@@ -14,6 +14,7 @@ import { useForecast } from '../lib/weather.js';
 import { packingList, packMonth } from '../lib/packing.js';
 import { cheapestStayMonths } from '../lib/costIndex.js';
 import { useI18n } from '../i18n/index.jsx';
+import { usePaywall } from '../hooks/usePaywall.jsx';
 import {
   TreeIcon, PersonIcon, CalendarIcon, MapPinIcon, CameraIcon,
   ParkingIcon, SunIcon, PartSunIcon, CloudIcon, FogIcon,
@@ -158,6 +159,7 @@ export function DestinationPage({
   isFavorite, onToggleFavorite, onOpenFeature, onOpenItin,
 }) {
   const { t, lang } = useI18n();
+  const paywall = usePaywall();
   const pageRef = React.useRef(null);
   const scrollRef = React.useRef(null);
   const mapRef = React.useRef(null);
@@ -238,6 +240,7 @@ export function DestinationPage({
 
   const exportPdf = async () => {
     if (pdfBusy) return;
+    if (!paywall.require('export')) return;
     setPdfBusy(true);
     try {
       const { openDestinationPdf } = await import('../lib/destinationPdf.js');

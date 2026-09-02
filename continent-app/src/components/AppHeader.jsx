@@ -1,6 +1,7 @@
 import React from 'react';
 import Logo from './Logo.jsx';
 import { useI18n } from '../i18n/index.jsx';
+import { usePaywall } from '../hooks/usePaywall.jsx';
 import {
   PersonIcon, CompassIcon, GlobeIcon, RouteIcon, ListDayIcon, BookmarkIcon,
   TicketIcon, FriendsIcon,
@@ -57,6 +58,10 @@ export function AppHeader({
   children,
 }) {
   const { t } = useI18n();
+  // The pass chip is chrome, not a gate, so it goes straight to the price
+  // table. A caller may still override where it points; nothing does today.
+  const paywall = usePaywall();
+  const seePricing = onSeePricing || paywall.openPrices;
   return (
     <div className={`app-header ${children ? 'has-filters' : ''}`}>
       <button
@@ -107,10 +112,10 @@ export function AppHeader({
             desktop where it is the bar's one call to action. The language
             picker left this row for the Account panel: switching languages is
             rare, the row over the map is not the place to spend width on it. */}
-        {onSeePricing && (
+        {seePricing && (
           <button
             className="header-pricing-btn"
-            onClick={onSeePricing}
+            onClick={seePricing}
             title={t('header.seePricing')}
           >
             <TicketIcon size={14} />

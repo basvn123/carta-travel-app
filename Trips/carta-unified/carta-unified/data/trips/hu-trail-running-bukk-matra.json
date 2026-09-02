@@ -1,0 +1,300 @@
+{
+  "id": "hu-trail-running-bukk-matra",
+  "sourceId": "hungary-bukk-matra-trail-running",
+  "slug": "hu-trail-running-bukk-matra",
+  "title": "Blue Blazes and Dry Karst: A Trail-Running Week in the Bükk and the Mátra",
+  "country": "Hungary",
+  "countryCode": "HU",
+  "countries": [
+    {
+      "name": "Hungary",
+      "code": "HU"
+    }
+  ],
+  "isMultiCountry": false,
+  "region": "Eastern & Southeastern Europe",
+  "regionKey": "eastern-southeastern",
+  "subRegion": "Északi-középhegység — the Bükk and Mátra ranges",
+  "tripType": "Trail Running",
+  "tripTypeId": 2,
+  "tripTypeSlug": "trail-running",
+  "durationDays": 7,
+  "bestPeriod": {
+    "months": [
+      4,
+      5,
+      9,
+      10
+    ],
+    "monthNames": [
+      "April",
+      "May",
+      "September",
+      "October"
+    ],
+    "window": "late April to mid-May, and the last two weeks of September into mid-October",
+    "note": null,
+    "avoid": "July–August (35 °C in the Eger basin, no water on the Bükk plateau) and February–March (mud, ice on the north-facing rim)",
+    "raw": null
+  },
+  "budgetTier": "€",
+  "budgetTierRange": [
+    1,
+    1
+  ],
+  "budgetTierRaw": "€",
+  "budget": {
+    "currency": "EUR",
+    "totalEur": {
+      "low": 305,
+      "high": 550
+    },
+    "totalNote": "€305–€550",
+    "breakdown": {
+      "accommodation": {
+        "lowEur": 145,
+        "highEur": 265,
+        "note": "€145–€265 (€21–€38/night in panzió and turistaház beds)"
+      },
+      "food": {
+        "lowEur": 90,
+        "highEur": 140,
+        "note": "€90–€140 (€13–€20/day — village konyha lunches, hut goulash)"
+      },
+      "transport": {
+        "lowEur": 45,
+        "highEur": 80,
+        "note": "€45–€80 (trains, the Szalajka and Mátra forest railways, buses, one transfer taxi)"
+      },
+      "activities": {
+        "lowEur": 25,
+        "highEur": 65,
+        "note": "€25–€65 (cave tours, lookout towers, a stamping book)"
+      }
+    },
+    "perDayEur": {
+      "low": 44,
+      "high": 79
+    }
+  },
+  "profile": {
+    "difficulty": 4,
+    "difficultyLabel": "Demanding",
+    "difficultyNote": "Moderate–Hard",
+    "fitnessLevel": "Demanding",
+    "crowdLevel": null,
+    "familyFriendly": null,
+    "carRequired": null
+  },
+  "basecamps": [
+    "Szilvásvárad",
+    "Eger",
+    "Mátrafüred",
+    "Galyatető"
+  ],
+  "gatewayAirport": "Budapest (BUD). Train Budapest-Keleti → Eger via Füzesabony, ~2 h; bus Eger → Szilvásvárad, ~45 min. Home: Gyöngyös → Vámosgyörk → Budapest, ~1 h 45.",
+  "gatewayAirportCode": "BUD",
+  "languages": [
+    "Hungarian"
+  ],
+  "currency": "Hungarian forint (HUF)",
+  "emergencyNumber": "112",
+  "coordinates": {
+    "lat": 47.9027,
+    "lon": 20.3733,
+    "precision": "city",
+    "matchedPlace": "Eger",
+    "source": "geonames (geonamescache, cities > 15k)"
+  },
+  "tags": [
+    "trail-running",
+    "karst",
+    "orszagos-kektura",
+    "kekesteto",
+    "bukk-plateau",
+    "forest-singletrack",
+    "dry-mountain"
+  ],
+  "summary": "Hungary's mountains top out at 1,014 m, which is why runners underrate them and then get quietly taken apart. Seven days of beech singletrack, limestone rim path and the oldest waymarked long-distance trail in…",
+  "summaryGenerated": false,
+  "hook": "Hungary's mountains top out at 1,014 m, which is why runners underrate them and then get quietly taken apart. Seven days of beech singletrack, limestone rim path and the oldest waymarked long-distance trail in Europe. The Bükk plateau is the hook: a karst tableland with almost no surface water, sinkholes underfoot, and a rock rim that drops 400 m in one step. Runnable, beautiful, and unforgiving about hydration.",
+  "snapshot": {
+    "Country": "Hungary",
+    "Trip type": "Trail Running",
+    "Duration": "7 days",
+    "Best period": "Late April–May and late September–October",
+    "Budget tier": "€",
+    "Difficulty": "Moderate–Hard",
+    "Start / End": "Szilvásvárad → Mátrafüred (two bases, ~115 km running, ~4,300 m ascent)",
+    "Getting there": "Budapest (BUD). Train Budapest-Keleti → Eger via Füzesabony, ~2 h; bus Eger → Szilvásvárad, ~45 min. Home: Gyöngyös → Vámosgyörk → Budapest, ~1 h 45."
+  },
+  "itinerary": [
+    {
+      "day": 1,
+      "title": "Arrival and the Szalajka shakeout",
+      "morning": "Train from Budapest-Keleti to Eger, change at Füzesabony, then the bus north to **Szilvásvárad**. Drop bags and buy a *bélyegzőfüzet* before the shops shut.",
+      "afternoon": "Run the **Szalajka-völgy** floor: trout ponds, the open-air forestry museum, then the **Fátyol-vízesés**, a travertine cascade spreading like a veil over stepped limestone. Continue to the **Szalajka-forrás** at the valley head and turn back — 9 km of near-flat gravel and boardwalk.",
+      "evening": "Eat trout at one of the Szalajka út kitchens, then walk to the Lipizzaner stud paddocks. Check the plateau forecast: on the Bükk, fog matters more than rain.",
+      "dayStats": "9 km / +240 m",
+      "sleep": null
+    },
+    {
+      "day": 2,
+      "title": "Istállós-kő, the roof of the Bükk",
+      "morning": "Away by 07:30 on the yellow trail up the valley's north side. Relentless but entirely runnable — beech, then hornbeam, then the sudden thin light of the summit meadow at **Istállós-kő (959 m)**. Stamp box at the top.",
+      "afternoon": "Follow the ridge west, turn south on the red trail toward **Bánya-hegy**, and drop back to Szilvásvárad on forest road and singletrack. Refill only at the Szalajka source — there is nothing on the ridge.",
+      "evening": "Arrange tomorrow's lift to Bánkút; there is no useful bus onto the plateau and a village taxi runs about €18–€25 (7,000–10,000 HUF) [VERIFY: current Szilvásvárad–Bánkút transfer fare].",
+      "dayStats": "18 km / +720 m",
+      "sleep": null
+    },
+    {
+      "day": 3,
+      "title": "The rim: Bálvány, Tar-kő, Három-kő",
+      "morning": "Start at **Bánkút** (~890 m), the ski clearing on the plateau's western shoulder. Run east on the blue and red lines to **Bálvány (956 m)**, then out along the rim — the best running in Hungary: open grassy karst, dolina after dolina on your right, the Sajó basin below on your left.",
+      "afternoon": "**Tar-kő (950 m)** and **Három-kő (932 m)** are limestone prows standing clear of the forest above a 300–400 m drop, the only airy metres of the week. Then the interior: Nagy-mező's frost-hollow meadows, and **Jávorkút** for the day's only reliable water, before the forestry track back.",
+      "evening": "Sleep at **Bánkút** or drop to Szilvásvárad. Either way eat twice — the dry plateau air dehydrates you without your noticing [VERIFY: current Bánkút turistaház bed rates].",
+      "dayStats": "24 km / +650 m",
+      "sleep": null
+    },
+    {
+      "day": 4,
+      "title": "Lillafüred, caves and the Garadna",
+      "morning": "Move east to **Lillafüred** (~320 m), where the Palotaszálló hangs over the Hámori lake. Run the green trail past the **Szinva-vízesés** — about 20 m, the highest waterfall in Hungary — then climb the Garadna on forestry track.",
+      "afternoon": "Up to Fehérkő-lápa and back down the ridge: shaded, spring-fed, gentle, exactly what tired quads need after the rim. Finish at the **Anna-barlang**, a rare limestone-tufa cave formed inside the waterfall's own deposits, and the dripstone **Szent István-barlang** next door; both guided, both short [VERIFY: current cave tour times and ticket prices].",
+      "evening": "LÁEV narrow-gauge into Miskolc for dinner, or stay and eat trout at Lillafüred. Reposition to the Mátra tonight or at dawn.",
+      "dayStats": "17 km / +610 m",
+      "sleep": null
+    },
+    {
+      "day": 5,
+      "title": "Into the Mátra: Muzsla and Sástó",
+      "morning": "Eger to Gyöngyös by bus, then the **Mátravasút** narrow-gauge or the local bus up to **Mátrafüred** (~340 m). A different mountain entirely: andesite, softer contours, running water everywhere.",
+      "afternoon": "Climb the blue-triangle spur to **Muzsla-tető (805 m)** and its lookout, traverse north to **Sástó**, and descend on the red trail. Sástó's tower — a converted oil rig on the lakeshore — gives the cleanest view of the Kékes massif short of climbing it.",
+      "evening": "Mátrafüred is a small spa village with cheap kitchens; eat *bableves* and lay out tomorrow's kit. The Kékestető day is long.",
+      "dayStats": "15 km / +620 m",
+      "sleep": null
+    },
+    {
+      "day": 6,
+      "title": "Kékestető and Galyatető on the Blue Trail",
+      "morning": "Out of Mátrafüred on the OKT's blue blaze, climbing through Sástó to **Mátraháza (~715 m)**, then the last pull to **Kékestető (1,014 m)** — the highest ground in Hungary, marked by a television tower with a public viewing deck [VERIFY: current Kékestető tower lookout hours and entry price]. Stamp the book.",
+      "afternoon": "West on the Kéktúra along the Mátrabérc ridge to **Galyatető (964 m)**, the country's second summit, with its stone tower above the beeches. Refill at Mátraháza and Galyatető — this is where the Mátra's springs earn their keep.",
+      "evening": "Bus down road 24 to Mátrafüred. Dinner, legs up, four stamp boxes in the book.",
+      "dayStats": "26 km / +1,050 m",
+      "sleep": null
+    },
+    {
+      "day": 7,
+      "title": "Sirok, and out",
+      "morning": "An unhurried last run on the OKT's eastern Mátra section toward **Parádsasvár** and the volcanic ruin of **Sirok castle** on its tuff spike — the trail's hinge between the Mátra and the Bükk.",
+      "afternoon": "Bus to Gyöngyös, an hour in the baroque centre and the Mátra Museum, then the branch train to Vámosgyörk.",
+      "evening": "Train to Budapest-Keleti, 1 h 45. Eat *lecsó* and drink Egri Bikavér somewhere with a tablecloth.",
+      "dayStats": "12 km / +400 m",
+      "sleep": null
+    }
+  ],
+  "accommodationStrategy": [
+    {
+      "rank": 1,
+      "name": "Szilvásvárad village panzió cluster",
+      "style": "guesthouse",
+      "location": "Szilvásvárad",
+      "description": "Szilvásvárad sits at the mouth of the Szalajka valley, so Days 1 and 2 start from the door. The Egri út and Szalajka út guesthouses have drying space, laundry sinks, and hosts who will drive you up to Bánkút for the rim day.",
+      "booking": "3–4 weeks ahead direct by phone or email; 2–3 months for May and October weekends.",
+      "priceNote": null
+    },
+    {
+      "rank": 2,
+      "name": "Bánkút turistaház",
+      "style": "plateau hut, ~890 m",
+      "location": "Bánkút",
+      "description": "the only bed actually on the Bükk plateau. It turns the 24 km rim traverse into a run starting at 900 m instead of 300 m, and puts you on the karst at dawn while the dolinas still hold mist. Bunk rooms, cash-friendly, no reliable signal.",
+      "booking": "direct, 4–6 weeks ahead; confirm the kitchen is running before counting on dinner.",
+      "priceNote": null
+    },
+    {
+      "rank": 3,
+      "name": "Mátrafüred guesthouses off Parádi út",
+      "style": "spa-village pension",
+      "location": "Mátrafüred",
+      "description": "the best vertical-to-doorstep ratio in the Mátra — Muzsla starts 200 m from the street and the OKT to Kékestető runs through the village. On the Mátravasút line and the road-24 bus route, so every run has a bail-out.",
+      "booking": "2–3 weeks ahead; avoid the mid-August holiday fortnight when the village is full.",
+      "priceNote": null
+    }
+  ],
+  "logistics": {
+    "connectivity": "Telekom, Yettel and Vodafone cover the Mátra ridge and Kékestető comprehensively. The Bükk plateau interior — Nagy-mező, the Tar-kő rim, the upper Garadna — is patchy to dead. Download offline maps; the OSM hiking layer renders the blaze colours accurately.",
+    "emergency": "**112**, unified dispatch, English-speaking operators. There is no dedicated mountain-rescue corps; county disaster management and the volunteer *Magyar Barlangi Mentőszolgálat* handle cave incidents. Give your position by trail colour and nearest named feature — dispatchers know Tar-kő and Jávorkút.",
+    "weather": "Continental and abrupt. Storms build over the Mátra from mid-May afternoons; the Kékes summit runs 8–10 °C colder than Gyöngyös. On the plateau the real hazard is autumn fog, which erases the rim and makes the dolina field genuinely disorienting. Frost hollows sit well below surrounding forest temperature at dawn.",
+    "bookingWindows": "Nothing sells out except May and October weekends and mid-August. Lillafüred cave tours run to fixed departures and fill on summer Saturdays — take the first.",
+    "money": "Forint, roughly **395 HUF to the euro** [VERIFY: current exchange rate]. Cards work in Eger, Gyöngyös and Miskolc, but the Bánkút hut, the Szalajka railway kiosk and village kitchens prefer cash — carry €50–€70 in small notes. Never change money at an airport kiosk or a street *pénzváltó* advertising \"no commission\".",
+    "transportRules": "MÁV trains are cheap and reliable; buy in the MÁVPlusz app. With a bike, the **kerékpárjegy is 500 HUF**, valid 24 hours and one journey, plus a *kerékpárhelyjegy* of 100–990 HUF on InterCity and express services. Both forest railways are seasonal.",
+    "permits": "This is **Bükki Nemzeti Park** and protected landscape. No permit or fee for running marked trails, but stay on them — leaving the blaze in a strictly protected zone (*fokozottan védett terület*) is an offence, and several plateau dolinas and cave mouths sit inside them. No wild camping, no open fire, no drones without written permission, dogs on leads.",
+    "health": null,
+    "gettingThere": null,
+    "other": []
+  },
+  "proTips": [
+    "**Treat the Bükk plateau as a desert crossing.** Two litres, salt, and a plan that touches **Jávorkút**. Runners get into trouble here not from terrain but from assuming a green Central European mountain must have streams. The water is 400 m below you, inside the rock.",
+    "**Buy the stamping book on day one.** Pressing a rubber stamp at Istállós-kő, Bánkút, Kékestető and Galyatető turns four separate runs into one coherent thing, and Hungarians will talk to you about it on the trail.",
+    "**Run the rim traverse west to east.** Bálvány first puts the morning sun behind you on Tar-kő and Három-kő, and lands Jávorkút's water at the two-thirds point rather than the start.",
+    "**Use the forest railways as one-way lifts.** The Szalajka line up the valley and the Mátravasút to Lajosháza let you run down instead of up. Locals do it routinely.",
+    "**September beats May by a nose** — same temperatures, drier limestone, fewer ticks, and the beech turn in the second week of October is the best week of the Bükk year. May's one advantage is wild garlic in the Garadna.",
+    "**Vaccinate against tick-borne encephalitis.** Hungary is endemic, these forests are prime habitat, and the schedule needs starting months ahead. Carry a tick remover: Nagy-mező's grass is thick with them from April."
+  ],
+  "typeSpecific": {
+    "raw": {
+      "Named routes, distance and vertical": "(1) **Szalajka–Istállós-kő loop**: Szilvásvárad (~300 m) up the *Szalajka-völgy* past the **Fátyol-vízesés** and the Szalajka source to **Istállós-kő (959 m)**, the Bükk's highest summit, back over Bánya-hegy — **18 km / +720 m**. (2) **The rim traverse**: Bánkút (~890 m) → **Bálvány (956 m)** → **Tar-kő (950 m)** → **Három-kő (932 m)** → Nagy-mező → **Jávorkút** → Bánkút, **24 km / +650 m**. (3) **Lillafüred–Jávorkút loop** up the Garadna and back over Fehérkő-lápa, **17 km / +610 m**. (4) **Muzsla circuit** from Mátrafüred (~340 m) over **Muzsla-tető (805 m)** and **Sástó**, **15 km / +620 m**. (5) **The Kéktúra spine**, Mátrafüred → Mátraháza → **Kékestető (1,014 m)** → **Galyatető (964 m)**, **26 km / +1,050 m** point-to-point.",
+      "Waymarking": "The **Országos Kéktúra (OKT)** — the National Blue Trail, laid out from 1938, the oldest long-distance marked path in Europe, roughly 1,170 km from Írott-kő to Hollóháza. Its blaze is a **horizontal blue bar on a white square**. All Hungarian trails share the grammar: horizontal bar for main lines; triangle for a summit spur, circle for a spring (*forrás*), L for a lookout.",
+      "Technical grade": "T1 to a soft T2, with short T2+ steps on the **Tar-kő** and **Három-kő** rim scrambles — no exposure needing hands for more than three moves. The difficulty is elsewhere: wet beech litter over polished limestone in October, ankle-swallowing *dolina* rims, and unmarked forestry junctions that look identical under closed canopy.",
+      "Terrain split": "Roughly 55% forest singletrack, 25% packed forestry road, 15% bare karst — plates, runnels, grikes — 5% asphalt. The Mátra is andesite: rounder, grassier, with real streams. The Bükk is Triassic limestone: faster when dry, treacherous when not.",
+      "Water — the critical section": "**The Bükk plateau has essentially no surface water.** Rain drains straight into the karst and re-emerges in valley springs hundreds of metres below the rim. Plan every plateau run around named sources: **Jávorkút** (piped, the plateau's one dependable tap), **Bolhás-forrás** near the Bálvány meadows, **Vörös-kő-forrás** below the northern rim — a genuine descent-and-reclimb, not a detour — and the **Szalajka-forrás** at the valley head. Carry **2 litres minimum** on the rim traverse and treat Jávorkút as the only guaranteed refill [VERIFY: current flow reliability of Bolhás-forrás and Vörös-kő-forrás in a dry autumn]. The Mátra is the opposite: Mátraháza, Kékestető, Sástó and Galyatető all have taps, and the Csörgő and Nagy streams run year-round.",
+      "Bail-outs": "Bánkút is driveable from Nagyvisnyó and Mályinka; Nagy-mező and Jávorkút sit on forestry roads. Lillafüred and Garadna are on the **LÁEV narrow-gauge** from Miskolc [VERIFY: current LÁEV timetable and fares]. In the Mátra, road 24 runs Gyöngyös–Mátrafüred–Sástó–Mátraháza–Kékestető with regular buses, so no route is more than 4 km from a stop. The **Szalajka forest railway** cuts 5 km off the valley when your legs are done [VERIFY: current fare and running season].",
+      "The stamping book": "The Kéktúra's *bélyegzőfüzet* is a passport carried by tens of thousands of Hungarians: stamp boxes (*bélyegzőhely*) hang at huts, lookouts and summit posts, and you press the rubber stamp into the book to prove passage. Buy one through the **Magyar Természetjáró Szövetség** or a tourist shop in Eger or Gyöngyös [VERIFY: current price of the bélyegzőfüzet]. On this route you can collect **Istállós-kő, Bánkút, Kékestető and Galyatető**. A phone app with GPS check-in exists; the physical stamps are the point.",
+      "Race calendar": "**Ultrabalaton** in mid-May — 221 km round Lake Balaton, solo or relay — is the gravitational centre of the Hungarian endurance year and empties every other May start list for a fortnight; enter it or avoid its weekend. In the mountains, the **Kékes uphill race** to the 1,014 m summit and the Bükk trail events based on Miskolc and Lillafüred are the fixtures [VERIFY: 2027 race dates, distances and entry fees]."
+    },
+    "surface": "Roughly 55% forest singletrack, 25% packed forestry road, 15% bare karst — plates, runnels, grikes — 5% asphalt. The Mátra is andesite: rounder, grassier, with real streams. The Bükk is Triassic limestone: faster when dry, treacherous when not.",
+    "distanceKm": null,
+    "elevationM": null,
+    "verticalM": 1,
+    "technicalRating": "The **Országos Kéktúra (OKT)** — the National Blue Trail, laid out from 1938, the oldest long-distance marked path in Europe, roughly 1,170 km from Írott-kő to Hollóháza. Its blaze is a **horizontal blue bar on a white square**. All Hungarian trails share the grammar: horizontal bar for main lines; triangle for a summit spur, circle for a spring (*forrás*), L for a lookout.",
+    "transitPass": null,
+    "hutBooking": null,
+    "liftNetwork": null,
+    "snowReliability": null,
+    "windConditions": null,
+    "gpxReady": null,
+    "bookingTimeline": null,
+    "audience": null
+  },
+  "packingNotes": [],
+  "whatCouldGoWrong": [],
+  "sources": {
+    "verified": null,
+    "confidenceNotes": "- Verified: Kékestető 1,014 m and Galyatető 964 m as Hungary's first and second summits; Istállós-kő 959 m as the Bükk's highest; the OKT as Europe's oldest long-distance marked trail, blue horizontal blaze, ~1,170 km Írott-kő–Hollóháza; the *bélyegzőfüzet* tradition; the Bükk-fennsík as waterless internally-draining karst; Szinva as Hungary's highest waterfall; the MÁV kerékpárjegy at 500 HUF plus a 100–990 HUF InterCity reservation; Ultrabalaton as a mid-May 221 km Balaton circuit; emergency 112. - `[VERIFY]` items in this file: 10 (see inline markers above) - Last reviewed: 2026-09-02"
+  },
+  "verifyFlags": [
+    "current flow reliability of Bolhás-forrás and Vörös-kő-forrás in a dry autumn",
+    "current LÁEV timetable and fares",
+    "current fare and running season",
+    "current price of the bélyegzőfüzet",
+    "2027 race dates, distances and entry fees",
+    "current Szilvásvárad–Bánkút transfer fare",
+    "current Bánkút turistaház bed rates",
+    "current cave tour times and ticket prices",
+    "current Kékestető tower lookout hours and entry price",
+    "current exchange rate"
+  ],
+  "verifyFlagCount": 10,
+  "volatilePricing": true,
+  "wordCount": 2499,
+  "dataVintage": 2026,
+  "provenance": {
+    "batch": "eastern-southeastern",
+    "sourceFile": "cartaeasterneuropetrips/trips/hungary-bukk-matra-trail-running.md",
+    "sourceFormat": "md+nested-yaml-frontmatter (one file per trip)",
+    "sourceId": "hungary-bukk-matra-trail-running",
+    "ingestedAt": "2026-09-02",
+    "synthesized": false
+  }
+}

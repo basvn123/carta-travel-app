@@ -1,0 +1,303 @@
+{
+  "id": "fi-nature-escape-saimaa-lakeland-linnansaari-kolovesi-cabin-week",
+  "sourceId": "saimaa-lakeland-linnansaari-kolovesi-cabin-week",
+  "slug": "fi-nature-escape-saimaa-lakeland-linnansaari-kolovesi-cabin-week",
+  "title": "Saimaa Lakeland: Linnansaari & Kolovesi Cabin Week",
+  "country": "Finland",
+  "countryCode": "FI",
+  "countries": [
+    {
+      "name": "Finland",
+      "code": "FI"
+    }
+  ],
+  "isMultiCountry": false,
+  "region": "Northern Europe & Baltics",
+  "regionKey": "northern-baltics",
+  "subRegion": "Lake Saimaa, South Savo — Linnansaari and Kolovesi National Parks",
+  "tripType": "Nature Escapes & Cabin Stays",
+  "tripTypeId": 9,
+  "tripTypeSlug": "nature-escape",
+  "durationDays": 7,
+  "bestPeriod": {
+    "months": [
+      2,
+      3,
+      6,
+      7,
+      8,
+      9
+    ],
+    "monthNames": [
+      "February",
+      "March",
+      "June",
+      "July",
+      "August",
+      "September"
+    ],
+    "window": "Mid-June to early September for paddling and swimming; **late August–September for mushrooms, berries and mist mornings**; February–March for ice, snowshoeing and a frozen lake outside the sauna door",
+    "note": null,
+    "avoid": null,
+    "raw": "Mid-June to early September for paddling and swimming; **late August–September for mushrooms, berries and mist mornings**; February–March for ice, snowshoeing and a frozen lake outside the sauna door"
+  },
+  "budgetTier": "€€",
+  "budgetTierRange": [
+    2,
+    2
+  ],
+  "budgetTierRaw": "€€",
+  "budget": {
+    "currency": "EUR",
+    "totalEur": {
+      "low": 750,
+      "high": 1200
+    },
+    "totalNote": "€750–1,200 per person",
+    "breakdown": {
+      "accommodation": {
+        "lowEur": 110,
+        "highEur": 220,
+        "note": "€110–220 per night for a whole cabin sleeping 4–6; island wilderness huts and rental cabins from €60; upmarket lakeside villas €280+"
+      },
+      "food": {
+        "lowEur": 30,
+        "highEur": 50,
+        "note": "€30–50 per day self-catering; there is essentially no restaurant option once you are on the water"
+      },
+      "transport": {
+        "lowEur": 150,
+        "highEur": 260,
+        "note": "€150–260: car hire from Helsinki €45–60 per day, or train to Savonlinna and a local transfer; kayak or boat hire €35–70 per day"
+      },
+      "activities": {
+        "lowEur": 80,
+        "highEur": 200,
+        "note": "€80–200: guided seal-watching paddle, Olavinlinna castle, canoe rental, a smoke sauna evening"
+      }
+    },
+    "perDayEur": {
+      "low": 107,
+      "high": 171
+    }
+  },
+  "profile": {
+    "difficulty": null,
+    "difficultyLabel": null,
+    "difficultyNote": null,
+    "fitnessLevel": null,
+    "crowdLevel": null,
+    "familyFriendly": null,
+    "carRequired": null
+  },
+  "basecamps": [
+    "Oravi",
+    "Rantasalmi",
+    "Savonlinna",
+    "Puumala"
+  ],
+  "gatewayAirport": null,
+  "gatewayAirportCode": null,
+  "languages": [
+    "Finnish",
+    "English"
+  ],
+  "currency": "EUR",
+  "emergencyNumber": "112 — install the 112 Suomi app",
+  "coordinates": {
+    "lat": 62.1,
+    "lon": 28.6,
+    "precision": "source",
+    "matchedPlace": "Oravi",
+    "source": "source record"
+  },
+  "tags": [],
+  "summary": "A seven-day nature escapes & cabin stay itinerary in Lake Saimaa, South Savo — Linnansaari and Kolovesi National Parks, Finland.",
+  "summaryGenerated": true,
+  "hook": null,
+  "snapshot": {},
+  "itinerary": [
+    {
+      "day": 1,
+      "title": "Helsinki to the lake",
+      "morning": "Drive northeast from Helsinki, about 3 h 30, or take the train to Savonlinna. Stop for supplies at the last large supermarket — this is the trip's most important logistical act.",
+      "afternoon": "Arrive at your first cabin near Oravi or Rantasalmi, between Linnansaari and Kolovesi. Unload, swim, learn the boat.",
+      "evening": "Heat the sauna. The Finnish sequence is sauna, lake, repeat, and then dinner at 21:00 in the long summer light.",
+      "dayStats": null,
+      "sleep": null
+    },
+    {
+      "day": 2,
+      "title": "Linnansaari National Park by kayak",
+      "morning": "Rent kayaks or take the park boat from Oravi into **Linnansaari**, an archipelago national park of hundreds of rocky, pine-topped islands.",
+      "afternoon": "Paddle to Linnansaari island itself, where there is an old croft farm still worked traditionally, marked trails and a lookout over the labyrinth. This is prime **Saimaa ringed seal** habitat; sightings are a matter of luck and stillness.",
+      "evening": "Return to the cabin, or stay in a park hut. **Seal rule:** keep your distance, never approach a hauled-out seal, and observe the spring landing restrictions on nesting islets.",
+      "dayStats": null,
+      "sleep": null
+    },
+    {
+      "day": 3,
+      "title": "Kolovesi: the paddling-only park",
+      "morning": "**Kolovesi National Park** bans motorboats, so the only way in is by paddle. The result is the quietest water in southern Finland: narrow sounds, 30 m cliffs, and prehistoric **rock paintings** in red ochre on the cliff faces at Ukonvuori and elsewhere.",
+      "afternoon": "Paddle the sounds, land at a designated site, and cook over a fire in a marked fireplace.",
+      "evening": "Camp at a wilderness site or return. This is the day the trip is built around.",
+      "dayStats": null,
+      "sleep": null
+    },
+    {
+      "day": 4,
+      "title": "Cabin day: fishing, foraging, sauna",
+      "morning": "Slow start. Fish from the boat — pike, perch and zander are the lake's staples — under the public rod-and-line right.",
+      "afternoon": "Forage. From late July, bilberries carpet the forest floor; from August, chanterelles and ceps. Everyman's right allows this everywhere except gardens and cultivated land.",
+      "evening": "Cook what you caught and picked, then a proper long sauna. If your cabin has a **smoke sauna** (*savusauna*), it needs five hours of heating and it is worth every one of them.",
+      "dayStats": null,
+      "sleep": null
+    },
+    {
+      "day": 5,
+      "title": "Savonlinna and Olavinlinna",
+      "morning": "Drive to Savonlinna. **Olavinlinna** is a 1475 medieval castle standing on a rock in the middle of the strait, one of the northernmost stone fortresses in the world, and it hosts an opera festival inside its courtyard in July.",
+      "afternoon": "The Kerimäki church nearby is the largest wooden church in the world, seating over 3,000 in a village of a few thousand. Then the Punkaharju esker — a narrow glacial ridge of pine forest between two lakes, a Finnish national landscape since the 19th century.",
+      "evening": "Back to the cabin. Restock food.",
+      "dayStats": null,
+      "sleep": null
+    },
+    {
+      "day": 6,
+      "title": "The isolation night",
+      "morning": "Move to a second, more remote cabin: an island property reached by boat, or a rented hut with no electricity.",
+      "afternoon": "Do nothing on purpose. Swim, row, read, chop wood for the sauna.",
+      "evening": "No light pollution, and from late August the nights are dark enough for stars again — and occasionally aurora this far north.",
+      "dayStats": null,
+      "sleep": null
+    },
+    {
+      "day": 7,
+      "title": "Out",
+      "morning": "Last swim, clean the cabin properly (this is expected in Finland, and the standard is high), return the boat.",
+      "afternoon": "Drive or train back to Helsinki.",
+      "evening": null,
+      "dayStats": null,
+      "sleep": null
+    }
+  ],
+  "accommodationStrategy": [
+    {
+      "rank": 1,
+      "name": "Oravi village cabins and Saimaa lakeside mökki",
+      "style": null,
+      "location": null,
+      "description": "The classic Finnish rental cabin: timber, lakefront, private sauna, rowing boat, kitchen, and a jetty. €110–220 for the whole cabin. Oravi is the practical base because both national parks are reachable from it and there is kayak rental and a water-taxi service in the village.",
+      "booking": null,
+      "priceNote": null
+    },
+    {
+      "rank": 2,
+      "name": "Island cabins by boat access",
+      "style": null,
+      "location": null,
+      "description": "The step up in isolation: solar power, wood stove, wood-fired sauna, drinking water carried in, and no neighbours in sight. Book with an operator who provides the boat transfer and briefs you on the route — Saimaa's channels are genuinely confusing without a chart.",
+      "booking": null,
+      "priceNote": null
+    },
+    {
+      "rank": 3,
+      "name": "National park wilderness huts and rental huts",
+      "style": "Metsähallitus",
+      "location": null,
+      "description": "Inside Linnansaari and Kolovesi. Open huts are free and unbookable; rental huts and the park's historic croft accommodation can be reserved for a modest fee. No electricity, no running water, composting toilets, and the deepest quiet available in southern Finland.",
+      "booking": null,
+      "priceNote": null
+    }
+  ],
+  "logistics": {
+    "connectivity": null,
+    "emergency": "112 and the **112 Suomi** app, which sends your coordinates — critical on a lake with 14,000 islands and no addresses. Mobile coverage on Saimaa is good near shores and patchy in the far channels.",
+    "weather": null,
+    "bookingWindows": "July is the Finnish holiday month and the good cabins go 4–6 months ahead. The opera festival fills Savonlinna entirely. Late August and September are quiet, cheap and arguably better.",
+    "money": null,
+    "transportRules": null,
+    "permits": null,
+    "health": null,
+    "gettingThere": null,
+    "other": [
+      {
+        "label": "Everyman's right, and its limits",
+        "text": "You may walk, swim, camp for a night, and pick berries and mushrooms almost anywhere, including in the national parks. You may **not** light a fire outside marked fireplaces, disturb wildlife, camp in the immediate vicinity of homes, or drive off-road. During a regional forest-fire warning, even marked fireplaces are closed."
+      },
+      {
+        "label": "Seal protection",
+        "text": "The Saimaa ringed seal exists nowhere else on earth and its population is small. Spring landing restrictions apply on nesting islets, motorboat speed limits are in force in parts of the parks, and certain fishing gear is banned seasonally to prevent seal deaths. Follow the signs exactly — this is an active conservation programme, not a formality. `verify: true`"
+      },
+      {
+        "label": "Water",
+        "text": "Lake water is generally clean but should be boiled or filtered for drinking; cabins usually have a well or carried water. Never assume."
+      },
+      {
+        "label": "Boating",
+        "text": "Saimaa's navigation is genuinely complex: shallow rocks, unmarked channels, and islands that look identical. Take the chart, take the operator's briefing seriously, and wear the lifejacket. Wind gets up quickly on open stretches and a loaded kayak in a 10 m/s crosswind is a real problem."
+      },
+      {
+        "label": "Ticks",
+        "text": "Present in southern Finland, and TBE vaccination is worth discussing with a doctor if you will be in long grass and forest."
+      },
+      {
+        "label": "Sauna etiquette",
+        "text": "Naked, quiet, and by gender or family group unless agreed otherwise. Throw water on the stones (*löyly*) rather than asking whether you may. Never wear a swimsuit in a private cabin sauna without checking — it reads as strange."
+      }
+    ]
+  },
+  "proTips": [
+    "Paddle **Kolovesi**, not just Linnansaari. The motorboat ban makes it a different order of quiet, and the ochre rock paintings — thousands of years old, at water level on the cliffs — are the single most memorable thing on this itinerary.",
+    "Rent a cabin **with a rowing boat**, not just a motorboat. Rowing at 05:00 through lake mist is the Saimaa experience Finns are actually describing when they talk about summer.",
+    "Learn the **smoke sauna** if your cabin has one. It takes half a day, produces a soft heat nothing else matches, and it is the oldest form of the Finnish sauna.",
+    "Time it for **late August**: warm water still, first mushrooms, no mosquitoes, dark nights returning, and half the price of July.",
+    "Buy fish from a **lake fisherman** if you cannot catch your own — smoked vendace or zander from a village smokehouse is the region's best food.",
+    "Bring a **paper chart** of the lake even if you have a plotter. Saimaa is the largest lake in Finland and the fourth largest in Europe by area, with a shoreline longer than any other lake on the continent, and every island looks like the last one."
+  ],
+  "typeSpecific": {
+    "raw": {
+      "remote_access": "No 4x4 required — sealed roads reach every mainland base. The genuine remoteness is on the water: island cabins are reached only by your own boat, a water taxi, or a kayak, and the last kilometre is always paddled or rowed",
+      "isolation_levels": {
+        "level_1": "Lakeside cabin with road access, electricity, wifi, own sauna — 15 minutes from a supermarket",
+        "level_2": "Island cabin with boat access, solar power, wood-fired sauna, drinking water carried in",
+        "level_3": "Wilderness hut in Linnansaari or Kolovesi National Park — no power, no booking for open huts, composting toilet, lake water boiled"
+      },
+      "foraging_rules": "Everyman's right allows picking berries and mushrooms almost everywhere, including inside national parks, without permission. Fires only in marked fireplaces and never under a regional fire warning. Fishing with a rod and line is a public right; lure fishing requires the national fisheries management fee for ages 18–64",
+      "wildlife": "The Saimaa ringed seal — one of the world's rarest seals, found only in this lake system, numbering in the several hundreds — plus osprey, black-throated diver and elk",
+      "gpx_ready": true
+    },
+    "surface": null,
+    "distanceKm": null,
+    "elevationM": null,
+    "verticalM": null,
+    "technicalRating": null,
+    "transitPass": null,
+    "hutBooking": null,
+    "liftNetwork": null,
+    "snowReliability": null,
+    "windConditions": null,
+    "gpxReady": true,
+    "bookingTimeline": null,
+    "audience": null
+  },
+  "packingNotes": [],
+  "whatCouldGoWrong": [],
+  "sources": {
+    "verified": null,
+    "confidenceNotes": null
+  },
+  "verifyFlags": [],
+  "verifyFlagCount": 0,
+  "volatilePricing": true,
+  "wordCount": 1610,
+  "dataVintage": 2026,
+  "provenance": {
+    "batch": "northern-baltics",
+    "sourceFile": "carta_northern_europe_baltics_trips.md#trip-25",
+    "sourceFormat": "single-file md, '## Trip NN' records with fenced YAML",
+    "sourceId": "saimaa-lakeland-linnansaari-kolovesi-cabin-week",
+    "ingestedAt": "2026-09-02",
+    "synthesized": false
+  }
+}

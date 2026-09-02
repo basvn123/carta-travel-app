@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useI18n } from '../i18n/index.jsx';
+import { NearbyOutdoors } from './NearbyOutdoors.jsx';
 import {
   lakeHeadline, lakeWhy, lakeTags, lakeSwim, lakeSeason, lakeHazards,
   bestForLabel, componentLabel, serviceLabel, accessLabel, monthWord,
@@ -42,7 +43,7 @@ import {
  *
  * The month strip is an ESTIMATE and says so in its own subtitle. There is no
  * free per lake water temperature series for Europe, so the pipeline models it
- * from WorldClim air normals with a documented correction. Presenting that as
+ * from CHELSA air normals with a documented correction. Presenting that as
  * a measurement would be the dishonest half of a useful feature.
  */
 
@@ -102,7 +103,7 @@ function SeasonStrip({ temps, warmC, t }) {
   );
 }
 
-export function LakePage({ lake, countryName, onClose, onSelectDest, warmC = 18 }) {
+export function LakePage({ lake, countryName, onClose, onSelectDest, warmC = 18, onOpenNeighbour }) {
   const { t, lang } = useI18n();
   const [shot, setShot] = useState(0);
   const [toast, setToast] = useState(null);
@@ -366,6 +367,13 @@ export function LakePage({ lake, countryName, onClose, onSelectDest, warmC = 18 
               )}
             </section>
           )}
+
+          <NearbyOutdoors
+            row={lake}
+            cc={lake.cc}
+            headings={{ trail: 'nb.lake.trail', peak: 'nb.lake.peak' }}
+            onOpen={onOpenNeighbour}
+          />
 
           <section className="bpage-score">
             <h2>{t('lake.scoreHead')}</h2>

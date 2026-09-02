@@ -1,0 +1,293 @@
+{
+  "id": "ro-culinary-dealu-mare-dragasani",
+  "sourceId": "romania-dealu-mare-dragasani-wine",
+  "slug": "ro-culinary-dealu-mare-dragasani",
+  "title": "Fetească and Fire Water: A Week Through Dealu Mare and Drăgășani",
+  "country": "Romania",
+  "countryCode": "RO",
+  "countries": [
+    {
+      "name": "Romania",
+      "code": "RO"
+    }
+  ],
+  "isMultiCountry": false,
+  "region": "Eastern & Southeastern Europe",
+  "regionKey": "eastern-southeastern",
+  "subRegion": "Dealu Mare (Prahova & Buzău), the Buzău Land Geopark, and Drăgășani on the Olt",
+  "tripType": "Culinary & Wine Tours",
+  "tripTypeId": 7,
+  "tripTypeSlug": "culinary",
+  "durationDays": 7,
+  "bestPeriod": {
+    "months": [
+      9,
+      10
+    ],
+    "monthNames": [
+      "September",
+      "October"
+    ],
+    "window": "mid-September to mid-October — the *culesul viilor* harvest, warm days, cellars open and working",
+    "note": null,
+    "avoid": "July–August (35 °C on the terrace, cellars shut for holidays) and February–March (nothing is happening)",
+    "raw": null
+  },
+  "budgetTier": "€€",
+  "budgetTierRange": [
+    2,
+    2
+  ],
+  "budgetTierRaw": "€€",
+  "budget": {
+    "currency": "EUR",
+    "totalEur": {
+      "low": 925,
+      "high": 1500
+    },
+    "totalNote": "€925–€1,500",
+    "breakdown": {
+      "accommodation": {
+        "lowEur": 350,
+        "highEur": 560,
+        "note": "€350–€560 (€50–€80/night, mostly winery guesthouses)"
+      },
+      "food": {
+        "lowEur": 175,
+        "highEur": 280,
+        "note": "€175–€280 (€25–€40/day — Romanian restaurant prices are low, winery lunches are not)"
+      },
+      "transport": {
+        "lowEur": 260,
+        "highEur": 400,
+        "note": "€260–€400 (driver-guide or private transfers; a car you cannot legally drink and drive)"
+      },
+      "activities": {
+        "lowEur": 140,
+        "highEur": 260,
+        "note": "€140–€260 (tastings €12–€35 per person per estate)"
+      }
+    },
+    "perDayEur": {
+      "low": 132,
+      "high": 214
+    }
+  },
+  "profile": {
+    "difficulty": 1,
+    "difficultyLabel": "Easy",
+    "difficultyNote": "Easy",
+    "fitnessLevel": "Easy",
+    "crowdLevel": null,
+    "familyFriendly": null,
+    "carRequired": null
+  },
+  "basecamps": [
+    "Urlați",
+    "Ceptura",
+    "Pietroasele",
+    "Drăgășani"
+  ],
+  "gatewayAirport": "Bucharest Otopeni (OTP). Dealu Mare is 70–90 min north-east by road; Drăgășani 3 h west. Trains reach Ploiești and Drăgășani but not the cellars — this is a road trip with a hired driver.",
+  "gatewayAirportCode": "OTP",
+  "languages": [
+    "Romanian"
+  ],
+  "currency": "Romanian leu (RON) — roughly 5.0–5.3 RON to the euro during 2026",
+  "emergencyNumber": "112",
+  "coordinates": {
+    "lat": 44.65,
+    "lon": 24.2667,
+    "precision": "city",
+    "matchedPlace": "Drăgăşani",
+    "source": "geonames (geonamescache, cities > 15k)"
+  },
+  "tags": [
+    "wine",
+    "native-grapes",
+    "feteasca-neagra",
+    "geopark",
+    "mud-volcanoes",
+    "harvest",
+    "carpathian-foothills"
+  ],
+  "summary": "Romania makes more wine than New Zealand and Austria combined and almost nobody outside it drinks any. This week fixes that: a sun-facing terrace of Carpathian foothill vineyard where Fetească Neagră ripens like a…",
+  "summaryGenerated": false,
+  "hook": "Romania makes more wine than New Zealand and Austria combined and almost nobody outside it drinks any. This week fixes that: a sun-facing terrace of Carpathian foothill vineyard where Fetească Neagră ripens like a Rhône grape, a fortnight-old plum spirit poured before breakfast, mud volcanoes bubbling in a bare grey badland, and a second, cooler valley on the Olt growing a grape that exists nowhere else. Easy driving, hard-to-find bottles, and a driver you must hire.",
+  "snapshot": {
+    "Country": "Romania",
+    "Trip type": "Culinary & Wine Tours",
+    "Duration": "7 days",
+    "Best period": "September–October, peak at harvest",
+    "Budget tier": "€€",
+    "Difficulty": "Easy",
+    "Start / End": "Bucharest → Bucharest (loop, ~620 km driven)",
+    "Getting there": "Bucharest Otopeni (OTP). Dealu Mare is 70–90 min north-east by road; Drăgășani 3 h west. Trains reach Ploiești and Drăgășani but not the cellars — this is a road trip with a hired driver."
+  },
+  "itinerary": [
+    {
+      "day": 1,
+      "title": "Bucharest to the terrace",
+      "morning": "Land at Otopeni, meet the driver, and go straight north-east on the DN1 and DJ102 towards Urlați. The vineyard appears as soon as the plain tilts: a continuous south-facing bench under wooded Subcarpathian hills.",
+      "afternoon": "**Crama Basilescu** at Urlați for the first flight — a house rebuilt on a 19th-century estate, strong on Fetească Neagră and Tămâioasă. Ask for the dry Tămâioasă alongside the sweet to understand the grape's range [VERIFY: current visiting hours].",
+      "evening": "Check into a guesthouse around Ceptura or Urlați. Dinner of *ciorbă rădăuțeană* then *tochitură* with *brânză de burduf*; a small *țuică* first, poured by the host, refused at your peril.",
+      "dayStats": "95 km",
+      "sleep": null
+    },
+    {
+      "day": 2,
+      "title": "Davino, and the benchmark",
+      "morning": "**Davino** at Ceptura, booked well ahead. The estate is the reference point for modern Romanian wine: Domaine Ceptura Blanc from Fetească Albă and Sauvignon, the Rouge from Fetească Neagră with Cabernet and Merlot, and Flamboyant at the top.",
+      "afternoon": "Lunch at the winery restaurant if the booking allows, then **SERVE** — founded by the Corsican Count Guy de Poix in 1994, the first foreign-owned Romanian estate after 1989, and still the maker of Cuvée Charlotte and Terra Romana.",
+      "evening": "Back to Ceptura. Walk the vineyard tracks at dusk; if it is late September the pickers are still out and the crush pads are running past dark.",
+      "dayStats": "30 km",
+      "sleep": null
+    },
+    {
+      "day": 3,
+      "title": "Fintești, Șarînga and the eastern end",
+      "morning": "**Lacerta** at Fintești, a purpose-built modern winery with a gravity-flow cellar and a wide range — the Cuvée X and the Fetească Neagră reserve are the ones to taste side by side.",
+      "afternoon": "**Aurelia Vișinescu** at Șarînga, one of Romania's most respected winemakers working under her own name; the Anima and Nomad ranges. Then **Rotenberg** further east, where Mihai Rotenberg makes some of the country's most serious Merlot on iron-red clay [VERIFY: whether Rotenberg accepts same-day visits].",
+      "evening": "Move base to Pietroasele or Sărata-Monteoru in Buzău county. Dinner: *pastramă de oaie* grilled over vine cuttings, and *mămăligă*.",
+      "dayStats": "55 km",
+      "sleep": null
+    },
+    {
+      "day": 4,
+      "title": "Mud volcanoes and the Geopark",
+      "morning": "The **Buzău Land UNESCO Global Geopark** — a designated territory of salt karst, fossil beds, ophiolites and living mud vents across the Buzău Subcarpathians. Start at the *vulcanii noroioși* at **Berca** (Pâclele Mari and Pâclele Mici), where cold methane pushes grey clay slurry up through cones into a landscape with almost nothing growing on it [VERIFY: current entry fee and opening hours at Pâclele Mari].",
+      "afternoon": "North to the **Focul Viu** natural gas flames at Lopătari and the rock-cut chambers around **Aluniș** and **Nucu-Bozioru**, hollowed into sandstone and used as hermitages. The **Sarea lui Buzău** salt outcrops are the geological story in one place.",
+      "evening": "Back down to Pietroasele — the site of the 1837 Pietroasele gold hoard and a working vineyard since Roman times. Eat *sarmale* and drink a Tămâioasă Românească off-dry.",
+      "dayStats": "70 km, no wine",
+      "sleep": null
+    },
+    {
+      "day": 5,
+      "title": "West to the Olt",
+      "morning": "A long transfer day, west on the A1 and DN65. Break it at **Domeniile Sâmburești** in Olt county, historically the source of Romania's best Cabernet Sauvignon, a genuinely different terroir from Dealu Mare.",
+      "afternoon": "Arrive **Drăgășani**, a small Vâlcea town on the right bank of the Olt with vineyards on the slope behind it. The valley is cooler and windier than Dealu Mare and the wines show it — higher acid, more aromatics.",
+      "evening": "Guesthouse dinner in or near Drăgășani. *Ciorbă de burtă* if you have the stomach for it, then grilled trout from the Olt tributaries.",
+      "dayStats": "250 km",
+      "sleep": null
+    },
+    {
+      "day": 6,
+      "title": "Crâmpoșie, Novac, Negru",
+      "morning": "**Prince Știrbey**, the estate revived by Baroness Ileana Kripp-Costinescu and Jakob Kripp on restituted family land, and the reason Crâmpoșie Selecționată exists commercially at all. Taste the Crâmpoșie, then the Novac and the Negru de Drăgășani back to back — both bred at the local research station in the 20th century, both dark and black-peppered.",
+      "afternoon": "**Avincis**, the architecturally striking neighbour, built around the restored Vila Dobrușa. Their Cuvée Petit and the Crâmpoșie are the markers. Book both estates as one day, ideally with lunch at whichever offers it [VERIFY: current lunch availability and price at Avincis].",
+      "evening": "If time and the driver allow, a bottle of **Crama Oprișor** from Mehedinji further south-west — the Smerenie and La Cetate labels — bought locally rather than visited; it is a two-hour detour you do not need.",
+      "dayStats": "35 km",
+      "sleep": null
+    },
+    {
+      "day": 7,
+      "title": "Back to Bucharest, and what to carry home",
+      "morning": "Drive east on the DN65 and A1. Stop in Pitești only for fuel; there is nothing you need.",
+      "afternoon": "Bucharest. A closing tasting flight at a city wine bar covers what the week missed — a **Petro Vaselo** from the Banat, a **Liliac** from Transylvania, a **Grasă de Cotnari** from Moldavia — the three regions this itinerary deliberately skipped.",
+      "evening": "*Mici* with mustard and a beer at a *berărie*, then *papanași*. Fly out, or stay a night. EU passengers can carry wine home without limit for personal use; the 100 ml liquid rule still applies to hand luggage, so it all goes in the hold.",
+      "dayStats": "200 km",
+      "sleep": null
+    }
+  ],
+  "accommodationStrategy": [
+    {
+      "rank": 1,
+      "name": "Casa Timiș",
+      "style": "winery estate hotel",
+      "location": "Slon, Prahova",
+      "description": "a full estate hotel with its own vineyard and restaurant, up in the Prahova hills within an hour of the Ceptura and Urlați cellars, which means one relocation instead of three. Real kitchen, real wine list, secure parking for the driver.",
+      "booking": "direct or by booking platform, 4–6 weeks ahead, longer for harvest weekends [VERIFY: current nightly rate].",
+      "priceNote": null
+    },
+    {
+      "rank": 2,
+      "name": "Conacul Bellu / guesthouses at Urlați",
+      "style": "village guesthouse, *pensiune*",
+      "location": "Ceptura",
+      "description": "puts you inside the Dealu Mare vineyard rather than at its edge, walking distance from at least one cellar, and *pensiune* hosts cook the regional dishes better than any restaurant will.",
+      "booking": "by phone or email, 2–3 weeks ahead; many take cash only.",
+      "priceNote": null
+    },
+    {
+      "rank": 3,
+      "name": "Pensiuni at Drăgășani / Vila Dobrușa area",
+      "style": "small guesthouse",
+      "location": "Vâlcea",
+      "description": "Drăgășani has thin hotel stock, so a guesthouse on the vineyard slope is both the best and the only sensible option; you are ten minutes from Știrbey and Avincis and can walk between vineyard blocks before breakfast.",
+      "booking": "3–4 weeks ahead, direct; confirm whether breakfast is included, as many quote room-only.",
+      "priceNote": null
+    }
+  ],
+  "logistics": {
+    "connectivity": "4G/5G is good and cheap across Prahova, Buzău and Vâlcea — Romania has some of the fastest fixed and mobile internet in the EU. Signal drops in the Geopark's deeper valleys around Nucu-Bozioru.",
+    "emergency": "**112**, English-speaking operators. Pharmacies (*farmacie*) are widespread; many in towns run *non-stop*.",
+    "weather": "September days reach 25–28 °C on the terrace and drop to 8 °C at night. October brings the first real rain and the clay tracks between vineyard blocks turn to grease — do not take a low car onto them.",
+    "bookingWindows": "Estates 1–2 weeks ahead, longer in harvest; Davino, SERVE and Prince Știrbey closer to 2–3 weeks in late September. Accommodation 3–6 weeks. Confirm by phone the day before — email replies can be slow.",
+    "money": "Cards work in towns and at the larger estates. Small *pensiuni*, village shops and roadside honey and *zacuscă* stalls are cash. Carry 400–600 RON (€75–€115) in small notes. ATMs are in every town; avoid the standalone Euronet machines and their conversion offer — always choose to be charged in RON.",
+    "transportRules": "Blood alcohol limit **0.00%**. If you self-drive at all, you need a **rovinietă** e-vignette for national roads — category A, **1 day €3.50 (~18 RON), 10 days €6 (~31 RON), 30 days €9.50 (~50 RON)**; there is no 7-day product. Rental cars usually include it — verify at pickup, because the fine falls on the driver.",
+    "permits": "No permits for the vineyards. The Buzău Land Geopark charges site by site rather than as a whole; the mud volcano reserves have small entry fees and marked paths — the crust is thin and people do go through it.",
+    "health": null,
+    "gettingThere": null,
+    "other": []
+  },
+  "proTips": [
+    "Book Davino and Prince Știrbey first and build the week around the two dates they give you. Everything else in this itinerary is flexible; those two are not.",
+    "Go at *culesul viilor* — the second half of September into early October. You get crush-pad access, must straight off the press, and winemakers who are exhausted but talking.",
+    "Ask specifically for **DOC-CT** and **DOC-CIB** bottlings of Tămâioasă Românească. The late-harvest and noble-rot tiers rarely leave the country and are the best value on any Romanian list.",
+    "Say *\"Un pahar de Fetească Neagră, vă rog\"* and *\"Nu conduc\"* (I'm not driving). The second sentence changes the pour.",
+    "Buy your *țuică* from the estate or a *pensiune* host, not a supermarket. Ask whether it is *de prună*, single-distilled, and expect 28–40% — if they say *pălincă* and hand you 50%+, treat it accordingly.",
+    "Skip the Prahova Valley castle circuit on this trip. Peleș is 90 minutes away and swallows a full day; Dealu Mare and Buzău are the reason you came.",
+    "Have the driver collect a case at each estate rather than carrying bottles between hotels. Most cellars will hold and consolidate a purchase for a same-week pickup."
+  ],
+  "typeSpecific": {
+    "raw": {
+      "Appellations (DOC)": "**Dealu Mare** is the headline: a 60-km south-facing terrace at 150–550 m along the Subcarpathian foothills of Prahova and Buzău counties, where the Carpathians shelter the slope and the aspect gives it more heat than the latitude should allow — Romania's serious red country. **Drăgășani DOC** sits on the right bank of the Olt in Vâlcea, cooler, sandier, more aromatic, and the historic home of two native varieties. For context: **Recaș** and **Miniș** in the Banat (west, Hungarian-influenced, Cadarcă country), **Cotnari** in Moldavia (sweet whites from Grasă), and **Murfatlar** behind the Black Sea coast. Romanian labels carry the DOC plus a ripeness sub-tier — **DOC-CMD** (harvest at full maturity), **DOC-CT** (late harvest), **DOC-CIB** (noble-rot harvest).",
+      "Native grapes to hunt": "**Fetească Neagră** — the flagship red, black-cherry and dried plum, tannin that needs three years. **Fetească Albă** and **Fetească Regală** — the whites; Regală is the crisper, later crossing. **Tămâioasă Românească** — the \"frankincense grape\", a Muscat relative, made dry, off-dry and botrytised. **Grasă de Cotnari** — thin-skinned, rot-prone in the best way, the base of Cotnari's sweet whites. **Crâmpoșie Selecționată** — Drăgășani's own, a 1970s clonal selection of an ancient local white, sharp and saline. **Novac** and **Negru de Drăgășani** — modern Romanian crossings bred at the Drăgășani research station, both dark and peppery. **Băbească Neagră** — pale, high-acid, the Gamay of the east.",
+      "Named producers": "Dealu Mare: **Davino** at Ceptura (the benchmark — Domaine Ceptura Rouge, Flamboyant, Revelatio), **SERVE** (Guy de Poix's estate, Cuvée Charlotte), **Lacerta** at Fintești, **Budureasca**, **Rotenberg** (a Merlot specialist at Dealu Mare's eastern end), **Aurelia Vișinescu** at Șarînga (Anima, Nomad), **Crama Basilescu** at Urlați. Elsewhere: **Domeniile Sâmburești** in Olt, **Avincis** and **Prince Știrbey** at Drăgășani, **Crama Oprișor** in Mehedinți, **Petro Vaselo** in the Banat, **Liliac** in Transylvania.",
+      "Appointment-only, without exception": "Romanian estates are not drop-in cellar doors. **Davino, SERVE, Rotenberg, Aurelia Vișinescu, Prince Știrbey and Avincis all require a booking**, usually 5–10 days ahead, by email or their web form, with a stated party size. Lacerta and Budureasca have more restaurant-like set-ups but still ask you to call. Turning up unannounced at harvest gets you a polite no. Tastings run roughly €12–€35 a head depending on the flight [VERIFY: current 2026 tasting fees at each estate].",
+      "Signature dishes, correct names": "*Sarmale* (cabbage-rolled minced pork, with *mămăligă* and sour cream), *mici* or *mititei* (skinless grilled minced-meat rolls, ordered by the piece), *ciorbă de burtă* (tripe soup, garlic and cream), *ciorbă rădăuțeană* (its chicken cousin from Rădăuți), *zacuscă* (autumn roast-vegetable relish, every household makes it in October), *tochitură* (pork stew with polenta, cheese and a fried egg), *papanași* (fried cheese doughnuts, sour cream and sour-cherry jam), *cozonac* (the enriched walnut loaf), *pastramă de oaie* (cured, smoked mutton — the autumn dish), and *brânză de burduf*, sheep's cheese matured in a fir-bark or sheepskin casing.",
+      "Țuică vs palincă": "Both are fruit spirits and they are not the same. ***Țuică*** is plum, generally single-distilled, and sits around **28–40% ABV** in its common commercial and household forms. ***Palincă*** is double-distilled, legally protected, made from plum, apple, pear or apricot mostly in Transylvania and Maramureș, and lands at **40–55% ABV** — homemade *pălincă de casă* is often stronger still. Both are served before, not after, the meal.",
+      "Zero tolerance": "Romania's drink-drive limit is **0.00%** in blood alcohol, criminally enforced above 0.08% with prison exposure. There is no \"one glass\" allowance. **A hired driver is mandatory** on this itinerary, not a nicety — budget €80–€120 a day for a car and driver-guide [VERIFY: current driver-guide day rate]."
+    },
+    "surface": null,
+    "distanceKm": null,
+    "elevationM": null,
+    "verticalM": null,
+    "technicalRating": null,
+    "transitPass": null,
+    "hutBooking": null,
+    "liftNetwork": null,
+    "snowReliability": null,
+    "windConditions": null,
+    "gpxReady": null,
+    "bookingTimeline": null,
+    "audience": null
+  },
+  "packingNotes": [],
+  "whatCouldGoWrong": [],
+  "sources": {
+    "verified": null,
+    "confidenceNotes": "- Verified: Romania's 0.00% drink-drive limit; the rovinietă category A tariff (1 day €3.50 / 10 days €6 / 30 days €9.50, no 7-day product, set in euro and billed in lei); Dealu Mare's position along the Prahova–Buzău Subcarpathian foothills; Drăgășani DOC on the right bank of the Olt; Crâmpoșie Selecționată, Novac and Negru de Drăgășani as Drăgășani varieties; Buzău Land as a UNESCO Global Geopark including the Berca mud volcanoes and the Lopătari live flames; emergency number 112; țuică (28–40%) versus double-distilled palincă (40–55%). - `[VERIFY]` items in this file: 7 (see inline markers above) - Last reviewed: 2026-09-02"
+  },
+  "verifyFlags": [
+    "current 2026 tasting fees at each estate",
+    "current driver-guide day rate",
+    "current visiting hours",
+    "whether Rotenberg accepts same-day visits",
+    "current entry fee and opening hours at Pâclele Mari",
+    "current lunch availability and price at Avincis",
+    "current nightly rate"
+  ],
+  "verifyFlagCount": 7,
+  "volatilePricing": true,
+  "wordCount": 2456,
+  "dataVintage": 2026,
+  "provenance": {
+    "batch": "eastern-southeastern",
+    "sourceFile": "cartaeasterneuropetrips/trips/romania-dealu-mare-dragasani-wine.md",
+    "sourceFormat": "md+nested-yaml-frontmatter (one file per trip)",
+    "sourceId": "romania-dealu-mare-dragasani-wine",
+    "ingestedAt": "2026-09-02",
+    "synthesized": false
+  }
+}

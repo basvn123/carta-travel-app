@@ -13,6 +13,8 @@ import { fmtDate, laterISO, useToday } from '../lib/dates.js';
 import { fetchDrivingRoute } from '../lib/routing.js';
 import { useTripPlanner } from '../hooks/useTripPlanner.js';
 import { useCountryInsights } from '../hooks/useCountryInsights.js';
+import { usePaywall } from '../hooks/usePaywall.jsx';
+import { fetchTripPlans } from '../auth/tripPlanStorage.js';
 import { useI18n } from '../i18n/index.jsx';
 import { loadAssignments, TRIP_DRAFT_PLAN_ID } from './dayPlanStore.js';
 import { SparkIcon, TrainIcon, BusIcon, CarIcon, FerryIcon, BulbIcon, InfoIcon, ReceiptIcon, BedIcon } from '../components/Icons.jsx';
@@ -211,10 +213,24 @@ function Suggestions({ suggestions, onPick }) {
 
 export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, openPlanId, onOpenPlanConsumed, origin, onChangeOrigin, onPlanDay, openSharedTrip, onSharedTripConsumed, stayTier = 'home', lifestyle = null, onOpenLifestyle = null }) {
   const { t } = useI18n();
+  const paywall = usePaywall();
   const countryInsights = useCountryInsights();
   // `stayTier` is the lifestyle panel's "where you sleep" choice; the planner
   // prices its stays from the same setting as the map and the receipt.
   const tp = useTripPlanner(data, countryInsights, stayTier);
+  // A finished itinerary is the one moment the traveller is looking at
+  // something they built and want to keep, which is where an offer belongs.
+  // Fires on the TRANSITION into the planned view and only for a trip that
+  // has never been saved, so reopening an old trip is never interrupted; the
+  // once-a-session and thirty-day rules are the provider's, not ours.
+  const wasPlanned = useRef(false);
+  useEffect(() => {
+    const nowPlanned = !!tp.planned && tp.stopDetails.length > 0;
+    if (nowPlanned && !wasPlanned.current && !tp.planId) {
+      paywall.nudge('celebrate');
+    }
+    wasPlanned.current = nowPlanned;
+  }, [tp.planned, tp.stopDetails.length, tp.planId, paywall]);
   const destinations = data?.destinations || {};
   // Trip dates start today at the earliest, never at the fare window's
   // harvest date (see useToday).
@@ -468,6 +484,15 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, open
     if (!user) { onRequestAuth && onRequestAuth(); return; }
     const wasUpdate = Boolean(tp.planId);
     const fromEdit = !tp.planned;
+    // A free traveller keeps one trip. The second one is somebody who came
+    // back, which is the person worth asking. Saving over an existing trip is
+    // never gated, and the count is only fetched when it can change the
+    // answer, so a pass holder never pays for the round trip.
+    if (!wasUpdate && !paywall.paid) {
+      let existing = [];
+      try { existing = await fetchTripPlans(user.id); } catch { existing = []; }
+      if (existing.length >= 1 && !paywall.require('save')) return;
+    }
     try {
       await tp.savePlan(user.id);
       setSaveNotice(wasUpdate ? t('trip.updatedNotice') : t('trip.savedNotice'));

@@ -6,7 +6,8 @@
  *                          range) with its name, kind and per layer counts
  *   /region/{FILE}.json    one region's page: rated cards ranked, listed
  *                          cards separately (no score key, on purpose),
- *                          editorial picks and neighbouring region ids
+ *                          editorial picks, and named neighbours so the
+ *                          page needs no second fetch to label them
  *   /coverage.json         the audit: per region per layer, published
  *                          against quota and floor, ok | thin | empty | na
  *
@@ -160,11 +161,12 @@ export function scopeForRows(rowsWithKm) {
 }
 
 function regionNameOfRow(row) {
-  // The nearest row names where the good stuff actually is: its stretch or
-  // region from the wire's rg block via the region index when loaded, its
-  // plain admin region string otherwise, its country as a last resort.
+  // The nearest row names where the good stuff actually is. Beaches and
+  // lakes carry an admin region string, mountains carry their range, and a
+  // row with neither falls back to the distance phrasing rather than
+  // inventing a place name.
   const r = row.r || row;
-  return r.region || null;
+  return r.region || r.range || null;
 }
 
 const BAND_HEAD_KEY = {

@@ -1,0 +1,330 @@
+{
+  "id": "cz-nature-escape-sumava-wilderness",
+  "sourceId": "cz-nature-sumava-wilderness",
+  "slug": "cz-nature-escape-sumava-wilderness",
+  "title": "Bog and Wildwood — A Week in the Šumava Core",
+  "country": "Czechia",
+  "countryCode": "CZ",
+  "countries": [
+    {
+      "name": "Czechia",
+      "code": "CZ"
+    }
+  ],
+  "isMultiCountry": false,
+  "region": "Western & Central Europe",
+  "regionKey": "western-central",
+  "subRegion": "Šumava National Park, South Bohemia",
+  "tripType": "Nature Escapes & Cabin Stays",
+  "tripTypeId": 9,
+  "tripTypeSlug": "nature-escape",
+  "durationDays": 7,
+  "bestPeriod": {
+    "months": [
+      5,
+      6,
+      9,
+      10
+    ],
+    "monthNames": [
+      "May",
+      "June",
+      "September",
+      "October"
+    ],
+    "window": null,
+    "note": "Capercaillie leks close parts of the core zone in April–May at dawn; October brings the best chance of hearing red deer roar in the Modrava basin, and biting insects drop off by then.",
+    "avoid": null,
+    "raw": null
+  },
+  "budgetTier": "€",
+  "budgetTierRange": [
+    1,
+    1
+  ],
+  "budgetTierRaw": "€",
+  "budget": {
+    "currency": "EUR",
+    "totalEur": {
+      "low": 560,
+      "high": 820
+    },
+    "totalNote": null,
+    "breakdown": {
+      "accommodation": {
+        "lowEur": 220,
+        "highEur": 320,
+        "note": null
+      },
+      "food": {
+        "lowEur": 140,
+        "highEur": 200,
+        "note": null
+      },
+      "transport": {
+        "lowEur": 100,
+        "highEur": 160,
+        "note": null
+      },
+      "activities": {
+        "lowEur": 100,
+        "highEur": 140,
+        "note": null
+      }
+    },
+    "perDayEur": {
+      "low": 80,
+      "high": 117
+    }
+  },
+  "profile": {
+    "difficulty": 3,
+    "difficultyLabel": "Active",
+    "difficultyNote": null,
+    "fitnessLevel": "Active",
+    "crowdLevel": "Low",
+    "familyFriendly": false,
+    "carRequired": true
+  },
+  "basecamps": [
+    "Modrava"
+  ],
+  "gatewayAirport": "Prague (PRG)",
+  "gatewayAirportCode": "PRG",
+  "languages": [
+    "Czech"
+  ],
+  "currency": "CZK",
+  "emergencyNumber": "112",
+  "coordinates": {
+    "lat": 50.088,
+    "lon": 14.4208,
+    "precision": "gateway",
+    "matchedPlace": "Prague",
+    "source": "geonames (geonamescache, cities > 15k)"
+  },
+  "tags": [
+    "peat-bog",
+    "primeval-forest",
+    "lynx-country",
+    "boardwalk",
+    "strict-access-zone"
+  ],
+  "summary": "A week based at Modrava, walking boardwalked peat bogs and the Boubín primeval forest in Central Europe's largest continuous woodland, under strict national-park zoning.",
+  "summaryGenerated": false,
+  "hook": "Šumava is the least Instagrammed of Czechia's mountain ranges and the reason is exactly its appeal: no single dramatic peak, just an enormous rolling forest, treeless raised bogs on boardwalks, and one of the last strongholds of lynx in Central Europe. This is a week for people who want quiet more than views — a cabin near Modrava, long boggy walks on boardwalk and forest track, and a national park that takes its zone-I rules seriously enough to fine you for stepping off them.",
+  "snapshot": {
+    "Country": "Czechia",
+    "Base(s)": "Modrava (7 nights)",
+    "Trip Type": "Nature Escapes & Cabin Stays",
+    "Duration": "7 days",
+    "Best Period": "May–June or September–October",
+    "Budget Tier": "€",
+    "Total Distance / Terrain": "approx. 70–90 km walking; forest track, gravel road, and boardwalk over peat bog — flat to gently rolling, no real elevation gain",
+    "Getting There": "Train from Prague to Sušice or Klatovy, then bus or Šumava's seasonal Green Bus service to Modrava; a car is more practical for the week itself",
+    "Who It Suits": "Wildlife-minded walkers and birders who don't need a summit to feel like they've earned the day"
+  },
+  "itinerary": [
+    {
+      "day": 1,
+      "title": "Arrival at Modrava",
+      "morning": "Train Prague–Sušice, then bus to Modrava — a scattered hamlet of a few dozen buildings around a former hunting lodge, and the park's most useful base.",
+      "afternoon": "Settle into the cabin and walk the short loop past the Modravská hájovna (the historic hunting lodge, now a park information point) and along the Vydra river confluence. Note the last-road realities: the paved road into Modrava is fine for any car, but from late autumn it needs winter tyres — mandatory under Czech law from 1 November to 31 March whenever winter conditions are present, and enforced.",
+      "evening": "Cook in. No restaurant here runs late.",
+      "dayStats": "6 km, flat.",
+      "sleep": null
+    },
+    {
+      "day": 2,
+      "title": "Chalupská slať boardwalk",
+      "morning": "Drive or take the seasonal Green Bus toward Kvilda, then walk the boardwalk loop through Chalupská slať, one of the best-preserved raised bogs in Central Europe — dwarf pine, sundew, and open peat pools that formed over 9,000-odd years.",
+      "afternoon": "Continue into Kvilda itself, at just over 1,000 m the highest-altitude village in Czechia, and see the small glassworks-history exhibit before heading back.",
+      "evening": "Dinner at the cabin. Check tomorrow's weather — bog walking in rain is miserable and the boardwalk gets slick.",
+      "dayStats": "12 km, flat, entirely boardwalk and gravel path.",
+      "sleep": null
+    },
+    {
+      "day": 3,
+      "title": "Jezerní slať and the Modrava peat basin",
+      "morning": "Walk directly from Modrava into the Jezerní slať bog reserve, near the Poledník hill, on its looped boardwalk — quieter than Chalupská slať and a strong bet for capercaillie sign, if not the bird itself, outside the spring lekking closure.",
+      "afternoon": "Extend into the wider Modrava peat basin on marked forest track, staying strictly on the path — this whole area sits in the park's zone I, where leaving the marked trail is a finable offence, not a suggestion.",
+      "evening": "Rest. This is a full day even without much elevation, since bog track is genuinely tiring underfoot.",
+      "dayStats": "16 km, flat, boardwalk and forest gravel.",
+      "sleep": null
+    },
+    {
+      "day": 4,
+      "title": "Resupply and the Vchynicko-tetovský canal",
+      "morning": "Drive to Sušice or Vimperk for the week's main resupply — Modrava's own shop is small and seasonal, so treat any real grocery run as a day-trip task, not a five-minute errand.",
+      "afternoon": "On the way back, walk a stretch of the historic Vchynicko-tetovský floating canal near Antýgl, an 18th-century engineering relic still carrying water along the Vydra valley.",
+      "evening": "Early dinner; tomorrow starts before dawn.",
+      "dayStats": "8 km walking plus a driving resupply leg.",
+      "sleep": null
+    },
+    {
+      "day": 5,
+      "title": "Boubín primeval forest",
+      "morning": "Drive to Kubova Huť and walk into Boubínský prales, protected since 1858 and one of the oldest continuously protected forest reserves in Europe — spruce and fir here reach ages and girths you won't see in any managed Central European woodland. Stay on the marked interpretive path; much of the reserve's core is closed to entry entirely to let deadwood and natural regeneration run undisturbed.",
+      "afternoon": "Continue to the Boubín summit viewpoint if energy allows, then loop back through younger forest.",
+      "evening": "Dinner in Kubova Huť or back at Modrava.",
+      "dayStats": "14 km, gentle climb of roughly 350 m to the Boubín summit area.",
+      "sleep": null
+    },
+    {
+      "day": 6,
+      "title": "Dawn wildlife walk and Bučina border ridge",
+      "morning": "Out before first light for the best chance of red deer at the forest edge and, if you're patient and lucky, a lynx crossing — realistically you're more likely to find fresh tracks in mud or snow than to see the animal itself, and that's a fair outcome here.",
+      "afternoon": "Drive to Bučina, a former border village now marked mostly by cleared house foundations, and walk the ridge path along the old Iron Curtain line toward the Bavarian border, with views into the Bavarian Forest National Park on the German side.",
+      "evening": "Last full evening. Pack.",
+      "dayStats": "15 km combined, gently rolling.",
+      "sleep": null
+    },
+    {
+      "day": 7,
+      "title": "Departure",
+      "morning": "A short farewell walk from the cabin door.",
+      "afternoon": "Bus or Green Bus to Sušice, train onward to Prague.",
+      "evening": "Prague, or flight home.",
+      "dayStats": "4 km, then transfer day.",
+      "sleep": null
+    }
+  ],
+  "accommodationStrategy": [
+    {
+      "rank": 1,
+      "name": "Self-catering cabin near Modrava",
+      "style": "Off-grid cabin",
+      "location": "forest edge",
+      "description": "The best-placed base for the whole week: within walking distance of the Modrava peat basin and a short drive from both Kvilda and Kubova Huť. Confirm before booking whether the cabin has mains electricity — several properties around Modrava run on generator power for a few hours a day only, with a wood stove for heat and a well or spring for water, and expect a dry or composting toilet at the more remote ones.",
+      "booking": "6–8 weeks ahead for September's deer-rut weekends.",
+      "priceNote": "€35–€55 per night"
+    },
+    {
+      "rank": 2,
+      "name": "A pension in Kvilda",
+      "style": "Guesthouse",
+      "location": "village centre",
+      "description": "A good alternative base if you'd rather have mains power and a village shop on hand every day; Kvilda sits directly on the route between Chalupská slať and Modrava, so little is lost in terms of access.",
+      "booking": "4–6 weeks ahead.",
+      "priceNote": "€40–€65 per night with breakfast"
+    },
+    {
+      "rank": 3,
+      "name": "A hotel in Sušice",
+      "style": "Hotel",
+      "location": "gateway town",
+      "description": "Useful as a bookend night for train connections and as your proper resupply base — Sušice has full supermarkets, a pharmacy and a hospital, none of which exist in the park core.",
+      "booking": "2–3 weeks ahead.",
+      "priceNote": "€45–€70 per night"
+    }
+  ],
+  "logistics": {
+    "connectivity": null,
+    "emergency": "112 pan-European; Czech mountain rescue Horská služba **1210** covers the Šumava massif too.",
+    "weather": null,
+    "bookingWindows": null,
+    "money": null,
+    "transportRules": null,
+    "permits": null,
+    "health": null,
+    "gettingThere": null,
+    "other": [
+      {
+        "label": "Isolation, specifically",
+        "text": "The nearest real supermarket is in Sušice or Vimperk, 30–40 minutes' drive from Modrava; Modrava's own shop is small, seasonal and keeps short hours. Phone signal is patchy to absent in the valley bottoms around the bogs and reliable again on the higher ridges. The nearest doctor and hospital are in Sušice."
+      },
+      {
+        "label": "Zone I access rules",
+        "text": "Much of the Modrava basin, the peat bog reserves and Boubínský prales sit in the park's strictest protection zone. Staying on marked paths and boardwalks is a legal requirement here, not a courtesy, and rangers do patrol and fine those who wander off."
+      },
+      {
+        "label": "Seasonal closures",
+        "text": "Capercaillie lekking areas close to visitors at dawn in April and May; some peat-bog boardwalks close temporarily for repair after winter — check the Šumava NP administration's current notices before relying on a specific route."
+      },
+      {
+        "label": "Foraging",
+        "text": "Mushroom and berry picking for personal use is a long-standing, culturally central Czech right, generally permitted in the park's outer zones (II and III) in reasonable personal quantities. It is prohibited inside zone I and inside national nature reserves such as Boubínský prales, Chalupská slať and Jezerní slať — know which zone you're standing in before you pick."
+      },
+      {
+        "label": "Fire",
+        "text": "Open fires and camping outside designated sites are prohibited throughout the national park; this is strictly enforced."
+      },
+      {
+        "label": "Ticks",
+        "text": "Šumava is a significant TBE (tick-borne encephalitis) risk area; vaccination is worth arranging well before travel, and check for ticks after every bog or forest walk."
+      },
+      {
+        "label": "Winter tyres",
+        "text": "Mandatory on Czech roads from 1 November to 31 March in winter conditions — relevant even for a September or October trip if an early snap arrives."
+      },
+      {
+        "label": "Green Bus network",
+        "text": "Šumava NP runs a seasonal public bus system connecting Modrava, Kvilda and Bučina in summer specifically to reduce private car traffic in the sensitive core — worth using even if you have a car."
+      }
+    ]
+  },
+  "proTips": [
+    "Walk Jezerní slať before Chalupská slať — it gets a fraction of the visitors and is the better bet for actually hearing the forest rather than other boots on boardwalk.",
+    "Do the dawn wildlife walk on Day 6, once you already know the local tracks well enough to move quietly and confidently before light.",
+    "Ask at the Modravská hájovna information point for the current capercaillie-closure map before planning any early-morning route in April or May.",
+    "Use the Green Bus for the Kvilda leg on Day 2 and save your own car's fuel and the single narrow parking area at the Chalupská slať trailhead for a quieter arrival.",
+    "Bring a proper mushroom guide if you're travelling in autumn — Czechs forage seriously, and the outer-zone forest tracks around Kubova Huť are genuinely good for it in September, if you know which species are safe.",
+    "Book the deer-rut week (late September into October) well ahead; it's the single busiest period for cabins around Modrava despite the low visitor numbers by national standards.",
+    "Pack binoculars specifically for the Bučina ridge — the open border-zone views into the Bavarian Forest are the best long-distance sightlines of the week."
+  ],
+  "typeSpecific": {
+    "raw": {
+      "Total Distance / Terrain": "approx. 70–90 km walking; forest track, gravel road, and boardwalk over peat bog — flat to gently rolling, no real elevation gain",
+      "Who It Suits": "Wildlife-minded walkers and birders who don't need a summit to feel like they've earned the day"
+    },
+    "surface": "approx. 70–90 km walking; forest track, gravel road, and boardwalk over peat bog — flat to gently rolling, no real elevation gain",
+    "distanceKm": 70,
+    "elevationM": null,
+    "verticalM": null,
+    "technicalRating": null,
+    "transitPass": null,
+    "hutBooking": null,
+    "liftNetwork": null,
+    "snowReliability": null,
+    "windConditions": null,
+    "gpxReady": null,
+    "bookingTimeline": null,
+    "audience": "Wildlife-minded walkers and birders who don't need a summit to feel like they've earned the day"
+  },
+  "packingNotes": [
+    "Waterproof boots rather than trail shoes — bog margins and forest track stay wet even in a dry week.",
+    "A head torch for both cabin use and the Day 6 pre-dawn start.",
+    "Binoculars for deer, capercaillie sign and the Bučina border views.",
+    "Tick repellent and a tick-removal tool; check yourself daily.",
+    "A printed Šumava NP zone map — phone signal in the bog basins is unreliable exactly where you'd want to check it.",
+    "Layers for genuinely variable weather; the open bogs have no wind shelter at all.",
+    "Cash in koruna for Modrava's small shop and any Green Bus fares.",
+    "A cool bag for the Day 4 resupply run, since you'll be an hour or more from the cabin.",
+    "A basic first-aid kit — the nearest hospital is 30–40 minutes away in Sušice.",
+    "A mushroom guidebook if travelling in autumn and interested in foraging correctly and legally."
+  ],
+  "whatCouldGoWrong": [
+    "**You unknowingly cross into zone I and are stopped by a ranger.** Fallback: carry the printed zone map, treat every boardwalk and marked-only sign as absolute, and if in doubt, ask at Modravská hájovna before setting out rather than guessing on the trail.",
+    "**The capercaillie closure blocks your planned dawn route in spring.** Fallback: shift the wildlife walk to the Bučina ridge or the Vydra valley, both outside the seasonal lek closures.",
+    "**Rain turns the bog boardwalks slick and the forest tracks to mud.** Fallback: treat Boubínský prales's firmer forest floor as your wet-weather day, and save the open bogs for drier conditions.",
+    "**Modrava's small shop is out of what you need.** Fallback: this is expected, not exceptional — do the real resupply run to Sušice or Vimperk on Day 4 rather than relying on the village shop for anything beyond bread and milk.",
+    "**An early snowfall in October catches a car without winter tyres.** Fallback: check the forecast before departure and fit winter tyres proactively; Czech law requires them in winter conditions regardless of the calendar date."
+  ],
+  "sources": {
+    "verified": null,
+    "confidenceNotes": null
+  },
+  "verifyFlags": [],
+  "verifyFlagCount": 0,
+  "volatilePricing": false,
+  "wordCount": 2016,
+  "dataVintage": 2026,
+  "provenance": {
+    "batch": "western-central",
+    "sourceFile": "cartatripsv1/trips/cz-nature-sumava-wilderness.md",
+    "sourceFormat": "md+yaml-frontmatter (one file per trip)",
+    "sourceId": "cz-nature-sumava-wilderness",
+    "ingestedAt": "2026-09-02",
+    "synthesized": false
+  }
+}

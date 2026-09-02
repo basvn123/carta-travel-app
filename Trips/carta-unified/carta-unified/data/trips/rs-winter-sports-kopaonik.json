@@ -1,0 +1,276 @@
+{
+  "id": "rs-winter-sports-kopaonik",
+  "sourceId": "winter-sports-serbia-kopaonik",
+  "slug": "rs-winter-sports-kopaonik",
+  "title": "Kopaonik: Pančićev Vrh, the Karaman Ridge and a Week on Serbia's Roof",
+  "country": "Serbia",
+  "countryCode": "RS",
+  "countries": [
+    {
+      "name": "Serbia",
+      "code": "RS"
+    }
+  ],
+  "isMultiCountry": false,
+  "region": "Southern & Mediterranean Europe",
+  "regionKey": "southern-mediterranean",
+  "subRegion": "Kopaonik National Park & Raška, southern Serbia",
+  "tripType": "Winter Sports & Skiing",
+  "tripTypeId": 8,
+  "tripTypeSlug": "winter-sports",
+  "durationDays": 7,
+  "bestPeriod": {
+    "months": [
+      1,
+      2,
+      3
+    ],
+    "monthNames": [
+      "January",
+      "February",
+      "March"
+    ],
+    "window": "Late January–early March; the second half of February combines the deepest base with the famous Kopaonik sun",
+    "note": null,
+    "avoid": "25 December–7 January, when high-season pricing bites and every Belgrade family is on Malo Jezero, and after 20 March when the sun that makes this mountain pleasant destroys it by noon",
+    "raw": "Late January–early March; the second half of February combines the deepest base with the famous Kopaonik sun"
+  },
+  "budgetTier": "€€",
+  "budgetTierRange": [
+    2,
+    2
+  ],
+  "budgetTierRaw": "€€",
+  "budget": {
+    "currency": "EUR",
+    "totalEur": {
+      "low": 950,
+      "high": 1700
+    },
+    "totalNote": "€950–€1,700 per person, excl. international flights",
+    "breakdown": {
+      "accommodation": {
+        "lowEur": 380,
+        "highEur": 750,
+        "note": "Suvo Rudište 4 half board €70–€120 pppn; Konaci apartments and Brzeće cut this by 30–40%"
+      },
+      "food": {
+        "lowEur": 160,
+        "highEur": 300,
+        "note": "Mountain restaurant mains 1,200–2,200 RSD (€10–€19); Brzeće and Raška half that; coffee 200 RSD"
+      },
+      "transport": {
+        "lowEur": 160,
+        "highEur": 330,
+        "note": "Airport transfer €70–€120 each way; hire car €35–€50/day; Brzeće ski bus 300–500 RSD"
+      },
+      "activities": {
+        "lowEur": 250,
+        "highEur": 320,
+        "note": "6-day pass 24,900 RSD (€213), night skiing, national park fee, Jošanička Banja, Studenica"
+      }
+    },
+    "perDayEur": {
+      "low": 136,
+      "high": 243
+    }
+  },
+  "profile": {
+    "difficulty": 3,
+    "difficultyLabel": "Active",
+    "difficultyNote": "3/5 — six lift-served days on a mountain with 950 m of vertical and long, sustained reds; nothing technical, but altitude, cold and a 200 km transfer make day one hard",
+    "fitnessLevel": "Active",
+    "crowdLevel": null,
+    "familyFriendly": null,
+    "carRequired": null
+  },
+  "basecamps": [],
+  "gatewayAirport": "BEG Belgrade Nikola Tesla, 285 km / 4 h 30–6 h by road; INI Niš Constantine the Great, 200 km / 3 h 30–4 h 30 and usually the smarter arrival",
+  "gatewayAirportCode": "BEG",
+  "languages": [],
+  "currency": null,
+  "emergencyNumber": "112",
+  "coordinates": {
+    "lat": 44.804,
+    "lon": 20.4651,
+    "precision": "country",
+    "matchedPlace": "Belgrade",
+    "source": "country capital fallback"
+  },
+  "tags": [
+    "serbia",
+    "kopaonik",
+    "pancicev-vrh",
+    "brzece-gondola",
+    "night-skiing",
+    "national-park",
+    "non-eu",
+    "josanicka-banja",
+    "studenica",
+    "budget-skiing"
+  ],
+  "summary": "Kopaonik is the mountain Serbia built its winter around, and it is odd and likeable in ways the brochures do not capture: a broad, rounded massif rising to **Pančićev vrh at 2,017 m**, treeless on top, sun-drenched to a degree that has given it the nickname *Sunčana planina*, and equipped with an unusually good modern lift fleet including heated six-seaters and, since the Brzeće gondola opened, a genuine 1,000-metre vertical descent. The week is built as an inside-out exploration — two days learning the Suvo Rudište core around **Karaman Greben**, **Malo Jezero** and **Krst**, then out to the flanks at **Gobelja** and **Duboka**, then the full ride down the gondola to **Brzeće** and back, with the summit of Pančićev vrh saved for a clear morning. Kopaonik sits inside a national park, so the terrain is protected forest and open alpine meadow rather than a building site, and the après scene at Konaci is loud, cheap and entirely unlike anything in the Alps. It suits intermediates who want a lot of well-groomed red mileage, families who want night skiing and short lift lines mid-week, and travellers who like the idea of finishing the week in a 78°C thermal spring and a twelfth-century UNESCO monastery.",
+  "summaryGenerated": false,
+  "hook": null,
+  "snapshot": {},
+  "itinerary": [
+    {
+      "day": 1,
+      "title": "Fly to Niš or Belgrade, drive south, arrive on the mountain",
+      "morning": "Land at **INI Niš** if you can — it is 200 km and 3 h 30–4 h 30 away against Belgrade's 285 km and up to six hours in winter traffic. Collect a hire car or a pre-booked transfer; the last 30 km up from **Raška** or **Brzeće** is a serious mountain road and needs winter tyres.",
+      "afternoon": "Arrive at **Suvo Rudište**, roughly 1,770 m, and settle. Buy the six-day pass and pay the **500 RSD ChipCard deposit**; collect rental gear at Konaci. If there is light left, ride one lap of **Malo Jezero** just to open the legs at altitude.",
+      "evening": "Eat at your hotel — the half-board convention here is strong — or walk to **Konaci** for the après strip, which starts loud at about 16:30 and does not pretend to be sophisticated.",
+      "dayStats": "Niš–Kopaonik 200 km / 3 h 30–4 h 30 / base altitude 1,770 m / ChipCard 500 RSD / 6-day adult pass 24,900 RSD (≈ €213)",
+      "sleep": "Grand Hotel & Spa Kopaonik, Suvo Rudište"
+    },
+    {
+      "day": 2,
+      "title": "Karaman Greben end to end",
+      "morning": "Ride the **Karaman Greben** chair and ski the ridge run top to bottom. This is Kopaonik's signature descent — a long, sustained, beautifully graded red along the crest with the whole Raška valley on your left. Lap it three times before the mountain fills.",
+      "afternoon": "Work down through **Mali Karaman** and **Veliki Karaman**, then across to **Krst** on the northern side, which is steeper and quieter. Lunch at the **Marine Vode** mountain restaurant on the sunny flank.",
+      "evening": "**Night skiing on Malo Jezero.** The floodlit run is short but the refrozen surface is fast, the ticket is roughly 1,950–2,400 RSD, and at −10°C under lights it is the most memorable hour of the week. Dinner afterwards at **Restoran Kraljevi Čardaci**.",
+      "dayStats": "Kopaonik 1,060–2,017 m / 55 km over 25 runs, 26 lifts / Karaman Greben the resort's signature red / night ticket ≈ 1,950–2,400 RSD (€17–€21) / lifts 09:00–16:00",
+      "sleep": "Grand Hotel & Spa Kopaonik, Suvo Rudište"
+    },
+    {
+      "day": 3,
+      "title": "Gobelja and Duboka: the cold flanks",
+      "morning": "Traverse northwest to **Gobelja**, the shoulder that holds the coldest, driest snow on the massif and sees a fraction of the traffic. On a hard-frozen morning it is worth the transit twice over; on a warm one it is the only place still skiing well after 11:00.",
+      "afternoon": "Drop into the **Duboka** chain — Duboka 1, 2 and 3 — a wooded valley on the north side and the closest thing Kopaonik has to tree skiing. Watch the clock: **the bottom of Duboka 3 is where people get stranded, so turn round by 15:00.**",
+      "evening": "Back at Konaci, eat at **Restoran Angella**, then take the après strip seriously for one night — Serbian ski nightlife is a genuine cultural artefact and it runs on rakija, turbofolk and volume.",
+      "dayStats": "Gobelja north-facing, coldest snow on the mountain / Duboka chain three lifts / hard turnaround 15:00 at Duboka 3, 15:15 at Gobelja / rakija ≈ 250–400 RSD",
+      "sleep": "Grand Hotel & Spa Kopaonik, Suvo Rudište"
+    },
+    {
+      "day": 4,
+      "title": "The gondola day: the full 1,000 m to Brzeće",
+      "morning": "Ski to **Mali Karaman** and take the **Brzeće gondola** down — roughly 4.4 km of cable and about 700 m of drop to the village at 1,050 m. Ride it once to see the line, then ski it: the descent from Mali Karaman to Brzeće is the longest continuous run in Serbia and the reason the gondola was built.",
+      "afternoon": "Do it twice more, then have lunch in **Brzeće** itself, which is 40% cheaper than the mountain top and where the local kitchens are better. Ride back up on the gondola, or take the **Brzeće ski bus** if the queue has grown.",
+      "evening": "Return to Suvo Rudište and eat at the **Konaci** complex, or stay down in Brzeće for a village dinner — grilled meat, kajmak and a Rubin red — and come up on the last cabin.",
+      "dayStats": "Brzeće gondola ≈ 4.4 km, 8-seat cabins, Brzeće 1,050 m to Mali Karaman ≈ 1,760 m / continuous descent ≈ 950–1,000 m vertical / three laps ≈ 3,000 m descent / ski bus 300–500 RSD",
+      "sleep": "Grand Hotel & Spa Kopaonik, Suvo Rudište"
+    },
+    {
+      "day": 5,
+      "title": "Weather-contingency and rest day: Jošanička Banja and Studenica",
+      "morning": "This is the designed flex day; take it early if the mountain is in cloud or a košava-driven wind has stopped the upper chairs, otherwise take it here when legs are worst. Drive 25 km down the western side to **Jošanička Banja** and get into the hottest thermal water in Serbia — the source runs at around **78°C** and the bathhouses are plain, cheap and excellent.",
+      "afternoon": "Continue 40 km north to **Studenica Monastery**, founded in the 1190s by Stefan Nemanja, a UNESCO World Heritage site whose marble Church of the Virgin holds the best Byzantine frescoes in the country. In winter it is close to empty and genuinely silent.",
+      "evening": "Eat in **Raška** on the way back for a fraction of mountain prices, then drive up in the dark with care — the last 25 km is unlit switchback.",
+      "dayStats": "Jošanička Banja 25 km, spring ≈ 78°C / Studenica ≈ 60–70 km from the resort / total driving 130–160 km round trip / zero vertical metres skied",
+      "sleep": "Grand Hotel & Spa Kopaonik, Suvo Rudište"
+    },
+    {
+      "day": 6,
+      "title": "Pančićev vrh, the summit and the sunny side",
+      "morning": "Take the summit lift to **Pančićev vrh, 2,017 m**, the highest point in central Serbia, and walk the last few metres to the **mausoleum of Josif Pančić**, the botanist who catalogued this mountain. On a clear morning you can see into Kosovo and across to the Golija massif; the snow on the flanks up here is the best on the mountain.",
+      "afternoon": "Ski the sunny **Marine Vode** and **Sunčana Dolina** side in the early afternoon while it is still soft rather than slushy, then finish with two more laps of Karaman Greben as the light goes flat and gold.",
+      "evening": "Last night: dinner at **Restoran Milmari**, then a walk out onto the snow above the hotels — Kopaonik's summit plateau under a clear February sky is worth ten minutes of cold.",
+      "dayStats": "Pančićev vrh 2,017 m / summit-to-Brzeće potential vertical ≈ 950 m / roughly 25–30 piste km on the day / national park: stay on marked ground",
+      "sleep": "Grand Hotel & Spa Kopaonik, Suvo Rudište"
+    },
+    {
+      "day": 7,
+      "title": "A last morning, then the long road out",
+      "morning": "Ski Malo Jezero and Karaman until 11:00 on the last day of the six-day pass, then return rental gear and reclaim the **500 RSD ChipCard deposit**. Sunday mornings are the quietest three hours of the week here.",
+      "afternoon": "Drive out. Allow **4 h 30–6 h to Belgrade** and **3 h 30–4 h 30 to Niš**, and add an hour in snow — the descent to Raška and the road through Brus are both slow when it is falling.",
+      "evening": "If your flight is early, sleep in Belgrade or Niš rather than trusting the mountain road at dawn. In Belgrade, eat in Skadarlija before you go.",
+      "dayStats": "Half-day skiing ≈ 1,500–2,500 m descent / ChipCard refund 500 RSD / Kopaonik–BEG 285 km / Kopaonik–INI 200 km / add 1 h in snow",
+      "sleep": "Airport hotel, Belgrade or Niš"
+    }
+  ],
+  "accommodationStrategy": [
+    {
+      "rank": 1,
+      "name": "Grand Hotel & Spa Kopaonik",
+      "style": "four-star",
+      "location": "Suvo Rudište",
+      "description": "The largest and best-connected bed on the mountain, part of the **MK Mountain Resort** estate, sitting directly at the Suvo Rudište lift hub with ski room, pool and spa. You walk out of the door onto snow, which matters on a mountain with no real village and a fifteen-minute shuttle to anything else. Roughly €80–€130 per person per night half board in season.",
+      "booking": null,
+      "priceNote": null
+    },
+    {
+      "rank": 2,
+      "name": "Konaci (Sunčani Vrhovi) apartments",
+      "style": "self-catering",
+      "location": "Suvo Rudište",
+      "description": "The apartment village at the heart of the resort, cheaper than the hotels, with the ski school, rental shops, supermarket and the entire après strip on the doorstep. It is the right choice for families and groups who want to cook some meals and be able to walk home from the noise. Roughly €50–€90 per person per night in a shared apartment.",
+      "booking": null,
+      "priceNote": null
+    },
+    {
+      "rank": 3,
+      "name": "Brzeće village",
+      "style": "guesthouses and apartments at the gondola base",
+      "location": null,
+      "description": "The counter-strategy since the gondola opened: sleep at 1,050 m in a real village with real restaurants, pay 30–40% less, and ride up in eight minutes instead of driving a mountain road. The cost is the gondola's operating hours and a warmer, wetter base in a marginal snow year. Roughly €30–€60 per person per night.",
+      "booking": null,
+      "priceNote": null
+    }
+  ],
+  "logistics": {
+    "connectivity": "Coverage on the pistes is good; the Duboka valley and parts of Gobelja have dead ground. Serbia sits **outside EU roaming**, but the **Western Balkans regional roaming agreement and the 2023 EU–WB6 reduction** have cut EU-to-Serbia charges substantially — check your operator's zone before landing, or buy a local prepaid SIM in Belgrade or Niš. Download offline maps for the drive; the Brus and Raška approaches lose signal.",
+    "emergency": "**112** works nationally; **194** is the ambulance and **193** the fire service. Mountain rescue is the volunteer **Gorska služba spasavanja Srbije (GSS)** working alongside the resort ski patrol. Serbia is **not in the EU** — EHIC/GHIC does not apply, though the UK and several EU states have bilateral healthcare agreements. Carry insurance naming winter sports and helicopter or ground recovery.",
+    "weather": "Kopaonik's selling point is sun — 200-plus sunny days a year — and its problem is the same thing: southeast-facing pistes go from perfect to slush inside an hour in March. The **košava**, the cold southeasterly that funnels up from the Danube basin, is what shuts the summit and Karaman Greben chairs on a bad day, and it can arrive with almost no warning. Fog on the Suvo Rudište plateau is common and disorienting on a treeless mountain.",
+    "bookingWindows": "The **Ski Opening period discount of 30%** is the single biggest saving available and drives a scramble for December weekends — book beds three months ahead for it. High-season beds (25 Dec–7 Jan, 11–17 Feb) go four months out. Lift tickets need no advance purchase. Studenica needs no booking but check winter opening hours before driving.",
+    "money": "The **Serbian dinar (RSD)**, roughly **117 RSD to €1** — verify the day's rate. Cards are accepted throughout the resort and in Raška; village guesthouses, the ski bus, small kafanas and Jošanička Banja are cash. Change money at a licensed *menjačnica*, not at the airport. Tipping is rounding up to 10%.",
+    "transportRules": "**Winter tyres are legally required from 1 November to 1 April** on Serbian roads in winter conditions, with chains carried for mountain routes — this is enforced on the Brus and Raška approaches. Serbia has **no vignette**; motorway tolls are paid per section in cash or by card. A hire car crossing into Bosnia, Montenegro, North Macedonia or Croatia needs the **green card** and written permission. Lift access is by RFID ChipCard with a 500 RSD deposit.",
+    "permits": "The resort sits inside **Kopaonik National Park**, which levies an entry or environmental fee and regulates where you may go off marked ground. Drones need civil-aviation approval and are banned over the pistes. Ski patrol closures are enforced with pass confiscation.",
+    "health": "Tap water at the resort is potable. **Serbia does not publish a full daily EAWS five-point avalanche bulletin for Kopaonik** — the **RHMZ (Republički hidrometeorološki zavod Srbije)** issues weather and snow data, so treat off-piste as unbulletined terrain. Altitude is trivial at 2,017 m, but the combination of a treeless summit, wind chill and clear-sky radiation produces real frostbite risk on the Karaman ridge in February — cover your face.",
+    "gettingThere": null,
+    "other": []
+  },
+  "proTips": [
+    "Fly into **Niš, not Belgrade**. It is 85 km and often 90 minutes closer, the transfer is cheaper, and you avoid the Belgrade ring road entirely.",
+    "If your dates are flexible, go during the **Ski Opening period** and take the 30% off daily and short multi-day tickets. It is the only structural discount Skijališta Srbije offers.",
+    "Buy the **7-day rather than the 6-day pass** if you are staying seven nights: 27,900 vs 24,900 RSD is a 12% premium for a 17% increase in days, and it lets you ski the morning you leave.",
+    "Sleep in **Brzeće** and commute up the gondola. Since the lift opened, this is the biggest single saving on the mountain — 30–40% off the bed and better food — and the ride up takes minutes.",
+    "Ski **Gobelja before 11:00 and Marine Vode after 13:00**, never the reverse. The north flank holds the overnight freeze and the sunny side needs the sun to soften it; getting this backwards wastes half a day.",
+    "Take the night-ski ticket on **Malo Jezero** rather than adding a sixth daytime lap. It is a fifth of a day-pass price and the refrozen surface is faster than anything you skied at noon.",
+    "**Turn round at 15:00 at the bottom of Duboka 3.** It is the one place on this mountain where missing the lift costs you a long, cold walk or an expensive taxi round the massif.",
+    "Combine **Jošanička Banja and Studenica** into one day rather than two half-days. They are on the same western road, the driving is the expensive part, and doing both makes the flex day worth taking.",
+    "Cover your face on **Karaman Greben** in February. It is a treeless ridge at 1,900 m with a southeasterly blowing across it, and sunburn plus wind chill on the same cheek is the classic Kopaonik injury."
+  ],
+  "typeSpecific": {
+    "raw": {
+      "Pass tiers by name": "Kopaonik is run by **JP Skijališta Srbije (Ski Resorts of Serbia)**, which prices in three seasonal bands — **Low: 15 Nov–16 Dec and from 24 Mar; Mid: 17–24 Dec, 8 Jan–10 Feb, 18–23 Mar; High: 25 Dec–7 Jan and 11–17 Feb**. The **Kopaonik resort ticket** is the everyday product: **day adult 5,600 RSD (≈ €48)**, **child 3,900 RSD (≈ €33)**, **senior 5,000 RSD (≈ €43)**. **6-day: adult 24,900 RSD (≈ €213), child 16,400 RSD (≈ €140), senior 20,900 RSD (≈ €179)**. **7-day: adult 27,900 RSD (≈ €238), child 18,000 RSD (≈ €154), senior 22,400 RSD (≈ €191)**. There is no dynamic pricing and no gate-versus-online spread, but there is a real early-season discount: **during the Ski Opening period, 30% is knocked off single-ride, half-day, daily and two- to four-day tickets** — the reason Serbs plan December weekends around the opening date. **Night skiing** is sold separately at roughly **1,950–2,400 RSD (≈ €17–€21)**, or bundled in a \"day + night\" ticket category that includes a minimum of one floodlit run. **ChipCard deposit is 500 RSD (≈ €4.30)**, refunded on return. The regional super-pass is the **Ski Centar Srbija / Skijališta Srbije season ticket**, which spans the operator's other centres — **Stara Planina, Tornik on Zlatibor, Divčibare and Besna Kobila** — and is the right buy only for residents or repeat visitors. Buy at the Suvo Rudište and Brzeće ticket offices, at the Konaci kiosk, or online through skijalistasrbije.rs.",
+      "Lift network and interconnects": "The hub is **Suvo Rudište at roughly 1,770 m**, where the hotels are and where most lifts start. Radiating from it: the **Karaman Greben** ridge chair, the resort's signature lift, serving a long sustained red along the crest; **Mali Karaman** and **Veliki Karaman** beneath it; the **Krst** chair to the north; **Malo Jezero**, the short, wide, floodlit sector that is both the beginners' hill and the night-ski run; **Marine Vode** and **Sunčana Dolina** on the sunny southeast flank; and the **Pančićev vrh** lift to the 2,017 m summit and its mausoleum to the botanist Josif Pančić. Further out sit two satellites: **Gobelja**, on the northwestern shoulder, which holds the coldest snow on the mountain and the quietest pistes, and **Duboka 1, 2 and 3**, a chain of lifts dropping down a wooded valley on the northern side and the closest thing here to tree skiing. The transformative piece is the **Brzeće–Mali Karaman gondola**, an 8-seat cabin lift of roughly 4.4 km linking the village of **Brzeće at about 1,050 m** to Mali Karaman at around 1,760 m: it converted Brzeće from a cheap dormitory into a genuine second base and created the mountain's only 950–1,000 m continuous descent. **Lifts run roughly 09:00–16:00.** Everything on the mountain is interlinked on snow from Suvo Rudište, but **Gobelja and the Duboka chain are the two places people get stranded** — treat 15:00 as the turnaround at the bottom of Duboka 3, and 15:15 at Gobelja. The gap is patched by the **Brzeće ski bus** and by the gondola itself, which runs as downhill transport at the end of the day.",
+      "Snow reliability": "Kopaonik spans **1,060 m at Brzeće to 2,017 m at Pančićev vrh** — 957 m of vertical, the largest in Serbia. The top third is open, treeless and exposed; the Gobelja and Duboka flanks face broadly north and hold; the Marine Vode and Sunčana Dolina side faces southeast and is the first to suffer under the mountain's celebrated 200-plus sunny days. Snowmaking is extensive and modern, covering the core Suvo Rudište pistes and the gondola descent, but **Skijališta Srbije does not publish coverage as a percentage of pisted kilometres — treat any quoted figure as unverified**. **Season: early December to early April**, with the operator's forward calendar showing roughly 3 December to 11 April. In a bad snow year Kopaonik retreats to the north-facing Gobelja and Duboka runs and the snowmade Karaman/Malo Jezero core, closes the Brzeće ski-home and runs the gondola as a lift down.",
+      "Off-piste and touring": "Kopaonik is not a freeride mountain and should not be sold as one, but there is real terrain: the **north-facing bowls under Gobelja**, the **tree gaps flanking the Duboka valley**, and the open ground either side of the **Pančićev vrh** summit lift, which on a cold clear morning gives the best snow on the massif. Ski touring is growing on **Suvo Rudište toward Nebeske Stolice** and on the ridge north of Gobelja. Two hard constraints: the whole massif is inside **Kopaonik National Park**, so route choice is regulated and some ground is a strict reserve; and **Serbia's avalanche information is thin — the Republički hidrometeorološki zavod Srbije (RHMZ)** issues weather and snow-depth data rather than a full daily EAWS five-point bulletin for Kopaonik. Rescue is the volunteer **Gorska služba spasavanja Srbije (GSS)**, plus the resort's own ski patrol. Carry transceiver, shovel and probe, and hire a local instructor or GSS-affiliated guide rather than improvising.",
+      "Piste breakdown": "**Roughly 55 km of marked piste over 25 runs, served by 26 lifts: about 30 km easy (54%), 19 km intermediate (34%), 6 km difficult (12%).** **Beginners** belong on **Malo Jezero** — wide, gentle, floodlit and served by short lifts — and on the lower Sunčana Dolina meadows. **Intermediates** own the mountain: **Karaman Greben** end-to-end, then **Krst**, then the full gondola descent to Brzeće, which is the single best run here and worth doing twice. **Experts** get the short steep pitches under **Gobelja** and the top of **Duboka**, plus whatever the summit lift's flanks are holding; anyone chasing 45-degree couloirs is in the wrong country.",
+      "Non-ski days": "**Jošanička Banja**, about 25 km down the western side, has the hottest thermal spring in Serbia at around **78°C**, plus the ruins of an Ottoman hamam — the local bathhouses are basic and cheap and the water is startling. **Studenica Monastery**, a UNESCO World Heritage site from the 1190s with the finest Byzantine frescoes in Serbia, is around 60–70 km north and makes a full winter day. On the mountain: the **Pančić mausoleum** on the summit, **snowshoe and marked winter walking routes** from Suvo Rudište toward **Nebeske Stolice** and the Gobelja ridge, tubing and a snow park at Malo Jezero, and the **Kopaonik National Park visitor centre**. Down in **Brzeće** there is a small thermal source and, further out, the **Đavolja Varoš** rock formations for anyone with a spare full day and a good car.",
+      "Hire, lockers and schools": "Rental is concentrated at Suvo Rudište around the Konaci complex and in Brzeće at the gondola base, with the resort operator and a cluster of independents. Expect roughly **1,800–3,000 RSD/day (€15–€26)** for a standard ski-boot-pole package and **9,000–15,000 RSD (€77–€128) for six days**; performance skis add 50%. Base-station lockers run 400–800 RSD/day. Instruction is the bargain: the **official Skijališta Srbije ski school** and the independent schools operating out of Konaci charge in the region of **3,500–6,000 RSD (€30–€51) per hour for a private lesson** and **18,000–30,000 RSD (€154–€256) for a five-morning group course**. English-language instructors exist in quantity here — Kopaonik has been taking international guests for decades — but confirm the language when booking, not on the snow."
+    },
+    "surface": null,
+    "distanceKm": null,
+    "elevationM": null,
+    "verticalM": null,
+    "technicalRating": null,
+    "transitPass": null,
+    "hutBooking": null,
+    "liftNetwork": "Kopaonik is run by **JP Skijališta Srbije (Ski Resorts of Serbia)**, which prices in three seasonal bands — **Low: 15 Nov–16 Dec and from 24 Mar; Mid: 17–24 Dec, 8 Jan–10 Feb, 18–23 Mar; High: 25 Dec–7 Jan and 11–17 Feb**. The **Kopaonik resort ticket** is the everyday product: **day adult 5,600 RSD (≈ €48)**, **child 3,900 RSD (≈ €33)**, **senior 5,000 RSD (≈ €43)**. **6-day: adult 24,900 RSD (≈ €213), child 16,400 RSD (≈ €140), senior 20,900 RSD (≈ €179)**. **7-day: adult 27,900 RSD (≈ €238), child 18,000 RSD (≈ €154), senior 22,400 RSD (≈ €191)**. There is no dynamic pricing and no gate-versus-online spread, but there is a real early-season discount: **during the Ski Opening period, 30% is knocked off single-ride, half-day, daily and two- to four-day tickets** — the reason Serbs plan December weekends around the opening date. **Night skiing** is sold separately at roughly **1,950–2,400 RSD (≈ €17–€21)**, or bundled in a \"day + night\" ticket category that includes a minimum of one floodlit run. **ChipCard deposit is 500 RSD (≈ €4.30)**, refunded on return. The regional super-pass is the **Ski Centar Srbija / Skijališta Srbije season ticket**, which spans the operator's other centres — **Stara Planina, Tornik on Zlatibor, Divčibare and Besna Kobila** — and is the right buy only for residents or repeat visitors. Buy at the Suvo Rudište and Brzeće ticket offices, at the Konaci kiosk, or online through skijalistasrbije.rs.",
+    "snowReliability": "Kopaonik spans **1,060 m at Brzeće to 2,017 m at Pančićev vrh** — 957 m of vertical, the largest in Serbia. The top third is open, treeless and exposed; the Gobelja and Duboka flanks face broadly north and hold; the Marine Vode and Sunčana Dolina side faces southeast and is the first to suffer under the mountain's celebrated 200-plus sunny days. Snowmaking is extensive and modern, covering the core Suvo Rudište pistes and the gondola descent, but **Skijališta Srbije does not publish coverage as a percentage of pisted kilometres — treat any quoted figure as unverified**. **Season: early December to early April**, with the operator's forward calendar showing roughly 3 December to 11 April. In a bad snow year Kopaonik retreats to the north-facing Gobelja and Duboka runs and the snowmade Karaman/Malo Jezero core, closes the Brzeće ski-home and runs the gondola as a lift down.",
+    "windConditions": null,
+    "gpxReady": null,
+    "bookingTimeline": null,
+    "audience": null
+  },
+  "packingNotes": [],
+  "whatCouldGoWrong": [],
+  "sources": {
+    "verified": "The Skijališta Srbije published Kopaonik ski-pass tariff in RSD (day adult 5,600 / child 3,900 / senior 5,000; 6-day 24,900 / 16,400 / 20,900; 7-day 27,900 / 18,000 / 22,400), the 500 RSD ChipCard deposit, night-track ticket pricing in the 1,950–2,400 RSD region, the \"day + night\" category including a minimum of one floodlit run, and the published 30% discount on single, half-day, daily and two- to four-day tickets during ski-track and season openings. The three published season bands (Low 15 Nov–16 Dec and from 24 Mar; Mid 17–24 Dec, 8 Jan–10 Feb, 18–23 Mar; High 25 Dec–7 Jan, 11–17 Feb). Kopaonik's resort profile: 1,060–2,017 m with 957 m vertical, roughly 55 km of piste at 30 km easy / 19 km intermediate / 6 km difficult, 26 lifts including heated four- and six-seaters, an early-December to early-April operating season, and the resort's position inside Kopaonik National Park. The existence and operation of the Brzeće–Mali Karaman gondola.",
+    "confidenceNotes": "**The RSD-to-EUR conversions above use roughly 117 RSD = €1 and must be re-run at the day's rate before publishing.** **The Brzeće gondola's exact length (≈ 4.4 km), cabin capacity and top-station altitude are indicative and should be confirmed against Skijališta Srbije's technical data** — published figures vary between sources. **The scope and price of the multi-centre Ski Centar Srbija / Skijališta Srbije season pass across Stara Planina, Tornik, Divčibare and Besna Kobila was not confirmed this run and must be verified before it is presented as a purchasable product.** Snowmaking coverage as a percentage of pisted km is not published — no figure is asserted here. Named lifts and sectors (Karaman Greben, Mali and Veliki Karaman, Malo Jezero, Gobelja, Duboka 1–3, Krst, Marine Vode, Sunčana Dolina, Pančićev vrh) are correct as sector and lift names but individual lift types and the exact turnaround times quoted are operational judgements, not published rules. Hotel and restaurant names on the mountain are real establishments but should be checked for current operation and branding, as ownership on Kopaonik changes hands often. Rental, ski-school, locker, ski-bus and national park fee figures are indicative bands, not quoted tariffs. Jošanička Banja's 78°C source temperature and Studenica's winter opening hours should both be re-checked."
+  },
+  "verifyFlags": [],
+  "verifyFlagCount": 0,
+  "volatilePricing": false,
+  "wordCount": 4450,
+  "dataVintage": 2026,
+  "provenance": {
+    "batch": "southern-mediterranean",
+    "sourceFile": "carta-dataset/trips/winter-sports-serbia-kopaonik.md",
+    "sourceFormat": "md with '## Metadata' bullet block (one file per trip)",
+    "sourceId": "winter-sports-serbia-kopaonik",
+    "ingestedAt": "2026-09-02",
+    "synthesized": false
+  }
+}

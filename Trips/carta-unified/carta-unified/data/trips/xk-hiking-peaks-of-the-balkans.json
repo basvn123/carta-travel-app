@@ -1,0 +1,278 @@
+{
+  "id": "xk-hiking-peaks-of-the-balkans",
+  "sourceId": "hiking-kosovo-peaks-of-the-balkans",
+  "slug": "xk-hiking-peaks-of-the-balkans",
+  "title": "Peaks of the Balkans: Rugova, Doberdol and the Three-Border Passes",
+  "country": "Kosovo",
+  "countryCode": "XK",
+  "countries": [
+    {
+      "name": "Kosovo",
+      "code": "XK"
+    }
+  ],
+  "isMultiCountry": false,
+  "region": "Southern & Mediterranean Europe",
+  "regionKey": "southern-mediterranean",
+  "subRegion": "Prokletije / Accursed Mountains — Rugova, Valbona, Theth & Plav",
+  "tripType": "Hiking & Alpine Trekking",
+  "tripTypeId": 6,
+  "tripTypeSlug": "hiking",
+  "durationDays": 7,
+  "bestPeriod": {
+    "months": [
+      6,
+      7,
+      9
+    ],
+    "monthNames": [
+      "June",
+      "July",
+      "September"
+    ],
+    "window": "Mid-June–late September, with the sweet spot 10 July–10 September",
+    "note": null,
+    "avoid": "October–May — snow lies on Qafa e Borit and Qafa e Valbonës into June, shepherd huts are shut and no katun serves food",
+    "raw": "Mid-June–late September, with the sweet spot 10 July–10 September"
+  },
+  "budgetTier": "€€",
+  "budgetTierRange": [
+    2,
+    2
+  ],
+  "budgetTierRaw": "€€",
+  "budget": {
+    "currency": "EUR",
+    "totalEur": {
+      "low": 900,
+      "high": 1500
+    },
+    "totalNote": "€900–€1,500 per person, excl. international flights",
+    "breakdown": {
+      "accommodation": {
+        "lowEur": 300,
+        "highEur": 450,
+        "note": "Katun and guesthouse half board €30–€50 pppn; Peja hotel €45–€70"
+      },
+      "food": {
+        "lowEur": 90,
+        "highEur": 160,
+        "note": "Half board covers most meals; town dinners €8–€15, beer €1.50–€2.50"
+      },
+      "transport": {
+        "lowEur": 260,
+        "highEur": 480,
+        "note": "Airport transfers, three 4x4 shuttles (Reka e Allagës, Çerem–Valbona, Gusinje–Peja)"
+      },
+      "activities": {
+        "lowEur": 250,
+        "highEur": 410,
+        "note": "Border permits €0–€10 each plus €25–€65 agency filing; optional guide €70–€110/day shared"
+      }
+    },
+    "perDayEur": {
+      "low": 129,
+      "high": 214
+    }
+  },
+  "profile": {
+    "difficulty": 4,
+    "difficultyLabel": "Demanding",
+    "difficultyNote": "4/5 — five consecutive walking days of 700–1,300 m ascent on rough karst, scree and shepherd track, at 1,000–2,500 m",
+    "fitnessLevel": "Demanding",
+    "crowdLevel": null,
+    "familyFriendly": null,
+    "carRequired": null
+  },
+  "basecamps": [],
+  "gatewayAirport": "PRN Pristina Adem Jashari, 1 h 40 min drive to Peja/Peć; TIA Tirana 3 h 30 min to Valbona via the Koman ferry or the Kukës motorway",
+  "gatewayAirportCode": "PRN",
+  "languages": [],
+  "currency": null,
+  "emergencyNumber": "112",
+  "coordinates": {
+    "lat": 42.6727,
+    "lon": 21.1669,
+    "precision": "country",
+    "matchedPlace": "Pristina",
+    "source": "country capital fallback"
+  },
+  "tags": [
+    "peaks-of-the-balkans",
+    "prokletije",
+    "hut-to-hut",
+    "border-permits",
+    "rugova",
+    "theth-valbona",
+    "katun",
+    "kosovo"
+  ],
+  "summary": "This is the wildest walking week in Europe that still has beds at the end of every day. The Prokletije are limestone in its most aggressive mood — 2,500 m walls, sinkhole basins, snow lying in shaded gullies in July — and the trail threads three countries with a shepherd economy still functioning above 1,700 m. You sleep in Rugova guesthouses, in tin-roofed katun dormitories at Doberdol where the water comes from a pipe in a hillside, and in Theth and Valbona stone houses where dinner is whatever the family cooked. It suits hikers who want genuine remoteness and can tolerate paperwork, rough transfers and inconsistent waymarking. It is emphatically not a Dolomites-style hut circuit: bring your own margin.",
+  "summaryGenerated": false,
+  "hook": null,
+  "snapshot": {},
+  "itinerary": [
+    {
+      "day": 1,
+      "title": "Peja, the Rugova gorge and the Kuqishtë lake",
+      "morning": "Land at Pristina, transfer 85 km to Peja/Peć. Collect printed permits and confirm the week's 4x4 transfers with Balkan Natural Adventure on Rr. Mbretëresha Teutë. Visit the Patriarchate of Peć, a 13th-century Serbian Orthodox monastery under KFOR guard at the gorge mouth.",
+      "afternoon": "Drive 22 km up the Rugova canyon — 1,000 m walls, tunnels, the Via Ferrata Ari cable route above the road — to Kuqishtë at 1,400 m. Walk the easy 6 km round trip to **Liqenat (Liqeni i Kuqishtës)**, a glacial tarn in a beech-and-spruce basin, to open the legs.",
+      "evening": "Dinner at your guesthouse: *fli* (layered pastry baked under a saç), *flija* with honey and cream, and homemade rakia. Ask the family to write your next two days' katun bookings by phone.",
+      "dayStats": "85 km transfer + 22 km canyon drive / 6 km walk / 220 m ascent / Kuqishtë 1,400 m / permits checked ×3",
+      "sleep": "Guesthouse Ariu, Kuqishtë (Rugova)"
+    },
+    {
+      "day": 2,
+      "title": "Guri i Kuq 2,522 m, then down to Reka e Allagës",
+      "morning": "Leave at 06:30 for **Guri i Kuq** (\"Red Rock\"), 2,522 m, the big viewpoint above Rugova. Rough shepherd track to the Hajla-side pastures, then unmarked grass and limestone to the summit ridge — this is where a GPX earns its keep.",
+      "afternoon": "Descend the same way to Kuqishtë, then take the forest track west to **Reka e Allagës**, a scatter of summer houses at 1,300 m in a broad meadow basin. A 4x4 lifts you the final rough kilometres to **Milishevc** (1,700 m) if legs are done.",
+      "evening": "Katun supper at Milishevc — potato and cheese pie, soup, bread cooked that afternoon. Sunset over the Hajla ridge; no electricity beyond a solar panel and a light bulb.",
+      "dayStats": "16 km / 1,180 m ascent / 900 m descent / high point 2,522 m / 7–8 h walking / 4x4 transfer €40–€60 per vehicle",
+      "sleep": "Katun dormitory, Milishevc (half board ~€35, cash)"
+    },
+    {
+      "day": 3,
+      "title": "Over Qafa e Borit into Albania: Milishevc to Doberdol",
+      "morning": "The classic Kosovo–Albania stage. Climb south-west from Milishevc through beech to open karst, crossing **Qafa e Borit (\"Snow Pass\") at roughly 2,010 m** — the actual border. Have permits and passports in your hip pocket, not buried.",
+      "afternoon": "Long, gentle descent into the **Doberdol** basin at 1,800 m: a dozen stone-and-tin katuns, three of which take walkers, cattle everywhere, a piped spring in the middle. Afternoon option: the 1 h 15 min climb to the **tromeđa** three-country marker at Maja e Trekufirit (2,366 m), where Kosovo, Albania and Montenegro meet.",
+      "evening": "Dinner at Katun Doberdol — bean soup, fried trout if someone has walked to the Valbona river, sheep cheese. Bed is a plank bunk with blankets; use your liner.",
+      "dayStats": "17 km / 950 m ascent / 850 m descent / border at ~2,010 m / 7–8 h / half board €30–€35 cash",
+      "sleep": "Katun Doberdol, Albania"
+    },
+    {
+      "day": 4,
+      "title": "Doberdol to Çerem, then the Valbona valley",
+      "morning": "South-west out of Doberdol on a broad pastoral traverse under Maja e Balqinit, then a long descending contour on shepherd path and old logging track to **Çerem** (1,300 m), a near-abandoned hamlet where two families run beds.",
+      "afternoon": "Lunch at Çerem, then a bone-shaking 4x4 down the Valbona river track to **Valbonë village** (1,000 m) — 22 km, up to 2 hours. The valley opens into one of the great glacial troughs of the Balkans, with Maja e Kollatës at 2,556 m closing the head.",
+      "evening": "Rita's or Hotel Rilindja in Valbonë; Rilindja's kitchen is the reliable one — trout, byrek, walnut cake, and a beer on the terrace under the north faces.",
+      "dayStats": "14 km walking / 300 m ascent / 800 m descent / 6–7 h / 4x4 Çerem–Valbonë €80–€120 per vehicle",
+      "sleep": "Hotel Rilindja, Valbonë"
+    },
+    {
+      "day": 5,
+      "title": "Qafa e Valbonës: the Theth crossing",
+      "morning": "The most-walked stage on the trail and the one with the best waymarking. From Rrogam at the valley head, climb 800 m of stony zigzags through beech to **Qafa e Valbonës, 1,795 m**, with the *kafe* stall at the top selling €2 coffee and pomegranate juice.",
+      "afternoon": "Descend 900 m into the Theth basin, steep and loose in the upper third, then forest, then the Shala river flats. Detour to the **Grunas waterfall** (25 min each way) before reaching the village.",
+      "evening": "Guesthouse dinner in Theth; afterwards walk five minutes to the **Kulla e Ngujimit**, the restored blood-feud lock-in tower, and the church whose stone roof defines every photograph of the village.",
+      "dayStats": "17 km / 900 m ascent / 1,000 m descent / pass 1,795 m / 7–8 h with breaks / expect 200+ walkers on an August Saturday",
+      "sleep": "Bujtina Polia or Guesthouse Harusha, Theth"
+    },
+    {
+      "day": 6,
+      "title": "Qafa e Pejës into Montenegro: Theth to Vusanje",
+      "morning": "The wildest of the border stages. Up the Theth valley past Nderlysaj, then a sustained rocky climb to **Qafa e Pejës, 1,710 m**, a notch in a vertical limestone rib. Montenegrin border police sometimes check here; sometimes nobody appears and you still need the permit.",
+      "afternoon": "Long descent through the Ropojana valley — the *Grebaje/Ropojana* trough is one of the finest landscapes in the range — past the seasonal **Oko Skakavice** spring pool to **Vusanje** (1,000 m) and on to Gusinje.",
+      "evening": "Stay in Vusanje or Gusinje; dinner of cicvara, kajmak and grilled lamb. Cash in euros — Montenegro uses the euro unilaterally.",
+      "dayStats": "21 km / 1,000 m ascent / 1,300 m descent / pass 1,710 m / 8–9 h — the longest day of the week",
+      "sleep": "Guesthouse in Vusanje or Hotel Rosi, Gusinje"
+    },
+    {
+      "day": 7,
+      "title": "Plav, the Babino Polje ridge and back to Peja",
+      "morning": "Short walk to the **Grlja waterfall** and the **Ali Pasha springs** between Gusinje and Plav, then coffee on Plav's lakeside. If you have energy and a fourth permit day, the classic **Kuqishtë–Babino Polje** stage over the Bogićevica saddle is the alternative finish, walked in reverse from Babino Polje's katuns.",
+      "afternoon": "Transfer Plav → Rožaje → the Kulla/Kullë border → Peja, roughly 3 h 15 min. Shower, and the *bazaar* in Peja for a filigree souvenir.",
+      "evening": "Dinner at Te Rrezja or Art Design in Peja — mixed grill, tavë, and a Peja beer brewed 500 m away. Transfer to Pristina next morning, or drive it the same night in 1 h 40 min.",
+      "dayStats": "5 km walk / 150 m ascent / 3 h 15 min transfer / two international border posts / Peja 500 m",
+      "sleep": "Hotel Dukagjini or Hotel Semitronix, Peja"
+    }
+  ],
+  "accommodationStrategy": [
+    {
+      "rank": 1,
+      "name": "Guesthouse Ariu",
+      "style": "Rugova",
+      "location": "family guesthouse, Kuqishtë",
+      "description": "At 1,400 m on the trail, with drying space, an owner who books katuns and 4x4s by phone, and breakfast from 06:00 for the Guri i Kuq start. Roughly €30–€40 half board, and the last reliable place to leave a bag.",
+      "booking": null,
+      "priceNote": null
+    },
+    {
+      "rank": 2,
+      "name": "Katun Doberdol",
+      "style": "Albania",
+      "location": "working shepherd hut, Doberdol",
+      "description": "Plank bunks under a tin roof at 1,800 m, blankets rather than duvets, spring water piped to a trough, generator or solar for a couple of hours. There is nowhere else within four walking hours, which is exactly why it must be reserved. €30–€35 half board, euros in cash, no receipt.",
+      "booking": null,
+      "priceNote": null
+    },
+    {
+      "rank": 3,
+      "name": "Hotel Rilindja",
+      "style": "Albania",
+      "location": "valley lodge, Valbonë",
+      "description": "The original walkers' base in Valbona, with a proper kitchen, hot water, drying room and staff who understand the Theth timetable. Around €45–€60 half board in a room, less in the wooden annexes. Books out entirely for August weekends.",
+      "booking": null,
+      "priceNote": null
+    }
+  ],
+  "logistics": {
+    "connectivity": "**None of the three countries is in the EU roaming zone.** The Western Balkans \"Roam Like at Home\" deal covers travel *between* the six regional economies, not EU visitors; EU SIMs face reduced but non-zero charges. Buy a Vala or IPKO prepaid SIM in Peja (€5–€10 with data). No signal at Doberdol, Çerem or either border pass.",
+    "emergency": "112 works in all three countries; Albania also uses 127 for fire and 129 for police, Kosovo 192 for police. Mountain rescue is volunteer and ground-based — assume a 6–12 hour response above 1,800 m. Nearest full hospitals: Peja regional hospital, Shkodër, and Berane in Montenegro. Insurance must name trekking to 3,000 m, non-EU repatriation and cross-border evacuation.",
+    "weather": "Afternoon thunderstorms build from around 14:00 in July and August, and the passes are the worst place to be caught — start at 06:00–06:30. Early-season fog in the Ropojana valley can erase the path. Nights at Doberdol drop to 4–6 °C even in August.",
+    "bookingWindows": "Border permits 15–30 days ahead (Albania is the bottleneck). Katuns at Doberdol and Milishevc 3–6 weeks for July–August. Theth and Valbona guesthouses 4–8 weeks for August weekends. 4x4 transfers 3–5 days.",
+    "money": "Kosovo and Montenegro use the euro; Albania uses the lek but every guesthouse on this route quotes and accepts euros. **Carry €400–€500 in cash in small notes** — ATMs exist in Peja, Plav, Gusinje and Bajram Curri, and nowhere else on the route. Tipping is not expected; rounding up is.",
+    "transportRules": "Rental cars from Kosovo frequently forbid entry to Serbia and sometimes Albania — check the contract and buy the green card. Kosovo–Montenegro crossings at Kullë/Rožaje are straightforward; Kosovo–Serbia entry stamps can complicate onward travel. Most walkers use hired 4x4s with drivers instead.",
+    "permits": "Three border permits as above, plus Theth and Valbona sit inside Albanian national parks with a small vehicle fee. Drones are restricted near border zones and effectively unwise on this route. Fires outside katun hearths are prohibited.",
+    "health": "**Mine and unexploded-ordnance awareness matters here.** Residual contamination from 1998–99 persists in western Kosovo's border areas; the rule is absolute — stay on marked paths and worn shepherd tracks, never shortcut through untrodden meadow or explore trenches and ruins. Livestock guardian dogs are serious: stop, do not run, let the shepherd call them off. Treat water taken below pastures. Ticks in beech forest to 1,600 m.",
+    "gettingThere": null,
+    "other": []
+  },
+  "proTips": [
+    "File the **Albanian** permit first and the other two after — Shkodër and Kukës are the slow links, and their reply date determines your whole itinerary.",
+    "Ask your agency to put all three permit PDFs into one printed booklet with the passport copies attached. Officers at Qafa e Pejës want to see paper, in order, without you scrolling through a phone in the wind.",
+    "Book the Çerem–Valbonë 4x4 before you leave Peja, not from Doberdol. There is no signal at Doberdol to arrange it, and the drivers work on the Valbona side.",
+    "Walk Theth–Valbona **westbound (Valbona to Theth)** as this itinerary does: you climb the shaded, gentler side in the morning and descend the sun-blasted side, and you arrive in Theth against the day-trippers rather than with them.",
+    "Carry €5 and €10 notes. Katuns genuinely cannot change a €50, and the nearest ATM may be two days away.",
+    "At every katun, ask for the water source before you fill. Some pipes come from above the herd, some from below; the family knows and will tell you honestly.",
+    "Take the 1 h 15 min side trip from Doberdol to the three-country marker in the evening, not the morning. The light is better, the herds are down, and you will not shorten the next day.",
+    "If a katun is full, the answer is never \"we have nothing\" but \"sleep in the eating room\". Accept it, keep the liner accessible, and pay the same rate without haggling."
+  ],
+  "typeSpecific": {
+    "raw": {
+      "Hut-to-hut booking path": "Kuqishtë (Rugova) → Milishevc → Doberdol → Çerem/Valbona → Theth → Vusanje/Gusinje. Nothing here is an Alpine Club hut. Rugova beds are family guesthouses (Guesthouse Ariu and Bjeshkët e Kuqishtës in Kuqishtë); Milishevc and Doberdol are working katuns with plank bunks and pit or basic toilets; Valbona and Theth are village guesthouses. Book by WhatsApp/Viber to the owner's mobile, or through Balkan Natural Adventure (Peja, +383 49 673 617, info@bnadventure.com), which handles the whole chain. Half board runs €30–€40 in katuns and €35–€55 in Theth/Valbona. **Everything above the valley floor is cash-only in euros; Albanian villages take euros but give change in lek.** Reserve 3–6 weeks out for late July–August. There is no formal overflow rule: if a katun is full, the family gives you floor space in the eating room or a mattress in the hay barn for the same price — carry a liner and a light sleeping bag rather than assuming a duvet.",
+      "Cross-border permit process (the single most important logistics item)": "Three separate national permits, each applied for by email with a completed form, a colour passport scan for every walker, and a dated itinerary naming each crossing point.",
+      "notes": [
+        "*Kosovo* — Kosovo Police Border Directorate, Pristina. Email ragip.bunjaku@kosovopolice.com (copy the duty officers listed on peaksofthebalkans.com). **Free.** Turnaround is fast, often 2–3 working days, but file 15 days ahead. Approval arrives as a PDF you print.",
+        "*Albania* — Albanian State Police, Regional Border & Migration Directorates: Shkodër (drkmshkoder@asp.gov.al) covers the Theth/Vusanje side, Kukës (drkmkukes@asp.gov.al) covers Doberdol–Çerem–Valbona. **Free**, but the slowest: allow 10–15 working days and chase by phone.",
+        "*Montenegro* — Border Police station in Plav, stgpplav@gmail.com. A **small fee, roughly €5–€10 per person**, paid into a state account at a Plav bank (add a ~€3 banking charge), and in practice the permit is collected in person in Plav, so build a town stop into the itinerary. Agencies file all three for €25–€65 per party. Carry printed copies: the officers at Qafa e Pejës check paper, not phones."
+      ],
+      "Safety markers and waymarking": "The official system is the **Peaks of the Balkans roundel** — a red-and-white circular disc with the trail logo — supplemented by classic **red-white-red paint blazes** on rock and tree, and occasional wooden signposts with hour estimates. Coverage is good on Theth–Valbona and Milishevc–Doberdol, thin on Reka e Allagës and the Montenegrin Bogićevica arm, and essentially absent on the Guri i Kuq summit ridge. There is no via ferrata on the main route; the only cabled section of note is the short chain-protected step below Maja e Rosit if you take that variant. Download the official GPX from peaksofthebalkans.com and carry it in Organic Maps or Gaia with the 1:60,000 Huber Kartographie *Peaks of the Balkans* sheet as backup.",
+      "Elevation and gear essentials": "Daily ascent 700–1,300 m, descent similar. High points on this itinerary: Guri i Kuq 2,522 m, Qafa e Borit ~2,010 m, Qafa e Valbonës 1,795 m, Qafa e Pejës 1,710 m. Snow patches persist in north-facing gullies below Qafa e Borit and on Guri i Kuq's north side into **early July**; microspikes are worth carrying before 10 July, an ice axe only for a pre-season crossing in June. No ferrata set required. B-rated boots with ankle support are not optional — the karst is sharp and the descent into Theth is 1,000 m of loose limestone.",
+      "Water, food resupply and rubbish": "Springs are frequent, but every basin has sheep and cattle above it — filter or treat anything drawn below a katun. Shepherd huts sell milk, *kos*, *djathë* and coffee for €1–€3 cash. Resupply is Peja, the Valbona village shop, Theth's store and Gusinje. **There is no rubbish collection above the valleys**: carry everything out. Katuns burn plastic; do not add to it.",
+      "Bail-out options, rescue and insurance": "Doberdol bails to Çerem then a rough 4x4 track to Valbona (2 h, €80–€120 per vehicle). Theth now has sealed-road access from Shkodër via the Thethi tunnel. Rugova katuns sit 40–60 min from a drivable track. **Helicopter rescue is neither routine nor free** — Kosovo and Albania rely on ground teams, Montenegro's GSS CG is volunteer. Insure for trekking to 3,000 m, non-EU repatriation and **cross-border evacuation**.",
+      "Realistic walking times": "Signposted hours here are shepherd hours. Add 30–40% for an averagely fit hiker with a 10 kg pack. Theth–Valbona signed as \"6 h\" is honestly 7–8 h; Doberdol–Çerem signed \"5 h\" is 6–7 h."
+    },
+    "surface": null,
+    "distanceKm": null,
+    "elevationM": null,
+    "verticalM": null,
+    "technicalRating": "The official system is the **Peaks of the Balkans roundel** — a red-and-white circular disc with the trail logo — supplemented by classic **red-white-red paint blazes** on rock and tree, and occasional wooden signposts with hour estimates. Coverage is good on Theth–Valbona and Milishevc–Doberdol, thin on Reka e Allagës and the Montenegrin Bogićevica arm, and essentially absent on the Guri i Kuq summit ridge. There is no via ferrata on the main route; the only cabled section of note is the short chain-protected step below Maja e Rosit if you take that variant. Download the official GPX from peaksofthebalkans.com and carry it in Organic Maps or Gaia with the 1:60,000 Huber Kartographie *Peaks of the Balkans* sheet as backup.",
+    "transitPass": null,
+    "hutBooking": "Kuqishtë (Rugova) → Milishevc → Doberdol → Çerem/Valbona → Theth → Vusanje/Gusinje. Nothing here is an Alpine Club hut. Rugova beds are family guesthouses (Guesthouse Ariu and Bjeshkët e Kuqishtës in Kuqishtë); Milishevc and Doberdol are working katuns with plank bunks and pit or basic toilets; Valbona and Theth are village guesthouses. Book by WhatsApp/Viber to the owner's mobile, or through Balkan Natural Adventure (Peja, +383 49 673 617, info@bnadventure.com), which handles the whole chain. Half board runs €30–€40 in katuns and €35–€55 in Theth/Valbona. **Everything above the valley floor is cash-only in euros; Albanian villages take euros but give change in lek.** Reserve 3–6 weeks out for late July–August. There is no formal overflow rule: if a katun is full, the family gives you floor space in the eating room or a mattress in the hay barn for the same price — carry a liner and a light sleeping bag rather than assuming a duvet.",
+    "liftNetwork": null,
+    "snowReliability": null,
+    "windConditions": null,
+    "gpxReady": null,
+    "bookingTimeline": null,
+    "audience": null
+  },
+  "packingNotes": [],
+  "whatCouldGoWrong": [],
+  "sources": {
+    "verified": "The three-country permit structure, the named application emails for the Kosovo Border Directorate and the Albanian Shkodër and Kukës directorates, the Plav border police address, the fact that Kosovo and Albania issue free permits while Montenegro charges a small bank-paid fee collected in person in Plav, and the three main crossings requiring permits (Vusanje–Theth, Dobërdol–Milishevc, Kosovo–Babino Polje). Sutjeska-style regional cash-only norms and euro usage in Kosovo and Montenegro.",
+    "confidenceNotes": "Permit email addresses and named officers change — re-verify against peaksofthebalkans.com and bnadventure.com within 30 days of publication. Montenegrin permit fee quoted between €5 and €10 plus a banking charge; confirm the current state account procedure. Katun half-board prices at Milishevc and Doberdol are 2025-season estimates and are negotiated in cash, not listed. Çerem–Valbonë 4x4 rates fluctuate sharply with fuel and demand. Guri i Kuq summit elevation is cited between 2,516 m and 2,522 m in different sources. Theth road access has changed rapidly since the tunnel opened; confirm current shuttle options from Shkodër. Landmine risk statements should be checked against the latest Kosovo Mine Action Centre guidance before publishing."
+  },
+  "verifyFlags": [],
+  "verifyFlagCount": 0,
+  "volatilePricing": false,
+  "wordCount": 3320,
+  "dataVintage": 2026,
+  "provenance": {
+    "batch": "southern-mediterranean",
+    "sourceFile": "carta-dataset/trips/hiking-kosovo-peaks-of-the-balkans.md",
+    "sourceFormat": "md with '## Metadata' bullet block (one file per trip)",
+    "sourceId": "hiking-kosovo-peaks-of-the-balkans",
+    "ingestedAt": "2026-09-02",
+    "synthesized": false
+  }
+}

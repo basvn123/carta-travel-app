@@ -1,5 +1,6 @@
 import React, { useRef, useState } from 'react';
 import { useI18n } from '../i18n/index.jsx';
+import { usePaywall } from '../hooks/usePaywall.jsx';
 import { SparkIcon, UploadIcon } from '../components/Icons.jsx';
 import {
   filesToPayload, requestBookingImport, IMPORT_ACCEPT, MAX_IMPORT_FILES,
@@ -24,8 +25,14 @@ export function MagicImportZone({ onResult, importContext, leadKey = 'extras.imp
   const [dragOver, setDragOver] = useState(false);
   const [urlValue, setUrlValue] = useState('');
   const fileRef = useRef(null);
+  const paywall = usePaywall();
 
+  // Files, pasted text and links all end up here, so this is the only place
+  // the gate has to stand. Reading a booking runs parse-booking, which costs
+  // real money per call, which is why it was the one free surface with a bill
+  // attached to it.
   const run = async (payloadPart) => {
+    if (!paywall.require('import')) { setState({ phase: 'idle' }); return; }
     setState({ phase: 'busy' });
     const res = await requestBookingImport({
       ...payloadPart,

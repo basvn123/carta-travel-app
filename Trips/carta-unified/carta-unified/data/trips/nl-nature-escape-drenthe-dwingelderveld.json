@@ -1,0 +1,320 @@
+{
+  "id": "nl-nature-escape-drenthe-dwingelderveld",
+  "sourceId": "nl-nature-drenthe-dwingelderveld",
+  "slug": "nl-nature-escape-drenthe-dwingelderveld",
+  "title": "Wet Heath and Dark Sky: A Week in Drenthe",
+  "country": "Netherlands",
+  "countryCode": "NL",
+  "countries": [
+    {
+      "name": "Netherlands",
+      "code": "NL"
+    }
+  ],
+  "isMultiCountry": false,
+  "region": "Western & Central Europe",
+  "regionKey": "western-central",
+  "subRegion": "Dwingelderveld, Drenthe",
+  "tripType": "Nature Escapes & Cabin Stays",
+  "tripTypeId": 9,
+  "tripTypeSlug": "nature-escape",
+  "durationDays": 7,
+  "bestPeriod": {
+    "months": [
+      5,
+      6,
+      9,
+      10
+    ],
+    "monthNames": [
+      "May",
+      "June",
+      "September",
+      "October"
+    ],
+    "window": null,
+    "note": "Ground-nesting birds close several heath paths mid-March to mid-August; late September onward gives the longest, darkest nights for stargazing.",
+    "avoid": null,
+    "raw": null
+  },
+  "budgetTier": "€",
+  "budgetTierRange": [
+    1,
+    1
+  ],
+  "budgetTierRaw": "€",
+  "budget": {
+    "currency": "EUR",
+    "totalEur": {
+      "low": 650,
+      "high": 920
+    },
+    "totalNote": null,
+    "breakdown": {
+      "accommodation": {
+        "lowEur": 330,
+        "highEur": 460,
+        "note": null
+      },
+      "food": {
+        "lowEur": 150,
+        "highEur": 210,
+        "note": null
+      },
+      "transport": {
+        "lowEur": 70,
+        "highEur": 100,
+        "note": null
+      },
+      "activities": {
+        "lowEur": 100,
+        "highEur": 150,
+        "note": null
+      }
+    },
+    "perDayEur": {
+      "low": 93,
+      "high": 131
+    }
+  },
+  "profile": {
+    "difficulty": 1,
+    "difficultyLabel": "Easy",
+    "difficultyNote": null,
+    "fitnessLevel": "Easy",
+    "crowdLevel": "Low",
+    "familyFriendly": true,
+    "carRequired": false
+  },
+  "basecamps": [
+    "Ruinen"
+  ],
+  "gatewayAirport": "Amsterdam Schiphol (AMS)",
+  "gatewayAirportCode": "AMS",
+  "languages": [
+    "Dutch"
+  ],
+  "currency": "EUR",
+  "emergencyNumber": "112",
+  "coordinates": {
+    "lat": 52.374,
+    "lon": 4.8897,
+    "precision": "country",
+    "matchedPlace": "Amsterdam",
+    "source": "country capital fallback"
+  },
+  "tags": [
+    "wet-heathland",
+    "dark-sky",
+    "hunebedden",
+    "radio-telescope",
+    "cabin-stay"
+  ],
+  "summary": "A quiet week on the Netherlands' largest wet heathland, sleeping in a Drenthe cabin, walking to Stone Age tombs and a historic radio telescope under some of the darkest skies in the country.",
+  "summaryGenerated": false,
+  "hook": "Dwingelderveld is the largest tract of wet heathland left in northwest Europe: open moor, shallow pools, sand drifts and juniper scrub, grazed by wandering flocks of Drenthe heath sheep and crossed by paths that close for months each spring so curlew and other ground-nesting birds can breed undisturbed. It sits inside one of the darkest patches of sky the Netherlands has left, next to a historic radio telescope and, a short ride away, some of Drenthe's oldest Stone Age tombs.",
+  "snapshot": {
+    "Country": "Netherlands",
+    "Base(s)": "Ruinen (7 nights), or a Drenthe forest cabin near Dwingeloo",
+    "Trip Type": "Nature Escapes & Cabin Stays",
+    "Duration": "7 days",
+    "Best Period": "May–June, September–October",
+    "Budget Tier": "€",
+    "Total Distance / Terrain": "approx. 70–90 km walking and cycling, negligible elevation change; heathland boardwalk, sandy forest track, quiet farm lanes",
+    "Getting There": "Amsterdam Schiphol (AMS) → train to Meppel, then bus to Ruinen (approx. 2h total)",
+    "Who It Suits": "Slow-travel walkers, families and stargazers who want flat, easy terrain and genuine dark skies without driving far"
+  },
+  "itinerary": [
+    {
+      "day": 1,
+      "title": "Meppel to Ruinen",
+      "morning": "Train from Schiphol to Meppel, the nearest railhead to the park, then a short local bus into Ruinen, a small village on the park's southern edge.",
+      "afternoon": "Check in and walk the short heath-edge loop from the village, an easy first orientation before committing to longer days.",
+      "evening": "Dinner in Ruinen; the village has a modest but sufficient choice of places to eat.",
+      "dayStats": "6 km, negligible vert. Village lanes and heath-edge path. Water: Ruinen shops. Bail-out: village is the base itself.",
+      "sleep": null
+    },
+    {
+      "day": 2,
+      "title": "Into the wet heath",
+      "morning": "Walk out onto the open Dwingelderveld heath on the boardwalked Reeuwijk or Noordse Veld sections, the classic wet-heathland scenery of shallow pools (vennen), purple heather and scattered juniper.",
+      "afternoon": "Continue toward the Drents-Friese Wold boundary area, watching for the Drenthe heath sheep flocks that graze the moor under a shepherd's daily watch — a working, centuries-old land-management practice, not a display.",
+      "evening": "Return to Ruinen; check the closure map for tomorrow's route, since some heath paths are seasonally shut for breeding curlew and other waders.",
+      "dayStats": "16 km, negligible vert. Boardwalk over wet sections, sandy heath path elsewhere. Water: none on the open heath — carry 1.5 L. Bail-out: the heath is criss-crossed by cycle paths that lead back to any surrounding village within 30–45 minutes.",
+      "sleep": null
+    },
+    {
+      "day": 3,
+      "title": "Havelte and the Papeloze Kerk hunebedden",
+      "morning": "Cycle or bus to Havelte, on the park's western fringe, to see two of Drenthe's Stone Age passage graves, known locally as De Papeloze Kerk (\"the popeless church\") — massive glacial boulders assembled by the Funnelbeaker culture roughly five thousand years ago.",
+      "afternoon": "Walk the short heath and forest loop around the tombs, then return via the quieter western paths of the park.",
+      "evening": "Dinner in Ruinen or, if staying at the cabin already, a simple meal in.",
+      "dayStats": "20 km cycling or 12 km walking depending on mode. Flat forest and heath track. Water: Havelte village. Bail-out: a bus service links Havelte back to Ruinen or Dwingeloo throughout the day.",
+      "sleep": null
+    },
+    {
+      "day": 4,
+      "title": "Dwingeloo radio telescope and move to the cabin",
+      "morning": "Bus to Dwingeloo village and visit the Dwingeloo radio telescope, a 25-metre dish built in 1956, one of the world's first large steerable radio telescopes, now restored and operated by amateur radio astronomers who run public open days.",
+      "afternoon": "Relocate to a self-catering forest cabin (vakantiehuisje) near Dwingeloo, simple but comfortable, with mains water and power and a wood stove for cool evenings.",
+      "evening": "Settle in; if the forecast is clear, this is a strong first stargazing night, since the telescope's own campus sits inside the same protected dark-sky zone as the cabin area.",
+      "dayStats": "10 km walking/cycling combined. Village lanes and forest track. Water: Dwingeloo shops, then cabin supply. Bail-out: not applicable, a light day by design.",
+      "sleep": null
+    },
+    {
+      "day": 5,
+      "title": "Ruinen forest and heath loop",
+      "morning": "A longer loop through the Ruinen forest and the heath's eastern section, quieter than the Havelte side and good for birdlife away from the main visitor routes.",
+      "afternoon": "A slow lunch stop at one of the park's information huts, then a shorter return leg, keeping the day light for tonight's stargazing.",
+      "evening": "Dark-sky watching from the cabin or a nearby open heath viewpoint, well clear of village lighting — Dwingelderveld is recognised as one of the Netherlands' dark-sky areas, and on a clear, moonless night the Milky Way is visible to the naked eye.",
+      "dayStats": "18 km walking. Forest track and heath path. Water: information hut taps. Bail-out: several forest tracks shortcut back to Ruinen or Dwingeloo.",
+      "sleep": null
+    },
+    {
+      "day": 6,
+      "title": "Slow day: sheep, cycling, no fixed plan",
+      "morning": "Join (or simply watch from a distance) the daily shepherding of the heath sheep flock, timed and posted locally — a genuinely calm, low-key event rather than a show.",
+      "afternoon": "Rent bicycles in Dwingeloo for an easy loop through the surrounding Drenthe farmland and forest edges, well outside the protected heath core, with none of yesterday's path restrictions.",
+      "evening": "A last dinner at the cabin or in Dwingeloo village.",
+      "dayStats": "25 km cycling, flat. Farm lanes and cycle paths. Water: Dwingeloo shops. Bail-out: the flat Drenthe cycle network makes any point a short ride from a village.",
+      "sleep": null
+    },
+    {
+      "day": 7,
+      "title": "Back to Meppel and out",
+      "morning": "Pack out of the cabin, leaving rubbish at the collection point given at check-in.",
+      "afternoon": "Bus to Meppel and train to Schiphol.",
+      "evening": "Onward flight.",
+      "dayStats": "Transfer day, no walking distance logged.",
+      "sleep": null
+    }
+  ],
+  "accommodationStrategy": [
+    {
+      "rank": 1,
+      "name": "Guesthouse in Ruinen",
+      "style": "Village inn",
+      "location": "heath-edge location",
+      "description": "A small, unpretentious base right against the southern edge of the heath, useful for the early days of the trip when the boardwalk sections are the focus. The village is quiet enough that booking two or three weeks ahead is normally enough outside peak summer.",
+      "booking": "3–4 weeks ahead in summer.",
+      "priceNote": "€65–€95 per night with breakfast"
+    },
+    {
+      "rank": 2,
+      "name": "Forest cabin (vakantiehuisje) near Dwingeloo",
+      "style": "Self-catering cabin",
+      "location": null,
+      "description": "A simple, well-kept cabin within the darkest part of the protected sky zone, close to both the radio telescope and the eastern heath trails. Facilities are straightforward — mains water and power, a wood stove, no streetlight nearby, which is exactly the point for stargazing.",
+      "booking": "6–8 weeks ahead for a September–October dark-sky stay.",
+      "priceNote": "€95–€140 per night for two, self-catering"
+    },
+    {
+      "rank": 3,
+      "name": "Guesthouse in Dwingeloo",
+      "style": "Village inn",
+      "location": "park-north location",
+      "description": "A useful alternative or add-on base close to the telescope and the sheep-shepherding routes, with a shorter walk to the astronomy programme's public evenings than from Ruinen.",
+      "booking": "3–4 weeks ahead.",
+      "priceNote": "€70–€100 per night with breakfast"
+    }
+  ],
+  "logistics": {
+    "connectivity": null,
+    "emergency": "112 pan-European for police, ambulance and fire.",
+    "weather": null,
+    "bookingWindows": null,
+    "money": "Euro. Cards, including contactless, are near-universal even in the small village shops; carry a little cash for the radio telescope's donation box on open days.",
+    "transportRules": null,
+    "permits": null,
+    "health": null,
+    "gettingThere": null,
+    "other": [
+      {
+        "label": "Access",
+        "text": "No 4x4 or special vehicle is needed; Ruinen and Dwingeloo both sit on paved roads with regular bus service from Meppel station, and the heath itself is walked or cycled, not driven."
+      },
+      {
+        "label": "Isolation level",
+        "text": "Be plain about this too: Drenthe's heath villages are small but well-serviced, with a supermarket and pharmacy within a few kilometres at all times and reliable mobile signal across almost the whole park. The dark, empty feel of the heath at night is a managed effect of deliberate lighting policy, not true remoteness."
+      },
+      {
+        "label": "Resupply",
+        "text": "Ruinen and Dwingeloo both have a supermarket and bakery; Meppel, a short bus or train ride away, covers anything larger, including a pharmacy with longer hours."
+      },
+      {
+        "label": "Foraging and fire law",
+        "text": "Dwingelderveld is a protected Natura 2000 wet heathland; leaving marked paths onto the open moor is prohibited to protect the fragile vegetation and ground-nesting birds, and a number of paths close entirely from mid-March to mid-August for exactly that reason — check the current closure map before setting out. Picking plants, flowers or moss is not permitted anywhere in the park. Campfires and wild camping are prohibited throughout; a small number of basic trekkershutten (simple hiker cabins) at surrounding campsites are the closest thing to an off-grid overnight the park allows."
+      },
+      {
+        "label": "Wildlife",
+        "text": "The heath sheep flocks are working animals, not petting-zoo attractions — keep dogs leashed and give them space. Watch for curlew and other waders on the protected sections, roe deer at forest edges, and the adder (Vipera berus), the Netherlands' only venomous snake, which suns itself on open heath paths in spring — leave it alone and it will move off."
+      },
+      {
+        "label": "Ticks",
+        "text": "Common in the heath grass and forest edges from spring through autumn; check daily after walking off boardwalk sections."
+      }
+    ]
+  },
+  "proTips": [
+    "Check the seasonal path-closure map before every heath walk — Dwingelderveld enforces its bird-breeding closures properly, and rangers do patrol.",
+    "Time a visit to the Dwingeloo telescope around one of the volunteer group's public open days, when the dish itself may be tracking and the operators explain its history properly.",
+    "Watch the heath sheep shepherding from a distance in the early morning — the flock and shepherd follow a set daily route, and locals will tell you the rough timing if you ask at the Ruinen or Dwingeloo tourist information point.",
+    "Choose a moonless night for stargazing and give your eyes twenty full minutes to adjust before judging the sky — the difference between a rushed five-minute look and a proper dark-adapted view here is enormous.",
+    "Cycle rather than walk the Havelte hunebedden day; it turns a long walking day into an easy half-day and leaves energy for the evening's astronomy.",
+    "Ruinen's small weekly market (check the current day locally) is worth timing a visit around for fresh produce rather than relying only on the supermarket.",
+    "Bring a picnic for the open heath sections — there are no cafés on the moor itself, only at the surrounding village edges and information huts."
+  ],
+  "typeSpecific": {
+    "raw": {
+      "Total Distance / Terrain": "approx. 70–90 km walking and cycling, negligible elevation change; heathland boardwalk, sandy forest track, quiet farm lanes",
+      "Who It Suits": "Slow-travel walkers, families and stargazers who want flat, easy terrain and genuine dark skies without driving far"
+    },
+    "surface": "approx. 70–90 km walking and cycling, negligible elevation change; heathland boardwalk, sandy forest track, quiet farm lanes",
+    "distanceKm": 70,
+    "elevationM": null,
+    "verticalM": null,
+    "technicalRating": null,
+    "transitPass": null,
+    "hutBooking": null,
+    "liftNetwork": null,
+    "snowReliability": null,
+    "windConditions": null,
+    "gpxReady": null,
+    "bookingTimeline": null,
+    "audience": "Slow-travel walkers, families and stargazers who want flat, easy terrain and genuine dark skies without driving far"
+  },
+  "packingNotes": [
+    "A light rain shell — Drenthe weather changes quickly even on a forecast-dry day.",
+    "Warm layers for stargazing evenings, which get cold fast on open heath even in summer.",
+    "A red-light headtorch if you own one, to preserve night vision during dark-sky evenings.",
+    "Binoculars for the sheep flocks, waders and general heath birdlife.",
+    "Sturdy but not technical footwear — the boardwalks are easy, but wet-heath mud off them is deep.",
+    "A refillable water bottle; taps are at villages and information huts, not on the open moor.",
+    "Insect repellent for the wet-heath pools in summer.",
+    "A basic first-aid kit including tweezers for tick removal."
+  ],
+  "whatCouldGoWrong": [
+    "**A planned heath path is seasonally closed.** Fallback: the boardwalked core routes near Ruinen and the forest tracks around Dwingeloo stay open year-round; reroute onto those rather than pushing past a closure sign.",
+    "**Cloud cancels the stargazing night.** Fallback: Drenthe's dark skies are reliable across the week in a clear spell — shift the attempt to whichever night the forecast improves, and treat the radio telescope's daytime visit as the guaranteed part of the astronomy plan.",
+    "**Rain turns the open heath boggy.** Fallback: stick to boardwalked sections and the surrounding forest tracks, which drain better than the open vennen.",
+    "**Sunday and Monday closures.** Village shops and some cafés close Sunday afternoon and, in smaller villages, Monday too; buy ahead on Saturday.",
+    "**A missed connecting bus from Meppel.** Rural services run on a limited timetable; check the return schedule the night before and build in a buffer, since evening frequencies thin out."
+  ],
+  "sources": {
+    "verified": null,
+    "confidenceNotes": null
+  },
+  "verifyFlags": [],
+  "verifyFlagCount": 0,
+  "volatilePricing": false,
+  "wordCount": 1997,
+  "dataVintage": 2026,
+  "provenance": {
+    "batch": "western-central",
+    "sourceFile": "cartatripsv1/trips/nl-nature-drenthe-dwingelderveld.md",
+    "sourceFormat": "md+yaml-frontmatter (one file per trip)",
+    "sourceId": "nl-nature-drenthe-dwingelderveld",
+    "ingestedAt": "2026-09-02",
+    "synthesized": false
+  }
+}

@@ -1,0 +1,290 @@
+{
+  "id": "bg-water-sports-black-sea-coast",
+  "sourceId": "bulgaria-black-sea-coast-water-sports",
+  "slug": "bg-water-sports-black-sea-coast",
+  "title": "Wind, Cliff and Reedbed: The Bulgarian Black Sea from Durankulak to Rezovo",
+  "country": "Bulgaria",
+  "countryCode": "BG",
+  "countries": [
+    {
+      "name": "Bulgaria",
+      "code": "BG"
+    }
+  ],
+  "isMultiCountry": false,
+  "region": "Eastern & Southeastern Europe",
+  "regionKey": "eastern-southeastern",
+  "subRegion": "The Bulgarian Black Sea Coast — Dobrudzha to Strandzha",
+  "tripType": "Water Sports & Coastal Trips",
+  "tripTypeId": 10,
+  "tripTypeSlug": "water-sports",
+  "durationDays": 7,
+  "bestPeriod": {
+    "months": [
+      6,
+      9
+    ],
+    "monthNames": [
+      "June",
+      "September"
+    ],
+    "window": "the first three weeks of June, then the whole of September",
+    "note": null,
+    "avoid": "mid-July to late August (Sunny Beach and Golden Sands at capacity, doubled rates, weakest wind of the year)",
+    "raw": null
+  },
+  "budgetTier": "€",
+  "budgetTierRange": [
+    1,
+    2
+  ],
+  "budgetTierRaw": "€–€€",
+  "budget": {
+    "currency": "EUR",
+    "totalEur": {
+      "low": 745,
+      "high": 1400
+    },
+    "totalNote": "€745–€1,400",
+    "breakdown": {
+      "accommodation": {
+        "lowEur": 245,
+        "highEur": 490,
+        "note": "€245–€490 (€35–€70/night, guesthouse or apartment double)"
+      },
+      "food": {
+        "lowEur": 140,
+        "highEur": 230,
+        "note": "€140–€230 (€20–€33/day, mehana dinners and market breakfasts)"
+      },
+      "transport": {
+        "lowEur": 180,
+        "highEur": 280,
+        "note": "€180–€280 (car hire Varna–Burgas open-jaw, plus fuel and one-way fee)"
+      },
+      "activities": {
+        "lowEur": 180,
+        "highEur": 400,
+        "note": "€180–€400 (kite/windsurf rental and tuition, two dives, SUP, reserve boat)"
+      }
+    },
+    "perDayEur": {
+      "low": 106,
+      "high": 200
+    }
+  },
+  "profile": {
+    "difficulty": 3,
+    "difficultyLabel": "Active",
+    "difficultyNote": "Moderate",
+    "fitnessLevel": "Moderate",
+    "crowdLevel": null,
+    "familyFriendly": null,
+    "carRequired": null
+  },
+  "basecamps": [
+    "Krapets",
+    "Varna",
+    "Sozopol",
+    "Sinemorets"
+  ],
+  "gatewayAirport": "Fly into Varna, out of Burgas; 130 km apart, both served by low-cost carriers. Hire a car — the E87 / Route 9 coast road is the spine and the northern kite beaches have no useful bus.",
+  "gatewayAirportCode": null,
+  "languages": [
+    "Bulgarian"
+  ],
+  "currency": "Euro (EUR) — sole legal tender since 1 February 2026; mandatory dual BGN display ended 8 August 2026",
+  "emergencyNumber": "112",
+  "coordinates": {
+    "lat": 43.2191,
+    "lon": 27.9102,
+    "precision": "city",
+    "matchedPlace": "Varna",
+    "source": "geonames (geonamescache, cities > 15k)"
+  },
+  "tags": [
+    "kitesurfing",
+    "windsurfing",
+    "sup",
+    "freediving",
+    "wreck-diving",
+    "unesco",
+    "cliffs",
+    "rip-currents"
+  ],
+  "summary": "Bulgaria's coast is two countries pretending to be one. The north is limestone cliff, empty steppe beach and the most reliable wind in the country; the south is river mouths, oak forest running down to the sand and…",
+  "summaryGenerated": false,
+  "hook": "Bulgaria's coast is two countries pretending to be one. The north is limestone cliff, empty steppe beach and the most reliable wind in the country; the south is river mouths, oak forest running down to the sand and old fishing towns. Between them sit the package resorts, which you drive past. This week is wind in the morning, a boat or a wreck in the afternoon, and grilled *tsatsa* with a cold Zagorka at a table on the harbour wall.",
+  "snapshot": {
+    "Country": "Bulgaria",
+    "Trip type": "Water Sports & Coastal Trips",
+    "Duration": "7 days",
+    "Best period": "June and September (warm sea, thinner crowds, usable wind)",
+    "Budget tier": "€–€€",
+    "Difficulty": "Moderate (open-water swimming competence assumed)",
+    "Start / End": "Varna (VAR) → Burgas (BOJ), north to south, open-jaw",
+    "Getting there": "Fly into Varna, out of Burgas; 130 km apart, both served by low-cost carriers. Hire a car — the E87 / Route 9 coast road is the spine and the northern kite beaches have no useful bus."
+  },
+  "itinerary": [
+    {
+      "day": 1,
+      "title": "North to the wind",
+      "morning": "Land at Varna, collect the car and drive north on Route 9 past Balchik and Kavarna to Shabla. Buy supplies in Kavarna; Krapets has a village shop and little else.",
+      "afternoon": "Walk out to Shabla lighthouse, the easternmost point of Bulgaria, then down to the Shablenska Tuzla lagoon behind the dunes. Read the wind on the water before committing to a launch.",
+      "evening": "Settle into a Krapets guesthouse. Dinner is whatever the village kitchen has — usually *shopska*, grilled *safrid* and house rakia [VERIFY: current guesthouse rates in Krapets].",
+      "dayStats": "100 km driving",
+      "sleep": null
+    },
+    {
+      "day": 2,
+      "title": "Durankulak, the reference zone (kite/windsurf day)",
+      "morning": "Drive 12 km north to Durankulak beach, park behind the dunes, and rig early only if a gradient wind is already running. Otherwise walk the sand spit between the sea and Durankulak lake, a major migratory stopover.",
+      "afternoon": "The thermal window: 12–20 knots north-easterly, flat inshore water, clean sand and nothing to hit for kilometres. Beginners stay at Krapets, where the shore shelves gently.",
+      "evening": "Derig before the wind dies rather than after. Eat in Shabla and watch for pelicans and geese over the lake at dusk; the Dobrudzha steppe behind you is completely dark.",
+      "dayStats": null,
+      "sleep": null
+    },
+    {
+      "day": 3,
+      "title": "Kaliakra, Bolata and the Balchik gardens",
+      "morning": "Cape Kaliakra: a red-brown limestone headland running two kilometres into the sea, 70 m cliffs, a fortress ruin and cormorant colonies below. Come before the coach parties at 11:00.",
+      "afternoon": "Bolata Bay, the red-cliffed cove just north of the cape, is the best snorkel entry on this coast — clear water, rock, a lifeguarded strip in season. Rusalka and Kavarna's Chirakman headland are minutes on.",
+      "evening": "Balchik: the Palace of Queen Marie and its University Botanical Garden step down terraces to the sea, best at closing time in low sun. They are separately run — the palace complex by the Ministry of Culture, the garden by Sofia University — so pay **€10 (19.56 BGN)** at each gate, or take the **combined adult ticket at €20 (2026 tariff)**; concessions and students €3.60, children 6–18 €3, a family package €18. Gates open 08:00–20:00 May–August, 08:00–19:00 in September, and 08:30–17:00 in winter. Sleep in Varna.",
+      "dayStats": "90 km driving",
+      "sleep": null
+    },
+    {
+      "day": 4,
+      "title": "Varna, wrecks and the freedive line (dive day)",
+      "morning": "Book a two-tank morning with a Varna dive centre. The Black Sea below roughly 150 m is anoxic, which means shallow wrecks stay remarkably intact; the *Mopang*, a steamer lost off the Kaliakra coast, sits in easy recreational depth [VERIFY: current wreck trip operator and price].",
+      "afternoon": "Surface interval on Kabakum or Bunkera, the two beaches north of the Sea Garden that locals use instead of Golden Sands. Freedivers use the rock shelves off Bunkera; visibility is best on a settled easterly.",
+      "evening": "Walk the Sea Garden to the Naval Museum, then eat in the Gretsi and Kraibrezhna quarter behind the port. Varna is the only place on the route with real late food.",
+      "dayStats": null,
+      "sleep": null
+    },
+    {
+      "day": 5,
+      "title": "Byala, Nesebar and the resort you skip",
+      "morning": "Drive south to Byala for the white marl cliffs at Byala's north beach, then the wild sand at Karadere — unguarded, no concession, no shade, and the last undeveloped long beach on the central coast.",
+      "afternoon": "Nesebar's old town sits on a rock peninsula and is a UNESCO World Heritage site for its Byzantine church stock — the Church of Christ Pantocrator and St Stephen among a dozen survivors. The Museum Ancient Nessebar's **all-sites combined ticket is €17.90 (35.00 BGN)** adult, €8.69 (17.00 BGN) child (2026 tariff), covering the archaeological museum, St Stephen, St Spas, St Paraskeva, St John the Baptist and the windmill; singly it is €4.60 for the museum-plus-St-Stephen ticket and €2.56 for each of the smaller churches, so the combined ticket pays for itself at four sites. Beside it, Sunny Beach is a high-rise package resort of clubs and hotel blocks; drive through it, do not stop.",
+      "evening": "Continue to Sozopol. Take a room in the old town on the Skamni peninsula and eat at Neptun, one of the long-standing fish tables on the seaward lane [VERIFY: current hours].",
+      "dayStats": "120 km driving",
+      "sleep": null
+    },
+    {
+      "day": 6,
+      "title": "Ropotamo, Arkutino and the paddling day",
+      "morning": "The Ropotamo river reserve runs boat trips upriver from the bridge landing past Lion's Head rock and the drowned oak forest. Private paddling within the reserve is restricted — arrange access rather than launching [VERIFY: current private-craft rules on the Ropotamo].",
+      "afternoon": "Arkutino beach and the dune system behind it, then Dyuni's long strand. Both are exposed rip-current bays on a south-easterly swell; if the flags are red, take the water lily lagoon instead.",
+      "evening": "Back to Sozopol harbour for *tsatsa*, mussels and a mehana table. The old town empties around 22:00 in September, which is when the lanes are worth walking.",
+      "dayStats": "60 km driving",
+      "sleep": null
+    },
+    {
+      "day": 7,
+      "title": "Sinemorets, the Veleka mouth and Silistar",
+      "morning": "Drive south through Primorsko, Kiten, Tsarevo and Ahtopol into Strandzha. At Sinemorets the Veleka river meets the sea across a sandbar — freshwater on one side, sea on the other, and a strong outflow current at the bar itself.",
+      "afternoon": "SUP upstream on the Veleka between forested banks; boards rent on the north beach. Then Silistar, five kilometres on: a protected, unguarded cove with the clearest water on the Bulgarian coast.",
+      "evening": "Eat in Sinemorets or Ahtopol, then drive 90 minutes north to Burgas for the flight out [VERIFY: current Sinemorets guesthouse rates].",
+      "dayStats": "95 km driving",
+      "sleep": null
+    }
+  ],
+  "accommodationStrategy": [
+    {
+      "rank": 1,
+      "name": "A Krapets village guesthouse",
+      "style": "family guesthouse",
+      "location": "Krapets",
+      "description": "two minutes from the launch, so you rig on the wind rather than the drive. Owners store boards, read the forecast better than any app, and cook if you ask by lunchtime.",
+      "booking": "direct by phone or messaging; 3–5 weeks for June, less for late September.",
+      "priceNote": null
+    },
+    {
+      "rank": 2,
+      "name": "An old-town room on the Skamni peninsula",
+      "style": "stone townhouse",
+      "location": "Sozopol",
+      "description": "Ropotamo, Arkutino and Dyuni within 30 minutes, Sinemorets within 90, and dinner on foot rather than a drive after wine. The wooden-balcony houses are the ones worth paying for.",
+      "booking": "6–8 weeks for early September; the old town fills before the modern side.",
+      "priceNote": null
+    },
+    {
+      "rank": 3,
+      "name": "A Sinemorets guesthouse above Butamyata",
+      "style": "small guesthouse",
+      "location": "Sinemorets",
+      "description": "both Veleka-mouth beaches and Silistar are walkable or five minutes away, and Strandzha forest starts at the back gate. Simple rooms, big terraces, no nightlife — the point.",
+      "booking": "4–6 weeks ahead; stock is limited and Bulgarian families take it in August.",
+      "priceNote": null
+    }
+  ],
+  "logistics": {
+    "connectivity": "4G is good along the whole coast, patchy in the Strandzha forest inland of Sinemorets. Buy a local prepaid SIM at Varna airport for cheap data.",
+    "emergency": "112; on guarded beaches tell the lifeguard first. Recompression facilities are limited — dive conservatively and carry cover that includes it.",
+    "weather": "afternoon thermals are reliable, storms are not. Summer fronts arrive fast off the north-west with lightning and a sudden offshore blast; get off the water when the horizon greys, not when the first drop lands.",
+    "bookingWindows": "4–8 weeks for the good guesthouses in June and September. Anything within 20 km of Sunny Beach in August is a different market entirely.",
+    "money": "Bulgaria uses the euro, with lev amounts still displayed at the fixed 1.95583 BGN rate. Cards are accepted almost everywhere on the coast; carry cash for beach concessions, village guesthouses and reserve boats.",
+    "transportRules": "a vignette is required on Bulgarian national roads — hire cars normally include it, so confirm at pickup. The Varna–Burgas one-way drop incurs a fee. Route 9 is single carriageway with heavy summer traffic; do not plan long legs after dark.",
+    "permits": "Kaliakra, Ropotamo, Arkutino and Silistar are protected areas with rules on access, camping and craft — no wild camping, no fires, and marked paths at Kaliakra. Kitesurfing is prohibited inside marked swimming zones on concessioned beaches; launch outside the buoys.",
+    "health": null,
+    "gettingThere": null,
+    "other": []
+  },
+  "proTips": [
+    "Treat Shabla–Durankulak as the anchor and everything else as flexible. If a three-day northerly is forecast, stay north and shift the southern days; the wind will not come to you.",
+    "Go to Nesebar at 08:00 or after 18:30. The old town is a cruise and coach destination between those hours and genuinely lovely outside them.",
+    "On any concessioned beach, walk 100 m past the last row of loungers. The free zone is a legal requirement, it is almost always emptier, and you keep the same lifeguard cover.",
+    "Order fish by the local name and by weight — *tsatsa* (fried sprat), *safrid* (horse mackerel), *kalkan* (turbot, in season and expensive). Asking for \"fish\" gets you frozen imported fillet.",
+    "Swim early. Water is calmest before the thermal builds, jellyfish drift in on the afternoon onshore breeze, and the long sandy bays are least ripped at dawn.",
+    "Karadere and Silistar have no lifeguard, no shade and no shop. Take water, take a shirt, and do not swim there alone on a day with any surf running."
+  ],
+  "typeSpecific": {
+    "raw": {
+      "Prevailing wind": "A north-easterly to easterly sea breeze builds through the afternoon as the land heats: light before 11:00, 12–20 knots by 14:00–17:00, dying near sunset. June and September give the most usable days; July–August is the flattest stretch of the season. From late September the synoptic northerlies arrive — colder, stronger, less predictable, and the reason the north coast has a shoulder season. Southerlies bring swell and murky water.",
+      "Launch spots": "Durankulak beach and the Shabla–Krapets strip are Bulgaria's reference kite and windsurf zone: shallow, sandy, obstruction-free, with a long north-easterly fetch. Krapets is the friendlier learner launch, Durankulak the more committing. Further south, Kabakum and Bunkera north of Varna work in a moderate easterly, and Burgas Bay — the Sarafovo side and Sozopol's Harmanite beach — is the southern alternative when the north is blown out.",
+      "Equipment and rental hubs": "Seasonal kite and windsurf operations set up on the sand at Shabla, Durankulak and Krapets from roughly May to October, teaching in English and storing gear; they are small and change names between seasons, so confirm before driving four hours [VERIFY: current schools, rates and season dates at Shabla/Durankulak]. Varna holds the coast's only year-round dive infrastructure; SUP rents by the hour in Sozopol, Sinemorets and at Arkutino.",
+      "Tidal and current awareness": "The Black Sea is effectively non-tidal — the astronomical range is a few centimetres and you can ignore it entirely when planning a launch or a shore dive. What actually kills people here is different. Wind-driven longshore currents run parallel to the shore on any sustained cross-shore breeze and will move you a kilometre down the beach without your noticing. Rip currents form off the long sandy bays — Sunny Beach, Kavatsi, Dyuni, Krapets — usually where a sandbar gap concentrates the return flow; swim parallel to shore to exit, never against it. Seiches, basin-scale standing oscillations driven by pressure and wind, cause abrupt level and current changes inside enclosed bays such as Burgas and Varna. River mouths at Veleka and Ropotamo add an outflow that runs hard after rain.",
+      "Water, jellyfish and beach rules": "The sea reaches 22–25 °C in June and holds into late September. *Rhizostoma pulmo*, the barrel jellyfish, blooms from midsummer into October — large, alarming, only mildly stinging, but unpleasant in the face while freediving. Bulgarian beaches are state property let under concession: operators may charge for umbrellas and loungers in defined zones, must keep **at least 50% of the active beach area as a free zone** for people with their own kit, and must staff lifeguards and marked swim areas in season. There is no single national price cap — the ceiling is written into each concession contract — but the 2026 norm on the main concession beaches is about **€5 (10 BGN) for an umbrella and €5 again for a lounger**, from around €1.50 each on municipal beaches such as Burgas North up to €15 and more at the premium Sunny Beach and Sozopol fronts (press reporting rather than a published tariff). Blue Flag beaches are guarded; Karadere, Silistar and the Veleka mouth are not. Blue Flag beaches are guarded; Karadere, Silistar and the Veleka mouth are not."
+    },
+    "surface": null,
+    "distanceKm": null,
+    "elevationM": null,
+    "verticalM": null,
+    "technicalRating": null,
+    "transitPass": null,
+    "hutBooking": null,
+    "liftNetwork": null,
+    "snowReliability": null,
+    "windConditions": "A north-easterly to easterly sea breeze builds through the afternoon as the land heats: light before 11:00, 12–20 knots by 14:00–17:00, dying near sunset. June and September give the most usable days; July–August is the flattest stretch of the season. From late September the synoptic northerlies arrive — colder, stronger, less predictable, and the reason the north coast has a shoulder season. Southerlies bring swell and murky water.",
+    "gpxReady": null,
+    "bookingTimeline": null,
+    "audience": null
+  },
+  "packingNotes": [],
+  "whatCouldGoWrong": [],
+  "sources": {
+    "verified": null,
+    "confidenceNotes": "- Verified: Shabla/Durankulak as Bulgaria's reference kite and windsurf zone, Burgas Bay the southern alternative; the Black Sea as effectively non-tidal, with wind-driven currents, seiches and rip currents off the long sandy bays as the real hazards; Nesebar as a UNESCO World Heritage site; euro adoption with lev at the fixed 1.95583 rate; the anoxic deep layer preserving wrecks; *Rhizostoma pulmo* as the late-season bloom jellyfish. - `[VERIFY]` items in this file: 6 (see inline markers above) - Last reviewed: 2026-09-02"
+  },
+  "verifyFlags": [
+    "current schools, rates and season dates at Shabla/Durankulak",
+    "current guesthouse rates in Krapets",
+    "current wreck trip operator and price",
+    "current hours",
+    "current private-craft rules on the Ropotamo",
+    "current Sinemorets guesthouse rates"
+  ],
+  "verifyFlagCount": 6,
+  "volatilePricing": true,
+  "wordCount": 2365,
+  "dataVintage": 2026,
+  "provenance": {
+    "batch": "eastern-southeastern",
+    "sourceFile": "cartaeasterneuropetrips/trips/bulgaria-black-sea-coast-water-sports.md",
+    "sourceFormat": "md+nested-yaml-frontmatter (one file per trip)",
+    "sourceId": "bulgaria-black-sea-coast-water-sports",
+    "ingestedAt": "2026-09-02",
+    "synthesized": false
+  }
+}

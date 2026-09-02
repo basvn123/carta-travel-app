@@ -147,16 +147,22 @@ await page.waitForTimeout(800);
 const p1 = await page.locator('.places-dcard .places-card-price').first().innerText().catch(() => '');
 check('price sort resorts the cards', /€/.test(p1), p1);
 
-// ── Trips: the day rail, then the drawn city walks ──
+// ── Trips: the curated library, then the composed door, then the walks ──
 //
-// The category now opens on the composed multi-day itineraries (the published
-// trip layer, see verify_trips.mjs). The one-day city walks this block covers
-// are what the "1" chip on the day rail reaches, so that is how it gets there.
+// The category now opens on the curated trip library's style grid
+// (see verify_journeys.mjs for the library itself). The composed multi-day
+// itineraries live behind their own door at the end of the grid, and the
+// one-day city walks this block covers are what the "1" chip on the day
+// rail reaches, so that is how it gets there.
 await page.locator('.places-country:visible').selectOption('');
 await page.waitForTimeout(600);
 await page.locator('.places-cat', { hasText: /^trips$/i }).click();
 await page.waitForTimeout(1600);
-check('trips category opens on the composed itineraries',
+check('trips category opens on the style grid',
+  await page.locator('.jstyle-card').count() === 10);
+await page.locator('.jcomposed-card').click();
+await page.waitForTimeout(1600);
+check('the composed door opens the itineraries',
   await page.locator('.places-icard').count() > 0);
 check('the day slider is there', await page.locator('.trip-slider-input:visible').isVisible());
 await page.locator('.trip-slider-input:visible').fill('1');

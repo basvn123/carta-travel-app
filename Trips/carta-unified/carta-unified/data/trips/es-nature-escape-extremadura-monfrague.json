@@ -1,0 +1,281 @@
+{
+  "id": "es-nature-escape-extremadura-monfrague",
+  "sourceId": "nature-escape-spain-extremadura-monfrague",
+  "slug": "es-nature-escape-extremadura-monfrague",
+  "title": "Dehesa, Vultures and Dark Sky: An Extremadura Slow Week",
+  "country": "Spain",
+  "countryCode": "ES",
+  "countries": [
+    {
+      "name": "Spain",
+      "code": "ES"
+    }
+  ],
+  "isMultiCountry": false,
+  "region": "Southern & Mediterranean Europe",
+  "regionKey": "southern-mediterranean",
+  "subRegion": "Monfragüe, Las Hurdes, Sierra de Gata & the Jerte",
+  "tripType": "Nature Escapes & Cabin Stays",
+  "tripTypeId": 9,
+  "tripTypeSlug": "nature-escape",
+  "durationDays": 7,
+  "bestPeriod": {
+    "months": [
+      3,
+      5,
+      9,
+      10,
+      11
+    ],
+    "monthNames": [
+      "March",
+      "May",
+      "September",
+      "October",
+      "November"
+    ],
+    "window": "Mid-March–mid-May & late September–early November",
+    "note": null,
+    "avoid": "July–August — 40–44°C by mid-afternoon, raptors stop flying, and the fire-risk regime closes tracks and bans all open flame",
+    "raw": "Mid-March–mid-May & late September–early November"
+  },
+  "budgetTier": "€€",
+  "budgetTierRange": [
+    2,
+    2
+  ],
+  "budgetTierRaw": "€€",
+  "budget": {
+    "currency": "EUR",
+    "totalEur": {
+      "low": 1050,
+      "high": 1650
+    },
+    "totalNote": "€1,050–€1,650 per person, excl. international flights",
+    "breakdown": {
+      "accommodation": {
+        "lowEur": 450,
+        "highEur": 700,
+        "note": "Casas rurales €70–€110 a double; regional hospederías €90–€130"
+      },
+      "food": {
+        "lowEur": 250,
+        "highEur": 400,
+        "note": "Menú del día €13–€18; a Torta del Casar and Ibérico blowout adds €60"
+      },
+      "transport": {
+        "lowEur": 260,
+        "highEur": 400,
+        "note": "Rental car essential, €40–€60/day, fuel; no public transport reaches the viewpoints"
+      },
+      "activities": {
+        "lowEur": 90,
+        "highEur": 150,
+        "note": "Park entry free; one guided birding day €120–€200 for two, telescope hire, a night-sky session"
+      }
+    },
+    "perDayEur": {
+      "low": 150,
+      "high": 236
+    }
+  },
+  "profile": {
+    "difficulty": 2,
+    "difficultyLabel": "Moderate",
+    "difficultyNote": "2/5 — mostly viewpoint driving and 5–12 km walks; one 500 m climb to Monfragüe castle and one river-gorge day in the Jerte",
+    "fitnessLevel": "Moderate",
+    "crowdLevel": null,
+    "familyFriendly": null,
+    "carRequired": null
+  },
+  "basecamps": [],
+  "gatewayAirport": "MAD Madrid-Barajas, 2 h 30 to Torrejón el Rubio; SVQ Seville 2 h 45; LIS Lisbon 3 h 15",
+  "gatewayAirportCode": "MAD",
+  "languages": [],
+  "currency": null,
+  "emergencyNumber": "112",
+  "coordinates": {
+    "lat": 40.4165,
+    "lon": -3.7026,
+    "precision": "country",
+    "matchedPlace": "Madrid",
+    "source": "country capital fallback"
+  },
+  "tags": [
+    "birdwatching",
+    "dehesa",
+    "dark-sky",
+    "vultures",
+    "cabin-stay",
+    "schist-villages",
+    "cherry-blossom",
+    "foraging"
+  ],
+  "summary": "Extremadura is Europe's largest surviving stretch of dehesa — open oak pasture grazed for a thousand years — and its wildlife density is a consequence of that farming, not despite it. This week is built around slowness: two long, low-mileage days at Monfragüe's cliff viewpoints where cinereous vultures pass at eye level, a day of schist villages in Las Hurdes where the roofs are slate and the valleys are hard, a gorge day in the Jerte, and evenings under one of the darkest certified skies in western Europe. It suits people with binoculars, patience, and no urge to tick off towns. The best raptor watching is in the first two hours of light and the last two before dusk, so this is a trip that wants early nights and earlier mornings.",
+  "summaryGenerated": false,
+  "hook": null,
+  "snapshot": {},
+  "itinerary": [
+    {
+      "day": 1,
+      "title": "Land, drive west, first evening at Salto del Gitano",
+      "morning": "Collect the car at Madrid and drive the A-5 and EX-208 to Torrejón el Rubio. Stock up in Plasencia or Trujillo — the park has no shop.",
+      "afternoon": "Settle in, then drive the 10 minutes to Salto del Gitano and simply sit. The Peñafalcón cliff opposite is a quartzite wall with griffon and cinereous vultures on every ledge; late afternoon thermals bring them across the road at head height.",
+      "evening": "Dinner in Torrejón el Rubio on Extremaduran basics — migas, Torta del Casar, presa ibérica. Then five minutes outside the village for the first look at the sky.",
+      "dayStats": "250 km / 2 h 30 drive / park entry free / Salto del Gitano viewpoint at 260 m, cliff 200 m high / best raptor light 18:00–20:30 in spring",
+      "sleep": "Hospedería Parque de Monfragüe, Torrejón el Rubio"
+    },
+    {
+      "day": 2,
+      "title": "Dawn at Portilla del Tiétar, castle at midday",
+      "morning": "Be at Portilla del Tiétar for first light. This is the reliable spot for Spanish imperial eagle, black stork on the ledges, and — at dusk rather than dawn — eagle owl. Stay two hours; the birds work on their schedule, not yours.",
+      "afternoon": "Drive to Villarreal de San Carlos, the park's only village, founded in 1784 under Charles III to make the Tajo road safe, and use its information centres. Then climb to the Castillo de Monfragüe and the Ermita de la Virgen, 130 m above the car park, for the 360° view of the Tajo and Tiétar confluence.",
+      "evening": "Return to Portilla del Tiétar at dusk for the eagle owl. Take a flask; it gets cold quickly.",
+      "dayStats": "45 km driving / 2 walks totalling 6 km / castle at 460 m / imperial eagle pairs in the park in low double figures / no entry fee anywhere",
+      "sleep": "Hospedería Parque de Monfragüe"
+    },
+    {
+      "day": 3,
+      "title": "A guided dehesa and steppe morning, then nothing",
+      "morning": "Book a guide for a dehesa and pseudo-steppe morning outside the park — the Trujillo and Santa Marta de Magasca plains hold great bustard, little bustard, sandgrouse, roller and lesser kestrel, and finding them without local knowledge is a lottery. A telescope changes the day.",
+      "afternoon": "Deliberately empty. Sleep, read on a terrace, walk the dehesa footpath from your accommodation. In late autumn the Iberian pigs are out for the montanera, fattening on acorns from October to March — the only agricultural spectacle in Europe that tastes like something.",
+      "evening": "Trujillo's Plaza Mayor for a long dinner under the storks nesting on every tower.",
+      "dayStats": "Guided half-day typically €150–€250 for up to 4 / 60–90 km of farm roads / montanera runs Oct–Mar / lesser kestrel colonies in Trujillo's old town number in the dozens of pairs",
+      "sleep": "Casa Rural El Recuerdo, Pago de San Clemente"
+    },
+    {
+      "day": 4,
+      "title": "North to Las Hurdes and the schist villages",
+      "morning": "Drive north through Plasencia into Las Hurdes, a region of slate and schist valleys that was a byword for isolation until the 1920s. Stop at El Gasco, where the houses are built of stacked schist and a legend of a volcano attaches to the hill above, then walk to the Chorro de la Miacera waterfall.",
+      "afternoon": "Continue to Riomalo de Abajo and walk up to the Meandro del Melero viewpoint, where the Alagón river makes an almost complete loop around a tongue of land — one of the great river meanders of Iberia and best in late afternoon light.",
+      "evening": "Slate-country dinner at Las Mestas: goat, honey, and the local olive oil.",
+      "dayStats": "110 km / 2 h drive / El Gasco to Miacera 3.5 km round trip, 200 m ascent / Melero viewpoint walk 2.5 km round trip / last fuel at Nuñomoral",
+      "sleep": "Hospedería Hurdes Reales, Las Mestas"
+    },
+    {
+      "day": 5,
+      "title": "Sierra de Gata, Trevejo and a slow afternoon",
+      "morning": "Cross west into the Sierra de Gata. Robledillo de Gata is the set piece — timber-framed houses on stone, alleys a metre wide, an olive-oil village that has been left alone. Walk the river path below it.",
+      "afternoon": "Drive to Trevejo, a hamlet of a dozen houses around a Templar-linked castle ruin with rock-cut graves in the churchyard, on a spur with a hundred kilometres of view. Nothing else scheduled.",
+      "evening": "Back at the hospedería, or dinner in a village bar where the menu is spoken.",
+      "dayStats": "85 km of narrow mountain road / Trevejo at 780 m / Robledillo river walk 4 km flat / mobile signal fails in both valleys / driving time roughly double what a map suggests",
+      "sleep": "Hospedería Hurdes Reales, or a casa rural in Sierra de Gata"
+    },
+    {
+      "day": 6,
+      "title": "Valle del Jerte gorge day and La Vera",
+      "morning": "Drive east to the Valle del Jerte and walk into the Reserva Natural Garganta de los Infiernos to Los Pilones, a chain of glacial pothole pools scoured into granite. The route from the Puente Nuevo car park is around 6 km round trip with 250 m of ascent.",
+      "afternoon": "Cross into La Vera and its gargantas — the mountain streams at Garganta la Olla and Cuartos. This is cherry country: roughly a million and a half trees flower across the Jerte in the last week of March and the first of April, and the fruit is picked from late May into July.",
+      "evening": "Pimentón de la Vera is smoked over oak in this valley and turns up in everything; eat patatas revolconas and migas with it, and buy a tin of the *dulce* to take home.",
+      "dayStats": "95 km / Los Pilones walk 6 km, 250 m ascent, pools at 900 m / cherry blossom last week of March–first week of April / water 10–13°C, swimming is a plunge",
+      "sleep": "Casa rural in the Jerte or La Vera"
+    },
+    {
+      "day": 7,
+      "title": "Cornalvo, Mérida and out",
+      "morning": "Drive south to Cornalvo Natural Park, where a Roman dam built in the 1st–2nd century still holds water and the surrounding dehesa is quiet, dull-flat and full of birds — a good, low-effort last morning.",
+      "afternoon": "Mérida for the Roman theatre and amphitheatre if you have the appetite, or straight for the airport.",
+      "evening": "Fly out of Madrid or Seville, allowing three hours of driving either way.",
+      "dayStats": "Cornalvo dam still functional after ~1,900 years / 130 km Mérida–Cáceres / Mérida to MAD 3 h 15, to SVQ 2 h 15 / return the car with a full tank; fuel is 20 km from either airport",
+      "sleep": "Airport hotel, or an overnight in Mérida"
+    }
+  ],
+  "accommodationStrategy": [
+    {
+      "rank": 1,
+      "name": "Hospedería Parque de Monfragüe",
+      "style": "regional rural hotel",
+      "location": "Torrejón el Rubio",
+      "description": "Part of Extremadura's public hospedería network, ten minutes from Salto del Gitano and the closest full-service base to the park's viewpoints. Parking, a restaurant that will do an early breakfast if warned, a pool for the hot months, and around €90–€130 a double. The practical choice for the two dawn-and-dusk raptor days.",
+      "booking": null,
+      "priceNote": null
+    },
+    {
+      "rank": 2,
+      "name": "Casa Rural El Recuerdo",
+      "style": "naturalist-run country house",
+      "location": "Pago de San Clemente",
+      "description": "A dehesa house between Trujillo and Monfragüe, run by a working ornithologist, with its own garden bird list, telescopes on the terrace and guiding available from the door. Small, so it books out in the March–May peak. Roughly €80–€110 a double with breakfast. The right base for the steppe day.",
+      "booking": null,
+      "priceNote": null
+    },
+    {
+      "rank": 3,
+      "name": "Hospedería Hurdes Reales",
+      "style": "slate-country hospedería",
+      "location": "Las Mestas",
+      "description": "Deep in Las Hurdes at the head of the valley, with a river below and the schist villages within 20 minutes. It exists because the region needed one good hotel, and it is the only place up here with reliable heating, a pool and a restaurant. Around €80–€110. Fill your fuel tank before you arrive.",
+      "booking": null,
+      "priceNote": null
+    }
+  ],
+  "logistics": {
+    "connectivity": "Spain is EU, so roaming is free for EU SIMs. Coverage is good on the EX-208 and in towns, patchy at Portilla del Tiétar, and genuinely absent in the Hurdes and Sierra de Gata valley floors. Download offline maps; several Hurdes link roads are unsigned.",
+    "emergency": "112 for everything, including the Guardia Civil mountain rescue unit and the INFOEX fire service. Nearest hospitals: Virgen del Puerto in Plasencia for Monfragüe and Las Hurdes, Hospital de Cáceres to the south. EHIC/GHIC works in Spain's public system. Response into upper Las Hurdes is slow — carry coordinates.",
+    "weather": "The problem is heat, not storms — July and August run to 40–44°C in the Tajo valley, raptors stop flying in the middle of the day, and the fire regime restricts access. Spring brings a 20°C daily swing: 3°C at dawn at a viewpoint, 25°C by lunch. Autumn rain arrives suddenly in late October and turns Hurdes tracks slippery. The *gota fría* pattern can bring intense October downpours.",
+    "bookingWindows": "Casa Rural El Recuerdo and the small birding houses fill for late March–early May a good three to six months ahead — this is the peak international birding window. Guided days should be booked four to eight weeks out. Jerte cherry-blossom weekends sell out the entire valley; book by January. Photography hides on private estates need two to four weeks and often a minimum group.",
+    "money": "Euro. Cards work almost everywhere, but village bars in Las Hurdes and the Sierra de Gata, honesty-box honey stalls and small producers are cash. Carry €100 in small notes. Tipping is optional and small — round up, or leave a euro or two per person.",
+    "transportRules": "No vignette in Spain; the A-5 from Madrid is toll-free. A car is not optional — no bus reaches the Monfragüe viewpoints, and the ones that pass Torrejón el Rubio are useless for dawn starts. Stopping on the EX-208 outside marked bays is an offence and dangerous. Cross-border into Portugal is generally permitted by hire companies but declare it. Speed limits on the narrow EX roads are enforced by Guardia Civil mobile units.",
+    "permits": "Monfragüe National Park has no entry fee, no ticket and no booking system, but its core zones are closed to public access, and leaving marked paths and viewpoints is prohibited. Drones are banned over the national park. Collecting plants, fungi, antlers or anything else inside the park is prohibited. Outside it, virtually all dehesa is private: you need the owner's consent for anything, including walking. Camping outside campsites is not permitted.",
+    "health": "Tap water is potable throughout. Ticks are present in the dehesa spring and autumn — check after grass walking, and note that Crimean-Congo haemorrhagic fever virus has been detected in ticks in western Spain, which is a reason to use repellent and remove ticks promptly, not a reason to stay home. Processionary caterpillar nests in the pines are a February–April hazard for dogs and children. Heatstroke is the genuine summer risk. Snakes (Lataste's viper) exist but are shy.",
+    "gettingThere": null,
+    "other": []
+  },
+  "proTips": [
+    "Do Portilla del Tiétar twice — once at first light for imperial eagle and black stork, once at dusk for eagle owl. Almost every visitor does it once, in the middle of the day, and sees rocks.",
+    "Park at the Salto del Gitano bay and stay put for 90 minutes rather than driving between viewpoints. Vultures come to you; chasing them guarantees you are always in the car when something happens.",
+    "Villarreal de San Carlos has no shop and one seasonal bar. Buy lunch in Torrejón el Rubio or Plasencia every single morning.",
+    "Book a guided steppe morning rather than a Monfragüe morning. Monfragüe you can do yourself; great bustard and sandgrouse on the Magasca plains you almost certainly cannot.",
+    "Check the moon before choosing your dark-sky night. Monfragüe's Starlight certification is worth nothing against a gibbous moon; aim for the three nights either side of new moon.",
+    "In Las Hurdes, drive valley-by-valley rather than trying to loop. The connecting roads over the ridges are single-track, slow, and add an hour you did not budget.",
+    "The Jerte cherry blossom peaks in a window of about ten days that shifts by a fortnight year to year with the weather. Follow the valley's own bloom reports rather than booking a fixed date in January.",
+    "Ask your hospedería for a *desayuno temprano* the night before. Extremaduran hotels serve breakfast at 08:30, which is an hour after the birds have finished.",
+    "If you want a mushroom day in October, arrange it through a local association or a landowner rather than parking on a track. The dehesa is fenced private property and the fine for helping yourself is larger than a guided day."
+  ],
+  "typeSpecific": {
+    "raw": {
+      "Remote access — what actually needs clearance": "Monfragüe itself is a paved-road park: the EX-208 runs through it and the key viewpoints have car parks, so a normal hire car is correct and a 4x4 is a waste of money. Where clearance matters is Las Hurdes and Sierra de Gata — the 6.5 km concrete-and-gravel track above El Gasco to the Chorro de la Miacera, the unsealed link roads between Ladrillar and Riomalo, and the forest tracks in the Sierra de Gata piornales, all of which become slick and rutted after autumn rain. Dehesa farm tracks are almost all private, gated and cattle-gridded: do not drive them.",
+      "Last-mile walk-ins and transfers": "Salto del Gitano is a roadside viewpoint, zero walking. Monfragüe castle is a 25-minute, 130 m climb from the Fuente del Francés car park. The Meandro del Melero viewpoint is a 25–35 minute walk from the parking at Riomalo de Abajo. There is no shuttle inside the park and no useful bus; a taxi from Torrejón el Rubio to the viewpoints is possible but expensive, and guided birding operators pick up from your accommodation.",
+      "Wilderness isolation — Level 2 of 5 at Torrejón el Rubio, Level 3 in Las Hurdes": "From Villarreal de San Carlos it is 15 minutes to a paved main road, 20 minutes to a shop and fuel at Torrejón el Rubio, 45 minutes to a pharmacy of any size at Plasencia or Trujillo, and about 55 minutes to the Hospital Virgen del Puerto in Plasencia. In upper Las Hurdes, the villages of Ladrillar and Las Mestas are 40 minutes from a supermarket and over an hour from a hospital, with mobile coverage that fails in the valley bottoms.",
+      "Off-grid reality": "Most casas rurales here are grid-connected, but the character ones are stone or schist with wood-burning stoves and thin insulation — March and November nights fall below 5°C and the stove is the heating, not a decoration. Firewood is normally supplied and stacked. Water is municipal and potable in villages; standalone dehesa cottages often run from a borehole and a tank, which is fine to drink where the host says so and worth filtering if you are unsure. Wastewater is septic. Bring: binoculars (8x42 minimum), a telescope if you own one, a red-light head torch for the dark-sky nights, layers for a 20°C daily temperature swing, and food for two lunches — the park has no shop, and Villarreal's single bar closes early out of season.",
+      "Phone signal": "Reasonable across Monfragüe's viewpoints, weak at Portilla del Tiétar, absent in the deeper Hurdes valleys and much of the Sierra de Gata. Spain is EU, so roaming is free for EU SIMs. Download offline maps for Las Hurdes.",
+      "Named places to sleep": "Casa Rural El Recuerdo at Pago de San Clemente, between Trujillo and Monfragüe, is the birder's house — run by a naturalist, with a garden that produces its own species list. Hospedería Parque de Monfragüe in Torrejón el Rubio is the regional government's rural hotel, closest full-service base to the viewpoints. Hospedería Hurdes Reales at Las Mestas is the equivalent deep in Las Hurdes, in slate country with a pool and a river below.",
+      "Foraging rules": "Extremadura has no single region-wide mushroom quota comparable to the permit systems in Castilla y León (permits through micocyl.es, generally 5 kg per person per day) or Andalucía (3–5 kg depending on province). The binding constraint here is land tenure: the dehesa is overwhelmingly private, fenced and stocked, and picking without the owner's permission is trespass regardless of quantity. Collecting anything inside Monfragüe National Park is prohibited. Where you do have permission, autumn dehesa produces *Amanita caesarea*, *Boletus aereus* and *Macrolepiota procera*, and spring produces the *Amanita ponderosa* that La Vera and Sierra de Gata locals guard closely. Take a haul to a pharmacy or a local mycological association for identification rather than trusting an app; there is no permanent public inspection point in the villages.",
+      "Wildlife and hides": "Monfragüe holds one of the world's largest cinereous vulture colonies (several hundred pairs), a large griffon population, Egyptian vulture, black stork on the cliffs, Spanish imperial eagle in low double-figure pairs, Bonelli's eagle and eagle owl. The classic vantages are Salto del Gitano/Peñafalcón, Portilla del Tiétar (eagle owl at dusk, black stork, imperial eagle), Mirador de la Báscula and the castle. Ethical rules: no drones anywhere over the cliffs, no playback, no leaving the viewpoints to scramble toward nests, and no stopping on the EX-208 outside marked bays. Photography hides are run privately on surrounding estates and must be booked. Named guides working the area include Martin Kelsey (Casa Rural El Recuerdo) and Godfried Schreur of Extremadura Birding, both long-established; a private day is typically €150–€250 for a small group.",
+      "Dark sky": "Monfragüe holds Starlight Reserve certification, awarded in 2016, and the sky over the park regularly reads 21.5+ on a sky-quality meter. Villarreal de San Carlos and the Tajo bridge viewpoints are the accessible spots; new moon and the mid-August Perseids or mid-December Geminids are the calendar dates.",
+      "Fire risk and open flame": "Extremadura declares a high-risk period (*época de peligro alto*) typically running 1 June to 15 October, during which open flame, barbecues outside authorised installations, agricultural burning and often off-road vehicle use in forest are prohibited; the INFOEX plan governs it and fines are substantial. Cigarette ends from car windows are prosecuted. Outside that window, burning still requires municipal authorisation."
+    },
+    "surface": null,
+    "distanceKm": null,
+    "elevationM": null,
+    "verticalM": null,
+    "technicalRating": null,
+    "transitPass": null,
+    "hutBooking": null,
+    "liftNetwork": null,
+    "snowReliability": null,
+    "windConditions": null,
+    "gpxReady": null,
+    "bookingTimeline": null,
+    "audience": null
+  },
+  "packingNotes": [],
+  "whatCouldGoWrong": [],
+  "sources": {
+    "verified": "Monfragüe National Park has no entrance fee and Villarreal de San Carlos is the only settlement inside it, with the park's visitor centre; Monfragüe's status as a Starlight/dark-sky reserve; regional mushroom-quota comparison across Spanish autonomous communities (Castilla y León permit-based with a 5 kg per person per day limit; Andalucía 3–5 kg depending on province; Galicia 2 kg; Comunidad Valenciana 6 kg), confirming that Extremadura is not among the communities operating a headline personal quota.",
+    "confidenceNotes": "Extremadura's specific mycological regulation and any municipal permit schemes were not confirmed this run — verify with the Junta de Extremadura before publishing, and re-check the exact dates of the declared high fire-risk period, which shifts annually. Cinereous vulture and Spanish imperial eagle pair counts are cited as orders of magnitude, not current census figures; take the latest from the park's own monitoring. Named guides (Martin Kelsey / Casa Rural El Recuerdo; Godfried Schreur / Extremadura Birding) and their rates need confirmation of current operation. Hospedería Parque de Monfragüe and Hospedería Hurdes Reales rates are indicative and their opening seasons should be checked. Iberian lynx in Extremadura is confined to reintroduction areas well south of this route and was deliberately not promised as a sighting. Jerte blossom dates move by up to two weeks annually. Photography-hide operators on private estates around Monfragüe were not individually verified."
+  },
+  "verifyFlags": [],
+  "verifyFlagCount": 0,
+  "volatilePricing": false,
+  "wordCount": 3708,
+  "dataVintage": 2026,
+  "provenance": {
+    "batch": "southern-mediterranean",
+    "sourceFile": "carta-dataset/trips/nature-escape-spain-extremadura-monfrague.md",
+    "sourceFormat": "md with '## Metadata' bullet block (one file per trip)",
+    "sourceId": "nature-escape-spain-extremadura-monfrague",
+    "ingestedAt": "2026-09-02",
+    "synthesized": false
+  }
+}

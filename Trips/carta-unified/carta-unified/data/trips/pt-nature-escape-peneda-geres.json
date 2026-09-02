@@ -1,0 +1,279 @@
+{
+  "id": "pt-nature-escape-peneda-geres",
+  "sourceId": "nature-escape-portugal-peneda-geres",
+  "slug": "pt-nature-escape-peneda-geres",
+  "title": "Granite, Granaries and Wolf Country: Peneda-Gerês Slow Week",
+  "country": "Portugal",
+  "countryCode": "PT",
+  "countries": [
+    {
+      "name": "Portugal",
+      "code": "PT"
+    }
+  ],
+  "isMultiCountry": false,
+  "region": "Southern & Mediterranean Europe",
+  "regionKey": "southern-mediterranean",
+  "subRegion": "Minho & Peneda-Gerês National Park",
+  "tripType": "Nature Escapes & Cabin Stays",
+  "tripTypeId": 9,
+  "tripTypeSlug": "nature-escape",
+  "durationDays": 7,
+  "bestPeriod": {
+    "months": [
+      5,
+      6,
+      9,
+      10
+    ],
+    "monthNames": [
+      "May",
+      "June",
+      "September",
+      "October"
+    ],
+    "window": "Mid-May–late June & mid-September–late October",
+    "note": null,
+    "avoid": "July–August — the critical fire period closes forest access on high-risk days, the river pools are packed, and Albergaria is tolled and jammed",
+    "raw": "Mid-May–late June & mid-September–late October"
+  },
+  "budgetTier": "€€",
+  "budgetTierRange": [
+    2,
+    2
+  ],
+  "budgetTierRaw": "€€",
+  "budget": {
+    "currency": "EUR",
+    "totalEur": {
+      "low": 950,
+      "high": 1500
+    },
+    "totalNote": "€950–€1,500 per person, excl. international flights",
+    "breakdown": {
+      "accommodation": {
+        "lowEur": 420,
+        "highEur": 680,
+        "note": "Village granite houses €70–€110 per unit; campsite bungalows €55–€75; one pousada night €120–€160"
+      },
+      "food": {
+        "lowEur": 220,
+        "highEur": 350,
+        "note": "Minho mains €9–€15; cabrito assado for two around €40; vinho verde by the jug"
+      },
+      "transport": {
+        "lowEur": 240,
+        "highEur": 360,
+        "note": "Rental car €40–€55/day, fuel, Portuguese tolls, Albergaria gate €1.50/day"
+      },
+      "activities": {
+        "lowEur": 70,
+        "highEur": 110,
+        "note": "Guided wolf-track morning, Vilarinho museum, kayak hire, park interpretive centres"
+      }
+    },
+    "perDayEur": {
+      "low": 136,
+      "high": 214
+    }
+  },
+  "profile": {
+    "difficulty": 3,
+    "difficultyLabel": "Active",
+    "difficultyNote": "3/5 — daily walks of 8–15 km with 400–800 m ascent on granite steps, boulder and old paved trails",
+    "fitnessLevel": "Active",
+    "crowdLevel": null,
+    "familyFriendly": null,
+    "carRequired": null
+  },
+  "basecamps": [],
+  "gatewayAirport": "OPO Porto Francisco Sá Carneiro, 1 h 20 to Vilar da Veiga (Gerês), 1 h 35 to Soajo, 2 h 05 to Pitões das Júnias",
+  "gatewayAirportCode": "OPO",
+  "languages": [],
+  "currency": null,
+  "emergencyNumber": "112",
+  "coordinates": {
+    "lat": 38.7251,
+    "lon": -9.1498,
+    "precision": "country",
+    "matchedPlace": "Lisbon",
+    "source": "country capital fallback"
+  },
+  "tags": [
+    "peneda-geres",
+    "espigueiros",
+    "iberian-wolf",
+    "garrano",
+    "cabin-stay",
+    "waterfalls",
+    "fire-season",
+    "foraging"
+  ],
+  "summary": "Peneda-Gerês is Portugal's only national park and it is not wilderness in the North American sense — it is a 700 km² granite massif that people have farmed, grazed and terraced for two thousand years, and the interest lies in that overlap. Espigueiros, the stone maize granaries at Soajo and Lindoso, stand on bare rock like a village of tombs. Garrano ponies graze commons that have been communal since medieval charters. Iberian wolf still runs the northern serras. This week moves anticlockwise from Soajo through Castro Laboreiro's high seasonal villages to Pitões das Júnias, then into the Gerês valley for the Roman road, the drowned village of Vilarinho das Furnas and the river pools. It suits people who like walking on granite, sleeping under a wooden ceiling, and eating slowly.",
+  "summaryGenerated": false,
+  "hook": null,
+  "snapshot": {},
+  "itinerary": [
+    {
+      "day": 1,
+      "title": "Porto to Soajo, and the granary village",
+      "morning": "Collect the car at Porto, drive north on the A3 and A27 to Arcos de Valdevez, and shop properly — this is the last supermarket before the mountains.",
+      "afternoon": "Climb to Soajo and walk out to the *eira*, the granite threshing floor where two dozen espigueiros stand on bare rock, most of them 18th and 19th century, still communally owned and some still used. Then the short river walk down to the Poço Negro pools on the Adrão.",
+      "evening": "Dinner in Soajo on cabrito assado — kid roasted in a wood oven — with vinho verde from the jug. Order the day before if you can.",
+      "dayStats": "115 km / 1 h 35 drive / Soajo at 800 m / 24 espigueiros on the eira / last supermarket 22 km back at Arcos",
+      "sleep": "Granite village house, Soajo"
+    },
+    {
+      "day": 2,
+      "title": "Serra da Peneda, garranos and the Castro Laboreiro brandas",
+      "morning": "Drive the Peneda road past the sanctuary at Nossa Senhora da Peneda, where a baroque staircase climbs to a shrine under a 300 m granite face, then walk out onto the plateau commons where garrano ponies graze free.",
+      "afternoon": "Continue to Castro Laboreiro, the border village with a ruined castle on a rock spur, and drive or walk one of the *branda* tracks — the summer settlements the villagers moved up to with their herds, paired with lower *inverneiras* for winter. Bostelinhos and Ameijoeira are the accessible ones.",
+      "evening": "Back at Soajo, or eat in Castro Laboreiro where the menu is smoked pork, potato and broth.",
+      "dayStats": "70 km on narrow mountain road / Peneda sanctuary at 620 m, plateau at 1,100–1,300 m / branda tracks 4–8 km unsealed / keep 30 m from garranos / Castro Laboreiro is 3 km from the Spanish border",
+      "sleep": "Granite village house, Soajo"
+    },
+    {
+      "day": 3,
+      "title": "Over to Pitões das Júnias, a deliberately empty day",
+      "morning": "Drive east via Lindoso, stopping for its 50-odd espigueiros clustered under a 13th-century castle keep with Spain across the reservoir, then over the high road to Pitões das Júnias, one of Portugal's highest inhabited villages at around 1,150 m.",
+      "afternoon": "Walk down to the ruins of the Mosteiro de Santa Maria das Júnias, founded in the 9th century and rebuilt in the 12th, with a Romanesque church shell in a wet green hollow, and continue to the waterfall below it. Then stop. Sit in the village. Watch the cattle come in.",
+      "evening": "The village's few restaurants do bísaro pork, smoked sausage and Barroso beef — the local breed carries a protected designation and tastes like it.",
+      "dayStats": "95 km / 2 h drive on mountain roads / Pitões at ~1,150 m / monastery walk 2.5 km round trip, 120 m descent and return / no fuel within 25 km",
+      "sleep": "Village house, Pitões das Júnias"
+    },
+    {
+      "day": 4,
+      "title": "Cabril, Fafião and the wolf pits",
+      "morning": "Drive south to Cabril and Fafião, deep in the Gerês side of the park, and take the marked path to the Fojo do Lobo — a stone-walled funnel trap the villages built communally to catch wolves, restored and interpreted. It tells you more about the human relationship with the wolf than any hide could.",
+      "afternoon": "The Cávado and Rabagão arms below Cabril hold a chain of granite pools locals call the Tahiti — deep, cold, and reached by a short walk from the road. Swim if the water is above 16°C, which in June it is not.",
+      "evening": "Grill at the house. If it is outside the critical fire period and you are using a built fireplace, this is the night for it; otherwise the stove.",
+      "dayStats": "45 km / 5 km of unsealed track to the fojo area / water 14–18°C in June, up to 22°C in September / open flame banned 1 July–30 September outside authorised installations",
+      "sleep": "Village house at Cabril or Ermida"
+    },
+    {
+      "day": 5,
+      "title": "Mata de Albergaria, the Geira Roman road and Portela do Homem",
+      "morning": "Enter the Mata de Albergaria restricted zone, paying the €1.50 vehicle fee at the gate if you are travelling inside the summer window. Park only in the authorised bays and walk a section of the Geira — the Roman road from Braga to Astorga, with dozens of surviving milestones standing in the oak wood.",
+      "afternoon": "Continue to Portela do Homem on the Spanish border and the cascade below it, then loop back down the N308 past the Arado waterfall. Go early or late: the Arado car park is full by mid-morning in summer.",
+      "evening": "Vilar da Veiga in the Gerês valley, where the old spa town has proper restaurants. Order trout, or the *rojões*.",
+      "dayStats": "Albergaria gate €1.50/vehicle/day, roughly 14 Jun–14 Sep, 11:00–18:00, three collection points / no stopping outside bays inside the zone / Portela do Homem at 820 m / Geira milestones number in the dozens",
+      "sleep": "Aquafalls Nature Hotel or a valley guesthouse, Vilar da Veiga"
+    },
+    {
+      "day": 6,
+      "title": "Vilarinho das Furnas, the drowned village",
+      "morning": "From Campo do Gerês, walk in to the Vilarinho das Furnas reservoir. The village beneath it was flooded in 1972; when the water is low in late summer and autumn its street plan, walls and thresholds re-emerge. The ethnographic museum at São João do Campo tells the story of the communal system that ran the village before it drowned.",
+      "afternoon": "Continue on the old Geira track or the reservoir circuit, or take a kayak out onto the water. This is a long, easy, quiet day and it should not be rushed.",
+      "evening": "Back in the valley for dinner, then early to bed — the last morning starts at dawn.",
+      "dayStats": "12–16 km walk / 350 m ascent / village ruins visible mainly Aug–Nov at low water / museum small, closed some weekdays out of season",
+      "sleep": "Vilar da Veiga, or bungalow at Parque de Campismo de Vilarinho das Furnas"
+    },
+    {
+      "day": 7,
+      "title": "Dawn on the commons, then south",
+      "morning": "First light on the Gerês plateau above Leonte, when garranos and roe deer are moving and the granite is pink. An hour of doing nothing but watching is the right end to this week.",
+      "afternoon": "Drive to Amares and Braga; if you want one grand meal, the Pousada at Santa Maria do Bouro is a Cistercian monastery reworked into a hotel and worth the detour.",
+      "evening": "Porto, 50 minutes further, or straight to the airport.",
+      "dayStats": "130 km to OPO / 1 h 25 / Portuguese motorway tolls roughly €10–€14 on this route / fuel cheapest in Braga",
+      "sleep": "Porto or airport hotel"
+    }
+  ],
+  "accommodationStrategy": [
+    {
+      "rank": 1,
+      "name": "ADERE-Peneda-Gerês village houses",
+      "style": "restored granite houses",
+      "location": "Soajo / Pitões / Ermida",
+      "description": "The park association's own network of restored *casas de aldeia*: thick granite walls, a wood stove, a stocked woodpile, and a village that goes quiet at nine. Typically €70–€110 per house, usually a two-night minimum, booked directly through ADERE-PG rather than the big platforms. This is the accommodation that makes the trip what it is.",
+      "booking": null,
+      "priceNote": null
+    },
+    {
+      "rank": 2,
+      "name": "Parque de Campismo de Vilarinho das Furnas",
+      "style": "park campsite and bungalows",
+      "location": "Campo do Gerês",
+      "description": "Sits at the Vilarinho trailhead and the Geira access, ADERE-run, with pitches and simple wooden bungalows at roughly €55–€75. Basic, well placed, and the only way to start the Vilarinho walk at seven in the morning. Shop and café on site in season only.",
+      "booking": null,
+      "priceNote": null
+    },
+    {
+      "rank": 3,
+      "name": "Aquafalls Nature Hotel",
+      "style": "valley hotel",
+      "location": "Vilar da Veiga",
+      "description": "The comfortable middle of the week: proper heating, a pool, a view down the Caniçada reservoir, parking, and shops and a pharmacy within five minutes. Around €110–€160 a double. Use it for the two Gerês-valley nights, when you want a shower that works and a restaurant that does not close at eight.",
+      "booking": null,
+      "priceNote": null
+    }
+  ],
+  "logistics": {
+    "connectivity": "Portugal is EU; roaming is free for EU SIMs. Signal is good in the Gerês valley and Soajo, poor at Ermida and Cabril, absent on the Peneda plateau and in the Vilarinho basin. Offline maps are essential — several park tracks are unsigned and the paper maps sold locally are approximate.",
+    "emergency": "112 for everything; it dispatches GNR and the bombeiros, who handle mountain rescue here. Nearest hospitals: Hospital de Braga for the Gerês side (about 50 min from Vilar da Veiga), Viana do Castelo for Soajo, Chaves for Pitões. EHIC/GHIC works in the SNS. Coverage gaps mean you should leave a route plan with your host.",
+    "weather": "This is the wettest corner of Portugal — over 3,000 mm a year falls on parts of the Serra do Gerês, and cloud sits on the plateau for days in spring and autumn. Granite paths become genuinely slippery when wet. Summer is the opposite problem: heat, drought and fire risk. Winter brings snow above 1,000 m and Pitões can be cut off briefly.",
+    "bookingWindows": "ADERE village houses need four to eight weeks in shoulder season and three months for July–August or a Portuguese holiday weekend. Vilar da Veiga hotels are booked out for August by spring. Guided walks and kayak hire need three to five days. If you want the Amares pousada, book it a month ahead.",
+    "money": "Euro. Cards work in Gerês valley businesses and most restaurants; village cafés, the Albergaria gate, honey and smoked-meat producers, and some village houses are cash. Carry €150 in small notes — the gate staff will not have change for a fifty. Tipping is rounding up, or 5–10% for a full meal.",
+    "transportRules": "Portuguese motorways are tolled; most are barrier-based but some northern routes are electronic-only, so take the hire company's transponder or you will get an administrative fee per passage. The Albergaria zone charge is separate and is collected in cash at the gate. Cross-border into Spain at Portela do Homem or Lindoso is unmanned and free, but tell your hire company. Narrow park roads have no barriers and long drops; drive them slowly and expect cattle.",
+    "permits": "Peneda-Gerês charges no general entry fee; the Albergaria zone charge is the exception. Wild camping and campervan overnighting are prohibited inside the park and enforced. Fires are prohibited outside built installations, absolutely so during the critical period. Collecting fungi, plants, stone and firewood is prohibited in protected zones. Drones require ANAC registration and are not permitted over the park's protected areas without authorisation. Swimming is banned in some water-supply sections — obey the signs at Albergaria.",
+    "health": "Tap water is potable in villages; treat spring-tank supply if in doubt. Ticks are present spring and autumn. Wild boar are common at night on the roads and are the most likely thing to damage your car. Granite river pools are colder than they look and the rock underwater is slick — never dive. Garranos and Castro Laboreiro dogs are working animals, not attractions.",
+    "gettingThere": null,
+    "other": []
+  },
+  "proTips": [
+    "Enter Mata de Albergaria before 11:00 or after 18:00 outside the collection window and the €1.50 gate is unstaffed — but the no-stopping rules still apply, and rangers do check.",
+    "Visit Vilarinho das Furnas in late September or October. The reservoir is at its lowest, and the drowned village's walls stand clear of the water in a way they never do in June.",
+    "Book your Soajo or Pitões house directly with ADERE-Peneda-Gerês. The same houses appear on booking platforms with a markup and without the local phone number that actually gets answered.",
+    "Order cabrito or Barroso beef the day before. Village restaurants cook to order in a wood oven and will simply say no at 20:00.",
+    "Do the Arado waterfall at 08:00. The car park holds perhaps forty cars and by eleven in July the road is lined for a kilometre.",
+    "In the critical fire period, check IPMA's daily risk map before you plan a walk. On *máximo* days forest access is legally closed and you can be fined for being on a track.",
+    "Buy diesel in Arcos de Valdevez, Montalegre or Vilar da Veiga. There is no fuel inside the park, and the run from Pitões to a pump is 25 km of mountain road.",
+    "The garrano commons above Peneda are best at first light and last light, when the ponies move to water. In the middle of the day they are in the shade and you will drive past them.",
+    "Ask your host about the *baldio* before picking anything. The commons here have functioning parish councils with real authority, and the answer is often generous — but it has to be asked."
+  ],
+  "typeSpecific": {
+    "raw": {
+      "Remote access — what you actually need": "Most of the park is reachable in a normal car on narrow but sealed roads. The exceptions that matter: the track from Fafião toward the Fojo do Lobo and the upper Cabril commons, roughly 5 km of loose granite; the branda tracks above Castro Laboreiro to Bostelinhos and Ameijoeira, 4–8 km of unsealed ground; and the link above Pitões toward the Serra do Gerês plateau. All become greasy and rutted after autumn rain, when a high-clearance vehicle stops being a luxury. The Mata de Albergaria road (N308-1) is sealed and fine, but regulated — see fees below.",
+      "The Albergaria toll gate — the park rule most visitors get wrong": "Access to the Mata de Albergaria restricted zone is charged at **€1.50 per vehicle per day**, collected in person by ADERE-Peneda-Gerês staff at three points — Portela do Homem, Bouça da Mó and Portela de Leonte — during the summer season, in recent years running roughly **14 June to 14 September, 11:00–18:00**. Residents and natives of Terras de Bouro with proof, emergency vehicles and forest-management vehicles are exempt. Inside the zone you must not stop, park or picnic outside authorised bays; the oak wood is a strict-protection area and the rules exist to keep 3,000 cars a day out of it.",
+      "Last-mile walk-ins and transfers": "Vilarinho das Furnas ruins are a 40–50 minute walk from the Campo do Gerês trailhead, longer around the reservoir. Cascata do Arado is 15 minutes from a car park that fills by 10:00 in summer. Pitões' Santa Maria das Júnias monastery and its waterfall are 25 minutes down a stone path. No shuttle exists; ADERE-PG and local operators in Gerês and Arcos de Valdevez arrange transfers and guided walks, which is the practical way to do a one-way traverse.",
+      "Wilderness isolation — Level 3 of 5 at Pitões das Júnias and Ermida, Level 2 in the Gerês valley": "Pitões sits at about 1,150 m, 25 minutes from a village shop at Tourém or Montalegre for anything real, 40 minutes to a pharmacy in Montalegre, and roughly 1 h 15 to the nearest hospital (Chaves or Braga, depending on direction). Ermida and Cabril are 30–40 minutes from a supermarket, with no fuel for 25 km. The Gerês valley at Vilar da Veiga has shops, fuel, pharmacy and a health centre, with Braga's Hospital de Braga about 50 minutes away.",
+      "Off-grid reality": "Village houses here are granite, thick-walled and cold — the wood-burning stove or lareira is the heating, and firewood is usually supplied. Power is grid but rural circuits drop in storms; carry a torch. Water is municipal and potable in villages, but many houses draw from a mina or spring tank, which locals drink and visitors should consider filtering. Wastewater is septic — nothing but paper. There is no shop in Ermida, Fafião or Pitões beyond a café that may sell bread; buy food in Arcos de Valdevez, Montalegre or Vilar da Veiga. Bring a swimming towel, water shoes for the granite pools, insect repellent for the river evenings and a torch with spare batteries.",
+      "Phone signal": "Good along the Gerês valley and at Soajo; unreliable at Ermida, in the Vilarinho basin and on the Castro Laboreiro brandas; effectively absent on the Serra da Peneda plateau. Portugal is EU, so roaming is free. Download offline maps before Soajo.",
+      "Named places to sleep": "ADERE-Peneda-Gerês runs a network of restored village houses across the park — granite walls, wooden ceilings, a stove, and a lane outside where nothing happens. The Parque de Campismo de Vilarinho das Furnas at Campo do Gerês, also ADERE-run, has pitches and simple bungalows and sits at the Vilarinho trailhead. In the valley, Aquafalls Nature Hotel above Vilar da Veiga is the comfortable option with a view down the reservoir; Pousada Mosteiro de Amares at Santa Maria do Bouro, a 12th-century Cistercian monastery converted by Eduardo Souto de Moura, is the architectural night out, 30 minutes from the park gate.",
+      "Foraging rules": "Portuguese law regulates wild mushroom collection nationally, with a personal-use limit commonly applied at 5 kg per person per day and commercial collection requiring authorisation and landowner consent. Inside Peneda-Gerês National Park the park regulation overrides that: collecting fungi, plants, moss, rock or firewood in the strict-protection and partial-protection zones — including Mata de Albergaria, the Ramiscal and the Peneda plateau reserves — is prohibited, and even in the surrounding areas the *baldios* (communal lands) belong to the parish commons, whose councils control use. In practice: forage nothing inside the park boundary, and ask at the parish before touching anything outside it. The autumn haul in the Minho — *Boletus edulis*, *Lactarius deliciosus*, *Amanita caesarea* — is real, and the safe way to do it is a guided outing from Montalegre or Arcos de Valdevez.",
+      "Wildlife": "Iberian wolf (*Canis lupus signatus*) persists in the northern serras of the park in low numbers as part of a national population of only a few hundred; you will see tracks, scat and the restored *fojo do lobo* wolf pits at Fafião and Ermida long before you see an animal. Garrano ponies — a small, ancient Iberian breed — graze the commons semi-feral and are genuinely wild-tempered: keep 30 m away, never feed, and give mares with foals the whole hillside. Roe deer, wild boar, otter, golden eagle and, at dusk, Iberian wall lizards on every warm rock. Castro Laboreiro dogs, the region's own mountain breed, work with shepherds and will announce you well before you arrive; do not approach a flock. Ethical rules: no drones over commons or nesting cliffs, no feeding, and no off-trail walking on the wolf side of the park.",
+      "Fire risk and open flame": "Portugal's *período crítico* normally runs **1 July to 30 September** and can be extended by government decision. During it, all burning of scrub and agricultural waste, all fires outside authorised fixed installations, fireworks, and the use of some machinery in forest are prohibited; on days of *risco muito elevado* or *máximo* the authorities close access to defined forest areas outright and can ban circulation on forest tracks. Check the IPMA daily fire-risk map and the ICNF/civil-protection notices each morning. Barbecues are permitted only at signed, built park picnic sites, and not at all on high-risk days."
+    },
+    "surface": null,
+    "distanceKm": null,
+    "elevationM": null,
+    "verticalM": null,
+    "technicalRating": null,
+    "transitPass": null,
+    "hutBooking": null,
+    "liftNetwork": null,
+    "snowReliability": null,
+    "windConditions": null,
+    "gpxReady": null,
+    "bookingTimeline": null,
+    "audience": null
+  },
+  "packingNotes": [],
+  "whatCouldGoWrong": [],
+  "sources": {
+    "verified": "The Mata de Albergaria access charge — €1.50 per vehicle per day, collected in person by ADERE-Peneda-Gerês staff at Portela do Homem, Bouça da Mó and Portela de Leonte, 11:00–18:00, over a summer season running mid-June to mid-September, with exemptions for residents and natives of Terras de Bouro, emergency vehicles and forest-management vehicles. Portugal's critical fire period of 1 July–30 September, during which burning of scrub and agricultural waste is prohibited and access to forest areas can be restricted on very-high and maximum-risk days.",
+    "confidenceNotes": "The Albergaria toll season dates were confirmed for a recent year and are set annually — re-verify the exact 2026 window and hours before publishing, and confirm the charge has not been revised. Portugal's 5 kg per person per day personal-use mushroom limit is the commonly cited national figure but the governing decree should be checked directly, and the park's own prohibition in protected zones takes precedence regardless. Named accommodation (Aquafalls Nature Hotel, Parque de Campismo de Vilarinho das Furnas, Pousada Mosteiro de Amares) and the ADERE village-house network need current rate and availability confirmation. Espigueiro counts at Soajo and Lindoso are the traditionally cited figures. Iberian wolf presence in the northern serras is well documented but numbers are low and no sighting should be promised. Vilarinho das Furnas ruin visibility depends entirely on reservoir level in a given year. Portuguese electronic-toll arrangements for hire cars vary by company."
+  },
+  "verifyFlags": [],
+  "verifyFlagCount": 0,
+  "volatilePricing": false,
+  "wordCount": 3854,
+  "dataVintage": 2026,
+  "provenance": {
+    "batch": "southern-mediterranean",
+    "sourceFile": "carta-dataset/trips/nature-escape-portugal-peneda-geres.md",
+    "sourceFormat": "md with '## Metadata' bullet block (one file per trip)",
+    "sourceId": "nature-escape-portugal-peneda-geres",
+    "ingestedAt": "2026-09-02",
+    "synthesized": false
+  }
+}

@@ -252,6 +252,15 @@ export function AiDayPlanModal({
             {signedIn && entitlement?.known && entitlement.plansCap > 0 && (
               <p className="ai-plan-note ai-plan-balance">
                 {t('ai.balance', { left: entitlement.plansLeft, cap: entitlement.plansCap })}
+                {/* Offered on the LAST plan, not after the last one. Asking
+                    once the allowance is spent is asking after a failure,
+                    which is the worst moment there is; asking while the
+                    traveller still has one in hand is an offer. */}
+                {entitlement.plansLeft > 0 && entitlement.plansLeft <= 1 && onOpenPass && (
+                  <button className="auth-link ai-plan-upsell-link" onClick={() => onOpenPass('plansLow')}>
+                    {t('pass.seePasses')}
+                  </button>
+                )}
               </p>
             )}
             <p className="ai-plan-note">{t('ai.privacy')}</p>

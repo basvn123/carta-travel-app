@@ -9,8 +9,7 @@ import {
 import { PrivacyPolicy } from '../components/PrivacyPolicy.jsx';
 import { ATTRIBUTIONS } from '../data/attribution.js';
 import { CountryFlag } from '../components/CountryFlag.jsx';
-import { PassModal } from '../components/PassModal.jsx';
-import { useEntitlement } from '../hooks/useEntitlement.js';
+import { usePaywall } from '../hooks/usePaywall.jsx';
 import { TIERS, daysLeft, canUpgrade, formatPrice } from '../lib/pricing.js';
 import {
   MIN_PASSWORD_LENGTH, passwordStrength, checkPasswordRules, passwordMeetsRules,
@@ -271,13 +270,15 @@ export function AccountPanel({
     updateProfile, sendPasswordReset, deleteAccount, configured,
   } = useAuth();
   const { t, lang, setLang, languages } = useI18n();
-  const entitlement = useEntitlement();
+  // One ai_status read for the whole app, owned by PaywallProvider, so the
+  // balance shown here cannot disagree with the balance a gate enforced.
+  const paywall = usePaywall();
+  const entitlement = paywall.entitlement;
   // Whether the staff door shows at all. A hint, not a gate: every admin RPC
   // re-checks membership on the server.
   const { isAdmin } = useIsAdmin();
   const panelRef = useRef(null);
   const [view, setView] = useState(initialView); // 'home' | 'profile' | 'friends' | 'faq' | 'feedback' | 'data'
-  const [passOpen, setPassOpen] = useState(false);
   const [privacyOpen, setPrivacyOpen] = useState(false);
 
   const storedName = user?.user_metadata?.full_name?.trim() || '';
@@ -784,7 +785,7 @@ export function AccountPanel({
                     <div className="account-pass-price">
                       {formatPrice(upgrade.priceCents, locale)} <span>{t('pass.perTrip')}</span>
                     </div>
-                    <button className="auth-submit account-pass-cta" onClick={() => setPassOpen(true)}>
+                    <button className="auth-submit account-pass-cta" onClick={paywall.openPrices}>
                       {t(entitlement.tier === 'free' ? 'pass.seePasses' : 'pass.extend')}
                     </button>
                   </div>
@@ -1324,15 +1325,6 @@ export function AccountPanel({
       )}
 
       {privacyOpen && <PrivacyPolicy onClose={() => setPrivacyOpen(false)} />}
-      {passOpen && (
-        <PassModal
-          entitlement={entitlement}
-          reason="browse"
-          signedIn={!!user}
-          onClose={() => { setPassOpen(false); entitlement.refresh(); }}
-          onSignIn={() => { setPassOpen(false); onOpenAuth?.(); }}
-        />
-      )}
     </div>
     </div>
   );

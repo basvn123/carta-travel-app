@@ -1,0 +1,296 @@
+{
+  "id": "ro-nature-escape-apuseni-maramures-cabin",
+  "sourceId": "romania-apuseni-maramures-cabin-nature",
+  "slug": "ro-nature-escape-apuseni-maramures-cabin",
+  "title": "Karst and Wooden Spires: Apuseni and Maramureș from a Cabin",
+  "country": "Romania",
+  "countryCode": "RO",
+  "countries": [
+    {
+      "name": "Romania",
+      "code": "RO"
+    }
+  ],
+  "isMultiCountry": false,
+  "region": "Eastern & Southeastern Europe",
+  "regionKey": "eastern-southeastern",
+  "subRegion": "Apuseni Nature Park (Bihor/Alba) and Maramureș (Iza, Vaser and the Rodna foothills)",
+  "tripType": "Nature Escapes & Cabin Stays",
+  "tripTypeId": 9,
+  "tripTypeSlug": "nature-escape",
+  "durationDays": 7,
+  "bestPeriod": {
+    "months": [
+      6,
+      7,
+      9
+    ],
+    "monthNames": [
+      "June",
+      "July",
+      "September"
+    ],
+    "window": "the second half of September — hay in, berries and mushrooms up, forest roads dry, bears still active but crowds gone",
+    "note": null,
+    "avoid": "November–April (Padiș forest roads unploughed and impassable) and rain weeks in any month",
+    "raw": null
+  },
+  "budgetTier": "€",
+  "budgetTierRange": [
+    1,
+    1
+  ],
+  "budgetTierRaw": "€",
+  "budget": {
+    "currency": "EUR",
+    "totalEur": {
+      "low": 650,
+      "high": 1120
+    },
+    "totalNote": "€650–€1,120",
+    "breakdown": {
+      "accommodation": {
+        "lowEur": 230,
+        "highEur": 420,
+        "note": "€230–€420 (€35–€60/night for cabins and *pensiuni*, less for a mountain cabana)"
+      },
+      "food": {
+        "lowEur": 130,
+        "highEur": 200,
+        "note": "€130–€200 (€19–€29/day — village *pensiune* half-board is remarkable value)"
+      },
+      "transport": {
+        "lowEur": 200,
+        "highEur": 330,
+        "note": "€200–€330 (4x4 or high-clearance rental, fuel, Mocănița fares)"
+      },
+      "activities": {
+        "lowEur": 90,
+        "highEur": 170,
+        "note": "€90–€170 (cave tickets, guided Ponorului descent, Mocănița)"
+      }
+    },
+    "perDayEur": {
+      "low": 93,
+      "high": 160
+    }
+  },
+  "profile": {
+    "difficulty": 3,
+    "difficultyLabel": "Active",
+    "difficultyNote": "Moderate",
+    "fitnessLevel": "Moderate",
+    "crowdLevel": null,
+    "familyFriendly": null,
+    "carRequired": null
+  },
+  "basecamps": [
+    "Gârda de Sus",
+    "Pietroasa",
+    "Breb",
+    "Vișeu de Sus"
+  ],
+  "gatewayAirport": "Cluj-Napoca (CLJ) is the airport for both halves — Apuseni is 2 h west, Maramureș 3 h north. Baia Mare (BAY) is closer to Maramureș but has far thinner flights.",
+  "gatewayAirportCode": "CLJ",
+  "languages": [
+    "Romanian"
+  ],
+  "currency": "Romanian leu (RON) — roughly 5.0–5.3 RON to the euro during 2026",
+  "emergencyNumber": "112 (Salvamont: 0725 826 668)",
+  "coordinates": {
+    "lat": 47.7079,
+    "lon": 24.4295,
+    "precision": "city",
+    "matchedPlace": "Vişeu de Sus",
+    "source": "geonames (geonamescache, cities > 15k)"
+  },
+  "tags": [
+    "cabins",
+    "karst",
+    "caves",
+    "wooden-churches",
+    "bears",
+    "off-grid",
+    "mocanita",
+    "foraging"
+  ],
+  "summary": "Two Romanias that the country's own tourists barely reach. First a limestone plateau riddled with ice caves and swallow-holes, where the road ends in mud and the villages are single farmsteads scattered across whole…",
+  "summaryGenerated": false,
+  "hook": "Two Romanias that the country's own tourists barely reach. First a limestone plateau riddled with ice caves and swallow-holes, where the road ends in mud and the villages are single farmsteads scattered across whole hillsides. Then a valley of oak-shingle churches with spires like sharpened pencils, a steam logging train that still hauls timber, and forest holding the largest brown bear population in Europe outside Russia. Wood stoves, spring water, no signal, and a genuine wildlife protocol.",
+  "snapshot": {
+    "Country": "Romania",
+    "Trip type": "Nature Escapes & Cabin Stays",
+    "Duration": "7 days",
+    "Best period": "June–July and September",
+    "Budget tier": "€",
+    "Difficulty": "Moderate",
+    "Start / End": "Cluj-Napoca → Cluj-Napoca (loop, ~700 km, much of it slow)",
+    "Getting there": "Cluj-Napoca (CLJ) is the airport for both halves — Apuseni is 2 h west, Maramureș 3 h north. Baia Mare (BAY) is closer to Maramureș but has far thinner flights."
+  },
+  "itinerary": [
+    {
+      "day": 1,
+      "title": "Cluj to the karst",
+      "morning": "Land at Cluj-Napoca, hire the car (specify high clearance), and buy bear spray and a gas canister at an outdoor shop in the city before leaving.",
+      "afternoon": "West on the DN1/E60 then south into the Apuseni to **Peștera Urșilor** at Chișcău — the Bears' Cave, found in 1975, named for the cave-bear bones in it and Romania's most visited show cave, on lit walkways [VERIFY: current ticket price and opening hours].",
+      "evening": "Continue to a cabin around **Pietroasa** or **Gârda de Sus**. Wood stove, *pensiune* dinner of *ciorbă* and *tochitură*, and an early night.",
+      "dayStats": "140 km / 2 h 30",
+      "sleep": null
+    },
+    {
+      "day": 2,
+      "title": "The underground glacier and the *moți*",
+      "morning": "**Peștera Scărișoara** above Gârda de Sus — a 105-metre shaft down into a chamber holding an underground glacier, one of the largest in the world, tens of thousands of years old. Guided visits only, and it is genuinely cold: take a fleece [VERIFY: current Scărișoara guiding schedule and fee].",
+      "afternoon": "Drive the *moți* country around **Arieșeni** and **Gârda**. The settlement pattern here is unlike anywhere else in Romania — no village centre, just individual farmsteads scattered up whole hillsides, each with its hay barns and *șură*.",
+      "evening": "Back to the cabin. Ask the host about the *tulnic*, the long alpenhorn used across these hills, and about *horincă*, the local double-distilled plum spirit.",
+      "dayStats": null,
+      "sleep": null
+    },
+    {
+      "day": 3,
+      "title": "Padiș and the Citadels (walk-in day)",
+      "morning": "Drive or walk in to the **Padiș plateau** — a high karst basin with almost no surface water, because everything drains underground. Base at the Padiș cabanas.",
+      "afternoon": "The marked walk to **Cetățile Ponorului**, the \"Citadels of Ponor\": a colossal system of three linked dolines and a cave portal where an entire stream disappears into a 70-metre-plus arch. The **rim viewpoint (belvedere)** is the safe objective; the descent into the doline floor is steep, greasy and best done with a guide [VERIFY: current guided descent availability and cost].",
+      "evening": "Cabana food and a fire. No signal here. Watch the plateau go dark and note the total absence of streams.",
+      "dayStats": null,
+      "sleep": null
+    },
+    {
+      "day": 4,
+      "title": "Ice caves and the Galbena gorge",
+      "morning": "The **Focul Viu** ice cave — a small chamber where a shaft of daylight strikes a permanent ice block, hence the \"living fire\" — and the **Vârtop** ice cave nearby, both short walks from Padiș-side tracks.",
+      "afternoon": "**Cheile Galbenei**, the Galbena gorge: a cabled, wet, technical route through a narrow limestone slot below the Ponorului resurgence. Not a walk — allow 4–6 hours round trip, take gloves, and turn back if the water is up.",
+      "evening": "Off the plateau and north. Long transfer towards Maramureș begins; overnight in Beiuș or push on if the light holds.",
+      "dayStats": null,
+      "sleep": null
+    },
+    {
+      "day": 5,
+      "title": "North to the wooden churches",
+      "morning": "Drive north through Oradea and Satu Mare or over the hills via Baia Mare. Slow roads, no motorway.",
+      "afternoon": "Enter Maramureș at **Șurdești**, whose 1721 wooden church carries **one of the tallest wooden spires in Europe** at around 54 m and is one of the eight Maramureș churches on the **UNESCO World Heritage list**. Then **Bârsana** — both the historic church and the large modern monastery complex, which is not UNESCO but is worth the stop.",
+      "evening": "Base at **Breb**, a village of hay meadows, hand-carved gates and no visible 21st century. Guesthouse dinner, *horincă*, and *plăcinte*.",
+      "dayStats": "240 km / 4 h 30",
+      "sleep": null
+    },
+    {
+      "day": 6,
+      "title": "The Mocănița and the Vaser",
+      "morning": "To **Vișeu de Sus** for the **Mocănița Vaser Valley railway** — a 760 mm narrow-gauge forest line, still steam-hauled, running up the Vaser into a valley with no road, no settlement and no signal. It remains a working timber railway as well as a tourist one. Book ahead; summer departures sell out [VERIFY: current Mocănița timetable, fare and booking window].",
+      "afternoon": "The full run and return takes most of the day. Bring food; the mid-route halt has limited service. Watch for bear sign along the cuttings — this is prime habitat.",
+      "evening": "Back to Breb or Botiza. Eat *sarmale* and *brânză de burduf*; ask about the local weaving if you are in **Botiza**, which is known for its rugs.",
+      "dayStats": null,
+      "sleep": null
+    },
+    {
+      "day": 7,
+      "title": "Ieud, Poienile Izei, Săpânța, and out",
+      "morning": "The Iza valley churches: **Ieud Deal**, the oldest of them and reckoned to be the country's oldest surviving wooden church, and **Poienile Izei**, whose interior paintings of the torments of the damned are the most startling images in Maramureș [VERIFY: current church opening arrangements — several are opened on request by a keyholder].",
+      "afternoon": "**Săpânța** and the **Merry Cemetery** — Stan Ioan Pătraș's blue-painted oak crosses, each with a carved portrait and a rhymed, often blackly funny epitaph about how the occupant lived and died.",
+      "evening": "East along the Rodna foothills if you have the time — **Rodna Mountains National Park**, the highest range in the Eastern Carpathians outside the Făgăraș, with Pietrosul Rodnei at 2,303 m — then the drive back to Cluj, or a final night in a Maramureș guesthouse.",
+      "dayStats": null,
+      "sleep": null
+    }
+  ],
+  "accommodationStrategy": [
+    {
+      "rank": 1,
+      "name": "A cabin (*cabană*) at Gârda de Sus or Arieșeni",
+      "style": "off-grid wooden cabin",
+      "location": "Apuseni",
+      "description": "puts you within 30 minutes of Scărișoara and inside the *moți* landscape, on tarmac, so the car survives. Wood stove, spring water, and a host who will tell you which forest road is passable this week.",
+      "booking": "direct by phone 2–4 weeks ahead; many are cash only and quote in lei [VERIFY: current nightly rates].",
+      "priceNote": null
+    },
+    {
+      "rank": 2,
+      "name": "Cabana Padiș / Cabana Cetățile Ponorului",
+      "style": "mountain cabana",
+      "location": "Padiș plateau",
+      "description": "sleeping on the plateau removes the forest-road drive from the equation entirely and puts you at the Ponorului trailhead at first light, which is when the doline holds mist. Basic bunks, generator power, no signal.",
+      "booking": "by phone, 3–4 weeks ahead in summer; confirm whether meals are provided.",
+      "priceNote": null
+    },
+    {
+      "rank": 3,
+      "name": "A traditional house at Breb or Botiza",
+      "style": "village guesthouse",
+      "location": "Maramureș",
+      "description": "Breb's houses are working farmsteads with hay meadows and carved gates, ten minutes from Șurdești and an hour from Vișeu de Sus, so the whole Maramureș half runs from one base with no relocation. Home cooking, home *horincă*.",
+      "booking": "3–5 weeks ahead direct; village guesthouses answer the phone faster than email.",
+      "priceNote": null
+    }
+  ],
+  "logistics": {
+    "connectivity": "Good 4G in the towns and most Maramureș villages. **None in the Padiș karst valleys, Cheile Galbenei, or the upper Vaser.** Download offline maps before you leave Cluj and tell someone your route each day.",
+    "emergency": "**112**, and **Salvamont 0725 826 668**. Install the Salvamont and DSU apps — they transmit your coordinates. Cave rescue is a specialist, slow callout.",
+    "weather": "The Apuseni plateau sits at 1,100–1,300 m and can be 12 °C colder than Cluj with fog that closes visibility to 30 m. Summer thunderstorms fill the Galbenei gorge fast — the water level is the go/no-go, not the sky.",
+    "bookingWindows": "Cabins 2–5 weeks. The Mocănița is the exception: book weeks ahead for July–August departures. Guided cave and gorge trips 1–2 weeks.",
+    "money": "Rural Romania is a cash economy. Cabanas, village guesthouses, church keyholders and cave ticket booths often take **cash only**. Carry 800–1,200 RON (€150–€230) for the week; the last reliable ATMs are Beiuș, Câmpeni, Vișeu de Sus and Sighetu Marmației.",
+    "transportRules": "A **rovinietă** is required on national roads — category A, 1 day €3.50 (~18 RON), 10 days €6 (~31 RON), 30 days €9.50 (~50 RON); no 7-day product exists. Rentals usually include it — check. Forest roads (*drum forestier*) are not covered by most rental insurance.",
+    "permits": "No general entry fee for Apuseni Nature Park; caves are individually ticketed and Scărișoara and Urșilor are guided-only. Rodna National Park's strict reserves are closed to visitors. Drones need permission over protected areas and are unwelcome near villages.",
+    "health": null,
+    "gettingThere": null,
+    "other": []
+  },
+  "proTips": [
+    "Buy bear spray in Cluj on day one from an outdoor shop, and hand it to the last guesthouse host when you leave. It cannot fly, and a can bought at home is a can confiscated at the gate.",
+    "Ask your Apuseni host — not the internet — whether the Padiș forest road is passable. Conditions change with every heavy rain and the locals know within the hour.",
+    "Do Cetățile Ponorului at **07:30**. The doline holds cold air and fills with mist that burns off by 10:00, and it is the only time you will have the belvedere to yourself.",
+    "In Maramureș, the smaller UNESCO churches are often locked. Learn *\"Unde este cheia?\"* (where is the key?) — a neighbour holds it and will walk you over, and a 20 RON note in the box is the norm.",
+    "Book the Mocănița's earliest departure and sit on the left going up for the river views. The later trains are hotter, fuller and less likely to see wildlife.",
+    "Eat where the *pensiune* cooks rather than in restaurants. Half-board in a Maramureș house costs €10–€15 a head and is better than anything in Baia Mare.",
+    "Do not store food in the cabin porch or the tent vestibule, ever. Bears in these forests know exactly what a rucksack is, and a habituated bear is the one that gets destroyed."
+  ],
+  "typeSpecific": {
+    "raw": {
+      "Access requirements — where a 4x4 genuinely matters": "Tarmac reaches Chișcău, Gârda de Sus, Pietroasa, Arieșeni and every Maramureș village on this route; a normal hire car is fine for those. **The real test is the Padiș approach.** The forest roads climbing to the Padiș plateau — the Pietroasa–Padiș road up the Valea Galbenei side and the Boga and Călineasa approaches — are unsurfaced, rutted, stony and washed out in sections, and after rain they are a high-clearance or 4x4 proposition, not a hatchback one. Hire companies routinely forbid unsurfaced roads in their terms; read the contract. The alternative is to park at Pietroasa or Boga and walk in, which adds 2–3 hours each way. **Cetățile Ponorului's rim viewpoint** is a walk-in from Padiș regardless of vehicle. Cheile Galbenei has fixed cables and is a technical gorge route, not a stroll.",
+      "Isolation rating (1–5, 5 = fully remote)": "Chișcău and the Bears' Cave: **1** — village, cafés, coach parking. Gârda de Sus and Scărișoara: **2** — road access, phone signal, shops. Arieșeni and the *moți* hamlets: **3** — scattered farmsteads, thin services. **Padiș plateau: 4** — no permanent settlement, seasonal cabanas only, unreliable signal. **Cetățile Ponorului and the Galbenei gorge: 5** — no signal at all, no water source you should trust untreated, self-rescue distances measured in hours. Maramureș villages (Breb, Botiza, Ieud): **2**. Upper Vaser Valley: **4** — no road access beyond the railway, no signal.",
+      "Wild camping — the rule differs by designation": "**Apuseni is a *parc natural* (nature park), not a national park**, and its regulations are correspondingly looser: bivouacking is tolerated in the buffer zones in practice, prohibited in the strictly protected scientific reserves, and increasingly restricted around Padiș, where the pressure of numbers has forced designated camping areas. **Rodna and Călimani are national parks**, where camping is confined to designated sites and the strict reserves are closed. In both cases: no open fires outside built fire rings, pack everything out, and ask the park administration or the cabana keeper rather than assuming. [VERIFY: current Padiș camping designations and fees]",
+      "Foraging norms": "Mushroom and berry picking for **personal consumption** is customary and legally tolerated on state forest land in Romania, and Romanians do it seriously — *hribi* (ceps), *gălbiori* (chanterelles), *bureți*, plus bilberries (*afine*) and wild raspberries in July and August. **Commercial-scale collection requires a permit and a contract with the forestry district (*ocol silvic*)**, and strictly protected reserves are off limits entirely. Do not pick inside a marked scientific reserve, do not use a rake, and if you cannot identify it with certainty, do not eat it — Romania has *Amanita phalloides* in the same oak and beech woods as the good things.",
+      "Wildlife — the serious point": "Romania holds **Europe's largest populations of brown bear, wolf and lynx** outside Russia, and the Apuseni and Maramureș forests are core habitat. Bear encounters are a real risk, not a brochure line, and habituated bears near rubbish are the dangerous ones. Protocol: **store all food, rubbish and scented items inside a vehicle or a hard building overnight**, never in a tent or on a cabin porch; cook away from where you sleep; make noise on blind forest tracks; walk in groups at dawn and dusk. On an encounter: **do not run, do not climb, do not turn your back**. Back away slowly at an angle, speak in a low steady voice, keep the bear's escape route open. A bluff charge usually stops. **Bear spray is legal in Romania** for personal self-defence — no permit, adults 18+ only — and sold openly in outdoor and hunting shops (TW1000 Bear Defender, Umarex/Walther, Sabre Frontiersman) at roughly **100–350 RON (€20–€70)** for 225–750 ml. **It cannot be flown, in cabin or hold** — it is a classed dangerous aerosol. **Buy it on arrival in Cluj and leave it behind.** Carry it on the hip belt, not inside the pack.",
+      "Off-grid utilities": "Expect a **wood stove** or *sobă* as the only heating — you will be shown the woodpile and are expected to use it sensibly; **spring or well water** rather than mains, often gravity-fed and safe but worth asking about; **solar or generator electricity** with a limited evening window; composting or septic toilets; and **no mobile signal at all in the karst valleys** around Padiș, Galbenei and the upper Vaser. Bring a headtorch, a power bank, matches, and paper maps.",
+      "Rescue": "**Salvamont 0725 826 668** and **112**. Salvamont Bihor covers the Padiș and Apuseni karst; Salvamont Maramureș covers the Rodna and Vaser. Caves are a specialist rescue with long response times — never enter an unmanaged cave without a guide."
+    },
+    "surface": null,
+    "distanceKm": null,
+    "elevationM": null,
+    "verticalM": null,
+    "technicalRating": null,
+    "transitPass": null,
+    "hutBooking": null,
+    "liftNetwork": null,
+    "snowReliability": null,
+    "windConditions": null,
+    "gpxReady": null,
+    "bookingTimeline": null,
+    "audience": null
+  },
+  "packingNotes": [],
+  "whatCouldGoWrong": [],
+  "sources": {
+    "verified": null,
+    "confidenceNotes": "- Verified: Salvamont dispatch 0725 826 668 plus 112; bear spray legal in Romania for adults 18+, no permit, roughly 100–350 RON, and not carryable by air in cabin or hold; the rovinietă category A tariff (1 day €3.50 / 10 days €6 / 30 days €9.50, no 7-day product); Apuseni's status as a nature park rather than a national park, with correspondingly different camping rules; Peștera Scărișoara's underground glacier; Cetățile Ponorului as a doline-and-cave system on the Padiș plateau; the eight Maramureș wooden churches on the UNESCO list, including Șurdești, Ieud Deal and Poienile Izei; the Mocănița Vaser Valley narrow-gauge steam railway from Vișeu de Sus; the Merry Cemetery at Săpânța; emergency number 112. - `[VERIFY]` items in this file: 7 (see inline markers above) - Last reviewed: 2026-09-02"
+  },
+  "verifyFlags": [
+    "current Padiș camping designations and fees",
+    "current ticket price and opening hours",
+    "current Scărișoara guiding schedule and fee",
+    "current guided descent availability and cost",
+    "current Mocănița timetable, fare and booking window",
+    "current church opening arrangements — several are opened on request by a keyholder",
+    "current nightly rates"
+  ],
+  "verifyFlagCount": 7,
+  "volatilePricing": true,
+  "wordCount": 2666,
+  "dataVintage": 2026,
+  "provenance": {
+    "batch": "eastern-southeastern",
+    "sourceFile": "cartaeasterneuropetrips/trips/romania-apuseni-maramures-cabin-nature.md",
+    "sourceFormat": "md+nested-yaml-frontmatter (one file per trip)",
+    "sourceId": "romania-apuseni-maramures-cabin-nature",
+    "ingestedAt": "2026-09-02",
+    "synthesized": false
+  }
+}

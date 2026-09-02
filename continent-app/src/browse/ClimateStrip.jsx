@@ -2,7 +2,7 @@ import React from 'react';
 import { useI18n } from '../i18n/index.jsx';
 
 /**
- * Real climate normals (WorldClim, 1970-2000) as a 12-month comfort strip:
+ * Real climate normals (NASA POWER, 2001-2020) as a 12-month comfort strip:
  * bar height + colour = tourist comfort, with the daytime high above and the
  * best-weather months called out. Extracted from BestTimePanel so the Explore
  * panel can show "when to go" without any of the fare machinery around it.

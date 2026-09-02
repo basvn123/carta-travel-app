@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   adminAddNote, adminAnalytics, adminBanUser, adminDeleteUser, adminGetAudit,
+  adminPaywallFunnel,
   adminGetUser, adminHealth, adminListFeedback, adminListUsers, adminMark,
   adminListOverrides, adminResetQuota, adminSetConfig, adminSetFeedbackStatus,
   adminSetTier, adminStats, adminUnbanUser,
@@ -79,6 +80,76 @@ function Sparkbars({ series }) {
   );
 }
 
+/**
+ * The pass funnel, thirty days.
+ *
+ * Reads top to bottom as the journey itself: how many people were asked, how
+ * many walked away, how many pressed buy, how many actually hold a pass. The
+ * two rates between them are the only numbers that say whether a change to
+ * the gates or the price did anything.
+ *
+ * Guests are called out rather than folded in. They can be shown an offer but
+ * cannot be followed to a purchase, so a conversion rate that quietly includes
+ * them in the denominator understates every gate.
+ */
+function PaywallFunnel({ funnel, t }) {
+  const shown = funnel.shown || 0;
+  const checkout = funnel.checkout || 0;
+  const bought = funnel.purchased || 0;
+  const pct = (a, b) => (b > 0 ? `${((a / b) * 100).toFixed(1)}%` : '-');
+  const reasons = funnel.byReason || [];
+
+  return (
+    <>
+      <h2 className="adminpage-h2">{t('admin.funnelTitle')}</h2>
+      <p className="adminpage-muted">{t('admin.funnelHint', { days: funnel.days || 30 })}</p>
+      <div className="adminpage-tiles">
+        <div className="adminpage-tile"><b>{shown}</b><span>{t('admin.funnelShown')}</span></div>
+        <div className="adminpage-tile"><b>{funnel.dismissed || 0}</b><span>{t('admin.funnelDismissed')}</span></div>
+        <div className="adminpage-tile"><b>{checkout}</b><span>{t('admin.funnelCheckout')}</span></div>
+        <div className="adminpage-tile"><b>{bought}</b><span>{t('admin.funnelBought')}</span></div>
+        <div className="adminpage-tile"><b>{pct(checkout, shown)}</b><span>{t('admin.funnelRateOffer')}</span></div>
+        <div className="adminpage-tile"><b>{pct(bought, checkout)}</b><span>{t('admin.funnelRatePaid')}</span></div>
+      </div>
+      {!!funnel.shownGuest && (
+        <p className="adminpage-muted">
+          {t('admin.funnelGuests', { n: funnel.shownGuest, pct: pct(funnel.shownGuest, shown) })}
+        </p>
+      )}
+
+      <div className="adminpage-cols">
+        <section className="adminpage-card">
+          <h3 className="adminpage-h3">{t('admin.funnelByGate')}</h3>
+          {reasons.length === 0 ? (
+            <p className="adminpage-muted">{t('admin.funnelEmpty')}</p>
+          ) : (
+            <ol className="adminpage-rank">
+              {reasons.map((r) => (
+                <li key={r.reason}>
+                  <span className="adminpage-rankname">
+                    {r.reason}
+                    <em>{pct(r.checkout || 0, r.shown || 0)}</em>
+                  </span>
+                  <span className="adminpage-ranknum">
+                    {r.shown} / {r.checkout}
+                  </span>
+                </li>
+              ))}
+            </ol>
+          )}
+          <p className="adminpage-muted">{t('admin.funnelByGateHint')}</p>
+        </section>
+
+        <section className="adminpage-card">
+          <h3 className="adminpage-h3">{t('admin.funnelDaily')}</h3>
+          <Sparkbars series={(funnel.daily || []).map((d) => ({ day: d.day, n: d.shown }))} />
+          <p className="adminpage-muted">{t('admin.funnelDailyHint')}</p>
+        </section>
+      </div>
+    </>
+  );
+}
+
 export function AdminPage({ onClose }) {
   const { t } = useI18n();
   const { user, hasPassword, reauthenticate, sendPasswordReset } = useAuth();
@@ -92,6 +163,7 @@ export function AdminPage({ onClose }) {
   const [stats, setStats] = useState(null);
   const [health, setHealth] = useState(null);
   const [analytics, setAnalytics] = useState(null);
+  const [funnel, setFunnel] = useState(null);
   const [audit, setAudit] = useState(null);
   const [auditBusy, setAuditBusy] = useState(false);
 
@@ -215,6 +287,7 @@ export function AdminPage({ onClose }) {
     adminStats().then(setStats).catch(() => setStats(null));
     adminHealth().then(setHealth).catch(() => setHealth(null));
     adminAnalytics().then(setAnalytics).catch(() => setAnalytics(null));
+    adminPaywallFunnel(30).then(setFunnel).catch(() => setFunnel(null));
     loadAudit(25);
     loadFeedback('new');
     loadOverrides();
@@ -862,6 +935,8 @@ export function AdminPage({ onClose }) {
                     </div>
                   </>
                 )}
+
+                {funnel && !funnel.error && <PaywallFunnel funnel={funnel} t={t} />}
 
                 <h2 className="adminpage-h2">{t('admin.recentTitle')}</h2>
                 {(audit?.rows || []).length === 0 ? (

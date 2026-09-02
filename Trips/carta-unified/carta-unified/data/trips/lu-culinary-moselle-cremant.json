@@ -1,0 +1,292 @@
+{
+  "id": "lu-culinary-moselle-cremant",
+  "sourceId": "lu-culinary-moselle-cremant",
+  "slug": "lu-culinary-moselle-cremant",
+  "title": "Crémant and the Luxembourg Moselle",
+  "country": "Luxembourg",
+  "countryCode": "LU",
+  "countries": [
+    {
+      "name": "Luxembourg",
+      "code": "LU"
+    }
+  ],
+  "isMultiCountry": false,
+  "region": "Western & Central Europe",
+  "regionKey": "western-central",
+  "subRegion": "Moselle Luxembourgeoise",
+  "tripType": "Culinary & Wine Tours",
+  "tripTypeId": 7,
+  "tripTypeSlug": "culinary",
+  "durationDays": 7,
+  "bestPeriod": {
+    "months": [
+      5,
+      6,
+      9
+    ],
+    "monthNames": [
+      "May",
+      "June",
+      "September"
+    ],
+    "window": null,
+    "note": "Whit Monday brings Grevenmacher's wine market and June the vines in full leaf; September is harvest, when the smallest domaines are hardest to reach.",
+    "avoid": null,
+    "raw": null
+  },
+  "budgetTier": "€€",
+  "budgetTierRange": [
+    2,
+    2
+  ],
+  "budgetTierRaw": "€€",
+  "budget": {
+    "currency": "EUR",
+    "totalEur": {
+      "low": 950,
+      "high": 1300
+    },
+    "totalNote": null,
+    "breakdown": {
+      "accommodation": {
+        "lowEur": 430,
+        "highEur": 560,
+        "note": null
+      },
+      "food": {
+        "lowEur": 250,
+        "highEur": 330,
+        "note": null
+      },
+      "transport": {
+        "lowEur": 70,
+        "highEur": 110,
+        "note": null
+      },
+      "activities": {
+        "lowEur": 200,
+        "highEur": 300,
+        "note": null
+      }
+    },
+    "perDayEur": {
+      "low": 136,
+      "high": 186
+    }
+  },
+  "profile": {
+    "difficulty": 1,
+    "difficultyLabel": "Easy",
+    "difficultyNote": null,
+    "fitnessLevel": "Easy",
+    "crowdLevel": "Low",
+    "familyFriendly": false,
+    "carRequired": false
+  },
+  "basecamps": [
+    "Remich and Grevenmacher"
+  ],
+  "gatewayAirport": "Luxembourg (LUX)",
+  "gatewayAirportCode": "LUX",
+  "languages": [
+    "Luxembourgish",
+    "French",
+    "German"
+  ],
+  "currency": "EUR",
+  "emergencyNumber": "112",
+  "coordinates": {
+    "lat": 49.6098,
+    "lon": 6.1327,
+    "precision": "gateway",
+    "matchedPlace": "Luxembourg",
+    "source": "geonames (geonamescache, cities > 15k)"
+  },
+  "tags": [
+    "cremant",
+    "marque-nationale",
+    "vinsmoselle",
+    "route-du-vin",
+    "free-public-transport"
+  ],
+  "summary": "A week along the Route du Vin tasting Crémant de Luxembourg, Riesling and Elbling from cooperative caves to appointment-only biodynamic growers.",
+  "summaryGenerated": false,
+  "hook": "Luxembourg's Moselle is a 42-kilometre ribbon of river between Schengen and Wasserbillig, and it is worked by two very different hands: the Vinsmoselle cooperative, whose cellars anchor half the villages, and a handful of small, independent domaines who answer their own email. All of it moves on the country's free public transport, which means this is a week of tasting without ever calculating a taxi fare.",
+  "snapshot": {
+    "Country": "Luxembourg",
+    "Base(s)": "Remich (4 nights) · Grevenmacher (3 nights)",
+    "Trip Type": "Culinary & Wine Tours",
+    "Duration": "7 days / 7 nights",
+    "Best Period": "May, June, September",
+    "Budget Tier": "€€",
+    "Total Distance / Terrain": "Approx. 40 km along the Route du Vin, flat riverside paths with gentle vineyard slopes above each village",
+    "Getting There": "Fly to Luxembourg (LUX), free RGTR bus or a short taxi to Remich, approx. 30 minutes",
+    "Who It Suits": "Crémant drinkers, appellation-system nerds, anyone who wants a wine week with zero transport cost"
+  },
+  "itinerary": [
+    {
+      "day": 1,
+      "title": "Arrival on the river",
+      "morning": "Land at Luxembourg Airport and take the free RGTR bus to Remich, about 30 minutes.",
+      "afternoon": "Walk the Remich Esplanade, the riverside promenade that is the town's social spine, and get oriented: the Route du Vin runs both directions from here, Schengen downstream, Grevenmacher and Wormeldange upstream.",
+      "evening": "Friture de la Moselle, small fried river fish, at a promenade restaurant, with a glass of Elbling — the oldest grape variety still grown here, planted since Roman times.",
+      "dayStats": "Cellars visited: 0. Km travelled: 4 km on foot. Approx. tasting spend: €0.",
+      "sleep": null
+    },
+    {
+      "day": 2,
+      "title": "Crémant and the Marque Nationale",
+      "morning": "Domaine Mathis Bastian in Remich pours a walk-in tasting and is a good place to start with the appellation system: any bottle carrying Luxembourg's Marque Nationale seal has passed an official state tasting panel and chemical analysis, the country's own quality guarantee, distinct from and layered on top of the EU's Moselle Luxembourgeoise appellation.",
+      "afternoon": "A short bus ride to Stadtbredimus for Domaine Cep d'Or, another walk-in cellar, focused on Crémant de Luxembourg, the traditional-method sparkling wine that has carried its own AOP since 1991 — made the same way as Champagne, second fermentation in the bottle, but from Mosel-grown Pinot Blanc, Auxerrois, Chardonnay and Riesling.",
+      "evening": "Bouneschlupp, green bean soup with potatoes, bacon and smoked sausage — one of Luxembourg's two unofficial national dishes — back in Remich.",
+      "dayStats": "Cellars visited: 2. Km travelled: 8 km plus bus. Approx. tasting spend: €25–35.",
+      "sleep": null
+    },
+    {
+      "day": 3,
+      "title": "The email-only grower",
+      "morning": "Domaine Sunnen-Hoffmann, a small biodynamic producer near Remich, is well regarded but does not run a public tasting room; visits are by appointment, arranged by email at least two to three weeks ahead, or through the Entente Touristique de la Région Moselle. Book this before the trip if you want the slot.",
+      "afternoon": "Without a confirmed appointment, spend the afternoon on the Sentier Viticole path above Remich instead, through the vineyards toward Bech-Kleinmacher, where the A Possen open-air museum shows the region's older farming and wine-growing life.",
+      "evening": "Judd mat Gaardebounen, smoked pork collar with broad beans, Luxembourg's other national dish, at a Remich restaurant, paired with a Pinot Gris.",
+      "dayStats": "Cellars visited: 0–1 (reservation-dependent). Km travelled: 10 km. Approx. tasting spend: €15–30.",
+      "sleep": null
+    },
+    {
+      "day": 4,
+      "title": "Up the Route du Vin to Grevenmacher",
+      "morning": "Free RGTR bus along the Route du Vin through Wintrange, Ahn and Wormeldange, about 30 minutes to Grevenmacher. Wormeldange is worth a stop for the Vinsmoselle cooperative's Caves de Wormeldange, a walk-in cellar known for Riesling and Auxerrois from the steep Koeppchen vineyard.",
+      "afternoon": "Grevenmacher itself is Bernard-Massard territory: Caves Bernard-Massard, family-owned since 1921 and the country's largest private Crémant producer, runs a public tour and tasting through its rock-cut cellars, walk-in but worth booking the tour slot a day ahead in high season.",
+      "evening": "Settle into Grevenmacher; a quiet dinner facing the river.",
+      "dayStats": "Cellars visited: 2. Km travelled: 6 km plus bus. Approx. tasting spend: €25–30.",
+      "sleep": null
+    },
+    {
+      "day": 5,
+      "title": "Ahn, Ehnen and the small domaines",
+      "morning": "Walk or take the free bus back down to Ahn and Ehnen, two of the prettiest villages on the river, for Domaine Krier Bisenius, a family estate with a walk-in Vinothek, pouring Auxerrois and Pinot Gris from vineyards immediately behind the village.",
+      "afternoon": "Ehnen's small wine museum, the Musée du Vin, occupies a former winegrower's house and covers the valley's shift from Elbling-heavy production to today's varietal range.",
+      "evening": "Back to Grevenmacher. Kachkéis, a soft, spreadable cooked cheese, with bread and a glass of Rivaner, as a simple evening plate.",
+      "dayStats": "Cellars visited: 1. Km travelled: 9 km. Approx. tasting spend: €15–20.",
+      "sleep": null
+    },
+    {
+      "day": 6,
+      "title": "Wäimaart and Wormeldange's Koeppchen",
+      "morning": "If the trip falls near Whit Monday (Pentecost), Grevenmacher's Wäimaart — a wine market with stalls from growers up and down the valley — fills the town centre; otherwise spend the morning walking the marked vineyard path above Wormeldange to the Koeppchen site.",
+      "afternoon": "A second look at Vinsmoselle's cooperative range, this time comparing a Crémant Brut against a Crémant Rosé, both walk-in pours, to understand the house style against the smaller independents tasted earlier in the week.",
+      "evening": "Quetschentaart, plum tart, for dessert — the valley's harvest-season standard.",
+      "dayStats": "Cellars visited: 1. Km travelled: 6 km. Approx. tasting spend: €15–20.",
+      "sleep": null
+    },
+    {
+      "day": 7,
+      "title": "Luxembourg City market and departure",
+      "morning": "Free train or bus into Luxembourg City, about 25 minutes, for the Place Guillaume II market, running Wednesday and Saturday mornings, roughly 07:30–13:30 — a last chance at farm cheese, charcuterie and produce from across the country.",
+      "afternoon": "A walk through the Grund and along the casemates before heading to the airport.",
+      "evening": "Departure from Luxembourg (LUX).",
+      "dayStats": "Cellars visited: 0. Km travelled: 5 km plus transfers. Approx. tasting spend: €10–15.",
+      "sleep": null
+    }
+  ],
+  "accommodationStrategy": [
+    {
+      "rank": 1,
+      "name": "Hotel St. Nicolas",
+      "style": "Riverside hotel",
+      "location": "Remich",
+      "description": "Sits directly on the Esplanade with river-facing rooms, putting the promenade restaurants, the Route du Vin cycle path and the free bus stop all within a few minutes' walk — a good base for the week's first, gentler days.",
+      "booking": "6 weeks ahead.",
+      "priceNote": "€120–€170 per night"
+    },
+    {
+      "rank": 2,
+      "name": "Hotel-Restaurant Simmer",
+      "style": "Family-run wine-country hotel",
+      "location": "Wormeldange/Ahn",
+      "description": "A long-established address on the Route du Vin between Grevenmacher and Remich, with a kitchen built around the local wine list; useful as a base for the Wormeldange and Ahn cellars without depending on bus timetables for dinner.",
+      "booking": "6 weeks ahead.",
+      "priceNote": "€110–€160 per night"
+    }
+  ],
+  "logistics": {
+    "connectivity": null,
+    "emergency": "112 pan-European, covers police, fire and ambulance in Luxembourg.",
+    "weather": "The river moderates temperatures; sudden showers are more common than long rain in May and June.",
+    "bookingWindows": "Independent growers such as Sunnen-Hoffmann do not run drop-in tasting rooms; email at least two to three weeks ahead, or route the request through the Entente Touristique de la Région Moselle. Vinsmoselle's cooperative caves and Bernard-Massard are walk-in.",
+    "money": "Cards are accepted almost everywhere in Luxembourg, including small cellar shops.",
+    "transportRules": "All RGTR buses and trains within Luxembourg have been free of charge since 2020; the Route du Vin bus and the Luxembourg City line both cost nothing.",
+    "permits": null,
+    "health": null,
+    "gettingThere": null,
+    "other": [
+      {
+        "label": "Opening-hour traps",
+        "text": "Village Vinothèques often close Monday; check ahead if your plan depends on one specific stop."
+      },
+      {
+        "label": "Drink-drive alternatives",
+        "text": "With buses and trains free, there is no financial reason to drive between tastings — use the Route du Vin bus line, or walk the flat riverside path between neighbouring villages."
+      }
+    ]
+  },
+  "proTips": [
+    "Ask any Marque Nationale bottle's back label for its control number — it is a genuine state-issued mark, not a marketing sticker, and growers are proud to explain it.",
+    "Book the Bernard-Massard cellar tour a day ahead in summer; the walk-in tasting room stays open even when the guided tour is full.",
+    "Compare an Elbling against a Crémant base wine if a cellar offers it; Elbling's high acidity is exactly what makes the valley's sparkling wine work.",
+    "Time a Whit Monday visit around Grevenmacher's Wäimaart for the widest single-day tasting of small growers in one place.",
+    "Ask for Pinot Gris and Pinot Blanc back to back — the valley's two most-planted white grapes taste more different from each other here than in most other regions.",
+    "Use the free train to Luxembourg City for the Saturday Place Guillaume II market rather than the smaller village markets, which run irregularly."
+  ],
+  "typeSpecific": {
+    "raw": {
+      "Total Distance / Terrain": "Approx. 40 km along the Route du Vin, flat riverside paths with gentle vineyard slopes above each village",
+      "Who It Suits": "Crémant drinkers, appellation-system nerds, anyone who wants a wine week with zero transport cost"
+    },
+    "surface": "Approx. 40 km along the Route du Vin, flat riverside paths with gentle vineyard slopes above each village",
+    "distanceKm": 40,
+    "elevationM": null,
+    "verticalM": null,
+    "technicalRating": null,
+    "transitPass": null,
+    "hutBooking": null,
+    "liftNetwork": null,
+    "snowReliability": null,
+    "windConditions": null,
+    "gpxReady": null,
+    "bookingTimeline": null,
+    "audience": "Crémant drinkers, appellation-system nerds, anyone who wants a wine week with zero transport cost"
+  },
+  "packingNotes": [
+    "Comfortable shoes for the Sentier Viticole vineyard paths, which are dirt and grass rather than pavement.",
+    "A light rain layer; river-valley showers arrive with little warning.",
+    "A small cooler bag for Crémant or Kachkéis bought at a cellar door.",
+    "A phrase or two of French or German; Luxembourgish is the everyday language but both are widely spoken.",
+    "Cash in small denominations for market stalls, though cards work almost everywhere else.",
+    "A daypack for the vineyard walk above Wormeldange."
+  ],
+  "whatCouldGoWrong": [
+    "**Sunnen-Hoffmann or another small domaine doesn't reply in time.** Fall back on Vinsmoselle's cooperative caves or Bernard-Massard, both reliably walk-in.",
+    "**You visit outside Whit Monday and miss the Wäimaart.** Grevenmacher's cellars and the Ehnen wine museum give the same context any week of the season.",
+    "**Rain washes out the vineyard walk.** The Musée du Vin in Ehnen and the A Possen museum near Bech-Kleinmacher are solid indoor alternatives.",
+    "**A bus runs late or is cancelled.** Services are frequent along the Route du Vin, but build a 20-minute buffer before any timed cellar appointment.",
+    "**You've tasted more than planned.** With transport free and frequent, simply wait for the next bus rather than walking a vineyard road at dusk."
+  ],
+  "sources": {
+    "verified": null,
+    "confidenceNotes": null
+  },
+  "verifyFlags": [],
+  "verifyFlagCount": 0,
+  "volatilePricing": false,
+  "wordCount": 1676,
+  "dataVintage": 2026,
+  "provenance": {
+    "batch": "western-central",
+    "sourceFile": "cartatripsv1/trips/lu-culinary-moselle-cremant.md",
+    "sourceFormat": "md+yaml-frontmatter (one file per trip)",
+    "sourceId": "lu-culinary-moselle-cremant",
+    "ingestedAt": "2026-09-02",
+    "synthesized": false
+  }
+}

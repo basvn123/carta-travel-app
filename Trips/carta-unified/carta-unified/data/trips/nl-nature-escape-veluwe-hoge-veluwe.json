@@ -1,0 +1,320 @@
+{
+  "id": "nl-nature-escape-veluwe-hoge-veluwe",
+  "sourceId": "nl-nature-veluwe-hoge-veluwe",
+  "slug": "nl-nature-escape-veluwe-hoge-veluwe",
+  "title": "White Bicycles: A Week on the Veluwe",
+  "country": "Netherlands",
+  "countryCode": "NL",
+  "countries": [
+    {
+      "name": "Netherlands",
+      "code": "NL"
+    }
+  ],
+  "isMultiCountry": false,
+  "region": "Western & Central Europe",
+  "regionKey": "western-central",
+  "subRegion": "Veluwe, Gelderland",
+  "tripType": "Nature Escapes & Cabin Stays",
+  "tripTypeId": 9,
+  "tripTypeSlug": "nature-escape",
+  "durationDays": 7,
+  "bestPeriod": {
+    "months": [
+      5,
+      6,
+      9,
+      10
+    ],
+    "monthNames": [
+      "May",
+      "June",
+      "September",
+      "October"
+    ],
+    "window": null,
+    "note": "September and October bring the red deer rut and the best light in the sculpture garden; midsummer weekends see the longest queues at the park gates.",
+    "avoid": null,
+    "raw": null
+  },
+  "budgetTier": "€€",
+  "budgetTierRange": [
+    2,
+    2
+  ],
+  "budgetTierRaw": "€€",
+  "budget": {
+    "currency": "EUR",
+    "totalEur": {
+      "low": 800,
+      "high": 1120
+    },
+    "totalNote": null,
+    "breakdown": {
+      "accommodation": {
+        "lowEur": 420,
+        "highEur": 580,
+        "note": null
+      },
+      "food": {
+        "lowEur": 180,
+        "highEur": 250,
+        "note": null
+      },
+      "transport": {
+        "lowEur": 80,
+        "highEur": 110,
+        "note": null
+      },
+      "activities": {
+        "lowEur": 120,
+        "highEur": 180,
+        "note": null
+      }
+    },
+    "perDayEur": {
+      "low": 114,
+      "high": 160
+    }
+  },
+  "profile": {
+    "difficulty": 1,
+    "difficultyLabel": "Easy",
+    "difficultyNote": null,
+    "fitnessLevel": "Easy",
+    "crowdLevel": "Moderate",
+    "familyFriendly": true,
+    "carRequired": false
+  },
+  "basecamps": [
+    "Otterlo"
+  ],
+  "gatewayAirport": "Amsterdam Schiphol (AMS)",
+  "gatewayAirportCode": "AMS",
+  "languages": [
+    "Dutch"
+  ],
+  "currency": "EUR",
+  "emergencyNumber": "112",
+  "coordinates": {
+    "lat": 52.374,
+    "lon": 4.8897,
+    "precision": "country",
+    "matchedPlace": "Amsterdam",
+    "source": "country capital fallback"
+  },
+  "tags": [
+    "national-park",
+    "white-bicycles",
+    "wildlife-hides",
+    "museum",
+    "forest-cabin"
+  ],
+  "summary": "A week of free white bicycles, wildlife hides and the Kröller-Müller's van Goghs inside a fenced, ticketed national park, based in a forest cabin near Otterlo on the wider Veluwe.",
+  "summaryGenerated": false,
+  "hook": "De Hoge Veluwe is honest about what it is: a fenced, privately managed nature reserve with a paid gate, timed entry and a closing hour, not wilderness. That honesty is exactly what makes it work as a family nature week — heathland, drift sand and old oak forest that feel remote on a bicycle, red deer that come to a hide right on schedule, and a world-class museum in the middle of it, all a short, signposted ride from a village with a supermarket.",
+  "snapshot": {
+    "Country": "Netherlands",
+    "Base(s)": "Otterlo (7 nights), forest cabin on the wider Veluwe",
+    "Trip Type": "Nature Escapes & Cabin Stays",
+    "Duration": "7 days",
+    "Best Period": "May–June, September–October",
+    "Budget Tier": "€€",
+    "Total Distance / Terrain": "approx. 90–120 km by bicycle, under 200 m cumulative ascent; sandy forest track, heathland path, paved park lanes",
+    "Getting There": "Amsterdam Schiphol (AMS) → train to Ede-Wageningen or Apeldoorn, then bus to Otterlo (approx. 1h45 total)",
+    "Who It Suits": "Families, birdwatchers and anyone who wants an easy, flat nature week with a genuine cultural anchor"
+  },
+  "itinerary": [
+    {
+      "day": 1,
+      "title": "Otterlo and the Otterlo gate",
+      "morning": "Train from Schiphol to Ede-Wageningen, then the local bus to Otterlo, a small village that sits directly against the park's Otterlo entrance.",
+      "afternoon": "Check in and walk to the gate to buy timed park tickets for the week — entry is per person plus a separate small charge if you bring a car in, and gates close well before dusk, so plan around the posted hours for your visit dates.",
+      "evening": "An easy loop around Otterlo itself; the village has several restaurants and a supermarket, useful context for how close \"wild\" and \"convenient\" sit here.",
+      "dayStats": "4 km, negligible vert. Village lanes. Water: Otterlo shops. Bail-out: village is the base itself.",
+      "sleep": null
+    },
+    {
+      "day": 2,
+      "title": "Into the park: white bicycles and the sand drifts",
+      "morning": "Enter at the Otterlo gate and take one of the thousands of free white bicycles (witte fietsen) parked just inside — first come, first served, ride any of them anywhere in the park and leave it at any other rack.",
+      "afternoon": "Ride out to the Aardhuis area and the open drift-sand dunes near Deelense Was, a genuinely striking, near-desert landscape in the middle of the Netherlands, then loop back through mixed pine and oak forest.",
+      "evening": "Return the bikes at the gate rack before closing; dinner in Otterlo.",
+      "dayStats": "28 km cycling, flat. Sandy and paved park lanes. Water: the park's café at the visitor centre (Bezoekerscentrum). Bail-out: the park's lane network is dense — any point is a short ride from a gate or the centre.",
+      "sleep": null
+    },
+    {
+      "day": 3,
+      "title": "Kröller-Müller Museum and the sculpture garden",
+      "morning": "Cycle to the Kröller-Müller Museum, which holds one of the world's largest van Gogh collections outside Amsterdam and sits inside the park itself, reachable only by bike, on foot or by the park's own shuttle.",
+      "afternoon": "Walk the museum's sculpture garden, one of the largest in Europe, including Jean Dubuffet's Jardin d'émail — allow a full afternoon, since the garden alone covers 25 hectares.",
+      "evening": "Ride back to Otterlo before gate closing; a quiet dinner after a museum-heavy day.",
+      "dayStats": "14 km cycling plus museum walking. Paved park lanes. Water: museum café. Bail-out: the museum has its own gate-adjacent bike park for a short return if tired.",
+      "sleep": null
+    },
+    {
+      "day": 4,
+      "title": "Wildlife hides and the red deer",
+      "morning": "Cycle to one of the park's kijkhutten (observation hides) at first light — the deer, wild boar and introduced mouflon are most active and least disturbed in the early hours, and the hides are built to keep visitors silent and out of sight.",
+      "afternoon": "A slower ride through the Wodanseiken area, home to ancient, gnarled oaks left from historic wood-pasture use, then a picnic near the Sint Hubertus hunting lodge, designed by architect H.P. Berlage for the park's founders.",
+      "evening": "If visiting in September or October, return to a hide at dusk for the rut (bronstijd) — the roaring of stags carries a long way across the heath and is the single best wildlife event of the week.",
+      "dayStats": "22 km cycling. Sandy track and paved lanes. Water: visitor centre. Bail-out: hides are close to the main lane network throughout.",
+      "sleep": null
+    },
+    {
+      "day": 5,
+      "title": "Radio Kootwijk and the outer heath",
+      "morning": "Leave the park for the day and cycle or bus to Radio Kootwijk, a striking Art Deco former transmitter station built in the 1920s in the middle of open heathland just outside the park, now a small museum and café.",
+      "afternoon": "Walk or cycle the surrounding Kootwijkerzand heath and dune system, one of the larger open sand landscapes in the country, then loop back toward Otterlo through forest.",
+      "evening": "Dinner in Otterlo; an easier day after four days of park cycling.",
+      "dayStats": "20 km cycling, flat. Heath and forest track. Water: Radio Kootwijk café. Bail-out: a bus service connects Kootwijk back to Otterlo/Apeldoorn if legs are tired.",
+      "sleep": null
+    },
+    {
+      "day": 6,
+      "title": "Move to a forest cabin, slow afternoon",
+      "morning": "Relocate to a self-catering forest cabin (boswoning) on the wider Veluwe just outside the national park boundary, among the larger forest estates around Otterlo and Hoenderloo.",
+      "afternoon": "No fixed plan — a short walk from the cabin door into managed forest, or a return visit to any park corner missed earlier in the week using the last day of the multi-day ticket if purchased that way.",
+      "evening": "Cook in; the cabins here are simple but comfortable, with a wood-burning stove for cool evenings and mains water and power, since this is managed private forest rather than remote land.",
+      "dayStats": "Rest day, short optional walk only. Water: cabin supply. Bail-out: not applicable.",
+      "sleep": null
+    },
+    {
+      "day": 7,
+      "title": "Last ride and out",
+      "morning": "A final easy loop on the wider Veluwe forest paths near the cabin, or one last white-bicycle circuit if the park ticket still has validity.",
+      "afternoon": "Bus to Apeldoorn or Ede-Wageningen and train to Schiphol.",
+      "evening": "Onward flight.",
+      "dayStats": "Transfer day, short optional cycling only.",
+      "sleep": null
+    }
+  ],
+  "accommodationStrategy": [
+    {
+      "rank": 1,
+      "name": "Guesthouse in Otterlo",
+      "style": "Village inn",
+      "location": "park-gate location",
+      "description": "The closest possible base to the Otterlo entrance, useful for the museum and hide days when an early gate opening matters. The village is small, so book ahead for the September rut season, its busiest window outside midsummer.",
+      "booking": "6–8 weeks ahead for September–October and summer weekends.",
+      "priceNote": "€90–€130 per night with breakfast"
+    },
+    {
+      "rank": 2,
+      "name": "Forest cabin (boswoning) near Hoenderloo",
+      "style": "Self-catering cabin",
+      "location": "wider Veluwe forest",
+      "description": "A private forest-estate cabin just outside the national park boundary, giving a genuine change of pace after a week of park logistics. Facilities are straightforward rather than off-grid: mains water and power, a wood stove, and enough separation from the road to feel properly wooded.",
+      "booking": "8–10 weeks ahead in summer.",
+      "priceNote": "€110–€160 per night for two, self-catering"
+    },
+    {
+      "rank": 3,
+      "name": "Guesthouse in Hoenderloo",
+      "style": "Village inn",
+      "location": "alternate park gate",
+      "description": "A useful alternative base at the park's eastern gate, marginally quieter than Otterlo and closer to Radio Kootwijk and the Kootwijkerzand heath, at the cost of a slightly longer ride to the museum.",
+      "booking": "4–6 weeks ahead.",
+      "priceNote": "€85–€120 per night with breakfast"
+    }
+  ],
+  "logistics": {
+    "connectivity": null,
+    "emergency": "112 pan-European for police, ambulance and fire.",
+    "weather": null,
+    "bookingWindows": null,
+    "money": "Euro. Cards, including contactless, are near-universal; the park gate and museum both take cards, though a little cash is useful for the smaller Radio Kootwijk café.",
+    "transportRules": null,
+    "permits": null,
+    "health": null,
+    "gettingThere": null,
+    "other": [
+      {
+        "label": "Access",
+        "text": "No 4x4 or special vehicle is needed; both Otterlo and Hoenderloo sit on paved roads with regular bus service, and the park itself is entered through three staffed gates (Otterlo, Hoenderloo, Schaarsbergen) with posted opening and closing hours that change by season — arrive well before closing, since latecomers are turned away."
+      },
+      {
+        "label": "Isolation level",
+        "text": "Be plain about this: De Hoge Veluwe is a managed, ticketed landscape within a short ride of a supermarket in Otterlo, and mobile signal is reliable throughout. The appeal is the scale and quiet of the fenced reserve, not remoteness."
+      },
+      {
+        "label": "Resupply",
+        "text": "Otterlo and Hoenderloo both have supermarkets and bakeries; Apeldoorn and Arnhem, both under 30 minutes away by bus or train, cover anything larger."
+      },
+      {
+        "label": "Foraging and fire law",
+        "text": "The park is privately managed and part of the Natura 2000 network; picking flowers, plants or mushrooms is prohibited throughout, and visitors must stay on marked lanes and paths — cutting across open heath or dune is not permitted, partly to protect ground-nesting birds. Certain heathland sections close to off-path access during the spring–summer breeding season. Camping and open fires are prohibited inside the park entirely; the nearest legal campsite with fire pits is outside the boundary near Hoenderloo."
+      },
+      {
+        "label": "Wildlife and ticks",
+        "text": "Red deer rut runs September into October and is the park's marquee event; wild boar and mouflon are present but shyer, best seen from the hides. Ticks are common in the heath and forest edges from spring through autumn — check daily after any off-cycle walking."
+      },
+      {
+        "label": "Bicycles",
+        "text": "The white bicycles are free but basic, single-speed and without gears — fine for the flat, sandy lanes here but budget more time than a road bike would need, and note there is no reservation system: on the busiest midsummer days, arrive early for the best pick."
+      }
+    ]
+  },
+  "proTips": [
+    "Buy park tickets online in advance for a specific time slot; walk-up tickets on busy weekends can mean a long wait at the Otterlo gate.",
+    "Head straight for a wildlife hide at opening time, before the day's cycling traffic reaches that part of the park — the animals move off quickly once lanes get busy.",
+    "Visit the Kröller-Müller Museum on a weekday if possible; it is one of the most visited museums in the country and Saturday afternoons draw real crowds to the van Gogh rooms.",
+    "The Sint Hubertus hunting lodge is included in some ticket types for interior visits on a timed tour — book that slot separately and early, since spaces are limited.",
+    "Radio Kootwijk is easy to treat as a footnote; give it a proper hour, since the building's scale only reads once you are standing under it.",
+    "Return your white bicycle to any rack, not just where you took it — this is by design, and holding onto one past the day discourages the next visitor.",
+    "September's rut is loudest around dawn and dusk near the heathland edges — check the visitor centre's daily wildlife-sighting board for that day's best-reported hide."
+  ],
+  "typeSpecific": {
+    "raw": {
+      "Total Distance / Terrain": "approx. 90–120 km by bicycle, under 200 m cumulative ascent; sandy forest track, heathland path, paved park lanes",
+      "Who It Suits": "Families, birdwatchers and anyone who wants an easy, flat nature week with a genuine cultural anchor"
+    },
+    "surface": "approx. 90–120 km by bicycle, under 200 m cumulative ascent; sandy forest track, heathland path, paved park lanes",
+    "distanceKm": 90,
+    "elevationM": null,
+    "verticalM": null,
+    "technicalRating": null,
+    "transitPass": null,
+    "hutBooking": null,
+    "liftNetwork": null,
+    "snowReliability": null,
+    "windConditions": null,
+    "gpxReady": null,
+    "bookingTimeline": null,
+    "audience": "Families, birdwatchers and anyone who wants an easy, flat nature week with a genuine cultural anchor"
+  },
+  "packingNotes": [
+    "Comfortable cycling clothes; the terrain is flat and easy but a full day in the saddle on a single-speed bike adds up.",
+    "A light rain layer — Veluwe weather turns quickly even on a forecast-dry day.",
+    "Binoculars for the wildlife hides.",
+    "Sunscreen and a hat for the open drift-sand and heath sections, which have no shade.",
+    "A printed or downloaded park map — mobile signal is fine but the lane network is dense enough to benefit from a paper backup.",
+    "Comfortable walking shoes for the museum's sculpture garden, which is a genuine walk in itself.",
+    "A refillable water bottle; taps are available at the visitor centre and museum.",
+    "Insect repellent for the forest cabin evenings."
+  ],
+  "whatCouldGoWrong": [
+    "**Gate queues on a summer weekend.** Fallback: book the earliest available timed slot and arrive 15 minutes before it opens, or shift the visit to a weekday.",
+    "**All the good white bicycles are gone at a busy rack.** Fallback: every gate and the visitor centre has its own rack; walk a few minutes to the next one rather than waiting.",
+    "**Rain during the museum's sculpture garden visit.** Fallback: the museum building itself covers a full afternoon of the van Gogh and modern collections, and the garden can be seen another day within a multi-day ticket.",
+    "**A closed heathland path during bird-breeding season.** Fallback: the park's paved lane network stays fully open even when specific off-path heath sections are restricted; check the visitor centre board for the day's closures.",
+    "**Gate closes before you're back.** Fallback: build in a 30-minute buffer before posted closing time, since being caught inside after the gate locks means a walk to a different exit."
+  ],
+  "sources": {
+    "verified": null,
+    "confidenceNotes": null
+  },
+  "verifyFlags": [],
+  "verifyFlagCount": 0,
+  "volatilePricing": false,
+  "wordCount": 2093,
+  "dataVintage": 2026,
+  "provenance": {
+    "batch": "western-central",
+    "sourceFile": "cartatripsv1/trips/nl-nature-veluwe-hoge-veluwe.md",
+    "sourceFormat": "md+yaml-frontmatter (one file per trip)",
+    "sourceId": "nl-nature-veluwe-hoge-veluwe",
+    "ingestedAt": "2026-09-02",
+    "synthesized": false
+  }
+}

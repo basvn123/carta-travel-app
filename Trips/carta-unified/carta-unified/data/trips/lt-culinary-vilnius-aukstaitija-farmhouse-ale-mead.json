@@ -1,0 +1,314 @@
+{
+  "id": "lt-culinary-vilnius-aukstaitija-farmhouse-ale-mead",
+  "sourceId": "vilnius-aukstaitija-farmhouse-ale-mead-road",
+  "slug": "lt-culinary-vilnius-aukstaitija-farmhouse-ale-mead",
+  "title": "Vilnius & Aukštaitija: Farmhouse Ale and Mead Road",
+  "country": "Lithuania",
+  "countryCode": "LT",
+  "countries": [
+    {
+      "name": "Lithuania",
+      "code": "LT"
+    }
+  ],
+  "isMultiCountry": false,
+  "region": "Northern Europe & Baltics",
+  "regionKey": "northern-baltics",
+  "subRegion": "Vilnius, Aukštaitija (northeast Lithuania), Biržai, Dzūkija",
+  "tripType": "Culinary & Wine Tours",
+  "tripTypeId": 7,
+  "tripTypeSlug": "culinary",
+  "durationDays": 7,
+  "bestPeriod": {
+    "months": [
+      5,
+      6,
+      7,
+      8,
+      9,
+      10
+    ],
+    "monthNames": [
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "October"
+    ],
+    "window": "May to October. September–October for mushroom season, honey harvest and the beer festivals; June for cold soup season and Rasos midsummer",
+    "note": null,
+    "avoid": null,
+    "raw": "May to October. September–October for mushroom season, honey harvest and the beer festivals; June for cold soup season and Rasos midsummer"
+  },
+  "budgetTier": "€€",
+  "budgetTierRange": [
+    2,
+    2
+  ],
+  "budgetTierRaw": "€€",
+  "budget": {
+    "currency": "EUR",
+    "totalEur": {
+      "low": 850,
+      "high": 1350
+    },
+    "totalNote": "€850–1,350 per person",
+    "breakdown": {
+      "accommodation": {
+        "lowEur": 70,
+        "highEur": 140,
+        "note": "€70–140 per night, double, in Vilnius; €50–90 in the regions"
+      },
+      "food": {
+        "lowEur": 40,
+        "highEur": 75,
+        "note": "€40–75 per day; a Vilnius tasting menu €70–130"
+      },
+      "transport": {
+        "lowEur": 180,
+        "highEur": 260,
+        "note": "€180–260: car hire €40–55 per day for the Aukštaitija and Dzūkija legs"
+      },
+      "activities": {
+        "lowEur": 60,
+        "highEur": 130,
+        "note": "€60–130: brewery and mead visits, Trakai castle, tree-beekeeping demonstration"
+      }
+    },
+    "perDayEur": {
+      "low": 121,
+      "high": 193
+    }
+  },
+  "profile": {
+    "difficulty": null,
+    "difficultyLabel": null,
+    "difficultyNote": null,
+    "fitnessLevel": null,
+    "crowdLevel": null,
+    "familyFriendly": null,
+    "carRequired": null
+  },
+  "basecamps": [
+    "Vilnius",
+    "Biržai",
+    "Anykščiai",
+    "Merkinė"
+  ],
+  "gatewayAirport": null,
+  "gatewayAirportCode": null,
+  "languages": [
+    "Lithuanian",
+    "Russian",
+    "Polish",
+    "English"
+  ],
+  "currency": "EUR",
+  "emergencyNumber": "112",
+  "coordinates": {
+    "lat": 54.6872,
+    "lon": 25.2797,
+    "precision": "source",
+    "matchedPlace": "Vilnius",
+    "source": "source record"
+  },
+  "tags": [],
+  "summary": "A seven-day culinary & wine tour itinerary in Vilnius, Aukštaitija (northeast Lithuania), Biržai, Dzūkija, Lithuania.",
+  "summaryGenerated": true,
+  "hook": null,
+  "snapshot": {},
+  "itinerary": [
+    {
+      "day": 1,
+      "title": "Vilnius: the old town table",
+      "morning": "Arrive Vilnius. The old town is the largest surviving baroque old town in Eastern Europe, on the UNESCO list, and walkable end to end in forty minutes.",
+      "afternoon": "**Halės Turgus**, the covered market since 1906: rye bread, smoked meats, curd cheese, forest mushrooms and honey. Lunch here. Then Užupis, the self-declared artists' republic across the Vilnia river with its own constitution on a wall in thirty languages.",
+      "evening": "Dinner at one of the restaurants reinterpreting Lithuanian historical cuisine — the Grand Duchy's kitchen, with its game, rye and preserved fruit, is being seriously researched and cooked in Vilnius right now. `verify: true`",
+      "dayStats": null,
+      "sleep": null
+    },
+    {
+      "day": 2,
+      "title": "Vilnius: beer bars and the modern kitchen",
+      "morning": "The Gediminas Tower and the Palace of the Grand Dukes for the context that explains the food: this was the capital of a state that stretched to the Black Sea.",
+      "afternoon": "Vilnius's **farmhouse-beer bars** are the point of this day. A handful of small bars in the old town and in Naujamiestis serve rotating *kaimiškas alus* from named village brewers — often unfiltered, low-carbonation, and unlike anything in the German or Belgian traditions.",
+      "evening": "Snack culture: smoked pig ears, *kepta duona* (fried garlic rye), curd cheese and salted peas, which exist specifically to be eaten with farmhouse ale.",
+      "dayStats": null,
+      "sleep": null
+    },
+    {
+      "day": 3,
+      "title": "Trakai and the Karaim kitchen",
+      "morning": "Trakai, 30 minutes west: the island castle on Lake Galvė, red brick on water, rebuilt in the 20th century and unmistakable.",
+      "afternoon": "The **Karaim** community — a Turkic people brought here in the 14th century by Grand Duke Vytautas — still lives on the town's main street in three-windowed wooden houses. Their **kibinai**, a baked pastry of lamb and onion, is one of the region's great dishes and is made properly only here.",
+      "evening": "Return to Vilnius, or drive north to start the Aukštaitija leg.",
+      "dayStats": null,
+      "sleep": null
+    },
+    {
+      "day": 4,
+      "title": "Aukštaitija: the farmhouse brewing heartland",
+      "morning": "Drive north toward Panevėžys and Pasvalys (about 2 h). This is flat, fertile, barley country and the last place in Europe where farmhouse brewing survived without a revival — it simply never stopped.",
+      "afternoon": "Visit an actual farm brewery. **Jovarų Alus** is the most famous, brewed by hand in a village with equipment that looks agricultural because it is. Arrangements must be made ahead and a Lithuanian-speaking guide helps enormously.",
+      "evening": "Biržai, the beer capital: a castle, a lake, and two large regional breweries in town alongside the farm producers. Dinner with local ale and *skilandis*.",
+      "dayStats": null,
+      "sleep": null
+    },
+    {
+      "day": 5,
+      "title": "Biržai karst, Anykščiai and the fruit wines",
+      "morning": "The **Kirkilai karst lakes** outside Biržai — a landscape of sinkholes where the gypsum bedrock collapses, with a viewing tower over dozens of small water-filled craters.",
+      "afternoon": "South to Anykščiai for the fruit-wine tradition — Lithuania's berry and apple wines are a serious regional industry — plus the treetop walkway in the Anykščiai pine forest and the narrow-gauge railway.",
+      "evening": "Anykščiai or back toward Vilnius.",
+      "dayStats": null,
+      "sleep": null
+    },
+    {
+      "day": 6,
+      "title": "Stakliškės mead and the Dzūkija forest",
+      "morning": "**Stakliškės**, south of Vilnius, is where Lithuanian mead is made to a documented traditional method — honey, water, hops and herbs, fermented and matured for months rather than fortified. The tasting explains why *midus* is closer to a wine than to the sweet mead most people expect.",
+      "afternoon": "Into **Dzūkija National Park**: pine forest, sand, and villages like Zervynos and Musteika, where the UNESCO-listed **tree-beekeeping** tradition is still practised — hives hollowed into living pines, worked with a rope and a climbing seat.",
+      "evening": "Mushrooms. Dzūkija is Lithuania's foraging heartland and in September the entire region is in the forest at dawn. A guesthouse dinner here will be built around what was picked that morning.",
+      "dayStats": null,
+      "sleep": null
+    },
+    {
+      "day": 7,
+      "title": "Vilnius return and departure",
+      "morning": "Last market run at Halės or the Tymo market for honey, black bread, smoked cheese and a bottle of mead.",
+      "afternoon": "Vilnius airport is fifteen minutes from the old town.",
+      "evening": null,
+      "dayStats": null,
+      "sleep": null
+    }
+  ],
+  "accommodationStrategy": [
+    {
+      "rank": 1,
+      "name": "Vilnius old town boutique hotels",
+      "style": null,
+      "location": null,
+      "description": "Small hotels in restored baroque and 19th-century buildings, €80–150. Everything on Days 1–3 is walkable, which matters on a beer itinerary. Look for a property between the cathedral and Užupis.",
+      "booking": null,
+      "priceNote": null
+    },
+    {
+      "rank": 2,
+      "name": "Biržai / Aukštaitija country guesthouses",
+      "style": null,
+      "location": null,
+      "description": "Simple, warm, and often with a sauna and a host who brews or knows who does. This is the region where the accommodation is the introduction — a guesthouse owner will get you into a farm brewery that no website lists.",
+      "booking": null,
+      "priceNote": null
+    },
+    {
+      "rank": 3,
+      "name": "Dzūkija forest homesteads",
+      "style": null,
+      "location": null,
+      "description": "Wooden houses in pine forest near Merkinė or Marcinkonys, €50–90, with home cooking and mushroom knowledge. The right ending for the week and a completely different Lithuania from Vilnius.",
+      "booking": null,
+      "priceNote": null
+    }
+  ],
+  "logistics": {
+    "connectivity": null,
+    "emergency": "112. Vilnius has excellent hospitals; rural Aukštaitija and Dzūkija are 40–90 minutes from one.",
+    "weather": null,
+    "bookingWindows": "Vilnius restaurants: 1–3 weeks. Brewery visits: 2–4 weeks via a guide. Guesthouses in mushroom season: 3–4 weeks, and note that September weekends in Dzūkija are busy with Lithuanian foragers.",
+    "money": null,
+    "transportRules": null,
+    "permits": null,
+    "health": null,
+    "gettingThere": null,
+    "other": [
+      {
+        "label": "Farmhouse breweries are farms",
+        "text": "They are not visitor centres, several do not have websites, and the brewer may speak only Lithuanian. Either go with a specialist beer guide from Vilnius or have your guesthouse arrange it. Turning up unannounced is not the custom. `verify: true`"
+      },
+      {
+        "label": "What farmhouse ale is",
+        "text": "Often unboiled or briefly boiled wort, family yeast cultures, farm-grown hops, low carbonation, served fresh and sometimes cloudy. Shelf life is short and it does not travel — which is precisely why you go to it."
+      },
+      {
+        "label": "Alcohol law",
+        "text": "Lithuania has some of the EU's strictest alcohol regulation: a **0.0‰ drink-drive limit for drivers with under two years' experience and 0.4‰ otherwise**, retail sale restricted by hour, and a minimum purchase age of 20. Plan drivers accordingly. `verify: true`"
+      },
+      {
+        "label": "Foraging",
+        "text": "Mushroom and berry picking on public forest land is legal and is a national obsession. Do not pick in strict nature reserves, and never eat anything a local has not confirmed — Lithuania has genuinely dangerous lookalikes."
+      },
+      {
+        "label": "Driving",
+        "text": "Good roads, headlights on at all times, winter tyres compulsory 10 November–1 April. Rural drink-driving enforcement is strict and checkpoints are common."
+      }
+    ]
+  },
+  "proTips": [
+    "Hire a **specialist beer guide** for the Aukštaitija day. It costs less than a good dinner and it is the difference between drinking farmhouse ale in a Vilnius bar and drinking it out of the fermenter with the man who made it.",
+    "Ask for the **beer snack menu** (*užkandžiai*) rather than a main course. Smoked pig ears, fried rye with garlic, salted peas, curd cheese and dried meat is the correct meal with farmhouse ale and it costs €10.",
+    "**Šaltibarščiai** — the neon-pink cold beetroot and kefir soup with hot potatoes on the side — is a summer-only dish and Lithuanians are passionate about it. Order it any time between May and September.",
+    "Mead from **Stakliškės** is the single best thing to bring home from this trip: it is unlike commercial mead, it ages, and it is difficult to find outside the country.",
+    "Go in **late September**. Mushroom season, honey harvest, apple wine, warm days and beer festivals in the Aukštaitija towns all coincide.",
+    "Vilnius's food scene has changed dramatically in the last decade and the historical-cuisine research movement is the most interesting thing happening in Baltic food. Book one such dinner deliberately, early in the week — it frames everything you eat afterwards."
+  ],
+  "typeSpecific": {
+    "raw": {
+      "appellations_and_terroir": "Not a wine country — this is Europe's last living **farmhouse ale** tradition, plus honey. Lithuanian *kaimiškas alus* uses raw or lightly boiled wort, local landrace yeasts kept in families for generations, and hops grown on the farm. Stakliškės mead is made to a documented traditional recipe; Lithuanian and Polish **tree beekeeping** was inscribed on UNESCO's intangible heritage list in 2020",
+      "signature_producers": [
+        "Jovarų Alus (Pasvalys district)",
+        "Dundulis (Panevėžys)",
+        "Butautų Dvaro Bravoras (Biržai district)",
+        "Rinkuškiai (Biržai)",
+        "Lithuanian mead from Stakliškės",
+        "Musteika tree-beekeeping community (Dzūkija)"
+      ],
+      "signature_dishes": [
+        "Cepelinai",
+        "šaltibarščiai (cold beetroot soup)",
+        "kibinai in Trakai",
+        "skilandis",
+        "kastinys",
+        "black rye bread",
+        "šakotis",
+        "smoked pig ears with farmhouse ale",
+        "wild mushrooms from Dzūkija"
+      ],
+      "reservation_only": "Farmhouse breweries are farms. Visits are pre-arranged, often in Lithuanian, and frequently only through a guide or a specialist beer tour",
+      "gpx_ready": true
+    },
+    "surface": null,
+    "distanceKm": null,
+    "elevationM": null,
+    "verticalM": null,
+    "technicalRating": null,
+    "transitPass": null,
+    "hutBooking": null,
+    "liftNetwork": null,
+    "snowReliability": null,
+    "windConditions": null,
+    "gpxReady": true,
+    "bookingTimeline": "Farmhouse breweries are farms. Visits are pre-arranged, often in Lithuanian, and frequently only through a guide or a specialist beer tour",
+    "audience": null
+  },
+  "packingNotes": [],
+  "whatCouldGoWrong": [],
+  "sources": {
+    "verified": null,
+    "confidenceNotes": null
+  },
+  "verifyFlags": [],
+  "verifyFlagCount": 0,
+  "volatilePricing": true,
+  "wordCount": 1518,
+  "dataVintage": 2026,
+  "provenance": {
+    "batch": "northern-baltics",
+    "sourceFile": "carta_northern_europe_baltics_trips.md#trip-21",
+    "sourceFormat": "single-file md, '## Trip NN' records with fenced YAML",
+    "sourceId": "vilnius-aukstaitija-farmhouse-ale-mead-road",
+    "ingestedAt": "2026-09-02",
+    "synthesized": false
+  }
+}

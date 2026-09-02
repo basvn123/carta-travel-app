@@ -1,0 +1,296 @@
+{
+  "id": "bg-trail-running-rila-pirin",
+  "sourceId": "bulgaria-rila-pirin-trail-running",
+  "slug": "bg-trail-running-rila-pirin",
+  "title": "Musala to Vihren: A Rila and Pirin Running Week Above 2,500 m",
+  "country": "Bulgaria",
+  "countryCode": "BG",
+  "countries": [
+    {
+      "name": "Bulgaria",
+      "code": "BG"
+    }
+  ],
+  "isMultiCountry": false,
+  "region": "Eastern & Southeastern Europe",
+  "regionKey": "eastern-southeastern",
+  "subRegion": "Rila and Pirin (Govedartsi, Borovets, Bansko)",
+  "tripType": "Trail Running",
+  "tripTypeId": 2,
+  "tripTypeSlug": "trail-running",
+  "durationDays": 7,
+  "bestPeriod": {
+    "months": [
+      7,
+      8,
+      9
+    ],
+    "monthNames": [
+      "July",
+      "August",
+      "September"
+    ],
+    "window": "mid-August to the end of September — snowfields gone from the Musala couloirs, storm frequency falling, lifts still turning",
+    "note": null,
+    "avoid": "before late June (cornices and wet slab on the north sides) and the first half of July, when the klek is soaking and afternoon cells fire daily",
+    "raw": null
+  },
+  "budgetTier": "€",
+  "budgetTierRange": [
+    1,
+    1
+  ],
+  "budgetTierRaw": "€",
+  "budget": {
+    "currency": "EUR",
+    "totalEur": {
+      "low": 410,
+      "high": 870
+    },
+    "totalNote": "€410–€870",
+    "breakdown": {
+      "accommodation": {
+        "lowEur": 180,
+        "highEur": 300,
+        "note": "€180–€300 (€25–€45/night, guesthouses and mountain huts)"
+      },
+      "food": {
+        "lowEur": 140,
+        "highEur": 210,
+        "note": "€140–€210 (€20–€30/day)"
+      },
+      "transport": {
+        "lowEur": 90,
+        "highEur": 160,
+        "note": "€90–€160 (Sofia transfers, Yastrebets and Panichishte gondolas, Bansko gondola, taxis to trailheads)"
+      },
+      "activities": {
+        "lowEur": 0,
+        "highEur": 200,
+        "note": "€0–€200 (no trail fees; a local guide day is optional)"
+      }
+    },
+    "perDayEur": {
+      "low": 59,
+      "high": 124
+    }
+  },
+  "profile": {
+    "difficulty": 4,
+    "difficultyLabel": "Demanding",
+    "difficultyNote": "Hard",
+    "fitnessLevel": "Demanding",
+    "crowdLevel": null,
+    "familyFriendly": null,
+    "carRequired": null
+  },
+  "basecamps": [
+    "Govedartsi",
+    "Borovets",
+    "Bansko"
+  ],
+  "gatewayAirport": "Sofia (SOF) is 75 km from Govedartsi and Borovets — one hour by transfer, or bus to Samokov then a local minibus. Bansko is 2 h 45 from Sofia by direct bus, or 2 h from Borovets over the Yundola road.",
+  "gatewayAirportCode": "SOF",
+  "languages": [
+    "Bulgarian"
+  ],
+  "currency": "Euro (EUR) — sole legal tender since 1 February 2026; mandatory dual BGN display ended 8 August 2026",
+  "emergencyNumber": "112 (mountain rescue PSS: 1470)",
+  "coordinates": {
+    "lat": 42.6975,
+    "lon": 23.3241,
+    "precision": "gateway",
+    "matchedPlace": "Sofia",
+    "source": "geonames (geonamescache, cities > 15k)"
+  },
+  "tags": [
+    "trail-running",
+    "rila",
+    "pirin",
+    "musala",
+    "vihren",
+    "seven-lakes",
+    "high-altitude",
+    "granite"
+  ],
+  "summary": "Two ranges, six days of running, and the two highest summits in the Balkans in the same week. Rila gives you granite slab, a hundred cirque lakes and dwarf-pine tunnels that will remove the skin from your shins.…",
+  "summaryGenerated": false,
+  "hook": "Two ranges, six days of running, and the two highest summits in the Balkans in the same week. Rila gives you granite slab, a hundred cirque lakes and dwarf-pine tunnels that will remove the skin from your shins. Pirin gives you white marble that eats outsoles and drops away on both sides. The trails are waymarked and almost entirely unmaintained. Bring a headtorch, a jacket, and the discipline to be off the ridge by one o'clock.",
+  "snapshot": {
+    "Country": "Bulgaria",
+    "Trip type": "Trail Running",
+    "Duration": "7 days",
+    "Best period": "July–September, best mid-August to end of September",
+    "Budget tier": "€",
+    "Difficulty": "Hard",
+    "Start / End": "Govedartsi → Bansko (two bases, ~150 km and ~8,000 m of running)",
+    "Getting there": "Sofia (SOF) is 75 km from Govedartsi and Borovets — one hour by transfer, or bus to Samokov then a local minibus. Bansko is 2 h 45 from Sofia by direct bus, or 2 h from Borovets over the Yundola road."
+  },
+  "itinerary": [
+    {
+      "day": 1,
+      "title": "Arrival and a legs-opener",
+      "morning": "Fly into Sofia, transfer to **Govedartsi** (1,200 m) in the Cherni Iskar valley — quieter, cheaper and better for sleeping than Borovets.",
+      "afternoon": "Shake out on the forest road up the **Malyovishka river** towards Hizha Malyovitsa. Runnable, shaded, and useful for gauging how the altitude sits on you.",
+      "evening": "Eat at a village *mehana* — grilled trout, *shopska salata*, no *rakia* the night before Musala. Lay out kit and check the Yastrebets gondola's first cabin time.",
+      "dayStats": "10 km / +350 m / T1",
+      "sleep": null
+    },
+    {
+      "day": 2,
+      "title": "Musala, 2,925 m, the highest point in the Balkans",
+      "morning": "Drive to **Borovets** and take the **Yastrebets gondola** to 2,369 m [VERIFY: current Yastrebets gondola summer fare]. Run the traverse to **Musala hut (2,389 m)**, fill at the spring, then follow the **Musalenski lakes** chain — Everest, Ledeno, Alekovo — up the cirque.",
+      "afternoon": "The final 300 m is stepped rock and often has old snow in the gully. Touch the summit block and the weather station, then reverse. Two and a half hours up, ninety minutes down.",
+      "evening": "Back down the gondola before the last cabin. Recovery food in Borovets, then back to Govedartsi.",
+      "dayStats": "13 km / +680 / −680 m / T3",
+      "sleep": null
+    },
+    {
+      "day": 3,
+      "title": "Malyovitsa and the Fish Lakes",
+      "morning": "From **Hizha Malyovitsa (1,750 m)** climb the granite steps past the Malyovishki waterfall to the **Malyovitsa (2,729 m)** summit block — a genuine hands-on scramble at the top, T4 for ten metres.",
+      "afternoon": "Drop to the **Ribni Ezera** (Fish Lakes) basin and the hut on the shore, then run back over the **Kobilino Branishte** saddle. Big day; carry food and refill at the lake outflow.",
+      "evening": "Legs up in Govedartsi. This is the day that decides whether the Pirin loop later in the week is realistic.",
+      "dayStats": "26 km / +1,450 m / T3–T4",
+      "sleep": null
+    },
+    {
+      "day": 4,
+      "title": "The Seven Rila Lakes and Haramiyata",
+      "morning": "Transfer to **Panichishte** and take the **Pionerska gondola** to the **Rilski Ezera hut (2,150 m)**. Run the full circuit of the seven: **Dolnoto** (the Lower), **Ribnoto** (the Fish), **Trilistnika** (the Trefoil), **Bliznaka** (the Twin), **Babreka** (the Kidney), **Okoto** (the Eye) — at 37.5 m the deepest cirque lake in Bulgaria — and **Salzata** (the Tear).",
+      "afternoon": "Climb the ridge to the **Haramiyata** viewpoint (2,465 m) for the classic overhead of all seven, then descend the klek-tunnel path towards Skakavitsa.",
+      "evening": "Return by gondola [VERIFY: current Pionerska gondola fare]. Overnight at the hut if you want the lakes to yourselves at dawn.",
+      "dayStats": "14 km / +780 m / T2–T3",
+      "sleep": null
+    },
+    {
+      "day": 5,
+      "title": "Rila Monastery, then transfer to Pirin",
+      "morning": "Drive over to the **Rila Monastery (1,147 m)** — the Hrelyo Tower and the striped arcades of the Church of the Nativity — and run the river track up the Rilska valley to **Kirilova Polyana (1,400 m)** and back. Fast, forested, restorative.",
+      "afternoon": "Transfer south to **Bansko** via Blagoevgrad, two to two and a half hours [VERIFY: current Rila–Bansko transfer options and cost].",
+      "evening": "Bansko *mehana* dinner: *kavarma*, *banitsa*, a Melnik red. Reconnoitre the gondola base for tomorrow's early cabin.",
+      "dayStats": "16 km / +420 m / T1–T2",
+      "sleep": null
+    },
+    {
+      "day": 6,
+      "title": "The Vihren–Todorka loop",
+      "morning": "Up the **Bunderitsa** road or the Bansko gondola to **Hizha Vihren (1,950 m)**. Climb the **Kazana** cirque to **Vihren (2,914 m)**, Bulgaria's second summit, on white marble that is unrunnable in the wet.",
+      "afternoon": "Descend to the **Banderishka porta**, traverse the ridge to **Todorka (2,746 m)**, then drop past the **Banderishki lakes** to the hut. Two litres minimum — the marble section holds no water at all.",
+      "evening": "Down to Bansko, mineral bath, and an honest assessment of quads before Day 7.",
+      "dayStats": "18 km / +1,500 m / T3–T4",
+      "sleep": null
+    },
+    {
+      "day": 7,
+      "title": "Banderishki lakes cruise and out",
+      "morning": "A gentle last lap from Hizha Vihren around the upper and lower **Banderishki lakes** on granite slab, with a detour to **Baikushev's Pine**, a Bosnian pine over 1,300 years old.",
+      "afternoon": "Gondola or jeep down to Bansko [VERIFY: current summer Bansko gondola fare]. Late lunch on the old square.",
+      "evening": "Bus to Sofia, or stay the night and take the narrow-gauge train from Dobrinishte for the view.",
+      "dayStats": "12 km / +600 m / T2",
+      "sleep": null
+    }
+  ],
+  "accommodationStrategy": [
+    {
+      "rank": 1,
+      "name": "Guesthouse in Govedartsi",
+      "style": "village guesthouse",
+      "location": "Govedartsi",
+      "description": "1,200 m of free altitude while you sleep, twenty minutes from the Malyovitsa trailhead and forty from Borovets, at half Borovets prices. Family kitchens will do an early breakfast if you ask the night before.",
+      "booking": "Booking.com or direct by phone, two to four weeks ahead [VERIFY: current Govedartsi guesthouse rates].",
+      "priceNote": null
+    },
+    {
+      "rank": 2,
+      "name": "Rilski Ezera hut",
+      "style": "BTS mountain hut",
+      "location": "Seven Rila Lakes, 2,150 m",
+      "description": "puts you inside the cirque for a dawn circuit before the gondola delivers the day crowds at 10:00. Dormitory beds, hot soup, cash only.",
+      "booking": "phone the hut direct, a week ahead midweek, longer for weekends [VERIFY: current Rilski Ezera hut bed rate].",
+      "priceNote": null
+    },
+    {
+      "rank": 3,
+      "name": "Hizha Vihren",
+      "style": "BTS mountain hut",
+      "location": "Bunderitsa valley, 1,950 m",
+      "description": "removes 1,000 m of road climbing from the Vihren–Todorka loop and lets you start on the marble at 06:00 rather than 09:00. Spring water at the door.",
+      "booking": "phone direct, two weeks ahead; cash only.",
+      "priceNote": null
+    }
+  ],
+  "logistics": {
+    "connectivity": "A1 and Yettel cover Borovets, Bansko and most ridgelines; the Fish Lakes basin and the Bunderitsa cirque are patchy. Download offline maps for both ranges before leaving town.",
+    "emergency": "**PSS 1470** or **112**. Report your position by hut, lake or saddle name and waymark colour. Carry a foil blanket — a twisted ankle at 2,700 m becomes a hypothermia problem within an hour.",
+    "weather": "Afternoon thunderstorms from mid-June to mid-August, typically firing at 13:00. Rila also produces fast hill fog that erases the marker poles. Hail is common above 2,500 m.",
+    "bookingWindows": "Guesthouses two to four weeks; huts one to two weeks by phone, more for the September holiday weekends.",
+    "money": "Bulgaria has adopted the **euro**, with prices still dual-displayed in **BGN** at the fixed 1.95583 rate. Huts and jeep taxis are **cash only**; gondolas take cards.",
+    "transportRules": "The Bunderitsa road above Hizha Banderitsa is unsurfaced — gondola or jeep taxi. Gondolas stop for lightning and wind without warning; always know the walking descent.",
+    "permits": "No fees or permits in either Rila or Pirin National Park, but both ban **wild camping outside marked bivouac zones**, **open fires**, **dogs** and drones. Marked trails only, and no shortcutting the Seven Lakes switchbacks.",
+    "health": null,
+    "gettingThere": null,
+    "other": []
+  },
+  "proTips": [
+    "Wear long socks or calf sleeves for every Rila run. The klek will otherwise take your shins apart in a single descent, and the cuts get infected fast at altitude.",
+    "Take the first gondola cabin at Borovets and at Panichishte. You will have Musala's summit and the Seven Lakes ridge to yourself for two hours before the day-trip buses land.",
+    "Sleep at the Rilski Ezera hut and run the circuit at 06:00. The lakes are mirror-flat, the light is sideways, and Haramiyata is empty.",
+    "Carry two litres for the Pirin marble day and fill at the Hizha Vihren spring. The karst drains everything; there is no stream between the Kazana and the Banderishki lakes.",
+    "Learn *\"Kade e pateka za…?\"* — where is the path to…? Waymarks vanish in cloud, and shepherds and hut wardens give reliable directions by hut name.",
+    "Use Govedartsi, not Borovets, as the Rila base. Cheaper, quieter, closer to Malyovitsa, and you sleep at 1,200 m instead of in a ski resort.",
+    "Keep Day 7 flexible. If a front comes through, swap the Banderishki lakes for the low, forested Rila Monastery run — it works in any weather."
+  ],
+  "typeSpecific": {
+    "raw": {
+      "The runs, with numbers": "**Musala (2,925 m)** from the Yastrebets gondola top: 13 km, +680/−680 m, **T3**, granite blocks and one steep summit staircase. **Seven Rila Lakes circuit with Haramiyata**: 14 km, +780 m, **T2–T3**. **Malyovitsa (2,729 m) and Ribni Ezera**: 26 km, +1,450 m, **T3** with a T4 scramble on the summit block. **Rila Monastery to Kirilova Polyana and back**: 16 km, +420 m, **T1–T2**, runnable river track. **Vihren–Todorka loop, Pirin**: 18 km, +1,500 m, **T3–T4**. **Banderishki lakes loop**: 12 km, +600 m, **T2**.",
+      "Terrain, honestly": "Rila is **granite** — slab that grips when dry and skates when wet, plus long boulder fields where you hop rather than run. Pirin's north is **marble karst**: sharp, fissured, and hard on soft-lugged shoes. Both ranges have **scree**, some of it live.",
+      "The klek is the real hazard": "*Klek* is dwarf mountain pine (*Pinus mugo*), and above about 1,900 m in Rila it forms dense, waist-to-chest-high thickets that trails tunnel through. The branches are woody, springy and hidden under the canopy; they shred shins, hook laces, and conceal the trail surface completely, so you cannot see the rock you are about to land on. Klek sections are why Rila runners wear **calf sleeves or long socks in August**. Never leave a marked line to shortcut through klek — you will not get through, and you will not be visible from the air.",
+      "Water points by name": "The **Musala hut spring** at 2,389 m (the last reliable water before the summit). The **outflow streams of the Rila lakes** — the Fish Lake and Lower Lake outflows below Rilski Ezera hut, and the Okoto outflow. The **Malyovishka river** below Malyovitsa hut. In Pirin: the **Banderitsa** stream and the spring at Hizha Vihren. Between Kutelo and Todorka on the marble there is **nothing** — carry two litres.",
+      "Waymarks and maintenance": "The **BTS/KKS** white–colour–white blaze plus tall marker poles above the treeline. **Red** is the ridge line and the **E4**. Be clear-eyed: Bulgarian ridge trails are **marked but not maintained**. Paint fades, poles fall, drainage does not exist, and a \"path\" on the map may be a braided scar across scree. Carry a phone with an offline map and do not rely on continuous waymarking in cloud.",
+      "Bail-outs": "**Yastrebets gondola** to Borovets from the Musala side; the **Panichishte–Pionerska gondola** from the Seven Lakes; the **Bansko gondola** from Banderishka polyana; the **Bezbog chairlift** on the far side of Pirin. All are weather-dependent and stop early [VERIFY: current gondola operating hours and last-down times].",
+      "Rescue": "**PSS (Planinska Spasitelna Sluzhba) on 1470**, or **112**. Rila and Pirin teams are ground-based out of Borovets, Samokov and Bansko; helicopter is not something to plan around. Insure for mountain running above 2,500 m.",
+      "Storm timing": "From roughly 20 June to 20 August, convective cells fire over both ranges from about **13:00**, often earlier over Rila. On Musala and the Pirin ridge you are the highest object for kilometres. Start at first light and treat 13:00 as a hard turnaround."
+    },
+    "surface": "Rila is **granite** — slab that grips when dry and skates when wet, plus long boulder fields where you hop rather than run. Pirin's north is **marble karst**: sharp, fissured, and hard on soft-lugged shoes. Both ranges have **scree**, some of it live.",
+    "distanceKm": null,
+    "elevationM": null,
+    "verticalM": null,
+    "technicalRating": null,
+    "transitPass": null,
+    "hutBooking": null,
+    "liftNetwork": null,
+    "snowReliability": null,
+    "windConditions": null,
+    "gpxReady": null,
+    "bookingTimeline": null,
+    "audience": null
+  },
+  "packingNotes": [],
+  "whatCouldGoWrong": [],
+  "sources": {
+    "verified": null,
+    "confidenceNotes": "- Verified: Musala 2,925 m as the highest peak in the Balkans; Musala hut at 2,389 m; Vihren 2,914 m; Todorka 2,746 m; Malyovitsa 2,729 m; Okoto as the deepest cirque lake in Bulgaria at 37.5 m; the seven named Rila lakes; Haramiyata as the standard overhead viewpoint; Baikushev's Pine as a Bosnian pine over 1,300 years old; *klek* as dwarf mountain pine and the principal Rila trail hazard; BTS/KKS white–colour–white waymarking and the E4; PSS mountain rescue on 1470 and 112; national park bans on camping, fires and dogs; euro adoption with BGN dual display at 1.95583. - `[VERIFY]` items in this file: 7 (see inline markers above) - Last reviewed: 2026-09-02"
+  },
+  "verifyFlags": [
+    "current gondola operating hours and last-down times",
+    "current Yastrebets gondola summer fare",
+    "current Pionerska gondola fare",
+    "current Rila–Bansko transfer options and cost",
+    "current summer Bansko gondola fare",
+    "current Govedartsi guesthouse rates",
+    "current Rilski Ezera hut bed rate"
+  ],
+  "verifyFlagCount": 7,
+  "volatilePricing": true,
+  "wordCount": 2145,
+  "dataVintage": 2026,
+  "provenance": {
+    "batch": "eastern-southeastern",
+    "sourceFile": "cartaeasterneuropetrips/trips/bulgaria-rila-pirin-trail-running.md",
+    "sourceFormat": "md+nested-yaml-frontmatter (one file per trip)",
+    "sourceId": "bulgaria-rila-pirin-trail-running",
+    "ingestedAt": "2026-09-02",
+    "synthesized": false
+  }
+}

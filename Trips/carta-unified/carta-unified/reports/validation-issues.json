@@ -1,0 +1,3074 @@
+[
+  {
+    "level": "WARNING",
+    "trip": "at-cycling-donauradweg-wachau",
+    "code": "missing-connectivity",
+    "detail": "logistics.connectivity is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "at-cycling-donauradweg-wachau",
+    "code": "missing-booking-windows",
+    "detail": "logistics.bookingWindows is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "be-cycling-flemish-ardennes-bergs",
+    "code": "missing-connectivity",
+    "detail": "logistics.connectivity is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "be-cycling-flemish-ardennes-bergs",
+    "code": "missing-booking-windows",
+    "detail": "logistics.bookingWindows is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "be-cycling-vennbahn-ardennes",
+    "code": "gateway-coordinates",
+    "detail": "pin sits on the gateway city (Brussels), not on the trip's basecamp"
+  },
+  {
+    "level": "WARNING",
+    "trip": "be-cycling-vennbahn-ardennes",
+    "code": "missing-connectivity",
+    "detail": "logistics.connectivity is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "be-cycling-vennbahn-ardennes",
+    "code": "missing-booking-windows",
+    "detail": "logistics.bookingWindows is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "cz-cycling-south-bohemia-ponds",
+    "code": "missing-connectivity",
+    "detail": "logistics.connectivity is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "cz-cycling-south-bohemia-ponds",
+    "code": "missing-booking-windows",
+    "detail": "logistics.bookingWindows is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "de-cycling-bodensee-radweg",
+    "code": "missing-connectivity",
+    "detail": "logistics.connectivity is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "de-cycling-bodensee-radweg",
+    "code": "missing-booking-windows",
+    "detail": "logistics.bookingWindows is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "dk-cycling-bornholm-round-granite-coast-smokehouse-loop",
+    "code": "budget-sum-drift",
+    "detail": "low: breakdown sums to €315 against a stated total of €1050 (-70%)"
+  },
+  {
+    "level": "WARNING",
+    "trip": "dk-cycling-bornholm-round-granite-coast-smokehouse-loop",
+    "code": "budget-sum-drift",
+    "detail": "high: breakdown sums to €520 against a stated total of €1500 (-65%)"
+  },
+  {
+    "level": "WARNING",
+    "trip": "dk-cycling-bornholm-round-granite-coast-smokehouse-loop",
+    "code": "missing-evening",
+    "detail": "day 7 has no evening block"
+  },
+  {
+    "level": "WARNING",
+    "trip": "dk-cycling-bornholm-round-granite-coast-smokehouse-loop",
+    "code": "missing-gateway",
+    "detail": "no gateway airport named on the record"
+  },
+  {
+    "level": "INFO",
+    "trip": "dk-cycling-bornholm-round-granite-coast-smokehouse-loop",
+    "code": "generated-summary",
+    "detail": "summary composed from metadata — no editorial summary in the source"
+  },
+  {
+    "level": "WARNING",
+    "trip": "ee-cycling-saaremaa-muhu-juniper-island-loop",
+    "code": "budget-sum-drift",
+    "detail": "low: breakdown sums to €215 against a stated total of €650 (-67%)"
+  },
+  {
+    "level": "WARNING",
+    "trip": "ee-cycling-saaremaa-muhu-juniper-island-loop",
+    "code": "budget-sum-drift",
+    "detail": "high: breakdown sums to €390 against a stated total of €1000 (-61%)"
+  },
+  {
+    "level": "WARNING",
+    "trip": "ee-cycling-saaremaa-muhu-juniper-island-loop",
+    "code": "missing-evening",
+    "detail": "day 7 has no evening block"
+  },
+  {
+    "level": "WARNING",
+    "trip": "ee-cycling-saaremaa-muhu-juniper-island-loop",
+    "code": "missing-gateway",
+    "detail": "no gateway airport named on the record"
+  },
+  {
+    "level": "INFO",
+    "trip": "ee-cycling-saaremaa-muhu-juniper-island-loop",
+    "code": "generated-summary",
+    "detail": "summary composed from metadata — no editorial summary in the source"
+  },
+  {
+    "level": "WARNING",
+    "trip": "fr-cycling-alsace-vineyard-route",
+    "code": "missing-connectivity",
+    "detail": "logistics.connectivity is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "fr-cycling-alsace-vineyard-route",
+    "code": "missing-booking-windows",
+    "detail": "logistics.bookingWindows is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "fr-cycling-loire-a-velo",
+    "code": "missing-connectivity",
+    "detail": "logistics.connectivity is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "gr-cycling-peloponnese-arcadia",
+    "code": "approximate-coordinates",
+    "detail": "pin falls back to the Greece capital — no basecamp town resolved"
+  },
+  {
+    "level": "WARNING",
+    "trip": "hr-cycling-istria-parenzana",
+    "code": "approximate-coordinates",
+    "detail": "pin falls back to the Croatia capital — no basecamp town resolved"
+  },
+  {
+    "level": "WARNING",
+    "trip": "it-cycling-puglia-valle-itria",
+    "code": "approximate-coordinates",
+    "detail": "pin falls back to the Italy capital — no basecamp town resolved"
+  },
+  {
+    "level": "WARNING",
+    "trip": "lu-cycling-pc-network-moselle-mullerthal",
+    "code": "gateway-coordinates",
+    "detail": "pin sits on the gateway city (Luxembourg), not on the trip's basecamp"
+  },
+  {
+    "level": "WARNING",
+    "trip": "lu-cycling-pc-network-moselle-mullerthal",
+    "code": "missing-connectivity",
+    "detail": "logistics.connectivity is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "lu-cycling-pc-network-moselle-mullerthal",
+    "code": "missing-booking-windows",
+    "detail": "logistics.bookingWindows is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "me-cycling-kotor-lovcen",
+    "code": "approximate-coordinates",
+    "detail": "pin falls back to the Montenegro capital — no basecamp town resolved"
+  },
+  {
+    "level": "WARNING",
+    "trip": "nl-cycling-green-heart-waterline",
+    "code": "missing-connectivity",
+    "detail": "logistics.connectivity is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "nl-cycling-green-heart-waterline",
+    "code": "missing-booking-windows",
+    "detail": "logistics.bookingWindows is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "nl-cycling-wadden-frisian-dikes",
+    "code": "missing-connectivity",
+    "detail": "logistics.connectivity is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "nl-cycling-wadden-frisian-dikes",
+    "code": "missing-booking-windows",
+    "detail": "logistics.bookingWindows is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "pt-cycling-alentejo-costa-vicentina",
+    "code": "approximate-coordinates",
+    "detail": "pin falls back to the Portugal capital — no basecamp town resolved"
+  },
+  {
+    "level": "WARNING",
+    "trip": "se-cycling-kattegattleden-gothenburg-helsingborg",
+    "code": "budget-sum-drift",
+    "detail": "low: breakdown sums to €345 against a stated total of €1150 (-70%)"
+  },
+  {
+    "level": "WARNING",
+    "trip": "se-cycling-kattegattleden-gothenburg-helsingborg",
+    "code": "budget-sum-drift",
+    "detail": "high: breakdown sums to €555 against a stated total of €1650 (-66%)"
+  },
+  {
+    "level": "WARNING",
+    "trip": "se-cycling-kattegattleden-gothenburg-helsingborg",
+    "code": "missing-evening",
+    "detail": "day 7 has no evening block"
+  },
+  {
+    "level": "WARNING",
+    "trip": "se-cycling-kattegattleden-gothenburg-helsingborg",
+    "code": "missing-gateway",
+    "detail": "no gateway airport named on the record"
+  },
+  {
+    "level": "WARNING",
+    "trip": "se-cycling-kattegattleden-gothenburg-helsingborg",
+    "code": "missing-connectivity",
+    "detail": "logistics.connectivity is empty"
+  },
+  {
+    "level": "INFO",
+    "trip": "se-cycling-kattegattleden-gothenburg-helsingborg",
+    "code": "generated-summary",
+    "detail": "summary composed from metadata — no editorial summary in the source"
+  },
+  {
+    "level": "WARNING",
+    "trip": "si-cycling-soca-brda",
+    "code": "approximate-coordinates",
+    "detail": "pin falls back to the Slovenia capital — no basecamp town resolved"
+  },
+  {
+    "level": "WARNING",
+    "trip": "at-trail-running-innsbruck-nordkette",
+    "code": "missing-connectivity",
+    "detail": "logistics.connectivity is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "at-trail-running-innsbruck-nordkette",
+    "code": "missing-booking-windows",
+    "detail": "logistics.bookingWindows is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "at-trail-running-innsbruck-nordkette",
+    "code": "missing-type-detail",
+    "detail": "no technical rating captured for this trip type"
+  },
+  {
+    "level": "WARNING",
+    "trip": "be-trail-running-hautes-fagnes",
+    "code": "gateway-coordinates",
+    "detail": "pin sits on the gateway city (Brussels), not on the trip's basecamp"
+  },
+  {
+    "level": "WARNING",
+    "trip": "be-trail-running-hautes-fagnes",
+    "code": "missing-booking-windows",
+    "detail": "logistics.bookingWindows is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "be-trail-running-hautes-fagnes",
+    "code": "missing-type-detail",
+    "detail": "no technical rating captured for this trip type"
+  },
+  {
+    "level": "WARNING",
+    "trip": "bg-trail-running-rila-pirin",
+    "code": "gateway-coordinates",
+    "detail": "pin sits on the gateway city (Sofia), not on the trip's basecamp"
+  },
+  {
+    "level": "WARNING",
+    "trip": "bg-trail-running-rila-pirin",
+    "code": "missing-type-detail",
+    "detail": "no technical rating captured for this trip type"
+  },
+  {
+    "level": "WARNING",
+    "trip": "ch-trail-running-engadin-ridges",
+    "code": "gateway-coordinates",
+    "detail": "pin sits on the gateway city (Zürich), not on the trip's basecamp"
+  },
+  {
+    "level": "WARNING",
+    "trip": "ch-trail-running-engadin-ridges",
+    "code": "missing-connectivity",
+    "detail": "logistics.connectivity is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "ch-trail-running-engadin-ridges",
+    "code": "missing-booking-windows",
+    "detail": "logistics.bookingWindows is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "ch-trail-running-engadin-ridges",
+    "code": "missing-type-detail",
+    "detail": "no technical rating captured for this trip type"
+  },
+  {
+    "level": "WARNING",
+    "trip": "cz-trail-running-krkonose-ridge",
+    "code": "gateway-coordinates",
+    "detail": "pin sits on the gateway city (Prague), not on the trip's basecamp"
+  },
+  {
+    "level": "WARNING",
+    "trip": "cz-trail-running-krkonose-ridge",
+    "code": "missing-connectivity",
+    "detail": "logistics.connectivity is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "cz-trail-running-krkonose-ridge",
+    "code": "missing-booking-windows",
+    "detail": "logistics.bookingWindows is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "cz-trail-running-krkonose-ridge",
+    "code": "missing-type-detail",
+    "detail": "no technical rating captured for this trip type"
+  },
+  {
+    "level": "WARNING",
+    "trip": "de-trail-running-berchtesgaden",
+    "code": "approximate-coordinates",
+    "detail": "pin falls back to the Germany capital — no basecamp town resolved"
+  },
+  {
+    "level": "WARNING",
+    "trip": "de-trail-running-berchtesgaden",
+    "code": "missing-connectivity",
+    "detail": "logistics.connectivity is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "de-trail-running-berchtesgaden",
+    "code": "missing-booking-windows",
+    "detail": "logistics.bookingWindows is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "de-trail-running-berchtesgaden",
+    "code": "missing-type-detail",
+    "detail": "no technical rating captured for this trip type"
+  },
+  {
+    "level": "WARNING",
+    "trip": "es-trail-running-sierra-nevada-alpujarras",
+    "code": "approximate-coordinates",
+    "detail": "pin falls back to the Spain capital — no basecamp town resolved"
+  },
+  {
+    "level": "WARNING",
+    "trip": "fo-trail-running-faroese-ridgelines-streymoy-vagar",
+    "code": "budget-sum-drift",
+    "detail": "low: breakdown sums to €505 against a stated total of €1700 (-70%)"
+  },
+  {
+    "level": "WARNING",
+    "trip": "fo-trail-running-faroese-ridgelines-streymoy-vagar",
+    "code": "budget-sum-drift",
+    "detail": "high: breakdown sums to €865 against a stated total of €2500 (-65%)"
+  },
+  {
+    "level": "WARNING",
+    "trip": "fo-trail-running-faroese-ridgelines-streymoy-vagar",
+    "code": "missing-evening",
+    "detail": "day 7 has no evening block"
+  },
+  {
+    "level": "WARNING",
+    "trip": "fo-trail-running-faroese-ridgelines-streymoy-vagar",
+    "code": "missing-gateway",
+    "detail": "no gateway airport named on the record"
+  },
+  {
+    "level": "INFO",
+    "trip": "fo-trail-running-faroese-ridgelines-streymoy-vagar",
+    "code": "generated-summary",
+    "detail": "summary composed from metadata — no editorial summary in the source"
+  },
+  {
+    "level": "WARNING",
+    "trip": "fr-trail-running-chamonix-balcons",
+    "code": "approximate-coordinates",
+    "detail": "pin falls back to the France capital — no basecamp town resolved"
+  },
+  {
+    "level": "WARNING",
+    "trip": "fr-trail-running-chamonix-balcons",
+    "code": "missing-connectivity",
+    "detail": "logistics.connectivity is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "fr-trail-running-chamonix-balcons",
+    "code": "missing-type-detail",
+    "detail": "no technical rating captured for this trip type"
+  },
+  {
+    "level": "WARNING",
+    "trip": "fr-trail-running-mercantour-vesubie",
+    "code": "approximate-coordinates",
+    "detail": "pin falls back to the France capital — no basecamp town resolved"
+  },
+  {
+    "level": "WARNING",
+    "trip": "fr-trail-running-mercantour-vesubie",
+    "code": "missing-connectivity",
+    "detail": "logistics.connectivity is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "fr-trail-running-mercantour-vesubie",
+    "code": "missing-booking-windows",
+    "detail": "logistics.bookingWindows is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "fr-trail-running-mercantour-vesubie",
+    "code": "missing-type-detail",
+    "detail": "no technical rating captured for this trip type"
+  },
+  {
+    "level": "WARNING",
+    "trip": "gr-trail-running-zagori-vikos",
+    "code": "approximate-coordinates",
+    "detail": "pin falls back to the Greece capital — no basecamp town resolved"
+  },
+  {
+    "level": "WARNING",
+    "trip": "hr-trail-running-velebit-premuzic",
+    "code": "gateway-coordinates",
+    "detail": "pin sits on the gateway city (Zadar), not on the trip's basecamp"
+  },
+  {
+    "level": "WARNING",
+    "trip": "ie-trail-running-wicklow-granite-dublin-mountains-lugnaquilla",
+    "code": "budget-sum-drift",
+    "detail": "low: breakdown sums to €285 against a stated total of €900 (-68%)"
+  },
+  {
+    "level": "WARNING",
+    "trip": "ie-trail-running-wicklow-granite-dublin-mountains-lugnaquilla",
+    "code": "budget-sum-drift",
+    "detail": "high: breakdown sums to €500 against a stated total of €1350 (-63%)"
+  },
+  {
+    "level": "WARNING",
+    "trip": "ie-trail-running-wicklow-granite-dublin-mountains-lugnaquilla",
+    "code": "missing-evening",
+    "detail": "day 7 has no evening block"
+  },
+  {
+    "level": "WARNING",
+    "trip": "ie-trail-running-wicklow-granite-dublin-mountains-lugnaquilla",
+    "code": "missing-gateway",
+    "detail": "no gateway airport named on the record"
+  },
+  {
+    "level": "INFO",
+    "trip": "ie-trail-running-wicklow-granite-dublin-mountains-lugnaquilla",
+    "code": "generated-summary",
+    "detail": "summary composed from metadata — no editorial summary in the source"
+  },
+  {
+    "level": "WARNING",
+    "trip": "li-trail-running-fuerstensteig-drei-schwestern",
+    "code": "missing-connectivity",
+    "detail": "logistics.connectivity is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "li-trail-running-fuerstensteig-drei-schwestern",
+    "code": "missing-booking-windows",
+    "detail": "logistics.bookingWindows is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "li-trail-running-fuerstensteig-drei-schwestern",
+    "code": "missing-type-detail",
+    "detail": "no technical rating captured for this trip type"
+  },
+  {
+    "level": "WARNING",
+    "trip": "lu-trail-running-mullerthal",
+    "code": "gateway-coordinates",
+    "detail": "pin sits on the gateway city (Luxembourg), not on the trip's basecamp"
+  },
+  {
+    "level": "WARNING",
+    "trip": "lu-trail-running-mullerthal",
+    "code": "missing-connectivity",
+    "detail": "logistics.connectivity is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "lu-trail-running-mullerthal",
+    "code": "missing-booking-windows",
+    "detail": "logistics.bookingWindows is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "lu-trail-running-mullerthal",
+    "code": "missing-type-detail",
+    "detail": "no technical rating captured for this trip type"
+  },
+  {
+    "level": "WARNING",
+    "trip": "mc-trail-running-tete-de-chien-agel",
+    "code": "missing-connectivity",
+    "detail": "logistics.connectivity is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "mc-trail-running-tete-de-chien-agel",
+    "code": "missing-booking-windows",
+    "detail": "logistics.bookingWindows is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "mc-trail-running-tete-de-chien-agel",
+    "code": "missing-type-detail",
+    "detail": "no technical rating captured for this trip type"
+  },
+  {
+    "level": "WARNING",
+    "trip": "me-trail-running-durmitor",
+    "code": "approximate-coordinates",
+    "detail": "pin falls back to the Montenegro capital — no basecamp town resolved"
+  },
+  {
+    "level": "WARNING",
+    "trip": "no-trail-running-romsdal-ridges-andalsnes-skyrunning-week",
+    "code": "budget-sum-drift",
+    "detail": "low: breakdown sums to €460 against a stated total of €1600 (-71%)"
+  },
+  {
+    "level": "WARNING",
+    "trip": "no-trail-running-romsdal-ridges-andalsnes-skyrunning-week",
+    "code": "budget-sum-drift",
+    "detail": "high: breakdown sums to €770 against a stated total of €2300 (-67%)"
+  },
+  {
+    "level": "WARNING",
+    "trip": "no-trail-running-romsdal-ridges-andalsnes-skyrunning-week",
+    "code": "missing-evening",
+    "detail": "day 7 has no evening block"
+  },
+  {
+    "level": "WARNING",
+    "trip": "no-trail-running-romsdal-ridges-andalsnes-skyrunning-week",
+    "code": "missing-gateway",
+    "detail": "no gateway airport named on the record"
+  },
+  {
+    "level": "INFO",
+    "trip": "no-trail-running-romsdal-ridges-andalsnes-skyrunning-week",
+    "code": "generated-summary",
+    "detail": "summary composed from metadata — no editorial summary in the source"
+  },
+  {
+    "level": "WARNING",
+    "trip": "pl-trail-running-karkonosze-stolowe",
+    "code": "gateway-coordinates",
+    "detail": "pin sits on the gateway city (Wrocław), not on the trip's basecamp"
+  },
+  {
+    "level": "WARNING",
+    "trip": "pt-trail-running-madeira",
+    "code": "approximate-coordinates",
+    "detail": "pin falls back to the Portugal capital — no basecamp town resolved"
+  },
+  {
+    "level": "WARNING",
+    "trip": "ro-trail-running-piatra-craiului-bucegi",
+    "code": "missing-type-detail",
+    "detail": "no technical rating captured for this trip type"
+  },
+  {
+    "level": "WARNING",
+    "trip": "si-trail-running-julian-alps-bohinj",
+    "code": "approximate-coordinates",
+    "detail": "pin falls back to the Slovenia capital — no basecamp town resolved"
+  },
+  {
+    "level": "WARNING",
+    "trip": "at-city-vienna-ring-and-beyond",
+    "code": "missing-type-detail",
+    "detail": "no transit pass detail captured for this trip type"
+  },
+  {
+    "level": "WARNING",
+    "trip": "be-city-antwerp-and-ghent",
+    "code": "missing-connectivity",
+    "detail": "logistics.connectivity is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "be-city-antwerp-and-ghent",
+    "code": "missing-type-detail",
+    "detail": "no transit pass detail captured for this trip type"
+  },
+  {
+    "level": "WARNING",
+    "trip": "cz-city-brno-modernism",
+    "code": "missing-connectivity",
+    "detail": "logistics.connectivity is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "cz-city-brno-modernism",
+    "code": "missing-type-detail",
+    "detail": "no transit pass detail captured for this trip type"
+  },
+  {
+    "level": "WARNING",
+    "trip": "cz-city-prague-layered",
+    "code": "missing-connectivity",
+    "detail": "logistics.connectivity is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "cz-city-prague-layered",
+    "code": "missing-type-detail",
+    "detail": "no transit pass detail captured for this trip type"
+  },
+  {
+    "level": "WARNING",
+    "trip": "de-city-berlin-neighbourhoods",
+    "code": "missing-connectivity",
+    "detail": "logistics.connectivity is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "de-city-berlin-neighbourhoods",
+    "code": "missing-booking-windows",
+    "detail": "logistics.bookingWindows is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "de-city-berlin-neighbourhoods",
+    "code": "missing-type-detail",
+    "detail": "no transit pass detail captured for this trip type"
+  },
+  {
+    "level": "WARNING",
+    "trip": "de-city-hamburg-hafencity",
+    "code": "missing-connectivity",
+    "detail": "logistics.connectivity is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "de-city-hamburg-hafencity",
+    "code": "missing-type-detail",
+    "detail": "no transit pass detail captured for this trip type"
+  },
+  {
+    "level": "WARNING",
+    "trip": "dk-city-copenhagen-by-neighbourhood-block",
+    "code": "missing-difficulty",
+    "detail": "no difficulty rating in the source record"
+  },
+  {
+    "level": "WARNING",
+    "trip": "dk-city-copenhagen-by-neighbourhood-block",
+    "code": "budget-sum-drift",
+    "detail": "low: breakdown sums to €345 against a stated total of €1600 (-78%)"
+  },
+  {
+    "level": "WARNING",
+    "trip": "dk-city-copenhagen-by-neighbourhood-block",
+    "code": "budget-sum-drift",
+    "detail": "high: breakdown sums to €630 against a stated total of €2600 (-76%)"
+  },
+  {
+    "level": "WARNING",
+    "trip": "dk-city-copenhagen-by-neighbourhood-block",
+    "code": "missing-evening",
+    "detail": "day 7 has no evening block"
+  },
+  {
+    "level": "WARNING",
+    "trip": "dk-city-copenhagen-by-neighbourhood-block",
+    "code": "missing-gateway",
+    "detail": "no gateway airport named on the record"
+  },
+  {
+    "level": "WARNING",
+    "trip": "dk-city-copenhagen-by-neighbourhood-block",
+    "code": "missing-connectivity",
+    "detail": "logistics.connectivity is empty"
+  },
+  {
+    "level": "INFO",
+    "trip": "dk-city-copenhagen-by-neighbourhood-block",
+    "code": "generated-summary",
+    "detail": "summary composed from metadata — no editorial summary in the source"
+  },
+  {
+    "level": "WARNING",
+    "trip": "ee-city-tallinn-limestone-bastions-telliskivi",
+    "code": "missing-difficulty",
+    "detail": "no difficulty rating in the source record"
+  },
+  {
+    "level": "WARNING",
+    "trip": "ee-city-tallinn-limestone-bastions-telliskivi",
+    "code": "budget-sum-drift",
+    "detail": "low: breakdown sums to €195 against a stated total of €800 (-76%)"
+  },
+  {
+    "level": "WARNING",
+    "trip": "ee-city-tallinn-limestone-bastions-telliskivi",
+    "code": "budget-sum-drift",
+    "detail": "high: breakdown sums to €390 against a stated total of €1300 (-70%)"
+  },
+  {
+    "level": "WARNING",
+    "trip": "ee-city-tallinn-limestone-bastions-telliskivi",
+    "code": "missing-evening",
+    "detail": "day 7 has no evening block"
+  },
+  {
+    "level": "WARNING",
+    "trip": "ee-city-tallinn-limestone-bastions-telliskivi",
+    "code": "missing-gateway",
+    "detail": "no gateway airport named on the record"
+  },
+  {
+    "level": "INFO",
+    "trip": "ee-city-tallinn-limestone-bastions-telliskivi",
+    "code": "generated-summary",
+    "detail": "summary composed from metadata — no editorial summary in the source"
+  },
+  {
+    "level": "WARNING",
+    "trip": "fr-city-paris-arrondissement-blocks",
+    "code": "missing-connectivity",
+    "detail": "logistics.connectivity is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "fr-city-paris-arrondissement-blocks",
+    "code": "missing-type-detail",
+    "detail": "no transit pass detail captured for this trip type"
+  },
+  {
+    "level": "WARNING",
+    "trip": "it-city-rome",
+    "code": "missing-type-detail",
+    "detail": "no transit pass detail captured for this trip type"
+  },
+  {
+    "level": "WARNING",
+    "trip": "lu-city-ville-fortress",
+    "code": "missing-connectivity",
+    "detail": "logistics.connectivity is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "lu-city-ville-fortress",
+    "code": "missing-booking-windows",
+    "detail": "logistics.bookingWindows is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "lu-city-ville-fortress",
+    "code": "missing-type-detail",
+    "detail": "no transit pass detail captured for this trip type"
+  },
+  {
+    "level": "WARNING",
+    "trip": "lv-city-riga-art-nouveau-market-halls-daugava",
+    "code": "missing-difficulty",
+    "detail": "no difficulty rating in the source record"
+  },
+  {
+    "level": "WARNING",
+    "trip": "lv-city-riga-art-nouveau-market-halls-daugava",
+    "code": "budget-sum-drift",
+    "detail": "low: breakdown sums to €180 against a stated total of €700 (-74%)"
+  },
+  {
+    "level": "WARNING",
+    "trip": "lv-city-riga-art-nouveau-market-halls-daugava",
+    "code": "budget-sum-drift",
+    "detail": "high: breakdown sums to €360 against a stated total of €1150 (-69%)"
+  },
+  {
+    "level": "WARNING",
+    "trip": "lv-city-riga-art-nouveau-market-halls-daugava",
+    "code": "missing-evening",
+    "detail": "day 7 has no evening block"
+  },
+  {
+    "level": "WARNING",
+    "trip": "lv-city-riga-art-nouveau-market-halls-daugava",
+    "code": "missing-gateway",
+    "detail": "no gateway airport named on the record"
+  },
+  {
+    "level": "WARNING",
+    "trip": "lv-city-riga-art-nouveau-market-halls-daugava",
+    "code": "missing-connectivity",
+    "detail": "logistics.connectivity is empty"
+  },
+  {
+    "level": "INFO",
+    "trip": "lv-city-riga-art-nouveau-market-halls-daugava",
+    "code": "generated-summary",
+    "detail": "summary composed from metadata — no editorial summary in the source"
+  },
+  {
+    "level": "WARNING",
+    "trip": "mc-city-riviera-week",
+    "code": "missing-connectivity",
+    "detail": "logistics.connectivity is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "mc-city-riviera-week",
+    "code": "missing-booking-windows",
+    "detail": "logistics.bookingWindows is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "mc-city-riviera-week",
+    "code": "missing-type-detail",
+    "detail": "no transit pass detail captured for this trip type"
+  },
+  {
+    "level": "WARNING",
+    "trip": "nl-city-amsterdam-canal-belt",
+    "code": "missing-connectivity",
+    "detail": "logistics.connectivity is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "nl-city-amsterdam-canal-belt",
+    "code": "missing-booking-windows",
+    "detail": "logistics.bookingWindows is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "nl-city-amsterdam-canal-belt",
+    "code": "missing-type-detail",
+    "detail": "no transit pass detail captured for this trip type"
+  },
+  {
+    "level": "WARNING",
+    "trip": "at-cozy-towns-salzkammergut",
+    "code": "gateway-coordinates",
+    "detail": "pin sits on the gateway city (Salzburg), not on the trip's basecamp"
+  },
+  {
+    "level": "WARNING",
+    "trip": "at-cozy-towns-salzkammergut",
+    "code": "missing-connectivity",
+    "detail": "logistics.connectivity is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "at-cozy-towns-salzkammergut",
+    "code": "missing-booking-windows",
+    "detail": "logistics.bookingWindows is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "ba-cozy-towns-slowly-mostar-blagaj-pocitelj-trebinje",
+    "code": "approximate-coordinates",
+    "detail": "pin falls back to the Bosnia and Herzegovina capital — no basecamp town resolved"
+  },
+  {
+    "level": "WARNING",
+    "trip": "be-cozy-towns-bruges-damme-veurne",
+    "code": "missing-connectivity",
+    "detail": "logistics.connectivity is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "be-cozy-towns-bruges-damme-veurne",
+    "code": "missing-booking-windows",
+    "detail": "logistics.bookingWindows is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "bg-cozy-towns-revival",
+    "code": "gateway-coordinates",
+    "detail": "pin sits on the gateway city (Sofia), not on the trip's basecamp"
+  },
+  {
+    "level": "WARNING",
+    "trip": "ch-cozy-towns-appenzell",
+    "code": "gateway-coordinates",
+    "detail": "pin sits on the gateway city (Zürich), not on the trip's basecamp"
+  },
+  {
+    "level": "WARNING",
+    "trip": "ch-cozy-towns-appenzell",
+    "code": "missing-connectivity",
+    "detail": "logistics.connectivity is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "ch-cozy-towns-appenzell",
+    "code": "missing-booking-windows",
+    "detail": "logistics.bookingWindows is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "cz-cozy-towns-south-bohemia-telc",
+    "code": "gateway-coordinates",
+    "detail": "pin sits on the gateway city (Prague), not on the trip's basecamp"
+  },
+  {
+    "level": "WARNING",
+    "trip": "cz-cozy-towns-south-bohemia-telc",
+    "code": "missing-connectivity",
+    "detail": "logistics.connectivity is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "cz-cozy-towns-south-bohemia-telc",
+    "code": "missing-booking-windows",
+    "detail": "logistics.bookingWindows is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "de-cozy-towns-mosel-villages",
+    "code": "gateway-coordinates",
+    "detail": "pin sits on the gateway city (Frankfurt am Main), not on the trip's basecamp"
+  },
+  {
+    "level": "WARNING",
+    "trip": "de-cozy-towns-mosel-villages",
+    "code": "missing-connectivity",
+    "detail": "logistics.connectivity is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "de-cozy-towns-mosel-villages",
+    "code": "missing-booking-windows",
+    "detail": "logistics.bookingWindows is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "de-cozy-towns-romantic",
+    "code": "gateway-coordinates",
+    "detail": "pin sits on the gateway city (Nuremberg), not on the trip's basecamp"
+  },
+  {
+    "level": "WARNING",
+    "trip": "de-cozy-towns-romantic",
+    "code": "missing-connectivity",
+    "detail": "logistics.connectivity is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "dk-cozy-towns-south-funen-archipelago-aeroe-faaborg-svendborg",
+    "code": "missing-difficulty",
+    "detail": "no difficulty rating in the source record"
+  },
+  {
+    "level": "WARNING",
+    "trip": "dk-cozy-towns-south-funen-archipelago-aeroe-faaborg-svendborg",
+    "code": "budget-sum-drift",
+    "detail": "low: breakdown sums to €330 against a stated total of €1050 (-69%)"
+  },
+  {
+    "level": "WARNING",
+    "trip": "dk-cozy-towns-south-funen-archipelago-aeroe-faaborg-svendborg",
+    "code": "budget-sum-drift",
+    "detail": "high: breakdown sums to €570 against a stated total of €1600 (-64%)"
+  },
+  {
+    "level": "WARNING",
+    "trip": "dk-cozy-towns-south-funen-archipelago-aeroe-faaborg-svendborg",
+    "code": "missing-evening",
+    "detail": "day 7 has no evening block"
+  },
+  {
+    "level": "WARNING",
+    "trip": "dk-cozy-towns-south-funen-archipelago-aeroe-faaborg-svendborg",
+    "code": "missing-gateway",
+    "detail": "no gateway airport named on the record"
+  },
+  {
+    "level": "WARNING",
+    "trip": "dk-cozy-towns-south-funen-archipelago-aeroe-faaborg-svendborg",
+    "code": "missing-connectivity",
+    "detail": "logistics.connectivity is empty"
+  },
+  {
+    "level": "INFO",
+    "trip": "dk-cozy-towns-south-funen-archipelago-aeroe-faaborg-svendborg",
+    "code": "generated-summary",
+    "detail": "summary composed from metadata — no editorial summary in the source"
+  },
+  {
+    "level": "WARNING",
+    "trip": "fr-cozy-towns-alsace-villages",
+    "code": "approximate-coordinates",
+    "detail": "pin falls back to the France capital — no basecamp town resolved"
+  },
+  {
+    "level": "WARNING",
+    "trip": "fr-cozy-towns-alsace-villages",
+    "code": "missing-connectivity",
+    "detail": "logistics.connectivity is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "fr-cozy-towns-alsace-villages",
+    "code": "missing-booking-windows",
+    "detail": "logistics.bookingWindows is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "fr-cozy-towns-dordogne-perigord",
+    "code": "approximate-coordinates",
+    "detail": "pin falls back to the France capital — no basecamp town resolved"
+  },
+  {
+    "level": "WARNING",
+    "trip": "fr-cozy-towns-dordogne-perigord",
+    "code": "missing-connectivity",
+    "detail": "logistics.connectivity is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "fr-cozy-towns-dordogne-perigord",
+    "code": "missing-booking-windows",
+    "detail": "logistics.bookingWindows is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "gr-cozy-towns-pelion",
+    "code": "gateway-coordinates",
+    "detail": "pin sits on the gateway city (Thessaloníki), not on the trip's basecamp"
+  },
+  {
+    "level": "WARNING",
+    "trip": "it-cozy-towns-umbria",
+    "code": "approximate-coordinates",
+    "detail": "pin falls back to the Italy capital — no basecamp town resolved"
+  },
+  {
+    "level": "WARNING",
+    "trip": "lt-cozy-towns-curonian-spit-nida-juodkrante-dune-villages",
+    "code": "missing-difficulty",
+    "detail": "no difficulty rating in the source record"
+  },
+  {
+    "level": "WARNING",
+    "trip": "lt-cozy-towns-curonian-spit-nida-juodkrante-dune-villages",
+    "code": "budget-sum-drift",
+    "detail": "low: breakdown sums to €240 against a stated total of €700 (-66%)"
+  },
+  {
+    "level": "WARNING",
+    "trip": "lt-cozy-towns-curonian-spit-nida-juodkrante-dune-villages",
+    "code": "budget-sum-drift",
+    "detail": "high: breakdown sums to €450 against a stated total of €1100 (-59%)"
+  },
+  {
+    "level": "WARNING",
+    "trip": "lt-cozy-towns-curonian-spit-nida-juodkrante-dune-villages",
+    "code": "missing-evening",
+    "detail": "day 7 has no evening block"
+  },
+  {
+    "level": "WARNING",
+    "trip": "lt-cozy-towns-curonian-spit-nida-juodkrante-dune-villages",
+    "code": "missing-gateway",
+    "detail": "no gateway airport named on the record"
+  },
+  {
+    "level": "INFO",
+    "trip": "lt-cozy-towns-curonian-spit-nida-juodkrante-dune-villages",
+    "code": "generated-summary",
+    "detail": "summary composed from metadata — no editorial summary in the source"
+  },
+  {
+    "level": "WARNING",
+    "trip": "lu-cozy-towns-little-switzerland",
+    "code": "missing-connectivity",
+    "detail": "logistics.connectivity is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "lu-cozy-towns-little-switzerland",
+    "code": "missing-booking-windows",
+    "detail": "logistics.bookingWindows is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "lv-cozy-towns-kurzeme-slow-week-kuldiga-sabile-talsi",
+    "code": "missing-difficulty",
+    "detail": "no difficulty rating in the source record"
+  },
+  {
+    "level": "WARNING",
+    "trip": "lv-cozy-towns-kurzeme-slow-week-kuldiga-sabile-talsi",
+    "code": "budget-sum-drift",
+    "detail": "low: breakdown sums to €235 against a stated total of €600 (-61%)"
+  },
+  {
+    "level": "WARNING",
+    "trip": "lv-cozy-towns-kurzeme-slow-week-kuldiga-sabile-talsi",
+    "code": "budget-sum-drift",
+    "detail": "high: breakdown sums to €415 against a stated total of €950 (-56%)"
+  },
+  {
+    "level": "WARNING",
+    "trip": "lv-cozy-towns-kurzeme-slow-week-kuldiga-sabile-talsi",
+    "code": "missing-evening",
+    "detail": "day 7 has no evening block"
+  },
+  {
+    "level": "WARNING",
+    "trip": "lv-cozy-towns-kurzeme-slow-week-kuldiga-sabile-talsi",
+    "code": "missing-gateway",
+    "detail": "no gateway airport named on the record"
+  },
+  {
+    "level": "WARNING",
+    "trip": "lv-cozy-towns-kurzeme-slow-week-kuldiga-sabile-talsi",
+    "code": "missing-connectivity",
+    "detail": "logistics.connectivity is empty"
+  },
+  {
+    "level": "INFO",
+    "trip": "lv-cozy-towns-kurzeme-slow-week-kuldiga-sabile-talsi",
+    "code": "generated-summary",
+    "detail": "summary composed from metadata — no editorial summary in the source"
+  },
+  {
+    "level": "WARNING",
+    "trip": "mk-cozy-towns-ohrid-bitola",
+    "code": "approximate-coordinates",
+    "detail": "pin falls back to the North Macedonia capital — no basecamp town resolved"
+  },
+  {
+    "level": "WARNING",
+    "trip": "nl-cozy-towns-hanseatic-ijssel",
+    "code": "missing-connectivity",
+    "detail": "logistics.connectivity is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "nl-cozy-towns-hanseatic-ijssel",
+    "code": "missing-booking-windows",
+    "detail": "logistics.bookingWindows is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "pt-cozy-towns-alentejo-villages",
+    "code": "approximate-coordinates",
+    "detail": "pin falls back to the Portugal capital — no basecamp town resolved"
+  },
+  {
+    "level": "WARNING",
+    "trip": "at-road-trip-grossglockner-tyrol",
+    "code": "gateway-coordinates",
+    "detail": "pin sits on the gateway city (Innsbruck), not on the trip's basecamp"
+  },
+  {
+    "level": "WARNING",
+    "trip": "at-road-trip-grossglockner-tyrol",
+    "code": "missing-connectivity",
+    "detail": "logistics.connectivity is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "at-road-trip-grossglockner-tyrol",
+    "code": "missing-booking-windows",
+    "detail": "logistics.bookingWindows is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "ch-road-trip-bernina-gotthard-ticino",
+    "code": "missing-booking-windows",
+    "detail": "logistics.bookingWindows is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "ch-road-trip-passes-furka",
+    "code": "gateway-coordinates",
+    "detail": "pin sits on the gateway city (Zürich), not on the trip's basecamp"
+  },
+  {
+    "level": "WARNING",
+    "trip": "ch-road-trip-passes-furka",
+    "code": "missing-connectivity",
+    "detail": "logistics.connectivity is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "ch-road-trip-passes-furka",
+    "code": "missing-booking-windows",
+    "detail": "logistics.bookingWindows is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "cz-road-trip-bohemia-castles-spas",
+    "code": "missing-connectivity",
+    "detail": "logistics.connectivity is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "cz-road-trip-bohemia-castles-spas",
+    "code": "missing-booking-windows",
+    "detail": "logistics.bookingWindows is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "de-road-trip-black-forest-b500",
+    "code": "missing-connectivity",
+    "detail": "logistics.connectivity is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "de-road-trip-black-forest-b500",
+    "code": "missing-booking-windows",
+    "detail": "logistics.bookingWindows is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "fo-road-trip-subsea-loop",
+    "code": "missing-difficulty",
+    "detail": "no difficulty rating in the source record"
+  },
+  {
+    "level": "WARNING",
+    "trip": "fo-road-trip-subsea-loop",
+    "code": "budget-sum-drift",
+    "detail": "low: breakdown sums to €675 against a stated total of €1800 (-62%)"
+  },
+  {
+    "level": "WARNING",
+    "trip": "fo-road-trip-subsea-loop",
+    "code": "budget-sum-drift",
+    "detail": "high: breakdown sums to €1090 against a stated total of €2600 (-58%)"
+  },
+  {
+    "level": "WARNING",
+    "trip": "fo-road-trip-subsea-loop",
+    "code": "missing-evening",
+    "detail": "day 7 has no evening block"
+  },
+  {
+    "level": "WARNING",
+    "trip": "fo-road-trip-subsea-loop",
+    "code": "missing-gateway",
+    "detail": "no gateway airport named on the record"
+  },
+  {
+    "level": "WARNING",
+    "trip": "fo-road-trip-subsea-loop",
+    "code": "missing-connectivity",
+    "detail": "logistics.connectivity is empty"
+  },
+  {
+    "level": "INFO",
+    "trip": "fo-road-trip-subsea-loop",
+    "code": "generated-summary",
+    "detail": "summary composed from metadata — no editorial summary in the source"
+  },
+  {
+    "level": "WARNING",
+    "trip": "fr-road-trip-route-des-grandes-alpes",
+    "code": "missing-connectivity",
+    "detail": "logistics.connectivity is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "fr-road-trip-route-des-grandes-alpes",
+    "code": "missing-booking-windows",
+    "detail": "logistics.bookingWindows is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "gr-road-trip-peloponnese-loop",
+    "code": "approximate-coordinates",
+    "detail": "pin falls back to the Greece capital — no basecamp town resolved"
+  },
+  {
+    "level": "WARNING",
+    "trip": "ie-road-trip-wild-atlantic-way-dingle-iveragh-burren",
+    "code": "missing-difficulty",
+    "detail": "no difficulty rating in the source record"
+  },
+  {
+    "level": "WARNING",
+    "trip": "ie-road-trip-wild-atlantic-way-dingle-iveragh-burren",
+    "code": "budget-sum-drift",
+    "detail": "low: breakdown sums to €615 against a stated total of €1600 (-62%)"
+  },
+  {
+    "level": "WARNING",
+    "trip": "ie-road-trip-wild-atlantic-way-dingle-iveragh-burren",
+    "code": "budget-sum-drift",
+    "detail": "high: breakdown sums to €1010 against a stated total of €2400 (-58%)"
+  },
+  {
+    "level": "WARNING",
+    "trip": "ie-road-trip-wild-atlantic-way-dingle-iveragh-burren",
+    "code": "missing-evening",
+    "detail": "day 7 has no evening block"
+  },
+  {
+    "level": "WARNING",
+    "trip": "ie-road-trip-wild-atlantic-way-dingle-iveragh-burren",
+    "code": "missing-gateway",
+    "detail": "no gateway airport named on the record"
+  },
+  {
+    "level": "WARNING",
+    "trip": "ie-road-trip-wild-atlantic-way-dingle-iveragh-burren",
+    "code": "missing-connectivity",
+    "detail": "logistics.connectivity is empty"
+  },
+  {
+    "level": "INFO",
+    "trip": "ie-road-trip-wild-atlantic-way-dingle-iveragh-burren",
+    "code": "generated-summary",
+    "detail": "summary composed from metadata — no editorial summary in the source"
+  },
+  {
+    "level": "WARNING",
+    "trip": "li-road-trip-rhine-triangle",
+    "code": "missing-connectivity",
+    "detail": "logistics.connectivity is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "li-road-trip-rhine-triangle",
+    "code": "missing-booking-windows",
+    "detail": "logistics.bookingWindows is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "lu-road-trip-ardennes-moselle-loop",
+    "code": "missing-connectivity",
+    "detail": "logistics.connectivity is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "lu-road-trip-ardennes-moselle-loop",
+    "code": "missing-booking-windows",
+    "detail": "logistics.bookingWindows is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "mc-road-trip-three-corniches-turini",
+    "code": "missing-connectivity",
+    "detail": "logistics.connectivity is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "mc-road-trip-three-corniches-turini",
+    "code": "missing-booking-windows",
+    "detail": "logistics.bookingWindows is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "me-road-trip-tara",
+    "code": "approximate-coordinates",
+    "detail": "pin falls back to the Montenegro capital — no basecamp town resolved"
+  },
+  {
+    "level": "WARNING",
+    "trip": "nl-road-trip-delta-afsluitdijk",
+    "code": "missing-connectivity",
+    "detail": "logistics.connectivity is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "nl-road-trip-delta-afsluitdijk",
+    "code": "missing-booking-windows",
+    "detail": "logistics.bookingWindows is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "no-road-trip-lofoten-e10-fishing-villages-arctic-light",
+    "code": "missing-difficulty",
+    "detail": "no difficulty rating in the source record"
+  },
+  {
+    "level": "WARNING",
+    "trip": "no-road-trip-lofoten-e10-fishing-villages-arctic-light",
+    "code": "budget-sum-drift",
+    "detail": "low: breakdown sums to €775 against a stated total of €2000 (-61%)"
+  },
+  {
+    "level": "WARNING",
+    "trip": "no-road-trip-lofoten-e10-fishing-villages-arctic-light",
+    "code": "budget-sum-drift",
+    "detail": "high: breakdown sums to €1310 against a stated total of €3000 (-56%)"
+  },
+  {
+    "level": "WARNING",
+    "trip": "no-road-trip-lofoten-e10-fishing-villages-arctic-light",
+    "code": "missing-evening",
+    "detail": "day 7 has no evening block"
+  },
+  {
+    "level": "WARNING",
+    "trip": "no-road-trip-lofoten-e10-fishing-villages-arctic-light",
+    "code": "missing-gateway",
+    "detail": "no gateway airport named on the record"
+  },
+  {
+    "level": "WARNING",
+    "trip": "no-road-trip-lofoten-e10-fishing-villages-arctic-light",
+    "code": "missing-connectivity",
+    "detail": "logistics.connectivity is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "no-road-trip-lofoten-e10-fishing-villages-arctic-light",
+    "code": "missing-booking-windows",
+    "detail": "logistics.bookingWindows is empty"
+  },
+  {
+    "level": "INFO",
+    "trip": "no-road-trip-lofoten-e10-fishing-villages-arctic-light",
+    "code": "generated-summary",
+    "detail": "summary composed from metadata — no editorial summary in the source"
+  },
+  {
+    "level": "WARNING",
+    "trip": "pt-road-trip-n2-serra-estrela",
+    "code": "gateway-coordinates",
+    "detail": "pin sits on the gateway city (Porto), not on the trip's basecamp"
+  },
+  {
+    "level": "WARNING",
+    "trip": "si-road-trip-julian-alps-passes",
+    "code": "approximate-coordinates",
+    "detail": "pin falls back to the Slovenia capital — no basecamp town resolved"
+  },
+  {
+    "level": "WARNING",
+    "trip": "sk-road-trip-orava-spis",
+    "code": "approximate-coordinates",
+    "detail": "pin falls back to the Slovakia capital — no basecamp town resolved"
+  },
+  {
+    "level": "WARNING",
+    "trip": "ad-hiking-coma-pedrosa-madriu",
+    "code": "approximate-coordinates",
+    "detail": "pin falls back to the Andorra capital — no basecamp town resolved"
+  },
+  {
+    "level": "WARNING",
+    "trip": "at-hiking-berliner-hoehenweg",
+    "code": "gateway-coordinates",
+    "detail": "pin sits on the gateway city (Innsbruck), not on the trip's basecamp"
+  },
+  {
+    "level": "WARNING",
+    "trip": "at-hiking-berliner-hoehenweg",
+    "code": "missing-connectivity",
+    "detail": "logistics.connectivity is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "at-hiking-berliner-hoehenweg",
+    "code": "missing-type-detail",
+    "detail": "no hut booking path captured for this trip type"
+  },
+  {
+    "level": "WARNING",
+    "trip": "at-hiking-stubai-hoehenweg",
+    "code": "gateway-coordinates",
+    "detail": "pin sits on the gateway city (Innsbruck), not on the trip's basecamp"
+  },
+  {
+    "level": "WARNING",
+    "trip": "at-hiking-stubai-hoehenweg",
+    "code": "missing-connectivity",
+    "detail": "logistics.connectivity is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "at-hiking-stubai-hoehenweg",
+    "code": "missing-type-detail",
+    "detail": "no hut booking path captured for this trip type"
+  },
+  {
+    "level": "WARNING",
+    "trip": "ba-hiking-sutjeska-via-dinarica",
+    "code": "gateway-coordinates",
+    "detail": "pin sits on the gateway city (Sarajevo), not on the trip's basecamp"
+  },
+  {
+    "level": "WARNING",
+    "trip": "be-hiking-ardennes-gr57-ourthe",
+    "code": "gateway-coordinates",
+    "detail": "pin sits on the gateway city (Brussels), not on the trip's basecamp"
+  },
+  {
+    "level": "WARNING",
+    "trip": "be-hiking-ardennes-gr57-ourthe",
+    "code": "missing-connectivity",
+    "detail": "logistics.connectivity is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "be-hiking-ardennes-gr57-ourthe",
+    "code": "missing-booking-windows",
+    "detail": "logistics.bookingWindows is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "be-hiking-ardennes-gr57-ourthe",
+    "code": "missing-type-detail",
+    "detail": "no hut booking path captured for this trip type"
+  },
+  {
+    "level": "WARNING",
+    "trip": "bg-hiking-pirin-hut-to-hut",
+    "code": "gateway-coordinates",
+    "detail": "pin sits on the gateway city (Sofia), not on the trip's basecamp"
+  },
+  {
+    "level": "WARNING",
+    "trip": "ch-hiking-berner-oberland-huts",
+    "code": "gateway-coordinates",
+    "detail": "pin sits on the gateway city (Zürich), not on the trip's basecamp"
+  },
+  {
+    "level": "WARNING",
+    "trip": "ch-hiking-berner-oberland-huts",
+    "code": "missing-connectivity",
+    "detail": "logistics.connectivity is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "ch-hiking-berner-oberland-huts",
+    "code": "missing-type-detail",
+    "detail": "no hut booking path captured for this trip type"
+  },
+  {
+    "level": "WARNING",
+    "trip": "ch-hiking-walkers-haute-route-valais",
+    "code": "gateway-coordinates",
+    "detail": "pin sits on the gateway city (Geneva), not on the trip's basecamp"
+  },
+  {
+    "level": "WARNING",
+    "trip": "ch-hiking-walkers-haute-route-valais",
+    "code": "missing-connectivity",
+    "detail": "logistics.connectivity is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "ch-hiking-walkers-haute-route-valais",
+    "code": "missing-type-detail",
+    "detail": "no hut booking path captured for this trip type"
+  },
+  {
+    "level": "WARNING",
+    "trip": "cz-hiking-bohemian-switzerland",
+    "code": "gateway-coordinates",
+    "detail": "pin sits on the gateway city (Prague), not on the trip's basecamp"
+  },
+  {
+    "level": "WARNING",
+    "trip": "cz-hiking-bohemian-switzerland",
+    "code": "missing-connectivity",
+    "detail": "logistics.connectivity is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "cz-hiking-bohemian-switzerland",
+    "code": "missing-booking-windows",
+    "detail": "logistics.bookingWindows is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "cz-hiking-bohemian-switzerland",
+    "code": "missing-type-detail",
+    "detail": "no hut booking path captured for this trip type"
+  },
+  {
+    "level": "WARNING",
+    "trip": "de-hiking-allgaeu-heilbronner-weg",
+    "code": "gateway-coordinates",
+    "detail": "pin sits on the gateway city (Memmingen), not on the trip's basecamp"
+  },
+  {
+    "level": "WARNING",
+    "trip": "de-hiking-allgaeu-heilbronner-weg",
+    "code": "missing-connectivity",
+    "detail": "logistics.connectivity is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "de-hiking-allgaeu-heilbronner-weg",
+    "code": "missing-type-detail",
+    "detail": "no hut booking path captured for this trip type"
+  },
+  {
+    "level": "WARNING",
+    "trip": "es-hiking-ordesa-pyrenees-gr11",
+    "code": "gateway-coordinates",
+    "detail": "pin sits on the gateway city (Zaragoza), not on the trip's basecamp"
+  },
+  {
+    "level": "WARNING",
+    "trip": "fi-hiking-hetta-pallas-wilderness-traverse",
+    "code": "budget-sum-drift",
+    "detail": "low: breakdown sums to €202 against a stated total of €600 (-66%)"
+  },
+  {
+    "level": "WARNING",
+    "trip": "fi-hiking-hetta-pallas-wilderness-traverse",
+    "code": "budget-sum-drift",
+    "detail": "high: breakdown sums to €365 against a stated total of €950 (-62%)"
+  },
+  {
+    "level": "WARNING",
+    "trip": "fi-hiking-hetta-pallas-wilderness-traverse",
+    "code": "missing-evening",
+    "detail": "day 7 has no evening block"
+  },
+  {
+    "level": "WARNING",
+    "trip": "fi-hiking-hetta-pallas-wilderness-traverse",
+    "code": "missing-gateway",
+    "detail": "no gateway airport named on the record"
+  },
+  {
+    "level": "WARNING",
+    "trip": "fi-hiking-hetta-pallas-wilderness-traverse",
+    "code": "missing-connectivity",
+    "detail": "logistics.connectivity is empty"
+  },
+  {
+    "level": "INFO",
+    "trip": "fi-hiking-hetta-pallas-wilderness-traverse",
+    "code": "generated-summary",
+    "detail": "summary composed from metadata — no editorial summary in the source"
+  },
+  {
+    "level": "WARNING",
+    "trip": "fr-hiking-gr54-ecrins",
+    "code": "gateway-coordinates",
+    "detail": "pin sits on the gateway city (Grenoble), not on the trip's basecamp"
+  },
+  {
+    "level": "WARNING",
+    "trip": "fr-hiking-gr54-ecrins",
+    "code": "missing-connectivity",
+    "detail": "logistics.connectivity is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "fr-hiking-gr54-ecrins",
+    "code": "missing-type-detail",
+    "detail": "no hut booking path captured for this trip type"
+  },
+  {
+    "level": "WARNING",
+    "trip": "gr-hiking-mount-olympus-refuges",
+    "code": "approximate-coordinates",
+    "detail": "pin falls back to the Greece capital — no basecamp town resolved"
+  },
+  {
+    "level": "WARNING",
+    "trip": "it-hiking-alta-via-1-dolomites",
+    "code": "approximate-coordinates",
+    "detail": "pin falls back to the Italy capital — no basecamp town resolved"
+  },
+  {
+    "level": "WARNING",
+    "trip": "li-hiking-panorama",
+    "code": "approximate-coordinates",
+    "detail": "pin falls back to the Liechtenstein capital — no basecamp town resolved"
+  },
+  {
+    "level": "WARNING",
+    "trip": "li-hiking-panorama",
+    "code": "missing-connectivity",
+    "detail": "logistics.connectivity is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "li-hiking-panorama",
+    "code": "missing-booking-windows",
+    "detail": "logistics.bookingWindows is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "li-hiking-panorama",
+    "code": "missing-type-detail",
+    "detail": "no hut booking path captured for this trip type"
+  },
+  {
+    "level": "WARNING",
+    "trip": "lu-hiking-escapardenne-eislek",
+    "code": "gateway-coordinates",
+    "detail": "pin sits on the gateway city (Luxembourg), not on the trip's basecamp"
+  },
+  {
+    "level": "WARNING",
+    "trip": "lu-hiking-escapardenne-eislek",
+    "code": "missing-connectivity",
+    "detail": "logistics.connectivity is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "lu-hiking-escapardenne-eislek",
+    "code": "missing-type-detail",
+    "detail": "no hut booking path captured for this trip type"
+  },
+  {
+    "level": "WARNING",
+    "trip": "no-hiking-jotunheimen-hut-to-hut-besseggen-fannaraken",
+    "code": "budget-sum-drift",
+    "detail": "low: breakdown sums to €400 against a stated total of €1300 (-69%)"
+  },
+  {
+    "level": "WARNING",
+    "trip": "no-hiking-jotunheimen-hut-to-hut-besseggen-fannaraken",
+    "code": "budget-sum-drift",
+    "detail": "high: breakdown sums to €625 against a stated total of €1900 (-67%)"
+  },
+  {
+    "level": "WARNING",
+    "trip": "no-hiking-jotunheimen-hut-to-hut-besseggen-fannaraken",
+    "code": "missing-evening",
+    "detail": "day 7 has no evening block"
+  },
+  {
+    "level": "WARNING",
+    "trip": "no-hiking-jotunheimen-hut-to-hut-besseggen-fannaraken",
+    "code": "missing-gateway",
+    "detail": "no gateway airport named on the record"
+  },
+  {
+    "level": "WARNING",
+    "trip": "no-hiking-jotunheimen-hut-to-hut-besseggen-fannaraken",
+    "code": "missing-connectivity",
+    "detail": "logistics.connectivity is empty"
+  },
+  {
+    "level": "INFO",
+    "trip": "no-hiking-jotunheimen-hut-to-hut-besseggen-fannaraken",
+    "code": "generated-summary",
+    "detail": "summary composed from metadata — no editorial summary in the source"
+  },
+  {
+    "level": "WARNING",
+    "trip": "se-hiking-kungsleden-north-abisko-nikkaluokta",
+    "code": "budget-sum-drift",
+    "detail": "low: breakdown sums to €430 against a stated total of €1100 (-61%)"
+  },
+  {
+    "level": "WARNING",
+    "trip": "se-hiking-kungsleden-north-abisko-nikkaluokta",
+    "code": "budget-sum-drift",
+    "detail": "high: breakdown sums to €700 against a stated total of €1600 (-56%)"
+  },
+  {
+    "level": "WARNING",
+    "trip": "se-hiking-kungsleden-north-abisko-nikkaluokta",
+    "code": "missing-evening",
+    "detail": "day 7 has no evening block"
+  },
+  {
+    "level": "WARNING",
+    "trip": "se-hiking-kungsleden-north-abisko-nikkaluokta",
+    "code": "missing-gateway",
+    "detail": "no gateway airport named on the record"
+  },
+  {
+    "level": "WARNING",
+    "trip": "se-hiking-kungsleden-north-abisko-nikkaluokta",
+    "code": "missing-connectivity",
+    "detail": "logistics.connectivity is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "se-hiking-kungsleden-north-abisko-nikkaluokta",
+    "code": "missing-booking-windows",
+    "detail": "logistics.bookingWindows is empty"
+  },
+  {
+    "level": "INFO",
+    "trip": "se-hiking-kungsleden-north-abisko-nikkaluokta",
+    "code": "generated-summary",
+    "detail": "summary composed from metadata — no editorial summary in the source"
+  },
+  {
+    "level": "WARNING",
+    "trip": "si-hiking-triglav-hut-to-hut",
+    "code": "approximate-coordinates",
+    "detail": "pin falls back to the Slovenia capital — no basecamp town resolved"
+  },
+  {
+    "level": "WARNING",
+    "trip": "sk-hiking-high-tatras-hut-to-hut",
+    "code": "approximate-coordinates",
+    "detail": "pin falls back to the Slovakia capital — no basecamp town resolved"
+  },
+  {
+    "level": "WARNING",
+    "trip": "xk-hiking-peaks-of-the-balkans",
+    "code": "approximate-coordinates",
+    "detail": "pin falls back to the Kosovo capital — no basecamp town resolved"
+  },
+  {
+    "level": "WARNING",
+    "trip": "at-culinary-wachau-gruner-veltliner",
+    "code": "gateway-coordinates",
+    "detail": "pin sits on the gateway city (Vienna), not on the trip's basecamp"
+  },
+  {
+    "level": "WARNING",
+    "trip": "at-culinary-wachau-gruner-veltliner",
+    "code": "missing-connectivity",
+    "detail": "logistics.connectivity is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "be-culinary-lambic-trappist",
+    "code": "missing-connectivity",
+    "detail": "logistics.connectivity is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "ch-culinary-valais-fendant-raclette",
+    "code": "missing-connectivity",
+    "detail": "logistics.connectivity is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "cz-culinary-moravia-and-beer",
+    "code": "missing-connectivity",
+    "detail": "logistics.connectivity is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "de-culinary-baden-black-forest",
+    "code": "missing-connectivity",
+    "detail": "logistics.connectivity is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "de-culinary-mosel-riesling",
+    "code": "approximate-coordinates",
+    "detail": "pin falls back to the Germany capital — no basecamp town resolved"
+  },
+  {
+    "level": "WARNING",
+    "trip": "de-culinary-mosel-riesling",
+    "code": "missing-connectivity",
+    "detail": "logistics.connectivity is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "fr-culinary-burgundy-cote-dor",
+    "code": "missing-connectivity",
+    "detail": "logistics.connectivity is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "fr-culinary-champagne-reims-epernay",
+    "code": "missing-connectivity",
+    "detail": "logistics.connectivity is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "hr-culinary-istria-truffles",
+    "code": "gateway-coordinates",
+    "detail": "pin sits on the gateway city (Pula), not on the trip's basecamp"
+  },
+  {
+    "level": "WARNING",
+    "trip": "ie-culinary-west-cork-larder-ballymaloe-skibbereen",
+    "code": "missing-difficulty",
+    "detail": "no difficulty rating in the source record"
+  },
+  {
+    "level": "WARNING",
+    "trip": "ie-culinary-west-cork-larder-ballymaloe-skibbereen",
+    "code": "budget-sum-drift",
+    "detail": "low: breakdown sums to €660 against a stated total of €1900 (-65%)"
+  },
+  {
+    "level": "WARNING",
+    "trip": "ie-culinary-west-cork-larder-ballymaloe-skibbereen",
+    "code": "budget-sum-drift",
+    "detail": "high: breakdown sums to €1170 against a stated total of €2900 (-60%)"
+  },
+  {
+    "level": "WARNING",
+    "trip": "ie-culinary-west-cork-larder-ballymaloe-skibbereen",
+    "code": "missing-evening",
+    "detail": "day 7 has no evening block"
+  },
+  {
+    "level": "WARNING",
+    "trip": "ie-culinary-west-cork-larder-ballymaloe-skibbereen",
+    "code": "missing-gateway",
+    "detail": "no gateway airport named on the record"
+  },
+  {
+    "level": "WARNING",
+    "trip": "ie-culinary-west-cork-larder-ballymaloe-skibbereen",
+    "code": "missing-connectivity",
+    "detail": "logistics.connectivity is empty"
+  },
+  {
+    "level": "INFO",
+    "trip": "ie-culinary-west-cork-larder-ballymaloe-skibbereen",
+    "code": "generated-summary",
+    "detail": "summary composed from metadata — no editorial summary in the source"
+  },
+  {
+    "level": "WARNING",
+    "trip": "it-culinary-tuscany-chianti-montalcino",
+    "code": "approximate-coordinates",
+    "detail": "pin falls back to the Italy capital — no basecamp town resolved"
+  },
+  {
+    "level": "WARNING",
+    "trip": "lt-culinary-vilnius-aukstaitija-farmhouse-ale-mead",
+    "code": "missing-difficulty",
+    "detail": "no difficulty rating in the source record"
+  },
+  {
+    "level": "WARNING",
+    "trip": "lt-culinary-vilnius-aukstaitija-farmhouse-ale-mead",
+    "code": "budget-sum-drift",
+    "detail": "low: breakdown sums to €350 against a stated total of €850 (-59%)"
+  },
+  {
+    "level": "WARNING",
+    "trip": "lt-culinary-vilnius-aukstaitija-farmhouse-ale-mead",
+    "code": "budget-sum-drift",
+    "detail": "high: breakdown sums to €605 against a stated total of €1350 (-55%)"
+  },
+  {
+    "level": "WARNING",
+    "trip": "lt-culinary-vilnius-aukstaitija-farmhouse-ale-mead",
+    "code": "missing-evening",
+    "detail": "day 7 has no evening block"
+  },
+  {
+    "level": "WARNING",
+    "trip": "lt-culinary-vilnius-aukstaitija-farmhouse-ale-mead",
+    "code": "missing-gateway",
+    "detail": "no gateway airport named on the record"
+  },
+  {
+    "level": "WARNING",
+    "trip": "lt-culinary-vilnius-aukstaitija-farmhouse-ale-mead",
+    "code": "missing-connectivity",
+    "detail": "logistics.connectivity is empty"
+  },
+  {
+    "level": "INFO",
+    "trip": "lt-culinary-vilnius-aukstaitija-farmhouse-ale-mead",
+    "code": "generated-summary",
+    "detail": "summary composed from metadata — no editorial summary in the source"
+  },
+  {
+    "level": "WARNING",
+    "trip": "lu-culinary-moselle-cremant",
+    "code": "gateway-coordinates",
+    "detail": "pin sits on the gateway city (Luxembourg), not on the trip's basecamp"
+  },
+  {
+    "level": "WARNING",
+    "trip": "lu-culinary-moselle-cremant",
+    "code": "missing-connectivity",
+    "detail": "logistics.connectivity is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "nl-culinary-north-holland-cheese-genever",
+    "code": "missing-connectivity",
+    "detail": "logistics.connectivity is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "pt-culinary-douro-valley",
+    "code": "approximate-coordinates",
+    "detail": "pin falls back to the Portugal capital — no basecamp town resolved"
+  },
+  {
+    "level": "WARNING",
+    "trip": "se-culinary-skane-country-osterlen-kullabygden",
+    "code": "missing-difficulty",
+    "detail": "no difficulty rating in the source record"
+  },
+  {
+    "level": "WARNING",
+    "trip": "se-culinary-skane-country-osterlen-kullabygden",
+    "code": "budget-sum-drift",
+    "detail": "low: breakdown sums to €530 against a stated total of €1700 (-69%)"
+  },
+  {
+    "level": "WARNING",
+    "trip": "se-culinary-skane-country-osterlen-kullabygden",
+    "code": "budget-sum-drift",
+    "detail": "high: breakdown sums to €930 against a stated total of €2600 (-64%)"
+  },
+  {
+    "level": "WARNING",
+    "trip": "se-culinary-skane-country-osterlen-kullabygden",
+    "code": "missing-evening",
+    "detail": "day 7 has no evening block"
+  },
+  {
+    "level": "WARNING",
+    "trip": "se-culinary-skane-country-osterlen-kullabygden",
+    "code": "missing-gateway",
+    "detail": "no gateway airport named on the record"
+  },
+  {
+    "level": "WARNING",
+    "trip": "se-culinary-skane-country-osterlen-kullabygden",
+    "code": "missing-connectivity",
+    "detail": "logistics.connectivity is empty"
+  },
+  {
+    "level": "INFO",
+    "trip": "se-culinary-skane-country-osterlen-kullabygden",
+    "code": "generated-summary",
+    "detail": "summary composed from metadata — no editorial summary in the source"
+  },
+  {
+    "level": "WARNING",
+    "trip": "si-culinary-vipava-karst",
+    "code": "approximate-coordinates",
+    "detail": "pin falls back to the Slovenia capital — no basecamp town resolved"
+  },
+  {
+    "level": "WARNING",
+    "trip": "ad-winter-sports-grandvalira",
+    "code": "approximate-coordinates",
+    "detail": "pin falls back to the Andorra capital — no basecamp town resolved"
+  },
+  {
+    "level": "WARNING",
+    "trip": "at-winter-sports-arlberg-st-anton",
+    "code": "gateway-coordinates",
+    "detail": "pin sits on the gateway city (Innsbruck), not on the trip's basecamp"
+  },
+  {
+    "level": "WARNING",
+    "trip": "at-winter-sports-arlberg-st-anton",
+    "code": "missing-type-detail",
+    "detail": "no lift network / pass detail captured for this trip type"
+  },
+  {
+    "level": "WARNING",
+    "trip": "at-winter-sports-kitzbuehel-kitzski",
+    "code": "gateway-coordinates",
+    "detail": "pin sits on the gateway city (Innsbruck), not on the trip's basecamp"
+  },
+  {
+    "level": "WARNING",
+    "trip": "at-winter-sports-kitzbuehel-kitzski",
+    "code": "missing-type-detail",
+    "detail": "no lift network / pass detail captured for this trip type"
+  },
+  {
+    "level": "WARNING",
+    "trip": "ba-winter-sports-jahorina-bjelasnica",
+    "code": "approximate-coordinates",
+    "detail": "pin falls back to the Bosnia and Herzegovina capital — no basecamp town resolved"
+  },
+  {
+    "level": "WARNING",
+    "trip": "be-winter-sports-hautes-fagnes-nordic",
+    "code": "gateway-coordinates",
+    "detail": "pin sits on the gateway city (Liège), not on the trip's basecamp"
+  },
+  {
+    "level": "WARNING",
+    "trip": "be-winter-sports-hautes-fagnes-nordic",
+    "code": "missing-type-detail",
+    "detail": "no lift network / pass detail captured for this trip type"
+  },
+  {
+    "level": "WARNING",
+    "trip": "bg-winter-sports-bansko-pirin",
+    "code": "gateway-coordinates",
+    "detail": "pin sits on the gateway city (Sofia), not on the trip's basecamp"
+  },
+  {
+    "level": "WARNING",
+    "trip": "ch-winter-sports-engelberg-titlis-freeride",
+    "code": "gateway-coordinates",
+    "detail": "pin sits on the gateway city (Zürich), not on the trip's basecamp"
+  },
+  {
+    "level": "WARNING",
+    "trip": "ch-winter-sports-engelberg-titlis-freeride",
+    "code": "missing-connectivity",
+    "detail": "logistics.connectivity is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "ch-winter-sports-engelberg-titlis-freeride",
+    "code": "missing-type-detail",
+    "detail": "no lift network / pass detail captured for this trip type"
+  },
+  {
+    "level": "WARNING",
+    "trip": "ch-winter-sports-verbier-4-vallees",
+    "code": "gateway-coordinates",
+    "detail": "pin sits on the gateway city (Geneva), not on the trip's basecamp"
+  },
+  {
+    "level": "WARNING",
+    "trip": "ch-winter-sports-verbier-4-vallees",
+    "code": "missing-connectivity",
+    "detail": "logistics.connectivity is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "ch-winter-sports-verbier-4-vallees",
+    "code": "missing-type-detail",
+    "detail": "no lift network / pass detail captured for this trip type"
+  },
+  {
+    "level": "WARNING",
+    "trip": "cz-winter-sports-krkonose-spindleruv-mlyn",
+    "code": "gateway-coordinates",
+    "detail": "pin sits on the gateway city (Prague), not on the trip's basecamp"
+  },
+  {
+    "level": "WARNING",
+    "trip": "cz-winter-sports-krkonose-spindleruv-mlyn",
+    "code": "missing-type-detail",
+    "detail": "no lift network / pass detail captured for this trip type"
+  },
+  {
+    "level": "WARNING",
+    "trip": "de-winter-sports-garmisch-zugspitze",
+    "code": "missing-connectivity",
+    "detail": "logistics.connectivity is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "de-winter-sports-garmisch-zugspitze",
+    "code": "missing-type-detail",
+    "detail": "no lift network / pass detail captured for this trip type"
+  },
+  {
+    "level": "WARNING",
+    "trip": "fi-winter-sports-levi-yllas-lapland-twin-resort-ski",
+    "code": "missing-difficulty",
+    "detail": "no difficulty rating in the source record"
+  },
+  {
+    "level": "WARNING",
+    "trip": "fi-winter-sports-levi-yllas-lapland-twin-resort-ski",
+    "code": "budget-sum-drift",
+    "detail": "low: breakdown sums to €480 against a stated total of €1500 (-68%)"
+  },
+  {
+    "level": "WARNING",
+    "trip": "fi-winter-sports-levi-yllas-lapland-twin-resort-ski",
+    "code": "budget-sum-drift",
+    "detail": "high: breakdown sums to €845 against a stated total of €2400 (-65%)"
+  },
+  {
+    "level": "WARNING",
+    "trip": "fi-winter-sports-levi-yllas-lapland-twin-resort-ski",
+    "code": "missing-evening",
+    "detail": "day 7 has no evening block"
+  },
+  {
+    "level": "WARNING",
+    "trip": "fi-winter-sports-levi-yllas-lapland-twin-resort-ski",
+    "code": "missing-gateway",
+    "detail": "no gateway airport named on the record"
+  },
+  {
+    "level": "WARNING",
+    "trip": "fi-winter-sports-levi-yllas-lapland-twin-resort-ski",
+    "code": "missing-connectivity",
+    "detail": "logistics.connectivity is empty"
+  },
+  {
+    "level": "INFO",
+    "trip": "fi-winter-sports-levi-yllas-lapland-twin-resort-ski",
+    "code": "generated-summary",
+    "detail": "summary composed from metadata — no editorial summary in the source"
+  },
+  {
+    "level": "WARNING",
+    "trip": "fr-winter-sports-chamonix-freeride",
+    "code": "approximate-coordinates",
+    "detail": "pin falls back to the France capital — no basecamp town resolved"
+  },
+  {
+    "level": "WARNING",
+    "trip": "fr-winter-sports-chamonix-freeride",
+    "code": "missing-connectivity",
+    "detail": "logistics.connectivity is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "fr-winter-sports-chamonix-freeride",
+    "code": "missing-type-detail",
+    "detail": "no lift network / pass detail captured for this trip type"
+  },
+  {
+    "level": "WARNING",
+    "trip": "fr-winter-sports-three-valleys-meribel",
+    "code": "gateway-coordinates",
+    "detail": "pin sits on the gateway city (Chambéry), not on the trip's basecamp"
+  },
+  {
+    "level": "WARNING",
+    "trip": "fr-winter-sports-three-valleys-meribel",
+    "code": "missing-type-detail",
+    "detail": "no lift network / pass detail captured for this trip type"
+  },
+  {
+    "level": "WARNING",
+    "trip": "gr-winter-sports-parnassos-arachova",
+    "code": "approximate-coordinates",
+    "detail": "pin falls back to the Greece capital — no basecamp town resolved"
+  },
+  {
+    "level": "WARNING",
+    "trip": "it-winter-sports-dolomiti-superski",
+    "code": "approximate-coordinates",
+    "detail": "pin falls back to the Italy capital — no basecamp town resolved"
+  },
+  {
+    "level": "WARNING",
+    "trip": "li-winter-sports-malbun-family",
+    "code": "approximate-coordinates",
+    "detail": "pin falls back to the Liechtenstein capital — no basecamp town resolved"
+  },
+  {
+    "level": "WARNING",
+    "trip": "li-winter-sports-malbun-family",
+    "code": "missing-connectivity",
+    "detail": "logistics.connectivity is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "li-winter-sports-malbun-family",
+    "code": "missing-booking-windows",
+    "detail": "logistics.bookingWindows is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "li-winter-sports-malbun-family",
+    "code": "missing-type-detail",
+    "detail": "no lift network / pass detail captured for this trip type"
+  },
+  {
+    "level": "WARNING",
+    "trip": "no-winter-sports-hemsedal-hallingdal-and-nordic",
+    "code": "missing-difficulty",
+    "detail": "no difficulty rating in the source record"
+  },
+  {
+    "level": "WARNING",
+    "trip": "no-winter-sports-hemsedal-hallingdal-and-nordic",
+    "code": "budget-sum-drift",
+    "detail": "low: breakdown sums to €540 against a stated total of €2000 (-73%)"
+  },
+  {
+    "level": "WARNING",
+    "trip": "no-winter-sports-hemsedal-hallingdal-and-nordic",
+    "code": "budget-sum-drift",
+    "detail": "high: breakdown sums to €885 against a stated total of €2900 (-69%)"
+  },
+  {
+    "level": "WARNING",
+    "trip": "no-winter-sports-hemsedal-hallingdal-and-nordic",
+    "code": "missing-evening",
+    "detail": "day 7 has no evening block"
+  },
+  {
+    "level": "WARNING",
+    "trip": "no-winter-sports-hemsedal-hallingdal-and-nordic",
+    "code": "missing-gateway",
+    "detail": "no gateway airport named on the record"
+  },
+  {
+    "level": "WARNING",
+    "trip": "no-winter-sports-hemsedal-hallingdal-and-nordic",
+    "code": "missing-connectivity",
+    "detail": "logistics.connectivity is empty"
+  },
+  {
+    "level": "INFO",
+    "trip": "no-winter-sports-hemsedal-hallingdal-and-nordic",
+    "code": "generated-summary",
+    "detail": "summary composed from metadata — no editorial summary in the source"
+  },
+  {
+    "level": "WARNING",
+    "trip": "ro-winter-sports-poiana-brasov-sinaia",
+    "code": "missing-type-detail",
+    "detail": "no lift network / pass detail captured for this trip type"
+  },
+  {
+    "level": "WARNING",
+    "trip": "rs-winter-sports-kopaonik",
+    "code": "approximate-coordinates",
+    "detail": "pin falls back to the Serbia capital — no basecamp town resolved"
+  },
+  {
+    "level": "WARNING",
+    "trip": "se-winter-sports-are-lift-linked-capital",
+    "code": "missing-difficulty",
+    "detail": "no difficulty rating in the source record"
+  },
+  {
+    "level": "WARNING",
+    "trip": "se-winter-sports-are-lift-linked-capital",
+    "code": "budget-sum-drift",
+    "detail": "low: breakdown sums to €455 against a stated total of €1800 (-75%)"
+  },
+  {
+    "level": "WARNING",
+    "trip": "se-winter-sports-are-lift-linked-capital",
+    "code": "budget-sum-drift",
+    "detail": "high: breakdown sums to €800 against a stated total of €2700 (-70%)"
+  },
+  {
+    "level": "WARNING",
+    "trip": "se-winter-sports-are-lift-linked-capital",
+    "code": "missing-evening",
+    "detail": "day 7 has no evening block"
+  },
+  {
+    "level": "WARNING",
+    "trip": "se-winter-sports-are-lift-linked-capital",
+    "code": "missing-gateway",
+    "detail": "no gateway airport named on the record"
+  },
+  {
+    "level": "WARNING",
+    "trip": "se-winter-sports-are-lift-linked-capital",
+    "code": "missing-connectivity",
+    "detail": "logistics.connectivity is empty"
+  },
+  {
+    "level": "INFO",
+    "trip": "se-winter-sports-are-lift-linked-capital",
+    "code": "generated-summary",
+    "detail": "summary composed from metadata — no editorial summary in the source"
+  },
+  {
+    "level": "WARNING",
+    "trip": "si-winter-sports-kranjska-gora-vogel",
+    "code": "approximate-coordinates",
+    "detail": "pin falls back to the Slovenia capital — no basecamp town resolved"
+  },
+  {
+    "level": "WARNING",
+    "trip": "at-nature-escape-gesaeuse-almhuette",
+    "code": "gateway-coordinates",
+    "detail": "pin sits on the gateway city (Graz), not on the trip's basecamp"
+  },
+  {
+    "level": "WARNING",
+    "trip": "at-nature-escape-gesaeuse-almhuette",
+    "code": "missing-connectivity",
+    "detail": "logistics.connectivity is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "at-nature-escape-gesaeuse-almhuette",
+    "code": "missing-booking-windows",
+    "detail": "logistics.bookingWindows is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "ba-nature-escape-una-national-park",
+    "code": "approximate-coordinates",
+    "detail": "pin falls back to the Bosnia and Herzegovina capital — no basecamp town resolved"
+  },
+  {
+    "level": "WARNING",
+    "trip": "be-nature-escape-hoge-kempen-cabin",
+    "code": "missing-connectivity",
+    "detail": "logistics.connectivity is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "be-nature-escape-hoge-kempen-cabin",
+    "code": "missing-booking-windows",
+    "detail": "logistics.bookingWindows is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "ch-nature-escape-swiss-national-park-engadin",
+    "code": "gateway-coordinates",
+    "detail": "pin sits on the gateway city (Zürich), not on the trip's basecamp"
+  },
+  {
+    "level": "WARNING",
+    "trip": "ch-nature-escape-swiss-national-park-engadin",
+    "code": "missing-connectivity",
+    "detail": "logistics.connectivity is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "ch-nature-escape-swiss-national-park-engadin",
+    "code": "missing-booking-windows",
+    "detail": "logistics.bookingWindows is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "cz-nature-escape-jeseniky-cabin",
+    "code": "gateway-coordinates",
+    "detail": "pin sits on the gateway city (Ostrava), not on the trip's basecamp"
+  },
+  {
+    "level": "WARNING",
+    "trip": "cz-nature-escape-jeseniky-cabin",
+    "code": "missing-connectivity",
+    "detail": "logistics.connectivity is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "cz-nature-escape-jeseniky-cabin",
+    "code": "missing-booking-windows",
+    "detail": "logistics.bookingWindows is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "cz-nature-escape-sumava-wilderness",
+    "code": "gateway-coordinates",
+    "detail": "pin sits on the gateway city (Prague), not on the trip's basecamp"
+  },
+  {
+    "level": "WARNING",
+    "trip": "cz-nature-escape-sumava-wilderness",
+    "code": "missing-connectivity",
+    "detail": "logistics.connectivity is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "cz-nature-escape-sumava-wilderness",
+    "code": "missing-booking-windows",
+    "detail": "logistics.bookingWindows is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "de-nature-escape-bayerischer-wald",
+    "code": "gateway-coordinates",
+    "detail": "pin sits on the gateway city (Munich), not on the trip's basecamp"
+  },
+  {
+    "level": "WARNING",
+    "trip": "de-nature-escape-bayerischer-wald",
+    "code": "missing-connectivity",
+    "detail": "logistics.connectivity is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "de-nature-escape-bayerischer-wald",
+    "code": "missing-booking-windows",
+    "detail": "logistics.bookingWindows is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "es-nature-escape-extremadura-monfrague",
+    "code": "approximate-coordinates",
+    "detail": "pin falls back to the Spain capital — no basecamp town resolved"
+  },
+  {
+    "level": "WARNING",
+    "trip": "fi-nature-escape-saimaa-lakeland-linnansaari-kolovesi-cabin-week",
+    "code": "missing-difficulty",
+    "detail": "no difficulty rating in the source record"
+  },
+  {
+    "level": "WARNING",
+    "trip": "fi-nature-escape-saimaa-lakeland-linnansaari-kolovesi-cabin-week",
+    "code": "budget-sum-drift",
+    "detail": "low: breakdown sums to €370 against a stated total of €750 (-51%)"
+  },
+  {
+    "level": "WARNING",
+    "trip": "fi-nature-escape-saimaa-lakeland-linnansaari-kolovesi-cabin-week",
+    "code": "budget-sum-drift",
+    "detail": "high: breakdown sums to €730 against a stated total of €1200 (-39%)"
+  },
+  {
+    "level": "WARNING",
+    "trip": "fi-nature-escape-saimaa-lakeland-linnansaari-kolovesi-cabin-week",
+    "code": "missing-evening",
+    "detail": "day 7 has no evening block"
+  },
+  {
+    "level": "WARNING",
+    "trip": "fi-nature-escape-saimaa-lakeland-linnansaari-kolovesi-cabin-week",
+    "code": "missing-gateway",
+    "detail": "no gateway airport named on the record"
+  },
+  {
+    "level": "WARNING",
+    "trip": "fi-nature-escape-saimaa-lakeland-linnansaari-kolovesi-cabin-week",
+    "code": "missing-connectivity",
+    "detail": "logistics.connectivity is empty"
+  },
+  {
+    "level": "INFO",
+    "trip": "fi-nature-escape-saimaa-lakeland-linnansaari-kolovesi-cabin-week",
+    "code": "generated-summary",
+    "detail": "summary composed from metadata — no editorial summary in the source"
+  },
+  {
+    "level": "WARNING",
+    "trip": "fo-nature-escape-suduroy-mykines-faroese-isolation-week",
+    "code": "missing-difficulty",
+    "detail": "no difficulty rating in the source record"
+  },
+  {
+    "level": "WARNING",
+    "trip": "fo-nature-escape-suduroy-mykines-faroese-isolation-week",
+    "code": "budget-sum-drift",
+    "detail": "low: breakdown sums to €575 against a stated total of €1600 (-64%)"
+  },
+  {
+    "level": "WARNING",
+    "trip": "fo-nature-escape-suduroy-mykines-faroese-isolation-week",
+    "code": "budget-sum-drift",
+    "detail": "high: breakdown sums to €935 against a stated total of €2300 (-59%)"
+  },
+  {
+    "level": "WARNING",
+    "trip": "fo-nature-escape-suduroy-mykines-faroese-isolation-week",
+    "code": "missing-evening",
+    "detail": "day 7 has no evening block"
+  },
+  {
+    "level": "WARNING",
+    "trip": "fo-nature-escape-suduroy-mykines-faroese-isolation-week",
+    "code": "missing-gateway",
+    "detail": "no gateway airport named on the record"
+  },
+  {
+    "level": "WARNING",
+    "trip": "fo-nature-escape-suduroy-mykines-faroese-isolation-week",
+    "code": "missing-connectivity",
+    "detail": "logistics.connectivity is empty"
+  },
+  {
+    "level": "INFO",
+    "trip": "fo-nature-escape-suduroy-mykines-faroese-isolation-week",
+    "code": "generated-summary",
+    "detail": "summary composed from metadata — no editorial summary in the source"
+  },
+  {
+    "level": "WARNING",
+    "trip": "fr-nature-escape-vosges-cabane",
+    "code": "approximate-coordinates",
+    "detail": "pin falls back to the France capital — no basecamp town resolved"
+  },
+  {
+    "level": "WARNING",
+    "trip": "fr-nature-escape-vosges-cabane",
+    "code": "missing-connectivity",
+    "detail": "logistics.connectivity is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "fr-nature-escape-vosges-cabane",
+    "code": "missing-booking-windows",
+    "detail": "logistics.bookingWindows is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "hr-nature-escape-velebit-lika",
+    "code": "gateway-coordinates",
+    "detail": "pin sits on the gateway city (Zadar), not on the trip's basecamp"
+  },
+  {
+    "level": "WARNING",
+    "trip": "hu-nature-escape-hortobagy-orseg-cabin",
+    "code": "approximate-coordinates",
+    "detail": "pin falls back to the Hungary capital — no basecamp town resolved"
+  },
+  {
+    "level": "WARNING",
+    "trip": "it-nature-escape-sardinia-supramonte",
+    "code": "gateway-coordinates",
+    "detail": "pin sits on the gateway city (Olbia), not on the trip's basecamp"
+  },
+  {
+    "level": "WARNING",
+    "trip": "lu-nature-escape-upper-sure-oesling",
+    "code": "gateway-coordinates",
+    "detail": "pin sits on the gateway city (Luxembourg), not on the trip's basecamp"
+  },
+  {
+    "level": "WARNING",
+    "trip": "lu-nature-escape-upper-sure-oesling",
+    "code": "missing-connectivity",
+    "detail": "logistics.connectivity is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "lu-nature-escape-upper-sure-oesling",
+    "code": "missing-booking-windows",
+    "detail": "logistics.bookingWindows is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "lv-nature-escape-gauja-slitere-latvian-forest-cabin-week",
+    "code": "missing-difficulty",
+    "detail": "no difficulty rating in the source record"
+  },
+  {
+    "level": "WARNING",
+    "trip": "lv-nature-escape-gauja-slitere-latvian-forest-cabin-week",
+    "code": "budget-sum-drift",
+    "detail": "low: breakdown sums to €260 against a stated total of €550 (-53%)"
+  },
+  {
+    "level": "WARNING",
+    "trip": "lv-nature-escape-gauja-slitere-latvian-forest-cabin-week",
+    "code": "budget-sum-drift",
+    "detail": "high: breakdown sums to €475 against a stated total of €900 (-47%)"
+  },
+  {
+    "level": "WARNING",
+    "trip": "lv-nature-escape-gauja-slitere-latvian-forest-cabin-week",
+    "code": "missing-evening",
+    "detail": "day 7 has no evening block"
+  },
+  {
+    "level": "WARNING",
+    "trip": "lv-nature-escape-gauja-slitere-latvian-forest-cabin-week",
+    "code": "missing-gateway",
+    "detail": "no gateway airport named on the record"
+  },
+  {
+    "level": "WARNING",
+    "trip": "lv-nature-escape-gauja-slitere-latvian-forest-cabin-week",
+    "code": "missing-connectivity",
+    "detail": "logistics.connectivity is empty"
+  },
+  {
+    "level": "INFO",
+    "trip": "lv-nature-escape-gauja-slitere-latvian-forest-cabin-week",
+    "code": "generated-summary",
+    "detail": "summary composed from metadata — no editorial summary in the source"
+  },
+  {
+    "level": "WARNING",
+    "trip": "md-nature-escape-orheiul-vechi-padurea-domneasca",
+    "code": "approximate-coordinates",
+    "detail": "pin falls back to the Moldova capital — no basecamp town resolved"
+  },
+  {
+    "level": "WARNING",
+    "trip": "mk-nature-escape-mavrovo-galicica",
+    "code": "gateway-coordinates",
+    "detail": "pin sits on the gateway city (Skopje), not on the trip's basecamp"
+  },
+  {
+    "level": "WARNING",
+    "trip": "nl-nature-escape-drenthe-dwingelderveld",
+    "code": "approximate-coordinates",
+    "detail": "pin falls back to the Netherlands capital — no basecamp town resolved"
+  },
+  {
+    "level": "WARNING",
+    "trip": "nl-nature-escape-drenthe-dwingelderveld",
+    "code": "missing-connectivity",
+    "detail": "logistics.connectivity is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "nl-nature-escape-drenthe-dwingelderveld",
+    "code": "missing-booking-windows",
+    "detail": "logistics.bookingWindows is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "nl-nature-escape-veluwe-hoge-veluwe",
+    "code": "approximate-coordinates",
+    "detail": "pin falls back to the Netherlands capital — no basecamp town resolved"
+  },
+  {
+    "level": "WARNING",
+    "trip": "nl-nature-escape-veluwe-hoge-veluwe",
+    "code": "missing-connectivity",
+    "detail": "logistics.connectivity is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "nl-nature-escape-veluwe-hoge-veluwe",
+    "code": "missing-booking-windows",
+    "detail": "logistics.bookingWindows is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "pl-nature-escape-bieszczady-cabin",
+    "code": "approximate-coordinates",
+    "detail": "pin falls back to the Poland capital — no basecamp town resolved"
+  },
+  {
+    "level": "WARNING",
+    "trip": "pt-nature-escape-peneda-geres",
+    "code": "approximate-coordinates",
+    "detail": "pin falls back to the Portugal capital — no basecamp town resolved"
+  },
+  {
+    "level": "WARNING",
+    "trip": "sk-nature-escape-slovensky-raj-cabin",
+    "code": "approximate-coordinates",
+    "detail": "pin falls back to the Slovakia capital — no basecamp town resolved"
+  },
+  {
+    "level": "WARNING",
+    "trip": "al-water-sports-riviera-karaburun",
+    "code": "approximate-coordinates",
+    "detail": "pin falls back to the Albania capital — no basecamp town resolved"
+  },
+  {
+    "level": "WARNING",
+    "trip": "at-water-sports-salzkammergut-lakes",
+    "code": "gateway-coordinates",
+    "detail": "pin sits on the gateway city (Salzburg), not on the trip's basecamp"
+  },
+  {
+    "level": "WARNING",
+    "trip": "at-water-sports-salzkammergut-lakes",
+    "code": "missing-connectivity",
+    "detail": "logistics.connectivity is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "at-water-sports-salzkammergut-lakes",
+    "code": "missing-booking-windows",
+    "detail": "logistics.bookingWindows is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "be-water-sports-de-panne-kite-landyacht",
+    "code": "gateway-coordinates",
+    "detail": "pin sits on the gateway city (Brussels), not on the trip's basecamp"
+  },
+  {
+    "level": "WARNING",
+    "trip": "be-water-sports-de-panne-kite-landyacht",
+    "code": "missing-connectivity",
+    "detail": "logistics.connectivity is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "be-water-sports-de-panne-kite-landyacht",
+    "code": "missing-booking-windows",
+    "detail": "logistics.bookingWindows is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "be-water-sports-ostend-knokke-sail",
+    "code": "missing-connectivity",
+    "detail": "logistics.connectivity is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "be-water-sports-ostend-knokke-sail",
+    "code": "missing-booking-windows",
+    "detail": "logistics.bookingWindows is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "de-water-sports-ruegen-baltic-wind",
+    "code": "approximate-coordinates",
+    "detail": "pin falls back to the Germany capital — no basecamp town resolved"
+  },
+  {
+    "level": "WARNING",
+    "trip": "de-water-sports-ruegen-baltic-wind",
+    "code": "missing-connectivity",
+    "detail": "logistics.connectivity is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "de-water-sports-ruegen-baltic-wind",
+    "code": "missing-booking-windows",
+    "detail": "logistics.bookingWindows is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "dk-water-sports-cold-hawaii-klitmoller-vorupor-thy",
+    "code": "missing-difficulty",
+    "detail": "no difficulty rating in the source record"
+  },
+  {
+    "level": "WARNING",
+    "trip": "dk-water-sports-cold-hawaii-klitmoller-vorupor-thy",
+    "code": "budget-sum-drift",
+    "detail": "low: breakdown sums to €350 against a stated total of €1000 (-65%)"
+  },
+  {
+    "level": "WARNING",
+    "trip": "dk-water-sports-cold-hawaii-klitmoller-vorupor-thy",
+    "code": "budget-sum-drift",
+    "detail": "high: breakdown sums to €585 against a stated total of €1600 (-63%)"
+  },
+  {
+    "level": "WARNING",
+    "trip": "dk-water-sports-cold-hawaii-klitmoller-vorupor-thy",
+    "code": "missing-evening",
+    "detail": "day 7 has no evening block"
+  },
+  {
+    "level": "WARNING",
+    "trip": "dk-water-sports-cold-hawaii-klitmoller-vorupor-thy",
+    "code": "missing-gateway",
+    "detail": "no gateway airport named on the record"
+  },
+  {
+    "level": "WARNING",
+    "trip": "dk-water-sports-cold-hawaii-klitmoller-vorupor-thy",
+    "code": "missing-connectivity",
+    "detail": "logistics.connectivity is empty"
+  },
+  {
+    "level": "INFO",
+    "trip": "dk-water-sports-cold-hawaii-klitmoller-vorupor-thy",
+    "code": "generated-summary",
+    "detail": "summary composed from metadata — no editorial summary in the source"
+  },
+  {
+    "level": "WARNING",
+    "trip": "ee-water-sports-west-estonian-coast-parnu-ristna-sorve",
+    "code": "missing-difficulty",
+    "detail": "no difficulty rating in the source record"
+  },
+  {
+    "level": "WARNING",
+    "trip": "ee-water-sports-west-estonian-coast-parnu-ristna-sorve",
+    "code": "budget-sum-drift",
+    "detail": "low: breakdown sums to €270 against a stated total of €800 (-66%)"
+  },
+  {
+    "level": "WARNING",
+    "trip": "ee-water-sports-west-estonian-coast-parnu-ristna-sorve",
+    "code": "budget-sum-drift",
+    "detail": "high: breakdown sums to €490 against a stated total of €1250 (-61%)"
+  },
+  {
+    "level": "WARNING",
+    "trip": "ee-water-sports-west-estonian-coast-parnu-ristna-sorve",
+    "code": "missing-evening",
+    "detail": "day 7 has no evening block"
+  },
+  {
+    "level": "WARNING",
+    "trip": "ee-water-sports-west-estonian-coast-parnu-ristna-sorve",
+    "code": "missing-gateway",
+    "detail": "no gateway airport named on the record"
+  },
+  {
+    "level": "WARNING",
+    "trip": "ee-water-sports-west-estonian-coast-parnu-ristna-sorve",
+    "code": "missing-connectivity",
+    "detail": "logistics.connectivity is empty"
+  },
+  {
+    "level": "INFO",
+    "trip": "ee-water-sports-west-estonian-coast-parnu-ristna-sorve",
+    "code": "generated-summary",
+    "detail": "summary composed from metadata — no editorial summary in the source"
+  },
+  {
+    "level": "WARNING",
+    "trip": "fr-water-sports-landes-hossegor-surf",
+    "code": "gateway-coordinates",
+    "detail": "pin sits on the gateway city (Biarritz), not on the trip's basecamp"
+  },
+  {
+    "level": "WARNING",
+    "trip": "fr-water-sports-landes-hossegor-surf",
+    "code": "missing-connectivity",
+    "detail": "logistics.connectivity is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "fr-water-sports-landes-hossegor-surf",
+    "code": "missing-booking-windows",
+    "detail": "logistics.bookingWindows is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "fr-water-sports-quiberon-morbihan",
+    "code": "approximate-coordinates",
+    "detail": "pin falls back to the France capital — no basecamp town resolved"
+  },
+  {
+    "level": "WARNING",
+    "trip": "fr-water-sports-quiberon-morbihan",
+    "code": "missing-connectivity",
+    "detail": "logistics.connectivity is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "fr-water-sports-quiberon-morbihan",
+    "code": "missing-booking-windows",
+    "detail": "logistics.bookingWindows is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "gr-water-sports-cyclades-paros-naxos",
+    "code": "approximate-coordinates",
+    "detail": "pin falls back to the Greece capital — no basecamp town resolved"
+  },
+  {
+    "level": "WARNING",
+    "trip": "hu-water-sports-balaton-tisza",
+    "code": "approximate-coordinates",
+    "detail": "pin falls back to the Hungary capital — no basecamp town resolved"
+  },
+  {
+    "level": "WARNING",
+    "trip": "it-water-sports-sardinia-porto-pollo",
+    "code": "approximate-coordinates",
+    "detail": "pin falls back to the Italy capital — no basecamp town resolved"
+  },
+  {
+    "level": "WARNING",
+    "trip": "lt-water-sports-curonian-lagoon-svencele-nida-kite-week",
+    "code": "missing-difficulty",
+    "detail": "no difficulty rating in the source record"
+  },
+  {
+    "level": "WARNING",
+    "trip": "lt-water-sports-curonian-lagoon-svencele-nida-kite-week",
+    "code": "budget-sum-drift",
+    "detail": "low: breakdown sums to €260 against a stated total of €900 (-71%)"
+  },
+  {
+    "level": "WARNING",
+    "trip": "lt-water-sports-curonian-lagoon-svencele-nida-kite-week",
+    "code": "budget-sum-drift",
+    "detail": "high: breakdown sums to €475 against a stated total of €1400 (-66%)"
+  },
+  {
+    "level": "WARNING",
+    "trip": "lt-water-sports-curonian-lagoon-svencele-nida-kite-week",
+    "code": "missing-evening",
+    "detail": "day 7 has no evening block"
+  },
+  {
+    "level": "WARNING",
+    "trip": "lt-water-sports-curonian-lagoon-svencele-nida-kite-week",
+    "code": "missing-gateway",
+    "detail": "no gateway airport named on the record"
+  },
+  {
+    "level": "WARNING",
+    "trip": "lt-water-sports-curonian-lagoon-svencele-nida-kite-week",
+    "code": "missing-connectivity",
+    "detail": "logistics.connectivity is empty"
+  },
+  {
+    "level": "INFO",
+    "trip": "lt-water-sports-curonian-lagoon-svencele-nida-kite-week",
+    "code": "generated-summary",
+    "detail": "summary composed from metadata — no editorial summary in the source"
+  },
+  {
+    "level": "WARNING",
+    "trip": "mc-water-sports-freedive-kayak",
+    "code": "missing-connectivity",
+    "detail": "logistics.connectivity is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "mc-water-sports-freedive-kayak",
+    "code": "missing-booking-windows",
+    "detail": "logistics.bookingWindows is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "mc-water-sports-sailing-riviera",
+    "code": "missing-connectivity",
+    "detail": "logistics.connectivity is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "mc-water-sports-sailing-riviera",
+    "code": "missing-booking-windows",
+    "detail": "logistics.bookingWindows is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "me-water-sports-boka-ada-bojana",
+    "code": "approximate-coordinates",
+    "detail": "pin falls back to the Montenegro capital — no basecamp town resolved"
+  },
+  {
+    "level": "WARNING",
+    "trip": "nl-water-sports-frisian-lakes-ijsselmeer",
+    "code": "missing-connectivity",
+    "detail": "logistics.connectivity is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "nl-water-sports-frisian-lakes-ijsselmeer",
+    "code": "missing-booking-windows",
+    "detail": "logistics.bookingWindows is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "nl-water-sports-zeeland-brouwersdam-kite",
+    "code": "approximate-coordinates",
+    "detail": "pin falls back to the Netherlands capital — no basecamp town resolved"
+  },
+  {
+    "level": "WARNING",
+    "trip": "nl-water-sports-zeeland-brouwersdam-kite",
+    "code": "missing-connectivity",
+    "detail": "logistics.connectivity is empty"
+  },
+  {
+    "level": "WARNING",
+    "trip": "nl-water-sports-zeeland-brouwersdam-kite",
+    "code": "missing-booking-windows",
+    "detail": "logistics.bookingWindows is empty"
+  }
+]

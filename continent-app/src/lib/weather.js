@@ -9,7 +9,7 @@
  *
  * This is deliberately client-side: a forecast is the one block on the page
  * that CANNOT be kept fresh by a pipeline cadence, it is stale the day
- * after it is harvested. The climate normals (WorldClim, in the wire) say
+ * after it is harvested. The climate normals (NASA POWER, in the wire) say
  * what a month is usually like; this says what this week actually looks like.
  */
 import { useEffect, useState } from 'react';

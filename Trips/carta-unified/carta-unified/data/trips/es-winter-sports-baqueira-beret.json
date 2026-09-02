@@ -1,0 +1,275 @@
+{
+  "id": "es-winter-sports-baqueira-beret",
+  "sourceId": "winter-sports-spain-baqueira-beret",
+  "slug": "es-winter-sports-baqueira-beret",
+  "title": "Baqueira Beret: Val d'Aran on the Atlantic Side",
+  "country": "Spain",
+  "countryCode": "ES",
+  "countries": [
+    {
+      "name": "Spain",
+      "code": "ES"
+    }
+  ],
+  "isMultiCountry": false,
+  "region": "Southern & Mediterranean Europe",
+  "regionKey": "southern-mediterranean",
+  "subRegion": "Val d'Aran, Catalan Pyrenees, Lleida",
+  "tripType": "Winter Sports & Skiing",
+  "tripTypeId": 8,
+  "tripTypeSlug": "winter-sports",
+  "durationDays": 7,
+  "bestPeriod": {
+    "months": [
+      1,
+      2,
+      3
+    ],
+    "monthNames": [
+      "January",
+      "February",
+      "March"
+    ],
+    "window": "Mid-January–mid-March; the second half of February combines the deepest base with lengthening days",
+    "note": null,
+    "avoid": "26 December–7 January and Spanish Semana Santa, when Barcelona and Madrid arrive together and the C-28 queues at Baqueira 1500 start at 08:15",
+    "raw": "Mid-January–mid-March; the second half of February combines the deepest base with lengthening days"
+  },
+  "budgetTier": "€€€",
+  "budgetTierRange": [
+    3,
+    3
+  ],
+  "budgetTierRaw": "€€€",
+  "budget": {
+    "currency": "EUR",
+    "totalEur": {
+      "low": 1600,
+      "high": 2700
+    },
+    "totalNote": "€1,600–€2,700 per person, excl. international flights",
+    "breakdown": {
+      "accommodation": {
+        "lowEur": 650,
+        "highEur": 1300,
+        "note": "Salardú/Arties guesthouses €80–€130 pppn; Baqueira 1500 slopeside €180–€300"
+      },
+      "food": {
+        "lowEur": 320,
+        "highEur": 520,
+        "note": "Menú del dia €18–€25; mountain restaurant mains €18–€28; one Casa Irene dinner €70–€100"
+      },
+      "transport": {
+        "lowEur": 200,
+        "highEur": 350,
+        "note": "Toulouse transfer or hire car €55–€90/day; free ski bus within Val d'Aran"
+      },
+      "activities": {
+        "lowEur": 430,
+        "highEur": 530,
+        "note": "6-day forfait roughly €300–€360, Banhs de Tredòs €18–€25, one guided freeride day"
+      }
+    },
+    "perDayEur": {
+      "low": 229,
+      "high": 386
+    }
+  },
+  "profile": {
+    "difficulty": 3,
+    "difficultyLabel": "Active",
+    "difficultyNote": "3/5 — lift-served days of 4,000–6,000 vertical metres, with one optional ski-touring or freeride day that pushes to 4/5",
+    "fitnessLevel": "Active",
+    "crowdLevel": null,
+    "familyFriendly": null,
+    "carRequired": null
+  },
+  "basecamps": [],
+  "gatewayAirport": "TLS Toulouse–Blagnac, 2 h 30–3 h to Vielha via Bossòst; ILD Lleida–Alguaire 2 h 30; BCN Barcelona El Prat 4 h–4 h 30",
+  "gatewayAirportCode": "TLS",
+  "languages": [],
+  "currency": null,
+  "emergencyNumber": "112",
+  "coordinates": {
+    "lat": 41.6167,
+    "lon": 0.6222,
+    "precision": "city",
+    "matchedPlace": "Lleida",
+    "source": "geonames (geonamescache, cities > 15k)"
+  },
+  "tags": [
+    "baqueira",
+    "val-daran",
+    "pyrenees",
+    "freeride",
+    "bonaigua",
+    "aranese",
+    "thermal-baths",
+    "catalonia",
+    "off-piste"
+  ],
+  "summary": "Val d'Aran is the only Spanish valley that drains north into the Atlantic, and that single geographic accident is the whole trip: the weather arrives wet off the Bay of Biscay, dumps on the Aran side of the watershed, and leaves Baqueira with the most reliable snow in Spain. The week works as three concentric rings — the groomed Baqueira and Beret bowls for the first days, the Bonaigua and Cara Nord flanks for the harder pistes and long descents, and then the off-piste terrain around Baciver and the Escornacrabes couloir for anyone who brought a transceiver. Between ski days you drop into a valley of Romanesque churches, Aranese-speaking villages and thermal water at Tredòs. It suits strong intermediates and experts, especially those who care more about snow quality and freeride potential than about vertical drop or lift-network glamour.",
+  "summaryGenerated": false,
+  "hook": null,
+  "snapshot": {},
+  "itinerary": [
+    {
+      "day": 1,
+      "title": "Toulouse to Vielha, and a first afternoon on Baqueira",
+      "morning": "Fly to Toulouse and drive south through Saint-Gaudens and over into Spain at Bossòst — the Aran side of the border, which is why this is the fast route. Roughly 2 h 30 without snow.",
+      "afternoon": "Collect the forfait and hire kit at Baqueira 1500, ride the **Blanhiblar** gondola up to the 1,800 m plateau, and ski the wide blues off the Bosque and Argulls chairs for two hours to find your feet.",
+      "evening": "Tauèrna Urtau in Arties for pintxos and a Somontano red, or Era Lucana in Vielha if you are staying in the capital.",
+      "dayStats": "Drive Toulouse–Vielha 2 h 30–3 h / Baqueira 1500 base / 8–12 piste km, roughly 1,500 m descent / hire €120–€190 for the week",
+      "sleep": "Hotel Rafael Leret, Salardú"
+    },
+    {
+      "day": 2,
+      "title": "Beret plateau and the Baciver traverse",
+      "morning": "Drive or take the free ski bus to the **Beret** access at Pla de Beret, about 1,850 m — a broad sunlit shelf that skis nothing like the rest of the resort. Warm up on the plateau blues, then push out to the **Baciver** chairs.",
+      "afternoon": "Traverse back over the ridge into the Baqueira bowl and ski laps of the long reds down to 1,800 m. Lunch at the Pla de Beret restaurant rather than descending.",
+      "evening": "Salardú, and the Romanesque church of Sant Andreu with its 12th-century Crist de Salardú, then dinner at the hotel.",
+      "dayStats": "Pla de Beret ~1,850 m / Cap de Baqueira ~2,510 m / 25–30 piste km, roughly 4,500 m descent / free Val d'Aran ski bus Vielha–Baqueira",
+      "sleep": "Hotel Rafael Leret, Salardú"
+    },
+    {
+      "day": 3,
+      "title": "Bonaigua and the long fall lines",
+      "morning": "Cross to the **Bonaigua** sector on the far side of the **Port de la Bonaigua (2,072 m)** — check the C-28 road status before you leave, because this is the pass that closes. The Bonaigua flank has the resort's longest sustained pitches and its best blacks.",
+      "afternoon": "Ski the Bonaigua reds and blacks until the linking chair closes around 16:15, then return over the ridge to the Baqueira bowl. Do not leave this to 16:30.",
+      "evening": "Casa Irene in Arties — the valley's long-established restaurant, where the Aranese-French cooking and the game dishes justify the bill. Book ahead.",
+      "dayStats": "Port de la Bonaigua 2,072 m / Bonaigua linking chair last run ~16:15 / 28–33 piste km, roughly 5,500 m descent / C-28 closes in heavy snow, no alternative from that side",
+      "sleep": "Hotel Rafael Leret, Salardú"
+    },
+    {
+      "day": 4,
+      "title": "Cara Nord and the freeride day",
+      "morning": "Read the **Lauegi d'Aran** bulletin over breakfast — if it is 3 or above, this becomes a piste day. If it is 1 or 2 and there is fresh, meet a guide from Camins or the Escola d'Esquí freeride programme at Baqueira 1500 with transceiver, shovel and probe.",
+      "afternoon": "Work the shaded **Cara Nord** above Argulls and Ta Dossau, and if conditions allow, the **Escornacrabes** couloir off the Baqueira ridge. Otherwise take the guide onto the Baciver backcountry, which is safer-angled and skis just as well.",
+      "evening": "Après at Moët in Baqueira 1500 while the road empties, then back to Salardú.",
+      "dayStats": "Bulletin: lauegi.conselharan.org, EAWS 1–5 plus Aran's own ATES terrain classification / guide €300–€400 per day per group / Escornacrabes is an itinerary, not a piste / transceiver, shovel, probe mandatory",
+      "sleep": "Hotel Rafael Leret, Salardú"
+    },
+    {
+      "day": 5,
+      "title": "Weather-contingency and rest day: Tredòs, Vielha and the Romanesque valley",
+      "morning": "The designed flex day, and the one to move if the Bonaigua closes or a foehn shuts the top chairs. Drive up the Aiguamòg valley to the **Banhs de Tredòs** at about 1,750 m and sit in sulphurous water at 34–37°C with snow on the rim.",
+      "afternoon": "Down to **Vielha** for the **Musèu dera Val d'Aran** and the church of **Sant Miquèu** with its Crist de Mijaran, then walk the old town. Aranese — a variety of Gascon Occitan — is co-official here alongside Catalan and Spanish, and the street signs are the clearest evidence of it.",
+      "evening": "Era Lucana in Vielha for **olla aranesa**, the valley's cabbage, bean and pork winter stew, and a **civet** of wild boar or chamois. This is the meal the trip is really about.",
+      "dayStats": "Banhs de Tredòs ~€18–€25, water 34–37°C, altitude ~1,750 m / Vielha 974 m / zero vertical metres / snowshoe alternative up the Valarties, 2–3 h",
+      "sleep": "Hotel Rafael Leret, Salardú"
+    },
+    {
+      "day": 6,
+      "title": "The full traverse day",
+      "morning": "The big one. Start at Baqueira 1500 on first lifts, up the **Blanhiblar** gondola, over the top to Beret, out to the far edge of **Baciver**, and back across the plateau.",
+      "afternoon": "Cross the Bonaigua flank, take the longest reds you can find, and finish the day by skiing the whole vertical from around 2,500 m back to the 1,500 m road base. Lunch is a sandwich in a lift queue; that is the deal.",
+      "evening": "Baqueira 1500 après at Moët, then a taxi or the ski bus back down. Do not drive the C-28 after a session there.",
+      "dayStats": "30–35 piste km / roughly 6,000 m descent / 1,500–2,510 m, the full 1,000 m in one run at the end / 173 km total resort terrain across ~169 runs",
+      "sleep": "Hotel Rafael Leret, Salardú"
+    },
+    {
+      "day": 7,
+      "title": "Half day on Beret, then out",
+      "morning": "Final morning on the **Pla de Beret** plateau — high, sunny, and the easiest place to ski with luggage already in the car. Two hours is enough.",
+      "afternoon": "Return hire kit by 13:00, then drive north over Bossòst to Toulouse. Allow extra: the Bossòst road and the Vielha tunnel both stack up on Sunday afternoons and the border is a real bottleneck in bad weather.",
+      "evening": "Overnight near Toulouse rather than chancing an early flight after a mountain drive.",
+      "dayStats": "Half day ~2,000 m descent / drive Salardú–Toulouse 2 h 45–3 h 30 with Sunday traffic / Vielha tunnel keeps the southern route open year-round / winter tyres or chains required by signage",
+      "sleep": "Airport hotel, Toulouse"
+    }
+  ],
+  "accommodationStrategy": [
+    {
+      "rank": 1,
+      "name": "Hotel Rafael Leret",
+      "style": "mid-range hotel",
+      "location": "Salardú",
+      "description": "Salardú at 1,268 m is the strategic base: five minutes from Baqueira 1500 by free ski bus, ten from the Beret road, and with a real village around it rather than a car park. Ski storage, early breakfast, and a bill roughly 40% below the slopeside equivalents. Around €80–€130 pppn.",
+      "booking": null,
+      "priceNote": null
+    },
+    {
+      "rank": 2,
+      "name": "Hotel Val de Neu",
+      "style": "five-star",
+      "location": "Baqueira 1500",
+      "description": "The ski-in/ski-out option at the foot of the lifts, with a spa and the shortest possible morning. You are buying twenty minutes a day and paying heavily for it: roughly €250–€450 per room, and there is no village outside the door. Worth it with small children or a short trip.",
+      "booking": null,
+      "priceNote": null
+    },
+    {
+      "rank": 3,
+      "name": "Parador de Arties",
+      "style": "parador",
+      "location": "Arties",
+      "description": "Built around the Casa de Don Gaspar de Portolà in Arties at 1,143 m, midway between Vielha and Salardú, with the valley's best restaurant cluster on the doorstep. A 15-minute ski-bus run to the lifts. Roughly €120–€200 per room, and the most characterful bed in Aran.",
+      "booking": null,
+      "priceNote": null
+    }
+  ],
+  "logistics": {
+    "connectivity": "4G is good in the villages, on the Baqueira bowl and across Beret, and unreliable on the Bonaigua back side and in the Aiguamòg valley. EU roaming applies. Download the Baqueira app and offline maps; the resort's own **Ski Track App**, new for 2025/26, logs descents and shares live location, which is genuinely useful on a big traverse day.",
+    "emergency": "112 reaches the **Bombers de la Generalitat** and the **GRAE** mountain rescue unit. Spain is EU, so EHIC/GHIC covers state care, but not off-piste rescue or repatriation — carry winter-sports insurance that names off-piste and helicopter recovery. The valley hospital is Espitau Val d'Aran in Vielha.",
+    "weather": "Atlantic fronts arrive wet and heavy and can drop a metre in 36 hours, which is the resort's strength and its main disruptor. The **Port de la Bonaigua closes** in those events, cutting the C-28 to Esterri d'Àneu — the **Vielha tunnel** on the N-230 is the year-round southern lifeline. Foehn on the Spanish side can also spike freezing levels and shut top chairs on wind.",
+    "bookingWindows": "Baqueira 1500 and Salardú beds for February and Semana Santa go 4–6 months out. Casa Irene needs a week. Guides for a powder day should be reserved in advance, not on the morning. Forfaits are cheapest bought online at least seven days ahead.",
+    "money": "Euro. Cards work everywhere including the Banhs de Tredòs; small village bars still like cash. Tipping is rounding up, or 5–10% for a full restaurant meal.",
+    "transportRules": "Winter tyres or chains are required by signage on the C-28 and enforced by the Mossos when it snows — a hire car from Toulouse may not come chained, so ask. The **BaqueiraPASS** keycard is reloadable and gets a better per-day rate than a gate ticket. The Val d'Aran ski bus is free; parking at Baqueira 1500 is the daily bottleneck, so use it.",
+    "permits": "No park fees within the resort, but the **Aigüestortes i Estany de Sant Maurici National Park** boundary lies immediately south of the Bonaigua and has its own rules for ski touring — check before crossing. Drones require AESA compliance and are banned over the ski area. Off-piste is legal and unpatrolled; the resort does not rescue you for free outside the marked terrain.",
+    "health": "Tap water is potable throughout the valley. Altitude is not an issue below 2,510 m. The real hazards are avalanche and the Bonaigua road. Read the **Lauegi d'Aran** bulletin daily and use Aran's published **ATES** terrain map when planning any touring — it is one of very few places in southern Europe where that resource exists.",
+    "gettingThere": null,
+    "other": []
+  },
+  "proTips": [
+    "Sleep in Salardú or Arties, not at Baqueira 1500. The free ski bus makes the slopeside premium pointless, the villages have restaurants, and you avoid the 08:15 car queue on the C-28 entirely.",
+    "Use the Blanhiblar gondola from Baqueira 1500 in the morning and drive to the Beret access in the afternoon. Splitting your entry points halves your time in lift queues on a Saturday.",
+    "Check the C-28 status over the Port de la Bonaigua before committing to that sector. If it closes while you are on the far side, the only way home is around the mountain.",
+    "Read the Lauegi bulletin yourself rather than asking the hotel. Aran publishes in five languages to EAWS standards and, uniquely for the Pyrenees, an ATES terrain classification — it is better information than most Alpine valleys give you.",
+    "Book the Banhs de Tredòs for a snowy afternoon rather than a clear one. Outdoor sulphur pools at 1,750 m in falling snow is the single best photograph of the week.",
+    "Order olla aranesa on a day you have skied hard. It is a slow winter stew of cabbage, beans, pork and pasta, it appears on menus only in the cold months, and it is the local dish that is actually local.",
+    "Buy the forfait online at least a week ahead and load it to a BaqueiraPASS card. The gate price is the worst price available and the card carries over to next season.",
+    "If the resort is wind-held above 2,200 m, go to Beret rather than home. The plateau sits low and open enough that its lifts often keep turning when the Baqueira and Bonaigua top chairs stop."
+  ],
+  "typeSpecific": {
+    "raw": {
+      "Pass tiers by name": "Baqueira sells a single resort **forfait** — there is no local-versus-area distinction here because there is only one area, and no regional super-pass equivalent to Dolomiti Superski. For 2025/26 the **one-day adult forfait reached €71.50**, up 3.6% on the previous season's €69 and the smallest rise in five years; the **weekend day rate ran about €66.50** and a **five-day package worked out around €60 per day**. A **6-day adult pass falls in the region of €300–€360**, with **children (roughly 7–12) around €200–€245** — banded, because Baqueira prices dynamically by date and the published multi-day tariff moves. A **season pass runs roughly €1,200–€1,300 adult.** There is a dedicated **beginner ticket at about €25 adult and €15 child**, covering the learning lifts only, plus a free conveyor at Beret. Passes load onto the reloadable **BaqueiraPASS** keycard, which reduces the per-day rate against gate prices; expect a small refundable card charge on first issue. Buy at least a week ahead online for the best rate. **There is no night skiing at Baqueira** — the resort has never run a floodlit product, so budget nothing for it.",
+      "Lift network and the circuits you can ski in a day": "Three sectors on one continuous lift network. **Baqueira** rises from the roadside base at **Baqueira 1500** — the **Blanhiblar** and **Vaquèira** gondolas are the main access, lifting the morning crowd off the C-28 and up to the 1,800 m plateau — and tops out around Cap de Baqueira. **Beret** sits over the ridge to the north on the broad Pla de Beret plateau at about 1,850 m, sunnier, gentler and the family sector, with its own road access from Salardú. **Bonaigua** hangs on the far side of the **Port de la Bonaigua**, the 2,072 m pass on the C-28, and gives the longest fall-line pitches in the resort. The signature day is the **full traverse: Baqueira 1500 up to Cap de Baqueira, over into Beret, out to Baciver, back over the Bonaigua flank and home** — around 30–35 piste kilometres. **Cara Nord**, the north face above Argulls and Ta Dossau, is the shaded, cold-snow annexe that holds powder longest.",
+      "Last lift and the bus that patches the gap": "Lifts run roughly **09:00–17:00** and the sector-linking chairs above Beret and Bonaigua close first, typically 16:15–16:30. The gap-patcher is the **free Val d'Aran ski bus**, which runs Vielha–Arties–Salardú–Tredòs–Baqueira 1500 through the day. If you are caught on the Bonaigua side after the last chair, the only way home is the **C-28 over the Port de la Bonaigua** — which is exactly the road that closes in snow.",
+      "Snow reliability": "The resort spans roughly **1,500 m at Baqueira 1500 to about 2,510 m at Cap de Baqueira / Tuc de Baciver**. The critical fact is aspect and airmass, not altitude: Val d'Aran is on the **Atlantic watershed**, so it takes the full moisture load of Biscay fronts that never reach the Catalan Pyrenees to the south. **173 km of skiable terrain** across roughly 169 marked runs plus four itineraries were published for 2025/26, with the season announced as **29 November 2025 to 6 April 2026** (other listings quote 12 December to 21 April — the gap is real and must be re-checked). Snowmaking is extensive and was extended for 2025/26 with 14 new guns at Ta Dossau, 12 old units replaced by six efficient ones, two new winch groomers and 2 km of additional wind fencing; **coverage is commonly given as around 50–60% of pisted kilometres, but Baqueira does not publish a firm percentage.** In a bad snow year the resort concentrates on the high Beret plateau and the shaded Cara Nord, and the return to Baqueira 1500 shuts, sending everyone down the gondolas.",
+      "Off-piste and touring": "This is the reason strong skiers come. **Escornacrabes** — literally \"goat-scarer\" in Aranese — is the resort's famous couloir, a narrow steep line off the Baqueira ridge that is skied as an itinerary rather than a piste. **Tuc de Salana**, **Tuc de Baciver** and the bowls beyond Baciver toward the Marimanya massif give the touring terrain, and the Aiguamòg valley toward Colomèrs is the classic ski-tour approach. The avalanche bulletin is the **Butlletí de Perill d'Allaus issued by the Centre de Lauegi d'Aran, the avalanche service of the Conselh Generau d'Aran** (lauegi.conselharan.org), published to EAWS standards in five languages — and uniquely for the Pyrenees, Aran also publishes an **ATES avalanche-terrain classification** for the valley, which is genuinely useful for planning. A guide is not legally mandated but is the practical default: local outfits include **Camins** and the freeride programme run through the **Escola d'Esquí Baqueira Beret**. Transceiver, shovel and probe are non-negotiable beyond the ropes.",
+      "Piste breakdown": "Of the roughly **173 km**, the split runs approximately 10% green, 35% blue, 40% red and 15% black. **Beginners** belong on the **Pla de Beret** plateau, which is wide, sunny and almost flat by Pyrenean standards, and on the free conveyor learning zone. **Intermediates** should live on the Baqueira bowl reds and the Beret–Baciver link, where the mileage is. **Experts** get the **Bonaigua** fall-line blacks, the **Cara Nord** shaded pitches, and — with a guide and a bulletin reading below 3 — Escornacrabes and the Baciver backcountry.",
+      "Non-ski days": "The **Banhs de Tredòs**, thermal pools at about 1,750 m up the Aiguamòg valley above Tredòs, fed by sulphurous springs and open outdoors in the snow, is the single best rest-day in the valley — roughly €18–€25 for a session. Beyond that: the Romanesque church of **Sant Miquèu** in Vielha with its Crist de Mijaran, **Santa Maria d'Arties**, the **Musèu dera Val d'Aran** in Vielha, marked snowshoe routes up the Aiguamòg and Valarties valleys, and the Nordic circuit at Beret.",
+      "Hire, lockers and schools": "Rental clusters at Baqueira 1500 and 1700 and in Salardú and Vielha; expect **€120–€190 a week** standard and **€220–€300** for performance or freeride skis with touring bindings. Slopeside lockers at Baqueira 1500 and Beret run **€6–€10 a day** and are worth it because the road base is where the parking chaos is. The **Escola d'Esquí Baqueira Beret** is the resort school: roughly **€250–€330 for five half-day group mornings**, **€65–€90 an hour** private with a lower hourly rate for full days, plus dedicated freeride and touring programmes."
+    },
+    "surface": null,
+    "distanceKm": null,
+    "elevationM": null,
+    "verticalM": null,
+    "technicalRating": null,
+    "transitPass": null,
+    "hutBooking": null,
+    "liftNetwork": "Baqueira sells a single resort **forfait** — there is no local-versus-area distinction here because there is only one area, and no regional super-pass equivalent to Dolomiti Superski. For 2025/26 the **one-day adult forfait reached €71.50**, up 3.6% on the previous season's €69 and the smallest rise in five years; the **weekend day rate ran about €66.50** and a **five-day package worked out around €60 per day**. A **6-day adult pass falls in the region of €300–€360**, with **children (roughly 7–12) around €200–€245** — banded, because Baqueira prices dynamically by date and the published multi-day tariff moves. A **season pass runs roughly €1,200–€1,300 adult.** There is a dedicated **beginner ticket at about €25 adult and €15 child**, covering the learning lifts only, plus a free conveyor at Beret. Passes load onto the reloadable **BaqueiraPASS** keycard, which reduces the per-day rate against gate prices; expect a small refundable card charge on first issue. Buy at least a week ahead online for the best rate. **There is no night skiing at Baqueira** — the resort has never run a floodlit product, so budget nothing for it.",
+    "snowReliability": "The resort spans roughly **1,500 m at Baqueira 1500 to about 2,510 m at Cap de Baqueira / Tuc de Baciver**. The critical fact is aspect and airmass, not altitude: Val d'Aran is on the **Atlantic watershed**, so it takes the full moisture load of Biscay fronts that never reach the Catalan Pyrenees to the south. **173 km of skiable terrain** across roughly 169 marked runs plus four itineraries were published for 2025/26, with the season announced as **29 November 2025 to 6 April 2026** (other listings quote 12 December to 21 April — the gap is real and must be re-checked). Snowmaking is extensive and was extended for 2025/26 with 14 new guns at Ta Dossau, 12 old units replaced by six efficient ones, two new winch groomers and 2 km of additional wind fencing; **coverage is commonly given as around 50–60% of pisted kilometres, but Baqueira does not publish a firm percentage.** In a bad snow year the resort concentrates on the high Beret plateau and the shaded Cara Nord, and the return to Baqueira 1500 shuts, sending everyone down the gondolas.",
+    "windConditions": null,
+    "gpxReady": null,
+    "bookingTimeline": null,
+    "audience": null
+  },
+  "packingNotes": [],
+  "whatCouldGoWrong": [],
+  "sources": {
+    "verified": "Baqueira Beret's published 2025/26 expansion to **173 km of skiable terrain** across roughly 169 marked runs plus four itineraries, the five new blue slopes named **Cargolh, Lebre 1, Arrianglo, Poric and Sautarèth**, two new winch groomers, **14 new snow guns at Ta Dossau** with 12 older units replaced by six efficient models, 2 km of additional wind fencing, and the new Ski Track App. The announced **season of 29 November 2025 to 6 April 2026**. The **2025/26 one-day adult forfait at €71.50**, a 3.6% rise on the previous €69 and the smallest in five years, with a weekend rate around €66.50, a five-day package working out near €60 per day, and beginner tickets at about €25 adult and €15 child. The existence and function of the **Centre de Lauegi d'Aran**, the Conselh Generau d'Aran's avalanche service, which publishes an EAWS-standard bulletin in five languages and an **ATES terrain classification** for the Aran Valley.",
+    "confidenceNotes": "**The 6-day adult (€300–€360) and child (€200–€245) prices are inferred bands, not confirmed tariffs** — Baqueira prices multi-day passes dynamically and these must be re-checked against the live booking engine for the actual dates. Season-pass figures of €1,200–€1,300 are third-party and unconfirmed. **Season dates conflict between sources**: the resort's own 2025/26 announcement gives 29 November–6 April, while a third-party listing gives 12 December–21 April with 130 days open — resolve before publishing. The BaqueiraPASS card charge or deposit amount is not confirmed. **Snowmaking coverage as a percentage of pisted kilometres is not published by Baqueira** — the 50–60% band here is an estimate and should be sourced or cut. Top altitude is variously given between 2,510 m and 2,610 m depending on whether Cap de Baqueira or Tuc de Baciver is counted — verify. The Blanhiblar and Vaquèira gondola naming, capacities and exact roles should be checked against the current lift plan. Piste difficulty percentages, hire and ski-school prices, hotel rates and Banhs de Tredòs entry are indicative prior-season bands. Restaurant status and opening days shift seasonally."
+  },
+  "verifyFlags": [],
+  "verifyFlagCount": 0,
+  "volatilePricing": false,
+  "wordCount": 3784,
+  "dataVintage": 2026,
+  "provenance": {
+    "batch": "southern-mediterranean",
+    "sourceFile": "carta-dataset/trips/winter-sports-spain-baqueira-beret.md",
+    "sourceFormat": "md with '## Metadata' bullet block (one file per trip)",
+    "sourceId": "winter-sports-spain-baqueira-beret",
+    "ingestedAt": "2026-09-02",
+    "synthesized": false
+  }
+}

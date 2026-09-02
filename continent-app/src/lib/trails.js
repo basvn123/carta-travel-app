@@ -56,22 +56,64 @@ export function loadTrailsIndex() {
   });
 }
 
-/** Every published trip in one country. Resolves an empty array for a country
- *  with nothing published, null when there is no file to read at all. */
+/** A trip with no line cannot be drawn and cannot be measured on the map, so
+ *  it never reaches a caller that assumes both. */
+const drawable = (t) => t && t.id && t.geometry
+  && Array.isArray(t.geometry.coordinates) && t.geometry.coordinates.length > 0;
+
+/** Every published RATED trip in one country. Resolves an empty array for a
+ *  country with nothing published, null when there is no file to read at all.
+ *
+ *  Rated only, deliberately: this is what every existing caller means by "the
+ *  trails of this country", and a listed row carries no rating, so quietly
+ *  folding them in here would put unscored rows into a price list, a nearby
+ *  strip and a city-day lookup that all assume a score. Listed rows come
+ *  through loadListedTrails, which a screen has to ask for. */
 export function loadTrails(country) {
   const cc = String(country || '').toUpperCase();
   if (!COUNTRY_RE.test(cc)) return Promise.resolve(null);
   return Promise.all([cached(`/trails/${cc}.json`), overridesReady()])
     .then(([raw]) => {
       if (!raw || !Array.isArray(raw.trips)) return null;
-      // A trip with no line cannot be drawn and cannot be measured on the map,
-      // so it never reaches a caller that assumes both.
-      const rows = raw.trips.filter((t) => t && t.id && t.geometry
-        && Array.isArray(t.geometry.coordinates)
-        && t.geometry.coordinates.length > 0);
       // Trails carry one `img` string rather than an images array.
-      return applyOverrides('trail', rows, { imageKey: 'img' });
+      return applyOverrides('trail', raw.trips.filter(drawable), { imageKey: 'img' });
     });
+}
+
+/**
+ * The `listed` tier of one country: routes verified to exist, named, deduped
+ * and in region, and deliberately NOT scored.
+ *
+ * They exist so a region page in Moldova or Kosovo is not empty. The wire
+ * omits the rating key entirely rather than nulling it, which is what lets a
+ * card render "not scored yet" instead of a zero, so nothing here invents a
+ * score and nothing downstream should either.
+ *
+ * Resolves an empty array for a country with none, which is most of them.
+ */
+export function loadListedTrails(country) {
+  const cc = String(country || '').toUpperCase();
+  if (!COUNTRY_RE.test(cc)) return Promise.resolve([]);
+  return Promise.all([cached(`/trails/${cc}.json`), overridesReady()])
+    .then(([raw]) => {
+      if (!raw || !Array.isArray(raw.listed)) return [];
+      return applyOverrides('trail', raw.listed.filter(drawable), { imageKey: 'img' });
+    });
+}
+
+/**
+ * The per-country facet counts the export shipped, or null.
+ *
+ * How many rows in this country can answer each filter value, counted by the
+ * pipeline over the rows it wrote. The app uses them to grey out a chip that
+ * would lead to an empty list before it has looked at a single row, and the
+ * harness holds them against the rows so a stale count cannot survive a
+ * re-export.
+ */
+export function loadTrailFacets(country) {
+  const cc = String(country || '').toUpperCase();
+  if (!COUNTRY_RE.test(cc)) return Promise.resolve(null);
+  return cached(`/trails/${cc}.json`).then((raw) => raw?.facets || null);
 }
 
 /** One trip in full, for the detail view: full-resolution geometry, the whole

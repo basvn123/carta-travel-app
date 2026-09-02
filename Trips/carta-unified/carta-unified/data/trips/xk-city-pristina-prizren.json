@@ -1,0 +1,276 @@
+{
+  "id": "xk-city-pristina-prizren",
+  "sourceId": "city-kosovo-pristina-prizren",
+  "slug": "xk-city-pristina-prizren",
+  "title": "Pristina & Prizren: Kosovo's Two Cities in Seven Days",
+  "country": "Kosovo",
+  "countryCode": "XK",
+  "countries": [
+    {
+      "name": "Kosovo",
+      "code": "XK"
+    }
+  ],
+  "isMultiCountry": false,
+  "region": "Southern & Mediterranean Europe",
+  "regionKey": "southern-mediterranean",
+  "subRegion": "Kosovo — Pristina, Prizren & the Rugova highlands",
+  "tripType": "City Trips",
+  "tripTypeId": 3,
+  "tripTypeSlug": "city",
+  "durationDays": 7,
+  "bestPeriod": {
+    "months": [
+      5,
+      6,
+      9,
+      10
+    ],
+    "monthNames": [
+      "May",
+      "June",
+      "September",
+      "October"
+    ],
+    "window": "Mid-May–late June & September–mid October",
+    "note": null,
+    "avoid": "December–February (Pristina's winter inversion traps lignite smog and air quality collapses); August is hot and dusty with monasteries at their busiest.",
+    "raw": "Mid-May–late June & September–mid October"
+  },
+  "budgetTier": "€",
+  "budgetTierRange": [
+    1,
+    1
+  ],
+  "budgetTierRaw": "€",
+  "budget": {
+    "currency": "EUR",
+    "totalEur": {
+      "low": 480,
+      "high": 850
+    },
+    "totalNote": "€600–€950 per person, excl. international flights",
+    "breakdown": {
+      "accommodation": {
+        "lowEur": 210,
+        "highEur": 400,
+        "note": "Good central doubles at €50–80; Kosovo is the cheapest capital in Europe"
+      },
+      "food": {
+        "lowEur": 150,
+        "highEur": 240,
+        "note": "Mains €4–8, macchiato €1–1.50, a serious dinner rarely exceeds €25"
+      },
+      "transport": {
+        "lowEur": 70,
+        "highEur": 120,
+        "note": "Intercity buses, two airport transfers, one hired car or driver for Rugova"
+      },
+      "activities": {
+        "lowEur": 50,
+        "highEur": 90,
+        "note": "Most museums €1–3; the cost is guides and the Rugova day"
+      }
+    },
+    "perDayEur": {
+      "low": 69,
+      "high": 121
+    }
+  },
+  "profile": {
+    "difficulty": 2,
+    "difficultyLabel": "Moderate",
+    "difficultyNote": "2 — 6–9 km a day in the cities, plus one 8–12 km hiking option in Rugova with 350–500 m of ascent.",
+    "fitnessLevel": "Moderate",
+    "crowdLevel": null,
+    "familyFriendly": null,
+    "carRequired": null
+  },
+  "basecamps": [],
+  "gatewayAirport": "PRN — Pristina International \"Adem Jashari\"; airport shuttle or taxi to central Pristina 20 min (€15–20 fixed); no train link",
+  "gatewayAirportCode": "PRN",
+  "languages": [],
+  "currency": null,
+  "emergencyNumber": "112",
+  "coordinates": {
+    "lat": 42.6639,
+    "lon": 21.0961,
+    "precision": "city",
+    "matchedPlace": "Kosovo Polje",
+    "source": "geonames (geonamescache, cities > 15k)"
+  },
+  "tags": [
+    "ottoman",
+    "orthodox-monasteries",
+    "brutalism",
+    "newborn",
+    "non-eu",
+    "day-trip-rugova",
+    "balkan",
+    "coffee-culture",
+    "hammam"
+  ],
+  "summary": "Kosovo gives you two entirely different cities four days apart on the same €5 bus. Pristina is young, loud and architecturally strange — Yugoslav brutalism, a spiky National Library, an unfinished Orthodox cathedral, and the Newborn monument that gets repainted each February. Prizren is Ottoman: a river through the middle, a hillside fortress, a 17th-century mosque on the square, and a Serbian Orthodox cathedral rebuilt after 2004. Between and around them are the Gračanica and Visoki Dečani monasteries, still under protection, and the Rugova gorge. It is the cheapest week in this collection, and the least infrastructure-heavy: expect minibuses, cash, and conversations.",
+  "summaryGenerated": false,
+  "hook": null,
+  "snapshot": {},
+  "itinerary": [
+    {
+      "day": 1,
+      "title": "Pristina: the boulevard and the library",
+      "morning": "Taxi in from PRN, drop bags, then walk **Bulevardi Nënë Tereza** from Skanderbeg's statue north. Macchiato at **Dit' e Nat'**, Fazli Grajçevci 5, a bookshop-café that functions as the city's living room.",
+      "afternoon": "**National Library of Kosovo** (free, enter and look up at the domes from inside — it is the whole argument), the unfinished **Christ the Saviour cathedral** beside it, and the **University** campus. Then **Newborn** on Bill Clinton Boulevard, repainted every 17 February, and the **Heroinat** memorial of 20,000 pins.",
+      "evening": "Dinner at **Liburnia**, Rr. Perandori Justinian 9 — Kosovar home cooking done seriously, €12–20pp. Then rakia at Soma Book Station.",
+      "dayStats": "6.4 km, flat; taxi PRN €15–20; library open Mon–Fri 08:00–20:00; mains €5–8.",
+      "sleep": "Hotel Gracanica or Swiss Diamond Prishtina, central Pristina."
+    },
+    {
+      "day": 2,
+      "title": "Ottoman Pristina, Gračanica monastery",
+      "morning": "The old quarter — **Xhamia e Madhe** (Great Mosque, 1461), the **Great Hammam**, the **Clock Tower**, and the **Ethnological Museum Emin Gjiku** (€2), an 18th–19th-century Ottoman family compound with the *oda* reception room intact and excellent guides.",
+      "afternoon": "Gjilan-bound bus from the main station to **Gračanica** — 20 minutes, €1. The 1321 monastery church, five domes stacked in a pyramid, holds some of the finest surviving Serbian medieval frescoes. Cover shoulders and knees; no photography inside.",
+      "evening": "Back in Pristina, **Te Zoti** or **Renaissance 2** (Rr. Sylejman Vokshi, no menu, no prices, a set procession of dishes and wine, ~€20pp, ring the bell).",
+      "dayStats": "5.8 km; bus €1 each way, 20 min; Emin Gjiku 10:00–17:00, closed Mondays; Gračanica daylight hours, closed midday.",
+      "sleep": "Swiss Diamond Prishtina."
+    },
+    {
+      "day": 3,
+      "title": "Kosovo Museum, Grand Hotel context, bus to Prizren",
+      "morning": "**Kosovo Museum**, Rr. Ali Pashë Tepelena (€2), for the Neolithic *Goddess on the Throne* from Tjerrtorja, and the **Kosovo Art Gallery** nearby. Walk past the **Grand Hotel Prishtina** — worth ten minutes for the lobby and the story of a five-star state hotel that lost its stars one at a time.",
+      "afternoon": "Bus from Pristina station to **Prizren**, ~1h45, €5, departures every 20–30 min. Check into the old town and walk **Shadervan** square at golden hour.",
+      "evening": "**Te Syla**, off Shadervan, for *qebapa* and *suxhuk*; €8–14pp. Then the riverside terraces along the Lumbardhi.",
+      "dayStats": "5.1 km; bus 1h45 / €5; Kosovo Museum 10:00–17:00, closed Mondays.",
+      "sleep": "Hotel Prizreni or Centrum Hotel, Prizren old town."
+    },
+    {
+      "day": 4,
+      "title": "Prizren: mosques, the League, and Kalaja",
+      "morning": "**Sinan Pasha Mosque** (1615) on Shadervan — the single-dome hall and painted mihrab — then the **Gazi Mehmed Pasha Hammam** and the **Stone Bridge** over the Lumbardhi.",
+      "afternoon": "**League of Prizren complex** (€1), the reconstructed 1878 house where the Albanian national movement was founded; then the **Church of Our Lady of Ljeviš** (14th century, UNESCO, burnt in 2004, restored — access by arrangement) and the Catholic **Cathedral of Our Lady of Perpetual Succour**.",
+      "evening": "Climb to **Kalaja fortress** (free, 30 min, 130 m) for sunset over the roofs and the Šar mountains behind. Dinner at **Ambient**, Rr. Sharri, €10–18pp.",
+      "dayStats": "6.7 km incl. 130 m fortress climb; League complex 09:00–17:00; Kalaja open, unlit — carry a torch for the descent.",
+      "sleep": "Hotel Prizreni."
+    },
+    {
+      "day": 5,
+      "title": "Visoki Dečani and Gjakova",
+      "morning": "Pre-arranged visit to **Visoki Dečani Monastery** near Deçan — driver from Prizren (~€40–60 return, 1h) or bus to Deçan then taxi. At the gate you pass a KFOR checkpoint, surrender bags and register with passports; the 1327–35 church holds around a thousand frescoes and the largest surviving medieval Byzantine-rite fresco programme anywhere.",
+      "afternoon": "On to **Gjakova** for the reconstructed **Çarshia e Madhe** bazaar, the longest in Kosovo, and the Hadum Mosque.",
+      "evening": "Back to Prizren. **Marashi** on the riverbank for trout, €12–18pp.",
+      "dayStats": "~120 km driven; Dečani open roughly 09:00–13:00 and 15:00–17:00; passport mandatory; no photography inside the church.",
+      "sleep": "Hotel Prizreni."
+    },
+    {
+      "day": 6,
+      "title": "Rugova Gorge and Peja",
+      "morning": "Bus or driver Prizren → **Peja** (1h15–1h30). The **Patriarchate of Peć** (small entry fee, passport required, KFOR-adjacent) at the gorge mouth — four churches under one roof, 13th–14th century.",
+      "afternoon": "Into the **Rugova Gorge**: the Via Ferrata Ari, the zipline, or the walk toward the Drelaj villages. A hired car or driver is the only practical way; €25–40 for the half day.",
+      "evening": "Peja's bazaar and a beer at the **Birra Peja** brewery town it is named for, or return to Pristina by the 18:00–19:00 bus (€5, 1h30).",
+      "dayStats": "8–12 km hiking option, 350–500 m ascent; Peja bus €5 / 1h30; driver into Rugova €25–40.",
+      "sleep": "Swiss Diamond Prishtina (back in Pristina) or Hotel Dukagjini, Peja."
+    },
+    {
+      "day": 7,
+      "title": "Pristina coffee, Bear Sanctuary, departure",
+      "morning": "If time allows, the **Bear Sanctuary Prishtina** at Mramor (€2–3, 20 min by taxi), where bears rescued from restaurant cages live out their lives — a very Kosovar postscript. Otherwise, a last slow macchiato on Rr. Rexhep Luci.",
+      "afternoon": "Souvenir *filigran* silver from the old quarter workshops, then taxi to PRN.",
+      "evening": "Flight out.",
+      "dayStats": "4.0 km; taxi PRN €15–20; allow 2 h at PRN for non-Schengen departure; macchiato €1–1.50.",
+      "sleep": "n/a — departure day."
+    }
+  ],
+  "accommodationStrategy": [
+    {
+      "rank": 1,
+      "name": "Swiss Diamond Prishtina",
+      "style": "Business hotel",
+      "location": "Sheshi Nënë Tereza 42, Pristina",
+      "description": "On the pedestrian boulevard itself, so the Library, Newborn and the bus station are all a walk. Reliable heating and filtration, which matters given Pristina's winter air quality, and a functioning gym after bus days. €90–130 double.",
+      "booking": null,
+      "priceNote": null
+    },
+    {
+      "rank": 2,
+      "name": "Hotel Prizreni",
+      "style": "Small hotel",
+      "location": "Rr. Sharri, Prizren old town",
+      "description": "Fifty metres off Shadervan and directly under the Kalaja path, so the sunset climb is a fifteen-minute round trip. Rooms are simple and the terrace breakfast looks at the Sinan Pasha dome. €50–75.",
+      "booking": null,
+      "priceNote": "€50–75"
+    },
+    {
+      "rank": 3,
+      "name": "Hotel Dukagjini",
+      "style": "Historic hotel",
+      "location": "Sheshi i Dëshmorëve, Peja",
+      "description": "The obvious Rugova base if you extend the gorge into two days, on Peja's main square with parking, and the drivers who work the canyon wait outside. €60–90.",
+      "booking": null,
+      "priceNote": "€60–90"
+    }
+  ],
+  "logistics": {
+    "connectivity": "**Non-EU roaming.** Kosovo is not in the EU roaming zone, though it participates in the Western Balkans roaming agreement and some EU operators now apply a capped Balkans rate — check before you land. Local Vala or IPKO prepaid SIMs cost €5–10 with generous data and are sold at the airport. Note that some Serbian networks bleed across in the north and can trigger unexpected charges.",
+    "emergency": "112 works; 192 police, 194 ambulance. Kosovo has no formal mountain-rescue service in Rugova — the local guiding outfits are the de facto rescue, so hike with one. **Kosovo is outside the EU and EHIC does not apply**; carry full medical insurance and confirm your policy covers Kosovo specifically, since some exclude it by name.",
+    "weather": "Pristina's winter **thermal inversion** traps lignite-power-station smoke in the basin, and PM2.5 readings regularly go off scale between December and February. Rugova gets snow into May and the gorge road can close after storms; the Šar range above Prizren holds snow into June.",
+    "bookingWindows": "Visoki Dečani 48–72 hours ahead with passport details, by email or phone to the monastery. DokuFest accommodation in Prizren three months ahead for early August. Rugova drivers and via ferrata guides 2–3 days. Buses are turn-up-and-go.",
+    "money": "**Kosovo uses the euro** unilaterally, without being in the eurozone or the EU. Cash dominates — most restaurants, all buses, all taxis, museums and monastery donations are cash-only. ATMs are plentiful in Pristina and Prizren and thin elsewhere. Tipping is rounding up. Serbian dinars circulate in the northern municipalities and in Serb-majority villages like Gračanica.",
+    "transportRules": "No rail worth using. Intercity buses are frequent, cheap and pay-on-board; the Pristina station is on Bill Clinton Boulevard, well signed. **A Kosovo entry stamp does not bar you from Serbia, but entering Serbia from Kosovo at a Kosovo-Serbia crossing can be refused if you did not enter Kosovo via Serbia** — plan any Belgrade combination to go Serbia → Kosovo → third country, or fly. Rental cars from Kosovo often cannot be driven into Serbia; check the contract.",
+    "permits": "No tourist tax. Visoki Dečani and the Patriarchate of Peć require passports at the gate, ban photography inside the churches, and enforce dress codes (covered shoulders and knees, no shorts, headscarf offered for women). Drones are prohibited near all KFOR-protected sites.",
+    "health": "Tap water is treated and generally potable in Pristina and Prizren but many locals drink bottled; if in doubt, buy it. Kosovo is safe for visitors, with very low violent crime. **Unexploded ordnance remains a residual risk in remote uncleared areas** — stay on marked paths in the Rugova and Šar backcountry.",
+    "gettingThere": null,
+    "other": []
+  },
+  "proTips": [
+    "Email **Visoki Dečani at least 72 hours before** with the full name and passport number of every visitor. Turning up unannounced at the KFOR checkpoint usually means being turned away.",
+    "Check your operator's **Western Balkans roaming cap** before landing, or buy a €5 Vala or IPKO SIM at PRN. Default non-EU data rates in Kosovo are brutal.",
+    "Visit **Newborn on or just after 17 February** if the dates fall right — the monument is repainted every Independence Day and the design is a national conversation.",
+    "In Pristina, the **National Library must be entered**, not photographed from outside. The domes, the light wells and the reading rooms are the building; the fishnet exterior is only half the joke.",
+    "Take the **Gjilan bus for Gračanica** rather than a taxi — €1, twenty minutes, and it drops you at the monastery wall.",
+    "Prizren's **Kalaja fortress has no lighting**. Climb for sunset, but carry a phone torch for the descent, which is loose gravel in the dark.",
+    "Order **flija** where you see it advertised on a village menu — a layered pancake cooked in rings under a hot lid, made to order and needing an hour, so ask when you arrive rather than when you're hungry.",
+    "Time an August visit around **DokuFest** in Prizren, or deliberately avoid it: the festival takes over the fortress, the river and every bed in town."
+  ],
+  "typeSpecific": {
+    "raw": {
+      "Walkable blocks": "Pristina centre (**Bulevardi Nënë Tereza** pedestrian spine → Skanderbeg statue → Newborn → Bill Clinton Boulevard, 1.8 km, flat); Pristina old quarter (Xhamia e Madhe → Ethnological Museum Emin Gjiku → Great Hammam, 900 m); Prizren old town (**Shadervan** square → Stone Bridge → Sinan Pasha Mosque → riverfront Marash, 1.1 km flat, then a 30-minute 130 m climb to **Kalaja**).",
+      "Transit: there is no urban pass worth buying": "Pristina city buses cost €0.40–0.50 paid in cash to the driver, and everything central is walkable. **Intercity buses** run from Pristina's main station on Bill Clinton Boulevard: Prizren roughly €5 and 1h45 (departures every 20–30 min), Peja €5 and 1h30 (every 20 min), Gjakova €5, Gračanica €1 on the Gjilan bus (20 min, every 30 min).",
+      "Airport transfer": "PRN is 18 km from the centre with **no train and no reliable public bus**. Take the fixed-price taxi (€15–20) or a hotel transfer. Book a return pickup the night before — the airport rank thins out after the evening bank of departures.",
+      "Booking timeline": "**Visoki Dečani** requires advance permission — email or phone the monastery at least **48–72 hours ahead** with full passport details for every visitor; you hand over your passport and bags at the KFOR checkpoint on arrival. **Gračanica** takes walk-ins during daylight but closes at midday for services. Prizren's Documentary and Short Film Festival (**DokuFest**, early August) fills every bed in the city three months out. Restaurants almost never need booking outside DokuFest.",
+      "Architectural focal points": "Andrija Mutnjaković's 1982 **National Library of Kosovo** — 99 domes and a full aluminium fishnet skin, the most argued-about building in the Balkans; the unfinished **Christ the Saviour** cathedral beside it; the 1961 **Grand Hotel Prishtina**, once the state's showpiece and now a half-empty monument to a different era; the 1615 **Sinan Pasha Mosque** in Prizren, built with stone reportedly taken from Visoki Dečani; the 14th-century Raška-Byzantine **Gračanica** (c. 1321, King Milutin's endowment, UNESCO-listed); **Visoki Dečani** (1327–35), Romanesque-Byzantine hybrid in banded marble with roughly a thousand surviving frescoes.",
+      "Eating structure": "Pristina for modern Balkan and specialty coffee (Soma Book Station, Dit' e Nat'), Prizren for grills and river terraces (Te Syla, Marashi), plus *flija* and *tavë* wherever it is offered. Cash-first everywhere.",
+      "Day trip": "**Rugova Gorge** from Peja — bus Pristina → Peja €5 / 1h30, then taxi or hired driver into the canyon (€25–40 for a half day), with the Via Ferrata Ari and the Rugova zipline as options and Patriarchate of Peć at the gorge mouth."
+    },
+    "surface": null,
+    "distanceKm": null,
+    "elevationM": null,
+    "verticalM": null,
+    "technicalRating": null,
+    "transitPass": "Pristina centre (**Bulevardi Nënë Tereza** pedestrian spine → Skanderbeg statue → Newborn → Bill Clinton Boulevard, 1.8 km, flat); Pristina old quarter (Xhamia e Madhe → Ethnological Museum Emin Gjiku → Great Hammam, 900 m); Prizren old town (**Shadervan** square → Stone Bridge → Sinan Pasha Mosque → riverfront Marash, 1.1 km flat, then a 30-minute 130 m climb to **Kalaja**).",
+    "hutBooking": null,
+    "liftNetwork": null,
+    "snowReliability": null,
+    "windConditions": null,
+    "gpxReady": null,
+    "bookingTimeline": "**Visoki Dečani** requires advance permission — email or phone the monastery at least **48–72 hours ahead** with full passport details for every visitor; you hand over your passport and bags at the KFOR checkpoint on arrival. **Gračanica** takes walk-ins during daylight but closes at midday for services. Prizren's Documentary and Short Film Festival (**DokuFest**, early August) fills every bed in the city three months out. Restaurants almost never need booking outside DokuFest.",
+    "audience": null
+  },
+  "packingNotes": [],
+  "whatCouldGoWrong": [],
+  "sources": {
+    "verified": "Kosovo's use of the euro confirmed; **Visoki Dečani's access regime confirmed** — it remains the only site in Kosovo still guarded by KFOR, with a traffic barrier and watchtower, bag surrender and passport registration required to enter. Gračanica access confirmed as the Gjilan-bound bus from Pristina station, 20 minutes, €1 fare, departing every 30 minutes. Pristina–Peja bus confirmed at €5 and 1h30 with departures roughly every 20 minutes. Rugova gorge access from Peja confirmed as taxi or on foot, with hiking, water sports and ziplining available.",
+    "confidenceNotes": "The Pristina–Prizren bus fare and frequency (€5, 1h45, every 20–30 min) is inferred from the comparable Peja route and needs direct confirmation. PRN taxi fixed fare (€15–20) and Rugova driver rates (€25–40) are approximate. Museum admissions of €1–3 are nominal and may have changed. **Visoki Dečani's advance-notice requirement, opening hours and current permission procedure are the highest-risk facts in this file and must be re-verified with the monastery directly before publishing** — the security regime has changed several times. The Serbia-entry rule for travellers who entered Kosovo from a third country should be re-checked against current Serbian border practice, as it has been applied inconsistently. Church of Our Lady of Ljeviš access is by arrangement and frequently closed."
+  },
+  "verifyFlags": [],
+  "verifyFlagCount": 0,
+  "volatilePricing": false,
+  "wordCount": 2745,
+  "dataVintage": 2026,
+  "provenance": {
+    "batch": "southern-mediterranean",
+    "sourceFile": "carta-dataset/trips/city-kosovo-pristina-prizren.md",
+    "sourceFormat": "md with '## Metadata' bullet block (one file per trip)",
+    "sourceId": "city-kosovo-pristina-prizren",
+    "ingestedAt": "2026-09-02",
+    "synthesized": false
+  }
+}

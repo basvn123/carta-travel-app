@@ -1,0 +1,311 @@
+{
+  "id": "li-hiking-panorama",
+  "sourceId": "li-hiking-liechtenstein-panorama",
+  "slug": "li-hiking-panorama",
+  "title": "Liechtenstein Panorama — Malbun, Fürstensteig and the Rätikon Rim",
+  "country": "Liechtenstein",
+  "countryCode": "LI",
+  "countries": [
+    {
+      "name": "Liechtenstein",
+      "code": "LI"
+    }
+  ],
+  "isMultiCountry": false,
+  "region": "Western & Central Europe",
+  "regionKey": "western-central",
+  "subRegion": "Rätikon Alps, Liechtenstein and Vorarlberg",
+  "tripType": "Hiking & Alpine Trekking",
+  "tripTypeId": 6,
+  "tripTypeSlug": "hiking",
+  "durationDays": 7,
+  "bestPeriod": {
+    "months": [
+      6,
+      7,
+      8,
+      9
+    ],
+    "monthNames": [
+      "June",
+      "July",
+      "August",
+      "September"
+    ],
+    "window": null,
+    "note": "The Naafkopf ridge and Pfälzerhütte approach can hold snow into June; the Fürstensteig is best walked dry, after a settled spell.",
+    "avoid": null,
+    "raw": null
+  },
+  "budgetTier": "€€",
+  "budgetTierRange": [
+    2,
+    2
+  ],
+  "budgetTierRaw": "€€",
+  "budget": {
+    "currency": "EUR",
+    "totalEur": {
+      "low": 770,
+      "high": 1120
+    },
+    "totalNote": null,
+    "breakdown": {
+      "accommodation": {
+        "lowEur": 420,
+        "highEur": 580,
+        "note": null
+      },
+      "food": {
+        "lowEur": 200,
+        "highEur": 280,
+        "note": null
+      },
+      "transport": {
+        "lowEur": 90,
+        "highEur": 150,
+        "note": null
+      },
+      "activities": {
+        "lowEur": 60,
+        "highEur": 110,
+        "note": null
+      }
+    },
+    "perDayEur": {
+      "low": 110,
+      "high": 160
+    }
+  },
+  "profile": {
+    "difficulty": 3,
+    "difficultyLabel": "Active",
+    "difficultyNote": null,
+    "fitnessLevel": "Active",
+    "crowdLevel": "Low",
+    "familyFriendly": false,
+    "carRequired": false
+  },
+  "basecamps": [
+    "Malbun"
+  ],
+  "gatewayAirport": "Zürich (ZRH)",
+  "gatewayAirportCode": "ZRH",
+  "languages": [
+    "German"
+  ],
+  "currency": "CHF",
+  "emergencyNumber": "112",
+  "coordinates": {
+    "lat": 47.1415,
+    "lon": 9.5215,
+    "precision": "country",
+    "matchedPlace": "Vaduz",
+    "source": "country capital fallback"
+  },
+  "tags": [
+    "via-ferrata",
+    "cross-border",
+    "small-country",
+    "ridge-walk",
+    "dav-hut"
+  ],
+  "summary": "A full week built from Liechtenstein's compact high country — Fürstensteig, the Fürstin-Gina-Weg and Pfälzerhütte — with two honest cross-border days into Vorarlberg.",
+  "summaryGenerated": false,
+  "hook": "Liechtenstein is 25 km long, and no honest week pretends otherwise — this trip owns it, basing entirely in Malbun and Steg and using the country's real assets: the cable-secured Fürstensteig, the high traverse to Pfälzerhütte under the Naafkopf, and two sections of the new Liechtenstein Trail. Two days cross into neighbouring Vorarlberg, because that is where the Rätikon actually continues, and pretending otherwise would waste good trail.",
+  "snapshot": {
+    "Country": "Liechtenstein",
+    "Base(s)": "Malbun (1,600 m), with day trips from Steg",
+    "Trip Type": "Hiking & Alpine Trekking",
+    "Duration": "7 days",
+    "Best Period": "Late June to late September",
+    "Budget Tier": "€€",
+    "Total Distance / Terrain": "approx. 65–75 km, 4,200–4,800 m combined ascent; alpine ridge (white-red-white T2–T3), one secured via-ferrata-style traverse",
+    "Getting There": "Fly to Zürich (ZRH), train to Sargans or Buchs SG, then LIEmobil bus 11 to Malbun (about 2h15 door to door)",
+    "Who It Suits": "Confident hikers who want a genuinely small-country week without padding, comfortable with cables and drops"
+  },
+  "itinerary": [
+    {
+      "day": 1,
+      "title": "Arrival and the Sareis warm-up",
+      "morning": "Arrive via Buchs SG, LIEmobil bus to Malbun. LIEmobil covers the whole principality for a flat low fare — buy the day pass at the Malbun terminus.",
+      "afternoon": "Ride the Sareisbahn chairlift to Sareis (2,000 m) and walk the short ridge loop back down through Alp Sücka, an easy leg-stretch with the whole Malbun bowl below.",
+      "evening": "Settle in Malbun; check tomorrow's forecast at the tourist information kiosk.",
+      "dayStats": "8 km, 250 m ascent (lift-assisted), 650 m descent. Grade T1–T2, no exposure.",
+      "sleep": null
+    },
+    {
+      "day": 2,
+      "title": "Fürstin-Gina-Weg to the Bettlerjoch",
+      "morning": "From Steg, walk the Fürstin-Gina-Weg, Liechtenstein's high panoramic path named for the former princess, climbing through larch to the Valünapass area.",
+      "afternoon": "Continue to the Bettlerjoch (2,109 m) on the Austrian border, with views into the Samina valley and across to the Drei Schwestern ridge, then descend to Malbun.",
+      "evening": "Dinner in Malbun; this was the acclimatization day for tomorrow's longer push.",
+      "dayStats": "14 km, 850 m ascent, 850 m descent. Grade T2–T3, well-graded alpine path, brief exposed sections near the Joch.",
+      "sleep": null
+    },
+    {
+      "day": 3,
+      "title": "Up to Pfälzerhütte under the Naafkopf",
+      "morning": "From Malbun, climb via the Bettlerjoch route or the direct Naafkopf path toward Pfälzerhütte (2,108 m), run by DAV Sektion Pfalz — Liechtenstein's only staffed mountain hut, sitting almost exactly on the tripoint of Liechtenstein, Austria and Switzerland.",
+      "afternoon": "Drop packs and climb the Naafkopf (2,570 m) itself, a straightforward scramble from the hut with views over three countries at once.",
+      "evening": "Dinner at the hut; book ahead, since it is the only overnight option on this side of the ridge and fills on summer weekends.",
+      "dayStats": "11 km, 950 m ascent, negligible descent (day pack for the summit). Grade T3, rocky trail with short scrambling to the Naafkopf summit.",
+      "sleep": null
+    },
+    {
+      "day": 4,
+      "title": "The high traverse and down to Valüna",
+      "morning": "From Pfälzerhütte, traverse south-west along the ridge on marked alpine trail into Swiss territory above the Valünatal, a quiet stretch that sees far fewer boots than the Malbun side.",
+      "afternoon": "Descend into the Valünatal and follow the valley path back down to Steg, closing the loop.",
+      "evening": "Bus back to Malbun; an easier evening after two demanding days.",
+      "dayStats": "13 km, 300 m ascent, 1,350 m descent. Grade T2–T3, loose scree on the upper traverse.",
+      "sleep": null
+    },
+    {
+      "day": 5,
+      "title": "Cross-border to Nenzinger Himmel",
+      "morning": "Bus and connecting Postbus over the Bielerhöhe road corridor is not direct — instead take the LIEmobil/ÖBB connection via Feldkirch to Nenzen, then the seasonal shuttle bus up the closed valley road to Nenzinger Himmel, a high alpine meadow basin in Vorarlberg.",
+      "afternoon": "Walk up through Nenzinger Himmel toward the Vorarlberg high country, a broad, gentle basin that is one of the range's classic soft-landing days after the Naafkopf traverse.",
+      "evening": "Return by the same shuttle; overnight back in Malbun or, for a shorter transfer next morning, in Nenzen village.",
+      "dayStats": "12 km, 500 m ascent, 500 m descent. Grade T1–T2, wide valley path, no exposure.",
+      "sleep": null
+    },
+    {
+      "day": 6,
+      "title": "The Fürstensteig",
+      "morning": "Transfer to Gaflei above Triesenberg. The Fürstensteig begins here: a narrow, cable-secured ledge path blasted into the Drei Schwestern's flank in 1898, with iron stemples and handrails across the exposed sections.",
+      "afternoon": "The path continues to Bergstation Sareis, where the chairlift offers a fast return to Malbun for tired legs, or continue on foot back down through Alp Sücka.",
+      "evening": "This is the trip's other headline day — a quieter dinner and an early night afterwards is the usual pattern.",
+      "dayStats": "9 km, 550 m ascent, 350 m descent (to Sareis) or 950 m descent (all the way down). Grade T4 with continuous fixed cable, genuinely exposed; not a route for vertigo or wet rock.",
+      "sleep": null
+    },
+    {
+      "day": 7,
+      "title": "Gafadura Hütte and departure",
+      "morning": "Second cross-border day: Postbus toward Vorarlberg's Gamperdonatal via Frastanz, up to the Gafadura Hütte, run by the Alpenverein Vorarlberg on the ridge above the Ill valley.",
+      "afternoon": "Short loop from the hut for the view back across Liechtenstein and the Rhine valley, then descend and connect back to Buchs SG for the onward train.",
+      "evening": "Depart via Zürich.",
+      "dayStats": "10 km, 650 m ascent, 650 m descent. Grade T2, forest and alp path, no exposure.",
+      "sleep": null
+    }
+  ],
+  "accommodationStrategy": [
+    {
+      "rank": 1,
+      "name": "Gasthof Restaurant Turna or Hotel Alpina",
+      "style": "Malbun village",
+      "location": null,
+      "description": "Small family-run hotels a few minutes from both the Sareisbahn and the Bettlerjoch trailhead, and the only realistic single base for a week that returns to Malbun most nights. Ask for a room with drying space for wet boots after the Fürstensteig.",
+      "booking": "6–8 weeks ahead for July–August.",
+      "priceNote": "CHF 100–150 (approx. €105–160) per night"
+    },
+    {
+      "rank": 2,
+      "name": "Pfälzerhütte",
+      "style": "DAV mountain hut",
+      "location": "Naafkopf ridge",
+      "description": "The only staffed hut on the route and the logical overnight for the Day 3–4 high traverse; book directly through the hut's own reservation channel (linked from the Alpenverein Sektion Pfalz website) or by phone, especially for weekend dates.",
+      "booking": "6–8 weeks ahead.",
+      "priceNote": "€50–€65 half-board per night"
+    },
+    {
+      "rank": 3,
+      "name": "Pension in Steg",
+      "style": "Guesthouse",
+      "location": "upper valley",
+      "description": "A quieter, cheaper alternative to Malbun for the first two nights, with the Fürstin-Gina-Weg trailhead at the door.",
+      "booking": "4–6 weeks ahead.",
+      "priceNote": "CHF 90–130 (approx. €95–140) per night"
+    }
+  ],
+  "logistics": {
+    "connectivity": null,
+    "emergency": "112 pan-European; Liechtenstein has no separate alpine rescue number, and 112 routes to the same Rega-coordinated Swiss/Austrian mountain rescue network used across the border.",
+    "weather": "The Rätikon builds afternoon cloud quickly off the Rhine valley; plan the Fürstensteig and Naafkopf days for clear mornings and be off exposed ground by early afternoon.",
+    "bookingWindows": null,
+    "money": null,
+    "transportRules": "Both Vorarlberg legs (Nenzinger Himmel, Gafadura) need Austrian Postbus or ÖBB connections that do not run on a Liechtenstein timetable — check the seasonal shuttle schedule to Nenzinger Himmel before committing to Day 5, as it operates a reduced summer service only.",
+    "permits": null,
+    "health": null,
+    "gettingThere": null,
+    "other": [
+      {
+        "label": "LIEmobil",
+        "text": "Liechtenstein's bus network is inexpensive and covers Malbun, Steg and Vaduz thoroughly; a multi-day pass is the simplest option for a week that starts and ends by bus."
+      },
+      {
+        "label": "Currency",
+        "text": "Liechtenstein uses the Swiss franc; Vorarlberg uses the euro. Carry both in small amounts for hut bars and bus fares."
+      },
+      {
+        "label": "Hüttenschlafsack",
+        "text": "Required at Pfälzerhütte and at Gafadura Hütte, as at any DAV or Alpenverein hut."
+      },
+      {
+        "label": "Cash",
+        "text": "Card acceptance is patchy at both mountain huts; carry cash in both currencies."
+      }
+    ]
+  },
+  "proTips": [
+    "Book Pfälzerhütte before anything else — it is the only bed on that side of the ridge and the pinch point of the week.",
+    "Walk the Fürstensteig on a weekday morning; it is narrow enough that a busy Saturday means real queuing at the ladder sections.",
+    "Confirm the Nenzinger Himmel shuttle bus schedule the day before — it is genuinely seasonal and thinner than it looks online.",
+    "Buy the LIEmobil multi-day pass on arrival rather than single tickets; it pays for itself by Day 3.",
+    "Ask at the Malbun tourist office about current Naafkopf and Fürstensteig conditions — both close temporarily after heavy rain.",
+    "Eat at least one dinner of Käsknöpfle, the Liechtenstein-Vorarlberg staple, at a Malbun gasthof rather than saving it for a city trip elsewhere.",
+    "Time the Sareisbahn descent on Day 6 for late afternoon light across the Rhine valley toward the Swiss side."
+  ],
+  "typeSpecific": {
+    "raw": {
+      "Total Distance / Terrain": "approx. 65–75 km, 4,200–4,800 m combined ascent; alpine ridge (white-red-white T2–T3), one secured via-ferrata-style traverse",
+      "Who It Suits": "Confident hikers who want a genuinely small-country week without padding, comfortable with cables and drops"
+    },
+    "surface": "approx. 65–75 km, 4,200–4,800 m combined ascent; alpine ridge (white-red-white T2–T3), one secured via-ferrata-style traverse",
+    "distanceKm": 65,
+    "elevationM": null,
+    "verticalM": null,
+    "technicalRating": null,
+    "transitPass": null,
+    "hutBooking": null,
+    "liftNetwork": null,
+    "snowReliability": null,
+    "windConditions": null,
+    "gpxReady": null,
+    "bookingTimeline": null,
+    "audience": "Confident hikers who want a genuinely small-country week without padding, comfortable with cables and drops"
+  },
+  "packingNotes": [
+    "Via-ferrata gloves for the Fürstensteig's steel cable sections — bare hands get raw fast.",
+    "A climbing-style helmet for both the Fürstensteig and the Naafkopf summit scramble.",
+    "Hüttenschlafsack for the two hut nights.",
+    "CHF and EUR cash in small denominations.",
+    "Sturdy boots with ankle support; this is not a sneaker week.",
+    "A light rain shell — Rätikon weather turns quickly even on a forecast-clear day.",
+    "A printed or offline map of the Vorarlberg legs; mobile signal is unreliable in the Gamperdonatal and Nenzinger Himmel basins."
+  ],
+  "whatCouldGoWrong": [
+    "**Fürstensteig closed after rain.** The path management closes it when the rock is wet or icy. Fallback: swap Day 6 with Day 2's Fürstin-Gina-Weg leg and reattempt later in the week.",
+    "**Nenzinger Himmel shuttle not running.** Fallback: walk the lower Gamperdonatal instead from Frastanz, a gentler valley day that needs no seasonal shuttle.",
+    "**Pfälzerhütte fully booked.** Fallback: day-trip to the Naafkopf ridge from Malbun without the overnight, returning to Malbun the same evening — longer, but keeps the itinerary intact.",
+    "**Cross-border bus connections missed.** Fallback: a taxi from Malbun to Nenzen or Frastanz is not cheap but is far cheaper than losing a whole day of a short week.",
+    "**Bad weather strands the whole week in Malbun.** Fallback: the lower Vaduz old-town and Rhine valley cycle path are genuine half-day options that need no ridge conditions at all."
+  ],
+  "sources": {
+    "verified": null,
+    "confidenceNotes": null
+  },
+  "verifyFlags": [],
+  "verifyFlagCount": 0,
+  "volatilePricing": false,
+  "wordCount": 1681,
+  "dataVintage": 2026,
+  "provenance": {
+    "batch": "western-central",
+    "sourceFile": "cartatripsv1/trips/li-hiking-liechtenstein-panorama.md",
+    "sourceFormat": "md+yaml-frontmatter (one file per trip)",
+    "sourceId": "li-hiking-liechtenstein-panorama",
+    "ingestedAt": "2026-09-02",
+    "synthesized": false
+  }
+}

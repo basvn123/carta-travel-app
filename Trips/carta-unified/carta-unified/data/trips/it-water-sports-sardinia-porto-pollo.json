@@ -1,0 +1,279 @@
+{
+  "id": "it-water-sports-sardinia-porto-pollo",
+  "sourceId": "water-sports-italy-sardinia-porto-pollo",
+  "slug": "it-water-sports-sardinia-porto-pollo",
+  "title": "The Bonifacio Funnel: Porto Pollo, La Maddalena and Gallura on the Wind",
+  "country": "Italy",
+  "countryCode": "IT",
+  "countries": [
+    {
+      "name": "Italy",
+      "code": "IT"
+    }
+  ],
+  "isMultiCountry": false,
+  "region": "Southern & Mediterranean Europe",
+  "regionKey": "southern-mediterranean",
+  "subRegion": "Northern Sardinia — Gallura, Porto Pollo & the La Maddalena Archipelago",
+  "tripType": "Water Sports & Coastal Trips",
+  "tripTypeId": 10,
+  "tripTypeSlug": "water-sports",
+  "durationDays": 7,
+  "bestPeriod": {
+    "months": [
+      5,
+      6,
+      8,
+      9
+    ],
+    "monthNames": [
+      "May",
+      "June",
+      "August",
+      "September"
+    ],
+    "window": "Mid-May–June and September — the maestrale is at its most reliable, the water is swimmable, and the archipelago is not yet rationed by August boat traffic",
+    "note": null,
+    "avoid": "August (Gallura's roads, beaches and permit quotas are all at their worst and prices roughly double) and November–March (most centres closed, water 14–15°C)",
+    "raw": "Mid-May–June and September — the maestrale is at its most reliable, the water is swimmable, and the archipelago is not yet rationed by August boat traffic"
+  },
+  "budgetTier": "€€",
+  "budgetTierRange": [
+    2,
+    3
+  ],
+  "budgetTierRaw": "€€–€€€",
+  "budget": {
+    "currency": "EUR",
+    "totalEur": {
+      "low": 1500,
+      "high": 2450
+    },
+    "totalNote": "€1,500–€2,450 per person, excl. international flights",
+    "breakdown": {
+      "accommodation": {
+        "lowEur": 480,
+        "highEur": 980,
+        "note": "Camping Isuledda pitch or bungalow €35–€90; Palau three-star double €90–€160; Santa Teresa €110–€190 in September"
+      },
+      "food": {
+        "lowEur": 300,
+        "highEur": 460,
+        "note": "Trattoria main €14–€22, seafood by weight €55–€80/kg, Vermentino di Gallura by the glass €4–€6, coffee €1.20"
+      },
+      "transport": {
+        "lowEur": 280,
+        "highEur": 440,
+        "note": "Hire car €40–€70/day plus fuel; Palau–La Maddalena ferry €14–€20 return with car; airport transfer"
+      },
+      "activities": {
+        "lowEur": 440,
+        "highEur": 570,
+        "note": "Six days of kit hire €330–€450, one coached session €80–€90, park permit for a rental boat €15–€55/day, Cala Coticcio guided access €25–€40, one dive at Tavolara €50–€75"
+      }
+    },
+    "perDayEur": {
+      "low": 214,
+      "high": 350
+    }
+  },
+  "profile": {
+    "difficulty": 3,
+    "difficultyLabel": "Active",
+    "difficultyNote": "3/5 — five to six days of afternoon sessions in 20–30 knots, plus a guided scramble into Cala Coticcio and a freedive day at Tavolara",
+    "fitnessLevel": "Active",
+    "crowdLevel": null,
+    "familyFriendly": null,
+    "carRequired": null
+  },
+  "basecamps": [],
+  "gatewayAirport": "OLB Olbia Costa Smeralda — 45 min to Palau and Porto Pollo, 1 h to Santa Teresa Gallura, 25 min to Porto San Paolo for Tavolara. AHO Alghero is 2 h 15.",
+  "gatewayAirportCode": "OLB",
+  "languages": [],
+  "currency": null,
+  "emergencyNumber": "112",
+  "coordinates": {
+    "lat": 41.8919,
+    "lon": 12.5113,
+    "precision": "country",
+    "matchedPlace": "Rome",
+    "source": "country capital fallback"
+  },
+  "tags": [
+    "windsurfing",
+    "kitesurfing",
+    "wingfoil",
+    "porto-pollo",
+    "maestrale",
+    "la-maddalena",
+    "freediving",
+    "tavolara",
+    "sardinia",
+    "marine-park"
+  ],
+  "summary": "Porto Pollo exists because of a geographical accident: eleven kilometres of open water between Sardinia and Corsica, and a northwest wind that has to squeeze through it. The Bocche di Bonifacio behaves like a venturi, and the maestrale that arrives at the sandy isthmus of the Isola dei Gabbiani has been accelerated on the way in. What makes the spot rather than merely windy is the isthmus itself, which splits the water into two entirely different sports within two hundred metres — a shallow, glassy lagoon on one side for learning and freestyle, an open bay with chop and a swell line on the other for wave riding and blasting. You spend the week on that isthmus, with three days out: one into the La Maddalena Archipelago National Park with its permit system and its no-go zones, one west to Capo Testa and the granite of Santa Teresa Gallura, one south to freedive the wall at Tavolara. The rhythm is fixed and generous — the maestrale is a genuine afternoon wind, so mornings are for coffee, boats and snorkelling, and from about one o'clock you sail.",
+  "summaryGenerated": false,
+  "hook": null,
+  "snapshot": {},
+  "itinerary": [
+    {
+      "day": 1,
+      "title": "Olbia to Porto Pollo, register, first lagoon session",
+      "morning": "Land at OLB, collect a car and drive 45 minutes north through Arzachena to **Palau** and on to the Porto Pollo isthmus. Check in, then walk the isthmus end to end — five minutes — and look at both bays. This is the single most useful orientation on the trip: flat glass one side, chop and a swell line the other.",
+      "afternoon": "Register at your centre (Sporting Club Sardinia or Wind Porto Pollo if you want FIV/IKO structure and rescue-boat cover, MB Pro Center for the biggest fleet) and take an easy first session in the **sheltered lagoon**. Sand bottom, waist-deep, and the correct place to recalibrate.",
+      "evening": "Drive into Palau for dinner at La Gritta, on the water at Porto Faro looking across at La Maddalena, or Da Robertino in town for Gallurese cooking and a bottle of Vermentino di Gallura.",
+      "dayStats": "OLB–Porto Pollo 45 km, 45 min / lagoon knee-to-chest deep over sand / maestrale fills 11:00–13:00, peaks 14:00–18:00 at 15–30 knots / kit hire €60–€90/day, six-day €330–€450",
+      "sleep": "Camping Isuledda, Isola dei Gabbiani"
+    },
+    {
+      "day": 2,
+      "title": "The open bay, the venturi and a coached hour",
+      "morning": "Coffee and a slow rig. Book a **private hour** with your centre for the morning — €80–€90 buys a technique correction that will pay for itself across five remaining afternoons, and morning wind is the right strength for coaching.",
+      "afternoon": "Cross to the **open western bay** for the real session. Side-onshore maestrale, building chop, and by mid-afternoon a short wind swell you can actually ride. Respect the marked kite and windsurf corridors, and note the centres' rescue boat positions before you launch.",
+      "evening": "Aperitivo at the Isuledda beach bar while the wind drops off the isthmus, then dinner at Da Thomas in Palau — the pasta with bottarga is the local thing to order.",
+      "dayStats": "Bocche di Bonifacio ~11 km wide, accelerates the maestrale by several knots over regional forecast / private lesson €80–€90/h, 6 h package €420–€540 solo, ~€120 pp for three / 75 kg rider on a typical afternoon: 7–9 m kite, 4.7–5.5 m sail",
+      "sleep": "Camping Isuledda, Isola dei Gabbiani"
+    },
+    {
+      "day": 3,
+      "title": "La Maddalena Archipelago by boat: permits, Budelli, Spargi",
+      "morning": "A morning boat day, because the maestrale makes the archipelago unpleasant after 14:00. Hire a **40 hp gommone** in Palau (no licence needed — Italy's threshold is 40.8 hp / 30 kW) or take a licensed day boat, and **buy the park navigation authorisation online before you leave the dock**. Run north to **Spargi** and **Cala Corsara**, then **Santa Maria** and the **Cala Napoletana** anchorage, anchoring only on visible clean sand.",
+      "afternoon": "Approach **Budelli**. The **Spiaggia Rosa is inside a Zone A integral reserve — no landing, no anchoring, no close approach**, and the pink sand is viewed from the boardwalk on the island's authorised route or from the water at the prescribed distance. Then back through the Passo dei Monaci to Palau ahead of the wind, or leave the boat and take the 15-minute **Palau–La Maddalena ferry** for an evening in La Maddalena town.",
+      "evening": "Dinner in La Maddalena town on Piazza Umberto I, or back at Porto Pollo.",
+      "dayStats": "Park navigation permit roughly €15–€55/day, ~40% reduction for sail / 40 hp gommone €180–€350/day plus fuel / Palau–La Maddalena ferry 15 min, €14–€20 return with car / Spiaggia Rosa: Zone A, no landing, no anchoring / anchor on sand only, Posidonia protected",
+      "sleep": "Camping Isuledda, Isola dei Gabbiani"
+    },
+    {
+      "day": 4,
+      "title": "Cala Coticcio with a guide, then the afternoon wind",
+      "morning": "Drive or ferry across to **Caprera** and walk in to **Cala Coticcio**, the granite twin cove known as \"Tahiti\" — **access is only with an authorised guide in capped daily groups and must be booked in advance**; unaccompanied entry is fined. The walk is a rough 40-minute scramble over granite, so wear shoes. The water inside is as clear as anywhere in the Mediterranean; snorkel the eastern lobe.",
+      "afternoon": "Back to Porto Pollo for the session. If the maestrale is over 28 knots, ride the lagoon side; if it has backed west, do not ride the lagoon side at all — that shift makes it offshore with open strait downwind.",
+      "evening": "Also on Caprera is the **Compendio Garibaldino**, Garibaldi's house and tomb, which is a better hour than it sounds. Dinner in Palau or self-catered at the campsite.",
+      "dayStats": "Cala Coticcio guided access only, capped daily numbers, roughly €25–€40 pp / approach walk ~40 min over granite / water 23–25°C in September / offshore risk when maestrale backs W/WSW",
+      "sleep": "Camping Isuledda, Isola dei Gabbiani"
+    },
+    {
+      "day": 5,
+      "title": "Capo Testa, the Valle della Luna and Santa Teresa Gallura",
+      "morning": "Drive an hour west to **Capo Testa** — a granite headland eroded into rounded, hollowed shapes, with the **Valle della Luna** behind it and small deep coves like **Cala Spinosa** cut into the rock. Snorkel from the rocks: 15–25 m visibility, granite boulders, and shoals in the gullies. Reef shoes for the urchins.",
+      "afternoon": "Into **Santa Teresa Gallura** for lunch and a swim at **Rena Bianca**, then look across 11 km of the Bocche to Bonifacio's white cliffs on Corsica. If you want a session, Porto Liscia on the way back takes the same maestrale with far more room than Porto Pollo.",
+      "evening": "Dinner at Papè Satan in Santa Teresa Gallura — a long-standing kitchen with proper Sardinian cooking — before the drive back.",
+      "dayStats": "Porto Pollo–Capo Testa 40 km, 55 min / Bocche di Bonifacio 11 km across, Corsica visible / Rena Bianca sheltered, sandy, family water / Gallura tidal range 0.2–0.4 m — no tide planning required",
+      "sleep": "Camping Isuledda, Isola dei Gabbiani, or Hotel Corallaro, Santa Teresa"
+    },
+    {
+      "day": 6,
+      "title": "Tavolara: the wall, and a day of depth instead of wind",
+      "morning": "Drive an hour south to **Porto San Paolo** and cross to **Tavolara**, the limestone slab that rises 560 m straight out of the sea inside the **Area Marina Protetta Tavolara–Punta Coda Cavallo**. Dive or freedive with a local centre: the walls drop past 40 m, the granite and limestone architecture is dramatic, and **Secca del Papa** is one of the best-known dive sites in the western Mediterranean.",
+      "afternoon": "Lunch on Tavolara's Spalmatore di Terra beach at one of the two seasonal restaurants, then snorkel the shallows before the boat back. This is a deliberate no-wind day; if the maestrale is exceptional, keep it in reserve and ride instead.",
+      "evening": "Back north. Dinner in Palau, or a last plate of seafood in Cannigione on the Golfo di Arzachena.",
+      "dayStats": "Porto Pollo–Porto San Paolo 65 km, 1 h / Tavolara summit 565 m / marine protected area, zoned, dive with a licensed centre only / guided dive €50–€75, freedive session €45–€70 / visibility commonly 20–30 m",
+      "sleep": "Camping Isuledda, Isola dei Gabbiani"
+    },
+    {
+      "day": 7,
+      "title": "Last session on the isthmus, then out",
+      "morning": "Final morning at Porto Pollo. Use the light wind window for a **wingfoil session in the lagoon** if you have not tried it — this is one of the best places in Europe to learn it, and every centre now has kit and a shallow, forgiving flat area to fall in.",
+      "afternoon": "Wash and return gear, then take the coast road east via **Capo d'Orso** — the wind-eroded bear-shaped granite above Palau, a fifteen-minute walk from the car park with the whole archipelago below it — before the drive to Olbia.",
+      "evening": "If time allows, eat in Olbia's Corso Umberto before the flight; otherwise the airport.",
+      "dayStats": "Wingfoil kit €70–€100/day / Capo d'Orso 15 min walk, small entry fee / Porto Pollo–OLB 45 min / return kit before 17:00, most centres close at 18:00",
+      "sleep": "Departure"
+    }
+  ],
+  "accommodationStrategy": [
+    {
+      "rank": 1,
+      "name": "Camping Isuledda",
+      "style": "campsite and bungalows",
+      "location": "Isola dei Gabbiani, Porto Pollo",
+      "description": "The obvious base: it occupies the isthmus itself, so both bays, all four water-sports centres and the launching areas are on foot, and you can re-check conditions hourly without moving a car. Pitches, mobile homes and bungalows, a shop, a bar and rinse facilities. Roughly €35–€60 a pitch, €70–€130 for a bungalow in season.",
+      "booking": null,
+      "priceNote": null
+    },
+    {
+      "rank": 2,
+      "name": "Hotel La Vecchia Fonte",
+      "style": "three-star hotel",
+      "location": "Palau",
+      "description": "Ten minutes from Porto Pollo and in walking distance of the La Maddalena ferry, Palau's restaurants and the boat-rental quays, which makes it the right choice for the archipelago and Capo d'Orso days. Parking, air conditioning and a proper breakfast, which the campsite does not offer. Roughly €100–€180 double.",
+      "booking": null,
+      "priceNote": null
+    },
+    {
+      "rank": 3,
+      "name": "Hotel Corallaro",
+      "style": "seafront hotel",
+      "location": "Rena Bianca, Santa Teresa Gallura",
+      "description": "Worth one night at the western end of the week: directly above Rena Bianca beach, walking distance into Santa Teresa's old centre and twenty minutes from Capo Testa, with the Bocche and Corsica in front of you. Roughly €140–€230 double in September.",
+      "booking": null,
+      "priceNote": null
+    }
+  ],
+  "logistics": {
+    "connectivity": "Good 4G/5G in Palau, Santa Teresa and along the SP90; patchy on the Isola dei Gabbiani's seaward side and genuinely poor in the archipelago's channels. Italy is in the EU, so EU/EEA SIMs roam at domestic rates. Download Windguru and the park's authorisation portal before you need them at a boat quay.",
+    "emergency": "**112** for everything and **1530** for the Guardia Costiera, plus **VHF Channel 16** on the water. Hospitals at Olbia (the main one for the north-east) and La Maddalena; serious cases go to Sassari or Cagliari. Check that your policy names kitesurfing and windsurfing — many European policies exclude both, and freediving below 10 m almost always needs a rider.",
+    "weather": "The maestrale is the whole timetable. It can jump ten knots in an hour and it does not respect the \"dies at sunset\" rule once properly established. **It also cancels ferries:** a hard maestrale stops the Palau–La Maddalena service and the archipelago day boats, and it is the single most common cause of a lost boat day. The scirocco brings haze, gust and a heavy sea in the Bocche.",
+    "bookingWindows": "July and August accommodation in Gallura goes four to six months out and roughly doubles in price. **Cala Coticcio's guided access has a daily cap and must be booked days in advance in high season.** La Maddalena park navigation authorisations are bought online per day and are best purchased the evening before. Six-day kit passes rarely sell out but the good boards do — email your centre a fortnight ahead. Boat rentals in Palau book out in August.",
+    "money": "Euro. Cards are accepted almost everywhere including beach kiosks, but carry €80–€120 in cash for parking, small beach bars and the occasional rural trattoria. Tipping is not obligatory in Italy — round up, or leave 5% for genuinely good service; note the *coperto* (cover charge) of €2–€4 per person on many restaurant bills is not a tip.",
+    "transportRules": "A car is essential. Gallura's beach parking is almost universally paid in summer (€1.50–€3/hour, often via app) and the Porto Pollo and Capo Testa car parks fill by 11:00 in August. Taking a hire car on the Palau–La Maddalena ferry is straightforward and cheap but requires the rental company's permission in some contracts — check. **The 40.8 hp / 30 kW licence threshold and the six-mile limit are the two numbers that govern boat hire**; both are enforced by the Guardia Costiera and the archipelago is patrolled.",
+    "permits": "**Every boat needs a paid daily La Maddalena park authorisation.** Zone A areas are closed to entry, anchoring and stopping. **Anchoring on *Posidonia oceanica* is illegal and fined**, and Sardinia enforces this hard. Landing on Spiaggia Rosa is prohibited; Cala Coticcio needs a guide. Sardinia also bans removing sand, pebbles and shells from its beaches — this carries fines running to hundreds of euros and airport checks are real. Drones need ENAC registration and are restricted over the national park.",
+    "health": "Tap water is drinkable in Palau and Santa Teresa but many locals drink bottled; ask at your accommodation. **Sea urchins on every granite ledge are the leading injury** — reef shoes and a needle. Mauve stinger jellyfish come in patches; hot-water immersion, not vinegar. The maestrale's dry heat conceals dehydration badly. Sardinian sun in June and July is stronger than the air temperature suggests — sail in a rash vest.",
+    "gettingThere": null,
+    "other": []
+  },
+  "proTips": [
+    "Buy the six-day pass at your centre on day one. Every Porto Pollo centre discounts hard past four days and the pass normally includes beach storage, which removes two car loadings a day from your life.",
+    "Walk both sides of the isthmus every morning before you rig. A twenty-degree veer turns the lagoon from perfect to offshore and the open bay from choppy to sublime, and the walk between them is three minutes.",
+    "Buy your La Maddalena park authorisation online the night before, not at the quay. The desks queue in August and the permit is per-day and non-transferable — arriving without one means either a wasted morning or a fine.",
+    "Book Cala Coticcio's guide slot before you leave home for a July or August trip. The daily cap is small, it sells out, and being turned back at the trailhead is a genuinely miserable way to lose a morning.",
+    "Do the archipelago in the morning, always. The maestrale peaks at 14:00–18:00 and a 5 m gommone crossing the Passo dei Monaci at four in the afternoon in 28 knots is not a pleasant boat.",
+    "Take a coached hour in the first two days rather than the last. In this lagoon a single instructor correction, applied over five remaining afternoons, is worth more than the whole rest of the rental.",
+    "Learn wingfoil here rather than anywhere else. The Porto Pollo lagoon is shallow, flat, sandy and forgiving, all four centres have current kit, and it is the one spot in the Mediterranean where the learning curve is genuinely pleasant.",
+    "Do not take sand, pebbles or shells home. Sardinia prosecutes this, airport baggage checks look for it, and the fines start in the hundreds of euros.",
+    "Eat inland once. Arzachena, Luogosanto and the Gallura stazzi feed you suckling pig, *zuppa gallurese* and Vermentino at half the coastal price, and it is the only way to see that Gallura is a granite farming country that happens to have the Costa Smeralda attached to it."
+  ],
+  "typeSpecific": {
+    "raw": {
+      "Prevailing wind — the maestrale and the Bonifacio venturi": "The **maestrale** is a northwest wind, the Mediterranean's dominant summer flow in this corner, generated by pressure gradients across the Gulf of Lion and the Tyrrhenian. The **Bocche di Bonifacio**, the roughly 11 km strait between Sardinia and Corsica, compresses that flow between two granite coasts and accelerates it measurably — Porto Pollo sits directly in the outfall, which is why a 15-knot regional forecast routinely delivers 20–25 knots at the isthmus. Season runs roughly **April to early November**, with the strongest and most consistent months **May, June and September**; July and August are windy but with more light days and far more people. Typical working strength is **15–30 knots in the afternoon**. The daily cycle overlays a thermal on the synoptic wind: light or nothing in the morning, filling from **11:00–13:00**, peaking **14:00–18:00**, easing at sunset. A properly established maestrale ignores that cycle and blows through the night for three or four days. The counter-wind is the **scirocco** from the southeast, which brings humid haze, a longer swell and gustier, less pleasant conditions; the **ponente** westerly is the mid-season alternative.",
+      "Launch spots — the twin bays of Porto Pollo (Porto Puddu)": "The sandy isthmus connecting the mainland to the **Isola dei Gabbiani (Isuledda)** divides the water. The **western/open bay** takes the maestrale side-onshore across open water with building chop and a genuine wind swell by mid-afternoon — this is the wave, freeride and advanced side. The **eastern/sheltered lagoon** behind the isthmus is knee-to-chest deep over sand, glassy flat in the same wind, and is where every beginner course, freestyle session and wingfoil first flight happens; it is one of the best learning lagoons in the Mediterranean. **The two areas are formally separated into kite and windsurf zones with marked corridors** — the centres enforce this and you will be told where to launch. Bottom is sand across the isthmus with granite outcrops at the edges. Elsewhere in Gallura: **Rena Bianca** at Santa Teresa Gallura (sheltered, sandy, family water, good for SUP), **Cala Spinosa** and the coves at **Capo Testa** (granite, deep, superb snorkelling, no launching), and **Porto Liscia**, the long beach west of Porto Pollo, which takes the same wind with more space and fewer people.",
+      "Equipment hubs and certification": "Porto Pollo has four established centres clustered at the isthmus and on the Isola dei Gabbiani. **MB Pro Center** (Windsurf Village, operating since 2009, a very large RRD fleet plus wingfoil boards and kites, with a kids' academy). **Sporting Club Sardinia** (on the Isola dei Gabbiani, running since 1988, affiliated to **FIV, VDWS and IKO**, multilingual, kite from age nine). **Wind Porto Pollo Centre** (Isola dei Gabbiani, **FIV and IKO** certified, Duotone equipment, with its own rescue boat). **PKS / FH Academy** (Isola dei Gabbiani, **IKO**, kite, wingfoil, windsurf and eFoil). Indicative 2026 pricing: **private lesson €80–€90/hour; a six-hour package €420–€540 one-to-one, around €190 per person for two, around €120 per person for three; kite or windsurf day hire €60–€90; a six-day rental pass €330–€450; wingfoil kit €70–€100/day.** Board and rig storage on the beach is included in most week passes and €5–€10/day otherwise. Rescue-boat cover is standard at the two FIV/IKO centres and is a real reason to hire from them rather than the cheapest option.",
+      "Tides and currents — the honest Mediterranean position": "Northern Sardinia is effectively tideless: **astronomical range in Gallura is on the order of 0.2–0.4 m**, and a hard maestrale's wind set-up shifts the waterline more than the moon. There are no tide windows in this file and there should be none in your planning. What is real is current. The **Bocche di Bonifacio carries a significant wind-driven surface current**, generally eastward under a maestrale, and it strengthens in the narrows and between the archipelago's islands; a channel that looks like a two-minute crossing on a chart can hold two knots of drift. Headland acceleration is pronounced at **Capo d'Orso, Punta Sardegna and Capo Testa**. Offshore-wind danger at Porto Pollo is a specific, named risk: **if the wind backs west or west-southwest, the sheltered lagoon side becomes offshore, and downwind of you is the open strait toward Corsica.** Every centre briefs this; take the briefing seriously.",
+      "Sea conditions and safety": "Water temperature: roughly 15–16°C in April, 18–19°C in May, 21–23°C in June, 24–25°C in July, 25–26°C in August, 23–24°C in September, 21–22°C in October. **A 2 mm shorty or long john is right for May and October; boardshorts and a lycra do July and August, but take a 2 mm top for a three-hour session, because 28 knots of dry maestrale strips heat fast even off warm water.** *Pelagia noctiluca* mauve stingers appear in patches, particularly after several calm days. **Sea urchins live on every granite ledge in Gallura** — at Capo Testa, Cala Coticcio and the rocky edges of the Porto Pollo bays — and reef shoes are essential. Lifeguard coverage exists on the main managed beaches in July and August only; at Porto Pollo the practical rescue cover is the centres' own boats during opening hours. **Emergency 112; Guardia Costiera 1530; VHF Channel 16.**",
+      "La Maddalena Archipelago National Park — permits and rules": "The park covers 62 islands and islets and **every boat navigating in its waters needs a daily online authorisation purchased in advance**; cost scales with hull length and propulsion, running roughly **€15–€55 per day for the small-to-mid craft most visitors hire, with sailing vessels receiving a reduction of around 40% on the motor rate.** The park is divided into graded protection zones: **Zone A areas are integral reserves where entry, anchoring and stopping are prohibited outright**, and the waters around **Budelli's Spiaggia Rosa** are exactly that — the pink beach has been closed to landing and to close approach since the 1990s, and there is no version of the trip in which you walk on it; authorised operators view it from the Budelli boardwalk instead. **Anchoring is permitted only on clean sand, never on *Posidonia oceanica* seagrass**, which is both an offence and the main cause of dragged anchors in the archipelago; overnight anchoring is allowed only in permitted zones with sand or mud bottoms and with per-cove boat caps. **Cala Coticcio (\"Tahiti\") on Caprera is accessible only with an authorised guide**, in capped daily groups, booked in advance — unaccompanied entry is fined.",
+      "Boat logistics and the Italian 40 hp rule": "Italy's threshold is clear and generous: **a boating licence (*patente nautica*) is required only for engines over 40.8 hp / 30 kW, or for vessels over 24 m, or for navigation more than six nautical miles from shore.** That makes the standard 5–6 m gommone with a 40 hp outboard rentable by anyone over 18 without a licence — the workhorse of a Gallura week. Expect **€180–€350 per day in season plus fuel**, from Palau, Cannigione or Santa Teresa Gallura, with the park permit either included or bought separately at the desk. The six-mile limit matters here: it keeps you comfortably inside the archipelago but rules out a Corsica crossing. Harbour fees at Palau and Cannigione for a day berth run €25–€60 for a small craft in high season; Porto Cervo is another matter entirely.",
+      "Weather-contingency plan": "*No wind:* the archipelago boat day, Capo Testa and the Valle della Luna, or a freedive at Tavolara. *Too much wind (30 knots+):* the lagoon side at Porto Pollo holds when the open bay does not, and Porto Liscia gives more room; if that fails, La Maddalena town, the Garibaldi museum at Compendio Garibaldino on Caprera, or the Nuraghe Albucciu and the Gallura interior around Arzachena. *Scirocco:* Rena Bianca at Santa Teresa is sheltered from the southeast, and the Bocche crossing gets uncomfortable — do not book the boat day. **Note that a hard maestrale also cancels the Palau–La Maddalena ferry and the archipelago day boats**, so hold one flexible day."
+    },
+    "surface": null,
+    "distanceKm": null,
+    "elevationM": null,
+    "verticalM": null,
+    "technicalRating": null,
+    "transitPass": null,
+    "hutBooking": null,
+    "liftNetwork": null,
+    "snowReliability": null,
+    "windConditions": "The **maestrale** is a northwest wind, the Mediterranean's dominant summer flow in this corner, generated by pressure gradients across the Gulf of Lion and the Tyrrhenian. The **Bocche di Bonifacio**, the roughly 11 km strait between Sardinia and Corsica, compresses that flow between two granite coasts and accelerates it measurably — Porto Pollo sits directly in the outfall, which is why a 15-knot regional forecast routinely delivers 20–25 knots at the isthmus. Season runs roughly **April to early November**, with the strongest and most consistent months **May, June and September**; July and August are windy but with more light days and far more people. Typical working strength is **15–30 knots in the afternoon**. The daily cycle overlays a thermal on the synoptic wind: light or nothing in the morning, filling from **11:00–13:00**, peaking **14:00–18:00**, easing at sunset. A properly established maestrale ignores that cycle and blows through the night for three or four days. The counter-wind is the **scirocco** from the southeast, which brings humid haze, a longer swell and gustier, less pleasant conditions; the **ponente** westerly is the mid-season alternative.",
+    "gpxReady": null,
+    "bookingTimeline": null,
+    "audience": null
+  },
+  "packingNotes": [],
+  "whatCouldGoWrong": [],
+  "sources": {
+    "verified": "Porto Pollo's four established centres and their affiliations — MB Pro Center (founded 2009, Windsurf Village, large RRD fleet plus wingfoil and kite), Sporting Club Sardinia (founded 1988, Isola dei Gabbiani, FIV/VDWS/IKO, kite from age nine), Wind Porto Pollo Centre (founded 2000, Isola dei Gabbiani, FIV and IKO, Duotone, rescue service), and PKS / FH Academy (Isola dei Gabbiani, IKO); indicative 2026 lesson pricing of €80–€90 for a private hour and six-hour packages at €420–€540 solo, ~€190 pp for two and ~€120 pp for three; the flat shallow lagoon versus open-sea wave split at the Isola dei Gabbiani and the existence of separated kite and windsurf zones; maestrale afternoon strengths of 15–30 knots from April to November; Italy's boat-licence threshold of 40 hp engine power (with the statutory figure being 40.8 hp / 30 kW) and 24 m length; the La Maddalena Archipelago National Park's daily online navigation authorisation with cost scaling by size and a roughly 40% reduction for sailing vessels, its graded protection zones with Zone A closed to entry and anchoring, its anchor-on-clean-sand-only rule protecting *Posidonia oceanica*, per-cove caps on overnight anchoring, and the total prohibition on landing at or closely approaching Budelli's Spiaggia Rosa.",
+    "confidenceNotes": "The **Cala Coticcio guided-access rule, its daily cap and its price were not confirmed in this run** and are the highest-priority item to re-verify with the Parco Nazionale dell'Arcipelago di La Maddalena before publishing. The exact La Maddalena permit price bands change annually and by hull length and propulsion — take current figures from the park's own authorisation portal rather than this file's €15–€55 range. Whether the 2026 overnight-anchoring rules described here are fully in force should be re-checked against the park's current ordinance. All rental, lesson, boat-hire, dive and harbour prices are indicative and unverified against published 2026 lists. Windfinder's Porto Pollo station is no longer reporting, so the wind figures here rest on centre-published and regional climatology rather than a live station record — treat the \"venturi adds several knots\" claim as well-attested locally but not quantified from data in this run. Named hotels (Camping Isuledda, Hotel La Vecchia Fonte, Hotel Corallaro) and restaurants (La Gritta, Da Robertino, Da Thomas, Papè Satan) should be confirmed as still trading. Tavolara dive-centre availability, the marine park's current zoning and access rules, and the seasonal Tavolara boat service and restaurants must be checked live. Water temperatures and wind figures are climatological averages."
+  },
+  "verifyFlags": [],
+  "verifyFlagCount": 0,
+  "volatilePricing": false,
+  "wordCount": 4721,
+  "dataVintage": 2026,
+  "provenance": {
+    "batch": "southern-mediterranean",
+    "sourceFile": "carta-dataset/trips/water-sports-italy-sardinia-porto-pollo.md",
+    "sourceFormat": "md with '## Metadata' bullet block (one file per trip)",
+    "sourceId": "water-sports-italy-sardinia-porto-pollo",
+    "ingestedAt": "2026-09-02",
+    "synthesized": false
+  }
+}

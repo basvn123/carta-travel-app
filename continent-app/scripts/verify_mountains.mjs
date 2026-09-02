@@ -118,6 +118,129 @@ try {
       `${rows} vs ${index.n_mountains}`);
     check('a useful share can be ridden to the top', lifted >= 20, `${lifted} lift served`);
 
+
+    // ── v2: the tiers, the seven filters, and the floor ──────────────────
+    //
+    // Everything below is peak_index_v2 (docs/MOUNTAINS.md). The rules the
+    // export gate enforces are checked again here because the gate and the
+    // app read the same files, and a wire that drifted would fail silently
+    // in the browser rather than loudly in the build.
+    const W = index.model?.weights || {};
+    const weightSum = Object.values(W).reduce((a, b) => a + b, 0);
+    check('the model is peak_index_v2', index.model?.version === 'peak_index_v2',
+      index.model?.version || '');
+    check('the weights ship with the data and sum to one',
+      Math.abs(weightSum - 1) < 1e-6, `${weightSum}`);
+    check('the view is a scored component', (W.views || 0) > 0, `${W.views}`);
+    check('the index carries the terrain model',
+      Boolean(index.model?.terrain?.version), index.model?.terrain?.version || '');
+    check('the index reports the floor both ways round',
+      Boolean(index.floor && index.floor.filled && index.floor.unreachable), '');
+    check('every floor miss carries a reason code',
+      Object.values(index.floor?.unreachable || {})
+        .every((e) => Object.keys(index.floor.reasons || {}).includes(e.k)),
+      Object.entries(index.floor?.unreachable || {})
+        .map(([cc, e]) => `${cc}:${e.k}`).join(', '));
+
+    const DIFFS = ['walkUp', 'hike', 'mountainHike', 'scramble', 'alpine',
+      'viaFerrata', 'technical'];
+    const ACCESS = ['liftTop', 'liftMountain', 'roadTop', 'trailhead',
+      'transit', 'remote'];
+    const thin = [];
+    const shortGallery = [];
+    const unnamedGallery = [];
+    const scoredListed = [];
+    const badFacet = [];
+    const noRegion = [];
+    let listedRows = 0;
+    let withView = 0;
+    let withDiff = 0;
+    let withSeason = 0;
+    let promDem = 0;
+    for (const c of index.countries || []) {
+      const path = `${WIRE}/${c.cc}.json`;
+      if (!existsSync(path)) continue;
+      const file = JSON.parse(readFileSync(path, 'utf8'));
+      const rated = file.mountains || [];
+      const listed = file.listed || [];
+      listedRows += listed.length;
+      // The floor is satisfied by rows of ANY tier, and a country that could
+      // not reach it has to have said why in the index.
+      if (rated.length + listed.length < (index.floor?.target || 8)
+          && !index.floor?.unreachable?.[c.cc]) {
+        thin.push(`${c.cc}: ${rated.length}+${listed.length}`);
+      }
+      for (const m of rated) {
+        if ((m.images || []).length < (index.model?.min_images || 4)) {
+          shortGallery.push(m.id);
+        }
+        if (!(m.images || []).some((i) => ['name', 'article', 'p18'].includes(i.ev))) {
+          unnamedGallery.push(m.id);
+        }
+        if (!m.rg) noRegion.push(m.id);
+        if (m.diff) {
+          withDiff += 1;
+          if (!DIFFS.includes(m.diff.k)) badFacet.push(`${m.id}: diff ${m.diff.k}`);
+          if (m.diff.src === 'dem' && !m.diff.est) {
+            badFacet.push(`${m.id}: DEM difficulty not marked estimated`);
+          }
+        }
+        for (const code of m.acc || []) {
+          if (!ACCESS.includes(code)) badFacet.push(`${m.id}: acc ${code}`);
+        }
+        if (m.vb != null) {
+          withView += 1;
+          if (!(m.vb >= 1 && m.vb <= 5)) badFacet.push(`${m.id}: vb ${m.vb}`);
+        }
+        if (m.promSrc && !['dem', 'dem_min'].includes(m.promSrc)) {
+          badFacet.push(`${m.id}: promSrc ${m.promSrc}`);
+        }
+        if (m.promSrc) promDem += 1;
+        if (m.season) {
+          withSeason += 1;
+          if (!m.season.est) badFacet.push(`${m.id}: season not marked estimated`);
+          if ((m.season.months || []).some((n) => n < 1 || n > 12)) {
+            badFacet.push(`${m.id}: month out of range`);
+          }
+        }
+      }
+      // The one rule the tier model cannot bend: a listed row has no score
+      // key of any spelling. Absent, not null, because the app cannot render
+      // what is not there.
+      for (const m of listed) {
+        if ('score' in m || 'tier' in m || 'comp' in m || 'sub' in m) {
+          scoredListed.push(m.id);
+        }
+        if (!['l', 'e'].includes(m.t)) scoredListed.push(`${m.id}: t=${m.t}`);
+        if (!(m.images || []).length
+            && !(m.why || []).some((w) => w.k === 'no_photo_map_card')) {
+          scoredListed.push(`${m.id}: no photograph and no map card`);
+        }
+      }
+    }
+    check('every rated row carries four photographs', shortGallery.length === 0,
+      `${shortGallery.length}: ${shortGallery.slice(0, 3).join(', ')}`);
+    check('every gallery is carried by a photograph that names the mountain',
+      unnamedGallery.length === 0,
+      `${unnamedGallery.length}: ${unnamedGallery.slice(0, 3).join(', ')}`);
+    check('no listed row carries a score', scoredListed.length === 0,
+      scoredListed.slice(0, 3).join(', '));
+    check('the listed tier is populated', listedRows > 0, `${listedRows} listed`);
+    check('every country reaches the floor or says why', thin.length === 0,
+      thin.slice(0, 5).join(', '));
+    check('every published row carries its region block', noRegion.length === 0,
+      `${noRegion.length}: ${noRegion.slice(0, 3).join(', ')}`);
+    check('the facets are all in vocabulary', badFacet.length === 0,
+      badFacet.slice(0, 3).join(' | '));
+    check('the difficulty facet is live on most rows', withDiff >= rows * 0.5,
+      `${withDiff} of ${rows}`);
+    check('the view is measured on most rows', withView >= rows * 0.5,
+      `${withView} of ${rows}`);
+    check('the season is measured on most rows', withSeason >= rows * 0.5,
+      `${withSeason} of ${rows}`);
+    check('prominence is computed where no source published one', promDem > 0,
+      `${promDem} rows carry a computed prominence`);
+
     // The reader test. A "best mountains in Europe" list that has published a
     // few thousand rows and not one of these is wrong in the way somebody
     // notices in the first five seconds.
@@ -148,13 +271,19 @@ check('destinations tab opens', await page.locator('.places-tab').isVisible());
 
 // The chrome that must exist on General, so its absence on Mountains means
 // something was removed rather than never rendered.
-check('General still carries the country picker', await page.locator('.places-country').count() === 1);
+// `:visible`, because the chrome renders the picker twice, once in the
+// desktop side rail and once in the phone toolbar, and CSS decides which one
+// a viewport shows. Counting both is how this check started failing on a
+// change that broke nothing.
+check('General still carries the country picker',
+  await page.locator('.places-country:visible').count() === 1);
 
 await page.locator('.places-cat', { hasText: /^mountains$/i }).click();
 await page.waitForTimeout(2500);
 
 // ── The controls this tab carries, and the ones it does not ──
-check('country picker is on Mountains', await page.locator('.places-country').count() === 1);
+check('country picker is on Mountains',
+  await page.locator('.places-country:visible').count() === 1);
 check('priced-from picker is gone on Mountains', await page.locator('.places-controls .origin-btn').count() === 0);
 check('lifestyle tier is gone on Mountains', await page.locator('.lifestyle-btn:visible').count() === 0);
 check('the search field stays', await page.locator('.places-search input').count() === 1);
@@ -177,9 +306,11 @@ check('cards carry the height in mono', heights >= 1, `${heights} of ${nCards}`)
 const cardScore = await cards.first().locator('.score-chip').innerText().catch(() => '');
 check('cards carry a score', /^\d/.test(cardScore.trim()), cardScore);
 check('cards carry reason chips', await cards.first().locator('.places-bcard-tags span').count() >= 1);
-const head = await page.locator('.places-beachhead').first().innerText().catch(() => '');
-check('the list says how many mountains and how many countries', /\d/.test(head),
-  head.replace(/\n/g, ' '));
+const head = await page.locator('.places-beachhead').count()
+  ? await page.locator('.places-beachhead').first().innerText().catch(() => '')
+  : '';
+check('the opening list is the European ranking, with no country header',
+  !head, head.replace(/\n/g, ' ').slice(0, 60));
 await page.screenshot({ path: 'shots/mountains-list.png', fullPage: false });
 
 // Ranked, best first.
@@ -190,8 +321,8 @@ check('the list is ranked best first',
   nums.slice(0, 5).join(', '));
 
 // ── The lift chip, which is why most people open this tab ──
-// It is one of six now (walk up, lift, climb, volcano, glacier, high point)
-// and they live in the toolbar card rather than loose on the page.
+// It leads the "how you get there" group, which is the one group short
+// enough for the toolbar row; the other six filters live in the sheet.
 const chip = page.locator('.places-facets .places-class', { hasText: /lift/i }).first();
 if (await chip.count()) {
   const chipLabel = await chip.innerText();
@@ -210,6 +341,47 @@ if (await chip.count()) {
   check('the lift filter keeps only mountains with a lift', false, 'no chip rendered');
 }
 
+// ── The seven filters brief 05 asks for ──
+// One group in the toolbar, the rest inside the Filters sheet, every chip
+// carrying its own count, and no chip offered at zero in this scope.
+const filterBtn = page.locator('.places-filter-btn').first();
+if (await filterBtn.count()) {
+  await filterBtn.click();
+  await page.waitForTimeout(900);
+  // The sheet renders the same facet model as the toolbar through its own
+  // markup (PlacesFilterSheet: fsheet-field / fchips / fchip), which is why
+  // this reads fchips rather than places-classes.
+  const groups = page.locator('.fsheet-places .fchips');
+  const nGroups = await groups.count();
+  check('the filter sheet offers every mountain facet', nGroups >= 7,
+    `${nGroups} groups`);
+  const labels = (await page.locator('.fsheet-places .fchip span:not(.fchip-n)')
+    .allInnerTexts()).map((x) => x.trim());
+  const wanted = [/lift to the top/i, /walk up|hike/i, /500 m|1,000|1\.000/i,
+    /hill|summit|peak/i, /view|panoram/i, /jan|jun|jul/i];
+  const found = wanted.filter((re) => labels.some((l) => re.test(l)));
+  check('the filters cover height, prominence, view, difficulty, access and month',
+    found.length >= 5, `${found.length} of ${wanted.length} kinds seen`);
+  const counted = await page.locator('.fsheet-places .fchip-n').count();
+  check('every filter chip carries a count', counted >= labels.length * 0.9,
+    `${counted} counts for ${labels.length} chips`);
+  const zeroLive = await page.locator('.fsheet-places .fchip:not([disabled]) .fchip-n')
+    .allInnerTexts();
+  check('no chip is offered at zero in this scope',
+    zeroLive.every((x) => x.trim() !== '0'),
+    zeroLive.filter((x) => x.trim() === '0').length + ' zero chips live');
+  await page.screenshot({ path: 'shots/mountains-filters.png', fullPage: false });
+  // Close it by the scrim rather than by Escape: the sheet stays open on a
+  // missed key and every click after it lands on the scrim instead of the
+  // list, which reads as a mysterious 30 second timeout three checks later.
+  await page.locator('.fsheet-scrim').click({ position: { x: 5, y: 5 } })
+    .catch(() => page.keyboard.press('Escape'));
+  await page.waitForTimeout(800);
+  check('the filter sheet closes', await page.locator('.fsheet-places').count() === 0);
+} else {
+  check('the filter sheet offers every mountain facet', false, 'no Filters button');
+}
+
 // ── Typing a country name opens that country's full list ──
 // The where line is "<range>, <country>" with the mono height on a second
 // line, so the country is the last comma part of the FIRST line. Split on a
@@ -226,6 +398,8 @@ if (firstCountry) {
   check('typing a country names it over the list', new RegExp(firstCountry, 'i').test(countryHead),
     countryHead.replace(/\n/g, ' '));
   check('the country list has mountains in it', await page.locator('.places-mcard').count() >= 1);
+  check('the country list says how many mountains it holds', /\d/.test(countryHead),
+    countryHead.replace(/\n/g, ' ').slice(0, 80));
   await page.locator('.places-search input').fill('');
   await page.waitForTimeout(1200);
 }
@@ -315,15 +489,37 @@ desk.on('pageerror', (e) => errors.push('desktop pageerror: ' + e.message.split(
 await seed(desk);
 await desk.goto(URL, { waitUntil: 'domcontentloaded', timeout: 45000 });
 await desk.waitForTimeout(3000);
-await desk.locator('.header-nav-item, .bottom-nav-item', { hasText: /destinations/i }).first().click();
-await desk.waitForTimeout(1200);
-await desk.locator('.places-cat', { hasText: /^mountains$/i }).click();
-await desk.waitForTimeout(2500);
+// The desktop shell moved the nav into the header (browse chrome v4), and a
+// window that is already on Destinations renders no nav item to click at
+// all. Both are fine; a hard click on a control that may not exist is not,
+// and it costs every check after it (this one threw for 30 seconds and took
+// the desktop pass with it).
+const deskTab = desk.locator('.header-nav-item, .bottom-nav-item',
+  { hasText: /destinations/i }).first();
+if (await deskTab.isVisible().catch(() => false)) {
+  await deskTab.click();
+  await desk.waitForTimeout(1200);
+}
+check('desktop: the destinations tab is reachable',
+  await desk.locator('.places-tab').isVisible().catch(() => false));
+// Desktop draws the categories in the left panel (.side-cat) and the phone
+// draws them in the toolbar (.places-cat). One renderer, two class names, so
+// the harness asks for whichever one this viewport rendered.
+const deskCat = desk.locator('.side-cat:visible, .places-cat:visible',
+  { hasText: /^mountains$/i }).first();
+if (await deskCat.isVisible().catch(() => false)) {
+  await deskCat.click();
+  await desk.waitForTimeout(2500);
+}
 check('desktop renders the mountain cards', await desk.locator('.places-mcard').count() >= 3);
 await desk.screenshot({ path: 'shots/mountains-desktop.png' });
-await desk.locator('.places-mcard').first().click();
-await desk.waitForTimeout(1500);
-check('desktop opens the mountain page', await desk.locator('.mpage').isVisible());
+const deskCard = desk.locator('.places-mcard').first();
+if (await deskCard.isVisible().catch(() => false)) {
+  await deskCard.click();
+  await desk.waitForTimeout(1500);
+}
+check('desktop opens the mountain page',
+  await desk.locator('.mpage').isVisible().catch(() => false));
 await desk.screenshot({ path: 'shots/mountains-page-desktop.png', fullPage: true });
 await desk.close();
 

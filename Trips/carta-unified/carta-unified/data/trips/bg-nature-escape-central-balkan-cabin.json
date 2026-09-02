@@ -1,0 +1,298 @@
+{
+  "id": "bg-nature-escape-central-balkan-cabin",
+  "sourceId": "bulgaria-central-balkan-cabin-nature",
+  "slug": "bg-nature-escape-central-balkan-cabin",
+  "title": "Reserve Country: Central Balkan Huts, Karst Caves and the Rhodope Vulture Gorges",
+  "country": "Bulgaria",
+  "countryCode": "BG",
+  "countries": [
+    {
+      "name": "Bulgaria",
+      "code": "BG"
+    }
+  ],
+  "isMultiCountry": false,
+  "region": "Eastern & Southeastern Europe",
+  "regionKey": "eastern-southeastern",
+  "subRegion": "Central Balkan National Park (Stara Planina), the Lovech karst, and the Eastern Rhodopes",
+  "tripType": "Nature Escapes & Cabin Stays",
+  "tripTypeId": 9,
+  "tripTypeSlug": "nature-escape",
+  "durationDays": 7,
+  "bestPeriod": {
+    "months": [
+      5,
+      6,
+      9
+    ],
+    "monthNames": [
+      "May",
+      "June",
+      "September"
+    ],
+    "window": "late May to mid-June (waterfalls at full flow, vultures on eggs, meadows in flower)",
+    "note": null,
+    "avoid": "November–April on the ridge (Botev is a full winter mountain), and August in the Rhodopes (40 °C, rivers down to a trickle)",
+    "raw": null
+  },
+  "budgetTier": "€",
+  "budgetTierRange": [
+    1,
+    1
+  ],
+  "budgetTierRaw": "€",
+  "budget": {
+    "currency": "EUR",
+    "totalEur": {
+      "low": 450,
+      "high": 810
+    },
+    "totalNote": "€450–€810",
+    "breakdown": {
+      "accommodation": {
+        "lowEur": 120,
+        "highEur": 260,
+        "note": "€120–€260 (€15–€40/night — huts €12–€20, village vilas €30–€45)"
+      },
+      "food": {
+        "lowEur": 110,
+        "highEur": 170,
+        "note": "€110–€170 (€16–€24/day; hut half-board where offered)"
+      },
+      "transport": {
+        "lowEur": 180,
+        "highEur": 300,
+        "note": "€180–€300 (a hire car is effectively compulsory: €30–€45/day plus fuel)"
+      },
+      "activities": {
+        "lowEur": 40,
+        "highEur": 80,
+        "note": "€40–€80 (Devetashka, Krushuna, Ökocentrum-style visitor centres, a guided vulture hide)"
+      }
+    },
+    "perDayEur": {
+      "low": 64,
+      "high": 116
+    }
+  },
+  "profile": {
+    "difficulty": 3,
+    "difficultyLabel": "Active",
+    "difficultyNote": "Moderate",
+    "fitnessLevel": "Moderate",
+    "crowdLevel": null,
+    "familyFriendly": null,
+    "carRequired": null
+  },
+  "basecamps": [
+    "Kalofer",
+    "Cherni Osam",
+    "Apriltsi",
+    "Lovech",
+    "Madzharovo"
+  ],
+  "gatewayAirport": "Sofia (SOF) or Plovdiv (PDV). Kalofer is 2 h from Sofia on the A1/I-6 via Karlovo. Finish near the Greek border: Madzharovo is 3 h 30 from Sofia, 2 h 15 from Plovdiv. Hire the car at the airport.",
+  "gatewayAirportCode": "SOF",
+  "languages": [
+    "Bulgarian"
+  ],
+  "currency": "Euro (EUR) — sole legal tender since 1 February 2026; mandatory dual BGN display ended 8 August 2026",
+  "emergencyNumber": "112 (Planinska spasitelna sluzhba, mountain rescue, via 112)",
+  "coordinates": {
+    "lat": 43.1323,
+    "lon": 24.7176,
+    "precision": "city",
+    "matchedPlace": "Lovech",
+    "source": "geonames (geonamescache, cities > 15k)"
+  },
+  "tags": [
+    "national-park",
+    "huts",
+    "waterfalls",
+    "vultures",
+    "rewilding",
+    "bears",
+    "foraging",
+    "off-grid"
+  ],
+  "summary": "A week in the two wildest blocks of Bulgaria: a beech-and-granite national park where nine strict reserves are sealed off from everything but a marked footpath, and a semi-desert river gorge where griffon vultures…",
+  "summaryGenerated": false,
+  "hook": "A week in the two wildest blocks of Bulgaria: a beech-and-granite national park where nine strict reserves are sealed off from everything but a marked footpath, and a semi-desert river gorge where griffon vultures ride the thermals over a rewilded valley. You sleep in unheated *hizha* bunkrooms at 1,800 m, drive forest roads that will take a hire car's sump off, and go two days without a signal. Not comfortable. Genuinely remote.",
+  "snapshot": {
+    "Country": "Bulgaria",
+    "Trip type": "Nature Escapes & Cabin Stays",
+    "Duration": "7 days",
+    "Best period": "Late May to mid-June, or September",
+    "Budget tier": "€",
+    "Difficulty": "Moderate",
+    "Start / End": "Kalofer → Madzharovo (point-to-point, ~600 km driving)",
+    "Getting there": "Sofia (SOF) or Plovdiv (PDV). Kalofer is 2 h from Sofia on the A1/I-6 via Karlovo. Finish near the Greek border: Madzharovo is 3 h 30 from Sofia, 2 h 15 from Plovdiv. Hire the car at the airport."
+  },
+  "itinerary": [
+    {
+      "day": 1,
+      "title": "Kalofer and the highest waterfall in Bulgaria",
+      "morning": "Drive Sofia–Karlovo–**Kalofer**, the birthplace of Hristo Botev, and register your route intention at the **Central Balkan National Park** Kalofer information point [VERIFY: current Kalofer visitor point opening hours].",
+      "afternoon": "The Byala reka valley trail to **Raysko Praskalo** — \"Paradise Spray\" — which drops **124.5 m** in a single fall off the Botev cirque, the highest waterfall in Bulgaria and the Balkans. Full volume in late May, a thin thread by August.",
+      "evening": "Continue to **Hizha Rai** at roughly 1,950 m beneath the fall. Bean soup, a wood stove, a generator that dies at 22:00 [VERIFY: current Hizha Rai bed and half-board rates].",
+      "dayStats": null,
+      "sleep": null
+    },
+    {
+      "day": 2,
+      "title": "Botev peak, 2,376 m",
+      "morning": "Leave at 06:30 for **Botev**, the Stara Planina's highest summit at **2,376 m**, crowned by an incongruous television mast and meteorological station. Two to three hours from Rai on marked trail, exposed to the ridge wind throughout.",
+      "afternoon": "Walk the rim above **Dzhendema** reserve, the great south-facing wall of the range and the most strictly protected ground in Bulgaria. Look; do not enter.",
+      "evening": "Descend to Kalofer and drive the **Beklemeto (Troyan) pass** at about 1,525 m to a *vila* in **Cherni Osam** or **Apriltsi** — hot water, a real bed, and signal for the first time in 36 hours.",
+      "dayStats": null,
+      "sleep": null
+    },
+    {
+      "day": 3,
+      "title": "Steneto and the beech forests",
+      "morning": "Up the Cherni Osam forest road to **Hizha Pleven** at about 1,300 m, gateway to the **Steneto** reserve — a Bulgarian component of UNESCO's *Ancient and Primeval Beech Forests* inscription of 2017.",
+      "afternoon": "The marked through-route into the Steneto gorge: limestone walls, the Cherni Osam river, caves in the flank, beech never cut. Marked trail only; the reserve permits nothing else.",
+      "evening": "Back down for the **Natural History Museum in Cherni Osam**, a serious taxidermy and habitat collection built by one family over decades [VERIFY: current Cherni Osam museum hours].",
+      "dayStats": null,
+      "sleep": null
+    },
+    {
+      "day": 4,
+      "title": "Kozya Stena and the ridge huts",
+      "morning": "Park at the **Troyan Pass** monument on Beklemeto and walk the ridge west on **Kom–Emine** (E3) waymarks to **Kozya Stena** reserve, a narrow limestone crest holding Balkan endemics including edelweiss.",
+      "afternoon": "Down to **Hizha Kozya Stena** for soup, then across to **Hizha Dobrila** at roughly 1,800 m, the stone staging post on the ridge [VERIFY: current Hizha Dobrila rates and midweek staffing].",
+      "evening": "Stay at Dobrila. No signal, spring water, and the stars over the Steneto forest. Carry cash — there is no card machine on the ridge.",
+      "dayStats": null,
+      "sleep": null
+    },
+    {
+      "day": 5,
+      "title": "Down to the karst: Devetashka and Krushuna",
+      "morning": "North to **Lovech** (about 1 h 15), then 20 km to **Devetaki** village and the **Devetashka Cave** — a colossal karst hall with seven ceiling openings and a floor the size of a stadium, holding a large bat colony. **Access is restricted in the bat breeding season, roughly June–July** [VERIFY: current Devetashka Cave seasonal closure dates and hours].",
+      "afternoon": "East to the **Krushuna waterfalls**, a travertine staircase of terraces and moss below the village — boardwalks, low gradient, and the busiest thing on this itinerary. Before 10:00 or after 16:00.",
+      "evening": "The long transfer south: Lovech to **Madzharovo** is roughly 290 km and 4 hours via Stara Zagora and Haskovo. Do it in daylight — the last hour is narrow gorge road.",
+      "dayStats": null,
+      "sleep": null
+    },
+    {
+      "day": 6,
+      "title": "Vultures above the Arda",
+      "morning": "At first light, up to the viewpoint above the **Madzharovo** gorge on the Arda — the core breeding area of Bulgaria's **griffon vulture** colony and a last stronghold of the **Egyptian vulture**, the small migratory one that winters in Africa and is critically endangered in Europe.",
+      "afternoon": "The **Bulgarian Society for the Protection of Birds (BSPB/BDZP) Eastern Rhodopes Nature Conservation Centre** runs the field station, exhibition and guided hides. Book a hide in advance — it starts before dawn and there are few seats [VERIFY: current BSPB Madzharovo hide booking process and fee].",
+      "evening": "Stay at the centre. The old mining valley below is among the emptiest inhabited landscapes in the EU: black stork, sombre tit, and a river with nobody on it.",
+      "dayStats": null,
+      "sleep": null
+    },
+    {
+      "day": 7,
+      "title": "Studen Kladenets and the Byala Reka wilderness",
+      "morning": "West along the Arda to the **Studen Kladenets** reservoir, focus of the Rhodope rewilding work — reintroduced **fallow and red deer** built up as a prey base for the vultures, and a feeding site above the water.",
+      "afternoon": "With high clearance and dry weather, run south into the **Byala Reka** basin towards Kroumovgrad: oak savanna, dry gorges, tortoises on the track, one of the least visited protected areas in the country. In a 2WD car on a wet day, do not.",
+      "evening": "Out via Kardzhali. Eat *patatnik*, drink Rhodope wine, and note that the week cost less than three nights in the Alps.",
+      "dayStats": null,
+      "sleep": null
+    }
+  ],
+  "accommodationStrategy": [
+    {
+      "rank": 1,
+      "name": "Hizha Rai",
+      "style": "mountain hut, off-grid",
+      "location": "beneath Raysko Praskalo, Kalofer",
+      "description": "the only bed that puts you on Botev's rim at dawn instead of climbing 1,400 m from the valley. Wood stove, generator hours, spring water, bunkrooms.",
+      "booking": "direct by phone a few days ahead midweek, 2–3 weeks for a summer weekend. Cash only; bring a liner.",
+      "priceNote": null
+    },
+    {
+      "rank": 2,
+      "name": "Village *vila* rentals",
+      "style": "self-catering house",
+      "location": "Cherni Osam and Apriltsi",
+      "description": "the midweek reset — hot water, drying space and a kitchen, 20 minutes from the Steneto trailhead and inside the Kom–Emine corridor. Wood-stove heating; ask whether wood is included.",
+      "booking": "2–4 weeks ahead via Booking.com or direct with the owner. September is the tight month, because of the mushrooms.",
+      "priceNote": null
+    },
+    {
+      "rank": 3,
+      "name": "BSPB Eastern Rhodopes Nature Conservation Centre",
+      "style": "field-station guesthouse",
+      "location": "Madzharovo",
+      "description": "you sleep at the research station above the gorge, with the people who ring the birds. Simple rooms, shared facilities, exhibition on site, hides arranged at the desk.",
+      "booking": "direct with BSPB well ahead for spring migration and the breeding season — the building is small [VERIFY: current BSPB Madzharovo room rates].",
+      "priceNote": null
+    }
+  ],
+  "logistics": {
+    "connectivity": "A1 and Yettel cover Kalofer, Troyan, Apriltsi, Lovech and the Rhodope villages. There is **no signal at Hizha Rai, Hizha Dobrila or in the Steneto gorge** and patchy coverage on the Botev ridge. Download offline maps — Kom–Emine waymarks are good but sparse in cloud.",
+    "emergency": "**112**, routing to the **Planinska spasitelna sluzhba** (Bulgarian Red Cross mountain rescue). Response to the Botev ridge is measured in hours. Leave your route with the hut warden and stick to it.",
+    "weather": "The ridge makes its own weather. Botev is among the windiest points in Bulgaria and can go sun-to-whiteout in twenty minutes in any month; snow patches persist into June. The Rhodopes are the opposite problem — 40 °C and no shade in August.",
+    "bookingWindows": "Huts, a few days to three weeks. The BSPB centre and any vulture hide, weeks to months in spring. The hire car as early as possible for September — Bulgarian fleets run out.",
+    "money": "Bulgaria uses the **euro**, lev fixed at 1 EUR = 1.95583 BGN. **Every hut here is cash-only** and there is no ATM above the valley towns; carry €200–€250 in small notes. Cards work in Lovech, Troyan and Kardzhali.",
+    "transportRules": "An electronic **vignette** is required on Bulgarian republican roads and motorways — buy it online or at a fuel station before driving. Check the rental agreement's unsurfaced-road exclusion. Fuel in Troyan and again in Haskovo; Rhodope stations are far apart and close early.",
+    "permits": "No entry fee or permit for the national park. **Marked trails only in all nine reserves**; no camping or bivouac in reserves; camping only in designated park zones; **no open fires anywhere in the park**; no drones; dogs leashed and banned in reserves. Collecting plants, fungi or wood is prohibited in the core and reserves and permit-regulated elsewhere.",
+    "health": null,
+    "gettingThere": null,
+    "other": []
+  },
+  "proTips": [
+    "**Take Raysko Praskalo in the last week of May.** Snowmelt is what makes a 124 m waterfall look like one; by August it is a stain on a cliff.",
+    "**Phone the hut the day before, in Bulgarian if you can.** Wardens do not reliably answer email, and a hut listed as open may be shut for a week for supplies.",
+    "**Ask a Cherni Osam or Apriltsi host about mushrooms instead of searching alone.** Village knowledge of which slope is producing is decades deep, freely given, and keeps you legally outside the park core.",
+    "**Book the Madzharovo hide before anything else.** It is the one genuinely scarce thing here, and only the dawn session is worth doing.",
+    "**Use the Beklemeto pass as your bad-weather switch.** If the ridge is in cloud, drop north to Devetashka and Krushuna a day early and take Botev on the better morning.",
+    "**Carry 3 litres and a filter.** Kom–Emine ridge springs are reliable in June and unreliable in September; Rhodope tributaries in August are stagnant.",
+    "**Learn *\"Има ли мечки тук?\"*** — \"are there bears here?\" The answer is always yes, and the advice that follows beats anything written down."
+  ],
+  "typeSpecific": {
+    "raw": {
+      "Access requirements": "Three grades. **Asphalt throughout**: the Beklemeto (Troyan) pass road at ~1,525 m and the Kalofer approach. **Rough but 2WD-passable when dry**: the Cherni Osam forest road to **Hizha Pleven**, broken concrete then gravel, fine in a hatchback if you crawl. **High clearance genuinely required**: the upper forest road above Kalofer, the tracks around **Studen Kladenets**, and everything off tarmac in the **Byala Reka** basin, where the road is a dry riverbed with a name. Rain downgrades all three within an hour, and Bulgarian hire cars are almost always barred from unsurfaced roads — read the agreement.",
+      "Isolation level: 4 of 5": "Two nights in huts with no road access and no mains power; the Rhodope nights in a village of a few hundred with one shop. Not 5 — there is always a warden or a village within three hours' walk — but nowhere here is help fast.",
+      "Wild camping vs bivouac — the distinction that matters": "Bulgarian law prohibits camping outside designated sites, and inside **Central Balkan National Park** camping is allowed only at the directorate's **designated camping and bivouac zones**, mostly at or beside the huts. In practice a **bivouac** — one night, late in, early out, no established camp, no fire, pitched beside a hut or at a marked bivouac place — is accepted by wardens. A **camp** — several nights, a fire ring, gear spread out, off-zone — is not, and is fined. Inside the nine **strict reserves** (Boatin, Tsarichina, Kozya Stena, Steneto, Sokolna, Peeshtite Skali, Severen Dzhendem, Dzhendema, Stara Reka) there is **no camping and no bivouac at all**: the marked through-trail and nothing else — no leaving the path, no fire, no picking, no dogs, no drone [VERIFY: current Central Balkan NP bivouac zone list and seasonal reserve closures].",
+      "Foraging": "Medicinal plants fall under the **Medicinal Plants Act (Zakon za lechebnite rastenia)**: personal-quantity picking on state forest land is free, **commercial collection needs a municipal permit**, and several species are under annual quota or banned from wild collection outright — **Sideritis scardica** (*mursalski chay*) and **Rhodiola rosea** are the two you will be tempted by and must not take [VERIFY: current banned/quota species list]. Mushrooms — *manatarka* (cep), chanterelle — are free for personal use on state forest land in the Troyan and Apriltsi valleys, the classic September activity. **Inside the reserves and the park core, all collecting of plants, fungi and firewood is prohibited.**",
+      "Bear and wolf protocol": "The Central Balkan holds a resident **brown bear** population and the beech reserves are prime habitat. Make noise on blind bends and in dense beech, avoid dusk in berry season, never approach a cub, keep food out of the tent, and if you meet one do not run — back away facing it, talking level. Wolves are present in both ranges and are not a practical concern. The likelier problem is a livestock guardian dog at a *kolibi* sheepfold: stop, do not turn your back, let the shepherd call it off.",
+      "Off-grid utilities": "The high huts (Rai, Dobrila, Kozya Stena) run **generator or solar on fixed evening hours**, with wood stoves, spring water, dry toilets, cold showers, and are **cash-only**; blankets are provided, bedding often is not. Village *vila* rentals in Cherni Osam, Apriltsi and Ribaritsa have mains power and hot water but frequently no central heating, only a wood *pech* — ask before booking a May night."
+    },
+    "surface": null,
+    "distanceKm": null,
+    "elevationM": null,
+    "verticalM": null,
+    "technicalRating": null,
+    "transitPass": null,
+    "hutBooking": null,
+    "liftNetwork": null,
+    "snowReliability": null,
+    "windConditions": null,
+    "gpxReady": null,
+    "bookingTimeline": null,
+    "audience": null
+  },
+  "packingNotes": [],
+  "whatCouldGoWrong": [],
+  "sources": {
+    "verified": null,
+    "confidenceNotes": "- Verified: Botev 2,376 m as the highest Stara Planina summit; Raysko Praskalo ~124.5 m as Bulgaria's highest waterfall; the park's nine strict reserves, with Bulgarian components inscribed on UNESCO's Ancient and Primeval Beech Forests list in 2017; Beklemeto/Troyan pass ~1,525 m; Devetashka's bat colony and seasonal restriction; Krushuna's travertine cascades; Madzharovo as the griffon and Egyptian vulture stronghold with a BSPB centre; Studen Kladenets deer reintroduction as vulture prey base; Bulgarian camping law and the Medicinal Plants Act regime; Bulgaria on the euro; emergency 112. - `[VERIFY]` items in this file: 9 (see inline markers above) - Last reviewed: 2026-09-02"
+  },
+  "verifyFlags": [
+    "current Central Balkan NP bivouac zone list and seasonal reserve closures",
+    "current banned/quota species list",
+    "current Kalofer visitor point opening hours",
+    "current Hizha Rai bed and half-board rates",
+    "current Cherni Osam museum hours",
+    "current Hizha Dobrila rates and midweek staffing",
+    "current Devetashka Cave seasonal closure dates and hours",
+    "current BSPB Madzharovo hide booking process and fee",
+    "current BSPB Madzharovo room rates"
+  ],
+  "verifyFlagCount": 9,
+  "volatilePricing": true,
+  "wordCount": 2401,
+  "dataVintage": 2026,
+  "provenance": {
+    "batch": "eastern-southeastern",
+    "sourceFile": "cartaeasterneuropetrips/trips/bulgaria-central-balkan-cabin-nature.md",
+    "sourceFormat": "md+nested-yaml-frontmatter (one file per trip)",
+    "sourceId": "bulgaria-central-balkan-cabin-nature",
+    "ingestedAt": "2026-09-02",
+    "synthesized": false
+  }
+}

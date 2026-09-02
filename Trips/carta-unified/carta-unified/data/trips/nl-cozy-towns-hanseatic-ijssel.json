@@ -1,0 +1,321 @@
+{
+  "id": "nl-cozy-towns-hanseatic-ijssel",
+  "sourceId": "nl-cozy-towns-hanseatic-ijssel",
+  "slug": "nl-cozy-towns-hanseatic-ijssel",
+  "title": "The Hanseatic IJssel — Deventer, Zutphen, Zwolle, Hattem",
+  "country": "Netherlands",
+  "countryCode": "NL",
+  "countries": [
+    {
+      "name": "Netherlands",
+      "code": "NL"
+    }
+  ],
+  "isMultiCountry": false,
+  "region": "Western & Central Europe",
+  "regionKey": "western-central",
+  "subRegion": "IJssel Valley, Overijssel & Gelderland",
+  "tripType": "Cozy Towns Trips",
+  "tripTypeId": 4,
+  "tripTypeSlug": "cozy-towns",
+  "durationDays": 7,
+  "bestPeriod": {
+    "months": [
+      4,
+      5,
+      6,
+      9
+    ],
+    "monthNames": [
+      "April",
+      "May",
+      "June",
+      "September"
+    ],
+    "window": null,
+    "note": "The Deventer Boekenmarkt falls on the first Sunday of August; December brings the Dickens Festijn and much colder river wind.",
+    "avoid": null,
+    "raw": null
+  },
+  "budgetTier": "€€",
+  "budgetTierRange": [
+    2,
+    2
+  ],
+  "budgetTierRaw": "€€",
+  "budget": {
+    "currency": "EUR",
+    "totalEur": {
+      "low": 980,
+      "high": 1420
+    },
+    "totalNote": null,
+    "breakdown": {
+      "accommodation": {
+        "lowEur": 520,
+        "highEur": 720,
+        "note": null
+      },
+      "food": {
+        "lowEur": 280,
+        "highEur": 400,
+        "note": null
+      },
+      "transport": {
+        "lowEur": 80,
+        "highEur": 130,
+        "note": null
+      },
+      "activities": {
+        "lowEur": 100,
+        "highEur": 170,
+        "note": null
+      }
+    },
+    "perDayEur": {
+      "low": 140,
+      "high": 203
+    }
+  },
+  "profile": {
+    "difficulty": 1,
+    "difficultyLabel": "Easy",
+    "difficultyNote": null,
+    "fitnessLevel": "Easy",
+    "crowdLevel": "Low",
+    "familyFriendly": true,
+    "carRequired": false
+  },
+  "basecamps": [
+    "Deventer"
+  ],
+  "gatewayAirport": "Amsterdam (AMS)",
+  "gatewayAirportCode": "AMS",
+  "languages": [
+    "Dutch"
+  ],
+  "currency": "EUR",
+  "emergencyNumber": "112",
+  "coordinates": {
+    "lat": 52.255,
+    "lon": 6.1639,
+    "precision": "city",
+    "matchedPlace": "Deventer",
+    "source": "geonames (geonamescache, cities > 15k)"
+  },
+  "tags": [
+    "hanseatic",
+    "market-days",
+    "bookshops",
+    "ijssel",
+    "town-squares"
+  ],
+  "summary": "Four Hanseatic towns on the IJssel in seven days — Friday and Saturday markets, chained libraries, bookshops and a single change of hotel.",
+  "summaryGenerated": false,
+  "hook": "The IJssel towns were rich in 1350 and then quietly stopped being important, which is the best thing that can happen to a town's architecture. Deventer, Zutphen, Zwolle and Hattem sit within forty minutes of each other on a slow green river, all reachable by train, all built around a square with a weigh house on it. One hotel change in seven nights, two market days, and more secondhand bookshops per head than anywhere else in the country.",
+  "snapshot": {
+    "Country": "Netherlands (Overijssel & Gelderland)",
+    "Base(s)": "Deventer (3 nights) · Zwolle (3 nights)",
+    "Trip Type": "Cozy Towns Trips",
+    "Duration": "7 days / 6 nights",
+    "Total Distance / Terrain": "45–55 km walked, plus 40–60 km optional cycling; entirely flat, brick and cobble, one river dyke",
+    "Best Period": "April–June, September",
+    "Budget Tier": "€€ — approx. €980–1,420 per person",
+    "Getting There": "Fly Amsterdam (AMS); direct trains to Deventer (approx. 1h20) and Zwolle (approx. 1h20)",
+    "Who It Suits": "Readers, market-goers, cyclists who don't want to race, anyone who found Amsterdam exhausting"
+  },
+  "itinerary": [
+    {
+      "day": 1,
+      "title": "Deventer and the Brink",
+      "morning": "Train from Schiphol to Deventer, roughly 1h20 with one change at Amersfoort or Utrecht. Walk in from the station in eight minutes; the whole old town is inside a ten-minute radius.",
+      "afternoon": "Start on the Brink, the long triangular market square that has been Deventer's trading floor for a thousand years. On it stands De Waag, the weigh house of 1528 with an outdoor staircase and a cannonball-punctured door, now the city museum; and the Penninckshuis of 1583, whose Renaissance front is pure Hanseatic showing-off. Then the Lebuïnuskerk, whose tower gives the flattest, widest view in the Netherlands.",
+      "evening": "Cross the IJssel on the Deventer voetveer — the pedestrian and bicycle ferry that has run on this crossing for centuries, two minutes each way — and walk in the Worp park on the west bank for the classic view: the whole town in profile above the water. Eat back on the Brink.",
+      "dayStats": "Towns: 1 (Deventer). Walking: 5 km. Transfer: approx. 1h20 from AMS.",
+      "sleep": null
+    },
+    {
+      "day": 2,
+      "title": "Zutphen, the chained library and the Berkel",
+      "morning": "Twelve minutes by train south to Zutphen. Walk to 's Gravenhof, the square beside the Sint-Walburgiskerk, then into the church for the Librije — a chained library completed in 1564, its 750 volumes still shackled to the reading lecterns exactly as they were when books cost as much as a house. It is one of very few of its kind left anywhere. Approx. €7.",
+      "afternoon": "Zutphen's market days are Thursday and Saturday, on the Groenmarkt and Houtmarkt, running roughly 09:00 to 16:00 — cheese, fish, flowers and a good bread stall. Beyond the squares, walk the Berkelpoort, a 14th-century water gate straddling the little river Berkel, and the Drogenapstoren. Between April and October the Berkelzomp, a replica of the flat-bottomed barge that carried freight up the Berkel, runs short trips from the quay.",
+      "evening": "Back in Deventer by 18:30. The Bergkwartier — the hill district around the Bergkerk, restored in the 1960s in the first serious urban conservation project in the Netherlands — has the quiet cafés; the Brink has the busy ones.",
+      "dayStats": "Towns: 2 (Deventer, Zutphen). Walking: 9 km. Transfer: 25 min by train, return.",
+      "sleep": null
+    },
+    {
+      "day": 3,
+      "title": "Market day, koek and the bookshops",
+      "morning": "Deventer's markets fill the Brink on Friday and Saturday, roughly 09:00 to 17:00, and the Saturday one is the big one — stroopwafels made on the stall, North Sea herring, Overijssel farm cheese, flower buckets three deep. On the square, the Deventer Koekwinkel sells the town's own honey cake; Bussink has been baking Deventer koek since 1593 and the recipe has not moved much since.",
+      "afternoon": "Deventer takes books seriously. Boekhandel Praamstra has been the town's bookshop for generations, and the antiquarian and secondhand shops thicken through the Bergkwartier lanes. All of it culminates once a year in the Deventer Boekenmarkt on the first Sunday of August: around 875 stalls and roughly six kilometres of trestle tables along the IJssel quays, the largest book market in Europe. If your week can be moved to touch it, move it.",
+      "evening": "A long dinner and an early night. This is the first of the week's two deliberately unhurried days.",
+      "dayStats": "Towns: 1 (Deventer). Walking: 6 km. Transfer: none.",
+      "sleep": null
+    },
+    {
+      "day": 4,
+      "title": "North to Zwolle",
+      "morning": "Nothing before 10:00. Coffee on the Brink, one more pass through the Bergkwartier, then the 25-minute train to Zwolle — the only relocation of the trip.",
+      "afternoon": "Zwolle is bigger, and its old town sits inside a complete star-shaped moat laid out in the 17th century, which makes an hour's circular walk with water on one side the entire way. Start at the Sassenpoort, the brick city gate of 1409 with four turrets, then the Grote Markt, the Hoofdwacht of 1614, and the Grote of Sint-Michaëlskerk with its Schnitger organ of 1721.",
+      "evening": "Waanders In de Broeren is a bookshop installed inside the 15th-century Broerenkerk — three storeys of shelving in the nave, a café in the choir, and the original vaulting overhead. It stays open into the evening and is the best possible argument for a town this size.",
+      "dayStats": "Towns: 2 (Deventer, Zwolle). Walking: 6 km. Transfer: 25 min / 40 km.",
+      "sleep": null
+    },
+    {
+      "day": 5,
+      "title": "Hattem, and a museum of bakers",
+      "morning": "Hattem is 8 km from Zwolle across the IJssel — twenty minutes by bike on a dyke-top path, or fifteen by bus. Rent a bike at Zwolle station and ride; the route crosses the river and drops you at the Dijkpoort, the 14th-century gate that Pierre Cuypers restored with rather more romance than accuracy in 1908.",
+      "afternoon": "The Nederlands Bakkerijmuseum, in a row of old houses on Hattem's main lane, is the reason to come: working wood-fired ovens, a preserved shop interior, a miller's and confectioner's kit, and bakers actually baking — you eat what comes out. Approx. €12. Next to it, the Voerman Museum holds the IJssel landscapes of Jan Voerman and the collection of Anton Pieck's drawings.",
+      "evening": "Ride back into Zwolle along the river. Dinner around the Grote Markt; if you want the country's most celebrated kitchen, De Librije, in the converted women's prison on Spinhuisplein, books months ahead and is a different budget entirely.",
+      "dayStats": "Towns: 2 (Zwolle, Hattem). Walking: 4 km, cycling 18 km. Transfer: 20 min each way.",
+      "sleep": null
+    },
+    {
+      "day": 6,
+      "title": "Kampen, and the Zwolle Thursday flea market",
+      "morning": "In July and August, Zwolle's Blauwvingerdagen bring a flea and antiques market to the Grote Markt and Melkmarkt on Thursday mornings — bric-a-brac, prints, and a lot of Dutch families haggling gently. Outside those weeks, the general market runs on Friday and Saturday, roughly 09:00 to 17:00.",
+      "afternoon": "Take the Kamperlijntje, the ten-minute branch line to Kampen, and walk the Oudestraat from the Koornmarktspoort to the Nieuwe Toren. Kampen's town hall holds the Schepenzaal, a 1545 magistrates' room with a carved stone chimneypiece that is one of the finest Renaissance interiors in the country. The IJssel front, seen from the bridge, is the best skyline on the river.",
+      "evening": "Back in Zwolle. Museum de Fundatie on the Blijmarkt keeps late hours one evening a week — worth checking; its 2013 tiled ellipsoid, dropped on the roof of a 19th-century courthouse by Hubert-Jan Henket, is the one piece of loud architecture on this whole itinerary.",
+      "dayStats": "Towns: 2 (Zwolle, Kampen). Walking: 8 km. Transfer: 20 min by train, return.",
+      "sleep": null
+    },
+    {
+      "day": 7,
+      "title": "A slow last morning",
+      "morning": "The second unhurried morning. Walk the moat ring anticlockwise from the Sassenpoort with a coffee, sit in the Broerenkerk bookshop, and buy the things you noticed on Day 4 — Zwolle's small shops around the Luttekestraat and Sassenstraat are open from 09:30 and never crowded before 11:00.",
+      "afternoon": "If the weather is good, rent a bike and ride the Zwolle side of the IJssel south toward Wijhe on the dyke — flat, quiet, and lined with meadows and herons. Turn back whenever you like; there is no destination that matters.",
+      "evening": "Zwolle to Schiphol is a direct train of about 1h20, with departures several times an hour until late. Leave enough time to eat before you go; airport food is not a fitting end to this particular week.",
+      "dayStats": "Towns: 1 (Zwolle). Walking: 5 km, cycling optional 20 km. Transfer: approx. 1h20 to AMS.",
+      "sleep": null
+    }
+  ],
+  "accommodationStrategy": [
+    {
+      "rank": 1,
+      "name": "Sandton IJsselhotel",
+      "style": "Country-house hotel across the river",
+      "location": "Deventer",
+      "description": "A grand old villa on the west bank of the IJssel, reached from town by the little pedestrian ferry — which means you arrive at your hotel by boat every evening for three days. Rooms face the water and the town's skyline; it is silent at night in a way no address on the Brink can be, and it is still six minutes from the square.",
+      "booking": "two months ahead; the Boekenmarkt weekend needs six or more.",
+      "priceNote": "€135–190 per night"
+    },
+    {
+      "rank": 2,
+      "name": "Hotel Fidder",
+      "style": "Family-run boutique hotel",
+      "location": "Zwolle",
+      "description": "A late-19th-century house just outside the moat ring, run by the same family for well over a century and furnished with real antiques rather than reproduction ones. It is a ten-minute walk to the Grote Markt through quiet streets, and the breakfast room is the antidote to a chain buffet. Small, so it fills.",
+      "booking": "six to eight weeks ahead.",
+      "priceNote": "€120–170 per night"
+    },
+    {
+      "rank": 3,
+      "name": "Bilderberg Grand Hotel Wientjes",
+      "style": "Classic town hotel",
+      "location": "Zwolle",
+      "description": "The fallback when Fidder is full, on the same quiet avenue: larger, comfortable, with parking and a proper bar. Useful if you are travelling with a car or want a lift and a late kitchen after a long day in Kampen.",
+      "booking": "three to four weeks ahead.",
+      "priceNote": "€130–185 per night"
+    }
+  ],
+  "logistics": {
+    "connectivity": null,
+    "emergency": "112 for all services. Non-urgent police 0900-8844. Pharmacies operate a rotating out-of-hours service posted in the window.",
+    "weather": "The IJssel valley is flat and open, and a headwind on a bike is the day's real terrain. Rain arrives in bands from the west; a two-hour gap is normal, so plan indoor stops rather than cancelling.",
+    "bookingWindows": null,
+    "money": "Cards are universal; a few market stalls and the ferry are cash-friendly but most take contactless. Some Dutch retailers still refuse foreign credit cards and want a debit card — carry both.",
+    "transportRules": "You can tap a contactless bank card or phone directly on NS gates and bus readers — check in and check out, every leg, or you are overcharged. There is no need to buy an OV-chipkaart for a week's trip.",
+    "permits": null,
+    "health": null,
+    "gettingThere": null,
+    "other": [
+      {
+        "label": "Emergencies",
+        "text": "112 for all services. Non-urgent police 0900-8844. Pharmacies operate a rotating out-of-hours service posted in the window."
+      },
+      {
+        "label": "Bikes",
+        "text": "OV-fiets rental at stations requires a Dutch bank account; use a commercial rental shop near Deventer or Zwolle station instead, approx. €12–18 per day. Trains carry bikes only outside 06:30–09:00 and 16:00–18:30 on weekdays, and require a separate day ticket (approx. €8)."
+      },
+      {
+        "label": "Market times",
+        "text": "Deventer: Friday and Saturday on the Brink, roughly 09:00–17:00. Zutphen: Thursday and Saturday, Groenmarkt and Houtmarkt. Zwolle: Friday and Saturday on the Grote Markt, plus the Thursday-morning Blauwvingerdagen flea market in July and August. Everything is packed away by late afternoon."
+      },
+      {
+        "label": "Shop hours are the classic Dutch trap",
+        "text": "Many independent shops in these towns do not open at all on Monday morning, and Sunday opening is limited to one or two Sundays a month outside the big cities. Supermarkets open daily and late."
+      },
+      {
+        "label": "High water",
+        "text": "The IJssel floods its outer meadows in winter and early spring. Dyke-top paths stay open; the low riverside paths and some ferry landings do not."
+      },
+      {
+        "label": "Drones",
+        "text": "are prohibited over the historic centres and near the church towers; the tower climbs give you the shot anyway."
+      }
+    ]
+  },
+  "proTips": [
+    "Build the week around Friday and Saturday. Deventer's Saturday market and Zutphen's Saturday market are the two best mornings available, and everything else in this itinerary is flexible.",
+    "Take the Deventer voetveer at dusk rather than midday. Five minutes of river, the town lit behind you, and it costs almost nothing.",
+    "Ask at the Walburgiskerk in Zutphen whether the Librije guide is on duty. Access is by timed visit and the guide will open the chained volumes for you — without them you see the room, not the books.",
+    "Buy Deventer koek from a shop on the Brink, not from a supermarket. The stone-jar version keeps for weeks and travels far better than stroopwafels.",
+    "Do the Zwolle moat ring on a bike at 08:30. The whole circuit takes twenty minutes and you meet commuters, herons and nobody else.",
+    "Kampen's Schepenzaal has restricted access hours through the Stedelijk Museum. Go in the early afternoon and ask at the desk rather than assuming it is open with the rest of the collection.",
+    "The Bakkerijmuseum in Hattem bakes to a schedule. Arrive before 14:00 and you will catch something coming out of the oven; arrive at 16:00 and you will see a cold oven.",
+    "Book De Librije, if you want it, at least three months ahead and take the lunch sitting — same kitchen, notably lower price."
+  ],
+  "typeSpecific": {
+    "raw": {
+      "Total Distance / Terrain": "45–55 km walked, plus 40–60 km optional cycling; entirely flat, brick and cobble, one river dyke",
+      "Who It Suits": "Readers, market-goers, cyclists who don't want to race, anyone who found Amsterdam exhausting"
+    },
+    "surface": "45–55 km walked, plus 40–60 km optional cycling; entirely flat, brick and cobble, one river dyke",
+    "distanceKm": 45,
+    "elevationM": null,
+    "verticalM": null,
+    "technicalRating": null,
+    "transitPass": null,
+    "hutBooking": null,
+    "liftNetwork": null,
+    "snowReliability": null,
+    "windConditions": null,
+    "gpxReady": null,
+    "bookingTimeline": null,
+    "audience": "Readers, market-goers, cyclists who don't want to race, anyone who found Amsterdam exhausting"
+  },
+  "packingNotes": [
+    "A genuinely waterproof jacket with a hood: umbrellas are useless in the wind that comes down this river valley.",
+    "Shoes that survive wet cobbles — Deventer's Bergkwartier lanes and Zutphen's squares are uneven brick.",
+    "Cycling gloves and a buff for April and September; the dyke to Hattem is fully exposed.",
+    "A folding tote for the markets, and a second one for books.",
+    "A debit card as well as a credit card — some Dutch shops accept only Maestro or local debit.",
+    "Bike lights if you rent for a full day; Dutch police do enforce this after dark.",
+    "Layers rather than one thick coat; the towns are warm indoors and the river is not.",
+    "Binoculars for the church interiors and the herons on the outer meadows."
+  ],
+  "whatCouldGoWrong": [
+    "**You arrive on a Monday and the shops are shut.** Fallback: the churches, the Waag museum, De Fundatie and the Bakkerijmuseum keep their own hours, and both market towns are worth a walk regardless. Shift your shopping to Tuesday.",
+    "**The wind makes cycling miserable.** Fallback: every leg here has a train or bus equivalent — Hattem by bus from Zwolle, Kampen by the branch line — and none of the itinerary depends on a bike.",
+    "**Rooms vanish for the Boekenmarkt or the Dickens Festijn.** Deventer sells out entirely for both. If you want either, book six to nine months out or base in Zwolle and commute in by train.",
+    "**Winter flooding closes the riverside paths.** The Worp side of the Deventer ferry and the low IJssel meadows can be underwater from December to March. The dyke routes and all four town centres stay open.",
+    "**You run out of town.** These are small places, and three days in one is genuinely three days. If Deventer starts to feel finished on Day 3, use the extra half-day for Bronkhorst — the smallest city in the Netherlands, thirty minutes south of Zutphen — rather than filling time indoors."
+  ],
+  "sources": {
+    "verified": null,
+    "confidenceNotes": null
+  },
+  "verifyFlags": [],
+  "verifyFlagCount": 0,
+  "volatilePricing": false,
+  "wordCount": 2580,
+  "dataVintage": 2026,
+  "provenance": {
+    "batch": "western-central",
+    "sourceFile": "cartatripsv1/trips/nl-cozy-towns-hanseatic-ijssel.md",
+    "sourceFormat": "md+yaml-frontmatter (one file per trip)",
+    "sourceId": "nl-cozy-towns-hanseatic-ijssel",
+    "ingestedAt": "2026-09-02",
+    "synthesized": false
+  }
+}

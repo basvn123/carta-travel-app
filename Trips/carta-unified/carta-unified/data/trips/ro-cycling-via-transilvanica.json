@@ -1,0 +1,296 @@
+{
+  "id": "ro-cycling-via-transilvanica",
+  "sourceId": "romania-via-transilvanica-cycling",
+  "slug": "ro-cycling-via-transilvanica",
+  "title": "Andesite Milestones: A Gravel Week on the Via Transilvanica",
+  "country": "Romania",
+  "countryCode": "RO",
+  "countries": [
+    {
+      "name": "Romania",
+      "code": "RO"
+    }
+  ],
+  "isMultiCountry": false,
+  "region": "Eastern & Southeastern Europe",
+  "regionKey": "eastern-southeastern",
+  "subRegion": "Terra Saxonica and Terra Siculorum — the Saxon villages of Mureș, Brașov and Sibiu counties",
+  "tripType": "Cycling Trips",
+  "tripTypeId": 1,
+  "tripTypeSlug": "cycling",
+  "durationDays": 7,
+  "bestPeriod": {
+    "months": [
+      5,
+      6,
+      9
+    ],
+    "monthNames": [
+      "May",
+      "June",
+      "September"
+    ],
+    "window": "the first three weeks of September — hay cut, tracks dry, hills green, and the clay hard enough to ride",
+    "note": null,
+    "avoid": "any week after prolonged rain (the clay sections become unrideable) and mid-July–August heat",
+    "raw": null
+  },
+  "budgetTier": "€",
+  "budgetTierRange": [
+    1,
+    1
+  ],
+  "budgetTierRaw": "€",
+  "budget": {
+    "currency": "EUR",
+    "totalEur": {
+      "low": 610,
+      "high": 1060
+    },
+    "totalNote": "€610–€1,060",
+    "breakdown": {
+      "accommodation": {
+        "lowEur": 230,
+        "highEur": 400,
+        "note": "€230–€400 (€35–€60/night in Saxon village guesthouses, most with dinner)"
+      },
+      "food": {
+        "lowEur": 140,
+        "highEur": 210,
+        "note": "€140–€210 (€20–€30/day — guesthouse half-board is the norm and the best food on the route)"
+      },
+      "transport": {
+        "lowEur": 180,
+        "highEur": 330,
+        "note": "€180–€330 (gravel bike hire or air freight, CFR trains, one support transfer)"
+      },
+      "activities": {
+        "lowEur": 60,
+        "highEur": 120,
+        "note": "€60–€120 (fortified church entries, Viscri and Biertan, a guide day)"
+      }
+    },
+    "perDayEur": {
+      "low": 87,
+      "high": 151
+    }
+  },
+  "profile": {
+    "difficulty": 3,
+    "difficultyLabel": "Active",
+    "difficultyNote": "Moderate",
+    "fitnessLevel": "Moderate",
+    "crowdLevel": null,
+    "familyFriendly": null,
+    "carRequired": null
+  },
+  "basecamps": [
+    "Sighișoara",
+    "Viscri",
+    "Rupea",
+    "Mediaș"
+  ],
+  "gatewayAirport": "Fly into Sibiu (SBZ), Târgu Mureș (TGM) or Cluj (CLJ). CFR trains reach Sighișoara from Brașov (2 h 15), Cluj (3 h 30) and Bucharest (4 h 30–5 h). Finish on a train or flight out of Sibiu.",
+  "gatewayAirportCode": "SBZ",
+  "languages": [
+    "Romanian",
+    "Hungarian",
+    "German (residually, in the Saxon villages)"
+  ],
+  "currency": "Romanian leu (RON) — roughly 5.0–5.3 RON to the euro during 2026",
+  "emergencyNumber": "112 (Salvamont: 0725 826 668)",
+  "coordinates": {
+    "lat": 46.2214,
+    "lon": 24.7928,
+    "precision": "city",
+    "matchedPlace": "Sighișoara",
+    "source": "geonames (geonamescache, cities > 15k)"
+  },
+  "tags": [
+    "gravel",
+    "via-transilvanica",
+    "saxon-villages",
+    "viscri",
+    "shepherd-dogs",
+    "bikepacking",
+    "transylvania"
+  ],
+  "summary": "A carved stone every kilometre, an orange T on a fence post, and 300 km of Transylvania that no road atlas makes look interesting. This is riding through hay meadows and oak forest between Saxon villages with…",
+  "summaryGenerated": false,
+  "hook": "A carved stone every kilometre, an orange T on a fence post, and 300 km of Transylvania that no road atlas makes look interesting. This is riding through hay meadows and oak forest between Saxon villages with fortified churches and forty remaining German speakers, on a surface that swings from smooth commune asphalt to clay ruts that would stop a tractor. The hills are short and relentless, the guesthouse dinners are enormous, and the shepherd dogs are the real terrain.",
+  "snapshot": {
+    "Country": "Romania",
+    "Trip type": "Cycling Trips",
+    "Duration": "7 days",
+    "Best period": "May–June and September",
+    "Budget tier": "€",
+    "Difficulty": "Moderate",
+    "Start / End": "Sighișoara → Sibiu (point-to-point, ~305 km, ~5,200 m ascent)",
+    "Getting there": "Fly into Sibiu (SBZ), Târgu Mureș (TGM) or Cluj (CLJ). CFR trains reach Sighișoara from Brașov (2 h 15), Cluj (3 h 30) and Bucharest (4 h 30–5 h). Finish on a train or flight out of Sibiu."
+  },
+  "itinerary": [
+    {
+      "day": 1,
+      "title": "Sighișoara and a shakedown",
+      "morning": "Arrive in **Sighișoara**, collect or build the bike, and walk the citadel — the Clock Tower, the Covered Stairway up to the Church on the Hill, and the last inhabited medieval citadel in Europe still functioning as a town.",
+      "afternoon": "A short loop east on the Via Transilvanica towards **Hetiur** and back, purely to find the orange T, meet your first milestone, and check that the gearing and tyre pressure suit 10% pasture ramps.",
+      "evening": "Dinner in the lower town. Set the bike up properly tonight: mud clearance, spare hanger, two tubes, and a chain that will survive clay.",
+      "dayStats": "22 km / +350 m",
+      "sleep": null
+    },
+    {
+      "day": 2,
+      "title": "A taste of Terra Siculorum",
+      "morning": "Transfer or train north-east to **Odorheiu Secuiesc**, the Székely town at the heart of Terra Siculorum — Hungarian-speaking, with its own architecture and a completely different village pattern from the Saxon lands.",
+      "afternoon": "Ride the Via Transilvanica back south-west out of Odorheiu through the Székely hill villages: long grassy doubletrack, oak woodland, and milestones set into hedgerows. This is the quietest riding of the week.",
+      "evening": "Finish at a guesthouse on the section end and eat *kürtőskalács* fresh off the spit. Székely cooking runs to *gulyás* and stuffed cabbage — order both.",
+      "dayStats": "48 km / +820 m",
+      "sleep": null
+    },
+    {
+      "day": 3,
+      "title": "Saschiz, Criț and the clay",
+      "morning": "Back to Sighișoara and out west on the route to **Saschiz**, whose fortified church and hilltop citadel are UNESCO-listed as part of the Villages with Fortified Churches in Transylvania.",
+      "afternoon": "The section on to **Criț** is the first serious clay. Ridable and enjoyable dry; a shoulder-carry wet. Criț's church has a Saxon graveyard with almost no living German community left to fill it.",
+      "evening": "Down to **Viscri**. Guesthouse dinner — this village's houses were restored under the Mihai Eminescu Trust and the whole street is lime-washed in blues and greens.",
+      "dayStats": "52 km / +900 m",
+      "sleep": null
+    },
+    {
+      "day": 4,
+      "title": "Viscri, Bunești and Rupea",
+      "morning": "The **Viscri fortified church**, UNESCO-listed, white-walled and unheated, plus the village blacksmith and the woollen-sock cooperative. Do this before riding; the coaches arrive at 11:00.",
+      "afternoon": "Out via **Bunești** — the junction village on the DN13 — and the pasture climb to **Rupea**, where a huge basalt-hilltop citadel stands over the road, restored and open. The Rupea approach is the best descent of the week.",
+      "evening": "Guesthouse in Rupea or Homorod. *Ciorbă*, *sarmale*, *palincă*; ask the host to fill your bottles from the well rather than the tap.",
+      "dayStats": "46 km / +780 m",
+      "sleep": null
+    },
+    {
+      "day": 5,
+      "title": "Homorod, Cața, Ungra",
+      "morning": "**Homorod**'s Romanesque-cored fortified church, then a long forest-track section south — genuinely remote riding, with more roe deer than people.",
+      "afternoon": "**Cața** and **Ungra**, the two quietest Saxon villages on the route, on rolling clay and pasture. Ungra sits above the Olt; from the ridge the **Făgăraș** wall appears to the south, 2,500 m and usually with snow on it.",
+      "evening": "Guesthouse in the Făgăraș foothills. This is the day to check the forecast properly — everything from here west depends on whether the clay stays hard.",
+      "dayStats": "58 km / +950 m",
+      "sleep": null
+    },
+    {
+      "day": 6,
+      "title": "North-west to Biertan and Richiș",
+      "morning": "Transfer or ride north-west to **Biertan**, whose fortified church — a triple ring of walls, the famous multi-locked sacristy door — was the seat of the Saxon Lutheran bishops and is the best-preserved of the lot.",
+      "afternoon": "The short, beautiful ride over the hill to **Richiș**, a village with a strikingly Gothic-Cistercian church and a slow trickle of returning Saxon descendants, then on towards **Mediaș**.",
+      "evening": "**Mediaș**: the leaning Trumpeters' Tower, a real town centre, and a proper restaurant meal after five days of guesthouse cooking.",
+      "dayStats": "47 km / +810 m",
+      "sleep": null
+    },
+    {
+      "day": 7,
+      "title": "Into Sibiu",
+      "morning": "West out of Mediaș on the Terra Vinum ground — vineyards on the south-facing slopes, gravel between them, easier gradients than anything so far.",
+      "afternoon": "The long approach into **Sibiu** through Șura Mare, finishing in the Piața Mare. Wash the bike before you box it; Transylvanian clay sets like cement.",
+      "evening": "Sibiu. Eat on the Piața Mică under the Bridge of Lies, drink something local, and count how many andesite milestones you photographed.",
+      "dayStats": "62 km / +680 m",
+      "sleep": null
+    }
+  ],
+  "accommodationStrategy": [
+    {
+      "rank": 1,
+      "name": "A restored Saxon house at Viscri",
+      "style": "village guesthouse",
+      "location": "Viscri",
+      "description": "Viscri's guesthouses are restored 18th-century Saxon houses with barns — meaning a lockable stone outbuilding for the bikes, an outdoor tap and hose for the clay, and a host who cooks dinner because there is nowhere else to eat.",
+      "booking": "3–5 weeks ahead, direct by phone; Viscri fills at weekends [VERIFY: current nightly rates].",
+      "priceNote": null
+    },
+    {
+      "rank": 2,
+      "name": "A guesthouse in Rupea or Homorod",
+      "style": "village *pensiune*",
+      "location": "Brașov county",
+      "description": "the midpoint of the Saxon crossing, on the DN13 so a support car or a bail-out taxi can reach you, with the Rupea citadel and a railway station both within reach if the weather turns and you need to skip a section.",
+      "booking": "2–3 weeks ahead; half-board is standard and worth taking.",
+      "priceNote": null
+    },
+    {
+      "rank": 3,
+      "name": "Hotel or pension in the Sighișoara lower town",
+      "style": "small hotel",
+      "location": "Sighișoara",
+      "description": "bookending the trip in the lower town rather than the citadel means level access, parking, a bike-build space and a five-minute walk to the station — the citadel's cobbles and stairs are a nightmare with a bike bag.",
+      "booking": "3–4 weeks ahead; confirm secure indoor bike storage explicitly before you pay.",
+      "priceNote": null
+    }
+  ],
+  "logistics": {
+    "connectivity": "Romanian mobile data is fast and cheap, and 4G reaches most Saxon villages. Forest sections between Homorod and Cața have gaps. Download the whole route offline — the blaze is not a substitute for a GPX in fog.",
+    "emergency": "**112**. In the hills, **Salvamont 0725 826 668**. Dog bites need medical attention and a rabies risk assessment the same day — Romania is not rabies-free and rural dogs are frequently unvaccinated.",
+    "weather": "Transylvanian summer storms build fast in the afternoon; the danger to a cyclist is not lightning but the clay, which goes from rideable to impossible in twenty minutes of rain and takes 24–48 hours of sun to recover. Build a rest day into a seven-day plan.",
+    "bookingWindows": "Guesthouses 2–5 weeks; Viscri and Biertan longer at weekends. Bike hire and luggage transfer 4–8 weeks — the operators are small and their fleets are smaller.",
+    "money": "Village guesthouses, church keyholders and roadside honey sellers are cash. Carry 700–1,000 RON (€135–€190). ATMs exist in Sighișoara, Rupea, Mediaș and Sibiu and nowhere between them.",
+    "transportRules": "CFR needs a **bicycle supplement** and a service with bike space; *Regio* trains are the dependable ones. If you drive a support car, the **rovinietă** applies on national roads — category A, 1 day €3.50 (~18 RON), 10 days €6 (~31 RON), 30 days €9.50 (~50 RON); there is no 7-day product.",
+    "permits": "No permit for the Via Transilvanica; it is free to walk and ride. Fortified churches charge small entry fees and several are opened on request by a keyholder living nearby [VERIFY: current fortified-church entry fees at Viscri, Biertan and Saschiz]. Wild camping is tolerated off the route in unfenced forest but not on pasture in use.",
+    "health": null,
+    "gettingThere": null,
+    "other": []
+  },
+  "proTips": [
+    "Check rainfall for the previous **three days**, not the forecast. The clay's state is a function of what already fell, and a sunny morning after a wet night is the worst trap on this route.",
+    "Fit a **40–45 mm tyre with real mud clearance** and carry a stick or a length of dowel — for scraping the clay off the frame, and not incidentally for the dogs.",
+    "Photograph the milestone number at every junction you doubt. If you lose the blaze, the last number you saw is what Tășuleasa Social or a local will use to find you.",
+    "Arrive at Viscri and Biertan **before 10:00 or after 16:00**. Both are on the coach circuit from Brașov and both are empty either side of the middle of the day.",
+    "Learn *\"Ciobane, cheamă câinii!\"* — shepherd, call the dogs. Said loudly and early, it resolves 90% of encounters before they start.",
+    "Book **half-board everywhere**. Saxon villages have no restaurants; the guesthouse kitchen is the only food, it costs €8–€12, and it is better than the towns.",
+    "Ride the section **into** Sibiu rather than out of it. The Terra Vinum gradients favour the westbound direction and finishing in the Piața Mare beats starting there."
+  ],
+  "typeSpecific": {
+    "raw": {
+      "The route": "The **Via Transilvanica** is a **waymarked long-distance route of roughly 1,400 km** running diagonally across Romania from **Putna** in Bucovina to **Drobeta-Turnu Severin** on the Danube, built from 2018 onwards by the **Asociația Tășuleasa Social** with volunteer labour. It is divided into named *terras* — Bucovinei, Dacica, Siculorum, **Saxonica**, Vinum, Ardealului, Banatica. This week rides the **Terra Saxonica** heart, with a taste of **Terra Siculorum** and a Terra Vinum finish into Sibiu.",
+      "Waymarking": "Two systems, both used. The **orange \"T\" blaze** is painted on posts, trees, walls and rocks, and it is the one you follow minute to minute. The **carved andesite milestones** — one roughly every kilometre, each numbered, quarried and cut by hand — are the route's signature and the best confirmation you are still on it. Milestone numbers run from the Putna end, so they count **down** as you ride south-west. Download the official GPX before you leave; the blaze is good but not infallible on pasture.",
+      "Is it legally rideable?": "The Via Transilvanica is **designed and promoted for walking, cycling and horseback**, and the great majority of it is legally open to bikes. It is not, however, uniformly *practically* rideable: sections cross narrow single-track through forest, steep eroded gullies and, in the mountain *terras*, terrain where you will push. Within Terra Saxonica the ridable proportion is high — call it 85–90% — but expect short carries. Some segments cross private pasture on customary access; ride through, do not stop, and close gates. [VERIFY: current official cycling guidance and any walkers-only segments in Terra Saxonica]",
+      "Surface split": "Roughly: **35% forest track and gravel doubletrack**, **25% sheep-pasture doubletrack** (grass over hard-packed earth, fine when dry, greasy when not), **25% commune asphalt** linking villages, and **15% clay**. That last figure is the one that decides your week. **The clay sections between Saschiz, Criț and Bunești, and again around Cața and Ungra, are genuinely unrideable after rain** — the soil balls up in the frame and drivetrain within fifty metres and the bike becomes a wheelbarrow. This is a **40–45 mm gravel-tyre trip** with generous mud clearance; anything narrower is wrong and anything wider is unnecessary.",
+      "Per-day distance and elevation": "Day 1 shakedown 22 km / +350 m. Day 2 (Terra Siculorum) 48 km / +820 m. Day 3 52 km / +900 m. Day 4 46 km / +780 m. Day 5 58 km / +950 m. Day 6 47 km / +810 m. Day 7 62 km / +680 m. Total ~305 km / ~5,200 m. **The Transylvanian hills roll harder than the map suggests** — these are 60–120 m rises repeated a dozen times a day at 8–12%, and the accumulated climbing is closer to an Alpine col day than the profile implies.",
+      "Shepherd dogs — the single biggest hazard": "Not bears, not traffic. Transylvanian flocks are guarded by **Ciobănesc Românesc Carpatin, Mioritic and de Bucovina** dogs, 40–60 kg, bred to drive off wolves, and a cyclist moving fast past a flock triggers exactly the behaviour they exist for. **The technique:** slow down and **stop pedalling well before you reach them**; **dismount and put the bike between you and the dogs**; walk steadily on, without running, without shouting, without eye contact; keep the bike as a barrier and keep moving away from the flock, which is what they want. Shout for the shepherd — ***\"Ciobane!\"*** — and he will normally call them off. Never sprint: they are faster than you uphill and they will chase. Carrying a stick or riding with a group helps. **The legal position:** Romania's hunting law (Legea 407/2006) caps sheepfold dogs in hunting grounds at **three in mountain areas, two in hills and one in the plains**, each required to wear a *jujeu* — a wooden restraint on the collar to stop them chasing game. **In practice this is very widely ignored**; flocks of eight or ten unrestrained dogs are common. Know the rule, but plan for the reality.",
+      "Bikes: hire and logistics": "Dedicated gravel-bike hire in **Sighișoara** is thin to non-existent; the practical options are a Brașov- or Bucharest-based operator delivering a bike to your first guesthouse, or bringing your own in a bag. Several Romanian cycling tour operators run supported Via Transilvanica trips and will hire out bikes with luggage transfer between guesthouses, which is the sensible way to do this route without a support car [VERIFY: current gravel-bike hire rates and delivery to Sighișoara].",
+      "CFR trains with a bike": "Romanian Railways carries bicycles only on services with designated bike space, and you need a **bicycle supplement in addition to your own ticket**; on Interregio and long-distance trains this is not guaranteed and staff can refuse a bike if the space is taken. Regional (*Regio*) trains on the Sighișoara–Mediaș–Sibiu and Brașov–Rupea lines are the reliable ones. Bag the bike if you can — a boxed or bagged bike travels as luggage without argument [VERIFY: current CFR bicycle supplement price and which services accept bikes]."
+    },
+    "surface": "Roughly: **35% forest track and gravel doubletrack**, **25% sheep-pasture doubletrack** (grass over hard-packed earth, fine when dry, greasy when not), **25% commune asphalt** linking villages, and **15% clay**. That last figure is the one that decides your week. **The clay sections between Saschiz, Criț and Bunești, and again around Cața and Ungra, are genuinely unrideable after rain** — the soil balls up in the frame and drivetrain within fifty metres and the bike becomes a wheelbarrow. This is a **40–45 mm gravel-tyre trip** with generous mud clearance; anything narrower is wrong and anything wider is unnecessary.",
+    "distanceKm": null,
+    "elevationM": null,
+    "verticalM": null,
+    "technicalRating": "Two systems, both used. The **orange \"T\" blaze** is painted on posts, trees, walls and rocks, and it is the one you follow minute to minute. The **carved andesite milestones** — one roughly every kilometre, each numbered, quarried and cut by hand — are the route's signature and the best confirmation you are still on it. Milestone numbers run from the Putna end, so they count **down** as you ride south-west. Download the official GPX before you leave; the blaze is good but not infallible on pasture.",
+    "transitPass": null,
+    "hutBooking": null,
+    "liftNetwork": null,
+    "snowReliability": null,
+    "windConditions": null,
+    "gpxReady": null,
+    "bookingTimeline": null,
+    "audience": null
+  },
+  "packingNotes": [],
+  "whatCouldGoWrong": [],
+  "sources": {
+    "verified": null,
+    "confidenceNotes": "- Verified: the Via Transilvanica as a ~1,400 km waymarked route from Putna to Drobeta-Turnu Severin, developed by Asociația Tășuleasa Social, marked with an orange T and numbered carved andesite milestones; the *terra* naming including Terra Siculorum and Terra Saxonica; Viscri, Saschiz and Biertan among the UNESCO-listed Villages with Fortified Churches in Transylvania; Legea 407/2006's cap on sheepfold dogs (three in mountains, two in hills, one in plains) with the *jujeu* requirement, and its poor enforcement; the Romanian livestock-guardian breeds (Carpatin, Mioritic, de Bucovina); the rovinietă category A tariff; Salvamont 0725 826 668 and emergency 112. - `[VERIFY]` items in this file: 5 (see inline markers above) - Last reviewed: 2026-09-02"
+  },
+  "verifyFlags": [
+    "current official cycling guidance and any walkers-only segments in Terra Saxonica",
+    "current gravel-bike hire rates and delivery to Sighișoara",
+    "current CFR bicycle supplement price and which services accept bikes",
+    "current nightly rates",
+    "current fortified-church entry fees at Viscri, Biertan and Saschiz"
+  ],
+  "verifyFlagCount": 5,
+  "volatilePricing": true,
+  "wordCount": 2588,
+  "dataVintage": 2026,
+  "provenance": {
+    "batch": "eastern-southeastern",
+    "sourceFile": "cartaeasterneuropetrips/trips/romania-via-transilvanica-cycling.md",
+    "sourceFormat": "md+nested-yaml-frontmatter (one file per trip)",
+    "sourceId": "romania-via-transilvanica-cycling",
+    "ingestedAt": "2026-09-02",
+    "synthesized": false
+  }
+}

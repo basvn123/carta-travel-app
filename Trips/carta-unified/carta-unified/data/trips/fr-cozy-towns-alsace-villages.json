@@ -1,0 +1,320 @@
+{
+  "id": "fr-cozy-towns-alsace-villages",
+  "sourceId": "fr-cozy-towns-alsace-wine-villages",
+  "slug": "fr-cozy-towns-alsace-villages",
+  "title": "Four Walled Villages of the Alsace Wine Road",
+  "country": "France",
+  "countryCode": "FR",
+  "countries": [
+    {
+      "name": "France",
+      "code": "FR"
+    }
+  ],
+  "isMultiCountry": false,
+  "region": "Western & Central Europe",
+  "regionKey": "western-central",
+  "subRegion": "Haut-Rhin, Alsace",
+  "tripType": "Cozy Towns Trips",
+  "tripTypeId": 4,
+  "tripTypeSlug": "cozy-towns",
+  "durationDays": 7,
+  "bestPeriod": {
+    "months": [
+      5,
+      6,
+      9,
+      10
+    ],
+    "monthNames": [
+      "May",
+      "June",
+      "September",
+      "October"
+    ],
+    "window": null,
+    "note": "Start on a Thursday so Ribeauvillé's Saturday market and Colmar's covered market both fall inside the week; September brings the harvest and October the colour.",
+    "avoid": null,
+    "raw": null
+  },
+  "budgetTier": "€€",
+  "budgetTierRange": [
+    2,
+    2
+  ],
+  "budgetTierRaw": "€€",
+  "budget": {
+    "currency": "EUR",
+    "totalEur": {
+      "low": 1150,
+      "high": 1680
+    },
+    "totalNote": null,
+    "breakdown": {
+      "accommodation": {
+        "lowEur": 520,
+        "highEur": 760,
+        "note": null
+      },
+      "food": {
+        "lowEur": 330,
+        "highEur": 470,
+        "note": null
+      },
+      "transport": {
+        "lowEur": 180,
+        "highEur": 260,
+        "note": null
+      },
+      "activities": {
+        "lowEur": 120,
+        "highEur": 190,
+        "note": null
+      }
+    },
+    "perDayEur": {
+      "low": 164,
+      "high": 240
+    }
+  },
+  "profile": {
+    "difficulty": 2,
+    "difficultyLabel": "Moderate",
+    "difficultyNote": null,
+    "fitnessLevel": "Easy",
+    "crowdLevel": "High",
+    "familyFriendly": true,
+    "carRequired": true
+  },
+  "basecamps": [
+    "Riquewihr, Kaysersberg and Eguisheim"
+  ],
+  "gatewayAirport": "Basel-Mulhouse EuroAirport (BSL/MLH)",
+  "gatewayAirportCode": null,
+  "languages": [
+    "French",
+    "Alsatian"
+  ],
+  "currency": "EUR",
+  "emergencyNumber": "112",
+  "coordinates": {
+    "lat": 48.8534,
+    "lon": 2.3488,
+    "precision": "country",
+    "matchedPlace": "Paris",
+    "source": "country capital fallback"
+  },
+  "tags": [
+    "wine-villages",
+    "grand-cru",
+    "market-days",
+    "artisan-food",
+    "slow-travel"
+  ],
+  "summary": "Three fortified wine villages in seven days, nine kilometres apart, with grand cru footpaths, a 1715 cask and two mornings that start at ten.",
+  "summaryGenerated": false,
+  "hook": "The villages on the Route des Vins sit so close together that a week here needs almost no driving. You move three times, never more than twelve kilometres, and spend the rest of the days walking between vine rows and cellar doors. The trick is being inside the walls at seven in the morning and seven at night, when the coaches are somewhere else.",
+  "snapshot": {
+    "Country": "France",
+    "Base(s)": "Riquewihr (3 nights) · Kaysersberg (2 nights) · Eguisheim (2 nights)",
+    "Trip Type": "Cozy Towns Trips",
+    "Duration": "7 days / 7 nights",
+    "Best Period": "May, June, September, October",
+    "Budget Tier": "€€",
+    "Total Distance / Terrain": "Approx. 120 km driven all week; 35–45 km walked, including one 500 m ascent to the Ribeauvillé castles",
+    "Getting There": "EuroAirport Basel-Mulhouse to Colmar by rail via Saint-Louis, approx. 1h; or TGV Paris–Colmar in 2h40",
+    "Who It Suits": "Wine drinkers, slow walkers, food-market people, couples and families who want short days"
+  },
+  "itinerary": [
+    {
+      "day": 1,
+      "title": "Inside the Riquewihr walls",
+      "morning": "Land at Basel-Mulhouse, pick up a car and drive north to Colmar and on to Riquewihr — about an hour in total. Park outside the ramparts; the village core is pedestrian.",
+      "afternoon": "Riquewihr survived the wars with its 16th-century fabric intact. Walk rue du Général-de-Gaulle from the lower gate to the Dolder, the 1291 belfry-gate that closes the top of the street, and look up: dated lintels, oriel windows, and courtyards with wooden galleries behind every arch.",
+      "evening": "Eat in a winstub — the Alsatian tavern format, long tables, tarte flambée and a pitcher of Riesling. Then walk the empty street; by 19:30 the day visitors have gone and Riquewihr belongs to about 1,200 residents.",
+      "dayStats": "Towns visited: 1. Walking: 4 km. Transfer time: approx. 1h from Basel.",
+      "sleep": null
+    },
+    {
+      "day": 2,
+      "title": "Cooperage, then the vine path",
+      "morning": "Nothing before 10:00. Then the Tour des Voleurs and the Maison de Vigneron beside it: a winemaker's house set out as it worked, with the cooper's bench, the hooping tools, the shaving horse and a great beam wine press. This is what village cooperage actually looked like, and it explains the shape of every cask you will see this week.",
+      "afternoon": "Pick up the marked sentier viticole behind the village and walk up through the Grand Cru Schoenenbourg — steep marl and gypsum, the reason Riquewihr Riesling ages — then across to Hunawihr with its fortified church, and back via Zellenberg. About 7 km, two hours, no navigation required.",
+      "evening": "Tastings in the village. Hugel & Fils has been in Riquewihr since 1639; ask to see the Sainte-Catherine foudre, in continuous use since 1715. Dopff au Moulin, a few doors down, makes the Crémant.",
+      "dayStats": "Towns visited: 3. Walking: 9 km. Transfer time: none.",
+      "sleep": null
+    },
+    {
+      "day": 3,
+      "title": "Market morning in Ribeauvillé",
+      "morning": "Five kilometres north, Ribeauvillé holds its weekly market on Saturday mornings, roughly 08:00–12:30, spreading along the Grand'Rue around the Place de la Sinne and its fountain. Munster from the valley farms, bretzels, charcuterie, fruit. Buy lunch.",
+      "afternoon": "Two workshops in one town. Beauvillé, on the edge of Ribeauvillé, still prints table linen by hand on flat screens in a former mill, and sells seconds and ends at the factory shop. The Cave de Ribeauvillé, founded in 1895 and the oldest wine cooperative in France, pours across the Grand Cru Kirchberg de Ribeauvillé and Geisberg.",
+      "evening": "If you have legs left, climb to the Trois Châteaux — Saint-Ulrich, Girsberg and Haut-Ribeaupierre — on the marked path above town. Roughly 500 m of ascent, two hours up, and the ruins look straight down the plain to the Black Forest.",
+      "dayStats": "Towns visited: 2. Walking: 10 km. Transfer time: 20 min return by car.",
+      "sleep": null
+    },
+    {
+      "day": 4,
+      "title": "Nine kilometres, one grand cru",
+      "morning": "The second lie-in: nothing before 10:00. Pack slowly and drive the nine kilometres to Kaysersberg, which sits in the mouth of the Weiss valley under a ruined keep.",
+      "afternoon": "Walk the fortified bridge of 1514, then the church of Sainte-Croix for its carved and painted altarpiece of 1518. Neighbouring Kientzheim, ten minutes on foot, holds the Grand Cru Schlossberg — the first Alsace vineyard classified, in 1975 — and Domaine Paul Blanck's tasting room at its foot.",
+      "evening": "Kaysersberg's main street empties completely after dinner. Domaine Weinbach, at the Clos des Capucins on the edge of the village, receives by appointment only; arrange it before you travel.",
+      "dayStats": "Towns visited: 2. Walking: 6 km. Transfer time: 20 min driving.",
+      "sleep": null
+    },
+    {
+      "day": 5,
+      "title": "Up the valley for cheese and eau-de-vie",
+      "morning": "Drive 12 km up the Weiss to Lapoutroie. The Fromagerie Haxaire has been making and ageing Munster AOP here for generations — washed-rind, straw-mat matured, and eaten with cumin seeds rather than in spite of the smell. The cellars can be visited.",
+      "afternoon": "In the same village, the G. Miclo distillery works the Alsatian eaux-de-vie: kirsch, mirabelle, framboise, poire williams. Tastings are small and strictly for the passenger seat.",
+      "evening": "Back in Kaysersberg, the Albert Schweitzer museum occupies the house where he was born in 1875, three minutes from the bridge. Dinner in the village.",
+      "dayStats": "Towns visited: 2. Walking: 4 km. Transfer time: 45 min return by car.",
+      "sleep": null
+    },
+    {
+      "day": 6,
+      "title": "Jam, a watchman, and the ring village",
+      "morning": "Drive south, stopping at Niedermorschwihr, where Christine Ferber makes her copper-pan preserves at Maison Ferber on rue des Trois Épis. Opening hours are short and idiosyncratic — check before you set out — and the queue is worth it.",
+      "afternoon": "Twelve kilometres on to Eguisheim, whose lanes run in concentric rings around the Place du Château Saint-Léon and its fountain and chapel. Walk the outer ring twice: once for the flowers and once for the dated doorways. Domaine Léon Beyer and Domaine Bruno Sorg both pour in the village, on Grand Cru Eichberg and Pfersigberg.",
+      "evening": "In summer, Turckheim's night watchman still makes his round from the Place Turenne at 22:00, lantern, halberd and horn, from May to October. It is five kilometres away and it is not a re-enactment invented for visitors.",
+      "dayStats": "Towns visited: 3. Walking: 6 km. Transfer time: 40 min driving.",
+      "sleep": null
+    },
+    {
+      "day": 7,
+      "title": "Colmar, and out",
+      "morning": "Colmar is fifteen minutes away. Start at the Marché Couvert on rue des Écoles, the 1865 brick-and-iron hall trading Tuesday to Saturday, roughly 08:00–18:00 — oysters, Munster, horseradish, bretzels.",
+      "afternoon": "The Musée Unterlinden, in a Dominican convent with a 2015 Herzog & de Meuron extension, holds Grünewald's Isenheim altarpiece; it closes on Tuesdays, which is why it sits on this day. Walk out past the Koïfhus of 1480, the Maison Pfister of 1537 and the canals of the Petite Venise.",
+      "evening": "Colmar to Basel-Mulhouse is about an hour by road, less by train and shuttle.",
+      "dayStats": "Towns visited: 1. Walking: 6 km. Transfer time: approx. 1h to Basel.",
+      "sleep": null
+    }
+  ],
+  "accommodationStrategy": [
+    {
+      "rank": 1,
+      "name": "Hôtel de la Couronne",
+      "style": "Small hotel inside the walls",
+      "location": "Riquewihr",
+      "description": "A handful of rooms in a stone house on rue de la Couronne, within the ramparts and a minute from the Dolder. Sleeping inside the walls is the entire argument: you get Riquewihr at 07:00 and 21:00, which is the only time it resembles the village in the photographs. Ask about the loading permit for driving in with bags.",
+      "booking": "3 months ahead for September and October.",
+      "priceNote": "€110–€160 per night"
+    },
+    {
+      "rank": 2,
+      "name": "Hôtel Constantin",
+      "style": "Converted vigneron's house",
+      "location": "Kaysersberg",
+      "description": "A former winegrower's house on rue du Père Kohlman, quiet, small, with a courtyard and its own parking — which is not a given in a village where the street is closed to traffic. Two minutes from the fortified bridge and the church, and ten minutes on foot to the Schlossberg vines at Kientzheim.",
+      "booking": "2 months ahead; the Advent weekends sell out by summer.",
+      "priceNote": "€100–€145 per night"
+    },
+    {
+      "rank": 3,
+      "name": "Hostellerie du Château",
+      "style": "Village hotel on the square",
+      "location": "Eguisheim",
+      "description": "Directly on the Place du Château Saint-Léon, facing the fountain and the chapel, in a half-timbered house with about a dozen rooms. Being on the square means the ring lanes are a doorstep walk at dawn, and you can leave the car parked for two full days.",
+      "booking": "2–3 months ahead.",
+      "priceNote": "€115–€170 per night"
+    }
+  ],
+  "logistics": {
+    "connectivity": null,
+    "emergency": "112 across Europe; in France, 15 for the SAMU medical service and 17 for police. Pharmacies display the on-duty rota for nights and Sundays.",
+    "weather": null,
+    "bookingWindows": null,
+    "money": "Cards everywhere; market stalls and small producers still prefer cash. Carry €60.",
+    "transportRules": null,
+    "permits": null,
+    "health": null,
+    "gettingThere": null,
+    "other": [
+      {
+        "label": "Drink-driving",
+        "text": "The French limit is 0.5 g/L of blood, and 0.2 g/L for licence-holders of under three years. Every serious tasting room has a spittoon and expects you to use it. Colmar taxis will do village runs, and a designated driver is the norm here."
+      },
+      {
+        "label": "Tasting appointments",
+        "text": "Village co-operatives and the larger houses have walk-in tasting rooms. Named domaines — Weinbach, Zind-Humbrecht, Trimbach — are appointment-only, by email, usually a few weeks out. Expect a €10–€20 tasting fee, often waived on purchase."
+      },
+      {
+        "label": "Village traffic",
+        "text": "Riquewihr, Eguisheim and Kaysersberg close their cores to cars. Use the paid car parks outside the walls, around €5–€8 per day, and ask your hotel to authorise a short loading window."
+      },
+      {
+        "label": "Crit'Air",
+        "text": "France's air-quality sticker is required in Strasbourg's low-emission zone. Order one online before travelling if your route touches Strasbourg; Colmar and the villages do not currently require it."
+      },
+      {
+        "label": "Closing days",
+        "text": "Many Alsatian restaurants close Sunday evening and all day Monday and Tuesday. Museums generally close Tuesday, and the covered market in Colmar closes Monday."
+      },
+      {
+        "label": "Harvest",
+        "text": "The *vendanges* run roughly mid-September to mid-October. Cellars are working, tasting rooms may shut without notice, and tractors own the vineyard lanes."
+      }
+    ]
+  },
+  "proTips": [
+    "Walk the sentier viticole between Riquewihr and Hunawihr in the late afternoon: the path faces east, so the light comes over your shoulder onto the Schoenenbourg slope rather than into the lens.",
+    "Ask at Hugel to see the 1715 Sainte-Catherine cask. It is not on the standard tasting and they will usually show it if the cellar is quiet.",
+    "Buy from the Cave de Ribeauvillé rather than the village boutiques: co-operative pricing on grand cru bottlings runs meaningfully below the shop shelves ten metres away.",
+    "Order Munster with cumin and eat it at the end, not with dessert. Ask for the Haxaire *fermier* by name on any cheese board in the valley.",
+    "Riquewihr and Eguisheim take their coach traffic between 10:30 and 17:00. Do interiors and tastings then; walk the streets at 07:30 and after 19:00.",
+    "Book the Turckheim watchman round for a clear evening. He does not go out in heavy rain, and there is no schedule to appeal to.",
+    "A wine box from any co-operative ships or travels far better than bottles in a suitcase; most cellars sell purpose-made six-bottle flight cases for a few euros."
+  ],
+  "typeSpecific": {
+    "raw": {
+      "Total Distance / Terrain": "Approx. 120 km driven all week; 35–45 km walked, including one 500 m ascent to the Ribeauvillé castles",
+      "Who It Suits": "Wine drinkers, slow walkers, food-market people, couples and families who want short days"
+    },
+    "surface": "Approx. 120 km driven all week; 35–45 km walked, including one 500 m ascent to the Ribeauvillé castles",
+    "distanceKm": 120,
+    "elevationM": null,
+    "verticalM": null,
+    "technicalRating": null,
+    "transitPass": null,
+    "hutBooking": null,
+    "liftNetwork": null,
+    "snowReliability": null,
+    "windConditions": null,
+    "gpxReady": null,
+    "bookingTimeline": null,
+    "audience": "Wine drinkers, slow walkers, food-market people, couples and families who want short days"
+  },
+  "packingNotes": [
+    "Shoes that handle both cobbles and a chalky vineyard path; the sentier viticole is dusty in summer and slick after rain.",
+    "A layer for the Weiss valley, which sits higher and colder than the plain.",
+    "Sun protection for the vine paths, which have no shade at all between May and September.",
+    "A folding six-bottle carrier or padded wine sleeves if you plan to fly home with anything.",
+    "Cash for markets, car parks and the Lapoutroie cellars.",
+    "A light waterproof — Vosges foothill weather turns fast in the afternoon.",
+    "Something smarter than walking clothes for one dinner; Alsatian restaurants are informal but not scruffy."
+  ],
+  "whatCouldGoWrong": [
+    "**Every village is full of coaches.** Restructure rather than relocate. Hunawihr, Zellenberg, Niedermorschwihr and Kientzheim take almost no group traffic and are all within five kilometres.",
+    "**A domaine cancels because it is harvest.** Cellar doors in the co-operatives stay open through the vendanges; switch to the Cave de Ribeauvillé or Wolfberger at Eguisheim.",
+    "**Rain for two days.** Unterlinden, the Beauvillé works, the Haxaire cellars, the Miclo distillery and the Riquewihr museums make a full wet-weather week between them.",
+    "**You cannot park at your hotel.** Alsace village cores are genuinely closed. Confirm the loading arrangement at booking, and travel with bags you can wheel or carry 300 m over cobbles.",
+    "**Someone has to drive after tastings.** Build the week around one non-drinking driver per day, or use Colmar-based taxis for the Ribeauvillé and Lapoutroie legs."
+  ],
+  "sources": {
+    "verified": null,
+    "confidenceNotes": null
+  },
+  "verifyFlags": [],
+  "verifyFlagCount": 0,
+  "volatilePricing": false,
+  "wordCount": 2128,
+  "dataVintage": 2026,
+  "provenance": {
+    "batch": "western-central",
+    "sourceFile": "cartatripsv1/trips/fr-cozy-towns-alsace-wine-villages.md",
+    "sourceFormat": "md+yaml-frontmatter (one file per trip)",
+    "sourceId": "fr-cozy-towns-alsace-wine-villages",
+    "ingestedAt": "2026-09-02",
+    "synthesized": false
+  }
+}

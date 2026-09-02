@@ -40,6 +40,9 @@ const WHY_KEY = {
   // The listed tier's one honest line: shipped by the region
   // programme's floor fill, never by a scored row.
   unrated_coverage: 'region.listedNote',
+  // "Draw the map instead", the photo engine's code for a row with no
+  // publishable picture. Same key the mountain layer renders.
+  no_photo_map_card: 'photo.mapCard',
   area: 'lake.whyArea',
   depth: 'lake.whyDepth',
   elevation: 'lake.whyElevation',
@@ -74,6 +77,12 @@ const WHY_KEY = {
   unesco: 'lake.whyUnesco',
   activities: 'lake.whyActivities',
   shoreWalk: 'lake.whyShoreWalk',
+  // Shore access, new in lake_index_v2. The two are opposites and only one of
+  // them is ever true of a lake: there is a way along the water, or the ways
+  // that touch it say private.
+  shorePath: 'lake.whyShorePath',
+  shoreLaunch: 'lake.whyShoreLaunch',
+  privateShore: 'lake.whyPrivateShore',
   hikeIn: 'lake.whyHikeIn',
   roadAccess: 'lake.whyRoadAccess',
   cableCar: 'lake.whyCableCar',
@@ -110,6 +119,8 @@ const TAG_KEY = {
   designated: 'lake.tagDesignated',
   activities: 'lake.tagWatersports',
   shoreWalk: 'lake.tagShoreWalk',
+  shorePath: 'lake.tagShorePath',
+  privateShore: 'lake.tagPrivateShore',
   hikeIn: 'lake.tagHikeIn',
   forest: 'lake.tagForest',
   area: 'lake.tagBigLake',
@@ -279,9 +290,11 @@ export function accessLabel(code, t) {
 }
 
 /** The order the score breakdown is read in: the components that decide the
- *  most first, which is also the order of their weights. */
+ *  most first, which is also the order of their weights. `photo` and `shore`
+ *  are lake_index_v2's two new terms and sit at the end because they weigh
+ *  the least; a v1 row simply has no bar for them. */
 export const COMPONENT_ORDER = ['scenery', 'swimming', 'acclaim', 'activity',
-  'water', 'wildness'];
+  'water', 'wildness', 'photo', 'shore'];
 
 /** The three the page shows as headline figures, above the breakdown. */
 export const SUB_ORDER = ['scenery', 'swimming', 'activity'];
@@ -315,4 +328,212 @@ export const GEM_CUTOFF = 0.62;
 
 export function isHiddenGem(lake) {
   return (lake.gem || 0) >= GEM_CUTOFF;
+}
+
+/* ---------------------------------------------------------------------------
+ * Filters
+ *
+ * Nine groups, from brief 04 section 4, in the same shape MOUNTAIN_FACETS
+ * uses: a group key, a label, and options that each carry a predicate over
+ * one wire row. Inside a group the options are an OR (a lake is Excellent or
+ * Good); between groups they are an AND (Excellent water AND a shore path),
+ * which is what people mean when they tick two boxes in different rows.
+ *
+ * Swimming leads, for the same reason the swimming verdict rides on every
+ * card: a list that promises beautiful water has to be able to show only the
+ * water you may get into.
+ *
+ * Two of the brief's rows are narrower here than the brief wrote them, and
+ * both narrowings are about not inventing a reading:
+ *
+ *   Setting     the brief asks for Mountain / Forest / Moorland / Lowland /
+ *               Urban / Island from "scenery inputs + WorldCover". WorldCover
+ *               is not joined to this layer, so the five that the scenery
+ *               inputs really do evidence are offered and Moorland is not.
+ *               A chip nothing can ever match is worse than a missing one.
+ *   Protected   Natura 2000 and Emerald polygons are not ingested for lakes
+ *               (the protected-area cache holds OSM centroids). The three
+ *               levels that cache does support are offered instead, and the
+ *               chip says what it means.
+ *
+ * The same rule the beach layer keeps: never render a chip with a zero count.
+ * The counting below is what lets the caller do that.
+ * ------------------------------------------------------------------------ */
+
+const whyOf = (l, k) => (l.why || []).find((w) => w.k === k);
+const hasWhy = (l, k) => !!whyOf(l, k);
+const hasTag = (l, k) => (l.tags || []).includes(k);
+
+/** Which of the six doings a lake carries, from the `activities` reason's
+ *  comma separated list parameter. */
+export function lakeDoings(lake) {
+  const row = whyOf(lake, 'activities');
+  return new Set(String(row?.list || '').split(',').filter(Boolean));
+}
+
+/** The month numbers (1..12) whose estimated water temperature reaches the
+ *  model's warm threshold. Absent for a lake with no climate sample, which
+ *  is the honest answer rather than "no good months". */
+export function lakeWarmMonths(lake, warmC = 18) {
+  const temps = lake.swim?.temps;
+  if (!Array.isArray(temps) || temps.length !== 12) return [];
+  const out = [];
+  for (let i = 0; i < 12; i += 1) if (temps[i] >= warmC) out.push(i + 1);
+  return out;
+}
+
+const MONTH_CODES = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+  'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+const SIZE_BANDS = [
+  { key: 'pond', test: (l) => (l.size?.areaKm2 ?? 0) > 0
+    && l.size.areaKm2 < 0.1 },
+  { key: 'lake', test: (l) => (l.size?.areaKm2 ?? 0) >= 0.1
+    && l.size.areaKm2 <= 10 },
+  { key: 'large', test: (l) => (l.size?.areaKm2 ?? 0) > 10 },
+];
+
+export const LAKE_FACETS = [
+  {
+    key: 'swim',
+    labelKey: 'lake.filterSwim',
+    toolbar: true,
+    options: [
+      { key: 'yes', labelKey: 'lake.swimYes' },
+      { key: 'limited', labelKey: 'lake.swimLimited' },
+      { key: 'no', labelKey: 'lake.swimNo' },
+      { key: 'unknown', labelKey: 'lake.swimUnknown' },
+    ].map((o) => ({ ...o, test: (l) => l.swim?.rule === o.key })),
+  },
+  {
+    key: 'water',
+    labelKey: 'lake.filterWater',
+    options: [
+      { key: 'excellent', labelKey: 'lake.waterExcellent',
+        test: (l) => l.water?.class === 'Excellent' },
+      { key: 'good', labelKey: 'lake.waterGood',
+        test: (l) => l.water?.class === 'Good' },
+      { key: 'sufficient', labelKey: 'lake.waterSufficient',
+        test: (l) => l.water?.class === 'Sufficient' },
+      { key: 'unrated', labelKey: 'lake.waterUnrated',
+        test: (l) => !l.water?.class },
+    ],
+  },
+  {
+    key: 'setting',
+    labelKey: 'lake.filterSetting',
+    options: [
+      { key: 'mountain', labelKey: 'lake.setMountain',
+        test: (l) => hasTag(l, 'mountains') || hasWhy(l, 'mountains')
+          || (l.size?.elevM ?? 0) >= 800 },
+      { key: 'forest', labelKey: 'lake.setForest',
+        test: (l) => hasWhy(l, 'forest') },
+      { key: 'island', labelKey: 'lake.setIsland',
+        test: (l) => hasWhy(l, 'islands') },
+      { key: 'urban', labelKey: 'lake.setUrban',
+        test: (l) => hasWhy(l, 'resortShore') },
+      { key: 'lowland', labelKey: 'lake.setLowland',
+        test: (l) => (l.size?.elevM ?? 999) < 200 && !hasWhy(l, 'mountains') },
+    ],
+  },
+  {
+    key: 'size',
+    labelKey: 'lake.filterSize',
+    options: SIZE_BANDS.map((b) => ({
+      key: b.key, labelKey: `lake.size${cap(b.key)}`, test: b.test,
+    })),
+  },
+  {
+    key: 'doing',
+    labelKey: 'lake.filterActivity',
+    options: [
+      ...['kayak', 'sail', 'dive', 'boat', 'fish'].map((code) => ({
+        key: code,
+        labelKey: DOING_KEY[code],
+        test: (l) => lakeDoings(l).has(code),
+      })),
+      { key: 'walk', labelKey: 'lake.doShorePath',
+        test: (l) => hasWhy(l, 'shoreWalk') || hasWhy(l, 'shorePath') },
+    ],
+  },
+  {
+    key: 'shore',
+    labelKey: 'lake.filterShore',
+    options: [
+      { key: 'path', labelKey: 'lake.shorePublicPath',
+        test: (l) => hasWhy(l, 'shorePath') },
+      { key: 'beach', labelKey: 'lake.shoreBeach',
+        test: (l) => hasWhy(l, 'shoreBeach') || hasTag(l, 'shoreBeach') },
+      { key: 'limited', labelKey: 'lake.shoreLimited',
+        test: (l) => hasWhy(l, 'privateShore') },
+    ],
+  },
+  {
+    key: 'wild',
+    labelKey: 'lake.filterWildness',
+    options: [
+      { key: 'wild', labelKey: 'lake.wildWild',
+        test: (l) => (l.comp?.wildness ?? 0) >= 0.85 },
+      { key: 'quiet', labelKey: 'lake.wildQuiet',
+        test: (l) => (l.comp?.wildness ?? 0) >= 0.55
+          && (l.comp?.wildness ?? 0) < 0.85 },
+      { key: 'developed', labelKey: 'lake.wildDeveloped',
+        test: (l) => (l.comp?.wildness ?? 1) < 0.55 },
+    ],
+  },
+  {
+    key: 'month',
+    labelKey: 'lake.filterSeason',
+    options: MONTH_CODES.map((code, i) => ({
+      key: code.toLowerCase(),
+      labelKey: `lake.mon${code}`,
+      test: (l) => lakeWarmMonths(l).includes(i + 1),
+    })),
+  },
+  {
+    key: 'prot',
+    labelKey: 'lake.filterProtected',
+    options: [
+      { key: 'np', labelKey: 'lake.protNationalPark',
+        test: (l) => !!l.protected?.np },
+      { key: 'reserve', labelKey: 'lake.protReserve',
+        test: (l) => !!l.protected?.name && !l.protected?.np },
+      { key: 'unesco', labelKey: 'lake.protUnesco',
+        test: (l) => hasTag(l, 'unesco') || hasWhy(l, 'unesco') },
+    ],
+  },
+];
+
+/** Rows that satisfy every group with a selection (OR inside a group). */
+export function applyLakeFacets(rows, state) {
+  let out = rows || [];
+  for (const group of LAKE_FACETS) {
+    const on = state?.[group.key] || [];
+    if (!on.length) continue;
+    const tests = on
+      .map((k) => group.options.find((o) => o.key === k)?.test)
+      .filter(Boolean);
+    if (!tests.length) continue;
+    out = out.filter((row) => tests.some((fn) => fn(row)));
+  }
+  return out;
+}
+
+/**
+ * How many rows each chip would leave, counted inside the pool the OTHER
+ * groups already narrowed and IGNORING its own group's other chips. That is
+ * what lets a chip carry its own number, grey itself out instead of leading
+ * to an empty list, and keep the number still while it is tapped.
+ */
+export function lakeFacetCounts(pool, state) {
+  const out = new Map();
+  if (!pool) return out;
+  for (const group of LAKE_FACETS) {
+    const others = { ...(state || {}), [group.key]: [] };
+    const base = applyLakeFacets(pool, others);
+    for (const option of group.options) {
+      out.set(`${group.key}:${option.key}`, base.filter(option.test).length);
+    }
+  }
+  return out;
 }

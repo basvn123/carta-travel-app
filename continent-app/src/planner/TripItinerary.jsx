@@ -15,6 +15,7 @@ import { groundLinkFor } from '../lib/groundLinks.js';
 import { BagCheck } from '../components/BagCheck.jsx';
 import { fareProv, flightProv, estPrefix, FareTag, BookingNote } from '../components/FareProvenance.jsx';
 import { useI18n } from '../i18n/index.jsx';
+import { usePaywall } from '../hooks/usePaywall.jsx';
 import { SparkIcon, TrainIcon, BusIcon, CarIcon, FerryIcon, BedIcon, ReceiptIcon, ShareIcon, DownloadIcon, LuggageIcon, MapPinIcon, RouteIcon, CalendarIcon, LinkIcon, ChevronDownIcon } from '../components/Icons.jsx';
 import { PlaneIcon } from '../components/TransportIcons.jsx';
 import { TRAVEL_MODE_LABEL } from '../lib/transportLinks.js';
@@ -392,6 +393,11 @@ export function TripItinerary({
     extras, bookingRows,
   };
 
+  // Files need a pass; links do not. Sharing a trip is how somebody else
+  // first hears about Carta, so gating it would tax the only marketing this
+  // product has. See hooks/usePaywall.jsx.
+  const paywall = usePaywall();
+
   // A note under the export row (copy feedback, My Maps import steps, ...).
   const exportNote = (msg, ms = 2500) => {
     setShareState(msg);
@@ -399,11 +405,13 @@ export function TripItinerary({
   };
 
   const handleKml = () => {
+    if (!paywall.require('export')) return;
     downloadKml(label || 'carta-trip', tripKml({ label, stopDetails, dayPlan, fmtDate: fmtLong }));
     exportNote(t('export.myMapsHint'), 15000);
   };
 
   const handleIcs = () => {
+    if (!paywall.require('export')) return;
     const ics = tripIcs(exportPayload);
     if (!ics) return;
     downloadIcs(label || 'carta-trip', ics);
@@ -908,7 +916,10 @@ export function TripItinerary({
                 </button>
                 <button
                   className="itin-export-item"
-                  onClick={() => downloadTripPdf(exportPayload)}
+                  onClick={() => {
+                    if (!paywall.require('export')) return;
+                    downloadTripPdf(exportPayload);
+                  }}
                   title={t('export.downloadPdfTitle')}
                 >
                   <DownloadIcon size={13} /> {t('export.downloadPdf')}

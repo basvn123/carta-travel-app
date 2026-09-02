@@ -1,0 +1,283 @@
+{
+  "id": "es-cycling-girona-costa-brava",
+  "sourceId": "cycling-spain-girona-costa-brava",
+  "slug": "es-cycling-girona-costa-brava",
+  "title": "Girona & the Costa Brava",
+  "country": "Spain",
+  "countryCode": "ES",
+  "countries": [
+    {
+      "name": "Spain",
+      "code": "ES"
+    }
+  ],
+  "isMultiCountry": false,
+  "region": "Southern & Mediterranean Europe",
+  "regionKey": "southern-mediterranean",
+  "subRegion": "Catalonia — Girona & the Costa Brava",
+  "tripType": "Cycling Trips",
+  "tripTypeId": 1,
+  "tripTypeSlug": "cycling",
+  "durationDays": 7,
+  "bestPeriod": {
+    "months": [
+      3,
+      4,
+      5,
+      6,
+      9,
+      10,
+      11
+    ],
+    "monthNames": [
+      "March",
+      "April",
+      "May",
+      "June",
+      "September",
+      "October",
+      "November"
+    ],
+    "window": "March–early June & mid-September–early November",
+    "note": null,
+    "avoid": "August — Costa Brava roads clog with beach traffic and inland temperatures hit 35°C; late December–January brings ice on Rocacorba's upper slopes",
+    "raw": "March–early June & mid-September–early November"
+  },
+  "budgetTier": "€€",
+  "budgetTierRange": [
+    2,
+    3
+  ],
+  "budgetTierRaw": "€€–€€€",
+  "budget": {
+    "currency": "EUR",
+    "totalEur": {
+      "low": 1500,
+      "high": 2400
+    },
+    "totalNote": "€1,500–€2,400 per person, excl. international flights",
+    "breakdown": {
+      "accommodation": {
+        "lowEur": 630,
+        "highEur": 1120,
+        "note": "Girona city hotels €90–€160 pppn; a Costa Brava night costs more"
+      },
+      "food": {
+        "lowEur": 350,
+        "highEur": 560,
+        "note": "Menú del día €14–€18; Girona dinner €30–€45 with wine"
+      },
+      "transport": {
+        "lowEur": 120,
+        "highEur": 230,
+        "note": "Airport transfer, Rodalies R11 legs, one van shuttle to Sant Feliu"
+      },
+      "activities": {
+        "lowEur": 400,
+        "highEur": 490,
+        "note": "Carbon road hire €280–€420/week, Dalí museum €17, café habit"
+      }
+    },
+    "perDayEur": {
+      "low": 214,
+      "high": 343
+    }
+  },
+  "profile": {
+    "difficulty": 4,
+    "difficultyLabel": "Demanding",
+    "difficultyNote": "4/5 — Rocacorba alone is a 992 m summit at 7% average, and the week routinely runs 100 km days",
+    "fitnessLevel": "Demanding",
+    "crowdLevel": null,
+    "familyFriendly": null,
+    "carRequired": null
+  },
+  "basecamps": [],
+  "gatewayAirport": "GRO Girona–Costa Brava, 15 min to the city centre; BCN Barcelona El Prat, 1 h 20 min by AVE plus a short ride",
+  "gatewayAirportCode": "GRO",
+  "languages": [],
+  "currency": null,
+  "emergencyNumber": "112",
+  "coordinates": {
+    "lat": 41.9831,
+    "lon": 2.8249,
+    "precision": "city",
+    "matchedPlace": "Girona",
+    "source": "geonames (geonamescache, cities > 15k)"
+  },
+  "tags": [
+    "road-cycling",
+    "rocacorba",
+    "els-angels",
+    "greenway",
+    "costa-brava",
+    "pro-training-roads",
+    "gravel",
+    "catalonia"
+  ],
+  "summary": "Girona is not a scenic backdrop that happens to have cyclists in it; it is a town whose economy has partly reorganised around them. Within 20 km of the Pont de Pedra you can be on the Els Àngels climb, on the hardpack of the Ruta del Carrilet, or in the Gavarres forest on gravel that has never seen a car. This week strings together the four climbs that define the local calendar — Els Àngels, Rocacorba, Sant Hilari and Sant Grau — connects them with the two greenways that make recovery days genuinely restful, and puts one day on the Costa Brava's coast road between Sant Feliu de Guíxols and Tossa. Expect fast group rides, excellent coffee, and roads whose surface quality is consistently better than anything else in this collection.",
+  "summaryGenerated": false,
+  "hook": null,
+  "snapshot": {},
+  "itinerary": [
+    {
+      "day": 1,
+      "title": "Arrival, bike fit, and Els Àngels",
+      "morning": "Collect the bike from Eat Sleep Cycle on Plaça de Catalunya — allow a full hour for fit, pedals and a shakedown spin. Coffee at Espresso Mafia on Carrer de la Cort Reial.",
+      "afternoon": "Ride the classic opener: out through Quart and Sant Medir, up Els Àngels to the sanctuary at 485 m, then the fast descent to Madremanya and back through Celrà. This is the loop every visiting rider does first, for good reason.",
+      "evening": "Dinner at La Fàbrica on Carrer de la Barca, the cyclists' canteen run by former pro Christian Meier, or tapas at Konig on Plaça Independència.",
+      "dayStats": "52 km / 780 m ascent / 100% paved / Els Àngels 10.4 km at 4.6%",
+      "sleep": "Hotel Nord 1901, Girona"
+    },
+    {
+      "day": 2,
+      "title": "Rocacorba, the reference climb",
+      "morning": "Ride north via Sarrià de Ter and Sant Julià de Ramis, then along the Banyoles road. Warm up properly; Rocacorba punishes anyone who arrives cold.",
+      "afternoon": "The climb: 13.4 km, 940 m, 7% average, 15% pitches, finishing at the masts at 992 m. Descend carefully — the road is narrow, gravel-strewn in places, and there is no run-off. Coffee and a swim at Estany de Banyoles on the way home.",
+      "evening": "Federal Café on Carrer Nou del Teatre for a slower, Anglophone-friendly evening, or Nu on Carrer Abeuradors for a proper Catalan tasting menu.",
+      "dayStats": "92 km / 1,510 m ascent / 100% paved / summit 992 m / max gradient 15%",
+      "sleep": "Hotel Nord 1901, Girona"
+    },
+    {
+      "day": 3,
+      "title": "Gavarres gravel and the Els Metges loop",
+      "morning": "Swap onto a gravel bike and head east into the Gavarres massif through Sant Martí Vell and Madremanya. The pistes here are hardpack forest road with occasional loose granite decomposition.",
+      "afternoon": "Ride the Els Metges loop — the medieval villages of Sant Martí Vell, Púbol with its Dalí-decorated castle for Gala, and Monells with its arcaded square. Return on the Ter river path.",
+      "evening": "Vermut and anchovies at La Vermuteria, then dinner at Le Bistrot on the Pujada de Sant Domènec steps for pizzes de coca.",
+      "dayStats": "74 km / 890 m ascent / 45% paved, 50% hardpack piste, 5% loose gravel / Púbol castle €10",
+      "sleep": "Hotel Nord 1901, Girona"
+    },
+    {
+      "day": 4,
+      "title": "Sant Hilari and the Guilleries",
+      "morning": "West through Bescanó and Anglès, then the long, even climb to Sant Hilari Sacalm — 17.2 km at 4.1%, a genuinely rhythmic ascent with tree cover most of the way.",
+      "afternoon": "Descend via Osor and Sant Feliu de Pallerols, then join the Carrilet I greenway at Amer for the flat run home. The greenway's packed sand is fine on 28 mm.",
+      "evening": "Cal Ros on Carrer Cort Reial, an old-school Girona house doing suquet and rice dishes; ask for the day's arròs.",
+      "dayStats": "118 km / 1,690 m ascent / 78% paved, 22% greenway hardpack / Sant Hilari summit 801 m",
+      "sleep": "Hotel Nord 1901, Girona"
+    },
+    {
+      "day": 5,
+      "title": "The Carrilet to the sea, and Sant Grau",
+      "morning": "Ride the Ruta del Carrilet II end to end: 41.9 km of packed granite sand from Girona through Llagostera and Castell d'Aro, mostly downhill at half a percent, to Sant Feliu de Guíxols.",
+      "afternoon": "Take Sant Grau up from Sant Feliu — 8.6 km at 4.4% to 468 m — then the GI-682 corniche to Tossa de Mar, which is the single best sea-cliff road in Catalonia. Swim at Cala Pola.",
+      "evening": "Can Segura in Tossa for fideuà, or back in Sant Feliu, Can Dulce on Carrer Sant Joan.",
+      "dayStats": "88 km / 920 m ascent / 52% greenway hardpack, 48% paved / Carrilet II 41.9 km at 0.5% average",
+      "sleep": "Hotel Sant Pol, Sant Feliu de Guíxols"
+    },
+    {
+      "day": 6,
+      "title": "Empordà plain, Peratallada and back inland",
+      "morning": "North through Palamós and Palafrugell to Peratallada, a stone village so intact it is essentially a film set, then Pals with its brick tower and rice paddies.",
+      "afternoon": "Turn inland through La Bisbal d'Empordà, the ceramics town, and climb Santa Pellaia — 6.8 km at 5.2% to 465 m — back over the Gavarres to Girona.",
+      "evening": "L'Alqueria on Carrer Ginesta for the best arròs a la cassola in the city; book two days ahead.",
+      "dayStats": "104 km / 1,180 m ascent / 92% paved, 8% hardpack / Santa Pellaia 6.8 km at 5.2%",
+      "sleep": "Hotel Nord 1901, Girona"
+    },
+    {
+      "day": 7,
+      "title": "Mare de Déu del Mont, or a soft last spin",
+      "morning": "The optional big finish: north via Banyoles and Besalú's eleventh-century bridge to Mare de Déu del Mont, 18.5 km at 5.3% to a sanctuary at 1,115 m with the Pyrenees laid out north. The soft option is the Ter river path to Sant Julià and back.",
+      "afternoon": "Return the bike to Eat Sleep Cycle, then walk Girona's Passeig de la Muralla along the Carolingian walls and through the Call, the medieval Jewish quarter.",
+      "evening": "Final coffee at La Fàbrica, then the 15-minute transfer to GRO.",
+      "dayStats": "126 km / 1,980 m ascent (big option) or 38 km / 210 m (soft option) / summit 1,115 m",
+      "sleep": "Hotel Nord 1901, Girona"
+    }
+  ],
+  "accommodationStrategy": [
+    {
+      "rank": 1,
+      "name": "Hotel Nord 1901",
+      "style": "townhouse hotel",
+      "location": "Girona centre",
+      "description": "Two minutes' walk from Eat Sleep Cycle on Plaça de Catalunya, with a locked garage for bikes and a small pool for post-ride legs. On the Mercadal side of the river, so no cobbles or steps with a bike. Roughly €130–€190 double.",
+      "booking": null,
+      "priceNote": null
+    },
+    {
+      "rank": 2,
+      "name": "Bike Breaks Girona Cycle Centre apartments",
+      "style": "cyclist-specific",
+      "location": "Girona",
+      "description": "Purpose-built for riders: workshop access, wash bay, laundry, and a shop downstairs that will fix anything. Less charming than a hotel, considerably more useful across a six-day riding block. Around €90–€140 for a twin apartment.",
+      "booking": null,
+      "priceNote": null
+    },
+    {
+      "rank": 3,
+      "name": "Hotel Sant Pol",
+      "style": "seafront hotel",
+      "location": "Sant Feliu de Guíxols",
+      "description": "The right one-night coastal stop at the far end of the Carrilet, with bike storage and a beach 30 m from the door, positioned at the foot of the Sant Grau climb. €110–€170 double, and it lets you split the week rather than commuting back to Girona.",
+      "booking": null,
+      "priceNote": null
+    }
+  ],
+  "logistics": {
+    "connectivity": "4G and 5G throughout, including on Rocacorba's summit. Spain is in the EU so roaming applies. Strava heat-mapping is unusually reliable here for finding legal gravel — but check for private-estate signs in the Gavarres.",
+    "emergency": "112. Catalonia's GEM mountain rescue covers the Guilleries and Montseny. Spain honours EHIC/GHIC. Hospital Josep Trueta in Girona is the trauma centre. Helmets are compulsory outside urban areas in Spain and on all roads for under-16s.",
+    "weather": "The tramuntana, a dry north wind off the Pyrenees, can gust above 90 km/h in the Empordà plain between Figueres and Pals, and crosswinds there are more dangerous than any climb this week. Spring garbinada sea breezes build from 13:00. Rocacorba holds ice in shaded corners into March.",
+    "bookingWindows": "Girona hotels fill for Sea Otter Europe in September and for the Girona Cycling Festival — book three months out. Eat Sleep Cycle carbon bikes need four to six weeks in March–May. La Fàbrica does not take dinner reservations for small groups; L'Alqueria and Nu do and want two to five days.",
+    "money": "Euro. Cards accepted essentially everywhere including mountain-top bars. Tipping is not customary beyond rounding; 5–10% for a full dinner is generous. Carry €10 in coins for vending machines at greenway stations.",
+    "transportRules": "Rodalies R11 carries bikes free outside weekday peaks. AVE and Avant require a bagged or boxed bike. No vignette in Spain; AP-7 tolls were removed in 2021 so approach roads are free. Rental cars may not cross into Andorra without permission. Cyclists must use a reflective vest at night on interurban roads.",
+    "permits": "The Gavarres and Montseny are protected but freely rideable on forest tracks; some pistes close during high fire-risk periods, which the Generalitat declares daily in summer. Drones need AESA registration and are banned over the Dalí sites. Wild camping is prohibited across Catalonia.",
+    "health": "Tap water is potable but tastes poor in Girona; refill from fountains at Els Àngels and Sant Grau. Processionary caterpillars in pine forests from February to April are dangerous to skin and lethal to dogs. Summer fire bans can close forest roads without notice. Wild boar are common at dusk on the Gavarres pistes.",
+    "gettingThere": null,
+    "other": []
+  },
+  "proTips": [
+    "Ride Rocacorba on a weekday morning. Weekend traffic on the single-lane upper section is not cars but other cyclists descending, and there is no room for two abreast.",
+    "Eat Sleep Cycle supplies no lock. Buy or borrow one before your first café stop — bike theft in Girona city is real and specifically targets rental carbon.",
+    "The Carrilet greenways have no cafés for long stretches around Cassà de la Selva. Load up in Llagostera, which has the only reliable mid-route stop.",
+    "Girona's group rides leave from Plaça de la Independència and outside the Eat Sleep Cycle Hub between 09:00 and 10:00 most days. Ask in the shop the evening before rather than turning up cold.",
+    "Descend Els Àngels toward Madremanya rather than back to Quart. The surface is better, the corners are open, and it puts you on the best breakfast loop in the region.",
+    "In high fire-risk summers the Generalitat closes Gavarres forest tracks at short notice — check the day's level before committing to a gravel route with no paved escape.",
+    "Sant Grau and the GI-682 to Tossa should be ridden before 11:00 in shoulder season. After that it becomes a motorcycle road.",
+    "Book Rodalies bike travel outside 07:00–09:30 and 17:00–19:30. Outside those windows it is free and unlimited; inside them you will be turned away."
+  ],
+  "typeSpecific": {
+    "raw": {
+      "Rocacorba (from Banyoles side, via Pujarnol)": "13.4 km, 940 m ascent, 7.0% average, 15% maximum on the ramps above the reservoir, summit 992 m at the transmitter masts. Dead-end road, single lane in places, almost no traffic. The reference climb — most local riders know their time on it.",
+      "Els Àngels (from Girona via Sant Medir/Quart)": "10.4 km, 470 m ascent, 4.6% average, 9% maximum, summit 485 m at the sanctuary. The everyday climb, ridden before work by half the peloton living in the city.",
+      "Sant Hilari Sacalm (from Anglès)": "17.2 km, 700 m ascent, 4.1% average with a 10% section at Osor, summit 801 m — the long tempo climb, and the gateway to the Montseny foothills.",
+      "Sant Grau (from Sant Feliu de Guíxols)": "8.6 km, 380 m ascent, 4.4% average, summit 468 m, the coastal balcony climb linking Sant Feliu to Tossa de Mar.",
+      "Greenways": "Ruta del Carrilet II (Girona–Sant Feliu de Guíxols) is 41.9 km of packed granite sand on a former narrow-gauge formation, high point 136 m at Cassà de la Selva, average grade 0.5%. Carrilet I (Olot–Girona) adds 54 km on similar surface via Les Planes d'Hostoles and Amer.",
+      "Week surface split": "approximately 72% paved (excellent chip-seal and asphalt), 24% packed granite sand on the greenways and Gavarres pistes, 4% loose forest gravel on the Els Metges and Madremanya link tracks. A 28–32 mm road setup handles the whole week; 38 mm gravel opens the Gavarres.",
+      "Bike hire": "Eat Sleep Cycle at Plaça de Catalunya 15, 17004 Girona is the main hub — open Monday to Sunday 09:00–14:00 and 17:00–20:00, with a 2026 fleet spanning Colnago, Wilier, Basso and Cannondale road bikes, Wilier gravel, e-road, e-gravel, e-MTB and Brompton. Each rental includes an inner tube, tyre levers and mini-pump; pedals, saddles and helmets are extras and no lock is supplied. Free overnight bike storage at the Hub, and delivery across Girona, the Costa Brava and the Pyrenees by quote. Bike Breaks Girona Cycle Centre and Terra Bike Tours are the established alternatives, both with bike-box storage. Indicative rates run €40–€60/day for carbon road, €35–€50 gravel, €45–€65 e-road, with weekly rates of roughly €280–€420. One-way drop-off on the Costa Brava is a delivery-quote matter rather than a fixed fee.",
+      "Bike-friendly accommodation logistics": "Hotel Nord 1901 has a locked garage two minutes from Plaça de Catalunya; Hotel Ultònia offers secure storage and a 07:00 breakfast; Bike Breaks runs cyclist-specific apartments with workshop access and a wash bay. Girona's old town is stairs and cobbles — book on the Mercadal side of the Onyar if you value wheeling a bike straight to the door.",
+      "Bike on public transport": "Rodalies de Catalunya suburban trains (line R11 Girona–Figueres–Portbou, RG1 to Blanes) carry bikes free outside weekday peaks in designated spaces. Long-distance AVE and Avant services from Barcelona require the bike to be bagged or boxed within specified dimensions, or booked into a limited bike space on some Euromed services. Sarfa/Moventis coaches to the Costa Brava take bikes in the hold at driver's discretion for a small fee."
+    },
+    "surface": "approximately 72% paved (excellent chip-seal and asphalt), 24% packed granite sand on the greenways and Gavarres pistes, 4% loose forest gravel on the Els Metges and Madremanya link tracks. A 28–32 mm road setup handles the whole week; 38 mm gravel opens the Gavarres.",
+    "distanceKm": null,
+    "elevationM": null,
+    "verticalM": null,
+    "technicalRating": null,
+    "transitPass": null,
+    "hutBooking": null,
+    "liftNetwork": null,
+    "snowReliability": null,
+    "windConditions": null,
+    "gpxReady": null,
+    "bookingTimeline": null,
+    "audience": null
+  },
+  "packingNotes": [],
+  "whatCouldGoWrong": [],
+  "sources": {
+    "verified": "Eat Sleep Cycle's Girona address at Plaça de Catalunya 15, opening hours, 2026 fleet composition (Colnago, Wilier, Basso, Cannondale, Brompton, e-bike and gravel options), inclusion of tube, levers and mini-pump, free overnight Hub storage, no lock supplied, and delivery-by-quote across Girona, Costa Brava and Pyrenees; Ruta del Carrilet II length of 41.9 km, packed granite sand surface, 136 m high point at Cassà de la Selva and 0.5% average grade.",
+    "confidenceNotes": "Eat Sleep Cycle daily and weekly rates are not published on the rental page and are indicative only — re-verify through their booking engine before publishing, along with Bike Breaks and Terra Bike Tours pricing and bike-box policies. Rodalies bike-carriage peak-hour windows and AVE bagging dimensions change with timetable revisions; confirm with Renfe. Climb figures for Rocacorba, Sant Hilari, Sant Grau, Santa Pellaia and Mare de Déu del Mont are drawn from standard published profiles and should be spot-checked. Restaurant and hotel pricing is prior-season. Summer forest-track closures depend on the daily fire-risk declaration and cannot be predicted in advance."
+  },
+  "verifyFlags": [],
+  "verifyFlagCount": 0,
+  "volatilePricing": false,
+  "wordCount": 2767,
+  "dataVintage": 2026,
+  "provenance": {
+    "batch": "southern-mediterranean",
+    "sourceFile": "carta-dataset/trips/cycling-spain-girona-costa-brava.md",
+    "sourceFormat": "md with '## Metadata' bullet block (one file per trip)",
+    "sourceId": "cycling-spain-girona-costa-brava",
+    "ingestedAt": "2026-09-02",
+    "synthesized": false
+  }
+}

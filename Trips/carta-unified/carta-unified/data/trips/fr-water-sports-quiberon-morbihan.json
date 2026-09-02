@@ -1,0 +1,328 @@
+{
+  "id": "fr-water-sports-quiberon-morbihan",
+  "sourceId": "fr-water-quiberon-morbihan",
+  "slug": "fr-water-sports-quiberon-morbihan",
+  "title": "Quiberon and the Golfe du Morbihan by Board and Kayak",
+  "country": "France",
+  "countryCode": "FR",
+  "countries": [
+    {
+      "name": "France",
+      "code": "FR"
+    }
+  ],
+  "isMultiCountry": false,
+  "region": "Western & Central Europe",
+  "regionKey": "western-central",
+  "subRegion": "Morbihan, Brittany",
+  "tripType": "Water Sports & Coastal Trips",
+  "tripTypeId": 10,
+  "tripTypeSlug": "water-sports",
+  "durationDays": 7,
+  "bestPeriod": {
+    "months": [
+      6,
+      7,
+      8,
+      9
+    ],
+    "monthNames": [
+      "June",
+      "July",
+      "August",
+      "September"
+    ],
+    "window": null,
+    "note": "July and August bring the most reliable thermal afternoon breeze on the Côte Sauvage; June and September keep the Golfe's currents just as strong with far fewer boats.",
+    "avoid": null,
+    "raw": null
+  },
+  "budgetTier": "€€",
+  "budgetTierRange": [
+    2,
+    2
+  ],
+  "budgetTierRaw": "€€",
+  "budget": {
+    "currency": "EUR",
+    "totalEur": {
+      "low": 960,
+      "high": 1400
+    },
+    "totalNote": null,
+    "breakdown": {
+      "accommodation": {
+        "lowEur": 470,
+        "highEur": 680,
+        "note": null
+      },
+      "food": {
+        "lowEur": 240,
+        "highEur": 330,
+        "note": null
+      },
+      "transport": {
+        "lowEur": 100,
+        "highEur": 150,
+        "note": null
+      },
+      "activities": {
+        "lowEur": 150,
+        "highEur": 240,
+        "note": null
+      }
+    },
+    "perDayEur": {
+      "low": 137,
+      "high": 200
+    }
+  },
+  "profile": {
+    "difficulty": 3,
+    "difficultyLabel": "Active",
+    "difficultyNote": null,
+    "fitnessLevel": "Active",
+    "crowdLevel": "Moderate",
+    "familyFriendly": true,
+    "carRequired": true
+  },
+  "basecamps": [
+    "Quiberon"
+  ],
+  "gatewayAirport": "Nantes Atlantique (NTE)",
+  "gatewayAirportCode": "NTE",
+  "languages": [
+    "French"
+  ],
+  "currency": "EUR",
+  "emergencyNumber": "112",
+  "coordinates": {
+    "lat": 48.8534,
+    "lon": 2.3488,
+    "precision": "country",
+    "matchedPlace": "Paris",
+    "source": "country capital fallback"
+  },
+  "tags": [
+    "surf",
+    "sea-kayak",
+    "golfe-du-morbihan",
+    "tidal-currents",
+    "belle-ile"
+  ],
+  "summary": "A week of surf on the Côte Sauvage, sea kayaking the Golfe du Morbihan's tidal currents, and a Belle-Île crossing, based at Quiberon.",
+  "summaryGenerated": false,
+  "hook": "Two very different bodies of water sit either side of the Quiberon peninsula, ten kilometres apart. On the west, the Côte Sauvage takes the full Atlantic swell onto rock and beach break. On the east, the Golfe du Morbihan is nearly closed, and the tide has to force the same volume of water through a narrow mouth twice a day — currents that reach several knots and have humbled plenty of confident paddlers. This week surfs one and reads the other, with a day on Belle-Île and an evening at Carnac's alignments between.",
+  "snapshot": {
+    "Country": "France",
+    "Base(s)": "Quiberon (5 nights), Vannes or Locmariaquer for the Golfe day (2 nights)",
+    "Trip Type": "Water Sports & Coastal Trips",
+    "Duration": "7 days",
+    "Best Period": "June, July, August, September",
+    "Budget Tier": "€€ (approx. €960–€1,400 per person, excluding flights)",
+    "Total Distance / Terrain": "Côte Sauvage beach and reef breaks along roughly 8 km; Golfe du Morbihan tidal basin approx. 20 km across with currents to 4–5 knots at the Barre du Grand Vezid",
+    "Getting There": "Fly to Nantes, hire a car for the 1 h 30 drive to Quiberon; a car is genuinely useful for reaching Golfe put-in points and the Belle-Île ferry terminal",
+    "Who It Suits": "Surfers and sea kayakers comfortable reading a swell forecast and a tide table, who want two contrasting Breton waters in one week"
+  },
+  "itinerary": [
+    {
+      "day": 1,
+      "title": "Arrival and first look at the Côte Sauvage",
+      "morning": "Fly into Nantes, collect the hire car, drive 1 h 30 to Quiberon. Check into base and walk the Côte Sauvage, the peninsula's exposed western shore, a run of small coves and reef points fully open to the Atlantic.",
+      "afternoon": "Register with a Quiberon surf school affiliated to the Fédération Française de Surf (FFS) for a conditions briefing and, for less experienced surfers, a first lesson at a sheltered sandy cove such as Port Blanc, gentler than the exposed points further south.",
+      "evening": "Dinner in Quiberon town; an early one given tomorrow's tide-timed session.",
+      "dayStats": "1 h in water · orientation and lesson · softboard, spring wetsuit.",
+      "sleep": null
+    },
+    {
+      "day": 2,
+      "title": "Côte Sauvage surf",
+      "morning": "The Atlantic swell here is usually a clean groundswell from the west to north-west, met most mornings by a light offshore or cross-shore breeze before the local thermal builds; check the surf forecast and tide table together, since several breaks work only within specific tide windows and turn to close-out mush or exposed rock at the wrong state. Surf a mid-tide session at Port Bara or Port Blanc depending on swell direction.",
+      "afternoon": "A second session or a rest, watching the more advanced reef break at Beg er Vil work at the right swell size — experienced surfers only, with rock hazards close to the surface.",
+      "evening": "Walk the Côte Sauvage coastal path (part of the GR34) at sunset, one of the finest stretches of the entire Breton coastal trail.",
+      "dayStats": "2.5 h in water · SW groundswell, light offshore morning wind · shortboard or funboard, 3/2 mm wetsuit.",
+      "sleep": null
+    },
+    {
+      "day": 3,
+      "title": "Belle-Île crossing",
+      "morning": "Ferry from Quiberon's Port Maria to Le Palais on Belle-Île, roughly 45 minutes, the largest of Brittany's islands and a genuine day trip rather than a stretch.",
+      "afternoon": "Explore the Aiguilles de Port-Coton, the needle rocks Monet painted in 1886, and the Grand Phare lighthouse. If swell and wind align, a surf or bodyboard session is possible on the island's exposed western coves; otherwise this is a walking day.",
+      "evening": "Ferry back to Quiberon, dinner at the port.",
+      "dayStats": "0–1.5 h in water depending on conditions · variable · own gear if surfing.",
+      "sleep": null
+    },
+    {
+      "day": 4,
+      "title": "Transfer to the Golfe and first paddle",
+      "morning": "Drive to Locmariaquer or Vannes on the Golfe du Morbihan's shore, about 45 minutes from Quiberon. This gulf is nearly landlocked, connected to the Atlantic by a mouth only about 1 km wide near Port-Navalo, and the tide pushes its full volume through that gap — currents at spots like the Barre du Grand Vezid can run 4–5 knots at springs, among the strongest on the French coast.",
+      "afternoon": "Register with a Golfe-based sea kayak club (several operate from Vannes, Larmor-Baden and Arradon, generally FFCK-affiliated) for a guided introductory paddle timed to slack water — the only sensible time for a first outing, since ebb and flood both run hard enough to overpower an unprepared paddler.",
+      "evening": "Vannes old town, with its half-timbered houses and ramparts around the port; dinner near the Place des Lices.",
+      "dayStats": "2 h paddling · slack-water window · sea kayak, spray deck, buoyancy aid.",
+      "sleep": null
+    },
+    {
+      "day": 5,
+      "title": "The Golfe's islands",
+      "morning": "A longer guided kayak circuit among the Golfe's islands — popularly said to number 365, though the true count is closer to forty. Île aux Moines and Île d'Arz are the two largest, reachable by paddle or the small local ferries.",
+      "afternoon": "Continue the circuit or land on Île aux Moines for a walk and lunch; timing the return leg to ride the tide rather than fight it is the entire skill of paddling here, and the guide plans the route around that day's specific tide times.",
+      "evening": "Locmariaquer, where the Grand Menhir Brisé and the Table des Marchands passage tomb sit close to the water — among the oldest standing stone monuments in Europe, predating Carnac's alignments.",
+      "dayStats": "3.5 h paddling · tide-timed circuit · sea kayak, wetsuit top.",
+      "sleep": null
+    },
+    {
+      "day": 6,
+      "title": "Carnac and a return surf session",
+      "morning": "Drive back toward Quiberon via Carnac, and spend the morning among the alignments — over 3,000 standing stones dating to the Neolithic, the largest such concentration in the world, with the Ménec and Kermario alignments walkable from marked paths.",
+      "afternoon": "Back on the Côte Sauvage for a final surf session, timed again to the tide and the day's swell forecast.",
+      "evening": "Dinner in Carnac-Plage or Quiberon, with fresh oysters from the Golfe's beds, a genuine local specialty of Locmariaquer.",
+      "dayStats": "2 h in water · variable swell and wind · surfboard, 3/2 mm wetsuit.",
+      "sleep": null
+    },
+    {
+      "day": 7,
+      "title": "Final session and departure",
+      "morning": "A last surf check on the Côte Sauvage or a short flat-water paddle from Quiberon's own sheltered eastern shore if the swell has dropped.",
+      "afternoon": "Return gear, shower, and drive back to Nantes (1 h 30, add margin on summer Saturdays).",
+      "evening": "Flight home from Nantes.",
+      "dayStats": "1.5 h in water · variable · own or final rental kit.",
+      "sleep": null
+    }
+  ],
+  "accommodationStrategy": [
+    {
+      "rank": 1,
+      "name": "Guesthouse or hotel near Port Maria, Quiberon",
+      "style": null,
+      "location": null,
+      "description": "Within walking or short-drive distance of both the Côte Sauvage breaks and the Belle-Île ferry terminal — this single base covers Days 1, 2, 3, 6 and 7 without moving.",
+      "booking": "eight weeks ahead for July–August; four weeks for June or September.",
+      "priceNote": "€95–€145 per night"
+    },
+    {
+      "rank": 2,
+      "name": "B&B near the Vannes or Locmariaquer waterfront",
+      "style": null,
+      "location": null,
+      "description": "A short drive from the Golfe's kayak clubs and put-in points, walking distance to Vannes old town.",
+      "booking": "four to six weeks ahead.",
+      "priceNote": "€90–€135 per night"
+    },
+    {
+      "rank": 3,
+      "name": "Chambre d'hôtes near Carnac-Plage",
+      "style": null,
+      "location": null,
+      "description": "An option for splitting the last two nights closer to the alignments and final surf sessions, without the full drive back to Quiberon each evening.",
+      "booking": "four weeks ahead.",
+      "priceNote": "€85–€120 per night"
+    }
+  ],
+  "logistics": {
+    "connectivity": null,
+    "emergency": "Emergency number is 112. At sea, the maritime distress channel is VHF 16, and search-and-rescue coordination on this coast runs through the CROSS (Centre Régional Opérationnel de Surveillance et de Sauvetage) Étel station, the CROSS covering the whole Breton Atlantic coast.",
+    "weather": null,
+    "bookingWindows": null,
+    "money": null,
+    "transportRules": null,
+    "permits": null,
+    "health": null,
+    "gettingThere": null,
+    "other": [
+      {
+        "label": null,
+        "text": "Emergency number is 112. At sea, the maritime distress channel is VHF 16, and search-and-rescue coordination on this coast runs through the CROSS (Centre Régional Opérationnel de Surveillance et de Sauvetage) Étel station, the CROSS covering the whole Breton Atlantic coast."
+      },
+      {
+        "label": null,
+        "text": "The Golfe du Morbihan's tidal currents are a genuine hazard, not a scenic detail: at spring tides the flow near Port-Navalo and around the Barre du Grand Vezid can exceed 4–5 knots, faster than most paddlers can make headway against. Guided or slack-water-timed paddling is the only sensible approach without strong local experience."
+      },
+      {
+        "label": null,
+        "text": "The Côte Sauvage lives up to its name: several coves have serious rip and rock hazards and are unsupervised outside the main patrolled beaches. Check the day's flag colour (green, yellow, orange, red, ascending restriction) and never surf an unsupervised break alone in unfamiliar conditions."
+      },
+      {
+        "label": null,
+        "text": "Lifeguard (poste de secours) season on the main Quiberon and Carnac beaches generally runs mid-June to early September; outside those dates, beaches are unsupervised."
+      },
+      {
+        "label": null,
+        "text": "Learn to read the SHOM tide table (coefficient and times of high/low water) before the first Golfe paddle — the coefficient, roughly 20 to 120, indicates that day's current strength, and a guide will not run a serious circuit on a high-coefficient day with inexperienced paddlers."
+      },
+      {
+        "label": null,
+        "text": "A car is genuinely useful: the Golfe's put-in points, Carnac's alignments and the Quiberon ferry terminal are spread wider than a single walkable base can cover, though local buses connect Quiberon, Carnac and Vannes."
+      },
+      {
+        "label": null,
+        "text": "Cash and card both work at rental counters and restaurants; smaller Golfe-side kiosks near the islands can be cash-only."
+      },
+      {
+        "label": null,
+        "text": "Book the Belle-Île ferry (Compagnie Océane) ahead in July–August, when sailings fill, and reserve Golfe guided kayak trips at least a few days out in peak season."
+      }
+    ]
+  },
+  "proTips": [
+    "Check the tide coefficient before any Golfe paddle day — above about 90, even a guided group sticks to a short, sheltered route near slack water only.",
+    "Surf Port Blanc or sheltered coves on a small swell day and save the exposed points for a clean, moderate groundswell with light offshore wind.",
+    "Take the earliest reasonable Belle-Île ferry crossing for the fullest island day, since return sailings can be tight on the last boat in peak season.",
+    "Buy Golfe oysters directly from a producer's stall near Locmariaquer rather than a restaurant plate — noticeably fresher and cheaper.",
+    "Walk a stretch of the GR34 along the Côte Sauvage even on a non-water day; it gives the clearest sense of where each spot sits relative to the rocks.",
+    "Visit Carnac's alignments early morning or the last two hours before closing to avoid midday coach-tour crowds.",
+    "Ask the kayak guide to explain the Golfe's slack-water timing on the water, not just in the briefing — seeing the current slow and reverse near the islands is the best lesson in reading it."
+  ],
+  "typeSpecific": {
+    "raw": {
+      "Total Distance / Terrain": "Côte Sauvage beach and reef breaks along roughly 8 km; Golfe du Morbihan tidal basin approx. 20 km across with currents to 4–5 knots at the Barre du Grand Vezid",
+      "Who It Suits": "Surfers and sea kayakers comfortable reading a swell forecast and a tide table, who want two contrasting Breton waters in one week"
+    },
+    "surface": "Côte Sauvage beach and reef breaks along roughly 8 km; Golfe du Morbihan tidal basin approx. 20 km across with currents to 4–5 knots at the Barre du Grand Vezid",
+    "distanceKm": 8,
+    "elevationM": null,
+    "verticalM": null,
+    "technicalRating": null,
+    "transitPass": null,
+    "hutBooking": null,
+    "liftNetwork": null,
+    "snowReliability": null,
+    "windConditions": null,
+    "gpxReady": null,
+    "bookingTimeline": null,
+    "audience": "Surfers and sea kayakers comfortable reading a swell forecast and a tide table, who want two contrasting Breton waters in one week"
+  },
+  "packingNotes": [
+    "A 3/2 mm wetsuit for July–August; step up to 4/3 mm for June or September mornings.",
+    "Reef booties for the rockier breaks.",
+    "A spray deck and proper buoyancy aid for the Golfe days — non-negotiable given the current strength.",
+    "A dry bag for phone, keys and the tide-table printout or app.",
+    "Sunglasses with a strap and high-factor sunscreen; the Golfe's flat water reflects glare all day.",
+    "Comfortable walking shoes for Carnac and the GR34.",
+    "A warm layer for Golfe mornings, often cooler and stiller than the open coast.",
+    "Euro cash for ferry kiosks, oyster stalls and smaller guesthouses."
+  ],
+  "whatCouldGoWrong": [
+    "**Underestimating the Golfe's currents.** Paddling against a flooding or ebbing tide near the mouth can pin even a strong kayaker in place. Always paddle with a guide or strictly at slack water, treating the tide table as the actual schedule.",
+    "**A flat or blown-out swell on the Côte Sauvage.** Groundswell is generally reliable but not guaranteed; a flat week converts naturally into more Golfe paddling, Belle-Île time and the Carnac alignments.",
+    "**Missed Belle-Île ferry return.** Peak-season sailings can sell out. Book the return leg in advance and build slack rather than catching the last boat.",
+    "**Rock and rip hazards on unsupervised coves.** Several breaks have no lifeguard cover outside the main season. Stick to flagged, supervised beaches unless surfing with a school or experienced local.",
+    "**A sudden Atlantic frontal system.** Weather can turn quickly here. Check the CROSS Étel marine forecast each morning and treat any strong-wind warning as a reason to shift to the sheltered Golfe."
+  ],
+  "sources": {
+    "verified": null,
+    "confidenceNotes": null
+  },
+  "verifyFlags": [],
+  "verifyFlagCount": 0,
+  "volatilePricing": false,
+  "wordCount": 2032,
+  "dataVintage": 2026,
+  "provenance": {
+    "batch": "western-central",
+    "sourceFile": "cartatripsv1/trips/fr-water-quiberon-morbihan.md",
+    "sourceFormat": "md+yaml-frontmatter (one file per trip)",
+    "sourceId": "fr-water-quiberon-morbihan",
+    "ingestedAt": "2026-09-02",
+    "synthesized": false
+  }
+}

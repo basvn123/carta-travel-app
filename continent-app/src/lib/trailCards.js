@@ -158,6 +158,137 @@ export function tripBand(tr) {
   return DISTANCE_BANDS.find((b) => m >= b.min && m < b.max)?.key ?? null;
 }
 
+/**
+ * Climb bands, in metres of ascent.
+ *
+ * The cut points are the pipeline's (pipeline/trails/export_wire.py
+ * ASCENT_BANDS ships the same five rows in index.json's filter_model, and
+ * verify_trails_export.mjs holds these against those). Duplicated rather than
+ * read from the wire because a chip has to render on the first frame, before
+ * index.json has arrived; the harness is what stops the two drifting.
+ *
+ * Phrased as terrain rather than as arithmetic. "Rolling" is a thing a walker
+ * can picture and "150 to 500 m of ascent" is a thing they have to convert.
+ */
+export const ASCENT_BANDS = [
+  { key: 'flat', labelKey: 'trails.climbFlat', min: 0, max: 150 },
+  { key: 'rolling', labelKey: 'trails.climbRolling', min: 150, max: 500 },
+  { key: 'hilly', labelKey: 'trails.climbHilly', min: 500, max: 1000 },
+  { key: 'steep', labelKey: 'trails.climbSteep', min: 1000, max: 1800 },
+  { key: 'serious', labelKey: 'trails.climbSerious', min: 1800, max: Infinity },
+];
+
+/** Which climb band a trip falls in, or null when nothing measured it. */
+export function tripClimbBand(tr) {
+  const m = tr?.ascent_m;
+  if (typeof m !== 'number') return null;
+  return ASCENT_BANDS.find((b) => m >= b.min && m < b.max)?.key ?? null;
+}
+
+/**
+ * The five published difficulty grades, hardest last.
+ *
+ * The wire carries the grade in `f.g` and where it came from in `f.gs`, and
+ * the two are shown differently on purpose: a grade a mapper wrote on the
+ * path and a grade we read off a 30 m elevation model are not the same claim,
+ * and a walker choosing a very hard route deserves to know which they are
+ * looking at. `gradeIsDerived` is what the badge asks.
+ */
+export const GRADES = [
+  { key: 'easy', labelKey: 'trails.gradeEasy' },
+  { key: 'moderate', labelKey: 'trails.gradeModerate' },
+  { key: 'hard', labelKey: 'trails.gradeHard' },
+  { key: 'very_hard', labelKey: 'trails.gradeVeryHard' },
+  { key: 'alpine', labelKey: 'trails.gradeAlpine' },
+];
+
+export const tripGrade = (tr) => tr?.f?.g ?? null;
+export const gradeIsDerived = (tr) => (tr?.f?.gs ?? null) === 'derived';
+
+/**
+ * Route shape: where the walk leaves you at the end of it.
+ *
+ * Out-and-back is separated from loop here even though both end where they
+ * started, because they are not the same day: one shows you new ground the
+ * whole way and the other shows you the same ground twice. `is_loop` stays on
+ * the card as the cruder "you can leave the car here" signal, and covers all
+ * three of loop, out_back and figure8.
+ */
+export const ROUTE_TYPES = [
+  { key: 'loop', labelKey: 'trails.shapeLoop' },
+  { key: 'out_back', labelKey: 'trails.shapeOutBack' },
+  { key: 'point', labelKey: 'trails.shapePoint' },
+  { key: 'figure8', labelKey: 'trails.shapeFigure8' },
+];
+
+export const tripRouteType = (tr) => tr?.f?.rt ?? null;
+
+/**
+ * What the walk goes past, as codes.
+ *
+ * The single most persuasive thing on a trail card: "waterfall, lake, castle"
+ * is an argument for a Saturday and "12.4 km, moderate" is a specification.
+ * Every code is a feature the pipeline found within 250 m of the drawn line
+ * (pipeline/trails/scenic.py), never within a generous radius that would let
+ * a card claim the next valley's waterfall.
+ */
+export const HIGHLIGHTS = [
+  { key: 'summit', labelKey: 'trails.hlSummit' },
+  { key: 'viewpoint', labelKey: 'trails.hlViewpoint' },
+  { key: 'waterfall', labelKey: 'trails.hlWaterfall' },
+  { key: 'lake', labelKey: 'trails.hlLake' },
+  { key: 'gorge', labelKey: 'trails.hlGorge' },
+  { key: 'coast', labelKey: 'trails.hlCoast' },
+  { key: 'forest', labelKey: 'trails.hlForest' },
+  { key: 'castle', labelKey: 'trails.hlCastle' },
+  { key: 'hut', labelKey: 'trails.hlHut' },
+  { key: 'village', labelKey: 'trails.hlVillage' },
+];
+
+export const tripHighlights = (tr) => tr?.f?.hl || [];
+
+/**
+ * Who the walk suits, tagged and derived kept apart.
+ *
+ * `f.su` is what OpenStreetMap says about the path. `f.sd` is what we worked
+ * out from its shape, its surface and its gradient. The filter accepts both,
+ * because somebody looking for a family walk wants both; the CARD says which,
+ * because "a mapper checked this is wheelchair accessible" and "this looked
+ * gentle to us" cannot be the same sentence.
+ *
+ * wheelchair only ever appears in `f.su`. Nothing derives it, by design.
+ */
+export const SUITABILITY = [
+  { key: 'family', labelKey: 'trails.suitFamily' },
+  { key: 'beginner', labelKey: 'trails.suitBeginner' },
+  { key: 'dog', labelKey: 'trails.suitDog' },
+  { key: 'stroller', labelKey: 'trails.suitStroller' },
+  { key: 'wheelchair', labelKey: 'trails.suitWheelchair', taggedOnly: true },
+  { key: 'winter', labelKey: 'trails.suitWinter' },
+];
+
+/** Every suitability code on a trip, tagged and derived together. */
+export function tripSuitability(tr) {
+  return [...(tr?.f?.su || []), ...(tr?.f?.sd || [])];
+}
+
+/** True when this code is a derivation rather than something OSM was told. */
+export function suitabilityIsDerived(tr, key) {
+  return (tr?.f?.sd || []).includes(key) && !(tr?.f?.su || []).includes(key);
+}
+
+/** A listed row: verified to exist, in region, and deliberately not scored. */
+export const isListed = (tr) => (tr?.t ?? 'r') === 'l';
+
+/** Assembled by us from way-level paths rather than published as a route. */
+export const isDerivedRoute = (tr) => Boolean(tr?.f?.dr);
+
+/** The portal that confirms this line, or null. */
+export function portalVerified(tr) {
+  const pv = tr?.f?.pv;
+  return pv ? (typeof pv === 'string' ? pv : true) : null;
+}
+
 /** i18n key for the small kind chip on a card. */
 export function tripKindKey(tr, assocDest) {
   if (tr.category === 'citytrip') {

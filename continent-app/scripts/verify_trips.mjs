@@ -90,6 +90,11 @@ const toTrips = async (page) => {
   // Playwright's strict mode on two sliders.
   await page.locator('.places-cat:visible, .side-cat:visible', { hasText: /^\s*trips\s*$/i })
     .first().click();
+  // The Trips category opens on the curated library now; the composed
+  // itineraries this harness checks live behind their own door at the end
+  // of the style grid.
+  await page.locator('.jcomposed-card').waitFor({ state: 'visible', timeout: 15000 });
+  await page.locator('.jcomposed-card').click();
   await page.locator('.trip-slider-input:visible').first()
     .waitFor({ state: 'visible', timeout: 15000 });
   await page.waitForTimeout(1800);

@@ -1,0 +1,308 @@
+{
+  "id": "sk-road-trip-orava-spis",
+  "sourceId": "slovakia-orava-spis-road-trip",
+  "slug": "sk-road-trip-orava-spis",
+  "title": "Nosferatu to the Silver Town: An Orava, Tatra and Spiš Castle Loop",
+  "country": "Slovakia",
+  "countryCode": "SK",
+  "countries": [
+    {
+      "name": "Slovakia",
+      "code": "SK"
+    }
+  ],
+  "isMultiCountry": false,
+  "region": "Eastern & Southeastern Europe",
+  "regionKey": "eastern-southeastern",
+  "subRegion": "Orava, the Tatras, Spiš and the Slovak Karst",
+  "tripType": "Road Trips & Scenic Drives",
+  "tripTypeId": 5,
+  "tripTypeSlug": "road-trip",
+  "durationDays": 7,
+  "bestPeriod": {
+    "months": [
+      6,
+      9,
+      10
+    ],
+    "monthNames": [
+      "June",
+      "September",
+      "October"
+    ],
+    "window": "the second half of September — clear air over the Orava, castles still open, no Tatra traffic",
+    "note": null,
+    "avoid": "mid-December to mid-March unless you are equipped for snow; several castles and the Orava Village Museum run reduced winter access",
+    "raw": null
+  },
+  "budgetTier": "€€",
+  "budgetTierRange": [
+    2,
+    2
+  ],
+  "budgetTierRaw": "€€",
+  "budget": {
+    "currency": "EUR",
+    "totalEur": {
+      "low": 810,
+      "high": 1300
+    },
+    "totalNote": "€810–€1,300",
+    "breakdown": {
+      "accommodation": {
+        "lowEur": 280,
+        "highEur": 490,
+        "note": "€280–€490 (€40–€70/night)"
+      },
+      "food": {
+        "lowEur": 160,
+        "highEur": 240,
+        "note": "€160–€240 (€23–€34/day)"
+      },
+      "transport": {
+        "lowEur": 290,
+        "highEur": 430,
+        "note": "€290–€430 (rental 7 days €180–€280, fuel ~€90–€120, e-vignette €12–€18)"
+      },
+      "activities": {
+        "lowEur": 80,
+        "highEur": 140,
+        "note": "€80–€140 (castle and cave entries, museums)"
+      }
+    },
+    "perDayEur": {
+      "low": 116,
+      "high": 186
+    }
+  },
+  "profile": {
+    "difficulty": 1,
+    "difficultyLabel": "Easy",
+    "difficultyNote": "Easy",
+    "fitnessLevel": "Easy",
+    "crowdLevel": null,
+    "familyFriendly": null,
+    "carRequired": null
+  },
+  "basecamps": [
+    "Oravský Podzámok",
+    "Ždiar",
+    "Levoča",
+    "Banská Štiavnica"
+  ],
+  "gatewayAirport": "Fly Poprad-Tatry (TAT) or Košice (KSC) and rent there; return the car in Bratislava (one-way fee applies). Alternatively start and end in Bratislava and add 340 km to reach Orava.",
+  "gatewayAirportCode": "TAT",
+  "languages": [
+    "Slovak"
+  ],
+  "currency": "Euro (EUR)",
+  "emergencyNumber": "112 (mountain rescue HZS: 18 300)",
+  "coordinates": {
+    "lat": 48.1482,
+    "lon": 17.1067,
+    "precision": "country",
+    "matchedPlace": "Bratislava",
+    "source": "country capital fallback"
+  },
+  "tags": [
+    "road-trip",
+    "castles",
+    "unesco",
+    "orava",
+    "tatras",
+    "caves",
+    "mountain-passes"
+  ],
+  "summary": "Slovakia's castles are absurdly good and almost nobody drives between them. This loop starts under the cliff-top keep Murnau filmed as Count Orlok's lair in 1922, crosses the Orava's empty uplands, slips along the…",
+  "summaryGenerated": false,
+  "hook": "Slovakia's castles are absurdly good and almost nobody drives between them. This loop starts under the cliff-top keep Murnau filmed as Count Orlok's lair in 1922, crosses the Orava's empty uplands, slips along the Tatra foot on the Polish border, climbs the largest castle complex in central Europe, drops into caves under the Karst, and ends in a silver town inside a volcano. About 750 km, seven days, and one of them entirely on unhurried mountain road.",
+  "snapshot": {
+    "Country": "Slovakia",
+    "Trip type": "Road Trips & Scenic Drives",
+    "Duration": "7 days",
+    "Best period": "June–October",
+    "Budget tier": "€–€€",
+    "Difficulty": "Easy",
+    "Start / End": "Poprad → Bratislava (point-to-point, ~750 km total)",
+    "Getting there": "Fly Poprad-Tatry (TAT) or Košice (KSC) and rent there; return the car in Bratislava (one-way fee applies). Alternatively start and end in Bratislava and add 340 km to reach Orava."
+  },
+  "itinerary": [
+    {
+      "day": 1,
+      "title": "To the castle on the rock",
+      "morning": "Collect the car at Poprad, confirm the e-vignette status at the desk, and take the D1 west to Ružomberok.",
+      "afternoon": "Road 59 north up the Orava to **Oravský Podzámok**. **Orava Castle** rises 112 m straight out of the rock above the river; F. W. Murnau shot it as Count Orlok's castle for *Nosferatu* in 1922, and the exterior is unchanged. The tour climbs through five levels [VERIFY: current Orava Castle tour times and price].",
+      "evening": "Stay in the village or in Dolný Kubín. Eat trout, and look at the castle floodlit from the road bridge.",
+      "dayStats": "130 km / 1 h 50",
+      "sleep": null
+    },
+    {
+      "day": 2,
+      "title": "Log houses and the Roháče",
+      "morning": "West to **Zuberec-Brestová** and the **Múzeum oravskej dediny**, an open-air museum of relocated Orava log houses, a wooden church and a whole street of farmsteads on a forested slope [VERIFY: current Orava Village Museum hours].",
+      "afternoon": "Drive to the head of the **Roháče** valley below the Western Tatras and walk an hour up towards the Roháčske plesá — the road ends and the tarns are a genuine mountain walk, not a stroll.",
+      "evening": "North to **Oravská Priehrada**. The reservoir drowned five villages in 1953; **Slanický ostrov umenia** is the church hill of one of them, left as an island and now an art gallery reached by boat [VERIFY: current Slanický Island boat season and fare].",
+      "dayStats": "75 km / 2 h",
+      "sleep": null
+    },
+    {
+      "day": 3,
+      "title": "The border and into the Tatra foot",
+      "morning": "East along the reservoir shore to **Suchá Hora** and the **Chochołowska** border area — high, open moorland peat bog with the Western Tatras filling the southern horizon.",
+      "afternoon": "Either cross to Poland at Chochołów and run through **Zakopane** on road 47/49, or stay Slovak on 66 through Trstená and Liptovská Teplička. The Polish option adds scenery and traffic in equal measure.",
+      "evening": "Arrive in **Ždiar**, a Goral village of painted timber houses strung along road 66 under the Belianske Tatry. Sleep here; the passes are better in the morning light.",
+      "dayStats": "95 km / 2 h",
+      "sleep": null
+    },
+    {
+      "day": 4,
+      "title": "Podspády and Kežmarok",
+      "morning": "Drive the **Podspády** saddle at around 1,081 m, the highest road point on this loop, with the Belianske limestone wall on one side and Poland on the other.",
+      "afternoon": "Down to **Kežmarok** — the castle, the burgher square, and the 1717 **wooden articular church**, UNESCO-listed, built entirely without nails under Habsburg restrictions on Protestant building [VERIFY: current articular church opening times].",
+      "evening": "Short drive to Levoča or stay in Kežmarok. Either way, eat early.",
+      "dayStats": "35 km / 45 min",
+      "sleep": null
+    },
+    {
+      "day": 5,
+      "title": "The largest castle in central Europe",
+      "morning": "**Spiš Castle (Spišský hrad)**, UNESCO-listed, sprawling over a travertine hill above **Spišské Podhradie** — approach from the west so it fills the road ahead. There is no shade in the upper ward [VERIFY: current Spišský hrad season and entry fee].",
+      "afternoon": "Cross the valley to **Spišská Kapitula**, the walled canons' town of one street and two gates, with the Romanesque St Martin's Cathedral. Then on to **Levoča** and Master Pavol's 18.6 m limewood altar in the Basilica of St James.",
+      "evening": "Levoča's square at dusk, with the Cage of Shame and the free-standing Renaissance town hall.",
+      "dayStats": "55 km / 1 h 15",
+      "sleep": null
+    },
+    {
+      "day": 6,
+      "title": "Karst, manor and ruin",
+      "morning": "South to the **Slovak Karst** and the **Domica** cave — UNESCO-listed, geologically continuous with Hungary's Baradla across the border, with a boat section on the underground Styx when the water is high enough [VERIFY: current Domica tour times and boat availability].",
+      "afternoon": "North to **Betliar**, the Andrássy manor with its English park, library and hunting trophies, then ten minutes to **Krásna Hôrka**, the hilltop castle badly burned in 2012 and restored in stages — check what is open before you drive up [VERIFY: current Krásna Hôrka reopening status].",
+      "evening": "Sleep in Rožňava or push on towards Brezno.",
+      "dayStats": "165 km / 3 h 15",
+      "sleep": null
+    },
+    {
+      "day": 7,
+      "title": "Donovaly and the silver town",
+      "morning": "West through Brezno to **Banská Bystrica**, then the climb over **Donovaly at 960 m** — a wide, well-graded pass with a summit car park and a genuine panorama into the Veľká Fatra.",
+      "afternoon": "South-west to **Banská Štiavnica**, UNESCO-listed, sitting inside a collapsed volcanic caldera. Trojičné námestie, the plague column, the Old and New Castles, and the **Calvary** on its cone above the town.",
+      "evening": "Swim in a *tajch* — Klinger or Počúvadlo, the 18th-century mining reservoirs now used as lakes — then drive the last 190 km to Bratislava, or sleep and drive it in the morning.",
+      "dayStats": "190 km / 3 h",
+      "sleep": null
+    }
+  ],
+  "accommodationStrategy": [
+    {
+      "rank": 1,
+      "name": "Hotel Odboj",
+      "style": "valley hotel with parking",
+      "location": "Oravský Podzámok area",
+      "description": "secure off-street parking under the castle rock, so you can walk to the first tour of the day rather than fight the coach park, and it is on the right side of town for the Zuberec run next morning.",
+      "booking": "direct, 3–4 weeks ahead [VERIFY: current nightly rate].",
+      "priceNote": null
+    },
+    {
+      "rank": 2,
+      "name": "Penzión Kamzík",
+      "style": "Goral guesthouse on road 66",
+      "location": "Ždiar",
+      "description": "right on the pass road with its own parking, half-board, and a drying room — useful because Ždiar sits at 900 m and the weather here changes faster than in the Spiš. Good base for the Podspády drive in morning light.",
+      "booking": "direct or Booking.com, 3 weeks ahead; earlier for the ski season.",
+      "priceNote": null
+    },
+    {
+      "rank": 3,
+      "name": "Penzión Kachelman",
+      "style": "historic house in the core",
+      "location": "Banská Štiavnica",
+      "description": "parking in a town where the streets are 1:8 gradients and the historic core is close to impassable for a stranger; from here you walk to everything and only touch the car to leave for Bratislava.",
+      "booking": "direct, 4 weeks ahead; sold out for the Salamander festival weekend in September.",
+      "priceNote": null
+    }
+  ],
+  "logistics": {
+    "connectivity": "Good 4G on all main roads. Weakest in the upper Orava valleys, on the Suchá Hora moor and in the Karst below Domica. Download offline maps for the Orava.",
+    "emergency": "112. Mountain rescue **HZS 18 300** if you leave the car for the Roháče or the Belianske foot — Slovak mountain rescue is chargeable to the rescued person without insurance. Motorway assistance is via your rental's number, not 112.",
+    "weather": "Donovaly and Podspády get snow from November and hold it into April. Autumn fog sits in the Orava basin until 10:00. Summer thunderstorms build over the Tatras from early afternoon and the road 66 surface floods in dips.",
+    "bookingWindows": "Guesthouses 3–4 weeks. Castle tours are guided and timed: Orava, Spiš and Betliar sell out mid-morning slots in July and August. **Almost every Slovak museum and castle closes Monday** — build the loop so Monday is a driving day.",
+    "money": "Euro. Cards everywhere for fuel and hotels; carry €80–€120 cash for castle kiosks, cave tickets and village parking. Fuel is roughly on a par with Czechia and cheaper than Austria.",
+    "transportRules": "**E-vignette mandatory on D/R roads**, plate-registered, from eznamka.sk. **Blood alcohol 0.0‰ — absolute zero tolerance.** Headlights on at all times, year-round. **Winter tyres legally required in winter road conditions** (unlike Poland, where they are not). Reflective vest reachable from inside the car, not the boot. Speed: 50 in towns, 90 out, 130 on motorway, 90 on expressway in built-up areas.",
+    "permits": "No permits. Fuel is the real Orava issue — stations thin out badly between Trstená, Zuberec and the Suchá Hora border, and again between Rožňava and Brezno. Fill at half a tank, not a quarter. Cross-border: Czechia, Austria, Hungary and Poland are routinely permitted on Slovak rentals; **Ukraine is excluded**.",
+    "health": null,
+    "gettingThere": null,
+    "other": []
+  },
+  "proTips": [
+    "Shoot Orava Castle from the road-59 layby on the far bank in the late afternoon, when the sun comes round onto the rock face. Murnau's exterior shots are recognisably from this side.",
+    "Book the first castle tour of the day everywhere. Slovak castles run guided groups only, capped, in Slovak with an English text sheet — the 09:00 slot is a handful of people, the 11:00 is fifty.",
+    "Buy the **10-day e-vignette**, not the 1-day. The difference is a few euros and this route drops on and off the D1 four times.",
+    "Take the Slovak side from Suchá Hora to Ždiar rather than routing through Zakopane in July and August. The Polish resort adds an hour of traffic for scenery you can get from road 66.",
+    "Fill up in Dolný Kubín before the Roháče and in Rožňava before Brezno. Both are the last reliable stations before long empty stretches.",
+    "If it is Monday, drive Donovaly and walk the Banská Štiavnica **Calvary** — both open, both free, both better than a closed castle.",
+    "Check Krásna Hôrka's status before committing the detour. Restoration since the 2012 fire has proceeded in phases and the accessible parts have changed repeatedly."
+  ],
+  "typeSpecific": {
+    "raw": {
+      "The legs, with km and driving time": "",
+      "notes": [
+        "Poprad → **Oravský Podzámok** — 130 km, 1 h 50 (D1 to Ružomberok, then road 59 up the Orava valley).",
+        "Oravský Podzámok → **Zuberec-Brestová** and the Roháče → **Oravská Priehrada** (Slanická Osada) — 75 km, 2 h with stops.",
+        "Oravská Priehrada → **Suchá Hora** border area → **Ždiar** via Poland or the Slovak side — 95 km, 2 h.",
+        "Ždiar → **Podspády** → **Kežmarok** — 35 km, 45 min.",
+        "Kežmarok → **Spiš Castle** and **Spišská Kapitula** → **Levoča** — 55 km, 1 h 15.",
+        "Levoča → **Domica** (Slovak Karst) → **Betliar** → **Krásna Hôrka** — 165 km, 3 h 15.",
+        "Krásna Hôrka → **Banská Bystrica** via **Donovaly** → **Banská Štiavnica** — 190 km, 3 h.",
+        "Banská Štiavnica → Bratislava — 190 km, 2 h 30."
+      ],
+      "Named passes and altitudes": "**Donovaly, 960 m** — the Ružomberok–Banská Bystrica saddle on road 59, gritted and open year-round but genuinely snowy from November. **Podspády / Ždiarske sedlo, ~1,081 m** on road 66/67 between the Belianske Tatry and the Polish border. **Huty and the Orava passes** on the Zuberec–Liptov link, around 800–900 m. **Vrchslatina and Šturec** on the older Banská Bystrica approaches. None of these close routinely, but all can shut for hours in a blizzard [VERIFY: current winter closure practice on the Zuberec–Huty link].",
+      "The e-vignette": "Slovak motorways (D and R roads) require an **electronic, plate-registered vignette** from **eznamka.sk** — no sticker, no windscreen anything. For vehicles up to 3.5 t the tiers are a 1-day, a 10-day, a 30-day and a 365-day product, roughly €5 / €12 / €17 / €60 [VERIFY: 2026 e-vignette tariff — re-check at eznamka.sk before travel]. Buy it before you drive; enforcement is by camera and fines are heavy. Rental cars usually come with an annual one — confirm at the desk rather than assuming.",
+      "Winter tyres are legally mandatory": "in Slovakia when there is compacted snow, ice or frost on the road — a real contrast with Poland, where winter tyres are not legally required at all. Cross the border at Suchá Hora in November and the legal obligation changes underneath you. Slovak law also requires a full winter set on vehicles up to 3.5 t in those conditions, not just two wheels.",
+      "Rental cross-border rules": "Slovak rentals routinely permit **Czechia, Austria, Hungary and Poland** with no more than a note on the contract. **Ukraine is excluded** by essentially every major desk, and so, usually, are Moldova, Serbia, Albania and Belarus. Declare a Polish leg — this route touches it — and check whether the Green Card and breakdown cover extend [VERIFY: current cross-border fee at Slovak rental desks].",
+      "Viewpoints and laybys": "The layby on road 59 at **Oravský Podzámok**, opposite the castle rock, is the Nosferatu shot. **Slanický ostrov umenia** jetty at Oravská Priehrada. The **Ždiar** laybys on road 66 looking into the Belianske Tatry. The **Spišské Podhradie** approach from the west, where Spiš Castle fills the windscreen. The **Donovaly** summit car park."
+    },
+    "surface": null,
+    "distanceKm": null,
+    "elevationM": null,
+    "verticalM": null,
+    "technicalRating": null,
+    "transitPass": null,
+    "hutBooking": null,
+    "liftNetwork": null,
+    "snowReliability": null,
+    "windConditions": null,
+    "gpxReady": null,
+    "bookingTimeline": null,
+    "audience": null
+  },
+  "packingNotes": [],
+  "whatCouldGoWrong": [],
+  "sources": {
+    "verified": null,
+    "confidenceNotes": "- Verified: Orava Castle at Oravský Podzámok was used by F. W. Murnau for *Nosferatu* (1922); Spiš Castle with Spišská Kapitula, Levoča, Banská Štiavnica, Kežmarok's wooden articular church and the Domica cave are all UNESCO-listed; Slanický Island is the surviving hill of a village drowned by the Orava reservoir in 1953; the Slovak motorway vignette is electronic and plate-registered via eznamka.sk; winter tyres are legally mandatory in Slovakia in winter road conditions, unlike Poland; Slovak rentals routinely allow Czechia, Austria, Hungary and Poland but exclude Ukraine; blood alcohol limit 0.0‰ and headlights on year-round; emergency 112, HZS 18 300, and Slovak mountain rescue chargeable without insurance; Donovaly pass at 960 m. - `[VERIFY]` items in this file: 11 (see inline markers above) - Last reviewed: 2026-09-02"
+  },
+  "verifyFlags": [
+    "current winter closure practice on the Zuberec–Huty link",
+    "2026 e-vignette tariff — re-check at eznamka.sk before travel",
+    "current cross-border fee at Slovak rental desks",
+    "current Orava Castle tour times and price",
+    "current Orava Village Museum hours",
+    "current Slanický Island boat season and fare",
+    "current articular church opening times",
+    "current Spišský hrad season and entry fee",
+    "current Domica tour times and boat availability",
+    "current Krásna Hôrka reopening status",
+    "current nightly rate"
+  ],
+  "verifyFlagCount": 11,
+  "volatilePricing": true,
+  "wordCount": 2323,
+  "dataVintage": 2026,
+  "provenance": {
+    "batch": "eastern-southeastern",
+    "sourceFile": "cartaeasterneuropetrips/trips/slovakia-orava-spis-road-trip.md",
+    "sourceFormat": "md+nested-yaml-frontmatter (one file per trip)",
+    "sourceId": "slovakia-orava-spis-road-trip",
+    "ingestedAt": "2026-09-02",
+    "synthesized": false
+  }
+}

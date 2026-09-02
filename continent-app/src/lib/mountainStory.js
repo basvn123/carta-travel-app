@@ -44,6 +44,12 @@ const WHY_KEY = {
   // The listed tier's one honest line: shipped by the region
   // programme's floor fill, never by a scored row.
   unrated_coverage: 'region.listedNote',
+  // The editorial tier: a mountain a person put on the list that missed a
+  // machine gate. It carries no score either.
+  editorial_pick: 'mtn.whyEditorial',
+  // A row with nothing publishable shows the map instead of somebody else's
+  // view under its name. The photo engine's own code, shared by every layer.
+  no_photo_map_card: 'photo.mapCard',
   height: 'mtn.whyHeight',
   highpoint: 'mtn.whyHighpoint',
   prominence: 'mtn.whyProminence',
@@ -73,6 +79,16 @@ const WHY_KEY = {
   wildlife: 'mtn.whyWildlife',
   film: 'mtn.whyFilm',
   parking: 'mtn.whyParking',
+  transit: 'mtn.whyTransit',
+  // v2: the view, measured against Copernicus GLO-30 rather than inferred
+  // from somebody having mapped a bench.
+  wideView: 'mtn.whyWideView',
+  waterView: 'mtn.whyWaterView',
+  peaksInView: 'mtn.whyPeaksInView',
+  // The difficulty facet, which never moves the ranking. `est` marks a grade
+  // the terrain implied rather than one a mapper tagged, and it earns its own
+  // sentence: a DEM has never walked anything.
+  difficulty: (r) => (r.est ? 'mtn.whyDifficultyEst' : 'mtn.whyDifficulty'),
   season: 'mtn.whySeason',
   wikiFame: 'mtn.whyWikiFame',
   curated: 'mtn.whyCurated',
@@ -82,6 +98,8 @@ const WHY_KEY = {
 const TAG_KEY = {
   lift: (r) => `mtn.tag${cap(r.kind)}`,
   viewpoint: 'mtn.tagViewpoint',
+  wideView: 'mtn.tagWideView',
+  waterView: 'mtn.tagWaterView',
   glacier: 'mtn.tagGlacier',
   activeVolcano: 'mtn.tagActiveVolcano',
   volcanic: 'mtn.tagVolcano',
@@ -154,6 +172,10 @@ export function mountainWhy(mountain, t, max) {
       params.to = monthWord(reason.to, t);
     }
     if (reason.k === 'graded') params.scale = t(`mtn.sac${cap(reason.scale || '')}`);
+    if (reason.k === 'difficulty') {
+      params.word = t(`mtn.diff${cap(reason.d || '')}`);
+      params.hard = reason.hard ? t(`mtn.diff${cap(reason.hard)}`) : '';
+    }
     const line = t(key, params);
     // A key with no catalogue entry falls back to the key itself, which must
     // never reach the page as a sentence.
@@ -215,7 +237,7 @@ export function componentLabel(code, t) {
 /** The order the score breakdown is read in: the components that decide the
  *  most first, which is also the order of their weights. */
 export const COMPONENT_ORDER = ['scenery', 'access', 'acclaim', 'stature',
-  'experience'];
+  'experience', 'views', 'photo'];
 
 /** The three the page shows as headline figures, above the breakdown. */
 export const SUB_ORDER = ['scenery', 'access', 'experience'];
@@ -264,4 +286,241 @@ export function isLiftServed(mountain) {
 export function heightLine(mountain, t, lang) {
   if (mountain.ele == null) return '';
   return t('mtn.heightLine', { m: Math.round(mountain.ele).toLocaleString(lang) });
+}
+
+/* ---------------------------------------------------------------------------
+ * v2: the difficulty, the way in, the view and the season
+ * ------------------------------------------------------------------------ */
+
+/** The difficulty ladder as one word. `est` marks a grade nobody tagged: it
+ *  was inferred from the terrain, and the label says so rather than letting
+ *  a reader take a DEM's word for a route. */
+export function difficultyLabel(mountain, t) {
+  const code = mountain?.diff?.k;
+  if (!code) return '';
+  const word = t(`mtn.diff${cap(code)}`);
+  if (!word || word === `mtn.diff${cap(code)}`) return '';
+  return mountain.diff.est ? t('mtn.diffEst', { word }) : word;
+}
+
+/** Every way in this mountain has, as words, in the order the pipeline
+ *  ranked them. */
+export function accessLabels(mountain, t) {
+  return (mountain?.acc || [])
+    .map((code) => {
+      const key = `mtn.acc${cap(code)}`;
+      const word = t(key);
+      return word && word !== key ? { code, label: word } : null;
+    })
+    .filter(Boolean);
+}
+
+/** The view band as a word. The band is a percentile WITHIN THE COUNTRY, so
+ *  "Panoramic" means panoramic for this country, which is the only reading
+ *  that works on both a Dutch and a Swiss page. */
+export function viewBandLabel(mountain, t) {
+  const band = mountain?.vb;
+  if (!band) return '';
+  const key = `mtn.view${band}`;
+  const word = t(key);
+  return word && word !== key ? word : '';
+}
+
+/** Prominence bands, the honest version of "how much of a mountain is it".
+ *  Absolute metres rather than a percentile: 300 m of prominence is 300 m of
+ *  prominence in Denmark and in Switzerland. */
+export const PROM_BANDS = [
+  { key: 'molehill', max: 100 },
+  { key: 'hill', min: 100, max: 300 },
+  { key: 'peak', min: 300, max: 1000 },
+  { key: 'major', min: 1000 },
+];
+
+export function promBand(mountain) {
+  const m = mountain?.prom;
+  if (m == null) return null;
+  return (PROM_BANDS.find((b) => (b.min == null || m >= b.min)
+    && (b.max == null || m < b.max)) || {}).key || null;
+}
+
+export const ELEVATION_BANDS = [
+  { key: 'e0', max: 500 },
+  { key: 'e1', min: 500, max: 1000 },
+  { key: 'e2', min: 1000, max: 2000 },
+  { key: 'e3', min: 2000, max: 3000 },
+  { key: 'e4', min: 3000 },
+];
+
+/** The best months as one line: a range where they are contiguous, a list
+ *  where they are not, and never an invitation on a summit that is under
+ *  snow all year (`snowbound`). */
+export function bestMonthsLine(mountain, t) {
+  const season = mountain?.season;
+  const months = season?.months;
+  if (!months || !months.length || months.length >= 12) return '';
+  const words = months.map((m) => t(`mtn.mon${MONTH_CODES[m - 1]}`));
+  const contiguous = months.every((m, i) => i === 0 || m === months[i - 1] + 1);
+  const span = contiguous && months.length > 1
+    ? t('mtn.monthsRange', { from: words[0], to: words[words.length - 1] })
+    : words.join(', ');
+  return season.snowbound
+    ? t('mtn.monthsSnowbound', { span })
+    : t('mtn.monthsBest', { span });
+}
+
+const MONTH_CODES = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+  'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+/**
+ * The seven filters brief 05 asks for, as a model rather than as markup.
+ *
+ * They render twice, as the quick chip row under the toolbar and as the full
+ * set inside the Filters sheet, and a filter that exists in one and not the
+ * other is the bug this shape prevents. `toolbar` is what decides which of
+ * them is short enough for the row: the way up leads, because "can I get up
+ * it" is what this tab is opened for, and the other six live in the sheet.
+ *
+ * Two rules the counts depend on:
+ *   inside a group the chips are OR. The bands are mutually exclusive, so
+ *   AND inside a group would mean every second tap emptied the list.
+ *   across groups they are AND. "A volcano you can walk up" is the question
+ *   people actually ask; "a volcano or anything you can walk up" is not.
+ */
+const inBand = (value, band) => value != null
+  && (band.min == null || value >= band.min)
+  && (band.max == null || value < band.max);
+
+export const MOUNTAIN_FACETS = [
+  {
+    key: 'acc',
+    labelKey: 'mtn.filterAccess',
+    toolbar: true,
+    options: [
+      { key: 'liftTop', labelKey: 'mtn.accLiftTop' },
+      { key: 'liftMountain', labelKey: 'mtn.accLiftMountain' },
+      { key: 'roadTop', labelKey: 'mtn.accRoadTop' },
+      { key: 'trailhead', labelKey: 'mtn.accTrailhead' },
+      { key: 'transit', labelKey: 'mtn.accTransit' },
+      { key: 'remote', labelKey: 'mtn.accRemote' },
+    ].map((o) => ({ ...o, test: (m) => (m.acc || []).includes(o.key) })),
+  },
+  {
+    key: 'diff',
+    labelKey: 'mtn.filterDifficulty',
+    options: ['walkUp', 'hike', 'mountainHike', 'scramble', 'alpine',
+      'viaFerrata', 'technical'].map((code) => ({
+      key: code,
+      labelKey: `mtn.diff${cap(code)}`,
+      test: (m) => m.diff?.k === code,
+    })),
+  },
+  {
+    key: 'ele',
+    labelKey: 'mtn.filterElevation',
+    options: ELEVATION_BANDS.map((b) => ({
+      key: b.key,
+      labelKey: `mtn.ele${cap(b.key)}`,
+      test: (m) => inBand(m.ele, b),
+    })),
+  },
+  {
+    key: 'prom',
+    labelKey: 'mtn.filterProminence',
+    options: PROM_BANDS.map((b) => ({
+      key: b.key,
+      labelKey: `mtn.prom${cap(b.key)}`,
+      test: (m) => inBand(m.prom, b),
+    })),
+  },
+  {
+    key: 'view',
+    labelKey: 'mtn.filterViews',
+    options: [5, 4, 3, 2, 1].map((band) => ({
+      key: `v${band}`,
+      labelKey: `mtn.view${band}`,
+      test: (m) => m.vb === band,
+    })),
+  },
+  {
+    key: 'rate',
+    labelKey: 'mtn.filterRating',
+    options: [3, 2, 1].map((tier) => ({
+      key: `t${tier}`,
+      labelKey: `mtn.band${tier}`,
+      test: (m) => mountainTier(m) >= tier,
+    })),
+  },
+  {
+    key: 'month',
+    labelKey: 'mtn.filterSeason',
+    options: MONTH_CODES.map((code, i) => ({
+      key: code.toLowerCase(),
+      labelKey: `mtn.mon${code}`,
+      // A snowbound summit's "best months" are its warmest rather than its
+      // walkable ones, so it is not offered as an answer to "what can I do
+      // in July": it would be the one row on that list nobody can walk up.
+      test: (m) => !m.season?.snowbound && (m.season?.months || []).includes(i + 1),
+    })),
+  },
+  {
+    key: 'kind',
+    labelKey: 'mtn.filterLabel',
+    options: [
+      { key: 'volcano', labelKey: 'mtn.chipVolcano',
+        test: (m) => m.kind === 'volcano' || (m.why || []).some(
+          (w) => w.k === 'volcanic' || w.k === 'activeVolcano') },
+      { key: 'glacier', labelKey: 'mtn.chipGlacier',
+        test: (m) => (m.tags || []).includes('glacier') },
+      { key: 'water', labelKey: 'mtn.chipWaterView',
+        test: (m) => !!m.view?.water },
+      { key: 'high', labelKey: 'mtn.chipHighpoint',
+        test: (m) => (m.tags || []).includes('highpoint') },
+    ],
+  },
+];
+
+/** Rows that satisfy every ACTIVE group (OR inside a group, AND across). */
+export function applyMountainFacets(rows, state) {
+  let out = rows;
+  for (const group of MOUNTAIN_FACETS) {
+    const on = state?.[group.key] || [];
+    if (!on.length) continue;
+    const tests = on
+      .map((k) => group.options.find((o) => o.key === k)?.test)
+      .filter(Boolean);
+    if (!tests.length) continue;
+    out = out.filter((row) => tests.some((fn) => fn(row)));
+  }
+  return out;
+}
+
+/**
+ * How many rows each chip would leave, counted inside the pool the OTHER
+ * groups already narrowed and IGNORING its own group's other chips. That is
+ * what lets a chip carry its own number, grey itself out instead of leading
+ * to an empty list, and keep the number still while it is tapped.
+ */
+export function mountainFacetCounts(pool, state) {
+  const out = new Map();
+  if (!pool) return out;
+  for (const group of MOUNTAIN_FACETS) {
+    const others = { ...(state || {}), [group.key]: [] };
+    const base = applyMountainFacets(pool, others);
+    for (const option of group.options) {
+      out.set(`${group.key}:${option.key}`, base.filter(option.test).length);
+    }
+  }
+  return out;
+}
+
+/** The one line a country whose floor could not be reached earns, composed
+ *  from the code index.json ships rather than stored as prose. Brief 05's
+ *  lead: the layer is honest about the floor internally and invisible about
+ *  it to a reader, who just sees four Lithuanian mountains. */
+export function floorNote(index, cc, t, countryName) {
+  const entry = index?.floor?.unreachable?.[cc];
+  if (!entry) return '';
+  const key = `mtn.floor${cap(entry.k)}`;
+  const line = t(key, { country: countryName || cc, n: entry.have });
+  return line && line !== key ? line : '';
 }

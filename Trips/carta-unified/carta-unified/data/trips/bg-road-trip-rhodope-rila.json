@@ -1,0 +1,298 @@
+{
+  "id": "bg-road-trip-rhodope-rila",
+  "sourceId": "bulgaria-rhodope-rila-road-trip",
+  "slug": "bg-road-trip-rhodope-rila",
+  "title": "Orpheus Country: A Rhodope and Rila Driving Loop from Plovdiv to Sofia",
+  "country": "Bulgaria",
+  "countryCode": "BG",
+  "countries": [
+    {
+      "name": "Bulgaria",
+      "code": "BG"
+    }
+  ],
+  "isMultiCountry": false,
+  "region": "Eastern & Southeastern Europe",
+  "regionKey": "eastern-southeastern",
+  "subRegion": "Western Rhodopes & the Rila Massif",
+  "tripType": "Road Trips & Scenic Drives",
+  "tripTypeId": 5,
+  "tripTypeSlug": "road-trip",
+  "durationDays": 7,
+  "bestPeriod": {
+    "months": [
+      5,
+      6,
+      9,
+      10
+    ],
+    "monthNames": [
+      "May",
+      "June",
+      "September",
+      "October"
+    ],
+    "window": "late May to late June for green meadows and full waterfalls, then mid-September to mid-October for colour and empty roads",
+    "note": null,
+    "avoid": "August (Pamporovo and Velingrad full, Trigrad gorge coach traffic) and December–March, when Prevala and the Rila Lakes chairlift road are snowbound",
+    "raw": null
+  },
+  "budgetTier": "€",
+  "budgetTierRange": [
+    1,
+    2
+  ],
+  "budgetTierRaw": "€–€€",
+  "budget": {
+    "currency": "EUR",
+    "totalEur": {
+      "low": 650,
+      "high": 1080
+    },
+    "totalNote": "€650–€1,080",
+    "breakdown": {
+      "accommodation": {
+        "lowEur": 230,
+        "highEur": 420,
+        "note": "€230–€420 (€35–€60/night, guesthouses and small hotels)"
+      },
+      "food": {
+        "lowEur": 110,
+        "highEur": 180,
+        "note": "€110–€180 (€16–€26/day)"
+      },
+      "transport": {
+        "lowEur": 250,
+        "highEur": 370,
+        "note": "€250–€370 (compact rental €30–€48/day + ~60 L fuel + e-vignette)"
+      },
+      "activities": {
+        "lowEur": 60,
+        "highEur": 110,
+        "note": "€60–€110 (caves, Snezhanka tower, Eagle's Eye shuttle, chairlift)"
+      }
+    },
+    "perDayEur": {
+      "low": 93,
+      "high": 154
+    }
+  },
+  "profile": {
+    "difficulty": 3,
+    "difficultyLabel": "Active",
+    "difficultyNote": "Moderate",
+    "fitnessLevel": "Moderate",
+    "crowdLevel": null,
+    "familyFriendly": null,
+    "carRequired": null
+  },
+  "basecamps": [
+    "Plovdiv",
+    "Devin",
+    "Shiroka Laka",
+    "Smolyan",
+    "Velingrad",
+    "Rila Monastery"
+  ],
+  "gatewayAirport": "Fly into Sofia (SOF), 1 h 45 by A1 to Plovdiv, or Plovdiv (PDV) direct. Rail Sofia–Plovdiv 2 h. Drop the car in Sofia.",
+  "gatewayAirportCode": "SOF",
+  "languages": [
+    "Bulgarian"
+  ],
+  "currency": "Euro (EUR) — sole legal tender since 1 February 2026; mandatory dual BGN display ended 8 August 2026",
+  "emergencyNumber": "112",
+  "coordinates": {
+    "lat": 42.1539,
+    "lon": 24.75,
+    "precision": "city",
+    "matchedPlace": "Plovdiv",
+    "source": "geonames (geonamescache, cities > 15k)"
+  },
+  "tags": [
+    "road-trip",
+    "mountain-passes",
+    "caves",
+    "monasteries",
+    "unesco",
+    "folk-music",
+    "rhodopes",
+    "rila"
+  ],
+  "summary": "The Rhodopes are not dramatic in the alpine sense — long, dark, spruce-covered whalebacks with villages in the folds and a road that never stops turning. Then the mountain opens a hole in itself and a river…",
+  "summaryGenerated": false,
+  "hook": "The Rhodopes are not dramatic in the alpine sense — long, dark, spruce-covered whalebacks with villages in the folds and a road that never stops turning. Then the mountain opens a hole in itself and a river disappears into it. A week of caves, gorges, monasteries and mehana tables, driven at 45 km/h because that is the honest average, and finished on a chairlift above seven glacial lakes.",
+  "snapshot": {
+    "Country": "Bulgaria",
+    "Trip type": "Road Trips & Scenic Drives",
+    "Duration": "7 days",
+    "Best period": "Late May–June, mid-September–mid-October",
+    "Budget tier": "€–€€",
+    "Difficulty": "Moderate",
+    "Start / End": "Plovdiv → Sofia (open loop, ~640 km)",
+    "Getting there": "Fly into Sofia (SOF), 1 h 45 by A1 to Plovdiv, or Plovdiv (PDV) direct. Rail Sofia–Plovdiv 2 h. Drop the car in Sofia."
+  },
+  "itinerary": [
+    {
+      "day": 1,
+      "title": "Plovdiv, and the oldest street in Europe",
+      "morning": "Collect the car, then leave it. Walk the Old Town's cobbled ramps — Balabanov House, Hindliyan House, the Roman Theatre of Philippopolis still used for opera.",
+      "afternoon": "The Roman Stadium under Dzhumaya Square, then Kapana, the craft quarter, for coffee. Climb **Bunardzhika** — the Hill of the Liberators — for the Alyosha monument and the whole Thracian plain at your feet.",
+      "evening": "Dinner of *shopska*, *kavarma* and Mavrud from the Asenovgrad slopes at **Gostilnitsa Chuchura** in the Old Town [VERIFY: current hours]. Confirm the BGTOLL vignette is live on your plate before bed.",
+      "dayStats": "0 km",
+      "sleep": null
+    },
+    {
+      "day": 2,
+      "title": "Bachkovo, then the Vacha road",
+      "morning": "**Bachkovo Monastery**, founded 1083 by the Georgian brothers Bakuriani — Bulgaria's second largest, with a 12th-century ossuary and the Virgin Eleusa icon. Buy monastery honey and *katmi* pancakes at the stalls outside.",
+      "afternoon": "North to Krichim, then the reservoir road up the Vacha: 40 km of bends between the Vacha and Devin dams, tunnels, no signal. Arrive **Devin**, a spa town on hot mineral water.",
+      "evening": "Soak in a Devin hotel pool fed by the town springs, then dinner of *cheverme* lamb and *patatnik*, the Rhodopean grated-potato cake that is the region's real signature dish.",
+      "dayStats": "135 km / 3 h 10",
+      "sleep": null
+    },
+    {
+      "day": 3,
+      "title": "The Devil's Throat and the underworld",
+      "morning": "Drive the gorge into **Trigrad** at 20 km/h. **Dyavolsko Garlo — the Devil's Throat Cave** — swallows the Trigrad river whole: Bulgaria's tallest underground waterfall, about 42 m, in a cathedral-sized hall, with 301 steps cut in rock as the way out. Tradition puts **Orpheus's descent to the underworld** here, and debris thrown in never reappears at the resurgence.",
+      "afternoon": "Back to Teshel, then the **Buynovo gorge** to **Yagodina Cave** — five levels, about 10 km surveyed, a 1,100 m show route at a constant 6°C. Bring a fleece [VERIFY: current hours and ticket price].",
+      "evening": "Take the 4x4 shuttle from Yagodina up the rough forest track to the **Eagle's Eye** platform for sunset over the gorge, then a village guesthouse dinner.",
+      "dayStats": "65 km / 2 h",
+      "sleep": null
+    },
+    {
+      "day": 4,
+      "title": "Shiroka Laka and the bagpipe",
+      "morning": "**Shiroka Laka**: white Rhodopean houses with black timber, the Church of the Assumption of 1834 built in 38 days, and the **National School of Folk Arts**, where teenagers learn the **kaba gaida** — the deep-toned Rhodopean bagpipe, longer-droned and a fourth lower than the thin Thracian gaida.",
+      "afternoon": "Over to **Smolyan** for the **Smolyan Lakes** on the town's northern edge — around eight of an original twenty survive — and the Regional Historical Museum's Thracian and folk-costume rooms.",
+      "evening": "Up to **Momchilovtsi**, a ridge village at 1,200 m famous for yoghurt exported to China, for dinner and the best village views in the Rhodopes.",
+      "dayStats": "70 km / 1 h 45",
+      "sleep": null
+    },
+    {
+      "day": 5,
+      "title": "Snezhanka, then west to Batak",
+      "morning": "Over the **Prevala** saddle to **Pamporovo** and the walk to the **Snezhanka** tower at 1,926 m — 153 steps to the platform, and on a clear morning the Aegean ridge lines of Greek Thrace [VERIFY: current tower hours].",
+      "afternoon": "Long drive via Devin and Dospat across the **Yavorovets** watershed to **Batak**. Visit the Church of St Nedelya, the memorial to the 1876 Batak massacre — a hard, necessary hour that explains Bulgarian nineteenth-century politics better than any museum.",
+      "evening": "Batak reservoir or on to **Velingrad**. Eat trout from the Batak dam, grilled plain with lemon.",
+      "dayStats": "135 km / 3 h",
+      "sleep": null
+    },
+    {
+      "day": 6,
+      "title": "Velingrad springs to the Rila valley",
+      "morning": "**Velingrad**, the self-styled spa capital of the Balkans: the **Kleptuza** karst spring in the town park pushes out cold water beside eighty-odd hot mineral springs. Ninety minutes in a mineral pool before a long drive.",
+      "afternoon": "The Yundola plateau road to Razlog, the **Predel pass** (1,140 m) with the Pirin wall on your left, then Simitli, Kocherinovo and 22 km up the Rilska river to **Rila Monastery**, UNESCO-listed since 1983.",
+      "evening": "Sleep in a monastery cell or the guesthouses in Pastra below. After the coaches leave at 18:00, the striped arcades and **Hrelyo's Tower** of 1335 are yours [VERIFY: current monastery cell rates and check-in cut-off].",
+      "dayStats": "185 km / 3 h 30",
+      "sleep": null
+    },
+    {
+      "day": 7,
+      "title": "Seven Lakes, then Sofia",
+      "morning": "Early liturgy in the Nativity church, then drive to Sapareva Banya and up to **Panichishte**. The chairlift from **Pionerska hut** lifts you to about 2,100 m by the Rilski Ezera hut.",
+      "afternoon": "Walk the cirque: Dolnoto, Ribnoto, Trilistnika, Bliznaka, Babreka, **Okoto** — the deepest cirque lake in Bulgaria at roughly 37.5 m — and **Salzata** at 2,535 m. Three to four hours round trip on rough path; the lakes freeze into June some years.",
+      "evening": "Down the E79 to Sofia, return the car, and finish with *shkembe* or grilled Rhodopean sausage in the Kapana-style bars around Ulitsa Shishman.",
+      "dayStats": "150 km / 2 h 55",
+      "sleep": null
+    }
+  ],
+  "accommodationStrategy": [
+    {
+      "rank": 1,
+      "name": "Rhodopean guesthouse",
+      "style": "village konak",
+      "location": "Shiroka Laka",
+      "description": "stone-and-timber houses on the Shirokolashka river, wood stoves, *mekitsi* and sheep's yoghurt for breakfast, and hosts who will arrange a bagpipe evening. Parking is on the road — take the compact.",
+      "booking": "direct by phone or Booking.com, 2–3 weeks ahead; the March *Pesponedelnik* kukeri festival fills the village a year out.",
+      "priceNote": null
+    },
+    {
+      "rank": 2,
+      "name": "Rila Monastery cells / Pastra guesthouses",
+      "style": "monastic and family lodging",
+      "location": "Rilska valley",
+      "description": "the only way to see the courtyard empty. Cells are spartan — no heating in shoulder season, curfew, cash on arrival.",
+      "booking": "monastery cells by phone only, 3–4 weeks ahead; keep a Pastra guesthouse as backup.",
+      "priceNote": null
+    },
+    {
+      "rank": 3,
+      "name": "Spa Hotel Persenk",
+      "style": "mid-range spa hotel",
+      "location": "Devin",
+      "description": "enclosed parking, thermal mineral pools fed by Devin's own springs and a restaurant that stays open late — the kind of reset night this drive needs, and Devin sits exactly where the Trigrad and Dospat legs meet. Consistently the highest-rated hotel in the town.",
+      "booking": "direct or via the usual portals, 2 weeks ahead.",
+      "priceNote": null
+    }
+  ],
+  "logistics": {
+    "connectivity": "A1 and Yettel cover towns and the main roads; expect nothing in the Trigrad and Buynovo gorges or on the Vacha reservoir road. Download offline maps.",
+    "emergency": "112. Mountain rescue is the Bulgarian Red Cross Mountain Rescue Service (PSS); on the Rila lakes carry the hut's number and tell someone your route.",
+    "weather": "Rhodope fog forms fast in the gorges and afternoon storms build over Rila from mid-June. The Seven Lakes cirque holds snow patches into July.",
+    "bookingWindows": "Guesthouses 2–3 weeks; Rila cells 3–4 weeks; the car 4–6 weeks (manual transmission is the default and much cheaper).",
+    "money": "Bulgaria has adopted the euro at the fixed rate of 1 EUR = 1.95583 BGN. Mandatory dual EUR/BGN display **ended on 8 August 2026**, so prices are now quoted in euro alone unless a shop chooses to keep the lev figure for reference; the lev itself ceased to be legal tender on 31 January 2026. Cards are widely taken in towns, but cave tickets, village guesthouses and monastery cells are often cash — carry €60–€80 in small notes.",
+    "transportRules": "50 km/h in towns, 90 outside, 140 on motorway. Dipped headlights compulsory year-round, day and night. Alcohol limit 0.5‰. Winter tyres or chains required 15 November–1 March.",
+    "permits": "BGTOLL e-vignette on all national roads. Caves are guided-entry only, on fixed departures, with no photography inside some sections; Rila Monastery bans shorts and bare shoulders in the church.",
+    "health": null,
+    "gettingThere": null,
+    "other": []
+  },
+  "proTips": [
+    "Do the Devil's Throat on the **first tour of the day**. The hall's acoustics and the waterfall roar are ruined once three groups overlap, and the 301 steps are a bottleneck.",
+    "Sleep in Trigrad or Yagodina, not Devin, if you want the caves without the coach window. The villages are half the price of Pamporovo.",
+    "Ask your Shiroka Laka host for *\"kaba gaida na zhivo\"* — live bagpipe. Students and village players do informal evenings; it costs a round of rakia, not a ticket.",
+    "Drive the Trigrad gorge before 09:00 or after 17:00. Coach transfers run mid-morning and mid-afternoon, and that is when the single-track reversing happens.",
+    "At the Seven Lakes, walk **anti-clockwise to Salzata first**, then descend past Okoto. Everyone else goes the other way and you will meet the crowd head-on rather than travel inside it.",
+    "Rila Monastery is a two-hour day trip from Sofia for the coaches. Staying the night costs about the same as a Sofia hotel and buys you dawn in an empty courtyard.",
+    "Buy the vignette yourself on bgtoll.bg if you have any doubt. It takes three minutes, costs less than one fine, and the receipt is your evidence."
+  ],
+  "typeSpecific": {
+    "raw": {
+      "Driving legs (km + realistic time)": "Plovdiv→Bachkovo 30 km/40 min (Asenovgrad, road 86); Bachkovo→Devin 105 km/2 h 30 via Krichim and the Vacha reservoir road; Devin→Trigrad 30 km/55 min; Trigrad→Yagodina 35 km/1 h (back to the Teshel junction, then the Buynovo gorge); Yagodina→Shiroka Laka 45 km/1 h 10; Shiroka Laka→Smolyan 25 km/35 min; Smolyan→Momchilovtsi 18 km/30 min; Smolyan→Pamporovo 16 km/25 min over the Prevala saddle; Pamporovo→Batak 120 km/2 h 40 via Devin and Dospat; Batak→Velingrad 35 km/45 min; Velingrad→Rila Monastery 150 km/2 h 45 via Yundola, Razlog, the Predel pass and Kocherinovo; Rila Monastery→Panichishte 70 km/1 h 40; Panichishte→Sofia 80 km/1 h 15.",
+      "Passes and hairpins": "The **Prevala** saddle between Smolyan and Pamporovo, around 1,600 m, is the loop's high road point and the first to ice [VERIFY: exact Prevala altitude]. The **Yavorovets** pass carries the Devin–Dospat road over the watershed [VERIFY: Yavorovets altitude and surface]. The Shiroka Laka–Pamporovo climb stacks roughly twenty-five hairpins in 12 km; the Vacha reservoir road runs 40 km of continuous bends with no straight over 300 m. **Predel** (1,140 m) is the only fast pass on the trip.",
+      "Honest width warning": "The road into **Trigrad** narrows to effectively single-track between the gorge walls — around 3.5 m at the tightest point, with short unlit rock-cut tunnels, no barrier on the river side and passing places every few hundred metres. Fine in a hatchback at 20 km/h; genuinely unpleasant in a large SUV or campervan, and when a coach comes the other way somebody reverses. The Buynovo gorge road to Yagodina is comparable.",
+      "Car rental and vignette": "Bulgaria's vignette is fully electronic — bought by number plate through **BGTOLL** (bgtoll.bg, the app, or any petrol-station terminal). No sticker; ANPR cameras enforce it. One-day, weekend, weekly, monthly, quarterly and annual products exist; from **1 August 2026** the car (≤3.5 t) tariff is **one day €5.30, weekend €6.60, week €10.00, month €19.90, quarter €35.90, year €64.50** — a 30% rise on the previous rates, so budget the week's vignette at ten euros rather than the older seven. Rentals normally come vignetted — confirm the plate is registered. Cross-border: most Bulgarian rentals allow Greece and Romania with a Green Card and a fee (€30–€60); **North Macedonia, Serbia and Türkiye are usually excluded or need written authorisation**, with extra insurance bought at the Turkish border.",
+      "Fuel": "Real gaps up here. Fill in **Devin**, **Smolyan** or **Dospat** and never drop below a quarter tank: no fuel in Trigrad, Yagodina, Shiroka Laka or Momchilovtsi, and Devin–Dospat is 60 km of empty forest road.",
+      "Viewpoints": "The **Eagle's Eye (Orlovo Oko)** glass platform at about 1,563 m above the Buynovo gorge; the **Snezhanka** TV tower at 1,926 m above Pamporovo; the Rozhen meadows above Momchilovtsi; the Hrelyo's Tower courtyard at Rila; the chairlift top station above the Seven Lakes cirque."
+    },
+    "surface": null,
+    "distanceKm": null,
+    "elevationM": null,
+    "verticalM": null,
+    "technicalRating": null,
+    "transitPass": null,
+    "hutBooking": null,
+    "liftNetwork": null,
+    "snowReliability": null,
+    "windConditions": null,
+    "gpxReady": null,
+    "bookingTimeline": null,
+    "audience": null
+  },
+  "packingNotes": [],
+  "whatCouldGoWrong": [],
+  "sources": {
+    "verified": null,
+    "confidenceNotes": "- Verified: euro adoption in effect with BGN still quoted; BGTOLL e-vignette; Rila Monastery UNESCO 1983 and Hrelyo's Tower 1335; Bachkovo founded 1083; Devil's Throat waterfall and 301-step exit; Snezhanka tower 1,926 m; Trigrad gorge single-track constraint. - `[VERIFY]` items in this file: 6 (see inline markers above) - Last reviewed: 2026-09-02"
+  },
+  "verifyFlags": [
+    "exact Prevala altitude",
+    "Yavorovets altitude and surface",
+    "current hours",
+    "current hours and ticket price",
+    "current tower hours",
+    "current monastery cell rates and check-in cut-off"
+  ],
+  "verifyFlagCount": 6,
+  "volatilePricing": true,
+  "wordCount": 2181,
+  "dataVintage": 2026,
+  "provenance": {
+    "batch": "eastern-southeastern",
+    "sourceFile": "cartaeasterneuropetrips/trips/bulgaria-rhodope-rila-road-trip.md",
+    "sourceFormat": "md+nested-yaml-frontmatter (one file per trip)",
+    "sourceId": "bulgaria-rhodope-rila-road-trip",
+    "ingestedAt": "2026-09-02",
+    "synthesized": false
+  }
+}

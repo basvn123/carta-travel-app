@@ -90,8 +90,9 @@ export const ATTRIBUTIONS = [
     credit: 'Bathing water quality, and the official bathing sites that '
       + 'decide whether a lake can be swum in, from the European Environment '
       + 'Agency and the Member State authorities that report them; coastal '
-      + 'stretches cut from the EEA coastline for analysis, and the EEA '
-      + 'biogeographical regions and WISE river basin districts',
+      + 'stretches cut from the EEA coastline for analysis, which also says '
+      + 'which way a beach faces and whether the sun sets over its water, '
+      + 'and the EEA biogeographical regions and WISE river basin districts',
   },
   {
     source: 'ONS Open Geography',
@@ -115,8 +116,9 @@ export const ATTRIBUTIONS = [
   {
     source: 'NASA POWER',
     license: 'US Government work (no restriction; acknowledgement appreciated)',
-    credit: 'Climate normals from the NASA POWER project, NASA Langley '
-      + 'Research Center (power.larc.nasa.gov)',
+    credit: 'Climate normals, and the best months on every mountain page, '
+      + 'from the NASA POWER project, NASA Langley Research Center '
+      + '(power.larc.nasa.gov)',
   },
   {
     source: 'UNESCO World Heritage Centre',
@@ -124,10 +126,10 @@ export const ATTRIBUTIONS = [
     credit: 'World Heritage designations from the UNESCO World Heritage List',
   },
   {
-    source: 'WorldClim',
-    license: 'WorldClim 2.1 terms (citation required)',
-    credit: 'The estimated lake swimming season is modelled from WorldClim '
-      + '2.1 normals (Fick and Hijmans 2017)',
+    source: 'CHELSA',
+    license: 'CC BY 4.0',
+    credit: 'The estimated lake swimming season is modelled from CHELSA V2.1 '
+      + 'climate normals (Karger et al. 2017)',
   },
   {
     source: 'OpenTripMap',
@@ -139,14 +141,67 @@ export const ATTRIBUTIONS = [
     license: 'CDLA-Permissive 2.0',
     credit: 'Sightseeing places from Overture Maps Foundation',
   },
+  // Cycling layer (pipeline/cycling). OSM above covers the route geometry and
+  // the surface, safety and service tags underneath every figure; these three
+  // cover the ground truth the OSM lines are checked against.
+  //
+  // EuroVelo's wording is PRESCRIBED by the ECF and shipped verbatim with the
+  // real download date substituted. A paraphrase is not compliance, which is
+  // why this entry carries the sentence rather than a summary of it, and why
+  // export_cycling.py writes the dated copy into the cycling wire as well.
+  {
+    source: 'EuroVelo',
+    license: 'ODbL 1.0 (since October 2024)',
+    credit: 'Contains information from EuroVelo GPX tracks downloaded from '
+      + 'www.EuroVelo.com, which is made available here under the Open '
+      + 'Database License (ODbL). Used to check the cycle routes we publish '
+      + 'against the alignments the European Cyclists Federation publishes',
+  },
+  {
+    source: 'Walk Wheel Cycle Trust (Sustrans)',
+    license: 'Open Government Licence v3.0',
+    credit: 'National Cycle Network alignments, used to check the British and '
+      + 'Scottish cycle routes we publish, © Walk Wheel Cycle Trust; contains '
+      + 'Ordnance Survey data © Crown copyright and database right',
+  },
+  {
+    source: 'Spatial Hub Scotland (Improvement Service)',
+    license: 'Open Government Licence v3.0',
+    credit: 'Local-authority cycling network geometry for Scotland, used to '
+      + 'check the Scottish cycle routes we publish, © Improvement Service '
+      + 'via spatialhub.scot; contains Ordnance Survey data © Crown '
+      + 'copyright and database right',
+  },
+  {
+    source: 'SchweizMobil and the Federal Roads Office (ASTRA)',
+    license: 'opendata.swiss terms (free reuse with the source named)',
+    credit: 'Veloland Schweiz national and regional cycle routes, used to '
+      + 'check the Swiss routes we publish, SchweizMobil and ASTRA via '
+      + 'opendata.swiss',
+  },
+  {
+    source: 'European Environment Agency, protected sites',
+    license: 'EEA re-use policy (CC BY 4.0)',
+    credit: 'Natura 2000 and Emerald Network site boundaries, which decide '
+      + 'how much of a cycle route runs through protected landscape and '
+      + 'whether a beach stands inside a protected site, from '
+      + 'the European Environment Agency. Emerald is the non-EU half, so '
+      + 'the claim holds in Norway, the United Kingdom, Switzerland and the '
+      + 'Balkans as well as inside the Union',
+  },
   // Trails vertical (tools/trailslab). The published hikes, daytrips and city
   // trips are produced works: selected, measured, described and approved one
   // by one. OSM above covers their geometry; these four cover what shaped it.
   {
     source: 'Copernicus GLO-30',
     license: 'Copernicus DEM instance terms (credit required)',
-    credit: 'Trail elevation, ascent and descent from the Copernicus GLO-30 '
-      + 'DEM (© ESA, Airbus)',
+    // Two layers now: trails take the Z off it, and the mountain layer
+    // computes prominence, isolation and the view from it. The prescribed
+    // wording is the second sentence and it is prescribed word for word.
+    credit: 'Trail elevation, ascent and descent, and mountain prominence, '
+      + 'isolation and viewsheds, from the Copernicus GLO-30 DEM. '
+      + '© DLR e.V. 2010-2014 and © Airbus Defence and Space GmbH 2014-2018, '
+      + 'provided under COPERNICUS by the European Union and ESA',
   },
   {
     source: 'swisstopo',
@@ -162,6 +217,16 @@ export const ATTRIBUTIONS = [
     source: 'Kartverket',
     license: 'CC BY 4.0',
     credit: 'Norwegian trails checked against Turrutebasen, Kartverket',
+  },
+  {
+    // The OGL asks for the copyright statement, and Natural England's own
+    // dataset page prescribes it including the Ordnance Survey half, because
+    // the trail lines are drawn on OS mapping. Both sentences, word for word.
+    source: 'Natural England',
+    license: 'Open Government Licence v3.0',
+    credit: 'English trails checked against National Trails (England). '
+      + '© Natural England copyright. Contains Ordnance Survey data '
+      + '© Crown copyright and database right',
   },
   {
     source: 'Transitous',

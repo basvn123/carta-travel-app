@@ -1,0 +1,324 @@
+{
+  "id": "fr-cycling-alsace-vineyard-route",
+  "sourceId": "fr-cycling-alsace-vineyard-route",
+  "slug": "fr-cycling-alsace-vineyard-route",
+  "title": "The Alsace Vineyard Route by Bike",
+  "country": "France",
+  "countryCode": "FR",
+  "countries": [
+    {
+      "name": "France",
+      "code": "FR"
+    }
+  ],
+  "isMultiCountry": false,
+  "region": "Western & Central Europe",
+  "regionKey": "western-central",
+  "subRegion": "Alsace, Grand Est",
+  "tripType": "Cycling Trips",
+  "tripTypeId": 1,
+  "tripTypeSlug": "cycling",
+  "durationDays": 7,
+  "bestPeriod": {
+    "months": [
+      5,
+      6,
+      9,
+      10
+    ],
+    "monthNames": [
+      "May",
+      "June",
+      "September",
+      "October"
+    ],
+    "window": null,
+    "note": "Late September and early October put you in the vineyards during the vendanges, with tractor traffic on the narrow lanes.",
+    "avoid": null,
+    "raw": null
+  },
+  "budgetTier": "€€",
+  "budgetTierRange": [
+    2,
+    2
+  ],
+  "budgetTierRaw": "€€",
+  "budget": {
+    "currency": "EUR",
+    "totalEur": {
+      "low": 950,
+      "high": 1400
+    },
+    "totalNote": null,
+    "breakdown": {
+      "accommodation": {
+        "lowEur": 460,
+        "highEur": 690,
+        "note": null
+      },
+      "food": {
+        "lowEur": 240,
+        "highEur": 330,
+        "note": null
+      },
+      "transport": {
+        "lowEur": 110,
+        "highEur": 180,
+        "note": null
+      },
+      "activities": {
+        "lowEur": 150,
+        "highEur": 220,
+        "note": null
+      }
+    },
+    "perDayEur": {
+      "low": 136,
+      "high": 200
+    }
+  },
+  "profile": {
+    "difficulty": 3,
+    "difficultyLabel": "Active",
+    "difficultyNote": null,
+    "fitnessLevel": "Active",
+    "crowdLevel": "Moderate",
+    "familyFriendly": false,
+    "carRequired": false
+  },
+  "basecamps": [
+    "Colmar"
+  ],
+  "gatewayAirport": "EuroAirport Basel-Mulhouse-Freiburg (BSL)",
+  "gatewayAirportCode": "BSL",
+  "languages": [
+    "French",
+    "German",
+    "Alsatian"
+  ],
+  "currency": "EUR",
+  "emergencyNumber": "112",
+  "coordinates": {
+    "lat": 48.0808,
+    "lon": 7.3558,
+    "precision": "city",
+    "matchedPlace": "Colmar",
+    "source": "geonames (geonamescache, cities > 15k)"
+  },
+  "tags": [
+    "vineyard-route",
+    "eurovelo-5",
+    "wine-villages",
+    "train-assisted",
+    "e-bike-friendly"
+  ],
+  "summary": "A week on the Véloroute du Vignoble d'Alsace and EuroVelo 15, riding grand cru slopes by day and returning to Colmar by free regional train.",
+  "summaryGenerated": false,
+  "hook": "Alsace hands cyclists a rare combination. A continuously signed route runs the length of the vineyard, there is a village worth stopping in roughly every eight kilometres, and a dense regional train network will carry your bike free when your legs are finished. The riding is rolling rather than mountainous, apart from one deliberate day of climbing to a castle on a ridge.",
+  "snapshot": {
+    "Country": "France (Grand Est)",
+    "Base(s)": "Colmar (5 nights), Obernai (1), Strasbourg (1)",
+    "Trip Type": "Cycling Trips",
+    "Duration": "7 days",
+    "Best Period": "May, June, September, October",
+    "Budget Tier": "€€ (approx. €950–€1,400 per person, excluding flights)",
+    "Total Distance / Terrain": "Approx. 335 km, +3,000 m cumulative. Asphalt lanes and canal paths, with short sections of compacted vineyard track",
+    "Getting There": "Fly to EuroAirport Basel-Mulhouse-Freiburg, then TER 200 via Mulhouse to Colmar (approx. 1 h 15 door to door with the airport shuttle)",
+    "Who It Suits": "Riders comfortable with 50–70 km days and 500–900 m of climbing, who want wine and villages more than mileage"
+  },
+  "itinerary": [
+    {
+      "day": 1,
+      "title": "Three castles above Eguisheim",
+      "morning": "Collect bikes in Colmar. Colmarvélo, the municipal hire service, rents city and trekking bikes by the day; for a trekking bike with racks and panniers, or an e-bike with a 500 Wh battery, book ahead through an Accueil Vélo certified shop or have Vélo Voyageur or Abicyclette Voyages deliver machines to your hotel. Check the Accueil Vélo sticker at every stop you plan on this week; it guarantees a pump, a repair kit and secure parking within 5 km of the route.",
+      "afternoon": "A short shakedown loop south. Follow the Véloroute du Vignoble d'Alsace out of Colmar to Wettolsheim and Eguisheim, then climb the vineyard lane to Husseren-les-Châteaux and the three ruined towers above it. That is 240 m of gain in about 5 km. Descend to Turckheim through the Brand grand cru.",
+      "evening": "Back in Colmar for the Marché Couvert on Place de l'Ancienne Douane, then dinner at Wistub Brenner. Order the baeckeoffe rather than the tarte flambée.",
+      "dayStats": "35 km · +420 m · asphalt, 3 km compacted vineyard track.",
+      "sleep": null
+    },
+    {
+      "day": 2,
+      "title": "Kaysersberg to Ribeauvillé",
+      "morning": "North on the vineyard route to Ammerschwihr and Kientzheim, then Kaysersberg. Domaine Weinbach sits at the Clos des Capucins below the Schlossberg grand cru; tastings are by appointment only and worth arranging weeks ahead.",
+      "afternoon": "Riquewihr, then the short climb to Hunawihr with its fortified church, then Ribeauvillé. Hugel & Fils and Trimbach both run walk-in tasting rooms with fixed hours; the appointment-only estates do not. Return south via Bergheim and the flat lanes through Ostheim.",
+      "evening": "Eat at Winstub Zum Pfifferhüs in Ribeauvillé before riding back to Colmar in the last of the light.",
+      "dayStats": "58 km · +560 m · asphalt throughout.",
+      "sleep": null
+    },
+    {
+      "day": 3,
+      "title": "Haut-Koenigsbourg",
+      "morning": "Take the TER from Colmar to Sélestat with the bike. Bikes travel free and unreserved on TER Grand Est, in the carriages marked with a bicycle pictogram. Ride to Châtenois, then begin the climb through Kintzheim.",
+      "afternoon": "The road to Haut-Koenigsbourg climbs about 550 m in 8 km, with sustained pitches of 7 to 9 per cent. The castle was rebuilt for Kaiser Wilhelm II between 1900 and 1908 and the view runs from the Vosges to the Black Forest. Descend north to Dambach-la-Ville, then follow the route through Itterswiller and Andlau, where Domaine Marc Kreydenweiss farms the schist of the Kastelberg.",
+      "evening": "Barr, then Obernai. Overnight in Obernai; the medieval centre around Place du Marché is small enough to walk in half an hour.",
+      "dayStats": "52 km · +900 m · asphalt, one steep sustained climb.",
+      "sleep": null
+    },
+    {
+      "day": 4,
+      "title": "The Bruche canal into Strasbourg",
+      "morning": "Obernai to Rosheim and Molsheim, the northern end of the vineyard proper. This is the gentlest riding of the week.",
+      "afternoon": "At Molsheim join the Canal de la Bruche towpath, a flat, largely traffic-free run of about 25 km into Strasbourg. Surface is a mix of asphalt and compacted gravel. It delivers you at the Petite France quarter.",
+      "evening": "Strasbourg. The cathedral astronomical clock performs at 12:30, so it is a morning target rather than an evening one. Eat in the Krutenau instead of the tourist blocks around Place Kléber.",
+      "dayStats": "44 km · +250 m · asphalt plus 25 km of canal towpath.",
+      "sleep": null
+    },
+    {
+      "day": 5,
+      "title": "EuroVelo 15 down the Rhine",
+      "morning": "Leave Strasbourg southbound on EuroVelo 15, the Rhine Route, through the Neuhof forest and the Rhine polders. The surface is flat and fast, mostly asphalt on dike tops.",
+      "afternoon": "Cross to Germany and back on the Rhinau ferry, which is free for cyclists and runs continuously in daylight, then continue past Marckolsheim. Leave the river at Artolsheim for Sélestat and take the TER back to Colmar, a 15 minute hop.",
+      "evening": "Colmar. The Petite Venise canals are quiet after 20:00 once the day-trip coaches have gone.",
+      "dayStats": "55 km · +150 m · asphalt dike paths, short gravel sections in the forest.",
+      "sleep": null
+    },
+    {
+      "day": 6,
+      "title": "South to the Rangen de Thann",
+      "morning": "Colmar to Rouffach on the vineyard route, past the Vorbourg slope, then Pfaffenheim and Westhalten.",
+      "afternoon": "Guebwiller sits under the Kitterlé and Kessler grand crus and the road tilts noticeably here. Continue through Soultz to Thann, whose Rangen is the steepest vineyard in Alsace at up to 68 per cent, planted on volcanic rock. Zind-Humbrecht and Schoffit both hold parcels there. Return by TER from Thann to Colmar.",
+      "evening": "A quiet night. Book the two-star kitchen at JY'S in Colmar only if you are willing to lose the following morning.",
+      "dayStats": "52 km · +450 m · asphalt.",
+      "sleep": null
+    },
+    {
+      "day": 7,
+      "title": "The Fecht valley to Munster",
+      "morning": "West out of Colmar on the Fecht valley cycle route towards Munster, a steady false flat of about 19 km along the valley floor with the Vosges crest ahead.",
+      "afternoon": "Munster for the cheese, which is AOP and sold at its best from the farms above the town. The climb to the Petit Ballon or the Route des Crêtes is available if you have legs left; it adds 700 m. Otherwise coast back to Colmar or take the TER from Munster.",
+      "evening": "Return the bikes. The TER 200 runs Colmar to Basel in about 50 minutes for the airport.",
+      "dayStats": "40 km · +300 m (add 700 m for the crest option) · asphalt.",
+      "sleep": null
+    }
+  ],
+  "accommodationStrategy": [
+    {
+      "rank": 1,
+      "name": "Hôtel Turenne",
+      "style": "Mid-range town hotel",
+      "location": "Colmar",
+      "description": "Ten minutes on foot from Petite Venise and five from the station, which matters because four of the seven days use the train. Ask at booking for the enclosed private parking rather than the street; it is the reason to choose this over the guesthouses inside the pedestrian zone, where you will be carrying a loaded bike over cobbles.",
+      "booking": "three months ahead for September and October.",
+      "priceNote": "€95–€150 per night"
+    },
+    {
+      "rank": 2,
+      "name": "Hôtel Le Colombier",
+      "style": "Boutique half-timbered",
+      "location": "Obernai",
+      "description": "A converted merchant house on rue Dietrich with an inner courtyard where bikes can be locked out of the weather. Obernai is the right overnight for the Haut-Koenigsbourg day because it puts the following morning on the flat run to Molsheim.",
+      "booking": "two months ahead.",
+      "priceNote": "€110–€180 per night"
+    },
+    {
+      "rank": 3,
+      "name": "Hôtel Cour du Corbeau",
+      "style": "Historic",
+      "location": "Strasbourg",
+      "description": "A 16th-century galleried inn near the Corbeau bridge, with a courtyard and staff used to cyclists arriving off the Bruche towpath. The location kills the need for any city transport on the one urban night of the week.",
+      "booking": "three months ahead, longer if the European Parliament is sitting.",
+      "priceNote": "€170–€260 per night"
+    }
+  ],
+  "logistics": {
+    "connectivity": null,
+    "emergency": "Emergency number is 112. In France, 15 reaches SAMU medical dispatch and 18 the fire service, who also handle road accidents.",
+    "weather": null,
+    "bookingWindows": null,
+    "money": null,
+    "transportRules": null,
+    "permits": null,
+    "health": null,
+    "gettingThere": null,
+    "other": [
+      {
+        "label": null,
+        "text": "Emergency number is 112. In France, 15 reaches SAMU medical dispatch and 18 the fire service, who also handle road accidents."
+      },
+      {
+        "label": null,
+        "text": "Bikes travel free and without reservation on TER Grand Est regional trains, in the marked areas, subject to space. TGV INOUI requires a €10 bike reservation for an assembled bike and space sells out. Regional buses in Alsace do not take bikes."
+      },
+      {
+        "label": null,
+        "text": "Navigation is by the green Alsace à Vélo panels. The Véloroute du Vignoble d'Alsace runs Marlenheim to Thann; EuroVelo 5 crosses the plain via Strasbourg and Mulhouse; EuroVelo 15 follows the Rhine. Download the GPX from alsaceavelo.fr rather than trusting a routing app, which will send you onto the D-roads."
+      },
+      {
+        "label": null,
+        "text": "Luggage transfer is not a public service here. Vélo Voyageur and Abicyclette Voyages arrange it as part of a booked itinerary; otherwise a local taxi will move bags between hotels for roughly €40–€60 a leg."
+      },
+      {
+        "label": null,
+        "text": "Most estates close between 12:00 and 14:00, and many close all day Sunday and Monday. Village bakeries sell out of kougelhopf by 10:00 on Sunday."
+      },
+      {
+        "label": null,
+        "text": "Cards work everywhere, but small growers and the Munster farms often prefer cash."
+      },
+      {
+        "label": null,
+        "text": "Alsace has a 0.5 g/l blood alcohol limit that applies to cyclists in practice through the offence of riding while impaired. Spit at tastings or ride an e-bike and go slowly."
+      }
+    ]
+  },
+  "proTips": [
+    "Ride the vineyard route northbound in the morning and the plain southbound in the afternoon. The prevailing wind runs up the Rhine valley from the south-west and turns the flat return legs into work if you get the order wrong.",
+    "Book Domaine Weinbach and Trimbach by email at least three weeks out, in French, naming a specific date and a party size. Both refuse walk-ins at busy periods but rarely refuse a written request.",
+    "The Haut-Koenigsbourg car park fills by 10:30 in season. Cyclists ride past the queue to the bike racks at the ticket office and buy on the spot.",
+    "Sélestat is the smartest rail hub on the route, not Colmar. It has more northbound services and lets you cut any day short from Dambach, Châtenois or Marckolsheim.",
+    "The Rhinau ferry is free, runs on demand and gets you 20 minutes of Baden riding, which is the cheapest way to add a second country to the week.",
+    "Buy a picnic at the Colmar Marché Couvert before 11:00 on a Saturday. It shuts early and there is nothing comparable in the villages."
+  ],
+  "typeSpecific": {
+    "raw": {
+      "Total Distance / Terrain": "Approx. 335 km, +3,000 m cumulative. Asphalt lanes and canal paths, with short sections of compacted vineyard track",
+      "Who It Suits": "Riders comfortable with 50–70 km days and 500–900 m of climbing, who want wine and villages more than mileage"
+    },
+    "surface": "Approx. 335 km, +3,000 m cumulative. Asphalt lanes and canal paths, with short sections of compacted vineyard track",
+    "distanceKm": 335,
+    "elevationM": null,
+    "verticalM": null,
+    "technicalRating": null,
+    "transitPass": null,
+    "hutBooking": null,
+    "liftNetwork": null,
+    "snowReliability": null,
+    "windConditions": null,
+    "gpxReady": null,
+    "bookingTimeline": null,
+    "audience": "Riders comfortable with 50–70 km days and 500–900 m of climbing, who want wine and villages more than mileage"
+  },
+  "packingNotes": [
+    "32 mm tyres minimum. The vineyard connectors are compacted stone and 25 mm road tyres are miserable on them.",
+    "A proper lock. Bikes are left outside tasting rooms and churches all week.",
+    "Two 750 ml bottles. There are fountains in the villages but nothing at all on the Haut-Koenigsbourg climb.",
+    "Rain jacket and a spare pair of gloves. Vosges foothill weather turns fast in May and October.",
+    "A wine-bottle sleeve or a padded pannier insert if you intend to carry purchases; better still, have estates ship.",
+    "Sunscreen. The vineyard is unshaded from 09:00 to 18:00.",
+    "Front and rear lights, mandatory after dark."
+  ],
+  "whatCouldGoWrong": [
+    "**Vendanges traffic.** From mid-September the vineyard lanes carry tractors and hoppers. Ride the plain routes at harvest peak and save the slopes for early morning.",
+    "**A full TER.** Bike spaces on the Colmar–Sélestat and Thann shuttles fill on summer weekends. Fall back to the following service; frequency is every 30 to 60 minutes.",
+    "**A closed estate.** Many small domaines shut for two weeks in August and again during harvest. Confirm 48 hours ahead and keep the cooperative cellars, which keep regular hours, as a backup.",
+    "**Thunderstorms on the ridge.** The Haut-Koenigsbourg day is exposed. If storms are forecast after 14:00, start at 08:00 or swap the day for the Rhine leg.",
+    "**A mechanical.** Village bike shops are rare. Carry two tubes and a chain link; the reliable workshops are in Colmar, Sélestat and Strasbourg."
+  ],
+  "sources": {
+    "verified": null,
+    "confidenceNotes": null
+  },
+  "verifyFlags": [],
+  "verifyFlagCount": 0,
+  "volatilePricing": false,
+  "wordCount": 1996,
+  "dataVintage": 2026,
+  "provenance": {
+    "batch": "western-central",
+    "sourceFile": "cartatripsv1/trips/fr-cycling-alsace-vineyard-route.md",
+    "sourceFormat": "md+yaml-frontmatter (one file per trip)",
+    "sourceId": "fr-cycling-alsace-vineyard-route",
+    "ingestedAt": "2026-09-02",
+    "synthesized": false
+  }
+}

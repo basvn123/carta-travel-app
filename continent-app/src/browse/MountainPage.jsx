@@ -1,9 +1,11 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useI18n } from '../i18n/index.jsx';
+import { NearbyOutdoors } from './NearbyOutdoors.jsx';
 import {
   mountainHeadline, mountainWhy, mountainTags, mountainHazards, mountainSeason,
   bestForLabel, componentLabel, liftLabel, isLiftServed, isHiddenGem,
   mountainRating, COMPONENT_ORDER, SUB_ORDER,
+  difficultyLabel, viewBandLabel, bestMonthsLine, accessLabels,
 } from '../lib/mountainStory.js';
 import { mountainShareUrl } from '../lib/mountains.js';
 import { trailheadDirectionsUrl, shareTrailLink } from '../lib/trailExport.js';
@@ -101,7 +103,11 @@ function WayUp({ mountain, t }) {
   const tone = ride ? 'ride' : lift ? 'near' : 'foot';
   const srcKey = lift ? (SRC_KEY[lift.src] || '') : '';
   const srcLine = srcKey ? t(srcKey) : '';
-  const season = mountainSeason(mountain, t);
+  const season = bestMonthsLine(mountain, t) || mountainSeason(mountain, t);
+  // Every way in, not just the lift: parking at the start and a station
+  // within two kilometres are the two facts that decide whether a person
+  // without a car can go, and v1 had no field for either.
+  const ways = accessLabels(mountain, t);
   return (
     <div className={`mpage-way mpage-way-${tone}`} role="note">
       <span className="mpage-way-word">{liftLabel(mountain, t)}</span>
@@ -116,11 +122,16 @@ function WayUp({ mountain, t }) {
       )}
       {ride && <span className="mpage-way-note">{t('mtn.liftSeasonNote')}</span>}
       {season && <span className="mpage-way-note">{season}</span>}
+      {ways.length > 0 && (
+        <span className="mpage-way-ways">
+          {ways.map((w) => <span key={w.code}>{w.label}</span>)}
+        </span>
+      )}
     </div>
   );
 }
 
-export function MountainPage({ mountain, countryName, onClose, onSelectDest }) {
+export function MountainPage({ mountain, countryName, onClose, onSelectDest, onOpenNeighbour }) {
   const { t, lang } = useI18n();
   const [shot, setShot] = useState(0);
   const [toast, setToast] = useState(null);
@@ -183,9 +194,28 @@ export function MountainPage({ mountain, countryName, onClose, onSelectDest }) {
     mountain.prom != null && {
       key: 'prom',
       label: t('mtn.factProminence'),
-      value: `${Math.round(mountain.prom).toLocaleString(lang)} m`,
-      note: t('mtn.factProminenceNote'),
+      // A computed prominence says so, and a computed one the search window
+      // could only bound from below says THAT: "at least 2,312 m" is a
+      // different claim from "2,312 m" and the reader is owed the difference.
+      value: `${mountain.promSrc === 'dem_min' ? '≥ ' : ''}`
+        + `${Math.round(mountain.prom).toLocaleString(lang)} m`,
+      note: mountain.promSrc === 'dem_min' ? t('mtn.factProminenceDemMin')
+        : mountain.promSrc === 'dem' ? t('mtn.factProminenceDem')
+          : t('mtn.factProminenceNote'),
       mono: true,
+    },
+    mountain.diff && {
+      key: 'diff',
+      label: t('mtn.factDifficulty'),
+      value: difficultyLabel(mountain, t),
+    },
+    mountain.view && {
+      key: 'view',
+      label: t('mtn.factView'),
+      value: [viewBandLabel(mountain, t),
+        `${Math.round(mountain.view.km2).toLocaleString(lang)} km2`]
+        .filter(Boolean).join(', '),
+      note: t('mtn.factViewNote'),
     },
     mountain.isoKm != null && {
       key: 'iso',
@@ -207,8 +237,14 @@ export function MountainPage({ mountain, countryName, onClose, onSelectDest }) {
     mountain.season && {
       key: 'season',
       label: t('mtn.factSeason'),
-      value: mountainSeason(mountain, t) || t('mtn.seasonAllYear'),
-      note: t('mtn.factSeasonNote'),
+      // The climatology's own sentence where there is one, which names the
+      // months and says outright when the answer is "the warmest, not the
+      // walkable". The v1 line stays as the fallback for a row the season
+      // sweep has not reached.
+      value: bestMonthsLine(mountain, t) || mountainSeason(mountain, t)
+        || t('mtn.seasonAllYear'),
+      note: mountain.season.months ? t('mtn.seasonEstNote')
+        : t('mtn.factSeasonNote'),
     },
   ].filter(Boolean);
 
@@ -343,6 +379,13 @@ export function MountainPage({ mountain, countryName, onClose, onSelectDest }) {
               </dl>
             </section>
           )}
+
+          <NearbyOutdoors
+            row={mountain}
+            cc={mountain.cc}
+            headings={{ trail: 'nb.mtn.trail', peak: 'nb.mtn.peak', lake: 'nb.mtn.lake' }}
+            onOpen={onOpenNeighbour}
+          />
 
           <section className="bpage-score">
             <h2>{t('mtn.scoreHead')}</h2>

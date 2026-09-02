@@ -22,17 +22,58 @@
 
 import { chromium } from 'playwright';
 
-const URL = process.argv[2] || 'http://localhost:4173/';
-// Which country's list to check. Slovenia by default: 150 curated routes,
-// 63 of them loops, and enough relief that the reason codes have something to
-// say. Pass another ISO2 to check a country whose photo pass has finished.
+// The category rail is TWINNED and the two halves do not share a class. The
+// desktop shell renders .side-cat inside the left panel; the phone shell
+// renders .places-cat in the banded toolbar. Only one is ever visible, so a
+// harness has to ask for BOTH and scope to :visible. Asking for .places-cat
+// alone passed for as long as the tab was phone-first and has silently
+// pointed at a hidden node ever since the desktop shell landed.
+const CAT = '.places-cat:visible, .side-cat:visible';
+// Sorts are twinned too, and again under different classes.
+const SORT = '.places-sort:visible, .side-sort:visible';
+
+// The facet rail is twinned the same way the category rail is, and again the
+// two halves do not share a wrapper class: .side-facets on desktop and
+// .places-facets on the phone. Scope to the visible one rather than to either
+// name, so the harness follows the shell instead of asserting which shell.
+//
+// A helper rather than a bare string, because a selector LIST cannot be
+// interpolated in front of a descendant: `${FACETS} .places-class` parses as
+// ".side-facets:visible" OR ".places-facets:visible .places-class", which
+// silently matched the wrapper and made the band chips read as zero while
+// every other check still passed. Comma binds looser than a space.
+const inFacets = (sel) =>
+  `.side-facets:visible ${sel}, .places-facets:visible ${sel}`;
+
+const RAW_URL = process.argv[2] || 'http://localhost:4173/';
+// ?paymock: the GPX and KML exports are entitlement gated, and a headless run
+// cannot sign in or hold an entitlement, so without the seam the button opens
+// a paywall dialog and the "is the GPX one continuous track" check tests the
+// paywall instead. See src/hooks/usePaywall.jsx.
+const URL = RAW_URL + (RAW_URL.includes('?') ? '&' : '?') + 'paymock';
+// Which country's list to check. Slovenia by default: a few hundred curated
+// routes, about half of them loops, and enough relief that the reason codes
+// have something to say. Pass another ISO2 to check a country whose photo
+// pass has finished.
+//
+// Deliberately not asserted against a fixed count any more. Slovenia carried
+// exactly 150 for as long as the budget was a country constant; it is now the
+// sum of its regions' quotas, so a hard-coded number here would be asserting
+// the bug this layer removed.
 const CC = (process.argv[3] || 'SI').toUpperCase();
 
 const browser = await chromium.launch();
 const checks = [];
 const check = (label, ok, note = '') => { checks.push({ label, ok, note }); };
 const errors = [];
-const NOISE = /emrldtp|ERR_FAILED|config is not valid/;
+// The one 404 these pages produce is Supabase's content_overrides, an
+// OPTIONAL table (migration 018) that is not applied on the live project.
+// overrides.js reads it, ignores the error and falls back to an empty
+// table (`.catch(() => table)`), so the 404 is documented behaviour
+// rather than a fault. Matched on the MESSAGE because the console text
+// carries no URL: `status of 404` and nothing broader, so a 404 on a
+// wire file the app actually needs still fails the run.
+const NOISE = /status of 404|emrldtp|ERR_FAILED|config is not valid/;
 
 const seed = (page) => page.addInitScript(() => {
   try {
@@ -60,15 +101,17 @@ if (await destTab.isVisible().catch(() => false)) {
   await destTab.click();
   await page.waitForTimeout(1200);
 }
-await page.locator('.places-cat', { hasText: /trails/i }).first().click();
+await page.locator(CAT, { hasText: /trails/i }).click();
 await page.waitForTimeout(1000);
 check('trails category opens', await page.locator('.places-tab').isVisible());
 
-await page.locator('.places-country').selectOption(CC);
+await page.locator('.places-country:visible').selectOption(CC);
 await page.waitForTimeout(2500);
 
 const cards = page.locator('.places-tcard');
 const nCards = await cards.count();
+// Held so a later filter can prove it moved the LIST rather than the count.
+const firstNames = await page.locator('.places-tcard .places-card-name').allInnerTexts();
 check('country list is much longer than the old 13', nCards >= 30, `${nCards} cards rendered`);
 
 // ── The rating ───────────────────────────────────────────────────────────
@@ -96,19 +139,31 @@ check('every trail photograph comes from Commons',
 await page.screenshot({ path: `shots/trails-${CC.toLowerCase()}-list.png`, fullPage: false });
 
 // ── The length filter ────────────────────────────────────────────────────
-const bandChips = page.locator('.places-facets .places-class').filter({ hasNotText: /loops/i });
+const bandChips = page.locator(inFacets('.places-class')).filter({ hasNotText: /loops/i });
 const nBands = await bandChips.count();
 check('length band chips render', nBands >= 4, `${nBands} bands`);
 const bandLabel = await bandChips.first().innerText().catch(() => '');
 check('band chips carry a count', /\d/.test(bandLabel), bandLabel.replace(/\n/g, ' '));
 
 // Tap the shortest band and confirm the list actually shortens to short walks.
-const shortChip = page.locator('.places-facets .places-class', { hasText: /under 5 km/i }).first();
+const shortChip = page.locator(inFacets('.places-class'), { hasText: /under 5 km/i }).first();
 await shortChip.click();
 await page.waitForTimeout(900);
+// Compare WHICH cards are shown, not how many.
+//
+// The list paginates at a fixed page size, and a country now carries hundreds
+// of routes rather than 150, so both the filtered and the unfiltered set can
+// exceed one page and the rendered COUNT stays identical while the filter is
+// working perfectly. Counting was a valid check when Slovenia published 150
+// and the short band held 30 of them; it silently became a check on the page
+// size. The chip's own number is the honest total, and the identity of the
+// visible cards is what proves the filter moved the list.
 const afterBand = await page.locator('.places-tcard').count();
-check('length filter changes the list', afterBand > 0 && afterBand < nCards,
-  `${afterBand} of ${nCards} after "Under 5 km"`);
+const afterNames = await page.locator('.places-tcard .places-card-name').allInnerTexts();
+const bandTotal = parseInt((await shortChip.innerText()).replace(/\D+/g, ''), 10) || 0;
+check('length filter changes the list',
+  afterBand > 0 && (afterNames.join('|') !== firstNames.join('|') || afterBand < nCards),
+  `${afterBand} of ${nCards} shown, ${bandTotal} in the band`);
 const kmTexts = await page.locator('.places-tcard .places-card-facts').allInnerTexts();
 const kms = kmTexts.map((s) => parseFloat(s)).filter(Number.isFinite);
 // The card rounds to one decimal and drops a trailing zero, so a 4.96 km
@@ -121,7 +176,7 @@ await shortChip.click();
 await page.waitForTimeout(700);
 
 // ── Loops ────────────────────────────────────────────────────────────────
-const loopChip = page.locator('.places-loopchip').first();
+const loopChip = page.locator('.places-loopchip:visible').first();
 check('loops-only chip is offered', await loopChip.count() > 0);
 if (await loopChip.count()) {
   await loopChip.click();
@@ -136,14 +191,14 @@ if (await loopChip.count()) {
 }
 
 // ── Sort by length ───────────────────────────────────────────────────────
-await page.locator('.places-sort', { hasText: /length/i }).first().click();
+await page.locator(SORT, { hasText: /length/i }).first().click();
 await page.waitForTimeout(900);
 const sortedKm = (await page.locator('.places-tcard .places-card-facts').allInnerTexts())
   .map((s) => parseFloat(s)).filter(Number.isFinite);
 check('length sort orders shortest first',
   sortedKm.every((k, i) => i === 0 || sortedKm[i - 1] <= k + 0.001),
   sortedKm.slice(0, 5).join(', '));
-await page.locator('.places-sort', { hasText: /rating/i }).first().click();
+await page.locator(SORT, { hasText: /rating/i }).first().click();
 await page.waitForTimeout(800);
 
 // ── The trail page ───────────────────────────────────────────────────────
@@ -232,13 +287,13 @@ await phone.goto(URL, { waitUntil: 'domcontentloaded', timeout: 45000 });
 await phone.waitForTimeout(3000);
 await phone.locator('.bottom-nav-item', { hasText: /destinations/i }).first().click();
 await phone.waitForTimeout(1200);
-await phone.locator('.places-cat', { hasText: /trails/i }).first().click();
+await phone.locator(CAT, { hasText: /trails/i }).click();
 await phone.waitForTimeout(900);
-await phone.locator('.places-country').selectOption(CC);
+await phone.locator('.places-country:visible').selectOption(CC);
 await phone.waitForTimeout(2500);
 check('phone: trail cards render', await phone.locator('.places-tcard').count() > 5);
 check('phone: the filter rail is there',
-  await phone.locator('.places-facets .places-class').count() >= 4);
+  await phone.locator(inFacets('.places-class')).count() >= 4);
 const overflow = await phone.evaluate(
   () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
 );

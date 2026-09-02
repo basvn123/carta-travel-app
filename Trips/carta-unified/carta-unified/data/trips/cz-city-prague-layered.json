@@ -1,0 +1,318 @@
+{
+  "id": "cz-city-prague-layered",
+  "sourceId": "cz-city-prague-layered",
+  "slug": "cz-city-prague-layered",
+  "title": "Prague in Layers — Gothic, Baroque, Cubist, Functionalist",
+  "country": "Czechia",
+  "countryCode": "CZ",
+  "countries": [
+    {
+      "name": "Czechia",
+      "code": "CZ"
+    }
+  ],
+  "isMultiCountry": false,
+  "region": "Western & Central Europe",
+  "regionKey": "western-central",
+  "subRegion": "Prague",
+  "tripType": "City Trips",
+  "tripTypeId": 3,
+  "tripTypeSlug": "city",
+  "durationDays": 7,
+  "bestPeriod": {
+    "months": [
+      4,
+      5,
+      6,
+      9,
+      10
+    ],
+    "monthNames": [
+      "April",
+      "May",
+      "June",
+      "September",
+      "October"
+    ],
+    "window": null,
+    "note": "May and late September avoid both the August coach season and the short, grey January days; the Vinohrady beer gardens open around April.",
+    "avoid": null,
+    "raw": null
+  },
+  "budgetTier": "€€",
+  "budgetTierRange": [
+    2,
+    2
+  ],
+  "budgetTierRaw": "€€",
+  "budget": {
+    "currency": "EUR",
+    "totalEur": {
+      "low": 640,
+      "high": 1010
+    },
+    "totalNote": null,
+    "breakdown": {
+      "accommodation": {
+        "lowEur": 350,
+        "highEur": 560,
+        "note": null
+      },
+      "food": {
+        "lowEur": 160,
+        "highEur": 240,
+        "note": null
+      },
+      "transport": {
+        "lowEur": 40,
+        "highEur": 70,
+        "note": null
+      },
+      "activities": {
+        "lowEur": 90,
+        "highEur": 140,
+        "note": null
+      }
+    },
+    "perDayEur": {
+      "low": 91,
+      "high": 144
+    }
+  },
+  "profile": {
+    "difficulty": 2,
+    "difficultyLabel": "Moderate",
+    "difficultyNote": null,
+    "fitnessLevel": "Easy",
+    "crowdLevel": "High",
+    "familyFriendly": true,
+    "carRequired": false
+  },
+  "basecamps": [
+    "Prague (Vinohrady or Karlín)"
+  ],
+  "gatewayAirport": "Prague (PRG)",
+  "gatewayAirportCode": "PRG",
+  "languages": [
+    "Czech"
+  ],
+  "currency": "CZK",
+  "emergencyNumber": "112",
+  "coordinates": {
+    "lat": 50.088,
+    "lon": 14.4208,
+    "precision": "city",
+    "matchedPlace": "Prague",
+    "source": "geonames (geonamescache, cities > 15k)"
+  },
+  "tags": [
+    "cubist-architecture",
+    "functionalism",
+    "baroque",
+    "vinohrady",
+    "karlin"
+  ],
+  "summary": "Prague read as four architectural centuries, one district a day, with Vinohrady and Karlín given as much weight as the Castle.",
+  "summaryGenerated": false,
+  "hook": "Prague was never bombed and never comprehensively rebuilt, so its centuries sit on top of one another on the same streets: a Gothic vault under a Baroque plaster ceiling, a Cubist façade three doors from a Renaissance one. Take one layer at a time and the city stops being a crowd problem and becomes legible. The Castle gets one morning. Vinohrady and Karlín get a day each, which is roughly the right proportion.",
+  "snapshot": {
+    "Country": "Czechia",
+    "Base(s)": "Prague, single base (Vinohrady or Karlín)",
+    "Trip Type": "City Trips",
+    "Duration": "7 days",
+    "Best Period": "April–June, September–October",
+    "Budget Tier": "€€",
+    "Total Distance / Terrain": "approx. 65–80 km on foot; flat on the right bank, steep climbs to Hradčany, Vyšehrad and Vítkov; 8 districts",
+    "Getting There": "Fly to PRG, then bus 119 to Nádraží Veleslavín and metro A, about 35 min; or rail from Vienna, Dresden and Berlin to Praha hlavní nádraží",
+    "Who It Suits": "Repeat visitors and first-timers who want more than the Charles Bridge; anyone who reads buildings"
+  },
+  "itinerary": [
+    {
+      "day": 1,
+      "title": "Staré Město: the Gothic core and the Cubist corner",
+      "morning": "Start early, genuinely early. Staroměstské náměstí at 07:30 is empty; at 10:00 it is not. The Týn Church (begun 1365), the astronomical clock on the Old Town Hall (mechanism 1410), and the Karolinum's oriel window on Ovocný trh belong to the same century. The Old Town Hall tower has timed entry and the first slots are the only calm ones.",
+      "afternoon": "Walk Celetná to the Dům U Černé Matky Boží — the House at the Black Madonna (Josef Gočár, 1912), the first Cubist building anywhere, with a Cubist café, Grand Café Orient, on the first floor. Coffee there, then the Convent of St Agnes (founded 1231) on the river side of Josefov, which holds the National Gallery's medieval Bohemian panels in a Gothic cloister almost nobody visits.",
+      "evening": "Havelské tržiště, the market on Havelská, runs daily until early evening; buy fruit, not souvenirs. Dinner in the Old Town away from the main axes — anywhere off Dlouhá.",
+      "dayStats": "8 km walked. Districts: Staré Město, Josefov. Ticket spend approx. CZK 600–800 (€25–€33).",
+      "sleep": null
+    },
+    {
+      "day": 2,
+      "title": "Hradčany: the Castle at opening, then Nový Svět",
+      "morning": "Be at the Castle gates when they open. Buy the Circuit B ticket, which covers St Vitus Cathedral (begun 1344 by Matthias of Arras, continued by Peter Parler, completed 1929), the Old Royal Palace, St George's Basilica and Golden Lane. Cathedral entry is free only in the small entrance area; the nave is inside the ticket. Security screening at the gates adds 10–20 minutes from mid-morning.",
+      "afternoon": "Leave by the western gate into Hradčanské náměstí and walk down into Nový Svět, a lane of tiny 17th-century cottages behind the Castle where the crowd simply does not go. Then Loreta (Baroque complex, bell carillon on the hour) and the Strahov Monastery library (Theological Hall 1679, Philosophical Hall 1794) — you view the halls from the doorway unless you book the paid extended access.",
+      "evening": "Walk down the Petřín slope through the orchards for the classic dusk view, or ride the funicular, which is covered by any valid transit ticket.",
+      "dayStats": "9 km walked, 130 m of climbing. Districts: Hradčany, Malá Strana. Ticket spend approx. CZK 700–950 (€29–€39).",
+      "sleep": null
+    },
+    {
+      "day": 3,
+      "title": "Malá Strana Baroque and Kampa",
+      "morning": "One block: the streets between Malostranské náměstí and Kampa. St Nicholas Church (Kryštof Dientzenhofer, continued by his son Kilián Ignác and completed 1755) is the finest Baroque interior in Central Europe and the one building worth the entry fee twice. Then the Wallenstein Palace garden (1630), free, with its dripstone wall and resident peacocks.",
+      "afternoon": "The Vrtba Garden off Karmelitská, a terraced Baroque garden climbing the hill, ticketed and almost always quiet. Then Kampa island, the Čertovka mill wheel, and the Kampa Museum for Czech modernism, including František Kupka.",
+      "evening": "Café Savoy on Vítězná, a restored 1893 café with a neo-Renaissance ceiling, does a proper dinner. Cross the Charles Bridge after 22:00 when it is briefly walkable again.",
+      "dayStats": "7 km walked. Districts: Malá Strana. Ticket spend approx. CZK 500–700 (€21–€29).",
+      "sleep": null
+    },
+    {
+      "day": 4,
+      "title": "Vyšehrad and the Cubist embankment",
+      "morning": "Metro C to Vyšehrad and walk into the fortress: the Basilica of St Peter and St Paul, the ramparts above the Vltava bend, and the Slavín cemetery where Dvořák, Smetana, Mucha and Čapek are buried. The casemates and the Gorlice hall underneath hold six original Charles Bridge statues.",
+      "afternoon": "Descend the north-west stairs to Podolí and the best Cubist architecture in the world, all within four streets: the Kovařovic Villa on Libušina, the triple house at Rašínovo nábřeží 6–10, and the apartment building at Neklanova 30 — all by Josef Chochol, all 1913. Walk the embankment north.",
+      "evening": "The Náplavka riverside quay below Výtoň. On Saturday mornings it holds Prague's biggest farmers' market; on weekday evenings the vaulted cellars in the wall are bars.",
+      "dayStats": "9 km walked, 60 m of climbing. Districts: Vyšehrad, Podolí, Nové Město. Ticket spend approx. CZK 300–450 (€12–€19).",
+      "sleep": null
+    },
+    {
+      "day": 5,
+      "title": "Vinohrady: Plečnik, the vineyard and Jiřího z Poděbrad",
+      "morning": "Metro A to Jiřího z Poděbrad and out into the square. The Church of the Most Sacred Heart of Our Lord (Jože Plečnik, 1932) is unlike anything else — a dark brick liturgical ark with a glazed clock 7.5 metres across set into a slab tower. The interior is open around services and on scheduled afternoons. The farmers' market on the square runs Wednesday to Saturday, roughly 08:00 to 18:00, and Saturday is the full version.",
+      "afternoon": "Walk Vinohradská and the residential grid — Slovenská, Šumavská, Mánesova — for the National Revival and Art Nouveau apartment blocks. Then Havlíčkovy sady, known as Grébovka, a 19th-century landscape park with a working vineyard and a neo-Renaissance villa; the Viniční altán pavilion pours the estate's own wine.",
+      "evening": "Riegrovy sady beer garden for the sunset view over the city to the Castle. It is a local institution, cash-friendly, and gets busy from 18:00.",
+      "dayStats": "8 km walked, 70 m of climbing. Districts: Vinohrady. Ticket spend approx. CZK 200–350 (€8–€15).",
+      "sleep": null
+    },
+    {
+      "day": 6,
+      "title": "Karlín and Žižkov",
+      "morning": "Karlín is the flat grid laid out in 1817 as Prague's first planned suburb, flooded catastrophically in 2002 and rebuilt since. Start at Karlínské náměstí with the Church of Sts Cyril and Methodius (Karl Roesner and Ignác Ullmann, 1863), a basilica in Romanesque revival on a scale the district no longer justifies. The square holds a farmers' market on Saturdays.",
+      "afternoon": "Climb Vítkov hill to the National Memorial (Jan Zázvorka, 1932), a granite functionalist mausoleum with the enormous equestrian Jan Žižka (Bohumil Kafka, cast 1950) outside and a rooftop terrace over the whole city. Descend into Žižkov for the Television Tower (1992) with David Černý's crawling babies bolted to it, and the Olšany cemeteries.",
+      "evening": "Eska on Pernerova, in a converted Karlín factory, does modern Czech baking and fermentation properly. Or drink in Žižkov, which has more pubs per capita than any district in the country.",
+      "dayStats": "10 km walked, 110 m of climbing to Vítkov. Districts: Karlín, Žižkov. Ticket spend approx. CZK 350–500 (€15–€21).",
+      "sleep": null
+    },
+    {
+      "day": 7,
+      "title": "Functionalism: Villa Müller, Baba and the Veletržní palác",
+      "morning": "Adolf Loos's Villa Müller (1930) in Střešovice is the Raumplan made real — a plain white cube outside, a spiralling sequence of differently proportioned rooms in travertine, mahogany and green marble inside. **It is guided tour only, small groups, and the tours book out weeks ahead in season.** Reserve online or by email as soon as your dates are fixed; tours typically run several times a day, closed Mondays, with a reduced winter schedule. Tram 1 or 18 to Ořechovka.",
+      "afternoon": "Cross to the Baba estate in Dejvice, 33 functionalist family villas built for the 1932 Werkbund exhibition by Gočár, Pavel Janák, Ladislav Žák and others, still lived in and walkable from the street. Then the Veletržní palác (Oldřich Tyl and Josef Fuchs, 1928), the first great functionalist building in Europe, now the National Gallery's modern collection.",
+      "evening": "Holešovice: the Pražská tržnice market halls, the Vnitroblock complex, and a last Czech lager somewhere with a proper tank.",
+      "dayStats": "8 km walked. Districts: Střešovice, Dejvice, Holešovice. Ticket spend approx. CZK 600–800 (€25–€33).",
+      "sleep": null
+    }
+  ],
+  "accommodationStrategy": [
+    {
+      "rank": 1,
+      "name": "An apartment in Vinohrady",
+      "style": "Self-catering",
+      "location": "around náměstí Míru",
+      "description": "Vinohrady is the right base for this itinerary: metro A runs through it to both the Castle side and the airport bus, the restaurants are for residents rather than tourists, and the Jiřího z Poděbrad market is your breakfast. Look for a flat with a lift and street-facing windows on a side street rather than on Vinohradská, which carries trams all night.",
+      "booking": "8 weeks ahead.",
+      "priceNote": "€80–€130 per night for two"
+    },
+    {
+      "rank": 2,
+      "name": "Hotel Pentahotel Prague",
+      "style": "Mid-range",
+      "location": "Sámova, Vršovice/Vinohrady edge",
+      "description": "Straightforward, reliable and priced well below the Old Town, with trams to Náměstí Míru and the Karlín and Vršovice restaurant streets on foot. Useful if you want a hotel desk and daily housekeeping without paying centre rates, and the location makes Days 5 and 6 start at the door.",
+      "booking": "5 weeks ahead.",
+      "priceNote": "€90–€140 per night"
+    },
+    {
+      "rank": 3,
+      "name": "Boutique rooms in Karlín",
+      "style": "Small hotel or aparthotel",
+      "location": "Křižíkova",
+      "description": "Karlín gives you flat streets, the metro B line, the Vítkov climb, and a district that empties of visitors at 18:00. Bakeries and the Saturday market are on Karlínské náměstí; Forum Karlín handles the concerts. Ask for a courtyard room — Křižíkova is a tram street.",
+      "booking": "6 weeks ahead.",
+      "priceNote": "€100–€150 per night"
+    }
+  ],
+  "logistics": {
+    "connectivity": null,
+    "emergency": "112 pan-European. Czech specifics: ambulance 155, police 158, city police 156, fire 150. Pharmacies with 24-hour service are listed at the door of every lékárna.",
+    "weather": null,
+    "bookingWindows": "Villa Müller is the one true bottleneck — book it first and build the week around it. Prague Castle needs no advance ticket but the security queue does; arrive at opening. The Clementinum Baroque library and the Astronomical Clock tower run timed slots that sell out midday in summer. Restaurant reservations at Eska and the Ambiente group's places should be a week ahead for dinner.",
+    "money": "Czechia uses the koruna, not the euro. Never change money at a street exchange booth in the centre — the advertised rate is for a different transaction. Use a bank ATM (ČSOB, Komerční banka, Česká spořitelna) and always decline dynamic currency conversion. Cards work almost everywhere; keep CZK 500 in cash for markets and small pubs.",
+    "transportRules": null,
+    "permits": null,
+    "health": null,
+    "gettingThere": null,
+    "other": [
+      {
+        "label": "The transit ticket that actually fits",
+        "text": "Prague PID sells 30-minute (approx. CZK 30) and 90-minute (approx. CZK 40) singles, a 24-hour ticket at approx. CZK 120 and a **72-hour jízdenka at approx. CZK 330 (about €13.50)**. There is no 7-day tourist ticket. For a week, buy one 72-hour ticket for your heaviest three days and singles for the rest, or, if you are here longer, a monthly pass at approx. CZK 550 — but that requires a registered Lítačka card and a photo, which is rarely worth the errand."
+      },
+      {
+        "label": "Validation is a one-time act",
+        "text": "Paper tickets are stamped once, in the yellow box at the metro entrance or on board a tram, at the *start* of validity — not at every change. Stamping twice voids it. Inspectors are plain-clothed and constant; the on-the-spot fine is around CZK 1,500."
+      },
+      {
+        "label": "Luggage",
+        "text": "A bag over 25 × 45 × 70 cm needs its own half-price ticket, approx. CZK 20. Inspectors do check this on the airport bus."
+      },
+      {
+        "label": "Beer etiquette",
+        "text": "In a traditional pub the beer arrives when you sit and keeps arriving until you put a beer mat on your glass. Tally marks on the slip are the bill. Tip by rounding up to the next CZK 10 or 20."
+      },
+      {
+        "label": "Opening-hour traps",
+        "text": "National Gallery buildings and most state museums close Monday. Churches with paid entry close for services. Many kitchens stop at 21:30 even where the bar runs later."
+      }
+    ]
+  },
+  "proTips": [
+    "The Charles Bridge is a different structure before 07:00 and after 22:30. Both windows are genuinely empty and free; every hour in between is a queue with a view.",
+    "Buy the Prague Castle ticket at the far Golden Lane end box office rather than the main courtyard one. The circuit is the same, the queue is a fraction.",
+    "The Petřín funicular, the Vltava ferries (přívoz lines P1–P7) and tram 42's historic cars all run on ordinary PID tickets. Ferry P5 across to Císařská louka is the cheapest boat ride in the city.",
+    "Tram 22 from Národní třída up to Pohořelec is the standing tourist route; ride it up in the morning and walk down instead of queueing for it in the afternoon crush.",
+    "Book the Villa Müller and, if you want the pair, Loos's Winternitz Villa in Střešovice on the same day — they are 15 minutes apart and share the same Raumplan logic.",
+    "Náplavka's Saturday farmers' market opens at 08:00 and the good bread is gone by 10:00. Go early, then walk the Cubist embankment while it is still cool.",
+    "Riegrovy sady in Vinohrady and Letná beer garden face each other across the river. Riegrovy gets the sunset over the Castle; Letná gets the bridges. Do one on Day 5 and the other after the Veletržní palác on Day 7."
+  ],
+  "typeSpecific": {
+    "raw": {
+      "Total Distance / Terrain": "approx. 65–80 km on foot; flat on the right bank, steep climbs to Hradčany, Vyšehrad and Vítkov; 8 districts",
+      "Who It Suits": "Repeat visitors and first-timers who want more than the Charles Bridge; anyone who reads buildings"
+    },
+    "surface": "approx. 65–80 km on foot; flat on the right bank, steep climbs to Hradčany, Vyšehrad and Vítkov; 8 districts",
+    "distanceKm": 65,
+    "elevationM": null,
+    "verticalM": null,
+    "technicalRating": null,
+    "transitPass": null,
+    "hutBooking": null,
+    "liftNetwork": null,
+    "snowReliability": null,
+    "windConditions": null,
+    "gpxReady": null,
+    "bookingTimeline": null,
+    "audience": "Repeat visitors and first-timers who want more than the Charles Bridge; anyone who reads buildings"
+  },
+  "packingNotes": [
+    "Shoes with grip for wet cobbles — Prague's setts polish smooth and the Malá Strana lanes are steep.",
+    "A layer for church interiors, which stay cold from October to May regardless of the street temperature.",
+    "A small cash reserve in CZK for markets, pub tabs and cloakroom attendants, who expect CZK 20.",
+    "A compact daypack; the National Gallery buildings and Villa Müller require bags and coats in the cloakroom.",
+    "A phone with offline maps — the Old Town's street numbering uses two systems and neither helps.",
+    "Sunglasses and a hat for the Vyšehrad ramparts and Vítkov, both fully exposed.",
+    "A refillable bottle; Prague tap water is soft, safe and free, and restaurants will fill it if asked.",
+    "Something smart enough for a concert at the Rudolfinum or Forum Karlín, if you plan one."
+  ],
+  "whatCouldGoWrong": [
+    "**Villa Müller is fully booked for your whole week.** Fallback: book the Winternitz Villa instead, also Loos, also guided, and considerably easier to get into; add the Rothmayer House in Střešovice for a third interwar interior.",
+    "**You get stung by a currency exchange booth or a DCC prompt.** Fallback: withdraw from a bank-branded ATM, refuse the machine's own conversion, and if you have already changed money, Czech exchange offices are legally required to allow a cancellation within three hours for amounts under a threshold — go straight back with the receipt.",
+    "**The Old Town is unwalkable by mid-morning.** Fallback: this itinerary only spends one day there, and it front-loads it to 07:30. If you lose that window, swap Day 1 with Day 5 and do Vinohrady instead.",
+    "**Rain shuts the outdoor half of the week.** Fallback: the Veletržní palác, the Convent of St Agnes, the Kampa Museum and the Strahov libraries are four large interiors that between them absorb two full wet days.",
+    "**A pub bill is larger than expected.** Fallback: check the slip's tally marks against what you drank before paying, and be wary of unrequested bread, nuts or aperitifs in centre restaurants, which are charged. Politely send them back."
+  ],
+  "sources": {
+    "verified": null,
+    "confidenceNotes": null
+  },
+  "verifyFlags": [],
+  "verifyFlagCount": 0,
+  "volatilePricing": false,
+  "wordCount": 2632,
+  "dataVintage": 2026,
+  "provenance": {
+    "batch": "western-central",
+    "sourceFile": "cartatripsv1/trips/cz-city-prague-layered.md",
+    "sourceFormat": "md+yaml-frontmatter (one file per trip)",
+    "sourceId": "cz-city-prague-layered",
+    "ingestedAt": "2026-09-02",
+    "synthesized": false
+  }
+}

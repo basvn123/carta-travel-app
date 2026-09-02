@@ -103,6 +103,27 @@ export function loadLakes(country) {
     });
 }
 
+/**
+ * The LISTED water bodies of one country: verified to exist, named, deduped,
+ * in region, and carrying no score at all.
+ *
+ * Its own function rather than a second field on loadLakes, because the
+ * master spec's rule is that a screen has to OPT IN to showing unscored rows.
+ * They never interleave into a ranked list; they render under their own
+ * heading, as their own kind of card. Same shape as loadListedMountains.
+ */
+export function loadListedLakes(country) {
+  const cc = String(country || '').toUpperCase();
+  if (!COUNTRY_RE.test(cc)) return Promise.resolve([]);
+  return Promise.all([cached(`/lakes/${cc}.json`), overridesReady()])
+    .then(([raw]) => {
+      const rows = Array.isArray(raw?.listed) ? raw.listed : [];
+      return applyOverrides('lake', rows.filter(
+        (l) => l && l.id && Number.isFinite(l.lat) && Number.isFinite(l.lon),
+      ));
+    });
+}
+
 /** The lakes of several countries at once, flattened and re-ranked. */
 export function loadLakesFor(countries) {
   return Promise.all((countries || []).map((cc) => loadLakes(cc)))

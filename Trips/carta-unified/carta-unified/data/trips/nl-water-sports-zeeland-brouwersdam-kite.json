@@ -1,0 +1,324 @@
+{
+  "id": "nl-water-sports-zeeland-brouwersdam-kite",
+  "sourceId": "nl-water-zeeland-brouwersdam-kite",
+  "slug": "nl-water-sports-zeeland-brouwersdam-kite",
+  "title": "The Brouwersdam Kite and Wing Foil Week",
+  "country": "Netherlands",
+  "countryCode": "NL",
+  "countries": [
+    {
+      "name": "Netherlands",
+      "code": "NL"
+    }
+  ],
+  "isMultiCountry": false,
+  "region": "Western & Central Europe",
+  "regionKey": "western-central",
+  "subRegion": "Zeeland Delta, Schouwen-Duiveland and Goeree-Overflakkee",
+  "tripType": "Water Sports & Coastal Trips",
+  "tripTypeId": 10,
+  "tripTypeSlug": "water-sports",
+  "durationDays": 7,
+  "bestPeriod": {
+    "months": [
+      5,
+      6,
+      7,
+      8,
+      9
+    ],
+    "monthNames": [
+      "May",
+      "June",
+      "July",
+      "August",
+      "September"
+    ],
+    "window": null,
+    "note": "May, June and September carry the most consistent south-westerlies without the July-August crowding; late autumn adds storm-force wind for experienced sailors only.",
+    "avoid": null,
+    "raw": null
+  },
+  "budgetTier": "€€",
+  "budgetTierRange": [
+    2,
+    2
+  ],
+  "budgetTierRaw": "€€",
+  "budget": {
+    "currency": "EUR",
+    "totalEur": {
+      "low": 860,
+      "high": 1250
+    },
+    "totalNote": null,
+    "breakdown": {
+      "accommodation": {
+        "lowEur": 400,
+        "highEur": 580,
+        "note": null
+      },
+      "food": {
+        "lowEur": 220,
+        "highEur": 300,
+        "note": null
+      },
+      "transport": {
+        "lowEur": 110,
+        "highEur": 170,
+        "note": null
+      },
+      "activities": {
+        "lowEur": 130,
+        "highEur": 200,
+        "note": null
+      }
+    },
+    "perDayEur": {
+      "low": 123,
+      "high": 179
+    }
+  },
+  "profile": {
+    "difficulty": 3,
+    "difficultyLabel": "Active",
+    "difficultyNote": null,
+    "fitnessLevel": "Active",
+    "crowdLevel": "Moderate",
+    "familyFriendly": false,
+    "carRequired": true
+  },
+  "basecamps": [
+    "Ouddorp, Goeree-Overflakkee"
+  ],
+  "gatewayAirport": "Rotterdam The Hague Airport (RTM)",
+  "gatewayAirportCode": "RTM",
+  "languages": [
+    "Dutch"
+  ],
+  "currency": "EUR",
+  "emergencyNumber": "112",
+  "coordinates": {
+    "lat": 52.374,
+    "lon": 4.8897,
+    "precision": "country",
+    "matchedPlace": "Amsterdam",
+    "source": "country capital fallback"
+  },
+  "tags": [
+    "kitesurf",
+    "wing-foil",
+    "brouwersdam",
+    "grevelingenmeer",
+    "oosterschelde",
+    "tidal-currents"
+  ],
+  "summary": "A Zeeland Delta week kiting and wing foiling the Brouwersdam's flat-water and open-sea sides, plus the tidal currents of the Oosterschelde behind the storm barrier.",
+  "summaryGenerated": false,
+  "hook": "The Brouwersdam is a six-kilometre dam with two completely different bodies of water on either side of it: the flat, tideless Grevelingenmeer to the south and the open North Sea to the north, separated by a strip of asphalt and dune barely wide enough for a car park. This week uses that split the way the dam's regulars do — flat water to build skill, open water to test it — then pushes east into the Oosterschelde, where the storm surge barrier keeps a genuine tide alive behind it, currents included.",
+  "snapshot": {
+    "Country": "Netherlands",
+    "Base(s)": "Ouddorp, Goeree-Overflakkee (7 nights)",
+    "Trip Type": "Water Sports & Coastal Trips",
+    "Duration": "7 days",
+    "Best Period": "May, June, July, August, September",
+    "Budget Tier": "€€ (approx. €860–€1,250 per person, excluding flights)",
+    "Total Distance / Terrain": "Daily sessions of 2–4 water hours across three distinct waters: tideless lake, open North Sea coast, and tidal Oosterschelde channel",
+    "Getting There": "Fly to Rotterdam The Hague Airport, hire a car for the roughly 1-hour drive to Ouddorp; the dam's spots are spread out and not practically reachable without one",
+    "Who It Suits": "Intermediate-to-advanced kiters and wing foilers who want both forgiving flat water and a real tidal-current environment in one trip"
+  },
+  "itinerary": [
+    {
+      "day": 1,
+      "title": "Arrival and Kabbelaarsbank orientation",
+      "morning": "Arrive in Ouddorp and collect gear. Kabbelaarsbank, on the Grevelingenmeer side of the Brouwersdam, is the region's benchmark beginner-to-intermediate spot: a wide, shallow, tideless bay with a sandy bottom and no boat traffic to dodge.",
+      "afternoon": "Rig up at Kabbelaarsbank for an orientation session. Instruction here runs through Watersportverbond-affiliated schools using the national CWO course structure, the standard Dutch qualification path for windsurfing, kiting and sailing instruction.",
+      "evening": "Ouddorp village for dinner; the centre is a five-minute drive from the dam.",
+      "dayStats": "2.5 water hours · Grevelingenmeer flat water, 12–16 knots SW · 9–10 m² kite or wing, twin-tip or foil board, 4/3 mm wetsuit.",
+      "sleep": null
+    },
+    {
+      "day": 2,
+      "title": "Wing foiling on the lake",
+      "morning": "Back at Kabbelaarsbank, now with a wing foil setup. The Grevelingenmeer's total absence of current and its shallow, consistent depth make it one of the better wing-foiling learning grounds in the country.",
+      "afternoon": "Extend the session east along the lake shore toward Scharendijke, a quieter stretch popular with local foilers once the basic balance is dialled in.",
+      "evening": "Rest and stretch; foiling uses different stabiliser muscles than kiting and the first two days are tiring in an unfamiliar way.",
+      "dayStats": "3 water hours · Grevelingenmeer, 10–15 knots SW, zero current · wing, foil board, 3/2 mm wetsuit.",
+      "sleep": null
+    },
+    {
+      "day": 3,
+      "title": "The North Sea side",
+      "morning": "Cross the dam to the open coast. The North Sea side of the Brouwersdam has real fetch and, on a building south-westerly, real chop and small waves, a different sport from the lake side eighty metres away.",
+      "afternoon": "Session on the open-water side, working overpowered conditions and chop riding. This side also carries a genuine tidal stream close to the dam's rock groynes at outgoing tide — stay well off the rocks and clear of the sluice outflow.",
+      "evening": "Back to Ouddorp; check tomorrow's forecast against the Neeltje Jans visit plan.",
+      "dayStats": "3 water hours · North Sea open coast, 16–22 knots SW, wind chop to 0.6 m · wave board or freestyle twin-tip, 5/3 mm wetsuit.",
+      "sleep": null
+    },
+    {
+      "day": 4,
+      "title": "Neeltje Jans and the storm surge barrier",
+      "morning": "Drive the short distance to Neeltje Jans, the artificial island built to construct the Oosterscheldekering, the storm surge barrier completed in 1986. The visitor centre here explains, better than anywhere else in the country, why this coast looks and behaves the way it does.",
+      "afternoon": "The barrier's gates are normally open, which is the whole point of it: unlike the fully closed dams elsewhere in the Delta Works, the Oosterschelde behind it keeps a real tidal exchange with the sea, roughly 3–4 metres of range, specifically to keep the estuary's mussel and oyster beds alive.",
+      "evening": "Easy session back at Kabbelaarsbank if there's wind and energy left, otherwise a rest evening in Ouddorp.",
+      "dayStats": "1.5 water hours (optional) · Grevelingenmeer, light wind · foil or freestyle gear.",
+      "sleep": null
+    },
+    {
+      "day": 5,
+      "title": "Oosterschelde currents",
+      "morning": "Drive to the Oosterschelde side near Colijnsplaat or Zierikzee. This is not a beginner day: the tidal streams running past the barrier's gates and around the Zeelandbrug pilings are genuinely strong, well known in the Dutch diving community for exactly that reason, and only sensible to sail or paddle at slack tide with a local guide who knows the timing.",
+      "afternoon": "A guided sea-kayak session on the Oosterschelde at slack water, or, for confident kiters, a session on the estuary's open stretches away from the barrier where the current is milder, timed against the tide table.",
+      "evening": "Zierikzee for dinner, a genuinely handsome former Hanseatic port town worth the detour on its own merits.",
+      "dayStats": "2 water hours · Tidal Oosterschelde, current-dependent, timed to slack water · sea kayak or kite gear, 4/3 mm wetsuit.",
+      "sleep": null
+    },
+    {
+      "day": 6,
+      "title": "Back to the Brouwersdam, best conditions",
+      "morning": "Return to whichever side of the dam the forecast favours — lake for a lighter or awkward-direction wind, open coast for a clean south-westerly.",
+      "afternoon": "A full session pushing whatever skill was weakest earlier in the week: jumps and transitions on the lake, or wave riding on the coast.",
+      "evening": "Last dinner in Ouddorp.",
+      "dayStats": "3.5 water hours · Either Grevelingenmeer or North Sea depending on forecast, 12–20 knots · full kit as conditions require.",
+      "sleep": null
+    },
+    {
+      "day": 7,
+      "title": "Final session and departure",
+      "morning": "A short final session at Kabbelaarsbank, low-key and enjoyable rather than pushing new ground.",
+      "afternoon": "Pack, return rental gear, and drive to Rotterdam The Hague Airport.",
+      "evening": "Departure flight.",
+      "dayStats": "1.5 water hours · Grevelingenmeer, light-moderate wind · freestyle or wing gear.",
+      "sleep": null
+    }
+  ],
+  "accommodationStrategy": [
+    {
+      "rank": 1,
+      "name": "Guesthouse or apartment, Ouddorp centre",
+      "style": null,
+      "location": null,
+      "description": "Ouddorp sits within a five-minute drive of both the Kabbelaarsbank lake spot and the open-coast Brouwersdam side, which matters when the day's plan depends on checking wind direction that morning. Look for outdoor rinsing and gear storage, standard in the area's watersport-oriented rentals.",
+      "booking": "six to eight weeks ahead for July and August.",
+      "priceNote": "€90–€140 per night"
+    },
+    {
+      "rank": 2,
+      "name": "Bungalow park near the Brouwersdam",
+      "style": null,
+      "location": null,
+      "description": "Several established holiday parks sit directly behind the dam on the Schouwen-Duiveland side, walkable to Kabbelaarsbank and a short drive to the open coast, with secure storage for boards and foils.",
+      "booking": "two to three months ahead for peak summer weeks.",
+      "priceNote": "€85–€150 per night"
+    },
+    {
+      "rank": 3,
+      "name": "Zierikzee, quieter alternative",
+      "style": null,
+      "location": null,
+      "description": "Basing in the historic town centre trades a few minutes of extra driving each day for genuinely good food and a break from the beach-town atmosphere of Ouddorp and Renesse.",
+      "booking": "four to six weeks ahead.",
+      "priceNote": "€95–€145 per night"
+    }
+  ],
+  "logistics": {
+    "connectivity": null,
+    "emergency": "Emergency number 112. The KNRM, the Dutch volunteer lifeboat service, covers this coast; report any incident by phone or VHF Channel 16.",
+    "weather": null,
+    "bookingWindows": null,
+    "money": null,
+    "transportRules": null,
+    "permits": null,
+    "health": null,
+    "gettingThere": null,
+    "other": [
+      {
+        "label": null,
+        "text": "Emergency number 112. The KNRM, the Dutch volunteer lifeboat service, covers this coast; report any incident by phone or VHF Channel 16."
+      },
+      {
+        "label": null,
+        "text": "The Grevelingenmeer has essentially no tide, having been sealed off from the sea by the Brouwersdam in 1971, though a small managed flush through the Flakkeese Spuisluis since 2004 keeps oxygen levels up without restoring real tidal range."
+      },
+      {
+        "label": null,
+        "text": "The Oosterschelde, by contrast, keeps a genuine 3–4 m tidal range because the storm surge barrier's gates stay open in normal weather — currents near the barrier and the Zeelandbrug can run to several knots and are dangerous to underestimate."
+      },
+      {
+        "label": null,
+        "text": "Water temperature: North Sea side roughly 6–8°C in March, 15–16°C in June, 18–19°C in August, dropping back to 8–10°C by December. The Grevelingenmeer runs a degree or two warmer in summer as a shallower, calmer body of water. A 4/3 mm wetsuit covers spring and autumn on either side; a 5/3 mm or 5/4 mm is sensible outside the June–September window on the open coast."
+      },
+      {
+        "label": null,
+        "text": "Prevailing wind is south-westerly through the season, typically force 3–5; the autumn storm season from September onward brings northwesterly gales that can exceed force 7–8, unrideable for anyone but the most experienced."
+      },
+      {
+        "label": null,
+        "text": "No launch, sailing or riding permits are required at the recognised Brouwersdam spots, but respect the marked swimming zones at Ouddorp's own beach, which are off-limits to kiting and foiling in season."
+      },
+      {
+        "label": null,
+        "text": "A car is genuinely necessary; the dam's two sides, Neeltje Jans and the Oosterschelde spots are all a short drive apart but not walkable together."
+      }
+    ]
+  },
+  "proTips": [
+    "Check wind direction before committing to a side of the dam. A south-westerly that looks marginal on the open coast is often perfect on the sheltered lake, and vice versa for a northerly.",
+    "Arrive at Kabbelaarsbank before 10:00 on a forecast weekend; the car park and rigging space fill fast once the day's wind is confirmed.",
+    "Time any Oosterschelde session against the official tide tables, not general daylight — slack water lasts less than an hour there and the current either side of it is the whole hazard.",
+    "Visit Neeltje Jans on a lighter-wind day rather than sacrificing a good session for it; the exhibits are worth an unhurried half-day.",
+    "Ask at the Kabbelaarsbank rental huts about the day's specific launch zone — sandbank positions shift and the easiest entry point changes through the season.",
+    "Zierikzee's Thursday market is worth timing a rest morning around if the week includes one."
+  ],
+  "typeSpecific": {
+    "raw": {
+      "Total Distance / Terrain": "Daily sessions of 2–4 water hours across three distinct waters: tideless lake, open North Sea coast, and tidal Oosterschelde channel",
+      "Who It Suits": "Intermediate-to-advanced kiters and wing foilers who want both forgiving flat water and a real tidal-current environment in one trip"
+    },
+    "surface": "Daily sessions of 2–4 water hours across three distinct waters: tideless lake, open North Sea coast, and tidal Oosterschelde channel",
+    "distanceKm": 2,
+    "elevationM": null,
+    "verticalM": null,
+    "technicalRating": null,
+    "transitPass": null,
+    "hutBooking": null,
+    "liftNetwork": null,
+    "snowReliability": null,
+    "windConditions": null,
+    "gpxReady": null,
+    "bookingTimeline": null,
+    "audience": "Intermediate-to-advanced kiters and wing foilers who want both forgiving flat water and a real tidal-current environment in one trip"
+  },
+  "packingNotes": [
+    "A 4/3 mm wetsuit as the default, with a thicker 5/3 mm or 5/4 mm for shoulder-season open-coast sessions.",
+    "Wetsuit boots; both the lake and open-coast entries have shell and stone sections.",
+    "A wing and a kite if bringing personal gear for both disciplines — rental covers either but not always both at short notice.",
+    "A tide table or app for the Oosterschelde days specifically; the Grevelingenmeer and dam sides do not need one.",
+    "A dry bag for the sea-kayak day on the Oosterschelde.",
+    "Layers for the car park between sessions; Zeeland's open coast is windier and several degrees cooler than the sheltered lake side even a few hundred metres away."
+  ],
+  "whatCouldGoWrong": [
+    "**Wrong-side wind direction.** A day that is unrideable on the open coast is often fine on the lake. Check both spots' live conditions before writing off the day.",
+    "**Missed slack water on the Oosterschelde.** Turning up even thirty minutes late can mean a genuinely strong current running against a paddler or a swimmer. Build the whole day's plan around the tide table, not the other way round.",
+    "**A September–November storm system.** Force 7 or above on the open coast is not a session, it is a hazard. Retreat to the lake for lighter riding or take a full rest day.",
+    "**Gear left rigged unattended.** Zeeland's wind can pick up fast; an unweighted kite or wing on the beach is a known cause of minor injuries and lost gear here.",
+    "**No rental availability for a specific discipline.** Wing foil demand has outpaced kite rental stock at some Brouwersdam operators in peak season; book gear two to three days ahead if a specific session is essential."
+  ],
+  "sources": {
+    "verified": null,
+    "confidenceNotes": null
+  },
+  "verifyFlags": [],
+  "verifyFlagCount": 0,
+  "volatilePricing": false,
+  "wordCount": 1906,
+  "dataVintage": 2026,
+  "provenance": {
+    "batch": "western-central",
+    "sourceFile": "cartatripsv1/trips/nl-water-zeeland-brouwersdam-kite.md",
+    "sourceFormat": "md+yaml-frontmatter (one file per trip)",
+    "sourceId": "nl-water-zeeland-brouwersdam-kite",
+    "ingestedAt": "2026-09-02",
+    "synthesized": false
+  }
+}

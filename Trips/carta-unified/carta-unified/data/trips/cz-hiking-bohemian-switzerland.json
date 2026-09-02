@@ -1,0 +1,314 @@
+{
+  "id": "cz-hiking-bohemian-switzerland",
+  "sourceId": "cz-hiking-bohemian-switzerland",
+  "slug": "cz-hiking-bohemian-switzerland",
+  "title": "Bohemian Switzerland — A Sandstone Walking Week",
+  "country": "Czechia",
+  "countryCode": "CZ",
+  "countries": [
+    {
+      "name": "Czechia",
+      "code": "CZ"
+    }
+  ],
+  "isMultiCountry": false,
+  "region": "Western & Central Europe",
+  "regionKey": "western-central",
+  "subRegion": "České Švýcarsko, Ústí nad Labem Region",
+  "tripType": "Hiking & Alpine Trekking",
+  "tripTypeId": 6,
+  "tripTypeSlug": "hiking",
+  "durationDays": 7,
+  "bestPeriod": {
+    "months": [
+      5,
+      6,
+      9
+    ],
+    "monthNames": [
+      "May",
+      "June",
+      "September"
+    ],
+    "window": null,
+    "note": "July–August bring crowds and timed-entry queues at Pravčická brána; the gorge boats stop running in poor water levels, usually checked daily in high summer.",
+    "avoid": null,
+    "raw": null
+  },
+  "budgetTier": "€",
+  "budgetTierRange": [
+    1,
+    1
+  ],
+  "budgetTierRaw": "€",
+  "budget": {
+    "currency": "EUR",
+    "totalEur": {
+      "low": 600,
+      "high": 850
+    },
+    "totalNote": null,
+    "breakdown": {
+      "accommodation": {
+        "lowEur": 280,
+        "highEur": 400,
+        "note": null
+      },
+      "food": {
+        "lowEur": 160,
+        "highEur": 220,
+        "note": null
+      },
+      "transport": {
+        "lowEur": 70,
+        "highEur": 100,
+        "note": null
+      },
+      "activities": {
+        "lowEur": 90,
+        "highEur": 130,
+        "note": null
+      }
+    },
+    "perDayEur": {
+      "low": 86,
+      "high": 121
+    }
+  },
+  "profile": {
+    "difficulty": 2,
+    "difficultyLabel": "Moderate",
+    "difficultyNote": null,
+    "fitnessLevel": "Moderate",
+    "crowdLevel": "Moderate",
+    "familyFriendly": false,
+    "carRequired": false
+  },
+  "basecamps": [
+    "Hřensko"
+  ],
+  "gatewayAirport": "Prague (PRG)",
+  "gatewayAirportCode": "PRG",
+  "languages": [
+    "Czech"
+  ],
+  "currency": "EUR",
+  "emergencyNumber": "112",
+  "coordinates": {
+    "lat": 50.088,
+    "lon": 14.4208,
+    "precision": "gateway",
+    "matchedPlace": "Prague",
+    "source": "geonames (geonamescache, cities > 15k)"
+  },
+  "tags": [
+    "sandstone",
+    "national-park",
+    "ket-marking",
+    "gorges",
+    "cross-border"
+  ],
+  "summary": "A week walking sandstone gorges, table rocks and Europe's largest natural arch through Bohemian Switzerland National Park from Hřensko.",
+  "summaryGenerated": false,
+  "hook": "This is not a mountain range. It is a plateau of sandstone that erosion has carved into towers, arches, canyons and one genuinely startling natural bridge, all of it stitched together by one of the most precisely organised waymarking systems in Europe. České Švýcarsko rewards slow walking between narrow gorges, and its national park status means the rules are strict and worth understanding before you set foot on a trail.",
+  "snapshot": {
+    "Country": "Czechia",
+    "Base(s)": "Hřensko, with overnights shifting to Mezní Louka and Jetřichovice",
+    "Trip Type": "Hiking & Alpine Trekking",
+    "Duration": "7 days",
+    "Best Period": "May–June, September",
+    "Budget Tier": "€",
+    "Total Distance / Terrain": "approx. 80–100 km, 2,000–2,600 m cumulative ascent; sandstone plateau, gorge-bottom paths, ladders and stairs cut into rock, KČT-marked throughout",
+    "Getting There": "Fly to Prague (PRG), train to Děčín, then regional bus to Hřensko (about 2.5 hours total)",
+    "Who It Suits": "Steady walkers comfortable with ladders, narrow rock steps and strict path-only rules; not technical, but not flat either"
+  },
+  "itinerary": [
+    {
+      "day": 1,
+      "title": "Hřensko and the Edmundova soutěska",
+      "morning": "Arrive in Hřensko, a village wedged at the confluence of the Kamenice and Elbe (Labe) rivers on the German border. Walk straight into the Edmundova soutěska (Edmund Gorge), where the path narrows between sheer sandstone walls above the Kamenice.",
+      "afternoon": "Take the seasonal punt-boat section through the gorge's narrowest stretch — the only way through part of the canyon without swimming — then continue to the Dlouhý důl viewpoint before looping back.",
+      "evening": "First dinner in Hřensko; the village's guesthouses cater specifically to walkers heading into the park.",
+      "dayStats": "10 km, 250 m ascent, 250 m descent. Waymarking: KČT green stripe (local route) from the village, joining the red-stripe long-distance trail at the gorge entrance.",
+      "sleep": null
+    },
+    {
+      "day": 2,
+      "title": "Hřensko to Mezní Louka via Pravčická brána",
+      "morning": "Climb out of the Kamenice valley on the KČT red trail toward Pravčická brána, Europe's largest natural sandstone arch, reached through the Pravčický důl forest.",
+      "afternoon": "The arch itself can only be viewed from below or from the adjacent Sokolí vyhlídka (Falcon's Viewpoint) — walking on top of it has been prohibited for decades to protect the sandstone. Continue past the historic Sokolí hostinec to Mezní Louka, a small plateau settlement that is effectively the park's high-country hub.",
+      "evening": "Overnight in Mezní Louka; book ahead, since it is the only accommodation cluster deep inside the park itself.",
+      "dayStats": "14 km, 400 m ascent, 250 m descent. Waymarking: KČT red stripe, the park's principal long-distance route, well maintained and heavily used near the arch.",
+      "sleep": null
+    },
+    {
+      "day": 3,
+      "title": "Mezní Louka to Jetřichovice",
+      "morning": "Head south from Mezní Louka on quieter plateau paths toward Malá Pravčická brána, the smaller and far less visited sibling arch, then on through mixed pine and heath.",
+      "afternoon": "Descend gradually toward Jetřichovice, a village of scattered farmhouses that serves as the park's other main walking base, passing table-rock formations along the Vysoká Lísa ridge.",
+      "evening": "Jetřichovice is quieter than Hřensko and a good base for the middle of the week; small pensions here are used to hikers arriving on foot.",
+      "dayStats": "16 km, 350 m ascent, 400 m descent. Waymarking: KČT red stripe with a short blue-stripe connector into the village.",
+      "sleep": null
+    },
+    {
+      "day": 4,
+      "title": "Jetřichovice to Vysoký Sněžník and back",
+      "morning": "Climb to Vysoký Sněžník, the highest sandstone table in the park at 619 m, via a steep staircase cut directly into the rock — the only way up, and a genuine landmark of the trail network.",
+      "afternoon": "From the summit platform the whole plateau is visible, table rocks stacked to the horizon; descend past the Rudolfův kámen viewpoint before looping back to Jetřichovice.",
+      "evening": "A shorter day, deliberately, after two longer stages.",
+      "dayStats": "13 km, 450 m ascent, 450 m descent. Waymarking: KČT yellow-stripe local loop from the village, joining red stripe near the summit stair.",
+      "sleep": null
+    },
+    {
+      "day": 5,
+      "title": "Jetřichovice to Kamenická stěna and Dolský mlýn",
+      "morning": "Walk north-east across a quieter stretch of plateau toward the Belveder viewpoint, looking down over the Kamenice valley from the Kamenická stěna cliff line.",
+      "afternoon": "Descend to Dolský mlýn, a restored 19th-century watermill deep in the gorge bottom, then follow the Kamenice downstream toward the Divoká soutěska (Wild Gorge), the second of the two boat-served gorges.",
+      "evening": "Return to Hřensko by the gorge-bottom path or by the local bus that runs along the Kamenice valley road.",
+      "dayStats": "17 km, 350 m ascent, 550 m descent. Waymarking: KČT red stripe throughout, with green-stripe local variants near Dolský mlýn.",
+      "sleep": null
+    },
+    {
+      "day": 6,
+      "title": "Mezná plateau and Mariina vyhlídka",
+      "morning": "From Hřensko, climb to the Mezná plateau, a scattered hamlet of farmhouses above the Elbe canyon, on quiet green-stripe paths through heath and scattered pine.",
+      "afternoon": "Walk to Mariina vyhlídka (Maria's Viewpoint), which looks directly down onto the Elbe far below and across the river into Saxon Switzerland on the German side — the Bastei bridge is visible on a clear day, a reminder that this sandstone plateau does not stop at the border.",
+      "evening": "Return to Hřensko for the night, closing the loop on the base.",
+      "dayStats": "15 km, 400 m ascent, 400 m descent. Waymarking: KČT green stripe out, yellow stripe on the return loop.",
+      "sleep": null
+    },
+    {
+      "day": 7,
+      "title": "Tichá soutěska and departure",
+      "morning": "A gentler final walk into the Tichá soutěska (Quiet Gorge), the least visited of the Kamenice's three narrow sections, on a path that stays close to the water the whole way.",
+      "afternoon": "Loop back to Hřensko village along the Elbe riverside path, with time for a last coffee before the bus to Děčín.",
+      "evening": "Train back toward Prague from Děčín.",
+      "dayStats": "9 km, 150 m ascent, 150 m descent. Waymarking: KČT red stripe, the gentlest gorge walk of the week.",
+      "sleep": null
+    }
+  ],
+  "accommodationStrategy": [
+    {
+      "rank": 1,
+      "name": "Guesthouse in Hřensko",
+      "style": null,
+      "location": "Gateway base",
+      "description": "Hřensko sits at the park's main entrance and has the widest choice of small pensions built specifically around gorge-walking tourism, with drying space for wet boots after the boat sections.",
+      "booking": "4–6 weeks ahead for June and September weekends.",
+      "priceNote": "€45–€70 per night"
+    },
+    {
+      "rank": 2,
+      "name": "Pension in Mezní Louka",
+      "style": null,
+      "location": "Deep-park overnight",
+      "description": "The only realistic overnight cluster inside the park's core zone, useful for splitting the Pravčická brána day from a long there-and-back and reaching the arch at quieter hours.",
+      "booking": "6–8 weeks ahead — beds here are limited and this is the most requested single night of the week.",
+      "priceNote": "€50–€75 per night"
+    },
+    {
+      "rank": 3,
+      "name": "Pension in Jetřichovice",
+      "style": null,
+      "location": "Quiet mid-week base",
+      "description": "A calmer, more scattered village than Hřensko, well placed for the Vysoký Sněžník and Kamenická stěna days without the gorge-entrance crowds.",
+      "booking": "3–4 weeks ahead.",
+      "priceNote": "€40–€65 per night"
+    }
+  ],
+  "logistics": {
+    "connectivity": null,
+    "emergency": "112 pan-European; police 158, ambulance 155, fire 150 also work directly within Czechia.",
+    "weather": null,
+    "bookingWindows": null,
+    "money": "Village shops in Mezní Louka and Jetřichovice are small and close early; buy picnic supplies in Hřensko or Děčín before heading into the plateau.",
+    "transportRules": null,
+    "permits": null,
+    "health": null,
+    "gettingThere": null,
+    "other": [
+      {
+        "label": "The KČT marking system, explained",
+        "text": "Every marked trail carries a rectangular sign painted directly on trees, posts or rock faces: a white stripe, a coloured stripe, then a white stripe again, at roughly eye height. The colour denotes the route's importance in the network, not its difficulty — red marks the principal long-distance trails (the backbone routes, like the one through Pravčická brána), blue marks secondary connecting routes, green and yellow mark local and link paths. Junctions carry small painted signposts giving destinations and walking times in hours. Learning to read one colour-coded arrow at a junction replaces most need for GPS in this park."
+      },
+      {
+        "label": "Strict path-only rule",
+        "text": "Bohemian Switzerland National Park enforces off-path walking bans rigorously, with fines for straying onto the fragile sandstone or into closed zones — this is not a suggestion, it is actively patrolled, and it exists because sandstone erodes fast under foot traffic."
+      },
+      {
+        "label": "Seasonal closures",
+        "text": "Some paths close from March to June to protect nesting peregrine falcons and eagle owls on the cliff faces; check current closures at the park visitor centre in Hřensko or Krásná Lípa before setting out."
+      },
+      {
+        "label": "Gorge boats run seasonally",
+        "text": "and depend on water levels; a dry summer can suspend the Edmundova or Divoká soutěska punt sections entirely, with a signed dry-land bypass path as the alternative."
+      },
+      {
+        "label": "Cross-border awareness",
+        "text": "The park borders Saxon Switzerland in Germany directly; both use the Schengen zone so no formal border control exists, but Czech koruna is the currency on this side and euro cards are not universally accepted in small village pensions — carry cash."
+      }
+    ]
+  },
+  "proTips": [
+    "Reach Pravčická brána before 09:30. The viewpoint terrace and the historic hostinec beside it draw coach-tour crowds from Dresden and Prague by late morning.",
+    "Take the Edmundova soutěska boat on Day 1 rather than skipping it to save money — the gorge's narrowest stretch genuinely cannot be seen properly from the bypass path.",
+    "Climb Vysoký Sněžník's rock-cut staircase in the morning; it is one lane wide and backs up badly when a tour group meets a descending one.",
+    "Buy a paper KČT 1:25,000 map (the green-covered regional sheet) even with a phone — the sandstone gorges kill GPS signal completely at the bottom.",
+    "Ask the Mezní Louka pension about the closed-zone map before Day 3; nesting closures shift slightly year to year and the printed park leaflet is updated more often than most map apps.",
+    "Walk to Mariina vyhlídka in late afternoon rather than midday — the low sun lights the Elbe canyon and the Bastei cliffs opposite far better than flat midday light.",
+    "Carry koruna in cash for the Mezní Louka and Jetřichovice pensions; several still run card-free."
+  ],
+  "typeSpecific": {
+    "raw": {
+      "Total Distance / Terrain": "approx. 80–100 km, 2,000–2,600 m cumulative ascent; sandstone plateau, gorge-bottom paths, ladders and stairs cut into rock, KČT-marked throughout",
+      "Who It Suits": "Steady walkers comfortable with ladders, narrow rock steps and strict path-only rules; not technical, but not flat either"
+    },
+    "surface": "approx. 80–100 km, 2,000–2,600 m cumulative ascent; sandstone plateau, gorge-bottom paths, ladders and stairs cut into rock, KČT-marked throughout",
+    "distanceKm": 80,
+    "elevationM": null,
+    "verticalM": null,
+    "technicalRating": null,
+    "transitPass": null,
+    "hutBooking": null,
+    "liftNetwork": null,
+    "snowReliability": null,
+    "windConditions": null,
+    "gpxReady": null,
+    "bookingTimeline": null,
+    "audience": "Steady walkers comfortable with ladders, narrow rock steps and strict path-only rules; not technical, but not flat either"
+  },
+  "packingNotes": [
+    "Trail shoes with real grip — the rock-cut staircases and gorge-bottom paths are often damp and can be slick even in dry weather.",
+    "A light rain shell; the gorges create their own microclimate and can be markedly cooler and wetter than the surrounding plateau.",
+    "A 20–25 L daypack; nights are in guesthouses, not huts.",
+    "A printed KČT map as the primary navigation tool — trust the paint marks over a phone signal that will not exist in the gorges.",
+    "Cash in Czech koruna, since several village pensions and kiosks are cash-only.",
+    "A swim-ready layer or dry bag insert if taking the gorge boat sections in wet weather.",
+    "Binoculars, genuinely useful for spotting the peregrine falcons and eagle owls the seasonal closures protect.",
+    "What people over-pack: mountain hardware. There is no scrambling and no exposure requiring rope or poles here — this is a walking week, and boots plus a rain shell cover it."
+  ],
+  "whatCouldGoWrong": [
+    "**Pravčická brána is crowded on arrival.** Fallback: the Malá Pravčická brána on Day 3 gives a quieter, equally genuine version of the same sandstone-arch geology with almost no other visitors.",
+    "**Gorge boats suspended for low water.** Fallback: both Edmundova and Divoká soutěska have signed dry-land bypass paths that stay open regardless of river level.",
+    "**A nesting-season path closure blocks a planned route.** Fallback: the park's dense trail network almost always offers a parallel red- or blue-marked alternative; check at the Hřensko visitor centre before setting out.",
+    "**Mezní Louka pension fully booked.** Fallback: day-trip to Pravčická brána from Hřensko instead and shift the extra night to Jetřichovice, adjusting Day 2's distance upward.",
+    "**Heavy rain makes gorge-bottom paths slick.** Fallback: shift to the higher plateau routes (Vysoký Sněžník, Mezná) for that day and save the gorge walking for drier conditions later in the week."
+  ],
+  "sources": {
+    "verified": null,
+    "confidenceNotes": null
+  },
+  "verifyFlags": [],
+  "verifyFlagCount": 0,
+  "volatilePricing": false,
+  "wordCount": 1983,
+  "dataVintage": 2026,
+  "provenance": {
+    "batch": "western-central",
+    "sourceFile": "cartatripsv1/trips/cz-hiking-bohemian-switzerland.md",
+    "sourceFormat": "md+yaml-frontmatter (one file per trip)",
+    "sourceId": "cz-hiking-bohemian-switzerland",
+    "ingestedAt": "2026-09-02",
+    "synthesized": false
+  }
+}

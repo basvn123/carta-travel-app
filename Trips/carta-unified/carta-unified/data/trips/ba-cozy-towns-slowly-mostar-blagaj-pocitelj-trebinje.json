@@ -1,0 +1,277 @@
+{
+  "id": "ba-cozy-towns-slowly-mostar-blagaj-pocitelj-trebinje",
+  "sourceId": "cozy-towns-bosnia-herzegovina",
+  "slug": "ba-cozy-towns-slowly-mostar-blagaj-pocitelj-trebinje",
+  "title": "Herzegovina Slowly: Mostar, Blagaj, Počitelj & Trebinje",
+  "country": "Bosnia and Herzegovina",
+  "countryCode": "BA",
+  "countries": [
+    {
+      "name": "Bosnia and Herzegovina",
+      "code": "BA"
+    }
+  ],
+  "isMultiCountry": false,
+  "region": "Southern & Mediterranean Europe",
+  "regionKey": "southern-mediterranean",
+  "subRegion": "Herzegovina — Neretva valley & Trebišnjica",
+  "tripType": "Cozy Towns Trips",
+  "tripTypeId": 4,
+  "tripTypeSlug": "cozy-towns",
+  "durationDays": 7,
+  "bestPeriod": {
+    "months": [
+      4,
+      5,
+      6,
+      9,
+      10
+    ],
+    "monthNames": [
+      "April",
+      "May",
+      "June",
+      "September",
+      "October"
+    ],
+    "window": "Late April–mid June & mid September–late October",
+    "note": null,
+    "avoid": "July–August (Mostar's old bridge is shoulder-to-shoulder with cruise excursions from Dubrovnik and the Neretva valley hits 38°C) and January, when much of Počitelj and Stolac shuts",
+    "raw": "Late April–mid June & mid September–late October"
+  },
+  "budgetTier": "€",
+  "budgetTierRange": [
+    1,
+    1
+  ],
+  "budgetTierRaw": "€",
+  "budget": {
+    "currency": "EUR",
+    "totalEur": {
+      "low": 760,
+      "high": 1300
+    },
+    "totalNote": "€700–€1,200 per person, excl. international flights",
+    "breakdown": {
+      "accommodation": {
+        "lowEur": 320,
+        "highEur": 560,
+        "note": "€45–€80 pp/night in historic-house hotels and family pansions"
+      },
+      "food": {
+        "lowEur": 160,
+        "highEur": 280,
+        "note": "Mains 12–25 BAM (€6–€13); a full dinner with wine under €20"
+      },
+      "transport": {
+        "lowEur": 190,
+        "highEur": 290,
+        "note": "Rental car with cross-border permission, or a driver at €80–€110 a day"
+      },
+      "activities": {
+        "lowEur": 90,
+        "highEur": 170,
+        "note": "Kravice entry, tekke, museums, winery tastings, coppersmith session"
+      }
+    },
+    "perDayEur": {
+      "low": 109,
+      "high": 186
+    }
+  },
+  "profile": {
+    "difficulty": 2,
+    "difficultyLabel": "Moderate",
+    "difficultyNote": "2 — Počitelj's stone stairs and Mostar's polished cobbles are the hardest things here; everything else is flat",
+    "fitnessLevel": "Moderate",
+    "crowdLevel": null,
+    "familyFriendly": null,
+    "carRequired": null
+  },
+  "basecamps": [],
+  "gatewayAirport": "DBV — Dubrovnik, 1 h 50 to Trebinje and 3 h to Mostar including the border; SJJ Sarajevo is 2 h 30 to Mostar and better for onward rail",
+  "gatewayAirportCode": "DBV",
+  "languages": [],
+  "currency": null,
+  "emergencyNumber": "112",
+  "coordinates": {
+    "lat": 43.8486,
+    "lon": 18.3564,
+    "precision": "country",
+    "matchedPlace": "Sarajevo",
+    "source": "country capital fallback"
+  },
+  "tags": [
+    "herzegovina",
+    "mostar",
+    "trebinje",
+    "stecci",
+    "ottoman-towns",
+    "bosnian-coffee",
+    "slow-travel",
+    "wine"
+  ],
+  "summary": "Herzegovina is stone, water and coffee, and the trick to it is refusing to do it in two days. This week gives you four nights in Mostar's old town and three in Trebinje, a plane-shaded southern town most visitors never reach, with the Ottoman villages of the Neretva — Blagaj, Počitelj, Stolac — filling the middle. The pace is set by the coffee ritual: a džezva, a fildžan, a sugar cube held in the teeth, and forty minutes that cannot be shortened. There is one town move, two afternoons with nothing in them, and a deliberate rule of arriving at the famous places either before 09:30 or after 17:00. It suits travellers who want the layered, complicated version of the Balkans rather than a bridge photograph.",
+  "summaryGenerated": false,
+  "hook": null,
+  "snapshot": {},
+  "itinerary": [
+    {
+      "day": 1,
+      "title": "Into the Neretva valley",
+      "morning": "Fly to Dubrovnik, collect a car with written cross-border permission, and drive north-east into Bosnia. The border formalities are straightforward but not fast; budget an hour.",
+      "afternoon": "Arrive in Mostar, park outside the old town, and check in. First walk: the Stari Most at 18:00, when the light goes gold and the divers of the Mostar Diving Club are still collecting for the 24 m jump.",
+      "evening": "Dinner at Šadrvan, at the top of Kujundžiluk under vines — begova čorba, ćevapi, and stuffed vine leaves. Then a džezva of coffee somewhere with a view of the bridge lit up.",
+      "dayStats": "DBV–Mostar 140 km / 3 h with the border. Stari Most deck 21 m above the Neretva; divers jump around 24 m. Mains 12–25 BAM (€6–€13).",
+      "sleep": "Muslibegović House, Mostar"
+    },
+    {
+      "day": 2,
+      "title": "Blagaj's spring and the old town after dark",
+      "morning": "Out to Blagaj at 09:00 before the coaches. The tekke sits directly on the water beneath the cliff; sit inside on the carpets for ten minutes rather than photographing it from the terrace. Coffee afterwards at a riverside table where the Buna is loud enough to make conversation an effort.",
+      "afternoon": "Back into Mostar for the parts most visitors skip: the Karađoz Beg Mosque, the Kriva Ćuprija (the small crooked bridge that was the practice run for the big one), and the Bišćevića Ćošak Turkish house.",
+      "evening": "Climb the Koski Mehmed Pasha minaret for the classic bridge view at 18:30, then eat at Hindin Han on the Radobolja stream.",
+      "dayStats": "Mostar–Blagaj 12 km / 20 min. Buna spring average flow around 43 m³/s; cliff above it roughly 200 m. Tekke entry ~6 BAM (€3). Minaret ~5 BAM (€2.50).",
+      "sleep": "Muslibegović House, Mostar"
+    },
+    {
+      "day": 3,
+      "title": "Počitelj, Kravice, and then nothing",
+      "morning": "South down the Neretva to Počitelj — an Ottoman fortified village of about 400 people, essentially one long stone staircase. Climb to the fort, come down slowly, and buy figs on the steps.",
+      "afternoon": "Kravice waterfalls on the Trebižat, a 25 m curtain into a swimmable pool. Then stop. Back to Mostar by 16:30, and use the rest of the day for the courtyard and a book.",
+      "evening": "Late, unhurried dinner at Konoba Taurus, then coffee in the bazaar after the day-trippers have gone. Mostar is a different town after 20:00.",
+      "dayStats": "Mostar–Počitelj 30 km / 35 min; Počitelj–Kravice 25 km / 30 min; Kravice–Mostar 40 km / 45 min. Kravice entry ~10–20 BAM (€5–€10). Počitelj stairs 90 m of climb.",
+      "sleep": "Muslibegović House, Mostar"
+    },
+    {
+      "day": 4,
+      "title": "Stolac, the stećci, and the Bregava",
+      "morning": "East to Stolac, stopping first at the Radimlja necropolis on the approach road — the carved arms on the stećci are the single most haunting thing in Herzegovina, and it takes fifteen minutes to walk the field.",
+      "afternoon": "Stolac itself: the Bregava river running through the middle of town past old mills, the Begovina quarter of Ottoman houses, and the Vidoška fortress above. It is a town still visibly repairing itself from the 1990s, and worth the slow look.",
+      "evening": "Return to Mostar for the coppersmithing hour on Kujundžiluk, then a last dinner in the old town.",
+      "dayStats": "Mostar–Stolac 45 km / 50 min. Radimlja holds roughly 130 stećci; free or nominal entry. Coppersmith session 60–90 min, roughly 40–60 BAM (€20–€30).",
+      "sleep": "Muslibegović House, Mostar"
+    },
+    {
+      "day": 5,
+      "title": "South to Trebinje",
+      "morning": "Slow departure, then the drive south through the Popovo Polje karst basin — a landscape that floods in winter and is bone dry in September.",
+      "afternoon": "Arrive in Trebinje, check in beside the old town, and walk the Kastel walls and the plane-tree square. Nothing else. This is the town where you learn to sit.",
+      "evening": "Trg Slobode under the trees from 19:00, when the whole town appears. Dinner nearby with a bottle of Žilavka, the local white.",
+      "dayStats": "Mostar–Trebinje 110 km / 2 h. Trebinje at 273 m, 28 km from the Adriatic. Buses run this route but only a couple of times a day.",
+      "sleep": "Hotel Platani, Trebinje"
+    },
+    {
+      "day": 6,
+      "title": "Monastery wine, an old bridge, and an open afternoon",
+      "morning": "Tvrdoš Monastery, 5 km out of town, where Orthodox monks have made wine on the site since Roman foundations underneath it — taste the Vranac and the Žilavka in the cellar and buy directly.",
+      "afternoon": "Unplanned. Walk the riverside path to the Arslanagić Bridge, a 16th-century Ottoman span that was dismantled and rebuilt upstream when the Trebišnjica was dammed, then do nothing for three hours.",
+      "evening": "Up to Hercegovačka Gračanica on Crkvina hill at sunset for the view over the valley, then back down for grilled lamb and a long coffee.",
+      "dayStats": "Trebinje–Tvrdoš 5 km / 10 min; tasting roughly 20–35 BAM (€10–€18). Riverside walk to Arslanagić 2.2 km each way, flat. Crkvina hill 130 m above town.",
+      "sleep": "Hotel Platani, Trebinje"
+    },
+    {
+      "day": 7,
+      "title": "Market morning, then the coast",
+      "morning": "Saturday market in the old town from about 07:00 — honey, dried figs, pomegranate juice, cheese in oil, rakija in reused bottles. Buy the honey; it travels. Then one last coffee under the plane trees.",
+      "afternoon": "Drive to Dubrovnik, allowing properly for the border. If your flight is late, the coast road via Trebinje's mountain descent is spectacular.",
+      "evening": "Flight home.",
+      "dayStats": "Trebinje–DBV 65 km / 1 h 50 including the border; queues at Ivanica can add 45 min on summer weekends. Market 07:00–13:00, fullest before 10:00.",
+      "sleep": "—"
+    }
+  ],
+  "accommodationStrategy": [
+    {
+      "rank": 1,
+      "name": "Muslibegović House",
+      "style": "12-room Ottoman house hotel",
+      "location": "Mostar",
+      "description": "An 18th-century family residence that is simultaneously a national monument and a working hotel, five minutes' walk above the Stari Most. Rooms range from simple to fully traditional with low divans and carved ceilings; ask for a traditional room, which costs a little more and is the whole reason to stay here. Quiet at night, which is rare this close to the bazaar. Roughly €80–€130 per double.",
+      "booking": null,
+      "priceNote": null
+    },
+    {
+      "rank": 2,
+      "name": "Hotel Platani",
+      "style": "30-room town hotel",
+      "location": "Trebinje",
+      "description": "Directly on Trg Slobode with its terrace under the plane trees, which means the korzo happens at your table. Unfussy rooms, good breakfast, and the single best-placed bed in Trebinje for a three-night sit-still stay. Roughly €55–€85 per double.",
+      "booking": null,
+      "priceNote": null
+    },
+    {
+      "rank": 3,
+      "name": "Hotel Kriva Ćuprija or a Blagaj pansion",
+      "style": null,
+      "location": "alternatives",
+      "description": "Kriva Ćuprija sits on the Radobolja stream in Mostar's old town, a small conversion of mill buildings, if Muslibegović is full. Staying out at Blagaj instead is a real option for a quieter week — but it puts you 12 km from Mostar's evenings.",
+      "booking": null,
+      "priceNote": null
+    }
+  ],
+  "logistics": {
+    "connectivity": "**Bosnia and Herzegovina is outside the EU, so EU roam-like-at-home does not apply.** Check your operator's Western Balkans bundle or buy a BH Telecom or m:tel prepaid SIM. Note that Trebinje is in Republika Srpska and Mostar in the Federation — networks differ slightly by entity, and phones hop across the Croatian network on the coast road, which can trigger unexpected charges.",
+    "emergency": "112 works, but 124 (ambulance), 122 (police) and 123 (fire) are the reliable direct numbers in BiH. Mountain rescue is thin — the GSS responds via 112. Take insurance with repatriation cover.",
+    "weather": "The Neretva valley is a heat trap: 38°C is normal in July and the stone holds it overnight. The bura wind hits the Popovo Polje and the Trebinje plateau in winter. Sudden heavy rain in November and December can flood the karst polje and close minor roads.",
+    "bookingWindows": "Mostar old-town rooms need 2–3 months for May and September. Coppersmith sessions and Tvrdoš cellar tastings want a day or two's notice. Nothing else here requires advance booking.",
+    "money": "The currency is the **convertible mark (BAM/KM)**, pegged to the euro at **1.95583 BAM = €1** — so roughly 2 KM to the euro. Euros are accepted informally at some tourist businesses at a poor rate; pay in marks. Cards work in hotels and larger restaurants; markets, Kravice's entry booth, village cafés, taxis and craft workshops are cash. Withdraw at bank ATMs and decline dynamic currency conversion. Tipping is rounding up, 10% on a good dinner.",
+    "transportRules": "If you rent in Croatia you must obtain written cross-border permission and a green card at pickup, and declare Bosnia specifically — many cheap brokers refuse it. A vignette is not required in BiH but tolls apply on the A1 north of Mostar. Herzegovina's minor roads are narrow, unlit and shared with livestock. Buses connect Mostar–Blagaj–Počitelj and Mostar–Trebinje, but only a few times daily.",
+    "permits": "Landmines remain a genuine hazard away from marked paths in some rural areas; never walk into unmarked ground, ruins or overgrown fields anywhere in the country, and stay on established tracks. Drones need permission. Photographing military or border installations is prohibited.",
+    "health": "Tap water is potable in Mostar and Trebinje. The Buna and Trebižat are cold year-round — the Kravice pool rarely exceeds 18°C. Mostar's cobbles are polished marble-smooth and treacherous in rain; the Stari Most's deck has raised stone ribs precisely because it is otherwise unwalkable.",
+    "gettingThere": null,
+    "other": []
+  },
+  "proTips": [
+    "Mostar's old town is a cruise-excursion destination from Dubrovnik between roughly 10:30 and 16:30. Sleep in it, and do all your bridge-side wandering before 09:30 or after 17:30 — you will effectively have a different town.",
+    "Learn the coffee ritual rather than ordering an espresso. The džezva is poured into the fildžan a little at a time, the sugar cube is dipped and held in the teeth, and the rahat lokum comes first. Rushing it is the one thing that reads as rude here.",
+    "Pay in convertible marks, not euros. Businesses that accept euros usually round the 1.96 rate down to 2, which is a quiet 2% on everything.",
+    "Cross at Ivanica rather than the coastal crossings when driving Trebinje–Dubrovnik. It is smaller, faster and drops you above the Konavle valley with a view worth the detour.",
+    "At Radimlja, walk the field rather than viewing from the car park. The carved raised-arm figures only make sense when you are among them and can see how many there are.",
+    "Trebinje is in Republika Srpska and Mostar is not, and the two towns tell their recent history differently. Ask, listen, and don't arbitrate — the most rewarding conversations of the week come from being genuinely curious rather than informed.",
+    "Buy wine at Tvrdoš rather than in Mostar. The monastery sells at cellar prices, the Vranac travels well, and the labels are the best souvenir you'll bring home."
+  ],
+  "typeSpecific": {
+    "raw": {
+      "Kujundžiluk, Mostar": "— the coppersmiths' bazaar leading to the Stari Most, where families still beat copper trays and džezve by hand. It is a genuine craft street wrapped in a souvenir street; the working shops are the ones with an anvil visible.",
+      "Trg Slobode, Trebinje": "is the anchor square of the second half: a walled old town under enormous plane trees, with café tables under the canopy and a korzo that starts around 19:00 and runs along Njegoševa and the riverside promenade.",
+      "Trebinje's Saturday market": "fills the old town from early morning — honey, figs, pomegranates, ćurak cheese in oil, homemade rakija, and Herzegovinian wine sold from the boot of a car. Best before 10:00.",
+      "Blagaj tekke": "sits at the Buna spring, where a karst river emerges whole from beneath a 200 m cliff — one of Europe's largest springs by volume. The dervish house dates from around 1520 and is still a functioning place of prayer; shoes off, shoulders covered.",
+      "Počitelj": "climbs the Neretva's east bank as a set of stone stairs linking the Šišman Ibrahim Pasha Mosque, the medieval Sahat Kula and the hilltop fort. Women sell figs, pomegranates and dried herbs on the lower steps in September.",
+      "Radimlja, near Stolac": "holds roughly 130 *stećci* — medieval Bosnian tombstones carved with raised arms, spirals and hunting scenes, UNESCO-listed and unlike anything else in Europe.",
+      "Hands-on experience": "a coppersmithing hour in a working Kujundžiluk workshop — chasing a pattern into a small copper plate with hammer and punch, alongside the family that has done it for generations. Book through your hotel the day before.",
+      "Pacing": "one move (Mostar → Trebinje on Day 5), blank afternoons on Days 3 and 6, and the short walks that exist: Blagaj village to the tekke (900 m along the Buna), Počitelj's stair circuit (600 m, 90 m of climb), Trebinje old town to the Arslanagić bridge (2.2 km along the Trebišnjica)."
+    },
+    "surface": null,
+    "distanceKm": null,
+    "elevationM": null,
+    "verticalM": null,
+    "technicalRating": null,
+    "transitPass": null,
+    "hutBooking": null,
+    "liftNetwork": null,
+    "snowReliability": null,
+    "windConditions": null,
+    "gpxReady": null,
+    "bookingTimeline": null,
+    "audience": null
+  },
+  "packingNotes": [],
+  "whatCouldGoWrong": [],
+  "sources": {
+    "verified": "BAM peg confirmed at 1.95583 to the euro and Bosnia and Herzegovina's non-EU roaming status checked. Trebinje's Saturday market in the old town confirmed as an established weekly event. Blagaj tekke, the Buna spring and Tvrdoš Monastery's winemaking confirmed as active.",
+    "confidenceNotes": "Trebinje market hours are typical rather than officially published — advise arriving early. Entry fees at Kravice, the tekke and the minaret change annually and were not each re-confirmed this run. Mostar–Trebinje and Mostar–Počitelj bus frequencies are described qualitatively because published timetables are unreliable; the file assumes a car. Room counts for Muslibegović House and Hotel Platani are approximate. Individual coppersmith workshops on Kujundžiluk are family businesses that open and close without notice — the file deliberately names the craft street rather than a single shop, and users should book through their hotel. Restaurant continuity in Mostar should be re-checked before publishing."
+  },
+  "verifyFlags": [],
+  "verifyFlagCount": 0,
+  "volatilePricing": false,
+  "wordCount": 2698,
+  "dataVintage": 2026,
+  "provenance": {
+    "batch": "southern-mediterranean",
+    "sourceFile": "carta-dataset/trips/cozy-towns-bosnia-herzegovina.md",
+    "sourceFormat": "md with '## Metadata' bullet block (one file per trip)",
+    "sourceId": "cozy-towns-bosnia-herzegovina",
+    "ingestedAt": "2026-09-02",
+    "synthesized": false
+  }
+}

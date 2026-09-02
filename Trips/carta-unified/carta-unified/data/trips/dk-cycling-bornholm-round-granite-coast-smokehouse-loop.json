@@ -1,0 +1,271 @@
+{
+  "id": "dk-cycling-bornholm-round-granite-coast-smokehouse-loop",
+  "sourceId": "bornholm-round-granite-coast-smokehouse-loop",
+  "slug": "dk-cycling-bornholm-round-granite-coast-smokehouse-loop",
+  "title": "Bornholm Round: Granite Coast & Smokehouse Loop",
+  "country": "Denmark",
+  "countryCode": "DK",
+  "countries": [
+    {
+      "name": "Denmark",
+      "code": "DK"
+    }
+  ],
+  "isMultiCountry": false,
+  "region": "Northern Europe & Baltics",
+  "regionKey": "northern-baltics",
+  "subRegion": "Bornholm, Baltic Sea",
+  "tripType": "Cycling Trips",
+  "tripTypeId": 1,
+  "tripTypeSlug": "cycling",
+  "durationDays": 7,
+  "bestPeriod": {
+    "months": [
+      5,
+      6,
+      7,
+      8,
+      9
+    ],
+    "monthNames": [
+      "May",
+      "June",
+      "July",
+      "August",
+      "September"
+    ],
+    "window": "Mid-May to mid-September; peak light and open smokehouses late June–August; quietest late May and first half of September",
+    "note": null,
+    "avoid": null,
+    "raw": "Mid-May to mid-September; peak light and open smokehouses late June–August; quietest late May and first half of September"
+  },
+  "budgetTier": "€€",
+  "budgetTierRange": [
+    2,
+    2
+  ],
+  "budgetTierRaw": "€€",
+  "budget": {
+    "currency": "EUR",
+    "totalEur": {
+      "low": 1050,
+      "high": 1500
+    },
+    "totalNote": "€1,050–1,500 per person for 7 days",
+    "breakdown": {
+      "accommodation": {
+        "lowEur": 90,
+        "highEur": 150,
+        "note": "€90–150 per night, double (guesthouse to design hotel); hostels €35–55 pp"
+      },
+      "food": {
+        "lowEur": 45,
+        "highEur": 70,
+        "note": "€45–70 per day (smokehouse buffets €20–28, dinner €35–60)"
+      },
+      "transport": {
+        "lowEur": 120,
+        "highEur": 190,
+        "note": "€120–190 total: Copenhagen–Ystad–Rønne ferry combo, plus €90–130 bike hire for the week"
+      },
+      "activities": {
+        "lowEur": 60,
+        "highEur": 110,
+        "note": "€60–110 total: Hammershus, Christiansø ferry, brewery and workshop visits"
+      }
+    },
+    "perDayEur": {
+      "low": 150,
+      "high": 214
+    }
+  },
+  "profile": {
+    "difficulty": 2,
+    "difficultyLabel": "Moderate",
+    "difficultyNote": "Easy–moderate. 105–135 km signposted loop split over 5 riding days; 300–450 m gain per day; no sustained climbs",
+    "fitnessLevel": "Moderate",
+    "crowdLevel": null,
+    "familyFriendly": null,
+    "carRequired": null
+  },
+  "basecamps": [
+    "Rønne",
+    "Allinge",
+    "Gudhjem",
+    "Svaneke"
+  ],
+  "gatewayAirport": null,
+  "gatewayAirportCode": null,
+  "languages": [
+    "Danish",
+    "English"
+  ],
+  "currency": "DKK (Danish krone)",
+  "emergencyNumber": "112",
+  "coordinates": {
+    "lat": 55.1,
+    "lon": 14.9167,
+    "precision": "source",
+    "matchedPlace": "Rønne",
+    "source": "source record"
+  },
+  "tags": [],
+  "summary": "A seven-day cycling trip itinerary in Bornholm, Baltic Sea, Denmark.",
+  "summaryGenerated": true,
+  "hook": null,
+  "snapshot": {},
+  "itinerary": [
+    {
+      "day": 1,
+      "title": "Arrival, Rønne and the west coast warm-up",
+      "morning": "Train from Copenhagen Central to Ystad in Sweden (about 1 h 40 with the through ticket), then the Bornholmslinjen fast ferry Ystad–Rønne, roughly 1 h 20. Collect bikes at a Rønne rental within walking distance of the terminal; ask for 32–38 mm tyres, they make the gravel sections painless.",
+      "afternoon": "Ride the coastal path north to Hasle, an easy flat 12 km on asphalt with the Baltic on your left. Stop at Hasle Røgeri for your first *sol over Gudhjem* — smoked herring, raw egg yolk, radish, chives, rye.",
+      "evening": "Continue to Jons Kapel, a sea-cliff chapel formation reached by wooden stairs, then back to Rønne. Dinner at a harbourside table; early night, the ferry day is longer than it reads.",
+      "dayStats": "24 km, asphalt",
+      "sleep": null
+    },
+    {
+      "day": 2,
+      "title": "Rønne to Allinge via Hammershus",
+      "morning": "North on the coast route through Sorthat-Muleby and Hasle, then onto the Ringebakkerne cliff section — this is the most dramatic asphalt on the island, quarried granite falling straight into the sea.",
+      "afternoon": "Hammershus, the largest medieval fortress ruin in Northern Europe, with the low-slung visitor centre built into the hillside opposite. Allow two hours. Push on over Hammerknuden past Hammer Fyr lighthouse and the flooded Opalsøen quarry.",
+      "evening": "Roll down into Sandvig and Allinge. Dinner at Nordlandet's restaurant if you want the design-hotel version of the island, or the harbour grill in Allinge for the honest one.",
+      "dayStats": "36 km, 420 m gain",
+      "sleep": null
+    },
+    {
+      "day": 3,
+      "title": "Allinge to Gudhjem, round churches and Christiansø",
+      "morning": "Inland loop to Olsker and Østerlars round churches — Østerlars is the largest and oldest of the four, a whitewashed defensive drum from around 1160.",
+      "afternoon": "Descend to Gudhjem, the steepest little town on Bornholm, and take the Christiansøfarten boat to Christiansø in the Ertholmene group, about an hour each way. No bikes, no cars, 90 residents, a 17th-century naval fortress and the country's easternmost point.",
+      "evening": "Back in Gudhjem, dinner at the harbour, then walk up Bokul rock for sunset over the roofs.",
+      "dayStats": "28 km",
+      "sleep": null
+    },
+    {
+      "day": 4,
+      "title": "Gudhjem to Svaneke, the craft corridor",
+      "morning": "Coastal ride via Melsted and Listed. Stop at Bornholms Kunstmuseum on the Helligdomsklipperne cliffs — the building is worth the ticket on its own.",
+      "afternoon": "Svaneke, Denmark's best-preserved small town and the island's maker capital: Svaneke Bryghus for beer, Svaneke Chokoladeri, Pernille Bülow's glassblowing workshop, Bornholms Mosteri for apple must.",
+      "evening": "Dinner in Svaneke; if you have booked far ahead, this is the night to drive or taxi to Kadeau Bornholm at Sømarken for the island tasting menu.",
+      "dayStats": "26 km",
+      "sleep": null
+    },
+    {
+      "day": 5,
+      "title": "Svaneke to Dueodde and Aakirkeby",
+      "morning": "South through Nexø, then the long white sand of Dueodde — the finest-grained beach in Denmark, used historically for hourglasses. Lighthouse climb for the flat forest view.",
+      "afternoon": "Turn inland on the old railway grade (compacted gravel) toward Aakirkeby, passing Hallegård farm shop for smoked sausage.",
+      "evening": "Stay near Aakirkeby or Sømarken. Quiet interior night; stars are excellent here.",
+      "dayStats": "34 km, mixed surface",
+      "sleep": null
+    },
+    {
+      "day": 6,
+      "title": "Almindingen forest and Ekkodalen",
+      "morning": "Into Almindingen, Denmark's third-largest forest. Ride the gravel through Ekkodalen — the echo valley, a rift with 20 m rock walls — and climb Rytterknægten (162 m), the island's high point, with the Kongemindet tower on top.",
+      "afternoon": "Paradisbakkerne on the eastern edge: granite hills, glacial erratics, marked walking trails if you want to leave the bike. Loop back west to Nylars round church, the best preserved of the four.",
+      "evening": "Return to Rønne. Dinner and a last harbour beer.",
+      "dayStats": "30 km, 450 m gain",
+      "sleep": null
+    },
+    {
+      "day": 7,
+      "title": "Coastal spin and departure",
+      "morning": "Short flat spin south to Arnager and its long wooden pier, then back. Return bikes.",
+      "afternoon": "Ferry Rønne–Ystad, train to Copenhagen. If you have a late flight, the alternative is the Rønne–Køge overnight route (about 5.5 h) which takes bikes without fuss.",
+      "evening": null,
+      "dayStats": null,
+      "sleep": null
+    }
+  ],
+  "accommodationStrategy": [
+    {
+      "rank": 1,
+      "name": "Nordlandet",
+      "style": "design hotel",
+      "location": "Allinge",
+      "description": "Former sanatorium above the north coast, Nordic-modern rooms, sea-facing terrace restaurant. Locked bike storage in the grounds and a laundry, which matters mid-week. Best positioned for the Hammershus and Hammerknuden days.",
+      "booking": null,
+      "priceNote": null
+    },
+    {
+      "rank": 2,
+      "name": "Danchells Anneks",
+      "style": "guesthouse",
+      "location": "Gudhjem",
+      "description": "Small, family-run, on the slope above the harbour. Two minutes from the Christiansø jetty, so you can ride the morning loop, dump the bike, and walk to the boat. Ask for a ground-floor room — Gudhjem is all stairs.",
+      "booking": null,
+      "priceNote": null
+    },
+    {
+      "rank": 3,
+      "name": "Green Solution House (Hotel GSH)",
+      "style": null,
+      "location": "Rønne",
+      "description": "Cradle-to-cradle designed hotel, five minutes from the ferry terminal, with secure indoor cycle parking and tools. Ideal for the first and last nights so an early ferry never becomes a taxi problem.",
+      "booking": null,
+      "priceNote": null
+    }
+  ],
+  "logistics": {
+    "connectivity": "4G/5G is reliable island-wide; there are thin patches in Almindingen and along the north cliffs. Download the offline map layer before Day 6.",
+    "emergency": "112. Bornholm Hospital is in Rønne. Pharmacy hours are short outside Rønne — carry chain lube, spare tubes and any prescriptions with you.",
+    "weather": "Bornholm is a Baltic island: wind decides your day more than rain. A 12 m/s westerly makes the west coast leg genuinely hard and the east coast easy — ride the loop clockwise on westerly days, anticlockwise on easterlies. Sea fog can close in on the north coast in late May and early June.",
+    "bookingWindows": "Kadeau Bornholm: opens reservations by season, book 2–3 months ahead. Nordlandet and Stammershalle Badehotel: 3–4 months for July. Christiansø boat: same-week is fine except in the last two weeks of July. Bike rental: 3 weeks ahead for the summer peak, and specify pannier racks.",
+    "money": "Denmark uses DKK, not the euro. Cards work everywhere including farm honesty stalls; carry a €20 equivalent in coins only for a few harbour toilets and air pumps.",
+    "transportRules": "Cycling is legal on all signposted *cykelveje*; the numbered island routes are marked with blue signs. Two-abreast riding is allowed only where it does not obstruct. Right-of-way at Danish roundabouts favours traffic already in the circle. Lights are mandatory from dusk and police do enforce it.",
+    "permits": null,
+    "health": null,
+    "gettingThere": "The fast route is Copenhagen → Ystad (Swedish rail, passport/ID needed for the Danish–Swedish border check) → Bornholmslinjen ferry. Buy the combined DSB \"Bornholm\" through-ticket; bike spaces on the ferry are limited and must be reserved separately in July and August.",
+    "other": []
+  },
+  "proTips": [
+    "Ride the loop **anticlockwise** and you get the granite north coast on Days 2–3 while your legs are fresh and the smokehouse crowd is still in Rønne.",
+    "Smokehouses run buffet lunches; arrive at **11:30, not 13:00**, and you skip the queue and get the herring still warm.",
+    "Ferry bikes: book the **07:30 Ystad departure** on arrival day. It puts you on the island before noon with a full riding afternoon, and the return spaces on the last boat are what actually sell out.",
+    "Christiansø runs a handful of guest beds in the old fortress buildings. Booking one night there is the single most memorable upgrade on this itinerary, and almost nobody does it.",
+    "The island's **Bornholms Valsemølle** and Lehnsgaard rapeseed oil ship internationally, so shop on Day 6, not Day 1 — panniers are finite.",
+    "Late-season trick: the second week of September has open smokehouses, warm sea, and half the accommodation price of the first week of August."
+  ],
+  "typeSpecific": {
+    "raw": {
+      "surface_mix": "≈70% asphalt, 25% compacted gravel on former railway grades, 5% packed forest track",
+      "total_distance_km": 235,
+      "max_elevation_m": 162,
+      "gpx_ready": true
+    },
+    "surface": "≈70% asphalt, 25% compacted gravel on former railway grades, 5% packed forest track",
+    "distanceKm": 235,
+    "elevationM": 162,
+    "verticalM": null,
+    "technicalRating": null,
+    "transitPass": null,
+    "hutBooking": null,
+    "liftNetwork": null,
+    "snowReliability": null,
+    "windConditions": null,
+    "gpxReady": true,
+    "bookingTimeline": null,
+    "audience": null
+  },
+  "packingNotes": [],
+  "whatCouldGoWrong": [],
+  "sources": {
+    "verified": null,
+    "confidenceNotes": null
+  },
+  "verifyFlags": [],
+  "verifyFlagCount": 0,
+  "volatilePricing": true,
+  "wordCount": 1409,
+  "dataVintage": 2026,
+  "provenance": {
+    "batch": "northern-baltics",
+    "sourceFile": "carta_northern_europe_baltics_trips.md#trip-01",
+    "sourceFormat": "single-file md, '## Trip NN' records with fenced YAML",
+    "sourceId": "bornholm-round-granite-coast-smokehouse-loop",
+    "ingestedAt": "2026-09-02",
+    "synthesized": false
+  }
+}

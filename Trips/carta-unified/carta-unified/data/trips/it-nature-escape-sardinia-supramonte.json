@@ -1,0 +1,281 @@
+{
+  "id": "it-nature-escape-sardinia-supramonte",
+  "sourceId": "nature-escape-italy-sardinia-supramonte",
+  "slug": "it-nature-escape-sardinia-supramonte",
+  "title": "Limestone, Juniper and Pinnetta Smoke: A Supramonte Week",
+  "country": "Italy",
+  "countryCode": "IT",
+  "countries": [
+    {
+      "name": "Italy",
+      "code": "IT"
+    }
+  ],
+  "isMultiCountry": false,
+  "region": "Southern & Mediterranean Europe",
+  "regionKey": "southern-mediterranean",
+  "subRegion": "Sardinia — Barbagia, Supramonte & Ogliastra",
+  "tripType": "Nature Escapes & Cabin Stays",
+  "tripTypeId": 9,
+  "tripTypeSlug": "nature-escape",
+  "durationDays": 7,
+  "bestPeriod": {
+    "months": [
+      4,
+      5,
+      6,
+      9,
+      10
+    ],
+    "monthNames": [
+      "April",
+      "May",
+      "June",
+      "September",
+      "October"
+    ],
+    "window": "Late April–early June & mid-September–late October",
+    "note": null,
+    "avoid": "July–August — 40°C on the limestone, the beach caps sell out, and the maximum fire-alert period bans everything with a flame",
+    "raw": "Late April–early June & mid-September–late October"
+  },
+  "budgetTier": "€€",
+  "budgetTierRange": [
+    2,
+    2
+  ],
+  "budgetTierRaw": "€€",
+  "budget": {
+    "currency": "EUR",
+    "totalEur": {
+      "low": 1150,
+      "high": 1750
+    },
+    "totalNote": "€1,150–€1,750 per person, excl. international flights",
+    "breakdown": {
+      "accommodation": {
+        "lowEur": 480,
+        "highEur": 760,
+        "note": "Agriturismi €70–€110 per person half board; Golgo refuge beds cheaper; Bosa hotel €80–€120 a double"
+      },
+      "food": {
+        "lowEur": 230,
+        "highEur": 360,
+        "note": "Agriturismo half board covers most dinners; Cannonau and pane carasau everywhere"
+      },
+      "transport": {
+        "lowEur": 330,
+        "highEur": 480,
+        "note": "High-clearance rental €50–€80/day, fuel around €1.85/litre, no motorway tolls in Sardinia"
+      },
+      "activities": {
+        "lowEur": 110,
+        "highEur": 180,
+        "note": "Gorropu €6, Cala Goloritzé €7, Tiscali entry, one guided Supramonte day, a 4x4 transfer"
+      }
+    },
+    "perDayEur": {
+      "low": 164,
+      "high": 250
+    }
+  },
+  "profile": {
+    "difficulty": 4,
+    "difficultyLabel": "Demanding",
+    "difficultyNote": "4/5 — 500–700 m of ascent on loose limestone most days, with a 470 m climb back out of Cala Goloritzé in the afternoon heat; no technical ground on the standard routes",
+    "fitnessLevel": "Demanding",
+    "crowdLevel": null,
+    "familyFriendly": null,
+    "carRequired": null
+  },
+  "basecamps": [],
+  "gatewayAirport": "OLB Olbia, 1 h 45 to Oliena and 2 h 15 to Urzulei; CAG Cagliari 2 h 30 to Baunei; AHO Alghero is the natural exit, 50 min from Bosa",
+  "gatewayAirportCode": "OLB",
+  "languages": [],
+  "currency": null,
+  "emergencyNumber": "112",
+  "coordinates": {
+    "lat": 40.9234,
+    "lon": 9.498,
+    "precision": "gateway",
+    "matchedPlace": "Olbia",
+    "source": "geonames (geonamescache, cities > 15k)"
+  },
+  "tags": [
+    "supramonte",
+    "gorropu",
+    "cala-goloritze",
+    "tiscali",
+    "agriturismo",
+    "griffon-vulture",
+    "mouflon",
+    "foraging",
+    "fire-restrictions"
+  ],
+  "summary": "The Supramonte is the largest roadless limestone massif in Italy — a plateau of holm oak, juniper and dolines above the Gulf of Orosei, where shepherds lived in conical stone huts until living memory and where the interior still has no water on the surface for kilometres. This week works its three faces. You start inland at Oliena beside Su Gologone, Sardinia's biggest karst spring, walk up to the nuraghic village of Tiscali hidden inside a collapsed doline, then descend into Gorropu, a gorge 400 m deep and in places four metres wide. The middle of the week slows down for Orgosolo's murals and the granite of the Gennargentu. Then you cross to the Golgo plateau above Baunei — reached by a hairpin ramp and a dirt track — for the 270 m abyss of Su Sterru and the walk down to Cala Goloritzé, which now takes 250 people a day and no more. It finishes on the far coast at Bosa under griffon vultures. It suits people who want heat, silence, hard rock and dinner cooked by the family that raised it.",
+  "summaryGenerated": false,
+  "hook": null,
+  "snapshot": {},
+  "itinerary": [
+    {
+      "day": 1,
+      "title": "Oliena, Su Gologone and the Supramonte wall",
+      "morning": "Fly into Olbia, pick up the car and drive south to Oliena, under the 1,463 m limestone face of Monte Corrasi. Shop properly in Nuoro or Oliena — the village shops close for a long lunch and the plateau has nothing.",
+      "afternoon": "Walk in to Su Gologone, Sardinia's largest karst spring and a natural monument since 1998, where water forced up through a fault runs out at several hundred litres a second into the Cedrino. Divers have pushed the flooded shaft past 130 m without finding the bottom. The pool itself is a short, easy walk from the car park.",
+      "evening": "Dinner at the agriturismo: suckling pig, pane carasau, pecorino, and Oliena's Nepente Cannonau, which Gabriele d'Annunzio wrote about and which the village has not stopped mentioning since.",
+      "dayStats": "105 km drive / 1 h 45 / Su Gologone average flow several hundred l/s, dived beyond −130 m / Monte Corrasi 1,463 m / last full supermarket before the plateau days",
+      "sleep": "Agriturismo Guthiddai or Su Gologone Experience Hotel, Oliena"
+    },
+    {
+      "day": 2,
+      "title": "Tiscali, the village inside the mountain",
+      "morning": "Drive or take a 4x4 transfer into the Valle Lanaittu, then climb 1 h 15–1 h 30 to Tiscali — a nuraghic settlement built inside a collapsed doline on the top of Monte Tiscali, hidden from every direction, occupied into the Roman period and only rediscovered in the nineteenth century. The huts are ruined and roofless; the doline is the architecture.",
+      "afternoon": "Descend and take the rest of the day slowly. The Lanaittu valley holds the Sa Oche and Su Bentu cave systems, among the longest in Italy, visitable with the Dorgali cooperatives.",
+      "evening": "Back to Oliena. If the agriturismo has a working *pinnetta*, eat in it.",
+      "dayStats": "10 km round trip / 500 m ascent / 4–5 h / Tiscali entry around €5, cash / valley track rough, 4x4 transfer saves 1 h each way / no water on the climb",
+      "sleep": "Agriturismo Guthiddai, Oliena"
+    },
+    {
+      "day": 3,
+      "title": "Gorropu",
+      "morning": "Drive the SS125 south to the Genna Silana pass at 1,017 m and take the path down — roughly 4 km with 620 m of descent — into the Flumineddu valley and the mouth of Su Gorropu. The gorge walls reach around 400 m and narrow in places to a few metres. Tickets are €6 for adults and €4 for ages 6–17, cash only at the information point, no advance booking; the canyon is open daily with last entry around 16:30 and everyone out by 17:00.",
+      "afternoon": "Walk as far up the boulder floor as the water and your nerve allow. The upper sections need climbing skill and a guide; the tourist section is a scramble over house-sized blocks. Then the 2-hour climb back to the pass, which in September heat is the real work of the day.",
+      "evening": "Down to Urzulei and a plate of *culurgiones*, the pinched potato-and-mint ravioli that Ogliastra treats as a regional flag.",
+      "dayStats": "8 km round trip / 620 m descent and re-ascent / 5–6 h / gorge walls to about 400 m / €6 adult, €4 child, cash / concessionaire Chìntula, +39 389 420 8595 / last entry 16:30",
+      "sleep": "Hotel Gorropu, Urzulei"
+    },
+    {
+      "day": 4,
+      "title": "A slow day: Orgosolo and the Gennargentu edge",
+      "morning": "Deliberately easy. Drive up to Orgosolo, where more than two hundred murals cover the village walls — the tradition began around 1969 and was pushed into its recognisable form in the mid-1970s by an art teacher and his pupils, and the subjects are still land occupations, shepherd politics and international solidarity rather than decoration.",
+      "afternoon": "Continue towards Fonni and the Gennargentu, Sardinia's high ground, where Punta La Marmora reaches 1,834 m and Bruncu Spina 1,829 m. Walk an hour on the ridge for the view across the whole interior, or don't, and sit outside a bar in Fonni at 1,000 m instead.",
+      "evening": "Return to Urzulei or move to Baunei. Ogliastra dinner and an early night before the plateau day.",
+      "dayStats": "90 km of mountain road / Orgosolo 620 m, 200+ murals / Punta La Marmora 1,834 m / Fonni 1,000 m, the highest village in Sardinia / minimal walking by design",
+      "sleep": "Hotel Gorropu, Urzulei, or a Baunei guesthouse"
+    },
+    {
+      "day": 5,
+      "title": "Golgo plateau, Su Sterru and Cala Goloritzé",
+      "morning": "Take the Baunei ramp — 10 km of 20% hairpins — up to the Golgo plateau at about 700 m, a juniper and holm-oak tableland grazed by half-wild pigs and donkeys. Look into Su Sterru, the *voragine*, a single vertical karst shaft about 270 m deep with a mouth some 40 m across, fenced and floodlit by nothing; drop a pebble and count. The small church of San Pietro sits nearby with its pilgrim quarters.",
+      "afternoon": "Drive the plateau track to Su Porteddu and walk down to Cala Goloritzé — 3.5 km and about 470 m of descent to a beach of white shingle under the 143 m limestone spire of the Aguglia. Access is capped at 250 visitors a day on the trail, costs €7 including the Su Porteddu parking, and in peak season must be booked in advance through the official app or site, at most 72 hours ahead. Boats must stay 300 m offshore and cannot land.",
+      "evening": "Back up in the cool, then dinner at Golgo. This is the night to stay on the plateau rather than driving down.",
+      "dayStats": "Baunei–Golgo 10 km at up to 20% / plateau track about 7 km unsealed / Su Sterru about 270 m deep / Goloritzé 3.5 km each way, 470 m, €7, 250 visitors/day cap / trail from 07:30, beach cleared around 18:00 in summer",
+      "sleep": "Il Rifugio or Goloritzé Room & Breakfast, Golgo (Cooperativa Goloritzé)"
+    },
+    {
+      "day": 6,
+      "title": "Cala Luna, and a second slow afternoon",
+      "morning": "Drive north to Cala Gonone and walk the coast path from Cala Fuili to Cala Luna — around 4 km each way over the headland, with the beach and its sea caves at the end. The alternative is the boat from Cala Gonone, which is what almost everyone does, so the path is quiet in both directions.",
+      "afternoon": "Swim, eat at the single beach kiosk if it is running, and walk back in the late light. If the sea is up, substitute the Dorgali side: the Ispinigoli cave with its 38 m stalagmite, one of the tallest in Europe.",
+      "evening": "Dorgali or Cala Gonone. Fish, then Cannonau from the Dorgali cooperative cellar.",
+      "dayStats": "8 km round trip on the coast path / 350 m cumulative ascent / Ispinigoli column about 38 m / boat return from Cala Luna roughly €20–€30 if you walk one way / no shade on the headland",
+      "sleep": "Dorgali or Cala Gonone"
+    },
+    {
+      "day": 7,
+      "title": "Across the island to the griffons at Bosa",
+      "morning": "Drive west across the interior via Macomer to Bosa on the Temo, the only navigable river in Sardinia, with the Malaspina castle above the coloured houses of Sa Costa.",
+      "afternoon": "Take the coast road north towards Alghero — a slow, empty corniche and the last Sardinian stronghold of the griffon vulture, rebuilt over the last decade through LIFE restocking and feeding stations. Stop at the marked pull-offs mid to late morning or mid-afternoon when the thermals are up; binoculars, patience, and no attempt to get closer.",
+      "evening": "Last dinner in Bosa or Alghero — Bosa's Malvasia if you are staying, catalan-style lobster if you are in Alghero — then AHO, under an hour away.",
+      "dayStats": "175 km drive / 3 h with stops / Bosa–Alghero coast road 45 km of hairpins, allow 1 h 15 / griffon colony viewable from marked pull-offs / AHO 50 min from Bosa",
+      "sleep": "Bosa, Alghero or an airport hotel"
+    }
+  ],
+  "accommodationStrategy": [
+    {
+      "rank": 1,
+      "name": "Agriturismo Guthiddai",
+      "style": "working farm",
+      "location": "Oliena",
+      "description": "Under the Corrasi wall with its own vines and olives, half board, and the sort of dinner that makes the drive worthwhile. It is close enough to Su Gologone and the Lanaittu track to make Tiscali an easy morning, has parking, and around €70–€110 per person half board it undercuts the famous hotel next door by a wide margin. Book ahead in September.",
+      "booking": null,
+      "priceNote": null
+    },
+    {
+      "rank": 2,
+      "name": "Il Rifugio / Goloritzé Room & Breakfast",
+      "style": "plateau refuge",
+      "location": "Golgo, Baunei",
+      "description": "Run by Cooperativa Goloritzé (Antonio Cabras, +39 368 7028980), open year-round, and the only way to be on the Golgo plateau at dawn without a tent. Simple rooms, plateau silence, solar power, and the people who will also drive you and guide you. This is the trip's defining night — and it removes the 20% hairpin descent in the dark.",
+      "booking": null,
+      "priceNote": null
+    },
+    {
+      "rank": 3,
+      "name": "Hotel Gorropu",
+      "style": "SS125 base",
+      "location": "Urzulei",
+      "description": "Practical rather than romantic: a mountain hotel on the main road within twenty minutes of the Genna Silana trailhead and an hour of the Golgo ramp, with proper parking and a kitchen that stays open for people coming out of the gorge late. Around €80–€130 a double. Useful as the hinge between the northern and southern halves of the week.",
+      "booking": null,
+      "priceNote": null
+    }
+  ],
+  "logistics": {
+    "connectivity": "Italy is in the EU, so EU roaming applies with no surcharge. Coverage is good in villages and along the SS125, poor on the Golgo plateau, and absent in the gorge and the Lanaittu valley. Download offline maps and, if you are walking anything unmarked, carry a GPS track — the Supramonte has killed experienced people who simply got lost.",
+    "emergency": "112 for everything, 1515 for forest fire. Mountain rescue is CNSAS Sardegna, working with the Corpo Forestale and, on the Gulf of Orosei cliffs, the Guardia Costiera; evacuation from Gorropu or the Selvaggio Blu line usually means a helicopter, and it will be measured in hours. Italy is in the EU health system, so carry an EHIC/GHIC, but insurance should still name trekking and helicopter evacuation.",
+    "weather": "The real hazard is heat. Interior temperatures pass 40°C in July and August and the limestone radiates it back; the Goloritzé and Gorropu climbs are both afternoon ascents with no shade and no water. Autumn brings sudden violent rain — the Flumineddu can rise fast and Gorropu is a canyon, so do not enter on a red or orange hydro alert. The mistral blows hard on the west coast and can close the Cala Gonone boats.",
+    "bookingWindows": "Cala Goloritzé is the one hard reservation: 250 people a day on the trail, bookable no earlier than 72 hours ahead in peak season through the official channel, and it goes. Gorropu is the opposite — no booking at all, cash at the gate. Agriturismi in September and at Easter need weeks; Golgo needs days. Guided Supramonte days and 4x4 transfers should be arranged the week before.",
+    "money": "Euro. Cards are widely accepted in hotels and restaurants but the Gorropu ticket point is cash, plateau kiosks are cash, and village bars often prefer it. Carry €150–€200 in small notes. Tipping is rounding up; there is no service expectation at an agriturismo beyond that.",
+    "transportRules": "No motorway tolls in Sardinia and no vignette. The SS125 Orientale Sarda is a spectacular but slow mountain road — allow half again on any map time. Many rental agreements exclude unsealed roads, which is exactly what the Golgo plateau track and the Lanaittu valley are, so declare it and take the right vehicle. Ferries from the mainland need booking weeks ahead in August. ZTL restrictions apply in Alghero's old town.",
+    "permits": "Cala Goloritzé €7 with a 250-a-day cap and mandatory peak-season booking; Su Gorropu €6 adult, €4 child, cash, open daily with last entry around 16:30; Tiscali around €5. Much of the Supramonte is private or communal grazing land — fenced *tancas* are not rights of way. Camping and campervan overnighting outside authorised sites is prohibited across Sardinia's coast and enforced in Ogliastra. Drone flight needs ENAC compliance and is restricted over beaches and protected areas; do not fly at Goloritzé. Removing sand, pebbles or shells from Sardinian beaches is a criminal offence with substantial fines and airport checks.",
+    "health": "Tap water in the villages is potable; plateau cistern water may not be. There is no water at all on the Goloritzé path, on the Tiscali climb or in Gorropu — carry 2.5–3 litres per person. Ticks are present in the oak scrub. Sardinia has no venomous snakes, which is a genuine relief after the Balkans, but the limestone is razor-sharp on hands and the loose blocks in Gorropu turn ankles. Sun exposure is the single most common problem: start at 07:00 and be climbing back out of nothing at 15:00 in summer.",
+    "gettingThere": null,
+    "other": []
+  },
+  "proTips": [
+    "Book Cala Goloritzé the moment your 72-hour window opens, and take the earliest slot. The climb back out is 470 m with no shade, and the difference between leaving the beach at 11:00 and at 15:00 in September is enormous.",
+    "Do Gorropu from Genna Silana in the morning and accept that you are paying for the descent with a two-hour climb. The alternative from Sa Barva is flatter but needs a 4x4 shuttle and adds cost.",
+    "Sleep at Golgo rather than commuting from Baunei. You avoid driving the 20% hairpins twice in a day, and the plateau at dawn — donkeys, pigs, absolute silence — is the best thing on the itinerary.",
+    "Carry cash for Gorropu. There is no card machine at the information point and no ATM anywhere near the pass.",
+    "Walk to Cala Luna from Cala Fuili rather than taking the boat. Everyone else arrives by sea between 11:00 and 16:00; on foot you have the headland to yourself in both directions.",
+    "If you are picking mushrooms in October, ring the comune before you start and take the basket to the free ASL 3 Nuoro mycological inspectorate afterwards. Sardinia's rules are municipal, inconsistent, and enforced.",
+    "Ask the agriturismo whether they still cook in the *pinnetta*. Several do it for groups on request and will add you to an existing booking; it is not on any menu.",
+    "Never take a stone or a handful of sand. Sardinian beach-material theft carries real fines and airport baggage checks, and Goloritzé's white shingle is the most-policed of all.",
+    "Late September and early October is the best window: the sea is still warm, the beach caps stop selling out, the fire-alert period ends on 31 October, and the mushrooms start."
+  ],
+  "typeSpecific": {
+    "raw": {
+      "Remote access — the tracks that matter": "The Golgo plateau above Baunei is reached by about 10 km of extremely steep, narrow asphalt with gradients around 20% and blind hairpins — a normal car does it, in first gear, with hot brakes on the way down — after which roughly 7 km of unsealed track runs across the plateau to the Su Porteddu car park at the Goloritzé trailhead. The dirt is dusty and rutted in summer and greasy after autumn rain; high clearance is genuinely useful, a 4x4 is genuinely useful after a storm, and a low hire car will scrape. The Valle Lanaittu approach to Tiscali from Oliena is a rough limestone track where a 4x4 transfer from the local cooperatives saves an hour of walking. The Gorropu approach from Sa Barva bridge is 4x4 shuttle territory; the Genna Silana approach on the SS125 is a normal car park at a pass.",
+      "Last-mile walk-ins and transfers": "Genna Silana to Gorropu is roughly 4 km and 620 m of descent, 1 h 15 down and 2 h back up — the return climb is the whole day's difficulty. Cala Goloritzé is 3.5 km one way with about 470 m of descent, 1 h 15–1 h 30 down and 1–2 h up. Tiscali is 1 h 15–1 h 30 up from the Lanaittu valley floor. Transfers are run by the local cooperatives — Cooperativa Goloritzé at Golgo (Antonio Cabras, +39 368 7028980, info@coopgoloritze.com) does 4x4 tours, guided trekking, food and luggage logistics; Guide del Supramonte and the Dorgali and Urzulei cooperatives cover the northern side.",
+      "Wilderness isolation — Level 4 of 5 on the Golgo plateau": "Roughly 30 minutes of track and hairpin to paved road in Baunei, no neighbours within 3–4 km of the Su Porteddu end, nearest shop and fuel in Baunei (about 12 km, small, closed at lunch), nearest pharmacy also Baunei, nearest hospital the Ospedale di Lanusei, roughly 55 minutes away. Deeper into the Supramonte di Urzulei and Oliena, where the Selvaggio Blu trek runs, it is Level 5 in practical terms: no road, no water, no signal, and helicopter evacuation the only realistic rescue. The inland bases at Oliena and Urzulei sit at Level 2 — shops, fuel and a pharmacy within ten minutes.",
+      "Off-grid reality": "The plateau properties run on solar with generator backup and limited evening power; hot water is often solar and finite, so shower early or late, not at 20:00 with everyone else. Water is spring-fed or trucked into cisterns and should be treated where it is not declared potable. Cooking and heating in the older buildings is wood, including bread ovens; firewood is the household's own. Wastewater goes to soakaway, so nothing goes down the sink that would not go on the ground. There is no shop on the Golgo plateau at all — bring water for the walk in, at least 2.5 litres per person, because there is none on the Goloritzé path or in Gorropu.",
+      "Phone signal": "Reasonable on the SS125 and in the villages, patchy on the Golgo plateau, absent in the bottom of Gorropu, in the Lanaittu valley and along most of the coastal cliffs. Download offline maps; the Supramonte's tracks are a maze and the standard error here is people descending the wrong doline.",
+      "Foraging rules — the Sardinian anomaly": "Sardinia is the last Italian region without its own mushroom-collection law. A 2022 bill proposed the standard framework — a licence card, 3 kg a day for amateurs and 10 kg for professionals, a mycology course, no limit on your own land — but until it passes, practice falls back on the national framework and, crucially, on individual comune regulations, several of which set their own limits and require a municipal permit. Assume 3 kg per person per day as the working ceiling, ask at the comune where you are picking, and never collect inside a fenced or signed private *tanca* — most of the Supramonte is grazed private or communal land, not open access. The mycological inspectorate for the whole Supramonte is run free of charge by ASL 3 Nuoro, opening for the autumn season around the end of September with counters in Nuoro and Sorgono and further sites at Macomer and Siniscola; they will identify a basket at no cost and they also certify commercial hauls. Wild asparagus, myrtle berries and prickly pear are picked everywhere in season; myrtle for making liqueur is subject to comune rules on quantity and dates. Protected Sardinian endemics and all orchids are photograph-only.",
+      "Named places to sleep and their character": "Su Gologone Experience Hotel at Oliena is the famous one — a rambling art-filled hotel by the spring, expensive, and genuinely singular. Agriturismo Guthiddai, also at Oliena, is the working-farm alternative under the Supramonte wall, with its own Cannonau and Nepente vines. Hotel Gorropu at Urzulei sits on the SS125 within reach of both the gorge and the Golgo road. On the plateau itself, Cooperativa Goloritzé runs Il Rifugio and the Goloritzé Room & Breakfast at Golgo, which is as close to sleeping in the Supramonte as you can legally get. Restored *pinnette* — the conical juniper-pole and stone shepherd huts — survive at several agriturismi as dining rooms and demonstration buildings rather than bedrooms; the one at a working farm dinner, with the fire in the middle and the smoke going out of the apex, is the real thing.",
+      "Wildlife": "Sardinian wild boar (*Sus scrofa meridionalis*, smaller and darker than the mainland animal) is everywhere and nocturnal; mouflon (*Ovis gmelini musimon*) holds the Supramonte and Gennargentu cliffs and is best glassed at dawn on open ledges. Golden eagle and Bonelli's eagle breed on the Gulf of Orosei walls. Griffon vultures survive on the north-west coast between Bosa and Alghero, the last colony in Sardinia, rebuilt through a LIFE restocking and supplementary-feeding programme — the reliable viewing is along the Bosa–Alghero coast road at the marked pull-offs, mid-morning when thermals start. Ethical rules: watch from the road or a hide, never approach a feeding station, no drones anywhere near cliff nests, and keep well back from mouflon in the rut.",
+      "Fire and open flame": "Sardinia's regional fire prescriptions set a maximum-alert period from 1 June to 31 October, during which open flames, barbecues outside authorised equipped areas, stubble burning and any spark-producing work in or near vegetation are prohibited, with the Corpo Forestale e di Vigilanza Ambientale enforcing and aircraft on standby through the season. In practice this means no camp stove on the plateau, no cigarette outside a vehicle, and no barbecue anywhere that is not a built, authorised fireplace. The forest-fire emergency number is 1515; 112 for everything else."
+    },
+    "surface": null,
+    "distanceKm": null,
+    "elevationM": null,
+    "verticalM": null,
+    "technicalRating": null,
+    "transitPass": null,
+    "hutBooking": null,
+    "liftNetwork": null,
+    "snowReliability": null,
+    "windConditions": null,
+    "gpxReady": null,
+    "bookingTimeline": null,
+    "audience": null
+  },
+  "packingNotes": [],
+  "whatCouldGoWrong": [],
+  "sources": {
+    "verified": "Su Gorropu official site (adult €6, ages 6–17 €4, cash only at the entrance information point, no advance booking, open daily 10:00 to about 16:30 with exit by 17:00, concessionaire Chìntula S.n.c., SS125 km 190.5 near Urzulei, +39 389 420 8595 / info@gorropu.info); Cala Goloritzé access (€7 including Su Porteddu parking, cap of 250 visitors per day on the trail, peak-season booking through the official app/site no earlier than 72 hours ahead, 3.5 km each way with about 470 m of elevation, 1 h 15–1 h 30 down and 1–2 h up, trail from 07:30, boats held 300 m offshore and no landing); Sardinia's regional fire prescriptions with a maximum-alert period of 1 June–31 October in 2026; Sardinia as the last Italian region without a regional mushroom law, with a 2022 bill proposing a licence card, 3 kg/day amateur and 10 kg/day professional limits; ASL 3 Nuoro mycological inspectorate free of charge, opening for the autumn season around late September with counters in Nuoro and Sorgono and further sites at Macomer and Siniscola; Cooperativa Goloritzé at Golgo, Baunei (guided treks, 4x4 tours, Il Rifugio and Goloritzé Room & Breakfast, +39 368 7028980).",
+    "confidenceNotes": "The Cala Goloritzé fee, cap and booking window have changed more than once in recent seasons and the operating months in which booking is mandatory vary — re-verify with the Comune di Baunei immediately before publishing. Gorropu's hours shift seasonally and the site itself notes closures in bad weather; the cash-only rule should be re-checked. The Tiscali entry price and which cooperative is currently managing it were not confirmed this run. Sardinia's regional mushroom bill had not passed as of the last confirmed reporting — check whether a regional law is now in force and whether a tesserino is required, and note that comune-level regulations differ village to village. Griffon vulture numbers on the Bosa–Alghero coast and the current status of the LIFE feeding stations were not confirmed this run. Agriturismo Guthiddai, Su Gologone Experience Hotel and Hotel Gorropu should be confirmed as trading with current rates. Fuel prices, rental rates and the exact Golgo plateau track condition change seasonally."
+  },
+  "verifyFlags": [],
+  "verifyFlagCount": 0,
+  "volatilePricing": false,
+  "wordCount": 4438,
+  "dataVintage": 2026,
+  "provenance": {
+    "batch": "southern-mediterranean",
+    "sourceFile": "carta-dataset/trips/nature-escape-italy-sardinia-supramonte.md",
+    "sourceFormat": "md with '## Metadata' bullet block (one file per trip)",
+    "sourceId": "nature-escape-italy-sardinia-supramonte",
+    "ingestedAt": "2026-09-02",
+    "synthesized": false
+  }
+}

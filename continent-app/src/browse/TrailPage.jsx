@@ -2,7 +2,12 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { loadTrail } from '../lib/trails.js';
-import { haversineKm, stopNameFromRef, trailRating } from '../lib/trailCards.js';
+import {
+  haversineKm, stopNameFromRef, trailRating,
+  tripGrade, gradeIsDerived, tripRouteType, tripHighlights,
+  tripSuitability, suitabilityIsDerived, isListed, isDerivedRoute,
+  portalVerified, HIGHLIGHTS, SUITABILITY, ROUTE_TYPES,
+} from '../lib/trailCards.js';
 import { trailStory, trailReasons } from '../lib/trailStory.js';
 import {
   routePoints, routeLength, nearestOnRoute, sliceRoute, remainingRelief,
@@ -14,6 +19,8 @@ import {
 } from '../lib/trailExport.js';
 import { eur } from '../lib/format.js';
 import { useI18n } from '../i18n/index.jsx';
+import { NearbyOutdoors } from './NearbyOutdoors.jsx';
+import { usePaywall } from '../hooks/usePaywall.jsx';
 import {
   ArrowLeftIcon, ShareIcon, DownloadIcon, CompassIcon, RouteIcon, BootIcon,
   ClockIcon, MountainIcon, MapPinIcon, CheckIcon, ListDayIcon, CloseIcon,
@@ -57,6 +64,20 @@ function token(name, fallback) {
   const v = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
   return v || fallback;
 }
+
+// Code to label key, built from the shared filter model rather than written
+// out again, so a value added to trailCards.js cannot go missing on the page.
+const GRADE_LABEL = {
+  easy: 'trails.gradeEasy', moderate: 'trails.gradeModerate',
+  hard: 'trails.gradeHard', very_hard: 'trails.gradeVeryHard',
+  alpine: 'trails.gradeAlpine',
+};
+const ROUTE_LABEL = Object.fromEntries(
+  ROUTE_TYPES.map(({ key, labelKey }) => [key, labelKey]));
+const HIGHLIGHT_LABEL = Object.fromEntries(
+  HIGHLIGHTS.map(({ key, labelKey }) => [key, labelKey]));
+const SUIT_LABEL = Object.fromEntries(
+  SUITABILITY.map(({ key, labelKey }) => [key, labelKey]));
 
 const STORY_ICONS = {
   route: RouteIcon, boot: BootIcon, clock: ClockIcon, mountain: MountainIcon,
@@ -202,17 +223,18 @@ function useLiveFix(active) {
 
 /** One fact in the strip: the value over a small label. Measured numbers are
  *  mono; a word (the difficulty) is not a measurement and stays in the sans. */
-function Fact({ label, value, word = false }) {
+function Fact({ label, value, word = false, title }) {
   return (
-    <div className="tpage-fact">
+    <div className="tpage-fact" title={title}>
       <span className={`tpage-fact-val ${word ? 'is-word' : ''}`}>{value}</span>
       <span className="tpage-fact-label">{label}</span>
     </div>
   );
 }
 
-export function TrailPage({ card, onClose, onSelectDest }) {
+export function TrailPage({ card, onClose, onSelectDest, onOpenNeighbour }) {
   const { t } = useI18n();
+  const paywall = usePaywall();
   const { tr, assoc, kindKey, price } = card;
   const isCityDay = tr.category === 'citytrip';
   const [detail, setDetail] = useState(null);
@@ -455,12 +477,14 @@ export function TrailPage({ card, onClose, onSelectDest }) {
   ].filter(Boolean).join(', ');
 
   const onGpx = async () => {
+    if (!paywall.require('export')) return;
     const gpx = trailGpx(tr, detail, { link: shareUrl, stopNames });
     const how = await shareOrDownloadFile(trailFileBase(tr), gpx, 'gpx', tr.name);
     setToast(how === 'shared' ? null : t('trails.savedGpx'));
   };
 
   const onKml = () => {
+    if (!paywall.require('export')) return;
     const kml = trailKml(tr, detail, { link: shareUrl, stopNames, factLine });
     downloadTextFile(trailFileBase(tr), kml, 'kml');
     setToast(t('trails.savedKml'));
@@ -473,9 +497,24 @@ export function TrailPage({ card, onClose, onSelectDest }) {
 
   /* ── Render ──────────────────────────────────────────────────────────── */
 
-  const diffKey = tr.difficulty === 'easy' ? 'places.diffEasy'
-    : tr.difficulty === 'moderate' ? 'places.diffModerate'
-      : tr.difficulty === 'hard' ? 'places.diffHard' : null;
+  // The published five-value grade when attributes.py has reached this route,
+  // validate.py's three-value effort class otherwise. Never both: a page that
+  // said "Moderate" beside a chip that found it under "Hard" is the drift the
+  // grade exists to end.
+  const grade = tripGrade(src) || tripGrade(tr);
+  const diffKey = grade ? GRADE_LABEL[grade]
+    : tr.difficulty === 'easy' ? 'places.diffEasy'
+      : tr.difficulty === 'moderate' ? 'places.diffModerate'
+        : tr.difficulty === 'hard' ? 'places.diffHard' : null;
+  const derivedGrade = gradeIsDerived(src) || gradeIsDerived(tr);
+  const shapeKey = ROUTE_LABEL[tripRouteType(src) || tripRouteType(tr)];
+  const highlightCodes = tripHighlights(src).length
+    ? tripHighlights(src) : tripHighlights(tr);
+  const suits = tripSuitability(src).length
+    ? tripSuitability(src) : tripSuitability(tr);
+  const listed = isListed(src) || isListed(tr);
+  const portal = portalVerified(src) || portalVerified(tr);
+  const family = detail?.family || tr.fam || null;
   const stops = detail?.stops;
   const ascent = detail?.ascent_m ?? tr.ascent_m;
   const dirUrl = start ? trailheadDirectionsUrl(start.lat, start.lon) : '';
@@ -568,8 +607,83 @@ export function TrailPage({ card, onClose, onSelectDest }) {
             {isNum(detail?.descent_m) && <Fact label={t('trails.factDescent')} value={`${Math.round(detail.descent_m)} m`} />}
             {isNum(detail?.elevation?.ele_max_m) && <Fact label={t('trails.factHigh')} value={`${Math.round(detail.elevation.ele_max_m)} m`} />}
             {isCityDay && isNum(tr.n_stops) && <Fact label={t('trails.factStops')} value={String(tr.n_stops)} />}
-            {diffKey && <Fact label={t('trails.factDifficulty')} value={t(diffKey)} word />}
+            {diffKey && (
+              <Fact
+                label={t('trails.factDifficulty')}
+                value={t(diffKey) + (derivedGrade ? ' ~' : '')}
+                title={derivedGrade ? t('trails.gradeDerived') : t('trails.gradeFrom')}
+                word
+              />
+            )}
+            {shapeKey && <Fact label={t('trails.shapeLabel')} value={t(shapeKey)} word />}
           </div>
+
+          {/* What the walk goes past and who it suits, as chips rather than
+              as prose. Two rows, and the second one says which claims came
+              off the map and which are ours: "a mapper recorded that dogs are
+              allowed here" and "this looked gentle to us" are not the same
+              promise, and a chip that blurs them is worse than no chip. */}
+          {(highlightCodes.length > 0 || suits.length > 0) && (
+            <div className="tpage-chips">
+              {highlightCodes.map((code) => (
+                <span key={code} className="tpage-chip tpage-chip-hl">
+                  {t(HIGHLIGHT_LABEL[code] || 'trails.hlSummit')}
+                </span>
+              ))}
+              {suits.map((code) => {
+                const est = suitabilityIsDerived(src.f ? src : tr, code);
+                return (
+                  <span
+                    key={code}
+                    className={`tpage-chip tpage-chip-suit${est ? ' est' : ''}`}
+                    title={t(est ? 'trails.suitEstimated' : 'trails.suitTagged')}
+                  >
+                    {t(SUIT_LABEL[code] || code)}
+                    {est ? <i aria-hidden="true">~</i> : null}
+                  </span>
+                );
+              })}
+            </div>
+          )}
+
+          {/* The path this walk is one stage of.
+              Route families collapse to one slot, which is what stops
+              Bulgaria's list reading as ST701 through ST710, and it also
+              means the PATH itself would otherwise be nameless: the E paths
+              (E1 to E12) are mapped as dozens of national stage relations
+              named after the towns they run between, so a reader would see
+              "Bad Meinberg to Horn" and never learn they were looking at a
+              route that crosses a continent. This is the family's page: the
+              row that took the slot names what it stands for, and links the
+              siblings that are published too. */}
+          {family && family.size > 1 && (
+            <section className="tpage-sec tpage-family">
+              <h2 className="tpage-sec-title">
+                {t('trails.familyPart', { name: family.n || family.k })}
+              </h2>
+              <p className="tpage-family-n">
+                {t('trails.familyStages', { n: family.size })}
+              </p>
+            </section>
+          )}
+
+          {/* Three notes that are claims about the data rather than about the
+              walk, so they read as provenance and not as features. */}
+          {(listed || portal || isDerivedRoute(src) || isDerivedRoute(tr)) && (
+            <div className="tpage-provenance">
+              {listed && <p>{t('trails.listedNote')}</p>}
+              {portal && (
+                <p>
+                  {t('trails.portalVerified', {
+                    source: typeof portal === 'string' ? portal : '',
+                  })}
+                </p>
+              )}
+              {(isDerivedRoute(src) || isDerivedRoute(tr)) && (
+                <p>{t('trails.derivedRouteNote')}</p>
+              )}
+            </div>
+          )}
 
           {/* The argument for the walk, before the machinery of taking it
               away. Short on purpose: three to six measured claims, each one
@@ -651,8 +765,12 @@ export function TrailPage({ card, onClose, onSelectDest }) {
           )}
 
           {story.points.length > 0 && (
-            <section className="tpage-sec">
+            <section className="tpage-sec tpage-expect">
               <h2 className="tpage-sec-title">{t('trails.expectTitle')}</h2>
+              {/* Same list styling as the why section above, its own class:
+                  one is the argument for the walk and one is the description
+                  of it, and a reader of the DOM (or a harness) has to be able
+                  to tell which is which. */}
               <ul className="tpage-story">
                 {story.points.map((p) => {
                   const Icon = STORY_ICONS[p.icon] || RouteIcon;
@@ -730,6 +848,13 @@ export function TrailPage({ card, onClose, onSelectDest }) {
               </span>
             </button>
           )}
+
+          <NearbyOutdoors
+            row={tr}
+            cc={tr.country}
+            headings={{ peak: 'nb.trail.peak', lake: 'nb.trail.lake', beach: 'nb.trail.beach' }}
+            onOpen={onOpenNeighbour}
+          />
 
           <p className="tpage-credit">{detail?.attribution_text || tr.attribution_text}</p>
         </div>

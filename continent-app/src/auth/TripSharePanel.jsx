@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { LinkIcon, CheckIcon, TrashIcon, PersonIcon } from '../components/Icons.jsx';
 import { useI18n } from '../i18n/index.jsx';
+import { usePaywall } from '../hooks/usePaywall.jsx';
 import {
   fetchTripShares, createTripShare, revokeTripShare, buildShareUrl,
   SHARE_DURATIONS, DEFAULT_SHARE_DAYS, daysLeft,
@@ -62,6 +63,7 @@ const VIS_OPTS = [
  * handed over.
  */
 function CoplannerBlock({ userId, tripPlanId, t }) {
+  const paywall = usePaywall();
   const [people, setPeople] = useState([]);
   const [friends, setFriends] = useState([]);
   const [pick, setPick] = useState('');
@@ -84,6 +86,7 @@ function CoplannerBlock({ userId, tripPlanId, t }) {
 
   const invite = async () => {
     if (!pick) return;
+    if (!paywall.require('share')) return;
     setBusy(true);
     setError('');
     try {
@@ -160,6 +163,7 @@ export function TripSharePanel({
   userId, tripPlanId, visibility = 'private', onVisibility, canInvite = true,
 }) {
   const { t, lang } = useI18n();
+  const paywall = usePaywall();
   const [scope, setScope] = useState('itinerary');
   const [links, setLinks] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -224,6 +228,11 @@ export function TripSharePanel({
   };
 
   const make = async () => {
+    // The first share link is free, always. It is how the next traveller
+    // hears about Carta, and a product with no marketing budget cannot tax
+    // its own word of mouth. The second one is a collaboration habit, and
+    // that is what the pass is for.
+    if (links.length >= 1 && !paywall.require('share')) return;
     setBusy(true);
     setError('');
     try {

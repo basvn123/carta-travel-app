@@ -1,0 +1,293 @@
+{
+  "id": "bg-cozy-towns-revival",
+  "sourceId": "bulgaria-revival-towns-cozy-towns",
+  "slug": "bg-cozy-towns-revival",
+  "title": "Carved Ceilings and Cobbled Bridges: A Slow Week in Bulgaria's Revival Towns",
+  "country": "Bulgaria",
+  "countryCode": "BG",
+  "countries": [
+    {
+      "name": "Bulgaria",
+      "code": "BG"
+    }
+  ],
+  "isMultiCountry": false,
+  "region": "Eastern & Southeastern Europe",
+  "regionKey": "eastern-southeastern",
+  "subRegion": "Sredna Gora, the Balkan foothills and the Veliko Tarnovo highlands",
+  "tripType": "Cozy Towns Trips",
+  "tripTypeId": 4,
+  "tripTypeSlug": "cozy-towns",
+  "durationDays": 7,
+  "bestPeriod": {
+    "months": [
+      5,
+      6,
+      9
+    ],
+    "monthNames": [
+      "May",
+      "June",
+      "September"
+    ],
+    "window": "late May to mid-June, and the whole of September — long light, warm stone, no coach parties",
+    "note": null,
+    "avoid": "late July–August (heat in the valleys, museum-house queues) and January–February, when half the guesthouses in Koprivshtitsa and Bozhentsi simply close",
+    "raw": null
+  },
+  "budgetTier": "€",
+  "budgetTierRange": [
+    1,
+    1
+  ],
+  "budgetTierRaw": "€",
+  "budget": {
+    "currency": "EUR",
+    "totalEur": {
+      "low": 610,
+      "high": 990
+    },
+    "totalNote": "€610–€990",
+    "breakdown": {
+      "accommodation": {
+        "lowEur": 245,
+        "highEur": 420,
+        "note": "€245–€420 (€35–€60/night, Revival-house guesthouses with breakfast)"
+      },
+      "food": {
+        "lowEur": 140,
+        "highEur": 210,
+        "note": "€140–€210 (€20–€30/day, mehana dinners included)"
+      },
+      "transport": {
+        "lowEur": 180,
+        "highEur": 280,
+        "note": "€180–€280 (7-day small car hire plus fuel; or €70–€110 by bus and train, slower)"
+      },
+      "activities": {
+        "lowEur": 45,
+        "highEur": 80,
+        "note": "€45–€80 (museum-house tickets, combined passes, one craft workshop)"
+      }
+    },
+    "perDayEur": {
+      "low": 87,
+      "high": 141
+    }
+  },
+  "profile": {
+    "difficulty": 1,
+    "difficultyLabel": "Easy",
+    "difficultyNote": "Easy",
+    "fitnessLevel": "Easy",
+    "crowdLevel": null,
+    "familyFriendly": null,
+    "carRequired": null
+  },
+  "basecamps": [
+    "Koprivshtitsa",
+    "Tryavna",
+    "Arbanasi"
+  ],
+  "gatewayAirport": "Sofia (SOF) is 110 km from Koprivshtitsa — 1 h 45 by car, or the slow train on the Sofia–Burgas line to Koprivshtitsa station, which sits 9 km below the town with a connecting bus. Fly home from Sofia or Varna (VAR), 3 h from Veliko Tarnovo.",
+  "gatewayAirportCode": "SOF",
+  "languages": [
+    "Bulgarian"
+  ],
+  "currency": "Euro (EUR) — sole legal tender since 1 February 2026; mandatory dual BGN display ended 8 August 2026",
+  "emergencyNumber": "112",
+  "coordinates": {
+    "lat": 42.6975,
+    "lon": 23.3241,
+    "precision": "gateway",
+    "matchedPlace": "Sofia",
+    "source": "geonames (geonamescache, cities > 15k)"
+  },
+  "tags": [
+    "revival-architecture",
+    "woodcarving",
+    "museum-houses",
+    "slow-travel",
+    "guesthouses",
+    "crafts",
+    "mehana"
+  ],
+  "summary": "Three bases in seven days, and nothing that starts before nine. The *Vazrazhdane* towns are what Bulgaria built when it had money and no country: oriel windows overhanging cobbles, blue and ochre plaster, ceilings…",
+  "summaryGenerated": false,
+  "hook": "Three bases in seven days, and nothing that starts before nine. The *Vazrazhdane* towns are what Bulgaria built when it had money and no country: oriel windows overhanging cobbles, blue and ochre plaster, ceilings carved into suns because two craftsmen made a bet. You walk one town a day, eat in guesthouse *mehanas* where the menu is a conversation, and drive no more than three hours all week.",
+  "snapshot": {
+    "Country": "Bulgaria",
+    "Trip type": "Cozy Towns Trips",
+    "Duration": "7 days",
+    "Best period": "May–June and September",
+    "Budget tier": "€",
+    "Difficulty": "Easy",
+    "Start / End": "Koprivshtitsa → Arbanasi / Veliko Tarnovo (three bases, ~350 km of driving in total)",
+    "Getting there": "Sofia (SOF) is 110 km from Koprivshtitsa — 1 h 45 by car, or the slow train on the Sofia–Burgas line to Koprivshtitsa station, which sits 9 km below the town with a connecting bus. Fly home from Sofia or Varna (VAR), 3 h from Veliko Tarnovo."
+  },
+  "itinerary": [
+    {
+      "day": 1,
+      "title": "Into Koprivshtitsa",
+      "morning": "Collect a car in Sofia and drive east on the Trakia motorway, then up the Topolnitsa valley. Koprivshtitsa sits at 1,060 m in a bowl of the Sredna Gora, and it is noticeably cooler than the plain.",
+      "afternoon": "Do nothing but walk. Cross the **Kalachev Bridge** — the Bridge of the First Rifle Shot, where the April Uprising began on 20 April 1876 — and follow the Topolnitsa's cobbled crossings up to **Ploshtad 20-ti April**.",
+      "evening": "Dinner in your guesthouse *mehana*: *shopska salata*, *kavarma* in a clay pot, a glass of Mavrud. The town has no nightlife and that is the entire point.",
+      "dayStats": "110 km / 1 h 45 from Sofia",
+      "sleep": null
+    },
+    {
+      "day": 2,
+      "title": "The four houses (walking day, no driving)",
+      "morning": "Start at the **Oslekov House** (1856), the richest in town — cedar columns brought from Lebanon, a painted façade, and a hall built to show a merchant's money. Then the **Lyutov House** (1854), whose domed *naos* ceiling and *alafranga* wall niches are the finest painted interior in Koprivshtitsa.",
+      "afternoon": "The **Kableshkov House**, birthplace of Todor Kableshkov, who wrote the \"Bloody Letter\" announcing the rising, and the **Debelyanov House**, home of the poet Dimcho Debelyanov, with its bronze of a waiting mother in the churchyard above.",
+      "evening": "Climb to the Church of the Assumption for the last light on the roofs, then a slow dinner. Ask your hosts about tomorrow's road — the Troyan pass route is scenic and slow.",
+      "dayStats": null,
+      "sleep": null
+    },
+    {
+      "day": 3,
+      "title": "Over the Balkan to Tryavna",
+      "morning": "Drive north over the **Republic Pass** (Prohod na Republikata) or the Troyan–Kărnare road, stopping at **Troyan** for the potteries — this is where the *kapkovidna* drip glaze comes from, and prices at the workshop are half what you pay in Sofia.",
+      "afternoon": "Arrive in **Tryavna**, drop bags, and cross the **1844 humpback bridge** into **Slaveykov Square** for a first look at the clock tower and the Old School.",
+      "evening": "Eat on the square. Tryavna is a working town rather than a museum, so the *mehanas* fill with locals from about seven.",
+      "dayStats": "185 km / 3 h",
+      "sleep": null
+    },
+    {
+      "day": 4,
+      "title": "The woodcarvers, then Bozhentsi",
+      "morning": "The **Daskalov House** (1808), now the Museum of Woodcarving and Icon Painting. Its two carved **sun ceilings** were made in a six-month wager between the masters Dimitar Oshanets and Ivan Bochukovets — stand under both and pick a winner.",
+      "afternoon": "Drive twenty minutes to **Bozhentsi**, an entire village preserved as an architectural reserve: stone-slab roofs, timber galleries, no through traffic. Walk to the **Baba Kostadinitsa House** and the Doncho Popa House.",
+      "evening": "Back in Tryavna, visit the Church of the Archangel Michael, then buy something carved from a workshop off the square rather than a souvenir stall.",
+      "dayStats": "35 km round trip",
+      "sleep": null
+    },
+    {
+      "day": 5,
+      "title": "To Arbanasi, above Veliko Tarnovo",
+      "morning": "A short drive through the Gabrovo hills to **Arbanasi**, a village of fortified stone merchant houses on the plateau overlooking Veliko Tarnovo. Check in early and take the afternoon slowly.",
+      "afternoon": "The **Church of the Nativity of Christ** — plain and low from outside, and inside a barrel-vaulted interior covered from floor to ceiling in 17th-century painting, some 3,500 figures, including a wheel of the zodiac. Then the **Konstantsalieva House**, a merchant's fortress with hidden stairs and a walled courtyard.",
+      "evening": "Sunset from the Arbanasi escarpment over the Yantra gorge and the lit walls of Tsarevets, then dinner at a village *mehana*.",
+      "dayStats": "45 km / 50 min",
+      "sleep": null
+    },
+    {
+      "day": 6,
+      "title": "Veliko Tarnovo and the craft street",
+      "morning": "Drive or taxi down to **Veliko Tarnovo** and walk **Samovodska Charshia** early, while the coppersmiths and potters are setting up. Buy Troyan ceramics, wool and a copper *dzhezve* here.",
+      "afternoon": "**Tsarevets** fortress — the Patriarchal church on the summit, the Execution Rock, and the whole medieval capital under your feet — then General Gurko Street, the tier of houses stacked above the river.",
+      "evening": "Back up to Arbanasi. If the **Sound and Light** show over Tsarevets is running, watch it from the Arbanasi viewpoint rather than the crowded terraces below [VERIFY: current Sound and Light schedule].",
+      "dayStats": "10 km / 20 min",
+      "sleep": null
+    },
+    {
+      "day": 7,
+      "title": "Zheravna on the way out",
+      "morning": "A last Arbanasi breakfast, then drive south-east over the Balkan through Elena towards **Zheravna** — roughly 200 timber Revival houses in a village of a few hundred people, with almost nothing modern in the frame.",
+      "afternoon": "Visit the **Yordan Yovkov House**, the writer's birthplace, and the **Rusi Chorbadzhi House**, then look for woven wool blankets in the village workshops. This was sheep money, and it still shows.",
+      "evening": "Continue to Burgas or Varna for a flight, or turn back to Sofia (3 h 30). Eat *banitsa* on the road.",
+      "dayStats": "130 km / 2 h",
+      "sleep": null
+    }
+  ],
+  "accommodationStrategy": [
+    {
+      "rank": 1,
+      "name": "A Revival-house guesthouse on Ploshtad 20-ti April",
+      "style": "guesthouse",
+      "location": "Koprivshtitsa",
+      "description": "puts every one of the four museum houses within a ten-minute cobbled walk, so you never move the car for two days. Wood stoves matter here — Koprivshtitsa at 1,060 m is cold in May and September evenings.",
+      "booking": "direct by phone or Booking.com, three to four weeks ahead; longer for any weekend in September [VERIFY: current Koprivshtitsa guesthouse rates].",
+      "priceNote": null
+    },
+    {
+      "rank": 2,
+      "name": "A carved-ceiling guesthouse near Slaveykov Square",
+      "style": "boutique guesthouse",
+      "location": "Tryavna",
+      "description": "the square is the whole town, and staying on it means the Daskalov House, the clock tower and dinner are all doorstep-close. Several restored houses keep original carved ceilings in the rooms.",
+      "booking": "direct, two to three weeks ahead.",
+      "priceNote": null
+    },
+    {
+      "rank": 3,
+      "name": "A stone merchant house",
+      "style": "boutique hotel",
+      "location": "Arbanasi",
+      "description": "three nights in one bed, with Veliko Tarnovo twenty minutes below for the sightseeing and Arbanasi's silence for the evenings. Courtyards, thick walls, and the Tsarevets view from the ridge.",
+      "booking": "three to five weeks ahead; Arbanasi is popular with Bulgarian weekenders from Sofia.",
+      "priceNote": null
+    }
+  ],
+  "logistics": {
+    "connectivity": "A1 and Yettel cover all three bases well; Bozhentsi and the Elena–Zheravna road have thin patches. Guesthouse Wi-Fi is normal and usually good.",
+    "emergency": "**112** nationwide, with English-speaking operators. The nearest full hospitals are in Veliko Tarnovo and Gabrovo; Koprivshtitsa has a clinic only.",
+    "weather": "Koprivshtitsa is a mountain town and can be ten degrees colder than Plovdiv on the same day. Carry a warm layer even in June, and expect afternoon showers in the Balkan foothills.",
+    "bookingWindows": "Guesthouses two to four weeks ahead for May–June and September. Book much earlier if you overlap the Zheravna costume festival in August, when the whole area fills.",
+    "money": "Bulgaria has adopted the **euro**, with prices still dual-displayed in **BGN** at the fixed 1.95583 rate. Museum houses, small workshops and village *mehanas* are frequently **cash only** — carry €100–€150 in small notes.",
+    "transportRules": "A car is the sane choice; a **vignette** is required on Bulgarian national roads and motorways, bought electronically before you drive [VERIFY: current weekly vignette price]. Cobbles and steep lanes in Koprivshtitsa, Bozhentsi and Zheravna mean small cars and careful parking. Bulgaria is **zero-tolerance on drink-driving**.",
+    "permits": "No permits needed. Bozhentsi and Zheravna are protected architectural reserves — cars are restricted or excluded from the cores, and you park at the edge and walk in. Photography inside museum houses is often ticketed separately.",
+    "health": null,
+    "gettingThere": null,
+    "other": []
+  },
+  "proTips": [
+    "Buy the combined museum ticket at the tourist information office in Koprivshtitsa and again in Tryavna, not at the first house door. It is cheaper and saves queueing at every gate.",
+    "Tell your guesthouse at breakfast that you want dinner. Village *mehanas* cook to order from what was bought that morning, and a lunchtime request gets you the good version rather than the menu version.",
+    "Go to Bozhentsi before 10:00 or after 16:00. Day coaches from Gabrovo hold it in the middle of the day and leave it empty either side.",
+    "Ask in Tryavna's workshops for a *panel* or a spoon rather than an icon. Small pieces from the Tryavna school are genuinely affordable and genuinely made there.",
+    "Learn *\"Imate li stai?\"* (do you have rooms?) and *\"Domashno?\"* (homemade?). The second word gets you the house *rakia* and the house *lyutenitsa* instead of the shop-bought one.",
+    "If you want a fourth base, add **Melnik** in the far south-west — Bulgaria's smallest town, under sandstone pyramids — or **Shiroka Laka** in the Rhodopes for its bagpipe school. Both are three-plus hours away, so swap them in for Zheravna rather than adding a night.",
+    "Drive the Troyan and Elena passes in daylight. They are the best roads of the week, they are slow, and Bulgarian mountain roads are unlit with unfenced livestock after dark."
+  ],
+  "typeSpecific": {
+    "raw": {
+      "Squares, by name": "**Ploshtad 20-ti April** in Koprivshtitsa, where the April Uprising was declared in 1876 and where the four best museum houses sit within ten minutes' walk. **Slaveykov Square** in Tryavna — properly Kapitan Dyado Nikola Square — a single cobbled rectangle holding the 1814 **clock tower**, the 1844 humpback bridge and the 1839 Old School, and arguably the most complete Revival ensemble in the country. **Samovodska Charshia** in Veliko Tarnovo, a working craft street rather than a square. The stone-roofed lanes of **Bozhentsi**, which has no square at all and is better for it.",
+      "Artisan trades, by town": "**Tryavna woodcarving** — the *Tryavnenska shkola*, the school that produced the iconostases of half of Bulgaria, still taught at the town's art school and still practised in workshops off Slaveykov Square. **Troyan pottery**, 60 km west, recognisable by its *kapkovidna* drip glaze — bands of colour run and pool down the vessel — sold from the Troyan workshops and on Samovodska Charshia. **Zheravna wool**: the village's Revival wealth came from sheep, and the trade survives in woven blankets and the summer costume fair. On Samovodska Charshia you can watch coppersmiths, potters, bakers and a knife-maker working to the street.",
+      "Boutique and guesthouse stays": "Family-run Revival houses, restored with carved ceilings intact, typically eight to fourteen rooms and a *mehana* downstairs. Expect €35–€60 a night with breakfast, wood stoves in shoulder season, and hosts who will cook dinner if you say so at breakfast.",
+      "Pacing rule — one relocation every two days": "Koprivshtitsa two nights, Tryavna two nights, Arbanasi three nights. Longest single drive is 3 hours; the other two are 45 minutes and a day-trip loop. Every base has enough within walking distance for a day when it rains.",
+      "Museum-house logic": "Koprivshtitsa and Tryavna both sell **combined tickets** covering their house-museums, cheaper than paying at each door, from the tourist information office rather than the houses themselves [VERIFY: current Koprivshtitsa and Tryavna combined ticket prices]. Most house-museums close one day a week — commonly Monday — and shut for lunch out of season [VERIFY: current museum-house opening days and hours].",
+      "Market and craft days": "There is no single big market day in these towns; the crafts run daily on Samovodska Charshia and the workshops in Tryavna. The dates that matter are festivals: the **Zheravna Festival of Folklore Costume** in August [VERIFY: 2027 Zheravna costume festival dates], and the **Koprivshtitsa National Folklore Festival**, held on the Voglen meadow only **once every five years** [VERIFY: next Koprivshtitsa festival year and dates]."
+    },
+    "surface": null,
+    "distanceKm": null,
+    "elevationM": null,
+    "verticalM": null,
+    "technicalRating": null,
+    "transitPass": null,
+    "hutBooking": null,
+    "liftNetwork": null,
+    "snowReliability": null,
+    "windConditions": null,
+    "gpxReady": null,
+    "bookingTimeline": null,
+    "audience": null
+  },
+  "packingNotes": [],
+  "whatCouldGoWrong": [],
+  "sources": {
+    "verified": null,
+    "confidenceNotes": "- Verified: the April Uprising declared at Koprivshtitsa on 20 April 1876 and Todor Kableshkov's \"Bloody Letter\"; the Oslekov House (1856) and Lyutov House (1854); Tryavna's 1814 clock tower and 1844 humpback bridge on Slaveykov Square; the Daskalov House (1808) and its two carved sun ceilings made as a wager between rival masters; the Tryavna woodcarving school; Bozhentsi and Zheravna as protected architectural reserves; the Nativity Church at Arbanasi and the Konstantsalieva House; Samovodska Charshia as Veliko Tarnovo's craft street; Tsarevets as the medieval capital's fortress; Troyan pottery's *kapkovidna* drip glaze; the Koprivshtitsa folklore festival's five-year cycle; euro adoption with BGN dual display at 1.95583; 112 as the emergency number. - `[VERIFY]` items in this file: 7 (see inline markers above) - Last reviewed: 2026-09-02"
+  },
+  "verifyFlags": [
+    "current Koprivshtitsa and Tryavna combined ticket prices",
+    "current museum-house opening days and hours",
+    "2027 Zheravna costume festival dates",
+    "next Koprivshtitsa festival year and dates",
+    "current Sound and Light schedule",
+    "current Koprivshtitsa guesthouse rates",
+    "current weekly vignette price"
+  ],
+  "verifyFlagCount": 7,
+  "volatilePricing": true,
+  "wordCount": 2228,
+  "dataVintage": 2026,
+  "provenance": {
+    "batch": "eastern-southeastern",
+    "sourceFile": "cartaeasterneuropetrips/trips/bulgaria-revival-towns-cozy-towns.md",
+    "sourceFormat": "md+nested-yaml-frontmatter (one file per trip)",
+    "sourceId": "bulgaria-revival-towns-cozy-towns",
+    "ingestedAt": "2026-09-02",
+    "synthesized": false
+  }
+}

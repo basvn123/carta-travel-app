@@ -20,7 +20,7 @@
  * topmost layer must eat the key.
  */
 import React, { useEffect, useState } from 'react';
-import { loadRegion, loadRegionIndex, regionShareUrl } from '../lib/regions.js';
+import { loadRegion, regionShareUrl } from '../lib/regions.js';
 import { useI18n } from '../i18n/index.jsx';
 
 const KIND_KEY = {
@@ -37,8 +37,13 @@ const LAYER_TO_FEATURE = {
 };
 
 function cardImage(card) {
-  const img = (card.images && card.images[0] && card.images[0].u) || card.img;
-  return typeof img === 'string' && img.startsWith('https://') ? img : null;
+  // Two shapes reach a card: beaches, lakes and mountains ship `images[]`
+  // of objects, trails ship a single `img` that is ALSO an object. Reading
+  // `img` as a string dropped every trail photograph on the page while the
+  // wire carried it, so both shapes are unwrapped here.
+  const first = (card.images && card.images[0]) || card.img;
+  const url = typeof first === 'string' ? first : first && first.u;
+  return typeof url === 'string' && url.startsWith('https://') ? url : null;
 }
 
 function Card({ card, listed, t, onOpen }) {
@@ -60,8 +65,8 @@ function Card({ card, listed, t, onOpen }) {
           ? <span className="rgnp-listed-chip">{t('region.listedChip')}</span>
           : (
             <span className="rgnp-card-sub">
-              {score != null ? score.toFixed(1) : ''}
-              {card.region ? `  ${card.region}` : ''}
+              {[score != null ? score.toFixed(1) : null,
+                card.region || card.range || null].filter(Boolean).join(', ')}
             </span>
           )}
       </span>
@@ -72,14 +77,14 @@ function Card({ card, listed, t, onOpen }) {
 export function RegionPage({ id, onClose, onOpenFeature, onOpenRegion }) {
   const { t } = useI18n();
   const [data, setData] = useState(undefined);
-  const [names, setNames] = useState(null);
   const [copied, setCopied] = useState(false);
 
+  // One fetch. Neighbours arrive named inside the region file, so opening
+  // a page never pulls the whole region index for six button labels.
   useEffect(() => {
     let on = true;
     setData(undefined);
     loadRegion(id).then((d) => { if (on) setData(d); });
-    loadRegionIndex().then((ix) => { if (on && ix) setNames(ix.byId); });
     return () => { on = false; };
   }, [id]);
 
@@ -110,11 +115,17 @@ export function RegionPage({ id, onClose, onOpenFeature, onOpenRegion }) {
   };
 
   if (data === null) {
-    // The id resolves to nothing published. Close rather than show a shell.
+    // An id that resolves to no file at all: a stale link, or a region
+    // that left the spine. Say which, rather than showing an empty shell
+    // that reads as a broken page.
     return (
-      <div className="rgnp">
+      <div className="rgnp" role="dialog" aria-modal="true">
         <div className="rgnp-inner">
-          <button className="rgnp-back" onClick={onClose}>{'←'} {t('places.clearNear')}</button>
+          <button className="rgnp-back" onClick={onClose} aria-label="close">
+            {'←'}
+          </button>
+          <h1>{t('region.notFound')}</h1>
+          <p className="rgnp-card-sub">{t('region.notFoundHint')}</p>
         </div>
       </div>
     );
@@ -134,7 +145,7 @@ export function RegionPage({ id, onClose, onOpenFeature, onOpenRegion }) {
               {region.country ? `, ${region.country}` : ''}
             </div>
             <h1>{region.name}</h1>
-            <button className="rgnp-back" onClick={share}>
+            <button className="rgnp-share" onClick={share}>
               {copied ? t('region.shareDone') : t('region.share')}
             </button>
 
@@ -176,9 +187,9 @@ export function RegionPage({ id, onClose, onOpenFeature, onOpenRegion }) {
               <>
                 <p className="rgnp-sect">{t('region.neighboursHead')}</p>
                 <div className="rgnp-neigh">
-                  {data.neighbours.map((nid) => (
-                    <button key={nid} onClick={() => onOpenRegion?.(nid)}>
-                      {names?.get(nid)?.name || nid}
+                  {data.neighbours.map((n) => (
+                    <button key={n.id} onClick={() => onOpenRegion?.(n.id)}>
+                      {n.name}
                     </button>
                   ))}
                 </div>

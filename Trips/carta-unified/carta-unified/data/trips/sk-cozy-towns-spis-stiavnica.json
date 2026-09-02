@@ -1,0 +1,295 @@
+{
+  "id": "sk-cozy-towns-spis-stiavnica",
+  "sourceId": "slovakia-spis-stiavnica-cozy-towns",
+  "slug": "sk-cozy-towns-spis-stiavnica",
+  "title": "Silver, Wood and Limewood: A Slow Week in Banská Štiavnica and the Spiš Towns",
+  "country": "Slovakia",
+  "countryCode": "SK",
+  "countries": [
+    {
+      "name": "Slovakia",
+      "code": "SK"
+    }
+  ],
+  "isMultiCountry": false,
+  "region": "Eastern & Southeastern Europe",
+  "regionKey": "eastern-southeastern",
+  "subRegion": "Štiavnické vrchy, Spiš and Šariš",
+  "tripType": "Cozy Towns Trips",
+  "tripTypeId": 4,
+  "tripTypeSlug": "cozy-towns",
+  "durationDays": 7,
+  "bestPeriod": {
+    "months": [
+      5,
+      6,
+      9
+    ],
+    "monthNames": [
+      "May",
+      "June",
+      "September"
+    ],
+    "window": "the second half of September — warm days, tajchy still swimmable in the first week, no coach parties in Levoča",
+    "note": null,
+    "avoid": "late July–August in Banská Štiavnica (Slovak domestic peak, the tajchy are full) and any Monday, when almost every museum in the country closes",
+    "raw": null
+  },
+  "budgetTier": "€",
+  "budgetTierRange": [
+    1,
+    1
+  ],
+  "budgetTierRaw": "€",
+  "budget": {
+    "currency": "EUR",
+    "totalEur": {
+      "low": 530,
+      "high": 880
+    },
+    "totalNote": "€530–€880",
+    "breakdown": {
+      "accommodation": {
+        "lowEur": 245,
+        "highEur": 420,
+        "note": "€245–€420 (€35–€60/night, guesthouses and small hotels)"
+      },
+      "food": {
+        "lowEur": 140,
+        "highEur": 210,
+        "note": "€140–€210 (€20–€30/day — guesthouse dinners are the cheap luxury here)"
+      },
+      "transport": {
+        "lowEur": 90,
+        "highEur": 160,
+        "note": "€90–€160 (rental car 5 days, or trains and regional buses)"
+      },
+      "activities": {
+        "lowEur": 55,
+        "highEur": 90,
+        "note": "€55–€90 (adits, castles, church towers, museums)"
+      }
+    },
+    "perDayEur": {
+      "low": 76,
+      "high": 126
+    }
+  },
+  "profile": {
+    "difficulty": 1,
+    "difficultyLabel": "Easy",
+    "difficultyNote": "Easy",
+    "fitnessLevel": "Easy",
+    "crowdLevel": null,
+    "familyFriendly": null,
+    "carRequired": null
+  },
+  "basecamps": [
+    "Banská Štiavnica",
+    "Levoča",
+    "Bardejov"
+  ],
+  "gatewayAirport": "Fly Bratislava (BTS) or Vienna (VIE, 70 km); return from Košice (KSC). Rail alternative: Bratislava–Hronská Dúbrava–Banská Štiavnica, then IC to Poprad and Spišská Nová Ves.",
+  "gatewayAirportCode": "BTS",
+  "languages": [
+    "Slovak"
+  ],
+  "currency": "Euro (EUR)",
+  "emergencyNumber": "112",
+  "coordinates": {
+    "lat": 49.2918,
+    "lon": 21.2727,
+    "precision": "city",
+    "matchedPlace": "Bardejov",
+    "source": "geonames (geonamescache, cities > 15k)"
+  },
+  "tags": [
+    "unesco",
+    "medieval-towns",
+    "mining",
+    "folk-architecture",
+    "crafts",
+    "slow-travel",
+    "spis"
+  ],
+  "summary": "Slovakia keeps five UNESCO towns and villages within a comfortable day's drive of each other and almost nobody visits them in sequence. This is a week of three beds and long afternoons: a silver town inside a…",
+  "summaryGenerated": false,
+  "hook": "Slovakia keeps five UNESCO towns and villages within a comfortable day's drive of each other and almost nobody visits them in sequence. This is a week of three beds and long afternoons: a silver town inside a collapsed volcano, the tallest Gothic altar on earth, a burgher square with its medieval plot lines intact, and a log village where the smoke still smells of spruce. Deliberately unhurried, unfashionable, and very cheap.",
+  "snapshot": {
+    "Country": "Slovakia",
+    "Trip type": "Cozy Towns Trips",
+    "Duration": "7 days",
+    "Best period": "May–June and September",
+    "Budget tier": "€",
+    "Difficulty": "Easy",
+    "Start / End": "Bratislava → Košice (point-to-point, ~520 km by road)",
+    "Getting there": "Fly Bratislava (BTS) or Vienna (VIE, 70 km); return from Košice (KSC). Rail alternative: Bratislava–Hronská Dúbrava–Banská Štiavnica, then IC to Poprad and Spišská Nová Ves."
+  },
+  "itinerary": [
+    {
+      "day": 1,
+      "title": "Into the caldera",
+      "morning": "Collect the car in Bratislava and take the R1 east to Žiar nad Hronom, then the switchbacks up to Banská Štiavnica — about two and a half hours. The town sits inside a collapsed volcanic caldera, which is why the streets run at impossible angles.",
+      "afternoon": "Walk Trojičné námestie, the plague column and the **Old Castle** — a 13th-century church fortified against the Ottomans. Then up to the **New Castle**, a white watchtower with the best single view of the roofs.",
+      "evening": "Dinner at a guesthouse table. Order *kapustnica*, the sauerkraut and sausage soup, and ask about the *tajchy* — your hosts will each name a different favourite.",
+      "dayStats": "Bratislava → Banská Štiavnica, 190 km",
+      "sleep": null
+    },
+    {
+      "day": 2,
+      "title": "Adits and reservoirs (Banská Štiavnica)",
+      "morning": "The **Slovak Mining Museum's Bartolomej adit** (Štôlňa Bartolomej) at the open-air museum: helmet, lamp, boots and an underground hour in a real 18th-century working [VERIFY: current adit tour times and price]. Book the first slot; groups fill the later ones.",
+      "afternoon": "Walk the **Calvary** — 23 stations climbing a volcanic cone to a twin-towered upper church, restored from near-ruin over twenty years. It takes an hour up and is the single best thing in the town.",
+      "evening": "Swim in a *tajch*. **Klinger** is nearest, **Počúvadlo** the biggest and warmest. These are 18th-century mining water reservoirs built by Hell and Mikovíny to power pumps — engineering, not leisure, and now the town's swimming lakes.",
+      "dayStats": null,
+      "sleep": null
+    },
+    {
+      "day": 3,
+      "title": "Across to Spiš",
+      "morning": "Drive east via Zvolen and Banská Bystrica, then the R2/D1 to Poprad — around three hours. Break at **Vlkolínec** above Ružomberok, a UNESCO log-house village of 45 dwellings, still inhabited, still without a souvenir strip [VERIFY: current Vlkolínec entry fee].",
+      "afternoon": "Arrive in Levoča and simply walk the square before the light goes. The town walls are largely complete and you can circle most of them.",
+      "evening": "Eat *pirohy* and *halušky* in a cellar restaurant off Námestie Majstra Pavla, then look at the Cage of Shame, a 16th-century iron cage on the square where scolds and drunks were displayed.",
+      "dayStats": "Banská Štiavnica → Levoča, 200 km",
+      "sleep": null
+    },
+    {
+      "day": 4,
+      "title": "The tallest altar in the world (Levoča)",
+      "morning": "The **Basilica of St James**. **Master Pavol of Levoča** carved its high altar between 1507 and 1517 — **18.6 m of limewood**, the tallest Gothic altarpiece anywhere, with the Last Supper predella and life-size apostles. Entry is by timed guided visit from the ticket office opposite; go at opening [VERIFY: current basilica ticket price and tour times].",
+      "afternoon": "The Renaissance **town hall** and the Master Pavol House museum. Then climb to the Mariánska hora pilgrimage basilica above the town for the Spiš basin panorama.",
+      "evening": "Guesthouse dinner. Ask for *bryndzové halušky* made with real sheep bryndza rather than cow-curd substitute — say *\"z ovčej bryndze, prosím\"*.",
+      "dayStats": null,
+      "sleep": null
+    },
+    {
+      "day": 5,
+      "title": "Castle and chapter",
+      "morning": "Drive fifteen minutes to **Spišské Podhradie** and up to **Spiš Castle (Spišský hrad)**, one of the largest castle complexes in central Europe, spread over a travertine hill. Wear real shoes; the upper ward is exposed and there is no shade [VERIFY: current Spišský hrad entry fee and season].",
+      "afternoon": "Cross the valley to **Spišská Kapitula**, the walled ecclesiastical town — one street, two gates, the Romanesque St Martin's Cathedral and the canons' houses. It is silent, and takes an hour.",
+      "evening": "Back in Levoča for a wine on the square. The Spiš towns were German-settled from the 13th century, and the burgher plot widths on the square still show it.",
+      "dayStats": "Levoča base, 30 km round trip",
+      "sleep": null
+    },
+    {
+      "day": 6,
+      "title": "North to Šariš",
+      "morning": "Detour to **Kežmarok** for the **wooden articular church** — built 1717 without a single nail, of yew and red spruce, seating 1,500, put up under Habsburg rules that forbade stone, towers and a town-centre site for Protestants. UNESCO-listed [VERIFY: current articular church opening hours].",
+      "afternoon": "Drive to **Bardejov** via Prešov, about two hours. Walk **Radničné námestie**, ringed by gabled burgher houses, with the 1509 town hall standing free in the middle.",
+      "evening": "Dinner in a house on the square. Bardejov closes early; eat at 18:00 like the locals.",
+      "dayStats": "Levoča → Bardejov, 100 km, via Kežmarok",
+      "sleep": null
+    },
+    {
+      "day": 7,
+      "title": "Wafers and the suburbium (Bardejov)",
+      "morning": "**St Egidius (Bazilika sv. Egídia)**, an 11-altar Gothic church whose winged altarpieces survive largely in place. Climb the tower if it is open [VERIFY: current tower access].",
+      "afternoon": "Walk the **Jewish suburbium** north-west of the walls — the 1836 Old Synagogue, the ritual bath and the assembly house, one of the most complete surviving Jewish town quarters in Slovakia. Then take the bus or drive 5 km to **Bardejovské Kúpele** for the spa colonnade and a bag of *oplátky* eaten warm.",
+      "evening": "Drive or take the train to Košice, 75 km, for the flight out — or stay a last night and eat *šúľance s makom* somewhere with a tiled stove.",
+      "dayStats": null,
+      "sleep": null
+    }
+  ],
+  "accommodationStrategy": [
+    {
+      "rank": 1,
+      "name": "Penzión Cosmopolitan II",
+      "style": "town-house guesthouse",
+      "location": "Banská Štiavnica",
+      "description": "on the historic core within three minutes of Trojičné námestie, so you can park once and not touch the car for two days — which matters in a town where every street is a gradient. Breakfast, and staff who will tell you which tajch is warm this week.",
+      "booking": "direct or Booking.com, 4–6 weeks ahead; longer for the September weekends [VERIFY: current nightly rate].",
+      "priceNote": null
+    },
+    {
+      "rank": 2,
+      "name": "Hotel U Leva",
+      "style": "historic house on the main square",
+      "location": "Levoča",
+      "description": "directly on Námestie Majstra Pavla, so the basilica is a 90-second walk and you can be first through the door at opening, before the coaches from Poprad. Restaurant on site for the nights you cannot face going out.",
+      "booking": "direct, 3–4 weeks ahead; it fills for the July Marian pilgrimage weekend.",
+      "priceNote": null
+    },
+    {
+      "rank": 3,
+      "name": "Penzión Semafor",
+      "style": "small family guesthouse",
+      "location": "Bardejov",
+      "description": "a short walk below the square with parking, a family kitchen doing genuine Šariš cooking, and hosts who will book you into the synagogue visit — which is not a walk-in.",
+      "booking": "direct by phone or email, 2–3 weeks ahead.",
+      "priceNote": null
+    }
+  ],
+  "logistics": {
+    "connectivity": "4G/5G is good in all four towns; Vlkolínec and the upper Calvary are patchier. Free Wi-Fi in most guesthouses and on Levoča's square.",
+    "emergency": "112 nationwide. Hospitals in Banská Štiavnica (small), Poprad and Bardejov. Nothing here is remote enough to need mountain rescue, but if you walk the Štiavnické vrchy ridges, HZS is **18 300** and Slovak mountain rescue is chargeable without insurance.",
+    "weather": "Continental. Spring and autumn swing 15 °C in a day; the caldera holds fog until mid-morning in September. Pack a warm layer even in June — Levoča sits at 570 m and Bardejov at 277 m, and the evenings feel it.",
+    "bookingWindows": "Guesthouses 3–6 weeks. The exceptions are the first weekend of September in Banská Štiavnica (**Salamander** mining festival, when the whole town is booked out months ahead) and the Levoča pilgrimage weekend in early July [VERIFY: 2027 Salamander dates].",
+    "money": "Euro. Cards are accepted in towns; carry €60–€80 cash for adit tours, church entries, village entry fees and market stalls. ATMs on every main square.",
+    "transportRules": "A car makes this week; without one, use IC trains to Poprad and Prešov plus regional buses (cp.sk for timetables). If driving motorways, buy the **e-vignette** at eznamka.sk — it is plate-registered and there is no windscreen sticker. Blood-alcohol limit is **0.0‰**, absolutely.",
+    "permits": "No permits. Almost every museum in Slovakia closes **Monday**; plan Monday as a driving or walking day. Vlkolínec charges a small village entry fee and is a living settlement — do not photograph through windows.",
+    "health": null,
+    "gettingThere": null,
+    "other": []
+  },
+  "proTips": [
+    "Do the Levoča basilica at opening, not after lunch. The Master Pavol altar is visited in timed groups and the mid-morning slots go to school and coach parties; the first tour of the day is often six people.",
+    "Swim at **Počúvadlo** rather than Klinger in high summer, and at Klinger in September when Počúvadlo has cooled. Locals treat the tajchy as a temperature ladder and will tell you which one is currently right.",
+    "Buy bryndza and *žinčica* at a roadside *salaš* on the Ružomberok–Poprad stretch, not in a shop. The whey is only good the day it is made, and it will not exist by afternoon.",
+    "Ask your guesthouse at breakfast whether they will cook dinner. Most will, for €10–€14 a head, and it is invariably better than the restaurant on the square.",
+    "Skip the Spiš Castle car park queue by arriving before 09:30 or after 15:30; the site is huge and thins out fast in the last two hours.",
+    "Learn *\"Prosím si účet\"* (the bill, please) and *\"Máte domácu polievku?\"* (do you have homemade soup?). Soup is the point of a Slovak lunch and is usually not on the printed menu.",
+    "If Monday falls mid-trip, use it for Vlkolínec and the Calvary — both outdoor, both open, both better empty."
+  ],
+  "typeSpecific": {
+    "raw": {
+      "Village and town squares by name": "**Trojičné námestie** in Banská Štiavnica — a sloping triangle of merchant houses around the 1759 plague column, with the Old Castle above and the New Castle on its own knoll. **Námestie Majstra Pavla** in Levoča, a vast rectangle holding the Basilica of St James, the Renaissance town hall with its arcades, the Evangelical church and the **Cage of Shame**. **Radničné námestie** in Bardejov, the most intact Gothic-burgher square in Slovakia, closed at the top by St Egidius. **Vlkolínec** has no square at all — it has one lane, 45 log houses, a wooden belfry and a two-storey log bell tower.",
+      "Market days and where to buy": "Levoča's produce market runs on the lower square most mornings, busiest Friday and Saturday [VERIFY: current Levoča market days]. Banská Štiavnica has a Saturday farmers' market on Trojičné námestie in season [VERIFY: current market schedule]. Bardejov's market sits below the square by the bus station. Buy *bryndza* — the salted sheep's cheese with PGI protection — direct from a *salaš* rather than a supermarket, and drink the *žinčica* whey alongside it while it is fresh.",
+      "Named crafts": "**Modra majolica** (blue-and-white tin-glazed earthenware, still hand-painted at the Modra workshop). **Čičmany patterning** — the white lime geometry painted onto dark log walls in the Žilina region, now Slovakia's most-reproduced folk motif. **Bardejov's oplátky**, the wafer-thin spa wafers sold at Bardejovské Kúpele. Woodcarving and gilding around Levoča, a direct inheritance of Master Pavol's workshop.",
+      "Boutique and small stays": "Everything here is a *penzión* or a converted burgher house; there is no international chain outside Košice. Expect €35–€60 a night for a double with breakfast, and dinner cooked to order if you ask in the morning.",
+      "Pacing rule": "Three bases in seven nights: Banská Štiavnica (nights 1–2), Levoča (nights 3–5), Bardejov (nights 6–7). Never more than one relocation every two days, and two of the three relocations are under two hours."
+    },
+    "surface": null,
+    "distanceKm": null,
+    "elevationM": null,
+    "verticalM": null,
+    "technicalRating": null,
+    "transitPass": null,
+    "hutBooking": null,
+    "liftNetwork": null,
+    "snowReliability": null,
+    "windConditions": null,
+    "gpxReady": null,
+    "bookingTimeline": null,
+    "audience": null
+  },
+  "packingNotes": [],
+  "whatCouldGoWrong": [],
+  "sources": {
+    "verified": null,
+    "confidenceNotes": "- Verified: Banská Štiavnica, Levoča with the Spiš Castle group, Bardejov, Vlkolínec and the Kežmarok wooden articular church are all UNESCO World Heritage; Master Pavol's high altar in the Basilica of St James is 18.6 m and the tallest Gothic altarpiece in the world; the *tajchy* are 18th-century mining water reservoirs; Slovakia uses the euro; emergency 112, HZS 18 300, and Slovak mountain rescue is chargeable without cover; Slovak drink-driving limit is 0.0‰; the motorway vignette is electronic and plate-registered. - `[VERIFY]` items in this file: 10 (see inline markers above) - Last reviewed: 2026-09-02"
+  },
+  "verifyFlags": [
+    "current Levoča market days",
+    "current market schedule",
+    "current adit tour times and price",
+    "current Vlkolínec entry fee",
+    "current basilica ticket price and tour times",
+    "current Spišský hrad entry fee and season",
+    "current articular church opening hours",
+    "current tower access",
+    "current nightly rate",
+    "2027 Salamander dates"
+  ],
+  "verifyFlagCount": 10,
+  "volatilePricing": true,
+  "wordCount": 2126,
+  "dataVintage": 2026,
+  "provenance": {
+    "batch": "eastern-southeastern",
+    "sourceFile": "cartaeasterneuropetrips/trips/slovakia-spis-stiavnica-cozy-towns.md",
+    "sourceFormat": "md+nested-yaml-frontmatter (one file per trip)",
+    "sourceId": "slovakia-spis-stiavnica-cozy-towns",
+    "ingestedAt": "2026-09-02",
+    "synthesized": false
+  }
+}

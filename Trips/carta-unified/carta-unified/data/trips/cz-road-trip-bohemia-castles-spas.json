@@ -1,0 +1,316 @@
+{
+  "id": "cz-road-trip-bohemia-castles-spas",
+  "sourceId": "cz-road-trip-bohemia-castles-spas",
+  "slug": "cz-road-trip-bohemia-castles-spas",
+  "title": "Bohemia by Car — Spa Colonnades, Ore Mountains and Sandstone",
+  "country": "Czechia",
+  "countryCode": "CZ",
+  "countries": [
+    {
+      "name": "Czechia",
+      "code": "CZ"
+    }
+  ],
+  "isMultiCountry": false,
+  "region": "Western & Central Europe",
+  "regionKey": "western-central",
+  "subRegion": "West Bohemia, Krušné hory and the Elbe sandstone",
+  "tripType": "Road Trips & Scenic Drives",
+  "tripTypeId": 5,
+  "tripTypeSlug": "road-trip",
+  "durationDays": 7,
+  "bestPeriod": {
+    "months": [
+      5,
+      6,
+      9,
+      10
+    ],
+    "monthNames": [
+      "May",
+      "June",
+      "September",
+      "October"
+    ],
+    "window": null,
+    "note": "The Krušné hory ridge road is snow-cleared but slow from November to March; the sandstone gorge boats run April to October only.",
+    "avoid": null,
+    "raw": null
+  },
+  "budgetTier": "€€",
+  "budgetTierRange": [
+    2,
+    2
+  ],
+  "budgetTierRaw": "€€",
+  "budget": {
+    "currency": "EUR",
+    "totalEur": {
+      "low": 780,
+      "high": 1180
+    },
+    "totalNote": null,
+    "breakdown": {
+      "accommodation": {
+        "lowEur": 380,
+        "highEur": 560,
+        "note": null
+      },
+      "food": {
+        "lowEur": 180,
+        "highEur": 280,
+        "note": null
+      },
+      "transport": {
+        "lowEur": 150,
+        "highEur": 230,
+        "note": null
+      },
+      "activities": {
+        "lowEur": 70,
+        "highEur": 110,
+        "note": null
+      }
+    },
+    "perDayEur": {
+      "low": 111,
+      "high": 169
+    }
+  },
+  "profile": {
+    "difficulty": 2,
+    "difficultyLabel": "Moderate",
+    "difficultyNote": null,
+    "fitnessLevel": "Easy",
+    "crowdLevel": "Moderate",
+    "familyFriendly": true,
+    "carRequired": true
+  },
+  "basecamps": [
+    "Karlovy Vary, Mezní Louka and Kutná Hora"
+  ],
+  "gatewayAirport": "Prague (PRG)",
+  "gatewayAirportCode": "PRG",
+  "languages": [
+    "Czech",
+    "German"
+  ],
+  "currency": "CZK",
+  "emergencyNumber": "112",
+  "coordinates": {
+    "lat": 50.2327,
+    "lon": 12.8712,
+    "precision": "city",
+    "matchedPlace": "Karlovy Vary",
+    "source": "geonames (geonamescache, cities > 15k)"
+  },
+  "tags": [
+    "spa-towns",
+    "castles",
+    "sandstone",
+    "e-vignette",
+    "ore-mountains"
+  ],
+  "summary": "A 950 km Bohemian loop from Prague through the spa triangle, along the Ore Mountains ridge and into the sandstone gorges of Bohemian Switzerland.",
+  "summaryGenerated": false,
+  "hook": "Czechia does not do alpine passes, so this drive earns its scenery a different way: forest ridges at a thousand metres, spa towns built to be walked in, and a sandstone canyon where the road simply stops at the German border. The legs are short, the second-class roads are free, and the car is the point only about half the time.",
+  "snapshot": {
+    "Country": "Czechia",
+    "Base(s)": "Karlovy Vary (3 nights), Mezní Louka / Hřensko (2), Kutná Hora (1)",
+    "Trip Type": "Road Trips & Scenic Drives",
+    "Duration": "7 days",
+    "Best Period": "May–June and September–October",
+    "Total Distance / Terrain": "approx. 950 km; motorway D6/D8 plus long ridge and forest roads, max altitude approx. 1,100 m",
+    "Getting There": "Fly to Prague (PRG); collect the car at the airport, never in the centre",
+    "Who It Suits": "Slow drivers who want castles, colonnades and one serious gorge walk"
+  },
+  "itinerary": [
+    {
+      "day": 1,
+      "title": "Out of Prague, west to the Ohře",
+      "morning": "Collect the car at Václav Havel Airport. Confirm the e-vignette is registered to the plate — Czechia has had no windscreen sticker since 2021 — and that dipped headlights come on automatically, because they are compulsory day and night, year round.",
+      "afternoon": "Take the D6 west, then drop south to **Křivoklát**, a royal hunting castle in the Berounka woods. The village car park is below the walls; the last 300 m is on foot. Rejoin the D6 for Karlovy Vary.",
+      "evening": "Detour to **Loket**, a granite spur town wrapped in a river meander, with a 12th-century castle above the square. Then 15 km on to Karlovy Vary. Park in a garage below the spa zone — the Lázeňská zóna is permit-only for cars and the enforcement is camera-based.",
+      "dayStats": "175 km · 2h40 driving · no passes · max altitude 430 m.",
+      "sleep": null
+    },
+    {
+      "day": 2,
+      "title": "Karlovy Vary on foot, Bečov by car",
+      "morning": "Leave the car. Walk the Mlýnská, Tržní and Sadová colonnades, buy a porcelain **lázeňský pohárek** cup from a kiosk, and taste the springs in ascending temperature — Vřídlo, the geyser spring, runs at 73°C and is drunk cooled.",
+      "afternoon": "Drive 25 km south to **Bečov nad Teplou** for the Reliquary of St. Maur, the Romanesque shrine found under the castle chapel floor in 1985. Entry is by timed guided tour only and small groups sell out; book online the day before.",
+      "evening": "Back in Karlovy Vary, walk up to the Diana lookout tower by funicular and down through the forest path.",
+      "dayStats": "60 km · 1h10 driving · no passes · max altitude 620 m.",
+      "sleep": null
+    },
+    {
+      "day": 3,
+      "title": "The spa triangle",
+      "morning": "West on the R6/D6 to **Cheb**, whose Špalíček merchant houses lean into the square, then 6 km to **Františkovy Lázně** — the smallest and flattest of the three UNESCO-listed Great Spas of Europe here, laid out in yellow neoclassical terraces.",
+      "afternoon": "South on the 21 and 230 to **Mariánské Lázně**: the cast-iron colonnade, the singing fountain on the hour, and forest roads through the Slavkovský les on the way back.",
+      "evening": "Return to Karlovy Vary on the 20/6. Third night in the same bed, which is the whole reason to base here.",
+      "dayStats": "165 km · 2h50 driving · no passes · max altitude 780 m.",
+      "sleep": null
+    },
+    {
+      "day": 4,
+      "title": "The Ore Mountains ridge",
+      "morning": "Climb the hairpins of the 25 to **Jáchymov**, the silver and uranium town that gave the word \"dollar\" its root, then on to **Boží Dar** at 1,028 m — the highest town in Central Europe. The spur road to the **Klínovec** car park (1,244 m summit) tops out around 1,100 m; the last stretch is on foot or by chairlift.",
+      "afternoon": "Take the ridge road east — the 219 and 254 through Loučná pod Klínovcem, Hora Svaté Kateřiny and Nová Ves v Horách. This is the finest driving of the week: long open moorland curves at 800–900 m with the Bohemian basin dropping away to the south. Descend the switchbacks to Litvínov, then the D8 to Ústí nad Labem and Děčín.",
+      "evening": "Follow the Labe (Elbe) gorge road to **Hřensko**, the lowest point in Czechia at 115 m, and sleep at Mezní Louka. Parking in Hřensko itself is cramped, paid and slow; the Mezní Louka lot is bigger.",
+      "dayStats": "210 km · 4h00 driving · 3 ridge saddles (Boží Dar, Hora Svaté Kateřiny, Nová Ves) · max altitude approx. 1,100 m.",
+      "sleep": null
+    },
+    {
+      "day": 5,
+      "title": "Bohemian Switzerland",
+      "morning": "Walk from Mezní Louka to **Pravčická brána**, Europe's largest sandstone arch, on the red-marked trail — about 3 km each way, entry approx. CZK 200 (€8). The Czech waymarking is a coloured stripe between two white ones and the network is dense; follow colours, not compass.",
+      "afternoon": "Drive down to Hřensko and take the punts through the **Edmundova soutěska** and **Divoká soutěska** gorges of the Kamenice. Ferrymen pole the boats between walls 50 m high; tickets are sold at the landing stage and the last departure is mid-afternoon.",
+      "evening": "Optional cross-border run to Bad Schandau and the **Bastei** bridge in Saxon Switzerland — 25 km, no border formalities, no German car toll.",
+      "dayStats": "55 km · 1h10 driving · no passes · max altitude 415 m.",
+      "sleep": null
+    },
+    {
+      "day": 6,
+      "title": "Down the Labe to the silver town",
+      "morning": "Retrace the gorge to Děčín, then follow the river to **Litoměřice** for its arcaded square and the Chalice house, and stop at **Terezín**, the fortress town used as a ghetto and transit camp. Allow two unhurried hours; parking is free outside the Small Fortress.",
+      "afternoon": "Continue via **Mělník**, where the Vltava meets the Labe below a castle terrace planted with Ludmila vines, then cross-country on the 16 and 38 to Kutná Hora.",
+      "evening": "Walk the Barborská terrace above the Jesuit college at dusk, after the coaches leave.",
+      "dayStats": "205 km · 3h20 driving · no passes · max altitude 380 m.",
+      "sleep": null
+    },
+    {
+      "day": 7,
+      "title": "Kutná Hora and back to Prague",
+      "morning": "The **Sedlec Ossuary** opens early and issues timed tickets; take the first slot and combine it with the cathedral of the Assumption next door. Then the cathedral of **St. Barbara**, a late-Gothic hall church funded by silver miners.",
+      "afternoon": "Drive the 111 and 125 through the Sázava woods to **Český Šternberk**, a castle on a rock spine still held by the family that built it in 1241. Guided tours in Czech with printed English text.",
+      "evening": "D1 into Prague and drop the car at the airport or a peripheral depot. Do not drive into Prague 1 with luggage; the tram is faster.",
+      "dayStats": "100 km · 1h50 driving · no passes · max altitude 460 m.",
+      "sleep": null
+    }
+  ],
+  "accommodationStrategy": [
+    {
+      "rank": 1,
+      "name": "Grandhotel Pupp",
+      "style": "Grand spa hotel",
+      "location": "Karlovy Vary",
+      "description": "The anchor of the town since the 18th century, at the top of the pedestrian spa street with its own garage — which solves Karlovy Vary's real problem, that the centre is closed to unpermitted cars. Three nights here means three days without repacking.",
+      "booking": "two months ahead; longer for film-festival week in early July.",
+      "priceNote": "€160–€300 per night for two"
+    },
+    {
+      "rank": 2,
+      "name": "Hotel Mezní Louka",
+      "style": "Forest lodge",
+      "location": "Bohemian Switzerland",
+      "description": "A 19th-century hunting lodge at the trailhead for Pravčická brána, with a large open car park and a kitchen that serves late enough for walkers coming off the gorge trails. Staying here rather than in Hřensko avoids the morning parking scrum in the gorge village.",
+      "booking": "six weeks for weekends in high summer.",
+      "priceNote": "€80–€130 per night for two"
+    },
+    {
+      "rank": 3,
+      "name": "Hotel Mědínek Old Town",
+      "style": "Town hotel",
+      "location": "Kutná Hora",
+      "description": "On Palackého náměstí, three minutes from St. Barbara's and with parking behind the building — useful because Kutná Hora's old-town streets are narrow, one-way and heavily signed. Good position for the early ossuary slot.",
+      "booking": "three weeks.",
+      "priceNote": "€70–€110 per night for two"
+    }
+  ],
+  "logistics": {
+    "connectivity": null,
+    "emergency": "112 pan-European; 155 ambulance, 158 police, 150 fire. Mountain rescue (Horská služba) is **1210** and covers the Krušné hory and the sandstone parks.",
+    "weather": null,
+    "bookingWindows": null,
+    "money": "Koruna, not euro. Cards work almost everywhere, but gorge boats, small car parks and village pubs are cash-first. Refuse dynamic currency conversion at ATMs.",
+    "transportRules": null,
+    "permits": null,
+    "health": null,
+    "gettingThere": null,
+    "other": [
+      {
+        "label": "E-vignette",
+        "text": "Motorway and expressway use (D-class roads: D6, D8, D1, D11) requires a plate-linked electronic vignette bought at edalnicnizname.cz or the app — approx. CZK 300 (€12) for 10 days, CZK 480 (€19) for 30 days, CZK 2,570 (€105) annual. There is no sticker and no physical proof. First-class roads numbered 6, 13, 20 and so on are free, and several exempt sections are signposted."
+      },
+      {
+        "label": "Rental cars",
+        "text": "Czech rentals normally include the vignette; check the plate on your confirmation. Cross-border into Germany, Austria, Poland and Slovakia is standard; the Balkans are usually excluded or surcharged €30–€60. One-way drops to Dresden or Vienna start around €150."
+      },
+      {
+        "label": "Germany's Umweltplakette",
+        "text": "The Bastei detour needs nothing — neither Dresden nor Saxon Switzerland has a low-emission zone. If you extend to Leipzig, Halle or Berlin you need a green Umweltplakette on the windscreen, sold for €6–€20 at TÜV/DEKRA stations; rentals registered in Germany usually already carry one, Czech-plated cars usually do not."
+      },
+      {
+        "label": "Driving rules that are actually enforced",
+        "text": "Dipped headlights 24/7 all year. Blood alcohol limit is zero — no glass of wine at lunch. Winter tyres are compulsory from 1 November to 31 March whenever there is snow, ice or slush. Speed cameras and section control are common on the D8 and around Ústí."
+      },
+      {
+        "label": "Emergencies",
+        "text": "112 pan-European; 155 ambulance, 158 police, 150 fire. Mountain rescue (Horská služba) is **1210** and covers the Krušné hory and the sandstone parks."
+      },
+      {
+        "label": "Opening-hour traps",
+        "text": "Czech castles close entirely from November to March and run weekends-only in April and October; most shut on Mondays even in season. Guided tours are the only way in and the last tour is often 90 minutes before closing."
+      }
+    ]
+  },
+  "proTips": [
+    "Book the Bečov reliquary tour and the St. Barbara / Sedlec combined ticket online the previous evening. Both cap group sizes and both sell out by mid-morning in summer.",
+    "Drive the Krušné hory ridge west to east. Eastbound, the Bohemian basin is on your right all afternoon and the light stays behind you.",
+    "At Hřensko, park at Mezní Louka and walk down to the gorge boats rather than driving in. The village road is a single lane between rock and river, and it gridlocks by 10:00.",
+    "Buy the spa cup, not bottled water: the Karlovy Vary springs are free, and the porcelain spout is designed to cool 73°C water on the way to your mouth.",
+    "Fill up in Czechia before crossing to Saxony. Czech fuel is consistently cheaper, and the border stations at Hřensko know it.",
+    "If rain kills the sandstone day, swap in Děčín castle's rose garden and the Ústí funicular to Větruše — both are ten minutes away and mostly indoors."
+  ],
+  "typeSpecific": {
+    "raw": {
+      "Total Distance / Terrain": "approx. 950 km; motorway D6/D8 plus long ridge and forest roads, max altitude approx. 1,100 m",
+      "Who It Suits": "Slow drivers who want castles, colonnades and one serious gorge walk"
+    },
+    "surface": "approx. 950 km; motorway D6/D8 plus long ridge and forest roads, max altitude approx. 1,100 m",
+    "distanceKm": 950,
+    "elevationM": null,
+    "verticalM": null,
+    "technicalRating": null,
+    "transitPass": null,
+    "hutBooking": null,
+    "liftNetwork": null,
+    "snowReliability": null,
+    "windConditions": null,
+    "gpxReady": null,
+    "bookingTimeline": null,
+    "audience": "Slow drivers who want castles, colonnades and one serious gorge walk"
+  },
+  "packingNotes": [
+    "Grippy shoes with an edge: the sandstone steps at Pravčická brána stay damp and greasy even in August.",
+    "A light waterproof — the Elbe gorge makes its own weather.",
+    "Cash in koruna, roughly CZK 3,000, for boats, car parks and rural pubs.",
+    "Swimwear for a spa afternoon in Karlovy Vary or Mariánské Lázně.",
+    "A phone holder and offline maps; the ridge road loses signal in the border forests.",
+    "Something warm: Boží Dar sits at 1,028 m and runs 8–10°C below Prague."
+  ],
+  "whatCouldGoWrong": [
+    "**Forest-fire or storm closure in Bohemian Switzerland.** Sections of the park have been closed for restoration since the 2022 fire and trails change year to year. Fallback: the Tisá rock town and the Děčínský Sněžník plateau, both 30 minutes away and unaffected.",
+    "**You drove a D-road without a vignette.** Fines are issued to the plate and follow the rental company back to you with an admin fee. Fallback: buy the vignette on your phone before you touch a D-road — activation is immediate.",
+    "**Castle shut on a Monday.** It will be. Fallback: build Mondays around towns, not castles — Kutná Hora, Litoměřice and Loket all work as walking days.",
+    "**Prague airport drop at rush hour.** The D1 and the Prague ring seize up 07:00–09:00 and 15:00–18:00. Fallback: leave Kutná Hora before 07:00 or after 10:00; the difference is 45 minutes."
+  ],
+  "sources": {
+    "verified": null,
+    "confidenceNotes": null
+  },
+  "verifyFlags": [],
+  "verifyFlagCount": 0,
+  "volatilePricing": false,
+  "wordCount": 2077,
+  "dataVintage": 2026,
+  "provenance": {
+    "batch": "western-central",
+    "sourceFile": "cartatripsv1/trips/cz-road-trip-bohemia-castles-spas.md",
+    "sourceFormat": "md+yaml-frontmatter (one file per trip)",
+    "sourceId": "cz-road-trip-bohemia-castles-spas",
+    "ingestedAt": "2026-09-02",
+    "synthesized": false
+  }
+}

@@ -1,0 +1,282 @@
+{
+  "id": "it-city-naples",
+  "sourceId": "city-italy-naples",
+  "slug": "it-city-naples",
+  "title": "Naples Vertical: Spaccanapoli, Sanità and the Bay",
+  "country": "Italy",
+  "countryCode": "IT",
+  "countries": [
+    {
+      "name": "Italy",
+      "code": "IT"
+    }
+  ],
+  "isMultiCountry": false,
+  "region": "Southern & Mediterranean Europe",
+  "regionKey": "southern-mediterranean",
+  "subRegion": "Campania — Naples & the Gulf",
+  "tripType": "City Trips",
+  "tripTypeId": 3,
+  "tripTypeSlug": "city",
+  "durationDays": 7,
+  "bestPeriod": {
+    "months": [
+      3,
+      4,
+      5,
+      6,
+      9,
+      10,
+      11
+    ],
+    "monthNames": [
+      "March",
+      "April",
+      "May",
+      "June",
+      "September",
+      "October",
+      "November"
+    ],
+    "window": "Late March–early June & late September–early November",
+    "note": null,
+    "avoid": "August — the city empties, half the good kitchens shut for *ferie*, and Pompeii is a furnace; mid-winter brings closed catacomb tours on wet days.",
+    "raw": "Late March–early June & late September–early November"
+  },
+  "budgetTier": "€€",
+  "budgetTierRange": [
+    2,
+    2
+  ],
+  "budgetTierRaw": "€€",
+  "budget": {
+    "currency": "EUR",
+    "totalEur": {
+      "low": 870,
+      "high": 1450
+    },
+    "totalNote": "€900–€1,450 per person, excl. international flights",
+    "breakdown": {
+      "accommodation": {
+        "lowEur": 440,
+        "highEur": 780,
+        "note": "B&B or small hotel double, per-person share, Centro Storico or Chiaia"
+      },
+      "food": {
+        "lowEur": 230,
+        "highEur": 360,
+        "note": "Pizza €6–9, trattoria lunch €15–22, one €45 seafood dinner"
+      },
+      "transport": {
+        "lowEur": 50,
+        "highEur": 80,
+        "note": "Weekly TIC, Circumvesuviana returns, Alibus, funiculars"
+      },
+      "activities": {
+        "lowEur": 150,
+        "highEur": 230,
+        "note": "MANN, Sansevero, catacombs, San Martino, Pompeii"
+      }
+    },
+    "perDayEur": {
+      "low": 124,
+      "high": 207
+    }
+  },
+  "profile": {
+    "difficulty": 3,
+    "difficultyLabel": "Active",
+    "difficultyNote": "3 — 8–11 km a day with real vertical: the Pedamentina's 414 steps, Sanità's staircases, Vomero funicular alternatives.",
+    "fitnessLevel": "Active",
+    "crowdLevel": null,
+    "familyFriendly": null,
+    "carRequired": null
+  },
+  "basecamps": [],
+  "gatewayAirport": "NAP — Naples Capodichino; Alibus to Piazza Garibaldi 15 min / Molo Beverello 25 min (€3 in advance, €4 on board), taxi flat fare ~€23–27",
+  "gatewayAirportCode": "NAP",
+  "languages": [],
+  "currency": null,
+  "emergencyNumber": "112",
+  "coordinates": {
+    "lat": 40.8522,
+    "lon": 14.2681,
+    "precision": "city",
+    "matchedPlace": "Naples",
+    "source": "geonames (geonamescache, cities > 15k)"
+  },
+  "tags": [
+    "baroque",
+    "catacombs",
+    "pizza",
+    "archaeology",
+    "street-food",
+    "funicular",
+    "day-trip-pompeii",
+    "caravaggio",
+    "vertical-city"
+  ],
+  "summary": "Naples is stacked — Greek grid under Roman market under Baroque church under a modern city that never stopped using any of it. This week works the vertical: the decumani of the Centro Storico and Spaccanapoli, the Rione Sanità's staircases and catacombs, Vomero above on the funicular, Chiaia along the water, and the Quartieri Spagnoli's grid climbing the hill behind Via Toledo. It is loud, dense, and rewards early starts and precise ticketing — Cappella Sansevero now admits nobody without a pre-booked slot. Pompeii or Herculaneum takes a day out on the Circumvesuviana. Come hungry and with proper shoes.",
+  "summaryGenerated": false,
+  "hook": null,
+  "snapshot": {},
+  "itinerary": [
+    {
+      "day": 1,
+      "title": "Arrival and the decumani",
+      "morning": "Alibus in, drop bags, then straight onto **Via dei Tribunali**. Coffee at **Caffè Mexico**, Piazza Dante — order it *amaro* unless you want it sweet by default.",
+      "afternoon": "**Duomo di Napoli** and the Cappella del Tesoro di San Gennaro, then the Gothic **Santa Chiara** and its majolica cloister (€6). Walk Spaccanapoli west past **Gesù Nuovo**'s pyramid-faceted façade to Piazza del Gesù.",
+      "evening": "Pizza at **Pizzeria Gino e Toto Sorbillo**, Via dei Tribunali 32 — take a number from the man at the door, expect 30–60 min, €6–9. Digestivo on Piazza Bellini.",
+      "dayStats": "5.4 km, 60 m ascent; Alibus €3; Santa Chiara cloister 09:30–17:30; pizza €6–9.",
+      "sleep": "Atelier Inès Suite Art, Vico dei Panettieri, Centro Storico."
+    },
+    {
+      "day": 2,
+      "title": "Cappella Sansevero and MANN",
+      "morning": "Pre-booked slot at **Cappella Sansevero**, Via Francesco de Sanctis 19 (€12, 09:00–19:00, closed Tuesdays, last entry 18:30). Twenty minutes is enough for the room; the *Cristo Velato* and the anatomical machines in the crypt are the two things to actually look at.",
+      "afternoon": "**MANN — Museo Archeologico Nazionale** (€22 including special exhibitions; closed Tuesdays). Prioritise the Farnese Bull and Hercules, the Pompeian mosaics including the Alexander Mosaic, and the Gabinetto Segreto.",
+      "evening": "**Trattoria da Nennella** in the Quartieri Spagnoli (Vico Lungo Teatro Nuovo 105) for the theatre and a €15 set menu, cash only, no bookings. Or **Tandem** on Via Paladino for ragù.",
+      "dayStats": "7.0 km, 90 m ascent; Metro Line 1 to Museo; Sansevero €12, MANN €22; both closed Tue.",
+      "sleep": "Atelier Inès Suite Art."
+    },
+    {
+      "day": 3,
+      "title": "Rione Sanità and the catacombs",
+      "morning": "Up through Porta San Gennaro into **Sanità**. **Palazzo dello Spagnolo** and **Palazzo Sanfelice** courtyards (free, look up at the open staircases), then the **Cimitero delle Fontanelle** ossuary (free, Via Fontanelle 80).",
+      "afternoon": "Guided tour of the **Catacombe di San Gennaro** (€14 combined with San Gaudioso, tours hourly 10:00–17:00, run by the Cooperativa La Paranza) — 4th-century frescoed loculi under the Basilica dell'Incoronata del Buon Consiglio.",
+      "evening": "**Concettina ai Tre Santi**, Via Arena della Sanità 7 — the neighbourhood's own pizzeria, book online or wait; €10–16. Sfogliatella from **Pasticceria Poppella** afterwards.",
+      "dayStats": "8.3 km, 150 m ascent; catacombs €14, guided only; Fontanelle 10:00–17:00, closed Wed.",
+      "sleep": "Atelier Inès Suite Art."
+    },
+    {
+      "day": 4,
+      "title": "Pompeii by Circumvesuviana",
+      "morning": "Porta Nolana 08:00 Circumvesuviana toward Sorrento, off at **Pompei Scavi–Villa dei Misteri**, ~36 min, ~€3.20. Enter at Porta Marina with a pre-booked ticket (€22 full site). Head first to the Villa dei Misteri at the far end while everyone else does the Forum.",
+      "afternoon": "Work back through the Casa del Fauno, the Lupanar, the Terme Stabiane and the Amphitheatre. Four hours minimum; there is no shade on the Via dell'Abbondanza.",
+      "evening": "Back by 18:00. Dinner at **Antica Osteria Pisano**, Piazzetta Crocelle ai Mannesi 1, for *pasta e patate con provola*; €20–28pp.",
+      "dayStats": "12 km walked at Pompeii; train 36 min each way, ~€6.40 return; site 09:00–19:00 April–October, last entry 17:30.",
+      "sleep": "Atelier Inès Suite Art."
+    },
+    {
+      "day": 5,
+      "title": "Vomero, San Martino and the funiculars",
+      "morning": "**Funicolare Centrale** from Via Toledo to Piazza Fuga (covered by the TIC), then the **Certosa di San Martino** (€6) — Fanzago's marble church, the Presepe Cuciniello nativity, and the best single view of the bay from the Belvedere.",
+      "afternoon": "**Castel Sant'Elmo** (€5) above it, then descend the **Pedamentina di San Martino**, 414 steps down to Corso Vittorio Emanuele — 25 minutes and the finest walk in the city.",
+      "evening": "**Chiaia**: aperitivo on Piazza dei Martiri, then dinner at **Trattoria dell'Oca**, Via Santa Teresa a Chiaia 11 (book 3–5 days, €30–40pp).",
+      "dayStats": "6.8 km plus 414 steps descent, 200 m net drop; funicular on TIC; Certosa 08:30–19:30, closed Wed.",
+      "sleep": "Atelier Inès Suite Art."
+    },
+    {
+      "day": 6,
+      "title": "Royal Naples, the waterfront and Caravaggio",
+      "morning": "**Palazzo Reale** (€10), the Galleria Umberto I, and **Teatro di San Carlo** on a 30-minute guided visit (€9, hourly). Then **Castel Nuovo**'s Renaissance triumphal arch from Piazza Municipio.",
+      "afternoon": "Bus or walk the Lungomare Caracciolo to **Castel dell'Ovo** (free) and Borgo Marinari. Then **Pio Monte della Misericordia**, Via dei Tribunali 253 (€10), for Caravaggio's *Sette opere di Misericordia* still hanging in the chapel it was painted for.",
+      "evening": "Seafood at **Ristorante Zi' Teresa** on Borgo Marinari, or fried classics standing at **Friggitoria Vomero**. €25–45pp.",
+      "dayStats": "9.1 km, flat; Palazzo Reale 09:00–20:00, closed Wed; Pio Monte 09:00–18:00.",
+      "sleep": "Atelier Inès Suite Art."
+    },
+    {
+      "day": 7,
+      "title": "Underground and departure",
+      "morning": "**Napoli Sotterranea**, Piazza San Gaetano 68 (€12, guided, hourly) — Greek cisterns, Roman theatre remains under an apartment, and WWII shelters, 90 minutes.",
+      "afternoon": "Last pizza at **L'Antica Pizzeria da Michele**, Via Cesare Sersale 1 (two toppings only, €5–6, take a ticket), then Alibus from Piazza Garibaldi to NAP.",
+      "evening": "Flight out.",
+      "dayStats": "4.2 km; Sotterranea tours on the hour; Alibus 15 min from Garibaldi; allow 2 h at NAP.",
+      "sleep": "n/a — departure day."
+    }
+  ],
+  "accommodationStrategy": [
+    {
+      "rank": 1,
+      "name": "Atelier Inès Suite Art",
+      "style": "Design B&B",
+      "location": "Vico dei Panettieri, Centro Storico",
+      "description": "Four rooms inside the decumani grid, thirty seconds from Spaccanapoli, so the 09:00 Sansevero slot is a walk not a metro ride. Soundproofed windows matter here more than anywhere: ask for a courtyard-facing room. €110–160 double.",
+      "booking": null,
+      "priceNote": null
+    },
+    {
+      "rank": 2,
+      "name": "Casa D'Anna",
+      "style": "Guesthouse",
+      "location": "Via dei Cristallini 138, Sanità",
+      "description": "A frescoed apartment above Sanità with a library, a terrace and hosts who know the catacomb schedule. Fifteen minutes' downhill walk to the Duomo, and it puts you inside the neighbourhood rather than visiting it. €120–170.",
+      "booking": null,
+      "priceNote": "€120–170"
+    },
+    {
+      "rank": 3,
+      "name": "Grand Hotel Parker's",
+      "style": "Historic hotel",
+      "location": "Corso Vittorio Emanuele 135, Vomero slope",
+      "description": "The 1870 grande dame with a rooftop restaurant over the bay, on the funicular line and away from the Centro Storico's night noise. Worth it if you want quiet and a car-accessible entrance. €200–300.",
+      "booking": null,
+      "priceNote": "€200–300"
+    }
+  ],
+  "logistics": {
+    "connectivity": "Full EU roaming, good 4G/5G; signal drops entirely in the catacombs, Fontanelle and Napoli Sotterranea. Download offline maps for Sanità, where the alley network defeats GPS.",
+    "emergency": "112 unified emergency number; 118 direct for ambulance. Ospedale Cardarelli and Pellegrini are the central ERs. EU/EHIC applies.",
+    "weather": "Autumn *acqua alta* rain events flood the lower Centro Storico streets in minutes and can close Pompeii's outer insulae. Summer humidity off the gulf makes 33°C feel like 40°C on the Via dell'Abbondanza.",
+    "bookingWindows": "Cappella Sansevero is booking-only, released 60 days ahead with a second drop two days before. Catacombe di San Gennaro 3–7 days. Pompeii 2–5 days on pompeiisites.org. Teatro di San Carlo tours 2–3 days. Restaurants: 50 Kalò and dell'Oca 3–5 days; Michele, Sorbillo and Nennella take no bookings at all.",
+    "money": "Euro. Cards are now widely accepted but Nennella, Fontanelle offerings, and many *friggitorie* remain cash. Coperto of €1.50–3 is normal; service is not usually added, round up.",
+    "transportRules": "Validate the TIC in the machine at every entry, including funiculars — inspectors are frequent on Line 1. Circumvesuviana tickets are separate from the city TIC unless you hold a regional UnicoCampania fare. The Campania ArteCard 3-day (about €32) bundles regional transport with two free museum entries and is worth it if you do Pompeii plus MANN plus the Certosa.",
+    "permits": "Naples tourist tax runs roughly €1.50–€5 per person per night by accommodation category, paid on site. Pompeii bans backpacks over 30x30x15 cm — use the free Porta Marina deposit. Drones are banned over all archaeological parks.",
+    "health": "Tap water is potable and comes from the Serino aqueduct. Traffic is the real risk — scooters treat pedestrian crossings as advisory; cross with locals. Watch phones on Via Toledo and the Circumvesuviana, which is genuinely the least secure transport in the region.",
+    "gettingThere": null,
+    "other": []
+  },
+  "proTips": [
+    "Book **Cappella Sansevero for 09:00 on the day it opens after a Tuesday closure** — the room holds few people and the first slot is the only quiet one.",
+    "At Pompeii, walk **west to the Villa dei Misteri first** and reverse the standard flow; you will have the frescoes to yourself for twenty minutes while the crowd fills the Forum.",
+    "Take the **Circumvesuviana from Porta Nolana, not Garibaldi** — it is the line's origin station, so you board an empty train and get a seat for the 36 minutes.",
+    "The **Pedamentina di San Martino** should be walked downhill only: 414 steps with the whole bay in front of you, and it deposits you at Corso Vittorio Emanuele for the walk into Chiaia.",
+    "For pizza without the two-hour Sorbillo wait, go to **Da Attilio** in the Pignasecca or **Concettina ai Tre Santi** in Sanità at 12:30 — same quality, local queue.",
+    "The **Cooperativa La Paranza** ticket bundles San Gennaro and San Gaudioso catacombs; the guides are Sanità residents and the money funds the neighbourhood, which is the whole point of the project.",
+    "Buy the **Alibus ticket at a tabaccheria before boarding** — €3 instead of €4, and the driver often has no change.",
+    "Naples closes on a rota: Sansevero and MANN on **Tuesday**, Certosa and Palazzo Reale on **Wednesday**, Fontanelle on **Wednesday**. Plan Tuesday for Sanità and Wednesday for the Centro Storico churches."
+  ],
+  "typeSpecific": {
+    "raw": {
+      "Walkable blocks": "Centro Storico (Via dei Tribunali → Via San Gregorio Armeno → Spaccanapoli/Via Benedetto Croce, a 1.6 km cross of Greek decumani); Sanità (Piazza Cavour → Via Sanità → Palazzo dello Spagnolo → Catacombe di San Gennaro, 1.5 km with 70 m ascent); Quartieri Spagnoli (Via Toledo → Vico Lungo del Gelso, 900 m of grid on a 12% slope); Chiaia (Piazza dei Martiri → Via Chiaia → Lungomare Caracciolo, 2.1 km flat); Vomero (Piazza Vanvitelli → Via Scarlatti → Certosa di San Martino, 1.2 km).",
+      "Transit pass": "the **TIC** integrated ticket covers ANM metro, buses, funiculars and EAV lines inside the city — around €1.50 for 90 minutes, €4.50 daily, €15.80 weekly. Cheaper ANM-only singles exist from about €1.00 but do not cover regional trains.",
+      "Airport transfer": "**Alibus** (ANM) Capodichino → Piazza Garibaldi → Piazza Municipio/Molo Beverello, every 20–25 min, €3 bought in advance at a tabaccheria or €4 from the driver, valid 90 minutes. The taxi flat fare to the centre is posted at the rank.",
+      "Booking timeline": "**Cappella Sansevero** — mandatory advance booking on ticket.museosansevero.it; slots open 60 days out with a second release two days before, and the Veiled Christ hours sell out weeks ahead in spring. **Catacombe di San Gennaro** — guided-only, book 3–7 days on catacombedinapoli.it. **Pompeii** — book 2–5 days on ticketing.colosseo-style official portal (pompeiisites.org). **MANN** and **Certosa** accept same-day.",
+      "Architectural focal points": "the Greek-Roman street grid still legible in the decumani; Sanmartino's *Cristo Velato* (1753) and Queirolo's *Disinganno* net in Cappella Sansevero; Ferdinando Sanfelice's double-flight *scala aperta* at Palazzo dello Spagnolo (1738), the Neapolitan Baroque staircase perfected; Cosimo Fanzago's inlaid marble in the Certosa di San Martino; Gae Aulenti's Museo metro station and the Toledo station by Óscar Tusquets Blanca.",
+      "Eating structure": "pizzerie for lunch (€6–9 and a queue), trattorie for dinner in Sanità and Chiaia, *friggitorie* between. Reservation reality: Michele and Da Attilio take numbers not bookings; 50 Kalò and Sud take reservations.",
+      "Day trip": "**Pompeii** on the **Circumvesuviana Naples–Sorrento line** from Napoli Porta Nolana/Garibaldi to Pompei Scavi–Villa dei Misteri, ~36 min, roughly €3.20 each way; Herculaneum (Ercolano Scavi) is ~20 min and about €2.50."
+    },
+    "surface": null,
+    "distanceKm": null,
+    "elevationM": null,
+    "verticalM": null,
+    "technicalRating": null,
+    "transitPass": "Centro Storico (Via dei Tribunali → Via San Gregorio Armeno → Spaccanapoli/Via Benedetto Croce, a 1.6 km cross of Greek decumani); Sanità (Piazza Cavour → Via Sanità → Palazzo dello Spagnolo → Catacombe di San Gennaro, 1.5 km with 70 m ascent); Quartieri Spagnoli (Via Toledo → Vico Lungo del Gelso, 900 m of grid on a 12% slope); Chiaia (Piazza dei Martiri → Via Chiaia → Lungomare Caracciolo, 2.1 km flat); Vomero (Piazza Vanvitelli → Via Scarlatti → Certosa di San Martino, 1.2 km).",
+    "hutBooking": null,
+    "liftNetwork": null,
+    "snowReliability": null,
+    "windConditions": null,
+    "gpxReady": null,
+    "bookingTimeline": "**Cappella Sansevero** — mandatory advance booking on ticket.museosansevero.it; slots open 60 days out with a second release two days before, and the Veiled Christ hours sell out weeks ahead in spring. **Catacombe di San Gennaro** — guided-only, book 3–7 days on catacombedinapoli.it. **Pompeii** — book 2–5 days on ticketing.colosseo-style official portal (pompeiisites.org). **MANN** and **Certosa** accept same-day.",
+    "audience": null
+  },
+  "packingNotes": [],
+  "whatCouldGoWrong": [],
+  "sources": {
+    "verified": "Cappella Sansevero confirmed against museosansevero.it — €12 full price, 09:00–19:00, closed Tuesdays, mandatory advance booking via ticket.museosansevero.it, tickets released 60 days ahead with a further release two days before visit. Naples tourist tax band (€1.50–€5 per person per night by category) checked against a 2026 Italian city-tax summary. Alibus fare structure (€3 advance / €4 on board) and the TIC integrated ticket concept confirmed from Naples transport guides.",
+    "confidenceNotes": "The TIC fare figures (€1.50 / €4.50 daily / €15.80 weekly) come from a source whose fare table may be several revisions out of date — re-verify against unicocampania.it before publishing. Circumvesuviana fares to Pompei Scavi (~€3.20) and Ercolano (~€2.50) and the Campania ArteCard price (~€32) need re-checking. Pompeii's €22 admission, MANN's €22 and the Catacombe di San Gennaro's €14 are 2025–26 rates subject to January revision. Certosa di San Martino and Palazzo Reale closure days shift with staffing; confirm on the ministry calendar. Pizzeria queue policies (Sorbillo, Michele, Da Attilio) change seasonally."
+  },
+  "verifyFlags": [],
+  "verifyFlagCount": 0,
+  "volatilePricing": false,
+  "wordCount": 2471,
+  "dataVintage": 2026,
+  "provenance": {
+    "batch": "southern-mediterranean",
+    "sourceFile": "carta-dataset/trips/city-italy-naples.md",
+    "sourceFormat": "md with '## Metadata' bullet block (one file per trip)",
+    "sourceId": "city-italy-naples",
+    "ingestedAt": "2026-09-02",
+    "synthesized": false
+  }
+}

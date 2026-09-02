@@ -1,0 +1,318 @@
+{
+  "id": "fr-road-trip-route-des-grandes-alpes",
+  "sourceId": "fr-road-trip-route-des-grandes-alpes",
+  "slug": "fr-road-trip-route-des-grandes-alpes",
+  "title": "Route des Grandes Alpes — Lake Geneva to the Mediterranean",
+  "country": "France",
+  "countryCode": "FR",
+  "countries": [
+    {
+      "name": "France",
+      "code": "FR"
+    }
+  ],
+  "isMultiCountry": false,
+  "region": "Western & Central Europe",
+  "regionKey": "western-central",
+  "subRegion": "Haute-Savoie, Savoie, Hautes-Alpes, Alpes-Maritimes",
+  "tripType": "Road Trips & Scenic Drives",
+  "tripTypeId": 5,
+  "tripTypeSlug": "road-trip",
+  "durationDays": 7,
+  "bestPeriod": {
+    "months": [
+      6,
+      7,
+      8,
+      9
+    ],
+    "monthNames": [
+      "June",
+      "July",
+      "August",
+      "September"
+    ],
+    "window": null,
+    "note": "Iseran and Galibier normally open between late May and mid-June and close with the first heavy snow in late October; the full route is only continuous in that window.",
+    "avoid": null,
+    "raw": null
+  },
+  "budgetTier": "€€€",
+  "budgetTierRange": [
+    3,
+    3
+  ],
+  "budgetTierRaw": "€€€",
+  "budget": {
+    "currency": "EUR",
+    "totalEur": {
+      "low": 1250,
+      "high": 1850
+    },
+    "totalNote": null,
+    "breakdown": {
+      "accommodation": {
+        "lowEur": 600,
+        "highEur": 880,
+        "note": null
+      },
+      "food": {
+        "lowEur": 280,
+        "highEur": 400,
+        "note": null
+      },
+      "transport": {
+        "lowEur": 280,
+        "highEur": 420,
+        "note": null
+      },
+      "activities": {
+        "lowEur": 90,
+        "highEur": 150,
+        "note": null
+      }
+    },
+    "perDayEur": {
+      "low": 179,
+      "high": 264
+    }
+  },
+  "profile": {
+    "difficulty": 3,
+    "difficultyLabel": "Active",
+    "difficultyNote": null,
+    "fitnessLevel": "Easy",
+    "crowdLevel": "High",
+    "familyFriendly": false,
+    "carRequired": true
+  },
+  "basecamps": [
+    "Thonon-les-Bains to Menton, one night per stage"
+  ],
+  "gatewayAirport": "Genève (GVA), out from Nice (NCE)",
+  "gatewayAirportCode": "GVA",
+  "languages": [
+    "French"
+  ],
+  "currency": "EUR",
+  "emergencyNumber": "112",
+  "coordinates": {
+    "lat": 46.3705,
+    "lon": 6.4798,
+    "precision": "city",
+    "matchedPlace": "Thonon-les-Bains",
+    "source": "geonames (geonamescache, cities > 15k)"
+  },
+  "tags": [
+    "alpine-passes",
+    "one-way-route",
+    "hairpins",
+    "col-de-liseran",
+    "mediterranean-finish"
+  ],
+  "summary": "The classic 720 km traverse from Lake Geneva to Menton across sixteen cols, driven north to south in seven stages with the light behind you.",
+  "summaryGenerated": false,
+  "hook": "Sixteen cols, two national parks and a finish where the last hairpin drops into lemon trees. The Route des Grandes Alpes is a signposted itinerary, not a motorway, and it rewards short days: 100 km of Savoyard hairpins takes longer than 300 km of autoroute and leaves you far more tired.",
+  "snapshot": {
+    "Country": "France",
+    "Base(s)": "La Clusaz, Bourg-Saint-Maurice, Valloire, Guillestre, Isola, Sospel",
+    "Trip Type": "Road Trips & Scenic Drives",
+    "Duration": "7 days",
+    "Best Period": "Mid-June to early October",
+    "Total Distance / Terrain": "approx. 775 km; sixteen cols, sustained 7–10% gradients, max altitude 2,764 m",
+    "Getting There": "Fly into Genève (GVA), pick up on the French sector, drop at Nice (NCE)",
+    "Who It Suits": "Confident drivers; not for nervous passengers or anyone towing"
+  },
+  "itinerary": [
+    {
+      "day": 1,
+      "title": "Léman to the Aravis",
+      "morning": "Collect the car at Geneva airport's **French sector**. This matters: the French side has its own arrivals hall and car-hire desks, and hiring there keeps you out of Switzerland entirely, so no Swiss motorway vignette and no cross-border clause. Drive to Thonon-les-Bains on the lake shore, the official kilometre zero.",
+      "afternoon": "Up the Dranse valley on the D902 to Morzine and over the **Col des Gets** (1,163 m), an easy wooded opener with gentle gradients. Down to Taninges and Cluses, then the **Col de la Colombière** (1,618 m), where the last 2 km hit 10% under the Aiguille de Pointe Percée.",
+      "evening": "Sleep at Le Grand-Bornand or La Clusaz. Both have free village parking outside July and August.",
+      "dayStats": "135 km · 3h00 driving · 2 cols · max altitude 1,618 m.",
+      "sleep": null
+    },
+    {
+      "day": 2,
+      "title": "Aravis, Saisies and the Cormet",
+      "morning": "The **Col des Aravis** (1,486 m) opens with the Mont Blanc massif framed dead ahead from the chapel at the summit — the best free viewpoint of the first half. Down to Flumet.",
+      "afternoon": "The **Col des Saisies** (1,650 m) is broad, grassy and undramatic; the payoff is the **Cormet de Roselend** (1,968 m) beyond Beaufort. Stop at the Barrage de Roselend layby above the turquoise reservoir, then again at the Plan de la Laie. The descent to Bourg-Saint-Maurice is 20 km of tight, unguarded hairpins — take it slowly and use engine braking.",
+      "evening": "Bourg-Saint-Maurice, 840 m. Buy Beaufort AOP cheese from the cooperative in Beaufort on the way through; it will not survive to Menton, which is the point.",
+      "dayStats": "95 km · 2h40 driving · 3 cols · max altitude 1,968 m.",
+      "sleep": null
+    },
+    {
+      "day": 3,
+      "title": "Col de l'Iseran",
+      "morning": "Up the Tarentaise on the D902 through Sainte-Foy and Val-d'Isère to the **Col de l'Iseran**, 2,764 m — the highest paved pass in France. Opening is typically late May to mid-June and closure is late October; the Savoie département publishes daily status, and a June opening does not mean a June without snow banks. Gradients are steady at 6–7% but the air at the top is thin and the wind is constant.",
+      "afternoon": "Descend to **Bonneval-sur-Arc**, a stone-and-lauze village in the Vanoise with cars banned from the core — park at the entrance lot. Then down the Maurienne through Lanslebourg and Modane.",
+      "evening": "Turn up to **Valloire** via Saint-Michel-de-Maurienne and the **Col du Télégraphe** (1,566 m), a 12 km wooded climb averaging 7%. Fill the tank in Modane: there is no fuel between here and Briançon on the pass route.",
+      "dayStats": "130 km · 3h30 driving · 2 cols · max altitude 2,764 m.",
+      "sleep": null
+    },
+    {
+      "day": 4,
+      "title": "Galibier and Izoard",
+      "morning": "The **Col du Galibier**, 2,642 m, from Valloire: 18 km at an average of about 7%, with the final kilometre above the tunnel at 10–12%. The summit road over the top is the scenic option; the 1891 tunnel beneath it is narrow, single-file by lights and closed in poor weather. Galibier normally opens in early June. Summit parking is a handful of bays either side — it is a stop-and-go place, not a picnic spot.",
+      "afternoon": "Down to the **Col du Lautaret** (2,058 m), which stays open most of the winter and carries the Jardin Alpin botanical garden. Then Briançon, and up the **Col d'Izoard** (2,360 m). The southern descent through the **Casse Déserte** — a lunar scree bowl with the Coppi and Bobet memorial — is the single most photographed stretch of the route. Park in the marked bays, not on the shoulder.",
+      "evening": "Down the Guil to Château-Ville-Vieille and Guillestre.",
+      "dayStats": "105 km · 3h20 driving · 3 cols · max altitude 2,642 m.",
+      "sleep": null
+    },
+    {
+      "day": 5,
+      "title": "Vars and the Bonette",
+      "morning": "The **Col de Vars** (2,109 m) climbs out of Guillestre in wide, well-surfaced curves past the Refuge Napoléon, one of the chain of shelters ordered along these cols in 1854. Descend to Barcelonnette in the Ubaye, an alpine town with Mexican villas built by returning emigrants.",
+      "afternoon": "The **Col de la Bonette**, 2,715 m, with the loop road around the **Cime de la Bonette** at 2,802 m — the highest asphalt in France, though the pass itself is lower than the Iseran. The loop is narrow, unguarded and single-track in places, with no barrier on the drop side. Open roughly June to October.",
+      "evening": "Down the Tinée to Isola. The valley road runs through rockfall galleries and is dark by 19:00 in September.",
+      "dayStats": "140 km · 3h50 driving · 2 cols plus the Cime loop · max altitude 2,802 m.",
+      "sleep": null
+    },
+    {
+      "day": 6,
+      "title": "Saint-Martin, Turini and the Mercantour edge",
+      "morning": "Down the Tinée to Saint-Sauveur, then up the **Col Saint-Martin** (1,500 m) into the Valdeblore. Larch forest, hairpins, almost no traffic — the quietest driving of the week.",
+      "afternoon": "Drop into the Vésubie at Saint-Martin-Vésubie, then climb the D70 to the **Col de Turini** (1,607 m) through 34 numbered bends of beech forest. This is the Monte-Carlo Rally's night stage; drive it as if it is not. Descend to Moulinet and Sospel.",
+      "evening": "Sospel, 350 m, on the Bévéra with its tolled medieval bridge. Mediterranean air arrives suddenly here — olives, cicadas, a 20°C swing from this morning.",
+      "dayStats": "120 km · 3h30 driving · 2 cols · max altitude 1,607 m.",
+      "sleep": null
+    },
+    {
+      "day": 7,
+      "title": "Castillon and the sea",
+      "morning": "The **Col de Castillon** (706 m) is the last one, a short green climb through the Alpes-Maritimes hinterland. Then the descent to **Menton**, where the route officially ends at the seafront. Swim, then buy citrons de Menton at the covered Marché des Halles.",
+      "afternoon": "The 30 km along the coast to Nice can be done on the Basse Corniche for the views or the A8 for speed. The A8 is tolled — roughly €4–€5 for this stretch — and Nice sits inside a low-emission zone requiring a Crit'Air sticker.",
+      "evening": "Drop the car at Nice airport. Refuel before the terminal: airport-adjacent stations charge a heavy premium.",
+      "dayStats": "70 km · 1h40 driving · 1 col · max altitude 706 m.",
+      "sleep": null
+    }
+  ],
+  "accommodationStrategy": [
+    {
+      "rank": 1,
+      "name": "Hôtel A la Pastourelle",
+      "style": "Village hotel",
+      "location": "Bonneval-sur-Arc",
+      "description": "Inside a protected Vanoise village where cars stay at the edge, which means silence after the day-trippers leave and a 30-minute head start on the Iseran in the morning. Simple rooms, a kitchen that feeds walkers, and parking in the village lot ten minutes' walk away.",
+      "booking": "three months for July and August; the village has very few beds.",
+      "priceNote": "€95–€150 per night for two"
+    },
+    {
+      "rank": 2,
+      "name": "Refuge Napoléon",
+      "style": "Historic pass refuge",
+      "location": "Col de Vars",
+      "description": "One of the 1850s shelters built along the imperial road, now run as a mountain inn at 2,109 m with a bar, dormitories and rooms. Sleeping on a col rather than in the valley gives you the pass at dawn and at dusk with no traffic on it.",
+      "booking": "two months; it closes outside the summer window.",
+      "priceNote": "€80–€130 per night for two, half board typical"
+    },
+    {
+      "rank": 3,
+      "name": "Hôtel des Étrangers",
+      "style": "Family hotel",
+      "location": "Sospel",
+      "description": "A long-established hotel in the last valley town before the coast, with its own parking and a pool — which after six days of hairpins is not a frivolity. Ten minutes from the Col de Castillon and forty from Nice airport.",
+      "booking": "six weeks.",
+      "priceNote": "€90–€140 per night for two"
+    }
+  ],
+  "logistics": {
+    "connectivity": null,
+    "emergency": "112 everywhere. Mountain rescue is the PGHM, reached through 112. Give a GPS position; valley names repeat across départements.",
+    "weather": null,
+    "bookingWindows": null,
+    "money": null,
+    "transportRules": null,
+    "permits": null,
+    "health": null,
+    "gettingThere": null,
+    "other": [
+      {
+        "label": "Tolls",
+        "text": "France charges **péage** on autoroutes only; every col here is free. You meet péage on the A8 near Nice and, if used, the A40/A41 approach — take a ticket, pay on exit by card. Mont-Blanc and Fréjus tunnels are separate and expensive; neither is needed."
+      },
+      {
+        "label": "Crit'Air",
+        "text": "France's air-quality sticker is compulsory in the low-emission zones of Nice, Grenoble, Lyon and Aix-Marseille, and during pollution episodes elsewhere. It costs about €4 from certificat-air.gouv.fr and takes days to arrive by post — order before you fly, or confirm the rental already carries one."
+      },
+      {
+        "label": "Rental and drop fees",
+        "text": "Picking up in Geneva's French sector avoids the Swiss annual motorway vignette (CHF 40, no short-term option) and Swiss cross-border clauses. A Geneva-to-Nice one-way drop typically runs €150–€400; a same-country drop from Annecy or Lyon is cheaper. Italy is 15 km from Menton — check the contract if you plan to cross."
+      },
+      {
+        "label": "Pass status",
+        "text": "Départements publish live col openings: Savoie for Iseran and Galibier, Hautes-Alpes for Izoard and Vars, Alpes-Maritimes for Bonette and Turini. Check the morning of, not the week before."
+      },
+      {
+        "label": "Emergencies",
+        "text": "112 everywhere. Mountain rescue is the PGHM, reached through 112. Give a GPS position; valley names repeat across départements."
+      },
+      {
+        "label": "Fuel",
+        "text": "The route has real gaps. Fill in Cluses, Bourg-Saint-Maurice, Modane, Briançon, Barcelonnette and Saint-Étienne-de-Tinée. Nothing on Iseran, Galibier, Izoard or Bonette, and mountain stations close at 19:00 and on Sunday afternoons."
+      },
+      {
+        "label": "Opening-hour traps",
+        "text": "Village restaurants stop lunch at 13:30 and dinner at 21:00, and many close Sunday evening and Monday. Buy bread by 12:00."
+      }
+    ]
+  },
+  "proTips": [
+    "Drive north to south. The sun sits behind you on the southern descents, the gradients suit the loaded car better, and you finish at sea level in warm weather rather than climbing into cold.",
+    "Be on the Iseran and the Galibier before 09:30. Cyclists, camper vans and coaches all bunch between 10:00 and 16:00, and the summit car parks hold very few vehicles.",
+    "The Galibier tunnel is the bad-weather bypass, not the shortcut. If it is shut and the summit road is open you have lost nothing; if the summit is shut the tunnel usually is too.",
+    "At the Casse Déserte on Izoard, stop at the *second* layby heading south. The first is the busy one; the second frames the Coppi–Bobet memorial with the pinnacles behind.",
+    "If Bonette is shut, the **Col de la Cayolle** (2,326 m) is the parallel option from Barcelonnette to Guillaumes and rejoins the route near Beuil."
+  ],
+  "typeSpecific": {
+    "raw": {
+      "Total Distance / Terrain": "approx. 775 km; sixteen cols, sustained 7–10% gradients, max altitude 2,764 m",
+      "Who It Suits": "Confident drivers; not for nervous passengers or anyone towing"
+    },
+    "surface": "approx. 775 km; sixteen cols, sustained 7–10% gradients, max altitude 2,764 m",
+    "distanceKm": 775,
+    "elevationM": null,
+    "verticalM": null,
+    "technicalRating": null,
+    "transitPass": null,
+    "hutBooking": null,
+    "liftNetwork": null,
+    "snowReliability": null,
+    "windConditions": null,
+    "gpxReady": null,
+    "bookingTimeline": null,
+    "audience": "Confident drivers; not for nervous passengers or anyone towing"
+  },
+  "packingNotes": [
+    "A jacket that works at 2,800 m in wind: the Cime de la Bonette can be 5°C in July while Menton is 30°C.",
+    "Swimwear packed at the top of the bag for day 7 — and for the Lac de Roselend if you are brave.",
+    "Sunglasses with real UV protection; high-col glare through a windscreen is punishing.",
+    "Motion-sickness tablets for passengers. The Turini descent alone has 34 numbered bends.",
+    "Paper map of the Alpes du Sud; signal fails in the Ubaye and upper Tinée.",
+    "Comfortable shoes for Bonneval-sur-Arc and the Jardin Alpin at Lautaret."
+  ],
+  "whatCouldGoWrong": [
+    "**A col is closed by late snow or rockfall.** Fallback: the Maurienne and Durance valleys run parallel to almost the whole route; you can bypass Iseran via Modane and Galibier via the Lautaret with no backtracking.",
+    "**Overheating brakes on a long descent.** Fallback: use second gear from the summit, not the pedal, and pull into a layby if you smell them. The Cormet de Roselend and the Bonette are the two that punish riding the brakes.",
+    "**Rain and cloud on the big passes.** Fallback: swap the day — spend it in Briançon's Vauban upper town or Barcelonnette, and take the col the following morning. The route is short enough to absorb one lost day.",
+    "**The one-way drop fee comes as a surprise at Nice.** Fallback: confirm the fee in writing at pickup, and compare with returning to Geneva via the A51/A43, which is 6h30 of autoroute but sometimes cheaper than the drop."
+  ],
+  "sources": {
+    "verified": null,
+    "confidenceNotes": null
+  },
+  "verifyFlags": [],
+  "verifyFlagCount": 0,
+  "volatilePricing": false,
+  "wordCount": 2105,
+  "dataVintage": 2026,
+  "provenance": {
+    "batch": "western-central",
+    "sourceFile": "cartatripsv1/trips/fr-road-trip-route-des-grandes-alpes.md",
+    "sourceFormat": "md+yaml-frontmatter (one file per trip)",
+    "sourceId": "fr-road-trip-route-des-grandes-alpes",
+    "ingestedAt": "2026-09-02",
+    "synthesized": false
+  }
+}

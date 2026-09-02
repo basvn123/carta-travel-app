@@ -1,0 +1,312 @@
+{
+  "id": "de-trail-running-berchtesgaden",
+  "sourceId": "de-trail-running-berchtesgaden",
+  "slug": "de-trail-running-berchtesgaden",
+  "title": "Watzmann Weeks — Running the Berchtesgaden Ridges",
+  "country": "Germany",
+  "countryCode": "DE",
+  "countries": [
+    {
+      "name": "Germany",
+      "code": "DE"
+    }
+  ],
+  "isMultiCountry": false,
+  "region": "Western & Central Europe",
+  "regionKey": "western-central",
+  "subRegion": "Berchtesgadener Land, Bavaria",
+  "tripType": "Trail Running",
+  "tripTypeId": 2,
+  "tripTypeSlug": "trail-running",
+  "durationDays": 7,
+  "bestPeriod": {
+    "months": [
+      6,
+      7,
+      8,
+      9
+    ],
+    "monthNames": [
+      "June",
+      "July",
+      "August",
+      "September"
+    ],
+    "window": null,
+    "note": "North-facing gullies below the Watzmann and Hochkalter hold old snow into late June.",
+    "avoid": null,
+    "raw": null
+  },
+  "budgetTier": "€€",
+  "budgetTierRange": [
+    2,
+    2
+  ],
+  "budgetTierRaw": "€€",
+  "budget": {
+    "currency": "EUR",
+    "totalEur": {
+      "low": 780,
+      "high": 1180
+    },
+    "totalNote": null,
+    "breakdown": {
+      "accommodation": {
+        "lowEur": 380,
+        "highEur": 560,
+        "note": null
+      },
+      "food": {
+        "lowEur": 220,
+        "highEur": 320,
+        "note": null
+      },
+      "transport": {
+        "lowEur": 90,
+        "highEur": 150,
+        "note": null
+      },
+      "activities": {
+        "lowEur": 90,
+        "highEur": 150,
+        "note": null
+      }
+    },
+    "perDayEur": {
+      "low": 111,
+      "high": 169
+    }
+  },
+  "profile": {
+    "difficulty": 4,
+    "difficultyLabel": "Demanding",
+    "difficultyNote": null,
+    "fitnessLevel": "Demanding",
+    "crowdLevel": "Moderate",
+    "familyFriendly": false,
+    "carRequired": false
+  },
+  "basecamps": [
+    "Schönau am Königssee"
+  ],
+  "gatewayAirport": "Salzburg (SZG)",
+  "gatewayAirportCode": "SZG",
+  "languages": [
+    "German"
+  ],
+  "currency": "EUR",
+  "emergencyNumber": "112",
+  "coordinates": {
+    "lat": 52.5244,
+    "lon": 13.4105,
+    "precision": "country",
+    "matchedPlace": "Berlin",
+    "source": "country capital fallback"
+  },
+  "tags": [
+    "alpine-running",
+    "national-park",
+    "vertical-gain",
+    "hut-support",
+    "lift-assisted"
+  ],
+  "summary": "A coached week of ridge running in Berchtesgaden National Park, built around one big Watzmann day and supported by huts, boats and buses.",
+  "summaryGenerated": false,
+  "hook": "Berchtesgaden gives you more vertical per kilometre than almost anywhere in Germany, and it gives you an escape route from nearly all of it — a boat, a gondola, a valley track. That combination is what makes it a training week rather than a survival week. You build for three days, you spend everything on one, and you let the Königssee put you back together.",
+  "snapshot": {
+    "Country": "Germany (Bavaria)",
+    "Base(s)": "Schönau am Königssee, with runs from Ramsau, Hintersee and Wimbachbrücke",
+    "Trip Type": "Trail Running",
+    "Duration": "7 days",
+    "Best Period": "Late June to late September",
+    "Budget Tier": "€€",
+    "Total Distance / Terrain": "Approx. 105–115 km and 6,000–6,500 m of ascent; limestone, root, scree and cabled rock, T1–T3",
+    "Getting There": "Fly Salzburg (SZG), bus 840 to Berchtesgaden Hbf (approx. 50 min), then RVO bus 841/842 to Schönau",
+    "Who It Suits": "Runners comfortable with sustained 1,000 m+ climbs, hands-on-rock scrambling and loose descents"
+  },
+  "itinerary": [
+    {
+      "day": 1,
+      "title": "Salt, Water, Legs",
+      "morning": "Land, take the bus down and drop bags in Schönau. Ask for the Berchtesgadener Land Gästekarte at check-in — it covers the RVO valley buses and pays for itself before Thursday.",
+      "afternoon": "Shakeout on the Soleleitungsweg, the 19th-century brine-pipeline path between Berchtesgaden and Ramsau. It is a graded, largely traversing forest track — T1, fully runnable, soft underfoot, with a handful of short tunnels and constant views to the Watzmann's east face. Run it out to Ramsau and back to the bus at the Pfarrkirche St. Sebastian.",
+      "evening": "Walk the Königssee shore to Malerwinkel, eat early, sleep long. At 600 m there is nothing to acclimatise to — this week's adaptation is muscular, not respiratory.",
+      "dayStats": "13 km, 320 m ascent, T1. Water: fountain beside St. Sebastian in Ramsau, reliable all summer.",
+      "sleep": null
+    },
+    {
+      "day": 2,
+      "title": "Grünstein, the Honest Warm-Up",
+      "morning": "From the Königssee car park take the Grünstein trail via the Kühroint junction. It is 700 m of steady, rooty climbing to the Grünsteinhütte at 1,220 m, then a short scramble to the 1,304 m cross. Grade T2, with one exposed step near the top; the via ferrata variants alongside are for climbers, not runners — stay on the walkers' path.",
+      "afternoon": "Descend the Rabensteinsteig side towards Schönau — steeper, looser, good practice for controlling cadence on limestone gravel.",
+      "evening": "Cold-water legs in the Königssee at the Seelände, then dinner in Schönau. This is a nervous-system day, not a fitness day.",
+      "dayStats": "12 km, 780 m ascent, T2. Water: Grünsteinhütte, staffed roughly May to October, closed in poor weather. **Bail-out:** the ascent path is the descent path — no committing terrain.",
+      "sleep": null
+    },
+    {
+      "day": 3,
+      "title": "Jenner to Schneibstein, Lift-Assisted Vert",
+      "morning": "Jennerbahn gondola from Königssee to the top station, then run the ridge to the Jenner summit (1,874 m) before dropping to the Königsbergalm saddle. Continue south to Torrener Joch and the Carl-von-Stahl-Haus (1,733 m), which sits exactly on the German–Austrian border.",
+      "afternoon": "From the Stahlhaus climb Schneibstein (2,276 m) — an open, stony ridge at T2, runnable in long sections, with the Hoher Göll filling the eastern sky. Return over the Joch and descend the Königsbachalm track to Hinterbrand, then the forest road to Königssee.",
+      "evening": "Refuel properly. Tomorrow is deliberately easy so that Friday can be hard.",
+      "dayStats": "19 km, 950 m ascent (plus 700 m bought with the gondola), 1,600 m descent, T2. Water: Carl-von-Stahl-Haus (staffed nearly year-round, most dependable water on the ridge) and Königsbachalm (Almsommer only, roughly mid-June to mid-September). **Bail-out:** ride the Jennerbahn back down instead of descending on foot.",
+      "sleep": null
+    },
+    {
+      "day": 4,
+      "title": "Hintersee and the Zauberwald, Recovery Pace",
+      "morning": "Bus to Hintersee. Loop the lake, then run the Zauberwald — a boulder-strewn moss forest on the Ramsauer Ache — up to the Klausbachtal entrance. Flat, cushioned, T1.",
+      "afternoon": "Continue up the Klausbachtal valley road as far as the hanging bridge, then turn. If your legs feel good, the temptation is the Blaueis climb; resist it, that is Saturday's job.",
+      "evening": "Ramsau for the postcard view of the church against the Reiter Alpe, then early bed.",
+      "dayStats": "16 km, 300 m ascent, T1, all runnable. Water: taps at the Hintersee car park area and the Klausbachtal information point; the lakeside guesthouses serve non-guests. **Bail-out:** the Klausbachtal shuttle and RVO bus 846 both return to Ramsau.",
+      "sleep": null
+    },
+    {
+      "day": 5,
+      "title": "Peak Day: Wimbach to the Watzmannhaus and Hocheck",
+      "morning": "Leave at first light from Wimbachbrücke. Through the Wimbachklamm gorge, then break right onto the Watzmann path. The climb to the Watzmannhaus (1,930 m) via the Stubenalm and Mitterkaseralm is 1,300 m of relentless, well-graded T2 — forest, then meadow, then limestone terrace.",
+      "afternoon": "From the hut, the summit of Hocheck (2,651 m) is a further 720 m on marked rock, T3, with cables on the final rib and real exposure to the east. It is a hike-fast section, not a running section. Return the same way to the Watzmannhaus, then traverse the balcony path to Kührointhütte and descend the Rinnkendlsteig or the Kühroint forest road to the Königssee.",
+      "evening": "Food and salt in Schönau. Plan nothing after 20:00.",
+      "dayStats": "26 km, 2,150 m ascent, T3 at the top, T2 below. Water: Watzmannhaus (bought, not free — carry cash), Kührointhütte (staffed roughly late May to October), Wimbachschloss on the alternative valley return. **Bail-out:** turn at the Watzmannhaus, or descend Kühroint and take the last Königssee boat; RVO buses run from Wimbachbrücke and Königssee until evening.",
+      "sleep": null
+    },
+    {
+      "day": 6,
+      "title": "Blaueis, the Northernmost Glacier",
+      "morning": "Bus to Hintersee. Climb the Blaueishütte path (1,680 m) under the Hochkalter's north face — 1,050 m of steep, stepped, partly cabled T3 through the Schärtenalm. The glacier cirque above the hut still holds ice; it is the northernmost in the Alps and it is visibly shrinking.",
+      "afternoon": "Optional out-and-back towards the Blaueisscharte for another 250 m, then a controlled descent — fast below, not above.",
+      "evening": "Ramsau. Eat, stretch, pack down.",
+      "dayStats": "15 km, 1,150 m ascent, T3. Water: Schärtenalm (Almsommer only) and Blaueishütte (staffed roughly late May to mid-October, water sold). **Bail-out:** single valley, single path back to Hintersee and bus 846.",
+      "sleep": null
+    },
+    {
+      "day": 7,
+      "title": "Kehlstein and a Flat Finish",
+      "morning": "Obersalzberg bus, then the Kehlstein road walk-run to the Kehlsteinhaus at 1,834 m — closed to private cars, served by its own bus, and a clean 800 m of graded tarmac if you want one last climb. The Hoher Göll fills the view south.",
+      "afternoon": "Bus down, then a shakeout: there is no shore path to St. Bartholomä, so take the boat and jog the peninsula loop past the pilgrimage church.",
+      "evening": "Bus 840 to Salzburg. Arrive at the airport with wrecked quads and a much better descent technique than you had on Monday.",
+      "dayStats": "11 km, 850 m ascent (mostly road), T1. Water: Kehlsteinhaus terrace, open daily in season.",
+      "sleep": null
+    }
+  ],
+  "accommodationStrategy": [
+    {
+      "rank": 1,
+      "name": "Hotel Zechmeisterlehen",
+      "style": "Traditional Alpine Hotel",
+      "location": "Schönau am Königssee",
+      "description": "Ten minutes on foot from the Königssee bus terminus, which is the trailhead for Grünstein, Jenner and Kühroint, so three of the week's seven days start without transport. It has a pool and sauna, which matter more than they sound after Day 5, and a drying room for the inevitable afternoon storm.",
+      "booking": "February for July and August dates.",
+      "priceNote": "€130–€190 per night for two, half board available"
+    },
+    {
+      "rank": 2,
+      "name": "Alpenhotel Denninglehen",
+      "style": "Mountain Guesthouse",
+      "location": "Oberau above Berchtesgaden",
+      "description": "Perched at 900 m on the Obersalzberg side, with a wellness area and a genuinely quiet setting. It suits runners who want the Kehlstein and Rossfeld side of the valley on the doorstep and do not mind a bus down to the Königssee trailheads.",
+      "booking": "March.",
+      "priceNote": "€140–€200 per night for two"
+    }
+  ],
+  "logistics": {
+    "connectivity": null,
+    "emergency": "Emergency is **112** across Germany. Bergwacht Bayern is dispatched through 112 — give the trail name, the nearest hut, and your grid position from the map app before your battery dies.",
+    "weather": null,
+    "bookingWindows": null,
+    "money": null,
+    "transportRules": null,
+    "permits": null,
+    "health": null,
+    "gettingThere": null,
+    "other": [
+      {
+        "label": null,
+        "text": "Emergency is **112** across Germany. Bergwacht Bayern is dispatched through 112 — give the trail name, the nearest hut, and your grid position from the map app before your battery dies."
+      },
+      {
+        "label": null,
+        "text": "Mobile coverage is good on the Jenner and Kehlstein ridges, patchy in the Wimbachgries, absent in the lower Klausbachtal gorge."
+      },
+      {
+        "label": null,
+        "text": "Berchtesgaden National Park rules are enforced: stay on marked paths, no wild camping, no bivouacs, no drones anywhere in the park, dogs on a lead. Rangers do check."
+      },
+      {
+        "label": null,
+        "text": "Afternoon thunderstorms are the defining hazard from mid-July. Build every day around being off the ridges by 14:00; the DWD WarnWetter app and the Bergwetter forecast from the Alpenverein are the two to trust."
+      },
+      {
+        "label": null,
+        "text": "Huts want cash. The Watzmannhaus, Blaueishütte and Kührointhütte have limited or no card acceptance and no free drinking water — budget €4–€6 per litre bought at altitude."
+      },
+      {
+        "label": null,
+        "text": "The Königssee boats are electric, timetabled and stop early — last departures from St. Bartholomä are usually mid- to late afternoon in shoulder season. Do not plan a day that depends on a boat you have not checked that morning."
+      },
+      {
+        "label": null,
+        "text": "The Gästekarte from your accommodation gives free RVO valley bus travel — just show it to the driver."
+      }
+    ]
+  },
+  "proTips": [
+    "Take the first Jennerbahn cabin of the day. It buys 700 m of climb, puts you on the Schneibstein ridge before the cloud builds, and halves the crowding on the summit path.",
+    "Run the Königssee's east shore in the morning and the Wimbach side in the afternoon — the valley is deep and narrow, and the light and shade flip hard around midday.",
+    "The Rinnkendlsteig off Kühroint is closed after heavy rain and after rockfall; check the notice at the Königssee trailhead before committing to it as your Day 5 descent, and default to the Kühroint forest road if in doubt.",
+    "If Friday's forecast is bad, swap Day 5 and Day 6 — Blaueis is a single-valley objective with a hut halfway, far safer in unsettled weather than the Watzmann's east ridge.",
+    "The Wimbachgries riverbed is 6 km of near-flat gravel at 1,200 m — an ideal tempo session on a light day."
+  ],
+  "typeSpecific": {
+    "raw": {
+      "Total Distance / Terrain": "Approx. 105–115 km and 6,000–6,500 m of ascent; limestone, root, scree and cabled rock, T1–T3",
+      "Who It Suits": "Runners comfortable with sustained 1,000 m+ climbs, hands-on-rock scrambling and loose descents"
+    },
+    "surface": "Approx. 105–115 km and 6,000–6,500 m of ascent; limestone, root, scree and cabled rock, T1–T3",
+    "distanceKm": 105,
+    "elevationM": null,
+    "verticalM": null,
+    "technicalRating": null,
+    "transitPass": null,
+    "hutBooking": null,
+    "liftNetwork": null,
+    "snowReliability": null,
+    "windConditions": null,
+    "gpxReady": null,
+    "bookingTimeline": null,
+    "audience": "Runners comfortable with sustained 1,000 m+ climbs, hands-on-rock scrambling and loose descents"
+  },
+  "packingNotes": [
+    "Shoes with a real lug pattern and a stiff-ish rock plate. Berchtesgaden limestone is sharp, wet in the morning and polished on the popular sections.",
+    "Lightweight gloves for the cabled sections on Hocheck and above the Blaueishütte — the steel is cold and greasy.",
+    "A 1.5 l carrying capacity minimum. Between the Watzmannhaus and the valley there is no reliable water on Day 5.",
+    "Cash in small notes for hut drinks and the Königssee boat if you buy on the day.",
+    "Wind shell and a warm layer, always. The Schneibstein ridge at 2,276 m can be fifteen degrees colder than Schönau.",
+    "Head torch even for day runs: the Wimbachklamm tunnels are dark, and any Day 5 overrun finishes in forest.",
+    "Poles, foldable. The 1,300 m Watzmann climb and the Blaueis descent both justify them."
+  ],
+  "whatCouldGoWrong": [
+    "**Thunderstorm on the Watzmann ridge.** The Hocheck section is cabled and exposed. The fallback is to stop at the Watzmannhaus, sit it out on the terrace, and descend to Kühroint once the cell passes; the hut will take you for the night if it does not.",
+    "**Old snow in the north-facing gullies.** Below the Blaueisscharte and on the Schneibstein's north side snow can survive into early July. Without microspikes, turn around — the runout is rock.",
+    "**Hut closed or full.** Alm kitchens close in bad weather and outside the Almsommer. Carry the full day's water on any route where your plan relies on a single hut.",
+    "**Missing the last Königssee boat.** The shore is not walkable from St. Bartholomä. Check the final departure time in the morning and set a phone alarm for one hour before it.",
+    "**Bus timetable thinning in September.** RVO frequencies drop after the Bavarian school holidays. On late-season days finishing at Hintersee or Wimbachbrücke, confirm the last service before you start running."
+  ],
+  "sources": {
+    "verified": null,
+    "confidenceNotes": null
+  },
+  "verifyFlags": [],
+  "verifyFlagCount": 0,
+  "volatilePricing": false,
+  "wordCount": 2024,
+  "dataVintage": 2026,
+  "provenance": {
+    "batch": "western-central",
+    "sourceFile": "cartatripsv1/trips/de-trail-running-berchtesgaden.md",
+    "sourceFormat": "md+yaml-frontmatter (one file per trip)",
+    "sourceId": "de-trail-running-berchtesgaden",
+    "ingestedAt": "2026-09-02",
+    "synthesized": false
+  }
+}

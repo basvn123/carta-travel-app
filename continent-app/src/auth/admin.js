@@ -69,6 +69,14 @@ export const adminHealth = () => call('admin_health');
 
 export const adminAnalytics = () => call('admin_analytics');
 
+/**
+ * The pass funnel: offers shown, offers dismissed, buy buttons pressed, and
+ * passes actually granted. Counts only; there is no RPC that returns a single
+ * event, deliberately (see migration 022_paywall_events.sql).
+ */
+export const adminPaywallFunnel = (days = 30) =>
+  call('admin_paywall_funnel', { p_days: days });
+
 export const adminListFeedback = (status, limit = 50, offset = 0) =>
   call('admin_list_feedback', { p_status: status || null, p_limit: limit, p_offset: offset });
 

@@ -1,8 +1,9 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useI18n } from '../i18n/index.jsx';
+import { NearbyOutdoors } from './NearbyOutdoors.jsx';
 import {
   beachHeadline, beachWhy, beachTags, bestForLabel, componentLabel,
-  COMPONENT_ORDER, beachRating,
+  COMPONENT_ORDER, beachRating, componentWeights,
 } from '../lib/beachStory.js';
 import { beachShareUrl } from '../lib/beaches.js';
 import { trailheadDirectionsUrl, shareTrailLink } from '../lib/trailExport.js';
@@ -73,9 +74,15 @@ function ImageCredit({ image, t }) {
   );
 }
 
-export function BeachPage({ beach, countryName, onClose, onSelectDest }) {
+export function BeachPage({ beach, countryName, onClose, onSelectDest, model, onOpenNeighbour }) {
   const { t, lang } = useI18n();
   const [shot, setShot] = useState(0);
+  // The score badge opens the breakdown. Closed by default: most readers
+  // want the number, and the ones who want to argue with it are exactly the
+  // ones who will tap it. The bars stay on the page below either way; what
+  // this adds is the weight beside each one, which is what turns "6.7" from
+  // a verdict into an argument.
+  const [showParts, setShowParts] = useState(false);
   const [toast, setToast] = useState(null);
   const scrollEl = useRef(null);
   const titleEl = useRef(null);
@@ -119,6 +126,19 @@ export function BeachPage({ beach, countryName, onClose, onSelectDest }) {
 
   if (!beach) return null;
 
+  // A component the pipeline could not measure is absent from `comp` rather
+  // than zero, so the breakdown renders what was actually read and a beach in
+  // a country with no bathing water register simply has no water bar.
+  const weights = componentWeights(model);
+  const parts = COMPONENT_ORDER
+    .filter((key) => beach.comp?.[key] != null)
+    .map((key) => ({
+      key,
+      label: componentLabel(key, t),
+      pct: Math.round(beach.comp[key] * 100),
+      weight: weights?.[key] != null ? Math.round(weights[key] * 100) : null,
+    }));
+
   const mapsUrl = trailheadDirectionsUrl(beach.lat, beach.lon);
   const onShare = async () => {
     const how = await shareTrailLink(beach.name, beachShareUrl(beach));
@@ -153,6 +173,24 @@ export function BeachPage({ beach, countryName, onClose, onSelectDest }) {
       label: t('beach.factProtected'),
       value: beach.protected.name,
       note: beach.protected.np ? t('beach.nationalPark') : beach.protected.kind,
+    },
+    // Proved from a polygon rather than inferred from a centroid, so this row
+    // says "inside" and means it.
+    beach.prot && {
+      key: 'prot',
+      label: t('beach.factProtected'),
+      value: beach.prot.name,
+      note: t(beach.prot.net === 'natura2000'
+        ? 'beach.fProtectedNatura2000' : 'beach.fProtectedEmerald'),
+    },
+    beach.size && {
+      key: 'size',
+      label: t('beach.facetSize'),
+      value: t(`beach.fSize${beach.size.charAt(0).toUpperCase()}${beach.size.slice(1)}`),
+    },
+    beach.sunset && {
+      key: 'sunset', label: t('beach.facetBestfor'),
+      value: t('beach.fBestforSunset'),
     },
     beach.services?.length && {
       key: 'services',
@@ -205,9 +243,51 @@ export function BeachPage({ beach, countryName, onClose, onSelectDest }) {
             </h1>
             {beach.nameLocal && <p className="bpage-local">{beach.nameLocal}</p>}
             <div className="bpage-scorerow">
-              <ScoreChip rating={rating} size="lg" />
+              {/* The badge is the door to the breakdown. The weights are
+                  already in the wire's model block and the components are
+                  already on the row, so surfacing them costs nothing and is
+                  the strongest trust move available: a 6.7 nobody can take
+                  apart is just an opinion with a decimal point. */}
+              <button
+                type="button"
+                className="bpage-scorebtn"
+                aria-expanded={showParts}
+                aria-controls="bpage-parts"
+                onClick={() => setShowParts((v) => !v)}
+                title={t(showParts ? 'beach.scoreHide' : 'beach.scoreTap')}
+              >
+                <ScoreChip rating={rating} size="lg" />
+              </button>
               <span className="bpage-band">{t(`beach.band${rating.tier}`)}</span>
+              <button
+                type="button"
+                className="bpage-scorehint"
+                onClick={() => setShowParts((v) => !v)}
+              >
+                {t(showParts ? 'beach.scoreHide' : 'beach.scoreTap')}
+              </button>
             </div>
+            {showParts && (
+              <ul className="bpage-parts" id="bpage-parts">
+                {parts.map((part) => (
+                  <li key={part.key}>
+                    <span className="bpage-part-label">{part.label}</span>
+                    <span className="bpage-part-track" aria-hidden="true">
+                      <span
+                        className="bpage-part-fill"
+                        style={{ width: `${part.pct}%` }}
+                      />
+                    </span>
+                    <span className="bpage-part-n">{part.pct}</span>
+                    {part.weight != null && (
+                      <small className="bpage-part-w">
+                        {t('beach.scoreWeight', { pct: part.weight })}
+                      </small>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
 
           {main && (
@@ -269,17 +349,24 @@ export function BeachPage({ beach, countryName, onClose, onSelectDest }) {
             </section>
           )}
 
+          <NearbyOutdoors
+            row={beach}
+            cc={beach.cc}
+            headings={{ trail: 'nb.beach.trail', beach: 'nb.beach.beach', cycle: 'nb.beach.cycle' }}
+            onOpen={onOpenNeighbour}
+          />
+
           <section className="bpage-score">
             <h2>{t('beach.scoreHead')}</h2>
             <p className="bpage-note">{t('beach.scoreNote')}</p>
             <ul className="bpage-bars">
-              {COMPONENT_ORDER.filter((key) => beach.comp?.[key] != null).map((key) => (
-                <li key={key}>
-                  <span className="bpage-bar-label">{componentLabel(key, t)}</span>
+              {parts.map((part) => (
+                <li key={part.key}>
+                  <span className="bpage-bar-label">{part.label}</span>
                   <span className="bpage-bar-track" aria-hidden="true">
-                    <span className="bpage-bar-fill" style={{ width: `${Math.round(beach.comp[key] * 100)}%` }} />
+                    <span className="bpage-bar-fill" style={{ width: `${part.pct}%` }} />
                   </span>
-                  <span className="bpage-bar-n">{Math.round(beach.comp[key] * 100)}</span>
+                  <span className="bpage-bar-n">{part.pct}</span>
                 </li>
               ))}
             </ul>

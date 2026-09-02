@@ -6,6 +6,27 @@ import {
 import { startCheckout } from '../lib/checkout.js';
 import { SparkIcon, CheckIcon } from './Icons.jsx';
 
+/**
+ * What the modal leads with, per reason code. Naming the moment beats a cold
+ * "want to pay?", and `sub` replaces the generic lead where a reassurance is
+ * worth more than the pitch (nobody's work is lost by a gate).
+ *
+ * The reason codes themselves live in hooks/usePaywall.jsx; this is only the
+ * copy for them, kept here so the modal does not import the hook that mounts
+ * it. Every key must exist in all six locales.
+ */
+const REASON_COPY = {
+  plans:     { heading: 'pass.headingPlans' },
+  ground:    { heading: 'pass.headingGround' },
+  export:    { heading: 'pass.headingExport',    sub: 'pass.subExport' },
+  import:    { heading: 'pass.headingImport',    sub: 'pass.subImport' },
+  share:     { heading: 'pass.headingShare',     sub: 'pass.subShare' },
+  save:      { heading: 'pass.headingSave',      sub: 'pass.subSave' },
+  plansLow:  { heading: 'pass.headingPlansLow' },
+  celebrate: { heading: 'pass.headingCelebrate' },
+  expiring:  { heading: 'pass.headingExpiring' },
+};
+
 const FAIL_KEY = {
   auth: 'pass.errSignIn',
   no_auth_config: 'pass.errSignIn',
@@ -38,7 +59,7 @@ export function PassModal({ entitlement, reason = '', onClose, onSignIn, signedI
     if (!signedIn) { onSignIn?.(); return; }
     setFailCode('');
     setBusy(tier);
-    const res = await startCheckout(tier);
+    const res = await startCheckout(tier, reason);
     if (!res.ok) {
       setFailCode(res.code || 'stripe_error');
       setBusy('');
@@ -47,9 +68,9 @@ export function PassModal({ entitlement, reason = '', onClose, onSignIn, signedI
     // set keeps the button from being pressed twice during the handover.
   };
 
-  const headingKey = reason === 'plans' ? 'pass.headingPlans'
-    : reason === 'ground' ? 'pass.headingGround'
-      : 'pass.heading';
+  const copy = REASON_COPY[reason] || {};
+  const headingKey = copy.heading || 'pass.heading';
+  const leadKey = copy.sub || 'pass.lead';
 
   return (
     <div className="day-saved-overlay pass-overlay" role="dialog" aria-modal="true" onClick={onClose}>
@@ -60,7 +81,7 @@ export function PassModal({ entitlement, reason = '', onClose, onSignIn, signedI
           <span className="ai-plan-badge"><SparkIcon size={15} /></span>
           <h3>{t(headingKey)}</h3>
         </div>
-        <p className="ai-plan-lead">{t('pass.lead')}</p>
+        <p className="ai-plan-lead">{t(leadKey)}</p>
 
         {current !== 'free' && left != null && (
           <p className="pass-current">{t('pass.current', { name: t(TIERS[current].labelKey), days: left })}</p>

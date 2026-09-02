@@ -1,0 +1,279 @@
+{
+  "id": "ad-hiking-coma-pedrosa-madriu",
+  "sourceId": "hiking-andorra-coma-pedrosa-madriu",
+  "slug": "ad-hiking-coma-pedrosa-madriu",
+  "title": "Andorra High Route: Comapedrosa, Juclà and the Madriu Valley",
+  "country": "Andorra",
+  "countryCode": "AD",
+  "countries": [
+    {
+      "name": "Andorra",
+      "code": "AD"
+    }
+  ],
+  "isMultiCountry": false,
+  "region": "Southern & Mediterranean Europe",
+  "regionKey": "southern-mediterranean",
+  "subRegion": "Vall del Madriu-Perafita-Claror & Parc Natural Comunal de les Valls del Comapedrosa",
+  "tripType": "Hiking & Alpine Trekking",
+  "tripTypeId": 6,
+  "tripTypeSlug": "hiking",
+  "durationDays": 7,
+  "bestPeriod": {
+    "months": [
+      6,
+      7,
+      8,
+      9,
+      10
+    ],
+    "monthNames": [
+      "June",
+      "July",
+      "August",
+      "September",
+      "October"
+    ],
+    "window": "Late June–early October, with the staffed refuge window roughly 1 June–12 October",
+    "note": null,
+    "avoid": "November–May — the staffed refuges close, the high colls hold snow and the Madriu valley path ices in its lower gorge",
+    "raw": "Late June–early October, with the staffed refuge window roughly 1 June–12 October"
+  },
+  "budgetTier": "€€",
+  "budgetTierRange": [
+    2,
+    2
+  ],
+  "budgetTierRaw": "€€",
+  "budget": {
+    "currency": "EUR",
+    "totalEur": {
+      "low": 780,
+      "high": 1250
+    },
+    "totalNote": "€780–€1,250 per person, excl. international flights",
+    "breakdown": {
+      "accommodation": {
+        "lowEur": 300,
+        "highEur": 470,
+        "note": "Staffed refuge half board €55.80 at Comapedrosa; valley hotels €70–€120"
+      },
+      "food": {
+        "lowEur": 190,
+        "highEur": 300,
+        "note": "Borda dinners €25–€35, mountain lunches €12–€18, refuge packed lunch €10–€12"
+      },
+      "transport": {
+        "lowEur": 160,
+        "highEur": 280,
+        "note": "Toulouse or Barcelona coach, Andorran bus network, two taxis to trailheads"
+      },
+      "activities": {
+        "lowEur": 130,
+        "highEur": 200,
+        "note": "Caldea spa €45–€55, Sorteny natural park, luggage transfers between valleys"
+      }
+    },
+    "perDayEur": {
+      "low": 111,
+      "high": 179
+    }
+  },
+  "profile": {
+    "difficulty": 4,
+    "difficultyLabel": "Demanding",
+    "difficultyNote": "4/5 — a 2,942 m summit plus three consecutive days of 800–950 m ascent crossing colls above 2,700 m",
+    "fitnessLevel": "Demanding",
+    "crowdLevel": null,
+    "familyFriendly": null,
+    "carRequired": null
+  },
+  "basecamps": [],
+  "gatewayAirport": "TLS Toulouse-Blagnac, 3 h to La Massana by bus or car; BCN Barcelona 3 h 15 min; LEU Andorra-La Seu d'Urgell 40 min",
+  "gatewayAirportCode": "TLS",
+  "languages": [],
+  "currency": null,
+  "emergencyNumber": "112",
+  "coordinates": {
+    "lat": 42.5078,
+    "lon": 1.5211,
+    "precision": "country",
+    "matchedPlace": "Andorra la Vella",
+    "source": "country capital fallback"
+  },
+  "tags": [
+    "comapedrosa",
+    "madriu-perafita-claror",
+    "coronallacs",
+    "grp",
+    "unesco",
+    "refugi",
+    "andorra",
+    "pyrenees"
+  ],
+  "summary": "Andorra is 468 km² and nearly all of it is above 1,000 m, which makes it the densest walking country in the Pyrenees. This week takes its two defining landscapes: the granite bowl beneath **Pic de Comapedrosa, 2,942 m**, the country's high point, and the **Vall del Madriu-Perafita-Claror**, a UNESCO World Heritage cultural landscape covering nine per cent of the national territory with no road into it at all. Between them the route crosses the Sorteny and Juclà lake basins on the Coronallacs circuit. You sleep in a mixture of staffed refuges with cooked dinners and free unstaffed stone shelters. It suits confident hikers who like high, empty, lake-strewn granite country and do not need a village every night.",
+  "summaryGenerated": false,
+  "hook": null,
+  "snapshot": {},
+  "itinerary": [
+    {
+      "day": 1,
+      "title": "La Massana, Ordino and the Sorteny valley",
+      "morning": "Arrive by coach from Toulouse or Barcelona (3 h–3 h 15 min) into **Andorra la Vella**, then the local bus up to **La Massana, 1,230 m**. Buy gas, maps and anything you forgot; Andorra's sports shops are duty-free and genuinely cheap.",
+      "afternoon": "Drive or bus to **Ordino** and walk into the **Parc Natural de la Vall de Sorteny**, an easy 8 km loop through the botanical meadows — over 700 plant species — to the **Borda de Sorteny refuge at 1,970 m** and back.",
+      "evening": "Dinner at **Borda Xixerella** near Pal, a converted stone barn doing wood-grilled meats, *trinxat* and Andorran cheese, or at Molí dels Fanals in Sispony.",
+      "dayStats": "8 km / 450 m ascent / La Massana 1,230 m / Sorteny refuge 1,970 m / 3 h realistic / duty-free gas canisters available",
+      "sleep": "Hotel in La Massana or Arinsal"
+    },
+    {
+      "day": 2,
+      "title": "Arinsal to the Comapedrosa refuge",
+      "morning": "Start from **Arinsal at 1,550 m**, following the Riu de Comapedrosa past the **Cascada de la Roca del Cabirol** on a steadily steepening path through pine to the open cirque.",
+      "afternoon": "Reach the **Refugi del Comapedrosa, 2,260 m**, after **685 m of ascent**, then spend the afternoon walking up to the **Estany Negre** and the Estanys de les Truites beneath the summit wall — good acclimatisation and the best light of the day on the granite.",
+      "evening": "Half board at the refuge (€55.80): soup, a stew, cheese, and a warden's briefing on tomorrow's snow and wind. Forty-five places, so it books out on August weekends.",
+      "dayStats": "5.5 km / 710 m ascent / Arinsal 1,550 m / refuge 2,260 m / 2 h 45 min–3 h realistic / half board €55.80, bed only €21.90",
+      "sleep": "Refugi del Comapedrosa, 2,260 m"
+    },
+    {
+      "day": 3,
+      "title": "Pic de Comapedrosa, 2,942 m",
+      "morning": "Leave at 07:00 for the country's high point. Steep switchbacks to the **Portella de Sanfons**, then a stony ridge and a short easy scramble to the **summit of Pic de Comapedrosa, 2,942 m**, with France, Spain and the whole of Andorra laid out — the \"roof of the Principality\".",
+      "afternoon": "Descend by the Sanfons route or reverse the ascent, collect gear at the refuge, and continue down to **Arinsal**. Transfer across to **Ordino** or **Canillo** for the eastern half of the week.",
+      "evening": "Dinner in Ordino's Plaça Major; Restaurant Armengol or the terrace at Coma. Andorran *escudella* and a Costers del Segre red.",
+      "dayStats": "12 km / 700 m ascent / 1,400 m descent / summit 2,942 m / 6 h 30 min–7 h 30 min realistic",
+      "sleep": "Hotel in Ordino or Canillo"
+    },
+    {
+      "day": 4,
+      "title": "Sorteny to the Estanys de Juclà",
+      "morning": "Return to the **Borda de Sorteny refuge, 1,970 m**, and climb the Coronallacs stage east over the **Collada dels Meners at roughly 2,713 m**, a long grass-and-scree pull with old iron-mine workings near the top.",
+      "afternoon": "Descend into the Juclà basin and the **Estanys de Juclà**, the largest natural lake in Andorra, and check into the **Refugi de Juclà** at about 2,300 m on its shore.",
+      "evening": "Trout-coloured light on the lake at dusk, dinner in the refuge, and no phone signal to speak of. The Coronallacs stages are exactly this: one coll, one lake basin, one bed.",
+      "dayStats": "12 km / 900 m ascent / 550 m descent / Collada dels Meners approx. 2,713 m / 5 h 30 min–6 h 30 min realistic",
+      "sleep": "Refugi de Juclà, approx. 2,300 m"
+    },
+    {
+      "day": 5,
+      "title": "Vall d'Incles and the crossing to Refugi de l'Illa",
+      "morning": "South-west from Juclà, dropping toward the **Vall d'Incles** — a summer-shuttle-only valley of *bordes* and grazing — then climbing again past the Estanys de Cabana Sorda.",
+      "afternoon": "Cross the high ground around the **Coll de Vall Civera (approx. 2,550 m)** into the head of the Madriu and reach the **Refugi de l'Illa, 2,488 m**, a modern staffed refuge beside the Estany de l'Illa with the Riu Madriu starting at its door. It sits inside the UNESCO valley, whose tariffs are approved as public prices by the Andorran government.",
+      "evening": "The refuge's terrace faces east down the entire Madriu. Order tomorrow's packed lunch — it is a long, foodless day out.",
+      "dayStats": "14 km / 800 m ascent / 650 m descent / Coll de Vall Civera approx. 2,550 m / refuge 2,488 m / 6–7 h realistic",
+      "sleep": "Refugi de l'Illa, 2,488 m"
+    },
+    {
+      "day": 6,
+      "title": "The full Madriu: Perafita, Ràmio and Escaldes",
+      "morning": "Walk the length of the **Vall del Madriu-Perafita-Claror**, past the **Pla de l'Ingla** and the side turn to the free, unstaffed **Refugi de Perafita** — worth the detour to see how the unguarded system works: bunks, a table, a stove, nobody in charge.",
+      "afternoon": "The long stone-pitched descent past the **bordes de Ràmio**, the *fangars* charcoal platforms and the old irrigation channels, through a hanging beech gorge to **Entremesaigües** and out at **Escaldes-Engordany, 1,100 m**. There is no road the entire way, which is the point.",
+      "evening": "**Caldea** thermal spa in Escaldes (€45–€55) is precisely engineered for legs that have just lost 1,400 m. Dinner afterwards at Can Manel in Andorra la Vella.",
+      "dayStats": "18 km / 250 m ascent / 1,400 m descent / Madriu valley 42 km², 9% of Andorra / 7–8 h realistic / no vehicle access anywhere in the valley",
+      "sleep": "Hotel in Escaldes-Engordany or Andorra la Vella"
+    },
+    {
+      "day": 7,
+      "title": "Escaldes, the customs run and out",
+      "morning": "Walk the Madriu interpretation centre and the Romanesque **església de Sant Miquel d'Engolasters** above Escaldes, then the easy Rec del Solà balcony path over Andorra la Vella.",
+      "afternoon": "The duty-free shop before you leave is a national institution — but **Andorra is outside the EU customs union and allowances are enforced at both the French and Spanish frontiers**, typically around 1.5 litres of spirits, 300 cigarettes and a €900 goods value for adults. Do not over-buy.",
+      "evening": "Coach or drive out: 3 h 15 min to Barcelona, 3 h to Toulouse, or 40 minutes to the small La Seu d'Urgell airport.",
+      "dayStats": "6 km of town walking / Escaldes 1,100 m / customs allowance approx. €900 goods, 1.5 L spirits / BCN 3 h 15 min",
+      "sleep": "Barcelona, Toulouse, or the outbound flight"
+    }
+  ],
+  "accommodationStrategy": [
+    {
+      "rank": 1,
+      "name": "Refugi del Comapedrosa",
+      "style": "staffed refuge",
+      "location": "2,260 m",
+      "description": "Forty-five places directly beneath Andorra's highest peak, open continuously 1 June–12 October, booked online at reserves.refugicomapedrosa.ad or on +376 327 955 between 09:00 and 19:00. Half board is €55.80 and a bed alone €21.90. Staying here turns the Comapedrosa summit from a 1,400 m valley slog into a comfortable morning.",
+      "booking": null,
+      "priceNote": null
+    },
+    {
+      "rank": 2,
+      "name": "Refugi de l'Illa",
+      "style": "staffed refuge",
+      "location": "2,488 m",
+      "description": "The only bed at the head of the UNESCO Madriu valley, modern, warm and with government-approved public tariffs. It is the hinge of any Madriu crossing, since the alternative is walking the whole valley in one day from Grau Roig. Book through the Coronallacs portal or the refuge's own site.",
+      "booking": null,
+      "priceNote": null
+    },
+    {
+      "rank": 3,
+      "name": "Hotel base in La Massana or Ordino",
+      "style": "valley hotels",
+      "location": "1,230–1,300 m",
+      "description": "Andorra's compact bus network means one valley hotel covers the western half of the week: parking, drying rooms, luggage storage while you are at the refuges, and dinner options that a refuge cannot match. Roughly €70–€120 double, cheaper outside the ski season.",
+      "booking": null,
+      "priceNote": null
+    }
+  ],
+  "logistics": {
+    "connectivity": "**Andorra is outside the EU roaming zone.** Andorra Telecom is the sole operator and EU SIMs roam at non-EU rates that can be punitive — check your tariff, or buy a local prepaid Mobiland SIM. Coverage is good in the valleys and on the Juclà basin, poor in the Madriu gorge. Download offline maps.",
+    "emergency": "**112** reaches the Bombers d'Andorra, who operate mountain rescue and the helicopter. **Andorra is not in the EU and EHIC/GHIC is not valid here** — treatment is charged. Buy insurance that names Andorra explicitly (many policies list it separately from \"Europe\") and covers mountain rescue and repatriation. Nearest hospital: Meritxell in Escaldes-Engordany.",
+    "weather": "Afternoon storms build over the high colls from around 14:00 in July and August; the Collada dels Meners is the exposed one. Autumn fog fills the Madriu quickly. Andorra sits on the Mediterranean–Atlantic divide, so weather can differ completely between Arinsal and Encamp on the same day. Check meteo.ad.",
+    "bookingWindows": "Comapedrosa and l'Illa 3–6 weeks for July and August, longer for weekends; the Coronallacs circuit is booked as a package through its own portal. Unstaffed refuges cannot be booked at all. Valley hotels 2–4 weeks in summer.",
+    "money": "Andorra uses the **euro** despite being outside the EU. Cards work everywhere in the valleys; carry €200 for refuges and mountain bars. Tipping is not customary beyond rounding up. Prices for fuel, alcohol, tobacco and sports equipment are markedly lower than in France or Spain because of the tax regime.",
+    "transportRules": "**Andorra is not in Schengen** and both frontiers have customs posts — passports and vehicle documents are checked, and goods allowances are enforced on exit. Hire cars from Spain or France usually permit entry but confirm the insurance green card covers Andorra. Andorra has no railway; coaches run from Barcelona, Barcelona airport and Toulouse. The domestic bus network is cheap, frequent and reaches every parish.",
+    "permits": "No permit is needed to walk, and the refuges and GRP are free to use. The **Vall del Madriu-Perafita-Claror is closed to motor vehicles** and managed under a UNESCO plan; camping is restricted, fires prohibited, and the *bordes* and irrigation channels are protected heritage. Drones require authorisation. Dogs must be leashed near grazing flocks.",
+    "health": "Lake and stream water is plentiful but grazed above — filter or treat. Altitude is modest; the real risks are afternoon lightning on the colls and the cumulative knee damage of the Madriu descent. Livestock guardian dogs work the Perafita and Claror pastures — walk around flocks, do not run.",
+    "gettingThere": null,
+    "other": []
+  },
+  "proTips": [
+    "Book the **Comapedrosa refuge for a weeknight**. Forty-five places against a national high point on a Saturday in August is the tightest bed in the Principality.",
+    "Buy your gas canisters, map and any missing kit in **La Massana or Andorra la Vella on day one** — duty-free pricing makes Andorra the cheapest gear shopping in the Pyrenees, and there is nothing to buy above 2,000 m.",
+    "Check whether your travel insurance names **Andorra** rather than just \"Europe\" or \"EU\". This is the single most commonly missed thing about walking here.",
+    "Turn off data roaming at the border and use a **Mobiland prepaid SIM** if you need connectivity. Andorra is outside the EU roaming rules and the bill surprises people.",
+    "Walk the **Madriu downhill from l'Illa**, not up from Escaldes. You get the whole World Heritage valley unfolding in front of you and finish at a thermal spa instead of starting at one.",
+    "Detour the 20 minutes to the unstaffed **Refugi de Perafita** even if you are not sleeping there. It is the clearest illustration of how the unguarded network functions, and a useful bad-weather option to have seen in daylight.",
+    "Use the **Vall d'Incles summer shuttle** rather than driving in — private vehicles are restricted in high season and the shuttle drops you closer to the Cabana Sorda path.",
+    "Order the refuge packed lunch the night before on the l'Illa stage. There is no food, no shop and no bar between the refuge and Escaldes-Engordany, seven hours away.",
+    "Keep the Caldea spa booking for the evening of the Madriu descent, not a rest day. Sixteen hundred metres of stone-pitched descent is exactly what the thermal circuit is for."
+  ],
+  "typeSpecific": {
+    "raw": {
+      "Hut-to-hut booking path": "**Refugi del Comapedrosa (2,260 m, 45 places)** → **Refugi de Borda de Sorteny (1,970 m)** → **Refugi de Juclà (approx. 2,300 m, beside Andorra's largest lake)** → **Refugi de l'Illa (2,488 m)**, with the unstaffed **Refugi de Perafita** as a shelter on the final descent. These are among the country's small handful of **refugis guardats** (staffed refuges), and the **Coronallacs** circuit is the official five-stage route linking them. **Comapedrosa books online at reserves.refugicomapedrosa.ad or by phone on +376 327 955 between 09:00 and 19:00**, and runs **continuously from 1 June to 12 October** with out-of-season bookings by arrangement. Its published rates are **€55.80 half board (bed, dinner and breakfast) and €21.90 for the bed alone**. Refugi de l'Illa's tariffs are set as **public prices approved by the Govern d'Andorra** and it books through its own site and the Coronallacs reservation portal. Expect **€50–€60 half board across the staffed network**. Cards are accepted at Comapedrosa and l'Illa but the connection fails in bad weather — carry €200. **Bring a sleeping-bag liner**; blankets are provided.",
+      "Staffed versus unstaffed refuges — the system that defines Andorran walking": "Alongside the staffed huts, Andorra maintains **roughly two dozen *refugis no guardats*** — free, permanently unlocked stone or metal shelters with bunks or sleeping platforms, a table, sometimes a stove, and **no warden, no food, no water supply and no booking**. They operate strictly first-come, first-served, cannot be reserved, and can be full when you arrive. **Refugi de Perafita** in the Madriu is one. Plan around the staffed huts and treat the unstaffed ones as a bonus or a bad-weather bail-out, carrying a stove and food if you intend to use one. **If a staffed refuge is full**, the practical answers are the nearest unstaffed refuge, a descent to the valley (Andorra is small — nothing is more than 4 hours from a road), or the Coronallacs booking office rerouting your stage order.",
+      "Safety markers and waymarking": "Andorra uses the **French/Spanish GR system — red-over-white horizontal stripes** on the **GRP (Gran Recorregut del Perímetre / Gran Ruta d'Andorra)**, a roughly **120 km circular route** around the country's edge with an official stage structure, and **yellow-over-white** for PR local routes. The **Coronallacs** stages carry their own logo alongside the GRP marks. Above the tree line the marking becomes **cairns (*fites*) and painted dots**, which are unreliable in cloud on the Collada dels Meners and the Coll de Vall Civera. There are **no via ferratas on this itinerary**; the Vall del Riu and Canillo ferratas are separate excursions.",
+      "Elevation and gear essentials": "Cumulative ascent across the five walking days is roughly **4,000 m**. High points: **Pic de Comapedrosa 2,942 m**, Collada dels Meners approx. 2,713 m, Coll de Vall Civera approx. 2,550 m, Refugi de l'Illa 2,488 m, Estany de Juclà approx. 2,300 m. **North-facing snow patches on the Comapedrosa summit couloir and the high colls persist into early July**; microspikes are worth carrying before 10 July and an ice axe for a June crossing. No ferrata set required. Poles matter — the Madriu descent loses 1,400 m on stone-pitched mule path.",
+      "Water, food resupply and rubbish": "This is granite country with lakes everywhere, so water is far more available than in the limestone Pyrenees, but **every basin is grazed** — filter or treat. Staffed refuges sell water and packed lunches (€10–€12, ordered the previous evening). Resupply only in **Arinsal, La Massana, Ordino, Encamp and Escaldes-Engordany**; there is no shop on the high route. **Pack everything out.** The Madriu is a World Heritage site with an active management plan and litter is taken very seriously; fires are prohibited outside refuge hearths.",
+      "Bail-out options, rescue and insurance": "No point on this route is more than about four hours from a road, which makes Andorra unusually forgiving. Comapedrosa bails to Arinsal (2 h), Juclà to the Vall d'Incles (2 h), l'Illa to Grau Roig or down the Madriu. **112 reaches the Bombers d'Andorra, who run the mountain-rescue and helicopter service.** Andorra is **outside the EU**, so **EHIC/GHIC does not apply** — Andorran healthcare is charged and reimbursement is a private matter. **Travel insurance explicitly covering Andorra (not \"EU\") plus mountain rescue and repatriation is essential**; many policies list Andorra separately and some omit it entirely.",
+      "UNESCO valley rules": "The **Vall del Madriu-Perafita-Claror** was inscribed in 2004 as a cultural landscape covering about **42 km², nine per cent of Andorra**, and it is **closed to motor vehicles**. Access is on foot only, principally from **Entremesaigües and Ràmio above Escaldes-Engordany**, from the Vall d'Incles, or over the colls from Grau Roig. Wild camping is restricted, grazing and the *bordes* (stone barns) are living heritage rather than ruins, and dogs must be under control around livestock.",
+      "Realistic walking times": "Andorran signposts are reasonably honest by Pyrenean standards but still assume a light pack. Add **20–30%**. Arinsal to the Comapedrosa refuge is signed 2 h–2 h 30 min for 685 m; plan 2 h 45 min–3 h with a full pack."
+    },
+    "surface": null,
+    "distanceKm": null,
+    "elevationM": null,
+    "verticalM": null,
+    "technicalRating": "Andorra uses the **French/Spanish GR system — red-over-white horizontal stripes** on the **GRP (Gran Recorregut del Perímetre / Gran Ruta d'Andorra)**, a roughly **120 km circular route** around the country's edge with an official stage structure, and **yellow-over-white** for PR local routes. The **Coronallacs** stages carry their own logo alongside the GRP marks. Above the tree line the marking becomes **cairns (*fites*) and painted dots**, which are unreliable in cloud on the Collada dels Meners and the Coll de Vall Civera. There are **no via ferratas on this itinerary**; the Vall del Riu and Canillo ferratas are separate excursions.",
+    "transitPass": null,
+    "hutBooking": "**Refugi del Comapedrosa (2,260 m, 45 places)** → **Refugi de Borda de Sorteny (1,970 m)** → **Refugi de Juclà (approx. 2,300 m, beside Andorra's largest lake)** → **Refugi de l'Illa (2,488 m)**, with the unstaffed **Refugi de Perafita** as a shelter on the final descent. These are among the country's small handful of **refugis guardats** (staffed refuges), and the **Coronallacs** circuit is the official five-stage route linking them. **Comapedrosa books online at reserves.refugicomapedrosa.ad or by phone on +376 327 955 between 09:00 and 19:00**, and runs **continuously from 1 June to 12 October** with out-of-season bookings by arrangement. Its published rates are **€55.80 half board (bed, dinner and breakfast) and €21.90 for the bed alone**. Refugi de l'Illa's tariffs are set as **public prices approved by the Govern d'Andorra** and it books through its own site and the Coronallacs reservation portal. Expect **€50–€60 half board across the staffed network**. Cards are accepted at Comapedrosa and l'Illa but the connection fails in bad weather — carry €200. **Bring a sleeping-bag liner**; blankets are provided.",
+    "liftNetwork": null,
+    "snowReliability": null,
+    "windConditions": null,
+    "gpxReady": null,
+    "bookingTimeline": null,
+    "audience": null
+  },
+  "packingNotes": [],
+  "whatCouldGoWrong": [],
+  "sources": {
+    "verified": "Refugi del Comapedrosa at 2,260 m with 45 overnight places, open continuously from 1 June to 12 October with out-of-season bookings possible, reservations online at reserves.refugicomapedrosa.ad or by phone on +376 327 955 between 09:00 and 19:00, half board (bed, dinner, breakfast) at €55.80 and bed-only at €21.90, with the approach from Arinsal quoted as 2 h–2 h 30 min for 685 m of ascent. The existence of a Govern d'Andorra process approving public prices for the staffed Refugi de l'Illa, and the government's published network of staffed and unstaffed refuges and GR routes.",
+    "confidenceNotes": "Refugi de l'Illa and Refugi de Juclà altitudes, capacities, exact tariffs and 2026 opening dates must be re-verified against govern.ad and the Coronallacs portal — l'Illa is quoted between 2,480 m and 2,490 m in different sources. The precise membership of Andorra's staffed-refuge list and the official Coronallacs stage order should be confirmed before publication. Collada dels Meners and Coll de Vall Civera elevations are approximate. Andorran customs allowances change periodically — check the current figures with the Duana Andorrana. Caldea admission prices and the Vall d'Incles summer shuttle arrangements are seasonal. Roaming costs for EU SIMs in Andorra vary enormously by home operator and should be flagged rather than quantified."
+  },
+  "verifyFlags": [],
+  "verifyFlagCount": 0,
+  "volatilePricing": false,
+  "wordCount": 3465,
+  "dataVintage": 2026,
+  "provenance": {
+    "batch": "southern-mediterranean",
+    "sourceFile": "carta-dataset/trips/hiking-andorra-coma-pedrosa-madriu.md",
+    "sourceFormat": "md with '## Metadata' bullet block (one file per trip)",
+    "sourceId": "hiking-andorra-coma-pedrosa-madriu",
+    "ingestedAt": "2026-09-02",
+    "synthesized": false
+  }
+}

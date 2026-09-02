@@ -2,7 +2,7 @@
  * packing.js, "what to bring" for a destination, derived instead of asserted.
  *
  * Every line traces to a fact the wire already carries: the month's climate
- * normals (WorldClim), the destination's categories, the swim relevance rule
+ * normals (NASA POWER), the destination's categories, the swim relevance rule
  * and the plug standard of the country. No climate for a place means fewer,
  * more general lines, never invented weather.
  *

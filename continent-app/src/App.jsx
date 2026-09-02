@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo, Suspense, lazy } from 'react';
 import { AppHeader } from './components/AppHeader.jsx';
 import { BottomNav } from './components/BottomNav.jsx';
-import { AnnouncementBar } from './components/AnnouncementBar.jsx';
+import { AnnouncementBar, PassExpiryBanner } from './components/AnnouncementBar.jsx';
 import { MaintenanceGate } from './components/MaintenanceGate.jsx';
 import { ExploreTab } from './browse/ExploreTab.jsx';
 import { DestinationPage } from './browse/DestinationPage.jsx';
@@ -79,8 +79,7 @@ import { SharedTripView } from './auth/SharedTripView.jsx';
 import { ResetPasswordScreen } from './auth/ResetPasswordScreen.jsx';
 import { AccountPanel } from './auth/AccountPanel.jsx';
 import { SavedTripsPanel } from './auth/SavedTripsPanel.jsx';
-import { PassModal } from './components/PassModal.jsx';
-import { useEntitlement } from './hooks/useEntitlement.js';
+import { PaywallProvider } from './hooks/usePaywall.jsx';
 import { originHome } from './lib/origins.js';
 import { useAppData } from './hooks/useAppData.js';
 import { useDestinationSearch } from './hooks/useDestinationSearch.js';
@@ -94,22 +93,10 @@ import { useReach } from './lib/reach.js';
 // ask again on this device, only a fresh sign-in should bring accounts back.
 const GUEST_KEY = 'continent.guestMode.v1';
 
-// The pass picker, reachable from chrome (the header's "See pricing" and the
-// account panel) rather than only from a spent allowance. Mounted only while
-// open so the ai_status read happens when somebody actually looks at prices,
-// not on every app load.
-function GlobalPassModal({ signedIn, onClose, onSignIn }) {
-  const entitlement = useEntitlement();
-  return (
-    <PassModal
-      entitlement={entitlement}
-      reason=""
-      signedIn={signedIn}
-      onClose={onClose}
-      onSignIn={onSignIn}
-    />
-  );
-}
+// The pass picker used to be mounted here, in the account panel and in the
+// day planner, each opening it on its own terms. It now lives inside
+// PaywallProvider (hooks/usePaywall.jsx), which is the single place that
+// decides when a traveller is asked and how often.
 
 
 export default function App() {
@@ -155,8 +142,6 @@ function TravelApp() {
   const [guestMode, setGuestMode] = useState(
     () => typeof window !== 'undefined' && localStorage.getItem(GUEST_KEY) === '1'
   );
-  // The pass picker, opened from the header or the account panel.
-  const [passOpen, setPassOpen] = useState(false);
   // Which spoke the account panel opens on. The header's Friends button is
   // its own door into the same panel, so it says where to land. The nonce
   // remounts the panel on every such open: initialView only seeds state, so
@@ -714,6 +699,15 @@ function TravelApp() {
   }
 
   return (
+    /* Every paid surface in the app asks this provider for permission, and it
+       owns the one pass modal. It sits inside TravelApp rather than beside
+       AuthProvider because the sign-in handoff is TravelApp's own modal. */
+    <PaywallProvider
+      onSignIn={() => {
+        setAuthModalMode('signin');
+        setAuthModalOpen(true);
+      }}
+    >
     <div className="app" onClick={() => setSelectedId(null)}>
       <div className="top-bar" ref={filterBarRef} onClick={(e) => e.stopPropagation()}>
         <AppHeader
@@ -722,7 +716,6 @@ function TravelApp() {
           accountOpen={accountOpen}
           onOpenFriends={toggleFriends}
           friendsOpen={accountOpen && accountView === 'friends'}
-          onSeePricing={() => setPassOpen(true)}
           onBrandClick={() => goToTab('places')}
           activeTab={activeTab}
           onChangeTab={goToTab}
@@ -1047,23 +1040,11 @@ function TravelApp() {
         </Suspense>
       )}
 
-      {passOpen && (
-        <div onClick={(e) => e.stopPropagation()}>
-          <GlobalPassModal
-            signedIn={!!user && authConfigured}
-            onClose={() => setPassOpen(false)}
-            onSignIn={() => {
-              setPassOpen(false);
-              setAuthModalMode('signin');
-              setAuthModalOpen(true);
-            }}
-          />
-        </div>
-      )}
-
       {/* The site notice from site_config, switched on from the admin panel.
           Renders nothing unless one is live, so it costs the layout nothing. */}
       <AnnouncementBar />
+      {/* A pass expires quietly by design, so the only warning is this one. */}
+      <PassExpiryBanner />
 
       {emailConfirmed && (
         <div className="confirm-toast" role="status" onClick={(e) => e.stopPropagation()}>
@@ -1079,5 +1060,6 @@ function TravelApp() {
         </div>
       )}
     </div>
+    </PaywallProvider>
   );
 }

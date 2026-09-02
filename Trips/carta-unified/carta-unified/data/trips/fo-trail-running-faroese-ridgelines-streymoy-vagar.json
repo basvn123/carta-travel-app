@@ -1,0 +1,281 @@
+{
+  "id": "fo-trail-running-faroese-ridgelines-streymoy-vagar",
+  "sourceId": "faroese-ridgelines-streymoy-vagar",
+  "slug": "fo-trail-running-faroese-ridgelines-streymoy-vagar",
+  "title": "Faroese Ridgelines: Streymoy & Vágar",
+  "country": "Faroe Islands",
+  "countryCode": "FO",
+  "countries": [
+    {
+      "name": "Faroe Islands",
+      "code": "FO"
+    }
+  ],
+  "isMultiCountry": false,
+  "region": "Northern Europe & Baltics",
+  "regionKey": "northern-baltics",
+  "subRegion": "Streymoy, Vágar and Eysturoy",
+  "tripType": "Trail Running",
+  "tripTypeId": 2,
+  "tripTypeSlug": "trail-running",
+  "durationDays": 7,
+  "bestPeriod": {
+    "months": [
+      5,
+      6,
+      7,
+      8,
+      9
+    ],
+    "monthNames": [
+      "May",
+      "June",
+      "July",
+      "August",
+      "September"
+    ],
+    "window": "Late May to early September. June and July give near-endless daylight; September brings the clearest air but the first autumn gales",
+    "note": null,
+    "avoid": null,
+    "raw": "Late May to early September. June and July give near-endless daylight; September brings the clearest air but the first autumn gales"
+  },
+  "budgetTier": "€€€",
+  "budgetTierRange": [
+    3,
+    3
+  ],
+  "budgetTierRaw": "€€€",
+  "budget": {
+    "currency": "EUR",
+    "totalEur": {
+      "low": 1700,
+      "high": 2500
+    },
+    "totalNote": "€1,700–2,500 per person",
+    "breakdown": {
+      "accommodation": {
+        "lowEur": 120,
+        "highEur": 200,
+        "note": "€120–200 per night, double; guesthouses €80–130"
+      },
+      "food": {
+        "lowEur": 55,
+        "highEur": 85,
+        "note": "€55–85 per day; a heimablídni home-dinner runs €70–110 per person"
+      },
+      "transport": {
+        "lowEur": 250,
+        "highEur": 380,
+        "note": "€250–380: flights to Vágar, car hire €70–95 per day (essentially mandatory), tunnel tolls"
+      },
+      "activities": {
+        "lowEur": 80,
+        "highEur": 200,
+        "note": "€80–200: landowner hiking fees, one guided ridge day, Mykines boat or helicopter"
+      }
+    },
+    "perDayEur": {
+      "low": 243,
+      "high": 357
+    }
+  },
+  "profile": {
+    "difficulty": 4,
+    "difficultyLabel": "Demanding",
+    "difficultyNote": "Hard, and hard in an unusual way — the terrain is not technically difficult but it is steep, wet, trackless in places, and navigationally serious in fog",
+    "fitnessLevel": "Demanding",
+    "crowdLevel": null,
+    "familyFriendly": null,
+    "carRequired": null
+  },
+  "basecamps": [
+    "Tórshavn",
+    "Sørvágur",
+    "Gjógv"
+  ],
+  "gatewayAirport": null,
+  "gatewayAirportCode": null,
+  "languages": [
+    "Faroese",
+    "Danish",
+    "English"
+  ],
+  "currency": "DKK / Faroese króna (pegged 1:1 to DKK)",
+  "emergencyNumber": "112",
+  "coordinates": {
+    "lat": 62.01,
+    "lon": -6.77,
+    "precision": "source",
+    "matchedPlace": "Tórshavn",
+    "source": "source record"
+  },
+  "tags": [],
+  "summary": "A seven-day trail running itinerary in Streymoy, Vágar and Eysturoy, Faroe Islands.",
+  "summaryGenerated": true,
+  "hook": null,
+  "snapshot": {},
+  "itinerary": [
+    {
+      "day": 1,
+      "title": "Arrive Vágar, Trøllkonufingur and Sandavágur",
+      "morning": "Land at Vágar Airport, collect the hire car, buy food in Miðvágur — supplies outside Tórshavn are thin.",
+      "afternoon": "The short cliff run out to the Trøllkonufingur viewpoint above Sandavágur — the \"witch's finger\" sea stack, 313 m of basalt. Grass path, steep, wildly exposed at the end.",
+      "evening": "Check in near Sørvágur. **Water:** the stream behind Sandavágur village; fill before you climb.",
+      "dayStats": "7 km, 450 m",
+      "sleep": null
+    },
+    {
+      "day": 2,
+      "title": "Trælanípa and Sørvágsvatn",
+      "morning": "The optical-illusion route: the lake Sørvágsvatn appears to hang hundreds of metres above the sea when seen from the Trælanípa cliff. Pay the landowner fee at the trailhead — it is collected in person and by card.",
+      "afternoon": "Continue past Bøsdalafossur, where the lake pours directly into the Atlantic, and run the ridge line above Miðvágur back. Add the Gásadalur road and the Múlafossur waterfall village at the western tip for the classic Faroese photograph.",
+      "evening": "Dinner in Sørvágur. **Water:** lake outflows are drinkable after filtering; there is nothing on the Trælanípa cliff itself.",
+      "dayStats": "9 km, 400 m",
+      "sleep": null
+    },
+    {
+      "day": 3,
+      "title": "Slættaratindur, the highest point",
+      "morning": "Drive to Eysturoy via the subsea tunnel and up to the Eiðisskarð pass. Slættaratindur is 880 m, the highest mountain in the Faroes, and from the pass it is a direct 600 m climb on grass, scree and rock.",
+      "afternoon": "The summit view on a clear day reaches most of the archipelago. In fog it is a compass-and-cairn exercise and should be abandoned rather than improvised — the north face falls away sharply.",
+      "evening": "Drive on to Gjógv, a village built around a natural sea gorge, and stay there. **Water:** streams on the lower third of the ascent only.",
+      "dayStats": "5 km, 600 m — short, steep, serious",
+      "sleep": null
+    },
+    {
+      "day": 4,
+      "title": "Saksun to Tjørnuvík, the old postal route",
+      "morning": "Start at Saksun — a turf-roofed church, a tidal lagoon, and about ten inhabitants. The old walking route climbs over the pass to Tjørnuvík on the north coast, marked by traditional cairns (*varðar*) that predate any signage.",
+      "afternoon": "Tjørnuvík's black-sand beach faces the Risin og Kellingin sea stacks. It is also the Faroes' surf beach; the water is 9–11 °C.",
+      "evening": "Arrange a shuttle or leave a second car — there is no bus link between the two ends that works in a single day. `verify: true` **Water:** the pass streams; the Saksun valley is heavily grazed, so filter.",
+      "dayStats": "7–8 km point-to-point, 500 m",
+      "sleep": null
+    },
+    {
+      "day": 5,
+      "title": "Tórshavn ridge day: Húsareyn and the Kirkjubøur old road",
+      "morning": "From the capital, run up Húsareyn (347 m) directly from the northern edge of town — the local training hill, runnable throughout.",
+      "afternoon": "The Kirkjubøhálsur old road, a stone-marked historic route over the ridge from Tórshavn to Kirkjubøur, where the ruined 14th-century Magnus Cathedral and the Kirkjubøargarður farmhouse — reportedly one of the oldest inhabited wooden houses in the world — sit on the shore.",
+      "evening": "Tórshavn. Book a **heimablídni** — a home-hosted dinner in a private house, a Faroese institution that predates the current food scene. **Water:** carry it; the Kirkjubøur ridge is dry.",
+      "dayStats": "14 km, 550 m",
+      "sleep": null
+    },
+    {
+      "day": 6,
+      "title": "Skælingsfjall or the Nordradalsskarð traverse",
+      "morning": "The Nordradalsskarð pass road south of Tórshavn gives high starts. Skælingsfjall (767 m) is a long grassy ridge with almost no trail and no other people, looking across Hestfjørður to the islands of Koltur and Hestur.",
+      "afternoon": "Descend to Kvívík and run the coastal lane. This is the day to have GPX loaded and a compass bearing rehearsed — the plateau is featureless in cloud.",
+      "evening": "Last night in Tórshavn; if the reservation gods have been kind, this is the night for a tasting menu at the fermentation-focused end of the Faroese food scene. `verify: true` **Water:** stream at the col below the summit ridge.",
+      "dayStats": "12 km, 800 m",
+      "sleep": null
+    },
+    {
+      "day": 7,
+      "title": "Sea day and departure",
+      "morning": "If wind allows, take the Mykines boat from Sørvágur for the puffin colony and the lighthouse ridge — but treat it as a bonus, since it cancels often.",
+      "afternoon": "Fly out from Vágar. Allow slack: Faroese departures are the most weather-delayed in this dataset.",
+      "evening": null,
+      "dayStats": null,
+      "sleep": null
+    }
+  ],
+  "accommodationStrategy": [
+    {
+      "rank": 1,
+      "name": "Hotel Føroyar",
+      "style": null,
+      "location": "Tórshavn",
+      "description": "Turf-roofed, built into the hillside above the capital, with a view over the whole harbour. Practically: it is at the top of the Húsareyn trailhead, so two of the week's runs start from the car park, and the drying facilities cope with genuinely wet kit.",
+      "booking": null,
+      "priceNote": null
+    },
+    {
+      "rank": 2,
+      "name": "Gjáargarður Guesthouse",
+      "style": null,
+      "location": "Gjógv",
+      "description": "A guesthouse in the most beautiful village in the archipelago, positioned for the Slættaratindur and Saksun–Tjørnuvík days. Home-cooked evening meals available if booked at check-in, which matters because Gjógv has no restaurant.",
+      "booking": null,
+      "priceNote": null
+    },
+    {
+      "rank": 3,
+      "name": "Sørvágur / Bøur guesthouses",
+      "style": null,
+      "location": "Vágar",
+      "description": "Ten minutes from the airport and from the Sørvágsvatn trailhead. Best first and last nights, and the correct base if you are attempting Mykines, since the boat leaves from Sørvágur harbour and decisions are made at 07:00.",
+      "booking": null,
+      "priceNote": null
+    }
+  ],
+  "logistics": {
+    "connectivity": "Surprisingly good 4G on populated coasts, absent on plateaux. Download offline maps for every route. Faroese numbers are cheap on a local SIM; EU roaming does not apply. `verify: true`",
+    "emergency": "112. Search and rescue is competent but the terrain is unforgiving: the standard accident is a slip on wet grass above a cliff. Wear shoes with aggressive lugs, and treat 35° wet grass as you would treat ice.",
+    "weather": "Four seasons in an hour is the local joke and it is literal. Sea fog can drop visibility to 20 m on a ridge in minutes. Faroese forecasts are given per-village because the weather differs across a single fjord. Build two flexible days into a seven-day plan and expect to use one.",
+    "bookingWindows": "Cars: 2–3 months ahead for summer, the island fleet is small and genuinely sells out. Mykines boat: as soon as the season opens. Tórshavn's serious restaurants: 2–4 months. Guesthouses in Gjógv: 3 months.",
+    "money": null,
+    "transportRules": null,
+    "permits": null,
+    "health": null,
+    "gettingThere": null,
+    "other": [
+      {
+        "label": "Hiking fees and guides",
+        "text": "Since 2019, landowners charge for access to several of the most-photographed routes and some require a guide. Fees are typically 200–500 DKK per person. Trespassing is taken seriously and has led to prosecutions. Check each route's status before you drive to it. `verify: true`"
+      },
+      {
+        "label": "Driving and tunnels",
+        "text": "Subsea tunnels connect Vágar, Streymoy and Eysturoy; the Vágar and Eysturoy tunnels are tolled automatically via the hire car's registration and billed by the rental company. The Eysturoy tunnel contains the world's only undersea roundabout. Single-lane mountain roads use passing bays — the vehicle nearest a bay reverses."
+      }
+    ]
+  },
+  "proTips": [
+    "Run the popular routes at **06:00 or after 19:00** in June. The Sørvágsvatn path holds hundreds of people between 10:00 and 16:00 and almost nobody before or after — and the light at both ends is better.",
+    "Book a **heimablídni** early in the trip, not late. Your hosts will reshape the rest of your week with local knowledge no guidebook has.",
+    "Faroese sheep have made every hillside a network of contour paths. On trackless ground, follow the sheep line that maintains altitude — it is almost always the safest and the driest.",
+    "Take the **helicopter**. The government-subsidised Atlantic Airways helicopter serves remote villages at a fixed, absurdly low fare for a scheduled sector. Seats are released on a fixed schedule and go instantly, and tourists may be restricted to one-way legs. `verify: true`",
+    "Wind assessment is more useful than rain assessment. Above 12 m/s, cancel the exposed ridges — not because of comfort but because gusts on a cliff edge are the actual danger.",
+    "Carry **two pairs of shoes**. Nothing dries overnight in Faroese humidity, and a wet shoe on Day 3 is a wet shoe on Day 7."
+  ],
+  "typeSpecific": {
+    "raw": {
+      "technical_rating": "T3 with severe exposure on cliff-edge sections; grass-on-rock at 35–40° is the real hazard, not scrambling",
+      "weekly_vertical_m": 5200,
+      "water_strategy": "Streams everywhere, but every catchment is grazed by sheep — carry a filter or purification tablets and drink from fast water high in the catchment only",
+      "access_note": "Many routes cross private land and charge a per-person fee or require a licensed guide. This has been enforced since 2019 and is not optional.",
+      "gpx_ready": true
+    },
+    "surface": null,
+    "distanceKm": null,
+    "elevationM": null,
+    "verticalM": 5200,
+    "technicalRating": "T3 with severe exposure on cliff-edge sections; grass-on-rock at 35–40° is the real hazard, not scrambling",
+    "transitPass": null,
+    "hutBooking": null,
+    "liftNetwork": null,
+    "snowReliability": null,
+    "windConditions": null,
+    "gpxReady": true,
+    "bookingTimeline": null,
+    "audience": null
+  },
+  "packingNotes": [],
+  "whatCouldGoWrong": [],
+  "sources": {
+    "verified": null,
+    "confidenceNotes": null
+  },
+  "verifyFlags": [],
+  "verifyFlagCount": 0,
+  "volatilePricing": true,
+  "wordCount": 1554,
+  "dataVintage": 2026,
+  "provenance": {
+    "batch": "northern-baltics",
+    "sourceFile": "carta_northern_europe_baltics_trips.md#trip-05",
+    "sourceFormat": "single-file md, '## Trip NN' records with fenced YAML",
+    "sourceId": "faroese-ridgelines-streymoy-vagar",
+    "ingestedAt": "2026-09-02",
+    "synthesized": false
+  }
+}

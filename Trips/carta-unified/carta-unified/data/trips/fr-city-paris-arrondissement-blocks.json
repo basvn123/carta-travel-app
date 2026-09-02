@@ -1,0 +1,319 @@
+{
+  "id": "fr-city-paris-arrondissement-blocks",
+  "sourceId": "fr-city-paris-arrondissement-blocks",
+  "slug": "fr-city-paris-arrondissement-blocks",
+  "title": "Paris by the Block — Seven Arrondissements, Seven Days",
+  "country": "France",
+  "countryCode": "FR",
+  "countries": [
+    {
+      "name": "France",
+      "code": "FR"
+    }
+  ],
+  "isMultiCountry": false,
+  "region": "Western & Central Europe",
+  "regionKey": "western-central",
+  "subRegion": "Île-de-France",
+  "tripType": "City Trips",
+  "tripTypeId": 3,
+  "tripTypeSlug": "city",
+  "durationDays": 7,
+  "bestPeriod": {
+    "months": [
+      4,
+      5,
+      6,
+      9,
+      10
+    ],
+    "monthNames": [
+      "April",
+      "May",
+      "June",
+      "September",
+      "October"
+    ],
+    "window": null,
+    "note": "Late September and early October give warm terraces and reopened kitchens after the August closures; May is beautiful and busy.",
+    "avoid": null,
+    "raw": null
+  },
+  "budgetTier": "€€€",
+  "budgetTierRange": [
+    3,
+    3
+  ],
+  "budgetTierRaw": "€€€",
+  "budget": {
+    "currency": "EUR",
+    "totalEur": {
+      "low": 1200,
+      "high": 1880
+    },
+    "totalNote": null,
+    "breakdown": {
+      "accommodation": {
+        "lowEur": 700,
+        "highEur": 1150,
+        "note": null
+      },
+      "food": {
+        "lowEur": 300,
+        "highEur": 430,
+        "note": null
+      },
+      "transport": {
+        "lowEur": 60,
+        "highEur": 90,
+        "note": null
+      },
+      "activities": {
+        "lowEur": 140,
+        "highEur": 210,
+        "note": null
+      }
+    },
+    "perDayEur": {
+      "low": 171,
+      "high": 269
+    }
+  },
+  "profile": {
+    "difficulty": 2,
+    "difficultyLabel": "Moderate",
+    "difficultyNote": null,
+    "fitnessLevel": "Moderate",
+    "crowdLevel": "High",
+    "familyFriendly": true,
+    "carRequired": false
+  },
+  "basecamps": [
+    "Paris (11e or 3e)"
+  ],
+  "gatewayAirport": "Paris Charles de Gaulle (CDG)",
+  "gatewayAirportCode": "CDG",
+  "languages": [
+    "French"
+  ],
+  "currency": "EUR",
+  "emergencyNumber": "112",
+  "coordinates": {
+    "lat": 48.8534,
+    "lon": 2.3488,
+    "precision": "city",
+    "matchedPlace": "Paris",
+    "source": "geonames (geonamescache, cities > 15k)"
+  },
+  "tags": [
+    "arrondissements",
+    "timed-entry",
+    "street-markets",
+    "belleville",
+    "canal-saint-martin"
+  ],
+  "summary": "Paris taken one walkable arrondissement at a time, with four days spent entirely off the museum spine and a market anchoring each district.",
+  "summaryGenerated": false,
+  "hook": "The mistake in Paris is treating it as a list of monuments joined by métro rides. Done properly it is a set of villages with numbers, and each one holds a morning market, a church, a park and a street of shops within about a kilometre. Three days here go to the great collections. The other four never leave the eastern and northern arrondissements, and they are the days where you eat best.",
+  "snapshot": {
+    "Country": "France",
+    "Base(s)": "Paris, single base (11e Oberkampf or 3e Haut-Marais)",
+    "Trip Type": "City Trips",
+    "Duration": "7 days",
+    "Best Period": "April–June, September–October",
+    "Budget Tier": "€€€",
+    "Total Distance / Terrain": "approx. 80–95 km on foot; flat except the Belleville, Ménilmontant and Butte-aux-Cailles slopes; 9 arrondissements",
+    "Getting There": "Fly to CDG, RER B to Gare du Nord in 30 min; or Eurostar and TGV into Gare du Nord, Gare de l'Est and Gare de Lyon",
+    "Who It Suits": "Second-and-beyond visitors, walkers, market shoppers; anyone who wants to stop queueing"
+  },
+  "itinerary": [
+    {
+      "day": 1,
+      "title": "Le Marais: Place des Vosges to the Enfants Rouges",
+      "morning": "One block, all day. Start at Place des Vosges (completed 1612, the oldest planned square in Paris) under the arcades, then the Musée Carnavalet on rue de Sévigné — the city's own history museum in two hôtels particuliers, reopened in 2021 after five years of work. The permanent collection is free; only the temporary shows are ticketed.",
+      "afternoon": "The Musée Picasso in the Hôtel Salé (Jean Boullier de Bourges, 1659), timed entry, book two or three days ahead for weekends. Then walk rue des Rosiers, the Pletzl's old Jewish street, and the courtyards of the Hôtel de Soubise on rue des Francs-Bourgeois.",
+      "evening": "The Marché des Enfants Rouges on rue de Bretagne, opened in 1615 and the oldest covered market in Paris — a dozen food counters under one roof, open Tuesday to Sunday, closed Monday, and best at lunch rather than dinner. Eat there or on rue de Bretagne, then drink in the Haut-Marais around rue de Turenne.",
+      "dayStats": "8 km walked. Arrondissements: 3e, 4e. Ticket spend approx. €16–€24.",
+      "sleep": null
+    },
+    {
+      "day": 2,
+      "title": "Île de la Cité and the Latin Quarter",
+      "morning": "Sainte-Chapelle (consecrated 1248) first thing. The 09:00 and 09:15 slots are the ones worth having — the fifteen windows only work with morning light, and by midday the upper chapel is shoulder to shoulder. Slots release online roughly two months ahead and summer mornings go early; the combined Sainte-Chapelle plus Conciergerie ticket saves a few euros and lets you walk straight into the second site.",
+      "afternoon": "Notre-Dame, reopened in December 2024, is free but managed by timed reservation through its official app; a tranche of slots is released a couple of days in advance and a further tranche on the day, so check both. Then cross to the Left Bank: Shakespeare and Company, the Panthéon (Jacques-Germain Soufflot, completed 1790) with its Foucault pendulum and the roof colonnade, and the Arènes de Lutèce, a Roman amphitheatre hidden behind rue Monge.",
+      "evening": "Rue Mouffetard for the market street — stalls Tuesday to Sunday morning, restaurants at night. Dinner around the Contrescarpe end.",
+      "dayStats": "10 km walked. Arrondissements: 1er, 4e, 5e. Ticket spend approx. €35–€45.",
+      "sleep": null
+    },
+    {
+      "day": 3,
+      "title": "Belleville and Ménilmontant, off the spine",
+      "morning": "Métro to Belleville and straight into the Marché de Belleville on the boulevard — Tuesday and Friday mornings, roughly 07:00 to 14:30, the cheapest and most crowded market in the city, North African and Chinese and Vietnamese all at once. Climb rue de Belleville, then Parc de Belleville for the view down the whole axis to the Eiffel Tower from the top terrace at 108 metres.",
+      "afternoon": "Père-Lachaise (Alexandre-Théodore Brongniart, 1804), the first garden cemetery in Europe: 44 hectares, cobbled avenues, and a free map at the conservation office by the Porte des Amandiers gate. Enter from the top at Gambetta and walk downhill. Then rue de Ménilmontant and the street art on rue Dénoyez.",
+      "evening": "Parc des Buttes-Chaumont (Jean-Charles Alphand, 1867), built on a former gypsum quarry with a suspension bridge by Gustave Eiffel's workshop and a temple on a rock island. Then dinner around rue Sainte-Marthe or the Belleville Chinese restaurants on rue de Belleville itself.",
+      "dayStats": "11 km walked, 120 m of climbing. Arrondissements: 19e, 20e, 11e. Ticket spend approx. €0–€5.",
+      "sleep": null
+    },
+    {
+      "day": 4,
+      "title": "Saint-Germain, Orsay and the 7e",
+      "morning": "The Musée d'Orsay in Victor Laloux's 1900 railway station, converted by Gae Aulenti in 1986. Timed entry, and the honest advice is to book the last slots rather than the first: Thursday evening opening runs until 21:45 and the Impressionist floor at 20:00 is a different museum. Free on the first Sunday of the month, which is exactly when not to go.",
+      "afternoon": "Walk to the Musée Rodin on rue de Varenne, whose garden ticket alone is cheap and holds *The Thinker*, *The Gates of Hell* and a rose garden with chairs. Then across into Saint-Germain: Église Saint-Sulpice, the Cour du Commerce Saint-André, rue de Buci.",
+      "evening": "The Marché Raspail on boulevard Raspail is Tuesday, Friday and Sunday mornings only — the Sunday edition is entirely organic and famous — so if your day falls otherwise, eat instead on rue de Seine or rue des Canettes.",
+      "dayStats": "9 km walked. Arrondissements: 6e, 7e. Ticket spend approx. €30–€40.",
+      "sleep": null
+    },
+    {
+      "day": 5,
+      "title": "Canal Saint-Martin and the 10e, off the spine",
+      "morning": "Start at the Hôpital Saint-Louis (Claude Vellefaux, 1607), whose brick-and-stone courtyard is one of the oldest intact ensembles in Paris and is open to walk through. Then the Marché Couvert Saint-Quentin (1866), a cast-iron and glass hall on boulevard de Magenta, open Tuesday to Sunday.",
+      "afternoon": "The Canal Saint-Martin itself, cut 1802–1825: nine locks, two swing bridges, and iron footbridges over the whole run from the Bassin de la Villette down to the Bastille tunnel. Walk the towpath south, stopping on rue de Marseille, rue Beaurepaire and rue de Lancry for the shops. On Sundays the quays close to cars entirely.",
+      "evening": "Rue Oberkampf and rue Saint-Maur in the 11e for dinner and bars — this is where Paris in its thirties actually drinks. Passage Brady, the covered Indian arcade off rue du Faubourg-Saint-Denis, is the cheap alternative.",
+      "dayStats": "10 km walked. Arrondissements: 10e, 11e. Ticket spend approx. €0–€8.",
+      "sleep": null
+    },
+    {
+      "day": 6,
+      "title": "Butte-aux-Cailles and the 13e, off the spine",
+      "morning": "Métro to Corvisart and climb into the Butte-aux-Cailles — a village of two-storey houses, cobbled lanes and an artesian well on place Paul-Verlaine that still runs 28°C water from 582 metres down. The Cité Florale and the rue Dieulafoy garden-city streets are five minutes south.",
+      "afternoon": "Down to the Manufacture des Gobelins on avenue des Gobelins, the state tapestry works operating on the site since the 17th century, with guided workshop visits on set days. Then the 13e's other face: the Olympiades slab towers of the 1970s and Paris's real Chinatown along avenue de Choisy and avenue d'Ivry, and the Bibliothèque nationale de France François-Mitterrand (Dominique Perrault, 1995), four glass towers around a sunken pine forest.",
+      "evening": "Eat Vietnamese or Chaozhou on avenue de Choisy, then walk a section of the Petite Ceinture — the abandoned 1860s belt railway, opened to the public in stretches, including a long green corridor in the 15e and shorter ones here.",
+      "dayStats": "11 km walked, 60 m of climbing. Arrondissements: 13e. Ticket spend approx. €0–€15.",
+      "sleep": null
+    },
+    {
+      "day": 7,
+      "title": "Batignolles and the back of Montmartre, off the spine",
+      "morning": "The Marché Biologique des Batignolles on boulevard des Batignolles runs Saturday mornings, roughly 09:00 to 14:00, and is the northern counterpart to Raspail. Then Square des Batignolles, the Cité des Fleurs — a private lane of 1840s villas off rue de la Jonquière — and the shops on rue Legendre and rue des Dames.",
+      "afternoon": "Walk east into the 18e and take Montmartre backwards: up rue Lepic past the Moulin de la Galette, the Musée de Montmartre on rue Cortot with Renoir's garden and the studio Suzanne Valadon and Utrillo worked in, the Clos Montmartre vineyard, and rue Saint-Vincent. You will reach Sacré-Cœur from behind with no funicular queue and no staircase crowd.",
+      "evening": "Dinner in the 9e around rue des Martyrs — a food street of butchers, cheesemongers and bakeries by day and restaurants by night — then last drinks in South Pigalle.",
+      "dayStats": "10 km walked, 130 m of climbing to the Butte. Arrondissements: 17e, 18e, 9e. Ticket spend approx. €12–€18.",
+      "sleep": null
+    }
+  ],
+  "accommodationStrategy": [
+    {
+      "rank": 1,
+      "name": "Hôtel Jules & Jim",
+      "style": "Boutique",
+      "location": "rue des Gravilliers, 3e",
+      "description": "Three buildings around a courtyard in the Haut-Marais with a fire pit and a late bar. It puts Day 1 on your doorstep and is within walking distance of the canal and the République interchange, which feeds five métro lines. Rooms are small in the Parisian way; the courtyard is the point.",
+      "booking": "10–12 weeks ahead.",
+      "priceNote": "€200–€300 per night"
+    },
+    {
+      "rank": 2,
+      "name": "Hôtel Fabric",
+      "style": "Design hotel",
+      "location": "rue de la Folie-Méricourt, 11e",
+      "description": "A converted textile workshop off rue Oberkampf, which is the best-value dinner neighbourhood in central Paris and the natural base for the eastern half of this itinerary. Métro Saint-Ambroise and Parmentier are both two minutes away; Père-Lachaise and the canal are walkable.",
+      "booking": "10 weeks ahead.",
+      "priceNote": "€180–€260 per night"
+    },
+    {
+      "rank": 3,
+      "name": "An apartment in the 11e or 10e",
+      "style": "Self-catering",
+      "location": "Oberkampf or Canal",
+      "description": "Seven days makes a kitchen worth having when the markets are half the itinerary. A registered short-let with a proper number displayed avoids the enforcement problems Paris has with unlicensed rentals. Ask which floor and whether there is a lift — Haussmann buildings routinely have six.",
+      "booking": "10–12 weeks ahead.",
+      "priceNote": "€140–€220 per night for two"
+    }
+  ],
+  "logistics": {
+    "connectivity": null,
+    "emergency": "112 pan-European. French specifics: SAMU medical 15, police 17, fire 18, and 114 by SMS for the deaf and hard of hearing. Pharmacies with a green cross show the rotating night duty on the door.",
+    "weather": null,
+    "bookingWindows": "Sainte-Chapelle: slots open roughly 60 days out, morning slots go first, and the security queue on boulevard du Palais adds 20 minutes regardless. Notre-Dame: free reservation via the official app, a batch released about two days ahead just after midnight and more on the day. The Catacombes: timed, and typically sold out a week ahead. Musée d'Orsay and Musée Picasso: two to four days is usually enough except Saturdays.",
+    "money": "Cards work everywhere including buses via contactless; markets often want cash, so carry €40–€60. Service is included by law — leaving a couple of euros is generous, not required. Say *bonjour* on entering any shop; skipping it is the single most common visitor error.",
+    "transportRules": null,
+    "permits": null,
+    "health": null,
+    "gettingThere": null,
+    "other": [
+      {
+        "label": "The pass decision",
+        "text": "Since the 2025 fare reform Paris has one flat métro/RER fare across all zones — a single Métro-Train ticket at approx. €2.50, bus and tram at approx. €2.00, and a book of ten loaded onto a **Navigo Easy** card (card fee approx. €2) at roughly €19–€21. For a week of heavy use the **Navigo Découverte** weekly pass at approx. €32 plus a €5 card fee covers zones 1–5, which includes both airports, Versailles and Disneyland."
+      },
+      {
+        "label": "The Navigo trap",
+        "text": "The weekly pass runs Monday 00:00 to Sunday 23:59 no matter which day you buy it. Arrive on a Thursday and you pay a full week for four days. You also need a passport-format photo glued to the card — bring one or use a station photo booth. Buy it Monday to Wednesday for the current week, Thursday onward for the next."
+      },
+      {
+        "label": "The Paris Visite trap",
+        "text": "Sold hard at airport counters at roughly €17 for one day to €55 for five days in zones 1–3, with \"discounts\" that are typically a euro or two off things you were not going to do. It is worse value than a carnet on Navigo Easy in almost every scenario, and its zone 1–3 version excludes CDG."
+      },
+      {
+        "label": "Airport transfers",
+        "text": "RER B to and from CDG costs approx. €13 as a single, or nothing extra if your Navigo Découverte covers the week. Orly is reachable by métro 14 for a similar flat fare. Never take an unbooked \"taxi\" tout at arrivals; the official taxi rank has a fixed flat fare to central Paris posted on a sign."
+      },
+      {
+        "label": "Opening-hour traps",
+        "text": "The Louvre closes Tuesday; Orsay and Picasso close Monday; the Marché des Enfants Rouges closes Monday. Most street markets are morning only and finish by 14:30. Many independent restaurants close Sunday and Monday, and a substantial number shut for two or three weeks in August."
+      }
+    ]
+  },
+  "proTips": [
+    "Book the last Orsay slot on a Thursday. The museum runs to 21:45 and the fifth-floor Impressionist rooms after 20:00 are as close to empty as they ever get.",
+    "Enter Père-Lachaise at Porte Gambetta, the top gate, and walk downhill to the Père-Lachaise métro. Everyone else does it the other way and climbs.",
+    "Buy at the market at the *end*, not the beginning. Belleville, Raspail and Batignolles all discount in the final half hour as stalls break down.",
+    "Rue des Martyrs in the 9e is a better food street than anything in the Marais and requires no ticket at all. Do it on the way to or from Montmartre.",
+    "The Musée Rodin sells a garden-only ticket for a few euros. On a warm afternoon it is the best-value seat in central Paris.",
+    "Climb the Panthéon's colonnade rather than the Eiffel Tower for the view: same rooftop panorama, a fraction of the queue, and open April to October.",
+    "Use the Vélib' bike share for the canal and Belleville days. A short-term pass costs a few euros and the towpath route from La Villette to Bastille is nearly all separated cycle track.",
+    "Approach Montmartre from the north-west via rue Lepic and rue Saint-Vincent. The staircase and funicular crowds all arrive from the south, and you get the vineyard and the Musée de Montmartre garden on the way."
+  ],
+  "typeSpecific": {
+    "raw": {
+      "Total Distance / Terrain": "approx. 80–95 km on foot; flat except the Belleville, Ménilmontant and Butte-aux-Cailles slopes; 9 arrondissements",
+      "Who It Suits": "Second-and-beyond visitors, walkers, market shoppers; anyone who wants to stop queueing"
+    },
+    "surface": "approx. 80–95 km on foot; flat except the Belleville, Ménilmontant and Butte-aux-Cailles slopes; 9 arrondissements",
+    "distanceKm": 80,
+    "elevationM": null,
+    "verticalM": null,
+    "technicalRating": null,
+    "transitPass": null,
+    "hutBooking": null,
+    "liftNetwork": null,
+    "snowReliability": null,
+    "windConditions": null,
+    "gpxReady": null,
+    "bookingTimeline": null,
+    "audience": "Second-and-beyond visitors, walkers, market shoppers; anyone who wants to stop queueing"
+  },
+  "packingNotes": [
+    "Shoes that will take 12 km a day on stone — this itinerary walks more than most Paris weeks.",
+    "One outfit that will not look out of place at dinner in the 6e; Paris is not formal but it is not casual either.",
+    "A folding market bag and a small cool bag if you are self-catering.",
+    "A passport-format photo for the Navigo Découverte card, or the coins for a station photo booth.",
+    "A compact umbrella; Paris rain is frequent, light and unpredictable in every month.",
+    "Layers for museum interiors and evening terraces, which diverge by ten degrees in spring and autumn.",
+    "A refillable bottle — the green Wallace fountains run drinking water from March to November, and there are Eau de Paris sparkling fountains in several parks.",
+    "A daypack small enough to keep on your front in the métro at rush hour; pickpocketing on lines 1, 4 and the RER B is organised and constant."
+  ],
+  "whatCouldGoWrong": [
+    "**You buy the Navigo Découverte on a Friday.** It expires Sunday night. Fallback: buy a book of ten on a Navigo Easy card instead, which never expires and can be topped up, and switch to the weekly pass on Monday if you are still in town.",
+    "**Sainte-Chapelle morning slots are gone.** Fallback: take an afternoon slot but visit on the brightest day of your week, or go to the Conciergerie first and use the combined ticket; alternatively Saint-Séverin and Saint-Eustache have serious stained glass with no ticket at all.",
+    "**A transport strike.** Regular and usually announced days ahead. Fallback: Paris is walkable end to end in about two hours, Vélib' keeps running, and this itinerary is built on district blocks precisely so that a strike day costs you nothing — just do the nearest arrondissement.",
+    "**August closures.** Many of the best restaurants and some markets shut for weeks. Fallback: the covered markets — Enfants Rouges, Saint-Quentin — and the Chinatown restaurants of the 13e stay open through August almost without exception.",
+    "**Pickpocketed on the métro or at a museum entrance.** Fallback: carry nothing in a back pocket, keep the bag in front on lines 1 and 4, and if it happens, report at any commissariat for the insurance paperwork and cancel cards through your bank app immediately."
+  ],
+  "sources": {
+    "verified": null,
+    "confidenceNotes": null
+  },
+  "verifyFlags": [],
+  "verifyFlagCount": 0,
+  "volatilePricing": false,
+  "wordCount": 2778,
+  "dataVintage": 2026,
+  "provenance": {
+    "batch": "western-central",
+    "sourceFile": "cartatripsv1/trips/fr-city-paris-arrondissement-blocks.md",
+    "sourceFormat": "md+yaml-frontmatter (one file per trip)",
+    "sourceId": "fr-city-paris-arrondissement-blocks",
+    "ingestedAt": "2026-09-02",
+    "synthesized": false
+  }
+}

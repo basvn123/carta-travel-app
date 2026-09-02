@@ -11,10 +11,23 @@
  */
 import { supabase } from './supabaseClient.js';
 import { PAID_TIERS } from './pricing.js';
+import { trackPaywall } from './paywallEvents.js';
 
-export async function startCheckout(tier) {
+/**
+ * @param {string} tier    the pass being bought
+ * @param {string} [reason] the gate that sent them here, for the funnel only.
+ *   Carried so "which gate converts" is answerable. Without it a checkout row
+ *   has no gate, and the per-gate breakdown can only ever show who was ASKED,
+ *   never who paid, which is the half that decides anything.
+ */
+export async function startCheckout(tier, reason = '') {
   if (!supabase) return { ok: false, code: 'no_auth_config' };
   if (!PAID_TIERS.includes(tier)) return { ok: false, code: 'bad_tier' };
+  // Intent, not outcome. Recorded before the round trip so a checkout that
+  // dies at Stripe still shows up as somebody who tried, which is exactly the
+  // gap worth seeing. The purchase itself is recorded by the webhook in
+  // pass_grants and is never claimed by this client.
+  trackPaywall('checkout', reason, tier);
   try {
     const { data, error } = await supabase.functions.invoke('checkout', { body: { tier } });
     if (error) {

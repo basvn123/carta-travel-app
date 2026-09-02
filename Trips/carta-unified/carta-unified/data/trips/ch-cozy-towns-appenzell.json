@@ -1,0 +1,322 @@
+{
+  "id": "ch-cozy-towns-appenzell",
+  "sourceId": "ch-cozy-towns-appenzell",
+  "slug": "ch-cozy-towns-appenzell",
+  "title": "Painted Houses — An Appenzellerland Week",
+  "country": "Switzerland",
+  "countryCode": "CH",
+  "countries": [
+    {
+      "name": "Switzerland",
+      "code": "CH"
+    }
+  ],
+  "isMultiCountry": false,
+  "region": "Western & Central Europe",
+  "regionKey": "western-central",
+  "subRegion": "Appenzell Innerrhoden & Ausserrhoden",
+  "tripType": "Cozy Towns Trips",
+  "tripTypeId": 4,
+  "tripTypeSlug": "cozy-towns",
+  "durationDays": 7,
+  "bestPeriod": {
+    "months": [
+      5,
+      6,
+      9,
+      10
+    ],
+    "monthNames": [
+      "May",
+      "June",
+      "September",
+      "October"
+    ],
+    "window": null,
+    "note": "The Landsgemeinde votes in the open air on the last Sunday of April; the decorated cattle come down off the alps in the first half of September.",
+    "avoid": null,
+    "raw": null
+  },
+  "budgetTier": "€€€",
+  "budgetTierRange": [
+    3,
+    3
+  ],
+  "budgetTierRaw": "€€€",
+  "budget": {
+    "currency": "EUR",
+    "totalEur": {
+      "low": 1330,
+      "high": 1890
+    },
+    "totalNote": null,
+    "breakdown": {
+      "accommodation": {
+        "lowEur": 700,
+        "highEur": 980,
+        "note": null
+      },
+      "food": {
+        "lowEur": 380,
+        "highEur": 520,
+        "note": null
+      },
+      "transport": {
+        "lowEur": 140,
+        "highEur": 210,
+        "note": null
+      },
+      "activities": {
+        "lowEur": 110,
+        "highEur": 180,
+        "note": null
+      }
+    },
+    "perDayEur": {
+      "low": 190,
+      "high": 270
+    }
+  },
+  "profile": {
+    "difficulty": 2,
+    "difficultyLabel": "Moderate",
+    "difficultyNote": null,
+    "fitnessLevel": "Easy",
+    "crowdLevel": "Moderate",
+    "familyFriendly": true,
+    "carRequired": false
+  },
+  "basecamps": [
+    "Appenzell"
+  ],
+  "gatewayAirport": "Zürich (ZRH)",
+  "gatewayAirportCode": "ZRH",
+  "languages": [
+    "German"
+  ],
+  "currency": "CHF",
+  "emergencyNumber": "112",
+  "coordinates": {
+    "lat": 47.3667,
+    "lon": 8.55,
+    "precision": "gateway",
+    "matchedPlace": "Zürich",
+    "source": "geonames (geonamescache, cities > 15k)"
+  },
+  "tags": [
+    "painted-houses",
+    "alpine-folk-craft",
+    "cheese-dairies",
+    "narrow-gauge-rail",
+    "landsgemeinde"
+  ],
+  "summary": "Appenzell, Urnäsch, Stein and Gais in seven days — painted gables, working dairies, Biber bakers and narrow-gauge trains, with one hotel change.",
+  "summaryGenerated": false,
+  "hook": "Appenzellerland is small, stubborn and very good at making things: cheese, herbal bitters, honey cake pressed in carved wooden moulds, embroidery fine enough to sell to Paris. Two half-cantons, a landscape of green hummocks under the Alpstein wall, and towns where the house fronts are painted the colours of a Sunday waistcoat. This week takes four of them at walking pace, on a narrow-gauge railway, with a single change of hotel.",
+  "snapshot": {
+    "Country": "Switzerland (Appenzell Innerrhoden & Ausserrhoden)",
+    "Base(s)": "Appenzell (4 nights) · Gais (2 nights)",
+    "Trip Type": "Cozy Towns Trips",
+    "Duration": "7 days / 6 nights",
+    "Best Period": "May–June, September–October",
+    "Budget Tier": "€€€ — approx. €1,330–1,890 per person",
+    "Total Distance / Terrain": "40–50 km walked; rolling pasture paths, one cable-car day in the Alpstein, all village walking flat",
+    "Getting There": "Fly Zürich (ZRH); train to St. Gallen or Gossau, then Appenzeller Bahnen to Appenzell (approx. 2h in total)",
+    "Who It Suits": "Craft and folk-culture travellers, families, walkers who want a gondola rather than a rucksack"
+  },
+  "itinerary": [
+    {
+      "day": 1,
+      "title": "Hauptgasse and the Landsgemeindeplatz",
+      "morning": "Zürich airport to St. Gallen by direct train, then the Appenzeller Bahnen narrow-gauge line up through Teufen and Bühler — about 45 minutes of climbing through pasture, with the Alpstein filling the windscreen. Total journey approx. 2 hours.",
+      "afternoon": "Walk the Hauptgasse. Appenzell's main street is a run of painted, deep-eaved gable fronts in ox-blood, ochre and green, each with the family's trade lettered across it; the Rathaus and the Pfarrkirche St. Mauritius anchor the top end. Then the Landsgemeindeplatz — the bare square where, on the last Sunday of April, citizens of Innerrhoden still vote on cantonal law in the open air by raising a hand.",
+      "evening": "Dinner in town: Appenzeller Chäshörnli, Siedwurst with Rösti, Chäsmagerone. Ask for the Appenzeller Bier from the Brauerei Locher, which has been brewing in the village since 1886, and finish with a small glass of Appenzeller Alpenbitter — a herbal digestif made here since 1902 from a recipe of some forty-two herbs.",
+      "dayStats": "Towns: 1 (Appenzell). Walking: 3 km. Transfer: approx. 2h from ZRH.",
+      "sleep": null
+    },
+    {
+      "day": 2,
+      "title": "Ebenalp, the cliff inn, and the Seealpsee",
+      "morning": "Take the little red train ten minutes up the valley to Wasserauen, then the cable car to Ebenalp at 1,640 m — approx. CHF 34 return (about €36). At the top, walk down through the Wildkirchli: three prehistoric caves in the cliff, a hermitage chapel, and then Berggasthaus Aescher, the inn pinned against the rock face under an overhang.",
+      "afternoon": "Continue down to the Seealpsee, a green lake in a bowl of limestone, roughly 1h15 from Aescher on a steep but made path. Alp dairies around the shore sell their own cheese and cold Most in summer. From the lake it is another hour of easy descent to Wasserauen and the train.",
+      "evening": "Back in Appenzell by 17:30. Sit outside on the Hauptgasse with a beer and watch the light go off the Säntis.",
+      "dayStats": "Towns: 1 (Appenzell) plus the Alpstein. Walking: 8 km, approx. 700 m descent. Transfer: 20 min by train, cable car.",
+      "sleep": null
+    },
+    {
+      "day": 3,
+      "title": "Urnäsch and the museum of customs",
+      "morning": "Twenty-five minutes by train west to Urnäsch, a long green village square lined with painted houses in Ausserrhoden. The Museum für Appenzeller Brauchtum on the square is the single best explanation of this culture anywhere: the Silvesterchläuse costumes — the \"beautiful\" ones with headdresses built as model farmhouses, the \"ugly\" ones in moss and pine cones — plus cow bells, harness, Streichmusik instruments and the yodelling tradition. Approx. CHF 10 (about €10.50).",
+      "afternoon": "Walk out of Urnäsch on the pasture paths toward Schwellbrunn, or simply sit on the square. This is the second of the week's slow afternoons and it is meant to be.",
+      "evening": "Return to Appenzell. If you are here between Christmas and mid-January, the Silvesterchlausen on 31 December and again on 13 January — the Old New Year of the Julian calendar — is the reason people come to Urnäsch at all.",
+      "dayStats": "Towns: 2 (Appenzell, Urnäsch). Walking: 6 km. Transfer: 50 min by train, return.",
+      "sleep": null
+    },
+    {
+      "day": 4,
+      "title": "Market morning, bitters and the Biber bakers",
+      "morning": "Appenzell's weekly market takes the Landsgemeindeplatz on Saturday mornings, usually from about 08:00 to 12:00 — alp cheese, dried meat, Öpfelbrot, honey, and stalls of cut flowers. Buy the day's food here. The Biber bakeries along the Hauptgasse make the region's honey-and-almond cake pressed in carved wooden moulds, so that a bear, a Senn or a cow comes out on the crust; they will show you the mould if the shop is not three deep.",
+      "afternoon": "Two working producers accept visitors in the village. The Alpenbitter distillery keeps a visitor room and shop explaining the herb recipe, and the Locher brewery runs a self-guided brewing experience with tasting, approx. CHF 20–30 (about €21–32). Between them, look into the Museum Appenzell on the Hauptgasse for the hand embroidery: Appenzell whitework, worked by outworking farmwomen through the 19th century and still practised by a handful of embroiderers.",
+      "evening": "Walk fifteen minutes out of the village on the Sitter riverside path for the view back at the painted fronts, then a last supper in Appenzell before the move.",
+      "dayStats": "Towns: 1 (Appenzell). Walking: 5 km. Transfer: none.",
+      "sleep": null
+    },
+    {
+      "day": 5,
+      "title": "Fifteen minutes to Gais",
+      "morning": "The only relocation of the week, and it takes a quarter of an hour: the Appenzeller Bahnen train north to Gais. Take the whole morning anyway — coffee, a last pass along the Hauptgasse, and a slow packing.",
+      "afternoon": "Gais's Dorfplatz is the reason to come: a complete ensemble of curved-gable houses, rebuilt after the village burned in 1780 and protected as a heritage site of national importance. There is nothing quite like the sweep of those rounded gables anywhere else in Switzerland. Gais also made its living from the whey cure in the 18th and 19th centuries, when visitors came to drink Molke from the alps.",
+      "evening": "Village kitchens here close early. Eat at 19:00, then walk out on the ridge toward the Stoss, where the Appenzellers defeated the Habsburg army in 1405 — the chapel and the view over the Rhine valley are ten minutes' walk from the last houses.",
+      "dayStats": "Towns: 2 (Appenzell, Gais). Walking: 5 km. Transfer: 15 min by train.",
+      "sleep": null
+    },
+    {
+      "day": 6,
+      "title": "Stein: the show dairy and the folk museum",
+      "morning": "Bus or train and bus west to Stein, roughly 30–40 minutes. The Appenzeller Schaukäserei is a working demonstration dairy: cheesemaking happens in the morning behind glass, from the copper vat through the cutting of the curd to the press, and the cellar with its brine-washed wheels is part of the visit. Come before midday or you will see clean equipment.",
+      "afternoon": "Next door, the Appenzeller Volkskunde-Museum is the craft half of the day: hand-weaving and hand-embroidery demonstrated on the original equipment, a reconstructed Sennenstube, and the naive Bauernmalerei — the painted milk pails, cow straps and Alpfahrt panels that are this region's true folk art. Approx. CHF 10 (about €10.50).",
+      "evening": "Back to Gais for the evening. In the first half of September, watch the roads: the Alpabfahrt brings the herds down from the alps, Sennen in yellow breeches and red waistcoats walking ahead of decorated cows, and it stops traffic in every village here.",
+      "dayStats": "Towns: 2 (Gais, Stein). Walking: 5 km. Transfer: approx. 1h20 return.",
+      "sleep": null
+    },
+    {
+      "day": 7,
+      "title": "The rack railway down to the Rhine, and out",
+      "morning": "From Gais, take the line to Altstätten Stadt — a narrow-gauge descent with a rack section that drops roughly 600 m off the Appenzell plateau into the Rhine valley in about twenty minutes, one of the most dramatic short rides in Swiss railways. Walk Altstätten's arcaded Marktgasse, then ride back up.",
+      "afternoon": "A last unhurried lunch on the Gais Dorfplatz, and time to buy what you decided against earlier in the week: Appenzeller cheese vacuum-packed for travel, a bottle of Alpenbitter, a Biber in its box.",
+      "evening": "Gais to St. Gallen is around 35 minutes by train, and St. Gallen to Zürich airport about 1h15. Allow three hours door to gate and do not attempt a flight before midday.",
+      "dayStats": "Towns: 2 (Gais, Altstätten). Walking: 4 km. Transfer: approx. 2h to ZRH.",
+      "sleep": null
+    }
+  ],
+  "accommodationStrategy": [
+    {
+      "rank": 1,
+      "name": "Romantik Hotel Säntis",
+      "style": "Historic hotel",
+      "location": "Landsgemeindeplatz, Appenzell",
+      "description": "The painted facade on the Landsgemeindeplatz belongs to the hotel itself, which puts you on the square where the market sets up and thirty seconds from the Hauptgasse. It has a proper restaurant and a small spa, which matters after the Ebenalp descent, and the station is a four-minute walk with a bag.",
+      "booking": "three months ahead; Landsgemeinde weekend a year out.",
+      "priceNote": "CHF 220–320 (about €230–340) per night"
+    },
+    {
+      "rank": 2,
+      "name": "Hotel Appenzell",
+      "style": "Small family hotel",
+      "location": "Landsgemeindeplatz, Appenzell",
+      "description": "The quieter alternative on the same square, family-run, with a café-confiserie downstairs that makes its own Biber and pastries. Rooms are simple and calm; ask for one facing the square rather than the road behind. Good value by Swiss standards and easy about early breakfasts for the Wasserauen train.",
+      "booking": "two months ahead.",
+      "priceNote": "CHF 190–260 (about €200–275) per night"
+    },
+    {
+      "rank": 3,
+      "name": "Hotel Krone",
+      "style": "Village inn",
+      "location": "Dorfplatz, Gais",
+      "description": "Directly on Gais's curved-gable square, a traditional Gasthof with a handful of rooms and a kitchen that feeds the village. Being on the Dorfplatz is the whole reason to sleep in Gais rather than commuting from Appenzell; the square is yours after 20:00. Station two minutes away for the Stein and Altstätten days.",
+      "booking": "six weeks ahead.",
+      "priceNote": "CHF 150–210 (about €160–220) per night"
+    }
+  ],
+  "logistics": {
+    "connectivity": null,
+    "emergency": "112 works everywhere; in Switzerland use 144 for ambulance, 117 police, 118 fire, and **1414 for Rega**, the air rescue service — relevant on the Ebenalp and Seealpsee paths. Save 1414 before you go up.",
+    "weather": "The Alpstein manufactures its own afternoon cloud from June onward. The Ebenalp cable car stops in high wind or thunderstorms, and the descent to Seealpsee is dangerous in wet weather — the path is polished limestone.",
+    "bookingWindows": null,
+    "money": "Switzerland uses the Swiss franc; euros are sometimes accepted in tourist businesses at a poor rate and change comes in francs. Cards work everywhere including the market, but carry CHF 50–100 in coins and small notes for alp dairies and mountain inns, several of which are cash-only.",
+    "transportRules": "A Half Fare Card (approx. CHF 120, about €126, valid one month) pays for itself in about three days at these fares, including the cable cars, which sell half-price tickets on it. A Swiss Travel Pass only makes sense if you are combining this with travel elsewhere in the country. Ask your hotel whether your stay comes with a regional guest card — several Appenzellerland hosts issue one covering local buses.",
+    "permits": null,
+    "health": null,
+    "gettingThere": null,
+    "other": [
+      {
+        "label": "Emergencies",
+        "text": "112 works everywhere; in Switzerland use 144 for ambulance, 117 police, 118 fire, and **1414 for Rega**, the air rescue service — relevant on the Ebenalp and Seealpsee paths. Save 1414 before you go up."
+      },
+      {
+        "label": "Timetable discipline",
+        "text": "Swiss trains and post buses leave to the second and connections are built on four-minute changes. Miss one and the next is typically 30 or 60 minutes. Check the last departure from Wasserauen and Stein before you set out."
+      },
+      {
+        "label": "Opening-hour traps",
+        "text": "Village shops close 12:00–13:30 for lunch, at 18:30 on weekdays, around 16:00 on Saturday, and all day Sunday. The Schaukäserei only makes cheese in the morning. Museums in Urnäsch and Stein often close Mondays outside high season."
+      },
+      {
+        "label": "Alpine paths",
+        "text": "are waymarked yellow for hiking trails and white-red-white for mountain trails. The Ebenalp–Seealpsee–Wasserauen route is white-red-white: steep, exposed in places, and not a stroll in trainers."
+      },
+      {
+        "label": "Drones",
+        "text": "are restricted near the cable cars and over the Alpstein wildlife zones; the Hoher Kasten and Ebenalp platforms give the shot legally."
+      },
+      {
+        "label": "Fires and foraging",
+        "text": "Open fires are permitted only at marked fireplaces, and grazing land is private working pasture — close every gate, walk single file through herds, and never come between a cow and a calf."
+      }
+    ]
+  },
+  "proTips": [
+    "Take the first Ebenalp cable car of the day, around 08:00. The Aescher path is a single-file cliff ledge and by 11:00 it is a queue; before 09:30 you will have the Wildkirchli caves to yourself.",
+    "Descend to Seealpsee rather than ascending to it. The climb from Wasserauen is 600 m of steady grind; the descent from Ebenalp puts the lake in front of you the whole way.",
+    "At the Schaukäserei, arrive by 10:00. Cheesemaking runs in the morning and what is on show at 15:00 is a clean vat and a shop.",
+    "Buy Appenzeller cheese at an alp dairy above Seealpsee or at the Saturday market, not at the airport. Ask for the *würzig* or the extra-mature — the mild export version is not what the region eats.",
+    "Ask a Biber baker on the Hauptgasse to show you the carved mould. The moulds are individual to each house and older than most of the shops.",
+    "The Gais–Altstätten rack descent is worth doing as a return trip in the morning, when the Rhine valley haze has not yet built up. Sit on the right going down.",
+    "If your dates touch the last Sunday in April, the Landsgemeinde is public and free to watch from the edge of the square. Arrive in Appenzell before 10:00; the trains are full and the village is closed to cars.",
+    "Book Berggasthaus Aescher for a drink, not a meal, unless you have reserved. It is small, famous, and the terrace turns over fast."
+  ],
+  "typeSpecific": {
+    "raw": {
+      "Total Distance / Terrain": "40–50 km walked; rolling pasture paths, one cable-car day in the Alpstein, all village walking flat",
+      "Who It Suits": "Craft and folk-culture travellers, families, walkers who want a gondola rather than a rucksack"
+    },
+    "surface": "40–50 km walked; rolling pasture paths, one cable-car day in the Alpstein, all village walking flat",
+    "distanceKm": 40,
+    "elevationM": null,
+    "verticalM": null,
+    "technicalRating": null,
+    "transitPass": null,
+    "hutBooking": null,
+    "liftNetwork": null,
+    "snowReliability": null,
+    "windConditions": null,
+    "gpxReady": null,
+    "bookingTimeline": null,
+    "audience": "Craft and folk-culture travellers, families, walkers who want a gondola rather than a rucksack"
+  },
+  "packingNotes": [
+    "Proper hiking boots with ankle support for the Ebenalp descent — the limestone is polished and slick, and trainers are the commonest cause of injury on that path.",
+    "A warm mid-layer and a windproof shell: the Ebenalp is 1,000 m above Appenzell and runs 6–8 °C colder, with wind.",
+    "Sunglasses and high-factor sunscreen — the pasture and limestone reflect hard even in September.",
+    "CHF 100 in small notes and coins for alp dairies, mountain inns and the market.",
+    "A soft cool bag or two for carrying cheese home; the Saturday market sells whole wedges that will not survive a warm car boot.",
+    "Trekking poles for the Seealpsee descent, especially with knees over fifty.",
+    "A light rain shell in any month; Appenzell's summer afternoon storms are brief and total.",
+    "Cash-friendly small wallet: several dairies have an honesty box rather than a till.",
+    "Modest, warm clothing if you attend the Landsgemeinde — it is a formal civic occasion held outdoors in April."
+  ],
+  "whatCouldGoWrong": [
+    "**The Ebenalp cable car is closed for wind or maintenance.** Fallback: the Kronberg lift from Jakobsbad or the Hoher Kasten from Brülisau, both a short train or bus ride away, or the flat valley walk from Wasserauen toward Seealpsee, which is fine in poor visibility.",
+    "**Fog sits on the plateau all day.** It happens in October. Fallback: this is a museum-and-workshop itinerary at heart — the Urnäsch folk museum, the Stein dairy and craft museum, and the Appenzell distillery and brewery are all indoors and all better in bad weather.",
+    "**A Monday closes the museums.** Fallback: shift the Urnäsch and Stein days to Tuesday–Saturday and use Monday for Appenzell village, the producers and a valley walk.",
+    "**The costs bite.** Switzerland is expensive and this itinerary has two cable cars and several paid visits. Fallback: buy the Half Fare Card, eat your main meal at midday from the market, and use village Gasthof kitchens rather than hotel restaurants — the same food at two-thirds the price.",
+    "**You miss the last train from Stein or Wasserauen.** Services here stop early by city standards. Fallback: check the last departure at the stop when you arrive, and budget approx. CHF 60–90 for a taxi back to Gais or Appenzell if you overrun."
+  ],
+  "sources": {
+    "verified": null,
+    "confidenceNotes": null
+  },
+  "verifyFlags": [],
+  "verifyFlagCount": 0,
+  "volatilePricing": false,
+  "wordCount": 2685,
+  "dataVintage": 2026,
+  "provenance": {
+    "batch": "western-central",
+    "sourceFile": "cartatripsv1/trips/ch-cozy-towns-appenzell.md",
+    "sourceFormat": "md+yaml-frontmatter (one file per trip)",
+    "sourceId": "ch-cozy-towns-appenzell",
+    "ingestedAt": "2026-09-02",
+    "synthesized": false
+  }
+}

@@ -1,0 +1,294 @@
+{
+  "id": "pl-cozy-towns-lubelskie",
+  "sourceId": "poland-lubelskie-cozy-towns",
+  "slug": "pl-cozy-towns-lubelskie",
+  "title": "Loess, Arcades and Onion Bread: A Slow Week in Lubelskie's Small Towns",
+  "country": "Poland",
+  "countryCode": "PL",
+  "countries": [
+    {
+      "name": "Poland",
+      "code": "PL"
+    }
+  ],
+  "isMultiCountry": false,
+  "region": "Eastern & Southeastern Europe",
+  "regionKey": "eastern-southeastern",
+  "subRegion": "Lubelskie, the Vistula bend and the Zamość–Roztocze borderland",
+  "tripType": "Cozy Towns Trips",
+  "tripTypeId": 4,
+  "tripTypeSlug": "cozy-towns",
+  "durationDays": 7,
+  "bestPeriod": {
+    "months": [
+      5,
+      6,
+      9
+    ],
+    "monthNames": [
+      "May",
+      "June",
+      "September"
+    ],
+    "window": "the second half of May into mid-June — lilac and rapeseed, ravines dry enough to walk, everything open, nothing full",
+    "note": null,
+    "avoid": "the last week of July and the first of August (the Two Riversides festival fills Kazimierz Dolny completely), and summer weekends in Sandomierz",
+    "raw": null
+  },
+  "budgetTier": "€",
+  "budgetTierRange": [
+    1,
+    1
+  ],
+  "budgetTierRaw": "€",
+  "budget": {
+    "currency": "EUR",
+    "totalEur": {
+      "low": 550,
+      "high": 905
+    },
+    "totalNote": "€550–€905",
+    "breakdown": {
+      "accommodation": {
+        "lowEur": 245,
+        "highEur": 420,
+        "note": "€245–€420 (€35–€60/night, doubles in guesthouses and small hotels)"
+      },
+      "food": {
+        "lowEur": 110,
+        "highEur": 175,
+        "note": "€110–€175 (€16–€25/day — this is the cheapest corner of Poland to eat well in)"
+      },
+      "transport": {
+        "lowEur": 150,
+        "highEur": 230,
+        "note": "€150–€230 (car hire 7 days €120–€180 + fuel; Warsaw–Lublin rail if car-free)"
+      },
+      "activities": {
+        "lowEur": 45,
+        "highEur": 80,
+        "note": "€45–€80 (museums, underground routes, the castle chapel)"
+      }
+    },
+    "perDayEur": {
+      "low": 79,
+      "high": 129
+    }
+  },
+  "profile": {
+    "difficulty": 1,
+    "difficultyLabel": "Easy",
+    "difficultyNote": "Easy",
+    "fitnessLevel": "Easy",
+    "crowdLevel": null,
+    "familyFriendly": null,
+    "carRequired": null
+  },
+  "basecamps": [
+    "Kazimierz Dolny",
+    "Zamość",
+    "Lublin"
+  ],
+  "gatewayAirport": "Warsaw Chopin (WAW) or Modlin (WMI), then 160 km / 2 h 15 by car to Kazimierz Dolny. Car-free: PKP Intercity Warszawa–Lublin in about 2 h 15, or Warszawa–Puławy Miasto in 1 h 45, then bus or taxi the last 14 km to Kazimierz. Lublin Airport (LUZ) at Świdnik has a thin route list — check before you build the week around it.",
+  "gatewayAirportCode": "WAW",
+  "languages": [
+    "Polish"
+  ],
+  "currency": "Polish złoty (PLN)",
+  "emergencyNumber": "112",
+  "coordinates": {
+    "lat": 50.7231,
+    "lon": 23.252,
+    "precision": "city",
+    "matchedPlace": "Zamość",
+    "source": "geonames (geonamescache, cities > 15k)"
+  },
+  "tags": [
+    "cozy-towns",
+    "renaissance",
+    "unesco",
+    "ravines",
+    "crafts",
+    "bakeries",
+    "slow-travel"
+  ],
+  "summary": "Eastern Poland's small towns keep different hours. A wooden well in the middle of a Renaissance square, ravines cut ten metres deep into pale loess by nothing but rainwater and cartwheels, a Gothic castle chapel…",
+  "summaryGenerated": false,
+  "hook": "Eastern Poland's small towns keep different hours. A wooden well in the middle of a Renaissance square, ravines cut ten metres deep into pale loess by nothing but rainwater and cartwheels, a Gothic castle chapel where Byzantine saints stare down from the vaults, and onion flatbread eaten warm off a bakery counter at eight in the morning. Three bases, two relocations, no queue worth the name. For travellers who would rather sit in a square than tick a list.",
+  "snapshot": {
+    "Country": "Poland",
+    "Trip type": "Cozy Towns Trips",
+    "Duration": "7 days",
+    "Best period": "May, June and September; late May is the sweet spot",
+    "Budget tier": "€",
+    "Difficulty": "Easy",
+    "Start / End": "Kazimierz Dolny → Lublin (point-to-point, ~420 km driven in total)",
+    "Getting there": "Warsaw Chopin (WAW) or Modlin (WMI), then 160 km / 2 h 15 by car to Kazimierz Dolny. Car-free: PKP Intercity Warszawa–Lublin in about 2 h 15, or Warszawa–Puławy Miasto in 1 h 45, then bus or taxi the last 14 km to Kazimierz. Lublin Airport (LUZ) at Świdnik has a thin route list — check before you build the week around it."
+  },
+  "itinerary": [
+    {
+      "day": 1,
+      "title": "The Vistula bend (Kazimierz Dolny)",
+      "morning": "Drive down from Warsaw and park outside the centre; the Rynek is pedestrian-first and the approach roads clog by 11:00. Check in, then walk the square slowly — the wooden well, the Przybyła houses, and the deep arcaded shopfronts that once handled Vistula grain.",
+      "afternoon": "The **kościół farny** (parish church of St John the Baptist) holds a 1620 organ, one of the oldest playable instruments in Poland. Then down to the riverbank and the surviving **spichlerze** — Renaissance granaries strung along the Vistula, evidence that this doll's-house town was once a serious port.",
+      "evening": "Climb the **Góra Trzech Krzyży** (Three Crosses Hill) for the last hour of light: the whole bend of the Vistula, the granaries, and Janowiec's castle on the far bank. Twenty minutes up. Dinner in town, and a *kogut* from Sarzyński for tomorrow's breakfast.",
+      "dayStats": null,
+      "sleep": null
+    },
+    {
+      "day": 2,
+      "title": "Ravines and ruins (Kazimierz Dolny)",
+      "morning": "Walk the **wąwozy lessowe** — ravines eroded into wind-blown loess so deep the tree roots hang across the path at head height. **Korzeniowy Dół** is the famous one (about 500 m, exposed roots, best empty before 09:30); **Wąwóz Małachowskiego** and Plebanka are longer and quieter. Trainers are fine; after rain, they are not.",
+      "afternoon": "Up to the **ruined castle** and the free-standing 13th-century **baszta** above it, then across to the **Kuncewiczówka**, Maria Kuncewiczowa's house-museum, and the Jewish cemetery on Czerniawy, where surviving *matzevot* were set into a cracked memorial wall.",
+      "evening": "Take the small ferry across the Vistula to **Janowiec** and its Firlej castle if it is running, or stay put and eat on the square. Kazimierz has been an artists' colony since Tadeusz Pruszkowski brought his Warsaw students here in the 1920s, and the easel-in-the-street habit has never stopped.",
+      "dayStats": null,
+      "sleep": null
+    },
+    {
+      "day": 3,
+      "title": "Palace park and spa town (Puławy, Nałęczów)",
+      "morning": "Fifteen kilometres north to **Puławy**. The **Czartoryski park** is the point: Izabela Czartoryska's landscape garden with the **Świątynia Sybilli** (Temple of the Sibyl, 1801) and the **Domek Gotycki**, which together functioned as the first public museum in Poland — a patriotic reliquary built while the country did not legally exist.",
+      "afternoon": "Ten kilometres on to **Nałęczów**, a working cardiological spa since 1880. Walk the **Park Zdrojowy**, drink the mineral water at the pump room, look into the **Palmiarnia**, and visit **Chata Żeromskiego**, the log cabin where Stefan Żeromski wrote [VERIFY: current Nałęczów Palmiarnia and Chata Żeromskiego opening hours].",
+      "evening": "Back to Kazimierz for a third night. Try *forszmak lubelski* — a thick pork, pickled cucumber and paprika stew that is the region's true comfort dish, not a tourist invention.",
+      "dayStats": null,
+      "sleep": null
+    },
+    {
+      "day": 4,
+      "title": "Sandomierz, then south to Zamość",
+      "morning": "Leave early, 85 km west on the Vistula's left bank to **Sandomierz**. Start at the **Brama Opatowska**, the only surviving town gate, and climb it for the roofscape. Then the Rynek and the cathedral, whose chancel carries Ruthenian-Byzantine frescoes of the 1420s.",
+      "afternoon": "The **Podziemna Trasa Turystyczna** — roughly 470 m of linked merchants' cellars, up to 12 m down, dug for storing Hungarian wine and Baltic-bound grain [VERIFY: 2026 Sandomierz Underground Route ticket price and tour departure times]. Be honest with yourself about timing: Sandomierz is where *Ojciec Mateusz* is filmed, and on summer weekends the square is genuinely crowded with Polish television pilgrims. Come on a weekday.",
+      "evening": "130 km south-east to **Zamość**, arriving for dusk in the arcades. Rynek Wielki floodlit and half-empty is the single best thirty minutes of the week.",
+      "dayStats": "215 km, ~3 h 30 driving",
+      "sleep": null
+    },
+    {
+      "day": 5,
+      "title": "The ideal city (Zamość)",
+      "morning": "Zamość was built from nothing on Jan Zamoyski's order, to Morando's plan, as a fortified Renaissance ideal city — and it is UNESCO-listed (1992) because it survives essentially whole. Walk Rynek Wielki, climb the town hall, then do the Armenian houses, Rynek Solny and Rynek Wodny, and the collegiate church.",
+      "afternoon": "The **Arsenał** museum and **Bastion VII** with the Nowa Brama Lubelska explain the fortress that stopped both Chmielnicki and Charles X Gustav. Then the **Rotunda** on the town's edge: a circular 1820s powder magazine used by the Germans from 1940 as an execution and transit site, now a martyrdom museum. It takes half an hour and it recalibrates the day.",
+      "evening": "Eat under the arcades. Zamość is a student town in term time, so the square stays alive well past 22:00, and a main course plus beer rarely tops €14 (60 PLN).",
+      "dayStats": null,
+      "sleep": null
+    },
+    {
+      "day": 6,
+      "title": "Potters, weavers, and on to Lublin",
+      "morning": "West through **Szczebrzeszyn** — the beetle-in-the-reeds tongue-twister town, with its Renaissance-Orthodox church and the Roztocze hills behind — then on towards **Janów Lubelski** and the hamlet of **Łążek Garncarski** for the potteries. Buy something heavy and badly packable; that is the point.",
+      "afternoon": "Optional 35 km spur to **Rudnik nad Sanem** for the wicker museum and the workshops, or head straight north. Either way, 110 km to **Lublin**, arriving mid-afternoon.",
+      "evening": "Walk in through the **Brama Krakowska**, cross the Rynek past the Trybunał, and out through the **Brama Grodzka** — the old gate between the Christian town and the Jewish quarter that no longer exists, now the home of **Ośrodek Brama Grodzka – Teatr NN** and its archive of the vanished district.",
+      "dayStats": "200–240 km, ~3 h 30",
+      "sleep": null
+    },
+    {
+      "day": 7,
+      "title": "The chapel, then the chalk (Lublin, Chełm)",
+      "morning": "The one unmissable thing in the region: the **Kaplica Trójcy Świętej** in Lublin Castle. A Gothic brick chapel completely covered inside with Ruthenian-Byzantine frescoes, finished in 1418, signed by Master Andrey, commissioned by Władysław Jagiełło — Eastern iconography under Western vaults, in near-total condition, and almost nobody there [VERIFY: current Lublin Castle chapel admission price and opening days].",
+      "afternoon": "An hour east to **Chełm** and the **Chełmskie Podziemia Kredowe** — a guided route through medieval chalk-mining tunnels beneath the town, cool, white and genuinely strange, complete with the resident ghost Bieluch [VERIFY: current Chełm Chalk Tunnels admission and guided-tour times].",
+      "evening": "Back to Lublin for the last night. If you are driving on to Warsaw tomorrow, route via **Kock** for Jabłonowska's planned square and the Hasidic court of Menachem Mendel; if you have a spare day and are heading for the Bug, **Kodeń** is the payoff — the basilica built around the icon Mikołaj Sapieha stole from a papal chapel in 1631.",
+      "dayStats": null,
+      "sleep": null
+    }
+  ],
+  "accommodationStrategy": [
+    {
+      "rank": 1,
+      "name": "Dom Architekta SARP",
+      "style": "historic guesthouse on the Rynek",
+      "location": "Kazimierz Dolny",
+      "description": "the architects' association house sits directly on the market square in a restored merchant building, so you step out into the Rynek at 07:00 before the coaches. Parking on site, which in Kazimierz is worth more than a view.",
+      "booking": "6–8 weeks ahead for May–June weekends; 4+ months if your dates touch the Two Riversides festival [VERIFY: 2026 Dwa Brzegi festival dates].",
+      "priceNote": null
+    },
+    {
+      "rank": 2,
+      "name": "Hotel Senator",
+      "style": "boutique hotel inside the fortifications",
+      "location": "Zamość",
+      "description": "a two-minute walk from Rynek Wielki, inside the historic core, with the arcades and the Rotunda both walkable — so the car stays parked for a full 36 hours. Quiet street, secure parking, breakfast early enough for a craft-village morning.",
+      "booking": "3–4 weeks ahead; longer if a re-enactment weekend or the Zamość festival season overlaps.",
+      "priceNote": null
+    },
+    {
+      "rank": 3,
+      "name": "Hotel Alter or Grand Hotel Lublinianka",
+      "style": "restored tenement / grand hotel",
+      "location": "Lublin Old Town",
+      "description": "both put you inside or beside the Stare Miasto, ten minutes' walk from the castle chapel and five from the cebularz counters on ul. Kowalska. Late check-in is standard, which matters after a craft-village driving day.",
+      "booking": "2–3 weeks ahead midweek; earlier in June, when Lublin's festival calendar is dense.",
+      "priceNote": null
+    }
+  ],
+  "logistics": {
+    "connectivity": "4G/5G is solid in all three bases and along the main roads; the loess ravines and the Roztocze forest roads drop to nothing. Download offline maps before Day 2 — Korzeniowy Dół has no signal and several unmarked forks.",
+    "emergency": "**112** everywhere, English answered. There is no mountain rescue here; for river incidents on the Vistula the water-rescue number is **WOPR 601 100 100**. Pharmacies (*apteka*) are plentiful; the on-duty rota is posted in every pharmacy window.",
+    "weather": "Continental. May and June bring hard afternoon thunderstorms that turn loess ravines into slick chutes within minutes — walk them in the morning. September is the most reliable month, with cold mornings and 20 °C afternoons.",
+    "bookingWindows": "Everything except Kazimierz Dolny in high summer can be booked two to four weeks out. Kazimierz on a July or August weekend, and any date near the festival, needs months.",
+    "money": "Poland uses the **złoty (PLN)**; roughly 4.3 PLN to the euro. Cards work almost everywhere, including village bakeries, but carry 200–300 PLN in cash for the potteries in Łążek, the ferry to Janowiec, and rural parking meadows. Avoid Euronet-style airport bureaux; use bank ATMs and always decline dynamic currency conversion.",
+    "transportRules": "Dipped headlights are mandatory **24 hours a day, year-round**. The drink-drive threshold is **0.02% BAC (0.2 ‰)** — effectively zero, and rigorously enforced on rural roads. Built-up-area limit is 50 km/h day and night. There is no motorway on this itinerary and no vignette for cars in Poland.",
+    "permits": "No entry fees for the towns. The Kazimierz ravines are legally protected landscape — stay on the floor of the ravine and do not climb the loess walls, which collapse. Photography inside the Lublin castle chapel is restricted and flash is banned outright; the frescoes are pigment on lime, and the rule is enforced by the guards, not by signage.",
+    "health": null,
+    "gettingThere": null,
+    "other": []
+  },
+  "proTips": [
+    "**Walk Korzeniowy Dół before 09:00 or after 17:00.** It is a fifteen-minute drive-and-walk from Kazimierz's square and, between those hours in summer, a single-file queue. Empty, in low side-light, it is one of the strangest landscapes in Poland.",
+    "**Do Sandomierz on a Tuesday or Wednesday.** The *Ojciec Mateusz* effect is real and weekend-shaped: the same square that holds forty people midweek holds a thousand on a July Saturday.",
+    "**Buy cebularz before 10:00 and eat it standing up.** It is a bread, not a pizza; by lunchtime the onion has gone limp and locals will tell you so. Ask for *\"świeży cebularz, proszę.\"*",
+    "**Book the Zamość town hall tower and the Sandomierz cellars for the first slot of the day.** Both are small-group timed entries, both fill from mid-morning, and both are far better without a group behind you.",
+    "**Ask at the Łążek workshops whether a firing is scheduled.** The wood kilns run to their own calendar, and if one is loading you will be waved in. A phone call in Polish through your guesthouse gets a better answer than turning up.",
+    "**Use Lublin as the wet-weather base.** The castle chapel, the Lubelska Trasa Podziemna under the Rynek, and the Brama Grodzka archive are all indoors and all excellent — save the ravines for the sun.",
+    "**If you have an eighth day, give it to Kodeń and the Bug.** The border river landscape east of Biała Podlaska is empty, flat and lovely, and Kodeń's basilica is a genuinely bizarre monument to a stolen icon and a papal excommunication reversed."
+  ],
+  "typeSpecific": {
+    "raw": {
+      "The squares, by name": "**Rynek in Kazimierz Dolny** — irregular, sloping, built around a wooden-roofed well, with the **Kamienice Przybyłów** (the brothers Mikołaj and Krzysztof, 1615) on the south side, their facades encrusted with outsized reliefs of St Nicholas and St Christopher. **Rynek Wielki in Zamość** — an exact 100 × 100 m arcaded square, laid out by the Paduan architect **Bernardo Morando** from 1580, with the town hall's fan staircase on the north side and the **Kamienice Ormiańskie**, the Armenian merchants' houses, beside it. **Rynek Solny** and **Rynek Wodny** flank it, each a precise half-size. **Sandomierz Rynek**, sloping to a 16th-century town hall with a Renaissance attic. **Rynek in Lublin**, filled almost entirely by the **Trybunał Koronny**. And **Kock**, a trapezoid square laid out for Anna Jabłonowska by Szymon Bogumił Zug in the 1780s — a whole planned town nobody visits.",
+      "Market days and produce": "Lublin's daily action is at the **Hala Targowa** on ul. Ruska and the **Plac Bychawski** market; Zamość runs its produce market beside Rynek Solny most mornings; Kazimierz Dolny's small square market is a weekend affair aimed at visitors [VERIFY: current market days in Kazimierz Dolny and Zamość]. Ask for *ser koryciński*-style farm cheeses, Roztocze honey and, in September, plums for *powidła*.",
+      "Artisan specialities": "**Łążek Garncarski**, a hamlet outside Janów Lubelski, is Lubelskie's surviving pottery village — unglazed and slip-glazed red earthenware from wood-fired kilns, worked by a handful of families whose workshops open to visitors by arrangement rather than by shopfront [VERIFY: Łążek Garncarski workshop names and current visiting arrangements]. **Rudnik nad Sanem**, 35 km further south-west, is Poland's wicker capital: the **Centrum Wikliniarstwa** museum and a strip of basket workshops along the road, still weaving *wiklina* commercially.",
+      "The bread": "**Cebularz lubelski** holds a **PGI** (Protected Geographical Indication, registered 2014): a 15 cm wheat disc topped with diced onion and poppy seed, eaten within hours of baking and never reheated. In Kazimierz Dolny the equivalent icon is the **kogut kazimierski**, a cockerel-shaped loaf, and the address is **Piekarnia Sarzyński** on ul. Nadrzeczna. In Lublin, buy cebularz from the counters on ul. Kowalska and inside the Hala Targowa before 10:00 [VERIFY: current cebularz bakery addresses and opening hours in Lublin]. For dessert, order **kogel-mogel** — whipped yolk and sugar, a Polish nursery dish that turns up on Lublin menus done properly with rum.",
+      "Boutique stays": "Small, family-run, and cheap by Western European standards: converted granaries and merchant houses in Kazimierz, arcaded flats in Zamość, restored tenements in Lublin's Stare Miasto. €35–€60 (150–260 PLN) buys a good double almost everywhere except Kazimierz in high summer.",
+      "Pacing": "Three bases in seven nights: Kazimierz Dolny (3), Zamość (2), Lublin (2). Two relocations, both doubling as sightseeing days. Nothing here needs to be rushed and nothing rewards it."
+    },
+    "surface": null,
+    "distanceKm": null,
+    "elevationM": null,
+    "verticalM": null,
+    "technicalRating": null,
+    "transitPass": null,
+    "hutBooking": null,
+    "liftNetwork": null,
+    "snowReliability": null,
+    "windConditions": null,
+    "gpxReady": null,
+    "bookingTimeline": null,
+    "audience": null
+  },
+  "packingNotes": [],
+  "whatCouldGoWrong": [],
+  "sources": {
+    "verified": null,
+    "confidenceNotes": "- Verified: Zamość UNESCO-inscribed 1992 as Bernardo Morando's ideal Renaissance town, Rynek Wielki 100 × 100 m; Kamienice Przybyłów dated 1615; Kaplica Trójcy Świętej frescoes completed 1418 under Władysław Jagiełło, signed by Master Andrey; cebularz lubelski registered as a PGI in 2014; Czartoryski park at Puławy with the Świątynia Sybilli (1801) as the first Polish public museum collection; Poland's 0.2 ‰ drink-drive limit and year-round dipped headlights; złoty as currency; emergency 112, WOPR 601 100 100. - `[VERIFY]` items in this file: 8 (see inline markers above) - Last reviewed: 2026-09-02"
+  },
+  "verifyFlags": [
+    "current market days in Kazimierz Dolny and Zamość",
+    "Łążek Garncarski workshop names and current visiting arrangements",
+    "current cebularz bakery addresses and opening hours in Lublin",
+    "current Nałęczów Palmiarnia and Chata Żeromskiego opening hours",
+    "2026 Sandomierz Underground Route ticket price and tour departure times",
+    "current Lublin Castle chapel admission price and opening days",
+    "current Chełm Chalk Tunnels admission and guided-tour times",
+    "2026 Dwa Brzegi festival dates"
+  ],
+  "verifyFlagCount": 8,
+  "volatilePricing": true,
+  "wordCount": 2669,
+  "dataVintage": 2026,
+  "provenance": {
+    "batch": "eastern-southeastern",
+    "sourceFile": "cartaeasterneuropetrips/trips/poland-lubelskie-cozy-towns.md",
+    "sourceFormat": "md+nested-yaml-frontmatter (one file per trip)",
+    "sourceId": "poland-lubelskie-cozy-towns",
+    "ingestedAt": "2026-09-02",
+    "synthesized": false
+  }
+}

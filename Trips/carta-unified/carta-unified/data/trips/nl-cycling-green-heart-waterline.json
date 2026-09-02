@@ -1,0 +1,329 @@
+{
+  "id": "nl-cycling-green-heart-waterline",
+  "sourceId": "nl-cycling-green-heart-waterline",
+  "slug": "nl-cycling-green-heart-waterline",
+  "title": "The Waterline Ride from Amsterdam to Kinderdijk",
+  "country": "Netherlands",
+  "countryCode": "NL",
+  "countries": [
+    {
+      "name": "Netherlands",
+      "code": "NL"
+    }
+  ],
+  "isMultiCountry": false,
+  "region": "Western & Central Europe",
+  "regionKey": "western-central",
+  "subRegion": "Groene Hart, Utrecht and Zuid-Holland",
+  "tripType": "Cycling Trips",
+  "tripTypeId": 1,
+  "tripTypeSlug": "cycling",
+  "durationDays": 7,
+  "bestPeriod": {
+    "months": [
+      4,
+      5,
+      6,
+      9
+    ],
+    "monthNames": [
+      "April",
+      "May",
+      "June",
+      "September"
+    ],
+    "window": null,
+    "note": "Late April gives bulb fields and long light; the forts of the waterline mostly open from April to October only.",
+    "avoid": null,
+    "raw": null
+  },
+  "budgetTier": "€€",
+  "budgetTierRange": [
+    2,
+    2
+  ],
+  "budgetTierRaw": "€€",
+  "budget": {
+    "currency": "EUR",
+    "totalEur": {
+      "low": 980,
+      "high": 1470
+    },
+    "totalNote": null,
+    "breakdown": {
+      "accommodation": {
+        "lowEur": 520,
+        "highEur": 780,
+        "note": null
+      },
+      "food": {
+        "lowEur": 260,
+        "highEur": 360,
+        "note": null
+      },
+      "transport": {
+        "lowEur": 90,
+        "highEur": 150,
+        "note": null
+      },
+      "activities": {
+        "lowEur": 110,
+        "highEur": 180,
+        "note": null
+      }
+    },
+    "perDayEur": {
+      "low": 140,
+      "high": 210
+    }
+  },
+  "profile": {
+    "difficulty": 2,
+    "difficultyLabel": "Moderate",
+    "difficultyNote": null,
+    "fitnessLevel": "Moderate",
+    "crowdLevel": "High",
+    "familyFriendly": true,
+    "carRequired": false
+  },
+  "basecamps": [
+    "Utrecht"
+  ],
+  "gatewayAirport": "Amsterdam Schiphol (AMS)",
+  "gatewayAirportCode": "AMS",
+  "languages": [
+    "Dutch",
+    "English"
+  ],
+  "currency": "EUR",
+  "emergencyNumber": "112",
+  "coordinates": {
+    "lat": 52.0908,
+    "lon": 5.1222,
+    "precision": "city",
+    "matchedPlace": "Utrecht",
+    "source": "geonames (geonamescache, cities > 15k)"
+  },
+  "tags": [
+    "knooppunten",
+    "waterlinieroute",
+    "unesco-forts",
+    "polder-riding",
+    "ferry-hopping"
+  ],
+  "summary": "Amsterdam to Kinderdijk by knooppunten and the Waterlinieroute, following the UNESCO-listed Dutch Water Defence Lines through forts, dikes and river ferries.",
+  "summaryGenerated": false,
+  "hook": "This is a week spent inside a piece of military engineering. The Stelling van Amsterdam and the Nieuwe Hollandse Waterlinie were designed to drown an invading army in 40 cm of water, and since 2021 they have carried a joint UNESCO listing. Riding them means forts, sluices, inundation fields and dike tops, with the Vecht, the Lek and the Alblasserwaard windmills threaded in. There is no climbing. There is a great deal of wind.",
+  "snapshot": {
+    "Country": "Netherlands",
+    "Base(s)": "Naarden (1 night), Utrecht (3), Gorinchem (1), Kinderdijk area (1), Rotterdam (1)",
+    "Trip Type": "Cycling Trips",
+    "Duration": "7 days",
+    "Best Period": "April, May, June, September",
+    "Budget Tier": "€€ (approx. €980–€1,470 per person, excluding flights)",
+    "Total Distance / Terrain": "Approx. 300 km, +600 m cumulative. Asphalt and brick fietspaden, shell paths on the fort perimeters",
+    "Getting There": "Fly to Schiphol, train to Amsterdam Centraal in 17 minutes; bikes need a day ticket and are banned in weekday rush hours",
+    "Who It Suits": "Anyone who can turn a pedal. The difficulty here is headwind and city traffic, not terrain"
+  },
+  "itinerary": [
+    {
+      "day": 1,
+      "title": "Out of Amsterdam along the Stelling",
+      "morning": "Collect bikes. MacBike has rented in Amsterdam since 1984 and has a branch at Centraal Station; Black Bikes is the other reliable multi-branch option. For a trekking bike with racks, Frederic Rentabike on the Brouwersgracht is the long-standing choice. OV-fiets, the station hire system, is cheaper at around €4.75 for 24 hours but needs a Dutch NS-Flex account, so most visitors cannot use it.",
+      "afternoon": "East along the IJ and the Diemerzeedijk to Muiden, where Muiderslot has guarded the Vecht mouth since about 1285. Then Weesp and the earth ramparts of Naarden-Vesting, a twelve-pointed star fortress that is still fully moated.",
+      "evening": "Naarden. Walk the ramparts at sunset; the whole circuit is 3 km.",
+      "dayStats": "40 km · +60 m · asphalt and brick cycle path, short shell sections on the ramparts.",
+      "sleep": null
+    },
+    {
+      "day": 2,
+      "title": "The Vecht to Utrecht",
+      "morning": "South along the Vecht, following the knooppunten rather than a route number: this stretch links 68, 70, 34 and 33 through Nigtevecht and Vreeland. The riverbanks carry the country houses that 17th-century Amsterdam merchants built to escape the city.",
+      "afternoon": "Loenen, Breukelen and Maarssen, then into Utrecht along the Vecht towpath. Fort bij Nigtevecht and Fort Uitermeer are passed en route and both are open in summer.",
+      "evening": "Utrecht. The wharf cellars along the Oudegracht are the medieval unloading level of the canal and now hold most of the city's restaurants.",
+      "dayStats": "46 km · +50 m · asphalt, 6 km of compacted gravel towpath.",
+      "sleep": null
+    },
+    {
+      "day": 3,
+      "title": "Forts of the Nieuwe Hollandse Waterlinie",
+      "morning": "East out of Utrecht through the Amelisweerd estate woods to Fort Rijnauwen, the largest fort of the line, accessible on guided visits only because it is a bat and owl reserve.",
+      "afternoon": "Fort bij Vechten holds the Waterliniemuseum, built underground in 2015, with a working scale model of the inundation system that explains the entire week in twenty minutes. Loop back via Bunnik, Houten and the Kromme Rijn.",
+      "evening": "Utrecht again. The Rietveld Schröder House of 1924 is on the eastern edge and takes timed tickets released well ahead.",
+      "dayStats": "45 km · +60 m · asphalt with shell paths inside the fort grounds.",
+      "sleep": null
+    },
+    {
+      "day": 4,
+      "title": "Down the Lek to Gorinchem",
+      "morning": "South from Utrecht through Nieuwegein and Vreeswijk, where the old lock complex meets the Lek. Cross the river on the Wijk bij Duurstede ferry or the Culemborg road bridge.",
+      "afternoon": "Follow the Lek dike west through Culemborg, past Werk aan het Spoel, then Everdingen, where Fort Everdingen houses a working brewery in its bomb-proof barracks. Continue on the dike to Gorinchem, entering through the 17th-century Dalempoort.",
+      "evening": "Gorinchem. The bastion walk over the Merwede is the best view of the week.",
+      "dayStats": "58 km · +80 m · asphalt dike road, occasional cobbled village sections.",
+      "sleep": null
+    },
+    {
+      "day": 5,
+      "title": "Loevestein and the Alblasserwaard",
+      "morning": "Take the Riveer foot and bike ferry from Gorinchem to Woudrichem and on to Slot Loevestein, the moated castle at the meeting of the Waal and the Maas where Hugo de Groot escaped in a book chest in 1621.",
+      "afternoon": "Return by ferry and ride west into the Alblasserwaard, the deepest polder in the country, through Hoornaar and Bleskensgraaf. The land here sits below sea level and the ditches are the field boundaries.",
+      "evening": "Kinderdijk. Nineteen windmills of 1738–1740, UNESCO-listed since 1997, and almost empty after 18:00 when the visitor centre closes.",
+      "dayStats": "52 km · +70 m · asphalt, two ferry crossings.",
+      "sleep": null
+    },
+    {
+      "day": 6,
+      "title": "Kinderdijk to Rotterdam",
+      "morning": "A slow first hour along the Kinderdijk mill canal before the coaches arrive, then the Lek dike west to the Krimpen ferry.",
+      "afternoon": "Into Rotterdam along the Nieuwe Maas. Cross the Erasmusbrug of 1996, ride Katendrecht and the Kop van Zuid, then the Van Nelle Factory of 1931, a UNESCO monument of Dutch functionalism. The Maastunnel has a dedicated cyclist escalator and tube under the river.",
+      "evening": "Rotterdam. The Markthal and the Fenix warehouses on Katendrecht are the two places to eat that are worth the detour.",
+      "dayStats": "38 km · +90 m · asphalt, city traffic and one river tunnel.",
+      "sleep": null
+    },
+    {
+      "day": 7,
+      "title": "The Green Heart back to Gouda",
+      "morning": "North-east out of Rotterdam through the Rottemeren and Zevenhuizen into the Groene Hart proper, the open dairy landscape that Dutch planning law has protected from the Randstad cities since the 1950s.",
+      "afternoon": "Gouda for the Sint-Janskerk stained glass and, on Thursday mornings from April to August, the reconstructed cheese market on the Markt. Then the Reeuwijkse Plassen, a lake district created by peat digging, and on to Woerden or Gouda station.",
+      "evening": "Train back to Amsterdam, roughly 50 minutes with a bike day ticket. Return bikes at Centraal.",
+      "dayStats": "50 km · +60 m · asphalt with brick village streets.",
+      "sleep": null
+    }
+  ],
+  "accommodationStrategy": [
+    {
+      "rank": 1,
+      "name": "Mother Goose Hotel",
+      "style": "Boutique",
+      "location": "Utrecht city centre",
+      "description": "On the Ganzenmarkt, a few metres off the Oudegracht and 10 minutes from Utrecht Centraal, with an internal bike store. Three nights here removes two hotel changes and puts you in reach of the entire waterline by day ride, which is the structural point of the week.",
+      "booking": "two months ahead, three in April.",
+      "priceNote": "€140–€210 per night"
+    },
+    {
+      "rank": 2,
+      "name": "Hotel Gorinchem",
+      "style": "Practical mid-range",
+      "location": "Gorinchem",
+      "description": "Just outside the old ramparts with parking and a lockable bike area, which matters because Gorinchem is the pivot between the Lek dike and the Loevestein ferries. The town's own hotel stock is tiny, so this is the reliable bed rather than the charming one.",
+      "booking": "six weeks ahead.",
+      "priceNote": "€100–€150 per night"
+    },
+    {
+      "rank": 3,
+      "name": "Hotel New York",
+      "style": "Historic",
+      "location": "Rotterdam Kop van Zuid",
+      "description": "The former Holland America Line headquarters of 1901, on the water at the Wilhelminapier, with bike parking and the water taxi at the door. It is the right end point because you can ride in over the Erasmusbrug and never touch a car park.",
+      "booking": "three months ahead.",
+      "priceNote": "€150–€230 per night"
+    }
+  ],
+  "logistics": {
+    "connectivity": null,
+    "emergency": "Emergency number is 112. Traffic police response is fast and cycle-lane rules are enforced, including lights after dark.",
+    "weather": null,
+    "bookingWindows": null,
+    "money": null,
+    "transportRules": null,
+    "permits": null,
+    "health": null,
+    "gettingThere": null,
+    "other": [
+      {
+        "label": null,
+        "text": "Emergency number is 112. Traffic police response is fast and cycle-lane rules are enforced, including lights after dark."
+      },
+      {
+        "label": null,
+        "text": "Bikes on trains need a Dagkaart Fiets, approximately €7.50, valid all day on NS and accepted by the regional operators. Bikes are banned on weekdays from 06:30 to 09:00 and 16:00 to 18:30. Folding bikes in a bag travel free at any time."
+      },
+      {
+        "label": null,
+        "text": "Navigate by fietsknooppunten, the numbered junction network. Write the sequence on a bar-mounted card. The LF Waterlinieroute is still signed along this stretch, but do not expect to see LF2 Stedenroute markers too — that numbering was retired and its signs came down in 2021, part of the national move away from numbered LF-routes toward the node network."
+      },
+      {
+        "label": null,
+        "text": "Ferries are part of the network. Riveer runs Gorinchem to Woudrichem and Loevestein; the Waterbus links Rotterdam, Kinderdijk and Dordrecht and takes bikes for a small supplement; the Lek pontjes at Wijk bij Duurstede and Krimpen run daily in season and cost €2–€4."
+      },
+      {
+        "label": null,
+        "text": "Look for the Fietsers Welkom certification on accommodation. It means covered locked storage, a repair kit and a place to dry kit."
+      },
+      {
+        "label": null,
+        "text": "Luggage transfer is a private arrangement. Dutch Bike Tours and Boat Bike Tours both run supported Waterline itineraries with bags moved daily."
+      },
+      {
+        "label": null,
+        "text": "Contactless card and phone payment work everywhere, but a few Dutch businesses accept only Maestro or local debit. Carry a modest amount of cash."
+      },
+      {
+        "label": null,
+        "text": "Fort interiors and museums typically open Tuesday to Sunday, April to October. Fort Rijnauwen is guided-visit only and books out weeks ahead."
+      }
+    ]
+  },
+  "proTips": [
+    "Plan the week west to east if a strong south-westerly is forecast for the whole period, and reverse the itinerary. Wind is the only gradient here and 6 Bft on an open polder is harder than an Alpine col.",
+    "Ride the Kinderdijk mill canal before 09:00 or after 18:00. The path is public and free; only the visitor centre and the museum mills charge.",
+    "Book the Rietveld Schröder House the moment your dates are fixed. Slots are small-group, timed and released months ahead, and it is the one thing in Utrecht that sells out.",
+    "The Waterliniemuseum at Fort Vechten is best done on Day 3, not later. It explains the inundation sluices you will then ride past for four days.",
+    "Use the water taxi in Rotterdam to skip the Maastunnel with a loaded bike; it takes bikes and crosses in five minutes.",
+    "The Utrecht bike parking under the station holds 12,500 bikes and the first 24 hours are free. Use it rather than the street if you are exploring on foot.",
+    "Buy a €7.50 bike day ticket even for a short hop. There is no cheaper single fare and it lets you bail out of any headwind day at the next station."
+  ],
+  "typeSpecific": {
+    "raw": {
+      "Total Distance / Terrain": "Approx. 300 km, +600 m cumulative. Asphalt and brick fietspaden, shell paths on the fort perimeters",
+      "Who It Suits": "Anyone who can turn a pedal. The difficulty here is headwind and city traffic, not terrain"
+    },
+    "surface": "Approx. 300 km, +600 m cumulative. Asphalt and brick fietspaden, shell paths on the fort perimeters",
+    "distanceKm": 300,
+    "elevationM": null,
+    "verticalM": null,
+    "technicalRating": null,
+    "transitPass": null,
+    "hutBooking": null,
+    "liftNetwork": null,
+    "snowReliability": null,
+    "windConditions": null,
+    "gpxReady": null,
+    "bookingTimeline": null,
+    "audience": "Anyone who can turn a pedal. The difficulty here is headwind and city traffic, not terrain"
+  },
+  "packingNotes": [
+    "A genuinely windproof jacket. Rain gear alone does not cope with a polder crosswind.",
+    "35–40 mm tyres. Brick fietspaden and shell fort paths punish anything narrower.",
+    "Two locks, one of them a heavy chain. Bike theft in Amsterdam, Utrecht and Rotterdam is industrial.",
+    "Lights front and rear, legally required and checked. Dutch police fine tourists.",
+    "A bar-mounted phone holder or a knooppunten card holder; you will be reading junction numbers every few kilometres.",
+    "Sunscreen. There is no shade for hours at a time on the dikes.",
+    "A dry bag for the ferry crossings, which are open-decked.",
+    "Cash for the small pontjes, which sometimes take coins only."
+  ],
+  "whatCouldGoWrong": [
+    "**Rush-hour bike ban.** If a day collapses at 16:30 you cannot take a train until 18:30. Plan bail-outs for late morning or wait it out in a station café.",
+    "**A cancelled pontje.** High water or wind stops the small Lek ferries. The alternatives are the Culemborg and Vianen road bridges, adding 10–15 km.",
+    "**Headwind from the south-west.** On a bad day the Alblasserwaard leg can take twice the expected time. Shorten by taking the Waterbus from Kinderdijk to Rotterdam.",
+    "**A fort that is shut.** Many open only at weekends outside July and August. Check openingstijden the night before rather than arriving hopeful.",
+    "**Amsterdam bike theft.** Never leave a hired touring bike on the street overnight. Use the hotel store or a guarded stalling."
+  ],
+  "sources": {
+    "verified": null,
+    "confidenceNotes": null
+  },
+  "verifyFlags": [],
+  "verifyFlagCount": 0,
+  "volatilePricing": false,
+  "wordCount": 1963,
+  "dataVintage": 2026,
+  "provenance": {
+    "batch": "western-central",
+    "sourceFile": "cartatripsv1/trips/nl-cycling-green-heart-waterline.md",
+    "sourceFormat": "md+yaml-frontmatter (one file per trip)",
+    "sourceId": "nl-cycling-green-heart-waterline",
+    "ingestedAt": "2026-09-02",
+    "synthesized": false
+  }
+}

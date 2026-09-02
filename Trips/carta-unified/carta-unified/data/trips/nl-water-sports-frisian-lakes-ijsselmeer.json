@@ -1,0 +1,325 @@
+{
+  "id": "nl-water-sports-frisian-lakes-ijsselmeer",
+  "sourceId": "nl-water-frisian-lakes-ijsselmeer",
+  "slug": "nl-water-sports-frisian-lakes-ijsselmeer",
+  "title": "Skûtsjes and Open Boats on the Frisian Lakes",
+  "country": "Netherlands",
+  "countryCode": "NL",
+  "countries": [
+    {
+      "name": "Netherlands",
+      "code": "NL"
+    }
+  ],
+  "isMultiCountry": false,
+  "region": "Western & Central Europe",
+  "regionKey": "western-central",
+  "subRegion": "Friesland lake district and the IJsselmeer",
+  "tripType": "Water Sports & Coastal Trips",
+  "tripTypeId": 10,
+  "tripTypeSlug": "water-sports",
+  "durationDays": 7,
+  "bestPeriod": {
+    "months": [
+      5,
+      6,
+      7,
+      8,
+      9
+    ],
+    "monthNames": [
+      "May",
+      "June",
+      "July",
+      "August",
+      "September"
+    ],
+    "window": null,
+    "note": "July and August coincide with the SKS skûtsjesilen racing calendar between the lake towns; May, June and September give quieter water and steadier south-westerlies.",
+    "avoid": null,
+    "raw": null
+  },
+  "budgetTier": "€€",
+  "budgetTierRange": [
+    2,
+    2
+  ],
+  "budgetTierRaw": "€€",
+  "budget": {
+    "currency": "EUR",
+    "totalEur": {
+      "low": 820,
+      "high": 1200
+    },
+    "totalNote": null,
+    "breakdown": {
+      "accommodation": {
+        "lowEur": 380,
+        "highEur": 540,
+        "note": null
+      },
+      "food": {
+        "lowEur": 220,
+        "highEur": 300,
+        "note": null
+      },
+      "transport": {
+        "lowEur": 100,
+        "highEur": 170,
+        "note": null
+      },
+      "activities": {
+        "lowEur": 120,
+        "highEur": 190,
+        "note": null
+      }
+    },
+    "perDayEur": {
+      "low": 117,
+      "high": 171
+    }
+  },
+  "profile": {
+    "difficulty": 2,
+    "difficultyLabel": "Moderate",
+    "difficultyNote": null,
+    "fitnessLevel": "Moderate",
+    "crowdLevel": "Moderate",
+    "familyFriendly": true,
+    "carRequired": false
+  },
+  "basecamps": [
+    "Sneek, Friesland"
+  ],
+  "gatewayAirport": "Amsterdam Schiphol (AMS)",
+  "gatewayAirportCode": "AMS",
+  "languages": [
+    "Dutch",
+    "Frisian"
+  ],
+  "currency": "EUR",
+  "emergencyNumber": "112",
+  "coordinates": {
+    "lat": 53.033,
+    "lon": 5.6589,
+    "precision": "city",
+    "matchedPlace": "Sneek",
+    "source": "geonames (geonamescache, cities > 15k)"
+  },
+  "tags": [
+    "skutsjesilen",
+    "ijsselmeer",
+    "frisian-lakes",
+    "open-boat-charter",
+    "sneek",
+    "elfstedentocht"
+  ],
+  "summary": "A week chartering an open boat through the Frisian lake district — Sneek, Heeg, Stavoren, Makkum — with a taste of skûtsjesilen and the IJsselmeer's short steep chop.",
+  "summaryGenerated": false,
+  "hook": "Friesland's lake district is a maze of open water and cut canals threaded between towns that were islands before the land was drained, and the whole network still carries the route of the Elfstedentocht, the eleven-cities tour skated in hard winters and sailed in soft ones. This week charters an open boat out of Heeg, works the sheltered lakes toward Stavoren and Makkum, and treats the IJsselmeer itself with the respect its short, steep chop actually earns.",
+  "snapshot": {
+    "Country": "Netherlands",
+    "Base(s)": "Sneek (7 nights, day and overnight sailing from Heeg)",
+    "Trip Type": "Water Sports & Coastal Trips",
+    "Duration": "7 days",
+    "Best Period": "May, June, July, August, September",
+    "Budget Tier": "€€ (approx. €820–€1,200 per person, excluding flights)",
+    "Total Distance / Terrain": "Roughly 110 km of sailing over the week across sheltered lakes, connecting canals and a short IJsselmeer exposure",
+    "Getting There": "Fly to Amsterdam Schiphol, then a direct train to Sneek in about 1 h 40; no car needed once the boat is collected",
+    "Who It Suits": "Sailors and families wanting relaxed open-boat cruising through genuinely picturesque towns, with no licence required for the standard charter class"
+  },
+  "itinerary": [
+    {
+      "day": 1,
+      "title": "Sneek and boat handover",
+      "morning": "Arrive in Sneek, home of the annual Sneekweek regatta and the natural hub of this lake district. Settle in and walk the Waterpoort, the 17th-century water gate that is the town's defining landmark.",
+      "afternoon": "Bus or taxi the short distance to Heeg, one of Friesland's main charter hubs, for boat handover with an established local charter operator such as Ottenhome Heeg. Boats under 15 m and below the inland speed threshold need no formal licence in the Netherlands, though a briefing on the boat's handling and the area's buoyage is standard practice and worth taking seriously.",
+      "evening": "First night aboard or back in Sneek, depending on the charter's mooring arrangement; either way, a short shakedown sail on the Heegermeer to get the feel of the boat before the open lakes tomorrow.",
+      "dayStats": "1.5 water hours · Heegermeer, sheltered, 8–12 knots SW · open sailing boat, life jackets, no wetsuit required.",
+      "sleep": null
+    },
+    {
+      "day": 2,
+      "title": "Heeg and the Fluessen",
+      "morning": "Sail from Heeg onto the Fluessen, one of the larger open lakes in the district and a genuine test of open-water boat handling without the exposure of the IJsselmeer itself.",
+      "afternoon": "Work points of sail across the Fluessen's open stretch, then duck into the sheltered channels around Elahuizen and Oudega for a calmer finish to the day.",
+      "evening": "Moor at Heeg or continue back toward Sneek depending on the plan; both towns have well-serviced visitor moorings.",
+      "dayStats": "4 water hours · Fluessen, 10–16 knots SW, moderate lake chop · open sailing boat, spray jacket.",
+      "sleep": null
+    },
+    {
+      "day": 3,
+      "title": "South to Stavoren",
+      "morning": "Sail south-west through the connecting waters toward Stavoren, the oldest town in Friesland and historically its main Zuiderzee trading port before the IJsselmeer's closure changed the coast's character entirely.",
+      "afternoon": "Moor in Stavoren's harbour and walk the small town centre, including the Vrouwe van Stavoren statue commemorating the local legend of a merchant's wife whose greed supposedly sank the harbour's fortune.",
+      "evening": "Stavoren's harbourside for dinner, with a clear view out toward the open IJsselmeer beyond the breakwater.",
+      "dayStats": "3.5 water hours · Sheltered lakes and canals, 8–14 knots SW · open sailing boat.",
+      "sleep": null
+    },
+    {
+      "day": 4,
+      "title": "A careful look at the IJsselmeer",
+      "morning": "Check the forecast seriously before committing. The IJsselmeer is shallow, averaging only 5–6 m, and with roughly 50 km of open fetch it builds short, steep waves fast once the wind passes force 4 — genuinely different water from the sheltered lakes and not to be underestimated in an open boat.",
+      "afternoon": "On a settled, moderate forecast, take a short exposure out from Stavoren's harbour mouth to feel that chop firsthand before turning back into sheltered water; on anything stronger, stay inside the harbour and use the day for the town and the small maritime museum instead.",
+      "evening": "Depart Stavoren back into the lake network, heading north toward Workum.",
+      "dayStats": "2.5 water hours · IJsselmeer exposure (conditions-dependent) and sheltered return · open sailing boat, full waterproofs on deck.",
+      "sleep": null
+    },
+    {
+      "day": 5,
+      "title": "Workum and Hindeloopen",
+      "morning": "Sail to Workum, a handsome former Zuiderzee town with a long Waag and a well-preserved historic waterfront.",
+      "afternoon": "Continue a short hop to Hindeloopen, famous for its own distinct decorative painted-furniture tradition and for the Hindeloopen style of speed skating that gave the sport several of its early techniques. The Hidde Nijland Museum covers both.",
+      "evening": "Moor at Hindeloopen's small, picturesque harbour for the night.",
+      "dayStats": "3 water hours · Sheltered lakes and connecting canals, 8–13 knots SW · open sailing boat.",
+      "sleep": null
+    },
+    {
+      "day": 6,
+      "title": "Makkum and the ceramics workshop",
+      "morning": "Sail north to Makkum, another former Zuiderzee port, now known above all for Koninklijke Tichelaar Makkum, the royal ceramics and tile workshop operating continuously since 1572 — genuinely one of the oldest companies in the Netherlands.",
+      "afternoon": "Visit the workshop, then sail back south-east into the lake network, retracing part of the Elfstedentocht's summer-sailable route toward Sneek.",
+      "evening": "Overnight on the water or back into Sneek, depending on how the week's schedule has run.",
+      "dayStats": "4 water hours · Sheltered lakes and canals, 8–14 knots SW · open sailing boat.",
+      "sleep": null
+    },
+    {
+      "day": 7,
+      "title": "Sneekermeer and handover",
+      "morning": "Finish on the Sneekermeer itself, the lake that hosts Sneekweek each August and, in season, carries skûtsjesilen races between the SKS's competing towns — traditional Frisian sailing barges, some over a century old, raced under enormous sail area by teams drawn from the towns they represent.",
+      "afternoon": "Return the boat at Heeg and take a taxi or bus back to Sneek.",
+      "evening": "Train to Schiphol for the evening flight, or an extra night in Sneek before an early departure.",
+      "dayStats": "2 water hours · Sneekermeer, 10–15 knots SW · open sailing boat.",
+      "sleep": null
+    }
+  ],
+  "accommodationStrategy": [
+    {
+      "rank": 1,
+      "name": "Hotel or guesthouse, Sneek centre",
+      "style": null,
+      "location": null,
+      "description": "Staying in Sneek keeps the week anchored to trains and buses for the Amsterdam connection while the charter itself is collected a short hop away in Heeg. The town's own harbour and the Waterpoort make it a pleasant base on the nights not spent aboard.",
+      "booking": "six to eight weeks ahead; earlier for Sneekweek itself in early August.",
+      "priceNote": "€85–€130 per night"
+    },
+    {
+      "rank": 2,
+      "name": "Sleeping aboard the charter boat",
+      "style": null,
+      "location": null,
+      "description": "Most open-boat charters in this district come set up for a couple of nights aboard, with basic bunks and a small galley. It is the simplest way to be on the water at first and last light, when the lakes are calmest and the towns' harbours are quietest.",
+      "booking": "confirm sleeping arrangement with the charter operator when booking the boat.",
+      "priceNote": "Included in charter cost, or roughly €20–€35 per person per night for a larger cruising boat"
+    },
+    {
+      "rank": 3,
+      "name": "Bed and breakfast, Stavoren or Hindeloopen",
+      "style": null,
+      "location": null,
+      "description": "Small, family-run stays in either town suit a night off the boat mid-week, both within easy walking distance of the harbour where the boat is moored.",
+      "booking": "three to four weeks ahead.",
+      "priceNote": "€75–€115 per night"
+    }
+  ],
+  "logistics": {
+    "connectivity": null,
+    "emergency": "Emergency number 112. The KNRM keeps lifeboat stations at Lemmer and Stavoren covering the IJsselmeer edge of this district; call or use VHF Channel 16 for anything beyond a minor issue.",
+    "weather": null,
+    "bookingWindows": null,
+    "money": null,
+    "transportRules": null,
+    "permits": null,
+    "health": null,
+    "gettingThere": null,
+    "other": [
+      {
+        "label": null,
+        "text": "Emergency number 112. The KNRM keeps lifeboat stations at Lemmer and Stavoren covering the IJsselmeer edge of this district; call or use VHF Channel 16 for anything beyond a minor issue."
+      },
+      {
+        "label": null,
+        "text": "No formal boating licence (vaarbewijs) is required in the Netherlands for open boats under 15 m and below the inland speed threshold, which covers the standard charter class used on this trip; the charter operator's handover briefing substitutes for formal instruction."
+      },
+      {
+        "label": null,
+        "text": "The Frisian lakes have essentially no tide and, sheltered by land on most sides, rarely build dangerous chop; the IJsselmeer is the one body of water on this route that genuinely can, and should be treated differently from the rest of the trip."
+      },
+      {
+        "label": null,
+        "text": "Water temperature in the lakes: roughly 14–15°C in May, 17–18°C in June, 20–21°C in August, cooling to 12–13°C by October. No wetsuit is standard for open-boat sailing; keep a full change of dry clothes aboard regardless."
+      },
+      {
+        "label": null,
+        "text": "The prevailing wind is south-westerly through the season, typically force 3–5; a passing front can push the IJsselmeer past comfortable limits for an open boat within an hour, so check the forecast each morning rather than once for the week."
+      },
+      {
+        "label": null,
+        "text": "Skûtsjesilen races, organised by the SKS between competing Frisian towns, run mid-July into August and can fill a race town's harbour and moorings entirely on race day; check the schedule before planning a specific overnight stop."
+      },
+      {
+        "label": null,
+        "text": "Shops in the smaller lake towns keep limited hours and many close on Sunday; Sneek, Heeg and Stavoren have the most reliable supermarkets on this route."
+      }
+    ]
+  },
+  "proTips": [
+    "Sail the IJsselmeer exposure on Day 4 only if the forecast is genuinely settled; there is no shame in staying inside Stavoren's harbour and using the alternative plan instead.",
+    "Time the Sneekermeer return for early morning if a skûtsje race is scheduled that day; the fleet's start and the spectator boat traffic around it are worth watching from a respectful distance, not from inside the racing lane.",
+    "Book the Heeg charter pickup at least a season ahead for July and August; the district's best-known operators sell out their fleets well before summer.",
+    "Ask the charter operator for a boat with a reefing system you're comfortable using solo; the Fluessen and the IJsselmeer edge are exactly where a quick reef matters most.",
+    "Visit Koninklijke Tichelaar Makkum on a weekday morning; workshop tours are smaller and less rushed than weekend visits.",
+    "Carry small cash for the smaller harbour offices; some still charge mooring fees by an honesty box or a harbourmaster's evening round rather than a card machine."
+  ],
+  "typeSpecific": {
+    "raw": {
+      "Total Distance / Terrain": "Roughly 110 km of sailing over the week across sheltered lakes, connecting canals and a short IJsselmeer exposure",
+      "Who It Suits": "Sailors and families wanting relaxed open-boat cruising through genuinely picturesque towns, with no licence required for the standard charter class"
+    },
+    "surface": "Roughly 110 km of sailing over the week across sheltered lakes, connecting canals and a short IJsselmeer exposure",
+    "distanceKm": 110,
+    "elevationM": null,
+    "verticalM": null,
+    "technicalRating": null,
+    "transitPass": null,
+    "hutBooking": null,
+    "liftNetwork": null,
+    "snowReliability": null,
+    "windConditions": null,
+    "gpxReady": null,
+    "bookingTimeline": null,
+    "audience": "Sailors and families wanting relaxed open-boat cruising through genuinely picturesque towns, with no licence required for the standard charter class"
+  },
+  "packingNotes": [
+    "Waterproof deck layers rather than a wetsuit; this is open-boat sailing, not immersion sport, but Frisian weather turns quickly.",
+    "Deck shoes with real grip for wet, painted wooden decks on older charter boats.",
+    "A warm layer for evenings on the water even in high summer; the lakes cool fast after sunset.",
+    "A printed or offline chart of the lake network; mobile signal is fine in the towns but patchy on some of the connecting canals.",
+    "Cash in small denominations for harbour fees and village shops.",
+    "A dry bag for phone, documents and camera on the IJsselmeer exposure day specifically."
+  ],
+  "whatCouldGoWrong": [
+    "**A forecast that turns on the IJsselmeer day.** Stay inside Stavoren's sheltered harbour rather than pushing out; the town and its small museum are a perfectly good substitute plan.",
+    "**A skûtsje race day filling a harbour.** Check the SKS schedule before planning an overnight stop in a race-hosting town, or arrive well before the fleet to secure a mooring.",
+    "**Wind funnelling stronger than forecast through a narrow canal cut.** Reduce sail early rather than late when approaching a known pinch point between lakes.",
+    "**A missed charter return slot.** Build a buffer into the final day; returning a boat late at Heeg can mean a rushed, unpleasant final sail instead of the relaxed one the week deserves.",
+    "**Limited shop hours on a Sunday in a small lake town.** Provision at Sneek, Heeg or Stavoren rather than relying on finding an open shop in Hindeloopen or Workum on a weekend."
+  ],
+  "sources": {
+    "verified": null,
+    "confidenceNotes": null
+  },
+  "verifyFlags": [],
+  "verifyFlagCount": 0,
+  "volatilePricing": false,
+  "wordCount": 1943,
+  "dataVintage": 2026,
+  "provenance": {
+    "batch": "western-central",
+    "sourceFile": "cartatripsv1/trips/nl-water-frisian-lakes-ijsselmeer.md",
+    "sourceFormat": "md+yaml-frontmatter (one file per trip)",
+    "sourceId": "nl-water-frisian-lakes-ijsselmeer",
+    "ingestedAt": "2026-09-02",
+    "synthesized": false
+  }
+}

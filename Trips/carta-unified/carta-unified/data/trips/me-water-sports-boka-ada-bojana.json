@@ -1,0 +1,275 @@
+{
+  "id": "me-water-sports-boka-ada-bojana",
+  "sourceId": "water-sports-montenegro-boka-ada-bojana",
+  "slug": "me-water-sports-boka-ada-bojana",
+  "title": "Fjord and Sandbar: Kayaking Boka Kotorska, Kiting Ada Bojana",
+  "country": "Montenegro",
+  "countryCode": "ME",
+  "countries": [
+    {
+      "name": "Montenegro",
+      "code": "ME"
+    }
+  ],
+  "isMultiCountry": false,
+  "region": "Southern & Mediterranean Europe",
+  "regionKey": "southern-mediterranean",
+  "subRegion": "Boka Kotorska (Bay of Kotor), the Ulcinj coast & Lake Skadar",
+  "tripType": "Water Sports & Coastal Trips",
+  "tripTypeId": 10,
+  "tripTypeSlug": "water-sports",
+  "durationDays": 7,
+  "bestPeriod": {
+    "months": [
+      6,
+      9
+    ],
+    "monthNames": [
+      "June",
+      "September"
+    ],
+    "window": "Early June and September — the maestral is settled, the bay is warm and glassy in the mornings, the Ada Bojana kite schools are fully staffed, and Kotor is not yet a cruise-ship queue",
+    "note": null,
+    "avoid": "Late July–August (cruise crowds in Kotor, 35°C in the bay with no breeze until noon) and November–March (bura season, most kite schools and Ada Bojana entirely closed)",
+    "raw": "Early June and September — the maestral is settled, the bay is warm and glassy in the mornings, the Ada Bojana kite schools are fully staffed, and Kotor is not yet a cruise-ship queue"
+  },
+  "budgetTier": "€€",
+  "budgetTierRange": [
+    2,
+    2
+  ],
+  "budgetTierRaw": "€€",
+  "budget": {
+    "currency": "EUR",
+    "totalEur": {
+      "low": 1150,
+      "high": 1900
+    },
+    "totalNote": "€1,150–€1,900 per person, excl. international flights",
+    "breakdown": {
+      "accommodation": {
+        "lowEur": 420,
+        "highEur": 780,
+        "note": "Kotor old-town or Dobrota double €70–€130; Ulcinj €55–€100; Ada Bojana bungalow €60–€110"
+      },
+      "food": {
+        "lowEur": 250,
+        "highEur": 400,
+        "note": "Konoba main €10–€18, grilled fish €45–€70/kg, Vranac by the glass €3–€4, coffee €1.50–€2"
+      },
+      "transport": {
+        "lowEur": 230,
+        "highEur": 380,
+        "note": "Hire car €30–€55/day plus fuel; Verige (Kamenari–Lepetane) ferry €4.50–€6 per car; airport transfers"
+      },
+      "activities": {
+        "lowEur": 280,
+        "highEur": 450,
+        "note": "Guided kayak days €35–€60 each, kite kit hire €40–€60/half day, beginner IKO course €150–€220, Blue Cave boat €20–€30, Lake Skadar NP entry and kayak €25–€45"
+      }
+    },
+    "perDayEur": {
+      "low": 164,
+      "high": 271
+    }
+  },
+  "profile": {
+    "difficulty": 3,
+    "difficultyLabel": "Active",
+    "difficultyNote": "3/5 — sea-kayak days of 12–18 km in the bay, plus multi-hour kite sessions in 15–20 knots and an optional steep 45-minute climb to Gospa od Anđela above Stoliv",
+    "fitnessLevel": "Active",
+    "crowdLevel": null,
+    "familyFriendly": null,
+    "carRequired": null
+  },
+  "basecamps": [],
+  "gatewayAirport": "TIV Tivat — 25 min to Kotor, 1 h 45 to Ulcinj. TGD Podgorica is 1 h 30 to Kotor and 1 h 20 to Ulcinj, and closer to Lake Skadar. DBV Dubrovnik is 2 h to Kotor but crosses an EU external border.",
+  "gatewayAirportCode": "TIV",
+  "languages": [],
+  "currency": null,
+  "emergencyNumber": "112",
+  "coordinates": {
+    "lat": 42.4412,
+    "lon": 19.2631,
+    "precision": "country",
+    "matchedPlace": "Podgorica",
+    "source": "country capital fallback"
+  },
+  "tags": [
+    "sea-kayaking",
+    "kitesurfing",
+    "boka-kotorska",
+    "ada-bojana",
+    "maestral",
+    "bura",
+    "lake-skadar",
+    "blue-cave",
+    "non-eu-roaming",
+    "ulcinj"
+  ],
+  "summary": "Montenegro gives you two completely different pieces of water in one small country, and this week takes both. The first half is the Boka Kotorska, a drowned river canyon that looks like a fjord and behaves like a lake — glassy at dawn, framed by 1,700 m limestone walls, with Perast's two islets, the church above Stoliv and half a dozen abandoned villages you can only sensibly reach by kayak. The second half is the exact opposite: the Ulcinj coast, where 12 kilometres of open sand at Velika Plaža runs down to the Bojana river and the flat, shallow lagoon at Ada Bojana that has quietly become one of Europe's best beginner and freestyle kite spots. Between the two you get the Blue Cave and Žanjice at the bay's mouth, and you end on freshwater at Lake Skadar, the largest lake in the Balkans, paddling through lily fields under a national park. The wind story is simple and worth learning: the maestral is your friend and arrives after lunch, and the bura is the reason you check the forecast every single morning.",
+  "summaryGenerated": false,
+  "hook": null,
+  "snapshot": {},
+  "itinerary": [
+    {
+      "day": 1,
+      "title": "Into the bay: Tivat, Kotor and the walls",
+      "morning": "Land at TIV, collect a car and drive 25 minutes round the bay to Kotor. Check in in Dobrota or the old town, then walk the fortifications: the **city walls climb to St John's Fortress** is 1,350 steps and about 350 m of ascent, and it is best done early or in the last two hours of light, not at midday.",
+      "afternoon": "Orientation swim off the **Dobrota** quay — deep, clean, with steps into the water every hundred metres — and a first look at the bay's geography from the shore. Book your kayak day with **Kayak Montenegro** in town.",
+      "evening": "Dinner at Konoba Scala Santa or Galion, on the water below the walls, then a glass of Vranac at Bokun wine bar in the old town.",
+      "dayStats": "TIV–Kotor 22 km, 25 min / city walls 1,350 steps, ~350 m ascent, entry €8–€15 / bay water 23–25°C in June / tidal range 0.3–0.5 m — no tide planning",
+      "sleep": "Palazzo Radomiri or an old-town apartment, Kotor/Dobrota"
+    },
+    {
+      "day": 2,
+      "title": "Kayak the west shore: Prčanj, Stoliv, Gospa od Anđela",
+      "morning": "On the water by 08:00, because the bay is glass until the maestral deflects down it around midday. Paddle from Kotor or Muo along the **west shore** past Prčanj's Birth of the Virgin church to **Donji Stoliv**. This shore stays in the mountain's shadow into mid-morning, which makes it the most beautiful and the coolest paddling in the Boka.",
+      "afternoon": "Beach the kayaks at Donji Stoliv and climb the steep chestnut-forest path 45 minutes up to **Gornji Stoliv**, an all-but-abandoned upper village, and the fifteenth-century church of **Gospa od Anđela** with the whole bay laid out below. Paddle back before the afternoon breeze fills.",
+      "evening": "Drive round to Morinj for dinner at **Konoba Ćatovića Mlini**, a restored watermill complex on a trout stream — the best-known kitchen in the bay and worth the booking.",
+      "dayStats": "Kotor–Stoliv round trip by kayak roughly 12–14 km / guided full-day kayak €55–€75, half day €35–€45 / Gornji Stoliv climb ~45 min, ~250 m ascent / maestral in the bay 8–14 knots from midday",
+      "sleep": "Palazzo Radomiri or an old-town apartment, Kotor/Dobrota"
+    },
+    {
+      "day": 3,
+      "title": "Perast, Our Lady of the Rocks and the Verige narrows",
+      "morning": "Paddle or drive north to **Perast**, the seventeenth-century Venetian town with no room to grow. Cross the 150 m of water to **Gospa od Škrpjela (Our Lady of the Rocks)** — an artificial island raised over centuries by sailors dropping stones around a wrecked hull, now carrying a church with 68 silver votive plaques and a museum. **Sveti Đorđe**, the cypress islet opposite, is a working monastery and landing is not permitted.",
+      "afternoon": "Continue northwest to **Risan** for the second-century Roman mosaics — including the only known depiction of Hypnos, god of sleep, in a mosaic floor — and then look at the **Verige strait**, where the bay pinches to about 340 m. This is the bura's accelerator and it is worth seeing the geometry from the shore.",
+      "evening": "Dinner in Perast at Conte, on the waterfront, with the islets lit up in front of you.",
+      "dayStats": "Kotor–Perast 12 km, 20 min by road / Perast–Our Lady of the Rocks 150 m, boat shuttle €5–€8 return / island museum entry €2–€5 / Verige strait ~340 m at its narrowest / Risan mosaics entry €3–€5",
+      "sleep": "Palazzo Radomiri or an old-town apartment, Kotor/Dobrota"
+    },
+    {
+      "day": 4,
+      "title": "The bay's mouth: Blue Cave, Žanjice, Mamula",
+      "morning": "Drive round to **Herceg Novi** or the Luštica peninsula and take a boat out to the **Blue Cave (Plava špilja)** — a sea cave on Luštica's outer coast where refracted light turns the water an implausible electric blue. Go on the first boat of the day; by 11:00 there are a dozen craft queuing to get in and the effect is spoiled.",
+      "afternoon": "Swim and snorkel at **Žanjice**, the long pebble beach on the peninsula, then look across at **Mamula**, the circular Austro-Hungarian island fortress at the bay's mouth — a Second World War internment camp and now, controversially, a hotel. Snorkelling here is the clearest water in the Boka.",
+      "evening": "Herceg Novi's stepped old town for dinner — Konoba Feral for fish — and the Forte Mare ramparts at sunset.",
+      "dayStats": "Kotor–Herceg Novi 43 km via the Kamenari–Lepetane ferry (crossing 10 min, €4.50–€6 per car) or 65 km round the bay / Blue Cave boat trip €20–€30 pp, 2–3 h / Žanjice pebble, urchins, reef shoes essential",
+      "sleep": "Palazzo Radomiri or an old-town apartment, Kotor/Dobrota"
+    },
+    {
+      "day": 5,
+      "title": "South to Ulcinj: Velika Plaža and the first kite session",
+      "morning": "Drive south — Kotor to Ulcinj is about 1 h 45 via Budva and Bar, on a coast road that is slow and beautiful. Check in at Ulcinj or in an Ada Bojana bungalow, then walk out onto **Velika Plaža** to see the scale of it: twelve kilometres of unbroken sand with the Albanian mountains at the far end.",
+      "afternoon": "Register at your school — **Kiteloop**, **Dragon Project**, **Sandbox**, **Ka'banya** or **Kiteriders** — and take the first session as the maestral fills around midday. If you are learning, this is where you start; if you are not, the central section of Velika Plaža gives you cross-onshore wind over gently shelving sand with nothing to hit.",
+      "evening": "Eat at **Restaurant Miško** on the Bojana river — a stilted fish restaurant on the water among the *kalimere*, the traditional net-and-hut fishing platforms. Order whatever came out of the river and lagoon that day.",
+      "dayStats": "Kotor–Ulcinj 100 km, 1 h 45 / Velika Plaža 12–13 km of sand / maestral fills around midday, 15–20 knots gusting 25 / beginner IKO course €150–€220 for 6 h over two days / kit hire €40–€60 half day",
+      "sleep": "Ada Bojana bungalow or a hotel in Ulcinj"
+    },
+    {
+      "day": 6,
+      "title": "Ada Bojana: lagoon flat water and a downwinder",
+      "morning": "Off the water while the wind is still building. Walk or SUP the **Bojana river arms** around Ada Bojana — the island is a triangle formed by the river splitting around a sandbank at the Albanian border, and the water on the river side is flat, shallow and warm. Note that **Ada Bojana has been a designated naturist area since the 1970s and much of the seaward beach and the resort bungalow zone remain officially clothing-optional**; the kite schools and the restaurants are not, but do not be surprised, and do not photograph people.",
+      "afternoon": "The big session. The **lagoon** side is the best flat water on the eastern Adriatic and the right place to try something new; the open beach outside gives you space for a **downwinder along Velika Plaža** — arrange the shuttle with your school in the morning, not at 15:00. Keep a hard turnaround well clear of the river mouth: the Bojana's current runs toward Albania.",
+      "evening": "Sundowner at one of the Ada Bojana beach bars, then dinner at a *kalimera* restaurant on the river again — it is the reason to be here.",
+      "dayStats": "Ada Bojana lagoon knee-to-waist deep, flat / downwinder along Velika Plaža 5–8 km, shuttle €15–€25 pp / Bojana river current strongest after rain, flows toward the Albanian bank / naturist zoning on the seaward beach and bungalow area",
+      "sleep": "Ada Bojana bungalow or a hotel in Ulcinj"
+    },
+    {
+      "day": 7,
+      "title": "Lake Skadar: freshwater, lilies and out",
+      "morning": "Drive 1 h 15 inland to **Virpazar** and swap salt for fresh. **Lake Skadar** is the largest lake in the Balkans and a national park, and a guided or self-guided kayak from Virpazar takes you through reed channels and — in June and early July — enormous fields of white water lilies, past the ruined island prison of **Grmožur** and the monastery at **Kom**. It is completely sheltered, so it is the natural fallback if the coast has weather.",
+      "afternoon": "Drive up to the **Pavlova Strana** viewpoint above the horseshoe bend at Rijeka Crnojevića — the most photographed piece of Montenegro after Kotor — then continue to TGD (25 minutes) or back across to TIV (1 h 30).",
+      "evening": "If you are flying from Podgorica, eat in Virpazar at one of the lakeside konobas: carp, smoked bleak and a bottle of Krstač.",
+      "dayStats": "Ulcinj–Virpazar 65 km, 1 h 15 / Lake Skadar National Park entry roughly €4–€5 pp / kayak hire €25–€35/day, guided day €45–€65 / lilies peak June–early July / Virpazar–TGD 35 km, 25 min",
+      "sleep": "Departure"
+    }
+  ],
+  "accommodationStrategy": [
+    {
+      "rank": 1,
+      "name": "Palazzo Radomiri",
+      "style": "restored palace hotel",
+      "location": "Dobrota, Bay of Kotor",
+      "description": "An eighteenth-century Boka captain's palace on the Dobrota waterfront with its own sea platform and steps into deep water, which matters when you want to swim before breakfast and store kayaks or fins somewhere sensible. Ten minutes from Kotor old town by car and away from the cruise-day crowds. Roughly €140–€260 double.",
+      "booking": null,
+      "priceNote": null
+    },
+    {
+      "rank": 2,
+      "name": "Heritage Grand Perast or a Perast waterfront apartment",
+      "style": null,
+      "location": "Perast",
+      "description": "For anyone who wants to be on the water in the most beautiful village in the bay: everything in Perast is on foot, the boat shuttle to Our Lady of the Rocks leaves from the quay, and the bay at dawn from a Perast balcony is the single best view of the trip. Roughly €120–€250 double.",
+      "booking": null,
+      "priceNote": null
+    },
+    {
+      "rank": 3,
+      "name": "Ada Bojana bungalow",
+      "style": "river-island cabins",
+      "location": "Ada Bojana, Ulcinj",
+      "description": "Simple wooden bungalows on the island itself, which puts the lagoon, the kite schools and the *kalimera* restaurants all within walking distance and removes the daily 20-minute drive from Ulcinj. Basic — expect a fridge, a fan and a shower, not a resort — and note the naturist zoning. Roughly €60–€110 double in season.",
+      "booking": null,
+      "priceNote": null
+    }
+  ],
+  "logistics": {
+    "connectivity": "**Montenegro is not in the EU and \"roam like at home\" does not apply.** A Western Balkans regional roaming agreement and subsequent EU–Western Balkans price reductions have brought data costs down, but the terms vary sharply by operator and are not the same as domestic rates — check yours before you land or buy a local prepaid SIM (**Crnogorski Telekom, One, or M:tel**) at the airport. Coverage is good along the coast and in the bay; thinner on the Luštica back roads and in the Skadar reed channels.",
+    "emergency": "**112** for everything (122 police, 123 fire, 124 ambulance). Maritime incidents route through 112 and **VHF Channel 16**; the Maritime Safety and Port Management Administration in Bar coordinates search and rescue. Hospitals in Kotor and Bar, with the main referral centre in Podgorica. **Montenegro is outside the EU, so the European Health Insurance Card does not apply** — carry proper travel insurance that names kitesurfing and sea kayaking explicitly.",
+    "weather": "The **bura** is the phenomenon to respect. It arrives from the northeast off the Orjen and Lovćen massifs, is funnelled and accelerated by the bay's arms and the Verige narrows, goes from nothing to 40 knots faster than you can get a kayak to shore, and is offshore in the Boka — meaning it blows you out of the bay. It is mainly an autumn-to-spring wind but summer episodes occur. Check the forecast every morning before launching anything, and take the local operators' judgement over an app.",
+    "bookingWindows": "Kotor accommodation in July and August goes three to four months ahead; Perast, which has very few rooms, goes further. Kayak Montenegro's guided days book two to four days out in summer. Ada Bojana kite courses should be booked a week or two ahead in August, and gear passes emailed ahead. Ćatovića Mlini needs a day or two. The Blue Cave is walk-up except in August. Lake Skadar needs nothing.",
+    "money": "**The currency is the euro, adopted unilaterally — Montenegro is not in the eurozone and not in the EU.** Cards are accepted in Kotor, Budva and the larger hotels; **Ada Bojana, the kalimera restaurants, beach bars, small konobas and the Perast boat shuttle are frequently cash-only.** Carry €150–€200. ATMs are plentiful on the coast but charge; use a bank machine, not a Euronet. Tipping is 10% at a sit-down restaurant.",
+    "transportRules": "A car is essential and Montenegro's coast road is slow — allow more time than the distance suggests. The **Kamenari–Lepetane ferry across the Verige strait** runs every 15 minutes around the clock, takes 10 minutes, costs €4.50–€6 per car and saves roughly 25 km round the bay; it is worth using in both directions. Check that your rental permits **crossing into Albania or Croatia** — many Montenegrin contracts prohibit it or require a green card and a written authorisation, and Ada Bojana sits directly on the Albanian border, though the border itself is the river and there is no crossing there. Motorway tolls apply only on the Podgorica–Mateševo section.",
+    "permits": "No permit is needed to kite or kayak. **A skipper's certificate is required for most motorboat rental**, which is why skippered boats dominate. Foreign-flagged vessels pay a navigation permit and tourist tax and must clear in at a designated port. Anchoring on *Posidonia* seagrass is prohibited and anchoring is restricted around the Perast islets. **Lake Skadar National Park charges entry** and restricts motorised craft in parts of the reed zone; nesting-bird areas are closed in spring. Drones require CAA Montenegro permission and are restricted over Kotor's UNESCO-listed old town and the fortifications. **Ada Bojana's naturist zoning** is a long-standing designation, not an informal habit — photography of people on the beach is not acceptable.",
+    "health": "Tap water is drinkable in Kotor, Tivat and Budva; ask in Ulcinj and on Ada Bojana. **Sea urchins on the Boka's rock shelves and at Žanjice are the leading injury** — reef shoes for every non-sand entry. Mauve stingers appear in patches; hot-water immersion, not vinegar. The bay's cold freshwater spring plumes cause a real thermal shock for swimmers after rain. Mosquitoes at Ada Bojana and around Lake Skadar are genuinely bad at dusk in summer — bring repellent.",
+    "gettingThere": null,
+    "other": []
+  },
+  "proTips": [
+    "Paddle the Boka before 09:00 and be off the water by 13:00. The bay is a mirror at dawn and the light on the west shore under Lovćen at that hour is the reason to have brought a kayak at all.",
+    "Take the Kamenari–Lepetane ferry rather than driving round the bay. Ten minutes and about €5 saves 25 km of coast road and puts you at the Blue Cave boats an hour earlier.",
+    "Do the Kotor walls at 07:00 or after 18:00, never in between. There is no shade on the climb, cruise passengers arrive at 09:00, and the fortress in low light is a different place.",
+    "Book the first Blue Cave boat of the day. By late morning a dozen craft are jostling at the entrance and the refracted blue light — the entire point — is broken up by hulls and wake.",
+    "Set a hard upwind turnaround at Ada Bojana, well clear of the river mouth. The Bojana's current runs toward the Albanian bank, and a downed kite drifting across an international border is a bureaucratic afternoon you do not want.",
+    "Buy a local SIM at the airport. Montenegro is outside EU roaming, the reduced Western Balkans rates do not apply to every operator, and the phone bill is the most common unpleasant surprise of a Montenegrin week.",
+    "Carry cash in small notes. Ada Bojana's restaurants and beach bars, the Perast boat shuttle, most konobas and half the parking are cash-only despite the country using the euro.",
+    "Keep Lake Skadar as your weather insurance. It is 40 minutes inland from the coast, sheltered from both bura and jugo, and frequently has an entirely different day from the sea — it rescues a written-off coastal afternoon.",
+    "Eat on the Bojana river at least twice. The *kalimere* fish restaurants at Ada Bojana serve river eel, sea bass and mussels straight off the platforms, and there is nothing else quite like them anywhere on the Adriatic."
+  ],
+  "typeSpecific": {
+    "raw": {
+      "Prevailing wind — the maestral and the bura": "The **maestral** is a northwest afternoon sea breeze, the summer engine of the whole Montenegrin coast. At Velika Plaža and Ada Bojana it delivers a reliable **15–20 knots by early afternoon, gusting to 25**, typically from around midday to sunset, from roughly June through September — that is the kite window, and it is remarkably consistent. In the Boka the same breeze arrives weaker and deflected by the mountains, usually 8–14 knots, funnelled along the bay's axis rather than from open sea. The **bura** is the hazard: a cold, dry, violently gusty northeasterly that falls off the Orjen and Lovćen massifs and is **funnelled and accelerated through the bay's narrow arms and the Verige strait**, where it can go from calm to 40 knots in minutes and produce sustained 50–60 knot gusts in winter storms. It is primarily an autumn-to-spring wind but summer episodes happen, and it is a serious matter for anyone in a kayak. The **jugo** (sirocco) from the southeast brings humid weather, rain and swell onto Velika Plaža, closing the exposed beach and turning Ada Bojana's lagoon brown with river runoff.",
+      "Launch spots — the Boka": "*Kotor waterfront and Muo* — sheltered, deep right off the wall, easy launching, the standard start for a bay paddle; watch for tour boats and cruise tenders. *Dobrota* — 4 km of stone quay with steps into deep water, calm, all levels, the best morning swimming water in the bay. *Prčanj and Stoliv* — the west shore under the mountain, in shadow until mid-morning, glassy, with the abandoned upper village of **Gornji Stoliv** and the fifteenth-century church of **Gospa od Anđela** above it, reached by a steep 45-minute path from the shore. *Perast* — the postcard base for the two islets, **Gospa od Škrpjela (Our Lady of the Rocks)**, an artificial island built up over centuries by sailors dropping stones, and **Sveti Đorđe**, the cypress-covered monastery islet where landing is not permitted. *Žanjice and Mirište* on the Luštica peninsula near the bay's mouth — pebble, clear, open water, the launching point for the **Blue Cave (Plava špilja)** and for **Mamula** island fortress. Bottom is rock and pebble throughout; there is essentially no sand in the Boka.",
+      "Launch spots — the Ulcinj coast": "*Velika Plaža* — **12–13 km of continuous open sand** from Ulcinj's southern edge to the Bojana delta, gently shelving, cross-onshore in the maestral, with the kite schools clustered in the central section roughly 3–8 km along; the best big-space downwinder in the eastern Adriatic. *Ada Bojana* — the triangular river island on the Albanian border, with the **flat, shallow, current-scoured lagoon** on the river arms that is the region's best flat-water freestyle and beginner ground, and the seaward beach outside. *Mala Plaža* in Ulcinj town — small, sheltered, swimming only. *Valdanos* — an olive-lined cove north of Ulcinj, no wind, good snorkelling.",
+      "Equipment hubs and certification": "Ada Bojana and Velika Plaža carry a real cluster of established schools: **Kiteloop Kiteboarding Center**, **Dragon Project** (windsurf and kite, one of the longest-running on the island), **Sandbox Kitesurfing School**, **Ka'banya Kitesurf Beach** and **Kiteriders Montenegro**. Most teach to **IKO** standard; ask to see the instructor's card. Indicative 2026 prices: **beginner IKO course, six hours over two days, €150–€220; private tuition €50–€75/hour; kit hire €40–€60 per half day, €60–€90 per full day, with multi-day passes discounted; storage typically included** with a course or pass. In the Boka, **Kayak Montenegro** in Kotor runs guided half- and full-day paddles and rents sit-on-top and touring kayaks; a 2.5-hour guided bay tour runs roughly €35–€45 and a full day €55–€75. On Lake Skadar, **Undiscovered Montenegro** operates guided kayaking out of Virpazar.",
+      "Tides and currents": "The Adriatic at this latitude is close to tideless: **range in the Bay of Kotor is roughly 0.3–0.5 m**, and at Ulcinj about the same. Do not plan around tide state. Two local hydrographic facts matter more. First, the Boka has powerful **karst freshwater springs** — the Sopot spring above Risan and the Ljuta on the Kotor shore — which push cold surface water and localised outflow into the bay after rain; you will swim through 18°C water inside a 25°C bay and feel it. Second, **the Bojana river at Ada Bojana carries a genuine current**, strongest after rain and on the eastern arm, which is what keeps the lagoon flat but also means a downed kite drifts toward the Albanian bank and an international border. Headland acceleration is severe at the **Verige strait** — the bay narrows to roughly 340 m there and both wind and tidal-exchange current increase noticeably. Offshore-wind danger applies in both halves: a bura in the Boka blows off the land and out of the bay, and at Velika Plaža an easterly makes the beach offshore with open Adriatic downwind.",
+      "Sea safety": "Water temperature: roughly 15–16°C in April, 18–19°C in May, 22–23°C in June, 24–25°C in July, 25–26°C in August, 23–24°C in September, 21°C in October — with the Boka running a degree or two warmer at the surface and stratified over cold spring water. **Boardshorts or a shorty are fine June–September; a 3/2 shorty for May and October; a 2 mm top for a long kite session in 20 knots even in August.** *Pelagia noctiluca* mauve stingers appear in patches. **Sea urchins are dense on the Boka's rock shelves and at Žanjice and Valdanos** — reef shoes for every entry that is not sand. Lifeguards operate on Velika Plaža's managed sections and Ulcinj's Mala Plaža in July and August only; the Boka has essentially none, and Ada Bojana's rescue cover is the kite schools' own boats and radios during opening hours. **Emergency 112 (122 police, 123 fire, 124 ambulance); maritime incidents route via 112 and VHF Channel 16; the Maritime Safety and Port Management Administration in Bar coordinates search and rescue.** The nearest hospitals are Kotor and Bar; serious cases go to Podgorica.",
+      "Boat and kayak logistics": "**Montenegro does not have a generous licence-free horsepower allowance** — anything beyond a small outboard dinghy in practice requires a skipper's certificate recognised by the maritime authority, and bareboat charters demand a recognised licence plus a VHF certificate. That makes the realistic options: skippered boats (readily available and reasonably priced out of Kotor, Perast and Herceg Novi), and kayaks and SUPs, which need nothing. Foreign-flagged vessels must clear in at a designated port and pay the **navigation permit (\"vinjeta\") and tourist tax**. Marina fees vary wildly: Marina Kotor and the Herceg Novi municipal berths are moderate, while **Porto Montenegro (Tivat)** and **Portonovi** are superyacht-priced. Anchoring on *Posidonia* seagrass is prohibited, and anchoring is restricted in front of Kotor and inside the Perast islet zone.",
+      "Weather-contingency plan": "*Bura in the Boka:* do not launch a kayak, full stop — the wind's onset is too fast and the fetch down the bay too long. Substitute the Kotor city walls climb to St John's Fortress, the Maritime Museum, Perast on foot, or the Roman mosaics at Risan. *Maestral too light at Ada Bojana:* SUP the Bojana river arms, or drive 25 minutes to Valdanos and snorkel. *Jugo with swell and rain:* Velika Plaža is closed for practical purposes; Lake Skadar is sheltered and often has completely different weather 40 minutes inland. *Sea too rough for the Blue Cave:* the boats will not run — swap to Herceg Novi's old town, the Savina monastery and the Forte Mare."
+    },
+    "surface": null,
+    "distanceKm": null,
+    "elevationM": null,
+    "verticalM": null,
+    "technicalRating": null,
+    "transitPass": null,
+    "hutBooking": null,
+    "liftNetwork": null,
+    "snowReliability": null,
+    "windConditions": "The **maestral** is a northwest afternoon sea breeze, the summer engine of the whole Montenegrin coast. At Velika Plaža and Ada Bojana it delivers a reliable **15–20 knots by early afternoon, gusting to 25**, typically from around midday to sunset, from roughly June through September — that is the kite window, and it is remarkably consistent. In the Boka the same breeze arrives weaker and deflected by the mountains, usually 8–14 knots, funnelled along the bay's axis rather than from open sea. The **bura** is the hazard: a cold, dry, violently gusty northeasterly that falls off the Orjen and Lovćen massifs and is **funnelled and accelerated through the bay's narrow arms and the Verige strait**, where it can go from calm to 40 knots in minutes and produce sustained 50–60 knot gusts in winter storms. It is primarily an autumn-to-spring wind but summer episodes happen, and it is a serious matter for anyone in a kayak. The **jugo** (sirocco) from the southeast brings humid weather, rain and swell onto Velika Plaža, closing the exposed beach and turning Ada Bojana's lagoon brown with river runoff.",
+    "gpxReady": null,
+    "bookingTimeline": null,
+    "audience": null
+  },
+  "packingNotes": [],
+  "whatCouldGoWrong": [],
+  "sources": {
+    "verified": "Velika Plaža as roughly 12 km of sand running from Ulcinj's southern outskirts to the Bojana delta, with the maestral delivering approximately 15–20 knots by early afternoon and gusts to 25, blowing from around midday to sunset, with June–September as the core season and September offering the best combination of wind, warmth and quiet; the flat shallow water at the southern end near the Bojana river as the beginner and freestyle ground; kite schools clustered in the central section of Velika Plaža with beginner IKO courses around €150–€220 for six hours over two days and equipment hire around €40–€60 per half day; informal and designated naturist sections at the southern end of the coast and on Ada Bojana; the existence and current operation of Kiteloop Kiteboarding Center, Dragon Project, Sandbox Kitesurfing, Ka'banya and Kiteriders Montenegro in the Ulcinj/Ada Bojana area; Montenegro's non-EU status for roaming purposes.",
+    "confidenceNotes": "**Montenegro's boat-licence threshold is the highest-priority item to re-verify** — this file states that most motorboat rental requires a recognised skipper's certificate and that there is no generous licence-free horsepower allowance, which reflects the practical market but was not confirmed against Montenegrin maritime regulation; check with the Maritime Safety and Port Management Administration before publishing. The exact status and extent of Ada Bojana's naturist zoning (formal designation versus long-standing convention, and which sections it covers) should be confirmed. Kayak Montenegro's current programme and pricing, and Undiscovered Montenegro's Lake Skadar kayaking, were not verified in this run. All accommodation names (Palazzo Radomiri, Heritage Grand Perast, Ada Bojana bungalows) and restaurants (Konoba Ćatovića Mlini, Conte, Galion, Konoba Scala Santa, Konoba Feral, Restaurant Miško) should be confirmed as still trading and open in the intended months. Entry fees for the Kotor city walls, Our Lady of the Rocks, the Risan mosaics and Lake Skadar National Park change annually. The Kamenari–Lepetane ferry fare and frequency should be checked live. Mamula island's current status as a hotel and whether public landing or nearby anchoring is permitted needs verification. Wind figures for the maestral and bura are drawn from general Adriatic climatology and local sources rather than a station record; the bura's quoted 40–60 knot gust figures are characteristic of winter storm events, not summer conditions. Water temperatures are climatological averages."
+  },
+  "verifyFlags": [],
+  "verifyFlagCount": 0,
+  "volatilePricing": false,
+  "wordCount": 4890,
+  "dataVintage": 2026,
+  "provenance": {
+    "batch": "southern-mediterranean",
+    "sourceFile": "carta-dataset/trips/water-sports-montenegro-boka-ada-bojana.md",
+    "sourceFormat": "md with '## Metadata' bullet block (one file per trip)",
+    "sourceId": "water-sports-montenegro-boka-ada-bojana",
+    "ingestedAt": "2026-09-02",
+    "synthesized": false
+  }
+}

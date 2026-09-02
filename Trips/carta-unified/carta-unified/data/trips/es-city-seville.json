@@ -1,0 +1,276 @@
+{
+  "id": "es-city-seville",
+  "sourceId": "city-spain-seville",
+  "slug": "es-city-seville",
+  "title": "Seville Slow: Mudéjar Courtyards and Triana Nights",
+  "country": "Spain",
+  "countryCode": "ES",
+  "countries": [
+    {
+      "name": "Spain",
+      "code": "ES"
+    }
+  ],
+  "isMultiCountry": false,
+  "region": "Southern & Mediterranean Europe",
+  "regionKey": "southern-mediterranean",
+  "subRegion": "Andalucía — Seville & the Guadalquivir",
+  "tripType": "City Trips",
+  "tripTypeId": 3,
+  "tripTypeSlug": "city",
+  "durationDays": 7,
+  "bestPeriod": {
+    "months": [
+      3,
+      5,
+      10,
+      11
+    ],
+    "monthNames": [
+      "March",
+      "May",
+      "October",
+      "November"
+    ],
+    "window": "Mid-March–early May & mid-October–end November",
+    "note": null,
+    "avoid": "July–August (42°C is routine and the city genuinely shuts 14:00–20:00); Semana Santa and Feria de Abril triple hotel rates and close monuments.",
+    "raw": "Mid-March–early May & mid-October–end November"
+  },
+  "budgetTier": "€€",
+  "budgetTierRange": [
+    2,
+    2
+  ],
+  "budgetTierRaw": "€€",
+  "budget": {
+    "currency": "EUR",
+    "totalEur": {
+      "low": 930,
+      "high": 1505
+    },
+    "totalNote": "€950–€1,500 per person, excl. international flights",
+    "breakdown": {
+      "accommodation": {
+        "lowEur": 490,
+        "highEur": 840,
+        "note": "Casa-palacio guesthouse double, per-person share, Santa Cruz or Alfalfa"
+      },
+      "food": {
+        "lowEur": 250,
+        "highEur": 380,
+        "note": "Tapas €3.50–5 each, menú del día €14–18, one €45 dinner"
+      },
+      "transport": {
+        "lowEur": 60,
+        "highEur": 100,
+        "note": "Tussam card, AVE/Media Distancia day trip, airport bus both ways"
+      },
+      "activities": {
+        "lowEur": 130,
+        "highEur": 185,
+        "note": "Alcázar, Cathedral, Casa de Pilatos, Setas, flamenco, Córdoba Mezquita"
+      }
+    },
+    "perDayEur": {
+      "low": 133,
+      "high": 215
+    }
+  },
+  "profile": {
+    "difficulty": 2,
+    "difficultyLabel": "Moderate",
+    "difficultyNote": "2 — flat city, 7–10 km a day, but heat is the limiting factor, not gradient.",
+    "fitnessLevel": "Moderate",
+    "crowdLevel": null,
+    "familyFriendly": null,
+    "carRequired": null
+  },
+  "basecamps": [],
+  "gatewayAirport": "SVQ — Seville Airport; EA airport bus to Plaza de Armas 35 min (€4 single), taxi flat fare ~€25–33",
+  "gatewayAirportCode": "SVQ",
+  "languages": [],
+  "currency": null,
+  "emergencyNumber": "112",
+  "coordinates": {
+    "lat": 37.3828,
+    "lon": -5.9732,
+    "precision": "city",
+    "matchedPlace": "Sevilla",
+    "source": "geonames (geonamescache, cities > 15k)"
+  },
+  "tags": [
+    "mudejar",
+    "alcazar",
+    "flamenco",
+    "tapas",
+    "orange-trees",
+    "baroque",
+    "day-trip-cordoba",
+    "ave-train",
+    "patios"
+  ],
+  "summary": "Seville is a city of interiors: the whole point is what happens behind the door, in the courtyard, under the vine. This week is built around that — the Real Alcázar's Mudéjar rooms at opening hour, Casa de Pilatos's Renaissance-Roman patio in the empty midday, the Hospital de los Venerables's sunken courtyard fountain, and Triana's tiled bar fronts across the river at night. Days follow the Andalusian clock: monuments before 12:00, a long lunch, siesta, then the city reopens at 20:00 and stays up. Distances are small and flat; the discipline is timing, not stamina. A Córdoba or Cádiz day by fast train supplies the contrast.",
+  "summaryGenerated": false,
+  "hook": null,
+  "snapshot": {},
+  "itinerary": [
+    {
+      "day": 1,
+      "title": "Arrival, Alfalfa and the first tapas crawl",
+      "morning": "EA bus in from SVQ, drop bags, orient on **Plaza de la Alfalfa**. Coffee and *tostada con manteca colorá* at **Bar El Comercio**, Calle Lineros 9, a 1904 tiled churro bar.",
+      "afternoon": "Walk the **Setas de Sevilla** (Metropol Parasol) walkway (€16 including the Antiquarium's Roman house mosaics beneath) and Plaza de la Encarnación. Then the **Iglesia del Salvador** (€5, or included on the Cathedral combined ticket), a Baroque hall on a mosque footprint.",
+      "evening": "Crawl three bars: **Bodeguita Romero** (Calle Harinas 10, *pringá* roll), **Bar Las Teresas** (Calle Santa Teresa 2, jamón), **Casa Morales** (Calle García de Vinuesa 11, vermouth from the vats).",
+      "dayStats": "5.8 km walked, flat; EA bus €4; Setas 09:30–00:30; tapas €3.50–5 each, three bars ~€30pp.",
+      "sleep": "Hotel Casa 1800, Calle Rodrigo Caro 6, Santa Cruz."
+    },
+    {
+      "day": 2,
+      "title": "Real Alcázar at opening, then Santa Cruz",
+      "morning": "**Real Alcázar** on the 09:30 opening slot (€15.50, +€5.50 for the Cuarto Real Alto; 09:30–19:00 April–September, to 17:00 in winter). Head straight to the Patio de las Doncellas before the groups, then the Salón de Embajadores dome and out into the Jardines with the Galería de Grutesco.",
+      "afternoon": "**Hospital de los Venerables** (Plaza de los Venerables 8, €12) for the sunken patio and Velázquez's *Santa Rufina*, then wander Callejón del Agua and Plaza de Doña Elvira in the emptier siesta hours.",
+      "evening": "Flamenco at **Casa de la Memoria**, Calle Cuna 6 — 90 minutes, no amplification, ~€22, book ahead. Late dinner at **Casa Ricardo**, Calle Hernán Cortés 2.",
+      "dayStats": "6.4 km; Alcázar €15.50 + €5.50; Venerables €12; flamenco 19:30 & 21:00 sittings.",
+      "sleep": "Hotel Casa 1800."
+    },
+    {
+      "day": 3,
+      "title": "Cathedral, Giralda and the riverside",
+      "morning": "**Catedral de Sevilla + Giralda** on a 10:00 slot (€14, €13 online) — the Almohad minaret's ramps were built for a horseman, not stairs; the Capilla Mayor retablo is the largest altarpiece in Christendom. Then the free **Archivo General de Indias** across the square.",
+      "afternoon": "**Torre del Oro** (€3) and the Guadalquivir bank, then **Plaza de España** and the Parque de María Luisa in late light — go at 18:30 when the ceramic province benches face west.",
+      "evening": "Dinner at **Cañabota**, Calle Orfila 3 — Atlantic fish over coals, counter seating, book 2–3 weeks, €55–75pp. Alternative: **Casa Robles** for the classic version.",
+      "dayStats": "8.1 km; Cathedral 10:45–18:00 Mon–Sat, Sun from 14:30; Archivo free, closed Mondays.",
+      "sleep": "Hotel Casa 1800."
+    },
+    {
+      "day": 4,
+      "title": "Córdoba day trip by AVE",
+      "morning": "Santa Justa 08:00–08:30 AVE/Avant to Córdoba, 45–50 min. Walk 20 min to the **Mezquita-Catedral** for the 08:30–09:30 free early entry (Mon–Sat, no ticket, no groups) or the 10:00 paid slot (€13). The 856 double-arched columns of Abd al-Rahman's hall are the reason to make the trip.",
+      "afternoon": "The **Judería** lanes, **Alcázar de los Reyes Cristianos** (€5), and Calleja de las Flores. Lunch of *salmorejo* and *flamenquín* at **Bodegas Campos**, Calle de Lineros 32.",
+      "evening": "Back on the 19:00–20:00 train. Late tapas at **Eslava**, Calle Eslava 3 in San Lorenzo (the *costilla* and the cigar-shaped *huevo sobre bizcocho*), no reservations for the bar.",
+      "dayStats": "6.9 km walked in Córdoba; AVE 45–50 min, €25–38 return; Mezquita free 08:30–09:30 Mon–Sat.",
+      "sleep": "Hotel Casa 1800."
+    },
+    {
+      "day": 5,
+      "title": "Casa de Pilatos, Macarena and the convents",
+      "morning": "**Casa de Pilatos** (Plaza de Pilatos 1, €12 full house, €10 ground floor only; free for EU citizens Mondays 15:00–18:00). The main patio's Roman busts, Genoese marble and Mudéjar *azulejo* dado in one square is the city's argument in miniature.",
+      "afternoon": "North up Calle San Luis through **Macarena**: the Baroque **Iglesia de San Luis de los Franceses** (€6), the **Basílica de la Macarena** and her Virgin (€5 museum), and the surviving Almohad **Muralla** stretch. Buy convent sweets through the *torno* at **Convento de Santa Paula**.",
+      "evening": "**Alameda de Hércules** — vermouth at **Bar Bulebar**, then dinner at **Sobretablas**, Calle Colombia 7 (book 1–2 weeks, €45–60pp) or the closer **Casa Ruperto** for quail.",
+      "dayStats": "7.6 km; Pilatos €12, 09:00–18:00; San Luis closed Mondays; convent sweets €6–9 a box, cash.",
+      "sleep": "Hotel Casa 1800."
+    },
+    {
+      "day": 6,
+      "title": "Triana across the river",
+      "morning": "Cross the **Puente de Isabel II** (1852, Gustavo Steinacher and Ferdinand Bernadet, modelled on the Pont du Carrousel) to the **Centro Cerámica Triana** (€2.10) built over the old Santa Ana kiln floors — the tile industry that surfaced half the city's façades.",
+      "afternoon": "**Mercado de Triana** for lunch at the counters, then Calle Betis for the classic river-facing view of the Torre del Oro, and the **Capilla de los Marineros**. Browse the surviving tile workshops on Calle Antillano Campos.",
+      "evening": "Triana flamenco with less theatre: **Casa Anselma**, Calle Pagés del Corro 49, opens around midnight, no sign, no entry fee, drinks-only, and no photographs. Eat first at **Blanca Paloma**, Calle San Jacinto 49.",
+      "dayStats": "7.2 km; Centro Cerámica €2.10, 11:00–18:00; Anselma from ~00:00, closed Sundays.",
+      "sleep": "Hotel Casa 1800."
+    },
+    {
+      "day": 7,
+      "title": "Fine art and departure",
+      "morning": "**Museo de Bellas Artes** in the Convento de la Merced (free for EU citizens, €1.50 otherwise) — the Zurbarán and Murillo rooms in the former church nave are the best-hung pictures in Andalucía.",
+      "afternoon": "Last vermouth and a *serranito* at **Bodega Santa Cruz \"Las Columnas\"**, Calle Rodrigo Caro 1, then bags and the EA bus to SVQ from Prado de San Sebastián.",
+      "evening": "Flight out.",
+      "dayStats": "3.9 km; Bellas Artes 09:00–21:00 Tue–Sat, closed Mondays; EA bus 35 min, €4; allow 2 h at SVQ.",
+      "sleep": "n/a — departure day."
+    }
+  ],
+  "accommodationStrategy": [
+    {
+      "rank": 1,
+      "name": "Hotel Casa 1800",
+      "style": "Casa-palacio hotel",
+      "location": "Calle Rodrigo Caro 6, Santa Cruz",
+      "description": "Thirty-odd rooms in a 19th-century house one lane from the Alcázar wall, with a roof terrace looking straight at the Giralda and free afternoon tea. You can be first through the Alcázar gate five minutes after breakfast. €180–260 double; ask for an interior patio room to escape the Mateos Gago noise.",
+      "booking": null,
+      "priceNote": null
+    },
+    {
+      "rank": 2,
+      "name": "Hotel Palacio de Villapanés",
+      "style": "Boutique palace",
+      "location": "Calle Santiago 31, San Bartolomé",
+      "description": "An 18th-century palace with a proper Baroque staircase, a courtyard pool and enough distance from Santa Cruz to feel residential while staying a 10-minute walk from the Cathedral. €200–290.",
+      "booking": null,
+      "priceNote": "€200–290"
+    },
+    {
+      "rank": 3,
+      "name": "Corral del Rey",
+      "style": "Small design hotel",
+      "location": "Calle Corral del Rey 12, Alfalfa",
+      "description": "Thirteen rooms in a 17th-century *casa señorial* with Roman columns in the courtyard, dropped into the best tapas grid in the city. €190–280; the roof plunge pool is the July argument.",
+      "booking": null,
+      "priceNote": null
+    }
+  ],
+  "logistics": {
+    "connectivity": "Full EU roaming; 5G throughout the centre and on the AVE corridor. Renfe requires the app or a printed ticket for barrier entry at Santa Justa.",
+    "emergency": "112. Municipal police 092. Pharmacies rotate a *farmacia de guardia* — the roster is posted on every pharmacy door. EU/EHIC applies; Spain's public system is straightforward for EU visitors.",
+    "weather": "The *terral*, a dry inland wind, pushes July–August highs past 42°C; Seville regularly records Spain's national maximum. Even in May, 15:00–18:00 is for interiors. November brings short, heavy Atlantic rain.",
+    "bookingWindows": "Real Alcázar 1–2 weeks (official infoticketing site only — resellers add 40%); Cathedral 3–5 days; Casa de la Memoria 4–7 days; Cañabota and Sobretablas 1–3 weeks; AVE to Córdoba 2–3 weeks for the cheap fare buckets.",
+    "money": "Euro. Cards work almost everywhere, but old-guard bars (Casa Morales, Casa Anselma, convent *tornos*) are cash. Tipping is minimal — round up, or leave €1–2 per person after tapas.",
+    "transportRules": "Validate the Tussam card on boarding; the EA bus takes cards. Renfe security-scans bags at Santa Justa — arrive 20 minutes before an AVE departure.",
+    "permits": "Andalucía charges no municipal tourist tax as of 2026. The Alcázar and Cathedral both refuse large backpacks — no cloakroom at the Alcázar. Flamenco venues like Casa Anselma prohibit photography outright and will ask you to leave.",
+    "health": "Tap water is potable. Heat is the hazard: carry 2 litres, walk the *sombra* side, treat 14:00–17:00 in summer as unwalkable. Petty theft concentrates on Calle Sierpes and the Cathedral perimeter.",
+    "gettingThere": null,
+    "other": []
+  },
+  "proTips": [
+    "The Alcázar's free slot is **Mondays 18:00–18:30, October–March**, released online only and gone within hours — set a reminder for the release, and note it is far too short for the gardens.",
+    "Córdoba's **Mezquita is free 08:30–09:30, Monday to Saturday**, with no ticket required and no tour groups. Take the 08:00 AVE and you are inside the arcades in near-silence.",
+    "Casa de Pilatos is **free to EU citizens on non-holiday Mondays, 15:00–18:00** — exactly the hours when everything else is shut for siesta.",
+    "Order tapas *de pie* at the bar, not at a table: the same plate costs 20–30% more seated on a terrace, and every price list posts both tariffs.",
+    "Book the **Giralda climb for the last hour before closing** — the ramp empties, and the bells at the hour from inside the belfry are worth the timing.",
+    "**Casa Anselma** has no sign and no fee; look for the plain door at Pagés del Corro 49 after midnight and buy a drink. It is the antidote to ticketed *tablao* flamenco.",
+    "Buy convent sweets through the revolving *torno* at Santa Paula — you never see the nun, you leave exact change, and the *dulce de membrillo* travels.",
+    "In heat, use the **Setas walkway at 09:30 or after 21:00**; the deck is unshaded and the midday version is punishing for the same €16."
+  ],
+  "typeSpecific": {
+    "raw": {
+      "Walkable blocks": "Santa Cruz (Calle Mateos Gago → Plaza de Doña Elvira → Callejón del Agua, 1.1 km of shaded lanes); Alfalfa/Encarnación (Plaza de la Alfalfa → Calle Pérez Galdós → Setas, 900 m); Alameda de Hércules (the 800 m boulevard itself, plus Calle Feria); Macarena (Basílica → Calle San Luis → Convento de Santa Paula, 1.3 km); Triana (Puente de Isabel II → Calle Betis → Calle San Jacinto → Mercado de Triana, 1.6 km).",
+      "Transit pass": "Tussam's **Tarjeta Multiviaje** — €1.50 refundable deposit, top-ups from €7, fares around €0.76 per ride versus €1.40 cash on board; the single Metro Line 1 and the T1 tram to San Bernardo take the same card. Most of this week needs zero transit.",
+      "Airport transfer": "**EA (Especial Aeropuerto)** bus, airport → Prado de San Sebastián → Plaza de Armas, every 20–30 min, ~35 min, €4 single / €6 return. Taxis run a fixed municipal tariff, roughly €25 weekday daytime, €33 nights and holidays.",
+      "Booking timeline": "**Real Alcázar** — timed entry, book 1–2 weeks ahead on alcazardesevilla.infoticketing.com (the only official channel); the free Monday evening slot (18:00–18:30, October–March) releases online and vanishes within hours. **Cathedral + Giralda** — 3–5 days ahead, €14 at the door or €13 online. **Flamenco at Casa de la Memoria** — 4–7 days, only 100 seats. **Córdoba AVE** — book 2–3 weeks for the €25–35 fare band.",
+      "Architectural focal points": "Almohad brickwork in the Giralda's sebka panelling (1184–98, Ahmad ibn Baso); Pedro I's 1360s Mudéjar palace inside the Alcázar, built by Toledan and Granadan craftsmen for a Christian king; Casa de Pilatos's 1520s fusion of Gothic, Mudéjar and Italian Renaissance; Leonardo de Figueroa's Baroque at the Hospital de los Venerables (1687); Aníbal González's 1929 regionalist Plaza de España; Jürgen Mayer's 2011 timber Metropol Parasol.",
+      "Eating structure": "stand-up tapas bars in Alfalfa and Santa Cruz, sit-down *guisos* in Triana, market lunch at Feria or Triana. Only the destination kitchens (Cañabota, Sobretablas) require booking; classic bars are elbows-only.",
+      "Day trip": "**Córdoba** by Renfe AVE/Avant, Santa Justa → Córdoba in 45–50 min, €25–38 return depending how early you book; Media Distancia takes 1h20 for less."
+    },
+    "surface": null,
+    "distanceKm": null,
+    "elevationM": null,
+    "verticalM": null,
+    "technicalRating": null,
+    "transitPass": "Santa Cruz (Calle Mateos Gago → Plaza de Doña Elvira → Callejón del Agua, 1.1 km of shaded lanes); Alfalfa/Encarnación (Plaza de la Alfalfa → Calle Pérez Galdós → Setas, 900 m); Alameda de Hércules (the 800 m boulevard itself, plus Calle Feria); Macarena (Basílica → Calle San Luis → Convento de Santa Paula, 1.3 km); Triana (Puente de Isabel II → Calle Betis → Calle San Jacinto → Mercado de Triana, 1.6 km).",
+    "hutBooking": null,
+    "liftNetwork": null,
+    "snowReliability": null,
+    "windConditions": null,
+    "gpxReady": null,
+    "bookingTimeline": "**Real Alcázar** — timed entry, book 1–2 weeks ahead on alcazardesevilla.infoticketing.com (the only official channel); the free Monday evening slot (18:00–18:30, October–March) releases online and vanishes within hours. **Cathedral + Giralda** — 3–5 days ahead, €14 at the door or €13 online. **Flamenco at Casa de la Memoria** — 4–7 days, only 100 seats. **Córdoba AVE** — book 2–3 weeks for the €25–35 fare band.",
+    "audience": null
+  },
+  "packingNotes": [],
+  "whatCouldGoWrong": [],
+  "sources": {
+    "verified": "Real Alcázar admission (€15.50), Cuarto Real Alto supplement (€5.50) and seasonal hours (09:30–19:00 Apr–Sep, to 17:00 Oct–Mar) confirmed on alcazarsevilla.org, which names alcazardesevilla.infoticketing.com as the sole official channel. Cathedral/Giralda (€14, €13 online), Casa de Pilatos (€12) and Setas (€16) checked against a June 2026 Seville monument price list. No municipal tourist tax in Andalucía.",
+    "confidenceNotes": "Tussam Multiviaje fare and deposit, the €4 EA bus fare and the fixed taxi tariff all drift annually. AVE Seville–Córdoba pricing is dynamic; €25–38 assumes 2–3 weeks' notice. The Mezquita free hour and the Alcázar/Casa de Pilatos free slots are the most volatile items and are periodically suspended. Restaurant lead times and Casa Anselma's opening nights need re-confirmation."
+  },
+  "verifyFlags": [],
+  "verifyFlagCount": 0,
+  "volatilePricing": false,
+  "wordCount": 2466,
+  "dataVintage": 2026,
+  "provenance": {
+    "batch": "southern-mediterranean",
+    "sourceFile": "carta-dataset/trips/city-spain-seville.md",
+    "sourceFormat": "md with '## Metadata' bullet block (one file per trip)",
+    "sourceId": "city-spain-seville",
+    "ingestedAt": "2026-09-02",
+    "synthesized": false
+  }
+}

@@ -79,6 +79,11 @@ const run = async () => {
   await readsEmpty('friendships', '/rest/v1/friendships?select=id');
   await readsEmpty('trip_shares', '/rest/v1/trip_shares?select=token');
   await readsEmpty('trip_plans', '/rest/v1/trip_plans?select=id');
+  // Checked separately from trip_plans because migration 020 widened both
+  // tables to co-planners in one file and broke both the same way, and a
+  // later migration could easily touch only one of them.
+  await readsEmpty('trip_plan_stops', '/rest/v1/trip_plan_stops?select=id');
+  await readsEmpty('trip_collaborators', '/rest/v1/trip_collaborators?select=trip_plan_id');
 
   // 2. The internal helpers stay internal. Granting these to fix the above
   //    would hand every caller an oracle over other people's links.
@@ -108,7 +113,32 @@ const run = async () => {
     fail(`get_shared_trip: expected [] for an unknown token, got ${shared.text.slice(0, 140)}`);
   }
 
-  // 4. The policy that broke must not name the function it cannot call. Read
+  // 4. The pass funnel (migration 022). Skipped rather than failed while the
+  //    migration is unapplied, so this file stays green against a database
+  //    that predates it and turns into a real check the moment it does not.
+  //
+  //    The writer, paywall_event, is deliberately NOT called here. Anon being
+  //    able to record an event is the point of it, but calling it would write
+  //    a row into the funnel this script is supposed to be measuring, and this
+  //    file promises at the top that it never writes. Its self-check block
+  //    covers that path on apply instead.
+  const funnelProbe = await call('/rest/v1/rpc/admin_paywall_funnel', { p_days: 1 });
+  if (funnelProbe.json?.code === 'PGRST202' || funnelProbe.status === 404) {
+    console.log('  skip: migration 022 is not applied, so there is no pass funnel to check');
+  } else if (funnelProbe.json?.code === '42501') {
+    ok('admin_paywall_funnel is refused to anon, as it must be');
+    // RLS with no policies would already return an empty list rather than
+    // rows, but Supabase default-grants new public tables to anon, so the
+    // migration revokes that explicitly. This is the check that the revoke
+    // actually happened.
+    const evs = await call('/rest/v1/paywall_events?select=id');
+    if (evs.json?.code === '42501') ok('paywall_events is not readable by anon');
+    else fail(`paywall_events is READABLE by anon: ${evs.status} ${evs.text.slice(0, 140)}`);
+  } else {
+    fail(`admin_paywall_funnel answered anon: ${funnelProbe.status} ${funnelProbe.text.slice(0, 140)}`);
+  }
+
+  // 5. The policy that broke must not name the function it cannot call. Read
   //    indirectly: a working profiles read above already proves it, but a
   //    grant added to "fix" it would show up here as a callable helper.
   console.log(failures ? `\n${failures} check(s) failed` : '\nall checks passed');

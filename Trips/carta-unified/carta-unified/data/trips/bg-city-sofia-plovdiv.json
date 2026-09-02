@@ -1,0 +1,291 @@
+{
+  "id": "bg-city-sofia-plovdiv",
+  "sourceId": "bulgaria-sofia-plovdiv-city",
+  "slug": "bg-city-sofia-plovdiv",
+  "title": "Sofia and Plovdiv: A Split Week Between Serdica and Philippopolis",
+  "country": "Bulgaria",
+  "countryCode": "BG",
+  "countries": [
+    {
+      "name": "Bulgaria",
+      "code": "BG"
+    }
+  ],
+  "isMultiCountry": false,
+  "region": "Eastern & Southeastern Europe",
+  "regionKey": "eastern-southeastern",
+  "subRegion": "Sofia Valley & the Upper Thracian Plain",
+  "tripType": "City Trips",
+  "tripTypeId": 3,
+  "tripTypeSlug": "city",
+  "durationDays": 7,
+  "bestPeriod": {
+    "months": [
+      5,
+      6,
+      9,
+      10
+    ],
+    "monthNames": [
+      "May",
+      "June",
+      "September",
+      "October"
+    ],
+    "window": "mid-May to mid-June, and the whole of September",
+    "note": null,
+    "avoid": "July–August (35 °C+ on the Thracian plain, Plovdiv's Old Town cobbles unbearable by noon) and February fog in the Sofia basin",
+    "raw": null
+  },
+  "budgetTier": "€",
+  "budgetTierRange": [
+    1,
+    2
+  ],
+  "budgetTierRaw": "€–€€",
+  "budget": {
+    "currency": "EUR",
+    "totalEur": {
+      "low": 515,
+      "high": 890
+    },
+    "totalNote": "€515–€890",
+    "breakdown": {
+      "accommodation": {
+        "lowEur": 270,
+        "highEur": 480,
+        "note": "€270–€480 (€39–€69/night, 4 nights Sofia + 3 nights Plovdiv)"
+      },
+      "food": {
+        "lowEur": 140,
+        "highEur": 230,
+        "note": "€140–€230 (€20–€33/day)"
+      },
+      "transport": {
+        "lowEur": 35,
+        "highEur": 60,
+        "note": "€35–€60 (metro/day cards, Sofia–Plovdiv train, Boyana and Vitosha buses)"
+      },
+      "activities": {
+        "lowEur": 70,
+        "highEur": 120,
+        "note": "€70–€120 (Boyana, Nevsky crypt, Roman Theatre, Roman Stadium, museums)"
+      }
+    },
+    "perDayEur": {
+      "low": 74,
+      "high": 127
+    }
+  },
+  "profile": {
+    "difficulty": 1,
+    "difficultyLabel": "Easy",
+    "difficultyNote": "Easy",
+    "fitnessLevel": "Easy",
+    "crowdLevel": null,
+    "familyFriendly": null,
+    "carRequired": null
+  },
+  "basecamps": [
+    "Sofia",
+    "Plovdiv"
+  ],
+  "gatewayAirport": "Sofia Airport (SOF) Terminal 2 sits on metro line **M4**; Serdika in the centre in ~20 min for a single-ride fare. Plovdiv Airport (PDV) has thin seasonal traffic — plan on Sofia both ways and take the train back on Day 7 morning.",
+  "gatewayAirportCode": "SOF",
+  "languages": [
+    "Bulgarian"
+  ],
+  "currency": "Euro (EUR) — sole legal tender since 1 February 2026; mandatory dual BGN display ended 8 August 2026",
+  "emergencyNumber": "112",
+  "coordinates": {
+    "lat": 42.6975,
+    "lon": 23.3241,
+    "precision": "city",
+    "matchedPlace": "Sofia",
+    "source": "geonames (geonamescache, cities > 15k)"
+  },
+  "tags": [
+    "city",
+    "unesco",
+    "roman-ruins",
+    "thracian",
+    "orthodox",
+    "mountains",
+    "budget"
+  ],
+  "summary": "Two cities, one week, one train. Sofia is a capital built on top of its own Roman street grid, where you change metro lines through 4th-century foundations and the mineral water still runs free from a public tap.…",
+  "summaryGenerated": false,
+  "hook": "Two cities, one week, one train. Sofia is a capital built on top of its own Roman street grid, where you change metro lines through 4th-century foundations and the mineral water still runs free from a public tap. Plovdiv is older and slower, a Thracian hill town wearing an Ottoman and National Revival coat, with a Roman stadium buried under the shopping street. Cheap, flat, unhurried and — for once in Europe — genuinely uncrowded.",
+  "snapshot": {
+    "Country": "Bulgaria",
+    "Trip type": "City Trips",
+    "Duration": "7 days",
+    "Best period": "Mid-May to mid-June; September",
+    "Budget tier": "€–€€",
+    "Difficulty": "Easy",
+    "Start / End": "Sofia (4 nights) → Plovdiv (3 nights) → fly out of Sofia or Plovdiv",
+    "Getting there": "Sofia Airport (SOF) Terminal 2 sits on metro line **M4**; Serdika in the centre in ~20 min for a single-ride fare. Plovdiv Airport (PDV) has thin seasonal traffic — plan on Sofia both ways and take the train back on Day 7 morning."
+  },
+  "itinerary": [
+    {
+      "day": 1,
+      "title": "Landing on the Roman Grid",
+      "morning": "M4 from Terminal 2 to Serdika. Drop bags, then descend into the **Serdica archaeological complex** under the Largo — a Roman street, drains and house walls, roofed and free to walk.",
+      "afternoon": "The **Rotunda of St George** through the Presidency courtyard (watch the hourly guard change), then Sveta Nedelya and the Banya Bashi mosque, then the **Central Mineral Baths** and its free taps — bring a bottle.",
+      "evening": "**Manastirska Magernitsa**, ul. Han Asparuh 67 — monastery recipes, rabbit in wine, wild-herb salads, an encyclopaedic menu. Reserve for after 20:00 [VERIFY: current hours].",
+      "dayStats": "Sofia, 5 km on foot",
+      "sleep": null
+    },
+    {
+      "day": 2,
+      "title": "Nevsky, Oborishte and the Doctor's Garden",
+      "morning": "**Alexander Nevsky Cathedral** at opening, when the light is on the eastern apse and the choir sometimes rehearses; then the crypt icon museum, the strongest single collection in the Balkans.",
+      "afternoon": "Walk north into **Oborishte** — the National Gallery in the former royal palace, then the **Doctor's Garden** and the streets of Art Nouveau villas around it. Coffee somewhere on ul. Oborishte.",
+      "evening": "**Cosmos**, ul. Lavele 19 — modern Bulgarian, small plates, a serious list of Melnik and Thracian Valley wines. Book two or three days ahead [VERIFY: current hours].",
+      "dayStats": "Sofia, 6 km",
+      "sleep": null
+    },
+    {
+      "day": 3,
+      "title": "Boyana and Vitosha",
+      "morning": "Bus 64 or 107 from Hladilnika to **Boyana Church**. Fifteen minutes, eight people, 1259 frescoes — the Christ Evergetes and the donor portraits of Sebastocrator Kaloyan and Desislava. It is the single best thing in Bulgaria.",
+      "afternoon": "Up to **Vitosha**: the Simeonovo gondola or Dragalevtsi chairlift to Aleko hut, then 1h30 on a broad path to **Cherni Vrah**, 2,290 m, with the Sofia basin below. Lifts often run weekends only outside high season [VERIFY: current Simeonovo/Dragalevtsi operating days].",
+      "evening": "Back down to the centre for something simple — shopska salad and a rakia.",
+      "dayStats": "Sofia, 20 km round trip + 4 km walking",
+      "sleep": null
+    },
+    {
+      "day": 4,
+      "title": "Zhenski Pazar, Vazov and NDK",
+      "morning": "**Zhenski Pazar** by 09:00 for the produce lines, cheese counters and a hot banitsa, then Sveti Sedmochislenitsi, an Ottoman mosque turned Orthodox church.",
+      "afternoon": "The **Ivan Vazov National Theatre** and City Garden, then Vitosha boulevard south to **NDK**; the National Archaeological Museum in the old Büyük mosque if it is hot.",
+      "evening": "Last Sofia dinner. Pack for an early train.",
+      "dayStats": "Sofia, 6 km",
+      "sleep": null
+    },
+    {
+      "day": 5,
+      "title": "The Train to Plovdiv, and Kapana",
+      "morning": "Train from Sofia Central to Plovdiv. Fifteen minutes' walk to your Kapana or Old Town base.",
+      "afternoon": "Get the ground under you: **Dzhumaya Square** and the exposed **Roman Stadium** sphendone, then the length of ul. Knyaz Alexander I — you are walking directly above the track.",
+      "evening": "**Pavaj**, ul. Zlatarska 7 — mismatched furniture, Bulgarian home cooking done properly, no reservations, go at 19:00 [VERIFY: current hours]. Then Kapana's bars.",
+      "dayStats": "150 km, 2h20–2h50",
+      "sleep": null
+    },
+    {
+      "day": 6,
+      "title": "The Old Town, House by House",
+      "morning": "Climb into **Stariya Grad** early. **Balabanov House** (reconstructed National Revival merchant's house, symmetric plan, painted ceilings) and **Hindliyan House** (1835–40, the alabaster bathroom, the Venice and Constantinople murals on the walls). Both take an hour.",
+      "afternoon": "**Nebet Tepe** — Thracian walls of the 12th century BC on the top hill, and the best view over the Maritsa and the Rhodope foothills. Down the far side to the **Roman Theatre of Philippopolis**, which you should see empty in daylight and, if a performance is on, again at night.",
+      "evening": "**Shtastliveca**, ul. Knyaz Alexander I 31 — big terrace, generous portions, the reliable main-street table. Book for the terrace [VERIFY: current hours].",
+      "dayStats": "Plovdiv, 5 km",
+      "sleep": null
+    },
+    {
+      "day": 7,
+      "title": "Tsar Simeon Garden, Sahat Tepe, and Out",
+      "morning": "**Tsar Simeon Garden** — the 1892 layout by the Swiss gardener Lucien Chevalas, the lake, and the Singing Fountains, which perform in the evening but look better empty in the morning.",
+      "afternoon": "Climb **Sahat Tepe** to the clock tower and take a last long lunch at **Rahat Tepe**, the terrace restaurant on the hill.",
+      "evening": "Train or bus back to Sofia for the flight, or fly from Plovdiv if the schedule serves.",
+      "dayStats": "Plovdiv, 4 km",
+      "sleep": null
+    }
+  ],
+  "accommodationStrategy": [
+    {
+      "rank": 1,
+      "name": "Sense Hotel",
+      "style": "design hotel",
+      "location": "16 Tsar Osvoboditel Blvd, Sofia",
+      "description": "opposite Alexander Nevsky, a rooftop bar level with the domes, 10 minutes from the Largo and the Doctor's Garden.",
+      "booking": "3–5 weeks ahead direct.",
+      "priceNote": null
+    },
+    {
+      "rank": 2,
+      "name": "R34 Boutique Hotel",
+      "style": "small townhouse hotel",
+      "location": "ul. Rakovski 34, Sofia",
+      "description": "cheaper and quieter, a block from the National Theatre and inside the Serdika/NDK walking triangle.",
+      "booking": "2–4 weeks ahead.",
+      "priceNote": null
+    },
+    {
+      "rank": 3,
+      "name": "Hotel Residence City Garden",
+      "style": "boutique guesthouse",
+      "location": "ul. Bratya Pulievi 1, Plovdiv",
+      "description": "between Kapana and Tsar Simeon Garden — five minutes from Pavaj, eight from the Roman Theatre steps, and not above a Kapana bar.",
+      "booking": "2–4 weeks ahead; longer during the September Plovdiv fair week.",
+      "priceNote": null
+    }
+  ],
+  "logistics": {
+    "connectivity": "EU roaming. Free wifi in metro stations and most cafés; patchy on Vitosha above Aleko.",
+    "emergency": "112, English usually answered; Vitosha mountain rescue is reached the same way.",
+    "weather": "Sofia sits at 550 m, 5–8 °C cooler than Plovdiv; Cherni Vrah can be 15 °C colder again, with wind. Carry a shell even in June.",
+    "bookingWindows": "Boyana same-day-to-24-hours; Cosmos 2–3 days; Shtastliveca terrace 2 days; trains no booking needed except on public holidays.",
+    "money": "Bulgaria has moved to the **euro**, converted at the fixed rate of **1 EUR = 1.95583 BGN**. Mandatory dual EUR/BGN price display ran from 8 August 2025 and **ended on 8 August 2026** — from 9 August merchants price in euro only, and any lev figure you still see is voluntary reference. Lev notes and coins stopped being legal tender on 31 January 2026; banks exchange them until 31 December 2026 (some charge a fee after 30 June) and the **BNB exchanges them free of charge with no deadline**. Expect some ATMs and older tills to still think in leva. Cards are accepted almost everywhere; keep €20–€30 in small notes for Zhenski Pazar and village buses.",
+    "transportRules": "validate a paper ticket on trams and buses; contactless taps at metro turnstiles are per-journey. Sofia's transport inspectors are frequent and unamused. Left luggage exists at Sofia Central station.",
+    "permits": "no photography inside Boyana Church at all — this is enforced. Flash is banned in the Nevsky crypt. Drone use over the Old Town of Plovdiv and over Sofia's government quarter requires permission you will not get.",
+    "health": null,
+    "gettingThere": null,
+    "other": []
+  },
+  "proTips": [
+    "Do Boyana at the **first slot of the day**. Eight people at a time means the difference between arriving at 09:00 and 14:00 is an hour of standing in a car park.",
+    "Fill your bottle at the **Central Mineral Baths** taps rather than buying water. It is 37 °C, slightly sulphurous, free, and Sofians queue there with five-litre jerricans for a reason.",
+    "Take the **train** Sofia–Plovdiv and sit on the right-hand side heading east — you get Vitosha behind you and the Sredna Gora ridge for most of the run.",
+    "Plovdiv's Old Town houses are individually ticketed, but a **combined municipal-museums ticket** covers Balabanov, Hindliyan and several others for less than three singles [VERIFY: current combined ticket price and coverage].",
+    "Eat *banitsa* and drink *boza* at Zhenski Pazar for under €2. Then never drink boza again.",
+    "In Bulgaria a **head shake means yes and a nod means no**. It is real, it is inconsistent among younger people, and it will cost you a meal at least once. Say *da* and *ne* out loud.",
+    "Vitosha's lifts are the weak link. If Simeonovo is closed, bus 66 from Hladilnika reaches Aleko by road and the Cherni Vrah walk is unaffected."
+  ],
+  "typeSpecific": {
+    "raw": {
+      "Walkable neighbourhood blocks (Sofia)": "the **Largo** — the socialist-classicist ensemble of the former Party House, Council of Ministers and TZUM, with the excavated **Serdica** decumanus and shops running beneath it and up into the Serdika metro concourse. **Oborishte and the Doctor's Garden (Doktorska gradina)** — embassy streets, plane trees and the 1884 memorial to the medical corps of the Russo-Turkish War; the quietest good-café district in the city. **Ivan Vazov** — the National Theatre, the City Garden chess tables and the axis down to NDK. **Zhenski Pazar** (the Women's Market) on ul. Stefan Stambolov — three blocks of produce, banitsa, lyutenitsa and Roma trade, best before 10:00. The **Central Mineral Baths** block behind the Banya Bashi mosque, where the 1913 Vienna-Secession bathhouse now holds the Sofia History Museum and the free 37 °C taps run on the north side.",
+      "Walkable neighbourhood blocks (Plovdiv)": "**Kapana** (\"the trap\") — a dozen pedestrianised lanes of studios, third-wave coffee and craft beer between ul. Rayko Daskalov and Dzhumaya Square. **Stariya Grad (Old Town)** — the cobbled climb past Balabanov House and Hindliyan House to **Nebet Tepe**, the Thracian acropolis on the northernmost of the syenite hills. **Tsar Simeon Garden** and the Singing Fountains, south of the main street. **Sahat Tepe (Danov Hill)** for the clock tower and the sunset terrace.",
+      "Transit passes and prices": "Sofia runs four metro lines — **M1/M2** (the older cross), **M3** (Hadzhi Dimitar–Gorna Banya, the deep new line) and **M4**, which shares track with M1/M2 and serves the airport. A single ride is **€0.80 (1.56 BGN)**; a one-day all-modes card **€2.00 (3.91 BGN)**, or **€3.00 (5.87 BGN)** with the night lines included; a 72-hour card **€7.60 (14.86 BGN)** (2026 tariff, published in euro since 1 January 2026). Buy contactless at the turnstile or from the machine. Plovdiv has no metro and needs none — everything in this itinerary is inside a 25-minute walk.",
+      "Sofia–Plovdiv, train vs. bus": "the **train** from Sofia Central (Tsentralna Gara) takes **2h40–3h05** on the fast (BV/ICF) services, costs **€5.62 (11.00 BGN)** second class on the BDŽ distance tariff — **€7.62 (14.90 BGN)** on the services carrying compulsory seat reservation (2026 tariff) — and drops you at Plovdiv station a 15-minute walk south of Kapana. The **bus** from Serdika Bus Station or Sofia Central Bus Station is faster — about 1h50 — runs at least hourly and costs roughly **€8–€10 (16–20 BGN)**. Take the train: it is more comfortable, and the Trakiya motorway coach gains you forty minutes you will not use.",
+      "Cultural booking timelines": "**Boyana Church** is the one hard reservation. UNESCO-listed, with 1259 frescoes that predate Giotto by a generation, it admits a **maximum of eight visitors at a time for a strictly enforced 15 minutes** — the microclimate rule, not a queue-management one. Turn up at opening or reserve by phone the day before; on summer weekends the last slots go by early afternoon. Admission around €5 (10 BGN) [VERIFY: current Boyana admission and reservation procedure]. Nothing else in either city genuinely sells out, but the **Alexander Nevsky crypt** icon museum keeps shorter hours than the cathedral above it, and the **Roman Stadium** underpass has restricted afternoon access on some weekdays [VERIFY: current hours].",
+      "Architectural focal points": "**Alexander Nevsky Cathedral** (Alexander Pomerantsev, 1882–1912) — Neo-Byzantine, gold-leaf domes, a 45 m central cupola and the country's best icon collection in its crypt. The **Rotunda of St George**, early 4th century, the oldest building in Sofia, standing in the courtyard of the Presidency with three layers of medieval fresco under later Ottoman plaster. The **Largo** (1950s, Petso Zlatev and others) — Bulgaria's most complete Stalinist ensemble. **NDK**, the National Palace of Culture (Alexander Barov, 1981), a hexagonal concrete slab built for the 1,300th anniversary of the Bulgarian state. In Plovdiv: the **Roman Theatre of Philippopolis** (early 2nd century, under Trajan, ~5,000–7,000 seats, still used for opera) and the **Roman Stadium** (2nd century, ~240 m long, capacity around 30,000), of which the marble sphendone is exposed beneath Dzhumaya Square and the rest runs under the length of ul. Knyaz Alexander I."
+    },
+    "surface": null,
+    "distanceKm": null,
+    "elevationM": null,
+    "verticalM": null,
+    "technicalRating": null,
+    "transitPass": "Sofia runs four metro lines — **M1/M2** (the older cross), **M3** (Hadzhi Dimitar–Gorna Banya, the deep new line) and **M4**, which shares track with M1/M2 and serves the airport. A single ride is **€0.80 (1.56 BGN)**; a one-day all-modes card **€2.00 (3.91 BGN)**, or **€3.00 (5.87 BGN)** with the night lines included; a 72-hour card **€7.60 (14.86 BGN)** (2026 tariff, published in euro since 1 January 2026). Buy contactless at the turnstile or from the machine. Plovdiv has no metro and needs none — everything in this itinerary is inside a 25-minute walk.",
+    "hutBooking": null,
+    "liftNetwork": null,
+    "snowReliability": null,
+    "windConditions": null,
+    "gpxReady": null,
+    "bookingTimeline": "**Boyana Church** is the one hard reservation. UNESCO-listed, with 1259 frescoes that predate Giotto by a generation, it admits a **maximum of eight visitors at a time for a strictly enforced 15 minutes** — the microclimate rule, not a queue-management one. Turn up at opening or reserve by phone the day before; on summer weekends the last slots go by early afternoon. Admission around €5 (10 BGN) [VERIFY: current Boyana admission and reservation procedure]. Nothing else in either city genuinely sells out, but the **Alexander Nevsky crypt** icon museum keeps shorter hours than the cathedral above it, and the **Roman Stadium** underpass has restricted afternoon access on some weekdays [VERIFY: current hours].",
+    "audience": null
+  },
+  "packingNotes": [],
+  "whatCouldGoWrong": [],
+  "sources": {
+    "verified": null,
+    "confidenceNotes": "- Verified: Boyana Church's UNESCO status, 1259 frescoes and the eight-visitor / 15-minute entry rule; Alexander Nevsky's architect and dates; the Rotunda of St George as Sofia's oldest building; the Roman Theatre and Roman Stadium of Philippopolis; Cherni Vrah at 2,290 m; the Sofia metro structure and M4 airport link; the fixed rate 1 EUR = 1.95583 BGN; restaurant addresses. - `[VERIFY]` items in this file: 8 (see inline markers above) - Last reviewed: 2026-09-02"
+  },
+  "verifyFlags": [
+    "current Boyana admission and reservation procedure",
+    "current hours",
+    "current Simeonovo/Dragalevtsi operating days",
+    "current combined ticket price and coverage"
+  ],
+  "verifyFlagCount": 4,
+  "volatilePricing": true,
+  "wordCount": 2275,
+  "dataVintage": 2026,
+  "provenance": {
+    "batch": "eastern-southeastern",
+    "sourceFile": "cartaeasterneuropetrips/trips/bulgaria-sofia-plovdiv-city.md",
+    "sourceFormat": "md+nested-yaml-frontmatter (one file per trip)",
+    "sourceId": "bulgaria-sofia-plovdiv-city",
+    "ingestedAt": "2026-09-02",
+    "synthesized": false
+  }
+}

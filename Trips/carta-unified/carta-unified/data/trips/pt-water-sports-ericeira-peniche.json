@@ -1,0 +1,280 @@
+{
+  "id": "pt-water-sports-ericeira-peniche",
+  "sourceId": "water-sports-portugal-ericeira-peniche",
+  "slug": "pt-water-sports-ericeira-peniche",
+  "title": "Reserve and Peninsula: Surfing Ericeira, Peniche and the Nazaré Canyon",
+  "country": "Portugal",
+  "countryCode": "PT",
+  "countries": [
+    {
+      "name": "Portugal",
+      "code": "PT"
+    }
+  ],
+  "isMultiCountry": false,
+  "region": "Southern & Mediterranean Europe",
+  "regionKey": "southern-mediterranean",
+  "subRegion": "Estremadura — Ericeira World Surfing Reserve, Peniche & Nazaré",
+  "tripType": "Water Sports & Coastal Trips",
+  "tripTypeId": 10,
+  "tripTypeSlug": "water-sports",
+  "durationDays": 7,
+  "bestPeriod": {
+    "months": [
+      5,
+      6,
+      9,
+      10
+    ],
+    "monthNames": [
+      "May",
+      "June",
+      "September",
+      "October"
+    ],
+    "window": "Mid-September–end October — the best swell-to-weather ratio of the year, warm water, and the nortada already easing; May–June is the calm, beginner-friendly alternative",
+    "note": null,
+    "avoid": "July–August for the wind (the nortada blows onshore from late morning most days) and for crowds; December–February brings the best waves but 4/3 wetsuits, short days and frequent all-day closeouts",
+    "raw": "Mid-September–end October — the best swell-to-weather ratio of the year, warm water, and the nortada already easing; May–June is the calm, beginner-friendly alternative"
+  },
+  "budgetTier": "€€",
+  "budgetTierRange": [
+    2,
+    2
+  ],
+  "budgetTierRaw": "€€",
+  "budget": {
+    "currency": "EUR",
+    "totalEur": {
+      "low": 1150,
+      "high": 1950
+    },
+    "totalNote": "€1,150–€1,950 per person, excl. international flights",
+    "breakdown": {
+      "accommodation": {
+        "lowEur": 380,
+        "highEur": 780,
+        "note": "Surf-house dorm €25–€40/night; double room in Ericeira or Baleal €70–€130; Surfers Lodge Peniche higher"
+      },
+      "food": {
+        "lowEur": 230,
+        "highEur": 380,
+        "note": "Prato do dia €9–€14, grilled fish €14–€22, bica €0.80, imperial €1.50–€2.50"
+      },
+      "transport": {
+        "lowEur": 190,
+        "highEur": 330,
+        "note": "Hire car €30–€50/day plus fuel and motorway tolls (electronic); airport transfer"
+      },
+      "activities": {
+        "lowEur": 350,
+        "highEur": 520,
+        "note": "Board and wetsuit hire €20–€30/day or €100–€150/week, 3–4 coached sessions €35–€60 each, Berlengas boat €23–€30, Nazaré fort €2"
+      }
+    },
+    "perDayEur": {
+      "low": 164,
+      "high": 279
+    }
+  },
+  "profile": {
+    "difficulty": 3,
+    "difficultyLabel": "Active",
+    "difficultyNote": "3/5 — paddling Atlantic beach breaks for two hours a day is real work, and Supertubos and the Ericeira reefs demand a genuine baseline of fitness and duck-diving competence",
+    "fitnessLevel": "Active",
+    "crowdLevel": null,
+    "familyFriendly": null,
+    "carRequired": null
+  },
+  "basecamps": [],
+  "gatewayAirport": "LIS Lisbon Humberto Delgado — 45 min to Ericeira, 1 h 20 to Peniche, 1 h 45 to Nazaré. OPO Porto is 2 h 15 to Nazaré if you run the trip in reverse.",
+  "gatewayAirportCode": "LIS",
+  "languages": [],
+  "currency": null,
+  "emergencyNumber": "112",
+  "coordinates": {
+    "lat": 39.3558,
+    "lon": -9.3811,
+    "precision": "city",
+    "matchedPlace": "Peniche",
+    "source": "geonames (geonamescache, cities > 15k)"
+  },
+  "tags": [
+    "surfing",
+    "ericeira",
+    "peniche",
+    "nazare",
+    "world-surfing-reserve",
+    "nortada",
+    "atlantic-tides",
+    "berlengas",
+    "surf-camp",
+    "wetsuits"
+  ],
+  "summary": "This is Portugal's densest stretch of good waves and it fits inside a 70 km drive. You start in Ericeira, the only World Surfing Reserve in Europe, where seven or eight genuinely world-class reefs sit inside four kilometres of coast and a beginner can still find a sand-bottomed beach break at Foz do Lizandro. Then you move to Peniche, which is not a town so much as a peninsula — and because it sticks out into the Atlantic with waves on both sides, it works in almost any wind, which is the single most useful geographical fact in Portuguese surfing. You finish north at Nazaré, where a 230 km submarine canyon focuses swell into Praia do Norte and where, in the right season, you stand on the fort headland and watch waves that do not look real. Two hard truths shape the week: the nortada, a thermal north wind that ruins the afternoon most days from spring to early autumn, and a 3.5 m spring tidal range that turns each break on and off. Learn both and this is one of the best surf weeks in Europe.",
+  "summaryGenerated": false,
+  "hook": null,
+  "snapshot": {},
+  "itinerary": [
+    {
+      "day": 1,
+      "title": "Land in Lisbon, Foz do Lizandro to shake off the flight",
+      "morning": "Land at LIS, collect the car — take the electronic toll transponder, the A8 and A21 both use it — and drive 45 minutes northwest to Ericeira. Check in, then walk the clifftop path from Praia dos Pescadores north past Praia do Norte and Matadouro so you can see the reserve's geography from above before you paddle into it.",
+      "afternoon": "First session at **Foz do Lizandro**, the sand-bottomed river-mouth beach at the southern end of town. Multiple peaks, forgiving, and the correct place to recalibrate after a winter. Note where the river rip runs on the dropping tide.",
+      "evening": "Dinner at Tik Tapas in the old town, or grilled fish at Marisqueira César. Ericeira is a fishing town before it is a surf town and the fish shows it.",
+      "dayStats": "LIS–Ericeira 50 km, 45 min / Foz do Lizandro sand bottom, all levels / board + wetsuit hire €30–€45/day / water 17–19°C in September, 3/2 full suit",
+      "sleep": "Ericeira Chill House or Rapture Surfcamp Ericeira"
+    },
+    {
+      "day": 2,
+      "title": "Ribeira d'Ilhas at dawn, then the reserve on foot",
+      "morning": "Be in the water at Ribeira d'Ilhas at first light — the amphitheatre bay 2 km north of town, a long right-hand reef point and the most accessible of the reserve's serious waves. On a smaller day the inside section is genuinely intermediate-friendly. Check the tide: it wants mid-to-high.",
+      "afternoon": "Nortada will be up. Walk the reserve — Ribeira d'Ilhas, Reef, Cave, Pedra Branca and Coxos are all within a few kilometres, and watching Coxos from the cliff on a solid day is an education in what a point break can do. Do not paddle out at Coxos on your first visit.",
+      "evening": "Beer and petiscos at the Ribeira d'Ilhas beach bar while the wind drops, then dinner at Prim or Mar d'Areia in town.",
+      "dayStats": "Ericeira–Ribeira d'Ilhas 2 km / spring tidal range 3.2–3.6 m, neaps 1.2–1.6 m / nortada fills 11:00–13:00, peaks 15:00–19:00, 15–25 knots / Coxos advanced only, urchin-covered reef",
+      "sleep": "Ericeira Chill House or Rapture Surfcamp Ericeira"
+    },
+    {
+      "day": 3,
+      "title": "São Julião, coaching, and a tide-planned second session",
+      "morning": "Drive 15 minutes south to **São Julião**, an exposed beach break with multiple peaks that holds swell when the rest of the coast is flat and takes a bigger day than Lizandro. Book a coached session here or at Lizandro — one video-analysis hour with an FPS-certified coach is worth three unstructured surfs.",
+      "afternoon": "Second short session timed to the tide rather than the clock — if the morning was high water at Ribeira d'Ilhas, the afternoon low opens Matadouro and the Lizandro banks. Then Ericeira's Sunday-market streets and the Ericeira Surf Clube's clubhouse.",
+      "evening": "Canastra or Tasca do Joel for percebes, ameijoas à Bulhão Pato and a bottle of Colares white — the tiny sand-grown wine region is 20 minutes down the coast.",
+      "dayStats": "Ericeira–São Julião 12 km, 15 min / coached session €35–€60, private €60–€90/h / two tides in 12 h 25 min — plan sessions around them, not lunch",
+      "sleep": "Ericeira Chill House or Rapture Surfcamp Ericeira"
+    },
+    {
+      "day": 4,
+      "title": "North to Peniche: Baleal, Cantinho da Baía and Lagide",
+      "morning": "Drive 70 minutes north to Peniche, dropping bags at Baleal. Warm up at **Cantinho da Baía** on the sheltered south side of the Baleal isthmus — soft, sandy and the least consequential water in the region, which is exactly what you want on a travel day.",
+      "afternoon": "If there is northwest swell and the tide is mid-to-high, paddle out at **Lagide**, the left-hand reef on Baleal's north side. If the nortada is already up, this is when the peninsula pays: cross to the south side and check Supertubos and Molho Leste.",
+      "evening": "Bar do Bruno on the Baleal isthmus for sunset, then dinner at Tasca do Joel in Peniche — one of the best fish kitchens on this coast, and you should book.",
+      "dayStats": "Ericeira–Peniche 70 km, 1 h 10 / Baleal isthmus splits north- and south-facing beaches within 400 m / Lagide left reef, NW swell, mid-to-high tide / Cantinho da Baía all levels",
+      "sleep": "Baleal Surf Camp or Surfers Lodge Peniche"
+    },
+    {
+      "day": 5,
+      "title": "Supertubos, Cabo Carvoeiro and the fort",
+      "morning": "Dawn at **Supertubos**, on the south side. Whether you surf it or watch it depends entirely on the swell and honestly on you — on a 1.5 m day with a light north wind and a dropping tide it is one of the best waves in Europe, and on a 3 m day it is a sand-bottomed guillotine. **Molho Leste** next door is the sensible compromise.",
+      "afternoon": "Drive out to **Cabo Carvoeiro** at the tip of the peninsula — the lighthouse, the Nau dos Corvos sea stack, and the cliff path round to the Papôa. Then the **Fortaleza de Peniche** and its Museu Nacional Resistência e Liberdade, the former political prison of the Estado Novo, which is a serious and worthwhile hour.",
+      "evening": "Dinner at Nau dos Corvos on the cape with the light going down over the Berlengas, or Marisqueira Mirandum in town for shellfish by weight.",
+      "dayStats": "Supertubos best on W/NW swell, N/NE wind, dropping tide / Peniche fort museum entry roughly €3–€5 / Cabo Carvoeiro to Berlengas 10 km, visible on a clear day",
+      "sleep": "Baleal Surf Camp or Surfers Lodge Peniche"
+    },
+    {
+      "day": 6,
+      "title": "Berlengas: the 350-person island",
+      "morning": "Take the first boat from Peniche's fishing harbour to **Berlenga Grande** — 30 minutes, and the crossing is genuinely rough on any residual swell, so take something for it. The island is a Nature Reserve and UNESCO Biosphere Reserve with a daily cap of roughly 350 visitors, so your ticket is your permit. Walk up to the lighthouse, then down the causeway to the **Forte de São João Baptista**, the seventeenth-century fort on its own islet.",
+      "afternoon": "Snorkel the clear water off Carreiro do Mosteiro — visibility here is far better than the mainland beaches — or take the operator's cave tour round to the Furado Grande tunnel. Last boat back is usually mid-to-late afternoon; miss it and you are staying.",
+      "evening": "Back in Baleal, an easy evening session at Prainha if the wind has dropped, then dinner at Casa Vieira or a plate of caldeirada at the harbour.",
+      "dayStats": "Peniche–Berlenga Grande 10 km, ~30 min / daily visitor cap ~350 / return boat €23–€30 / cave tour €15–€25 extra / service roughly May–September, cancels on swell",
+      "sleep": "Baleal Surf Camp or Surfers Lodge Peniche"
+    },
+    {
+      "day": 7,
+      "title": "Nazaré's Praia do Norte, then Lisbon",
+      "morning": "Drive 45 minutes north to **Nazaré** and go straight to the **Forte de São Miguel Arcanjo** on the Sítio headland — the red lighthouse fort, now a small big-wave museum, standing directly above Praia do Norte. The **Nazaré Canyon**, roughly 230 km long and 5 km deep at its head, funnels and focuses Atlantic swell into this one beach, which is why the world's largest surfed waves happen here. From October to March you may see tow-in sessions; in September you will at least see why. Take the funicular down to Praia and walk the seafront.",
+      "afternoon": "A final surf at **Praia do Norte's** southern end or at Salgado, or if the swell is big, at sheltered **Praia da Nazaré** in front of town. Then the drive to Lisbon.",
+      "evening": "If you have time before the flight, dinner in Lisbon's Cais do Sodré or a last plate of grilled sardines at a Nazaré seafront restaurant. Return the car with a full tank; the toll transponder settles automatically.",
+      "dayStats": "Peniche–Nazaré 55 km, 45 min / fort and museum entry roughly €2 / Nazaré Canyon ~230 km long, up to 5 km deep / big-wave season October–March / Nazaré–LIS 1 h 45",
+      "sleep": "Departure, or an airport hotel in Lisbon"
+    }
+  ],
+  "accommodationStrategy": [
+    {
+      "rank": 1,
+      "name": "Rapture Surfcamp Ericeira",
+      "style": "surf camp",
+      "location": "Foz do Lizandro",
+      "description": "A full-package camp on the beginner-to-intermediate beach with boards, wetsuits, coaching, transport to whichever break is working, and secure gear storage — which matters because Ericeira's reefs are spread over several kilometres and the camp van solves the tide-timing problem for you. Dorms from roughly €40/night, private doubles €90–€140, week packages €450–€750 with half board.",
+      "booking": null,
+      "priceNote": null
+    },
+    {
+      "rank": 2,
+      "name": "Baleal Surf Camp",
+      "style": "long-established camp",
+      "location": "Baleal isthmus, Peniche",
+      "description": "On the isthmus itself, which means both the north- and south-facing beaches are within a few hundred metres and you can re-check both sides of the peninsula on foot rather than by car. Board and wetsuit hire on site, drying racks, a good social kitchen. Roughly €35–€55 dorm, €80–€130 double.",
+      "booking": null,
+      "priceNote": null
+    },
+    {
+      "rank": 3,
+      "name": "Surfers Lodge Peniche",
+      "style": "design hotel",
+      "location": "Baleal",
+      "description": "The step up: a proper hotel with a pool, rooftop, decent food and a surf programme attached, for anyone travelling as a couple where only one person surfs. Walking distance to Cantinho da Baía, and it stays open and comfortable in November when the camps get bleak. Roughly €130–€230 double.",
+      "booking": null,
+      "priceNote": null
+    }
+  ],
+  "logistics": {
+    "connectivity": "Very good 4G/5G along the whole coast; thin in the Berlengas and in the cliff coves. Portugal is in the EU so EU/EEA SIMs roam at domestic rates. Download Windguru or Surfline and the Instituto Hidrográfico tide tables offline — the beach car parks at Coxos and São Julião have poor signal.",
+    "emergency": "**112** for everything. **MRCC Lisboa +351 214 401 919** and **VHF Channel 16** for maritime incidents; the Polícia Marítima handle beach enforcement. Hospitals in Torres Vedras and Caldas da Rainha; major trauma to Lisbon. Standard travel insurance usually covers surfing but check whether it covers *tow-in* or reef breaks if you are going anywhere near Nazaré.",
+    "weather": "The nortada is the daily constant from April to September; treat any afternoon plan as provisional. Autumn and winter bring genuine Atlantic storm systems, and a 4 m swell here does not just make surfing hard, it closes coastal roads and the Nazaré promenade. Sea fog (*nevoeiro*) rolls in with startling speed on the Ericeira cliffs.",
+    "bookingWindows": "Surf camps in Ericeira and Peniche sell out three to four months ahead for July–September. The Berlengas boat should be booked online several days ahead in July–August because of the 350-person cap, and same-day is often possible in May, June and September. Nazaré accommodation is impossible during the big-wave events — check the WSL and Nazaré Tow Surfing Challenge calendars before fixing dates. Restaurants like Tasca do Joel need a day's notice.",
+    "money": "Euro. Cards are near-universal including Multibanco everywhere, but small tascas and beach kiosks still prefer cash — carry €50–€80. Tipping is 5–10% at a sit-down meal, rounding up elsewhere. Motorway tolls are electronic: take the transponder from the rental desk or you will get a bill with fees attached.",
+    "transportRules": "A car is close to essential — the good breaks in both areas are strung along 15 km of coast and the buses do not follow surf. Board-carrying: most rental cars will not take a longboard inside; camps provide transport. Parking at Ribeira d'Ilhas, Coxos and Supertubos fills by 09:00 in summer, and break-ins from beach car parks are a genuine and well-documented problem — leave nothing visible.",
+    "permits": "No permit is needed to surf. The Ericeira World Surfing Reserve is a protection designation, not a permit system, but respect for local priority at Coxos and Pedra Branca is enforced socially and firmly. The Berlengas Nature Reserve caps visitors and restricts anchoring, camping (advance ICNF permit only) and any collection of flora or fauna. Beach flags are legally binding during the June–September bathing season. Drones require ANAC registration and are restricted over the reserve and over Berlengas.",
+    "health": "Tap water is drinkable throughout. Cold-water shock is the underrated risk — 15°C in July after an upwelling week is a genuine hazard for someone who packed a shorty. Rips at Foz do Lizandro's river mouth and the Baleal channels are the most common rescue cause; if caught, paddle parallel to the beach, not against the flow. Urchins on the Ericeira reefs — bring booties. Portuguese man o' war triggers occasional red flags; treat with hot water, not vinegar.",
+    "gettingThere": null,
+    "other": []
+  },
+  "proTips": [
+    "Surf at dawn, every day, without negotiation. Between April and September the nortada makes the afternoon a lottery and the morning a certainty; the whole trip's quality is decided by what time you set the alarm.",
+    "Learn the peninsula rule at Peniche before you need it: north wind means south-side spots, south wind means north-side spots. It is why Peniche is surfable roughly 340 days a year.",
+    "Pull the tide table each morning and pick the break to fit it, not the other way round. Lagide on mid-to-high, Coxos and Pedra Branca on mid-to-low, Supertubos on the drop — with a 3.5 m spring range, getting this wrong wastes the session.",
+    "Book the first Berlengas boat of the day, not the second. The island's cap means the later arrivals share the one path and the one beach with everyone, and the sea is almost always calmer before the wind builds.",
+    "Watch Coxos from the cliff before you ever consider paddling out. It has a strict local hierarchy, an urchin-covered reef and a shallow take-off, and turning up unannounced on a good day is the fastest way to have a bad week.",
+    "Take a video-analysis session in your first two days, not your last. Ericeira and Peniche coaches all offer it, and applying corrections over five remaining days is worth ten times as much as being told them on day six.",
+    "Nazaré is best visited in the morning even outside big-wave season, because the Sítio headland catches the same nortada and by afternoon the viewing platform is a wind tunnel full of coaches.",
+    "Eat inland once. Óbidos, Atouguia da Baleia and the Colares wine villages between Ericeira and Sintra all feed you better and cheaper than the seafront, and Colares' sand-grown Ramisco is one of the strangest and best wines in Portugal.",
+    "If you only have one wetsuit, make it a 3/2 with a chest zip, and bring a thermal top. Portuguese upwelling means summer water here is colder than the Irish Sea in August, and half the visiting surfers underdress for it."
+  ],
+  "typeSpecific": {
+    "raw": {
+      "Prevailing wind — the nortada": "A north to north-northwest thermal wind driven by the contrast between the cold Atlantic and the heating Iberian interior. It is the defining daily rhythm of the Portuguese coast from roughly April to September. Typical cycle: glassy or light-offshore at dawn, first ripples around 10:00–11:00, filling hard through midday, peaking 15:00–19:00 at 15–25 knots and occasionally 30, then easing after sunset. October–March is synoptic rather than thermal, with cleaner all-day windows but bigger, stormier swell. **The practical consequence is absolute: surf at dawn.** By 13:00 in July most of the exposed coast is a wind-blown mess.",
+      "The peninsula trick at Peniche": "Peniche's headland points west, with beaches facing north and beaches facing south within a few minutes' drive. In a nortada, the north-side spots (Baleal, Lagide, Praia do Norte, Almagreira) go onshore while the south side (**Supertubos**, **Molho Leste**, Consolação) turns offshore and clean. In a southerly, it reverses exactly. Ericeira has less of this flexibility — most of the reserve faces west to northwest — which is why you base the second half of the week in Peniche.",
+      "Ericeira World Surfing Reserve — the breaks": "Designated in 2011, the first World Surfing Reserve in Europe, protecting roughly 4 km of coast and a cluster of world-class waves. *Coxos* — a powerful right point/reef over urchin-covered rock, best at mid-to-low tide, the best wave in the reserve and firmly advanced-only with a serious local pecking order. *Pedra Branca* — a fast, hollow left over a flat, shallow slab; the region's best lefthander and dangerous at low tide. *Ribeira d'Ilhas* — a long, forgiving right-hand reef point that has hosted WSL Challenger Series events, workable by intermediates and, on the inside on a small day, by beginners with an instructor. *Reef* and *Cave* — short, heavy and technical. *Matadouro* and *Praia do Norte* — reef peaks with a more manageable reform inside. *Foz do Lizandro* — a sand-bottomed river-mouth beach break with multiple peaks, the reserve's beginner and intermediate anchor, and the fallback whenever the reefs are too big. *São Julião*, a few kilometres south, is an exposed beach break with multiple peaks that is remarkably consistent even in flat summer weeks and takes a bigger swell than Lizandro.",
+      "Peniche and Baleal — the breaks": "*Supertubos* — a shallow, ferociously fast sand-bottomed barrel on the south side, the WSL tour venue, working best on a solid W/NW swell with north or northeast wind and dropping tide; it breaks close to dry sand and it is not a spot to learn heavy-water surfing on. *Molho Leste* — the jetty-protected spot next door, technical and fast, good on southwest swells at mid tide. *Cantinho da Baía* and *Prainha* on the Baleal isthmus — soft, sheltered, sandy and the reason Peniche has two dozen surf schools. *Lagide* — a left-breaking reef on the north side of the Baleal peninsula, best on northwest swell and mid-to-high tide, and the goofy-footer's favourite. *Almagreira* and *Praia do Norte/Belgas* — wilder, less crowded beach breaks north of town. *Consolação* — a two-in-one beach with a soft sandy north end and a sharp reef to the south.",
+      "Equipment hubs and certification": "Ericeira: **Ericeira Surf Clube** (the local club, founded in the late 1980s, the institutional heart of the reserve), **Rapture Surfcamp Ericeira** at Foz do Lizandro, and the **Ultimar** and **Ericeira Surf & Skate** shops for board hire and repairs. Peniche and Baleal: **Baleal Surf Camp** (one of Portugal's oldest, on the isthmus), **Peniche Surf Camp**, **Surfers Lodge Peniche**, and **Surf Stash** for board and wetsuit rental without a package. Indicative 2026 prices: soft-top or shortboard hire €20–€30/day, €100–€150/week; wetsuit hire €10–€15/day; a two-hour group lesson €30–€45; private coaching €60–€90/hour; a seven-night surf-camp package with board, wetsuit, two daily sessions and half board €450–€750. Instructors work to ISA and Federação Portuguesa de Surf standards; ask to see the FPS instructor card. Board storage is included in camps and costs €3–€5/day at shops.",
+      "Tides and currents — this is the real Atlantic": "Spring range on this coast runs roughly **3.2–3.6 m**, neaps roughly **1.2–1.6 m**, with two highs and two lows a day. That is not a detail: Ribeira d'Ilhas works differently across a 3 m swing, Lagide needs mid-to-high, Coxos and Pedra Branca prefer mid-to-low, and Supertubos changes character entirely over a tide. **Do not plan from a memorised table — pull the Instituto Hidrográfico tide times for Peniche or Cascais each morning.** Rips are the primary hazard: at Foz do Lizandro the river-mouth rip runs hard on a dropping tide, and at Baleal and Almagreira the channel rips are strong enough to carry a competent surfer 200 m out in minutes. Use them to paddle out, never to swim. Headland acceleration around Cabo Carvoeiro and the Papôa is severe, and the offshore-wind danger on this coast is real for anyone on a SUP or inflatable — an offshore land breeze at Baleal puts open Atlantic downwind of you.",
+      "Sea conditions, wetsuits and safety": "This coast is cold for its latitude because the nortada drives upwelling. Water temperature: roughly 14–15°C January–March, 15–16°C April–May, 16–17°C June, 17–19°C July–August (but capable of dropping to 15°C after a hard nortada week), 18–19°C September, 17–18°C October, 16°C November. **A 3/2 full suit is the summer minimum; a 4/3 with boots from November to April; add a hood in January–February.** Swell height: roughly 0.8–1.5 m in June–August, 1.2–2.5 m in September–October, 2–4 m November–February with 5 m-plus events. Jellyfish are a minor issue compared with the Mediterranean, though Portuguese man o' war occasionally arrives on westerly weather; the real injury risks are the urchin-covered basalt at the Ericeira reefs (booties for Coxos and Pedra Branca) and the sand-bottom impact at Supertubos. Lifeguards (*nadadores-salvadores*) operate on the designated bathing beaches from roughly 15 June to 15 September only, and the flag system is legally binding. **Emergency 112; MRCC Lisboa +351 214 401 919; VHF Channel 16. Maritime Police enforce beach rules.**",
+      "Boat, kayak and Berlengas logistics": "Portugal has no meaningful licence-free horsepower allowance of the Italian or Greek kind — recreational motorboats require a *carta de navegador de recreio*, so the practical water options here are guided boats, kayaks and SUPs. The **Berlengas** archipelago, 10 km off Peniche, is a Nature Reserve and UNESCO Biosphere Reserve with a **daily visitor cap of around 350 people on Berlenga Grande**, enforced through the boat operators' allocation, so you book a numbered return ticket rather than turning up. Licensed operators from Peniche's fishing harbour include **Viamar**, **Berlengatur**, **Berlenga Turpesca** and **Julius Boat**; the crossing takes about 30 minutes and costs roughly €23–€30 return, with cave tours around the island priced separately. The service runs roughly May to September and cancels routinely on swell — it is a calm-day activity, not a scheduled ferry. Camping on the island requires a separate advance permit from the ICNF. Anchoring inside the reserve is restricted.",
+      "Weather-contingency plan": "*Flat and windy:* São Julião takes swell when everything else is flat, and Cantinho da Baía is surfable in almost anything. *Blown out by nortada:* switch to the south side of the Peniche peninsula and surf Supertubos or Molho Leste, which the same wind cleans up. *Too big for you:* this is the Nazaré day — drive north and watch, which is a legitimate and unforgettable use of a bad-surf morning. *Sea state cancels Berlengas:* Cabo Carvoeiro, the Gruta da Furninha and the Peniche fort's Museu da Resistência e Liberdade fill the day properly. *Nothing works at all:* Óbidos, 25 minutes from Peniche, is a walled medieval town and a decent rainy afternoon."
+    },
+    "surface": null,
+    "distanceKm": null,
+    "elevationM": null,
+    "verticalM": null,
+    "technicalRating": null,
+    "transitPass": null,
+    "hutBooking": null,
+    "liftNetwork": null,
+    "snowReliability": null,
+    "windConditions": "A north to north-northwest thermal wind driven by the contrast between the cold Atlantic and the heating Iberian interior. It is the defining daily rhythm of the Portuguese coast from roughly April to September. Typical cycle: glassy or light-offshore at dawn, first ripples around 10:00–11:00, filling hard through midday, peaking 15:00–19:00 at 15–25 knots and occasionally 30, then easing after sunset. October–March is synoptic rather than thermal, with cleaner all-day windows but bigger, stormier swell. **The practical consequence is absolute: surf at dawn.** By 13:00 in July most of the exposed coast is a wind-blown mess.",
+    "gpxReady": null,
+    "bookingTimeline": null,
+    "audience": null
+  },
+  "packingNotes": [],
+  "whatCouldGoWrong": [],
+  "sources": {
+    "verified": "Ericeira as a World Surfing Reserve and the character of its named breaks — Ribeira d'Ilhas as a long right reef point and WSL Challenger Series venue, Coxos as a powerful advanced right point best at mid-to-low tide, Pedra Branca as a fast left over flat reef that should be avoided at low tide, Foz do Lizandro and São Julião as all-level beach breaks; Peniche's spot roster and characters — Supertubos as the powerful tubing WSL venue, Molho Leste as a jetty-protected technical wave on southeast swell at mid tide, Lagide as a left reef on the north side working on NW swell at mid-to-high, Prainha and Cantinho da Baía as the beginner beaches, Consolação's split sandy/reef character, Almagreira as a wilder beach break; the Berlengas daily visitor cap of approximately 350 people, the roughly 30-minute crossing from Peniche, operators including Viamar, Berlengatur, Berlenga Turpesca and Julius Boat, and return fares in the region of €23–€30 with a June–September high season of multiple daily departures; Portugal's lack of a licence-free horsepower allowance comparable to Italy or Greece.",
+    "confidenceNotes": "The Berlengas cap has been revised more than once — confirm the exact current figure and whether it is administered per-operator or by ICNF before publishing. Boat prices, schedules and the exact opening and closing dates of the Berlengas season change annually and cancel on sea state. All board hire, lesson, coaching and camp package prices are indicative for 2026 and should be re-verified. Current operating status of named schools and camps (Ericeira Surf Clube, Rapture Surfcamp Ericeira, Baleal Surf Camp, Peniche Surf Camp, Surfers Lodge Peniche, Surf Stash, Ultimar) should be confirmed. Named restaurants should be checked as still trading and for seasonal closures. Tidal ranges quoted (3.2–3.6 m springs, 1.2–1.6 m neaps) are typical for the Estremadura coast but the exact figures differ between Peniche, Cascais and Nazaré reference ports — use Instituto Hidrográfico data per beach. Water temperature, swell height and nortada figures are climatological averages. The Nazaré Canyon dimensions and the Forte de São Miguel Arcanjo entry price should be re-checked. Portugal's recreational boating licence rules were not verified against Portuguese maritime authority documentation and must be confirmed before publishing."
+  },
+  "verifyFlags": [],
+  "verifyFlagCount": 0,
+  "volatilePricing": false,
+  "wordCount": 4614,
+  "dataVintage": 2026,
+  "provenance": {
+    "batch": "southern-mediterranean",
+    "sourceFile": "carta-dataset/trips/water-sports-portugal-ericeira-peniche.md",
+    "sourceFormat": "md with '## Metadata' bullet block (one file per trip)",
+    "sourceId": "water-sports-portugal-ericeira-peniche",
+    "ingestedAt": "2026-09-02",
+    "synthesized": false
+  }
+}

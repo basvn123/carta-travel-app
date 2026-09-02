@@ -1,23 +1,33 @@
 /**
  * trailStory.js, the trail explained to a walker rather than to a database.
  *
- * The lab's description_md is composed from the same numbers the page already
+ * The lab's description_md was composed from the same numbers the page already
  * prints, in the voice of the script that wrote it: "It covers a distance of
  * 8.1 km with 527 m of ascent and 368 m of descent", country as a bare ISO2
- * code, the DIN rule named out loud. Read next to the facts strip it says
+ * code, the DIN rule named out loud. Read next to the facts strip it said
  * nothing twice.
  *
  * So this file does not clean that prose up, it replaces it. Every line the
  * walker reads is composed from the structured fields through t(), which means
- * it lands in all six UI languages and never leaks a country code. The three
- * things the prose knows that the fields do not are pulled back out of it:
- *   the waymark reference   "signposted as CBE"       -> follow the CBE signs
- *   what it goes past       "passes X within 800 m"   -> passes close to X
- *   the official source     "published by turrutebasen"
+ * it lands in all six UI languages and never leaks a country code.
  *
- * If the lab ever ships a genuinely written description (describe.py's
- * reviewed prose), looksTemplated() sees that it is not boilerplate and the
- * page renders it as prose instead of throwing it away.
+ * The three things the prose knew that the fields did not are now FIELDS:
+ *
+ *   waymark_ref   "signposted as CBE"        -> follow the CBE signs
+ *   passes        "passes X within 800 m"    -> passes close to X
+ *   publisher     "published by turrutebasen"
+ *
+ * pipeline/trails/attributes.py promotes all three out of the same evidence
+ * describe.py read (the OSM ref tag, popularity.py's anchors, the portal
+ * cross-check), and describe.py itself is retired: it ran monthly, spent
+ * free-tier quota and fed a surface that had stopped reading it. The regex
+ * scrapers below are the FALLBACK for the descriptions still sitting in the
+ * lab from before the fields existed, and they can go the day the last one
+ * does.
+ *
+ * If the lab ever ships a genuinely written description, looksTemplated()
+ * sees that it is not boilerplate and the page renders it as prose instead of
+ * throwing it away.
  */
 
 /**
@@ -61,6 +71,9 @@ const REASON_ICON = {
   known: 'star',
   photogenic: 'camera',
   dense: 'eye',
+  varied: 'eye',
+  roadWalk: 'route',
+  unrated_coverage: 'pin',
 };
 
 /** A number the sentence can name, or nothing. Keeps "the highest at
@@ -68,11 +81,18 @@ const REASON_ICON = {
 const num = (v) => (typeof v === 'number' && Number.isFinite(v) ? v : null);
 
 function reasonText(r, t) {
-  const { code } = r;
+  // The trails wire spells a reason `code`; the other three layers spell it
+  // `k`. A listed row's single reason arrives in the shared shape, so both
+  // are read here rather than making the region layer special-case trails.
+  const code = r.code || r.k;
   const name = (r.name || '').trim();
   const n = num(r.n);
   const ele = num(r.ele);
   switch (code) {
+    // The listed tier's one honest line, shared with the other three
+    // layers: a route the region floor kept so its page is not empty.
+    case 'unrated_coverage':
+      return t('region.listedNote');
     case 'summits':
       return ele && name
         ? t('trails.whySummits', { n, name, m: ele })
@@ -127,6 +147,16 @@ function reasonText(r, t) {
       return t('trails.whyKnown');
     case 'photogenic':
       return t('trails.whyPhotogenic', { n });
+    // v2 of the rating (pipeline/trails/rate.py). Variety is the claim the
+    // density term cannot make: three different things beat nine of one.
+    case 'varied':
+      return t('trails.whyVaried', { n });
+    // And the one line here that is a warning rather than an argument. It is
+    // in this list on purpose: the most common complaint about a route drawn
+    // from OpenStreetMap is a "hike" that turns out to be a third tarmac, and
+    // somebody deserves to read that before they drive there, not after.
+    case 'roadWalk':
+      return t('trails.roadShare', { pct: num(r.pct) });
     case 'dense':
       return t('trails.whyDense', { n });
     default:
@@ -272,8 +302,10 @@ export function trailStory(tr, detail = null, { t, loop = null, nearby = null } 
     const wayKey = WAYMARK_KEY[src.network];
     if (wayKey) add('waymark', 'compass', t(wayKey));
 
-    const ref = (md.match(REF_RE) || [])[1];
-    if (ref) add('signs', 'compass', t('trails.sSigns', { ref: ref.trim() }));
+    // The field first, the scrape only when there is no field. Same for the
+    // two below: a route attributes.py has reached never has its prose read.
+    const ref = src.waymark_ref || (md.match(REF_RE) || [])[1];
+    if (ref) add('signs', 'compass', t('trails.sSigns', { ref: String(ref).trim() }));
 
     // Where the mapped route had short breaks in it, say so. The line the
     // app draws and the GPX carries is continuous, but a few metres of it
@@ -293,11 +325,13 @@ export function trailStory(tr, detail = null, { t, loop = null, nearby = null } 
     // from the middle of the route.
   }
 
-  const passes = passesNearby(md);
+  const passes = Array.isArray(src.passes) && src.passes.length
+    ? src.passes.map((p) => p.name).filter(Boolean).slice(0, 4)
+    : passesNearby(md);
   if (passes.length) add('passes', 'pin', t('trails.sPasses', { list: passes.join(', ') }));
 
-  const source = (md.match(PUBLISHED_RE) || [])[1];
-  if (source) add('official', 'check', t('trails.sOfficial', { source: source.trim() }));
+  const source = src.publisher || (md.match(PUBLISHED_RE) || [])[1];
+  if (source) add('official', 'check', t('trails.sOfficial', { source: String(source).trim() }));
 
   // A reviewed description is worth reading in full; boilerplate is not, and
   // everything it knew is already in the lines above.

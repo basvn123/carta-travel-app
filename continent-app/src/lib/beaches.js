@@ -101,6 +101,28 @@ export function loadBeaches(country) {
     });
 }
 
+/**
+ * The LISTED beaches of one country: verified to exist, named, deduped and in
+ * region, but not scored.
+ *
+ * Its own function reading its own array, rather than a flag on loadBeaches,
+ * because that is the guarantee the tier model rests on. A screen has to opt
+ * in to showing unscored rows; it cannot get them by accident, and they can
+ * never interleave into a ranked list. The rows carry no `score` key at all,
+ * so there is nothing for a sort to grab hold of even if one tried.
+ */
+export function loadListedBeaches(country) {
+  const cc = String(country || '').toUpperCase();
+  if (!COUNTRY_RE.test(cc)) return Promise.resolve([]);
+  return Promise.all([cached(`/beaches/${cc}.json`), overridesReady()])
+    .then(([raw]) => {
+      const rows = Array.isArray(raw?.listed) ? raw.listed : [];
+      return applyOverrides('beach', rows.filter(
+        (b) => b && b.id && Number.isFinite(b.lat) && Number.isFinite(b.lon),
+      ));
+    });
+}
+
 /** The beaches of several countries at once, flattened and re-ranked. Used by
  *  the all-Europe view, which is what the tab opens on. */
 export function loadBeachesFor(countries) {

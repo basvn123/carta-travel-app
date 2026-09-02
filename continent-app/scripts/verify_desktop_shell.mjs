@@ -65,8 +65,9 @@ check('it sits under the bar and over the results',
   `bar ends ${Math.round(barBottom.y + barBottom.height)}, search ${Math.round(searchTop)}, list ${Math.round(listTop)}`);
 check('side panel renders', await page.locator('.places-side').isVisible());
 check('toolbar card folded away', await page.locator('.places-toolbar').isHidden());
+// Seven since Cycling joined General/Trips/Trails/Beaches/Lakes/Mountains.
 const sideCats = await page.locator('.places-side .side-cat').count();
-check('six category tiles in the panel', sideCats === 6, `${sideCats}`);
+check('every category has a tile in the panel', sideCats === 7, `${sideCats}`);
 check('origin picker off this page', await page.locator('.places-tab .origin-btn').count() === 0
   || await page.locator('.places-tab .origin-btn').first().isHidden());
 check('lifestyle stays in the panel', await page.locator('.places-side .lifestyle-btn').isVisible());

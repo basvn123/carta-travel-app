@@ -26,8 +26,7 @@ import {
   canonicalPoiIndices, poiIdentityKeys, DAY_STYLES, routeCandidates,
 } from './dayDraft.js';
 import { AiDayPlanModal } from './AiDayPlanModal.jsx';
-import { PassModal } from '../components/PassModal.jsx';
-import { useEntitlement } from '../hooks/useEntitlement.js';
+import { usePaywall } from '../hooks/usePaywall.jsx';
 import { CartaChatPlanner } from './CartaChatPlanner.jsx';
 import {
   buildAiCandidates, requestAiDayPlan, splitAiPlan, decorateAiStops,
@@ -171,12 +170,11 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
     return out;
   }, [data, discovered, supersededIds]);
   const countryInsights = useCountryInsights();
-  // What this traveller's pass allows. A hint for the UI only, the Edge
-  // Functions enforce it; see useEntitlement.
-  const entitlement = useEntitlement();
-  // '' when closed, otherwise the reason it opened ('plans' | 'ground' | 'browse'),
-  // which decides whether the modal leads with what just ran out.
-  const [passReason, setPassReason] = useState('');
+  // What this traveller's pass allows, and the one door that asks for one.
+  // A hint for the UI only: the Edge Functions enforce the AI quotas and
+  // PaywallProvider owns the modal, the reason codes and how often it opens.
+  const paywall = usePaywall();
+  const entitlement = paywall.entitlement;
 
   const [savedPlans, setSavedPlans] = useState([]);
   const [plansLoading, setPlansLoading] = useState(false);
@@ -1811,15 +1809,19 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
   // shareable file, no libraries, no external services, and it wears the
   // app's own palette (warm paper, deep ink, one rust accent). Every place
   // gets an explanation, and each place + each day carries a Google Maps link.
-  const downloadPdf = () => openDayPlanPdf({
-    stop, stops, assignments, plan, days, visitFactor,
-    itemsForStop, estimateWalkMinutes, fmtDur,
-  });
+  const downloadPdf = () => {
+    if (!paywall.require('export')) return;
+    openDayPlanPdf({
+      stop, stops, assignments, plan, days, visitFactor,
+      itemsForStop, estimateWalkMinutes, fmtDur,
+    });
+  };
 
   // The same walk as the PDF, but as a KML download: every planned day a
   // My Maps folder of pins in walking order. The toast repeats the import
   // steps because mymaps.google.com is not a path most travellers know.
   const downloadKmlFile = () => {
+    if (!paywall.require('export')) return;
     const ok = openDayPlanKml({ stop, stops, assignments, plan, visitFactor, itemsForStop });
     if (ok) {
       setSaveToast(t('export.myMapsHint'));
@@ -1830,6 +1832,7 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
   // Every planned day as timed calendar blocks, spoken in the same clock the
   // timeline shows, so the plan lands in Google/Apple/Outlook calendars.
   const downloadIcsFile = () => {
+    if (!paywall.require('export')) return;
     const ok = openDayPlanIcs({ stop, stops, assignments, plan, visitFactor, itemsForStop });
     if (ok) {
       setSaveToast(t('export.calendarHint'));
@@ -3245,19 +3248,9 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
           onFallback={fallbackAi}
           onClose={() => { setAiOpen(false); setBotPreset(null); }}
           entitlement={entitlement}
-          onOpenPass={(reason) => setPassReason(reason || 'browse')}
+          onOpenPass={(reason) => paywall.require(reason || 'browse')}
         />
       )}
-      {passReason && (
-        <PassModal
-          entitlement={entitlement}
-          reason={passReason}
-          signedIn={!!user && authConfigured}
-          onClose={() => { setPassReason(''); entitlement.refresh(); }}
-          onSignIn={() => setPassReason('')}
-        />
-      )}
-
       <TripMap
         stops={routePins}
         padBottom={isNarrow ? Math.min(sheetPx, 420) : 420}

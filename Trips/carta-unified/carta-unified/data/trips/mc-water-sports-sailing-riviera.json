@@ -1,0 +1,324 @@
+{
+  "id": "mc-water-sports-sailing-riviera",
+  "sourceId": "mc-water-monaco-sailing-riviera",
+  "slug": "mc-water-sports-sailing-riviera",
+  "title": "Monaco Sailing Week: Port Hercule to the Riviera",
+  "country": "Monaco",
+  "countryCode": "MC",
+  "countries": [
+    {
+      "name": "Monaco",
+      "code": "MC"
+    }
+  ],
+  "isMultiCountry": false,
+  "region": "Western & Central Europe",
+  "regionKey": "western-central",
+  "subRegion": "Monaco and the French-Italian Riviera coast",
+  "tripType": "Water Sports & Coastal Trips",
+  "tripTypeId": 10,
+  "tripTypeSlug": "water-sports",
+  "durationDays": 7,
+  "bestPeriod": {
+    "months": [
+      5,
+      6,
+      9,
+      10
+    ],
+    "monthNames": [
+      "May",
+      "June",
+      "September",
+      "October"
+    ],
+    "window": null,
+    "note": "May, June, September and October carry the most reliable thermal sea breeze without August's crowding; July and August are sailable but Port Hercule and Villefranche get very busy.",
+    "avoid": null,
+    "raw": null
+  },
+  "budgetTier": "€€€",
+  "budgetTierRange": [
+    3,
+    3
+  ],
+  "budgetTierRaw": "€€€",
+  "budget": {
+    "currency": "EUR",
+    "totalEur": {
+      "low": 1900,
+      "high": 2600
+    },
+    "totalNote": null,
+    "breakdown": {
+      "accommodation": {
+        "lowEur": 900,
+        "highEur": 1200,
+        "note": null
+      },
+      "food": {
+        "lowEur": 350,
+        "highEur": 480,
+        "note": null
+      },
+      "transport": {
+        "lowEur": 100,
+        "highEur": 160,
+        "note": null
+      },
+      "activities": {
+        "lowEur": 550,
+        "highEur": 760,
+        "note": null
+      }
+    },
+    "perDayEur": {
+      "low": 271,
+      "high": 371
+    }
+  },
+  "profile": {
+    "difficulty": 2,
+    "difficultyLabel": "Moderate",
+    "difficultyNote": null,
+    "fitnessLevel": "Moderate",
+    "crowdLevel": "High",
+    "familyFriendly": false,
+    "carRequired": false
+  },
+  "basecamps": [
+    "Monaco (Port Hercule)"
+  ],
+  "gatewayAirport": "Nice Côte d'Azur (NCE)",
+  "gatewayAirportCode": "NCE",
+  "languages": [
+    "French",
+    "Monégasque",
+    "Italian"
+  ],
+  "currency": "EUR",
+  "emergencyNumber": "112",
+  "coordinates": {
+    "lat": 43.7372,
+    "lon": 7.4215,
+    "precision": "city",
+    "matchedPlace": "Monaco",
+    "source": "geonames (geonamescache, cities > 15k)"
+  },
+  "tags": [
+    "sailing",
+    "yacht-club-de-monaco",
+    "port-hercule",
+    "riviera-coast",
+    "regatta",
+    "mistral"
+  ],
+  "summary": "A Monaco-based sailing week through the Yacht Club de Monaco, coastal passages to Villefranche and Saint-Jean-Cap-Ferrat, and a crossing to Sanremo.",
+  "summaryGenerated": false,
+  "hook": "Monaco's harbour is small enough to walk end to end in ten minutes and crowded with more tonnage per square metre than almost anywhere on earth, but the sailing grounds beyond it are genuinely good: a deep, steep coastline, a reliable afternoon thermal, and a scatter of natural harbours that have sheltered boats since the Romans. This week bases at Port Hercule, sails east and west along the coast, and crosses the border to Sanremo before the wind turns against the return.",
+  "snapshot": {
+    "Country": "Monaco",
+    "Base(s)": "Monaco, Port Hercule (7 nights)",
+    "Trip Type": "Water Sports & Coastal Trips",
+    "Duration": "7 days",
+    "Best Period": "May, June, September, October",
+    "Budget Tier": "€€€ (approx. €1,900–€2,600 per person, excluding flights)",
+    "Total Distance / Terrain": "Roughly 70 nautical miles of coastal passages over the week, from Cap d'Ail to Sanremo",
+    "Getting There": "Fly to Nice Côte d'Azur, then the coastal train or Ligne 100 bus to Monaco in 20–35 minutes; no car needed for the week",
+    "Who It Suits": "Sailors with some dinghy or keelboat experience wanting structured Riviera coastal passages from a single fixed base"
+  },
+  "itinerary": [
+    {
+      "day": 1,
+      "title": "Port Hercule and the Yacht Club de Monaco",
+      "morning": "Arrive and walk Port Hercule, Monaco's main harbour, stern-to with superyachts along the Quai des États-Unis and racing dinghies tucked into the smaller basins.",
+      "afternoon": "Visit the Yacht Club de Monaco on the Quai Louis II, in its Norman Foster–designed home opened in 2014. The club runs sailing programmes across dinghies, offshore keelboats and its own Optimist and youth fleets, and can point toward its current partner schools for short-course sailing.",
+      "evening": "Dinner near the port, watching the evening arrivals from a day's racing or delivery passage.",
+      "dayStats": "1 water hour (harbour orientation) · Calm inside the breakwater · no gear beyond a life jacket check.",
+      "sleep": null
+    },
+    {
+      "day": 2,
+      "title": "Sailing course inside the bay",
+      "morning": "A half-day keelboat or dinghy session within Monaco's bay and toward Cap Martin, working points of sail, tacking and reefing in the moderate conditions the sheltered bay usually offers before midday.",
+      "afternoon": "As the thermal breeze fills in from the south-east through early afternoon, extend the session to practice sailing in a proper 12–16 knots, the wind range this coast delivers most reliably in the settled season.",
+      "evening": "Easy night in Monaco; an early start tomorrow for the first real coastal passage.",
+      "dayStats": "4 water hours · 8–16 knots, building SE thermal · keelboat or dinghy, life jacket, spray top.",
+      "sleep": null
+    },
+    {
+      "day": 3,
+      "title": "Passage to Villefranche-sur-Mer",
+      "morning": "Depart Port Hercule west past Cap d'Ail and Cap Ferrat's outer point for Villefranche-sur-Mer, roughly 12 nautical miles, one of the deepest natural harbours on the entire Mediterranean and historically a fleet anchorage for exactly that reason.",
+      "afternoon": "Anchor or pick up a mooring in the bay, sheltered on three sides by hills that block most of a mistral's force even when it is blowing hard further west along the coast. Row or dinghy ashore to walk the old town.",
+      "evening": "A mooring night in Villefranche if conditions and berth availability allow, otherwise a short motor back to Port Hercule.",
+      "dayStats": "5 water hours · 10–15 knots SE, flattening inside the bay · keelboat, foul-weather layer for the passage.",
+      "sleep": null
+    },
+    {
+      "day": 4,
+      "title": "Saint-Jean-Cap-Ferrat and Beaulieu-sur-Mer",
+      "morning": "Sail the short leg around Cap Ferrat to Saint-Jean-Cap-Ferrat, threading past the point where the cape's own micro-thermal often accelerates the breeze noticeably.",
+      "afternoon": "Continue into Beaulieu-sur-Mer's harbour, another well-sheltered stop, then a shore break to see the Villa Kérylos before sailing back toward Monaco in the calmer late-afternoon air as the thermal starts to ease.",
+      "evening": "Return to Port Hercule for the night.",
+      "dayStats": "4.5 water hours · 10–18 knots, gusty around the cape point · keelboat, harness for foredeck work.",
+      "sleep": null
+    },
+    {
+      "day": 5,
+      "title": "Crossing to Sanremo",
+      "morning": "The week's longest passage: east past Menton and across the French-Italian border toward Sanremo, roughly 25 nautical miles, best started early to use the calmer morning air before the thermal builds against the course.",
+      "afternoon": "Arrive into Sanremo's Porto Vecchio in the early afternoon and moor for the night; this old fishing harbour on the Italian Riviera is a natural break point and a fair-weather crossing only.",
+      "evening": "Dinner in Sanremo's old town, La Pigna, a very different register from Monaco's polish.",
+      "dayStats": "6 water hours · 8–14 knots, wind against course by afternoon · keelboat, full offshore layer.",
+      "sleep": null
+    },
+    {
+      "day": 6,
+      "title": "Return passage and regatta context",
+      "morning": "Depart Sanremo early to beat the building thermal on the return leg toward Monaco, a passage best sailed on a settled forecast with the mistral and libeccio both absent.",
+      "afternoon": "Back in Port Hercule by mid-afternoon. If the calendar allows, this is the moment to see what the Yacht Club de Monaco has on the water: the club runs the Primo Cup–Trophée Credit Suisse each winter, one of the longest-established winter keelboat regattas on this coast, and Monaco Classic Week in alternating summers for classic yachts, alongside a full programme of youth and offshore racing through the year.",
+      "evening": "Rest evening in Monaco after the longer sailing days.",
+      "dayStats": "5.5 water hours · 10–16 knots, morning favourable, afternoon on the nose · keelboat, full kit.",
+      "sleep": null
+    },
+    {
+      "day": 7,
+      "title": "Final sail and departure",
+      "morning": "A short final sail inside Monaco's bay, working on what the week has built, before returning gear to the club or charter operator.",
+      "afternoon": "Pack and take the coastal bus or train to Nice for the flight home.",
+      "evening": "Departure from Nice Côte d'Azur.",
+      "dayStats": "2 water hours · Light thermal, 8–12 knots · dinghy or keelboat.",
+      "sleep": null
+    }
+  ],
+  "accommodationStrategy": [
+    {
+      "rank": 1,
+      "name": "Hotel near Port Hercule",
+      "style": null,
+      "location": null,
+      "description": "Staying within walking distance of the harbour cuts the daily transfer to the boat to almost nothing and puts the Yacht Club de Monaco's facilities on the doorstep for gear storage and briefings.",
+      "booking": "three to four months ahead, especially around any regatta week.",
+      "priceNote": "€280–€420 per night"
+    },
+    {
+      "rank": 2,
+      "name": "Serviced apartment, La Condamine",
+      "style": null,
+      "location": null,
+      "description": "Monaco's harbourside district one level back from the quay, quieter and often better value than Monte-Carlo proper, still a five-minute walk to the boats.",
+      "booking": "two to three months ahead.",
+      "priceNote": "€220–€340 per night"
+    },
+    {
+      "rank": 3,
+      "name": "Beaulieu-sur-Mer or Villefranche base",
+      "style": null,
+      "location": null,
+      "description": "Basing in France just along the coast and commuting into Monaco by train cuts cost meaningfully and works well given the week's route already runs through both towns.",
+      "booking": "six to eight weeks ahead.",
+      "priceNote": "€150–€230 per night"
+    }
+  ],
+  "logistics": {
+    "connectivity": null,
+    "emergency": "Emergency number 112, and VHF Channel 16 monitored by CROSS Med, the regional maritime rescue coordination centre for this coast; every skippered charter should confirm this before departure.",
+    "weather": null,
+    "bookingWindows": null,
+    "money": null,
+    "transportRules": null,
+    "permits": null,
+    "health": null,
+    "gettingThere": null,
+    "other": [
+      {
+        "label": null,
+        "text": "Emergency number 112, and VHF Channel 16 monitored by CROSS Med, the regional maritime rescue coordination centre for this coast; every skippered charter should confirm this before departure."
+      },
+      {
+        "label": null,
+        "text": "The mistral, a strong north-to-northwest wind funnelling down the Rhône corridor, reaches this coast less directly than it does the Gulf of Lion further west, but a strong mistral event still pushes gusty, unsettled conditions along the Riviera and is the main reason to check a multi-day forecast before committing to the Sanremo crossing."
+      },
+      {
+        "label": null,
+        "text": "The libeccio, from the south-west, brings the opposite problem: onshore swell and a rougher ride into harbours that face that direction."
+      },
+      {
+        "label": null,
+        "text": "Tidal range on this coast is small, typically 20–40 cm, so berthing and anchoring plans are wind- and swell-driven, not tide-driven."
+      },
+      {
+        "label": null,
+        "text": "Villefranche-sur-Mer's bay is the standout safe harbour on this stretch; its depth and surrounding hills shelter it from most wind directions, which is why navies have used it for centuries."
+      },
+      {
+        "label": null,
+        "text": "Crewed charter boats in Monaco typically require no personal licence; skippering a bareboat charter requires an internationally recognised sailing qualification, which any legitimate Monaco charter operator will ask to see before handing over a boat."
+      },
+      {
+        "label": null,
+        "text": "Passport or ID is required for the Sanremo leg; Monaco to Italy by sea still crosses an international border even though there is no passport control on the water itself."
+      }
+    ]
+  },
+  "proTips": [
+    "Sail east to Sanremo and back inside a single settled weather window rather than splitting it across a forecast change; a mistral arriving mid-crossing turns an easy day into a hard one.",
+    "Time the Villefranche and Cap Ferrat legs for the morning; the thermal is gentler before midday and the anchorage is quieter before the day-boat traffic from Nice arrives.",
+    "Ask the Yacht Club de Monaco's front desk about any regatta on the water that week — even without racing, watching a Primo Cup fleet start from the bay is worth timing a free afternoon around.",
+    "Book the Sanremo overnight mooring ahead in high season; Porto Vecchio's visitor berths are limited and fill with cross-border traffic from both coasts.",
+    "Carry euros and a card that works in Italy separately from a Monaco-based account; Sanremo's smaller harbourside businesses are not all card-friendly.",
+    "Use the calmer late-afternoon air, after the thermal has eased, for the final approach into Port Hercule rather than fighting peak-thermal traffic at the harbour mouth."
+  ],
+  "typeSpecific": {
+    "raw": {
+      "Total Distance / Terrain": "Roughly 70 nautical miles of coastal passages over the week, from Cap d'Ail to Sanremo",
+      "Who It Suits": "Sailors with some dinghy or keelboat experience wanting structured Riviera coastal passages from a single fixed base"
+    },
+    "surface": "Roughly 70 nautical miles of coastal passages over the week, from Cap d'Ail to Sanremo",
+    "distanceKm": 70,
+    "elevationM": null,
+    "verticalM": null,
+    "technicalRating": null,
+    "transitPass": null,
+    "hutBooking": null,
+    "liftNetwork": null,
+    "snowReliability": null,
+    "windConditions": null,
+    "gpxReady": null,
+    "bookingTimeline": null,
+    "audience": "Sailors with some dinghy or keelboat experience wanting structured Riviera coastal passages from a single fixed base"
+  },
+  "packingNotes": [
+    "A proper offshore foul-weather layer for the Sanremo crossing, even in settled summer weather; open water off Cap Ferrat can be genuinely gusty.",
+    "Deck shoes with real grip; Monaco's marina pontoons and Villefranche's stone quays are both slick when wet.",
+    "A compact first-aid kit and seasickness remedy for anyone unused to the Sanremo leg's longer open-water stretch.",
+    "A dry bag for phone, passport and cash on the Italy crossing.",
+    "Sun protection rated for a full day afloat; there is no shade on an open cockpit for six hours.",
+    "A smart-casual change of clothes; both Monaco and Sanremo expect it for harbourside dinners."
+  ],
+  "whatCouldGoWrong": [
+    "**A mistral warning on crossing day.** Postpone the Sanremo leg rather than sail into it; Villefranche and Beaulieu both make a fine substitute day with genuine shelter.",
+    "**Afternoon thermal fighting the return from Sanremo.** Leave early, before the breeze builds against the course, rather than departing at a leisurely midday hour.",
+    "**No visitor berth in Sanremo.** Book the mooring in advance in peak season, or plan a day-trip crossing with a return to Monaco the same evening instead of an overnight stay.",
+    "**Seasickness on the longest leg.** Take remedies before departure, not after symptoms start, and keep a below-decks rest spot free for anyone who needs it.",
+    "**A fully booked charter fleet during a regatta week.** Confirm boat availability for the whole week before booking flights if your dates land near a known Yacht Club de Monaco event."
+  ],
+  "sources": {
+    "verified": null,
+    "confidenceNotes": null
+  },
+  "verifyFlags": [],
+  "verifyFlagCount": 0,
+  "volatilePricing": false,
+  "wordCount": 1800,
+  "dataVintage": 2026,
+  "provenance": {
+    "batch": "western-central",
+    "sourceFile": "cartatripsv1/trips/mc-water-monaco-sailing-riviera.md",
+    "sourceFormat": "md+yaml-frontmatter (one file per trip)",
+    "sourceId": "mc-water-monaco-sailing-riviera",
+    "ingestedAt": "2026-09-02",
+    "synthesized": false
+  }
+}

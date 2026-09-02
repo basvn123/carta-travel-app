@@ -1,0 +1,282 @@
+{
+  "id": "me-road-trip-tara",
+  "sourceId": "road-trip-montenegro-bosnia-tara",
+  "slug": "me-road-trip-tara",
+  "title": "Kotor to Sarajevo via the Tara Canyon",
+  "country": "Montenegro",
+  "countryCode": "ME",
+  "countries": [
+    {
+      "name": "Montenegro",
+      "code": "ME"
+    },
+    {
+      "name": "Bosnia and Herzegovina",
+      "code": "BA"
+    }
+  ],
+  "isMultiCountry": true,
+  "region": "Southern & Mediterranean Europe",
+  "regionKey": "southern-mediterranean",
+  "subRegion": "Boka Kotorska, Durmitor, the Piva canyon and Sutjeska",
+  "tripType": "Road Trips & Scenic Drives",
+  "tripTypeId": 5,
+  "tripTypeSlug": "road-trip",
+  "durationDays": 7,
+  "bestPeriod": {
+    "months": [
+      6,
+      7,
+      9
+    ],
+    "monthNames": [
+      "June",
+      "July",
+      "September"
+    ],
+    "window": "Mid-June–early July & September (Sedlo Pass open, Durmitor snow-free)",
+    "note": null,
+    "avoid": "November–May — Sedlo and the Durmitor ring road are snow-closed; August brings Kotor cruise gridlock and 35°C in Podgorica",
+    "raw": "Mid-June–early July & September (Sedlo Pass open, Durmitor snow-free)"
+  },
+  "budgetTier": "€€",
+  "budgetTierRange": [
+    2,
+    2
+  ],
+  "budgetTierRaw": "€€",
+  "budget": {
+    "currency": "EUR",
+    "totalEur": {
+      "low": 880,
+      "high": 1350
+    },
+    "totalNote": "€880–€1,350 per person, excl. international flights",
+    "breakdown": {
+      "accommodation": {
+        "lowEur": 320,
+        "highEur": 520,
+        "note": "Kotor old town, a Žabljak lodge, Sarajevo old-town boutique"
+      },
+      "food": {
+        "lowEur": 170,
+        "highEur": 280,
+        "note": "Bosnia is markedly cheaper than the Montenegrin coast"
+      },
+      "transport": {
+        "lowEur": 300,
+        "highEur": 440,
+        "note": "Rental, one-way drop, cross-border fee, fuel, BiH tolls"
+      },
+      "activities": {
+        "lowEur": 90,
+        "highEur": 140,
+        "note": "Durmitor NP, Sutjeska NP, Tara rafting or zipline, Kotor walls"
+      }
+    },
+    "perDayEur": {
+      "low": 126,
+      "high": 193
+    }
+  },
+  "profile": {
+    "difficulty": 2,
+    "difficultyLabel": "Moderate",
+    "difficultyNote": "2 — driving-led, with an optional 2 h Black Lake circuit and a steep 45 min at Sutjeska",
+    "fitnessLevel": "Moderate",
+    "crowdLevel": null,
+    "familyFriendly": null,
+    "carRequired": null
+  },
+  "basecamps": [],
+  "gatewayAirport": "TIV — Tivat; 22 km / 35 min to Kotor. Return from SJJ Sarajevo, 12 km from the centre",
+  "gatewayAirportCode": "TIV",
+  "languages": [],
+  "currency": null,
+  "emergencyNumber": "112",
+  "coordinates": {
+    "lat": 42.4412,
+    "lon": 19.2631,
+    "precision": "country",
+    "matchedPlace": "Podgorica",
+    "source": "country capital fallback"
+  },
+  "tags": [
+    "road-trip",
+    "montenegro",
+    "bosnia",
+    "durmitor",
+    "tara-canyon",
+    "serpentine",
+    "cross-border",
+    "sedlo-pass",
+    "piva",
+    "balkans"
+  ],
+  "summary": "This is a week of vertical geography: from a fjord that is not a fjord, over a limestone wall on a road built for a queen, across the second-deepest canyon on earth, and out through the last primeval forest in Europe into Sarajevo. The driving is the trip. The Kotor serpentine is twenty-five stacked hairpins with the Boka bay dropping away below; the Sedlo Pass at 1,907 m crosses Durmitor's stone desert; the Piva canyon road runs 56 tunnels hacked out of the gorge wall in a single 30 km stretch. It ends in a city where the road trip stops mattering, because Sarajevo is walkable and a car there is a nuisance. Suited to confident drivers comfortable with narrow, unguarded, occasionally unlit mountain roads and a border crossing in the middle.",
+  "summaryGenerated": false,
+  "hook": null,
+  "snapshot": {},
+  "itinerary": [
+    {
+      "day": 1,
+      "title": "Boka Kotorska and the walls",
+      "morning": "Collect the car at TIV. The coastal road round the bay through Tivat and Prčanj is slow, narrow and beautiful; allow 45 minutes for 22 km.",
+      "afternoon": "Park at the Kotor Port garage or the riverside lot outside the walls — **the old town is entirely pedestrian**. Climb the 1,350 steps of the city walls to the fortress of San Giovanni; €15, and go after 17:00 when the cruise crowds have gone and the light is on the bay.",
+      "evening": "Dinner at Konoba Scala Santa in the old town, or drive 4 km to Konoba Ćatovića Mlini in Morinj — a converted watermill with trout ponds, and the best meal in the Boka.",
+      "dayStats": "22 km / 35 min; Kotor walls €15, 1,350 steps, 260 m ascent; parking €1.50–€2/h.",
+      "sleep": "Hotel Monte Cristo or Palazzo Radomiri (Dobrota) — the latter has its own parking, which Kotor's walls do not."
+    },
+    {
+      "day": 2,
+      "title": "The serpentine, Njeguši and Cetinje",
+      "morning": "Leave Kotor by 08:00 and take the old Njeguši road. Twenty-five hairpins, each numbered, with the bay unfolding below — **stop at bend 14 and bend 21**, both of which have widened laybys with the classic view down onto Kotor and Perast. Morning light comes from the east and lifts the bay out of shadow.",
+      "afternoon": "Njeguši village at the top for pršut (air-dried ham) and njeguški sir at Kod Pera na Bukovicu. Then to Cetinje, the old royal capital — the Biljarda and the King Nikola Museum are twenty minutes each.",
+      "evening": "Descend the M2 to Podgorica. Dinner at Pod Volat for ćevapi under the clock tower, then walk the Ribnica confluence.",
+      "dayStats": "75 km / 2 h 30 with stops; serpentine 0–900 m in 8.3 km, ~25 hairpins; Lovćen NP entry €3 if you detour to the mausoleum.",
+      "sleep": "Hotel Hemera or Ziya Hotel, Podgorica — both with secure parking."
+    },
+    {
+      "day": 3,
+      "title": "The Morača canyon to the Tara bridge",
+      "morning": "North on the **E65/E80 through the Morača canyon** — a spectacular 40 km of galleries, tunnels and a river 200 m below. The Morača Monastery, founded 1252, sits in a green terrace beside the road with free parking.",
+      "afternoon": "Continue past Kolašin and Mojkovac to the **Đurđevića Tara Bridge**. Park on the north side and walk out over the arches; the Tara canyon below is 1,300 m deep, the second-deepest in the world. The zipline crosses in about 40 seconds.",
+      "evening": "Drive the final 23 km to Žabljak at 1,456 m — the highest town in the Balkans. Dinner at Restoran Durmitor for kačamak (cornmeal and cheese) and lamb ispod sača.",
+      "dayStats": "175 km / 3 h 30; Morača canyon ~40 km of tunnels; Tara bridge 365 m long, 172 m high, free; Žabljak 1,456 m.",
+      "sleep": "Hotel Soa or Etno Selo Šljeme, Žabljak — chalet-style with generous parking."
+    },
+    {
+      "day": 4,
+      "title": "Durmitor and the Black Lake",
+      "morning": "Walk the **Black Lake (Crno jezero)** circuit — 3.5 km, flat, an hour, and the classic Durmitor image with Međed's cliff reflected in it. Park at the national park gate; entry is €3 per person plus a small parking fee.",
+      "afternoon": "Drive the **eastern half of the Durmitor Ring Road** as far as the Sedlo approach, then return — or, if you have energy, take the Ćurevac viewpoint road for the aerial view down into the Tara canyon. The Ćurevac spur is gravel for its last 2 km.",
+      "evening": "Back in Žabljak. This is a good night for an early one: tomorrow is the hardest driving day.",
+      "dayStats": "45 km / 1 h 30 driving; Black Lake circuit 3.5 km / 1 h; Durmitor NP €3 pp; Žabljak fuel — fill tonight.",
+      "sleep": "Hotel Soa, Žabljak (second night)."
+    },
+    {
+      "day": 5,
+      "title": "Sedlo Pass and 56 tunnels",
+      "morning": "The **Sedlo Pass at 1,907 m** is the day's opening act — 30 km of narrow asphalt across a limestone plateau under Bobotov Kuk, with almost no barriers and no traffic. Do it before 10:00 when the light is still raking. Descend to Trsa and Pišće.",
+      "afternoon": "Down to Plužine, then the **Piva canyon road** — 56 unlit, rough-cut, single-lane tunnels in 30 km, hanging above the turquoise reservoir. Full headlights, horn before every tunnel, and be ready to reverse to a passing place. This section takes 90 minutes for 45 km and is the most demanding driving of the trip.",
+      "evening": "Cross into Bosnia at **Šćepan Polje** — present the Green Card and the rental authorisation letter. Continue 25 km to Tjentište. Dinner at the Sutjeska NP hotel restaurant; options are limited here.",
+      "dayStats": "120 km / 4 h; Sedlo 1,907 m; 56 tunnels; Šćepan Polje border 20–45 min in season; last Montenegrin fuel at Plužine.",
+      "sleep": "Hotel Mladost, Tjentište, or a Perućica-area eco lodge."
+    },
+    {
+      "day": 6,
+      "title": "Sutjeska, Perućica and the road to Sarajevo",
+      "morning": "**Sutjeska National Park** holds Perućica, one of Europe's last two primeval forests — entry requires a park ranger guide, arranged at the visitor centre. The Battle of Sutjeska monument at the Valley of Heroes is a huge brutalist concrete sculpture worth twenty minutes on its own.",
+      "afternoon": "Drive north on the M20 through **Foča** and the Drina valley to Sarajevo — a good road along a green river, with the last 40 km narrowing through Trnovo. Change money to KM at a bank in Foča; the border-area exchange rates are poor.",
+      "evening": "Park the car and leave it. Sarajevo's Baščaršija is walkable and the streets are narrow. Dinner at Ćevabdžinica Željo for ćevapi in somun bread, then Turkish coffee at Divan in the Morića Han caravanserai.",
+      "dayStats": "135 km / 3 h; Sutjeska NP entry ~5 KM, Perućica guided visit ~30–50 KM per group; M20 untolled; Sarajevo garage 2–3 KM/h.",
+      "sleep": "Hotel Colors Inn or Isa Begov Hamam Hotel, Sarajevo — both with arranged parking."
+    },
+    {
+      "day": 7,
+      "title": "Sarajevo on foot, then the drop-off",
+      "morning": "Walk the line where Ottoman Baščaršija meets Austro-Hungarian Ferhadija — it is marked on the pavement as the \"Sarajevo Meeting of Cultures\". The Latin Bridge, the Gazi Husrev-beg Mosque and the restored Vijećnica are all within ten minutes.",
+      "afternoon": "Take the cable car up to **Trebević** — 9 minutes to 1,164 m, with the abandoned 1984 Olympic bobsleigh track a short walk from the top station. The road up is drivable but the cable car is faster and you avoid the narrow hairpins.",
+      "evening": "Drop the car at SJJ. Fuel before you get to the airport road; refuel at the Petrol station on Kurta Schorka. Confirm the one-way drop paperwork and take photos of the returned vehicle.",
+      "dayStats": "25 km / 45 min including the airport run; Trebević cable car 20 KM return (~€10); Vijećnica entry 10 KM.",
+      "sleep": "Departure."
+    }
+  ],
+  "accommodationStrategy": [
+    {
+      "rank": 1,
+      "name": "Palazzo Radomiri",
+      "style": "Restored 18th-century palace",
+      "location": "Dobrota",
+      "description": "Three kilometres from Kotor's walls on the bay road, with its own waterfront terrace and — critically — its own parking. Staying inside Kotor's walls means carrying luggage several hundred metres from a paid garage; staying here means you park at the door and taxi in for dinner. €140–€230.",
+      "booking": null,
+      "priceNote": "€140–€230"
+    },
+    {
+      "rank": 2,
+      "name": "Hotel Soa",
+      "style": "Alpine lodge",
+      "location": "Žabljak",
+      "description": "Two nights here bracket the Durmitor days without moving. Large free car park, drying room, and breakfast from 07:00 — necessary for an early Sedlo crossing, which is materially safer and more beautiful before the day's traffic and haze. Ten minutes' drive from the Black Lake gate. €80–€130.",
+      "booking": null,
+      "priceNote": "€80–€130"
+    },
+    {
+      "rank": 3,
+      "name": "Isa Begov Hamam Hotel",
+      "style": "Historic hotel",
+      "location": "Sarajevo",
+      "description": "Built around a restored 1462 Ottoman bathhouse, inside Baščaršija but with a partnered garage — the correct answer in a city where the old town is pedestrian and street parking is metered and scarce. Walking distance to everything on Day 7. €95–€150.",
+      "booking": null,
+      "priceNote": "€95–€150"
+    }
+  ],
+  "logistics": {
+    "connectivity": "**Neither country is in the EU roaming zone.** Some EU operators now include the Western Balkans in bundles; most do not, and default rates are punitive. Buy a Telenor or One Montenegro SIM in Podgorica and a BH Telecom or m:tel SIM in Foča or Sarajevo, or accept offline maps. There is no signal on the Sedlo plateau, in the Piva tunnels or across most of Sutjeska.",
+    "emergency": "112 works in both countries. Montenegro: 122 police, 124 ambulance. Bosnia: 122 police, 124 ambulance, 121 fire. Mountain rescue in Durmitor and Sutjeska is thin and slow — carry a proper first-aid kit and tell your hotel your route.",
+    "weather": "Durmitor gets snow into June and again from October; hail and thunderstorms build over the plateau most summer afternoons from around 14:00. The **bura** funnels down the Boka in winter and spring. The Morača and Piva canyons hold fog until mid-morning in autumn.",
+    "bookingWindows": "Žabljak accommodation fills for July–August and for the Tara rafting season. Perućica primeval forest visits must be arranged with the Sutjeska NP office at least a day ahead — you cannot walk in unguided. Kotor walls need no booking. **The one-way rental drop is the real booking constraint** — arrange 4–8 weeks out.",
+    "money": "Montenegro uses the euro. Bosnia uses the **KM (BAM)** at 1.95583 to the euro — a fixed peg, so any exchange offering much worse is skimming. Cards are widely accepted in Kotor, Podgorica and Sarajevo; assume cash for Žabljak konobas, park entries, the Piva-side villages and all parking. Tipping is 10% in Bosnia, rounding up in Montenegro.",
+    "transportRules": "No vignette in either country. Montenegro's only meaningful tolls are the **Sozina tunnel (€3.50)** and the Smokovac–Mateševo motorway section; Bosnia collects motorway tolls at barriers in KM, euros or by card. **Headlights are mandatory 24/7 in Montenegro**, and mandatory outside built-up areas in Bosnia. Winter equipment is legally required 15 November–31 March in both. Alcohol limits: 0.03% Montenegro, 0.03% Bosnia — effectively do not drink and drive. **Green Card and written cross-border permission are mandatory** for the Šćepan Polje crossing; without them you will be turned back at the Bosnian side.",
+    "permits": "Durmitor and Sutjeska are national parks with per-person entry fees. Wild camping is restricted in both. Drones require permission in Montenegro and are banned over the Tara bridge and near any military installation; Bosnia requires prior approval and drone use near the Sarajevo airport corridor is prohibited. **Landmine risk persists in parts of rural Bosnia** — stay on marked paths in the Sutjeska and Foča areas and never enter fenced or taped land.",
+    "health": "Tap water is potable in Kotor, Podgorica, Žabljak and Sarajevo. Spring water in Durmitor is drinkable. Ticks are present in the Sutjeska beech forests — check daily, and note that tick-borne encephalitis occurs in the region. The Tara and Piva rivers are 8–12°C year-round. Altitude tops at 1,907 m by car, which requires no acclimatisation but does mean a 15°C temperature drop from the coast.",
+    "gettingThere": null,
+    "other": []
+  },
+  "proTips": [
+    "Drive the Kotor serpentine **upward, early**. Locals use it as a fast descent, and meeting a Podgorica-plated Golf coming down at speed on a single-lane hairpin at 11:00 is the trip's worst moment. At 08:00 you will have it to yourself.",
+    "Get the Green Card in your hand at pickup and **read it** — it must list BA (Bosnia) explicitly. A verbal assurance at the desk is worth nothing at Šćepan Polje, where the crossing is small, slow and staffed by people who will simply refuse you.",
+    "Sound the horn before every Piva tunnel, and switch to full beam **before** entering rather than inside. The tunnels are unlit, unmarked and roughly single-lane; the horn is the only warning system that exists.",
+    "Fill the tank in Žabljak the night before Sedlo. There is no fuel for roughly 70 km over the pass, and the Plužine station keeps unreliable hours.",
+    "Take the Sedlo crossing before 10:00. The plateau light is best early, afternoon storms build reliably, and you will meet almost no oncoming traffic on a road with very few passing places.",
+    "Book the Perućica guide the day before through the Sutjeska NP office in Tjentište. Turning up hoping to walk in gets you a ranger who is already out with another group and a wasted morning.",
+    "In Bosnia, change money at a bank counter in Foča rather than at a border-side kiosk. The KM is pegged, so any exchange offering meaningfully worse than 1.95 to the euro is taking a cut you do not need to give.",
+    "Photograph the Đurđevića Tara bridge from the **Ćurevac viewpoint** rather than from the bridge itself. From the bridge you cannot see the bridge; from Ćurevac you get the arches, the gorge and 1,300 m of drop in one frame.",
+    "Budget for the one-way drop as a fixed cost of this route, not an afterthought. If it comes back at over €300, price a return to Podgorica plus a Sarajevo bus — the overland bus is 7 hours and about €25."
+  ],
+  "typeSpecific": {
+    "raw": {
+      "Total distance": "~640 km over 7 days. Deliberately short: the Piva canyon section averages 35 km/h and the Sedlo crossing 30 km/h.",
+      "The Kotor serpentine (old Njeguši road, P1 / Kotor–Cetinje)": "roughly 25 numbered hairpins climbing from sea level to about 900 m in 8.3 km of road distance. Single-lane in stretches with passing places, low stone parapets and none at all in places. It is legal in both directions but locals descend and tourists ascend — go **up** in the morning. Impassable for anything longer than a van.",
+      "Sedlo Pass (P14 / Durmitor ring road), 1,907 m": "the highest paved road in Montenegro. Narrow but asphalted, with a stone-desert plateau, sheer limestone faces and almost no barriers. Part of the 76 km Durmitor Ring Road over three cols — Sedlo, Dobri Do and Todorov Do. **Closed by snow from roughly November to late May/early June**; it opened for the 2026 season on 6 June 2026.",
+      "Piva canyon road (M6 / R11, Plužine–Šćepan Polje)": "approximately 56 tunnels in around 30 km, most of them **unlit, single-lane, rough-hewn and dripping**. There are no lights, no markings and no run-off. Sound the horn before entry, put full beams on, and expect to reverse. The canyon wall drops 400 m to the turquoise Piva reservoir with no barrier.",
+      "Đurđevića Tara Bridge": "365 m long, 172 m above the Tara river, built 1937–40. Free to cross; free parking on the north side; a zipline runs across the gorge for €10–€20.",
+      "Cross-border rental & Green Card": "the single most important logistics item. Montenegrin rental companies permit Bosnia and Herzegovina, Albania, Kosovo, Serbia and Croatia, but **only with a Green Card and written cross-border authorisation issued at pickup** — typically €30–€60, sometimes charged per country. Many international brands exclude Kosovo and Albania. **One-way Montenegro-to-Sarajevo drops are the expensive part: €150–€350**, and several companies refuse them outright. Confirm at booking, in writing, and check the Green Card physically lists BiH.",
+      "Tolls & vignettes": "neither country uses a vignette. **Montenegro** has one toll: the **Sozina tunnel** (Sutomore–Virpazar) at €3.50 for a car, and the newer Bar–Boljare motorway's Smokovac–Mateševo section at ~€3.50. **Bosnia and Herzegovina** has no vignette either — its ~210 km of tolled motorway is collected at barriers, payable in KM, euros or by card, with typical sections costing 1.20 KM (~€0.61) to 14.00 KM (~€7.14). The Tjentište–Foča–Sarajevo route on this trip uses untolled trunk roads.",
+      "Currency": "Montenegro uses the **euro** despite not being in the EU or eurozone. Bosnia uses the **konvertibilna marka (BAM/KM)**, pegged at 1.95583 KM = €1. Euros are widely accepted in Bosnian tourist areas at a poor rate; use KM.",
+      "Fuel": "good coverage on the coast and around Podgorica. The gaps are Žabljak to Plužine over Sedlo (about 70 km with nothing), and Šćepan Polje to Foča. Fill at Nikšić, Žabljak and Foča."
+    },
+    "surface": null,
+    "distanceKm": 640,
+    "elevationM": null,
+    "verticalM": null,
+    "technicalRating": null,
+    "transitPass": null,
+    "hutBooking": null,
+    "liftNetwork": null,
+    "snowReliability": null,
+    "windConditions": null,
+    "gpxReady": null,
+    "bookingTimeline": null,
+    "audience": null
+  },
+  "packingNotes": [],
+  "whatCouldGoWrong": [],
+  "sources": {
+    "verified": "Sedlo Pass at 1,907 m and the 76 km Durmitor Ring Road over Sedlo, Dobri Do and Todorov Do, closed by snow until late May/early June and opened for the 2026 season on 6 June 2026; Bosnia and Herzegovina has no vignette, using barrier-collected motorway tolls in KM across roughly 210 km of motorway, payable in local currency, euros or by card, with the KM pegged at ~1.96 to the euro; cross-border Balkan rentals require a Green Card plus written company authorisation, with fees typically charged per crossing.",
+    "confidenceNotes": "The Sedlo/Durmitor ring opening date is snow-dependent and varies by several weeks year to year — 6 June 2026 is the 2026 date only, and the road can also close temporarily after summer storms. The 56-tunnel count on the Piva road is the commonly cited figure but sources vary between 50 and 72 depending on where the section is measured. One-way Montenegro-to-Bosnia rental drop charges vary enormously by company and season and several majors refuse them entirely; the €150–€350 band is indicative and must be quoted per booking. Montenegrin toll points (Sozina, Smokovac–Mateševo) and Bosnian barrier prices are revised periodically. National park entry fees in Durmitor and Sutjeska change annually. Landmine-clearance status in rural BiH continues to improve but should be checked against BHMAC before publishing any off-road suggestion."
+  },
+  "verifyFlags": [],
+  "verifyFlagCount": 0,
+  "volatilePricing": false,
+  "wordCount": 3318,
+  "dataVintage": 2026,
+  "provenance": {
+    "batch": "southern-mediterranean",
+    "sourceFile": "carta-dataset/trips/road-trip-montenegro-bosnia-tara.md",
+    "sourceFormat": "md with '## Metadata' bullet block (one file per trip)",
+    "sourceId": "road-trip-montenegro-bosnia-tara",
+    "ingestedAt": "2026-09-02",
+    "synthesized": false
+  }
+}

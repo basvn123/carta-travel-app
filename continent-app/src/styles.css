@@ -19720,6 +19720,21 @@ button.ai-sched-main:focus-visible {
   cursor: pointer;
 }
 .site-banner-close:hover { color: var(--ink); background: var(--paper-dim); }
+/* The expiry banner's one action. Quiet by design: it reaches somebody who
+   has already paid, so it offers rather than shouts. */
+.site-banner-action {
+  flex: none;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--accent);
+  background: none;
+  border: 0;
+  padding: 4px 8px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.site-banner-action:hover { background: var(--accent-bg); }
 @media (max-width: 760px) {
   .site-banner { bottom: calc(var(--bottom-nav-h) + 12px); }
 }
@@ -20980,6 +20995,76 @@ button.ai-sched-main:focus-visible {
 /* The hidden gem chip on a card sits with the other tag chips, so it takes
    their shape and only changes colour. It is a claim about the ranking, not
    about the lake, which is why it never looks like the physical tags. */
+/* The listed tier, rendered as a LIST rather than as cards, and that is the
+   design decision rather than an economy: a listed row has no score, no
+   ranking and often no photograph, so a photo card would promise a judgement
+   that was never made. Hairlines, per the design system's "lists get
+   hairlines, objects get borders". */
+.places-alsohere {
+  grid-column: 1 / -1;
+  margin-top: 18px;
+}
+.places-listedrows {
+  margin: 6px 2px 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--line);
+}
+.places-listedrow {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  padding: 9px 2px;
+  border-bottom: 1px solid var(--line);
+  font-size: 13.5px;
+}
+.places-listedrow-name { font-weight: 600; }
+.places-listedrow-ele {
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 12px;
+  color: var(--ink-soft);
+}
+.places-listedrow-chip {
+  margin-left: auto;
+  font-size: 11.5px;
+  color: var(--ink-soft);
+}
+
+/* The difficulty chip on a mountain card. Same chip as the rest of the row
+   rather than a new colour: difficulty is a FACET here, never a judgement,
+   and a red "technical climb" badge would rank it by making it look
+   dangerous. peak_index_v2 keeps difficulty out of the score for exactly
+   that reason, and the card should not put it back in through the palette. */
+.places-mcard-diff {
+  font-variant-numeric: tabular-nums;
+}
+/* The floor line, under a country header. Its own line rather than a
+   parenthesis, because it explains a short list and a reader who wants the
+   explanation is looking under the count. */
+.places-beachhead-note {
+  display: block;
+  margin-top: 2px;
+  color: var(--ink-soft);
+}
+/* Every way in, under the way up. A quiet row: the lift already has the
+   loud slot above it, and these are the answers for somebody without a car. */
+.mpage-way-ways {
+  flex-basis: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 2px;
+}
+.mpage-way-ways span {
+  padding: 2px 8px;
+  border-radius: 6px;
+  border: 1px solid var(--line);
+  font-size: 11.5px;
+  color: var(--ink-soft);
+  white-space: nowrap;
+}
+
 .places-bcard-tags .tag-gem {
   background: color-mix(in srgb, var(--rate) 78%, transparent);
 }
@@ -21859,6 +21944,93 @@ button.ai-sched-main:focus-visible {
   align-items: center;
   gap: 3px;
   background: rgba(255, 255, 255, 0.26);
+}
+
+/* Highlight chips on a trip card: what the walk goes past, in the walker's
+   own words. Dimmer than the loop chip on purpose, because a loop is a fact
+   about the shape and a waterfall is a fact about the day: the eye should
+   reach the name and the length first and then find these. */
+.places-card-hl {
+  background: rgba(255, 255, 255, 0.18);
+  font-weight: 500;
+}
+
+/* A listed row says what it is instead of showing a number it never earned.
+   Sits exactly where the rating badge would, so a column of cards keeps one
+   right-hand rhythm whether or not a row is scored. */
+.places-card-unrated {
+  padding: 2px 8px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  color: rgba(255, 255, 255, 0.86);
+  white-space: nowrap;
+}
+
+/* The tilde on a derived grade. A whole word ("estimated") would not fit a
+   card and a different colour would read as a warning; one character that
+   the title attribute explains is the smallest honest mark. */
+.places-card-diff.est i,
+.tpage-chip.est i {
+  font-style: normal;
+  opacity: 0.65;
+  margin-left: 2px;
+}
+
+/* ── Trail page: what you pass, who it suits ───────────────────────────
+   Two chip families in one wrap, deliberately different weights. A
+   highlight is a reason to go and carries the accent; a suitability is a
+   constraint being satisfied and carries the rule. */
+.tpage-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 10px;
+}
+.tpage-chip {
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+}
+.tpage-chip-hl {
+  background: var(--accent-bg);
+  color: var(--accent);
+}
+.tpage-chip-suit {
+  border: 1px solid var(--rule);
+  background: var(--paper-dim);
+  color: var(--ink-soft);
+}
+
+/* Provenance: claims about the DATA rather than about the walk. Set small
+   and quiet, because somebody choosing a Saturday walk does not need to
+   read them and somebody deciding whether to trust the line does. */
+.tpage-provenance {
+  margin-top: 12px;
+  padding: 10px 12px;
+  border: 1px solid var(--rule-soft);
+  border-radius: 10px;
+  background: var(--paper-dim);
+}
+.tpage-provenance p {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--ink-soft);
+}
+.tpage-provenance p + p { margin-top: 6px; }
+
+/* The path a stage belongs to. Set as a section rather than as a chip
+   because it is a different KIND of fact from the rest: not something about
+   this walk, but the thing this walk is part of. */
+.tpage-family .tpage-sec-title { margin-bottom: 2px; }
+.tpage-family-n {
+  margin: 0;
+  font-size: 12px;
+  color: var(--ink-soft);
 }
 
 .tpage-toast {
@@ -29010,6 +29182,16 @@ button.ai-sched-main:focus-visible {
   cursor: pointer;
   color: var(--ink);
 }
+.rgnp-share {
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  background: none;
+  padding: 5px 10px;
+  margin: 2px 0 4px;
+  font-size: 13px;
+  cursor: pointer;
+  color: var(--ink);
+}
 .rgnp-kind {
   font-size: 12.5px;
   font-weight: 600;
@@ -29097,4 +29279,562 @@ button.ai-sched-main:focus-visible {
   font-size: 13px;
   cursor: pointer;
   color: var(--ink);
+}
+
+/* ---------------------------------------------------------------------------
+   The cycling layer.
+
+   Nothing here invents a look: the page shell mirrors .rgnp, the cards reuse
+   .places-tcard, and every colour is a token. Two rules from the design
+   system do most of the work in this block:
+
+   THE MONO RULE. var(--mono) carries measured facts only: kilometres, metres
+   of ascent, percent paved, safety scores, agreement percentages. Route names,
+   town names and every sentence stay in the body face. That is why a stage
+   line sets its distance in mono and its destination in sans on the same row.
+
+   LISTS GET HAIRLINES, OBJECTS GET BORDERS. Stages and family sections are
+   runs of related facts, so they are divided by rules. A route card is a
+   bounded thing, so it gets a border.
+   --------------------------------------------------------------------------- */
+
+.cycle-page {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  overflow-y: auto;
+  background: var(--paper);
+  padding: 18px 20px 64px;
+}
+.cycle-page > * { max-width: 860px; margin-left: auto; margin-right: auto; }
+
+.cycle-close, .cycle-back {
+  display: block;
+  border: 0;
+  background: none;
+  padding: 8px 4px;
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+  color: var(--ink);
+}
+.cycle-title {
+  margin: 6px 0 2px;
+  font-size: 26px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+}
+.cycle-sub { margin: 0 0 10px; font-size: 15px; color: var(--ink-soft); }
+.cycle-note { margin: 6px 0; font-size: 14px; color: var(--ink-soft); }
+
+/* Measured facts. Tabular so a column of distances does not jitter. */
+.cycle-facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 18px;
+  margin: 10px 0 4px;
+  padding: 10px 0;
+  border-top: 1px solid var(--rule-soft);
+  border-bottom: 1px solid var(--rule-soft);
+  font-family: var(--mono);
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+}
+.cycle-surface, .cycle-safety, .cycle-free, .cycle-bike,
+.cycle-pace, .cycle-season, .cycle-agree { white-space: nowrap; }
+.cycle-safety-note, .cycle-credit {
+  margin: 10px 0 0;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--ink-mute);
+}
+.cycle-why { margin: 10px 0; padding-left: 18px; font-size: 15px; color: var(--ink-soft); }
+.cycle-why li { margin: 3px 0; }
+
+/* Stages: a run of facts, so hairlines rather than boxes. */
+.cycle-stages { margin: 8px 0; padding: 0; list-style: none; }
+.cycle-stage {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 2px 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--rule-soft);
+}
+.cycle-stage-day {
+  grid-row: 1 / 3;
+  align-self: start;
+  min-width: 34px;
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--ink-mute);
+}
+.cycle-stage-line { font-size: 15px; color: var(--ink); }
+.cycle-stage-meta, .cycle-stage-sleep, .cycle-stage-bail {
+  font-family: var(--mono);
+  font-size: 12.5px;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-mute);
+}
+
+.cycle-checks {
+  margin: 12px 0 0;
+  padding: 10px 12px;
+  border: 1px solid var(--rule-soft);
+  border-radius: 10px;
+  font-size: 13px;
+  color: var(--ink-soft);
+}
+.cycle-gpx {
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  background: none;
+  padding: 8px 14px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  color: var(--ink);
+}
+.cycle-gpx:hover { background: var(--paper-dim); }
+
+.cycle-gallery { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin: 12px 0; }
+.cycle-shot { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 10px; }
+
+/* Route and tour cards in the list. */
+.cycle-tourcard-title { font-size: 15px; font-weight: 600; color: var(--ink); }
+.cycle-tourcard-meta, .cycle-tourcard-pace, .cycle-card-meta,
+.cycle-card-surface, .cycle-card-score {
+  font-family: var(--mono);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-mute);
+}
+.cycle-tourcard-towns, .cycle-card-why { font-size: 13px; color: var(--ink-soft); }
+.cycle-card-name { font-size: 15px; font-weight: 600; color: var(--ink); }
+/* A listed row has no score, and says so rather than showing a gap. */
+.cycle-card-unrated, .cycle-unrated {
+  font-size: 12.5px;
+  font-style: normal;
+  color: var(--ink-mute);
+}
+
+/* EuroVelo families: chips, because each is one continental route. */
+.cycle-famrow {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 8px 2px 4px;
+}
+.cycle-famchip {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  background: var(--bg-card);
+  padding: 8px 12px;
+  cursor: pointer;
+  text-align: left;
+  color: var(--ink);
+}
+.cycle-famchip:hover { background: var(--paper-dim); }
+.cycle-famchip-ref { font-size: 14px; font-weight: 600; }
+.cycle-famchip-meta {
+  font-family: var(--mono);
+  font-size: 11.5px;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-mute);
+}
+.cycle-famlist { margin: 6px 0; padding: 0; list-style: none; }
+.cycle-famitem {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 0;
+  border-bottom: 1px solid var(--rule-soft);
+}
+.cycle-famitem-name { flex: 1; font-size: 15px; color: var(--ink); }
+.cycle-famitem-km {
+  font-family: var(--mono);
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-soft);
+}
+.cycle-famitem-un { font-size: 12.5px; color: var(--ink-mute); }
+
+.cycle-famchip:focus-visible, .cycle-gpx:focus-visible,
+.cycle-close:focus-visible, .cycle-back:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+@media (max-width: 560px) {
+  .cycle-page { padding: 14px 16px 56px; }
+  .cycle-title { font-size: 22px; }
+  .cycle-gallery { grid-template-columns: 1fr; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cycle-famchip, .cycle-gpx { transition: none; }
+}
+
+/* ── Cross-layer neighbours (brief 08): "trails up this mountain" ────────
+   One block per neighbouring layer on every layer page, composed from the
+   build-time nb ids. List idiom, not cards: these are related facts under
+   the page's object, so they get hairlines (same shape as .lpage-walks). */
+.nbx { display: grid; gap: 18px; }
+.nbx-block h2 { margin-bottom: 4px; }
+.nbx-list { margin: 0; padding: 0; list-style: none; }
+.nbx-list li { border-top: 1px solid var(--rule-soft); }
+.nbx-list li:last-child { border-bottom: 1px solid var(--rule-soft); }
+.nbx-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 9px 2px;
+  border: 0;
+  background: none;
+  font: inherit;
+  font-size: 13.5px;
+  color: var(--ink);
+  text-align: left;
+  cursor: pointer;
+}
+.nbx-item:hover .nbx-name { text-decoration: underline; }
+.nbx-item:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+.nbx-name {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.nbx-meta { display: flex; align-items: center; gap: 8px; flex: none; }
+.nbx-meta small {
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 11.5px;
+  color: var(--ink-mute);
+}
+.nbx-unscored {
+  font-size: 11px;
+  color: var(--ink-mute);
+  border: 1px solid var(--rule-soft);
+  border-radius: 999px;
+  padding: 2px 8px;
+  white-space: nowrap;
+}
+
+/* ==========================================================================
+   Curated trip library (journeys): the Trips tab's front door.
+   Ten style cards, one style's trips as photo cards, and the journey page.
+   ========================================================================== */
+
+/* The one-line introduction over the style grid. */
+.jsec-lede {
+  grid-column: 1 / -1;
+  margin: 2px 2px 0;
+  font-size: 13px;
+  color: var(--ink-soft);
+}
+
+/* A style card is the country strip's grammar with more photograph: the
+   image IS the message, so it gets a taller box and a display-face name. */
+.jstyle-card { aspect-ratio: 16 / 9; }
+.jstyle-card .jstyle-name {
+  font-size: 21px;
+  white-space: normal;
+  line-height: 1.15;
+}
+@media (min-width: 640px) {
+  .jstyle-card .jstyle-name { font-size: 23px; }
+}
+
+/* One curated trip. Slightly taller than a destination card so the facts
+   row breathes; everything rides on the photograph, nothing under it. */
+.jcard { aspect-ratio: 2 / 1; }
+.jcard .jcard-title { white-space: normal; line-height: 1.2; }
+.jcard .jcard-facts { margin-top: 6px; }
+
+/* The composer's own door at the end of the grid: a bordered instrument
+   row, deliberately not a photo card, because it is a different product. */
+.jcomposed-card {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 18px;
+  border: 1px solid var(--rule);
+  border-radius: 14px;
+  background: var(--bg-card);
+  text-align: left;
+  cursor: pointer;
+}
+.jcomposed-card:hover { border-color: var(--ink-mute); }
+.jcomposed-card:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+.jcomposed-icon {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: var(--paper-dim);
+  color: var(--ink-soft);
+  flex: none;
+}
+.jcomposed-text { flex: 1; min-width: 0; }
+.jcomposed-title {
+  display: block;
+  font-family: var(--display);
+  font-size: 16.5px;
+  font-weight: 600;
+}
+.jcomposed-sub {
+  display: block;
+  margin-top: 2px;
+  font-size: 12px;
+  color: var(--ink-soft);
+}
+
+/* The head of one style's list: the way back, then the name and the count. */
+.jsec-head { grid-column: 1 / -1; margin: 2px 2px 0; }
+.jsec-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px 6px 9px;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: var(--bg-card);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink-soft);
+  cursor: pointer;
+}
+.jsec-back:hover { border-color: var(--ink-mute); color: var(--ink); }
+.jsec-back:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+.jsec-back-solo { margin-top: 12px; }
+.jsec-title {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin-top: 10px;
+  font-family: var(--display);
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+.jsec-n {
+  font-family: var(--ui);
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--ink-mute);
+}
+
+/* ── The journey page ── */
+
+/* A region line that is only a line: the pin is a capital or gateway
+   fallback, so it links nowhere and prints no coordinates. */
+.jpage-where-flat { cursor: default; }
+
+.jpage-chips { flex-wrap: wrap; }
+.jpage-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: var(--bg-card);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink-soft);
+}
+.jpage-chip.mono { font-family: var(--mono); font-weight: 500; }
+
+.jpage-tags { margin-top: 10px; }
+
+/* The budget as an itemised receipt: hairline rows, right-aligned mono,
+   a heavier rule above the sum. */
+.jpage-budget-rows { list-style: none; margin: 0; padding: 0; }
+.jpage-budget-rows li {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 9px 0;
+  border-top: 1px solid var(--rule-soft);
+}
+.jpage-budget-rows li:first-child { border-top: 0; }
+.jpage-budget-label { font-size: 13px; }
+.jpage-budget-label small {
+  display: block;
+  margin-top: 2px;
+  font-size: 11.5px;
+  color: var(--ink-mute);
+  line-height: 1.4;
+}
+.jpage-budget-eur {
+  font-family: var(--mono);
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.jpage-budget-total {
+  border-top: 2px solid var(--ink) !important;
+}
+.jpage-budget-total .jpage-budget-label { font-weight: 600; }
+.jpage-budget-total .jpage-budget-eur { font-size: 15px; font-weight: 500; }
+
+/* One authored day: the number in mono, the title in display, then the
+   three parts of the day with their labels in the margin of the text. */
+.jpage-day {
+  padding: 14px 0 4px;
+  border-top: 1px solid var(--rule-soft);
+}
+.jpage-day:first-of-type { border-top: 0; padding-top: 4px; }
+.jpage-day-head {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+.jpage-day-n {
+  font-family: var(--mono);
+  font-size: 11.5px;
+  font-weight: 500;
+  color: var(--rate);
+  white-space: nowrap;
+}
+.jpage-day-head h3 {
+  font-family: var(--display);
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+.jpage-day-part { margin-bottom: 8px; }
+.jpage-day-when {
+  display: block;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+  margin-bottom: 2px;
+}
+.jpage-day-text {
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: var(--ink-soft);
+}
+.jpage-day-stats {
+  margin: 6px 0 8px;
+  font-family: var(--mono);
+  font-size: 11.5px;
+  color: var(--ink-mute);
+  font-variant-numeric: tabular-nums;
+}
+.jpage-day-sleep {
+  margin: 4px 0 8px;
+  font-size: 12.5px;
+  color: var(--ink-soft);
+}
+
+/* Where to sleep: one bordered card per named property. */
+.jpage-stay {
+  padding: 14px 16px;
+  border: 1px solid var(--rule-soft);
+  border-radius: 12px;
+  background: var(--bg-card);
+  margin-bottom: 10px;
+}
+.jpage-stay header {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 4px 10px;
+  margin-bottom: 4px;
+}
+.jpage-stay h3 { font-size: 14px; font-weight: 700; }
+.jpage-stay-kind { font-size: 12px; color: var(--ink-mute); }
+.jpage-stay-desc {
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--ink-soft);
+}
+.jpage-stay-book {
+  margin-top: 6px;
+  font-size: 12px;
+  color: var(--ink-soft);
+}
+.jpage-stay-book .mono {
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Good to know: the logistics slots as definition rows. */
+.jpage-log-row dd { color: var(--ink-soft); }
+.jpage-log-text { font-size: 13px; line-height: 1.5; }
+
+.jpage-tips ul { list-style: none; margin: 0; padding: 0; }
+.jpage-tips li {
+  position: relative;
+  padding: 8px 0 8px 18px;
+  border-top: 1px solid var(--rule-soft);
+}
+.jpage-tips li:first-child { border-top: 0; }
+.jpage-tips li::before {
+  content: '';
+  position: absolute;
+  left: 2px;
+  top: 15px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--rate);
+}
+.jpage-tip-text {
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--ink-soft);
+}
+
+/* What must be re-checked before booking, said once, tinted, never buried. */
+.jpage-verify {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin: 0 0 20px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: var(--rate-bg);
+  color: var(--rate);
+  font-size: 12.5px;
+  line-height: 1.45;
+}
+.jpage-verify svg { flex: none; margin-top: 2px; }
+
+/* Journeys on a phone: the style cards keep the two-abreast tile grammar
+   (the .places-ccard rules above already reshape them), only the display
+   name steps down to tile size. A trip card carries a title, a place line
+   and a fact row, and half a column cannot hold that, so like the composed
+   itinerary card it keeps the full row. */
+@media (max-width: 768px) {
+  .jstyle-card .jstyle-name { font-size: 15.5px; }
+  .jcard {
+    grid-column: 1 / -1;
+    aspect-ratio: 2 / 1;
+  }
+  .jcard .jcard-title { font-size: 16px; }
+  .jsec-title { font-size: 19px; }
 }

@@ -1,0 +1,311 @@
+{
+  "id": "fr-cycling-loire-a-velo",
+  "sourceId": "fr-cycling-loire-a-velo",
+  "slug": "fr-cycling-loire-a-velo",
+  "title": "La Loire à Vélo — Orléans to Saumur on EuroVelo 6",
+  "country": "France",
+  "countryCode": "FR",
+  "countries": [
+    {
+      "name": "France",
+      "code": "FR"
+    }
+  ],
+  "isMultiCountry": false,
+  "region": "Western & Central Europe",
+  "regionKey": "western-central",
+  "subRegion": "Loire Valley, Centre-Val de Loire and Anjou",
+  "tripType": "Cycling Trips",
+  "tripTypeId": 1,
+  "tripTypeSlug": "cycling",
+  "durationDays": 7,
+  "bestPeriod": {
+    "months": [
+      5,
+      6,
+      9,
+      10
+    ],
+    "monthNames": [
+      "May",
+      "June",
+      "September",
+      "October"
+    ],
+    "window": null,
+    "note": "May and June for the gardens at Villandry and Chaumont; September for warm water in the Loire and empty châteaux after the French holidays end.",
+    "avoid": null,
+    "raw": null
+  },
+  "budgetTier": "€€",
+  "budgetTierRange": [
+    2,
+    2
+  ],
+  "budgetTierRaw": "€€",
+  "budget": {
+    "currency": "EUR",
+    "totalEur": {
+      "low": 1000,
+      "high": 1500
+    },
+    "totalNote": null,
+    "breakdown": {
+      "accommodation": {
+        "lowEur": 480,
+        "highEur": 700,
+        "note": null
+      },
+      "food": {
+        "lowEur": 280,
+        "highEur": 400,
+        "note": null
+      },
+      "transport": {
+        "lowEur": 110,
+        "highEur": 180,
+        "note": null
+      },
+      "activities": {
+        "lowEur": 130,
+        "highEur": 220,
+        "note": null
+      }
+    },
+    "perDayEur": {
+      "low": 143,
+      "high": 214
+    }
+  },
+  "profile": {
+    "difficulty": 1,
+    "difficultyLabel": "Easy",
+    "difficultyNote": null,
+    "fitnessLevel": "Easy",
+    "crowdLevel": "High",
+    "familyFriendly": true,
+    "carRequired": false
+  },
+  "basecamps": [
+    "Point-to-point, Orléans to Saumur"
+  ],
+  "gatewayAirport": "Paris (CDG)",
+  "gatewayAirportCode": "CDG",
+  "languages": [
+    "French"
+  ],
+  "currency": "EUR",
+  "emergencyNumber": "112",
+  "coordinates": {
+    "lat": 47.9025,
+    "lon": 1.9041,
+    "precision": "city",
+    "matchedPlace": "Orléans",
+    "source": "geonames (geonamescache, cities > 15k)"
+  },
+  "tags": [
+    "loire-a-velo",
+    "eurovelo-6",
+    "chateaux",
+    "accueil-velo",
+    "family"
+  ],
+  "summary": "Around 290 flat kilometres of dedicated greenway and levee path from Orléans to Saumur, with a château every day and a train back at the end.",
+  "summaryGenerated": false,
+  "hook": "The last wild river in France runs between sandbars and willow islands, and someone had the sense to build 900 km of cycle route along it. This is the central section, the one with the châteaux, and it is almost aggressively easy: dedicated greenway, levee tops, and lanes through vineyards, with a total climb over seven days that a single Alpine col would beat before lunch.",
+  "snapshot": {
+    "Country": "France",
+    "Base(s)": "Orléans → Beaugency → Blois → Amboise → Tours → Chinon → Saumur",
+    "Trip Type": "Cycling Trips",
+    "Duration": "7 days",
+    "Best Period": "May, June, September, October",
+    "Budget Tier": "€€",
+    "Total Distance / Terrain": "approx 290 km, roughly 1,200 m cumulative gain; around 85% asphalt greenway and small roads, the remainder compacted crushed limestone (sable stabilisé) on levee sections",
+    "Getting There": "Paris (CDG) → RER B to Paris-Austerlitz, Intercités to Orléans (approx 1h10, bike reservation required). Return by TER Rémi from Saumur",
+    "Who It Suits": "Families, first tourers, anyone who wants a week of riding where the ride is not the hardest part of the day"
+  },
+  "itinerary": [
+    {
+      "day": 1,
+      "title": "Orléans and the first levee",
+      "morning": "Arrive in Orléans. Détours de Loire has agencies here and in nine other Loire towns, which is what makes this trip work: hire in Orléans, hand back in Saumur. Trekking bikes from approx €18 per day, e-bikes from approx €35, one-way drop-off approx €25–40.",
+      "afternoon": "Roll out west on the south bank, leaving the city on greenway past the Pont George V and the Quai du Châtelet, then up onto the levee — the raised flood dyke that carries much of La Loire à Vélo — through Meung-sur-Loire, where Villon was imprisoned in the château.",
+      "evening": "Beaugency is a small stone town with a Romanesque keep, a twenty-two-arch medieval bridge and considerably fewer visitors than anywhere downstream. The Place du Martroi has the market and the cafés.",
+      "dayStats": "32 km, +90 m, asphalt with 4 km compacted limestone on the levee.",
+      "sleep": null
+    },
+    {
+      "day": 2,
+      "title": "Chambord across the forest",
+      "morning": "Cross to the north bank at Beaugency and follow the signed spur into the Domaine national de Chambord. The approach runs through a 5,440-hectare walled hunting park, the largest in Europe, with deer and wild boar at the edges.",
+      "afternoon": "Chambord itself: 440 rooms, the double-helix staircase, and a roofline of chimneys that looks like a small city. Entry approx €16, and the bike racks are at the Porte Royale. Then east along the Cosson and the forest greenway to Blois.",
+      "evening": "Blois climbs its hill in staircases. The Château Royal has four wings in four architectural styles, from Gothic to Classical, all facing one courtyard; the son et lumière runs in summer.",
+      "dayStats": "50 km, +190 m, asphalt with 7 km of forest track and crushed limestone.",
+      "sleep": null
+    },
+    {
+      "day": 3,
+      "title": "Chaumont's gardens to Amboise",
+      "morning": "South bank out of Blois through Chailles and Candé, then a stretch of levee with the river wide and braided below. This is prime sandbar country; in low water the islands are big enough to walk on.",
+      "afternoon": "Chaumont-sur-Loire sits above a short steep ramp, the only climb worth naming so far. The Domaine runs the Festival International des Jardins from late April to early November — thirty commissioned garden installations; combined ticket approx €21. Give it two hours.",
+      "evening": "Amboise. Leonardo da Vinci died at Clos Lucé, 400 metres from the royal château where he is buried in the Chapelle Saint-Hubert. Château approx €17.50, Clos Lucé approx €19.",
+      "dayStats": "42 km, +210 m, asphalt with 5 km crushed limestone.",
+      "sleep": null
+    },
+    {
+      "day": 4,
+      "title": "Vouvray, the troglodyte bank and Tours",
+      "morning": "North bank from Amboise through Lussault and Vouvray. The coteau is honeycombed with troglodyte cellars cut into the tuffeau, and the Chenin Blanc here runs from bone dry to intensely sweet. Domaine Huet has been the Vouvray reference since 1928; tastings by appointment.",
+      "afternoon": "The last 12 km into Tours run on greenway beside the Loire and then along the Cher. Tours is the largest city on the route and the natural rest point.",
+      "evening": "Place Plumereau and the half-timbered streets of Vieux-Tours. The Rue Colbert has the better kitchens; rillons and rillettes de Tours are the local charcuterie and they are not the same thing.",
+      "dayStats": "34 km, +240 m including the Vouvray coteau, asphalt.",
+      "sleep": null
+    },
+    {
+      "day": 5,
+      "title": "Villandry's gardens and the Bréhémont levee",
+      "morning": "West along the Cher to its confluence, then the north bank to Villandry. The Renaissance kitchen garden — nine squares of vegetables planted as a formal parterre, replanted twice a year — is the reason to come; gardens only approx €8, château and gardens approx €13.50.",
+      "afternoon": "Continue on the levee through Bréhémont, one of the most peaceful stretches of the whole route, with the Loire on one side and poplar plantations on the other. Langeais has a fifteenth-century château with an intact drawbridge, approx €12.",
+      "evening": "Sleep in Langeais or push 8 km to Bréhémont, where Loire Vélo Nature rents e-bikes and runs shuttles and where the village is a single street facing the water.",
+      "dayStats": "45 km, +150 m, roughly 12 km compacted limestone levee.",
+      "sleep": null
+    },
+    {
+      "day": 6,
+      "title": "Azay-le-Rideau and the Chinon vineyards",
+      "morning": "South from Langeais over the river and up the Indre valley to Azay-le-Rideau, a château built on an island in the Indre and reflected in it; approx €13. The approach through Rigny-Ussé passes the Château d'Ussé, the Sleeping Beauty one.",
+      "afternoon": "West through Rivarennes and Huismes into Chinon. The last 8 km climb gently through Cabernet Franc vineyards — Chinon AOC — before the fortress appears on its ridge above the Vienne.",
+      "evening": "The Forteresse Royale de Chinon, where Joan of Arc identified the Dauphin in 1429, approx €10.50. The old town below has the best restaurant density between Tours and Saumur.",
+      "dayStats": "48 km, +280 m, asphalt with short gravel sections along the Indre.",
+      "sleep": null
+    },
+    {
+      "day": 7,
+      "title": "The confluence, Fontevraud and Saumur",
+      "morning": "Down the Vienne to Candes-Saint-Martin, where the Vienne joins the Loire. The viewpoint above the collegiate church is the best panorama on the route and takes ten minutes to walk up.",
+      "afternoon": "Montsoreau's white château stands directly in the water. Two kilometres inland, the Abbaye Royale de Fontevraud — the largest surviving monastic city in Europe — holds the tombs of Eleanor of Aquitaine, Henry II and Richard the Lionheart; approx €13.",
+      "evening": "Into Saumur past the Ackerman and Bouvet-Ladubay cellars cut into the tuffeau, where Saumur Brut is aged. Drop the bike at the Détours de Loire agency; TER Rémi carries bikes free to Tours or Angers.",
+      "dayStats": "40 km, +230 m, asphalt with 6 km crushed limestone.",
+      "sleep": null
+    }
+  ],
+  "accommodationStrategy": [
+    {
+      "rank": 1,
+      "name": "Hôtel de l'Abeille",
+      "style": "Family-run town hotel",
+      "location": "Orléans",
+      "description": "Run by the same family since 1903, two streets from the station and directly on the route out of town. It carries the Accueil Vélo label, which in practice means a locked bike room, a pump and a basic tool kit at reception — the national standard worth checking for at every stop.",
+      "booking": "six weeks ahead.",
+      "priceNote": "€110–160 per night for two"
+    },
+    {
+      "rank": 2,
+      "name": "Hôtel Anne de Bretagne",
+      "style": "Small hotel below the château",
+      "location": "Blois",
+      "description": "On a quiet square at the foot of the château staircase, with a garage for bikes and a five-minute walk to everything in Blois. It is the practical Day 2 finish: you arrive tired from Chambord and do not want a hill or a taxi.",
+      "booking": "two months ahead for June–September.",
+      "priceNote": "€95–140 per night for two"
+    },
+    {
+      "rank": 3,
+      "name": "Hôtel Anne d'Anjou",
+      "style": "Historic hotel on the quay",
+      "location": "Saumur",
+      "description": "An eighteenth-century mansion directly beneath the château on the Loire quay, with a walled courtyard for bikes and a listed staircase. It is 900 metres from Saumur station, so the last morning is a roll rather than a scramble.",
+      "booking": "three months ahead; Saumur fills during the Cadre Noir events and the July horse shows.",
+      "priceNote": "€150–220 per night for two"
+    }
+  ],
+  "logistics": {
+    "connectivity": null,
+    "emergency": "112 across France; 15 for SAMU medical, 18 for fire. Riverside stretches between villages have coverage but the Sologne forest edge near Chambord can drop out.",
+    "weather": null,
+    "bookingWindows": "Chambord and Fontevraud sell timed online tickets that skip the queue. Bikes go in racks outside every site; none allow bikes inside the grounds.",
+    "money": "Cards everywhere, including most bakeries. Village shops close 12:30–15:30 and all day Sunday afternoon and Monday. Restaurant kitchens stop at 14:00 and do not reopen before 19:00 — plan lunch, or carry it.",
+    "transportRules": null,
+    "permits": null,
+    "health": null,
+    "gettingThere": null,
+    "other": [
+      {
+        "label": "Accueil Vélo",
+        "text": "The national cycle-tourism label. Accredited hotels, B&Bs and repair shops sit within 5 km of the route, keep secure storage and a repair kit, and display a green-and-blue logo. Filter every booking on it."
+      },
+      {
+        "label": "Bikes on trains",
+        "text": "TER Rémi in Centre-Val de Loire carries assembled bikes free, no reservation, in marked spaces — first come, first served, and the Orléans–Tours–Saumur axis fills on summer weekends. Intercités from Paris-Austerlitz and TGV to Tours/Saint-Pierre-des-Corps require a paid bike reservation, approx €10, bookable up to four months ahead and genuinely limited. Book the outbound the day reservations open."
+      },
+      {
+        "label": "Rental and one-way",
+        "text": "Détours de Loire operates a network of agencies from Orléans to Saumur and beyond, with one-way returns for approx €25–40. Loire Vélo Nature at Bréhémont is the specialist for e-bikes and shuttles in the Touraine section."
+      },
+      {
+        "label": "Luggage transfer",
+        "text": "Randovélo, based in the Loire valley, and Détours de Loire both move bags hotel-to-hotel for roughly €15–22 per bag per stage. Book at least three weeks out for July and August."
+      },
+      {
+        "label": "Legal",
+        "text": "Helmets are compulsory for under-12s only. Lights and a rear reflector are required after dark. The Loire itself is dangerous to swim — strong undertows, shifting sandbars and no lifeguards outside designated bases."
+      }
+    ]
+  },
+  "proTips": [
+    "Ride west, as this itinerary does. The greenway sections and the château sequence both work better downstream, and the TER return from Saumur is faster and cheaper than the reverse.",
+    "Book the Intercités bike slot from Paris the moment the timetable opens. There are typically only a handful of bike spaces per train and they are gone weeks before the seats.",
+    "Arrive at Chambord after 16:30. Most of the coach traffic has left, the light on the west façade is at its best, and the domaine's outer park stays open later than the château.",
+    "At Chaumont, buy the combined garden festival ticket and start with the far end of the park, working back. Everyone else starts at the château.",
+    "Use the south bank between Blois and Amboise and the north bank between Amboise and Tours. Both are signed; the choices above are the quieter and better-surfaced of each pair.",
+    "Fontevraud opens at 09:30 and the abbey church is empty for the first forty minutes. It is a fifteen-minute climb from Montsoreau — do it before the Saumur run, not after."
+  ],
+  "typeSpecific": {
+    "raw": {
+      "Total Distance / Terrain": "approx 290 km, roughly 1,200 m cumulative gain; around 85% asphalt greenway and small roads, the remainder compacted crushed limestone (sable stabilisé) on levee sections",
+      "Who It Suits": "Families, first tourers, anyone who wants a week of riding where the ride is not the hardest part of the day"
+    },
+    "surface": "approx 290 km, roughly 1,200 m cumulative gain; around 85% asphalt greenway and small roads, the remainder compacted crushed limestone (sable stabilisé) on levee sections",
+    "distanceKm": 290,
+    "elevationM": null,
+    "verticalM": null,
+    "technicalRating": null,
+    "transitPass": null,
+    "hutBooking": null,
+    "liftNetwork": null,
+    "snowReliability": null,
+    "windConditions": null,
+    "gpxReady": null,
+    "bookingTimeline": null,
+    "audience": "Families, first tourers, anyone who wants a week of riding where the ride is not the hardest part of the day"
+  },
+  "packingNotes": [
+    "Tyres of 32–38 mm. The levee sable stabilisé punishes narrow rubber and there is no reason to run it here.",
+    "A light rain shell; Loire weather is Atlantic and showers arrive fast and pass in twenty minutes.",
+    "Sun protection, including arm covers. The levee tops have no shade for long stretches and reflect off the river sand.",
+    "A cable lock. Every château has racks; none has supervision.",
+    "Two bottles; village fountains exist but are inconsistent, and July on the levee is hot.",
+    "Spare tube, levers, pump — Accueil Vélo repair points are frequent but they close at 12:30."
+  ],
+  "whatCouldGoWrong": [
+    "**No bike space on the Paris train.** Intercités and TGV bike slots are hard-capped. Fallback: take an ordinary TGV to Saint-Pierre-des-Corps with the bike boxed, or ride the Paris–Orléans section of EuroVelo 3 over two days.",
+    "**Summer heat above 35 °C.** The levee has no shade and the Loire valley gets genuinely hot in July and August. Fallback: start at 07:00, take a four-hour lunch, ride again from 17:00; every stage here is short enough to split.",
+    "**Rain turns the levee slow and the bike filthy.** Fallback: the parallel departmental roads are quiet, signed as alternates and fully asphalt; the TER between any two towns on the route takes bikes free."
+  ],
+  "sources": {
+    "verified": null,
+    "confidenceNotes": null
+  },
+  "verifyFlags": [],
+  "verifyFlagCount": 0,
+  "volatilePricing": false,
+  "wordCount": 2111,
+  "dataVintage": 2026,
+  "provenance": {
+    "batch": "western-central",
+    "sourceFile": "cartatripsv1/trips/fr-cycling-loire-a-velo.md",
+    "sourceFormat": "md+yaml-frontmatter (one file per trip)",
+    "sourceId": "fr-cycling-loire-a-velo",
+    "ingestedAt": "2026-09-02",
+    "synthesized": false
+  }
+}

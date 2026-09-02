@@ -2,33 +2,52 @@ import React, { lazy, Suspense, useEffect, useMemo, useRef, useState } from 'rea
 import { useIsDesktop } from '../hooks/useIsDesktop.js';
 import { RatingBadge } from '../components/RatingBadge.jsx';
 import { CountryFlag } from '../components/CountryFlag.jsx';
-import { eur } from '../lib/format.js';
+import { count, eur } from '../lib/format.js';
 import { fareProv, estPrefix } from '../components/FareProvenance.jsx';
 import { HeroImage } from '../components/HeroImage.jsx';
 import { PlacesFilterSheet } from './PlacesFilterSheet.jsx';
 import { trailPath } from '../lib/trailShape.js';
 import { srcSetFor } from '../lib/heroImage.js';
-import { loadTrails, loadTrailsIndex } from '../lib/trails.js';
-import { loadBeachIndex, loadBeaches, loadTopBeaches } from '../lib/beaches.js';
-import { beachTags, beachRating } from '../lib/beachStory.js';
-import { loadLakeIndex, loadLakes, loadTopLakes } from '../lib/lakes.js';
-import { lakeTags, lakeRating, lakeSwim, isHiddenGem } from '../lib/lakeStory.js';
+import { loadTrails, loadListedTrails, loadTrailsIndex } from '../lib/trails.js';
 import {
-  loadMountainIndex, loadMountains, loadTopMountains,
+  loadBeachIndex, loadBeaches, loadListedBeaches, loadTopBeaches,
+} from '../lib/beaches.js';
+import {
+  beachTags, beachRating,
+  BEACH_FACETS, applyBeachFacets, beachFacetCounts,
+} from '../lib/beachStory.js';
+import {
+  loadLakeIndex, loadLakes, loadListedLakes, loadTopLakes,
+} from '../lib/lakes.js';
+import {
+  lakeTags, lakeRating, lakeSwim, isHiddenGem,
+  LAKE_FACETS, applyLakeFacets, lakeFacetCounts,
+} from '../lib/lakeStory.js';
+import {
+  loadMountainIndex, loadMountains, loadListedMountains, loadTopMountains,
 } from '../lib/mountains.js';
 import {
   loadTripIndex, loadTrips, loadTopTrips, rankTrips,
 } from '../lib/trips.js';
+import { loadCyclingIndex, loadCycling } from '../lib/cycling.js';
+import {
+  countryPhrase, listedLine, paceLine, surfaceLine, whyLines,
+} from '../lib/cycleStory.js';
 import {
   tripHeadline, shapeLabel, transportLabel, seasonLabel, tripTags, cardThumb,
 } from '../lib/tripStory.js';
 import {
   mountainTags, mountainRating, isLiftServed, liftLabel,
+  MOUNTAIN_FACETS, applyMountainFacets, mountainFacetCounts, floorNote,
+  difficultyLabel, viewBandLabel,
   isHiddenGem as isMountainGem,
 } from '../lib/mountainStory.js';
 import {
   associateTrip, haversineKm, tripCentre, tripKindKey, tripThemes,
   DISTANCE_BANDS, tripBand, trailRating,
+  ASCENT_BANDS, tripClimbBand, GRADES, tripGrade, gradeIsDerived,
+  ROUTE_TYPES, tripRouteType, HIGHLIGHTS, tripHighlights,
+  SUITABILITY, tripSuitability, suitabilityIsDerived, isListed,
 } from '../lib/trailCards.js';
 import { useI18n } from '../i18n/index.jsx';
 import { geocodeAddress, reverseGeocode } from '../lib/geocode.js';
@@ -37,8 +56,10 @@ import {
   SearchIcon, ChevronRightIcon, RouteIcon, SkylineIcon, SuitcaseIcon, BootIcon,
   BeachIcon, MountainIcon, MapPinIcon, CrosshairIcon,
   CityIcon, TownIcon, VillageIcon, AreaIcon, LoopIcon, LakeIcon, FilterIcon,
+  BikeIcon, ArrowLeftIcon,
 } from '../components/Icons.jsx';
 import { LifestyleButton } from './LifestyleButton.jsx';
+import { JourneysSection } from './JourneysSection.jsx';
 
 /**
  * The Destinations tab: the whole catalogue and every published trip as a
@@ -95,8 +116,14 @@ const TrailPage = lazy(() => import('./TrailPage.jsx').then((m) => ({ default: m
 const BeachPage = lazy(() => import('./BeachPage.jsx').then((m) => ({ default: m.BeachPage })));
 const LakePage = lazy(() => import('./LakePage.jsx').then((m) => ({ default: m.LakePage })));
 const MountainPage = lazy(() => import('./MountainPage.jsx').then((m) => ({ default: m.MountainPage })));
+const CyclePage = lazy(() => import('./CyclePage.jsx').then((m) => ({ default: m.CyclePage })));
+const CycleFamilyPage = lazy(
+  () => import('./CyclePage.jsx').then((m) => ({ default: m.CycleFamilyPage })),
+);
 // The itinerary page mounts TripMap, and TripMap pulls in maplibre-gl.
 const TripPage = lazy(() => import('./TripPage.jsx').then((m) => ({ default: m.TripPage })));
+// The curated week's page: no map, but only ever reached by tapping a card.
+const JourneyPage = lazy(() => import('./JourneyPage.jsx').then((m) => ({ default: m.JourneyPage })));
 // The Trips overview card reuses the same TripMap, lazily for the same
 // reason: maplibre-gl stays out of the main bundle until a map is on screen.
 
@@ -272,6 +299,7 @@ const CATS = [
   { key: 'beaches', Icon: BeachIcon, labelKey: 'places.catBeaches' },
   { key: 'lakes', Icon: LakeIcon, labelKey: 'places.catLakes' },
   { key: 'mountains', Icon: MountainIcon, labelKey: 'places.catMountains' },
+  { key: 'cycling', Icon: BikeIcon, labelKey: 'places.catCycling' },
 ];
 
 /**
@@ -305,51 +333,26 @@ const CLASS_OF = new Map(CLASSES.flatMap((c) => c.match.map((m) => [m, c.key])))
  * walk up" is the question people actually ask; "a volcano or anything you
  * can walk up" is not one.
  */
-const hasWhy = (m, k) => (m.why || []).some((w) => w.k === k);
 const hasTag = (m, k) => (m.tags || []).includes(k);
 
-// Mountains. The tab is most often opened with "which of these can I get up",
-// so the two ways up lead, and the kinds people go out of their way for
-// follow. Every one of them is a field in the wire: nothing here is inferred
-// from a name.
-const MOUNTAIN_CHIPS = [
-  {
-    key: 'walk',
-    labelKey: 'mtn.chipWalk',
-    test: (m) => hasWhy(m, 'hiking') || hasWhy(m, 'graded')
-      || (m.bestFor || []).includes('walking'),
-  },
-  { key: 'lift', labelKey: 'mtn.chipLift', test: isLiftServed },
-  {
-    key: 'climb',
-    labelKey: 'mtn.chipClimb',
-    test: (m) => (m.bestFor || []).includes('climbing')
-      || hasWhy(m, 'climbersMountain') || hasTag(m, 'viaFerrata'),
-  },
-  {
-    key: 'volcano',
-    labelKey: 'mtn.chipVolcano',
-    test: (m) => m.kind === 'volcano' || hasWhy(m, 'volcanic') || hasWhy(m, 'activeVolcano'),
-  },
-  { key: 'glacier', labelKey: 'mtn.chipGlacier', test: (m) => hasTag(m, 'glacier') },
-  { key: 'high', labelKey: 'mtn.chipHighpoint', test: (m) => hasTag(m, 'highpoint') },
-];
+// Mountains have their own model, in lib/mountainStory.js: brief 05 asks for
+// seven filters rather than one row of chips, and the tests belong next to
+// the code that reads the wire. MOUNTAIN_FACETS is the same shape as the
+// lists below, grouped, with `toolbar` deciding which group is short enough
+// for the row under the search field.
 
-// Lakes. Swimming leads for the reason the swimming verdict rides on every
-// card: a list that promises beautiful water has to be able to show only the
-// water you may get into.
-const LAKE_CHIPS = [
-  { key: 'swim', labelKey: 'lake.chipSwim', test: (l) => l.swim?.rule === 'yes' },
-  { key: 'water', labelKey: 'lake.chipWater', test: (l) => hasTag(l, 'waterExcellent') },
-  { key: 'beach', labelKey: 'lake.chipBeach', test: (l) => hasTag(l, 'shoreBeach') },
-  { key: 'mountains', labelKey: 'lake.chipMountains', test: (l) => hasTag(l, 'mountains') },
-];
+// Lakes have their own model too, in lib/lakeStory.js: brief 04 asks for
+// nine filters rather than one row of four chips, and the tests belong next
+// to the code that reads the wire. LAKE_FACETS is the same grouped shape as
+// MOUNTAIN_FACETS, and `toolbar` picks the group short enough for the row
+// under the search field (swimming, which is what a lake list is asked for
+// first).
 
-const BEACH_CHIPS = [
-  { key: 'water', labelKey: 'beach.chipWater', test: (b) => hasTag(b, 'waterExcellent') },
-  { key: 'quiet', labelKey: 'beach.chipQuiet', test: (b) => hasTag(b, 'undeveloped') },
-  { key: 'lifeguard', labelKey: 'beach.chipLifeguard', test: (b) => hasTag(b, 'lifeguard') },
-];
+// Beaches keep their model in lib/beachStory.js too (BEACH_FACETS), the same
+// grouped shape as LAKE_FACETS and MOUNTAIN_FACETS. Brief 03 section 4 asked
+// for nine groups in place of the three chips that shipped, two of which read
+// zero in every scope, and for the rule those two chips broke: a chip whose
+// count is zero here is not rendered at all.
 
 /** Rows that satisfy every selected chip. */
 function applyChips(rows, chips, on) {
@@ -495,12 +498,34 @@ function TrailPicture({ tr, assoc }) {
   );
 }
 
+// The five published grades as label keys. The card prints the grade rather
+// than validate.py's three-value effort class when there is one, because the
+// grade is what the filter chip says and a card that disagrees with the chip
+// that found it is the bug this replaces.
+const GRADE_KEY = {
+  easy: 'trails.gradeEasy', moderate: 'trails.gradeModerate',
+  hard: 'trails.gradeHard', very_hard: 'trails.gradeVeryHard',
+  alpine: 'trails.gradeAlpine',
+};
+
+// Highlight code to label key. Built from HIGHLIGHTS rather than written out
+// again, so a code added to the model cannot go missing on the card.
+const HIGHLIGHT_KEY = Object.fromEntries(
+  HIGHLIGHTS.map(({ key, labelKey }) => [key, labelKey]));
+
 function TripCard({ card, km, onOpen, t }) {
   const { tr, assoc, kindKey, price } = card;
   const isCityDay = tr.category === 'citytrip';
-  const diffKey = tr.difficulty === 'easy' ? 'places.diffEasy'
-    : tr.difficulty === 'moderate' ? 'places.diffModerate'
-      : tr.difficulty === 'hard' ? 'places.diffHard' : null;
+  const grade = tripGrade(tr);
+  const diffKey = grade ? GRADE_KEY[grade]
+    : tr.difficulty === 'easy' ? 'places.diffEasy'
+      : tr.difficulty === 'moderate' ? 'places.diffModerate'
+        : tr.difficulty === 'hard' ? 'places.diffHard' : null;
+  // Up to two of the things on the line. The single most persuasive thing on
+  // a trail card: "waterfall, castle" is a reason to go on Saturday and
+  // "12.4 km, moderate" is a specification.
+  const highlights = isCityDay ? [] : tripHighlights(tr).slice(0, 2);
+  const listed = isListed(tr);
   return (
     <button className="places-tcard" onClick={() => onOpen(card)}>
       <TrailPicture tr={tr} assoc={assoc} />
@@ -529,6 +554,11 @@ function TripCard({ card, km, onOpen, t }) {
                 {t('trails.loop')}
               </span>
             )}
+            {highlights.map((code) => (
+              <span key={code} className="places-card-kind places-card-hl">
+                {t(HIGHLIGHT_KEY[code] || 'trails.hlSummit')}
+              </span>
+            ))}
           </span>
         </span>
         <span className="places-card-right">
@@ -540,8 +570,19 @@ function TripCard({ card, km, onOpen, t }) {
           {!isCityDay && trailRating(tr) && (
             <RatingBadge rating={trailRating(tr)} size="xs" showGem={false} />
           )}
+          {/* A listed row is verified to exist and deliberately not scored.
+              It says so, in place of the number, rather than showing a low
+              one it never earned. */}
+          {listed && (
+            <span className="places-card-unrated">{t('trails.notScored')}</span>
+          )}
           {!isCityDay && diffKey && (
-            <span className="places-card-diff">{t(diffKey)}</span>
+            <span className={`places-card-diff${gradeIsDerived(tr) ? ' est' : ''}`}
+              title={gradeIsDerived(tr) ? t('trails.gradeDerived') : undefined}
+            >
+              {t(diffKey)}
+              {gradeIsDerived(tr) ? <i aria-hidden="true">~</i> : null}
+            </span>
           )}
           {isCityDay && price && (
             <span className="places-card-price">
@@ -666,6 +707,12 @@ function MountainCard({ mountain, km, countryName, onOpen, t, lang }) {
   const tags = mountainTags(mountain, t, km == null ? 3 : 2);
   const place = [mountain.range, countryName].filter(Boolean).join(', ');
   const ride = isLiftServed(mountain);
+  // The two v2 facets a card can carry without crowding: how hard the
+  // easiest way up is, and how big the view is. Both are filterable, and a
+  // filter whose answer is invisible once you stop filtering is a filter
+  // people stop trusting.
+  const hard = difficultyLabel(mountain, t);
+  const view = viewBandLabel(mountain, t);
   return (
     <button className="places-bcard places-mcard" onClick={() => onOpen(mountain)}>
       {shot
@@ -690,8 +737,10 @@ function MountainCard({ mountain, km, countryName, onOpen, t, lang }) {
               </span>
             )}
           </span>
-          {tags.length > 0 && (
+          {(tags.length > 0 || hard || view) && (
             <span className="places-bcard-tags">
+              {hard && <span className="places-mcard-diff">{hard}</span>}
+              {view && <span>{view}</span>}
               {tags.map((tag) => <span key={tag.code}>{tag.label}</span>)}
               {isMountainGem(mountain) && <span className="tag-gem">{t('mtn.hiddenGem')}</span>}
             </span>
@@ -878,12 +927,30 @@ export function DestinationsTab({
   // ends where it started. Kept out of `classes` because they filter a
   // different list and would otherwise survive a category switch.
   const [bands, setBands] = useState([]);            // DISTANCE_BANDS keys, [] = any
+  // The five filters the brief added beside length. Every one is an array of
+  // codes with [] meaning "any", and the two rules are worth stating once:
+  // WITHIN a group the selection is a union (two lengths means either length,
+  // which is how "an afternoon or a whole day" is one thought), ACROSS groups
+  // it is an intersection. Highlights and suitability are the exceptions and
+  // are unions inside themselves too, because "a waterfall or a lake" is what
+  // somebody scanning a list of chips actually means; asking for both at once
+  // is a search, not a filter.
+  const [grades, setGrades] = useState([]);          // GRADES keys
+  const [climbs, setClimbs] = useState([]);          // ASCENT_BANDS keys
+  const [shapes, setShapes] = useState([]);          // ROUTE_TYPES keys
+  const [hls, setHls] = useState([]);                // HIGHLIGHTS keys
+  const [suits, setSuits] = useState([]);            // SUITABILITY keys
   const [loopsOnly, setLoopsOnly] = useState(false);
   const [trailSort, setTrailSort] = useState({ key: 'rating', dir: -1 });
   const [visible, setVisible] = useState(PAGE);
   const [pageCard, setPageCard] = useState(null);    // enriched trip card or null
-  // The Trips category asks one question: how many days. 1 means the drawn
-  // city walks, 2 and up mean a composed itinerary, null means any length.
+  // The Trips category opens on the curated library, browsed style first:
+  // null is the ten-style grid, a slug is one style's list, and 'composed'
+  // is the door into the machine-composed itineraries below.
+  const [journeyView, setJourneyView] = useState(null);
+  const [pageJourney, setPageJourney] = useState(null);   // { id, gw } or null
+  // The composed itineraries ask one question: how many days. 1 means the
+  // drawn city walks, 2 and up mean a composed itinerary, null means any.
   const [itinDays, setItinDays] = useState(null);
   const [itinPace, setItinPace] = useState(null);     // null = any pace
   const [itinScale, setItinScale] = useState(null);   // null = both
@@ -934,6 +1001,13 @@ export function DestinationsTab({
   const [topLakes, setTopLakes] = useState(null);
   const [countryLakes, setCountryLakes] = useState({});     // cc -> rows
   const [lakesLoading, setLakesLoading] = useState(false);
+  // The listed tier, held apart from the ranked rows on purpose: a
+  // screen has to opt in to showing water bodies that carry no score.
+  const [listedLakes, setListedLakes] = useState({});
+  // The listed tier for beaches, held apart from the rated rows for the same
+  // reason: one has been scored and one has only been verified to exist, and
+  // nothing in this file may let them mix.
+  const [listedBeaches, setListedBeaches] = useState({});
   const [pageLake, setPageLake] = useState(null);
 
   // Mountains: the same three artifacts again.
@@ -941,15 +1015,30 @@ export function DestinationsTab({
   const [topMountains, setTopMountains] = useState(null);
   const [countryMountains, setCountryMountains] = useState({});   // cc -> rows
   const [mountainsLoading, setMountainsLoading] = useState(false);
+  // The listed tier, per country. Held apart from the rated rows because the
+  // two are different claims: one has been measured and one has only been
+  // verified to exist, and nothing in this file may let them mix.
+  const [listedMountains, setListedMountains] = useState({});
   const [pageMountain, setPageMountain] = useState(null);
 
+  // Cycling: routes and the tours composed over them. Two lists rather than
+  // one, because a listed row carries no score and must never interleave into
+  // a ranked list (master spec section 3).
+  const [cycleIndex, setCycleIndex] = useState(null);
+  const [countryCycling, setCountryCycling] = useState({});   // cc -> bundle
+  const [cyclingLoading, setCyclingLoading] = useState(false);
+  const [pageCycle, setPageCycle] = useState(null);
+
   // The chip filters each published layer carries, as selected keys into
-  // MOUNTAIN_CHIPS / LAKE_CHIPS / BEACH_CHIPS. Held per layer rather than in
+  // MOUNTAIN_FACETS / LAKE_FACETS / BEACH_FACETS. Held per layer rather than in
   // one bag because they filter different lists and a chip that survived a
   // category switch would silently empty the next tab.
-  const [mtnChips, setMtnChips] = useState([]);
-  const [lakeChips, setLakeChips] = useState([]);
-  const [beachChips, setBeachChips] = useState([]);
+  // One object rather than one array: eight groups, each holding its own
+  // selection. Inside a group the chips are OR (the bands are mutually
+  // exclusive), across groups they are AND.
+  const [mtnFacets, setMtnFacets] = useState({});
+  const [lakeFacets, setLakeFacets] = useState({});
+  const [beachFacets, setBeachFacets] = useState({});
   // The Filters door. One sheet on every width, the same as Explore's.
   const [sheetOpen, setSheetOpen] = useState(false);
   // The Filters sheet hangs off this button on a pointer screen.
@@ -1004,17 +1093,27 @@ export function DestinationsTab({
   const isBeachCat = cat === 'beaches';
   const isLakeCat = cat === 'lakes';
   const isMountainCat = cat === 'mountains';
-  const isTripCat = cat !== 'general' && !isBeachCat && !isLakeCat && !isMountainCat;
+  const isCycleCat = cat === 'cycling';
+  // The Trips tab's curated library (style grid or one style's list). The
+  // composed itineraries and the drawn city walks live behind its
+  // 'composed' door and keep every behaviour they had.
+  const isJourneyBrowse = cat === 'trips' && journeyView !== 'composed';
+  const isComposedTrips = cat === 'trips' && journeyView === 'composed';
+  const isTripCat = cat === 'trails' || isComposedTrips;
   const trailsCountry = nearPlace ? nearPlace.iso2 : country;
   useEffect(() => {
     if (!isTripCat || !trailsCountry) { setCountryTrips(null); return undefined; }
     let live = true;
     setTrailsLoading(true);
-    loadTrails(trailsCountry).then((trips) => {
-      if (!live) return;
-      setCountryTrips(trips || []);
-      setTrailsLoading(false);
-    });
+    // Rated and listed in one go, concatenated in that order. A listed row
+    // carries no rating key at all, so it sorts to the end of a rating sort by
+    // itself and renders with a "not scored yet" chip rather than a number.
+    Promise.all([loadTrails(trailsCountry), loadListedTrails(trailsCountry)])
+      .then(([trips, listed]) => {
+        if (!live) return;
+        setCountryTrips([...(trips || []), ...(listed || [])]);
+        setTrailsLoading(false);
+      });
     return () => { live = false; };
   }, [isTripCat, trailsCountry]);
 
@@ -1328,6 +1427,29 @@ export function DestinationsTab({
     });
   }, [isTripCat, countryTrips, data, destIndex, priceById]);
 
+  // A neighbour card on any layer page opens that layer's own page (brief
+  // 08's cross-layer blocks). One page at a time: opening a neighbour closes
+  // the page it was found on, so Escape and the back cross keep one meaning.
+  const openNeighbour = (layer, row) => {
+    setPageCard(null); setPageBeach(null); setPageLake(null);
+    setPageMountain(null); setPageCycle(null);
+    if (layer === 'beach') setPageBeach(row);
+    else if (layer === 'lake') setPageLake(row);
+    else if (layer === 'peak') setPageMountain(row);
+    else if (layer === 'cycle') {
+      setPageCycle({ routeId: row.id, country: row.cc || country });
+    } else if (layer === 'trail') {
+      const assoc = associateTrip(row, data.destinations, destIndex);
+      setPageCard({
+        tr: row,
+        assoc,
+        kindKey: tripKindKey(row, assoc.dest),
+        themes: tripThemes(row, assoc.dest),
+        price: assoc.destId ? priceById.get(assoc.destId) || null : null,
+      });
+    }
+  };
+
   // The shared link's trip, as soon as its country file has been joined. It
   // opens whatever it is: a city day arriving through a trail link still gets
   // its own page rather than an empty Trails list.
@@ -1356,6 +1478,21 @@ export function DestinationsTab({
     // or a full day" actually thinks.
     if (cat === 'trails') {
       if (bands.length) rows = rows.filter((c) => bands.includes(tripBand(c.tr)));
+      if (grades.length) rows = rows.filter((c) => grades.includes(tripGrade(c.tr)));
+      if (climbs.length) rows = rows.filter((c) => climbs.includes(tripClimbBand(c.tr)));
+      if (shapes.length) rows = rows.filter((c) => shapes.includes(tripRouteType(c.tr)));
+      if (hls.length) {
+        rows = rows.filter((c) => {
+          const on = tripHighlights(c.tr);
+          return hls.some((k) => on.includes(k));
+        });
+      }
+      if (suits.length) {
+        rows = rows.filter((c) => {
+          const on = tripSuitability(c.tr);
+          return suits.some((k) => on.includes(k));
+        });
+      }
       if (loopsOnly) rows = rows.filter((c) => c.tr.is_loop);
     }
     if (nearPlace) {
@@ -1393,7 +1530,8 @@ export function DestinationsTab({
       out.sort((a, b) => dir * a.c.tr.name.localeCompare(b.c.tr.name));
     }
     return out;
-  }, [tripCards, cat, q, nearPlace, sort, trailSort, bands, loopsOnly]);
+  }, [tripCards, cat, q, nearPlace, sort, trailSort, bands, loopsOnly,
+    grades, climbs, shapes, hls, suits]);
 
   // How many walks each length band holds in this country, and how many of
   // them loop, so a chip can carry its own count and grey itself out instead
@@ -1407,14 +1545,30 @@ export function DestinationsTab({
     if (cat !== 'trails' || !tripCards) return null;
     const rows = tripCards.filter((c) => c.tr.category !== 'citytrip'
       && (!q || norm(c.tr.name).includes(q)));
-    const byBand = new Map(DISTANCE_BANDS.map((b) => [b.key, 0]));
+    const tally = (defs) => new Map(defs.map((d) => [d.key, 0]));
+    const bump = (map, key) => {
+      if (key != null && map.has(key)) map.set(key, map.get(key) + 1);
+    };
+    const byBand = tally(DISTANCE_BANDS);
+    const byGrade = tally(GRADES);
+    const byClimb = tally(ASCENT_BANDS);
+    const byShape = tally(ROUTE_TYPES);
+    const byHl = tally(HIGHLIGHTS);
+    const bySuit = tally(SUITABILITY);
     let loops = 0;
+    let listed = 0;
     for (const c of rows) {
-      const band = tripBand(c.tr);
-      if (band != null) byBand.set(band, (byBand.get(band) || 0) + 1);
+      bump(byBand, tripBand(c.tr));
+      bump(byGrade, tripGrade(c.tr));
+      bump(byClimb, tripClimbBand(c.tr));
+      bump(byShape, tripRouteType(c.tr));
+      for (const k of new Set(tripHighlights(c.tr))) bump(byHl, k);
+      for (const k of new Set(tripSuitability(c.tr))) bump(bySuit, k);
       if (c.tr.is_loop) loops += 1;
+      if (isListed(c.tr)) listed += 1;
     }
-    return { byBand, loops, total: rows.length };
+    return { byBand, byGrade, byClimb, byShape, byHl, bySuit,
+      loops, listed, total: rows.length };
   }, [cat, tripCards, q]);
 
   // The country index for trip categories: published countries as flag cards.
@@ -1439,7 +1593,7 @@ export function DestinationsTab({
   // so one country cannot fill the page, and /trips/{CC}.json is everything
   // touching that country. Ranking the continent in the browser would mean
   // fetching forty three files before drawing a card.
-  const isItinCat = cat === 'trips' && itinDays !== 1;
+  const isItinCat = isComposedTrips && itinDays !== 1;
 
   useEffect(() => {
     if (!isItinCat || itinIndex !== undefined) return undefined;
@@ -1467,6 +1621,7 @@ export function DestinationsTab({
   useEffect(() => {
     if (!openTrip) return;
     setCat('trips');
+    setJourneyView('composed');
     setItinDays(null);
     setPageItin({ id: openTrip.id });
     onOpenTripConsumed?.();
@@ -1562,9 +1717,13 @@ export function DestinationsTab({
   useEffect(() => {
     if (!isBeachCat || !wantBeachCountry || countryBeaches[wantBeachCountry]) return undefined;
     let live = true;
-    loadBeaches(wantBeachCountry).then((rows) => {
+    Promise.all([
+      loadBeaches(wantBeachCountry),
+      loadListedBeaches(wantBeachCountry),
+    ]).then(([rows, listed]) => {
       if (!live) return;
       setCountryBeaches((cur) => ({ ...cur, [wantBeachCountry]: rows || [] }));
+      setListedBeaches((cur) => ({ ...cur, [wantBeachCountry]: listed || [] }));
     });
     return () => { live = false; };
   }, [isBeachCat, wantBeachCountry, countryBeaches]);
@@ -1583,7 +1742,7 @@ export function DestinationsTab({
       const have = new Set(loaded.map((b) => b.id));
       pool = [...loaded, ...topBeaches.filter((b) => !have.has(b.id))];
     }
-    let rows = applyChips(pool, BEACH_CHIPS, beachChips);
+    let rows = applyBeachFacets(pool, beachFacets);
     if (q && !queryCountry) {
       rows = rows.filter((b) => norm(b.name).includes(q)
         || norm(b.nameLocal || '').includes(q)
@@ -1598,12 +1757,12 @@ export function DestinationsTab({
     }
     return rows.map((b) => ({ b, km: null }));
   }, [isBeachCat, topBeaches, countryBeaches, wantBeachCountry, q, queryCountry,
-    nearPlace, countryName, beachChips]);
+    nearPlace, countryName, beachFacets]);
 
-  const beachCounts = useMemo(() => chipCounts(
+  const beachCounts = useMemo(() => beachFacetCounts(
     (wantBeachCountry ? countryBeaches[wantBeachCountry] : null) || topBeaches,
-    BEACH_CHIPS, beachChips,
-  ), [topBeaches, countryBeaches, wantBeachCountry, beachChips]);
+    beachFacets,
+  ), [topBeaches, countryBeaches, wantBeachCountry, beachFacets]);
 
   // A shared #beach= link, opened once its country file has landed.
   useEffect(() => {
@@ -1658,9 +1817,13 @@ export function DestinationsTab({
   useEffect(() => {
     if (!isLakeCat || !wantLakeCountry || countryLakes[wantLakeCountry]) return undefined;
     let live = true;
-    loadLakes(wantLakeCountry).then((rows) => {
+    Promise.all([
+      loadLakes(wantLakeCountry),
+      loadListedLakes(wantLakeCountry),
+    ]).then(([rows, listed]) => {
       if (!live) return;
       setCountryLakes((cur) => ({ ...cur, [wantLakeCountry]: rows || [] }));
+      setListedLakes((cur) => ({ ...cur, [wantLakeCountry]: listed || [] }));
     });
     return () => { live = false; };
   }, [isLakeCat, wantLakeCountry, countryLakes]);
@@ -1677,7 +1840,7 @@ export function DestinationsTab({
       const have = new Set(loaded.map((l) => l.id));
       pool = [...loaded, ...topLakes.filter((l) => !have.has(l.id))];
     }
-    let rows = applyChips(pool, LAKE_CHIPS, lakeChips);
+    let rows = applyLakeFacets(pool, lakeFacets);
     if (q && !queryLakeCountry) {
       rows = rows.filter((l) => norm(l.name).includes(q)
         || norm(l.nameLocal || '').includes(q)
@@ -1692,12 +1855,12 @@ export function DestinationsTab({
     }
     return rows.map((l) => ({ b: l, km: null }));
   }, [isLakeCat, topLakes, countryLakes, wantLakeCountry, q, queryLakeCountry,
-    nearPlace, countryName, lakeChips]);
+    nearPlace, countryName, lakeFacets]);
 
-  const lakeCounts = useMemo(() => chipCounts(
+  const lakeCounts = useMemo(() => lakeFacetCounts(
     (wantLakeCountry ? countryLakes[wantLakeCountry] : null) || topLakes,
-    LAKE_CHIPS, lakeChips,
-  ), [topLakes, countryLakes, wantLakeCountry, lakeChips]);
+    lakeFacets,
+  ), [topLakes, countryLakes, wantLakeCountry, lakeFacets]);
 
   // A country the traveller typed that has NO published water. `absent` is
   // written by the export gate and carries the difference between "nothing
@@ -1764,9 +1927,13 @@ export function DestinationsTab({
     if (!isMountainCat || !wantMountainCountry
       || countryMountains[wantMountainCountry]) return undefined;
     let live = true;
-    loadMountains(wantMountainCountry).then((rows) => {
+    Promise.all([
+      loadMountains(wantMountainCountry),
+      loadListedMountains(wantMountainCountry),
+    ]).then(([rows, listed]) => {
       if (!live) return;
       setCountryMountains((cur) => ({ ...cur, [wantMountainCountry]: rows || [] }));
+      setListedMountains((cur) => ({ ...cur, [wantMountainCountry]: listed || [] }));
     });
     return () => { live = false; };
   }, [isMountainCat, wantMountainCountry, countryMountains]);
@@ -1782,7 +1949,7 @@ export function DestinationsTab({
       const have = new Set(loaded.map((m) => m.id));
       pool = [...loaded, ...topMountains.filter((m) => !have.has(m.id))];
     }
-    let rows = applyChips(pool, MOUNTAIN_CHIPS, mtnChips);
+    let rows = applyMountainFacets(pool, mtnFacets);
     if (q && !queryMountainCountry) {
       rows = rows.filter((m) => norm(m.name).includes(q)
         || norm(m.nameLocal || '').includes(q)
@@ -1797,12 +1964,75 @@ export function DestinationsTab({
     }
     return rows.map((m) => ({ b: m, km: null }));
   }, [isMountainCat, topMountains, countryMountains, wantMountainCountry, q,
-    queryMountainCountry, nearPlace, countryName, mtnChips]);
+    queryMountainCountry, nearPlace, countryName, mtnFacets]);
 
-  const mtnCounts = useMemo(() => chipCounts(
+  const mtnCounts = useMemo(() => mountainFacetCounts(
     (wantMountainCountry ? countryMountains[wantMountainCountry] : null) || topMountains,
-    MOUNTAIN_CHIPS, mtnChips,
-  ), [topMountains, countryMountains, wantMountainCountry, mtnChips]);
+    mtnFacets,
+  ), [topMountains, countryMountains, wantMountainCountry, mtnFacets]);
+
+  // ---------------------------------------------------------------- cycling
+  //
+  // Two lists, never one. `routes` are rated and carry a score; `listed` rows
+  // are verified to exist and correctly named but have NO score key at all,
+  // so they live under their own heading and a screen has to opt in to
+  // showing them. `tours` are the composed multi-day plans, which are the
+  // reason the layer exists: nothing about them is generated when a reader
+  // asks, and each one passed ten hard checks before it was published.
+  const cycleCountries = useMemo(
+    () => new Set((cycleIndex?.countries || []).map((c) => c.country)),
+    [cycleIndex],
+  );
+
+  const queryCycleCountry = useMemo(() => {
+    if (!isCycleCat || !q || q.length < 2) return null;
+    for (const cc of cycleCountries) {
+      if (norm(cc) === q || norm(countryName(cc)).startsWith(q)) return cc;
+    }
+    return null;
+  }, [isCycleCat, q, cycleCountries, countryName]);
+
+  const wantCycleCountry = (country && cycleCountries.has(country) ? country : null)
+    || queryCycleCountry
+    || (nearPlace && cycleCountries.has(nearPlace.iso2) ? nearPlace.iso2 : null)
+    || (cycleIndex?.countries?.[0]?.country ?? null);
+
+  useEffect(() => {
+    if (!isCycleCat || cycleIndex) return undefined;
+    let live = true;
+    loadCyclingIndex().then((idx) => { if (live) setCycleIndex(idx); });
+    return () => { live = false; };
+  }, [isCycleCat, cycleIndex]);
+
+  useEffect(() => {
+    if (!isCycleCat || !wantCycleCountry || countryCycling[wantCycleCountry]) {
+      return undefined;
+    }
+    let live = true;
+    setCyclingLoading(true);
+    loadCycling(wantCycleCountry).then((bundle) => {
+      if (!live) return;
+      setCountryCycling((cur) => ({ ...cur, [wantCycleCountry]: bundle || null }));
+      setCyclingLoading(false);
+    });
+    return () => { live = false; };
+  }, [isCycleCat, wantCycleCountry, countryCycling]);
+
+  const cycleBundle = isCycleCat && wantCycleCountry
+    ? countryCycling[wantCycleCountry] : null;
+
+  const cycleRows = useMemo(() => {
+    if (!isCycleCat || !cycleBundle) return null;
+    const match = (r) => !q || queryCycleCountry
+      || norm(r.name || '').includes(q) || norm(r.ref || '').includes(q);
+    return {
+      tours: (cycleBundle.tours || []).filter(
+        (tr) => !q || queryCycleCountry || norm(tr.title || '').includes(q),
+      ),
+      routes: (cycleBundle.routes || []).filter(match),
+      listed: (cycleBundle.listed || []).filter(match),
+    };
+  }, [isCycleCat, cycleBundle, q, queryCycleCountry]);
 
   const absentMountainCountry = useMemo(() => {
     if (!isMountainCat || !q || q.length < 2 || !mountainIndex) return null;
@@ -1836,16 +2066,16 @@ export function DestinationsTab({
     setVisible(PAGE);
     scrollRef.current?.scrollTo?.(0, 0);
   }, [cat, country, q, nearPlace, sort, classes, trailSort, bands, loopsOnly,
-    mtnChips, lakeChips, beachChips]);
+    mtnFacets, lakeFacets, beachFacets, journeyView]);
 
   // Walk-shape filters belong to the Trails list and to nothing else. Leaving
   // them set while the traveller browses Trips would silently hide rows on a
   // tab whose chips are not even on screen to explain why.
   useEffect(() => {
     if (cat !== 'trails') { setBands([]); setLoopsOnly(false); }
-    if (cat !== 'mountains') setMtnChips([]);
-    if (cat !== 'lakes') setLakeChips([]);
-    if (cat !== 'beaches') setBeachChips([]);
+    if (cat !== 'mountains') setMtnFacets({});
+    if (cat !== 'lakes') setLakeFacets({});
+    if (cat !== 'beaches') setBeachFacets({});
   }, [cat]);
 
   useEffect(() => {
@@ -1863,6 +2093,7 @@ export function DestinationsTab({
     setCat(next);
     setQuery('');
     setClasses([]);
+    setJourneyView(null);
     // The country deliberately survives the switch: "I am looking at Albania,
     // now show me its trails" is the whole point of a shared filter. It is
     // dropped only when the tab that arrives cannot offer it, by the effect
@@ -1916,8 +2147,10 @@ export function DestinationsTab({
   //
   // Lakes and mountains drop it too, and for the same reasons: neither is
   // priced, neither is slept in, and both are ranked by their own index.
+  // The curated trip library drops it too: its budgets are editorial ranges
+  // for the whole week, not fares priced from the traveller's airport.
   const showPriceChrome = cat !== 'trails' && !isBeachCat && !isLakeCat
-    && !isMountainCat;
+    && !isMountainCat && !isJourneyBrowse;
 
   // ── The filter model ──────────────────────────────────────────────────
   //
@@ -1993,13 +2226,30 @@ export function DestinationsTab({
       });
     }
     if (cat === 'trails' && !showCountryIndex && trailFacets && trailFacets.total > 0) {
-      const opts = DISTANCE_BANDS.map(({ key, labelKey }) => {
+      // Six groups, in the order a walker decides in: how long have I got,
+      // how hard do I want it, how much climb, where does it leave me, what
+      // will I see, who is coming. A group with nothing to offer in this
+      // country is not rendered at all rather than rendered empty.
+      const fromCounts = (key, label, defs, on, counts, setter) => {
+        const options = defs
+          .map((d) => {
+            const n = counts.get(d.key) || 0;
+            const isOn = on.includes(d.key);
+            return { key: d.key, label: t(d.labelKey), n, on: isOn,
+              disabled: !n && !isOn };
+          })
+          .filter((o) => o.n > 0 || o.on);
+        if (!options.length) return;
+        out.push({ key, label, onToggle: toggleChip(setter), options });
+      };
+
+      const lengthOpts = DISTANCE_BANDS.map(({ key, labelKey }) => {
         const n = trailFacets.byBand.get(key) || 0;
         const isOn = bands.includes(key);
         return { key, label: t(labelKey), n, on: isOn, disabled: !n && !isOn };
       });
       if (trailFacets.loops > 0) {
-        opts.push({
+        lengthOpts.push({
           key: 'loop',
           Icon: LoopIcon,
           // Its own class because it is not a length: it rides at the end of
@@ -2014,32 +2264,125 @@ export function DestinationsTab({
         key: 'length',
         label: t('trails.lengthLabel'),
         onToggle: (k) => (k === 'loop' ? setLoopsOnly((v) => !v) : toggleBand(k)),
-        options: opts,
+        options: lengthOpts,
       });
+      fromCounts('grade', t('trails.gradeLabel'), GRADES, grades,
+        trailFacets.byGrade, setGrades);
+      fromCounts('climb', t('trails.climbLabel'), ASCENT_BANDS, climbs,
+        trailFacets.byClimb, setClimbs);
+      fromCounts('shape', t('trails.shapeLabel'), ROUTE_TYPES, shapes,
+        trailFacets.byShape, setShapes);
+      fromCounts('highlights', t('trails.hlLabel'), HIGHLIGHTS, hls,
+        trailFacets.byHl, setHls);
+      fromCounts('suitability', t('trails.suitLabel'), SUITABILITY, suits,
+        trailFacets.bySuit, setSuits);
     }
     if (isBeachCat && beachRows) {
-      out.push(fromDefs('beach', t('beach.filterLabel'), BEACH_CHIPS,
-        beachChips, beachCounts, toggleChip(setBeachChips)));
+      // Nine groups (brief 03 section 4). Every chip carries a count, and a
+      // chip whose count is zero in this scope is NOT RENDERED: not greyed
+      // out, absent. A disabled control still occupies the rail and still
+      // reads as something that ought to work, which is exactly the
+      // impression "Nothing built on it 0" gave. A chip the reader has
+      // already selected always survives, even at zero, or tapping it would
+      // strand them in an empty list with no way back out.
+      for (const group of BEACH_FACETS) {
+        const on = beachFacets[group.key] || [];
+        const options = group.options
+          .map((o) => ({
+            key: o.key,
+            label: t(o.labelKey),
+            n: beachCounts.get(`${group.key}:${o.key}`) ?? 0,
+            on: on.includes(o.key),
+          }))
+          .filter((o) => o.n > 0 || o.on);
+        if (!options.length) continue;
+        out.push({
+          key: `beach-${group.key}`,
+          label: t(group.labelKey),
+          toolbar: !!group.toolbar,
+          onToggle: (k) => setBeachFacets((cur) => {
+            const was = cur[group.key] || [];
+            return { ...cur,
+                     [group.key]: was.includes(k) ? was.filter((x) => x !== k)
+                                                  : [...was, k] };
+          }),
+          options,
+        });
+      }
     }
     if (isLakeCat && lakeRows) {
-      out.push(fromDefs('lake', t('lake.filterLabel'), LAKE_CHIPS,
-        lakeChips, lakeCounts, toggleChip(setLakeChips)));
+      // Nine filters (brief 04 section 4), and its one hard rule: NEVER
+      // render a chip with a zero count. A chip offering "Sufficient water"
+      // over a list that holds none of it is a promise the list cannot keep,
+      // and greying it out still puts the word on screen. So a zero option is
+      // dropped outright, and a group whose every option is zero never
+      // renders. A SELECTED chip survives its own zero, because the way back
+      // out of an empty list is the chip you tapped to get there.
+      for (const group of LAKE_FACETS) {
+        const on = lakeFacets[group.key] || [];
+        const options = group.options
+          .map((o) => {
+            const n = lakeCounts.get(`${group.key}:${o.key}`) ?? 0;
+            return { key: o.key, label: t(o.labelKey), n, on: on.includes(o.key) };
+          })
+          .filter((o) => o.n > 0 || o.on);
+        if (!options.length) continue;
+        out.push({
+          key: `lake-${group.key}`,
+          label: t(group.labelKey),
+          toolbar: !!group.toolbar,
+          onToggle: (k) => setLakeFacets((cur) => {
+            const was = cur[group.key] || [];
+            return { ...cur,
+                     [group.key]: was.includes(k) ? was.filter((x) => x !== k)
+                                                  : [...was, k] };
+          }),
+          options,
+        });
+      }
     }
     if (isMountainCat && mountainRows) {
-      out.push(fromDefs('mtn', t('mtn.filterLabel'), MOUNTAIN_CHIPS,
-        mtnChips, mtnCounts, toggleChip(setMtnChips)));
+      // Seven filters, plus the kind chips v1 already had. Every one of them
+      // carries a count, and a chip with a zero count in this scope renders
+      // disabled rather than leading to an empty list (brief 05 section 4).
+      for (const group of MOUNTAIN_FACETS) {
+        const on = mtnFacets[group.key] || [];
+        const options = group.options.map((o) => {
+          const n = mtnCounts.get(`${group.key}:${o.key}`) ?? 0;
+          const isOn = on.includes(o.key);
+          return { key: o.key, label: t(o.labelKey), n, on: isOn,
+                   disabled: !n && !isOn };
+        });
+        if (!options.some((o) => o.n || o.on)) continue;
+        out.push({
+          key: `mtn-${group.key}`,
+          label: t(group.labelKey),
+          toolbar: !!group.toolbar,
+          onToggle: (k) => setMtnFacets((cur) => {
+            const was = cur[group.key] || [];
+            return { ...cur,
+                     [group.key]: was.includes(k) ? was.filter((x) => x !== k)
+                                                  : [...was, k] };
+          }),
+          options,
+        });
+      }
     }
     return out;
   }, [cat, t, showCountryIndex, classCounts, classes, isItinCat, itinFacets,
-    itinPace, itinScale, trailFacets, bands, loopsOnly, isBeachCat, beachRows,
-    beachChips, beachCounts, isLakeCat, lakeRows, lakeChips, lakeCounts,
-    isMountainCat, mountainRows, mtnChips, mtnCounts]);
+    itinPace, itinScale, trailFacets, bands, loopsOnly,
+    grades, climbs, shapes, hls, suits, isBeachCat, beachRows,
+    beachFacets, beachCounts, isLakeCat, lakeRows, lakeFacets, lakeCounts,
+    isMountainCat, mountainRows, mtnFacets, mtnCounts]);
 
   // What the Filters badge counts, and what Clear all clears. The country is
   // one of them: it is the filter every tab now carries.
   const activeFilters = (country ? 1 : 0)
     + classes.length + bands.length + (loopsOnly ? 1 : 0)
-    + beachChips.length + lakeChips.length + mtnChips.length
+    + grades.length + climbs.length + shapes.length + hls.length + suits.length
+    + Object.values(beachFacets).reduce((n, list) => n + (list?.length || 0), 0)
+    + Object.values(lakeFacets).reduce((n, list) => n + (list?.length || 0), 0)
+    + Object.values(mtnFacets).reduce((n, list) => n + (list?.length || 0), 0)
     + (itinDays != null ? 1 : 0) + (itinPace ? 1 : 0) + (itinScale ? 1 : 0);
 
   const resetAll = () => {
@@ -2047,9 +2390,14 @@ export function DestinationsTab({
     setClasses([]);
     setBands([]);
     setLoopsOnly(false);
-    setBeachChips([]);
-    setLakeChips([]);
-    setMtnChips([]);
+    setGrades([]);
+    setClimbs([]);
+    setShapes([]);
+    setHls([]);
+    setSuits([]);
+    setBeachFacets({});
+    setLakeFacets({});
+    setMtnFacets({});
     setItinDays(null);
     setItinPace(null);
     setItinScale(null);
@@ -2133,7 +2481,9 @@ export function DestinationsTab({
     />
   );
 
-  const renderFacetGroups = () => facetGroups.map((g) => (
+  const renderFacetGroups = (only) => facetGroups
+    .filter((g) => (only === 'toolbar' ? g.toolbar !== false : true))
+    .map((g) => (
     <div
       key={g.key}
       className="places-classes"
@@ -2159,7 +2509,7 @@ export function DestinationsTab({
         </button>
       ))}
     </div>
-  ));
+    ));
 
   // The search field, built once. It renders inline in the phone toolbar and
   // portals into the app header on desktop; the suggestion list rides with it.
@@ -2281,9 +2631,9 @@ export function DestinationsTab({
               {renderCountry('places-country side-country')}
             </div>
           )}
-          {(facetGroups.length > 0 || cat === 'trips') && (
+          {(facetGroups.length > 0 || isComposedTrips) && (
             <div className="side-group side-facets">
-              {cat === 'trips' && (
+              {isComposedTrips && (
                 <TripLengthSlider
                   days={itinDays}
                   setDays={setItinDays}
@@ -2291,7 +2641,7 @@ export function DestinationsTab({
                   t={t}
                 />
               )}
-              {renderFacetGroups()}
+              {renderFacetGroups('toolbar')}
             </div>
           )}
           {/* No "Lifestyle" caption above it: the button says the word
@@ -2370,9 +2720,9 @@ export function DestinationsTab({
             because a chip that changes WHICH rows are listed is the same kind
             of control as the search field above it. The model is built once
             (facetGroups) and rendered here and in the sheet. */}
-        {(facetGroups.length > 0 || cat === 'trips') && (
+        {(facetGroups.length > 0 || isComposedTrips) && (
           <div className="places-facets">
-            {cat === 'trips' && (
+            {isComposedTrips && (
               <TripLengthSlider
                 days={itinDays}
                 setDays={setItinDays}
@@ -2511,11 +2861,49 @@ export function DestinationsTab({
                         />
                       </React.Fragment>
                     ))}
+                    {/* The listed tier, under its own heading and never
+                        interleaved: these rows carry no score key at all, so
+                        they cannot be ranked and must not look as if they
+                        were. Shown once the ranked list has run out, which is
+                        where "what else is here" is the actual question, and
+                        it is what keeps a stretch of coast from looking empty
+                        because nobody has photographed it yet. */}
+                    {wantBeachCountry && !nearPlace
+                      && (listedBeaches[wantBeachCountry] || []).length > 0
+                      && beachRows.length <= visible && (
+                      <div className="places-alsohere">
+                        <p className="places-beachhead">
+                          {t('beach.alsoHead', {
+                            country: countryName(wantBeachCountry),
+                          })}
+                          <span className="places-beachhead-note">
+                            {t('beach.alsoNote')}
+                          </span>
+                        </p>
+                        <ul className="places-listedrows">
+                          {(listedBeaches[wantBeachCountry] || []).map((b) => (
+                            <li key={b.id} className="places-listedrow">
+                              <span className="places-listedrow-name">
+                                {b.name}
+                              </span>
+                              {b.region && (
+                                <span className="places-listedrow-ele">
+                                  {b.region}
+                                </span>
+                              )}
+                              <span className="places-listedrow-chip">
+                                {t('region.listedNote')}
+                              </span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
                   </>
                 )
                 : (
                   <p className="places-empty">
-                    {beachChips.length
+                    {Object.values(beachFacets).some((l) => l?.length)
                       ? t('beach.noneChips')
                       : nearPlace
                         ? t('beach.noneNear', { city: nearPlace.name })
@@ -2570,11 +2958,47 @@ export function DestinationsTab({
                         />
                       </React.Fragment>
                     ))}
+                    {/* The listed tier, under its own heading and never
+                        interleaved: these rows carry no score key at all, so
+                        they cannot be ranked and must not look as if they
+                        were. Shown once the ranked list has run out, which is
+                        where "what else is here" is the actual question. */}
+                    {wantLakeCountry && !nearPlace
+                      && (listedLakes[wantLakeCountry] || []).length > 0
+                      && lakeRows.length <= visible && (
+                      <div className="places-alsohere">
+                        <p className="places-beachhead">
+                          {t('lake.alsoHead', {
+                            country: countryName(wantLakeCountry),
+                          })}
+                          <span className="places-beachhead-note">
+                            {t('lake.alsoNote')}
+                          </span>
+                        </p>
+                        <ul className="places-listedrows">
+                          {(listedLakes[wantLakeCountry] || []).map((l) => (
+                            <li key={l.id} className="places-listedrow">
+                              <span className="places-listedrow-name">
+                                {l.name}
+                              </span>
+                              {l.region && (
+                                <span className="places-listedrow-ele">
+                                  {l.region}
+                                </span>
+                              )}
+                              <span className="places-listedrow-chip">
+                                {t('region.listedNote')}
+                              </span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
                   </>
                 )
                 : (
                   <p className="places-empty">
-                    {lakeChips.length
+                    {Object.values(lakeFacets).some((l) => l?.length)
                       ? t('lake.noneChips')
                       : nearPlace
                         ? t('lake.noneNear', { city: nearPlace.name })
@@ -2615,8 +3039,27 @@ export function DestinationsTab({
                           country: countryName(wantMountainCountry),
                           n: fmt(mountainRows.length),
                         })}
+                        {/* One line, from one code, where the floor could
+                            not be reached. A reader sees "Lithuania's high
+                            points are gentle, and this is every one we
+                            could verify" rather than four mountains and no
+                            explanation. */}
+                        {floorNote(mountainIndex, wantMountainCountry, t,
+                          countryName(wantMountainCountry)) && (
+                          <span className="places-beachhead-note">
+                            {floorNote(mountainIndex, wantMountainCountry, t,
+                              countryName(wantMountainCountry))}
+                          </span>
+                        )}
                       </p>
                     )}
+                    {/* The listed tier, under its own heading and never
+                        inside the ranked list. These rows carry no score
+                        key at all, so there is nothing to sort them by and
+                        nothing to render as a rating: they say the mountain
+                        exists, is named correctly and is in this region,
+                        which is the honest answer where the gates could not
+                        say more. */}
                     {mountainRows.slice(0, visible).map(({ b, km }, i) => (
                       <React.Fragment key={b.id}>
                         {bandBreak(mountainRows, i) && (
@@ -2632,11 +3075,43 @@ export function DestinationsTab({
                         />
                       </React.Fragment>
                     ))}
+                    {wantMountainCountry && !nearPlace
+                      && (listedMountains[wantMountainCountry] || []).length > 0
+                      && mountainRows.length <= visible && (
+                      <div className="places-alsohere">
+                        <p className="places-beachhead">
+                          {t('mtn.alsoHead', {
+                            country: countryName(wantMountainCountry),
+                          })}
+                          <span className="places-beachhead-note">
+                            {t('mtn.alsoNote')}
+                          </span>
+                        </p>
+                        <ul className="places-listedrows">
+                          {(listedMountains[wantMountainCountry] || [])
+                            .map((m) => (
+                              <li key={m.id} className="places-listedrow">
+                                <span className="places-listedrow-name">
+                                  {m.name}
+                                </span>
+                                {m.ele != null && (
+                                  <span className="places-listedrow-ele">
+                                    {Math.round(m.ele).toLocaleString(lang)} m
+                                  </span>
+                                )}
+                                <span className="places-listedrow-chip">
+                                  {t('region.listedNote')}
+                                </span>
+                              </li>
+                            ))}
+                        </ul>
+                      </div>
+                    )}
                   </>
                 )
                 : (
                   <p className="places-empty">
-                    {mtnChips.length
+                    {Object.values(mtnFacets).some((l) => l?.length)
                       ? t('mtn.noneChips')
                       : nearPlace
                         ? t('mtn.noneNear', { city: nearPlace.name })
@@ -2657,6 +3132,190 @@ export function DestinationsTab({
 
             {mountainRows?.length > 0 && <p className="places-credit">{t('mtn.credit')}</p>}
           </div>
+        )}
+
+        {/* Cycling. Tours first, because a tour is the answer to "plan me a
+            cycling trip" and a route is the catalogue entry underneath it.
+            Listed routes sit under their own heading with no score, which is
+            what makes the coverage honest rather than merely large. */}
+        {isCycleCat && (
+          <div className="places-list" data-testid="cycle-list">
+            {cyclingLoading && <p className="places-empty">{'…'}</p>}
+
+            {/* EuroVelo families. In OSM a EuroVelo is one relation PER
+                COUNTRY SECTION under a superroute, so without this band the
+                catalogue shows "EuroVelo 6 part Germany 3" and never the
+                6,308 km thing it belongs to. The manifest is the same
+                membership the harvest stamps; the geometry stays in the
+                per-route files. */}
+            {!cyclingLoading && (cycleIndex?.families || []).length > 0 && (
+              <>
+                <p className="places-bandhead">{t('cycle.familiesTitle')}</p>
+                <div className="cycle-famrow">
+                  {(cycleIndex.families || []).map((f) => (
+                    <button
+                      type="button"
+                      key={f.ref}
+                      className="cycle-famchip"
+                      data-testid="cycle-famchip"
+                      onClick={() => setPageCycle({ familyRef: f.ref })}
+                    >
+                      <span className="cycle-famchip-ref">{f.ref}</span>
+                      <span className="cycle-famchip-meta">
+                        {t('cycle.familyMeta', {
+                          km: count(f.km),
+                          countries: countryPhrase(f.countries.length, t),
+                        })}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              </>
+            )}
+
+            {!cyclingLoading && cycleRows && (
+              <>
+                {cycleRows.tours.length > 0 && (
+                  <>
+                    <p className="places-bandhead">{t('cycle.toursTitle')}</p>
+                    {cycleRows.tours.slice(0, visible).map((tr) => (
+                      <button
+                        type="button"
+                        key={tr.slug}
+                        className="places-tcard cycle-tourcard"
+                        data-testid="cycle-tourcard"
+                        onClick={() => setPageCycle({ tourSlug: tr.slug,
+                          country: wantCycleCountry })}
+                      >
+                        <span className="cycle-tourcard-title">{tr.title}</span>
+                        <span className="cycle-tourcard-meta">
+                          {t('cycle.days', { n: tr.days })}
+                          {', '}
+                          {`${tr.km} km`}
+                          {tr.asc != null ? `, ${tr.asc} m` : ''}
+                        </span>
+                        <span className="cycle-tourcard-pace">
+                          {paceLine(tr.pace, t)}
+                        </span>
+                        <span className="cycle-tourcard-towns">
+                          {(tr.towns || []).filter(Boolean).join(', ')}
+                        </span>
+                      </button>
+                    ))}
+                  </>
+                )}
+
+                {cycleRows.routes.length > 0 && (
+                  <>
+                    <p className="places-bandhead">{t('cycle.routesTitle')}</p>
+                    {cycleRows.routes.slice(0, visible).map((r) => (
+                      <button
+                        type="button"
+                        key={r.id}
+                        className="places-tcard cycle-card"
+                        data-testid="cycle-card"
+                        onClick={() => setPageCycle({ routeId: r.id,
+                          country: wantCycleCountry })}
+                      >
+                        {r.img && (
+                          <img className="cycle-card-img" src={r.img} alt=""
+                            loading="lazy" />
+                        )}
+                        <span className="cycle-card-name">{r.name}</span>
+                        <span className="cycle-card-meta">
+                          {`${r.km} km`}
+                          {r.asc != null ? `, ${r.asc} m` : ''}
+                        </span>
+                        {r.score != null && (
+                          <span className="cycle-card-score"
+                            data-testid="cycle-card-score">{r.score}</span>
+                        )}
+                        <span className="cycle-card-surface">
+                          {surfaceLine({
+                            paved_share: r.paved,
+                            surface_known_share: r.paved == null ? 0 : 1,
+                          }, t)}
+                        </span>
+                        <span className="cycle-card-why">
+                          {(whyLines(r.why, t, 2) || [])
+                            .map((line) => line.text).join(', ')}
+                        </span>
+                      </button>
+                    ))}
+                  </>
+                )}
+
+                {cycleRows.listed.length > 0 && (
+                  <>
+                    <p className="places-bandhead"
+                      data-testid="cycle-listed-head">
+                      {t('cycle.listedHeading')}
+                    </p>
+                    {cycleRows.listed.slice(0, visible).map((r) => (
+                      <button
+                        type="button"
+                        key={r.id}
+                        className="places-tcard cycle-card cycle-card-listed"
+                        data-testid="cycle-listed-card"
+                        onClick={() => setPageCycle({ routeId: r.id,
+                          country: wantCycleCountry })}
+                      >
+                        <span className="cycle-card-name">{r.name}</span>
+                        <span className="cycle-card-meta">{`${r.km} km`}</span>
+                        <span className="cycle-card-unrated">{listedLine(t)}</span>
+                      </button>
+                    ))}
+                  </>
+                )}
+
+                {!cycleRows.tours.length && !cycleRows.routes.length
+                  && !cycleRows.listed.length && (
+                  <p className="places-empty">{t('cycle.emptyCountry')}</p>
+                )}
+              </>
+            )}
+
+            {!cyclingLoading && !cycleRows && (
+              <p className="places-empty">{t('cycle.emptyCountry')}</p>
+            )}
+
+            {cycleRows && (cycleRows.routes.length > 0
+              || cycleRows.tours.length > 0) && (
+              <p className="places-credit" data-testid="cycle-credit-foot">
+                {t('cycle.sourceNote')}
+              </p>
+            )}
+          </div>
+        )}
+
+        {isJourneyBrowse && (
+          <JourneysSection
+            q={debouncedQuery}
+            country={country}
+            view={journeyView}
+            onView={setJourneyView}
+            onOpen={(card) => setPageJourney({ id: card.id, gw: card.gw || null })}
+            onComposed={() => setJourneyView('composed')}
+            countryName={countryName}
+            t={t}
+            lang={lang}
+          />
+        )}
+
+        {isComposedTrips && (
+          <button
+            type="button"
+            className="jsec-back jsec-back-solo"
+            onClick={() => {
+              setJourneyView(null);
+              setItinDays(null);
+              setItinPace(null);
+              setItinScale(null);
+            }}
+          >
+            <ArrowLeftIcon size={14} />
+            <span>{t('journey.backStyles')}</span>
+          </button>
         )}
 
         {isItinCat && (
@@ -2754,8 +3413,25 @@ export function DestinationsTab({
         <Suspense fallback={null}>
           <TrailPage
             card={pageCard}
+            onOpenNeighbour={openNeighbour}
             onClose={() => setPageCard(null)}
             onSelectDest={(id) => { setPageCard(null); onSelectDest(id); }}
+          />
+        </Suspense>
+      )}
+
+      {pageJourney && (
+        <Suspense fallback={null}>
+          <JourneyPage
+            id={pageJourney.id}
+            gatewayDest={(() => {
+              // The gateway airport code doubles as a catalogue id (BCN,
+              // VIE...), which is what lets the page end on a priced CTA.
+              const d = pageJourney.gw ? data.destinations[pageJourney.gw] : null;
+              return d ? { id: pageJourney.gw, city: d.city } : null;
+            })()}
+            onClose={() => setPageJourney(null)}
+            onSelectDest={(id) => { setPageJourney(null); onSelectDest(id); }}
           />
         </Suspense>
       )}
@@ -2776,7 +3452,9 @@ export function DestinationsTab({
         <Suspense fallback={null}>
           <BeachPage
             beach={pageBeach}
+            onOpenNeighbour={openNeighbour}
             countryName={countryName(pageBeach.cc)}
+            model={beachIndex?.model || null}
             onClose={() => setPageBeach(null)}
             onSelectDest={(id) => { setPageBeach(null); onSelectDest(id); }}
           />
@@ -2787,6 +3465,7 @@ export function DestinationsTab({
         <Suspense fallback={null}>
           <LakePage
             lake={pageLake}
+            onOpenNeighbour={openNeighbour}
             countryName={countryName(pageLake.cc)}
             warmC={lakeIndex?.model?.warm_c ?? 18}
             onClose={() => setPageLake(null)}
@@ -2795,10 +3474,33 @@ export function DestinationsTab({
         </Suspense>
       )}
 
+      {pageCycle && pageCycle.familyRef && (
+        <Suspense fallback={null}>
+          <CycleFamilyPage
+            familyRef={pageCycle.familyRef}
+            onClose={() => setPageCycle(null)}
+          />
+        </Suspense>
+      )}
+
+      {pageCycle && !pageCycle.familyRef && (
+        <Suspense fallback={null}>
+          <CyclePage
+            routeId={pageCycle.routeId}
+            onOpenNeighbour={openNeighbour}
+            tourSlug={pageCycle.tourSlug}
+            country={pageCycle.country}
+            countryName={countryName(pageCycle.country)}
+            onClose={() => setPageCycle(null)}
+          />
+        </Suspense>
+      )}
+
       {pageMountain && (
         <Suspense fallback={null}>
           <MountainPage
             mountain={pageMountain}
+            onOpenNeighbour={openNeighbour}
             countryName={countryName(pageMountain.cc)}
             onClose={() => setPageMountain(null)}
             onSelectDest={(id) => { setPageMountain(null); onSelectDest(id); }}

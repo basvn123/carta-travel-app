@@ -1,0 +1,303 @@
+{
+  "id": "bg-cycling-danube-eurovelo6",
+  "sourceId": "bulgaria-danube-eurovelo6-cycling",
+  "slug": "bg-cycling-danube-eurovelo6",
+  "title": "Into the Easterly: EuroVelo 6 Along the Bulgarian Danube, Vidin to Cherven",
+  "country": "Bulgaria",
+  "countryCode": "BG",
+  "countries": [
+    {
+      "name": "Bulgaria",
+      "code": "BG"
+    }
+  ],
+  "isMultiCountry": false,
+  "region": "Eastern & Southeastern Europe",
+  "regionKey": "eastern-southeastern",
+  "subRegion": "The Bulgarian Danube bank, the Danubian Plain and Rusenski Lom",
+  "tripType": "Cycling Trips",
+  "tripTypeId": 1,
+  "tripTypeSlug": "cycling",
+  "durationDays": 7,
+  "bestPeriod": {
+    "months": [
+      5,
+      6,
+      9
+    ],
+    "monthNames": [
+      "May",
+      "June",
+      "September"
+    ],
+    "window": "the second half of May, and the first three weeks of September",
+    "note": null,
+    "avoid": "July–August (35–40 °C on unshaded II-11 asphalt, and no tree cover between the river towns)",
+    "raw": null
+  },
+  "budgetTier": "€",
+  "budgetTierRange": [
+    1,
+    1
+  ],
+  "budgetTierRaw": "€",
+  "budget": {
+    "currency": "EUR",
+    "totalEur": {
+      "low": 430,
+      "high": 785
+    },
+    "totalNote": "€430–€785",
+    "breakdown": {
+      "accommodation": {
+        "lowEur": 140,
+        "highEur": 260,
+        "note": "€140–€260 (€20–€37/night — Danube-town guesthouses are genuinely cheap)"
+      },
+      "food": {
+        "lowEur": 105,
+        "highEur": 175,
+        "note": "€105–€175 (€15–€25/day)"
+      },
+      "transport": {
+        "lowEur": 150,
+        "highEur": 290,
+        "note": "€150–€290 (bike rental/delivery €90–€190 + BDŽ trains, bridge shuttle, transfers)"
+      },
+      "activities": {
+        "lowEur": 35,
+        "highEur": 60,
+        "note": "€35–€60 (Baba Vida, Kaleto, Ivanovo, Cherven, Persina, Radetzky)"
+      }
+    },
+    "perDayEur": {
+      "low": 61,
+      "high": 112
+    }
+  },
+  "profile": {
+    "difficulty": 3,
+    "difficultyLabel": "Active",
+    "difficultyNote": "Moderate",
+    "fitnessLevel": "Moderate",
+    "crowdLevel": null,
+    "familyFriendly": null,
+    "carRequired": null
+  },
+  "basecamps": [
+    "Vidin",
+    "Belogradchik",
+    "Lom",
+    "Nikopol",
+    "Svishtov",
+    "Ruse"
+  ],
+  "gatewayAirport": "Sofia (SOF) is the practical gateway. BDŽ runs Sofia–Vidin daily, roughly 5–5 h 30. Finish in Ruse: BDŽ Ruse–Sofia is ~6 h 30, or fly out of Bucharest Otopeni (OTP), 75 km north across the river.",
+  "gatewayAirportCode": "SOF",
+  "languages": [
+    "Bulgarian"
+  ],
+  "currency": "Euro (EUR) — sole legal tender since 1 February 2026; mandatory dual BGN display ended 8 August 2026",
+  "emergencyNumber": "112",
+  "coordinates": {
+    "lat": 43.9916,
+    "lon": 22.8824,
+    "precision": "city",
+    "matchedPlace": "Vidin",
+    "source": "geonames (geonamescache, cities > 15k)"
+  },
+  "tags": [
+    "eurovelo-6",
+    "danube",
+    "cycling",
+    "unesco",
+    "fortresses",
+    "birdwatching",
+    "headwind"
+  ],
+  "summary": "Seven days on the least-ridden stretch of EuroVelo 6, where the river is a kilometre wide and the traffic is a tractor every twenty minutes. You climb a thousand metres inland to the sandstone towers of Belogradchik,…",
+  "summaryGenerated": false,
+  "hook": "Seven days on the least-ridden stretch of EuroVelo 6, where the river is a kilometre wide and the traffic is a tractor every twenty minutes. You climb a thousand metres inland to the sandstone towers of Belogradchik, drop back to a road crossing six tributary valleys, sleep in fishing towns nobody photographs, and finish at a UNESCO cave-church above a gorge. For self-sufficient riders who want distance without crowds and do not mind a headwind.",
+  "snapshot": {
+    "Country": "Bulgaria",
+    "Trip type": "Cycling Trips",
+    "Duration": "7 days",
+    "Best period": "May–June and September",
+    "Budget tier": "€",
+    "Difficulty": "Moderate",
+    "Start / End": "Vidin → Ruse (point-to-point, ~505 km, ~4,300 m ascent)",
+    "Getting there": "Sofia (SOF) is the practical gateway. BDŽ runs Sofia–Vidin daily, roughly 5–5 h 30. Finish in Ruse: BDŽ Ruse–Sofia is ~6 h 30, or fly out of Bucharest Otopeni (OTP), 75 km north across the river."
+  },
+  "itinerary": [
+    {
+      "day": 1,
+      "title": "Vidin, the fortress and the bridge",
+      "morning": "Arrive on the Sofia train, build or collect the bike, and ride the riverside promenade to **Baba Vida**, the only fully preserved medieval fortress in Bulgaria, its feet literally in the Danube [VERIFY: current Baba Vida entry fee and hours].",
+      "afternoon": "Spin north to the **New Europe Bridge** ramps and ride the cycle lane out over the water towards Calafat — 1,971 m of deck and the best view of Vidin there is. Return past the Ottoman **Stambol Kapiya** gate and the synagogue.",
+      "evening": "Eat on the promenade, drink Novo Selo wine, and repack. Tomorrow is the only real climbing day.",
+      "dayStats": "24 km / +140 m",
+      "sleep": null
+    },
+    {
+      "day": 2,
+      "title": "The rocks above the plain",
+      "morning": "South-west out of Vidin on the Dimovo road: 25 km of gently rising farmland, then the ascent proper after **Dimovo**, where the road tips into the western Balkan foothills and stays up for 20 km.",
+      "afternoon": "Roll into **Belogradchik** at about 520 m, close to a thousand metres above the river. Take the last steep pitch to **Kaleto**, the fortress built into the sandstone towers themselves — Roman foundations, Ottoman walls, rock doing the work of ramparts [VERIFY: current Kaleto and Belogradchik Rocks entry fee].",
+      "evening": "Walk to the **Zbegovete** viewpoint for sunset, when the rock turns properly red. It is cold after dark up here even in a summer week.",
+      "dayStats": "55 km / +980 m",
+      "sleep": null
+    },
+    {
+      "day": 3,
+      "title": "Back down to the river",
+      "morning": "A 12 km spur to the **Magura Cave** at Rabisha — bat colony, and prehistoric wall paintings drawn in bat guano — before the long descent [VERIFY: current Magura Cave hours].",
+      "afternoon": "Drop north-east through Dimovo to **Archar** — Roman **Ratiaria**, capital of Dacia Ripensis, now a ploughed field with a fence and a sign. Join **II-11** and turn east.",
+      "evening": "Into **Lom**, Bulgaria's second Danube port, for river fish on the quay. The wind will have been in your face for 40 km; this is the day you learn the week's rhythm.",
+      "dayStats": "80 km / +320 / −850 m",
+      "sleep": null
+    },
+    {
+      "day": 4,
+      "title": "Two valleys and a nuclear town",
+      "morning": "East out of Lom across the **Tsibritsa** and the **Ogosta** — the first two rungs of the washboard, each a 70 m drop and climb with nothing to break the wind on the rim.",
+      "afternoon": "**Kozloduy**: the nuclear plant's stacks own the skyline, but stop for the **Radetzky**, a full-size replica of the Austrian paddle steamer Hristo Botev's rebels seized in 1876, moored where they landed [VERIFY: current Radetzky museum-ship hours].",
+      "evening": "On to **Oryahovo**, a hill town rising steeply off its own ferry terminal (the crossing runs to Bechet, Romania). Guesthouses sit on the upper terrace; the dusk view down the river pays for the last climb.",
+      "dayStats": "92 km / +560 m",
+      "sleep": null
+    },
+    {
+      "day": 5,
+      "title": "Along the Iskar mouth to Nikopol",
+      "morning": "The best surface of the week: a resurfaced run east from Oryahovo across open grain country, the river appearing and disappearing on the left.",
+      "afternoon": "At **Gigen**, detour 2 km to **Ulpia Oescus**, the Roman colony at the mouth of the Iskar — a large, quiet, half-excavated field of foundations and column drums with almost no visitors.",
+      "evening": "Into **Nikopol**, the steepest town on the route, its ruined Byzantine and Ottoman fortress on the bluff above the Turnu Măgurele ferry. Fish soup, then bed — tomorrow is short and the hours belong on the island.",
+      "dayStats": "76 km / +520 m",
+      "sleep": null
+    },
+    {
+      "day": 6,
+      "title": "The island and the marshes",
+      "morning": "An easy 12 km to **Belene**. Report to the **Persina Nature Park** visitor centre in town before riding the dykes — the park covers the whole Bulgarian Danube island complex and **Persin** is the largest island in the Bulgarian Danube [VERIFY: current Persina visitor centre opening hours and whether an island permit is required].",
+      "afternoon": "Persin's restored marshes are reintroduction ground for Dalmatian pelican, pygmy cormorant and ferruginous duck — ride the compacted dyke slowly, with binoculars. The island also held Bulgaria's principal labour camp; there is a memorial.",
+      "evening": "On to **Svishtov**, the northernmost point of Bulgaria: Kolyu Ficheto's **Sveta Troitsa** church, and the Roman legionary fortress of **Novae** on the eastern edge of town.",
+      "dayStats": "58 km / +330 m",
+      "sleep": null
+    },
+    {
+      "day": 7,
+      "title": "The gorge, the cave church and little Vienna",
+      "morning": "Skip the truck-heavy 35 km of II-52: take the early bus or BDŽ connection with the bike to **Byala**, then ride south-east through Polsko Kosovo to **Dve Mogili** [VERIFY: current Svishtov–Byala bus and bike-carriage arrangement].",
+      "afternoon": "Drop into **Rusenski Lom Nature Park** and the Cherni Lom gorge to **Cherven**, a 12th–14th-century fortress town on a meander spur, reached by footbridge and a stiff walk. Then the gorge road north to the **Ivanovo Rock-Hewn Churches**, UNESCO-listed since 1979 — the Church of the Holy Virgin is a cave gallery in the cliff with 14th-century frescoes, up a steel stair [VERIFY: current Ivanovo entry fee and closing day].",
+      "evening": "Twenty easy kilometres north into **Ruse**. Finish on **ploshtad Svoboda** beneath the **Dohodno Zdanie**, among the neo-baroque façades that earned the \"little Vienna\" tag, and eat somewhere with a tablecloth.",
+      "dayStats": "77 km / +690 m",
+      "sleep": null
+    }
+  ],
+  "accommodationStrategy": [
+    {
+      "rank": 1,
+      "name": "Upper-town guesthouses",
+      "style": "family guesthouse",
+      "location": "Belogradchik",
+      "description": "the rocks are floodlit and the town empties when the day coaches leave, so an overnight buys the site alone at dusk and again at 08:00. Courtyards take bikes; most houses cook dinner if you ask at booking.",
+      "booking": "2–3 weeks ahead for May and September weekends, by phone or Booking.com; midweek walk-ins are fine [VERIFY: current Belogradchik guesthouse rates].",
+      "priceNote": null
+    },
+    {
+      "rank": 2,
+      "name": "Riverfront guesthouses",
+      "style": "small-town hotel",
+      "location": "Nikopol and Svishtov",
+      "description": "both sit on the bank above the ferry terminal — secure yard, a 06:30 start straight onto II-11, dinner within 200 m, and the week's lowest rates at €20–€30.",
+      "booking": "a week ahead or on the day by phone. Outside August nobody is competing for beds.",
+      "priceNote": null
+    },
+    {
+      "rank": 3,
+      "name": "Central hotels around ploshtad Svoboda",
+      "style": "city hotel",
+      "location": "Ruse",
+      "description": "end-of-trip logistics — inside the neo-baroque core, 10 minutes from the BDŽ station for the bike train to Sofia, close to the bridge plaza for a Bucharest flight, with lockable luggage rooms.",
+      "booking": "3–4 weeks ahead. Ruse fills with business travellers, so Tuesday and Wednesday are tightest.",
+      "priceNote": null
+    }
+  ],
+  "logistics": {
+    "connectivity": "A1, Yettel and Vivacom cover the river road and every town on it; coverage drops in the Cherni Lom gorge and on parts of the Persin dykes. Download the route offline — EuroVelo 6 signage here is sporadic and cannot be navigated by.",
+    "emergency": "**112**, with English-speaking operators. Quote the II-11 kilometre marker if you can see one; it is the fastest way to be located between towns.",
+    "weather": "Continental and extreme. May can hold a 12 °C day of rain and a 32 °C day in the same week; July hits 38 °C with no shade between tributary valleys. Storms build on the plain late afternoon and cross fast. Carry 2.5 litres — gaps between village taps run to 25 km.",
+    "bookingWindows": "Nothing needs months of notice except the Sofia bike delivery (4–6 weeks) and a Ruse hotel midweek (3–4 weeks).",
+    "money": "Bulgaria uses the **euro**, lev fixed at 1 EUR = 1.95583 BGN, dual pricing still displayed. Cards work in Vidin, Lom, Svishtov and Ruse. **Carry €80–€120 in small notes** — village shops, the Cherven ticket hut, ferry kiosks and guesthouses between Lom and Nikopol are cash-first.",
+    "transportRules": "The **Ruse–Giurgiu bridge cannot be ridden**; the **Vidin–Calafat bridge can**. Oryahovo–Bechet and Nikopol–Turnu Măgurele ferries take bikes.",
+    "permits": "No permit for the EuroVelo 6 line. **Persina** restricts parts of the island complex in the breeding season and asks visitors to register at Belene; **Rusenski Lom** is marked paths only. No wild camping in either. Lights and reflective gear outside built-up areas are legally required — II-11 is unlit and busy with farm traffic at dusk.",
+    "health": null,
+    "gettingThere": null,
+    "other": []
+  },
+  "proTips": [
+    "**Ride the long eastbound days before 11:00.** The easterly is a morning breeze and an afternoon wall. On Days 4 and 5, leaving at 06:30 and finishing by 14:00 is the whole difference.",
+    "**Sleep in Belogradchik, don't day-trip it.** Sofia operators arrive at midday and leave by five; an overnight gives you the towers at dusk and dawn with nobody in them.",
+    "**Book the bike delivery before the flights.** Sofia fleets are finite in May and September, and a Vidin drop plus a Ruse collection is a 600 km round trip for the operator — it is the one piece that can fail.",
+    "**Learn three words:** *\"чешма\"* (public drinking fountain — ask in every village), *\"баничарница\"* (the pastry shop that opens at 06:00) and *\"колело\"* (bicycle).",
+    "**Keep the Oryahovo ferry as a fallback.** If wind or a mechanical wrecks Day 5, the Romanian bank is flatter, faster and better connected back to Bucharest.",
+    "**Eat river fish.** Danube carp (*шаран*) and catfish in Lom, Nikopol and Svishtov cost a third of the Black Sea equivalent. Order it grilled, not fried."
+  ],
+  "typeSpecific": {
+    "raw": {
+      "Daily legs": "D1 Vidin loop 24 km / +140 m. D2 Vidin → Belogradchik 55 km / +980 m. D3 Belogradchik → Archar → Lom 80 km / +320 / −850 m. D4 Lom → Kozloduy → Oryahovo 92 km / +560 m. D5 Oryahovo → Gigen → Nikopol 76 km / +520 m. D6 Nikopol → Belene → Svishtov 58 km / +330 m. D7 Byala → Cherven → Ivanovo → Ruse 77 km / +690 m.",
+      "Surface split": "Roughly **82% asphalt, 11% gravel or compacted dyke track, 7% badly patched or broken asphalt**. The spine is **republican road II-11**, which shadows the river from Vidin to Svishtov: two lanes, no shoulder, low traffic, and surface quality that changes at every municipal boundary. Gravel is concentrated on the **Persina** dykes and the **Rusenski Lom** tracks. Ride **35–40 mm tyres minimum**; a gravel bike or rigid tourer is right, a 25 mm road bike is not.",
+      "The terrain is not flat": "The river is flat; the road is not. The **Danubian Plain is a washboard** — the Lom, Tsibritsa, Ogosta, Iskar, Vit, Osam and Yantra each cut a 60–120 m valley across your line of travel, and II-11 drops into and climbs out of every one. Expect **500–700 m of ascent on a \"flat\" river day**, and nearly **1,000 m on the Belogradchik climb**, from about 35 m at the Danube to 520 m in town and 600 m at the Kaleto gate.",
+      "The wind": "A **persistent easterly to north-easterly** runs the corridor, strongest in spring and often 20–30 km/h through the afternoon. Riding west to east you ride **into it** most of the week — deliberate, since it front-loads the wind onto the short sheltered western days. Want it behind you? Run the route in reverse from Ruse.",
+      "Bike rental and delivery": "No walk-in rental counter exists in Vidin. Bikes come from Sofia: **Odysseia-In**, **Penguin Travel** and **Cycling Bulgaria** rent touring and gravel bikes and will deliver to Vidin and collect in Ruse, typically €90–€190 for the week including transfer [VERIFY: current rental and delivery rates]. Ruse has bike shops around ulitsa Aleksandrovska [VERIFY: current Ruse bike-shop names and hours]. Carry two tubes, a folding tyre and a chain link — between Lom and Nikopol there is nothing.",
+      "Bike-friendly accommodation": "Danube-town guesthouses have a courtyard, shed or garage; ask for *\"стая за колело\"* and the bike comes inside. Nowhere here has a formal bike room, and nowhere needs one.",
+      "Trains with bikes (BDŽ)": "Bikes travel in the **baggage compartment of trains marked with a bicycle symbol**; buy a separate bike ticket at the counter, around €2 (4 BGN) [VERIFY: current BDŽ bicycle-ticket price]. Sofia–Vidin and Ruse–Gorna Oryahovitsa–Sofia services generally take them; some expresses do not, and on a crowded train the guard decides. Buy it at the station — conductors will not.",
+      "Bridges to Romania": "The **New Europe Bridge, Vidin–Calafat** (2013) has a **separate pedestrian and cycle lane** and can be ridden [VERIFY: current cyclist access and whether a fee applies]. The **Danube Bridge, Ruse–Giurgiu** (1954) is **closed to cyclists and pedestrians**; reach Giurgiu by bridge shuttle minibus or a lift arranged at the customs plaza, roughly €10–€15 [VERIFY: current Ruse bridge shuttle operation and fare]."
+    },
+    "surface": "Roughly **82% asphalt, 11% gravel or compacted dyke track, 7% badly patched or broken asphalt**. The spine is **republican road II-11**, which shadows the river from Vidin to Svishtov: two lanes, no shoulder, low traffic, and surface quality that changes at every municipal boundary. Gravel is concentrated on the **Persina** dykes and the **Rusenski Lom** tracks. Ride **35–40 mm tyres minimum**; a gravel bike or rigid tourer is right, a 25 mm road bike is not.",
+    "distanceKm": null,
+    "elevationM": null,
+    "verticalM": null,
+    "technicalRating": null,
+    "transitPass": null,
+    "hutBooking": null,
+    "liftNetwork": null,
+    "snowReliability": null,
+    "windConditions": "A **persistent easterly to north-easterly** runs the corridor, strongest in spring and often 20–30 km/h through the afternoon. Riding west to east you ride **into it** most of the week — deliberate, since it front-loads the wind onto the short sheltered western days. Want it behind you? Run the route in reverse from Ruse.",
+    "gpxReady": null,
+    "bookingTimeline": null,
+    "audience": null
+  },
+  "packingNotes": [],
+  "whatCouldGoWrong": [],
+  "sources": {
+    "verified": null,
+    "confidenceNotes": "- Verified: Baba Vida as Bulgaria's only fully preserved medieval fortress; the Vidin–Calafat New Europe Bridge (2013) and the Ruse–Giurgiu Danube Bridge (1954, road and rail, ~2.2 km); Ivanovo UNESCO-inscribed 1979; Cherven in Rusenski Lom; Persin as the largest Bulgarian Danube island; Ulpia Oescus at Gigen, Ratiaria at Archar, Novae at Svishtov; road II-11 as the Danube road; Bulgaria on the euro, lev fixed at 1.95583; emergency 112. - `[VERIFY]` items in this file: 13 (see inline markers above) - Last reviewed: 2026-09-02"
+  },
+  "verifyFlags": [
+    "current rental and delivery rates",
+    "current Ruse bike-shop names and hours",
+    "current BDŽ bicycle-ticket price",
+    "current cyclist access and whether a fee applies",
+    "current Ruse bridge shuttle operation and fare",
+    "current Baba Vida entry fee and hours",
+    "current Kaleto and Belogradchik Rocks entry fee",
+    "current Magura Cave hours",
+    "current Radetzky museum-ship hours",
+    "current Persina visitor centre opening hours and whether an island permit is required",
+    "current Svishtov–Byala bus and bike-carriage arrangement",
+    "current Ivanovo entry fee and closing day",
+    "current Belogradchik guesthouse rates"
+  ],
+  "verifyFlagCount": 13,
+  "volatilePricing": true,
+  "wordCount": 2375,
+  "dataVintage": 2026,
+  "provenance": {
+    "batch": "eastern-southeastern",
+    "sourceFile": "cartaeasterneuropetrips/trips/bulgaria-danube-eurovelo6-cycling.md",
+    "sourceFormat": "md+nested-yaml-frontmatter (one file per trip)",
+    "sourceId": "bulgaria-danube-eurovelo6-cycling",
+    "ingestedAt": "2026-09-02",
+    "synthesized": false
+  }
+}

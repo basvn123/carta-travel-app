@@ -631,6 +631,12 @@ export function SavedTripsPanel({ data, onClose, onLoadTrip, onLoadTripPlan, onO
   const [error, setError] = useState('');
   const [tripPlans, setTripPlans] = useState(SAVED_MOCK ? MOCK_PLANS : []);
   const [tripPlansLoading, setTripPlansLoading] = useState(!!user && !SAVED_MOCK);
+  // A trip list that cannot be read is NOT a traveller with no trips.
+  // This was a bare .catch(() => {}) until migration 020 made every read
+  // of trip_plans return 42501, and the two states rendered identically:
+  // Planned and Visited went quietly empty for every account, and nothing
+  // on screen or in the console said so. Same lesson as 012.
+  const [tripPlansError, setTripPlansError] = useState('');
   // Day plans, local-first; account sync can rewrite them underneath this
   // panel (a pull from another device), so refresh on those changes.
   const [dayPlans, setDayPlans] = useState(() => loadStandalonePlans());
@@ -649,9 +655,14 @@ export function SavedTripsPanel({ data, onClose, onLoadTrip, onLoadTripPlan, onO
 
   const loadTripPlans = () => {
     setTripPlansLoading(true);
+    setTripPlansError('');
     fetchTripPlans(user.id)
-      .then(setTripPlans)
-      .catch(() => {})
+      .then((rows) => { setTripPlans(rows); setTripPlansError(''); })
+      .catch((e) => {
+        console.error('trip plans failed to load', e);
+        setTripPlans([]);
+        setTripPlansError(e.message || t('saved.errLoad'));
+      })
       .finally(() => setTripPlansLoading(false));
   };
 
@@ -1286,6 +1297,8 @@ export function SavedTripsPanel({ data, onClose, onLoadTrip, onLoadTripPlan, onO
           >
             {!authed ? signedOutEmpty : tripPlansLoading ? (
               <div className="footnote">{t('saved.loading')}</div>
+            ) : tripPlansError ? (
+              <div className="auth-error">{tripPlansError}</div>
             ) : upcomingPlans.length === 0 ? (
               <SavedEmpty
                 Icon={RouteIcon}
@@ -1531,7 +1544,9 @@ export function SavedTripsPanel({ data, onClose, onLoadTrip, onLoadTripPlan, onO
                 onSave={handleSavePastTrip}
               />
             )}
-            {pastCount === 0 && !pastOpen ? (
+            {tripPlansError && !pastOpen ? (
+              <div className="auth-error">{tripPlansError}</div>
+            ) : pastCount === 0 && !pastOpen ? (
               <SavedEmpty
                 Icon={CheckIcon}
                 text={t('saved.pastEmpty')}

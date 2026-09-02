@@ -70,6 +70,18 @@ const WHY_KEY = {
   snorkel: 'beach.whySnorkel',
   surf: 'beach.whySurf',
   length: 'beach.whyLength',
+  // beach_beauty_v2. The pipeline spells these in snake_case because
+  // 03-BEACHES.md names them that way and because unrated_coverage, which
+  // arrived with the region programme, already reads like this.
+  sunset_facing: 'beach.whySunsetFacing',
+  long_strand: 'beach.whyLongStrand',
+  pocket_cove: 'beach.whyPocketCove',
+  water_unknown_no_source: 'beach.whyWaterUnknownNoSource',
+  natura2000: 'beach.whyNatura2000',
+  emerald: 'beach.whyEmerald',
+  // A listed row with no publishable photograph. The card draws itself from
+  // the map instead, and this is the line under it.
+  no_photo_map_card: 'beach.whyNoPhotoMapCard',
 };
 
 // Short chip labels, for the card and the top of the page.
@@ -99,6 +111,11 @@ const TAG_KEY = {
   blueFlag: 'beach.tagBlueFlag',
   snorkel: 'beach.tagSnorkel',
   surf: 'beach.tagSurf',
+  sunset_facing: 'beach.tagSunsetFacing',
+  long_strand: 'beach.tagLongStrand',
+  pocket_cove: 'beach.tagPocketCove',
+  natura2000: 'beach.tagNatura2000',
+  emerald: 'beach.tagEmerald',
 };
 
 const SERVICE_KEY = {
@@ -201,9 +218,40 @@ export function componentLabel(code, t) {
 }
 
 /** The order the score breakdown is read in: the components that decide the
- *  most first, which is also the order of their weights. */
+ *  most first, which is also the order of their weights.
+ *
+ *  A component the pipeline could not measure is ABSENT from `comp` rather
+ *  than zero, so the page filters this list against the row and a Norwegian
+ *  beach simply shows seven bars instead of eight. That is the visible face
+ *  of drop-and-renormalise: a bar nobody earned is never drawn. */
 export const COMPONENT_ORDER = ['setting', 'acclaim', 'water', 'sand',
-  'wildness', 'comfort'];
+  'wildness', 'comfort', 'space', 'photo'];
+
+/** The weight each component carried, straight from the wire's model block,
+ *  so the breakdown can show what the number is made of rather than only
+ *  what it scored. Falls back to nothing when the index has not loaded. */
+export function componentWeights(model) {
+  const weights = model && model.weights;
+  if (!weights || typeof weights !== 'object') return null;
+  return weights;
+}
+
+/** Whether this row is the listed tier: exists, named, deduped, not scored.
+ *  The test is the ABSENCE of a score rather than the presence of a flag,
+ *  because absence is what the export guarantees. */
+export function isListed(beach) {
+  return !!beach && beach.t === 'l';
+}
+
+/** The facet rail's labels, for a group key and an option key. Kept here so
+ *  the pipeline's facet vocabulary has exactly one translation table. */
+export function facetGroupLabel(group, t) {
+  return t(`beach.facet${cap(group)}`);
+}
+
+export function facetOptionLabel(group, option, t) {
+  return t(`beach.f${cap(group)}${cap(option)}`);
+}
 
 /** Score band, for the colour of the chip. Mirrors the cutoffs the pipeline
  *  published in the wire meta (beauty_index.TIER_CUTOFFS); the beach's own
@@ -225,4 +273,198 @@ export function beachRating(beach, t) {
     tier,
     label: t(`beach.band${tier}`),
   };
+}
+
+
+/* ---------------------------------------------------------------------------
+ * The filter rail
+ *
+ * 03-BEACHES.md section 4. What shipped was three chips, and two of them read
+ * zero in every scope: "Excellent water 2", "Nothing built on it 0",
+ * "Lifeguard 0". A filter that shows a zero tells the reader the filters are
+ * broken even when they are honest, and three filters over a catalogue with
+ * this many fields was leaving most of them unreachable.
+ *
+ * Nine groups now, every one backed by a field beach_beauty_v2 actually
+ * publishes. Grouped in the same shape as LAKE_FACETS and MOUNTAIN_FACETS so
+ * the three natural-feature tabs share one mental model, with one rule of its
+ * own that the brief is explicit about and that the other two do not follow:
+ *
+ *   A CHIP WHOSE COUNT IS ZERO IN THE CURRENT SCOPE IS NOT RENDERED.
+ *
+ * Not greyed out. Absent. A disabled control still occupies the rail and
+ * still reads as something that ought to work; an absent one reads as a
+ * filter that does not apply here, which is the truth.
+ *
+ * `toolbar` picks the one group short enough for the row under the search
+ * field. Water quality, because that is what a beach list is asked for first.
+ * ------------------------------------------------------------------------- */
+
+const whyHas = (b, k) => (b.why || []).some((w) => w.k === k);
+const tagHas = (b, k) => (b.tags || []).includes(k);
+
+export const BEACH_FACETS = [
+  {
+    key: 'water',
+    labelKey: 'beach.facetWater',
+    toolbar: true,
+    options: [
+      { key: 'excellent', labelKey: 'beach.fWaterExcellent',
+        test: (b) => b.water?.class === 'Excellent' },
+      { key: 'good', labelKey: 'beach.fWaterGood',
+        test: (b) => b.water?.class === 'Good' },
+      { key: 'sufficient', labelKey: 'beach.fWaterSufficient',
+        test: (b) => b.water?.class === 'Sufficient' },
+      // A real answer, not a gap. No authority publishes a bathing class for
+      // Norway, Iceland or Great Britain, so the pipeline drops the water
+      // component there rather than inventing one, and a reader filtering
+      // for it is asking a legitimate question.
+      { key: 'unrated', labelKey: 'beach.fWaterUnrated',
+        test: (b) => !b.water?.class },
+    ],
+  },
+  {
+    key: 'substrate',
+    labelKey: 'beach.facetSubstrate',
+    options: [
+      { key: 'sand', labelKey: 'beach.fSubstrateSand',
+        test: (b) => b.surface === 'sand' },
+      { key: 'pebble', labelKey: 'beach.fSubstratePebble',
+        test: (b) => ['pebble', 'gravel', 'fineGravel'].includes(b.surface) },
+      { key: 'shingle', labelKey: 'beach.fSubstrateShingle',
+        test: (b) => b.surface === 'shingle' },
+      { key: 'rock', labelKey: 'beach.fSubstrateRock',
+        test: (b) => b.surface === 'rock' },
+    ],
+  },
+  {
+    key: 'setting',
+    labelKey: 'beach.facetSetting',
+    options: [
+      { key: 'cliffs', labelKey: 'beach.fSettingCliffs',
+        test: (b) => whyHas(b, 'cliffs') },
+      { key: 'dunes', labelKey: 'beach.fSettingDunes',
+        test: (b) => whyHas(b, 'dunes') },
+      { key: 'pines', labelKey: 'beach.fSettingPines',
+        test: (b) => whyHas(b, 'pines') },
+      { key: 'lagoon', labelKey: 'beach.fSettingLagoon',
+        test: (b) => whyHas(b, 'lagoon') },
+      { key: 'park', labelKey: 'beach.fSettingPark',
+        test: (b) => whyHas(b, 'nationalPark') || whyHas(b, 'reserve') },
+    ],
+  },
+  {
+    key: 'wildness',
+    labelKey: 'beach.facetWildness',
+    options: [
+      { key: 'wild', labelKey: 'beach.fWildnessWild',
+        test: (b) => tagHas(b, 'undeveloped') || whyHas(b, 'undeveloped') },
+      { key: 'quiet', labelKey: 'beach.fWildnessQuiet',
+        test: (b) => whyHas(b, 'quiet') },
+      { key: 'developed', labelKey: 'beach.fWildnessDeveloped',
+        test: (b) => whyHas(b, 'resortStrip') },
+    ],
+  },
+  {
+    key: 'size',
+    labelKey: 'beach.facetSize',
+    // From the beach's own geometry, which is what the v2 `space` component
+    // reads. Nothing in v1 could tell a four kilometre strand from a sixty
+    // metre cove, and they are different products.
+    options: [
+      { key: 'cove', labelKey: 'beach.fSizeCove', test: (b) => b.size === 'cove' },
+      { key: 'beach', labelKey: 'beach.fSizeBeach', test: (b) => b.size === 'beach' },
+      { key: 'strand', labelKey: 'beach.fSizeStrand', test: (b) => b.size === 'strand' },
+    ],
+  },
+  {
+    key: 'facilities',
+    labelKey: 'beach.facetFacilities',
+    // Each its own chip, per the brief: "parking" and "a lifeguard" are not
+    // one question, and a single Facilities chip could not answer either.
+    options: [
+      { key: 'parking', labelKey: 'beach.fFacilitiesParking',
+        test: (b) => (b.services || []).includes('parking') },
+      { key: 'toilets', labelKey: 'beach.fFacilitiesToilets',
+        test: (b) => (b.services || []).includes('toilets') },
+      { key: 'food', labelKey: 'beach.fFacilitiesFood',
+        test: (b) => (b.services || []).includes('food') },
+      { key: 'stepfree', labelKey: 'beach.fFacilitiesStepfree',
+        test: (b) => !!b.wheelchair },
+      { key: 'lifeguard', labelKey: 'beach.fFacilitiesLifeguard',
+        test: (b) => !!b.lifeguard },
+    ],
+  },
+  {
+    key: 'naturist',
+    labelKey: 'beach.facetNaturist',
+    // OSM spells it `naturism` and `nudism` is the older key. The pipeline
+    // reads both, so by the time it is here there is one field.
+    options: [
+      { key: 'yes', labelKey: 'beach.fNaturistYes', test: (b) => !!b.nudism },
+    ],
+  },
+  {
+    key: 'protected',
+    labelKey: 'beach.facetProtected',
+    // Natura 2000 is the EU half and the Emerald Network is its non-EU twin,
+    // so this chip works in Norway and the Balkans instead of stopping at the
+    // EU border. Both are proved from polygons, not from a centroid.
+    options: [
+      { key: 'natura2000', labelKey: 'beach.fProtectedNatura2000',
+        test: (b) => b.prot?.net === 'natura2000' },
+      { key: 'emerald', labelKey: 'beach.fProtectedEmerald',
+        test: (b) => b.prot?.net === 'emerald' },
+      { key: 'national', labelKey: 'beach.fProtectedNational',
+        test: (b) => !!b.protected?.np },
+    ],
+  },
+  {
+    key: 'bestfor',
+    labelKey: 'beach.facetBestfor',
+    options: [
+      { key: 'swimming', labelKey: 'beach.fBestforSwimming',
+        test: (b) => (b.bestFor || []).includes('swimming') },
+      { key: 'sunset', labelKey: 'beach.fBestforSunset',
+        test: (b) => !!b.sunset || (b.bestFor || []).includes('sunset') },
+      { key: 'walking', labelKey: 'beach.fBestforWalking',
+        test: (b) => (b.bestFor || []).includes('walkers') },
+      { key: 'surf', labelKey: 'beach.fBestforSurf',
+        test: (b) => (b.bestFor || []).includes('surfing') },
+    ],
+  },
+];
+
+/** Rows that satisfy every group with a selection (OR inside a group). */
+export function applyBeachFacets(rows, state) {
+  let out = rows || [];
+  for (const group of BEACH_FACETS) {
+    const on = state?.[group.key] || [];
+    if (!on.length) continue;
+    const tests = on
+      .map((k) => group.options.find((o) => o.key === k)?.test)
+      .filter(Boolean);
+    if (!tests.length) continue;
+    out = out.filter((row) => tests.some((fn) => fn(row)));
+  }
+  return out;
+}
+
+/**
+ * How many rows each chip would leave, counted inside the pool the OTHER
+ * groups already narrowed and IGNORING its own group's other chips. That is
+ * what lets a chip carry a number that is true of what tapping it would do,
+ * and what keeps the number still while it is tapped.
+ */
+export function beachFacetCounts(pool, state) {
+  const out = new Map();
+  if (!pool) return out;
+  for (const group of BEACH_FACETS) {
+    const others = { ...(state || {}), [group.key]: [] };
+    const base = applyBeachFacets(pool, others);
+    for (const option of group.options) {
+      out.set(`${group.key}:${option.key}`, base.filter(option.test).length);
+    }
+  }
+  return out;
 }

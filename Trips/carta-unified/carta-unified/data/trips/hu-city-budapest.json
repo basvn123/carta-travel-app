@@ -1,0 +1,300 @@
+{
+  "id": "hu-city-budapest",
+  "sourceId": "hungary-budapest-city",
+  "slug": "hu-city-budapest",
+  "title": "Districts and Domes: Seven Days in Budapest, Pest Side First",
+  "country": "Hungary",
+  "countryCode": "HU",
+  "countries": [
+    {
+      "name": "Hungary",
+      "code": "HU"
+    }
+  ],
+  "isMultiCountry": false,
+  "region": "Eastern & Southeastern Europe",
+  "regionKey": "eastern-southeastern",
+  "subRegion": "Budapest — Pest districts V–IX, Buda I–II, XIII and Óbuda",
+  "tripType": "City Trips",
+  "tripTypeId": 3,
+  "tripTypeSlug": "city",
+  "durationDays": 7,
+  "bestPeriod": {
+    "months": [
+      4,
+      5,
+      9,
+      10
+    ],
+    "monthNames": [
+      "April",
+      "May",
+      "September",
+      "October"
+    ],
+    "window": "late April to early June, and the second half of September",
+    "note": null,
+    "avoid": "mid-July to mid-August (35 °C in the stone streets, Sziget week, half the good kitchens on holiday)",
+    "raw": null
+  },
+  "budgetTier": "€€",
+  "budgetTierRange": [
+    2,
+    2
+  ],
+  "budgetTierRaw": "€€",
+  "budget": {
+    "currency": "EUR",
+    "totalEur": {
+      "low": 785,
+      "high": 1325
+    },
+    "totalNote": "€785–€1,325",
+    "breakdown": {
+      "accommodation": {
+        "lowEur": 420,
+        "highEur": 700,
+        "note": "€420–€700 (€60–€100/night, central district V–VII)"
+      },
+      "food": {
+        "lowEur": 210,
+        "highEur": 350,
+        "note": "€210–€350 (€30–€50/day, one tasting menu included)"
+      },
+      "transport": {
+        "lowEur": 25,
+        "highEur": 45,
+        "note": "€25–€45 (BKK 7-day travelcard plus a funicular and a boat)"
+      },
+      "activities": {
+        "lowEur": 130,
+        "highEur": 230,
+        "note": "€130–€230 (Parliament, Opera, two baths, synagogue complex, Hospital in the Rock)"
+      }
+    },
+    "perDayEur": {
+      "low": 112,
+      "high": 189
+    }
+  },
+  "profile": {
+    "difficulty": 1,
+    "difficultyLabel": "Easy",
+    "difficultyNote": "Easy",
+    "fitnessLevel": "Easy",
+    "crowdLevel": null,
+    "familyFriendly": null,
+    "carRequired": null
+  },
+  "basecamps": [
+    "Budapest V. kerület",
+    "Budapest VI. kerület",
+    "Budapest VII. kerület"
+  ],
+  "gatewayAirport": "Budapest Ferenc Liszt (BUD), 16 km out. Bus **100E** direct to Deák Ferenc tér, or **200E** to Kőbánya-Kispest and M3. Rail: Keleti and Nyugati stations, both on the metro.",
+  "gatewayAirportCode": "BUD",
+  "languages": [
+    "Hungarian"
+  ],
+  "currency": "Hungarian forint (HUF)",
+  "emergencyNumber": "112",
+  "coordinates": {
+    "lat": 47.4996,
+    "lon": 19.0511,
+    "precision": "city",
+    "matchedPlace": "Budapest V. kerület",
+    "source": "geonames (geonamescache, cities > 15k)"
+  },
+  "tags": [
+    "city-break",
+    "thermal-baths",
+    "secession",
+    "jewish-quarter",
+    "ruin-bars",
+    "danube",
+    "architecture"
+  ],
+  "summary": "Budapest rewards a week because it is really several cities stacked on one river — a Habsburg parade ground in District V, a French boulevard in VI, a bombed-and-reoccupied Jewish quarter in VII, an interwar Bauhaus…",
+  "summaryGenerated": false,
+  "hook": "Budapest rewards a week because it is really several cities stacked on one river — a Habsburg parade ground in District V, a French boulevard in VI, a bombed-and-reoccupied Jewish quarter in VII, an interwar Bauhaus grid in XIII, and a Roman town at the end of the tram line. Seven days lets you walk one district a day, book the baths at the right hour, and still eat properly. Flat, cheap by Western European standards, and best in shoulder season.",
+  "snapshot": {
+    "Country": "Hungary",
+    "Trip type": "City Trips",
+    "Duration": "7 days",
+    "Best period": "Late April–early June, second half of September",
+    "Budget tier": "€€",
+    "Difficulty": "Easy",
+    "Start / End": "Budapest → Budapest (single base, no relocation)",
+    "Getting there": "Budapest Ferenc Liszt (BUD), 16 km out. Bus **100E** direct to Deák Ferenc tér, or **200E** to Kőbánya-Kispest and M3. Rail: Keleti and Nyugati stations, both on the metro."
+  },
+  "itinerary": [
+    {
+      "day": 1,
+      "title": "District V, the parade ground",
+      "morning": "Start at **Szabadság tér**: the Hungarian National Bank, the former Stock Exchange, the Soviet war memorial and the contested 2014 occupation monument all facing each other across one square.",
+      "afternoon": "The **Parliament** on your booked slot — the Grand Staircase, the dome hall and the Holy Crown, 45 minutes, passport in hand. Then the riverbank and the **Shoes on the Danube Bank** memorial.",
+      "evening": "Coffee under the frescoes at **Café Gerbeaud** on Vörösmarty tér (since 1858), then dinner at **Hungarikum Bisztró** on Steindl Imre utca — small, permanently booked, and the best straightforward Hungarian cooking near the Parliament [VERIFY: current Hungarikum Bisztró reservation policy].",
+      "dayStats": null,
+      "sleep": null
+    },
+    {
+      "day": 2,
+      "title": "Andrássy út and District VI",
+      "morning": "Walk Andrássy from Deák to Oktogon, then ride one stop on **M1** purely for the 1896 station tiling. Book a **State Opera House** tour or the evening performance.",
+      "afternoon": "Continue to **Hősök tere** and the Városliget. Then **Széchenyi Baths** (1913) — the outdoor pools in the neo-baroque courtyard, best from 16:00 when the day crowds thin.",
+      "evening": "Eat at **Kispiac Bisztró** on Hold utca, a ten-table room doing duck, pickles and *főzelék* properly, then walk two minutes to see Lechner's **Postal Savings Bank** floodlit.",
+      "dayStats": null,
+      "sleep": null
+    },
+    {
+      "day": 3,
+      "title": "District VII, the Jewish quarter",
+      "morning": "The **Dohány Street Synagogue** (Ludwig Förster, 1859), the largest in Europe, with the Jewish Museum and the Wallenberg memorial garden. Then the **Rumbach Sebestyén utca synagogue** (Otto Wagner, 1872, restored and reopened 2021).",
+      "afternoon": "The **Kazinczy utca Orthodox synagogue** (Löffler brothers, 1913), then the quarter's courtyards — Gozsdu udvar, the fire walls, the plaques.",
+      "evening": "**Gettó Gulyás** on Wesselényi utca for a proper goulash and *pörkölt* comparison, then **Szimpla Kert** on Kazinczy — arrive before 21:00 if you want to see the building rather than the crowd.",
+      "dayStats": null,
+      "sleep": null
+    },
+    {
+      "day": 4,
+      "title": "Buda: Castle Hill and Rózsadomb",
+      "morning": "The **Budavári Sikló** funicular up from Clark Ádám tér, then **Matthias Church**, the **Fisherman's Bastion** at opening for the empty terraces, and the Hungarian National Gallery in the Castle.",
+      "afternoon": "**Hospital in the Rock** on Lovas út — the wartime and Cold War hospital and nuclear bunker cut into the Castle Hill karst, on a booked guided tour [VERIFY: current Sziklakórház tour price and languages].",
+      "evening": "Down to **II. Rózsadomb** for **Gül Baba türbéje**, the restored Ottoman dervish tomb on Mecset utca, then dinner at **Stand25 Bisztró** in the Hold utcai Vásárcsarnok back across the river [VERIFY: current Stand25 location and opening days].",
+      "dayStats": null,
+      "sleep": null
+    },
+    {
+      "day": 5,
+      "title": "Districts VIII and IX",
+      "morning": "The **Palotanegyed**: Mikszáth Kálmán tér, Krúdy utca, the Wenckheim Palace that is now the Szabó Ervin Library — walk into the reading rooms on the upper floors, they are open to visitors.",
+      "afternoon": "The **Hungarian National Museum** on Múzeum körút, then south into **Ferencváros**: Ráday utca, and the **Great Market Hall** (Pecz Samu, 1897) at Fővám tér for paprika, *kolbász* and a first-floor *lángos*.",
+      "evening": "The **Bálna** on the embankment for the river view, then **Rosenstein** on Mosonyi utca near Keleti — Hungarian-Jewish home cooking, three decades in one family, and the single most reliable dinner in Budapest [VERIFY: current Rosenstein booking lead time].",
+      "dayStats": null,
+      "sleep": null
+    },
+    {
+      "day": 6,
+      "title": "Óbuda and Aquincum",
+      "morning": "HÉV from Batthyány tér to **Óbuda**: the cobbled **Fő tér**, the Zichy Palace courtyard, the **Vasarely Museum** and the **Kiscelli Museum** in its ruined baroque church.",
+      "afternoon": "On to **Aquincum**, the civilian town of the Roman provincial capital of Pannonia Inferior — a full excavated street grid, mosaics and the reconstructed water organ, plus the military amphitheatre on the way back [VERIFY: current Aquincum Museum hours and winter closure].",
+      "evening": "Return south on the **D11/D12** boat if the timetable allows, and eat in **XIII. Újlipótváros** on Pozsonyi út, under the Bauhaus façades and among people who live here.",
+      "dayStats": null,
+      "sleep": null
+    },
+    {
+      "day": 7,
+      "title": "Gellért, the market and the last walk",
+      "morning": "The **Gellért Baths** (1918) — Art Nouveau glass, Zsolnay tiling and the finest interior of any bath in the city. Go at opening; the thermal pools are quiet before 10:00.",
+      "afternoon": "Up the **Gellért-hegy** to the Citadella and the Liberty Statue for the whole-city panorama, then down over the **Szabadság híd** and one last circuit of the Great Market Hall.",
+      "evening": "**Bors GasztroBár** on Kazinczy utca for a soup and a baguette standing up — €5, twenty minutes, and better than half the sit-down restaurants — then Tram 2 north along the river with the Parliament lit up.",
+      "dayStats": null,
+      "sleep": null
+    }
+  ],
+  "accommodationStrategy": [
+    {
+      "rank": 1,
+      "name": "Hotels around Szabadság tér and Október 6. utca",
+      "style": "boutique hotel",
+      "location": "District V",
+      "description": "the quietest central address in the city. You are 10 minutes' walk from the Parliament, the Basilica and the Chain Bridge, on the M3 and the 2 tram, and out of the ruin-bar noise cone entirely.",
+      "booking": "4–8 weeks ahead; longer over Easter, the 20 August national holiday and New Year.",
+      "priceNote": null
+    },
+    {
+      "rank": 2,
+      "name": "Apartments off Pozsonyi út",
+      "style": "serviced apartment",
+      "location": "XIII. Újlipótváros",
+      "description": "the best value-per-square-metre in Budapest, in a real residential district with 1930s modernist blocks, the 4/6 tram at the end of the street and a genuine neighbourhood food scene. Fifteen minutes to the Parliament on foot.",
+      "booking": "3–6 weeks ahead direct or through the usual platforms; weekly rates are common [VERIFY: typical Újlipótváros weekly apartment rate].",
+      "priceNote": null
+    },
+    {
+      "rank": 3,
+      "name": "Small hotels on Mikszáth Kálmán tér",
+      "style": "small hotel",
+      "location": "VIII. Palotanegyed",
+      "description": "cheapest of the three, walkable to the National Museum, Ráday utca and the Jewish quarter, and surrounded by student cafés rather than stag parties. Good if you want the VII district by night without sleeping in it.",
+      "booking": "2–4 weeks ahead; the quarter is not yet a fixed point on the tourist map.",
+      "priceNote": null
+    }
+  ],
+  "logistics": {
+    "connectivity": "Full 4G/5G everywhere including the whole metro network. Free wifi in the baths' lobbies, most cafés and BKK boats.",
+    "emergency": "**112**. Pharmacies marked *gyógyszertár*; there are 24-hour ones near Nyugati and on Alkotás utca. Tap water is safe and good.",
+    "weather": "Continental. April swings from 6 °C to 24 °C in a week; July and August routinely hold 33–36 °C with no breeze in the Pest grid, which is why the baths and the museums are the afternoon plan in summer. Winter is grey and damp rather than snowy.",
+    "bookingWindows": "Parliament tours and Opera performances first, then the Hospital in the Rock, then baths and the synagogue complex. Restaurants: Rosenstein and Hungarikum Bisztró a week or two ahead, Kispiac and Stand25 a few days.",
+    "money": "Hungary uses the **forint**, not the euro; roughly 395–400 HUF to €1 [VERIFY: current HUF/EUR rate]. Cards are accepted almost everywhere, including markets. **Never change money on the street**, and avoid the airport bureaux. ATMs: use bank-branded machines and always decline \"dynamic currency conversion\" — the machine's own rate is 8–12% worse. Tipping is 10%, and check whether *szervízdíj* is already on the bill.",
+    "transportRules": "Buy the 7-day BKK travelcard at any metro window or the BudapestGO app. It does **not** cover the funicular, the Castle bus, or airport taxis. The HÉV suburban rail needs a supplement beyond the city boundary. Ride-hailing is Bolt; ordinary street taxis must be ordered by app or phone, not hailed.",
+    "permits": "No permits needed. Alcohol is not permitted on public transport. The Dohány complex is closed Saturdays and on Jewish holidays. Photography is restricted inside the Parliament's Holy Crown hall, and drones are banned over the whole city centre.",
+    "health": null,
+    "gettingThere": null,
+    "other": []
+  },
+  "proTips": [
+    "**Book the Parliament tour the moment you fix your dates.** It is the one hard constraint in the week: timed, capped, ID-checked, and gone days in advance in May and September.",
+    "**Baths at opening or after 16:00.** Gellért at 09:00 is a cathedral with six people in it; Széchenyi at 13:00 is a swimming pool with six hundred. Pay the extra for a **cabin** rather than a locker — it is a private changing room and worth the difference.",
+    "**Ride M1 end to end for the price of one journey.** Vörösmarty tér to Mexikói út is five minutes and the best-preserved 1896 interior in Europe.",
+    "**Do the ruin bars at 19:00, not midnight.** Szimpla Kert is a genuinely extraordinary building and you cannot see any of it after 22:00. The Sunday morning **farmers' market inside Szimpla** is the other half of the trick — same courtyard, jam and cheese instead of beer.",
+    "**Cross the river by boat, not bridge, at least once.** BKK's D11/D12 are included in the travelcard and give you the Parliament from the water for nothing.",
+    "**Say *\"Kérek egy…\"* and *\"Egészségedre!\"*** Hungarian is not guessable from any other language you know, and two phrases correctly used change how you are treated in a *kifőzde*.",
+    "**Keep District VIII in reserve for a wet afternoon.** The Szabó Ervin Library's palace reading rooms are free to enter, warm, almost empty, and the finest interior in the city that nobody queues for."
+  ],
+  "typeSpecific": {
+    "raw": {
+      "Walkable neighbourhood blocks": "**V. Belváros-Lipótváros** — Szabadság tér, the Parliament, Gresham Palace, Váci utca. **VI. Terézváros** — Andrássy út from Deák to Hősök tere, the Opera, Liszt Ferenc tér. **VII. Erzsébetváros** — the old Jewish quarter: Kazinczy, Dob and Rumbach Sebestyén utca, the ruin bars, three synagogues. **VIII. Palotanegyed** — the Palace Quarter around Mikszáth Kálmán tér, Krúdy utca and Múzeum körút. **IX. Ferencváros** — Ráday utca, the Great Market Hall at Fővám tér, the Bálna. **I. Vár** — Castle Hill, Matthias Church, Fisherman's Bastion. **II. Rózsadomb** — Gül Baba's tomb on Mecset utca, villa streets, Millenáris. **XIII. Újlipótváros** — Pozsonyi út and Szent István Park. **III. Óbuda** — Fő tér, the Kiscelli and Vasarely museums, Aquincum.",
+      "Transit passes": "BKK **24-hour travelcard ~2,500 HUF (€6.30)**, **72-hour ~5,500 HUF (€14)**, **7-day ~6,850 HUF (€17.30)** — the 7-day is the correct buy for this itinerary and covers metro, tram, bus, trolley, HÉV inside the city boundary and the public Danube boats [VERIFY: current BKK 2026 tariff]. The **Budapest Card** (24/48/72/96/120 h) bundles transit with free or discounted entries; 72 h is roughly €58 and only pays back if you do three or more paid museums a day [VERIFY: current Budapest Card price and inclusions]. Validate paper tickets; inspectors work the metro escalators relentlessly.",
+      "Lines worth riding for their own sake": "**M1, the Millennium Underground** (1896) — the oldest electrified underground on the European continent, wooden-panelled stations, running the length of Andrássy út and UNESCO-listed with it. **Tram 2** along the Pest embankment, the best cheap Danube view in the city. The **Budavári Sikló funicular** (1870) from Clark Ádám tér to the Castle, about 4,000 HUF (€10) return and not covered by the travelcard [VERIFY: current funicular fare]. BKK Danube boats **D11 and D12** run a weekday commuter service up and down the river and are included in the travelcard — a free river cruise if you time it [VERIFY: current D11/D12 season and timetable].",
+      "Booking timelines that actually matter": "**Parliament (Országház)** — **timed guided tour only**, sold through the official Országház office and website, sells out days ahead in season, priced in split EU / non-EU tiers, and you must show a **passport or ID at the gate** [VERIFY: current Parliament tour price and EU/non-EU tiers]. **State Opera House** — performances 4–8 weeks ahead, house tours 1–2 weeks. **Széchenyi** and **Gellért** — timed online tickets 2–5 days ahead for a weekend; choose cabin over locker. **Dohány Street Synagogue complex** — timed entry on a combined ticket covering the synagogue, the Jewish Museum, the Wallenberg memorial garden and Rumbach; closed Saturdays and Jewish holidays. **Hospital in the Rock (Sziklakórház)** — hourly guided tours only, small groups, 3–7 days ahead.",
+      "Architectural focal points": "**Steindl Imre**'s Parliament (1885–1904), Gothic Revival on a Westminster model with a 96 m dome. **Ybl Miklós** — the Opera House (1884) and the completion of St Stephen's Basilica, the definition of Budapest neo-Renaissance. **Lechner Ödön**'s Hungarian Secession, a national style in Zsolnay ceramic: the **Museum of Applied Arts** on Üllői út (1896, **closed for long-running renovation** — check before walking there) [VERIFY: Museum of Applied Arts reopening date] and the **Postal Savings Bank** on Hold utca (1901), whose ceramic roof of bees and flowers only reads from above. **Quittner Zsigmond**'s **Gresham Palace** (1906). And the 1930s **Bauhaus** blocks of Újlipótváros around Pozsonyi út — flat façades, corner windows, a different century two tram stops from the Parliament."
+    },
+    "surface": null,
+    "distanceKm": null,
+    "elevationM": null,
+    "verticalM": null,
+    "technicalRating": null,
+    "transitPass": "BKK **24-hour travelcard ~2,500 HUF (€6.30)**, **72-hour ~5,500 HUF (€14)**, **7-day ~6,850 HUF (€17.30)** — the 7-day is the correct buy for this itinerary and covers metro, tram, bus, trolley, HÉV inside the city boundary and the public Danube boats [VERIFY: current BKK 2026 tariff]. The **Budapest Card** (24/48/72/96/120 h) bundles transit with free or discounted entries; 72 h is roughly €58 and only pays back if you do three or more paid museums a day [VERIFY: current Budapest Card price and inclusions]. Validate paper tickets; inspectors work the metro escalators relentlessly.",
+    "hutBooking": null,
+    "liftNetwork": null,
+    "snowReliability": null,
+    "windConditions": null,
+    "gpxReady": null,
+    "bookingTimeline": "**Parliament (Országház)** — **timed guided tour only**, sold through the official Országház office and website, sells out days ahead in season, priced in split EU / non-EU tiers, and you must show a **passport or ID at the gate** [VERIFY: current Parliament tour price and EU/non-EU tiers]. **State Opera House** — performances 4–8 weeks ahead, house tours 1–2 weeks. **Széchenyi** and **Gellért** — timed online tickets 2–5 days ahead for a weekend; choose cabin over locker. **Dohány Street Synagogue complex** — timed entry on a combined ticket covering the synagogue, the Jewish Museum, the Wallenberg memorial garden and Rumbach; closed Saturdays and Jewish holidays. **Hospital in the Rock (Sziklakórház)** — hourly guided tours only, small groups, 3–7 days ahead.",
+    "audience": null
+  },
+  "packingNotes": [],
+  "whatCouldGoWrong": [],
+  "sources": {
+    "verified": null,
+    "confidenceNotes": "- Verified: M1 (1896) as the oldest electrified underground on the European continent, UNESCO-listed with Andrássy út; Steindl's Parliament 1885–1904, 96 m dome, guided-tour-only with ID; Ybl's Opera House (1884); Lechner's Museum of Applied Arts (1896) and Postal Savings Bank (1901); Gresham Palace (Quittner, 1906); Dohány Street Synagogue (Förster, 1859) as Europe's largest; Rumbach (Otto Wagner, 1872, reopened 2021); Kazinczy Orthodox synagogue (1913); Gellért 1918, Széchenyi 1913; Great Market Hall (Pecz, 1897); Budavári Sikló 1870; Aquincum in Pannonia Inferior; Hungary on the forint; emergency 112. - `[VERIFY]` items in this file: 13 (see inline markers above) - Last reviewed: 2026-09-02"
+  },
+  "verifyFlags": [
+    "current BKK 2026 tariff",
+    "current Budapest Card price and inclusions",
+    "current funicular fare",
+    "current D11/D12 season and timetable",
+    "current Parliament tour price and EU/non-EU tiers",
+    "Museum of Applied Arts reopening date",
+    "current Hungarikum Bisztró reservation policy",
+    "current Sziklakórház tour price and languages",
+    "current Stand25 location and opening days",
+    "current Rosenstein booking lead time",
+    "current Aquincum Museum hours and winter closure",
+    "typical Újlipótváros weekly apartment rate",
+    "current HUF/EUR rate"
+  ],
+  "verifyFlagCount": 13,
+  "volatilePricing": true,
+  "wordCount": 2386,
+  "dataVintage": 2026,
+  "provenance": {
+    "batch": "eastern-southeastern",
+    "sourceFile": "cartaeasterneuropetrips/trips/hungary-budapest-city.md",
+    "sourceFormat": "md+nested-yaml-frontmatter (one file per trip)",
+    "sourceId": "hungary-budapest-city",
+    "ingestedAt": "2026-09-02",
+    "synthesized": false
+  }
+}

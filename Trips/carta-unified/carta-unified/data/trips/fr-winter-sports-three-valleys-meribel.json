@@ -1,0 +1,308 @@
+{
+  "id": "fr-winter-sports-three-valleys-meribel",
+  "sourceId": "fr-winter-three-valleys-meribel",
+  "slug": "fr-winter-sports-three-valleys-meribel",
+  "title": "Les 3 Vallées from Méribel — Courchevel to Val Thorens",
+  "country": "France",
+  "countryCode": "FR",
+  "countries": [
+    {
+      "name": "France",
+      "code": "FR"
+    }
+  ],
+  "isMultiCountry": false,
+  "region": "Western & Central Europe",
+  "regionKey": "western-central",
+  "subRegion": "Tarentaise, Savoie, French Alps",
+  "tripType": "Winter Sports & Skiing",
+  "tripTypeId": 8,
+  "tripTypeSlug": "winter-sports",
+  "durationDays": 7,
+  "bestPeriod": {
+    "months": [
+      1,
+      2,
+      3,
+      12
+    ],
+    "monthNames": [
+      "January",
+      "February",
+      "March",
+      "December"
+    ],
+    "window": null,
+    "note": "February and March give the most reliable snow across all altitudes; late-season March offers longer light for the Val Thorens and Orelle sectors.",
+    "avoid": null,
+    "raw": null
+  },
+  "budgetTier": "€€€",
+  "budgetTierRange": [
+    3,
+    3
+  ],
+  "budgetTierRaw": "€€€",
+  "budget": {
+    "currency": "EUR",
+    "totalEur": {
+      "low": 1700,
+      "high": 2450
+    },
+    "totalNote": null,
+    "breakdown": {
+      "accommodation": {
+        "lowEur": 800,
+        "highEur": 1120,
+        "note": null
+      },
+      "food": {
+        "lowEur": 280,
+        "highEur": 380,
+        "note": null
+      },
+      "transport": {
+        "lowEur": 150,
+        "highEur": 220,
+        "note": null
+      },
+      "activities": {
+        "lowEur": 470,
+        "highEur": 730,
+        "note": null
+      }
+    },
+    "perDayEur": {
+      "low": 243,
+      "high": 350
+    }
+  },
+  "profile": {
+    "difficulty": 3,
+    "difficultyLabel": "Active",
+    "difficultyNote": null,
+    "fitnessLevel": "Active",
+    "crowdLevel": "High",
+    "familyFriendly": true,
+    "carRequired": false
+  },
+  "basecamps": [
+    "Méribel"
+  ],
+  "gatewayAirport": "Chambéry (CMF)",
+  "gatewayAirportCode": "CMF",
+  "languages": [
+    "French"
+  ],
+  "currency": "EUR",
+  "emergencyNumber": "112",
+  "coordinates": {
+    "lat": 45.5663,
+    "lon": 5.9208,
+    "precision": "gateway",
+    "matchedPlace": "Chambéry",
+    "source": "geonames (geonamescache, cities > 15k)"
+  },
+  "tags": [
+    "lift-interconnect",
+    "pass-tiers",
+    "off-piste",
+    "avalanche-safety",
+    "high-altitude"
+  ],
+  "summary": "A week based in Méribel using the full 3 Vallées interconnect to reach Courchevel, Val Thorens and Orelle, with pass tiers explained and a guided off-piste day.",
+  "summaryGenerated": false,
+  "hook": "Les 3 Vallées is the largest lift-connected ski area on earth, and Méribel sits at its geographic middle, which is exactly why it works as a base: Courchevel is one valley over, Val Thorens the other, and neither requires a car. This week uses the interconnect properly — including the two points where it actually breaks down — and spends a full day off the marked pistes with a certified guide.",
+  "snapshot": {
+    "Country": "France",
+    "Base(s)": "Méribel (7 nights)",
+    "Trip Type": "Winter Sports & Skiing",
+    "Duration": "7 days",
+    "Best Period": "December–March; February/March most snow-secure across all altitudes",
+    "Budget Tier": "€€€",
+    "Total Distance / Terrain": "Les 3 Vallées: approx. 600 km piste; base 1,450 m (Méribel) to 3,230 m (Cime de Caron, Val Thorens)",
+    "Getting There": "Fly to Chambéry (CMF), 1h30 transfer; Geneva (GVA) or Lyon (LYS) also viable, 2h30",
+    "Who It Suits": "Confident intermediates and advanced skiers who want to actually use the scale of the area, not just one valley"
+  },
+  "itinerary": [
+    {
+      "day": 1,
+      "title": "Arrival and Méribel orientation",
+      "morning": "Transfer from Chambéry to Méribel (1,450 m), roughly 90 minutes by road up the Tarentaise valley and the Méribel access road.",
+      "afternoon": "Buy the appropriate pass tier for the week (see Smart Logistics below) and take the Saulire Express or Roc de Fer chairs above Méribel centre for an easy orientation lap, finishing down toward Méribel-Mottaret at 1,700 m, the resort's higher and snow-surer satellite village.",
+      "evening": "Méribel's centre, deliberately built in traditional chalet style since the resort's 1938 founding by a British skier fleeing the newly annexed Austrian Alps, is compact enough to explore on foot.",
+      "dayStats": "approx. 900 m vertical · Méribel/Mottaret sectors · 2 lift hours.",
+      "sleep": null
+    },
+    {
+      "day": 2,
+      "title": "Méribel valley in full",
+      "morning": "Ski the Méribel valley's own terrain properly before crossing anywhere else: the Mont Vallon cable car above Mottaret reaches 2,952 m, the valley's highest point, with a long, varied descent back down.",
+      "afternoon": "The Plattières and Tougnète sectors on the valley's eastern flank connect toward Les Menuires and St Martin de Belleville — worth a look even on a Méribel-focused day, since the lift network here is genuinely open rather than needing a specific \"linking\" chair.",
+      "evening": "A Méribel Valley pass (the resort's own local ticket, cheaper than the full 3 Vallées pass) genuinely covers everything skied so far — worth knowing before paying for the full interconnect ticket on day one.",
+      "dayStats": "approx. 4,200 m vertical · Méribel/Mottaret/Tougnète sectors · 4.5 lift hours.",
+      "sleep": null
+    },
+    {
+      "day": 3,
+      "title": "Courchevel, and the Saulire bottleneck",
+      "morning": "Cross into the Courchevel valley via the Saulire cable car, the historic link between the two valleys and, on a busy day, the single biggest queue in the 3 Vallées — arrive by 08:45 to beat the mid-morning crush, since this cabin is the actual chokepoint of the whole interconnect. In strong wind it is also the first lift on this side to suspend, stranding skiers on whichever side of the ridge they started from.",
+      "afternoon": "Courchevel's four linked villages — Courchevel 1850 (the luxury end), 1650, Moriond and Le Praz — offer a different character: wider, more manicured pistes and noticeably higher prices in 1850's restaurants. Ski down through the Bel Air and Ariondaz sectors for a varied return.",
+      "evening": "Return over the Saulire before its last-departure time, checked each morning at the base — missing it means a long piste-and-lift detour back via Méribel-Mottaret rather than a direct crossing.",
+      "dayStats": "approx. 4,500 m vertical · Courchevel valley (1850/1650/Moriond/Le Praz) · 4 lift hours.",
+      "sleep": null
+    },
+    {
+      "day": 4,
+      "title": "Val Thorens and the Col de Chanrossa",
+      "morning": "Cross into the Val Thorens/Belleville valley via the Col de Chanrossa or Mont de la Chambre lift chain from Méribel-Mottaret — a smoother link than the Saulire, though it too closes first in genuinely severe wind since it runs along an exposed ridge.",
+      "afternoon": "Val Thorens itself sits at 2,300 m, the highest resort centre in Europe, and its lift-served terrain reaches the Cime de Caron at 3,230 m by cable car — the area's highest point and, on a clear day, a view stretching to Mont Blanc. This altitude is also the honest reason Val Thorens holds snow later into spring than either Méribel or Courchevel; if the week has been marginal for snow lower down, weight more time here.",
+      "evening": "Return to Méribel via the same link chain; Val Thorens' own centre, purpose-built and functional rather than picturesque, is not worth an overnight detour on this itinerary.",
+      "dayStats": "approx. 4,800 m vertical · Val Thorens/Belleville valley · 4.5 lift hours.",
+      "sleep": null
+    },
+    {
+      "day": 5,
+      "title": "Orelle, the Maurienne-side extension",
+      "morning": "Orelle is the 3 Vallées' fourth access point, added in 2011 specifically to give the area a direct link from the Maurienne valley and the A43 motorway, avoiding the longer Tarentaise approach — useful context for why it exists, and also why it is the area's most exposed single link. The Bouquetin tri-cable gondola climbs from the Orelle valley floor up to the Cime de Caron ridge in one long span; it is the lift most likely to suspend in high wind of anything in the network, and when it closes, Orelle is effectively cut off from the rest of the 3 Vallées.",
+      "afternoon": "Approach Orelle from the Val Thorens side instead — ski down to the Bouquetin's upper station and ride it down, then back up, for a genuinely different, quieter pocket of the area with good tree-line skiing lower down that the higher valleys lack.",
+      "evening": "Return to Méribel via Val Thorens and the Col de Chanrossa link, timed against the posted last-lift schedule.",
+      "dayStats": "approx. 3,600 m vertical · Orelle/Val Thorens link · 4 lift hours.",
+      "sleep": null
+    },
+    {
+      "day": 6,
+      "title": "Guided off-piste day",
+      "morning": "Book a full day with the Bureau des Guides de Méribel or the off-piste programme run by ESF Méribel (École du Ski Français), both established local operations offering certified-guide freeride days. The Vallée des Encombres, accessed from the ridge above St Martin de Belleville, is the area's best-known off-piste itinerary: a long, unpatrolled descent through wild, partially wooded terrain that is genuinely not a place to go without a guide who knows the current line and snowpack.",
+      "afternoon": "Depending on conditions, the guide may instead choose lines off the Mont Vallon or Col de Chanrossa ridges, checking the daily Météo-France avalanche bulletin, rated on the standard five-level European avalanche danger scale (1 Low to 5 Very High), before committing. Transceiver, probe and shovel are standard kit for the day, either brought or supplied and checked by the guide office.",
+      "evening": "A debrief with the group is normal practice; guide offices here often flag which lines are worth another look before the snow changes character later in the season.",
+      "dayStats": "approx. 1,200–1,800 m vertical off-piste · Vallée des Encombres/Mont Vallon sectors · full guided day.",
+      "sleep": null
+    },
+    {
+      "day": 7,
+      "title": "St Martin de Belleville and departure",
+      "morning": "A gentler final morning in the quieter St Martin de Belleville sector, a genuine working Savoyard village rather than a purpose-built resort, with good tree-lined runs back toward the valley.",
+      "afternoon": "Return to Méribel, hand back rental gear, and transfer to Chambéry with a comfortable buffer before an evening flight.",
+      "evening": "Flight home from Chambéry.",
+      "dayStats": "approx. 1,800 m vertical · St Martin de Belleville/Méribel sectors · 2.5 lift hours.",
+      "sleep": null
+    }
+  ],
+  "accommodationStrategy": [
+    {
+      "rank": 1,
+      "name": "Hôtel Le Coucou",
+      "style": "Ski-in ski-out",
+      "location": "Méribel centre",
+      "description": "A short walk from the Saulire lift base, positioned for the early starts the Courchevel crossing rewards, with ski storage and boot warmers standard.",
+      "booking": "August for the February peak.",
+      "priceNote": "€280–€400 per night for two, half board"
+    },
+    {
+      "rank": 2,
+      "name": "Résidence Le Village Montana",
+      "style": "Self-catering apartments",
+      "location": "Méribel-Mottaret",
+      "description": "Apartments at 1,700 m, closer to the Mont Vallon cable car and the Val Thorens-direction lifts, and generally cheaper than central Méribel for an equivalent standard.",
+      "booking": "two to three months ahead.",
+      "priceNote": "€190–€280 per night for two"
+    },
+    {
+      "rank": 3,
+      "name": "Hôtel Le Grand Coeur",
+      "style": "Traditional luxury chalet-hotel",
+      "location": "Méribel",
+      "description": "A well-established Méribel hotel a short walk from the centre, with an early breakfast service that suits the 08:45 start needed to beat the Saulire queue.",
+      "booking": "August for Christmas and February school-holiday weeks.",
+      "priceNote": "€320–€460 per night for two, half board"
+    }
+  ],
+  "logistics": {
+    "connectivity": "Reliable in all four resort centres; drops out on the high ridge lifts and in the Vallée des Encombres, one more reason the guided day carries a radio.",
+    "emergency": "112 pan-European; French mountain rescue (PGHM) also reachable via 112. Piste patrol response within resort boundaries is fast given the density of lift infrastructure.",
+    "weather": "The Saulire cable car and the Orelle-side Bouquetin gondola are the two most wind-sensitive links; build a spare half-day into the week rather than assuming every crossing will run.",
+    "bookingWindows": "French Christmas/New Year and February school-holiday weeks (staggered by zone) sell out Méribel's better properties up to a year ahead; book the guided off-piste day two to three weeks ahead in high season.",
+    "money": "Cards standard everywhere; RFID pass cards are used at every lift gate — keep it accessible rather than buried in a pack.",
+    "transportRules": null,
+    "permits": null,
+    "health": null,
+    "gettingThere": null,
+    "other": [
+      {
+        "label": "Ski pass tiers",
+        "text": "A Méribel Valley pass (local only, covering Méribel and Mottaret) runs approx. €65–€72 per day or €330–€370 for six days in 2026 and is genuinely enough for a Méribel-only week. The full 3 Vallées pass, needed for Courchevel, Val Thorens and Orelle, runs approx. €78–€86 per day or €400–€450 for six days. There is no meaningful middle tier — local valley or the whole interconnect."
+      },
+      {
+        "label": "Emergencies",
+        "text": "112 pan-European; French mountain rescue (PGHM) also reachable via 112. Piste patrol response within resort boundaries is fast given the density of lift infrastructure."
+      },
+      {
+        "label": "Opening-hour traps",
+        "text": "Last-lift times on the inter-valley links shift through the season and are posted each morning — check the return-crossing time before heading to Courchevel or Val Thorens."
+      },
+      {
+        "label": "Avalanche equipment",
+        "text": "Mandatory for the Vallée des Encombres and any off-piste terrain — transceiver, probe and shovel; guide offices check kit but this does not substitute for self-rescue competence."
+      }
+    ]
+  },
+  "proTips": [
+    "Cross to Courchevel before 09:00; the Saulire queue by 10:30 on a Saturday changeover morning can run 30–40 minutes.",
+    "Weight the back half of the week toward Val Thorens and Orelle if the season has run mild — the altitude difference from Méribel's 1,450 m base is real.",
+    "A Méribel Valley pass genuinely pays for itself over a full 3 Vallées pass if you are not planning to cross into Courchevel or Val Thorens more than once or twice — do the arithmetic before buying the full tier by default.",
+    "Book the Vallée des Encombres guided day for the clearest forecast window in the week; visibility on the exposed St Martin ridge approach matters as much as snow quality.",
+    "St Martin de Belleville's village restaurants run noticeably cheaper than Courchevel 1850's for an equivalent meal.",
+    "Check the Bouquetin gondola's live status before committing to an Orelle-side day in anything but calm weather."
+  ],
+  "typeSpecific": {
+    "raw": {
+      "Total Distance / Terrain": "Les 3 Vallées: approx. 600 km piste; base 1,450 m (Méribel) to 3,230 m (Cime de Caron, Val Thorens)",
+      "Who It Suits": "Confident intermediates and advanced skiers who want to actually use the scale of the area, not just one valley"
+    },
+    "surface": "Les 3 Vallées: approx. 600 km piste; base 1,450 m (Méribel) to 3,230 m (Cime de Caron, Val Thorens)",
+    "distanceKm": 3,
+    "elevationM": null,
+    "verticalM": null,
+    "technicalRating": null,
+    "transitPass": null,
+    "hutBooking": null,
+    "liftNetwork": null,
+    "snowReliability": null,
+    "windConditions": null,
+    "gpxReady": null,
+    "bookingTimeline": null,
+    "audience": "Confident intermediates and advanced skiers who want to actually use the scale of the area, not just one valley"
+  },
+  "packingNotes": [
+    "Transceiver, probe and shovel for the guided off-piste day.",
+    "A helmet, standard practice on the steeper Courchevel and Mont Vallon terrain.",
+    "Goggles with a low-light lens for the exposed ridge crossings in flat light.",
+    "Layers for a wide range: Val Thorens at 2,300–3,230 m runs noticeably colder than Méribel's 1,450 m base village.",
+    "Cash in small notes for mountain restaurants that prefer it.",
+    "A daypack for the guided day, sized for spare layers, water and emergency kit."
+  ],
+  "whatCouldGoWrong": [
+    "**Wind closes the Saulire cable car.** Fallback: ski Méribel's own extensive terrain that day, or cross to Val Thorens via the more sheltered Chanrossa link instead.",
+    "**The Bouquetin gondola suspends, stranding an Orelle-side plan.** Fallback: retreat to the Val Thorens sector, fully accessible from Méribel regardless of Orelle's status.",
+    "**Low snow at Méribel's 1,450 m base.** Fallback: spend more time at Val Thorens and Mottaret's higher terrain, both holding cover longer.",
+    "**The Vallée des Encombres guided day is fully booked.** Fallback: book the alternate operator — ESF Méribel if the Bureau des Guides is full — or shift to Mont Vallon's more accessible off-piste pockets."
+  ],
+  "sources": {
+    "verified": null,
+    "confidenceNotes": null
+  },
+  "verifyFlags": [],
+  "verifyFlagCount": 0,
+  "volatilePricing": false,
+  "wordCount": 2079,
+  "dataVintage": 2026,
+  "provenance": {
+    "batch": "western-central",
+    "sourceFile": "cartatripsv1/trips/fr-winter-three-valleys-meribel.md",
+    "sourceFormat": "md+yaml-frontmatter (one file per trip)",
+    "sourceId": "fr-winter-three-valleys-meribel",
+    "ingestedAt": "2026-09-02",
+    "synthesized": false
+  }
+}

@@ -1,0 +1,293 @@
+{
+  "id": "se-hiking-kungsleden-north-abisko-nikkaluokta",
+  "sourceId": "kungsleden-north-abisko-nikkaluokta",
+  "slug": "se-hiking-kungsleden-north-abisko-nikkaluokta",
+  "title": "Kungsleden North: Abisko to Nikkaluokta",
+  "country": "Sweden",
+  "countryCode": "SE",
+  "countries": [
+    {
+      "name": "Sweden",
+      "code": "SE"
+    }
+  ],
+  "isMultiCountry": false,
+  "region": "Northern Europe & Baltics",
+  "regionKey": "northern-baltics",
+  "subRegion": "Lapland, Norrbotten — Abisko and Kebnekaise massif",
+  "tripType": "Hiking & Alpine Trekking",
+  "tripTypeId": 6,
+  "tripTypeSlug": "hiking",
+  "durationDays": 7,
+  "bestPeriod": {
+    "months": [
+      7,
+      8,
+      9
+    ],
+    "monthNames": [
+      "July",
+      "August",
+      "September"
+    ],
+    "window": "Late June to mid-September, matching the STF staffed-hut season and the boat services. July has mosquitoes and midnight sun; the first half of September has autumn colour, no insects and the first frosts",
+    "note": null,
+    "avoid": null,
+    "raw": "Late June to mid-September, matching the STF staffed-hut season and the boat services. July has mosquitoes and midnight sun; the first half of September has autumn colour, no insects and the first frosts"
+  },
+  "budgetTier": "€€",
+  "budgetTierRange": [
+    2,
+    2
+  ],
+  "budgetTierRaw": "€€",
+  "budget": {
+    "currency": "EUR",
+    "totalEur": {
+      "low": 1100,
+      "high": 1600
+    },
+    "totalNote": "€1,100–1,600 per person",
+    "breakdown": {
+      "accommodation": {
+        "lowEur": 45,
+        "highEur": 70,
+        "note": "STF mountain huts €45–70 per night for members; Kebnekaise Fjällstation €70–140; Abisko Turiststation €60–110"
+      },
+      "food": {
+        "lowEur": 35,
+        "highEur": 60,
+        "note": "€35–60 per day — hut shops sell freeze-dried meals and staples at mountain prices; carry your own for the middle stages"
+      },
+      "transport": {
+        "lowEur": 200,
+        "highEur": 320,
+        "note": "€200–320: night train or flight to Kiruna/Abisko, lake boats, Nikkaluokta bus"
+      },
+      "activities": {
+        "lowEur": 150,
+        "highEur": 250,
+        "note": "Included; optional guided Kebnekaise summit €150–250"
+      }
+    },
+    "perDayEur": {
+      "low": 157,
+      "high": 229
+    }
+  },
+  "profile": {
+    "difficulty": 4,
+    "difficultyLabel": "Demanding",
+    "difficultyNote": "Moderate–hard. About 105 km over 6 walking days on a well-marked, bridged trail; one pass at 1,150 m; the difficulty is distance, weather and remoteness rather than technicality",
+    "fitnessLevel": "Demanding",
+    "crowdLevel": null,
+    "familyFriendly": null,
+    "carRequired": null
+  },
+  "basecamps": [
+    "Abisko",
+    "Nikkaluokta",
+    "Kiruna"
+  ],
+  "gatewayAirport": null,
+  "gatewayAirportCode": null,
+  "languages": [
+    "Swedish",
+    "English",
+    "Sámi languages"
+  ],
+  "currency": "SEK (Swedish krona)",
+  "emergencyNumber": "112",
+  "coordinates": {
+    "lat": 68.35,
+    "lon": 18.78,
+    "precision": "source",
+    "matchedPlace": "Abisko",
+    "source": "source record"
+  },
+  "tags": [],
+  "summary": "A seven-day hiking & alpine trekking itinerary in Lapland, Norrbotten — Abisko and Kebnekaise massif, Sweden.",
+  "summaryGenerated": true,
+  "hook": null,
+  "snapshot": {},
+  "itinerary": [
+    {
+      "day": 1,
+      "title": "Abisko: arrival and the Abisko canyon",
+      "morning": "Arrive by the Stockholm–Narvik night train to Abisko Turiststation (about 17 h, and one of Europe's best rail journeys), or fly to Kiruna and take the bus.",
+      "afternoon": "Walk the Abisko canyon where the Abiskojåkka river cuts a gorge through red rock, and see the Lapporten — the U-shaped glacial gate that is the symbol of Swedish Lapland. Weigh your pack, buy last gas canisters at the station shop.",
+      "evening": "Abisko Turiststation. Brief yourself on the route board and register your plan.",
+      "dayStats": "6 km",
+      "sleep": null
+    },
+    {
+      "day": 2,
+      "title": "Abisko to Abiskojaure",
+      "morning": "The trailhead arch at Abisko is the northern terminus of the Kungsleden, the King's Trail. Birch forest, boardwalk over wet ground, the river always to your left.",
+      "afternoon": "Arrive Abiskojaure hut on the lake — a group of red-painted cabins with a sauna by the water.",
+      "evening": "Sauna and a lake swim at 8 °C. **Water:** the river and its tributaries the entire way; Swedish mountain water is drinkable untreated above the treeline and generally safe here.",
+      "dayStats": "15 km, 200 m, 4–5 h",
+      "sleep": null
+    },
+    {
+      "day": 3,
+      "title": "Abiskojaure to Alesjaure",
+      "morning": "Climb out of the birch into open fell. The valley widens; the trail is stony but clear, marked with cairns and red-painted rocks.",
+      "afternoon": "Alesjaure sits above a lake chain with Sámi settlements nearby — this is a working reindeer-herding landscape, not a wilderness in the empty sense. The hut has one of the best saunas on the trail, on a hill with a view down the valley.",
+      "evening": "Sámi-operated boat services run on the Alesjaure lakes in season and can shorten this stage significantly if weather or blisters demand it. `verify: true`",
+      "dayStats": "21 km, 400 m, 6–8 h",
+      "sleep": null
+    },
+    {
+      "day": 4,
+      "title": "Alesjaure to Tjäktja and over the pass to Sälka",
+      "morning": "Gentle climb up the Tjäktjavagge valley — a classic glacial trough, wide, treeless and enormous.",
+      "afternoon": "The **Tjäktja pass** at about 1,150 m is the highest point of the Kungsleden and the watershed of the trip. There is an emergency shelter at the top. Descend into the long valley to Sälka.",
+      "evening": "Sälka hut, with a shop and a sauna. If the day is too long, break it at Tjäktja hut before the pass. **Water:** streams throughout; the pass itself is dry for about 4 km.",
+      "dayStats": "25 km, 500 m, 8–9 h",
+      "sleep": null
+    },
+    {
+      "day": 5,
+      "title": "Sälka to Singi and Kebnekaise Fjällstation",
+      "morning": "Down the valley to Singi, where the Kungsleden continues south and our route turns east into the Kebnekaise massif.",
+      "afternoon": "The Ladtjovagge valley approach to Kebnekaise Fjällstation, with the massif rising ahead. The station is a full mountain centre — restaurant, shop, sauna, guides.",
+      "evening": "Proper food and a bed. Book the guided summit day now if you want it.",
+      "dayStats": "22 km, 300 m, 7–8 h",
+      "sleep": null
+    },
+    {
+      "day": 6,
+      "title": "Kebnekaise south summit",
+      "morning": "Sweden's highest mountain. The **eastern route** is the standard non-glaciated ascent — long, steep, rocky, and hard but unguided-feasible for fit, experienced walkers. The **western route** crosses the Björling glacier and requires a guide, rope and crampons.",
+      "afternoon": "The south summit is a glacier-capped peak whose height changes measurably from year to year as the ice cap melts — it has now dropped to roughly the same height as the ice-free north peak, which is itself a lesson in what is happening up here.",
+      "evening": "Back at the station. Sauna. This is the hardest day of the week by a wide margin — treat the weather forecast as a veto, not a suggestion. **Water:** streams to about 1,400 m only; carry 2 litres.",
+      "dayStats": "18 km return, 1,700 m, 10–14 h",
+      "sleep": null
+    },
+    {
+      "day": 7,
+      "title": "Kebnekaise to Nikkaluokta and out",
+      "morning": "The exit valley to Nikkaluokta, a Sámi village and the road head. A boat across Ladtjojaure lake cuts about 6 km off the walk when it is running.",
+      "afternoon": "Bus Nikkaluokta–Kiruna (about 1 h 20), then flight or the night train south. Eat a reindeer burger at the Nikkaluokta café; it is a tradition and it is earned.",
+      "evening": null,
+      "dayStats": "19 km, mostly descending",
+      "sleep": null
+    }
+  ],
+  "accommodationStrategy": [
+    {
+      "rank": 1,
+      "name": "STF mountain huts",
+      "style": "Abiskojaure, Alesjaure, Tjäktja, Sälka, Singi",
+      "location": null,
+      "description": "Small clusters of red cabins with bunk dormitories, a shared kitchen with gas, a wood-fired sauna at most of them, and a warden. Several have a small shop selling freeze-dried food, chocolate, gas and basic supplies. **No advance booking for the mountain huts** — beds are allocated on arrival and the STF principle is that nobody is turned away, with floor mattresses as the overflow. STF membership gives a meaningful discount. `verify: true`",
+      "booking": null,
+      "priceNote": null
+    },
+    {
+      "rank": 2,
+      "name": "Kebnekaise Fjällstation",
+      "style": null,
+      "location": null,
+      "description": "The big mountain station at the foot of the massif: rooms and dormitories, a restaurant serving proper Lapland cooking, a shop, and the guide office for the western-route summit. Two nights here is the correct shape for Days 5–6.",
+      "booking": null,
+      "priceNote": null
+    },
+    {
+      "rank": 3,
+      "name": "Abisko Turiststation",
+      "style": null,
+      "location": null,
+      "description": "Trailhead base with rooms, dorms, a shop, a restaurant and the Aurora Sky Station chairlift. It sits on the railway, so your travel day ends at the door.",
+      "booking": null,
+      "priceNote": null
+    }
+  ],
+  "logistics": {
+    "connectivity": null,
+    "emergency": "112. Mountain rescue is coordinated by the police and is slow by mountain-range standards — this is a genuinely remote area. Hut wardens have radio contact. Carry a whistle, and consider a satellite messenger for the Kebnekaise day.",
+    "weather": "Snow is possible in any month; the Tjäktja pass in a whiteout is serious. Fjällsäkerhetsrådet (the Swedish mountain safety council) publishes conditions and warnings in English.",
+    "bookingWindows": null,
+    "money": null,
+    "transportRules": null,
+    "permits": null,
+    "health": null,
+    "gettingThere": null,
+    "other": [
+      {
+        "label": "Season boundaries matter absolutely",
+        "text": "Outside the staffed season the huts close, the lake boats stop and — critically — some **bridges are removed for the winter**, which changes river crossings from trivial to dangerous. Check the STF season dates before booking any transport. `verify: true`"
+      },
+      {
+        "label": "Allemansrätten",
+        "text": "Sweden's right of public access allows wild camping for a night or two on unenclosed land, which is what makes the Kungsleden flexible. You may camp beside huts and pay a reduced fee to use the service building and sauna."
+      },
+      {
+        "label": "Reindeer herding",
+        "text": "This is Sámi land in active use. Do not disturb reindeer, do not fly drones over herds, keep to the trail near corrals, and treat herding fences and gates as working infrastructure."
+      },
+      {
+        "label": "Mosquitoes",
+        "text": "Mid-July in the birch zone is severe. A head net weighs nothing and will change your trip. Late August onward they are gone."
+      },
+      {
+        "label": "Gear essentials",
+        "text": "Four-season shell and trousers, insulated jacket, hat and gloves, boots with ankle support, gaiters, sleeping bag rated to at least 0 °C plus a liner, stove and fuel (canisters are sold at huts, not carried on planes), water bottles, headtorch from mid-August when the nights return."
+      },
+      {
+        "label": "Payment",
+        "text": "Sweden is effectively cashless and the huts take cards, but connectivity is intermittent — carry two cards and expect offline processing."
+      }
+    ]
+  },
+  "proTips": [
+    "Go in the **first two weeks of September**. Autumn colour on the fells is extraordinary, the mosquitoes are gone, the huts are quiet, and the northern lights return at night while the huts are still staffed.",
+    "Use the **lake boats** without guilt. Alesjaure and Ladtjojaure boat services remove about 15 km of flat lakeside walking and let you spend the saved day on Kebnekaise instead.",
+    "Book **two nights at Kebnekaise Fjällstation** so the summit day has a weather reserve. A single-night plan means summiting in whatever conditions arrive.",
+    "Take the **night train** rather than flying. It arrives at the trailhead itself, saves a hotel night, and the run along the Torneträsk lake at dawn is the trip's overture.",
+    "Every hut has a **sauna**, usually with a lake or river beside it and a booking sheet on the door. Sign up on arrival; the evening slots go first.",
+    "Send a resupply parcel? No — but do plan on hut shops for the middle three days and carry only two days' emergency food. It is the single biggest pack-weight saving available."
+  ],
+  "typeSpecific": {
+    "raw": {
+      "technical_rating": "T2 trail walking with boardwalk over bog; the optional Kebnekaise south summit is T3+ with a glacier crossing on the western route",
+      "weekly_distance_km": 105,
+      "max_elevation_m": 1150,
+      "hut_network": "Svenska Turistföreningen (STF) — Abiskojaure, Alesjaure, Tjäktja, Sälka, Singi, Kebnekaise Fjällstation",
+      "gpx_ready": true
+    },
+    "surface": null,
+    "distanceKm": 105,
+    "elevationM": 1150,
+    "verticalM": null,
+    "technicalRating": "T2 trail walking with boardwalk over bog; the optional Kebnekaise south summit is T3+ with a glacier crossing on the western route",
+    "transitPass": null,
+    "hutBooking": "Svenska Turistföreningen (STF) — Abiskojaure, Alesjaure, Tjäktja, Sälka, Singi, Kebnekaise Fjällstation",
+    "liftNetwork": null,
+    "snowReliability": null,
+    "windConditions": null,
+    "gpxReady": true,
+    "bookingTimeline": null,
+    "audience": null
+  },
+  "packingNotes": [],
+  "whatCouldGoWrong": [],
+  "sources": {
+    "verified": null,
+    "confidenceNotes": null
+  },
+  "verifyFlags": [],
+  "verifyFlagCount": 0,
+  "volatilePricing": true,
+  "wordCount": 1559,
+  "dataVintage": 2026,
+  "provenance": {
+    "batch": "northern-baltics",
+    "sourceFile": "carta_northern_europe_baltics_trips.md#trip-17",
+    "sourceFormat": "single-file md, '## Trip NN' records with fenced YAML",
+    "sourceId": "kungsleden-north-abisko-nikkaluokta",
+    "ingestedAt": "2026-09-02",
+    "synthesized": false
+  }
+}
