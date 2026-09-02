@@ -260,6 +260,37 @@ Two caveats worth keeping in view: the labels are model made
 through the review queue), and 29 images from one category is a small,
 enriched sample rather than the 800 the brief asks for.
 
+## Fix it at the gate, not in the data
+
+`fill_authors.py` repairs the caches: it re-asks Commons for a name and
+drops what it cannot credit. That leaves the wire honest only AFTER a
+pass has run, and only until the next harvest introduces new files. The
+guarantee expires quietly, and it depends on somebody having run
+something.
+
+`credit.owes_credit(img)` is the same rule as a gate condition, and it
+is the stronger one. An export that refuses a photograph owing a credit
+it does not have makes honesty a property of the layer rather than of a
+maintenance pass: it holds whatever the cache says and whoever has run
+what, including when the session that was going to run the repair ends
+first. It also recovers by itself, which repairing data cannot do. If
+the name turns up on Commons next month the photograph returns at the
+next export with nobody needing to remember it was missing.
+
+The cycling layer got there first (brief 07), and the framing is theirs:
+**a missing credit should cost US a picture, never a reader a false
+notice.** "CC BY-SA 3.0" printed under a photograph naming nobody is
+worse than shipping no photograph, because it looks like compliance.
+
+Two cases are easy to get backwards, and both are in the tests: a CC0
+file with no author is complete, not a gap, and a file with NO licence
+at all fails even when it names an author.
+
+The cost is small and it only points one way. Measured on mountains:
+90 photographs dropped, 8 rows falling from rated to listed, none
+emptied and none deleted. A drop can only ever demote a row, because the
+listed tier and the map card are both real places to land.
+
 ## A thin gallery is not a place with little to photograph
 
 A constraint for brief 08 and for anything else that aggregates this
