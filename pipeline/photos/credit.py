@@ -73,3 +73,36 @@ def credit_gap(meta):
     """True when this file owes a name and has none: the condition worth
     reporting, as distinct from a public domain file with no author."""
     return attribution_required(meta) and not author_of(meta)
+
+
+# Licences that ask for no name at all. A file under one of these with an
+# empty author is correct and complete, not a gap.
+NO_CREDIT_LIC = re.compile(r"public domain|^pd\b|cc0|no restrictions", re.I)
+
+
+def owes_credit(img):
+    """True when a published image record owes a name and carries none.
+
+    The gate condition, as opposed to the repair condition. fill_authors
+    fixes the DATA, which makes the wire honest only after a pass has run
+    and only until the next harvest introduces new files. An export that
+    refuses this at the gate makes it a property of the layer instead: a
+    photograph owing a credit it does not have cannot reach a card,
+    whatever the cache says and whoever has run what. The cycling layer
+    got there first (brief 07) and the framing is theirs: a missing
+    credit should cost US a picture, never a reader a false notice.
+
+    It also recovers by itself. If the name turns up on Commons later,
+    the photograph returns at the next export with nobody needing to
+    remember, which repairing the data cannot do.
+
+    Accepts a cache record (license/author) or a wire record (lic/by).
+    """
+    lic = (img.get("license") or img.get("lic") or "").strip()
+    if not lic:
+        return True                       # no licence is worse than no name
+    if img.get("no_attribution_required"):
+        return False                      # Commons says none is owed
+    if NO_CREDIT_LIC.search(lic):
+        return False
+    return not (img.get("author") or img.get("by") or "").strip()

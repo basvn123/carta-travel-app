@@ -19,10 +19,14 @@ So, per image with a licence and no author, in order:
      truncated sanely)
   3. AttributionRequired false -> no credit owed; the empty author is
      recorded as fine (`no_attribution_required`) and the file ships
-  4. still nothing and a credit IS owed -> the file stops shipping: it is
-     removed where the row keeps two photographs, flagged
-     (`drop_no_author`) and reported where removing it would unpublish
-     the row, so the coverage decision is visible instead of silent
+  4. still nothing and a credit IS owed -> the file stops shipping,
+     always, however few photographs the row has left. A row is allowed
+     to fall: under its layer's rated gate it publishes as `listed`, and
+     with no photographs at all it publishes as a map card. Both are
+     honest and neither deletes the row, so there is nothing to trade
+     the licence obligation against. The run reports how many rows moved
+     each way, because that number ticks the published count DOWN and is
+     better predicted than explained afterwards.
 
 Writes the RICH caches, so the fix persists through every later export
 (the cache is the snapshot). Run any export after it to publish.
@@ -36,10 +40,25 @@ ASCII clean, no em dashes, per project convention.
 import argparse
 import json
 import re
+import sys
 import time
 import urllib.parse
 import urllib.request
 from pathlib import Path
+
+# Windows consoles and redirected pipes default to cp1252, which cannot
+# encode half the landforms in Europe. This pass names the rows it acts
+# on, so a mountain called Kroficka took the whole run down with a
+# UnicodeEncodeError before it reached its first write: the repair was
+# fine and the REPORT killed it. A progress line must never be the thing
+# that fails a licence fix, the same lesson the takedown scrub learned
+# from a path it could not make relative.
+if sys.platform == "win32":
+    for _stream in (sys.stdout, sys.stderr):
+        try:
+            _stream.reconfigure(encoding="utf-8", errors="replace")
+        except (AttributeError, ValueError):
+            pass
 
 ROOT = Path(__file__).resolve().parents[2]
 API = "https://commons.wikimedia.org/w/api.php"
@@ -111,9 +130,23 @@ def lookup(titles):
     return out
 
 
+def rated_gate(layer):
+    """How many photographs this layer's RATED tier asks for, read off the
+    wire's own model block so the report follows a gate change instead of
+    guessing at one. None when the layer has not published a gate."""
+    path = (ROOT / "continent-app" / "public" / LAYERS[layer][0]
+            / "index.json")
+    try:
+        model = json.loads(path.read_text(encoding="utf-8")).get("model")
+        return (model or {}).get("min_images")
+    except (OSError, ValueError):
+        return None
+
+
 def repair_layer(layer, dry_run=False):
     cache_dir, row_key = LAYERS[layer]
-    filled = waived = dropped = kept_flagged = 0
+    filled = waived = dropped = demoted = emptied = 0
+    gate = rated_gate(layer)
     for path in sorted((ROOT / "cache" / cache_dir).glob("rich_??.json")):
         data = json.loads(path.read_text(encoding="utf-8"))
         rows = data.get(row_key) or []
@@ -157,21 +190,39 @@ def repair_layer(layer, dry_run=False):
                 doomed = [i for i in imgs if i.get("drop_no_author")]
                 clean_imgs = [i for i in imgs
                               if not i.get("drop_no_author")]
-                if doomed and len(clean_imgs) >= 2:
+                if doomed:
+                    # An uncreditable photograph ALWAYS goes, however few
+                    # remain. There used to be a floor here: keep the file
+                    # rather than let a row fall under two photographs.
+                    # That floor was written before the listed tier and
+                    # the map card existed, when dropping meant deleting
+                    # the row, and it had the effect of preserving a
+                    # coverage number by continuing to publish exactly the
+                    # files whose credit we cannot honour. It kept the
+                    # violation on the rows that had the most of it.
+                    #
+                    # A row is now allowed to fall: to the listed tier
+                    # with fewer photographs, or to a map card with none.
+                    # Both are honest, and neither is deleted. The
+                    # licence obligation is not a thing to trade against
+                    # a row count.
                     row["images"] = clean_imgs
                     dropped += len(doomed)
-                elif doomed:
-                    kept_flagged += len(doomed)
-                    print(f"    {row.get('name')}: would fall under two "
-                          f"photographs, flagged instead")
+                    if not clean_imgs:
+                        emptied += 1
+                    elif gate and len(clean_imgs) < gate:
+                        demoted += 1
             if not dry_run:
                 tmp = path.with_suffix(".json.tmp")
                 tmp.write_text(json.dumps(data, ensure_ascii=False,
                                           indent=1), encoding="utf-8")
                 tmp.replace(path)
     print(f"  {layer}: {filled} authors filled, {waived} waived "
-          f"(no attribution required), {dropped} dropped, "
-          f"{kept_flagged} flagged for the coverage decision")
+          f"(no attribution required), {dropped} dropped")
+    if demoted or emptied:
+        print(f"  {layer}: {demoted} rows now under the rated gate "
+              f"of {gate} and will publish as listed, {emptied} rows "
+              f"left with no photograph and will publish as a map card")
 
 
 def main():
