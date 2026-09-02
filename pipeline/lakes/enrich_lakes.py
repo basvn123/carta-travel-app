@@ -60,6 +60,19 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 
+# Windows consoles and redirected pipes default to cp1252, which cannot encode
+# a Latvian, Icelandic or Polish lake name. A print of one then raises
+# UnicodeEncodeError and takes the stage down; the lake export died on
+# "Lielais Baltezers" halfway through a logged run. The data was never the
+# problem, the terminal was, so say so once here.
+if sys.platform == "win32":
+    for _stream in (sys.stdout, sys.stderr):
+        try:
+            _stream.reconfigure(encoding="utf-8", errors="replace")
+        except (AttributeError, ValueError):
+            pass
+
+
 
 def _regions_assign():
     """pipeline/regions/assign.py under a neutral name, loaded on first use.
@@ -125,6 +138,7 @@ IMAGES_WANTED = 5        # a lake is a place you look at, so it gets a gallery
 IMAGE_WORKERS = 2
 PROTECTED_MAX_KM = 8.0
 DEST_MAX_KM = 110.0
+GATE_HEADROOM = 6.0   # ~1 in 6 shortlisted lakes clears both gates
 OSM_BATCH = 12           # lakes per Overpass request (the radius is large)
 WIKI_BATCH = 20
 TRAIL_MAX_KM = 6.0
@@ -352,7 +366,8 @@ def published_ids(cc):
 
     The shore sweep is the expensive half of this stage: one Overpass query
     per twelve lakes, with a radius in kilometres, against an endpoint that
-    answers a 504 whenever it is busy. Over a 120 lake shortlist for 42
+    answers a 504 whenever it is busy. Over the v1 shortlist of 120 a country,
+    for 42
     countries that is 320 queries and most of a working day, and roughly three
     quarters of it is spent on lakes the export gate will drop anyway.
 
@@ -503,6 +518,30 @@ CEILING_MIN = 120
 CEILING_MAX = 900
 
 
+def _quota_sum(groups):
+    """What this country's regions are collectively owed by the region quota.
+
+    Zero when the quota module or its measures are unavailable, which makes
+    the caller fall back to the old region-count budget rather than fail."""
+    try:
+        mod = _regions_assign()
+        import importlib.util
+        spec = importlib.util.spec_from_file_location(
+            "carta_region_quotas_enrich",
+            HERE.parents[1] / "pipeline" / "regions" / "quotas.py")
+        q = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(q)
+        total = 0
+        for key in groups:
+            try:
+                total += max(0, q.published_target(key, "lake"))
+            except Exception:
+                continue
+        return total
+    except Exception:
+        return 0
+
+
 def shortlist_for(lakes, ceiling=None, per_region=REGION_SHORTLIST):
     """The water bodies that earn the network calls, region by region.
 
@@ -515,8 +554,24 @@ def shortlist_for(lakes, ceiling=None, per_region=REGION_SHORTLIST):
         key = (lake.get("rg") or {}).get("n3") or lake.get("iso2") or "?"
         groups.setdefault(key, []).append(lake)
     if ceiling is None:
+        # Sized from OPPORTUNITY, not from a count of regions. A flat budget
+        # per region is the same fault as a flat cap per country, one level
+        # down: Norway's 21 regions hold 24,808 named water bodies and
+        # Belgium's 11 hold a few hundred, and PER_REGION_BUDGET gave both
+        # eight apiece. Norway shortlisted 168 candidates out of 26,339 and
+        # published 30 against a target of 80, because the gate can only
+        # choose from what was photographed.
+        #
+        # The region quota already measures the opportunity, so the budget is
+        # a multiple of the quota this country's regions are owed. The
+        # multiple is headroom for the gate: about one shortlisted lake in
+        # six clears both the 5.4 score and the four-photograph bar, so a
+        # budget equal to the quota would publish a sixth of it.
+        quota = _quota_sum(groups)
         ceiling = max(CEILING_MIN,
-                      min(CEILING_MAX, len(groups) * PER_REGION_BUDGET))
+                      min(CEILING_MAX,
+                          max(len(groups) * PER_REGION_BUDGET,
+                              int(quota * GATE_HEADROOM))))
     # A country with few regions must still be allowed to spend its budget.
     # Iceland is two NUTS3 regions and Faroe is one, so a flat 40 a region
     # would cap Iceland at 80 whatever its ceiling said, and the brief names
@@ -868,6 +923,10 @@ def pick_images(lake, lang, probe=True):
             "score": round(cand["score"] + delta, 3),
             "seen": seen_pixels,
         })
+        # Commons already told us whether a name is owed; store the
+        # answer so a gate reads a column rather than parsing a licence
+        # string (pipeline/photos/credit.py stamp()).
+        photo_credit.stamp(picked[-1], info.get("extmetadata"))
         if len(picked) >= IMAGES_WANTED:
             break
     picked.sort(key=lambda i: -i["score"])
@@ -1218,13 +1277,14 @@ def enrich_country(cc, shortlist_n=SHORTLIST, refresh=False, bathing=None,
             # which is what makes a change to the candidate rules worth a
             # run: adding Wikidata's P18 as a source rescued 302 of the 618
             # lakes the image gate had dropped, and re-photographing all
-            # 3,809 to reach them would have been two and a half hours of
+            # 3,809 on the v1 shortlist to reach them would have been two
+            # and a half hours of
             # somebody else's bandwidth for nothing.
             thin = rephotograph and len(kept or []) < rephotograph
             # `photos_published` re-shoots the lakes a traveller can actually
             # see, and only those. The strict picker costs about fifteen
-            # requests a lake, so running it over the whole 3,809 shortlist to
-            # improve 1,125 published cards would be an hour of Wikimedia's
+            # requests a lake, so running it over the whole shortlist to
+            # improve the published cards would be an hour of Wikimedia's
             # bandwidth spent on rows nobody will ever open.
             if photos_published and shipping is not None:
                 # Only lakes the CURRENT picker has not seen. Every picture it
@@ -1234,7 +1294,7 @@ def enrich_country(cc, shortlist_n=SHORTLIST, refresh=False, bathing=None,
                 # Written this way so the flag converges instead of looping:
                 # tightening the picker changes which lakes get published, so
                 # the published set is a moving target and the pass has to be
-                # run twice. If the second run re-shot all 1,080 published
+                # run twice. If the second run re-shot every published
                 # lakes again rather than the handful the first export
                 # promoted, converging would cost another four hours. Use
                 # --refresh when the rules change and everything must be redone.

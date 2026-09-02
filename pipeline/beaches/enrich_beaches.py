@@ -786,6 +786,10 @@ def pick_images(beach, lang, probe=True):
             "page": "https://commons.wikimedia.org/wiki/"
                     + urllib.parse.quote(cand["title"].replace(" ", "_")),
         })
+        # Commons already told us whether a name is owed; store the
+        # answer so a gate reads a column rather than parsing a licence
+        # string (pipeline/photos/credit.py stamp()).
+        photo_credit.stamp(picked[-1], info.get("extmetadata"))
         if len(picked) >= IMAGES_WANTED:
             break
     picked.sort(key=lambda i: -i["score"])

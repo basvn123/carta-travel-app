@@ -106,3 +106,26 @@ def owes_credit(img):
     if NO_CREDIT_LIC.search(lic):
         return False
     return not (img.get("author") or img.get("by") or "").strip()
+
+
+def stamp(img, meta):
+    """Record on an image record what COMMONS says about its credit.
+
+    A licence-string test is a heuristic, however carefully written: it
+    has to know that GFDL demands a name and CC0 does not, and it is one
+    unfamiliar template away from failing. Commons answers the question
+    directly in AttributionRequired, but only at harvest time, when the
+    metadata is in hand and the network call has already been paid for.
+
+    So the harvest decides and writes the answer down; a gate then reads
+    a column instead of parsing a string. The flag is only written when
+    the answer is "nothing is owed", because that is the claim that lets
+    an empty author through, and an absent flag must always mean "assume
+    a credit is owed".
+
+    Suggested by the cycling layer, which is deleting its own licence
+    heuristic in favour of reading this.
+    """
+    if meta and not attribution_required(meta):
+        img["no_attribution_required"] = True
+    return img
