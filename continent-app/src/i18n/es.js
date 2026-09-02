@@ -2403,12 +2403,7 @@ export const es = {
   "trip.tagRelaxed": "Tranquilo",
   "trip.tagPacked": "Intenso",
   "trip.tagHidden": "Fuera de ruta",
-  "trip.countOne": "1 viaje",
-  "trip.countMany": "{n} viajes",
   "trip.readMore": "Leer sobre {name}",
-  "trip.mapTitle": "Adónde llevan estos viajes",
-  "trip.mapExpand": "Ver el mapa más grande",
-  "trip.mapShrink": "Cerrar el mapa",
   /* TRIP-KEYS-END */
 
   "explore.sortCost": "Día más barato",

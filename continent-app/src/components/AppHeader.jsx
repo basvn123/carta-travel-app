@@ -118,11 +118,12 @@ export function AppHeader({
             <span className="header-pricing-label-short">{t('header.passes')}</span>
           </button>
         )}
-        {/* Desktop only (CSS hides it below 769px): the active tab's search
-            field portals itself in here, so "search any city, town or
-            address" lives in the bar the way a departure board's one input
-            does, and the tab below keeps every result. Empty on the planner
-            tabs, where there is nothing to search. */}
+        {/* Desktop only (CSS hides it below 769px), and Explore's alone:
+            that tab portals its search field in here. Destinations used to
+            as well and no longer does; its field now heads its own column,
+            under this bar and over the results it searches. The slot
+            collapses when empty (:empty), so the planner tabs and
+            Destinations leave no hole in the row. */}
         <div className="header-search-slot" id="header-search-slot" />
         {/* Friends is its own door, not a row buried in the account panel:
             seeing who you travel with is a place you go, not a setting you

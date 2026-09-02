@@ -843,7 +843,6 @@ function TravelApp() {
         <div className={activeTab === 'places' ? undefined : 'tab-keep-hidden'} onClick={(e) => e.stopPropagation()}>
           <DestinationsTab
             data={data}
-            isActive={activeTab === 'places'}
             pricedAll={pricedAll}
             priceMode={priceMode}
             availableCountries={availableCountries}

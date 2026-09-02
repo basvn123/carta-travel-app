@@ -336,10 +336,10 @@ await desk.screenshot({ path: 'shots/places-desktop.png' });
 // "priced from" pill was one control too many on the browse surface.
 check('no origin picker on the desktop page',
   (await desk.locator('.places-tab .origin-btn:visible').count()) === 0);
-// The desktop chrome that replaced it: search in the header, the category
+// The desktop chrome that replaced it: search at the head of the column, the category
 // tiles and the filter panel on the left.
-check('desktop: search rides in the header',
-  await desk.locator('.header-search-slot .places-search input').isVisible().catch(() => false));
+check('desktop: search heads the results column',
+  await desk.locator('.places-searchrow .places-search input').isVisible().catch(() => false));
 check('desktop: the side panel stands', await desk.locator('.places-side').isVisible().catch(() => false));
 
 // ── The trips index lost its intro paragraph ─────────────────────────────

@@ -1,6 +1,7 @@
 // Headless verify for the desktop browse chrome v4: paper top bar with the
-// red underline on the active tab, the search field portalled into the
-// header, the left filter panel on Destinations and Explore, full-accent
+// red underline on the active tab, Explore's search field portalled into the
+// header while Destinations heads its own column with its one, the left
+// filter panel on Destinations and Explore, full-accent
 // selected states, and the photo-forward Explore card whose explanation sits
 // behind the info button. Then a phone pass that proves nothing moved there.
 //
@@ -39,7 +40,7 @@ await page.goto(URL, { waitUntil: 'domcontentloaded', timeout: 45000 });
 await page.waitForTimeout(3500);
 
 // The bar: page ground, not white; the active section underlined; the pass
-// button on the full accent; friends folded to its icon; search in the bar.
+// button on the full accent; friends folded to its icon.
 const barBg = await bg(page, '.top-bar');
 check('top bar sits on the page ground', barBg === 'rgb(248, 246, 240)', barBg);
 check('a header tab is active', await page.locator('.header-nav-item.active').count() === 1);
@@ -49,10 +50,19 @@ const passLabel = (await page.locator('.header-pricing-btn').innerText().catch((
 check('pass button says Get a pass', /get a pass/i.test(passLabel), passLabel);
 check('friends label folded to the icon',
   await page.locator('.header-friends-label').first().isHidden().catch(() => true));
-check('search rides in the header',
-  await page.locator('.header-search-slot .places-search input').isVisible());
 
-// Destinations: the left panel stands, the toolbar card is gone.
+// Destinations: its search heads the column (NOT the header slot, which this
+// tab gave up), the left panel stands, the toolbar card is gone.
+check('search heads the results column',
+  await page.locator('.places-searchrow .places-search input').isVisible());
+check('search left the header slot',
+  await page.locator('.header-search-slot .places-search input').count() === 0);
+const searchTop = (await page.locator('.places-searchrow').boundingBox())?.y ?? 0;
+const listTop = (await page.locator('.places-list').first().boundingBox())?.y ?? 0;
+const barBottom = (await page.locator('.top-bar').boundingBox() || { y: 0, height: 0 });
+check('it sits under the bar and over the results',
+  searchTop >= barBottom.y + barBottom.height - 1 && searchTop < listTop,
+  `bar ends ${Math.round(barBottom.y + barBottom.height)}, search ${Math.round(searchTop)}, list ${Math.round(listTop)}`);
 check('side panel renders', await page.locator('.places-side').isVisible());
 check('toolbar card folded away', await page.locator('.places-toolbar').isHidden());
 const sideCats = await page.locator('.places-side .side-cat').count();
@@ -81,13 +91,13 @@ await page.waitForTimeout(400);
 const sortBg = await bg(page, '.places-side .side-sort.on');
 check('active sort wears the accent', sortBg === 'rgb(224, 90, 71)', sortBg);
 
-// The header search still answers: typing offers suggestions under the bar.
-await page.locator('.header-search-slot .places-search input').fill('Gent');
+// The column search still answers: typing offers suggestions under the field.
+await page.locator('.places-searchrow .places-search input').fill('Gent');
 await page.waitForTimeout(700);
-check('header search suggests', await page.locator('.places-sugg').isVisible());
+check('column search suggests', await page.locator('.places-sugg').isVisible());
 await page.screenshot({ path: 'shots/desktop-destinations.png' });
 await page.keyboard.press('Escape');
-await page.locator('.header-search-slot .places-search input').fill('');
+await page.locator('.places-searchrow .places-search input').fill('');
 await page.waitForTimeout(400);
 
 // ── Explore ──

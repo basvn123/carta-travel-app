@@ -82,23 +82,34 @@ const toTrips = async (page) => {
     else await bar.click();
     await page.locator('.places-tab').waitFor({ state: 'visible', timeout: 15000 });
   }
-  await page.locator('.places-cat', { hasText: /^\s*trips\s*$/i }).click();
-  await page.locator('.trip-slider-input').waitFor({ state: 'visible', timeout: 15000 });
+  // Every control on this tab is drawn TWICE (phone toolbar + desktop side
+  // panel), so both steps must name the VISIBLE twin: the category tile is
+  // .places-cat on a phone and .side-cat on desktop, and .trip-slider-input
+  // matches in both places at once. Without this the desktop pass clicked a
+  // display:none tile until it timed out and the phone pass tripped
+  // Playwright's strict mode on two sliders.
+  await page.locator('.places-cat:visible, .side-cat:visible', { hasText: /^\s*trips\s*$/i })
+    .first().click();
+  await page.locator('.trip-slider-input:visible').first()
+    .waitFor({ state: 'visible', timeout: 15000 });
   await page.waitForTimeout(1800);
 };
 
 /** Drag the day slider. 0 is "any length". */
 const setDays = async (page, n) => {
-  await page.locator('.trip-slider-input').fill(String(n));
+  await page.locator('.trip-slider-input:visible').first().fill(String(n));
   await page.waitForTimeout(1100);
 };
 
-/** The result count, read from the slider's own label rather than from the
+/** The result count, read from the slider's own data-n rather than from the
  *  DOM: the list renders a page at a time, so counting cards would compare
- *  the page size with itself. */
+ *  the page size with itself. The slider stopped SAYING the number on
+ *  2026-09-02 (a caption on a control that read as a claim about the
+ *  catalogue); it still knows it, and this is the only thing that does. */
 const totalOf = async (page) => {
-  const txt = await page.locator('.trip-slider-count').innerText().catch(() => '');
-  return Number((txt.match(/([\d,]+)/) || [])[1]?.replace(/,/g, '') || 0);
+  const n = await page.locator('.trip-slider:visible').first()
+    .getAttribute('data-n').catch(() => null);
+  return Number(n || 0);
 };
 
 // ── The wire itself, before any UI opinion of it ──
@@ -123,15 +134,16 @@ try {
   await toTrips(page);
 
   check('the Trips category opens on itineraries', await page.locator('.places-icard').count() > 0);
-  check('the day slider is there', await page.locator('.trip-slider-input').isVisible());
+  check('the day slider is there', await page.locator('.trip-slider-input:visible').first().isVisible());
   check('pace and place size are offered',
-    await page.locator('.trip-toggles .places-class').count() >= 5,
-    `${await page.locator('.trip-toggles .places-class').count()} chips`);
+    await page.locator('.places-facets .places-class:visible, .side-facets .places-class:visible').count() >= 5,
+    `${await page.locator('.places-facets .places-class:visible, .side-facets .places-class:visible').count()} chips`);
 
   const cards = await page.locator('.places-icard').count();
   check('a real page of trips', cards >= 12, `${cards} cards`);
   const allTotal = await totalOf(page);
-  check('the list says how many it found', allTotal > 100, `${allTotal} trips`);
+  check('the slider knows the whole result set', allTotal > 100, `${allTotal} trips`);
+  check('but never says it on screen', await page.locator('.trip-slider-count').count() === 0);
 
   // A photograph that actually resolves, not a 404 tile.
   const imgOk = await page.waitForFunction(() => {
@@ -161,7 +173,7 @@ try {
   await page.screenshot({ path: 'shots/trips-desktop.png' });
 
   // Pace is a real filter, and it narrows further.
-  const relaxed = page.locator('.trip-toggles .places-class').filter({ hasText: /relaxed/i }).first();
+  const relaxed = page.locator('.places-facets .places-class:visible, .side-facets .places-class:visible').filter({ hasText: /relaxed/i }).first();
   if (await relaxed.isEnabled().catch(() => false)) {
     await relaxed.click();
     await page.waitForTimeout(1100);
@@ -185,7 +197,7 @@ try {
 
   // Back to the itineraries, then narrow by country.
   await setDays(page, 0);   // back to any length
-  const picker = page.locator('.places-country');
+  const picker = page.locator('.places-country:visible').first();
   if (await picker.isVisible().catch(() => false)) {
     await picker.selectOption('AT');
     await page.waitForTimeout(2000);

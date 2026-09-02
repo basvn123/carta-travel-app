@@ -2403,12 +2403,7 @@ export const nl = {
   "trip.tagRelaxed": "Rustig",
   "trip.tagPacked": "Vol",
   "trip.tagHidden": "Van de gebaande paden",
-  "trip.countOne": "1 reis",
-  "trip.countMany": "{n} reizen",
   "trip.readMore": "Lees over {name}",
-  "trip.mapTitle": "Waar deze reizen heen gaan",
-  "trip.mapExpand": "Bekijk de kaart groter",
-  "trip.mapShrink": "Kaart sluiten",
   /* TRIP-KEYS-END */
 
   "explore.sortCost": "Goedkoopste dag",

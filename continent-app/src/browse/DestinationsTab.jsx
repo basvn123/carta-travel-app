@@ -1,5 +1,4 @@
 import React, { lazy, Suspense, useEffect, useMemo, useRef, useState } from 'react';
-import { createPortal } from 'react-dom';
 import { useIsDesktop } from '../hooks/useIsDesktop.js';
 import { RatingBadge } from '../components/RatingBadge.jsx';
 import { CountryFlag } from '../components/CountryFlag.jsx';
@@ -38,9 +37,7 @@ import {
   SearchIcon, ChevronRightIcon, RouteIcon, SkylineIcon, SuitcaseIcon, BootIcon,
   BeachIcon, MountainIcon, MapPinIcon, CrosshairIcon,
   CityIcon, TownIcon, VillageIcon, AreaIcon, LoopIcon, LakeIcon, FilterIcon,
-  ExpandIcon, ShrinkIcon,
 } from '../components/Icons.jsx';
-import { hasLngLat } from '../map/coords.js';
 import { LifestyleButton } from './LifestyleButton.jsx';
 
 /**
@@ -102,13 +99,10 @@ const MountainPage = lazy(() => import('./MountainPage.jsx').then((m) => ({ defa
 const TripPage = lazy(() => import('./TripPage.jsx').then((m) => ({ default: m.TripPage })));
 // The Trips overview card reuses the same TripMap, lazily for the same
 // reason: maplibre-gl stays out of the main bundle until a map is on screen.
-const TripsOverviewMap = lazy(() => import('../map/TripMap.jsx').then((m) => ({ default: m.TripMap })));
 
 // Framing margins for the trips overview map, module-level so their identity
 // is stable: TripMap redraws every pin when `fitPadding` changes, and an
 // inline object would change on every keystroke in the search field.
-const TRIPS_MAP_FIT = { top: 24, left: 24, right: 24, bottom: 24 };
-const TRIPS_MAP_FIT_FULL = { top: 84, left: 28, right: 28, bottom: 56 };
 
 const norm = (s) => String(s || '')
   .toLowerCase()
@@ -183,7 +177,7 @@ const TRIP_SCALES = [
  * The unit rides on the label rather than on every tick, because a scale that
  * repeats "days" four times is a scale nobody reads.
  */
-function TripLengthSlider({ days, setDays, n, t, fmt }) {
+function TripLengthSlider({ days, setDays, n, t }) {
   const value = days === null ? 0 : days;
   const valueWord = days === null
     ? t('trip.anyLength')
@@ -195,15 +189,19 @@ function TripLengthSlider({ days, setDays, n, t, fmt }) {
   // the left end and the two labels touched. The readout above says exactly
   // where the thumb is, so the axis only has to say where the ends are.
   const ticks = [0, 7, TRIP_MAX_DAYS];
+  // The head says what the slider is set to and nothing else. It used to
+  // carry the size of the result set beside it ("283 trips"), which read as
+  // a claim about the catalogue rather than a caption on a control, and the
+  // list underneath already shows what survived the filter. The number stays
+  // on the element as data-n: the component is the only thing that knows the
+  // whole total (the list renders a page at a time), and the trips harness
+  // reads it from here rather than counting cards against themselves.
   return (
-    <label className="trip-slider">
+    <label className="trip-slider" data-n={n}>
       <span className="trip-slider-head">
         <span className="trip-slider-label">
           {t('trip.lengthLabel')}
           <b>{valueWord}</b>
-        </span>
-        <span className="trip-slider-count">
-          {t(n === 1 ? 'trip.countOne' : 'trip.countMany', { n: fmt(n) })}
         </span>
       </span>
       <input
@@ -854,7 +852,7 @@ const ItinCard = React.memo(function ItinCard({ tr, km, onOpen, t }) {
 });
 
 export function DestinationsTab({
-  data, isActive = true, pricedAll, priceMode = 'total', availableCountries = [], onSelectDest,
+  data, pricedAll, priceMode = 'total', availableCountries = [], onSelectDest,
   stayTier = 'home', lifestyle, onOpenLifestyle,
   openTrail = null, onOpenTrailConsumed,
   openBeach = null, onOpenBeachConsumed,
@@ -893,10 +891,6 @@ export function DestinationsTab({
   const [itinTop, setItinTop] = useState(null);
   const [itinCountryRows, setItinCountryRows] = useState(null);
   const [pageItin, setPageItin] = useState(null);
-  // The trips overview map, blown up to the whole device. Off by default: a
-  // map that covers the screen the moment the category opens hides the list
-  // it belongs to.
-  const [tripsMapFull, setTripsMapFull] = useState(false);
   // A shared #trail= link: { id, country } until the country file has loaded
   // and the card it names can be opened.
   const [wantedTrail, setWantedTrail] = useState(null);
@@ -966,22 +960,6 @@ export function DestinationsTab({
     loadTrailsIndex().then((idx) => { if (live) setTrailsIndex(idx); });
     return () => { live = false; };
   }, []);
-
-  // Escape leaves the full-screen trips map, the way it leaves every other
-  // overlay. In the CAPTURE phase, and it stops the event there: App keeps its
-  // own Escape stack on window (Account, then My trips), that listener is
-  // registered first, and one press would otherwise close the big map AND the
-  // panel behind it in the same tick. While this dialog is up the key is its.
-  useEffect(() => {
-    if (!tripsMapFull) return undefined;
-    const onKey = (e) => {
-      if (e.key !== 'Escape') return;
-      e.stopPropagation();
-      setTripsMapFull(false);
-    };
-    window.addEventListener('keydown', onKey, true);
-    return () => window.removeEventListener('keydown', onKey, true);
-  }, [tripsMapFull]);
 
   // A shared link names one trip in one country: browse that country's trails
   // so the card exists, then open its page (below, once the file has landed).
@@ -1534,67 +1512,6 @@ export function DestinationsTab({
   //
   // Built from the SAME filtered rows the cards below render, so the country
   // filter, the day rail, the pace chips and a near-search all filter the
-  // pins too. Both trip modes feed it: the composed itineraries pin at the
-  // route's own centre, a one-day city walk at its anchor. Every point goes
-  // through hasLngLat first, because one NaN coordinate reaching MapLibre
-  // blanks the whole app.
-  const tripsMapStops = useMemo(() => {
-    if (cat !== 'trips') return [];
-    if (isItinCat) {
-      return (itinRows || [])
-        .filter(({ tr }) => hasLngLat(tr))
-        .map(({ tr }) => ({
-          lat: tr.lat,
-          lon: tr.lon,
-          city: tr.cities?.[0]?.city || '',
-          plain: true,
-          // Zoomed in, the pin wears the town the trip opens in.
-          img: tr.img?.url ? cardThumb(tr.img.url) : null,
-          open: () => setPageItin(tr),
-        }));
-    }
-    return (tripRows || [])
-      .map(({ c }) => {
-        const ctr = tripCentre(c.tr);
-        if (!hasLngLat(ctr)) return null;
-        return {
-          lat: ctr.lat,
-          lon: ctr.lon,
-          city: c.tr.name,
-          plain: true,
-          img: c.assoc.photoUrl || null,
-          open: () => setPageCard(c),
-        };
-      })
-      .filter(Boolean);
-  }, [cat, isItinCat, itinRows, tripRows]);
-
-  // MapLibre states the cooperative-gesture rule in its own overlay, in the
-  // traveller's language.
-  const tripsMapLocale = useMemo(() => ({
-    'CooperativeGesturesHandler.WindowsHelpText': t('map.ctrlZoom'),
-    'CooperativeGesturesHandler.MacHelpText': t('map.cmdZoom'),
-    'CooperativeGesturesHandler.MobileHelpText': t('map.twoFingers'),
-  }), [t]);
-
-  // Everything both copies of the overview map agree on. The frame differs
-  // (a card, or the whole device), the data never does. Tapping a pin opens
-  // that trip, which means leaving the big map first: a page opening behind
-  // a full-screen map would look like nothing happened.
-  const tripsMapProps = {
-    stops: tripsMapStops,
-    showRoute: false,
-    scrollZoom: true,
-    zoomControls: true,
-    mapLocale: tripsMapLocale,
-    photoZoom: 6,
-    easeToSelected: false,
-    padBottom: 0,
-    fitMaxZoom: 7,
-    fitPadding: TRIPS_MAP_FIT,
-    onSelectStop: (i) => { setTripsMapFull(false); tripsMapStops[i]?.open(); },
-  };
-
   // ── Beaches: the published beach layer ───────────────────────────────
 
   // Deliberately NOT guarded on beachesLoading, and beachesLoading is
@@ -2147,20 +2064,14 @@ export function DestinationsTab({
   // ── Desktop chrome ────────────────────────────────────────────────────
   //
   // On a desktop screen this tab's controls leave the toolbar card and take
-  // the shape a reader of paper maps expects: the search field rides in the
-  // app header (portalled into the slot AppHeader always renders), and
-  // everything that narrows the list stands in a panel on the left, under
-  // the brand. On a phone nothing moves: the toolbar card stays exactly as
-  // it was, and CSS shows one arrangement or the other.
+  // the shape a reader of paper maps expects: everything that narrows the
+  // list stands in a panel on the left under the brand, and the search field
+  // heads the main column, directly under the top bar and directly over the
+  // results it searches. It used to portal into the header instead, which
+  // put this page's own question up in the app's chrome, sharing a row with
+  // the account and the pass. On a phone nothing moves: the toolbar card
+  // stays exactly as it was, and CSS shows one arrangement or the other.
   const isDesktop = useIsDesktop();
-  const [headerSlot, setHeaderSlot] = useState(null);
-  useEffect(() => {
-    // After commit, so the header's slot exists even on the app's first
-    // render. Only the ACTIVE tab may claim it: both browse tabs stay
-    // mounted (keep-alive), and two portals into one slot would interleave.
-    if (isDesktop && isActive) setHeaderSlot(document.getElementById('header-search-slot'));
-    else setHeaderSlot(null);
-  }, [isDesktop, isActive]);
 
   // The same controls drawn twice, phone toolbar and desktop side panel:
   // one renderer each, so the two can never drift apart.
@@ -2338,34 +2249,8 @@ export function DestinationsTab({
     </div>
   );
 
-  // The overview card at the head of the trips list: every pinned trip on one
-  // small map, with the door to the device-sized copy. While the big map is
-  // up this frame keeps its height but drops its map: only one MapLibre
-  // instance is ever alive, which is the expensive thing here, and both are
-  // built from the same tripsMapProps so neither can drift.
-  const tripsMapCard = tripsMapStops.length > 0 && (
-    <div className="trips-map" role="group" aria-label={t('trip.mapTitle')}>
-      {!tripsMapFull && (
-        <Suspense fallback={<div className="trips-map-loading" aria-hidden="true" />}>
-          <TripsOverviewMap {...tripsMapProps} cooperativeGestures />
-        </Suspense>
-      )}
-      <button
-        type="button"
-        className="trips-map-expand"
-        onClick={() => setTripsMapFull(true)}
-        aria-label={t('trip.mapExpand')}
-        title={t('trip.mapExpand')}
-      >
-        <ExpandIcon size={15} />
-      </button>
-    </div>
-  );
-
   return (
     <div className="places-shell">
-      {headerSlot && createPortal(searchField, headerSlot)}
-
       {/* Desktop-only left panel (CSS hides it under 769px): the categories
           as a card grid under the brand, then everything that narrows or
           orders the list, standing on the page ground with one hairline to
@@ -2404,7 +2289,6 @@ export function DestinationsTab({
                   setDays={setItinDays}
                   n={itinRows ? itinRows.length : 0}
                   t={t}
-                  fmt={fmt}
                 />
               )}
               {renderFacetGroups()}
@@ -2423,6 +2307,12 @@ export function DestinationsTab({
 
       <div className="places-tab" ref={scrollRef}>
       <div className="places-wrap">
+        {/* Desktop only: the search field at the head of the column, under
+            the top bar and over the results it searches. The phone renders
+            the same field inside the toolbar card below instead. One field,
+            one place, never both: they share a ref. */}
+        {isDesktop && <div className="places-searchrow">{searchField}</div>}
+
         {/* Every control in one card, the same instrument Explore carries:
             the category cards, then search, then the sorts and the one
             Filters door, then whatever chips this tab narrows by. Read apart
@@ -2433,9 +2323,9 @@ export function DestinationsTab({
         </div>
 
         <div className="places-controls">
-          {/* Inline on a phone; on desktop the same field has portalled into
-              the app header and this renders nothing. */}
-          {!headerSlot && searchField}
+          {/* Inline on a phone; on desktop the same field heads the column
+              above and this renders nothing. */}
+          {!isDesktop && searchField}
           {/* Sorts, the Filters door, the country, where the prices start
               from and what they assume: one row, in that order. Filters
               leads because it is the one control that decides WHICH rows are
@@ -2488,7 +2378,6 @@ export function DestinationsTab({
                 setDays={setItinDays}
                 n={itinRows ? itinRows.length : 0}
                 t={t}
-                fmt={fmt}
               />
             )}
             {renderFacetGroups()}
@@ -2772,7 +2661,6 @@ export function DestinationsTab({
 
         {isItinCat && (
           <div className="places-list">
-            {tripsMapCard}
             {itinRows === null && <p className="places-empty">{'\u2026'}</p>}
 
             {itinRows && itinRows.length > 0 && (
@@ -2810,7 +2698,6 @@ export function DestinationsTab({
 
         {isTripCat && !isItinCat && (
           <div className="places-list">
-            {tripsMapCard}
             {showCountryIndex && (
               <>
                 {tripCountries.map((c) => (
@@ -2862,40 +2749,6 @@ export function DestinationsTab({
           </div>
         )}
       </div>
-
-      {/* The overview map at device size. Portalled to <body> on purpose: an
-          ancestor with a transform or backdrop-filter would become the
-          containing block for position:fixed and pin this layer to the list
-          column instead of the screen. Out here it also drops
-          cooperativeGestures, because a map that owns the whole device
-          should answer a pinch directly. */}
-      {tripsMapFull && tripsMapStops.length > 0 && createPortal(
-        <div className="tripsmap-full" role="dialog" aria-label={t('trip.mapTitle')}>
-          <div className="tripsmap-full-map">
-            <Suspense fallback={<div className="trips-map-loading" aria-hidden="true" />}>
-              <TripsOverviewMap
-                {...tripsMapProps}
-                fitMaxZoom={9}
-                fitPadding={TRIPS_MAP_FIT_FULL}
-              />
-            </Suspense>
-          </div>
-          <div className="tripsmap-full-bar">
-            <span className="tripsmap-full-title">{t('trip.mapTitle')}</span>
-            <button
-              type="button"
-              className="tripsmap-full-close"
-              onClick={() => setTripsMapFull(false)}
-              aria-label={t('trip.mapShrink')}
-              title={t('trip.mapShrink')}
-            >
-              <ShrinkIcon size={15} />
-              <span>{t('trip.mapShrink')}</span>
-            </button>
-          </div>
-        </div>,
-        document.body,
-      )}
 
       {pageCard && (
         <Suspense fallback={null}>

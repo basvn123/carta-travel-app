@@ -3091,12 +3091,7 @@ export const en = {
   'trip.tagRelaxed': 'Relaxed',
   'trip.tagPacked': 'Packed',
   'trip.tagHidden': 'Off the beaten track',
-  'trip.countOne': '1 trip',
-  'trip.countMany': '{n} trips',
   'trip.readMore': 'Read about {name}',
-  'trip.mapTitle': 'Where these trips go',
-  'trip.mapExpand': 'See the map bigger',
-  'trip.mapShrink': 'Close the map',
   /* TRIP-KEYS-END */
 
   /* ── Cost: euros a day, replacing the two 0-10 cheapness indices ── */

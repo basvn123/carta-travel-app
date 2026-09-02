@@ -24249,12 +24249,6 @@ button.ai-sched-main:focus-visible {
   text-transform: none;
   color: var(--ink);
 }
-.trip-slider-count {
-  font-family: var(--mono);
-  font-size: 11px;
-  font-variant-numeric: tabular-nums;
-  color: var(--ink-mute);
-}
 .trip-slider-input {
   width: 100%;
   height: 22px;
@@ -24293,8 +24287,6 @@ button.ai-sched-main:focus-visible {
 @media (prefers-reduced-motion: reduce) {
   .trip-slider-tick { transition: none; }
 }
-.trip-toggles { display: flex; flex-wrap: wrap; gap: 8px 16px; }
-.trip-toggles .places-classes { margin-top: 0; }
 
 /* The itinerary card: this tab's photo-card grammar, plus a body strip.
    .places-card-img is absolutely positioned at inset 0, so it needs a
@@ -27102,10 +27094,38 @@ button.ai-sched-main:focus-visible {
   }
 
   /* The toolbar cards fold away: everything they held now stands in the
-     panel (and the search in the bar). This is also what retires the
-     origin picker from this page, as the desktop design asks. */
+     panel, and the search field moves to the head of the column it searches
+     (Destinations) or into the bar (Explore, .header-search-slot). This is
+     also what retires the origin picker from this page, as the desktop
+     design asks. */
   .places-toolbar { display: none; }
   .explore-toolbar { display: none; }
+
+  /* Destinations asks its question in its own column: one field, first
+     thing under the top bar, directly over the results it filters, at the
+     width of a place name rather than the width of the page. The paper-dim
+     fill and the suggestion list's ground come from the "no pure white"
+     rules further down, which already cover anything inside .places-tab. */
+  .places-searchrow {
+    display: flex;
+    margin: 0 0 16px;
+  }
+  .places-searchrow .places-search {
+    flex: 1 1 auto;
+    max-width: 520px;
+    min-width: 0;
+  }
+  .places-searchrow .places-search input {
+    height: 42px;
+    border-radius: 999px;
+    border-color: var(--rule);
+  }
+  .places-searchrow .places-search input:focus {
+    outline: none;
+    border-color: var(--ink);
+    background: var(--paper);
+    box-shadow: 0 0 0 3px var(--accent-bg);
+  }
 
   /* ── Panel furniture. ── */
   .side-label {
@@ -27315,110 +27335,6 @@ button.ai-sched-main:focus-visible {
    narrowest desktop step the slot's base width has to come down too. */
 @media (min-width: 769px) and (max-width: 910px) {
   .header-search-slot { flex-basis: 110px; }
-}
-
-/* ─── Trips overview map: every listed trip pinned on one card at the head of
-   the Trips list, and the same map at device size once expanded. Same embed
-   contract as the saved-trips map: TripMap lays itself out full-bleed beside
-   a side panel, so pin it to this frame with force, or fitBounds runs against
-   a 34px canvas and no-ops. ─── */
-.places-list > .trips-map { grid-column: 1 / -1; }
-.trips-map {
-  position: relative;
-  height: 220px;
-  border: 1px solid var(--rule);
-  border-radius: 14px;
-  overflow: hidden;
-  background: var(--paper-dim);
-}
-.trips-map .trip-map,
-.trips-map > div { position: absolute !important; inset: 0 !important; }
-.trips-map-loading { position: absolute; inset: 0; background: var(--paper-dim); }
-.trips-map-expand {
-  position: absolute;
-  left: 10px;
-  bottom: 10px;
-  z-index: 2;
-  width: 30px;
-  height: 30px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 1px solid var(--rule);
-  border-radius: 9px;
-  background: rgba(248, 246, 240, 0.94);
-  color: var(--ink);
-  cursor: pointer;
-  transition: background .15s, color .15s, border-color .15s;
-}
-.trips-map-expand:hover { background: var(--ink); border-color: var(--ink); color: var(--paper); }
-
-.tripsmap-full {
-  position: fixed;
-  inset: 0;
-  z-index: 400;
-  background: var(--paper);
-}
-/* The map fills the layer; the bar floats over it so no pixel of the list's
-   geography is spent on chrome. */
-.tripsmap-full-map { position: absolute; inset: 0; }
-.tripsmap-full-map .trip-map,
-.tripsmap-full-map > div { position: absolute !important; inset: 0 !important; }
-.tripsmap-full-bar {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 2;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  padding: calc(12px + env(safe-area-inset-top)) 14px 12px;
-  pointer-events: none;
-}
-.tripsmap-full-title {
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  padding: 7px 13px;
-  border-radius: 999px;
-  background: rgba(248, 246, 240, 0.94);
-  font-family: var(--display);
-  font-size: 16px;
-  color: var(--ink);
-}
-/* The way out never wraps or shrinks: on a phone the title gives up its
-   width first. */
-.tripsmap-full-close {
-  pointer-events: auto;
-  flex: none;
-  white-space: nowrap;
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  padding: 8px 14px;
-  border: 1px solid var(--ink);
-  border-radius: 999px;
-  background: var(--ink);
-  font-family: var(--ui);
-  font-size: 12.5px;
-  font-weight: 600;
-  color: var(--paper);
-  cursor: pointer;
-  transition: background .15s, border-color .15s;
-}
-.tripsmap-full-close:hover { background: var(--accent); border-color: var(--accent); }
-/* MapLibre parks its zoom stack top-right, exactly where Close sits: drop
-   the stack below the bar rather than move the way out of the corner. */
-.tripsmap-full .maplibregl-ctrl-top-right {
-  top: calc(52px + env(safe-area-inset-top));
-}
-
-/* Desktop: the roomier column lets the geography breathe. */
-@media (min-width: 881px) {
-  .trips-map { height: 280px; }
 }
 
 /* ==========================================================================
