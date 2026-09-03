@@ -3348,4 +3348,9 @@ export const de = {
   "cpage.cities": "Städte, die sich lohnen",
   "cpage.towns": "Städtchen und Dörfer",
   "cpage.areas": "Landschaften",
+
+  // Search index (PLAN.md B2)
+  "explore.didYouMean": "Meinten Sie",
+  "explore.inParent": "{member} gehört zu {parent}",
+  "explore.regionFilter": "Orte in {region}",
 };

@@ -15,6 +15,7 @@ import { FilterChips } from './FilterChips.jsx';
 import { CategoryRail } from './CategoryRail.jsx';
 import { KindGlyph } from '../components/KindGlyph.jsx';
 import { kindOf, roleOf, buildNearbyIndex, ROLES } from '../lib/taxonomy.js';
+import { loadSearchIndex, querySearchIndex } from '../lib/searchIndex.js';
 import { useI18n } from '../i18n/index.jsx';
 import { GuidesStrip } from '../community/GuidesStrip.jsx';
 import { FULL_RATING_RANGE } from '../lib/rating.js';
@@ -367,6 +368,17 @@ export function ExploreTab({
   const [bbox, setBbox] = React.useState(null);
   // C9: a country is a page, not just a filter.
   const [countryPage, setCountryPage] = React.useState(null);
+  // B2: the fold-and-alias index answers the search box. Loaded on the
+  // first real query, then cached for the session.
+  const [searchHits, setSearchHits] = React.useState(null);
+  React.useEffect(() => {
+    let live = true;
+    if (!locationQuery || locationQuery.length < 3) { setSearchHits(null); return undefined; }
+    loadSearchIndex().then((ix) => {
+      if (live) setSearchHits(querySearchIndex(ix, locationQuery));
+    });
+    return () => { live = false; };
+  }, [locationQuery]);
   const sentinelRef = React.useRef(null);
   const scrollRef = React.useRef(null);
 
@@ -374,7 +386,7 @@ export function ExploreTab({
     data, locationQuery, countryFilter, tripKinds,
     ratingRange, gemOnly, unescoOnly, topBeachOnly, bigOnly, topPick,
     reachHours, reachMinutes, sortKey, showFavOnly, favorites,
-    indices,
+    indices, searchHits,
   });
 
   // C1's role needs the neighbour count; built once per catalogue.
@@ -754,11 +766,36 @@ export function ExploreTab({
           {view === 'grid' && sortSelect}
         </div>
 
+        {/* B2: a member village resolves to its parent, and says so. */}
+        {locationQuery && searchHits?.memberHits?.length > 0 && taxRows.length > 0 && (
+          <p className="xsearch-hint">
+            {t('explore.inParent', {
+              member: searchHits.memberHits[0].member,
+              parent: taxRows.find((p) => p.id === searchHits.memberHits[0].id)?.city
+                || searchHits.memberHits[0].id,
+            })}
+          </p>
+        )}
+        {locationQuery && searchHits?.regionLabel && (
+          <p className="xsearch-hint">
+            {t('explore.regionFilter', { region: searchHits.regionLabel })}
+          </p>
+        )}
+
         {taxRows.length === 0 && (
           <p className="explore-count">
             <span className="explore-count-badge">
               {showFavOnly ? t('results.emptyFav') : t('results.empty')}
             </span>
+            {locationQuery && searchHits?.suggestions?.length > 0 && (
+              <span className="xsearch-suggest">
+                {t('explore.didYouMean')}
+                {searchHits.suggestions.map((sug) => (
+                  <button key={sug} className="xsearch-suggest-btn"
+                    onClick={() => setLocationQuery(sug)}>{sug}</button>
+                ))}
+              </span>
+            )}
           </p>
         )}
 

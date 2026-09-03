@@ -4056,4 +4056,9 @@ export const en = {
   "cpage.cities": "Cities worth your time",
   "cpage.towns": "Towns and villages",
   "cpage.areas": "Landscapes",
+
+  // Search index (PLAN.md B2)
+  "explore.didYouMean": "Did you mean",
+  "explore.inParent": "{member} is part of {parent}",
+  "explore.regionFilter": "Showing places in {region}",
 };

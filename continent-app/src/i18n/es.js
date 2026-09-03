@@ -3348,4 +3348,9 @@ export const es = {
   "cpage.cities": "Ciudades que valen la pena",
   "cpage.towns": "Pueblos",
   "cpage.areas": "Paisajes",
+
+  // Search index (PLAN.md B2)
+  "explore.didYouMean": "¿Querías decir",
+  "explore.inParent": "{member} forma parte de {parent}",
+  "explore.regionFilter": "Lugares en {region}",
 };

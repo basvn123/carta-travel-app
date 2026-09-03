@@ -3348,4 +3348,9 @@ export const fr = {
   "cpage.cities": "Villes qui valent le temps",
   "cpage.towns": "Bourgs et villages",
   "cpage.areas": "Paysages",
+
+  // Search index (PLAN.md B2)
+  "explore.didYouMean": "Vouliez-vous dire",
+  "explore.inParent": "{member} fait partie de {parent}",
+  "explore.regionFilter": "Lieux en {region}",
 };

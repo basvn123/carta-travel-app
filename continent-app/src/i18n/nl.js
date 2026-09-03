@@ -3348,4 +3348,9 @@ export const nl = {
   "cpage.cities": "Steden die de tijd waard zijn",
   "cpage.towns": "Stadjes en dorpen",
   "cpage.areas": "Landschappen",
+
+  // Search index (PLAN.md B2)
+  "explore.didYouMean": "Bedoelde je",
+  "explore.inParent": "{member} hoort bij {parent}",
+  "explore.regionFilter": "Plaatsen in {region}",
 };

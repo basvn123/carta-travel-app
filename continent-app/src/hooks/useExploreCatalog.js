@@ -62,6 +62,7 @@ export function useExploreCatalog({
   ratingRange, gemOnly, unescoOnly, topBeachOnly, bigOnly, topPick,
   reachHours, reachMinutes, sortKey, showFavOnly, favorites,
   indices: providedIndices,
+  searchHits = null,
 }) {
   const rLo = ratingRange?.[0] ?? 0;
   const rHi = ratingRange?.[1] ?? 10;
@@ -132,7 +133,21 @@ export function useExploreCatalog({
 
   const filtered = useMemo(() => {
     return all.filter((p) => {
-      if (q && !(normalize(p.city).includes(q) || normalize(p.country).includes(q))) return false;
+      if (q) {
+        // B2: the fold-and-alias index widens the plain substring - an
+        // exonym, a folded diacritic, a member village or a region box all
+        // count as a hit. Additive only: everything the substring found
+        // before, it still finds.
+        const plain = normalize(p.city).includes(q) || normalize(p.country).includes(q);
+        const viaIndex = searchHits?.ids?.has(p.id) || false;
+        const viaRegion = searchHits?.bbox
+          ? ((p.city_lat ?? p.lat) >= searchHits.bbox[1]
+            && (p.city_lat ?? p.lat) <= searchHits.bbox[3]
+            && (p.city_lon ?? p.lon) >= searchHits.bbox[0]
+            && (p.city_lon ?? p.lon) <= searchHits.bbox[2])
+          : false;
+        if (!plain && !viaIndex && !viaRegion) return false;
+      }
       if (countryFilter.length && !countryFilter.includes(p.iso2)) return false;
       if (tripKinds.length > 0 && !matchesAnyKind(p.categories, tripKinds)) return false;
       if (ratingActive) {
@@ -151,7 +166,7 @@ export function useExploreCatalog({
       return true;
     });
     // favorites only re-filters while the shortlist view is on (favDep).
-  }, [all, q, countryFilter, tripKinds, ratingActive, rLo, rHi, gemOnly,
+  }, [all, q, searchHits, countryFilter, tripKinds, ratingActive, rLo, rHi, gemOnly,
     unescoOnly, topBeachOnly, bigOnly, showFavOnly, favDep,
     reachActive, reachCutoffMin, reachMinutes]);
 
