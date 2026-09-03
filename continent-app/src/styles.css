@@ -48,6 +48,26 @@
   --shadow-2:     0 4px 16px rgba(15, 23, 42, 0.10), 0 12px 32px rgba(15, 23, 42, 0.08);
   --shadow-card:  0 4px 20px rgba(15, 23, 42, 0.06);
 
+  /* Card taxonomy (PLAN.md C2). KIND is an ink-density ramp, not a rainbow:
+     the hierarchy reads as weight, so it survives greyscale and colour-blind
+     viewing. Values are ink mixed over paper at 100/78/62/45/50%. VERDICT
+     stays on the rating's ochre seal (--rate) - ratings are a measure here,
+     never the terracotta action colour. GEM gets its own quiet teal, the one
+     hue nothing else in the product uses, so "the world hasn't noticed" and
+     "worth the journey" can never be confused. The app is deliberately
+     single-theme (no prefers-color-scheme / data-theme blocks exist), so
+     these live only in this :root like every other token. */
+  --kind-metro:   #0f172a;
+  --kind-city:    #424856;
+  --kind-town:    #686c75;
+  --kind-village: #8f9297;
+  --kind-area:    #84868d;
+  --verdict-3:    var(--rate);       /* filled ribbon */
+  --verdict-2:    var(--rate);       /* outline ribbon */
+  --verdict-1:    var(--ink-mute);   /* text only */
+  --gem-ink:      #2c6e63;
+  --gem-bg:       #d9eae5;
+
   /* Type */
   --display:      'Fraunces', 'Iowan Old Style', Georgia, serif;
   --ui:           'Plus Jakarta Sans', 'Inter Tight', system-ui, -apple-system, sans-serif;
