@@ -45,6 +45,7 @@ export function ExploreFilterRail({
   unescoOnly, setUnescoOnly,
   countryFilter, setCountryFilter, availableCountries,
   reachHours, setReachHours, reachAvailable,
+  onOpenCountry,
 }) {
   return (
     <div className="xrail">
@@ -159,15 +160,22 @@ export function ExploreFilterRail({
       <Group label={t('sort.country')}>
         <div className="xrail-countries">
           {availableCountries.map(([iso2, name]) => (
-            <label key={iso2} className="xrail-country">
-              <input
-                type="checkbox"
-                checked={countryFilter.includes(iso2)}
-                onChange={() => setCountryFilter(toggleIn(countryFilter, iso2))}
-              />
-              <CountryFlag country={iso2} size={11} />
-              <span>{name}</span>
-            </label>
+            <span key={iso2} className="xrail-country-row">
+              <label className="xrail-country">
+                <input
+                  type="checkbox"
+                  checked={countryFilter.includes(iso2)}
+                  onChange={() => setCountryFilter(toggleIn(countryFilter, iso2))}
+                />
+                <CountryFlag country={iso2} size={11} />
+                <span>{name}</span>
+              </label>
+              {onOpenCountry && (
+                <button className="xrail-country-page" onClick={() => onOpenCountry(iso2)}
+                  aria-label={t('cpage.open', { country: name })}
+                  title={t('cpage.open', { country: name })}>{'\u2192'}</button>
+              )}
+            </span>
           ))}
         </div>
       </Group>

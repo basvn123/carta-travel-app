@@ -3334,4 +3334,18 @@ export const nl = {
   "explore.viewMap": "Kaart",
   "explore.viewAria": "Raster- of kaartweergave",
   "explore.mapAria": "Bestemmingen op de kaart",
+
+  // Country pages (PLAN.md C9)
+  "cpage.back": "Terug",
+  "cpage.open": "Over {country}",
+  "cpage.holds": "Carta kent {n} bestemmingen in {country}",
+  "cpage.day": "een gewone dag kost {eur} €",
+  "cpage.when": "op zijn best {months}",
+  "cpage.carMost": "bijna overal is een auto nodig",
+  "cpage.carSome": "buiten de steden helpt een auto",
+  "cpage.carFew": "trein en bus dekken het meeste",
+  "cpage.best": "Het beste van {country}",
+  "cpage.cities": "Steden die de tijd waard zijn",
+  "cpage.towns": "Stadjes en dorpen",
+  "cpage.areas": "Landschappen",
 };

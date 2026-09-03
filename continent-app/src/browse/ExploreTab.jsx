@@ -10,6 +10,7 @@ import { ExploreFilterRail } from './ExploreFilterRail.jsx';
 import { ExploreRails, interleaveByCountry } from './ExploreRails.jsx';
 import { TierLegend } from './TierLegend.jsx';
 import { ExploreMap } from './ExploreMap.jsx';
+import { CountryPage } from './CountryPage.jsx';
 import { FilterChips } from './FilterChips.jsx';
 import { CategoryRail } from './CategoryRail.jsx';
 import { KindGlyph } from '../components/KindGlyph.jsx';
@@ -364,6 +365,8 @@ export function ExploreTab({
   // grid quietly lie about what it holds.
   const [view, setView] = React.useState('grid');
   const [bbox, setBbox] = React.useState(null);
+  // C9: a country is a page, not just a filter.
+  const [countryPage, setCountryPage] = React.useState(null);
   const sentinelRef = React.useRef(null);
   const scrollRef = React.useRef(null);
 
@@ -622,6 +625,7 @@ export function ExploreTab({
       availableCountries={availableCountries}
       reachHours={reachHours} setReachHours={setReachHours}
       reachAvailable={reachAvailable}
+      onOpenCountry={setCountryPage}
     />
   );
 
@@ -727,6 +731,15 @@ export function ExploreTab({
             the live count and the sort select beside the results they rule. */}
         <FilterChips t={t} chips={chips} onClearAll={resetAll} />
 
+        {countryFilter.length === 1 && (
+          <button className="cpage-banner" onClick={() => setCountryPage(countryFilter[0])}>
+            {t('cpage.open', {
+              country: (availableCountries.find(([c]) => c === countryFilter[0]) || [])[1]
+                || countryFilter[0],
+            })} {'\u2192'}
+          </button>
+        )}
+
         {railsIdle && <ExploreRails rails={rails} onSelect={onSelect} t={t} />}
 
         <div className="xgrid-head">
@@ -776,6 +789,15 @@ export function ExploreTab({
         )}
       </div>
       </div>
+
+      {countryPage && (
+        <CountryPage
+          iso2={countryPage}
+          rows={rows}
+          onClose={() => setCountryPage(null)}
+          onSelect={(id) => { onSelect(id); }}
+        />
+      )}
     </div>
   );
 }

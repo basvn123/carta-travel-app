@@ -4042,4 +4042,18 @@ export const en = {
   "explore.viewMap": "Map",
   "explore.viewAria": "Grid or map view",
   "explore.mapAria": "Destinations on the map",
+
+  // Country pages (PLAN.md C9)
+  "cpage.back": "Back",
+  "cpage.open": "About {country}",
+  "cpage.holds": "Carta holds {n} destinations in {country}",
+  "cpage.day": "a typical day runs €{eur}",
+  "cpage.when": "best {months}",
+  "cpage.carMost": "a car is needed almost everywhere",
+  "cpage.carSome": "a car helps outside the cities",
+  "cpage.carFew": "trains and buses cover most of it",
+  "cpage.best": "The best of {country}",
+  "cpage.cities": "Cities worth your time",
+  "cpage.towns": "Towns and villages",
+  "cpage.areas": "Landscapes",
 };

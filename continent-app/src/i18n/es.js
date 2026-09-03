@@ -3334,4 +3334,18 @@ export const es = {
   "explore.viewMap": "Mapa",
   "explore.viewAria": "Vista de cuadrícula o mapa",
   "explore.mapAria": "Destinos en el mapa",
+
+  // Country pages (PLAN.md C9)
+  "cpage.back": "Atrás",
+  "cpage.open": "Sobre {country}",
+  "cpage.holds": "Carta cubre {n} destinos en {country}",
+  "cpage.day": "un día típico cuesta {eur} €",
+  "cpage.when": "mejor {months}",
+  "cpage.carMost": "hace falta coche casi en todas partes",
+  "cpage.carSome": "el coche ayuda fuera de las ciudades",
+  "cpage.carFew": "trenes y buses cubren casi todo",
+  "cpage.best": "Lo mejor de {country}",
+  "cpage.cities": "Ciudades que valen la pena",
+  "cpage.towns": "Pueblos",
+  "cpage.areas": "Paisajes",
 };

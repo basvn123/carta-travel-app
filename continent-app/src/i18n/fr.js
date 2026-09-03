@@ -3334,4 +3334,18 @@ export const fr = {
   "explore.viewMap": "Carte",
   "explore.viewAria": "Vue grille ou carte",
   "explore.mapAria": "Destinations sur la carte",
+
+  // Country pages (PLAN.md C9)
+  "cpage.back": "Retour",
+  "cpage.open": "À propos de {country}",
+  "cpage.holds": "Carta couvre {n} destinations en {country}",
+  "cpage.day": "une journée type coûte {eur} €",
+  "cpage.when": "idéal {months}",
+  "cpage.carMost": "une voiture est nécessaire presque partout",
+  "cpage.carSome": "une voiture aide hors des villes",
+  "cpage.carFew": "trains et bus couvrent presque tout",
+  "cpage.best": "Le meilleur de {country}",
+  "cpage.cities": "Villes qui valent le temps",
+  "cpage.towns": "Bourgs et villages",
+  "cpage.areas": "Paysages",
 };
