@@ -23,6 +23,7 @@ import { MemberPlaces } from './MemberPlaces.jsx';
 import { ScoreChip } from '../components/RatingBadge.jsx';
 import { visitLength } from '../lib/nearby.js';
 import { roleOf } from '../lib/taxonomy.js';
+import { KindGlyph } from '../components/KindGlyph.jsx';
 import { usePaywall } from '../hooks/usePaywall.jsx';
 import {
   TreeIcon, PersonIcon, CalendarIcon, MapPinIcon, CameraIcon,
@@ -237,6 +238,9 @@ export function DestinationPage({
   const verdict = d?.verdict || destination.rating || null;
   const sleep = d?.sleep || null;
   const getting = d?.practical?.getting_there || null;
+  const bookAhead = d?.practical?.book_ahead || [];
+  const rhythm = d?.practical?.rhythm || null;
+  const pairs = d?.practical?.pairs || [];
   const members = d?.members || null;
   const water = d?.water || null;
   const stayLen = visitLength(destination);
@@ -451,10 +455,33 @@ export function DestinationPage({
             )}
 
             {/* D3: getting there and around, the whole verdict line. */}
-            {getting && (getting.airport || getting.transit || getting.car_needed != null) && (
+            {(getting || rhythm || bookAhead.length > 0 || pairs.length > 0) && (
               <div className="dsheet-card" id="sec-getting">
                 <SectionTitle icon={CompassIcon}>{t('dest.gettingTitle')}</SectionTitle>
-                <GettingThere getting={getting} t={t} />
+                {getting && <GettingThere getting={getting} t={t} />}
+                {/* D4: the opening rhythm - what surprises a first visit. */}
+                {rhythm && <p className="destp-rhythm">{rhythm}</p>}
+                {/* D4: the sights that sell out, said before it is too late. */}
+                {bookAhead.length > 0 && (
+                  <p className="destp-bookahead">
+                    <span className="destp-bookahead-mark" aria-hidden="true">!</span>
+                    {t('dest.bookAhead', { names: bookAhead.join(', ') })}
+                  </p>
+                )}
+                {/* D4: what pairs well - never the same kind twice. */}
+                {pairs.length > 0 && (
+                  <div className="destp-pairs">
+                    <span className="destp-pairs-label">{t('dest.pairsWith')}</span>
+                    {pairs.map((pr) => (
+                      <button key={pr.id} type="button" className="destp-pair"
+                        onClick={() => onSelect?.(pr.id)}>
+                        <KindGlyph kind={pr.kind} size={10} label={t(`pkind.${pr.kind}`)} />
+                        <span>{pr.name}</span>
+                        <span className="mono">{pr.km} km</span>
+                      </button>
+                    ))}
+                  </div>
+                )}
               </div>
             )}
 
@@ -729,6 +756,16 @@ export function DestinationPage({
               <div className="dsheet-card" id="sec-cost">
                 <SectionTitle icon={ReceiptIcon}>{t('cost.title')}</SectionTitle>
                 <CostReceipt cost={cost} t={t} lifestyleLabel={lifestyleLine} onOpenLifestyle={onOpenLifestyle} />
+                {/* D4: the day rate becomes a budget - days from the same
+                    visit-length the verdict card states. */}
+                {stayLen?.n >= 2 && (
+                  <p className="destp-triptotal">
+                    {t('dest.tripTotal', {
+                      eur: new Intl.NumberFormat('en-GB').format(Math.round(cost.dayEur * stayLen.n)),
+                      n: stayLen.n,
+                    })}
+                  </p>
+                )}
               </div>
             )}
 

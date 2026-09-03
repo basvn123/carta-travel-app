@@ -3393,4 +3393,9 @@ export const es = {
   "dest.doOffTrail": "Fuera de ruta",
   "dest.membersTitle": "Pueblos dentro",
   "dest.memberRead": "Leer más",
+
+  // Practical layer (PLAN.md D4)
+  "dest.bookAhead": "Reserva con antelación: {names} se agotan.",
+  "dest.pairsWith": "Combina bien con",
+  "dest.tripTotal": "Unos {eur} € por {n} días, una persona",
 };

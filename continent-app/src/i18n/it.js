@@ -3393,4 +3393,9 @@ export const it = {
   "dest.doOffTrail": "Fuori rotta",
   "dest.membersTitle": "Borghi e paesi all’interno",
   "dest.memberRead": "Leggi di più",
+
+  // Practical layer (PLAN.md D4)
+  "dest.bookAhead": "Prenota in anticipo: {names} vanno esauriti.",
+  "dest.pairsWith": "Si abbina bene a",
+  "dest.tripTotal": "Circa {eur} € per {n} giorni, una persona",
 };

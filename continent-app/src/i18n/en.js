@@ -4101,4 +4101,9 @@ export const en = {
   "dest.doOffTrail": "Off the trail",
   "dest.membersTitle": "Villages and towns inside",
   "dest.memberRead": "Read more",
+
+  // Practical layer (PLAN.md D4)
+  "dest.bookAhead": "Book ahead: {names} sell out.",
+  "dest.pairsWith": "Pairs well with",
+  "dest.tripTotal": "About €{eur} for {n} days, one person",
 };

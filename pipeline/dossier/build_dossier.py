@@ -911,7 +911,27 @@ def compose_practical(dest):
             getting[out_key] = lt[src_key]
     if getting:
         practical["getting_there"] = getting
+    # D4: the practical layer's fields, merged where practical_layer.py
+    # computed them - book-ahead sights, the country's opening rhythm, and
+    # the places this one pairs well with. Regional food is absent until
+    # its source is honestly harvestable (Wikidata models a fraction of the
+    # PDO/PGI register: 238 entities measured 2026-09).
+    extra = _practical_extra().get(dest.get("id")) or {}
+    for key in ("book_ahead", "rhythm", "pairs", "eat"):
+        if extra.get(key):
+            practical[key] = extra[key]
     return practical
+
+
+_PRACTICAL = None
+
+
+def _practical_extra():
+    global _PRACTICAL
+    if _PRACTICAL is None:
+        path = os.path.join(CACHE, "practical.json")
+        _PRACTICAL = (load_json(path) or {}).get("dests", {}) if os.path.exists(path) else {}
+    return _PRACTICAL
 
 
 # ---------------------------------------------------------------- credits

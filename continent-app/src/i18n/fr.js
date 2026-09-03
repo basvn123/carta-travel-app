@@ -3393,4 +3393,9 @@ export const fr = {
   "dest.doOffTrail": "Hors des sentiers",
   "dest.membersTitle": "Villages et bourgs à l’intérieur",
   "dest.memberRead": "En savoir plus",
+
+  // Practical layer (PLAN.md D4)
+  "dest.bookAhead": "Réservez à l’avance : {names} affichent complet.",
+  "dest.pairsWith": "Se combine bien avec",
+  "dest.tripTotal": "Environ {eur} € pour {n} jours, une personne",
 };

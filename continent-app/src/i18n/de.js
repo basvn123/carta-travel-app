@@ -3393,4 +3393,9 @@ export const de = {
   "dest.doOffTrail": "Abseits der Pfade",
   "dest.membersTitle": "Dörfer und Städtchen darin",
   "dest.memberRead": "Mehr lesen",
+
+  // Practical layer (PLAN.md D4)
+  "dest.bookAhead": "Vorab buchen: {names} sind oft ausverkauft.",
+  "dest.pairsWith": "Passt gut zu",
+  "dest.tripTotal": "Etwa {eur} € für {n} Tage, eine Person",
 };

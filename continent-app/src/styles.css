@@ -30485,3 +30485,56 @@ button.ai-sched-main:focus-visible {
    modal launched from its own PDF button - a guest clicked and saw nothing
    happen. The pass variant outranks every page. */
 .day-saved-overlay.pass-overlay { z-index: 320; }
+
+/* --- practical layer (PLAN.md D4) ---------------------------------------- */
+.destp-rhythm { font-size: 13px; color: var(--ink-soft); margin: 10px 0 0; max-width: 66ch; }
+.destp-bookahead {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--ink);
+  background: var(--rate-bg);
+  border-radius: 8px;
+  padding: 8px 11px;
+  margin: 10px 0 0;
+}
+.destp-bookahead-mark {
+  flex: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--rate);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transform: translateY(2px);
+}
+.destp-pairs { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; margin: 12px 0 0; }
+.destp-pairs-label { font-size: 12px; font-weight: 700; color: var(--ink-mute); }
+.destp-pair {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font: inherit;
+  font-size: 12.5px;
+  color: var(--ink);
+  background: var(--bg-card);
+  border: 1px solid var(--rule-soft);
+  border-radius: 999px;
+  padding: 4px 11px;
+  cursor: pointer;
+}
+.destp-pair:hover { border-color: var(--rate-soft); }
+.destp-pair .mono { color: var(--ink-mute); font-size: 11px; }
+.destp-triptotal {
+  margin: 10px 0 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink);
+  border-top: 1px solid var(--rule-soft);
+  padding-top: 9px;
+}

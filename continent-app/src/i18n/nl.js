@@ -3393,4 +3393,9 @@ export const nl = {
   "dest.doOffTrail": "Buiten de route",
   "dest.membersTitle": "Dorpen en stadjes erin",
   "dest.memberRead": "Lees meer",
+
+  // Practical layer (PLAN.md D4)
+  "dest.bookAhead": "Vooraf boeken: {names} raken uitverkocht.",
+  "dest.pairsWith": "Past goed bij",
+  "dest.tripTotal": "Ongeveer {eur} € voor {n} dagen, een persoon",
 };
