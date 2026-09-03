@@ -102,3 +102,43 @@ exact-fill packer, modal-free filter rail with live count, chips and URL
 state. verify_explore.mjs 43/43 at the new contract; taxonomy tests 9/9;
 tab-switching's 3 header-portal failures reproduce on the parent commit
 (pre-existing).
+
+## Phase 4 - Coverage, findability and the destination page (B1-B4, D1-D7) - 2026-09-03
+
+**B1.** members_v1: 444 areas carry 2,564 real settlements from the landmark
+harvest + cities500 top-up; every seeded set complete (all five Cinque Terre
+villages survive a 500 m dedupe tuned for their 1.5 km spacing); 16
+empty-land areas ship what exists.
+
+**B2.** search_index.json (5,804 folded keys) + the client matcher: all nine
+done-when names resolve, members announce their parents, regions filter by
+bbox, typos land via edit distance 1.
+
+**B3 (stopped, then capture-max by user decision).** 2,304 register members
+missing across 17 modelled registers, 1,329 auto_admit; seven real registers
+unmodelled in Wikidata, printed as the gap. Nothing ingested.
+
+**B4 (capture-max).** Two evidence streams (WDQS boxes + a 207,650-row OSM
+settlement scan, per-country processes after in-process OOMs), ranked by
+sitelinks x anchor x proximity; top 2,500 as the review queue, the full
+10,668 archived beside it. Every probe name captured, Mougins included.
+Intake identity fixed: held requires name agreement beyond 1.5 km.
+
+**D1-D3, D5-D7.** The destination page walks the decision sequence with a
+sticky sub-nav; the verdict leads with breakdown, country line and
+confidence in words; neighbourhoods/seasonality, the fly-to and transit
+verdict, honest crowding, bathing water; significance-sized highlight tiles
+with lettered plates; consensus-grouped things to do; area members with the
+?dm= search anchor. Bugs fixed: persistState wiped foreign URL params; the
+pass modal opened UNDER the page (z 62 vs 240) so a guest's PDF click did
+nothing visible.
+
+**D4.** practical_v1: book-ahead (41 dests), rhythm (25 countries), pairs
+(2,717 dests, kinds never repeat), client-side trip total. Absent with
+stated reasons: regional food (Wikidata models 238 protected names against
+thousands; eAmbrosia is a new source), accessibility (wheelchair tags not
+harvested).
+
+**Plan complete.** All 31 steps landed or resolved by user decision; suites:
+rating 2/2, golden 120/120, explore 43/43, E3 24/24, destination full pass,
+taxonomy 9/9.
