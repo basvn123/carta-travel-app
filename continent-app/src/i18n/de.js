@@ -3311,4 +3311,16 @@ export const de = {
   "filter.activeAria": "Aktive Filter",
   "filter.removeChip": "{name} entfernen",
   "explore.countLine": "{n} Ziele",
+
+  // Explore rails (PLAN.md C5)
+  "rail.top": "Die {n}",
+  "rail.gems": "Versteckte Perlen",
+  "rail.bestOf": "Das Beste jedes Landes",
+  "rail.villages": "Dörfer, die die Fahrt lohnen",
+  "rail.now": "Gerade jetzt gut",
+  "rail.nocar": "Ohne Auto unterwegs",
+  "rail.cheap": "Unter 70 € am Tag",
+  "rail.quiet": "Ruhig in der Hochsaison",
+  "rail.seeAll": "Alle {n} zeigen",
+  "filter.bestOf": "Das Beste seines Landes",
 };

@@ -4019,4 +4019,16 @@ export const en = {
   "filter.activeAria": "Active filters",
   "filter.removeChip": "Remove {name}",
   "explore.countLine": "{n} destinations",
+
+  // Explore rails (PLAN.md C5)
+  "rail.top": "The {n}",
+  "rail.gems": "Hidden gems",
+  "rail.bestOf": "The best of every country",
+  "rail.villages": "Villages worth the drive",
+  "rail.now": "Great right now",
+  "rail.nocar": "Go without a car",
+  "rail.cheap": "Under €70 a day",
+  "rail.quiet": "Quiet in high season",
+  "rail.seeAll": "See all {n}",
+  "filter.bestOf": "Best of its country",
 };

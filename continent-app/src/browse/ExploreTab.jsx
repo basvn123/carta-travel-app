@@ -7,6 +7,7 @@ import { CountryFlag } from '../components/CountryFlag.jsx';
 import { fmtMonthRanges } from './ClimateStrip.jsx';
 import { useExploreCatalog } from '../hooks/useExploreCatalog.js';
 import { ExploreFilterRail } from './ExploreFilterRail.jsx';
+import { ExploreRails, interleaveByCountry } from './ExploreRails.jsx';
 import { FilterChips } from './FilterChips.jsx';
 import { CategoryRail } from './CategoryRail.jsx';
 import { KindGlyph } from '../components/KindGlyph.jsx';
@@ -349,6 +350,7 @@ export function ExploreTab({
       roles: list('xr'),
       month: q.get('xm') ? Number(q.get('xm')) : null,
       nocar: q.get('xp')?.includes('c') || false,
+      badged: q.get('xp')?.includes('b') || false,
       cheap: q.get('xp')?.includes('e') || false,
       quiet: q.get('xp')?.includes('q') || false,
       sea: q.get('xp')?.includes('s') || false,
@@ -375,6 +377,14 @@ export function ExploreTab({
     [nearby],
   );
 
+  // One predicate each, shared by the C5 rails and the C6 filters, so a
+  // rail's "See all" always lands on a grid showing the same list.
+  const noCarOk = (p) => !p.local_transport?.car_needed
+    && (p.local_transport?.transit_quality === 'good'
+      || p.local_transport?.transit_quality === 'excellent');
+  const cheapOk = (p) => p.cost?.dayEur != null && p.cost.dayEur <= 70;
+  const quietOk = (p) => p.crowding?.tier === 1;
+
   // C6: the taxonomy filters, applied after the catalog hook's own. The
   // count shown in the grid header is THIS list's length, so it can never
   // disagree with what renders.
@@ -383,9 +393,10 @@ export function ExploreTab({
     if (xf.verdicts.length && !xf.verdicts.includes(String(p.rating?.tier ?? 0))) return false;
     if (xf.roles.length && !xf.roles.includes(roleFor(p).key)) return false;
     if (xf.month && !(p.climate?.best || []).includes(xf.month)) return false;
-    if (xf.nocar && p.local_transport?.car_needed) return false;
-    if (xf.cheap && !(p.cost?.dayEur != null && p.cost.dayEur <= 70)) return false;
-    if (xf.quiet && p.crowding?.tier !== 1) return false;
+    if (xf.nocar && !noCarOk(p)) return false;
+    if (xf.cheap && !cheapOk(p)) return false;
+    if (xf.quiet && !quietOk(p)) return false;
+    if (xf.badged && !p.country_badge) return false;
     if (xf.sea && !(p.categories || []).some((c) => c === 'beach' || c === 'coast' || c === 'island')) return false;
     return true;
   }), [rows, xf, roleFor]);
@@ -406,7 +417,7 @@ export function ExploreTab({
     setOrDrop('xv', xf.verdicts.join(','));
     setOrDrop('xr', xf.roles.join(','));
     setOrDrop('xm', xf.month || '');
-    const flags = `${xf.nocar ? 'c' : ''}${xf.cheap ? 'e' : ''}${xf.quiet ? 'q' : ''}${xf.sea ? 's' : ''}`;
+    const flags = `${xf.nocar ? 'c' : ''}${xf.cheap ? 'e' : ''}${xf.quiet ? 'q' : ''}${xf.sea ? 's' : ''}${xf.badged ? 'b' : ''}`;
     setOrDrop('xp', flags);
     setOrDrop('xg', gemOnly ? '1' : '');
     setOrDrop('xu', unescoOnly ? '1' : '');
@@ -456,7 +467,7 @@ export function ExploreTab({
     setTopPick(null);
     setReachHours(null);
     setXf({ kinds: [], verdicts: [], roles: [], month: null,
-      nocar: false, cheap: false, quiet: false, sea: false });
+      nocar: false, cheap: false, quiet: false, sea: false, badged: false });
   };
 
   // C6: one chip per active filter, each removing exactly itself.
@@ -471,6 +482,7 @@ export function ExploreTab({
     if (xf.cheap) list.push({ key: 'cheap', label: t('filter.underDay', { eur: 70 }), remove: drop({ cheap: false }) });
     if (xf.quiet) list.push({ key: 'quiet', label: t('filter.notCrowded'), remove: drop({ quiet: false }) });
     if (xf.sea) list.push({ key: 'sea', label: t('filter.nearSea'), remove: drop({ sea: false }) });
+    if (xf.badged) list.push({ key: 'badged', label: t('filter.bestOf'), remove: drop({ badged: false }) });
     if (gemOnly) list.push({ key: 'gem', label: t('legend.gem'), remove: () => setGemOnly(false) });
     if (unescoOnly) list.push({ key: 'unesco', label: 'UNESCO', remove: () => setUnescoOnly(false) });
     for (const iso2 of countryFilter) {
@@ -522,6 +534,52 @@ export function ExploreTab({
       )}
     </div>
   );
+
+  // C5: the editorial rails. Every rail is (title, rows, seeAll) where the
+  // rows come from the SAME predicate its seeAll applies, so the "See all
+  // 292" grid is exactly the rail, longer. They lead only the unfiltered
+  // page: once the reader narrows anything, the grid is the answer.
+  const railsIdle = chips.length === 0 && !locationQuery
+    && tripKinds.length === 0 && !showFavOnly;
+  const rails = React.useMemo(() => {
+    if (!railsIdle) return [];
+    const month = new Date().getMonth() + 1;
+    const bestOf = new Map();
+    for (const p of rows) {
+      if (!p.country_badge) continue;
+      const cur = bestOf.get(p.country);
+      if (!cur || (p.country_rank || 99) < (cur.country_rank || 99)) bestOf.set(p.country, p);
+    }
+    const q = {
+      the43: rows.filter((p) => p.rating?.tier === 3),
+      gems: interleaveByCountry(rows.filter((p) => p.rating?.hidden_gem)),
+      bestOf: interleaveByCountry([...bestOf.values()]),
+      villages: rows.filter((p) => kindOf(p) === 'village' && (p.rating?.tier ?? 0) >= 1),
+      now: interleaveByCountry(rows.filter((p) => (p.climate?.best || []).includes(month))),
+      nocar: interleaveByCountry(rows.filter(noCarOk)),
+      cheap: interleaveByCountry(rows.filter(cheapOk)),
+      quiet: interleaveByCountry(rows.filter(quietOk)),
+    };
+    return [
+      { key: 'the43', title: t('rail.top', { n: q.the43.length }), rows: q.the43,
+        seeAll: () => patchXf({ verdicts: ['3'] }) },
+      { key: 'gems', title: t('rail.gems'), rows: q.gems,
+        seeAll: () => setGemOnly(true) },
+      { key: 'bestOf', title: t('rail.bestOf'), rows: q.bestOf,
+        seeAll: () => patchXf({ badged: true }) },
+      { key: 'villages', title: t('rail.villages'), rows: q.villages,
+        seeAll: () => patchXf({ kinds: ['village'], verdicts: ['1', '2', '3'] }) },
+      { key: 'now', title: t('rail.now'), rows: q.now,
+        seeAll: () => patchXf({ month }) },
+      { key: 'nocar', title: t('rail.nocar'), rows: q.nocar,
+        seeAll: () => patchXf({ nocar: true }) },
+      { key: 'cheap', title: t('rail.cheap'), rows: q.cheap,
+        seeAll: () => patchXf({ cheap: true }) },
+      { key: 'quiet', title: t('rail.quiet'), rows: q.quiet,
+        seeAll: () => patchXf({ quiet: true }) },
+    ];
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [railsIdle, rows, t]);
 
   // C6: sort is a select in the grid header, visually distinct from the
   // filters, standing where the results it orders actually are.
@@ -646,6 +704,8 @@ export function ExploreTab({
         {/* C6: active filters as removable chips, then the grid header with
             the live count and the sort select beside the results they rule. */}
         <FilterChips t={t} chips={chips} onClearAll={resetAll} />
+
+        {railsIdle && <ExploreRails rails={rails} onSelect={onSelect} t={t} />}
 
         <div className="xgrid-head">
           <span className="xgrid-count">{t('explore.countLine', { n: taxRows.length })}</span>

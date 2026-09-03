@@ -30115,3 +30115,77 @@ button.ai-sched-main:focus-visible {
 }
 .explore-grid--mosaic .xcard-best { display: inline-flex; }
 .explore-grid--mosaic .xcard-media { aspect-ratio: auto; }
+
+/* --- Explore rails (PLAN.md C5): editorial strips before the grid -------- */
+.xrails { display: flex; flex-direction: column; gap: 18px; margin: 0 0 22px; }
+.xrails-head { display: flex; align-items: baseline; gap: 12px; margin: 0 2px 8px; }
+.xrails-title {
+  font-family: var(--display);
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--ink);
+  margin: 0;
+}
+.xrails-all {
+  margin-left: auto;
+  font: inherit;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--rate-soft);
+  background: none;
+  border: 0;
+  cursor: pointer;
+  padding: 2px 4px;
+}
+.xrails-all:hover { text-decoration: underline; }
+.xrails-strip {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  scroll-snap-type: x proximity;
+  padding: 2px 2px 8px;
+}
+.railcard {
+  flex: 0 0 172px;
+  scroll-snap-align: start;
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+  font: inherit;
+  background: var(--bg-card);
+  border: 1px solid var(--rule-soft);
+  border-radius: 12px;
+  overflow: hidden;
+  cursor: pointer;
+  padding: 0;
+}
+.railcard-media { position: relative; display: block; }
+.railcard-img { width: 100%; display: block; }
+.railcard-seal {
+  position: absolute;
+  top: 7px;
+  left: 7px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--rate);
+}
+.railcard-seal.rt-2 { background: var(--bg-card); border: 2px solid var(--rate); }
+.railcard-body { display: flex; flex-direction: column; gap: 3px; padding: 8px 10px 10px; }
+.railcard-kind {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 10.5px;
+  color: var(--ink-mute);
+}
+.railcard-name {
+  font-family: var(--display);
+  font-size: 14.5px;
+  font-weight: 600;
+  color: var(--ink);
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
