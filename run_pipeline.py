@@ -1379,6 +1379,20 @@ TASKS = [
                  "dest rating's things component saturates on the new rates."),
     },
     {
+        "key": "country_context",
+        "title": "Country context: rank/percentile/badge within each country",
+        "cadence": "weekly",
+        "writes_app_data": True,
+        "soft": True,
+        "cmds": [[PY, "pipeline/country_context_layer.py"]],
+        "note": ("A6 (PLAN.md): country_rank/_n/_percentile/_badge and "
+                 "class_percentile beside the absolute score, so a browsing "
+                 "user sees where a place stands in the country they are "
+                 "going to. Reads rating.score only and refuses to write if "
+                 "any absolute score moved, so it runs safely after every "
+                 "rating refresh. Multi-airport cities hold one slot."),
+    },
+    {
         "key": "audit",
         "title": "Data-quality audit scorecard (read-only)",
         "cadence": "monthly",

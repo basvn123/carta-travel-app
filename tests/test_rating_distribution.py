@@ -30,9 +30,11 @@ it (see reports/rating_audit_v3_baseline.json):
          large. v3 held this (-0.02) and v4 must keep holding it.
   5. |corr(beauty, log population)| < 0.12.
          v3: -0.158 - beauty quietly penalised cities.
-  6. Every country has >= 3 badged destinations (country_badge, from A6).
-         Skipped while the field does not exist yet; asserts as soon as the
-         country-context layer publishes it.
+  6. Every country has >= min(3, destinations held) badged destinations
+         (country_badge, from A6) - the min() because Liechtenstein, Monaco
+         and San Marino hold one destination each, and three badges cannot
+         exist where one place does. Skipped while the field does not exist
+         yet; asserts as soon as the country-context layer publishes it.
   7. Tier-3 count stays between 35 and 70.
          "Worth the journey" means the continent's icons; the band keeps a
          recalibration from silently inflating or emptying the top shelf.
@@ -164,7 +166,9 @@ def test_rating_distribution():
         problems.append(f"tier-3 count {tier3} outside {TIER3_RANGE}")
 
     if badges_exist:
-        thin = {c: n for c, n in badged.items() if n < MIN_BADGED_PER_COUNTRY}
+        held = {c: v["n"] for c, v in report["countries"].items()}
+        thin = {c: n for c, n in badged.items()
+                if n < min(MIN_BADGED_PER_COUNTRY, held.get(c, 1))}
         lines.append(f"  countries below {MIN_BADGED_PER_COUNTRY} badges: "
                      f"{thin or 'none'}")
         if thin:
