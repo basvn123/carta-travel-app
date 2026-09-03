@@ -1,0 +1,32 @@
+name: rating-tests
+
+# The rating model's regression harness (PLAN.md E1 + E2): the 120-pair
+# golden order set and the distribution contract. Runs on every change to
+# the pipeline, the tests themselves, or the shipped wire, so a scoring
+# regression fails the build instead of reaching the catalogue. The tests
+# read the tracked wire (continent-app/public/app_data.json) in CI; the
+# gitignored master is only used locally.
+on:
+  push:
+    branches: [main]
+    paths:
+      - "pipeline/**"
+      - "tests/**"
+      - "continent-app/public/app_data.json"
+  pull_request:
+    paths:
+      - "pipeline/**"
+      - "tests/**"
+      - "continent-app/public/app_data.json"
+
+jobs:
+  rating:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install pytest
+      - name: Golden pairs and distribution contract
+        run: pytest tests/test_golden_ratings.py tests/test_rating_distribution.py -q -rs

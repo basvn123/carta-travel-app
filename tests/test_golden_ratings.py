@@ -30,7 +30,11 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 GOLDEN = ROOT / "tests" / "golden_ratings.json"
-DEFAULT_INPUT = ROOT / "app_data" / "app_data.json"
+# The master is the pipeline's source of truth but is gitignored; CI falls
+# back to the tracked wire, which carries identical rating fields.
+_MASTER = ROOT / "app_data" / "app_data.json"
+_WIRE = ROOT / "continent-app" / "public" / "app_data.json"
+DEFAULT_INPUT = _MASTER if _MASTER.exists() else _WIRE
 
 
 def evaluate(app_data_path=DEFAULT_INPUT):
