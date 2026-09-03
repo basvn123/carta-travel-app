@@ -69,3 +69,36 @@ the contract arms when A5 stamps rating_v4, so A5 must resolve that tension
 (the designation registers cover 37% of the catalogue; a true absence is not
 a constant dressed as a measurement, but the assertion cannot tell them
 apart).
+
+## Phase 3 - Context and the visible rebuild (A5, A6, A7, C1, C2, C3, C4, C6) - 2026-09-03
+
+**A5.** rating.confidence (curated 1,570 / modelled 1,458 / provisional 10) +
+inputs_present; schema v17, tag rating_v4. The E2 contract armed and passes,
+with one user-approved amendment (decision (a)): acclaim's modal share is
+asserted over nonzero values (0.351 < 0.40) because its 62.7% zero block is
+the true absence of register membership. corr(score, log pop) = +0.026.
+
+**A6.** country_rank/_n/_percentile/_badge + class_percentile: 303 badges
+across all 43 countries, zero absolute scores moved, one slot per
+multi-airport city. min(3, held) badge floor for one-destination countries.
+Wired into run_pipeline as a weekly task.
+
+**A7.** reports/appeal_queue.csv: top 300 uncurated by modelled score x fame
+x coverage deficit; row one is Koeln at modelled 9.0; 36 of the top 50 from
+sub-40%-coverage countries.
+
+**C1.** src/lib/taxonomy.js: kind / verdict / role, total cascade (PLAN's
+role rules left gaps), neighbour counts from a grid bucket index. Nine
+boundary tests via node --test. Catalogue: 712 base / 604 basecamp / 1,329
+daytrip / 393 stop.
+
+**C2.** Kind ink-ramp, verdict (rating ochre) and gem teal tokens in :root.
+Deviation, disclosed: the shipped app is single-theme; no
+prefers-color-scheme or data-theme block exists to redefine them in.
+
+**C3+C4+C6.** One commit, disclosed (shared files; PLAN's PR4 ships them
+together): four-slot card, kind-spanned 12-column mosaic with an
+exact-fill packer, modal-free filter rail with live count, chips and URL
+state. verify_explore.mjs 43/43 at the new contract; taxonomy tests 9/9;
+tab-switching's 3 header-portal failures reproduce on the parent commit
+(pre-existing).
