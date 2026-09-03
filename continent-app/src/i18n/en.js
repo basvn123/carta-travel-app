@@ -4036,4 +4036,10 @@ export const en = {
   "legend.aria": "What the ratings mean",
   "legend.dismiss": "Hide the legend",
   "legend.how": "How the score works",
+
+  // Explore map view (PLAN.md C7)
+  "explore.viewGrid": "Grid",
+  "explore.viewMap": "Map",
+  "explore.viewAria": "Grid or map view",
+  "explore.mapAria": "Destinations on the map",
 };

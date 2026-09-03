@@ -3328,4 +3328,10 @@ export const it = {
   "legend.aria": "Cosa significano i voti",
   "legend.dismiss": "Nascondi la legenda",
   "legend.how": "Come nasce il voto",
+
+  // Explore map view (PLAN.md C7)
+  "explore.viewGrid": "Griglia",
+  "explore.viewMap": "Mappa",
+  "explore.viewAria": "Vista griglia o mappa",
+  "explore.mapAria": "Destinazioni sulla mappa",
 };

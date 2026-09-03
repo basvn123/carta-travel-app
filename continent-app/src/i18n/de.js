@@ -3328,4 +3328,10 @@ export const de = {
   "legend.aria": "Was die Bewertungen bedeuten",
   "legend.dismiss": "Legende ausblenden",
   "legend.how": "So entsteht die Note",
+
+  // Explore map view (PLAN.md C7)
+  "explore.viewGrid": "Raster",
+  "explore.viewMap": "Karte",
+  "explore.viewAria": "Raster- oder Kartenansicht",
+  "explore.mapAria": "Ziele auf der Karte",
 };

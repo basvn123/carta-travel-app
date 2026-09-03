@@ -3328,4 +3328,10 @@ export const nl = {
   "legend.aria": "Wat de scores betekenen",
   "legend.dismiss": "Legenda verbergen",
   "legend.how": "Zo ontstaat de score",
+
+  // Explore map view (PLAN.md C7)
+  "explore.viewGrid": "Raster",
+  "explore.viewMap": "Kaart",
+  "explore.viewAria": "Raster- of kaartweergave",
+  "explore.mapAria": "Bestemmingen op de kaart",
 };

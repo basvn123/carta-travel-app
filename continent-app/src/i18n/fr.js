@@ -3328,4 +3328,10 @@ export const fr = {
   "legend.aria": "Ce que signifient les notes",
   "legend.dismiss": "Masquer la légende",
   "legend.how": "Comment la note est faite",
+
+  // Explore map view (PLAN.md C7)
+  "explore.viewGrid": "Grille",
+  "explore.viewMap": "Carte",
+  "explore.viewAria": "Vue grille ou carte",
+  "explore.mapAria": "Destinations sur la carte",
 };

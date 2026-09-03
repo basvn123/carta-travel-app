@@ -3328,4 +3328,10 @@ export const es = {
   "legend.aria": "Qué significan las notas",
   "legend.dismiss": "Ocultar la leyenda",
   "legend.how": "Cómo se calcula la nota",
+
+  // Explore map view (PLAN.md C7)
+  "explore.viewGrid": "Cuadrícula",
+  "explore.viewMap": "Mapa",
+  "explore.viewAria": "Vista de cuadrícula o mapa",
+  "explore.mapAria": "Destinos en el mapa",
 };

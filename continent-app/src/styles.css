@@ -30262,3 +30262,40 @@ button.ai-sched-main:focus-visible {
 @media (max-width: 768px) {
   .tierlegend-kinds { display: none; } /* the grid is single-column there */
 }
+
+/* --- Explore map view (PLAN.md C7) --------------------------------------- */
+.xview-toggle {
+  display: inline-flex;
+  border: 1px solid var(--rule-soft);
+  border-radius: 8px;
+  overflow: hidden;
+  margin-left: auto;
+}
+.xgrid-head .xview-toggle + .xgrid-sort { margin-left: 0; }
+.xview-toggle button {
+  font: inherit;
+  font-size: 12.5px;
+  padding: 5px 12px;
+  border: 0;
+  background: var(--bg-card);
+  color: var(--ink-soft);
+  cursor: pointer;
+}
+.xview-toggle button.on { background: var(--ink-fill); color: #fff; }
+.xmap {
+  height: min(72vh, 760px);
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid var(--rule-soft);
+  margin: 0 0 14px;
+}
+.xmap-canvas { width: 100%; height: 100%; }
+.xmap-pop { font-size: 12.5px; line-height: 1.35; }
+.xmap-pop strong { font-size: 13px; margin-right: 6px; }
+.xmap-pop-sub { color: #6f7688; }
+.xmap-pop-score {
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.xmap-pop-score.rt-3, .xmap-pop-score.rt-2 { color: #8f5a0c; }
+.explore-grid--mosaic[hidden] { display: none; } /* display:grid beats the hidden attr otherwise */

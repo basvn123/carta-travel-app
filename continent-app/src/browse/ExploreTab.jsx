@@ -9,6 +9,7 @@ import { useExploreCatalog } from '../hooks/useExploreCatalog.js';
 import { ExploreFilterRail } from './ExploreFilterRail.jsx';
 import { ExploreRails, interleaveByCountry } from './ExploreRails.jsx';
 import { TierLegend } from './TierLegend.jsx';
+import { ExploreMap } from './ExploreMap.jsx';
 import { FilterChips } from './FilterChips.jsx';
 import { CategoryRail } from './CategoryRail.jsx';
 import { KindGlyph } from '../components/KindGlyph.jsx';
@@ -358,6 +359,11 @@ export function ExploreTab({
     };
   });
   const patchXf = React.useCallback((delta) => setXf((v) => ({ ...v, ...delta })), []);
+  // C7: grid or map. The bbox narrows the count only WHILE the map is the
+  // view - an invisible filter surviving the switch back would make the
+  // grid quietly lie about what it holds.
+  const [view, setView] = React.useState('grid');
+  const [bbox, setBbox] = React.useState(null);
   const sentinelRef = React.useRef(null);
   const scrollRef = React.useRef(null);
 
@@ -406,6 +412,17 @@ export function ExploreTab({
     () => packRows(taxRows.slice(0, visible)),
     [taxRows, visible],
   );
+
+  // C7: what the map's viewport holds, counted live while the map is shown.
+  const shownRows = React.useMemo(() => {
+    if (view !== 'map' || !bbox) return taxRows;
+    const [w, so, e, n] = bbox;
+    return taxRows.filter((p) => {
+      const lat = p.city_lat ?? p.lat;
+      const lon = p.city_lon ?? p.lon;
+      return lat >= so && lat <= n && lon >= w && lon <= e;
+    });
+  }, [taxRows, view, bbox]);
 
   // C6: the filter state is the URL, so a filtered view is shareable and
   // the back button means what it says. replaceState keeps the #trip hash
@@ -713,9 +730,15 @@ export function ExploreTab({
         {railsIdle && <ExploreRails rails={rails} onSelect={onSelect} t={t} />}
 
         <div className="xgrid-head">
-          <span className="xgrid-count">{t('explore.countLine', { n: taxRows.length })}</span>
+          <span className="xgrid-count">{t('explore.countLine', { n: shownRows.length })}</span>
           {isMock && <span className="explore-mock">Mock data</span>}
-          {sortSelect}
+          <div className="xview-toggle" role="group" aria-label={t('explore.viewAria')}>
+            <button className={view === 'grid' ? 'on' : ''} aria-pressed={view === 'grid'}
+              onClick={() => setView('grid')}>{t('explore.viewGrid')}</button>
+            <button className={view === 'map' ? 'on' : ''} aria-pressed={view === 'map'}
+              onClick={() => setView('map')}>{t('explore.viewMap')}</button>
+          </div>
+          {view === 'grid' && sortSelect}
         </div>
 
         {taxRows.length === 0 && (
@@ -726,7 +749,11 @@ export function ExploreTab({
           </p>
         )}
 
-        <div className="explore-grid explore-grid--mosaic">
+        {view === 'map' && (
+          <ExploreMap rows={taxRows} onSelect={onSelect} onViewport={setBbox} t={t} />
+        )}
+
+        <div className="explore-grid explore-grid--mosaic" hidden={view === 'map'}>
           {packed.map(({ p, span, ratio, kind }) => (
             <ExploreCard
               key={p.id}
@@ -744,7 +771,7 @@ export function ExploreTab({
           ))}
         </div>
 
-        {visible < taxRows.length && (
+        {view === 'grid' && visible < taxRows.length && (
           <div ref={sentinelRef} className="places-sentinel" aria-hidden="true" style={{ height: 1 }} />
         )}
       </div>
