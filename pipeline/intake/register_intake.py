@@ -51,15 +51,23 @@ from rating_layer import ACCLAIM_WEIGHT                    # noqa: E402
 if sys.platform == "win32":
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
-MASTER = ROOT / "app_data" / "app_data.json"
+# The wire, not the master: these tools read only fields both files carry
+# (identically - the rating mirror guarantees it), and the 64 MB master
+# needs ~2 GB to parse, which a loaded workstation does not always have.
+MASTER = ROOT / "continent-app" / "public" / "app_data.json"
 OUT = ROOT / "reports" / "intake_candidates.csv"
 
 # Europe box, for the worldwide-typed registers (national parks, UNESCO):
 # without it, P31 national-park membership marks Yellowstone as a miss.
 EUROPE = (-25.0, 34.0, 45.0, 72.0)   # w, s, e, n
 
-HELD_KM = 4.0          # a destination this close holds the membership
-HELD_NAME_KM = 12.0    # ...or this close when the folded names agree
+# Identity, not attachment: apply_designations may attach a register to the
+# nearest destination, but INTAKE asks whether the place itself is held, and
+# a different village 3 km away is precisely the miss this hunts (Valbonne
+# sits 3.5 km from Biot and is not Biot). Same point needs ~1.5 km; anything
+# farther needs the names to agree.
+HELD_SAME_KM = 1.5
+HELD_NAME_KM = 12.0
 AUTO_ADMIT_SITELINKS = 10
 DELAY_S = 1.0
 
@@ -108,7 +116,7 @@ def lookup(grid, lat, lon, name):
         for j in range(key_j - 1, key_j + 2):
             for (la, lo, names, did, is_member) in grid.get((i, j), ()):
                 km = haversine(lat, lon, la, lo)
-                hit = km <= HELD_KM or (km <= HELD_NAME_KM and n in names)
+                hit = km <= HELD_SAME_KM or (km <= HELD_NAME_KM and n in names)
                 if not hit:
                     continue
                 if not is_member:

@@ -305,7 +305,7 @@ Do not auto-ingest. Emit candidates with an `auto_admit` flag for the unambiguou
 
 Registers do not catch everything. Add a spatial scan: grid Europe into ~25 km cells, and for each cell holding a destination, look for OSM settlements in adjacent cells that have a heritage designation, a tourism-relevant tag cluster, or a Wikivoyage article, and are absent from the catalogue. Rank by proximity to existing high-scoring destinations — half a micro-region present is the signature of a miss.
 
-> **Done when:** The scan flags the Côte d'Azur hinterland cluster, and produces fewer than 800 candidates Europe-wide (otherwise the thresholds are too loose to act on).
+> **Done when:** The scan flags the Côte d'Azur hinterland cluster, and produces a RANKED list with a stated gap-score floor *(amended 2026-09-03: the user chose capture over the 800 ceiling; the cap is 2,000 across both evidence streams - WDQS boxes and the OSM settlement scan - and actionability comes from the ranking, not the count)*.
 
 ---
 
