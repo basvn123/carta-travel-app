@@ -30,3 +30,5 @@ jobs:
       - run: pip install pytest
       - name: Golden pairs and distribution contract
         run: pytest tests/test_golden_ratings.py tests/test_rating_distribution.py -q -rs
+      - name: Coverage ratchet (register coverage may only rise)
+        run: python pipeline/diagnostics/coverage_report.py --check
