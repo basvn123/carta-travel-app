@@ -1,4 +1,15 @@
-"""Traveller rating engine - schema v16 `dest.rating` (rating_v3).
+"""Traveller rating engine - schema v17 `dest.rating` (rating_v4).
+
+v4 (2026-09, PLAN.md phase A): the same four components, honestly measured.
+Highlights reads an absolute per-POI significance instead of the town-
+relative rate that had collapsed it into a constant (A2); beauty gains an
+urban-fabric component and a graded UNESCO credit, measured from the city
+rather than the airport (A3); the fitted fallback becomes a within-class
+quantile calibration - the regression ranks, the curated distribution
+scores, a p95 cap and a curated-anchor guard keep the modelled tail below
+the hand-ranked crowns (A4); and every rating now says how much it knows:
+`confidence` (curated / modelled / provisional) plus `inputs_present` (A5).
+The v3 rationale below still explains the component design.
 
 Turns a curated editorial judgement plus three data signals into one clear
 0-10 destination score and a Michelin-Green-Guide-style tier:
@@ -160,13 +171,16 @@ HIDDEN_GEM_MIN_SCORE = 7.0                   # floor for curator-flagged gems
 HIDDEN_GEM_CURATED_MAX_FAME_PCTL = 0.6
 
 RATING_MODEL = {
-    "version": "rating_v3",
+    "version": "rating_v4",
     "weights": WEIGHTS,
     "tier_cutoffs": {str(k): v for k, v in TIER_CUTOFFS.items()},
     "tier_labels": {str(k): v for k, v in TIER_LABELS.items()},
     "hidden_gem": ("(tier>=2 & fame_pctl<=0.40) or (tier==1 & fame_pctl<=0.20) "
                    "or (curated gem & score>=7.0 & fame_pctl<=0.6)"),
     "scale": "absolute 0-10 (no percentile re-spreading, none within size class)",
+    "confidence": ("curated: a hand appeal score exists; modelled: the "
+                   "quantile calibration produced it; provisional: modelled "
+                   "with no designations and under three rated sights"),
     "components": {
         "appeal": ("curated 0-10 traveller-appeal judgement "
                    "(curated_appeal.json), read through the per-class scale"),
@@ -369,6 +383,44 @@ def blend_score(dest, appeal_rec, scales=None, fallback=None, hl=0.0):
     return max(0.0, min(10.0, total)), comps
 
 
+# A5: how much does this rating actually know? "curated" - a hand appeal
+# score exists (the only input that has looked at the place). "modelled" -
+# the A4 calibration produced it from evidence. "provisional" - modelled,
+# AND no register has judged the place, AND fewer than RATED_POIS_MIN
+# meaningfully-rated sights (rate >= 2 under the significance engine's local
+# quotas) exist to feed the evidence. Shown, not hidden: a modelled 8.1 is
+# an 8.1 with a quiet mark, never a silent demotion.
+RATED_POIS_MIN = 3
+
+
+def rated_poi_count(dest):
+    items = (dest.get("activities") or {}).get("items_full") or []
+    return sum(1 for it in items
+               if not it.get("dup") and not it.get("noise")
+               and (it.get("rate") or 0) >= 2)
+
+
+def confidence_for(dest, curated, fame_measured, fabric_measured):
+    """(confidence, inputs_present). Five binary inputs are counted: the
+    curated appeal, register designations, >= RATED_POIS_MIN rated sights,
+    a real pageview measurement, and an urban-fabric measurement."""
+    n_rated = rated_poi_count(dest)
+    if curated:
+        conf = "curated"
+    elif not dest.get("designations") and n_rated < RATED_POIS_MIN:
+        conf = "provisional"
+    else:
+        conf = "modelled"
+    inputs = sum((
+        1 if curated else 0,
+        1 if dest.get("designations") else 0,
+        1 if n_rated >= RATED_POIS_MIN else 0,
+        1 if fame_measured else 0,
+        1 if fabric_measured else 0,
+    ))
+    return conf, inputs
+
+
 def tier_for(score):
     for tier in (3, 2, 1):
         if score >= TIER_CUTOFFS[tier]:
@@ -509,7 +561,15 @@ def compute_ratings(dests):
     slot_pos = {s: k for k, s in enumerate(slots)}
     fame_pctls = [slot_fame_pctls[slot_pos[rep[i]]] for i in range(len(ids))]
 
-    counts = {3: 0, 2: 0, 1: 0, 0: 0, "hidden_gem": 0}
+    try:
+        fabric = json.loads((ROOT / "cache" / "urban_fabric.json")
+                            .read_text(encoding="utf-8"))
+    except OSError:
+        fabric = {}
+    measured_fame = set(pv)
+
+    counts = {3: 0, 2: 0, 1: 0, 0: 0, "hidden_gem": 0,
+              "curated": 0, "modelled": 0, "provisional": 0}
     for i, did in enumerate(ids):
         score = round(scores[i], 1)
         tier = tier_for(score)
@@ -518,11 +578,17 @@ def compute_ratings(dests):
                   or (tier == 1 and fame_pct <= HIDDEN_GEM_FAME_PCTL[1])
                   or (curated_gem[i] and score >= HIDDEN_GEM_MIN_SCORE
                       and fame_pct <= HIDDEN_GEM_CURATED_MAX_FAME_PCTL))
+        conf, inputs = confidence_for(
+            dests[did], "appeal" in comps[i],
+            did in measured_fame, bool(fabric.get(did)))
+        counts[conf] += 1
         dests[did]["rating"] = {
             "score": score,
             "tier": tier,
             "label": TIER_LABELS.get(tier),
             "hidden_gem": bool(hidden),
+            "confidence": conf,
+            "inputs_present": inputs,
             "fame": int(views_list[i]),
             "components": comps[i],
             "source": RATING_MODEL["version"],

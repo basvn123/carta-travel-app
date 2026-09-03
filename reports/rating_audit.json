@@ -1,8 +1,8 @@
 {
- "generated_at": "2026-09-03T14:38:51+00:00",
+ "generated_at": "2026-09-03T14:46:56+00:00",
  "input_meta": {
-  "schema_version": 16,
-  "rating_model": "rating_v3",
+  "schema_version": 17,
+  "rating_model": "rating_v4",
   "generated_at": "2026-06-07T13:21:17.357184+00:00",
   "n_destinations": 3038,
   "n_rated": 3038
@@ -32,6 +32,11 @@
     "count": 202,
     "share": 0.1287
    },
+   "modal_nonzero": {
+    "value": 0.65,
+    "count": 202,
+    "share": 0.1287
+   },
    "score_sd_contribution": 0.7503
   },
   "beauty": {
@@ -48,6 +53,11 @@
     "sd": 0.1511
    },
    "modal": {
+    "value": 0.41,
+    "count": 96,
+    "share": 0.0316
+   },
+   "modal_nonzero": {
     "value": 0.41,
     "count": 96,
     "share": 0.0316
@@ -72,6 +82,11 @@
     "count": 279,
     "share": 0.0918
    },
+   "modal_nonzero": {
+    "value": 0.671,
+    "count": 279,
+    "share": 0.0918
+   },
    "score_sd_contribution": 0.1624
   },
   "acclaim": {
@@ -91,6 +106,11 @@
     "value": 0.0,
     "count": 1906,
     "share": 0.6274
+   },
+   "modal_nonzero": {
+    "value": 1.0,
+    "count": 397,
+    "share": 0.3507
    },
    "score_sd_contribution": 0.24
   }
@@ -157,6 +177,68 @@
    },
    "tier2_plus_rate": 0.0879,
    "labelled_rate": 0.3576
+  },
+  "by_confidence": {
+   "curated": {
+    "n": 1570,
+    "tiers": {
+     "3": 47,
+     "2": 169,
+     "1": 390,
+     "0": 964
+    },
+    "scores": {
+     "n": 1570,
+     "min": 2.9,
+     "p10": 5.6,
+     "median": 6.6,
+     "p90": 7.9,
+     "p95": 8.3,
+     "max": 9.8,
+     "mean": 6.6478,
+     "sd": 0.9896
+    }
+   },
+   "modelled": {
+    "n": 1458,
+    "tiers": {
+     "3": 2,
+     "2": 127,
+     "1": 396,
+     "0": 933
+    },
+    "scores": {
+     "n": 1458,
+     "min": 3.5,
+     "p10": 5.7,
+     "median": 6.6,
+     "p90": 7.7,
+     "p95": 7.9,
+     "max": 9.0,
+     "mean": 6.5796,
+     "sd": 0.8068
+    }
+   },
+   "provisional": {
+    "n": 10,
+    "tiers": {
+     "3": 0,
+     "2": 0,
+     "1": 0,
+     "0": 10
+    },
+    "scores": {
+     "n": 10,
+     "min": 3.4,
+     "p10": 3.94,
+     "median": 5.65,
+     "p90": 6.61,
+     "p95": 6.655,
+     "max": 6.7,
+     "mean": 5.4,
+     "sd": 1.0873
+    }
+   }
   }
  },
  "countries": {

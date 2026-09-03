@@ -1,10 +1,10 @@
-"""Add the schema-v14 traveller rating to an existing app_data.json in place.
+"""Add the schema-v17 traveller rating to an existing app_data.json in place.
 
 Adds:
   - meta.rating_model   (weights, tier cutoffs/labels, display curve, sources)
   - dest.rating         (score 0-10 / tier 0-3 / label / hidden_gem / fame /
                          components) - see rating_layer.py
-  - bumps meta.schema_version to 14
+  - bumps meta.schema_version to 17 (rating_v4: confidence + calibration)
 
 Needs cache/dest_pageviews.json (run `python harvest_pageviews.py dests`
 first); destinations missing from the cache just score fame 0.
@@ -145,7 +145,7 @@ def validate(dests) -> list:
 
 def main() -> None:
     targets = [Path(a) for a in sys.argv[1:]] or DEFAULT_TARGETS
-    print("Applying rating layer (schema v14):")
+    print("Applying rating layer (schema v17):")
 
     master_path = targets[0]
     data = json.loads(master_path.read_text(encoding="utf-8"))
@@ -160,7 +160,7 @@ def main() -> None:
         sys.exit(1)
     data["meta"]["rating_model"] = rating_layer.RATING_MODEL
     data["meta"]["schema_version"] = max(
-        data["meta"].get("schema_version", 0), 14)
+        data["meta"].get("schema_version", 0), 17)
     # Atomic: write_text truncates the 100+ MB master before streaming it back,
     # so an interrupted or out-of-space write destroys the dataset every other
     # script reads. A full disk took out a harvest cache this way on
@@ -186,7 +186,7 @@ def main() -> None:
                 n += 1
         served["meta"]["rating_model"] = rating_layer.RATING_MODEL
         served["meta"]["schema_version"] = max(
-            served["meta"].get("schema_version", 0), 14)
+            served["meta"].get("schema_version", 0), 17)
         atomic_write_json(path, served, indent=None, separators=(",", ":"))
         print(f"  {path.name}: mirrored rating onto {n} dests")
 

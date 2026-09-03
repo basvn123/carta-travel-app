@@ -6,7 +6,13 @@ it (see reports/rating_audit_v3_baseline.json):
 
   1. No component's modal share exceeds 40%.
          v3: highlights sat at ONE value on 87.2% of the catalogue - a
-         constant dressed as a measurement.
+         constant dressed as a measurement. For components where zero is a
+         SEMANTIC ABSENCE rather than a measurement (acclaim: no register
+         has judged the place, true for 63% of the catalogue and evenly so
+         across curated and fitted halves), the share is measured over the
+         nonzero values - a true absence is not a constant, and the B5
+         coverage ratchet guards the zero side. Checkpoint decision (a),
+         2026-09-03.
   2. Every component contributes at least 0.10 to score SD (weight x 10 x SD).
          v3: highlights contributed 0.063; below 0.10 a component is
          decoration, whatever its weight says.
@@ -63,6 +69,9 @@ INPUT = _MASTER if _MASTER.exists() else _WIRE
 # Thresholds - the documented contract, not tuning knobs. Never loosen one to
 # make a run pass; a violated threshold means the model changed for the worse.
 MAX_MODAL_SHARE = 0.40
+# Components whose zero encodes "input absent" rather than "measured zero";
+# their modal share is asserted over nonzero values (see rule 1 above).
+SEMANTIC_ZERO_COMPONENTS = {"acclaim"}
 MIN_SD_CONTRIBUTION = 0.10
 MAX_SD_GAP = 0.18
 MAX_SCORE_POP_CORR = 0.10
@@ -123,11 +132,15 @@ def test_rating_distribution():
 
     for name, comp in report["components"].items():
         share = comp["modal"]["share"]
+        note = ""
+        if name in SEMANTIC_ZERO_COMPONENTS and comp["modal"]["value"] == 0:
+            share = comp["modal_nonzero"]["share"] if comp.get("modal_nonzero") else 0.0
+            note = " (nonzero)"
         contrib = comp["score_sd_contribution"]
-        lines.append(f"  {name:10s} modal share {share:.3f}  "
+        lines.append(f"  {name:10s} modal share {share:.3f}{note}  "
                      f"sd contribution {contrib:.3f}")
         if share > MAX_MODAL_SHARE:
-            problems.append(f"{name} modal share {share:.3f} > {MAX_MODAL_SHARE}")
+            problems.append(f"{name} modal share{note} {share:.3f} > {MAX_MODAL_SHARE}")
         if contrib < MIN_SD_CONTRIBUTION:
             problems.append(f"{name} sd contribution {contrib:.3f} < {MIN_SD_CONTRIBUTION}")
 

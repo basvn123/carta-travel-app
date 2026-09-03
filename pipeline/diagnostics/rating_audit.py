@@ -119,6 +119,7 @@ def audit(data):
             "weight": weight,
             "stats": dist_stats(vals),
             "modal": modal_share(vals),
+            "modal_nonzero": modal_share([v for v in vals if v]),
             "score_sd_contribution": round(weight * 10 * sd, 4) if weight else None,
         }
 
@@ -132,6 +133,18 @@ def audit(data):
         "curated": {"scores": dist_stats(scores(curated)), "tiers": tier_counts(curated)},
         "fitted": {"scores": dist_stats(scores(fitted)), "tiers": tier_counts(fitted)},
     }
+    # A5: tier distributions by published confidence, once the field exists.
+    by_conf = {}
+    for r in recs:
+        conf = r["rating"].get("confidence")
+        if conf:
+            by_conf.setdefault(conf, []).append(r)
+    if by_conf:
+        split["by_confidence"] = {
+            conf: {"n": len(rows), "tiers": tier_counts(rows),
+                   "scores": dist_stats(scores(rows))}
+            for conf, rows in sorted(by_conf.items())
+        }
     for part in ("curated", "fitted"):
         tiers = split[part]["tiers"]
         n = split[part]["scores"]["n"]
