@@ -211,3 +211,99 @@ APPEAL_SCALE_MODEL = {
     "why": ("curated appeal was anchored on city references, so the same "
             "percentile was worth ~1.7 points less to a village than a metro"),
 }
+
+
+# --------------------------------------------------------------------------- #
+# Fitted-score quantile calibration (A4, 2026-09).
+#
+# The least-squares fallback ORDERS uncurated places acceptably, but its raw
+# output regresses to the mean: fitted scores' SD was 0.615 against the
+# curated 0.950, the fitted p99 sat below the tier-2 cutoff, and a place was
+# 5.6x less likely to earn a label purely for lacking a curator. The fix
+# keeps the regression as the ranking device and stops using its raw output
+# as a score: each fitted place's rank WITHIN ITS CLASS is read off against
+# the curated score distribution of that same class.
+#
+# Quantile mapping is monotone, so it never reorders fitted places within a
+# class - it only restores the spread the regression destroyed. It is done
+# within class so a village is calibrated against villages, and deliberately
+# NOT within country: that would grade on a curve, which this model refuses.
+# The 12% shrink toward the class median keeps the map honest about
+# uncertainty: a modelled top-of-class estimate should not land ON the
+# curated maximum, only near it.
+# --------------------------------------------------------------------------- #
+
+CALIBRATION_SHRINK = 0.12
+# The map's target is capped at the curated class p95, not its maximum
+# (checkpoint-2 decision, 2026-09-03): mapping the fitted p99 onto the
+# curated p99 handed the regression's top guess the class's top score -
+# Koeln arrived at 9.5, Rome's number, on three-feature evidence. A modelled
+# score may reach the curated distribution's upper range, never its crown.
+CALIBRATION_P95_CAP = 0.95
+
+
+def _quantile(sorted_vals, q):
+    """Linear-interpolated quantile of an already-sorted list, q in 0..1."""
+    if not sorted_vals:
+        return None
+    pos = q * (len(sorted_vals) - 1)
+    lo = int(pos)
+    hi = min(lo + 1, len(sorted_vals) - 1)
+    frac = pos - lo
+    return sorted_vals[lo] * (1 - frac) + sorted_vals[hi] * frac
+
+
+def quantile_calibrate(fitted_by_class, curated_by_class):
+    """{did: calibrated score}. Monotone within every class, by construction.
+
+    fitted_by_class:  {cls: [(did, yhat)]}   raw regression outputs
+    curated_by_class: {cls: [score, ...]}    final scores of curated places
+
+    A class with fewer than MIN_CLASS_N curated members cannot provide a
+    stable target distribution; its fitted members are calibrated against the
+    pooled curated distribution instead of a noisy sliver.
+    """
+    pooled = sorted(s for scores in curated_by_class.values() for s in scores)
+    out = {}
+    for cls, rows in fitted_by_class.items():
+        target = sorted(curated_by_class.get(cls) or [])
+        if len(target) < MIN_CLASS_N:
+            target = pooled
+        if not target or not rows:
+            for did, yhat in rows:
+                out[did] = yhat
+            continue
+        med = _quantile(target, 0.5)
+        cap = _quantile(target, CALIBRATION_P95_CAP)
+        ceiling = CLASS_CEILING.get(cls, DEFAULT_CEILING)
+        # average rank on ties, so equal evidence stays an equal score
+        order = sorted(range(len(rows)), key=lambda i: rows[i][1])
+        pct = [0.0] * len(rows)
+        i = 0
+        while i < len(order):
+            j = i
+            while (j + 1 < len(order)
+                   and rows[order[j + 1]][1] == rows[order[i]][1]):
+                j += 1
+            avg = (i + j) / 2.0 / max(1, len(order) - 1)
+            for k in range(i, j + 1):
+                pct[order[k]] = avg
+            i = j + 1
+        for (did, _yhat), p in zip(rows, pct):
+            mapped = min(_quantile(target, p), cap)
+            shrunk = med + (1.0 - CALIBRATION_SHRINK) * (mapped - med)
+            out[did] = min(shrunk, ceiling)
+    return out
+
+
+CALIBRATION_MODEL = {
+    "version": "fitted_quantile_v1",
+    "rule": ("regression output is a rank, not a score: each fitted place's "
+             "within-class CDF position is mapped onto the curated score "
+             "distribution of the same class"),
+    "shrink_to_class_median": CALIBRATION_SHRINK,
+    "target_capped_at": "curated class p95 - a modelled score never wears the class crown",
+    "class_ceilings_apply": True,
+    "not_within_country": "that would grade on a curve",
+    "monotone": True,
+}

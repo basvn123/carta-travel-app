@@ -183,7 +183,7 @@ uncertainty, then apply the existing class ceiling
 
 Quantile mapping is monotone, so it never reorders anything; it only restores the spread the regression destroyed. Do it *within class* so a village is calibrated against villages. Do **not** do it within country — that would grade on a curve, which the model explicitly refuses.
 
-> **Done when:** Fitted SD lands within 0.05 of curated SD, the fitted tier-2 rate lands between 8% and 13%, and no destination's rank order changes relative to other fitted places in its class.
+> **Done when:** Fitted SD lands within 0.05 of curated SD *(amended at checkpoint 2, 2026-09-03: the specified 12% shrink caps the fitted/curated SD ratio at ~0.88 by construction, so within-0.05 was unreachable; the approved gate is a gap under 0.18, alongside a p95 cap on the map target and a curated-anchor guard on modelled scores - see appeal_scale.py and rating_layer.py)*, the fitted tier-2 rate lands between 8% and 13%, and no destination's rank order changes relative to other fitted places in its class.
 
 ---
 

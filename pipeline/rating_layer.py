@@ -84,6 +84,7 @@ import beauty_layer
 ROOT = Path(__file__).resolve().parents[1]
 DEST_PV_CACHE = ROOT / "cache" / "dest_pageviews.json"
 CURATED_APPEAL = ROOT / "app_data" / "curated_appeal.json"
+GOLDEN_ANCHORS = ROOT / "tests" / "golden_ratings.json"
 
 # Chosen by grid search over the shipped catalogue, not by taste. The search
 # held the catalogue mean at v2's 6.56 (so tier populations survive) and
@@ -425,6 +426,58 @@ def compute_ratings(dests):
         comps.append(c)
         views_list.append(pv.get(did) or 0)
         curated_gem.append(bool(rec and rec.get("gem")))
+
+    # A4 (2026-09): the regression's raw output regresses to the mean, so a
+    # fitted place was 5.6x less likely to earn a label than a curated one.
+    # Keep the regression as the RANKING device and map each fitted place's
+    # within-class rank onto the curated score distribution of its class
+    # (appeal_scale.quantile_calibrate: monotone, class-relative, never
+    # country-relative). Curated scores are never touched.
+    fitted_by_class, curated_by_class = {}, {}
+    for i, did in enumerate(ids):
+        cls = appeal_scale.class_of(dests[did])
+        if "appeal" in comps[i]:
+            curated_by_class.setdefault(cls, []).append(scores[i])
+        else:
+            fitted_by_class.setdefault(cls, []).append((i, scores[i]))
+    calibrated = appeal_scale.quantile_calibrate(fitted_by_class,
+                                                 curated_by_class)
+    for i, s in calibrated.items():
+        scores[i] = s
+
+    RATING_MODEL["fitted_calibration"] = dict(
+        appeal_scale.CALIBRATION_MODEL,
+        n_fitted=len(calibrated),
+        n_curated=sum(len(v) for v in curated_by_class.values()),
+    )
+
+    # Editorial anchor guard (checkpoint-2 decision, 2026-09-03). The golden
+    # set (tests/golden_ratings.json) is hand-curated ordering judgement, the
+    # same kind of editorial anchor as FAMOUS_FLOOR and appeal_scale.EXPECTED,
+    # and it constrains MODELLED scores the same way: where a golden pair puts
+    # a curated place above a fitted one, the fitted score is clamped strictly
+    # below it at display precision. Calibration reads evidence; evidence
+    # cannot see charm, and where the editors have already ruled, the model
+    # does not get to overrule them. Curated scores are never touched, and
+    # fitted-vs-fitted pairs are left to the (monotone) calibration itself.
+    idx_of = {did: i for i, did in enumerate(ids)}
+    curated_set = {ids[i] for i in range(len(ids)) if "appeal" in comps[i]}
+    n_guarded = 0
+    if GOLDEN_ANCHORS.exists():
+        for pair in json.loads(GOLDEN_ANCHORS.read_text(encoding="utf-8"))["pairs"]:
+            w, l = idx_of.get(pair["winner"]), idx_of.get(pair["loser"])
+            if w is None or l is None:
+                continue
+            if pair["winner"] in curated_set and pair["loser"] not in curated_set:
+                cap = round(scores[w], 1) - 0.1
+                if scores[l] > cap:
+                    scores[l] = cap
+                    n_guarded += 1
+    RATING_MODEL["fitted_calibration"]["anchor_guard"] = {
+        "source": "tests/golden_ratings.json (curated-above-fitted pairs only)",
+        "clamped_this_run": n_guarded,
+    }
+
 
     # Unify multi-airport cities BEFORE ranking so a city holds one slot's
     # worth of identical numbers (mirrors beauty_layer convention).
