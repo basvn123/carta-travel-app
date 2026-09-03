@@ -115,16 +115,22 @@ try {
   check('no total/per-person toggle', await page.locator('.filter-show').count() === 0);
   check('no desktop filter tray', await page.locator('.filter-tray').count() === 0);
 
-  // One Filters door, and it opens the SHEET on desktop too.
-  await page.locator('.explore-filter-btn:visible').first().click();
-  await page.waitForTimeout(600);
-  check('desktop Filters opens the sheet', await page.locator('.fsheet-explore').isVisible());
-  check('sheet is a modal dialog', await page.locator('.fsheet-explore').getAttribute('aria-modal') === 'true');
-  const sheetText = await page.locator('.fsheet-explore').innerText();
-  check('sheet has no price window', !/€/.test(sheetText));
+  // C6: the modal sheet is gone. Every filter stands in the always-visible
+  // rail, the count leads it, and turning a knob narrows the grid live.
+  check('no filter modal anywhere', await page.locator('.fsheet-explore').count() === 0);
+  check('the filter rail is on screen', await page.locator('.explore-side .xrail').isVisible());
+  check('the live count leads the rail', /\d/.test(await page.locator('.xrail-count').innerText()));
+  const countBefore = (await page.locator('.xgrid-count').innerText()).match(/\d+/)?.[0];
+  await page.locator('.explore-side .xrail-toggle', { hasText: /^Village$/ }).first().click();
+  await page.waitForTimeout(700);
+  const countAfter = (await page.locator('.xgrid-count').innerText()).match(/\d+/)?.[0];
+  check('a rail toggle narrows the count live', Number(countAfter) < Number(countBefore),
+    `${countBefore} -> ${countAfter}`);
+  check('the active filter shows as a chip', await page.locator('.xchip', { hasText: /Village/ }).count() === 1);
+  check('the filter landed in the URL', page.url().includes('xk=village'));
   await page.screenshot({ path: 'shots/explore-filters-desktop.png' });
-  await page.keyboard.press('Escape');
-  await page.waitForTimeout(400);
+  await page.locator('.xchip', { hasText: /Village/ }).click();
+  await page.waitForTimeout(500);
 
   await page.screenshot({ path: 'shots/explore-desktop.png', fullPage: false });
 
@@ -168,11 +174,13 @@ try {
   const gridBox = await page.locator('.explore-grid').boundingBox();
   check('no horizontal scroll', gridBox && gridBox.width <= 390, `grid ${Math.round(gridBox?.width || 0)}px`);
 
-  await page.locator('.explore-filter-btn:visible').first().click();
+  // C6 on a phone: the same rail inside a plain fold, never a modal.
+  await page.locator('.explore-fold > summary').click();
   await page.waitForTimeout(600);
-  check('phone Filters opens the same sheet', await page.locator('.fsheet-explore').isVisible());
+  check('phone fold opens the same rail', await page.locator('.explore-fold .xrail').isVisible());
+  check('phone rail is not a modal', await page.locator('[aria-modal="true"]').count() === 0);
   await page.screenshot({ path: 'shots/explore-filters-phone.png' });
-  await page.keyboard.press('Escape');
+  await page.locator('.explore-fold > summary').click();
   await page.waitForTimeout(400);
   await page.screenshot({ path: 'shots/explore-phone.png' });
 

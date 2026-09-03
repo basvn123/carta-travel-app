@@ -29858,3 +29858,260 @@ button.ai-sched-main:focus-visible {
   .jcard .jcard-title { font-size: 16px; }
   .jsec-title { font-size: 19px; }
 }
+
+/* ==========================================================================
+   Explore rebuild (PLAN.md C3, C4, C6): the mosaic grid, the four-slot card,
+   the always-visible filter rail and the chip row. Kind picks the span, so
+   the grid itself is the legend: metros and the top tier take half a row,
+   landscapes letterbox, cities sit three up, towns and villages four up.
+   ========================================================================== */
+
+.explore-grid--mosaic {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 16px;
+  align-items: start;
+}
+.explore-grid--mosaic .xcard { grid-column: span var(--xspan, 3); }
+@media (max-width: 899px) {
+  /* uniform two-up on small tablets */
+  .explore-grid--mosaic { grid-template-columns: repeat(2, 1fr); }
+  .explore-grid--mosaic .xcard { grid-column: span 1; }
+}
+@media (max-width: 619px) {
+  /* the phone reads one clean column */
+  .explore-grid--mosaic { grid-template-columns: 1fr; }
+}
+
+/* --- the four-slot card body ------------------------------------------- */
+.xcard-kind {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11.5px;
+  color: var(--ink-mute);
+}
+.xcard-kindword { font-weight: 600; letter-spacing: 0.01em; }
+.xcard-dot { opacity: 0.6; }
+.kind-glyph { flex: none; display: inline-block; }
+.xcard .xcard-name {
+  font-family: var(--display);
+  font-size: 19px;
+  font-weight: 600;
+  line-height: 1.15;
+  color: var(--ink);
+}
+.xcard--s6 .xcard-name, .xcard--metro .xcard-name { font-size: 22px; }
+.xcard-verdict {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 8px;
+  min-height: 20px;
+}
+.xcard-country-line {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--rate-soft);
+}
+.xcard-foot {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  font-size: 12px;
+  color: var(--ink-soft);
+}
+.xcard-role { font-weight: 600; }
+.xcard-hours { display: inline-flex; align-items: center; gap: 3px; color: var(--ink-mute); }
+.xcard-car { display: inline-flex; color: var(--ink-mute); }
+.xcard-cost { margin-left: auto; }
+
+/* the verdict ribbon: filled for the top tier, outlined for a detour */
+.xcard-seal--filled { background: var(--rate); color: #fff; border-color: var(--rate); }
+.xcard-seal--outline {
+  background: var(--bg-card);
+  color: var(--rate);
+  border: 1px solid var(--rate);
+}
+.xcard-gem {
+  position: absolute;
+  top: 42px;              /* below the shortlist star, which owns the corner */
+  right: 8px;
+  background: var(--gem-bg);
+  color: var(--gem-ink);
+  font-size: 10.5px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 999px;
+  pointer-events: none;
+}
+
+/* --- grid header: the live count and the sort select -------------------- */
+.xgrid-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 2px 2px 10px;
+}
+.xgrid-count {
+  font-family: var(--mono);
+  font-size: 12.5px;
+  color: var(--ink-soft);
+  font-variant-numeric: tabular-nums;
+}
+.xgrid-sort {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12.5px;
+  color: var(--ink-mute);
+}
+.xgrid-sort select {
+  font: inherit;
+  color: var(--ink);
+  background: var(--bg-card);
+  border: 1px solid var(--rule-soft);
+  border-radius: 8px;
+  padding: 5px 8px;
+}
+
+/* --- the filter rail ---------------------------------------------------- */
+.xrail { display: flex; flex-direction: column; gap: 14px; }
+.xrail-group { border: 0; margin: 0; padding: 0; min-width: 0; }
+.xrail-legend {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+  padding: 0 0 6px;
+}
+.xrail-toggles { display: flex; flex-wrap: wrap; gap: 6px; }
+.xrail-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font: inherit;
+  font-size: 12.5px;
+  color: var(--ink-soft);
+  background: var(--bg-card);
+  border: 1px solid var(--rule-soft);
+  border-radius: 999px;
+  padding: 5px 10px;
+  cursor: pointer;
+}
+.xrail-toggle:hover { border-color: var(--rule); }
+.xrail-toggle.on {
+  background: var(--ink-fill);
+  border-color: var(--ink-fill);
+  color: #fff;
+}
+.xrail-toggle.on .kind-glyph rect,
+.xrail-toggle.on .kind-glyph circle,
+.xrail-toggle.on .kind-glyph polygon { fill: #fff; }
+.xrail-toggle.xrail-gem.on { background: var(--gem-ink); border-color: var(--gem-ink); }
+.xrail-month {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+  font-size: 12.5px;
+  color: var(--ink-soft);
+}
+.xrail-month select {
+  font: inherit;
+  color: var(--ink);
+  background: var(--bg-card);
+  border: 1px solid var(--rule-soft);
+  border-radius: 8px;
+  padding: 4px 6px;
+}
+.xrail-countries {
+  max-height: 200px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding-right: 4px;
+}
+.xrail-country {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 12.5px;
+  color: var(--ink-soft);
+  padding: 3px 2px;
+  cursor: pointer;
+}
+.xrail-count {
+  font-family: var(--mono);
+  font-size: 13px;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+  margin: 0 0 10px;
+}
+.xrail-count-inline {
+  margin-left: auto;
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--ink-mute);
+  font-variant-numeric: tabular-nums;
+}
+
+/* --- active-filter chips ------------------------------------------------- */
+.xchips { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 2px 10px; }
+.xchip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font: inherit;
+  font-size: 12px;
+  color: var(--ink);
+  background: var(--rate-bg);
+  border: 1px solid transparent;
+  border-radius: 999px;
+  padding: 4px 10px;
+  cursor: pointer;
+}
+.xchip:hover { border-color: var(--rate-soft); }
+.xchip-x { font-weight: 700; opacity: 0.6; }
+.xchip-clear { background: transparent; border-color: var(--rule-soft); color: var(--ink-mute); }
+
+/* --- the phone fold: same rail, no modal --------------------------------- */
+.explore-fold {
+  margin: 0 0 10px;
+  background: var(--bg-card);
+  border: 1px solid var(--rule-soft);
+  border-radius: 14px;
+  padding: 0;
+}
+.explore-fold > summary {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  list-style: none;
+  cursor: pointer;
+  padding: 11px 14px;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--ink);
+}
+.explore-fold > summary::-webkit-details-marker { display: none; }
+.explore-fold[open] > summary { border-bottom: 1px solid var(--rule-soft); }
+.explore-fold .xrail { padding: 12px 14px 14px; }
+@media (min-width: 769px) {
+  .explore-fold { display: none; }
+}
+
+/* The mosaic card is body-forward again: the pre-rebuild desktop CSS hid
+   .xcard-body behind a photo overlay that no longer exists. Scoped to the
+   mosaic grid so nothing else that reuses .xcard changes. */
+.explore-grid--mosaic .xcard-body {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 10px 12px 12px;
+}
+.explore-grid--mosaic .xcard-best { display: inline-flex; }
+.explore-grid--mosaic .xcard-media { aspect-ratio: auto; }

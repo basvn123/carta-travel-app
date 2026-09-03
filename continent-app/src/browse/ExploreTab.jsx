@@ -6,13 +6,16 @@ import { WaterQualityBadge, swimRelevant } from '../components/WaterQualityBadge
 import { CountryFlag } from '../components/CountryFlag.jsx';
 import { fmtMonthRanges } from './ClimateStrip.jsx';
 import { useExploreCatalog } from '../hooks/useExploreCatalog.js';
-import { ExploreFilterSheet } from './ExploreFilterSheet.jsx';
+import { ExploreFilterRail } from './ExploreFilterRail.jsx';
+import { FilterChips } from './FilterChips.jsx';
 import { CategoryRail } from './CategoryRail.jsx';
+import { KindGlyph } from '../components/KindGlyph.jsx';
+import { kindOf, roleOf, buildNearbyIndex, ROLES } from '../lib/taxonomy.js';
 import { useI18n } from '../i18n/index.jsx';
 import { GuidesStrip } from '../community/GuidesStrip.jsx';
-import { isFullRatingRange, FULL_RATING_RANGE } from '../lib/rating.js';
+import { FULL_RATING_RANGE } from '../lib/rating.js';
 import {
-  FilterIcon, CalendarIcon, CameraIcon, ClockIcon, InfoIcon,
+  FilterIcon, CalendarIcon, CameraIcon, ClockIcon, InfoIcon, CarIcon,
 } from '../components/Icons.jsx';
 import { LifestyleButton } from './LifestyleButton.jsx';
 import { HeroImage } from '../components/HeroImage.jsx';
@@ -70,7 +73,61 @@ const SORTS = [
 // How wide the grid draws a card, so the browser can pick a thumbnail instead
 // of downloading Wikimedia's 960px rendering for a 300px slot. The widths in
 // the srcset are a fixed list Wikimedia will actually render (heroImage.js).
-const CARD_SIZES = '(max-width: 768px) 45vw, (max-width: 1180px) 30vw, 280px';
+const CARD_SIZES = '(max-width: 768px) 92vw, (max-width: 1180px) 45vw, 560px';
+
+/**
+ * C4: kind picks the card's span on the 12-column grid, so the page has a
+ * visible rhythm before anything is read - the grid IS the legend. Metros
+ * and anything worth the journey take half a row with a wide photograph,
+ * landscapes letterbox, cities sit 3-up, towns and villages 4-up square.
+ */
+function spanFor(p) {
+  const kind = kindOf(p);
+  if (kind === 'area') return { span: 6, ratio: [21, 9], kind };
+  if (kind === 'metro' || p.rating?.tier === 3) return { span: 6, ratio: [16, 10], kind };
+  if (kind === 'city') return { span: 4, ratio: [4, 3], kind };
+  return { span: 3, ratio: [1, 1], kind };
+}
+
+/**
+ * Fill each 12-column row exactly. Greedy with a small look-ahead: a card
+ * that fits is placed in order; when the next card would overflow, the
+ * packer pulls forward the nearest upcoming card that closes the row, and
+ * when nothing can, the row's last card widens to absorb the slack - no
+ * ragged rows, near-stable ordering.
+ */
+function packRows(rows) {
+  const items = rows.map((p) => ({ p, ...spanFor(p) }));
+  const WINDOW = 12; // how far ahead a card may be pulled; keeps sort readable
+  const out = [];
+  let used = 0;
+  while (items.length) {
+    const remainder = 12 - used;
+    // prefer, in order: the next card if it fits; else the nearest upcoming
+    // card that fits the remainder (exact closers first)
+    let idx = -1;
+    const win = Math.min(items.length, WINDOW);
+    for (let i = 0; i < win && idx === -1; i++) {
+      if (items[i].span === remainder) idx = i;
+    }
+    if (idx === -1) {
+      for (let i = 0; i < win && idx === -1; i++) {
+        if (items[i].span <= remainder) idx = i;
+      }
+    }
+    if (idx === -1) {
+      // nothing in the window fits: widen the row's last card to close it
+      if (out.length) out[out.length - 1].span += remainder;
+      used = 0;
+      continue;
+    }
+    const [it] = items.splice(idx, 1);
+    out.push(it);
+    used = (used + it.span) % 12;
+  }
+  if (used > 0 && out.length) out[out.length - 1].span += 12 - used;
+  return out;
+}
 
 /**
  * The hover preview: what the card cannot fit, now over the whole card
@@ -129,19 +186,16 @@ function CardPreview({ p, t, best }) {
   );
 }
 
-const ExploreCard = React.memo(function ExploreCard({ p, selected, fav, onSelect, onToggleFav, t }) {
-  const kf = knownFor(p);
+const ExploreCard = React.memo(function ExploreCard({
+  p, span, ratio, kind, role, selected, fav, onSelect, onToggleFav, t,
+}) {
   const best = p.climate?.best?.length ? fmtMonthRanges(p.climate.best) : null;
   // Two doors to one preview: hover follows the pointer, the info button
-  // pins it open until it is clicked again. Held apart because the pointer
-  // is always over the card at the moment the button is clicked, and a
-  // single flag made the click fight the hover it arrived through.
+  // pins it open until it is clicked again (WCAG 1.4.13 as before).
   const [hovered, setHovered] = React.useState(false);
   const [pinned, setPinned] = React.useState(false);
   const preview = hovered || pinned;
 
-  // Escape closes the preview without the pointer having to move, which is
-  // the "dismissible" half of WCAG 1.4.13.
   React.useEffect(() => {
     if (!preview) return undefined;
     const onKey = (e) => {
@@ -151,14 +205,20 @@ const ExploreCard = React.memo(function ExploreCard({ p, selected, fav, onSelect
     return () => document.removeEventListener('keydown', onKey);
   }, [preview]);
 
-  // Mouse only. On touch there is no hover, and a tap already opens the panel:
-  // making the first tap mean "preview" would cost every phone user a second
-  // tap to get anywhere.
   const onEnter = (e) => { if (e.pointerType === 'mouse') setHovered(true); };
+
+  // C3 slot 3, the verdict line's country half: only where it is earned.
+  const rank = p.country_rank;
+  const countryLine = rank === 1
+    ? t('card.topOf', { country: p.country })
+    : (p.country_badge ? t('card.rankIn', { n: rank, country: p.country }) : null);
+
+  const hours = p.place?.visit_h != null ? Math.round(p.place.visit_h) : null;
 
   return (
     <div
-      className={`xcard ${selected ? 'selected' : ''} ${preview ? 'previewing' : ''}`}
+      className={`xcard xcard--${kind} ${selected ? 'selected' : ''} ${preview ? 'previewing' : ''}`}
+      style={{ '--xspan': span }}
       onPointerEnter={onEnter}
       onPointerLeave={() => setHovered(false)}
     >
@@ -169,60 +229,67 @@ const ExploreCard = React.memo(function ExploreCard({ p, selected, fav, onSelect
         onBlur={() => setHovered(false)}
         aria-label={t('explore.openDest', { city: p.city })}
       >
+        {/* Slot 1: the image. Verdict ribbon top-left ONLY for tier 2 and
+            up - a label everything wears carries no information. Gem chip
+            top-right in its own teal, so "the world hasn't noticed" never
+            reads as a tier. */}
         <span className="xcard-media">
           <HeroImage
             url={p.image}
             city={p.city}
             iso2={p.iso2}
             className="xcard-img"
-            maxWidth={500}
+            maxWidth={span >= 6 ? 960 : 500}
             sizes={CARD_SIZES}
-            ratio={[5, 3]}
+            ratio={ratio}
           />
+          {(p.rating?.tier ?? 0) >= 2 && (
+            <span className={`xcard-seal ${tierClass(p.rating)} ${p.rating.tier === 3 ? 'xcard-seal--filled' : 'xcard-seal--outline'}`}>
+              {p.rating.label}
+            </span>
+          )}
+          {p.rating?.hidden_gem && (
+            <span className="xcard-gem">{t('legend.gem')}</span>
+          )}
           {best && (
             <span className="xcard-best" title={t('explore.bestMonthsTitle')}>
               <CalendarIcon size={11} /> {best}
             </span>
           )}
-          {/* The seal, not the number, is what a tier means. It shows only
-              where the model actually awarded one, so it stays a signal. */}
-          {p.rating?.label && (
-            <span className={`xcard-seal ${tierClass(p.rating)}`}>{p.rating.label}</span>
-          )}
-          {/* Desktop only (CSS): the card is nearly all photograph there, so
-              the name, the rating and the day price ride the picture on a
-              scrim, the way every photo card on Destinations already reads.
-              On a phone the body below carries them and this never shows. */}
-          <span className="xcard-overlay">
-            <span className="xcard-overlay-top">
-              <span className="xcard-overlay-name">{p.city}</span>
-              <ScoreChip rating={p.rating} size="xs" />
-            </span>
-            <span className="xcard-overlay-sub">
-              <CountryFlag country={p.iso2} size={11} />
-              <span>{p.country}</span>
-            </span>
-            <span className="xcard-overlay-foot">
-              <CostLine cost={p.cost} t={t} />
-            </span>
-          </span>
         </span>
+
         <span className="xcard-body">
-          <span className="xcard-name-row">
-            <span className="xcard-name">{p.city}</span>
-            <ScoreChip rating={p.rating} size="xs" />
-          </span>
-          <span className="xcard-sub">
+          {/* Slot 2: identity - kind glyph + kind word + country, then the
+              name in the display face. A column of these reads as a table. */}
+          <span className="xcard-kind">
+            <KindGlyph kind={kind} size={11} label={t(`pkind.${kind}`)} />
+            <span className="xcard-kindword">{t(`pkind.${kind}`)}</span>
+            <span className="xcard-dot" aria-hidden="true">·</span>
             <CountryFlag country={p.iso2} size={11} />
             <span>{p.country}</span>
-            {p.rating?.hidden_gem && <HiddenGemTag />}
             {swimRelevant(p) && (
               <WaterQualityBadge bathing={p.bathing_water} t={t} showLabel={false} />
             )}
           </span>
-          {kf && <span className="xcard-known">{kf}</span>}
+          <span className="xcard-name">{p.city}</span>
+
+          {/* Slot 3: the verdict - the score, and the country line where a
+              badge earned one. */}
+          <span className="xcard-verdict">
+            <ScoreChip rating={p.rating} size="xs" />
+            {countryLine && <span className="xcard-country-line">{countryLine}</span>}
+          </span>
+
+          {/* Slot 4: the meta line - what you DO with the place. */}
           <span className="xcard-foot">
-            <CostLine cost={p.cost} t={t} />
+            <span className="xcard-role">{t(role.labelKey)}</span>
+            {hours != null && (
+              <span className="xcard-hours"><ClockIcon size={11} /> {t('card.hours', { n: hours })}</span>
+            )}
+            {p.local_transport?.car_needed && (
+              <span className="xcard-car" title={t('card.carNeeded')}><CarIcon size={12} /></span>
+            )}
+            <span className="xcard-cost"><CostLine cost={p.cost} t={t} /></span>
           </span>
         </span>
       </button>
@@ -234,9 +301,6 @@ const ExploreCard = React.memo(function ExploreCard({ p, selected, fav, onSelect
       >
         <Star filled={fav} />
       </button>
-      {/* Desktop only (CSS): the explanation the card body used to state
-          lives behind this button now, so the photograph keeps the room.
-          It toggles the same preview that hover opens. */}
       <button
         className="xcard-info"
         onClick={() => setPinned((v) => !v)}
@@ -273,10 +337,24 @@ export function ExploreTab({
   choices, onOpenLifestyle, onOpenGuides,
 }) {
   const { t } = useI18n();
-  const [sheetOpen, setSheetOpen] = React.useState(false);
-  // The Filters sheet hangs off this button on a pointer screen.
-  const filterBtnRef = React.useRef(null);
   const [visible, setVisible] = React.useState(PAGE);
+  // C6: the taxonomy filters live here and in the URL, nowhere else. One
+  // object, so a chip row, the rail and the query string cannot drift.
+  const [xf, setXf] = React.useState(() => {
+    const q = new URLSearchParams(window.location.search);
+    const list = (k) => (q.get(k) ? q.get(k).split(',').filter(Boolean) : []);
+    return {
+      kinds: list('xk'),
+      verdicts: list('xv'),
+      roles: list('xr'),
+      month: q.get('xm') ? Number(q.get('xm')) : null,
+      nocar: q.get('xp')?.includes('c') || false,
+      cheap: q.get('xp')?.includes('e') || false,
+      quiet: q.get('xp')?.includes('q') || false,
+      sea: q.get('xp')?.includes('s') || false,
+    };
+  });
+  const patchXf = React.useCallback((delta) => setXf((v) => ({ ...v, ...delta })), []);
   const sentinelRef = React.useRef(null);
   const scrollRef = React.useRef(null);
 
@@ -287,28 +365,86 @@ export function ExploreTab({
     indices,
   });
 
+  // C1's role needs the neighbour count; built once per catalogue.
+  const nearby = React.useMemo(
+    () => (data?.destinations ? buildNearbyIndex(data.destinations) : {}),
+    [data],
+  );
+  const roleFor = React.useCallback(
+    (p) => roleOf(p, nearby[p.id] || 0),
+    [nearby],
+  );
+
+  // C6: the taxonomy filters, applied after the catalog hook's own. The
+  // count shown in the grid header is THIS list's length, so it can never
+  // disagree with what renders.
+  const taxRows = React.useMemo(() => rows.filter((p) => {
+    if (xf.kinds.length && !xf.kinds.includes(kindOf(p))) return false;
+    if (xf.verdicts.length && !xf.verdicts.includes(String(p.rating?.tier ?? 0))) return false;
+    if (xf.roles.length && !xf.roles.includes(roleFor(p).key)) return false;
+    if (xf.month && !(p.climate?.best || []).includes(xf.month)) return false;
+    if (xf.nocar && p.local_transport?.car_needed) return false;
+    if (xf.cheap && !(p.cost?.dayEur != null && p.cost.dayEur <= 70)) return false;
+    if (xf.quiet && p.crowding?.tier !== 1) return false;
+    if (xf.sea && !(p.categories || []).some((c) => c === 'beach' || c === 'coast' || c === 'island')) return false;
+    return true;
+  }), [rows, xf, roleFor]);
+
+  const packed = React.useMemo(
+    () => packRows(taxRows.slice(0, visible)),
+    [taxRows, visible],
+  );
+
+  // C6: the filter state is the URL, so a filtered view is shareable and
+  // the back button means what it says. replaceState keeps the #trip hash
+  // and never triggers a reload.
+  React.useEffect(() => {
+    if (!isActive) return;
+    const q = new URLSearchParams(window.location.search);
+    const setOrDrop = (k, v) => (v ? q.set(k, v) : q.delete(k));
+    setOrDrop('xk', xf.kinds.join(','));
+    setOrDrop('xv', xf.verdicts.join(','));
+    setOrDrop('xr', xf.roles.join(','));
+    setOrDrop('xm', xf.month || '');
+    const flags = `${xf.nocar ? 'c' : ''}${xf.cheap ? 'e' : ''}${xf.quiet ? 'q' : ''}${xf.sea ? 's' : ''}`;
+    setOrDrop('xp', flags);
+    setOrDrop('xg', gemOnly ? '1' : '');
+    setOrDrop('xu', unescoOnly ? '1' : '');
+    setOrDrop('xc', countryFilter.join(','));
+    setOrDrop('xs', sortKey !== 'beauty' ? sortKey : '');
+    const qs = q.toString();
+    window.history.replaceState(null, '',
+      `${window.location.pathname}${qs ? '?' + qs : ''}${window.location.hash}`);
+  }, [xf, gemOnly, unescoOnly, countryFilter, sortKey, isActive]);
+
+  // ...and hydrates the App-owned filters once on arrival.
+  const hydrated = React.useRef(false);
+  React.useEffect(() => {
+    if (hydrated.current) return;
+    hydrated.current = true;
+    const q = new URLSearchParams(window.location.search);
+    if (q.get('xg') === '1') setGemOnly(true);
+    if (q.get('xu') === '1') setUnescoOnly(true);
+    if (q.get('xc')) setCountryFilter(q.get('xc').split(',').filter(Boolean));
+    if (q.get('xs')) setSortKey(q.get('xs'));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   // New result set: back to one page, back to the top.
   React.useEffect(() => {
     setVisible(PAGE);
     scrollRef.current?.scrollTo?.(0, 0);
-  }, [rows]);
+  }, [taxRows]);
 
   React.useEffect(() => {
     const el = sentinelRef.current;
     if (!el) return undefined;
     const io = new IntersectionObserver((entries) => {
-      if (entries[0].isIntersecting) setVisible((v) => (v < rows.length ? v + PAGE : v));
+      if (entries[0].isIntersecting) setVisible((v) => (v < taxRows.length ? v + PAGE : v));
     }, { root: scrollRef.current, rootMargin: '900px' });
     io.observe(el);
     return () => io.disconnect();
-  }, [rows.length]);
-
-  const activeFilters = [
-    countryFilter.length > 0,
-    !isFullRatingRange(ratingRange),
-    gemOnly, unescoOnly, topBeachOnly, bigOnly, !!topPick,
-    reachAvailable && reachHours != null,
-  ].filter(Boolean).length;
+  }, [taxRows.length]);
 
   const resetAll = () => {
     setCountryFilter([]);
@@ -319,7 +455,31 @@ export function ExploreTab({
     setBigOnly(false);
     setTopPick(null);
     setReachHours(null);
+    setXf({ kinds: [], verdicts: [], roles: [], month: null,
+      nocar: false, cheap: false, quiet: false, sea: false });
   };
+
+  // C6: one chip per active filter, each removing exactly itself.
+  const chips = React.useMemo(() => {
+    const list = [];
+    const drop = (delta) => () => patchXf(delta);
+    for (const k of xf.kinds) list.push({ key: `k:${k}`, label: t(`pkind.${k}`), remove: drop({ kinds: xf.kinds.filter((x) => x !== k) }) });
+    for (const v of xf.verdicts) list.push({ key: `v:${v}`, label: t(`rating.tier${v}`), remove: drop({ verdicts: xf.verdicts.filter((x) => x !== v) }) });
+    for (const r of xf.roles) list.push({ key: `r:${r}`, label: t(`role.short.${r}`), remove: drop({ roles: xf.roles.filter((x) => x !== r) }) });
+    if (xf.month) list.push({ key: 'month', label: t('filter.goodIn') + ' ' + fmtMonthRanges([xf.month]), remove: drop({ month: null }) });
+    if (xf.nocar) list.push({ key: 'nocar', label: t('filter.noCar'), remove: drop({ nocar: false }) });
+    if (xf.cheap) list.push({ key: 'cheap', label: t('filter.underDay', { eur: 70 }), remove: drop({ cheap: false }) });
+    if (xf.quiet) list.push({ key: 'quiet', label: t('filter.notCrowded'), remove: drop({ quiet: false }) });
+    if (xf.sea) list.push({ key: 'sea', label: t('filter.nearSea'), remove: drop({ sea: false }) });
+    if (gemOnly) list.push({ key: 'gem', label: t('legend.gem'), remove: () => setGemOnly(false) });
+    if (unescoOnly) list.push({ key: 'unesco', label: 'UNESCO', remove: () => setUnescoOnly(false) });
+    for (const iso2 of countryFilter) {
+      const name = (availableCountries.find(([c]) => c === iso2) || [])[1] || iso2;
+      list.push({ key: `c:${iso2}`, label: name, remove: () => setCountryFilter(countryFilter.filter((x) => x !== iso2)) });
+    }
+    if (reachAvailable && reachHours != null) list.push({ key: 'reach', label: t('filter.reachHours', { n: reachHours }), remove: () => setReachHours(null) });
+    return list;
+  }, [xf, gemOnly, unescoOnly, countryFilter, reachHours, reachAvailable, availableCountries, t, patchXf, setGemOnly, setUnescoOnly, setCountryFilter, setReachHours]);
 
   const favSet = favorites || new Set();
 
@@ -363,36 +523,30 @@ export function ExploreTab({
     </div>
   );
 
-  const renderSorts = (cls) => SORTS.map((s) => {
-    const on = sortKey === s.key
-      || (s.key === 'beauty' && sortKey === 'price')
-      || (s.key === 'cost' && (sortKey === 'stay' || sortKey === 'food'));
-    return (
-      <button
-        key={s.key}
-        className={`${cls} ${on ? 'on' : ''}`.trim()}
-        onClick={() => setSortKey(s.key)}
-      >
-        {t(s.labelKey)}
-      </button>
-    );
-  });
+  // C6: sort is a select in the grid header, visually distinct from the
+  // filters, standing where the results it orders actually are.
+  const sortSelect = (
+    <label className="xgrid-sort">
+      <span>{t('places.sortLabel')}</span>
+      <select value={SORTS.some((x) => x.key === sortKey) ? sortKey : 'beauty'}
+        onChange={(e) => setSortKey(e.target.value)}>
+        {SORTS.map((x) => <option key={x.key} value={x.key}>{t(x.labelKey)}</option>)}
+      </select>
+    </label>
+  );
 
-  // The sheet anchors to whichever Filters door is actually on screen: the
-  // side panel's on desktop, the toolbar card's on a phone.
-  const renderFilterBtn = (cls, isSide) => (
-    <button
-      type="button"
-      ref={isSide === isDesktop ? filterBtnRef : undefined}
-      className={`explore-filter-btn ${cls} ${activeFilters > 0 ? 'has-active' : ''}`.trim()}
-      onClick={() => setSheetOpen(true)}
-      aria-haspopup="dialog"
-      aria-expanded={sheetOpen}
-    >
-      <FilterIcon size={14} />
-      <span>{t('filter.filters')}</span>
-      {activeFilters > 0 && <span className="filter-tray-badge">{activeFilters}</span>}
-    </button>
+  const filterRail = (
+    <ExploreFilterRail
+      t={t}
+      xf={xf}
+      patch={patchXf}
+      gemOnly={gemOnly} setGemOnly={setGemOnly}
+      unescoOnly={unescoOnly} setUnescoOnly={setUnescoOnly}
+      countryFilter={countryFilter} setCountryFilter={setCountryFilter}
+      availableCountries={availableCountries}
+      reachHours={reachHours} setReachHours={setReachHours}
+      reachAvailable={reachAvailable}
+    />
   );
 
   // One shared component, so this door looks the same here, on Destinations
@@ -434,12 +588,11 @@ export function ExploreTab({
         </div>
         <div className="side-block">
           <p className="side-label">{t('side.refine')}</p>
-          <div className="side-group" role="group" aria-label={t('explore.sortAria')}>
-            <p className="side-sub">{t('places.sortLabel')}</p>
-            <div className="side-sorts">{renderSorts('side-sort')}</div>
-          </div>
+          {/* C6: the result count leads - the single most reassuring element
+              on a filter UI - then every filter, no modal anywhere. */}
+          <p className="xrail-count">{t('explore.countLine', { n: taxRows.length })}</p>
+          {filterRail}
           <div className="side-group side-actions">
-            {renderFilterBtn('side-filter', true)}
             {onOpenLifestyle && renderLifestyle('side-lifestyle')}
             {renderFav('side-fav')}
           </div>
@@ -460,23 +613,24 @@ export function ExploreTab({
           {!headerSlot && searchField}
 
           <div className="explore-toolbar-right">
-            <div className="results-sort explore-sort" role="group" aria-label={t('explore.sortAria')}>
-              {renderSorts('')}
-            </div>
-
-            {/* Filters first: it is the one primary door in this row (decides
-                WHICH places are listed), so it leads. Lifestyle follows right
-                after it because the two are one sentence: Lifestyle decides
-                what the euro figure on each listed place means, and its
-                label carries the current setting so a reader can see what
-                the prices assume without opening anything. */}
             <div className="explore-chips">
-              {renderFilterBtn('', false)}
               {onOpenLifestyle && renderLifestyle('')}
               {renderFav('')}
             </div>
           </div>
         </div>
+
+        {/* Phone only (CSS hides it from 769px): the same rail inside a
+            plain disclosure fold - not a modal, so every filter stays
+            reachable and the count stays on screen while knobs turn. */}
+        <details className="explore-fold">
+          <summary>
+            <FilterIcon size={14} />
+            <span>{t('filter.filters')}</span>
+            <span className="xrail-count-inline">{t('explore.countLine', { n: taxRows.length })}</span>
+          </summary>
+          {filterRail}
+        </details>
 
         {/* The one community surface on a browse tab: a real count of what
             people have published, and one door. No preview carousel, because
@@ -489,22 +643,33 @@ export function ExploreTab({
             and the Lifestyle chip above states what it assumes, so a standing
             line explaining them was restating what the reader can already
             see. */}
-        {(rows.length === 0 || isMock) && (
+        {/* C6: active filters as removable chips, then the grid header with
+            the live count and the sort select beside the results they rule. */}
+        <FilterChips t={t} chips={chips} onClearAll={resetAll} />
+
+        <div className="xgrid-head">
+          <span className="xgrid-count">{t('explore.countLine', { n: taxRows.length })}</span>
+          {isMock && <span className="explore-mock">Mock data</span>}
+          {sortSelect}
+        </div>
+
+        {taxRows.length === 0 && (
           <p className="explore-count">
-            {rows.length === 0 && (
-              <span className="explore-count-badge">
-                {showFavOnly ? t('results.emptyFav') : t('results.empty')}
-              </span>
-            )}
-            {isMock && <span className="explore-mock">Mock data</span>}
+            <span className="explore-count-badge">
+              {showFavOnly ? t('results.emptyFav') : t('results.empty')}
+            </span>
           </p>
         )}
 
-        <div className="explore-grid">
-          {rows.slice(0, visible).map((p) => (
+        <div className="explore-grid explore-grid--mosaic">
+          {packed.map(({ p, span, ratio, kind }) => (
             <ExploreCard
               key={p.id}
               p={p}
+              span={span}
+              ratio={ratio}
+              kind={kind}
+              role={roleFor(p)}
               selected={p.id === selectedId}
               fav={favSet.has(p.id)}
               onSelect={onSelect}
@@ -514,38 +679,10 @@ export function ExploreTab({
           ))}
         </div>
 
-        {visible < rows.length && (
+        {visible < taxRows.length && (
           <div ref={sentinelRef} className="places-sentinel" aria-hidden="true" style={{ height: 1 }} />
         )}
       </div>
-
-      {sheetOpen && (
-        <ExploreFilterSheet
-          onClose={() => setSheetOpen(false)}
-          anchorRef={filterBtnRef}
-          countryFilter={countryFilter}
-          setCountryFilter={setCountryFilter}
-          availableCountries={availableCountries}
-          ratingRange={ratingRange}
-          setRatingRange={setRatingRange}
-          gemOnly={gemOnly}
-          setGemOnly={setGemOnly}
-          unescoOnly={unescoOnly}
-          setUnescoOnly={setUnescoOnly}
-          topBeachOnly={topBeachOnly}
-          setTopBeachOnly={setTopBeachOnly}
-          bigOnly={bigOnly}
-          setBigOnly={setBigOnly}
-          topPick={topPick}
-          setTopPick={setTopPick}
-          reachHours={reachHours}
-          setReachHours={setReachHours}
-          reachAvailable={reachAvailable}
-          activeFilters={activeFilters}
-          resetAll={resetAll}
-          resultCount={rows.length}
-        />
-      )}
       </div>
     </div>
   );
