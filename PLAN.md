@@ -243,7 +243,7 @@ Five steps. Two problems dressed as one: places that exist but cannot be found, 
 
 ### Model cluster members as first-class sub-destinations
 
-> FILES: **edit** pipeline/place_layer.py  ·  **schema** add `members[]`, `parent_id`
+> FILES: **new** pipeline/member_layer.py (path corrected 2026-09-03: members are container data, not place-class logic; place_layer.py needed no change)  ·  **schema** add `members[]`, `parent_id`
 
 Amalfi Coast, Cinque Terre, Lake Como, Luberon, Lake Garda and the other `area` entries are containers. Give each a `members[]` array of real named settlements with, at minimum: name, coordinates, one line of description, visit hours, and — where the data supports it — its own beauty and highlights values. Give each member `parent_id` pointing back.
 
