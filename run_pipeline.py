@@ -1393,6 +1393,20 @@ TASKS = [
                  "rating refresh. Multi-airport cities hold one slot."),
     },
     {
+        "key": "register_intake",
+        "title": "Register intake: which members do we NOT have (report only)",
+        "cadence": "monthly",
+        "writes_app_data": False,
+        "soft": True,
+        "cmds": [[PY, "pipeline/intake/register_intake.py"]],
+        "note": ("B3 (PLAN.md): full membership of every modelled place "
+                 "register from WDQS, diffed against the catalogue and the "
+                 "B1 member lists -> reports/intake_candidates.csv with an "
+                 "auto_admit flag. NEVER ingests anything: candidates wait "
+                 "for review, per the plan's hard stop. Unmodelled registers "
+                 "are printed as a visible gap."),
+    },
+    {
         "key": "audit",
         "title": "Data-quality audit scorecard (read-only)",
         "cadence": "monthly",
