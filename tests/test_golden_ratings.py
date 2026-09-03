@@ -64,19 +64,11 @@ def test_golden_pairs():
     baseline_failing = {(p["winner"], p["loser"])
                        for p in baseline["failing_pairs"]}
 
-    if model == baseline["model"]:
-        # Nothing should have moved: same model, same results.
-        assert passed == baseline["passed"], (
-            f"{model} baseline drift: {passed} pass now, "
-            f"{baseline['passed']} recorded")
-        now_failing = {(r["winner"], r["loser"]) for r in failed}
-        assert now_failing == baseline_failing, (
-            f"{model} baseline drift in WHICH pairs fail: "
-            f"new {now_failing - baseline_failing}, "
-            f"gone {baseline_failing - now_failing}")
-        return
-
-    # A newer model must strictly improve, and never break a pair v3 held.
+    # The invariant that holds at EVERY commit, whatever the model tag says:
+    # no pair the v3 baseline passed may fail. The tag stays rating_v3 while
+    # the Phase A maths lands step by step (the bump is reserved for A5), so
+    # the same-tag case must allow honest improvement - only regression is
+    # drift. Which pairs fail may shrink; it may never grow.
     regressions = [r for r in failed
                    if (r["winner"], r["loser"]) not in baseline_failing]
     assert not regressions, (
@@ -84,9 +76,13 @@ def test_golden_pairs():
         f"{baseline['model']} passed: "
         + "; ".join(f"{r['note']} ({r['winner_score']} vs {r['loser_score']})"
                     for r in regressions))
-    assert passed > baseline["passed"], (
-        f"{model} passes {passed}, not strictly more than "
-        f"{baseline['model']}'s {baseline['passed']}")
+
+    if model != baseline["model"]:
+        # The finished model must also beat the baseline outright (E1's
+        # "done when": strictly more pairs pass than v3 passed).
+        assert passed > baseline["passed"], (
+            f"{model} passes {passed}, not strictly more than "
+            f"{baseline['model']}'s {baseline['passed']}")
 
 
 if __name__ == "__main__":

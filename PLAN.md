@@ -127,7 +127,7 @@ Freeze the current output as `reports/rating_audit_v3_baseline.json`. Every late
 
 ### Rebuild highlights so it discriminates
 
-> FILES: **edit** pipeline/rating_layer.py  ·  **edit** pipeline/place_layer.py (POI significance)
+> FILES: **edit** pipeline/rating_layer.py  ·  **edit** pipeline/score_significance.py (POI significance; path corrected 2026-09-03: the per-POI significance engine lives here, not in place_layer.py, which only consumes `rate` for depth/visit-hours and needed no change. The absolute signal also required joining the backfill_landmarks WDQS harvest as an evidence source and extending that harvest to the 1,468 post-expansion destinations.)
 
 The current best-six measure saturates because six slots at significance ≥1 is a low bar almost everywhere. Replace it with a **peak-and-depth** pair on a scale that stays open at the top:
 

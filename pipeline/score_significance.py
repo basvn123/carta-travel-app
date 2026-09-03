@@ -12,6 +12,17 @@ independent open signals, per the 2026-08 open-data playbook:
   s_prior      the old rate as a weak prior (keeps harvest knowledge alive
                for POIs no external source corroborates)
 
+2026-09 (A2): POIs without a wiki URL - 84% of the catalogue - used to fall
+through to prior-plus-heritage only, which collapsed them into six giant tie
+blocks and made the destination rating's highlights component nearly modal.
+They now pick up sitelink evidence from cache/wikidata_landmarks.json (the
+backfill_landmarks WDQS box harvest: every entity with >= 10 sitelinks near
+each destination): an item matches a landmark row by shared name token within
+160 m, or within 70 m regardless of name, blacklisted types and
+settlement-describing shortdescs excluded. Unmatched no-wiki POIs still score
+prior-only - unmeasured stays low; it just no longer drags measured places
+into its tie block.
+
   blend = 0.6 * per-destination percentile + 0.4 * catalogue-wide percentile
 
 Per-city normalisation is the playbook's key trick: the best sight of a small
@@ -32,7 +43,17 @@ dup-tagged and noise-tagged items are excluded from quotas and never scored.
 Modes:
     python score_significance.py             # report + validation, no writes
     python score_significance.py apply       # gate must pass, then write
-                                             # it.rate (+ it.pop) to master
+                                             # it.rate, it.sig (+ it.pop)
+    python score_significance.py apply --sig-only
+                                             # write ONLY it.sig - the absolute
+                                             # 0-3 significance (catalogue-wide
+                                             # percentile of the composite
+                                             # score) the destination rating's
+                                             # highlights component reads.
+                                             # Leaves the town-relative rate,
+                                             # and everything downstream of it
+                                             # (planner deck, place.depth),
+                                             # untouched.
 Artifacts:
     cache/poi_significance.json      compact per-POI ledger [i, old, new, blend]
     logs/significance_report.json    distributions, movers, validation
@@ -46,6 +67,7 @@ from pathlib import Path
 
 from pipeline_io import atomic_write_json, load_json
 from dedupe_pois import name_core, haversine_km
+from backfill_landmarks import TYPE_BLACKLIST, BAD_DESC_RE, tokens
 
 if sys.platform == "win32":
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
@@ -54,12 +76,21 @@ ROOT = Path(__file__).resolve().parents[1]
 DATA = ROOT / "app_data" / "app_data.json"
 ENRICH_CACHE = ROOT / "app_data" / "enrich_cache.json"
 WD_CACHE = ROOT / "cache" / "poi_wikidata.json"
+LM_CACHE = ROOT / "cache" / "wikidata_landmarks.json"
 WV_CACHE = ROOT / "cache" / "wikivoyage_listings.json"
 OUT_LEDGER = ROOT / "cache" / "poi_significance.json"
 OUT_REPORT = ROOT / "logs" / "significance_report.json"
 
 WEIGHTS = {"views": 0.30, "sitelinks": 0.30, "heritage": 0.15,
-           "wv": 0.15, "prior": 0.10}
+           "wv": 0.15, "prior": 0.10,
+           # 2026-09 (A2): documentation presence - the enrichers found a
+           # Commons image and/or a Wikipedia description for this POI by
+           # geosearch + name match. Weak but INDEPENDENT evidence that the
+           # sight is documentable at all, and the only signal that varies
+           # inside the no-wiki mass (84% of POIs), which otherwise collapses
+           # into six giant prior-x-heritage tie blocks. Kept small so it can
+           # break ties without ever outranking sitelinks or pageviews.
+           "docum": 0.06}
 LOCAL_BLEND = 0.6                 # vs catalogue-wide percentile
 RATE3_SHARE = 0.12
 RATE2_SHARE = 0.28
@@ -143,9 +174,58 @@ def wv_weight_for(item, qid, wv_entry):
     return best
 
 
+LM_MATCH_M = 0.160     # km: shared-name-token acceptance radius
+LM_TIGHT_M = 0.070     # km: same-place acceptance radius, name or not
+
+
+def build_lm_index(lm):
+    """dest id -> [(qid, lat, lon, sl, art, label_tokens)] worth matching."""
+    out = {}
+    for did, rows in lm.items():
+        keep = []
+        for row in rows:
+            try:
+                qid, lat, lon, sl, _img, art, label, sdesc, types = row
+            except (TypeError, ValueError):
+                continue
+            if any(t in TYPE_BLACKLIST for t in types or ()):
+                continue
+            if sdesc and BAD_DESC_RE.search(sdesc):
+                continue
+            if label and BAD_DESC_RE.search(label):
+                continue
+            keep.append((qid, lat, lon, sl, art, tokens(label or "")))
+        if keep:
+            out[did] = keep
+    return out
+
+
+def lm_match(item, lm_rows):
+    """Best landmark row for one POI: (sitelinks, article) or (0, None).
+
+    Shared name token within LM_MATCH_M, or LM_TIGHT_M on distance alone -
+    the same acceptance rule backfill_landmarks uses to decide two records
+    are the same place, so join and harvest cannot drift apart.
+    """
+    ilat, ilon = item.get("lat"), item.get("lon")
+    if not isinstance(ilat, (int, float)) or not lm_rows:
+        return 0, None
+    itoks = tokens(item.get("name") or "")
+    best = (0, None)
+    for qid, lat, lon, sl, art, ltoks in lm_rows:
+        km = haversine_km(ilat, ilon, lat, lon)
+        if km > LM_MATCH_M:
+            continue
+        if (itoks & ltoks) or km <= LM_TIGHT_M:
+            if sl > best[0]:
+                best = (sl, art)
+    return best
+
+
 def compute(data):
     pop = (load_json(ENRICH_CACHE).get("pop")) or {}
     wd = load_json(WD_CACHE)
+    lm_index = build_lm_index(load_json(LM_CACHE) if LM_CACHE.exists() else {})
     wv_index = build_wv_index(load_json(WV_CACHE))
 
     rows = []                      # one per live POI
@@ -160,6 +240,14 @@ def compute(data):
             qid = wrec.get("qid")
             views = pop.get(url) or 0
             sl = wrec.get("sitelinks") or 0
+            lm_hit = False
+            if not sl:
+                # no direct Wikidata identity: try the landmark box harvest
+                sl, lm_art = lm_match(it, lm_index.get(did))
+                if sl:
+                    lm_hit = True
+                    if not views and lm_art:
+                        views = pop.get(lm_art) or 0
             heritage = bool(wrec.get("heritage") or it.get("heritage"))
             # An article about an admin area / settlement / railway station
             # lends the POI the TOWN's fame, not the sight's: a district
@@ -172,13 +260,14 @@ def compute(data):
                 sl = 0
             wvw = wv_weight_for(it, qid, wv_entry)
             visitors = wrec.get("visitors") or 0
+            docum = 0.5 * bool(it.get("img")) + 0.5 * bool(it.get("desc"))
             rows.append({
                 "did": did, "i": i, "it": it, "mis": misattributed,
                 "views": views, "sl": sl, "heritage": heritage,
-                "wv": wvw, "visitors": visitors,
+                "wv": wvw, "visitors": visitors, "docum": docum,
                 "prior": (it.get("rate") or 0) / 3.0,
                 "corroborated": bool((url and not misattributed)
-                                     or heritage or wvw > 0),
+                                     or heritage or wvw > 0 or lm_hit),
             })
 
     zs_views = zlog([r["views"] for r in rows])
@@ -191,12 +280,22 @@ def compute(data):
                       + WEIGHTS["sitelinks"] * zs
                       + WEIGHTS["heritage"] * her
                       + WEIGHTS["wv"] * r["wv"]
-                      + WEIGHTS["prior"] * r["prior"])
+                      + WEIGHTS["prior"] * r["prior"]
+                      + WEIGHTS["docum"] * r["docum"])
 
     # percentiles: catalogue-wide and per destination
     euro = percentile_ranks([r["score"] for r in rows])
     for r, e in zip(rows, euro):
         r["euro_pct"] = e
+        # Absolute significance, 0-3: where this sight stands against every
+        # live POI in Europe, on the same composite evidence the quota tiers
+        # read. This is the signal `rate` deliberately is NOT: rate answers
+        # "top of THIS town?" for the day planner's deck, sig answers "how
+        # big a deal is this anywhere?" for the destination rating. The
+        # rating's highlights component (rating_layer.highlights01) collapsed
+        # to a constant precisely because it read the town-relative rate as
+        # if it were this number.
+        r["sig"] = round(3.0 * e, 3)
     by_dest = defaultdict(list)
     for r in rows:
         by_dest[r["did"]].append(r)
@@ -279,6 +378,8 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("mode", nargs="?", default="report",
                     choices=["report", "apply"])
+    ap.add_argument("--sig-only", action="store_true",
+                    help="apply: write it.sig only; never touch rate or pop")
     args = ap.parse_args()
 
     data = json.loads(DATA.read_text(encoding="utf-8"))
@@ -338,9 +439,14 @@ def main():
             print("GATE FAILED: not writing the master.")
             sys.exit(1)
         pop = (load_json(ENRICH_CACHE).get("pop")) or {}
-        n_rate = n_pop = 0
+        n_rate = n_pop = n_sig = 0
         for r in rows:
             it = r["it"]
+            if it.get("sig") != r["sig"]:
+                it["sig"] = r["sig"]
+                n_sig += 1
+            if args.sig_only:
+                continue
             if (it.get("rate") or 0) != r["new_rate"]:
                 it["rate"] = r["new_rate"]
                 n_rate += 1
@@ -355,8 +461,8 @@ def main():
                 it["pop"] = int(pop[url])
                 n_pop += 1
         atomic_write_json(DATA, data)
-        print(f"applied: {n_rate} rates rewritten, {n_pop} pop set "
-              f"-> {DATA}")
+        print(f"applied: {n_rate} rates rewritten, {n_pop} pop set, "
+              f"{n_sig} sig written -> {DATA}")
 
 
 if __name__ == "__main__":

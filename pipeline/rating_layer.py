@@ -93,21 +93,23 @@ CURATED_APPEAL = ROOT / "app_data" / "curated_appeal.json"
 # looked at the place; the whole change happens in the 0.30 beneath it.
 WEIGHTS = {"appeal": 0.70, "beauty": 0.13, "acclaim": 0.06, "highlights": 0.11}
 
-# POI importance-rate -> contribution to the highlights weighting.
-POI_RATE_WEIGHT = {3: 1.0, 2: 0.45}
-POI_RATE_WEIGHT_LOW = 0.15      # rate 1/0 sights
-POI_ACTIVE_WEIGHT = 0.30        # "get active" POIs (sport/nature)
-
-# Highlights: how many of a place's best sights count, and the weight at which
-# the term saturates. Only the top HIGHLIGHT_K by significance are summed, so
-# the measure asks "how good is the best of what is here" rather than "how much
-# is here" - the question a traveller on a two-day visit is actually asking.
-# Six at 2.5 was chosen over the alternatives on measured size-fairness:
-# top-6/2.5 correlates +0.31 with log(population) against +0.61 for the old
-# count-everything term, and closes the small-vs-large gap from 0.567/0.909 to
-# 0.851/0.909. Wider windows (top-12) drift back toward a size measurement.
+# Highlights (A2, 2026-09): peak-and-depth over the ABSOLUTE per-POI
+# significance (`it.sig`, 0-3, written by score_significance.py from
+# pageviews + sitelinks + heritage + Wikivoyage curation, percentile-ranked
+# across every live POI in Europe). The previous top-6 sum over the
+# town-relative `rate` saturated completely - 87.2% of the catalogue carried
+# one identical value - because rate answers "top of this town?", not "how
+# big a deal is this anywhere?". Only the top HIGHLIGHT_K sights count, so
+# the measure still asks "how good is the best of what is here" rather than
+# "how much is here" - the question a traveller on a two-day visit is
+# actually asking.
 HIGHLIGHT_K = 6
-HIGHLIGHT_SATURATION = 2.5
+PEAK_W = 0.55                   # the single best sight
+DEPTH_W = 0.45                  # the best six, position-discounted
+DEPTH_DECAY = 0.55              # i-th sight counts 1/(1+0.55i)
+SIG_UNMEASURED = 0.9            # sig for a POI the significance run missed:
+                                # the catalogue median is ~1.5; unmeasured
+                                # sits below it, never at world-class
 
 # Acclaim: what membership of each register is worth, 0-1. Mirrors (and must
 # stay in step with) score_place_candidates.DESIGNATION_WEIGHT. A place in two
@@ -169,7 +171,9 @@ RATING_MODEL = {
                    "(curated_appeal.json), read through the per-class scale"),
         "acclaim": "membership of authoritative place registers (dest.designations)",
         "beauty": "composite Beauty Index (UNESCO, nature tags, iconic, beaches)",
-        "highlights": f"best {HIGHLIGHT_K} sights by significance, saturating",
+        "highlights": (f"peak-and-depth over the best {HIGHLIGHT_K} sights' "
+                       "ABSOLUTE significance (it.sig), p99-normalised at "
+                       "scoring time"),
         "fame": "avg daily Wikipedia pageviews - hidden-gem signal only, not scored",
     },
     "appeal_scale": appeal_scale.APPEAL_SCALE_MODEL,
@@ -193,33 +197,61 @@ def load_curated_appeal():
     return {}
 
 
-def highlights01(dest):
-    """Quality of a place's BEST sights, 0-1, independent of how many it has.
+def highlights_parts(dest):
+    """(peak01, depth_raw) for one destination, from ABSOLUTE significance.
 
-    Sums only the top HIGHLIGHT_K significance weights. The old measure summed
-    every POI, which made the term a population proxy (+0.57 with log(pop));
-    this one asks what the best few days here look like, which is what a
-    visitor experiences and what a village can win on.
+    2026-09 (A2): the previous version read the town-relative `rate`, which
+    answers "top of THIS town?" - so its top-6 sum was six 3s almost
+    everywhere and 87.2% of the catalogue shared one identical value. It now
+    reads `it.sig`, the catalogue-wide 0-3 significance score_significance.py
+    writes (composite of pageviews, sitelinks, heritage designation and
+    Wikivoyage curation, percentile-ranked across every live POI in Europe).
+
+      peak   the single best sight, 0-1: does this place hold anything of
+             European rank at all?
+      depth  the best six, each discounted by position (1 / (1 + 0.55 i)):
+             what do the best few days here look like? Normalised later
+             against the catalogue's p99, computed at scoring time.
+
+    dup/noise items never count. Items without a sig (a POI added after the
+    last significance run) fall back to a neutral low value rather than the
+    inflated rate: unmeasured is not the same claim as world-class.
     """
     act = (dest.get("activities") or {})
     items = act.get("items_full") or []
     if not items:
-        # thin fallback: name-only list, treated as mid-significance sights
-        n = len(act.get("items") or [])
-        return (1.0 - math.exp(-(min(n, HIGHLIGHT_K) * 0.45) / HIGHLIGHT_SATURATION)
-                if n else 0.0)
-    weights = []
-    for it in items:
-        if it.get("dup") or it.get("noise"):
-            continue        # 2026-08: dedupe/noise tags, not real depth
-        if it.get("active"):
-            weights.append(POI_ACTIVE_WEIGHT)
-        else:
-            weights.append(POI_RATE_WEIGHT.get(it.get("rate"), POI_RATE_WEIGHT_LOW))
-    if not weights:
-        return 0.0
-    weights.sort(reverse=True)
-    return 1.0 - math.exp(-sum(weights[:HIGHLIGHT_K]) / HIGHLIGHT_SATURATION)
+        # thin fallback: a name-only list. Treat as mid-significance sights
+        # so a destination the enricher has not reached is not zeroed for it.
+        n = min(len(act.get("items") or []), HIGHLIGHT_K)
+        sigs = [SIG_UNMEASURED] * n
+    else:
+        sigs = sorted((it.get("sig", SIG_UNMEASURED)
+                       for it in items
+                       if not it.get("dup") and not it.get("noise")),
+                      reverse=True)
+    if not sigs:
+        return 0.0, 0.0
+    peak = min(1.0, max(0.0, sigs[0] / 3.0))
+    depth = sum(s / (1.0 + DEPTH_DECAY * i)
+                for i, s in enumerate(sigs[:HIGHLIGHT_K]))
+    return peak, depth
+
+
+def highlights_map(dests):
+    """{dest id: highlights 0-1}, p99-calibrated across the whole catalogue.
+
+    hl = clip(0.55 peak + 0.45 depth / depth_p99, 0, 1). The p99 is measured
+    from the catalogue at scoring time, never hardcoded, so the scale tracks
+    the data as coverage grows. Returns (map, depth_p99).
+    """
+    parts = {did: highlights_parts(d) for did, d in dests.items()}
+    depths = sorted(p[1] for p in parts.values())
+    if not depths:
+        return {}, 0.0
+    p99 = depths[int(0.99 * (len(depths) - 1))] or 1.0
+    out = {did: min(1.0, max(0.0, PEAK_W * peak + DEPTH_W * (depth / p99)))
+           for did, (peak, depth) in parts.items()}
+    return out, round(p99, 3)
 
 
 def acclaim01(dest):
@@ -246,13 +278,15 @@ FALLBACK_DEFAULT = (0.098, 0.322, 0.085, 4.146)
 FALLBACK_MIN_N = 200
 
 
-def fit_fallback(dests, appeal, scales):
+def fit_fallback(dests, appeal, scales, hl01):
     """Least-squares fit of the real score onto acclaim, beauty, highlights.
 
     Fitted on the destinations that DO have a curated appeal, then applied to
     the ones that do not, so a place nobody has scored by hand still lands on
     the same scale as its neighbours instead of a tier and a half below them.
-    Returns (w_acclaim, w_beauty, w_highlights, intercept).
+    ``hl01`` is the precomputed highlights map (highlights_map), so the fit
+    reads exactly the values the scorer will. Returns
+    (w_acclaim, w_beauty, w_highlights, intercept).
     """
     X, y = [], []
     for did, d in dests.items():
@@ -263,10 +297,11 @@ def fit_fallback(dests, appeal, scales):
         if scales:
             a = appeal_scale.rescale(a, appeal_scale.class_of(d), scales)
         beauty = (d.get("beauty") or {}).get("score", 0) or 0.0
+        hl = hl01.get(did, 0.0) * 10.0
         real = (WEIGHTS["appeal"] * a + WEIGHTS["beauty"] * beauty
                 + WEIGHTS["acclaim"] * acclaim01(d) * 10.0
-                + WEIGHTS["highlights"] * highlights01(d) * 10.0)
-        X.append([acclaim01(d) * 10.0, beauty, highlights01(d) * 10.0, 1.0])
+                + WEIGHTS["highlights"] * hl)
+        X.append([acclaim01(d) * 10.0, beauty, hl, 1.0])
         y.append(real)
     if len(X) < FALLBACK_MIN_N:
         return FALLBACK_DEFAULT
@@ -288,7 +323,7 @@ def fit_fallback(dests, appeal, scales):
     return tuple(round(m[i][n] / m[i][i], 4) for i in range(n))
 
 
-def blend_score(dest, appeal_rec, scales=None, fallback=None):
+def blend_score(dest, appeal_rec, scales=None, fallback=None, hl=0.0):
     """Absolute 0-10 score. Falls back to evidence-led scoring when a
     destination has no curated appeal entry - which is no longer a
     "shouldn't happen": every place the coverage engine promotes arrives
@@ -299,7 +334,7 @@ def blend_score(dest, appeal_rec, scales=None, fallback=None):
     what the shadow report compares against.
     """
     beauty = (dest.get("beauty") or {}).get("score", 0) or 0.0
-    highlights = highlights01(dest) * 10.0
+    highlights = hl * 10.0
     acclaim = acclaim01(dest) * 10.0
     if appeal_rec and appeal_rec.get("appeal") is not None:
         appeal = float(appeal_rec["appeal"])
@@ -363,7 +398,16 @@ def compute_ratings(dests):
     appeal = load_curated_appeal()
 
     scales = appeal_scale.scales_for(dests, appeal)
-    fallback = fit_fallback(dests, appeal, scales)
+    hl01, depth_p99 = highlights_map(dests)
+    RATING_MODEL["highlights_model"] = {
+        "formula": "clip(0.55*peak + 0.45*depth/depth_p99, 0, 1)",
+        "peak": "best sight's absolute significance (it.sig / 3)",
+        "depth": f"sum over top {HIGHLIGHT_K} of sig_i / (1 + {DEPTH_DECAY}*i)",
+        "depth_p99": depth_p99,
+        "sig_source": ("score_significance.py: catalogue-wide percentile of "
+                       "composite open-signal evidence, 0-3"),
+    }
+    fallback = fit_fallback(dests, appeal, scales, hl01)
     RATING_MODEL["fallback_fit"] = {
         "coefficients": list(fallback),
         "terms": ["acclaim", "beauty", "highlights", "intercept"],
@@ -376,7 +420,7 @@ def compute_ratings(dests):
     for did in ids:
         d = dests[did]
         rec = appeal.get(did)
-        s, c = blend_score(d, rec, scales, fallback)
+        s, c = blend_score(d, rec, scales, fallback, hl01.get(did, 0.0))
         scores.append(s)
         comps.append(c)
         views_list.append(pv.get(did) or 0)
