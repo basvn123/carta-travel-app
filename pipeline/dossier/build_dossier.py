@@ -268,6 +268,10 @@ def resolve_highlights(dest, items, poi_wd, cap=12, listed=()):
             "lat": round(it["lat"], 5),
             "lon": round(it["lon"], 5),
             "dist_km": round(haversine_km(clat, clon, it["lat"], it["lon"]), 1),
+            # D5: the absolute significance (score_significance.py, 0-3)
+            # rides along so the renderer can mark WHY the ordering is what
+            # it is, not just apply it.
+            **({"sig": it["sig"]} if isinstance(it.get("sig"), (int, float)) else {}),
             # Fame dominates, curation breaks the ties fame cannot. The old
             # term was min(sitelinks, 60)/20, which SATURATED at 60: every
             # famous thing scored an identical 3.0 and the ranking fell
@@ -889,11 +893,24 @@ def compose_practical(dest):
     }
     practical = {"links": links}
     tr = dest.get("transfer") or {}
+    lt = dest.get("local_transport") or {}
+    # D3: the fields travellers decide on, all in one block - 1,344 places
+    # are rated poor transit and the reader must be told, not left to infer.
+    getting = {}
     if iata:
-        practical["getting_there"] = {
-            "airport": iata,
-            "transfer_min": tr.get("transfer_minutes_one_way"),
-        }
+        getting["airport"] = iata
+        if tr.get("transfer_minutes_one_way") is not None:
+            getting["transfer_min"] = tr.get("transfer_minutes_one_way")
+        if tr.get("transfer_mode"):
+            getting["transfer_mode"] = tr.get("transfer_mode")
+    for src_key, out_key in (("transit_quality", "transit"),
+                             ("car_needed", "car_needed"),
+                             ("reason", "why"),
+                             ("rental_eur_per_day", "rental_eur_day")):
+        if lt.get(src_key) is not None:
+            getting[out_key] = lt[src_key]
+    if getting:
+        practical["getting_there"] = getting
     return practical
 
 
@@ -1167,7 +1184,43 @@ def build_one(dest, ctx, refusal_log):
         water = {k: bw[k] for k in ("rating", "excellent_pct", "n_sites",
                                     "nearest", "year") if bw.get(k) is not None}
 
+    # D2: the verdict, shown honestly - the score, its parts, its
+    # confidence, and where the place stands in its country. The earlier
+    # brief hid the rating from this page; PLAN.md D2 reverses that call.
+    r = dest.get("rating") or {}
+    verdict = None
+    if r.get("score") is not None:
+        verdict = {k: r[k] for k in
+                   ("score", "tier", "label", "hidden_gem", "confidence",
+                    "inputs_present", "components") if r.get(k) is not None}
+        for k in ("country_rank", "country_n", "country_badge",
+                  "country_percentile", "class_percentile"):
+            if dest.get(k) is not None:
+                verdict[k] = dest[k]
+
+    # D3: where to sleep - the neighbourhood prices the wire always carried
+    # and no renderer ever spent, cheapest first, plus the tiers and the
+    # 12-month price curve.
+    ac = dest.get("accommodation") or {}
+    sleep = {}
+    if ac.get("neighbourhoods"):
+        sleep["neighbourhoods"] = sorted(
+            ac["neighbourhoods"],
+            key=lambda n: n.get("night_eur") if n.get("night_eur") is not None else 1e9,
+        )[:8]
+    for k in ("per_person_night_eur", "seasonality", "tiers"):
+        if ac.get(k):
+            sleep[k] = ac[k]
+
+    # D7: the members B1 attached, passed through for the parent page.
+    members = [{k: m[k] for k in ("name", "lat", "lon", "desc", "wiki",
+                                  "visit_h") if m.get(k) is not None}
+               for m in dest.get("members") or []] or None
+
     sections = {
+        "verdict": verdict,
+        "sleep": sleep or None,
+        "members": members,
         "gallery": gallery or None,
         "intro": intro,
         "highlights": highlights or None,

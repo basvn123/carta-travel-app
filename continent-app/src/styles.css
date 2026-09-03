@@ -30376,3 +30376,112 @@ button.ai-sched-main:focus-visible {
   padding: 3px 10px;
   cursor: pointer;
 }
+
+/* ==========================================================================
+   Destination page rebuild (PLAN.md D1-D7): the decision sequence, the
+   verdict card, sleep, getting there, the sized highlight grid, consensus
+   groups and area members.
+   ========================================================================== */
+.destp-subnav {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  display: flex;
+  gap: 4px;
+  overflow-x: auto;
+  padding: 6px 14px;
+  background: var(--paper);
+  border-bottom: 1px solid var(--rule-soft);
+}
+.destp-subnav button {
+  font: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink-soft);
+  background: var(--bg-card);
+  border: 1px solid var(--rule-soft);
+  border-radius: 999px;
+  padding: 4px 11px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.destp-subnav button:hover { border-color: var(--rule); color: var(--ink); }
+
+.destp-verdict-head { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin: 0 0 10px; }
+.destp-verdict-label { font-family: var(--display); font-size: 18px; font-weight: 600; color: var(--rate); }
+.destp-verdict-country { font-size: 13px; font-weight: 600; color: var(--rate-soft); }
+.destp-confidence {
+  font-size: 12.5px;
+  color: var(--ink-soft);
+  background: var(--rate-bg);
+  border-radius: 8px;
+  padding: 7px 10px;
+  margin: 10px 0 0;
+  max-width: 64ch;
+}
+.destp-howlong { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--ink-soft); margin: 10px 0 0; }
+
+/* sleep */
+.destp-hoods { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 5px; }
+.destp-hood { display: grid; grid-template-columns: minmax(90px, 1fr) 2fr 52px; align-items: center; gap: 8px; font-size: 12.5px; }
+.destp-hood-name { color: var(--ink); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.destp-hood-bar { height: 7px; background: var(--rule-soft); border-radius: 4px; overflow: hidden; }
+.destp-hood-bar span { display: block; height: 100%; background: var(--rate-soft); border-radius: 4px; }
+.destp-hood-eur { text-align: right; color: var(--ink-soft); font-variant-numeric: tabular-nums; }
+.destp-sleep-note { font-size: 11.5px; color: var(--ink-mute); margin: 8px 0 0; }
+.destp-sleep-tiers { display: flex; align-items: center; gap: 6px; font-size: 12.5px; color: var(--ink-soft); margin: 8px 0 0; }
+.destp-season { margin: 10px 0 0; }
+.destp-season-bars { display: flex; align-items: flex-end; gap: 3px; height: 42px; }
+.destp-season-bars span { flex: 1; background: var(--rule); border-radius: 2px 2px 0 0; }
+.destp-season-bars span.is-low { background: var(--green); }
+.destp-season-note { font-size: 11.5px; color: var(--green); margin: 4px 0 0; font-weight: 600; }
+
+/* getting there */
+.destp-getting { display: flex; flex-direction: column; gap: 7px; }
+.destp-get-row { display: flex; align-items: center; gap: 8px; font-size: 13.5px; color: var(--ink); margin: 0; }
+.destp-get-dot { width: 9px; height: 9px; border-radius: 50%; flex: none; }
+.destp-get-transit.is-excellent .destp-get-dot, .destp-get-transit.is-good .destp-get-dot { background: var(--status-success); }
+.destp-get-transit.is-limited .destp-get-dot { background: var(--rate-soft); }
+.destp-get-transit.is-poor .destp-get-dot { background: var(--danger); }
+
+/* crowding + water */
+.destp-crowd, .destp-water { margin: 12px 0 0; padding-top: 10px; border-top: 1px solid var(--rule-soft); }
+.destp-crowd-head, .destp-water-head { display: flex; align-items: center; gap: 8px; }
+.destp-crowd-year { font-size: 11px; color: var(--ink-mute); }
+.destp-crowd-line, .destp-water-line { font-size: 12.5px; color: var(--ink-soft); margin: 6px 0 0; }
+.destp-crowd-note { font-size: 11.5px; color: var(--ink-mute); margin: 6px 0 0; max-width: 62ch; }
+
+/* highlights: size, plates, groups, significance */
+.destp-hl-group { font-size: 11.5px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: var(--ink-mute); margin: 12px 2px 6px; }
+.destp-hl.is-top { grid-column: span 2; }
+.destp-hl.is-top img, .destp-hl.is-top .destp-hl-plate { min-height: 150px; }
+.destp-hl-plate {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 92px;
+  background: var(--paper-dim);
+  color: var(--ink-mute);
+  font-family: var(--display);
+  font-size: 34px;
+  font-weight: 600;
+}
+.destp-hl-sig { color: var(--rate-soft); font-size: 10px; letter-spacing: 1px; }
+.destp-do-group { font-size: 11.5px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: var(--ink-mute); margin: 12px 2px 6px; }
+.destp-do-group .mono { color: var(--rate-soft); }
+
+/* members */
+.destp-members { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 10px; }
+.destp-member { border: 1px solid var(--rule-soft); border-radius: 10px; padding: 10px 12px; display: flex; flex-direction: column; gap: 4px; }
+.destp-member.is-focus { border-color: var(--rate); background: var(--rate-bg); }
+.destp-member-head { display: flex; align-items: center; gap: 6px; }
+.destp-member-name { font-weight: 600; color: var(--ink); }
+.destp-member-h { margin-left: auto; font-size: 11px; color: var(--ink-mute); display: inline-flex; align-items: center; gap: 3px; }
+.destp-member-desc { font-size: 12px; color: var(--ink-soft); }
+.destp-member-link { font-size: 11.5px; color: var(--rate-soft); font-weight: 600; }
+
+/* A payment gate loses to nothing: the shared day-saved-overlay sits at
+   z 62, and the full-screen destination page at z 240 was burying the pass
+   modal launched from its own PDF button - a guest clicked and saw nothing
+   happen. The pass variant outranks every page. */
+.day-saved-overlay.pass-overlay { z-index: 320; }

@@ -168,11 +168,28 @@ export function loadInitialState() {
   return {};
 }
 
-/** Push the encoded state into the URL (replaceState) and the localStorage mirror. */
+
+// Every key encodeState can write; persistState replaces exactly these.
+const OWN_KEYS = ['b', 'big', 'cf', 'd', 'dh', 'fav', 'favonly', 'g', 'gem', 'ls', 'o', 'pm', 'pr', 'r', 'rh', 'rr', 'sort', 'st', 't', 'tab', 'tb', 'tk', 'top', 'un'];
+
+/** Push the encoded state into the URL (replaceState) and the localStorage mirror.
+ *
+ * Foreign query params are PRESERVED: the Explore rebuild keeps its filter
+ * state (xk/xv/xr/xm/xp/xc/xg/xu/xs) and the member anchor (dm) in the URL,
+ * and this writer used to rebuild the query from scratch and silently wipe
+ * them 300 ms after any state change. Own keys are replaced wholesale; keys
+ * this encoder never writes are left standing. Only the OWN keys go to the
+ * localStorage mirror, exactly as before.
+ */
 export function persistState(state) {
   if (typeof window === 'undefined') return;
   const qs = encodeState(state);
-  const url = qs ? `${window.location.pathname}?${qs}` : window.location.pathname;
+  const own = new URLSearchParams(qs);
+  const merged = new URLSearchParams(window.location.search);
+  for (const key of OWN_KEYS) merged.delete(key);
+  for (const [k, v] of own) merged.set(k, v);
+  const ms = merged.toString();
+  const url = ms ? `${window.location.pathname}?${ms}` : window.location.pathname;
   try { window.history.replaceState(null, '', url); } catch { /* ignore */ }
   try { window.localStorage.setItem(STORAGE_KEY, qs); } catch { /* ignore */ }
 }

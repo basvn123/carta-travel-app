@@ -14,6 +14,15 @@ import { useForecast } from '../lib/weather.js';
 import { packingList, packMonth } from '../lib/packing.js';
 import { cheapestStayMonths } from '../lib/costIndex.js';
 import { useI18n } from '../i18n/index.jsx';
+import { RatingBreakdown } from './RatingBreakdown.jsx';
+import { Neighbourhoods } from './Neighbourhoods.jsx';
+import { GettingThere } from './GettingThere.jsx';
+import { CrowdCalendar } from './CrowdCalendar.jsx';
+import { BathingWater } from './BathingWater.jsx';
+import { MemberPlaces } from './MemberPlaces.jsx';
+import { ScoreChip } from '../components/RatingBadge.jsx';
+import { visitLength } from '../lib/nearby.js';
+import { roleOf } from '../lib/taxonomy.js';
 import { usePaywall } from '../hooks/usePaywall.jsx';
 import {
   TreeIcon, PersonIcon, CalendarIcon, MapPinIcon, CameraIcon,
@@ -169,6 +178,20 @@ export function DestinationPage({
   const [pdfBusy, setPdfBusy] = React.useState(false);
 
   const dossier = useDossier(destination?.id);
+  // D7: a member search lands here with ?dm=<name>; that member is the
+  // reason the reader arrived, so it gets the focus.
+  const memberFocus = React.useMemo(() => {
+    try {
+      return new URLSearchParams(window.location.search).get('dm') || null;
+    } catch { return null; }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [destination?.id]);
+
+  // D1: the sticky sub-nav walks the decision sequence.
+  const jumpTo = (id) => {
+    scrollRef.current?.querySelector?.(`#${id}`)
+      ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
 
   React.useEffect(() => {
     setStuck(false);
@@ -211,7 +234,15 @@ export function DestinationPage({
   const packs = packingList(destination, month);
 
   const intro = d?.intro;
-  const highlights = d?.highlights || [];
+  const verdict = d?.verdict || destination.rating || null;
+  const sleep = d?.sleep || null;
+  const getting = d?.practical?.getting_there || null;
+  const members = d?.members || null;
+  const water = d?.water || null;
+  const stayLen = visitLength(destination);
+  const role = roleOf(destination, 0);
+  const highlights = [...(d?.highlights || [])]
+    .sort((a, b) => (b.rank_score || 0) - (a.rank_score || 0));
   const doItems = d?.do || [];
   const trips = d?.trips || [];
   const nearby = d?.nearby || {};
@@ -295,6 +326,19 @@ export function DestinationPage({
         </div>
       </div>
 
+      {/* D1: the decision sequence as a sticky rail - should I go, when,
+          where do I sleep, how do I get there, what do I do, what it costs */}
+      <nav className="destp-subnav" aria-label={t('dest.subnavAria')}>
+        {[['sec-verdict', 'dest.nav.verdict'], ['sec-when', 'dest.nav.when'],
+          ['sec-sleep', 'dest.nav.sleep'], ['sec-getting', 'dest.nav.getting'],
+          ['sec-do', 'dest.nav.do'], ['sec-cost', 'dest.nav.cost']]
+          .map(([id, key]) => (
+            <button key={id} type="button" onClick={() => jumpTo(id)}>
+              {t(key)}
+            </button>
+          ))}
+      </nav>
+
       <div className="destp-scroll" ref={scrollRef} onScroll={onScroll}>
         <GalleryStrip
           gallery={d?.gallery}
@@ -348,6 +392,72 @@ export function DestinationPage({
 
         <div className="destp-grid">
           <div className="destp-col is-main">
+            {/* D1+D2: the verdict leads - should I go, and how much does
+                this rating actually know. The old page hid the score; the
+                plan reverses that call, with the confidence shown rather
+                than the number silently demoted. */}
+            {verdict?.score != null && (
+              <div className="dsheet-card" id="sec-verdict">
+                <div className="destp-verdict-head">
+                  <ScoreChip rating={verdict} size="lg" />
+                  {verdict.label && <span className="destp-verdict-label">{verdict.label}</span>}
+                  {verdict.country_rank === 1 ? (
+                    <span className="destp-verdict-country">{t('card.topOf', { country: destination.country })}</span>
+                  ) : verdict.country_badge ? (
+                    <span className="destp-verdict-country">{t('card.rankIn', { n: verdict.country_rank, country: destination.country })}</span>
+                  ) : null}
+                </div>
+                <RatingBreakdown rating={verdict} meta={data?.meta} t={t} />
+                {verdict.confidence && verdict.confidence !== 'curated' && (
+                  <p className="destp-confidence">
+                    {t(verdict.confidence === 'provisional'
+                      ? 'dest.confProvisional' : 'dest.confModelled')}
+                  </p>
+                )}
+                {/* D1's "how long": hours become a shape, plus the role. */}
+                {(stayLen || destination.place?.visit_h != null) && (
+                  <p className="destp-howlong">
+                    <ClockIcon size={13} />
+                    <span>
+                      {stayLen ? t(stayLen.key, { n: stayLen.n }) : null}
+                      {' '}({t(role.labelKey)})
+                    </span>
+                  </p>
+                )}
+              </div>
+            )}
+
+            {/* D1: when - the climate strip with the crowding and water
+                measurements beside it, not buried below the fold. */}
+            {destination.climate?.m && (
+              <div className="dsheet-card" id="sec-when">
+                <SectionTitle icon={CalendarIcon}>{t('explore.whenTitle')}</SectionTitle>
+                <ClimateStrip climate={destination.climate} />
+                {cheapMonths && (
+                  <p className="xp-when-fact">{t('explore.whenCheapStay', { months: fmtMonthRanges(cheapMonths) })}</p>
+                )}
+                <CrowdCalendar destination={destination} t={t} />
+                <BathingWater water={water} destination={destination} t={t} />
+              </div>
+            )}
+
+            {/* D3: where to sleep - neighbourhood prices, tiers, the
+                12-month price curve. */}
+            {(sleep?.neighbourhoods?.length > 0 || sleep?.tiers || sleep?.seasonality) && (
+              <div className="dsheet-card" id="sec-sleep">
+                <SectionTitle icon={BedIcon}>{t('dest.sleepTitle')}</SectionTitle>
+                <Neighbourhoods sleep={sleep} t={t} />
+              </div>
+            )}
+
+            {/* D3: getting there and around, the whole verdict line. */}
+            {getting && (getting.airport || getting.transit || getting.car_needed != null) && (
+              <div className="dsheet-card" id="sec-getting">
+                <SectionTitle icon={CompassIcon}>{t('dest.gettingTitle')}</SectionTitle>
+                <GettingThere getting={getting} t={t} />
+              </div>
+            )}
+
             {/* What this place is about. */}
             {(intro?.body || (!loading && !intro?.body && destination.guide?.text)) && (
               <div className="dsheet-card">
@@ -402,40 +512,91 @@ export function DestinationPage({
                     onPickTrip={(row) => onSelect?.(row.id)}
                   />
                 </React.Suspense>
-                {highlights.length > 0 && (
-                  <div className="destp-hls">
-                    {highlights.map((h, i) => (
-                      <figure className="destp-hl" key={h.id}>
-                        {h.image?.url ? (
-                          <img src={h.image.url} alt="" loading="lazy" />
-                        ) : (
-                          <span className="destp-hl-blank"><CameraIcon size={16} /></span>
-                        )}
-                        <figcaption>
-                          <span className="destp-hl-name"><span className="destp-hl-n mono">{i + 1}</span>{h.name}</span>
-                          <span className="destp-hl-sub">
-                            <span>{h.kind}</span>
-                            {h.dist_km != null && <span className="mono">{fmtKm(h.dist_km)}</span>}
-                          </span>
-                          {h.fact && <span className="destp-hl-fact">{h.fact}</span>}
-                        </figcaption>
-                        {safeUrl(h.wikipedia) && (
-                          <a className="destp-hl-link" href={safeUrl(h.wikipedia)} target="_blank" rel="noreferrer" aria-label={h.name} />
-                        )}
-                      </figure>
-                    ))}
-                  </div>
-                )}
+                {/* D5: significance leads. The first three tiles draw
+                    larger, each carries its significance dots, tiles group
+                    by walking distance, and a failed photo collapses to a
+                    lettered plate in the paper tone - a broken-image icon
+                    never renders. */}
+                {highlights.length > 0 && (() => {
+                  const groups = [
+                    ['dest.hlCentre', highlights.filter((h) => (h.dist_km ?? 0) <= 1.5)],
+                    ['dest.hlWalk', highlights.filter((h) => (h.dist_km ?? 0) > 1.5 && h.dist_km <= 3.5)],
+                    ['dest.hlFarther', highlights.filter((h) => (h.dist_km ?? 99) > 3.5)],
+                  ].filter(([, rows]) => rows.length > 0);
+                  let n = 0;
+                  const sigDots = (sig) => (sig == null ? null
+                    : sig >= 2.4 ? '●●●' : sig >= 1.6 ? '●●○' : '●○○');
+                  return groups.map(([key, rows]) => (
+                    <div key={key}>
+                      {groups.length > 1 && <p className="destp-hl-group">{t(key)}</p>}
+                      <div className="destp-hls">
+                        {rows.map((h) => {
+                          n += 1;
+                          const rank = n;
+                          return (
+                            <figure className={`destp-hl ${rank <= 3 ? 'is-top' : ''}`} key={h.id}>
+                              {h.image?.url ? (
+                                <img
+                                  src={h.image.url}
+                                  alt=""
+                                  loading="lazy"
+                                  onError={(e) => {
+                                    e.currentTarget.hidden = true;
+                                    e.currentTarget.parentElement
+                                      ?.querySelector('.destp-hl-plate')
+                                      ?.removeAttribute('hidden');
+                                  }}
+                                />
+                              ) : null}
+                              <span className="destp-hl-plate" hidden={!!h.image?.url}>
+                                {(h.name || '?').slice(0, 1)}
+                              </span>
+                              <figcaption>
+                                <span className="destp-hl-name"><span className="destp-hl-n mono">{rank}</span>{h.name}</span>
+                                <span className="destp-hl-sub">
+                                  <span>{h.kind}</span>
+                                  {h.sig != null && (
+                                    <span className="destp-hl-sig" title={t('dest.sigTitle')}>{sigDots(h.sig)}</span>
+                                  )}
+                                  {h.dist_km != null && <span className="mono">{fmtKm(h.dist_km)}</span>}
+                                </span>
+                                {h.fact && <span className="destp-hl-fact">{h.fact}</span>}
+                              </figcaption>
+                              {safeUrl(h.wikipedia) && (
+                                <a className="destp-hl-link" href={safeUrl(h.wikipedia)} target="_blank" rel="noreferrer" aria-label={h.name} />
+                              )}
+                            </figure>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  ));
+                })()}
               </div>
             )}
 
             {/* Best things to do: activities, trails, festivals, with their
                 evidence when the research sweep has run here. */}
-            {doItems.length > 0 && (
-              <div className="dsheet-card">
+            {doItems.length > 0 && (() => {
+              // D6: the consensus count is the most trustworthy signal on
+              // the page, so it groups the list instead of footnoting it.
+              // Fewer than three evidenced items: the flat list stands.
+              const nOf = (x) => x.evidence?.n_sources ?? 0;
+              const evidenced = doItems.filter((x) => x.evidence?.n_sources != null);
+              const grouped = evidenced.length >= 3;
+              const buckets = grouped ? [
+                ['dest.doEssential', doItems.filter((x) => nOf(x) >= 5)],
+                ['dest.doIfTime', doItems.filter((x) => nOf(x) >= 2 && nOf(x) < 5)],
+                ['dest.doOffTrail', doItems.filter((x) => nOf(x) < 2)],
+              ].filter(([, xs]) => xs.length > 0) : [[null, doItems]];
+              return (
+              <div className="dsheet-card" id="sec-do">
                 <SectionTitle icon={CompassIcon}>{t('dest.doTitle')}</SectionTitle>
+                {buckets.map(([bkey, items]) => (
+                <React.Fragment key={bkey || 'all'}>
+                {bkey && <p className="destp-do-group">{t(bkey)} <span className="mono">{items.length}</span></p>}
                 <ul className="destp-dos">
-                  {doItems.map((item) => (
+                  {items.map((item) => (
                     <li className="destp-do" key={item.name}>
                       <span className={`destp-do-type is-${item.type}`}>{t(DO_TYPE_KEYS[item.type] || 'dest.doType.activity')}</span>
                       <span className="destp-do-main">
@@ -470,6 +631,8 @@ export function DestinationPage({
                     </li>
                   ))}
                 </ul>
+                </React.Fragment>
+                ))}
                 {(links.getyourguide || links.viator) && (
                   <div className="destp-book-row">
                     {links.getyourguide && (
@@ -481,6 +644,15 @@ export function DestinationPage({
                   </div>
                 )}
                 <p className="xp-source">{t('dest.bookNote')}</p>
+              </div>
+              );
+            })()}
+
+            {/* D7: the villages inside this area, from B1's members. */}
+            {members?.length > 0 && (
+              <div className="dsheet-card" id="sec-members">
+                <SectionTitle icon={MapPinIcon}>{t('dest.membersTitle')}</SectionTitle>
+                <MemberPlaces members={members} focusName={memberFocus} t={t} />
               </div>
             )}
 
@@ -554,7 +726,7 @@ export function DestinationPage({
           <div className="destp-col is-side">
             {/* What a day here costs, at the reader's own lifestyle. */}
             {cost?.dayEur != null && (
-              <div className="dsheet-card">
+              <div className="dsheet-card" id="sec-cost">
                 <SectionTitle icon={ReceiptIcon}>{t('cost.title')}</SectionTitle>
                 <CostReceipt cost={cost} t={t} lifestyleLabel={lifestyleLine} onOpenLifestyle={onOpenLifestyle} />
               </div>
@@ -607,22 +779,9 @@ export function DestinationPage({
               </div>
             )}
 
-            {/* When to go: normals, cheap months, crowding, and the events
-                Wikidata knows here. */}
-            {destination.climate && (
-              <div className="dsheet-card">
-                <SectionTitle icon={CalendarIcon}>{t('explore.whenTitle')}</SectionTitle>
-                {destination.climate && <ClimateStrip climate={destination.climate} />}
-                {cheapMonths && (
-                  <p className="xp-when-fact">{t('explore.whenCheapStay', { months: fmtMonthRanges(cheapMonths) })}</p>
-                )}
-                {crowdBadgeWorthShowing(destination) && destination.crowding?.label && (
-                  <p className="xp-when-fact">{t('explore.whenCrowds', { label: destination.crowding.label })}</p>
-                )}
-              </div>
-            )}
-
-            {/* Festivals get their own section, led by when they happen. */}
+            {/* Festivals get their own section, led by when they happen.
+                The old when-to-go card lived here; it moved to the top of
+                the main column (D1's decision sequence). */}
             {festivals.length > 0 && (
               <div className="dsheet-card">
                 <SectionTitle icon={CalendarIcon}>{t('dest.festivalsTitle')}</SectionTitle>

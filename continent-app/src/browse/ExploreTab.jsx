@@ -379,6 +379,19 @@ export function ExploreTab({
     });
     return () => { live = false; };
   }, [locationQuery]);
+
+  // D7: opening a parent found VIA a member search carries ?dm=<member> in
+  // the URL, so the destination page can put that member in focus - and a
+  // shared link keeps the anchor.
+  const openWithMember = React.useCallback((id) => {
+    const hit = searchHits?.memberHits?.find((h) => h.id === id);
+    const q = new URLSearchParams(window.location.search);
+    if (hit) q.set('dm', hit.member); else q.delete('dm');
+    window.history.replaceState(null, '',
+      `${window.location.pathname}?${q.toString()}${window.location.hash}`);
+    onSelect(id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchHits, onSelect]);
   const sentinelRef = React.useRef(null);
   const scrollRef = React.useRef(null);
 
@@ -752,7 +765,7 @@ export function ExploreTab({
           </button>
         )}
 
-        {railsIdle && <ExploreRails rails={rails} onSelect={onSelect} t={t} />}
+        {railsIdle && <ExploreRails rails={rails} onSelect={openWithMember} t={t} />}
 
         <div className="xgrid-head">
           <span className="xgrid-count">{t('explore.countLine', { n: shownRows.length })}</span>
@@ -800,7 +813,7 @@ export function ExploreTab({
         )}
 
         {view === 'map' && (
-          <ExploreMap rows={taxRows} onSelect={onSelect} onViewport={setBbox} t={t} />
+          <ExploreMap rows={taxRows} onSelect={openWithMember} onViewport={setBbox} t={t} />
         )}
 
         <div className="explore-grid explore-grid--mosaic" hidden={view === 'map'}>
@@ -814,7 +827,7 @@ export function ExploreTab({
               role={roleFor(p)}
               selected={p.id === selectedId}
               fav={favSet.has(p.id)}
-              onSelect={onSelect}
+              onSelect={openWithMember}
               onToggleFav={onToggleFav}
               t={t}
             />

@@ -88,7 +88,10 @@ for (const [label, sel] of [
 }
 check('map mounts', await page.locator('.dmap .maplibregl-canvas, .dmap canvas').count() > 0);
 check('layer toggle shows day trips', await page.locator('.destp-layer', { hasText: /day trips/i }).count() > 0);
-check('no rating score chip on the page', await destp.locator('.score-chip, .rating-label').count() === 0);
+// D2 reversed the old brief: the verdict now leads the page, breakdown
+// and confidence included, so the check asserts its presence.
+check('the verdict card leads with the breakdown',
+  await destp.locator('#sec-verdict .rate-break').count() === 1);
 check('day trips carry a score', await page.locator('.destp-trip-score').count() > 0);
 check('day trips explain themselves', await page.locator('.destp-trip-why').count() > 0);
 check('desktop shows the cross', await page.locator('.destp-close').isVisible());
@@ -106,8 +109,26 @@ await page.screenshot({ path: 'shots/destp-desktop-scrolled.png' });
 // ── The PDF export ────────────────────────────────────────────────────────
 const popupPromise = page.waitForEvent('popup', { timeout: 15000 }).catch(() => null);
 await page.locator('.destp-pdf').click();
-const popup = await popupPromise;
-check('PDF popup opens', !!popup);
+let popup = await popupPromise;
+// Paywall phase 1 gates the export for guests: the correct behaviours are
+// EITHER the PDF popup (entitled) or the pass dialog (guest). A silent
+// nothing is the only failure.
+if (!popup) {
+  const gated = await page.locator('[role=dialog]').filter({ hasText: /pass/i }).first()
+    .isVisible().catch(() => false);
+  check('PDF popup opens, or the paywall gates it for a guest', gated);
+  if (gated) {
+    // the pass sheet closes on a backdrop click (PassModal's overlay
+    // onClick), not on Escape. The BOTTOM corner: the destp bar renders
+    // above the overlay near the top (pre-existing z-order), so a top
+    // corner click hits the bar instead of the backdrop.
+    const vp = page.viewportSize();
+    await page.mouse.click(8, vp.height - 30);
+    await page.waitForTimeout(500);
+  }
+} else {
+  check('PDF popup opens, or the paywall gates it for a guest', true);
+}
 const pageHadParking = await page.locator('.destp-park').count() > 0;
 // Valbona has no recorded festivals, and a section with nothing to say is
 // not rendered. Only assert the printed section where the page has one.
@@ -144,7 +165,9 @@ await page.locator('button:has-text("Explore"):visible').first().click().catch((
 await page.waitForTimeout(2600);
 await page.locator('.explore-card, .xcard, .explore-grid button').first().click().catch(() => {});
 await page.waitForTimeout(2600);
-check('Explore card opens the full-screen page', await page.locator('.destp').isVisible().catch(() => false));
+check('Explore card opens the full-screen page',
+  await page.locator('.destp').isVisible().catch(() => false),
+  `dlg=${await page.locator('[role=dialog]').first().evaluate((e) => e.className + "|" + (e.offsetParent !== null)).catch(() => 'none')}`);
 
 // A gateway record describes the CITY, not its airport, and carries the
 // festival section with real months.
