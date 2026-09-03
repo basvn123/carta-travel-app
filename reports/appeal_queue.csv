@@ -1,0 +1,301 @@
+﻿impact,id,city,country,class,modelled_score,confidence,fame_pctl,country_coverage,country_rank,queued
+6.142,gem:koln,Köln,Germany,metro,9.0,modelled,0.982,0.305,1,2026-09-03
+5.619,gem:augsburg,Augsburg,Germany,metro,8.9,modelled,0.908,0.305,2,2026-09-03
+5.279,gem:bruhl,Brühl,Germany,town,7.8,modelled,0.974,0.305,25,2026-09-03
+5.243,gem:mannheim,Mannheim,Germany,metro,8.3,modelled,0.909,0.305,9,2026-09-03
+5.069,gem:bonn,Bonn,Germany,metro,7.7,modelled,0.947,0.305,37,2026-09-03
+4.905,gem:darmstadt,Darmstadt,Germany,city,8.4,modelled,0.84,0.305,4,2026-09-03
+4.804,gem:de-reit,De Reit,Netherlands,village,6.6,modelled,1.0,0.272,59,2026-09-03
+4.765,gem:koblenz,Koblenz,Germany,city,7.9,modelled,0.868,0.305,20,2026-09-03
+4.72,gem:karlsruhe,Karlsruhe,Germany,city,7.6,modelled,0.893,0.305,43,2026-09-03
+4.649,gem:breda,Breda,Netherlands,city,7.6,modelled,0.84,0.272,8,2026-09-03
+4.638,gem:ceuta,Ceuta,Spain,city,8.4,modelled,0.992,0.443,9,2026-09-03
+4.623,gem:bochum,Bochum,Germany,metro,8.5,modelled,0.782,0.305,3,2026-09-03
+4.61,gem:worms,Worms,Germany,city,7.7,modelled,0.861,0.305,37,2026-09-03
+4.55,gem:speyer,Speyer,Germany,city,8.4,modelled,0.779,0.305,4,2026-09-03
+4.543,gem:bayreuth,Bayreuth,Germany,city,8.4,modelled,0.778,0.305,4,2026-09-03
+4.532,gem:versailles,Versailles,France,city,8.4,modelled,0.981,0.45,5,2026-09-03
+4.472,gem:essen,Essen,Germany,metro,7.2,modelled,0.893,0.305,60,2026-09-03
+4.443,gem:arnhem,Arnhem,Netherlands,city,7.3,modelled,0.836,0.272,15,2026-09-03
+4.42,gem:melilla,Melilla,Spain,city,8.3,modelled,0.957,0.443,15,2026-09-03
+4.351,gem:jena,Jena,Germany,city,7.7,modelled,0.813,0.305,37,2026-09-03
+4.327,gem:bremerhaven,Bremerhaven,Germany,city,8.0,modelled,0.778,0.305,14,2026-09-03
+4.301,gem:kassel,Kassel,Germany,city,7.4,modelled,0.836,0.305,49,2026-09-03
+4.3,gem:halle-saale,Halle (Saale),Germany,city,7.7,modelled,0.803,0.305,37,2026-09-03
+4.287,gem:wiesbaden,Wiesbaden,Germany,city,7.1,modelled,0.869,0.305,70,2026-09-03
+4.267,gem:sunderland,Sunderland,United Kingdom,city,7.8,modelled,0.939,0.417,12,2026-09-03
+4.227,gem:hildesheim,Hildesheim,Germany,city,8.4,modelled,0.724,0.305,4,2026-09-03
+4.226,gem:gelsenkirchen,Gelsenkirchen,Germany,city,6.9,modelled,0.881,0.305,85,2026-09-03
+4.218,gem:woodstock,Woodstock,United Kingdom,village,7.4,modelled,0.979,0.417,40,2026-09-03
+4.18,gem:zwolle,Zwolle,Netherlands,city,7.5,modelled,0.766,0.272,10,2026-09-03
+4.172,gem:helsingborg,Helsingborg,Sweden,city,7.7,modelled,0.774,0.3,3,2026-09-03
+4.125,gem:gottingen,Göttingen,Germany,city,7.3,modelled,0.813,0.305,53,2026-09-03
+4.081,gem:nottingham,Nottingham,United Kingdom,metro,7.4,modelled,0.947,0.417,40,2026-09-03
+4.074,gem:kingston-upon-thames,Kingston upon Thames,United Kingdom,town,7.7,modelled,0.908,0.417,20,2026-09-03
+4.071,gem:bromley,Bromley,United Kingdom,area,8.0,modelled,0.874,0.417,6,2026-09-03
+4.066,gem:willemstad,Willemstad,Netherlands,village,6.1,modelled,0.916,0.272,91,2026-09-03
+3.999,gem:eisenach,Eisenach,Germany,town,7.8,modelled,0.738,0.305,25,2026-09-03
+3.988,gem:hilversum,Hilversum,Netherlands,city,7.9,modelled,0.693,0.272,3,2026-09-03
+3.984,gem:wuppertal,Wuppertal,Germany,metro,7.1,modelled,0.807,0.305,70,2026-09-03
+3.943,gem:guildford,Guildford,United Kingdom,city,7.7,modelled,0.879,0.417,20,2026-09-03
+3.939,gem:wittenberg,Wittenberg,Germany,town,7.2,modelled,0.787,0.305,60,2026-09-03
+3.93,gem:saarbrucken,Saarbrücken,Germany,city,6.6,modelled,0.857,0.305,117,2026-09-03
+3.888,gem:le-havre,Le Havre,France,city,7.9,modelled,0.895,0.45,21,2026-09-03
+3.875,gem:chelmsford,Chelmsford,United Kingdom,city,7.7,modelled,0.864,0.417,20,2026-09-03
+3.875,gem:dortmund,Dortmund,Germany,metro,6.1,modelled,0.914,0.305,171,2026-09-03
+3.853,gem:chemnitz,Chemnitz,Germany,city,6.5,modelled,0.853,0.305,125,2026-09-03
+3.849,gem:wolverhampton,Wolverhampton,United Kingdom,city,7.1,modelled,0.931,0.417,62,2026-09-03
+3.836,gem:amersfoort,Amersfoort,Netherlands,city,7.6,modelled,0.693,0.272,8,2026-09-03
+3.833,gem:roses,Roses,Spain,town,7.2,modelled,0.956,0.443,112,2026-09-03
+3.819,gem:high-wycombe,High Wycombe,United Kingdom,city,7.7,modelled,0.851,0.417,20,2026-09-03
+3.802,gem:umea,Umeå,Sweden,city,6.9,modelled,0.787,0.3,12,2026-09-03
+3.789,gem:leicester,Leicester,United Kingdom,metro,6.9,modelled,0.943,0.417,87,2026-09-03
+3.784,gem:frankfurt-oder,Frankfurt (Oder),Germany,city,5.6,modelled,0.972,0.305,220,2026-09-03
+3.782,gem:aberdeen,Aberdeen,United Kingdom,city,6.9,modelled,0.941,0.417,87,2026-09-03
+3.775,gem:almeria,Almería,Spain,city,7.9,modelled,0.858,0.443,31,2026-09-03
+3.765,gem:gijon,Gijón,Spain,city,7.9,modelled,0.856,0.443,31,2026-09-03
+3.762,gem:oviedo,Oviedo,Spain,city,7.5,modelled,0.901,0.443,69,2026-09-03
+3.746,gem:sheffield,Sheffield,United Kingdom,metro,6.7,modelled,0.96,0.417,109,2026-09-03
+3.744,gem:shrewsbury,Shrewsbury,United Kingdom,city,7.2,modelled,0.893,0.417,52,2026-09-03
+3.742,gem:vigo,Vigo,Spain,city,7.6,modelled,0.884,0.443,59,2026-09-03
+3.739,gem:elche,Elche,Spain,city,8.4,modelled,0.8,0.443,9,2026-09-03
+3.699,gem:zuidhoven,Zuidhoven,Netherlands,village,7.2,modelled,0.706,0.272,19,2026-09-03
+3.693,gem:halifax,Halifax,United Kingdom,city,7.1,modelled,0.893,0.417,62,2026-09-03
+3.692,gem:dessau,Dessau,Germany,city,8.1,modelled,0.656,0.305,11,2026-09-03
+3.686,gem:derby,Derby,United Kingdom,city,6.9,modelled,0.917,0.417,87,2026-09-03
+3.679,gem:toulon,Toulon,France,city,7.8,modelled,0.858,0.45,30,2026-09-03
+3.671,gem:swindon,Swindon,United Kingdom,city,7.0,modelled,0.9,0.417,72,2026-09-03
+3.665,gem:hastings,Hastings,United Kingdom,city,7.1,modelled,0.886,0.417,62,2026-09-03
+3.659,gem:magdeburg,Magdeburg,Germany,city,6.0,modelled,0.877,0.305,185,2026-09-03
+3.651,gem:dundee,Dundee,United Kingdom,city,6.8,modelled,0.922,0.417,100,2026-09-03
+3.639,gem:solingen,Solingen,Germany,city,6.9,modelled,0.759,0.305,85,2026-09-03
+3.639,gem:calais,Calais,France,city,7.5,modelled,0.882,0.45,63,2026-09-03
+3.632,gem:benidorm,Benidorm,Spain,city,7.1,modelled,0.919,0.443,125,2026-09-03
+3.601,gem:blackpool,Blackpool,United Kingdom,city,6.7,modelled,0.923,0.417,109,2026-09-03
+3.595,gem:perth,Perth,United Kingdom,town,6.3,modelled,0.98,0.417,166,2026-09-03
+3.583,gem:hameln,Hameln,Germany,city,7.2,modelled,0.716,0.305,60,2026-09-03
+3.578,gem:bergen-op-zoom,Bergen op Zoom,Netherlands,city,8.4,modelled,0.585,0.272,2,2026-09-03
+3.551,gem:castellammare-di-stabia,Castellammare di Stabia,Italy,city,8.4,modelled,0.803,0.474,19,2026-09-03
+3.55,gem:macclesfield,Macclesfield,United Kingdom,city,6.9,modelled,0.883,0.417,87,2026-09-03
+3.55,gem:algeciras,Algeciras,Spain,city,7.9,modelled,0.807,0.443,31,2026-09-03
+3.537,gem:mataro,Mataró,Spain,city,7.8,modelled,0.815,0.443,39,2026-09-03
+3.533,gem:colchester,Colchester,United Kingdom,city,6.7,modelled,0.905,0.417,109,2026-09-03
+3.533,gem:coventry,Coventry,United Kingdom,metro,6.4,modelled,0.948,0.417,155,2026-09-03
+3.53,gem:tenno,Tenno,Italy,village,6.8,modelled,0.986,0.474,194,2026-09-03
+3.525,gem:coca,Coca,Spain,village,6.6,modelled,0.959,0.443,193,2026-09-03
+3.518,gem:aschaffenburg,Aschaffenburg,Germany,city,6.9,modelled,0.733,0.305,85,2026-09-03
+3.497,gem:monchengladbach,Mönchengladbach,Germany,city,6.2,modelled,0.811,0.305,155,2026-09-03
+3.496,gem:ripon,Ripon,United Kingdom,town,7.8,modelled,0.77,0.417,12,2026-09-03
+3.489,gem:frome,Frome,United Kingdom,town,7.8,modelled,0.768,0.417,12,2026-09-03
+3.475,gem:clermont-ferrand,Clermont-Ferrand,France,city,7.6,modelled,0.831,0.45,50,2026-09-03
+3.465,gem:leek,Leek,United Kingdom,town,6.5,modelled,0.915,0.417,136,2026-09-03
+3.46,gem:burgh,Burgh,Netherlands,village,7.9,modelled,0.602,0.272,3,2026-09-03
+3.449,gem:bard,Bard,Italy,village,7.2,modelled,0.91,0.474,145,2026-09-03
+3.448,gem:guadalajara,Guadalajara,Spain,city,6.4,modelled,0.968,0.443,223,2026-09-03
+3.446,gem:bergisch-gladbach,Bergisch Gladbach,Germany,city,8.0,modelled,0.62,0.305,14,2026-09-03
+3.44,gem:coburg,Coburg,Germany,town,6.2,modelled,0.798,0.305,155,2026-09-03
+3.432,gem:carlisle,Carlisle,United Kingdom,city,6.5,modelled,0.906,0.417,136,2026-09-03
+3.427,gem:eastbourne,Eastbourne,United Kingdom,city,7.2,modelled,0.817,0.417,52,2026-09-03
+3.413,gem:caen,Caen,France,city,7.2,modelled,0.862,0.45,98,2026-09-03
+3.407,gem:zdar,Žďár,Czechia,village,6.8,modelled,0.818,0.388,28,2026-09-03
+3.405,gem:berwick-upon-tweed,Berwick-Upon-Tweed,United Kingdom,town,6.5,modelled,0.899,0.417,136,2026-09-03
+3.404,gem:bolton,Bolton,United Kingdom,city,6.7,modelled,0.872,0.417,109,2026-09-03
+3.398,gem:liege,Liège,Belgium,city,8.2,modelled,0.904,0.542,2,2026-09-03
+3.389,gem:saltaire,Saltaire,United Kingdom,town,7.8,modelled,0.746,0.417,12,2026-09-03
+3.387,gem:wigan,Wigan,United Kingdom,city,6.7,modelled,0.868,0.417,109,2026-09-03
+3.385,gem:aberystwyth,Aberystwyth,United Kingdom,town,7.0,modelled,0.83,0.417,72,2026-09-03
+3.377,gem:maidstone,Maidstone,United Kingdom,city,7.2,modelled,0.805,0.417,52,2026-09-03
+3.368,gem:huddersfield,Huddersfield,United Kingdom,city,7.0,modelled,0.826,0.417,72,2026-09-03
+3.361,gem:cheltenham,Cheltenham,United Kingdom,city,6.5,modelled,0.888,0.417,136,2026-09-03
+3.351,gem:lido-di-castel-fusano,Lido di Castel Fusano,Italy,village,7.9,modelled,0.806,0.474,42,2026-09-03
+3.34,gem:caernarfon,Caernarfon,United Kingdom,town,7.8,modelled,0.735,0.417,12,2026-09-03
+3.33,gem:royal-tunbridge-wells,Royal Tunbridge Wells,United Kingdom,city,7.0,modelled,0.817,0.417,72,2026-09-03
+3.329,gem:flensburg,Flensburg,Germany,city,6.0,modelled,0.798,0.305,185,2026-09-03
+3.318,gem:livorno,Livorno,Italy,city,7.6,modelled,0.829,0.474,82,2026-09-03
+3.316,gem:varese,Varese,Italy,city,7.7,modelled,0.818,0.474,73,2026-09-03
+3.315,gem:margate,Margate,United Kingdom,city,7.0,modelled,0.813,0.417,72,2026-09-03
+3.307,gem:bayonne,Bayonne,France,town,7.1,modelled,0.847,0.45,107,2026-09-03
+3.3,gem:gloucester,Gloucester,United Kingdom,city,6.4,modelled,0.885,0.417,155,2026-09-03
+3.293,gem:castel-gandolfo,Castel Gandolfo,Italy,village,7.9,modelled,0.792,0.474,42,2026-09-03
+3.291,gem:emden,Emden,Germany,city,7.3,modelled,0.649,0.305,53,2026-09-03
+3.263,gem:cirencester,Cirencester,United Kingdom,town,6.6,modelled,0.849,0.417,128,2026-09-03
+3.255,gem:saint-remy-de-provence,Saint-Rémy-de-Provence,France,town,7.8,modelled,0.759,0.45,30,2026-09-03
+3.255,gem:heilbronn,Heilbronn,Germany,city,6.2,modelled,0.755,0.305,155,2026-09-03
+3.25,gem:alcala-de-henares,Alcalá de Henares,Spain,city,8.4,modelled,0.695,0.443,9,2026-09-03
+3.249,gem:scarborough,Scarborough,United Kingdom,city,6.6,modelled,0.845,0.417,128,2026-09-03
+3.245,gem:folkestone,Folkestone,United Kingdom,city,7.0,modelled,0.796,0.417,72,2026-09-03
+3.236,gem:buxton,Buxton,United Kingdom,town,7.1,modelled,0.782,0.417,62,2026-09-03
+3.236,gem:luneburg,Lüneburg,Germany,city,6.2,modelled,0.751,0.305,155,2026-09-03
+3.235,gem:wismar,Wismar,Germany,town,7.0,modelled,0.665,0.305,77,2026-09-03
+3.219,gem:sodertalje,Södertälje,Sweden,city,7.3,modelled,0.63,0.3,6,2026-09-03
+3.216,gem:sanremo,Sanremo,Italy,town,7.4,modelled,0.825,0.474,114,2026-09-03
+3.215,gem:la-spezia,La Spezia,Italy,city,7.7,modelled,0.793,0.474,73,2026-09-03
+3.21,gem:wakefield,Wakefield,United Kingdom,city,6.7,modelled,0.822,0.417,109,2026-09-03
+3.209,gem:aylesbury,Aylesbury,United Kingdom,city,6.8,modelled,0.81,0.417,100,2026-09-03
+3.198,gem:paderborn,Paderborn,Germany,city,6.1,modelled,0.754,0.305,171,2026-09-03
+3.192,gem:osnabruck,Osnabrück,Germany,city,5.8,modelled,0.792,0.305,205,2026-09-03
+3.185,gem:bourges,Bourges,France,city,8.4,modelled,0.689,0.45,5,2026-09-03
+3.184,gem:pathmos,Pathmos,Netherlands,village,5.8,modelled,0.754,0.272,119,2026-09-03
+3.179,gem:brescia,Brescia,Italy,city,6.9,modelled,0.875,0.474,182,2026-09-03
+3.179,gem:palmanova,Palmanova,Italy,village,7.4,modelled,0.816,0.474,114,2026-09-03
+3.176,gem:reggio-nell-emilia,Reggio nell'Emilia,Italy,city,7.4,modelled,0.815,0.474,114,2026-09-03
+3.172,gem:taranto,Taranto,Italy,city,7.1,modelled,0.849,0.474,161,2026-09-03
+3.167,gem:keighley,Keighley,United Kingdom,city,7.3,modelled,0.745,0.417,45,2026-09-03
+3.163,gem:vlissingen,Vlissingen,Netherlands,town,6.8,modelled,0.639,0.272,46,2026-09-03
+3.159,gem:pforzheim,Pforzheim,Germany,city,6.9,modelled,0.659,0.305,85,2026-09-03
+3.155,gem:hebden-bridge,Hebden Bridge,United Kingdom,village,6.3,modelled,0.86,0.417,166,2026-09-03
+3.147,gem:burnley,Burnley,United Kingdom,city,6.1,modelled,0.886,0.417,199,2026-09-03
+3.146,gem:chambery,Chambéry,France,city,7.3,modelled,0.784,0.45,86,2026-09-03
+3.142,gem:bury-st-edmunds,Bury St Edmunds,United Kingdom,town,6.2,modelled,0.87,0.417,180,2026-09-03
+3.142,gem:plymouth,Plymouth,United Kingdom,city,5.8,modelled,0.93,0.417,258,2026-09-03
+3.142,gem:southport,Southport,United Kingdom,city,6.2,modelled,0.87,0.417,180,2026-09-03
+3.142,gem:karlstad,Karlstad,Sweden,city,7.0,modelled,0.641,0.3,11,2026-09-03
+3.142,gem:lelystad,Lelystad,Netherlands,city,7.2,modelled,0.599,0.272,19,2026-09-03
+3.141,gem:penzance,Penzance,United Kingdom,town,6.6,modelled,0.817,0.417,128,2026-09-03
+3.138,gem:liberec,Liberec,Czechia,city,7.1,modelled,0.722,0.388,16,2026-09-03
+3.136,gem:reading,Reading,United Kingdom,metro,5.8,modelled,0.928,0.417,258,2026-09-03
+3.129,gem:estepona,Estepona,Spain,city,7.3,modelled,0.77,0.443,99,2026-09-03
+3.128,gem:southampton,Southampton,United Kingdom,city,5.6,modelled,0.959,0.417,281,2026-09-03
+3.126,gem:carrara,Carrara,Italy,city,7.5,modelled,0.792,0.474,99,2026-09-03
+3.115,gem:chichester,Chichester,United Kingdom,town,6.2,modelled,0.863,0.417,180,2026-09-03
+3.104,gem:vasteras,Västerås,Sweden,city,6.1,modelled,0.727,0.3,38,2026-09-03
+3.102,gem:gdynia,Gdynia,Poland,city,8.4,modelled,0.808,0.543,2,2026-09-03
+3.098,gem:norrkoping,Norrköping,Sweden,city,6.5,modelled,0.681,0.3,23,2026-09-03
+3.098,gem:great-yarmouth,Great Yarmouth,United Kingdom,city,6.3,modelled,0.844,0.417,166,2026-09-03
+3.093,gem:kiel,Kiel,Germany,city,5.0,modelled,0.89,0.305,234,2026-09-03
+3.093,gem:cottbus,Cottbus,Germany,city,6.1,modelled,0.73,0.305,171,2026-09-03
+3.09,gem:treviso,Treviso,Italy,city,7.2,modelled,0.815,0.474,145,2026-09-03
+3.089,gem:gotha,Gotha,Germany,town,7.3,modelled,0.609,0.305,53,2026-09-03
+3.086,gem:stafford,Stafford,United Kingdom,city,6.9,modelled,0.768,0.417,87,2026-09-03
+3.08,gem:peterborough,Peterborough,United Kingdom,city,5.9,modelled,0.896,0.417,245,2026-09-03
+3.073,gem:asti,Asti,Italy,city,8.4,modelled,0.695,0.474,19,2026-09-03
+3.072,gem:le-cap-d-agde,Le Cap d'Agde,France,village,6.7,modelled,0.834,0.45,167,2026-09-03
+3.071,gem:xanten,Xanten,Germany,town,7.2,modelled,0.614,0.305,60,2026-09-03
+3.067,gem:kingston-upon-hull,Kingston upon Hull,United Kingdom,metro,5.6,modelled,0.94,0.417,281,2026-09-03
+3.063,gem:bedford,Bedford,United Kingdom,city,6.1,modelled,0.862,0.417,199,2026-09-03
+3.062,gem:kington,Kington,United Kingdom,village,6.0,modelled,0.876,0.417,224,2026-09-03
+3.059,gem:hanau-am-main,Hanau am Main,Germany,city,5.8,modelled,0.759,0.305,205,2026-09-03
+3.058,gem:bad-homburg-vor-der-hohe,Bad Homburg vor der Höhe,Germany,city,6.8,modelled,0.647,0.305,97,2026-09-03
+3.049,gem:ingolstadt,Ingolstadt,Germany,city,4.9,modelled,0.895,0.305,236,2026-09-03
+3.048,gem:angers,Angers,France,city,6.4,modelled,0.866,0.45,224,2026-09-03
+3.047,gem:benevento,Benevento,Italy,city,7.7,modelled,0.752,0.474,73,2026-09-03
+3.033,gem:brampton,Brampton,United Kingdom,village,5.7,modelled,0.913,0.417,273,2026-09-03
+3.032,gem:newbury,Newbury,United Kingdom,town,6.7,modelled,0.777,0.417,109,2026-09-03
+3.027,gem:chippenham,Chippenham,United Kingdom,town,7.3,modelled,0.712,0.417,45,2026-09-03
+3.022,gem:gaeta,Gaeta,Italy,town,7.6,modelled,0.755,0.474,82,2026-09-03
+3.014,gem:ogre,Ogre,Latvia,town,7.2,modelled,0.875,0.522,2,2026-09-03
+3.013,gem:worcester,Worcester,United Kingdom,city,6.1,modelled,0.848,0.417,199,2026-09-03
+3.012,gem:bakewell,Bakewell,United Kingdom,village,7.5,modelled,0.689,0.417,32,2026-09-03
+3.012,gem:munster,Münster,Germany,metro,4.9,modelled,0.884,0.305,236,2026-09-03
+3.007,gem:ipswich,Ipswich,United Kingdom,city,5.6,modelled,0.922,0.417,281,2026-09-03
+3.001,gem:kastel,Kastel,Germany,town,6.8,modelled,0.635,0.305,97,2026-09-03
+2.997,gem:oswestry,Oswestry,United Kingdom,town,6.7,modelled,0.768,0.417,109,2026-09-03
+2.996,gem:logrono,Logroño,Spain,city,7.7,modelled,0.699,0.443,52,2026-09-03
+2.994,gem:skipton,Skipton,United Kingdom,town,7.1,modelled,0.724,0.417,62,2026-09-03
+2.991,gem:knaresborough,Knaresborough,United Kingdom,town,7.0,modelled,0.733,0.417,72,2026-09-03
+2.975,gem:linkoping,Linköping,Sweden,city,5.4,modelled,0.787,0.3,76,2026-09-03
+2.972,gem:fussen,Füssen,Germany,town,6.9,modelled,0.62,0.305,85,2026-09-03
+2.967,gem:ostersund,Östersund,Sweden,town,6.3,modelled,0.673,0.3,26,2026-09-03
+2.959,gem:aquileia,Aquileia,Italy,village,7.5,modelled,0.749,0.474,99,2026-09-03
+2.956,gem:richmond,Richmond,United Kingdom,town,7.5,modelled,0.677,0.417,32,2026-09-03
+2.954,gem:hradec-kralove,Hradec Králové,Czechia,city,6.9,modelled,0.699,0.388,22,2026-09-03
+2.951,gem:orpington,Orpington,United Kingdom,town,7.4,modelled,0.685,0.417,40,2026-09-03
+2.951,gem:abergavenny,Abergavenny,United Kingdom,town,7.2,modelled,0.703,0.417,52,2026-09-03
+2.95,gem:cremona,Cremona,Italy,city,6.3,modelled,0.889,0.474,262,2026-09-03
+2.947,gem:pesaro,Pesaro,Italy,city,8.3,modelled,0.675,0.474,22,2026-09-03
+2.944,gem:prato,Prato,Italy,city,7.8,modelled,0.717,0.474,60,2026-09-03
+2.939,gem:pavia,Pavia,Italy,city,6.9,modelled,0.809,0.474,182,2026-09-03
+2.939,gem:orebro,Örebro,Sweden,city,5.8,modelled,0.724,0.3,63,2026-09-03
+2.922,gem:stroud,Stroud,United Kingdom,city,6.5,modelled,0.772,0.417,136,2026-09-03
+2.914,gem:fulda,Fulda,Germany,city,5.5,modelled,0.762,0.305,224,2026-09-03
+2.912,gem:roermond,Roermond,Netherlands,town,6.8,modelled,0.588,0.272,46,2026-09-03
+2.91,gem:burton-upon-trent,Burton upon Trent,United Kingdom,city,6.1,modelled,0.819,0.417,199,2026-09-03
+2.897,gem:ayr,Ayr,United Kingdom,town,6.3,modelled,0.789,0.417,166,2026-09-03
+2.895,gem:ravensburg,Ravensburg,Germany,town,6.3,modelled,0.661,0.305,143,2026-09-03
+2.889,gem:northampton,Northampton,United Kingdom,city,5.4,modelled,0.918,0.417,294,2026-09-03
+2.883,gem:stamford,Stamford,United Kingdom,town,6.2,modelled,0.798,0.417,180,2026-09-03
+2.876,gem:assen,Assen,Netherlands,city,7.0,modelled,0.564,0.272,32,2026-09-03
+2.869,gem:darlington,Darlington,United Kingdom,city,6.0,modelled,0.821,0.417,224,2026-09-03
+2.866,gem:torrevieja,Torrevieja,Spain,city,7.5,modelled,0.687,0.443,69,2026-09-03
+2.864,gem:chesterfield,Chesterfield,United Kingdom,city,6.2,modelled,0.793,0.417,180,2026-09-03
+2.858,gem:henley-on-thames,Henley-on-Thames,United Kingdom,town,6.1,modelled,0.804,0.417,199,2026-09-03
+2.853,gem:llandudno,Llandudno,United Kingdom,town,6.3,modelled,0.777,0.417,166,2026-09-03
+2.852,gem:marburg-an-der-lahn,Marburg an der Lahn,Germany,city,5.5,modelled,0.746,0.305,224,2026-09-03
+2.845,gem:lleida,Lleida,Spain,city,7.2,modelled,0.71,0.443,112,2026-09-03
+2.844,gem:huntingdon,Huntingdon,United Kingdom,town,6.1,modelled,0.8,0.417,199,2026-09-03
+2.842,gem:huesca,Huesca,Spain,city,7.5,modelled,0.681,0.443,69,2026-09-03
+2.841,gem:viareggio,Viareggio,Italy,city,8.1,modelled,0.666,0.474,26,2026-09-03
+2.839,gem:brandenburg-an-der-havel,Brandenburg an der Havel,Germany,city,6.2,modelled,0.659,0.305,155,2026-09-03
+2.839,gem:celle,Celle,Germany,city,5.9,modelled,0.692,0.305,195,2026-09-03
+2.835,gem:cuxhaven,Cuxhaven,Germany,city,6.6,modelled,0.618,0.305,117,2026-09-03
+2.819,gem:lanark,Lanark,United Kingdom,town,7.5,modelled,0.645,0.417,32,2026-09-03
+2.805,gem:bishops-stortford,Bishops Stortford,United Kingdom,town,6.5,modelled,0.741,0.417,136,2026-09-03
+2.797,gem:warwick,Warwick,United Kingdom,town,6.1,modelled,0.787,0.417,199,2026-09-03
+2.795,gem:lampedusa,Lampedusa,Italy,village,6.3,modelled,0.843,0.474,262,2026-09-03
+2.791,gem:hereford,Hereford,United Kingdom,city,5.5,modelled,0.871,0.417,290,2026-09-03
+2.79,gem:mulhouse,Mulhouse,France,city,6.3,modelled,0.805,0.45,233,2026-09-03
+2.776,gem:castello-de-la-plana,Castelló de la Plana,Spain,city,6.9,modelled,0.723,0.443,153,2026-09-03
+2.77,gem:yeovil,Yeovil,United Kingdom,city,6.5,modelled,0.731,0.417,136,2026-09-03
+2.764,gem:udine,Udine,Italy,city,6.1,modelled,0.861,0.474,287,2026-09-03
+2.762,gem:poitiers,Poitiers,France,city,6.0,modelled,0.837,0.45,276,2026-09-03
+2.761,gem:cambrai,Cambrai,France,town,7.5,modelled,0.669,0.45,63,2026-09-03
+2.761,gem:turenne,Turenne,France,village,6.6,modelled,0.761,0.45,189,2026-09-03
+2.757,gem:bishop-auckland,Bishop Auckland,United Kingdom,town,6.4,modelled,0.739,0.417,155,2026-09-03
+2.756,gem:pergola,Pergola,Italy,village,6.7,modelled,0.781,0.474,211,2026-09-03
+2.755,gem:berkhamsted,Berkhamsted,United Kingdom,town,6.7,modelled,0.706,0.417,109,2026-09-03
+2.753,gem:jonkoping,Jönköping,Sweden,city,5.3,modelled,0.742,0.3,79,2026-09-03
+2.734,gem:savona,Savona,Italy,city,7.6,modelled,0.683,0.474,82,2026-09-03
+2.721,gem:saint-etienne,Saint-Étienne,France,city,6.1,modelled,0.811,0.45,261,2026-09-03
+2.72,gem:albacete,Albacete,Spain,city,6.3,modelled,0.775,0.443,235,2026-09-03
+2.719,gem:godalming,Godalming,United Kingdom,town,6.2,modelled,0.753,0.417,180,2026-09-03
+2.717,gem:saint-nazaire,Saint-Nazaire,France,city,7.0,modelled,0.706,0.45,120,2026-09-03
+2.709,gem:saint-quentin,Saint-Quentin,France,city,7.8,modelled,0.632,0.45,30,2026-09-03
+2.708,gem:pardubice,Pardubice,Czechia,city,7.4,modelled,0.597,0.388,10,2026-09-03
+2.705,gem:szekesfehervar,Székesfehérvár,Hungary,city,6.1,modelled,0.839,0.472,18,2026-09-03
+2.704,gem:orleans,Orléans,France,city,5.6,modelled,0.878,0.45,304,2026-09-03
+2.703,gem:fuengirola,Fuengirola,Spain,city,7.6,modelled,0.639,0.443,59,2026-09-03
+2.702,gem:cesena,Cesena,Italy,city,7.4,modelled,0.693,0.474,114,2026-09-03
+2.701,gem:spitz,Spitz,Austria,village,7.9,modelled,0.906,0.623,6,2026-09-03
+2.701,gem:roquetas-de-mar,Roquetas de Mar,Spain,city,7.4,modelled,0.656,0.443,80,2026-09-03
+2.698,gem:windermere,Windermere,United Kingdom,village,6.0,modelled,0.772,0.417,224,2026-09-03
+2.697,gem:forte-dei-marmi,Forte dei Marmi,Italy,village,7.3,modelled,0.702,0.474,130,2026-09-03
+2.695,gem:halmstad,Halmstad,Sweden,city,6.3,modelled,0.611,0.3,26,2026-09-03
+2.687,gem:carmarthen,Carmarthen,United Kingdom,town,6.2,modelled,0.744,0.417,180,2026-09-03
+2.685,gem:mitte,Mitte,Germany,town,7.2,modelled,0.537,0.305,60,2026-09-03
+2.684,gem:pienza,Pienza,Italy,village,7.9,modelled,0.645,0.474,42,2026-09-03
+2.682,gem:gorinchem,Gorinchem,Netherlands,town,7.1,modelled,0.519,0.272,27,2026-09-03
+2.675,gem:salou,Salou,Spain,town,7.8,modelled,0.616,0.443,39,2026-09-03
+2.675,gem:messina,Messina,Italy,city,5.7,modelled,0.891,0.474,318,2026-09-03
+2.669,gem:le-mans,Le Mans,France,city,5.6,modelled,0.867,0.45,304,2026-09-03
+2.668,gem:pontevedra,Pontevedra,Spain,city,7.0,modelled,0.685,0.443,140,2026-09-03
+2.666,gem:oldenburg,Oldenburg,Germany,city,5.2,modelled,0.738,0.305,231,2026-09-03
+2.663,gem:montepulciano,Montepulciano,Italy,village,7.0,modelled,0.723,0.474,173,2026-09-03
+2.659,gem:sherborne,Sherborne,United Kingdom,town,6.8,modelled,0.671,0.417,100,2026-09-03
+2.649,gem:terezin,Terezín,Czechia,village,6.3,modelled,0.687,0.388,49,2026-09-03
+2.647,gem:hexham,Hexham,United Kingdom,town,6.0,modelled,0.757,0.417,224,2026-09-03
+2.647,gem:taunton,Taunton,United Kingdom,city,5.7,modelled,0.797,0.417,273,2026-09-03
+2.642,gem:paignton,Paignton,United Kingdom,city,7.9,modelled,0.574,0.417,9,2026-09-03
+2.641,gem:arundel,Arundel,United Kingdom,village,6.1,modelled,0.743,0.417,199,2026-09-03
+2.621,gem:newark-on-trent,Newark on Trent,United Kingdom,town,6.1,modelled,0.738,0.417,199,2026-09-03
+2.62,gem:bautzen,Bautzen,Germany,town,6.5,modelled,0.58,0.305,125,2026-09-03
+2.617,gem:la-linea-de-la-concepcion,La Línea de la Concepción,Spain,city,7.9,modelled,0.595,0.443,31,2026-09-03
+2.616,gem:kleve,Kleve,Germany,town,6.3,modelled,0.597,0.305,143,2026-09-03
+2.612,gem:monmouth,Monmouth,United Kingdom,town,6.3,modelled,0.712,0.417,166,2026-09-03
+2.608,gem:villena,Villena,Spain,town,6.6,modelled,0.71,0.443,193,2026-09-03
+2.594,gem:rottweil,Rottweil,Germany,town,5.4,modelled,0.691,0.305,227,2026-09-03
+2.585,gem:miskolc,Miskolc,Hungary,city,7.0,modelled,0.699,0.472,4,2026-09-03
+2.582,gem:newton-abbot,Newton Abbot,United Kingdom,town,7.0,modelled,0.633,0.417,72,2026-09-03
+2.581,gem:compiegne,Compiègne,France,town,6.7,modelled,0.7,0.45,167,2026-09-03
+2.566,gem:apsley,Apsley,United Kingdom,village,6.4,modelled,0.688,0.417,155,2026-09-03
+2.559,gem:jaen,Jaén,Spain,city,6.9,modelled,0.666,0.443,153,2026-09-03
+2.553,gem:hagen,Hagen,Germany,city,5.8,modelled,0.633,0.305,205,2026-09-03
+2.548,gem:torgau,Torgau,Germany,town,6.8,modelled,0.539,0.305,97,2026-09-03
+2.545,gem:villajoyosa,Villajoyosa,Spain,town,7.6,modelled,0.602,0.443,59,2026-09-03
+2.542,gem:saintes-maries-de-la-mer,Saintes-Maries-de-la-Mer,France,village,7.9,modelled,0.585,0.45,21,2026-09-03
+2.541,gem:vilanova-i-la-geltru,Vilanova i la Geltrú,Spain,city,7.8,modelled,0.585,0.443,39,2026-09-03
+2.535,gem:evesham,Evesham,United Kingdom,town,6.5,modelled,0.669,0.417,136,2026-09-03
+2.534,gem:den-helder,Den Helder,Netherlands,city,7.1,modelled,0.49,0.272,27,2026-09-03
+2.534,gem:mijas,Mijas,Spain,city,6.8,modelled,0.669,0.443,165,2026-09-03
+2.531,gem:heerlen,Heerlen,Netherlands,city,6.7,modelled,0.519,0.272,55,2026-09-03
+2.515,gem:chepstow,Chepstow,United Kingdom,town,6.8,modelled,0.635,0.417,100,2026-09-03
+2.514,gem:brilon,Brilon,Germany,town,6.6,modelled,0.548,0.305,117,2026-09-03
