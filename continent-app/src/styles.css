@@ -30189,3 +30189,76 @@ button.ai-sched-main:focus-visible {
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
+/* --- tier legend (PLAN.md C8) ------------------------------------------- */
+.tierlegend {
+  background: var(--bg-card);
+  border: 1px solid var(--rule-soft);
+  border-radius: 12px;
+  padding: 9px 12px;
+  margin: 0 0 12px;
+}
+.tierlegend-rows {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  font-size: 12px;
+  color: var(--ink-soft);
+}
+.tierlegend-row { display: inline-flex; align-items: center; gap: 5px; }
+.tierlegend-mark { width: 9px; height: 9px; border-radius: 50%; flex: none; }
+.tierlegend-mark.tl-3 { background: var(--rate); }
+.tierlegend-mark.tl-2 { background: var(--bg-card); border: 2px solid var(--rate); }
+.tierlegend-mark.tl-1 { background: var(--rate-bg); border: 1px solid var(--rate-soft); }
+.tierlegend-mark.tl-gem { background: var(--gem-ink); }
+.tierlegend-label { font-weight: 600; color: var(--ink); }
+.tierlegend-count { font-size: 11px; color: var(--ink-mute); font-variant-numeric: tabular-nums; }
+.tierlegend-kinds { display: inline-flex; gap: 10px; margin-left: 4px; }
+.tierlegend-kind { display: inline-flex; align-items: center; gap: 4px; color: var(--ink-mute); }
+.tierlegend-why {
+  margin-left: auto;
+  font: inherit;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--rate-soft);
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+.tierlegend-why:hover { text-decoration: underline; }
+.tierlegend-x {
+  font: inherit;
+  font-size: 15px;
+  line-height: 1;
+  color: var(--ink-mute);
+  background: none;
+  border: 0;
+  cursor: pointer;
+  padding: 2px 4px;
+}
+.tierlegend-method {
+  margin: 8px 2px 2px;
+  font-size: 12.5px;
+  color: var(--ink-soft);
+  max-width: 68ch;
+}
+.tierlegend-pip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 1px solid var(--rule);
+  background: var(--bg-card);
+  color: var(--ink-mute);
+  font: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  margin: 0 0 10px;
+}
+@media (max-width: 768px) {
+  .tierlegend-kinds { display: none; } /* the grid is single-column there */
+}

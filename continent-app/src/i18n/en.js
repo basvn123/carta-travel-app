@@ -4031,4 +4031,9 @@ export const en = {
   "rail.quiet": "Quiet in high season",
   "rail.seeAll": "See all {n}",
   "filter.bestOf": "Best of its country",
+
+  // Tier legend (PLAN.md C8)
+  "legend.aria": "What the ratings mean",
+  "legend.dismiss": "Hide the legend",
+  "legend.how": "How the score works",
 };

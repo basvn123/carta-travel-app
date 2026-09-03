@@ -3323,4 +3323,9 @@ export const fr = {
   "rail.quiet": "Calme en haute saison",
   "rail.seeAll": "Voir les {n}",
   "filter.bestOf": "Le meilleur de son pays",
+
+  // Tier legend (PLAN.md C8)
+  "legend.aria": "Ce que signifient les notes",
+  "legend.dismiss": "Masquer la légende",
+  "legend.how": "Comment la note est faite",
 };

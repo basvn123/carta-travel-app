@@ -8,6 +8,7 @@ import { fmtMonthRanges } from './ClimateStrip.jsx';
 import { useExploreCatalog } from '../hooks/useExploreCatalog.js';
 import { ExploreFilterRail } from './ExploreFilterRail.jsx';
 import { ExploreRails, interleaveByCountry } from './ExploreRails.jsx';
+import { TierLegend } from './TierLegend.jsx';
 import { FilterChips } from './FilterChips.jsx';
 import { CategoryRail } from './CategoryRail.jsx';
 import { KindGlyph } from '../components/KindGlyph.jsx';
@@ -696,6 +697,10 @@ export function ExploreTab({
             a new feature does not get to push them under the fold. Absent
             entirely when nothing is published. */}
         <GuidesStrip onOpen={onOpenGuides} />
+
+        {/* C8: the tiers, their live counts, and the five glyphs - the
+            system stated where it is used, folding to a "?" once read. */}
+        <TierLegend data={data} />
 
         {/* Only when there is something to say. The cards carry a euro figure
             and the Lifestyle chip above states what it assumes, so a standing

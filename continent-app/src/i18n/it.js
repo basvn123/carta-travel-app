@@ -3323,4 +3323,9 @@ export const it = {
   "rail.quiet": "Tranquillo in alta stagione",
   "rail.seeAll": "Vedi tutti i {n}",
   "filter.bestOf": "Il meglio del suo paese",
+
+  // Tier legend (PLAN.md C8)
+  "legend.aria": "Cosa significano i voti",
+  "legend.dismiss": "Nascondi la legenda",
+  "legend.how": "Come nasce il voto",
 };

@@ -3323,4 +3323,9 @@ export const nl = {
   "rail.quiet": "Rustig in het hoogseizoen",
   "rail.seeAll": "Alle {n} bekijken",
   "filter.bestOf": "Het beste van zijn land",
+
+  // Tier legend (PLAN.md C8)
+  "legend.aria": "Wat de scores betekenen",
+  "legend.dismiss": "Legenda verbergen",
+  "legend.how": "Zo ontstaat de score",
 };

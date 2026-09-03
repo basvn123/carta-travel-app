@@ -3323,4 +3323,9 @@ export const de = {
   "rail.quiet": "Ruhig in der Hochsaison",
   "rail.seeAll": "Alle {n} zeigen",
   "filter.bestOf": "Das Beste seines Landes",
+
+  // Tier legend (PLAN.md C8)
+  "legend.aria": "Was die Bewertungen bedeuten",
+  "legend.dismiss": "Legende ausblenden",
+  "legend.how": "So entsteht die Note",
 };
