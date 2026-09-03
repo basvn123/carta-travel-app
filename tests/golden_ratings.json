@@ -1,0 +1,680 @@
+{
+ "version": 1,
+ "created": "2026-09-03",
+ "rule": "pairwise order only, never absolute values: rating.score of winner must be strictly greater than the loser's. Ties fail - an order the model cannot express is an order it got wrong.",
+ "n_pairs": 120,
+ "n_destinations": 173,
+ "n_countries": 34,
+ "pairs": [
+  {
+   "winner": "FCO",
+   "loser": "TRN",
+   "note": "Rome above Turin"
+  },
+  {
+   "winner": "VCE",
+   "loser": "BRI",
+   "note": "Venice above Bari"
+  },
+  {
+   "winner": "FLR",
+   "loser": "gem:prato",
+   "note": "Florence above Prato"
+  },
+  {
+   "winner": "gem:tuscany-siena",
+   "loser": "gem:grosseto",
+   "note": "Siena above Grosseto"
+  },
+  {
+   "winner": "NAP",
+   "loser": "BDS",
+   "note": "Naples above Brindisi"
+  },
+  {
+   "winner": "gem:matera",
+   "loser": "BRI",
+   "note": "Matera above Bari"
+  },
+  {
+   "winner": "gem:taormina",
+   "loser": "gem:rovigo",
+   "note": "Taormina above Rovigo"
+  },
+  {
+   "winner": "VRN",
+   "loser": "gem:rovigo",
+   "note": "Verona above Rovigo"
+  },
+  {
+   "winner": "gem:amalfi-coast",
+   "loser": "gem:lecce",
+   "note": "Amalfi Coast above Lecce"
+  },
+  {
+   "winner": "gem:san-gimignano",
+   "loser": "gem:grazie",
+   "note": "San Gimignano above Grazie"
+  },
+  {
+   "winner": "gem:dolomites",
+   "loser": "gem:grosseto",
+   "note": "Dolomites above Grosseto"
+  },
+  {
+   "winner": "gem:pienza",
+   "loser": "gem:grosseto",
+   "note": "Pienza above Grosseto"
+  },
+  {
+   "winner": "CDG",
+   "loser": "gem:le-havre",
+   "note": "Paris above Le Havre"
+  },
+  {
+   "winner": "LYS",
+   "loser": "gem:saint-etienne",
+   "note": "Lyon above Saint-Etienne"
+  },
+  {
+   "winner": "LYS",
+   "loser": "gem:le-touquet-paris-plage",
+   "note": "Lyon above Le Touquet"
+  },
+  {
+   "winner": "gem:annecy",
+   "loser": "gem:saint-etienne",
+   "note": "Annecy above Saint-Etienne"
+  },
+  {
+   "winner": "gem:colmar",
+   "loser": "gem:saint-etienne",
+   "note": "Colmar above Saint-Etienne"
+  },
+  {
+   "winner": "gem:riquewihr",
+   "loser": "gem:le-havre",
+   "note": "Riquewihr above Le Havre"
+  },
+  {
+   "winner": "gem:provence-luberon",
+   "loser": "gem:le-havre",
+   "note": "Luberon above Le Havre"
+  },
+  {
+   "winner": "CCF",
+   "loser": "gem:le-havre",
+   "note": "Carcassonne above Le Havre"
+  },
+  {
+   "winner": "NCE",
+   "loser": "gem:saint-etienne",
+   "note": "Nice above Saint-Etienne"
+  },
+  {
+   "winner": "gem:bruges",
+   "loser": "CRL",
+   "note": "Bruges above Charleroi"
+  },
+  {
+   "winner": "gem:ghent",
+   "loser": "CRL",
+   "note": "Ghent above Charleroi"
+  },
+  {
+   "winner": "gem:antwerp",
+   "loser": "CRL",
+   "note": "Antwerp above Charleroi"
+  },
+  {
+   "winner": "gem:ghent",
+   "loser": "gem:dinant",
+   "note": "Ghent above Dinant"
+  },
+  {
+   "winner": "BRU",
+   "loser": "CRL",
+   "note": "Brussels above Charleroi"
+  },
+  {
+   "winner": "AMS",
+   "loser": "gem:almere-stad",
+   "note": "Amsterdam above Almere"
+  },
+  {
+   "winner": "gem:utrecht",
+   "loser": "gem:nieuw-bergen",
+   "note": "Utrecht above Nieuw-Bergen"
+  },
+  {
+   "winner": "gem:utrecht",
+   "loser": "gem:haaksbergen",
+   "note": "Utrecht above Haaksbergen"
+  },
+  {
+   "winner": "gem:ghent",
+   "loser": "gem:nieuw-bergen",
+   "note": "Ghent above Nieuw-Bergen"
+  },
+  {
+   "winner": "gem:hallstatt",
+   "loser": "LNZ",
+   "note": "Hallstatt above Linz"
+  },
+  {
+   "winner": "VIE",
+   "loser": "LNZ",
+   "note": "Vienna above Linz"
+  },
+  {
+   "winner": "SZG",
+   "loser": "GRZ",
+   "note": "Salzburg above Graz"
+  },
+  {
+   "winner": "BER",
+   "loser": "gem:dortmund",
+   "note": "Berlin above Dortmund"
+  },
+  {
+   "winner": "MUC",
+   "loser": "gem:wuppertal",
+   "note": "Munich above Wuppertal"
+  },
+  {
+   "winner": "gem:heidelberg",
+   "loser": "gem:sankt-andreasberg",
+   "note": "Heidelberg above Sankt Andreasberg"
+  },
+  {
+   "winner": "gem:rothenburg",
+   "loser": "gem:frankfurt-oder",
+   "note": "Rothenburg above Frankfurt (Oder)"
+  },
+  {
+   "winner": "gem:bamberg",
+   "loser": "gem:essen",
+   "note": "Bamberg above Essen"
+  },
+  {
+   "winner": "gem:regensburg",
+   "loser": "gem:essen",
+   "note": "Regensburg above Essen"
+  },
+  {
+   "winner": "gem:trier",
+   "loser": "gem:frankfurt-oder",
+   "note": "Trier above Frankfurt (Oder)"
+  },
+  {
+   "winner": "gem:heidelberg",
+   "loser": "gem:dortmund",
+   "note": "Heidelberg above Dortmund"
+  },
+  {
+   "winner": "STN",
+   "loser": "gem:coventry",
+   "note": "London above Coventry"
+  },
+  {
+   "winner": "EDI",
+   "loser": "gem:kingston-upon-hull",
+   "note": "Edinburgh above Hull"
+  },
+  {
+   "winner": "gem:bath",
+   "loser": "gem:swindon",
+   "note": "Bath above Swindon"
+  },
+  {
+   "winner": "gem:york",
+   "loser": "gem:derby",
+   "note": "York above Derby"
+  },
+  {
+   "winner": "gem:oxford",
+   "loser": "gem:derby",
+   "note": "Oxford above Derby"
+  },
+  {
+   "winner": "gem:isle-of-skye",
+   "loser": "INV",
+   "note": "Isle of Skye above Inverness"
+  },
+  {
+   "winner": "gem:cotswolds",
+   "loser": "gem:swindon",
+   "note": "Cotswolds above Swindon"
+  },
+  {
+   "winner": "gem:cambridge",
+   "loser": "gem:derby",
+   "note": "Cambridge above Derby"
+  },
+  {
+   "winner": "EDI",
+   "loser": "GLA",
+   "note": "Edinburgh above Glasgow"
+  },
+  {
+   "winner": "gem:york",
+   "loser": "NWI",
+   "note": "York above Norwich"
+  },
+  {
+   "winner": "BCN",
+   "loser": "ZAZ",
+   "note": "Barcelona above Zaragoza"
+  },
+  {
+   "winner": "gem:granada",
+   "loser": "gem:vigo",
+   "note": "Granada above Vigo"
+  },
+  {
+   "winner": "SVQ",
+   "loser": "gem:benidorm",
+   "note": "Seville above Benidorm"
+  },
+  {
+   "winner": "gem:toledo",
+   "loser": "gem:benidorm",
+   "note": "Toledo above Benidorm"
+  },
+  {
+   "winner": "gem:ronda",
+   "loser": "gem:benidorm",
+   "note": "Ronda above Benidorm"
+  },
+  {
+   "winner": "gem:segovia",
+   "loser": "gem:vigo",
+   "note": "Segovia above Vigo"
+  },
+  {
+   "winner": "gem:albarracin",
+   "loser": "gem:benidorm",
+   "note": "Albarracin above Benidorm"
+  },
+  {
+   "winner": "gem:cadaques",
+   "loser": "gem:benidorm",
+   "note": "Cadaques above Benidorm"
+  },
+  {
+   "winner": "gem:segovia",
+   "loser": "gem:gijon",
+   "note": "Segovia above Gijon"
+  },
+  {
+   "winner": "LIS",
+   "loser": "gem:braga",
+   "note": "Lisbon above Braga"
+  },
+  {
+   "winner": "gem:sintra",
+   "loser": "gem:braganca",
+   "note": "Sintra above Braganca"
+  },
+  {
+   "winner": "OPO",
+   "loser": "gem:braga",
+   "note": "Porto above Braga"
+  },
+  {
+   "winner": "gem:obidos",
+   "loser": "gem:braganca",
+   "note": "Obidos above Braganca"
+  },
+  {
+   "winner": "PRG",
+   "loser": "gem:ostrava",
+   "note": "Prague above Ostrava"
+  },
+  {
+   "winner": "gem:cesky-krumlov",
+   "loser": "BRQ",
+   "note": "Cesky Krumlov above Brno"
+  },
+  {
+   "winner": "gem:cesky-krumlov",
+   "loser": "gem:ostrava",
+   "note": "Cesky Krumlov above Ostrava"
+  },
+  {
+   "winner": "gem:telc",
+   "loser": "gem:ostrava",
+   "note": "Telc above Ostrava"
+  },
+  {
+   "winner": "gem:kutna-hora",
+   "loser": "gem:ostrava",
+   "note": "Kutna Hora above Ostrava"
+  },
+  {
+   "winner": "KRK",
+   "loser": "KTW",
+   "note": "Krakow above Katowice"
+  },
+  {
+   "winner": "GDN",
+   "loser": "KTW",
+   "note": "Gdansk above Katowice"
+  },
+  {
+   "winner": "WAW",
+   "loser": "LCJ",
+   "note": "Warsaw above Lodz"
+  },
+  {
+   "winner": "BUD",
+   "loser": "DEB",
+   "note": "Budapest above Debrecen"
+  },
+  {
+   "winner": "BUD",
+   "loser": "gem:miskolc",
+   "note": "Budapest above Miskolc"
+  },
+  {
+   "winner": "gem:eger",
+   "loser": "gem:zalaegerszeg",
+   "note": "Eger above Zalaegerszeg"
+  },
+  {
+   "winner": "gem:eger",
+   "loser": "gem:szombathely",
+   "note": "Eger above Szombathely"
+  },
+  {
+   "winner": "SBZ",
+   "loser": "CRA",
+   "note": "Sibiu above Craiova"
+  },
+  {
+   "winner": "gem:brasov",
+   "loser": "CRA",
+   "note": "Brasov above Craiova"
+  },
+  {
+   "winner": "gem:brasov",
+   "loser": "OTP",
+   "note": "Brasov above Bucharest"
+  },
+  {
+   "winner": "PDV",
+   "loser": "BOJ",
+   "note": "Plovdiv above Burgas"
+  },
+  {
+   "winner": "gem:veliko-tarnovo",
+   "loser": "BOJ",
+   "note": "Veliko Tarnovo above Burgas"
+  },
+  {
+   "winner": "PDV",
+   "loser": "SOF",
+   "note": "Plovdiv above Sofia"
+  },
+  {
+   "winner": "JTR",
+   "loser": "SKG",
+   "note": "Santorini above Thessaloniki"
+  },
+  {
+   "winner": "gem:meteora",
+   "loser": "SKG",
+   "note": "Meteora above Thessaloniki"
+  },
+  {
+   "winner": "gem:meteora",
+   "loser": "gem:lefkada",
+   "note": "Meteora above Lefkada"
+  },
+  {
+   "winner": "DBV",
+   "loser": "ZAG",
+   "note": "Dubrovnik above Zagreb"
+  },
+  {
+   "winner": "SPU",
+   "loser": "ZAG",
+   "note": "Split above Zagreb"
+  },
+  {
+   "winner": "gem:plitvice",
+   "loser": "ZAG",
+   "note": "Plitvice Lakes above Zagreb"
+  },
+  {
+   "winner": "gem:kotor",
+   "loser": "TGD",
+   "note": "Kotor above Podgorica"
+  },
+  {
+   "winner": "gem:kotor",
+   "loser": "gem:budva",
+   "note": "Kotor above Budva"
+  },
+  {
+   "winner": "BEG",
+   "loser": "INI",
+   "note": "Belgrade above Nis"
+  },
+  {
+   "winner": "gem:novi-sad",
+   "loser": "INI",
+   "note": "Novi Sad above Nis"
+  },
+  {
+   "winner": "OHD",
+   "loser": "SKP",
+   "note": "Ohrid above Skopje"
+  },
+  {
+   "winner": "OHD",
+   "loser": "gem:krusevo",
+   "note": "Ohrid above Krusevo"
+  },
+  {
+   "winner": "gem:berat",
+   "loser": "TIA",
+   "note": "Berat above Tirana"
+  },
+  {
+   "winner": "gem:gjirokaster",
+   "loser": "TIA",
+   "note": "Gjirokaster above Tirana"
+  },
+  {
+   "winner": "gem:mostar-ba",
+   "loser": "TGD",
+   "note": "Mostar above Podgorica"
+  },
+  {
+   "winner": "gem:bled",
+   "loser": "MBX",
+   "note": "Lake Bled above Maribor"
+  },
+  {
+   "winner": "LJU",
+   "loser": "MBX",
+   "note": "Ljubljana above Maribor"
+  },
+  {
+   "winner": "gem:banska-stiavnica",
+   "loser": "gem:banska-bystrica",
+   "note": "Banska Stiavnica above Banska Bystrica"
+  },
+  {
+   "winner": "gem:banska-stiavnica",
+   "loser": "KSC",
+   "note": "Banska Stiavnica above Kosice"
+  },
+  {
+   "winner": "gem:zermatt",
+   "loser": "BSL",
+   "note": "Zermatt above Basel"
+  },
+  {
+   "winner": "gem:lucerne",
+   "loser": "BSL",
+   "note": "Lucerne above Basel"
+  },
+  {
+   "winner": "gem:lauterbrunnen",
+   "loser": "gem:interlaken",
+   "note": "Lauterbrunnen above Interlaken"
+  },
+  {
+   "winner": "gem:zermatt",
+   "loser": "ZRH",
+   "note": "Zermatt above Zurich"
+  },
+  {
+   "winner": "BGO",
+   "loser": "gem:drammen",
+   "note": "Bergen above Drammen"
+  },
+  {
+   "winner": "BGO",
+   "loser": "OSL",
+   "note": "Bergen above Oslo"
+  },
+  {
+   "winner": "BGO",
+   "loser": "SVG",
+   "note": "Bergen above Stavanger"
+  },
+  {
+   "winner": "ARN",
+   "loser": "gem:vasteras",
+   "note": "Stockholm above Vasteras"
+  },
+  {
+   "winner": "CPH",
+   "loser": "AAL",
+   "note": "Copenhagen above Aalborg"
+  },
+  {
+   "winner": "HEL",
+   "loser": "TMP",
+   "note": "Helsinki above Tampere"
+  },
+  {
+   "winner": "KEF",
+   "loser": "gem:drammen",
+   "note": "Reykjavik above Drammen"
+  },
+  {
+   "winner": "TLL",
+   "loser": "gem:tartu",
+   "note": "Tallinn above Tartu"
+  },
+  {
+   "winner": "VNO",
+   "loser": "KUN",
+   "note": "Vilnius above Kaunas"
+  },
+  {
+   "winner": "RIX",
+   "loser": "KUN",
+   "note": "Riga above Kaunas"
+  },
+  {
+   "winner": "DUB",
+   "loser": "ORK",
+   "note": "Dublin above Cork"
+  },
+  {
+   "winner": "gem:galway-cliffs",
+   "loser": "gem:limerick",
+   "note": "Galway above Limerick"
+  },
+  {
+   "winner": "gem:dingle",
+   "loser": "gem:limerick",
+   "note": "Dingle above Limerick"
+  },
+  {
+   "winner": "gem:kilkenny",
+   "loser": "gem:limerick",
+   "note": "Kilkenny above Limerick"
+  },
+  {
+   "winner": "LUX",
+   "loser": "CRL",
+   "note": "Luxembourg above Charleroi"
+  }
+ ],
+ "v3_baseline": {
+  "model": "rating_v3",
+  "passed": 111,
+  "failed": 9,
+  "failing_pairs": [
+   {
+    "winner": "LYS",
+    "loser": "gem:le-touquet-paris-plage",
+    "note": "Lyon above Le Touquet",
+    "winner_score": 7.4,
+    "loser_score": 7.5
+   },
+   {
+    "winner": "gem:utrecht",
+    "loser": "gem:nieuw-bergen",
+    "note": "Utrecht above Nieuw-Bergen",
+    "winner_score": 7.7,
+    "loser_score": 7.8
+   },
+   {
+    "winner": "gem:ghent",
+    "loser": "gem:nieuw-bergen",
+    "note": "Ghent above Nieuw-Bergen",
+    "winner_score": 7.6,
+    "loser_score": 7.8
+   },
+   {
+    "winner": "gem:heidelberg",
+    "loser": "gem:sankt-andreasberg",
+    "note": "Heidelberg above Sankt Andreasberg",
+    "winner_score": 8.0,
+    "loser_score": 8.1
+   },
+   {
+    "winner": "gem:bamberg",
+    "loser": "gem:essen",
+    "note": "Bamberg above Essen",
+    "winner_score": 6.8,
+    "loser_score": 7.0
+   },
+   {
+    "winner": "gem:cadaques",
+    "loser": "gem:benidorm",
+    "note": "Cadaques above Benidorm",
+    "winner_score": 7.0,
+    "loser_score": 7.0
+   },
+   {
+    "winner": "gem:segovia",
+    "loser": "gem:gijon",
+    "note": "Segovia above Gijon",
+    "winner_score": 7.7,
+    "loser_score": 7.7
+   },
+   {
+    "winner": "gem:eger",
+    "loser": "gem:zalaegerszeg",
+    "note": "Eger above Zalaegerszeg",
+    "winner_score": 5.6,
+    "loser_score": 6.1
+   },
+   {
+    "winner": "gem:eger",
+    "loser": "gem:szombathely",
+    "note": "Eger above Szombathely",
+    "winner_score": 5.6,
+    "loser_score": 7.1
+   }
+  ]
+ }
+}
