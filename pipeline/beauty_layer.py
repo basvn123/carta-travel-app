@@ -200,7 +200,7 @@ def _saturate(x, k):
 
 
 def unesco_near(lat, lon, near_km=60.0, mid_km=120.0):
-    """(full_count<=60km, weighted_raw) for sites near a point. Mid ring counts half."""
+    """(full_count<=near_km, weighted_raw legacy ring credit). Display only."""
     full = 0
     raw = 0.0
     for s in load_unesco():
@@ -213,13 +213,34 @@ def unesco_near(lat, lon, near_km=60.0, mid_km=120.0):
     return full, raw
 
 
+def unesco_graded(lat, lon):
+    """Graded WHS credit (A3, 2026-09): full within 10 km, half to 25 km,
+    a quarter to 50 km, nothing beyond. The old ~60 km ring leaked prestige
+    into whatever happened to be nearby: a Harz village inherited Goslar's
+    World Heritage at full price. A cathedral you can walk to is this
+    place's beauty; one a daytrip away is a quarter of a reason to be here."""
+    raw = 0.0
+    for s in load_unesco():
+        d = _haversine_km(lat, lon, s["lat"], s["lon"])
+        if d <= 10.0:
+            raw += 1.0
+        elif d <= 25.0:
+            raw += 0.5
+        elif d <= 50.0:
+            raw += 0.25
+    return raw
+
+
 def _heritage_component(lat, lon, categories):
-    full, raw = unesco_near(lat, lon)
+    full, _legacy = unesco_near(lat, lon)   # full: display count, ~60 km ring
+    raw = unesco_graded(lat, lon)           # scoring: graded 10/25/50 credit
     # A destination explicitly tagged `unesco` but with no nearby plotted site
     # (boundary/coordinate gaps) still gets credit.
+    if raw == 0.0 and "unesco" in categories:
+        raw = 1.0
     if full == 0 and "unesco" in categories:
-        full, raw = 1, max(raw, 1.0)
-    comp = _saturate(raw, 3.0)  # raw 3 -> .63, 6 -> .86, 10 -> .96
+        full = 1
+    comp = _saturate(raw, 1.2)  # graded raw 1 (one on-site WHS) -> .57, 3 -> .92
     # The UNESCO filter flag is STRICTER than the scoring radius: a site must
     # sit within ~35 km (roughly "in or beside this destination") or the
     # destination itself must be tagged. The old 60 km ring flagged two thirds
@@ -277,15 +298,91 @@ def _iconic_component(city, categories):
     return min(1.0, base * 0.6 + curated)
 
 
+# Urban fabric (A3, 2026-09): the component that can finally see a beautiful
+# BUILT city. Read from cache/urban_fabric.json (harvest_urban_fabric.py:
+# pyosmium over the Geofabrik extracts, measured within 1 km of each
+# destination centre). None of the other four inputs measures squares,
+# riverfronts, pedestrian cores or listed-building density, which is why the
+# index correlated -0.158 with log population: it penalised cities for being
+# cities.
+URBAN_CACHE = os.path.join(HERE, "cache", "urban_fabric.json")
+_URBAN = None
+
+# Saturation constants: value at which each signal reaches ~0.63 of its cap.
+# The heritage signal is a DENSITY - listed/historic objects per km of
+# pedestrian core - because a raw count inside the fixed 1 km disc is a size
+# measurement (it correlated +0.66 with log population): a metro fills the
+# disc, a village occupies a corner of it. Objects per walkable km asks how
+# intact the core is, which Riquewihr can win and a sprawl cannot.
+URBAN_PED_KM = 0.5       # a THRESHOLD, not a scale: ~500 m of pedestrian
+                         # street marks a real walkable core, which a village
+                         # square street reaches; beyond that, length is
+                         # extent, i.e. size, and earns nothing more
+URBAN_HER_DENSITY = 25.0 # (heritage + historic/2) per km of pedestrian core
+URBAN_MIN_CORE_KM = 0.7  # density denominator floor: no divide-by-tiny spikes
+URBAN_MAX_CORE_KM = 3.0  # ...and ceiling: a 59 km ped network (Porto's
+                         # stairways) must not dilute its core's density
+URBAN_CANAL_M = 900.0    # a canal NETWORK, not a drainage ditch
+URBAN_BRIDGES = 3.0
+
+
+def load_urban_fabric():
+    global _URBAN
+    if _URBAN is None:
+        if os.path.exists(URBAN_CACHE):
+            with open(URBAN_CACHE, encoding="utf-8") as f:
+                _URBAN = json.load(f)
+        else:
+            _URBAN = {}
+    return _URBAN
+
+
+def _urban_component(dest_id):
+    f = load_urban_fabric().get(dest_id or "")
+    if not f:
+        return 0.0
+    core_km = f.get("ped_m", 0) / 1000.0
+    ped = _saturate(core_km, URBAN_PED_KM)
+    density = ((f.get("heritage_n", 0) + 0.5 * f.get("historic_n", 0))
+               / min(max(URBAN_MIN_CORE_KM, core_km), URBAN_MAX_CORE_KM))
+    her = _saturate(density, URBAN_HER_DENSITY)
+    ensemble = (0.40 * bool(f.get("square"))
+                + 0.30 * _saturate(f.get("canal_m", 0), URBAN_CANAL_M)
+                + 0.30 * _saturate(f.get("bridges_n", 0), URBAN_BRIDGES))
+    walls = 0.12 if f.get("citywalls") else 0.0
+    return min(1.0, 0.30 * ped + 0.40 * her + 0.30 * ensemble + walls)
+
+
 # Composite weights (sum to 1.0) + a standout bonus rewarding one big dimension.
-WEIGHTS = {"heritage": 0.30, "nature": 0.27, "iconic": 0.28, "beach": 0.15}
+# A3 (2026-09): urban enters at 0.20, paid for mostly by nature (0.27 ->
+# 0.21) and beach (0.15 -> 0.08), with iconic and heritage each giving up a
+# few points as well - PLAN.md prescribed nature+beach alone, but taking the
+# full 0.20 from two components cratered the landscape destinations
+# (Lauterbrunnen -0.28) for no fairness gain. Landscape places keep their
+# height through the standout bonus, and beach towns keep the top_beach flag
+# and curated list untouched.
+WEIGHTS = {"heritage": 0.27, "nature": 0.21, "iconic": 0.24, "beach": 0.08,
+           "urban": 0.20}
 STANDOUT_BONUS = 0.20
+# The standout bonus rewards ONE spectacular classic dimension - a fjord, a
+# perfect beach, a World Heritage core. Urban is excluded from it: metros all
+# hold urban near 1.0, and letting it drive the bonus handed every large city
+# a flat +0.2, which is exactly the size bias this index must not have
+# (measured: standout-with-urban pushes corr(beauty, log pop) from +0.07 to
+# +0.15). Urban still carries its full 0.20 base weight.
+STANDOUT_EXCLUDES = {"urban"}
 
 
 def compute_beauty(dest):
     """Return the `beauty` block for one destination record (no gems yet -
     gems are assigned dataset-wide by assign_gems once all scores are known)."""
-    lat, lon = dest.get("lat"), dest.get("lon")
+    # Measure from the CITY, not the airport: for airport-tier destinations
+    # lat/lon is the tarmac, up to 30 km from the place being scored. The old
+    # 60 km UNESCO ring hid that error; the graded 10/25/50 credit (A3) makes
+    # it fatal - Lyon's own World Heritage Presqu'ile read as "25 km away"
+    # from LYS. Same convention as the POI and fabric harvesters.
+    lat = dest.get("city_lat") if dest.get("city_lat") is not None else dest.get("lat")
+    lon = dest.get("city_lon") if dest.get("city_lon") is not None else dest.get("lon")
     cats = dest.get("categories") or []
     iso2 = dest.get("iso2")
     city = dest.get("city")
@@ -294,12 +391,15 @@ def compute_beauty(dest):
     beach, bf_count, top_beach = _beach_component(iso2, cats, city)
     nature = _nature_component(cats)
     iconic = _iconic_component(city, cats)
+    urban = _urban_component(dest.get("id"))
 
-    comps = {"heritage": heritage, "nature": nature, "iconic": iconic, "beach": beach}
+    comps = {"heritage": heritage, "nature": nature, "iconic": iconic,
+             "beach": beach, "urban": urban}
     base = sum(WEIGHTS[k] * comps[k] for k in WEIGHTS)
+    standout = max(v for k, v in comps.items() if k not in STANDOUT_EXCLUDES)
     # Floor: every real European city has *some* appeal; a stark 0.0 reads like
     # missing data in the UI rather than "ordinary".
-    score01 = min(1.0, max(0.06, base + STANDOUT_BONUS * max(comps.values())))
+    score01 = min(1.0, max(0.06, base + STANDOUT_BONUS * standout))
     score10 = round(10.0 * score01, 1)
 
     return {
@@ -311,7 +411,7 @@ def compute_beauty(dest):
         "blue_flag_country": bf_count,          # national Blue Flag beach count
         "top_beach": bool(top_beach),           # powers the Top-beaches button
         "components": {k: round(v, 3) for k, v in comps.items()},
-        "source": "composite_v1",
+        "source": "composite_v2",
     }
 
 
@@ -357,7 +457,12 @@ BEAUTY_MODEL = {
     "weights": WEIGHTS,
     "standout_bonus": STANDOUT_BONUS,
     "components": {
-        "heritage": "UNESCO World Heritage Sites within ~60 km (mid ring 60-120 km at 0.4); saturating",
+        "heritage": ("UNESCO WHS, graded credit: full within 10 km, half to "
+                     "25 km, quarter to 50 km (unesco_count still reports the "
+                     "~60 km ring for display); saturating"),
+        "urban": ("built-fabric measurement from OSM within 1 km of centre: "
+                  "pedestrian-core length, listed/historic density, named "
+                  "principal square, canal network, bridges, city walls"),
         "beach": "Blue Flag national beach density gated by the destination's coast/beach/island tags",
         "nature": "weighted scenic categories (fjord/alps/national-park/lake/island/...)",
         "iconic": "iconic tag + curated famously-stunning spots + Most Beautiful Villages members",
