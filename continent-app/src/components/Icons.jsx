@@ -798,3 +798,25 @@ export function FeedbackIcon({ size = 15, className = '' }) {
     </Glyph>
   );
 }
+
+/* Trip-kind glyphs for the guided wizard: a bicycle and a runner, so the
+   "what kind of trip?" tiles can say cycling and running without words. */
+export function BikeIcon({ size = 15, className = '' }) {
+  return (
+    <Glyph size={size} className={className} label="Cycling">
+      <circle cx="5.5" cy="17" r="3.5" />
+      <circle cx="18.5" cy="17" r="3.5" />
+      <path d="M5.5 17 9 9h5l4.5 8M9 9l3 8M14 9l-1.5-3H10" />
+    </Glyph>
+  );
+}
+
+export function RunIcon({ size = 15, className = '' }) {
+  return (
+    <Glyph size={size} className={className} label="Running">
+      <circle cx="14.5" cy="4.5" r="1.8" />
+      <path d="M8 21l3.2-5.5L8.6 13l3-4.5 3.6 2.5 3.3.5" />
+      <path d="M11.6 8.5 9 9.5 6.5 12.5M11.2 15.5l3.3 1.3 1.5 4.2" />
+    </Glyph>
+  );
+}

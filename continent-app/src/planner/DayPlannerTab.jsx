@@ -62,6 +62,7 @@ import {
   UploadIcon,
 } from '../components/Icons.jsx';
 import { MagicImportZone } from './MagicImportZone.jsx';
+import { kindByKey } from '../lib/tripKinds.js';
 import { toInboxItems } from './bookingImport.js';
 
 // How the explore search & "Let Carta guide you" name each pin category.
@@ -133,7 +134,7 @@ function buildStandalonePlan(sp) {
 }
 
 
-export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPlanConsumed }) {
+export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPlanConsumed, onBackToTrip }) {
   const { t, lang } = useI18n();
   // Towns the traveller asked Carta to research (discoveredStore.js). They are
   // real destinations from here on: pins, POI lists, search hits and plan
@@ -396,8 +397,26 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
   useEffect(() => {
     if (!openPlanId) return;
     (async () => {
+      if (typeof openPlanId === 'object' && openPlanId.newCity) {
+        // A city handed over from the Explore map or Saved trips: start a
+        // fresh day plan there, with the stay question already answered.
+        const dest = destinations[openPlanId.newCity];
+        if (dest) {
+          const c = cityCoords(dest);
+          setPlan(null);
+          setEditingPlanId(null);
+          setPlanKindCat(null);
+          setStayQuery('');
+          setStayResults(null);
+          setNewStayPoint({ lat: c.lat, lon: c.lon, label: `${dest.city}, ${dest.country}`, shortLabel: dest.city });
+          setLandingStep('when');
+        }
+        onOpenPlanConsumed && onOpenPlanConsumed();
+        return;
+      }
       if (typeof openPlanId === 'object') {
-        const { planId: targetPlanId, stopIndex, dayIndex } = openPlanId;
+        const { planId: targetPlanId, stopIndex, dayIndex, kind } = openPlanId;
+        setPlanKindCat((kind && kindByKey(kind)?.dayCat) || null);
         let opened = false;
         if (targetPlanId) {
           try { await openPlan(targetPlanId); opened = true; } catch { /* plan gone */ }
@@ -410,6 +429,7 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
           if (dayIndex != null) setDayIdx(Math.max(0, dayIndex));
         }
       } else {
+        setPlanKindCat(null);
         const sp = standalonePlans.find((x) => x.id === openPlanId);
         if (sp) openStandalone(sp);
         else { try { await openPlan(openPlanId); } catch { /* not found */ } }
@@ -623,6 +643,10 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
   // then becomes a numbered stop of the route). Filterable by category so a
   // busy city never turns into a wall of pins.
   const [mapCat, setMapCat] = useState('all');
+  // The kind of place a day of a trip opens on, from the trip's own kind
+  // (a cycling trip opens on active places, a food trip on restaurants).
+  // Null for standalone plans and trips planned without a kind.
+  const [planKindCat, setPlanKindCat] = useState(null);
   // Second filter axis: minimum rating ('all' | 'top' | 'must'), so a busy
   // city can be cut down to only its strongest places in one tap.
   const [mapRating, setMapRating] = useState('all');
@@ -639,8 +663,8 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
   // TripMap so zooming in can reveal more of the catalogue.
   const [mapView, setMapView] = useState(null);
   useEffect(() => {
-    setMapCat('all'); setMapRating('all'); setShowSel(false); setQualityOpen(false);
-  }, [stopIdx, plan?.id]);
+    setMapCat(planKindCat || 'all'); setMapRating('all'); setShowSel(false); setQualityOpen(false);
+  }, [stopIdx, plan?.id]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Places already laid into ANY day of this city: their pins are hidden, so
   // a place can't be double-added across days from the map.
@@ -3380,6 +3404,17 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
                 {stop?.dest?.city || 'No stops in this trip'}
                 {days[dayIdx] ? `, ${fmtDate(days[dayIdx])}` : ''}
               </div>
+              {/* A day of a trip belongs to that trip: one tap back to its
+                  overview, where the route, the receipt and the other days are. */}
+              {!plan.standalone && onBackToTrip && (
+                <button
+                  className="day-topcard-back"
+                  onClick={() => onBackToTrip(plan.tripDraft ? null : plan.id)}
+                  title={t('day.backToTripTitle')}
+                >
+                  <RouteIcon size={11} /> {t('day.backToTrip')}
+                </button>
+              )}
             </div>
             {/* Always-visible save state: standalone plans (and their picks)
                 persist on this device automatically; trip-based plans get an
@@ -3897,7 +3932,12 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
             </Collapsible>
           )}
 
-          <div className="trip-block">
+          <div className="trip-block day-plan-exit">
+            {!plan.standalone && onBackToTrip && (
+              <button className="trip-newtrip-btn" onClick={() => onBackToTrip(plan.tripDraft ? null : plan.id)}>
+                ← {t('day.backToTrip')}
+              </button>
+            )}
             <button className="trip-newtrip-btn" onClick={() => setPlan(null)}>← Back to all day plans</button>
           </div>
         </div>

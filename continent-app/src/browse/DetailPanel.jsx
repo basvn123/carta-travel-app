@@ -6,7 +6,7 @@ import { WaterQualityBadge, swimRelevant } from '../components/WaterQualityBadge
 import { CrowdingBadge, crowdBadgeWorthShowing } from '../components/CrowdingBadge.jsx';
 import { BestTimePanel } from './BestTimePanel.jsx';
 import { safeUrl, PRICE_SOURCE_LABELS, ACCOM_SOURCE_LABELS } from '../lib/format.js';
-import { ReceiptIcon, CalendarIcon, BedIcon, DiningIcon, CarIcon, InfoIcon, TreeIcon, PersonIcon } from '../components/Icons.jsx';
+import { ReceiptIcon, CalendarIcon, BedIcon, DiningIcon, CarIcon, InfoIcon, TreeIcon, PersonIcon, RouteIcon, ListDayIcon } from '../components/Icons.jsx';
 import { PlaneIcon } from '../components/TransportIcons.jsx';
 import { useI18n } from '../i18n/index.jsx';
 import { BreakdownTab, ViaAirportOptions } from './DetailBreakdown.jsx';
@@ -25,7 +25,7 @@ const popLine = (g) => {
   return [settle, pop].filter(Boolean).join(', ');
 };
 
-export function DetailPanel({ destination, departDate, returnDate, choices, setChoices, priceMode = 'total', onClose, onOpenLifestyle, onSelect, data, isFavorite, onToggleFavorite, onSaveTrip, onShiftDates }) {
+export function DetailPanel({ destination, departDate, returnDate, choices, setChoices, priceMode = 'total', onClose, onOpenLifestyle, onSelect, data, isFavorite, onToggleFavorite, onSaveTrip, onShiftDates, onPlanTripHere, onPlanDayHere }) {
   const { t } = useI18n();
   const [saveState, setSaveState] = React.useState('idle'); // idle | saving | saved
   const [activeTab, setActiveTab] = React.useState('breakdown'); // breakdown | best-time
@@ -134,6 +134,29 @@ export function DetailPanel({ destination, departDate, returnDate, choices, setC
                 <path d="M19 21l-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" />
               </svg>
               <span>{saveState === 'saving' ? t('detail.saving') : saveState === 'saved' ? t('detail.saved') : t('detail.saveTrip')}</span>
+            </button>
+          )}
+          {/* From a priced destination straight into either planner: the
+              Trip planner opens its guide with this country already picked,
+              the Day planner opens on this city. */}
+          {onPlanTripHere && (
+            <button
+              className="panel-fav panel-plan"
+              onClick={() => onPlanTripHere(destination)}
+              title={t('detail.planTripHereTitle', { country: destination.country })}
+            >
+              <RouteIcon size={15} />
+              <span>{t('detail.planTripHere')}</span>
+            </button>
+          )}
+          {onPlanDayHere && (
+            <button
+              className="panel-fav panel-plan"
+              onClick={() => onPlanDayHere(destination)}
+              title={t('detail.planDayHereTitle', { city: destination.city })}
+            >
+              <ListDayIcon size={15} />
+              <span>{t('detail.planDayHere')}</span>
             </button>
           )}
         </div>

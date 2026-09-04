@@ -77,6 +77,12 @@ export function useTripPlanner(data, countryInsights = null) {
     setTransferModeRaw((prev) => (dir ? { ...prev, [dir]: mode } : { in: mode, out: mode }));
   }, []);
   const [pace, setPace] = useState(draft?.pace || 'balanced'); // 'relaxed' | 'balanced' | 'packed'
+  // What kind of trip this is ('cycling', 'sightseeing', ...) and who is going
+  // ('solo' | 'couple' | 'friends' | 'family'), both answered in the guide.
+  // Read back by the overview's chip and by the Day planner, which opens a
+  // day of this trip on the matching kind of place (lib/tripKinds).
+  const [tripKind, setTripKind] = useState(draft?.tripKind || null);
+  const [party, setParty] = useState(draft?.party || null);
   // How expensive the traveller wants to sleep: 'dorm' | 'private' | 'home' |
   // 'hotel3' | 'hotel4' | 'hotel5'. Home (entire place) is the default; other
   // tiers price from the measured city tiers where they exist.
@@ -124,11 +130,11 @@ export function useTripPlanner(data, countryInsights = null) {
     persistTripDraft({
       tripStart, tripEnd, stops, groupSize, transportPref, legModes, ownLegs, transferMode, pace,
       baggage, anchorId, anchorOrigin, returnAnchorId, ownFlight, carHome, planId, planLabel, planned,
-      stayTier,
+      stayTier, tripKind, party,
     });
   }, [tripStart, tripEnd, stops, groupSize, transportPref, legModes, ownLegs, transferMode, pace,
       baggage, anchorId, anchorOrigin, returnAnchorId, ownFlight, carHome, planId, planLabel, planned,
-      stayTier]);
+      stayTier, tripKind, party]);
 
   // Chain each stop's arrive/depart dates from the trip start. A stop with no
   // trip start yet still carries its nights so the UI can show "2 nights".
@@ -265,6 +271,8 @@ export function useTripPlanner(data, countryInsights = null) {
     setReturnAnchorId(null);
     setOwnFlight(null);
     setCarHome(null);
+    setTripKind(null);
+    setParty(null);
     setPlanId(null);
     setPlanLabel('');
     setPlanned(false);
@@ -274,7 +282,7 @@ export function useTripPlanner(data, countryInsights = null) {
   // ordered list of { destinationId, nights, activities }, an optional name,
   // plus how they want to travel (transport) and how full their days should
   // feel (pace), everything stays editable in the planner afterwards.
-  const loadFromWizard = useCallback(({ startDate, stops: wizardStops, label, groupSize: gs, transport, pace: wizardPace, baggage: wizardBaggage, anchorId: wizardAnchor, anchorOrigin: wizardAnchorOrigin, returnAnchorId: wizardReturnAnchor, ownFlight: wizardOwnFlight, carHome: wizardCarHome, legModes: wizardLegModes, ownLegs: wizardOwnLegs }) => {
+  const loadFromWizard = useCallback(({ startDate, stops: wizardStops, label, groupSize: gs, transport, pace: wizardPace, baggage: wizardBaggage, anchorId: wizardAnchor, anchorOrigin: wizardAnchorOrigin, returnAnchorId: wizardReturnAnchor, ownFlight: wizardOwnFlight, carHome: wizardCarHome, legModes: wizardLegModes, ownLegs: wizardOwnLegs, tripKind: wizardKind, party: wizardParty }) => {
     const total = wizardStops.reduce((sum, s) => sum + Math.max(0, s.nights || 0), 0);
     setTripStart(startDate || '');
     setTripEnd(startDate ? addDays(startDate, total) : '');
@@ -295,6 +303,8 @@ export function useTripPlanner(data, countryInsights = null) {
     setReturnAnchorId(wizardReturnAnchor || null);
     setOwnFlight(wizardOwnFlight || null);
     setCarHome(wizardCarHome || null);
+    setTripKind(wizardKind || null);
+    setParty(wizardParty || null);
     // The "everything is booked" path asks how each hop is travelled, so the
     // wizard can hand over per-leg choices; every other path leaves them to
     // Carta and hands over nothing.
@@ -778,6 +788,8 @@ export function useTripPlanner(data, countryInsights = null) {
     // told us about and repriced the hop as a coach.
     setLegModes(sorted[0]?.choices?.legModes || {});
     setOwnLegs(sorted[0]?.choices?.ownLegs || {});
+    setTripKind(sorted[0]?.choices?.tripKind || null);
+    setParty(sorted[0]?.choices?.party || null);
     setPlanned(false);
   }, []);
 
@@ -802,7 +814,7 @@ export function useTripPlanner(data, countryInsights = null) {
             nights: s.nights,
             groupSize,
             activities: s.activities || [],
-            ...(i === 0 ? { baggage, transportPref, transferMode, pace, ...(anchorId ? { anchorId } : {}), ...(anchorOrigin ? { anchorOrigin } : {}), ...(returnAnchorId ? { returnAnchorId } : {}), ...(ownFlight ? { ownFlight } : {}), ...(carHome ? { carHome } : {}), ...(Object.keys(legModes).length ? { legModes } : {}), ...(Object.keys(ownLegs).length ? { ownLegs } : {}) } : {}),
+            ...(i === 0 ? { baggage, transportPref, transferMode, pace, ...(anchorId ? { anchorId } : {}), ...(anchorOrigin ? { anchorOrigin } : {}), ...(returnAnchorId ? { returnAnchorId } : {}), ...(ownFlight ? { ownFlight } : {}), ...(carHome ? { carHome } : {}), ...(Object.keys(legModes).length ? { legModes } : {}), ...(Object.keys(ownLegs).length ? { ownLegs } : {}), ...(tripKind ? { tripKind } : {}), ...(party ? { party } : {}) } : {}),
           },
         };
       }));
@@ -837,7 +849,7 @@ export function useTripPlanner(data, countryInsights = null) {
       setSaveState('idle');
       throw e;
     }
-  }, [planId, planLabel, stops, stopDetails, groupSize, legs, flight, anchorId, anchorOrigin, returnAnchorId, ownFlight, carHome, baggage, transportPref, transferMode, pace, legModes, ownLegs]);
+  }, [planId, planLabel, stops, stopDetails, groupSize, legs, flight, anchorId, anchorOrigin, returnAnchorId, ownFlight, carHome, baggage, transportPref, transferMode, pace, legModes, ownLegs, tripKind, party]);
 
   return {
     tripStart, setTripStart, tripEnd, setTripEnd,
@@ -856,6 +868,7 @@ export function useTripPlanner(data, countryInsights = null) {
     ownFlight, setOwnFlight,
     carHome, setCarHome,
     planned, setPlanned,
+    tripKind, setTripKind, party,
     planId, planLabel, setPlanLabel, saveState, savePlan, loadPlan,
   };
 }

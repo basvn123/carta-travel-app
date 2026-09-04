@@ -162,7 +162,7 @@ function SavedCard({ Icon, visual, visualKind = 'icon', title, meta, onOpen, ope
 // lives inside AccountPanel; this gives it a one-tap home of its own). Every
 // kind of "saved" trip lands here, single destinations saved from the map,
 // multi-stop trips built in the Trip planner, and device-local day plans, // each in its own clearly-labelled section.
-export function SavedTripsPanel({ data, onClose, onLoadTrip, onLoadTripPlan, onOpenAuth, onOpenDayPlan, onGoToTab }) {
+export function SavedTripsPanel({ data, onClose, onLoadTrip, onLoadTripPlan, onOpenAuth, onOpenDayPlan, onGoToTab, onPlanTripFrom, onPlanDayIn }) {
   const { user, configured } = useAuth();
   const { t } = useI18n();
   const destinations = data?.destinations || {};
@@ -277,6 +277,21 @@ export function SavedTripsPanel({ data, onClose, onLoadTrip, onLoadTripPlan, onO
                 ].filter(Boolean).join(', ')}
                 onOpen={() => onLoadTrip(trip)}
                 openTitle={t('saved.openDestination')}
+                /* A saved place is a starting point for both planners. */
+                actions={[
+                  ...(onPlanTripFrom ? [{
+                    key: 'trip',
+                    label: t('saved.planTripFrom'),
+                    icon: <RouteIcon size={14} />,
+                    onClick: () => onPlanTripFrom(trip),
+                  }] : []),
+                  ...(onPlanDayIn ? [{
+                    key: 'day',
+                    label: t('saved.planDayIn'),
+                    icon: <ListDayIcon size={14} />,
+                    onClick: () => onPlanDayIn(trip),
+                  }] : []),
+                ]}
                 onDelete={() => handleDelete(trip.id)}
                 deleteLabel={t('saved.removeItem', { name: trip.city })}
               />

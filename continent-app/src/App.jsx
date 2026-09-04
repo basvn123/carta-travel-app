@@ -276,6 +276,9 @@ function TravelApp() {
   // Nudges TripPlannerTab to open the guided wizard (homepage CTA): bumping
   // the counter is the signal, the tab consumes it via an effect.
   const [wizardLaunch, setWizardLaunch] = useState(0);
+  // A destination handed to the Trip planner's guide from the map or Saved
+  // trips: { country, arrivalId, city }. The guide opens with it already in.
+  const [wizardPrefill, setWizardPrefill] = useState(null);
 
   // Escape closes the top-most dismissable surface (the shared-trip offer,
   // then the destination detail, then the homepage falls through to the map).
@@ -308,6 +311,30 @@ function TravelApp() {
     try { localStorage.setItem('carta.mapGuideDone', '1'); } catch { /* private mode */ }
   }, []);
   const collapseList = useCallback(() => setListCollapsed(true), []);
+  // The links between the tools. A destination on the map or in Saved trips
+  // can start either planner; a stop in a planned trip opens on the map; a
+  // day of a trip goes back to that trip's overview.
+  const planTripAt = useCallback((dest) => {
+    if (!dest) return;
+    setSelectedId(null);
+    setSavedTripsOpen(false);
+    setWizardPrefill({ country: dest.country, arrivalId: dest.id, city: dest.city });
+    setActiveTab('trip');
+    setWizardLaunch((n) => n + 1);
+  }, [setSavedTripsOpen]);
+  const planDayAt = useCallback((destId) => {
+    if (!destId) return;
+    setSelectedId(null);
+    setSavedTripsOpen(false);
+    setPendingDayPlanId({ newCity: destId });
+    setActiveTab('day');
+  }, [setSavedTripsOpen]);
+  const exploreDest = useCallback((id) => {
+    if (!id) return;
+    setSavedTripsOpen(false);
+    setActiveTab('map');
+    openDetail(id);
+  }, [setSavedTripsOpen, openDetail]);
   const openCompare = useCallback(() => setCompareOpen(true), []);
   // "Top picks" hides the unreachable set, and an unanswered "where do you
   // drive from?" hides both sets; a fresh [] every render would re-render the
@@ -795,6 +822,8 @@ function TravelApp() {
               onToggleFavorite={selectedId ? () => toggleFav(selectedId) : undefined}
               onSaveTrip={authConfigured ? handleSaveTrip : undefined}
               onShiftDates={(depart, ret) => { setDepartDate(depart); setReturnDate(ret); }}
+              onPlanTripHere={planTripAt}
+              onPlanDayHere={(d) => planDayAt(d.id)}
             />
           </div>
 
@@ -832,12 +861,15 @@ function TravelApp() {
               openSharedTrip={pendingSharedTrip}
               onSharedTripConsumed={() => setPendingSharedTrip(null)}
               openWizardSignal={wizardLaunch}
+              wizardPrefill={wizardPrefill}
+              onWizardPrefillConsumed={() => setWizardPrefill(null)}
               origin={choices.origin}
               onChangeOrigin={setOrigin}
               onPlanDay={(target) => {
-                setPendingDayPlanId(target); // { planId|null, stopIndex, dayIndex }
+                setPendingDayPlanId(target); // { planId|null, stopIndex, dayIndex, kind }
                 setActiveTab('day');
               }}
+              onExploreDest={exploreDest}
             />
           </Suspense>
         </div>
@@ -851,6 +883,12 @@ function TravelApp() {
               authConfigured={authConfigured}
               openPlanId={pendingDayPlanId}
               onOpenPlanConsumed={() => setPendingDayPlanId(null)}
+              onBackToTrip={(planId) => {
+                // A saved trip reopens in its planned view; the unsaved draft
+                // is still sitting in the planner, so only the tab changes.
+                if (planId) setPendingTripPlanId(planId);
+                setActiveTab('trip');
+              }}
             />
           </Suspense>
         </div>
@@ -892,6 +930,11 @@ function TravelApp() {
               setPendingTripPlanId(id);
               setActiveTab('trip');
             }}
+            onPlanTripFrom={(trip) => planTripAt(
+              data.destinations[trip.destination_id]
+                || { id: trip.destination_id, city: trip.city, country: trip.country },
+            )}
+            onPlanDayIn={(trip) => planDayAt(trip.destination_id)}
           />
         </div>
       )}

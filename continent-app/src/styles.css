@@ -15121,3 +15121,324 @@ button.ai-sched-main:focus-visible {
   .account-back, .account-profile-card, .account-invite-btn, .account-menu-row,
   .account-faq-q, .account-faq-chev, .account-feedback-input { transition: none; }
 }
+
+/* ============================================================
+   Guided wizard v3: the "what have you already booked?" opener,
+   the trip-kind and who steps, kind-based country recommendations
+   ============================================================ */
+
+/* -- Opener: one question, three tabs, one panel -- */
+.guide-booked { text-align: left; }
+.guide-booked .guide-title { font-size: 26px; letter-spacing: -0.02em; }
+.guide-booked .guide-sub { margin: 8px 0 0; max-width: 62ch; margin-inline: 0; }
+.guide-booked-tabs {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+  margin-top: 36px;
+  padding: 5px;
+  border: 1px solid var(--rule);
+  border-radius: 14px;
+  background: var(--paper-dim);
+}
+.guide-booked-tab {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  padding: 12px 10px;
+  border-radius: 10px;
+  border: 1px solid transparent;
+  background: none;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--ink-soft);
+  cursor: pointer;
+  transition: background .15s, color .15s, border-color .15s;
+}
+.guide-booked-tab svg { color: var(--ink-mute); flex: none; }
+.guide-booked-tab:hover { color: var(--ink); }
+.guide-booked-tab.on { background: var(--paper); color: var(--ink); border-color: var(--rule); box-shadow: var(--shadow-1); }
+.guide-booked-tab.on svg { color: var(--accent); }
+.guide-booked-panel {
+  margin-top: 18px;
+  padding: 24px;
+  border: 1px solid var(--rule);
+  border-radius: 14px;
+  background: var(--paper);
+  animation: guide-booked-in .18s ease both;
+}
+@keyframes guide-booked-in { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+.guide-booked-panel-head { display: flex; gap: 14px; align-items: flex-start; }
+.guide-booked-panel-head .guide-path-icon { width: 44px; height: 44px; border-radius: 12px; }
+.guide-booked-panel-head b { display: block; font-size: 17px; color: var(--ink); }
+.guide-booked-panel-head p { margin: 4px 0 0; font-size: 13.5px; color: var(--ink-soft); line-height: 1.5; max-width: 60ch; }
+.guide-booked-cols {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-top: 22px;
+  padding-top: 20px;
+  border-top: 1px solid var(--rule-soft);
+}
+.guide-booked-col-label {
+  display: block;
+  margin-bottom: 8px;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ink-mute);
+}
+.guide-booked-steps { list-style: none; margin: 0; padding: 0; }
+.guide-booked-steps li {
+  display: flex; align-items: center; gap: 10px;
+  padding: 7px 0;
+  border-bottom: 1px solid var(--rule-soft);
+  font-size: 13.5px;
+  color: var(--ink);
+}
+.guide-booked-steps li:last-child { border-bottom: none; }
+.guide-booked-steps li span {
+  flex: none;
+  width: 20px; height: 20px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 50%;
+  background: var(--paper-dim);
+  font-family: var(--mono);
+  font-size: 10.5px;
+  color: var(--ink-soft);
+}
+.guide-booked-gets { margin: 0; font-size: 13.5px; color: var(--ink-soft); line-height: 1.55; }
+.guide-booked-go { display: inline-flex; align-items: center; gap: 6px; margin-top: 22px; padding: 12px 22px; font-size: 14px; }
+@media (max-width: 700px) {
+  .guide-booked .guide-title { font-size: 22px; }
+  .guide-booked-tabs { grid-template-columns: 1fr; margin-top: 26px; }
+  .guide-booked-tab { justify-content: flex-start; }
+  .guide-booked-panel { padding: 18px; }
+  .guide-booked-cols { grid-template-columns: 1fr; gap: 18px; }
+  .guide-booked-go { width: 100%; justify-content: center; }
+}
+
+/* -- Kind: what kind of trip is this? -- */
+.guide-kind-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 8px; }
+.guide-kind {
+  position: relative;
+  display: flex; flex-direction: column; align-items: flex-start; gap: 12px;
+  padding: 18px 16px;
+  border: 1px solid var(--rule);
+  border-radius: 14px;
+  background: var(--paper);
+  text-align: left;
+  cursor: pointer;
+  transition: border-color .15s, background .15s, transform .15s;
+}
+.guide-kind:hover { border-color: var(--ink-soft); transform: translateY(-1px); }
+.guide-kind.on { border-color: var(--accent); background: var(--accent-bg); box-shadow: inset 0 0 0 1px var(--accent); }
+.guide-kind .guide-interest-check { top: 10px; right: 10px; }
+.guide-kind-icon {
+  width: 42px; height: 42px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 12px;
+  background: var(--paper-dim);
+  color: var(--ink-soft);
+}
+.guide-kind.on .guide-kind-icon { background: var(--paper); color: var(--accent); }
+.guide-kind-text { display: flex; flex-direction: column; gap: 3px; }
+.guide-kind-text b { font-size: 15px; color: var(--ink); }
+.guide-kind-text small { font-size: 12px; color: var(--ink-mute); line-height: 1.45; }
+.guide-kind-note { margin-top: 18px; }
+@media (max-width: 900px) { .guide-kind-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 400px) { .guide-kind-grid { grid-template-columns: 1fr; } }
+
+/* -- Who: who is going? -- */
+.guide-who-card { max-width: 640px; }
+.guide-party-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.guide-party {
+  display: flex; flex-direction: column; gap: 2px;
+  padding: 12px;
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  background: var(--paper);
+  text-align: left;
+  cursor: pointer;
+  transition: border-color .15s, background .15s;
+}
+.guide-party:hover { border-color: var(--ink-soft); }
+.guide-party.on { border-color: var(--accent); background: var(--accent-bg); }
+.guide-party b { font-size: 14px; color: var(--ink); }
+.guide-party small { font-size: 11.5px; color: var(--ink-mute); }
+@media (max-width: 600px) { .guide-party-grid { grid-template-columns: repeat(2, 1fr); } }
+
+/* -- Where: the kind's country recommendations -- */
+.guide-recs {
+  margin: 0 0 22px;
+  border: 1px solid var(--rule);
+  border-radius: 14px;
+  background: var(--paper);
+  overflow: hidden;
+}
+.guide-recs-head {
+  display: flex; align-items: center; gap: 12px;
+  padding: 14px 16px;
+  background: var(--paper-dim);
+  border-bottom: 1px solid var(--rule);
+}
+.guide-recs-icon {
+  flex: none;
+  width: 34px; height: 34px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 10px;
+  border: 1px solid var(--rule);
+  background: var(--paper);
+  color: var(--accent);
+}
+.guide-recs-head-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.guide-recs-head-text b { font-size: 15px; color: var(--ink); }
+.guide-recs-head-text small { font-size: 12px; color: var(--ink-mute); line-height: 1.4; }
+.guide-recs-list { display: flex; flex-direction: column; }
+.guide-rec {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 14px;
+  align-items: start;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--rule-soft);
+}
+.guide-rec:last-child { border-bottom: none; }
+.guide-rec.on { background: var(--accent-bg); }
+.guide-rec > .guide-flag-img { margin-top: 2px; }
+.guide-rec-body { min-width: 0; }
+.guide-rec-title { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.guide-rec-title b { font-size: 14.5px; color: var(--ink); }
+.guide-rec-tag {
+  padding: 2px 7px;
+  border-radius: 999px;
+  border: 1px solid var(--rule);
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--ink-soft);
+}
+.guide-rec-tag.in { border-color: var(--green); color: var(--green); }
+.guide-rec-tag.off { color: var(--ink-mute); }
+.guide-rec-why { margin: 4px 0 0; font-size: 13px; color: var(--ink-soft); line-height: 1.5; }
+.guide-rec.off-season .guide-rec-why { color: var(--ink-mute); }
+.guide-rec-meta { display: flex; flex-wrap: wrap; gap: 4px 14px; margin-top: 7px; font-size: 11.5px; color: var(--ink-mute); }
+.guide-rec-meta span { display: inline-flex; align-items: center; gap: 4px; }
+.guide-rec-side { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; }
+.guide-rec-fare { display: flex; flex-direction: column; align-items: flex-end; line-height: 1.15; }
+.guide-rec-fare small { font-size: 10px; color: var(--ink-mute); }
+.guide-rec-fare b { font-family: var(--mono); font-size: 14px; color: var(--ink); font-variant-numeric: tabular-nums; }
+.guide-rec-add {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 7px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--rule);
+  background: var(--paper);
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--ink);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: border-color .15s, color .15s, background .15s;
+}
+.guide-rec-add:hover { border-color: var(--accent); color: var(--accent); }
+.guide-rec-add.on { background: var(--accent); border-color: var(--accent); color: #fff; }
+.guide-recs-more {
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+  width: 100%;
+  padding: 11px;
+  border: none;
+  border-top: 1px solid var(--rule);
+  background: var(--paper-dim);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink-soft);
+  cursor: pointer;
+}
+.guide-recs-more:hover { color: var(--accent); }
+.guide-recs-more svg { transition: transform .15s; }
+.guide-recs-more[aria-expanded="true"] svg { transform: rotate(180deg); }
+.guide-all-title { margin-bottom: 8px; }
+@media (max-width: 600px) {
+  .guide-rec { grid-template-columns: auto 1fr; }
+  .guide-rec > .guide-flag-img { grid-column: 1; grid-row: 1; }
+  .guide-rec-body { grid-column: 2; grid-row: 1; }
+  .guide-rec-side { grid-column: 2; grid-row: 2; flex-direction: row; align-items: center; justify-content: space-between; }
+  .guide-rec-fare { flex-direction: row; align-items: baseline; gap: 5px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .guide-booked-panel { animation: none; }
+  .guide-kind, .guide-kind:hover { transform: none; }
+}
+
+/* -- The links between the tools -- */
+/* The trip's kind, beside its dates in the planner's top card. */
+.trip-topcard-kind {
+  display: inline-flex; align-items: center; gap: 4px;
+  margin-left: 8px;
+  padding: 1px 7px;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  font-family: var(--ui);
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0;
+  color: var(--ink-soft);
+  background: var(--paper);
+  vertical-align: middle;
+}
+.trip-topcard-kind svg { color: var(--accent); }
+/* A stop in the planned route, with its way onto the Explore map. */
+.itin-stop-row { display: flex; align-items: stretch; gap: 6px; }
+.itin-stop-row .itin-stop { flex: 1; min-width: 0; }
+.itin-stop-explore {
+  flex: none;
+  display: inline-flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px;
+  padding: 6px 9px;
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  background: var(--paper);
+  font-size: 10.5px;
+  font-weight: 600;
+  line-height: 1.15;
+  text-align: center;
+  color: var(--ink-soft);
+  min-width: 52px;
+  cursor: pointer;
+  transition: border-color .15s, color .15s;
+}
+.itin-stop-explore:hover { border-color: var(--accent); color: var(--accent); }
+.itin-stop-explore svg { color: var(--accent); }
+/* A day of a trip, one tap back to its overview. */
+.day-topcard-back {
+  display: inline-flex; align-items: center; gap: 5px;
+  margin-top: 6px;
+  padding: 3px 8px;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: var(--paper);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--ink-soft);
+  cursor: pointer;
+}
+.day-topcard-back:hover { border-color: var(--accent); color: var(--accent); }
+.day-topcard-back svg { color: var(--accent); }
+.day-plan-exit { display: flex; flex-wrap: wrap; gap: 8px; }
+/* The planner buttons on a destination's detail panel. */
+.panel-plan svg { color: var(--accent); }
+.guide-booked-prefill { margin-top: 12px; }
+/* Where step: recommendations, the map, then the full grid. On a desktop the
+   map holds the right column beside both; on a phone the three stack in
+   that order, so the reason for the step (the picks) comes before the map
+   and the map before 43 country cards. */
+.guide-split-where { grid-template-areas: "recs side" "grid side"; grid-template-rows: auto 1fr; }
+.guide-split-where .guide-split-recs { grid-area: recs; }
+.guide-split-where .guide-split-grid { grid-area: grid; }
+.guide-split-where .guide-split-side { grid-area: side; }
+@media (max-width: 1000px) {
+  .guide-split-where { grid-template-areas: "recs" "side" "grid"; grid-template-rows: auto; }
+  .guide-split-where .guide-split-side { order: 0; }
+}
+.guide-rec-fare-row { display: flex; align-items: baseline; gap: 4px; }
+.guide-rec-fare-row small { font-size: 11px; color: var(--ink-mute); }
+.guide-rec-fare-sub { font-size: 10px; color: var(--ink-mute); white-space: nowrap; }
+@media (max-width: 600px) { .guide-rec-fare { flex-direction: column; align-items: flex-end; gap: 0; } }

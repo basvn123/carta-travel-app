@@ -325,7 +325,7 @@ export function TripItinerary({
   driveLegs = null, stayCosts = [], carRental = null, vignettes = null,
   tripHasCar = false,
   transferMode = 'auto', setTransferMode = null,
-  activeStopIndex, onSelectStop, onPlanDay, isDayPlanned = null,
+  activeStopIndex, onSelectStop, onPlanDay, onExploreStop, isDayPlanned = null,
   sharePayload = null, extrasPlanId = null,
 }) {
   // Whether a day already has Day-planner picks (drives "Plan" vs "Modify").
@@ -506,6 +506,7 @@ export function TripItinerary({
           )}
           {stopDetails.map((s, i) => (
             <React.Fragment key={i}>
+              <div className="itin-stop-row">
               <button
                 className={`itin-stop ${activeStopIndex === i ? 'active' : ''}`}
                 onClick={() => onSelectStop?.(i)}
@@ -524,6 +525,18 @@ export function TripItinerary({
                   </span>
                 </span>
               </button>
+              {/* The same place on the Explore map, with its price breakdown
+                  and best time: the two tools describe one destination. */}
+              {onExploreStop && s.dest && (
+                <button
+                  className="itin-stop-explore"
+                  onClick={() => onExploreStop(s.destinationId)}
+                  title={t('trip.seeOnMapTitle', { city: s.dest.city })}
+                >
+                  <MapPinIcon size={11} /> {t('trip.seeOnMap')}
+                </button>
+              )}
+              </div>
               {/* How you get to the NEXT stay: the leg is part of the route,
                   with its mode changeable in place. */}
               {i < stopDetails.length - 1 && (

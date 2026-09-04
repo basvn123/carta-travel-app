@@ -22,6 +22,7 @@ import { flightReasonLabel } from '../lib/trip_planner_pricing.js';
 import { geocodeAddress } from '../lib/geocode.js';
 import { carrierName } from '../lib/carriers.js';
 import { fareProv, flightProv, estPrefix, FareTag } from '../components/FareProvenance.jsx';
+import { kindByKey } from '../lib/tripKinds.js';
 
 const SHEET_H_KEY = 'carta.tripSheetH.v1';
 
@@ -209,7 +210,7 @@ function Suggestions({ suggestions, onPick }) {
   );
 }
 
-export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, openPlanId, onOpenPlanConsumed, origin, onChangeOrigin, onPlanDay, openSharedTrip, onSharedTripConsumed, openWizardSignal }) {
+export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, openPlanId, onOpenPlanConsumed, origin, onChangeOrigin, onPlanDay, onExploreDest, openSharedTrip, onSharedTripConsumed, openWizardSignal, wizardPrefill, onWizardPrefillConsumed }) {
   const { t } = useI18n();
   const countryInsights = useCountryInsights();
   const tp = useTripPlanner(data, countryInsights);
@@ -315,7 +316,14 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, open
     setWizardOpen(false);
     setSelectedStop(null);
     setSheetOpen(true);
+    onWizardPrefillConsumed && onWizardPrefillConsumed();
   };
+  const handleWizardCancel = () => {
+    setWizardOpen(false);
+    onWizardPrefillConsumed && onWizardPrefillConsumed();
+  };
+  // The kind of trip, as chosen in the guide, for the chip in the top card.
+  const tripKindDef = tp.tripKind ? kindByKey(tp.tripKind) : null;
 
   const handleStartOver = () => {
     if (!window.confirm(t('trip.confirmStartOver'))) return;
@@ -620,6 +628,11 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, open
             {tp.stopDetails.length > 0 && (
               <span className="trip-topcard-count">{tp.stopDetails.length} {tp.stopDetails.length === 1 ? t('trip.stopOne') : t('trip.stopMany')}</span>
             )}
+            {tripKindDef && (
+              <span className="trip-topcard-kind" title={t('trip.kindChipTitle')}>
+                <tripKindDef.Icon size={11} /> {t('trip.kindChip', { kind: t(tripKindDef.labelKey) })}
+              </span>
+            )}
           </div>
         </div>
 
@@ -667,7 +680,11 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, open
                 planId: tp.planId,
                 stopIndex: day.stopIndex,
                 dayIndex: day.dayOfStay - 1,
+                // The Day planner opens a day of this trip on the kind of
+                // place the trip is about (active, nature, sights, food).
+                kind: tp.tripKind || null,
               }) : null}
+              onExploreStop={onExploreDest || null}
             />
             <CheapTipsSection
               stopDetails={tp.stopDetails}
@@ -1103,7 +1120,7 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, open
       )}
 
       {wizardOpen && (
-        <GuidedTripWizard data={data} origin={origin} onChangeOrigin={onChangeOrigin} onCancel={() => setWizardOpen(false)} onComplete={handleWizardComplete} />
+        <GuidedTripWizard data={data} origin={origin} onChangeOrigin={onChangeOrigin} prefill={wizardPrefill} onCancel={handleWizardCancel} onComplete={handleWizardComplete} />
       )}
     </div>
   );
