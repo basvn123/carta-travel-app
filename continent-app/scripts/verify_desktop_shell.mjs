@@ -65,11 +65,17 @@ check('it sits under the bar and over the results',
   `bar ends ${Math.round(barBottom.y + barBottom.height)}, search ${Math.round(searchTop)}, list ${Math.round(listTop)}`);
 check('side panel renders', await page.locator('.places-side').isVisible());
 check('toolbar card folded away', await page.locator('.places-toolbar').isHidden());
-// Seven since Cycling joined General/Trips/Trails/Beaches/Lakes/Mountains.
+// Six: Trips, Trails, Beaches, Lakes, Mountains and Cycling. General left the
+// rail when Explore took over the priced catalogue.
 const sideCats = await page.locator('.places-side .side-cat').count();
-check('every category has a tile in the panel', sideCats === 7, `${sideCats}`);
+check('every category has a tile in the panel', sideCats === 6, `${sideCats}`);
 check('origin picker off this page', await page.locator('.places-tab .origin-btn').count() === 0
   || await page.locator('.places-tab .origin-btn').first().isHidden());
+// The lifestyle pill belongs to the priced lists. Trips opens on the curated
+// library, whose budgets are editorial, so the pill appears once the
+// composed door (the priced itineraries) is open.
+await page.locator('.jcomposed-card').first().click().catch(() => {});
+await page.waitForTimeout(1200);
 check('lifestyle stays in the panel', await page.locator('.places-side .lifestyle-btn').isVisible());
 check('country dropdown in the panel', await page.locator('.places-side .side-country').isVisible());
 
@@ -78,11 +84,10 @@ await page.locator('.places-side .side-cat', { hasText: /trails/i }).first().cli
 await page.waitForTimeout(1200);
 const onBg = await bg(page, '.places-side .side-cat.on');
 check('selected tile wears the full accent', onBg === 'rgb(224, 90, 71)', onBg);
-await page.locator('.places-side .side-cat', { hasText: /general/i }).first().click();
-await page.waitForTimeout(800);
-
 // Sorts live in the panel and switch on the accent. They only exist past the
 // country index (same rule as before this pass), so step into a country.
+// Trails, since General left the rail: its index is the same wall of
+// country cards and its list carries the same three sorts.
 await page.locator('.places-ccard').first().click();
 await page.waitForTimeout(1200);
 const sortN = await page.locator('.places-side .side-sort').count();
@@ -144,8 +149,13 @@ check('phone: no card chrome on the toolbar',
 check('phone: category row scrolls sideways', await phone.locator('.places-cats').evaluate(
   (el) => el.scrollWidth > el.clientWidth + 1 && getComputedStyle(el).display === 'flex'));
 check('phone: no origin chip', await phone.locator('.places-toolbar .origin-btn').count() === 0);
+// Country cards live on the layer indexes (Trails here); the Trips tile
+// opens on the style grid, which has no country cards to check.
+await phone.locator('.places-cat', { hasText: /trails/i }).first().click();
+await phone.waitForTimeout(1500);
 check('phone: no count line on country cards',
-  await phone.locator('.places-ccard .places-card-sub').count() === 0);
+  await phone.locator('.places-ccard').count() > 5
+  && await phone.locator('.places-ccard .places-card-sub').count() === 0);
 const tickH = await phone.locator('.places-cat').first()
   .evaluate((el) => getComputedStyle(el, '::before').height).catch(() => '');
 check('phone: category tiles carry the accent tick', tickH === '2px', tickH);

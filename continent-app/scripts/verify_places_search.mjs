@@ -93,8 +93,14 @@ await headerTab.click();
 await page.waitForTimeout(1500);
 check('destinations tab opens', await page.locator('.places-tab').isVisible());
 
+// The priced catalogue left this tab for Explore, so the near-search is
+// exercised on Trails: the same field, the same geocoder discipline, and a
+// list that ranks from the anchor with a km chip on every card.
+await page.locator('.places-cat:visible, .side-cat:visible', { hasText: /^trails$/i }).click();
+await page.waitForTimeout(800);
+
 const input = page.locator('.places-search input');
-const kmText = () => page.locator('.places-dcard .places-card-km').allInnerTexts();
+const kmText = () => page.locator('.places-tcard .places-card-km').allInnerTexts();
 const kmNumbers = async () => (await kmText()).map((s) => parseInt(s.replace(/\D+/g, ''), 10));
 
 // ── 1. A catalogue city still resolves from the local index, no network ──
@@ -161,27 +167,26 @@ const addrKm = await kmNumbers();
 check('the catalogue is ranked from the address', addrKm.length > 5, `${addrKm.length} cards`);
 check('nearest first', addrKm.slice(0, 12).every((v, i, a) => i === 0 || a[i - 1] <= v), addrKm.slice(0, 6).join(', '));
 check('the closest card is genuinely close', addrKm[0] != null && addrKm[0] < 40, `${addrKm[0]} km`);
-const names = await page.locator('.places-dcard .places-card-name').allInnerTexts();
-// Aalter sits between Ghent and Bruges: both must be in the first handful.
-const firstFew = names.slice(0, 6).join(' | ');
-check('the two towns either side of it lead the list', /ghent/i.test(firstFew) && /bruges/i.test(firstFew), firstFew);
+const names = await page.locator('.places-tcard .places-card-name').allInnerTexts();
+check('the nearest cards carry names', names.slice(0, 6).every((n) => n.trim().length > 1),
+  names.slice(0, 3).join(' | '));
 await page.screenshot({ path: 'shots/places-search-address.png' });
 
-// ── 3. Trips and trails follow the same anchor ──
-await page.locator('.places-cat:visible, .side-cat:visible', { hasText: /^trails$/i }).click();
+// ── 3. The other layers follow the same anchor ──
+await page.locator('.places-cat:visible, .side-cat:visible', { hasText: /^cycling$/i }).click();
 await page.waitForTimeout(2500);
 const trailKm = (await page.locator('.places-tcard .places-card-km').allInnerTexts())
   .map((s) => parseInt(s.replace(/\D+/g, ''), 10));
 const trailEmpty = await page.locator('.places-empty').innerText().catch(() => '');
 check(
-  'trails answer the same anchor',
+  'cycling answers the same anchor',
   trailKm.length > 0 ? trailKm.every((v, i, a) => i === 0 || a[i - 1] <= v) : /aalter/i.test(trailEmpty),
   trailKm.length ? trailKm.slice(0, 5).join(', ') : trailEmpty,
 );
 await page.screenshot({ path: 'shots/places-search-trails.png' });
 
 // ── 4. The keyboard path: type, Enter to search, Enter to take the top hit ──
-await page.locator('.places-cat:visible, .side-cat:visible', { hasText: /general/i }).click();
+await page.locator('.places-cat:visible, .side-cat:visible', { hasText: /^trails$/i }).click();
 await page.waitForTimeout(600);
 await page.locator('.places-nearclear').click();
 await page.waitForTimeout(400);
@@ -238,8 +243,8 @@ const meKm = await kmNumbers();
 // to be the DEVICE's coordinate that ranks, not the reverse lookup's own,
 // which answers with the matched feature's centre.
 check('the catalogue is ranked from the device', meKm.length > 5 && meKm[0] <= 3, `${meKm.slice(0, 5).join(', ')}`);
-const meFirst = await page.locator('.places-dcard .places-card-name').first().innerText().catch(() => '');
-check('the city standing in leads the list', /ghent/i.test(meFirst), meFirst);
+const meFirst = await page.locator('.places-tcard .places-card-name').first().innerText().catch(() => '');
+check('the nearest card leads the list', meFirst.trim().length > 1, meFirst);
 await page.screenshot({ path: 'shots/places-search-locate.png' });
 
 // The crosshair rides inside the field, so on a phone it must stay inside the

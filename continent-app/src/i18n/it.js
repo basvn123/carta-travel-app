@@ -1426,6 +1426,7 @@ export const it = {
   "trails.factAscent": "Salita",
   "trails.factDescent": "Discesa",
   "trails.factHigh": "Punto più alto",
+  "trails.factLow": "Punto più basso",
   "trails.factStops": "Tappe",
   "trails.factDifficulty": "Difficoltà",
   "trails.sLoop": "Percorso ad anello, finisci dove hai iniziato.",
@@ -1815,7 +1816,6 @@ export const it = {
   "trails.whyDense": "Molto da vedere, {n} punti di interesse vicino al tracciato",
 
   // Lakes (the published lake layer, pipeline/lakes)
-  "lake.countryHead": "{n} in {country}, i migliori per primi",
   "lake.noneNear": "Nessun lago pubblicato vicino a {city}",
   "lake.noneMatch": "Nessun lago corrisponde. Prova con il nome di un paese.",
   "lake.noneCountry": "Nessun lago pubblicato in {country}. Tutti i paesi con acque interne che valgono un viaggio sono in questa lista, quindi vuoto di solito vuol dire che non ce ne sono.",
@@ -2019,7 +2019,6 @@ export const it = {
 
   /* BEACH-KEYS-START */
   // ── Beaches: the published beach layer (pipeline/beaches) ─────────
-  'beach.countryHead': '{n} spiagge in {country}, le migliori per prime',
   'beach.noneNear': 'Nessuna spiaggia pubblicata vicino a {city}',
   'beach.noneMatch': 'Nessuna spiaggia corrisponde. Prova con un paese.',
   'beach.notPublished': 'Il livello spiagge non e ancora pubblicato.',
@@ -2180,7 +2179,6 @@ export const it = {
 
   /* MOUNTAIN-KEYS-START */
   // -- Montagne: il livello pubblicato (pipeline/mountains) -------------
-  "mtn.countryHead": "{n} montagne in {country}, le migliori per prime",
   "mtn.noneNear": "Nessuna montagna pubblicata vicino a {city}",
   "mtn.noneCountry": "In {country} non ha ancora passato la selezione nulla",
   "mtn.noneMatch": "Nessuna montagna corrisponde. Prova con il nome di un paese.",
@@ -2457,7 +2455,6 @@ export const it = {
   "trip.warnCrowded": "Ogni tappa e in una regione affollata. Vai presto o fuori dal pieno agosto.",
   "trip.galleryTitle": "Che aspetto ha",
   "trip.galleryCredit": "Fotografie da Wikimedia Commons, licenza verificata file per file.",
-  "trip.countryHead": "{n} viaggi in {country}, i migliori per primi",
   "trip.europeHead": "{n} viaggi, il meglio di ogni paese",
   "trip.credit": "Composti e verificati dal catalogo, da Wikivoyage e da OpenStreetMap. I prezzi sono stime per due persone insieme.",
   "trip.alsoDays": "anche {days} giorni",
@@ -3026,6 +3023,44 @@ export const it = {
   'cycle.openRoute': 'Apri l\'itinerario',
   'cycle.emptyCountry': 'Nessun itinerario ciclabile pubblicato qui per ora.',
   'cycle.sourceNote': 'Tracciato da OpenStreetMap, ODbL. I nostri punteggi, le tappe e i paesi di servizio sono lavoro nostro.',
+  'cycle.fLength': 'Lunghezza',
+  'cycle.lenShort': 'Meno di 10 km',
+  'cycle.lenHalf': 'Da 10 a 30 km',
+  'cycle.lenDay': 'Da 30 a 60 km',
+  'cycle.lenLong': 'Da 60 a 120 km',
+  'cycle.lenTour': '120 km e oltre',
+  'cycle.fSurface': 'Fondo',
+  'cycle.sfPaved': 'Asfaltato',
+  'cycle.sfMixed': 'Misto',
+  'cycle.sfUnpaved': 'Per lo più sterrato',
+  'cycle.fBike': 'Bici',
+  'cycle.bkTouring': 'Qualsiasi bici',
+  'cycle.bkGravel': 'Gravel',
+  'cycle.bkMtb': 'Mountain bike',
+  'cycle.fTraffic': 'Traffico',
+  'cycle.trCarFree': 'Quasi senza auto',
+  'cycle.trQuiet': 'Strade tranquille',
+  'cycle.fNetwork': 'Rete',
+  'cycle.netIcn': 'Percorso internazionale',
+  'cycle.netNcn': 'Percorso nazionale',
+  'cycle.netRcn': 'Percorso regionale',
+  'cycle.netLcn': 'Percorso locale',
+  'cycle.kindRoute': 'Percorso ciclabile',
+  'cycle.kindTour': 'Viaggio',
+  'cycle.countriesTitle': 'Per paese',
+  'cycle.noneChips': 'Nessun percorso corrisponde a questi filtri qui. Togline uno per allargare la lista.',
+  'cycle.factDays': 'Giorni',
+  'cycle.factPerDay': 'Al giorno',
+  'cycle.factPace': 'Ritmo',
+  'cycle.factBike': 'Bici',
+  'cycle.factPaved': 'Asfalto',
+  'cycle.factCarFree': 'Senza auto',
+  'cycle.factNetwork': 'Rete',
+  'cycle.paceShortRelaxed': 'Rilassato',
+  'cycle.paceShortBalanced': 'Equilibrato',
+  'cycle.paceShortStrong': 'Sostenuto',
+  'cycle.surfaceTitle': 'Fondo e traffico',
+  'cycle.stagePaved': '{pct}% asfaltato',
 
   // ---- Mountains v2 (peak_index_v2, docs/MOUNTAINS.md): the seven
   // filters, the measured view, the difficulty facet, the season from a
@@ -3201,7 +3236,6 @@ export const it = {
   'journey.typeWinterSports': 'Sport invernali e sci',
   'journey.typeNatureEscape': 'Natura e soggiorni in baita',
   'journey.typeWaterSports': 'Sport acquatici e costa',
-  'journey.homeLede': '{n} settimane di viaggio, scritte e verificate a mano. Scegli uno stile.',
   'journey.nTrips': '{n} viaggi',
   'journey.oneTrip': '1 viaggio',
   'journey.nDays': '{n} giorni',

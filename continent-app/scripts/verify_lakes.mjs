@@ -336,21 +336,27 @@ if (hasSwim) {
 }
 
 // -- The nine filter groups --
-// One model rendered twice: the group marked `toolbar` sits under the search
-// field, the whole set under the hairline in `.places-facets`. The rule the
-// programme keeps is that a chip never carries a zero, so a zero option is
-// dropped rather than greyed out, and a group of nothing but zeroes never
-// renders at all.
-const groupSel = '.places-facets .places-classes';
+// One model rendered twice: the group marked `toolbar` stands in the open
+// under the search field as a labelled row, the whole set behind the Filters
+// door. The rule the programme keeps is that a chip never carries a zero, so
+// a zero option is dropped rather than greyed out, and a group of nothing
+// but zeroes never renders at all.
+check('the swimming group stands in the open',
+  await page.locator('.places-facets .places-facet').count() >= 1);
+await page.locator('.places-filter-btn:visible').first().click();
+await page.waitForTimeout(700);
+const groupSel = '.fsheet-places .fchips';
 const nGroups = await page.locator(groupSel).count();
 check('the lake filter groups are offered', nGroups >= 5, `${nGroups} groups`);
-const chipTexts = await page.locator(`${groupSel} .places-class`).allInnerTexts();
+const chipTexts = await page.locator(`${groupSel} .fchip`).allInnerTexts();
 const clean = chipTexts.map((txt) => txt.replace(/\s+/g, ' ').trim());
 const zeroes = clean.filter((txt) => / 0$/.test(txt));
 check('no filter chip renders a zero count', zeroes.length === 0,
   zeroes.slice(0, 3).join(' | '));
 check('the filter chips carry counts', clean.some((txt) => /\d/.test(txt)),
   `${clean.length} chips`);
+await page.locator('.fsheet-close').click();
+await page.waitForTimeout(500);
 
 const cardImg = await cards.first().locator('.places-card-img').getAttribute('src').catch(() => '');
 check('cards carry a real photograph', /^https:\/\/upload\.wikimedia\.org/.test(cardImg || ''),
@@ -395,9 +401,14 @@ const firstCountry = (await page.locator('.places-bcard-where').first().innerTex
 if (firstCountry) {
   await page.locator('.places-search input').fill(firstCountry);
   await page.waitForTimeout(2200);
-  const countryHead = await page.locator('.places-beachhead').first().innerText().catch(() => '');
-  check('typing a country names it over the list', new RegExp(firstCountry, 'i').test(countryHead),
-    countryHead.replace(/\n/g, ' '));
+  // The "{n} in {country}, best first" line over the list is gone (the
+  // cards are the answer), so the scope is read off the cards themselves:
+  // every card on screen has to name the country that was typed.
+  const wheres = await page.locator('.places-bcard-where').allInnerTexts();
+  const countryHead = wheres.slice(0, 6).join(' | ');
+  check('typing a country narrows the list to it',
+    wheres.length > 0 && wheres.every((w) => new RegExp(firstCountry, 'i').test(w)),
+    countryHead.replace(/\n/g, ' ').slice(0, 100));
   check('the country list has lakes in it', await page.locator('.places-lcard').count() >= 1);
   await page.locator('.places-search input').fill('');
   await page.waitForTimeout(1200);

@@ -20079,16 +20079,35 @@ button.ai-sched-main:focus-visible {
    field above it, and it used to sit outside the card entirely. */
 .places-facets {
   display: flex;
-  flex-wrap: wrap;
-  align-items: flex-start;
-  gap: 8px 16px;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 8px;
   flex-basis: 100%;
   min-width: 0;
   padding-top: 10px;
   border-top: 1px solid var(--rule-soft);
 }
-.places-facets .places-classes { margin-top: 0; }
 .places-facets .trip-slider { flex: 1 1 100%; max-width: 420px; }
+/* One filter group is one LABELLED row: the label on the left says what the
+   chips narrow by ("Walk length", "How hard"), the chips wrap beside it.
+   Six groups of unlabelled chips in one wrap read as one long wall in which
+   "Flat", "Loop" and "Summit" were indistinguishable kinds of thing. */
+.places-facet {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 10px;
+}
+.places-facet-label {
+  flex: 0 0 auto;
+  min-width: 84px;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--ink-mute);
+}
+.places-facet .places-classes { margin-top: 0; gap: 6px; flex: 1 1 auto; }
+/* A chip with no glyph does not reserve the room for one. */
+.places-class.is-plain { padding: 5px 11px; font-size: 11.5px; }
 .places-search-icon {
   position: absolute;
   left: 12px; top: 50%;
@@ -20274,7 +20293,7 @@ button.ai-sched-main:focus-visible {
       scrim, the mono numbers stay mono. One shared overlay grammar for
       destination cards, trip cards and country flag cards. ── */
 
-.places-dcard, .places-ccard, .places-tcard {
+.places-dcard, .places-ccard {
   position: relative;
   display: block;
   width: 100%;
@@ -20301,7 +20320,6 @@ button.ai-sched-main:focus-visible {
    2.6:1 keeps 58 per cent of a 3:2 photograph, and is still a shade wider
    than the destination card under it. */
 .places-ccard { aspect-ratio: 2.6 / 1; }
-.places-tcard { aspect-ratio: 9 / 4; }
 .places-dcard:focus-visible, .places-ccard:focus-visible, .places-tcard:focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 2px;
@@ -21634,9 +21652,12 @@ button.ai-sched-main:focus-visible {
   color: var(--ink-mute);
 }
 
-/* The measured facts as one bordered instrument. A 1px grid gap over a hairline
-   ground draws the dividers, so cells stay even however many facts a route has
-   and no nth-child arithmetic decides where a border goes. */
+/* The measured facts as one bordered instrument. Each cell draws its own
+   hairline OUTLINE into the 1px grid gap, so the dividers appear only between
+   cells that exist: the old version painted the whole grid ground in the rule
+   colour, and a row the facts did not fill showed up as a grey slab. The
+   count on the grid picks the column count that closes the last row (four
+   facts, before the detail file lands, go two by two). */
 .tpage-facts {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -21644,15 +21665,19 @@ button.ai-sched-main:focus-visible {
   margin-top: 14px;
   border: 1px solid var(--rule);
   border-radius: 12px;
-  background: var(--rule-soft);
+  background: var(--bg-card);
   overflow: hidden;
 }
+.tpage-facts[data-n="2"], .tpage-facts[data-n="4"] { grid-template-columns: repeat(2, 1fr); }
 @media (min-width: 560px) {
-  .tpage-facts { grid-template-columns: repeat(auto-fit, minmax(96px, 1fr)); }
+  .tpage-facts, .tpage-facts[data-n="2"], .tpage-facts[data-n="4"] {
+    grid-template-columns: repeat(auto-fit, minmax(96px, 1fr));
+  }
 }
 .tpage-fact {
   padding: 9px 12px 10px;
   background: var(--bg-card);
+  outline: 1px solid var(--rule-soft);
 }
 .tpage-fact-val {
   display: block;
@@ -21997,6 +22022,128 @@ button.ai-sched-main:focus-visible {
   font-style: normal;
   opacity: 0.65;
   margin-left: 2px;
+}
+
+/* ── Trail and ride cards: the photograph on top, the facts in a body ──
+   The same object the itinerary card is: a bordered card, a picture that is
+   only a picture (plus the score and the distance band), and a body strip
+   where the name, the mono facts and the chips sit in the same slot on
+   every card. The old version laid all of that over the photograph, which
+   is why a card with two highlights and a card with none put the grade in
+   different corners, and why the photograph was mostly veil. */
+.places-tcard {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  border: 1px solid var(--rule-soft);
+  border-radius: 14px;
+  overflow: hidden;
+  background: var(--bg-card);
+  text-align: left;
+  transition: box-shadow .18s, border-color .18s;
+}
+.places-tcard:hover { box-shadow: var(--shadow-card); border-color: var(--rule); }
+.tcard-media {
+  position: relative;
+  display: block;
+  flex: none;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background: var(--paper-dim);
+}
+.tcard-media .places-card-img { position: absolute; inset: 0; }
+.tcard-media .places-card-shape { display: flex; }
+.tcard-score {
+  position: absolute;
+  left: 10px;
+  bottom: 10px;
+  display: inline-flex;
+}
+/* "Not scored yet" in the score's slot, on its own dark pill so it reads on
+   a photograph and on the paper ground of a drawn route alike. */
+.tcard-score.places-card-unrated {
+  padding: 3px 9px;
+  border: none;
+  background: rgba(26, 26, 26, 0.62);
+  color: #fff;
+}
+.tcard-body {
+  display: block;
+  flex: 1;
+  min-width: 0;
+  padding: 10px 12px 12px;
+}
+.places-tcard .tcard-name {
+  display: block;
+  font-family: var(--display);
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.22;
+  color: var(--ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-shadow: none;
+}
+.places-tcard .tcard-facts {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 3px 10px;
+  margin-top: 4px;
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--ink-soft);
+  font-variant-numeric: tabular-nums;
+}
+.tcard-price { margin-left: auto; font-weight: 600; color: var(--ink); }
+.tcard-price small { font-size: 10px; font-weight: 400; color: var(--ink-mute); }
+.places-tcard .tcard-meta { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 8px; }
+.tcard-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin: 0;
+  padding: 2px 8px;
+  border: 1px solid var(--rule-soft);
+  border-radius: 999px;
+  background: none;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--ink-soft);
+  white-space: nowrap;
+}
+.tcard-chip.is-kind {
+  border-color: var(--accent-bg);
+  background: var(--accent-bg);
+  color: var(--accent);
+  font-weight: 600;
+}
+.tcard-chip.is-hl { background: var(--paper-dim); border-color: var(--paper-dim); }
+.tcard-chip.places-card-loop { color: var(--ink); }
+.tcard-chip.places-card-diff { font-weight: 600; }
+.tcard-chip.est i { opacity: 0.6; }
+/* A phone card is a row rather than a stack: the photograph on the left at
+   a third of the width, the body beside it, one card per line. Two abreast
+   at 175px each cannot hold a name, three facts and three chips. */
+@media (max-width: 560px) {
+  .places-list > .places-tcard { grid-column: 1 / -1; }
+  .places-tcard { flex-direction: row; align-items: stretch; border-radius: 12px; }
+  .tcard-media { flex: 0 0 36%; aspect-ratio: auto; min-height: 108px; }
+  .tcard-body { padding: 9px 11px 10px; }
+  .places-tcard .tcard-name {
+    font-size: 14.5px;
+    white-space: normal;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
+  .places-tcard .tcard-facts { font-size: 11.5px; }
+  .tcard-score { left: 8px; bottom: 8px; }
+  /* The group label takes its own line on a phone, so the chips under it
+     start at the left edge instead of wrapping back under a label. */
+  .places-facet-label { flex-basis: 100%; min-width: 0; }
 }
 
 /* ── Trail page: what you pass, who it suits ───────────────────────────
@@ -27418,7 +27565,13 @@ button.ai-sched-main:focus-visible {
 
   /* Facet chips: the toolbar's own chips, stacked, and never on white. */
   .side-facets .places-classes { margin-top: 0; gap: 6px; }
-  .side-facets .places-classes + .places-classes { margin-top: 10px; }
+  .side-facets .places-facet { display: block; }
+  .side-facets .places-facet + .places-facet { margin-top: 12px; }
+  .side-facets .places-facet-label {
+    display: block;
+    margin: 0 0 6px;
+    font-size: 11px;
+  }
   .side-panel .places-class { background: var(--paper-dim); }
   .side-panel .places-class.on {
     background: var(--accent);
@@ -27635,7 +27788,7 @@ button.ai-sched-main:focus-visible {
 
   /* ── Cards, two abreast: bigger photographs, the facts on the scrim. ── */
   .places-list { grid-template-columns: 1fr 1fr; gap: 10px; }
-  .places-dcard, .places-ccard, .places-tcard, .places-bcard {
+  .places-dcard, .places-ccard, .places-bcard {
     aspect-ratio: 16 / 11;
     border-radius: 12px;
   }
@@ -29304,99 +29457,94 @@ button.ai-sched-main:focus-visible {
 /* ---------------------------------------------------------------------------
    The cycling layer.
 
-   Nothing here invents a look: the page shell mirrors .rgnp, the cards reuse
-   .places-tcard, and every colour is a token. Two rules from the design
-   system do most of the work in this block:
+   Nothing here invents a look: the list reuses the trail card (.places-tcard),
+   the page reuses the trail page shell (.tpage), and every colour is a token.
+   What is left in this block is what a ride has and a walk does not: the
+   tour's day count on its card, the stage list on its page, and the EuroVelo
+   family chips on the index.
 
    THE MONO RULE. var(--mono) carries measured facts only: kilometres, metres
-   of ascent, percent paved, safety scores, agreement percentages. Route names,
-   town names and every sentence stay in the body face. That is why a stage
-   line sets its distance in mono and its destination in sans on the same row.
+   of ascent, percent paved, safety scores. Route names, town names and every
+   sentence stay in the body face.
 
    LISTS GET HAIRLINES, OBJECTS GET BORDERS. Stages and family sections are
    runs of related facts, so they are divided by rules. A route card is a
    bounded thing, so it gets a border.
    --------------------------------------------------------------------------- */
 
-.cycle-page {
-  position: fixed;
-  inset: 0;
-  z-index: 300;
-  overflow-y: auto;
-  background: var(--paper);
-  padding: 18px 20px 64px;
-}
-.cycle-page > * { max-width: 860px; margin-left: auto; margin-right: auto; }
-
-.cycle-close, .cycle-back {
-  display: block;
-  border: 0;
-  background: none;
-  padding: 8px 4px;
-  font-size: 20px;
-  line-height: 1;
-  cursor: pointer;
-  color: var(--ink);
-}
-.cycle-title {
-  margin: 6px 0 2px;
-  font-size: 26px;
+/* The tour's day count, in the slot the score would take on a route card. */
+.tcard-days {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: rgba(26, 26, 26, 0.62);
+  color: #fff;
+  font-family: var(--mono);
+  font-size: 11px;
   font-weight: 600;
-  letter-spacing: -0.02em;
-  color: var(--ink);
+  font-variant-numeric: tabular-nums;
 }
-.cycle-sub { margin: 0 0 10px; font-size: 15px; color: var(--ink-soft); }
-.cycle-note { margin: 6px 0; font-size: 14px; color: var(--ink-soft); }
+/* The overnight towns on a tour card: one line, clipped. */
+.tcard-towns {
+  display: block;
+  margin-top: 7px;
+  font-size: 12px;
+  line-height: 1.4;
+  color: var(--ink-soft);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+/* A route's signed reference, beside its measurements. */
+.tcard-ref { color: var(--ink-mute); }
 
-/* Measured facts. Tabular so a column of distances does not jitter. */
-.cycle-facts {
+/* Stages: a run of facts, so hairlines rather than boxes. The day number
+   stands in a mono gutter; everything about the day sits beside it. */
+.cycle-stages { margin: 0; padding: 0; list-style: none; }
+.cycle-stage {
   display: flex;
-  flex-wrap: wrap;
-  gap: 6px 18px;
-  margin: 10px 0 4px;
+  gap: 12px;
   padding: 10px 0;
   border-top: 1px solid var(--rule-soft);
-  border-bottom: 1px solid var(--rule-soft);
-  font-family: var(--mono);
-  font-size: 13px;
-  font-variant-numeric: tabular-nums;
-  color: var(--ink);
 }
-.cycle-surface, .cycle-safety, .cycle-free, .cycle-bike,
-.cycle-pace, .cycle-season, .cycle-agree { white-space: nowrap; }
-.cycle-safety-note, .cycle-credit {
-  margin: 10px 0 0;
-  font-size: 12.5px;
-  line-height: 1.5;
-  color: var(--ink-mute);
-}
-.cycle-why { margin: 10px 0; padding-left: 18px; font-size: 15px; color: var(--ink-soft); }
-.cycle-why li { margin: 3px 0; }
-
-/* Stages: a run of facts, so hairlines rather than boxes. */
-.cycle-stages { margin: 8px 0; padding: 0; list-style: none; }
-.cycle-stage {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  gap: 2px 12px;
-  padding: 10px 0;
-  border-bottom: 1px solid var(--rule-soft);
-}
+.cycle-stage:first-child { border-top: none; padding-top: 2px; }
 .cycle-stage-day {
-  grid-row: 1 / 3;
-  align-self: start;
-  min-width: 34px;
+  flex: none;
+  width: 28px;
+  height: 28px;
+  margin: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--accent-bg);
+  color: var(--accent);
   font-family: var(--mono);
   font-size: 12px;
-  color: var(--ink-mute);
+  font-weight: 600;
 }
-.cycle-stage-line { font-size: 15px; color: var(--ink); }
-.cycle-stage-meta, .cycle-stage-sleep, .cycle-stage-bail {
+.cycle-stage-body { flex: 1; min-width: 0; }
+.cycle-stage-body p { margin: 0; }
+.cycle-stage-line { font-size: 14px; line-height: 1.45; color: var(--ink); }
+.cycle-stage-sleep {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 2px;
+  font-size: 13px;
+  color: var(--ink-soft);
+}
+.cycle-stage-meta, .cycle-stage-bail {
+  margin-top: 3px;
   font-family: var(--mono);
-  font-size: 12.5px;
+  font-size: 11.5px;
+  line-height: 1.5;
   font-variant-numeric: tabular-nums;
   color: var(--ink-mute);
 }
+.cycle-stage-bail { display: flex; align-items: center; gap: 5px; }
 
 .cycle-checks {
   margin: 12px 0 0;
@@ -29406,40 +29554,12 @@ button.ai-sched-main:focus-visible {
   font-size: 13px;
   color: var(--ink-soft);
 }
-.cycle-gpx {
-  border: 1px solid var(--rule);
-  border-radius: 6px;
-  background: none;
-  padding: 8px 14px;
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-  color: var(--ink);
-}
-.cycle-gpx:hover { background: var(--paper-dim); }
+.cycle-checks summary { cursor: pointer; font-weight: 600; color: var(--ink); }
+.cycle-checks p { margin: 8px 0 4px; line-height: 1.5; }
+.cycle-checks ul { margin: 0; padding-left: 18px; font-family: var(--mono); font-size: 12px; }
 
-.cycle-gallery { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin: 12px 0; }
-.cycle-shot { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 10px; }
-
-/* Route and tour cards in the list. */
-.cycle-tourcard-title { font-size: 15px; font-weight: 600; color: var(--ink); }
-.cycle-tourcard-meta, .cycle-tourcard-pace, .cycle-card-meta,
-.cycle-card-surface, .cycle-card-score {
-  font-family: var(--mono);
-  font-size: 12px;
-  font-variant-numeric: tabular-nums;
-  color: var(--ink-mute);
-}
-.cycle-tourcard-towns, .cycle-card-why { font-size: 13px; color: var(--ink-soft); }
-.cycle-card-name { font-size: 15px; font-weight: 600; color: var(--ink); }
-/* A listed row has no score, and says so rather than showing a gap. */
-.cycle-card-unrated, .cycle-unrated {
-  font-size: 12.5px;
-  font-style: normal;
-  color: var(--ink-mute);
-}
-
-/* EuroVelo families: chips, because each is one continental route. */
+/* EuroVelo families on the index: chips, because each is one continental
+   route rather than a country's list. */
 .cycle-famrow {
   grid-column: 1 / -1;
   display: flex;
@@ -29451,15 +29571,16 @@ button.ai-sched-main:focus-visible {
   display: flex;
   flex-direction: column;
   gap: 2px;
-  border: 1px solid var(--rule);
+  border: 1px solid var(--rule-soft);
   border-radius: 10px;
   background: var(--bg-card);
   padding: 8px 12px;
   cursor: pointer;
   text-align: left;
   color: var(--ink);
+  transition: box-shadow .18s, border-color .18s;
 }
-.cycle-famchip:hover { background: var(--paper-dim); }
+.cycle-famchip:hover { box-shadow: var(--shadow-card); border-color: var(--rule); }
 .cycle-famchip-ref { font-size: 14px; font-weight: 600; }
 .cycle-famchip-meta {
   font-family: var(--mono);
@@ -29467,36 +29588,31 @@ button.ai-sched-main:focus-visible {
   font-variant-numeric: tabular-nums;
   color: var(--ink-mute);
 }
-.cycle-famlist { margin: 6px 0; padding: 0; list-style: none; }
+.cycle-famlist { margin: 0; padding: 0; list-style: none; }
 .cycle-famitem {
   display: flex;
   align-items: center;
   gap: 10px;
   padding: 9px 0;
-  border-bottom: 1px solid var(--rule-soft);
+  border-top: 1px solid var(--rule-soft);
 }
-.cycle-famitem-name { flex: 1; font-size: 15px; color: var(--ink); }
+.cycle-famitem:first-child { border-top: none; }
+.cycle-famitem-name { flex: 1; min-width: 0; font-size: 14px; color: var(--ink); }
 .cycle-famitem-km {
   font-family: var(--mono);
-  font-size: 13px;
+  font-size: 12.5px;
   font-variant-numeric: tabular-nums;
   color: var(--ink-soft);
 }
-.cycle-famitem-un { font-size: 12.5px; color: var(--ink-mute); }
+.cycle-famitem-un { font-size: 12px; color: var(--ink-mute); }
 
-.cycle-famchip:focus-visible, .cycle-gpx:focus-visible,
-.cycle-close:focus-visible, .cycle-back:focus-visible {
+.cycle-famchip:focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 2px;
 }
 
-@media (max-width: 560px) {
-  .cycle-page { padding: 14px 16px 56px; }
-  .cycle-title { font-size: 22px; }
-  .cycle-gallery { grid-template-columns: 1fr; }
-}
 @media (prefers-reduced-motion: reduce) {
-  .cycle-famchip, .cycle-gpx { transition: none; }
+  .cycle-famchip { transition: none; }
 }
 
 /* ── Cross-layer neighbours (brief 08): "trails up this mountain" ────────
@@ -29554,14 +29670,6 @@ button.ai-sched-main:focus-visible {
    Curated trip library (journeys): the Trips tab's front door.
    Ten style cards, one style's trips as photo cards, and the journey page.
    ========================================================================== */
-
-/* The one-line introduction over the style grid. */
-.jsec-lede {
-  grid-column: 1 / -1;
-  margin: 2px 2px 0;
-  font-size: 13px;
-  color: var(--ink-soft);
-}
 
 /* A style card is the country strip's grammar with more photograph: the
    image IS the message, so it gets a taller box and a display-face name. */

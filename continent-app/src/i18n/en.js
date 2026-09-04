@@ -1894,6 +1894,7 @@ export const en = {
   "trails.factAscent": "Ascent",
   "trails.factDescent": "Descent",
   "trails.factHigh": "High point",
+  "trails.factLow": "Low point",
   "trails.factStops": "Stops",
   "trails.factDifficulty": "Difficulty",
   "trails.sLoop": "Circular route, so you finish where you started.",
@@ -2500,7 +2501,6 @@ export const en = {
   "trails.whyDense": "Dense with things to look at, {n} landmarks near the line",
 
   // Lakes (the published lake layer, pipeline/lakes)
-  "lake.countryHead": "{n} in {country}, best first",
   "lake.noneNear": "No published lake near {city}",
   "lake.noneMatch": "No lake matches that. Try a country name.",
   "lake.noneCountry": "No lakes are published in {country}. Every country with inland water worth a trip is in this list, so an empty one usually means there is none.",
@@ -2704,7 +2704,6 @@ export const en = {
 
   /* BEACH-KEYS-START */
   // ── Beaches: the published beach layer (pipeline/beaches) ─────────
-  'beach.countryHead': '{n} beaches in {country}, best first',
   'beach.noneNear': 'No published beach near {city}',
   'beach.noneMatch': 'No beach matches that. Try a country name.',
   'beach.notPublished': 'The beach layer has not shipped yet.',
@@ -2869,7 +2868,6 @@ export const en = {
   // (lib/mountainStory.js). Nothing in this block is a route description
   // and nothing in it upgrades a difficulty: what the data said is what the
   // sentence says, and the hazard block sends the reader to a local forecast.
-  'mtn.countryHead': '{n} mountains in {country}, best first',
   'mtn.noneNear': 'No published mountain near {city}',
   'mtn.noneCountry': 'Nothing has cleared the gate in {country} yet',
   'mtn.noneMatch': 'No mountain matches that. Try a country name.',
@@ -3163,7 +3161,6 @@ export const en = {
   'trip.warnCrowded': 'Every stop is in a crowded region. Go early in the day or outside high summer.',
   'trip.galleryTitle': 'What it looks like',
   'trip.galleryCredit': 'Photographs from Wikimedia Commons, licence checked per file.',
-  'trip.countryHead': '{n} trips in {country}, best first',
   'trip.europeHead': 'Showing {n} trips, the best of every country',
   'trip.credit': 'Composed and checked from the catalogue, Wikivoyage and OpenStreetMap. Prices are estimates for two people sharing.',
   'trip.alsoDays': 'also {days} days',
@@ -3733,6 +3730,44 @@ export const en = {
   'cycle.openRoute': 'Open the route',
   'cycle.emptyCountry': 'No cycle routes published here yet.',
   'cycle.sourceNote': 'Route geometry from OpenStreetMap, ODbL. Our scores, stages and service towns are our own work.',
+  'cycle.fLength': 'Ride length',
+  'cycle.lenShort': 'Under 10 km',
+  'cycle.lenHalf': '10 to 30 km',
+  'cycle.lenDay': '30 to 60 km',
+  'cycle.lenLong': '60 to 120 km',
+  'cycle.lenTour': '120 km and up',
+  'cycle.fSurface': 'Surface',
+  'cycle.sfPaved': 'Paved',
+  'cycle.sfMixed': 'Mixed',
+  'cycle.sfUnpaved': 'Mostly unpaved',
+  'cycle.fBike': 'Bike',
+  'cycle.bkTouring': 'Any bike',
+  'cycle.bkGravel': 'Gravel bike',
+  'cycle.bkMtb': 'Mountain bike',
+  'cycle.fTraffic': 'Traffic',
+  'cycle.trCarFree': 'Mostly car-free',
+  'cycle.trQuiet': 'Quiet roads',
+  'cycle.fNetwork': 'Network',
+  'cycle.netIcn': 'International route',
+  'cycle.netNcn': 'National route',
+  'cycle.netRcn': 'Regional route',
+  'cycle.netLcn': 'Local route',
+  'cycle.kindRoute': 'Cycle route',
+  'cycle.kindTour': 'Tour',
+  'cycle.countriesTitle': 'By country',
+  'cycle.noneChips': 'No rides match those filters here. Clear one to widen the list.',
+  'cycle.factDays': 'Days',
+  'cycle.factPerDay': 'Per day',
+  'cycle.factPace': 'Pace',
+  'cycle.factBike': 'Bike',
+  'cycle.factPaved': 'Paved',
+  'cycle.factCarFree': 'Car-free',
+  'cycle.factNetwork': 'Network',
+  'cycle.paceShortRelaxed': 'Relaxed',
+  'cycle.paceShortBalanced': 'Balanced',
+  'cycle.paceShortStrong': 'Strong',
+  'cycle.surfaceTitle': 'Surface and traffic',
+  'cycle.stagePaved': '{pct}% paved',
 
   // ---- Mountains v2 (peak_index_v2, docs/MOUNTAINS.md): the seven
   // filters, the measured view, the difficulty facet, the season from a
@@ -3909,7 +3944,6 @@ export const en = {
   'journey.typeWinterSports': 'Winter sports and skiing',
   'journey.typeNatureEscape': 'Nature escapes and cabin stays',
   'journey.typeWaterSports': 'Water sports and coastal trips',
-  'journey.homeLede': '{n} week-long trips, written and checked by hand. Pick a style.',
   'journey.nTrips': '{n} trips',
   'journey.oneTrip': '1 trip',
   'journey.nDays': '{n} days',

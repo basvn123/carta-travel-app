@@ -240,14 +240,14 @@ const firstCountry = (await page.locator('.places-bcard-where').first().innerTex
 if (firstCountry) {
   await page.locator('.places-search input').fill(firstCountry);
   await page.waitForTimeout(2200);
-  const countryHead = await page.locator('.places-beachhead').first().innerText().catch(() => '');
-  check('typing a country names it over the list', new RegExp(firstCountry, 'i').test(countryHead),
-    countryHead.replace(/\n/g, ' '));
-  // The header carries the count as well as the name. It only exists once a
-  // country is chosen, which is why this is asked here rather than on the
-  // opening European ranking, where there is no single country to count.
-  check('the list says how many beaches are in that country', /\d/.test(countryHead),
-    countryHead.replace(/\n/g, ' '));
+  // The "{n} in {country}, best first" line over the list is gone (the
+  // cards are the answer), so the scope is read off the cards themselves:
+  // every card on screen has to name the country that was typed.
+  const wheres = await page.locator('.places-bcard-where').allInnerTexts();
+  const countryHead = wheres.slice(0, 6).join(' | ');
+  check('typing a country narrows the list to it',
+    wheres.length > 0 && wheres.every((w) => new RegExp(firstCountry, 'i').test(w)),
+    countryHead.replace(/\n/g, ' ').slice(0, 100));
 
   // The listed tier on screen. Thousands of rows ship as listed and they live
   // in their own array in the wire, so a screen has to opt in to showing them.

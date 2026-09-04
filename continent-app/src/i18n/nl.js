@@ -1426,6 +1426,7 @@ export const nl = {
   "trails.factAscent": "Klim",
   "trails.factDescent": "Daling",
   "trails.factHigh": "Hoogste punt",
+  "trails.factLow": "Laagste punt",
   "trails.factStops": "Stops",
   "trails.factDifficulty": "Zwaarte",
   "trails.sLoop": "Rondwandeling, je eindigt waar je begon.",
@@ -1815,7 +1816,6 @@ export const nl = {
   "trails.whyDense": "Veel te zien, {n} bezienswaardigheden vlak bij de route",
 
   // Lakes (the published lake layer, pipeline/lakes)
-  "lake.countryHead": "{n} in {country}, beste eerst",
   "lake.noneNear": "Geen gepubliceerd meer bij {city}",
   "lake.noneMatch": "Geen meer komt overeen. Probeer een landnaam.",
   "lake.noneCountry": "Er zijn geen meren gepubliceerd in {country}. Elk land met binnenwater dat een reis waard is staat in deze lijst, dus leeg betekent meestal dat het er niet is.",
@@ -2019,7 +2019,6 @@ export const nl = {
 
   /* BEACH-KEYS-START */
   // ── Beaches: the published beach layer (pipeline/beaches) ─────────
-  'beach.countryHead': '{n} stranden in {country}, beste eerst',
   'beach.noneNear': 'Geen gepubliceerd strand in de buurt van {city}',
   'beach.noneMatch': 'Geen strand komt overeen. Probeer een landnaam.',
   'beach.notPublished': 'De strandlaag is nog niet gepubliceerd.',
@@ -2180,7 +2179,6 @@ export const nl = {
 
   /* MOUNTAIN-KEYS-START */
   // -- Bergen: de gepubliceerde berglaag (pipeline/mountains) -----------
-  "mtn.countryHead": "{n} bergen in {country}, beste eerst",
   "mtn.noneNear": "Geen gepubliceerde berg in de buurt van {city}",
   "mtn.noneCountry": "In {country} heeft nog niets de selectie gehaald",
   "mtn.noneMatch": "Geen berg gevonden. Probeer een landnaam.",
@@ -2457,7 +2455,6 @@ export const nl = {
   "trip.warnCrowded": "Elke stop ligt in een drukke regio. Ga vroeg op de dag of buiten de hoogzomer.",
   "trip.galleryTitle": "Hoe het eruitziet",
   "trip.galleryCredit": "Foto's van Wikimedia Commons, licentie per bestand gecontroleerd.",
-  "trip.countryHead": "{n} reizen in {country}, beste eerst",
   "trip.europeHead": "{n} reizen, het beste van elk land",
   "trip.credit": "Samengesteld en gecontroleerd uit de catalogus, Wikivoyage en OpenStreetMap. Prijzen zijn schattingen voor twee personen samen.",
   "trip.alsoDays": "ook {days} dagen",
@@ -3026,6 +3023,44 @@ export const nl = {
   'cycle.openRoute': 'Route openen',
   'cycle.emptyCountry': 'Hier zijn nog geen fietsroutes gepubliceerd.',
   'cycle.sourceNote': 'Routelijn van OpenStreetMap, ODbL. Onze scores, etappes en voorzieningenplaatsen zijn eigen werk.',
+  'cycle.fLength': 'Ritlengte',
+  'cycle.lenShort': 'Onder 10 km',
+  'cycle.lenHalf': '10 tot 30 km',
+  'cycle.lenDay': '30 tot 60 km',
+  'cycle.lenLong': '60 tot 120 km',
+  'cycle.lenTour': '120 km en meer',
+  'cycle.fSurface': 'Ondergrond',
+  'cycle.sfPaved': 'Verhard',
+  'cycle.sfMixed': 'Gemengd',
+  'cycle.sfUnpaved': 'Vooral onverhard',
+  'cycle.fBike': 'Fiets',
+  'cycle.bkTouring': 'Elke fiets',
+  'cycle.bkGravel': 'Gravelfiets',
+  'cycle.bkMtb': 'Mountainbike',
+  'cycle.fTraffic': 'Verkeer',
+  'cycle.trCarFree': 'Vooral autovrij',
+  'cycle.trQuiet': 'Rustige wegen',
+  'cycle.fNetwork': 'Netwerk',
+  'cycle.netIcn': 'Internationale route',
+  'cycle.netNcn': 'Nationale route',
+  'cycle.netRcn': 'Regionale route',
+  'cycle.netLcn': 'Lokale route',
+  'cycle.kindRoute': 'Fietsroute',
+  'cycle.kindTour': 'Reis',
+  'cycle.countriesTitle': 'Per land',
+  'cycle.noneChips': 'Geen ritten passen bij die filters. Zet er een uit om de lijst te verbreden.',
+  'cycle.factDays': 'Dagen',
+  'cycle.factPerDay': 'Per dag',
+  'cycle.factPace': 'Tempo',
+  'cycle.factBike': 'Fiets',
+  'cycle.factPaved': 'Verhard',
+  'cycle.factCarFree': 'Autovrij',
+  'cycle.factNetwork': 'Netwerk',
+  'cycle.paceShortRelaxed': 'Rustig',
+  'cycle.paceShortBalanced': 'Gemiddeld',
+  'cycle.paceShortStrong': 'Stevig',
+  'cycle.surfaceTitle': 'Ondergrond en verkeer',
+  'cycle.stagePaved': '{pct}% verhard',
 
   // ---- Mountains v2 (peak_index_v2, docs/MOUNTAINS.md): the seven
   // filters, the measured view, the difficulty facet, the season from a
@@ -3201,7 +3236,6 @@ export const nl = {
   'journey.typeWinterSports': 'Wintersport en skiën',
   'journey.typeNatureEscape': 'Natuur en verblijf in hutten',
   'journey.typeWaterSports': 'Watersport en kustreizen',
-  'journey.homeLede': '{n} weekreizen, met de hand geschreven en gecheckt. Kies een stijl.',
   'journey.nTrips': '{n} reizen',
   'journey.oneTrip': '1 reis',
   'journey.nDays': '{n} dagen',

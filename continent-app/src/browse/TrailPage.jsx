@@ -519,6 +519,51 @@ export function TrailPage({ card, onClose, onSelectDest, onOpenNeighbour }) {
   const ascent = detail?.ascent_m ?? tr.ascent_m;
   const dirUrl = start ? trailheadDirectionsUrl(start.lat, start.lon) : '';
 
+  // The facts, in the order a walker reads them.
+  //
+  // A loop climbs exactly what it descends, so on a loop the descent cell
+  // would only restate the ascent, and the elevation model's own noise made
+  // it restate it wrongly (339 m up, 321 m down, on a route that ends where
+  // it started). The low point takes that slot on a loop; on a one-way route
+  // the descent IS the number and stays.
+  const facts = [];
+  if (isNum(totalM)) {
+    facts.push({ key: 'distance', label: t('trails.factDistance'), value: `${km1(totalM)} km` });
+  }
+  if (isNum(src.duration_min)) {
+    facts.push({
+      key: 'time',
+      label: t(isCityDay ? 'trails.factDay' : 'trails.factTime'),
+      value: `${hoursText(src.duration_min)} h`,
+    });
+  }
+  if (isCityDay) {
+    if (isNum(tr.n_stops)) {
+      facts.push({ key: 'stops', label: t('trails.factStops'), value: String(tr.n_stops) });
+    }
+  } else {
+    if (isNum(ascent)) {
+      facts.push({ key: 'ascent', label: t('trails.factAscent'), value: `${Math.round(ascent)} m` });
+    }
+    if (loop && isNum(detail?.elevation?.ele_min_m)) {
+      facts.push({ key: 'low', label: t('trails.factLow'), value: `${Math.round(detail.elevation.ele_min_m)} m` });
+    } else if (!loop && isNum(detail?.descent_m)) {
+      facts.push({ key: 'descent', label: t('trails.factDescent'), value: `${Math.round(detail.descent_m)} m` });
+    }
+    if (isNum(detail?.elevation?.ele_max_m)) {
+      facts.push({ key: 'high', label: t('trails.factHigh'), value: `${Math.round(detail.elevation.ele_max_m)} m` });
+    }
+    if (diffKey) {
+      facts.push({
+        key: 'grade',
+        label: t('trails.factDifficulty'),
+        value: t(diffKey) + (derivedGrade ? ' ~' : ''),
+        title: derivedGrade ? t('trails.gradeDerived') : t('trails.gradeFrom'),
+        word: true,
+      });
+    }
+  }
+
   return (
     <div className={`tpage ${follow ? 'following' : ''}`} role="dialog" aria-modal="true" aria-label={tr.name}>
       <div className="tpage-bar">
@@ -591,31 +636,27 @@ export function TrailPage({ card, onClose, onSelectDest, onOpenNeighbour }) {
               {!isCityDay && rating && (
                 <RatingBadge rating={rating} size="xs" showGem={false} />
               )}
-              {!isCityDay && loop && (
+              {/* The shape rides beside the title, in the loop chip's slot:
+                  "Figure of eight" or "There and back" says more than "Loop"
+                  did, and it is no longer a seventh cell in the facts grid
+                  below, where it left the grid two cells short of a row. */}
+              {!isCityDay && (shapeKey || loop) && (
                 <span className="tpage-loop">
-                  <LoopIcon size={12} />
-                  {t('trails.loop')}
+                  {(loop || shapeKey === 'trails.shapeFigure8') && <LoopIcon size={12} />}
+                  {t(shapeKey || 'trails.loop')}
                 </span>
               )}
             </div>
           </div>
 
-          <div className="tpage-facts">
-            {isNum(totalM) && <Fact label={t('trails.factDistance')} value={`${km1(totalM)} km`} />}
-            {isNum(src.duration_min) && <Fact label={t(isCityDay ? 'trails.factDay' : 'trails.factTime')} value={`${hoursText(src.duration_min)} h`} />}
-            {isNum(ascent) && <Fact label={t('trails.factAscent')} value={`${Math.round(ascent)} m`} />}
-            {isNum(detail?.descent_m) && <Fact label={t('trails.factDescent')} value={`${Math.round(detail.descent_m)} m`} />}
-            {isNum(detail?.elevation?.ele_max_m) && <Fact label={t('trails.factHigh')} value={`${Math.round(detail.elevation.ele_max_m)} m`} />}
-            {isCityDay && isNum(tr.n_stops) && <Fact label={t('trails.factStops')} value={String(tr.n_stops)} />}
-            {diffKey && (
-              <Fact
-                label={t('trails.factDifficulty')}
-                value={t(diffKey) + (derivedGrade ? ' ~' : '')}
-                title={derivedGrade ? t('trails.gradeDerived') : t('trails.gradeFrom')}
-                word
-              />
-            )}
-            {shapeKey && <Fact label={t('trails.shapeLabel')} value={t(shapeKey)} word />}
+          {/* The measured facts. A hike fills two rows of three once its
+              detail file has landed (distance, time, ascent, the second
+              elevation figure, high point, difficulty); a city day fills one
+              row. The count rides on the grid so the stylesheet can pick a
+              column count that closes the last row rather than leaving a
+              blank cell. */}
+          <div className="tpage-facts" data-n={facts.length}>
+            {facts.map(({ key, ...f }) => <Fact key={key} {...f} />)}
           </div>
 
           {/* What the walk goes past and who it suits, as chips rather than

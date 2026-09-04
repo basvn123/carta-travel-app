@@ -153,3 +153,32 @@ reference population (reports/rating_reference_population.json) - the
 catalogue their thresholds were derived on. Thresholds unchanged; the
 full-catalogue values print beside them, unasserted. Measured on the
 reference: gap 0.157, score-pop -0.015, beauty-pop +0.072.
+
+## 2026-09-04: Destinations without General, one open filter row, every ride
+
+**Rail.** General left the Destinations rail: Explore already carries the
+priced catalogue, so the tab opens on Trips. The country picker on Trails
+and Cycling now offers only the countries those layers publish.
+
+**Filters.** One filter model still renders twice, but the open row under
+the toolbar holds ONE labelled group per tab (walk length, ride length,
+water quality, swimming, the way up) and the rest stand behind the Filters
+door; the desktop side panel shows every group, labelled. The count lines
+("{n} beaches in {country}, best first") and the trips lede are gone.
+
+**Cards.** Trail and ride cards are bordered objects: the photograph carries
+only the score and the distance band, the name, the mono facts and the
+chips sit in a body strip; one card per row on a phone, a photo-on-top
+card from 560px.
+
+**Trail page.** The facts grid is six cells (a loop shows its low point in
+place of a descent the elevation model could not agree with its ascent
+on); the route shape ("Figure of eight") rides beside the title.
+
+**Cycling.** A country index of flag cards, then every ride in the country
+as one list (rated first, then the 16,461 listed rows as full cards with
+"Not scored yet"), six filter groups from lib/cycleCards.js, the trail
+sorts, tours above the routes, EuroVelo families on the index. CyclePage
+is the trail page shell: real map, facts grid, why, GPX (paywall gated
+like the trail export), views, elevation, stages. Harnesses updated;
+verify_place_classes.mjs retired with its subject.

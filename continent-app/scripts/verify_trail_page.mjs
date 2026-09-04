@@ -99,8 +99,12 @@ const cardText = await page.locator('.places-tcard').first().innerText();
 check('card is facts only, no prose', !/waymarked|route in AL/i.test(cardText), cardText.replace(/\n/g, ' ').slice(0, 70));
 await page.screenshot({ path: 'shots/trail-list.png' });
 
-// Other categories keep their price chrome.
+// Other categories keep their price chrome. Trips opens on the curated
+// library's style grid, which has no sorts of its own; the priced chrome
+// lives behind its composed door.
 await page.locator(CAT, { hasText: /^trips$/i }).click();
+await page.waitForTimeout(1200);
+await page.locator('.jcomposed-card').first().click().catch(() => {});
 await page.waitForTimeout(1200);
 check('trips still show the sort chips', await page.locator(SORT).count() === 3);
 // The from-price origin picker moved out of this tab into the map tool row,
@@ -221,9 +225,12 @@ check('back closes the page', await page.locator('.tpage').count() === 0);
 // ── A city day is the same page, with its stops ───────────────────────────
 await page.locator(CAT, { hasText: /^trips$/i }).click();
 await page.waitForTimeout(1500);
-// The Trips category opens on its country index, exactly as Trails does, so a
-// card only exists once a country is chosen. Clicking straight through was
-// only ever right while the tab opened on a flat list.
+// The Trips category opens on the curated library's style grid; the composed
+// itineraries and the drawn city walks live behind its "composed" door, and
+// a card only exists once a country is chosen past that door. Clicking
+// straight through was only ever right while the tab opened on a flat list.
+await page.locator('.jcomposed-card').first().click().catch(() => {});
+await page.waitForTimeout(1200);
 await page.locator('.places-country:visible').selectOption('AL').catch(() => {});
 await page.waitForTimeout(1200);
 // A drawn city walk is the ONE DAY end of the Trips category, which is

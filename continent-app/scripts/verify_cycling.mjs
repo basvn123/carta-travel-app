@@ -428,6 +428,17 @@ if (!WIRE_ONLY) {
       const list = page.locator('[data-testid=cycle-list]');
       check(`${label}: the cycling list renders`, await list.count() > 0);
 
+      // The tab opens on a country index, the way Trails does. Pick Britain,
+      // which is the country the acceptance test below is about, through the
+      // country picker (twinned: the phone toolbar's and the desktop panel's).
+      const ccards = await page.locator('.places-ccard:visible').count();
+      check(`${label}: the tab opens on a country index`, ccards > 5, `${ccards} country cards`);
+      const picker = page.locator('.places-country:visible').first();
+      if (await picker.count()) {
+        await picker.selectOption('GB');
+        await page.waitForTimeout(2500);
+      }
+
       const tourCards = page.locator('[data-testid=cycle-tourcard]');
       const routeCards = page.locator('[data-testid=cycle-card]');
       const nTours = await tourCards.count();
@@ -435,12 +446,19 @@ if (!WIRE_ONLY) {
       check(`${label}: cards are on the page`, nTours + nRoutes > 0,
         `${nTours} tours, ${nRoutes} routes`);
 
-      // A listed card must not print a score anywhere on it.
+      // A listed card must not print a score anywhere on it. Its length
+      // ("6.4 km") and climb are measured facts and stay; they are stripped
+      // before the score regex runs so a short ride cannot fail as a score.
       const listedCards = page.locator('[data-testid=cycle-listed-card]');
       if (await listedCards.count()) {
         const text = await listedCards.first().innerText();
+        const facts = text.replace(/[+-]?\d+(?:[.,]\d+)?\s?(?:km|m)\b/g, '');
+        const scoreChips = await listedCards.first().locator('[data-testid=cycle-card-score]').count();
         check(`${label}: a listed card shows no score`,
-          !/\b\d\.\d\b/.test(text), text.replace(/\n/g, ' ').slice(0, 90));
+          !/\b\d\.\d\b/.test(facts) && scoreChips === 0,
+          text.replace(/\n/g, ' ').slice(0, 90));
+        check(`${label}: a listed card says it is not scored`,
+          /not scored/i.test(text), text.replace(/\n/g, ' ').slice(0, 60));
       }
 
       if (nTours) {

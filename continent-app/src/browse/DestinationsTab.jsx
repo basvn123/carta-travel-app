@@ -3,7 +3,6 @@ import { useIsDesktop } from '../hooks/useIsDesktop.js';
 import { RatingBadge } from '../components/RatingBadge.jsx';
 import { CountryFlag } from '../components/CountryFlag.jsx';
 import { count, eur } from '../lib/format.js';
-import { fareProv, estPrefix } from '../components/FareProvenance.jsx';
 import { HeroImage } from '../components/HeroImage.jsx';
 import { PlacesFilterSheet } from './PlacesFilterSheet.jsx';
 import { trailPath } from '../lib/trailShape.js';
@@ -30,9 +29,11 @@ import {
   loadTripIndex, loadTrips, loadTopTrips, rankTrips,
 } from '../lib/trips.js';
 import { loadCyclingIndex, loadCycling } from '../lib/cycling.js';
+import { countryPhrase, paceLine } from '../lib/cycleStory.js';
 import {
-  countryPhrase, listedLine, paceLine, surfaceLine, whyLines,
-} from '../lib/cycleStory.js';
+  CYCLE_FACETS, applyCycleFacets, cycleFacetCounts, cycleRating, isListedRide,
+  netLabelKey, bikeLabelKey, rideCentre,
+} from '../lib/cycleCards.js';
 import {
   tripHeadline, shapeLabel, transportLabel, seasonLabel, tripTags, cardThumb,
 } from '../lib/tripStory.js';
@@ -53,10 +54,10 @@ import { useI18n } from '../i18n/index.jsx';
 import { geocodeAddress, reverseGeocode } from '../lib/geocode.js';
 import { bandChip, bandBreak, scopeForRows } from '../lib/regions.js';
 import {
-  SearchIcon, ChevronRightIcon, RouteIcon, SkylineIcon, SuitcaseIcon, BootIcon,
+  SearchIcon, ChevronRightIcon, RouteIcon, SuitcaseIcon, BootIcon,
   BeachIcon, MountainIcon, MapPinIcon, CrosshairIcon,
-  CityIcon, TownIcon, VillageIcon, AreaIcon, LoopIcon, LakeIcon, FilterIcon,
-  BikeIcon, ArrowLeftIcon,
+  LoopIcon, LakeIcon, FilterIcon,
+  BikeIcon, ArrowLeftIcon, ClockIcon,
 } from '../components/Icons.jsx';
 import { LifestyleButton } from './LifestyleButton.jsx';
 import { JourneysSection } from './JourneysSection.jsx';
@@ -66,9 +67,9 @@ import { JourneysSection } from './JourneysSection.jsx';
  * browsable section of its own, reachable from the bottom bar (mobile) and
  * the header tabs (desktop).
  *
- * Six categories share one search, one country filter and one sort row:
- *   General    every priced place as a photo card, and a country index of
- *              flag cards when nothing is filtered yet
+ * Six categories share one search, one country filter and one sort row
+ * (the priced catalogue itself lives on Explore, so there is no General
+ * category here any more):
  *   Trips      composed city days from the content lab
  *   Trails     drawn hikes from the content lab
  *   Beaches    the published beach layer (pipeline/beaches)
@@ -293,7 +294,6 @@ const COVER_RATING_GIVE_BAD = 1.2;
 const fitsBox = (ratio, box) => (ratio > box ? box / ratio : ratio / box);
 
 const CATS = [
-  { key: 'general', Icon: SkylineIcon, labelKey: 'places.catGeneral' },
   { key: 'trips', Icon: SuitcaseIcon, labelKey: 'places.catTrips' },
   { key: 'trails', Icon: BootIcon, labelKey: 'places.catTrails' },
   { key: 'beaches', Icon: BeachIcon, labelKey: 'places.catBeaches' },
@@ -302,23 +302,6 @@ const CATS = [
   { key: 'cycling', Icon: BikeIcon, labelKey: 'places.catCycling' },
 ];
 
-/**
- * Place classes, in rising order of size (dest.place.class, written by
- * place_layer.py). The rail exists to answer the question the rating cannot:
- * a traveller looking at 1,570 priced places needs to know which ones are a
- * base and which ones are an afternoon, and "Bruges 8.8" does not say.
- *
- * `metro` is folded into `city` here. Five sizes is a taxonomy; four chips is
- * a decision, and nobody browsing has ever needed to separate a 300,000-person
- * city from a 90,000-person one before choosing where to sleep.
- */
-const CLASSES = [
-  { key: 'city', Icon: CityIcon, labelKey: 'places.classCity', match: ['city', 'metro'] },
-  { key: 'town', Icon: TownIcon, labelKey: 'places.classTown', match: ['town'] },
-  { key: 'village', Icon: VillageIcon, labelKey: 'places.classVillage', match: ['village'] },
-  { key: 'area', Icon: AreaIcon, labelKey: 'places.classArea', match: ['area'] },
-];
-const CLASS_OF = new Map(CLASSES.flatMap((c) => c.match.map((m) => [m, c.key])));
 
 /**
  * Chip filters for the three published layers, and the one shape all of them
@@ -398,57 +381,6 @@ const TRAIL_SORTS = [
   { key: 'az', labelKey: 'places.sortAZ', defaultDir: 1 },
 ];
 
-/** One catalogue place as a photo card: hero image, name, rating, from-price.
- *  The size glyph rides in the corner so the distinction the rail filters on
- *  is still readable once you have stopped filtering and started scrolling. */
-function DestCard({ p, km, priceMode, onSelect, t }) {
-  const prov = fareProv(p.prov || p);
-  const cls = CLASSES.find((c) => c.key === CLASS_OF.get(p.place?.class));
-  return (
-    <button className="places-dcard" onClick={() => onSelect(p.id)}>
-      {/* One column on a phone, two above 640px, ~360 css px wide and ~150
-          tall. Asking for the wire's 960px rendering on every card downloaded
-          several times the pixels it drew, which is what the srcset is for.
-          lib/heroImage.js owns the width list, because Wikimedia answers 400
-          for anything off it. */}
-      <HeroImage
-        url={p.image}
-        city={p.city}
-        iso2={p.iso2}
-        className="places-card-img"
-        maxWidth={960}
-        sizes="(max-width: 639px) 96vw, (max-width: 1180px) 48vw, 560px"
-        ratio={[12, 5]}
-      />
-      <span className="places-card-scrim" aria-hidden="true" />
-      {km != null && (
-        <span className="places-card-km">{bandChip(km, t)}</span>
-      )}
-      {cls && (
-        <span className="places-card-class" role="img" aria-label={t(cls.labelKey)}>
-          <cls.Icon size={14} />
-        </span>
-      )}
-      <span className="places-card-overlay">
-        <span className="places-card-main">
-          <span className="places-card-name">{p.city}</span>
-          <span className="places-card-sub">
-            <span>{p.country}</span>
-            <RatingBadge rating={p.rating} size="xs" showGem={false} />
-          </span>
-        </span>
-        <span className="places-card-right">
-          <span className="places-card-price">
-            {`${estPrefix(prov)}${eur(priceMode === 'pp' ? p.pp : p.total)}`}
-            {priceMode === 'pp' && <small>/pp</small>}
-          </span>
-          <ChevronRightIcon size={15} className="places-card-chev" />
-        </span>
-      </span>
-    </button>
-  );
-}
-
 /**
  * One published trip as a photo card: the name, the measured facts, the kind.
  *
@@ -526,72 +458,217 @@ function TripCard({ card, km, onOpen, t }) {
   // "12.4 km, moderate" is a specification.
   const highlights = isCityDay ? [] : tripHighlights(tr).slice(0, 2);
   const listed = isListed(tr);
+  const rating = isCityDay ? assoc.dest?.rating : trailRating(tr);
+  // The photograph carries the picture and nothing else but the score and
+  // the distance band. Every fact and every chip sits in a body strip under
+  // it, where it is readable and where the same slot holds the same thing on
+  // every card: the old overlay stacked kind, loop, highlights, grade and
+  // rating over the photograph, and a card with two highlights and a card
+  // with none put the grade in different places.
   return (
     <button className="places-tcard" onClick={() => onOpen(card)}>
-      <TrailPicture tr={tr} assoc={assoc} />
-      <span className="places-card-scrim" aria-hidden="true" />
-      {km != null && (
-        <span className="places-card-km">{bandChip(km, t)}</span>
-      )}
-      <span className="places-card-overlay">
-        <span className="places-card-main">
-          <span className="places-card-name">{tr.name}</span>
-          <span className="places-card-facts">
-            {tr.distance_m != null && (
-              <span>{(tr.distance_m / 1000).toFixed(1).replace(/\.0$/, '')} km</span>
-            )}
-            {tr.duration_min != null && <span>{hoursText(tr.duration_min)} h</span>}
-            {isCityDay && tr.n_stops != null && <span>{t('trails.stops', { n: tr.n_stops })}</span>}
-            {!isCityDay && tr.ascent_m != null && <span>+{Math.round(tr.ascent_m)} m</span>}
+      <span className="tcard-media">
+        <TrailPicture tr={tr} assoc={assoc} />
+        {km != null && (
+          <span className="places-card-km">{bandChip(km, t)}</span>
+        )}
+        {/* The walk's own rating, not the nearest town's. Scored within its
+            country from open signals only (pipeline/trails/rate.py). A
+            listed row is verified to exist and deliberately not scored, and
+            says so in the same slot rather than showing a number it never
+            earned. */}
+        {rating && (
+          <span className="tcard-score">
+            <RatingBadge rating={rating} size="xs" showGem={false} />
           </span>
-          <span className="places-card-kinds">
-            <span className={`places-card-kind ${isCityDay ? 'city' : ''}`}>{t(kindKey)}</span>
-            {/* Loop is the shape people filter for, so it is said on the card
-                and not only behind the chip that found it. */}
-            {!isCityDay && tr.is_loop && (
-              <span className="places-card-kind places-card-loop">
-                <LoopIcon size={11} />
-                {t('trails.loop')}
-              </span>
-            )}
-            {highlights.map((code) => (
-              <span key={code} className="places-card-kind places-card-hl">
-                {t(HIGHLIGHT_KEY[code] || 'trails.hlSummit')}
-              </span>
-            ))}
-          </span>
+        )}
+        {listed && (
+          <span className="tcard-score places-card-unrated">{t('trails.notScored')}</span>
+        )}
+      </span>
+      <span className="tcard-body">
+        <span className="tcard-name places-card-name">{tr.name}</span>
+        <span className="tcard-facts places-card-facts">
+          {tr.distance_m != null && (
+            <span>{(tr.distance_m / 1000).toFixed(1).replace(/\.0$/, '')} km</span>
+          )}
+          {tr.duration_min != null && <span>{hoursText(tr.duration_min)} h</span>}
+          {isCityDay && tr.n_stops != null && <span>{t('trails.stops', { n: tr.n_stops })}</span>}
+          {!isCityDay && tr.ascent_m != null && <span>+{Math.round(tr.ascent_m)} m</span>}
+          {isCityDay && price && (
+            <span className="tcard-price">
+              {eur(price.pp)}
+              <small>/pp</small>
+            </span>
+          )}
         </span>
-        <span className="places-card-right">
-          {isCityDay && assoc.dest?.rating && (
-            <RatingBadge rating={assoc.dest.rating} size="xs" showGem={false} />
-          )}
-          {/* The walk's own rating, not the nearest town's. Scored within its
-              country from open signals only (pipeline/trails/rate.py). */}
-          {!isCityDay && trailRating(tr) && (
-            <RatingBadge rating={trailRating(tr)} size="xs" showGem={false} />
-          )}
-          {/* A listed row is verified to exist and deliberately not scored.
-              It says so, in place of the number, rather than showing a low
-              one it never earned. */}
-          {listed && (
-            <span className="places-card-unrated">{t('trails.notScored')}</span>
+        <span className="tcard-meta places-card-kinds">
+          <span className={`tcard-chip is-kind ${isCityDay ? 'city' : ''}`}>{t(kindKey)}</span>
+          {/* Loop is the shape people filter for, so it is said on the card
+              and not only behind the chip that found it. */}
+          {!isCityDay && tr.is_loop && (
+            <span className="tcard-chip places-card-loop">
+              <LoopIcon size={11} />
+              {t('trails.loop')}
+            </span>
           )}
           {!isCityDay && diffKey && (
-            <span className={`places-card-diff${gradeIsDerived(tr) ? ' est' : ''}`}
+            <span
+              className={`tcard-chip places-card-diff${gradeIsDerived(tr) ? ' est' : ''}`}
               title={gradeIsDerived(tr) ? t('trails.gradeDerived') : undefined}
             >
               {t(diffKey)}
               {gradeIsDerived(tr) ? <i aria-hidden="true">~</i> : null}
             </span>
           )}
-          {isCityDay && price && (
-            <span className="places-card-price">
-              {eur(price.pp)}
-              <small>/pp</small>
+          {highlights.map((code) => (
+            <span key={code} className="tcard-chip is-hl places-card-hl">
+              {t(HIGHLIGHT_KEY[code] || 'trails.hlSummit')}
+            </span>
+          ))}
+        </span>
+      </span>
+    </button>
+  );
+}
+
+/**
+ * The picture on a ride's card: its own photograph where the photo pass found
+ * one (every rated row, a fifth of the listed rows in Britain), otherwise the
+ * route drawn as itself from the geometry the card already carries. The
+ * drawing is the honest picture: a grey hole would say "broken" and a
+ * borrowed town would say something untrue about the road.
+ */
+function RidePicture({ row }) {
+  const shape = useMemo(
+    () => (row.img ? null : trailPath(row.geometry)),
+    [row.img, row.geometry],
+  );
+  if (row.img) {
+    return <img className="places-card-img" src={row.img} alt="" loading="lazy" />;
+  }
+  if (shape) {
+    return (
+      <span className="places-card-img places-card-shape" aria-hidden="true">
+        <svg viewBox={shape.viewBox} preserveAspectRatio="xMidYMid meet">
+          <path d={shape.d} />
+        </svg>
+      </span>
+    );
+  }
+  return (
+    <span className="places-card-img places-card-noimg" aria-hidden="true">
+      <BikeIcon size={26} />
+    </span>
+  );
+}
+
+/**
+ * One signed cycle route as a card, in the trail card's grammar: the picture
+ * on top with the score in the corner, the measured facts in mono under the
+ * name, and the chips that say what kind of riding it is. Rated and listed
+ * rows are the same card; a listed row wears "Not scored yet" in the score's
+ * slot rather than a number it never earned, and everything else about it
+ * (length, climb, network, bike) is measured the same way.
+ */
+function CycleCard({ row, km, onOpen, t }) {
+  const rating = cycleRating(row);
+  const listed = isListedRide(row);
+  const netKey = netLabelKey(row.net);
+  const bikeKey = bikeLabelKey(row.bike);
+  return (
+    <button
+      className="places-tcard"
+      data-testid={listed ? 'cycle-listed-card' : 'cycle-card'}
+      onClick={() => onOpen(row)}
+    >
+      <span className="tcard-media">
+        <RidePicture row={row} />
+        {km != null && (
+          <span className="places-card-km">{bandChip(km, t)}</span>
+        )}
+        {rating && (
+          <span className="tcard-score" data-testid="cycle-card-score">
+            <RatingBadge rating={rating} size="xs" showGem={false} />
+          </span>
+        )}
+        {listed && (
+          <span className="tcard-score places-card-unrated">{t('trails.notScored')}</span>
+        )}
+      </span>
+      <span className="tcard-body">
+        <span className="tcard-name places-card-name">{row.name}</span>
+        <span className="tcard-facts places-card-facts">
+          {row.km != null && <span>{row.km} km</span>}
+          {row.asc != null && <span>+{Math.round(row.asc)} m</span>}
+          {row.ref && <span className="tcard-ref">{row.ref}</span>}
+        </span>
+        <span className="tcard-meta places-card-kinds">
+          <span className="tcard-chip is-kind">{t(netKey || 'cycle.kindRoute')}</span>
+          {row.loop && (
+            <span className="tcard-chip places-card-loop">
+              <LoopIcon size={11} />
+              {t('trails.loop')}
             </span>
           )}
-          <ChevronRightIcon size={15} className="places-card-chev" />
+          {bikeKey && <span className="tcard-chip is-hl">{t(bikeKey)}</span>}
         </span>
+      </span>
+    </button>
+  );
+}
+
+/**
+ * One composed multi-day tour as a card. The same card as a route with the
+ * day count where the score would be: a tour is not ranked against the
+ * routes it is built over, it is the answer to a different question ("plan
+ * me a week"), and its own page carries the day-by-day.
+ */
+function TourCard({ tour, onOpen, t }) {
+  const shape = useMemo(() => trailPath(tour.geometry), [tour.geometry]);
+  const towns = (tour.towns || []).filter(Boolean);
+  return (
+    <button
+      className="places-tcard"
+      data-testid="cycle-tourcard"
+      onClick={() => onOpen(tour)}
+    >
+      <span className="tcard-media">
+        {shape ? (
+          <span className="places-card-img places-card-shape" aria-hidden="true">
+            <svg viewBox={shape.viewBox} preserveAspectRatio="xMidYMid meet">
+              <path d={shape.d} />
+            </svg>
+          </span>
+        ) : (
+          <span className="places-card-img places-card-noimg" aria-hidden="true">
+            <BikeIcon size={26} />
+          </span>
+        )}
+        <span className="tcard-score tcard-days">
+          <ClockIcon size={11} />
+          {t('cycle.days', { n: tour.days })}
+        </span>
+      </span>
+      <span className="tcard-body">
+        <span className="tcard-name places-card-name">{tour.title}</span>
+        <span className="tcard-facts places-card-facts">
+          <span>{Math.round(tour.km)} km</span>
+          {tour.asc != null && <span>+{Math.round(tour.asc)} m</span>}
+          {tour.days > 0 && <span>{t('cycle.perDay', { km: Math.round(tour.km / tour.days) })}</span>}
+        </span>
+        <span className="tcard-meta places-card-kinds">
+          <span className="tcard-chip is-kind">{t('cycle.kindTour')}</span>
+          {paceLine(tour.pace, t) && (
+            <span className="tcard-chip">{paceLine(tour.pace, t).split(',')[0]}</span>
+          )}
+          {bikeLabelKey(tour.bike) && (
+            <span className="tcard-chip is-hl">{t(bikeLabelKey(tour.bike))}</span>
+          )}
+        </span>
+        {towns.length > 0 && (
+          <span className="tcard-towns">{towns.join(' · ')}</span>
+        )}
       </span>
     </button>
   );
@@ -901,7 +978,7 @@ const ItinCard = React.memo(function ItinCard({ tr, km, onOpen, t }) {
 });
 
 export function DestinationsTab({
-  data, pricedAll, priceMode = 'total', availableCountries = [], onSelectDest,
+  data, pricedAll, availableCountries = [], onSelectDest,
   stayTier = 'home', lifestyle, onOpenLifestyle,
   openTrail = null, onOpenTrailConsumed,
   openBeach = null, onOpenBeachConsumed,
@@ -913,8 +990,7 @@ export function DestinationsTab({
   const scrollRef = useRef(null);
   const sentinelRef = useRef(null);
 
-  const [cat, setCat] = useState('general');         // CATS key
-  const [classes, setClasses] = useState([]);        // CLASSES keys, [] = all sizes
+  const [cat, setCat] = useState('trips');           // CATS key
   const [query, setQuery] = useState('');
   const [debouncedQuery, setDebouncedQuery] = useState('');
   const [country, setCountry] = useState('');        // ISO2 or '' for all
@@ -1028,6 +1104,15 @@ export function DestinationsTab({
   const [countryCycling, setCountryCycling] = useState({});   // cc -> bundle
   const [cyclingLoading, setCyclingLoading] = useState(false);
   const [pageCycle, setPageCycle] = useState(null);
+  // The ride chips, selected keys into CYCLE_FACETS, the same shape the
+  // beach, lake and mountain layers keep.
+  const [cycFacets, setCycFacets] = useState({});
+  // Country cards on the cycling index: the cover is the country's best-rated
+  // ride's own photograph, fetched per country the first time its card is
+  // drawn, because a wall of catalogue town heroes over a cycling index says
+  // nothing about the riding.
+  const [cycleCovers, setCycleCovers] = useState({});
+  const cycleCoverAsked = useRef(new Set());
 
   // The chip filters each published layer carries, as selected keys into
   // MOUNTAIN_FACETS / LAKE_FACETS / BEACH_FACETS. Held per layer rather than in
@@ -1141,17 +1226,6 @@ export function DestinationsTab({
       });
     }
     return out;
-  }, [data]);
-
-  // Where each destination actually is, city centre first. Some rows are
-  // anchored on their airport, and measuring "how far is this from my street"
-  // against a runway 40 km out of town orders the nearest list wrong.
-  const centreById = useMemo(() => {
-    const m = new Map();
-    for (const [id, d] of Object.entries(data.destinations)) {
-      m.set(id, [d.city_lat ?? d.lat, d.city_lon ?? d.lon]);
-    }
-    return m;
   }, [data]);
 
   const priceById = useMemo(() => {
@@ -1339,77 +1413,6 @@ export function DestinationsTab({
       { enableHighAccuracy: false, timeout: 12000, maximumAge: 5 * 60 * 1000 },
     );
   };
-
-  // ── General: the priced catalogue ─────────────────────────────────────
-
-  const destRows = useMemo(() => {
-    if (cat !== 'general') return [];
-    const wantClass = classes.length ? new Set(classes) : null;
-    const filtered = pricedAll.filter((p) => {
-      if (country && p.iso2 !== country) return false;
-      if (q && !(norm(p.city).includes(q) || norm(p.country).includes(q))) return false;
-      // A destination with no place block predates the class layer, so it is
-      // shown under every size rather than hidden by a filter it never saw.
-      if (wantClass && p.place?.class && !wantClass.has(CLASS_OF.get(p.place.class))) return false;
-      return true;
-    });
-    if (nearPlace) {
-      return filtered
-        .map((p) => {
-          const c = centreById.get(p.id);
-          return { p, km: haversineKm(nearPlace.lat, nearPlace.lon, c?.[0] ?? p.lat, c?.[1] ?? p.lon) };
-        })
-        .sort((a, b) => a.km - b.km)
-        .slice(0, NEAR_MAX_ROWS);
-    }
-    const rows = filtered.map((p) => ({ p, km: null }));
-    const dir = sort.dir;
-    if (sort.key === 'rating') {
-      rows.sort((a, b) => dir * ((a.p.rating?.score ?? -1) - (b.p.rating?.score ?? -1)));
-    } else if (sort.key === 'price') {
-      const v = (p) => (priceMode === 'pp' ? p.pp : p.total) ?? Infinity;
-      rows.sort((a, b) => dir * (v(a.p) - v(b.p)));
-    } else {
-      rows.sort((a, b) => dir * a.p.city.localeCompare(b.p.city));
-    }
-    return rows;
-  }, [cat, pricedAll, country, q, nearPlace, centreById, sort, priceMode, classes]);
-
-  // How many places each size holds under the country/search filter, so a chip
-  // can say "42" and can grey itself out rather than leading to an empty list.
-  const classCounts = useMemo(() => {
-    if (cat !== 'general') return null;
-    const counts = new Map(CLASSES.map((c) => [c.key, 0]));
-    for (const p of pricedAll) {
-      if (country && p.iso2 !== country) continue;
-      if (q && !(norm(p.city).includes(q) || norm(p.country).includes(q))) continue;
-      const key = CLASS_OF.get(p.place?.class);
-      if (key) counts.set(key, counts.get(key) + 1);
-    }
-    // Inert until the place layer is in the wire: a catalogue with no classes
-    // yet would otherwise show a rail of four disabled zeros. Same rule the
-    // reach filter follows (see components/ReachFilter.jsx).
-    let any = false;
-    for (const n of counts.values()) if (n > 0) any = true;
-    return any ? counts : null;
-  }, [cat, pricedAll, country, q]);
-
-  // The country index for General: every priced country as a flag card.
-  const generalCountries = useMemo(() => {
-    if (cat !== 'general') return [];
-    const agg = new Map();
-    for (const p of pricedAll) {
-      const a = agg.get(p.iso2) || { n: 0, min: Infinity };
-      a.n += 1;
-      const v = priceMode === 'pp' ? p.pp : p.total;
-      if (v != null && v < a.min) a.min = v;
-      agg.set(p.iso2, a);
-    }
-    return availableCountries
-      .map(([cc, name]) => ({ cc, name, ...agg.get(cc) }))
-      .filter((c) => c.n > 0)
-      .sort((a, b) => a.name.localeCompare(b.name));
-  }, [cat, pricedAll, availableCountries, priceMode]);
 
   // ── Trip categories: the published wire, joined to the catalogue ──────
 
@@ -1992,10 +1995,12 @@ export function DestinationsTab({
     return null;
   }, [isCycleCat, q, cycleCountries, countryName]);
 
+  // No fallback to the first country in the index: the tab used to open on
+  // Andorra's one route because Andorra sorts first. With nothing chosen it
+  // opens on the country index, the way Trails does.
   const wantCycleCountry = (country && cycleCountries.has(country) ? country : null)
     || queryCycleCountry
-    || (nearPlace && cycleCountries.has(nearPlace.iso2) ? nearPlace.iso2 : null)
-    || (cycleIndex?.countries?.[0]?.country ?? null);
+    || (nearPlace && cycleCountries.has(nearPlace.iso2) ? nearPlace.iso2 : null);
 
   useEffect(() => {
     if (!isCycleCat || cycleIndex) return undefined;
@@ -2021,18 +2026,81 @@ export function DestinationsTab({
   const cycleBundle = isCycleCat && wantCycleCountry
     ? countryCycling[wantCycleCountry] : null;
 
-  const cycleRows = useMemo(() => {
+  // Every ride in the country, rated and listed, as ONE list of cards: the
+  // rated rows first in score order, then the listed rows, which carry no
+  // score key and so sort to the end of a rating sort by themselves (the
+  // same rule the trails list keeps). A length or A-Z sort interleaves the
+  // two, and the card says which is which. This is what "publish every
+  // ride" means on screen: the 436 listed Belgian routes are cards with a
+  // length, a climb, a surface and a page, not a footnote under the 19
+  // rated ones.
+  const cycleAll = useMemo(() => {
     if (!isCycleCat || !cycleBundle) return null;
-    const match = (r) => !q || queryCycleCountry
-      || norm(r.name || '').includes(q) || norm(r.ref || '').includes(q);
-    return {
-      tours: (cycleBundle.tours || []).filter(
-        (tr) => !q || queryCycleCountry || norm(tr.title || '').includes(q),
-      ),
-      routes: (cycleBundle.routes || []).filter(match),
-      listed: (cycleBundle.listed || []).filter(match),
-    };
+    return [...(cycleBundle.routes || []), ...(cycleBundle.listed || [])];
+  }, [isCycleCat, cycleBundle]);
+
+  const cycleRows = useMemo(() => {
+    if (!cycleAll) return null;
+    let rows = applyCycleFacets(cycleAll, cycFacets);
+    if (q && !queryCycleCountry) {
+      rows = rows.filter((r) => norm(r.name || '').includes(q)
+        || norm(r.ref || '').includes(q));
+    }
+    if (nearPlace) {
+      return rows
+        .map((r) => {
+          const c = rideCentre(r);
+          return c ? { r, km: haversineKm(nearPlace.lat, nearPlace.lon, c.lat, c.lon) } : null;
+        })
+        .filter(Boolean)
+        .sort((a, b) => a.km - b.km)
+        .slice(0, NEAR_MAX_ROWS);
+    }
+    const out = rows.map((r) => ({ r, km: null }));
+    const d = trailSort.dir;
+    if (trailSort.key === 'distance') {
+      out.sort((a, b) => d * ((a.r.km ?? Infinity) - (b.r.km ?? Infinity)));
+    } else if (trailSort.key === 'az') {
+      out.sort((a, b) => d * (a.r.name || '').localeCompare(b.r.name || ''));
+    } else {
+      out.sort((a, b) => d * ((a.r.score ?? -1) - (b.r.score ?? -1)));
+    }
+    return out;
+  }, [cycleAll, cycFacets, q, queryCycleCountry, nearPlace, trailSort]);
+
+  // The composed tours, above the rides: they answer "plan me a week" and are
+  // not ranked against the routes they ride over.
+  const cycleTours = useMemo(() => {
+    if (!isCycleCat || !cycleBundle) return [];
+    return (cycleBundle.tours || []).filter(
+      (tr) => !q || queryCycleCountry || norm(tr.title || '').includes(q),
+    );
   }, [isCycleCat, cycleBundle, q, queryCycleCountry]);
+
+  const cycCounts = useMemo(
+    () => cycleFacetCounts(cycleAll, cycFacets),
+    [cycleAll, cycFacets],
+  );
+
+  // The country index for cycling: every country with anything published,
+  // rated or listed, as a flag card, the way the trails index works.
+  const cycleCountryCards = useMemo(() => {
+    if (!isCycleCat || !cycleIndex) return [];
+    return cycleIndex.countries
+      .map((c) => ({ cc: c.country, name: countryName(c.country),
+        n: (c.n_routes || 0) + (c.n_listed || 0) }))
+      .filter((c) => c.n > 0)
+      .sort((a, b) => a.name.localeCompare(b.name));
+  }, [isCycleCat, cycleIndex, countryName]);
+
+  const askCycleCover = (cc) => {
+    if (!cc || cycleCoverAsked.current.has(cc)) return;
+    cycleCoverAsked.current.add(cc);
+    loadCycling(cc).then((bundle) => {
+      const hit = [...(bundle?.routes || []), ...(bundle?.listed || [])].find((r) => r.img);
+      if (hit) setCycleCovers((cur) => ({ ...cur, [cc]: hit.img }));
+    }).catch(() => { /* a country with no photograph keeps the catalogue cover */ });
+  };
 
   const absentMountainCountry = useMemo(() => {
     if (!isMountainCat || !q || q.length < 2 || !mountainIndex) return null;
@@ -2057,16 +2125,16 @@ export function DestinationsTab({
   }, [openMountain, onOpenMountainConsumed]);
 
   // New filter result: collapse the window and go back to the top.
-  const rowCount = cat === 'general' ? destRows.length
-    : isBeachCat ? (beachRows?.length ?? 0)
-      : isLakeCat ? (lakeRows?.length ?? 0)
-        : isMountainCat ? (mountainRows?.length ?? 0)
+  const rowCount = isBeachCat ? (beachRows?.length ?? 0)
+    : isLakeCat ? (lakeRows?.length ?? 0)
+      : isMountainCat ? (mountainRows?.length ?? 0)
+        : isCycleCat ? (cycleRows?.length ?? 0)
           : (tripRows?.length ?? 0);
   useEffect(() => {
     setVisible(PAGE);
     scrollRef.current?.scrollTo?.(0, 0);
-  }, [cat, country, q, nearPlace, sort, classes, trailSort, bands, loopsOnly,
-    mtnFacets, lakeFacets, beachFacets, journeyView]);
+  }, [cat, country, q, nearPlace, sort, trailSort, bands, loopsOnly,
+    mtnFacets, lakeFacets, beachFacets, cycFacets, journeyView]);
 
   // Walk-shape filters belong to the Trails list and to nothing else. Leaving
   // them set while the traveller browses Trips would silently hide rows on a
@@ -2076,6 +2144,7 @@ export function DestinationsTab({
     if (cat !== 'mountains') setMtnFacets({});
     if (cat !== 'lakes') setLakeFacets({});
     if (cat !== 'beaches') setBeachFacets({});
+    if (cat !== 'cycling') setCycFacets({});
   }, [cat]);
 
   useEffect(() => {
@@ -2092,7 +2161,6 @@ export function DestinationsTab({
     if (next === cat) return;
     setCat(next);
     setQuery('');
-    setClasses([]);
     setJourneyView(null);
     // The country deliberately survives the switch: "I am looking at Albania,
     // now show me its trails" is the whole point of a shared filter. It is
@@ -2103,12 +2171,6 @@ export function DestinationsTab({
 
   const toggleChip = (setter) => (key) => setter(
     (cur) => (cur.includes(key) ? cur.filter((k) => k !== key) : [...cur, key]));
-
-  const toggleClass = (key) => {
-    setClasses((cur) => (cur.includes(key)
-      ? cur.filter((k) => k !== key)
-      : [...cur, key]));
-  };
 
   const toggleSort = (key) => {
     setSort((s) => (s.key === key
@@ -2149,8 +2211,10 @@ export function DestinationsTab({
   // priced, neither is slept in, and both are ranked by their own index.
   // The curated trip library drops it too: its budgets are editorial ranges
   // for the whole week, not fares priced from the traveller's airport.
+  // Cycling drops it too: a signed route is free and is ranked by its own
+  // index, and a "priced from" origin over it answered nothing.
   const showPriceChrome = cat !== 'trails' && !isBeachCat && !isLakeCat
-    && !isMountainCat && !isJourneyBrowse;
+    && !isMountainCat && !isCycleCat && !isJourneyBrowse;
 
   // ── The filter model ──────────────────────────────────────────────────
   //
@@ -2164,9 +2228,24 @@ export function DestinationsTab({
     if (isBeachCat) return fromIndex(beachIndex);
     if (isLakeCat) return fromIndex(lakeIndex);
     if (isMountainCat) return fromIndex(mountainIndex);
+    // Trails and cycling publish per country too, so the picker offers the
+    // countries their index names rather than every priced country: the
+    // list used to offer Monaco's trails and Andorra's tours, and both are
+    // empty.
+    if (cat === 'trails') {
+      return (trailsIndex?.countries || [])
+        .filter((c) => (c.counts?.hike || 0) > 0)
+        .map((c) => [c.country, countryName(c.country)])
+        .sort((a, b) => a[1].localeCompare(b[1], lang));
+    }
+    if (isCycleCat) {
+      return (cycleIndex?.countries || [])
+        .map((c) => [c.country, countryName(c.country)])
+        .sort((a, b) => a[1].localeCompare(b[1], lang));
+    }
     return availableCountries;
-  }, [isBeachCat, isLakeCat, isMountainCat, beachIndex, lakeIndex, mountainIndex,
-    availableCountries, countryName, lang]);
+  }, [cat, isBeachCat, isLakeCat, isMountainCat, isCycleCat, beachIndex, lakeIndex,
+    mountainIndex, trailsIndex, cycleIndex, availableCountries, countryName, lang]);
 
   // A country the tab that just opened does not publish. Cleared rather than
   // left set, because the picker would show a country the list is not
@@ -2191,22 +2270,11 @@ export function DestinationsTab({
       }),
     });
     const out = [];
-    if (cat === 'general' && !showCountryIndex && classCounts) {
-      out.push({
-        key: 'size',
-        label: t('places.classLabel'),
-        onToggle: toggleClass,
-        options: CLASSES.map(({ key, Icon, labelKey }) => {
-          const n = classCounts.get(key) || 0;
-          const isOn = classes.includes(key);
-          return { key, Icon, label: t(labelKey), n, on: isOn, disabled: !n && !isOn };
-        }),
-      });
-    }
     if (isItinCat) {
       out.push({
         key: 'pace',
         label: t('trip.askPace'),
+        toolbar: true,
         onToggle: (k) => setItinPace((cur) => (cur === k ? null : k)),
         options: TRIP_PACES.map(({ key, labelKey }) => {
           const n = itinFacets.pace.get(key) || 0;
@@ -2217,6 +2285,7 @@ export function DestinationsTab({
       out.push({
         key: 'scale',
         label: t('trip.askScale'),
+        toolbar: true,
         onToggle: (k) => setItinScale((cur) => (cur === k ? null : k)),
         options: TRIP_SCALES.map(({ key, labelKey }) => {
           const n = itinFacets.scale.get(key) || 0;
@@ -2230,7 +2299,7 @@ export function DestinationsTab({
       // how hard do I want it, how much climb, where does it leave me, what
       // will I see, who is coming. A group with nothing to offer in this
       // country is not rendered at all rather than rendered empty.
-      const fromCounts = (key, label, defs, on, counts, setter) => {
+      const fromCounts = (key, label, defs, on, counts, setter, toolbar = false) => {
         const options = defs
           .map((d) => {
             const n = counts.get(d.key) || 0;
@@ -2240,7 +2309,7 @@ export function DestinationsTab({
           })
           .filter((o) => o.n > 0 || o.on);
         if (!options.length) return;
-        out.push({ key, label, onToggle: toggleChip(setter), options });
+        out.push({ key, label, toolbar, onToggle: toggleChip(setter), options });
       };
 
       const lengthOpts = DISTANCE_BANDS.map(({ key, labelKey }) => {
@@ -2260,9 +2329,15 @@ export function DestinationsTab({
           on: loopsOnly,
         });
       }
+      // One group stands in the open under the toolbar, the one a walker
+      // decides by first: how long. The other five live behind the Filters
+      // door (and all six stand in the desktop side panel, which has the
+      // height for them). Six rows of unlabelled chips in the open was the
+      // "filters all over the place" the rebuild answers.
       out.push({
         key: 'length',
         label: t('trails.lengthLabel'),
+        toolbar: true,
         onToggle: (k) => (k === 'loop' ? setLoopsOnly((v) => !v) : toggleBand(k)),
         options: lengthOpts,
       });
@@ -2341,6 +2416,38 @@ export function DestinationsTab({
         });
       }
     }
+    if (isCycleCat && cycleAll && cycleAll.length > 0) {
+      // Six groups, the same rule as beaches: a chip whose count is zero in
+      // this country is absent rather than greyed, a selected chip always
+      // survives. Length and surface stand in the open row; the rest live
+      // behind the Filters door.
+      for (const group of CYCLE_FACETS) {
+        const on = cycFacets[group.key] || [];
+        const options = group.options
+          .map((o) => ({
+            key: o.key,
+            label: t(o.labelKey),
+            Icon: o.loop ? LoopIcon : undefined,
+            cls: o.loop ? 'places-loopchip' : '',
+            n: cycCounts.get(`${group.key}:${o.key}`) ?? 0,
+            on: on.includes(o.key),
+          }))
+          .filter((o) => o.n > 0 || o.on);
+        if (!options.length) continue;
+        out.push({
+          key: `cycle-${group.key}`,
+          label: t(group.labelKey),
+          toolbar: !!group.toolbar,
+          onToggle: (k) => setCycFacets((cur) => {
+            const was = cur[group.key] || [];
+            return { ...cur,
+                     [group.key]: was.includes(k) ? was.filter((x) => x !== k)
+                                                  : [...was, k] };
+          }),
+          options,
+        });
+      }
+    }
     if (isMountainCat && mountainRows) {
       // Seven filters, plus the kind chips v1 already had. Every one of them
       // carries a count, and a chip with a zero count in this scope renders
@@ -2369,25 +2476,26 @@ export function DestinationsTab({
       }
     }
     return out;
-  }, [cat, t, showCountryIndex, classCounts, classes, isItinCat, itinFacets,
+  }, [cat, t, showCountryIndex, isItinCat, itinFacets,
     itinPace, itinScale, trailFacets, bands, loopsOnly,
     grades, climbs, shapes, hls, suits, isBeachCat, beachRows,
     beachFacets, beachCounts, isLakeCat, lakeRows, lakeFacets, lakeCounts,
-    isMountainCat, mountainRows, mtnFacets, mtnCounts]);
+    isMountainCat, mountainRows, mtnFacets, mtnCounts,
+    isCycleCat, cycleAll, cycFacets, cycCounts]);
 
   // What the Filters badge counts, and what Clear all clears. The country is
   // one of them: it is the filter every tab now carries.
   const activeFilters = (country ? 1 : 0)
-    + classes.length + bands.length + (loopsOnly ? 1 : 0)
+    + bands.length + (loopsOnly ? 1 : 0)
     + grades.length + climbs.length + shapes.length + hls.length + suits.length
     + Object.values(beachFacets).reduce((n, list) => n + (list?.length || 0), 0)
     + Object.values(lakeFacets).reduce((n, list) => n + (list?.length || 0), 0)
     + Object.values(mtnFacets).reduce((n, list) => n + (list?.length || 0), 0)
+    + Object.values(cycFacets).reduce((n, list) => n + (list?.length || 0), 0)
     + (itinDays != null ? 1 : 0) + (itinPace ? 1 : 0) + (itinScale ? 1 : 0);
 
   const resetAll = () => {
     setCountry('');
-    setClasses([]);
     setBands([]);
     setLoopsOnly(false);
     setGrades([]);
@@ -2398,16 +2506,22 @@ export function DestinationsTab({
     setBeachFacets({});
     setLakeFacets({});
     setMtnFacets({});
+    setCycFacets({});
     setItinDays(null);
     setItinPace(null);
     setItinScale(null);
   };
 
   // Which sorts this tab has, and whether there is a list for them to order.
-  const sortDefs = cat === 'trails' ? TRAIL_SORTS : (showPriceChrome ? SORTS : []);
+  // Trails and cycling share one set of sorts (rating, length, A-Z): neither
+  // has a price, both have a length and a rating.
+  const isRouteCat = cat === 'trails' || isCycleCat;
+  const sortDefs = isRouteCat ? TRAIL_SORTS : (showPriceChrome ? SORTS : []);
   const showSorts = cat === 'trails'
     ? (!showCountryIndex && !nearPlace && showTripRows)
-    : (!showCountryIndex && showPriceChrome);
+    : isCycleCat
+      ? (!showCountryIndex && !nearPlace && (cycleRows?.length ?? 0) > 0)
+      : (!showCountryIndex && showPriceChrome);
 
   // ── Desktop chrome ────────────────────────────────────────────────────
   //
@@ -2437,14 +2551,14 @@ export function DestinationsTab({
   ));
 
   const renderSortButtons = (cls) => sortDefs.map(({ key, labelKey }) => {
-    const cur = cat === 'trails' ? trailSort : sort;
-    const on = cat === 'trails' ? cur.key === key : (!nearPlace && cur.key === key);
+    const cur = isRouteCat ? trailSort : sort;
+    const on = isRouteCat ? cur.key === key : (!nearPlace && cur.key === key);
     return (
       <button
         key={key}
         className={`${cls} ${on ? 'on' : ''}`}
         onClick={() => {
-          if (cat === 'trails') { toggleTrailSort(key); return; }
+          if (isRouteCat) { toggleTrailSort(key); return; }
           setNearPlace(null);
           toggleSort(key);
         }}
@@ -2481,33 +2595,36 @@ export function DestinationsTab({
     />
   );
 
+  // Every group is a LABELLED row: the label says what the chips narrow by,
+  // which is what a run of "Flat 398, Rolling 231, Loop 543, Summit 47" had
+  // stopped saying once six groups sat in one wrap. 'toolbar' renders only
+  // the groups a tab marks for the open row (one or two); 'all' renders the
+  // full set, which is what the desktop side panel has the height for.
   const renderFacetGroups = (only) => facetGroups
-    .filter((g) => (only === 'toolbar' ? g.toolbar !== false : true))
+    .filter((g) => (only === 'toolbar' ? g.toolbar === true : true))
     .map((g) => (
-    <div
-      key={g.key}
-      className="places-classes"
-      role="group"
-      aria-label={g.label}
-    >
-      {g.options.map((o) => (
-        <button
-          key={o.key}
-          type="button"
-          className={`places-class ${o.cls || ''} ${o.on ? 'on' : ''}`}
-          aria-pressed={o.on}
-          disabled={o.disabled}
-          onClick={() => g.onToggle(o.key)}
-        >
-          {o.Icon && (
-            <span className="places-class-dot" aria-hidden="true">
-              <o.Icon size={16} />
-            </span>
-          )}
-          <span className="places-class-label">{o.label}</span>
-          {o.n != null && <span className="places-class-n">{fmt(o.n)}</span>}
-        </button>
-      ))}
+    <div key={g.key} className="places-facet" role="group" aria-label={g.label}>
+      <span className="places-facet-label">{g.label}</span>
+      <div className="places-classes">
+        {g.options.map((o) => (
+          <button
+            key={o.key}
+            type="button"
+            className={`places-class ${o.cls || ''} ${o.Icon ? '' : 'is-plain'} ${o.on ? 'on' : ''}`}
+            aria-pressed={o.on}
+            disabled={o.disabled}
+            onClick={() => g.onToggle(o.key)}
+          >
+            {o.Icon && (
+              <span className="places-class-dot" aria-hidden="true">
+                <o.Icon size={16} />
+              </span>
+            )}
+            <span className="places-class-label">{o.label}</span>
+            {o.n != null && <span className="places-class-n">{fmt(o.n)}</span>}
+          </button>
+        ))}
+      </div>
     </div>
     ));
 
@@ -2641,7 +2758,7 @@ export function DestinationsTab({
                   t={t}
                 />
               )}
-              {renderFacetGroups('toolbar')}
+              {renderFacetGroups('all')}
             </div>
           )}
           {/* No "Lifestyle" caption above it: the button says the word
@@ -2720,7 +2837,7 @@ export function DestinationsTab({
             because a chip that changes WHICH rows are listed is the same kind
             of control as the search field above it. The model is built once
             (facetGroups) and rendered here and in the sheet. */}
-        {(facetGroups.length > 0 || isComposedTrips) && (
+        {(facetGroups.some((g) => g.toolbar === true) || isComposedTrips) && (
           <div className="places-facets">
             {isComposedTrips && (
               <TripLengthSlider
@@ -2730,7 +2847,7 @@ export function DestinationsTab({
                 t={t}
               />
             )}
-            {renderFacetGroups()}
+            {renderFacetGroups('toolbar')}
           </div>
         )}
         </div>
@@ -2751,11 +2868,12 @@ export function DestinationsTab({
             : cat === 'lakes' ? lakeRows
               : cat === 'mountains' ? mountainRows
                 : cat === 'trails' ? tripRows
-                  : cat === 'trips' ? itinRows
-                    : destRows) || [];
+                  : cat === 'cycling' ? cycleRows
+                    : cat === 'trips' ? itinRows
+                      : null) || [];
           const scope = scopeForRows(kmRows.map((x) => ({
             km: x.km,
-            region: (x.b || x.p || x.tr || (x.c && x.c.tr) || {}).region || null,
+            region: (x.b || x.p || x.tr || x.r || (x.c && x.c.tr) || {}).region || null,
           })));
           const head = scope.scope === 'nearby' || scope.scope === 'none'
             ? t('places.nearHead', { city: nearPlace.name })
@@ -2775,57 +2893,6 @@ export function DestinationsTab({
           );
         })()}
 
-        {cat === 'general' && (
-          <div className="places-list">
-            {showCountryIndex
-              ? generalCountries.map((c) => (
-                <CountryCard
-                  key={c.cc}
-                  cc={c.cc}
-                  name={c.name}
-                  img={countryCover.get(c.cc)?.img || null}
-                  onPick={(cc) => setCountry(cc)}
-                />
-              ))
-              : (
-                <>
-                  {destRows.slice(0, visible).map(({ p, km }, i) => (
-                    <React.Fragment key={p.id}>
-                      {bandBreak(destRows, i) && (
-                        <p className="places-bandhead">{t(bandBreak(destRows, i))}</p>
-                      )}
-                      <DestCard p={p} km={km} priceMode={priceMode} onSelect={onSelectDest} t={t} />
-                    </React.Fragment>
-                  ))}
-                  {/* Nothing matched the text, which is exactly the case where
-                      the typed thing is a location rather than a destination:
-                      offer the map search instead of a dead end. Not while the
-                      suggestion list is open, which carries the same offer a
-                      few pixels higher. */}
-                  {destRows.length === 0 && (
-                    <div className="places-empty">
-                      <p>{t('places.emptyDest')}</p>
-                      {canGeo && !geoHits && !suggOpen && (
-                        <button
-                          type="button"
-                          className="places-empty-cta"
-                          onClick={runGeoSearch}
-                          disabled={geoBusy}
-                        >
-                          <MapPinIcon size={14} />
-                          {geoBusy ? t('places.searchingAny') : t('places.searchAny', { q: term })}
-                        </button>
-                      )}
-                    </div>
-                  )}
-                </>
-              )}
-            {visible < destRows.length && (
-              <div ref={sentinelRef} className="places-sentinel" aria-hidden="true" style={{ height: 1 }} />
-            )}
-          </div>
-        )}
-
         {/* Beaches. No country index in front of the list: the tab opens on
             the beaches themselves, ranked across Europe, because "show me a
             beach" is the request and a page of flags is not an answer to it.
@@ -2839,14 +2906,6 @@ export function DestinationsTab({
               beachRows.length > 0
                 ? (
                   <>
-                    {wantBeachCountry && !nearPlace && (
-                      <p className="places-beachhead">
-                        {t('beach.countryHead', {
-                          country: countryName(wantBeachCountry),
-                          n: fmt(beachRows.length),
-                        })}
-                      </p>
-                    )}
                     {beachRows.slice(0, visible).map(({ b, km }, i) => (
                       <React.Fragment key={b.id}>
                         {bandBreak(beachRows, i) && (
@@ -2936,14 +2995,6 @@ export function DestinationsTab({
               lakeRows.length > 0
                 ? (
                   <>
-                    {wantLakeCountry && !nearPlace && (
-                      <p className="places-beachhead">
-                        {t('lake.countryHead', {
-                          country: countryName(wantLakeCountry),
-                          n: fmt(lakeRows.length),
-                        })}
-                      </p>
-                    )}
                     {lakeRows.slice(0, visible).map(({ b, km }, i) => (
                       <React.Fragment key={b.id}>
                         {bandBreak(lakeRows, i) && (
@@ -3033,24 +3084,19 @@ export function DestinationsTab({
               mountainRows.length > 0
                 ? (
                   <>
-                    {wantMountainCountry && !nearPlace && (
+                    {/* No "{n} mountains in {country}, best first" line any
+                        more: the cards are the answer. What survives is the
+                        one note that explains a SHORT list, where the floor
+                        could not be reached: a reader sees "Lithuania's high
+                        points are gentle, and this is every one we could
+                        verify" rather than four mountains and no
+                        explanation. */}
+                    {wantMountainCountry && !nearPlace
+                      && floorNote(mountainIndex, wantMountainCountry, t,
+                        countryName(wantMountainCountry)) && (
                       <p className="places-beachhead">
-                        {t('mtn.countryHead', {
-                          country: countryName(wantMountainCountry),
-                          n: fmt(mountainRows.length),
-                        })}
-                        {/* One line, from one code, where the floor could
-                            not be reached. A reader sees "Lithuania's high
-                            points are gentle, and this is every one we
-                            could verify" rather than four mountains and no
-                            explanation. */}
                         {floorNote(mountainIndex, wantMountainCountry, t,
-                          countryName(wantMountainCountry)) && (
-                          <span className="places-beachhead-note">
-                            {floorNote(mountainIndex, wantMountainCountry, t,
-                              countryName(wantMountainCountry))}
-                          </span>
-                        )}
+                          countryName(wantMountainCountry))}
                       </p>
                     )}
                     {/* The listed tier, under its own heading and never
@@ -3134,153 +3180,132 @@ export function DestinationsTab({
           </div>
         )}
 
-        {/* Cycling. Tours first, because a tour is the answer to "plan me a
-            cycling trip" and a route is the catalogue entry underneath it.
-            Listed routes sit under their own heading with no score, which is
-            what makes the coverage honest rather than merely large. */}
+        {/* Cycling. The same shape as Trails: a country index of flag cards
+            until a country (or a near-search) is picked, then every ride in
+            that country as one list of cards, tours first. Listed rows are
+            cards too, with "Not scored yet" where the score would be: that
+            is what keeps the coverage honest AND on the page. */}
         {isCycleCat && (
           <div className="places-list" data-testid="cycle-list">
-            {cyclingLoading && <p className="places-empty">{'…'}</p>}
-
-            {/* EuroVelo families. In OSM a EuroVelo is one relation PER
-                COUNTRY SECTION under a superroute, so without this band the
-                catalogue shows "EuroVelo 6 part Germany 3" and never the
-                6,308 km thing it belongs to. The manifest is the same
-                membership the harvest stamps; the geometry stays in the
-                per-route files. */}
-            {!cyclingLoading && (cycleIndex?.families || []).length > 0 && (
+            {showCountryIndex && (
               <>
-                <p className="places-bandhead">{t('cycle.familiesTitle')}</p>
-                <div className="cycle-famrow">
-                  {(cycleIndex.families || []).map((f) => (
-                    <button
-                      type="button"
-                      key={f.ref}
-                      className="cycle-famchip"
-                      data-testid="cycle-famchip"
-                      onClick={() => setPageCycle({ familyRef: f.ref })}
-                    >
-                      <span className="cycle-famchip-ref">{f.ref}</span>
-                      <span className="cycle-famchip-meta">
-                        {t('cycle.familyMeta', {
-                          km: count(f.km),
-                          countries: countryPhrase(f.countries.length, t),
-                        })}
-                      </span>
-                    </button>
-                  ))}
-                </div>
+                {/* EuroVelo families, on the index only: in OSM a EuroVelo
+                    is one relation PER COUNTRY SECTION under a superroute,
+                    so without this band the catalogue shows "EuroVelo 6
+                    part Germany 3" and never the 6,308 km thing it belongs
+                    to. A continental route belongs over the continent, not
+                    inside one country's list. */}
+                {(cycleIndex?.families || []).length > 0 && (
+                  <>
+                    <p className="places-bandhead">{t('cycle.familiesTitle')}</p>
+                    <div className="cycle-famrow">
+                      {(cycleIndex.families || []).map((f) => (
+                        <button
+                          type="button"
+                          key={f.ref}
+                          className="cycle-famchip"
+                          data-testid="cycle-famchip"
+                          onClick={() => setPageCycle({ familyRef: f.ref })}
+                        >
+                          <span className="cycle-famchip-ref">{f.ref}</span>
+                          <span className="cycle-famchip-meta">
+                            {t('cycle.familyMeta', {
+                              km: count(f.km),
+                              countries: countryPhrase(f.countries.length, t),
+                            })}
+                          </span>
+                        </button>
+                      ))}
+                    </div>
+                    <p className="places-bandhead">{t('cycle.countriesTitle')}</p>
+                  </>
+                )}
+                {cycleCountryCards.map((c) => (
+                  <CountryCard
+                    key={c.cc}
+                    cc={c.cc}
+                    name={c.name}
+                    img={cycleCovers[c.cc] || countryCover.get(c.cc)?.img || null}
+                    onAskCover={cycleCovers[c.cc] ? null : askCycleCover}
+                    onPick={(cc) => setCountry(cc)}
+                  />
+                ))}
+                {cycleIndex && cycleCountryCards.length === 0 && (
+                  <p className="places-empty">{t('places.catEmpty')}</p>
+                )}
+                {!cycleIndex && <p className="places-empty">{'…'}</p>}
               </>
             )}
 
-            {!cyclingLoading && cycleRows && (
+            {!showCountryIndex && cyclingLoading && <p className="places-empty">{'…'}</p>}
+
+            {!showCountryIndex && !cyclingLoading && cycleRows && (
               <>
-                {cycleRows.tours.length > 0 && (
+                {cycleTours.length > 0 && !nearPlace && (
                   <>
                     <p className="places-bandhead">{t('cycle.toursTitle')}</p>
-                    {cycleRows.tours.slice(0, visible).map((tr) => (
-                      <button
-                        type="button"
+                    {cycleTours.map((tr) => (
+                      <TourCard
                         key={tr.slug}
-                        className="places-tcard cycle-tourcard"
-                        data-testid="cycle-tourcard"
-                        onClick={() => setPageCycle({ tourSlug: tr.slug,
+                        tour={tr}
+                        t={t}
+                        onOpen={(tour) => setPageCycle({ tourSlug: tour.slug,
                           country: wantCycleCountry })}
-                      >
-                        <span className="cycle-tourcard-title">{tr.title}</span>
-                        <span className="cycle-tourcard-meta">
-                          {t('cycle.days', { n: tr.days })}
-                          {', '}
-                          {`${tr.km} km`}
-                          {tr.asc != null ? `, ${tr.asc} m` : ''}
-                        </span>
-                        <span className="cycle-tourcard-pace">
-                          {paceLine(tr.pace, t)}
-                        </span>
-                        <span className="cycle-tourcard-towns">
-                          {(tr.towns || []).filter(Boolean).join(', ')}
-                        </span>
-                      </button>
+                      />
                     ))}
+                    {cycleRows.length > 0 && (
+                      <p className="places-bandhead">{t('cycle.routesTitle')}</p>
+                    )}
                   </>
                 )}
-
-                {cycleRows.routes.length > 0 && (
-                  <>
-                    <p className="places-bandhead">{t('cycle.routesTitle')}</p>
-                    {cycleRows.routes.slice(0, visible).map((r) => (
-                      <button
-                        type="button"
-                        key={r.id}
-                        className="places-tcard cycle-card"
-                        data-testid="cycle-card"
-                        onClick={() => setPageCycle({ routeId: r.id,
-                          country: wantCycleCountry })}
-                      >
-                        {r.img && (
-                          <img className="cycle-card-img" src={r.img} alt=""
-                            loading="lazy" />
-                        )}
-                        <span className="cycle-card-name">{r.name}</span>
-                        <span className="cycle-card-meta">
-                          {`${r.km} km`}
-                          {r.asc != null ? `, ${r.asc} m` : ''}
-                        </span>
-                        {r.score != null && (
-                          <span className="cycle-card-score"
-                            data-testid="cycle-card-score">{r.score}</span>
-                        )}
-                        <span className="cycle-card-surface">
-                          {surfaceLine({
-                            paved_share: r.paved,
-                            surface_known_share: r.paved == null ? 0 : 1,
-                          }, t)}
-                        </span>
-                        <span className="cycle-card-why">
-                          {(whyLines(r.why, t, 2) || [])
-                            .map((line) => line.text).join(', ')}
-                        </span>
-                      </button>
-                    ))}
-                  </>
-                )}
-
-                {cycleRows.listed.length > 0 && (
-                  <>
-                    <p className="places-bandhead"
-                      data-testid="cycle-listed-head">
-                      {t('cycle.listedHeading')}
-                    </p>
-                    {cycleRows.listed.slice(0, visible).map((r) => (
-                      <button
-                        type="button"
-                        key={r.id}
-                        className="places-tcard cycle-card cycle-card-listed"
-                        data-testid="cycle-listed-card"
-                        onClick={() => setPageCycle({ routeId: r.id,
-                          country: wantCycleCountry })}
-                      >
-                        <span className="cycle-card-name">{r.name}</span>
-                        <span className="cycle-card-meta">{`${r.km} km`}</span>
-                        <span className="cycle-card-unrated">{listedLine(t)}</span>
-                      </button>
-                    ))}
-                  </>
-                )}
-
-                {!cycleRows.tours.length && !cycleRows.routes.length
-                  && !cycleRows.listed.length && (
-                  <p className="places-empty">{t('cycle.emptyCountry')}</p>
+                {cycleRows.slice(0, visible).map(({ r, km }, i) => (
+                  <React.Fragment key={r.id}>
+                    {bandBreak(cycleRows, i) && (
+                      <p className="places-bandhead">{t(bandBreak(cycleRows, i))}</p>
+                    )}
+                    {/* The first listed row under a rating sort opens the
+                        unscored tier: one divider says so once, in place of
+                        a chip on every card saying it again. */}
+                    {!nearPlace && trailSort.key === 'rating' && isListedRide(r)
+                      && (i === 0 || !isListedRide(cycleRows[i - 1].r)) && (
+                      <p className="places-bandhead" data-testid="cycle-listed-head">
+                        {t('cycle.listedHeading')}
+                      </p>
+                    )}
+                    <CycleCard
+                      row={r}
+                      km={km}
+                      t={t}
+                      onOpen={(row) => setPageCycle({ routeId: row.id,
+                        country: wantCycleCountry })}
+                    />
+                  </React.Fragment>
+                ))}
+                {cycleRows.length === 0 && cycleTours.length === 0 && (
+                  <p className="places-empty">
+                    {Object.values(cycFacets).some((l) => l?.length)
+                      ? t('cycle.noneChips')
+                      : nearPlace
+                        ? t('places.noneNear', { city: nearPlace.name })
+                        : t('cycle.emptyCountry')}
+                  </p>
                 )}
               </>
             )}
 
-            {!cyclingLoading && !cycleRows && (
-              <p className="places-empty">{t('cycle.emptyCountry')}</p>
+            {!showCountryIndex && !cyclingLoading && !cycleRows && (
+              <p className="places-empty">
+                {nearPlace && !nearPlace.iso2
+                  ? t('places.noneNear', { city: nearPlace.name })
+                  : t('cycle.emptyCountry')}
+              </p>
             )}
 
-            {cycleRows && (cycleRows.routes.length > 0
-              || cycleRows.tours.length > 0) && (
+            {!showCountryIndex && visible < (cycleRows?.length ?? 0) && (
+              <div ref={sentinelRef} className="places-sentinel" aria-hidden="true" style={{ height: 1 }} />
+            )}
+
+            {cycleRows?.length > 0 && (
               <p className="places-credit" data-testid="cycle-credit-foot">
                 {t('cycle.sourceNote')}
               </p>
