@@ -20,10 +20,15 @@ import { useI18n } from '../i18n/index.jsx';
 
 const SEEN_KEY = 'carta.tierLegendDismissed.v1';
 
-export function TierLegend({ data }) {
+export function TierLegend({ data, defaultFolded = false }) {
   const { t } = useI18n();
+  // Remembered once the reader has folded or unfolded it by hand; until
+  // then the caller decides (a phone starts folded, a desktop open).
   const [dismissed, setDismissed] = React.useState(() => {
-    try { return localStorage.getItem(SEEN_KEY) === '1'; } catch { return false; }
+    try {
+      const v = localStorage.getItem(SEEN_KEY);
+      return v == null ? !!defaultFolded : v === '1';
+    } catch { return !!defaultFolded; }
   });
   const [why, setWhy] = React.useState(false);
 
@@ -46,7 +51,10 @@ export function TierLegend({ data }) {
   if (dismissed) {
     return (
       <button className="tierlegend-pip" onClick={() => set(false)}
-        aria-label={t('legend.show')} title={t('legend.show')}>?</button>
+        aria-label={t('legend.show')} title={t('legend.show')}>
+        <span aria-hidden="true">?</span>
+        <span className="tierlegend-pip-label">{t('explore.legendPip')}</span>
+      </button>
     );
   }
 

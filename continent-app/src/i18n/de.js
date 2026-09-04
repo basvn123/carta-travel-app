@@ -3322,6 +3322,16 @@ export const de = {
   "rail.cheap": "Unter 70 € am Tag",
   "rail.quiet": "Ruhig in der Hochsaison",
   "rail.seeAll": "Alle {n} zeigen",
+  "explore.collections": "Sammlungen",
+  "explore.legendPip": "Was die Bewertungen bedeuten",
+  "pdf.preparing": "Dein Reiseführer wird vorbereitet. Der Druckdialog öffnet sich gleich.",
+  "pdf.sleepPp": "Etwa €{eur} pro Nacht und Person",
+  "pdf.mapCaption": "Die Nummern entsprechen der Highlights-Liste.",
+  "pdf.open": "Öffnen",
+  "pdf.verdict": "Urteil",
+  "pdf.crowd": "Andrang",
+  "pdf.factScore": "Bewertung",
+  "pdf.contentsNote": "Highlights sind nach europäischer Bedeutung aus offenen Quellen sortiert; Aktivitäten danach, wie viele unabhängige Reiseführer sie nennen.",
   "filter.bestOf": "Das Beste seines Landes",
 
   // Tier legend (PLAN.md C8)

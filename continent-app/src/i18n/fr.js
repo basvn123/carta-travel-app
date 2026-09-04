@@ -3322,6 +3322,16 @@ export const fr = {
   "rail.cheap": "Moins de 70 € par jour",
   "rail.quiet": "Calme en haute saison",
   "rail.seeAll": "Voir les {n}",
+  "explore.collections": "Collections",
+  "explore.legendPip": "Ce que signifient les notes",
+  "pdf.preparing": "Votre guide se prépare. La fenêtre d’impression s’ouvre dans un instant.",
+  "pdf.sleepPp": "Environ €{eur} la nuit par personne",
+  "pdf.mapCaption": "Les numéros correspondent à la liste des incontournables.",
+  "pdf.open": "Ouvrir",
+  "pdf.verdict": "Verdict",
+  "pdf.crowd": "Affluence",
+  "pdf.factScore": "Note",
+  "pdf.contentsNote": "Les incontournables sont classés par importance européenne d’après des sources ouvertes ; les activités selon le nombre de guides indépendants qui les citent.",
   "filter.bestOf": "Le meilleur de son pays",
 
   // Tier legend (PLAN.md C8)

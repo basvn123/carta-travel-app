@@ -3322,6 +3322,16 @@ export const it = {
   "rail.cheap": "Meno di 70 € al giorno",
   "rail.quiet": "Tranquillo in alta stagione",
   "rail.seeAll": "Vedi tutti i {n}",
+  "explore.collections": "Collezioni",
+  "explore.legendPip": "Cosa significano le valutazioni",
+  "pdf.preparing": "Stiamo preparando la tua guida. La finestra di stampa si apre tra un attimo.",
+  "pdf.sleepPp": "Circa €{eur} a notte a persona",
+  "pdf.mapCaption": "I numeri corrispondono all’elenco delle attrazioni.",
+  "pdf.open": "Apri",
+  "pdf.verdict": "Verdetto",
+  "pdf.crowd": "Affollamento",
+  "pdf.factScore": "Valutazione",
+  "pdf.contentsNote": "Le attrazioni sono ordinate per rilevanza europea da fonti aperte; le attività per quante guide indipendenti le citano.",
   "filter.bestOf": "Il meglio del suo paese",
 
   // Tier legend (PLAN.md C8)

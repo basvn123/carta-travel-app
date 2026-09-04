@@ -3322,6 +3322,16 @@ export const es = {
   "rail.cheap": "Menos de 70 € al día",
   "rail.quiet": "Tranquilo en temporada alta",
   "rail.seeAll": "Ver los {n}",
+  "explore.collections": "Colecciones",
+  "explore.legendPip": "Qué significan las valoraciones",
+  "pdf.preparing": "Preparando tu guía. El diálogo de impresión se abre en un momento.",
+  "pdf.sleepPp": "Unos €{eur} por noche y persona",
+  "pdf.mapCaption": "Los números coinciden con la lista de imprescindibles.",
+  "pdf.open": "Abrir",
+  "pdf.verdict": "Veredicto",
+  "pdf.crowd": "Afluencia",
+  "pdf.factScore": "Valoración",
+  "pdf.contentsNote": "Los imprescindibles se ordenan por relevancia europea según fuentes abiertas; las actividades, por cuántas guías independientes las citan.",
   "filter.bestOf": "Lo mejor de su país",
 
   // Tier legend (PLAN.md C8)

@@ -30538,3 +30538,320 @@ button.ai-sched-main:focus-visible {
   border-top: 1px solid var(--rule-soft);
   padding-top: 9px;
 }
+
+/* ==========================================================================
+   Explore v5: one screen of chrome, one collections block, a dense grid.
+
+   What changed and why. The phone opened on 450px of controls (two rows of
+   kind tiles, a search card, a lifestyle row, a fold, a legend box), then
+   eight editorial rails stacked one under the other, then a grid one card
+   wide. The first destination card in the grid was five screens down. Now:
+   three short rows of chrome, ONE collections block with a tab row and one
+   strip, the legend folded to a pip beside the count, and a two-up grid with
+   a three-row card body. Desktop keeps its side panel and mosaic; it gains
+   the same single collections block and a sticky grid head.
+   ========================================================================== */
+
+/* --- the collections block: tabs over one strip ------------------------- */
+.xcoll { margin: 0 0 14px; }
+.xcoll-head { display: flex; align-items: baseline; gap: 12px; margin: 0 2px 6px; }
+.xcoll-title {
+  font-family: var(--display);
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--ink);
+  margin: 0;
+}
+.xcoll-tabs {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  scroll-snap-type: x proximity;
+  padding: 2px 2px 8px;
+  margin: 0 -2px;
+}
+.xcoll-tabs::-webkit-scrollbar { display: none; }
+.xcoll-tab {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 32px;
+  padding: 0 12px;
+  border-radius: 999px;
+  border: 1px solid var(--rule-soft);
+  background: var(--bg-card);
+  font: inherit;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--ink-soft);
+  white-space: nowrap;
+  cursor: pointer;
+  scroll-snap-align: start;
+  transition: background .15s, border-color .15s, color .15s;
+}
+.xcoll-tab:hover { border-color: var(--rule); color: var(--ink); }
+.xcoll-tab.on { background: var(--ink-fill); border-color: var(--ink-fill); color: #fff; }
+.xcoll-tab:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.xcoll-n { font-size: 10.5px; color: var(--ink-mute); font-variant-numeric: tabular-nums; }
+.xcoll-tab.on .xcoll-n { color: rgba(255, 255, 255, 0.72); }
+.xcoll .xrails-strip { padding: 2px 2px 6px; scrollbar-width: thin; }
+
+/* The strip card: photo, country, name, then the two facts a first glance
+   wants side by side, the score and the euro day. The score chip used to
+   stretch to the card's full width (a flex column child with no alignment),
+   which is how a 9.4 came to look like a progress bar. */
+.railcard { flex: 0 0 150px; }
+.railcard-body { gap: 2px; padding: 7px 9px 9px; }
+.railcard-name { font-size: 14px; }
+.railcard-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  margin-top: 3px;
+}
+.railcard .score-chip { align-self: flex-start; }
+.railcard-cost {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--ink-soft);
+  font-variant-numeric: tabular-nums;
+}
+.railcard--more {
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 12px;
+  background: var(--paper-dim);
+  border-style: dashed;
+  color: var(--ink-soft);
+  font-size: 12px;
+  font-weight: 600;
+  text-align: center;
+}
+.railcard--more:hover { color: var(--ink); border-color: var(--rule); }
+.railcard-more-n { font-size: 20px; color: var(--ink); }
+
+/* --- the grid head stays put while the grid scrolls --------------------- */
+.xgrid-head {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  margin: 0 0 10px;
+  padding: 8px 2px;
+  background: var(--paper);
+  border-bottom: 1px solid var(--rule-soft);
+}
+.xgrid-head .tierlegend-pip { margin: 0; }
+
+/* --- the legend, slimmer, and its pip as a labelled chip ---------------- */
+.tierlegend { padding: 7px 12px; margin: 0 0 8px; border-radius: 10px; }
+.tierlegend-pip {
+  width: auto;
+  height: 24px;
+  gap: 6px;
+  padding: 0 9px 0 6px;
+  border-radius: 999px;
+  font-size: 11.5px;
+  font-weight: 600;
+  margin: 0 0 8px;
+}
+.tierlegend-pip > span:first-child {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 1px solid currentColor;
+  font-size: 9.5px;
+}
+
+/* --- phone chrome: three short rows, no card around them ---------------- */
+@media (max-width: 768px) {
+  .explore-wrap { padding: 8px 12px calc(30px + env(safe-area-inset-bottom, 0px)); }
+  .explore-toolbar {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;   /* the base rule centres; stacked rows must fill */
+    gap: 8px;
+    padding: 0;
+    margin: 0 0 8px;
+    border: 0;
+    border-radius: 0;
+    background: none;
+    box-shadow: none;
+  }
+  .explore-toolbar-row { display: flex; align-items: center; gap: 8px; width: 100%; min-width: 0; }
+  .explore-toolbar-row .explore-search { flex: 1 1 auto; max-width: none; min-width: 0; }
+  .explore-toolbar-row .results-search { width: auto; padding-top: 0; }
+  .explore-toolbar-row .explore-fav { flex: none; height: 40px; padding: 0 12px; }
+
+  /* The kind rail as one scrolling line of chips: glyph and word side by
+     side, 34px tall, instead of two rows of tiles. The older phone rule
+     above gave every chip a fixed 78px tile with an accent bar; both go. */
+  .explore-toolbar .kind-rail {
+    flex-basis: auto;
+    align-self: stretch;
+    width: calc(100% + 24px);   /* bleeds into the wrap's 12px gutters */
+    min-width: 0;
+    margin: 0 -12px;
+    padding: 0 12px;
+    border-bottom: 0;
+  }
+  .explore-toolbar .kind-rail-scroll {
+    display: flex;
+    width: 100%;
+    min-width: 0;
+    gap: 6px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    padding: 2px 0 4px;
+  }
+  .explore-toolbar .kind-rail-scroll::-webkit-scrollbar { display: none; }
+  .explore-toolbar .kind-rail-chip {
+    flex: none;
+    flex-direction: row;
+    width: auto;
+    gap: 6px;
+    height: 34px;
+    padding: 0 12px;
+    border-radius: 999px;
+    background: var(--bg-card);
+    font-size: 12.5px;
+  }
+  .explore-toolbar .kind-rail-chip::before { display: none; }
+  .explore-toolbar .kind-rail-chip.on {
+    background: var(--ink-fill);
+    border-color: var(--ink-fill);
+    color: #fff;
+  }
+  .explore-toolbar .kind-rail-icon { width: 15px; height: 15px; }
+
+  /* The fold's closed row is the whole filter summary. */
+  .explore-fold { margin: 0 0 8px; border-radius: 12px; }
+  .explore-fold > summary { min-height: 40px; padding: 4px 10px 4px 12px; gap: 7px; font-size: 13px; }
+  .explore-fold-n {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 5px;
+    border-radius: 999px;
+    background: var(--accent);
+    color: #fff;
+    font-size: 10.5px;
+    font-weight: 600;
+  }
+  .explore-fold-lifestyle {
+    display: inline-flex;
+    justify-content: flex-end;
+    flex: 1 1 auto;
+    min-width: 0;
+    margin-left: 4px;
+  }
+  .explore-fold-lifestyle .lifestyle-btn { height: 28px; max-width: 100%; padding: 0 9px; font-size: 11.5px; gap: 5px; }
+  .explore-fold-lifestyle .lifestyle-btn-label,
+  .explore-fold-lifestyle .lifestyle-btn-vibe { display: none; }
+  .explore-fold > summary .xrail-count-inline { flex: none; margin-left: 0; font-size: 11.5px; }
+
+  .xcoll { margin: 0 0 10px; }
+  .xcoll-head { margin-bottom: 4px; }
+  .xcoll-title { font-size: 17px; }
+  .xcoll-tabs { margin: 0 -12px; padding: 2px 12px 8px; }
+  .xcoll .xrails-strip { margin: 0 -12px; padding: 2px 12px 6px; scrollbar-width: none; }
+  .xcoll .xrails-strip::-webkit-scrollbar { display: none; }
+  .railcard { flex-basis: 140px; }
+
+  .xgrid-head { gap: 8px; padding: 6px 0; }
+  .xgrid-count { font-size: 12px; }
+  .xview-toggle button { padding: 5px 10px; font-size: 12px; }
+  .xgrid-sort span { display: none; }
+  .xgrid-sort select { padding: 5px 6px; font-size: 12px; }
+}
+
+/* --- phone grid: two up, one photo ratio, a three-row body -------------- */
+@media (max-width: 619px) {
+  .explore-grid--mosaic { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  .explore-grid--mosaic .xcard-media { aspect-ratio: 4 / 3; }
+  .explore-grid--mosaic .xcard-body {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 3px 6px;
+    padding: 8px 9px 9px;
+  }
+  .explore-grid--mosaic .xcard-kind,
+  .explore-grid--mosaic .xcard-name { grid-column: 1 / -1; }
+  .explore-grid--mosaic .xcard-verdict { grid-column: 1; min-width: 0; min-height: 0; gap: 6px; }
+  .explore-grid--mosaic .xcard-foot {
+    grid-column: 2;
+    justify-self: end;
+    gap: 6px;
+    margin: 0;
+    padding: 0;
+    border-top: 0;
+  }
+  .explore-grid--mosaic .xcard-foot .cost-gauge { display: none; }
+  .xcard .xcard-name, .xcard--metro .xcard-name, .xcard--s6 .xcard-name {
+    font-size: 15px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .xcard-kind { font-size: 11px; gap: 4px; }
+  .xcard-kindword, .xcard-dot { display: none; }
+  .xcard-country-line {
+    font-size: 11px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .xcard-role, .xcard-hours, .xcard-car { display: none; }
+  .xcard-cost { margin-left: 0; gap: 5px; }
+  .xcard-cost-eur { font-size: 12.5px; }
+  .xcard-cost-unit { display: none; }
+  .xcard-seal { left: 6px; top: 6px; font-size: 9px; padding: 2px 6px; }
+  .xcard-best { left: 6px; bottom: 6px; gap: 4px; padding: 2px 7px; font-size: 9.5px; }
+  .xcard-star { top: 6px; right: 6px; width: 26px; height: 26px; }
+  .xcard-gem { top: auto; bottom: 6px; right: 6px; padding: 2px 6px; font-size: 9.5px; }
+  .xcard-info { display: none; }
+  .xcard:hover { transform: none; box-shadow: none; border-color: var(--rule-soft); }
+}
+
+/* --- the destination page on a phone: one row of actions, two-up sights - */
+@media (max-width: 720px) {
+  .destp-gallery { height: clamp(200px, 30vh, 300px); }
+  .destp-head { padding: 12px 14px 8px; }
+  .destp-head-actions {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto auto;
+    align-items: stretch;
+    gap: 8px;
+  }
+  .destp-pdf { height: 42px; padding: 0 12px; font-size: 13px; }
+  .destp-head-actions .panel-fav {
+    height: 42px;
+    padding: 0 12px;
+    border-radius: 10px;
+    font-size: 12px;
+    justify-content: center;
+  }
+  .destp-head-actions a.panel-fav { width: 42px; padding: 0; }
+  .destp-head-actions a.panel-fav span { display: none; }
+  .destp-lead { font-size: 14.5px; margin-top: 7px; }
+  .destp-hls { grid-template-columns: repeat(2, 1fr); gap: 10px 8px; }
+  .destp-hl.is-top { grid-column: span 1; }
+  .destp-hl.is-top img, .destp-hl.is-top .destp-hl-plate { min-height: 0; }
+  .destp-hls .destp-hl.is-top:first-child { grid-column: span 2; }
+  .destp-hl-name { font-size: 12.5px; }
+  .destp-hl-fact { -webkit-line-clamp: 1; }
+}
+
+/* A highlight photo that failed to load is hidden by the onError handler,
+   but the flex rule on .destp-hl img outranked the hidden attribute and the
+   broken frame stayed on screen above its lettered plate. */
+.destp-hl img[hidden] { display: none; }

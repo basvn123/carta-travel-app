@@ -277,13 +277,28 @@ export function DestinationPage({
     if (pdfBusy) return;
     if (!paywall.require('export')) return;
     setPdfBusy(true);
+    // The print window opens HERE, synchronously inside the tap, before the
+    // renderer chunk is awaited: a window.open that follows an await is no
+    // longer inside the user gesture, and Safari (iOS above all) blocks it
+    // as a popup. The renderer then writes into the window it is handed.
+    let win = null;
+    try { win = window.open('', '_blank'); } catch { win = null; }
+    if (win) {
+      try {
+        const safe = (s) => String(s).replace(/[<>&]/g, '');
+        win.document.write(`<!doctype html><title>${safe(city)}</title><body style="font-family:system-ui,sans-serif;padding:32px;color:#414b5e">${safe(t('pdf.preparing'))}</body>`);
+      } catch { /* cross-origin quirk; the renderer rewrites it anyway */ }
+    }
     try {
       const { openDestinationPdf } = await import('../lib/destinationPdf.js');
       openDestinationPdf({
         dossier: d, destination, cost, t, lang,
         lifestyleLabel: lifestyleLine,
         mapSnapshot: mapRef.current?.snapshot?.() || null,
+        win,
       });
+    } catch {
+      try { win?.close(); } catch { /* already gone */ }
     } finally {
       setPdfBusy(false);
     }

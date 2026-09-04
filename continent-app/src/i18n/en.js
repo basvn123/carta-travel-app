@@ -4030,6 +4030,16 @@ export const en = {
   "rail.cheap": "Under €70 a day",
   "rail.quiet": "Quiet in high season",
   "rail.seeAll": "See all {n}",
+  "explore.collections": "Collections",
+  "explore.legendPip": "What the ratings mean",
+  "pdf.preparing": "Preparing your guide. The print dialog opens in a moment.",
+  "pdf.sleepPp": "About €{eur} a night per person",
+  "pdf.mapCaption": "Numbers match the highlights list.",
+  "pdf.open": "Open",
+  "pdf.verdict": "Verdict",
+  "pdf.crowd": "Crowds",
+  "pdf.factScore": "Rating",
+  "pdf.contentsNote": "Highlights are ranked by European significance from open evidence; things to do by how many independent guides name them.",
   "filter.bestOf": "Best of its country",
 
   // Tier legend (PLAN.md C8)

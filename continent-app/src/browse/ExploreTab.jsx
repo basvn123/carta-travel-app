@@ -78,7 +78,7 @@ const SORTS = [
 // How wide the grid draws a card, so the browser can pick a thumbnail instead
 // of downloading Wikimedia's 960px rendering for a 300px slot. The widths in
 // the srcset are a fixed list Wikimedia will actually render (heroImage.js).
-const CARD_SIZES = '(max-width: 768px) 92vw, (max-width: 1180px) 45vw, 560px';
+const CARD_SIZES = '(max-width: 899px) 46vw, (max-width: 1180px) 45vw, 560px';
 
 /**
  * C4: kind picks the card's span on the 12-column grid, so the page has a
@@ -706,32 +706,44 @@ export function ExploreTab({
 
       <div className="explore-tab" ref={scrollRef}>
       <div className="explore-wrap">
-        {/* Every control in one card: the kind cards, then search, sort, the
-            one Filters door and the shortlist. The kind rail used to be a
-            full-bleed band under the header, which read as a second piece of
-            chrome; inside the card it is plainly the first of the four ways
-            to narrow the same list. */}
+        {/* Phone chrome (CSS hides all of it from 769px, where the side
+            panel and the header slot hold the same controls). Three short
+            rows, no card around them: the search field with the shortlist
+            star, the kind chips on one scrolling line, then the Filters fold
+            whose closed summary already carries the live count, the number
+            of active filters and the Lifestyle door. It used to be two rows
+            of kind tiles, a search card, a lifestyle row, a fold and a
+            legend box: 450px of chrome before the first place. */}
         <div className="explore-toolbar">
-          <CategoryRail tripKinds={tripKinds} setTripKinds={setTripKinds} />
-          {/* Inline on a phone; on desktop the same field has portalled into
-              the app header and this renders nothing. */}
-          {!headerSlot && searchField}
-
-          <div className="explore-toolbar-right">
-            <div className="explore-chips">
-              {onOpenLifestyle && renderLifestyle('')}
-              {renderFav('')}
-            </div>
+          <div className="explore-toolbar-row">
+            {/* Inline on a phone; on desktop the same field has portalled
+                into the app header and this renders nothing. */}
+            {!headerSlot && searchField}
+            {renderFav('')}
           </div>
+          <CategoryRail tripKinds={tripKinds} setTripKinds={setTripKinds} />
         </div>
 
-        {/* Phone only (CSS hides it from 769px): the same rail inside a
-            plain disclosure fold - not a modal, so every filter stays
-            reachable and the count stays on screen while knobs turn. */}
+        {/* Phone only: the same rail inside a plain disclosure fold - not a
+            modal, so every filter stays reachable and the count stays on
+            screen while knobs turn. */}
         <details className="explore-fold">
           <summary>
             <FilterIcon size={14} />
             <span>{t('filter.filters')}</span>
+            {chips.length > 0 && <span className="explore-fold-n mono">{chips.length}</span>}
+            {/* The Lifestyle door rides in the summary because every euro
+                figure below comes out of it. Its click is swallowed here
+                after the button has handled it, so pressing it opens the
+                lifestyle panel and does not also flip the fold. */}
+            {onOpenLifestyle && (
+              <span
+                className="explore-fold-lifestyle"
+                onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}
+              >
+                {renderLifestyle('explore-fold-lifestyle-btn')}
+              </span>
+            )}
             <span className="xrail-count-inline">{t('explore.countLine', { n: taxRows.length })}</span>
           </summary>
           {filterRail}
@@ -744,14 +756,6 @@ export function ExploreTab({
             entirely when nothing is published. */}
         <GuidesStrip onOpen={onOpenGuides} />
 
-        {/* C8: the tiers, their live counts, and the five glyphs - the
-            system stated where it is used, folding to a "?" once read. */}
-        <TierLegend data={data} />
-
-        {/* Only when there is something to say. The cards carry a euro figure
-            and the Lifestyle chip above states what it assumes, so a standing
-            line explaining them was restating what the reader can already
-            see. */}
         {/* C6: active filters as removable chips, then the grid header with
             the live count and the sort select beside the results they rule. */}
         <FilterChips t={t} chips={chips} onClearAll={resetAll} />
@@ -766,6 +770,13 @@ export function ExploreTab({
         )}
 
         {railsIdle && <ExploreRails rails={rails} onSelect={openWithMember} t={t} />}
+
+        {/* C8: the tiers, their live counts, and the five glyphs - the
+            system stated where it is used, directly over the grid that
+            encodes it. Desktop shows it open until dismissed; a phone starts
+            it folded to the "?" beside the count, because the first screen
+            there belongs to places, not to the key. */}
+        <TierLegend data={data} defaultFolded={!isDesktop} />
 
         <div className="xgrid-head">
           <span className="xgrid-count">{t('explore.countLine', { n: shownRows.length })}</span>

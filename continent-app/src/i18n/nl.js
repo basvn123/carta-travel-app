@@ -3322,6 +3322,16 @@ export const nl = {
   "rail.cheap": "Onder 70 € per dag",
   "rail.quiet": "Rustig in het hoogseizoen",
   "rail.seeAll": "Alle {n} bekijken",
+  "explore.collections": "Collecties",
+  "explore.legendPip": "Wat de beoordelingen betekenen",
+  "pdf.preparing": "Je gids wordt voorbereid. Het printvenster opent zo.",
+  "pdf.sleepPp": "Ongeveer €{eur} per nacht per persoon",
+  "pdf.mapCaption": "De nummers komen overeen met de lijst met hoogtepunten.",
+  "pdf.open": "Openen",
+  "pdf.verdict": "Oordeel",
+  "pdf.crowd": "Drukte",
+  "pdf.factScore": "Score",
+  "pdf.contentsNote": "Hoogtepunten zijn gerangschikt op Europese betekenis uit open bronnen; activiteiten op hoeveel onafhankelijke gidsen ze noemen.",
   "filter.bestOf": "Het beste van zijn land",
 
   // Tier legend (PLAN.md C8)
