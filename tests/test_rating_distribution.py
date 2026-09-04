@@ -30,6 +30,17 @@ it (see reports/rating_audit_v3_baseline.json):
          large. v3 held this (-0.02) and v4 must keep holding it.
   5. |corr(beauty, log population)| < 0.12.
          v3: -0.158 - beauty quietly penalised cities.
+
+  Gates 3-5 are POOLED statistics, and pooled statistics move when the
+  census moves: the 2026-09-04 register-village wave (708 small places,
+  honestly measured, golden untouched) shifted the SD gap to 0.213 and the
+  beauty correlation to 0.206 without a single pre-existing score changing.
+  Per the user ruling of 2026-09-04 these three gates are asserted on the
+  FIXED REFERENCE POPULATION in reports/rating_reference_population.json -
+  the 3,038-destination catalogue the thresholds were derived on - so they
+  measure the model, not the census. The full-catalogue values are printed
+  beside them and stay worth reading; a model recalibration is the moment
+  to re-freeze the reference. Gates 1-2 and 6-7 remain full-catalogue.
   6. Every country has >= min(3, destinations held) badged destinations
          (country_badge, from A6) - the min() because Liechtenstein, Monaco
          and San Marino hold one destination each, and three badges cannot
@@ -83,6 +94,10 @@ TIER3_RANGE = (35, 70)
 
 BASELINE_MODEL = "rating_v3"
 
+# The reference population for gates 3-5 (see docstring). Absent file means
+# an old checkout: fall back to the full catalogue.
+_REFERENCE = ROOT / "reports" / "rating_reference_population.json"
+
 
 def _corr(xs, ys):
     n = len(xs)
@@ -94,17 +109,24 @@ def _corr(xs, ys):
     return sum((x - mx) * (y - my) for x, y in zip(xs, ys)) / (sx * sy)
 
 
-def measure():
-    data = json.loads(INPUT.read_text(encoding="utf-8"))
-    dests = data["destinations"]
-    model = (data["meta"].get("rating_model") or {}).get("version", "?")
-    report = audit(data)
+def _population_stats(dests):
+    """(sd_gap, score_pop_corr, beauty_pop_corr) over one set of dests."""
+    cur, fit = [], []
+    for d in dests:
+        r = d.get("rating")
+        if not r:
+            continue
+        (cur if "appeal" in (r.get("components") or {}) else fit).append(r["score"])
 
-    # Size-fairness correlations, over destinations with a real population.
+    def _sd(xs):
+        m = sum(xs) / len(xs)
+        return math.sqrt(sum((x - m) ** 2 for x in xs) / len(xs))
+    sd_gap = abs(_sd(cur) - _sd(fit)) if len(cur) > 1 and len(fit) > 1 else 0.0
+
     pop_rows = [(d["rating"]["score"],
                  (d.get("beauty") or {}).get("score"),
                  (d.get("geonames") or {}).get("population"))
-                for d in dests.values() if d.get("rating")]
+                for d in dests if d.get("rating")]
     pop_rows = [(s, b, p) for s, b, p in pop_rows if p and p > 0]
     logpop = [math.log(p) for _, _, p in pop_rows]
     score_pop = _corr([s for s, _, _ in pop_rows], logpop)
@@ -112,6 +134,24 @@ def measure():
                    if b is not None]
     beauty_pop = _corr([b for b, _ in beauty_rows],
                        [lp for _, lp in beauty_rows])
+    return sd_gap, score_pop, beauty_pop
+
+
+def measure():
+    data = json.loads(INPUT.read_text(encoding="utf-8"))
+    dests = data["destinations"]
+    model = (data["meta"].get("rating_model") or {}).get("version", "?")
+    report = audit(data)
+
+    # Gates 3-5 run on the frozen reference population (see docstring); the
+    # full-catalogue values ride along for the printout.
+    all_stats = _population_stats(list(dests.values()))
+    if _REFERENCE.exists():
+        ref_ids = set(json.loads(_REFERENCE.read_text(encoding="utf-8"))["ids"])
+        ref_stats = _population_stats([d for i, d in dests.items()
+                                       if i in ref_ids])
+    else:
+        ref_ids, ref_stats = None, all_stats
 
     # Country badges (A6). None until the country-context layer ships.
     badge_field_exists = any("country_badge" in d for d in dests.values())
@@ -123,11 +163,14 @@ def measure():
         for name in report["countries"]:
             badged.setdefault(name, 0)
 
-    return model, report, score_pop, beauty_pop, badge_field_exists, badged
+    return (model, report, ref_stats, all_stats,
+            ref_ids is not None, badge_field_exists, badged)
 
 
 def test_rating_distribution():
-    model, report, score_pop, beauty_pop, badges_exist, badged = measure()
+    (model, report, ref_stats, all_stats,
+     ref_pinned, badges_exist, badged) = measure()
+    sd_gap, score_pop, beauty_pop = ref_stats
 
     lines = [f"model {model}  (input {INPUT.name})"]
     problems = []
@@ -146,12 +189,11 @@ def test_rating_distribution():
         if contrib < MIN_SD_CONTRIBUTION:
             problems.append(f"{name} sd contribution {contrib:.3f} < {MIN_SD_CONTRIBUTION}")
 
-    cur_sd = report["split"]["curated"]["scores"]["sd"]
-    fit_sd = report["split"]["fitted"]["scores"]["sd"]
-    gap = abs(cur_sd - fit_sd)
-    lines.append(f"  curated sd {cur_sd:.3f}  fitted sd {fit_sd:.3f}  gap {gap:.3f}")
-    if gap >= MAX_SD_GAP:
-        problems.append(f"curated/fitted sd gap {gap:.3f} >= {MAX_SD_GAP}")
+    pop = "reference population" if ref_pinned else "full catalogue (no reference file)"
+    lines.append(f"  gates 3-5 on the {pop}:")
+    lines.append(f"  curated/fitted sd gap {sd_gap:.3f}")
+    if sd_gap >= MAX_SD_GAP:
+        problems.append(f"curated/fitted sd gap {sd_gap:.3f} >= {MAX_SD_GAP}")
 
     lines.append(f"  corr(score, log pop) {score_pop:+.3f}  "
                  f"corr(beauty, log pop) {beauty_pop:+.3f}")
@@ -159,6 +201,10 @@ def test_rating_distribution():
         problems.append(f"|corr(score, log pop)| {abs(score_pop):.3f} >= {MAX_SCORE_POP_CORR}")
     if abs(beauty_pop) >= MAX_BEAUTY_POP_CORR:
         problems.append(f"|corr(beauty, log pop)| {abs(beauty_pop):.3f} >= {MAX_BEAUTY_POP_CORR}")
+    if ref_pinned:
+        a_gap, a_sp, a_bp = all_stats
+        lines.append(f"  (full catalogue, unasserted: gap {a_gap:.3f}  "
+                     f"score-pop {a_sp:+.3f}  beauty-pop {a_bp:+.3f})")
 
     tier3 = report["split"]["all"]["tiers"]["3"]
     lines.append(f"  tier-3 count {tier3}")

@@ -142,3 +142,14 @@ harvested).
 **Plan complete.** All 31 steps landed or resolved by user decision; suites:
 rating 2/2, golden 120/120, explore 43/43, E3 24/24, destination full pass,
 taxonomy 9/9.
+
+## 2026-09-04: reference population for the pooled gates
+
+The register-village wave (below) moved two of E2's pooled statistics with
+no pre-existing score changing: the curated/fitted SD gap to 0.213 and
+corr(beauty, log pop) to 0.206. Diagnosis showed pure composition effects,
+so per the user ruling gates 3-5 now assert on the frozen 3,038-destination
+reference population (reports/rating_reference_population.json) - the
+catalogue their thresholds were derived on. Thresholds unchanged; the
+full-catalogue values print beside them, unasserted. Measured on the
+reference: gap 0.157, score-pop -0.015, beauty-pop +0.072.
