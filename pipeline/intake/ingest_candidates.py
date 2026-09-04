@@ -106,6 +106,15 @@ KIND_CATS = {
     "national_park": ["nature"],
 }
 
+# Wikidata's P17 answers "which state is sovereign here", which is not the
+# question a travel catalogue asks. For territories the two diverge, and a
+# page filed under the sovereign reads as an error to any traveller: Gibraltar
+# is not somewhere you visit "in the United Kingdom". P17 is overridden by the
+# territory's own identity wherever the catalogue already knows it.
+TERRITORY_OVERRIDE = {
+    "Q1410": ("Gibraltar", "GI"),
+}
+
 MINUTES_PER_KM, MINUTES_BASE = 1.196, 1.3     # fitted on the 2026-08 expansion
 EUR_PER_KM, EUR_BASE = 0.322, 10.50
 ANCHOR_MAX_KM = 260.0
@@ -226,7 +235,11 @@ def main():
         if not rec.get("types") & SETTLEMENT_TYPES:
             dropped["not_settlement"] += 1
             continue
-        iso2 = country_iso.get(rec.get("country"))
+        override = TERRITORY_OVERRIDE.get(r["qid"])
+        if override:
+            rec["country"], iso2 = override
+        else:
+            iso2 = country_iso.get(rec.get("country"))
         if not iso2:
             dropped["unknown_country"] += 1
             continue
