@@ -73,16 +73,43 @@ import unicodedata
 # published index.json so a wire file can always be matched to the model that
 # scored it, which is the difference between "the beaches moved" and "we moved
 # them".
-MODEL_VERSION = "beach_beauty_v1"
+MODEL_VERSION = "beach_beauty_v2"
 
-WEIGHTS = {
-    "setting": 0.26,
-    "acclaim": 0.20,
+# The weight table as 03-BEACHES.md states it. Two components are new (space
+# and photo beauty, 0.06 each) and two were trimmed to pay for them (setting
+# 0.26 -> 0.24, acclaim 0.20 -> 0.18).
+#
+# It does not add up. The trims free 0.04 and the additions cost 0.12, so the
+# table as written sums to 1.08 rather than to 1.00, and the brief's own words
+# for the trims ("make room") say that was not the intention. Shipping it
+# unbalanced would not be a neutral choice: the score is 10x the weighted sum,
+# so every beach in Europe would score about eight per cent higher against
+# band cutoffs (6.4 / 7.6 / 8.6) that the brief leaves unchanged, and the top
+# of the range would compress against the 1.0 clamp until a 10.0 stopped
+# meaning anything.
+#
+# So the brief's RATIOS ship exactly as written and the sum is normalised back
+# to 1.00. Both tables go into index.json, `weights` and `weights_as_briefed`,
+# so the deviation is visible from the wire rather than buried here.
+WEIGHTS_AS_BRIEFED = {
+    "setting": 0.24,
+    "acclaim": 0.18,
     "water": 0.16,
     "sand": 0.14,
     "wildness": 0.14,
     "comfort": 0.10,
+    "space": 0.06,
+    "photo": 0.06,
 }
+_BRIEFED_SUM = sum(WEIGHTS_AS_BRIEFED.values())          # 1.08
+WEIGHTS = {k: round(v / _BRIEFED_SUM, 6)
+           for k, v in WEIGHTS_AS_BRIEFED.items()}
+# Rounding eight weights to six places leaves a residue of a couple of
+# millionths. The heaviest component absorbs it, so the table in the wire adds
+# to exactly 1.0 and a reader checking the arithmetic finds it correct.
+_HEAVIEST = max(WEIGHTS, key=lambda k: WEIGHTS[k])
+WEIGHTS[_HEAVIEST] = round(WEIGHTS[_HEAVIEST] + (1.0 - sum(WEIGHTS.values())), 6)
+
 STANDOUT_BONUS = 0.15
 # The bonus rewards a beach that is exceptional in ONE physical way, so it is
 # read off the physical components only.
@@ -92,7 +119,12 @@ STANDOUT_BONUS = 0.15
 # it put an Austrian lake lido above a Cypriot cove on the first ranked page.
 # Not water: an Excellent bathing class is the common case, not a distinction.
 # Not comfort: a car park is not a reason to cross Europe.
-STANDOUT_ON = ("setting", "sand", "wildness")
+# Not photo beauty: it is a fame signal wearing a different hat, see below.
+#
+# v2 adds `space`, per the brief: a four kilometre strand is exceptional in a
+# physical way, and so is a pocket cove that scores low on it while scoring
+# high on wildness.
+STANDOUT_ON = ("setting", "sand", "wildness", "space")
 
 # Score bands, in the Michelin idiom the rest of the app already speaks
 # (see rating_layer.py TIER_CUTOFFS). Beaches are scored on their own scale,
@@ -228,9 +260,25 @@ def sand_component(beach):
 
 
 def water_component(beach, country_default=WATER_DEFAULT):
+    """The bathing class, or None where no source can answer at all.
+
+    Three outcomes, not two, and the third is the v2 change. A beach with a
+    reading scores it. A beach with no reading in a country the register
+    covers scores its country's median, because no reading is not a bad
+    reading and a wild cove must not be punished for being wild. A beach in a
+    country NO register covers (Norway, Iceland, the non-Albania Balkans,
+    Turkey) returns None: the component is dropped and the remaining weights
+    are renormalised.
+
+    That third case used to score WATER_DEFAULT, which quietly handed every
+    Norwegian beach the same 0.62 that a genuinely unmeasured Italian cove
+    earned by sitting among measured neighbours. One is an inference from
+    data, the other is a number nobody earned (invariant 9)."""
     water = beach.get("water") or {}
     grade = WATER_VALUE.get(water.get("class"))
     if grade is None:
+        if country_default is None:
+            return None
         return round(country_default, 4)
     # A beach that has just come up a class, or just gone down one, is worth
     # half a step either way: the class is a four season rolling window, so
@@ -318,6 +366,73 @@ def comfort_component(beach):
     return round(min(1.0, value), 4)
 
 
+# How long a beach has to be before `space` is worth anything, and the point
+# at which more length stops adding. A beach shorter than 25 m is a landing
+# spot; the reference is the stretch's own median, so a component that reads
+# "roomy for this coast" rather than "long in absolute metres" (the Norwegian
+# fjord and the Costa de la Luz are not the same product and must not share a
+# yardstick).
+SPACE_MIN_M = 25
+SPACE_MAX_M = 60000        # beyond this the reading is a digitising error
+SPACE_FALLBACK_REF_M = 900
+
+
+def space_component(beach, reference_m=None):
+    """How much beach there is, normalised inside its own coastal stretch.
+
+    New in v2. Nothing in v1 could tell a four kilometre strand from a sixty
+    metre pocket cove, and they are different products bought for different
+    reasons. It doubles as a crowding proxy: a high `space` next to a low
+    `comfort` is the arithmetic of "you will have it to yourself".
+
+    Returns None when the geometry never said, which drops the component and
+    renormalises rather than scoring an unmeasured beach as though it were
+    tiny (invariant 6). Most Wikidata-only rows and every EEA spine row with
+    no OSM polygon behind it land here, and they are not small, they are
+    unmeasured."""
+    length = beach.get("length_m")
+    try:
+        length = float(length)
+    except (TypeError, ValueError):
+        return None
+    if not (SPACE_MIN_M <= length <= SPACE_MAX_M):
+        return None
+    reference = reference_m or SPACE_FALLBACK_REF_M
+    # Diminishing returns against the stretch's own median: the median beach
+    # on this coast scores 0.63, twice the median 0.86, and a cove a fifth of
+    # it 0.18. No cliff anywhere, so one metre never moves a band.
+    return round(min(1.0, _sat(length, reference)), 4)
+
+
+# Photo beauty is capped exactly as fame is, and for exactly the same reason.
+# A place that photographs well is genuinely a better beach day, which is what
+# earns the component its 0.06. But how MANY good photographs exist of a beach
+# is a popularity signal wearing a different hat, so the component reads the
+# MEAN of the best few rather than the count, and it is clamped.
+PHOTO_TOP_N = 3
+PHOTO_CAP = 0.9
+
+
+def photo_component(beach):
+    """The mean beauty of this beach's best PHOTO_TOP_N photographs.
+
+    The scores come from the photo engine (pipeline/photos/selection.py,
+    photo_rank_v1), which wrote them onto the cached image records, so this
+    reads what is already there and never re-derives anything.
+
+    Returns None when the beauty engine has not run over this row, which is
+    the honest answer: a beach whose gallery predates the engine has not been
+    judged ugly, it has not been judged."""
+    scores = [i.get("beauty") for i in (beach.get("images") or [])
+              if isinstance(i.get("beauty"), (int, float))
+              and not i.get("vetoed")]
+    if not scores:
+        return None
+    scores.sort(reverse=True)
+    best = scores[:PHOTO_TOP_N]
+    return round(min(PHOTO_CAP, sum(best) / len(best)), 4)
+
+
 def fame_raw(beach):
     """One number for "how much attention has this beach had", before any
     normalisation. Sitelinks and pageviews are Wikipedia's answer; the count
@@ -346,7 +461,16 @@ def acclaim_component(beach, country_max, global_max):
     return round(max(0.0, min(1.0, value)), 4)
 
 
-def score_beach(beach, country_max, global_max, water_default=WATER_DEFAULT):
+def score_beach(beach, country_max, global_max, water_default=WATER_DEFAULT,
+                space_reference=None):
+    """(components, 0..1, 0..10) for one beach.
+
+    Components that returned None are DROPPED and the surviving weights are
+    renormalised over what is left (invariant 6). That is what lets a
+    Norwegian beach with no bathing register, no digitised polygon and no
+    beauty-ranked gallery still be scored on the five components it does
+    have, instead of being handed three zeroes nobody measured and sinking
+    below every Italian lido."""
     comps = {
         "setting": setting_component(beach),
         "acclaim": acclaim_component(beach, country_max, global_max),
@@ -354,11 +478,20 @@ def score_beach(beach, country_max, global_max, water_default=WATER_DEFAULT):
         "sand": sand_component(beach),
         "wildness": wildness_component(beach),
         "comfort": comfort_component(beach),
+        "space": space_component(beach, space_reference),
+        "photo": photo_component(beach),
     }
-    base = sum(WEIGHTS[k] * comps[k] for k in WEIGHTS)
-    standout = max(comps[k] for k in STANDOUT_ON)
+    present = {k: v for k, v in comps.items() if v is not None}
+    budget = sum(WEIGHTS[k] for k in present)
+    if budget <= 0:
+        return {}, 0.0, 0.0
+    base = sum(WEIGHTS[k] * present[k] for k in present) / budget
+    # The standout bonus reads only components that were actually measured.
+    # Paying it on a dropped one would be paying for a reading nobody took.
+    physical = [present[k] for k in STANDOUT_ON if k in present]
+    standout = max(physical) if physical else 0.0
     score01 = min(1.0, base + STANDOUT_BONUS * standout)
-    return comps, round(score01, 4), round(10.0 * score01, 1)
+    return present, round(score01, 4), round(10.0 * score01, 1)
 
 
 def tier_for(score10, cutoffs=TIER_CUTOFFS):
@@ -381,6 +514,36 @@ def tier_for(score10, cutoffs=TIER_CUTOFFS):
 # ---------------------------------------------------------------------------
 
 REASON_MAX = 8
+
+# The size bands the brief's Size facet is cut at: a cove under 200 m, a long
+# strand over 2 km, an ordinary beach in between. Bands rather than metres,
+# because "is it a cove or a strand" is the question a reader actually has
+# and 340 m is not an answer to it.
+COVE_MAX_M = 200
+STRAND_MIN_M = 2000
+
+
+def size_band(beach):
+    """cove | beach | strand, or "" when the geometry never said."""
+    length = beach.get("length_m")
+    try:
+        length = float(length)
+    except (TypeError, ValueError):
+        return ""
+    if not (SPACE_MIN_M <= length <= SPACE_MAX_M):
+        return ""
+    if length <= COVE_MAX_M:
+        return "cove"
+    if length >= STRAND_MIN_M:
+        return "strand"
+    return "beach"
+
+
+# How far off due west the shore may face and still be sold as a sunset
+# beach. Plus or minus 50 degrees covers the sun's own swing between the
+# solstices at European latitudes, so a beach that watches the sun go down in
+# July still qualifies in October.
+SUNSET_TOLERANCE_DEG = 50
 
 
 def _surface_code(beach):
@@ -511,13 +674,41 @@ def reasons_for(beach, comps):
     length = beach.get("length_m") or 0
     if 60 <= length <= 30000:
         add("length", m=int(length))
+
+    # 8. What v2 added. These come last on purpose: REASON_MAX cuts the
+    # paragraph at eight, and a beach with a cliff, a lagoon and turquoise
+    # water should spend those eight on the cliff, not on its aspect.
+    band = size_band(beach)
+    if band == "strand":
+        add("long_strand")
+    elif band == "cove":
+        add("pocket_cove")
+    # "You can watch the sun go down from the sand" is a real reason to pick
+    # one beach over the next one along the same coast, and it is computed
+    # from the shore's own bearing rather than claimed (pipeline/beaches/
+    # coastline.py). Only ever emitted for a sea beach: a lake shore facing
+    # west is facing the other side of the lake.
+    if beach.get("sunset_facing") and beach.get("coastal", True):
+        add("sunset_facing")
+    # The honest sentence for a beach in a country no bathing water register
+    # reaches. It is not "the water is unknown quality", it is "nobody
+    # publishes a reading here", and the component was dropped rather than
+    # guessed (invariant 9).
+    if not (beach.get("water") or {}).get("class") and beach.get("no_water_source"):
+        add("water_unknown_no_source")
+    prot = beach.get("protection") or {}
+    if prot.get("natura2000"):
+        add("natura2000", name=prot.get("name") or "")
+    elif prot.get("emerald"):
+        add("emerald", name=prot.get("name") or "")
     return out
 
 
 HIGHLIGHT_ORDER = [
     "boatOnly", "cliffs", "turquoise", "lagoon", "sandColour", "dunes",
     "nationalPark", "undeveloped", "cave", "arch", "waterExcellent", "pines",
-    "shipwreck", "turtles", "nudist", "snorkel", "surf", "blueFlag",
+    "shipwreck", "turtles", "sunset_facing", "long_strand", "pocket_cove",
+    "natura2000", "emerald", "nudist", "snorkel", "surf", "blueFlag",
     "lifeguard", "steps", "hikeIn", "quiet", "shallow", "reserve",
 ]
 
@@ -534,17 +725,24 @@ def highlights_for(reasons):
     return out
 
 
+# Every rule reads components through .get(). Since v2 a component that was
+# never measured is ABSENT from the dict rather than defaulted, so indexing
+# one directly raises on exactly the rows the drop-and-renormalise rule was
+# written to protect: a Norwegian beach has no `water` key at all.
 BEST_FOR_RULES = (
-    ("scenery", lambda c, r: c["setting"] >= 0.6),
-    ("swimming", lambda c, r: c["water"] >= 0.9 and "shallow" in r),
-    ("families", lambda c, r: c["comfort"] >= 0.55 and ("shallow" in r
-                                                        or "lifeguard" in r)),
-    ("seclusion", lambda c, r: c["wildness"] >= 0.85),
+    ("scenery", lambda c, r: c.get("setting", 0) >= 0.6),
+    ("swimming", lambda c, r: c.get("water", 0) >= 0.9 and "shallow" in r),
+    ("families", lambda c, r: c.get("comfort", 0) >= 0.55 and ("shallow" in r
+                                                               or "lifeguard" in r)),
+    ("seclusion", lambda c, r: c.get("wildness", 0) >= 0.85),
     ("snorkelling", lambda c, r: "snorkel" in r or "clearWater" in r
      or "turquoise" in r),
     ("surfing", lambda c, r: "surf" in r),
     ("naturism", lambda c, r: "nudist" in r),
-    ("walkers", lambda c, r: "hikeIn" in r or "steps" in r),
+    ("walkers", lambda c, r: "hikeIn" in r or "steps" in r or "long_strand" in r),
+    # The brief's Best-for facet names Sunset explicitly, and it is the one
+    # entry on that list nothing in v1 could answer.
+    ("sunset", lambda c, r: "sunset_facing" in r or "sunset" in r),
 )
 
 

@@ -1,0 +1,54 @@
+# BRouter for the cycling layer: the routing engine the stage planner reaches
+# for when a gap has to be crossed on real roads rather than bridged with a
+# straight line, and the engine behind the three house profiles.
+#
+# Why BRouter and not Valhalla or GraphHopper (brief 07, section 4):
+#
+#   BRouter's .brf profile DSL exposes arbitrary tag-based costing directly,
+#   which is the only practical way to say "prefer quiet, paved, coastal,
+#   through the national park" as a cost function rather than as a filter
+#   applied afterwards. Elevation is baked into its .rd5 segment files, the
+#   segments are memory mapped so the footprint stays small, and the licence
+#   is GPL. Valhalla is the better isochrone engine and its 60 m sampled,
+#   smoothed grade is the noise problem already solved, but a Europe tile
+#   build wants 64 to 128 GB of RAM; add it later, for isochrones, if the
+#   planner needs them. GraphHopper's Europe multi-profile graph with
+#   elevation is about 170 GB. OSRM has no elevation in its cost model at
+#   all and is simply the wrong tool.
+#
+# Segment files are 5 by 5 degree .rd5 tiles from brouter.de, republished
+# weekly. prepare.py stages only the tiles a country actually needs, into
+# ./segments, so a Scotland run is two tiles rather than a continent.
+#
+# Usage, from the repo root:
+#   python tools/brouter/prepare.py --country GB --up --wait
+#   curl "http://127.0.0.1:17777/brouter?lonlats=-5.06,56.82|-5.11,56.71\
+#         &profile=carta-touring&alternativeidx=0&format=geojson"
+#
+# Loopback only, like every other local service in this repo: an
+# unauthenticated routing service has no business being reachable from the
+# LAN. Re-apply after an edit with: docker compose up -d
+
+services:
+  carta-brouter:
+    image: abrensch/brouter:latest
+    container_name: carta-brouter
+    ports:
+      - "127.0.0.1:17777:17777"
+    volumes:
+      # Segment tiles, staged by prepare.py from brouter.de.
+      - ./segments:/segments
+      # The three house profiles. They are part of the model, so they ship
+      # with the repo (invariant 2) rather than living in a container layer.
+      - ./profiles:/profiles:ro
+      - ./customprofiles:/customprofiles
+    environment:
+      JAVA_OPTS: "-Xmx1g -Xms256m -XX:MaxPermSize=128M"
+    restart: unless-stopped
+    healthcheck:
+      # BRouter answers /brouter with a usage error when it is up, which is
+      # enough to tell "listening" from "still unpacking segments".
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:17777/brouter || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 30

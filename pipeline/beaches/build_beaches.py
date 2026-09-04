@@ -47,6 +47,16 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 
+# Same guard build_lakes.py carries: a cp1252 console cannot encode the Greek
+# and Cyrillic beach names this layer now deliberately harvests, and a print
+# of one would take the stage down mid-run for a terminal problem.
+if sys.platform == "win32":
+    for _stream in (sys.stdout, sys.stderr):
+        try:
+            _stream.reconfigure(encoding="utf-8", errors="replace")
+        except (AttributeError, ValueError):
+            pass
+
 import harvest_beaches  # noqa: E402
 import enrich_beaches  # noqa: E402
 import export_beaches  # noqa: E402

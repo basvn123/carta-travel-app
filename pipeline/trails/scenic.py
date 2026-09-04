@@ -4,8 +4,8 @@ A trail's rating cannot come from reviews. AllTrails, Komoot, Outdooractive
 and Strava all forbid bulk reuse of their ratings, and Instagram has offered
 no location search since 2020, so there is no legal way to buy an opinion.
 What IS free is the reason the opinion would exist: the summits, viewpoints,
-waterfalls, lakes, gorges, castles and mountain huts a route actually runs
-past, all of it in OpenStreetMap under ODbL.
+waterfalls, lakes, gorges, cliffs, castles, huts and villages a route
+actually runs past, all of it in OpenStreetMap under ODbL.
 
 This sweeps those features across the grid cells the curated routes touch,
 then joins them to the routes. It produces two things:
@@ -76,9 +76,18 @@ HIGHLIGHTS_MAX = 12
 # is a convenience that still belongs on the page.
 KINDS = {
     "peak": 1.0, "volcano": 1.0, "viewpoint": 1.0, "waterfall": 1.0,
-    "glacier": 1.0, "arch": 0.9, "gorge": 0.9, "cave": 0.8, "hot_spring": 0.8,
+    "glacier": 1.0, "arch": 0.9, "gorge": 0.9, "cliff": 0.7, "cave": 0.8,
+    "hot_spring": 0.8,
     "lake": 0.7, "castle": 0.7, "ruins": 0.6, "monastery": 0.6,
-    "lighthouse": 0.6, "beach": 0.6, "hut": 0.5, "spring": 0.25, "water": 0.15,
+    "lighthouse": 0.6, "beach": 0.6, "hut": 0.5, "forest": 0.5,
+    "spring": 0.25, "water": 0.15,
+    # A village is a highlight and NOT a density signal. It earns a chip
+    # ("what you pass": village) because walking through one is a different
+    # day from walking round a reservoir, and it earns nothing in the scenery
+    # weight because Europe has a million of them and letting each one carry
+    # even 0.2 would make the densest walk in the catalogue a stroll through
+    # the Randstad.
+    "village": 0.0,
 }
 
 # Overpass selectors, consolidated into six statements with regex alternation.
@@ -98,12 +107,13 @@ KINDS = {
 SELECTORS = [
     'node["natural"~"^(peak|volcano|cave_entrance|spring)$"]["name"]',
     'node["natural"~"^(arch|hot_spring)$"]',
-    'nwr["natural"~"^(water|glacier|beach|gorge)$"]["name"]',
+    'nwr["natural"~"^(water|glacier|beach|gorge|cliff)$"]["name"]',
     'nwr["tourism"~"^(viewpoint|alpine_hut|wilderness_hut)$"]',
     'nwr["waterway"="waterfall"]',
     'nwr["historic"~"^(castle|ruins|monastery)$"]["name"]',
     'nwr["amenity"="monastery"]["name"]',
     'node["man_made"="lighthouse"]["name"]',
+    'node["place"~"^(village|hamlet)$"]["name"]',
 ]
 
 
@@ -185,8 +195,34 @@ KIND_OF_TAGS = [
     ("beach", lambda t: t.get("natural") == "beach"),
     ("hut", lambda t: t.get("tourism") in ("alpine_hut", "wilderness_hut")),
     ("lake", lambda t: t.get("natural") == "water"),
+    ("cliff", lambda t: t.get("natural") == "cliff"),
+    # Kept as a classifier with no selector above it: the extract pass that
+    # will supply forests writes the same tags, so this reads them without
+    # needing a second mapping. See FOREST, below.
+    ("forest", lambda t: t.get("natural") == "wood"
+                         or t.get("landuse") == "forest"),
+    ("village", lambda t: t.get("place") in ("village", "hamlet")),
     ("spring", lambda t: t.get("natural") == "spring"),
 ]
+
+# WHY THERE IS NO FOREST SELECTOR.
+#
+# `natural=wood` and `landuse=forest` were added to SELECTORS and then taken
+# out again, because a 1.5 degree cell is roughly the size of Belgium and
+# asking a free shared Overpass mirror for every named wood inside one is not
+# a targeted sweep. Measured: 12,246 features per cell against 2,215 before,
+# 1.8 minutes per cell, 13 hours for Europe, and both live mirrors returning
+# 504 while it ran. That is the module header's own rule being broken, the one
+# that says extracts are the bulk channel and Overpass is for targeted sweeps.
+#
+# Forests belong to an extract pass. The Geofabrik files are already on disk
+# for way_tags.py and ingest_osm_routes.py, a pyosmium area filter over them
+# costs nobody else anything, and it can run whenever those files are refreshed
+# rather than needing a special sweep. The classifier above is left in place so
+# that pass has nothing to teach this file when it lands.
+#
+# `village` and `cliff` DID stay in SELECTORS: they are node-level and cheap,
+# and they arrive with the next routine refresh at no extra cost.
 
 
 def classify(tags):
@@ -386,7 +422,55 @@ HIGHLIGHTS_SQL = """
     ORDER BY r.id, along_m
 """
 
+# The same join for the highlights that are AREAS rather than points
+# (pipeline/trails/forests.py, scenic_areas). Two differences, both forced by
+# the geometry:
+#
+#   off_m is the distance to the POLYGON, which is 0 whenever the route is
+#   inside it. That is the whole reason forests are stored as areas: "does
+#   this walk go through the Forest of Dean" cannot be asked of a centroid.
+#
+#   along_m is measured to the closest point on the line rather than to the
+#   feature, because ST_LineLocatePoint takes a point and a forest is not
+#   one. For a route that runs through a wood this lands at the point where
+#   it is deepest inside, which is the right place to put it in a list
+#   ordered along the walk.
+AREAS_SQL = """
+    WITH route AS (
+        SELECT id, ST_Force2D(ST_GeometryN(geom, 1)) AS line,
+               GREATEST(distance_m, 1) AS len
+        FROM trips WHERE id = ANY(%(ids)s)
+    )
+    SELECT r.id, a.kind, a.name,
+           ST_Distance(a.geom::geography, r.line::geography) AS off_m,
+           ST_LineLocatePoint(r.line,
+               ST_ClosestPoint(r.line, a.geom)) * r.len AS along_m,
+           ST_Y(ST_Centroid(a.geom)), ST_X(ST_Centroid(a.geom))
+    FROM route r
+    JOIN scenic_areas a
+      ON a.geom && ST_Expand(r.line, %(pad)s)
+     AND ST_DWithin(a.geom::geography, r.line::geography, %(radius)s)
+    ORDER BY r.id, along_m
+"""
+
 DEG_PAD = 0.02
+
+
+_HAS_AREAS = None
+
+
+def has_areas(conn):
+    """True when forests.py has built its table.
+
+    Checked rather than assumed, so a clone that has never run the forest
+    pass links points exactly as before instead of failing on a missing
+    relation. Cached, because this is called once per country."""
+    global _HAS_AREAS
+    if _HAS_AREAS is None:
+        with conn.cursor() as cur:
+            cur.execute("SELECT to_regclass('public.scenic_areas')")
+            _HAS_AREAS = cur.fetchone()[0] is not None
+    return _HAS_AREAS
 
 
 def link_country(conn, cc, verbose=False):
@@ -409,6 +493,22 @@ def link_country(conn, cc, verbose=False):
                 "off_m": round(off_m), "along_m": round(along_m),
                 "lat": round(lat, 5), "lon": round(lon, 5),
             })
+    # Areas, into the same list and under the same radius, so everything
+    # downstream (the density weight, the touched list, highlight_kinds) reads
+    # one collection and needs to know nothing about the shapes behind it.
+    if has_areas(conn):
+        with conn.cursor() as cur:
+            cur.execute(AREAS_SQL,
+                        {"ids": ids, "radius": DENSITY_M, "pad": DEG_PAD})
+            for (tid, kind, name, off_m, along_m, lat, lon) in cur.fetchall():
+                near[tid].append({
+                    "kind": kind, "name": name, "ele_m": None,
+                    "wikidata": None,
+                    "off_m": round(off_m), "along_m": round(along_m),
+                    "lat": round(lat, 5), "lon": round(lon, 5),
+                })
+        for rows in near.values():
+            rows.sort(key=lambda f: f["along_m"])
 
     written = 0
     with conn.cursor() as cur:

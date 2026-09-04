@@ -1,6 +1,6 @@
 """National portal cross-check: official trail geometries vs staged OSM trips.
 
-Loads three official datasets into the portal_trails staging table of the
+Loads five official datasets into the portal_trails staging table of the
 trailslab PostGIS DB (tools/trailslab, port 5433), then scores every staged
 OSM trip against the official geometry and writes a portal_agreement check
 into validation_runs.
@@ -32,6 +32,15 @@ conventions as the src/ingestion collectors):
       no hiking-trail vector layer, the OeAV Wegenetz is not open, and no
       other Land ships trail geometry under an open licence, so there is
       deliberately no AT loader yet.
+  GB  Natural England "National Trails (England)", the sixteen waymarked
+      National Trails, paged GeoJSON off their ArcGIS Feature Server.
+      Licence checked on the dataset page before the loader was written:
+      Open Government Licence v3.0, commercial reuse permitted, attribution
+      "(c) Natural England copyright. Contains Ordnance Survey data
+      (c) Crown copyright and database right". England only: the Wales Coast
+      Path (Natural Resources Wales) and Scotland's Great Trails (NatureScot)
+      are separate datasets under separate licences, so the GB check is
+      restricted to the England bbox the way the DE one is to Bavaria's.
 
 Matching, per staged OSM trip of the country:
   geometry: sample points every --step metres along the trip (capped at
@@ -107,6 +116,14 @@ TURRUTE_UUID = "d1422d17-6d95-4ef1-96ab-8af31744dd63"
 BVV_GPX_URL = ("https://geodaten.bayern.de/odd/m/2/freizeitwege/wanderwege/"
                "gpx/wanderwege_gpx.zip")
 BAVARIA_BBOX = (8.95, 47.25, 13.90, 50.60)   # lon/lat envelope, DE coverage
+NE_TRAILS_URL = ("https://services.arcgis.com/JJzESW51TqeY9uat/arcgis/rest/"
+                 "services/National_Trails_England/FeatureServer")
+NE_PAGE = 1000
+# The name field ArcGIS layers use varies by publisher and by republish, so
+# the first populated one of these wins rather than a single hard-coded key.
+NE_NAME_FIELDS = ("name", "Name", "NAME", "trail_name", "TrailName",
+                  "national_trail", "NationalTrail", "TRAIL")
+ENGLAND_BBOX = (-6.5, 49.8, 1.9, 55.9)       # lon/lat envelope, GB coverage
 
 NEAR_M = 60          # a sampled point this close to official geometry counts as covered
 LOOSE_M = 150        # secondary coverage band, recorded in details
@@ -452,6 +469,72 @@ def load_bvv_wanderwege(session, refresh):
 
 
 # ---------------------------------------------------------------------------
+# Loader: England, Natural England National Trails
+# ---------------------------------------------------------------------------
+
+def load_national_trails(session, refresh):
+    """Yield (name, srid, wkb_hex) per National Trail feature.
+
+    The fifth portal, and the one GB never had. Natural England publish the
+    sixteen National Trails of England as a linear dataset on their ArcGIS
+    Open Data geoportal and through data.gov.uk. Licence confirmed on the
+    dataset page before this was written: Open Government Licence, which
+    permits commercial reuse, with the attribution recorded in SOURCES below
+    and in docs/tos/data_licenses.md.
+
+    Fetched as paged GeoJSON from the ArcGIS Feature Server, the same shape
+    as the IGN WFS above: `resultOffset` walks the layer and
+    `exceededTransferLimit` says when to stop, which is more reliable than
+    trusting a count the service does not always give.
+
+    England only, on purpose. Wales (the Wales Coast Path, Natural Resources
+    Wales) and Scotland (Scotland's Great Trails, NatureScot) publish their
+    own datasets under their own licences and are not in this one, so the
+    coverage box below keeps Welsh and Scottish routes from collecting
+    meaningless failed checks, exactly as Bavaria does for Germany."""
+    store = RawStore("natural_england_national_trails")
+    offset, page = 0, 0
+    while True:
+        params = {
+            "where": "1=1", "outFields": "*", "outSR": 4326,
+            "f": "geojson", "resultOffset": offset,
+            "resultRecordCount": NE_PAGE, "returnGeometry": "true",
+            "orderByFields": "OBJECTID",
+        }
+        resp = session.get(NE_TRAILS_URL + "/0/query", params=params)
+        data = resp.json()
+        feats = data.get("features", [])
+        if page == 0:
+            print(f"  [GB] National Trails (England) via the ArcGIS "
+                  f"FeatureServer")
+        store.save_bytes(f"national_trails_p{page:03d}.json", resp.content,
+                         url=resp.url, content_type="application/json",
+                         note="National Trails (England), Natural England; "
+                              "Open Government Licence v3.0")
+        for f in feats:
+            geom = f.get("geometry")
+            if not geom:
+                continue
+            props = f.get("properties") or {}
+            name = next((props[k] for k in NE_NAME_FIELDS
+                         if props.get(k)), None)
+            yield (name, 4326, shapely.to_wkb(shape(geom), hex=True))
+        # The service caps a page at its own maxRecordCount whatever we ask
+        # for, and says so with exceededTransferLimit. That flag, not a count
+        # we guessed, is what decides whether to ask again.
+        if not feats or not (data.get("properties") or {}).get(
+                "exceededTransferLimit"):
+            break
+        offset += len(feats)
+        page += 1
+        if page > 200:                # the layer is sixteen trails, not a planet
+            print("  [GB] stopping at 200 pages; the layer should be smaller "
+                  "than this and something is wrong upstream")
+            break
+    print(f"  [GB] {page + 1} page(s) read")
+
+
+# ---------------------------------------------------------------------------
 # Staging into portal_trails
 # ---------------------------------------------------------------------------
 
@@ -465,6 +548,12 @@ SOURCES = {
     "DE": {"source": "bvv_wanderwege", "loader": load_bvv_wanderwege,
            "license": "CC BY 4.0 (Bayerische Vermessungsverwaltung)",
            "coverage": BAVARIA_BBOX, "reference": "routes"},
+    "GB": {"source": "natural_england_national_trails",
+           "loader": load_national_trails,
+           "license": "Open Government Licence v3.0 "
+                      "((c) Natural England copyright. Contains Ordnance "
+                      "Survey data (c) Crown copyright and database right)",
+           "coverage": ENGLAND_BBOX, "reference": "routes"},
 }
 
 

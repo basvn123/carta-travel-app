@@ -70,7 +70,26 @@ from harvest_peaks import (COUNTRIES, COUNTRY_QID, fold,  # noqa: E402
                            name_tokens)
 import peak_index as pi  # noqa: E402
 
+if sys.platform == "win32":
+    # A Bosnian summit name stops an export dead on a cp1252
+    # console otherwise, which is a silly way to lose a build.
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+
 ROOT = HERE.parents[1]
+
+
+def terrain_mod_version():
+    """terrain.py's model string, read without importing it: the module
+    configures GDAL and pulls rasterio in, and an export on a box with no
+    rasterio must still ship."""
+    try:
+        path = HERE / "terrain.py"
+        for line in path.read_text(encoding="utf-8").splitlines():
+            if line.startswith("MODEL_VERSION"):
+                return line.split("=", 1)[1].strip().strip('"')
+    except OSError:
+        pass
+    return "terrain_v1"
 
 
 def photo_rank_block():
@@ -103,11 +122,16 @@ else:
     _lake_spec.loader.exec_module(lake_images)
 OUT_DIR = ROOT / "continent-app" / "public" / "mountains"
 
-# How many photographs a mountain needs to be publishable. Two, unless one of
-# them is EVIDENCE rather than a guess: a Wikidata P18 is a curated statement
-# that this picture depicts this item, and one of those is worth more than two
-# files a geosearch found in the same valley.
-MIN_IMAGES = 2
+# How many photographs a RATED mountain needs. Four, up from two, which is
+# the programme wide bar (master spec section 8) and is affordable now for
+# one reason: a row that misses it is no longer deleted. It becomes a listed
+# row, keeps its name and its place on the map, and stops claiming a score.
+#
+# A listed row needs one photograph, or none at all: with none it ships the
+# photo engine's map card code and the app draws the mountain on a map
+# instead of showing somebody else's view under its name.
+MIN_IMAGES = 4
+MIN_IMAGES_LISTED = 0
 
 # 5.0 rather than 5.5, which is roughly a third more mountains published.
 #
@@ -118,13 +142,32 @@ MIN_IMAGES = 2
 # least one thing to say. Below it the rows stop being mountains anybody would
 # travel for and start being the next bump along the ridge.
 MIN_SCORE = 5.0
-PUBLISH_MAX = 60
+# A sanity ceiling far above the quota sum, per master spec section 4, and no
+# longer the thing that decides how many mountains a country publishes: the
+# region quota does that now. 60 was a country cap, and a country is the
+# wrong unit (Spain published exactly 120 beaches for the same reason).
+PUBLISH_MAX = 300
 DUPLICATE_KM = 1.0
 
 # The floor, and the reason it exists: without it the Netherlands publishes
 # nothing, Denmark publishes nothing, and the tab quietly becomes "the Alps".
+#
+# In v2 the floor is filled with LISTED rows rather than with rated rows
+# whose score was relaxed to 3.6. That is the honest version of the same
+# promise: a country with four mountains worth a score publishes four scores
+# and lists the rest, instead of dressing a 3.6 up as a recommendation.
 COUNTRY_FLOOR = 8
-FLOOR_MIN_SCORE = 3.6
+# Every European GMBA range gets at least this many rows of any tier
+# (brief 05 section 6). Ranges are the browse surface behind "peaks in the
+# Dolomites", and a range page with one row is not a page.
+RANGE_FLOOR = 2
+
+# Why a country could not reach its floor. Codes, never prose: the wire
+# carries the code and src/lib/mountainStory.js writes the sentence, in six
+# languages, the same arrangement every other explanation in this layer uses.
+#   poolExhausted   every named candidate in the country is already published
+#   noCandidates    the harvest found nothing else inside the country at all
+FLOOR_REASONS = ("poolExhausted", "noCandidates")
 
 TOP_N = 240
 TOP_PER_COUNTRY = 6
@@ -132,6 +175,14 @@ TOP_PER_COUNTRY = 6
 ATTRIBUTION = {
     "wikidata": "Mountain names, locations, elevations and prominence from "
                 "Wikidata (CC0)",
+    # Prescribed by the programme, word for word, and it travels with every
+    # row that carries a computed prominence, isolation or view.
+    "glo30": "Elevation, prominence, isolation and viewsheds computed from "
+             "the Copernicus DEM: (c) DLR e.V. 2010-2014 and (c) Airbus "
+             "Defence and Space GmbH 2014-2018, provided under COPERNICUS by "
+             "the European Union and ESA",
+    "climate": "Monthly climate normals from NASA POWER (MERRA-2), US "
+               "government open data",
     "osm": "Lifts, huts, paths and summit detail (c) OpenStreetMap "
            "contributors, ODbL",
     "commons": "Photographs from Wikimedia Commons, each under the licence "
@@ -158,6 +209,14 @@ CARD_PX = 500
 
 # How many pictures in one gallery may rest on category filing alone, and how
 # short the gallery has to be for them to be worth having at all.
+#
+# Left at 3 when MIN_IMAGES moved to 4, deliberately: it costs 85 rows of the
+# 1,497 that have four cached photographs, and every one of those 85 is a
+# gallery that is mostly category filing. Raising it to 4 would buy those rows
+# a rated tier by filling the fourth slot with a picture nothing says is of
+# this mountain, which is the trade the evidence gate exists to refuse. They
+# publish as listed rows instead, and the photo backlog in index.json names
+# their countries.
 WEAK_SLOTS = 2
 WEAK_UNTIL = 3
 
@@ -367,6 +426,81 @@ def wire_images(peak):
                                    tier=lambda i: i.get("ev"))
 
 
+# ---------------------------------------------------------------------------
+# The gate, v2
+# ---------------------------------------------------------------------------
+#
+# Order matters, and the order is the whole fix. In v1 the photo gate ran
+# first and deleted the pool, so COUNTRY_FLOOR=8 relaxed a score over an
+# empty list and Lithuania published four mountains. Brief 05 reorders it:
+#
+#     score gate   -> rated candidate
+#     photo gate   -> rated candidate, and REJECTS FALL THROUGH to listed
+#     country      -> Wikidata P17 must match the file it is going into
+#     dedupe       -> no better peak within a kilometre
+#     region quota -> per GMBA range, opportunity sized
+#     floor fill   -> country 8, every applicable NUTS3 1, every range 2,
+#                     satisfiable by listed rows because a listed row needs
+#                     one photograph or none at all
+#     report       -> which floors were filled, and which could not be, with
+#                     a reason code
+#
+# Three tiers reach the wire, and the master spec's rule is absolute: only a
+# rated row carries a score, and it carries it as a KEY THAT EXISTS. Listed
+# and editorial rows have no score key at all, because the app cannot render
+# what is not there and that is the only guarantee worth having.
+
+
+def carried_by_strong(images):
+    """Whether a gallery is carried by a picture that NAMES the mountain or
+    that its own Wikipedia article uses.
+
+    Commons filing is loose enough that a photograph of the town of Andorra
+    la Vella sits in Category:Tossal de la Llosada, because the ridge is on
+    the skyline. Four such pictures are still four pictures of somewhere
+    else."""
+    return any(img.get("ev") in ("name", "article", "p18") for img in images)
+
+
+def photo_gate(images):
+    """Brief 05: four photographs, and the gallery carried by a named or
+    article picture.
+
+    Four rather than v1's two is the programme wide bar (master spec section
+    8): two is a floor for existence and this layer publishes a gallery. A
+    row that misses it is not dropped any more, it is listed."""
+    return len(images) >= MIN_IMAGES and carried_by_strong(images)
+
+
+def view_bands(scored):
+    """Percentile bands for the view, WITHIN THE COUNTRY (invariant 5).
+
+    A Dutch summit that sees 40 km2 of the Netherlands is not "fine" against
+    the Alps and is remarkable against the rest of the Netherlands, and the
+    filter has to mean the same thing on every country's page. Five bands,
+    quintiles, computed over every row of the country that has a viewshed."""
+    values = sorted(v for v in
+                    (pi.terrain_of(p).get("view_km2") for p, _c, _s in scored)
+                    if v is not None)
+    if len(values) < 5:
+        return None
+    cuts = [values[int(len(values) * q)] for q in (0.2, 0.4, 0.6, 0.8)]
+    return cuts
+
+
+def view_band_of(peak, cuts):
+    """1..5, or None where nothing was measured."""
+    if not cuts:
+        return None
+    value = pi.terrain_of(peak).get("view_km2")
+    if value is None:
+        return None
+    band = 1
+    for cut in cuts:
+        if value >= cut:
+            band += 1
+    return min(5, band)
+
 def peak_id(peak):
     """Stable, readable, and unique even when two summits share a name.
 
@@ -374,7 +508,12 @@ def peak_id(peak):
     under Poland and under Slovakia, and Mount Olympus is a summit in Greece
     and another one in Cyprus."""
     slug = re.sub(r"[^a-z0-9]+", "-", fold(peak.get("name") or "")).strip("-")
-    return f"{peak['cc'].lower()}-{slug[:38] or 'peak'}-{peak.get('wd') or 'x'}"
+    # The tail is the Wikidata id, or the OSM element id where there is no
+    # Wikidata item. v1 wrote "x" for the second case, which was fine while
+    # every row came from Wikidata and becomes forty rows called
+    # "no-something-x" the moment the OSM spine lands.
+    tail = peak.get("wd") or (f"osm{peak['oid']}" if peak.get("oid") else "x")
+    return f"{peak['cc'].lower()}-{slug[:38] or 'peak'}-{tail}"
 
 
 def wiki_ref(peak, cc):
@@ -399,6 +538,10 @@ def credits_of(peak):
         keys.add("osm")
     if peak.get("facts"):
         keys.add("wikipedia")
+    if peak.get("terrain"):
+        keys.add("glo30")
+    if (peak.get("season") or {}).get("src"):
+        keys.add("climate")
     return [ATTRIBUTION[k] for k in sorted(keys)]
 
 
@@ -423,10 +566,11 @@ def display_name(peak):
     return name
 
 
-def wire_peak(peak, comps, score10, tier, reasons, expected):
+def wire_peak(peak, comps, score10, tier, reasons, expected, view_band=None,
+              images=None):
     kind = pi.kind_of(peak)
     lift = pi.lift_of(peak)
-    images = wire_images(peak)
+    images = wire_images(peak) if images is None else images
     row = {
         "id": peak_id(peak),
         "wd": peak.get("wd") or "",
@@ -472,17 +616,57 @@ def wire_peak(peak, comps, score10, tier, reasons, expected):
         row["nameLocal"] = other
     if peak.get("ele") is not None:
         row["ele"] = int(round(peak["ele"]))
+    elif pi.terrain_of(peak).get("ele_dem") is not None:
+        # A row whose sources never carried an elevation still has one: the
+        # DEM was asked at its coordinate. Marked, because a measured summit
+        # and a sampled cell are not the same claim.
+        row["ele"] = int(round(pi.terrain_of(peak)["ele_dem"]))
+        row["eleSrc"] = "dem"
+    # The elevation cross-check, shipped rather than silently applied: a gap
+    # over 30 m between the source and GLO-30 at this coordinate. It is
+    # usually the DEM smoothing a spire and occasionally a coordinate that
+    # misses the summit, and either way a reader auditing this layer should
+    # be able to see it. See terrain.summit_elevation.
+    if pi.terrain_of(peak).get("ele_gap") is not None:
+        row["eleGap"] = int(round(pi.terrain_of(peak)["ele_gap"]))
+
+    # Filter 4: difficulty, which never moves the ranking (brief 05 section 3).
+    diff = pi.difficulty_of(peak)
+    if diff:
+        row["diff"] = {k: v for k, v in diff.items() if k != "derived"}
+        if diff.get("derived"):
+            row["diff"]["est"] = True
+    # Filter 5: how you get to it, as a list rather than a rung.
+    acc = pi.access_codes(peak)
+    if acc:
+        row["acc"] = acc
+    # Filter 3: the view, banded by percentile within its own country.
+    if view_band is not None:
+        row["vb"] = view_band
+    terrain = pi.terrain_of(peak)
+    if terrain.get("view_km2") is not None:
+        row["view"] = {"km2": int(round(terrain["view_km2"])),
+                       "peaks": int(terrain.get("view_peaks") or 0),
+                       "water": bool(terrain.get("view_water"))}
     # Prominence, unless the source contradicts itself. Wikidata gives
     # Kopsenni in the Faroes 698 m of elevation and 789 m of prominence, and a
     # summit cannot rise further above its own connecting pass than it rises
     # above the sea. Elevation is the better attested of the two, so the
     # prominence is simply not published: no figure beats a wrong figure, and
     # one bad row should not stop 634 good ones from reaching the wire.
-    if peak.get("prom") is not None and (
-            peak.get("ele") is None or peak["prom"] <= peak["ele"] + 50):
-        row["prom"] = int(round(peak["prom"]))
-    if peak.get("iso_km") is not None:
-        row["isoKm"] = peak["iso_km"]
+    prom, prom_src = pi.prominence_of(peak)
+    if prom is not None:
+        row["prom"] = int(round(prom))
+        if prom_src.startswith("dem"):
+            # dem: computed from GLO-30. dem_min: computed, and the search
+            # window could only bound it from below, so it is a floor rather
+            # than a figure. Filter 2 bands both; the page labels the second.
+            row["promSrc"] = prom_src
+    iso, iso_src = pi.isolation_of(peak)
+    if iso is not None:
+        row["isoKm"] = round(iso, 2)
+        if iso_src == "dem":
+            row["isoSrc"] = "dem"
     if peak.get("range"):
         row["range"] = peak["range"][:60]
     if peak.get("highpoint_of"):
@@ -530,28 +714,109 @@ def in_country(peak, cc):
     return COUNTRY_QID.get(cc) in countries
 
 
-def publishable(peak, cc=None):
-    """The gate, minus the score (which needs the whole country first)."""
-    images = peak.get("images") or []
-    if not images:
-        return False
-    if len(images) < MIN_IMAGES and not evidenced_image(peak):
-        return False
+# ---------------------------------------------------------------------------
+# What the two v2 measurement passes add to a row
+# ---------------------------------------------------------------------------
+#
+# Both are keyed by COORDINATE rather than by Wikidata id, because both
+# measure a place rather than an item: terrain.py asks the DEM what the
+# ground does there, season.py asks a climatology what the weather does. A
+# row that changes its Q number, or that arrives from the OSM spine instead
+# of from Wikidata, gets the same answer without paying for it again.
+#
+# Missing is normal and never fatal. A country the sweeps have not reached
+# scores on the components it does have and renormalises, which is invariant
+# 6 and is the same rule that lets the layer publish without Overpass.
+
+MONTH_WORDS = ["jan", "feb", "mar", "apr", "may", "jun",
+               "jul", "aug", "sep", "oct", "nov", "dec"]
+
+
+def load_measurements():
+    """(terrain, seasons), both possibly empty."""
+    out = []
+    for name in ("terrain.json", "season.json"):
+        path = ROOT / "cache" / "mountains" / name
+        try:
+            out.append(json.loads(path.read_text(encoding="utf-8")))
+        except (OSError, ValueError):
+            out.append({})
+    return out[0], out[1]
+
+
+def season_from_climate(profile):
+    """The wire's season block, built from a monthly climatology.
+
+    Keeps the v1 shape (`from`, `to`, `n`, `est`) so every screen that
+    already reads it keeps working, and adds what the climatology knows: the
+    month numbers themselves, the twelve temperatures, the twelve snow
+    probabilities, and which source answered.
+
+    `snowbound` is the honest half of this: on a summit where no month clears
+    the snow bar, the months named are the warmest rather than the walkable,
+    and the page has to say so rather than read as an invitation."""
+    months = profile.get("best") or []
+    if not months:
+        return None
+    block = {
+        "from": MONTH_WORDS[months[0] - 1],
+        "to": MONTH_WORDS[months[-1] - 1],
+        "n": len(months),
+        "months": months,
+        "t": profile.get("t"),
+        "snow": profile.get("snow"),
+        "src": profile.get("src", "power"),
+        "est": True,
+    }
+    if profile.get("snowbound"):
+        block["snowbound"] = True
+    return block
+
+
+def hydrate(peaks, terrain, seasons):
+    """Attach the measured blocks to every row of a country, in place."""
+    for peak in peaks:
+        key = f"{peak['lat']:.5f},{peak['lon']:.5f}"
+        got = terrain.get(key)
+        if got:
+            peak["terrain"] = got
+        profile = seasons.get(key)
+        if profile:
+            block = season_from_climate(profile)
+            if block:
+                peak["season"] = block
+    return peaks
+
+
+def eligible(peak, cc=None):
+    """Whether this row may appear in the wire AT ALL, in any tier.
+
+    This is what is left of v1's `publishable` after the photo gate moved out
+    of it, and moving it out is the standing COUNTRY_FLOOR bug's fix: a row
+    short of photographs is now a listed row rather than a deleted one, so
+    the floor has a pool to reach into.
+
+    What remains is what a catalogue entry has to have whatever tier it
+    lands in: a real name, a country that agrees with the file it is going
+    into, and a measurement of some kind. A row with nothing but a name and
+    a coordinate is a gazetteer entry, and this is not a gazetteer; a row
+    the DEM has measured is not one, which is how an OSM spine summit with
+    no Wikidata elevation still publishes."""
     if not name_tokens(peak.get("name")):
         return False
-    # A row with nothing but a name and a coordinate is a gazetteer entry.
-    if peak.get("ele") is None and not peak.get("seed"):
+    if (peak.get("ele") is None and not peak.get("seed")
+            and pi.terrain_of(peak).get("ele_dem") is None):
         return False
     if cc and not in_country(peak, cc):
         return False
     return True
 
 
-def score_country(cc, global_max):
+def score_country(cc, global_max, terrain=None, seasons=None):
     rich = load_cache("rich", cc)
     if not rich or not rich.get("peaks"):
         return []
-    peaks = rich["peaks"]
+    peaks = hydrate(rich["peaks"], terrain or {}, seasons or {})
     fames = [pi.fame_raw(p) for p in peaks] or [1.0]
     country_max = max(fames) or 1.0
     # The tallest thing in THIS country, which is what relative height is
@@ -627,7 +892,7 @@ def region_key(row):
 
 def quota_ordered(rows, qmod):
     """Step 3 of the gate: the region quota. Rows are grouped per range,
-    ranked within their group, cut at the group's quota, then re-ordered so
+    ranked within their group, quota picks first and overflow behind, so
     every range's first pick outranks any range's second. The country cap
     that follows trims the Alps' fortieth peak before the Jura's third."""
     if qmod is None or not qmod.has_data():
@@ -646,20 +911,38 @@ def quota_ordered(rows, qmod):
             # Not applicable is a statement about quotas, never a ban.
             target = len(group)
         for rank, row in enumerate(sorted(group, key=lambda r: -r["score"])):
-            if rank >= target:
-                break
-            ranked.append((rank, -row["score"], row["id"], row))
-    ranked.sort(key=lambda t: t[:3])
-    return [row for _, _, _, row in ranked]
+            # A row past its region's quota is DEPRIORITISED, never dropped.
+            # Cutting here made the quota a hard ceiling, and in a country
+            # that is a single region of this layer's unit that ceiling is
+            # national: the trails layer found Cyprus, one NUTS3 region,
+            # falling from 103 publishable routes to a quota of 12. The
+            # contract is that the quota decides WHICH rows fill a country's
+            # budget and the country cap decides HOW MANY, so overflow sorts
+            # behind every region's allocation and the cap trims it, which
+            # is what the interleave was for in the first place.
+            over = 1 if rank >= target else 0
+            ranked.append((over, rank, -row["score"], row["id"], row))
+    ranked.sort(key=lambda t: t[:4])
+    return [row for _, _, _, _, row in ranked]
 
 
-def wire_listed(peak):
-    """A listed card: verified to exist, named, deduped, in region, and NOT
-    scored. The score key is absent rather than null, which is the only
-    reliable way to guarantee the app cannot render a number nobody earned."""
-    images = wire_images(peak)[:2]
+def wire_unrated(peak, tier, images=None):
+    """A card for a row that carries no score: `l` listed, or `e` editorial.
+
+    Verified to exist, named, deduped, in region, and NOT scored. The score
+    key is ABSENT rather than null, which is the only reliable way to
+    guarantee the app cannot render a number nobody earned: it cannot render
+    what is not there.
+
+    A listed row is allowed no photograph at all. That is the line that makes
+    the country floor reachable: Monaco and San Marino have a handful of
+    named hills between them and none of them has four pictures on Commons,
+    so a floor that demanded a gallery could never be met and a floor that
+    demands a name and a coordinate can."""
+    images = (wire_images(peak) if images is None else images)[:2]
     for img in images:
-        img.pop("_rec", None)  # the private marker never reaches the wire
+        img.pop("_rec", None)      # the private marker never reaches the wire
+        img.pop("_lead", None)
     row = {
         "id": peak_id(peak),
         "name": display_name(peak),
@@ -667,59 +950,153 @@ def wire_listed(peak):
         "kind": pi.kind_of(peak),
         "lat": round(peak["lat"], 6),
         "lon": round(peak["lon"], 6),
-        "t": "l",
-        "why": [{"k": "unrated_coverage"}],
+        "t": tier,
+        "why": [{"k": "unrated_coverage"}] if tier == "l"
+               else [{"k": "editorial_pick"}],
         "images": images,
         "credit": credits_of(peak),
     }
+    if not images:
+        # The photo engine's own code for "draw the map instead", which is
+        # what a row with nothing publishable gets everywhere in this repo.
+        row["why"].append({"k": "no_photo_map_card"})
     if peak.get("rg"):
         row["rg"] = peak["rg"]
     if peak.get("wd"):
         row["wd"] = peak["wd"]
     if peak.get("ele") is not None:
-        row["ele"] = peak["ele"]
+        row["ele"] = int(round(peak["ele"]))
+    elif pi.terrain_of(peak).get("ele_dem") is not None:
+        row["ele"] = int(round(pi.terrain_of(peak)["ele_dem"]))
+        row["eleSrc"] = "dem"
+    prom, prom_src = pi.prominence_of(peak)
+    if prom is not None:
+        # Prominence is a measurement of the ground, not a judgement of the
+        # mountain, so it may ride on an unscored row: it is what filter 2
+        # reads and it is the difference between a listed molehill and a
+        # listed 1,200 m peak nobody has photographed.
+        row["prom"] = int(round(prom))
+        if prom_src.startswith("dem"):
+            row["promSrc"] = prom_src
+    if peak.get("range"):
+        row["range"] = peak["range"][:60]
     return row
 
 
-def region_floor_fill(rated, pool, qmod):
-    """Step 4 of the gate, the REGION floor (the country floor above only
-    ever adds scored rows and stays as it was). For any applicable region
-    the gates left empty, the best remaining candidate is promoted to tier
-    'l': no score in the wire, one evidenced photograph preferred but not
-    demanded of a row whose whole job is to keep a page honest about what
-    exists."""
+def floor_fill(cc, have, pool, want, seen_ids):
+    """Top a country up to `want` rows of any tier, best candidates first.
+
+    Returns (rows added, reason code or None). The reason is the point of
+    this function as much as the rows are: brief 05's lead is that the layer
+    should be honest about the floor internally and invisible about it to a
+    reader, so a country that cannot be filled says WHY in index.json rather
+    than quietly publishing three mountains.
+
+    Candidates are ranked by what a reader would want first: an editorial
+    seed, then a photograph, then the score the row is not allowed to show.
+    """
+    room = want - len(have)
+    if room <= 0:
+        return [], None
+    ranked = sorted(
+        (t for t in pool if peak_id(t[0]) not in seen_ids),
+        key=lambda t: (0 if (t[0].get("seed") or {}).get("why") == "brief" else
+                       1 if t[0].get("seed") else 2,
+                       0 if (t[0].get("images") or []) else 1,
+                       -t[2]))
+    added = []
+    for peak, _comps, _score in ranked:
+        if len(added) >= room:
+            break
+        rid = peak_id(peak)
+        if rid in seen_ids:
+            continue
+        # The dedupe rule the rated rows live by, applied across tiers: two
+        # entries for one mountain are worse than a short list.
+        if any(haversine_km(peak["lat"], peak["lon"], row["lat"], row["lon"])
+               <= DUPLICATE_KM for row in have + added):
+            continue
+        seen_ids.add(rid)
+        added.append(wire_unrated(
+            peak, "e" if peak.get("seed") else "l"))
+    if len(have) + len(added) >= want:
+        return added, None
+    return added, ("noCandidates" if not pool else "poolExhausted")
+
+
+def region_floor_fill(rows, pool, qmod, seen_ids):
+    """The REGION floors: one row in every applicable NUTS3, RANGE_FLOOR in
+    every applicable GMBA range.
+
+    A region page that is empty is the coverage hole brief 01 built the audit
+    for; this is the step that fills it from the candidates the rated gate
+    turned away, at tier `l`, with no score."""
     if qmod is None or not qmod.has_data():
         return []
-    have = {}
-    for row in rated:
-        n3 = (row.get("rg") or {}).get("n3")
-        if n3:
-            have[n3] = have.get(n3, 0) + 1
-    pools = {}
+    have_n3, have_range = {}, {}
+    for row in rows:
+        rg = row.get("rg") or {}
+        if rg.get("n3"):
+            have_n3[rg["n3"]] = have_n3.get(rg["n3"], 0) + 1
+        if rg.get("ra"):
+            have_range[rg["ra"]] = have_range.get(rg["ra"], 0) + 1
+
+    wanted = []                      # (region id, level, how many short)
+    pools = {"n3": {}, "ra": {}}
     for peak, comps, score10 in pool:
-        n3 = (peak.get("rg") or {}).get("n3")
-        if not n3 or have.get(n3):
+        rg = peak.get("rg") or {}
+        if rg.get("n3"):
+            pools["n3"].setdefault(rg["n3"], []).append((peak, score10))
+        if rg.get("ra"):
+            pools["ra"].setdefault(rg["ra"], []).append((peak, score10))
+    for region_id, cands in pools["n3"].items():
+        if not qmod.applicable(region_id, "mountain"):
             continue
-        pools.setdefault(n3, []).append((peak, score10))
+        short = qmod.floor(region_id, "mountain") - have_n3.get(region_id, 0)
+        if short > 0:
+            wanted.append((region_id, cands, short))
+    for region_id, cands in pools["ra"].items():
+        if not qmod.applicable(region_id, "mountain"):
+            continue
+        short = RANGE_FLOOR - have_range.get(region_id, 0)
+        if short > 0:
+            wanted.append((region_id, cands, short))
+
     listed = []
-    for n3, cands in pools.items():
-        if not qmod.applicable(n3, "mountain"):
-            continue
-        room = qmod.floor(n3, "mountain")
-        cands.sort(key=lambda t: (0 if evidenced_image(t[0]) else 1, -t[1]))
-        for peak, _score in cands[:room]:
-            listed.append(wire_listed(peak))
+    for _region_id, cands, short in wanted:
+        # A photographed candidate first, then the best scoring: a region
+        # page's first row should be one a reader can look at.
+        cands = sorted(cands, key=lambda t: (0 if evidenced_image(t[0]) else 1,
+                                             -t[1]))
+        taken = 0
+        for peak, _score in cands:
+            if taken >= short:
+                break
+            rid = peak_id(peak)
+            if rid in seen_ids:
+                continue
+            if any(haversine_km(peak["lat"], peak["lon"], row["lat"], row["lon"])
+                   <= DUPLICATE_KM for row in rows + listed):
+                continue
+            seen_ids.add(rid)
+            listed.append(wire_unrated(peak, "e" if peak.get("seed") else "l"))
+            taken += 1
     return listed
 
 
 def validate_listed(rows):
-    """Listed rows have their own bar: real name, real place, no score of
-    any spelling, and any image still carries its licence."""
+    """Listed and editorial rows have their own bar: real name, real place,
+    no score of any spelling, and any image still carries its licence."""
     bad = []
     for row in rows:
         where = f"{row['cc']}/{row['id']}"
-        if "score" in row or "tier" in row or "comp" in row:
+        if row.get("t") not in ("l", "e"):
+            bad.append(f"{where}: unrated row with t={row.get('t')!r}")
+        if "score" in row or "tier" in row or "comp" in row or "sub" in row:
             bad.append(f"{where}: listed row carries a score key")
+        if not row.get("images") and not any(
+                w.get("k") == "no_photo_map_card" for w in row.get("why") or []):
+            bad.append(f"{where}: no photograph and no map card code")
         if not row["name"].strip():
             bad.append(f"{where}: no name")
         if not (-90 <= row["lat"] <= 90) or not (-180 <= row["lon"] <= 180):
@@ -783,6 +1160,34 @@ def validate(rows):
             bad.append(f"{where}: {lift.get('kind')} claimed from an article mention")
         if row.get("t") != "r":
             bad.append(f"{where}: rated row without t='r'")
+        # Four photographs, carried by one that names the mountain. The gate
+        # decides this; the validator is what makes it true of the FILE.
+        if len(row["images"]) < MIN_IMAGES:
+            bad.append(f"{where}: {len(row['images'])} photographs, "
+                       f"{MIN_IMAGES} required for a rated row")
+        if not any(img.get("ev") in ("name", "article", "p18")
+                   for img in row["images"]):
+            bad.append(f"{where}: no photograph names this mountain")
+        # The v2 facets, held to the same rule as the lift: a claim carries
+        # its source, and an inferred difficulty says it is inferred.
+        diff = row.get("diff")
+        if diff:
+            if diff.get("k") not in pi.DIFFICULTY:
+                bad.append(f"{where}: unknown difficulty {diff.get('k')!r}")
+            if diff.get("src") not in ("osm", "dem", "wiki"):
+                bad.append(f"{where}: difficulty with no source")
+            if diff.get("src") == "dem" and not diff.get("est"):
+                bad.append(f"{where}: DEM difficulty not marked estimated")
+        for code in row.get("acc") or []:
+            if code not in pi.ACCESS_CODES:
+                bad.append(f"{where}: unknown access code {code!r}")
+        if row.get("vb") is not None and not 1 <= row["vb"] <= 5:
+            bad.append(f"{where}: view band {row['vb']} off the scale")
+        season = row.get("season")
+        if season and not season.get("est"):
+            # Every season figure in this layer is modelled, never a
+            # forecast and never a lift operator's calendar.
+            bad.append(f"{where}: season not marked estimated")
         # Every published row carries its region block. A row whose rg has
         # no n3 is the documented handful outside the admin spine (the h4
         # cell still places it); a row with no rg at all was never stamped.
@@ -851,8 +1256,11 @@ def main():
     # Score everything first, fit the fame expectation on all of it, and only
     # then build rows: the gem score is a residual against the whole field, so
     # it cannot be computed one country at a time.
-    scored_by_cc = {cc: score_country(cc, global_max) for cc in countries
-                    if cc in pools}
+    terrain, seasons = load_measurements()
+    print(f"[mountains] measured terrain for {len(terrain)} coordinates, "
+          f"climatology for {len(seasons)}")
+    scored_by_cc = {cc: score_country(cc, global_max, terrain, seasons)
+                    for cc in countries if cc in pools}
     expectation = fit_expectation(
         [t for rows in scored_by_cc.values() for t in rows])
 
@@ -865,6 +1273,15 @@ def main():
     by_country = {}
     listed_by_country = {}
     filled = {}
+    # Which countries could not reach the floor, and why. This is brief 05's
+    # lead, done properly: the layer is honest about the floor internally and
+    # invisible about it to a reader, who just sees four Lithuanian
+    # mountains and one sentence composed from the code.
+    unreachable = {}
+    # How many rows cleared the score gate and missed the photo gate. The
+    # coverage backlog in one number per country: it is the queue the photo
+    # engine's re-harvest works through.
+    photo_shortfall = {}
     total = 0
     credits = set()
 
@@ -872,74 +1289,67 @@ def main():
         scored = scored_by_cc.get(cc) or []
         if not scored:
             continue
-        rows, spare, unrated_pool = [], [], []
+        cuts = view_bands(scored)
+        rows, unrated_pool = [], []
+        photo_short = 0
         for peak, comps, score10 in sorted(scored,
                                            key=lambda t: (-t[2], t[0]["name"])):
-            # The photo gate no longer deletes the pool before the floor can
-            # reach it. This is the standing COUNTRY_FLOOR=8 bug: the floor
-            # relaxed the score, but publishable() had already emptied the
-            # spare list of every peak short a photograph, so Lithuania sat
-            # at 4 mountains with a floor of 8. A named peak inside its
-            # country now falls through to the region floor as a listed
-            # candidate instead of vanishing.
-            if not publishable(peak, cc):
-                if name_tokens(peak.get("name")) and in_country(peak, cc):
-                    unrated_pool.append((peak, comps, score10))
+            # STEP 0: is this a catalogue entry at all. A real name, the
+            # right country, something measured.
+            if not eligible(peak, cc):
                 continue
+            images = wire_images(peak)
             reasons = pi.reasons_for(peak, comps)
-            if not reasons:
-                unrated_pool.append((peak, comps, score10))
+            # STEP 1: the score gate. A mountain the research brief names is
+            # rated whatever it scores, provided it clears every other gate:
+            # Kirkjufell is the most photographed mountain in Iceland and
+            # scores 4.8, because it is 463 m high, has almost no prominence
+            # and shares a country with Eyjafjallajokull, which owns the fame
+            # scale. A "best mountains in Europe" list without it is wrong in
+            # the way a reader notices in five seconds.
+            brief_seed = (peak.get("seed") or {}).get("why") == "brief"
+            scored_ok = (score10 >= args.min_score or brief_seed) and reasons
+            # STEP 2: the photo gate. Four photographs, carried by one that
+            # names the mountain. A row that misses it FALLS THROUGH: this is
+            # the line that fixes the floor, and it is the only change in
+            # this file that moves a number on every country page.
+            photo_ok = photo_gate(images)
+            if scored_ok and photo_ok:
+                rows.append(wire_peak(peak, comps, score10,
+                                      pi.tier_for(score10), reasons,
+                                      expectation(comps["acclaim"]),
+                                      view_band=view_band_of(peak, cuts),
+                                      images=images))
                 continue
-            row = wire_peak(peak, comps, score10, pi.tier_for(score10),
-                            reasons, expectation(comps["acclaim"]))
-            # A mountain the research brief names is published whatever it
-            # scores, provided it cleared every other gate. That is what the
-            # seed is FOR: Kirkjufell is the most photographed mountain in
-            # Iceland and scores 4.8, because it is 463 m high, has almost no
-            # prominence, and shares a country with Eyjafjallajokull, which
-            # owns the fame scale. A "best mountains in Europe" list without
-            # it is wrong in the way a reader notices in five seconds.
-            brief = (peak.get("seed") or {}).get("why") == "brief"
-            if score10 >= args.min_score or brief:
-                rows.append(row)
-            elif score10 >= FLOOR_MIN_SCORE or peak.get("seed"):
-                # A SEEDED entry can always fill a country's floor, whatever
-                # it scores. That is what the seed is for: the highest point
-                # of Lithuania is a 294 m rise in a forest with a platform on
-                # it, and it scores what a model built for the Alps would
-                # score it. It is also the answer to "what is the mountain in
-                # Lithuania", and a human put it on the list knowing exactly
-                # that. The score still decides the ORDER and the cap still
-                # decides how many.
-                spare.append(row)
+            if scored_ok and not photo_ok:
+                photo_short += 1
+            unrated_pool.append((peak, comps, score10))
+
+        # STEP 3: dedupe, then STEP 4: the region quota, then the country's
+        # sanity ceiling.
         rows = dedupe(rows)
         rows = quota_ordered(rows, qmod)[:args.max_per_country]
         rows.sort(key=lambda r: -r["score"])
 
-        if len(rows) < args.floor and spare:
-            room = args.floor - len(rows)
-            have = {r["id"] for r in rows}
-            extra = [r for r in dedupe(rows + spare)
-                     if r["id"] not in have][:room]
-            if extra:
-                filled[cc] = len(extra)
-                rows = rows + extra
+        # STEP 5: the floors. Country first, then every applicable region.
+        # Both are satisfied by rows of ANY tier, which is what makes
+        # COUNTRY_FLOOR reachable at last.
+        seen_ids = {r["id"] for r in rows}
+        extra, reason = floor_fill(cc, rows, unrated_pool, args.floor, seen_ids)
+        listed = list(extra)
+        listed += region_floor_fill(rows + extra, unrated_pool, qmod, seen_ids)
+        if extra:
+            filled[cc] = len(extra)
+        if reason:
+            unreachable[cc] = {"k": reason, "have": len(rows) + len(extra),
+                               "want": args.floor}
+        if photo_short:
+            photo_shortfall[cc] = photo_short
 
-        # The REGION floor: applicable regions the gates left empty get
-        # their best remaining candidate as a listed row, no score shipped.
-        listed = region_floor_fill(rows, unrated_pool, qmod)
         if not rows and not listed:
             if args.verbose:
                 print(f"  {cc}: nothing clears the gate")
             continue
-        if not rows:
-            listed_by_country[cc] = listed
-            listed_all.extend(listed)
-            for row in listed:
-                credits.update(row["credit"])
-            by_country[cc] = []
-            continue
-
         for row in rows:
             credits.update(row["credit"])
         for row in listed:
@@ -947,6 +1357,9 @@ def main():
         if listed:
             listed_by_country[cc] = listed
             listed_all.extend(listed)
+        by_country[cc] = rows
+        if not rows:
+            continue
         published.extend(rows)
         total += len(rows)
         cover = next((r["images"][0]["u"] for r in rows if r["images"]), "")
@@ -963,11 +1376,14 @@ def main():
             index[-1]["filled"] = filled[cc]
         if listed:
             index[-1]["listed"] = len(listed)
-        by_country[cc] = rows
+        if unreachable.get(cc):
+            index[-1]["floorMissed"] = unreachable[cc]["k"]
         if args.dry_run or args.verbose:
-            note = f" [+{filled[cc]} to reach the floor]" if filled.get(cc) else ""
-            print(f"  {cc}: {len(rows)} mountains, best {rows[0]['score']} "
-                  f"({rows[0]['name']}){note}")
+            note = f" [+{len(listed)} listed]" if listed else ""
+            miss = (f" [floor {unreachable[cc]['have']}/{args.floor}: "
+                    f"{unreachable[cc]['k']}]") if unreachable.get(cc) else ""
+            print(f"  {cc}: {len(rows)} rated, best {rows[0]['score']} "
+                  f"({rows[0]['name']}){note}{miss}")
 
     # Validate BEFORE anything is written. Scoring every country first and
     # writing afterwards is the whole point: a gate that fires after half the
@@ -1033,8 +1449,15 @@ def main():
         if len(top) >= TOP_N:
             break
 
-    absent = {cc: "nothing cleared the gate" for cc in countries
-              if cc not in by_country}
+    # A country with no RATED row is absent from the ranked tab even when it
+    # has listed rows, and it has to say so: keyed off by_country alone,
+    # Monaco vanished from index.json entirely the moment its two rows fell
+    # to the listed tier, and a catalogue that silently forgets a country is
+    # worse than one that says it has nothing scored yet. Codes, not prose
+    # (invariant 3); the app reads the keys and mountainStory writes the line.
+    absent = {cc: {"k": "noRated",
+                   "listed": len(listed_by_country.get(cc) or [])}
+              for cc in countries if not by_country.get(cc)}
 
     index.sort(key=lambda c: -c["n"])
     payload = {
@@ -1052,21 +1475,69 @@ def main():
             "tier_cutoffs": pi.TIER_CUTOFFS,
             "min_score": args.min_score,
             "min_images": MIN_IMAGES,
-            "min_images_note": "two photographs, or one that is provably of "
-                               "this mountain (a Wikidata P18 or a file named "
-                               "after it)",
+            "min_images_note": "four photographs, and the gallery carried by "
+                               "one that names the mountain or that its own "
+                               "Wikipedia article uses. A row short of that "
+                               "is listed, not dropped.",
             "country_floor": args.floor,
+            "range_floor": RANGE_FLOOR,
+            "tiers": {
+                "r": "rated: clears the score gate and the photo gate",
+                "l": "listed: exists, named, deduped, in region, NOT scored. "
+                     "No score key of any spelling.",
+                "e": "editorial: a seed a person vouched for that missed a "
+                     "gate. Also unscored.",
+            },
             # The region quota model ships with the data (invariant 2).
             "region_quota": (qmod.model_block()
                              if qmod is not None and qmod.has_data() else None),
-            "season_model": "Snow free months estimated from elevation and "
-                            "latitude, not from a forecast or a lift "
-                            "operator's calendar. Estimated, not measured.",
+            # The two v2 measurement passes, versioned with the data they
+            # produced (invariant 2).
+            "terrain": {
+                "version": terrain_mod_version(),
+                "dem": "Copernicus GLO-30, windowed reads",
+                "prominence": "flood to the key col, 12/40/120 km windows; "
+                              "promSrc dem_min marks a value the window "
+                              "could only bound from below",
+                "views": "viewshed within 30 km, curvature and refraction "
+                         "subtracted; bands are percentiles WITHIN the "
+                         "country (invariant 5)",
+                "difficulty": "easiest graded way to the top within 800 m; "
+                              "where none is tagged, the gentlest radial "
+                              "line's steepest sustained stretch, marked est",
+            },
+            "views_weight_note": "views moves the ranking by 0.06 and "
+                                 "difficulty moves it by nothing at all: a "
+                                 "hard mountain is not a better mountain.",
+            "season_model": "Monthly climatology per summit, lapse corrected "
+                            "to its own elevation; snow cover is modelled "
+                            "from the monthly mean, not measured. Estimated, "
+                            "and the wire says so.",
             "lift_note": "A lift is claimed only from OpenStreetMap geometry "
                          "within 700 m of the summit, or from the curated "
                          "seed. Opening seasons are not in this layer.",
         },
         "countries": index,
+        # The floor, reported both ways round. Brief 05's lead 05: the layer
+        # is honest about the floor internally and invisible about it to a
+        # reader. `filled` is where the floor added rows, `unreachable` is
+        # where it could not, with a code mountainStory turns into one line.
+        "floor": {
+            "target": args.floor,
+            "filled": filled,
+            "unreachable": unreachable,
+            "reasons": {
+                "poolExhausted": "every named candidate inside the country "
+                                 "is already in the wire",
+                "noCandidates": "the harvest found nothing else inside the "
+                                "country at all",
+            },
+        },
+        # The photo backlog, per country: rows that cleared the score gate
+        # and missed the four photograph bar. This is the queue the photo
+        # engine's wider funnel works through, and it is published rather
+        # than logged so the coverage audit can read it.
+        "photo_shortfall": photo_shortfall,
         "absent": absent,
         "attribution": sorted(credits),
         "sources": provenance(countries),

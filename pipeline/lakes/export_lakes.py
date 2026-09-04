@@ -7,10 +7,12 @@ promise on the first screen.
 
 A lake is published when all of these hold:
 
-  it has photographs        two freely licensed pictures that passed the
-                            relevance filter, or one that is provably of this
-                            lake (see MIN_IMAGES). A lake we cannot show is a
-                            row of text, and the tab is not a gazetteer.
+  it has photographs        FOUR freely licensed pictures that passed the
+                            relevance filter, with a lead one that carries
+                            evidence of being this lake (see MIN_IMAGES). A
+                            lake that cannot reach four is not dropped: it
+                            falls to the `listed` tier, which ships with no
+                            score key at all.
   it has a real name        something beyond the local word for "lake".
   it clears the floor       MIN_SCORE on the index, so the tail of village
                             ponds never reaches the wire.
@@ -45,7 +47,11 @@ Writes:
 Usage, from the repo root:
     python pipeline/lakes/export_lakes.py
     python pipeline/lakes/export_lakes.py --dry-run --verbose
-    python pipeline/lakes/export_lakes.py --countries SI,HR
+    python pipeline/lakes/export_lakes.py --countries SI,HR --dry-run
+
+A subset export is REFUSED without --allow-partial: index.json, top.json, the
+fame ceiling and the gem fit are all Europe wide, so a few countries would
+rewrite the whole layer's index and put two score scales in one wire.
 """
 
 import argparse
@@ -61,6 +67,19 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 
+# Windows consoles and redirected pipes default to cp1252, which cannot encode
+# a Latvian, Icelandic or Polish lake name. A print of one then raises
+# UnicodeEncodeError and takes the stage down; the lake export died on
+# "Lielais Baltezers" halfway through a logged run. The data was never the
+# problem, the terminal was, so say so once here.
+if sys.platform == "win32":
+    for _stream in (sys.stdout, sys.stderr):
+        try:
+            _stream.reconfigure(encoding="utf-8", errors="replace")
+        except (AttributeError, ValueError):
+            pass
+
+
 from water_sources import haversine_km, load_cache  # noqa: E402
 from harvest_lakes import COUNTRIES, fold, name_tokens  # noqa: E402
 import lake_index as li  # noqa: E402
@@ -69,6 +88,20 @@ import seed_lakes  # noqa: E402
 
 ROOT = HERE.parents[1]
 OUT_DIR = ROOT / "continent-app" / "public" / "lakes"
+
+
+def _photo_credit():
+    """pipeline/photos/credit.py, loaded by path like selection.py is."""
+    if "carta_photo_credit" not in sys.modules:
+        spec = importlib.util.spec_from_file_location(
+            "carta_photo_credit", ROOT / "pipeline" / "photos" / "credit.py")
+        mod = importlib.util.module_from_spec(spec)
+        sys.modules["carta_photo_credit"] = mod
+        spec.loader.exec_module(mod)
+    return sys.modules["carta_photo_credit"]
+
+
+photo_credit = _photo_credit()
 
 
 def photo_rank_block():
@@ -89,19 +122,57 @@ def photo_rank_block():
 
 # How many photographs a lake needs to be publishable.
 #
-# Two, unless one of them is EVIDENCE rather than a guess. The rule the beach
-# layer uses is a flat two, and it exists because a beach found by a blind
-# geosearch and shown under one borrowed photograph is a name on somebody
-# else's picture. For lakes it dropped 618 of 3,809 shortlisted water bodies,
-# including San Marino's only one, and 302 of those carried a Wikidata P18: a
-# curated statement that this photograph depicts this lake.
+# Two until 2026-08-30, unless one of them was EVIDENCE rather than a guess.
+# That rule existed because a lake found by a blind geosearch and shown under
+# one borrowed photograph is a name on somebody else's picture, and the flat
+# two the beach layer uses dropped 618 of 3,809 shortlisted water bodies, 302
+# of which carried a Wikidata P18.
 #
-# So the floor is two photographs OR one that is provably of this lake, which
-# means the P18 or a file named after it. A blind geosearch hit on its own is
-# still not enough, which is the case the original rule was protecting.
-MIN_IMAGES = 2
+# It is four now, and the number moved for a reason that is not "more is
+# better". Two photographs is a floor for EXISTENCE: it proves the place is
+# real and that somebody has been there. It is not a bar for BEAUTY, and the
+# tab promises the best lakes in Europe. Four pictures is what a gallery
+# needs before a reader can tell whether they want to go, and it is the same
+# bar the whole programme moved every layer to.
+#
+# The old escape hatch ("two, or one that is provably of this lake") is gone
+# from the RATED tier and survives where it belongs: a listed row, whose job
+# is to keep a region page honest about what exists, ships whatever evidenced
+# pictures it has, including none. A rated row that cannot reach four falls to
+# `listed` rather than out of the app, which is the whole point of the tier.
+MIN_IMAGES = 4
+
+# The lead picture has to be evidenced, not merely nearby. Lakes have no
+# equivalent of the beach layer's `geo` tier: a Commons geosearch hit that
+# reaches none of these five is refused outright at the enrich stage, so this
+# gate is satisfied by construction today. It is written down anyway, and the
+# validator holds the wire to it, so that staying true stops being an
+# accident of an upstream file.
+HERO_TIERS = ("p18", "title", "viewcat", "category", "name")
+
 MIN_SCORE = 5.4
-PUBLISH_MAX = 60
+# How many rows a country may publish. 60 was a publication TARGET and it
+# bound seven countries to exactly 60, which is the shape the master spec
+# names as proof a cap is still deciding the answer rather than the quota.
+#
+# Read this alongside quota_ordered, because the division of labour between
+# the two changed on 2026-08-30 and this number changed role with it. The
+# region quota used to CUT: a row past its region's allocation was dropped,
+# which made the quota a hard ceiling and, in a country that is a single
+# region of this layer's unit, a national one. It now DEPRIORITISES instead,
+# so the quota decides WHICH rows fill a country's budget and this decides
+# HOW MANY.
+#
+# That makes this the binding constraint for any country with more than 400
+# publishable water bodies, where before the quota sum usually bound first.
+# It is deliberately set well above what any country reaches today (74, in
+# the wire of 2026-08-30T16:09:49Z; a measurement, and it moves), and
+# verify_lakes.mjs asserts that no more than two
+# countries sit on the same maximum, which is the master spec's own test for
+# a cap that has started deciding the answer. If that check ever fires, this
+# number is doing work it should not be, and the honest fix is to raise it
+# rather than to let it quietly cap the biggest lakelands in Europe.
+PUBLISH_MAX = 400
 DUPLICATE_KM = 1.2
 
 # Per country coverage. Three is the number the research recommends as a
@@ -109,6 +180,21 @@ DUPLICATE_KM = 1.2
 # nothing is worth a traveller's attention even to fill a page.
 COUNTRY_FLOOR = 4
 FLOOR_MIN_SCORE = 4.0
+
+# The floors that replaced "four a country down to 4.0" as the coverage rule.
+# The country floor stays as a BACKSTOP, because a country with one applicable
+# region would otherwise be held to one row; the region floors are what
+# actually fill the map.
+#
+#   every applicable NUTS3   at least 1 row of any tier   (quotas.floor)
+#   every river basin        at least 2 rows of any tier  (BASIN_FLOOR)
+#
+# The basin floor is the one the brief adds for this layer specifically, and
+# it is the right unit for water: a river basin district is where the water
+# in a region actually comes from, it crosses admin borders the way water
+# does, and a basin with no published lake is a real hole in a way that an
+# empty NUTS3 in a city is not.
+BASIN_FLOOR = 2
 
 # The Europe wide file the tab opens on. Capped per country on purpose: the
 # raw top 200 of Europe is the Alps twice over, which is a true ranking and a
@@ -125,8 +211,9 @@ ATTRIBUTION = {
            "report it",
     "commons": "Photographs from Wikimedia Commons, each under the licence "
                "shown on the picture",
-    "worldclim": "Swimming season estimated from WorldClim 2.1 climate "
-                 "normals, not measured water temperature",
+    "chelsa": "Swimming season estimated from CHELSA V2.1 climate normals "
+              "(Karger et al. 2017, CC BY 4.0), not measured water "
+              "temperature",
 }
 
 
@@ -279,6 +366,19 @@ def usable_images(lake):
             continue
         seen = img.get("seen")
         if seen and seen.get("water", 1.0) < HARD_WATER_FLOOR:
+            continue
+        # A photograph owing a credit it does not carry cannot reach a card.
+        # This is the GATE condition, not the repair one: fill_authors mends
+        # the cache, which makes the wire honest only after a pass has run and
+        # only until the next harvest brings in new files. Refusing it here
+        # makes it a property of the layer instead, true whatever the cache
+        # says and whoever has run what. The framing is the cycling layer's: a
+        # missing credit should cost US a picture, never a reader a false
+        # notice, and "CC BY-SA 3.0" printed with nobody named is the credit
+        # removed and the notice kept. It also recovers by itself, because a
+        # name that turns up on Commons later brings the photograph back at
+        # the next export with nobody needing to remember.
+        if photo_credit.owes_credit(img):
             continue
         out.append((img, why))
     return out
@@ -481,7 +581,7 @@ def wire_lake(lake, comps, score10, tier, reasons, expected):
         ATTRIBUTION["osm"] if (lake.get("context") or lake.get("osm_id")) else None,
         ATTRIBUTION["eea"] if row.get("water") else None,
         ATTRIBUTION["commons"] if row["images"] else None,
-        ATTRIBUTION["worldclim"] if swim.get("temps") else None,
+        ATTRIBUTION["chelsa"] if swim.get("temps") else None,
     ]
     row["credit"] = [c for c in credits if c]
     return row
@@ -506,16 +606,32 @@ def evidenced_image(lake):
     return False
 
 
+def hero_evidenced(images):
+    """True when the lead picture is one somebody ASSERTED is of this lake."""
+    return bool(images) and images[0][1] in HERO_TIERS
+
+
 def publishable(lake):
-    """The gate, minus the score (which needs the whole country first)."""
+    """The RATED gate, minus the score (which needs the whole country first).
+
+    A lake that fails it is not dropped: main() puts it in the pool the
+    region floor fills from as a `listed` row. That is the mountain layer's
+    lesson, which cost 478 rows and a country floor that could not hold."""
     images = usable_images(lake)
-    if not images:
+    if len(images) < MIN_IMAGES:
         return False
-    if len(images) < MIN_IMAGES and not evidenced_image(lake):
+    if not hero_evidenced(images):
         return False
     if not name_tokens(lake.get("name")):
         return False
     return True
+
+
+def listable(lake):
+    """The LISTED bar: a real name, a real place, and pictures that are
+    either evidenced or absent. Nothing here asserts quality, which is
+    exactly why the row ships with no score key."""
+    return bool(name_tokens(lake.get("name")))
 
 
 def country_water_default(lakes):
@@ -536,10 +652,16 @@ def score_country(cc):
     water_default = country_water_default(lakes)
     fames = [li.fame_raw(b) for b in lakes] or [1.0]
     country_max = max(fames) or 1.0
+    # The photo component is normalised the way fame is, 60 per cent within
+    # the country and 40 across Europe, so it needs the same two ceilings.
+    beauties = [li.photo_raw(b) for b in lakes]
+    photo_max = max([b for b in beauties if b is not None] or [1.0]) or 1.0
     scored = []
     for lake in lakes:
         comps, _s01, score10 = li.score_lake(lake, country_max, GLOBAL_MAX,
-                                             water_default)
+                                             water_default,
+                                             photo_max=photo_max,
+                                             photo_global_max=PHOTO_GLOBAL_MAX)
         scored.append((lake, comps, score10))
     return scored
 
@@ -613,7 +735,7 @@ def region_key(row):
 
 def quota_ordered(rows, qmod):
     """Step 3 of the gate: the region quota. Rows are grouped by region,
-    ranked within their group, cut at the group's quota, then re-ordered so
+    ranked within their group, quota picks first and overflow behind, so
     every region's first pick outranks any region's second. The country cap
     that follows trims the deepest tails first instead of whichever thin
     lakeland happened to sort last."""
@@ -633,17 +755,33 @@ def quota_ordered(rows, qmod):
             # Not applicable is a statement about quotas, never a ban.
             target = len(group)
         for rank, row in enumerate(sorted(group, key=lambda r: -r["score"])):
-            if rank >= target:
-                break
-            ranked.append((rank, -row["score"], row["id"], row))
-    ranked.sort(key=lambda t: t[:3])
-    return [row for _, _, _, row in ranked]
+            # A row past its region's quota is DEPRIORITISED, never dropped.
+            # Cutting here made the quota a hard ceiling, and in a country
+            # that is a single region of this layer's unit that ceiling is
+            # national: the trails layer found Cyprus, one NUTS3 region,
+            # falling from 103 publishable routes to a quota of 12. The
+            # contract is that the quota decides WHICH rows fill a country's
+            # budget and the country cap decides HOW MANY, so overflow sorts
+            # behind every region's allocation and the cap trims it, which
+            # is what the interleave was for in the first place.
+            over = 1 if rank >= target else 0
+            ranked.append((over, rank, -row["score"], row["id"], row))
+    ranked.sort(key=lambda t: t[:4])
+    return [row for _, _, _, _, row in ranked]
 
 
 def wire_listed(lake):
     """A listed card: verified to exist, named, deduped, in region, and NOT
     scored. The score key is absent rather than null, which is the only
     reliable way to guarantee the app cannot render a number nobody earned."""
+    # One provably relevant photograph, or none and the card is drawn from
+    # the map. evidenced_image() is this layer's own definition of "provably
+    # of this lake" (a Wikidata P18, or a file named after it), reused here
+    # rather than restated, so the listed bar cannot drift from the rated
+    # one. A weakly evidenced picture is refused outright: on a row with no
+    # score to argue with, the photograph is the whole of what the card
+    # claims, and a shot of the next valley would be all of it.
+    images = wire_images(lake)[:1] if evidenced_image(lake) else []
     row = {
         "id": li.lake_id(lake),
         "name": lake["name"],
@@ -653,9 +791,16 @@ def wire_listed(lake):
         "lon": lake["lon"],
         "t": "l",
         "why": [{"k": "unrated_coverage"}],
-        "images": wire_images(lake)[:2],
+        "images": images,
         "src": lake.get("sources") or [],
     }
+    if not images:
+        # The spec's answer for a row with no publishable picture is the
+        # generated map card, and it ships as a CODE so *Story.js composes
+        # the caption. Without it the app renders an empty frame with no
+        # way to know the emptiness was deliberate, which is the exact case
+        # the map card exists for.
+        row["why"].append({"k": "no_photo_map_card"})
     if lake.get("rg"):
         row["rg"] = lake["rg"]
     if lake.get("adm"):
@@ -670,33 +815,79 @@ def wire_listed(lake):
 
 
 def region_floor_fill(rated, pool, qmod):
-    """Step 4 of the gate, the REGION floor (the country floor below only
-    ever adds scored rows and stays as it was). For any applicable region
-    the gates left empty, the best remaining candidate is promoted to tier
-    'l': no score in the wire, one evidenced photograph preferred but not
-    demanded of a row whose whole job is to keep a page honest about what
-    exists."""
+    """Step 4 of the gate, the REGION floors (the country floor below only
+    ever adds scored rows and stays as it was).
+
+    Two floors run here, in this order, and the second is the one this brief
+    adds for water specifically:
+
+      NUTS3, floor 1   every applicable admin region shows something. The
+                       quota module owns both the number and the applicable()
+                       rule, so the layer cannot quietly disagree with the
+                       audit that grades it.
+      basin, floor 2   every river basin district shows two. A basin is where
+                       the water in a region actually comes from, it crosses
+                       admin borders the way water does, and a basin district
+                       with nothing published is a real hole in a way that an
+                       empty city NUTS3 is not.
+
+    Promoted rows are tier 'l': no score in the wire, one evidenced
+    photograph preferred but not demanded of a row whose whole job is to keep
+    a page honest about what exists."""
     if qmod is None or not qmod.has_data():
         return []
-    have = {}
+    listed, taken = [], set()
+
+    def promote(cands, room):
+        # Evidenced pictures first, then score. A listed row still ships the
+        # best candidate the country has, it just does not ship a number.
+        cands.sort(key=lambda t: (0 if evidenced_image(t[0]) else 1, -t[1]))
+        out = 0
+        for lake, _score in cands:
+            if out >= room:
+                break
+            key = li.lake_id(lake)
+            if key in taken:
+                continue
+            taken.add(key)
+            listed.append(wire_listed(lake))
+            out += 1
+
+    # Floor one: the admin region.
+    have_n3 = {}
     for row in rated:
         n3 = (row.get("rg") or {}).get("n3")
         if n3:
-            have[n3] = have.get(n3, 0) + 1
-    pools = {}
-    for lake, comps, score10 in pool:
+            have_n3[n3] = have_n3.get(n3, 0) + 1
+    by_n3 = {}
+    for lake, _comps, score10 in pool:
         n3 = (lake.get("rg") or {}).get("n3")
-        if not n3 or have.get(n3):
+        if not n3 or have_n3.get(n3):
             continue
-        pools.setdefault(n3, []).append((lake, score10))
-    listed = []
-    for n3, cands in pools.items():
+        by_n3.setdefault(n3, []).append((lake, score10))
+    for n3, cands in by_n3.items():
         if not qmod.applicable(n3, "lake"):
             continue
-        room = qmod.floor(n3, "lake")
-        cands.sort(key=lambda t: (0 if evidenced_image(t[0]) else 1, -t[1]))
-        for lake, _score in cands[:room]:
-            listed.append(wire_listed(lake))
+        promote(cands, qmod.floor(n3, "lake"))
+
+    # Floor two: the river basin district. Rated rows and the listed rows
+    # just promoted both count towards it, because the floor is a minimum of
+    # ANY tier and a basin with two listed lakes is not empty.
+    have_ba = {}
+    for row in list(rated) + listed:
+        basin = (row.get("rg") or {}).get("ba")
+        if basin:
+            have_ba[basin] = have_ba.get(basin, 0) + 1
+    by_ba = {}
+    for lake, _comps, score10 in pool:
+        basin = (lake.get("rg") or {}).get("ba")
+        if not basin or have_ba.get(basin, 0) >= BASIN_FLOOR:
+            continue
+        if li.lake_id(lake) in taken:
+            continue
+        by_ba.setdefault(basin, []).append((lake, score10))
+    for basin, cands in by_ba.items():
+        promote(cands, BASIN_FLOOR - have_ba.get(basin, 0))
     return listed
 
 
@@ -735,8 +926,14 @@ def validate(rows):
             bad.append(f"{where}: no name")
         if not (0 <= row["score"] <= 10):
             bad.append(f"{where}: score {row['score']} is off the scale")
-        if not row["images"]:
-            bad.append(f"{where}: no images")
+        # The photo floor, checked on what is about to be written rather than
+        # trusted from the gate that ran upstream of it.
+        if len(row["images"]) < MIN_IMAGES:
+            bad.append(f"{where}: {len(row['images'])} photographs, "
+                       f"the rated bar is {MIN_IMAGES}")
+        elif row["images"][0].get("why") not in HERO_TIERS:
+            bad.append(f"{where}: lead photograph carries no evidence tier "
+                       f"({row['images'][0].get('why')!r})")
         for img in row["images"]:
             if not str(img.get("u", "")).startswith("https://"):
                 bad.append(f"{where}: image is not https")
@@ -788,6 +985,12 @@ def dedupe(rows):
                                          tier=lambda i: i.get("why"))
         if images is None:
             continue
+        # Reseating can leave a row under the rated photo floor, and a row
+        # that is about to be written has to clear the bar it is written
+        # under. The validator would catch this; catching it here means the
+        # build ships without the row rather than not shipping at all.
+        if len(images) < MIN_IMAGES or images[0].get("why") not in HERO_TIERS:
+            continue
         row["images"] = images
         lead = images[0]["u"] if images else None
         if any(haversine_km(row["lat"], row["lon"], other["lat"], other["lon"])
@@ -804,6 +1007,9 @@ def main():
     parser.add_argument("--countries", default="")
     parser.add_argument("--out", default=str(OUT_DIR))
     parser.add_argument("--dry-run", action="store_true")
+    parser.add_argument("--allow-partial", action="store_true",
+                        help="write a subset export anyway, knowing it "
+                             "rewrites the Europe wide index from it")
     parser.add_argument("--verbose", action="store_true")
     parser.add_argument("--min-score", type=float, default=MIN_SCORE)
     parser.add_argument("--max-per-country", type=int, default=PUBLISH_MAX)
@@ -813,10 +1019,36 @@ def main():
     wanted = [c.strip().upper() for c in args.countries.split(",") if c.strip()]
     countries = wanted or COUNTRIES
 
+    # A partial export is almost never what somebody means, and it fails in a
+    # way that looks like success. index.json and top.json are rewritten from
+    # the countries IN SCOPE, so `--countries SI` leaves a wire that says
+    # Europe has one country with lakes in it, and the per country files of
+    # the other forty survive on disk with nothing pointing at them.
+    #
+    # The scores would be wrong even if the index were not. Acclaim is
+    # normalised against a Europe wide fame ceiling and the gem residual is
+    # fitted across everything published, so rows scored inside a three
+    # country run are not on the same scale as the rows already in the wire.
+    #
+    # Refused rather than merged, because merging the index would still leave
+    # two scales in one file. --dry-run is always allowed, and that is the
+    # right way to look at one country.
+    if wanted and not args.dry_run and not args.allow_partial:
+        raise SystemExit(
+            f"[lakes] refusing a partial export of {','.join(wanted)}.\n"
+            "  index.json and top.json are Europe wide, and so are the fame\n"
+            "  ceiling and the gem fit, so a subset would rewrite the whole\n"
+            "  layer's index from a few countries and put two score scales in\n"
+            "  one wire. Run the full export:\n"
+            "      python pipeline/lakes/export_lakes.py --verbose\n"
+            "  To look at a subset without writing: add --dry-run.\n"
+            "  To do it anyway, knowingly: add --allow-partial.")
+
     # The Europe wide fame ceiling has to be known before any country can be
     # scored, so fame is read once over everything enriched.
-    global GLOBAL_MAX
+    global GLOBAL_MAX, PHOTO_GLOBAL_MAX
     GLOBAL_MAX = 1.0
+    photo_ceiling = 0.0
     pools = {}
     for cc in countries:
         rich = load_cache("rich", cc)
@@ -825,6 +1057,10 @@ def main():
         pools[cc] = rich["lakes"]
         for lake in rich["lakes"]:
             GLOBAL_MAX = max(GLOBAL_MAX, li.fame_raw(lake))
+            beauty = li.photo_raw(lake)
+            if beauty is not None:
+                photo_ceiling = max(photo_ceiling, beauty)
+    PHOTO_GLOBAL_MAX = photo_ceiling or 1.0
 
     # Score everything first, fit the fame expectation on all of it, and only
     # then build rows: the gem score is a residual against the whole field, so
@@ -856,17 +1092,21 @@ def main():
             # reach it (the mountain floor lesson): a named lake that fails
             # it falls through to the region floor as a listed candidate.
             if not publishable(lake):
-                if name_tokens(lake.get("name")):
+                if listable(lake):
                     unrated_pool.append((lake, comps, score10))
                 continue
             reasons = li.reasons_for(lake, comps)
             # A lake the data cannot say one sentence about is a name on a
             # photograph. That is a gate, not a build failure.
             if not reasons:
-                unrated_pool.append((lake, comps, score10))
+                if listable(lake):
+                    unrated_pool.append((lake, comps, score10))
                 continue
             row = wire_lake(lake, comps, score10, li.tier_for(score10),
                             reasons, expectation(comps["acclaim"]))
+            # Provenance for the photo component, counted here because only
+            # this loop still has the cache record the wire row came from.
+            row["_photo_read"] = li.photo_raw(lake) is not None
             if score10 >= args.min_score:
                 rows.append(row)
             elif score10 >= FLOOR_MIN_SCORE or lake.get("seed"):
@@ -902,11 +1142,24 @@ def main():
                 print(f"  {cc}: nothing clears the gate")
             continue
         if not rows:
+            # A country whose regions were filled but whose gate published
+            # nothing still has to appear in the index. Without a row here
+            # the file is written and nothing in the app knows to fetch it:
+            # `absent` skips the country (it has a file) and `countries`
+            # never names it. n=0 with a listed count is the honest shape,
+            # and the app opts into listed rows the same way everywhere.
             listed_by_country[cc] = listed
             listed_all.extend(listed)
             for row in listed:
                 credits.update(row["credit"])
             by_country[cc] = []
+            cover = next((r["images"][0]["u"] for r in listed if r["images"]),
+                         "")
+            index.append({
+                "cc": cc, "n": 0, "listed": len(listed), "best": None,
+                "cover": cover, "top": [r["name"] for r in listed[:3]],
+                "swimmable": 0,
+            })
             continue
 
         for row in rows:
@@ -940,6 +1193,16 @@ def main():
     # Validate BEFORE anything is written. Scoring every country first and
     # writing afterwards is the whole point: a gate that fires after half the
     # files are on disk has not gated anything.
+    # How much of the photo component is a reading rather than the default.
+    # In the wire because it is the number that makes a repeat of the
+    # 2026-08-30 contamination visible from the outside: the photo engine
+    # wrote 430 beauty scores for images it never fetched (two of its five
+    # components need no pixels), and nothing downstream could tell them from
+    # real ones. A share that falls off a cliff between builds now says so.
+    photo_read = sum(1 for r in published if r.pop("_photo_read", False))
+    for row in published:
+        row.pop("_photo_read", None)
+
     failures = validate(published) + validate_listed(listed_all)
     if failures:
         for line in failures[:20]:
@@ -1001,6 +1264,9 @@ def main():
     payload = {
         "generated_at": generated,
         "n_lakes": total,
+        # Beaches ships this header and lakes did not: same concept, same
+        # key, so a cross-layer consumer reads both without a special case.
+        "n_listed": sum(c.get("listed") or 0 for c in index),
         "model": {
             "version": li.MODEL_VERSION,
             "weights": li.WEIGHTS,
@@ -1013,20 +1279,28 @@ def main():
             "tier_cutoffs": li.TIER_CUTOFFS,
             "min_score": args.min_score,
             "min_images": MIN_IMAGES,
-            "min_images_note": "two photographs, or one that is provably of "
-                               "this lake (a Wikidata P18 or a file named "
-                               "after it)",
+            "min_images_note": "four photographs on a rated row, and the lead "
+                               "one has to carry evidence that it is of this "
+                               "lake. A row that cannot reach four is listed, "
+                               "not dropped",
+            "hero_tiers": list(HERO_TIERS),
+            # Rows whose pictures the beauty engine actually looked at. The
+            # rest take photo's documented default; see lake_index.photo_raw,
+            # which refuses a beauty score with no pHash behind it.
+            "photo_read_rows": photo_read,
+            "photo_read_share": (round(photo_read / total, 3) if total else 0),
             "country_floor": args.floor,
+            "basin_floor": BASIN_FLOOR,
             # The region quota model ships with the data (invariant 2).
             "region_quota": (qmod.model_block()
                              if qmod is not None and qmod.has_data() else None),
             # The season model, named in the wire so a figure on the page can
             # always be traced to the thing that produced it.
-            "season_model": "WorldClim 2.1 air normals at the lake's own "
-                            "coordinate, with a depth weighted thermal lag, "
-                            "solar gain, a shallow water bonus, and depth, "
-                            "altitude and glacier corrections. Estimated, "
-                            "not measured.",
+            "season_model": "CHELSA V2.1 air normals (1981-2010, 30 arc "
+                            "seconds) at the lake's own coordinate, with a "
+                            "depth weighted thermal lag, solar gain, a "
+                            "shallow water bonus, and depth, altitude and "
+                            "glacier corrections. Estimated, not measured.",
             "warm_c": li.SWIM_WARM_C,
         },
         "countries": index,

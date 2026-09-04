@@ -4,33 +4,83 @@ The Beaches category on the Destinations tab, end to end: where the beaches
 come from, what the beauty index actually measures, how the explanation on
 each page is written, and how to rebuild the whole thing from nothing.
 
-## What changed, and why
+Version 2 (`beach_beauty_v2`), per `03-BEACHES.md`. The v1 sections that did
+not change are kept rather than rewritten, because the arguments in them are
+still the arguments.
 
-Before this layer, "Beaches" was a filter over the published trips: any trip
-in a country whose anchor destination carried a `beach` or `coast` tag. Three
-things were wrong with that, and all three were visible on the first screen.
+## What changed in v2, and why
 
-- It listed **countries, not beaches**. The index counted every trip in the
-  country, so Andorra offered ten and Moldova three. Neither has a coast.
-- It listed **trips, not beaches**. Tapping through got you a city day in a
-  coastal town, never a beach.
-- It carried the **price chrome**: a country dropdown, a "priced from
-  Brussels" origin and a "Dorm bed" stay tier over a list of places nobody
-  sleeps on.
+v1 harvested 25,475 beaches and published 1,191 of them across 38 countries.
+Spain, France, Great Britain and Portugal each published **exactly 120**,
+which is the signature of a constant deciding a catalogue: `PUBLISH_MAX=120`.
+Nobody had ever looked at what sat at 121. Belgium published 2, which is why
+the beach list opened from Knokke ran 3 km, 3 km, then 135 km.
 
-The layer replaces all of it. `pipeline/beaches` publishes real named beaches
-with a score, a reason list and photographs; the tab renders those directly,
-ranked, with the country dropdown, the origin picker and the stay tier removed
-from that category only.
+**The harvest was never the problem. The gate was.** Four things changed, in
+this order.
+
+- **The bulk OSM pass moved off Overpass and onto the Geofabrik extracts this
+  repository already keeps.** 30 GB of country files were already on disk for
+  the trails layer. Reading them with pyosmium is local, deterministic, and
+  immune to all three ways Overpass had broken this layer before. It also made
+  the widening affordable: `natural=shingle`, `natural=sand`,
+  `leisure=beach_resort` and `leisure=swimming_area` alongside
+  `natural=beach`, UNNAMED beaches named from the nearest bay or village, and
+  the beach LENGTH read off the geometry.
+- **The EEA bathing water register became a SPINE rather than an
+  enrichment.** The layer had always read the register's CLASS. It had never
+  read the register's LIST. There are 22,289 designated bathing sites in it,
+  every one a place a European government says people swim, with a coordinate
+  and up to ten seasons of classification, and a great many of them are not
+  tagged `natural=beach` anywhere in OpenStreetMap. Reading the list cost no
+  network at all: the file was already in `cache/`.
+- **`PUBLISH_MAX` stopped binding.** It is 900 now, a sanity ceiling far above
+  the sum of any country's region quotas rather than the thing that decides
+  what a coast carries. The region quota from `pipeline/regions` decides that.
+- **A beach that misses a gate is listed rather than deleted.** The rated tier
+  asks for four photographs and a strongly evidenced lead; what fails falls
+  through into `listed`, which ships without a score at all.
+
+Together: **34,068 harvested beaches became 58,881**, and the tail that the
+constant used to cut now lands in a tier that says what it is.
+
+Two numbers moved that were not in the brief, and both were bugs the widening
+exposed.
+
+**`fold()` deleted every non-Latin alphabet.** The name test ("a word beyond
+the local word for beach") is built on `name_tokens()`, which is built on
+`fold()`, which ended by removing everything outside `[a-z0-9 ]`. For a name
+written in Greek or Cyrillic that removed the whole name, so the beach had no
+tokens and the name test failed. It was a hard gate on both tiers, so those
+beaches could never publish under any circumstances. Measured across the
+harvest: **1,850 beaches, including 1,228 in Greece** (37 per cent of the
+country) and 74 per cent of Bulgaria. `fold()` now spells Greek and Cyrillic
+into Latin first. The tables are a comparison key, not transliteration for a
+reader: nothing built on them is ever shown on screen.
+
+**San Marino published 2,415 beaches.** It is landlocked. Geofabrik cuts by
+its own regions, so San Marino and Italy share one extract, and the country
+filter that separates them (`belongs_to`) is deliberately generous: a point
+outside a country's simplified outline still counts unless it is demonstrably
+inside a neighbour's, because the shapes are drawn at continent zoom and a
+strict test deletes the Balearics from Spain. A beach on the Adriatic sits ON
+Italy's simplified coastline rather than inside it, so "not demonstrably
+inside Italy" was true of most of the Italian coast. Where two countries share
+an extract, containment in the country's own outline is now the only test.
 
 ## The chain
 
 ```
 pipeline/beaches/
   sources.py           polite clients: Wikidata, Overpass, Commons, Wikipedia
+  osm_extract.py       NEW  the bulk OSM pass, pyosmium over Geofabrik
+  eea_spine.py         NEW  the bathing register read as a candidate source
+  uk_bathing.py        NEW  Defra England and Wales (blocked, see open items)
+  coastline.py         NEW  which way a beach faces, and the sunset
+  protection.py        NEW  Natura 2000 + Emerald polygons, EU and non-EU
   harvest_beaches.py   stage 1  every named beach   -> cache/beaches/raw_CC.json
   enrich_beaches.py    stage 2  the shortlist, in full -> cache/beaches/rich_CC.json
-  beauty_index.py      the model: six components, the reasons, the ids
+  beauty_index.py      the model: eight components, the reasons, the ids
   export_beaches.py    stage 3  score, gate, validate -> continent-app/public/beaches/
   build_beaches.py     all three, in order, in one command
 ```
@@ -38,8 +88,9 @@ pipeline/beaches/
 ```
 continent-app/src/
   lib/beaches.js       the wire loader (index, top, per country, share links)
-  lib/beachStory.js    reason codes -> sentences, in six languages
-  browse/BeachPage.jsx the page one card opens
+  lib/beachStory.js    reason codes -> sentences in six languages, and
+                       BEACH_FACETS, the nine filter groups
+  browse/BeachPage.jsx the page one card opens, score badge included
   browse/DestinationsTab.jsx  the category itself
   scripts/verify_beaches.mjs  the headless check
 ```
@@ -47,263 +98,292 @@ continent-app/src/
 ## Rebuilding it
 
 ```
-python pipeline/beaches/build_beaches.py                 # everything
-python pipeline/beaches/build_beaches.py --countries GR  # one country
-python pipeline/beaches/build_beaches.py --skip-harvest  # re-score only
-python pipeline/beaches/build_beaches.py --dry-run       # what would ship
+python pipeline/harvest_bathing_water.py --sites-only   # the register, once a year
+python pipeline/beaches/protection.py --fetch           # Natura 2000 + Emerald, once
+python pipeline/beaches/osm_extract.py                  # the extracts -> osm_CC.json
+python pipeline/beaches/harvest_beaches.py --reuse-wikidata
+python pipeline/beaches/enrich_beaches.py
+python pipeline/beaches/export_beaches.py
 ```
 
-or through the orchestrator, which is where the cadence lives:
+`--reuse-wikidata` is the switch to use when the OSM half changed and Wikidata
+did not, which is what moving the bulk pass onto the extracts is: the Wikidata
+rows are already on disk and re-asking SPARQL 43 times to be told the same
+thing is both rude and slow.
 
-```
-python run_pipeline.py --only beaches
-```
+The osmium sweep is the long pole and it is entirely local: about four minutes
+per gigabyte of extract, so roughly two hours for the 30 GB of Europe, and the
+result is cached per country. France alone is 5.1 GB.
 
-A cold build is a few hours and nearly all of it is Overpass being asked
-politely: one query per country for the named beaches, then one query per 30
-shortlisted beaches for what stands around them. A warm re-run is seconds.
+Three performance facts that are not optional, all measured on this box:
 
-Overpass is the fragile part of the chain, and three rules exist because it
-broke in three different ways:
+- **Filter on tag VALUES, not on tag keys.** A `KeyFilter` on `natural` hands
+  Python every tree, pond and scrub polygon in the country: 386 seconds and
+  3.66 million objects for Spain, against 239 seconds and 677 thousand for the
+  identical answer filtered on values. The filter runs in C++; everything that
+  reaches Python has already been decided.
+- **Never walk a land polygon's exterior ring.** `project()` and
+  `interpolate()` on a ring with millions of vertices is the quadratic ring
+  walk this repository has paid for before. Reading a beach's aspect that way
+  took three seconds per beach. Against the coastal stretches
+  `pipeline/regions` already cut to 40..120 km it takes one millisecond.
+- **`STRtree.query(predicate='contains')` does not answer point-in-polygon.**
+  It runs its predicate against a PREPARED copy of each tree geometry, and
+  prepared `contains` returns False for a point that the same polygon's own
+  `.contains()` returns True for. The first version of the land test therefore
+  answered "not land" for Brussels, Madrid and every beach in Europe, which
+  gave every beach two sea probes and no aspect at all. Use `intersects`.
 
-- **A timed-out query returns HTTP 200 with an empty result** and a `remark`.
-  Read naively that is "this country has no beaches"; `sources.overpass()`
-  raises on the remark instead, and the caller falls back to querying the
-  country in 4 degree tiles.
-- **A regional mirror answers cleanly for the wrong planet.** overpass.osm.ch
-  is a Swiss database and returned a well-formed empty result for Austria,
-  which cost two countries before the pattern showed. Any mirror added to the
-  list must be checked with a query outside its own country first.
-- **An empty answer never replaces a non-empty cache.** Each country records
-  `osm_ok`, set only when Overpass actually answered, and a run that comes back
-  with nothing for a country that already has beaches keeps what it had. So a
-  bad hour costs nothing and the next run picks the OSM half up where it
-  stopped.
+Overpass is still in the chain for the 400 m context sweep, and the three
+rules that exist because it broke in three different ways still apply to it
+(a timed-out query returns HTTP 200 with an empty body and a remark; a
+regional mirror answers cleanly for the wrong planet; an empty answer never
+replaces a non-empty cache). That last guard is now scoped to Overpass ONLY.
+A Geofabrik extract cannot lie in that way, so an empty answer from it is
+believed, which is what lets a landlocked country correctly publish nothing.
 
 ### Why a rebuild reproduces
 
-- **The caches are the snapshot.** Every stage reads `cache/beaches/*.json`
-  when it can. With the caches in place, a rebuild produces identical wire
-  files apart from the `generated_at` stamp. Delete one cache to re-query one
-  source. They are LOCAL ONLY and gitignored: 159 MB rewritten whole on every
-  refresh does not belong in a 3 GB repository, and the LFS rule in
-  .gitattributes (`cache/*.json`) does not reach a subdirectory anyway. A fresh
-  clone therefore rebuilds from the sources, which is hours rather than
-  seconds, and produces the same wire from the same world.
-- **A switch controls the network, never the data.** `enrich_country` rebuilds
-  its list from the HARVEST cache every run, so everything a phase decides not
-  to fetch again has to be copied from the previous rich cache before the
-  phases start. Two holes lived here until 2026-08-29 and both silently
-  deleted work: the reuse of cached photographs sat inside the `if images:`
-  branch, so `--no-images`, which is the normal way to sweep Overpass without
-  fighting Commons for slots, wrote a cache with no pictures in it and those
-  beaches then failed the two photograph gate at the next export. And an
-  article is only ever fetched for a beach the previous cache has no article
-  for, while nothing copied the ones it did have, so every warm re-run stripped
-  the facts and the pageviews off exactly the beaches that had them. That is
-  how 429 of the 788 wiki-linked beaches in `cache/beaches` came to hold a
-  Wikipedia link with no facts behind it. Both are carried across up front now.
-  The facts heal themselves on the next enrich run, which sees them missing and
-  fetches them, and beach scores move up a little when they land.
-- **Every stage is deterministic.** Ranking sorts on score then id, the
-  shortlist is cut by a documented pre score, ties break on the id, and no
-  stage depends on dict ordering or on the clock.
-- **The model is versioned.** `beauty_index.MODEL_VERSION` and the full weight
-  table ship inside `index.json`, so a wire file can always be matched to the
-  model that produced it.
-- **The inputs are dated.** `index.json` carries `sources`: the harvest and
-  enrich timestamp per country, and the mtime of the EEA cache. Two builds
-  that differ can then be told apart, code moved or the world moved.
-- **The gate runs before the write.** Every country is scored and validated
-  first; only then is anything written. A validation failure leaves the
-  previous wire standing rather than half replacing it.
+Everything v1 said still holds: the caches are the snapshot, a switch controls
+the network and never the data, every stage is deterministic, the model is
+versioned, the inputs are dated, and the gate runs before the write.
+
+The v2 additions follow the same rules. `osm_extract.py` writes one cache per
+country and records which extract and which download day produced it.
+`coastline.py` and `protection.py` stamp their answers into the rich cache and
+mark the row as asked, so `{}` ("we looked and found nothing") never reads the
+same as absent ("nobody looked"). The carry-over block at the top of
+`enrich_country` now copies `aspect`, `shore_km`, `sunset_facing`,
+`protection`, `sst` and `approach` across before any phase runs, for exactly
+the reason the photographs and the article facts are copied there: this list
+is rebuilt from the HARVEST cache every run, so anything a phase decides not
+to fetch again has to be copied or the rewritten cache loses it.
 
 ## Where the beaches come from
 
 | Source | What it gives | Licence |
 |---|---|---|
+| OpenStreetMap via Geofabrik | The bulk: named and unnamed beaches, shingle, sand, beach resorts, swimming areas, the surface, lifeguard, nudism and access tags, and the LENGTH off the geometry | ODbL 1.0 |
+| EEA WISE bathing water | Both a spine and a reading: 22,289 designated sites with a name, a coordinate and ten seasons of class | EEA re-use |
 | Wikidata | The named beach, its coordinates, region, main image, Commons category, sitelink count | CC0 |
-| OpenStreetMap (Overpass) | Every other named `natural=beach`, plus surface, lifeguard, nudism, access, and what stands within 400 m | ODbL 1.0 |
-| EEA WISE bathing water | The official bathing season class near the beach, Excellent to Poor | EEA re-use policy |
-| Wikimedia Commons | Three or four photographs, each with author and licence | Per file |
+| Wikimedia Commons | The photographs, each with author and licence | Per file |
 | Wikipedia | Article facts (substrate, colour, setting, access) and pageviews | CC BY-SA, facts only |
+| Natura 2000 + Emerald Network | 29,749 protected site polygons, EU and non-EU | CC BY 4.0 |
+| EEA coastline for analysis | Which way a beach faces | EEA re-use |
+| OpenStreetMap via Overpass | What stands within 400 m | ODbL 1.0 |
 
-Two things are deliberately **not** in that list.
-
-**No places API.** Google Places, Foursquare and TripAdvisor all forbid
-keeping what they return; a beach database built on them could not be stored,
-only rented. Everything above can be kept.
-
-**No Instagram.** The Basic Display API was retired in December 2024 and the
-Graph API has no location search, so the popularity signal people reach for
-there is not obtainable. The count of freely licensed photographs taken at a
-beach does the same job, legally, and it is already in `acclaim`.
-
-The OSM slice stays in its own fields (`osm_tags`, and the `osm` id in the
-wire) and every published row carries its own `credit` array, the same
-arrangement the trails wire ships under: selected, scored and rewritten items
-are a produced work, and the ODbL obligation travels with the rows that used
-ODbL data.
+Still deliberately **not** in that list: no places API (Google, Foursquare and
+TripAdvisor all forbid keeping what they return), and no Instagram. Added to
+the refusals in v2: **WDPA / Protected Planet**, which is the obvious
+"protected areas API" and is non-commercial, and is the single biggest legal
+trap in this space.
 
 ## The beauty index
 
-Published in `index.json` under `model`, and shown to the reader as six bars
-on every beach page. Each component is 0..1.
+Eight components now, each 0..1, published in `index.json` under `model` and
+shown to the reader as bars on every beach page.
 
-| Component | Weight | What it reads |
-|---|---|---|
-| setting | 0.26 | Cliffs, sea cave, rock arch, dunes, pines, lagoon, islet, reef, lighthouse, and whether it sits in a national park or reserve |
-| acclaim | 0.20 | Sitelinks, pageviews, photograph count. 60% rank within its own country, 40% within Europe, both log scaled |
-| water | 0.16 | The EEA bathing season class, with a half step for a class that just moved |
-| sand | 0.14 | Substrate and colour: white, pink and black above golden, golden above shingle, shingle above rock; clear or turquoise water lifts all of them |
-| wildness | 0.14 | Minus what is built within 400 m, plus boat only, steps or a walk in |
-| comfort | 0.10 | Parking, toilets, showers, drinking water, food, lifeguard, step free access |
+| Component | v1 | v2 | What it reads |
+|---|---|---|---|
+| setting | 0.26 | 0.24 | Cliffs, sea cave, rock arch, dunes, pines, lagoon, islet, reef, lighthouse, and whether it sits in a park or reserve |
+| acclaim | 0.20 | 0.18 | Sitelinks, pageviews, photograph count. 60% rank within its own country, 40% within Europe, log scaled |
+| water | 0.16 | 0.16 | The EEA bathing class, with a half step for a class that just moved |
+| sand | 0.14 | 0.14 | Substrate and colour |
+| wildness | 0.14 | 0.14 | Minus what is built within 400 m, plus boat only, steps or a walk in |
+| comfort | 0.10 | 0.10 | Parking, toilets, showers, drinking water, food, lifeguard, step free |
+| **space** | - | **0.06** | How long the beach is, normalised inside its own coastal stretch |
+| **photo beauty** | - | **0.06** | The mean beauty of its best three photographs, capped |
 
-Plus a standout bonus of 0.15 times the strongest PHYSICAL component (setting,
-sand, wildness only), so a beach that is exceptional in one way still ranks.
-Score is `10 x` the total; the bands are 6.4, 7.6 and 8.6.
+Standout bonus: 0.15 of the strongest PHYSICAL component, now including
+`space`. Score is `10 x` the total; the bands are 6.4, 7.6 and 8.6, unchanged.
 
-Five choices in there are worth defending out loud.
+### The weight table does not add up, and what was done about it
 
-**Fame is capped and split.** Dias et al. (2024) surveyed 70 beach ranking
-sites and found two thirds ranked with no stated indicator at all. The ones
-with a method mostly count reviews, which returns the beaches that are already
-famous and already full. Splitting acclaim between "best in its own country"
-and "best in Europe" stops Greece and Spain, which have far more mapped and
-photographed beaches than Latvia, from filling every page.
+`03-BEACHES.md` trims setting by 0.02 and acclaim by 0.02, then adds two
+components worth 0.06 each. That frees 0.04 and spends 0.12, so the table as
+written sums to **1.08**, and the brief's own word for the trims ("make room")
+says that was not the intention.
 
-**Wildness subtracts.** A cove with nothing on it outranks a strip with forty
-hotels behind it. This is the component the review-count rankings have
-backwards, and it is what makes the small coves the tab was asked for reachable
-rather than buried.
+Shipping it unbalanced would not have been a neutral choice. The score is ten
+times the weighted sum, so every beach in Europe would have scored about eight
+per cent higher against band cutoffs the brief leaves unchanged, and the top
+of the range would have compressed against the 1.0 clamp until a 10.0 stopped
+meaning anything.
 
-**No reading is not a bad reading.** A beach with no EEA site nearby scores
-its country's median water class, not zero. Otherwise every wild cove would be
-punished for being wild.
+So the brief's RATIOS ship exactly as written and the sum is normalised back
+to 1.00. Both tables go into `index.json`, as `weights` and
+`weights_as_briefed`, so the deviation is visible from the wire rather than
+buried in a comment. `verify_beaches.mjs` asserts both that the published
+weights sum to 1 and that the brief's own table ships beside them.
 
-**Nor is it a good one.** The same rule cuts the other way for the two
-components read off the ground. Wildness is one minus what is built within
-400 m, so a beach the Overpass pass has not reached would score a perfect 1.0
-for having no hotels nobody counted, and comfort would score 0.0 for having no
-car park nobody looked for. An unmeasured beach gets 0.60 and 0.35 instead,
-and the sentence "nothing is built on it" is only emitted where the ground was
-actually swept.
+### `space`, and why it is not just "length"
 
-**The bonus is not paid for fame.** Being the most talked-about beach in your
-own country is true of exactly one beach in every country, landlocked ones
-included, and paying a standout bonus for it put an Austrian lake lido above a
-Cypriot cove on the first ranked page. Nor for an Excellent bathing class,
-which is the common case rather than a distinction. The bonus is for setting,
-sand and wildness.
+A four kilometre strand and a sixty metre pocket cove are different products
+bought for different reasons, and nothing in v1 could tell them apart. The
+length comes off the OSM geometry: a beach mapped as an open way IS its
+length, and a beach mapped as a closed polygon has none, so half its perimeter
+is used, which is exact for a long thin rectangle and the right order of
+magnitude for everything else a beach is shaped like. Which of the two was
+measured rides in the row.
 
-## Why each beach is beautiful
+It is normalised **inside its own coastal stretch**, not against a European
+constant. A Norwegian fjord beach and a Costa de la Luz strand cannot share a
+yardstick: 400 m is a big beach on one and a small one on the other. The
+median beach on a stretch scores 0.63.
 
-The wire carries no prose. Every beach ships a `why` array of reason codes:
+It doubles as a crowding proxy. A high `space` next to a low `comfort` is the
+arithmetic of "you will have it to yourself".
 
-```json
-"why": [{"k": "surface", "surface": "pebble"},
-        {"k": "cliffs"},
-        {"k": "waterExcellent", "site": "JALE"},
-        {"k": "nationalPark", "name": "Llogara"},
-        {"k": "boatOnly"}]
+### `photo beauty`, and why it is capped
+
+A place that photographs well is genuinely a better beach day, which is what
+earns the component its 0.06. But how MANY good photographs exist of a beach
+is a popularity signal wearing a different hat, so the component reads the
+MEAN of the best three rather than the count, and it is clamped at 0.9. It is
+also excluded from the standout bonus for the same reason acclaim is.
+
+The scores come from the photo engine (`pipeline/photos/selection.py`,
+`photo_rank_v1`), which already wrote them onto the cached image records. This
+reads what is there and derives nothing.
+
+### No reading is not a bad reading, and v2 finally acts on it
+
+v1 gave an unmeasured beach a documented default. v2 keeps that where a
+default can be honestly computed and **drops the component and renormalises
+the remaining weights** where it cannot. That is invariant 6, and the
+difference between the two cases is whether any source covers the country at
+all.
+
+- A beach with no bathing reading in a country the register covers scores its
+  country's MEDIAN class. A wild cove must not be punished for being wild.
+- A beach in a country **no register covers** gets no water component at all.
+  The remaining seven weights are renormalised over what is left. Norway,
+  Iceland, the non-Albania Balkans and (until the Defra block lifts) Great
+  Britain are in this case, and the card says so through the
+  `water_unknown_no_source` code rather than showing a number nobody earned.
+- Same rule for `space` where no geometry was digitised, and for `photo` where
+  the beauty engine has not run over the row. A row is not judged ugly; it has
+  not been judged.
+
+A component that was dropped is **absent from `comp`**, not zero, so the page
+draws seven bars instead of eight and the `bestFor` rules read every component
+through `.get()`. Indexing one directly raises on exactly the rows the rule
+exists to protect.
+
+## The gate
+
+```
+name test       a word beyond the local word for beach   hard, BOTH tiers
+score gate      >= 5.6, bands 6.4 / 7.6 / 8.6            -> candidate 'r'
+photo gate      >= 4 images, LEAD at p18|cat|name        -> 'r' confirmed
+                failures fall through, they do NOT disappear
+dedupe          no better beach within 150 m             hard, BOTH tiers
+region quota    top-N by score per coastal stretch       trims 'r'
+floor fill      every applicable NUTS3 >= 1 row,
+                every coastal stretch >= 3 rows          adds 'l'
+country ceiling PUBLISH_MAX = 900, a sanity ceiling far above the quota sum
+top.json        240 at 12 a country, 'r' only, ever
 ```
 
-`src/lib/beachStory.js` turns those into sentences through `t()`, which buys
-three things a written description could not have: the text lands in all six UI
-languages, every sentence on the page maps to exactly one field in the data,
-and the country files stay small enough to load at once. It is the same
-arrangement `lib/trailStory.js` uses for hikes.
+The load bearing change is that a score or photo failure falls through into
+the listed pool instead of deleting the beach. The name test and the dedupe
+are hard on both tiers, so they drop a row outright: a row nobody can name is
+not coverage, and the same sand twice under two names is worse than once.
 
-This is also why the page shows the component bars next to the prose. The
-number is only worth as much as the reader's ability to check it.
+**The lead photograph is what the photo gate is about.** v1 asked for two
+pictures and for at least one of them, anywhere in the gallery, to be strongly
+evidenced. That let a geotagged frame lead the card while a name-matched
+picture sat in slot three, which is exactly backwards: the lead is the one
+picture most people ever see of a beach, so it is the one that has to prove it
+is this beach.
 
-### Claims the data cannot make
+The `listed` tier's own bar is one strongly evidenced photograph, or none and
+the card is drawn from the map (`no_photo_map_card`). A weakly evidenced
+picture is refused outright there, and that is stricter than the rated tier
+on purpose: a listed row has no score to argue with, so its one photograph is
+the whole of what the card claims.
 
-The protected-area cache holds CENTROIDS, not polygons, so "this beach is
-inside the national park" can never be proved from it. What it can support is a
-claim that stays true anyway, so the distance gates the wording: a national
-park centroid within 3 km earns "it is on the coast of X, a national park"
-(parks are large), a nature reserve earns "it sits inside X" only within
-1.5 km, and anything further away is dropped from both the prose and the
-score. Before that gate existed, a beach 5 km from a park was told it was in
-one.
+## New in the wire
 
-### Photographs: proximity is not depiction
+Every row, both tiers, may now carry `size` (cove / beach / strand), `aspect`
+(the true bearing out to sea), `sunset`, `prot` (the protected site it is
+INSIDE, from polygons), `sst`, and `nameSrc` where the name was not the
+beach's own: `eea` for a bathing register name, `osm_near` for one borrowed
+from the nearest named bay or village. Rated rows also carry `space` and
+`photo` in `comp`. Country files and `index.json` carry a `facets` block.
 
-A photograph may only be published if something EVIDENCES that it shows this
-beach. The first version accepted anything geotagged within 300 m, and an audit
-of the published wire found 41 per cent of pictures never named their beach
-anywhere: a playground, castle ruins, a reed bed, a museum ship and a village
-square, all real photographs taken a few hundred metres from a beach and all
-useless on a card that promises the beach.
+`beachStory.js` gained the codes `sunset_facing`, `long_strand`,
+`pocket_cove`, `water_unknown_no_source`, `natura2000`, `emerald` and
+`no_photo_map_card`, in six languages, alongside `unrated_coverage`.
 
-Four kinds of evidence, and the kind each picture earned ships in the wire as
-`images[].ev`, so the claim can be audited from outside:
+## The filter rail
 
-| `ev` | What it means |
-|---|---|
-| `p18` | The Wikidata main image. Somebody curated it for this beach |
-| `cat` | A member of the beach's own Commons category |
-| `name` | The beach's distinctive name is in the file's title, description or categories |
-| `geo` | Taken within 250 m AND describing itself as coastal, which is what separates "the sea at Ksamil" from "playground in Kustermann-Park" |
+The tab shipped three chips and two of them read zero in every scope:
+"Excellent water 2", "Nothing built on it 0", "Lifeguard 0". A filter showing
+a zero tells the reader the filters are broken even when they are honest.
 
-Nothing else is publishable, the export's validate step fails the build on any
-row whose picture lacks one, and at least ONE picture per beach has to be
-strongly evidenced (`p18`, `cat` or `name`). A geotag can fill the second and
-third slots but cannot be all a beach is shown by: in Ksamil, eight beach club
-strips inside one bay each ended up illustrated by a photograph of the bay. On top of the gate, files are rejected for
-being portrait (a person, not a view), under 1000 px, or titled as something
-that merely stands near a beach (a church, a car park, a noticeboard, an
-insect), and ranked up for aerials, panoramas, wide frames and coastal words.
+Nine groups now (`BEACH_FACETS` in `lib/beachStory.js`), the same grouped
+shape the lake and mountain rails use: water quality, underfoot, setting, how
+wild, size, facilities, naturist, protected, best for. Every option is backed
+by a field the pipeline publishes, and one rule of its own that the sibling
+layers do not follow because this brief is explicit about it:
 
-The cost is deliberate: beaches whose only photographs were of the car park no
-longer publish at all. Fewer beaches with true pictures beats more beaches with
-pictures of something else.
+**A chip whose count is zero in the current scope is not rendered.** Not
+greyed out. Absent. A disabled control still occupies the rail and still reads
+as something that ought to work, which is exactly the impression "Nothing
+built on it 0" gave. A chip the reader has already SELECTED always survives,
+even at zero, because removing the control they just tapped would strand them
+in an empty list with no way back out.
 
-The old failure mode is still handled at export: eight named beaches inside one
-bay all borrowing the same photograph. A lead photograph already used by a
-better scoring beach retires the row, so the best of the cluster keeps the
-picture and the name.
+Counts are computed both ways on purpose. The wire carries a scope-wide count
+per facet (written by `export_beaches.facet_counts`, zeros omitted so a
+consumer that renders whatever it is given cannot render an empty chip), and
+the app recomputes them live, because a chip's count has to answer "inside
+what the other chips already narrowed".
 
-Card thumbnails are 500 px because upload.wikimedia.org serves only a fixed
-list of widths and answers 640, 800 and 320 with a 400. Check with curl before
-changing it.
+## The score badge opens
 
-## What gets published
+The weights were already in the wire and the components were already on the
+row, so surfacing them was nearly free and it is the strongest trust move
+available: a 6.7 nobody can take apart is an opinion with a decimal point.
+Tapping the badge on the beach page shows each component with its score AND
+its weight.
 
-A beach ships only if it has at least two relevant freely licensed
-photographs, a name with a word in it beyond the local word for "beach", a
-score of at least 5.6, and no better scoring beach within 150 m. Each country
-keeps its best 120. A country with nothing that clears the gate does not appear
-anywhere in the app, which is how "only countries that have beaches" is
-enforced: by the data, not by a hand kept coastline list.
+## What is still not in the index
 
-`top.json` is the Europe wide opening page: the best 240, capped at 12 per
-country so the first screen is a tour of the continent rather than a page of
-Greek islands. Typing a country's name in the search field swaps it for that
-country's full list.
+**Blue Flag, per beach.** Unchanged from v1 and confirmed by the brief:
+`blueflag.global`'s map system is offline with no API, no GeoJSON and no
+per-site list, so there is nothing to harvest. The 0.10-of-acclaim slot stays
+empty and correct rather than approximated. If it is ever wanted it is an
+annual manual import of the FEE published list plus a reuse check, which is a
+content job and not an engineering one.
 
-## What is not in the index yet
+**Accolades from published rankings.** Designed and empty, for the same
+reason. Worth doing for the top 200 beaches only.
 
-Two signals from the research this layer was built against are deliberately
-absent rather than approximated.
+## Open items
 
-**Blue Flag, per beach.** The programme awarded 4,323 beaches in 2025 and it
-is exactly the kind of binary, auditable signal the index wants. What we have
-is the country total (`pipeline/beauty_layer.py`) and whatever OSM mappers
-tagged `blue_flag=yes`, which is a handful. The index already reads the OSM tag
-and pays 0.10 of acclaim for it; a real per-beach list would need FEE's
-published data and a check of its reuse terms first.
-
-**Accolades from published rankings.** A beach appearing on several
-independent lists is strong evidence, and cross-list agreement is stronger
-still. Recording WHO ranked WHAT is a fact and is safe; republishing a list is
-not, and the EU database right makes a scraper that sweeps fifty ranking sites
-on a schedule a bad idea. The shape when it lands is one row per award,
-`beach_id | awarding_body | list_name | year | rank | source_url`, entered by
-hand a few hundred rows a year, log scaled and decayed by year so six mentions
-cannot crush an unlisted cove. Nothing has been entered, because inventing
-award rows to fill a column would be worse than an empty one.
+- **Defra England and Wales.** The client is written to the documented API and
+  the licence is Open Government Licence v3.0, but every path under
+  `environment.data.gov.uk/bwq/` answers HTTP 403 from an Azure Application
+  Gateway while the same host's root answers 200. That is a network-level
+  block, not a retired service. Until it lifts, Great Britain publishes with
+  the water component dropped.
+- **SEPA (Scotland) and DAERA (Northern Ireland).** Not wired at all. The
+  brief flags them unverified and they need a portal read first.
+- **Northern Ireland's beaches.** Geofabrik files them in the Ireland extract
+  while they belong to Great Britain, and the country filter drops them from
+  both. A small, known gap.
+- **Sea temperature climatology.** Copernicus Marine is the right source
+  (free, commercial use permitted, and a static per-beach number fits the
+  cache-is-the-snapshot invariant far better than a runtime API). Open-Meteo's
+  free marine endpoint is NON-COMMERCIAL and must not be used. The `sst` field
+  is in the wire contract and nothing writes it yet.
+- **The four-photograph target.** The gate is in place and the funnel is
+  widened, but the photo pass over the new candidates is hours of Wikimedia's
+  bandwidth and has not been run to completion. Until it has, rows that would
+  clear the score gate sit in `listed` for want of pictures, which is the tier
+  model working as designed rather than a failure.
 
 ## Checking it
 
@@ -313,8 +393,12 @@ npm run build && npm run preview -- --port 4173
 node scripts/verify_beaches.mjs
 ```
 
-The harness checks what the brief asked for: beaches rather than trips, no
-country dropdown, no priced-from, no stay tier, a pin and a place on every
-card, three or four credited photographs on the page, composed prose with no
-reason codes leaking through, the score broken into its parts, and no GPX or
-route export anywhere on a beach.
+The harness checks what v1 checked, plus what v2 added: the model block is
+`beach_beauty_v2` and its weights sum to 1, the brief's own table ships beside
+them, no country's count equals the ceiling or the old 120, every rated row
+carries four photographs and a strongly evidenced lead, every rated row
+carries its region block, `top.json` is rated only, listed rows carry no score
+of any spelling and never interleave into the ranked array, a listed
+photograph is always strongly evidenced, no facet count in the wire is zero,
+no chip on screen renders a zero, and the score badge opens a breakdown that
+shows each component's weight.

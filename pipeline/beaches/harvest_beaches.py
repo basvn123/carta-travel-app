@@ -39,11 +39,25 @@ import urllib.parse
 from datetime import datetime, timezone
 from pathlib import Path
 
+# Windows consoles default to cp1252, and this layer prints beach names:
+# "Ir-Ramla tal-Mixquqa" and "Plaza Zlatni Rat" both raise UnicodeEncodeError
+# on the way to a terminal that cannot spell them. Replacing the character is
+# right for a progress line and wrong for a data file, which is why this
+# touches stdout only; every cache and wire write goes through an explicit
+# encoding="utf-8".
+if sys.platform == "win32":
+    try:
+        sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+        sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+    except (AttributeError, ValueError):
+        pass
+
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 
 from sources import (SourceError, cell, get_json, haversine_km,  # noqa: E402
                      load_cache, overpass, save_cache, sparql)
+import eea_spine  # noqa: E402
 
 ROOT = HERE.parents[1]
 
@@ -129,12 +143,50 @@ out tags center;
 """
 
 
+# Scripts that are not Latin, spelled in Latin.
+#
+# fold() ends by deleting everything outside [a-z0-9 ], which for a name
+# written in Greek or Cyrillic deletes the whole name. That is not a cosmetic
+# problem: name_tokens() is built on fold(), the export's name test is built
+# on name_tokens(), and the name test is a HARD gate on both tiers. So every
+# beach whose name is written in its own alphabet was silently unpublishable.
+# Measured over the harvest: 1,850 beaches, including 1,228 in Greece, which
+# is 37 per cent of the country, and 74 per cent of Bulgaria.
+#
+# The tables are deliberately plain. This is not transliteration for a reader,
+# it is a comparison key: it has to be stable and consistent, not beautiful,
+# and nothing built on it is ever shown on screen. The row keeps its real
+# name; only the key is folded.
+_GREEK = {
+    "α": "a", "β": "v", "γ": "g", "δ": "d", "ε": "e", "ζ": "z", "η": "i",
+    "θ": "th", "ι": "i", "κ": "k", "λ": "l", "μ": "m", "ν": "n", "ξ": "x",
+    "ο": "o", "π": "p", "ρ": "r", "σ": "s", "ς": "s", "τ": "t", "υ": "y",
+    "φ": "f", "χ": "ch", "ψ": "ps", "ω": "o",
+}
+_CYRILLIC = {
+    "а": "a", "б": "b", "в": "v", "г": "g", "д": "d", "е": "e", "ж": "zh",
+    "з": "z", "и": "i", "й": "j", "к": "k", "л": "l", "м": "m", "н": "n",
+    "о": "o", "п": "p", "р": "r", "с": "s", "т": "t", "у": "u", "ф": "f",
+    "х": "h", "ц": "c", "ч": "ch", "ш": "sh", "щ": "sht", "ъ": "a",
+    "ь": "", "ю": "yu", "я": "ya", "ы": "y", "э": "e",
+    # Serbian, Macedonian and Ukrainian letters the Russian table has not got
+    "ђ": "dj", "ј": "j", "љ": "lj", "њ": "nj", "ћ": "c", "џ": "dz",
+    "ѓ": "g", "ќ": "k", "ѕ": "dz", "і": "i", "ї": "i", "є": "ie", "ґ": "g",
+}
+_TRANSLIT = {**_GREEK, **_CYRILLIC}
+
+
 def fold(name):
-    """Accent folded, lowercase, punctuation free. The same fold the rest of
-    the pipeline uses, including the l-with-stroke case that NFKD misses."""
+    """Accent folded, lowercase, punctuation free, and Latin.
+
+    The same fold the rest of the pipeline uses, including the l-with-stroke
+    case that NFKD misses, plus Greek and Cyrillic spelled into Latin so a
+    name written in its own alphabet still has tokens to compare."""
     text = unicodedata.normalize("NFKD", (name or "").lower())
     text = "".join(c for c in text if not unicodedata.combining(c))
     text = text.replace("ł", "l").replace("ß", "ss")
+    if any(c in _TRANSLIT for c in text):
+        text = "".join(_TRANSLIT.get(c, c) for c in text)
     return re.sub(r"[^a-z0-9 ]+", " ", text).strip()
 
 
@@ -152,6 +204,16 @@ GENERIC = {
     "pludmale", "paplūdimys", "papludimys", "uimaranta", "badeplass",
     "strandbad", "de", "da", "do", "del", "della", "di", "la", "le", "el",
     "los", "las", "the", "of", "van", "der", "den", "et", "und", "and",
+    # The words the widened harvest brought in, and the ones the Greek and
+    # Cyrillic transliteration made visible for the first time. Without these
+    # every Estonian beach shares the token "rand" and merges with its
+    # neighbours, and every Greek one shares "paralia".
+    "rand", "rannad", "randa", "badstrand", "sandstrand", "havsbad",
+    "badeplassen", "badestelle", "badesee", "strandbader", "strond",
+    "ramla", "bajja", "uvala", "luka", "plazhut", "plazh", "plaj",
+    "see", "sjo", "jarvi", "meri", "more", "mare", "kupaliste",
+    "spiaggia", "spiagge", "marina", "camping", "campingplatz",
+    "akti", "ormos", "kolpos", "nisi",
 }
 
 
@@ -401,20 +463,65 @@ PROBE_TIMEOUT = 90
 TILE_TIMEOUT = 180
 
 
-def osm_beaches(cc):
+def osm_extract_rows(cc):
+    """(rows, answered) out of the Geofabrik extract, or ([], False).
+
+    This is the preferred bulk source since 03-BEACHES.md: it is local, it is
+    deterministic, it carries the widened tag set and the beach lengths the
+    `space` component needs, and it cannot be told a lie by a regional mirror.
+    Overpass remains the fallback for a country with no extract on disk, and
+    remains the only source for the 400 m context sweep in enrich."""
+    try:
+        import osm_extract
+    except ImportError:
+        return [], False
+    payload = load_cache(osm_extract.STAGE, cc)
+    # A cache that EXISTS and holds no rows is a complete answer: Liechtenstein
+    # is landlocked and has no mapped beach, and that is not the same as
+    # "nobody has scanned Liechtenstein". Conflating the two sent every empty
+    # country to Overpass to be told the same thing slowly.
+    if payload is None:
+        return [], False
+    if not payload.get("rows"):
+        return [], True
+    rows = []
+    for row in payload["rows"]:
+        rows.append({
+            "osm_id": row["osm_id"],
+            "name": row["name"],
+            "name_local": row.get("name_local") or "",
+            "name_en": row.get("name_en") or "",
+            "lat": row["lat"],
+            "lon": row["lon"],
+            "iso2": row["iso2"],
+            "tags": row.get("tags") or {},
+            "osm_tag": row.get("osm_tag") or "",
+            "name_src": row.get("name_src") or "osm",
+            "length_m": row.get("length_m"),
+            "length_src": row.get("length_src") or "",
+        })
+    return rows, True
+
+
+def osm_beaches(cc, prefer_extract=True):
     """(rows, answered). The second half is the important one.
 
     Overpass refusing us for an hour and a country genuinely having no mapped
     beaches both come back as an empty list, and the difference decides
     whether the cached country is finished or half done."""
+    if prefer_extract:
+        rows, ok = osm_extract_rows(cc)
+        if ok:
+            print(f"    {cc}: {len(rows)} rows from the Geofabrik extract")
+            return rows, "extract"
     try:
         elements = overpass(OSM_QUERY % {"cc": cc, "timeout": PROBE_TIMEOUT},
                             timeout=PROBE_TIMEOUT + 30, tries=1, backoff=10.0)
-        return osm_rows(cc, elements), True
+        return osm_rows(cc, elements), "overpass"
     except SourceError as exc:
         print(f"    {cc}: one-shot OSM query failed ({str(exc)[:70]}), tiling")
     elements, answered = osm_beaches_tiled(cc)
-    return osm_rows(cc, elements), answered
+    return osm_rows(cc, elements), ("overpass" if answered else "")
 
 
 def osm_beaches_tiled(cc, timeout=TILE_TIMEOUT):
@@ -489,11 +596,48 @@ def osm_rows(cc, elements):
 # Merge
 # ---------------------------------------------------------------------------
 
+class _Grid:
+    """A 0.1 degree bucket index over rows, so a merge is linear.
+
+    merge() and merge_spine() both ask "is there a row of the other list near
+    this one", and both did it by scanning every row already accepted. That is
+    fine at the old scale and quadratic at the new one: Spain now brings 5,939
+    Wikidata rows, 5,948 OSM rows and 2,296 register sites, and the scan was
+    62 million haversine calls for one country. Same answers, bucketed.
+
+    0.1 degree is about 11 km of latitude, comfortably wider than any merge
+    radius in this file, so looking at the nine cells around a point cannot
+    miss a candidate."""
+
+    STEP = 10.0            # cells per degree
+
+    def __init__(self, rows=()):
+        self.cells = {}
+        for row in rows:
+            self.add(row)
+
+    @staticmethod
+    def _key(lat, lon):
+        return (int(lat * _Grid.STEP), int(lon * _Grid.STEP))
+
+    def add(self, row):
+        self.cells.setdefault(self._key(row["lat"], row["lon"]), []).append(row)
+
+    def near(self, lat, lon):
+        base = self._key(lat, lon)
+        out = []
+        for dy in (-1, 0, 1):
+            for dx in (-1, 0, 1):
+                out.extend(self.cells.get((base[0] + dy, base[1] + dx), ()))
+        return out
+
+
 def merge(wd_rows, osm_rows):
     """One row per beach, Wikidata first (it carries the fame and the images),
     OSM folded into it or added on its own."""
     beaches = []
     by_qid = {}
+    grid = _Grid()
     for row in wd_rows:
         rec = dict(row)
         rec["key"] = f"wd:{row['wd']}"
@@ -501,6 +645,7 @@ def merge(wd_rows, osm_rows):
         rec["osm_id"] = ""
         rec["osm_tags"] = {}
         beaches.append(rec)
+        grid.add(rec)
         by_qid[row["wd"]] = rec
 
     for row in osm_rows:
@@ -512,7 +657,7 @@ def merge(wd_rows, osm_rows):
             target = by_qid[qid]
         else:
             best_km = MERGE_KM
-            for rec in beaches:
+            for rec in grid.near(row["lat"], row["lon"]):
                 if rec["iso2"] != row["iso2"]:
                     continue
                 km = haversine_km(rec["lat"], rec["lon"], row["lat"], row["lon"])
@@ -529,12 +674,29 @@ def merge(wd_rows, osm_rows):
             target["osm_tags"] = tags
             if not target.get("name_local"):
                 target["name_local"] = row.get("name_local") or ""
+            # The measured length comes from the OSM geometry and is what the
+            # v2 `space` component reads. Wikidata's P2043 is kept only where
+            # OSM has nothing: it carries a unit we do not read, which is how
+            # "As Catedrais, 2" once meant two metres of shore.
+            if row.get("length_m"):
+                target["length_m"] = row["length_m"]
+                target["length_src"] = row.get("length_src") or "osm"
+            if row.get("osm_tag"):
+                target["osm_tag"] = row["osm_tag"]
             continue
-        beaches.append({
+        beaches.append(_new_osm_row(row))
+        grid.add(beaches[-1])
+    return beaches
+
+
+def _new_osm_row(row):
+    tags = row["tags"]
+    return {
             "key": f"osm:{row['osm_id']}",
             "wd": "",
             "name": row.get("name_en") or row["name"],
             "name_local": row["name_local"] or row["name"],
+            "name_src": row.get("name_src") or "osm",
             "lat": row["lat"],
             "lon": row["lon"],
             "iso2": row["iso2"],
@@ -545,17 +707,100 @@ def merge(wd_rows, osm_rows):
             "commons_cat": "",
             "enwiki": "",
             "localwiki": "",
-            "length_m": None,
+            "length_m": row.get("length_m"),
+            "length_src": row.get("length_src") or "",
+            "osm_tag": row.get("osm_tag") or "",
             "protected": [],
             "part_of": [],
             "sources": ["osm"],
             "osm_id": row["osm_id"],
             "osm_tags": tags,
-        })
-    return beaches
+    }
 
 
-def harvest_country(cc, use_osm=True, refresh=False):
+# ---------------------------------------------------------------------------
+# The EEA bathing water register, as a third spine
+# ---------------------------------------------------------------------------
+
+def merge_spine(beaches, sites):
+    """Fold the register into the catalogue: matched sites enrich, the rest
+    become rows.
+
+    A registered bathing site is a place a European government says people
+    swim, with a coordinate and a decade of classifications behind it. Most of
+    them are already here under an OSM or a Wikidata name, and for those the
+    register is what it has always been: the water reading. The ones nothing
+    else knew about are the coverage this layer was missing, and they enter as
+    rows of their own.
+
+    Matching is deliberately conservative in the same way merge() is. A site
+    within MERGE_KM whose name agrees is that beach. A site within
+    SAME_PLACE_KM is that beach whatever it is called, because two bathing
+    points 200 m apart are two ends of one strand and publishing both would
+    put the same sand on the page twice."""
+    added = matched = 0
+    grid = _Grid(beaches)
+    for site in sites:
+        target, best_km = None, eea_spine.MERGE_KM
+        for rec in grid.near(site["lat"], site["lon"]):
+            if rec["iso2"] != site["iso2"]:
+                continue
+            km = haversine_km(rec["lat"], rec["lon"], site["lat"], site["lon"])
+            if km > best_km:
+                continue
+            if (km <= eea_spine.SAME_PLACE_KM
+                    or same_beach(rec["name"], site["name"])
+                    or same_beach(rec.get("name_local"), site["name"])):
+                target, best_km = rec, km
+        if target is not None:
+            matched += 1
+            if "eea" not in target["sources"]:
+                target["sources"].append("eea")
+            # The register's own reading, stamped at harvest so the enrich
+            # stage's coordinate join never has to guess which site is this
+            # beach's. A site the enrich join already found is overwritten
+            # only by a NEARER one.
+            existing = target.get("water") or {}
+            if not existing or (existing.get("km") or 99) > best_km:
+                water = dict(site["water"])
+                water["km"] = round(best_km, 2)
+                target["water"] = water
+            continue
+        added += 1
+        row = {
+            "key": f"eea:{site['eea_id']}",
+            "wd": "",
+            "name": site["name"],
+            "name_local": "",
+            "name_src": "eea",
+            "name_registry": site.get("name_registry") or "",
+            "lat": site["lat"],
+            "lon": site["lon"],
+            "iso2": site["iso2"],
+            "adm": "",
+            "types": [],
+            "sitelinks": 0,
+            "wd_img": "",
+            "commons_cat": "",
+            "enwiki": "",
+            "localwiki": "",
+            "length_m": None,
+            "protected": [],
+            "part_of": [],
+            "sources": ["eea"],
+            "osm_id": "",
+            "osm_tags": {},
+            "eea_id": site["eea_id"],
+            "coastal": site["coastal"],
+            "water": site["water"],
+        }
+        beaches.append(row)
+        grid.add(row)
+    return added, matched
+
+
+def harvest_country(cc, use_osm=True, refresh=False, prefer_extract=True,
+                    use_spine=True, reuse_wikidata=False):
     """One country's beaches, cached. Re-runs pick up an unfinished half.
 
     A cached country is only finished if Overpass ANSWERED for it. During an
@@ -563,12 +808,28 @@ def harvest_country(cc, use_osm=True, refresh=False):
     this wrote "Germany: 52 beaches, 0 from OSM" and then skipped Germany on
     every later run, because a cache file existed. `osm_ok` is what makes the
     difference between "no beaches mapped here" and "nobody answered"."""
-    cached = None if refresh else load_cache(STAGE, cc)
-    if cached and (cached.get("osm_ok") or not use_osm):
+    cached = None if refresh and not reuse_wikidata else load_cache(STAGE, cc)
+    if cached and not reuse_wikidata and (cached.get("osm_ok") or not use_osm):
         print(f"  {cc}: {len(cached['beaches'])} beaches (cached)")
         return cached
 
-    if cached:
+    if cached and reuse_wikidata:
+        # The OSM source changed under us, not Wikidata. This is the switch to
+        # use when the bulk pass moves from Overpass to a Geofabrik extract or
+        # the extract is refreshed: the Wikidata half is already on disk and
+        # re-asking the SPARQL endpoint 43 times to learn what it already told
+        # us is rude and slow. Same merge, same output, no query.
+        print(f"  {cc}: reusing {len(cached['beaches'])} cached Wikidata rows")
+        wd_rows = []
+        for beach in cached["beaches"]:
+            if not beach.get("wd"):
+                continue
+            row = dict(beach)
+            for field in ("sources", "osm_id", "osm_tags", "key", "water",
+                          "osm_tag", "length_src", "name_src", "coastal"):
+                row.pop(field, None)
+            wd_rows.append(row)
+    elif cached:
         # Wikidata already answered for this country, so only the OSM half is
         # outstanding: reuse those rows rather than spend the SPARQL query
         # again. The merge fields are stripped so the merge can redo them.
@@ -593,8 +854,7 @@ def harvest_country(cc, use_osm=True, refresh=False):
     # full run still fills it in instead of treating the country as finished.
     found, osm_ok = [], False
     if use_osm:
-        print(f"  {cc}: querying Overpass")
-        found, osm_ok = osm_beaches(cc)
+        found, osm_ok = osm_beaches(cc, prefer_extract=prefer_extract)
 
     # A failed retry must never be written over a cache that already holds
     # beaches. The first version of this kept only the Wikidata rows while
@@ -602,7 +862,19 @@ def harvest_country(cc, use_osm=True, refresh=False):
     # into 10 and called it a harvest. Nothing replaces something.
     cached_osm = len([b for b in (cached or {}).get("beaches", [])
                       if "osm" in (b.get("sources") or [])])
-    if cached and use_osm and (not osm_ok or (not found and cached_osm)):
+    # The guard below exists because Overpass lies: a timed-out query and a
+    # lying mirror both answer "no beaches here" with a straight face, and
+    # believing either turns Albania's 141 beaches into 10.
+    #
+    # A Geofabrik extract cannot lie in that way. It is a file on disk, the
+    # scan is deterministic, and an empty answer means the country genuinely
+    # has no mapped beach. San Marino is landlocked and its correct row count
+    # is zero; under the unconditional guard it kept 2,415 Italian beaches
+    # that a bad country filter had given it, because "nothing replaces
+    # something" outranked a correct answer.
+    trustworthy_empty = (osm_ok == "extract")
+    if (cached and use_osm and not trustworthy_empty
+            and (not osm_ok or (not found and cached_osm))):
         # Either nobody answered, or somebody answered "nothing" for a country
         # we already hold beaches for. The second case is how a regional mirror
         # lies: overpass.osm.ch returned a clean empty result for Austria and
@@ -612,11 +884,18 @@ def harvest_country(cc, use_osm=True, refresh=False):
         return cached
 
     beaches = merge(wd_rows, found)
+    spine_added = spine_matched = 0
+    if use_spine:
+        sites = eea_spine.candidate_rows(cc)
+        if sites:
+            spine_added, spine_matched = merge_spine(beaches, sites)
     payload = {
         "country": cc,
         "harvested_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
         "n_wikidata": len(wd_rows),
         "n_osm": len(found),
+        "n_eea": spine_added + spine_matched,
+        "n_eea_new": spine_added,
         # False means Overpass never answered; the next run retries this half.
         "osm_ok": bool(osm_ok),
         "beaches": beaches,
@@ -625,9 +904,11 @@ def harvest_country(cc, use_osm=True, refresh=False):
     both = sum(1 for b in beaches if len(b["sources"]) > 1)
     outstanding = ("" if osm_ok
                    else " [OSM half outstanding, a later run fills it in]")
+    spine_note = (f", {spine_added} new + {spine_matched} matched from the "
+                  f"bathing register" if (spine_added or spine_matched) else "")
     print(f"  {cc}: {len(beaches)} beaches "
-          f"({len(wd_rows)} wikidata, {len(found)} osm, {both} merged)"
-          f"{outstanding}")
+          f"({len(wd_rows)} wikidata, {len(found)} osm, {both} merged"
+          f"{spine_note}){outstanding}")
     return payload
 
 
@@ -639,6 +920,21 @@ def main():
                         help="re-query even when a country is cached")
     parser.add_argument("--no-osm", action="store_true",
                         help="Wikidata only, for a quick pass")
+    parser.add_argument("--overpass", action="store_true",
+                        help="take the OSM half from Overpass rather than "
+                             "from the Geofabrik extract. The extract is the "
+                             "default since 03-BEACHES.md: it is local, it "
+                             "carries the widened tag set and the beach "
+                             "lengths, and it cannot time out.")
+    parser.add_argument("--reuse-wikidata", action="store_true",
+                        help="re-merge from the cached Wikidata rows instead "
+                             "of re-querying SPARQL. Use this when the OSM "
+                             "half changed and Wikidata did not, which is "
+                             "what moving the bulk pass onto the Geofabrik "
+                             "extracts is.")
+    parser.add_argument("--no-spine", action="store_true",
+                        help="skip the EEA bathing water register, which is "
+                             "otherwise merged in as a third source")
     parser.add_argument("--reverse", action="store_true",
                         help="work the country list from the end, so a second "
                              "process on another Overpass mirror can meet this "
@@ -653,7 +949,10 @@ def main():
     for cc in countries:
         try:
             payload = harvest_country(cc, use_osm=not args.no_osm,
-                                      refresh=args.refresh)
+                                      refresh=args.refresh,
+                                      prefer_extract=not args.overpass,
+                                      use_spine=not args.no_spine,
+                                      reuse_wikidata=args.reuse_wikidata)
             total += len(payload["beaches"])
         except KeyboardInterrupt:
             raise

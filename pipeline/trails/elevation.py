@@ -595,9 +595,14 @@ def select_ids(conn, countries, refresh, limit, ids, curated=False):
     if ids:
         return ids
     where_curated = ("AND status IN ('approved', 'published')" if curated else "")
+    # Both OSM sources. `osm_ways` is derive_routes.py's output, and a derived
+    # route needs a profile exactly as much as a relation does: without one it
+    # has no ascent, no climb band, and no DEM fallback for its grade, which is
+    # the whole reason the five thin countries got them. Filtering on
+    # `source = 'osm'` silently left all 290 of them flat.
     sql = f"""
         SELECT id FROM trips
-        WHERE source = 'osm' AND country = ANY(%s)
+        WHERE source IN ('osm', 'osm_ways') AND country = ANY(%s)
           AND (%s OR elevation IS NULL
                OR elevation->>'geom_md5'
                   IS DISTINCT FROM md5(ST_AsBinary(ST_Force2D(geom))))
@@ -639,6 +644,18 @@ def via_alpina_sanity(conn):
 # Driver
 # ---------------------------------------------------------------------------
 
+def curated_countries(conn):
+    """Every country curate.py has approved or published something in."""
+    with conn.cursor() as cur:
+        cur.execute("""
+            SELECT DISTINCT country FROM trips
+            WHERE category = 'hike' AND status IN ('approved', 'published')
+              AND country IS NOT NULL
+            ORDER BY 1
+        """)
+        return [r[0] for r in cur.fetchall()]
+
+
 def report_countries(records, top):
     by_country = defaultdict(list)
     for r in records:
@@ -668,7 +685,15 @@ def main():
     parser = argparse.ArgumentParser(
         description="Sample Copernicus GLO-30 along staged trips and fill "
                     "ascent, descent, duration and an elevation profile.")
-    parser.add_argument("--countries", default="CH,FR,NO,AT",
+    # Every country that has curated content, not the four pilot ones.
+    #
+    # The old default was "CH,FR,NO,AT" from the pilot era, and it stayed
+    # correct exactly as long as those were the only countries with approved
+    # routes. Running `elevation.py --curated` after the layer went to 43
+    # countries printed "nothing to do" and exited 0, because the four pilots
+    # were indeed done: a silent no-op that looks like success is the worst
+    # shape a default can have.
+    parser.add_argument("--countries", default="",
                         help="comma-separated ISO codes (default: CH,FR,NO,AT)")
     parser.add_argument("--refresh", action="store_true",
                         help="recompute even when the stored profile is fresh")
@@ -691,6 +716,10 @@ def main():
 
     conn = connect()
     ensure_elevation_column(conn)
+    if not countries:
+        countries = curated_countries(conn)
+        print(f"no --countries given: using the {len(countries)} country(ies) "
+              f"that have curated content")
     ids = select_ids(conn, countries, args.refresh, args.limit, ids_arg,
                      curated=args.curated)
     if not ids:

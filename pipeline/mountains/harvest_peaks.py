@@ -77,8 +77,13 @@ COUNTRIES = [
     "AD", "AL", "AT", "BA", "BE", "BG", "CH", "CY", "CZ", "DE", "DK", "EE",
     "ES", "FI", "FO", "FR", "GB", "GR", "HR", "HU", "IE", "IS", "IT", "LI",
     "LT", "LU", "LV", "MC", "MD", "ME", "MK", "MT", "NL", "NO", "PL", "PT",
-    "RO", "RS", "SE", "SI", "SK", "SM", "XK",
+    "RO", "RS", "SE", "SI", "SK", "SM", "UA", "XK",
 ]
+# 44 with Ukraine, which is the count brief 05 targets and the country the
+# trails layer already curates (Hoverla, Chornohora, the Transcarpathian
+# ridges). It has no rows in cache/features_wikidata.json, so it is harvested
+# the way every thin country is: the P610 high points, the hill and volcano
+# pass, and the OSM spine.
 
 LOCAL_LANG = {
     "AL": "sq", "AT": "de", "BA": "bs", "BE": "nl", "BG": "bg", "CH": "de",
@@ -88,7 +93,7 @@ LOCAL_LANG = {
     "ME": "sr", "MK": "mk", "MT": "mt", "NL": "nl", "NO": "no", "PL": "pl",
     "PT": "pt", "RO": "ro", "RS": "sr", "SE": "sv", "SI": "sl", "SK": "sk",
     "XK": "sq", "SM": "it", "LI": "de", "LU": "fr", "AD": "ca", "IE": "en",
-    "GB": "en",
+    "GB": "en", "UA": "uk",
 }
 
 COUNTRY_QID = {
@@ -100,7 +105,7 @@ COUNTRY_QID = {
     "LU": "Q32", "LV": "Q211", "MC": "Q235", "MD": "Q217", "ME": "Q236",
     "MK": "Q221", "MT": "Q233", "NL": "Q55", "NO": "Q20", "PL": "Q36",
     "PT": "Q45", "RO": "Q218", "RS": "Q403", "SE": "Q34", "SI": "Q215",
-    "SK": "Q214", "SM": "Q238", "XK": "Q1246",
+    "SK": "Q214", "SM": "Q238", "UA": "Q212", "XK": "Q1246",
 }
 
 # English country names, used ONLY to qualify a seed search term. Nothing is
@@ -117,7 +122,8 @@ COUNTRY_NAME = {
     "ME": "Montenegro", "MK": "North Macedonia", "MT": "Malta",
     "NL": "Netherlands", "NO": "Norway", "PL": "Poland", "PT": "Portugal",
     "RO": "Romania", "RS": "Serbia", "SE": "Sweden", "SI": "Slovenia",
-    "SK": "Slovakia", "SM": "San Marino", "XK": "Kosovo",
+    "SK": "Slovakia", "SM": "San Marino", "UA": "Ukraine",
+    "XK": "Kosovo",
 }
 
 WD_API = "https://www.wikidata.org/w/api.php"
@@ -131,13 +137,23 @@ WD_API = "https://www.wikidata.org/w/api.php"
 # published a mountain called "Q1517331". The list runs through the languages
 # this app speaks and then the larger European ones, which between them cover
 # anything a European landform is likely to be labelled in.
-LABEL_LANGS = "en,de,fr,es,it,nl,da,nb,sv,fi,pl,cs,pt,el,hu,ro,hr,sl,sk,et,lv,lt"
+LABEL_LANGS = ("en,de,fr,es,it,nl,da,nb,sv,fi,pl,cs,pt,el,hu,ro,hr,sl,"
+              "sk,et,lv,lt,uk")
 
-# How many rows per country reach the enrich stage. 110 rather than the lake
-# layer's 120 because a mountain costs one more Overpass question than a lake
-# does, and because the tail of a mountain country is far longer: rows 110 to
-# 8,000 in Norway are all the same unnamed bump.
-SHORTLIST = 110
+# How many rows per country reach the enrich stage.
+#
+# 110 in v1, and 110 was the coverage cap wearing a shortlist's clothes: the
+# export could never publish more than the harvest shortlisted, so "the best
+# 110 mountains in Norway" was the ceiling on a country with 100,526 in the
+# pool. v2 targets ~4,500 rated and ~3,000 listed rows over 44 countries,
+# which is ~170 published per country, and no gate can publish 170 rows out
+# of 110 candidates.
+#
+# 500 is what the region quota needs to have something to choose between in
+# every range, and it is affordable because the harvest itself is a local
+# read: the cost lands in enrich (ENRICH_TOP), which is separately capped and
+# separately resumable.
+SHORTLIST = 500
 
 # Below this many spine rows a country also gets the hill and volcano pass.
 # Deliberately generous: the pass is cheap exactly where the country is small.
@@ -284,6 +300,19 @@ def spine_rows(cc):
                 continue
             out[qid] = row
     return list(out.values())
+
+
+def row_key(row):
+    """The identity of a row inside one country's caches.
+
+    Wikidata's Q number where there is one, and the OSM element id where
+    there is not. The second half is new in v2: the OSM spine contributes
+    named summits, ridges and cliffs that Wikidata has never heard of, and
+    every stage downstream keyed its dictionaries on `wd`, which for those
+    rows is None. One None key per country means one summit per country
+    survives the Overpass sweep, which is the kind of bug that looks like a
+    thin answer rather than like a crash."""
+    return row.get("wd") or (f"osm:{row['oid']}" if row.get("oid") else "")
 
 
 def as_row(raw, cc):
@@ -653,6 +682,119 @@ def resolve_seed(cc, rows):
 # The cut
 # ---------------------------------------------------------------------------
 
+# ---------------------------------------------------------------------------
+# The second spine: OpenStreetMap
+# ---------------------------------------------------------------------------
+
+# What an OSM landform tag means to kind_of(). The values are words the
+# KIND_PATTERNS in peak_index already match, so one table serves both spines
+# rather than a second classifier that can disagree with the first.
+OSM_KIND_WORDS = {
+    "peak": "mountain", "volcano": "volcano", "saddle": "mountain pass",
+    "ridge": "ridge", "arete": "arete", "cliff": "cliff",
+    "plateau": "plateau", "mountain_pass": "mountain pass",
+}
+
+# How close an OSM element and a Wikidata item have to be to be the same
+# landform when no `wikidata` tag says so. The brief's number. It is small on
+# purpose: a summit node and its Wikidata item are usually within 30 m, and
+# 150 m is already generous on a broad ridge, while 500 m would start
+# swallowing the next top along.
+OSM_MATCH_M = 150
+
+
+def osm_rows(cc):
+    """Whatever cache/mountains/osm_CC.json holds, in this layer's row shape.
+
+    Read from the cache only. This stage never calls Overpass: the spine is
+    harvested by pipeline/mountains/osm_spine.py, which is separable for the
+    same reason the context sweep is (Overpass is the one source here that is
+    regularly unreachable), and a harvest run on a box that has never fetched
+    it simply works from Wikidata alone."""
+    cached = load_cache("osm", cc)
+    if not cached:
+        return []
+    out = []
+    for row in cached.get("rows") or []:
+        word = OSM_KIND_WORDS.get(row.get("natural") or "", "hill")
+        names = row.get("names") or {}
+        lang = LOCAL_LANG.get(cc, "en")
+        out.append({
+            "wd": row.get("wd") or None,
+            "oid": row["oid"],
+            "name": names.get("en") or row["name"],
+            "name_local": names.get(lang) or row["name"],
+            "names": names,
+            "lat": row["lat"],
+            "lon": row["lon"],
+            "ele": row.get("ele"),
+            "prom": row.get("prom"),
+            "wd_img": "",
+            "sitelinks": 0,
+            "cls": [word],
+            "osm_tags": row.get("tags") or {},
+            "cc": cc,
+            "src": "osm",
+            "sources": ["osm-odbl"],
+        })
+    return out
+
+
+def merge_osm(rows, extra):
+    """Fold the OSM spine into the Wikidata one.
+
+    Reconciliation is the brief's, in the brief's order: the `wikidata` tag
+    first, because an OSM mapper writing Q1234 on a summit node is a human
+    statement that these are the same mountain, and a spatial match within
+    150 m second.
+
+    A match ENRICHES rather than replaces. Wikidata carries the sitelinks
+    that acclaim is built from and OSM carries the elevation and prominence
+    that Wikidata mostly does not, so the merged row is better than either
+    spine alone, which is the whole argument for having two.
+
+    Returns (rows, matched, added)."""
+    cells = {}
+    for row in rows:
+        cells.setdefault((int(row["lat"] * 100), int(row["lon"] * 100)),
+                         []).append(row)
+    by_qid = {r["wd"]: r for r in rows if r.get("wd")}
+    matched = added = 0
+    for cand in extra:
+        twin = by_qid.get(cand["wd"]) if cand.get("wd") else None
+        if twin is None:
+            base = (int(cand["lat"] * 100), int(cand["lon"] * 100))
+            best_km = None
+            for dy in (-1, 0, 1):
+                for dx in (-1, 0, 1):
+                    for other in cells.get((base[0] + dy, base[1] + dx), ()):
+                        km = haversine_km(other["lat"], other["lon"],
+                                          cand["lat"], cand["lon"])
+                        if km * 1000.0 > OSM_MATCH_M:
+                            continue
+                        if best_km is None or km < best_km:
+                            twin, best_km = other, km
+        if twin is not None:
+            matched += 1
+            twin.setdefault("oid", cand["oid"])
+            if twin.get("ele") is None and cand.get("ele") is not None:
+                twin["ele"] = cand["ele"]
+            if twin.get("prom") is None and cand.get("prom") is not None:
+                twin["prom"] = cand["prom"]
+            if cand.get("osm_tags"):
+                twin["osm_tags"] = {**(twin.get("osm_tags") or {}),
+                                    **cand["osm_tags"]}
+            if "osm-odbl" not in twin.get("sources", []):
+                twin.setdefault("sources", []).append("osm-odbl")
+            continue
+        rows.append(cand)
+        added += 1
+        cells.setdefault((int(cand["lat"] * 100), int(cand["lon"] * 100)),
+                         []).append(cand)
+        if cand.get("wd"):
+            by_qid[cand["wd"]] = cand
+    return rows, matched, added
+
 def pre_score(row, ele_max):
     """A cheap ordering, used ONLY to decide who earns the network calls.
 
@@ -711,7 +853,12 @@ def dedupe_rows(rows):
                     if haversine_km(other["lat"], other["lon"],
                                     row["lat"], row["lon"]) > 0.25:
                         continue
-                    if same_peak(other["name"], row["name"]) or other["wd"] == row["wd"]:
+                    # `and other["wd"]` matters now that rows can arrive
+                    # without a Q number: two OSM summits 200 m apart both
+                    # have wd None, and None == None would fold every
+                    # cluster of tops on a ridge into one row.
+                    if (same_peak(other["name"], row["name"])
+                            or (other.get("wd") and other["wd"] == row.get("wd"))):
                         twin = other
                         break
                 if twin:
@@ -733,7 +880,8 @@ def dedupe_rows(rows):
     return kept
 
 
-def harvest_country(cc, refresh=False, shortlist_n=SHORTLIST, use_spine=True):
+def harvest_country(cc, refresh=False, shortlist_n=SHORTLIST, use_spine=True,
+                    use_osm=True):
     if not refresh and load_cache(STAGE, cc) is not None:
         print(f"  {cc}: cached")
         return load_cache(STAGE, cc)
@@ -772,6 +920,13 @@ def harvest_country(cc, refresh=False, shortlist_n=SHORTLIST, use_spine=True):
             rows.append(row)
             by_qid.add(row["wd"])
 
+    # The second spine, folded in before the seed is resolved so a seeded
+    # mountain can resolve against an OSM row Wikidata has never heard of.
+    osm_matched = osm_added = 0
+    if use_osm:
+        rows, osm_matched, osm_added = merge_osm(rows, osm_rows(cc))
+        by_qid = {r["wd"] for r in rows if r.get("wd")}
+
     hills_n = 0
     if len(rows) < THIN_POOL:
         hills = [r for r in query_rows(HILL_QUERY, cc, "hill") if in_europe(r)]
@@ -801,6 +956,8 @@ def harvest_country(cc, refresh=False, shortlist_n=SHORTLIST, use_spine=True):
         "spine": spine_n,
         "highpoints": len(highs),
         "hills": hills_n,
+        "osm_matched": osm_matched,
+        "osm_added": osm_added,
         "seed_resolved": resolved,
         "seed_missing": missing,
         "peaks": short,
@@ -808,7 +965,8 @@ def harvest_country(cc, refresh=False, shortlist_n=SHORTLIST, use_spine=True):
     save_cache(STAGE, cc, payload)
     note = f", {len(missing)} seed unresolved" if missing else ""
     print(f"  {cc}: pool {len(rows)} (spine {spine_n}, high points {len(highs)}, "
-          f"hills {hills_n}), shortlist {len(short)}, seed {resolved}{note}")
+          f"hills {hills_n}, osm +{osm_added}/={osm_matched}), "
+          f"shortlist {len(short)}, seed {resolved}{note}")
     if missing:
         print(f"      unresolved: {', '.join(missing)}")
     return payload
@@ -821,6 +979,8 @@ def main():
     parser.add_argument("--shortlist", type=int, default=SHORTLIST)
     parser.add_argument("--no-spine", action="store_true",
                         help="work from the seed and the high points alone")
+    parser.add_argument("--no-osm", action="store_true",
+                        help="leave the OSM spine cache out of the pool")
     args = parser.parse_args()
 
     wanted = [c.strip().upper() for c in args.countries.split(",") if c.strip()]
@@ -828,7 +988,8 @@ def main():
     for cc in countries:
         try:
             harvest_country(cc, refresh=args.refresh, shortlist_n=args.shortlist,
-                            use_spine=not args.no_spine)
+                            use_spine=not args.no_spine,
+                            use_osm=not args.no_osm)
         except KeyboardInterrupt:
             raise
         except Exception as exc:                      # noqa: BLE001

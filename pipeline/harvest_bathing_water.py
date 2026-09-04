@@ -94,9 +94,21 @@ def download_sites():
     """Page through every bathing water, keeping only what we summarise."""
     out = []
     offset = 0
+    # bathingWaterIdentifier is the registry's own stable key, and it is what
+    # the beach layer's EEA spine builds its row ids from: a site that moves a
+    # few metres between seasons must not become a different beach and orphan
+    # somebody's saved favourite (pipeline/beaches/eea_spine.py).
+    #
+    # The ten year class history is asked for as well. The Directive class is
+    # a four season rolling window, so minus1 is what says whether this site
+    # is on the way up or the way down, and minus10 is what says whether a
+    # Poor reading is this site's character or one bad summer.
     fields = ",".join([
+        "bathingWaterIdentifier",
         "bathingWaterName", "countryName", "countryCode", "bwWaterCategory",
-        "latitude", "longitude", "qualityStatus", "qualityStatus_minus3",
+        "latitude", "longitude", "qualityStatus",
+        "qualityStatus_minus1", "qualityStatus_minus2", "qualityStatus_minus3",
+        "qualityStatus_minus10",
         "bwProfileLink",
     ])
     while True:
@@ -119,6 +131,9 @@ def download_sites():
             if lat is None or lon is None:
                 continue
             out.append({
+                # The registry key. Additive: every consumer that predates it
+                # reads the rest of the row exactly as before.
+                "bwid": (a.get("bathingWaterIdentifier") or "").strip(),
                 "name": (a.get("bathingWaterName") or "").strip(),
                 "country": a.get("countryName"),
                 "iso2": a.get("countryCode"),
@@ -126,7 +141,9 @@ def download_sites():
                 "lat": float(lat),
                 "lon": float(lon),
                 "q": a.get("qualityStatus"),           # latest season
+                "q1": a.get("qualityStatus_minus1"),   # last season, the direction
                 "q3": a.get("qualityStatus_minus3"),   # three seasons earlier
+                "q10": a.get("qualityStatus_minus10"), # ten seasons, the character
                 "profile": a.get("bwProfileLink"),
             })
         print(f"  downloaded {len(out)} sites...")
@@ -232,6 +249,16 @@ def summarise(dests, sites):
 # --------------------------------------------------------------------------- #
 def main():
     refresh = "--refresh" in sys.argv[1:]
+    # --sites-only refreshes cache/eea_bathing_water.json and stops. The beach
+    # layer reads that cache as a SPINE (every site is a place a European
+    # government says people swim), and it must be able to pull a fresh copy
+    # without this script also rewriting the 68 MB catalogue master, which is
+    # a different writer with a different cadence.
+    if "--sites-only" in sys.argv[1:]:
+        sites = load_sites(refresh or "--sites-only" in sys.argv[1:])
+        with_id = sum(1 for s in sites if s.get("bwid"))
+        print(f"  {len(sites)} sites cached, {with_id} carry a registry id")
+        return
     sites = load_sites(refresh)
     data = load(MASTER)
     dests = data["destinations"]

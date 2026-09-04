@@ -60,23 +60,60 @@ def log(msg):
 
 
 def _points_to_n3(admin3, lats, lons):
-    """Bulk point to level 3 region id, with the 5 km sea snap."""
+    """Bulk point to level 3 region id, with the 5 km sea snap.
+
+    Both joins are deduplicated by the LEFT index before anything is read
+    off them: a point sitting exactly on a boundary comes back once per
+    region it touches, and the first cut of this function read the joined
+    frame as if it were still one row per point, which walked the positions
+    off the end of the frame."""
     import geopandas as gpd
     pts = gpd.GeoDataFrame(geometry=gpd.points_from_xy(lons, lats),
                            crs="EPSG:4326")
     hit = gpd.sjoin(pts, admin3[["id", "geometry"]], how="left",
                     predicate="within")
-    out = list(hit["id"])
-    missing = [i for i, v in enumerate(out) if not isinstance(v, str)]
+    hit = hit[~hit.index.duplicated(keep="first")].sort_index()
+    out = [v if isinstance(v, str) else None for v in hit["id"]]
+    missing = [i for i, v in enumerate(out) if v is None]
     if missing:
         rest = pts.iloc[missing]
         near = gpd.sjoin_nearest(rest, admin3[["id", "geometry"]], how="left",
                                  max_distance=5.0 / 111.32)
         near = near[~near.index.duplicated(keep="first")]
+        col = "id_right" if "id_right" in near.columns else "id"
         for i in missing:
-            got = near.loc[i, "id_right"] if "id_right" in near.columns else near.loc[i, "id"]
-            out[i] = got if isinstance(got, str) else None
+            if i in near.index:
+                got = near.loc[i, col]
+                if isinstance(got, str):
+                    out[i] = got
     return out
+
+
+def _iter_lakes():
+    """(area in km2 or None, lat, lon) for every named water body we know of.
+
+    The OSM sweep is preferred wherever it exists, because it is the only
+    source that has actually MEASURED the surface of every named water body
+    in a country: `lakes_over_5ha` is the quota formula's own input, and
+    counting it off the head of a Wikidata ranking was a proxy the region doc
+    flagged as temporary. A country the sweep has not reached falls back to
+    the harvest pool, so a partial sweep degrades a country at a time rather
+    than emptying the measure."""
+    swept = set()
+    for path in sorted((CACHE / "lakes").glob("osm_??.json")):
+        data = load_json(path)
+        if not data or not data.get("waters"):
+            continue
+        swept.add(path.stem.split("_")[1])
+        for row in data["waters"]:
+            if row.get("lat") is None or row.get("lon") is None:
+                continue
+            ha = row.get("area_ha")
+            yield (ha / 100.0 if ha else None), row["lat"], row["lon"]
+    for cc, row in _iter_layer_cache("lakes", "lakes"):
+        if cc in swept or row.get("lat") is None or row.get("lon") is None:
+            continue
+        yield row.get("area_km2"), row["lat"], row["lon"]
 
 
 def _iter_layer_cache(folder, key):
@@ -107,14 +144,13 @@ def build():
     for rid, km in coast_km.items():
         n3[rid]["coast_km"] = km
 
-    # Lakes: pool counts at the 5 ha and 20 ha rungs.
+    # Lakes: counts at the 5 ha and 20 ha rungs, from the OSM sweep where it
+    # has run and the harvest pool where it has not.
     lat_l, lon_l, area_l = [], [], []
-    for cc, row in _iter_layer_cache("lakes", "lakes"):
-        if row.get("lat") is None or row.get("lon") is None:
-            continue
-        lat_l.append(row["lat"])
-        lon_l.append(row["lon"])
-        area_l.append(row.get("area_km2"))
+    for area, lat, lon in _iter_lakes():
+        lat_l.append(lat)
+        lon_l.append(lon)
+        area_l.append(area)
     if lat_l:
         ids = _points_to_n3(admin3, lat_l, lon_l)
         for rid, a in zip(ids, area_l):
@@ -250,8 +286,8 @@ def build():
         "version": "opportunity_v1",
         "basis": {
             "coast_km": "EEA coastline v3 arc length per region",
-            "lakes_over_5ha": "lake harvest pool; unknown area counts at 5 ha, never at 20 ha",
-            "lakes_over_20ha": "lake harvest pool, recorded area >= 0.2 km2",
+            "lakes_over_5ha": "named water bodies from the OSM extract sweep (measured polygon area), harvest pool where the sweep has not run; unknown area counts at 5 ha, never at 20 ha",
+            "lakes_over_20ha": "same source, recorded area >= 0.2 km2",
             "peaks_over_p100": "mountain harvest pool, prominence >= 100 m",
             "relief_m": "GeoNames settlement DEM p98 - p02, raised by highest pool peak; GLO-30 sweep pending",
             "protected_share": "OSM protected site density per 100 km2 capped at 1; Natura 2000 + Emerald polygons pending",

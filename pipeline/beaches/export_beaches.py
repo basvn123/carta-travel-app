@@ -53,6 +53,19 @@ import sys
 from datetime import datetime, timezone
 from pathlib import Path
 
+# Windows consoles default to cp1252, and this layer prints beach names:
+# "Ir-Ramla tal-Mixquqa" and "Plaza Zlatni Rat" both raise UnicodeEncodeError
+# on the way to a terminal that cannot spell them. Replacing the character is
+# right for a progress line and wrong for a data file, which is why this
+# touches stdout only; every cache and wire write goes through an explicit
+# encoding="utf-8".
+if sys.platform == "win32":
+    try:
+        sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+        sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+    except (AttributeError, ValueError):
+        pass
+
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 
@@ -94,9 +107,23 @@ def photo_rank_block():
         return None
 
 
-MIN_IMAGES = 2
+# The rated tier's photo bar. Four, not two, per 00-MASTER-SPEC.md section 8:
+# two photographs is a floor for EXISTENCE and this tier is a claim about
+# beauty. A row that cannot field four does not disappear, it falls through to
+# `listed`, which is the whole point of the tier model.
+MIN_IMAGES = 4
+# The listed tier's bar: one strongly evidenced photograph, or none at all and
+# the card is drawn from the map instead. A listed row is a claim that the
+# place exists and is named, not a claim about how it looks.
+MIN_IMAGES_LISTED = 1
 MIN_SCORE = 5.6
-PUBLISH_MAX = 120
+# A sanity ceiling, far above the sum of any country's region quotas, NOT a
+# binding cap. The old value was 120 and it bound in four countries at once:
+# Spain, France, Great Britain and Portugal all published exactly 120, which
+# is the signature of a constant deciding a catalogue. The region quota now
+# decides how many beaches a coast carries; this only stops a bug from
+# publishing a country's entire harvest.
+PUBLISH_MAX = 900
 DUPLICATE_KM = 0.15
 
 # The Europe wide file the tab opens on. Capped per country on purpose: the
@@ -114,6 +141,8 @@ ATTRIBUTION = {
            "Water Directive data",
     "commons": "Photographs from Wikimedia Commons, each under the licence "
                "shown on the picture",
+    "natura": "Protected site boundaries: Natura 2000 and the Emerald "
+              "Network, European Environment Agency, CC BY 4.0",
 }
 
 
@@ -264,6 +293,49 @@ def services_of(beach):
     return out
 
 
+def v2_fields(beach):
+    """The fields 03-BEACHES.md adds to the row, on both tiers.
+
+    Every one of them is omitted rather than nulled when the enrichment did
+    not answer. The app cannot render what is not there, which is the only
+    reliable way to keep a number nobody earned off a card (invariant 9).
+
+      size     cove | beach | strand, the band the Size facet is cut at
+      space    how roomy this beach is for its own coast, 0..1
+      aspect   the true bearing from the sand out to sea
+      sunset   whether the sun sets over this beach's water in season
+      prot     the protected site this beach is INSIDE, from polygons
+      sst      monthly sea surface temperature climatology
+      nameSrc  where the name came from, when it was not the beach's own:
+               "eea" is a bathing register entry, "osm_near" is borrowed
+               from the nearest named bay or village
+    """
+    out = {}
+    band = bi.size_band(beach)
+    if band:
+        out["size"] = band
+    if beach.get("aspect") is not None:
+        out["aspect"] = beach["aspect"]
+    if beach.get("sunset_facing") and beach.get("coastal", True):
+        out["sunset"] = True
+    protection = beach.get("protection") or {}
+    if protection.get("inside"):
+        out["prot"] = {
+            "net": "natura2000" if protection.get("natura2000") else "emerald",
+            "name": protection.get("name") or "",
+            "code": protection.get("code") or "",
+        }
+    sst = beach.get("sst")
+    if isinstance(sst, list) and len(sst) == 12:
+        out["sst"] = sst
+    name_src = beach.get("name_src") or ""
+    if name_src in ("eea", "osm_near"):
+        out["nameSrc"] = name_src
+    if beach.get("coastal") is False:
+        out["inland"] = True
+    return out
+
+
 def wire_beach(beach, comps, score10, tier, reasons):
     tags = beach.get("osm_tags") or {}
     water = beach.get("water") or {}
@@ -299,6 +371,7 @@ def wire_beach(beach, comps, score10, tier, reasons):
         row["surface"] = surface
     if 60 <= (beach.get("length_m") or 0) <= 30000:   # see reasons_for
         row["lengthM"] = int(beach["length_m"])
+    row.update(v2_fields(beach))
     if water.get("class"):
         row["water"] = {"class": water["class"], "site": water.get("site") or ""}
     if area.get("name"):
@@ -327,32 +400,102 @@ def wire_beach(beach, comps, score10, tier, reasons):
     credits = [ATTRIBUTION["wikidata"] if "wikidata" in row["src"] else None,
                ATTRIBUTION["osm"] if "osm" in row["src"] else None,
                ATTRIBUTION["eea"] if row.get("water") else None,
+               ATTRIBUTION["natura"] if row.get("prot") else None,
                ATTRIBUTION["commons"] if row["images"] else None]
     row["credit"] = [c for c in credits if c]
     return row
 
 
-def publishable(beach):
-    """The gate, minus the score (which needs the whole country first)."""
+def photo_gate(beach):
+    """The rated tier's photo bar: four pictures, and the LEAD one strongly
+    evidenced.
+
+    v1 asked for two pictures and for at least one of them, anywhere in the
+    gallery, to be strongly evidenced. That let a geotagged frame lead the
+    card while a name-matched picture sat in slot three, which is exactly
+    backwards: the lead photograph is the one picture most people ever see of
+    a beach, so it is the one that has to prove it is this beach.
+
+    The gallery is already in publication order by the time this runs (the
+    beauty engine wrote it), so images[0] is the hero and asking about it is
+    asking about what the reader will see."""
     images = usable_images(beach)
     if len(images) < MIN_IMAGES:
         return False
-    if not any(i.get("evidence") in STRONG_EVIDENCE for i in images):
-        return False
-    if not name_tokens(beach.get("name")):
-        return False
-    return True
+    return images[0].get("evidence") in STRONG_EVIDENCE
+
+
+def listed_photo_gate(beach):
+    """The listed tier's bar: one strongly evidenced picture, or none.
+
+    Zero is a pass, not a failure. A listed row with no publishable
+    photograph ships the map card code and is drawn from its coordinates,
+    which is honest and is better than a region page with a hole in it. What
+    is NOT allowed is a weakly evidenced picture standing alone: a geotagged
+    frame from the next cove is worse than no picture, because it makes a
+    claim the row cannot support."""
+    images = [i for i in usable_images(beach)
+              if i.get("evidence") in STRONG_EVIDENCE]
+    return images[:MIN_IMAGES_LISTED]
+
+
+def named(beach):
+    """The name test, hard on BOTH tiers: a word beyond the local word for
+    "beach". "Plage" is not a destination and neither is "Strand"."""
+    return bool(name_tokens(beach.get("name")))
+
+
+def publishable(beach):
+    """The gate, minus the score (which needs the whole country first)."""
+    return named(beach) and photo_gate(beach)
 
 
 def country_water_default(beaches):
-    """What an unmeasured beach in this country is worth: the median class of
-    the beaches around it that DO have a reading. A country whose measured
-    water is mostly Excellent should not punish the cove nobody sampled."""
+    """What an unmeasured beach in this country is worth, or None.
+
+    None where NO source publishes a bathing class for this country at all
+    (Norway, Iceland, the non-Albania Balkans, and Great Britain until the
+    Defra feed is reachable). There the water component is dropped and the
+    remaining weights renormalised, rather than every beach in the country
+    being handed a median computed from nothing.
+
+    Where a source does publish, an unmeasured beach is worth the median of
+    its measured neighbours: no reading is not a bad reading, and a wild cove
+    must not be punished for being wild."""
+    if beaches and all(b.get("no_water_source") for b in beaches):
+        return None
     values = [bi.WATER_VALUE[b["water"]["class"]] for b in beaches
               if (b.get("water") or {}).get("class") in bi.WATER_VALUE]
     if len(values) < 5:
         return bi.WATER_DEFAULT
     return statistics.median(values)
+
+
+def space_references(beaches):
+    """The median beach length in each coastal stretch, so `space` reads
+    "roomy for THIS coast" rather than "long in absolute metres".
+
+    A Norwegian fjord beach and a Costa de la Luz strand cannot share a
+    yardstick: 400 m is a big beach on one and a small one on the other. A
+    stretch with too few measured beaches to have a median falls back to the
+    country's, and then to the module's own constant."""
+    by_stretch = {}
+    everything = []
+    for beach in beaches:
+        length = beach.get("length_m")
+        if not length or not (bi.SPACE_MIN_M <= length <= bi.SPACE_MAX_M):
+            continue
+        everything.append(length)
+        key = (beach.get("rg") or {}).get("co")
+        if key:
+            by_stretch.setdefault(key, []).append(length)
+    country = (statistics.median(everything) if len(everything) >= 5
+               else bi.SPACE_FALLBACK_REF_M)
+    out = {"": country}
+    for key, lengths in by_stretch.items():
+        out[key] = (statistics.median(lengths) if len(lengths) >= 5
+                    else country)
+    return out
 
 
 def score_country(cc, verbose=False):
@@ -361,12 +504,16 @@ def score_country(cc, verbose=False):
         return []
     beaches = rich["beaches"]
     water_default = country_water_default(beaches)
+    references = space_references(beaches)
     fames = [bi.fame_raw(b) for b in beaches] or [1.0]
     country_max = max(fames) or 1.0
     scored = []
     for beach in beaches:
+        reference = references.get((beach.get("rg") or {}).get("co") or "",
+                                   references[""])
         comps, _score01, score10 = bi.score_beach(beach, country_max,
-                                                  GLOBAL_MAX, water_default)
+                                                  GLOBAL_MAX, water_default,
+                                                  reference)
         scored.append((beach, comps, score10))
     return scored
 
@@ -443,17 +590,34 @@ def quota_ordered(rows, qmod):
             # table has not measured still publishes.
             target = len(group)
         for rank, row in enumerate(sorted(group, key=lambda r: -r["score"])):
-            if rank >= target:
-                break
-            ranked.append((rank, -row["score"], row["id"], row))
-    ranked.sort(key=lambda t: t[:3])
-    return [row for _, _, _, row in ranked]
+            # A row past its region's quota is DEPRIORITISED, never dropped.
+            # Cutting here made the quota a hard ceiling, and in a country
+            # that is a single region of this layer's unit that ceiling is
+            # national: the trails layer found Cyprus, one NUTS3 region,
+            # falling from 103 publishable routes to a quota of 12. The
+            # contract is that the quota decides WHICH rows fill a country's
+            # budget and the country cap decides HOW MANY, so overflow sorts
+            # behind every region's allocation and the cap trims it, which
+            # is what the interleave was for in the first place.
+            over = 1 if rank >= target else 0
+            ranked.append((over, rank, -row["score"], row["id"], row))
+    ranked.sort(key=lambda t: t[:4])
+    return [row for _, _, _, _, row in ranked]
 
 
 def wire_listed(beach):
     """A listed card: verified to exist, named, deduped, in region, and NOT
     scored. The score key is absent rather than null, which is the only
     reliable way to guarantee the app cannot render a number nobody earned."""
+    # One strongly evidenced photograph, or none and the card is drawn from
+    # the map. A weakly evidenced picture is refused outright here: on a row
+    # with no score to argue with, a photograph of the next cove is the whole
+    # of what the card claims.
+    images = [i for i in wire_images(beach)
+              if i.get("ev") in STRONG_EVIDENCE][:MIN_IMAGES_LISTED]
+    why = [{"k": "unrated_coverage"}]
+    if not images:
+        why.append({"k": "no_photo_map_card"})
     row = {
         "id": bi.beach_id(beach),
         "name": beach["name"],
@@ -461,10 +625,18 @@ def wire_listed(beach):
         "lat": beach["lat"],
         "lon": beach["lon"],
         "t": "l",
-        "why": [{"k": "unrated_coverage"}],
-        "images": wire_images(beach)[:2],
+        "why": why,
+        "images": images,
         "src": beach.get("sources") or [],
     }
+    row.update(v2_fields(beach))
+    # The water class is a fact about the place, not a score, so a listed row
+    # may carry it: it came from a government register and no model touched
+    # it. What a listed row may never carry is the beauty index or any part
+    # of it.
+    water = beach.get("water") or {}
+    if water.get("class"):
+        row["water"] = {"class": water["class"], "site": water.get("site") or ""}
     if beach.get("rg"):
         row["rg"] = beach["rg"]
     if beach.get("adm"):
@@ -475,43 +647,78 @@ def wire_listed(beach):
         row["osm"] = beach["osm_id"]
     credits = [ATTRIBUTION["wikidata"] if "wikidata" in row["src"] else None,
                ATTRIBUTION["osm"] if "osm" in row["src"] else None,
+               ATTRIBUTION["eea"] if row.get("water") else None,
+               ATTRIBUTION["natura"] if row.get("prot") else None,
                ATTRIBUTION["commons"] if row["images"] else None]
     row["credit"] = [c for c in credits if c]
     return row
 
 
 def floor_fill(rated, spare, qmod):
-    """Step 4 of the gate: the floor. For any region the score or photo
-    gate left below its floor, the best remaining candidate is promoted to
-    tier 'l' so the region's page is not empty. Nothing is invented: the
-    row ships without a score, under its own heading, and the photo bar is
-    relaxed to one evidenced picture rather than waived."""
+    """Step 4 of the gate: the floor.
+
+    Two floors, per 03-BEACHES.md: every applicable NUTS3 carries at least one
+    row of any tier, and every coastal stretch at least three. The stretch
+    floor is the one that answers the screenshot this whole programme started
+    from, where Knokke's beach list ran 3 km, 3 km, then 135 km: the Belgian
+    coast is one stretch, and three rows on it is the difference between a
+    regional list and a jump to Normandy.
+
+    Nothing is invented to fill a floor. The rows promoted here ship without a
+    score, under their own heading, with the photo bar relaxed to one
+    evidenced picture rather than waived, and with `unrated_coverage` saying
+    so on the card."""
     if qmod is None or not qmod.has_data():
         return []
-    have = {}
+    have_n3, have_co = {}, {}
     for row in rated:
-        n3 = (row.get("rg") or {}).get("n3")
-        if n3:
-            have[n3] = have.get(n3, 0) + 1
+        rg = row.get("rg") or {}
+        if rg.get("n3"):
+            have_n3[rg["n3"]] = have_n3.get(rg["n3"], 0) + 1
+        if rg.get("co"):
+            have_co[rg["co"]] = have_co.get(rg["co"], 0) + 1
+
+    # Candidates, best first, one entry per region key they could fill.
     pools = {}
     for beach, comps, score10 in spare:
-        n3 = (beach.get("rg") or {}).get("n3")
-        if not n3 or have.get(n3):
+        rg = beach.get("rg") or {}
+        for key in (rg.get("n3"), rg.get("co")):
+            if key:
+                pools.setdefault(key, []).append((beach, score10))
+
+    picked, listed = {}, []
+    for key, pool in pools.items():
+        if not qmod.applicable(key, "beach"):
             continue
-        pools.setdefault(n3, []).append((beach, score10))
-    listed = []
-    for n3, pool in pools.items():
-        if not qmod.applicable(n3, "beach"):
+        is_stretch = key.startswith("COAST:")
+        # The stretch floor is 3 and the NUTS3 floor is 1. quotas.floor()
+        # speaks in levels, and a coastal stretch is the layer's own unit, so
+        # the level 2 floor is the one that applies to it.
+        want = qmod.floor(key, "beach", level=2 if is_stretch else 3)
+        already = (have_co if is_stretch else have_n3).get(key, 0)
+        room = want - already
+        if room <= 0:
             continue
-        room = qmod.floor(n3, "beach")
         # One evidenced photograph beats none, a higher score breaks ties.
-        pool.sort(key=lambda t: (
-            -max((1 if i.get("evidence") in STRONG_EVIDENCE else 0)
-                 for i in usable_images(t[0])) if usable_images(t[0]) else 0,
-            -t[1]))
-        for beach, _score in pool[:room]:
+        pool.sort(key=lambda t: (-_best_evidence(t[0]), -t[1]))
+        for beach, _score in pool:
+            if room <= 0:
+                break
+            bid = bi.beach_id(beach)
+            if bid in picked:
+                continue          # already promoted for its other region key
+            picked[bid] = True
             listed.append(wire_listed(beach))
+            room -= 1
     return listed
+
+
+def _best_evidence(beach):
+    """1 when this beach has a strongly evidenced photograph, else 0."""
+    images = usable_images(beach)
+    if not images:
+        return 0
+    return 1 if any(i.get("evidence") in STRONG_EVIDENCE for i in images) else 0
 
 
 def validate_listed(rows):
@@ -526,11 +733,28 @@ def validate_listed(rows):
             bad.append(f"{where}: no name")
         if not (-90 <= row["lat"] <= 90) or not (-180 <= row["lon"] <= 180):
             bad.append(f"{where}: coordinates off the earth")
-        for img in row.get("images") or []:
+        images = row.get("images") or []
+        if len(images) > MIN_IMAGES_LISTED:
+            bad.append(f"{where}: listed row carries {len(images)} images")
+        for img in images:
             if not img.get("lic"):
                 bad.append(f"{where}: an image carries no licence")
-            if img.get("ev") not in ("p18", "cat", "name", "geo"):
-                bad.append(f"{where}: an image has no evidence")
+            # Stricter than the rated tier on purpose. A listed row has no
+            # score to argue with, so its one photograph is the whole of what
+            # the card claims, and a geotag is not enough to make it.
+            if img.get("ev") not in STRONG_EVIDENCE:
+                bad.append(f"{where}: a listed image is only "
+                           f"{img.get('ev') or 'unevidenced'}")
+        # A row with no photograph must SAY it has none, so the app draws the
+        # map card rather than an empty frame.
+        has_map_card = any(w.get("k") == "no_photo_map_card"
+                           for w in row.get("why") or [])
+        if not images and not has_map_card:
+            bad.append(f"{where}: no images and no map card code")
+        if images and has_map_card:
+            bad.append(f"{where}: map card code on a row that has a picture")
+        if not row.get("credit"):
+            bad.append(f"{where}: no attribution")
     return bad
 
 
@@ -557,7 +781,14 @@ def validate(rows):
         if not (0 <= row["score"] <= 10):
             bad.append(f"{where}: score {row['score']} is off the scale")
         if len(row["images"]) < MIN_IMAGES:
-            bad.append(f"{where}: {len(row['images'])} images")
+            bad.append(f"{where}: {len(row['images'])} images, "
+                       f"the rated tier wants {MIN_IMAGES}")
+        # The LEAD photograph is the one picture most readers ever see of a
+        # beach, so it is the one that has to prove it is this beach. A
+        # geotagged frame may fill a later slot; it may not lead.
+        if row["images"] and row["images"][0].get("ev") not in STRONG_EVIDENCE:
+            bad.append(f"{where}: the lead photograph is only "
+                       f"{row['images'][0].get('ev') or 'unevidenced'}")
         for img in row["images"]:
             if not str(img.get("u", "")).startswith("https://"):
                 bad.append(f"{where}: image is not https")
@@ -624,6 +855,116 @@ def dedupe(rows):
     return kept
 
 
+# ---------------------------------------------------------------------------
+# Facets
+#
+# 03-BEACHES.md section 4: "never render a filter chip whose count is 0 in the
+# current scope", and "add the count to every chip". Two of the three chips
+# the tab shipped read zero, which tells a reader the filters are broken even
+# when they are honest.
+#
+# The counts are computed here, over the rows actually published, and ship in
+# the wire. The app still recomputes them live as chips are tapped, because a
+# count has to answer "inside what the other chips already narrowed"; what the
+# wire's copy buys is a scope-wide answer for the region pages and a number
+# the harness can hold the rendered chips against.
+# ---------------------------------------------------------------------------
+
+def _has(row, code):
+    return any(w.get("k") == code for w in row.get("why") or [])
+
+
+FACETS = {
+    "water": (
+        ("excellent", lambda r: (r.get("water") or {}).get("class") == "Excellent"),
+        ("good", lambda r: (r.get("water") or {}).get("class") == "Good"),
+        ("sufficient", lambda r: (r.get("water") or {}).get("class") == "Sufficient"),
+        ("unrated", lambda r: not (r.get("water") or {}).get("class")),
+    ),
+    "substrate": (
+        ("sand", lambda r: r.get("surface") == "sand"),
+        ("pebble", lambda r: r.get("surface") in ("pebble", "fineGravel", "gravel")),
+        ("shingle", lambda r: r.get("surface") == "shingle"),
+        ("rock", lambda r: r.get("surface") == "rock"),
+    ),
+    "setting": (
+        ("cliffs", lambda r: _has(r, "cliffs")),
+        ("dunes", lambda r: _has(r, "dunes")),
+        ("pines", lambda r: _has(r, "pines")),
+        ("lagoon", lambda r: _has(r, "lagoon")),
+        ("park", lambda r: _has(r, "nationalPark") or _has(r, "reserve")),
+    ),
+    "wildness": (
+        ("wild", lambda r: _has(r, "undeveloped")),
+        ("quiet", lambda r: _has(r, "quiet")),
+        ("developed", lambda r: _has(r, "resortStrip")),
+    ),
+    "size": (
+        ("cove", lambda r: r.get("size") == "cove"),
+        ("beach", lambda r: r.get("size") == "beach"),
+        ("strand", lambda r: r.get("size") == "strand"),
+    ),
+    "facilities": (
+        ("parking", lambda r: "parking" in (r.get("services") or [])),
+        ("toilets", lambda r: "toilets" in (r.get("services") or [])),
+        ("food", lambda r: "food" in (r.get("services") or [])),
+        ("stepfree", lambda r: bool(r.get("wheelchair"))),
+        ("lifeguard", lambda r: bool(r.get("lifeguard"))),
+    ),
+    "naturist": (
+        ("yes", lambda r: bool(r.get("nudism"))),
+    ),
+    "protected": (
+        ("natura2000", lambda r: (r.get("prot") or {}).get("net") == "natura2000"),
+        ("emerald", lambda r: (r.get("prot") or {}).get("net") == "emerald"),
+        ("national", lambda r: bool((r.get("protected") or {}).get("np"))),
+    ),
+    "bestfor": (
+        ("swimming", lambda r: "swimming" in (r.get("bestFor") or [])),
+        ("sunset", lambda r: bool(r.get("sunset")) or "sunset" in (r.get("bestFor") or [])),
+        ("walking", lambda r: "walkers" in (r.get("bestFor") or [])),
+        ("surf", lambda r: "surfing" in (r.get("bestFor") or [])),
+    ),
+}
+
+
+def facet_counts(rows):
+    """{group: {value: n}} over published rows, zeros omitted.
+
+    Omitted rather than written as 0, so a consumer that renders whatever it
+    is given cannot render an empty chip. That is the brief's rule expressed
+    in the data instead of trusted to the view."""
+    out = {}
+    for group, options in FACETS.items():
+        counts = {}
+        for key, test in options:
+            n = sum(1 for row in rows if test(row))
+            if n:
+                counts[key] = n
+        if counts:
+            out[group] = counts
+    return out
+
+
+def dedupe_across(rated, listed):
+    """The 150 m rule, applied across BOTH tiers.
+
+    Hard on both tiers per the brief. Rated rows are placed first and keep
+    their ground, so a listed row never shadows a scored beach 80 m away, and
+    two listed rows on the same sand collapse to one. Without this the
+    widened harvest publishes the same cove twice under two names, once from
+    OpenStreetMap and once from the bathing register."""
+    kept_pts = [(r["lat"], r["lon"]) for r in rated]
+    out = []
+    for row in listed:
+        if any(haversine_km(row["lat"], row["lon"], lat, lon) <= DUPLICATE_KM
+               for lat, lon in kept_pts):
+            continue
+        kept_pts.append((row["lat"], row["lon"]))
+        out.append(row)
+    return out
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     parser.add_argument("--countries", default="")
@@ -670,16 +1011,18 @@ def main():
         # write. The load bearing change is that a photo gate failure falls
         # through into the floor pool instead of disappearing, which is the
         # bug that kept the mountain floor from ever holding.
+        # The gate, in the order 03-BEACHES.md sets out:
+        #   score -> photo -> name -> dedupe -> region quota -> floor fill
+        # with the load bearing property that a failure at the score or the
+        # photo step FALLS THROUGH into the listed pool instead of deleting
+        # the beach. The name test and the dedupe are hard on both tiers, so
+        # they drop a row outright.
         rows, spare = [], []
         for beach, comps, score10 in sorted(scored, key=lambda t: -t[2]):
-            named = bool(name_tokens(beach.get("name")))
-            if score10 < args.min_score:
-                if named:
-                    spare.append((beach, comps, score10))
-                continue
-            if not publishable(beach):
-                if named:
-                    spare.append((beach, comps, score10))
+            if not named(beach):
+                continue                      # hard, both tiers
+            if score10 < args.min_score or not photo_gate(beach):
+                spare.append((beach, comps, score10))
                 continue
             reasons = bi.reasons_for(beach, comps)
             # A beach the data cannot say one sentence about is a name on a
@@ -694,7 +1037,7 @@ def main():
         rows = dedupe(rows)
         rows = quota_ordered(rows, qmod)[:args.max_per_country]
         rows.sort(key=lambda r: -r["score"])
-        listed = floor_fill(rows, spare, qmod)
+        listed = dedupe_across(rows, floor_fill(rows, spare, qmod))
         if not rows and not listed:
             if args.verbose:
                 print(f"  {cc}: nothing clears the gate")
@@ -713,6 +1056,7 @@ def main():
             "best": rows[0]["score"] if rows else None,
             "cover": cover,
             "top": [r["name"] for r in rows[:3]],
+            "facets": facet_counts(rows),
         }
         if listed:
             entry["listed"] = len(listed)
@@ -754,7 +1098,15 @@ def main():
         "model": {
             "version": bi.MODEL_VERSION,
             "weights": bi.WEIGHTS,
+            # The brief's table as written, alongside the one actually used.
+            # They differ by a normalisation: 03-BEACHES.md's v2 weights sum
+            # to 1.08 rather than 1.00, and shipping that unbalanced would
+            # have inflated every score in Europe against unchanged band
+            # cutoffs. The ratios are the brief's; the sum is 1. Both ship so
+            # the deviation is auditable from the wire.
+            "weights_as_briefed": bi.WEIGHTS_AS_BRIEFED,
             "standout_bonus": bi.STANDOUT_BONUS,
+            "standout_on": list(bi.STANDOUT_ON),
             # The photo engine that ordered every gallery in this wire
             # (pipeline/photos/selection.py), shipped with the data so a
             # reader can see which weights picked each hero (invariant 2).
@@ -762,12 +1114,23 @@ def main():
             "tier_cutoffs": bi.TIER_CUTOFFS,
             "min_score": args.min_score,
             "min_images": MIN_IMAGES,
+            "min_images_listed": MIN_IMAGES_LISTED,
+            "publish_max": args.max_per_country,
+            "size_bands": {"cove_max_m": bi.COVE_MAX_M,
+                           "strand_min_m": bi.STRAND_MIN_M},
+            "facets": {group: [key for key, _ in options]
+                       for group, options in FACETS.items()},
             # The region quota model ships with the data (invariant 2): a
             # wire reader can see exactly which formula sized each region.
             "region_quota": (qmod.model_block()
                              if qmod is not None and qmod.has_data() else None),
         },
         "countries": index,
+        # Europe wide facet counts, over every rated row published. The tab
+        # opens on top.json, so these are what its chips can be checked
+        # against without loading 40 country files.
+        "facets": facet_counts(published),
+        "n_listed": len(listed_all),
         "attribution": sorted(credits),
         # What this build read, and when. Two wire files that differ can then
         # be told apart: same sources and same model means the code moved,
@@ -781,6 +1144,7 @@ def main():
     for cc, rows in by_country.items():
         path = out_dir / f"{cc}.json"
         envelope = {"country": cc, "generated_at": generated, "n": len(rows),
+                    "facets": facet_counts(rows),
                     "beaches": rows}
         # A separate array, not a flag inside the main one: a screen has to
         # opt in to showing unscored rows, and they can never interleave

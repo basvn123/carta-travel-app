@@ -9,10 +9,10 @@ the opposite. A single "beauty" figure hides exactly the thing a traveller is
 choosing between.
 
 So this model computes THREE sub scores that stand on their own and are shown
-on their own, plus three supporting components, and only then a combined score
+on their own, plus five supporting components, and only then a combined score
 for the ordering of a list.
 
-  scenery   0.30  the landform and what stands around the water. Mountains and
+  scenery   0.25  the landform and what stands around the water. Mountains and
                   relief, a glacial or volcanic origin, islands, forest to the
                   shore, cliffs, a waterfall, and whether the whole thing sits
                   inside a national park. The biggest weight, because it is
@@ -29,7 +29,7 @@ for the ordering of a list.
                   around the shore. What there is to DO when you are not in
                   the water, which for a lot of Europe's best lakes is the
                   whole visit.
-  acclaim   0.18  fame, capped and split: 60 per cent standing at home, 40 per
+  acclaim   0.13  fame, capped and split: 60 per cent standing at home, 40 per
                   cent standing in Europe, both log scaled. Splitting it is
                   what stops Italy and Switzerland, which have far more written
                   about lakes than Latvia, from filling every page.
@@ -40,11 +40,29 @@ for the ordering of a list.
                   than a zero: no reading is not a bad reading.
   wildness  0.08  the anti-resort term. What is built within 800 m, subtracted,
                   with credit back for a lake you can only walk to.
+  shore     0.04  can you get to the water at all. A path along the waterline,
+                  a beach, a slipway, a mapped access point, against a shore
+                  the ways say is private. New in v2, and the distinction is
+                  real in the Alps and in Britain: a gorgeous lake you cannot
+                  reach is a different product from the same lake with a path
+                  around it, and no other component was saying so.
+  photo     0.06  how good the photographs of it actually are, from the photo
+                  engine's beauty rank. Capped the way fame is, 60 per cent
+                  standing at home and 40 per cent across Europe, for the same
+                  reason: a country whose lakes are better photographed should
+                  not sweep the page.
 
 Plus a standout bonus (0.15 of the strongest of scenery, swimming and
 activity), so a lake that is exceptional in exactly one way still ranks. A
 glacial tarn with no facilities and no bathing site should not lose to an
 adequate town reservoir that scores 0.5 on everything.
+
+v2 makes room for those two by trimming the two the brief marked: scenery,
+which was the largest term and was silent about both of the new things, and
+acclaim, because the OpenStreetMap spine added tens of thousands of water
+bodies with no sitelinks at all and a long tail deserves less of its ranking
+decided by how much has been written about the head of it. See WEIGHTS for
+why the trim is deeper than the brief's printed table (which sums to 1.06).
 
 And a hidden gem term. The brief's sharpest criticism of published lake lists
 is that they rank by attention, which returns the lakes that are already on
@@ -64,16 +82,31 @@ import math
 import re
 import unicodedata
 
-MODEL_VERSION = "lake_index_v1"
+MODEL_VERSION = "lake_index_v2"
 
+# The weights sum to exactly 1.00, which is not a style preference: the score
+# is 10 x (weighted sum + a 0.15 standout bonus) clipped at 1.0, and the gate
+# (5.4) and the bands (6.3 / 7.5 / 8.5) are the same numbers v1 used. A table
+# that summed to more would lift every lake by that margin and clip the top,
+# and those numbers would quietly stop meaning what they meant.
+#
+# The brief's own v2 table does not sum to one. It trims scenery 0.30 -> 0.28
+# ("make room") and acclaim 0.18 -> 0.16 ("trim as the long tail grows"),
+# freeing 0.04, and then spends 0.10 on the two new components: 1.06. The
+# intent is unambiguous and only the arithmetic is short, so the room is taken
+# from the same two components the brief took it from, in the same ratio,
+# until it is actually there. Every other weight is the brief's, printed.
 WEIGHTS = {
-    "scenery": 0.30,
+    "scenery": 0.25,
     "swimming": 0.20,
-    "acclaim": 0.18,
+    "acclaim": 0.13,
     "activity": 0.14,
     "water": 0.10,
     "wildness": 0.08,
+    "photo": 0.06,
+    "shore": 0.04,
 }
+assert abs(sum(WEIGHTS.values()) - 1.0) < 1e-9, "the weight table must sum to 1"
 STANDOUT_BONUS = 0.15
 # Read off the three components that describe the lake itself. Not acclaim
 # ("the most talked about lake in its own country" is true of one lake in
@@ -169,9 +202,15 @@ def swim_rule(lake):
 
     if designated:
         return "yes", "eea"
+    # Step 4, "a mapped swimming place". Two sources now answer it and they
+    # do not disagree: the Overpass shore sweep, which runs on the shortlist,
+    # and the OSM extract sweep, which runs on every water body in the
+    # country and is what finally gives the tail of this layer an answer.
+    shore = shore_of(lake)
     if (tags.get("swimming") == "yes" or tags.get("sport") == "swimming"
             or (lake.get("context") or {}).get("swimming_area")
-            or (lake.get("context") or {}).get("beach")):
+            or (lake.get("context") or {}).get("beach")
+            or shore.get("swim_place") or shore.get("beach")):
         return "yes", "osm"
     if kind_of(lake) == "reservoir" and (DRINKING_RE.search(extract)
                                          or "drinking_water" in facts):
@@ -201,6 +240,21 @@ def _ctx(lake):
 
 def _tags(lake):
     return lake.get("osm_tags") or {}
+
+
+def shore_of(lake):
+    """What the OSM extract sweep found on this lake's waterline, or {}.
+
+    An EMPTY dict from a swept country means the sweep ran and found nothing,
+    which is a real answer about a lake ringed by fields. A MISSING block
+    means nobody looked, and `shore_measured` below keeps the two apart for
+    the same reason `measured` does for the Overpass pass."""
+    return lake.get("osm_shore") or {}
+
+
+def shore_measured(lake):
+    """True when osm_water.py has swept this lake's shore."""
+    return lake.get("osm_shore") is not None
 
 
 def measured(lake):
@@ -253,8 +307,11 @@ def near_park(lake):
 # need an account and a large download; the EEA reports quality, not warmth.
 #
 # So this is a MODEL, and it is labelled as one everywhere it appears. It
-# takes the WorldClim monthly air normals already sampled at the lake's own
-# coordinate (enrich_lakes.py) and applies four corrections.
+# takes the CHELSA V2.1 monthly air normals already sampled at the lake's
+# own coordinate (lake_climate.py, joined in enrich_lakes.py) and applies
+# four corrections. WorldClim 2.1 was the source until 2026-08-30 and was
+# replaced because its licence is non-commercial, which a published number
+# under an affiliate link and inside a redistributable PDF cannot stand on.
 #
 #   thermal lag     a lake in June is still partly May's lake, and a DEEP lake
 #                   is more of last month's lake than a shallow one, because
@@ -273,9 +330,12 @@ def near_park(lake):
 #                   heat and the whole column warms, which is why Balaton and
 #                   Neusiedler See are the warmest large lakes in the region.
 #   depth and       a residual depth term for the very deepest, and an
-#   altitude        altitude correction above 1,000 m, where the 5 arc-minute
-#                   raster cell is usually a valley rather than the lake
-#                   sitting above it. Glacier fed water takes a flat penalty:
+#   altitude        altitude correction above 1,000 m, where the raster cell
+#                   is usually a valley rather than the lake sitting above
+#                   it. CHELSA's 30 arc seconds makes this correction
+#                   smaller than it had to be under WorldClim's 5 arc
+#                   minutes, and it is kept because a cell is still wider
+#                   than a tarn. Glacier fed water takes a flat penalty:
 #                   meltwater arrives at close to zero all summer.
 #
 # It is published as an estimate, with the model named in the wire, and it is
@@ -420,9 +480,11 @@ def swimming_component(lake):
     sites = int((lake.get("water") or {}).get("sites") or 0)
     if sites:
         value += min(0.16, 0.06 + 0.02 * sites)
-    if ctx.get("beach") or "beach" in facts:
+    shore = shore_of(lake)
+    if ctx.get("beach") or "beach" in facts or shore.get("beach"):
         value += 0.10
-    if ctx.get("swimming_area") or ctx.get("water_park"):
+    if (ctx.get("swimming_area") or ctx.get("water_park")
+            or shore.get("swim_place")):
         value += 0.08
     if ctx.get("sauna"):
         value += 0.04
@@ -440,13 +502,56 @@ def swimming_component(lake):
 ACTIVITY_TAGS = ("canoe", "kayak", "sailing", "marina", "slipway", "scuba_diving",
                  "fishing", "boat_rental", "surfing", "windsurfing", "water_ski")
 
+# The walks term. It only ever ADDS, and that is the whole rule.
+#
+# A published marked route beside a lake is real information. Its ABSENCE is
+# not, at any coverage status, and three measurements taken on 2026-08-30 say
+# why no threshold can rescue it.
+#
+#   The rate tracks our publishing, not the ground. Lakes carry the signal
+#   32.4 per cent of the time where the trail layer's coverage is `ok`, 18.3
+#   where `thin`, 4.2 where `empty`.
+#   The gradient CONTINUES INSIDE `ok`, which is what kills a status test.
+#   Among trail-`ok` regions the rate runs 14.3 per cent where the region
+#   publishes five trails or fewer, 26.9 at six to twenty, 38.9 above twenty.
+#   `ok` means "met its quota", not "enumerated": those regions publish
+#   between 4 and 177 trails, median 15.
+#   And we already have the unbiased answer. The OSM extract sweep measures
+#   shore paths for every country uniformly, and its rate barely moves across
+#   the same three statuses: 78.9, 79.5, 69.4 per cent. That is the signal
+#   this component should lean on for "is there a walk here", and it does,
+#   through shore.path_m above.
+#
+# So there is no default and no coverage lookup. A lake with a published
+# route gets the term; a lake without simply does not, and nothing is
+# inferred from that. Correcting the absence with an expected value was tried
+# on this same evening and was wrong twice over: it repaired a step in a
+# continuous gradient, and the expectation it used was itself derived from our
+# own publishing rate, which is the quantity it was trying not to score.
+WALKS_TERM = 0.18
+
 
 def activity_component(lake):
     ctx, facts = _ctx(lake), _facts(lake)
+    shore = shore_of(lake)
     points = 0.0
     for tag in ACTIVITY_TAGS:
         if ctx.get(tag):
             points += 0.16
+    # The extract sweep answers part of this question for every water body in
+    # the country, where the Overpass pass answers all of it for a shortlist.
+    # It only ever ADDS: a lake nobody swept keeps its documented default
+    # rather than being marked down for a marina nobody looked for, and a
+    # lake with a marina and seven kilometres of shore path stops being stuck
+    # at that default when the evidence is sitting in the cache.
+    if shore.get("marina"):
+        points += 0.16
+    if shore.get("slipway") or shore.get("pier"):
+        points += 0.12
+    if shore.get("fishing"):
+        points += 0.10
+    if (shore.get("path_m") or 0) >= SHORE_PATH_M:
+        points += 0.18
     if "kayak" in facts or "canoe" in facts:
         points += 0.16
     if "sailing" in facts:
@@ -458,12 +563,13 @@ def activity_component(lake):
     if ctx.get("ferry_terminal") or "boat_trip" in facts:
         points += 0.18
     # Our own published trails wire, joined by bounding box in enrich_lakes.
-    # `highway=path` was deliberately left out of the Overpass sweep (it
-    # returns a hundred thousand ways around Lake Constance alone), so this is
-    # what answers "is there a walk here", and it answers it from a file
-    # already on disk.
+    # A named marked route beside a lake is a real and useful fact, and it is
+    # a NARROWER claim than "there is somewhere to walk": that question is
+    # answered above, uniformly, by shore.path_m from the extract sweep. This
+    # term only ever adds, and nothing is inferred from its absence. See
+    # WALKS_TERM for the three measurements behind that rule.
     if lake.get("walks"):
-        points += 0.18 + min(0.10, 0.02 * (lake.get("n_walks") or 1))
+        points += WALKS_TERM + min(0.10, 0.02 * (lake.get("n_walks") or 1))
     if "hiking" in facts:
         points += 0.12
     if ctx.get("glacier"):
@@ -520,6 +626,138 @@ def wildness_component(lake):
     if "busy" in facts:
         value -= 0.16
     return round(max(0.0, min(1.0, value)), 4)
+
+
+# ---------------------------------------------------------------------------
+# Shore access, new in v2
+#
+# The brief's case for it is short and correct: a gorgeous lake you cannot
+# reach is a different product. In the Alps and in Britain the distinction is
+# not theoretical. Loch Katrine has a tarmac path all the way round and no
+# swimming; Lough Tay is a private estate you can only look down on; half the
+# Lake District's most photographed water is a reservoir with a fence.
+#
+# What the component reads, all of it from the OSM extract sweep that
+# osm_water.py runs over the whole country rather than over a shortlist:
+#
+#   path_m         metres of walkable way inside 50 m of the waterline. The
+#                  brief's threshold is 300 m, because thirty metres of
+#                  footway crossing an outflow is not a shore path.
+#   beach          a mapped beach on the shore
+#   slipway/pier   a boat ramp or a jetty, which is an access point even for
+#                  somebody who does not have a boat
+#   swim_place     a mapped swimming area
+#   parking        somewhere to leave a car, which is access for most people
+#   access_private the ways that touch the water saying access=private or no
+#
+# The private count SUBTRACTS, and it is the only way this layer can say
+# "ringed by private land" at all.
+# ---------------------------------------------------------------------------
+
+SHORE_PATH_M = 300.0        # the brief's threshold for a shore path
+SHORE_DEFAULT = 0.45        # a lake nobody swept, and no reading is not a bad
+#                             reading. Deliberately under the mean of the
+#                             swept population rather than at it: an unswept
+#                             lake must not outrank a swept one that was
+#                             actually found to have a path.
+
+
+def shore_component(lake):
+    if not shore_measured(lake):
+        # The Overpass shore sweep can still answer a little of this for the
+        # shortlist, so an unswept lake with a mapped beach beside it is not
+        # held to the flat default.
+        ctx = _ctx(lake)
+        if measured(lake) and (ctx.get("beach") or ctx.get("slipway")
+                               or ctx.get("swimming_area")):
+            return 0.62
+        return SHORE_DEFAULT
+    shore = shore_of(lake)
+    points = 0.0
+    path_m = float(shore.get("path_m") or 0)
+    if path_m >= SHORE_PATH_M:
+        # A path that goes right round is worth more than one that touches.
+        points += 0.34 + 0.22 * _sat(path_m - SHORE_PATH_M, 1800.0)
+    elif path_m > 0:
+        points += 0.10 * (path_m / SHORE_PATH_M)
+    if shore.get("beach"):
+        points += 0.26
+    if shore.get("swim_place"):
+        points += 0.20
+    if shore.get("slipway") or shore.get("pier"):
+        points += 0.14
+    if shore.get("parking"):
+        points += 0.12
+    if shore.get("marina"):
+        points += 0.08
+    if shore.get("access_public"):
+        points += 0.08
+    value = _sat(points, 0.62)
+    private = int(shore.get("access_private") or 0)
+    if private:
+        # Ringed by private land. Capped, because one private drive on a
+        # twelve kilometre shore is not a closed lake.
+        value -= min(0.35, 0.12 * private)
+    return round(max(0.0, min(1.0, value)), 4)
+
+
+# ---------------------------------------------------------------------------
+# Photograph beauty, new in v2
+#
+# pipeline/photos scores every published picture for beauty and re-orders the
+# gallery by it. Until now that only decided WHICH picture led. This makes it
+# part of the ranking, at the smallest weight in the table and normalised the
+# way fame is, because "the lakes of the country with the best photographers"
+# is not a ranking anybody asked for.
+# ---------------------------------------------------------------------------
+
+PHOTO_HERO_SHARE = 0.65     # the hero carries most of it, the gallery the rest
+PHOTO_DEFAULT = 0.5         # a gallery the beauty pass has not reached
+
+
+def photo_raw(lake):
+    """The beauty of this lake's pictures, 0..1, or None when the photo engine
+    has not LOOKED at them. None is not zero: a row whose gallery predates the
+    beauty pass takes the documented default rather than a mark it never
+    earned.
+
+    A beauty score is only accepted when the record also carries a `phash`,
+    and that is not belt and braces. Two of the five components the photo
+    engine blends (resolution and season) can be computed from a record's
+    metadata alone, so a thumbnail fetch that failed used to leave a complete
+    looking score behind: a real number, in the real field, produced without
+    the model ever seeing the image. Measured in the caches on 2026-08-30:
+    430 of 4,503 scored images were that shape, and the export of that
+    afternoon read 355 published rows' worth of them before anybody noticed.
+    Those counts are a reading of one day's caches, not a standing property;
+    they self-repair on the next rescore, and the reason for the guard does
+    not depend on them.
+
+    The pHash is the honest marker of "the bytes arrived", because it can only
+    be computed from pixels. The photo engine has fixed its half (it retries,
+    and it now refuses to write a score at all when the fetch fails), and this
+    is the half that belongs here: a component whose input is owned by another
+    stage should not be able to publish a number that stage never measured.
+    If the marker ever disappears the whole component falls to its documented
+    default, which is the safe direction to fail in."""
+    scores = [img.get("beauty") for img in (lake.get("images") or [])
+              if isinstance(img.get("beauty"), (int, float)) and img.get("phash")]
+    if not scores:
+        return None
+    hero = scores[0]
+    rest = scores[1:]
+    tail = sum(rest) / len(rest) if rest else hero
+    return max(0.0, min(1.0, PHOTO_HERO_SHARE * hero
+                        + (1.0 - PHOTO_HERO_SHARE) * tail))
+
+
+def photo_component(lake, country_max, global_max):
+    raw = photo_raw(lake)
+    if raw is None:
+        return PHOTO_DEFAULT
+    home = raw / country_max if country_max > 0 else 0.0
+    europe = raw / global_max if global_max > 0 else 0.0
+    return round(max(0.0, min(1.0, 0.6 * home + 0.4 * europe)), 4)
 
 
 def fame_raw(lake):
@@ -596,7 +834,16 @@ def hazards_of(lake):
 # The score
 # ---------------------------------------------------------------------------
 
-def score_lake(lake, country_max, global_max, water_default=WATER_DEFAULT):
+def score_lake(lake, country_max, global_max, water_default=WATER_DEFAULT,
+               photo_max=None, photo_global_max=None):
+    """comps, score 0..1, score 0..10.
+
+    `photo_max` and `photo_global_max` are the beauty ceilings the photo
+    component normalises against, the same 60/40 home-and-Europe split fame
+    uses. They default to 1.0 so a caller that has not measured them scores
+    every lake's pictures on the raw beauty rank rather than crashing, which
+    is what the coverage audit's gate replay needs.
+"""
     comps = {
         "scenery": scenery_component(lake),
         "swimming": swimming_component(lake),
@@ -604,6 +851,9 @@ def score_lake(lake, country_max, global_max, water_default=WATER_DEFAULT):
         "acclaim": acclaim_component(lake, country_max, global_max),
         "water": water_component(lake, water_default),
         "wildness": wildness_component(lake),
+        "photo": photo_component(lake, photo_max or 1.0,
+                                 photo_global_max or 1.0),
+        "shore": shore_component(lake),
     }
     base = sum(WEIGHTS[k] * comps[k] for k in WEIGHTS)
     standout = max(comps[k] for k in STANDOUT_ON)
@@ -623,10 +873,16 @@ def tier_for(score10, cutoffs=TIER_CUTOFFS):
 
 def quality_of(comps):
     """The lake on its own terms, with fame taken out. This is the half of the
-    score a hidden gem is measured against."""
-    weights = {"scenery": 0.42, "swimming": 0.24, "activity": 0.18,
-               "water": 0.10, "wildness": 0.06}
-    return sum(weights[k] * comps[k] for k in weights)
+    score a hidden gem is measured against.
+
+    Shore access joins it in v2 because it is a fact about the lake. Photo
+    beauty deliberately does not: how well a place has been photographed is
+    the other face of how much attention it has had, and putting it inside the
+    quality half would smuggle fame back into the residual the gem score is
+    trying to measure."""
+    weights = {"scenery": 0.40, "swimming": 0.23, "activity": 0.17,
+               "water": 0.10, "wildness": 0.06, "shore": 0.04}
+    return sum(weights[k] * comps.get(k, 0.0) for k in weights)
 
 
 # Above this acclaim, a lake is not a hidden anything. The residual can be
@@ -667,6 +923,7 @@ REASON_MAX = 10
 
 def reasons_for(lake, comps):
     ctx, facts, tags = _ctx(lake), _facts(lake), _tags(lake)
+    shore = shore_of(lake)
     area = protected_of(lake)
     water = lake.get("water") or {}
     kind = kind_of(lake)
@@ -726,9 +983,9 @@ def reasons_for(lake, comps):
             add("season", **season)
         elif lake.get("climate"):
             add("neverWarm")
-    if ctx.get("beach") or "beach" in facts:
+    if ctx.get("beach") or "beach" in facts or shore.get("beach"):
         add("shoreBeach")
-    if ctx.get("swimming_area"):
+    if ctx.get("swimming_area") or shore.get("swim_place"):
         add("lido")
 
     # 5. Protection.
@@ -756,10 +1013,19 @@ def reasons_for(lake, comps):
     # 7. Getting there and what that keeps out.
     if "hike_in" in facts or "remote" in facts:
         add("hikeIn")
-    elif ctx.get("parking"):
+    elif ctx.get("parking") or shore.get("parking"):
         add("roadAccess")
     if ctx.get("cable_car"):
         add("cableCar")
+    # Shore access, from the OSM extract sweep. Two sentences and they are
+    # opposites, so only one of them can ever be true of a lake.
+    path_m = int(shore.get("path_m") or 0)
+    if path_m >= SHORE_PATH_M:
+        add("shorePath", km=round(path_m / 1000.0, 1))
+    elif shore.get("slipway") or shore.get("pier"):
+        add("shoreLaunch")
+    if shore.get("access_private") and path_m < SHORE_PATH_M:
+        add("privateShore")
     built = sum(ctx.get(t, 0) for t in BUILT_TAGS)
     if measured(lake) and built == 0 and not ctx.get("parking"):
         add("undeveloped")
@@ -801,7 +1067,8 @@ HIGHLIGHT_ORDER = [
     "turquoise", "kindGeothermal", "kindCrater", "kindTarn",
     "glacier", "mountains", "islands", "nationalPark", "unesco", "waterfall",
     "cliffs", "castle", "undeveloped", "waterExcellent", "lido", "shoreBeach",
-    "designated", "activities", "shoreWalk", "hikeIn", "forest", "area",
+    "designated", "activities", "shoreWalk", "shorePath", "privateShore",
+    "hikeIn", "forest", "area",
     "depth", "kindReservoir", "kindLagoon", "kindRiver",
 ]
 
@@ -827,7 +1094,8 @@ BEST_FOR_RULES = (
      and ("services" in r or "lido" in r or "shoreBeach" in r)),
     ("kayaking", lambda c, r, k: "activities" in r and c["activity"] >= 0.5),
     ("diving", lambda c, r, k: "clearWater" in r or "turquoise" in r),
-    ("walking", lambda c, r, k: "shoreWalk" in r or "hikeIn" in r),
+    ("walking", lambda c, r, k: "shoreWalk" in r or "hikeIn" in r
+     or "shorePath" in r),
     ("seclusion", lambda c, r, k: c["wildness"] >= 0.85),
     ("photography", lambda c, r, k: c["scenery"] >= 0.75 or "photographed" in r),
     ("thermal", lambda c, r, k: k == "geothermal"),

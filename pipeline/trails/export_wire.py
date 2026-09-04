@@ -146,6 +146,13 @@ TRIPS_SQL = """
            t.quality_score, t.status::text, t.updated_at,
            t.raw_tags, t.elevation,
            t.rating, t.rating_parts, t.is_loop, t.loop_source, t.highlights,
+           t.tier, t.rg, t.nuts3, t.region_crosses, t.derived_route,
+           t.grade, t.grade_src, t.grade_parts,
+           t.route_type, t.route_type_src,
+           t.highlight_kinds, t.suitability, t.surface, t.season,
+           t.waymark_ref, t.publisher, t.passes,
+           t.portal_ok, t.portal_source,
+           t.family_key, t.family_name, t.family_size,
            eff.info AS repair_info,
            ST_NPoints(eff.geom) AS n_full,
            ST_XMin(eff.geom), ST_YMin(eff.geom),
@@ -176,6 +183,13 @@ TRIP_COLS = ("id", "country", "category", "title", "description",
              "source", "license", "attribution_text",
              "quality", "status", "updated_at", "raw_tags", "elevation",
              "rating", "rating_parts", "is_loop", "loop_source", "highlights",
+             "tier", "rg", "nuts3", "region_crosses", "derived_route",
+             "grade", "grade_src", "grade_parts",
+             "route_type", "route_type_src",
+             "highlight_kinds", "suitability", "surface", "season",
+             "waymark_ref", "publisher", "passes",
+             "portal_ok", "portal_source",
+             "family_key", "family_name", "family_size",
              "repair_info",
              "n_full", "xmin", "ymin", "xmax", "ymax",
              "wire_geom", "full_geom")
@@ -441,8 +455,19 @@ _RG_WARNED = [False]
 
 def rg_of(t):
     """The region block for one route: midpoint of its length owns it, per
-    the assignment contract for lines. Falls back to nothing, never to a
-    guess."""
+    the assignment contract for lines.
+
+    Read from the column regionize.py stamped, exactly like every other
+    layer's export reads what its enrich stored: assignment is STORED, not
+    recomputed, so the wire never depends on this module being loadable and
+    the gate that spent a region's quota and the file that ships the row
+    cannot disagree about which region it is in.
+
+    The live computation below is the fallback for a lab regionize.py has not
+    reached yet, and only that. Falls back to nothing, never to a guess."""
+    stored = t.get("rg")
+    if stored:
+        return stored
     mod = _regions_assign()
     if mod is None:
         return None
@@ -461,6 +486,169 @@ def rg_of(t):
                   f"trails ship without region ids")
             _RG_WARNED[0] = True
         return None
+
+
+# ---------------------------------------------------------------------------
+# The filter block: the six things a walker narrows a list by
+# ---------------------------------------------------------------------------
+
+def filters_of(t):
+    """Everything a chip reads, as codes, on both the card and the page.
+
+    One nested object rather than eight top level keys, so a consumer can
+    tell "this route has not been through attributes.py yet" (no `f` at all)
+    from "this route has no highlights" (`f` with no `hl`). The distinction
+    matters to the harness, which counts how much of the wire each filter can
+    actually answer for.
+
+    Derived and tagged never merge. `gs` says which decided the grade and the
+    suitability object keeps two lists, because a chip that promises a
+    wheelchair route on the strength of a gradient reading is the one claim
+    in this layer that could put somebody in trouble."""
+    out = {}
+    if t.get("grade"):
+        out["g"] = t["grade"]
+        out["gs"] = t.get("grade_src")
+    if t.get("route_type"):
+        out["rt"] = t["route_type"]
+    kinds = t.get("highlight_kinds")
+    if kinds:
+        out["hl"] = list(kinds)
+    suit = t.get("suitability") or {}
+    tagged, derived = suit.get("tagged") or [], suit.get("derived") or []
+    if tagged:
+        out["su"] = tagged
+    if derived:
+        out["sd"] = derived
+    if t.get("waymark_ref"):
+        out["ref"] = t["waymark_ref"]
+    # osmc:symbol is the painted waymark itself. Its presence is the claim
+    # ("this route is signed on the ground"); the symbol string is not
+    # something the app can draw, so only the fact ships.
+    if (t.get("raw_tags") or {}).get("osmc:symbol"):
+        out["way"] = True
+    if t.get("season"):
+        out["se"] = t["season"]
+    if t.get("portal_ok"):
+        out["pv"] = t.get("portal_source") or True
+    if t.get("derived_route"):
+        out["dr"] = True
+    surface = t.get("surface") or {}
+    if surface.get("road_share"):
+        out["road"] = surface["road_share"]
+    return out or None
+
+
+def facet_counts(items):
+    """How many rows in this country can answer each filter value.
+
+    Shipped with the file so a chip can carry its own number and grey itself
+    out before the app has read a single row, and so the harness can hold the
+    counts against the rows rather than trusting them."""
+    counts = defaultdict(Counter)
+    for i in items:
+        f = i.get("f") or {}
+        if f.get("g"):
+            counts["grade"][f["g"]] += 1
+        if f.get("rt"):
+            counts["route_type"][f["rt"]] += 1
+        for code in f.get("hl") or []:
+            counts["highlights"][code] += 1
+        for code in f.get("su") or []:
+            counts["suitability"][code] += 1
+        for code in f.get("sd") or []:
+            counts["suitability"][f"{code}:derived"] += 1
+        if f.get("pv"):
+            counts["verified"]["portal"] += 1
+        if f.get("dr"):
+            counts["derived"]["route"] += 1
+        band = ascent_band(i.get("ascent_m"))
+        if band:
+            counts["ascent"][band] += 1
+    return {k: dict(v) for k, v in counts.items() if v}
+
+
+# Ascent bands, the brief's own cut points, in metres. Counted here so the
+# file can offer the chip; the app computes the same bands from ascent_m so a
+# slider and a chip can never disagree (continent-app/src/lib/trailCards.js
+# ASCENT_BANDS holds the same five rows).
+ASCENT_BANDS = [("flat", 0, 150), ("rolling", 150, 500), ("hilly", 500, 1000),
+                ("steep", 1000, 1800), ("serious", 1800, None)]
+
+# The distance bands curate.py fills its quota with, so a chip a traveller
+# taps maps onto a slice the selection is actually built to contain.
+DISTANCE_BANDS = [("short", 0, 5_000), ("half", 5_000, 10_000),
+                  ("day", 10_000, 20_000), ("long", 20_000, 40_000),
+                  ("trek", 40_000, None)]
+
+FILTER_MODEL_VERSION = "trail_filters_v1"
+
+
+def ascent_band(ascent_m):
+    if ascent_m is None:
+        return None
+    for key, low, high in ASCENT_BANDS:
+        if ascent_m >= low and (high is None or ascent_m < high):
+            return key
+    return None
+
+
+def filter_model():
+    """The six filters, their values and where each one comes from.
+
+    Ships in index.json for the same reason the region quota block ships with
+    the region wire: the model travels with the data. The app renders chips
+    from this rather than from a list of its own, so a value added here cannot
+    go missing in the UI and a value removed cannot leave a dead chip behind,
+    and verify_trails_export.mjs holds the app's copy against this one."""
+    return {
+        "version": FILTER_MODEL_VERSION,
+        "difficulty": {
+            "key": "f.g", "src": "f.gs",
+            "values": ["easy", "moderate", "hard", "very_hard", "alpine"],
+            "sources": ["tagged", "derived"],
+            "from": "worst member way sac_scale / trail_visibility / "
+                    "via_ferrata_scale, else DEM sustained gradient and "
+                    "ascent per km; raised by distance and ascent",
+        },
+        "distance": {
+            "key": "distance_m",
+            "bands": [{"k": k, "min": lo, "max": hi}
+                      for k, lo, hi in DISTANCE_BANDS],
+        },
+        "ascent": {
+            "key": "ascent_m",
+            "bands": [{"k": k, "min": lo, "max": hi}
+                      for k, lo, hi in ASCENT_BANDS],
+            "from": "Copernicus GLO-30, 3 sample moving average, 5 m "
+                    "hysteresis before a climb commits",
+        },
+        "route_type": {
+            "key": "f.rt",
+            "values": ["loop", "out_back", "point", "figure8"],
+            "from": "geometry: retrace overlap first, then the endpoint gap",
+        },
+        "highlights": {
+            "key": "f.hl",
+            "values": ["waterfall", "lake", "summit", "viewpoint", "castle",
+                       "hut", "gorge", "coast", "forest", "village"],
+            "from": "OSM features within 250 m of the line (scenic.py)",
+        },
+        "suitability": {
+            "key": "f.su", "derived_key": "f.sd",
+            "values": ["family", "dog", "stroller", "wheelchair", "winter",
+                       "beginner"],
+            "note": "f.su is tagged in OSM, f.sd is derived by us. "
+                    "wheelchair is never derived.",
+        },
+        "extras": {
+            "designation": "network",
+            "waymarked": "f.way",
+            "season": "f.se",
+            "portal_verified": "f.pv",
+            "derived_route": "f.dr",
+        },
+    }
 
 
 def wire_item(t, n_stops):
@@ -487,13 +675,31 @@ def wire_item(t, n_stops):
     rg = rg_of(t)
     if rg:
         item["rg"] = rg
-    if t.get("rating") is not None:
+    # The tier, on every row, and the rating ONLY on a rated one. Absent, not
+    # null: the app tests for the key, and a null would render as a number
+    # nobody earned the moment somebody wrote `row.rating ?? 0`.
+    item["t"] = t.get("tier") or "r"
+    if item["t"] == "l":
+        # The same `why` shape the beach, lake and mountain layers put on a
+        # listed row. lib/*Story.js maps the code to one sentence in all six
+        # UI languages ("we list it so this area is not empty"), so emitting
+        # it is what makes a listed trail card read like a listed peak card
+        # on a region page instead of rendering an empty reason list.
+        item["why"] = [{"k": "unrated_coverage"}]
+    if item["t"] != "l" and t.get("rating") is not None:
         item["rating"] = float(t["rating"])
     if t.get("is_loop") is not None:
         item["is_loop"] = bool(t["is_loop"])
-    reasons = reasons_of(t.get("rating_parts"), WIRE_REASONS)
-    if reasons:
-        item["reasons"] = reasons
+    filters = filters_of(t)
+    if filters:
+        item["f"] = filters
+    if t.get("family_key"):
+        item["fam"] = {"k": t["family_key"], "n": t.get("family_name"),
+                       "size": t.get("family_size") or 1}
+    if item["t"] != "l":
+        reasons = reasons_of(t.get("rating_parts"), WIRE_REASONS)
+        if reasons:
+            item["reasons"] = reasons
     # The hero, and only the hero. A card shows one picture; the gallery is
     # part of the detail file, which is fetched when the trail is opened.
     #
@@ -541,16 +747,51 @@ def detail_item(t, stops, generated_at):
     elevation = elevation_of(t["elevation"])
     if elevation:
         out["elevation"] = elevation
-    if t.get("rating") is not None:
+    out["t"] = t.get("tier") or "r"
+    if out["t"] != "l" and t.get("rating") is not None:
+        parts = t.get("rating_parts") or {}
         out["rating"] = float(t["rating"])
-        out["rating_model"] = (t.get("rating_parts") or {}).get("model")
-        out["rating_parts"] = (t.get("rating_parts") or {}).get("components")
+        out["rating_model"] = parts.get("model")
+        out["rating_parts"] = parts.get("components")
+        # What the components were ranked against, and how many rows were in
+        # that field. "8.4 out of what" is a fair question and this answers it.
+        if parts.get("scored_within"):
+            out["rated_within"] = {"id": parts["scored_within"],
+                                   "n": parts.get("scored_against")}
     if t.get("is_loop") is not None:
         out["is_loop"] = bool(t["is_loop"])
         out["loop_source"] = t.get("loop_source")
-    reasons = reasons_of(t.get("rating_parts"))
-    if reasons:
-        out["reasons"] = reasons
+    filters = filters_of(t)
+    if filters:
+        out["f"] = filters
+    # The grade's own evidence, on the page and not on the card: which member
+    # way grade decided it, how much of the line carried it, and the DEM terms
+    # where no tag did. A reader who wants to know why a walk is called alpine
+    # gets the reason rather than the label.
+    if t.get("grade_parts"):
+        out["grade_parts"] = t["grade_parts"]
+    if t.get("suitability"):
+        out["suitability"] = t["suitability"]
+    if t.get("surface"):
+        out["surface"] = t["surface"]
+    if t.get("passes"):
+        out["passes"] = t["passes"]
+    if t.get("publisher"):
+        out["publisher"] = t["publisher"]
+    if t.get("waymark_ref"):
+        out["waymark_ref"] = t["waymark_ref"]
+    if t.get("family_key"):
+        out["family"] = {"k": t["family_key"], "n": t.get("family_name"),
+                         "size": t.get("family_size") or 1}
+    if t.get("region_crosses"):
+        out["region_crosses"] = list(t["region_crosses"])
+    if t.get("derived_route"):
+        out["derived_route"] = True
+        out["derived_join"] = (t.get("raw_tags") or {}).get("derived_join")
+    if out["t"] != "l":
+        reasons = reasons_of(t.get("rating_parts"))
+        if reasons:
+            out["reasons"] = reasons
     highlights = highlights_of(t.get("highlights"))
     if highlights:
         out["highlights"] = highlights
@@ -568,24 +809,84 @@ def detail_item(t, stops, generated_at):
     return out
 
 
-def country_file(country, items, generated_at, tolerance):
-    counts = Counter(i["category"] for i in items)
+def validate_listed(rows):
+    """A listed row's own bar: a real name, a real line, and no rating of any
+    spelling. The mountain layer makes the same assertion for the same reason,
+    and it is the only reliable way to guarantee the app cannot render a
+    number nobody earned."""
+    bad = []
+    for row in rows:
+        where = f"{row.get('country')}/{row.get('id')}"
+        for key in ("rating", "reasons", "score"):
+            if key in row:
+                bad.append(f"{where}: listed row carries {key}")
+        if not str(row.get("name") or "").strip():
+            bad.append(f"{where}: no name")
+        geom = row.get("geometry") or {}
+        if not (geom.get("coordinates") or []):
+            bad.append(f"{where}: no geometry")
+    return bad
+
+
+def country_file(country, rated, listed, generated_at, tolerance):
+    items = rated + listed
+    counts = Counter(i["category"] for i in rated)
     credits = {i["attribution_text"] for i in items if i["attribution_text"]}
     if any(i.get("img") for i in items):
         credits.add(COMMONS_CREDIT)
-    n_loops = sum(1 for i in items if i.get("is_loop"))
-    return {
+    n_loops = sum(1 for i in rated if i.get("is_loop"))
+    # The families a country's rated list stands for, so a long path whose
+    # stages collapsed to one slot still has a page. The E paths (E1..E12) are
+    # the case that forces this: they are OSM route=hiking network=iwn
+    # relations mapped as national stages, so a family of forty ships as one
+    # row and the family it belongs to would otherwise be nameless.
+    # Keyed on the NAME where there is one, not on the internal family key.
+    # Two rows can be stages of the same path and still carry different family
+    # keys (the key is derived from a title, and E4's stages are named after
+    # the towns they run between), which would list one path several times and
+    # defeat the point of naming it. The key is the fallback for a family with
+    # no display name.
+    families = {}
+    for i in rated:
+        fam = i.get("fam")
+        if not fam or not fam.get("k"):
+            continue
+        key = fam.get("n") or fam["k"]
+        rec = families.setdefault(key, {"k": fam["k"], "n": fam.get("n"),
+                                        "size": 0, "trips": []})
+        rec["size"] += fam.get("size") or 1
+        rec["trips"].append(i["id"])
+    doc = {
         "country": country,
         "generated_at": generated_at,
         "simplify_m": tolerance,
-        "n_trips": len(items),
+        "n_trips": len(rated),
+        "n_listed": len(listed),
         "counts": dict(sorted(counts.items())),
         # What a filter can offer before the file is read: the app uses these
-        # to decide whether a loop chip is worth showing for this country.
+        # to decide whether a chip is worth showing for this country, and to
+        # put a number on it without walking every row first.
         "n_loops": n_loops,
+        "facets": facet_counts(rated),
+        "regions": sorted({(i.get("rg") or {}).get("n3") for i in rated
+                           if (i.get("rg") or {}).get("n3")}),
+        "families": sorted(families.values(),
+                           key=lambda f: (-f["size"], f["k"]))[:FAMILY_MAX],
         "attribution": sorted(credits),
-        "trips": items,
+        "trips": rated,
     }
+    # Absent rather than empty for a country with nothing listed: an empty
+    # array reads as "we looked and there is nothing", which is true, and a
+    # missing key reads the same to every consumer here. Present only when it
+    # carries something keeps the files honest about which countries needed it.
+    if listed:
+        doc["listed"] = listed
+    return doc
+
+
+# How many families one country file names. The list exists so a family page
+# can be reached, not as a second catalogue.
+FAMILY_MAX = 60
 
 
 # ---------------------------------------------------------------------------
@@ -617,7 +918,9 @@ def previous_countries(out_dir, wanted):
         kept.append({
             "country": code,
             "n_trips": len(doc.get("trips") or []),
+            "n_listed": len(doc.get("listed") or []),
             "counts": doc.get("counts") or {},
+            "facets": doc.get("facets") or {},
             "file": f"/trails/{code}.json",
             "_attribution": doc.get("attribution") or [],
         })
@@ -701,9 +1004,15 @@ def main():
           f"{' (' + ', '.join(countries) + ')' if countries else ''}: "
           f"{len(already)} already published, {len(fresh)} newly approved")
     if no_summary:
+        # Not a warning any more. describe.py is retired (docs/TRAILS.md,
+        # "Two debts, closed"): the page composes from structured fields, and
+        # the three things the prose knew are wire fields now. A trip with no
+        # description_md is the normal case, and pointing at a retired script
+        # would send the next reader to run it.
         verb = "held back" if args.require_summary else "exported without one"
-        print(f"  {len(no_summary)} trip(s) have no generated description, "
-              f"{verb} (run pipeline/trails/describe.py)")
+        print(f"  {len(no_summary)} trip(s) carry no lab description, {verb}. "
+              f"That is expected: the page composes its copy from the "
+              f"structured fields (lib/trailStory.js)")
 
     if args.dry_run:
         for t in trips:
@@ -744,21 +1053,39 @@ def main():
         else sorted(by_country)
 
     total_bytes, index_countries, credits = 0, [], set()
+    listed_total = 0
     for country in wanted:
         rows = by_country.get(country, [])
         items = [wire_item(t, len(stops.get(t["id"], []))) for t in rows]
-        payload = country_file(country, items, generated_at, args.tolerance)
+        rated = [i for i in items if i.get("t") != "l"]
+        listed = [i for i in items if i.get("t") == "l"]
+        bad = validate_listed(listed)
+        if bad:
+            # The same rule the other layers' exports live by: a failure
+            # leaves the previous wire standing rather than writing a file
+            # that breaks the promise the tier is for.
+            print(f"  {country}.json NOT written, the listed tier failed its "
+                  f"own gate:")
+            for line in bad[:8]:
+                print(f"    {line}")
+            continue
+        listed_total += len(listed)
+        payload = country_file(country, rated, listed, generated_at,
+                               args.tolerance)
         size = write_json(out_dir / f"{country}.json", payload)
         total_bytes += size
         credits.update(payload["attribution"])
-        index_countries.append({"country": country, "n_trips": len(items),
+        index_countries.append({"country": country, "n_trips": len(rated),
+                                "n_listed": len(listed),
                                 "counts": payload["counts"],
+                                "facets": payload["facets"],
                                 "file": f"/trails/{country}.json"})
         if args.verbose:
             for t in rows:
                 print(f"  [{t['id']}] {country} {t['category']}: "
                       f"{t['title'][:48]} {t['n_wire']}/{t['n_full']} points")
-        print(f"  {country}.json: {len(items)} trip(s), {size / 1024:.1f} KB")
+        print(f"  {country}.json: {len(rated)} rated + {len(listed)} listed, "
+              f"{size / 1024:.1f} KB")
 
     # Countries this run did not cover keep their files and their index entry.
     for entry in previous_countries(out_dir, set(wanted)):
@@ -776,10 +1103,39 @@ def main():
     held_back = {t["id"] for t in no_summary} if args.require_summary else set()
     dropped = prune_details(detail_dir, live_ids - held_back)
 
+    # The quota model ships with the data (invariant 2), the same block the
+    # beach, lake and mountain indexes carry; trails was the one quota-bearing
+    # layer whose wire did not say what its quota was.
+    quota_model = None
+    try:
+        import importlib.util as _ilu
+        _qp = ROOT / "pipeline" / "regions" / "quotas.py"
+        _spec = _ilu.spec_from_file_location("carta_region_quotas", _qp)
+        _qmod = _ilu.module_from_spec(_spec)
+        _spec.loader.exec_module(_qmod)
+        quota_model = _qmod.model_block()
+    except Exception as exc:  # quota model missing is a note, not a failure
+        print(f"  (region quota model unavailable: {exc})")
+
     total_bytes += write_json(out_dir / "index.json", {
         "generated_at": generated_at,
         "simplify_m": args.tolerance,
         "n_trips": sum(e["n_trips"] for e in index_countries),
+        "n_listed": sum(e.get("n_listed") or 0 for e in index_countries),
+        # The filter model ships WITH the data, the same rule the region quota
+        # block follows: the app renders chips from this rather than from a
+        # list of its own, so a value added in the pipeline cannot go missing
+        # in the UI and a value removed cannot leave a dead chip behind.
+        "filter_model": filter_model(),
+        "model": ({"region_quota": quota_model} if quota_model else {}),
+        # The TR/UA asymmetry is a decision, not an accident: recorded in
+        # docs/tos/data_licenses.md section 13 and stated here so a consumer
+        # counting files reads the empty shells the way they are meant.
+        "scope": {
+            "TR": "out of catalogue this cycle; staged in the lab only",
+            "UA": "staged in the lab; empty wire shell ships so nothing "
+                  "404s into SPA HTML; wartime advisory applies",
+        },
         "countries": index_countries,
         "attribution": sorted(credits),
     })
@@ -787,6 +1143,9 @@ def main():
     print(f"wrote {len(wanted)} country file(s) + {len(trips)} detail file(s) "
           f"+ index.json to {out_dir} ({total_bytes / 1024:.1f} KB total)"
           + (f", pruned {dropped} stale detail file(s)" if dropped else ""))
+    print(f"  {sum(e['n_trips'] for e in index_countries):,} rated and "
+          f"{listed_total:,} listed row(s) across "
+          f"{len(index_countries)} country file(s)")
     return 0
 
 

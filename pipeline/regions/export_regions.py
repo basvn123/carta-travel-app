@@ -64,7 +64,16 @@ LAYER_WIRES = {
     "lake": ("lakes", "lakes"),
     "mountain": ("mountains", "mountains"),
     "trail": ("trails", "trips"),
+    "cycling": ("cycling", "routes"),
 }
+
+# Every layer ships its listed and editorial rows in a SEPARATE array, so a
+# screen has to opt in to showing them (master spec section 3). This pass has
+# always had a `listed` bucket to route them into and only ever read the rated
+# key, so listed rows reached no region page at all. Reading both keys is what
+# makes the coverage floor mean something: a region whose rated rows are zero
+# is exactly the region whose page is filled by listed ones.
+LISTED_KEY = "listed"
 
 RESERVED = {"con", "prn", "aux", "nul", "com1", "com2", "com3", "com4",
             "com5", "com6", "com7", "com8", "com9", "lpt1", "lpt2", "lpt3",
@@ -137,9 +146,65 @@ def region_set():
 # Cards
 # ---------------------------------------------------------------------------
 
+def _rank_of(card):
+    """What a rated card is ranked by. Beaches, lakes and mountains carry
+    `score`; trails carry `rating` on the same 0..10 scale. A card with
+    neither sorts last rather than crashing the mixed list."""
+    for key in ("score", "rating"):
+        value = card.get(key)
+        if isinstance(value, (int, float)):
+            return float(value)
+    return 0.0
+
+
+# What a region card is allowed to carry. A region page is a browse
+# surface: it renders a picture, a name, a place and a rating, and taps
+# through to the layer's own page for everything else. Shipping the whole
+# source row instead put a 316 kB file behind the Croatian coast, mostly
+# score breakdowns and galleries nothing on this screen reads.
+#
+# `credit` and the image's `by`/`lic`/`licUrl`/`page` are not optional
+# trimming candidates: the per-file Commons credit obligation travels with
+# the photograph, so a card that shows a picture ships the fields that
+# credit it. Dropping the picture would be allowed; dropping its author
+# would not.
+#
+# What stays OFF a card is a rule, not an oversight. Provenance that
+# changes what a reader should expect on the ground (a trail's
+# `derived_route`, its bridged `gap_info`) belongs on the layer's page,
+# where there is room to say it as a sentence: on a card the same fact
+# reads as a defect rather than as honesty. Provenance that only records
+# how WE decided something belongs nowhere a reader can see it at all.
+CARD_KEEP = (
+    "id", "name", "nameLocal", "cc", "country", "lat", "lon", "t",
+    "score", "rating", "tier", "kind", "region", "range", "why", "tags",
+    "credit", "gem", "difficulty", "distance_m", "is_loop",
+    # The trail layer credits differently from the other three: its rows
+    # carry the ODbL data notice as `attribution_text` rather than a
+    # `credit` array. A trail card that shipped neither would be the one
+    # card on the page with no licence line behind it. (Its photograph's
+    # own credit lives on the trail detail file, which is where the
+    # existing trails list sends a reader too.)
+    "attribution_text", "license", "source",
+)
+IMAGE_KEEP = ("u", "by", "lic", "licUrl", "page", "ev")
+
+
 def _card(layer, row):
-    card = {k: v for k, v in row.items() if k != "geometry"}
+    card = {k: row[k] for k in CARD_KEEP if k in row}
     card["layer"] = layer
+    images = row.get("images") or []
+    if images:
+        # One picture, with its credit. The gallery lives on the layer page.
+        card["images"] = [{k: images[0][k] for k in IMAGE_KEEP
+                           if k in images[0]}]
+    elif row.get("img"):
+        # Trails ship a single `img`, and it is an OBJECT of the same shape
+        # as one gallery entry, not a URL string. Both are projected the
+        # same way so a card only ever has to understand one shape.
+        img = row["img"]
+        card["img"] = ({k: img[k] for k in IMAGE_KEEP if k in img}
+                       if isinstance(img, dict) else img)
     return card
 
 
@@ -154,7 +219,14 @@ def collect_cards(regions, range_parents):
     for layer, (folder, key) in LAYER_WIRES.items():
         for path in sorted((WIRE / folder).glob("[A-Z][A-Z].json")):
             data = load_json(path)
-            for row in (data or {}).get(key) or []:
+            # BOTH arrays. The country file keeps listed rows in their own
+            # `listed` key precisely so a screen has to opt into them, and
+            # reading only the main array is how the first cut of this
+            # export shipped 208 listed rows to nowhere: the coverage fill
+            # existed in the layer wires and no region page showed it.
+            rows = list((data or {}).get(key) or [])
+            rows += list((data or {}).get("listed") or [])
+            for row in rows:
                 rg = row.get("rg") or {}
                 if not rg:
                     # No stored assignment yet (wire predates the backfill):
@@ -191,7 +263,7 @@ def collect_cards(regions, range_parents):
 
 
 def _latlon(layer, row):
-    if layer == "trail":
+    if layer in ("trail", "cycling"):
         bbox = row.get("bbox")
         if bbox and len(bbox) == 4:
             return (bbox[1] + bbox[3]) / 2.0, (bbox[0] + bbox[2]) / 2.0
@@ -213,7 +285,7 @@ def validate(files):
         if scores != sorted(scores, reverse=True):
             failures.append(f"{rid}: rated cards not ranked")
         for n in payload["neighbours"]:
-            if not isinstance(n, str) or not n:
+            if not isinstance(n, dict) or not n.get("id") or not n.get("name"):
                 failures.append(f"{rid}: bad neighbour entry {n!r}")
     return failures
 
@@ -245,17 +317,21 @@ def main():
     files = {}
     for rid in sorted(wanted):
         got = routed.get(rid, {"rated": [], "listed": []})
-        rated = sorted(got["rated"],
-                       key=lambda c: -(c.get("score") or c.get("rating") or 0.0)
-                       if isinstance(c.get("score") or c.get("rating"), (int, float))
-                       else 0.0)
+        rated = sorted(got["rated"], key=lambda c: -_rank_of(c))
         files[rid] = {
             "region": {k: regions[rid][k] for k in ("id", "name", "kind", "country")},
             "generated_at": stamp,
             "rated": rated,
             "listed": got["listed"],
             "editorial": [],
-            "neighbours": regions[rid]["neighbours"],
+            # Names, not just ids. A region file is self sufficient: the
+            # page renders "the Zeeland delta" without fetching a 650 kB
+            # index to look up six labels.
+            "neighbours": [
+                {"id": nid, "name": regions[nid]["name"],
+                 "kind": regions[nid]["kind"]}
+                for nid in regions[rid]["neighbours"] if nid in regions
+            ],
         }
 
     failures = validate(files)

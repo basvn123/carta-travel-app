@@ -1,0 +1,118 @@
+# carta-touring: paved, quiet, comfortable. The default house profile.
+#
+# What this profile is FOR: a loaded touring bike on 32 to 40 mm tyres,
+# ridden for six hours a day by somebody who would rather add five
+# kilometres than share a road with lorries. It is the profile behind every
+# tour whose declared bike type is "touring", and validate_cycling.py's
+# surface_fit check refuses to publish such a tour if it contains grade-4
+# track, so the costing here and the gate there have to agree.
+#
+# The costing, in one sentence: a segregated cycleway is free, a quiet lane
+# is nearly free, an unpaved surface is expensive, and a trunk road is
+# effectively forbidden.
+#
+# Part of the model, so it ships with the data (invariant 2). Changing a
+# number here is a model change and wants a version bump in
+# pipeline/cycling/cycle_index.py, not a quiet edit.
+
+---context:global
+
+assign turnInstructionMode    = 1
+assign considerTurnRestrictions = true
+assign processUnusedTags      = false
+assign validForBikes          = 1
+
+# Uphill and downhill handling. A touring rider on a loaded bike feels a
+# climb harder than a road cyclist does, so the uphill cost is deliberately
+# above BRouter's trekking default.
+assign downhillcost           = 60
+assign downhillcutoff         = 1.5
+assign uphillcost             = 70
+assign uphillcutoff           = 1.5
+assign uphillbuffer           = 0
+assign downhillbuffer         = 0
+
+# Avoid unpaved outright rather than merely disliking it, because the tour
+# gate will refuse the result anyway if the surface is wrong.
+assign avoid_unsafe           = true
+assign allow_steps            = false
+assign allow_ferries          = true
+
+---context:way
+
+assign turncost = 90
+assign initialcost = 0
+
+assign is_ldcr =
+  or route_bicycle_icn=yes
+  or route_bicycle_ncn=yes
+  or route_bicycle_rcn=yes route_bicycle_lcn=yes
+
+assign is_unpaved =
+  or surface=unpaved
+  or surface=gravel
+  or surface=fine_gravel
+  or surface=compacted
+  or surface=ground
+  or surface=dirt
+  or surface=earth
+  or surface=grass
+  or surface=sand
+  or surface=pebblestone
+  or surface=mud
+  or tracktype=grade3
+  or tracktype=grade4 tracktype=grade5
+
+assign is_rough =
+  or smoothness=bad
+  or smoothness=very_bad
+  or smoothness=horrible
+  or smoothness=very_horrible smoothness=impassable
+
+assign bike_denied =
+  or bicycle=no
+  or bicycle=private
+  or access=no access=private
+
+# The road class ladder. These are the same anchors the house safety metric
+# in pipeline/cycling/enrich_cycling.py uses, so a road that scores badly
+# there is expensive here: cycleway free, residential cheap, secondary
+# noticeable, primary painful, trunk refused.
+assign road_cost =
+  switch highway=cycleway                      1.0
+  switch or highway=path highway=footway       1.1
+  switch highway=living_street                 1.1
+  switch highway=residential                   1.2
+  switch highway=service                       1.3
+  switch highway=track                         1.6
+  switch highway=unclassified                  1.3
+  switch highway=tertiary                      1.6
+  switch or highway=tertiary_link highway=secondary_link 1.8
+  switch highway=secondary                     2.4
+  switch or highway=primary highway=primary_link 5.0
+  switch or highway=trunk highway=trunk_link   10000
+  switch highway=motorway                      10000
+  switch highway=                              10000
+  2.0
+
+assign surface_cost =
+  switch is_unpaved  3.0
+  switch is_rough    2.5
+  1.0
+
+# A signed cycle route is maintained and waymarked, and following one is
+# most of what a tourer wants. Worth a real discount, not a token one.
+assign route_bonus =
+  switch is_ldcr 0.75 1.0
+
+assign costfactor =
+  switch bike_denied 10000
+  multiply road_cost multiply surface_cost route_bonus
+
+---context:node
+
+assign initialcost =
+  switch or barrier=gate or barrier=lift_gate barrier=cycle_barrier 30
+  switch highway=traffic_signals 20
+  switch barrier=bollard 5
+  0

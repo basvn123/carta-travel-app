@@ -1,29 +1,31 @@
 """Stage 1 of the lake layer: find the water bodies worth ranking.
 
-The beach layer sweeps OpenStreetMap for every named beach in a country and
-merges Wikidata into it. That shape is wrong for lakes, and Finland is why:
-OSM holds 168,000 named Finnish lakes, almost all of them a pond behind a
-summer house. A country sweep for `natural=water` would spend hours of
-Overpass time to bring back a haystack, and then the ranking would have to
-throw nearly all of it away.
+Two spines and a seed, merged into one pool.
 
-So this layer inverts the two sources.
-
-  Wikidata is the spine.  Every water body typed as a lake, a reservoir or a
-        lagoon (P31/P279* of Q23397, Q131681, Q187223), taken per country in
-        two bounded passes: the most written about, and the largest. That is
-        exactly the population a "best lakes" list is drawn from, it is CC0,
-        and it carries what a lake is ranked on: area, depth, elevation, the
-        region, the Commons category and the sitelink count.
+  Wikidata, in two bounded passes.  Every water body typed as a lake, a
+        reservoir or a lagoon (P31/P279* of Q23397, Q131681, Q187223), taken
+        per country as the 700 most written about and the 250 largest. It is
+        CC0 and it carries what a lake is ranked on: area, depth, elevation,
+        the region, the Commons category and the sitelink count.
+  OpenStreetMap, swept whole (osm_water.py).  Every NAMED water area in the
+        country's Geofabrik extract, read offline, with what is on its shore.
+        This is the second spine, added on 2026-08-30, and it exists because
+        the two Wikidata rankings publish Great Britain 8 and the Netherlands
+        60: a Scottish loch is neither the most written about nor the largest,
+        so it never entered the shortlist at all. Merged here on the wikidata
+        tag, else a centroid within 500 m and an area within 40 per cent, else
+        a centroid within 500 m and a shared distinctive word in the name.
   The curated seed is pinned.  seed_lakes.py names the water bodies travel
         writing actually names, including the ones Wikidata records as small
         and ordinary, and it carries the swimming rules that must never be
-        guessed. Anything in the seed that the two passes missed is resolved
-        by name here and force included.
-  OpenStreetMap comes later, and targeted.  enrich_lakes.py asks Overpass what
-        is AROUND each shortlisted lake, in batches: swimming areas, beaches,
-        boat rental, parking, a lido. One bounded question per 25 lakes rather
-        than one unbounded question per country.
+        guessed. Anything the two spines missed is resolved by name here and
+        force included. It resolves AFTER the OSM fold, so a seed entry can
+        pin a water body only OpenStreetMap knows about.
+
+Overpass is still asked one question, and only a targeted one: enrich_lakes.py
+asks what is AROUND each shortlisted lake, in batches. The country sized
+question that would return 168,000 named Finnish lakes is answered by the
+extract instead, which costs nobody's server anything.
 
 Class enumeration is done once, not per query. A per country
 `P31/P279* wd:Q23397` traversal answers Malta in fourteen seconds and times
@@ -41,10 +43,12 @@ Usage, from the repo root:
     python pipeline/lakes/harvest_lakes.py --countries SI,HR
     python pipeline/lakes/harvest_lakes.py --countries IT --refresh
     python pipeline/lakes/harvest_lakes.py --seed-only     # just the seed
+    python pipeline/lakes/harvest_lakes.py --fold-osm      # merge the sweep
 """
 
 import argparse
 import json
+import math
 import re
 import sys
 import unicodedata
@@ -54,6 +58,19 @@ from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
+
+# Windows consoles and redirected pipes default to cp1252, which cannot encode
+# a Latvian, Icelandic or Polish lake name. A print of one then raises
+# UnicodeEncodeError and takes the stage down; the lake export died on
+# "Lielais Baltezers" halfway through a logged run. The data was never the
+# problem, the terminal was, so say so once here.
+if sys.platform == "win32":
+    for _stream in (sys.stdout, sys.stderr):
+        try:
+            _stream.reconfigure(encoding="utf-8", errors="replace")
+        except (AttributeError, ValueError):
+            pass
+
 
 from water_sources import (SourceError, cell, get_json,  # noqa: E402
                            haversine_km, load_cache, save_cache, sparql)
@@ -614,7 +631,222 @@ def make_rows(detail):
     return [as_row(rec) for rec in detail.values()]
 
 
-def harvest_country(cc, refresh=False, classes=None, seed_only=False):
+# ---------------------------------------------------------------------------
+# The second spine: OpenStreetMap
+# ---------------------------------------------------------------------------
+#
+# Wikidata ranks by how much has been written about a lake and by how large it
+# is, and a Scottish loch or a Norwegian fjord lake wins neither. That is why
+# Great Britain published 8 lakes and the Netherlands 60. So osm_water.py
+# sweeps the Geofabrik extract of every country for named water bodies and
+# this folds the answer into the same rows the rest of the chain reads.
+#
+# The reconcile is the brief's, in its order:
+#
+#   the wikidata tag        an OSM element that names its own Wikidata id has
+#                           settled the question, and about a third of the
+#                           lakes worth publishing carry one.
+#   centroid and area       otherwise a centroid within 500 m AND a surface
+#                           area within 40 per cent of the recorded one. Both
+#                           halves matter: two Finnish lakes 400 m apart are
+#                           two lakes, and a 500 m centroid match against a
+#                           lake ten times the size is a bay of it.
+#   centroid and name       the documented fallback for the case the rule
+#                           above cannot decide, which is common: Wikidata
+#                           records no area for most small water bodies, so
+#                           the area test has nothing to compare. A centroid
+#                           within 500 m plus names that share a distinctive
+#                           word is the same standard the beach layer merges
+#                           OSM into Wikidata on.
+#
+# Anything that matches nothing joins the pool on its own, keyed `osm:w123`.
+# It arrives with no sitelinks, no Commons category and no article, which is
+# exactly what it is: a water body we know exists and know almost nothing
+# about. What happens to it next is the shortlist's and the gate's business.
+
+MERGE_KM = 0.5
+MERGE_AREA_TOL = 0.40
+
+
+def _osm_sweep(cc):
+    """cache/lakes/osm_CC.json, or None when the sweep has not run."""
+    path = ROOT / "cache" / "lakes" / f"osm_{cc}.json"
+    if not path.exists():
+        return None
+    try:
+        return json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return None
+
+
+def _area_agrees(rec_km2, osm_ha):
+    """The brief's +/-40 per cent test, or None when it cannot be run."""
+    if not rec_km2 or not osm_ha:
+        return None
+    osm_km2 = osm_ha / 100.0
+    bigger = max(rec_km2, osm_km2)
+    return abs(rec_km2 - osm_km2) / bigger <= MERGE_AREA_TOL
+
+
+def osm_row(water, cc):
+    """One OSM water body in the row shape every later stage reads."""
+    tags = water.get("tags") or {}
+    name = tags.get("name:en") or water["name"]
+    row = as_row({
+        "wd": water.get("wd") or "",
+        "name": name,
+        "name_local": water["name"],
+        "lat": water["lat"],
+        "lon": water["lon"],
+        "iso2": cc,
+        "adm": "",
+        "types": [tags.get("water") or tags.get("natural") or "lake"],
+        "sitelinks": 0,
+        "wd_img": "",
+        "commons_cat": "",
+        "enwiki": "",
+        "localwiki": "",
+        "area_km2": round(water["area_ha"] / 100.0, 4) if water.get("area_ha")
+        else None,
+        "depth_m": None,
+        "elev_m": None,
+        "protected": [],
+        "part_of": [],
+        "basin_countries": [],
+    })
+    # Keyed on the OSM id, not on the Wikidata id it may carry: a row that
+    # arrived from OSM must keep a stable identity across re-sweeps even if
+    # somebody adds a wikidata tag to it tomorrow.
+    row["key"] = f"osm:{water['osm_id']}"
+    row["sources"] = ["osm"]
+    row["osm_id"] = water["osm_id"]
+    row["osm_tags"] = tags
+    row["osm_shore"] = water.get("shore") or {}
+    row["osm_area_ha"] = water.get("area_ha")
+    if water.get("wikipedia"):
+        row["osm_wikipedia"] = water["wikipedia"]
+    return row
+
+
+def merge_osm(cc, rows, sweep=None):
+    """Fold the OSM sweep into a country's rows. Returns (rows, n_merged,
+    n_added)."""
+    sweep = sweep if sweep is not None else _osm_sweep(cc)
+    if not sweep or not sweep.get("waters"):
+        return rows, 0, 0
+    by_qid = {r["wd"]: r for r in rows if r.get("wd")}
+    # A 0.05 degree grid over the Wikidata rows, so the spatial fallback asks
+    # nine cells rather than the whole country. Norway's sweep holds 26,000
+    # water bodies and its harvest 650 rows: without this the fold is
+    # seventeen million haversines a country and takes longer than the
+    # extract pass that produced the sweep.
+    grid = {}
+    for row in rows:
+        key = (int(math.floor(row["lat"] * 20)), int(math.floor(row["lon"] * 20)))
+        grid.setdefault(key, []).append(row)
+
+    def near(lat, lon):
+        base = (int(math.floor(lat * 20)), int(math.floor(lon * 20)))
+        for d_lat in (-1, 0, 1):
+            for d_lon in (-1, 0, 1):
+                for row in grid.get((base[0] + d_lat, base[1] + d_lon), ()):
+                    yield row
+
+    merged = added = 0
+    fresh = []
+    for water in sweep["waters"]:
+        target = by_qid.get(water.get("wd") or "")
+        if target is None:
+            best, best_km = None, MERGE_KM
+            for row in near(water["lat"], water["lon"]):
+                km = haversine_km(row["lat"], row["lon"], water["lat"],
+                                  water["lon"])
+                if km > best_km:
+                    continue
+                agrees = _area_agrees(row.get("area_km2"), water.get("area_ha"))
+                if agrees is False:
+                    continue
+                if agrees is None and not (same_water(row.get("name"),
+                                                      water["name"])
+                                           or same_water(row.get("name_local"),
+                                                         water["name"])):
+                    continue
+                best, best_km = row, km
+            target = best
+        if target is not None:
+            if "osm" not in target["sources"]:
+                target["sources"].append("osm")
+            # The OSM id and its tags only ever ADD. A row that already
+            # carries them from the shore sweep keeps what it had, because
+            # that one was matched against this lake specifically.
+            if not target.get("osm_id"):
+                target["osm_id"] = water["osm_id"]
+            tags = dict(water.get("tags") or {})
+            tags.update(target.get("osm_tags") or {})
+            target["osm_tags"] = tags
+            target["osm_shore"] = water.get("shore") or {}
+            target["osm_area_ha"] = water.get("area_ha")
+            # Wikidata records no surface area for most small water bodies,
+            # and a measured polygon is a better answer than no answer.
+            if not target.get("area_km2") and water.get("area_ha"):
+                target["area_km2"] = round(water["area_ha"] / 100.0, 4)
+                target["area_from"] = "osm"
+            if not target.get("name_local"):
+                target["name_local"] = water["name"]
+            merged += 1
+            continue
+        fresh.append(osm_row(water, cc))
+        added += 1
+    return rows + fresh, merged, added
+
+
+def fold_osm(cc):
+    """Fold the OSM sweep into a cached country, without re-querying anything.
+
+    The Wikidata passes are the expensive half and they do not change when the
+    extract sweep lands, so this is the targeted re-run: it is to the OSM
+    spine what --fix-seeds is to the seed."""
+    cached = load_cache(STAGE, cc)
+    if not cached:
+        print(f"  {cc}: nothing cached")
+        return None
+    sweep = _osm_sweep(cc)
+    if not sweep:
+        print(f"  {cc}: no OSM sweep on disk (run osm_water.py first)")
+        return cached
+    # Drop the rows a previous fold added, so a re-fold after a re-sweep
+    # replaces them rather than stacking a second copy of the same lakes.
+    rows = [r for r in (cached.get("lakes") or [])
+            if not str(r.get("key", "")).startswith("osm:")]
+    for row in rows:
+        row.pop("osm_shore", None)
+        # Clear the seed mark before re-resolving, the same rule --fix-seeds
+        # keeps: a match made against the old pool has to be able to move when
+        # the pool grows, otherwise correcting the matcher pins its mistakes.
+        row.pop("seed", None)
+    rows, merged, added = merge_osm(cc, rows, sweep=sweep)
+    # The seed resolves AFTER the fold, which is the whole reason it is here
+    # rather than left to --fix-seeds: an entry a human added can now pin a
+    # water body that only OpenStreetMap knows about. The Fairy Pools are in
+    # OSM and are not a Wikidata lake.
+    rows, seeded, missing = resolve_seed(cc, rows, LOCAL_LANG.get(cc, "en"))
+    cached["lakes"] = rows
+    cached["n_osm"] = added
+    cached["n_osm_merged"] = merged
+    cached["n_seeded"] = seeded
+    cached["seed_missing"] = missing
+    cached["osm_swept_at"] = sweep.get("swept_at")
+    save_cache(STAGE, cc, cached)
+    note = f", {len(missing)} seed entries UNRESOLVED" if missing else ""
+    print(f"  {cc}: {len(rows)} water bodies ({added} new from OSM, "
+          f"{merged} merged into Wikidata rows, {seeded} seeded){note}")
+    if missing:
+        print(f"    unresolved: {', '.join(missing)}")
+    return cached
+
+
+def harvest_country(cc, refresh=False, classes=None, seed_only=False,
+                    use_osm=True):
     """One country's water bodies, cached."""
     cached = None if refresh else load_cache(STAGE, cc)
     if cached and cached.get("lakes") and not refresh:
@@ -657,6 +889,13 @@ def harvest_country(cc, refresh=False, classes=None, seed_only=False):
             row = dict(row) if row.get("key") else as_row(row)
             row.pop("seed", None)
             rows.append(row)
+    # The OSM spine folds in BEFORE the seed resolves, so a seed entry can
+    # pin a water body that only OpenStreetMap knows about. The Fairy Pools
+    # are in OSM and are not a Wikidata lake.
+    n_osm = n_osm_merged = 0
+    sweep = _osm_sweep(cc) if use_osm else None
+    if sweep:
+        rows, n_osm_merged, n_osm = merge_osm(cc, rows, sweep=sweep)
     rows, seeded, missing = resolve_seed(cc, rows, lang)
 
     # Nothing replaces something, the same rule the beach harvest learned the
@@ -671,6 +910,9 @@ def harvest_country(cc, refresh=False, classes=None, seed_only=False):
         "country": cc,
         "harvested_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
         "n_wikidata": n_wikidata,
+        "n_osm": n_osm,
+        "n_osm_merged": n_osm_merged,
+        "osm_swept_at": (sweep or {}).get("swept_at"),
         "n_seeded": seeded,
         "seed_missing": missing,
         "lakes": rows,
@@ -678,7 +920,7 @@ def harvest_country(cc, refresh=False, classes=None, seed_only=False):
     save_cache(STAGE, cc, payload)
     note = f", {len(missing)} seed entries UNRESOLVED" if missing else ""
     print(f"  {cc}: {len(rows)} water bodies ({n_wikidata} from Wikidata, "
-          f"{seeded} seeded){note}")
+          f"{n_osm} from OSM, {seeded} seeded){note}")
     if missing:
         print(f"    unresolved: {', '.join(missing)}")
     return payload
@@ -733,6 +975,11 @@ def main():
     parser.add_argument("--fix-seeds", action="store_true",
                         help="re-resolve the seed against the cached harvest, "
                              "without re-querying any country")
+    parser.add_argument("--fold-osm", action="store_true",
+                        help="fold cache/lakes/osm_CC.json into the cached "
+                             "harvest, without re-querying any country")
+    parser.add_argument("--no-osm", action="store_true",
+                        help="Wikidata and the seed only, no OSM spine")
     parser.add_argument("--reverse", action="store_true",
                         help="work the list from the end, so a second process "
                              "can meet this one in the middle")
@@ -743,14 +990,19 @@ def main():
     if args.reverse:
         countries = list(reversed(countries))
 
-    classes = None if args.fix_seeds else lake_classes()
+    classes = None if (args.fix_seeds or args.fold_osm) else lake_classes()
     total, unresolved = 0, []
     for cc in countries:
         try:
-            payload = (fix_seeds(cc) if args.fix_seeds
-                       else harvest_country(cc, refresh=args.refresh,
-                                            classes=classes,
-                                            seed_only=args.seed_only))
+            if args.fix_seeds:
+                payload = fix_seeds(cc)
+            elif args.fold_osm:
+                payload = fold_osm(cc)
+            else:
+                payload = harvest_country(cc, refresh=args.refresh,
+                                          classes=classes,
+                                          seed_only=args.seed_only,
+                                          use_osm=not args.no_osm)
             if payload is None:
                 continue
             total += len(payload["lakes"])

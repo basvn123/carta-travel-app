@@ -54,6 +54,8 @@ Options:
     --no-context          leave Overpass alone
     --no-images           leave Commons alone (for a fast structural re-run)
     --dry-run             say what would ship, write nothing
+    --skip-export         stop after enrich, for the orchestrator's order
+                          (harvest -> enrich -> terrain -> season -> export)
 
 ASCII clean, no em dashes, per project convention.
 """
@@ -83,6 +85,10 @@ def main():
     parser.add_argument("--shortlist", type=int, default=harvest_peaks.SHORTLIST)
     parser.add_argument("--top", type=int, default=enrich_peaks.ENRICH_TOP)
     parser.add_argument("--dry-run", action="store_true")
+    # Stop after enrich. v2 puts two measurement passes between enrich and
+    # export (terrain.py and season.py), and the orchestrator runs them in
+    # that order rather than exporting twice.
+    parser.add_argument("--skip-export", action="store_true")
     args = parser.parse_args()
 
     wanted = [c.strip().upper() for c in args.countries.split(",") if c.strip()]
@@ -115,6 +121,11 @@ def main():
                 raise
             except Exception as exc:                  # noqa: BLE001
                 print(f"  {cc}: enrich failed ({exc})")
+
+    if args.skip_export:
+        print(f"[mountains] harvest and enrich done in "
+              f"{(time.time() - started) / 60:.1f} min, export skipped")
+        return
 
     print("[3/3] export")
     argv = ["export_peaks.py"]

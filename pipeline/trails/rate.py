@@ -29,12 +29,22 @@ each component is a claim a reader could check:
   shape         loops score above there-and-back, which is the preference the
                 whole layer is tuned for, plus a mild bonus for a length that
                 fits a day.
+  variety       how many DIFFERENT kinds of thing are on the line. A walk past
+                a waterfall, a lake and a castle beats one past nine trees,
+                and the scenery term above cannot tell those apart because it
+                sums weights. (v2)
+  surface       what is underfoot, from the member way tags, minus the share
+                of the route that is a road. Road walking is the most common
+                complaint about any OSM derived route and nothing scored it.
+                (v2)
 
-Scored within a country, not across Europe. Absolute scoring would hand the
-Alps every high mark and leave the Netherlands with nothing above 4, which
-tells a Dutch walker nothing about which Dutch walk to take. Each component is
-converted to its within-country percentile first, so every country's list
-spans the scale and the top of it is that country's best.
+Scored within a REGION where the region has enough rows to rank against, and
+within the country otherwise. Absolute scoring would hand the Alps every high
+mark and leave the Netherlands with nothing above 4, which tells a Dutch
+walker nothing about which Dutch walk to take; and within-country scoring
+alone still ranks a Baltic coast walk against the Tatras. Each component is
+converted to its percentile inside its reference class first, so every list
+spans the scale and the top of it is that class's best.
 
 The same evidence produces `reasons`, a list of codes the app turns into
 sentences ("three named summits, the highest at 2,410 m"). The wire carries
@@ -66,14 +76,28 @@ from scenic import KINDS as SCENIC_WEIGHTS  # noqa: E402
 # Weights sum to 1. Scenery leads because it is the only component that says
 # what you will actually look at; designation and relief describe the walk,
 # prominence and photographs describe how well known it is.
+#
+# v2 took two points off scenery and one each off prominence, shape,
+# designation and photos to pay for the two new terms. Nothing was reweighted
+# for its own sake: the six that were here keep their order and very nearly
+# their size, because the model they encode was right and only incomplete.
 WEIGHTS = {
-    "scenery": 0.24,
-    "relief": 0.17,
-    "prominence": 0.16,
-    "designation": 0.14,
-    "photos": 0.13,
-    "shape": 0.16,
+    "scenery": 0.22,
+    "relief": 0.16,
+    "shape": 0.15,
+    "prominence": 0.14,
+    "designation": 0.13,
+    "photos": 0.12,
+    "variety": 0.05,
+    "surface": 0.03,
 }
+MODEL = "open-signals-v2"
+
+# How many rows a region needs before it is a fair reference class of its own.
+# Below this the percentile is measuring noise: with six rows every one of
+# them lands at a memorable percentile and none of them means anything, and
+# the country is the honest fallback.
+REGION_MIN_ROWS = 20
 
 NETWORK_LEVEL = {"iwn": 1.0, "nwn": 0.85, "rwn": 0.6, "lwn": 0.35, "lcn": 0.3}
 NETWORK_DEFAULT = 0.2
@@ -99,6 +123,12 @@ STEEP_M_PER_KM = 45
 HIGH_ALTITUDE_M = 1_800
 PHOTOGENIC = 4
 RICH_SCENERY_PER_KM = 1.2
+# Three different KINDS of thing on one walk is the point at which the variety
+# is worth a sentence rather than a component.
+VARIED_KINDS = 3
+# A route this much of which is a road is one a walker deserves warning about.
+# 20 percent of a 12 km walk is two and a half kilometres of tarmac.
+ROAD_WALK_SHARE = 0.20
 
 
 def pct_rank(values):
@@ -122,9 +152,14 @@ def pct_rank(values):
     return rank
 
 
+# Tier l is excluded, not merely unranked: a listed row is one the wire ships
+# WITHOUT a rating key, and the only way to guarantee the app cannot render a
+# number nobody earned is for the number never to exist. rate.py also NULLs
+# any rating a row carried before it was demoted to l.
 FETCH_SQL = """
     SELECT t.id, t.country, t.title, t.network, t.distance_m, t.ascent_m,
-           t.is_loop, t.highlights, t.elevation,
+           t.is_loop, t.highlights, t.elevation, t.nuts3,
+           t.highlight_kinds, t.surface,
            t.raw_tags->>'wikidata'  AS wikidata,
            t.raw_tags->>'wikipedia' AS wikipedia,
            p.score AS popularity,
@@ -140,10 +175,18 @@ FETCH_SQL = """
     ) p ON true
     WHERE t.country = %s AND t.category = 'hike'
       AND t.status IN ('approved', 'published')
+      AND t.tier IS DISTINCT FROM 'l'
+"""
+
+CLEAR_LISTED_SQL = """
+    UPDATE trips SET rating = NULL, rating_parts = NULL, rated_at = NULL
+    WHERE country = %s AND category = 'hike' AND tier = 'l'
+      AND rating IS NOT NULL
 """
 
 COLS = ("id", "country", "title", "network", "distance_m", "ascent_m",
-        "is_loop", "highlights", "elevation", "wikidata", "wikipedia",
+        "is_loop", "highlights", "elevation", "nuts3",
+        "highlight_kinds", "surface", "wikidata", "wikipedia",
         "popularity", "n_photos")
 
 
@@ -212,6 +255,30 @@ def shape_raw(row):
     return min(1.0, score)
 
 
+def variety_raw(row):
+    """How many DIFFERENT kinds of thing the route runs past.
+
+    The scenery term sums weights, so nine viewpoints out-score a waterfall,
+    a lake and a castle, and the second walk is the better day out by a
+    distance. Distinct highlight CODES, from attributes.py, which is also
+    exactly what the filter chips offer: a route that can answer three chips
+    is a route with three things on it."""
+    codes = row.get("highlight_kinds") or []
+    return float(len(set(codes)))
+
+
+def surface_raw(row):
+    """What is underfoot, minus the share of the walk that is a road.
+
+    attributes.py has already blended the tagged share towards neutral by how
+    much of the line said anything, so a country that does not map surface
+    scores mid-field rather than bottom. Nothing here punishes a route for
+    the silence of its mappers."""
+    s = row.get("surface") or {}
+    q = s.get("quality")
+    return float(q) if q is not None else 0.5
+
+
 RAW = {
     "scenery": scenery_raw,
     "relief": relief_raw,
@@ -219,6 +286,8 @@ RAW = {
     "photos": photos_raw,
     "designation": designation_raw,
     "shape": shape_raw,
+    "variety": variety_raw,
+    "surface": surface_raw,
 }
 
 
@@ -309,6 +378,15 @@ def reasons_for(row, parts):
         add("photogenic", n=row["n_photos"])
     if h.get("weight") and h["weight"] / km >= RICH_SCENERY_PER_KM:
         add("dense", n=h.get("n_near"))
+    # v2. Variety is the claim the density term cannot make, and the road
+    # share is the one complaint about an OSM derived route that nobody was
+    # ever told about before they parked.
+    kinds = set(row.get("highlight_kinds") or [])
+    if len(kinds) >= VARIED_KINDS:
+        add("varied", n=len(kinds))
+    road = float((row.get("surface") or {}).get("road_share") or 0)
+    if road >= ROAD_WALK_SHARE:
+        add("roadWalk", pct=int(round(road * 100)))
     return out
 
 
@@ -316,34 +394,77 @@ def reasons_for(row, parts):
 # Rating
 # ---------------------------------------------------------------------------
 
+def reference_classes(rows):
+    """{row id: (class key, [rows in that class])}.
+
+    Invariant 5 of the regions brief, generalised: a row is ranked inside its
+    own REGION when the region has enough rows to be a fair field, and inside
+    its country otherwise. A Dutch dune walk is not judged against the Alps
+    (the country rule, which was right), and a Bavarian valley walk is no
+    longer judged against the Zugspitze either.
+
+    The threshold is the whole honesty of it. Below REGION_MIN_ROWS the
+    percentile is measuring the shape of a handful, and a region with four
+    routes would publish one 9.8 and one 4.1 whatever they were like."""
+    by_region = defaultdict(list)
+    for r in rows:
+        if r.get("nuts3"):
+            by_region[r["nuts3"]].append(r)
+    classes = {}
+    for r in rows:
+        n3 = r.get("nuts3")
+        pool = by_region.get(n3) if n3 else None
+        if pool is not None and len(pool) >= REGION_MIN_ROWS:
+            classes[r["id"]] = (n3, pool)
+        else:
+            classes[r["id"]] = (r["country"], rows)
+    return classes
+
+
 def rate_country(rows, verbose=False):
     if not rows:
         return
-    ranks = {}
-    for key, fn in RAW.items():
-        values = [fn(r) for r in rows]
-        for r, v in zip(rows, values):
-            r.setdefault("_raw", {})[key] = v
-        ranks[key] = pct_rank(values)
+    for r in rows:
+        r["_raw"] = {k: fn(r) for k, fn in RAW.items()}
+
+    classes = reference_classes(rows)
+    # One rank function per (class, component), built once per class rather
+    # than once per row: a German list is thousands of rows across hundreds of
+    # regions, and rebuilding the sorted array for every one of them is
+    # quadratic in the size of the country.
+    pools = {key: pool for key, pool in classes.values()}
+    ranked_by_class = {
+        key: {k: pct_rank([r["_raw"][k] for r in pool]) for k in RAW}
+        for key, pool in pools.items()}
 
     for r in rows:
+        class_key, pool = classes[r["id"]]
+        ranks = ranked_by_class[class_key]
         parts = {k: round(ranks[k](r["_raw"][k]), 4) for k in RAW}
         r["parts"] = parts
+        r["scored_within"] = class_key
+        r["scored_against"] = len(pool)
         r["_composite"] = sum(WEIGHTS[k] * parts[k] for k in WEIGHTS)
 
     # Stretch the composite across the band before it becomes a rating.
     #
     # A weighted sum of percentiles cannot reach its own ends: topping every
-    # one of six components at once does not happen, so the raw composite ran
-    # about 0.25 to 0.70 and the first pass published every country's best
+    # one of eight components at once does not happen, so the raw composite
+    # ran about 0.25 to 0.70 and the first pass published every country's best
     # walk at 8.0 and its weakest at 5.5. That is not a rating, it is the
     # middle of one, and it wasted the half of the scale a reader actually
     # reads.
     #
-    # Min-max within the country, with a small pad so the floor is not exactly
-    # FLOOR. Linear, not rank based: rank alone would put every country's best
-    # at the ceiling whatever the gap behind it, and the gaps are the
-    # information. What survives is the shape of the country's own field.
+    # Min-max within the COUNTRY, with a small pad so the floor is not exactly
+    # FLOOR. Deliberately the country and not the reference class: the
+    # percentile above is what makes a component fair inside a region, and
+    # stretching per region as well would put a 9.8 at the top of every region
+    # in Europe. One country, one scale, is what makes two numbers on two
+    # cards in the same list comparable.
+    #
+    # Linear, not rank based: rank alone would put every country's best at the
+    # ceiling whatever the gap behind it, and the gaps are the information.
+    # What survives is the shape of the country's own field.
     composites = [r["_composite"] for r in rows]
     lo, hi = min(composites), max(composites)
     span = max(hi - lo, 1e-6)
@@ -374,8 +495,13 @@ def store(conn, rows):
                 "weights": WEIGHTS,
                 "raw": {k: round(v, 4) for k, v in r["_raw"].items()},
                 "reasons": r["reasons"],
-                "model": "open-signals-v1",
-                "scored_within": r["country"],
+                "model": MODEL,
+                # Which field this row's components were ranked inside, and
+                # how big it was. Shipped so a reader who asks "8.4 against
+                # what" has an answer.
+                "scored_within": r.get("scored_within") or r["country"],
+                "scored_against": r.get("scored_against"),
+                "scaled_within": r["country"],
             }), r["id"]))
     conn.commit()
 
@@ -409,16 +535,34 @@ def main():
             rate_country(rows, verbose=args.verbose)
             if not args.dry_run:
                 store(conn, rows)
+                # A row demoted to the listed tier since the last pass still
+                # carries the rating it earned as a rated one. The wire's
+                # promise is that a listed row has no rating key at all, and
+                # a stale number in the column is how that promise breaks.
+                with conn.cursor() as cur:
+                    cur.execute(CLEAR_LISTED_SQL, (cc,))
+                    totals["cleared"] += cur.rowcount
+                conn.commit()
             totals["rated"] += len(rows)
             totals["no_reason"] += sum(1 for r in rows if not r["reasons"])
+            totals["by_region"] += sum(1 for r in rows
+                                       if r.get("scored_within") != cc)
             spread[cc] = [r["rating"] for r in rows]
             top = rows[0]
-            print(f"{cc}: {len(rows):3d} rated, "
+            print(f"{cc}: {len(rows):5d} rated, "
                   f"{min(spread[cc]):.1f}-{max(spread[cc]):.1f}, "
+                  f"{sum(1 for r in rows if r.get('scored_within') != cc)} "
+                  f"ranked within their region, "
                   f"best {top['title'][:40]} ({top['rating']})")
 
         print("\n" + "=" * 58)
-        print(f"{totals['rated']:,} routes rated across {len(spread)} countries")
+        print(f"{totals['rated']:,} routes rated across {len(spread)} countries "
+              f"({MODEL})")
+        print(f"{totals['by_region']:,} ranked inside their own region "
+              f"(>= {REGION_MIN_ROWS} rows), the rest against their country")
+        if totals["cleared"]:
+            print(f"{totals['cleared']:,} rating(s) cleared off rows that are "
+                  f"now listed rather than rated")
         if totals["no_reason"]:
             print(f"{totals['no_reason']:,} carry no reason code at all: "
                   f"nothing named on the line, no relief, no article. They "

@@ -62,6 +62,7 @@ LAYER_WIRES = {
     "lake": ("lakes", "lakes"),
     "mountain": ("mountains", "mountains"),
     "trail": ("trails", "trips"),
+    "cycling": ("cycling", "routes"),
 }
 
 
@@ -86,23 +87,31 @@ def _load_export(layer_dir, module_name):
 
 
 def _published_rows(layer):
-    """Every published row of one layer, with lat/lon and name."""
+    """Every published row of one layer, rated and listed, with a position.
+
+    Both arrays, every layer. Each country file keeps its unscored rows in
+    a separate `listed` key so a screen has to opt into them, and an audit
+    that read only the main array would report a region the floor fill just
+    rescued as still empty. Trails carried a hardcoded tier here for one
+    build, from when that layer had none; it ships `t` and its own `listed`
+    array now, like the other three."""
     folder, key = LAYER_WIRES[layer]
     rows = []
     for path in sorted((WIRE / folder).glob("[A-Z][A-Z].json")):
-        data = load_json(path)
-        for row in (data or {}).get(key) or []:
-            if layer == "trail":
+        data = load_json(path) or {}
+        for row in list(data.get(key) or []) + list(data.get("listed") or []):
+            if layer in ("trail", "cycling"):
+                # A route has no single coordinate, so the bbox centre
+                # stands in. Its own rg is what actually places it; this is
+                # only the fallback for a row stamped before regionize.py.
                 bbox = row.get("bbox") or [None] * 4
                 lat = (bbox[1] + bbox[3]) / 2 if bbox[0] is not None else None
                 lon = (bbox[0] + bbox[2]) / 2 if bbox[0] is not None else None
-                rows.append({"id": str(row.get("id")), "name": row.get("name"),
-                             "lat": lat, "lon": lon, "tier": "r",
-                             "rg": row.get("rg")})
             else:
-                rows.append({"id": row.get("id"), "name": row.get("name"),
-                             "lat": row.get("lat"), "lon": row.get("lon"),
-                             "tier": row.get("t") or "r", "rg": row.get("rg")})
+                lat, lon = row.get("lat"), row.get("lon")
+            rows.append({"id": str(row.get("id")), "name": row.get("name"),
+                         "lat": lat, "lon": lon,
+                         "tier": row.get("t") or "r", "rg": row.get("rg")})
     return rows
 
 
@@ -169,17 +178,17 @@ def _admin3():
 
 def _examine_beaches():
     mod = _load_export("beaches", "export_beaches")
-    bi = sys.modules.get("carta_beauty_index") or mod.bi
     countries = mod.COUNTRIES if hasattr(mod, "COUNTRIES") else None
     if countries is None:
         countries = sorted({p.stem.split("_")[1]
                             for p in (ROOT / "cache" / "beaches").glob("rich_??.json")})
+    gate = _gate_of(mod, "beaches")
     gmax = 1.0
     for cc in countries:
         rich = mod.load_cache("rich", cc) or {}
         for beach in rich.get("beaches") or []:
             gmax = max(gmax, mod.bi.fame_raw(beach))
-    mod.GLOBAL_MAX = gmax
+    _prime_globals(mod, gmax)
     verdicts = {}
     for cc in countries:
         scored = mod.score_country(cc)
@@ -192,7 +201,7 @@ def _examine_beaches():
                 pool.append(cand + ("score_gate",
                                     f"score_{score10:.1f}_below_{mod.MIN_SCORE}"))
                 continue
-            if not mod.publishable(beach):
+            if not gate(beach, cc):
                 images = mod.usable_images(beach)
                 strong = sum(1 for i in images
                              if i.get("evidence") in mod.STRONG_EVIDENCE)
@@ -213,11 +222,60 @@ def _examine_beaches():
     return verdicts
 
 
+def _gate_of(mod, layer_dir):
+    """A callable (item, cc) -> bool for one layer's non score gate.
+
+    This module reaches into a sibling layer's own gate on purpose: the
+    backlog's whole value is that "score_4.9_below_5.4" is the number that
+    layer's code actually saw, not a number this file re-derived. The cost
+    is that a rename over there breaks the join here, which is exactly what
+    happened when the photo engine split the mountain gate into eligible()
+    plus photo_gate(). So the spelling is probed rather than assumed, and
+    an unknown shape degrades to "no candidates" with a message rather
+    than to a wrong reason."""
+    if hasattr(mod, "publishable"):
+        def gate(item, cc):
+            try:
+                return bool(mod.publishable(item, cc))
+            except TypeError:
+                return bool(mod.publishable(item))
+        return gate
+    if hasattr(mod, "eligible") and hasattr(mod, "photo_gate"):
+        def gate(item, cc):
+            try:
+                ok = bool(mod.eligible(item, cc))
+            except TypeError:
+                ok = bool(mod.eligible(item))
+            return ok and bool(mod.photo_gate(mod.wire_images(item)))
+        return gate
+    raise AttributeError(
+        f"{layer_dir}: no gate found (looked for publishable, "
+        f"or eligible plus photo_gate). Update _gate_of in coverage.py "
+        f"to match the layer's current gate.")
+
+
+def _prime_globals(mod, gmax):
+    """Set the module level ceilings a layer's main() would have set.
+
+    score_country() reads them, and calling it without main() leaves them
+    undefined: the lake layer's PHOTO_GLOBAL_MAX arrived this way and took
+    the lake backlog's candidates with it. Only names the module already
+    declares are set, so this cannot invent state a layer does not have."""
+    for name in ("GLOBAL_MAX", "PHOTO_GLOBAL_MAX"):
+        if hasattr(mod, name) or name in getattr(mod, "__dict__", {}):
+            setattr(mod, name, gmax if name == "GLOBAL_MAX" else 1.0)
+        else:
+            # Declared only inside main() via `global`, so it is not an
+            # attribute yet. Setting it is still correct and still safe.
+            setattr(mod, name, gmax if name == "GLOBAL_MAX" else 1.0)
+
+
 def _examine_scored(layer_dir, export_name, rows_key, score_country_takes_max):
     """Lakes and mountains share one shape: fame ceiling over the whole
     field, then score_country, then the photo and reason gates."""
     mod = _load_export(layer_dir, export_name)
     model = mod.li if hasattr(mod, "li") else mod.pi
+    gate = _gate_of(mod, layer_dir)
     countries = sorted({p.stem.split("_")[1]
                         for p in (ROOT / "cache" / layer_dir).glob("rich_??.json")})
     gmax = 1.0
@@ -225,23 +283,18 @@ def _examine_scored(layer_dir, export_name, rows_key, score_country_takes_max):
         rich = mod.load_cache("rich", cc) or {}
         for item in rich.get(rows_key) or []:
             gmax = max(gmax, model.fame_raw(item))
+    _prime_globals(mod, gmax)
     verdicts = {}
     for cc in countries:
         if score_country_takes_max:
             scored = mod.score_country(cc, gmax)
         else:
-            mod.GLOBAL_MAX = gmax
             scored = mod.score_country(cc)
         rows, pool = [], []
         for item, comps, score10 in sorted(scored, key=lambda t: -t[2]):
             cand = (item, item.get("key") or item.get("wd") or item.get("name"),
                     item.get("name"), item.get("lat"), item.get("lon"))
-            try:
-                ok = mod.publishable(item, cc) if layer_dir == "mountains" \
-                    else mod.publishable(item)
-            except TypeError:
-                ok = mod.publishable(item)
-            if not ok:
+            if not gate(item, cc):
                 images = item.get("images") or []
                 pool.append(cand + ("photo_gate", f"imgs_{len(images)}"))
                 continue
@@ -380,14 +433,43 @@ def _write_backlog(layer, path, deficits, names, countries_of, examiner,
 
 
 def write_wire(regions, layers):
+    """The coverage wire, MERGED rather than replaced.
+
+    A `--layers beach` run audits one layer, and a wire written from that
+    alone would report every region as having no lakes, no mountains and
+    no trails. That is the same trap the region export documents: a
+    targeted run must not de-index the rest. So the layers just audited
+    overwrite their own entries and every other layer's last known answer
+    is carried forward, with `layers` naming what this run refreshed."""
     admin3 = _admin3()
     names = dict(zip(admin3["id"], admin3["name"]))
+    previous = load_json(WIRE / "coverage.json", {}) or {}
+    prev_regions = previous.get("regions") or {}
+
+    merged = {}
+    for rid, by_layer in regions.items():
+        entry = {k: v for k, v in (prev_regions.get(rid) or {}).items()
+                 if k != "name"}
+        entry.update(by_layer)
+        merged[rid] = dict({"name": names.get(rid, rid)}, **entry)
+
+    audited = sorted(set(previous.get("layers") or []) | set(layers))
     payload = {
         "generated_at": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
         "version": COVERAGE_VERSION,
-        "layers": sorted(layers),
-        "regions": {rid: dict({"name": names.get(rid, rid)}, **by_layer)
-                    for rid, by_layer in sorted(regions.items())},
+        "layers": audited,
+        "refreshed": sorted(layers),
+        # WHICH UNIT each layer's gate actually budgets on, because this
+        # file reports per NUTS3 region and two layers do not gate there.
+        # A beach quota is spent per coastal stretch and a mountain quota
+        # per GMBA range, so for those two the `quota` beside a region is
+        # the NUTS3 equivalent view, NOT the number that gated anything: a
+        # region can hold more rated rows than it shows quota, and that is
+        # arithmetic rather than a leak. Only lake, trail and cycling
+        # budget on the same unit this file is keyed by.
+        "quota_units": {layer: spec["unit"]
+                        for layer, spec in quotas.QUOTA.items()},
+        "regions": dict(sorted(merged.items())),
     }
     atomic_write_json(WIRE / "coverage.json", payload,
                       separators=(",", ":"), indent=None)
@@ -458,10 +540,16 @@ def alerts(regions, layers):
     row of each layer that applies here". Farther than 60 km, and the
     region goes on the alert list; an applicable region at status empty is
     an alert by definition."""
+    import geopandas as gpd
     import numpy as np
     import shapely
     admin3 = _admin3()
-    pts = admin3.geometry.representative_point()
+    # Measured in EPSG:3035, not in degrees. A degree of longitude is 111 km
+    # at the equator and 55 km at 60 N, so a degree scaled distance reports
+    # every Norwegian region as twice as isolated as it is, which is the
+    # difference between an alert list and a list of Norway.
+    pts = gpd.GeoSeries(admin3.geometry.representative_point(),
+                        crs="EPSG:4326").to_crs("EPSG:3035")
     out = {"far_from_anything": [], "empty_applicable": []}
     for layer in layers:
         rows = _published_rows(layer)
@@ -469,7 +557,9 @@ def alerts(regions, layers):
                   if r["lat"] is not None and r["lon"] is not None]
         if not coords:
             continue
-        tree = shapely.STRtree(shapely.points(np.array(coords)))
+        pub = gpd.GeoSeries(
+            shapely.points(np.array(coords)), crs="EPSG:4326").to_crs("EPSG:3035")
+        tree = shapely.STRtree(np.array(pub.values))
         for rid, pt in zip(admin3["id"], pts):
             entry = regions.get(rid, {}).get(layer) or {}
             if entry.get("status") in (None, "na"):
@@ -477,9 +567,7 @@ def alerts(regions, layers):
             near = tree.query_nearest(pt, all_matches=False)
             if not len(near):
                 continue
-            hit = coords[int(near[0])]
-            km = 111.32 * float(shapely.distance(
-                pt, shapely.Point(hit[0], hit[1])))
+            km = float(shapely.distance(pt, pub.values[int(near[0])])) / 1000.0
             if km > 60.0:
                 out["far_from_anything"].append(
                     {"region": rid, "layer": layer, "km": round(km)})
@@ -495,7 +583,7 @@ def alerts(regions, layers):
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
-    ap.add_argument("--layers", default="beach,lake,mountain,trail")
+    ap.add_argument("--layers", default="beach,lake,mountain,trail,cycling")
     ap.add_argument("--explain", default=None, metavar="CANDIDATE_ID",
                     help="print the full gate trace for one candidate")
     args = ap.parse_args()
