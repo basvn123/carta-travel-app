@@ -333,8 +333,19 @@ export function CyclePage({ routeId, tourSlug, country, countryName,
             {route && route.ref ? `, ${route.ref}` : ''}
           </p>
         </div>
+        {/* ScoreChip takes a RATING OBJECT and reads `.score` off it, so
+            passing the bare number made it return null and no cycling page
+            has ever shown its score. Tier bands match the other layers. */}
         {rated && carta.score != null && (
-          <span data-testid="cycle-score"><ScoreChip rating={carta.score} /></span>
+          <span data-testid="cycle-score">
+            <ScoreChip
+              rating={{
+                score: carta.score,
+                tier: carta.score >= 8 ? 3 : carta.score >= 7 ? 2 : 1,
+              }}
+              size="lg"
+            />
+          </span>
         )}
       </header>
 
@@ -394,6 +405,15 @@ export function CyclePage({ routeId, tourSlug, country, countryName,
 
       {route && (
         <section className="cycle-route" data-testid="cycle-route">
+          {/* The measured facts. A tour has had these since it shipped and a
+              ROUTE never did, so the page opened on a route without saying
+              how long it is or how much it climbs, which are the first two
+              questions anyone asks of a ride. */}
+          <p className="cycle-facts" data-testid="cycle-route-facts">
+            {route.km != null && <span>{`${route.km} km`}</span>}
+            {route.asc != null && <span>{`${route.asc} m`}</span>}
+            {carta.surface?.bike && <span>{bikeLine(carta.surface.bike, t)}</span>}
+          </p>
           {!rated && <p className="cycle-unrated">{listedLine(t)}</p>}
           {why.length > 0 && (
             <>
