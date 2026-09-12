@@ -213,7 +213,9 @@ in order, and delete the fixtures. Do not touch export_wire.py's existing
 keys; add the new keys through route_schema so R2/R3 can fill them.
 ```
 
-> **Done when:** the migration applies through the guard on the live lab and on a fresh `docker compose down -v` lab, the smoke test passes with the three fixtures, and `export_wire.py --countries LI --dry-run` shows the new keys with null values and nothing else changed.
+> **Done when:** the migration applies through the guard on the live lab and on a fresh lab started from an empty volume (a throwaway compose project on another port, never `down -v` on the live one), the smoke test passes with the three fixtures, and a Liechtenstein export to a scratch directory differs from the one before only by the added keys. Keys the lab can already fill (`osm`, `net`, `descent_m`, `sf`, `huts`, `gaps`) carry values; the hierarchy keys stay null until R3.
+>
+> **Shipped 2026-09-12.** `09_hierarchy.sql`, `route_schema.py`, the smoke test fixtures, and the export additions. On the 111 Liechtenstein rows: `osm`, `net` and `descent_m` on 110, `sf` on 105, `h` on none, and every pre-existing key byte-identical.
 
 ---
 
@@ -575,7 +577,7 @@ destination attachments; the R6 caps are per activity for that reason.
 | Session | Steps | Note |
 |---|---|---|
 | 1 | R0 | Done 2026-09-12. Reshaped this file. |
-| 2 | R1, R2 | Migration and the relations scan. R2 is a relations-only pass, minutes per country, resumable. |
+| 2 | R1, R2 | R1 done 2026-09-12. R2 is a relations-only pass, minutes per country, resumable. |
 | 3 | R3 | Alone. Hierarchy, dedup and the reports. Four reporting points inside it. |
 | 4 | R4, R5 | Validation-heavy, code-light. R4 has a hard gate on the comparison table. |
 | 5 | R6 | First user-visible value. Ship here if you ship nothing else. |

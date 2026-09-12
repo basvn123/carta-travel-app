@@ -85,11 +85,17 @@ pipeline/trails/
   compose_citytrips.py
   schema.py             NEW  apply a migration only when it would change
                         something (see "Scar tissue")
+  route_schema.py       ROUTES.md R1: the RouteSummary / RouteDetail shapes
+                        as a mapping onto existing columns, the added wire
+                        keys (osm, net, descent_m, sf, h on a row; stages,
+                        variants, huts, gaps and more on a detail file), and
+                        the guard call for initdb/09_hierarchy.sql
   describe.py           RETIRED, see "Two debts"
 
 tools/trailslab/
   docker-compose.yml    the lab: PostGIS + pgRouting on port 5433, local only
-  initdb/01..07         the schema, applied in order on a fresh container
+  initdb/01..09         the schema, applied in order on a fresh container;
+                        09 is the route hierarchy graph (route_relations)
   review/               the human approval queue, FastAPI on 127.0.0.1:8011
 
 continent-app/

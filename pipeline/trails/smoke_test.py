@@ -32,6 +32,223 @@ def fail(msg):
     sys.exit(1)
 
 
+# ---------------------------------------------------------------------------
+# ROUTES.md R1: the hierarchy schema and the record mapping, on fixtures
+# ---------------------------------------------------------------------------
+
+# Three hand-built routes: a loop, a point-to-point, and a parent with three
+# stages and one variant. Relation ids are NEGATIVE, a range OSM never uses,
+# so cleanup can never touch a real relation.
+FIXTURE_SOURCE = "fixture"
+FIX_LOOP, FIX_P2P, FIX_PARENT = -1, -2, -3
+FIX_STAGES = (-4, -5, -6)
+FIX_VARIANT = -7            # a member relation with no store row of its own
+FIX_WAYS = (101, 102)
+
+FIXTURE_WAY_TAGS = {
+    "ways": 4,
+    "surface": {"asphalt": 0.5, "gravel": 0.3, "ground": 0.1},
+    "cover": {"surface": 0.9},
+}
+FIXTURE_HIGHLIGHTS = {
+    "features": [
+        {"kind": "spring", "name": "Quelle", "lat": 46.005, "lon": 7.605,
+         "along_m": 400, "off_m": 30, "ele_m": 1510},
+        {"kind": "hut", "name": "Testhuette", "lat": 46.008, "lon": 7.607,
+         "along_m": 1200, "off_m": 80, "ele_m": 1560},
+        {"kind": "peak", "name": "Spitze", "lat": 46.01, "lon": 7.61,
+         "along_m": 1500, "off_m": 200, "ele_m": 1700},
+    ]
+}
+
+
+def _wkt(points):
+    return "MULTILINESTRING Z((" + ", ".join(
+        f"{x} {y} {z}" for x, y, z in points) + "))"
+
+
+def r1_hierarchy_check(conn):
+    """09_hierarchy.sql through the guard, then the mapping over fixtures."""
+    from route_schema import (ensure_schema, load_rows, fetch_relations,
+                              summary_from_row, detail_from_row, wire_keys,
+                              detail_keys, hierarchy_block, WIRE_KEYS,
+                              DETAIL_KEYS)
+    conn.commit()                       # nothing of ours left open
+    gaps = ensure_schema(conn)
+    print("[ok] 09_hierarchy.sql: " + (f"applied for {', '.join(gaps)}"
+                                       if gaps else "already current, no lock taken"))
+
+    def cleanup(cur):
+        cur.execute("DELETE FROM route_relations WHERE osm_id < 0")
+        cur.execute("DELETE FROM trips WHERE source = %s", (FIXTURE_SOURCE,))
+
+    with conn.cursor() as cur:
+        cleanup(cur)                    # leftovers of a run that died mid-way
+        conn.commit()
+
+        def trip(osm_id, title, points, **extra):
+            cols = {"country": "CH", "category": "hike", "title": title,
+                    "source": FIXTURE_SOURCE, "source_ref": str(osm_id),
+                    "license": "ODbL 1.0", "network": "nwn",
+                    "distance_m": 2400, "ascent_m": 120, "descent_m": 40,
+                    "raw_tags": psycopg.types.json.Jsonb(
+                        {"osmc:symbol": "red:white:red_bar"}),
+                    "way_tags": psycopg.types.json.Jsonb(FIXTURE_WAY_TAGS),
+                    "gap_info": psycopg.types.json.Jsonb({"gap_count": 0}),
+                    "highlights": psycopg.types.json.Jsonb(FIXTURE_HIGHLIGHTS)}
+            cols.update(extra)
+            names = ", ".join(cols)
+            marks = ", ".join(f"%({k})s" for k in cols)
+            cur.execute(f"INSERT INTO trips ({names}, geom) VALUES ({marks}, "
+                        f"ST_GeomFromText(%(wkt)s, 4326)) RETURNING id",
+                        {**cols, "wkt": _wkt(points)})
+            return cur.fetchone()[0]
+
+        loop_id = trip(FIX_LOOP, "Fixture loop",
+                       [(7.60, 46.00, 1500), (7.61, 46.00, 1520),
+                        (7.61, 46.01, 1540), (7.60, 46.01, 1530),
+                        (7.60, 46.00, 1500)],
+                       is_loop=True, route_type="loop",
+                       grade="easy", grade_src="tagged",
+                       hierarchy="standalone", hierarchy_src="structure")
+        p2p_id = trip(FIX_P2P, "Fixture point to point",
+                      [(7.62, 46.00, 1500), (7.63, 46.01, 1600),
+                       (7.64, 46.02, 1650)],
+                      is_loop=False, route_type="point",
+                      grade="moderate", grade_src="derived",
+                      hierarchy="standalone", hierarchy_src="structure")
+        parent_id = trip(FIX_PARENT, "Fixture Fernweg",
+                         [(7.65, 46.00, 1500), (7.66, 46.01, 1550),
+                          (7.67, 46.02, 1600), (7.68, 46.03, 1650)],
+                         is_loop=False, route_type="point",
+                         hierarchy="parent", hierarchy_src="structure",
+                         stage_count=3)
+        stage_ids = []
+        for i, osm in enumerate(FIX_STAGES, start=1):
+            x = 7.65 + 0.01 * (i - 1)
+            stage_ids.append(trip(
+                osm, f"Fixture Fernweg Etappe {i}",
+                [(x, 46.00 + 0.01 * (i - 1), 1500 + 50 * (i - 1)),
+                 (x + 0.01, 46.01 + 0.01 * (i - 1), 1550 + 50 * (i - 1))],
+                is_loop=False, route_type="point",
+                hierarchy="stage", hierarchy_src="structure",
+                parent_refs=[FIX_PARENT], stage_index=i, stage_count=3))
+
+        rel = ("INSERT INTO route_relations (activity, osm_id, country, "
+               "tags_all, members, parent_refs, child_refs, hierarchy, "
+               "hierarchy_src, stage_index, stage_count, in_store, scanned_at) "
+               "VALUES ('hiking', %s, 'CH', %s, %s, %s, %s, %s, 'structure', "
+               "%s, %s, %s, now())")
+        J = psycopg.types.json.Jsonb
+        members = ([["r", osm, ""] for osm in FIX_STAGES]
+                   + [["r", FIX_VARIANT, "alternative"]]
+                   + [["w", w, ""] for w in FIX_WAYS])
+        cur.execute(rel, (FIX_PARENT,
+                          J({"type": "superroute", "route": "hiking",
+                             "name": "Fixture Fernweg", "network": "nwn"}),
+                          J(members), [], list(FIX_STAGES) + [FIX_VARIANT],
+                          "parent", None, 3, True))
+        for i, osm in enumerate(FIX_STAGES, start=1):
+            cur.execute(rel, (osm, J({"type": "route", "route": "hiking",
+                                     "name": f"Fixture Fernweg Etappe {i}"}),
+                              J([["w", 100 + i, ""]]), [FIX_PARENT], [],
+                              "stage", i, None, True))
+        cur.execute(rel, (FIX_VARIANT, J({"type": "route", "route": "hiking",
+                                          "name": "Fixture Fernweg Variante"}),
+                          J([["w", 199, ""]]), [FIX_PARENT], [],
+                          "variant", None, None, False))
+        for osm, title in ((FIX_LOOP, "Fixture loop"),
+                           (FIX_P2P, "Fixture point to point")):
+            cur.execute(rel, (osm, J({"type": "route", "route": "hiking",
+                                     "name": title, "roundtrip": "yes"}),
+                              J([["w", 100, ""]]), [], [],
+                              "standalone", None, None, True))
+        conn.commit()
+
+        # The mapping, exactly as export_wire.Hierarchy resolves it.
+        ids = [loop_id, p2p_id, parent_id] + stage_ids
+        rows = {r["id"]: r for r in load_rows(conn, ids)}
+        by_osm = {int(r["source_ref"]): r["id"] for r in rows.values()}
+        relations = fetch_relations(conn, "hiking",
+                                    list(by_osm) + [FIX_VARIANT])
+        resolve = by_osm.get
+
+        s_loop = summary_from_row(rows[loop_id], "hiking", resolve)
+        if s_loop.loop is not True or s_loop.shape != "loop":
+            fail(f"loop fixture mapped wrong: loop={s_loop.loop} shape={s_loop.shape}")
+        if s_loop.difficulty != "easy" or s_loop.difficulty_source != "tagged":
+            fail("loop fixture lost its tagged grade")
+        s_p2p = summary_from_row(rows[p2p_id], "hiking", resolve)
+        if s_p2p.loop is not False or s_p2p.shape != "point":
+            fail("point-to-point fixture mapped wrong")
+        print("[ok] loop and point-to-point map to their shapes")
+
+        s_parent = summary_from_row(rows[parent_id], "hiking", resolve)
+        if s_parent.hierarchy != "parent" or s_parent.stage_count != 3 \
+                or s_parent.is_stage_of is not None:
+            fail(f"parent summary wrong: {s_parent}")
+        d_parent = detail_from_row(rows[parent_id], relations[FIX_PARENT],
+                                   "hiking", resolve, resolve)
+        want = [{"osm": osm, "id": sid, "i": i}
+                for i, (osm, sid) in enumerate(zip(FIX_STAGES, stage_ids), 1)]
+        if d_parent.stages != want:
+            fail(f"parent stages did not round-trip in order:\n  got  {d_parent.stages}\n  want {want}")
+        if d_parent.variants != [{"osm": FIX_VARIANT, "id": None,
+                                  "role": "alternative"}]:
+            fail(f"parent variants wrong: {d_parent.variants}")
+        if d_parent.member_way_ids != list(FIX_WAYS):
+            fail(f"member ways wrong: {d_parent.member_way_ids}")
+        if (d_parent.tags_raw or {}).get("name") != "Fixture Fernweg":
+            fail("tags_raw did not come from route_relations.tags_all")
+        print("[ok] parent round-trips with 3 stages nested in order and 1 variant")
+
+        s_mid = summary_from_row(rows[stage_ids[1]], "hiking", resolve)
+        if s_mid.is_stage_of != FIX_PARENT or s_mid.parent_ref != parent_id \
+                or s_mid.stage_index != 2 or s_mid.stage_count != 3:
+            fail(f"stage summary wrong: {s_mid}")
+        h = hierarchy_block(s_mid)
+        if h != {"cls": "stage", "of": parent_id, "i": 2, "n": 3}:
+            fail(f"h block wrong: {h}")
+        print(f"[ok] stage 2 says it is stage 2 of 3 of wire id {parent_id}")
+
+        wk = wire_keys(s_mid)
+        if tuple(wk) != WIRE_KEYS:
+            fail(f"wire keys drifted: {tuple(wk)}")
+        # `osm` is a claim that the row IS an OSM relation, so a fixture
+        # (source 'fixture') must never carry one; the OSM path is checked
+        # on a synthetic row so no real relation id is written to the lab.
+        if wk["osm"] is not None or wk["net"] != "nwn" or wk["descent_m"] != 40:
+            fail(f"wire key values wrong: {wk}")
+        s_osm = summary_from_row({"id": 1, "title": "Via Alpina", "source": "osm",
+                                  "source_ref": "12359033"}, "hiking")
+        if s_osm.osm_relation_id != 12359033 or wire_keys(s_osm)["osm"] != 12359033:
+            fail("an OSM-sourced row did not map its relation id")
+        if wk["sf"] != {"paved": 0.5, "gravel": 0.3, "path": 0.1,
+                        "other": 0.0, "unknown": 0.1}:
+            fail(f"surface summary wrong: {wk['sf']}")
+        d_mid = detail_from_row(rows[stage_ids[1]], relations[FIX_STAGES[1]],
+                                "hiking", resolve, resolve)
+        dk = detail_keys(d_mid)
+        if tuple(dk) != DETAIL_KEYS:
+            fail(f"detail keys drifted: {tuple(dk)}")
+        if not dk["huts"] or dk["huts"][0]["name"] != "Testhuette" \
+                or not dk["water_points"] or dk["water_points"][0]["name"] != "Quelle":
+            fail(f"huts / water points wrong: {dk['huts']} {dk['water_points']}")
+        if dk["gaps"] != {"n": 0}:
+            fail(f"gaps wrong: {dk['gaps']}")
+        print("[ok] wire keys osm/net/descent_m/sf/h and detail keys carry the fixtures' values")
+
+        cleanup(cur)
+        conn.commit()
+        cur.execute("SELECT count(*) FROM trips WHERE source = %s", (FIXTURE_SOURCE,))
+        left = cur.fetchone()[0]
+        cur.execute("SELECT count(*) FROM route_relations WHERE osm_id < 0")
+        left += cur.fetchone()[0]
+        if left:
+            fail(f"{left} fixture row(s) left behind")
+        print("[ok] fixtures removed, lab left as found")
+
+
 def main():
     try:
         conn = connect()
@@ -130,6 +347,8 @@ def main():
             if cur.fetchone()[0] != 0:
                 fail("trip_stops did not cascade on trip delete")
             print("[ok] cascade delete cleaned up the stops")
+
+        r1_hierarchy_check(conn)
 
     conn.close()
     print("PASS: trailslab foundation is up and behaves")

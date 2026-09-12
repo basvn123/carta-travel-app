@@ -59,6 +59,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from db import connect  # noqa: E402  (also puts pipeline/ on sys.path)
 from validate import PILOT_COUNTRIES  # noqa: E402
+import route_schema  # noqa: E402  (ROUTES.md R1: the route-layer keys)
 
 # The lake layer's card-shape helpers, loaded by path as the beach, peak and
 # trip layers load them. The frame here is the 9/4 .places-tcard strip.
@@ -153,6 +154,9 @@ TRIPS_SQL = """
            t.waymark_ref, t.publisher, t.passes,
            t.portal_ok, t.portal_source,
            t.family_key, t.family_name, t.family_size,
+           t.source_ref, t.way_tags, t.gap_info,
+           t.hierarchy, t.hierarchy_src, t.parent_refs,
+           t.stage_index, t.stage_count, t.co_located,
            eff.info AS repair_info,
            ST_NPoints(eff.geom) AS n_full,
            ST_XMin(eff.geom), ST_YMin(eff.geom),
@@ -190,6 +194,9 @@ TRIP_COLS = ("id", "country", "category", "title", "description",
              "waymark_ref", "publisher", "passes",
              "portal_ok", "portal_source",
              "family_key", "family_name", "family_size",
+             "source_ref", "way_tags", "gap_info",
+             "hierarchy", "hierarchy_src", "parent_refs",
+             "stage_index", "stage_count", "co_located",
              "repair_info",
              "n_full", "xmin", "ymin", "xmax", "ymax",
              "wire_geom", "full_geom")
@@ -651,7 +658,43 @@ def filter_model():
     }
 
 
-def wire_item(t, n_stops):
+class Hierarchy:
+    """ROUTES.md R1 context for the added keys: the route_relations rows
+    behind this run's trips and their parents, plus the two resolvers that
+    turn a relation id into something the wire can name. Empty until R2 has
+    scanned and R3 has classified, which is what makes the keys null."""
+
+    def __init__(self, conn, trips):
+        self.by_osm = {}
+        for t in trips:
+            oid = route_schema.osm_id_of(t)
+            if oid is not None:
+                self.by_osm[oid] = t
+        wanted = set(self.by_osm)
+        for t in trips:
+            wanted.update(int(p) for p in (t.get("parent_refs") or []))
+        self.relations = route_schema.fetch_relations(conn, "hiking", wanted)
+
+    def resolve_route(self, osm_id):
+        """A child relation as a wire id, when it is in this run."""
+        t = self.by_osm.get(osm_id)
+        return t["id"] if t else None
+
+    def resolve_parent(self, osm_id):
+        """A parent as a wire id when it is published here, else its name
+        when the relation graph knows it, else None."""
+        t = self.by_osm.get(osm_id)
+        if t:
+            return t["id"]
+        rel = self.relations.get(osm_id)
+        return (rel.get("tags_all") or {}).get("name") if rel else None
+
+    def relation_of(self, t):
+        oid = route_schema.osm_id_of(t)
+        return self.relations.get(oid) if oid is not None else None
+
+
+def wire_item(t, n_stops, hier=None):
     """One trip as the country file carries it: enough to list it, filter it,
     draw it and credit it, and a pointer to the rest."""
     item = {
@@ -716,10 +759,16 @@ def wire_item(t, n_stops):
     anchor = anchor_of(t["raw_tags"])
     if anchor:
         item["anchor"] = anchor
+    # ROUTES.md R1: the route-layer keys, appended after everything the app
+    # reads today so a diff of the wire shows additions only. Each is null
+    # until the pass that fills it has run (route_schema.py says which).
+    summary = route_schema.summary_from_row(
+        t, "hiking", hier.resolve_parent if hier else None)
+    item.update(route_schema.wire_keys(summary))
     return item
 
 
-def detail_item(t, stops, generated_at):
+def detail_item(t, stops, generated_at, hier=None):
     """One trip in full: the on-demand half. Full-resolution 3D geometry lives
     here and only here, one file per trip, so nothing serves the lab's
     geometry in bulk."""
@@ -806,6 +855,12 @@ def detail_item(t, stops, generated_at):
         out["image_credit"] = COMMONS_CREDIT
     if stops:
         out["stops"] = stops
+    # ROUTES.md R1, same rule as wire_item: additions only, null until filled.
+    detail = route_schema.detail_from_row(
+        t, hier.relation_of(t) if hier else None, "hiking",
+        hier.resolve_parent if hier else None,
+        hier.resolve_route if hier else None)
+    out.update(route_schema.detail_keys(detail))
     return out
 
 
@@ -981,6 +1036,9 @@ def main():
     with conn.cursor() as cur:      # labs created before the review app exists
         cur.execute(REVIEWS_DDL.read_text(encoding="utf-8"))
     conn.commit()
+    # The hierarchy columns the SELECT below reads (09_hierarchy.sql), through
+    # the guard: a lab that already has them takes no lock.
+    route_schema.ensure_schema(conn, verbose=args.verbose)
 
     statuses = ["published"] if args.no_promote else ["approved", "published"]
     trips = fetch_trips(conn, statuses, countries, args.tolerance)
@@ -992,6 +1050,9 @@ def main():
         t["n_wire"] = sum(len(part) for part in t["wire"]["coordinates"]) \
             if t["wire"]["type"].startswith("Multi") else len(t["wire"]["coordinates"])
         t["quality"] = float(t["quality"]) if t["quality"] is not None else None
+
+    hier = Hierarchy(conn, trips)
+    conn.commit()
 
     no_summary = [t for t in trips if not summary_of(t["description"])]
     if args.require_summary and no_summary:
@@ -1018,6 +1079,12 @@ def main():
         for t in trips:
             print(f"  would publish [{t['id']}] {t['country']} {t['category']}: "
                   f"{t['title'][:52]} ({t['n_wire']} of {t['n_full']} points)")
+        fill = route_schema.fill_report(
+            [route_schema.wire_keys(route_schema.summary_from_row(
+                t, "hiking", hier.resolve_parent)) for t in trips],
+            route_schema.WIRE_KEYS)
+        print("  route keys (ROUTES.md R1), rows carrying a value: "
+              + ", ".join(f"{k} {n}/{tot}" for k, (n, tot) in fill.items()))
         countries_with = sorted({t["country"] for t in trips})
         print(f"dry run: nothing promoted, nothing written. Would write "
               f"{len(countries or countries_with)} country file(s) plus "
@@ -1056,7 +1123,7 @@ def main():
     listed_total = 0
     for country in wanted:
         rows = by_country.get(country, [])
-        items = [wire_item(t, len(stops.get(t["id"], []))) for t in rows]
+        items = [wire_item(t, len(stops.get(t["id"], [])), hier) for t in rows]
         rated = [i for i in items if i.get("t") != "l"]
         listed = [i for i in items if i.get("t") == "l"]
         bad = validate_listed(listed)
@@ -1097,7 +1164,7 @@ def main():
     for t in trips:
         total_bytes += write_json(detail_dir / f"{t['id']}.json",
                                   detail_item(t, stops.get(t["id"], []),
-                                              generated_at))
+                                              generated_at, hier))
     # A held-back trip is published but deliberately absent from the wire, so
     # its detail file goes too: nothing is served that no country file lists.
     held_back = {t["id"] for t in no_summary} if args.require_summary else set()
