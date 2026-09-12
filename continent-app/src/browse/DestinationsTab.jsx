@@ -30,10 +30,11 @@ import {
 import {
   loadTripIndex, loadTrips, loadTopTrips, rankTrips,
 } from '../lib/trips.js';
-import { loadCyclingIndex, loadCycling } from '../lib/cycling.js';
+import { loadCyclingIndex, loadCycling, loadTopCycling } from '../lib/cycling.js';
 import {
   countryPhrase, listedLine, paceLine, surfaceLine, whyLines,
 } from '../lib/cycleStory.js';
+import { cycleRating, routeTitle, paceLine as cyclePaceLine, bikeLine as cycleBikeLine } from '../lib/cycleStory.js';
 import {
   tripHeadline, shapeLabel, transportLabel, seasonLabel, tripTags, cardThumb,
 } from '../lib/tripStory.js';
@@ -608,6 +609,96 @@ function TripCard({ card, km, onOpen, t }) {
  * scored it that way, so the list can be read as an argument rather than as a
  * gallery.
  */
+/**
+ * A cycle route card, on the same photo-card template as a beach, a lake
+ * or a peak: the picture, the name over it, where it is, the badge on the
+ * right. The two figures a rider asks first (length and climb) take the
+ * chip slot the other layers use for distance-from-here, and the evidence
+ * line underneath the name is composed from the same reason codes the
+ * route page explains in full. A listed row has no score, and says so in
+ * the badge slot rather than leaving a gap.
+ */
+function CycleCard({ r, countryName, onOpen, t }) {
+  const rating = r.score != null ? cycleRating(r, t) : null;
+  const evidence = (whyLines(r.why, t, 2) || []).map((line) => line.text).join(', ');
+  return (
+    <button
+      type="button"
+      className={`places-bcard cycle-card${rating ? '' : ' cycle-card-listed'}`}
+      data-testid={rating ? 'cycle-card' : 'cycle-listed-card'}
+      onClick={() => onOpen(r)}
+    >
+      {r.img
+        ? <img className="places-card-img" src={r.img} alt="" loading="lazy" />
+        : <span className="places-card-img places-card-noimg" aria-hidden="true" />}
+      <span className="places-card-scrim" aria-hidden="true" />
+      <span className="places-card-km">
+        {`${r.km} km`}
+        {r.asc != null ? `, ${r.asc} m` : ''}
+      </span>
+      <span className="places-card-overlay">
+        <span className="places-card-main">
+          <span className="places-card-name">{routeTitle(r, t)}</span>
+          {countryName && (
+            <span className="places-bcard-where">
+              <MapPinIcon size={12} />
+              {countryName}
+            </span>
+          )}
+          {evidence && (
+            <span className="places-bcard-tags"><span>{evidence}</span></span>
+          )}
+        </span>
+        <span className="places-card-right">
+          {rating
+            ? <RatingBadge rating={rating} size="xs" showGem={false} />
+            : <span className="cycle-card-unrated">{t('cycle.notScored')}</span>}
+          <ChevronRightIcon size={15} className="places-card-chev" />
+        </span>
+      </span>
+    </button>
+  );
+}
+
+/** A composed tour: days and length in the chip, pace and bike as the
+ *  evidence line, the overnight towns as where it is. */
+function CycleTourCard({ tr, countryName, onOpen, t }) {
+  const towns = (tr.towns || []).slice(0, 3).join(', ');
+  return (
+    <button
+      type="button"
+      className="places-bcard cycle-tourcard"
+      data-testid="cycle-tourcard"
+      onClick={() => onOpen(tr)}
+    >
+      {tr.img
+        ? <img className="places-card-img" src={tr.img} alt="" loading="lazy" />
+        : <span className="places-card-img places-card-noimg" aria-hidden="true" />}
+      <span className="places-card-scrim" aria-hidden="true" />
+      <span className="places-card-km">
+        {t('cycle.days', { n: tr.days })}
+        {`, ${Math.round(tr.km)} km`}
+      </span>
+      <span className="places-card-overlay">
+        <span className="places-card-main">
+          <span className="places-card-name">{tr.title}</span>
+          <span className="places-bcard-where">
+            <MapPinIcon size={12} />
+            {[countryName, towns].filter(Boolean).join(', ')}
+          </span>
+          <span className="places-bcard-tags">
+            <span>{cyclePaceLine(tr.pace, t)}</span>
+            {tr.bike && <span>{cycleBikeLine(tr.bike, t)}</span>}
+          </span>
+        </span>
+        <span className="places-card-right">
+          <ChevronRightIcon size={15} className="places-card-chev" />
+        </span>
+      </span>
+    </button>
+  );
+}
+
 function BeachCard({ beach, km, countryName, onOpen, t }) {
   const shot = beach.images?.[0];
   const tags = beachTags(beach, t, km == null ? 3 : 2);
@@ -1027,6 +1118,7 @@ export function DestinationsTab({
   // one, because a listed row carries no score and must never interleave into
   // a ranked list (master spec section 3).
   const [cycleIndex, setCycleIndex] = useState(null);
+  const [cycleTop, setCycleTop] = useState(null);
   const [countryCycling, setCountryCycling] = useState({});   // cc -> bundle
   const [cyclingLoading, setCyclingLoading] = useState(false);
   const [pageCycle, setPageCycle] = useState(null);
@@ -1997,7 +2089,10 @@ export function DestinationsTab({
   const wantCycleCountry = (country && cycleCountries.has(country) ? country : null)
     || queryCycleCountry
     || (nearPlace && cycleCountries.has(nearPlace.iso2) ? nearPlace.iso2 : null)
-    || (cycleIndex?.countries?.[0]?.country ?? null);
+    // No country chosen means the Europe-wide top file, never the first
+    // country in the index: that default opened the tab on one Andorran
+    // route under a picker that said "All countries".
+    || null;
 
   useEffect(() => {
     if (!isCycleCat || cycleIndex) return undefined;
@@ -2005,6 +2100,18 @@ export function DestinationsTab({
     loadCyclingIndex().then((idx) => { if (live) setCycleIndex(idx); });
     return () => { live = false; };
   }, [isCycleCat, cycleIndex]);
+
+  useEffect(() => {
+    if (!isCycleCat || wantCycleCountry || cycleTop) return undefined;
+    let live = true;
+    setCyclingLoading(true);
+    loadTopCycling().then((top) => {
+      if (!live) return;
+      setCycleTop(top || { routes: [], listed: [], tours: [] });
+      setCyclingLoading(false);
+    });
+    return () => { live = false; };
+  }, [isCycleCat, wantCycleCountry, cycleTop]);
 
   useEffect(() => {
     if (!isCycleCat || !wantCycleCountry || countryCycling[wantCycleCountry]) {
@@ -2020,8 +2127,8 @@ export function DestinationsTab({
     return () => { live = false; };
   }, [isCycleCat, wantCycleCountry, countryCycling]);
 
-  const cycleBundle = isCycleCat && wantCycleCountry
-    ? countryCycling[wantCycleCountry] : null;
+  const cycleBundle = !isCycleCat ? null
+    : wantCycleCountry ? countryCycling[wantCycleCountry] : cycleTop;
 
   const cycleRows = useMemo(() => {
     if (!isCycleCat || !cycleBundle) return null;
@@ -3201,36 +3308,24 @@ export function DestinationsTab({
 
             {!cyclingLoading && cycleRows && (
               <>
+                {!wantCycleCountry && (
+                  <p className="cycle-topnote" data-testid="cycle-top-note">
+                    {t('cycle.topNote')}
+                  </p>
+                )}
                 {cycleRows.tours.length > 0 && (
                   <>
                     <p className="places-bandhead">{t('cycle.toursTitle')}</p>
-                    {cycleRows.tours.slice(0, visible).map((tr) => (
-                      <button
-                        type="button"
+                    {cycleRows.tours.slice(0, Math.max(visible, 60)).map((tr) => (
+                      <CycleTourCard
                         key={tr.slug}
-                        className="places-tcard cycle-tourcard"
-                        data-testid="cycle-tourcard"
-                        onClick={() => setPageCycle({ tourSlug: tr.slug,
-                          country: wantCycleCountry })}
-                      >
-                        {tr.img && (
-                          <img className="cycle-card-img" src={tr.img} alt=""
-                            loading="lazy" />
-                        )}
-                        <span className="cycle-tourcard-title">{tr.title}</span>
-                        <span className="cycle-tourcard-meta">
-                          {t('cycle.days', { n: tr.days })}
-                          {', '}
-                          {`${tr.km} km`}
-                          {tr.asc != null ? `, ${tr.asc} m` : ''}
-                        </span>
-                        <span className="cycle-tourcard-pace">
-                          {paceLine(tr.pace, t)}
-                        </span>
-                        <span className="cycle-tourcard-towns">
-                          {(tr.towns || []).filter(Boolean).join(', ')}
-                        </span>
-                      </button>
+                        tr={tr}
+                        t={t}
+                        countryName={countryName(tr.cc || wantCycleCountry)}
+                        onOpen={() => setPageCycle({
+                          tourSlug: tr.slug, country: tr.cc || wantCycleCountry,
+                        })}
+                      />
                     ))}
                   </>
                 )}
@@ -3238,39 +3333,16 @@ export function DestinationsTab({
                 {cycleRows.routes.length > 0 && (
                   <>
                     <p className="places-bandhead">{t('cycle.routesTitle')}</p>
-                    {cycleRows.routes.slice(0, visible).map((r) => (
-                      <button
-                        type="button"
+                    {cycleRows.routes.slice(0, Math.max(visible, 60)).map((r) => (
+                      <CycleCard
                         key={r.id}
-                        className="places-tcard cycle-card"
-                        data-testid="cycle-card"
-                        onClick={() => setPageCycle({ routeId: r.id,
-                          country: wantCycleCountry })}
-                      >
-                        {r.img && (
-                          <img className="cycle-card-img" src={r.img} alt=""
-                            loading="lazy" />
-                        )}
-                        <span className="cycle-card-name">{r.name}</span>
-                        <span className="cycle-card-meta">
-                          {`${r.km} km`}
-                          {r.asc != null ? `, ${r.asc} m` : ''}
-                        </span>
-                        {r.score != null && (
-                          <span className="cycle-card-score"
-                            data-testid="cycle-card-score">{r.score}</span>
-                        )}
-                        <span className="cycle-card-surface">
-                          {surfaceLine({
-                            paved_share: r.paved,
-                            surface_known_share: r.paved == null ? 0 : 1,
-                          }, t)}
-                        </span>
-                        <span className="cycle-card-why">
-                          {(whyLines(r.why, t, 2) || [])
-                            .map((line) => line.text).join(', ')}
-                        </span>
-                      </button>
+                        r={r}
+                        t={t}
+                        countryName={countryName(r.cc || wantCycleCountry)}
+                        onOpen={() => setPageCycle({
+                          routeId: r.id, country: r.cc || wantCycleCountry,
+                        })}
+                      />
                     ))}
                   </>
                 )}
@@ -3281,42 +3353,16 @@ export function DestinationsTab({
                       data-testid="cycle-listed-head">
                       {t('cycle.listedHeading')}
                     </p>
-                    {cycleRows.listed.slice(0, visible).map((r) => (
-                      <button
-                        type="button"
+                    {cycleRows.listed.slice(0, Math.max(visible, 60)).map((r) => (
+                      <CycleCard
                         key={r.id}
-                        className="places-tcard cycle-card cycle-card-listed"
-                        data-testid="cycle-listed-card"
-                        onClick={() => setPageCycle({ routeId: r.id,
-                          country: wantCycleCountry })}
-                      >
-                        {/* A listed row is unscored, not unmeasured: the
-                            wire carries its climb, surface and evidence
-                            just as a rated row does. Showing only the name
-                            and a length read as an empty record. */}
-                        {r.img && (
-                          <img className="cycle-card-img" src={r.img} alt=""
-                            loading="lazy" />
-                        )}
-                        <span className="cycle-card-name">{r.name}</span>
-                        <span className="cycle-card-meta">
-                          {`${r.km} km`}
-                          {r.asc != null ? `, ${r.asc} m` : ''}
-                        </span>
-                        <span className="cycle-card-surface">
-                          {surfaceLine({
-                            paved_share: r.paved,
-                            surface_known_share: r.paved == null ? 0 : 1,
-                          }, t)}
-                        </span>
-                        {r.why && r.why.length > 0 && (
-                          <span className="cycle-card-why">
-                            {(whyLines(r.why, t, 2) || [])
-                              .map((line) => line.text).join(', ')}
-                          </span>
-                        )}
-                        <span className="cycle-card-unrated">{listedLine(t)}</span>
-                      </button>
+                        r={r}
+                        t={t}
+                        countryName={countryName(r.cc || wantCycleCountry)}
+                        onOpen={() => setPageCycle({
+                          routeId: r.id, country: r.cc || wantCycleCountry,
+                        })}
+                      />
                     ))}
                   </>
                 )}
@@ -3532,6 +3578,7 @@ export function DestinationsTab({
           <CycleFamilyPage
             familyRef={pageCycle.familyRef}
             onClose={() => setPageCycle(null)}
+            onOpenRoute={(sec) => setPageCycle({ routeId: sec.id, country: sec.cc })}
           />
         </Suspense>
       )}

@@ -1,4 +1,6 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import maplibregl from 'maplibre-gl';
+import 'maplibre-gl/dist/maplibre-gl.css';
 import { useI18n } from '../i18n/index.jsx';
 import { count } from '../lib/format.js';
 import { NearbyOutdoors } from './NearbyOutdoors.jsx';
@@ -6,9 +8,11 @@ import { loadCycling } from '../lib/cycling.js';
 import { loadCycleFamily, loadCycleRoute, loadCycleTour, gpxCredit }
   from '../lib/cycling.js';
 import {
-  agreementLine, bailoutLine, bikeLine, countryPhrase, listedLine, overnightLine, paceLine, safetyLine, seasonLine, stageLine, surfaceLine, trafficFreeLine, whyLines,
+  agreementLine, bailoutLine, bikeLine, countryPhrase, cycleRating, listedLine,
+  overnightLine, paceLine, routeTitle, safetyLine, seasonLine, stageLine,
+  surfaceLine, trafficFreeLine, whyLines,
 } from '../lib/cycleStory.js';
-import { ScoreChip } from '../components/RatingBadge.jsx';
+import { RatingBadge } from '../components/RatingBadge.jsx';
 import { CountryFlag } from '../components/CountryFlag.jsx';
 import {
   ArrowLeftIcon, CameraIcon, BikeIcon, TrainIcon, ClockIcon,
@@ -28,8 +32,9 @@ import {
  * itinerary cannot.
  *
  * A ROUTE is the catalogue entry underneath: the line, what it is surfaced
- * with, how much traffic is on it, and whether the official source draws the
- * same line we do.
+ * with, how much traffic is on it, where it climbs, which towns it passes
+ * with a bed or a tap, and whether the official source draws the same line
+ * we do.
  *
  * Three things this page is careful about.
  *
@@ -46,11 +51,14 @@ import {
  *   OSM-based methodology computes infrastructure ratios and deliberately
  *   declines to define a safety score, so there is no standard being claimed.
  *
- * No maplibre here, the same call the beach, lake and mountain pages make:
- * this is opened from a list and read on a phone, and a map library to draw
- * one line would be the heaviest thing on the page. The line is drawn as an
- * inline SVG from the geometry already in the wire.
+ * The route is drawn on a real map, the same lazy maplibre the trail page
+ * uses. This whole file is a lazy chunk, so the library loads only when a
+ * route is actually opened and never on the list. A cycle route is a line on
+ * terrain, and the inline sketch of its shape that used to sit here said
+ * nothing about where it went.
  */
+
+const MAP_STYLE = 'https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json';
 
 // The month names the mountain layer already ships in all six languages.
 // A seventh copy of "January" would only be a seventh thing to translate.
@@ -58,45 +66,196 @@ const MONTHS = ['mtn.monthJan', 'mtn.monthFeb', 'mtn.monthMar', 'mtn.monthApr',
   'mtn.monthMay', 'mtn.monthJun', 'mtn.monthJul', 'mtn.monthAug',
   'mtn.monthSep', 'mtn.monthOct', 'mtn.monthNov', 'mtn.monthDec'];
 
-/** The route line as an inline path, fitted to a 320x120 box. */
-function linePath(geometry, w = 320, h = 120, pad = 6) {
-  const parts = geometry && geometry.type === 'MultiLineString'
-    ? geometry.coordinates
-    : geometry && geometry.type === 'LineString' ? [geometry.coordinates] : [];
-  const pts = parts.flat();
-  if (pts.length < 2) return null;
-  let minX = Infinity; let minY = Infinity; let maxX = -Infinity; let maxY = -Infinity;
-  for (const [x, y] of pts) {
-    if (x < minX) minX = x;
-    if (x > maxX) maxX = x;
-    if (y < minY) minY = y;
-    if (y > maxY) maxY = y;
+/** A design token as a concrete colour: MapLibre paint properties cannot read
+ *  a CSS variable, and the route should not carry its own private palette. */
+function token(name, fallback) {
+  if (typeof document === 'undefined') return fallback;
+  const v = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+  return v || fallback;
+}
+
+/** The line parts of a GeoJSON geometry, each a list of [lon, lat]. */
+function geometryParts(geometry) {
+  if (!geometry) return [];
+  if (geometry.type === 'MultiLineString') return geometry.coordinates || [];
+  if (geometry.type === 'LineString') return [geometry.coordinates || []];
+  return [];
+}
+
+const finitePair = ([x, y]) => Number.isFinite(x) && Number.isFinite(y);
+
+/**
+ * The map. Created once per mount and left alone; the line, the two end
+ * pins and the framing are redrawn whenever the geometry arrives or changes.
+ * A NaN anywhere in a coordinate crashes maplibre outright, so every part is
+ * filtered before it reaches the source.
+ */
+function useRouteMap(mapEl, geometry, bbox) {
+  const mapRef = useRef(null);
+
+  useEffect(() => {
+    if (mapRef.current || !mapEl.current) return undefined;
+    const map = new maplibregl.Map({
+      container: mapEl.current,
+      style: MAP_STYLE,
+      center: [12, 48],
+      zoom: 4,
+      attributionControl: { compact: true },
+    });
+    map.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'top-right');
+    map.on('load', () => {
+      const empty = { type: 'Feature', properties: {}, geometry: { type: 'MultiLineString', coordinates: [] } };
+      map.addSource('cycle', { type: 'geojson', data: empty });
+      map.addLayer({
+        id: 'cycle-casing', type: 'line', source: 'cycle',
+        paint: { 'line-color': '#ffffff', 'line-width': 7, 'line-opacity': 0.9 },
+        layout: { 'line-cap': 'round', 'line-join': 'round' },
+      });
+      map.addLayer({
+        id: 'cycle-line', type: 'line', source: 'cycle',
+        paint: { 'line-color': token('--accent', '#e05a47'), 'line-width': 3.4 },
+        layout: { 'line-cap': 'round', 'line-join': 'round' },
+      });
+      map.resize();
+      map._cycleReady = true;
+      if (map._draw) map._draw();
+    });
+    mapRef.current = map;
+    return () => { map.remove(); mapRef.current = null; };
+  }, [mapEl]);
+
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map) return;
+    const parts = geometryParts(geometry)
+      .filter((p) => Array.isArray(p) && p.length > 1 && p.every(finitePair));
+    const draw = () => {
+      const src = map.getSource('cycle');
+      if (src) {
+        src.setData({
+          type: 'Feature', properties: {},
+          geometry: { type: 'MultiLineString', coordinates: parts },
+        });
+      }
+      for (const m of map._cycleMarkers || []) m.remove();
+      map._cycleMarkers = [];
+      if (parts.length) {
+        const first = parts[0][0];
+        const lastPart = parts[parts.length - 1];
+        const last = lastPart[lastPart.length - 1];
+        // The pin is styled on an INNER child: maplibre owns the marker
+        // element's transform and clobbers anything set on it directly.
+        for (const [lngLat, cls] of [[first, 'cycle-map-pin'], [last, 'cycle-map-pin end']]) {
+          const el = document.createElement('div');
+          const dot = document.createElement('span');
+          dot.className = cls;
+          el.appendChild(dot);
+          map._cycleMarkers.push(
+            new maplibregl.Marker({ element: el }).setLngLat(lngLat).addTo(map),
+          );
+        }
+      }
+      let [w, s, e, n] = Array.isArray(bbox) ? bbox : [];
+      if (![w, s, e, n].every(Number.isFinite) && parts.length) {
+        w = Infinity; s = Infinity; e = -Infinity; n = -Infinity;
+        for (const part of parts) {
+          for (const [x, y] of part) {
+            if (x < w) w = x;
+            if (x > e) e = x;
+            if (y < s) s = y;
+            if (y > n) n = y;
+          }
+        }
+      }
+      if ([w, s, e, n].every(Number.isFinite)) {
+        map.fitBounds([[w, s], [e, n]], { padding: 36, duration: 0, maxZoom: 13 });
+      }
+    };
+    map._draw = draw;
+    if (map._cycleReady) draw();
+  }, [geometry, bbox]);
+}
+
+/** The elevation profile, the same instrument chart the trail page draws. */
+function ElevationChart({ elevation, t }) {
+  const profile = elevation && elevation.profile;
+  if (!Array.isArray(profile) || profile.length < 2) return null;
+  const W = 320; const H = 84; const PAD = 2;
+  const dMax = profile[profile.length - 1][0] || 1;
+  let eMin = elevation.ele_min_m;
+  let eMax = elevation.ele_max_m;
+  if (!Number.isFinite(eMin) || !Number.isFinite(eMax)) {
+    eMin = Infinity; eMax = -Infinity;
+    for (const p of profile) {
+      if (p[1] < eMin) eMin = p[1];
+      if (p[1] > eMax) eMax = p[1];
+    }
   }
-  // Latitude degrees are longer than longitude degrees away from the equator,
-  // so a raw lon/lat box draws Scotland squashed. One cosine keeps it honest.
-  const kx = Math.cos(((minY + maxY) / 2) * Math.PI / 180) || 1;
-  const spanX = Math.max(1e-6, (maxX - minX) * kx);
-  const spanY = Math.max(1e-6, maxY - minY);
-  const scale = Math.min((w - pad * 2) / spanX, (h - pad * 2) / spanY);
-  const ox = (w - spanX * scale) / 2;
-  const oy = (h - spanY * scale) / 2;
-  const px = (x) => ox + (x - minX) * kx * scale;
-  const py = (y) => h - (oy + (y - minY) * scale);
-  return parts
-    .filter((part) => part.length > 1)
-    .map((part) => part
-      .map(([x, y], i) => `${i ? 'L' : 'M'}${px(x).toFixed(1)} ${py(y).toFixed(1)}`)
-      .join(''))
-    .join(' ');
+  const span = Math.max(1, eMax - eMin);
+  const x = (d) => PAD + Math.min(1, d / dMax) * (W - 2 * PAD);
+  const y = (e) => H - PAD - ((e - eMin) / span) * (H - 2 * PAD);
+  const pts = profile.map(([d, e]) => `${x(d).toFixed(1)},${y(e).toFixed(1)}`);
+  return (
+    <div className="tpage-elev cycle-elev" data-testid="cycle-elev">
+      <svg viewBox={`0 0 ${W} ${H}`} className="tpage-elev-svg" role="img"
+        aria-label={t('cycle.elevTitle')} preserveAspectRatio="none">
+        <polyline points={`${PAD},${H - PAD} ${pts.join(' ')} ${W - PAD},${H - PAD}`} className="tpage-elev-area" />
+        <polyline points={pts.join(' ')} className="tpage-elev-line" vectorEffect="non-scaling-stroke" />
+      </svg>
+      <div className="tpage-elev-axis">
+        <span>{Math.round(eMin)} m</span>
+        <span>{Math.round(eMax)} m {t('cycle.elevMax')}</span>
+      </div>
+    </div>
+  );
+}
+
+/**
+ * The towns the line passes, with what each one has. The pipeline positions
+ * every service town along the route (`at_m`), so this reads in riding
+ * order. A long route can pass sixty towns; a dozen spread along it is what
+ * fits on a phone, always keeping the last one so the end is named.
+ */
+function Towns({ services, t }) {
+  const rows = (services || [])
+    .filter((s) => s && s.name && (
+      (s.sleep || 0) > 0 || s.station || (s.shop || 0) > 0
+      || (s.water || 0) > 0 || s.camp))
+    .sort((a, b) => (a.at_m || 0) - (b.at_m || 0));
+  if (!rows.length) return null;
+  const MAX = 12;
+  const step = Math.ceil(rows.length / MAX);
+  const shown = rows.length > MAX
+    ? rows.filter((_, i) => i % step === 0 || i === rows.length - 1)
+    : rows;
+  return (
+    <ul className="cycle-towns" data-testid="cycle-towns">
+      {shown.map((s) => {
+        const has = [
+          (s.sleep || 0) > 0 && t('cycle.townBeds', { n: s.sleep }),
+          s.camp && t('cycle.townCamp'),
+          (s.shop || 0) > 0 && t('cycle.townShop'),
+          (s.water || 0) > 0 && t('cycle.townWater'),
+          s.station && t('cycle.townStation'),
+        ].filter(Boolean);
+        return (
+          <li key={`${s.name}-${s.at_m}`} className="cycle-town">
+            <span className="cycle-town-km">
+              {t('cycle.atKm', { km: Math.round((s.at_m || 0) / 1000) })}
+            </span>
+            <span className="cycle-town-name">{s.name}</span>
+            <span className="cycle-town-has">{has.join(', ')}</span>
+          </li>
+        );
+      })}
+    </ul>
+  );
 }
 
 /** Build a GPX with the credit inside the file, and hand it to the browser. */
-function downloadGpx(route) {
+function downloadGpx(route, name) {
   const credit = gpxCredit(route);
-  const geometry = (route.osm && route.osm.geometry) || null;
-  const parts = geometry && geometry.type === 'MultiLineString'
-    ? geometry.coordinates
-    : geometry && geometry.type === 'LineString' ? [geometry.coordinates] : [];
+  const parts = geometryParts(route.osm && route.osm.geometry);
   if (!parts.length) return;
   const esc = (s) => String(s || '').replace(/[<>&]/g,
     (c) => ({ '<': '&lt;', '>': '&gt;', '&': '&amp;' }[c]));
@@ -108,14 +267,14 @@ function downloadGpx(route) {
   const gpx = `<?xml version="1.0" encoding="UTF-8"?>
 <gpx version="1.1" creator="Carta" xmlns="http://www.topografix.com/GPX/1/1">
  <metadata>
-  <name>${esc(route.name)}</name>
+  <name>${esc(name)}</name>
   <desc>${esc(credit.author)}</desc>
   <copyright author="${esc(credit.author)}">
    ${credit.licenseUrl ? `<license>${esc(credit.licenseUrl)}</license>` : ''}
   </copyright>
  </metadata>
  <trk>
-  <name>${esc(route.name)}</name>
+  <name>${esc(name)}</name>
   <desc>${esc(credit.author)}</desc>
 ${segs}
  </trk>
@@ -124,7 +283,7 @@ ${segs}
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
-  a.download = `${(route.name || 'route').replace(/[^\w-]+/g, '_')}.gpx`;
+  a.download = `${(name || 'route').replace(/[^\w-]+/g, '_')}.gpx`;
   document.body.appendChild(a);
   a.click();
   a.remove();
@@ -155,7 +314,7 @@ function Stages({ stages, t }) {
     <ol className="cycle-stages" data-testid="cycle-stages">
       {stages.map((s) => (
         <li key={s.d} className="cycle-stage" data-testid="cycle-stage">
-          <p className="cycle-stage-day">{`${t('cycle.stagesTitle')} ${s.d}`}</p>
+          <p className="cycle-stage-day">{t('cycle.dayN', { n: s.d })}</p>
           <p className="cycle-stage-line">{stageLine(s, t)}</p>
           <p className="cycle-stage-sleep">{overnightLine(s.to, t)}</p>
           <p className="cycle-stage-meta">
@@ -185,8 +344,11 @@ function Stages({ stages, t }) {
  * not a route: there is no geometry to draw, no score, and none of the route
  * page's hooks apply. Folding it into CyclePage as an early return broke the
  * rules of hooks, which was the design telling us it is a different thing.
+ *
+ * A published section is a door: it opens the route page underneath, which
+ * is the only way the manifest earns its place on a list.
  */
-export function CycleFamilyPage({ familyRef, onClose }) {
+export function CycleFamilyPage({ familyRef, onClose, onOpenRoute }) {
   const { t } = useI18n();
   const [family, setFamily] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -202,26 +364,31 @@ export function CycleFamilyPage({ familyRef, onClose }) {
     return () => { live = false; };
   }, [familyRef]);
 
-  // A EUROVELO FAMILY is its own kind of page: a manifest of the country
-  // sections that make one continental route up, not a route itself. It
-  // renders before the route branch because there is no geometry to draw and
-  // nothing below this point applies to it.
-    return (
-      <div className="cycle-page" data-testid="cycle-family-page">
-        <button type="button" className="cycle-close" onClick={onClose}
-                aria-label={t('common.close')}>{'×'}</button>
+  return (
+    <div className="cycle-page" data-testid="cycle-family-page">
+      <div className="cycle-inner">
+        <header className="cycle-head">
+          <button type="button" className="cycle-back" onClick={onClose}
+            aria-label={t('common.close')}>
+            <ArrowLeftIcon size={16} />
+          </button>
+          <div className="cycle-title">
+            <h1>{(family && family.ref) || familyRef}</h1>
+            {family && (
+              <p className="cycle-sub">
+                {t('cycle.familySummary', {
+                  km: count(family.km),
+                  sections: family.n_sections,
+                  countries: countryPhrase((family.countries || []).length, t),
+                })}
+              </p>
+            )}
+          </div>
+        </header>
         {loading && <p className="places-empty">{'…'}</p>}
         {!loading && !family && <p className="places-empty">{t('cycle.familyGone')}</p>}
         {!loading && family && (
           <>
-            <h2 className="cycle-title">{family.ref}</h2>
-            <p className="cycle-sub">
-              {t('cycle.familySummary', {
-                km: count(family.km),
-                sections: family.n_sections,
-                countries: countryPhrase(family.countries.length, t),
-              })}
-            </p>
             {family.ecf_agreement != null && (
               <p className="cycle-note">
                 {t('cycle.familyEcf',
@@ -230,26 +397,40 @@ export function CycleFamilyPage({ familyRef, onClose }) {
             )}
             <p className="places-bandhead">{t('cycle.familySections')}</p>
             <ul className="cycle-famlist">
-              {(family.sections || []).map((sec) => (
-                <li key={sec.id} className="cycle-famitem">
-                  <CountryFlag country={sec.cc} size={14} />
-                  <span className="cycle-famitem-name">
-                    {sec.name || `${sec.cc} ${sec.km} km`}
-                  </span>
-                  <span className="cycle-famitem-km">{sec.km} km</span>
-                  {!sec.published && (
-                    <span className="cycle-famitem-un">
-                      {t('cycle.familyUnpublished')}
+              {(family.sections || []).map((sec) => {
+                const inner = (
+                  <>
+                    <CountryFlag country={sec.cc} size={14} />
+                    <span className="cycle-famitem-name">
+                      {sec.name || `${sec.cc} ${sec.km} km`}
                     </span>
-                  )}
-                </li>
-              ))}
+                    <span className="cycle-famitem-km">{sec.km} km</span>
+                    {!sec.published && (
+                      <span className="cycle-famitem-un">
+                        {t('cycle.familyUnpublished')}
+                      </span>
+                    )}
+                  </>
+                );
+                return sec.published && onOpenRoute ? (
+                  <li key={sec.id} className="cycle-famitem cycle-famitem-open">
+                    <button type="button" className="cycle-famitem-btn"
+                      data-testid="cycle-famitem-open"
+                      onClick={() => onOpenRoute(sec)}>
+                      {inner}
+                    </button>
+                  </li>
+                ) : (
+                  <li key={sec.id} className="cycle-famitem">{inner}</li>
+                );
+              })}
             </ul>
             <p className="cycle-credit">{family.attribution}</p>
           </>
         )}
       </div>
-    );
+    </div>
+  );
 }
 
 
@@ -303,171 +484,172 @@ export function CyclePage({ routeId, tourSlug, country, countryName,
   const monthName = useMemo(() => (m) => t(MONTHS[(m - 1) % 12]), [t]);
 
   const carta = (route && route.carta) || {};
-  const path = useMemo(
-    () => linePath((tour && tour.geometry) || (route && route.osm && route.osm.geometry)),
-    [tour, route],
-  );
+  const geometry = (tour && tour.geometry)
+    || (route && route.osm && route.osm.geometry) || null;
+  const bbox = (tour && tour.bbox) || (route && route.bbox) || null;
+  const mapEl = useRef(null);
+  useRouteMap(mapEl, geometry, bbox);
+
   const why = useMemo(() => whyLines(carta.reasons, t), [carta.reasons, t]);
   const rated = Boolean(route && route.t === 'r');
+  const rating = rated && carta.score != null
+    ? cycleRating({ score: carta.score }, t) : null;
+  const title = (tour && tour.title) || (route && routeTitle(route, t)) || '…';
+  const cc = (tour && tour.country) || (route && route.country) || country;
+  // The ref is worth a word under the title unless the title IS the ref,
+  // which is what a route with no name of its own gets.
+  const refLine = route && route.ref && !String(title).includes(route.ref)
+    ? `, ${route.ref}` : '';
 
   return (
     <div className="cycle-page" data-testid="cycle-page">
-      <header className="cycle-head">
-        <button type="button" className="cycle-back" onClick={onClose}>
-          <ArrowLeftIcon size={16} />
-        </button>
-        <div className="cycle-title">
-          <h1 data-testid="cycle-name">
-            {(tour && tour.title) || (route && route.name) || '…'}
-          </h1>
-          <p className="cycle-sub">
-            {/* The prop is `country`, not `cc`: CountryFlag returns null for
-                an unknown code, so passing the wrong prop name failed
-                silently and every flag on this page was simply absent. */}
-            <CountryFlag
-              country={(tour && tour.country) || (route && route.country) || country}
-              size={15}
-            />
-            {' '}
-            {countryName}
-            {route && route.ref ? `, ${route.ref}` : ''}
-          </p>
-        </div>
-        {/* ScoreChip takes a RATING OBJECT and reads `.score` off it, so
-            passing the bare number made it return null and no cycling page
-            has ever shown its score. Tier bands match the other layers. */}
-        {rated && carta.score != null && (
-          <span data-testid="cycle-score">
-            <ScoreChip
-              rating={{
-                score: carta.score,
-                tier: carta.score >= 8 ? 3 : carta.score >= 7 ? 2 : 1,
-              }}
-              size="lg"
-            />
-          </span>
-        )}
-      </header>
-
-      {loading && <p className="places-empty">{'…'}</p>}
-
-      {!loading && !route && !tour && (
-        <p className="places-empty">{t('cycle.emptyCountry')}</p>
-      )}
-
-      {path && (
-        <svg className="cycle-line" viewBox="0 0 320 120" role="img"
-          aria-label={t('cycle.openRoute')} data-testid="cycle-line">
-          <path d={path} fill="none" stroke="currentColor" strokeWidth="2"
-            strokeLinejoin="round" strokeLinecap="round" />
-        </svg>
-      )}
-
-      {tour && (
-        <section className="cycle-tour" data-testid="cycle-tour">
-          <p className="cycle-facts">
-            <ClockIcon size={13} />
-            {' '}
-            {t('cycle.days', { n: tour.days })}
-            {', '}
-            {`${Math.round(tour.km)} km`}
-            {tour.asc != null ? `, ${tour.asc} m` : ''}
-          </p>
-          <p className="cycle-pace">{paceLine(tour.pace, t)}</p>
-          <p className="cycle-bike">
-            <BikeIcon size={13} />
-            {' '}
-            {bikeLine(tour.bike, t)}
-          </p>
-          {seasonLine(tour.season, t, monthName) && (
-            <p className="cycle-season" data-testid="cycle-season">
-              {seasonLine(tour.season, t, monthName)}
-            </p>
-          )}
-          <h2>{t('cycle.stagesTitle')}</h2>
-          <Stages stages={tour.stages} t={t} />
-          {tour.checks && (
-            <details className="cycle-checks" data-testid="cycle-checks">
-              <summary>{t('cycle.checksTitle')}</summary>
-              <p>{t('cycle.checksNote')}</p>
-              <ul>
-                {(tour.checks.passed || []).map((c) => <li key={c}>{c}</li>)}
-              </ul>
-            </details>
-          )}
-
-          {/* A tour has to be able to show the ride: four photographs are
-              now one of the ten checks it passed to get here, drawn from
-              the routes it rides and ordered along them. */}
-          <Photos images={tour.images} />
-        </section>
-      )}
-
-      {route && (
-        <section className="cycle-route" data-testid="cycle-route">
-          {/* The measured facts. A tour has had these since it shipped and a
-              ROUTE never did, so the page opened on a route without saying
-              how long it is or how much it climbs, which are the first two
-              questions anyone asks of a ride. */}
-          <p className="cycle-facts" data-testid="cycle-route-facts">
-            {route.km != null && <span>{`${route.km} km`}</span>}
-            {route.asc != null && <span>{`${route.asc} m`}</span>}
-            {carta.surface?.bike && <span>{bikeLine(carta.surface.bike, t)}</span>}
-          </p>
-          {!rated && <p className="cycle-unrated">{listedLine(t)}</p>}
-          {why.length > 0 && (
-            <>
-              <h2>{t('cycle.whyTitle')}</h2>
-              <ul className="cycle-why" data-testid="cycle-why">
-                {why.map((line) => <li key={line.text}>{line.text}</li>)}
-              </ul>
-            </>
-          )}
-
-          <h2>{t('cycle.safetyTitle')}</h2>
-          <p className="cycle-surface" data-testid="cycle-surface">
-            {surfaceLine(carta.surface, t)}
-          </p>
-          {trafficFreeLine(carta.surface, t) && (
-            <p className="cycle-free">{trafficFreeLine(carta.surface, t)}</p>
-          )}
-          {bikeLine(carta.surface && carta.surface.bike, t) && (
-            <p className="cycle-bike">{bikeLine(carta.surface.bike, t)}</p>
-          )}
-          <p className="cycle-safety" data-testid="cycle-safety">
-            {safetyLine(carta.safety, t)}
-          </p>
-          <p className="cycle-safety-note">{t('cycle.safetyHouse')}</p>
-          {agreementLine(carta.agreement, t) && (
-            <p className="cycle-agree" data-testid="cycle-agree">
-              {agreementLine(carta.agreement, t)}
-            </p>
-          )}
-
-          <Photos images={carta.images} />
-
-          <button type="button" className="cycle-gpx" data-testid="cycle-gpx"
-            onClick={() => downloadGpx(route)}>
-            {t('cycle.gpx')}
+      <div className="cycle-inner">
+        <header className="cycle-head">
+          <button type="button" className="cycle-back" onClick={onClose}
+            aria-label={t('common.close')}>
+            <ArrowLeftIcon size={16} />
           </button>
-          {wireRow && (
-            <NearbyOutdoors
-              row={wireRow}
-              cc={country}
-              headings={{ trail: 'nb.cycle.trail', peak: 'nb.cycle.peak', lake: 'nb.cycle.lake', beach: 'nb.cycle.beach' }}
-              onOpen={onOpenNeighbour}
-            />
+          <div className="cycle-title">
+            <h1 data-testid="cycle-name">{title}</h1>
+            <p className="cycle-sub">
+              <CountryFlag country={cc} size={15} />
+              {' '}
+              {countryName}
+              {refLine}
+            </p>
+          </div>
+          {rating && (
+            <span data-testid="cycle-score">
+              <RatingBadge rating={rating} size="lg" showGem={false} />
+            </span>
           )}
+        </header>
 
-          {/* One credit line, not two. The wire's own attribution is the
-              specific one (it names the source that actually supplied this
-              route); cycle.sourceNote is the generic fallback. Printing both
-              read as a stutter and buried the specific notice under it. */}
-          <p className="places-credit" data-testid="cycle-credit">
-            {(route.osm && route.osm.attribution) || t('cycle.sourceNote')}
-          </p>
-        </section>
-      )}
+        {loading && <p className="places-empty">{'…'}</p>}
+
+        {!loading && !route && !tour && (
+          <p className="places-empty">{t('cycle.emptyCountry')}</p>
+        )}
+
+        <div ref={mapEl} className="cycle-map" data-testid="cycle-map"
+          role="img" aria-label={t('cycle.mapLabel')} />
+
+        {tour && (
+          <section className="cycle-tour" data-testid="cycle-tour">
+            <p className="cycle-facts">
+              <ClockIcon size={13} />
+              {' '}
+              {t('cycle.days', { n: tour.days })}
+              {', '}
+              {`${Math.round(tour.km)} km`}
+              {tour.asc != null ? `, ${tour.asc} m` : ''}
+            </p>
+            <p className="cycle-pace">{paceLine(tour.pace, t)}</p>
+            <p className="cycle-bike">
+              <BikeIcon size={13} />
+              {' '}
+              {bikeLine(tour.bike, t)}
+            </p>
+            {seasonLine(tour.season, t, monthName) && (
+              <p className="cycle-season" data-testid="cycle-season">
+                {seasonLine(tour.season, t, monthName)}
+              </p>
+            )}
+            <h2>{t('cycle.stagesTitle')}</h2>
+            <Stages stages={tour.stages} t={t} />
+            {tour.checks && (
+              <details className="cycle-checks" data-testid="cycle-checks">
+                <summary>{t('cycle.checksTitle')}</summary>
+                <p>{t('cycle.checksNote')}</p>
+                <ul>
+                  {(tour.checks.passed || []).map((c) => <li key={c}>{c}</li>)}
+                </ul>
+              </details>
+            )}
+
+            {/* A tour has to be able to show the ride: four photographs are
+                one of the ten checks it passed to get here, drawn from the
+                routes it rides and ordered along them. */}
+            <Photos images={tour.images} />
+          </section>
+        )}
+
+        {route && (
+          <section className="cycle-route" data-testid="cycle-route">
+            <p className="cycle-facts" data-testid="cycle-route-facts">
+              {route.km != null && <span>{`${route.km} km`}</span>}
+              {route.asc != null && <span>{`${route.asc} m`}</span>}
+              {carta.surface && carta.surface.bike && (
+                <span>{bikeLine(carta.surface.bike, t)}</span>
+              )}
+            </p>
+            {!rated && <p className="cycle-unrated">{listedLine(t)}</p>}
+
+            {carta.elevation && Array.isArray(carta.elevation.profile)
+              && carta.elevation.profile.length > 1 && (
+              <>
+                <h2>{t('cycle.elevTitle')}</h2>
+                <ElevationChart elevation={carta.elevation} t={t} />
+              </>
+            )}
+
+            {why.length > 0 && (
+              <>
+                <h2>{t('cycle.whyTitle')}</h2>
+                <ul className="cycle-why" data-testid="cycle-why">
+                  {why.map((line) => <li key={line.text}>{line.text}</li>)}
+                </ul>
+              </>
+            )}
+
+            <h2>{t('cycle.safetyTitle')}</h2>
+            <p className="cycle-surface" data-testid="cycle-surface">
+              {surfaceLine(carta.surface, t)}
+            </p>
+            {trafficFreeLine(carta.surface, t) && (
+              <p className="cycle-free">{trafficFreeLine(carta.surface, t)}</p>
+            )}
+            <p className="cycle-safety" data-testid="cycle-safety">
+              {safetyLine(carta.safety, t)}
+            </p>
+            <p className="cycle-safety-note">{t('cycle.safetyHouse')}</p>
+            {agreementLine(carta.agreement, t) && (
+              <p className="cycle-agree" data-testid="cycle-agree">
+                {agreementLine(carta.agreement, t)}
+              </p>
+            )}
+
+            {Array.isArray(carta.services) && carta.services.length > 0 && (
+              <>
+                <h2>{t('cycle.townsTitle')}</h2>
+                <Towns services={carta.services} t={t} />
+              </>
+            )}
+
+            <Photos images={carta.images} />
+
+            <button type="button" className="cycle-gpx" data-testid="cycle-gpx"
+              onClick={() => downloadGpx(route, title)}>
+              {t('cycle.gpx')}
+            </button>
+            {wireRow && (
+              <NearbyOutdoors
+                row={wireRow}
+                cc={country}
+                headings={{ trail: 'nb.cycle.trail', peak: 'nb.cycle.peak', lake: 'nb.cycle.lake', beach: 'nb.cycle.beach' }}
+                onOpen={onOpenNeighbour}
+              />
+            )}
+
+            {/* One credit line. The wire's own attribution is the specific
+                one (it names the source that supplied this route);
+                cycle.sourceNote is the generic fallback. */}
+            <p className="places-credit" data-testid="cycle-credit">
+              {(route.osm && route.osm.attribution) || t('cycle.sourceNote')}
+            </p>
+          </section>
+        )}
+      </div>
     </div>
   );
 }

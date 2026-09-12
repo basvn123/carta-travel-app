@@ -40,6 +40,12 @@ import { applyOverrides, applyOverride, overridesReady } from './overrides.js';
 const COUNTRY_RE = /^[A-Z]{2}$/;
 const SLUG_RE = /^[a-z0-9-]{3,80}$/;
 
+/** A card the list can draw at all: an id and a line with at least one
+ *  coordinate. Shared by the country files and the Europe-wide top file. */
+const drawable = (r) => r && r.id && r.geometry
+  && Array.isArray(r.geometry.coordinates)
+  && r.geometry.coordinates.length > 0;
+
 function isJson(res) {
   return res.ok && (res.headers.get('content-type') || '').includes('json');
 }
@@ -108,6 +114,27 @@ export function loadCyclingIndex() {
 }
 
 /**
+ * The Europe-wide top file: what the tab opens on when no country is
+ * chosen. Every other layer has one (beaches/top.json and so on) and this
+ * one did not, so the tab defaulted to the first country in the index,
+ * alphabetically Andorra, and opened on a single Andorran route under a
+ * picker that said "All countries". Rated routes only, capped per country by
+ * the export so Germany cannot fill it alone, plus every published tour.
+ */
+export function loadTopCycling() {
+  return Promise.all([cached('/cycling/top.json'), overridesReady()])
+    .then(([raw]) => {
+      if (!raw || !Array.isArray(raw.routes)) return null;
+      return {
+        generatedAt: raw.generated_at || null,
+        routes: applyOverrides('cycle', raw.routes.filter(drawable), { imageKey: 'img' }),
+        listed: [],
+        tours: (raw.tours || []).filter((t) => t && t.slug),
+      };
+    });
+}
+
+/**
  * One country's cycling, as three separate lists.
  *
  * `routes` and `listed` stay apart on purpose: a listed row is verified to
@@ -120,9 +147,6 @@ export function loadCycling(country) {
   return Promise.all([cached(`/cycling/${fileFor(`${cc}.json`)}`), overridesReady()])
     .then(([raw]) => {
       if (!raw) return null;
-      const drawable = (r) => r && r.id && r.geometry
-        && Array.isArray(r.geometry.coordinates)
-        && r.geometry.coordinates.length > 0;
       const routes = applyOverrides('cycle', (raw.routes || []).filter(drawable),
         { imageKey: 'img' });
       const listed = (raw.listed || []).filter(drawable).map(stripUnearnedScore);

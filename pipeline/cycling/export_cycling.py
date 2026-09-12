@@ -423,7 +423,8 @@ def route_card(row, tier):
     images = usable_images(row)
     card = {
         "id": row["id"],
-        "name": row.get("name") or row.get("ref"),
+        "cc": row["country"],
+        "name": display_name(row),
         "ref": row.get("ref"),
         "net": row.get("network"),
         "km": round((row.get("distance_m") or 0) / 1000.0, 1),
@@ -527,7 +528,7 @@ def route_full(row, tier):
     return {
         "id": row["id"],
         "country": row["country"],
-        "name": row.get("name") or row.get("ref"),
+        "name": display_name(row) or row.get("ref"),
         "ref": row.get("ref"),
         "net": row.get("network"),
         "operator": row.get("operator"),
@@ -546,7 +547,8 @@ def tour_card(tour):
     stages = tour.get("stages") or []
     return {
         "slug": tour["slug"],
-        "title": tour["title"],
+        "cc": tour["country"],
+        "title": tour_title(tour),
         "pace": tour["pace"],
         "bike": tour["bike_type"],
         "days": tour["days"],
@@ -567,8 +569,9 @@ def tour_card(tour):
 def tour_full(tour):
     return {
         "slug": tour["slug"],
+        "cc": tour["country"],
         "country": tour["country"],
-        "title": tour["title"],
+        "title": tour_title(tour),
         "pace": tour["pace"],
         "bike": tour["bike_type"],
         "days": tour["days"],
@@ -688,6 +691,7 @@ def build(conn, countries, dry_run=False, verbose=False):
             log(f"pruned {pruned} tour file(s) that no longer pass the gate")
 
     families = family_files(fam_rows, published_ids, stamp, dry_run)
+    top_file(by_country, stamp, dry_run)
     return _write_index(by_country, counts, families, stamp, written,
                         total_bytes, n_usable, n_tours_kept, dry_run)
 
@@ -873,27 +877,96 @@ def _write_index(by_country, counts, families, stamp, written, total_bytes,
 EV_RE = re.compile(r"^EV(\d+)$")
 
 
-def section_name(row):
-    """What to call one country section of a EuroVelo.
+# Two things operators put in an OSM name that are not the name: a bracketed
+# catalogue tag at the front ("[CIMA AN02] Coll de la Gallina"), and " * "
+# as a separator between the route and its endpoints. And a name that is
+# nothing but a number ("(45)", "113", "19a") is a ref that was typed into
+# the wrong field.
+_NAME_TAG_RE = re.compile(r"^\s*\[[^\]]{1,24}\]\s*")
+_REF_ONLY_RE = re.compile(r"^\(?[A-Za-z]{0,3}[-. ]?\d{1,4}[A-Za-z]?\)?$")
+_TOUR_SUFFIX_RE = re.compile(r",\s*\d+\s+days\s+(relaxed|balanced|strong)\s*$")
 
-    Falling back to `ref` gave a manifest of 141 rows all reading "EV1": the
-    name of the FAMILY repeated once per section, which identifies nothing
-    and is the same string already at the top of the page. Most of these
-    relations genuinely carry no `name` (521 of 695 do), but OSM records
-    where a section runs `from` and `to`, and that is what a reader needs:
-    "Galisteo to Caceres" rather than a 141st "EV1". Measured on the wire,
-    from/to rescues 173 of the 174 unnamed sections and one is left with
-    nothing, which falls back to the ref as before.
+
+def _clean_name(raw):
+    name = _NAME_TAG_RE.sub("", (raw or "").strip())
+    name = re.sub(r"\s*\*\s*", ", ", name)
+    name = re.sub(r"\s{2,}", " ", name).strip(" ,")
+    return name
+
+
+def display_name(row):
+    """The name a reader sees, or None when OSM has nothing that is one.
+
+    None is deliberate. The app composes "Regional route 45" from the network
+    level and the ref in the reader's own language, which is a title; the
+    old fallback shipped "(45)" as the name and every card and page printed
+    it as one. Where the relation has no name but says where it runs, the
+    `from` and `to` tags are the name: "Galisteo - Caceres".
     """
-    name = (row.get("name") or "").strip()
-    if name:
+    name = _clean_name(row.get("name"))
+    ref = (row.get("ref") or "").strip()
+    if name and name != ref and not _REF_ONLY_RE.match(name):
         return name
     tags = row.get("raw_tags") or {}
     a = (tags.get("from") or "").strip()
     b = (tags.get("to") or "").strip()
     if a and b:
         return f"{a} - {b}"
-    return a or b or row.get("ref")
+    return None
+
+
+def tour_title(tour):
+    """The route's name, not "Chilterns Cycleway, 3 days strong": the days
+    and the pace are facts the card and the page already show as facts, and
+    a title that restates them reads as a filename."""
+    raw = (tour.get("title") or "").strip()
+    return _clean_name(_TOUR_SUFFIX_RE.sub("", raw)) or raw
+
+
+def section_name(row):
+    """What to call one country section of a EuroVelo.
+
+    Falling back to `ref` gave a manifest of 141 rows all reading "EV1": the
+    name of the FAMILY repeated once per section, which identifies nothing.
+    display_name() reads the `from` and `to` tags most of these relations
+    carry instead of a name; measured on the wire that rescues 173 of the
+    174 unnamed sections, and the last one keeps the ref.
+    """
+    return display_name(row) or row.get("ref")
+
+
+# cycling/top.json: what the tab opens on when no country is chosen. Every
+# other layer publishes one; without it the app defaulted to the first
+# country in the index and opened "All countries" on one Andorran route.
+# Rated rows only, best first, capped per country so Germany cannot fill it
+# alone, plus every published tour. Cards, not routes: the same objects the
+# country files carry, so the list draws them with the same code.
+TOP_N = 200
+TOP_PER_COUNTRY = 24
+
+
+def top_file(by_country, stamp, dry_run):
+    routes = []
+    for bundle in by_country.values():
+        best = sorted(bundle["routes"], key=lambda c: -(c.get("score") or 0))
+        routes.extend(best[:TOP_PER_COUNTRY])
+    routes.sort(key=lambda c: -(c.get("score") or 0))
+    routes = routes[:TOP_N]
+    tours = [t for b in by_country.values() for t in b["tours"]]
+    tours.sort(key=lambda c: -(c.get("scenic") or 0))
+    payload = {
+        "generated_at": stamp,
+        "n_routes": len(routes),
+        "n_tours": len(tours),
+        "n_countries": len({c.get("cc") for c in routes}),
+        "per_country_cap": TOP_PER_COUNTRY,
+        "routes": routes,
+        "tours": tours,
+    }
+    size = write_json(OUT_DIR / "top.json", payload, dry_run)
+    log(f"top.json: {len(routes)} routes from {payload['n_countries']} "
+        f"countries, {len(tours)} tours, {size / 1024:.0f} kB")
+    return payload
 
 
 def family_files(rows, published_ids, stamp, dry_run):
