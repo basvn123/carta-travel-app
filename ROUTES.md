@@ -107,7 +107,7 @@ geometric overlap test catches the rest, and nothing does that today.
 
 | Layer | Source | Notes |
 |---|---|---|
-| Route relations | Geofabrik per-country extracts, cached under `data/raw/geofabrik/<date>/` (42 files, 30 GB, IE and NI share one) | Never Overpass for bulk. The extracts carry no object metadata, so `osm_last_edited` is not available; do not promise it |
+| Route relations | Geofabrik per-country extracts, cached under `data/raw/geofabrik/<date>/` (44 files, 30 GB, IE and NI share one; TR and UA are on disk though out of the catalogue) | Never Overpass for bulk. The extracts carry no object metadata, so `osm_last_edited` is not available; do not promise it |
 | Hiking filter today | `type=route\|superroute`, `route=hiking\|foot\|walking`, kept when `network` has iwn/nwn/rwn or the relation is named | `ingest_osm_routes.py`; only 21 tags retained in `raw_tags`, R2 fixes that |
 | Cycling filter today | `route=bicycle`; superroutes and `network:type=node_network` are dropped from the catalogue, node networks kept as a graph | `harvest_cycling.py` |
 | Difficulty | `sac_scale`, `trail_visibility`, `via_ferrata_scale` on member ways, DEM otherwise; the wire says which (`f.gs` tagged or derived) | `way_tags.py`, `attributes.py` |
@@ -260,7 +260,9 @@ harvest dropped. An order of magnitude off means the filter is wrong: stop
 and report.
 ```
 
-> **Done when:** all 42 extracts scanned, every `trips` and `cycle_routes` row with source osm has a `route_relations` row, the counts report exists, and re-running one country leaves every other country's `scanned_at` untouched.
+> **Done when:** all 44 extracts scanned, every `trips` and `cycle_routes` row with source osm has a `route_relations` row, the counts report exists, and re-running one country leaves every other country's `scanned_at` untouched.
+>
+> **Shipped 2026-09-12.** `hierarchy.py --scan`, 44 extracts in 252 s. Hiking: 308,266 relations (2,159 superroutes, 121,161 node-network, 9,443 cross-border), every one of the 238,709 store rows covered. Cycling: 117,668 (1,272 superroutes, 48,441 node-network, 3,885 cross-border), every one of the 65,375 store rows covered. Gate ratios 1.29 hiking (the unnamed local relations the ingest filter dropped, kept here on purpose) and 1.06 cycling excluding node networks. Re-running LI alone moved none of the other 425,752 timestamps. The Via Francigena top relation (11860709) has four children, which are the national sections; the Italian one is itself a superroute, so R3 must classify two levels deep.
 
 ---
 
@@ -577,7 +579,7 @@ destination attachments; the R6 caps are per activity for that reason.
 | Session | Steps | Note |
 |---|---|---|
 | 1 | R0 | Done 2026-09-12. Reshaped this file. |
-| 2 | R1, R2 | R1 done 2026-09-12. R2 is a relations-only pass, minutes per country, resumable. |
+| 2 | R1, R2 | Both done 2026-09-12. The relations-only scan is four minutes for all of Europe, so re-running it is never the expensive part. |
 | 3 | R3 | Alone. Hierarchy, dedup and the reports. Four reporting points inside it. |
 | 4 | R4, R5 | Validation-heavy, code-light. R4 has a hard gate on the comparison table. |
 | 5 | R6 | First user-visible value. Ship here if you ship nothing else. |

@@ -90,6 +90,14 @@ pipeline/trails/
                         keys (osm, net, descent_m, sf, h on a row; stages,
                         variants, huts, gaps and more on a detail file), and
                         the guard call for initdb/09_hierarchy.sql
+  hierarchy.py          ROUTES.md R2: --scan reads the cached extracts once
+                        more, relations only, into route_relations: every
+                        tag, the ordered member list, parent and child refs,
+                        in_store, and which other extracts carried the same
+                        relation. Per-country resumable; the owning country
+                        (the one whose trips row holds it) writes the data,
+                        everyone else only adds itself to duplicate_in.
+                        Report: data/reports/routes_extract.json
   describe.py           RETIRED, see "Two debts"
 
 tools/trailslab/
