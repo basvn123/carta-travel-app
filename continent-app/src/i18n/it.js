@@ -3398,4 +3398,12 @@ export const it = {
   "dest.bookAhead": "Prenota in anticipo: {names} vanno esauriti.",
   "dest.pairsWith": "Si abbina bene a",
   "dest.tripTotal": "Circa {eur} € per {n} giorni, una persona",
+  // Explore v5 (2026-09-12): the control bar, the folds, the doors
+  "explore.title": "Esplora l'Europa",
+  "explore.sideKinds": "Stile di viaggio",
+  "explore.sideRefine": "Affina",
+  "explore.moreRails": "Altri percorsi",
+  "explore.viewList": "Elenco",
+  "explore.railPrev": "Indietro",
+  "explore.railNext": "Avanti",
 };

@@ -3,15 +3,22 @@ import { KindGlyph } from '../components/KindGlyph.jsx';
 import { KINDS } from '../lib/taxonomy.js';
 import { CountryFlag } from '../components/CountryFlag.jsx';
 import { MONTHS_SHORT } from './ClimateStrip.jsx';
+import { ChevronDownIcon } from '../components/Icons.jsx';
 
 /**
  * The Explore filter rail (PLAN.md C6): every filter reachable without a
- * modal. Four taxonomy-first groups - kind (the same glyphs the cards wear),
- * verdict, role, practical - then the country list, all always-visible on
- * desktop and inside a plain fold on a phone. The old modal sheet is gone:
- * a sheet that hides the controls also hides what the list is currently
- * showing, and the result count can only be trusted when the knobs that
- * produce it are on screen.
+ * modal. Five groups - kind (the same glyphs the cards wear), verdict, role,
+ * practical, country - on desktop in the left panel and inside a plain fold
+ * on a phone. The old modal sheet is gone: a sheet that hides the controls
+ * also hides what the list is currently showing, and the result count can
+ * only be trusted when the knobs that produce it are on screen.
+ *
+ * v5: each group is a fold. Five groups open at once ran the panel past
+ * the bottom of every laptop screen, and the country list, thirty-nine
+ * rows long, sat under everything a reader had to scroll past to reach.
+ * The first two groups open by default; the others open on demand, and a
+ * group with something active says how many on its summary row, so a
+ * closed fold never hides a filter that is narrowing the list.
  *
  * State contract: `xf` is one flat object owned by ExploreTab (and mirrored
  * into the URL there); this component only renders it and calls `patch`.
@@ -26,12 +33,19 @@ const VERDICTS = [
 ];
 const ROLE_KEYS = ['base', 'basecamp', 'daytrip', 'stop'];
 
-function Group({ label, children }) {
+// `open` is the fold's initial state only: React writes the attribute on
+// mount and leaves the reader's toggling alone afterwards, which is what a
+// disclosure should do.
+function Group({ label, n = 0, open = false, children }) {
   return (
-    <fieldset className="xrail-group">
-      <legend className="xrail-legend">{label}</legend>
-      {children}
-    </fieldset>
+    <details className="xrail-group" open={open || undefined}>
+      <summary className="xrail-legend">
+        <span className="xrail-legend-text">{label}</span>
+        {n > 0 && <span className="xrail-legend-n">{n}</span>}
+        <ChevronDownIcon size={15} className="xrail-legend-chev" />
+      </summary>
+      <div className="xrail-group-body">{children}</div>
+    </details>
   );
 }
 
@@ -47,9 +61,11 @@ export function ExploreFilterRail({
   reachHours, setReachHours, reachAvailable,
   onOpenCountry,
 }) {
+  const practicalN = [xf.nocar, xf.cheap, xf.quiet, xf.sea, unescoOnly, !!xf.month,
+    reachAvailable && reachHours != null].filter(Boolean).length;
   return (
     <div className="xrail">
-      <Group label={t('filter.kind')}>
+      <Group label={t('filter.kind')} n={xf.kinds.length} open>
         <div className="xrail-toggles">
           {KINDS.map((k) => (
             <button
@@ -66,7 +82,7 @@ export function ExploreFilterRail({
         </div>
       </Group>
 
-      <Group label={t('filter.verdict')}>
+      <Group label={t('filter.verdict')} n={xf.verdicts.length + (gemOnly ? 1 : 0)} open>
         <div className="xrail-toggles">
           {VERDICTS.map((v) => (
             <button
@@ -90,7 +106,7 @@ export function ExploreFilterRail({
         </div>
       </Group>
 
-      <Group label={t('filter.role')}>
+      <Group label={t('filter.role')} n={xf.roles.length}>
         <div className="xrail-toggles">
           {ROLE_KEYS.map((r) => (
             <button
@@ -106,7 +122,7 @@ export function ExploreFilterRail({
         </div>
       </Group>
 
-      <Group label={t('filter.practical')}>
+      <Group label={t('filter.practical')} n={practicalN}>
         <div className="xrail-toggles">
           <button type="button" className={`xrail-toggle ${xf.nocar ? 'on' : ''}`}
             aria-pressed={xf.nocar} onClick={() => patch({ nocar: !xf.nocar })}>
@@ -157,7 +173,7 @@ export function ExploreFilterRail({
         )}
       </Group>
 
-      <Group label={t('sort.country')}>
+      <Group label={t('sort.country')} n={countryFilter.length}>
         <div className="xrail-countries">
           {availableCountries.map(([iso2, name]) => (
             <span key={iso2} className="xrail-country-row">
@@ -173,7 +189,7 @@ export function ExploreFilterRail({
               {onOpenCountry && (
                 <button className="xrail-country-page" onClick={() => onOpenCountry(iso2)}
                   aria-label={t('cpage.open', { country: name })}
-                  title={t('cpage.open', { country: name })}>{'\u2192'}</button>
+                  title={t('cpage.open', { country: name })}>{'→'}</button>
               )}
             </span>
           ))}

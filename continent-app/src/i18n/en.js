@@ -4106,4 +4106,12 @@ export const en = {
   "dest.bookAhead": "Book ahead: {names} sell out.",
   "dest.pairsWith": "Pairs well with",
   "dest.tripTotal": "About €{eur} for {n} days, one person",
+  // Explore v5 (2026-09-12): the control bar, the folds, the doors
+  "explore.title": "Explore Europe",
+  "explore.sideKinds": "Trip style",
+  "explore.sideRefine": "Refine",
+  "explore.moreRails": "More ways in",
+  "explore.viewList": "List",
+  "explore.railPrev": "Scroll back",
+  "explore.railNext": "Scroll forward",
 };

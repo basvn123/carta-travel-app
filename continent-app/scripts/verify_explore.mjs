@@ -119,11 +119,31 @@ try {
   // rail, the count leads it, and turning a knob narrows the grid live.
   check('no filter modal anywhere', await page.locator('.fsheet-explore').count() === 0);
   check('the filter rail is on screen', await page.locator('.explore-side .xrail').isVisible());
-  check('the live count leads the rail', /\d/.test(await page.locator('.xrail-count').innerText()));
-  const countBefore = (await page.locator('.xgrid-count').innerText()).match(/\d+/)?.[0];
+  // v5: the count heads the control bar over the feed, beside the grid/map
+  // switch and the sort, and the rail groups are folds with the first two
+  // open. The count is locale-grouped ("3,855"), so digits are stripped.
+  const digits = async (sel) => Number((await page.locator(sel).innerText()).replace(/\D/g, ''));
+  check('the control bar heads the feed', await page.locator('.xbar .xbar-title').isVisible());
+  check('the live count heads the control bar', (await digits('.xbar .xgrid-count')) > 0);
+  check('grid/map switch and sort share the bar',
+    await page.locator('.xbar .xview-toggle button').count() === 2
+    && await page.locator('.xbar .xgrid-sort select').isVisible());
+  check('no second results header mid-page', await page.locator('.xgrid-head').count() === 0);
+  check('the rail groups are folds', await page.locator('.explore-side details.xrail-group').count() === 5);
+  check('the first two folds open, the rest closed',
+    await page.locator('.explore-side details.xrail-group[open]').count() === 2);
+  check('at most three collections lead the page', await page.locator('.xrails-rail').count() <= 3);
+  check('the other collections are one row of doors',
+    await page.locator('.xrails-more .xrails-more-chip').count() >= 3);
+  const bodyFacts = await page.locator('.xcard').first().locator('.xcard-name, .score-chip, .xcard-country, .xcard-kindword, .xcard-cost').count();
+  check('the card body carries its four facts', bodyFacts === 5, `${bodyFacts} parts`);
+  check('the season pill left the photo', await page.locator('.xcard-best').count() === 0);
+  const countBefore = await digits('.xbar .xgrid-count');
   await page.locator('.explore-side .xrail-toggle', { hasText: /^Village$/ }).first().click();
   await page.waitForTimeout(700);
-  const countAfter = (await page.locator('.xgrid-count').innerText()).match(/\d+/)?.[0];
+  const countAfter = await digits('.xbar .xgrid-count');
+  check('the open fold says how many are active',
+    (await page.locator('.explore-side .xrail-legend-n').first().innerText()).trim() === '1');
   check('a rail toggle narrows the count live', Number(countAfter) < Number(countBefore),
     `${countBefore} -> ${countAfter}`);
   check('the active filter shows as a chip', await page.locator('.xchip', { hasText: /Village/ }).count() === 1);
@@ -133,6 +153,19 @@ try {
   await page.waitForTimeout(500);
 
   await page.screenshot({ path: 'shots/explore-desktop.png', fullPage: false });
+
+  // C7 in v5: on a desktop the map stands beside the grid, not in its place,
+  // and the bar's count follows the viewport.
+  await page.locator('.xbar .xview-toggle button').nth(1).click();
+  await page.waitForTimeout(4000);
+  check('map view splits the feed', await page.locator('.xcontent--split').count() === 1);
+  check('the map canvas is up', await page.locator('.xcontent-map .maplibregl-canvas').count() === 1);
+  check('the grid stays beside the map', await page.locator('.xcontent--split .explore-grid .xcard').first().isVisible());
+  check('the collections step aside for the map', await page.locator('.xrails-rail').count() === 0);
+  await page.screenshot({ path: 'shots/explore-desktop-map.png' });
+  await page.locator('.xbar .xview-toggle button').first().click();
+  await page.waitForTimeout(600);
+  check('back to the grid, the map is gone', await page.locator('.maplibregl-canvas').count() === 0);
 
   // ── Open a destination: it is the full-screen page now. The deep contract
   // (gallery, highlights, PDF, parking deeplinks) lives in
@@ -179,6 +212,10 @@ try {
   await page.waitForTimeout(600);
   check('phone fold opens the same rail', await page.locator('.explore-fold .xrail').isVisible());
   check('phone rail is not a modal', await page.locator('[aria-modal="true"]').count() === 0);
+  check('phone: grid/map switch floats above the nav', await page.locator('.xview-fab').isVisible()
+    && await page.locator('.xbar .xview-toggle').isHidden());
+  check('phone: cards run two abreast', await page.locator('.explore-grid').evaluate(
+    (el) => getComputedStyle(el).gridTemplateColumns.split(' ').length === 2));
   await page.screenshot({ path: 'shots/explore-filters-phone.png' });
   await page.locator('.explore-fold > summary').click();
   await page.waitForTimeout(400);

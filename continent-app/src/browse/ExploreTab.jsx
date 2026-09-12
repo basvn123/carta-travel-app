@@ -1,7 +1,7 @@
 import React from 'react';
 import { createPortal } from 'react-dom';
 import { useIsDesktop } from '../hooks/useIsDesktop.js';
-import { ScoreChip, HiddenGemTag, tierClass } from '../components/RatingBadge.jsx';
+import { ScoreChip, tierClass } from '../components/RatingBadge.jsx';
 import { WaterQualityBadge, swimRelevant } from '../components/WaterQualityBadge.jsx';
 import { CountryFlag } from '../components/CountryFlag.jsx';
 import { fmtMonthRanges } from './ClimateStrip.jsx';
@@ -13,14 +13,14 @@ import { ExploreMap } from './ExploreMap.jsx';
 import { CountryPage } from './CountryPage.jsx';
 import { FilterChips } from './FilterChips.jsx';
 import { CategoryRail } from './CategoryRail.jsx';
-import { KindGlyph } from '../components/KindGlyph.jsx';
-import { kindOf, roleOf, buildNearbyIndex, ROLES } from '../lib/taxonomy.js';
+import { kindOf, roleOf, buildNearbyIndex } from '../lib/taxonomy.js';
 import { loadSearchIndex, querySearchIndex } from '../lib/searchIndex.js';
 import { useI18n } from '../i18n/index.jsx';
 import { GuidesStrip } from '../community/GuidesStrip.jsx';
 import { FULL_RATING_RANGE } from '../lib/rating.js';
 import {
-  FilterIcon, CalendarIcon, CameraIcon, ClockIcon, InfoIcon, CarIcon,
+  FilterIcon, CalendarIcon, CameraIcon, ClockIcon, InfoIcon,
+  ChevronDownIcon, MapPinIcon, ListDayIcon,
 } from '../components/Icons.jsx';
 import { LifestyleButton } from './LifestyleButton.jsx';
 import { HeroImage } from '../components/HeroImage.jsx';
@@ -35,24 +35,25 @@ import { knownFor } from '../lib/knownFor.js';
  * pipeline is retired from this page), every card answers four things at a
  * glance: what is this place, how good is it (the rating, and the tier seal
  * that says what the number means), what a day there costs one person in
- * euros, and when to go. Opening a card opens the full-screen
+ * euros, and where it is. Opening a card opens the full-screen
  * DestinationPage, rendered from the dossier contract.
  *
- * The card used to end in two 0-10 "cheapness" meters. They are gone, and
- * lib/costIndex.js documents why in full: with 88 distinct food baskets across
- * 3,038 destinations, a one-decimal rank was a country flag wearing a
- * measurement's clothes, and a harvested zero made Geneva the cheapest place
- * in Europe to sleep. A euro figure is smaller, plainer and true.
+ * v5 (2026-09-12) made the page calm. One control bar heads the feed with
+ * the title, the live count, the grid/map switch and the sort, where the
+ * old page split those between the side rail and a header halfway down.
+ * Three collections lead the idle page instead of eight, and the rest
+ * become one row of doors into the grid. The card carries the name, the
+ * score, the country, the kind and the euros a day, nothing else: the
+ * season, the sights and how long the place is worth moved into the hover
+ * preview, which already existed for exactly that. On a desktop the map
+ * sits beside the grid rather than replacing it, so the list narrows to
+ * what the map shows and the two never disagree.
  *
- * Hovering a card opens a preview with the things the card cannot fit: what
- * to see, how long to stay, the cost split. It follows WCAG 1.4.13, so it is
- * dismissible with Escape, survives the pointer travelling into it, and opens
- * on keyboard focus as well as hover. It never opens on touch, where hover
- * does not exist and the tap already opens the full panel.
- *
- * Filters live behind ONE Filters button on every width, opening the same
- * modal sheet the phone always had. The trip-kind rail above the grid keeps
- * editing the same tripKinds state it always did.
+ * Hovering a card opens a preview with the things the card cannot fit. It
+ * follows WCAG 1.4.13, so it is dismissible with Escape, survives the
+ * pointer travelling into it, and opens on keyboard focus as well as hover.
+ * It never opens on touch, where hover does not exist and the tap already
+ * opens the full page.
  */
 
 const PAGE = 48;
@@ -68,6 +69,19 @@ function Star({ filled }) {
   );
 }
 
+// Four tiles: the grid view, beside the pin that means the map.
+function GridIcon({ size = 14 }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" aria-hidden="true"
+      fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round">
+      <rect x="3.5" y="3.5" width="7" height="7" rx="1.5" />
+      <rect x="13.5" y="3.5" width="7" height="7" rx="1.5" />
+      <rect x="3.5" y="13.5" width="7" height="7" rx="1.5" />
+      <rect x="13.5" y="13.5" width="7" height="7" rx="1.5" />
+    </svg>
+  );
+}
+
 const SORTS = [
   { key: 'beauty', labelKey: 'sort.rating' },
   { key: 'cost', labelKey: 'explore.sortCost' },
@@ -78,7 +92,7 @@ const SORTS = [
 // How wide the grid draws a card, so the browser can pick a thumbnail instead
 // of downloading Wikimedia's 960px rendering for a 300px slot. The widths in
 // the srcset are a fixed list Wikimedia will actually render (heroImage.js).
-const CARD_SIZES = '(max-width: 768px) 92vw, (max-width: 1180px) 45vw, 560px';
+const CARD_SIZES = '(max-width: 768px) 46vw, (max-width: 1180px) 45vw, 560px';
 
 /**
  * C4: kind picks the card's span on the 12-column grid, so the page has a
@@ -135,13 +149,13 @@ function packRows(rows) {
 }
 
 /**
- * The hover preview: what the card cannot fit, now over the whole card
- * rather than just the photo. It repeats the name and rating that the real
- * card body carries underneath (that body is fully covered once the preview
- * spans the card, not just the image), then adds what a glance at the grid
- * cannot show: the season, the sights, how long the place is worth, and the
- * same bed/food receipt the destination panel uses, so a reader who has read
- * one can read the other.
+ * The hover preview: what the card cannot fit, over the whole card. It
+ * repeats the name and rating that the real card body carries underneath
+ * (that body is fully covered once the preview spans the card), then adds
+ * what a glance at the grid cannot show: where the place ranks in its
+ * country, what you do with it, the season, the sights, how long the place
+ * is worth, and the same bed/food receipt the destination page uses, so a
+ * reader who has read one can read the other.
  *
  * WCAG 1.4.13 has three requirements for content shown on hover and this
  * meets all three. Dismissible: Escape closes it without moving the pointer.
@@ -149,7 +163,7 @@ function packRows(rows) {
  * hovered and the preview open, with no "safe triangle" needed. Persistent:
  * nothing times it out, it closes when the pointer or the focus leaves.
  */
-function CardPreview({ p, t, best }) {
+function CardPreview({ p, t, best, role, countryLine }) {
   const stay = visitLength(p);
   const sights = placeSights(p, 3);
   const lead = knownFor(p);
@@ -162,7 +176,9 @@ function CardPreview({ p, t, best }) {
       <p className="xcard-preview-sub">
         <CountryFlag country={p.iso2} size={11} />
         <span>{p.country}</span>
+        {role && <span className="xcard-preview-role">{t(role.labelKey)}</span>}
       </p>
+      {countryLine && <p className="xcard-preview-rank">{countryLine}</p>}
       {lead && <p className="xcard-preview-lead">{lead}</p>}
       {sights.length > 0 && (
         <p className="xcard-preview-row">
@@ -212,13 +228,12 @@ const ExploreCard = React.memo(function ExploreCard({
 
   const onEnter = (e) => { if (e.pointerType === 'mouse') setHovered(true); };
 
-  // C3 slot 3, the verdict line's country half: only where it is earned.
+  // The country half of the verdict, only where it is earned. It lives in
+  // the preview now: on the card it was a fifth fact fighting four others.
   const rank = p.country_rank;
   const countryLine = rank === 1
     ? t('card.topOf', { country: p.country })
     : (p.country_badge ? t('card.rankIn', { n: rank, country: p.country }) : null);
-
-  const hours = p.place?.visit_h != null ? Math.round(p.place.visit_h) : null;
 
   return (
     <div
@@ -234,10 +249,9 @@ const ExploreCard = React.memo(function ExploreCard({
         onBlur={() => setHovered(false)}
         aria-label={t('explore.openDest', { city: p.city })}
       >
-        {/* Slot 1: the image. Verdict ribbon top-left ONLY for tier 2 and
-            up - a label everything wears carries no information. Gem chip
-            top-right in its own teal, so "the world hasn't noticed" never
-            reads as a tier. */}
+        {/* The photograph, and on it only what is earned: the verdict seal
+            for tier 2 and up (a label everything wears carries no
+            information), the gem chip in its own teal, the star. */}
         <span className="xcard-media">
           <HeroImage
             url={p.image}
@@ -256,45 +270,25 @@ const ExploreCard = React.memo(function ExploreCard({
           {p.rating?.hidden_gem && (
             <span className="xcard-gem">{t('legend.gem')}</span>
           )}
-          {best && (
-            <span className="xcard-best" title={t('explore.bestMonthsTitle')}>
-              <CalendarIcon size={11} /> {best}
-            </span>
-          )}
         </span>
 
+        {/* Four facts, two lines. The name and the score share the first;
+            the country, the kind and the euros a day share the second. */}
         <span className="xcard-body">
-          {/* Slot 2: identity - kind glyph + kind word + country, then the
-              name in the display face. A column of these reads as a table. */}
-          <span className="xcard-kind">
-            <KindGlyph kind={kind} size={11} label={t(`pkind.${kind}`)} />
-            <span className="xcard-kindword">{t(`pkind.${kind}`)}</span>
-            <span className="xcard-dot" aria-hidden="true">·</span>
-            <CountryFlag country={p.iso2} size={11} />
-            <span>{p.country}</span>
-            {swimRelevant(p) && (
-              <WaterQualityBadge bathing={p.bathing_water} t={t} showLabel={false} />
-            )}
+          <span className="xcard-head">
+            <span className="xcard-name">{p.city}</span>
+            <ScoreChip rating={p.rating} size="sm" />
           </span>
-          <span className="xcard-name">{p.city}</span>
-
-          {/* Slot 3: the verdict - the score, and the country line where a
-              badge earned one. */}
-          <span className="xcard-verdict">
-            <ScoreChip rating={p.rating} size="xs" />
-            {countryLine && <span className="xcard-country-line">{countryLine}</span>}
-          </span>
-
-          {/* Slot 4: the meta line - what you DO with the place. */}
-          <span className="xcard-foot">
-            <span className="xcard-role">{t(role.labelKey)}</span>
-            {hours != null && (
-              <span className="xcard-hours"><ClockIcon size={11} /> {t('card.hours', { n: hours })}</span>
-            )}
-            {p.local_transport?.car_needed && (
-              <span className="xcard-car" title={t('card.carNeeded')}><CarIcon size={12} /></span>
-            )}
-            <span className="xcard-cost"><CostLine cost={p.cost} t={t} /></span>
+          <span className="xcard-meta">
+            <span className="xcard-place">
+              <CountryFlag country={p.iso2} size={11} />
+              <span className="xcard-country">{p.country}</span>
+              <span className="xcard-kindword">{t(`pkind.${kind}`)}</span>
+              {swimRelevant(p) && (
+                <WaterQualityBadge bathing={p.bathing_water} t={t} showLabel={false} />
+              )}
+            </span>
+            <CostLine cost={p.cost} t={t} />
           </span>
         </span>
       </button>
@@ -315,7 +309,9 @@ const ExploreCard = React.memo(function ExploreCard({
       >
         <InfoIcon size={15} />
       </button>
-      {preview && <CardPreview p={p} t={t} best={best} />}
+      {preview && (
+        <CardPreview p={p} t={t} best={best} role={role} countryLine={countryLine} />
+      )}
     </div>
   );
 });
@@ -341,7 +337,7 @@ export function ExploreTab({
   isMock = false,
   choices, onOpenLifestyle, onOpenGuides,
 }) {
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
   const [visible, setVisible] = React.useState(PAGE);
   // C6: the taxonomy filters live here and in the URL, nowhere else. One
   // object, so a chip row, the rail and the query string cannot drift.
@@ -390,7 +386,6 @@ export function ExploreTab({
     window.history.replaceState(null, '',
       `${window.location.pathname}?${q.toString()}${window.location.hash}`);
     onSelect(id);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchHits, onSelect]);
   const sentinelRef = React.useRef(null);
   const scrollRef = React.useRef(null);
@@ -421,8 +416,9 @@ export function ExploreTab({
   const quietOk = (p) => p.crowding?.tier === 1;
 
   // C6: the taxonomy filters, applied after the catalog hook's own. The
-  // count shown in the grid header is THIS list's length, so it can never
-  // disagree with what renders.
+  // count shown in the control bar is THIS list's length (or, while the map
+  // is up, the part of it inside the viewport), so it can never disagree
+  // with what renders.
   const taxRows = React.useMemo(() => rows.filter((p) => {
     if (xf.kinds.length && !xf.kinds.includes(kindOf(p))) return false;
     if (xf.verdicts.length && !xf.verdicts.includes(String(p.rating?.tier ?? 0))) return false;
@@ -436,11 +432,6 @@ export function ExploreTab({
     return true;
   }), [rows, xf, roleFor]);
 
-  const packed = React.useMemo(
-    () => packRows(taxRows.slice(0, visible)),
-    [taxRows, visible],
-  );
-
   // C7: what the map's viewport holds, counted live while the map is shown.
   const shownRows = React.useMemo(() => {
     if (view !== 'map' || !bbox) return taxRows;
@@ -451,6 +442,16 @@ export function ExploreTab({
       return lat >= so && lat <= n && lon >= w && lon <= e;
     });
   }, [taxRows, view, bbox]);
+
+  // The grid beside the map lists what the map shows, in a plain two-up so
+  // the column stays readable at half width; the full-width grid keeps the
+  // packed mosaic.
+  const packed = React.useMemo(() => {
+    if (view === 'map') {
+      return shownRows.slice(0, visible).map((p) => ({ p, span: 1, ratio: [4, 3], kind: kindOf(p) }));
+    }
+    return packRows(taxRows.slice(0, visible));
+  }, [taxRows, shownRows, view, visible]);
 
   // C6: the filter state is the URL, so a filtered view is shareable and
   // the back button means what it says. replaceState keeps the #trip hash
@@ -492,16 +493,20 @@ export function ExploreTab({
     setVisible(PAGE);
     scrollRef.current?.scrollTo?.(0, 0);
   }, [taxRows]);
+  // A pan of the map is a new page too, but not a new scroll position: the
+  // map is what the reader is holding, and the list beside it just follows.
+  React.useEffect(() => { setVisible(PAGE); }, [bbox, view]);
 
+  const gridTotal = view === 'map' ? shownRows.length : taxRows.length;
   React.useEffect(() => {
     const el = sentinelRef.current;
     if (!el) return undefined;
     const io = new IntersectionObserver((entries) => {
-      if (entries[0].isIntersecting) setVisible((v) => (v < taxRows.length ? v + PAGE : v));
+      if (entries[0].isIntersecting) setVisible((v) => (v < gridTotal ? v + PAGE : v));
     }, { root: scrollRef.current, rootMargin: '900px' });
     io.observe(el);
     return () => io.disconnect();
-  }, [taxRows.length]);
+  }, [gridTotal]);
 
   const resetAll = () => {
     setCountryFilter([]);
@@ -584,9 +589,11 @@ export function ExploreTab({
   // C5: the editorial rails. Every rail is (title, rows, seeAll) where the
   // rows come from the SAME predicate its seeAll applies, so the "See all
   // 292" grid is exactly the rail, longer. They lead only the unfiltered
-  // page: once the reader narrows anything, the grid is the answer.
+  // grid page: once the reader narrows anything, or puts the map up, the
+  // grid is the answer. ExploreRails shows the first three as strips and
+  // the rest as one row of doors.
   const railsIdle = chips.length === 0 && !locationQuery
-    && tripKinds.length === 0 && !showFavOnly;
+    && tripKinds.length === 0 && !showFavOnly && view === 'grid';
   const rails = React.useMemo(() => {
     if (!railsIdle) return [];
     const month = new Date().getMonth() + 1;
@@ -599,9 +606,9 @@ export function ExploreTab({
     const q = {
       the43: rows.filter((p) => p.rating?.tier === 3),
       gems: interleaveByCountry(rows.filter((p) => p.rating?.hidden_gem)),
+      now: interleaveByCountry(rows.filter((p) => (p.climate?.best || []).includes(month))),
       bestOf: interleaveByCountry([...bestOf.values()]),
       villages: rows.filter((p) => kindOf(p) === 'village' && (p.rating?.tier ?? 0) >= 1),
-      now: interleaveByCountry(rows.filter((p) => (p.climate?.best || []).includes(month))),
       nocar: interleaveByCountry(rows.filter(noCarOk)),
       cheap: interleaveByCountry(rows.filter(cheapOk)),
       quiet: interleaveByCountry(rows.filter(quietOk)),
@@ -611,12 +618,12 @@ export function ExploreTab({
         seeAll: () => patchXf({ verdicts: ['3'] }) },
       { key: 'gems', title: t('rail.gems'), rows: q.gems,
         seeAll: () => setGemOnly(true) },
+      { key: 'now', title: t('rail.now'), rows: q.now,
+        seeAll: () => patchXf({ month }) },
       { key: 'bestOf', title: t('rail.bestOf'), rows: q.bestOf,
         seeAll: () => patchXf({ badged: true }) },
       { key: 'villages', title: t('rail.villages'), rows: q.villages,
         seeAll: () => patchXf({ kinds: ['village'], verdicts: ['1', '2', '3'] }) },
-      { key: 'now', title: t('rail.now'), rows: q.now,
-        seeAll: () => patchXf({ month }) },
       { key: 'nocar', title: t('rail.nocar'), rows: q.nocar,
         seeAll: () => patchXf({ nocar: true }) },
       { key: 'cheap', title: t('rail.cheap'), rows: q.cheap,
@@ -627,16 +634,38 @@ export function ExploreTab({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [railsIdle, rows, t]);
 
-  // C6: sort is a select in the grid header, visually distinct from the
-  // filters, standing where the results it orders actually are.
+  // The control bar's three instruments. The count is a measured figure,
+  // so it is grouped the way the reader's locale groups thousands.
+  const fmtCount = React.useMemo(() => new Intl.NumberFormat(lang || 'en'), [lang]);
+  const countLine = t('explore.countLine', { n: fmtCount.format(shownRows.length) });
+
   const sortSelect = (
     <label className="xgrid-sort">
-      <span>{t('places.sortLabel')}</span>
-      <select value={SORTS.some((x) => x.key === sortKey) ? sortKey : 'beauty'}
-        onChange={(e) => setSortKey(e.target.value)}>
-        {SORTS.map((x) => <option key={x.key} value={x.key}>{t(x.labelKey)}</option>)}
-      </select>
+      <span className="xgrid-sort-label">{t('places.sortLabel')}</span>
+      <span className="xgrid-sort-field">
+        <select value={SORTS.some((x) => x.key === sortKey) ? sortKey : 'beauty'}
+          onChange={(e) => setSortKey(e.target.value)}
+          aria-label={t('explore.sortAria')}>
+          {SORTS.map((x) => <option key={x.key} value={x.key}>{t(x.labelKey)}</option>)}
+        </select>
+        <ChevronDownIcon size={14} className="xgrid-sort-chev" />
+      </span>
     </label>
+  );
+
+  const viewToggle = (cls) => (
+    <div className={`xview-toggle ${cls}`.trim()} role="group" aria-label={t('explore.viewAria')}>
+      <button type="button" className={view === 'grid' ? 'on' : ''} aria-pressed={view === 'grid'}
+        onClick={() => setView('grid')}>
+        {cls === 'xview-fab' ? <ListDayIcon size={15} /> : <GridIcon size={14} />}
+        <span>{cls === 'xview-fab' ? t('explore.viewList') : t('explore.viewGrid')}</span>
+      </button>
+      <button type="button" className={view === 'map' ? 'on' : ''} aria-pressed={view === 'map'}
+        onClick={() => setView('map')}>
+        <MapPinIcon size={15} />
+        <span>{t('explore.viewMap')}</span>
+      </button>
+    </div>
   );
 
   const filterRail = (
@@ -678,24 +707,30 @@ export function ExploreTab({
     </button>
   );
 
+  const anyActive = chips.length > 0;
+
   return (
     <div className="explore-shell">
       {headerSlot && createPortal(searchField, headerSlot)}
 
       {/* Desktop-only left panel (CSS hides it under 769px): the trip kinds
-          as a card grid under the brand, then the sorts, the Filters door,
-          Lifestyle and the shortlist, with one hairline to the panel's
-          right. The phone keeps the toolbar card below instead. */}
+          as a tile grid, then the filter rail in folds, then Lifestyle and
+          the shortlist, with one hairline to the panel's right. The phone
+          keeps the toolbar card below instead. */}
       <aside className="side-panel explore-side" aria-label={t('filter.filters')}>
         <div className="side-block">
-          <p className="side-label">{t('side.categories')}</p>
+          <p className="side-label">{t('explore.sideKinds')}</p>
           <CategoryRail tripKinds={tripKinds} setTripKinds={setTripKinds} />
         </div>
         <div className="side-block">
-          <p className="side-label">{t('side.refine')}</p>
-          {/* C6: the result count leads - the single most reassuring element
-              on a filter UI - then every filter, no modal anywhere. */}
-          <p className="xrail-count">{t('explore.countLine', { n: taxRows.length })}</p>
+          <p className="side-label">
+            <span>{t('explore.sideRefine')}</span>
+            {anyActive && (
+              <button type="button" className="side-clear" onClick={resetAll}>
+                {t('filter.clearAll')}
+              </button>
+            )}
+          </p>
           {filterRail}
           <div className="side-group side-actions">
             {onOpenLifestyle && renderLifestyle('side-lifestyle')}
@@ -706,11 +741,8 @@ export function ExploreTab({
 
       <div className="explore-tab" ref={scrollRef}>
       <div className="explore-wrap">
-        {/* Every control in one card: the kind cards, then search, sort, the
-            one Filters door and the shortlist. The kind rail used to be a
-            full-bleed band under the header, which read as a second piece of
-            chrome; inside the card it is plainly the first of the four ways
-            to narrow the same list. */}
+        {/* Phone only (CSS hides it from 769px): the kind tiles, the search
+            field, Lifestyle and the shortlist in one banded toolbar. */}
         <div className="explore-toolbar">
           <CategoryRail tripKinds={tripKinds} setTripKinds={setTripKinds} />
           {/* Inline on a phone; on desktop the same field has portalled into
@@ -732,52 +764,47 @@ export function ExploreTab({
           <summary>
             <FilterIcon size={14} />
             <span>{t('filter.filters')}</span>
-            <span className="xrail-count-inline">{t('explore.countLine', { n: taxRows.length })}</span>
+            <span className="xrail-count-inline">{countLine}</span>
           </summary>
           {filterRail}
         </details>
 
-        {/* The one community surface on a browse tab: a real count of what
-            people have published, and one door. No preview carousel, because
-            the priced destinations below are why anybody opened this tab and
-            a new feature does not get to push them under the fold. Absent
-            entirely when nothing is published. */}
-        <GuidesStrip onOpen={onOpenGuides} />
+        {/* The control bar: what this page is, how many places it holds
+            right now, and the two ways to rearrange them. One row, over the
+            feed it rules. On a phone the grid/map switch floats above the
+            bottom nav instead (.xview-fab), where a thumb can reach it. */}
+        <div className="xbar">
+          <div className="xbar-lead">
+            <h1 className="xbar-title">{t('explore.title')}</h1>
+            <span className="xgrid-count">{countLine}</span>
+            {isMock && <span className="explore-mock">Mock data</span>}
+          </div>
+          <div className="xbar-tools">
+            {viewToggle('')}
+            {sortSelect}
+          </div>
+        </div>
+
+        {/* C6: active filters as removable chips, right under the bar. */}
+        <FilterChips t={t} chips={chips} onClearAll={resetAll} />
 
         {/* C8: the tiers, their live counts, and the five glyphs - the
             system stated where it is used, folding to a "?" once read. */}
         <TierLegend data={data} />
 
-        {/* Only when there is something to say. The cards carry a euro figure
-            and the Lifestyle chip above states what it assumes, so a standing
-            line explaining them was restating what the reader can already
-            see. */}
-        {/* C6: active filters as removable chips, then the grid header with
-            the live count and the sort select beside the results they rule. */}
-        <FilterChips t={t} chips={chips} onClearAll={resetAll} />
+        {/* The one community surface on a browse tab: a real count of what
+            people have published, and one door. Absent entirely when
+            nothing is published. */}
+        <GuidesStrip onOpen={onOpenGuides} />
 
         {countryFilter.length === 1 && (
           <button className="cpage-banner" onClick={() => setCountryPage(countryFilter[0])}>
             {t('cpage.open', {
               country: (availableCountries.find(([c]) => c === countryFilter[0]) || [])[1]
                 || countryFilter[0],
-            })} {'\u2192'}
+            })} {'→'}
           </button>
         )}
-
-        {railsIdle && <ExploreRails rails={rails} onSelect={openWithMember} t={t} />}
-
-        <div className="xgrid-head">
-          <span className="xgrid-count">{t('explore.countLine', { n: shownRows.length })}</span>
-          {isMock && <span className="explore-mock">Mock data</span>}
-          <div className="xview-toggle" role="group" aria-label={t('explore.viewAria')}>
-            <button className={view === 'grid' ? 'on' : ''} aria-pressed={view === 'grid'}
-              onClick={() => setView('grid')}>{t('explore.viewGrid')}</button>
-            <button className={view === 'map' ? 'on' : ''} aria-pressed={view === 'map'}
-              onClick={() => setView('map')}>{t('explore.viewMap')}</button>
-          </div>
-          {view === 'grid' && sortSelect}
-        </div>
 
         {/* B2: a member village resolves to its parent, and says so. */}
         {locationQuery && searchHits?.memberHits?.length > 0 && taxRows.length > 0 && (
@@ -795,49 +822,63 @@ export function ExploreTab({
           </p>
         )}
 
-        {taxRows.length === 0 && (
-          <p className="explore-count">
-            <span className="explore-count-badge">
-              {showFavOnly ? t('results.emptyFav') : t('results.empty')}
-            </span>
-            {locationQuery && searchHits?.suggestions?.length > 0 && (
-              <span className="xsearch-suggest">
-                {t('explore.didYouMean')}
-                {searchHits.suggestions.map((sug) => (
-                  <button key={sug} className="xsearch-suggest-btn"
-                    onClick={() => setLocationQuery(sug)}>{sug}</button>
-                ))}
-              </span>
+        {/* C7: the feed. Grid alone, or on a desktop the grid beside a
+            sticky map, the list narrowing to what the map holds. On a
+            phone the map takes the column and the floating switch brings
+            the list back. */}
+        <div className={`xcontent ${view === 'map' ? 'xcontent--split' : ''}`.trim()}>
+          <div className="xcontent-main">
+            {railsIdle && <ExploreRails rails={rails} onSelect={openWithMember} t={t} />}
+
+            {gridTotal === 0 && (
+              <p className="explore-count">
+                <span className="explore-count-badge">
+                  {showFavOnly ? t('results.emptyFav') : t('results.empty')}
+                </span>
+                {locationQuery && searchHits?.suggestions?.length > 0 && (
+                  <span className="xsearch-suggest">
+                    {t('explore.didYouMean')}
+                    {searchHits.suggestions.map((sug) => (
+                      <button key={sug} className="xsearch-suggest-btn"
+                        onClick={() => setLocationQuery(sug)}>{sug}</button>
+                    ))}
+                  </span>
+                )}
+              </p>
             )}
-          </p>
-        )}
 
-        {view === 'map' && (
-          <ExploreMap rows={taxRows} onSelect={openWithMember} onViewport={setBbox} t={t} />
-        )}
+            <div className="explore-grid explore-grid--mosaic">
+              {packed.map(({ p, span, ratio, kind }) => (
+                <ExploreCard
+                  key={p.id}
+                  p={p}
+                  span={span}
+                  ratio={ratio}
+                  kind={kind}
+                  role={roleFor(p)}
+                  selected={p.id === selectedId}
+                  fav={favSet.has(p.id)}
+                  onSelect={openWithMember}
+                  onToggleFav={onToggleFav}
+                  t={t}
+                />
+              ))}
+            </div>
 
-        <div className="explore-grid explore-grid--mosaic" hidden={view === 'map'}>
-          {packed.map(({ p, span, ratio, kind }) => (
-            <ExploreCard
-              key={p.id}
-              p={p}
-              span={span}
-              ratio={ratio}
-              kind={kind}
-              role={roleFor(p)}
-              selected={p.id === selectedId}
-              fav={favSet.has(p.id)}
-              onSelect={openWithMember}
-              onToggleFav={onToggleFav}
-              t={t}
-            />
-          ))}
+            {visible < gridTotal && (
+              <div ref={sentinelRef} className="places-sentinel" aria-hidden="true" style={{ height: 1 }} />
+            )}
+          </div>
+
+          {view === 'map' && (
+            <div className="xcontent-map">
+              <ExploreMap rows={taxRows} onSelect={openWithMember} onViewport={setBbox} t={t} />
+            </div>
+          )}
         </div>
-
-        {view === 'grid' && visible < taxRows.length && (
-          <div ref={sentinelRef} className="places-sentinel" aria-hidden="true" style={{ height: 1 }} />
-        )}
       </div>
+
+      {viewToggle('xview-fab')}
       </div>
 
       {countryPage && (

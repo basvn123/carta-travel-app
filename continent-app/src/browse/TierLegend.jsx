@@ -1,16 +1,20 @@
 import React from 'react';
-import { KINDS } from '../lib/taxonomy.js';
-import { KindGlyph } from '../components/KindGlyph.jsx';
 import { useI18n } from '../i18n/index.jsx';
 
 /**
  * The system, explained on the page itself (PLAN.md C8).
  *
- * A strip under the Explore header naming the four verdict tiers with their
- * LIVE counts (read from the catalogue, never hardcoded - the tier language
- * and cutoffs ship in meta.rating_model) and the five kind glyphs the cards
- * and the grid spans encode. Users trust a rating they can see the shape
- * of; until now "Worth the journey" was only inferable from what wore it.
+ * A line under the Explore control bar naming the four verdict tiers with
+ * their LIVE counts (read from the catalogue, never hardcoded - the tier
+ * language and cutoffs ship in meta.rating_model). Users trust a rating
+ * they can see the shape of; until now "Worth the journey" was only
+ * inferable from what wore it. The kind glyphs left the line in v5: the
+ * card names its kind in words now, and the filter rail's chips carry the
+ * glyphs beside those same words.
+ *
+ * v5 took the box away: a bordered card at the head of the page read as
+ * the page's first content, and it is a key, not content. It is now one
+ * quiet line, and the separators are drawn, not typed.
  *
  * Dismissible and remembered (localStorage): once read, it folds to a small
  * "?" affordance that brings it back. "How the score works" expands the
@@ -58,29 +62,26 @@ export function TierLegend({ data }) {
             <span className={`tierlegend-mark tl-${tier}`} aria-hidden="true" />
             <span className="tierlegend-label">{t(`rating.tier${tier}`)}</span>
             <span className="tierlegend-count mono">
-              {counts[tier]}{cuts[String(tier)] ? ` · ${Number(cuts[String(tier)]).toFixed(1)}+` : ''}
+              <span>{counts[tier]}</span>
+              {cuts[String(tier)] && (
+                <span className="tierlegend-cut">{Number(cuts[String(tier)]).toFixed(1)}+</span>
+              )}
             </span>
           </span>
         ))}
         <span className="tierlegend-row">
           <span className="tierlegend-mark tl-gem" aria-hidden="true" />
           <span className="tierlegend-label">{t('legend.gem')}</span>
-          <span className="tierlegend-count mono">{counts.gem}</span>
+          <span className="tierlegend-count mono"><span>{counts.gem}</span></span>
         </span>
-        <span className="tierlegend-kinds">
-          {KINDS.map((k) => (
-            <span key={k} className="tierlegend-kind">
-              <KindGlyph kind={k} size={10} label={t(`pkind.${k}`)} />
-              <span>{t(`pkind.${k}`)}</span>
-            </span>
-          ))}
+        <span className="tierlegend-actions">
+          <button className="tierlegend-why" onClick={() => setWhy((v) => !v)}
+            aria-expanded={why}>
+            {t('legend.how')}
+          </button>
+          <button className="tierlegend-x" onClick={() => set(true)}
+            aria-label={t('legend.dismiss')} title={t('legend.dismiss')}>×</button>
         </span>
-        <button className="tierlegend-why" onClick={() => setWhy((v) => !v)}
-          aria-expanded={why}>
-          {t('legend.how')}
-        </button>
-        <button className="tierlegend-x" onClick={() => set(true)}
-          aria-label={t('legend.dismiss')} title={t('legend.dismiss')}>×</button>
       </div>
       {why && <p className="tierlegend-method">{t('rating.method')}</p>}
     </aside>

@@ -3398,4 +3398,12 @@ export const nl = {
   "dest.bookAhead": "Vooraf boeken: {names} raken uitverkocht.",
   "dest.pairsWith": "Past goed bij",
   "dest.tripTotal": "Ongeveer {eur} € voor {n} dagen, een persoon",
+  // Explore v5 (2026-09-12): the control bar, the folds, the doors
+  "explore.title": "Ontdek Europa",
+  "explore.sideKinds": "Reisstijl",
+  "explore.sideRefine": "Verfijnen",
+  "explore.moreRails": "Meer ingangen",
+  "explore.viewList": "Lijst",
+  "explore.railPrev": "Terug scrollen",
+  "explore.railNext": "Verder scrollen",
 };

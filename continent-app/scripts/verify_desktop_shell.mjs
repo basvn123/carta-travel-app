@@ -110,11 +110,12 @@ check('kind tiles in the panel', await page.locator('.explore-side .kind-rail-ch
 check('explore search in the header',
   await page.locator('.header-search-slot .results-search-input').isVisible());
 
-// The card is nearly all photograph: overlay on, body off, info button up.
+// v5: the card is body-forward again, four facts under the photograph,
+// with the info button as the door to the rest.
 const card = page.locator('.xcard').first();
-check('card overlay carries the name',
-  (await card.locator('.xcard-overlay-name').innerText().catch(() => '')).trim().length > 1);
-check('card body folded away', await card.locator('.xcard-body').isHidden());
+check('card body carries the name',
+  (await card.locator('.xcard-body .xcard-name').innerText().catch(() => '')).trim().length > 1);
+check('card body is on screen', await card.locator('.xcard-body').isVisible());
 check('info button renders', await card.locator('.xcard-info').isVisible());
 // The explanation sits behind the button: click opens the preview panel.
 await card.locator('.xcard-info').click();
@@ -158,8 +159,8 @@ await phoneNav.click();
 await phone.waitForTimeout(2500);
 check('phone: explore toolbar stays inline', await phone.locator('.explore-toolbar').isVisible());
 const pCard = phone.locator('.xcard').first();
-check('phone: explore card is photo-first', await pCard.locator('.xcard-overlay').isVisible().catch(() => false));
-check('phone: explore card body folded away', await pCard.locator('.xcard-body').isHidden().catch(() => true));
+check('phone: explore card body is on screen', await pCard.locator('.xcard-body').isVisible().catch(() => false));
+check('phone: explore card has no photo overlay', await pCard.locator('.xcard-overlay').count() === 0);
 check('phone: info button stays hidden', await pCard.locator('.xcard-info').isHidden().catch(() => true));
 check('phone: explore cards run two abreast', await phone.locator('.explore-grid').evaluate(
   (el) => getComputedStyle(el).gridTemplateColumns.split(' ').length === 2));
