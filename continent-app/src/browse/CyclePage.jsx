@@ -232,7 +232,7 @@ export function CycleFamilyPage({ familyRef, onClose }) {
             <ul className="cycle-famlist">
               {(family.sections || []).map((sec) => (
                 <li key={sec.id} className="cycle-famitem">
-                  <CountryFlag cc={sec.cc} />
+                  <CountryFlag country={sec.cc} size={14} />
                   <span className="cycle-famitem-name">
                     {sec.name || `${sec.cc} ${sec.km} km`}
                   </span>
@@ -321,7 +321,13 @@ export function CyclePage({ routeId, tourSlug, country, countryName,
             {(tour && tour.title) || (route && route.name) || '…'}
           </h1>
           <p className="cycle-sub">
-            <CountryFlag cc={(tour && tour.country) || (route && route.country) || country} />
+            {/* The prop is `country`, not `cc`: CountryFlag returns null for
+                an unknown code, so passing the wrong prop name failed
+                silently and every flag on this page was simply absent. */}
+            <CountryFlag
+              country={(tour && tour.country) || (route && route.country) || country}
+              size={15}
+            />
             {' '}
             {countryName}
             {route && route.ref ? `, ${route.ref}` : ''}

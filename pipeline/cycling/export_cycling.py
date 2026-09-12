@@ -710,7 +710,14 @@ def _build_country(conn, cc, stamp, by_country, counts, fam_rows,
                 "id": row["id"], "country": row["country"],
                 "name": row.get("name"), "ref": row.get("ref"),
                 "distance_m": row.get("distance_m"),
-                "raw_tags": {"carta:family_ref": fam},
+                # from/to travel with the slim row because most EuroVelo
+                # sections have no name and those two tags are the only
+                # thing that tells one from another. See section_name().
+                "raw_tags": {
+                    "carta:family_ref": fam,
+                    "from": (row.get("raw_tags") or {}).get("from"),
+                    "to": (row.get("raw_tags") or {}).get("to"),
+                },
                 "agreement": row.get("agreement"),
             })
         why = basic_row(row)
@@ -866,6 +873,29 @@ def _write_index(by_country, counts, families, stamp, written, total_bytes,
 EV_RE = re.compile(r"^EV(\d+)$")
 
 
+def section_name(row):
+    """What to call one country section of a EuroVelo.
+
+    Falling back to `ref` gave a manifest of 141 rows all reading "EV1": the
+    name of the FAMILY repeated once per section, which identifies nothing
+    and is the same string already at the top of the page. Most of these
+    relations genuinely carry no `name` (521 of 695 do), but OSM records
+    where a section runs `from` and `to`, and that is what a reader needs:
+    "Galisteo to Caceres" rather than a 141st "EV1". Measured on the wire,
+    from/to rescues 173 of the 174 unnamed sections and one is left with
+    nothing, which falls back to the ref as before.
+    """
+    name = (row.get("name") or "").strip()
+    if name:
+        return name
+    tags = row.get("raw_tags") or {}
+    a = (tags.get("from") or "").strip()
+    b = (tags.get("to") or "").strip()
+    if a and b:
+        return f"{a} - {b}"
+    return a or b or row.get("ref")
+
+
 def family_files(rows, published_ids, stamp, dry_run):
     """family/{EV1}.json: a EuroVelo route as one thing across its countries.
 
@@ -919,7 +949,7 @@ def family_files(rows, published_ids, stamp, dry_run):
                               if agree else None),
             "sections": [
                 {"id": m["id"], "cc": m["country"],
-                 "name": m.get("name") or m.get("ref"),
+                 "name": section_name(m),
                  "km": round((m["distance_m"] or 0) / 1000.0),
                  "published": m["id"] in published}
                 for m in members],
