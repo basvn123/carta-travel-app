@@ -1,0 +1,1216 @@
+{
+ "generated_at": "2026-09-12T16:56:20+00:00",
+ "activities": {
+  "hiking": {
+   "relations": 308266,
+   "totals": {
+    "variant": 2683,
+    "standalone": 279208,
+    "parent": 3658,
+    "stage": 22717
+   },
+   "stage_by_name": 1160,
+   "variant_by_name": 947,
+   "multi_parent_decided": 4753,
+   "decided_by": {
+    "children": 1940,
+    "id": 303,
+    "name": 402,
+    "ancestor": 1
+   },
+   "unknown_roles": {
+    "loop": 2,
+    "transfer": 2,
+    "guidepost": 1,
+    "east": 1,
+    "south": 1,
+    "west": 1,
+    "north": 1,
+    "part.1": 1,
+    "part.2": 1,
+    "touristischer wegweiser": 1,
+    "tip:5": 1,
+    "access": 1,
+    "grenzsteinweg": 1,
+    "temporary": 1,
+    "part5a": 1,
+    "proposed": 1,
+    "meandros de coura": 1,
+    "eriksbergsleden": 1
+   },
+   "countries": {
+    "AD": {
+     "standalone": 6,
+     "stage": 10,
+     "parent": 1
+    },
+    "AL": {
+     "standalone": 90,
+     "stage": 1,
+     "parent": 2
+    },
+    "AT": {
+     "variant": 92,
+     "stage_by_name": 131,
+     "standalone": 11463,
+     "stage": 677,
+     "parent": 96
+    },
+    "BA": {
+     "standalone": 122,
+     "stage": 25,
+     "variant": 2,
+     "parent": 1
+    },
+    "BE": {
+     "variant": 105,
+     "stage_by_name": 444,
+     "standalone": 20605,
+     "stage": 597,
+     "parent": 43
+    },
+    "BG": {
+     "parent": 4,
+     "standalone": 481,
+     "stage": 62,
+     "variant": 3
+    },
+    "CH": {
+     "variant": 56,
+     "stage_by_name": 29,
+     "standalone": 22418,
+     "stage": 2461,
+     "parent": 630
+    },
+    "CY": {
+     "standalone": 200,
+     "stage": 8,
+     "parent": 10,
+     "variant": 1
+    },
+    "CZ": {
+     "standalone": 5922,
+     "variant": 163,
+     "stage": 233,
+     "parent": 182,
+     "stage_by_name": 1
+    },
+    "DE": {
+     "variant": 673,
+     "stage_by_name": 466,
+     "parent": 767,
+     "stage": 6625,
+     "standalone": 47593
+    },
+    "DK": {
+     "variant": 56,
+     "stage_by_name": 21,
+     "standalone": 1488,
+     "parent": 32,
+     "stage": 130
+    },
+    "EE": {
+     "standalone": 264,
+     "stage": 112,
+     "parent": 9,
+     "variant": 1
+    },
+    "ES": {
+     "variant": 193,
+     "stage_by_name": 86,
+     "standalone": 5351,
+     "stage": 1037,
+     "parent": 159
+    },
+    "FI": {
+     "standalone": 970,
+     "stage": 71,
+     "parent": 14
+    },
+    "FO": {
+     "standalone": 1
+    },
+    "FR": {
+     "variant": 436,
+     "stage_by_name": 120,
+     "standalone": 41900,
+     "stage": 2607,
+     "parent": 528
+    },
+    "GB": {
+     "variant": 138,
+     "stage_by_name": 16,
+     "standalone": 4202,
+     "parent": 173,
+     "stage": 539
+    },
+    "GR": {
+     "variant": 5,
+     "stage_by_name": 62,
+     "standalone": 1244,
+     "parent": 12,
+     "stage": 102
+    },
+    "HR": {
+     "variant": 5,
+     "stage_by_name": 104,
+     "standalone": 1008,
+     "parent": 11,
+     "stage": 163
+    },
+    "HU": {
+     "standalone": 3222,
+     "stage": 265,
+     "parent": 46,
+     "variant": 22
+    },
+    "IE": {
+     "variant": 1,
+     "stage_by_name": 1,
+     "standalone": 931,
+     "parent": 16,
+     "stage": 41
+    },
+    "IS": {
+     "standalone": 168,
+     "stage": 2,
+     "parent": 1
+    },
+    "IT": {
+     "variant": 463,
+     "stage_by_name": 511,
+     "standalone": 30378,
+     "stage": 3155,
+     "parent": 364
+    },
+    "LI": {
+     "standalone": 163,
+     "stage": 6,
+     "parent": 1
+    },
+    "LT": {
+     "standalone": 216,
+     "stage": 76,
+     "variant": 5,
+     "parent": 6
+    },
+    "LU": {
+     "standalone": 403,
+     "stage": 13,
+     "parent": 6,
+     "stage_by_name": 1
+    },
+    "LV": {
+     "stage": 115,
+     "standalone": 278,
+     "parent": 7
+    },
+    "MD": {
+     "standalone": 2
+    },
+    "ME": {
+     "standalone": 210,
+     "stage": 4
+    },
+    "MK": {
+     "standalone": 28,
+     "stage": 7,
+     "parent": 1
+    },
+    "MT": {
+     "standalone": 38
+    },
+    "NL": {
+     "standalone": 60719,
+     "variant": 156,
+     "stage_by_name": 16,
+     "stage": 1471,
+     "parent": 240
+    },
+    "NO": {
+     "variant": 5,
+     "stage_by_name": 1,
+     "standalone": 2857,
+     "parent": 40,
+     "stage": 316
+    },
+    "PL": {
+     "standalone": 3233,
+     "stage": 244,
+     "parent": 52,
+     "variant": 3,
+     "stage_by_name": 1
+    },
+    "PT": {
+     "variant": 18,
+     "stage_by_name": 29,
+     "standalone": 1255,
+     "parent": 9,
+     "stage": 57
+    },
+    "RO": {
+     "standalone": 1612,
+     "parent": 11,
+     "stage": 56,
+     "variant": 3
+    },
+    "RS": {
+     "variant": 6,
+     "stage_by_name": 25,
+     "standalone": 472,
+     "stage": 97,
+     "parent": 6
+    },
+    "SE": {
+     "variant": 51,
+     "stage_by_name": 38,
+     "standalone": 2763,
+     "stage": 984,
+     "parent": 129
+    },
+    "SI": {
+     "standalone": 1626,
+     "stage": 133,
+     "parent": 16,
+     "variant": 12,
+     "stage_by_name": 3
+    },
+    "SK": {
+     "standalone": 2654,
+     "stage": 150,
+     "stage_by_name": 1,
+     "parent": 24,
+     "variant": 7
+    },
+    "TR": {
+     "standalone": 102,
+     "parent": 6,
+     "stage": 51,
+     "variant": 2
+    },
+    "UA": {
+     "standalone": 534,
+     "parent": 2,
+     "stage": 2
+    },
+    "XK": {
+     "stage": 12,
+     "standalone": 16,
+     "parent": 1
+    }
+   },
+   "rows_updated": {
+    "route_relations": 0,
+    "trips": 0
+   },
+   "name_fallback_sample": [
+    {
+     "osm_id": 2693235,
+     "country": "ES",
+     "name": "Variante Pico del Águila"
+    },
+    {
+     "osm_id": 224520,
+     "country": "AT",
+     "name": "Glanzer Hoftour (Variante 1 - Kurzvariante)"
+    },
+    {
+     "osm_id": 562522,
+     "country": "AT",
+     "name": "Nordalpenweg 01A (Variante Hohe Wand)"
+    },
+    {
+     "osm_id": 2307530,
+     "country": "AT",
+     "name": "Über Vordere Mandling (Abstecher vom 01A)"
+    },
+    {
+     "osm_id": 2307179,
+     "country": "AT",
+     "name": "Ober-Piesting - Alkersdorf (231 Zubringer)"
+    },
+    {
+     "osm_id": 2345185,
+     "country": "AT",
+     "name": "Variante Bergstation-Schneeberg"
+    },
+    {
+     "osm_id": 2737146,
+     "country": "AT",
+     "name": "Salzsteigweg 09 (Variante Stainach)"
+    },
+    {
+     "osm_id": 3292201,
+     "country": "AT",
+     "name": "Kärntner Grenzweg Variante"
+    },
+    {
+     "osm_id": 3562360,
+     "country": "AT",
+     "name": "Zubringer 10 Höhenwanderweg um Eichgraben"
+    },
+    {
+     "osm_id": 3871856,
+     "country": "AT",
+     "name": "Voralpenweg 04 (Abstecher Schöpfl)"
+    },
+    {
+     "osm_id": 8360025,
+     "country": "AT",
+     "name": "Grubtaler Weg -Variante"
+    },
+    {
+     "osm_id": 8361559,
+     "country": "AT",
+     "name": "Gamlitz-Gaberhöhe-Steinbach Variante"
+    },
+    {
+     "osm_id": 10385047,
+     "country": "AT",
+     "name": "Au & Uferweg, lange Variante (Weg 8)"
+    },
+    {
+     "osm_id": 10390406,
+     "country": "AT",
+     "name": "Kreuz- & Querpfad, lange Variante (Weg 9)"
+    },
+    {
+     "osm_id": 14632554,
+     "country": "AT",
+     "name": "Dobratsch Rundwanderweg (veraltete Variante)"
+    },
+    {
+     "osm_id": 15511759,
+     "country": "AT",
+     "name": "Herzass Trumpf Variante Regelstein"
+    },
+    {
+     "osm_id": 18142822,
+     "country": "AT",
+     "name": "Welser Höhenweg (Welser Variante)"
+    },
+    {
+     "osm_id": 19443113,
+     "country": "AT",
+     "name": "Zubringer Kattowitzer Hütte"
+    },
+    {
+     "osm_id": 9065087,
+     "country": "BE",
+     "name": "Promenade des grosses pierres (alternative)"
+    },
+    {
+     "osm_id": 9065558,
+     "country": "BE",
+     "name": "Promenade de Chapeauvau (alternative)"
+    },
+    {
+     "osm_id": 9156234,
+     "country": "BE",
+     "name": "GR 15 Variante Charmille"
+    },
+    {
+     "osm_id": 10059997,
+     "country": "BE",
+     "name": "Streek-GR Waas- en Reynaertland Variant Lokeren-Daknam"
+    },
+    {
+     "osm_id": 10965514,
+     "country": "BE",
+     "name": "GRP 127 Variante pluie Quenast"
+    },
+    {
+     "osm_id": 12408715,
+     "country": "BE",
+     "name": "CB13 Neuve Cense - Chession - Saint-Martin - Grottes - Mont - Anthisnes - Sart (variante via Fond du Sart)"
+    },
+    {
+     "osm_id": 14639905,
+     "country": "BE",
+     "name": "GRP 563 Variante crue Lontzen"
+    },
+    {
+     "osm_id": 15351740,
+     "country": "BE",
+     "name": "GRP 573 Variante crue Herzogenhügel"
+    },
+    {
+     "osm_id": 15652169,
+     "country": "BE",
+     "name": "GR 57 Variante Hérou"
+    },
+    {
+     "osm_id": 18086255,
+     "country": "BE",
+     "name": "MDY22 Les Crêtes de la Warche: raccourci Warche"
+    },
+    {
+     "osm_id": 19768649,
+     "country": "BE",
+     "name": "GR 122 Variant Zottegem"
+    },
+    {
+     "osm_id": 10692445,
+     "country": "CH",
+     "name": "Büel - Dieterswil (Umleitung bei Schiessbetrieb) - fixme"
+    },
+    {
+     "osm_id": 11612725,
+     "country": "CH",
+     "name": "Umleitung bei Schiessbetrieb"
+    },
+    {
+     "osm_id": 12283021,
+     "country": "CH",
+     "name": "Umleitung bei Schiessbetrieb Nenzlingen-Blattenpass"
+    },
+    {
+     "osm_id": 12283022,
+     "country": "CH",
+     "name": "Umleitung bei Schiessbetrieb Eggflue"
+    },
+    {
+     "osm_id": 6054654,
+     "country": "DE",
+     "name": "Umleitung-Steinpilz in der Wildschutzzeit (1.Dez.-14 Mai)"
+    },
+    {
+     "osm_id": 1444362,
+     "country": "DE",
+     "name": "Wurzelberg - Alternativweg"
+    },
+    {
+     "osm_id": 2344389,
+     "country": "DE",
+     "name": "Alemannenweg Variante"
+    },
+    {
+     "osm_id": 2940604,
+     "country": "DE",
+     "name": "Spessartbogen Zubringer Wiesbütt - Bad Orb"
+    },
+    {
+     "osm_id": 3088296,
+     "country": "DE",
+     "name": "Spessartbogen Zubringer Marjoß"
+    },
+    {
+     "osm_id": 3119335,
+     "country": "DE",
+     "name": "Spessartbogen Zubringer Langenselbold"
+    },
+    {
+     "osm_id": 3119755,
+     "country": "DE",
+     "name": "Spessartbogen Zubringer Wächtersbach - Bad Orb"
+    }
+   ],
+   "seconds": 21.1
+  },
+  "cycling": {
+   "relations": 117668,
+   "totals": {
+    "stage": 12463,
+    "standalone": 102505,
+    "variant": 939,
+    "parent": 1761
+   },
+   "stage_by_name": 385,
+   "variant_by_name": 251,
+   "multi_parent_decided": 3031,
+   "decided_by": {
+    "children": 1966,
+    "name": 295,
+    "id": 127,
+    "ancestor": 7
+   },
+   "unknown_roles": {
+    "future": 26,
+    "radnetz reutlingen": 1,
+    "obiekt poszerzania umiejętności mtb": 1,
+    "conneection": 1
+   },
+   "countries": {
+    "AD": {
+     "standalone": 16
+    },
+    "AL": {
+     "stage": 1,
+     "parent": 1
+    },
+    "AT": {
+     "variant": 34,
+     "stage_by_name": 22,
+     "standalone": 1716,
+     "stage": 113,
+     "parent": 65
+    },
+    "BA": {
+     "stage": 2,
+     "standalone": 65,
+     "parent": 2
+    },
+    "BE": {
+     "variant": 14,
+     "stage_by_name": 16,
+     "standalone": 12169,
+     "stage": 727,
+     "parent": 158
+    },
+    "BG": {
+     "standalone": 45,
+     "variant": 1,
+     "stage": 6
+    },
+    "CH": {
+     "standalone": 455,
+     "stage": 230,
+     "parent": 90,
+     "variant": 29,
+     "stage_by_name": 4
+    },
+    "CY": {
+     "standalone": 7,
+     "stage": 2,
+     "stage_by_name": 1
+    },
+    "CZ": {
+     "variant": 20,
+     "stage_by_name": 18,
+     "standalone": 3158,
+     "stage": 58,
+     "parent": 36
+    },
+    "DE": {
+     "stage": 6684,
+     "standalone": 42753,
+     "variant": 325,
+     "stage_by_name": 174,
+     "parent": 514
+    },
+    "DK": {
+     "variant": 7,
+     "stage_by_name": 2,
+     "standalone": 841,
+     "stage": 40,
+     "parent": 11
+    },
+    "EE": {
+     "stage": 68,
+     "stage_by_name": 64,
+     "standalone": 40,
+     "parent": 1
+    },
+    "ES": {
+     "stage": 265,
+     "variant": 10,
+     "stage_by_name": 17,
+     "standalone": 2047,
+     "parent": 44
+    },
+    "FI": {
+     "standalone": 172,
+     "stage": 136,
+     "parent": 12,
+     "stage_by_name": 3
+    },
+    "FO": {
+     "standalone": 4
+    },
+    "FR": {
+     "variant": 51,
+     "stage_by_name": 45,
+     "parent": 136,
+     "standalone": 6277,
+     "stage": 1071
+    },
+    "GB": {
+     "variant": 289,
+     "stage_by_name": 24,
+     "standalone": 4448,
+     "parent": 487,
+     "stage": 1373
+    },
+    "GR": {
+     "standalone": 47,
+     "stage": 2
+    },
+    "HR": {
+     "variant": 3,
+     "stage_by_name": 10,
+     "standalone": 518,
+     "parent": 7,
+     "stage": 14
+    },
+    "HU": {
+     "standalone": 308,
+     "stage": 140,
+     "stage_by_name": 11,
+     "parent": 7
+    },
+    "IE": {
+     "variant": 26,
+     "stage_by_name": 2,
+     "standalone": 3146,
+     "stage": 200,
+     "parent": 66
+    },
+    "IS": {
+     "standalone": 35
+    },
+    "IT": {
+     "variant": 47,
+     "stage_by_name": 49,
+     "stage": 236,
+     "standalone": 1247,
+     "parent": 36
+    },
+    "LI": {
+     "standalone": 8,
+     "parent": 4
+    },
+    "LT": {
+     "standalone": 53,
+     "stage": 5,
+     "stage_by_name": 1
+    },
+    "LU": {
+     "variant": 2,
+     "stage_by_name": 2,
+     "standalone": 334,
+     "stage": 4,
+     "parent": 3
+    },
+    "LV": {
+     "variant": 1,
+     "stage_by_name": 144,
+     "stage": 155,
+     "standalone": 62,
+     "parent": 4
+    },
+    "MD": {
+     "standalone": 5
+    },
+    "ME": {
+     "standalone": 63,
+     "stage": 1
+    },
+    "MK": {
+     "stage": 2,
+     "standalone": 4
+    },
+    "MT": {
+     "stage": 1,
+     "standalone": 3
+    },
+    "NL": {
+     "variant": 17,
+     "stage_by_name": 1,
+     "standalone": 16211,
+     "stage": 376,
+     "parent": 20
+    },
+    "NO": {
+     "variant": 5,
+     "stage_by_name": 3,
+     "stage": 32,
+     "standalone": 424,
+     "parent": 14
+    },
+    "PL": {
+     "standalone": 2748,
+     "stage": 84,
+     "parent": 9,
+     "stage_by_name": 12,
+     "variant": 1
+    },
+    "PT": {
+     "stage": 96,
+     "standalone": 155,
+     "parent": 1,
+     "stage_by_name": 1
+    },
+    "RO": {
+     "standalone": 84,
+     "stage": 32,
+     "parent": 5
+    },
+    "RS": {
+     "variant": 3,
+     "stage_by_name": 3,
+     "standalone": 43,
+     "stage": 11
+    },
+    "SE": {
+     "standalone": 684,
+     "stage": 225,
+     "variant": 53,
+     "parent": 16
+    },
+    "SI": {
+     "variant": 1,
+     "stage_by_name": 1,
+     "standalone": 244,
+     "stage": 37,
+     "parent": 2
+    },
+    "SK": {
+     "standalone": 1578,
+     "stage": 28,
+     "parent": 7,
+     "stage_by_name": 5
+    },
+    "TR": {
+     "standalone": 185,
+     "parent": 2,
+     "stage": 5,
+     "stage_by_name": 1
+    },
+    "UA": {
+     "standalone": 100,
+     "stage": 1,
+     "parent": 1
+    },
+    "XK": {
+     "standalone": 3
+    }
+   },
+   "rows_updated": {
+    "route_relations": 0,
+    "cycle_routes": 0
+   },
+   "name_fallback_sample": [
+    {
+     "osm_id": 1814985,
+     "country": "CZ",
+     "name": "X233, alternativa budoucí A233"
+    },
+    {
+     "osm_id": 3500345,
+     "country": "CZ",
+     "name": "5A Jantarová stezka – alternativa (Skalička- rest. Jachta)"
+    },
+    {
+     "osm_id": 8251291,
+     "country": "CZ",
+     "name": "Alternativa 8100"
+    },
+    {
+     "osm_id": 17232155,
+     "country": "CZ",
+     "name": "A216, alternativa k budoucí A4"
+    },
+    {
+     "osm_id": 3188708,
+     "country": "AT",
+     "name": "Jubiläumsradweg R1 - Variante Seewinkel"
+    },
+    {
+     "osm_id": 17868148,
+     "country": "AT",
+     "name": "Glemmtalradweg variante"
+    },
+    {
+     "osm_id": 29139,
+     "country": "DE",
+     "name": "Elberadweg Alternative Magdeburg [rechtselbisch]"
+    },
+    {
+     "osm_id": 141205,
+     "country": "DE",
+     "name": "Panoramatour durch das Welland (Alternative)"
+    },
+    {
+     "osm_id": 326688,
+     "country": "DE",
+     "name": "Donauradweg Variante Blautal"
+    },
+    {
+     "osm_id": 918673,
+     "country": "DE",
+     "name": "[D10] Elberadweg Alternativroute Pillnitz"
+    },
+    {
+     "osm_id": 933745,
+     "country": "DE",
+     "name": "ZR1 - Zubringer zum Europaradweg R1"
+    },
+    {
+     "osm_id": 1181408,
+     "country": "DE",
+     "name": "Schambachtalbahn-Alternativ-Radweg"
+    },
+    {
+     "osm_id": 1560539,
+     "country": "DE",
+     "name": "Umleitung U5"
+    },
+    {
+     "osm_id": 1823618,
+     "country": "DE",
+     "name": "Radroute Main-Aisch-Radweg Variante I"
+    },
+    {
+     "osm_id": 1938723,
+     "country": "DE",
+     "name": "Delbrücker Spargelroute De12 Abstecher"
+    },
+    {
+     "osm_id": 2195606,
+     "country": "DE",
+     "name": "[D10] Elberadweg Alternative Neuhaus [linkselbisch]"
+    },
+    {
+     "osm_id": 2262836,
+     "country": "DE",
+     "name": "D12 - Alternative Grünhof"
+    },
+    {
+     "osm_id": 2267179,
+     "country": "DE",
+     "name": "Alz-Inn-Radweg Variante"
+    },
+    {
+     "osm_id": 2348655,
+     "country": "DE",
+     "name": "Eifel-Höhen-Route (Alternativ-Streckenabschnitt)"
+    },
+    {
+     "osm_id": 2402118,
+     "country": "DE",
+     "name": "D12 - Alternative Fähre Kamp-Karnin"
+    },
+    {
+     "osm_id": 2599005,
+     "country": "DE",
+     "name": "Elberadweg Alternative Magdeburg [linkselbisch]"
+    },
+    {
+     "osm_id": 2673452,
+     "country": "DE",
+     "name": "R1a Hardehausen (Warburg) - Alternativen"
+    },
+    {
+     "osm_id": 3932230,
+     "country": "DE",
+     "name": "Bodensee-Königssee-Radweg (Variante über Ortsmitte Bad Feilnbach)"
+    },
+    {
+     "osm_id": 5360290,
+     "country": "DE",
+     "name": "Elster-Radweg (Alternative Elstertrebnitz)"
+    },
+    {
+     "osm_id": 5391807,
+     "country": "DE",
+     "name": "Zootzen (22) - Schweinrich (27) (Variante Schilder)"
+    },
+    {
+     "osm_id": 5648756,
+     "country": "DE",
+     "name": "Via Julia (Alternative)"
+    },
+    {
+     "osm_id": 6019066,
+     "country": "DE",
+     "name": "Wolfsradweg Alternativen"
+    },
+    {
+     "osm_id": 6309591,
+     "country": "DE",
+     "name": "Weserradweg Alternativroute"
+    },
+    {
+     "osm_id": 6354910,
+     "country": "DE",
+     "name": "Weserradweg (Alternativstrecke)"
+    },
+    {
+     "osm_id": 6432798,
+     "country": "DE",
+     "name": "Goitzsche Rundweg Variante"
+    },
+    {
+     "osm_id": 7758088,
+     "country": "DE",
+     "name": "[D10] Elberadweg Alternative Mittellandkanal [rechtselbisch]"
+    },
+    {
+     "osm_id": 8464138,
+     "country": "DE",
+     "name": "Saaleradweg Variante Calbe"
+    },
+    {
+     "osm_id": 9160916,
+     "country": "DE",
+     "name": "Zubringer Mulderadweg Aue"
+    },
+    {
+     "osm_id": 9675978,
+     "country": "DE",
+     "name": "Donau-Ufer-Radweg (Variante)"
+    },
+    {
+     "osm_id": 9939012,
+     "country": "DE",
+     "name": "Zschopautalradweg Variante Wurzelweg"
+    },
+    {
+     "osm_id": 10117539,
+     "country": "DE",
+     "name": "Werratal Radweg Variante Bahnhof Eschwege"
+    },
+    {
+     "osm_id": 11199563,
+     "country": "DE",
+     "name": "Klais bypass"
+    },
+    {
+     "osm_id": 11858642,
+     "country": "DE",
+     "name": "Dreiland-Radweg Zubringer Basel (Schweizer Teil)"
+    },
+    {
+     "osm_id": 12563810,
+     "country": "DE",
+     "name": "Alternative Energien"
+    },
+    {
+     "osm_id": 12772506,
+     "country": "DE",
+     "name": "Engelroute, Zubringer vom Hauptbahnhof"
+    }
+   ],
+   "seconds": 9.8
+  }
+ },
+ "francigena": {
+  "chain": {
+   "955907": {
+    "name": "Via Francigena - 04 parte Italia",
+    "hierarchy": "parent",
+    "stage_count": 9,
+    "stages": [
+     [
+      2458709,
+      "Via Francigena - 01 Valle d'Aosta",
+      "stage",
+      null
+     ],
+     [
+      1471008,
+      "Via Francigena - 02 Piemonte",
+      "parent",
+      0
+     ],
+     [
+      2452848,
+      "Via Francigena - 03 Lombardia",
+      "parent",
+      0
+     ],
+     [
+      1471005,
+      "Via Francigena - 04 Emilia Romagna",
+      "parent",
+      0
+     ],
+     [
+      334891,
+      "Via Francigena - 05 Liguria",
+      "stage",
+      null
+     ],
+     [
+      12554842,
+      "Via Francigena - 06 Toscana",
+      "parent",
+      0
+     ],
+     [
+      6201614,
+      "Via Francigena - 07 Lazio",
+      "parent",
+      0
+     ],
+     [
+      2405262,
+      "Via Francigena - 08 Campania",
+      "parent",
+      0
+     ],
+     [
+      2341136,
+      "Via Francigena - 09 Puglia",
+      "parent",
+      0
+     ]
+    ]
+   },
+   "11860709": {
+    "name": "Via Francigena",
+    "hierarchy": "parent",
+    "stage_count": 4,
+    "stages": [
+     [
+      282117,
+      "Via Francigena - 01 part Great Britain",
+      "stage",
+      null
+     ],
+     [
+      371544,
+      "Via Francigena - 02 partie française",
+      "parent",
+      6
+     ],
+     [
+      124582,
+      "Via Francigena",
+      "stage",
+      null
+     ],
+     [
+      955907,
+      "Via Francigena - 04 parte Italia",
+      "parent",
+      9
+     ]
+    ]
+   }
+  },
+  "italian_rows_by_path": [
+   {
+    "path": "Via Francigena",
+    "hierarchy": "variant",
+    "rows": 23
+   },
+   {
+    "path": "Via Francigena Fabaria",
+    "hierarchy": "stage",
+    "rows": 15
+   },
+   {
+    "path": "Via Francigena",
+    "hierarchy": "parent",
+    "rows": 11
+   },
+   {
+    "path": "Magna Via Francigena",
+    "hierarchy": "stage",
+    "rows": 9
+   },
+   {
+    "path": "Via Francigena Mare",
+    "hierarchy": "variant",
+    "rows": 5
+   },
+   {
+    "path": "no parent (name)",
+    "hierarchy": "variant",
+    "rows": 5
+   },
+   {
+    "path": "no parent (structure)",
+    "hierarchy": "standalone",
+    "rows": 5
+   },
+   {
+    "path": "Magna Via Francigena",
+    "hierarchy": "variant",
+    "rows": 4
+   },
+   {
+    "path": "Via Francigena",
+    "hierarchy": "stage",
+    "rows": 2
+   },
+   {
+    "path": "Via Francigena Fabaria",
+    "hierarchy": "variant",
+    "rows": 2
+   },
+   {
+    "path": "Magna Via Francigena",
+    "hierarchy": "parent",
+    "rows": 1
+   },
+   {
+    "path": "no parent (name)",
+    "hierarchy": "stage",
+    "rows": 1
+   },
+   {
+    "path": "Via Francigena Mare",
+    "hierarchy": "parent",
+    "rows": 1
+   },
+   {
+    "path": "Via Francigena Mare",
+    "hierarchy": "stage",
+    "rows": 1
+   },
+   {
+    "path": "Via Francigena Fabaria",
+    "hierarchy": "parent",
+    "rows": 1
+   }
+  ],
+  "named_rows": [
+   {
+    "id": 735,
+    "title": "Via Francigena - 04 parte Italia",
+    "hierarchy": "parent",
+    "src": "structure",
+    "stage_of": 11860709,
+    "top_of": 11860709,
+    "stage_index": 4
+   },
+   {
+    "id": 6828,
+    "title": "Via Francigena",
+    "hierarchy": "parent",
+    "src": "structure",
+    "stage_of": null,
+    "top_of": null,
+    "stage_index": null
+   },
+   {
+    "id": 197887,
+    "title": "Magna Via Francigena",
+    "hierarchy": "parent",
+    "src": "structure",
+    "stage_of": null,
+    "top_of": null,
+    "stage_index": null
+   },
+   {
+    "id": 201656,
+    "title": "Via Francigena Mare - itinerario principale",
+    "hierarchy": "stage",
+    "src": "structure",
+    "stage_of": 15896942,
+    "top_of": 15896942,
+    "stage_index": 1
+   },
+   {
+    "id": 202887,
+    "title": "Via Francigena Fabaria",
+    "hierarchy": "parent",
+    "src": "structure",
+    "stage_of": null,
+    "top_of": null,
+    "stage_index": null
+   },
+   {
+    "id": 203027,
+    "title": "Via Francigena - Variante Anello di Campagnano",
+    "hierarchy": "variant",
+    "src": "structure",
+    "stage_of": 6201614,
+    "top_of": 11860709,
+    "stage_index": null
+   }
+  ]
+ }
+}

@@ -46,9 +46,10 @@ ASCII clean, no em dashes, per project convention.
 
 import argparse
 import json
+import re
 import sys
 import time
-from collections import defaultdict
+from collections import Counter, defaultdict
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -320,7 +321,8 @@ def store_coverage(conn):
                 WHERE s.source = 'osm' AND s.source_ref ~ '^[0-9]+$'
                   AND NOT EXISTS (SELECT 1 FROM route_relations r
                                   WHERE r.activity = %s
-                                    AND r.osm_id = s.source_ref::bigint)""",
+                                    AND r.osm_id = CASE WHEN s.source_ref ~ '^[0-9]+$'
+                                                        THEN s.source_ref::bigint END)""",
                         (activity,))
             out[activity] = cur.fetchone()[0]
     return out
@@ -343,6 +345,499 @@ def gate(totals, store):
             "ok": GATE_MIN_RATIO <= ratio <= GATE_MAX_RATIO,
         }
     return verdicts
+
+
+# ---------------------------------------------------------------------------
+# R3a: classify parent / stage / variant / standalone
+# ---------------------------------------------------------------------------
+#
+# From route_relations alone. A parent has child relations of the same
+# activity. A stage is a relation member of a route relation with a stage
+# role ("" and "main" mostly; route_schema.role_kind lists the rest the data
+# holds). A variant is a member with a variant role. Everything else is
+# standalone, unless its NAME says stage, which is the logged fallback.
+#
+# The one place this departs from ROUTES.md's wording: the spec said a stage
+# is a member of EXACTLY one route relation. The graph says 2,699 hiking and
+# 2,433 cycling stage-role children sit under two or more parents, and the
+# Via Alpina is the plain case: the Swiss national superroute and the
+# international one both list the same twenty stage relations directly.
+# "Exactly one" would make every one of them standalone. So a multi-parent
+# stage picks ONE parent, deterministically, and keeps every parent in
+# parent_refs:
+#   1. drop any candidate that is an ancestor of another candidate (a stage
+#      listed by both the regional section and the national path belongs
+#      to the section);
+#   2. prefer a parent whose name is contained in the stage's own name;
+#   3. prefer the parent with the fewest stage children (the more specific
+#      route);
+#   4. lowest relation id.
+# top_of is the root of the chosen chain, so "which path" is one column
+# away for a stage three levels down.
+
+REPORT_HIER = ROOT / "data" / "reports" / "routes_hierarchy.json"
+
+# Names that say "stage": a stage word next to a number, a leading counter
+# ("031 ~ Pot kurirjev"), or "<name> <n>: <from> - <to>". Every match is a
+# guess and is written with hierarchy_src = 'name'.
+STAGE_WORDS = (r"tappa|etappe|etapp|etape|étape|etapa|stage|sezione|tramo|"
+               r"trecho|etap|odcinek|dagsetapp|abschnitt|teilstück|troncon|"
+               r"tronçon|sección|seccion|section|leg|deel|dagwandeling|"
+               r"tappe|tape")
+NAME_STAGE_RE = re.compile(
+    rf"\b(?:{STAGE_WORDS})\b\s*[:\-.]?\s*[A-Z]{{0,4}}(\d{{1,3}})\b"
+    rf"|\b(\d{{1,3}})\s*[:.\-~]?\s*\b(?:{STAGE_WORDS})\b",
+    re.IGNORECASE)
+LEADING_COUNTER_RE = re.compile(r"^\s*(\d{1,4})\s*[~:.\-]\s+\S")
+# The separator class holds a hyphen and an en dash, written as an escape so
+# the file itself stays ASCII (house rule: no dashes of that kind anywhere).
+NUMBERED_LEG_RE = re.compile("^\\S.*?\\s(\\d{1,3})\\s*:\\s+\\S.+\\s[-\\u2013]\\s\\S")
+# A relation nobody wrapped in a superroute whose name says it is a variant
+# of something ("Variante Nord Via Francigena"). Also a guess, also logged.
+NAME_VARIANT_RE = re.compile(
+    r"\b(variante?|variant[ea]?|alternativ\w*|alternat(?:e|ive)|bypass|"
+    r"umleitung|deviazione|déviation|desvío|abstecher|zubringer|"
+    r"approach|excursion|shortcut|raccourci|scorciatoia)\b", re.IGNORECASE)
+
+
+def name_stage(name):
+    """(is_stage, number or None) from the name alone."""
+    n = name or ""
+    m = NAME_STAGE_RE.search(n)
+    if m:
+        num = m.group(1) or m.group(2)
+        return True, (int(num) if num and int(num) > 0 else None)
+    m = LEADING_COUNTER_RE.match(n)
+    if m:
+        return True, int(m.group(1))
+    m = NUMBERED_LEG_RE.match(n)
+    if m:
+        return True, int(m.group(1))
+    return False, None
+
+
+def name_variant(name):
+    return bool(NAME_VARIANT_RE.search(name or ""))
+
+
+def load_graph(conn, activity):
+    """Everything classify needs, in memory: about 300k small dicts."""
+    with conn.cursor() as cur:
+        cur.execute("""
+            SELECT osm_id, country, in_store, parent_refs, child_refs,
+                   tags_all->>'name', tags_all->>'type',
+                   (SELECT jsonb_agg(jsonb_build_array(m->>1, m->>2))
+                    FROM jsonb_array_elements(members) m WHERE m->>0 = 'r')
+            FROM route_relations WHERE activity = %s""", (activity,))
+        graph = {}
+        for osm_id, country, in_store, parents, children, name, rtype, rmembers in cur:
+            graph[osm_id] = {
+                "country": country, "in_store": in_store,
+                "parents": list(parents or []), "children": list(children or []),
+                "name": name or "", "type": rtype,
+                "rmembers": [(int(ref), role or "") for ref, role in (rmembers or [])],
+            }
+    return graph
+
+
+def classify_graph(graph, log):
+    """Pure function of the graph. Returns {osm_id: decision dict}."""
+    from route_schema import role_kind
+    from popularity import fold
+
+    # Memberships from the parents' member lists, first mention of a child
+    # wins its position. Only children that are in the graph count.
+    stage_children = defaultdict(list)     # parent -> [child, ...] in order
+    memberships = defaultdict(list)        # child -> [(parent, kind, role)]
+    unknown_roles = Counter()
+    for pid, rec in graph.items():
+        seen = set()
+        for cid, role in rec["rmembers"]:
+            if cid == pid or cid in seen or cid not in graph:
+                continue
+            seen.add(cid)
+            kind = role_kind(role)
+            if kind == "stage":
+                stage_children[pid].append(cid)
+            elif kind is None:
+                unknown_roles[role.strip().lower() or "(empty)"] += 1
+            memberships[cid].append((pid, kind, role))
+
+    anc_memo = {}
+
+    def ancestors(x):
+        """Every relation above x through parent_refs, cycle safe."""
+        if x in anc_memo:
+            return anc_memo[x]
+        out, frontier, depth = set(), [x], 0
+        while frontier and depth < 8:
+            nxt = []
+            for y in frontier:
+                for p in graph[y]["parents"] if y in graph else ():
+                    if p not in out and p != x:
+                        out.add(p)
+                        nxt.append(p)
+            frontier, depth = nxt, depth + 1
+        anc_memo[x] = out
+        return out
+
+    decided_by = Counter()
+
+    def choose(child, cands):
+        cands = sorted(set(cands))
+        if len(cands) == 1:
+            return cands[0], "single"
+        keep = [p for p in cands
+                if not any(p in ancestors(q) for q in cands if q != p)]
+        if len(keep) == 1:
+            return keep[0], "ancestor"
+        keep = keep or cands
+        cname = fold(graph[child]["name"])
+        named = [p for p in keep
+                 if fold(graph[p]["name"]) and fold(graph[p]["name"]) in cname]
+        if len(named) == 1:
+            return named[0], "name"
+        keep = named or keep
+        keep.sort(key=lambda p: (len(stage_children.get(p, ())) or 10 ** 9, p))
+        if len(keep) > 1 and (len(stage_children.get(keep[0], ())) or 10 ** 9) \
+                < (len(stage_children.get(keep[1], ())) or 10 ** 9):
+            return keep[0], "children"
+        return keep[0], "id"
+
+    out = {}
+    for cid, rec in graph.items():
+        ms = memberships.get(cid, [])
+        stage_ps = [p for p, kind, _ in ms if kind == "stage"]
+        var_ps = [p for p, kind, _ in ms if kind == "variant"]
+        is_parent = bool(stage_children.get(cid)) or any(
+            kind == "variant" for _, kind, _ in memberships_of_children(cid, graph, memberships))
+        cls, src, stage_of, why = "standalone", "structure", None, None
+        if stage_ps:
+            cls = "stage"
+            stage_of, why = choose(cid, stage_ps)
+        elif var_ps:
+            cls = "variant"
+            stage_of, why = choose(cid, var_ps)
+        if is_parent:
+            cls = "parent"
+        elif cls == "standalone" and not rec["parents"]:
+            named, num = name_stage(rec["name"])
+            if named:
+                cls, src = "stage", "name"
+                out[cid] = {"cls": cls, "src": src, "stage_of": None,
+                            "index": num, "count": None, "why": "name"}
+                log.append((cid, rec["country"], rec["name"]))
+                continue
+            if name_variant(rec["name"]):
+                out[cid] = {"cls": "variant", "src": "name", "stage_of": None,
+                            "index": None, "count": None, "why": "name"}
+                log.append((cid, rec["country"], rec["name"]))
+                continue
+        if why and len(set(stage_ps or var_ps)) > 1:
+            decided_by[why] += 1
+        index = None
+        if stage_of is not None and cls in ("stage", "parent") and stage_ps:
+            kids = stage_children.get(stage_of, [])
+            index = kids.index(cid) + 1 if cid in kids else None
+        count = len(stage_children.get(cid, [])) if is_parent else None
+        out[cid] = {"cls": cls, "src": src, "stage_of": stage_of,
+                    "index": index, "count": count, "why": why}
+
+    # top_of: walk stage_of upward, cycle safe.
+    for cid, d in out.items():
+        top, cur, hops = None, d["stage_of"], 0
+        seen = {cid}
+        while cur is not None and cur not in seen and hops < 8:
+            seen.add(cur)
+            top = cur
+            cur = out.get(cur, {}).get("stage_of")
+            hops += 1
+        d["top_of"] = top
+    return out, decided_by, unknown_roles
+
+
+def memberships_of_children(pid, graph, memberships):
+    """The (parent, kind, role) memberships of pid's children that point
+    back at pid: used only to ask 'does pid have a variant child'."""
+    for cid in graph[pid]["children"]:
+        for p, kind, role in memberships.get(cid, ()):
+            if p == pid:
+                yield p, kind, role
+
+
+def write_classification(conn, activity, decisions):
+    """One COPY into a temp table, one UPDATE: 300k rows in seconds."""
+    with conn.cursor() as cur:
+        cur.execute("""
+            CREATE TEMP TABLE cls (osm_id bigint PRIMARY KEY, hierarchy text,
+                hierarchy_src text, stage_of bigint, top_of bigint,
+                stage_index integer, stage_count integer) ON COMMIT DROP""")
+        with cur.copy("COPY cls FROM STDIN") as copy:
+            for osm_id, d in decisions.items():
+                copy.write_row((osm_id, d["cls"], d["src"], d["stage_of"],
+                                d["top_of"], d["index"], d["count"]))
+        cur.execute("""
+            UPDATE route_relations r
+               SET hierarchy = c.hierarchy, hierarchy_src = c.hierarchy_src,
+                   stage_of = c.stage_of, top_of = c.top_of,
+                   stage_index = c.stage_index, stage_count = c.stage_count
+              FROM cls c
+             WHERE r.activity = %s AND r.osm_id = c.osm_id
+               AND (r.hierarchy IS DISTINCT FROM c.hierarchy
+                    OR r.hierarchy_src IS DISTINCT FROM c.hierarchy_src
+                    OR r.stage_of IS DISTINCT FROM c.stage_of
+                    OR r.top_of IS DISTINCT FROM c.top_of
+                    OR r.stage_index IS DISTINCT FROM c.stage_index
+                    OR r.stage_count IS DISTINCT FROM c.stage_count)""",
+                    (activity,))
+        n_graph = cur.rowcount
+        table = TABLE_OF_ACTIVITY[activity]
+        # Copy onto the store rows, touching only rows whose values change,
+        # because the updated_at trigger fires on any UPDATE.
+        cur.execute(f"""
+            UPDATE {table} t
+               SET hierarchy = r.hierarchy, hierarchy_src = r.hierarchy_src,
+                   parent_refs = r.parent_refs, stage_of = r.stage_of,
+                   top_of = r.top_of, stage_index = r.stage_index,
+                   stage_count = r.stage_count
+              FROM route_relations r
+             WHERE r.activity = %s
+               AND r.osm_id = CASE WHEN t.source = 'osm'
+                                    AND t.source_ref ~ '^[0-9]+$'
+                                   THEN t.source_ref::bigint END
+               AND (t.hierarchy IS DISTINCT FROM r.hierarchy
+                    OR t.hierarchy_src IS DISTINCT FROM r.hierarchy_src
+                    OR t.parent_refs IS DISTINCT FROM r.parent_refs
+                    OR t.stage_of IS DISTINCT FROM r.stage_of
+                    OR t.top_of IS DISTINCT FROM r.top_of
+                    OR t.stage_index IS DISTINCT FROM r.stage_index
+                    OR t.stage_count IS DISTINCT FROM r.stage_count)""",
+                    (activity,))
+        n_store = cur.rowcount
+    return n_graph, n_store
+
+
+def francigena_block(conn):
+    """The acceptance case, as data: the top relation, its chain, and where
+    every Italian row with Francigena in its title ends up."""
+    with conn.cursor() as cur:
+        cur.execute("""
+            SELECT r.osm_id, r.tags_all->>'name', r.hierarchy, r.stage_count,
+                   (SELECT jsonb_agg(jsonb_build_array(c.osm_id, c.tags_all->>'name',
+                                                       c.hierarchy, c.stage_count)
+                                     ORDER BY c.stage_index)
+                    FROM route_relations c
+                    WHERE c.activity = 'hiking' AND c.stage_of = r.osm_id
+                      AND c.hierarchy IN ('stage', 'parent'))
+            FROM route_relations r
+            WHERE r.activity = 'hiking' AND r.osm_id IN (11860709, 955907)""")
+        chain = {row[0]: {"name": row[1], "hierarchy": row[2],
+                          "stage_count": row[3], "stages": row[4]}
+                 for row in cur.fetchall()}
+        cur.execute("""
+            SELECT COALESCE(top.tags_all->>'name', 'no parent (' || t.hierarchy_src || ')')
+                   AS path, t.hierarchy, count(*)
+            FROM trips t
+            LEFT JOIN route_relations top
+                   ON top.activity = 'hiking'
+                  AND top.osm_id = COALESCE(t.top_of, CASE WHEN t.hierarchy = 'parent'
+                                                           THEN t.source_ref::bigint END)
+            WHERE t.country = 'IT' AND t.source = 'osm'
+              AND t.title ILIKE '%%francigena%%'
+            GROUP BY 1, 2 ORDER BY 3 DESC""")
+        rows = [{"path": p, "hierarchy": h, "rows": n} for p, h, n in cur.fetchall()]
+        cur.execute("""
+            SELECT t.id, t.title, t.hierarchy, t.hierarchy_src, t.stage_of, t.top_of,
+                   t.stage_index
+            FROM trips t WHERE t.id IN (6828, 735, 203027, 197887, 202887, 201656)
+            ORDER BY t.id""")
+        named = [dict(zip(("id", "title", "hierarchy", "src", "stage_of",
+                           "top_of", "stage_index"), r)) for r in cur.fetchall()]
+    return {"chain": chain, "italian_rows_by_path": rows, "named_rows": named}
+
+
+def run_classify(args):
+    conn = connect()
+    ensure_schema(conn, verbose=args.verbose)
+    activities = [a.strip() for a in args.activities.split(",") if a.strip()]
+    report = {"generated_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+              "activities": {}}
+    t_all = time.time()
+    for activity in activities:
+        t0 = time.time()
+        graph = load_graph(conn, activity)
+        name_log = []
+        decisions, decided_by, unknown_roles = classify_graph(graph, name_log)
+        totals = Counter(d["cls"] for d in decisions.values())
+        by_name = sum(1 for d in decisions.values()
+                      if d["src"] == "name" and d["cls"] == "stage")
+        variants_by_name = sum(1 for d in decisions.values()
+                               if d["src"] == "name" and d["cls"] == "variant")
+        multi = sum(1 for d in decisions.values() if d["why"] in
+                    ("ancestor", "name", "children", "id"))
+        per_country = defaultdict(Counter)
+        for cid, d in decisions.items():
+            cc = graph[cid]["country"] or "??"
+            per_country[cc][d["cls"]] += 1
+            if d["src"] == "name":
+                per_country[cc]["stage_by_name"] += 1
+        if args.dry_run:
+            n_graph = n_store = 0
+            conn.rollback()
+        else:
+            n_graph, n_store = write_classification(conn, activity, decisions)
+            conn.commit()
+        block = {
+            "relations": len(decisions),
+            "totals": dict(totals),
+            "stage_by_name": by_name,
+            "variant_by_name": variants_by_name,
+            "multi_parent_decided": multi,
+            "decided_by": dict(decided_by),
+            "unknown_roles": dict(unknown_roles.most_common(20)),
+            "countries": {cc: dict(c) for cc, c in sorted(per_country.items())},
+            "rows_updated": {"route_relations": n_graph,
+                             TABLE_OF_ACTIVITY[activity]: n_store},
+            "name_fallback_sample": [
+                {"osm_id": i, "country": cc, "name": n} for i, cc, n in name_log[:40]],
+            "seconds": round(time.time() - t0, 1),
+        }
+        report["activities"][activity] = block
+        print(f"{activity}: {len(decisions):,} relations -> "
+              + ", ".join(f"{k} {totals.get(k, 0):,}" for k in
+                          ("parent", "stage", "variant", "standalone"))
+              + f"; {by_name:,} stages and {variants_by_name:,} variants by name "
+              f"only; {multi:,} multi-parent "
+              f"stages decided ({', '.join(f'{k} {v}' for k, v in decided_by.most_common())})"
+              + (f"; unknown roles {dict(unknown_roles.most_common(5))}" if unknown_roles else "")
+              + f" [{block['seconds']}s]"
+              + (" (dry run)" if args.dry_run else
+                 f"; wrote {n_graph:,} graph + {n_store:,} store rows"))
+    if not args.dry_run and "hiking" in activities:
+        report["francigena"] = francigena_block(conn)
+        conn.commit()
+        f = report["francigena"]
+        print("Via Francigena: " + json.dumps(f["italian_rows_by_path"], ensure_ascii=False))
+    conn.close()
+    if not args.dry_run:
+        REPORT_HIER.parent.mkdir(parents=True, exist_ok=True)
+        REPORT_HIER.write_text(json.dumps(report, indent=1, ensure_ascii=False) + "\n",
+                               encoding="utf-8")
+        print(f"report: {REPORT_HIER.relative_to(ROOT).as_posix()} "
+              f"[{time.time() - t_all:.0f}s]")
+    return 0
+
+
+# ---------------------------------------------------------------------------
+# R3b: the stitch report. Verify and report; nothing is rewritten.
+# ---------------------------------------------------------------------------
+
+REPORT_STITCH = ROOT / "data" / "reports" / "routes_stitch.json"
+GAP_BUCKETS = ((0, 0), (1, 1), (2, 4), (5, 9), (10, 49), (50, 10 ** 9))
+
+# A trip's line is continuous when its own assembly had no gap, or when a
+# fresh accepted repair (splice.py or repair.py) is a single part. The
+# freshness test is repair.py's, and curate.py's continuity gate is the same
+# expression: this report and that gate cannot disagree.
+GAPLESS_SQL = """
+    SELECT t.id, t.title, t.country, t.distance_m,
+           (t.gap_info->>'gap_count')::int AS gaps,
+           (t.gap_info->>'merged_segments')::int AS parts,
+           EXISTS (SELECT 1 FROM trip_repairs r
+                   WHERE r.trip_id = t.id AND r.repaired
+                     AND ST_NumGeometries(r.geom) = 1
+                     AND r.repair_info->>'source_geom_md5'
+                         = md5(ST_AsBinary(ST_Force2D(t.geom)))) AS repaired_whole,
+           t.status::text, t.source_ref
+    FROM trips t
+    WHERE t.source = 'osm'
+"""
+
+
+def run_stitch_report(args):
+    conn = connect()
+    out = {"generated_at": datetime.now(timezone.utc).isoformat(timespec="seconds")}
+    with conn.cursor() as cur:
+        cur.execute(GAPLESS_SQL)
+        rows = cur.fetchall()
+    dist = Counter()
+    most = []
+    for _id, title, cc, dist_m, gaps, parts, repaired, status, ref in rows:
+        g = gaps if gaps is not None else -1
+        for lo, hi in GAP_BUCKETS:
+            if lo <= g <= hi:
+                dist[f"{lo}" if lo == hi else f"{lo}-{hi if hi < 10**9 else 'plus'}"] += 1
+                break
+        else:
+            dist["unknown"] += 1
+    most = sorted(rows, key=lambda r: -(r[4] or 0))[:10]
+    out["staged_rows"] = len(rows)
+    out["gap_count_distribution"] = dict(dist)
+    out["ten_most_gapped"] = [
+        {"id": r[0], "name": r[1], "country": r[2], "gaps": r[4],
+         "parts": r[5], "distance_km": round((r[3] or 0) / 1000, 1),
+         "status": r[7]} for r in most]
+    # Every hiking superroute in the graph, with its stitch state.
+    by_ref = {r[8]: r for r in rows if r[8]}
+    with conn.cursor() as cur:
+        cur.execute("""
+            SELECT osm_id, country, tags_all->>'name', in_store, stage_count,
+                   hierarchy, top_of IS NULL AS is_root
+            FROM route_relations
+            WHERE activity = 'hiking' AND tags_all->>'type' = 'superroute'
+            ORDER BY osm_id""")
+        supers = cur.fetchall()
+        cur.execute("""
+            SELECT count(*), count(*) FILTER (WHERE in_store)
+            FROM route_relations
+            WHERE activity = 'cycling' AND tags_all->>'type' = 'superroute'""")
+        cyc_total, cyc_store = cur.fetchone()
+    states = Counter()
+    listing = []
+    for osm_id, cc, name, in_store, n_stages, hier, is_root in supers:
+        row = by_ref.get(str(osm_id))
+        if row is None:
+            state = "not_staged"
+        elif (row[4] == 0 and row[5] == 1) or row[6]:
+            state = "gapless"
+        else:
+            state = "gapped"
+        states[state] += 1
+        listing.append({"osm_id": osm_id, "country": cc, "name": name,
+                        "stages": n_stages, "root": bool(is_root),
+                        "state": state,
+                        "gaps": row[4] if row else None,
+                        "parts": row[5] if row else None,
+                        "repaired_whole": bool(row[6]) if row else None,
+                        "trip_id": row[0] if row else None,
+                        "status": row[7] if row else None})
+    out["hiking_superroutes"] = {
+        "total": len(supers), "states": dict(states),
+        "roots_gapless": sum(1 for x in listing if x["root"] and x["state"] == "gapless"),
+        "roots_total": sum(1 for x in listing if x["root"]),
+        "list": listing,
+    }
+    out["cycling_superroutes"] = {
+        "total": cyc_total, "with_store_row": cyc_store,
+        "note": "harvest_cycling.py drops superroutes before assembly, so none "
+                "has a line; their children do",
+    }
+    conn.close()
+    REPORT_STITCH.parent.mkdir(parents=True, exist_ok=True)
+    REPORT_STITCH.write_text(json.dumps(out, indent=1, ensure_ascii=False) + "\n",
+                             encoding="utf-8")
+    print(f"staged OSM rows: {len(rows):,}; gap_count distribution: {dict(dist)}")
+    print("ten most gapped:")
+    for x in out["ten_most_gapped"]:
+        print(f"  {x['gaps']:4d} gaps, {x['parts']:4d} parts, {x['distance_km']:7.1f} km  "
+              f"{x['country']} {x['name'][:60]}  [{x['status']}]")
+    s = out["hiking_superroutes"]
+    print(f"hiking superroutes: {s['total']:,} in the graph: {dict(states)}; "
+          f"roots gapless {s['roots_gapless']} of {s['roots_total']}")
+    print(f"cycling superroutes: {cyc_total:,} in the graph, {cyc_store} with a "
+          f"store row (the harvest drops them)")
+    print(f"report: {REPORT_STITCH.relative_to(ROOT).as_posix()}")
+    return 0
 
 
 # ---------------------------------------------------------------------------
@@ -464,7 +959,12 @@ def main():
         description="Route relation graph: scan the cached Geofabrik extracts "
                     "into route_relations (ROUTES.md R2).")
     ap.add_argument("--scan", action="store_true",
-                    help="relations-only pass over the extracts on disk")
+                    help="relations-only pass over the extracts on disk (R2)")
+    ap.add_argument("--classify", action="store_true",
+                    help="parent / stage / variant / standalone from the graph, "
+                         "copied onto trips and cycle_routes (R3a)")
+    ap.add_argument("--stitch-report", action="store_true",
+                    help="gap distribution and superroute stitch state (R3b)")
     ap.add_argument("--countries", default="",
                     help="comma-separated ISO2 codes (default: every country "
                          "with an extract on disk)")
@@ -474,11 +974,18 @@ def main():
                     help="scan and count, write nothing")
     ap.add_argument("--verbose", action="store_true")
     args = ap.parse_args()
-    if not args.scan:
+    if not (args.scan or args.classify or args.stitch_report):
         ap.print_help()
-        print("\nnothing to do: pass --scan (R2). --classify arrives with R3.")
+        print("\nnothing to do: pass --scan, --classify and/or --stitch-report")
         return 2
-    return run_scan(args)
+    rc = 0
+    if args.scan:
+        rc = run_scan(args) or rc
+    if args.classify:
+        rc = run_classify(args) or rc
+    if args.stitch_report:
+        rc = run_stitch_report(args) or rc
+    return rc
 
 
 if __name__ == "__main__":

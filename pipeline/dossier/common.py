@@ -19,6 +19,7 @@ from __future__ import annotations
 import json
 import math
 import os
+import hashlib
 import re
 import sys
 import tempfile
@@ -285,15 +286,88 @@ def file_page_url(filename: str) -> str:
     )
 
 
+_UTM_RE = re.compile(r"[?&]utm_[^&#]*")
+_THUMB_TAIL_RE = re.compile(r"/(\d+)px-[^/]+$")
+
+
+def strip_utm(url: str) -> str:
+    """Commons API thumburls arrive with ?utm_source=... tracking params.
+    They are noise in a wire and they break the /thumb/ width rewrite."""
+    if not url or "utm_" not in url:
+        return url
+    out = _UTM_RE.sub("", url)
+    if out.endswith("?") or out.endswith("&"):
+        out = out[:-1]
+    return out
+
+
+def commons_thumb_path(filename: str) -> str:
+    """The hashed directory Commons files live under: md5 of the underscored
+    name, first hex digit then first two. Deterministic, no API needed."""
+    name = filename.replace(" ", "_")
+    h = hashlib.md5(name.encode("utf-8")).hexdigest()
+    return f"{h[0]}/{h[:2]}/{quote(name, safe='')}"
+
+
+def _safe_width(width: int, orig_w=None) -> int:
+    """Commons answers 400 to a thumbnail wider than the original. When the
+    original width is known, snap to the largest standard width below it."""
+    if orig_w and width >= orig_w:
+        below = [w for w in WIKI_WIDTHS if w < orig_w]
+        return below[-1] if below else 250
+    return width
+
+
+def direct_commons_url(url: str, width: int = 960, orig_w=None) -> str:
+    """One direct upload.wikimedia.org thumbnail URL for any Commons shape.
+
+    Why this exists: a Wikidata P18 value is a Special:FilePath link, which
+    302s to Special:Redirect and then 301s to thumb.wikimedia.org. The
+    production Content-Security-Policy allows upload.wikimedia.org and
+    commons.wikimedia.org in img-src and nothing else, so every one of those
+    photographs (Rome's Pantheon among 20,000 others) rendered as a broken
+    image in the shipped app while loading fine on a dev server. The API's
+    own thumburl points at thumb.wikimedia.org too, with tracking params.
+
+    Handled shapes:
+      Special:FilePath/Name.jpg[?width=N]  -> hashed /thumb/ path at width
+      https://thumb.wikimedia.org/...       -> same path on upload.wikimedia.org
+      .../thumb/x/xy/Name.jpg/NNNpx-Name.jpg -> width snapped to the standard list
+      anything with ?utm_...                -> params stripped
+    SVG and TIFF thumbnails carry a .png / .jpg suffix on Commons; image_ok
+    refuses both kinds anyway, but the address stays correct.
+    """
+    if not url:
+        return url
+    url = strip_utm(url.replace("http://", "https://"))
+    url = url.replace("https://thumb.wikimedia.org/", "https://upload.wikimedia.org/")
+    width = _safe_width(width, orig_w)
+    if width not in WIKI_WIDTHS:
+        width = min(WIKI_WIDTHS, key=lambda w: abs(w - width))
+    m = _FILEPATH_RE.search(url)
+    if m:
+        name = unquote(m.group(1)).replace("_", " ")
+        ext = name.rsplit(".", 1)[-1].lower() if "." in name else ""
+        suffix = ".png" if ext == "svg" else (".jpg" if ext in ("tif", "tiff", "pdf") else "")
+        path = commons_thumb_path(name)
+        fname = quote(name.replace(" ", "_"), safe="")
+        return (f"https://upload.wikimedia.org/wikipedia/commons/thumb/{path}"
+                f"/{width}px-{fname}{suffix}")
+    if "/thumb/" in url and _THUMB_TAIL_RE.search(url):
+        return _THUMB_TAIL_RE.sub(lambda mm: mm.group(0).replace(
+            f"/{mm.group(1)}px-", f"/{width}px-", 1), url)
+    return url
+
+
 def filepath_thumb(url: str, width: int = 960) -> str:
     """A Wikidata P18 value is a Special:FilePath link to the ORIGINAL file,
-    which for a Commons photograph is routinely 8 MB. The same endpoint
-    resizes on request, and unlike /thumb/ URLs it accepts any width."""
+    which for a Commons photograph is routinely 8 MB. It used to be rewritten
+    to ?width=N on the same endpoint; that redirect chain ends on a host the
+    production CSP blocks, so it now resolves to the direct thumbnail."""
     if not url:
         return url
     if "Special:FilePath" in url:
-        base = url.split("?", 1)[0].replace("http://", "https://")
-        return f"{base}?width={width}"
+        return direct_commons_url(url, width)
     return url
 
 
@@ -307,13 +381,9 @@ def thumb_at(url: str, width: int) -> str:
     """
     if not url:
         return url
-    if "Special:FilePath" in url:
-        return filepath_thumb(url, width)
     if width not in WIKI_WIDTHS:
         width = min(WIKI_WIDTHS, key=lambda w: abs(w - width))
-    if "/thumb/" in url and re.search(r"/(\d+)px-", url):
-        return re.sub(r"/(\d+)px-", f"/{width}px-", url)
-    return url
+    return direct_commons_url(url, width)
 
 
 BAD_LICENCE_RE = re.compile(r"\b(nc|nd)\b|non[- ]?commercial|no[- ]?deriv|permission", re.I)

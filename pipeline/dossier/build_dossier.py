@@ -45,9 +45,9 @@ sys.path.insert(0, os.path.dirname(__file__))
 from common import (  # noqa: E402
     PUB, CACHE, DCACHE, REPORTS, GridIndex, TaslStore, atomic_write_json,
     bearing8, commons_filename, dossier_file_base, file_page_url,
-    filepath_thumb, haversine_km, image_ok, is_self_reference, licence_verdict,
-    load_json, name_matches, name_tokens, nav_links, norm_name, usable_desc,
-    sanitize_strings, slugify, thumb_at,
+    direct_commons_url, filepath_thumb, haversine_km, image_ok,
+    is_self_reference, licence_verdict, load_json, name_matches, name_tokens,
+    nav_links, norm_name, usable_desc, sanitize_strings, slugify, thumb_at,
 )
 from derive_do import derive  # noqa: E402
 
@@ -386,6 +386,10 @@ def compose_gallery(dest, highlights, nearby, tasl, refusals, target=8,
         if c.get("caption"):
             img["caption"] = c["caption"]
         attach_tasl(img, tasl, refusals)
+        # Commons answers 400 to a thumbnail wider than the original, so the
+        # address is settled only once TASL has told us how wide that is.
+        img["url"] = direct_commons_url(c["url"], 960, img.get("w"))
+        img["thumb"] = direct_commons_url(c["url"], 500, img.get("w"))
         # A crest or a locator map is a correct illustration and a useless
         # photograph; judged after TASL so the size is known.
         if not image_ok(c["url"], img.get("w"), img.get("h")):
@@ -425,7 +429,113 @@ def trim_sentences(text, max_chars):
 AIRPORTY_RE = re.compile(r"\bairport\b|\baerodrome\b|\bairfield\b", re.I)
 
 
-def compose_intro(dest, wv, city_intros=None):
+MONTH_NAMES = ["January", "February", "March", "April", "May", "June", "July",
+               "August", "September", "October", "November", "December"]
+CLASS_WORD = {"metro": "major city", "city": "city", "town": "town",
+              "village": "village", "area": "region"}
+PAREN_ANY_RE = re.compile(r"\s*\([^)]*\)")
+
+
+def _join_names(names):
+    names = [n for n in names if n]
+    if not names:
+        return ""
+    if len(names) == 1:
+        return names[0]
+    return ", ".join(names[:-1]) + " and " + names[-1]
+
+
+def _month_phrase(best):
+    """[4, 5] -> "April or May"; [5, 6, 7] -> "May to July"; [] -> ""."""
+    ms = sorted({m for m in best or [] if 1 <= m <= 12})
+    if not ms:
+        return ""
+    if len(ms) == 1:
+        return MONTH_NAMES[ms[0] - 1]
+    if len(ms) == 2 and ms[1] - ms[0] == 1:
+        return f"{MONTH_NAMES[ms[0] - 1]} or {MONTH_NAMES[ms[1] - 1]}"
+    if ms == list(range(ms[0], ms[-1] + 1)):
+        return f"{MONTH_NAMES[ms[0] - 1]} to {MONTH_NAMES[ms[-1] - 1]}"
+    return _join_names([MONTH_NAMES[m - 1] for m in ms[:3]])
+
+
+def _time_phrase(visit_h):
+    if not visit_h or visit_h <= 0:
+        return ""
+    if visit_h < 6:
+        return "Half a day covers it"
+    if visit_h < 14:
+        return "A full day covers it"
+    days = max(2, round(visit_h / 9))
+    words = {2: "two", 3: "three", 4: "four", 5: "five"}
+    return f"Plan {words.get(days, str(days))} days"
+
+
+def first_sentence(text, max_chars=190):
+    """The opening sentence of an extract, minus the bracketed name variants
+    and language notes that make an encyclopaedia lead read like a form."""
+    text = re.sub(r"\s+", " ", text or "").strip()
+    text = PAREN_ANY_RE.sub("", text)
+    text = re.sub(r"\s+,", ",", text)
+    parts = SENT_RE.split(text)
+    out = parts[0].strip() if parts else ""
+    if len(out) > max_chars:
+        cut = out[:max_chars].rsplit(",", 1)[0].rstrip(" ,;")
+        out = cut + "." if len(cut) > 40 else out[:max_chars].rsplit(" ", 1)[0] + "."
+    if out and out[-1] not in ".!?":
+        out += "."
+    return out
+
+
+def compose_short(dest, extract, facts, llm_intros=None):
+    """Two or three sentences a reader can act on: what the place is, what
+    its best sights are, how long it takes and when to come.
+
+    The Wikivoyage lead used to be printed whole (700 characters of "the
+    Eternal City ... Three Coins in the Fountain"). The page now shows one
+    distilled opening line and then speaks from our own measurements, so the
+    paragraph is specific to what Carta knows rather than a copied article.
+    A rewrite from cache/dossier/intros_llm.json (rewrite_intros.py, grounded
+    on the same facts and checked against the source text) replaces the
+    composed version where one exists."""
+    did = dest["id"]
+    rec = (llm_intros or {}).get(did)
+    if isinstance(rec, dict) and rec.get("text"):
+        return rec["text"], "rewrite"
+    city = PAREN_TAIL_RE.sub("", dest.get("city") or "").strip()
+    country = dest.get("country") or ""
+    cls = (dest.get("place") or {}).get("class", "town")
+    lead = ""
+    if extract and not AIRPORTY_RE.search(extract[:220]):
+        lead = first_sentence(extract)
+        # A lead that does not name the place is a fragment of something else.
+        if city and norm_name(city.split()[0]) not in norm_name(lead):
+            lead = ""
+    if not lead:
+        lead = f"{city} is a {CLASS_WORD.get(cls, 'place')} in {country}."
+    sents = [lead]
+    sights = facts.get("sights") or []
+    n_sights = facts.get("n_sights") or 0
+    if len(sights) >= 2 and n_sights > len(sights):
+        sents.append(f"{_join_names(sights)} lead its {n_sights} sights.")
+    elif len(sights) >= 2:
+        sents.append(f"The sights to see are {_join_names(sights)}.")
+    elif sights:
+        sents.append(f"Its best-known sight is {sights[0]}.")
+    when = _month_phrase(facts.get("best_months"))
+    time = _time_phrase(facts.get("visit_h"))
+    if time and when:
+        sents.append(f"{time}, ideally in {when}.")
+    elif time:
+        sents.append(f"{time}.")
+    elif when:
+        sents.append(f"The best months are {when}.")
+    if facts.get("unesco") and len(" ".join(sents)) < 250:
+        sents.append("The historic centre is on the World Heritage list.")
+    return " ".join(x for x in sents if x), "composed"
+
+
+def compose_intro(dest, wv, city_intros=None, facts=None, llm_intros=None):
     """What this PLACE is, never what its airport is.
 
     A gateway record carries the airport's article, so CDG opened with the
@@ -458,6 +568,11 @@ def compose_intro(dest, wv, city_intros=None):
     if body:
         intro["body"] = body
         intro["grounding"] = grounding
+    extract = rec.get("extract") if isinstance(rec, dict) else ""
+    short, short_src = compose_short(dest, extract, facts or {}, llm_intros)
+    if short:
+        intro["short"] = short
+        intro["short_src"] = short_src
     facts = {}
     pop = (dest.get("geonames") or {}).get("population")
     if pop:
@@ -543,11 +658,14 @@ def join_nearby(dest, layer_index):
         radius = radii.get(cls, radii["town"])
         rows = []
         for km, f in idx.near(clat, clon, radius):
-            if km < INSIDE_KM:
+            if km < INSIDE_KM or f.get("listed"):
                 continue
             rows.append((km, f))
-        # tier first, then score, then distance: never distance alone
+        # tier first, then a photograph, then score, then distance: never
+        # distance alone. The photograph ranks because the page shows one
+        # per row and a row without one is a name in a list.
         rows.sort(key=lambda t: (-(t[1].get("tier") or 0),
+                                 0 if t[1].get("thumb") else 1,
                                  -(t[1].get("score") or 0), t[0]))
         picked = []
         # OSM ships the same route under several relations ("GRP Bois de
@@ -576,6 +694,61 @@ def join_nearby(dest, layer_index):
         if picked:
             out[layer] = picked
     return out or None
+
+
+# ---------------------------------------------------------------- S5b around
+
+AROUND_KM = 20
+AROUND_CAP = 24
+AROUND_LAYERS = ("trails", "cycling", "mountains", "lakes", "beaches")
+
+
+def compose_around(dest, layer_index):
+    """Everything the Destinations tab knows within 20 km, per layer.
+
+    `nearby` is the shortlist (a radius by place class, capped small, tier
+    first). This is the inventory: every published trail, cycling route,
+    peak, lake and beach inside a fixed 20 km circle, best first, with the
+    full count so the page can say "34 trails, showing 24". Listed rows
+    (coverage without a rating) sit after the rated ones.
+    """
+    clat = dest.get("city_lat", dest["lat"])
+    clon = dest.get("city_lon", dest["lon"])
+    out = {"radius_km": AROUND_KM, "counts": {}}
+    total = 0
+    for layer in AROUND_LAYERS:
+        idx = layer_index.get(layer)
+        if not idx:
+            continue
+        rows = [(km, f) for km, f in idx.near(clat, clon, AROUND_KM)
+                if f.get("name")]
+        if not rows:
+            continue
+        rows.sort(key=lambda t: (0 if t[1].get("score") else 1,
+                                 -(t[1].get("score") or 0), t[0]))
+        picked, name_seen = [], set()
+        for km, f in rows:
+            key = norm_name(PAREN_TAIL_RE.sub("", f.get("name") or ""))
+            if not key or key in name_seen:
+                continue
+            name_seen.add(key)
+            entry = {
+                "cc": f["cc"], "id": f["id"], "name": f["name"],
+                "km": round(km, 1),
+                "bearing": bearing8(clat, clon, f["lat"], f["lon"]),
+                "lat": round(f["lat"], 5), "lon": round(f["lon"], 5),
+            }
+            for k in ("tier", "score", "thumb", "elev_m", "km_len",
+                      "duration_min", "difficulty", "water", "ascent_m",
+                      "listed"):
+                if f.get(k) is not None:
+                    entry[k] = f[k]
+            picked.append(entry)
+        if picked:
+            out["counts"][layer] = len(picked)
+            out[layer] = picked[:AROUND_CAP]
+            total += len(picked)
+    return out if total else None
 
 
 # ---------------------------------------------------------------- S6 trips
@@ -657,7 +830,7 @@ def compose_trips(dest, ctx):
             entry["visit_h"] = other["place"]["visit_h"]
         img = (other.get("image") or {}).get("url")
         if img:
-            entry["image"] = {"url": thumb_at(img, 500)}
+            entry["image"] = {"url": direct_commons_url(img, 500)}
         cands.append((rank, cats, entry))
 
     cands.sort(key=lambda t: -t[0])
@@ -758,7 +931,32 @@ def compose_parking(dest, spots):
     out = {"spots": [emit(s) for s in regular[:3]]}
     if prs:
         out["park_ride"] = emit(prs[0])
-    return out if out.get("spots") or out.get("park_ride") else None
+    if not (out.get("spots") or out.get("park_ride")):
+        return None
+    out["source"] = "osm"
+    return out
+
+
+_PARKING_WEB = None
+
+
+def parking_web_overlay(dest):
+    """Web-checked parking facts from parking_check.py (Gemini with Google
+    Search grounding): the official car parks and park-and-rides a city
+    itself names, whether the centre is a restricted zone, the operator's
+    page. OSM contributors tag what they walked past; the city's own page
+    says what is true. Absent until the check has run for this place."""
+    global _PARKING_WEB
+    if _PARKING_WEB is None:
+        _PARKING_WEB = load_json(os.path.join(DCACHE, "parking_web.json"), {}) or {}
+    rec = _PARKING_WEB.get(dest["id"])
+    if not isinstance(rec, dict) or not rec.get("checked"):
+        return None
+    keep = {k: rec[k] for k in ("checked", "official_url", "restricted",
+                                "restricted_note", "advice", "sources",
+                                "park_ride_names", "car_parks")
+            if rec.get(k) not in (None, "", [], {})}
+    return keep or None
 
 
 # ---------------------------------------------------------------- S8 tips
@@ -967,8 +1165,9 @@ def compose_credits(sections, designations=None):
         used["unesco"] = "designations"
     if (sections.get("when") or {}).get("normals"):
         used["power"] = "climate normals"
-    if sections.get("parking") or (sections.get("nearby") or {}).get("trails"):
-        used["osm"] = "parking, trails"
+    if sections.get("parking") or (sections.get("nearby") or {}).get("trails") \
+            or sections.get("around"):
+        used["osm"] = "parking, trails, cycling routes"
     if sections.get("highlights"):
         used["opentripmap"] = "highlights"
         used["wikidata"] = "facts"
@@ -1027,8 +1226,8 @@ def load_layer_index():
                     "cc": fn[:2], "id": f.get("id"), "name": f.get("name"),
                     "lat": f.get("lat"), "lon": f.get("lon"),
                     "tier": f.get("tier"), "score": f.get("score"),
-                    "thumb": img.get("u"),
-                    "elev_m": f.get("elev_m"),
+                    "thumb": direct_commons_url(img.get("u"), 500) if img.get("u") else None,
+                    "elev_m": f.get("elev_m") or f.get("ele"),
                     "water": water if isinstance(water, str) else None,
                 })
             add(layer, fn[:2], rows)
@@ -1051,17 +1250,69 @@ def load_layer_index():
                 lat = (bbox[1] + bbox[3]) / 2
                 lon = (bbox[0] + bbox[2]) / 2
                 img = t.get("img") or {}
+                score = t.get("score") if t.get("score") is not None else t.get("rating")
                 rows.append({
                     "cc": fn[:2], "id": str(t.get("id")), "name": t.get("name"),
                     "lat": lat, "lon": lon,
-                    "tier": t.get("tier") or (3 if (t.get("score") or 0) >= 8 else 2),
-                    "score": t.get("score"),
-                    "thumb": img.get("u"),
+                    "tier": t.get("tier") or (3 if (score or 0) >= 8 else 2),
+                    "score": score,
+                    "thumb": direct_commons_url(img.get("u"), 500) if img.get("u") else None,
+                    "km_len": round((t.get("distance_m") or 0) / 1000, 1) or None,
+                    "duration_min": t.get("duration_min"),
+                    "difficulty": t.get("difficulty"),
+                })
+            for t in data.get("listed", []) or []:
+                bbox = t.get("bbox") or []
+                name = str(t.get("name") or "").strip()
+                if len(bbox) != 4 or not name or re.fullmatch(r"[\d\s./-]+", name):
+                    continue
+                rows.append({
+                    "cc": fn[:2], "id": str(t.get("id")), "name": name,
+                    "lat": (bbox[1] + bbox[3]) / 2, "lon": (bbox[0] + bbox[2]) / 2,
+                    "tier": 0, "score": None, "thumb": None, "listed": True,
                     "km_len": round((t.get("distance_m") or 0) / 1000, 1) or None,
                     "duration_min": t.get("duration_min"),
                     "difficulty": t.get("difficulty"),
                 })
             add("trails", fn[:2], rows)
+
+    # Cycling: rated routes and the listed coverage, one row each. The wire
+    # gives img as a bare URL string from the Commons API (thumb host with
+    # tracking params); it is normalised here like every other photograph.
+    folder = os.path.join(PUB, "cycling")
+    if os.path.isdir(folder):
+        for fn in os.listdir(folder):
+            if not re.fullmatch(r"[A-Z]{2}\.json", fn):
+                continue
+            data = load_json(os.path.join(folder, fn), {})
+            rows = []
+            for listed, key in ((False, "routes"), (True, "listed")):
+                for t in data.get(key, []) or []:
+                    bbox = t.get("bbox") or []
+                    name = str(t.get("name") or "").strip()
+                    if len(bbox) != 4 or not name:
+                        continue
+                    if re.fullmatch(r"[\d\s./-]+", name) or name.startswith("(Projet)"):
+                        continue
+                    img = t.get("img")
+                    if isinstance(img, dict):
+                        img = img.get("u")
+                    score = t.get("score")
+                    row = {
+                        "cc": fn[:2], "id": str(t.get("id")), "name": name,
+                        "lat": (bbox[1] + bbox[3]) / 2,
+                        "lon": (bbox[0] + bbox[2]) / 2,
+                        "score": score,
+                        "tier": (3 if (score or 0) >= 8 else 2 if (score or 0) >= 6.5
+                                 else 1) if score else 0,
+                        "thumb": direct_commons_url(img, 500) if img else None,
+                        "km_len": t.get("km"),
+                        "ascent_m": t.get("asc"),
+                    }
+                    if listed:
+                        row["listed"] = True
+                    rows.append(row)
+            add("cycling", fn[:2], rows)
     return index
 
 
@@ -1072,6 +1323,7 @@ def load_context():
     acts = load_json(os.path.join(PUB, "activities_full.json"), {})
     wv = load_json(os.path.join(CACHE, "wikivoyage.json"), {})
     city_intros = load_json(os.path.join(DCACHE, "city_intros.json"), {}) or {}
+    llm_intros = load_json(os.path.join(DCACHE, "intros_llm.json"), {}) or {}
     landmarks = load_json(os.path.join(DCACHE, "landmarks.json"), {}) or {}
     listings = load_json(os.path.join(CACHE, "wikivoyage_listings.json"), {})
     poi_wd = load_json(os.path.join(CACHE, "poi_wikidata.json"), {})
@@ -1108,6 +1360,7 @@ def load_context():
 
     return {
         "dests": dests, "acts": acts, "wv": wv, "city_intros": city_intros,
+        "llm_intros": llm_intros,
         "landmarks": landmarks, "listings": listings,
         "poi_wd": poi_wd, "parking": parking, "gonext": gonext,
         "destinfo": destinfo, "trips_by_cc": trips_by_cc,
@@ -1118,6 +1371,29 @@ def load_context():
 
 
 # ---------------------------------------------------------------- assemble
+
+
+_IMG_KEYS = {"url", "thumb", "img", "big"}
+
+
+def fix_image_urls(obj, key=None):
+    """Last pass over the assembled body: every Commons address that is a
+    redirect (Special:FilePath), on the thumb host, or carrying tracking
+    params becomes the one direct upload.wikimedia.org form. Nothing else is
+    touched, so a booking link stays a booking link."""
+    if isinstance(obj, list):
+        return [fix_image_urls(x, key) for x in obj]
+    if isinstance(obj, dict):
+        return {k: fix_image_urls(v, k) for k, v in obj.items()}
+    if isinstance(obj, str) and key in _IMG_KEYS and "wikimedia.org" in obj:
+        if ("Special:FilePath" in obj or "thumb.wikimedia.org" in obj
+                or "utm_" in obj):
+            width = 500 if key == "thumb" else 960
+            m = re.search(r"/(\d+)px-", obj)
+            if m:
+                width = int(m.group(1))
+            return direct_commons_url(obj, width)
+    return obj
 
 
 def canonical_hash(body):
@@ -1145,6 +1421,9 @@ def build_one(dest, ctx, refusal_log):
             if not image_ok(h["image"]["url"], h["image"].get("w"),
                             h["image"].get("h")):
                 h.pop("image")
+            else:
+                h["image"]["url"] = direct_commons_url(
+                    h["image"]["url"], 960, h["image"].get("w"))
     if nearby:
         for rows in nearby.values():
             for f in rows:
@@ -1155,7 +1434,19 @@ def build_one(dest, ctx, refusal_log):
 
     gallery = compose_gallery(dest, highlights, nearby, ctx["tasl"], refusals,
                               landmarks=landmarks)
-    intro = compose_intro(dest, ctx["wv"], ctx["city_intros"])
+    around = compose_around(dest, ctx["layer_index"])
+    cl0 = dest.get("climate") or {}
+    intro_facts = {
+        "sights": [h["name"] for h in sorted(
+            highlights, key=lambda x: -(x.get("rank_score") or 0))[:3]],
+        "n_sights": len(highlights),
+        "visit_h": (dest.get("place") or {}).get("visit_h"),
+        "best_months": cl0.get("best") or [],
+        "unesco": any((g.get("kind") or "") == "unesco_whc"
+                      for g in dest.get("designations") or []),
+    }
+    intro = compose_intro(dest, ctx["wv"], ctx["city_intros"], intro_facts,
+                          ctx.get("llm_intros"))
     events = (ctx["destinfo"].get(dest.get("iso2"), {}).get(did) or {}).get(
         "events") or []
     research = load_json(os.path.join(
@@ -1164,6 +1455,10 @@ def build_one(dest, ctx, refusal_log):
                     ctx["poi_wd"], research, landmarks=landmarks)
     trips = compose_trips(dest, ctx)
     parking = compose_parking(dest, ctx["parking"].get(did))
+    web_park = parking_web_overlay(dest)
+    if web_park:
+        parking = parking or {"spots": [], "source": "osm"}
+        parking["web"] = web_park
 
     # Festivals get a section of their own rather than a footnote under the
     # climate strip: "when is it" is the whole reason a reader cares, and a
@@ -1246,6 +1541,7 @@ def build_one(dest, ctx, refusal_log):
         "highlights": highlights or None,
         "do": do or None,
         "nearby": nearby,
+        "around": around,
         "trips": trips,
         "when": when or None,
         "festivals": festivals or None,
@@ -1285,7 +1581,7 @@ def build_one(dest, ctx, refusal_log):
         },
         **sections,
     }
-    body = sanitize_strings(body)
+    body = sanitize_strings(fix_image_urls(body))
     body["content_hash"] = canonical_hash(
         {k: v for k, v in body.items() if k != "content_hash"})
     if refusals:

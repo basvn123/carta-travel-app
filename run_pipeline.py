@@ -1745,10 +1745,35 @@ TASKS = [
                  "finding new work as those countries start mapping routes."),
     },
     {
+        "key": "trails_hierarchy",
+        "title": "Routes: relation graph, hierarchy and co-located lines",
+        "cadence": "after",
+        "after": ["trails_ingest", "cycling_harvest"],
+        "writes_app_data": False,
+        "soft": True,
+        "guard": guard_trailslab_up,
+        "cmds": [
+            [PY, "pipeline/trails/hierarchy.py", "--scan", "--classify",
+             "--stitch-report"],
+            [PY, "pipeline/trails/dedup.py"],
+        ],
+        "note": ("ROUTES.md R2 and R3. One relations-only pass over the cached "
+                 "extracts (four minutes for Europe) fills route_relations with "
+                 "every tag, the ordered member list and the parent/child refs "
+                 "the ingest throws away; classify turns that into parent / "
+                 "stage / variant / standalone plus stage_of and top_of, copied "
+                 "onto trips AND cycle_routes; dedup.py writes co_located where "
+                 "two relations of comparable length share one line. Must run "
+                 "BEFORE trails_curate: the family collapse reads top_of and "
+                 "co_located as its first keys. Touches the two store tables "
+                 "only where a value changes, because the updated_at trigger "
+                 "fires on any UPDATE."),
+    },
+    {
         "key": "trails_curate",
         "title": "Trails: per-region quota, loop-first, continuity gated",
         "cadence": "after",
-        "after": ["trails_splice", "trails_regionize"],
+        "after": ["trails_splice", "trails_regionize", "trails_hierarchy"],
         "writes_app_data": False,
         "soft": True,
         "guard": guard_trailslab_up,

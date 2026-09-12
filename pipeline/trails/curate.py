@@ -399,6 +399,7 @@ CANDIDATES_SQL = """
            t.raw_tags->>'wikipedia' AS wikipedia,
            t.raw_tags->>'operator' AS raw_operator,
            t.is_loop, t.loop_source, t.sac_scale, t.nuts3, t.derived_route,
+           t.hierarchy, t.stage_of, t.top_of, t.co_located,
            (ST_XMin(t.geom) + ST_XMax(t.geom)) / 2 AS clon,
            (ST_YMin(t.geom) + ST_YMax(t.geom)) / 2 AS clat,
            p.score AS popularity,
@@ -437,6 +438,7 @@ CAND_COLS = ("id", "country", "title", "network", "distance_m", "quality",
              "status", "source_ref", "ref", "wikidata", "wikipedia",
              "raw_operator",
              "is_loop", "loop_source", "sac_scale", "nuts3", "derived_route",
+             "hierarchy", "stage_of", "top_of", "co_located",
              "clon", "clat", "popularity", "geometry_ok")
 
 
@@ -712,6 +714,24 @@ def collapse_families(rows):
     for r in rows:
         node = ("trip", r["id"])
         find(node)
+        # Structure FIRST (ROUTES.md R3a). hierarchy.py copied the relation
+        # graph onto the row: top_of is the root of the parent chain, so
+        # every stage, every regional section and the path relation itself
+        # share one key, and the Via Francigena is one family in Italy
+        # before any of its 86 titles is read. A root parent has no top_of
+        # and keys on its own relation id, which is what its stages carry.
+        # The name keys below stay, for the relations nobody wrapped in a
+        # superroute.
+        tree = r.get("top_of") or r.get("stage_of")
+        if tree:
+            union(node, ("tree", int(tree)))
+        elif r.get("hierarchy") == "parent" and str(r.get("source_ref") or "").isdigit():
+            union(node, ("tree", int(r["source_ref"])))
+        # Fourth key (R3c): rows that share a line share a slot. co_located
+        # carries the group's head first, so the head id is the group key.
+        co = r.get("co_located")
+        if co:
+            union(node, ("co", int(co[0])))
         title_key = title_family(r)
         if title_key:
             union(node, ("title", title_key))
@@ -969,6 +989,13 @@ def select_country(rows, target, quotas, loop_target=None, verbose=False,
 
     heads = collapse_families(rows)
     heads.sort(key=lambda r: -r["rank"])
+    # Said out loud so a change to the family keys can be measured: R3a's
+    # structural key is judged on how this number moves in a dry run.
+    n_tree = sum(1 for r in rows if r.get("top_of") or r.get("stage_of")
+                 or r.get("hierarchy") == "parent")
+    n_co = sum(1 for r in rows if r.get("co_located"))
+    print(f"    families: {len(rows):,} candidates -> {len(heads):,} heads "
+          f"({n_tree:,} rows carried a relation tree, {n_co:,} a dedup group)")
 
     # A long route has to earn its length. Anything past MAX_M is a multi-day
     # trek, which only enters as a famous one and only up to the trek share.

@@ -50,7 +50,9 @@ export function Neighbourhoods({ sleep, t }) {
               && t('dest.tierPrivate', { eur: Math.round(sleep.tiers.private_room_night_eur) }),
             sleep.tiers.hotel_night_eur != null
               && t('dest.tierHotel', { eur: Math.round(sleep.tiers.hotel_night_eur) }),
-          ].filter(Boolean).join(' · ')}
+          ].filter(Boolean).map((s, i) => (
+            <span key={s} className="destp-sleep-tier">{i > 0 && <span className="destp-sleep-sep" aria-hidden="true" />}{s}</span>
+          ))}
         </p>
       )}
       {seasonality && sMax > sMin && (

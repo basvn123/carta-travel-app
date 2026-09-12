@@ -36,20 +36,47 @@ CREATE TABLE IF NOT EXISTS route_relations (
     parent_refs    bigint[] NOT NULL DEFAULT '{}',
     child_refs     bigint[] NOT NULL DEFAULT '{}',
     -- parent | stage | variant | standalone, and whether structure or a
-    -- name pattern decided it. A name-decided stage is a guess and says so.
+    -- name pattern decided it. A name-decided stage or variant is a guess
+    -- and says so. A parent with stage_count 0 has only variant children:
+    -- it is a line with alternatives, not an umbrella (the regional
+    -- sections of the Via Francigena are this), and it may itself be a
+    -- stage of something (stage_of set).
     hierarchy      text,
     hierarchy_src  text,
     stage_index    integer,                    -- 1-based, in the parent's member order
     stage_count    integer,                    -- on the parent
     in_store       boolean NOT NULL DEFAULT false,   -- a trips / cycle_routes row exists
+    -- R3a. parent_refs is every relation this one is a member of; stage_of is
+    -- the ONE the classify step chose as its parent (the most specific, see
+    -- hierarchy.py), and top_of the root of that chain. The Via Francigena is
+    -- three levels deep (path -> national section -> regional section ->
+    -- stage), so "which parent" and "which path" are different answers.
+    -- NULL on a root.
+    stage_of       bigint,
+    top_of         bigint,
     -- Other country extracts that carried this relation (cross-border).
     duplicate_in   text[] NOT NULL DEFAULT '{}',
     scanned_at     timestamptz,
     PRIMARY KEY (activity, osm_id)
 );
 
+-- The same two columns again as ALTERs, because on a lab where the table
+-- already exists the CREATE above is a no-op and the guard in schema.py only
+-- sees ALTER ... ADD COLUMN lines. A column declared only inside the create
+-- statement reaches fresh labs and misses every existing one (the cycling
+-- layer learned this the hard way). Mind the guard's regexes when wording
+-- comments here: it reads this file as text.
+ALTER TABLE route_relations ADD COLUMN IF NOT EXISTS stage_of bigint;
+ALTER TABLE route_relations ADD COLUMN IF NOT EXISTS top_of bigint;
+
 CREATE INDEX IF NOT EXISTS route_relations_country_idx
     ON route_relations (activity, country);
+
+-- "Every stage of path X": the attach step's question, and the report's.
+CREATE INDEX IF NOT EXISTS route_relations_top_of_idx
+    ON route_relations (activity, top_of) WHERE top_of IS NOT NULL;
+CREATE INDEX IF NOT EXISTS route_relations_stage_of_idx
+    ON route_relations (activity, stage_of) WHERE stage_of IS NOT NULL;
 
 CREATE INDEX IF NOT EXISTS route_relations_hierarchy_idx
     ON route_relations (activity, hierarchy);
@@ -68,9 +95,14 @@ ALTER TABLE trips ADD COLUMN IF NOT EXISTS hierarchy_src text;
 ALTER TABLE trips ADD COLUMN IF NOT EXISTS parent_refs bigint[];
 ALTER TABLE trips ADD COLUMN IF NOT EXISTS stage_index integer;
 ALTER TABLE trips ADD COLUMN IF NOT EXISTS stage_count integer;
--- R3c writes it: ids of rows of the same activity whose line this one shares
--- (more than 80% of the shorter inside a 30 m buffer of the longer). The head
--- of a group has the higher network tier; nothing here is ever deleted.
+ALTER TABLE trips ADD COLUMN IF NOT EXISTS stage_of bigint;
+ALTER TABLE trips ADD COLUMN IF NOT EXISTS top_of bigint;
+-- R3c writes it: the ids of the rows of the same activity whose line this
+-- one shares (more than 80% of the shorter inside a 30 m buffer of the
+-- longer), the group's HEAD FIRST and the row itself included, so a row is
+-- a head exactly when co_located[1] = id. The head has the higher network
+-- tier. NULL when the row shares its line with nothing. Nothing here is
+-- ever deleted, demoted or unpublished by the dedup step.
 ALTER TABLE trips ADD COLUMN IF NOT EXISTS co_located bigint[];
 
 ALTER TABLE cycle_routes ADD COLUMN IF NOT EXISTS hierarchy text;
@@ -78,4 +110,12 @@ ALTER TABLE cycle_routes ADD COLUMN IF NOT EXISTS hierarchy_src text;
 ALTER TABLE cycle_routes ADD COLUMN IF NOT EXISTS parent_refs bigint[];
 ALTER TABLE cycle_routes ADD COLUMN IF NOT EXISTS stage_index integer;
 ALTER TABLE cycle_routes ADD COLUMN IF NOT EXISTS stage_count integer;
+ALTER TABLE cycle_routes ADD COLUMN IF NOT EXISTS stage_of bigint;
+ALTER TABLE cycle_routes ADD COLUMN IF NOT EXISTS top_of bigint;
 ALTER TABLE cycle_routes ADD COLUMN IF NOT EXISTS co_located bigint[];
+
+-- "Every stage of path X" and "every member of dedup group X": the queries
+-- the attach step (R6) runs per destination.
+CREATE INDEX IF NOT EXISTS trips_top_of_idx ON trips (top_of) WHERE top_of IS NOT NULL;
+CREATE INDEX IF NOT EXISTS trips_stage_of_idx ON trips (stage_of) WHERE stage_of IS NOT NULL;
+CREATE INDEX IF NOT EXISTS cycle_routes_top_of_idx ON cycle_routes (top_of) WHERE top_of IS NOT NULL;

@@ -6,7 +6,7 @@ import { ClimateStrip, MONTHS_SHORT, fmtMonthRanges } from './ClimateStrip.jsx';
 import { HeroImage } from '../components/HeroImage.jsx';
 import { CostReceipt } from '../components/CostSummary.jsx';
 import { matchProfile, PROFILE_LABEL_KEYS } from './LifestylePanel.jsx';
-import { safeUrl } from '../lib/format.js';
+import { safeUrl, eur } from '../lib/format.js';
 import { useDossier, destShareUrl } from '../lib/dossier.js';
 import { activityLink } from '../lib/activityAffiliates.js';
 import { mapsSearchUrl } from '../lib/destInfo.js';
@@ -20,41 +20,42 @@ import { GettingThere } from './GettingThere.jsx';
 import { CrowdCalendar } from './CrowdCalendar.jsx';
 import { BathingWater } from './BathingWater.jsx';
 import { MemberPlaces } from './MemberPlaces.jsx';
+import { AroundHere, FeaturePhoto, summaryOf } from './AroundHere.jsx';
 import { ScoreChip } from '../components/RatingBadge.jsx';
 import { visitLength } from '../lib/nearby.js';
 import { roleOf } from '../lib/taxonomy.js';
 import { KindGlyph } from '../components/KindGlyph.jsx';
 import { usePaywall } from '../hooks/usePaywall.jsx';
 import {
-  TreeIcon, PersonIcon, CalendarIcon, MapPinIcon, CameraIcon,
+  TreeIcon, PersonIcon, CalendarIcon, MapPinIcon,
   ParkingIcon, SunIcon, PartSunIcon, CloudIcon, FogIcon,
   RainIcon, DrizzleIcon, SnowIcon, StormIcon, ClockIcon, CompassIcon,
   ShoeIcon, SwimIcon, BootIcon, PlugIcon, BottleIcon, JacketIcon,
-  BackpackIcon, ReceiptIcon, CheckIcon, BedIcon, InfoIcon,
+  BackpackIcon, ReceiptIcon, CheckIcon, BedIcon, InfoIcon, StarIcon,
+  ChevronDownIcon, ChevronRightIcon, MusicIcon, SparkIcon, LinkIcon,
+  DownloadIcon, ShareIcon, BulbIcon, MedalIcon,
 } from '../components/Icons.jsx';
 import { PlaneIcon } from '../components/TransportIcons.jsx';
 
 /**
- * The full-screen destination page. Replaces the Explore side panel: opening
- * a destination now covers the screen on every width, with a cross (desktop)
- * and a back arrow (phone) as the two ways out, plus Escape.
+ * The full-screen destination page, v2: compact by construction.
  *
  * Renders from the dossier contract (public/dossier/{id}.json, built by
  * pipeline/dossier/build_dossier.py). The PDF export renders from the SAME
- * file (lib/destinationPdf.js), which is the whole architecture: one
- * contract, two renderers, zero drift.
+ * file (lib/destinationPdf.js): one contract, two renderers, zero drift.
  *
- * Section order is the order the user asked for: gallery, what this place is,
- * highlights with the map, best things to do, best trips from here, nearby
- * nature, what a day costs, when to go, live weather, insider tips, parking
- * with navigation deeplinks, what to pack, explore further, credits.
+ * Structure, top to bottom: the gallery, the head (name, badges, the short
+ * intro composed from our own facts, a four-fact strip, the actions), then
+ * folding sections. A closed section still answers its question in the
+ * header ("When to go: best Apr, May"; "What a day costs: EUR85"), so the
+ * page reads as a summary at a glance and as a guide when opened. The first
+ * four sections open by default because they are why people come here:
+ * highlights with the map, things to do, the outdoors within 20 km, and day
+ * trips. Everything else opens on demand.
  *
- * Two deliberate removals, both from the brief: the rating is not displayed
- * (the score still ranks trips and highlights inside the pipeline), and the
- * old "sights & areas" list is gone because highlights now carry it.
- *
- * Sections with nothing to say are not rendered at all, same contract as the
- * panel this replaces.
+ * Every picture on the page is either a Commons photograph or a basemap tile
+ * of the place; a broken image never renders and no lettered plate stands in
+ * for one. Sections with nothing to say are not rendered at all.
  */
 
 const DestMap = React.lazy(() => import('./DestMap.jsx'));
@@ -75,16 +76,36 @@ const DO_TYPE_KEYS = {
   festival: 'dest.doType.festival', swim: 'dest.doType.swim',
   experience: 'dest.doType.experience',
 };
+const DO_TYPE_ICON = {
+  trail: BootIcon, activity: CompassIcon, festival: MusicIcon,
+  swim: SwimIcon, experience: SparkIcon,
+};
+
+const OPEN_BY_DEFAULT = new Set(['highlights', 'do', 'around', 'trips', 'cost', 'tips']);
 
 const baseCity = (name) => (name || '').replace(/\s*\([^)]*\)\s*$/, '').trim();
 const fmtKm = (km) => (km < 0.95 ? `${Math.round((km * 1000) / 10) * 10} m` : `${Math.round(km)} km`);
+/** Highlight photographs ship at 960px; the tiles want 500. Same file, one
+ *  path segment, and Commons serves both. */
+const thumb500 = (url) => (url ? url.replace(/\/960px-/, '/500px-') : url);
 
-function SectionTitle({ icon: Icon, children, aside }) {
+/** One folding section. The header is the summary when closed and the title
+ *  when open; the body mounts only while open, which is also what keeps a
+ *  closed map from costing a WebGL context. */
+function Fold({ id, icon: Icon, title, summary, open, onToggle, children, aside, className = '' }) {
   return (
-    <div className="section-title section-title-iconed">
-      {Icon && <Icon size={12} />} {children}
-      {aside && <span className="section-title-aside">{aside}</span>}
-    </div>
+    <section className={`dsec ${open ? 'is-open' : ''} ${className}`} id={id}>
+      <div className="dsec-head">
+        <button type="button" className="dsec-toggle" onClick={onToggle} aria-expanded={open} aria-controls={`${id}-body`}>
+          {Icon && <Icon size={14} className="dsec-icon" />}
+          <span className="dsec-title">{title}</span>
+          {!open && summary && <span className="dsec-summary">{summary}</span>}
+          <ChevronDownIcon size={14} className="dsec-chev" />
+        </button>
+        {open && aside && <div className="dsec-aside">{aside}</div>}
+      </div>
+      {open && <div className="dsec-body" id={`${id}-body`}>{children}</div>}
+    </section>
   );
 }
 
@@ -101,20 +122,22 @@ function tipText(tip, t) {
 function GalleryStrip({ gallery, city, iso2, fallbackUrl }) {
   const scroller = React.useRef(null);
   const [idx, setIdx] = React.useState(0);
-  const imgs = gallery?.length ? gallery : (fallbackUrl ? [{ url: fallbackUrl }] : []);
+  const [failed, setFailed] = React.useState(() => new Set());
+  const imgs = (gallery?.length ? gallery : (fallbackUrl ? [{ url: fallbackUrl }] : []))
+    .filter((g) => !failed.has(g.url));
 
   const onScroll = (e) => {
     const el = e.currentTarget;
     const slide = el.querySelector('.destp-slide');
     if (!slide) return;
-    const next = Math.round(el.scrollLeft / (slide.offsetWidth + 8));
+    const next = Math.round(el.scrollLeft / (slide.offsetWidth + 6));
     setIdx((cur) => (cur === next ? cur : Math.min(next, imgs.length - 1)));
   };
   const nudge = (dir) => {
     const el = scroller.current;
     const slide = el?.querySelector('.destp-slide');
     if (!el || !slide) return;
-    el.scrollBy({ left: dir * (slide.offsetWidth + 8), behavior: 'smooth' });
+    el.scrollBy({ left: dir * (slide.offsetWidth + 6), behavior: 'smooth' });
   };
 
   if (!imgs.length) {
@@ -134,7 +157,9 @@ function GalleryStrip({ gallery, city, iso2, fallbackUrl }) {
               alt={g.caption || ''}
               loading={i === 0 ? 'eager' : 'lazy'}
               fetchPriority={i === 0 ? 'high' : undefined}
+              onError={() => setFailed((s) => new Set([...s, g.url]))}
             />
+            {g.caption && <figcaption className="destp-slide-cap">{g.caption}</figcaption>}
             {safeUrl(g.page) && (
               <a
                 className="destp-slide-credit"
@@ -142,8 +167,9 @@ function GalleryStrip({ gallery, city, iso2, fallbackUrl }) {
                 target="_blank"
                 rel="noreferrer"
                 title={[g.author, g.licence].filter(Boolean).join(', ')}
+                aria-label={[g.author, g.licence].filter(Boolean).join(', ') || 'Photo credit'}
               >
-                {'©'}
+                <InfoIcon size={12} />
               </a>
             )}
           </figure>
@@ -175,8 +201,12 @@ export function DestinationPage({
   const mapRef = React.useRef(null);
   const [stuck, setStuck] = React.useState(false);
   const [mapLayer, setMapLayer] = React.useState('highlights');
+  const [hlFocus, setHlFocus] = React.useState(null);
+  const [hlAll, setHlAll] = React.useState(false);
+  const [doAll, setDoAll] = React.useState(false);
   const [copied, setCopied] = React.useState(false);
   const [pdfBusy, setPdfBusy] = React.useState(false);
+  const [open, setOpen] = React.useState(() => new Set(OPEN_BY_DEFAULT));
 
   const dossier = useDossier(destination?.id);
   // D7: a member search lands here with ?dm=<name>; that member is the
@@ -188,16 +218,37 @@ export function DestinationPage({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [destination?.id]);
 
-  // D1: the sticky sub-nav walks the decision sequence.
+  const isOpen = (id) => open.has(id);
+  const toggle = (id) => setOpen((s) => {
+    const n = new Set(s);
+    if (n.has(id)) n.delete(id); else n.add(id);
+    return n;
+  });
+  const setAllOpen = (ids, value) => setOpen((s) => {
+    const n = new Set(s);
+    ids.forEach((id) => { if (value) n.add(id); else n.delete(id); });
+    return n;
+  });
   const jumpTo = (id) => {
-    scrollRef.current?.querySelector?.(`#${id}`)
-      ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    setOpen((s) => new Set([...s, id]));
+    requestAnimationFrame(() => {
+      scrollRef.current?.querySelector?.(`#sec-${id}`)
+        ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  };
+  const showOnMap = (layer) => {
+    setMapLayer(layer);
+    jumpTo('highlights');
   };
 
   React.useEffect(() => {
     setStuck(false);
     setMapLayer('highlights');
+    setHlFocus(null);
+    setHlAll(false);
+    setDoAll(false);
     setCopied(false);
+    setOpen(new Set(OPEN_BY_DEFAULT));
     if (scrollRef.current) scrollRef.current.scrollTop = 0;
   }, [destination?.id]);
 
@@ -250,16 +301,26 @@ export function DestinationPage({
   const doItems = d?.do || [];
   const trips = d?.trips || [];
   const nearby = d?.nearby || {};
+  const around = d?.around || null;
   const tips = d?.tips || [];
   const parking = d?.parking;
   const festivals = d?.festivals || [];
   const links = d?.practical?.links || {};
   const credits = d?.credits || [];
+  const when = d?.when || null;
   const nearbyRows = ['trails', 'beaches', 'lakes', 'mountains']
     .flatMap((layer) => (nearby[layer] || []).slice(0, 3).map((f) => ({ ...f, layer })));
-
   const nearbyForMap = nearbyRows.filter((f) => f.lat != null);
+  const aroundForMap = around
+    ? ['trails', 'cycling', 'mountains', 'lakes', 'beaches']
+      .flatMap((layer) => (around[layer] || []).slice(0, 12).map((f) => ({ ...f, layer })))
+      .filter((f) => f.lat != null)
+    : [];
   const tripsForMap = trips.filter((x) => x.lat != null);
+  const shortIntro = intro?.short || intro?.lead || kf || '';
+  const guideUrl = safeUrl(intro?.grounding?.[0]?.url || destination.guide?.url);
+  const bestMonths = when?.best?.length ? when.best.map((m) => MONTHS_SHORT[m - 1]).join(', ') : '';
+  const bedFrom = sleep?.tiers?.dorm_pp_night_eur ?? sleep?.per_person_night_eur ?? null;
 
   const share = async () => {
     const url = destShareUrl(destination.id);
@@ -274,16 +335,18 @@ export function DestinationPage({
   };
 
   const exportPdf = async () => {
-    if (pdfBusy) return;
+    if (pdfBusy || !d) return;
     if (!paywall.require('export')) return;
     setPdfBusy(true);
     try {
-      const { openDestinationPdf } = await import('../lib/destinationPdf.js');
-      openDestinationPdf({
+      const { downloadDestinationPdf } = await import('../lib/destinationPdf.js');
+      await downloadDestinationPdf({
         dossier: d, destination, cost, t, lang,
         lifestyleLabel: lifestyleLine,
-        mapSnapshot: mapRef.current?.snapshot?.() || null,
+        stayDays: stayLen?.n || null,
       });
+    } catch (e) {
+      console.error('pdf export failed', e);
     } finally {
       setPdfBusy(false);
     }
@@ -303,14 +366,57 @@ export function DestinationPage({
 
   const layerChoices = [
     { key: 'highlights', label: t('dest.layer.highlights'), n: highlights.length },
+    { key: 'around', label: t('dest.layer.around'), n: aroundForMap.length },
     { key: 'trips', label: t('dest.layer.trips'), n: tripsForMap.length },
-    { key: 'nearby', label: t('dest.layer.nearby'), n: nearbyForMap.length },
   ].filter((c) => c.n > 0);
+  const effectiveLayer = layerChoices.some((c) => c.key === mapLayer) ? mapLayer
+    : mapLayer === 'nearby' && nearbyForMap.length ? 'nearby' : 'highlights';
+
+  // The consensus count groups things to do: essential, if you have time,
+  // off the trail. Fewer than three evidenced items: one flat list.
+  const nOf = (x) => x.evidence?.n_sources ?? 0;
+  const evidenced = doItems.filter((x) => x.evidence?.n_sources != null);
+  const doBuckets = evidenced.length >= 3 ? [
+    ['dest.doEssential', doItems.filter((x) => nOf(x) >= 5)],
+    ['dest.doIfTime', doItems.filter((x) => nOf(x) >= 2 && nOf(x) < 5)],
+    ['dest.doOffTrail', doItems.filter((x) => nOf(x) < 2)],
+  ].filter(([, xs]) => xs.length > 0) : [[null, doItems]];
+  const DO_LIMIT = 5;
+  let doShown = 0;
+
+  const has = {
+    highlights: highlights.length > 0 || !loading,
+    do: doItems.length > 0,
+    around: !!(around || nearbyRows.length),
+    trips: trips.length > 0,
+    members: members?.length > 0,
+    rating: verdict?.score != null,
+    when: !!destination.climate?.m,
+    sleep: !!(sleep?.neighbourhoods?.length > 0 || sleep?.tiers || sleep?.seasonality),
+    getting: !!(getting || rhythm || bookAhead.length > 0 || pairs.length > 0),
+    cost: cost?.dayEur != null,
+    tips: tips.length > 0,
+    festivals: festivals.length > 0,
+    weather: forecast !== null && forecast !== undefined,
+    park: !!(parking && (parking.spots?.length > 0 || parking.park_ride || parking.web)),
+    pack: packs.length > 0,
+  };
+  const navItems = [
+    ['highlights', 'dest.nav.highlights'], ['do', 'dest.nav.do'], ['around', 'dest.nav.around'],
+    ['trips', 'dest.nav.trips'], ['when', 'dest.nav.when'], ['sleep', 'dest.nav.sleep'],
+    ['cost', 'dest.nav.cost'], ['park', 'dest.nav.park'],
+  ].filter(([id]) => has[id]);
+  const allIds = Object.keys(has).filter((k) => has[k]).concat(['further']);
+  const allOpen = allIds.every((id) => open.has(id));
+
+  const parkSearch = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`parking ${city}`)}`;
+  const webPark = parking?.web || null;
+  const cityNamed = new Set((webPark?.car_parks || []).map((c) => (c.name || '').toLowerCase()));
 
   return (
     <div
       ref={pageRef}
-      className="destp"
+      className="destp destp-v2"
       role="dialog"
       aria-modal="true"
       aria-label={city}
@@ -330,17 +436,16 @@ export function DestinationPage({
         </div>
       </div>
 
-      {/* D1: the decision sequence as a sticky rail - should I go, when,
-          where do I sleep, how do I get there, what do I do, what it costs */}
+      {/* The section rail: tap a name, the section opens and scrolls up. */}
       <nav className="destp-subnav" aria-label={t('dest.subnavAria')}>
-        {[['sec-verdict', 'dest.nav.verdict'], ['sec-when', 'dest.nav.when'],
-          ['sec-sleep', 'dest.nav.sleep'], ['sec-getting', 'dest.nav.getting'],
-          ['sec-do', 'dest.nav.do'], ['sec-cost', 'dest.nav.cost']]
-          .map(([id, key]) => (
-            <button key={id} type="button" onClick={() => jumpTo(id)}>
-              {t(key)}
-            </button>
+        <div className="destp-subnav-scroll">
+          {navItems.map(([id, key]) => (
+            <button key={id} type="button" onClick={() => jumpTo(id)}>{t(key)}</button>
           ))}
+        </div>
+        <button type="button" className="destp-subnav-all" onClick={() => setAllOpen(allIds, !allOpen)}>
+          {allOpen ? t('dest.collapseAll') : t('dest.expandAll')}
+        </button>
       </nav>
 
       <div className="destp-scroll" ref={scrollRef} onScroll={onScroll}>
@@ -353,9 +458,23 @@ export function DestinationPage({
 
         <div className="destp-head">
           <div className="destp-head-main">
-            <h2 className="destp-city">{city}</h2>
-            <div className="destp-country">{destination.country}</div>
-            {(intro?.lead || kf) && <p className="destp-lead">{intro?.lead || kf}</p>}
+            <div className="destp-title-row">
+              <h2 className="destp-city">{city}</h2>
+              {verdict?.score != null && (
+                <button type="button" className="destp-score" onClick={() => jumpTo('rating')} title={t('dest.ratingTitle', { score: verdict.score.toFixed(1) })}>
+                  <ScoreChip rating={verdict} size="lg" />
+                  {verdict.label && <span className="destp-score-label">{verdict.label}</span>}
+                </button>
+              )}
+            </div>
+            <div className="destp-country">
+              {destination.country}
+              {verdict?.country_rank === 1 ? (
+                <span className="destp-rank">{t('card.topOf', { country: destination.country })}</span>
+              ) : verdict?.country_badge ? (
+                <span className="destp-rank">{t('card.rankIn', { n: verdict.country_rank, country: destination.country })}</span>
+              ) : null}
+            </div>
             <div className="destp-badge-row">
               {(destination.designations || []).some((g) => g.kind === 'unesco_whc') && (
                 <span className="destp-unesco" title={(destination.designations || []).find((g) => g.kind === 'unesco_whc')?.name || ''}>
@@ -368,14 +487,24 @@ export function DestinationPage({
               {swimRelevant(destination) && (
                 <WaterQualityBadge bathing={destination.bathing_water} t={t} size="lg" />
               )}
-              {destination.place?.visit_h != null && (
-                <span className="destp-visit"><ClockIcon size={12} />{t('dest.visitHours', { n: Math.round(destination.place.visit_h) })}</span>
+              {stayLen && (
+                <span className="destp-visit"><ClockIcon size={12} />{t(stayLen.key, { n: stayLen.n })}</span>
               )}
             </div>
+            {/* What this place is: two or three sentences from our own
+                facts, one opening line after Wikivoyage. Never the article. */}
+            {shortIntro && (
+              <p className="destp-short">
+                {shortIntro}
+                {guideUrl && (
+                  <a className="destp-short-src" href={guideUrl} target="_blank" rel="noreferrer">{t('detail.readGuide')}</a>
+                )}
+              </p>
+            )}
           </div>
           <div className="destp-head-actions">
-            <button type="button" className="destp-pdf" onClick={exportPdf} disabled={pdfBusy || loading}>
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M12 3v11m0 0l-4-4m4 4l4-4M4 17v2a2 2 0 002 2h12a2 2 0 002-2v-2" /></svg>
+            <button type="button" className="destp-pdf" onClick={exportPdf} disabled={pdfBusy || loading || !d}>
+              <DownloadIcon size={15} />
               <span>{pdfBusy ? t('dest.pdfBuilding') : t('dest.pdf')}</span>
             </button>
             {onToggleFavorite && (
@@ -387,6 +516,10 @@ export function DestinationPage({
                 <span>{isFavorite ? t('detail.shortlisted') : t('detail.shortlist')}</span>
               </button>
             )}
+            <button type="button" className="panel-fav destp-share-btn" onClick={share}>
+              <ShareIcon size={15} />
+              <span>{copied ? t('dest.linkCopied') : t('dest.share')}</span>
+            </button>
             <a className="panel-fav" href={mapsSearchUrl(lat, lon)} target="_blank" rel="noreferrer">
               <MapPinIcon size={15} />
               <span>{t('explore.openMaps')}</span>
@@ -394,31 +527,315 @@ export function DestinationPage({
           </div>
         </div>
 
+        {/* Four measured facts, the instrument strip. */}
+        {(destination.place?.visit_h != null || bestMonths || cost?.dayEur != null || bedFrom != null) && (
+          <dl className="dfacts">
+            {destination.place?.visit_h != null && (
+              <div className="dfact"><dt>{t('pdf.factVisit')}</dt><dd className="mono">{Math.round(destination.place.visit_h)} h</dd></div>
+            )}
+            {bestMonths && (
+              <div className="dfact"><dt>{t('pdf.factBest')}</dt><dd className="mono">{bestMonths}</dd></div>
+            )}
+            {cost?.dayEur != null && (
+              <div className="dfact"><dt>{t('pdf.factDay')}</dt><dd className="mono">{eur(cost.dayEur)}</dd></div>
+            )}
+            {bedFrom != null && (
+              <div className="dfact"><dt>{t('dest.factSleep')}</dt><dd className="mono">{eur(bedFrom)}</dd></div>
+            )}
+          </dl>
+        )}
+
         <div className="destp-grid">
           <div className="destp-col is-main">
-            {/* D1+D2: the verdict leads - should I go, and how much does
-                this rating actually know. The old page hid the score; the
-                plan reverses that call, with the confidence shown rather
-                than the number silently demoted. */}
-            {verdict?.score != null && (
-              <div className="dsheet-card" id="sec-verdict">
-                <div className="destp-verdict-head">
-                  <ScoreChip rating={verdict} size="lg" />
-                  {verdict.label && <span className="destp-verdict-label">{verdict.label}</span>}
-                  {verdict.country_rank === 1 ? (
-                    <span className="destp-verdict-country">{t('card.topOf', { country: destination.country })}</span>
-                  ) : verdict.country_badge ? (
-                    <span className="destp-verdict-country">{t('card.rankIn', { n: verdict.country_rank, country: destination.country })}</span>
-                  ) : null}
+            {/* Highlights and the one map, with its layers. */}
+            {has.highlights && (
+              <Fold
+                id="sec-highlights"
+                icon={MapPinIcon}
+                title={t('dest.mapTitle')}
+                summary={highlights.length ? t('dest.hlSummary', { n: highlights.length }) : ''}
+                open={isOpen('highlights')}
+                onToggle={() => toggle('highlights')}
+                aside={layerChoices.length > 1 && (
+                  <div className="destp-layers" role="tablist" aria-label={t('dest.mapTitle')}>
+                    {layerChoices.map((c) => (
+                      <button
+                        key={c.key}
+                        type="button"
+                        role="tab"
+                        aria-selected={effectiveLayer === c.key}
+                        className={`destp-layer ${effectiveLayer === c.key ? 'on' : ''}`}
+                        onClick={() => setMapLayer(c.key)}
+                      >
+                        {c.label} <span className="mono">{c.n}</span>
+                      </button>
+                    ))}
+                  </div>
+                )}
+              >
+                <div className="dhl-wrap">
+                  <React.Suspense fallback={<div className="place-map place-map-wait dmap" />}>
+                    <DestMap
+                      ref={mapRef}
+                      place={{ lat, lon, name: city }}
+                      highlights={highlights}
+                      trips={tripsForMap}
+                      nearby={nearbyForMap}
+                      around={aroundForMap}
+                      active={effectiveLayer}
+                      focus={hlFocus}
+                      height={undefined}
+                      onPickTrip={(row) => onSelect?.(row.id)}
+                      onPickFeature={(layer, row) => onOpenFeature?.(layer, row)}
+                      onPickHighlight={(i) => {
+                        setHlFocus(i);
+                        setHlAll(true);
+                        requestAnimationFrame(() => {
+                          scrollRef.current?.querySelector?.(`#hl-${i}`)
+                            ?.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+                        });
+                      }}
+                    />
+                  </React.Suspense>
+                  {highlights.length > 0 && (
+                    <div className={`dhl-strip ${hlAll ? 'is-all' : ''}`}>
+                      {(hlAll ? highlights : highlights.slice(0, 8)).map((h, i) => (
+                        <figure
+                          className={`dhl ${hlFocus === i ? 'is-focus' : ''}`}
+                          key={h.id}
+                          id={`hl-${i}`}
+                          onMouseEnter={() => setHlFocus(i)}
+                          onFocus={() => setHlFocus(i)}
+                        >
+                          <button
+                            type="button"
+                            className="dhl-pic"
+                            onClick={() => { setHlFocus(i); setMapLayer('highlights'); }}
+                            aria-label={h.name}
+                          >
+                            <FeaturePhoto src={thumb500(h.image?.url)} lat={h.lat} lon={h.lon} className="dhl-photo" />
+                            <span className="dhl-n mono">{i + 1}</span>
+                            {h.heritage && <span className="dhl-heritage" title={t('dest.unesco')}><MedalIcon size={11} /></span>}
+                          </button>
+                          <figcaption>
+                            <span className="dhl-name">{h.name}</span>
+                            <span className="dhl-sub">
+                              <span>{h.kind}</span>
+                              {h.dist_km != null && <span className="mono">{fmtKm(h.dist_km)}</span>}
+                              {safeUrl(h.wikipedia) && (
+                                <a className="dhl-link" href={safeUrl(h.wikipedia)} target="_blank" rel="noreferrer" aria-label={`${h.name}, Wikipedia`}><LinkIcon size={11} /></a>
+                              )}
+                            </span>
+                            {h.fact && <span className="dhl-fact">{h.fact}</span>}
+                          </figcaption>
+                        </figure>
+                      ))}
+                    </div>
+                  )}
+                  {highlights.length > 8 && (
+                    <button type="button" className="dsec-more" onClick={() => setHlAll((v) => !v)}>
+                      {hlAll ? t('dest.showLess') : t('dest.showAll', { n: highlights.length })}
+                    </button>
+                  )}
                 </div>
-                <RatingBreakdown rating={verdict} meta={data?.meta} t={t} />
+              </Fold>
+            )}
+
+            {/* Best things to do: cards, grouped by how many guides agree. */}
+            {has.do && (
+              <Fold
+                id="sec-do"
+                icon={CompassIcon}
+                title={t('dest.doTitle')}
+                summary={t('dest.doSummary', { n: doItems.length })}
+                open={isOpen('do')}
+                onToggle={() => toggle('do')}
+              >
+                {doBuckets.map(([bkey, items]) => {
+                  const visible = items.filter(() => {
+                    if (doAll) return true;
+                    doShown += 1;
+                    return doShown <= DO_LIMIT;
+                  });
+                  if (!visible.length) return null;
+                  return (
+                    <React.Fragment key={bkey || 'all'}>
+                      {bkey && <p className="ddo-group">{t(bkey)} <span className="mono">{items.length}</span></p>}
+                      <ul className="ddo-grid">
+                        {visible.map((item) => {
+                          const TypeIcon = DO_TYPE_ICON[item.type] || CompassIcon;
+                          const ev = item.evidence;
+                          const evPct = ev?.n_sources != null
+                            ? (ev.method === 'open' ? Math.min(100, ev.n_sources * 25) : Math.round((ev.n_sources / Math.max(ev.of || 1, 1)) * 100))
+                            : null;
+                          const href = item.link && safeUrl(item.link) ? activityLink(safeUrl(item.link), 'dest-do') : null;
+                          const body = (
+                            <>
+                              <span className={`ddo-type is-${item.type}`}><TypeIcon size={11} />{t(DO_TYPE_KEYS[item.type] || 'dest.doType.activity')}</span>
+                              <span className="ddo-name">{item.name}</span>
+                              {item.detail && <span className="ddo-detail">{item.detail}</span>}
+                              <span className="ddo-foot">
+                                {item.season?.length > 0 && (
+                                  <span className="ddo-season mono">{item.season.map((m) => MONTHS_SHORT[m - 1]).join(', ')}</span>
+                                )}
+                                {ev?.n_sources != null && (
+                                  <span className={`ddo-ev ${ev.method === 'open' ? 'is-open' : ''}`} title={(ev.sources || ev.urls || []).join(', ')}>
+                                    <span className="ddo-ev-bar" aria-hidden="true"><span style={{ width: `${Math.max(8, evPct)}%` }} /></span>
+                                    <span>
+                                      {ev.method === 'open'
+                                        ? (ev.curated ? t('dest.evidenceCurated') : t('dest.evidenceOpen', { n: ev.n_sources }))
+                                        : t('dest.evidence', { n: ev.n_sources, of: ev.of })}
+                                    </span>
+                                  </span>
+                                )}
+                                {(href || (item.ref && onOpenFeature)) && <ChevronRightIcon size={13} className="ddo-go" />}
+                              </span>
+                            </>
+                          );
+                          if (href) {
+                            return (
+                              <li key={item.name}><a className="ddo" href={href} target="_blank" rel="noreferrer">{body}</a></li>
+                            );
+                          }
+                          if (item.ref && onOpenFeature) {
+                            return (
+                              <li key={item.name}><button type="button" className="ddo" onClick={() => onOpenFeature(item.ref.layer, item.ref)}>{body}</button></li>
+                            );
+                          }
+                          return <li key={item.name}><span className="ddo is-static">{body}</span></li>;
+                        })}
+                      </ul>
+                    </React.Fragment>
+                  );
+                })}
+                {doItems.length > DO_LIMIT && (
+                  <button type="button" className="dsec-more" onClick={() => setDoAll((v) => !v)}>
+                    {doAll ? t('dest.showLess') : t('dest.showAll', { n: doItems.length })}
+                  </button>
+                )}
+                {(links.getyourguide || links.viator) && (
+                  <div className="destp-book-row">
+                    {links.getyourguide && (
+                      <a className="xp-further-btn" href={activityLink(links.getyourguide, 'dest-book')} target="_blank" rel="noreferrer noopener">{t('dest.bookGyg')}</a>
+                    )}
+                    {links.viator && (
+                      <a className="xp-further-btn" href={activityLink(links.viator, 'dest-book')} target="_blank" rel="noreferrer noopener">{t('dest.bookViator')}</a>
+                    )}
+                  </div>
+                )}
+                <p className="xp-source">{t('dest.bookNote')}</p>
+              </Fold>
+            )}
+
+            {/* Around here: the outdoors within 20 km, from every layer the
+                Destinations tab knows, plus the top picks with photographs. */}
+            {has.around && (
+              <Fold
+                id="sec-around"
+                icon={TreeIcon}
+                title={t('dest.aroundTitle', { city })}
+                summary={summaryOf(around, t) || t('dest.natureTitle')}
+                open={isOpen('around')}
+                onToggle={() => toggle('around')}
+              >
+                <AroundHere
+                  city={city}
+                  nearby={nearby}
+                  around={around}
+                  t={t}
+                  onOpenFeature={onOpenFeature}
+                  onShowMap={aroundForMap.length || nearbyForMap.length ? showOnMap : null}
+                />
+              </Fold>
+            )}
+
+            {/* Best trips from here. Each card is a real catalogue place, so
+                clicking one opens ITS page; the map layer shows the same set. */}
+            {has.trips && (
+              <Fold
+                id="sec-trips"
+                icon={CompassIcon}
+                title={t('dest.tripsTitle')}
+                summary={t('dest.tripsSummary', { n: trips.length })}
+                open={isOpen('trips')}
+                onToggle={() => toggle('trips')}
+                aside={tripsForMap.length > 0 && (
+                  <button type="button" className="dar-map" onClick={() => showOnMap('trips')}>{t('dest.tripsOnMap')}</button>
+                )}
+              >
+                <div className="dtrips">
+                  {trips.map((tr) => {
+                    const go = tr.kind === 'composed_trip' ? () => onOpenItin?.(tr.id) : () => onSelect?.(tr.id);
+                    const can = tr.kind === 'composed_trip' ? !!onOpenItin : !!onSelect;
+                    return (
+                      <button type="button" className="dtrip" key={tr.id} onClick={go} disabled={!can}>
+                        <FeaturePhoto src={tr.image?.url} lat={tr.lat} lon={tr.lon} className="dtrip-photo" />
+                        <span className="dtrip-body">
+                          <span className="dtrip-head">
+                            <span className="dtrip-name">{tr.name}</span>
+                            {tr.rating?.score != null && <ScoreChip rating={{ score: tr.rating.score, tier: tr.rating.score >= 8 ? 3 : tr.rating.score >= 7 ? 2 : 1 }} size="sm" />}
+                          </span>
+                          <span className="dtrip-sub">
+                            {tr.kind === 'composed_trip' ? (
+                              <span className="mono">{t('dest.tripDays', { n: tr.days || 0 })}</span>
+                            ) : (
+                              tr.travel?.minutes != null && (
+                                <span className="mono">{t('dest.minutesBy', { n: tr.travel.minutes, mode: t(`mode.${tr.travel.mode}`) })}</span>
+                              )
+                            )}
+                            {tr.dist_km != null && <span className="mono">{tr.dist_km} km</span>}
+                          </span>
+                          {tr.blurb && <span className="dtrip-why">{tr.blurb}</span>}
+                          <span className="dtrip-go">{t('dest.tripOpen')} <ChevronRightIcon size={12} /></span>
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </Fold>
+            )}
+
+            {/* D7: the villages inside this area, from B1's members. */}
+            {has.members && (
+              <Fold
+                id="sec-members"
+                icon={MapPinIcon}
+                title={t('dest.membersTitle')}
+                summary={t('dest.membersSummary', { n: members.length })}
+                open={isOpen('members')}
+                onToggle={() => toggle('members')}
+              >
+                <MemberPlaces members={members} focusName={memberFocus} t={t} />
+              </Fold>
+            )}
+          </div>
+
+          <div className="destp-col is-side">
+            {/* The verdict, with its argument. */}
+            {has.rating && (
+              <Fold
+                id="sec-rating"
+                icon={StarIcon}
+                title={t('dest.ratingTitle', { score: verdict.score.toFixed(1) })}
+                summary={verdict.label || ''}
+                open={isOpen('rating')}
+                onToggle={() => toggle('rating')}
+              >
+                <RatingBreakdown
+                  rating={verdict}
+                  meta={data?.meta}
+                  t={t}
+                  countryLine={verdict.country_rank === 1
+                    ? t('card.topOf', { country: destination.country })
+                    : verdict.country_badge
+                      ? t('card.rankIn', { n: verdict.country_rank, country: destination.country })
+                      : null}
+                />
                 {verdict.confidence && verdict.confidence !== 'curated' && (
                   <p className="destp-confidence">
-                    {t(verdict.confidence === 'provisional'
-                      ? 'dest.confProvisional' : 'dest.confModelled')}
+                    {t(verdict.confidence === 'provisional' ? 'dest.confProvisional' : 'dest.confModelled')}
                   </p>
                 )}
-                {/* D1's "how long": hours become a shape, plus the role. */}
                 {(stayLen || destination.place?.visit_h != null) && (
                   <p className="destp-howlong">
                     <ClockIcon size={13} />
@@ -428,47 +845,64 @@ export function DestinationPage({
                     </span>
                   </p>
                 )}
-              </div>
+              </Fold>
             )}
 
-            {/* D1: when - the climate strip with the crowding and water
-                measurements beside it, not buried below the fold. */}
-            {destination.climate?.m && (
-              <div className="dsheet-card" id="sec-when">
-                <SectionTitle icon={CalendarIcon}>{t('explore.whenTitle')}</SectionTitle>
+            {/* When: the climate strip with crowding and water beside it. */}
+            {has.when && (
+              <Fold
+                id="sec-when"
+                icon={CalendarIcon}
+                title={t('explore.whenTitle')}
+                summary={bestMonths ? t('dest.whenSummary', { months: bestMonths }) : ''}
+                open={isOpen('when')}
+                onToggle={() => toggle('when')}
+              >
                 <ClimateStrip climate={destination.climate} />
                 {cheapMonths && (
                   <p className="xp-when-fact">{t('explore.whenCheapStay', { months: fmtMonthRanges(cheapMonths) })}</p>
                 )}
                 <CrowdCalendar destination={destination} t={t} />
                 <BathingWater water={water} destination={destination} t={t} />
-              </div>
+              </Fold>
             )}
 
-            {/* D3: where to sleep - neighbourhood prices, tiers, the
-                12-month price curve. */}
-            {(sleep?.neighbourhoods?.length > 0 || sleep?.tiers || sleep?.seasonality) && (
-              <div className="dsheet-card" id="sec-sleep">
-                <SectionTitle icon={BedIcon}>{t('dest.sleepTitle')}</SectionTitle>
+            {/* Where to sleep: neighbourhood prices, tiers, the price curve. */}
+            {has.sleep && (
+              <Fold
+                id="sec-sleep"
+                icon={BedIcon}
+                title={t('dest.sleepTitle')}
+                summary={bedFrom != null ? t('dest.sleepSummary', { eur: Math.round(bedFrom) }) : ''}
+                open={isOpen('sleep')}
+                onToggle={() => toggle('sleep')}
+              >
                 <Neighbourhoods sleep={sleep} t={t} />
-              </div>
+              </Fold>
             )}
 
-            {/* D3: getting there and around, the whole verdict line. */}
-            {(getting || rhythm || bookAhead.length > 0 || pairs.length > 0) && (
-              <div className="dsheet-card" id="sec-getting">
-                <SectionTitle icon={CompassIcon}>{t('dest.gettingTitle')}</SectionTitle>
+            {/* Getting there and around. */}
+            {has.getting && (
+              <Fold
+                id="sec-getting"
+                icon={PlaneIcon}
+                title={t('dest.gettingTitle')}
+                summary={getting?.airport
+                  ? (getting.transfer_min != null
+                    ? t('dest.flyToWithTransfer', { iata: getting.airport, n: getting.transfer_min, mode: t(`mode.${getting.transfer_mode || 'train'}`) })
+                    : t('dest.flyTo', { iata: getting.airport }))
+                  : (getting?.transit ? t(`dest.transit.${getting.transit}`) : '')}
+                open={isOpen('getting')}
+                onToggle={() => toggle('getting')}
+              >
                 {getting && <GettingThere getting={getting} t={t} />}
-                {/* D4: the opening rhythm - what surprises a first visit. */}
                 {rhythm && <p className="destp-rhythm">{rhythm}</p>}
-                {/* D4: the sights that sell out, said before it is too late. */}
                 {bookAhead.length > 0 && (
                   <p className="destp-bookahead">
                     <span className="destp-bookahead-mark" aria-hidden="true">!</span>
                     {t('dest.bookAhead', { names: bookAhead.join(', ') })}
                   </p>
                 )}
-                {/* D4: what pairs well - never the same kind twice. */}
                 {pairs.length > 0 && (
                   <div className="destp-pairs">
                     <span className="destp-pairs-label">{t('dest.pairsWith')}</span>
@@ -482,282 +916,20 @@ export function DestinationPage({
                     ))}
                   </div>
                 )}
-              </div>
+              </Fold>
             )}
 
-            {/* What this place is about. */}
-            {(intro?.body || (!loading && !intro?.body && destination.guide?.text)) && (
-              <div className="dsheet-card">
-                <SectionTitle icon={InfoIcon}>{t('dest.aboutTitle')}</SectionTitle>
-                <p className="destp-about">{intro?.body || destination.guide?.text}</p>
-                {safeUrl(intro?.grounding?.[0]?.url || destination.guide?.url) && (
-                  <a className="panel-about-guide-link" href={safeUrl(intro?.grounding?.[0]?.url || destination.guide?.url)} target="_blank" rel="noreferrer">
-                    {t('detail.readGuide')}
-                  </a>
-                )}
-                {destination.nature?.nearest?.name && (
-                  <div className="panel-about-fact">
-                    <TreeIcon size={13} />
-                    <span>
-                      {t('detail.nearestNature')}: {destination.nature.nearest.name}
-                      {destination.nature.nearest.dist_km != null ? `, ${destination.nature.nearest.dist_km} km` : ''}
-                    </span>
-                  </div>
-                )}
-              </div>
-            )}
-
-            {/* Highlights and the one map, three toggleable layers. */}
-            {(highlights.length > 0 || !loading) && (
-              <div className="dsheet-card">
-                <SectionTitle icon={MapPinIcon}>{t('dest.mapTitle')}</SectionTitle>
-                {layerChoices.length > 1 && (
-                  <div className="destp-layers" role="tablist" aria-label={t('dest.mapTitle')}>
-                    {layerChoices.map((c) => (
-                      <button
-                        key={c.key}
-                        type="button"
-                        role="tab"
-                        aria-selected={mapLayer === c.key}
-                        className={`destp-layer ${mapLayer === c.key ? 'on' : ''}`}
-                        onClick={() => setMapLayer(c.key)}
-                      >
-                        {c.label} <span className="mono">{c.n}</span>
-                      </button>
-                    ))}
-                  </div>
-                )}
-                <React.Suspense fallback={<div className="place-map place-map-wait" style={{ height: 300 }} />}>
-                  <DestMap
-                    ref={mapRef}
-                    place={{ lat, lon, name: city }}
-                    highlights={highlights}
-                    trips={tripsForMap}
-                    nearby={nearbyForMap}
-                    active={mapLayer}
-                    height={300}
-                    onPickTrip={(row) => onSelect?.(row.id)}
-                  />
-                </React.Suspense>
-                {/* D5: significance leads. The first three tiles draw
-                    larger, each carries its significance dots, tiles group
-                    by walking distance, and a failed photo collapses to a
-                    lettered plate in the paper tone - a broken-image icon
-                    never renders. */}
-                {highlights.length > 0 && (() => {
-                  const groups = [
-                    ['dest.hlCentre', highlights.filter((h) => (h.dist_km ?? 0) <= 1.5)],
-                    ['dest.hlWalk', highlights.filter((h) => (h.dist_km ?? 0) > 1.5 && h.dist_km <= 3.5)],
-                    ['dest.hlFarther', highlights.filter((h) => (h.dist_km ?? 99) > 3.5)],
-                  ].filter(([, rows]) => rows.length > 0);
-                  let n = 0;
-                  const sigDots = (sig) => (sig == null ? null
-                    : sig >= 2.4 ? '●●●' : sig >= 1.6 ? '●●○' : '●○○');
-                  return groups.map(([key, rows]) => (
-                    <div key={key}>
-                      {groups.length > 1 && <p className="destp-hl-group">{t(key)}</p>}
-                      <div className="destp-hls">
-                        {rows.map((h) => {
-                          n += 1;
-                          const rank = n;
-                          return (
-                            <figure className={`destp-hl ${rank <= 3 ? 'is-top' : ''}`} key={h.id}>
-                              {h.image?.url ? (
-                                <img
-                                  src={h.image.url}
-                                  alt=""
-                                  loading="lazy"
-                                  onError={(e) => {
-                                    e.currentTarget.hidden = true;
-                                    e.currentTarget.parentElement
-                                      ?.querySelector('.destp-hl-plate')
-                                      ?.removeAttribute('hidden');
-                                  }}
-                                />
-                              ) : null}
-                              <span className="destp-hl-plate" hidden={!!h.image?.url}>
-                                {(h.name || '?').slice(0, 1)}
-                              </span>
-                              <figcaption>
-                                <span className="destp-hl-name"><span className="destp-hl-n mono">{rank}</span>{h.name}</span>
-                                <span className="destp-hl-sub">
-                                  <span>{h.kind}</span>
-                                  {h.sig != null && (
-                                    <span className="destp-hl-sig" title={t('dest.sigTitle')}>{sigDots(h.sig)}</span>
-                                  )}
-                                  {h.dist_km != null && <span className="mono">{fmtKm(h.dist_km)}</span>}
-                                </span>
-                                {h.fact && <span className="destp-hl-fact">{h.fact}</span>}
-                              </figcaption>
-                              {safeUrl(h.wikipedia) && (
-                                <a className="destp-hl-link" href={safeUrl(h.wikipedia)} target="_blank" rel="noreferrer" aria-label={h.name} />
-                              )}
-                            </figure>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  ));
-                })()}
-              </div>
-            )}
-
-            {/* Best things to do: activities, trails, festivals, with their
-                evidence when the research sweep has run here. */}
-            {doItems.length > 0 && (() => {
-              // D6: the consensus count is the most trustworthy signal on
-              // the page, so it groups the list instead of footnoting it.
-              // Fewer than three evidenced items: the flat list stands.
-              const nOf = (x) => x.evidence?.n_sources ?? 0;
-              const evidenced = doItems.filter((x) => x.evidence?.n_sources != null);
-              const grouped = evidenced.length >= 3;
-              const buckets = grouped ? [
-                ['dest.doEssential', doItems.filter((x) => nOf(x) >= 5)],
-                ['dest.doIfTime', doItems.filter((x) => nOf(x) >= 2 && nOf(x) < 5)],
-                ['dest.doOffTrail', doItems.filter((x) => nOf(x) < 2)],
-              ].filter(([, xs]) => xs.length > 0) : [[null, doItems]];
-              return (
-              <div className="dsheet-card" id="sec-do">
-                <SectionTitle icon={CompassIcon}>{t('dest.doTitle')}</SectionTitle>
-                {buckets.map(([bkey, items]) => (
-                <React.Fragment key={bkey || 'all'}>
-                {bkey && <p className="destp-do-group">{t(bkey)} <span className="mono">{items.length}</span></p>}
-                <ul className="destp-dos">
-                  {items.map((item) => (
-                    <li className="destp-do" key={item.name}>
-                      <span className={`destp-do-type is-${item.type}`}>{t(DO_TYPE_KEYS[item.type] || 'dest.doType.activity')}</span>
-                      <span className="destp-do-main">
-                        <span className="destp-do-name">
-                          {item.link && safeUrl(item.link) ? (
-                            <a href={activityLink(safeUrl(item.link), 'dest-do')} target="_blank" rel="noreferrer">{item.name}</a>
-                          ) : item.ref && onOpenFeature ? (
-                            <button type="button" className="destp-do-ref" onClick={() => onOpenFeature(item.ref.layer, item.ref)}>{item.name}</button>
-                          ) : item.name}
-                        </span>
-                        {item.detail && <span className="destp-do-detail">{item.detail}</span>}
-                        <span className="destp-do-meta">
-                          {item.season?.length > 0 && (
-                            <span className="mono">{item.season.map((m) => MONTHS_SHORT[m - 1]).join(', ')}</span>
-                          )}
-                          {/* Two evidence models, and the line says which:
-                              publishers that named it, or the independent
-                              institutions that list it. Never conflated. */}
-                          {item.evidence?.n_sources != null && (
-                            item.evidence.method === 'open' ? (
-                              <span className="destp-do-evidence is-open" title={(item.evidence.sources || []).join(', ')}>
-                                {item.evidence.curated
-                                  ? t('dest.evidenceCurated')
-                                  : t('dest.evidenceOpen', { n: item.evidence.n_sources })}
-                              </span>
-                            ) : (
-                              <span className="destp-do-evidence">{t('dest.evidence', { n: item.evidence.n_sources, of: item.evidence.of })}</span>
-                            )
-                          )}
-                        </span>
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-                </React.Fragment>
-                ))}
-                {(links.getyourguide || links.viator) && (
-                  <div className="destp-book-row">
-                    {links.getyourguide && (
-                      <a className="xp-further-btn" href={activityLink(links.getyourguide, 'dest-book')} target="_blank" rel="noreferrer noopener">{t('dest.bookGyg')}</a>
-                    )}
-                    {links.viator && (
-                      <a className="xp-further-btn" href={activityLink(links.viator, 'dest-book')} target="_blank" rel="noreferrer noopener">{t('dest.bookViator')}</a>
-                    )}
-                  </div>
-                )}
-                <p className="xp-source">{t('dest.bookNote')}</p>
-              </div>
-              );
-            })()}
-
-            {/* D7: the villages inside this area, from B1's members. */}
-            {members?.length > 0 && (
-              <div className="dsheet-card" id="sec-members">
-                <SectionTitle icon={MapPinIcon}>{t('dest.membersTitle')}</SectionTitle>
-                <MemberPlaces members={members} focusName={memberFocus} t={t} />
-              </div>
-            )}
-
-            {/* Best trips from here. Each card is a real catalogue place, so
-                clicking one opens ITS page; the map layer shows the same set. */}
-            {trips.length > 0 && (
-              <div className="dsheet-card">
-                <SectionTitle
-                  icon={CompassIcon}
-                  aside={tripsForMap.length > 0 && (
-                    <button type="button" className="xp-shots-toggle" onClick={() => setMapLayer('trips')}>
-                      {t('dest.tripsOnMap')}
-                    </button>
-                  )}
-                >
-                  {t('dest.tripsTitle')}
-                </SectionTitle>
-                <div className="destp-trips">
-                  {trips.map((tr) => {
-                    const inner = (
-                      <>
-                        {tr.image?.url ? (
-                          <img src={tr.image.url} alt="" loading="lazy" />
-                        ) : (
-                          <span className="destp-trip-blank"><CompassIcon size={15} /></span>
-                        )}
-                        <span className="destp-trip-main">
-                          <span className="destp-trip-head">
-                            <span className="destp-trip-name">{tr.name}</span>
-                            {tr.rating?.score != null && (
-                              <span className="destp-trip-score mono">{tr.rating.score.toFixed(1)}</span>
-                            )}
-                          </span>
-                          <span className="destp-trip-sub">
-                            {tr.kind === 'composed_trip' ? (
-                              <span>{t('dest.tripDays', { n: tr.days || 0 })}</span>
-                            ) : (
-                              tr.travel?.minutes != null && (
-                                <span className="mono">
-                                  {t('dest.minutesBy', { n: tr.travel.minutes, mode: t(`mode.${tr.travel.mode}`) })}
-                                </span>
-                              )
-                            )}
-                            {tr.rating?.label && <span>{tr.rating.label}</span>}
-                          </span>
-                          {/* Why this one, in the catalogue's own words. A card
-                              that says only "58 min by train" is a distance,
-                              not a recommendation. */}
-                          {tr.blurb && <span className="destp-trip-why">{tr.blurb}</span>}
-                        </span>
-                      </>
-                    );
-                    if (tr.kind === 'composed_trip') {
-                      return (
-                        <button type="button" className="destp-trip" key={tr.id} onClick={() => onOpenItin?.(tr.id)} disabled={!onOpenItin}>
-                          {inner}
-                        </button>
-                      );
-                    }
-                    return (
-                      <button type="button" className="destp-trip" key={tr.id} onClick={() => onSelect?.(tr.id)} disabled={!onSelect}>
-                        {inner}
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
-          </div>
-
-          <div className="destp-col is-side">
             {/* What a day here costs, at the reader's own lifestyle. */}
-            {cost?.dayEur != null && (
-              <div className="dsheet-card" id="sec-cost">
-                <SectionTitle icon={ReceiptIcon}>{t('cost.title')}</SectionTitle>
+            {has.cost && (
+              <Fold
+                id="sec-cost"
+                icon={ReceiptIcon}
+                title={t('cost.title')}
+                summary={t('dest.costSummary', { eur: Math.round(cost.dayEur) })}
+                open={isOpen('cost')}
+                onToggle={() => toggle('cost')}
+              >
                 <CostReceipt cost={cost} t={t} lifestyleLabel={lifestyleLine} onOpenLifestyle={onOpenLifestyle} />
-                {/* D4: the day rate becomes a budget - days from the same
-                    visit-length the verdict card states. */}
                 {stayLen?.n >= 2 && (
                   <p className="destp-triptotal">
                     {t('dest.tripTotal', {
@@ -766,62 +938,38 @@ export function DestinationPage({
                     })}
                   </p>
                 )}
-              </div>
+              </Fold>
             )}
 
             {/* Insider tips: rule codes with evidence behind every sentence. */}
-            {tips.length > 0 && (
-              <div className="dsheet-card destp-tips">
-                <SectionTitle icon={CheckIcon}>{t('dest.tipsTitle')}</SectionTitle>
+            {has.tips && (
+              <Fold
+                id="sec-tips"
+                icon={BulbIcon}
+                title={t('dest.tipsTitle')}
+                summary={t('dest.tipsSummary', { n: tips.length })}
+                open={isOpen('tips')}
+                onToggle={() => toggle('tips')}
+                className="dsec-tips"
+              >
                 <ul className="destp-tip-list">
                   {tips.map((tip) => (
                     <li key={tip.code}>{tipText(tip, t)}</li>
                   ))}
                 </ul>
-              </div>
+              </Fold>
             )}
 
-            {/* Nature close by: the trails, beaches, lakes and mountains
-                layers, joined to this destination for the first time. */}
-            {nearbyRows.length > 0 && (
-              <div className="dsheet-card">
-                <SectionTitle icon={TreeIcon}>{t('dest.natureTitle')}</SectionTitle>
-                <ul className="destp-nature">
-                  {nearbyRows.map((f) => (
-                    <li key={`${f.layer}|${f.id}`}>
-                      <button
-                        type="button"
-                        className="destp-nat"
-                        onClick={() => onOpenFeature?.(f.layer, f)}
-                        disabled={!onOpenFeature}
-                      >
-                        {f.thumb ? (
-                          <img src={f.thumb} alt="" loading="lazy" />
-                        ) : (
-                          <span className="destp-nat-blank"><TreeIcon size={14} /></span>
-                        )}
-                        <span className="destp-nat-main">
-                          <span className="destp-nat-name">{f.name}</span>
-                          <span className="destp-nat-sub">
-                            <span>{t(`dest.layerKind.${f.layer}`)}</span>
-                            {f.elev_m != null && <span className="mono">{f.elev_m} m</span>}
-                            {f.km_len != null && <span className="mono">{f.km_len} km</span>}
-                          </span>
-                        </span>
-                        <span className="destp-nat-km mono">{fmtKm(f.km)}</span>
-                      </button>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-
-            {/* Festivals get their own section, led by when they happen.
-                The old when-to-go card lived here; it moved to the top of
-                the main column (D1's decision sequence). */}
-            {festivals.length > 0 && (
-              <div className="dsheet-card">
-                <SectionTitle icon={CalendarIcon}>{t('dest.festivalsTitle')}</SectionTitle>
+            {/* Festivals, led by when they happen. */}
+            {has.festivals && (
+              <Fold
+                id="sec-festivals"
+                icon={CalendarIcon}
+                title={t('dest.festivalsTitle')}
+                summary={t('dest.festSummary', { n: festivals.length })}
+                open={isOpen('festivals')}
+                onToggle={() => toggle('festivals')}
+              >
                 <ul className="destp-fests">
                   {festivals.map((f) => (
                     <li className="destp-fest" key={f.name}>
@@ -841,13 +989,19 @@ export function DestinationPage({
                     </li>
                   ))}
                 </ul>
-              </div>
+              </Fold>
             )}
 
-            {/* This week, live. Panel only; the PDF prints normals instead. */}
-            {forecast !== null && forecast !== undefined && (
-              <div className="dsheet-card">
-                <SectionTitle icon={SunIcon}>{t('explore.weatherTitle')}</SectionTitle>
+            {/* This week, live. Page only; the PDF prints normals instead. */}
+            {has.weather && (
+              <Fold
+                id="sec-weather"
+                icon={SunIcon}
+                title={t('explore.weatherTitle')}
+                summary={forecast[0]?.hi != null ? t('dest.weatherSummary', { hi: Math.round(forecast[0].hi) }) : ''}
+                open={isOpen('weather')}
+                onToggle={() => toggle('weather')}
+              >
                 <div className="xp-weather">
                   {forecast.map((day) => {
                     const Glyph = WEATHER_GLYPH[day.kind] || CloudIcon;
@@ -865,32 +1019,68 @@ export function DestinationPage({
                   })}
                 </div>
                 <p className="xp-source">{t('explore.weatherCredit')}</p>
-              </div>
+              </Fold>
             )}
 
-            {/* Where to park: ranked spots, each with three navigation apps. */}
-            {parking && (parking.spots?.length > 0 || parking.park_ride) && (
-              <div className="dsheet-card">
-                <SectionTitle icon={ParkingIcon}>{t('explore.parkTitle')}</SectionTitle>
+            {/* Where to park: OSM spots with deeplinks, the city's own word
+                where the web check has run, and an honest provenance line. */}
+            {has.park && (
+              <Fold
+                id="sec-park"
+                icon={ParkingIcon}
+                title={t('explore.parkTitle')}
+                summary={[
+                  parking.spots?.length ? t('dest.parkSummary', { n: parking.spots.length }) : '',
+                  parking.park_ride ? t('explore.park.park_ride') : '',
+                ].filter(Boolean).join(', ')}
+                open={isOpen('park')}
+                onToggle={() => toggle('park')}
+              >
+                {webPark && (
+                  <div className="dpark-web">
+                    <p className="dpark-web-head"><CheckIcon size={12} />{t('dest.parkChecked', { date: webPark.checked })}</p>
+                    {webPark.restricted && (
+                      <p className="dpark-web-line is-warn">{t('dest.parkRestricted')}{webPark.restricted_note ? ` ${webPark.restricted_note}` : ''}</p>
+                    )}
+                    {webPark.advice && <p className="dpark-web-line">{webPark.advice}</p>}
+                    {webPark.car_parks?.length > 0 && (
+                      <p className="dpark-web-line">
+                        <b>{t('dest.parkCityNamed')}:</b> {webPark.car_parks.map((c) => c.name + (c.note ? ` (${c.note})` : '')).join(', ')}
+                      </p>
+                    )}
+                    {webPark.park_ride_names?.length > 0 && (
+                      <p className="dpark-web-line"><b>{t('explore.park.park_ride')}:</b> {webPark.park_ride_names.join(', ')}</p>
+                    )}
+                    {safeUrl(webPark.official_url) && (
+                      <a className="dpark-web-link" href={safeUrl(webPark.official_url)} target="_blank" rel="noreferrer noopener"><LinkIcon size={11} />{t('dest.parkOfficial')}</a>
+                    )}
+                  </div>
+                )}
                 <ul className="destp-park-list">
-                  {(parking.spots || []).map((s, i) => (
-                    <li className="destp-park" key={`${s.lat}|${s.lon}`}>
-                      <span className="destp-park-main">
-                        <span className="destp-park-name">{s.name || t('explore.parkUnnamed')}</span>
-                        <span className="destp-park-sub">
-                          <span className={s.fee === 'no' ? 'destp-park-free' : ''}>
-                            {t(s.fee === 'no' ? 'explore.parkFree' : s.fee === 'yes' ? 'explore.parkPaid' : 'explore.parkFeeUnknown')}
+                  {(parking.spots || []).map((s) => {
+                    const confirmed = s.name && cityNamed.has(s.name.toLowerCase());
+                    return (
+                      <li className="destp-park" key={`${s.lat}|${s.lon}`}>
+                        <span className="destp-park-main">
+                          <span className="destp-park-name">
+                            {s.name || t('explore.parkUnnamed')}
+                            {confirmed && <span className="dpark-ok"><CheckIcon size={10} />{t('dest.parkVerified')}</span>}
                           </span>
-                          {s.capacity != null && <span className="mono">{t('explore.parkSpaces', { n: s.capacity })}</span>}
-                          <span className="mono">{t('dest.walkMin', { n: s.walk_min })}</span>
+                          <span className="destp-park-sub">
+                            <span className={s.fee === 'no' ? 'destp-park-free' : ''}>
+                              {t(s.fee === 'no' ? 'explore.parkFree' : s.fee === 'yes' ? 'explore.parkPaid' : 'explore.parkFeeUnknown')}
+                            </span>
+                            {s.capacity != null && <span className="mono">{t('explore.parkSpaces', { n: s.capacity })}</span>}
+                            <span className="mono">{t('dest.walkMin', { n: s.walk_min })}</span>
+                          </span>
                         </span>
-                      </span>
-                      <span className="destp-park-nav">
-                        <a href={s.nav.gmaps} target="_blank" rel="noreferrer noopener">{t('dest.navGmaps')}</a>
-                        <a href={s.nav.waze} target="_blank" rel="noreferrer noopener">{t('dest.navWaze')}</a>
-                      </span>
-                    </li>
-                  ))}
+                        <span className="destp-park-nav">
+                          <a href={s.nav.gmaps} target="_blank" rel="noreferrer noopener">{t('dest.navGmaps')}</a>
+                          <a href={s.nav.waze} target="_blank" rel="noreferrer noopener">{t('dest.navWaze')}</a>
+                        </span>
+                      </li>
+                    );
+                  })}
                   {parking.park_ride && (
                     <li className="destp-park is-pr" key="pr">
                       <span className="destp-park-main">
@@ -907,14 +1097,21 @@ export function DestinationPage({
                     </li>
                   )}
                 </ul>
-                <p className="xp-source">{t('explore.parkCredit')}</p>
-              </div>
+                <a className="xp-further-btn dpark-search" href={parkSearch} target="_blank" rel="noreferrer noopener"><ParkingIcon size={14} /><span>{t('dest.parkSearch')}</span></a>
+                <p className="xp-source">{t('dest.parkSource')}</p>
+              </Fold>
             )}
 
             {/* What to bring for the month that matters here. */}
-            {packs.length > 0 && (
-              <div className="dsheet-card">
-                <SectionTitle icon={CheckIcon}>{t('explore.packTitle')}</SectionTitle>
+            {has.pack && (
+              <Fold
+                id="sec-pack"
+                icon={BackpackIcon}
+                title={t('explore.packTitle')}
+                summary={destination.climate ? t('explore.packFor', { month: MONTHS_SHORT[month - 1] }) : ''}
+                open={isOpen('pack')}
+                onToggle={() => toggle('pack')}
+              >
                 <p className="xp-pack-for">
                   {destination.climate
                     ? t('explore.packFor', { month: MONTHS_SHORT[month - 1] })
@@ -931,12 +1128,18 @@ export function DestinationPage({
                     );
                   })}
                 </div>
-              </div>
+              </Fold>
             )}
 
             {/* Explore further: every handover, honest about being a search. */}
-            <div className="dsheet-card xp-further">
-              <SectionTitle icon={CompassIcon}>{t('explore.furtherTitle', { city })}</SectionTitle>
+            <Fold
+              id="sec-further"
+              icon={CompassIcon}
+              title={t('explore.furtherTitle', { city })}
+              summary={t('dest.furtherSummary')}
+              open={isOpen('further')}
+              onToggle={() => toggle('further')}
+            >
               <div className="destp-further">
                 {links.flights_google && (
                   <a className="xp-further-btn" href={links.flights_google} target="_blank" rel="noreferrer noopener"><PlaneIcon size={15} /><span>{t('dest.linkGflights')}</span></a>
@@ -952,7 +1155,7 @@ export function DestinationPage({
                 )}
               </div>
               <p className="xp-source">{t('explore.furtherNote')}</p>
-            </div>
+            </Fold>
 
             {/* Where every fact came from. The PDF prints the long form. */}
             {credits.length > 0 && (

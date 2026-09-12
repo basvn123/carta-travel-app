@@ -1,13 +1,13 @@
 {
- "generated_at": "2026-09-12T11:14:24Z",
+ "generated_at": "2026-09-12T14:43:15Z",
  "built": 3868,
  "written": 3868,
- "avg_gallery": 7.2,
- "avg_gallery_print": 5.05,
+ "avg_gallery": 7.22,
+ "avg_gallery_print": 5.08,
  "avg_highlights": 11.87,
  "merged_duplicates": 12612,
- "avg_do": 5.4,
- "n_with_licence_refusals": 2828,
+ "avg_do": 5.47,
+ "n_with_licence_refusals": 2841,
  "refusals_sample": {
   "CRL": [
    {
@@ -45,8 +45,8 @@
     "why": "licence"
    },
    {
-    "url": "https://upload.wikimedia.org/wikipedia/commons/c/cb/Fort_Marlborough.jpg?utm_source=ca.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
-    "why": "licence"
+    "url": "https://upload.wikimedia.org/wikipedia/commons/c/cb/Fort_Marlborough.jpg",
+    "why": "not_a_photograph"
    }
   ],
   "REU": [
@@ -83,33 +83,33 @@
   ],
   "ACE": [
    {
-    "url": "https://commons.wikimedia.org/wiki/Special:FilePath/Lanzarote%20Jardin%20de%20Cactus%20Kaktusgarten.jpg?width=960",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f9/Lanzarote_Jardin_de_Cactus_Kaktusgarten.jpg/960px-Lanzarote_Jardin_de_Cactus_Kaktusgarten.jpg",
     "why": "licence"
    },
    {
-    "url": "https://commons.wikimedia.org/wiki/Special:FilePath/Lanzarote%20Jardin%20de%20Cactus%20Kaktusgarten.jpg?width=960",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f9/Lanzarote_Jardin_de_Cactus_Kaktusgarten.jpg/960px-Lanzarote_Jardin_de_Cactus_Kaktusgarten.jpg",
     "why": "licence"
    }
   ],
   "FUE": [
    {
-    "url": "https://commons.wikimedia.org/wiki/Special:FilePath/Faro%20de%20La%20Entallada%20Tuineje%20Fuerteventura.jpg?width=960",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/Faro_de_La_Entallada_Tuineje_Fuerteventura.jpg/960px-Faro_de_La_Entallada_Tuineje_Fuerteventura.jpg",
     "why": "not_a_photograph"
    }
   ],
   "TFN": [
    {
-    "url": "https://commons.wikimedia.org/wiki/Special:FilePath/Anaga.jpg?width=960",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/95/Anaga.jpg/960px-Anaga.jpg",
     "why": "licence"
    }
   ],
   "SPC": [
    {
-    "url": "https://commons.wikimedia.org/wiki/Special:FilePath/Roque%20de%20los%20Muchachos%20view1.jpg?width=960",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/77/Roque_de_los_Muchachos_view1.jpg/960px-Roque_de_los_Muchachos_view1.jpg",
     "why": "licence"
    },
    {
-    "url": "https://commons.wikimedia.org/wiki/Special:FilePath/Roque%20de%20los%20Muchachos%20view1.jpg?width=960",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/77/Roque_de_los_Muchachos_view1.jpg/960px-Roque_de_los_Muchachos_view1.jpg",
     "why": "licence"
    }
   ],
@@ -153,25 +153,37 @@
     "why": "licence"
    },
    {
-    "url": "https://upload.wikimedia.org/wikipedia/commons/8/81/Reggio_Calabria_Teatro_Cilea_facciata.jpg?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/8/81/Reggio_Calabria_Teatro_Cilea_facciata.jpg",
+    "why": "not_a_photograph"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/9/9a/Reggio_calabria_santuario_di_sant%27antonio.jpg",
+    "why": "not_a_photograph"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/f/f4/Palazzo_Campanella.jpg",
+    "why": "not_a_photograph"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/b/bc/Reggio_Calabria_Palazzo_Zani_Lungomare.jpg",
+    "why": "not_a_photograph"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/Concattedrale_di_Bova_02.jpg/960px-Concattedrale_di_Bova_02.jpg",
     "why": "licence"
    },
    {
-    "url": "https://upload.wikimedia.org/wikipedia/commons/9/9a/Reggio_calabria_santuario_di_sant%27antonio.jpg?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
-    "why": "licence"
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0f/Reggio_Calabria_cartolina_Duomo_900.jpg/960px-Reggio_Calabria_cartolina_Duomo_900.jpg",
+    "why": "not_a_photograph"
    },
    {
-    "url": "https://upload.wikimedia.org/wikipedia/commons/f/f4/Palazzo_Campanella.jpg?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
-    "why": "licence"
-   },
-   {
-    "url": "https://upload.wikimedia.org/wikipedia/commons/b/bc/Reggio_Calabria_Palazzo_Zani_Lungomare.jpg?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b1/Ganzirri_%28Messina%29_02.jpg/960px-Ganzirri_%28Messina%29_02.jpg",
     "why": "licence"
    }
   ],
   "LMP": [
    {
-    "url": "https://commons.wikimedia.org/wiki/Special:FilePath/Spiaggia-dei-conigli2.jpg?width=960",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Spiaggia-dei-conigli2.jpg/960px-Spiaggia-dei-conigli2.jpg",
     "why": "not_a_photograph"
    }
   ],
@@ -181,7 +193,7 @@
     "why": "licence"
    },
    {
-    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Scorcio_Basilica_dei_sette_dolori_pescara.jpg/960px-Scorcio_Basilica_dei_sette_dolori_pescara.jpg?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Scorcio_Basilica_dei_sette_dolori_pescara.jpg/960px-Scorcio_Basilica_dei_sette_dolori_pescara.jpg",
     "why": "licence"
    }
   ],
@@ -193,7 +205,7 @@
   ],
   "GOA": [
    {
-    "url": "https://commons.wikimedia.org/wiki/Special:FilePath/Genoa%20conference%201922.jpg?width=960",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d2/Genoa_conference_1922.jpg/960px-Genoa_conference_1922.jpg",
     "why": "licence"
    }
   ]

@@ -157,6 +157,7 @@ TRIPS_SQL = """
            t.source_ref, t.way_tags, t.gap_info,
            t.hierarchy, t.hierarchy_src, t.parent_refs,
            t.stage_index, t.stage_count, t.co_located,
+           t.stage_of, t.top_of,
            eff.info AS repair_info,
            ST_NPoints(eff.geom) AS n_full,
            ST_XMin(eff.geom), ST_YMin(eff.geom),
@@ -197,6 +198,7 @@ TRIP_COLS = ("id", "country", "category", "title", "description",
              "source_ref", "way_tags", "gap_info",
              "hierarchy", "hierarchy_src", "parent_refs",
              "stage_index", "stage_count", "co_located",
+             "stage_of", "top_of",
              "repair_info",
              "n_full", "xmin", "ymin", "xmax", "ymax",
              "wire_geom", "full_geom")
@@ -673,6 +675,9 @@ class Hierarchy:
         wanted = set(self.by_osm)
         for t in trips:
             wanted.update(int(p) for p in (t.get("parent_refs") or []))
+            for k in ("stage_of", "top_of"):
+                if t.get(k):
+                    wanted.add(int(t[k]))
         self.relations = route_schema.fetch_relations(conn, "hiking", wanted)
 
     def resolve_route(self, osm_id):

@@ -63,7 +63,9 @@ pipeline/trails/
   derive_routes.py      NEW  builds routes from way-level paths for the five
                         countries with no route-relation culture
   curate.py             the selection: per-NUTS3 quota, continuity gate,
-                        families collapsed, loops first, bands, two tiers
+                        families collapsed (relation tree and dedup group
+                        first, then title, article and E-path keys), loops
+                        first, bands, two tiers
   way_tags.py           NEW  a fourth extract pass for the MEMBER WAY tags
                         the relations never carried
   elevation.py          Copernicus GLO-30 along every curated line
@@ -90,14 +92,33 @@ pipeline/trails/
                         keys (osm, net, descent_m, sf, h on a row; stages,
                         variants, huts, gaps and more on a detail file), and
                         the guard call for initdb/09_hierarchy.sql
-  hierarchy.py          ROUTES.md R2: --scan reads the cached extracts once
-                        more, relations only, into route_relations: every
-                        tag, the ordered member list, parent and child refs,
-                        in_store, and which other extracts carried the same
-                        relation. Per-country resumable; the owning country
-                        (the one whose trips row holds it) writes the data,
-                        everyone else only adds itself to duplicate_in.
-                        Report: data/reports/routes_extract.json
+  hierarchy.py          ROUTES.md R2 + R3a/b. --scan reads the cached
+                        extracts once more, relations only, into
+                        route_relations: every tag, the ordered member list,
+                        parent and child refs, in_store, and which other
+                        extracts carried the same relation. Per-country
+                        resumable; the owning country (the one whose trips
+                        row holds it) writes the data, everyone else only
+                        adds itself to duplicate_in. --classify turns the
+                        graph into parent / stage / variant / standalone with
+                        stage_of (the chosen parent), top_of (the root of
+                        the chain) and stage_index, copied onto trips AND
+                        cycle_routes; a multi-parent stage picks the most
+                        specific parent, deterministically. A "parent" with
+                        stage_count 0 is a line with variants (the Lazio
+                        section of the Via Francigena), not an umbrella.
+                        --stitch-report writes the gap distribution and the
+                        stitch state of every superroute.
+                        Reports: data/reports/routes_extract.json,
+                        routes_hierarchy.json, routes_stitch.json
+  dedup.py              ROUTES.md R3c. co_located on trips and cycle_routes:
+                        two rows of comparable extent (the shorter at least
+                        half the longer) whose shorter line lies more than
+                        80% inside a 30 m corridor of the longer, measured
+                        exactly in EPSG:3035 on subdivided pieces. Head
+                        first, self included. Umbrellas and node-network
+                        edges are structure, not lines, and are left out.
+                        Report: data/reports/routes_dedup.json
   describe.py           RETIRED, see "Two debts"
 
 tools/trailslab/

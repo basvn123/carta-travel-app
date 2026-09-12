@@ -132,13 +132,15 @@ def r1_hierarchy_check(conn):
                  (x + 0.01, 46.01 + 0.01 * (i - 1), 1550 + 50 * (i - 1))],
                 is_loop=False, route_type="point",
                 hierarchy="stage", hierarchy_src="structure",
-                parent_refs=[FIX_PARENT], stage_index=i, stage_count=3))
+                parent_refs=[FIX_PARENT], stage_of=FIX_PARENT,
+                top_of=FIX_PARENT, stage_index=i, stage_count=3))
 
         rel = ("INSERT INTO route_relations (activity, osm_id, country, "
                "tags_all, members, parent_refs, child_refs, hierarchy, "
-               "hierarchy_src, stage_index, stage_count, in_store, scanned_at) "
+               "hierarchy_src, stage_index, stage_count, in_store, scanned_at, "
+               "stage_of, top_of) "
                "VALUES ('hiking', %s, 'CH', %s, %s, %s, %s, %s, 'structure', "
-               "%s, %s, %s, now())")
+               "%s, %s, %s, now(), %s, %s)")
         J = psycopg.types.json.Jsonb
         members = ([["r", osm, ""] for osm in FIX_STAGES]
                    + [["r", FIX_VARIANT, "alternative"]]
@@ -147,22 +149,22 @@ def r1_hierarchy_check(conn):
                           J({"type": "superroute", "route": "hiking",
                              "name": "Fixture Fernweg", "network": "nwn"}),
                           J(members), [], list(FIX_STAGES) + [FIX_VARIANT],
-                          "parent", None, 3, True))
+                          "parent", None, 3, True, None, None))
         for i, osm in enumerate(FIX_STAGES, start=1):
             cur.execute(rel, (osm, J({"type": "route", "route": "hiking",
                                      "name": f"Fixture Fernweg Etappe {i}"}),
                               J([["w", 100 + i, ""]]), [FIX_PARENT], [],
-                              "stage", i, None, True))
+                              "stage", i, None, True, FIX_PARENT, FIX_PARENT))
         cur.execute(rel, (FIX_VARIANT, J({"type": "route", "route": "hiking",
                                           "name": "Fixture Fernweg Variante"}),
                           J([["w", 199, ""]]), [FIX_PARENT], [],
-                          "variant", None, None, False))
+                          "variant", None, None, False, FIX_PARENT, FIX_PARENT))
         for osm, title in ((FIX_LOOP, "Fixture loop"),
                            (FIX_P2P, "Fixture point to point")):
             cur.execute(rel, (osm, J({"type": "route", "route": "hiking",
                                      "name": title, "roundtrip": "yes"}),
                               J([["w", 100, ""]]), [], [],
-                              "standalone", None, None, True))
+                              "standalone", None, None, True, None, None))
         conn.commit()
 
         # The mapping, exactly as export_wire.Hierarchy resolves it.
@@ -207,7 +209,7 @@ def r1_hierarchy_check(conn):
                 or s_mid.stage_index != 2 or s_mid.stage_count != 3:
             fail(f"stage summary wrong: {s_mid}")
         h = hierarchy_block(s_mid)
-        if h != {"cls": "stage", "of": parent_id, "i": 2, "n": 3}:
+        if h != {"cls": "stage", "of": parent_id, "top": parent_id, "i": 2, "n": 3}:
             fail(f"h block wrong: {h}")
         print(f"[ok] stage 2 says it is stage 2 of 3 of wire id {parent_id}")
 

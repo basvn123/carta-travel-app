@@ -1,0 +1,101 @@
+{
+ "sample": 200,
+ "summary": {
+  "code point vs spec loop": 4,
+  "code loop vs spec figure8": 5,
+  "agree": 190,
+  "code point vs spec figure8": 1
+ },
+ "disagreements": [
+  {
+   "id": 187919,
+   "code": "point",
+   "spec": "loop",
+   "end_gap_m": 207,
+   "retrace15": 0.01,
+   "retrace30": 0.01
+  },
+  {
+   "id": 207929,
+   "code": "loop",
+   "spec": "figure8",
+   "end_gap_m": 390,
+   "retrace15": 0.01,
+   "retrace30": 0.02
+  },
+  {
+   "id": 80412,
+   "code": "point",
+   "spec": "loop",
+   "end_gap_m": 175,
+   "retrace15": 0.03,
+   "retrace30": 0.05
+  },
+  {
+   "id": 208685,
+   "code": "loop",
+   "spec": "figure8",
+   "end_gap_m": 351,
+   "retrace15": 0.01,
+   "retrace30": 0.01
+  },
+  {
+   "id": 205220,
+   "code": "loop",
+   "spec": "figure8",
+   "end_gap_m": 126,
+   "retrace15": 0.01,
+   "retrace30": 0.01
+  },
+  {
+   "id": 80512,
+   "code": "loop",
+   "spec": "figure8",
+   "end_gap_m": 441,
+   "retrace15": 0.01,
+   "retrace30": 0.02
+  },
+  {
+   "id": 189012,
+   "code": "point",
+   "spec": "loop",
+   "end_gap_m": 257,
+   "retrace15": 0.01,
+   "retrace30": 0.01
+  },
+  {
+   "id": 207620,
+   "code": "loop",
+   "spec": "figure8",
+   "end_gap_m": 430,
+   "retrace15": 0.01,
+   "retrace30": 0.01
+  },
+  {
+   "id": 212079,
+   "code": "point",
+   "spec": "figure8",
+   "end_gap_m": 229,
+   "retrace15": 0.01,
+   "retrace30": 0.03
+  },
+  {
+   "id": 187783,
+   "code": "point",
+   "spec": "loop",
+   "end_gap_m": 155,
+   "retrace15": 0.0,
+   "retrace30": 0.01
+  }
+ ],
+ "code_rule": {
+  "close_m": 100,
+  "retrace_buffer_m": 15,
+  "retrace_share": 0.6
+ },
+ "spec_rule": {
+  "close_m": 500,
+  "retrace_buffer_m": 30,
+  "retrace_share": 0.6
+ }
+}

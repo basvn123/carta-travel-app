@@ -1,13 +1,14 @@
-// Render one destination's printable guide for design review.
+// Download one destination's PDF guide for design review.
 //
 //   npm run build && npx vite preview --port 4207
-//   node scripts/shot_dossier_pdf.mjs CDG paris
+//   node scripts/shot_dossier_pdf.mjs FCO rome
 //
-// Writes shots/<name>.png (the whole document), shots/<name>.pdf (A4 print
-// output) and shots/<name>-<section>.png for each section, so a layout change
-// can be judged at full size rather than through a thumbnail of ten pages.
+// Opens the page with the ?paymock seam (the export is a paid action and a
+// headless run cannot hold an entitlement), clicks "Download PDF guide", and
+// saves the download to shots/<name>.pdf. Read the PDF page by page to judge
+// the layout at full size.
 import { chromium } from 'playwright';
-import { mkdirSync } from 'node:fs';
+import { mkdirSync, statSync } from 'node:fs';
 
 const id = process.argv[2] || 'CDG';
 const out = process.argv[3] || 'dossier';
@@ -22,47 +23,28 @@ for (let i = 0; i < 60; i++) {
 
 const browser = await chromium.launch();
 const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
+page.on('pageerror', (e) => console.log('pageerror:', e.message.split('\n')[0]));
+page.on('console', (m) => { if (m.type() === 'error' && !/favicon|net::|503|404/.test(m.text())) console.log('console:', m.text().slice(0, 160)); });
 await page.addInitScript(() => {
   try {
     localStorage.setItem('continent.lang.v1', 'en');
     localStorage.setItem('continent.guestMode.v1', '1');
+    localStorage.setItem('continent.mapGuideDismissed.v1', '1');
   } catch { /* storage unavailable */ }
 });
-await page.goto(`${BASE}#dest=${encodeURIComponent(id)}`, { waitUntil: 'domcontentloaded' });
+await page.goto(`${BASE}?paymock#dest=${encodeURIComponent(id)}`, { waitUntil: 'domcontentloaded' });
 await page.waitForTimeout(6500);
 
-const popupPromise = page.waitForEvent('popup', { timeout: 20000 }).catch(() => null);
+const dlPromise = page.waitForEvent('download', { timeout: 30000 }).catch(() => null);
 await page.locator('.destp-pdf').click();
-const popup = await popupPromise;
-if (!popup) {
-  console.log('no print window opened');
+const dl = await dlPromise;
+if (!dl) {
+  console.log('no download started');
+  await page.screenshot({ path: `shots/${out}-pdf-fail.png` });
   await browser.close();
   process.exit(1);
 }
-// Commons photographs are hotlinked; give them time or the shot is grey boxes.
-await popup.waitForTimeout(7000);
-await popup.setViewportSize({ width: 900, height: 1200 });
-await popup.screenshot({ path: `shots/${out}.png`, fullPage: true });
-await popup.emulateMedia({ media: 'print' });
-await popup.pdf({ path: `shots/${out}.pdf`, format: 'A4', printBackground: true })
-  .catch((e) => console.log('pdf failed:', e.message.slice(0, 80)));
-await popup.emulateMedia({ media: 'screen' });
-
-const SECTIONS = [
-  ['header.cover', 'cover'],
-  ['.sec-hl', 'mustsee'],
-  ['.sec:has(.dos)', 'do'],
-  ['.sec:has(.trips)', 'trips'],
-  ['.sec:has(.nat-grid)', 'nature'],
-  ['.sec:has(.fests)', 'festivals'],
-  ['.sec:has(.tips)', 'tips'],
-  ['.credits-page', 'credits'],
-];
-for (const [sel, name] of SECTIONS) {
-  const el = popup.locator(sel).first();
-  if (await el.count() && await el.isVisible().catch(() => false)) {
-    await el.screenshot({ path: `shots/${out}-${name}.png` }).catch(() => {});
-  }
-}
-console.log(`wrote shots/${out}.png, ${out}.pdf and its sections`);
+const path = `shots/${out}.pdf`;
+await dl.saveAs(path);
+console.log(`saved ${path} (${statSync(path).size} bytes) as ${dl.suggestedFilename()}`);
 await browser.close();

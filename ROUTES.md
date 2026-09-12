@@ -328,6 +328,16 @@ Constraints:
 ```
 
 > **Done when:** the Via Francigena resolves to relation 6828 as one parent with its stages in order and its variants labelled, the 85 other Francigena rows all point at it or at the Magna, Fabaria and Mare parents; every hiking superroute has a reported gap state; co_located groups are reported; and a curate `--dry-run` shows the family collapse now honouring structure before names.
+>
+> **Shipped 2026-09-12**, with three deliberate departures from the wording above, each measured before it was made.
+>
+> *3a.* "A stage is a member of exactly one route relation" would have made 4,753 hiking and 3,031 cycling stages standalone: the Via Alpina's twenty Swiss stages are listed by both the national and the international superroute. A multi-parent stage now picks one parent deterministically (drop ancestors of other candidates, then name affinity, then fewest stage children, then lowest id) and keeps every parent in `parent_refs`; `stage_of` is the chosen one and `top_of` the root of its chain, because the Via Francigena is path, national section, regional section, stage: three levels. Result on 308,266 hiking relations: 3,658 parents, 22,717 stages, 2,683 variants, 279,208 standalone; 1,160 stages and 947 variants decided by name alone, all flagged `hierarchy_src = name`. A parent with `stage_count` 0 has only variant children and is a line with alternatives (the Lazio section), which R6 may offer as a download. Trips 6828 is relation 11860709: four national sections, the Italian one (955907) nine regional sections in order, Lazio eight variants. Of the 85 other Italian Francigena rows, 74 resolve by structure to the Francigena, Magna, Fabaria or Mare parents, 6 are variants or a stage by name only, and 5 are relations OSM never linked to anything ("Trasversale Francigena"); the data says so rather than guessing. The structural key is the first in `curate.collapse_families`; it merged 4.9% of Italian, 4.7% of Swiss, 2.8% of Austrian, 4.9% of German and 8.3% of French families on the same candidate rows.
+>
+> *3b.* Reported, not rewritten: 207,353 of 238,709 staged rows have no gap, 16,413 one, 11,336 two to four, 3,529 five to forty-nine, 78 fifty or more (the worst is Finland's E6 at 319). Of 2,159 hiking superroutes in the graph, 1,758 have a line: 1,105 gapless (own assembly or a fresh whole repair), 653 gapped, 401 never staged. Cycling superroutes have no line at all: the harvest drops them, and their children carry the paths.
+>
+> *3c.* Measured one-sidedly as written (80% of the shorter), Switzerland chained 1,891 rows into one group behind the E4 superroute and 259 behind the E1 section, because a superroute's assembled line contains every stage and a 12 km village loop on a 500 km path "lies inside" it. Two changes: umbrellas (parents with stages) and node-network edges are structure and leave the candidate set, and the shorter must be at least half the longer's length, so "the same walk under several names" is what groups and "lies on" is not. Switzerland then gave 241 groups with a largest of 5 (Trans Swiss Trail, ViaGottardo under two spellings). Rows under 200 m are left out and counted. `co_located` carries the head first with the row itself included. Numbers for Europe are in `data/reports/routes_dedup.json`.
+>
+> *3d.* On 200 published rows the code and the spec agree on 190; all ten disagreements are routes whose ends sit 126 to 441 m apart, which the spec's 500 m calls closed and the code's 100 m does not. The retrace buffer (15 m vs 30 m) changed nothing. The code's figure is the trails brief's and is the more defensible one for a walk, so the code stays. `data/reports/routes_shape_check.json`.
 
 ---
 
@@ -580,7 +590,7 @@ destination attachments; the R6 caps are per activity for that reason.
 |---|---|---|
 | 1 | R0 | Done 2026-09-12. Reshaped this file. |
 | 2 | R1, R2 | Both done 2026-09-12. The relations-only scan is four minutes for all of Europe, so re-running it is never the expensive part. |
-| 3 | R3 | Alone. Hierarchy, dedup and the reports. Four reporting points inside it. |
+| 3 | R3 | Done 2026-09-12. Classify is 25 seconds for Europe; dedup is the slow one. Registered as `trails_hierarchy` in run_pipeline.py, before trails_curate. |
 | 4 | R4, R5 | Validation-heavy, code-light. R4 has a hard gate on the comparison table. |
 | 5 | R6 | First user-visible value. Ship here if you ship nothing else. |
 | 6 | R7 | Route pages and Explore. Depends on PLAN.md phase C having landed. |
