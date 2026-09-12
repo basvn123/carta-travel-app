@@ -47,6 +47,10 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 DB = ROOT / "cache" / "photos" / "geograph.sqlite"
+# A handful of dump rows carry a description far past the csv module's
+# default 128 KB field cap, which aborts the whole ingest on row ~400k.
+# The cap is a guard against runaway memory, not a correctness rule.
+csv.field_size_limit(16 * 1024 * 1024)
 DUMPS_URL = "https://data.geograph.org.uk/dumps/"
 SYNDICATOR = "https://api.geograph.org.uk/syndicator.php"
 
@@ -91,10 +95,14 @@ def ingest(base_path, geo_path=None):
     coords = {}
     if geo_path:
         for row in _open_rows(geo_path):
+            # Tolerated missing: the dump's columns have changed before and
+            # the base dump now carries the coordinate anyway.
+            if "wgs84_lat" not in row:
+                continue
             try:
                 coords[int(row["gridimage_id"])] = (
                     float(row["wgs84_lat"]), float(row["wgs84_long"]))
-            except (KeyError, ValueError):
+            except (KeyError, TypeError, ValueError):
                 continue
     n = 0
     batch = []
@@ -108,7 +116,18 @@ def ingest(base_path, geo_path=None):
         status = (row.get("moderation_status") or "").lower()
         if status and status not in ("accepted", "geograph"):
             continue
-        lat, lon = coords.get(gid, (None, None))
+        # The base dump itself carries wgs84_lat/wgs84_long and the current
+        # gridimage_geo dump does not (it ships national eastings and
+        # northings only), so the base row is the primary coordinate and the
+        # geo dump, when given, is a fallback for rows missing one.
+        lat, lon = None, None
+        try:
+            lat = float(row["wgs84_lat"])
+            lon = float(row["wgs84_long"])
+        except (KeyError, TypeError, ValueError):
+            lat, lon = None, None
+        if lat is None or lon is None or (lat == 0.0 and lon == 0.0):
+            lat, lon = coords.get(gid, (None, None))
         batch.append((gid, row.get("title") or "",
                       row.get("realname") or "",
                       row.get("imagetaken") or "",
@@ -168,19 +187,20 @@ def haversine_km(lat1, lon1, lat2, lon2):
 def syndicate(lat, lon, km=5, key=None):
     """Live candidates near a point, with thumbnail URLs and licences.
 
-    [{id, title, thumb, author, licence, link}]. Requires the API key;
-    without one this returns [] and the caller falls back to the dump
-    metadata (which cannot ship pixels, only the work list). Capped by
-    the service at 1,000 results per query; discovery belongs to the
-    dumps, not to this."""
+    [{id, title, thumb, author, licence, link}]. The key is optional: the
+    syndicator answers unauthenticated (verified 2026-09-12), and one is
+    sent only when CARTA_GEOGRAPH_KEY is set, which is what raises the
+    service's own rate allowance. Capped at 1,000 results per query;
+    discovery belongs to the dumps, not to this."""
     key = key or os.environ.get(KEY_ENV, "").strip()
-    if not key:
-        return []
-    params = urllib.parse.urlencode({
-        "key": key, "q": f"{lat},{lon}",
+    query = {
+        "q": f"{lat},{lon}",
         "distance": min(km, MAX_DISTANCE_KM),
         "format": "JSON", "perpage": PER_PAGE,
-    })
+    }
+    if key:
+        query["key"] = key
+    params = urllib.parse.urlencode(query)
     req = urllib.request.Request(f"{SYNDICATOR}?{params}",
                                  headers={"User-Agent": UA})
     try:
@@ -193,7 +213,9 @@ def syndicate(lat, lon, km=5, key=None):
         out.append({
             "id": item.get("guid") or item.get("link", ""),
             "title": item.get("title") or "",
-            "thumb": item.get("thumbnail") or "",
+            # The feed's field is "thumb"; "thumbnail" is kept as a
+            # fallback in case an older feed shape comes back.
+            "thumb": item.get("thumb") or item.get("thumbnail") or "",
             "author": item.get("author") or "",
             "licence": "CC BY-SA 2.0",
             "licence_url":
