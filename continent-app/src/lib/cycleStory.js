@@ -64,8 +64,17 @@ export function whyText(reason, t) {
   if (!reason || !reason.code) return null;
   const { code } = reason;
   switch (code) {
-    case 'eurovelo':
-      return reason.ref ? t('cycle.whyEuroVelo', { ref: reason.ref }) : null;
+    case 'eurovelo': {
+      if (!reason.ref) return null;
+      // The index stamps this code from the family ref, and a national
+      // network's family ref arrives here too: NCN National Route 1 carried
+      // "1" and read as "Part of 1, the European long-distance network".
+      // Only a EuroVelo ref is a EuroVelo sentence.
+      if (!/^EV\s?\d+/i.test(String(reason.ref))) {
+        return t('cycle.whyNational', { ref: reason.ref });
+      }
+      return t('cycle.whyEuroVelo', { ref: reason.ref });
+    }
     case 'national':
       return t(reason.net === 'icn' ? 'cycle.whyInternational' : 'cycle.whyNational',
         { ref: reason.ref || '' });
@@ -312,4 +321,42 @@ export function countryPhrase(n, t) {
   return n === 1
     ? t('cycle.familyCountryOne')
     : t('cycle.familyCountryMany', { n });
+}
+
+/* ------------------------------------------------------------------ cards */
+
+/** Score bands, so a chip can carry a colour and a title the way every other
+ *  layer's does. Rated rows start at the 5.4 gate, so the bands sit above it. */
+export function cycleTier(score) {
+  if (score == null) return 0;
+  if (score >= 8) return 3;
+  if (score >= 7) return 2;
+  if (score >= 6) return 1;
+  return 0;
+}
+
+/** The score as the rating OBJECT every card component in the app reads.
+ *  RatingBadge and ScoreChip take `{score, tier, label}` and return null for
+ *  a bare number, which is how the cycling page showed no score for months. */
+export function cycleRating(row, t) {
+  if (!row || row.score == null) return null;
+  const tier = cycleTier(row.score);
+  return { score: row.score, tier, label: t(`cycle.band${tier}`) };
+}
+
+const NET_KEY = {
+  icn: 'cycle.netIcn', ncn: 'cycle.netNcn', rcn: 'cycle.netRcn', lcn: 'cycle.netLcn',
+};
+
+/**
+ * What to call a route. The export ships a cleaned name where OSM had one
+ * and NO name where it had only a bare number ("(45)", "113"), because a
+ * number is not a name. The network level is what turns that number into a
+ * title a reader can place: "Regional route 45" rather than "(45)".
+ */
+export function routeTitle(row, t) {
+  const name = ((row && row.name) || '').trim();
+  if (name) return name;
+  const ref = ((row && row.ref) || '').trim();
+  return t(NET_KEY[row && row.net] || 'cycle.netRoute', { ref });
 }

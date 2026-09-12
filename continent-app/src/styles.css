@@ -29383,7 +29383,11 @@ button.ai-sched-main:focus-visible {
   background: var(--paper);
   padding: 18px 20px 64px;
 }
-.cycle-page > * { max-width: 860px; margin-left: auto; margin-right: auto; }
+/* One centred column. Centring every direct child of the page instead
+   (`.cycle-page > *`) broke the moment any child rule set its own side
+   margins, which the title, the subline and the section list all did: the
+   family page rendered its heading centred and its rows flush left. */
+.cycle-inner { max-width: 860px; margin: 0 auto; }
 
 .cycle-close, .cycle-back {
   display: block;
@@ -29427,29 +29431,29 @@ button.ai-sched-main:focus-visible {
   color: var(--ink-soft);
 }
 
-/* The route sketch. Also had no rule, so a 320x120 SVG sat raw in the page
-   at whatever width it felt like, adrift in whitespace. It is a shape, not a
-   map, so it gets a quiet card of its own and a sensible height. */
-.cycle-line {
-  display: block;
-  /* An <svg> has an intrinsic size, so it obeys neither `width:100%` (which
-     beat the 860px max-width from `.cycle-page > *` and pushed it flush left)
-     nor `width:auto` (which shrank it to its own 320px box, still left of
-     everything else). Pinning both width and max-width to the same column
-     the rest of the page uses is what actually lines it up. */
+/* The map. `position` is pinned because maplibre's own stylesheet loads
+   lazily with the page chunk and would otherwise win the cascade; the
+   height is the page's, not the library's. */
+.cycle-map {
+  position: relative !important;
   width: 100%;
-  max-width: 860px;
-  height: 180px;
-  /* `auto`, not 0: this rule sits after `.cycle-page > *` in the sheet, so a
-     `margin: 4px 0 16px` shorthand quietly replaced that rule's auto side
-     margins and the sketch stopped centring with the rest of the page. */
-  margin: 4px auto 16px;
-  padding: 14px;
-  box-sizing: border-box;
-  background: var(--paper-dim);
+  height: 320px;
+  margin: 4px 0 14px;
   border-radius: 12px;
-  color: var(--ink-soft);
+  overflow: hidden;
+  background: var(--paper-dim);
 }
+.cycle-map-pin {
+  display: block;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--accent);
+  border: 2px solid #fff;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.18);
+}
+.cycle-map-pin.end { background: var(--ink); }
+.cycle-elev { margin: 4px 0 10px; }
 .cycle-note { margin: 6px 0; font-size: 14px; color: var(--ink-soft); }
 
 /* Measured facts. Tabular so a column of distances does not jitter. */
@@ -29479,15 +29483,22 @@ button.ai-sched-main:focus-visible {
 
 /* Stages: a run of facts, so hairlines rather than boxes. */
 .cycle-stages { margin: 8px 0; padding: 0; list-style: none; }
+/* Five children: the day label, then four lines of text. The label spans
+   every row of the second column and the text is pinned to that column
+   explicitly; left to auto-placement, the third line wrapped round into the
+   label column, which then grew to fit it and squeezed the rest of the
+   stage into a strip down the right-hand side. */
 .cycle-stage {
   display: grid;
-  grid-template-columns: auto 1fr;
+  grid-template-columns: 56px 1fr;
   gap: 2px 12px;
   padding: 10px 0;
   border-bottom: 1px solid var(--rule-soft);
 }
+.cycle-stage > :not(.cycle-stage-day) { grid-column: 2; }
 .cycle-stage-day {
-  grid-row: 1 / 3;
+  grid-column: 1;
+  grid-row: 1 / 6;
   align-self: start;
   min-width: 34px;
   font-family: var(--mono);
@@ -29543,35 +29554,16 @@ button.ai-sched-main:focus-visible {
   color: var(--ink-mute);
 }
 
-/* Route and tour cards in the list.
- *
- * These carry their own layout rather than borrowing .places-tcard's, which
- * is a PHOTO card: it sets aspect-ratio 9/4 and expects absolutely positioned
- * children over an image. A cycling card is a stack of text spans, so under
- * that rule every span ran inline and the card read as one concatenated
- * string ("Coll de la Gallina11.8 km, 981 m5.5Paved throughout100% paved"),
- * squeezed into a fixed box. Column flex, and no aspect ratio: the card is as
- * tall as what it has to say. */
-.cycle-card, .cycle-tourcard {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 3px;
-  aspect-ratio: auto;
-  height: auto;
-  padding: 12px 14px;
-  text-align: left;
+/* Route and tour cards use the photo-card template every other layer
+   uses (.places-bcard), so they carry no layout of their own. What is
+   cycling's alone is the unscored marker in the badge slot. */
+.places-card-right .cycle-card-unrated {
+  font-size: 11px;
+  line-height: 1.2;
+  color: #fff;
+  opacity: 0.85;
+  white-space: nowrap;
 }
-.cycle-card-img {
-  width: 100%;
-  aspect-ratio: 12 / 5;
-  object-fit: cover;
-  border-radius: 8px;
-  margin-bottom: 4px;
-}
-/* The score sits with the stats rather than floating: these cards have no
-   photograph to overlay it on. */
-.cycle-card-score { font-weight: 600; color: var(--ink); }
 .cycle-tourcard-title { font-size: 15px; font-weight: 600; color: var(--ink); }
 .cycle-tourcard-meta, .cycle-tourcard-pace, .cycle-card-meta,
 .cycle-card-surface, .cycle-card-score {
@@ -29640,6 +29632,53 @@ button.ai-sched-main:focus-visible {
   outline-offset: 2px;
 }
 
+
+/* The Europe-wide list, and the note that says it is one. */
+.cycle-topnote { margin: 8px 0 2px; font-size: 13.5px; color: var(--ink-soft); }
+
+/* Towns along the way, in riding order. */
+.cycle-towns { list-style: none; margin: 4px 0 12px; padding: 0; }
+.cycle-town {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  padding: 7px 0;
+  border-bottom: 1px solid var(--rule-soft);
+  font-size: 14px;
+}
+.cycle-town-km {
+  flex: none;
+  min-width: 56px;
+  font-family: var(--mono);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-mute);
+}
+.cycle-town-name { flex: 1; min-width: 0; color: var(--ink); }
+.cycle-town-has { font-size: 12.5px; color: var(--ink-soft); text-align: right; }
+
+/* A published EuroVelo section is a door to its route. */
+.cycle-famitem-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  border: 0;
+  background: none;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.cycle-famitem-open:hover { background: var(--paper-dim); }
+.cycle-famitem-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+@media (max-width: 560px) {
+  .cycle-map { height: 240px; }
+  .cycle-town-has { display: none; }
+}
 @media (max-width: 560px) {
   .cycle-page { padding: 14px 16px 56px; }
   .cycle-title { font-size: 22px; }

@@ -155,6 +155,24 @@ if (!existsSync(`${WIRE}/index.json`)) {
   check('every published tour carries its own photographs',
     tourNoPhotos === 0,
     `${tourNoPhotos} of ${tourTotal} tours have fewer than 4`);
+  // The Europe-wide top file: what the tab opens on with no country chosen.
+  // Without it the tab defaulted to the first country in the index.
+  const topPath = `${WIRE}/top.json`;
+  const top = existsSync(topPath) ? readJson(topPath) : null;
+  const topRoutes = (top && top.routes) || [];
+  check('a Europe-wide top file is published',
+    topRoutes.length >= 40,
+    top ? `${topRoutes.length} routes, ${(top.tours || []).length} tours` : 'missing');
+  if (top) {
+    const ccs = new Set(topRoutes.map((r) => r.cc).filter(Boolean));
+    check('the top file spans many countries', ccs.size >= 10, `${ccs.size} countries`);
+    check('every top card names its country', topRoutes.every((r) => r.cc));
+    check('every top card is rated and has a photograph',
+      topRoutes.every((r) => r.t === 'r' && r.score != null && r.img));
+    check('the top file carries every published tour',
+      (top.tours || []).length === index.n_tours,
+      `${(top.tours || []).length} of ${index.n_tours}`);
+  }
   check('every rated row carries a score',
     ratedNoScore === 0, `${ratedNoScore} of ${ratedTotal} rated rows do not`);
   // EuroVelo families: the brief asks for EV1 to EV19 "published as
@@ -455,8 +473,11 @@ if (!WIRE_ONLY) {
       const listedCards = page.locator('[data-testid=cycle-listed-card]');
       if (await listedCards.count()) {
         const text = await listedCards.first().innerText();
+        // The chip is the score. A length like "11.8 km" is not one, which
+        // is what a bare decimal regex used to trip over.
         check(`${label}: a listed card shows no score`,
-          !/\b\d\.\d\b/.test(text), text.replace(/\n/g, ' ').slice(0, 90));
+          await listedCards.first().locator('.score-chip').count() === 0,
+          text.replace(/\n/g, ' ').slice(0, 90));
       }
 
       if (nTours) {
@@ -472,6 +493,17 @@ if (!WIRE_ONLY) {
         await page.waitForTimeout(1200);
         check(`${label}: a route opens its page`,
           await page.locator('[data-testid=cycle-page]').count() > 0);
+      }
+
+      if (await page.locator('[data-testid=cycle-page]').count()) {
+        const canvas = await page.waitForSelector('[data-testid=cycle-map] canvas',
+          { timeout: 15000 }).catch(() => null);
+        check(`${label}: the page draws the route on a real map`, Boolean(canvas));
+        check(`${label}: the elevation profile renders`,
+          await page.locator('[data-testid=cycle-elev]').count() > 0);
+        check(`${label}: the page names towns along the way`,
+          await page.locator('[data-testid=cycle-towns] li').count() > 0,
+          `${await page.locator('[data-testid=cycle-towns] li').count()} towns`);
       }
 
       const body = await page.locator('body').innerText();
