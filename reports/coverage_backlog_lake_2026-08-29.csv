@@ -1,0 +1,1218 @@
+country,nuts3,region_name,layer,published,quota,deficit,candidate_id,candidate_name,rejected_by,rejected_detail
+IS,IS002,Landsbyggð,lake,,15,11,wd:Q886946,Blue Lagoon,floor_pool,score_5.3_below_5.4
+IS,IS002,Landsbyggð,lake,,15,11,wd:Q335940,Þórisvatn,photo_gate,imgs_5
+IS,IS002,Landsbyggð,lake,,15,11,wd:Q1429607,Hvítárvatn,floor_pool,score_5.2_below_5.4
+IS,IS002,Landsbyggð,lake,,15,11,wd:Q335432,Þingvallavatn,floor_pool,score_5.0_below_5.4
+IS,IS002,Landsbyggð,lake,,15,11,wd:Q1344692,Lagarfljót,floor_pool,score_5.0_below_5.4
+IS,IS002,Landsbyggð,lake,,15,11,wd:Q283536,Langisjór,floor_pool,score_4.9_below_5.4
+IS,IS002,Landsbyggð,lake,,15,11,wd:Q2536202,Víti Askja,floor_pool,score_4.9_below_5.4
+IS,IS002,Landsbyggð,lake,,15,11,wd:Q1416444,Skorradalsvatn,floor_pool,score_4.8_below_5.4
+IS,IS002,Landsbyggð,lake,,15,11,wd:Q943482,Grænalón,photo_gate,imgs_2
+IS,IS002,Landsbyggð,lake,,15,11,wd:Q1121686,Kvíslavatn,floor_pool,score_4.8_below_5.4
+IS,IS002,Landsbyggð,lake,,15,11,wd:Q511933,Jökulsárlón,floor_pool,score_4.7_below_5.4
+IE,IE041,Border,lake,,10,9,wd:Q1871373,Lough Derg,floor_pool,score_5.3_below_5.4
+IE,IE041,Border,lake,,10,9,wd:Q4244931,Lough Talt,floor_pool,score_5.2_below_5.4
+IE,IE041,Border,lake,,10,9,wd:Q23014379,Kindrum Lough,floor_pool,score_4.9_below_5.4
+IE,IE041,Border,lake,,10,9,wd:Q24196710,Durnesh Lough,floor_pool,score_4.7_below_5.4
+IE,IE041,Border,lake,,10,9,wd:Q3356599,Lough Ramor,floor_pool,score_4.6_below_5.4
+IE,IE041,Border,lake,,10,9,wd:Q3260241,Lough Eske,floor_pool,score_4.6_below_5.4
+IE,IE041,Border,lake,,10,9,wd:Q3380869,Lough Sillan,floor_pool,score_4.6_below_5.4
+IE,IE041,Border,lake,,10,9,wd:Q6686123,Lough Gara,floor_pool,score_4.6_below_5.4
+IE,IE041,Border,lake,,10,9,wd:Q24196623,Lough Barra,floor_pool,score_4.5_below_5.4
+FO,FO-FRO,Faroe Islands,lake,,7,7,wd:Q476699,Fjallavatn,photo_gate,imgs_1
+FO,FO-FRO,Faroe Islands,lake,,7,7,wd:Q29100483,Kvíandalsvatn,photo_gate,imgs_5
+FO,FO-FRO,Faroe Islands,lake,,7,7,wd:Q29100373,Lomundaroyri,photo_gate,imgs_5
+AL,AL011,Dibër,lake,,6,6,wd:Q22005345,Liqeni i Lopeve,photo_gate,imgs_3
+AL,AL011,Dibër,lake,,6,6,wd:Q22007899,Liqeni i Hotit,photo_gate,imgs_1
+AL,AL011,Dibër,lake,,6,6,wd:Q22005350,Liqeni i Luleve,photo_gate,imgs_0
+AL,AL011,Dibër,lake,,6,6,wd:Q7358625,Sope Lake,floor_pool,score_4.8_below_5.4
+AL,AL011,Dibër,lake,,6,6,wd:Q22005363,Liqeni i Madh,floor_pool,score_4.8_below_5.4
+AL,AL011,Dibër,lake,,6,6,wd:Q120499178,Liqen i Rrasave,photo_gate,imgs_5
+EE,EE008,Lõuna-Eesti,lake,,13,6,wd:Q6477161,Lake Nüpli,photo_gate,imgs_0
+EE,EE008,Lõuna-Eesti,lake,,13,6,wd:Q211516,Võrtsjärv,floor_pool,score_5.3_below_5.4
+EE,EE008,Lõuna-Eesti,lake,,13,6,wd:Q3738630,Lake Kubija,floor_pool,score_5.3_below_5.4
+EE,EE008,Lõuna-Eesti,lake,,13,6,wd:Q6477470,Lake Raadi,floor_pool,score_5.2_below_5.4
+EE,EE008,Lõuna-Eesti,lake,,13,6,wd:Q7133100,Pappjärv,floor_pool,score_5.2_below_5.4
+EE,EE008,Lõuna-Eesti,lake,,13,6,wd:Q12377568,Lake Vanamõisa,floor_pool,score_5.2_below_5.4
+IE,IE042,West,lake,,9,6,wd:Q1768048,Lough Mask,floor_pool,score_5.3_below_5.4
+IE,IE042,West,lake,,9,6,wd:Q2746303,Lough Key,floor_pool,score_5.2_below_5.4
+IE,IE042,West,lake,,9,6,wd:Q24196547,Lough Rea,floor_pool,score_4.9_below_5.4
+IE,IE042,West,lake,,9,6,wd:Q949985,Lough Conn,floor_pool,score_4.8_below_5.4
+IE,IE042,West,lake,,9,6,wd:Q1871364,Lough Carra,floor_pool,score_4.7_below_5.4
+IE,IE042,West,lake,,9,6,wd:Q1045261,Carrowmore Lake,photo_gate,imgs_0
+IS,IS001,Höfuðborgarsvæði,lake,,6,6,wd:Q1332555,Elliðavatn,floor_pool,score_4.7_below_5.4
+IS,IS001,Höfuðborgarsvæði,lake,,6,6,wd:Q16424168,Rauðavatn,photo_gate,imgs_5
+IS,IS001,Höfuðborgarsvæði,lake,,6,6,wd:Q27468402,Vífilsstaðavatn,score_gate,score_3.6_below_5.4
+IS,IS001,Höfuðborgarsvæði,lake,,6,6,wd:Q97258621,Hvaleyrarvatn,score_gate,score_3.6_below_5.4
+IS,IS001,Höfuðborgarsvæði,lake,,6,6,wd:Q38110900,Ástjörn,score_gate,score_3.6_below_5.4
+IS,IS001,Höfuðborgarsvæði,lake,,6,6,wd:Q16420392,Bakkatjörn,photo_gate,imgs_5
+MK,MK006,Pološki,lake,,8,6,wd:Q20934164,Големо Езеро,photo_gate,imgs_3
+MK,MK006,Pološki,lake,,8,6,wd:Q20934163,Мало Езеро,photo_gate,imgs_3
+MK,MK006,Pološki,lake,,8,6,wd:Q110738739,Бозовачко Eзеро,photo_gate,imgs_1
+MK,MK006,Pološki,lake,,8,6,wd:Q20570572,Krivošijsko Lake,photo_gate,imgs_3
+MK,MK006,Pološki,lake,,8,6,wd:Q85987495,Малокорапско Езеро,photo_gate,imgs_5
+MK,MK006,Pološki,lake,,8,6,wd:Q20565710,Upper Dobrošte Lake,photo_gate,imgs_1
+RO,RO321,Bucureşti,lake,,6,6,wd:Q2747597,Lake Herăstrău,floor_pool,score_4.9_below_5.4
+RO,RO321,Bucureşti,lake,,6,6,wd:Q24066105,Lake Văcărești,floor_pool,score_4.9_below_5.4
+RO,RO321,Bucureşti,lake,,6,6,wd:Q3214882,Lake Floreasca,floor_pool,score_4.9_below_5.4
+RO,RO321,Bucureşti,lake,,6,6,wd:Q3214894,Lake Fundeni,floor_pool,score_4.8_below_5.4
+RO,RO321,Bucureşti,lake,,6,6,wd:Q13224702,Lake Plumbuita,floor_pool,score_4.8_below_5.4
+RO,RO321,Bucureşti,lake,,6,6,wd:Q12731889,Lake Tei,floor_pool,score_4.8_below_5.4
+GB,TLM02,"Perth and Kinross, and Stirling",lake,,6,6,wd:Q2266807,Loch Leven,floor_pool,score_4.9_below_5.4
+GB,TLM02,"Perth and Kinross, and Stirling",lake,,6,6,wd:Q1549069,Loch Earn,floor_pool,score_4.3_below_5.4
+GB,TLM02,"Perth and Kinross, and Stirling",lake,,6,6,wd:Q1867269,Loch Katrine,floor_pool,score_4.1_below_5.4
+GB,TLM02,"Perth and Kinross, and Stirling",lake,,6,6,wd:Q943839,Loch Rannoch,floor_pool,score_4.1_below_5.4
+GB,TLM02,"Perth and Kinross, and Stirling",lake,,6,6,wd:Q1801121,Lake of Menteith,floor_pool,score_4.1_below_5.4
+GB,TLM02,"Perth and Kinross, and Stirling",lake,,6,6,wd:Q952329,Loch Chon,floor_pool,score_4.1_below_5.4
+AL,AL021,Elbasan,lake,,6,5,wd:Q22002512,Liqeni i Rajces,photo_gate,imgs_1
+AL,AL021,Elbasan,lake,,6,5,wd:Q22005029,Liqeni i Dushkut,floor_pool,score_4.8_below_5.4
+AL,AL021,Elbasan,lake,,6,5,wd:Q22007831,Liqeni i Zavalines,photo_gate,imgs_0
+AL,AL021,Elbasan,lake,,6,5,wd:Q22012223,Liqeni i Belshit,floor_pool,score_4.3_below_5.4
+AL,AL021,Elbasan,lake,,6,5,wd:Q22007647,Liqeni i Zhurit,photo_gate,imgs_4
+AL,AL035,Vlorë,lake,,7,5,wd:Q22008293,Pasha Liman,photo_gate,imgs_0
+AL,AL035,Vlorë,lake,,7,5,wd:Q22008294,Liqeni i Pasha-limanit,photo_gate,imgs_0
+AL,AL035,Vlorë,lake,,7,5,wd:Q22012212,Bashamat,photo_gate,imgs_0
+AL,AL035,Vlorë,lake,,7,5,wd:Q22008285,Pylli i Pallorengut,photo_gate,imgs_4
+AL,AL035,Vlorë,lake,,7,5,wd:Q114830798,Lake Bufi,photo_gate,imgs_5
+LV,LV00C,Vidzeme,lake,,7,5,wd:Q11046848,Lake Väike-Palkna,score_gate,score_3.8_below_5.4
+LV,LV00C,Vidzeme,lake,,7,5,wd:Q6112816,Alauksts,photo_gate,imgs_5
+LV,LV00C,Vidzeme,lake,,7,5,wd:Q15218994,Inesis,floor_pool,score_5.0_below_5.4
+LV,LV00C,Vidzeme,lake,,7,5,wd:Q49304108,Limbažu Lielezers,floor_pool,score_5.0_below_5.4
+LV,LV00C,Vidzeme,lake,,7,5,wd:Q15218610,Augstrozes Lielezers,floor_pool,score_5.0_below_5.4
+MK,MK003,Jugozapaden,lake,,7,5,wd:Q1181386,Debar Lake,floor_pool,score_5.0_below_5.4
+MK,MK003,Jugozapaden,lake,,7,5,wd:Q20943211,Лабунишко Езеро,photo_gate,imgs_5
+MK,MK003,Jugozapaden,lake,,7,5,wd:Q20943212,Локва,photo_gate,imgs_5
+MK,MK003,Jugozapaden,lake,,7,5,wd:Q20943223,Подгоречко Езеро,photo_gate,imgs_5
+MK,MK003,Jugozapaden,lake,,7,5,wd:Q1280860,Kozjak Lake,floor_pool,score_4.5_below_5.4
+ME,ME000,Crna Gora,lake,,7,5,wd:Q1293440,Lake Visitor,photo_gate,imgs_0
+ME,ME000,Crna Gora,lake,,7,5,wd:Q1811764,Trnovačko Lake,floor_pool,score_5.1_below_5.4
+ME,ME000,Crna Gora,lake,,7,5,wd:Q1256107,Lake Plav,floor_pool,score_5.0_below_5.4
+ME,ME000,Crna Gora,lake,,7,5,wd:Q136080704,Vražje Lake,floor_pool,score_4.9_below_5.4
+ME,ME000,Crna Gora,lake,,7,5,wd:Q2097502,Lake Piva,floor_pool,score_4.8_below_5.4
+MK,MK001,Vardarski,lake,,5,5,wd:Q50427672,Moklište Lake,photo_gate,imgs_5
+MK,MK001,Vardarski,lake,,5,5,wd:Q20935661,Моклишко Езеро,photo_gate,imgs_1
+MK,MK001,Vardarski,lake,,5,5,wd:Q12908121,Лисиче,photo_gate,imgs_3
+MK,MK001,Vardarski,lake,,5,5,wd:Q3086506,Tikveš Lake,floor_pool,score_4.2_below_5.4
+MK,MK001,Vardarski,lake,,5,5,wd:Q12908695,Lake Mladost,floor_pool,score_4.1_below_5.4
+HU,HU323,Szabolcs-Szatmár-Bereg,lake,,5,5,wd:Q26229207,Morotva,photo_gate,imgs_5
+HU,HU323,Szabolcs-Szatmár-Bereg,lake,,5,5,wd:Q26228642,Solymos-tó,photo_gate,imgs_5
+HU,HU323,Szabolcs-Szatmár-Bereg,lake,,5,5,wd:Q1321615,Tiszavasvári Fehér-szik Természetvédelmi Terület,floor_pool,score_4.8_below_5.4
+HU,HU323,Szabolcs-Szatmár-Bereg,lake,,5,5,wd:Q26228665,Sós-tó,floor_pool,score_4.6_below_5.4
+HU,HU323,Szabolcs-Szatmár-Bereg,lake,,5,5,wd:Q26228551,Rádi-tó,photo_gate,imgs_5
+NO,NO085,Buskerud,lake,,5,5,wd:Q696445,Tyrifjorden,floor_pool,score_5.1_below_5.4
+NO,NO085,Buskerud,lake,,5,5,wd:Q1772375,Stolsvatnet,floor_pool,score_4.9_below_5.4
+NO,NO085,Buskerud,lake,,5,5,wd:Q4590459,Vavatn,floor_pool,score_4.9_below_5.4
+NO,NO085,Buskerud,lake,,5,5,wd:Q1772674,Halnefjorden,floor_pool,score_4.8_below_5.4
+NO,NO085,Buskerud,lake,,5,5,wd:Q4590021,Norefjorden,floor_pool,score_4.7_below_5.4
+RS,RS127,Sremska oblast,lake,,5,5,wd:Q3444519,Zasavica,floor_pool,score_4.7_below_5.4
+RS,RS127,Sremska oblast,lake,,5,5,wd:Q31182634,Бешеновачко језеро,photo_gate,imgs_4
+RS,RS127,Sremska oblast,lake,,5,5,wd:Q31182625,Бурје,photo_gate,imgs_3
+RS,RS127,Sremska oblast,lake,,5,5,wd:Q15990616,Borkovac,floor_pool,score_4.0_below_5.4
+RS,RS127,Sremska oblast,lake,,5,5,wd:Q31182621,Sot Lake,score_gate,score_3.9_below_5.4
+RO,RO225,Tulcea,lake,,5,5,wd:Q18541222,Babadag,photo_gate,imgs_0
+RO,RO225,Tulcea,lake,,5,5,wd:Q2349738,Lake Razelm,photo_gate,imgs_1
+RO,RO225,Tulcea,lake,,5,5,wd:Q14947829,Grindul și Lacul Răducu,photo_gate,imgs_1
+RO,RO225,Tulcea,lake,,5,5,wd:Q35721723,Lacul Furtuna,floor_pool,score_4.4_below_5.4
+RO,RO225,Tulcea,lake,,5,5,wd:Q30592727,Lake Golovița,photo_gate,imgs_0
+SI,SI032,Podravska,lake,,5,5,wd:Q3395306,Lake Ptuj,floor_pool,score_4.5_below_5.4
+SI,SI032,Podravska,lake,,5,5,wd:Q12795690,Lake Maribor,floor_pool,score_4.2_below_5.4
+SI,SI032,Podravska,lake,,5,5,wd:Q12807037,Black Lake,floor_pool,score_4.1_below_5.4
+SI,SI032,Podravska,lake,,5,5,wd:Q31904315,Ptujsko Jezero,photo_gate,imgs_5
+SI,SI032,Podravska,lake,,5,5,wd:Q10858353,Lovrenc Lakes,score_gate,score_3.9_below_5.4
+SI,SI038,Primorsko-notranjska,lake,,6,5,wd:Q19932854,Lake Bloke,floor_pool,score_4.0_below_5.4
+SI,SI038,Primorsko-notranjska,lake,,6,5,wd:Q90776977,Jeredovce,photo_gate,imgs_3
+SI,SI038,Primorsko-notranjska,lake,,6,5,wd:Q97215949,Krajnikov dol,photo_gate,imgs_4
+SI,SI038,Primorsko-notranjska,lake,,6,5,wd:Q19932508,Lake Klivnik,score_gate,score_3.7_below_5.4
+SI,SI038,Primorsko-notranjska,lake,,6,5,wd:Q12796983,Mola,score_gate,score_3.7_below_5.4
+GB,TLD13,Cumberland,lake,,6,5,wd:Q5287202,Dock Tarn,photo_gate,imgs_0
+GB,TLD13,Cumberland,lake,,6,5,wd:Q5267648,Devoke Water,floor_pool,score_5.0_below_5.4
+GB,TLD13,Cumberland,lake,,6,5,wd:Q1018122,Buttermere,floor_pool,score_4.7_below_5.4
+GB,TLD13,Cumberland,lake,,6,5,wd:Q514635,Wast Water,floor_pool,score_4.7_below_5.4
+GB,TLD13,Cumberland,lake,,6,5,wd:Q883285,Bleaberry Tarn,floor_pool,score_4.7_below_5.4
+GB,TLD14,Westmorland and Furness,lake,,6,5,wd:Q990827,Brothers Water,floor_pool,score_4.8_below_5.4
+GB,TLD14,Westmorland and Furness,lake,,6,5,wd:Q7305159,Red Tarn,photo_gate,imgs_5
+GB,TLD14,Westmorland and Furness,lake,,6,5,wd:Q1591929,Hayeswater,floor_pool,score_4.6_below_5.4
+GB,TLD14,Westmorland and Furness,lake,,6,5,wd:Q390370,Windermere,floor_pool,score_4.5_below_5.4
+GB,TLD14,Westmorland and Furness,lake,,6,5,wd:Q1543485,Grasmere,floor_pool,score_4.3_below_5.4
+GB,TLM20,Highlands and Islands,lake,,8,5,wd:Q49650,Loch Ness,floor_pool,score_5.3_below_5.4
+GB,TLM20,Highlands and Islands,lake,,8,5,wd:Q1967626,Loch Morlich,floor_pool,score_5.3_below_5.4
+GB,TLM20,Highlands and Islands,lake,,8,5,wd:Q1867229,Loch Arkaig,floor_pool,score_5.2_below_5.4
+GB,TLM20,Highlands and Islands,lake,,8,5,wd:Q1310646,Loch Maree,floor_pool,score_5.0_below_5.4
+GB,TLM20,Highlands and Islands,lake,,8,5,wd:Q1144481,Loch Insh,floor_pool,score_4.8_below_5.4
+AL,AL012,Durrës,lake,,4,4,wd:Q22012247,Keneta e Bishtarakes,photo_gate,imgs_0
+AL,AL012,Durrës,lake,,4,4,wd:Q22012374,Keneta e Durresit,photo_gate,imgs_0
+AL,AL012,Durrës,lake,,4,4,wd:Q22012249,Laguna e Bishtarakes,photo_gate,imgs_0
+AL,AL012,Durrës,lake,,4,4,wd:Q22009545,Pylli i Gramzes,photo_gate,imgs_0
+AL,AL032,Fier,lake,,5,4,wd:Q22009607,Godulla e Karavastase,photo_gate,imgs_0
+AL,AL032,Fier,lake,,5,4,wd:Q22009609,Liqeni i Karavastase,photo_gate,imgs_0
+AL,AL032,Fier,lake,,5,4,wd:Q22007539,Ujembledhesi i Thanes,photo_gate,imgs_0
+AL,AL032,Fier,lake,,5,4,wd:Q22009554,Ujembledhesi i Greshices,photo_gate,imgs_1
+AL,AL034,Korcë,lake,,4,4,wd:Q22005382,Keneta e Maliqit,photo_gate,imgs_0
+AL,AL034,Korcë,lake,,4,4,wd:Q132177937,Lake Neuron,floor_pool,score_4.4_below_5.4
+AL,AL034,Korcë,lake,,4,4,wd:Q16328245,Lake Maliq,photo_gate,imgs_0
+AL,AL034,Korcë,lake,,4,4,wd:Q132726163,Moglicë Reservoir,floor_pool,score_4.0_below_5.4
+AL,AL022,Tiranë,lake,,4,4,wd:Q22009774,Ujembledhesi i Manskurise,photo_gate,imgs_3
+AL,AL022,Tiranë,lake,,4,4,wd:Q895359,Bovilla reservoir,floor_pool,score_4.8_below_5.4
+AL,AL022,Tiranë,lake,,4,4,wd:Q9258041,Lake Farka,floor_pool,score_4.4_below_5.4
+AL,AL022,Tiranë,lake,,4,4,wd:Q22011884,Tirana Artificial Lake,floor_pool,score_4.3_below_5.4
+CY,CY000,Kýpros,lake,,8,4,wd:Q61740181,Λίμνη Ορόκλινης,photo_gate,imgs_5
+CY,CY000,Kýpros,lake,,8,4,wd:Q113153928,Athalassa Lake,floor_pool,score_4.8_below_5.4
+CY,CY000,Kýpros,lake,,8,4,wd:Q12880040,Λίμνη Παραλιμνίου,photo_gate,imgs_2
+CY,CY000,Kýpros,lake,,8,4,wd:Q82523478,Kalopanagiotis Reservoir,photo_gate,imgs_0
+GR,EL632,Achaia,lake,,4,4,wd:Q109301707,Asteri Lake,floor_pool,score_5.2_below_5.4
+GR,EL632,Achaia,lake,,4,4,wd:Q15057232,Tsivlou lake,floor_pool,score_4.8_below_5.4
+GR,EL632,Achaia,lake,,4,4,wd:Q12880047,Prókopos,photo_gate,imgs_5
+GR,EL632,Achaia,lake,,4,4,wd:Q15057228,Papas Lagoon,floor_pool,score_4.6_below_5.4
+GR,EL541,"Arta, Preveza",lake,,4,4,wd:Q2106785,Pournari lake,photo_gate,imgs_1
+GR,EL541,"Arta, Preveza",lake,,4,4,wd:Q15057373,Louros reservoir,photo_gate,imgs_5
+GR,EL541,"Arta, Preveza",lake,,4,4,wd:Q25094300,Pogonitsa,floor_pool,score_4.6_below_5.4
+GR,EL541,"Arta, Preveza",lake,,4,4,wd:Q12880039,Lake Ziros,floor_pool,score_4.5_below_5.4
+EE,EE001,Põhja-Eesti,lake,,7,4,wd:Q3449214,Ahvenajärv,photo_gate,imgs_5
+EE,EE001,Põhja-Eesti,lake,,7,4,wd:Q18626600,Lake Urbukse,floor_pool,score_4.8_below_5.4
+EE,EE001,Põhja-Eesti,lake,,7,4,wd:Q12372937,Lake Purgatsi,floor_pool,score_4.8_below_5.4
+EE,EE001,Põhja-Eesti,lake,,7,4,wd:Q12371021,Nikerjärv,floor_pool,score_4.8_below_5.4
+HU,HU232,Somogy,lake,,4,4,wd:Q26231849,Öreg-tó,photo_gate,imgs_0
+HU,HU232,Somogy,lake,,4,4,wd:Q51332506,Kotró,photo_gate,imgs_1
+HU,HU232,Somogy,lake,,4,4,wd:Q904268,Lake Deseda,floor_pool,score_4.9_below_5.4
+HU,HU232,Somogy,lake,,4,4,wd:Q12627551,Lake Baláta,floor_pool,score_4.7_below_5.4
+HR,HR062,Varaždinska županija,lake,,4,4,wd:Q4103545,Lake Varaždin,photo_gate,imgs_1
+HR,HR062,Varaždinska županija,lake,,4,4,wd:Q124364510,Motičnjak,photo_gate,imgs_1
+HR,HR062,Varaždinska županija,lake,,4,4,wd:Q820542,Lake Dubrava,floor_pool,score_5.1_below_5.4
+HR,HR062,Varaždinska županija,lake,,4,4,wd:Q26224786,Lake Ormož,floor_pool,score_5.0_below_5.4
+HR,HR063,Koprivničko-križevačka županija,lake,,5,4,wd:Q8082839,Šoderica,floor_pool,score_4.8_below_5.4
+HR,HR063,Koprivničko-križevačka županija,lake,,5,4,wd:Q136760356,Jablanje,photo_gate,imgs_5
+HR,HR063,Koprivničko-križevačka županija,lake,,5,4,wd:Q131323269,Ribnjak,floor_pool,score_4.5_below_5.4
+HR,HR063,Koprivničko-križevačka županija,lake,,5,4,wd:Q131314058,Gornje Ledine,floor_pool,score_4.4_below_5.4
+HR,HR024,Brodsko-posavska županija,lake,,4,4,wd:Q7178471,Petnja,floor_pool,score_5.2_below_5.4
+HR,HR024,Brodsko-posavska županija,lake,,4,4,wd:Q112121007,Bačica,photo_gate,imgs_0
+HR,HR024,Brodsko-posavska županija,lake,,4,4,wd:Q26223213,Sinokosno,photo_gate,imgs_0
+HR,HR024,Brodsko-posavska županija,lake,,4,4,wd:Q25302087,Jezero Petnja,photo_gate,imgs_0
+MK,MK004,Jugoistočen,lake,,6,4,wd:Q25553764,Мантово,photo_gate,imgs_5
+MK,MK004,Jugoistočen,lake,,6,4,wd:Q12906324,Selemli Lake,photo_gate,imgs_5
+MK,MK004,Jugoistočen,lake,,6,4,wd:Q11058229,Водоча,photo_gate,imgs_5
+MK,MK004,Jugoistočen,lake,,6,4,wd:Q24192538,Konče Lakes,photo_gate,imgs_5
+MK,MK002,Istočen,lake,,4,4,wd:Q3089331,Berovo Lake,floor_pool,score_5.3_below_5.4
+MK,MK002,Istočen,lake,,4,4,wd:Q63157998,Kundino Lake,photo_gate,imgs_5
+MK,MK002,Istočen,lake,,4,4,wd:Q20932221,Калиманско Езеро,photo_gate,imgs_5
+MK,MK002,Istočen,lake,,4,4,wd:Q20933989,Беровско Езеро,photo_gate,imgs_5
+IE,IE051,Mid-West ,lake,,5,4,wd:Q61676998,Ballyallia Lake,photo_gate,imgs_0
+IE,IE051,Mid-West ,lake,,5,4,wd:Q604502,Lough Gur,floor_pool,score_4.7_below_5.4
+IE,IE051,Mid-West ,lake,,5,4,wd:Q24196568,Lough Bunny,floor_pool,score_4.3_below_5.4
+IE,IE051,Mid-West ,lake,,5,4,wd:Q24196580,Lough Cullaun,photo_gate,imgs_0
+IE,IE053,South-West ,lake,,6,4,wd:Q25238257,Lough Gill,floor_pool,score_4.9_below_5.4
+IE,IE053,South-West ,lake,,6,4,wd:Q16894327,Lough Mahon,floor_pool,score_4.8_below_5.4
+IE,IE053,South-West ,lake,,6,4,wd:Q6686106,Lough Currane,floor_pool,score_4.3_below_5.4
+IE,IE053,South-West ,lake,,6,4,wd:Q22084164,Muckross Lake,floor_pool,score_4.2_below_5.4
+IE,IE062,Mid-East,lake,,4,4,wd:Q3074707,Lough Tay,floor_pool,score_4.9_below_5.4
+IE,IE062,Mid-East,lake,,4,4,wd:Q27588512,Glendalough Upper Lake,floor_pool,score_4.6_below_5.4
+IE,IE062,Mid-East,lake,,4,4,wd:Q287141,Lough Dan,floor_pool,score_4.6_below_5.4
+IE,IE062,Mid-East,lake,,4,4,wd:Q33227010,Art's Lough,floor_pool,score_4.6_below_5.4
+HU,HU333,Csongrád-Csanád,lake,,5,4,wd:Q942033,Lake Fehér,floor_pool,score_5.3_below_5.4
+HU,HU333,Csongrád-Csanád,lake,,5,4,wd:Q26231414,Sáros-szék,photo_gate,imgs_0
+HU,HU333,Csongrád-Csanád,lake,,5,4,wd:Q1473625,Őszeszéki-tó,photo_gate,imgs_4
+HU,HU333,Csongrád-Csanád,lake,,5,4,wd:Q20439415,Gátéri Fehér-tó,photo_gate,imgs_0
+NO,NO092,Agder,lake,,4,4,wd:Q1519876,Rosskreppfjorden,floor_pool,score_5.0_below_5.4
+NO,NO092,Agder,lake,,4,4,wd:Q1478768,Vegår,floor_pool,score_4.3_below_5.4
+NO,NO092,Agder,lake,,4,4,wd:Q1772746,Åraksfjorden,photo_gate,imgs_5
+NO,NO092,Agder,lake,,4,4,wd:Q6514173,Syndle,floor_pool,score_4.2_below_5.4
+NO,NO083,Østfold,lake,,4,4,wd:Q3356657,Vansjø,photo_gate,imgs_5
+NO,NO083,Østfold,lake,,4,4,wd:Q6515479,Vestvannet,floor_pool,score_4.1_below_5.4
+NO,NO083,Østfold,lake,,4,4,wd:Q1772611,Mingevannet,photo_gate,imgs_0
+NO,NO083,Østfold,lake,,4,4,wd:Q1772826,Rødenessjøen,score_gate,score_3.9_below_5.4
+NO,NO084,Akershus,lake,,4,4,wd:Q317277,Øyeren,floor_pool,score_4.9_below_5.4
+NO,NO084,Akershus,lake,,4,4,wd:Q6514268,Setten,floor_pool,score_4.3_below_5.4
+NO,NO084,Akershus,lake,,4,4,wd:Q6516096,Øgderen,floor_pool,score_4.2_below_5.4
+NO,NO084,Akershus,lake,,4,4,wd:Q945079,Hurdalssjøen,floor_pool,score_4.0_below_5.4
+NO,NO060,Trøndelag/Trööndelage,lake,,4,4,wd:Q1234569,Tunnsjøen,floor_pool,score_4.8_below_5.4
+NO,NO060,Trøndelag/Trööndelage,lake,,4,4,wd:Q777416,Aursund,floor_pool,score_4.7_below_5.4
+NO,NO060,Trøndelag/Trööndelage,lake,,4,4,wd:Q1777782,Snåsavatnet,floor_pool,score_4.7_below_5.4
+NO,NO060,Trøndelag/Trööndelage,lake,,4,4,wd:Q1170078,Selbusjøen,floor_pool,score_4.1_below_5.4
+NO,NO071,Nordland/Nordlánnda,lake,,5,4,wd:Q1772671,Gresvatnet,photo_gate,imgs_1
+NO,NO071,Nordland/Nordlánnda,lake,,5,4,wd:Q307594,Överuman,photo_gate,imgs_5
+NO,NO071,Nordland/Nordlánnda,lake,,5,4,wd:Q6515124,Vuolep Sårjåsjávrre,floor_pool,score_4.6_below_5.4
+NO,NO071,Nordland/Nordlánnda,lake,,5,4,wd:Q1352298,Røssvatnet,floor_pool,score_4.3_below_5.4
+MK,MK005,Pelagoniski,lake,,7,4,wd:Q12880819,Great Prespa,photo_gate,imgs_3
+MK,MK005,Pelagoniski,lake,,7,4,wd:Q64547779,Dimitrovo Lake,photo_gate,imgs_5
+MK,MK005,Pelagoniski,lake,,7,4,wd:Q64518352,Orlovi Bari,photo_gate,imgs_5
+MK,MK005,Pelagoniski,lake,,7,4,wd:Q12880819,Great Prespa,photo_gate,imgs_4
+MK,MK007,Severoistočen,lake,,4,4,wd:Q114964741,Кнежевско Езеро,photo_gate,imgs_5
+MK,MK007,Severoistočen,lake,,4,4,wd:Q3215447,Глажња (езеро),photo_gate,imgs_0
+MK,MK007,Severoistočen,lake,,4,4,wd:Q3134325,Липковско Езеро,photo_gate,imgs_0
+MK,MK007,Severoistočen,lake,,4,4,wd:Q20933105,Глажњанско Езеро,photo_gate,imgs_0
+RO,RO322,Ilfov,lake,,4,4,wd:Q3107107,Lake Snagov,floor_pool,score_5.3_below_5.4
+RO,RO322,Ilfov,lake,,4,4,wd:Q3214854,Lake Dâmbovița,photo_gate,imgs_2
+RO,RO322,Ilfov,lake,,4,4,wd:Q12731843,Lake Buftea,floor_pool,score_4.3_below_5.4
+RO,RO322,Ilfov,lake,,4,4,wd:Q18541229,Lake Căldărușani,floor_pool,score_4.2_below_5.4
+RS,RS110,City of Belgrade,lake,,5,4,wd:Q7348622,Veliki Galijaš,floor_pool,score_5.2_below_5.4
+RS,RS110,City of Belgrade,lake,,5,4,wd:Q12748082,Ада Сафари,photo_gate,imgs_5
+RS,RS110,City of Belgrade,lake,,5,4,wd:Q29976844,Veliko Blato,floor_pool,score_4.8_below_5.4
+RS,RS110,City of Belgrade,lake,,5,4,wd:Q12758519,Savsko Lake,photo_gate,imgs_5
+RO,RO126,Sibiu,lake,,5,4,wd:Q4829457,Avrig Lake,photo_gate,imgs_5
+RO,RO126,Sibiu,lake,,5,4,wd:Q29939935,Lake Auster,photo_gate,imgs_5
+RO,RO126,Sibiu,lake,,5,4,wd:Q106239695,Podrăgel Lake,photo_gate,imgs_2
+RO,RO126,Sibiu,lake,,5,4,wd:Q30626044,Lake Horea,photo_gate,imgs_5
+SK,SK031,Žilinský kraj,lake,,5,4,wd:Q11832490,Plačlivé pliesko,photo_gate,imgs_5
+SK,SK031,Žilinský kraj,lake,,5,4,wd:Q9158231,Anitino očko,photo_gate,imgs_2
+SK,SK031,Žilinský kraj,lake,,5,4,wd:Q1415402,Vrbické pleso,floor_pool,score_5.3_below_5.4
+SK,SK031,Žilinský kraj,lake,,5,4,wd:Q661900,Vyšné Jamnícke pleso,floor_pool,score_5.3_below_5.4
+RS,RS226,Pirotska oblast,lake,,4,4,wd:Q166971,Zavoj Lake,floor_pool,score_4.7_below_5.4
+RS,RS226,Pirotska oblast,lake,,4,4,wd:Q62084104,Smilovska lakes,floor_pool,score_4.2_below_5.4
+RS,RS226,Pirotska oblast,lake,,4,4,wd:Q65199997,Ветренско језеро,photo_gate,imgs_2
+RS,RS226,Pirotska oblast,lake,,4,4,wd:Q12750880,Дивљанско језеро,photo_gate,imgs_4
+SI,SI031,Pomurska,lake,,4,4,wd:Q38276803,Gajševsko jezero,floor_pool,score_4.7_below_5.4
+SI,SI031,Pomurska,lake,,4,4,wd:Q12794686,Lake Ledava,photo_gate,imgs_5
+SI,SI031,Pomurska,lake,,4,4,wd:Q12786592,Lake Bukovniško,floor_pool,score_4.0_below_5.4
+SI,SI031,Pomurska,lake,,4,4,wd:Q14698052,Lake Blaguš,score_gate,score_3.8_below_5.4
+SI,SI034,Savinjska,lake,,4,4,wd:Q19938123,Lake Šmartno,floor_pool,score_4.3_below_5.4
+SI,SI034,Savinjska,lake,,4,4,wd:Q18119923,Lake Velenje,score_gate,score_3.9_below_5.4
+SI,SI034,Savinjska,lake,,4,4,wd:Q3368576,Lake Žovnek,score_gate,score_3.8_below_5.4
+SI,SI034,Savinjska,lake,,4,4,wd:Q18213477,Lake Škale,photo_gate,imgs_5
+SI,SI043,Goriška,lake,,4,4,wd:Q3110294,Wild Lake,floor_pool,score_5.0_below_5.4
+SI,SI043,Goriška,lake,,4,4,wd:Q202760,Soča,floor_pool,score_4.1_below_5.4
+SI,SI043,Goriška,lake,,4,4,wd:Q12806014,Lake Vogrsko,photo_gate,imgs_5
+SI,SI043,Goriška,lake,,4,4,wd:Q64485230,Idrija Lagoon,photo_gate,imgs_0
+XK,XK004,Prizren,lake,,4,4,wd:Q20565703,Горно Врачанско Езеро,photo_gate,imgs_5
+XK,XK004,Prizren,lake,,4,4,wd:Q3406676,Šutmansko Lake,floor_pool,score_5.3_below_5.4
+XK,XK004,Prizren,lake,,4,4,wd:Q16361834,Konjushka's Lake,floor_pool,score_4.3_below_5.4
+XK,XK004,Prizren,lake,,4,4,wd:Q7353565,Upper Defsko Lake,photo_gate,imgs_5
+XK,XK005,Ferizaj,lake,,4,4,wd:Q12751073,Lower Blateštica lake,photo_gate,imgs_0
+XK,XK005,Ferizaj,lake,,4,4,wd:Q3299614,Big Jažinačko Lake,floor_pool,score_4.1_below_5.4
+XK,XK005,Ferizaj,lake,,4,4,wd:Q6593727,Štrbačko Lake,photo_gate,imgs_5
+XK,XK005,Ferizaj,lake,,4,4,wd:Q7353528,Small Jažinačko Lake,photo_gate,imgs_5
+AL,AL013,Kukës,lake,,5,3,wd:Q6475581,Lake Dash,floor_pool,score_5.3_below_5.4
+AL,AL013,Kukës,lake,,5,3,wd:Q117126835,Letaj Water Reservoir,photo_gate,imgs_5
+AL,AL013,Kukës,lake,,5,3,wd:Q140373290,Qarr Water Reservoir,photo_gate,imgs_5
+AL,AL031,Berat,lake,,3,3,wd:Q22007658,Ujembledhesi i Sadovices,photo_gate,imgs_3
+AL,AL031,Berat,lake,,3,3,wd:Q22009787,Ujembledhesi i Mbreshtanit,photo_gate,imgs_0
+AL,AL031,Berat,lake,,3,3,wd:Q22008157,Ujembledhesi i Belesoves,photo_gate,imgs_0
+AL,AL014,Lezhë,lake,,3,3,wd:Q22011725,Keneta e Kenalles,photo_gate,imgs_5
+AL,AL014,Lezhë,lake,,3,3,wd:Q22009634,Liqeni i Kenalles,photo_gate,imgs_5
+AL,AL014,Lezhë,lake,,3,3,wd:Q13041389,Patoku Lagoon,photo_gate,imgs_2
+AT,AT334,Tiroler Oberland,lake,,3,3,wd:Q872003,Rifflsee,floor_pool,score_5.3_below_5.4
+AT,AT334,Tiroler Oberland,lake,,3,3,wd:Q449184,Gepatschspeicher,floor_pool,score_5.2_below_5.4
+AT,AT334,Tiroler Oberland,lake,,3,3,wd:Q6710857,Längentalspeicher,floor_pool,score_5.2_below_5.4
+BE,BE211,Arr. Antwerpen,lake,,3,3,wd:Q2363216,wells of ekeren,floor_pool,score_5.0_below_5.4
+BE,BE211,Arr. Antwerpen,lake,,3,3,wd:Q2340432,Putse Moer,floor_pool,score_4.8_below_5.4
+BE,BE211,Arr. Antwerpen,lake,,3,3,wd:Q21763346,Stappensven,photo_gate,imgs_3
+BE,BE225,Arr. Maaseik,lake,,4,3,wd:Q13438810,Bergerven,floor_pool,score_4.7_below_5.4
+BE,BE225,Arr. Maaseik,lake,,4,3,wd:Q2906583,Ruiterskuilen,floor_pool,score_4.3_below_5.4
+BE,BE225,Arr. Maaseik,lake,,4,3,wd:Q98642638,Broekven,floor_pool,score_4.2_below_5.4
+BE,BE236,Arr. Sint-Niklaas,lake,,3,3,wd:Q1818342,Grote Geule,floor_pool,score_4.8_below_5.4
+BE,BE236,Arr. Sint-Niklaas,lake,,3,3,wd:Q21769143,Groot Gat,photo_gate,imgs_5
+BE,BE236,Arr. Sint-Niklaas,lake,,3,3,wd:Q21767614,Grote Weel,photo_gate,imgs_0
+BE,BE335,Arr. Verviers — communes francophones,lake,,3,3,wd:Q320702,Lake Robertville,floor_pool,score_5.3_below_5.4
+BE,BE335,Arr. Verviers — communes francophones,lake,,3,3,wd:Q17373262,Lake Gileppe,floor_pool,score_4.9_below_5.4
+BE,BE335,Arr. Verviers — communes francophones,lake,,3,3,wd:Q1129678,Lake Warfaaz,floor_pool,score_4.5_below_5.4
+BG,BG331,Varna,lake,,3,3,wd:Q1070423,Lake Varna,photo_gate,imgs_1
+BG,BG331,Varna,lake,,3,3,wd:Q7329986,Tsonevo Reservoir,floor_pool,score_5.3_below_5.4
+BG,BG331,Varna,lake,,3,3,wd:Q3131652,Lake Beloslav,floor_pool,score_5.2_below_5.4
+BG,BG344,Stara Zagora,lake,,3,3,wd:Q6395746,Koprinka Reservoir,floor_pool,score_5.3_below_5.4
+BG,BG344,Stara Zagora,lake,,3,3,wd:Q20498160,Ovcharitsa Reservoir,photo_gate,imgs_2
+BG,BG344,Stara Zagora,lake,,3,3,wd:Q20497991,Rozov Kladenets,floor_pool,score_4.3_below_5.4
+BG,BG412,Sofia,lake,,4,3,wd:Q12282528,Канарско езеро,photo_gate,imgs_1
+BG,BG412,Sofia,lake,,4,3,wd:Q7353771,Topolnitsa Reservoir,photo_gate,imgs_0
+BG,BG412,Sofia,lake,,4,3,wd:Q20497268,Ravnichalsko lake,floor_pool,score_4.9_below_5.4
+BG,BG421,Plovdiv,lake,,3,3,wd:Q12273973,Bryagovo Reservoir,floor_pool,score_4.8_below_5.4
+BG,BG421,Plovdiv,lake,,3,3,wd:Q11726676,Pyasachnik Reservoir,floor_pool,score_4.6_below_5.4
+BG,BG421,Plovdiv,lake,,3,3,wd:Q12279004,Dondukovo reservoir,photo_gate,imgs_3
+CH,CH055,St. Gallen,lake,,3,3,wd:Q664761,Voralpsee,floor_pool,score_5.1_below_5.4
+CH,CH055,St. Gallen,lake,,3,3,wd:Q1800177,Schwendisee,floor_pool,score_4.7_below_5.4
+CH,CH055,St. Gallen,lake,,3,3,wd:Q14444,Walensee,floor_pool,score_4.4_below_5.4
+CH,CH051,Glarus,lake,,3,3,wd:Q664441,Klöntalersee,floor_pool,score_5.2_below_5.4
+CH,CH051,Glarus,lake,,3,3,wd:Q663078,Oberblegisee,floor_pool,score_5.2_below_5.4
+CH,CH051,Glarus,lake,,3,3,wd:Q671751,Obersee,floor_pool,score_4.5_below_5.4
+CH,CH054,Appenzell Innerrhoden,lake,,3,3,wd:Q870273,Fälensee,floor_pool,score_4.8_below_5.4
+CH,CH054,Appenzell Innerrhoden,lake,,3,3,wd:Q870267,Seealpsee,floor_pool,score_4.7_below_5.4
+CH,CH054,Appenzell Innerrhoden,lake,,3,3,wd:Q668561,Sämtisersee,floor_pool,score_4.5_below_5.4
+CH,CH063,Schwyz,lake,,3,3,wd:Q675610,Wägitalersee,floor_pool,score_4.6_below_5.4
+CH,CH063,Schwyz,lake,,3,3,wd:Q688846,Sihlsee,floor_pool,score_4.5_below_5.4
+CH,CH063,Schwyz,lake,,3,3,wd:Q14518,Lake Lauerz,floor_pool,score_4.4_below_5.4
+CZ,CZ063,Kraj Vysočina,lake,,4,3,wd:Q11923557,Vodní nádrž Pilská,floor_pool,score_5.3_below_5.4
+CZ,CZ063,Kraj Vysočina,lake,,4,3,wd:Q20719664,Vřesník Reservoir,floor_pool,score_5.3_below_5.4
+CZ,CZ063,Kraj Vysočina,lake,,4,3,wd:Q28101861,Water reservoir Strž,floor_pool,score_5.2_below_5.4
+DE,DE80O,Ludwigslust-Parchim,lake,,4,3,wd:Q316028,Dobbertiner See,country_cap,rank_96
+DE,DE80O,Ludwigslust-Parchim,lake,,4,3,wd:Q447947,Dümmer See,country_cap,rank_104
+DE,DE80O,Ludwigslust-Parchim,lake,,4,3,wd:Q316044,Goldberger See,country_cap,rank_107
+ES,ES111,A Coruña,lake,,4,3,wd:Q4802948,As Pontes Lake,country_cap,rank_77
+GR,EL623,"Ithaki, Kefallinia",lake,,3,3,wd:Q1573013,Melissani Cave,floor_pool,score_5.2_below_5.4
+GR,EL623,"Ithaki, Kefallinia",lake,,3,3,wd:Q12872051,Avithos,photo_gate,imgs_5
+ES,ES114,Pontevedra,lake,,3,3,,,,
+GR,EL513,Rodopi,lake,,3,3,wd:Q25122897,Xirolimni Lake,photo_gate,imgs_0
+GR,EL513,Rodopi,lake,,3,3,wd:Q12878198,Lake Ismarida,photo_gate,imgs_1
+GR,EL513,Rodopi,lake,,3,3,wd:Q65233607,Gratini lake,photo_gate,imgs_0
+EE,EE009,Kesk-Eesti,lake,,4,3,wd:Q12374844,Lake Seli,floor_pool,score_5.0_below_5.4
+EE,EE009,Kesk-Eesti,lake,,4,3,wd:Q3742729,Lake Käsmu,floor_pool,score_4.7_below_5.4
+EE,EE009,Kesk-Eesti,lake,,4,3,wd:Q6477421,Lake Porkuni,floor_pool,score_4.6_below_5.4
+GR,EL526,Serres,lake,,3,3,wd:Q42154963,Cercinitis Lake,photo_gate,imgs_0
+GR,EL526,Serres,lake,,3,3,wd:Q1739269,Lake Kerkini,floor_pool,score_4.4_below_5.4
+GR,EL526,Serres,lake,,3,3,wd:Q12296076,Limni Achinou,photo_gate,imgs_0
+FI,FI1D7,Lappi,lake,,5,3,wd:Q205829,Kilpisjärvi,floor_pool,score_5.1_below_5.4
+FI,FI1D7,Lappi,lake,,5,3,wd:Q2542996,Yli-Kitka,floor_pool,score_5.0_below_5.4
+FI,FI1D7,Lappi,lake,,5,3,wd:Q6182224,Jerisjärvi,floor_pool,score_4.9_below_5.4
+FI,FI1DB,Pohjois-Savo,lake,,5,3,wd:Q7230318,Porovesi,photo_gate,imgs_5
+FI,FI1DB,Pohjois-Savo,lake,,5,3,wd:Q15209581,Kaavinjärvi,floor_pool,score_5.0_below_5.4
+FI,FI1DB,Pohjois-Savo,lake,,5,3,wd:Q7362310,Unnukka,floor_pool,score_4.9_below_5.4
+ES,ES432,Cáceres,lake,,3,3,wd:Q3379578,Valdecañas reservoir,floor_pool,score_5.2_below_5.4
+ES,ES432,Cáceres,lake,,3,3,wd:Q3075812,Arrocampo Reservoir,floor_pool,score_4.7_below_5.4
+ES,ES432,Cáceres,lake,,3,3,wd:Q19429422,Cedillo Reservoir,floor_pool,score_4.5_below_5.4
+ES,ES513,Lleida,lake,,7,3,wd:Q11920876,Estany de Contraix,country_cap,rank_63
+ES,ES513,Lleida,lake,,7,3,wd:Q11920902,estany del Bergús,country_cap,rank_65
+ES,ES513,Lleida,lake,,7,3,wd:Q17617674,estany Llong,country_cap,rank_66
+FI,FI196,Satakunta,lake,,3,3,wd:Q1896377,Sääksjärvi,floor_pool,score_5.0_below_5.4
+FI,FI196,Satakunta,lake,,3,3,wd:Q1635550,Pyhäjärvi,floor_pool,score_4.7_below_5.4
+FI,FI196,Satakunta,lake,,3,3,wd:Q6296595,Joutsijärvi,floor_pool,score_4.7_below_5.4
+HR,HR034,Šibensko-kninska županija,lake,,4,3,wd:Q25301398,Vela Solina,photo_gate,imgs_0
+HR,HR034,Šibensko-kninska županija,lake,,4,3,wd:Q111472100,Visovac Lake,floor_pool,score_5.3_below_5.4
+HR,HR034,Šibensko-kninska županija,lake,,4,3,wd:Q2474730,Cetina,floor_pool,score_4.9_below_5.4
+HR,HR035,Splitsko-dalmatinska županija,lake,,4,3,wd:Q2143020,Red Lake,floor_pool,score_5.0_below_5.4
+HR,HR035,Splitsko-dalmatinska županija,lake,,4,3,wd:Q1668261,Peruća Lake,floor_pool,score_5.0_below_5.4
+HR,HR035,Splitsko-dalmatinska županija,lake,,4,3,wd:Q26222955,Prančevići,photo_gate,imgs_0
+HR,HR036,Istarska županija,lake,,3,3,wd:Q16115608,Jezero Butoniga,floor_pool,score_5.1_below_5.4
+HR,HR036,Istarska županija,lake,,3,3,wd:Q114851279,Bakranjuša,photo_gate,imgs_0
+HR,HR065,Zagrebačka županija,lake,,3,3,wd:Q16115512,Čiče,floor_pool,score_4.5_below_5.4
+HR,HR065,Zagrebačka županija,lake,,3,3,wd:Q8082912,Šumbar Lake,photo_gate,imgs_0
+HR,HR065,Zagrebačka županija,lake,,3,3,wd:Q25299010,Crna Mlaka,photo_gate,imgs_0
+HR,HR025,Osječko-baranjska županija,lake,,3,3,wd:Q6476572,Lake Lapovac,photo_gate,imgs_0
+HR,HR025,Osječko-baranjska županija,lake,,3,3,wd:Q25295427,Kopačevsko jezero,photo_gate,imgs_1
+HR,HR025,Osječko-baranjska županija,lake,,3,3,wd:Q26224042,Jezero Borovik,floor_pool,score_4.3_below_5.4
+HU,HU211,Fejér,lake,,4,3,wd:Q20438788,Rétszilas Lakes Natural Reserve,floor_pool,score_4.7_below_5.4
+HU,HU211,Fejér,lake,,4,3,wd:Q1315401,Sós-tó,floor_pool,score_4.5_below_5.4
+HU,HU211,Fejér,lake,,4,3,wd:Q15631447,Zichy-tó,floor_pool,score_4.4_below_5.4
+HR,HR027,Karlovačka županija,lake,,3,3,wd:Q16116893,Jezero Sabljaki,floor_pool,score_4.3_below_5.4
+HR,HR027,Karlovačka županija,lake,,3,3,wd:Q12628497,Bukovnik,photo_gate,imgs_0
+HR,HR027,Karlovačka županija,lake,,3,3,wd:Q25301047,Jezero Begovac,photo_gate,imgs_0
+FR,FRJ26,Hautes-Pyrénées ,lake,,3,3,wd:Q3214754,Lac Bleu d'Ilhéou,country_cap,rank_98
+FR,FRJ26,Hautes-Pyrénées ,lake,,3,3,wd:Q633293,Gaube Lake,country_cap,rank_99
+FR,FRJ26,Hautes-Pyrénées ,lake,,3,3,wd:Q3215106,Lac Nère,country_cap,rank_101
+FR,FRI15,Pyrénées-Atlantiques,lake,,4,3,wd:Q3215544,Lac de Saint-Pée-sur-Nivelle,country_cap,rank_73
+FR,FRI15,Pyrénées-Atlantiques,lake,,4,3,wd:Q3214742,Lac Bersau,country_cap,rank_103
+FR,FRI15,Pyrénées-Atlantiques,lake,,4,3,wd:Q3215864,Lacs d'Arrémoulit,floor_pool,score_5.3_below_5.4
+LV,LV009,Zemgale,lake,,4,3,wd:Q5765299,Saukas ezers,floor_pool,score_5.0_below_5.4
+LV,LV009,Zemgale,lake,,4,3,wd:Q14917185,Lielauces ezers,floor_pool,score_4.9_below_5.4
+LV,LV009,Zemgale,lake,,4,3,wd:Q15220080,Zebrus ezers,floor_pool,score_4.8_below_5.4
+IT,ITH42,Udine,lake,,3,3,wd:Q1051808,Lago di Cavazzo,country_cap,rank_67
+IT,ITH42,Udine,lake,,3,3,wd:Q3826046,lago di Sauris,floor_pool,score_5.1_below_5.4
+IT,ITH42,Udine,lake,,3,3,wd:Q3825861,Lago del Predil,floor_pool,score_4.5_below_5.4
+LV,LV005,Latgale,lake,,10,3,wd:Q1630539,Rušons,floor_pool,score_5.2_below_5.4
+LV,LV005,Latgale,lake,,10,3,wd:Q3801480,Ežezers,floor_pool,score_5.2_below_5.4
+LV,LV005,Latgale,lake,,10,3,wd:Q20403226,Mazais Klusais ezers,floor_pool,score_5.2_below_5.4
+IT,ITC44,Sondrio,lake,,3,3,wd:Q1502960,Lago di Mezzola,country_cap,rank_81
+IT,ITC44,Sondrio,lake,,3,3,wd:Q672495,Lago di Livigno,floor_pool,score_5.3_below_5.4
+IT,ITC44,Sondrio,lake,,3,3,wd:Q656674,Lago di Lei,floor_pool,score_5.0_below_5.4
+HU,HU311,Borsod-Abaúj-Zemplén,lake,,4,3,wd:Q1175526,Megyer-hegyi Tarn,floor_pool,score_4.5_below_5.4
+HU,HU311,Borsod-Abaúj-Zemplén,lake,,4,3,wd:Q137596239,Tarcali bányató,floor_pool,score_4.3_below_5.4
+HU,HU311,Borsod-Abaúj-Zemplén,lake,,4,3,wd:Q111239048,Rudabányai bányató,floor_pool,score_4.2_below_5.4
+HU,HU313,Nógrád,lake,,3,3,wd:Q26233203,Csikós Lake,photo_gate,imgs_2
+HU,HU313,Nógrád,lake,,3,3,wd:Q130606252,Belsőszusz tó,photo_gate,imgs_5
+HU,HU313,Nógrád,lake,,3,3,wd:Q26231988,Kondás-tó,photo_gate,imgs_0
+IE,IE063,Midland,lake,,4,3,wd:Q1633096,Lough Lene,floor_pool,score_5.3_below_5.4
+IE,IE063,Midland,lake,,4,3,wd:Q2702889,Lough Owel,floor_pool,score_5.3_below_5.4
+IE,IE063,Midland,lake,,4,3,wd:Q3545409,Lough Gowna,floor_pool,score_5.3_below_5.4
+NO,NO094,Telemark,lake,,5,3,wd:Q2301965,Totak,floor_pool,score_4.5_below_5.4
+NO,NO094,Telemark,lake,,5,3,wd:Q175674,Norsjø,floor_pool,score_4.4_below_5.4
+NO,NO094,Telemark,lake,,5,3,wd:Q1519849,Heddalsvatnet,photo_gate,imgs_5
+NO,NO081,Oslo,lake,,4,3,wd:Q1247626,Maridalsvannet,floor_pool,score_4.7_below_5.4
+NO,NO081,Oslo,lake,,4,3,wd:Q4584729,Lutvann,floor_pool,score_4.7_below_5.4
+NO,NO081,Oslo,lake,,4,3,wd:Q1771171,Bogstadvannet,floor_pool,score_4.1_below_5.4
+NO,NO0A2,Vestland,lake,,5,3,wd:Q6516110,Lovatnet,floor_pool,score_5.2_below_5.4
+NO,NO0A2,Vestland,lake,,5,3,wd:Q6514017,Ringedalsvatnet,floor_pool,score_5.2_below_5.4
+NO,NO0A2,Vestland,lake,,5,3,wd:Q200003,Hornindalsvatnet,floor_pool,score_4.7_below_5.4
+NO,NO072,Troms/Romsa/Tromssa,lake,,3,3,wd:Q732672,Rostojávri,photo_gate,imgs_1
+NO,NO072,Troms/Romsa/Tromssa,lake,,3,3,wd:Q426405,Altevatnet,photo_gate,imgs_2
+NO,NO072,Troms/Romsa/Tromssa,lake,,3,3,wd:Q3911250,Prestvannet,floor_pool,score_4.4_below_5.4
+MK,MK008,Skopski,lake,,3,3,wd:Q259515,Lake Matka,floor_pool,score_5.2_below_5.4
+MK,MK008,Skopski,lake,,3,3,wd:Q12910139,Салаковски Езера,photo_gate,imgs_5
+MK,MK008,Skopski,lake,,3,3,wd:Q3215242,Lake Treska,floor_pool,score_4.1_below_5.4
+NL,NL414,Zuidoost-Noord-Brabant,lake,,3,3,wd:Q2933818,Zwartven,photo_gate,imgs_5
+NL,NL414,Zuidoost-Noord-Brabant,lake,,3,3,wd:Q2774846,Berkendonk,photo_gate,imgs_5
+NL,NL414,Zuidoost-Noord-Brabant,lake,,3,3,wd:Q2112355,IJzeren Man,floor_pool,score_5.3_below_5.4
+RO,RO311,Argeş,lake,,3,3,wd:Q18541230,Călțun Lake,floor_pool,score_4.5_below_5.4
+RO,RO311,Argeş,lake,,3,3,wd:Q511976,Lake Vidraru,floor_pool,score_4.4_below_5.4
+RO,RO311,Argeş,lake,,3,3,wd:Q113291245,Lacul Turcești,score_gate,score_3.9_below_5.4
+RS,RS211,Zlatiborska oblast,lake,,5,3,wd:Q932846,Perućac lake,floor_pool,score_5.2_below_5.4
+RS,RS211,Zlatiborska oblast,lake,,5,3,wd:Q207138,Zlatar Lake,floor_pool,score_4.9_below_5.4
+RS,RS211,Zlatiborska oblast,lake,,5,3,wd:Q1888646,Uvac,photo_gate,imgs_5
+RS,RS212,Kolubarska oblast,lake,,3,3,wd:Q20435113,Petnica Lake,score_gate,score_3.9_below_5.4
+RS,RS212,Kolubarska oblast,lake,,3,3,wd:Q23198806,Rovni Lake,score_gate,score_3.7_below_5.4
+RS,RS212,Kolubarska oblast,lake,,3,3,wd:Q25464923,Каменичко језеро,photo_gate,imgs_1
+RS,RS213,Mačvanska oblast,lake,,3,3,wd:Q231499,Zvornik Lake,floor_pool,score_4.6_below_5.4
+RS,RS213,Mačvanska oblast,lake,,3,3,wd:Q8075597,Zvorničko Lake,photo_gate,imgs_2
+RS,RS213,Mačvanska oblast,lake,,3,3,wd:Q231499,Zvornik Lake,floor_pool,score_4.4_below_5.4
+RO,RO112,Bistriţa-Năsăud,lake,,3,3,wd:Q65040386,Stiol Lake,floor_pool,score_4.6_below_5.4
+RO,RO112,Bistriţa-Năsăud,lake,,3,3,wd:Q18541225,Colibița Lake,floor_pool,score_4.0_below_5.4
+RO,RO112,Bistriţa-Năsăud,lake,,3,3,wd:Q18538892,Lacul Cetățele,photo_gate,imgs_0
+RO,RO411,Dolj,lake,,3,3,wd:Q18537675,Balta Cilieni - Băilești,photo_gate,imgs_0
+RO,RO411,Dolj,lake,,3,3,wd:Q18539162,Complexul lacustru Preajba-Făcăi,photo_gate,imgs_0
+RO,RO411,Dolj,lake,,3,3,wd:Q18547410,Rezervația Balta Neagră,photo_gate,imgs_1
+RS,RS214,Moravička oblast,lake,,3,3,wd:Q25458795,Međuvršje Lake,floor_pool,score_4.8_below_5.4
+RS,RS214,Moravička oblast,lake,,3,3,wd:Q16087664,Ovčar-Kablar Lake,floor_pool,score_4.2_below_5.4
+RS,RS214,Moravička oblast,lake,,3,3,wd:Q6984568,Nebeska Suza,photo_gate,imgs_0
+RO,RO113,Cluj,lake,,3,3,wd:Q13534398,Lake Tarnița,score_gate,score_3.9_below_5.4
+RO,RO113,Cluj,lake,,3,3,wd:Q874738,Lacul Știucilor,score_gate,score_3.6_below_5.4
+RO,RO113,Cluj,lake,,3,3,wd:Q24699117,Laguna albastră,score_gate,score_3.5_below_5.4
+RS,RS218,Šumadijska oblast,lake,,3,3,wd:Q1551157,Gruža Lake,floor_pool,score_4.5_below_5.4
+RS,RS218,Šumadijska oblast,lake,,3,3,wd:Q31183913,Bela Reka Lake,photo_gate,imgs_5
+RS,RS218,Šumadijska oblast,lake,,3,3,wd:Q853607,Garaško Lake,photo_gate,imgs_2
+RS,RS221,Borska oblast,lake,,3,3,wd:Q12749214,Bor Lake,floor_pool,score_5.2_below_5.4
+RS,RS221,Borska oblast,lake,,3,3,wd:Q110045209,Balta alu Šontu,photo_gate,imgs_3
+RS,RS221,Borska oblast,lake,,3,3,wd:Q102128024,Златно језеро,photo_gate,imgs_3
+PT,PT196,Beiras e Serra da Estrela,lake,,3,3,wd:Q34918735,Vale do Rossim Reservoir,floor_pool,score_5.2_below_5.4
+PT,PT196,Beiras e Serra da Estrela,lake,,3,3,wd:Q64750749,Covão dos Conchos,floor_pool,score_5.1_below_5.4
+PT,PT196,Beiras e Serra da Estrela,lake,,3,3,wd:Q35724446,Lagoa Comprida,score_gate,score_3.9_below_5.4
+RO,RO415,Vâlcea,lake,,3,3,wd:Q10998051,Lacul Călcescu,floor_pool,score_5.0_below_5.4
+RO,RO415,Vâlcea,lake,,3,3,wd:Q599713,Vidra Lake,floor_pool,score_4.2_below_5.4
+RO,RO415,Vâlcea,lake,,3,3,wd:Q6684848,Lotru-Ciunget Hydroelectric Power Station,photo_gate,imgs_0
+RO,RO214,Neamţ,lake,,3,3,wd:Q854060,Lake Izvorul Muntelui,floor_pool,score_4.0_below_5.4
+RO,RO214,Neamţ,lake,,3,3,wd:Q18541241,Lacul Pângărați,score_gate,score_3.3_below_5.4
+RO,RO214,Neamţ,lake,,3,3,wd:Q12731892,Lacul Vaduri,score_gate,score_3.3_below_5.4
+RO,RO422,Caraş-Severin,lake,,3,3,wd:Q12737039,Ochiul Beiului,floor_pool,score_4.7_below_5.4
+RO,RO422,Caraş-Severin,lake,,3,3,wd:Q18541231,Lacul Dracului,photo_gate,imgs_5
+RO,RO422,Caraş-Severin,lake,,3,3,wd:Q7349794,Ruieni Hydroelectric Power Station,photo_gate,imgs_0
+RO,RO124,Harghita,lake,,3,3,wd:Q924912,Lake Sfânta Ana,floor_pool,score_5.2_below_5.4
+RO,RO124,Harghita,lake,,3,3,wd:Q1029508,Red Lake,score_gate,score_3.9_below_5.4
+RO,RO124,Harghita,lake,,3,3,wd:Q18541242,Lacul Rat,photo_gate,imgs_0
+RO,RO222,Buzău,lake,,3,3,wd:Q18537674,Balta Amară,photo_gate,imgs_0
+RO,RO222,Buzău,lake,,3,3,wd:Q6469069,Lacul Vulturilor,score_gate,score_3.8_below_5.4
+RO,RO222,Buzău,lake,,3,3,wd:Q6272651,Lake Siriu,score_gate,score_3.6_below_5.4
+PT,PT1D3,Lezíria do Tejo,lake,,3,3,wd:Q10366992,Salinas da Fonte da Bica,floor_pool,score_5.3_below_5.4
+PT,PT1D3,Lezíria do Tejo,lake,,3,3,wd:Q34799330,Magos Reservoir,floor_pool,score_4.6_below_5.4
+PT,PT1D3,Lezíria do Tejo,lake,,3,3,wd:Q34868710,Albufeira do Peso,photo_gate,imgs_0
+PL,PL426,Koszaliński,lake,,3,3,wd:Q1681471,Jamno,floor_pool,score_5.1_below_5.4
+PL,PL426,Koszaliński,lake,,3,3,wd:Q753573,Jezioro Bukowo,floor_pool,score_4.8_below_5.4
+PL,PL426,Koszaliński,lake,,3,3,wd:Q1688792,Wicko,floor_pool,score_4.3_below_5.4
+SE,SE122,Södermanlands län,lake,,4,3,wd:Q3360880,Duveholmssjön,photo_gate,imgs_2
+SE,SE122,Södermanlands län,lake,,4,3,wd:Q1019336,Båven,floor_pool,score_5.2_below_5.4
+SE,SE122,Södermanlands län,lake,,4,3,wd:Q3361714,Yngaren,floor_pool,score_4.4_below_5.4
+RS,RS223,Zaječarska oblast,lake,,3,3,wd:Q121484312,Glogovica Lake,photo_gate,imgs_1
+RS,RS223,Zaječarska oblast,lake,,3,3,wd:Q25464638,Врмџанско језеро,photo_gate,imgs_5
+RS,RS223,Zaječarska oblast,lake,,3,3,wd:Q16084324,Grlište Lake,score_gate,score_3.9_below_5.4
+RS,RS225,Nišavska oblast,lake,,3,3,wd:Q895342,Bovansko Jezero,floor_pool,score_4.7_below_5.4
+RS,RS225,Nišavska oblast,lake,,3,3,wd:Q12756401,Облачинско језеро,photo_gate,imgs_2
+RS,RS225,Nišavska oblast,lake,,3,3,wd:Q16087169,Крајковачко језеро,photo_gate,imgs_2
+RS,RS228,Pčinjska oblast,lake,,3,3,wd:Q2140169,Vlasina Lake,floor_pool,score_5.2_below_5.4
+RS,RS228,Pčinjska oblast,lake,,3,3,wd:Q15994134,Jovac Lake,floor_pool,score_4.6_below_5.4
+RS,RS228,Pčinjska oblast,lake,,3,3,wd:Q12748252,Aleksandrovačko Jezero,photo_gate,imgs_0
+SI,SI041,Osrednjeslovenska,lake,,3,3,wd:Q6433068,Koseze Pond,floor_pool,score_4.4_below_5.4
+SI,SI041,Osrednjeslovenska,lake,,3,3,wd:Q12798990,Lake Podpeč,floor_pool,score_4.0_below_5.4
+SI,SI041,Osrednjeslovenska,lake,,3,3,wd:Q1394710,Lake Gradišče,score_gate,score_3.8_below_5.4
+SI,SI042,Gorenjska,lake,,5,3,wd:Q4921144,Black Lake,floor_pool,score_4.8_below_5.4
+SI,SI042,Gorenjska,lake,,5,3,wd:Q2659969,Lake Jasna,floor_pool,score_4.7_below_5.4
+SI,SI042,Gorenjska,lake,,5,3,wd:Q15241352,Lake Trboje,floor_pool,score_4.7_below_5.4
+XK,XK001,Prishtinë,lake,,3,3,wd:Q810843,Batllava Lake,floor_pool,score_4.7_below_5.4
+XK,XK001,Prishtinë,lake,,3,3,wd:Q810843,Batllava Lake,floor_pool,score_5.1_below_5.4
+XK,XK001,Prishtinë,lake,,3,3,wd:Q799675,Badoc Lake,floor_pool,score_4.7_below_5.4
+XK,XK002,Mitrovicë,lake,,3,3,wd:Q1479905,Gazivoda Lake,floor_pool,score_5.2_below_5.4
+XK,XK002,Mitrovicë,lake,,3,3,wd:Q1479905,Gazivoda Lake,floor_pool,score_5.3_below_5.4
+XK,XK002,Mitrovicë,lake,,3,3,wd:Q60500131,Mitrovica Lake,floor_pool,score_4.7_below_5.4
+XK,XK006,Gjilan,lake,,3,3,wd:Q6659809,Livoç Lake,photo_gate,imgs_3
+XK,XK006,Gjilan,lake,,3,3,wd:Q7242993,Prilepnica Lake,photo_gate,imgs_0
+XK,XK006,Gjilan,lake,,3,3,wd:Q7353450,Robovac Lake,photo_gate,imgs_0
+GB,TLL32,Gwynedd,lake,,5,3,wd:Q1335466,Llyn Tegid,floor_pool,score_5.3_below_5.4
+GB,TLL32,Gwynedd,lake,,5,3,wd:Q3086201,Llyn Llydaw,floor_pool,score_5.1_below_5.4
+GB,TLL32,Gwynedd,lake,,5,3,wd:Q3401781,Llyn Peris,floor_pool,score_5.1_below_5.4
+GB,TLM13,City of Edinburgh,lake,,3,3,wd:Q1263637,Duddingston Loch,score_gate,score_3.9_below_5.4
+GB,TLM13,City of Edinburgh,lake,,3,3,wd:Q4327251,Nor Loch,score_gate,score_3.8_below_5.4
+GB,TLM13,City of Edinburgh,lake,,3,3,wd:Q7352059,Threipmuir Reservoir,score_gate,score_3.8_below_5.4
+GB,TLM50,Aberdeen City and Aberdeenshire,lake,,3,3,wd:Q6664930,Loch Kinord,floor_pool,score_5.2_below_5.4
+GB,TLM50,Aberdeen City and Aberdeenshire,lake,,3,3,wd:Q18736999,Loch Davan,floor_pool,score_4.4_below_5.4
+GB,TLM50,Aberdeen City and Aberdeenshire,lake,,3,3,wd:Q6664986,Loch Muick,floor_pool,score_4.2_below_5.4
+MD,MD-MD-CA,Cahul,lake,,3,3,wd:Q16653023,Lacul Manta,floor_pool,score_4.9_below_5.4
+MD,MD-MD-CA,Cahul,lake,,3,3,wd:Q571052,Lake Beleu,floor_pool,score_4.2_below_5.4
+MD,MD-MD-CA,Cahul,lake,,3,3,wd:Q12102338,Lacul Dracele,photo_gate,imgs_1
+AD,AD-AD-02,Canillo,lake,,4,3,wd:Q21330594,Estany de Baix,floor_pool,score_4.8_below_5.4
+AD,AD-AD-02,Canillo,lake,,4,3,wd:Q21329944,Estany dels Meners de la Coma,floor_pool,score_4.7_below_5.4
+AD,AD-AD-02,Canillo,lake,,4,3,wd:Q21330009,Estany Mort,floor_pool,score_4.6_below_5.4
+AD,AD-AD-08,Escaldes-Engordany,lake,,3,3,wd:Q21329190,Estany de la Bova,floor_pool,score_5.2_below_5.4
+AD,AD-AD-08,Escaldes-Engordany,lake,,3,3,wd:Q21330406,Estany de Serra Mitjana,floor_pool,score_4.9_below_5.4
+AD,AD-AD-08,Escaldes-Engordany,lake,,3,3,wd:Q115579665,els Estanyons,floor_pool,score_4.8_below_5.4
+AT,AT126,Wiener Umland/Nordteil,lake,,2,2,wd:Q351321,Wienerwaldsee,floor_pool,score_4.7_below_5.4
+AT,AT226,Westliche Obersteiermark,lake,,2,2,wd:Q738742,Ingeringsee,floor_pool,score_5.3_below_5.4
+AT,AT311,Innviertel,lake,,2,2,wd:Q1644057,Höllerersee,country_cap,rank_65
+AT,AT321,Lungau,lake,,2,2,wd:Q21864930,Prebersee,country_cap,rank_87
+AT,AT341,Bludenz-Bregenzer Wald,lake,,3,2,wd:Q659123,Lünersee,country_cap,rank_79
+AT,AT341,Bludenz-Bregenzer Wald,lake,,3,2,wd:Q701705,Formarinsee,floor_pool,score_4.9_below_5.4
+AT,AT341,Bludenz-Bregenzer Wald,lake,,3,2,wd:Q877346,Silvretta Reservoir,floor_pool,score_4.9_below_5.4
+BE,BE100,Arr. de Bruxelles-Capitale/Arr. Brussel-Hoofdstad,lake,,2,2,wd:Q1073360,Ixelles Ponds,floor_pool,score_4.7_below_5.4
+BE,BE100,Arr. de Bruxelles-Capitale/Arr. Brussel-Hoofdstad,lake,,2,2,wd:Q56854583,lake in Bois de la Cambre,floor_pool,score_4.0_below_5.4
+BE,BE212,Arr. Mechelen,lake,,3,2,wd:Q2632521,De Nekker,photo_gate,imgs_0
+BE,BE212,Arr. Mechelen,lake,,3,2,wd:Q2475871,Eglegemvijver,photo_gate,imgs_5
+AT,AT331,Außerfern,lake,,4,2,wd:Q688460,Heiterwanger See,country_cap,rank_66
+AT,AT331,Außerfern,lake,,4,2,wd:Q2500790,Urisee,country_cap,rank_82
+AT,AT331,Außerfern,lake,,4,2,wd:Q575489,Plansee,floor_pool,score_5.2_below_5.4
+AT,AT333,Osttirol,lake,,2,2,wd:Q2454164,Tristacher See,floor_pool,score_5.0_below_5.4
+BE,BE258,Arr. Veurne,lake,,2,2,wd:Q3370008,Ganzepoot,floor_pool,score_4.7_below_5.4
+BE,BE310,Arr. Nivelles,lake,,2,2,wd:Q764863,Lake Genval,floor_pool,score_5.2_below_5.4
+BE,BE223,Arr. Tongeren,lake,,2,2,wd:Q67604479,Ven onder de Berg,photo_gate,imgs_0
+BE,BE224,Arr. Hasselt,lake,,2,2,wd:Q2544471,Schulensmeer,floor_pool,score_5.1_below_5.4
+BE,BE234,Arr. Gent,lake,,3,2,wd:Q539055,Kraenepoel,floor_pool,score_4.7_below_5.4
+BE,BE234,Arr. Gent,lake,,3,2,wd:Q2572524,Leeuwenhof,floor_pool,score_4.6_below_5.4
+BE,BE234,Arr. Gent,lake,,3,2,wd:Q2347208,Damvallei,floor_pool,score_4.6_below_5.4
+BE,BE241,Arr. Halle-Vilvoorde,lake,,2,2,wd:Q21767849,Hofstademeer,photo_gate,imgs_0
+BE,BE242,Arr. Leuven,lake,,2,2,wd:Q21771393,Vijvers van Bellefroid,floor_pool,score_4.0_below_5.4
+BE,BE242,Arr. Leuven,lake,,2,2,wd:Q23993492,Meer van Keerbergen,photo_gate,imgs_0
+BE,BE252,Arr. Diksmuide,lake,,2,2,wd:Q21770339,Blankaart,floor_pool,score_4.0_below_5.4
+BE,BE336,Bezirk Verviers — Deutschsprachige Gemeinschaft,lake,,3,2,wd:Q20107824,Casinoweiher,floor_pool,score_4.7_below_5.4
+BE,BE336,Bezirk Verviers — Deutschsprachige Gemeinschaft,lake,,3,2,wd:Q165395,Dam of the Vesdre,photo_gate,imgs_5
+BE,BE336,Bezirk Verviers — Deutschsprachige Gemeinschaft,lake,,3,2,wd:Q57316998,Thommer Weiher,score_gate,score_3.6_below_5.4
+BE,BE341,Arr. Arlon,lake,,2,2,wd:Q16508539,Lac de Messancy,floor_pool,score_4.4_below_5.4
+BE,BE353,Arr. Philippeville,lake,,2,2,wd:Q2885430,Lake Ry de Rome,floor_pool,score_4.3_below_5.4
+BG,BG311,Vidin,lake,,2,2,wd:Q6477472,Lake Rabisha,floor_pool,score_5.1_below_5.4
+BG,BG311,Vidin,lake,,2,2,wd:Q19705965,Kula Lake,photo_gate,imgs_0
+BG,BG312,Montana,lake,,2,2,wd:Q6395879,Ogosta Reservoir,floor_pool,score_4.5_below_5.4
+BE,BE343,Arr. Marche-en-Famenne,lake,,2,2,wd:Q2094247,Lake Nisramont,floor_pool,score_4.9_below_5.4
+BE,BE345,Arr. Virton,lake,,2,2,wd:Q1933210,Lac de la Vierre,photo_gate,imgs_0
+BE,BE345,Arr. Virton,lake,,2,2,wd:Q21768765,Étang des Épioux,photo_gate,imgs_0
+BE,BE351,Arr. Dinant,lake,,2,2,wd:Q21770367,Étang de Boiron,photo_gate,imgs_5
+BE,BE352,Arr. Namur,lake,,2,2,wd:Q660847,Meer van Bambois,photo_gate,imgs_3
+BG,BG325,Silistra,lake,,2,2,wd:Q12294882,Srebarna lake,floor_pool,score_4.1_below_5.4
+BG,BG315,Lovech,lake,,2,2,wd:Q12294182,Sopot,floor_pool,score_4.4_below_5.4
+BG,BG322,Gabrovo,lake,,2,2,wd:Q19707872,Христо Смирненски,photo_gate,imgs_0
+BG,BG324,Razgrad,lake,,2,2,wd:Q12273102,Beli Lom,photo_gate,imgs_0
+BG,BG342,Sliven,lake,,2,2,wd:Q12280199,Zhrebchevo Reservoir,floor_pool,score_5.2_below_5.4
+BG,BG343,Yambol,lake,,2,2,wd:Q12285754,Malko Sharkovo Reservoir,photo_gate,imgs_0
+BG,BG411,Sofia (stolitsa),lake,,4,2,wd:Q655144,Lake Ariana,floor_pool,score_5.3_below_5.4
+BG,BG411,Sofia (stolitsa),lake,,4,2,wd:Q20498888,Дружбенско езеро,photo_gate,imgs_5
+BG,BG411,Sofia (stolitsa),lake,,4,2,wd:Q45028642,Boyana Lake,floor_pool,score_4.8_below_5.4
+BG,BG333,Shumen,lake,,2,2,wd:Q6395899,Ticha Reservoir,floor_pool,score_5.3_below_5.4
+BG,BG334,Targovishte,lake,,2,2,wd:Q12299810,Yastrebino reservoir,photo_gate,imgs_2
+BG,BG424,Smolyan,lake,,3,2,wd:Q12294094,Smolyan Lakes,floor_pool,score_5.3_below_5.4
+BG,BG424,Smolyan,lake,,3,2,wd:Q104806720,Tsankov Kamak Reservoir,floor_pool,score_4.7_below_5.4
+BG,BG424,Smolyan,lake,,3,2,wd:Q21786711,Plovdivtsi reservoir,photo_gate,imgs_4
+BG,BG425,Kardzhali,lake,,3,2,wd:Q21778153,Studen Kladenets reservoir,photo_gate,imgs_1
+BG,BG425,Kardzhali,lake,,3,2,wd:Q12273810,Borovitsa Reservoir,photo_gate,imgs_1
+BG,BG414,Pernik,lake,,2,2,wd:Q12295731,Studena Reservoir,floor_pool,score_4.1_below_5.4
+BG,BG414,Pernik,lake,,2,2,wd:Q12291777,Pchelina Reservoir,floor_pool,score_4.1_below_5.4
+CH,CH023,Solothurn,lake,,2,2,wd:Q689876,lake Burgäschi (prehistoric lakeside settlement),floor_pool,score_4.7_below_5.4
+CH,CH011,Vaud,lake,,3,2,wd:Q2741317,Lac des Chavonnes,floor_pool,score_4.5_below_5.4
+CH,CH011,Vaud,lake,,3,2,wd:Q680900,Lac de l'Hongrin,floor_pool,score_4.4_below_5.4
+CH,CH057,Thurgau,lake,,2,2,wd:Q2309428,Nussbaumersee,floor_pool,score_4.7_below_5.4
+CZ,CZ031,Jihočeský kraj,lake,,4,2,wd:Q1183075,Dehtář,floor_pool,score_5.0_below_5.4
+CZ,CZ031,Jihočeský kraj,lake,,4,2,wd:Q23824342,Vodní nádrž Landštejn,floor_pool,score_4.8_below_5.4
+CZ,CZ031,Jihočeský kraj,lake,,4,2,wd:Q8556873,Římov Reservoir,floor_pool,score_4.7_below_5.4
+CH,CH062,Uri,lake,,3,2,wd:Q5822088,Oberalpsee,floor_pool,score_4.9_below_5.4
+CH,CH062,Uri,lake,,3,2,wd:Q43176,Göscheneralpsee,floor_pool,score_4.8_below_5.4
+CH,CH062,Uri,lake,,3,2,wd:Q2386062,Arnisee,floor_pool,score_4.8_below_5.4
+CH,CH064,Obwalden,lake,,3,2,wd:Q14505,Lake Sarnen,floor_pool,score_5.0_below_5.4
+CH,CH064,Obwalden,lake,,3,2,wd:Q675997,Melchsee,floor_pool,score_4.9_below_5.4
+CH,CH064,Obwalden,lake,,3,2,wd:Q14527,Lungerersee,floor_pool,score_4.2_below_5.4
+CZ,CZ071,Olomoucký kraj,lake,,4,2,wd:Q11706445,Bázlerova pískovna,photo_gate,imgs_1
+CZ,CZ071,Olomoucký kraj,lake,,4,2,wd:Q1076006,Chomoutovské jezero,floor_pool,score_5.1_below_5.4
+CZ,CZ071,Olomoucký kraj,lake,,4,2,wd:Q11812583,Horní nádrž Dlouhé Stráně,floor_pool,score_4.9_below_5.4
+DE,DEE05,Anhalt-Bitterfeld,lake,,2,2,wd:Q1123435,Goitzsche,country_cap,rank_91
+DE,DE80M,Nordwestmecklenburg,lake,,2,2,,,,
+DE,DE946,Ammerland,lake,,2,2,wd:Q59578,Zwischenahner Meer,country_cap,rank_94
+DE,DED2D,Görlitz,lake,,2,2,wd:Q159885,Bärwalder See,country_cap,rank_74
+DE,DE916,Goslar,lake,,2,2,wd:Q519907,Upper Harz Water Regale,country_cap,rank_61
+DE,DEA1B,Kleve,lake,,2,2,wd:Q2480125,Wylermeer,photo_gate,imgs_5
+DE,DE228,"Passau, Landkreis",lake,,2,2,wd:Q1477256,Rannasee,country_cap,rank_81
+DE,DE804,"Schwerin, Kreisfreie Stadt",lake,,2,2,wd:Q1398428,Fauler See,country_cap,rank_82
+DE,DE404,"Potsdam, Kreisfreie Stadt",lake,,2,2,wd:Q181494,Jungfernsee,country_cap,rank_101
+DE,DE40B,Oberspreewald-Lausitz,lake,,2,2,wd:Q149660,Senftenberger See,country_cap,rank_68
+DE,DE40E,Potsdam-Mittelmark,lake,,2,2,wd:Q318313,Lake Schwielowsee,country_cap,rank_95
+DE,DE40E,Potsdam-Mittelmark,lake,,2,2,wd:Q1548824,Großer Plessower See,country_cap,rank_112
+DE,DE149,Sigmaringen,lake,,2,2,wd:Q1259117,Illmensee,country_cap,rank_65
+DE,DE215,Berchtesgadener Land,lake,,3,2,wd:Q334574,Abtsdorfer See,country_cap,rank_66
+DE,DE215,Berchtesgadener Land,lake,,3,2,wd:Q156715,Königssee,country_cap,rank_99
+DE,DE215,Berchtesgadener Land,lake,,3,2,wd:Q1619819,Hintersee (Ramsauer Ache),floor_pool,score_4.9_below_5.4
+DE,DE40I,Uckermark,lake,,2,2,wd:Q826366,Oberuckersee,country_cap,rank_62
+DE,DE40I,Uckermark,lake,,2,2,wd:Q826780,Unteruckersee,country_cap,rank_92
+DE,DE21L,Starnberg,lake,,3,2,wd:Q180006,Pilsensee,country_cap,rank_78
+DE,DE21L,Starnberg,lake,,3,2,wd:Q1504459,Weßlinger See,country_cap,rank_83
+DE,DE21L,Starnberg,lake,,3,2,wd:Q2596558,Wörthsee,country_cap,rank_100
+ES,ES120,Asturias,lake,,4,2,wd:Q3395708,Ría de Avilés,country_cap,rank_67
+ES,ES120,Asturias,lake,,4,2,wd:Q2477016,Lagos de Covadonga,country_cap,rank_78
+ES,ES120,Asturias,lake,,4,2,wd:Q5195553,Lake Enol,country_cap,rank_80
+GR,EL642,Evvoia,lake,,3,2,wd:Q15057273,Lake Dystos,photo_gate,imgs_0
+GR,EL642,Evvoia,lake,,3,2,wd:Q25536172,Mikro and Megalo Livari lagoons,photo_gate,imgs_0
+GR,EL644,Fthiotida,lake,,2,2,wd:Q24882405,Vromolimni,photo_gate,imgs_0
+GR,EL644,Fthiotida,lake,,2,2,wd:Q16328259,Lake Xynias,photo_gate,imgs_0
+ES,ES424,Guadalajara,lake,,2,2,wd:Q8775330,Entrepeñas Reservoir,country_cap,rank_82
+GR,EL645,Fokida,lake,,2,2,wd:Q12880041,Lake Mornos,floor_pool,score_4.7_below_5.4
+ES,ES415,Salamanca,lake,,2,2,wd:Q43551868,Aldeadávila Reservoir,floor_pool,score_4.7_below_5.4
+GR,EL652,Korinthia,lake,,3,2,wd:Q14752068,Λίμνη Βουλιαγμένη,photo_gate,imgs_5
+GR,EL652,Korinthia,lake,,3,2,wd:Q3565135,Lake Doxa,floor_pool,score_5.3_below_5.4
+GR,EL653,"Lakonia, Messinia",lake,,3,2,wd:Q122854193,Gerakas Bay,floor_pool,score_4.6_below_5.4
+GR,EL653,"Lakonia, Messinia",lake,,3,2,wd:Q112034093,Lake Dopoli,photo_gate,imgs_1
+ES,ES417,Soria,lake,,2,2,wd:Q5969113,Black Lake of Urbión,floor_pool,score_4.3_below_5.4
+ES,ES112,Lugo,lake,,2,2,,,,
+ES,ES113,Ourense,lake,,2,2,wd:Q101897658,Chandrexa Reservoir,country_cap,rank_93
+ES,ES113,Ourense,lake,,2,2,wd:Q130299006,Salas River Reservoir,floor_pool,score_4.0_below_5.4
+ES,ES419,Zamora,lake,,3,2,wd:Q43562577,Miranda Reservoir,floor_pool,score_4.5_below_5.4
+ES,ES419,Zamora,lake,,3,2,wd:Q43563904,Bemposta Reservoir,floor_pool,score_4.5_below_5.4
+ES,ES419,Zamora,lake,,3,2,wd:Q43563251,Picote Reservoir,floor_pool,score_4.5_below_5.4
+GR,EL631,Aitoloakarnania,lake,,5,2,wd:Q2987510,Ozeros,floor_pool,score_5.1_below_5.4
+GR,EL631,Aitoloakarnania,lake,,5,2,wd:Q1365911,Kastraki lake,floor_pool,score_5.1_below_5.4
+GR,EL631,Aitoloakarnania,lake,,5,2,wd:Q15057313,Voulkaria,photo_gate,imgs_3
+GR,EL531,"Grevena, Kozani",lake,,2,2,wd:Q12880045,Lake Polyfytos,photo_gate,imgs_5
+GR,EL532,Kastoria,lake,,3,2,wd:Q24910377,Lake Gkistova,photo_gate,imgs_5
+GR,EL532,Kastoria,lake,,3,2,wd:Q105071378,Moutsalia,floor_pool,score_4.3_below_5.4
+GR,EL543,Ioannina,lake,,4,2,wd:Q12880038,Lake Aoos,photo_gate,imgs_3
+GR,EL543,Ioannina,lake,,4,2,wd:Q24896731,Zaravina Lake,floor_pool,score_4.7_below_5.4
+GR,EL543,Ioannina,lake,,4,2,wd:Q122231266,Drakolimni of Smolikas,floor_pool,score_4.6_below_5.4
+GR,EL542,Thesprotia,lake,,2,2,wd:Q56512353,Lake Kalodiki,floor_pool,score_5.1_below_5.4
+DK,DK012,Københavns omegn,lake,,4,2,wd:Q125575877,Raadvad Dam,floor_pool,score_5.2_below_5.4
+DK,DK012,Københavns omegn,lake,,4,2,wd:Q11971796,Gentofte Lake,floor_pool,score_4.2_below_5.4
+DK,DK012,Københavns omegn,lake,,4,2,wd:Q12325248,Lyngby Lake,floor_pool,score_4.2_below_5.4
+GR,EL431,Irakleio,lake,,2,2,wd:Q122416681,Lake Zaros,floor_pool,score_4.5_below_5.4
+GR,EL431,Irakleio,lake,,2,2,wd:Q72187481,Aposelemis lake,photo_gate,imgs_3
+DE,DEF07,Nordfriesland,lake,,2,2,wd:Q27554878,Rudbøl Lake,floor_pool,score_4.1_below_5.4
+GR,EL433,Rethymni,lake,,2,2,wd:Q18629933,Potamoi lake,photo_gate,imgs_5
+DE,DEF08,Ostholstein,lake,,3,2,wd:Q314836,Großer Eutiner See,country_cap,rank_72
+DE,DEF08,Ostholstein,lake,,3,2,wd:Q884355,Dieksee,country_cap,rank_105
+DE,DEF08,Ostholstein,lake,,3,2,wd:Q453834,Kellersee,country_cap,rank_110
+GR,EL511,Evros,lake,,2,2,wd:Q65241523,Λίμνη Νυμφών,photo_gate,imgs_0
+DE,DEF0B,Rendsburg-Eckernförde,lake,,2,2,wd:Q897089,Wittensee,country_cap,rank_98
+DE,DEF0C,Schleswig-Flensburg,lake,,2,2,wd:Q896799,Haddebyer Noor,country_cap,rank_114
+GR,EL514,Drama,lake,,2,2,wd:Q12880043,Platanovrysi lake,photo_gate,imgs_0
+GR,EL514,Drama,lake,,2,2,wd:Q15057367,Thisavros lake,floor_pool,score_4.5_below_5.4
+EE,EE004,Lääne-Eesti,lake,,6,2,wd:Q12364485,Inahamne,floor_pool,score_5.0_below_5.4
+EE,EE004,Lääne-Eesti,lake,,6,2,wd:Q3367282,Mullutu-Suurlaht,photo_gate,imgs_0
+EE,EE004,Lääne-Eesti,lake,,6,2,wd:Q3743829,Sutlepa meri,photo_gate,imgs_1
+DE,DEF0D,Segeberg,lake,,2,2,wd:Q1273880,Großer Segeberger See,country_cap,rank_87
+GR,EL521,Imathia,lake,,2,2,wd:Q15057364,Lake Asomaton,photo_gate,imgs_2
+GR,EL523,Kilkis,lake,,3,2,wd:Q53996668,Skra lake,floor_pool,score_4.7_below_5.4
+GR,EL523,Kilkis,lake,,3,2,wd:Q15057378,Mine Lake,photo_gate,imgs_5
+GR,EL524,Pella,lake,,3,2,wd:Q12279886,Giannitsa Lake,photo_gate,imgs_0
+GR,EL524,Pella,lake,,3,2,wd:Q12880034,Lake Agra,floor_pool,score_5.3_below_5.4
+EE,EE00A,Kirde-Eesti,lake,,3,2,wd:Q6478195,Lake Uljaste,floor_pool,score_4.3_below_5.4
+EE,EE00A,Kirde-Eesti,lake,,3,2,wd:Q7034460,Lake Niinsaare,floor_pool,score_4.2_below_5.4
+EE,EE00A,Kirde-Eesti,lake,,3,2,wd:Q6476486,Lake Konsu,score_gate,score_3.8_below_5.4
+GR,EL525,Pieria,lake,,2,2,wd:Q125999262,Kitros Salt Ponds,photo_gate,imgs_0
+GR,EL525,Pieria,lake,,2,2,wd:Q38128452,Lake Kati,photo_gate,imgs_2
+GR,EL306,Dytiki Attiki,lake,,2,2,wd:Q1785564,Koumoundourou lake,photo_gate,imgs_1
+FR,FRE21,Aisne,lake,,2,2,wd:Q3215411,Lac de l'Ailette,floor_pool,score_5.3_below_5.4
+FR,FRC12,Nièvre,lake,,3,2,wd:Q392278,Lac des Settons,country_cap,rank_63
+FR,FRC12,Nièvre,lake,,3,2,wd:Q3215531,Lac de Saint-Agnan,country_cap,rank_79
+FR,FRC12,Nièvre,lake,,3,2,wd:Q3591784,Étangs de Vaux et de Baye,country_cap,rank_82
+FR,FRC14,Yonne,lake,,2,2,wd:Q3215699,Lac du Bourdon,country_cap,rank_86
+FR,FRF11,Bas-Rhin,lake,,2,2,wd:Q771407,Lac du Baggersee,country_cap,rank_67
+FI,FI1D8,Kainuu,lake,,4,2,wd:Q6482080,Lammasjärvi,floor_pool,score_5.2_below_5.4
+FI,FI1D8,Kainuu,lake,,4,2,wd:Q7362705,Sapsojärvet,photo_gate,imgs_5
+FI,FI1D8,Kainuu,lake,,4,2,wd:Q1346212,Kiantajärvi,floor_pool,score_4.5_below_5.4
+FR,FR101,Paris,lake,,3,2,wd:Q2659603,lac des Minimes,floor_pool,score_4.4_below_5.4
+FR,FR101,Paris,lake,,3,2,wd:Q2659121,lac Daumesnil,floor_pool,score_4.3_below_5.4
+FR,FR101,Paris,lake,,3,2,wd:Q2574917,lac de Gravelle,floor_pool,score_4.1_below_5.4
+FI,FI1D9,Pohjois-Pohjanmaa,lake,,3,2,wd:Q18120518,Lämsänjärvi,floor_pool,score_5.0_below_5.4
+FI,FI1D9,Pohjois-Pohjanmaa,lake,,3,2,wd:Q1657988,Iijärvi,floor_pool,score_4.6_below_5.4
+FI,FI1D9,Pohjois-Pohjanmaa,lake,,3,2,wd:Q1346949,Muojärvi,photo_gate,imgs_5
+FI,FI1C7,Kymenlaakso,lake,,2,2,wd:Q2535480,Vuohijärvi,photo_gate,imgs_5
+FI,FI1C7,Kymenlaakso,lake,,2,2,wd:Q2119554,Pyhäjärvi,floor_pool,score_4.5_below_5.4
+FI,FI1D5,Keski-Pohjanmaa,lake,,2,2,wd:Q1762943,Lestijärvi,floor_pool,score_4.4_below_5.4
+FI,FI1C1,Varsinais-Suomi,lake,,2,2,wd:Q18327238,Mynäjärvi,photo_gate,imgs_5
+ES,ES617,Málaga,lake,,2,2,wd:Q5507199,Fuente de Piedra Lagoon,country_cap,rank_83
+ES,ES521,Alicante/Alacant,lake,,3,2,wd:Q5658339,Salinas de Santa Pola Natural Park,country_cap,rank_74
+ES,ES521,Alicante/Alacant,lake,,3,2,wd:Q201592,Tibi Reservoir,floor_pool,score_4.7_below_5.4
+ES,ES522,Castellón/Castelló,lake,,2,2,wd:Q202052,Ulldecona Reservoir,floor_pool,score_5.1_below_5.4
+ES,ES523,Valencia/València,lake,,2,2,wd:Q84165268,Albufera of Valencia,floor_pool,score_4.2_below_5.4
+FI,FI1C6,Päijät-Häme,lake,,3,2,wd:Q533040,Ruotsalainen,photo_gate,imgs_1
+FI,FI1C6,Päijät-Häme,lake,,3,2,wd:Q474661,Jääsjärvi,floor_pool,score_5.1_below_5.4
+FI,FI1C6,Päijät-Häme,lake,,3,2,wd:Q1781821,Konnivesi,floor_pool,score_4.4_below_5.4
+FI,FI199,Etelä-Pohjanmaa,lake,,3,2,wd:Q6445275,Kuortaneenjärvi,photo_gate,imgs_5
+FI,FI199,Etelä-Pohjanmaa,lake,,3,2,wd:Q593020,Lake Evijärvi,floor_pool,score_4.2_below_5.4
+HR,HR028,Sisačko-moslavačka županija,lake,,2,2,wd:Q212927,Una,floor_pool,score_4.8_below_5.4
+HR,HR028,Sisačko-moslavačka županija,lake,,2,2,wd:Q26223166,Mala Toka,photo_gate,imgs_0
+HR,HR033,Zadarska županija,lake,,3,2,wd:Q25503258,Mir lake,floor_pool,score_5.2_below_5.4
+HR,HR033,Zadarska županija,lake,,3,2,wd:Q12627490,Babića jezero,floor_pool,score_4.0_below_5.4
+HU,HU221,Győr-Moson-Sopron,lake,,2,2,wd:Q1219384,Nyirkai-Hany,photo_gate,imgs_5
+HU,HU221,Győr-Moson-Sopron,lake,,2,2,wd:Q26231615,Nádas-tó,photo_gate,imgs_0
+HU,HU222,Vas,lake,,2,2,wd:Q26233522,Hársas-tó,floor_pool,score_5.0_below_5.4
+HU,HU222,Vas,lake,,2,2,wd:Q66310118,Vadása-tó,photo_gate,imgs_2
+HU,HU223,Zala,lake,,3,2,wd:Q1031271,Gébárti Lake,photo_gate,imgs_0
+HU,HU223,Zala,lake,,3,2,wd:Q141108427,Lake Borostyán,floor_pool,score_4.9_below_5.4
+HU,HU223,Zala,lake,,3,2,wd:Q134296122,Lake Zalacsány,floor_pool,score_4.1_below_5.4
+HR,HR032,Ličko-senjska županija,lake,,5,2,wd:Q11104157,Batinovac,photo_gate,imgs_0
+HR,HR032,Ličko-senjska županija,lake,,5,2,wd:Q55965229,Vir,photo_gate,imgs_5
+HR,HR032,Ličko-senjska županija,lake,,5,2,wd:Q55965148,Veliko jezero,photo_gate,imgs_3
+HU,HU231,Baranya,lake,,4,2,wd:Q721786,Lake Dombay,floor_pool,score_4.7_below_5.4
+HU,HU231,Baranya,lake,,4,2,wd:Q26231347,Riha-tó,photo_gate,imgs_0
+HU,HU231,Baranya,lake,,4,2,wd:Q95160613,Lake Barátúr,floor_pool,score_4.5_below_5.4
+HR,HR064,Krapinsko-zagorska županija,lake,,2,2,wd:Q12627739,Bedekovčanska jezera,floor_pool,score_4.6_below_5.4
+FR,FRY50,Mayotte ,lake,,2,2,wd:Q2893122,Dziani Dzaha,country_cap,rank_91
+HU,HU212,Komárom-Esztergom,lake,,3,2,wd:Q26233158,Lake Cseke,photo_gate,imgs_0
+HU,HU212,Komárom-Esztergom,lake,,3,2,wd:Q831616,Lake Öreg,floor_pool,score_4.7_below_5.4
+HU,HU212,Komárom-Esztergom,lake,,3,2,wd:Q26230952,Környei-tó,floor_pool,score_4.3_below_5.4
+FR,FRJ25,Lot,lake,,2,2,wd:Q3215738,Lac du Tolerme,country_cap,rank_74
+FR,FRJ27,Tarn,lake,,2,2,wd:Q3215717,Lac du Laouzas,country_cap,rank_66
+FR,FRF34,Vosges,lake,,3,2,wd:Q1414641,Lac de Longemer,country_cap,rank_68
+FR,FRF34,Vosges,lake,,3,2,wd:Q3215474,Lac de Lispach,country_cap,rank_80
+FR,FRF34,Vosges,lake,,3,2,wd:Q1553818,Lac de Retournemer,country_cap,rank_93
+FR,FRH04,Morbihan,lake,,2,2,wd:Q3215459,Lake Guerlédan,country_cap,rank_78
+FR,FRJ15,Pyrénées-Orientales,lake,,4,2,wd:Q2038362,Étang de Leucate,country_cap,rank_87
+FR,FRJ15,Pyrénées-Orientales,lake,,4,2,wd:Q3215480,Lac de Matemale,country_cap,rank_97
+FR,FRJ15,Pyrénées-Orientales,lake,,4,2,wd:Q21328903,estany de Font Negra,floor_pool,score_5.3_below_5.4
+FR,FRF24,Haute-Marne,lake,,2,2,wd:Q3215639,Lac de Villegusien,floor_pool,score_5.3_below_5.4
+FR,FRF31,Meurthe-et-Moselle ,lake,,2,2,wd:Q3215514,Lac de Pierre-Percée,country_cap,rank_76
+FR,FRJ23,Haute-Garonne,lake,,2,2,wd:Q929191,Bassin de Saint-Ferréol,country_cap,rank_71
+IT,ITG2D,Sassari,lake,,2,2,wd:Q946242,Lago di Baratz,country_cap,rank_76
+IT,ITG2G,Oristano,lake,,2,2,wd:Q878556,Lake Omodeo,floor_pool,score_4.6_below_5.4
+IT,ITI34,Ascoli Piceno,lake,,2,2,wd:Q1059016,Lago di Pilato,country_cap,rank_74
+IT,ITH10,Bolzano-Bozen,lake,,4,2,wd:Q1249840,Reschensee,country_cap,rank_69
+IT,ITH10,Bolzano-Bozen,lake,,4,2,wd:Q2536415,Völser Weiher,country_cap,rank_73
+IT,ITH10,Bolzano-Bozen,lake,,4,2,wd:Q1403974,Felixer Weiher,country_cap,rank_83
+LT,LT023,Klaipėdos apskritis,lake,,2,2,wd:Q6438828,Krokų Lanka,floor_pool,score_5.1_below_5.4
+LT,LT023,Klaipėdos apskritis,lake,,2,2,wd:Q12027740,Kalotės Lake,floor_pool,score_4.4_below_5.4
+IT,ITH33,Belluno,lake,,3,2,wd:Q3825925,Lago di Centro Cadore,country_cap,rank_86
+IT,ITH33,Belluno,lake,,3,2,wd:Q1800433,Lago di Santa Croce,country_cap,rank_92
+IT,ITH33,Belluno,lake,,3,2,wd:Q1177961,Lake Misurina,floor_pool,score_4.7_below_5.4
+IT,ITH56,Ferrara,lake,,2,2,wd:Q1891671,Valli di Comacchio,country_cap,rank_90
+IT,ITG12,Palermo,lake,,2,2,wd:Q1800431,Lago di Piana degli Albanesi,floor_pool,score_5.1_below_5.4
+IT,ITI12,Lucca,lake,,2,2,wd:Q1236114,Lago di Massaciuccoli,floor_pool,score_4.8_below_5.4
+IT,ITH35,Venezia,lake,,2,2,wd:Q3826136,Laguna del Mort,country_cap,rank_65
+IT,ITG16,Enna,lake,,2,2,wd:Q1800432,Pergusa Lake,country_cap,rank_64
+IT,ITH41,Pordenone,lake,,2,2,wd:Q3825909,Barcis,country_cap,rank_103
+IT,ITI18,Arezzo,lake,,2,2,wd:Q3215490,Lago di Montedoglio,country_cap,rank_101
+IT,ITC20,Valle d’Aosta/Vallée d’Aoste,lake,,2,2,wd:Q3215066,Lake Misérin,country_cap,rank_97
+IT,ITC43,Lecco,lake,,2,2,wd:Q63172,Lago di Annone,country_cap,rank_78
+IT,ITF61,Cosenza,lake,,2,2,wd:Q3825664,Lago Cecita,country_cap,rank_94
+IT,ITF61,Cosenza,lake,,2,2,wd:Q3825626,Lake Arvo,country_cap,rank_100
+IT,ITF62,Crotone,lake,,2,2,wd:Q2885882,Lago Ampollino,floor_pool,score_4.9_below_5.4
+IE,IE052,South-East ,lake,,2,2,wd:Q6469864,Lady's Island Lake,photo_gate,imgs_1
+IE,IE052,South-East ,lake,,2,2,wd:Q26715337,Tacumshin Lake,photo_gate,imgs_1
+HU,HU321,Hajdú-Bihar,lake,,2,2,wd:Q26228673,Sós Víz,photo_gate,imgs_0
+HU,HU321,Hajdú-Bihar,lake,,2,2,wd:Q26229524,Hortobágyi víztároló,photo_gate,imgs_0
+HU,HU322,Jász-Nagykun-Szolnok,lake,,2,2,wd:Q112301181,Tiszaroffi árapasztó tározó,photo_gate,imgs_2
+IE,IE061,Dublin,lake,,2,2,wd:Q883906,Blessington Street Basin,floor_pool,score_4.1_below_5.4
+HU,HU331,Bács-Kiskun,lake,,5,2,wd:Q986825,Lake Déllő,photo_gate,imgs_0
+HU,HU331,Bács-Kiskun,lake,,5,2,wd:Q1109106,Király-tó,photo_gate,imgs_0
+HU,HU331,Bács-Kiskun,lake,,5,2,wd:Q912703,Dávodi Földvári-tó természetvédelmi terület,photo_gate,imgs_0
+HU,HU332,Békés,lake,,2,2,wd:Q26230209,Biharugra Fishponds,photo_gate,imgs_0
+HU,HU332,Békés,lake,,2,2,wd:Q60154662,Lake Fehér at Kardoskút,photo_gate,imgs_0
+HU,HU332,Békés,lake,,2,2,wd:Q25466068,Bányató,photo_gate,imgs_0
+IT,ITC16,Cuneo,lake,,2,2,wd:Q508045,Lago del Chiotas,country_cap,rank_98
+IT,ITC18,Alessandria,lake,,2,2,wd:Q779394,Lago della Busalletta,photo_gate,imgs_0
+PL,PL225,Bielski,lake,,2,2,wd:Q393265,Żywiec Lake,floor_pool,score_4.7_below_5.4
+NO,NO093,Vestfold,lake,,2,2,wd:Q3356675,Farris,floor_pool,score_4.7_below_5.4
+NO,NO093,Vestfold,lake,,2,2,wd:Q1773385,Goksjø,floor_pool,score_4.3_below_5.4
+NO,NO0A1,Rogaland,lake,,2,2,wd:Q1785536,Suldalsvatnet,score_gate,score_3.9_below_5.4
+PL,PL214,Krakowski,lake,,2,2,wd:Q7376603,Lake Dobczyce,floor_pool,score_5.2_below_5.4
+NO,NO0A3,Møre og Romsdal,lake,,2,2,wd:Q1303816,Eikesdalsvatnet,floor_pool,score_5.2_below_5.4
+NO,NO073,Finnmark/Finnmárku/Finmarkku,lake,,2,2,wd:Q3845329,Iešjávri,floor_pool,score_4.1_below_5.4
+NL,NL416,Noordoost-Noord-Brabant,lake,,3,2,wd:Q2126790,Zuiderplas,country_cap,rank_68
+NL,NL416,Noordoost-Noord-Brabant,lake,,3,2,wd:Q2024867,Oosterplas,photo_gate,imgs_5
+NL,NL416,Noordoost-Noord-Brabant,lake,,3,2,wd:Q2128774,IJzeren Vrouw,floor_pool,score_5.3_below_5.4
+NO,NO020,Innlandet,lake,,8,2,wd:Q668788,Øvre Sjodalsvatnet,floor_pool,score_5.2_below_5.4
+NO,NO020,Innlandet,lake,,8,2,wd:Q1773089,Breiddalsvatnet,floor_pool,score_5.2_below_5.4
+NO,NO020,Innlandet,lake,,8,2,wd:Q6513598,Rauddalsvatn,floor_pool,score_5.1_below_5.4
+NL,NL127,Noord-Friesland,lake,,3,2,wd:Q26203772,Badhuiskuil,floor_pool,score_5.1_below_5.4
+NL,NL127,Noord-Friesland,lake,,3,2,wd:Q26201533,Dune lake of Hee,floor_pool,score_5.1_below_5.4
+NL,NL128,Zuidwest-Friesland,lake,,4,2,wd:Q1593475,Hegemer Mar,country_cap,rank_61
+NL,NL128,Zuidwest-Friesland,lake,,4,2,wd:Q20622961,Noarderie,country_cap,rank_74
+NL,NL128,Zuidwest-Friesland,lake,,4,2,wd:Q1884151,Fluessen,floor_pool,score_5.1_below_5.4
+NL,NL133,Zuidwest-Drenthe,lake,,2,2,wd:Q2020030,Blauwe Meer,photo_gate,imgs_2
+NL,NL226,Arnhem/Nijmegen,lake,,2,2,wd:Q26722546,Bisonbaai,photo_gate,imgs_1
+NL,NL341,Zeeuwsch-Vlaanderen,lake,,2,2,wd:Q2753274,Braakman,photo_gate,imgs_0
+NL,NL363,Agglomeratie Leiden en Bollenstreek,lake,,3,2,wd:Q2009052,Braassemermeer,country_cap,rank_76
+NL,NL363,Agglomeratie Leiden en Bollenstreek,lake,,3,2,wd:Q3217046,Noord Aa,photo_gate,imgs_5
+NL,NL363,Agglomeratie Leiden en Bollenstreek,lake,,3,2,wd:Q1924933,Valkenburgse Meer,floor_pool,score_5.1_below_5.4
+NL,NL366,Groot-Rijnmond,lake,,4,2,wd:Q2784602,Bergse Plassen,country_cap,rank_72
+NL,NL366,Groot-Rijnmond,lake,,4,2,wd:Q1923898,Binnenbedijkte Maas,country_cap,rank_73
+NL,NL366,Groot-Rijnmond,lake,,4,2,wd:Q2335564,Zevenhuizerplas,country_cap,rank_78
+PT,PT300,Região Autónoma da Madeira,lake,,2,2,wd:Q131414381,Barragem do Pico da Urze,floor_pool,score_4.0_below_5.4
+RO,RO312,Călăraşi,lake,,2,2,wd:Q12731886,Lake Sărulești,floor_pool,score_4.1_below_5.4
+RO,RO312,Călăraşi,lake,,2,2,wd:Q18539789,Dorobanț Lake,floor_pool,score_4.1_below_5.4
+RO,RO111,Bihor,lake,,2,2,wd:Q12731852,Lacul Cicoș,photo_gate,imgs_0
+RO,RO111,Bihor,lake,,2,2,wd:Q7311762,Remeți Hydroelectric Power Station,photo_gate,imgs_1
+RO,RO313,Dâmboviţa,lake,,2,2,wd:Q18549561,Scropoasa Reservoir,floor_pool,score_4.7_below_5.4
+RO,RO313,Dâmboviţa,lake,,2,2,wd:Q12731842,Bolboci Reservoir,floor_pool,score_4.1_below_5.4
+RO,RO412,Gorj,lake,,2,2,wd:Q12714019,Lake Ceauru,photo_gate,imgs_0
+RO,RO412,Gorj,lake,,2,2,wd:Q98086394,Lacul Valea lui Iovan,score_gate,score_2.8_below_5.4
+RO,RO315,Ialomiţa,lake,,2,2,wd:Q12731832,Lake Amara,floor_pool,score_4.7_below_5.4
+RO,RO413,Mehedinţi,lake,,2,2,wd:Q1313598,Lake Đerdap,photo_gate,imgs_5
+RO,RO413,Mehedinţi,lake,,2,2,wd:Q1313598,Lake Đerdap,photo_gate,imgs_5
+RS,RS216,Rasinska oblast,lake,,2,2,wd:Q12747964,Ћелије (језеро),photo_gate,imgs_1
+RS,RS216,Rasinska oblast,lake,,2,2,wd:Q35712761,Jezero Ćelije,score_gate,score_3.6_below_5.4
+RS,RS217,Raška oblast,lake,,2,2,wd:Q12758768,Semeteško jezero,floor_pool,score_4.6_below_5.4
+RO,RO116,Sălaj,lake,,2,2,wd:Q6478343,Lake Vârșolț,photo_gate,imgs_0
+RO,RO213,Iaşi,lake,,2,2,wd:Q12731833,Aroneanu Lake,floor_pool,score_4.2_below_5.4
+RO,RO213,Iaşi,lake,,2,2,wd:Q12731855,Ciurbești Lake,score_gate,score_3.9_below_5.4
+RO,RO421,Arad,lake,,2,2,wd:Q6475988,Lake Ghioroc,floor_pool,score_4.1_below_5.4
+RO,RO421,Arad,lake,,2,2,wd:Q12721459,Balta Șoimoș,score_gate,score_3.8_below_5.4
+RO,RO122,Braşov,lake,,2,2,wd:Q12731902,Țigănești Lake,photo_gate,imgs_2
+RO,RO122,Braşov,lake,,2,2,wd:Q111079690,Urlea Lake,photo_gate,imgs_1
+PT,PT1C2,Baixo Alentejo,lake,,2,2,wd:Q8775414,Chança dam,floor_pool,score_4.7_below_5.4
+PT,PT1C2,Baixo Alentejo,lake,,2,2,wd:Q130536607,Albufeira de Monte Clérigo,floor_pool,score_4.6_below_5.4
+RO,RO123,Covasna,lake,,2,2,wd:Q1253091,Lacul Reci,score_gate,score_3.5_below_5.4
+RO,RO423,Hunedoara,lake,,3,2,wd:Q873977,Cinciș Lake,floor_pool,score_4.4_below_5.4
+RO,RO423,Hunedoara,lake,,3,2,wd:Q7349800,Râul Mare Hydroelectric Power Station,photo_gate,imgs_0
+RO,RO423,Hunedoara,lake,,3,2,wd:Q302019,Lacul Zănoaga Mare,score_gate,score_2.8_below_5.4
+RO,RO221,Brăila,lake,,2,2,wd:Q31909307,Balta Albă,photo_gate,imgs_0
+PT,PT1C3,Alto Alentejo,lake,,2,2,wd:Q49324291,Praia Fluvial do Alamal,floor_pool,score_5.0_below_5.4
+PT,PT1C4,Alentejo Central,lake,,3,2,wd:Q34919282,Alvito Reservoir,photo_gate,imgs_2
+PT,PT1C4,Alentejo Central,lake,,3,2,wd:Q108094410,Fonte e Lago do Gadanha,floor_pool,score_4.5_below_5.4
+PT,PT1C4,Alentejo Central,lake,,3,2,wd:Q133295700,Lago dos Cardeais,photo_gate,imgs_3
+RO,RO125,Mureş,lake,,2,2,wd:Q855254,Bözödi Lake,score_gate,score_3.8_below_5.4
+RO,RO125,Mureş,lake,,2,2,wd:Q1175336,Lake Ursu,score_gate,score_3.3_below_5.4
+RO,RO223,Constanţa,lake,,4,2,wd:Q35721844,Lacul Tabacarie,photo_gate,imgs_5
+RO,RO223,Constanţa,lake,,4,2,wd:Q12731840,Lake Bugeac,photo_gate,imgs_0
+RO,RO223,Constanţa,lake,,4,2,wd:Q5551525,Lake Tașaul,floor_pool,score_4.3_below_5.4
+RS,RS122,Južnobanatska oblast,lake,,2,2,wd:Q2812890,Bela Crkva lakes,floor_pool,score_4.7_below_5.4
+RO,RO224,Galaţi,lake,,2,2,wd:Q12731850,Brateș Lake,floor_pool,score_4.9_below_5.4
+RO,RO224,Galaţi,lake,,2,2,wd:Q23827026,Lacul Cătușa,photo_gate,imgs_2
+RS,RS125,Severnobačka oblast,lake,,3,2,wd:Q2744326,Ludaš Lake,floor_pool,score_5.2_below_5.4
+RS,RS125,Severnobačka oblast,lake,,3,2,wd:Q31181922,Zobnatičko jezero,photo_gate,imgs_5
+RS,RS126,Srednjobanatska oblast,lake,,3,2,wd:Q7361170,Rusanda,floor_pool,score_4.4_below_5.4
+RS,RS126,Srednjobanatska oblast,lake,,3,2,wd:Q279300,Belo jezero,photo_gate,imgs_5
+RS,RS126,Srednjobanatska oblast,lake,,3,2,wd:Q15997781,Okanj,photo_gate,imgs_0
+PL,PL518,Wrocławski,lake,,2,2,wd:Q11726570,Mietkowski Lake,floor_pool,score_4.2_below_5.4
+PL,PL912,Warszawski wschodni,lake,,2,2,wd:Q184467,Zegrze Reservoir,floor_pool,score_4.9_below_5.4
+PL,PL923,Płocki,lake,,2,2,wd:Q11726963,Jezioro Zdworskie,floor_pool,score_5.1_below_5.4
+PL,PL923,Płocki,lake,,2,2,wd:Q7371646,Włocławek Reservoir,floor_pool,score_4.5_below_5.4
+PL,PL713,Piotrkowski,lake,,2,2,wd:Q779428,Sulejowski Reservoir,floor_pool,score_4.1_below_5.4
+PL,PL427,Szczecinecko-pyrzycki,lake,,3,2,wd:Q1550966,Wielimie,country_cap,rank_72
+PL,PL427,Szczecinecko-pyrzycki,lake,,3,2,wd:Q5242990,Karwowo Lake,floor_pool,score_4.4_below_5.4
+PL,PL427,Szczecinecko-pyrzycki,lake,,3,2,wd:Q738182,Jezioro Lubie,floor_pool,score_4.0_below_5.4
+PT,PT111,Alto Minho,lake,,2,2,wd:Q63378362,Bertiandos and S. Pedro of Arcos Lagoons,floor_pool,score_5.0_below_5.4
+PL,PL633,Trójmiejski,lake,,2,2,wd:Q16563147,Jezioro Zajęcze,photo_gate,imgs_5
+PT,PT11A,Área Metropolitana do Porto,lake,,2,2,wd:Q7376576,Lagoa da Pedreira,photo_gate,imgs_5
+PL,PL812,Chełmsko-zamojski,lake,,2,2,wd:Q9386383,Nielisz Lake,country_cap,rank_76
+PT,PT11B,Alto Tâmega e Barroso,lake,,2,2,wd:Q34797779,Albufera do Alto Rabagao,floor_pool,score_4.8_below_5.4
+PT,PT11C,Tâmega e Sousa,lake,,2,2,wd:Q140371477,Carrapatelo Reservoir,photo_gate,imgs_5
+PT,PT11C,Tâmega e Sousa,lake,,2,2,wd:Q140371502,Crestuma-Lever Reservoir,photo_gate,imgs_5
+PL,PL814,Lubelski,lake,,2,2,wd:Q6475844,Lake Firlej,photo_gate,imgs_2
+PL,PL636,Słupski,lake,,2,2,wd:Q345353,Łebsko Lake,country_cap,rank_64
+PL,PL636,Słupski,lake,,2,2,wd:Q1688781,Lake Gardno,country_cap,rank_66
+SE,SE224,Skåne län,lake,,3,2,wd:Q1478637,Vombsjön,floor_pool,score_4.4_below_5.4
+SE,SE224,Skåne län,lake,,3,2,wd:Q10534731,Lake Immeln,floor_pool,score_4.3_below_5.4
+RS,RS224,Jablanička oblast,lake,,2,2,wd:Q12747651,Језеро Барје,photo_gate,imgs_1
+RS,RS224,Jablanička oblast,lake,,2,2,wd:Q16011732,Брестовачко језеро,photo_gate,imgs_1
+RS,RS227,Podunavska oblast,lake,,2,2,wd:Q31182491,Кусадачко језеро,photo_gate,imgs_5
+SE,SE332,Norrbottens län,lake,,5,2,wd:Q1238168,Vásstenjávrre,photo_gate,imgs_5
+SE,SE332,Norrbottens län,lake,,5,2,wd:Q1969324,Virihaure,floor_pool,score_5.3_below_5.4
+SE,SE332,Norrbottens län,lake,,5,2,wd:Q419614,Akkajaure,floor_pool,score_5.2_below_5.4
+SE,SE231,Hallands län,lake,,2,2,wd:Q3269287,Lygnern,floor_pool,score_4.9_below_5.4
+RS,RS229,Toplička oblast,lake,,2,2,wd:Q61123047,Блачко језеро,photo_gate,imgs_0
+SI,SI033,Koroška,lake,,2,2,wd:Q12791717,Ivarčko jezero,photo_gate,imgs_1
+SI,SI033,Koroška,lake,,2,2,wd:Q12787880,Lake Dravograd,score_gate,score_3.2_below_5.4
+SI,SI037,Jugovzhodna Slovenija,lake,,2,2,wd:Q12800527,Lake Kočevje,floor_pool,score_4.4_below_5.4
+SI,SI044,Obalno-kraška,lake,,3,2,wd:Q12805246,Vanganelsko jezero,photo_gate,imgs_5
+SI,SI044,Obalno-kraška,lake,,3,2,wd:Q60360454,Vodni rezervoar,photo_gate,imgs_5
+XK,XK003,Pejë,lake,,3,2,wd:Q6650632,Little Lake Lićenat,photo_gate,imgs_5
+XK,XK003,Pejë,lake,,3,2,wd:Q65315738,Lumbardh Lake,photo_gate,imgs_0
+GB,TLC42,Northumberland,lake,,2,2,wd:Q1630735,Kielder Water,floor_pool,score_4.4_below_5.4
+GB,TLC42,Northumberland,lake,,2,2,wd:Q5604294,Greenlee Lough,floor_pool,score_4.1_below_5.4
+GB,TLE22,North Yorkshire,lake,,2,2,wd:Q1225708,Malham Tarn,floor_pool,score_4.3_below_5.4
+GB,TLF13,South and West Derbyshire,lake,,2,2,wd:Q1800100,Ladybower Reservoir,score_gate,score_3.7_below_5.4
+GB,TLF22,Leicestershire CC and Rutland,lake,,2,2,wd:Q822190,Rutland Water,floor_pool,score_4.8_below_5.4
+GB,TLH34,Essex Haven Gateway,lake,,2,2,wd:Q4663930,Abberton Reservoir,floor_pool,score_4.1_below_5.4
+GB,TLH51,Norwich and East Norfolk,lake,,2,2,wd:Q6744907,Malthouse Broad,score_gate,score_3.9_below_5.4
+GB,TLH52,North and West Norfolk,lake,,2,2,wd:Q7329742,Hickling Broad,floor_pool,score_4.1_below_5.4
+GB,TLI35,Westminster and City of London,lake,,2,2,wd:Q1471930,Serpentine,score_gate,score_3.9_below_5.4
+GB,TLJ25,West Surrey,lake,,2,2,wd:Q7347669,Virginia Water Lake,floor_pool,score_4.2_below_5.4
+GB,TLJ25,West Surrey,lake,,2,2,wd:Q7270464,Queen Mary Reservoir,floor_pool,score_4.2_below_5.4
+GB,TLK30,Cornwall and Isles of Scilly,lake,,2,2,,,,
+GB,TLK52,Bath & North East Somerset and South Gloucestershire,lake,,2,2,wd:Q3044337,Chew Valley Lake,score_gate,score_3.9_below_5.4
+GB,TLK64,Dorset,lake,,2,2,wd:Q3845366,Radipole Lake,floor_pool,score_4.4_below_5.4
+GB,TLL31,Isle of Anglesey,lake,,2,2,wd:Q124312,Llyn Cerrig Bach,floor_pool,score_4.4_below_5.4
+GB,TLL33,Conwy and Denbighshire,lake,,2,2,wd:Q13129733,Llyn Bochlwyd,floor_pool,score_4.8_below_5.4
+GB,TLL41,Mid Wales,lake,,2,2,wd:Q2704839,Llangorse Lake,floor_pool,score_4.2_below_5.4
+GB,TLL41,Mid Wales,lake,,2,2,wd:Q2248798,Lake Vyrnwy,floor_pool,score_4.0_below_5.4
+GB,TLL42,South West Wales,lake,,2,2,wd:Q3397034,Llyn y Fan Fach,floor_pool,score_4.5_below_5.4
+GB,TLL42,South West Wales,lake,,2,2,wd:Q107716444,Pembroke River upper,score_gate,score_3.0_below_5.4
+GB,TLM11,East Lothian and Midlothian,lake,,2,2,wd:Q5568275,Glencorse Reservoir,floor_pool,score_4.2_below_5.4
+GB,TLM11,East Lothian and Midlothian,lake,,2,2,wd:Q6667276,Loganlea Reservoir,score_gate,score_3.5_below_5.4
+GB,TLM14,West Lothian,lake,,2,2,wd:Q5663476,Harperrig Reservoir,score_gate,score_3.5_below_5.4
+GB,TLM33,"Inverclyde, East Renfrewshire, and Renfrewshire",lake,,2,2,wd:Q1049507,Castle Semple Loch,score_gate,score_3.6_below_5.4
+GB,TLN0D,Antrim and Newtownabbey,lake,,2,2,wd:Q206942,Lough Neagh,floor_pool,score_4.8_below_5.4
+UA,UA-74538382B21863106612225,Rozdilna,lake,,2,2,wd:Q2651567,Cuciurgan Reservoir,floor_pool,score_4.5_below_5.4
+MD,MD-MD-GA,Gagauzia,lake,,2,2,wd:Q30247654,Tarakliyskoye Vodokhranilishche,photo_gate,imgs_0
+MD,MD-MD-CS,Causeni,lake,,2,2,wd:Q30247652,Lacul Liman,photo_gate,imgs_5
+MD,MD-MD-AN,Anenii Noi,lake,,2,2,wd:Q12731888,Lake Salas,floor_pool,score_4.1_below_5.4
+MD,MD-MD-SN,Transnistria,lake,,2,2,wd:Q19706988,Lacul Roșu,photo_gate,imgs_0
+MD,MD-MD-RI,RIscani,lake,,2,2,wd:Q3272045,Lacul de acumulare Costești-Stînca,floor_pool,score_4.5_below_5.4
+MD,MD-MD-RI,RIscani,lake,,2,2,wd:Q3272045,Lacul de acumulare Costești-Stînca,photo_gate,imgs_1
+AD,AD-AD-05,Ordino,lake,,3,2,wd:Q21329550,Estany Esbalçat,floor_pool,score_5.3_below_5.4
+AD,AD-AD-05,Ordino,lake,,3,2,wd:Q21329591,Estany de l'Estanyó,floor_pool,score_5.3_below_5.4
+AD,AD-AD-05,Ordino,lake,,3,2,wd:Q21329468,Estany de Creussans,floor_pool,score_4.8_below_5.4
+AL,AL015,Shkodër,lake,,5,1,wd:Q22011730,Keneta e Pertharjes,photo_gate,imgs_0
+AL,AL015,Shkodër,lake,,5,1,wd:Q5599406,Great Lake of Buni Jezercë,floor_pool,score_5.0_below_5.4
+AL,AL015,Shkodër,lake,,5,1,wd:Q22007584,Lake Vau i Dejës,floor_pool,score_4.7_below_5.4
+AT,AT122,Niederösterreich-Süd,lake,,2,1,,,,
+AT,AT222,Liezen,lake,,4,1,wd:Q760605,Augstsee,country_cap,rank_72
+AT,AT222,Liezen,lake,,4,1,wd:Q1468791,Putterersee,country_cap,rank_75
+AT,AT222,Liezen,lake,,4,1,wd:Q700688,Spechtensee,country_cap,rank_85
+AT,AT342,Rheintal-Bodenseegebiet,lake,,2,1,,,,
+BE,BE213,Arr. Turnhout,lake,,2,1,wd:Q106364052,Bootjesven,floor_pool,score_4.5_below_5.4
+AT,AT322,Pinzgau-Pongau,lake,,2,1,,,,
+AT,AT332,Innsbruck,lake,,3,1,wd:Q877320,Lake Lans,country_cap,rank_62
+AT,AT332,Innsbruck,lake,,3,1,wd:Q877038,Obernberger See,country_cap,rank_73
+AT,AT332,Innsbruck,lake,,3,1,wd:Q1525356,Natterer See,country_cap,rank_80
+AT,AT312,Linz-Wels,lake,,3,1,wd:Q2092165,Pichlinger See,photo_gate,imgs_5
+AT,AT313,Mühlviertel,lake,,2,1,,,,
+AT,AT314,Steyr-Kirchdorf,lake,,2,1,,,,
+BE,BE253,Arr. Ieper,lake,,2,1,wd:Q1978259,Zillebekevijver,floor_pool,score_4.6_below_5.4
+BE,BE254,Arr. Kortrijk,lake,,2,1,,,,
+BE,BE255,Arr. Oostende,lake,,2,1,wd:Q2454272,De Hoge Dijken,floor_pool,score_4.6_below_5.4
+BE,BE323,Arr. Mons,lake,,2,1,wd:Q21771863,Lac des Herbieres,photo_gate,imgs_4
+BE,BE232,Arr. Dendermonde,lake,,2,1,,,,
+BE,BE32D,Arr. Thuin,lake,,3,1,wd:Q3215575,Lake Virelles,floor_pool,score_5.0_below_5.4
+BG,BG321,Veliko Tarnovo,lake,,2,1,wd:Q7329993,Yovkovtsi,photo_gate,imgs_0
+BG,BG415,Kyustendil,lake,,5,1,wd:Q12274059,The Kidney,photo_gate,imgs_5
+BG,BG415,Kyustendil,lake,,5,1,wd:Q12273406,The Twin,photo_gate,imgs_5
+BG,BG415,Kyustendil,lake,,5,1,wd:Q21780848,Gorno Ribno Ezero,photo_gate,imgs_1
+BG,BG422,Haskovo,lake,,2,1,wd:Q12296829,Trakiets Reservoir,floor_pool,score_5.1_below_5.4
+CH,CH022,Fribourg / Freiburg,lake,,3,1,wd:Q670622,Lac de Schiffenen,floor_pool,score_5.2_below_5.4
+CH,CH024,Neuchâtel,lake,,2,1,,,,
+CH,CH033,Aargau,lake,,2,1,wd:Q680864,Klingnauer Stausee,floor_pool,score_4.9_below_5.4
+CH,CH070,Ticino,lake,,5,1,wd:Q668659,Lago di Vogorno,floor_pool,score_5.3_below_5.4
+CH,CH070,Ticino,lake,,5,1,wd:Q372407,Lago di Luzzone,floor_pool,score_5.1_below_5.4
+CH,CH070,Ticino,lake,,5,1,wd:Q164570,Lago Sfundau,floor_pool,score_4.9_below_5.4
+CH,CH061,Luzern,lake,,3,1,wd:Q14509,Lake Baldegg,floor_pool,score_5.1_below_5.4
+CH,CH061,Luzern,lake,,3,1,wd:Q14436,Lake Zug,floor_pool,score_4.9_below_5.4
+CH,CH061,Luzern,lake,,3,1,wd:Q16940,Rotsee,floor_pool,score_4.3_below_5.4
+CH,CH065,Nidwalden,lake,,2,1,,,,
+CH,CH066,Zug,lake,,2,1,,,,
+CZ,CZ053,Pardubický kraj,lake,,2,1,wd:Q3505514,Pastviny Reservoir,floor_pool,score_4.9_below_5.4
+CZ,CZ051,Liberecký kraj,lake,,3,1,wd:Q57241416,Mšeno Reservoir,floor_pool,score_5.1_below_5.4
+CZ,CZ051,Liberecký kraj,lake,,3,1,wd:Q11772802,Mechové jezírko,floor_pool,score_4.6_below_5.4
+CZ,CZ051,Liberecký kraj,lake,,3,1,wd:Q1166687,Souš Reservoir,floor_pool,score_4.5_below_5.4
+DE,DE138,Konstanz,lake,,3,1,wd:Q1772785,Mindelsee,country_cap,rank_70
+DE,DE138,Konstanz,lake,,3,1,wd:Q1533062,Gnadensee,country_cap,rank_75
+DE,DEB12,Ahrweiler,lake,,2,1,,,,
+DE,DEB24,Vulkaneifel,lake,,2,1,,,,
+DE,DEE04,Altmarkkreis Salzwedel,lake,,2,1,,,,
+DE,DE929,Region Hannover,lake,,2,1,wd:Q315045,Maschsee,country_cap,rank_73
+DE,DEE0B,Saalekreis,lake,,2,1,,,,
+DE,DE922,Diepholz,lake,,2,1,,,,
+DE,DEA23,"Köln, Kreisfreie Stadt",lake,,2,1,,,,
+DE,DED51,"Leipzig, Kreisfreie Stadt",lake,,2,1,wd:Q896548,Cospudener See,country_cap,rank_63
+DE,DEA5B,Soest,lake,,2,1,,,,
+DE,DE736,Waldeck-Frankenberg,lake,,2,1,,,,
+DE,DE27E,Oberallgäu,lake,,2,1,wd:Q1758050,Niedersonthofen Lake,country_cap,rank_89
+DE,DE40A,Oberhavel,lake,,2,1,wd:Q880361,Stolpsee,country_cap,rank_106
+DE,DE401,"Brandenburg an der Havel, Kreisfreie Stadt",lake,,3,1,wd:Q906698,Breitlingsee,country_cap,rank_64
+DE,DE401,"Brandenburg an der Havel, Kreisfreie Stadt",lake,,3,1,wd:Q635952,Beetzsee,floor_pool,score_5.2_below_5.4
+DE,DE40C,Oder-Spree,lake,,2,1,,,,
+DE,DE80J,Mecklenburgische Seenplatte,lake,,4,1,wd:Q523551,Fleesensee,country_cap,rank_69
+DE,DE80J,Mecklenburgische Seenplatte,lake,,4,1,wd:Q199102,Zierker See,country_cap,rank_80
+DE,DE80J,Mecklenburgische Seenplatte,lake,,4,1,wd:Q880079,Schmaler Luzin,country_cap,rank_81
+DE,DE405,Barnim,lake,,3,1,wd:Q1546908,Grimnitzsee,country_cap,rank_93
+DE,DE405,Barnim,lake,,3,1,wd:Q738483,Wandlitzer See,country_cap,rank_115
+DE,DE406,Dahme-Spreewald,lake,,2,1,wd:Q2407349,Teupitzer See,country_cap,rank_108
+DE,DE80K,Landkreis Rostock,lake,,2,1,,,,
+DE,DE25C,Weißenburg-Gunzenhausen,lake,,2,1,,,,
+DE,DE216,Bad Tölz-Wolfratshausen,lake,,2,1,wd:Q896990,Sylvensteinsee,country_cap,rank_77
+DE,DE21D,Garmisch-Partenkirchen,lake,,4,1,wd:Q808393,Barmsee,country_cap,rank_71
+DE,DE21D,Garmisch-Partenkirchen,lake,,4,1,wd:Q871535,Lautersee,country_cap,rank_102
+DE,DE21D,Garmisch-Partenkirchen,lake,,4,1,wd:Q1255560,Ferchensee,country_cap,rank_103
+DE,DE21E,Landsberg am Lech,lake,,2,1,,,,
+ES,ES423,Cuenca,lake,,2,1,,,,
+GR,EL643,Evrytania,lake,,2,1,,,,
+ES,ES300,Madrid,lake,,3,1,wd:Q3373807,Santillana reservoir,country_cap,rank_91
+ES,ES300,Madrid,lake,,3,1,wd:Q1329216,La Jarosa Reservoir,floor_pool,score_4.4_below_5.4
+ES,ES411,Ávila,lake,,2,1,wd:Q15075157,Laguna del Barco,floor_pool,score_4.5_below_5.4
+GR,EL651,"Argolida, Arkadia",lake,,2,1,wd:Q6469801,Ladon lake,photo_gate,imgs_0
+GR,EL611,"Karditsa, Trikala",lake,,2,1,wd:Q12880042,Lake Smokovo,floor_pool,score_5.1_below_5.4
+ES,ES211,Araba/Álava,lake,,2,1,wd:Q18286647,Valle Salado,floor_pool,score_4.8_below_5.4
+ES,ES213,Bizkaia,lake,,2,1,,,,
+GR,EL613,"Magnisia, Sporades",lake,,2,1,,,,
+GR,EL621,Zakynthos,lake,,2,1,,,,
+ES,ES220,Navarra,lake,,2,1,,,,
+ES,ES241,Huesca,lake,,4,1,wd:Q2791494,Ibón de Tebarray,country_cap,rank_64
+ES,ES241,Huesca,lake,,4,1,wd:Q1033116,Canelles Reservoir,country_cap,rank_71
+ES,ES241,Huesca,lake,,4,1,wd:Q1517048,Ibón de Estanés,floor_pool,score_5.3_below_5.4
+GR,EL633,Ileia,lake,,3,1,wd:Q15057381,Pinios Lake,photo_gate,imgs_3
+GR,EL641,Voiotia,lake,,2,1,wd:Q1234240,Lake Copais,photo_gate,imgs_1
+ES,ES422,Ciudad Real,lake,,2,1,,,,
+GR,EL527,Chalkidiki,lake,,2,1,,,,
+GR,EL421,"Kalymnos, Karpathos, Kasos, Kos, Rodos",lake,,2,1,,,,
+GR,EL411,"Lesvos, Limnos",lake,,2,1,wd:Q12873432,Aliki,photo_gate,imgs_0
+GR,EL422,"Andros, Thira, Kea - Kythnos, Milos, Mykonos, Naxos, Paros,  Syros, Tinos",lake,,3,1,wd:Q25166746,Αχιβαδολίμνη,photo_gate,imgs_5
+DE,DEF04,"Neumünster, Kreisfreie Stadt",lake,,2,1,,,,
+DK,DK014,Bornholm,lake,,2,1,wd:Q56240145,Pyritsøen,photo_gate,imgs_5
+DK,DK021,Østsjælland,lake,,2,1,,,,
+GR,EL434,Chania,lake,,3,1,,,,
+DE,DEF0A,Plön,lake,,3,1,wd:Q814516,Behler See,country_cap,rank_76
+DE,DEF0A,Plön,lake,,3,1,wd:Q884360,Höftsee,country_cap,rank_84
+DE,DEF0A,Plön,lake,,3,1,wd:Q454961,Kleiner Plöner See,country_cap,rank_113
+GR,EL512,Xanthi,lake,,2,1,wd:Q25133869,Lafrouda,photo_gate,imgs_0
+DK,DK031,Fyn,lake,,3,1,wd:Q10418435,Arreskov Lake,floor_pool,score_5.3_below_5.4
+DK,DK031,Fyn,lake,,3,1,wd:Q12341189,Vitsø Nor,floor_pool,score_5.3_below_5.4
+DK,DK031,Fyn,lake,,3,1,wd:Q29526114,Brændegård Lake,floor_pool,score_4.0_below_5.4
+DK,DK041,Vestjylland,lake,,6,1,wd:Q3435140,Stadil Fjord,photo_gate,imgs_1
+DK,DK041,Vestjylland,lake,,6,1,wd:Q23736703,Tange Sø,floor_pool,score_5.3_below_5.4
+DK,DK041,Vestjylland,lake,,6,1,wd:Q12342060,Ørslevkloster Lake,floor_pool,score_5.3_below_5.4
+FR,FRC21,Doubs,lake,,2,1,wd:Q605024,Lac de Remoray,country_cap,rank_65
+FR,FRC21,Doubs,lake,,2,1,wd:Q6467967,Lac de Malpas,country_cap,rank_90
+FR,FRC22,Jura,lake,,3,1,wd:Q64107,Lac de Vouglans,country_cap,rank_62
+FR,FRC22,Jura,lake,,3,1,wd:Q685526,Lac des Rousses,country_cap,rank_94
+FR,FRC23,Haute-Saône,lake,,2,1,,,,
+FR,FRF12,Haut-Rhin,lake,,3,1,wd:Q3246746,Schiessrothried,country_cap,rank_102
+FR,FRB03,Indre,lake,,2,1,,,,
+FI,FI1DA,Etelä-Savo,lake,,4,1,wd:Q1318014,Puula,floor_pool,score_4.7_below_5.4
+FI,FI1DA,Etelä-Savo,lake,,4,1,wd:Q1795204,Kyyvesi,floor_pool,score_4.7_below_5.4
+FI,FI1DA,Etelä-Savo,lake,,4,1,wd:Q6305393,Jukajärvi,floor_pool,score_4.6_below_5.4
+FR,FR107,Val-de-Marne,lake,,2,1,,,,
+FR,FRC11,Côte-d’Or,lake,,2,1,,,,
+FI,FI1C2,Kanta-Häme,lake,,3,1,wd:Q6445237,Kuohijärvi,floor_pool,score_4.4_below_5.4
+FI,FI1C2,Kanta-Häme,lake,,3,1,wd:Q6678652,Loppijärvi,floor_pool,score_4.1_below_5.4
+ES,ES613,Córdoba,lake,,2,1,wd:Q5369447,Iznájar Reservoir,floor_pool,score_5.1_below_5.4
+ES,ES614,Granada,lake,,3,1,wd:Q1032728,Canales Reservoir,floor_pool,score_5.1_below_5.4
+ES,ES614,Granada,lake,,3,1,wd:Q5369441,El Portillo Reservoir,floor_pool,score_5.1_below_5.4
+ES,ES616,Jaén,lake,,2,1,,,,
+ES,ES511,Barcelona,lake,,2,1,wd:Q1140094,Pantà de Sau,country_cap,rank_62
+ES,ES512,Girona,lake,,3,1,wd:Q7131952,Pantà de Darnius,country_cap,rank_92
+ES,ES512,Girona,lake,,3,1,wd:Q7131953,Susqueda Reservoir,floor_pool,score_4.8_below_5.4
+ES,ES620,Murcia,lake,,2,1,,,,
+FI,FI1C5,Etelä-Karjala,lake,,2,1,wd:Q1738152,Kivijärvi,floor_pool,score_5.2_below_5.4
+ES,ES531,Eivissa y Formentera,lake,,2,1,,,,
+FR,FRY10,Guadeloupe,lake,,2,1,,,,
+FR,FRK24,Isère,lake,,4,1,wd:Q3215502,Lac de Paladru,country_cap,rank_69
+FR,FRK24,Isère,lake,,4,1,wd:Q3215739,Sautet Lake,country_cap,rank_72
+FR,FRK24,Isère,lake,,4,1,wd:Q3219718,Lac du Lauvitel,country_cap,rank_88
+HR,HR031,Primorsko-goranska županija,lake,,3,1,wd:Q108776244,Njivice (jezero),photo_gate,imgs_0
+HR,HR031,Primorsko-goranska županija,lake,,3,1,wd:Q12640216,Potkoš,floor_pool,score_5.3_below_5.4
+HR,HR031,Primorsko-goranska županija,lake,,3,1,wd:Q3825969,Lokvarsko jezero,floor_pool,score_4.0_below_5.4
+FR,FRK27,Savoie,lake,,3,1,wd:Q1336068,Mont Cenis Lake,country_cap,rank_89
+FR,FRK12,Cantal,lake,,2,1,,,,
+FR,FRK13,Haute-Loire,lake,,2,1,,,,
+FR,FRL02,Hautes-Alpes ,lake,,2,1,wd:Q3215661,Lac des Estaris,country_cap,rank_104
+FR,FRL04,Bouches-du-Rhône,lake,,3,1,wd:Q288912,Étang de Berre,country_cap,rank_96
+FR,FRK21,Ain,lake,,3,1,wd:Q3215495,lac de Nantua,country_cap,rank_70
+FR,FRK21,Ain,lake,,3,1,wd:Q3215357,Lac de Barterand,country_cap,rank_75
+FR,FRK21,Ain,lake,,3,1,wd:Q3215450,Lac de Glandieu,country_cap,rank_84
+HU,HU110,Budapest,lake,,3,1,wd:Q84511078,Városliget Lake,floor_pool,score_5.0_below_5.4
+HU,HU110,Budapest,lake,,3,1,wd:Q106108479,Szilas lake,floor_pool,score_5.0_below_5.4
+FR,FRK22,Ardèche,lake,,2,1,,,,
+FR,FRM01,Corse-du-Sud,lake,,2,1,,,,
+HU,HU120,Pest,lake,,5,1,wd:Q26231614,Nádas-tó,photo_gate,imgs_5
+HU,HU120,Pest,lake,,5,1,wd:Q26258965,Házirét reservoir,floor_pool,score_4.9_below_5.4
+HU,HU120,Pest,lake,,5,1,wd:Q20439841,"Lake Jági, Pilisszentiván",floor_pool,score_4.8_below_5.4
+FR,FRM02,Haute-Corse,lake,,3,1,wd:Q24931487,Lac de Calca Tavulaghjiu,country_cap,rank_77
+FR,FRM02,Haute-Corse,lake,,3,1,wd:Q1578858,Lac de Capitellu,country_cap,rank_95
+FR,FRM02,Haute-Corse,lake,,3,1,wd:Q1799627,Lac de Melu,country_cap,rank_100
+FR,FRG01,Loire-Atlantique,lake,,2,1,,,,
+FR,FRF22,Aube,lake,,2,1,,,,
+FR,FRJ14,Lozère,lake,,2,1,wd:Q1348930,Lac de Naussac,country_cap,rank_85
+FR,FRF23,Marne,lake,,2,1,,,,
+FR,FRJ21,Ariège,lake,,2,1,wd:Q3023366,Étang de Lers,floor_pool,score_5.0_below_5.4
+FR,FRI12,Gironde,lake,,2,1,,,,
+FR,FRJ22,Aveyron,lake,,3,1,wd:Q3215481,Lac de Maury,country_cap,rank_81
+FR,FRF32,Meuse ,lake,,2,1,,,,
+FR,FRI22,Creuse,lake,,2,1,,,,
+IT,ITI22,Terni,lake,,2,1,,,,
+LV,LV00B,Kurzeme,lake,,6,1,wd:Q5248686,Kaņieris,floor_pool,score_5.2_below_5.4
+LV,LV00B,Kurzeme,lake,,6,1,wd:Q2340235,Lake Pape,floor_pool,score_5.2_below_5.4
+LV,LV00B,Kurzeme,lake,,6,1,wd:Q570564,Lake Engure,floor_pool,score_4.9_below_5.4
+IT,ITG2F,Cagliari,lake,,2,1,,,,
+IT,ITI42,Rieti,lake,,3,1,wd:Q3826045,Lago di Scandarello,country_cap,rank_77
+LT,LT022,Kauno apskritis,lake,,3,1,wd:Q14919038,Labūnava Reservoir,floor_pool,score_4.4_below_5.4
+LT,LT027,Tauragės apskritis,lake,,2,1,,,,
+IT,ITI14,Firenze,lake,,2,1,,,,
+IT,ITI16,Livorno,lake,,2,1,,,,
+IT,ITI1A,Grosseto,lake,,2,1,wd:Q3825918,Lago di Burano,country_cap,rank_66
+IT,ITI1A,Grosseto,lake,,2,1,wd:Q2250521,Laguna di Orbetello,country_cap,rank_72
+IT,ITI21,Perugia,lake,,2,1,,,,
+IT,ITF46,Foggia,lake,,3,1,wd:Q511180,Lago di Varano,country_cap,rank_85
+IT,ITC46,Bergamo,lake,,2,1,,,,
+IT,ITF48,Barletta-Andria-Trani,lake,,2,1,,,,
+HU,HU312,Heves,lake,,3,1,wd:Q14915983,Markaz Reservoir,floor_pool,score_4.4_below_5.4
+HU,HU312,Heves,lake,,3,1,wd:Q1315111,Sástó,score_gate,score_3.9_below_5.4
+HU,HU312,Heves,lake,,3,1,wd:Q26233539,Csórréti-víztározó,photo_gate,imgs_1
+IT,ITC4C,Milano,lake,,2,1,,,,
+IT,ITF11,L’Aquila,lake,,3,1,wd:Q1072254,Lago di Scanno,country_cap,rank_71
+IT,ITF11,L’Aquila,lake,,3,1,wd:Q2518166,Lake Campotosto,country_cap,rank_99
+IT,ITC11,Torino,lake,,3,1,wd:Q16570946,Lago Nero,country_cap,rank_87
+IT,ITC14,Verbano-Cusio-Ossola,lake,,2,1,,,,
+IT,ITC15,Novara,lake,,2,1,,,,
+PL,PL22A,Katowicki,lake,,2,1,,,,
+PL,PL22C,Tyski,lake,,2,1,,,,
+PL,PL218,Nowosądecki,lake,,2,1,,,,
+NL,NL415,Midden-Noord-Brabant,lake,,2,1,,,,
+NL,NL421,Noord-Limburg,lake,,2,1,,,,
+NL,NL422,Midden-Limburg,lake,,3,1,wd:Q1882317,Maasplassen,country_cap,rank_63
+NL,NL423,Zuid-Limburg,lake,,2,1,,,,
+NL,NL114,Oost-Groningen,lake,,2,1,wd:Q136445175,Beertsterplas,country_cap,rank_66
+NL,NL126,Zuidoost-Friesland,lake,,4,1,wd:Q2348263,De Leijen,country_cap,rank_64
+NL,NL126,Zuidoost-Friesland,lake,,4,1,wd:Q1886564,"Brandemeer, Weststellingwerf",country_cap,rank_79
+NL,NL126,Zuidoost-Friesland,lake,,4,1,wd:Q2584282,Recreatiegebied De Heide,photo_gate,imgs_5
+NL,NL131,Noord-Drenthe,lake,,3,1,wd:Q228662,Zuidlaardermeer,floor_pool,score_5.0_below_5.4
+NL,NL132,Zuidoost-Drenthe,lake,,2,1,wd:Q1887952,De Huttenheugte,floor_pool,score_5.2_below_5.4
+NL,NL211,Noord-Overijssel,lake,,4,1,wd:Q15879462,Molengat,country_cap,rank_69
+NL,NL211,Noord-Overijssel,lake,,4,1,wd:Q3032905,Belterwijde,country_cap,rank_71
+NL,NL211,Noord-Overijssel,lake,,4,1,wd:Q15885714,Schutsloterwijde,floor_pool,score_5.3_below_5.4
+NL,NL213,Twente,lake,,2,1,wd:Q2936839,Het Hulsbeek,country_cap,rank_77
+NL,NL323,IJmond,lake,,2,1,,,,
+NL,NL328,Alkmaar en omgeving,lake,,2,1,,,,
+NL,NL350,Utrecht,lake,,4,1,wd:Q12055125,Vinkeveense Plassen,country_cap,rank_67
+NL,NL350,Utrecht,lake,,4,1,wd:Q307092,Abcoudermeer,country_cap,rank_70
+NL,NL350,Utrecht,lake,,4,1,wd:Q731679,Maarsseveense Plassen,photo_gate,imgs_3
+NL,NL361,Agglomeratie ’s-Gravenhage,lake,,3,1,wd:Q2328507,Zoetermeerse Plas,country_cap,rank_65
+NL,NL361,Agglomeratie ’s-Gravenhage,lake,,3,1,wd:Q2290298,Hofvijver,floor_pool,score_5.2_below_5.4
+NL,NL365,Oost-Zuid-Holland,lake,,2,1,,,,
+NL,NL411,West-Noord-Brabant,lake,,3,1,wd:Q3478256,Galderse Meren,country_cap,rank_80
+PT,PT1C1,Alentejo Litoral,lake,,3,1,wd:Q35724693,Lagoa Salgada,photo_gate,imgs_0
+RO,RO424,Timiş,lake,,2,1,,,,
+PT,PT1D1,Oeste,lake,,2,1,,,,
+PT,PT1D2,Médio Tejo,lake,,2,1,,,,
+PL,PL638,Starogardzki,lake,,2,1,wd:Q11795786,Ocypel,country_cap,rank_75
+PL,PL821,Krośnieński,lake,,2,1,,,,
+PT,PT150,Algarve,lake,,3,1,wd:Q117217056,Salinas de Castro Marim,floor_pool,score_5.1_below_5.4
+PT,PT150,Algarve,lake,,3,1,wd:Q118611101,Albufeira da Barragem do Arade,floor_pool,score_4.6_below_5.4
+PT,PT191,Região de Aveiro,lake,,2,1,wd:Q3897611,Pateira de Fermentelos,floor_pool,score_4.9_below_5.4
+PT,PT192,Região de Coimbra,lake,,3,1,wd:Q96760070,Núcleo Museológico do Sal,floor_pool,score_4.6_below_5.4
+PT,PT192,Região de Coimbra,lake,,3,1,wd:Q9019924,Lagoa da Vela,floor_pool,score_4.5_below_5.4
+PT,PT192,Região de Coimbra,lake,,3,1,wd:Q35724509,Lagoa dos Braços,photo_gate,imgs_0
+PL,PL523,Nyski,lake,,2,1,wd:Q1534966,Otmuchów Lake,floor_pool,score_5.1_below_5.4
+PL,PL524,Opolski,lake,,2,1,,,,
+PT,PT193,Região de Leiria,lake,,2,1,,,,
+PL,PL418,Poznański,lake,,2,1,,,,
+PL,PL424,Miasto Szczecin,lake,,2,1,,,,
+PL,PL617,Inowrocławski,lake,,2,1,wd:Q7107843,Ostrowskie Lake,country_cap,rank_67
+PL,PL428,Szczeciński,lake,,3,1,wd:Q11726826,Jezioro Szczurze,country_cap,rank_74
+PL,PL428,Szczeciński,lake,,3,1,wd:Q572552,Miedwie,floor_pool,score_4.8_below_5.4
+PL,PL428,Szczeciński,lake,,3,1,wd:Q11726864,Turkusowe Lake,floor_pool,score_4.7_below_5.4
+PL,PL622,Olsztyński,lake,,4,1,wd:Q1141619,Łuknajno Lake,floor_pool,score_5.1_below_5.4
+PL,PL622,Olsztyński,lake,,4,1,wd:Q4973628,Lake Łańskie,floor_pool,score_4.7_below_5.4
+PL,PL622,Olsztyński,lake,,4,1,wd:Q1136017,Tałty,floor_pool,score_4.5_below_5.4
+PL,PL811,Bialski,lake,,2,1,,,,
+PL,PL431,Gorzowski,lake,,2,1,wd:Q11763075,Jezioro Lubiąź,country_cap,rank_68
+PL,PL634,Gdański,lake,,4,1,wd:Q11726272,Dąbrowskie,floor_pool,score_5.3_below_5.4
+PL,PL634,Gdański,lake,,4,1,wd:Q11752122,Kłodno,floor_pool,score_5.2_below_5.4
+PL,PL634,Gdański,lake,,4,1,wd:Q10983395,Gowidlińskie Lake,floor_pool,score_5.2_below_5.4
+PT,PT11D,Douro,lake,,3,1,wd:Q140371454,Valeira Reservoir,photo_gate,imgs_5
+PT,PT11D,Douro,lake,,3,1,wd:Q140371453,Régua Reservoir,photo_gate,imgs_5
+PT,PT11D,Douro,lake,,3,1,wd:Q140371455,Pocinho Reservoir,photo_gate,imgs_1
+PL,PL515,Jeleniogórski,lake,,3,1,wd:Q380417,Lake Leśnia,photo_gate,imgs_3
+PL,PL515,Jeleniogórski,lake,,3,1,wd:Q9339741,Sosnówka (lake),floor_pool,score_4.2_below_5.4
+PL,PL637,Chojnicki,lake,,3,1,wd:Q9274995,Gołuń,country_cap,rank_71
+PL,PL637,Chojnicki,lake,,3,1,wd:Q11726890,Jezioro Wielewskie w Wielu,floor_pool,score_5.3_below_5.4
+PL,PL637,Chojnicki,lake,,3,1,wd:Q9397164,Zagnanie,photo_gate,imgs_5
+SK,SK042,Košický kraj,lake,,4,1,wd:Q1096740,Palcmanská Maša Reservoir,floor_pool,score_5.2_below_5.4
+SK,SK042,Košický kraj,lake,,4,1,wd:Q3564561,Izra,floor_pool,score_5.2_below_5.4
+SK,SK042,Košický kraj,lake,,4,1,wd:Q63993870,Jazero,floor_pool,score_4.3_below_5.4
+SK,SK021,Trnavský kraj,lake,,2,1,,,,
+SE,SE322,Jämtlands län,lake,,4,1,wd:Q1637472,Rogen,floor_pool,score_5.1_below_5.4
+SE,SE322,Jämtlands län,lake,,4,1,wd:Q1358435,Flåsjön,floor_pool,score_4.6_below_5.4
+SE,SE322,Jämtlands län,lake,,4,1,wd:Q458965,Ströms vattudal,floor_pool,score_4.5_below_5.4
+SE,SE313,Gävleborgs län,lake,,2,1,wd:Q149448,Storsjön,floor_pool,score_5.2_below_5.4
+SE,SE121,Uppsala län,lake,,2,1,,,,
+SE,SE331,Västerbottens län,lake,,3,1,wd:Q3378127,Kultsjön,floor_pool,score_5.0_below_5.4
+SE,SE331,Västerbottens län,lake,,3,1,wd:Q4328478,Nydalasjön,floor_pool,score_4.3_below_5.4
+SK,SK032,Banskobystrický kraj,lake,,5,1,wd:Q12766677,Halčiansky tajch,photo_gate,imgs_1
+SK,SK032,Banskobystrický kraj,lake,,5,1,wd:Q7331154,Richňava,photo_gate,imgs_0
+SK,SK032,Banskobystrický kraj,lake,,5,1,wd:Q12020175,Horný Hodrušský tajch,photo_gate,imgs_5
+RS,RS222,Braničevska oblast,lake,,2,1,wd:Q61133326,Језеро Заова,photo_gate,imgs_0
+RS,RS222,Braničevska oblast,lake,,2,1,wd:Q114289276,Bujdina Bara,photo_gate,imgs_0
+SE,SE123,Östergötlands län,lake,,4,1,wd:Q1574296,Roxen,floor_pool,score_5.0_below_5.4
+SE,SE123,Östergötlands län,lake,,4,1,wd:Q2618547,Boren,floor_pool,score_4.9_below_5.4
+SE,SE123,Östergötlands län,lake,,4,1,wd:Q1520068,Glan,floor_pool,score_4.8_below_5.4
+SE,SE125,Västmanlands län,lake,,2,1,wd:Q10726520,Åmänningen,floor_pool,score_4.3_below_5.4
+SE,SE211,Jönköpings län,lake,,2,1,wd:Q1301936,Vidöstern,floor_pool,score_5.1_below_5.4
+SK,SK010,Bratislavský kraj,lake,,4,1,wd:Q5873521,Hlboké,photo_gate,imgs_4
+SK,SK010,Bratislavský kraj,lake,,4,1,wd:Q10422020,Štrkovecké jazero,floor_pool,score_4.6_below_5.4
+SK,SK010,Bratislavský kraj,lake,,4,1,wd:Q12031829,Kuchajda,floor_pool,score_4.2_below_5.4
+SE,SE311,Värmlands län,lake,,3,1,wd:Q10405392,Alkvettern,photo_gate,imgs_1
+SE,SE214,Gotlands län,lake,,2,1,wd:Q2435780,Tingstäde träsk,floor_pool,score_4.9_below_5.4
+XK,XK007,Gjakovë,lake,,3,1,wd:Q1520663,Radoniq Lake,floor_pool,score_4.8_below_5.4
+XK,XK007,Gjakovë,lake,,3,1,wd:Q7353120,Zemra Lake,floor_pool,score_5.3_below_5.4
+XK,XK007,Gjakovë,lake,,3,1,wd:Q1520663,Radoniq Lake,floor_pool,score_4.9_below_5.4
+GB,TLL51,Central Valleys and Bridgend,lake,,2,1,,,,
+GB,TLN0G,Fermanagh and Omagh,lake,,2,1,wd:Q1324180,Lough Erne,floor_pool,score_4.8_below_5.4
+UA,UA-74538382B44725547103458,Reni,lake,,2,1,,,,
+MD,MD-MD-DU,Dubasari,lake,,2,1,,,,
+AD,AD-AD-04,La Massana,lake,,3,1,wd:Q1934789,Estany Negre,floor_pool,score_4.8_below_5.4
+AD,AD-AD-04,La Massana,lake,,3,1,wd:Q2064512,Estanys de Montmantell,photo_gate,imgs_2
+AD,AD-AD-04,La Massana,lake,,3,1,wd:Q2793742,Basses de l'Estany Negre,score_gate,score_3.3_below_5.4
+AD,AD-AD-03,Encamp,lake,,3,1,wd:Q21329992,Estany de Montmalús,floor_pool,score_5.2_below_5.4
+AD,AD-AD-03,Encamp,lake,,3,1,wd:Q21330258,Estany Primer,floor_pool,score_4.7_below_5.4
+AD,AD-AD-03,Encamp,lake,,3,1,wd:Q21330004,Estany Moreno,floor_pool,score_4.5_below_5.4

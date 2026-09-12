@@ -267,7 +267,7 @@ kilometres from a station.
 | `safety_floor` | no stage below the safety floor; no stage with more than 2 km on `highway=trunk` |
 | `water_and_food` | drinking water or a shop at least every 40 km |
 | `bailout` | every stage end within 20 km of a station, **or** explicitly flagged remote |
-| `images` | no photograph from an unresolved licence |
+| `images` | four or more photographs, none from an unresolved licence |
 | `season` | months declared from the climatology; no Highland tour published as a January product |
 
 A tour that fails any one is not published and the previous wire stands.
@@ -391,6 +391,48 @@ first did not:
 The division of labour, which is the general form: the harvest decides when
 the metadata is in hand and the request is already paid for; the gate reads
 the answer. Parsing a licence at export time was always the fallback.
+
+---
+
+## A check that cannot fail is not a check
+
+`check_images` tested every photograph on a tour for a resolved licence and a
+known host, and returned clean when it found nothing to object to. A tour
+with an **empty gallery** therefore passed it. Every one of the 27 published
+tours shipped `"images": []` alongside `"passed": [... "images" ...]`, which
+is the same shape of defect as the credit notice with nobody named: a claim
+of compliance standing in for the thing itself, inside the module written to
+prevent exactly that.
+
+The cause was upstream and just as quiet. `cycle_tours.images` is a real
+column that **nothing has ever written**: `stage_planner.py` omits it from
+its INSERT, so all 76 rows held NULL, and `tour_full()` wrote the `[]` it
+read. A purity rule over an always-empty list is unfalsifiable.
+
+Two halves to the fix, and both are needed:
+
+- **The gate got a minimum.** `TOUR_IMAGES_MIN = 4`, which is the number the
+  brief's own acceptance test asks a published tour for. The count clause was
+  real all along; it lived only in the harness, so it bound one hand-checked
+  Scottish tour rather than the wire.
+- **The gallery is COMPOSED, not harvested.** A tour is its routes, and those
+  routes have already been photographed, credit-checked and positioned along
+  the line by `cycle_images.py`. `tour_gallery()` walks the route ids in
+  riding order, sorts each route's own pictures by `off_m` within it, dedupes
+  by URL and caps at eight. No second fetch, no second licence path, and a
+  photograph that stops being creditable leaves the tour the moment it leaves
+  the route.
+
+`off_m` is metres along the ROUTE, which orders correctly within one route
+and means nothing across two; walking routes in tour order and sorting only
+inside each is what makes a gallery read start to finish.
+
+**A refused tour also has to stop being a URL.** Route files are rewritten
+every run and self-correct; tour files are written only when they pass, so
+the 26 tours this gate refused would have sat on disk indefinitely still
+serving their old record and still claiming ten checks passed. The export now
+prunes tour files that are no longer published, on full runs only: a
+`--countries` run knows nothing about the other countries' tours.
 
 ---
 

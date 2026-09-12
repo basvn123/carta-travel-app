@@ -378,6 +378,11 @@ export function CyclePage({ routeId, tourSlug, country, countryName,
               </ul>
             </details>
           )}
+
+          {/* A tour has to be able to show the ride: four photographs are
+              now one of the ten checks it passed to get here, drawn from
+              the routes it rides and ordered along them. */}
+          <Photos images={tour.images} />
         </section>
       )}
 
@@ -428,10 +433,13 @@ export function CyclePage({ routeId, tourSlug, country, countryName,
             />
           )}
 
+          {/* One credit line, not two. The wire's own attribution is the
+              specific one (it names the source that actually supplied this
+              route); cycle.sourceNote is the generic fallback. Printing both
+              read as a stutter and buried the specific notice under it. */}
           <p className="places-credit" data-testid="cycle-credit">
             {(route.osm && route.osm.attribution) || t('cycle.sourceNote')}
           </p>
-          <p className="places-credit">{t('cycle.sourceNote')}</p>
         </section>
       )}
     </div>

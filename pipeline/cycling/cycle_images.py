@@ -121,8 +121,18 @@ SEARCHED_EMPTY = """
                       WHERE v.subject_type = '%s' AND v.subject_id = r.id
                         AND v.check_name = 'cycle_photos')""" % SUBJECT
 
+# The routes a composed tour actually rides. A tour cannot publish without
+# four photographs (validate_cycling.check_images), and its gallery is built
+# from its routes, so these are the highest-value routes in the layer to
+# photograph: 63 of them decide whether 76 tour candidates can ship at all,
+# against 20,000-odd for the catalogue at large.
+TOUR_ROUTES = """
+      AND r.id IN (SELECT DISTINCT rid
+                   FROM cycle_tours t, unnest(t.route_ids) AS rid)"""
 
-def fetch_targets(conn, countries, refresh, missing=False, limit=0):
+
+def fetch_targets(conn, countries, refresh, missing=False, limit=0,
+                  tour_routes=False):
     """Routes worth searching, best first.
 
     Two exclusions, the same pair the trails engine learned to need. Skipping
@@ -134,6 +144,8 @@ def fetch_targets(conn, countries, refresh, missing=False, limit=0):
     """
     having = "" if refresh else (HAVE_PHOTOS if missing
                                  else HAVE_PHOTOS + SEARCHED_EMPTY)
+    if tour_routes:
+        having += TOUR_ROUTES
     with conn.cursor() as cur:
         cur.execute(TARGETS_SQL.format(having=having),
                     {"countries": list(countries) or None})
@@ -379,8 +391,9 @@ def mark_empty(conn, rid, n_candidates, n_points):
 # Main
 # ---------------------------------------------------------------------------
 
-def run(conn, countries, refresh=False, missing=False, limit=0, verbose=False):
-    ids = fetch_targets(conn, countries, refresh, missing, limit)
+def run(conn, countries, refresh=False, missing=False, limit=0, verbose=False,
+        tour_routes=False):
+    ids = fetch_targets(conn, countries, refresh, missing, limit, tour_routes)
     log(f"photos: {len(ids)} route(s) to search")
     if not ids:
         return Counter()
@@ -464,13 +477,16 @@ def main():
     ap.add_argument("--missing-only", action="store_true",
                     help="retry only the routes that still have no picture")
     ap.add_argument("--limit", type=int, default=0)
+    ap.add_argument("--tour-routes", action="store_true",
+                    help="only the routes a composed tour rides: the set "
+                         "that decides whether tours can publish at all")
     ap.add_argument("--verbose", action="store_true")
     args = ap.parse_args()
     countries = ([c.strip().upper() for c in args.countries.split(",")
                   if c.strip()] if args.countries else [])
     with connect() as conn:
         run(conn, countries, args.refresh, args.missing_only, args.limit,
-            args.verbose)
+            args.verbose, args.tour_routes)
 
 
 if __name__ == "__main__":

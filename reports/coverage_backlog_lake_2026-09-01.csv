@@ -1,0 +1,1373 @@
+country,nuts3,region_name,layer,published,quota,deficit,candidate_id,candidate_name,rejected_by,rejected_detail
+IS,IS002,Landsbyggð,lake,,15,9,wd:Q114736535,Landmannalaugar hut,photo_gate,imgs_3
+IS,IS002,Landsbyggð,lake,,15,9,wd:Q1123643,Frostastaðavatn,floor_pool,score_5.3_below_5.4
+IS,IS002,Landsbyggð,lake,,15,9,wd:Q283536,Langisjór,photo_gate,imgs_4
+IS,IS002,Landsbyggð,lake,,15,9,wd:Q574165,Kleifarvatn,floor_pool,score_5.2_below_5.4
+IS,IS002,Landsbyggð,lake,,15,9,wd:Q1344692,Lagarfljót,floor_pool,score_5.2_below_5.4
+IS,IS002,Landsbyggð,lake,,15,9,wd:Q1521372,Hvalvatn,photo_gate,imgs_1
+IS,IS002,Landsbyggð,lake,,15,9,wd:Q1429607,Hvítárvatn,floor_pool,score_5.0_below_5.4
+IS,IS002,Landsbyggð,lake,,15,9,wd:Q2536202,Víti Askja,floor_pool,score_4.9_below_5.4
+IS,IS002,Landsbyggð,lake,,15,9,wd:Q943482,Grænalón,photo_gate,imgs_1
+IE,IE042,West,lake,,9,8,wd:Q848917,Lough Corrib,photo_gate,imgs_2
+IE,IE042,West,lake,,9,8,wd:Q949985,Lough Conn,photo_gate,imgs_3
+IE,IE042,West,lake,,9,8,wd:Q2746303,Lough Key,photo_gate,imgs_3
+IE,IE042,West,lake,,9,8,wd:Q1768048,Lough Mask,photo_gate,imgs_3
+IE,IE042,West,lake,,9,8,wd:Q3036874,Doo Lough,floor_pool,score_4.3_below_5.4
+IE,IE042,West,lake,,9,8,wd:Q24196540,Lough Inagh,floor_pool,score_4.1_below_5.4
+IE,IE042,West,lake,,9,8,wd:Q33284347,Lough Nafooey,photo_gate,imgs_1
+MK,MK006,Pološki,lake,,8,8,osm:w1211220683,Малокорапско Езеро,photo_gate,imgs_0
+MK,MK006,Pološki,lake,,8,8,osm:w966141862,Големокорапско Езеро,photo_gate,imgs_0
+MK,MK006,Pološki,lake,,8,8,osm:w1244557875,Изгревно Езеро,photo_gate,imgs_0
+MK,MK006,Pološki,lake,,8,8,wd:Q12273457,Bogovinje Lake,photo_gate,imgs_3
+MK,MK006,Pološki,lake,,8,8,wd:Q1785612,Mavrovo Lake,photo_gate,imgs_2
+MK,MK006,Pološki,lake,,8,8,wd:Q12905767,Karanikola Lake,photo_gate,imgs_5
+MK,MK006,Pološki,lake,,8,8,wd:Q20934164,Големо Езеро,photo_gate,imgs_3
+MK,MK006,Pološki,lake,,8,8,wd:Q20934163,Мало Езеро,photo_gate,imgs_3
+LT,LT029,Utenos apskritis,lake,,9,7,wd:Q16451164,Gavys,photo_gate,imgs_3
+LT,LT029,Utenos apskritis,lake,,9,7,wd:Q597311,Drūkšiai,photo_gate,imgs_3
+LT,LT029,Utenos apskritis,lake,,9,7,wd:Q2043441,Linkmenas,photo_gate,imgs_2
+LT,LT029,Utenos apskritis,lake,,9,7,wd:Q1187891,Tauragnas,photo_gate,imgs_5
+LT,LT029,Utenos apskritis,lake,,9,7,wd:Q2569121,Visaginas,photo_gate,imgs_3
+LT,LT029,Utenos apskritis,lake,,9,7,wd:Q9163296,Alaušas,photo_gate,imgs_3
+LT,LT029,Utenos apskritis,lake,,9,7,wd:Q1093664,Luodis,photo_gate,imgs_3
+IE,IE041,Border,lake,,10,7,wd:Q3776146,Lough Melvin,photo_gate,imgs_2
+IE,IE041,Border,lake,,10,7,wd:Q1366974,Lough Allen,photo_gate,imgs_2
+IE,IE041,Border,lake,,10,7,wd:Q3756406,Lough Oughter,floor_pool,score_5.3_below_5.4
+IE,IE041,Border,lake,,10,7,wd:Q3776146,Lough Melvin,photo_gate,imgs_2
+IE,IE041,Border,lake,,10,7,wd:Q23010334,Lough Beagh,photo_gate,imgs_2
+IE,IE041,Border,lake,,10,7,wd:Q17355539,Lough Salt,score_gate,score_3.8_below_5.4
+SK,SK041,Prešovský kraj,lake,,13,7,osm:w22774945,Veľké Hincovo pleso,photo_gate,imgs_2
+SK,SK041,Prešovský kraj,lake,,13,7,osm:w558904335,Hincove oká,score_gate,score_3.9_below_5.4
+SK,SK041,Prešovský kraj,lake,,13,7,osm:w22774946,Hincove oká,score_gate,score_3.9_below_5.4
+SK,SK041,Prešovský kraj,lake,,13,7,osm:w47575012,Nižné Temnosmrečinské pleso,photo_gate,imgs_1
+SK,SK041,Prešovský kraj,lake,,13,7,osm:w366333668,Malé Tomanovské pleso,photo_gate,imgs_0
+SK,SK041,Prešovský kraj,lake,,13,7,osm:w1102869294,Nižné Tomanovské pleso,photo_gate,imgs_0
+SK,SK041,Prešovský kraj,lake,,13,7,osm:w366333645,Vyšné Tomanovo pleso,photo_gate,imgs_0
+AL,AL021,Elbasan,lake,,6,6,wd:Q22009795,Liqeni i Merhojes,photo_gate,imgs_0
+AL,AL021,Elbasan,lake,,6,6,wd:Q120801093,Dragostunja Lakes,photo_gate,imgs_1
+AL,AL021,Elbasan,lake,,6,6,osm:w1197822242,Balla 2,photo_gate,imgs_0
+AL,AL021,Elbasan,lake,,6,6,wd:Q22005029,Liqeni i Dushkut,photo_gate,imgs_1
+AL,AL021,Elbasan,lake,,6,6,wd:Q22012223,Liqeni i Belshit,photo_gate,imgs_4
+AL,AL021,Elbasan,lake,,6,6,wd:Q22002512,Liqeni i Rajces,photo_gate,imgs_1
+MK,MK005,Pelagoniski,lake,,7,6,wd:Q204392,Lake Prespa,photo_gate,imgs_3
+MK,MK005,Pelagoniski,lake,,7,6,wd:Q12880819,Great Prespa,photo_gate,imgs_2
+MK,MK005,Pelagoniski,lake,,7,6,wd:Q204392,Lake Prespa,photo_gate,imgs_3
+MK,MK005,Pelagoniski,lake,,7,6,wd:Q12880819,Great Prespa,photo_gate,imgs_1
+MK,MK005,Pelagoniski,lake,,7,6,wd:Q204392,Lake Prespa,photo_gate,imgs_3
+MK,MK005,Pelagoniski,lake,,7,6,wd:Q12880819,Great Prespa,photo_gate,imgs_3
+FO,FO-FRO,Faroe Islands,lake,,7,6,osm:w762997214,Svimjihøllin í Leirvík,photo_gate,imgs_0
+FO,FO-FRO,Faroe Islands,lake,,7,6,wd:Q476699,Fjallavatn,photo_gate,imgs_1
+FO,FO-FRO,Faroe Islands,lake,,7,6,osm:w66990272,Gøtusandur,photo_gate,imgs_0
+FO,FO-FRO,Faroe Islands,lake,,7,6,osm:w1179830546,Krabbisurðin,photo_gate,imgs_0
+FO,FO-FRO,Faroe Islands,lake,,7,6,osm:w62313203,Sandagerð,photo_gate,imgs_0
+FO,FO-FRO,Faroe Islands,lake,,7,6,osm:w44703028,Klaksvikar Svimjihøll,photo_gate,imgs_0
+AL,AL011,Dibër,lake,,6,5,wd:Q22005345,Liqeni i Lopeve,photo_gate,imgs_2
+AL,AL011,Dibër,lake,,6,5,wd:Q22007899,Liqeni i Hotit,photo_gate,imgs_1
+AL,AL011,Dibër,lake,,6,5,wd:Q22005350,Liqeni i Luleve,photo_gate,imgs_0
+AL,AL011,Dibër,lake,,6,5,wd:Q22005363,Liqeni i Madh,photo_gate,imgs_4
+AL,AL011,Dibër,lake,,6,5,wd:Q5593962,Gramë Lake,photo_gate,imgs_1
+BG,BG415,Kyustendil,lake,,5,5,wd:Q1661327,Seven Rila Lakes,photo_gate,imgs_1
+BG,BG415,Kyustendil,lake,,5,5,wd:Q12292353,Ribni Ezera,photo_gate,imgs_1
+BG,BG415,Kyustendil,lake,,5,5,wd:Q12278969,The Lower Lake,photo_gate,imgs_1
+BG,BG415,Kyustendil,lake,,5,5,wd:Q12294095,Smradlivo Lake,photo_gate,imgs_1
+BG,BG415,Kyustendil,lake,,5,5,wd:Q12274059,The Kidney,photo_gate,imgs_5
+FI,FI1DB,Pohjois-Savo,lake,,5,5,wd:Q1782052,Suvasvesi,photo_gate,imgs_3
+FI,FI1DB,Pohjois-Savo,lake,,5,5,wd:Q890532,Kallavesi,photo_gate,imgs_3
+FI,FI1DB,Pohjois-Savo,lake,,5,5,wd:Q7362310,Unnukka,photo_gate,imgs_3
+FI,FI1DB,Pohjois-Savo,lake,,5,5,wd:Q1635506,Juurusvesi–Akonvesi,photo_gate,imgs_3
+FI,FI1DB,Pohjois-Savo,lake,,5,5,wd:Q7230318,Porovesi,photo_gate,imgs_5
+LT,LT011,Vilniaus apskritis,lake,,9,5,wd:Q12647221,Akmena,photo_gate,imgs_2
+LT,LT011,Vilniaus apskritis,lake,,9,5,wd:Q12675182,Totoriškės,photo_gate,imgs_4
+LT,LT011,Vilniaus apskritis,lake,,9,5,wd:Q16459387,Luka,photo_gate,imgs_5
+LT,LT011,Vilniaus apskritis,lake,,9,5,wd:Q12656195,Gulbinas,photo_gate,imgs_1
+LT,LT011,Vilniaus apskritis,lake,,9,5,wd:Q12672998,Skaistis,photo_gate,imgs_1
+MK,MK001,Vardarski,lake,,5,5,wd:Q12908695,Lake Mladost,photo_gate,imgs_4
+MK,MK001,Vardarski,lake,,5,5,wd:Q50427672,Moklište Lake,photo_gate,imgs_5
+MK,MK001,Vardarski,lake,,5,5,wd:Q3086506,Tikveš Lake,floor_pool,score_4.8_below_5.4
+MK,MK001,Vardarski,lake,,5,5,wd:Q12908121,Лисиче,photo_gate,imgs_3
+MK,MK001,Vardarski,lake,,5,5,wd:Q20935661,Моклишко Езеро,photo_gate,imgs_1
+IS,IS001,Höfuðborgarsvæði,lake,,6,5,wd:Q16420392,Bakkatjörn,photo_gate,imgs_4
+IS,IS001,Höfuðborgarsvæði,lake,,6,5,osm:w713708484,Sundlaug Kópavogs,photo_gate,imgs_1
+IS,IS001,Höfuðborgarsvæði,lake,,6,5,osm:w758084598,Sundhöll Hafnarfjarðar,photo_gate,imgs_2
+IS,IS001,Höfuðborgarsvæði,lake,,6,5,wd:Q1568141,Hafravatn,photo_gate,imgs_4
+IS,IS001,Höfuðborgarsvæði,lake,,6,5,wd:Q27468402,Vífilsstaðavatn,photo_gate,imgs_4
+NO,NO071,Nordland/Nordlánnda,lake,,5,5,wd:Q1771514,Balvatnet,photo_gate,imgs_2
+NO,NO071,Nordland/Nordlánnda,lake,,5,5,wd:Q4591249,Raudvatnet,photo_gate,imgs_2
+NO,NO071,Nordland/Nordlánnda,lake,,5,5,wd:Q307594,Överuman,photo_gate,imgs_1
+NO,NO071,Nordland/Nordlánnda,lake,,5,5,wd:Q1352298,Røssvatnet,photo_gate,imgs_1
+NO,NO071,Nordland/Nordlánnda,lake,,5,5,wd:Q5096953,Storglomvatnet,floor_pool,score_4.5_below_5.4
+NO,NO020,Innlandet,lake,,8,5,wd:Q212209,Mjøsa,photo_gate,imgs_2
+NO,NO020,Innlandet,lake,,8,5,wd:Q1324437,Femund,photo_gate,imgs_3
+NO,NO020,Innlandet,lake,,8,5,wd:Q1018512,Bygdin,photo_gate,imgs_1
+NO,NO020,Innlandet,lake,,8,5,wd:Q545033,Randsfjorden,photo_gate,imgs_3
+NO,NO020,Innlandet,lake,,8,5,wd:Q1772708,Einavatnet,photo_gate,imgs_4
+RS,RS127,Sremska oblast,lake,,5,5,osm:w15939678,Danube,photo_gate,imgs_3
+RS,RS127,Sremska oblast,lake,,5,5,osm:w73173192,Венеција,photo_gate,imgs_0
+RS,RS127,Sremska oblast,lake,,5,5,osm:w250105719,Плажа,photo_gate,imgs_0
+RS,RS127,Sremska oblast,lake,,5,5,wd:Q31182634,Бешеновачко језеро,photo_gate,imgs_3
+RS,RS127,Sremska oblast,lake,,5,5,wd:Q3444519,Zasavica,photo_gate,imgs_3
+RO,RO126,Sibiu,lake,,5,5,wd:Q794973,Bâlea Lak,photo_gate,imgs_3
+RO,RO126,Sibiu,lake,,5,5,wd:Q29939935,Lake Auster,photo_gate,imgs_4
+RO,RO126,Sibiu,lake,,5,5,wd:Q29939954,Lacul cu Nămol,photo_gate,imgs_4
+RO,RO126,Sibiu,lake,,5,5,wd:Q30625613,Lake Avram Iancu-Ocnița,photo_gate,imgs_4
+RO,RO126,Sibiu,lake,,5,5,wd:Q29939942,Lake Brâncoveanu,photo_gate,imgs_4
+RO,RO225,Tulcea,lake,,5,5,wd:Q18541222,Babadag,photo_gate,imgs_0
+RO,RO225,Tulcea,lake,,5,5,osm:r1308660,Lake Razelm,photo_gate,imgs_0
+RO,RO225,Tulcea,lake,,5,5,osm:r4021632,Lacul Ciuperca,photo_gate,imgs_0
+RO,RO225,Tulcea,lake,,5,5,osm:w449367297,Plaja Ciuperca,photo_gate,imgs_0
+RO,RO225,Tulcea,lake,,5,5,wd:Q2349738,Lake Razelm,photo_gate,imgs_1
+SI,SI038,Primorsko-notranjska,lake,,6,5,wd:Q205836,Lake Cerknica,photo_gate,imgs_2
+SI,SI038,Primorsko-notranjska,lake,,6,5,osm:w1313100274,Glamping Lake Bloke,photo_gate,imgs_2
+SI,SI038,Primorsko-notranjska,lake,,6,5,osm:r9623586,Cerkniško Jezero,photo_gate,imgs_1
+SI,SI038,Primorsko-notranjska,lake,,6,5,wd:Q12796983,Mola,photo_gate,imgs_3
+SI,SI038,Primorsko-notranjska,lake,,6,5,wd:Q90776977,Jeredovce,photo_gate,imgs_3
+AL,AL012,Durrës,lake,,4,4,osm:w270111016,Plazhi i Gjirit të Lalëzit,photo_gate,imgs_0
+AL,AL012,Durrës,lake,,4,4,osm:w237926963,Beach of Durrës,photo_gate,imgs_1
+AL,AL012,Durrës,lake,,4,4,osm:w356914535,Vila Verde,photo_gate,imgs_0
+AL,AL012,Durrës,lake,,4,4,osm:w150540952,Pishina,photo_gate,imgs_0
+AL,AL032,Fier,lake,,5,4,osm:w977778133,Samuel King seaside,photo_gate,imgs_0
+AL,AL032,Fier,lake,,5,4,osm:w10228257,Semani,photo_gate,imgs_0
+AL,AL032,Fier,lake,,5,4,osm:w534521503,Liqeni i Godullës së Veçmës,photo_gate,imgs_0
+AL,AL032,Fier,lake,,5,4,wd:Q22009607,Godulla e Karavastase,photo_gate,imgs_0
+AL,AL034,Korcë,lake,,4,4,osm:w913037175,Park Aleksander,photo_gate,imgs_0
+AL,AL034,Korcë,lake,,4,4,osm:w696944270,Camping Beach Erlin,photo_gate,imgs_0
+AL,AL034,Korcë,lake,,4,4,osm:w1101726265,Erlin,photo_gate,imgs_0
+AL,AL034,Korcë,lake,,4,4,wd:Q22005382,Keneta e Maliqit,photo_gate,imgs_0
+AL,AL035,Vlorë,lake,,7,4,osm:w219957228,Drymades Beach,photo_gate,imgs_2
+AL,AL035,Vlorë,lake,,7,4,wd:Q22008294,Liqeni i Pasha-limanit,photo_gate,imgs_0
+AL,AL035,Vlorë,lake,,7,4,osm:w219958739,Plazhi i Palasës,photo_gate,imgs_0
+AL,AL035,Vlorë,lake,,7,4,osm:w1347309879,Plazhi publik,photo_gate,imgs_0
+GR,EL541,"Arta, Preveza",lake,,4,4,osm:w25976585,Piso Krioneri,photo_gate,imgs_0
+GR,EL541,"Arta, Preveza",lake,,4,4,osm:w25976305,Krioneri,photo_gate,imgs_0
+GR,EL541,"Arta, Preveza",lake,,4,4,osm:w1380228093,Nissos,photo_gate,imgs_0
+GR,EL541,"Arta, Preveza",lake,,4,4,wd:Q2106785,Pournari lake,photo_gate,imgs_1
+DK,DK050,Nordjylland,lake,,5,4,wd:Q23734931,Vandet Sø,photo_gate,imgs_2
+DK,DK050,Nordjylland,lake,,5,4,wd:Q23736564,Store Økssø,photo_gate,imgs_1
+DK,DK050,Nordjylland,lake,,5,4,wd:Q23743345,Nors Sø,photo_gate,imgs_0
+DK,DK050,Nordjylland,lake,,5,4,wd:Q12314024,Glenstrup Sø,photo_gate,imgs_3
+HU,HU231,Baranya,lake,,4,4,osm:w540665870,Boki-Duna,photo_gate,imgs_0
+HU,HU231,Baranya,lake,,4,4,osm:w146979411,Ó-Dráva,photo_gate,imgs_0
+HU,HU231,Baranya,lake,,4,4,osm:w235960200,Mailáthpuszta horgászto 1,photo_gate,imgs_0
+HU,HU231,Baranya,lake,,4,4,osm:w228380578,Boros-Dráva / Boroš,photo_gate,imgs_0
+HR,HR062,Varaždinska županija,lake,,4,4,wd:Q4103545,Lake Varaždin,photo_gate,imgs_1
+HR,HR062,Varaždinska županija,lake,,4,4,wd:Q124364510,Motičnjak,photo_gate,imgs_1
+HR,HR062,Varaždinska županija,lake,,4,4,wd:Q820542,Lake Dubrava,photo_gate,imgs_2
+HR,HR062,Varaždinska županija,lake,,4,4,osm:w383771862,Kupalište Drava,photo_gate,imgs_2
+HR,HR063,Koprivničko-križevačka županija,lake,,5,4,wd:Q115178781,Kencel,photo_gate,imgs_3
+HR,HR063,Koprivničko-križevačka županija,lake,,5,4,wd:Q136760356,Jablanje,photo_gate,imgs_3
+HR,HR063,Koprivničko-križevačka županija,lake,,5,4,wd:Q131314058,Gornje Ledine,photo_gate,imgs_3
+HR,HR063,Koprivničko-križevačka županija,lake,,5,4,wd:Q131323269,Ribnjak,photo_gate,imgs_4
+HR,HR024,Brodsko-posavska županija,lake,,4,4,osm:w79581953,Poloj,photo_gate,imgs_3
+HR,HR024,Brodsko-posavska županija,lake,,4,4,osm:w241625214,Bazeni Slavonski Brod,photo_gate,imgs_3
+HR,HR024,Brodsko-posavska županija,lake,,4,4,wd:Q7178471,Petnja,photo_gate,imgs_2
+HR,HR024,Brodsko-posavska županija,lake,,4,4,osm:w241625214,Bazeni Slavonski Brod,photo_gate,imgs_3
+HU,HU211,Fejér,lake,,4,4,wd:Q847072,Lake Velence,photo_gate,imgs_2
+HU,HU211,Fejér,lake,,4,4,wd:Q997741,Fehérvárcsurgó reservoir,photo_gate,imgs_3
+HU,HU211,Fejér,lake,,4,4,osm:w195370293,Napsugár Strand,photo_gate,imgs_1
+HU,HU211,Fejér,lake,,4,4,osm:w836140803,Velence Club Camping,photo_gate,imgs_2
+MK,MK003,Jugozapaden,lake,,7,4,wd:Q156258,Lake Ohrid,photo_gate,imgs_3
+MK,MK003,Jugozapaden,lake,,7,4,osm:w219684157,"Воено Одморалиште ""Генерал Васко Карангелевски""",photo_gate,imgs_0
+MK,MK003,Jugozapaden,lake,,7,4,wd:Q156258,Lake Ohrid,photo_gate,imgs_3
+MK,MK003,Jugozapaden,lake,,7,4,osm:w1527941371,Beach Kaneo,photo_gate,imgs_3
+MK,MK004,Jugoistočen,lake,,6,4,osm:w1241710473,Градска Плажа,photo_gate,imgs_0
+MK,MK004,Jugoistočen,lake,,6,4,wd:Q25553764,Мантово,photo_gate,imgs_5
+MK,MK004,Jugoistočen,lake,,6,4,wd:Q12906324,Selemli Lake,photo_gate,imgs_5
+MK,MK004,Jugoistočen,lake,,6,4,wd:Q111748945,Lake Bučim,photo_gate,imgs_4
+LV,LV005,Latgale,lake,,10,4,osm:r1314022,ež. Laukesas / Laucesas ezers,photo_gate,imgs_1
+LV,LV005,Latgale,lake,,10,4,wd:Q12676986,Kalniškių Lake,photo_gate,imgs_1
+LV,LV005,Latgale,lake,,10,4,osm:r3136135,ež. Kampuotis III / Lielais Kumpotis,photo_gate,imgs_1
+LV,LV005,Latgale,lake,,10,4,osm:r5464720,Robežas ezers - Riebežeris,photo_gate,imgs_1
+IE,IE051,Mid-West ,lake,,5,4,wd:Q918349,Lough Derg,photo_gate,imgs_3
+IE,IE051,Mid-West ,lake,,5,4,wd:Q61676998,Ballyallia Lake,photo_gate,imgs_0
+IE,IE051,Mid-West ,lake,,5,4,wd:Q604502,Lough Gur,photo_gate,imgs_2
+IE,IE051,Mid-West ,lake,,5,4,wd:Q25238260,Dromore Lough,photo_gate,imgs_2
+HU,HU311,Borsod-Abaúj-Zemplén,lake,,4,4,wd:Q137596492,Kistokaji bányató,photo_gate,imgs_1
+HU,HU311,Borsod-Abaúj-Zemplén,lake,,4,4,osm:w118933526,Kemény Dénes Városi Sportuszoda,photo_gate,imgs_2
+HU,HU311,Borsod-Abaúj-Zemplén,lake,,4,4,osm:r3458783,Mályi-tó,photo_gate,imgs_0
+HU,HU311,Borsod-Abaúj-Zemplén,lake,,4,4,osm:r2605627,Debreczeni-tó,photo_gate,imgs_0
+HU,HU323,Szabolcs-Szatmár-Bereg,lake,,5,4,osm:w33235406,Sóstó,photo_gate,imgs_2
+HU,HU323,Szabolcs-Szatmár-Bereg,lake,,5,4,osm:w680652604,Eissmann Városi Uszoda,photo_gate,imgs_0
+HU,HU323,Szabolcs-Szatmár-Bereg,lake,,5,4,osm:w299696961,Tanuszoda,photo_gate,imgs_0
+HU,HU323,Szabolcs-Szatmár-Bereg,lake,,5,4,osm:r11741410,Rétközi-tó,photo_gate,imgs_0
+HU,HU331,Bács-Kiskun,lake,,5,4,osm:w174011670,Karapancsai-halastó,photo_gate,imgs_0
+HU,HU331,Bács-Kiskun,lake,,5,4,wd:Q2665499,Lake Vadkert,photo_gate,imgs_1
+HU,HU331,Bács-Kiskun,lake,,5,4,wd:Q1051426,Lake Szelid,photo_gate,imgs_2
+HU,HU331,Bács-Kiskun,lake,,5,4,wd:Q986825,Lake Déllő,photo_gate,imgs_0
+HU,HU333,Csongrád-Csanád,lake,,5,4,osm:w391737156,Foka,photo_gate,imgs_0
+HU,HU333,Csongrád-Csanád,lake,,5,4,osm:w839396385,Sziksósfürdő,photo_gate,imgs_0
+HU,HU333,Csongrád-Csanád,lake,,5,4,osm:w299378183,Sziksósfürdő kemping,photo_gate,imgs_0
+HU,HU333,Csongrád-Csanád,lake,,5,4,osm:w82422771,Sziksóstó,photo_gate,imgs_0
+NO,NO092,Agder,lake,,4,4,wd:Q1772746,Åraksfjorden,photo_gate,imgs_5
+NO,NO092,Agder,lake,,4,4,wd:Q2455280,Byglandsfjorden,photo_gate,imgs_4
+NO,NO092,Agder,lake,,4,4,wd:Q6514173,Syndle,photo_gate,imgs_5
+NO,NO092,Agder,lake,,4,4,wd:Q657862,Lundevatnet,photo_gate,imgs_2
+MK,MK007,Severoistočen,lake,,4,4,wd:Q114964741,Кнежевско Езеро,photo_gate,imgs_5
+MK,MK007,Severoistočen,lake,,4,4,wd:Q3215447,Глажња (езеро),photo_gate,imgs_0
+MK,MK007,Severoistočen,lake,,4,4,wd:Q20933105,Глажњанско Езеро,photo_gate,imgs_0
+MK,MK007,Severoistočen,lake,,4,4,wd:Q22253462,Otošnica Lake,photo_gate,imgs_3
+PT,PT200,Região Autónoma dos Açores,lake,,6,4,wd:Q1515751,Sete Cidades Massif,photo_gate,imgs_1
+PT,PT200,Região Autónoma dos Açores,lake,,6,4,wd:Q1800480,Lagoa do Fogo,photo_gate,imgs_2
+PT,PT200,Região Autónoma dos Açores,lake,,6,4,wd:Q1526881,Lagoa das Sete Cidades,photo_gate,imgs_2
+PT,PT200,Região Autónoma dos Açores,lake,,6,4,wd:Q1800473,Lagoa do Caldeirão,photo_gate,imgs_1
+RS,RS226,Pirotska oblast,lake,,4,4,wd:Q166971,Zavoj Lake,photo_gate,imgs_3
+RS,RS226,Pirotska oblast,lake,,4,4,wd:Q65199997,Ветренско језеро,photo_gate,imgs_2
+RS,RS226,Pirotska oblast,lake,,4,4,wd:Q12750880,Дивљанско језеро,photo_gate,imgs_4
+RS,RS226,Pirotska oblast,lake,,4,4,wd:Q65200461,Sukovo Lake,photo_gate,imgs_2
+SI,SI032,Podravska,lake,,5,4,osm:w451858077,Plački vrh,photo_gate,imgs_2
+SI,SI032,Podravska,lake,,5,4,osm:w734422177,Kamp Terme Ptuj,photo_gate,imgs_3
+SI,SI032,Podravska,lake,,5,4,osm:w171236272,Termalni park Terme Ptuj,photo_gate,imgs_2
+SI,SI032,Podravska,lake,,5,4,osm:w1347427913,Termalni park Terme Ptuj,photo_gate,imgs_2
+SI,SI043,Goriška,lake,,4,4,osm:w715907893,Labrca Outdoor Center,photo_gate,imgs_0
+SI,SI043,Goriška,lake,,4,4,osm:w389536038,Avtokamp Ajdovščina,photo_gate,imgs_2
+SI,SI043,Goriška,lake,,4,4,osm:w172149585,Mestno kopališče,photo_gate,imgs_0
+SI,SI043,Goriška,lake,,4,4,wd:Q3110294,Wild Lake,photo_gate,imgs_3
+XK,XK004,Prizren,lake,,4,4,osm:w543273642,Liqeni i Vërmicës,photo_gate,imgs_0
+XK,XK004,Prizren,lake,,4,4,wd:Q20565703,Горно Врачанско Езеро,photo_gate,imgs_4
+XK,XK004,Prizren,lake,,4,4,osm:w454549649,Konjushka's Lake,photo_gate,imgs_1
+XK,XK004,Prizren,lake,,4,4,wd:Q3406676,Šutmansko Lake,photo_gate,imgs_4
+XK,XK005,Ferizaj,lake,,4,4,wd:Q12751073,Lower Blateštica lake,photo_gate,imgs_0
+XK,XK005,Ferizaj,lake,,4,4,wd:Q3299614,Big Jažinačko Lake,photo_gate,imgs_4
+XK,XK005,Ferizaj,lake,,4,4,wd:Q6593727,Štrbačko Lake,photo_gate,imgs_4
+XK,XK005,Ferizaj,lake,,4,4,wd:Q5296206,Donji Vir Lake,photo_gate,imgs_4
+GB,TLD13,Cumberland,lake,,6,4,wd:Q934551,Derwentwater,photo_gate,imgs_2
+GB,TLD13,Cumberland,lake,,6,4,wd:Q1018122,Buttermere,photo_gate,imgs_2
+GB,TLD13,Cumberland,lake,,6,4,wd:Q514635,Wast Water,photo_gate,imgs_4
+GB,TLD13,Cumberland,lake,,6,4,wd:Q1480464,Thirlmere,photo_gate,imgs_0
+GB,TLM20,Highlands and Islands,lake,,8,4,wd:Q1535690,Loch an Eilein,photo_gate,imgs_2
+GB,TLM20,Highlands and Islands,lake,,8,4,wd:Q1368230,Loch Awe,photo_gate,imgs_3
+GB,TLM20,Highlands and Islands,lake,,8,4,wd:Q1310646,Loch Maree,photo_gate,imgs_3
+GB,TLM20,Highlands and Islands,lake,,8,4,wd:Q1444264,Loch Morar,floor_pool,score_5.3_below_5.4
+AD,AD-AD-02,Canillo,lake,,4,4,wd:Q11979432,Estanys de Juclar,photo_gate,imgs_2
+AD,AD-AD-02,Canillo,lake,,4,4,wd:Q21329237,Estany de les Canals Roges,photo_gate,imgs_3
+AD,AD-AD-02,Canillo,lake,,4,4,wd:Q21330594,Estany de Baix,photo_gate,imgs_1
+AD,AD-AD-02,Canillo,lake,,4,4,wd:Q21329944,Estany dels Meners de la Coma,photo_gate,imgs_4
+AL,AL013,Kukës,lake,,5,3,wd:Q6475581,Lake Dash,photo_gate,imgs_5
+AL,AL013,Kukës,lake,,5,3,wd:Q140373290,Qarr Water Reservoir,photo_gate,imgs_1
+AL,AL013,Kukës,lake,,5,3,wd:Q117126835,Letaj Water Reservoir,photo_gate,imgs_2
+AL,AL031,Berat,lake,,3,3,wd:Q22007658,Ujembledhesi i Sadovices,photo_gate,imgs_3
+AL,AL031,Berat,lake,,3,3,wd:Q22009787,Ujembledhesi i Mbreshtanit,photo_gate,imgs_0
+AL,AL031,Berat,lake,,3,3,wd:Q22008157,Ujembledhesi i Belesoves,photo_gate,imgs_0
+AL,AL014,Lezhë,lake,,3,3,osm:w338110168,Shëngjin Beach,photo_gate,imgs_2
+AL,AL014,Lezhë,lake,,3,3,osm:w366443477,Tale Beach,photo_gate,imgs_1
+AL,AL014,Lezhë,lake,,3,3,wd:Q22011725,Keneta e Kenalles,photo_gate,imgs_5
+AL,AL015,Shkodër,lake,,5,3,wd:Q22012027,Lake Koman,photo_gate,imgs_2
+AL,AL015,Shkodër,lake,,5,3,wd:Q22009743,Laguna e Vilunit,photo_gate,imgs_2
+AL,AL015,Shkodër,lake,,5,3,osm:w599625297,Velipoja Beach,photo_gate,imgs_3
+BE,BE225,Arr. Maaseik,lake,,4,3,wd:Q2702921,Heerenlaak,photo_gate,imgs_3
+BE,BE225,Arr. Maaseik,lake,,4,3,osm:r1585681,Vissenakkerplas,photo_gate,imgs_0
+BE,BE225,Arr. Maaseik,lake,,4,3,osm:w1531380842,Zwemzone De Steenberg,photo_gate,imgs_0
+BE,BE236,Arr. Sint-Niklaas,lake,,3,3,osm:w41596527,De Ster Noord,photo_gate,imgs_0
+BE,BE236,Arr. Sint-Niklaas,lake,,3,3,osm:w505802955,Roeibootjes,photo_gate,imgs_0
+BE,BE236,Arr. Sint-Niklaas,lake,,3,3,osm:w505802960,Waterfietsen,photo_gate,imgs_0
+BE,BE336,Bezirk Verviers — Deutschsprachige Gemeinschaft,lake,,3,3,wd:Q470432,Lake Bütgenbach,photo_gate,imgs_2
+BE,BE336,Bezirk Verviers — Deutschsprachige Gemeinschaft,lake,,3,3,osm:r6710464,Etangs de Recht,photo_gate,imgs_0
+BE,BE336,Bezirk Verviers — Deutschsprachige Gemeinschaft,lake,,3,3,osm:w1531906881,Zone de baignade des Étangs de Recht,photo_gate,imgs_0
+BG,BG332,Dobrich,lake,,4,3,wd:Q12279229,Durankulak lake,photo_gate,imgs_2
+BG,BG332,Dobrich,lake,,4,3,wd:Q12272915,Balchishka Tuzla,photo_gate,imgs_2
+BG,BG332,Dobrich,lake,,4,3,wd:Q1133271,Lake Shabla,photo_gate,imgs_2
+BG,BG424,Smolyan,lake,,3,3,wd:Q12281484,Teshel,photo_gate,imgs_2
+BG,BG424,Smolyan,lake,,3,3,osm:w335734546,Persenk Thermal Waterpark,photo_gate,imgs_0
+BG,BG424,Smolyan,lake,,3,3,wd:Q104806720,Tsankov Kamak Reservoir,photo_gate,imgs_5
+BG,BG425,Kardzhali,lake,,3,3,wd:Q6369169,Kardzhali Reservoir,photo_gate,imgs_3
+BG,BG425,Kardzhali,lake,,3,3,wd:Q21778153,Studen Kladenets reservoir,photo_gate,imgs_1
+BG,BG425,Kardzhali,lake,,3,3,wd:Q12284696,Лебедови езера,photo_gate,imgs_0
+BG,BG413,Blagoevgrad,lake,,5,3,wd:Q20498447,Dautovo Lake,photo_gate,imgs_2
+BG,BG413,Blagoevgrad,lake,,5,3,wd:Q7348099,Sinanishko Lake,photo_gate,imgs_3
+BG,BG413,Blagoevgrad,lake,,5,3,wd:Q12291315,Prevalski Lakes,photo_gate,imgs_1
+BG,BG421,Plovdiv,lake,,3,3,osm:w77092763,Rowing canal,photo_gate,imgs_1
+BG,BG421,Plovdiv,lake,,3,3,osm:w410548952,"Плувен комплекс ""Младост""",photo_gate,imgs_0
+BG,BG421,Plovdiv,lake,,3,3,osm:w1432459686,Sports Complex VSI,photo_gate,imgs_0
+CZ,CZ042,Ústecký kraj,lake,,7,3,wd:Q12036095,Lake Matylda,photo_gate,imgs_2
+CZ,CZ042,Ústecký kraj,lake,,7,3,wd:Q1558921,Kamencové jezero,photo_gate,imgs_2
+CZ,CZ042,Ústecký kraj,lake,,7,3,wd:Q3491130,Lake Milada,photo_gate,imgs_4
+DE,DE405,Barnim,lake,,3,3,wd:Q832060,Parsteiner See,photo_gate,imgs_2
+DE,DE405,Barnim,lake,,3,3,wd:Q315446,Werbellinsee,photo_gate,imgs_2
+DE,DE405,Barnim,lake,,3,3,wd:Q738483,Wandlitzer See,photo_gate,imgs_4
+GR,EL622,Kerkyra,lake,,3,3,wd:Q14213239,Korission Lagoon,photo_gate,imgs_3
+GR,EL622,Kerkyra,lake,,3,3,wd:Q24915572,Lake Antiniotissa,photo_gate,imgs_1
+GR,EL622,Kerkyra,lake,,3,3,wd:Q12873437,Alyki Lefkimmis,photo_gate,imgs_3
+GR,EL632,Achaia,lake,,4,3,wd:Q109301707,Asteri Lake,photo_gate,imgs_2
+GR,EL632,Achaia,lake,,4,3,wd:Q15057232,Tsivlou lake,photo_gate,imgs_5
+GR,EL632,Achaia,lake,,4,3,wd:Q15057228,Papas Lagoon,floor_pool,score_5.1_below_5.4
+GR,EL633,Ileia,lake,,3,3,wd:Q4208570,Kaiafas Lake,photo_gate,imgs_1
+GR,EL633,Ileia,lake,,3,3,wd:Q6434401,Kotychi,photo_gate,imgs_3
+GR,EL633,Ileia,lake,,3,3,osm:w498304811,Kounoupelaki,photo_gate,imgs_0
+GR,EL543,Ioannina,lake,,4,3,wd:Q776956,Lake Pamvotida,photo_gate,imgs_3
+GR,EL543,Ioannina,lake,,4,3,wd:Q2615364,Drakolimni,photo_gate,imgs_3
+GR,EL543,Ioannina,lake,,4,3,osm:w976322268,Κολύμπη,photo_gate,imgs_0
+GR,EL422,"Andros, Thira, Kea - Kythnos, Milos, Mykonos, Naxos, Paros,  Syros, Tinos",lake,,3,3,osm:w410093157,Batsi,photo_gate,imgs_3
+GR,EL422,"Andros, Thira, Kea - Kythnos, Milos, Mykonos, Naxos, Paros,  Syros, Tinos",lake,,3,3,osm:w494228310,Kamares,photo_gate,imgs_3
+GR,EL422,"Andros, Thira, Kea - Kythnos, Milos, Mykonos, Naxos, Paros,  Syros, Tinos",lake,,3,3,osm:w384671017,Naxos Marina,photo_gate,imgs_2
+GR,EL513,Rodopi,lake,,3,3,osm:w165937118,Δημοτικό Κάμπινγκ,photo_gate,imgs_0
+GR,EL513,Rodopi,lake,,3,3,wd:Q25122897,Xirolimni Lake,photo_gate,imgs_0
+GR,EL513,Rodopi,lake,,3,3,osm:w863250309,Scout camp 'Alkion',photo_gate,imgs_0
+EE,EE004,Lääne-Eesti,lake,,6,3,wd:Q3234121,Lake Ermistu,photo_gate,imgs_1
+EE,EE004,Lääne-Eesti,lake,,6,3,wd:Q595341,Kaali crater,photo_gate,imgs_3
+EE,EE004,Lääne-Eesti,lake,,6,3,wd:Q6373614,Karujärv,photo_gate,imgs_2
+GR,EL523,Kilkis,lake,,3,3,wd:Q8427831,Lake Pikrolimni,photo_gate,imgs_3
+GR,EL523,Kilkis,lake,,3,3,osm:r2913208,Axios,photo_gate,imgs_0
+GR,EL523,Kilkis,lake,,3,3,wd:Q15057378,Mine Lake,photo_gate,imgs_3
+GR,EL526,Serres,lake,,3,3,osm:w165537966,Strymonas,photo_gate,imgs_1
+GR,EL526,Serres,lake,,3,3,osm:w1216288122,Κολυμβητήριο,photo_gate,imgs_0
+GR,EL526,Serres,lake,,3,3,wd:Q1739269,Lake Kerkini,photo_gate,imgs_5
+FI,FI1D8,Kainuu,lake,,4,3,wd:Q1818331,Lentua,photo_gate,imgs_1
+FI,FI1D8,Kainuu,lake,,4,3,wd:Q6482080,Lammasjärvi,photo_gate,imgs_5
+FI,FI1D8,Kainuu,lake,,4,3,wd:Q1346212,Kiantajärvi,photo_gate,imgs_2
+HR,HR034,Šibensko-kninska županija,lake,,4,3,wd:Q1254195,Zmajevo oko,photo_gate,imgs_3
+HR,HR034,Šibensko-kninska županija,lake,,4,3,wd:Q25301398,Vela Solina,photo_gate,imgs_0
+HR,HR034,Šibensko-kninska županija,lake,,4,3,wd:Q111472100,Visovac Lake,photo_gate,imgs_2
+HU,HU232,Somogy,lake,,4,3,osm:r3044241,Ó-Dráva,photo_gate,imgs_0
+HU,HU232,Somogy,lake,,4,3,osm:w23564761,Bók,photo_gate,imgs_0
+HU,HU232,Somogy,lake,,4,3,osm:r17395388,Garicsi-kavicsbányató,photo_gate,imgs_0
+HR,HR037,Dubrovačko-neretvanska županija,lake,,6,3,osm:w38589506,Kuti,photo_gate,imgs_1
+HR,HR037,Dubrovačko-neretvanska županija,lake,,6,3,wd:Q12644525,Veliko jezero (Mljet),photo_gate,imgs_3
+HR,HR037,Dubrovačko-neretvanska županija,lake,,6,3,wd:Q1623907,Salt mine in Ston,photo_gate,imgs_3
+HR,HR065,Zagrebačka županija,lake,,3,3,wd:Q16115512,Čiče,photo_gate,imgs_4
+HR,HR065,Zagrebačka županija,lake,,3,3,osm:w634642781,Gradski bazen Velika Gorica,photo_gate,imgs_1
+HR,HR065,Zagrebačka županija,lake,,3,3,osm:w139717051,Športsko rekreativni centar Vugrinščak,photo_gate,imgs_0
+HR,HR025,Osječko-baranjska županija,lake,,3,3,osm:w555978571,Kopika,photo_gate,imgs_2
+HR,HR025,Osječko-baranjska županija,lake,,3,3,osm:w1088142939,Gradski bazeni,photo_gate,imgs_0
+HR,HR025,Osječko-baranjska županija,lake,,3,3,osm:w406087098,Bistrinačka plaža,photo_gate,imgs_0
+HU,HU120,Pest,lake,,5,3,osm:w449069353,Lupa-tó,photo_gate,imgs_2
+HU,HU120,Pest,lake,,5,3,osm:r187301,Ráckevei (Soroksári)-Duna,photo_gate,imgs_0
+HU,HU120,Pest,lake,,5,3,wd:Q111153528,Cseres Lake,photo_gate,imgs_2
+HR,HR027,Karlovačka županija,lake,,3,3,wd:Q16116893,Jezero Sabljaki,photo_gate,imgs_1
+HR,HR027,Karlovačka županija,lake,,3,3,osm:w1218535553,Kupalište Jambrić,photo_gate,imgs_0
+HR,HR027,Karlovačka županija,lake,,3,3,osm:w530773551,Kolpa,photo_gate,imgs_2
+LV,LV009,Zemgale,lake,,4,3,osm:w628088083,Lielais melnezers,photo_gate,imgs_0
+LV,LV009,Zemgale,lake,,4,3,osm:w628088082,Mazais melnezers,photo_gate,imgs_0
+LV,LV009,Zemgale,lake,,4,3,osm:r12619204,Dumblis,photo_gate,imgs_0
+LI,LI000,Liechtenstein,lake,,3,3,wd:Q1225854,Egel lake Feldkirch,photo_gate,imgs_1
+LI,LI000,Liechtenstein,lake,,3,3,wd:Q156543,Gampriner Seele,photo_gate,imgs_2
+LI,LI000,Liechtenstein,lake,,3,3,osm:w980601916,Hallenbad Eschen,photo_gate,imgs_2
+LV,LV00C,Vidzeme,lake,,7,3,wd:Q13459372,Liivajärv,photo_gate,imgs_4
+LV,LV00C,Vidzeme,lake,,7,3,wd:Q20529574,Mudajärv,photo_gate,imgs_0
+LV,LV00C,Vidzeme,lake,,7,3,wd:Q11046848,Lake Väike-Palkna,photo_gate,imgs_1
+LT,LT021,Alytaus apskritis,lake,,6,3,wd:Q263136,Metelys,photo_gate,imgs_2
+LT,LT021,Alytaus apskritis,lake,,6,3,wd:Q16472802,Snaigynas,photo_gate,imgs_3
+LT,LT021,Alytaus apskritis,lake,,6,3,wd:Q20503921,Samanis,photo_gate,imgs_1
+MK,MK002,Istočen,lake,,4,3,osm:w37910535,City Pool,photo_gate,imgs_0
+MK,MK002,Istočen,lake,,4,3,osm:w365527240,City Swimming Pool,photo_gate,imgs_0
+MK,MK002,Istočen,lake,,4,3,wd:Q20933989,Беровско Езеро,photo_gate,imgs_4
+LT,LT026,Šiaulių apskritis,lake,,4,3,wd:Q1134459,Rėkyvos,photo_gate,imgs_2
+LT,LT026,Šiaulių apskritis,lake,,4,3,wd:Q16457574,Kurtuva,photo_gate,imgs_1
+LT,LT026,Šiaulių apskritis,lake,,4,3,wd:Q12668975,Pašvinys,photo_gate,imgs_0
+IT,ITF46,Foggia,lake,,3,3,wd:Q1129358,Lake Lesina,photo_gate,imgs_2
+IT,ITF46,Foggia,lake,,3,3,wd:Q949581,Lago Salso,photo_gate,imgs_3
+IT,ITF46,Foggia,lake,,3,3,osm:w26310089,Foce Varano,photo_gate,imgs_1
+NO,NO085,Buskerud,lake,,5,3,wd:Q1636385,Krøderen,photo_gate,imgs_1
+NO,NO085,Buskerud,lake,,5,3,wd:Q1144478,Eikeren,photo_gate,imgs_3
+NO,NO085,Buskerud,lake,,5,3,wd:Q1772375,Stolsvatnet,floor_pool,score_5.0_below_5.4
+NO,NO072,Troms/Romsa/Tromssa,lake,,3,3,wd:Q11872280,Koltajärvi,photo_gate,imgs_0
+NO,NO072,Troms/Romsa/Tromssa,lake,,3,3,wd:Q1773462,Somasjärvi,photo_gate,imgs_1
+NO,NO072,Troms/Romsa/Tromssa,lake,,3,3,osm:r1725668,Gálggojávri,photo_gate,imgs_0
+MK,MK008,Skopski,lake,,3,3,wd:Q259515,Lake Matka,photo_gate,imgs_3
+MK,MK008,Skopski,lake,,3,3,osm:w1493028272,Swimming pool Saraj,photo_gate,imgs_1
+MK,MK008,Skopski,lake,,3,3,osm:w38084155,Базен Аеродром,photo_gate,imgs_0
+NL,NL126,Zuidoost-Friesland,lake,,4,3,wd:Q2348263,De Leijen,photo_gate,imgs_3
+NL,NL126,Zuidoost-Friesland,lake,,4,3,wd:Q2682231,Canadameer,photo_gate,imgs_2
+NL,NL126,Zuidoost-Friesland,lake,,4,3,osm:w1119977245,Jachthaven Alddjip,photo_gate,imgs_3
+RS,RS211,Zlatiborska oblast,lake,,5,3,osm:w414339612,"Gradska Plaža ""Kolovrat""",photo_gate,imgs_0
+RS,RS211,Zlatiborska oblast,lake,,5,3,osm:w1530476400,Купалиште „Рача”,photo_gate,imgs_0
+RS,RS211,Zlatiborska oblast,lake,,5,3,wd:Q207138,Zlatar Lake,photo_gate,imgs_5
+RO,RO322,Ilfov,lake,,4,3,osm:w1244012652,Parcare în Otopeni SRL,photo_gate,imgs_0
+RO,RO322,Ilfov,lake,,4,3,osm:w118166547,Water Park Otopeni,photo_gate,imgs_0
+RO,RO322,Ilfov,lake,,4,3,wd:Q3214854,Lake Dâmbovița,photo_gate,imgs_2
+RS,RS212,Kolubarska oblast,lake,,3,3,osm:w1097853588,Љишки базен,photo_gate,imgs_0
+RS,RS212,Kolubarska oblast,lake,,3,3,wd:Q23198806,Rovni Lake,floor_pool,score_4.7_below_5.4
+RS,RS212,Kolubarska oblast,lake,,3,3,wd:Q20435113,Petnica Lake,floor_pool,score_4.4_below_5.4
+RO,RO411,Dolj,lake,,3,3,osm:w1532951236,Plaja Maglavit,photo_gate,imgs_0
+RO,RO411,Dolj,lake,,3,3,osm:w1532951523,Plaja Cetate,photo_gate,imgs_0
+RO,RO411,Dolj,lake,,3,3,osm:w703344380,Balta Arcerului,photo_gate,imgs_0
+RS,RS214,Moravička oblast,lake,,3,3,osm:w820866413,Градска плажа,photo_gate,imgs_0
+RS,RS214,Moravička oblast,lake,,3,3,osm:w695633575,Плажа са Љубићске стране,photo_gate,imgs_0
+RS,RS214,Moravička oblast,lake,,3,3,osm:w979397255,Рекреативно језеро,photo_gate,imgs_0
+RS,RS218,Šumadijska oblast,lake,,3,3,wd:Q16086083,Šumarice lake,photo_gate,imgs_3
+RS,RS218,Šumadijska oblast,lake,,3,3,osm:w167524226,Затворени базен,photo_gate,imgs_0
+RS,RS218,Šumadijska oblast,lake,,3,3,wd:Q1551157,Gruža Lake,floor_pool,score_5.2_below_5.4
+RO,RO415,Vâlcea,lake,,3,3,osm:w289908196,Parcarea Parc,photo_gate,imgs_0
+RO,RO415,Vâlcea,lake,,3,3,osm:w289908199,Pișcină de Adulți și Copiii,photo_gate,imgs_0
+RO,RO415,Vâlcea,lake,,3,3,osm:w289908194,Ștrand,photo_gate,imgs_0
+RO,RO423,Hunedoara,lake,,3,3,wd:Q851764,Bucura Lake,photo_gate,imgs_1
+RO,RO423,Hunedoara,lake,,3,3,wd:Q873977,Cinciș Lake,photo_gate,imgs_2
+RO,RO423,Hunedoara,lake,,3,3,osm:w98180694,Bazinul De Înnot,photo_gate,imgs_0
+RO,RO222,Buzău,lake,,3,3,osm:w170207028,Ștrand Paradis,photo_gate,imgs_0
+RO,RO222,Buzău,lake,,3,3,wd:Q18537674,Balta Amară,photo_gate,imgs_0
+RO,RO222,Buzău,lake,,3,3,wd:Q31909310,Balta Amara,photo_gate,imgs_0
+RS,RS110,City of Belgrade,lake,,5,3,wd:Q2321302,Ada Ciganlija,photo_gate,imgs_3
+RS,RS110,City of Belgrade,lake,,5,3,wd:Q12758519,Savsko Lake,photo_gate,imgs_4
+RS,RS110,City of Belgrade,lake,,5,3,osm:w659201374,Nudist Beach Ada Ciganlija,photo_gate,imgs_2
+RS,RS126,Srednjobanatska oblast,lake,,3,3,osm:w115278448,Пескара,photo_gate,imgs_0
+RS,RS126,Srednjobanatska oblast,lake,,3,3,osm:w135743469,Чепел,photo_gate,imgs_0
+RS,RS126,Srednjobanatska oblast,lake,,3,3,wd:Q2940431,Carska Bara,photo_gate,imgs_3
+SE,SE110,Stockholms län,lake,,9,3,wd:Q3360984,Ältasjön,photo_gate,imgs_3
+SE,SE110,Stockholms län,lake,,9,3,wd:Q3361308,Yngern,photo_gate,imgs_1
+SE,SE110,Stockholms län,lake,,9,3,wd:Q3361283,Måsnaren,photo_gate,imgs_2
+RS,RS223,Zaječarska oblast,lake,,3,3,osm:w416211357,Zupan beach,photo_gate,imgs_0
+RS,RS223,Zaječarska oblast,lake,,3,3,osm:w972083759,Moravica canyon,photo_gate,imgs_0
+RS,RS223,Zaječarska oblast,lake,,3,3,osm:w914185390,Шест каца,photo_gate,imgs_0
+SI,SI031,Pomurska,lake,,4,3,osm:r1704442,Mura,photo_gate,imgs_0
+SI,SI031,Pomurska,lake,,4,3,osm:r11696336,Belovič,photo_gate,imgs_0
+SI,SI031,Pomurska,lake,,4,3,osm:r1704442,Mura,photo_gate,imgs_0
+XK,XK003,Pejë,lake,,3,3,osm:w212861485,Lake Drelaj,photo_gate,imgs_1
+XK,XK003,Pejë,lake,,3,3,osm:w212861486,Lake Leqinat,photo_gate,imgs_1
+XK,XK003,Pejë,lake,,3,3,wd:Q6650632,Little Lake Lićenat,photo_gate,imgs_2
+XK,XK006,Gjilan,lake,,3,3,wd:Q7242993,Prilepnica Lake,photo_gate,imgs_0
+XK,XK006,Gjilan,lake,,3,3,osm:w646328068,Evropa 2002,photo_gate,imgs_0
+XK,XK006,Gjilan,lake,,3,3,osm:w460417257,Pishina ''Palma,photo_gate,imgs_0
+GB,TLM13,City of Edinburgh,lake,,3,3,wd:Q7352059,Threipmuir Reservoir,floor_pool,score_4.8_below_5.4
+GB,TLM13,City of Edinburgh,lake,,3,3,wd:Q1263637,Duddingston Loch,floor_pool,score_4.7_below_5.4
+GB,TLM13,City of Edinburgh,lake,,3,3,wd:Q24661167,Bonaly Reservoir,photo_gate,imgs_2
+AD,AD-AD-05,Ordino,lake,,3,3,wd:Q9019969,Estanys de Tristaina,photo_gate,imgs_3
+AD,AD-AD-05,Ordino,lake,,3,3,wd:Q21329550,Estany Esbalçat,photo_gate,imgs_2
+AD,AD-AD-05,Ordino,lake,,3,3,wd:Q21329591,Estany de l'Estanyó,photo_gate,imgs_2
+AD,AD-AD-04,La Massana,lake,,3,3,wd:Q2781227,Estanys Forcats,photo_gate,imgs_2
+AD,AD-AD-04,La Massana,lake,,3,3,wd:Q2477261,Estany de les Truites,photo_gate,imgs_3
+AD,AD-AD-04,La Massana,lake,,3,3,wd:Q1934789,Estany Negre,photo_gate,imgs_4
+AD,AD-AD-08,Escaldes-Engordany,lake,,3,3,wd:Q21330406,Estany de Serra Mitjana,photo_gate,imgs_1
+AD,AD-AD-08,Escaldes-Engordany,lake,,3,3,wd:Q115579665,els Estanyons,photo_gate,imgs_1
+AD,AD-AD-08,Escaldes-Engordany,lake,,3,3,wd:Q21329190,Estany de la Bova,photo_gate,imgs_1
+AL,AL022,Tiranë,lake,,4,2,osm:w237926967,Plazhi i Golemit,photo_gate,imgs_3
+AL,AL022,Tiranë,lake,,4,2,osm:w335713840,Spille Beach,photo_gate,imgs_0
+AL,AL022,Tiranë,lake,,4,2,wd:Q22009774,Ujembledhesi i Manskurise,photo_gate,imgs_3
+AT,AT112,Nordburgenland,lake,,3,2,wd:Q6396,Neusiedl Lake,photo_gate,imgs_1
+AT,AT112,Nordburgenland,lake,,3,2,wd:Q1166740,Darscho,photo_gate,imgs_3
+AT,AT112,Nordburgenland,lake,,3,2,wd:Q1980477,Neufelder See,photo_gate,imgs_3
+BE,BE211,Arr. Antwerpen,lake,,3,2,osm:w32907782,City Camping Antwerp,photo_gate,imgs_2
+BE,BE211,Arr. Antwerpen,lake,,3,2,osm:w19783271,Sint-Annastrand,photo_gate,imgs_1
+BE,BE211,Arr. Antwerpen,lake,,3,2,osm:w4309315,Galgenweel,photo_gate,imgs_0
+BE,BE212,Arr. Mechelen,lake,,3,2,wd:Q1993163,Hazewinkel,photo_gate,imgs_3
+BE,BE212,Arr. Mechelen,lake,,3,2,wd:Q2632521,De Nekker,photo_gate,imgs_0
+BE,BE212,Arr. Mechelen,lake,,3,2,osm:w1451805843,LAGO Lier De Waterperels,photo_gate,imgs_4
+BE,BE223,Arr. Tongeren,lake,,2,2,wd:Q67604479,Ven onder de Berg,photo_gate,imgs_0
+BE,BE223,Arr. Tongeren,lake,,2,2,osm:w211728251,Jocomo-Parc,photo_gate,imgs_0
+BE,BE223,Arr. Tongeren,lake,,2,2,osm:w457768622,San Lanaco,photo_gate,imgs_0
+BE,BE234,Arr. Gent,lake,,3,2,osm:r12399642,Krekenplas,photo_gate,imgs_0
+BE,BE234,Arr. Gent,lake,,3,2,osm:w595841743,Sportstrand,photo_gate,imgs_0
+BE,BE234,Arr. Gent,lake,,3,2,osm:w89705568,Urban Gardens,photo_gate,imgs_0
+BE,BE241,Arr. Halle-Vilvoorde,lake,,2,2,osm:w1531233092,ijsestrand,photo_gate,imgs_0
+BE,BE241,Arr. Halle-Vilvoorde,lake,,2,2,osm:w95046579,Begijntjesbad,photo_gate,imgs_0
+BE,BE241,Arr. Halle-Vilvoorde,lake,,2,2,osm:w34301080,Strandzone,photo_gate,imgs_0
+BE,BE242,Arr. Leuven,lake,,2,2,osm:w60581408,Meer van Rotselaar,photo_gate,imgs_1
+BE,BE242,Arr. Leuven,lake,,2,2,osm:w439518935,Zwemzone 'de Plas',photo_gate,imgs_0
+BE,BE242,Arr. Leuven,lake,,2,2,osm:w1422548249,Shallow Swimming Area,photo_gate,imgs_0
+BE,BE252,Arr. Diksmuide,lake,,2,2,osm:w644533680,Centrumparking Station,photo_gate,imgs_0
+BE,BE252,Arr. Diksmuide,lake,,2,2,osm:w1193920072,De Pluimen,photo_gate,imgs_0
+BE,BE252,Arr. Diksmuide,lake,,2,2,osm:w151075570,De Kupe,photo_gate,imgs_0
+BE,BE353,Arr. Philippeville,lake,,2,2,osm:w1300451234,Lac du Ry Jaune,photo_gate,imgs_0
+BE,BE353,Arr. Philippeville,lake,,2,2,osm:w94905519,Piscine de Couvin,photo_gate,imgs_2
+BE,BE353,Arr. Philippeville,lake,,2,2,wd:Q2885430,Lake Ry de Rome,photo_gate,imgs_2
+BG,BG311,Vidin,lake,,2,2,osm:w830818449,Pri Ivan Pool,photo_gate,imgs_0
+BG,BG311,Vidin,lake,,2,2,osm:w1375100541,Градски плаж,photo_gate,imgs_0
+BG,BG311,Vidin,lake,,2,2,osm:w1111141884,"Язовир ""Божурица""",photo_gate,imgs_0
+BE,BE345,Arr. Virton,lake,,2,2,osm:w25789282,Lac de Conchibois,photo_gate,imgs_0
+BE,BE345,Arr. Virton,lake,,2,2,osm:w837098923,Plage du lac de Conchibois,photo_gate,imgs_0
+BE,BE345,Arr. Virton,lake,,2,2,osm:w1532019017,Zone de baignade de Lacuisine,photo_gate,imgs_0
+BE,BE351,Arr. Dinant,lake,,2,2,osm:w1531768777,Zone de baignade de Vresse-sur-Semois,photo_gate,imgs_2
+BE,BE351,Arr. Dinant,lake,,2,2,osm:w836148992,plage de Alle,photo_gate,imgs_2
+BE,BE351,Arr. Dinant,lake,,2,2,osm:w1531906880,Zone de baignade de Membre,photo_gate,imgs_1
+BE,BE352,Arr. Namur,lake,,2,2,wd:Q660847,Meer van Bambois,photo_gate,imgs_3
+BE,BE352,Arr. Namur,lake,,2,2,osm:w112871512,Plage du Lac de Bambois,photo_gate,imgs_0
+BE,BE352,Arr. Namur,lake,,2,2,osm:w114467947,Le Bambois,photo_gate,imgs_0
+BG,BG325,Silistra,lake,,2,2,osm:w25238848,езеро Малък Преславец,photo_gate,imgs_0
+BG,BG325,Silistra,lake,,2,2,wd:Q12294882,Srebarna lake,floor_pool,score_4.2_below_5.4
+BG,BG325,Silistra,lake,,2,2,osm:w25238848,езеро Малък Преславец,photo_gate,imgs_0
+BG,BG315,Lovech,lake,,2,2,wd:Q12294182,Sopot,photo_gate,imgs_5
+BG,BG315,Lovech,lake,,2,2,osm:w589669874,Минерален плаж,photo_gate,imgs_0
+BG,BG315,Lovech,lake,,2,2,osm:w857623156,басейн Нира,photo_gate,imgs_0
+BG,BG322,Gabrovo,lake,,2,2,osm:w497938600,Sky Pool & Bar,photo_gate,imgs_0
+BG,BG322,Gabrovo,lake,,2,2,osm:w1053841636,Градски басейн,photo_gate,imgs_0
+BG,BG322,Gabrovo,lake,,2,2,wd:Q19707872,Христо Смирненски,photo_gate,imgs_0
+BG,BG324,Razgrad,lake,,2,2,osm:w25222630,яз. Пчелина 2,photo_gate,imgs_0
+BG,BG324,Razgrad,lake,,2,2,osm:w25222317,яз. Пчелина,photo_gate,imgs_0
+BG,BG324,Razgrad,lake,,2,2,wd:Q12273102,Beli Lom,photo_gate,imgs_0
+BG,BG342,Sliven,lake,,2,2,wd:Q12280199,Zhrebchevo Reservoir,photo_gate,imgs_2
+BG,BG342,Sliven,lake,,2,2,wd:Q20499348,Асеновец,photo_gate,imgs_0
+BG,BG342,Sliven,lake,,2,2,osm:w25220292,яз. Асеновец,photo_gate,imgs_0
+BG,BG343,Yambol,lake,,2,2,wd:Q12285754,Malko Sharkovo Reservoir,photo_gate,imgs_0
+BG,BG343,Yambol,lake,,2,2,wd:Q113130851,Dvata chuchura reservoir,photo_gate,imgs_0
+BG,BG343,Yambol,lake,,2,2,osm:w49908605,Гребен канал,photo_gate,imgs_0
+BG,BG344,Stara Zagora,lake,,3,2,osm:w1362831284,Плувен басейн,photo_gate,imgs_0
+BG,BG344,Stara Zagora,lake,,3,2,osm:w75849464,"Комплекс ""Арт""",photo_gate,imgs_0
+BG,BG344,Stara Zagora,lake,,3,2,wd:Q20498160,Ovcharitsa Reservoir,photo_gate,imgs_2
+BG,BG334,Targovishte,lake,,2,2,osm:w180852118,Рай,photo_gate,imgs_0
+BG,BG334,Targovishte,lake,,2,2,osm:w177943017,ез. Борово Око,photo_gate,imgs_0
+BG,BG334,Targovishte,lake,,2,2,wd:Q12299810,Yastrebino reservoir,photo_gate,imgs_2
+CH,CH023,Solothurn,lake,,2,2,osm:w49588395,TCS Camping zum Muttenhof,photo_gate,imgs_0
+CH,CH023,Solothurn,lake,,2,2,osm:r60624,Aare,photo_gate,imgs_2
+CH,CH023,Solothurn,lake,,2,2,osm:w576341929,Lido,photo_gate,imgs_0
+CH,CH051,Glarus,lake,,3,2,wd:Q663078,Oberblegisee,photo_gate,imgs_3
+CH,CH051,Glarus,lake,,3,2,wd:Q671751,Obersee,floor_pool,score_5.1_below_5.4
+CH,CH051,Glarus,lake,,3,2,wd:Q2443989,Torfstichsee,photo_gate,imgs_4
+CZ,CZ072,Zlínský kraj,lake,,4,2,wd:Q1553929,Luhačovická přehrada,photo_gate,imgs_3
+CZ,CZ072,Zlínský kraj,lake,,4,2,wd:Q11922921,Bystřička Reservoir,photo_gate,imgs_2
+CZ,CZ072,Zlínský kraj,lake,,4,2,wd:Q96158664,Kunovská tabule,photo_gate,imgs_2
+DE,DEB12,Ahrweiler,lake,,2,2,wd:Q549267,Laacher See,photo_gate,imgs_3
+DE,DEB12,Ahrweiler,lake,,2,2,osm:w1393581444,Lydia-Turm,photo_gate,imgs_2
+DE,DE946,Ammerland,lake,,2,2,wd:Q59578,Zwischenahner Meer,photo_gate,imgs_3
+DE,DE946,Ammerland,lake,,2,2,osm:w27378152,Karlshofer See,photo_gate,imgs_0
+DE,DE80O,Ludwigslust-Parchim,lake,,4,2,wd:Q704793,Plauer See,photo_gate,imgs_3
+DE,DE916,Goslar,lake,,2,2,wd:Q519907,Upper Harz Water Regale,photo_gate,imgs_2
+DE,DE916,Goslar,lake,,2,2,wd:Q96176842,Hirschler Teich,photo_gate,imgs_3
+DE,DE922,Diepholz,lake,,2,2,wd:Q688459,Dümmer,photo_gate,imgs_4
+DE,DE922,Diepholz,lake,,2,2,osm:w376940347,BSC,photo_gate,imgs_0
+DE,DE300,Berlin,lake,,4,2,wd:Q694789,Müggelsee,photo_gate,imgs_3
+DE,DE804,"Schwerin, Kreisfreie Stadt",lake,,2,2,wd:Q1398428,Fauler See,photo_gate,imgs_5
+DE,DE804,"Schwerin, Kreisfreie Stadt",lake,,2,2,wd:Q1689557,Neumühler See,photo_gate,imgs_2
+DE,DE804,"Schwerin, Kreisfreie Stadt",lake,,2,2,wd:Q778066,Burgsee,photo_gate,imgs_3
+DE,DE80J,Mecklenburgische Seenplatte,lake,,4,2,wd:Q324084,Tollensesee,photo_gate,imgs_3
+DE,DE21E,Landsberg am Lech,lake,,2,2,wd:Q265336,Ammersee,photo_gate,imgs_3
+DE,DE21E,Landsberg am Lech,lake,,2,2,osm:w38252408,Campingplatz Utting,photo_gate,imgs_2
+GR,EL642,Evvoia,lake,,3,2,osm:w280403754,Kalamos Beach,photo_gate,imgs_2
+GR,EL642,Evvoia,lake,,3,2,wd:Q15057273,Lake Dystos,photo_gate,imgs_0
+GR,EL642,Evvoia,lake,,3,2,osm:w166232034,Agali,photo_gate,imgs_0
+GR,EL644,Fthiotida,lake,,2,2,wd:Q24882405,Vromolimni,photo_gate,imgs_0
+GR,EL644,Fthiotida,lake,,2,2,osm:w751549379,Τραγάνα,photo_gate,imgs_0
+GR,EL644,Fthiotida,lake,,2,2,osm:w510509597,Dermária,photo_gate,imgs_0
+GR,EL645,Fokida,lake,,2,2,osm:w606522156,Ακτή Βραχάκια,photo_gate,imgs_0
+GR,EL645,Fokida,lake,,2,2,osm:w340252013,Καλαφάτης,photo_gate,imgs_0
+GR,EL645,Fokida,lake,,2,2,osm:w352153216,Παραθάλασσο,photo_gate,imgs_0
+GR,EL652,Korinthia,lake,,3,2,wd:Q14752068,Λίμνη Βουλιαγμένη,photo_gate,imgs_5
+GR,EL652,Korinthia,lake,,3,2,wd:Q1251026,Lake Stymphalia,photo_gate,imgs_3
+GR,EL652,Korinthia,lake,,3,2,osm:w702043307,Κοκκώσι,photo_gate,imgs_0
+GR,EL653,"Lakonia, Messinia",lake,,3,2,wd:Q24910881,Gialova Lagoon,photo_gate,imgs_1
+GR,EL653,"Lakonia, Messinia",lake,,3,2,osm:w404927220,Megali Ammos,photo_gate,imgs_0
+GR,EL653,"Lakonia, Messinia",lake,,3,2,osm:w716719695,Mavrovouni Beach,photo_gate,imgs_0
+GR,EL621,Zakynthos,lake,,2,2,wd:Q6393862,"Keri Lake, Zakynthos",photo_gate,imgs_3
+GR,EL621,Zakynthos,lake,,2,2,osm:w89353132,Laganas beach,photo_gate,imgs_3
+GR,EL621,Zakynthos,lake,,2,2,osm:w94826851,Tartaruga Camping,photo_gate,imgs_0
+GR,EL623,"Ithaki, Kefallinia",lake,,3,2,osm:w501001650,Trapezaki beach,photo_gate,imgs_0
+GR,EL623,"Ithaki, Kefallinia",lake,,3,2,osm:w80502199,Skinos,photo_gate,imgs_0
+GR,EL623,"Ithaki, Kefallinia",lake,,3,2,osm:w80500982,Gidaki,photo_gate,imgs_0
+GR,EL631,Aitoloakarnania,lake,,5,2,wd:Q1553955,Lake Lysimachia,photo_gate,imgs_3
+GR,EL631,Aitoloakarnania,lake,,5,2,wd:Q2987510,Ozeros,photo_gate,imgs_4
+GR,EL631,Aitoloakarnania,lake,,5,2,wd:Q1365911,Kastraki lake,photo_gate,imgs_2
+GR,EL527,Chalkidiki,lake,,2,2,wd:Q117352522,"Mavrobara, Polychrono",photo_gate,imgs_1
+GR,EL527,Chalkidiki,lake,,2,2,osm:w623153166,Blue Dream,photo_gate,imgs_0
+GR,EL527,Chalkidiki,lake,,2,2,osm:w79447222,Bousoulas,photo_gate,imgs_0
+GR,EL531,"Grevena, Kozani",lake,,2,2,osm:w1373356021,Λιάπειο Κολυμβητήριο,photo_gate,imgs_0
+GR,EL531,"Grevena, Kozani",lake,,2,2,wd:Q12880045,Lake Polyfytos,photo_gate,imgs_5
+GR,EL531,"Grevena, Kozani",lake,,2,2,osm:w1151320210,Κλειστό Κολυμβητήριο,photo_gate,imgs_0
+GR,EL411,"Lesvos, Limnos",lake,,2,2,wd:Q5105247,Chortarolimni,photo_gate,imgs_1
+GR,EL411,"Lesvos, Limnos",lake,,2,2,osm:w251823840,Tsamakia beach,photo_gate,imgs_0
+GR,EL411,"Lesvos, Limnos",lake,,2,2,osm:w269139068,Tarti Beach,photo_gate,imgs_1
+GR,EL542,Thesprotia,lake,,2,2,osm:w770901392,Camping Kalami Beach,photo_gate,imgs_0
+GR,EL542,Thesprotia,lake,,2,2,osm:w137438834,Mikri Ammos,photo_gate,imgs_0
+GR,EL542,Thesprotia,lake,,2,2,osm:w224769871,Zavia,photo_gate,imgs_0
+DK,DK012,Københavns omegn,lake,,4,2,wd:Q116193033,Fuglesangssøen,photo_gate,imgs_1
+DK,DK012,Københavns omegn,lake,,4,2,osm:w549190776,Hvidovre Havn,photo_gate,imgs_0
+DK,DK012,Københavns omegn,lake,,4,2,osm:w629829821,Hvidovre strand,photo_gate,imgs_0
+GR,EL432,Lasithi,lake,,3,2,wd:Q135234238,Alatsolimni,photo_gate,imgs_3
+GR,EL432,Lasithi,lake,,3,2,osm:w832883055,Αμμούδι,photo_gate,imgs_0
+GR,EL432,Lasithi,lake,,3,2,osm:w832883054,Πολύδωρος,photo_gate,imgs_0
+DE,DEF07,Nordfriesland,lake,,2,2,wd:Q20622,Rantum Basin,photo_gate,imgs_3
+DE,DEF07,Nordfriesland,lake,,2,2,wd:Q894922,Bottschlotter-See,photo_gate,imgs_1
+DE,DEF07,Nordfriesland,lake,,2,2,wd:Q27554878,Rudbøl Lake,photo_gate,imgs_3
+DK,DK022,Vest- og Sydsjælland,lake,,5,2,wd:Q39060232,Sorø Lake,photo_gate,imgs_2
+DK,DK022,Vest- og Sydsjælland,lake,,5,2,wd:Q23738301,Søndersø,photo_gate,imgs_3
+DK,DK022,Vest- og Sydsjælland,lake,,5,2,wd:Q23747292,Gyrstinge Sø,photo_gate,imgs_2
+GR,EL511,Evros,lake,,2,2,osm:w61187429,Pachia Ammos Beach,photo_gate,imgs_1
+GR,EL511,Evros,lake,,2,2,osm:w302589143,Alexandroupoli Municipal Camping,photo_gate,imgs_0
+GR,EL511,Evros,lake,,2,2,osm:w385780592,Aya Yorgi,photo_gate,imgs_0
+GR,EL514,Drama,lake,,2,2,osm:w185529618,Κολυμβητήριο Δράμας,photo_gate,imgs_0
+GR,EL514,Drama,lake,,2,2,wd:Q15057367,Thisavros lake,photo_gate,imgs_1
+GR,EL514,Drama,lake,,2,2,wd:Q12880043,Platanovrysi lake,photo_gate,imgs_0
+GR,EL521,Imathia,lake,,2,2,wd:Q15057364,Lake Asomaton,photo_gate,imgs_2
+GR,EL521,Imathia,lake,,2,2,wd:Q12880049,Λίμνη Σφηκιά,photo_gate,imgs_0
+GR,EL521,Imathia,lake,,2,2,wd:Q122310214,Sfikia,photo_gate,imgs_0
+GR,EL522,Thessaloniki,lake,,3,2,wd:Q117663686,Angelochori Lagoon,photo_gate,imgs_3
+GR,EL522,Thessaloniki,lake,,3,2,osm:w1382668177,Sand Dunes Nudist Beach,photo_gate,imgs_1
+GR,EL522,Thessaloniki,lake,,3,2,osm:w471793547,Akti Siamo,photo_gate,imgs_0
+GR,EL524,Pella,lake,,3,2,wd:Q12279886,Giannitsa Lake,photo_gate,imgs_0
+GR,EL524,Pella,lake,,3,2,wd:Q12880034,Lake Agra,photo_gate,imgs_5
+GR,EL524,Pella,lake,,3,2,osm:r3153861,Edesseos,photo_gate,imgs_0
+EE,EE00A,Kirde-Eesti,lake,,3,2,wd:Q2458214,Narva Reservoir,photo_gate,imgs_4
+EE,EE00A,Kirde-Eesti,lake,,3,2,wd:Q6807155,Lake Nõmme,photo_gate,imgs_1
+EE,EE00A,Kirde-Eesti,lake,,3,2,wd:Q7371026,Rääkjärv,photo_gate,imgs_1
+GR,EL306,Dytiki Attiki,lake,,2,2,osm:w100003490,Kineta's Beach,photo_gate,imgs_3
+GR,EL306,Dytiki Attiki,lake,,2,2,osm:w294123442,Psatha,photo_gate,imgs_1
+GR,EL306,Dytiki Attiki,lake,,2,2,osm:w362625307,Παραλία Πόρτο Γερμενό,photo_gate,imgs_0
+FI,FI1D9,Pohjois-Pohjanmaa,lake,,3,2,wd:Q1794741,Kuusamojärvi,photo_gate,imgs_1
+FI,FI1D9,Pohjois-Pohjanmaa,lake,,3,2,wd:Q1346949,Muojärvi,photo_gate,imgs_5
+FI,FI1D9,Pohjois-Pohjanmaa,lake,,3,2,wd:Q11898180,Toranki,photo_gate,imgs_0
+FI,FI1C7,Kymenlaakso,lake,,2,2,wd:Q2535480,Vuohijärvi,photo_gate,imgs_5
+FI,FI1C7,Kymenlaakso,lake,,2,2,wd:Q6488331,Lappalanjärvi,photo_gate,imgs_1
+FI,FI1C7,Kymenlaakso,lake,,2,2,wd:Q28802623,Käyrälampi,photo_gate,imgs_2
+ES,ES620,Murcia,lake,,2,2,osm:w307367311,Playa de Bolnuevo,photo_gate,imgs_3
+ES,ES620,Murcia,lake,,2,2,osm:w164048183,Playa de Levante,photo_gate,imgs_0
+ES,ES620,Murcia,lake,,2,2,osm:w233738957,Playa de las Delicias,photo_gate,imgs_0
+ES,ES521,Alicante/Alacant,lake,,3,2,osm:w19563217,Platja de Sant Joan,photo_gate,imgs_1
+ES,ES521,Alicante/Alacant,lake,,3,2,wd:Q3373949,Embassament de Beniarrés,photo_gate,imgs_4
+ES,ES521,Alicante/Alacant,lake,,3,2,wd:Q5658339,Salinas de Santa Pola Natural Park,photo_gate,imgs_3
+FI,FI1C6,Päijät-Häme,lake,,3,2,wd:Q1784076,Vesijärvi,photo_gate,imgs_3
+FI,FI1C6,Päijät-Häme,lake,,3,2,wd:Q533040,Ruotsalainen,photo_gate,imgs_1
+FI,FI1C6,Päijät-Häme,lake,,3,2,wd:Q474661,Jääsjärvi,photo_gate,imgs_5
+HU,HU213,Veszprém,lake,,3,2,wd:Q15054321,Belső-tó,photo_gate,imgs_3
+HU,HU213,Veszprém,lake,,3,2,wd:Q1126452,Outer lake (Tihany),photo_gate,imgs_3
+HU,HU213,Veszprém,lake,,3,2,osm:w230187779,Plage 18,photo_gate,imgs_0
+HR,HR028,Sisačko-moslavačka županija,lake,,2,2,osm:w290677073,Kupalište,photo_gate,imgs_0
+HR,HR028,Sisačko-moslavačka županija,lake,,2,2,wd:Q212927,Una,floor_pool,score_4.9_below_5.4
+HR,HR028,Sisačko-moslavačka županija,lake,,2,2,osm:w95996549,Petrinjsko kupalište,photo_gate,imgs_0
+HU,HU222,Vas,lake,,2,2,wd:Q66310118,Vadása-tó,photo_gate,imgs_2
+HU,HU222,Vas,lake,,2,2,osm:r3564313,Csónakázó-tó,photo_gate,imgs_3
+HU,HU222,Vas,lake,,2,2,wd:Q26233522,Hársas-tó,photo_gate,imgs_1
+HR,HR031,Primorsko-goranska županija,lake,,3,2,osm:r12948475,Kolpa,photo_gate,imgs_0
+HR,HR031,Primorsko-goranska županija,lake,,3,2,osm:w998400496,Lipovica,photo_gate,imgs_2
+HR,HR031,Primorsko-goranska županija,lake,,3,2,osm:w24872316,Naturist Camp Bunculuka,photo_gate,imgs_1
+HR,HR032,Ličko-senjska županija,lake,,5,2,wd:Q3541891,Ciginovac,photo_gate,imgs_3
+HR,HR032,Ličko-senjska županija,lake,,5,2,wd:Q16110792,Veliki Burget,photo_gate,imgs_3
+HR,HR032,Ličko-senjska županija,lake,,5,2,wd:Q7210399,Galovac,photo_gate,imgs_5
+HR,HR036,Istarska županija,lake,,3,2,osm:w822646079,Kupalište Stoja,photo_gate,imgs_0
+HR,HR036,Istarska županija,lake,,3,2,osm:w125452901,Camping Ulika,photo_gate,imgs_3
+HR,HR036,Istarska županija,lake,,3,2,osm:w481824675,Camping Kanegra FKK,photo_gate,imgs_0
+HR,HR064,Krapinsko-zagorska županija,lake,,2,2,wd:Q12627739,Bedekovčanska jezera,photo_gate,imgs_1
+FR,FRG01,Loire-Atlantique,lake,,2,2,wd:Q3215452,Lac de Grand-Lieu,photo_gate,imgs_2
+FR,FRG01,Loire-Atlantique,lake,,2,2,wd:Q3114820,Grand réservoir de Vioreau,photo_gate,imgs_2
+FR,FRG01,Loire-Atlantique,lake,,2,2,osm:w230361720,Plage Du Nau,photo_gate,imgs_0
+FR,FRF32,Meuse ,lake,,2,2,wd:Q1413346,Lac de Madine,photo_gate,imgs_3
+FR,FRF32,Meuse ,lake,,2,2,osm:w32241320,Canal Saint-Airy,photo_gate,imgs_2
+FR,FRF32,Meuse ,lake,,2,2,osm:w32223250,Canal du Puty,photo_gate,imgs_2
+IT,ITG2F,Cagliari,lake,,2,2,wd:Q3968028,Stagno di Cagliari,photo_gate,imgs_3
+IT,ITG2F,Cagliari,lake,,2,2,osm:r12624640,Saline,photo_gate,imgs_3
+IT,ITG2F,Cagliari,lake,,2,2,osm:w142006632,Spiaggia di Solanas,photo_gate,imgs_1
+IT,ITI42,Rieti,lake,,3,2,wd:Q2623043,Lago del Turano,photo_gate,imgs_3
+IT,ITI42,Rieti,lake,,3,2,wd:Q3826045,Lago di Scandarello,photo_gate,imgs_3
+IT,ITI42,Rieti,lake,,3,2,wd:Q3826066,Ventina lake,photo_gate,imgs_2
+LT,LT022,Kauno apskritis,lake,,3,2,wd:Q4253638,Lampėdis,photo_gate,imgs_2
+LT,LT022,Kauno apskritis,lake,,3,2,wd:Q12647177,Akademija Reservoir,photo_gate,imgs_3
+LT,LT022,Kauno apskritis,lake,,3,2,wd:Q12659407,Kalvių Lake,photo_gate,imgs_1
+LT,LT025,Panevėžio apskritis,lake,,3,2,wd:Q1093648,Sartai,photo_gate,imgs_1
+LT,LT025,Panevėžio apskritis,lake,,3,2,wd:Q16450369,Ekrano gamyklos tvenkinys,photo_gate,imgs_3
+LT,LT025,Panevėžio apskritis,lake,,3,2,wd:Q16456396,Kilučiai Lake,photo_gate,imgs_0
+IT,ITI12,Lucca,lake,,2,2,wd:Q1800435,Lago di Vagli,photo_gate,imgs_2
+IT,ITI12,Lucca,lake,,2,2,osm:w702791690,Bagno Rossella,photo_gate,imgs_0
+IT,ITI12,Lucca,lake,,2,2,wd:Q3825961,Lago di Gramolazzo,photo_gate,imgs_2
+LT,LT027,Tauragės apskritis,lake,,2,2,wd:Q14919240,Paršežeris,photo_gate,imgs_1
+LT,LT027,Tauragės apskritis,lake,,2,2,wd:Q12650151,Balskai reservoir,photo_gate,imgs_3
+LT,LT027,Tauragės apskritis,lake,,2,2,wd:Q13191857,Dievytis,photo_gate,imgs_1
+LT,LT028,Telšių apskritis,lake,,4,2,wd:Q12664718,Mastis,photo_gate,imgs_4
+LT,LT028,Telšių apskritis,lake,,4,2,wd:Q14918903,Germantas,photo_gate,imgs_1
+LT,LT028,Telšių apskritis,lake,,4,2,wd:Q13191670,Beržoras Lake,photo_gate,imgs_0
+IT,ITI16,Livorno,lake,,2,2,osm:w240633465,Stagnone della Capraia,photo_gate,imgs_0
+IT,ITI16,Livorno,lake,,2,2,wd:Q3825568,laghetto delle Conche,photo_gate,imgs_1
+IT,ITI16,Livorno,lake,,2,2,wd:Q3825574,laghetto di Terra Nera,photo_gate,imgs_2
+HU,HU312,Heves,lake,,3,2,osm:w208609049,Bitskey Aladár Uszoda,photo_gate,imgs_3
+HU,HU312,Heves,lake,,3,2,osm:w289249774,Beach,photo_gate,imgs_1
+HU,HU312,Heves,lake,,3,2,osm:w289249781,busz parkoló,photo_gate,imgs_1
+HU,HU313,Nógrád,lake,,3,2,osm:w117987592,Nyírjesi I. tó,photo_gate,imgs_3
+HU,HU313,Nógrád,lake,,3,2,osm:w616602173,Balassagyarmati strand,photo_gate,imgs_0
+HU,HU313,Nógrád,lake,,3,2,osm:w1165466444,Illés Rudolf Tanuszoda,photo_gate,imgs_0
+IE,IE052,South-East ,lake,,2,2,wd:Q6469864,Lady's Island Lake,photo_gate,imgs_1
+IE,IE052,South-East ,lake,,2,2,wd:Q26715337,Tacumshin Lake,photo_gate,imgs_1
+IE,IE052,South-East ,lake,,2,2,osm:w143475053,Active Tribe,photo_gate,imgs_0
+HU,HU322,Jász-Nagykun-Szolnok,lake,,2,2,osm:w224092141,Horgász és Családi Kemping,photo_gate,imgs_0
+HU,HU322,Jász-Nagykun-Szolnok,lake,,2,2,osm:w1137937848,Mancsos Pancsoló kutyastrand,photo_gate,imgs_1
+HU,HU322,Jász-Nagykun-Szolnok,lake,,2,2,osm:r15901723,Örvényi-morotva,photo_gate,imgs_2
+PL,PL22C,Tyski,lake,,2,2,wd:Q5575652,Goczałkowice Reservoir,photo_gate,imgs_3
+PL,PL22C,Tyski,lake,,2,2,wd:Q9344133,Starganiec,photo_gate,imgs_2
+PL,PL22C,Tyski,lake,,2,2,wd:Q4411395,Paprocany Lake,photo_gate,imgs_3
+PL,PL415,Miasto Poznań,lake,,3,2,wd:Q2311941,Lake Malta,photo_gate,imgs_2
+PL,PL415,Miasto Poznań,lake,,3,2,osm:w847100634,Przystań Rusałka RafaMarina,photo_gate,imgs_3
+PL,PL415,Miasto Poznań,lake,,3,2,wd:Q6979920,Lake Rusałka,photo_gate,imgs_3
+NO,NO081,Oslo,lake,,4,2,wd:Q2297840,Sognsvann,photo_gate,imgs_1
+NO,NO081,Oslo,lake,,4,2,wd:Q1771171,Bogstadvannet,photo_gate,imgs_3
+NO,NO081,Oslo,lake,,4,2,wd:Q1775997,Østensjøvannet,photo_gate,imgs_1
+NO,NO0A1,Rogaland,lake,,2,2,wd:Q1773395,Aksdalsvatnet,photo_gate,imgs_1
+NO,NO0A1,Rogaland,lake,,2,2,wd:Q5338772,Edlandsvatnet,photo_gate,imgs_0
+NO,NO0A1,Rogaland,lake,,2,2,wd:Q1777231,Frøylandsvatnet,photo_gate,imgs_2
+NO,NO083,Østfold,lake,,4,2,wd:Q3356657,Vansjø,photo_gate,imgs_5
+NO,NO083,Østfold,lake,,4,2,wd:Q6515479,Vestvannet,photo_gate,imgs_1
+NO,NO083,Østfold,lake,,4,2,wd:Q11219855,Tunevannet,photo_gate,imgs_1
+PL,PL214,Krakowski,lake,,2,2,osm:w1030188989,Kuter Port Nieznanowice,photo_gate,imgs_0
+PL,PL214,Krakowski,lake,,2,2,osm:w1521333674,Ośrodek Wypoczynkowy Kłaj Dolina Raby,photo_gate,imgs_1
+PL,PL214,Krakowski,lake,,2,2,osm:w177180817,Bobrowe Rozlewisko,photo_gate,imgs_0
+NO,NO073,Finnmark/Finnmárku/Finmarkku,lake,,2,2,osm:r15306829,Ellenvatnet - Ealjejávri - Ellijärvi,photo_gate,imgs_0
+NO,NO073,Finnmark/Finnmárku/Finmarkku,lake,,2,2,wd:Q3356697,Polmakvannet,photo_gate,imgs_1
+NO,NO073,Finnmark/Finnmárku/Finmarkku,lake,,2,2,osm:r7189365,Geađgejávri,photo_gate,imgs_0
+NL,NL421,Noord-Limburg,lake,,2,2,osm:w111838314,Strandbad Maalbek,photo_gate,imgs_0
+NL,NL421,Noord-Limburg,lake,,2,2,osm:w1192914956,EuroParcs Maasduinen,photo_gate,imgs_0
+NL,NL421,Noord-Limburg,lake,,2,2,wd:Q95636879,Reindersmeer,photo_gate,imgs_1
+NL,NL423,Zuid-Limburg,lake,,2,2,osm:w75720874,Camping Cottesserhoeve,photo_gate,imgs_0
+NL,NL423,Zuid-Limburg,lake,,2,2,wd:Q2345097,Pietersplas,photo_gate,imgs_2
+NL,NL423,Zuid-Limburg,lake,,2,2,osm:w75720873,Camping De Oosterdriessen,photo_gate,imgs_0
+NL,NL127,Noord-Friesland,lake,,3,2,wd:Q820364,Burgumer Mar,photo_gate,imgs_2
+NL,NL127,Noord-Friesland,lake,,3,2,wd:Q2184168,Groote Wielen,photo_gate,imgs_0
+NL,NL127,Noord-Friesland,lake,,3,2,osm:w1279047076,It Wiid,photo_gate,imgs_1
+NL,NL133,Zuidwest-Drenthe,lake,,2,2,wd:Q2020030,Blauwe Meer,photo_gate,imgs_2
+NL,NL133,Zuidwest-Drenthe,lake,,2,2,osm:w88016683,Schoonhoven (recreatiegebied) - Zwemplas,photo_gate,imgs_1
+NL,NL133,Zuidwest-Drenthe,lake,,2,2,osm:r1319711,De Westerse Koele,photo_gate,imgs_0
+NL,NL211,Noord-Overijssel,lake,,4,2,wd:Q2706854,Beulakerwijde,photo_gate,imgs_2
+NL,NL211,Noord-Overijssel,lake,,4,2,wd:Q2571412,Wijthmenerplas,photo_gate,imgs_2
+NL,NL211,Noord-Overijssel,lake,,4,2,osm:r3713387,Bovenwijde,photo_gate,imgs_2
+NL,NL328,Alkmaar en omgeving,lake,,2,2,wd:Q27959422,Geestmerambacht,photo_gate,imgs_2
+NL,NL328,Alkmaar en omgeving,lake,,2,2,osm:w988702178,Zomerdel Geestmerambacht,photo_gate,imgs_1
+NL,NL328,Alkmaar en omgeving,lake,,2,2,osm:w71601977,Zwembaai 5,photo_gate,imgs_0
+NL,NL341,Zeeuwsch-Vlaanderen,lake,,2,2,osm:w45051029,Canisvlietsche Kreek,photo_gate,imgs_0
+NL,NL341,Zeeuwsch-Vlaanderen,lake,,2,2,osm:w1272992817,Pereboomsgatkreek,photo_gate,imgs_0
+NL,NL341,Zeeuwsch-Vlaanderen,lake,,2,2,osm:r19654179,Stierskreek,photo_gate,imgs_0
+NL,NL414,Zuidoost-Noord-Brabant,lake,,3,2,wd:Q2933818,Zwartven,photo_gate,imgs_4
+NL,NL414,Zuidoost-Noord-Brabant,lake,,3,2,wd:Q2774846,Berkendonk,photo_gate,imgs_5
+NL,NL414,Zuidoost-Noord-Brabant,lake,,3,2,wd:Q2112355,IJzeren Man,photo_gate,imgs_2
+RO,RO311,Argeş,lake,,3,2,osm:w576189765,Acumularea Budeasa,photo_gate,imgs_0
+RO,RO311,Argeş,lake,,3,2,osm:w88363380,Acumularea Vâlcele,photo_gate,imgs_0
+RO,RO311,Argeş,lake,,3,2,wd:Q18541230,Călțun Lake,floor_pool,score_5.1_below_5.4
+RO,RO312,Călăraşi,lake,,2,2,osm:r2849143,Canalul Dorobanțu,photo_gate,imgs_0
+RO,RO312,Călăraşi,lake,,2,2,osm:r11953727,Lacul Belciugatele,photo_gate,imgs_0
+RO,RO312,Călăraşi,lake,,2,2,osm:w75137160,Plaja Tineretului,photo_gate,imgs_0
+RO,RO111,Bihor,lake,,2,2,osm:w33236055,Ferma de Crap,photo_gate,imgs_0
+RO,RO111,Bihor,lake,,2,2,osm:w228387330,Lac Frontiera Borș - Borsi horgásztó,photo_gate,imgs_1
+RO,RO111,Bihor,lake,,2,2,osm:w41350393,Ștrandul Apollo,photo_gate,imgs_0
+RO,RO321,Bucureşti,lake,,6,2,wd:Q12731889,Lake Tei,photo_gate,imgs_3
+RO,RO321,Bucureşti,lake,,6,2,wd:Q24066105,Lake Văcărești,photo_gate,imgs_3
+RO,RO321,Bucureşti,lake,,6,2,wd:Q3214894,Lake Fundeni,photo_gate,imgs_5
+RO,RO112,Bistriţa-Năsăud,lake,,3,2,wd:Q65040386,Stiol Lake,photo_gate,imgs_2
+RO,RO112,Bistriţa-Năsăud,lake,,3,2,wd:Q18538892,Lacul Cetățele,photo_gate,imgs_0
+RO,RO112,Bistriţa-Năsăud,lake,,3,2,osm:w88372270,Acumularea Piscicolă Budurleni,photo_gate,imgs_0
+RO,RO113,Cluj,lake,,3,2,wd:Q874738,Lacul Știucilor,photo_gate,imgs_1
+RO,RO113,Cluj,lake,,3,2,osm:w38526158,Parking Piața Mihai Viteazu,photo_gate,imgs_2
+RO,RO113,Cluj,lake,,3,2,osm:w1516353709,Bazin de înot,photo_gate,imgs_0
+RO,RO412,Gorj,lake,,2,2,osm:w219498427,Ștrandul orășenesc Rovinari,photo_gate,imgs_3
+RO,RO412,Gorj,lake,,2,2,osm:w1282928455,Plaja Voinigești,photo_gate,imgs_0
+RO,RO412,Gorj,lake,,2,2,osm:w229525143,Parcare,photo_gate,imgs_0
+RS,RS221,Borska oblast,lake,,3,2,osm:w300842903,Плажа Кладово,photo_gate,imgs_0
+RS,RS221,Borska oblast,lake,,3,2,osm:w1430785693,Sip Beach,photo_gate,imgs_0
+RS,RS221,Borska oblast,lake,,3,2,osm:w507287154,Hotel Lepenski vir,photo_gate,imgs_0
+RO,RO413,Mehedinţi,lake,,2,2,osm:w973340729,Balta Mare,photo_gate,imgs_0
+RO,RO413,Mehedinţi,lake,,2,2,wd:Q1313598,Lake Đerdap,photo_gate,imgs_2
+RO,RO413,Mehedinţi,lake,,2,2,osm:w1230120056,Parcare Dunărea,photo_gate,imgs_0
+RS,RS216,Rasinska oblast,lake,,2,2,wd:Q12747964,Ћелије (језеро),photo_gate,imgs_1
+RS,RS216,Rasinska oblast,lake,,2,2,osm:w344119675,Затворени базени Крушевац,photo_gate,imgs_0
+RS,RS216,Rasinska oblast,lake,,2,2,osm:w344119673,Отворени базени Крушевац,photo_gate,imgs_0
+RS,RS217,Raška oblast,lake,,2,2,osm:w378690044,Градска плажа,photo_gate,imgs_0
+RS,RS217,Raška oblast,lake,,2,2,osm:w290466555,Градски базен,photo_gate,imgs_0
+RS,RS217,Raška oblast,lake,,2,2,osm:w1219093492,Akvapark Raj,photo_gate,imgs_0
+PT,PT196,Beiras e Serra da Estrela,lake,,3,2,osm:w301178688,Praia Fluvial de Valhelhas,photo_gate,imgs_1
+PT,PT196,Beiras e Serra da Estrela,lake,,3,2,osm:w954079010,Valhelhas Camping,photo_gate,imgs_2
+PT,PT196,Beiras e Serra da Estrela,lake,,3,2,osm:r1710157,Albufeira do Caldeirão,photo_gate,imgs_3
+RO,RO116,Sălaj,lake,,2,2,wd:Q6478343,Lake Vârșolț,photo_gate,imgs_0
+RO,RO116,Sălaj,lake,,2,2,osm:w173444426,Ferma Piscicolă Cehu Silvaniei,photo_gate,imgs_0
+RO,RO214,Neamţ,lake,,3,2,osm:r9566132,Acumularea Bâtca Doamnei,photo_gate,imgs_2
+RO,RO214,Neamţ,lake,,3,2,osm:w1161180083,Bazin înot,photo_gate,imgs_0
+RO,RO214,Neamţ,lake,,3,2,wd:Q12731892,Lacul Vaduri,photo_gate,imgs_1
+RO,RO421,Arad,lake,,2,2,osm:w220641367,Corleone parking place,photo_gate,imgs_0
+RO,RO421,Arad,lake,,2,2,osm:w559197067,Gradina Termala Dorobanti,photo_gate,imgs_0
+RO,RO421,Arad,lake,,2,2,osm:w171921350,Bazinul Olimpic Delfinul,photo_gate,imgs_0
+RO,RO122,Braşov,lake,,2,2,osm:w272866468,Paradisul Acvatic,photo_gate,imgs_0
+RO,RO122,Braşov,lake,,2,2,osm:w218122565,Paradisul Acvatic,photo_gate,imgs_0
+RO,RO122,Braşov,lake,,2,2,osm:w86379543,Ștrand Codlea,photo_gate,imgs_0
+RO,RO422,Caraş-Severin,lake,,3,2,osm:w223966423,Bazinul Olimpic Olimpia,photo_gate,imgs_0
+RO,RO422,Caraş-Severin,lake,,3,2,osm:w277991195,Șapte Izvoare,photo_gate,imgs_0
+RO,RO422,Caraş-Severin,lake,,3,2,wd:Q28726082,Trei Ape,photo_gate,imgs_1
+RO,RO123,Covasna,lake,,2,2,wd:Q1253091,Lacul Reci,photo_gate,imgs_4
+RO,RO123,Covasna,lake,,2,2,osm:r11952759,Lacul Pădureni,photo_gate,imgs_1
+RO,RO123,Covasna,lake,,2,2,osm:w144717903,Ștrandul Municipal,photo_gate,imgs_0
+RO,RO221,Brăila,lake,,2,2,osm:w208301090,Ștrand Brăila,photo_gate,imgs_3
+RO,RO221,Brăila,lake,,2,2,osm:w903643556,Lacul Sărat,photo_gate,imgs_0
+RO,RO221,Brăila,lake,,2,2,osm:w1191469840,Alma Health and Fun,photo_gate,imgs_0
+RO,RO424,Timiş,lake,,2,2,wd:Q12731887,Surduc Lake,photo_gate,imgs_2
+RO,RO424,Timiş,lake,,2,2,osm:w961643675,La Luma,photo_gate,imgs_0
+RO,RO424,Timiş,lake,,2,2,osm:w1081584055,Plaja Paradis,photo_gate,imgs_0
+RO,RO125,Mureş,lake,,2,2,wd:Q1175336,Lake Ursu,photo_gate,imgs_4
+RO,RO125,Mureş,lake,,2,2,osm:w1091884167,Canalul Turbinei,photo_gate,imgs_0
+RO,RO125,Mureş,lake,,2,2,osm:w173613149,Lacul Aluniș,photo_gate,imgs_0
+RO,RO223,Constanţa,lake,,4,2,wd:Q665510,Lake Siutghiol,photo_gate,imgs_3
+RO,RO223,Constanţa,lake,,4,2,osm:w23010932,Lacul Neptun II,photo_gate,imgs_2
+RO,RO223,Constanţa,lake,,4,2,osm:w32534117,Plaja Júpiter,photo_gate,imgs_3
+RS,RS122,Južnobanatska oblast,lake,,2,2,osm:w38757879,Главно језеро,photo_gate,imgs_0
+RS,RS122,Južnobanatska oblast,lake,,2,2,osm:w163697248,Шаранско језеро,photo_gate,imgs_0
+RS,RS122,Južnobanatska oblast,lake,,2,2,osm:w501601770,Kamp Bela Crkva,photo_gate,imgs_0
+RO,RO224,Galaţi,lake,,2,2,osm:w88371024,Lacul Sovârca,photo_gate,imgs_0
+RO,RO224,Galaţi,lake,,2,2,osm:w88371044,Lacul Pochina,photo_gate,imgs_0
+RO,RO224,Galaţi,lake,,2,2,wd:Q12731850,Brateș Lake,photo_gate,imgs_3
+RS,RS125,Severnobačka oblast,lake,,3,2,wd:Q7127675,Palić Lake,photo_gate,imgs_4
+RS,RS125,Severnobačka oblast,lake,,3,2,osm:r4494801,Зобнатичко језеро,photo_gate,imgs_0
+RS,RS125,Severnobačka oblast,lake,,3,2,osm:w253882243,СРЦ Прозивка,photo_gate,imgs_0
+PL,PL638,Starogardzki,lake,,2,2,wd:Q9019883,Borzechowskie Wielkie Lake,photo_gate,imgs_3
+PL,PL638,Starogardzki,lake,,2,2,wd:Q9178074,Borówno Wielkie,photo_gate,imgs_1
+PL,PL638,Starogardzki,lake,,2,2,wd:Q11795786,Ocypel,photo_gate,imgs_3
+PL,PL424,Miasto Szczecin,lake,,2,2,osm:w42722027,Jezioro Goplany,photo_gate,imgs_2
+PL,PL424,Miasto Szczecin,lake,,2,2,osm:w55962083,Jezioro Głuszec,photo_gate,imgs_1
+PL,PL424,Miasto Szczecin,lake,,2,2,wd:Q1158664,Dąbie Lake,photo_gate,imgs_2
+PL,PL426,Koszaliński,lake,,3,2,wd:Q753573,Jezioro Bukowo,photo_gate,imgs_3
+PL,PL426,Koszaliński,lake,,3,2,wd:Q1688792,Wicko,photo_gate,imgs_3
+PL,PL426,Koszaliński,lake,,3,2,wd:Q9189908,Chlewo,photo_gate,imgs_2
+SK,SK042,Košický kraj,lake,,4,2,osm:r3704583,Kechnec,photo_gate,imgs_3
+SK,SK042,Košický kraj,lake,,4,2,osm:w34311411,Izra,photo_gate,imgs_2
+SK,SK042,Košický kraj,lake,,4,2,osm:r19996593,Lánec,photo_gate,imgs_0
+SE,SE312,Dalarnas län,lake,,3,2,osm:r7086302,Grövelsjön,photo_gate,imgs_1
+SE,SE312,Dalarnas län,lake,,3,2,osm:r32748,Flötningssjön,photo_gate,imgs_0
+SE,SE312,Dalarnas län,lake,,3,2,osm:r16949204,Skinningstjärnen,photo_gate,imgs_0
+SE,SE122,Södermanlands län,lake,,4,2,wd:Q3361714,Yngaren,photo_gate,imgs_2
+SE,SE122,Södermanlands län,lake,,4,2,wd:Q3360453,Hallbosjön,photo_gate,imgs_1
+SE,SE122,Södermanlands län,lake,,4,2,wd:Q3361316,Klämmingen,photo_gate,imgs_2
+SK,SK031,Žilinský kraj,lake,,5,2,osm:r1454833,Orava reservoir,floor_pool,score_4.8_below_5.4
+SK,SK031,Žilinský kraj,lake,,5,2,osm:w197459657,Nižné Jamnícke pleso,photo_gate,imgs_1
+SK,SK031,Žilinský kraj,lake,,5,2,osm:w181561902,Ťatliakovo jazero,photo_gate,imgs_1
+SK,SK032,Banskobystrický kraj,lake,,5,2,osm:w4429483,Vodná nádrž Petrovec,photo_gate,imgs_0
+SK,SK032,Banskobystrický kraj,lake,,5,2,wd:Q13407127,Dolnohodrušský tajch,photo_gate,imgs_2
+SK,SK032,Banskobystrický kraj,lake,,5,2,wd:Q7331154,Richňava,photo_gate,imgs_0
+RS,RS222,Braničevska oblast,lake,,2,2,osm:w38758325,Сребрно језеро,photo_gate,imgs_1
+RS,RS222,Braničevska oblast,lake,,2,2,osm:w127877378,Сребрно језеро,photo_gate,imgs_0
+RS,RS222,Braničevska oblast,lake,,2,2,wd:Q1938900,Silver Lake,photo_gate,imgs_2
+RS,RS224,Jablanička oblast,lake,,2,2,wd:Q12747651,Језеро Барје,photo_gate,imgs_1
+RS,RS224,Jablanička oblast,lake,,2,2,wd:Q16011732,Брестовачко језеро,photo_gate,imgs_1
+RS,RS224,Jablanička oblast,lake,,2,2,osm:w209682866,Брестовачко језеро,photo_gate,imgs_0
+RS,RS225,Nišavska oblast,lake,,3,2,osm:w948094074,Staro Kupatilo,photo_gate,imgs_0
+RS,RS225,Nišavska oblast,lake,,3,2,osm:w970749951,Посебно паркиралиште „Чаир”,photo_gate,imgs_0
+RS,RS225,Nišavska oblast,lake,,3,2,osm:w687309620,Чаир,photo_gate,imgs_0
+RS,RS227,Podunavska oblast,lake,,2,2,osm:w504470506,Sports center pool,photo_gate,imgs_2
+RS,RS227,Podunavska oblast,lake,,2,2,osm:w210403994,Кудречко језеро доње,photo_gate,imgs_0
+RS,RS227,Podunavska oblast,lake,,2,2,osm:r11659907,Šalinac lakes,photo_gate,imgs_0
+SE,SE332,Norrbottens län,lake,,5,2,osm:w558267375,Övertorneå Camping,photo_gate,imgs_2
+SE,SE332,Norrbottens län,lake,,5,2,osm:r300111,Ylinen Kilpisjärvi,floor_pool,score_5.0_below_5.4
+SE,SE332,Norrbottens län,lake,,5,2,osm:w225409471,Eko Badet Parkering,photo_gate,imgs_1
+SE,SE231,Hallands län,lake,,2,2,osm:w13211645,Vallgraven,photo_gate,imgs_1
+SE,SE231,Hallands län,lake,,2,2,wd:Q16506438,Byasjön,photo_gate,imgs_2
+SE,SE231,Hallands län,lake,,2,2,wd:Q3269287,Lygnern,photo_gate,imgs_4
+RS,RS228,Pčinjska oblast,lake,,3,2,osm:w95012607,Pishina e Preshevës,photo_gate,imgs_0
+RS,RS228,Pčinjska oblast,lake,,3,2,wd:Q15994134,Jovac Lake,photo_gate,imgs_4
+RS,RS228,Pčinjska oblast,lake,,3,2,wd:Q12748252,Aleksandrovačko Jezero,photo_gate,imgs_0
+RS,RS229,Toplička oblast,lake,,2,2,osm:w1057703860,Градски базен,photo_gate,imgs_0
+RS,RS229,Toplička oblast,lake,,2,2,osm:w287510939,Bazen Žitorđa,photo_gate,imgs_0
+RS,RS229,Toplička oblast,lake,,2,2,wd:Q61123047,Блачко језеро,photo_gate,imgs_0
+SI,SI033,Koroška,lake,,2,2,wd:Q12791717,Ivarčko jezero,photo_gate,imgs_1
+SI,SI033,Koroška,lake,,2,2,osm:w447410382,Mestno kopališče,photo_gate,imgs_0
+SI,SI033,Koroška,lake,,2,2,osm:w503445542,Ronkova ulica,photo_gate,imgs_0
+SI,SI034,Savinjska,lake,,4,2,osm:w322858966,Sonce,photo_gate,imgs_0
+SI,SI034,Savinjska,lake,,4,2,osm:w320052379,Rogaška Riviera,photo_gate,imgs_1
+SI,SI034,Savinjska,lake,,4,2,osm:w505477794,Bazen Zbelovo,photo_gate,imgs_0
+XK,XK007,Gjakovë,lake,,3,2,osm:w497917808,Liqeni i Tropojës,photo_gate,imgs_1
+XK,XK007,Gjakovë,lake,,3,2,wd:Q1520663,Radoniq Lake,floor_pool,score_5.1_below_5.4
+XK,XK007,Gjakovë,lake,,3,2,wd:Q6978342,Gjeravica Lake,photo_gate,imgs_3
+GB,TLC42,Northumberland,lake,,2,2,wd:Q5180597,Crag Lough,photo_gate,imgs_2
+GB,TLC42,Northumberland,lake,,2,2,wd:Q1630735,Kielder Water,floor_pool,score_4.7_below_5.4
+GB,TLC42,Northumberland,lake,,2,2,wd:Q5465157,Fontburn,photo_gate,imgs_2
+GB,TLD14,Westmorland and Furness,lake,,6,2,wd:Q1544320,Rydal Water,floor_pool,score_5.1_below_5.4
+GB,TLD14,Westmorland and Furness,lake,,6,2,wd:Q1480495,Haweswater Reservoir,photo_gate,imgs_2
+GB,TLF22,Leicestershire CC and Rutland,lake,,2,2,wd:Q822190,Rutland Water,photo_gate,imgs_3
+GB,TLF22,Leicestershire CC and Rutland,lake,,2,2,osm:w37221328,Loughborough University Swimming Pool,photo_gate,imgs_1
+GB,TLF22,Leicestershire CC and Rutland,lake,,2,2,osm:w372221143,Sykes Lane Car Park,photo_gate,imgs_1
+GB,TLH51,Norwich and East Norfolk,lake,,2,2,osm:w206754851,Brush Quay,photo_gate,imgs_2
+GB,TLH51,Norwich and East Norfolk,lake,,2,2,wd:Q16897670,Wroxham Broad,photo_gate,imgs_2
+GB,TLH51,Norwich and East Norfolk,lake,,2,2,wd:Q6744907,Malthouse Broad,floor_pool,score_4.6_below_5.4
+GB,TLH52,North and West Norfolk,lake,,2,2,wd:Q7329742,Hickling Broad,photo_gate,imgs_5
+GB,TLH52,North and West Norfolk,lake,,2,2,osm:w372559958,Boating Pond,photo_gate,imgs_1
+GB,TLH52,North and West Norfolk,lake,,2,2,wd:Q5906158,Horsey Mere,photo_gate,imgs_2
+GB,TLJ25,West Surrey,lake,,2,2,osm:w5058302,Frensham Great Pond,photo_gate,imgs_1
+GB,TLJ25,West Surrey,lake,,2,2,osm:w23218999,Guildford Lido,photo_gate,imgs_2
+GB,TLJ25,West Surrey,lake,,2,2,wd:Q7347669,Virginia Water Lake,floor_pool,score_4.9_below_5.4
+GB,TLK30,Cornwall and Isles of Scilly,lake,,2,2,wd:Q6977674,The Loe,photo_gate,imgs_3
+GB,TLK30,Cornwall and Isles of Scilly,lake,,2,2,osm:r12624766,Siblyback Lake,photo_gate,imgs_2
+GB,TLK30,Cornwall and Isles of Scilly,lake,,2,2,wd:Q5303831,Dozmary Pool,photo_gate,imgs_0
+GB,TLK52,Bath & North East Somerset and South Gloucestershire,lake,,2,2,osm:w291450782,Car Park 1,photo_gate,imgs_1
+GB,TLK52,Bath & North East Somerset and South Gloucestershire,lake,,2,2,wd:Q3044337,Chew Valley Lake,floor_pool,score_5.3_below_5.4
+GB,TLK52,Bath & North East Somerset and South Gloucestershire,lake,,2,2,osm:w17217391,Kingswood Leisure Centre,photo_gate,imgs_2
+GB,TLL31,Isle of Anglesey,lake,,2,2,wd:Q5058743,Cemlyn Bay and lagoon,photo_gate,imgs_3
+GB,TLL31,Isle of Anglesey,lake,,2,2,wd:Q124312,Llyn Cerrig Bach,floor_pool,score_4.3_below_5.4
+GB,TLL31,Isle of Anglesey,lake,,2,2,wd:Q3405702,Llyn Llywenan,photo_gate,imgs_2
+GB,TLL32,Gwynedd,lake,,5,2,wd:Q3399871,Llyn Padarn,photo_gate,imgs_2
+GB,TLL32,Gwynedd,lake,,5,2,wd:Q3397816,Llyn Gwynant,photo_gate,imgs_3
+GB,TLL32,Gwynedd,lake,,5,2,wd:Q3405761,Llyn Idwal,photo_gate,imgs_1
+GB,TLL33,Conwy and Denbighshire,lake,,2,2,wd:Q3405768,Llyn Geirionydd,photo_gate,imgs_1
+GB,TLL33,Conwy and Denbighshire,lake,,2,2,wd:Q3401458,Llyn Cowlyd,photo_gate,imgs_3
+GB,TLL33,Conwy and Denbighshire,lake,,2,2,wd:Q13129733,Llyn Bochlwyd,photo_gate,imgs_2
+GB,TLL41,Mid Wales,lake,,2,2,wd:Q3403911,Llyn Cwm Llwch,photo_gate,imgs_2
+GB,TLL41,Mid Wales,lake,,2,2,wd:Q2704839,Llangorse Lake,floor_pool,score_4.5_below_5.4
+GB,TLL41,Mid Wales,lake,,2,2,wd:Q2248798,Lake Vyrnwy,photo_gate,imgs_3
+GB,TLL42,South West Wales,lake,,2,2,wd:Q3397034,Llyn y Fan Fach,floor_pool,score_5.3_below_5.4
+GB,TLL42,South West Wales,lake,,2,2,wd:Q1758395,Llyn Llech Owain,photo_gate,imgs_1
+GB,TLL42,South West Wales,lake,,2,2,wd:Q7351387,Lower Lliedi Reservoir,photo_gate,imgs_3
+GB,TLM11,East Lothian and Midlothian,lake,,2,2,wd:Q5568275,Glencorse Reservoir,floor_pool,score_4.9_below_5.4
+GB,TLM11,East Lothian and Midlothian,lake,,2,2,wd:Q6667276,Loganlea Reservoir,floor_pool,score_4.0_below_5.4
+GB,TLM11,East Lothian and Midlothian,lake,,2,2,wd:Q5337772,Edgelaw Reservoir,photo_gate,imgs_1
+GB,TLM14,West Lothian,lake,,2,2,wd:Q6554472,Linlithgow Loch,floor_pool,score_4.9_below_5.4
+GB,TLM14,West Lothian,lake,,2,2,wd:Q5663476,Harperrig Reservoir,photo_gate,imgs_1
+GB,TLM14,West Lothian,lake,,2,2,wd:Q5138796,Cobbinshaw Reservoir,photo_gate,imgs_1
+GB,TLM33,"Inverclyde, East Renfrewshire, and Renfrewshire",lake,,2,2,osm:w508461250,Bodden Boo,photo_gate,imgs_2
+GB,TLM33,"Inverclyde, East Renfrewshire, and Renfrewshire",lake,,2,2,wd:Q1049507,Castle Semple Loch,floor_pool,score_5.1_below_5.4
+GB,TLM33,"Inverclyde, East Renfrewshire, and Renfrewshire",lake,,2,2,wd:Q4267500,Loch Thom,photo_gate,imgs_1
+GB,TLN0D,Antrim and Newtownabbey,lake,,2,2,wd:Q206942,Lough Neagh,photo_gate,imgs_3
+GB,TLN0D,Antrim and Newtownabbey,lake,,2,2,osm:r1121118,Lough Neagh,photo_gate,imgs_2
+GB,TLN0D,Antrim and Newtownabbey,lake,,2,2,osm:w215327731,Jordanstown Loughshore Car Park,photo_gate,imgs_2
+UA,UA-74538382B21863106612225,Rozdilna,lake,,2,2,wd:Q2651567,Cuciurgan Reservoir,photo_gate,imgs_4
+MD,MD-MD-CA,Cahul,lake,,3,2,wd:Q16653023,Lacul Manta,photo_gate,imgs_1
+MD,MD-MD-CA,Cahul,lake,,3,2,wd:Q12102338,Lacul Dracele,photo_gate,imgs_1
+MD,MD-MD-CA,Cahul,lake,,3,2,wd:Q571052,Lake Beleu,floor_pool,score_4.3_below_5.4
+MD,MD-MD-GA,Gagauzia,lake,,2,2,wd:Q30247654,Tarakliyskoye Vodokhranilishche,photo_gate,imgs_0
+MD,MD-MD-GA,Gagauzia,lake,,2,2,osm:w25466486,Lacul Taraclia,photo_gate,imgs_0
+MD,MD-MD-GA,Gagauzia,lake,,2,2,osm:w25466497,Lacul Congaz,photo_gate,imgs_0
+MD,MD-MD-CS,Causeni,lake,,2,2,osm:w291758859,Городской пляж,photo_gate,imgs_0
+MD,MD-MD-CS,Causeni,lake,,2,2,osm:w368438794,Коровий пляж,photo_gate,imgs_0
+MD,MD-MD-CS,Causeni,lake,,2,2,osm:w662375261,База отдыха «Сэнэтатя»,photo_gate,imgs_0
+MD,MD-MD-AN,Anenii Noi,lake,,2,2,wd:Q12731888,Lake Salas,photo_gate,imgs_1
+MD,MD-MD-AN,Anenii Noi,lake,,2,2,osm:w254428548,Iazul Larga,photo_gate,imgs_0
+MD,MD-MD-AN,Anenii Noi,lake,,2,2,osm:w36393575,Iazul „Geamăna”,photo_gate,imgs_0
+MD,MD-MD-DU,Dubasari,lake,,2,2,wd:Q2655738,Dubăsari Reservoir,photo_gate,imgs_2
+MD,MD-MD-DU,Dubasari,lake,,2,2,osm:w1414870116,Bază de odihnă,photo_gate,imgs_0
+MD,MD-MD-DU,Dubasari,lake,,2,2,osm:w1414870094,"Hotel, Restaurant & Yacht Club „Vila Dorului”",photo_gate,imgs_0
+MD,MD-MD-SN,Transnistria,lake,,2,2,osm:r13353141,Nistru,photo_gate,imgs_0
+MD,MD-MD-SN,Transnistria,lake,,2,2,osm:w224357231,Пляж,photo_gate,imgs_0
+MD,MD-MD-SN,Transnistria,lake,,2,2,osm:w225027400,Солдатский пляж,photo_gate,imgs_0
+MD,MD-MD-RI,RIscani,lake,,2,2,wd:Q3272045,Lacul de acumulare Costești-Stînca,photo_gate,imgs_1
+MD,MD-MD-RI,RIscani,lake,,2,2,osm:w149516913,Lacul Strâmba,photo_gate,imgs_0
+MD,MD-MD-RI,RIscani,lake,,2,2,osm:r12443780,Prutul Mort,photo_gate,imgs_0
+AD,AD-AD-03,Encamp,lake,,3,2,wd:Q21329797,Estany de l'Illa,photo_gate,imgs_1
+AD,AD-AD-03,Encamp,lake,,3,2,wd:Q21329992,Estany de Montmalús,photo_gate,imgs_2
+AD,AD-AD-03,Encamp,lake,,3,2,wd:Q21330258,Estany Primer,photo_gate,imgs_2
+AT,AT226,Westliche Obersteiermark,lake,,2,1,wd:Q1475179,Furtner Teich,photo_gate,imgs_3
+AT,AT226,Westliche Obersteiermark,lake,,2,1,wd:Q21864019,Wildsee,photo_gate,imgs_2
+AT,AT226,Westliche Obersteiermark,lake,,2,1,wd:Q21868931,Lavantsee,photo_gate,imgs_2
+AT,AT334,Tiroler Oberland,lake,,3,1,wd:Q1658291,Pipurger Speicher,photo_gate,imgs_3
+AT,AT334,Tiroler Oberland,lake,,3,1,wd:Q21034656,Drachensee,photo_gate,imgs_3
+AT,AT334,Tiroler Oberland,lake,,3,1,wd:Q449184,Gepatschspeicher,photo_gate,imgs_5
+BE,BE100,Arr. de Bruxelles-Capitale/Arr. Brussel-Hoofdstad,lake,,2,1,osm:w821848439,Bassin de Biestebroeck - Biestebroekdok,photo_gate,imgs_1
+BE,BE100,Arr. de Bruxelles-Capitale/Arr. Brussel-Hoofdstad,lake,,2,1,osm:w821874743,Bassin de Batelage - Schippersdok,photo_gate,imgs_0
+BE,BE100,Arr. de Bruxelles-Capitale/Arr. Brussel-Hoofdstad,lake,,2,1,osm:w261091214,Calypso 2000,photo_gate,imgs_0
+BE,BE213,Arr. Turnhout,lake,,2,1,osm:w24150076,Zilvermeer,photo_gate,imgs_3
+BE,BE213,Arr. Turnhout,lake,,2,1,osm:w1017190878,Zilvermeer,photo_gate,imgs_3
+BE,BE213,Arr. Turnhout,lake,,2,1,osm:w486874945,Camping Zilvermeer,photo_gate,imgs_3
+AT,AT322,Pinzgau-Pongau,lake,,2,1,wd:Q131389092,Goldegger See,photo_gate,imgs_3
+AT,AT322,Pinzgau-Pongau,lake,,2,1,wd:Q2155364,Ritzensee,photo_gate,imgs_1
+AT,AT322,Pinzgau-Pongau,lake,,2,1,wd:Q131737547,Gasteiner Badesee,photo_gate,imgs_2
+AT,AT333,Osttirol,lake,,2,1,wd:Q21864668,Oberseitsee,photo_gate,imgs_2
+AT,AT333,Osttirol,lake,,2,1,wd:Q21873085,Alkuser See,photo_gate,imgs_2
+AT,AT333,Osttirol,lake,,2,1,wd:Q21863999,Wildensee,photo_gate,imgs_1
+AT,AT313,Mühlviertel,lake,,2,1,wd:Q631713,Ausee,photo_gate,imgs_2
+AT,AT313,Mühlviertel,lake,,2,1,osm:w128776322,Campingdorf Ausee,photo_gate,imgs_1
+AT,AT313,Mühlviertel,lake,,2,1,osm:w128774198,Ausee,photo_gate,imgs_1
+BE,BE253,Arr. Ieper,lake,,2,1,wd:Q1867247,Dikkebusvijver,photo_gate,imgs_3
+BE,BE253,Arr. Ieper,lake,,2,1,osm:w445321836,De Kouter,photo_gate,imgs_0
+BE,BE253,Arr. Ieper,lake,,2,1,osm:w976963540,Caterpillar Crater,photo_gate,imgs_1
+BE,BE254,Arr. Kortrijk,lake,,2,1,wd:Q2268951,"De Gavers, West Flanders",photo_gate,imgs_4
+BE,BE254,Arr. Kortrijk,lake,,2,1,osm:w445155423,Kortrijk 11,photo_gate,imgs_3
+BE,BE254,Arr. Kortrijk,lake,,2,1,osm:r8377196,Gavermeer,photo_gate,imgs_0
+BE,BE258,Arr. Veurne,lake,,2,1,osm:w132801927,Militair Vakantiekamp,photo_gate,imgs_0
+BE,BE258,Arr. Veurne,lake,,2,1,osm:w118518363,Polderdyk,photo_gate,imgs_0
+BE,BE258,Arr. Veurne,lake,,2,1,osm:w390659157,C,photo_gate,imgs_0
+BE,BE224,Arr. Hasselt,lake,,2,1,osm:w93244889,Paalse Plas,photo_gate,imgs_0
+BE,BE224,Arr. Hasselt,lake,,2,1,osm:w232143263,Heidestrand,photo_gate,imgs_1
+BE,BE224,Arr. Hasselt,lake,,2,1,osm:w120459124,Bronnenvijver,photo_gate,imgs_0
+BE,BE232,Arr. Dendermonde,lake,,2,1,osm:w1080000418,Zwemvijver Nieuwdonk,photo_gate,imgs_0
+BE,BE232,Arr. Dendermonde,lake,,2,1,osm:w483244329,Schelde,photo_gate,imgs_2
+BE,BE232,Arr. Dendermonde,lake,,2,1,osm:w100394848,Binnenzwembad De Warande,photo_gate,imgs_1
+BE,BE251,Arr. Brugge,lake,,3,1,wd:Q47001258,Meer van Heist,photo_gate,imgs_2
+BE,BE251,Arr. Brugge,lake,,3,1,wd:Q56234934,Zegemeer,photo_gate,imgs_3
+BE,BE251,Arr. Brugge,lake,,3,1,osm:w827012307,Beachvolleybalterrein Drogenbrood,photo_gate,imgs_0
+BE,BE341,Arr. Arlon,lake,,2,1,osm:w125105650,L'Eau Vive,photo_gate,imgs_0
+BE,BE341,Arr. Arlon,lake,,2,1,osm:w91711030,Piscine l'Hydrion,photo_gate,imgs_1
+BE,BE341,Arr. Arlon,lake,,2,1,osm:w515813624,Camping Officiel,photo_gate,imgs_0
+BG,BG312,Montana,lake,,2,1,osm:w615811097,Плувен комплекс,photo_gate,imgs_0
+BG,BG312,Montana,lake,,2,1,osm:w689620634,Комплекс Аугуста,photo_gate,imgs_0
+BG,BG312,Montana,lake,,2,1,osm:w304948677,Градски минерален басейн,photo_gate,imgs_0
+BE,BE32D,Arr. Thuin,lake,,3,1,wd:Q21771830,Lac de la Plate Taille,photo_gate,imgs_3
+BE,BE32D,Arr. Thuin,lake,,3,1,osm:w293534598,Zone de baignade du Lac de la Plate Taille,photo_gate,imgs_0
+BE,BE32D,Arr. Thuin,lake,,3,1,osm:w837396727,Centre Aquatique des Haies,photo_gate,imgs_1
+BG,BG331,Varna,lake,,3,1,osm:w702968330,Lotos Beach,photo_gate,imgs_2
+BG,BG331,Varna,lake,,3,1,osm:w702968335,Ривиера,photo_gate,imgs_0
+BG,BG331,Varna,lake,,3,1,wd:Q1070423,Lake Varna,photo_gate,imgs_1
+BG,BG321,Veliko Tarnovo,lake,,2,1,osm:w1412477825,Руски плаж,photo_gate,imgs_0
+BG,BG321,Veliko Tarnovo,lake,,2,1,osm:w508170844,Водно-развлекателен комплекс,photo_gate,imgs_0
+BG,BG321,Veliko Tarnovo,lake,,2,1,wd:Q7329993,Yovkovtsi,photo_gate,imgs_0
+BG,BG411,Sofia (stolitsa),lake,,4,1,wd:Q655144,Lake Ariana,photo_gate,imgs_4
+BG,BG411,Sofia (stolitsa),lake,,4,1,wd:Q20498888,Дружбенско езеро,photo_gate,imgs_5
+BG,BG411,Sofia (stolitsa),lake,,4,1,osm:w65136861,Dianabad Swimming pool,photo_gate,imgs_0
+BG,BG333,Shumen,lake,,2,1,wd:Q113130919,Lake Shumen,photo_gate,imgs_0
+BG,BG333,Shumen,lake,,2,1,osm:w258500562,"спортен комплекс, плувен басейн",photo_gate,imgs_0
+BG,BG333,Shumen,lake,,2,1,osm:w211174005,Драгоево,photo_gate,imgs_0
+BG,BG341,Burgas,lake,,5,1,wd:Q779560,Arkutino,photo_gate,imgs_2
+BG,BG341,Burgas,lake,,5,1,wd:Q1346157,Alepu,photo_gate,imgs_2
+BG,BG341,Burgas,lake,,5,1,wd:Q1971410,Uzungeren,photo_gate,imgs_1
+BG,BG412,Sofia,lake,,4,1,wd:Q7353771,Topolnitsa Reservoir,photo_gate,imgs_0
+BG,BG412,Sofia,lake,,4,1,wd:Q12282528,Канарско езеро,photo_gate,imgs_1
+BG,BG412,Sofia,lake,,4,1,wd:Q2334710,Dushantsi Reservoir,floor_pool,score_5.3_below_5.4
+BG,BG414,Pernik,lake,,2,1,osm:w509179345,Плувен комплекс,photo_gate,imgs_0
+BG,BG414,Pernik,lake,,2,1,osm:w531078167,Комплекс „Съни“,photo_gate,imgs_0
+BG,BG414,Pernik,lake,,2,1,osm:w397682713,Минерален басейн Банкя,photo_gate,imgs_0
+BG,BG422,Haskovo,lake,,2,1,wd:Q6098603,Ivaylovgrad reservoir,photo_gate,imgs_2
+BG,BG422,Haskovo,lake,,2,1,osm:w529678062,Градски плажен басейн,photo_gate,imgs_0
+BG,BG422,Haskovo,lake,,2,1,osm:w1212048460,Закрит плувен басейн „Хасково“,photo_gate,imgs_0
+CH,CH011,Vaud,lake,,3,1,wd:Q870058,Lac de Bret,photo_gate,imgs_3
+CH,CH011,Vaud,lake,,3,1,wd:Q2741337,Lac de Sauvabelin,photo_gate,imgs_1
+CH,CH011,Vaud,lake,,3,1,wd:Q970497,Lac Lioson,photo_gate,imgs_4
+CH,CH064,Obwalden,lake,,3,1,wd:Q14527,Lungerersee,photo_gate,imgs_5
+CH,CH064,Obwalden,lake,,3,1,osm:w40797907,Camping International Giswil,photo_gate,imgs_2
+CH,CH064,Obwalden,lake,,3,1,wd:Q5408352,Eugenisee,floor_pool,score_5.3_below_5.4
+CH,CH065,Nidwalden,lake,,2,1,osm:w64549733,Camping Buochs-Vierwaldstättersee,photo_gate,imgs_2
+CH,CH065,Nidwalden,lake,,2,1,osm:w308648872,Hafen Buochs,photo_gate,imgs_2
+CH,CH065,Nidwalden,lake,,2,1,osm:w308724266,Strandbad Buochs-Ennetbürgen,photo_gate,imgs_2
+CZ,CZ071,Olomoucký kraj,lake,,4,1,wd:Q11923581,Plumlov Reservoir,photo_gate,imgs_2
+CZ,CZ071,Olomoucký kraj,lake,,4,1,wd:Q11706445,Bázlerova pískovna,photo_gate,imgs_1
+CZ,CZ071,Olomoucký kraj,lake,,4,1,osm:w353800070,Pláž u Lázničků,photo_gate,imgs_0
+DE,DEE04,Altmarkkreis Salzwedel,lake,,2,1,osm:w973345314,Ferienpark Zichtau,photo_gate,imgs_0
+DE,DEE05,Anhalt-Bitterfeld,lake,,2,1,osm:w91787597,Edderitzer See,photo_gate,imgs_3
+DE,DE929,Region Hannover,lake,,2,1,wd:Q165782,Steinhuder Meer,photo_gate,imgs_3
+DE,DEE0B,Saalekreis,lake,,2,1,wd:Q134974409,Hasse-See,photo_gate,imgs_2
+DE,DEA1B,Kleve,lake,,2,1,osm:r11335984,Blaue Lagune,photo_gate,imgs_0
+DE,DEA1B,Kleve,lake,,2,1,wd:Q2480125,Wylermeer,photo_gate,imgs_5
+DE,DEA1B,Kleve,lake,,2,1,osm:w296990813,Netterdenschen Kanal,photo_gate,imgs_3
+DE,DEA5B,Soest,lake,,2,1,osm:w284191757,Strandbad Uferlos,photo_gate,imgs_2
+DE,DE736,Waldeck-Frankenberg,lake,,2,1,wd:Q896249,Diemelsee,photo_gate,imgs_2
+DE,DE736,Waldeck-Frankenberg,lake,,2,1,wd:Q2299621,Twistesee,photo_gate,imgs_1
+DE,DE40B,Oberspreewald-Lausitz,lake,,2,1,wd:Q160841,Großräschener See,photo_gate,imgs_2
+DE,DE406,Dahme-Spreewald,lake,,2,1,wd:Q471366,Schwielochsee,photo_gate,imgs_3
+DE,DE406,Dahme-Spreewald,lake,,2,1,wd:Q1355282,Wolziger See,photo_gate,imgs_2
+DE,DE40E,Potsdam-Mittelmark,lake,,2,1,wd:Q1531463,Glindowsee,photo_gate,imgs_3
+DE,DE40E,Potsdam-Mittelmark,lake,,2,1,wd:Q1548824,Großer Plessower See,photo_gate,imgs_3
+DE,DE149,Sigmaringen,lake,,2,1,wd:Q322070,Baggersee Lutz,photo_gate,imgs_1
+DE,DE25C,Weißenburg-Gunzenhausen,lake,,2,1,wd:Q49406,Großer Brombachsee,photo_gate,imgs_3
+DE,DE215,Berchtesgadener Land,lake,,3,1,osm:w8090561,Funtensee,photo_gate,imgs_1
+DE,DE215,Berchtesgadener Land,lake,,3,1,osm:w25148988,Seeleinsee,photo_gate,imgs_1
+DE,DE215,Berchtesgadener Land,lake,,3,1,osm:w287498348,Steinbergsee,photo_gate,imgs_1
+DE,DE21D,Garmisch-Partenkirchen,lake,,4,1,osm:r2557199,Lautersee,floor_pool,score_5.1_below_5.4
+DE,DE21D,Garmisch-Partenkirchen,lake,,4,1,osm:w35147654,Pflegersee,photo_gate,imgs_1
+DE,DE21D,Garmisch-Partenkirchen,lake,,4,1,osm:w543579017,Strandbad Pflegersee,photo_gate,imgs_0
+DE,DE21F,Miesbach,lake,,3,1,wd:Q2264893,Seehamer See,photo_gate,imgs_3
+DE,DE21K,"Rosenheim, Landkreis",lake,,2,1,wd:Q1297140,Egelsee,photo_gate,imgs_2
+DE,DE21K,"Rosenheim, Landkreis",lake,,2,1,osm:w25928315,Schindlberger See,photo_gate,imgs_0
+DE,DE21K,"Rosenheim, Landkreis",lake,,2,1,wd:Q315443,Simssee,photo_gate,imgs_3
+DE,DE21L,Starnberg,lake,,3,1,wd:Q180006,Pilsensee,photo_gate,imgs_5
+DE,DE21M,Traunstein,lake,,2,1,wd:Q2396539,Taubensee,photo_gate,imgs_1
+DE,DE21M,Traunstein,lake,,2,1,wd:Q4138,Chiemsee,photo_gate,imgs_3
+DE,DE21M,Traunstein,lake,,2,1,wd:Q2386792,Tachinger See,photo_gate,imgs_2
+DE,DE27B,Ostallgäu,lake,,4,1,osm:w26815399,Auwaldpfad,photo_gate,imgs_0
+DE,DE27B,Ostallgäu,lake,,4,1,osm:w606841425,Floß,photo_gate,imgs_0
+DE,DE27B,Ostallgäu,lake,,4,1,osm:w25412268,Alpseebad,photo_gate,imgs_1
+ES,ES120,Asturias,lake,,4,1,wd:Q5553336,Ría de Villaviciosa,photo_gate,imgs_3
+ES,ES120,Asturias,lake,,4,1,wd:Q8775319,Doiras HPP,photo_gate,imgs_1
+ES,ES120,Asturias,lake,,4,1,wd:Q659299,Embalse de Salime,floor_pool,score_4.8_below_5.4
+GR,EL643,Evrytania,lake,,2,1,osm:w263623133,Κολυμβητήριο,photo_gate,imgs_0
+GR,EL611,"Karditsa, Trikala",lake,,2,1,osm:w797530985,ΜΟΝΟΠΑΤΙ ΠΕΖΟΠΟΡΙΑΣ,photo_gate,imgs_0
+GR,EL611,"Karditsa, Trikala",lake,,2,1,wd:Q12880042,Lake Smokovo,photo_gate,imgs_1
+GR,EL611,"Karditsa, Trikala",lake,,2,1,osm:w192205492,Acheloos,photo_gate,imgs_0
+ES,ES417,Soria,lake,,2,1,osm:w697594521,Piscinas Municipales de San Leonardo de Yagüe,photo_gate,imgs_3
+ES,ES417,Soria,lake,,2,1,osm:w366389272,Camping Urbión,photo_gate,imgs_0
+ES,ES417,Soria,lake,,2,1,osm:w514773046,Piscina Municipal,photo_gate,imgs_0
+GR,EL641,Voiotia,lake,,2,1,osm:w309026170,Άγιος Ισήδωρος,photo_gate,imgs_0
+GR,EL641,Voiotia,lake,,2,1,osm:w501193363,Άγιος Νικόλαος,photo_gate,imgs_0
+GR,EL641,Voiotia,lake,,2,1,osm:w1189210164,Παραλία Αγριλέζας,photo_gate,imgs_0
+ES,ES422,Ciudad Real,lake,,2,1,wd:Q23979620,Laguna del Rey,photo_gate,imgs_3
+ES,ES422,Ciudad Real,lake,,2,1,wd:Q8775327,El Vicario Reservoir,photo_gate,imgs_2
+ES,ES422,Ciudad Real,lake,,2,1,wd:Q26940411,Laguna volcánica de La Alberquilla,photo_gate,imgs_0
+DK,DK042,Østjylland,lake,,8,1,wd:Q23739977,Skanderborg Sø,photo_gate,imgs_2
+DK,DK042,Østjylland,lake,,8,1,wd:Q12322383,Knudsø,photo_gate,imgs_5
+DK,DK042,Østjylland,lake,,8,1,osm:r1865365,Gudenå,photo_gate,imgs_1
+GR,EL307,"Peiraias, Nisoi",lake,,2,1,wd:Q122260801,Lekani,photo_gate,imgs_1
+GR,EL307,"Peiraias, Nisoi",lake,,2,1,osm:w519985348,Dragonera Beach,photo_gate,imgs_0
+GR,EL307,"Peiraias, Nisoi",lake,,2,1,osm:w614051704,Μαρίνα Σουβάλας,photo_gate,imgs_0
+GR,EL532,Kastoria,lake,,3,1,osm:w1418253321,Πλαζ Καστοριάς,photo_gate,imgs_0
+GR,EL532,Kastoria,lake,,3,1,wd:Q24910377,Lake Gkistova,photo_gate,imgs_5
+GR,EL532,Kastoria,lake,,3,1,wd:Q105071378,Moutsalia,photo_gate,imgs_2
+DE,DEF04,"Neumünster, Kreisfreie Stadt",lake,,2,1,osm:w414607297,Parkplatz Minigolfplatz,photo_gate,imgs_0
+DK,DK014,Bornholm,lake,,2,1,wd:Q5645779,Hammersø,photo_gate,imgs_3
+DK,DK014,Bornholm,lake,,2,1,wd:Q56240145,Pyritsøen,photo_gate,imgs_3
+DK,DK014,Bornholm,lake,,2,1,osm:w171505169,Hullehavn Camping,photo_gate,imgs_0
+EE,EE001,Põhja-Eesti,lake,,7,1,wd:Q621853,Lake Harku,photo_gate,imgs_3
+EE,EE001,Põhja-Eesti,lake,,7,1,wd:Q1808999,Lake Maardu,photo_gate,imgs_2
+EE,EE001,Põhja-Eesti,lake,,7,1,wd:Q3743604,Lake Klooga,photo_gate,imgs_3
+DE,DEF0A,Plön,lake,,3,1,wd:Q454961,Kleiner Plöner See,photo_gate,imgs_3
+GR,EL512,Xanthi,lake,,2,1,wd:Q25133869,Lafrouda,photo_gate,imgs_0
+GR,EL512,Xanthi,lake,,2,1,wd:Q25133868,Lafra Lake,photo_gate,imgs_0
+DE,DEF0C,Schleswig-Flensburg,lake,,2,1,wd:Q830453,Selker Noor,photo_gate,imgs_3
+DE,DEF0C,Schleswig-Flensburg,lake,,2,1,wd:Q642038,Arenholzer See,photo_gate,imgs_3
+DE,DEF0C,Schleswig-Flensburg,lake,,2,1,osm:w14858722,Niehuuser See,score_gate,score_3.9_below_5.4
+DE,DEF0D,Segeberg,lake,,2,1,wd:Q1675385,Itzstedter See,photo_gate,imgs_1
+DE,DEF0D,Segeberg,lake,,2,1,wd:Q893993,Bornhöveder See,photo_gate,imgs_2
+DK,DK041,Vestjylland,lake,,6,1,wd:Q12315027,Hald Sø,photo_gate,imgs_3
+DK,DK041,Vestjylland,lake,,6,1,wd:Q23746990,Kilen,photo_gate,imgs_2
+DK,DK041,Vestjylland,lake,,6,1,wd:Q23734767,Tjele Langsø,photo_gate,imgs_2
+GR,EL525,Pieria,lake,,2,1,osm:w687590534,Paralia,photo_gate,imgs_3
+GR,EL525,Pieria,lake,,2,1,osm:w160895840,Olympic Beach,photo_gate,imgs_2
+GR,EL525,Pieria,lake,,2,1,osm:w1117096092,Camping Gold Beach,photo_gate,imgs_1
+FR,FRE21,Aisne,lake,,2,1,osm:w95525829,Étang de la Lobiette,photo_gate,imgs_0
+FR,FRE21,Aisne,lake,,2,1,osm:w39321635,Bassin de Monampteuil,photo_gate,imgs_0
+FR,FRE21,Aisne,lake,,2,1,osm:w174808922,Plan d'eau de la Frette,photo_gate,imgs_0
+FR,FRC23,Haute-Saône,lake,,2,1,osm:w194241025,Ludolac,photo_gate,imgs_0
+FR,FRC23,Haute-Saône,lake,,2,1,osm:w114297815,Étang du Breuil,photo_gate,imgs_0
+FR,FRC23,Haute-Saône,lake,,2,1,osm:w698335901,Parking de la Motte,photo_gate,imgs_1
+FR,FRC14,Yonne,lake,,2,1,osm:w415518853,Camping Municipal de Mailly le Château,photo_gate,imgs_0
+FR,FRC14,Yonne,lake,,2,1,osm:w1133841508,Le Flow,photo_gate,imgs_0
+FR,FRC14,Yonne,lake,,2,1,osm:w150913880,Lac du Bourdon,photo_gate,imgs_1
+FI,FI1D7,Lappi,lake,,5,1,wd:Q2542996,Yli-Kitka,photo_gate,imgs_2
+FI,FI1D7,Lappi,lake,,5,1,wd:Q203137,Lake Inari,photo_gate,imgs_2
+FI,FI1D7,Lappi,lake,,5,1,wd:Q1868580,Lokka Reservoir,photo_gate,imgs_1
+FR,FRB03,Indre,lake,,2,1,osm:r2400523,Le Lac de Belle-Isle,photo_gate,imgs_0
+FR,FRB03,Indre,lake,,2,1,osm:w187628783,Plage de Belle-Isle,photo_gate,imgs_0
+FR,FRB03,Indre,lake,,2,1,wd:Q49316572,Étang de Bellebouche,photo_gate,imgs_1
+FR,FR101,Paris,lake,,3,1,wd:Q3457718,Réservoir de l'hôpital Saint-Louis,photo_gate,imgs_1
+FR,FR101,Paris,lake,,3,1,wd:Q384109,lac de Saint-Mandé,floor_pool,score_5.3_below_5.4
+FR,FR101,Paris,lake,,3,1,wd:Q2659603,lac des Minimes,floor_pool,score_5.2_below_5.4
+FR,FRC11,Côte-d’Or,lake,,2,1,wd:Q3215516,Lac de Pont,photo_gate,imgs_1
+FR,FRC11,Côte-d’Or,lake,,2,1,wd:Q3215503,Lac de Panthier,photo_gate,imgs_1
+FR,FRC11,Côte-d’Or,lake,,2,1,osm:r3412786,Canal de Bourgogne,photo_gate,imgs_3
+FI,FI1D5,Keski-Pohjanmaa,lake,,2,1,wd:Q7362303,Ullavanjärvi,photo_gate,imgs_0
+FI,FI1D5,Keski-Pohjanmaa,lake,,2,1,wd:Q18211773,Halsuanjärvi,photo_gate,imgs_0
+FI,FI1D5,Keski-Pohjanmaa,lake,,2,1,osm:r7323720,Räyringinjärvi,photo_gate,imgs_0
+FI,FI1B1,Helsinki-Uusimaa,lake,,4,1,wd:Q826447,Lake Bodom,photo_gate,imgs_2
+FI,FI1B1,Helsinki-Uusimaa,lake,,4,1,wd:Q10572693,Pitkäjärvi,photo_gate,imgs_3
+FI,FI1B1,Helsinki-Uusimaa,lake,,4,1,wd:Q18326154,Lake Sääksi,photo_gate,imgs_1
+ES,ES617,Málaga,lake,,2,1,osm:w474082561,Playa de Artola,photo_gate,imgs_0
+ES,ES617,Málaga,lake,,2,1,osm:w109608882,Playa El Bombo - El Bombo,photo_gate,imgs_0
+ES,ES617,Málaga,lake,,2,1,osm:w109609003,Playa de Las Doradas,photo_gate,imgs_0
+ES,ES512,Girona,lake,,3,1,wd:Q1369765,Lake of Banyoles,photo_gate,imgs_3
+ES,ES512,Girona,lake,,3,1,wd:Q50583274,Lake of La Poma,photo_gate,imgs_3
+ES,ES512,Girona,lake,,3,1,wd:Q11920913,Estanyol del Vilar,photo_gate,imgs_1
+FR,FRY10,Guadeloupe,lake,,2,1,wd:Q3214879,Lac Flammarion,photo_gate,imgs_2
+FR,FRY10,Guadeloupe,lake,,2,1,wd:Q24878697,Étang As de Pique,photo_gate,imgs_1
+FR,FRY10,Guadeloupe,lake,,2,1,wd:Q3215444,Lac de Gaschet,photo_gate,imgs_1
+HR,HR033,Zadarska županija,lake,,3,1,osm:w93655991,Babića jezero,photo_gate,imgs_1
+HR,HR033,Zadarska županija,lake,,3,1,wd:Q1625342,Vransko Lake,photo_gate,imgs_3
+HR,HR033,Zadarska županija,lake,,3,1,osm:w972611475,Zaton Holiday Resort Beach,photo_gate,imgs_3
+HU,HU221,Győr-Moson-Sopron,lake,,2,1,osm:w122207120,Borsodi-dűlő,photo_gate,imgs_0
+HU,HU221,Győr-Moson-Sopron,lake,,2,1,osm:w3868937,Herlaki-tó,photo_gate,imgs_0
+HU,HU221,Győr-Moson-Sopron,lake,,2,1,osm:w368448889,Hidegségi-tó,photo_gate,imgs_0
+HU,HU223,Zala,lake,,3,1,osm:w114036835,Öreg-kavicsbánya-tó,photo_gate,imgs_0
+HU,HU223,Zala,lake,,3,1,osm:r183802,Mura,photo_gate,imgs_0
+HU,HU223,Zala,lake,,3,1,osm:w646079620,Letenye I. sz. kavicsbánya-tó,photo_gate,imgs_0
+HR,HR035,Splitsko-dalmatinska županija,lake,,4,1,osm:w397083675,Matejuška,photo_gate,imgs_2
+HR,HR035,Splitsko-dalmatinska županija,lake,,4,1,osm:w181351754,Banj,photo_gate,imgs_0
+HR,HR035,Splitsko-dalmatinska županija,lake,,4,1,osm:w1029042526,Relax Pool,photo_gate,imgs_0
+FR,FRK13,Haute-Loire,lake,,2,1,osm:w390215648,La Chanterelle,photo_gate,imgs_0
+FR,FRK13,Haute-Loire,lake,,2,1,osm:w126098471,Plan d'Eau de La Tour,photo_gate,imgs_0
+FR,FRK13,Haute-Loire,lake,,2,1,osm:w39696119,Barrage de Lavalette,photo_gate,imgs_0
+HR,HR050,Grad Zagreb,lake,,2,1,wd:Q116192398,Bundek,photo_gate,imgs_2
+HR,HR050,Grad Zagreb,lake,,2,1,osm:w991184848,Jarun nudist beach,photo_gate,imgs_2
+HR,HR050,Grad Zagreb,lake,,2,1,osm:w170336318,Otok Trešnjevka,photo_gate,imgs_0
+FR,FRL02,Hautes-Alpes ,lake,,2,1,wd:Q2380235,Lac de l'Eychauda,photo_gate,imgs_3
+FR,FRL02,Hautes-Alpes ,lake,,2,1,wd:Q60850789,Lac de l'Orceyrette,photo_gate,imgs_2
+FR,FRL02,Hautes-Alpes ,lake,,2,1,wd:Q3215557,Lac de Souliers,photo_gate,imgs_1
+FR,FRY50,Mayotte ,lake,,2,1,,,,
+FR,FRK22,Ardèche,lake,,2,1,osm:w159393432,Camping de l'Ardèche - Vallon Pont d'Arc,photo_gate,imgs_2
+FR,FRK22,Ardèche,lake,,2,1,osm:w285722032,Camping des Gorges,photo_gate,imgs_0
+FR,FRK22,Ardèche,lake,,2,1,osm:w174946260,Rives d'Arc - Collection Rivages,photo_gate,imgs_0
+FR,FRM01,Corse-du-Sud,lake,,2,1,wd:Q3215428,Lac de Creno,photo_gate,imgs_1
+FR,FRM01,Corse-du-Sud,lake,,2,1,wd:Q3215592,Lac de l'Ospedale,photo_gate,imgs_3
+FR,FRM01,Corse-du-Sud,lake,,2,1,wd:Q16508564,Lac du Rizzanese,photo_gate,imgs_2
+FR,FRJ25,Lot,lake,,2,1,wd:Q3215263,Lac Vert,photo_gate,imgs_1
+FR,FRJ25,Lot,lake,,2,1,osm:r5502839,Plan d'eau de Tauriac,photo_gate,imgs_2
+FR,FRJ25,Lot,lake,,2,1,osm:w626338627,Camping du Port,photo_gate,imgs_0
+FR,FRJ26,Hautes-Pyrénées ,lake,,3,1,wd:Q3215598,Lake Bernatuara,photo_gate,imgs_1
+FR,FRJ26,Hautes-Pyrénées ,lake,,3,1,osm:w316447673,Lac de Clarabide,photo_gate,imgs_0
+FR,FRJ26,Hautes-Pyrénées ,lake,,3,1,wd:Q3215734,Lac du Pourtet,photo_gate,imgs_3
+FR,FRF22,Aube,lake,,2,1,osm:w23405550,Lac d'Amance,photo_gate,imgs_0
+FR,FRF22,Aube,lake,,2,1,osm:w1064810644,Grand bain,photo_gate,imgs_0
+FR,FRF22,Aube,lake,,2,1,osm:w1064810643,Petit bain,photo_gate,imgs_0
+FR,FRF23,Marne,lake,,2,1,wd:Q1799643,Lake Der-Chantecoq,photo_gate,imgs_3
+FR,FRF23,Marne,lake,,2,1,osm:w669665980,Port de Nuisement,photo_gate,imgs_2
+FR,FRF23,Marne,lake,,2,1,osm:w305848415,Camping Foret,photo_gate,imgs_0
+FR,FRF24,Haute-Marne,lake,,2,1,wd:Q3215639,Lac de Villegusien,photo_gate,imgs_3
+FR,FRF24,Haute-Marne,lake,,2,1,osm:w1080396829,Yelloh! en Champagne,photo_gate,imgs_0
+FR,FRF24,Haute-Marne,lake,,2,1,wd:Q3215412,Lac de Charmes,photo_gate,imgs_3
+IT,ITG2G,Oristano,lake,,2,1,osm:w116625259,Spiaggia di Santa Caterina,photo_gate,imgs_2
+IT,ITG2G,Oristano,lake,,2,1,osm:w113500748,Spiaggia della Balena,photo_gate,imgs_2
+IT,ITG2G,Oristano,lake,,2,1,wd:Q21995943,laguna di Mistras,photo_gate,imgs_0
+IT,ITI33,Macerata,lake,,2,1,wd:Q13403151,Lago di Fiastra,photo_gate,imgs_3
+IT,ITI33,Macerata,lake,,2,1,osm:w942107751,Antonio,photo_gate,imgs_0
+IT,ITI33,Macerata,lake,,2,1,osm:w936244664,Arturo,photo_gate,imgs_0
+IT,ITI34,Ascoli Piceno,lake,,2,1,wd:Q106983137,Lago di Gerosa,photo_gate,imgs_1
+IT,ITI34,Ascoli Piceno,lake,,2,1,osm:w658726730,Casablanca,photo_gate,imgs_0
+IT,ITI34,Ascoli Piceno,lake,,2,1,osm:w658726727,Chalet Stella,photo_gate,imgs_0
+LT,LT023,Klaipėdos apskritis,lake,,2,1,wd:Q12669658,Plocis,photo_gate,imgs_0
+LT,LT023,Klaipėdos apskritis,lake,,2,1,wd:Q12662671,Lazdininkai Pond,photo_gate,imgs_2
+LT,LT023,Klaipėdos apskritis,lake,,2,1,wd:Q12660342,Kašučių Lake,photo_gate,imgs_1
+IT,ITI14,Firenze,lake,,2,1,osm:r9185816,Cassa di espansione dei Renai,photo_gate,imgs_0
+IT,ITI14,Firenze,lake,,2,1,osm:w675560399,Vingone,photo_gate,imgs_1
+IT,ITI14,Firenze,lake,,2,1,osm:r5445123,Lago Casanuova,photo_gate,imgs_0
+IT,ITG16,Enna,lake,,2,1,wd:Q1800432,Pergusa Lake,photo_gate,imgs_3
+IT,ITG16,Enna,lake,,2,1,osm:w51067757,Parcheggio C,photo_gate,imgs_0
+IT,ITG16,Enna,lake,,2,1,wd:Q499239,Lago Pozzillo,photo_gate,imgs_3
+IT,ITH41,Pordenone,lake,,2,1,osm:w131243839,Piscina Turistica,photo_gate,imgs_0
+IT,ITH41,Pordenone,lake,,2,1,osm:w36092573,Piscina comunale,photo_gate,imgs_0
+IT,ITH41,Pordenone,lake,,2,1,wd:Q18785480,Tramonti Lake,photo_gate,imgs_2
+IT,ITI18,Arezzo,lake,,2,1,osm:w48829905,Piazza Borro di Tonino,photo_gate,imgs_0
+IT,ITI18,Arezzo,lake,,2,1,osm:w1316849133,La Chiocciola,photo_gate,imgs_0
+IT,ITI18,Arezzo,lake,,2,1,osm:w122317193,Piscine Pincardini,photo_gate,imgs_0
+IT,ITI21,Perugia,lake,,2,1,osm:w176335219,Listro,photo_gate,imgs_0
+IT,ITI21,Perugia,lake,,2,1,osm:w60098972,Piazza Trento e Trieste,photo_gate,imgs_0
+IT,ITI21,Perugia,lake,,2,1,osm:w985768733,Sualzo,photo_gate,imgs_0
+IT,ITF48,Barletta-Andria-Trani,lake,,2,1,osm:w47076434,Spiaggia di Ponente,photo_gate,imgs_0
+IT,ITF48,Barletta-Andria-Trani,lake,,2,1,osm:w1137106125,Brigantino,photo_gate,imgs_0
+IT,ITF48,Barletta-Andria-Trani,lake,,2,1,osm:w925593289,Spiaggia di salsello,photo_gate,imgs_0
+IT,ITF62,Crotone,lake,,2,1,osm:w407485735,Centro Vacanze Punta Alice,photo_gate,imgs_1
+IT,ITF62,Crotone,lake,,2,1,osm:w474427039,San Leonardo,photo_gate,imgs_0
+IT,ITF62,Crotone,lake,,2,1,osm:w247185008,Piazza Beata Vergine Maria,photo_gate,imgs_0
+HU,HU321,Hajdú-Bihar,lake,,2,1,osm:r11878189,Békás-tó,photo_gate,imgs_3
+HU,HU321,Hajdú-Bihar,lake,,2,1,osm:w492551430,Aqua-Palace,photo_gate,imgs_1
+HU,HU321,Hajdú-Bihar,lake,,2,1,osm:w661176632,Aquaticum strandfürdő,photo_gate,imgs_0
+IE,IE053,South-West ,lake,,6,1,wd:Q25238257,Lough Gill,photo_gate,imgs_1
+IE,IE053,South-West ,lake,,6,1,wd:Q5037623,Caragh Lake,floor_pool,score_4.5_below_5.4
+IE,IE053,South-West ,lake,,6,1,wd:Q22084113,Lough Allua,floor_pool,score_4.2_below_5.4
+IE,IE061,Dublin,lake,,2,1,osm:w306849010,Seapoint,photo_gate,imgs_3
+IE,IE061,Dublin,lake,,2,1,wd:Q116922455,Brittas Pond,photo_gate,imgs_1
+IE,IE061,Dublin,lake,,2,1,osm:w35356883,Newtownsmith Park Parking,photo_gate,imgs_0
+IT,ITC13,Biella,lake,,2,1,wd:Q3825905,Lake of Bertignano,photo_gate,imgs_2
+IT,ITC13,Biella,lake,,2,1,wd:Q3215672,Lago delle Mischie,photo_gate,imgs_1
+IT,ITC13,Biella,lake,,2,1,wd:Q3825856,Lago del Mucrone,photo_gate,imgs_2
+IT,ITF33,Napoli,lake,,3,1,wd:Q19060551,Lago di Licola,photo_gate,imgs_1
+IT,ITF33,Napoli,lake,,3,1,wd:Q3825725,Lago Miseno,photo_gate,imgs_1
+IT,ITF33,Napoli,lake,,3,1,wd:Q3825997,Lago di Patria,photo_gate,imgs_0
+IT,ITC15,Novara,lake,,2,1,osm:w201955908,Corso Europa,photo_gate,imgs_0
+IT,ITC15,Novara,lake,,2,1,osm:w517853410,Verde Lago,photo_gate,imgs_0
+IT,ITC15,Novara,lake,,2,1,osm:w457675271,Camping Village Lago Maggiore,photo_gate,imgs_0
+HU,HU332,Békés,lake,,2,1,osm:r3171298,Gyopáros-tó,photo_gate,imgs_0
+HU,HU332,Békés,lake,,2,1,osm:w283842219,Liget Wellness és Konferencia Hotel,photo_gate,imgs_1
+HU,HU332,Békés,lake,,2,1,osm:w112924471,Árpád Gyógy-és Strandfürdő,photo_gate,imgs_1
+IE,IE062,Mid-East,lake,,4,1,wd:Q33285169,Lough Ouler,photo_gate,imgs_2
+IE,IE062,Mid-East,lake,,4,1,wd:Q959556,Lough Sheelin,photo_gate,imgs_3
+IE,IE062,Mid-East,lake,,4,1,osm:w120697131,Glendalough Upper Lake,photo_gate,imgs_2
+IE,IE063,Midland,lake,,4,1,wd:Q3545409,Lough Gowna,photo_gate,imgs_1
+IE,IE063,Midland,lake,,4,1,wd:Q1586768,Lough Derravaragh,photo_gate,imgs_2
+IE,IE063,Midland,lake,,4,1,wd:Q22084069,Killinure Lough,photo_gate,imgs_2
+IT,ITC18,Alessandria,lake,,2,1,wd:Q3825609,Laghi di Lavagnina,photo_gate,imgs_1
+IT,ITC18,Alessandria,lake,,2,1,osm:w226315391,Lago Lavagnina 2,photo_gate,imgs_0
+IT,ITC18,Alessandria,lake,,2,1,osm:w60111890,Piazza Divisione Mantova,photo_gate,imgs_0
+PL,PL225,Bielski,lake,,2,1,osm:w238833348,Kąpielisko miejskie,photo_gate,imgs_0
+PL,PL225,Bielski,lake,,2,1,osm:w136353696,"Pływalnia ""Start""",photo_gate,imgs_2
+PL,PL225,Bielski,lake,,2,1,osm:w1354011600,plaża miejska,photo_gate,imgs_0
+PL,PL22A,Katowicki,lake,,2,1,osm:w22745620,Stawiki,photo_gate,imgs_3
+PL,PL22A,Katowicki,lake,,2,1,osm:w22745636,Hubertus 3,photo_gate,imgs_5
+PL,PL22A,Katowicki,lake,,2,1,osm:r7497435,Borki,photo_gate,imgs_4
+PL,PL414,Koniński,lake,,4,1,wd:Q6512708,Lednica,photo_gate,imgs_4
+PL,PL414,Koniński,lake,,4,1,wd:Q11791420,Niedzięgiel,photo_gate,imgs_4
+PL,PL414,Koniński,lake,,4,1,wd:Q11726569,Mikorzyńskie Lake,photo_gate,imgs_3
+NO,NO084,Akershus,lake,,4,1,wd:Q6514268,Setten,photo_gate,imgs_2
+NO,NO084,Akershus,lake,,4,1,wd:Q11999909,Semsvannet,photo_gate,imgs_2
+NO,NO084,Akershus,lake,,4,1,wd:Q4580205,Engervannet,photo_gate,imgs_1
+NO,NO0A3,Møre og Romsdal,lake,,2,1,wd:Q5285398,Djupvatnet,floor_pool,score_5.3_below_5.4
+NO,NO0A3,Møre og Romsdal,lake,,2,1,osm:r5893400,Osvatnet,photo_gate,imgs_0
+NO,NO0A3,Møre og Romsdal,lake,,2,1,wd:Q5612765,Gråsjøen,photo_gate,imgs_0
+NO,NO060,Trøndelag/Trööndelage,lake,,4,1,wd:Q5566023,Gjevilvatnet,photo_gate,imgs_3
+NO,NO060,Trøndelag/Trööndelage,lake,,4,1,wd:Q6977209,Storvatnet,photo_gate,imgs_1
+NO,NO060,Trøndelag/Trööndelage,lake,,4,1,wd:Q1234569,Tunnsjøen,photo_gate,imgs_1
+NL,NL415,Midden-Noord-Brabant,lake,,2,1,osm:r1176550,Papschot,photo_gate,imgs_0
+NL,NL415,Midden-Noord-Brabant,lake,,2,1,osm:w972977791,WSV Woudrichem,photo_gate,imgs_2
+NL,NL415,Midden-Noord-Brabant,lake,,2,1,wd:Q127406630,Victoriameer,photo_gate,imgs_0
+NL,NL416,Noordoost-Noord-Brabant,lake,,3,1,wd:Q2934319,IJzeren Man,photo_gate,imgs_3
+NL,NL416,Noordoost-Noord-Brabant,lake,,3,1,wd:Q2024867,Oosterplas,photo_gate,imgs_5
+NL,NL416,Noordoost-Noord-Brabant,lake,,3,1,wd:Q2126790,Zuiderplas,photo_gate,imgs_2
+NL,NL422,Midden-Limburg,lake,,3,1,osm:w366045378,Stevensweert Marina,photo_gate,imgs_2
+NL,NL422,Midden-Limburg,lake,,3,1,osm:w966312249,Grote Hegge,photo_gate,imgs_0
+NL,NL422,Midden-Limburg,lake,,3,1,osm:w966779478,Huyskensplas,photo_gate,imgs_0
+NL,NL128,Zuidwest-Friesland,lake,,4,1,wd:Q1593475,Hegemer Mar,photo_gate,imgs_1
+NL,NL128,Zuidwest-Friesland,lake,,4,1,wd:Q1884151,Fluessen,photo_gate,imgs_4
+NL,NL128,Zuidwest-Friesland,lake,,4,1,wd:Q2263575,Langwarder Wielen,photo_gate,imgs_3
+NL,NL213,Twente,lake,,2,1,osm:r9347443,Oelemars,photo_gate,imgs_0
+NL,NL213,Twente,lake,,2,1,osm:w46111981,Bergvennen,photo_gate,imgs_0
+NL,NL213,Twente,lake,,2,1,wd:Q2050876,Recreatieterrein Het Rutbeek,photo_gate,imgs_1
+NL,NL221,Veluwe,lake,,3,1,wd:Q943170,Nuldernauw,photo_gate,imgs_3
+NL,NL221,Veluwe,lake,,3,1,osm:w60283373,Het Bussloo,photo_gate,imgs_2
+NL,NL221,Veluwe,lake,,3,1,osm:w372157713,'t Wolbos,photo_gate,imgs_0
+NL,NL321,Kop van Noord-Holland,lake,,2,1,wd:Q1813641,Amstelmeer,photo_gate,imgs_2
+NL,NL321,Kop van Noord-Holland,lake,,2,1,osm:w276415294,Recreatiebad Enkhuizerzand,photo_gate,imgs_3
+NL,NL321,Kop van Noord-Holland,lake,,2,1,osm:w45137961,Hoge Oude Veer,photo_gate,imgs_0
+NL,NL323,IJmond,lake,,2,1,wd:Q2773823,Alkmaardermeer,photo_gate,imgs_2
+NL,NL323,IJmond,lake,,2,1,osm:w614452361,Westbroekplas,photo_gate,imgs_0
+NL,NL323,IJmond,lake,,2,1,wd:Q2667071,IJ,photo_gate,imgs_0
+NL,NL342,Overig Zeeland,lake,,3,1,wd:Q1546115,Grevelingen,photo_gate,imgs_3
+NL,NL342,Overig Zeeland,lake,,3,1,wd:Q2115147,Veerse Gat,photo_gate,imgs_2
+NL,NL342,Overig Zeeland,lake,,3,1,osm:w46153661,Jachtclub Veere,photo_gate,imgs_2
+NL,NL350,Utrecht,lake,,4,1,wd:Q1857518,Haarrijnseplas,photo_gate,imgs_2
+NL,NL350,Utrecht,lake,,4,1,wd:Q731679,Maarsseveense Plassen,photo_gate,imgs_3
+NL,NL350,Utrecht,lake,,4,1,wd:Q2049150,Recreatieplas Cattenbroek,photo_gate,imgs_1
+NL,NL365,Oost-Zuid-Holland,lake,,2,1,osm:w93855919,Surfplas,photo_gate,imgs_0
+NL,NL365,Oost-Zuid-Holland,lake,,2,1,wd:Q2789838,Zegerplas,photo_gate,imgs_2
+NL,NL365,Oost-Zuid-Holland,lake,,2,1,osm:w93973031,Reeuwijkse Houtwal,photo_gate,imgs_1
+NL,NL366,Groot-Rijnmond,lake,,4,1,wd:Q431283,Brielse meer,photo_gate,imgs_2
+NL,NL366,Groot-Rijnmond,lake,,4,1,osm:r8115766,Haringvliet,photo_gate,imgs_3
+NL,NL366,Groot-Rijnmond,lake,,4,1,wd:Q2466706,Rottemeren,photo_gate,imgs_4
+RS,RS213,Mačvanska oblast,lake,,3,1,wd:Q8075597,Zvorničko Lake,photo_gate,imgs_2
+RS,RS213,Mačvanska oblast,lake,,3,1,osm:w522897200,Drina,photo_gate,imgs_0
+RS,RS213,Mačvanska oblast,lake,,3,1,osm:w1235031007,"Beach ""Stari grad""",photo_gate,imgs_0
+RO,RO313,Dâmboviţa,lake,,2,1,osm:w450848707,Piscina Green Heaven,photo_gate,imgs_0
+RO,RO313,Dâmboviţa,lake,,2,1,osm:r1308445,Ialomița,photo_gate,imgs_0
+RO,RO313,Dâmboviţa,lake,,2,1,wd:Q12731842,Bolboci Reservoir,floor_pool,score_4.6_below_5.4
+RO,RO315,Ialomiţa,lake,,2,1,osm:w254244252,Ștrand,photo_gate,imgs_0
+RO,RO315,Ialomiţa,lake,,2,1,osm:w253303936,Bazin de înot,photo_gate,imgs_0
+RO,RO315,Ialomiţa,lake,,2,1,wd:Q18547462,Lacul Rodeanu,photo_gate,imgs_0
+RO,RO213,Iaşi,lake,,2,1,osm:w970948917,Lacul Gorban,photo_gate,imgs_0
+RO,RO213,Iaşi,lake,,2,1,osm:w33708757,Iazul Grozești,photo_gate,imgs_0
+RO,RO213,Iaşi,lake,,2,1,osm:r1250922,Lacul Ciric II,photo_gate,imgs_0
+RO,RO124,Harghita,lake,,3,1,osm:w1064000700,Unicum gyógyfürdő és sós-meszes forrás,photo_gate,imgs_0
+RO,RO124,Harghita,lake,,3,1,osm:w292528289,Baza de tratament Balneo-Mofetta,photo_gate,imgs_0
+RO,RO124,Harghita,lake,,3,1,osm:w338064650,Splash Csíki,photo_gate,imgs_0
+PT,PT1D3,Lezíria do Tejo,lake,,3,1,osm:w399127972,Praia Fluvial de Coruche,photo_gate,imgs_2
+PT,PT1D3,Lezíria do Tejo,lake,,3,1,osm:r17055409,Lago do Parque,photo_gate,imgs_1
+PT,PT1D3,Lezíria do Tejo,lake,,3,1,osm:w158084844,Complexo de Piscinas Municipais,photo_gate,imgs_0
+PL,PL821,Krośnieński,lake,,2,1,wd:Q11726590,Lake Myczkowce,photo_gate,imgs_3
+PL,PL821,Krośnieński,lake,,2,1,osm:w292574187,Centrum Wypoczynkowo-Szkoleniowe Unitra,photo_gate,imgs_0
+PL,PL821,Krośnieński,lake,,2,1,osm:w537467183,Blue Marine Kemping,photo_gate,imgs_0
+PL,PL518,Wrocławski,lake,,2,1,osm:w116629105,Staw Pierwszy Jelczański,photo_gate,imgs_0
+PL,PL518,Wrocławski,lake,,2,1,wd:Q9164344,Zalew Bajkał,photo_gate,imgs_2
+PL,PL518,Wrocławski,lake,,2,1,osm:w30173945,Kąpielisko Wały,photo_gate,imgs_0
+PT,PT192,Região de Coimbra,lake,,3,1,osm:r2665375,Albufeira do Cabril,photo_gate,imgs_0
+PT,PT192,Região de Coimbra,lake,,3,1,osm:w212896667,Praia do Forte,photo_gate,imgs_2
+PT,PT192,Região de Coimbra,lake,,3,1,osm:w182454933,Piscina Fluvial de Pomares,photo_gate,imgs_3
+PT,PT193,Região de Leiria,lake,,2,1,osm:w771614394,Piscina Flutuante do Cabril,photo_gate,imgs_2
+PT,PT193,Região de Leiria,lake,,2,1,osm:w771616833,Praia Fluvial do Cabril,photo_gate,imgs_3
+PT,PT193,Região de Leiria,lake,,2,1,osm:w511356030,Praia das Valeiras,photo_gate,imgs_3
+PL,PL713,Piotrkowski,lake,,2,1,osm:w10610254,Zalew na Drzewiczce,photo_gate,imgs_3
+PL,PL713,Piotrkowski,lake,,2,1,osm:w47080066,Zbiornik Słok,photo_gate,imgs_3
+PL,PL713,Piotrkowski,lake,,2,1,osm:r319145,Jezioro Bugaj,photo_gate,imgs_1
+PL,PL622,Olsztyński,lake,,4,1,wd:Q6478194,Lake Ukiel,photo_gate,imgs_2
+PL,PL622,Olsztyński,lake,,4,1,wd:Q1136017,Tałty,photo_gate,imgs_3
+PL,PL622,Olsztyński,lake,,4,1,wd:Q6980780,Wet Lake,photo_gate,imgs_3
+PL,PL811,Bialski,lake,,2,1,osm:w642625793,"Plaża ""Kąpielisko nr 2""",photo_gate,imgs_0
+PL,PL811,Bialski,lake,,2,1,osm:w1252017608,Kąpielisko nr 2,photo_gate,imgs_0
+PL,PL811,Bialski,lake,,2,1,osm:w642625795,"Główna Plaża ""OSiR""",photo_gate,imgs_0
+PL,PL623,Ełcki,lake,,6,1,wd:Q11726628,Jezioro Oleckie Wielkie,photo_gate,imgs_3
+PL,PL623,Ełcki,lake,,6,1,wd:Q607483,Lake Roś,photo_gate,imgs_4
+PL,PL623,Ełcki,lake,,6,1,wd:Q4081746,Bełdany,photo_gate,imgs_3
+PL,PL812,Chełmsko-zamojski,lake,,2,1,osm:r17064248,Żółtańce,photo_gate,imgs_1
+PL,PL812,Chełmsko-zamojski,lake,,2,1,osm:r5382894,Zalew Bojary,photo_gate,imgs_0
+PL,PL812,Chełmsko-zamojski,lake,,2,1,osm:w176939370,Maczuły,photo_gate,imgs_0
+PT,PT11C,Tâmega e Sousa,lake,,2,1,wd:Q140371502,Crestuma-Lever Reservoir,photo_gate,imgs_4
+PT,PT11C,Tâmega e Sousa,lake,,2,1,wd:Q140371477,Carrapatelo Reservoir,photo_gate,imgs_2
+PT,PT11C,Tâmega e Sousa,lake,,2,1,osm:r5011894,Albufeira do Torrão,photo_gate,imgs_0
+PT,PT11D,Douro,lake,,3,1,osm:r3688749,Albufeira do Pocinho,photo_gate,imgs_0
+PT,PT11D,Douro,lake,,3,1,osm:r20269084,Embalse de Saucelle,photo_gate,imgs_1
+PT,PT11D,Douro,lake,,3,1,wd:Q43560800,Saucelle Reservoir,photo_gate,imgs_3
+PL,PL515,Jeleniogórski,lake,,3,1,osm:w26715296,Mały Staw,photo_gate,imgs_3
+PL,PL515,Jeleniogórski,lake,,3,1,osm:w47195119,Zbiornik wodny Niedów,photo_gate,imgs_2
+PL,PL515,Jeleniogórski,lake,,3,1,wd:Q3508724,Mały Staw,photo_gate,imgs_2
+SE,SE121,Uppsala län,lake,,2,1,wd:Q184492,Mälaren,photo_gate,imgs_3
+SE,SE121,Uppsala län,lake,,2,1,osm:r2691207,Trehörningen,photo_gate,imgs_2
+SE,SE121,Uppsala län,lake,,2,1,wd:Q10526496,Hosjön,photo_gate,imgs_2
+SE,SE212,Kronobergs län,lake,,3,1,wd:Q1474746,Helgasjön,photo_gate,imgs_3
+SE,SE212,Kronobergs län,lake,,3,1,wd:Q1765665,Mien,photo_gate,imgs_2
+SE,SE212,Kronobergs län,lake,,3,1,wd:Q891521,Bolmen,photo_gate,imgs_3
+SI,SI037,Jugovzhodna Slovenija,lake,,2,1,osm:r7621823,Kolpa,photo_gate,imgs_1
+SI,SI037,Jugovzhodna Slovenija,lake,,2,1,osm:w707446389,Lahinja,photo_gate,imgs_1
+SI,SI037,Jugovzhodna Slovenija,lake,,2,1,osm:w172820115,Big Berry Resort,photo_gate,imgs_0
+SI,SI041,Osrednjeslovenska,lake,,3,1,osm:w331675502,Podpeško Jezero,photo_gate,imgs_1
+SI,SI041,Osrednjeslovenska,lake,,3,1,osm:w8119549,Kopališče Tivoli,photo_gate,imgs_1
+SI,SI041,Osrednjeslovenska,lake,,3,1,osm:w1369579547,Parkirna hiša Ilirija,photo_gate,imgs_0
+SE,SE214,Gotlands län,lake,,2,1,wd:Q166402,Lake Bästeträsk,photo_gate,imgs_3
+SE,SE214,Gotlands län,lake,,2,1,osm:w1071031578,Ljugarns Camping och Semesterby,photo_gate,imgs_0
+SE,SE214,Gotlands län,lake,,2,1,wd:Q890553,Bogeviken,photo_gate,imgs_1
+XK,XK001,Prishtinë,lake,,3,1,osm:w1457192965,Swiss Wellness Park,photo_gate,imgs_0
+XK,XK001,Prishtinë,lake,,3,1,osm:w1184509625,Matinée Pool Club,photo_gate,imgs_0
+XK,XK001,Prishtinë,lake,,3,1,osm:w1457193709,Dubai Pool,photo_gate,imgs_0
+GB,TLE22,North Yorkshire,lake,,2,1,wd:Q1225708,Malham Tarn,floor_pool,score_4.9_below_5.4
+GB,TLE22,North Yorkshire,lake,,2,1,wd:Q5139930,Cod Beck Reservoir,photo_gate,imgs_3
+GB,TLE22,North Yorkshire,lake,,2,1,wd:Q6519781,Leighton Reservoir,photo_gate,imgs_3
+GB,TLF13,South and West Derbyshire,lake,,2,1,wd:Q7348277,Toddbrook Reservoir,photo_gate,imgs_1
+GB,TLF13,South and West Derbyshire,lake,,2,1,wd:Q933452,Carsington Water,photo_gate,imgs_4
+GB,TLF13,South and West Derbyshire,lake,,2,1,wd:Q13359459,Derwent Reservoir,photo_gate,imgs_3
+GB,TLH34,Essex Haven Gateway,lake,,2,1,wd:Q4663930,Abberton Reservoir,floor_pool,score_4.3_below_5.4
+GB,TLI35,Westminster and City of London,lake,,2,1,osm:w23607683,Serpentine Lido,photo_gate,imgs_2
+GB,TLI35,Westminster and City of London,lake,,2,1,osm:w58757016,Triangle Carpark,photo_gate,imgs_0
+GB,TLI35,Westminster and City of London,lake,,2,1,osm:r1972843,Diana Memorial Fountain,photo_gate,imgs_0
+GB,TLK64,Dorset,lake,,2,1,wd:Q885847,Blue Pool,photo_gate,imgs_2
+GB,TLK64,Dorset,lake,,2,1,osm:w127314158,East Beach,photo_gate,imgs_1
+GB,TLK64,Dorset,lake,,2,1,osm:w1037134000,Esplanade Car Park,photo_gate,imgs_0
+GB,TLL51,Central Valleys and Bridgend,lake,,2,1,wd:Q2564713,Llyn Fawr,photo_gate,imgs_3
+GB,TLL51,Central Valleys and Bridgend,lake,,2,1,osm:w45853882,Hillsboro Place Car Park,photo_gate,imgs_0
+GB,TLL51,Central Valleys and Bridgend,lake,,2,1,osm:w221819704,Pontsticill Reservoir,photo_gate,imgs_1
+GB,TLM02,"Perth and Kinross, and Stirling",lake,,6,1,wd:Q1867269,Loch Katrine,floor_pool,score_4.7_below_5.4
+GB,TLM50,Aberdeen City and Aberdeenshire,lake,,3,1,wd:Q6665031,Loch of Aboyne,floor_pool,score_4.6_below_5.4
+GB,TLM50,Aberdeen City and Aberdeenshire,lake,,3,1,wd:Q3850249,Loch of Strathbeg,photo_gate,imgs_2
+GB,TLM50,Aberdeen City and Aberdeenshire,lake,,3,1,wd:Q18736996,Loch Callater,floor_pool,score_4.0_below_5.4
+GB,TLN0G,Fermanagh and Omagh,lake,,2,1,wd:Q1324180,Lough Erne,floor_pool,score_4.9_below_5.4
+GB,TLN0G,Fermanagh and Omagh,lake,,2,1,wd:Q6875872,Lower Lough Erne,photo_gate,imgs_1
+GB,TLN0G,Fermanagh and Omagh,lake,,2,1,wd:Q11878874,Upper Lough Erne,photo_gate,imgs_3
+UA,UA-74538382B44725547103458,Reni,lake,,2,1,osm:r11543925,Lake Cugurlui,photo_gate,imgs_1
+UA,UA-74538382B44725547103458,Reni,lake,,2,1,osm:w238777262,Reni Port Basin,photo_gate,imgs_0

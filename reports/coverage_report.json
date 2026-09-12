@@ -1,106 +1,106 @@
 {
- "generated_at": "2026-09-04T06:22:15+00:00",
- "n_destinations": 3746,
+ "generated_at": "2026-09-12T11:14:12+00:00",
+ "n_destinations": 3868,
  "n_countries": 43,
  "layer_coverage_total": {
-  "designations": 0.488,
-  "nature": 0.3946,
-  "crowding": 0.3708,
-  "bathing_water": 0.2397,
-  "guide": 0.2758
+  "designations": 0.4772,
+  "nature": 0.3821,
+  "crowding": 0.3591,
+  "bathing_water": 0.2322,
+  "guide": 0.2671
  },
  "register_membership_totals": "pending B3 register_intake - held counts only until then",
  "countries": {
   "Italy": {
-   "destinations": 581,
-   "per_10000_km2": 19.23,
-   "per_million_residents": 9.86,
-   "appeal_coverage": 0.2771,
+   "destinations": 651,
+   "per_10000_km2": 21.55,
+   "per_million_residents": 11.05,
+   "appeal_coverage": 0.2473,
    "registers_held": {
-    "beautiful_village": 337,
+    "beautiful_village": 341,
     "capital_of_culture": 16,
     "heritage_town": 10,
     "national_park": 13,
     "spa_town": 1,
     "unesco_tentative": 19,
-    "unesco_whc": 53
+    "unesco_whc": 54
    },
    "layer_coverage": {
-    "designations": 0.716,
-    "nature": 0.2599,
-    "crowding": 0.2754,
-    "bathing_water": 0.179,
-    "guide": 0.179
+    "designations": 0.6467,
+    "nature": 0.232,
+    "crowding": 0.2458,
+    "bathing_water": 0.1598,
+    "guide": 0.1598
    }
   },
   "France": {
-   "destinations": 572,
-   "per_10000_km2": 10.52,
-   "per_million_residents": 8.65,
-   "appeal_coverage": 0.2517,
+   "destinations": 591,
+   "per_10000_km2": 10.87,
+   "per_million_residents": 8.94,
+   "appeal_coverage": 0.2437,
    "registers_held": {
-    "beautiful_village": 143,
+    "beautiful_village": 144,
     "capital_of_culture": 8,
     "heritage_town": 243,
     "national_park": 3,
     "spa_town": 1,
     "unesco_tentative": 19,
-    "unesco_whc": 52
+    "unesco_whc": 55
    },
    "layer_coverage": {
-    "designations": 0.7657,
-    "nature": 0.243,
-    "crowding": 0.25,
-    "bathing_water": 0.2098,
-    "guide": 0.1748
+    "designations": 0.7479,
+    "nature": 0.2352,
+    "crowding": 0.242,
+    "bathing_water": 0.203,
+    "guide": 0.1692
    }
   },
   "United Kingdom": {
-   "destinations": 522,
-   "per_10000_km2": 21.43,
-   "per_million_residents": 7.64,
-   "appeal_coverage": 0.2471,
+   "destinations": 526,
+   "per_10000_km2": 21.59,
+   "per_million_residents": 7.7,
+   "appeal_coverage": 0.2452,
    "registers_held": {
-    "capital_of_culture": 9,
-    "market_town": 336,
+    "capital_of_culture": 10,
+    "market_town": 337,
     "national_park": 7,
     "spa_town": 1,
     "unesco_tentative": 4,
     "unesco_whc": 22
    },
    "layer_coverage": {
-    "designations": 0.7031,
-    "nature": 0.2452,
+    "designations": 0.7015,
+    "nature": 0.2433,
     "crowding": 0.0038,
     "bathing_water": 0.0,
-    "guide": 0.1801
+    "guide": 0.1787
    }
   },
   "Spain": {
-   "destinations": 291,
-   "per_10000_km2": 5.75,
-   "per_million_residents": 5.99,
-   "appeal_coverage": 0.4433,
+   "destinations": 300,
+   "per_10000_km2": 5.93,
+   "per_million_residents": 6.17,
+   "appeal_coverage": 0.43,
    "registers_held": {
-    "capital_of_culture": 10,
-    "heritage_town": 149,
+    "capital_of_culture": 12,
+    "heritage_town": 152,
     "national_park": 18,
-    "unesco_tentative": 7,
+    "unesco_tentative": 8,
     "unesco_whc": 42
    },
    "layer_coverage": {
-    "designations": 0.6254,
-    "nature": 0.3883,
-    "crowding": 0.4399,
-    "bathing_water": 0.3024,
-    "guide": 0.2887
+    "designations": 0.62,
+    "nature": 0.3767,
+    "crowding": 0.4267,
+    "bathing_water": 0.2933,
+    "guide": 0.28
    }
   },
   "Germany": {
-   "destinations": 246,
-   "per_10000_km2": 6.88,
-   "per_million_residents": 2.91,
-   "appeal_coverage": 0.3049,
+   "destinations": 248,
+   "per_10000_km2": 6.94,
+   "per_million_residents": 2.93,
+   "appeal_coverage": 0.3024,
    "registers_held": {
     "capital_of_culture": 9,
     "national_park": 4,
@@ -109,48 +109,48 @@
     "unesco_whc": 45
    },
    "layer_coverage": {
-    "designations": 0.2398,
-    "nature": 0.3049,
-    "crowding": 0.3008,
-    "bathing_water": 0.2358,
-    "guide": 0.2358
+    "designations": 0.2379,
+    "nature": 0.3024,
+    "crowding": 0.2984,
+    "bathing_water": 0.2339,
+    "guide": 0.2339
    }
   },
   "Greece": {
-   "destinations": 151,
-   "per_10000_km2": 11.44,
-   "per_million_residents": 14.52,
-   "appeal_coverage": 0.6887,
+   "destinations": 155,
+   "per_10000_km2": 11.75,
+   "per_million_residents": 14.9,
+   "appeal_coverage": 0.671,
    "registers_held": {
-    "capital_of_culture": 1,
+    "capital_of_culture": 2,
     "national_park": 8,
     "unesco_tentative": 6,
     "unesco_whc": 16
    },
    "layer_coverage": {
-    "designations": 0.1523,
-    "nature": 0.6623,
-    "crowding": 0.6821,
-    "bathing_water": 0.5762,
-    "guide": 0.4636
+    "designations": 0.1548,
+    "nature": 0.6452,
+    "crowding": 0.6645,
+    "bathing_water": 0.5613,
+    "guide": 0.4516
    }
   },
   "Netherlands": {
-   "destinations": 136,
-   "per_10000_km2": 32.74,
-   "per_million_residents": 7.6,
-   "appeal_coverage": 0.2721,
+   "destinations": 144,
+   "per_10000_km2": 34.66,
+   "per_million_residents": 8.04,
+   "appeal_coverage": 0.2569,
    "registers_held": {
     "capital_of_culture": 4,
     "unesco_tentative": 2,
     "unesco_whc": 8
    },
    "layer_coverage": {
-    "designations": 0.0809,
-    "nature": 0.2721,
-    "crowding": 0.2721,
-    "bathing_water": 0.2721,
-    "guide": 0.2353
+    "designations": 0.0764,
+    "nature": 0.2569,
+    "crowding": 0.2569,
+    "bathing_water": 0.2569,
+    "guide": 0.2222
    }
   },
   "Portugal": {
@@ -192,10 +192,10 @@
    }
   },
   "Poland": {
-   "destinations": 81,
-   "per_10000_km2": 2.59,
-   "per_million_residents": 2.21,
-   "appeal_coverage": 0.5432,
+   "destinations": 82,
+   "per_10000_km2": 2.62,
+   "per_million_residents": 2.24,
+   "appeal_coverage": 0.5366,
    "registers_held": {
     "capital_of_culture": 5,
     "national_park": 3,
@@ -203,11 +203,11 @@
     "unesco_whc": 11
    },
    "layer_coverage": {
-    "designations": 0.1975,
-    "nature": 0.5432,
-    "crowding": 0.5432,
-    "bathing_water": 0.3333,
-    "guide": 0.3457
+    "designations": 0.1951,
+    "nature": 0.5366,
+    "crowding": 0.5366,
+    "bathing_water": 0.3293,
+    "guide": 0.3415
    }
   },
   "Czechia": {
@@ -421,21 +421,21 @@
    }
   },
   "Slovenia": {
-   "destinations": 29,
-   "per_10000_km2": 14.3,
-   "per_million_residents": 13.68,
-   "appeal_coverage": 0.6897,
+   "destinations": 30,
+   "per_10000_km2": 14.8,
+   "per_million_residents": 14.15,
+   "appeal_coverage": 0.6667,
    "registers_held": {
     "capital_of_culture": 1,
     "unesco_tentative": 3,
     "unesco_whc": 3
    },
    "layer_coverage": {
-    "designations": 0.1724,
-    "nature": 0.6897,
-    "crowding": 0.6897,
-    "bathing_water": 0.2414,
-    "guide": 0.3448
+    "designations": 0.1667,
+    "nature": 0.6667,
+    "crowding": 0.6667,
+    "bathing_water": 0.2333,
+    "guide": 0.3333
    }
   },
   "Slovakia": {
@@ -454,6 +454,23 @@
     "nature": 0.7143,
     "crowding": 0.7143,
     "bathing_water": 0.1429,
+    "guide": 0.5
+   }
+  },
+  "Finland": {
+   "destinations": 28,
+   "per_10000_km2": 0.83,
+   "per_million_residents": 5.0,
+   "appeal_coverage": 0.6071,
+   "registers_held": {
+    "capital_of_culture": 3,
+    "unesco_whc": 3
+   },
+   "layer_coverage": {
+    "designations": 0.1786,
+    "nature": 0.6071,
+    "crowding": 0.5714,
+    "bathing_water": 0.4286,
     "guide": 0.5
    }
   },
@@ -476,21 +493,21 @@
     "guide": 0.2143
    }
   },
-  "Finland": {
-   "destinations": 27,
-   "per_10000_km2": 0.8,
-   "per_million_residents": 4.82,
-   "appeal_coverage": 0.6296,
+  "Iceland": {
+   "destinations": 23,
+   "per_10000_km2": 2.23,
+   "per_million_residents": 58.97,
+   "appeal_coverage": 0.8696,
    "registers_held": {
     "capital_of_culture": 2,
-    "unesco_whc": 3
+    "unesco_tentative": 2
    },
    "layer_coverage": {
-    "designations": 0.1481,
-    "nature": 0.6296,
-    "crowding": 0.5926,
-    "bathing_water": 0.4444,
-    "guide": 0.5185
+    "designations": 0.1304,
+    "nature": 0.7391,
+    "crowding": 0.8696,
+    "bathing_water": 0.0,
+    "guide": 0.3913
    }
   },
   "Latvia": {
@@ -510,23 +527,6 @@
     "crowding": 0.5217,
     "bathing_water": 0.4348,
     "guide": 0.3913
-   }
-  },
-  "Iceland": {
-   "destinations": 21,
-   "per_10000_km2": 2.04,
-   "per_million_residents": 53.85,
-   "appeal_coverage": 0.9524,
-   "registers_held": {
-    "capital_of_culture": 2,
-    "unesco_tentative": 2
-   },
-   "layer_coverage": {
-    "designations": 0.1429,
-    "nature": 0.8095,
-    "crowding": 0.9524,
-    "bathing_water": 0.0,
-    "guide": 0.4286
    }
   },
   "Montenegro": {
@@ -566,21 +566,21 @@
    }
   },
   "Cyprus": {
-   "destinations": 19,
-   "per_10000_km2": 20.54,
-   "per_million_residents": 20.43,
-   "appeal_coverage": 0.6842,
+   "destinations": 20,
+   "per_10000_km2": 21.62,
+   "per_million_residents": 21.51,
+   "appeal_coverage": 0.65,
    "registers_held": {
     "capital_of_culture": 1,
-    "unesco_tentative": 1,
+    "unesco_tentative": 2,
     "unesco_whc": 2
    },
    "layer_coverage": {
-    "designations": 0.1579,
-    "nature": 0.6842,
-    "crowding": 0.6842,
-    "bathing_water": 0.4211,
-    "guide": 0.4211
+    "designations": 0.2,
+    "nature": 0.65,
+    "crowding": 0.65,
+    "bathing_water": 0.4,
+    "guide": 0.4
    }
   },
   "Estonia": {

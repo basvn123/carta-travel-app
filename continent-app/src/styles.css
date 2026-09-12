@@ -20074,18 +20074,29 @@ button.ai-sched-main:focus-visible {
 .places-filter-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .places-filter-btn .filter-tray-badge { background: var(--paper); color: var(--accent); }
 
-/* What this tab narrows by, under a hairline in the same card: a chip that
-   changes WHICH rows are listed is the same kind of control as the search
-   field above it, and it used to sit outside the card entirely. */
+/* What this tab narrows by, in the same card: a chip that changes WHICH rows
+   are listed is the same kind of control as the search field above it, and it
+   used to sit outside the card entirely. Stacked one labelled group per row
+   rather than wrapped into one flex pool: with seven-plus groups (Mountains
+   alone has eight) a wrapped pool reads as a single wall of identical pills,
+   because nothing on screen says where one group's chips end and the next
+   one's begin. The top divider that used to mark the seam is gone too - once
+   every group carries its own caption, a second, unrelated hairline directly
+   under Filters/All countries read as a stray mark rather than structure. */
 .places-facets {
   display: flex;
-  flex-wrap: wrap;
-  align-items: flex-start;
-  gap: 8px 16px;
+  flex-direction: column;
+  gap: 14px;
   flex-basis: 100%;
   min-width: 0;
-  padding-top: 10px;
-  border-top: 1px solid var(--rule-soft);
+  margin-top: 14px;
+}
+.places-facet-group { min-width: 0; }
+.places-facet-label {
+  margin: 0 0 6px;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--ink-mute);
 }
 .places-facets .places-classes { margin-top: 0; }
 .places-facets .trip-slider { flex: 1 1 100%; max-width: 420px; }
@@ -20160,6 +20171,35 @@ button.ai-sched-main:focus-visible {
   opacity: .7;
 }
 .places-country:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+/* The country filter, as a button + anchored panel (CountryPicker) rather
+   than a native <select>: a native select hands its open list to the OS to
+   place, which is why it used to land flush against the viewport edge
+   instead of under the pill. .country-picker is just the positioning root;
+   .places-country still carries the pill's own look so every existing size
+   rule (side panel, mobile stack, toolbar) keeps applying unchanged. */
+.country-picker { position: relative; display: inline-flex; min-width: 0; }
+.country-picker .places-country {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  width: 100%;
+  cursor: pointer;
+}
+.country-picker .places-country.on { border-color: var(--accent-soft); color: var(--ink); }
+.country-picker-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.country-picker .origin-btn-caret { font-size: 9px; }
+/* Left-anchored, unlike origin's right-anchored pop: the country pill sits
+   left of the toolbar, not at its right edge. Desktop/tablet only - the
+   phone breakpoint below pins .origin-pop (which this also is) to the
+   viewport instead, and must win over this unscoped rule. */
+@media (min-width: 769px) {
+  .country-picker-pop { left: 0; right: auto; width: 280px; }
+}
 /* The departure the prices were computed from. The shared OriginPicker wears
    its map pill by default, so it takes the row's 38px shell here: Filters,
    the country, this and Lifestyle are one bar and used to stand at three
@@ -20574,7 +20614,7 @@ button.ai-sched-main:focus-visible {
   .places-toolbar-right { margin-left: 0; width: 100%; }
   .places-sorts { width: 100%; }
   .places-sort { flex: 1; justify-content: center; padding: 7px 6px; }
-  .places-country { flex: 1 1 130px; max-width: none; }
+  .places-country, .country-picker { flex: 1 1 130px; max-width: none; }
 }
 @media (max-width: 480px) {
   /* Stacked: every control takes the full width, the origin pill included, so
@@ -20592,7 +20632,7 @@ button.ai-sched-main:focus-visible {
      minimum size is the width of its longest option ("Bosnia and
      Herzegovina"), so below about 390px it stopped fitting beside Filters and
      took a band of its own. */
-  .places-country { max-width: none; flex: 1 1 130px; min-width: 0; }
+  .places-country, .country-picker { max-width: none; flex: 1 1 130px; min-width: 0; }
   /* The departure and the stay tier share one row rather than taking a
      full-width band each: they are both statements about what the prices
      below assume, and stacking them cost the card 46px on the width where
@@ -25823,13 +25863,15 @@ button.ai-sched-main:focus-visible {
 }
 
 /* ── Step one: what is already booked ──────────────────────────────────
-   Two toggles, not a chooser screen. The old wizard made the traveller
+   Three answers, not a chooser screen. The old wizard made the traveller
    classify their own trip before it had asked them anything; this asks the
    same thing as one question among the others, and takes questions away
-   rather than sending them down a different wizard. */
+   rather than sending them down a different wizard. Two of the three are
+   toggles that can both be on; the third is holding nothing, which is the
+   commonest answer and used to be sayable only by touching nothing. */
 .guide-booked-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(3, 1fr);
   gap: 8px;
 }
 .guide-booked-bit {
@@ -25855,6 +25897,17 @@ button.ai-sched-main:focus-visible {
 .guide-booked-bit .guide-mode-check { position: absolute; top: 8px; right: 8px; }
 .guide-booked-card .guide-note { margin-top: 10px; }
 
+/* "Nothing yet" is an answer, not an absence, so it sits on the same row and
+   carries the same weight as the two beside it: same card, same accent fill
+   when chosen. It reads a shade quieter only while it is off, so the two that
+   change the rest of the flow are the ones the eye reaches first. */
+.guide-booked-none:not(.on) { background: var(--paper-dim); color: var(--ink-soft); }
+
+@media (max-width: 1024px) and (min-width: 720px) {
+  .guide-booked-grid { grid-template-columns: 1fr 1fr; }
+  /* Odd card out spans the row rather than leaving a hole beside it. */
+  .guide-booked-none { grid-column: 1 / -1; }
+}
 @media (max-width: 719px) {
   .guide-booked-grid { grid-template-columns: 1fr; }
 }
@@ -27413,12 +27466,16 @@ button.ai-sched-main:focus-visible {
   .side-sort.on .places-sort-dir { color: #fff; }
   .side-sort:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
-  /* The country, full width of the panel. */
+  /* The country, full width of the panel. The picker's wrapper (.country-
+     picker) is what the flex/box layout actually sees now, not the button
+     .side-country still classes, so it has to carry the same width too. */
   .side-country { width: 100%; max-width: none; border-radius: 10px; }
+  .side-group .country-picker { display: flex; width: 100%; }
+  .side-group .country-picker-pop { left: 0; right: 0; width: auto; }
 
   /* Facet chips: the toolbar's own chips, stacked, and never on white. */
+  .side-facets { gap: 10px; }
   .side-facets .places-classes { margin-top: 0; gap: 6px; }
-  .side-facets .places-classes + .places-classes { margin-top: 10px; }
   .side-panel .places-class { background: var(--paper-dim); }
   .side-panel .places-class.on {
     background: var(--accent);
@@ -27623,6 +27680,7 @@ button.ai-sched-main:focus-visible {
   .places-sort.on .places-sort-dir { color: #fff; }
   .places-chips { width: 100%; gap: 8px; }
   .places-filter-btn { flex: 1 1 0; min-width: 0; justify-content: center; height: 42px; }
+  .places-chips .country-picker { flex: 1 1 0; min-width: 0; }
   .places-chips .places-country {
     flex: 1 1 0;
     min-width: 0;
@@ -27631,7 +27689,6 @@ button.ai-sched-main:focus-visible {
     background: var(--paper-dim);
   }
   .places-chips .lifestyle-btn { flex: 1 1 100%; justify-content: center; }
-  .places-facets { padding-top: 12px; }
 
   /* ── Cards, two abreast: bigger photographs, the facts on the scrim. ── */
   .places-list { grid-template-columns: 1fr 1fr; gap: 10px; }
@@ -30448,8 +30505,7 @@ button.ai-sched-main:focus-visible {
 .destp-crowd, .destp-water { margin: 12px 0 0; padding-top: 10px; border-top: 1px solid var(--rule-soft); }
 .destp-crowd-head, .destp-water-head { display: flex; align-items: center; gap: 8px; }
 .destp-crowd-year { font-size: 11px; color: var(--ink-mute); }
-.destp-crowd-line, .destp-water-line { font-size: 12.5px; color: var(--ink-soft); margin: 6px 0 0; }
-.destp-crowd-note { font-size: 11.5px; color: var(--ink-mute); margin: 6px 0 0; max-width: 62ch; }
+.destp-water-line { font-size: 12.5px; color: var(--ink-soft); margin: 6px 0 0; }
 
 /* highlights: size, plates, groups, significance */
 .destp-hl-group { font-size: 11.5px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: var(--ink-mute); margin: 12px 2px 6px; }

@@ -27,8 +27,9 @@ the evening a hundred kilometres from a station.
     water_and_food  drinking water or a shop at least every 40 km.
     bailout         every stage end within 20 km of a station, or explicitly
                     flagged remote. Remote is allowed; silence is not.
-    images          no photograph from a host whose licence we have not
-                    checked. The trips rule, unchanged.
+    images          four or more photographs, none from a host whose licence
+                    we have not checked. The count is the half that was
+                    missing: a tour with an empty gallery used to pass.
     season          the tour declares its months from climatology. No
                     Highland tour published as a January product.
 
@@ -76,6 +77,11 @@ SAFETY_FLOOR = 4.0            # out of 10, where 10 is a segregated cycleway
 # A tour whose safety could not be measured on most of its length is not a
 # safe tour, it is an unmeasured one, and it does not ship as either.
 SAFETY_MIN_KNOWN = 0.4
+
+# How many photographs a tour has to be able to show. The brief's acceptance
+# test asks a published tour for four or more; this is the gate that makes
+# that a property of the wire rather than of one hand-checked Scottish tour.
+TOUR_IMAGES_MIN = 4
 
 # Which surfaces each declared bike type may legally contain.
 BIKE_ALLOWS = {
@@ -205,8 +211,23 @@ def check_bailout(tour):
 
 
 def check_images(tour):
-    """Every photograph comes from a host whose licence we actually checked."""
-    for img in (tour.get("images") or []):
+    """Enough photographs to show the ride, every one from a checked host.
+
+    This check used to test only the photographs that were present, which
+    meant a tour with NO photographs passed it: the loop had nothing to
+    iterate and returned None. Every published tour claimed `images` among
+    its passed checks while shipping an empty gallery, which is the failure
+    mode this whole module exists to prevent, sitting inside the module.
+
+    A minimum is the honest reading of the rule. The brief's acceptance test
+    asks a published tour for four or more photographs, and a multi-day tour
+    that cannot show a single kilometre of itself is not a product.
+    """
+    images = tour.get("images") or []
+    if len(images) < TOUR_IMAGES_MIN:
+        return "only_%d_photograph(s)_of_%d_needed" % (len(images),
+                                                       TOUR_IMAGES_MIN)
+    for img in images:
         url = img.get("url") if isinstance(img, dict) else img
         if not url:
             continue
@@ -270,7 +291,25 @@ def validate(tours):
 
 TOURS_SQL = """
     SELECT t.id, t.country, t.slug, t.title, t.pace, t.bike_type, t.days,
-           t.distance_m, t.ascent_m, t.stages, t.season, t.images,
+           t.distance_m, t.ascent_m, t.stages, t.season,
+           -- The gallery, composed here rather than read from t.images.
+           --
+           -- `cycle_tours.images` is a column nothing writes: the planner
+           -- omits it from its INSERT, so it is NULL on every row. A tour's
+           -- pictures live on the routes it rides, and the export composes
+           -- them there. Reading the empty column instead meant this module
+           -- answered differently depending on who called it: the export saw
+           -- real galleries, a standalone run saw none and rejected every
+           -- tour in the lab. The gate has to mean one thing.
+           COALESCE(t.images, (
+               SELECT jsonb_agg(img)
+               FROM (
+                   SELECT jsonb_array_elements(r.images) AS img
+                   FROM unnest(t.route_ids) AS rid
+                   JOIN cycle_routes r ON r.id = rid
+                   WHERE r.images IS NOT NULL
+               ) s
+           ), '[]'::jsonb) AS images,
            ST_NumGeometries(t.geom)
     FROM cycle_tours t
     WHERE (%(countries)s::text[] IS NULL OR t.country = ANY(%(countries)s))

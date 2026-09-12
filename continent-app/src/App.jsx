@@ -68,6 +68,7 @@ import { readBeachFromUrl } from './lib/beaches.js';
 import { readRegionFromUrl } from './lib/regions.js';
 import { readLakeFromUrl } from './lib/lakes.js';
 import { readMountainFromUrl } from './lib/mountains.js';
+import { readCycleFromUrl } from './lib/cycling.js';
 import { readTripFromUrl } from './lib/trips.js';
 import { loadTripDraft } from './planner/tripDraftStore.js';
 import { bindDayPlanCloud } from './planner/dayPlanSync.js';
@@ -386,6 +387,16 @@ function TravelApp() {
   useEffect(() => {
     if (pendingMountain) setActiveTab('places');
   }, [pendingMountain]);
+
+  // And a single CYCLE ROUTE or TOUR (#cycle=63478&cc=GB, #tour=slug, see
+  // lib/cycling.js). The reader has existed since the layer shipped and was
+  // never called, so a shared cycle link opened the app on whatever tab the
+  // recipient was last on and dropped the route. It is also the door a region
+  // page needs: cycling is the largest layer on those pages.
+  const [pendingCycle, setPendingCycle] = useState(() => readCycleFromUrl());
+  useEffect(() => {
+    if (pendingCycle) setActiveTab('places');
+  }, [pendingCycle]);
 
   // A shared REGION link (#region=COAST:ES-LUZ-CADIZ, see lib/regions.js).
   // Not a tab: the region page is a hoisted overlay like DestinationPage,
@@ -856,6 +867,8 @@ function TravelApp() {
             onOpenLakeConsumed={() => setPendingLake(null)}
             openMountain={pendingMountain}
             onOpenMountainConsumed={() => setPendingMountain(null)}
+            openCycle={pendingCycle}
+            onOpenCycleConsumed={() => setPendingCycle(null)}
             openTrip={pendingTrip}
             onOpenTripConsumed={() => setPendingTrip(null)}
             onOpenTripInPlanner={openTripInPlanner}
@@ -921,6 +934,9 @@ function TravelApp() {
                 else if (layer === 'beaches') setPendingBeach({ id: String(ref.id), cc: ref.cc });
                 else if (layer === 'lakes') setPendingLake({ id: String(ref.id), cc: ref.cc });
                 else if (layer === 'mountains') setPendingMountain({ id: String(ref.id), cc: ref.cc });
+                else if (layer === 'cycling') {
+                  setPendingCycle({ kind: 'route', id: Number(ref.id), country: ref.cc });
+                }
                 goToTab('places');
               }}
             />
@@ -949,6 +965,9 @@ function TravelApp() {
               else if (layer === 'beaches') setPendingBeach({ id: String(ref.id), cc: ref.cc });
               else if (layer === 'lakes') setPendingLake({ id: String(ref.id), cc: ref.cc });
               else if (layer === 'mountains') setPendingMountain({ id: String(ref.id), cc: ref.cc });
+              else if (layer === 'cycling') {
+                setPendingCycle({ kind: 'route', id: Number(ref.id), country: ref.cc });
+              }
               goToTab('places');
             }}
             onOpenItin={(id) => {

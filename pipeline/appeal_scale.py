@@ -253,7 +253,95 @@ def _quantile(sorted_vals, q):
     return sorted_vals[lo] * (1 - frac) + sorted_vals[hi] * frac
 
 
-def quantile_calibrate(fitted_by_class, curated_by_class):
+# --------------------------------------------------------------------------- #
+# Frozen anchors (2026-09-04, user ruling)
+#
+# The calibration below maps a fitted place's WITHIN-COHORT RANK onto the
+# curated score distribution. That made a score depend on who else happened to
+# be in the catalogue: ingesting 122 destinations re-rated 1,118 existing ones,
+# some by 1.9 points, with their evidence completely unchanged. An absolute
+# 0-10 scale cannot work that way - a place's score must answer "what is this
+# place worth", not "where does it rank among today's cohort".
+#
+# So the rank->score map is FROZEN as a curve. It is fitted once, from a
+# reference cohort, and stored in reports/rating_calibration_anchors.json as a
+# per-class list of (raw regression output, calibrated score) knots. Scoring a
+# place afterwards is a lookup: interpolate its own raw score on that curve.
+# New arrivals get rated against the same curve every existing place was, and
+# no existing score moves when the catalogue grows.
+#
+# Re-freezing is a deliberate model revision (delete the file and re-run),
+# never a side effect of an ingest.
+# --------------------------------------------------------------------------- #
+
+ANCHOR_FILE = "reports/rating_calibration_anchors.json"
+ANCHOR_KNOTS = 241        # dense enough that replay error stays under 0.05
+
+
+def _interp(knots, x):
+    """Piecewise-linear lookup on [(x, y), ...] sorted by x; flat outside."""
+    if not knots:
+        return x
+    if x <= knots[0][0]:
+        return knots[0][1]
+    if x >= knots[-1][0]:
+        return knots[-1][1]
+    lo, hi = 0, len(knots) - 1
+    while hi - lo > 1:
+        mid = (lo + hi) // 2
+        if knots[mid][0] <= x:
+            lo = mid
+        else:
+            hi = mid
+    x0, y0 = knots[lo]
+    x1, y1 = knots[hi]
+    if x1 == x0:
+        return y0
+    return y0 + (y1 - y0) * (x - x0) / (x1 - x0)
+
+
+def build_anchor_curves(fitted_by_class, curated_by_class):
+    """The frozen curves: {cls: [[raw, calibrated], ...]}.
+
+    Fits the SAME quantile map the cohort-relative version applies, then
+    samples it at ANCHOR_KNOTS points so it can be replayed on any future
+    place without reference to a cohort.
+    """
+    calibrated = _quantile_calibrate_cohort(fitted_by_class, curated_by_class)
+    curves = {}
+    for cls, rows in fitted_by_class.items():
+        pairs = sorted((yhat, calibrated[did]) for did, yhat in rows)
+        if len(pairs) < 2:
+            continue
+        knots = []
+        for k in range(ANCHOR_KNOTS):
+            idx = round(k * (len(pairs) - 1) / (ANCHOR_KNOTS - 1))
+            raw, cal = pairs[idx]
+            if knots and abs(raw - knots[-1][0]) < 1e-9:
+                knots[-1] = [raw, max(knots[-1][1], cal)]
+            else:
+                knots.append([raw, cal])
+        # enforce monotonicity: the curve must never fall as evidence rises
+        for i in range(1, len(knots)):
+            if knots[i][1] < knots[i - 1][1]:
+                knots[i][1] = knots[i - 1][1]
+        curves[cls] = knots
+    return curves
+
+
+def apply_anchor_curves(fitted_by_class, curves):
+    """{did: calibrated score} by lookup on the frozen curves."""
+    out = {}
+    for cls, rows in fitted_by_class.items():
+        knots = curves.get(cls) or curves.get("__pooled__")
+        ceiling = CLASS_CEILING.get(cls, DEFAULT_CEILING)
+        for did, yhat in rows:
+            out[did] = (min(round(_interp(knots, yhat), 2), ceiling)
+                        if knots else yhat)
+    return out
+
+
+def _quantile_calibrate_cohort(fitted_by_class, curated_by_class):
     """{did: calibrated score}. Monotone within every class, by construction.
 
     fitted_by_class:  {cls: [(did, yhat)]}   raw regression outputs
@@ -262,6 +350,9 @@ def quantile_calibrate(fitted_by_class, curated_by_class):
     A class with fewer than MIN_CLASS_N curated members cannot provide a
     stable target distribution; its fitted members are calibrated against the
     pooled curated distribution instead of a noisy sliver.
+
+    Cohort-relative: used ONLY to fit the frozen curves above, never to score
+    a catalogue directly - see the frozen-anchors note.
     """
     pooled = sorted(s for scores in curated_by_class.values() for s in scores)
     out = {}

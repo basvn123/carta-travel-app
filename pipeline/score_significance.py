@@ -114,6 +114,60 @@ def zlog(values):
     return [(x - mean) / sd for x in logs]
 
 
+SIG_ANCHOR_FILE = ROOT / "reports" / "significance_anchors.json"
+SIG_ANCHOR_KNOTS = 401
+
+
+def _euro_percentiles(scores):
+    """Catalogue-wide percentile per score, from FROZEN breakpoints.
+
+    The breakpoints are the sorted composite scores of the reference cohort,
+    sampled at SIG_ANCHOR_KNOTS points. A score's percentile is its position
+    on that fixed curve, so a POI's significance depends on its own evidence
+    and never on how many places the catalogue happens to hold.
+    """
+    if SIG_ANCHOR_FILE.exists():
+        knots = json.loads(SIG_ANCHOR_FILE.read_text(encoding="utf-8"))["knots"]
+    else:
+        ordered = sorted(scores)
+        knots = []
+        for k in range(SIG_ANCHOR_KNOTS):
+            idx = round(k * (len(ordered) - 1) / (SIG_ANCHOR_KNOTS - 1))
+            knots.append([ordered[idx], k / (SIG_ANCHOR_KNOTS - 1)])
+        for i in range(1, len(knots)):
+            if knots[i][0] < knots[i - 1][0]:
+                knots[i][0] = knots[i - 1][0]
+        SIG_ANCHOR_FILE.parent.mkdir(parents=True, exist_ok=True)
+        SIG_ANCHOR_FILE.write_text(json.dumps({
+            "frozen": "2026-09-04",
+            "why": ("catalogue-wide percentiles re-normalised sig on every "
+                    "ingest, moving highlights and ratings for places whose "
+                    "own evidence had not changed"),
+            "n_reference_pois": len(ordered),
+            "knots": knots,
+        }, indent=1), encoding="utf-8")
+
+    out = []
+    for v in scores:
+        if v <= knots[0][0]:
+            out.append(knots[0][1])
+            continue
+        if v >= knots[-1][0]:
+            out.append(knots[-1][1])
+            continue
+        lo, hi = 0, len(knots) - 1
+        while hi - lo > 1:
+            mid = (lo + hi) // 2
+            if knots[mid][0] <= v:
+                lo = mid
+            else:
+                hi = mid
+        x0, y0 = knots[lo]
+        x1, y1 = knots[hi]
+        out.append(y0 if x1 == x0 else y0 + (y1 - y0) * (v - x0) / (x1 - x0))
+    return out
+
+
 def percentile_ranks(values):
     """value list -> percentile 0..1, average rank on ties."""
     order = sorted(range(len(values)), key=lambda i: values[i])
@@ -283,8 +337,17 @@ def compute(data):
                       + WEIGHTS["prior"] * r["prior"]
                       + WEIGHTS["docum"] * r["docum"])
 
-    # percentiles: catalogue-wide and per destination
-    euro = percentile_ranks([r["score"] for r in rows])
+    # percentiles: catalogue-wide and per destination.
+    #
+    # FROZEN (2026-09-04): euro_pct used to be the rank of a POI within
+    # whatever the catalogue held that day, so ingesting destinations
+    # re-normalised `sig` for every existing sight and moved highlights - and
+    # therefore ratings - across the whole catalogue. Vranje's highlights went
+    # 0.383 -> 0.615 on an ingest that touched nothing of Vranje's. An
+    # absolute significance cannot work that way, so the percentile
+    # breakpoints are fitted once, stored, and looked up thereafter. Delete
+    # SIG_ANCHOR_FILE to re-freeze, which is a deliberate model revision.
+    euro = _euro_percentiles([r["score"] for r in rows])
     for r, e in zip(rows, euro):
         r["euro_pct"] = e
         # Absolute significance, 0-3: where this sight stands against every

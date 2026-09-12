@@ -29,8 +29,13 @@ const KIND_KEY = {
   nuts2: 'region.kind.nuts2',
 };
 
+// Every layer the region wire can put on a card has to appear here, or the
+// card renders and does nothing when it is clicked. Cycling is the largest
+// contributor of listed rows on these pages and was missing from this table,
+// so every one of those cards was inert.
 const LAYER_TO_FEATURE = {
   beach: 'beaches',
+  cycling: 'cycling',
   lake: 'lakes',
   mountain: 'mountains',
   trail: 'trails',

@@ -108,6 +108,14 @@ const BOOKED_BITS = [
   { key: 'stays', Icon: BedIcon, labelKey: 'wizard.bookedStays', subKey: 'wizard.bookedStaysSub' },
 ];
 
+// The third answer, which used to be no answer at all. Holding nothing is the
+// commonest way into the planner and it was the one state with no button: you
+// said it by leaving both toggles off, and a screen whose correct answer is to
+// touch nothing reads as a screen you have not finished. It is a card now, on
+// the same row, and picking it clears the other two rather than adding a third
+// flag, because "nothing" and "something" cannot both be true.
+const BOOKED_NONE = { key: 'none', Icon: SparkIcon, labelKey: 'wizard.bookedNone', subKey: 'wizard.bookedNoneSub' };
+
 // The four opening questions, one per step: what is already booked, where the
 // trip leaves from, when, and who is coming. They were one screen with four
 // stacked cards, which put the Next button below the fold and told the rail
@@ -230,6 +238,9 @@ export function GuidedTripWizard({
   // bothers to ask.
   const [booked, setBooked] = useState({ travel: false, stays: false });
   const toggleBooked = (key) => setBooked((prev) => ({ ...prev, [key]: !prev[key] }));
+  // Picking "nothing yet" is not a third flag, it is the other two turned off.
+  const clearBooked = () => setBooked({ travel: false, stays: false });
+  const bookedNothing = !booked.travel && !booked.stays;
   const [step, setStep] = useState(1);
   // Which way the last move went, so the incoming screen slides in from the
   // side it came from. Steps should read as travel through one form.
@@ -2013,13 +2024,31 @@ export function GuidedTripWizard({
                       {booked[b.key] && <span className="guide-mode-check"><CheckIcon size={11} /></span>}
                     </button>
                   ))}
+
+                  {/* Third card, same row: holding nothing, said out loud. */}
+                  <button
+                    className={`guide-booked-bit guide-booked-none ${bookedNothing ? 'on' : ''}`}
+                    onClick={clearBooked}
+                    aria-pressed={bookedNothing}
+                  >
+                    <span className="guide-booked-icon"><BOOKED_NONE.Icon size={17} /></span>
+                    <span className="guide-booked-text">
+                      <b>{t(BOOKED_NONE.labelKey)}</b>
+                      <small>{t(BOOKED_NONE.subKey)}</small>
+                    </span>
+                    {bookedNothing && <span className="guide-mode-check"><CheckIcon size={11} /></span>}
+                  </button>
                 </div>
-                <p className="guide-note">
-                  {booked.travel && booked.stays ? t('wizard.bookedBoth')
-                    : booked.stays ? t('wizard.bookedStaysNote')
-                      : booked.travel ? t('wizard.bookedTravelNote')
-                        : t('wizard.bookedNothing')}
-                </p>
+                {/* The note says what the answer takes away. With nothing
+                    booked it has nothing to take away, and the card itself
+                    already says Carta plans the whole trip, so it goes. */}
+                {!bookedNothing && (
+                  <p className="guide-note">
+                    {booked.travel && booked.stays ? t('wizard.bookedBoth')
+                      : booked.stays ? t('wizard.bookedStaysNote')
+                        : t('wizard.bookedTravelNote')}
+                  </p>
+                )}
               </div>
             </>
           )}

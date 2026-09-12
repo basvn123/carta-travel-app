@@ -2,6 +2,7 @@ import React, { lazy, Suspense, useEffect, useMemo, useRef, useState } from 'rea
 import { useIsDesktop } from '../hooks/useIsDesktop.js';
 import { RatingBadge } from '../components/RatingBadge.jsx';
 import { CountryFlag } from '../components/CountryFlag.jsx';
+import { CountryPicker } from '../components/CountryPicker.jsx';
 import { count, eur } from '../lib/format.js';
 import { fareProv, estPrefix } from '../components/FareProvenance.jsx';
 import { HeroImage } from '../components/HeroImage.jsx';
@@ -907,6 +908,7 @@ export function DestinationsTab({
   openBeach = null, onOpenBeachConsumed,
   openLake = null, onOpenLakeConsumed,
   openMountain = null, onOpenMountainConsumed,
+  openCycle = null, onOpenCycleConsumed,
   openTrip = null, onOpenTripConsumed, onOpenTripInPlanner,
 }) {
   const { t, lang } = useI18n();
@@ -2056,6 +2058,22 @@ export function DestinationsTab({
     onOpenMountainConsumed?.();
   }, [openMountain, onOpenMountainConsumed]);
 
+  // A shared #cycle= / #tour= link, or a cycling card on a region page.
+  // Simpler than the others: CyclePage loads the route or tour by id itself,
+  // so there is no country file to wait for here.
+  useEffect(() => {
+    if (!openCycle) return;
+    setCat('cycling');
+    setQuery('');
+    setNearPlace(null);
+    if (openCycle.kind === 'tour' && openCycle.slug) {
+      setPageCycle({ tourSlug: openCycle.slug });
+    } else if (openCycle.id) {
+      setPageCycle({ routeId: openCycle.id, country: openCycle.country });
+    }
+    onOpenCycleConsumed?.();
+  }, [openCycle, onOpenCycleConsumed]);
+
   // New filter result: collapse the window and go back to the top.
   const rowCount = cat === 'general' ? destRows.length
     : isBeachCat ? (beachRows?.length ?? 0)
@@ -2150,7 +2168,7 @@ export function DestinationsTab({
   // The curated trip library drops it too: its budgets are editorial ranges
   // for the whole week, not fares priced from the traveller's airport.
   const showPriceChrome = cat !== 'trails' && !isBeachCat && !isLakeCat
-    && !isMountainCat && !isJourneyBrowse;
+    && !isMountainCat && !isCycleCat && !isJourneyBrowse;
 
   // ── The filter model ──────────────────────────────────────────────────
   //
@@ -2158,15 +2176,25 @@ export function DestinationsTab({
   // and offering a country a layer has nothing in is worse than not offering
   // it: the list would empty and nothing on screen would say why.
   const countryOptions = useMemo(() => {
+    // Beaches, lakes and mountains key the country as `cc`; cycling keys it
+    // as `country`. Both are read here rather than in one caller, so a layer
+    // whose index spells it the other way cannot silently produce a list of
+    // undefined entries.
     const fromIndex = (idx) => (idx?.countries || [])
-      .map((c) => [c.cc, countryName(c.cc)])
+      .map((c) => c.cc || c.country)
+      .filter(Boolean)
+      .map((cc) => [cc, countryName(cc)])
       .sort((a, b) => a[1].localeCompare(b[1], lang));
     if (isBeachCat) return fromIndex(beachIndex);
     if (isLakeCat) return fromIndex(lakeIndex);
     if (isMountainCat) return fromIndex(mountainIndex);
+    // Cycling publishes its own country set too. Falling through to the
+    // priced catalogue offered countries with no cycling at all, which is
+    // exactly what the note above says is worse than not offering them.
+    if (isCycleCat) return fromIndex(cycleIndex);
     return availableCountries;
-  }, [isBeachCat, isLakeCat, isMountainCat, beachIndex, lakeIndex, mountainIndex,
-    availableCountries, countryName, lang]);
+  }, [isBeachCat, isLakeCat, isMountainCat, isCycleCat, beachIndex, lakeIndex,
+    mountainIndex, cycleIndex, availableCountries, countryName, lang]);
 
   // A country the tab that just opened does not publish. Cleared rather than
   // left set, because the picker would show a country the list is not
@@ -2456,17 +2484,13 @@ export function DestinationsTab({
   });
 
   const renderCountry = (cls) => (
-    <select
+    <CountryPicker
       className={cls}
       value={country}
-      onChange={(e) => { setCountry(e.target.value); setNearPlace(null); }}
-      aria-label={t('places.allCountries')}
-    >
-      <option value="">{t('places.allCountries')}</option>
-      {countryOptions.map(([cc, name]) => (
-        <option key={cc} value={cc}>{name}</option>
-      ))}
-    </select>
+      options={countryOptions}
+      onChange={(cc) => { setCountry(cc); setNearPlace(null); }}
+      label={t('places.allCountries')}
+    />
   );
 
   // The same door Explore draws, from the same component: this tab prices
@@ -2484,12 +2508,13 @@ export function DestinationsTab({
   const renderFacetGroups = (only) => facetGroups
     .filter((g) => (only === 'toolbar' ? g.toolbar !== false : true))
     .map((g) => (
-    <div
-      key={g.key}
-      className="places-classes"
-      role="group"
-      aria-label={g.label}
-    >
+    <div key={g.key} className="places-facet-group">
+      <p className="places-facet-label">{g.label}</p>
+      <div
+        className="places-classes"
+        role="group"
+        aria-label={g.label}
+      >
       {g.options.map((o) => (
         <button
           key={o.key}
@@ -2508,6 +2533,7 @@ export function DestinationsTab({
           {o.n != null && <span className="places-class-n">{fmt(o.n)}</span>}
         </button>
       ))}
+      </div>
     </div>
     ));
 
@@ -3187,6 +3213,10 @@ export function DestinationsTab({
                         onClick={() => setPageCycle({ tourSlug: tr.slug,
                           country: wantCycleCountry })}
                       >
+                        {tr.img && (
+                          <img className="cycle-card-img" src={tr.img} alt=""
+                            loading="lazy" />
+                        )}
                         <span className="cycle-tourcard-title">{tr.title}</span>
                         <span className="cycle-tourcard-meta">
                           {t('cycle.days', { n: tr.days })}
@@ -3260,8 +3290,31 @@ export function DestinationsTab({
                         onClick={() => setPageCycle({ routeId: r.id,
                           country: wantCycleCountry })}
                       >
+                        {/* A listed row is unscored, not unmeasured: the
+                            wire carries its climb, surface and evidence
+                            just as a rated row does. Showing only the name
+                            and a length read as an empty record. */}
+                        {r.img && (
+                          <img className="cycle-card-img" src={r.img} alt=""
+                            loading="lazy" />
+                        )}
                         <span className="cycle-card-name">{r.name}</span>
-                        <span className="cycle-card-meta">{`${r.km} km`}</span>
+                        <span className="cycle-card-meta">
+                          {`${r.km} km`}
+                          {r.asc != null ? `, ${r.asc} m` : ''}
+                        </span>
+                        <span className="cycle-card-surface">
+                          {surfaceLine({
+                            paved_share: r.paved,
+                            surface_known_share: r.paved == null ? 0 : 1,
+                          }, t)}
+                        </span>
+                        {r.why && r.why.length > 0 && (
+                          <span className="cycle-card-why">
+                            {(whyLines(r.why, t, 2) || [])
+                              .map((line) => line.text).join(', ')}
+                          </span>
+                        )}
                         <span className="cycle-card-unrated">{listedLine(t)}</span>
                       </button>
                     ))}

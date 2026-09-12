@@ -190,9 +190,17 @@ CARD_KEEP = (
 IMAGE_KEEP = ("u", "by", "lic", "licUrl", "page", "ev")
 
 
-def _card(layer, row):
+def _card(layer, row, cc=None):
     card = {k: row[k] for k in CARD_KEEP if k in row}
     card["layer"] = layer
+    # The country is what lets a card OPEN: every layer page resolves its row
+    # out of {CC}.json, so a card without one is a card that renders and does
+    # nothing. Beaches, lakes and mountains carry `cc` on the row itself;
+    # cycling rows never have, so 1,865 cycling cards shipped unopenable.
+    # The filename is the authority here and costs nothing to read, so it is
+    # the fallback for every layer rather than a cycling special case.
+    if cc and not card.get("cc"):
+        card["cc"] = cc
     images = row.get("images") or []
     if images:
         # One picture, with its credit. The gallery lives on the layer page.
@@ -252,7 +260,7 @@ def collect_cards(regions, range_parents):
                                 seen.add(up)
                                 up = range_parents.get(up)
                 tier = row.get("t") or "r"
-                card = _card(layer, row)
+                card = _card(layer, row, cc=path.stem)
                 for rid in targets:
                     if tier == "l":
                         routed[rid]["listed"].append(card)

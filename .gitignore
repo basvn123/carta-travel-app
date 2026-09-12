@@ -56,6 +56,10 @@ logs/pipeline.lock
 app_data/app_data.json
 app_data/app_data.backup.json
 app_data/*.pre_*.json
+# The wave-2 intake snapshot, 111 MB and over GitHub's 100 MB limit, same
+# class as app_data.json directly above: a whole-file rewrite of derived
+# intake data that the catalogue is built from rather than served from.
+app_data/app_data.wave2.json
 
 # ---------------------------------------------------------------------------
 # Adding a rule for a new cache directory? Two things, learned the same day by
@@ -106,6 +110,15 @@ cache/lakes/
 # the three above, and the same reason the .git here is already 3 GB. The app
 # serves continent-app/public/trails; these only save a cold rebuild.
 cache/trails/
+
+# Cycle layer harvest caches (pipeline/cycling): 521 MB of raw portal and
+# protected-area downloads, THREE of them over GitHub's 100 MB hard limit
+# (portal_bnac_france.json alone is 318 MB), so this is not a preference:
+# a commit including them cannot be pushed at all. Same call as the four
+# above. The app serves continent-app/public/cycling; these only save a cold
+# re-fetch, and the portals are static national downloads. Rebuild with
+#   python pipeline/cycling/harvest_cycling.py --countries <name>
+cache/cycling/
 
 # Region spine (pipeline/regions): ~600 MB of downloaded boundary sources
 # plus a 197 MB GeoPackage built from them, the single largest artifact any

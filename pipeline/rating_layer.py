@@ -85,6 +85,7 @@ Multi-airport cities are unified onto their primary airport first (same
 convention as the beauty layer) so Paris ranks once, not three times.
 """
 
+import datetime as _dt
 import json
 import math
 from pathlib import Path
@@ -255,15 +256,24 @@ def highlights_parts(dest):
 def highlights_map(dests):
     """{dest id: highlights 0-1}, p99-calibrated across the whole catalogue.
 
-    hl = clip(0.55 peak + 0.45 depth / depth_p99, 0, 1). The p99 is measured
-    from the catalogue at scoring time, never hardcoded, so the scale tracks
-    the data as coverage grows. Returns (map, depth_p99).
+    hl = clip(0.55 peak + 0.45 depth / depth_p99, 0, 1).
+
+    The p99 was measured from the catalogue at scoring time, which made it a
+    cohort statistic: it drifted on every ingest and moved highlights, and so
+    ratings, for places whose own sights had not changed. It is FROZEN with
+    the other anchors (2026-09-04) so the depth scale is a property of the
+    model rather than of today's catalogue size. Returns (map, depth_p99).
     """
     parts = {did: highlights_parts(d) for did, d in dests.items()}
     depths = sorted(p[1] for p in parts.values())
     if not depths:
         return {}, 0.0
-    p99 = depths[int(0.99 * (len(depths) - 1))] or 1.0
+    anchor_path = ROOT / appeal_scale.ANCHOR_FILE
+    frozen_p99 = None
+    if anchor_path.exists():
+        frozen_p99 = json.loads(
+            anchor_path.read_text(encoding="utf-8")).get("depth_p99")
+    p99 = frozen_p99 or depths[int(0.99 * (len(depths) - 1))] or 1.0
     out = {did: min(1.0, max(0.0, PEAK_W * peak + DEPTH_W * (depth / p99)))
            for did, (peak, depth) in parts.items()}
     return out, round(p99, 3)
@@ -492,13 +502,42 @@ def compute_ratings(dests):
             curated_by_class.setdefault(cls, []).append(scores[i])
         else:
             fitted_by_class.setdefault(cls, []).append((i, scores[i]))
-    calibrated = appeal_scale.quantile_calibrate(fitted_by_class,
-                                                 curated_by_class)
+    # The map is FROZEN (2026-09-04 ruling): a place's calibrated score is a
+    # lookup of its own regression output on a stored curve, not its rank in
+    # today's cohort. Growing the catalogue therefore rates the newcomers and
+    # leaves every existing score exactly where it was. Re-fitting is
+    # deliberate: delete the anchor file to re-freeze.
+    anchor_path = ROOT / appeal_scale.ANCHOR_FILE
+    if anchor_path.exists():
+        anchors = json.loads(anchor_path.read_text(encoding="utf-8"))
+        curves = anchors["curves"]
+        froze_now = False
+    else:
+        curves = appeal_scale.build_anchor_curves(fitted_by_class,
+                                                  curated_by_class)
+        anchor_path.parent.mkdir(parents=True, exist_ok=True)
+        anchor_path.write_text(json.dumps({
+            "frozen": _dt.date.today().isoformat(),
+            "model": "fitted_quantile_v2_frozen",
+            "why": ("cohort-relative calibration re-rated 1,118 existing "
+                    "places when 122 arrived; an absolute scale must not "
+                    "depend on who else is in the catalogue"),
+            "n_reference_fitted": sum(len(v) for v in fitted_by_class.values()),
+            "n_reference_curated": sum(len(v) for v in curated_by_class.values()),
+            "knots_per_class": appeal_scale.ANCHOR_KNOTS,
+            "curves": curves,
+        }, indent=1), encoding="utf-8")
+        froze_now = True
+
+    calibrated = appeal_scale.apply_anchor_curves(fitted_by_class, curves)
     for i, s in calibrated.items():
         scores[i] = s
 
     RATING_MODEL["fitted_calibration"] = dict(
         appeal_scale.CALIBRATION_MODEL,
+        version="fitted_quantile_v2_frozen",
+        anchors=appeal_scale.ANCHOR_FILE,
+        anchors_frozen_this_run=froze_now,
         n_fitted=len(calibrated),
         n_curated=sum(len(v) for v in curated_by_class.values()),
     )

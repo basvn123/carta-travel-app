@@ -117,6 +117,8 @@ if (!existsSync(`${WIRE}/index.json`)) {
   let ratedNoScore = 0;
   let photosFourPlus = 0;
   let ratedTotal = 0;
+  let tourNoPhotos = 0;
+  let tourTotal = 0;
   for (const entry of index.countries || []) {
     const path = `${WIRE}/${entry.file.split('/').pop()}`;
     if (!existsSync(path)) continue;
@@ -131,6 +133,13 @@ if (!existsSync(`${WIRE}/index.json`)) {
       if ((r.nimg || 0) >= 4) photosFourPlus += 1;
       routeById.set(r.id, r);
     }
+    for (const tr of data.tours || []) {
+      tourTotal += 1;
+      const slug = String(tr.slug || '').replace(/[^a-z0-9-]/gi, '');
+      const tf = `${WIRE}/tour/${slug}.json`;
+      const gallery = existsSync(tf) ? (readJson(tf).images || []) : [];
+      if (gallery.length < 4) tourNoPhotos += 1;
+    }
     if (entry.country === 'GB') {
       gbCountry = data;
       scotTours = (data.tours || []).filter((t) => isScottish(t.rg));
@@ -139,6 +148,13 @@ if (!existsSync(`${WIRE}/index.json`)) {
   check('a listed row has no score key at all',
     scoreOnListed === 0,
     `${scoreOnListed} of ${listedTotal} listed rows carry one`);
+  // Every published tour can show the ride. `images` is one of the ten hard
+  // checks, and it used to pass on an empty gallery because the check only
+  // tested the photographs that were there: nothing to iterate, nothing to
+  // object to. The gate now requires four, so the wire can be asked directly.
+  check('every published tour carries its own photographs',
+    tourNoPhotos === 0,
+    `${tourNoPhotos} of ${tourTotal} tours have fewer than 4`);
   check('every rated row carries a score',
     ratedNoScore === 0, `${ratedNoScore} of ${ratedTotal} rated rows do not`);
   // EuroVelo families: the brief asks for EV1 to EV19 "published as

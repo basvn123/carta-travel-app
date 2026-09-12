@@ -278,6 +278,43 @@ def usable_images(row):
     return [img for img in (row.get("images") or []) if creditable(img)]
 
 
+# A tour carries no photographs of its own and never has: `cycle_tours.images`
+# is a column nothing writes, so every tour published an empty gallery while
+# its `images` check reported passed. A tour IS its routes, though, and those
+# routes have been photographed, credit-checked and positioned by
+# cycle_images.py already. So the gallery is COMPOSED from them rather than
+# re-harvested: no new fetch, no second licence path, and a photograph that
+# stops being creditable disappears from the tour the moment it disappears
+# from the route.
+TOUR_GALLERY_MAX = 8
+
+
+def tour_gallery(tour, routes_by_id):
+    """The tour's photographs, in riding order, drawn from its own routes.
+
+    `off_m` is the metres along the ROUTE a picture was taken at, which is
+    the right order within one route and meaningless across two. Routes are
+    therefore walked in the order the tour rides them, and each route's own
+    pictures sorted within it, so a gallery reads start to finish.
+    """
+    seen, out = set(), []
+    for rid in (tour.get("route_ids") or []):
+        row = routes_by_id.get(rid)
+        if not row:
+            continue
+        for img in sorted(usable_images(row),
+                          key=lambda i: (i.get("off_m") if i.get("off_m")
+                                         is not None else 1 << 30)):
+            url = img.get("url") or img.get("thumb")
+            if not url or url in seen:
+                continue
+            seen.add(url)
+            out.append(dict(img, route_id=rid))
+            if len(out) >= TOUR_GALLERY_MAX:
+                return out
+    return out
+
+
 def photo_count(row):
     return len(usable_images(row))
 
@@ -419,13 +456,18 @@ def route_card(row, tier):
     if row.get("season"):
         card["season"] = row["season"]
 
+    # `why` is evidence, not a verdict: every code in it restates a measured
+    # fact, so it ships on a listed row too. Without it a listed card has
+    # nothing to say but its own length, because all the app's prose is
+    # composed from these codes. See route_full for the full argument.
+    if row.get("reasons"):
+        card["why"] = row["reasons"][:6]
+
     # The tier contract: a score key exists only on a rated row.
     if tier == "r":
         card["score"] = round(float(row["rating"]), 1)
         if scenic.get("score") is not None:
             card["scenic"] = round(float(scenic["score"]), 1)
-        if row.get("reasons"):
-            card["why"] = row["reasons"][:6]
     else:
         card["k"] = "unrated_coverage"
     return card
@@ -468,10 +510,19 @@ def route_full(row, tier):
         "images": row.get("images"),
         "model": IDX.MODEL_VERSION,
     }
+    # REASONS ARE NOT A SCORE, and the distinction is the whole tier contract.
+    # A score is a verdict this route earned; a reason is a restatement of
+    # something measured ("93% away from motor traffic", "58 m of climbing"),
+    # and it is true whether or not the route cleared the photo gate.
+    # cycle_index.py computes reasons for every scored row, so withholding
+    # them from listed rows discarded work already done and left 97% of route
+    # pages with numbers and no sentences: the app composes every line of
+    # prose from these codes. The score and its parts stay gated.
+    if row.get("reasons"):
+        carta["reasons"] = row["reasons"]
     if tier == "r":
         carta["score"] = round(float(row["rating"]), 1)
         carta["parts"] = row.get("rating_parts")
-        carta["reasons"] = row.get("reasons")
 
     return {
         "id": row["id"],
@@ -599,13 +650,14 @@ def build(conn, countries, dry_run=False, verbose=False):
     counts = defaultdict(Counter)
     fam_rows = []
     published_ids = set()
+    published_slugs = set()
     refused_all = Counter()
     written = total_bytes = n_routes_seen = n_usable = n_tours_kept = 0
 
     for cc in ccs:
         got = _build_country(conn, cc, stamp, by_country, counts,
-                             fam_rows, published_ids, refused_all,
-                             dry_run, verbose)
+                             fam_rows, published_ids, published_slugs,
+                             refused_all, dry_run, verbose)
         n_routes_seen += got["seen"]
         n_usable += got["usable"]
         n_tours_kept += got["tours"]
@@ -617,13 +669,32 @@ def build(conn, countries, dry_run=False, verbose=False):
         + (", ".join(f"{k}={v}" for k, v in refused_all.most_common()) or "none"))
     log(f"tours: {n_tours_kept} pass all ten checks")
 
+    # A tour that stops passing the gate has to STOP BEING A URL, not merely
+    # drop out of the country file. Route files are rewritten every run and
+    # so correct themselves; tour files are written only when they pass, so
+    # a refused tour used to sit on disk indefinitely, still serving its old
+    # record and still claiming all ten checks passed. That is the same
+    # "looks like compliance" failure the credit gate exists to prevent.
+    #
+    # Only on a full export: a targeted --countries run knows nothing about
+    # the other countries' tours and must not delete them.
+    if not countries and not dry_run:
+        pruned = 0
+        for path in (OUT_DIR / "tour").glob("*.json"):
+            if path.name not in published_slugs:
+                path.unlink()
+                pruned += 1
+        if pruned:
+            log(f"pruned {pruned} tour file(s) that no longer pass the gate")
+
     families = family_files(fam_rows, published_ids, stamp, dry_run)
     return _write_index(by_country, counts, families, stamp, written,
                         total_bytes, n_usable, n_tours_kept, dry_run)
 
 
 def _build_country(conn, cc, stamp, by_country, counts, fam_rows,
-                   published_ids, refused_all, dry_run, verbose):
+                   published_ids, published_slugs, refused_all, dry_run,
+                   verbose):
     routes = load_routes(conn, [cc])
     tours = load_tours(conn, [cc])
 
@@ -656,6 +727,17 @@ def _build_country(conn, cc, stamp, by_country, counts, fam_rows,
             f"rated row(s) over their region's target")
 
     # 3. the tour gate
+    #
+    # The gallery is attached BEFORE validation, not after, because the
+    # images check is part of the gate: a tour that cannot show the ride has
+    # to be able to fail on that, and it cannot fail on a field that is
+    # always empty. Composed from `routes` rather than `usable` on purpose:
+    # a route can miss the RATED photo bar and still have one creditable
+    # picture worth showing, and the tour is not publishing a score for it.
+    routes_by_id = {r["id"]: r for r in routes}
+    for t in tours:
+        t["images"] = tour_gallery(t, routes_by_id)
+
     kept_tours, dropped_tours, reasons = V.validate(
         [dict(t, parts=1, bike=t["bike_type"]) for t in tours])
     if verbose and reasons:
@@ -709,6 +791,7 @@ def _build_country(conn, cc, stamp, by_country, counts, fam_rows,
     for tour in kept_tours:
         full = tours_by_slug[tour["slug"]]
         full["checks"] = tour.get("checks")
+        published_slugs.add(safe_name(f"{tour['slug']}.json"))
         total_bytes += write_json(
             OUT_DIR / "tour" / safe_name(f"{tour['slug']}.json"),
             tour_full(full), dry_run)
