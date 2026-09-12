@@ -73,6 +73,10 @@ foreach ($cc in $Countries) {
     # A completion receipt per country, written as we go: the log is the
     # narrative, this is the machine-readable answer to "how far did it
     # get before it died".
+    #
+    # Out-File -Encoding utf8 writes a BOM on PowerShell 5.1, which
+    # json.load rejects with "Expecting value: line 1 column 1". Read it
+    # with encoding="utf-8-sig", not "utf-8".
     $state.countries += [ordered]@{ cc = $cc; exit = $code; seconds = $secs }
     $state | ConvertTo-Json -Depth 5 | Out-File -FilePath $receipt -Encoding utf8
 }

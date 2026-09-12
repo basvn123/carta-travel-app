@@ -1160,8 +1160,18 @@ def main():
     # {CC}.json is still reachable: index.json will not list it, but the app
     # fetches per country by code the moment somebody types that country's
     # name. Prune, the same way pipeline/trails/export_wire.py prunes details.
+    # Only a run that considered EVERY country may prune, because the test
+    # is "this file is not in what we just published" and on a --countries
+    # run that is true of the 38 countries the run never looked at. A
+    # single-country export used to delete the rest of Europe here, and
+    # index.json then disagreed with the files on disk.
+    if wanted:
+        prunable = {cc for cc in wanted if cc not in by_country}
+    else:
+        prunable = {path.stem for path in out_dir.glob("[A-Z][A-Z].json")
+                    if path.stem not in by_country}
     for path in out_dir.glob("[A-Z][A-Z].json"):
-        if path.stem not in by_country:
+        if path.stem in prunable:
             path.unlink()
             if args.verbose:
                 print(f"  pruned {path.name} (no longer publishable)")
@@ -1176,6 +1186,14 @@ def main():
         encoding="utf-8")
     print(f"[beaches] published {total} beaches across {len(index)} countries "
           f"into {out_dir} (top.json holds {len(top)})")
+    # index.json and top.json are built from THIS run's countries alone, so
+    # a --countries run leaves them describing a Europe of one country while
+    # the other {CC}.json files sit on disk unlisted. The per-country files
+    # are correct and worth keeping, so this warns rather than refusing.
+    if wanted:
+        print(f"[beaches] WARNING: index.json and top.json now describe only "
+              f"{', '.join(sorted(wanted))}. Re-run with no --countries "
+              f"before shipping, or they will disagree with the files on disk.")
 
 
 GLOBAL_MAX = 1.0
