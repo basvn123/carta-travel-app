@@ -66,10 +66,33 @@ from route_schema import ensure_schema, TABLE_OF_ACTIVITY  # noqa: E402
 REPORT = ROOT / "data" / "reports" / "routes_extract.json"
 
 # route=* value -> activity. The hiking set is the ingest's ROUTE_VALUES; the
-# cycling value is harvest_cycling.ROUTE_VALUE. route=mtb stays out until R8.
+# cycling value is harvest_cycling.ROUTE_VALUE.
+#
+# ROUTES.md R8 adds the rest. They ride in the SAME graph rather than in
+# tables of their own, because the hierarchy, the dedup and the attach are
+# all activity-agnostic: a ski tour has stages and variants exactly as a
+# pilgrim path does. A relation tagged for two activities ("hiking;mtb", 126
+# of them) lands in both pools, which is two rows under the primary key and
+# is right: the same ground is a walk and a ride.
+#
+# Skating is scanned because route=inline_skates exists and costs nothing to
+# keep; it is not published anywhere and has no rules of its own.
 ROUTE_ACTIVITY = {"hiking": "hiking", "foot": "hiking", "walking": "hiking",
-                  "bicycle": "cycling"}
-ACTIVITIES = ("hiking", "cycling")
+                  "bicycle": "cycling", "mtb": "mtb", "ski": "ski",
+                  "canoe": "canoe", "horse": "horse",
+                  "inline_skates": "skating"}
+
+# piste:type on a type=route relation, which is how ski routes are actually
+# tagged in the Alps and Scandinavia: route=ski is the minority spelling.
+# Downhill pistes are NOT routes anybody navigates, and sled runs and snow
+# parks are not either; both are dropped rather than mapped to an activity.
+PISTE_ACTIVITY = {"skitour": "ski", "nordic": "nordic", "hike": "winter_hike"}
+
+ACTIVITIES = ("hiking", "cycling", "mtb", "ski", "nordic", "winter_hike",
+              "canoe", "horse", "skating")
+# The two the earlier steps built, and the ones whose store rows live in
+# trips / cycle_routes. Everything else is graph-only until it earns a store.
+STORED_ACTIVITIES = ("hiking", "cycling")
 RELATION_TYPES = ("route", "superroute")
 NODE_NETWORK = "node_network"
 
@@ -103,23 +126,45 @@ def scan_extract(pbf_path):
     lands in both pools; the primary key is (activity, osm_id), so that is
     two rows and not a collision."""
     pools = {a: {} for a in ACTIVITIES}
-    fp = osmium.FileProcessor(str(pbf_path), osmium.osm.RELATION) \
-        .with_filter(osmium.filter.KeyFilter("route"))
-    for rel in fp:
-        tags = rel.tags
-        if tags.get("type") not in RELATION_TYPES:
-            continue
-        acts = {ROUTE_ACTIVITY[v.strip()]
-                for v in (tags.get("route") or "").split(";")
-                if v.strip() in ROUTE_ACTIVITY}
-        if not acts:
-            continue
-        # Every tag, verbatim, and the members exactly as OSM orders them.
-        tags_all = {t.k: t.v for t in tags}
-        members = [[m.type, m.ref, m.role or ""] for m in rel.members]
-        for act in acts:
-            pools[act][rel.id] = {"tags": tags_all, "members": members}
+    # Two keys, not one: a ski route is often tagged piste:type=skitour with
+    # no `route` key at all (399 of Austria's 401 ski tours), so a
+    # KeyFilter("route") pass alone finds almost none of them. KeyFilter
+    # takes one key, so this is two passes and a seen set rather than one.
+    seen = set()
+    for key in ("route", "piste:type"):
+        fp = osmium.FileProcessor(str(pbf_path), osmium.osm.RELATION) \
+            .with_filter(osmium.filter.KeyFilter(key))
+        for rel in fp:
+            if rel.id in seen:
+                continue
+            tags = rel.tags
+            if tags.get("type") not in RELATION_TYPES:
+                continue
+            seen.add(rel.id)
+            _absorb(rel, tags, pools)
     return pools
+
+
+def _absorb(rel, tags, pools):
+    """One relation into every activity pool it belongs to.
+
+    A relation tagged for two activities lands in both: the primary key is
+    (activity, osm_id), so "hiking;mtb" is two rows and not a collision, and
+    the same ground being both a walk and a ride is a fact about it."""
+    acts = {ROUTE_ACTIVITY[v.strip()]
+            for v in (tags.get("route") or "").split(";")
+            if v.strip() in ROUTE_ACTIVITY}
+    # route=piste is a container: what it IS lives in piste:type.
+    piste = PISTE_ACTIVITY.get((tags.get("piste:type") or "").strip())
+    if piste:
+        acts.add(piste)
+    if not acts:
+        return
+    # Every tag, verbatim, and the members exactly as OSM orders them.
+    tags_all = {t.k: t.v for t in tags}
+    members = [[m.type, m.ref, m.role or ""] for m in rel.members]
+    for act in acts:
+        pools[act][rel.id] = {"tags": tags_all, "members": members}
 
 
 def link_refs(pool):
@@ -142,8 +187,13 @@ def link_refs(pool):
 # ---------------------------------------------------------------------------
 
 def store_owners(conn, activity):
-    """osm relation id -> country of the trips / cycle_routes row."""
-    table = TABLE_OF_ACTIVITY[activity]
+    """osm relation id -> country of the trips / cycle_routes row.
+
+    Empty for the R8 activities: they live in the graph only, so nothing
+    "owns" them from a store and the first extract that scans one keeps it.""" 
+    table = TABLE_OF_ACTIVITY.get(activity)
+    if not table:
+        return {}
     with conn.cursor() as cur:
         cur.execute(f"SELECT source_ref::bigint, country FROM {table} "
                     f"WHERE source = 'osm' AND source_ref ~ '^[0-9]+$'")
@@ -279,7 +329,7 @@ def load_report():
 def store_totals(conn):
     out = {}
     with conn.cursor() as cur:
-        for activity in ACTIVITIES:
+        for activity in STORED_ACTIVITIES:
             cur.execute(f"SELECT count(*) FROM {TABLE_OF_ACTIVITY[activity]} "
                         f"WHERE source = 'osm'")
             out[activity] = cur.fetchone()[0]
@@ -315,7 +365,7 @@ def store_coverage(conn):
     """Store rows with NO route_relations row: the acceptance criterion."""
     out = {}
     with conn.cursor() as cur:
-        for activity in ACTIVITIES:
+        for activity in STORED_ACTIVITIES:
             cur.execute(f"""
                 SELECT count(*) FROM {TABLE_OF_ACTIVITY[activity]} s
                 WHERE s.source = 'osm' AND s.source_ref ~ '^[0-9]+$'
@@ -329,18 +379,35 @@ def store_coverage(conn):
 
 
 def gate(totals, store):
-    """The order-of-magnitude check, per activity. Node-network relations
-    are excluded from the cycling ratio because the harvest dropped them on
-    purpose and they are the one population expected to be large."""
+    """The order-of-magnitude check, for the activities that HAVE a store to
+    check against.
+
+    Node-network relations are excluded from the cycling ratio because the
+    harvest dropped them on purpose and they are the one population expected
+    to be large.
+
+    The R8 activities have no store at all, so there is nothing to compare a
+    count with and a ratio would be a division by a number nobody measured.
+    They are reported with their counts and no verdict, which is the honest
+    shape: the gate exists to catch a filter that went wrong against a known
+    population, and for these the scan IS the first measurement."""
     verdicts = {}
     for activity in ACTIVITIES:
         found = totals[activity]["relations"]
         if activity == "cycling":
             found -= totals[activity]["node_networks"]
-        have = store[activity] or 1
+        have = store.get(activity)
+        if not have:
+            verdicts[activity] = {
+                "scanned_excluding_node_networks": found, "store": None,
+                "ratio": None, "ok": None,
+                "note": "no store to compare against: this scan is the first "
+                        "measurement of this activity",
+            }
+            continue
         ratio = found / have
         verdicts[activity] = {
-            "scanned_excluding_node_networks": found, "store": store[activity],
+            "scanned_excluding_node_networks": found, "store": have,
             "ratio": round(ratio, 3),
             "ok": GATE_MIN_RATIO <= ratio <= GATE_MAX_RATIO,
         }
@@ -591,7 +658,11 @@ def write_classification(conn, activity, decisions):
                     OR r.stage_count IS DISTINCT FROM c.stage_count)""",
                     (activity,))
         n_graph = cur.rowcount
-        table = TABLE_OF_ACTIVITY[activity]
+        # Graph-only activities (ROUTES.md R8) have no store to copy onto:
+        # their hierarchy lives in route_relations and is read from there.
+        table = TABLE_OF_ACTIVITY.get(activity)
+        if not table:
+            return n_graph, 0
         # Copy onto the store rows, touching only rows whose values change,
         # because the updated_at trigger fires on any UPDATE.
         cur.execute(f"""
@@ -697,7 +768,7 @@ def run_classify(args):
             "unknown_roles": dict(unknown_roles.most_common(20)),
             "countries": {cc: dict(c) for cc, c in sorted(per_country.items())},
             "rows_updated": {"route_relations": n_graph,
-                             TABLE_OF_ACTIVITY[activity]: n_store},
+                             TABLE_OF_ACTIVITY.get(activity, "none"): n_store},
             "name_fallback_sample": [
                 {"osm_id": i, "country": cc, "name": n} for i, cc, n in name_log[:40]],
             "seconds": round(time.time() - t0, 1),
@@ -938,7 +1009,9 @@ def run_scan(args):
               f"{t['with_children']:,} with children; "
               f"store rows without a relation row: {missing[a]:,}")
     print(f"  report: {REPORT.relative_to(ROOT).as_posix()}")
-    bad = [a for a in ACTIVITIES if not verdict[a]["ok"]]
+    # `ok` is None for an activity with no store to check against, which is
+    # not a failure: `is False` rather than `not`.
+    bad = [a for a in ACTIVITIES if verdict[a]["ok"] is False]
     if full and bad:
         for a in bad:
             v = verdict[a]

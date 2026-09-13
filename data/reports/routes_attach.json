@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-09-13T19:04:31+00:00",
+ "generated_at": "2026-09-13T19:56:18+00:00",
  "max_km": 25.0,
  "caps": {
   "hiking": 8,
@@ -9,28 +9,29 @@
  "destinations": 3868,
  "destinations_with_any": 3605,
  "rows": {
-  "hiking": 16491,
+  "hiking": 16493,
   "cycling": 1864
  },
  "rows_named_for_their_path": {
-  "hiking": 2811,
+  "hiking": 2810,
   "cycling": 483
  },
  "car_free_starts": {
-  "hiking": 1179,
+  "hiking": 1183,
   "cycling": 257
  },
+ "node_network_summaries": 188,
  "per_destination_distribution": {
   "hiking": {
    "0": 287,
    "1": 282,
    "2": 280,
    "3": 709,
-   "4": 612,
-   "5": 436,
+   "4": 613,
+   "5": 434,
    "6": 429,
    "7": 344,
-   "8": 489
+   "8": 490
   },
   "cycling": {
    "0": 2788,
@@ -51,5 +52,5 @@
   "5": 212,
   "6": 1926
  },
- "seconds": 245.2
+ "seconds": 213.6
 }

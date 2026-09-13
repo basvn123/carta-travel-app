@@ -208,6 +208,22 @@ COLS = ("activity", "id", "name", "country", "network", "distance_m",
 
 
 CYCLING_WIRE = ROOT / "continent-app" / "public" / "cycling"
+NODE_NETWORKS = ROOT / "data" / "derived" / "node_networks.json"
+
+
+def load_node_networks():
+    """What node_networks.py measured, keyed by destination id.
+
+    ROUTES.md R8: in the Netherlands and Belgium the cycling is a numbered
+    mesh rather than a set of routes, and the catalogue deliberately
+    publishes none of its 24,171 signed edges as routes. A destination there
+    would otherwise be shown nothing, which is false: it is standing in one
+    of the densest cycling networks in Europe. This carries the measurement
+    so the page can say so in a sentence."""
+    try:
+        return json.loads(NODE_NETWORKS.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return {}
 
 
 def published_cycle_ids():
@@ -389,8 +405,10 @@ def main():
     ids = {d.strip().upper() for d in args.dests.split(",") if d.strip()}
     dests = load_dests(ids)
     cycle_ids = sorted(published_cycle_ids())
+    node_nets = load_node_networks()
     print(f"{len(dests):,} destinations to attach, against "
-          f"{len(cycle_ids):,} rated cycle routes in the wire")
+          f"{len(cycle_ids):,} rated cycle routes in the wire and "
+          f"{len(node_nets):,} node-network summaries")
     if not cycle_ids:
         print("  no cycling wire on disk: the cycling half will be empty")
 
@@ -420,6 +438,12 @@ def main():
                 stats[f"{activity}_rows"] += len(got)
                 stats[f"{activity}_with_stage"] += sum(1 for g in got if g.get("stage"))
                 stats[f"{activity}_car_free"] += sum(1 for g in got if g.get("car_free"))
+        # The mesh, where there is one. Not a route and never rendered as a
+        # list: one sentence saying how much signed network is within reach.
+        nn = node_nets.get(dest["id"])
+        if nn:
+            block["node_network"] = nn
+            stats["node_network"] += 1
         if block:
             out[dest["id"]] = block
             stats["dests_with_any"] += 1
@@ -440,6 +464,7 @@ def main():
                                       for a in ("hiking", "cycling")},
         "car_free_starts": {a: stats[f"{a}_car_free"]
                             for a in ("hiking", "cycling")},
+        "node_network_summaries": stats["node_network"],
         "per_destination_distribution": {
             a: {str(k): v for k, v in sorted(counts[a].items())}
             for a in ("hiking", "cycling")},

@@ -70,12 +70,37 @@ function Row({ row, t, onOpen }) {
   );
 }
 
+/**
+ * Node-network cycling, where the riding is a numbered mesh rather than a
+ * set of routes (ROUTES.md R8). The catalogue publishes none of its signed
+ * edges as routes, and it is right not to: each is a two kilometre connector
+ * between two posts. But a reader in Maastricht shown nothing would conclude
+ * there is nothing, so the measurement gets a sentence of its own.
+ */
+function NodeNetwork({ nn, t }) {
+  if (!nn?.km) return null;
+  return (
+    <div className="drh-nodenet" data-testid="route-nodenet">
+      <h4 className="drh-head"><BikeIcon size={14} /> {t('route.nodeNetTitle')}</h4>
+      <p className="drh-nn-line">
+        {t('route.nodeNetLine', { km: nn.km, radius: nn.radius_km, n: nn.junctions })}
+      </p>
+      <p className="drh-nn-how">{t('route.nodeNetHow')}</p>
+      {nn.nearest?.ref && (
+        <p className="drh-nn-how">
+          {t('route.nodeNetNearest', { ref: nn.nearest.ref, km: nn.nearest.km })}
+        </p>
+      )}
+    </div>
+  );
+}
+
 export default function RoutesFromHere({ routes, t, onOpen }) {
   const groups = [
     ['hiking', 'dest.routesHiking', RouteIcon],
     ['cycling', 'dest.routesCycling', BikeIcon],
   ].filter(([k]) => (routes?.[k] || []).length > 0);
-  if (!groups.length) return null;
+  if (!groups.length && !routes?.node_network?.km) return null;
 
   return (
     <div className="drh">
@@ -89,6 +114,7 @@ export default function RoutesFromHere({ routes, t, onOpen }) {
           </ul>
         </div>
       ))}
+      <NodeNetwork nn={routes?.node_network} t={t} />
       {/* Said out loud, because a short list here means thin mapping rather
           than a thin country, and the reader cannot tell those apart. */}
       <p className="drh-note">{t('dest.routesCoverage')}</p>

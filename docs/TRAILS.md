@@ -88,6 +88,16 @@ pipeline/trails/
   validate.py           five checks -> quality_score, status routing
   regression.py         demotes published content that fell below the bar
   rate.py               the published 0 to 10 and its reason codes
+  derived_activities.py ROUTES.md R8: trail running and gravel, which OSM
+                        does not tag, derived from what routes already
+                        measure and stored as a FLAG on the route rather
+                        than as a second row. The rules are in the module
+                        docstring. Report: data/reports/routes_derived.json
+  node_networks.py      ROUTES.md R8: the Dutch and Belgian numbered mesh,
+                        measured per destination (signed km, junctions,
+                        nearest post) so a page can say what is there in one
+                        sentence. Its 24,171 edges are never published as
+                        routes, and that filter stays
   transit_stops.py      ROUTES.md R6: railway and coach stations from the
                         extracts, with the cycling layer's exclusions (no zoo
                         miniatures, funiculars or heritage lines), so

@@ -1,0 +1,340 @@
+{
+ "generated_at": "2026-09-13T19:50:46+00:00",
+ "rules": {
+  "trail_running": {
+   "distance_m": [
+    8000,
+    30000
+   ],
+   "shapes": [
+    "loop",
+    "out_back"
+   ],
+   "max_ascent_per_km": 60.0,
+   "min_path_share": 0.5,
+   "sac_scale": [
+    "hiking",
+    "mountain_hiking"
+   ],
+   "waymarked": true
+  },
+  "gravel": {
+   "unpaved_share": [
+    0.4,
+    0.85
+   ],
+   "max_mtb_scale": 1,
+   "rejects_tracktype": [
+    "grade4",
+    "grade5"
+   ]
+  },
+  "bikepacking": "not built: stage_planner.py already segments long cycle routes into day stages behind ten hard checks"
+ },
+ "trail_running": {
+  "candidates": 17455,
+  "qualified": 3187,
+  "countries": 31,
+  "per_country": {
+   "AT": 89,
+   "BE": 132,
+   "BG": 5,
+   "CH": 45,
+   "CY": 4,
+   "CZ": 69,
+   "DE": 1628,
+   "DK": 32,
+   "EE": 3,
+   "ES": 197,
+   "FI": 12,
+   "FR": 251,
+   "GB": 19,
+   "GR": 52,
+   "HR": 5,
+   "HU": 25,
+   "IE": 5,
+   "IS": 2,
+   "IT": 134,
+   "LT": 1,
+   "LU": 36,
+   "LV": 3,
+   "NL": 158,
+   "NO": 5,
+   "PL": 55,
+   "PT": 82,
+   "RO": 17,
+   "RS": 57,
+   "SE": 37,
+   "SI": 13,
+   "SK": 14
+  },
+  "rejected_by": {
+   "distance": 9459,
+   "shape": 2933,
+   "waymarked": 1010,
+   "underfoot": 662,
+   "ascent": 168,
+   "grade": 36
+  },
+  "best": [
+   {
+    "id": 165326,
+    "cc": "NL",
+    "name": "PARK21-route",
+    "score": 0.998
+   },
+   {
+    "id": 161313,
+    "cc": "NL",
+    "name": "Emmen hardlooprondje 10 km",
+    "score": 0.993
+   },
+   {
+    "id": 67847,
+    "cc": "RS",
+    "name": "Обалом Јегричке",
+    "score": 0.992
+   },
+   {
+    "id": 196261,
+    "cc": "IT",
+    "name": "Valli di Novellara",
+    "score": 0.991
+   },
+   {
+    "id": 204391,
+    "cc": "IT",
+    "name": "Giro del Pantano Grande, Lago di Fondi",
+    "score": 0.988
+   },
+   {
+    "id": 182111,
+    "cc": "ES",
+    "name": "Vuelta a San Marugán",
+    "score": 0.987
+   },
+   {
+    "id": 165231,
+    "cc": "NL",
+    "name": "Olmenhorstroute",
+    "score": 0.984
+   },
+   {
+    "id": 211740,
+    "cc": "DE",
+    "name": "1 - Moor-Weg",
+    "score": 0.98
+   },
+   {
+    "id": 207296,
+    "cc": "DE",
+    "name": "Bölsche Wanderweg",
+    "score": 0.977
+   },
+   {
+    "id": 214631,
+    "cc": "DE",
+    "name": "Rundwanderweg Döberitzer Heide",
+    "score": 0.976
+   },
+   {
+    "id": 165788,
+    "cc": "NL",
+    "name": "Duin en Kruidbergroute",
+    "score": 0.976
+   },
+   {
+    "id": 165365,
+    "cc": "NL",
+    "name": "Groene Wijkenroute",
+    "score": 0.976
+   },
+   {
+    "id": 206210,
+    "cc": "DE",
+    "name": "Rundweg 7, Schützenhausweg",
+    "score": 0.972
+   },
+   {
+    "id": 206209,
+    "cc": "DE",
+    "name": "Rundweg 9, Heideweg (aufgegeben)",
+    "score": 0.967
+   },
+   {
+    "id": 254722,
+    "cc": "DE",
+    "name": "A1 Kasterer Höhe",
+    "score": 0.966
+   }
+  ]
+ },
+ "gravel": {
+  "candidates": 32264,
+  "qualified": 2343,
+  "countries": 33,
+  "per_country": {
+   "AT": 32,
+   "BA": 4,
+   "BE": 10,
+   "CH": 4,
+   "CZ": 78,
+   "DE": 951,
+   "DK": 48,
+   "EE": 22,
+   "ES": 118,
+   "FI": 33,
+   "FR": 202,
+   "GB": 106,
+   "GR": 2,
+   "HR": 38,
+   "HU": 28,
+   "IE": 25,
+   "IT": 117,
+   "LT": 8,
+   "LU": 2,
+   "LV": 90,
+   "ME": 10,
+   "NL": 1,
+   "NO": 30,
+   "PL": 236,
+   "PT": 8,
+   "RO": 4,
+   "RS": 12,
+   "SE": 58,
+   "SI": 12,
+   "SK": 42,
+   "TR": 4,
+   "UA": 7,
+   "XK": 1
+  },
+  "rejected_by": {
+   "unpaved_share": 29548,
+   "tracktype": 281,
+   "mtb_scale": 92
+  },
+  "best": [
+   {
+    "id": 43084,
+    "cc": "DE",
+    "name": null,
+    "unpaved": 0.85,
+    "worst_mtb": 0,
+    "rough_share": 0.0
+   },
+   {
+    "id": 62386,
+    "cc": "PL",
+    "name": "203Y",
+    "unpaved": 0.85,
+    "worst_mtb": 0,
+    "rough_share": 0.0
+   },
+   {
+    "id": 1857,
+    "cc": "AT",
+    "name": "Igel",
+    "unpaved": 0.849,
+    "worst_mtb": 0,
+    "rough_share": 0.0
+   },
+   {
+    "id": 7263,
+    "cc": "DE",
+    "name": "Radweg 17",
+    "unpaved": 0.848,
+    "worst_mtb": 1,
+    "rough_share": 0.0
+   },
+   {
+    "id": 31834,
+    "cc": "DE",
+    "name": null,
+    "unpaved": 0.848,
+    "worst_mtb": 0,
+    "rough_share": 0.0
+   },
+   {
+    "id": 45225,
+    "cc": "GB",
+    "name": "South Holderness Rail Trail",
+    "unpaved": 0.847,
+    "worst_mtb": 0,
+    "rough_share": 0.0
+   },
+   {
+    "id": 63340,
+    "cc": "ME",
+    "name": "Two Peaks and Five Lakes",
+    "unpaved": 0.847,
+    "worst_mtb": 0,
+    "rough_share": 0.0
+   },
+   {
+    "id": 43627,
+    "cc": "DE",
+    "name": "Custenlohr - Langensteinach",
+    "unpaved": 0.847,
+    "worst_mtb": 0,
+    "rough_share": 0.0
+   },
+   {
+    "id": 55355,
+    "cc": "ES",
+    "name": "EV1",
+    "unpaved": 0.847,
+    "worst_mtb": 0,
+    "rough_share": 0.006
+   },
+   {
+    "id": 59112,
+    "cc": "SE",
+    "name": "Nydala runt",
+    "unpaved": 0.846,
+    "worst_mtb": 0,
+    "rough_share": 0.0
+   },
+   {
+    "id": 45379,
+    "cc": "GB",
+    "name": "NCN National Route 697",
+    "unpaved": 0.846,
+    "worst_mtb": 0,
+    "rough_share": 0.0
+   },
+   {
+    "id": 59443,
+    "cc": "SE",
+    "name": "Kila-Sala cykelled",
+    "unpaved": 0.846,
+    "worst_mtb": 0,
+    "rough_share": 0.054
+   },
+   {
+    "id": 21769,
+    "cc": "DE",
+    "name": "BasX",
+    "unpaved": 0.846,
+    "worst_mtb": 0,
+    "rough_share": 0.0
+   },
+   {
+    "id": 9909,
+    "cc": "FR",
+    "name": "De la Guérinière au pont de Noirmoutier",
+    "unpaved": 0.845,
+    "worst_mtb": 0,
+    "rough_share": 0.0
+   },
+   {
+    "id": 55454,
+    "cc": "ES",
+    "name": "Vía Verde del Odiel",
+    "unpaved": 0.845,
+    "worst_mtb": 0,
+    "rough_share": 0.0
+   }
+  ]
+ },
+ "seconds": 40.7
+}

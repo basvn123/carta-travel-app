@@ -161,6 +161,44 @@ if (subject) {
   await phone.close();
 }
 
+// Node-network cycling (ROUTES.md R8): a sentence, never a list. The
+// acceptance criterion is that a reader in the Netherlands is told how much
+// signed network is there WITHOUT being shown its 24,171 two-kilometre edges
+// as routes.
+{
+  const nn = (() => {
+    const dir = 'public/dossier';
+    if (!existsSync(dir)) return null;
+    for (const fn of readdirSync(dir)) {
+      if (!/\.json$/.test(fn) || fn === 'index.json') continue;
+      let d;
+      try { d = JSON.parse(readFileSync(`${dir}/${fn}`, 'utf8')); } catch { continue; }
+      if (d.routes?.node_network?.km) return { id: d.id, ...d.routes.node_network };
+    }
+    return null;
+  })();
+  check('a dossier carries a node-network summary', !!nn, nn ? `${nn.id} ${nn.km} km` : '');
+  if (nn) {
+    await page.goto(`${BASE}#dest=${encodeURIComponent(nn.id)}`,
+      { waitUntil: 'domcontentloaded', timeout: 45000 });
+    await page.waitForTimeout(4200);
+    const all = page.locator('.destp-subnav-all');
+    if (await all.count() && /expand/i.test(await all.textContent().catch(() => ''))) {
+      await all.click();
+      await page.waitForTimeout(800);
+    }
+    const box = page.locator('[data-testid="route-nodenet"]');
+    check('the node network renders', await box.count() === 1, nn.id);
+    const text = (await box.textContent().catch(() => '')) || '';
+    check('it states the signed length and the junctions',
+      text.includes(String(nn.km)) && text.includes(String(nn.junctions)),
+      text.replace(/\s+/g, ' ').slice(0, 90));
+    // The mesh must never be rendered as route rows.
+    const rows = await page.locator('[data-testid="route-nodenet"] .drh-row').count();
+    check('it is a sentence, not a list of edges', rows === 0, `${rows} rows`);
+  }
+}
+
 // A destination with nothing attached shows no block at all.
 if (without.length) {
   const empty = without[0];

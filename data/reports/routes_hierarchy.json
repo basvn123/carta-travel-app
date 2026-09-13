@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-09-12T16:56:20+00:00",
+ "generated_at": "2026-09-13T19:50:03+00:00",
  "activities": {
   "hiking": {
    "relations": 308266,
@@ -14,34 +14,34 @@
    "multi_parent_decided": 4753,
    "decided_by": {
     "children": 1940,
-    "id": 303,
     "name": 402,
+    "id": 303,
     "ancestor": 1
    },
    "unknown_roles": {
     "loop": 2,
     "transfer": 2,
-    "guidepost": 1,
+    "proposed": 1,
+    "tip:5": 1,
+    "access": 1,
     "east": 1,
     "south": 1,
     "west": 1,
     "north": 1,
     "part.1": 1,
     "part.2": 1,
-    "touristischer wegweiser": 1,
-    "tip:5": 1,
-    "access": 1,
-    "grenzsteinweg": 1,
     "temporary": 1,
     "part5a": 1,
-    "proposed": 1,
-    "meandros de coura": 1,
-    "eriksbergsleden": 1
+    "guidepost": 1,
+    "grenzsteinweg": 1,
+    "touristischer wegweiser": 1,
+    "eriksbergsleden": 1,
+    "meandros de coura": 1
    },
    "countries": {
     "AD": {
-     "standalone": 6,
      "stage": 10,
+     "standalone": 6,
      "parent": 1
     },
     "AL": {
@@ -70,37 +70,37 @@
      "parent": 43
     },
     "BG": {
-     "parent": 4,
      "standalone": 481,
      "stage": 62,
+     "parent": 4,
      "variant": 3
     },
     "CH": {
      "variant": 56,
      "stage_by_name": 29,
      "standalone": 22418,
-     "stage": 2461,
-     "parent": 630
+     "parent": 630,
+     "stage": 2461
     },
     "CY": {
      "standalone": 200,
      "stage": 8,
-     "parent": 10,
-     "variant": 1
+     "variant": 1,
+     "parent": 10
     },
     "CZ": {
      "standalone": 5922,
      "variant": 163,
-     "stage": 233,
      "parent": 182,
+     "stage": 233,
      "stage_by_name": 1
     },
     "DE": {
-     "variant": 673,
-     "stage_by_name": 466,
+     "standalone": 47593,
      "parent": 767,
      "stage": 6625,
-     "standalone": 47593
+     "variant": 673,
+     "stage_by_name": 466
     },
     "DK": {
      "variant": 56,
@@ -112,8 +112,8 @@
     "EE": {
      "standalone": 264,
      "stage": 112,
-     "parent": 9,
-     "variant": 1
+     "variant": 1,
+     "parent": 9
     },
     "ES": {
      "variant": 193,
@@ -131,11 +131,11 @@
      "standalone": 1
     },
     "FR": {
-     "variant": 436,
-     "stage_by_name": 120,
      "standalone": 41900,
      "stage": 2607,
-     "parent": 528
+     "parent": 528,
+     "variant": 436,
+     "stage_by_name": 120
     },
     "GB": {
      "variant": 138,
@@ -154,22 +154,22 @@
     "HR": {
      "variant": 5,
      "stage_by_name": 104,
-     "standalone": 1008,
      "parent": 11,
+     "standalone": 1008,
      "stage": 163
     },
     "HU": {
      "standalone": 3222,
-     "stage": 265,
      "parent": 46,
+     "stage": 265,
      "variant": 22
     },
     "IE": {
      "variant": 1,
      "stage_by_name": 1,
      "standalone": 931,
-     "parent": 16,
-     "stage": 41
+     "stage": 41,
+     "parent": 16
     },
     "IS": {
      "standalone": 168,
@@ -179,8 +179,8 @@
     "IT": {
      "variant": 463,
      "stage_by_name": 511,
-     "standalone": 30378,
      "stage": 3155,
+     "standalone": 30378,
      "parent": 364
     },
     "LI": {
@@ -201,8 +201,8 @@
      "stage_by_name": 1
     },
     "LV": {
-     "stage": 115,
      "standalone": 278,
+     "stage": 115,
      "parent": 7
     },
     "MD": {
@@ -213,9 +213,9 @@
      "stage": 4
     },
     "MK": {
-     "standalone": 28,
      "stage": 7,
-     "parent": 1
+     "parent": 1,
+     "standalone": 28
     },
     "MT": {
      "standalone": 38
@@ -224,19 +224,19 @@
      "standalone": 60719,
      "variant": 156,
      "stage_by_name": 16,
-     "stage": 1471,
-     "parent": 240
+     "parent": 240,
+     "stage": 1471
     },
     "NO": {
-     "variant": 5,
-     "stage_by_name": 1,
      "standalone": 2857,
      "parent": 40,
-     "stage": 316
+     "stage": 316,
+     "variant": 5,
+     "stage_by_name": 1
     },
     "PL": {
-     "standalone": 3233,
      "stage": 244,
+     "standalone": 3233,
      "parent": 52,
      "variant": 3,
      "stage_by_name": 1
@@ -249,16 +249,16 @@
      "stage": 57
     },
     "RO": {
-     "standalone": 1612,
      "parent": 11,
+     "standalone": 1612,
      "stage": 56,
      "variant": 3
     },
     "RS": {
      "variant": 6,
      "stage_by_name": 25,
-     "standalone": 472,
      "stage": 97,
+     "standalone": 472,
      "parent": 6
     },
     "SE": {
@@ -269,33 +269,33 @@
      "parent": 129
     },
     "SI": {
+     "variant": 12,
+     "parent": 16,
      "standalone": 1626,
      "stage": 133,
-     "parent": 16,
-     "variant": 12,
      "stage_by_name": 3
     },
     "SK": {
      "standalone": 2654,
      "stage": 150,
-     "stage_by_name": 1,
      "parent": 24,
-     "variant": 7
+     "variant": 7,
+     "stage_by_name": 1
     },
     "TR": {
-     "standalone": 102,
      "parent": 6,
+     "standalone": 102,
      "stage": 51,
      "variant": 2
     },
     "UA": {
      "standalone": 534,
-     "parent": 2,
-     "stage": 2
+     "stage": 2,
+     "parent": 2
     },
     "XK": {
-     "stage": 12,
      "standalone": 16,
+     "stage": 12,
      "parent": 1
     }
    },
@@ -305,39 +305,9 @@
    },
    "name_fallback_sample": [
     {
-     "osm_id": 2693235,
-     "country": "ES",
-     "name": "Variante Pico del Águila"
-    },
-    {
-     "osm_id": 224520,
-     "country": "AT",
-     "name": "Glanzer Hoftour (Variante 1 - Kurzvariante)"
-    },
-    {
-     "osm_id": 562522,
-     "country": "AT",
-     "name": "Nordalpenweg 01A (Variante Hohe Wand)"
-    },
-    {
-     "osm_id": 2307530,
-     "country": "AT",
-     "name": "Über Vordere Mandling (Abstecher vom 01A)"
-    },
-    {
      "osm_id": 2307179,
      "country": "AT",
      "name": "Ober-Piesting - Alkersdorf (231 Zubringer)"
-    },
-    {
-     "osm_id": 2345185,
-     "country": "AT",
-     "name": "Variante Bergstation-Schneeberg"
-    },
-    {
-     "osm_id": 2737146,
-     "country": "AT",
-     "name": "Salzsteigweg 09 (Variante Stainach)"
     },
     {
      "osm_id": 3292201,
@@ -345,49 +315,9 @@
      "name": "Kärntner Grenzweg Variante"
     },
     {
-     "osm_id": 3562360,
-     "country": "AT",
-     "name": "Zubringer 10 Höhenwanderweg um Eichgraben"
-    },
-    {
-     "osm_id": 3871856,
-     "country": "AT",
-     "name": "Voralpenweg 04 (Abstecher Schöpfl)"
-    },
-    {
-     "osm_id": 8360025,
-     "country": "AT",
-     "name": "Grubtaler Weg -Variante"
-    },
-    {
-     "osm_id": 8361559,
-     "country": "AT",
-     "name": "Gamlitz-Gaberhöhe-Steinbach Variante"
-    },
-    {
-     "osm_id": 10385047,
-     "country": "AT",
-     "name": "Au & Uferweg, lange Variante (Weg 8)"
-    },
-    {
-     "osm_id": 10390406,
-     "country": "AT",
-     "name": "Kreuz- & Querpfad, lange Variante (Weg 9)"
-    },
-    {
-     "osm_id": 14632554,
-     "country": "AT",
-     "name": "Dobratsch Rundwanderweg (veraltete Variante)"
-    },
-    {
      "osm_id": 15511759,
      "country": "AT",
      "name": "Herzass Trumpf Variante Regelstein"
-    },
-    {
-     "osm_id": 18142822,
-     "country": "AT",
-     "name": "Welser Höhenweg (Welser Variante)"
     },
     {
      "osm_id": 19443113,
@@ -405,49 +335,19 @@
      "name": "Promenade de Chapeauvau (alternative)"
     },
     {
-     "osm_id": 9156234,
-     "country": "BE",
-     "name": "GR 15 Variante Charmille"
-    },
-    {
-     "osm_id": 10059997,
-     "country": "BE",
-     "name": "Streek-GR Waas- en Reynaertland Variant Lokeren-Daknam"
-    },
-    {
      "osm_id": 10965514,
      "country": "BE",
      "name": "GRP 127 Variante pluie Quenast"
     },
     {
-     "osm_id": 12408715,
-     "country": "BE",
-     "name": "CB13 Neuve Cense - Chession - Saint-Martin - Grottes - Mont - Anthisnes - Sart (variante via Fond du Sart)"
+     "osm_id": 1444362,
+     "country": "DE",
+     "name": "Wurzelberg - Alternativweg"
     },
     {
-     "osm_id": 14639905,
-     "country": "BE",
-     "name": "GRP 563 Variante crue Lontzen"
-    },
-    {
-     "osm_id": 15351740,
-     "country": "BE",
-     "name": "GRP 573 Variante crue Herzogenhügel"
-    },
-    {
-     "osm_id": 15652169,
-     "country": "BE",
-     "name": "GR 57 Variante Hérou"
-    },
-    {
-     "osm_id": 18086255,
-     "country": "BE",
-     "name": "MDY22 Les Crêtes de la Warche: raccourci Warche"
-    },
-    {
-     "osm_id": 19768649,
-     "country": "BE",
-     "name": "GR 122 Variant Zottegem"
+     "osm_id": 6054654,
+     "country": "DE",
+     "name": "Umleitung-Steinpilz in der Wildschutzzeit (1.Dez.-14 Mai)"
     },
     {
      "osm_id": 10692445,
@@ -470,57 +370,157 @@
      "name": "Umleitung bei Schiessbetrieb Eggflue"
     },
     {
-     "osm_id": 6054654,
+     "osm_id": 20747144,
      "country": "DE",
-     "name": "Umleitung-Steinpilz in der Wildschutzzeit (1.Dez.-14 Mai)"
+     "name": "Europäischer Fernwanderweg E10, Deutschland, Rügen/Vorpommern,Zubringer Tannenort"
     },
     {
-     "osm_id": 1444362,
-     "country": "DE",
-     "name": "Wurzelberg - Alternativweg"
+     "osm_id": 2930029,
+     "country": "DK",
+     "name": "Alternativ Kyst til Kyst Stien"
     },
     {
-     "osm_id": 2344389,
-     "country": "DE",
-     "name": "Alemannenweg Variante"
+     "osm_id": 18568565,
+     "country": "FR",
+     "name": "Variante boucle du Lac Blanc"
     },
     {
-     "osm_id": 2940604,
-     "country": "DE",
-     "name": "Spessartbogen Zubringer Wiesbütt - Bad Orb"
+     "osm_id": 59286,
+     "country": "GB",
+     "name": "Longster Trail (alternative)"
     },
     {
-     "osm_id": 3088296,
-     "country": "DE",
-     "name": "Spessartbogen Zubringer Marjoß"
+     "osm_id": 1984496,
+     "country": "GB",
+     "name": "Sherbourne Valley Walk - Alternative Route 1"
     },
     {
-     "osm_id": 3119335,
-     "country": "DE",
-     "name": "Spessartbogen Zubringer Langenselbold"
+     "osm_id": 8489601,
+     "country": "GB",
+     "name": "Whithorn Way (alternative to east of Troon)"
     },
     {
-     "osm_id": 3119755,
+     "osm_id": 1766783,
+     "country": "IT",
+     "name": "Percorso alternativo \"Q\""
+    },
+    {
+     "osm_id": 1901394,
+     "country": "IT",
+     "name": "Percorso alternativo \"O\""
+    },
+    {
+     "osm_id": 8379312,
+     "country": "IT",
+     "name": "Variante bassa Montebuono"
+    },
+    {
+     "osm_id": 13836712,
+     "country": "IT",
+     "name": "Sulle Antiche Vie dei Cimbri Variante"
+    },
+    {
+     "osm_id": 14606572,
+     "country": "IT",
+     "name": "SD04 - Variante sito archeologico monte Luseto"
+    },
+    {
+     "osm_id": 17861980,
+     "country": "IT",
+     "name": "Volterra Urban Trekking - Variante"
+    },
+    {
+     "osm_id": 6725639,
+     "country": "PT",
+     "name": "Grande Rota das Aldeias Históricas - Variante"
+    },
+    {
+     "osm_id": 9922219,
+     "country": "PT",
+     "name": "Trilho dos Povos das Ribeiras de Piodam - Variante"
+    },
+    {
+     "osm_id": 2651180,
+     "country": "ES",
+     "name": "Variante Umbrías de Santo Ángel"
+    },
+    {
+     "osm_id": 17532262,
+     "country": "PT",
+     "name": "Variante 1.1"
+    },
+    {
+     "osm_id": 2679177,
+     "country": "ES",
+     "name": "Variante del estrecho del Capitán"
+    },
+    {
+     "osm_id": 2695666,
+     "country": "ES",
+     "name": "Variante Pedro López"
+    },
+    {
+     "osm_id": 2695670,
+     "country": "ES",
+     "name": "Variante a Aledo"
+    },
+    {
+     "osm_id": 3312702,
+     "country": "ES",
+     "name": "Vallès Natural. Variant de Sant Llorenç Savall"
+    },
+    {
+     "osm_id": 1138806,
      "country": "DE",
-     "name": "Spessartbogen Zubringer Wächtersbach - Bad Orb"
+     "name": "SAV Abstecher: HW1 - Hülbe auf der Lützelalb"
+    },
+    {
+     "osm_id": 22439,
+     "country": "BE",
+     "name": "Jef Van Hoofpad Variante langs spoorweg"
+    },
+    {
+     "osm_id": 2301559,
+     "country": "BE",
+     "name": "GRP 577 Variante Chevetogne"
+    },
+    {
+     "osm_id": 15652144,
+     "country": "BE",
+     "name": "GR 125 Variante Meuse à Freyr"
+    },
+    {
+     "osm_id": 17808351,
+     "country": "BE",
+     "name": "Promenade Georges Zeyen (variante)"
+    },
+    {
+     "osm_id": 7810566,
+     "country": "CH",
+     "name": "Hint. Rotstein-Obere Tweralp alternativ während Schiesszeiten Schiessplatz Cholloch"
+    },
+    {
+     "osm_id": 7810567,
+     "country": "CH",
+     "name": "Hint. Rotstein-Obere Tweralp alternativ während Schiesszeiten Schiessplatz Cholloch"
     }
    ],
-   "seconds": 21.1
+   "seconds": 13.7
   },
   "cycling": {
    "relations": 117668,
    "totals": {
     "stage": 12463,
-    "standalone": 102505,
     "variant": 939,
+    "standalone": 102505,
     "parent": 1761
    },
    "stage_by_name": 385,
    "variant_by_name": 251,
    "multi_parent_decided": 3031,
    "decided_by": {
-    "children": 1966,
     "name": 295,
+    "children": 1966,
     "id": 127,
     "ancestor": 7
    },
@@ -546,8 +546,8 @@
      "parent": 65
     },
     "BA": {
-     "stage": 2,
      "standalone": 65,
+     "stage": 2,
      "parent": 2
     },
     "BE": {
@@ -558,13 +558,13 @@
      "parent": 158
     },
     "BG": {
+     "stage": 6,
      "standalone": 45,
-     "variant": 1,
-     "stage": 6
+     "variant": 1
     },
     "CH": {
-     "standalone": 455,
      "stage": 230,
+     "standalone": 455,
      "parent": 90,
      "variant": 29,
      "stage_by_name": 4
@@ -582,10 +582,10 @@
      "parent": 36
     },
     "DE": {
-     "stage": 6684,
-     "standalone": 42753,
      "variant": 325,
      "stage_by_name": 174,
+     "standalone": 42753,
+     "stage": 6684,
      "parent": 514
     },
     "DK": {
@@ -620,9 +620,9 @@
     "FR": {
      "variant": 51,
      "stage_by_name": 45,
-     "parent": 136,
      "standalone": 6277,
-     "stage": 1071
+     "stage": 1071,
+     "parent": 136
     },
     "GB": {
      "variant": 289,
@@ -636,17 +636,17 @@
      "stage": 2
     },
     "HR": {
+     "standalone": 518,
      "variant": 3,
      "stage_by_name": 10,
-     "standalone": 518,
-     "parent": 7,
-     "stage": 14
+     "stage": 14,
+     "parent": 7
     },
     "HU": {
      "standalone": 308,
+     "parent": 7,
      "stage": 140,
-     "stage_by_name": 11,
-     "parent": 7
+     "stage_by_name": 11
     },
     "IE": {
      "variant": 26,
@@ -682,11 +682,11 @@
      "parent": 3
     },
     "LV": {
-     "variant": 1,
-     "stage_by_name": 144,
      "stage": 155,
      "standalone": 62,
-     "parent": 4
+     "stage_by_name": 144,
+     "parent": 4,
+     "variant": 1
     },
     "MD": {
      "standalone": 5
@@ -704,66 +704,66 @@
      "standalone": 3
     },
     "NL": {
-     "variant": 17,
-     "stage_by_name": 1,
      "standalone": 16211,
      "stage": 376,
-     "parent": 20
+     "parent": 20,
+     "variant": 17,
+     "stage_by_name": 1
     },
     "NO": {
      "variant": 5,
      "stage_by_name": 3,
-     "stage": 32,
      "standalone": 424,
+     "stage": 32,
      "parent": 14
     },
     "PL": {
      "standalone": 2748,
      "stage": 84,
+     "variant": 1,
      "parent": 9,
-     "stage_by_name": 12,
-     "variant": 1
+     "stage_by_name": 12
     },
     "PT": {
      "stage": 96,
+     "stage_by_name": 1,
      "standalone": 155,
-     "parent": 1,
-     "stage_by_name": 1
+     "parent": 1
     },
     "RO": {
-     "standalone": 84,
      "stage": 32,
-     "parent": 5
+     "parent": 5,
+     "standalone": 84
     },
     "RS": {
      "variant": 3,
      "stage_by_name": 3,
-     "standalone": 43,
-     "stage": 11
+     "stage": 11,
+     "standalone": 43
     },
     "SE": {
-     "standalone": 684,
      "stage": 225,
-     "variant": 53,
-     "parent": 16
+     "standalone": 684,
+     "parent": 16,
+     "variant": 53
     },
     "SI": {
-     "variant": 1,
-     "stage_by_name": 1,
      "standalone": 244,
      "stage": 37,
-     "parent": 2
+     "parent": 2,
+     "variant": 1,
+     "stage_by_name": 1
     },
     "SK": {
      "standalone": 1578,
      "stage": 28,
-     "parent": 7,
-     "stage_by_name": 5
+     "stage_by_name": 5,
+     "parent": 7
     },
     "TR": {
      "standalone": 185,
-     "parent": 2,
      "stage": 5,
+     "parent": 2,
      "stage_by_name": 1
     },
     "UA": {
@@ -801,187 +801,1700 @@
      "name": "A216, alternativa k budoucí A4"
     },
     {
-     "osm_id": 3188708,
-     "country": "AT",
-     "name": "Jubiläumsradweg R1 - Variante Seewinkel"
-    },
-    {
-     "osm_id": 17868148,
-     "country": "AT",
-     "name": "Glemmtalradweg variante"
-    },
-    {
-     "osm_id": 29139,
-     "country": "DE",
-     "name": "Elberadweg Alternative Magdeburg [rechtselbisch]"
-    },
-    {
-     "osm_id": 141205,
-     "country": "DE",
-     "name": "Panoramatour durch das Welland (Alternative)"
-    },
-    {
-     "osm_id": 326688,
-     "country": "DE",
-     "name": "Donauradweg Variante Blautal"
-    },
-    {
-     "osm_id": 918673,
-     "country": "DE",
-     "name": "[D10] Elberadweg Alternativroute Pillnitz"
-    },
-    {
-     "osm_id": 933745,
-     "country": "DE",
-     "name": "ZR1 - Zubringer zum Europaradweg R1"
-    },
-    {
-     "osm_id": 1181408,
-     "country": "DE",
-     "name": "Schambachtalbahn-Alternativ-Radweg"
-    },
-    {
-     "osm_id": 1560539,
-     "country": "DE",
-     "name": "Umleitung U5"
-    },
-    {
-     "osm_id": 1823618,
-     "country": "DE",
-     "name": "Radroute Main-Aisch-Radweg Variante I"
-    },
-    {
-     "osm_id": 1938723,
-     "country": "DE",
-     "name": "Delbrücker Spargelroute De12 Abstecher"
-    },
-    {
-     "osm_id": 2195606,
-     "country": "DE",
-     "name": "[D10] Elberadweg Alternative Neuhaus [linkselbisch]"
-    },
-    {
-     "osm_id": 2262836,
-     "country": "DE",
-     "name": "D12 - Alternative Grünhof"
-    },
-    {
-     "osm_id": 2267179,
-     "country": "DE",
-     "name": "Alz-Inn-Radweg Variante"
-    },
-    {
-     "osm_id": 2348655,
-     "country": "DE",
-     "name": "Eifel-Höhen-Route (Alternativ-Streckenabschnitt)"
-    },
-    {
-     "osm_id": 2402118,
-     "country": "DE",
-     "name": "D12 - Alternative Fähre Kamp-Karnin"
-    },
-    {
-     "osm_id": 2599005,
-     "country": "DE",
-     "name": "Elberadweg Alternative Magdeburg [linkselbisch]"
-    },
-    {
-     "osm_id": 2673452,
-     "country": "DE",
-     "name": "R1a Hardehausen (Warburg) - Alternativen"
-    },
-    {
-     "osm_id": 3932230,
-     "country": "DE",
-     "name": "Bodensee-Königssee-Radweg (Variante über Ortsmitte Bad Feilnbach)"
-    },
-    {
-     "osm_id": 5360290,
-     "country": "DE",
-     "name": "Elster-Radweg (Alternative Elstertrebnitz)"
-    },
-    {
-     "osm_id": 5391807,
-     "country": "DE",
-     "name": "Zootzen (22) - Schweinrich (27) (Variante Schilder)"
-    },
-    {
      "osm_id": 5648756,
      "country": "DE",
      "name": "Via Julia (Alternative)"
     },
     {
-     "osm_id": 6019066,
+     "osm_id": 13108433,
      "country": "DE",
-     "name": "Wolfsradweg Alternativen"
+     "name": "Abstecher Alteburgturm"
     },
     {
-     "osm_id": 6309591,
+     "osm_id": 13279699,
      "country": "DE",
-     "name": "Weserradweg Alternativroute"
+     "name": "72-73 alternativ"
     },
     {
-     "osm_id": 6354910,
-     "country": "DE",
-     "name": "Weserradweg (Alternativstrecke)"
+     "osm_id": 2188986,
+     "country": "ES",
+     "name": "Camino del Destierro del Cid alternativa Castillo"
     },
     {
-     "osm_id": 6432798,
-     "country": "DE",
-     "name": "Goitzsche Rundweg Variante"
+     "osm_id": 2872966,
+     "country": "ES",
+     "name": "e17 Variant a Sant Àngel"
     },
     {
-     "osm_id": 7758088,
-     "country": "DE",
-     "name": "[D10] Elberadweg Alternative Mittellandkanal [rechtselbisch]"
+     "osm_id": 9348713,
+     "country": "ES",
+     "name": "Bypass Casa de Campo"
     },
     {
-     "osm_id": 8464138,
-     "country": "DE",
-     "name": "Saaleradweg Variante Calbe"
+     "osm_id": 17840644,
+     "country": "FR",
+     "name": "Variante autour du Lac"
     },
     {
-     "osm_id": 9160916,
-     "country": "DE",
-     "name": "Zubringer Mulderadweg Aue"
+     "osm_id": 156095,
+     "country": "GB",
+     "name": "White Rose Route - Thirsk Variant"
     },
     {
-     "osm_id": 9675978,
-     "country": "DE",
-     "name": "Donau-Ufer-Radweg (Variante)"
+     "osm_id": 4802173,
+     "country": "GB",
+     "name": "low-level NCN Route 5 alternative (incomplete)"
     },
     {
-     "osm_id": 9939012,
-     "country": "DE",
-     "name": "Zschopautalradweg Variante Wurzelweg"
+     "osm_id": 6154669,
+     "country": "GB",
+     "name": "Regional Route 30 (alternative)"
     },
     {
-     "osm_id": 10117539,
-     "country": "DE",
-     "name": "Werratal Radweg Variante Bahnhof Eschwege"
+     "osm_id": 16025056,
+     "country": "IE",
+     "name": "Newtonstewart Bypass Cycle Path"
     },
     {
-     "osm_id": 11199563,
-     "country": "DE",
-     "name": "Klais bypass"
+     "osm_id": 2562291,
+     "country": "IT",
+     "name": "Ciclovia Francigena - variante Moncenisio"
     },
     {
-     "osm_id": 11858642,
-     "country": "DE",
-     "name": "Dreiland-Radweg Zubringer Basel (Schweizer Teil)"
+     "osm_id": 3531121,
+     "country": "IT",
+     "name": "Lomellina Uno - variante ritorno a Vigevano"
     },
     {
-     "osm_id": 12563810,
-     "country": "DE",
-     "name": "Alternative Energien"
+     "osm_id": 5943324,
+     "country": "IT",
+     "name": "Ciclovia Alpe Adria Radweg variante di Pradamano"
     },
     {
-     "osm_id": 12772506,
+     "osm_id": 11620233,
+     "country": "IT",
+     "name": "DOGA - Dolomiti Garda - Variante Dolce Vita"
+    },
+    {
+     "osm_id": 14091156,
+     "country": "LU",
+     "name": "PC6 alternative"
+    },
+    {
+     "osm_id": 6859228,
+     "country": "NO",
+     "name": "1 Alternative"
+    },
+    {
+     "osm_id": 6859249,
+     "country": "NO",
+     "name": "1 Alternative (Bergen-Trondheim)"
+    },
+    {
+     "osm_id": 17708432,
+     "country": "NO",
+     "name": "Sentrum - Sandviken (alternativ rute)"
+    },
+    {
+     "osm_id": 2406667,
      "country": "DE",
-     "name": "Engelroute, Zubringer vom Hauptbahnhof"
+     "name": "D12 - Alternative Geesow"
+    },
+    {
+     "osm_id": 1781281,
+     "country": "CZ",
+     "name": "Žižkovská-návrh, alternativa PNK"
+    },
+    {
+     "osm_id": 4058431,
+     "country": "CZ",
+     "name": "6A Cyklostezka Ohře - alternativa Kadaň-Želina"
+    },
+    {
+     "osm_id": 19649620,
+     "country": "AT",
+     "name": "Innenstadtring / Variante 2"
+    },
+    {
+     "osm_id": 9865,
+     "country": "BE",
+     "name": "Sint-Annekesroute Variante 1"
+    },
+    {
+     "osm_id": 2450347,
+     "country": "BE",
+     "name": "Gansrijdersroute Variante Stabroek"
+    },
+    {
+     "osm_id": 317245,
+     "country": "DE",
+     "name": "Saaleradweg Variante"
+    },
+    {
+     "osm_id": 2393506,
+     "country": "DE",
+     "name": "Fränkischer Karpfenradweg (Alternativroute)"
+    },
+    {
+     "osm_id": 3839529,
+     "country": "DE",
+     "name": "Sächsische Städteroute Alternativstrecken"
+    },
+    {
+     "osm_id": 9940285,
+     "country": "DE",
+     "name": "Zschopautalradweg Variante Drebach"
+    },
+    {
+     "osm_id": 13088471,
+     "country": "DE",
+     "name": "BahnRadRoute Hellweg-Weser (Zubringer Bahnhof Brake)"
+    },
+    {
+     "osm_id": 15009726,
+     "country": "DE",
+     "name": "Zubringer vom Bahnhof Erkelenz zu der Route 81-82"
+    },
+    {
+     "osm_id": 18617292,
+     "country": "DK",
+     "name": "Bicycle Route rcn 15-22 Alternative"
+    },
+    {
+     "osm_id": 1558245,
+     "country": "ES",
+     "name": "Variant de la Pobla Llarga"
+    },
+    {
+     "osm_id": 162152,
+     "country": "GB",
+     "name": "The White Rose - Moors Variant"
+    },
+    {
+     "osm_id": 1503237,
+     "country": "GB",
+     "name": "Chilterns Cycleway (road alternative)"
+    },
+    {
+     "osm_id": 1902024,
+     "country": "GB",
+     "name": "NCN 27 alternative"
     }
    ],
-   "seconds": 9.8
+   "seconds": 6.5
+  },
+  "mtb": {
+   "relations": 16467,
+   "totals": {
+    "standalone": 14243,
+    "stage": 1883,
+    "variant": 138,
+    "parent": 203
+   },
+   "stage_by_name": 197,
+   "variant_by_name": 120,
+   "multi_parent_decided": 577,
+   "decided_by": {
+    "id": 42,
+    "children": 210,
+    "name": 7,
+    "ancestor": 1
+   },
+   "unknown_roles": {
+    "optional": 1
+   },
+   "countries": {
+    "AD": {
+     "standalone": 2
+    },
+    "AL": {
+     "standalone": 6
+    },
+    "AT": {
+     "standalone": 1897,
+     "stage": 87,
+     "stage_by_name": 64,
+     "variant": 28,
+     "parent": 21
+    },
+    "BA": {
+     "standalone": 23
+    },
+    "BE": {
+     "standalone": 456,
+     "stage": 18,
+     "parent": 2,
+     "stage_by_name": 18,
+     "variant": 1
+    },
+    "BG": {
+     "standalone": 72
+    },
+    "CH": {
+     "stage": 122,
+     "parent": 21,
+     "standalone": 380,
+     "stage_by_name": 28,
+     "variant": 1
+    },
+    "CY": {
+     "standalone": 19
+    },
+    "CZ": {
+     "standalone": 297,
+     "stage": 42,
+     "parent": 13
+    },
+    "DE": {
+     "standalone": 1673,
+     "variant": 13,
+     "stage_by_name": 9,
+     "stage": 537,
+     "parent": 52
+    },
+    "DK": {
+     "stage": 7,
+     "standalone": 263,
+     "parent": 6,
+     "variant": 3
+    },
+    "EE": {
+     "standalone": 1
+    },
+    "ES": {
+     "standalone": 1106,
+     "stage": 85,
+     "parent": 4,
+     "stage_by_name": 100,
+     "variant": 34
+    },
+    "FI": {
+     "standalone": 159,
+     "stage": 10,
+     "parent": 3
+    },
+    "FR": {
+     "standalone": 3168,
+     "variant": 21,
+     "stage_by_name": 35,
+     "stage": 123,
+     "parent": 21
+    },
+    "GB": {
+     "standalone": 507,
+     "variant": 6,
+     "stage_by_name": 6,
+     "stage": 12,
+     "parent": 3
+    },
+    "GR": {
+     "standalone": 13
+    },
+    "HR": {
+     "stage": 9,
+     "stage_by_name": 9,
+     "standalone": 116
+    },
+    "HU": {
+     "stage": 28,
+     "standalone": 154,
+     "parent": 3
+    },
+    "IE": {
+     "standalone": 43,
+     "parent": 1,
+     "stage": 13
+    },
+    "IS": {
+     "standalone": 9
+    },
+    "IT": {
+     "standalone": 1378,
+     "stage": 729,
+     "stage_by_name": 44,
+     "variant": 29,
+     "parent": 43
+    },
+    "LI": {
+     "standalone": 1
+    },
+    "LT": {
+     "standalone": 1
+    },
+    "LU": {
+     "standalone": 27
+    },
+    "LV": {
+     "standalone": 6
+    },
+    "ME": {
+     "standalone": 1
+    },
+    "MK": {
+     "standalone": 3
+    },
+    "MT": {
+     "standalone": 3
+    },
+    "NL": {
+     "standalone": 410,
+     "variant": 2,
+     "stage_by_name": 2,
+     "stage": 8,
+     "parent": 1
+    },
+    "NO": {
+     "standalone": 120
+    },
+    "PL": {
+     "standalone": 354,
+     "stage": 8,
+     "parent": 1
+    },
+    "PT": {
+     "standalone": 100
+    },
+    "RO": {
+     "standalone": 46
+    },
+    "RS": {
+     "standalone": 28
+    },
+    "SE": {
+     "standalone": 680,
+     "parent": 6,
+     "stage": 26
+    },
+    "SI": {
+     "standalone": 174,
+     "stage": 17,
+     "parent": 1,
+     "stage_by_name": 1
+    },
+    "SK": {
+     "standalone": 382,
+     "stage": 2,
+     "stage_by_name": 1,
+     "parent": 1
+    },
+    "TR": {
+     "standalone": 3
+    },
+    "UA": {
+     "standalone": 162
+    }
+   },
+   "rows_updated": {
+    "route_relations": 16467,
+    "none": 0
+   },
+   "name_fallback_sample": [
+    {
+     "osm_id": 2453905,
+     "country": "AT",
+     "name": "Verbindung 1: Windischgarsten - Garstnertaler Höhenrunde"
+    },
+    {
+     "osm_id": 2453907,
+     "country": "AT",
+     "name": "Verbindung 2: Windischgarsten - Garstnertaler Höhenrunde"
+    },
+    {
+     "osm_id": 2453908,
+     "country": "AT",
+     "name": "Verbindung 3: Windischgarsten - Oberwenger Panoramaroute"
+    },
+    {
+     "osm_id": 2453917,
+     "country": "AT",
+     "name": "Verbindung 4: Spital/Pyhrn - Oberwenger Panoramaroute"
+    },
+    {
+     "osm_id": 2453922,
+     "country": "AT",
+     "name": "Verbindung 5: Spital/Pyhrn - Garstnertaler Höhenrunde"
+    },
+    {
+     "osm_id": 2950743,
+     "country": "AT",
+     "name": "Bike Trail Tirol Etappe 14: Westendorf - Alpbach"
+    },
+    {
+     "osm_id": 2952532,
+     "country": "AT",
+     "name": "Bike Trail Tirol Etappe 13: Kitzbühel - Westendorf"
+    },
+    {
+     "osm_id": 2961404,
+     "country": "AT",
+     "name": "Bike Trail Tirol Etappe 07: Scharnitz - Achensee"
+    },
+    {
+     "osm_id": 2961448,
+     "country": "AT",
+     "name": "Bike Trail Tirol Etappe 16: Zell - Achensee"
+    },
+    {
+     "osm_id": 2961562,
+     "country": "AT",
+     "name": "Bike Trail Tirol Etappe 15: Alpbach - Zell"
+    },
+    {
+     "osm_id": 2962949,
+     "country": "AT",
+     "name": "Bike Trail Tirol Etappe 20: Weerberg - Windegg"
+    },
+    {
+     "osm_id": 2962990,
+     "country": "AT",
+     "name": "Bike Trail Tirol Etappe 18: Mayrhofen - Lanersbach"
+    },
+    {
+     "osm_id": 2963118,
+     "country": "AT",
+     "name": "Bike Trail Tirol Etappe 19: Lanersbach - Geiseljoch - Weerberg"
+    },
+    {
+     "osm_id": 2963426,
+     "country": "AT",
+     "name": "Bike Trail Tirol Etappe 17: Zell - Mayrhofen"
+    },
+    {
+     "osm_id": 2963688,
+     "country": "AT",
+     "name": "Bike Trail Tirol Etappe 21: Windegg - Matrei"
+    },
+    {
+     "osm_id": 2963700,
+     "country": "AT",
+     "name": "Bike Trail Tirol Etappe 22: Matrei - Mieders"
+    },
+    {
+     "osm_id": 2965730,
+     "country": "AT",
+     "name": "Bike Trail Tirol Etappe 30: Ischgl - St. Anton"
+    },
+    {
+     "osm_id": 2970435,
+     "country": "AT",
+     "name": "Bike Trail Tirol Etappe 31: St. Anton - Steeg"
+    },
+    {
+     "osm_id": 2980749,
+     "country": "AT",
+     "name": "Bike Trail Tirol Etappe 25: Sellrain - Kühtai - Oetz"
+    },
+    {
+     "osm_id": 2980780,
+     "country": "AT",
+     "name": "Bike Trail Tirol Etappe 23: Mieders - Mutters"
+    },
+    {
+     "osm_id": 2980781,
+     "country": "AT",
+     "name": "Bike Trail Tirol Etappe 24: Mutters - Sellrain"
+    },
+    {
+     "osm_id": 8293067,
+     "country": "AT",
+     "name": "Zubringer zur Leithaberg-Strecke - ORF Eisenstadt Burgstall - Gscheidkreuz"
+    },
+    {
+     "osm_id": 8293068,
+     "country": "AT",
+     "name": "MTB Zubringer zur Leithaberg-Strecke - L213 - Gscheidkreuz"
+    },
+    {
+     "osm_id": 9227427,
+     "country": "AT",
+     "name": "Weizer Almenland Radtour Alternative"
+    },
+    {
+     "osm_id": 9820095,
+     "country": "AT",
+     "name": "SA 05 | Hundstein - Variante 2"
+    },
+    {
+     "osm_id": 10105747,
+     "country": "AT",
+     "name": "Zubringer Gasthaus Bockerl - Prießnitztal"
+    },
+    {
+     "osm_id": 10917277,
+     "country": "AT",
+     "name": "Variante Bichlalm"
+    },
+    {
+     "osm_id": 10917813,
+     "country": "AT",
+     "name": "Variante Moosalm - Hundsstein"
+    },
+    {
+     "osm_id": 10919833,
+     "country": "AT",
+     "name": "Zubringer Sievering-Grüass Di a Gott Wirt"
+    },
+    {
+     "osm_id": 11077101,
+     "country": "AT",
+     "name": "Zubringer Gießhübl-Parapluie Strecke"
+    },
+    {
+     "osm_id": 11637423,
+     "country": "AT",
+     "name": "Der große Jogl - Etappe 1: Vorau - St. Jakob im Walde"
+    },
+    {
+     "osm_id": 11637584,
+     "country": "AT",
+     "name": "Der große Jogl - Etappe 1: Arzberghütte"
+    },
+    {
+     "osm_id": 11637585,
+     "country": "AT",
+     "name": "Der große Jogl - Etappe 1: Hochwechsel"
+    },
+    {
+     "osm_id": 11637748,
+     "country": "AT",
+     "name": "Der große Jogl - Etappe 2: St. Jakob im Walde - Fischbach"
+    },
+    {
+     "osm_id": 11637821,
+     "country": "AT",
+     "name": "Der große Jogl - Etappe 2: Roseggerhaus"
+    },
+    {
+     "osm_id": 11637831,
+     "country": "AT",
+     "name": "Der große Jogl - Etappe 2: Steinriegel"
+    },
+    {
+     "osm_id": 11637918,
+     "country": "AT",
+     "name": "Der große Jogl - Etappe 2: Heuereckschutzhütte"
+    },
+    {
+     "osm_id": 11638144,
+     "country": "AT",
+     "name": "Der große Jogl - Etappe 3: Fischbach - Wenigzell"
+    },
+    {
+     "osm_id": 11638223,
+     "country": "AT",
+     "name": "Der große Jogl - Etappe 4: Wenigzell - Vorau: Variante 1"
+    },
+    {
+     "osm_id": 11638276,
+     "country": "AT",
+     "name": "Der große Jogl - Etappe 4: Masenberg"
+    }
+   ],
+   "seconds": 1.7
+  },
+  "ski": {
+   "relations": 3828,
+   "totals": {
+    "standalone": 3757,
+    "variant": 39,
+    "parent": 5,
+    "stage": 27
+   },
+   "stage_by_name": 5,
+   "variant_by_name": 38,
+   "multi_parent_decided": 44,
+   "decided_by": {
+    "id": 1
+   },
+   "unknown_roles": {},
+   "countries": {
+    "AT": {
+     "standalone": 730,
+     "variant": 7,
+     "stage_by_name": 7
+    },
+    "BE": {
+     "standalone": 1
+    },
+    "BG": {
+     "standalone": 1
+    },
+    "CH": {
+     "standalone": 319,
+     "variant": 1,
+     "parent": 2
+    },
+    "CZ": {
+     "standalone": 199
+    },
+    "DE": {
+     "standalone": 886,
+     "stage": 18,
+     "variant": 10,
+     "stage_by_name": 10,
+     "parent": 2
+    },
+    "DK": {
+     "standalone": 1
+    },
+    "EE": {
+     "standalone": 21
+    },
+    "ES": {
+     "standalone": 136,
+     "variant": 13,
+     "stage_by_name": 13
+    },
+    "FI": {
+     "standalone": 85
+    },
+    "FR": {
+     "standalone": 259,
+     "variant": 6,
+     "stage_by_name": 6
+    },
+    "HU": {
+     "standalone": 4,
+     "stage": 4,
+     "stage_by_name": 4
+    },
+    "IT": {
+     "standalone": 99,
+     "variant": 2,
+     "stage_by_name": 2
+    },
+    "LV": {
+     "standalone": 10
+    },
+    "NO": {
+     "standalone": 306,
+     "stage": 1,
+     "stage_by_name": 1
+    },
+    "PL": {
+     "standalone": 70
+    },
+    "RO": {
+     "standalone": 7
+    },
+    "SE": {
+     "standalone": 295,
+     "stage": 4,
+     "parent": 1
+    },
+    "SI": {
+     "standalone": 6
+    },
+    "SK": {
+     "standalone": 322
+    }
+   },
+   "rows_updated": {
+    "route_relations": 3828,
+    "none": 0
+   },
+   "name_fallback_sample": [
+    {
+     "osm_id": 2654148,
+     "country": "AT",
+     "name": "Hochau (Kurze Variante)"
+    },
+    {
+     "osm_id": 3544448,
+     "country": "AT",
+     "name": "Skitour Klingspitz, Variante über Marbachhöhe"
+    },
+    {
+     "osm_id": 13804305,
+     "country": "AT",
+     "name": "Variante Sonnenloipe"
+    },
+    {
+     "osm_id": 18631314,
+     "country": "AT",
+     "name": "Möserloipe Variante 2"
+    },
+    {
+     "osm_id": 18631322,
+     "country": "AT",
+     "name": "Möserloipe Variante 3"
+    },
+    {
+     "osm_id": 18631388,
+     "country": "AT",
+     "name": "Möserloipe Variante 1"
+    },
+    {
+     "osm_id": 2772537,
+     "country": "DE",
+     "name": "Spitzingsee - Rotwand (Variante)"
+    },
+    {
+     "osm_id": 2812540,
+     "country": "DE",
+     "name": "Wimbach - Watzmannkar (Variante zum 5. Watzmannkind)"
+    },
+    {
+     "osm_id": 2835656,
+     "country": "DE",
+     "name": "Hammerstiel - Watzmannkar (Variante zum 3. Watzmannkind)"
+    },
+    {
+     "osm_id": 2850615,
+     "country": "DE",
+     "name": "Rotwand Reib'n (Kurze Variante)"
+    },
+    {
+     "osm_id": 4599916,
+     "country": "DE",
+     "name": "Zubringer Bruckmühl"
+    },
+    {
+     "osm_id": 4606021,
+     "country": "DE",
+     "name": "Zubringer Vagener Au"
+    },
+    {
+     "osm_id": 6812296,
+     "country": "DE",
+     "name": "Alternativ-Loipe Auerhahnstraße"
+    },
+    {
+     "osm_id": 7922234,
+     "country": "DE",
+     "name": "Zubringer Loipe Osterhofen"
+    },
+    {
+     "osm_id": 7924822,
+     "country": "DE",
+     "name": "Priental-Loipe (klassisch) - Variante"
+    },
+    {
+     "osm_id": 9553719,
+     "country": "DE",
+     "name": "Zubringer Lenneplätze"
+    },
+    {
+     "osm_id": 4457926,
+     "country": "AT",
+     "name": "Nachtloipe (Variante)"
+    },
+    {
+     "osm_id": 4185254,
+     "country": "ES",
+     "name": "descenso con esquís: Variante Canal O Foratulas"
+    },
+    {
+     "osm_id": 4185373,
+     "country": "ES",
+     "name": "esquí de montaña: alternativa al camino Brazato"
+    },
+    {
+     "osm_id": 4187383,
+     "country": "ES",
+     "name": "descenso con esquís: descenso alternativo el Verde"
+    },
+    {
+     "osm_id": 4232428,
+     "country": "ES",
+     "name": "Skimo: tramo alternativo Vuelta de las Maladetas por Pico e Ibonet Cordier"
+    },
+    {
+     "osm_id": 4257586,
+     "country": "ES",
+     "name": "esquí de montaña: variante ascenso final Espelunciecha"
+    },
+    {
+     "osm_id": 4257634,
+     "country": "ES",
+     "name": "esquí de montaña: variante Culivillas"
+    },
+    {
+     "osm_id": 6612921,
+     "country": "ES",
+     "name": "esquí de montaña: variante Vértice Anayet por Cordal"
+    },
+    {
+     "osm_id": 7014649,
+     "country": "ES",
+     "name": "Variante descenso Labaza"
+    },
+    {
+     "osm_id": 7043583,
+     "country": "ES",
+     "name": "Variante descenso el Verde"
+    },
+    {
+     "osm_id": 7043661,
+     "country": "ES",
+     "name": "variante ascenso el Verde"
+    },
+    {
+     "osm_id": 7088686,
+     "country": "ES",
+     "name": "esquí de montaña: variante ascenso Sabocos, mediante flanqueo"
+    },
+    {
+     "osm_id": 7215297,
+     "country": "ES",
+     "name": "ascenso alternativo directo Collado Cregüeña (Aragüells)"
+    },
+    {
+     "osm_id": 6618708,
+     "country": "FR",
+     "name": "Variante ascenso a Licoué con esquís"
+    },
+    {
+     "osm_id": 6618709,
+     "country": "FR",
+     "name": "Variante en ascenso"
+    },
+    {
+     "osm_id": 7014919,
+     "country": "FR",
+     "name": "Variante en ascenso"
+    },
+    {
+     "osm_id": 7160486,
+     "country": "FR",
+     "name": "freeride: Badet variante"
+    },
+    {
+     "osm_id": 7190309,
+     "country": "FR",
+     "name": "freeride: variante le couloir"
+    },
+    {
+     "osm_id": 7190311,
+     "country": "FR",
+     "name": "Variante entrada Lagopède"
+    },
+    {
+     "osm_id": 7044100,
+     "country": "ES",
+     "name": "Variante ascenso Canalroya"
+    },
+    {
+     "osm_id": 5899967,
+     "country": "HU",
+     "name": "4. sífutó pálya"
+    },
+    {
+     "osm_id": 5900274,
+     "country": "HU",
+     "name": "1. sífutó pálya"
+    },
+    {
+     "osm_id": 5900325,
+     "country": "HU",
+     "name": "2. sífutó pálya"
+    },
+    {
+     "osm_id": 5900327,
+     "country": "HU",
+     "name": "3. sífutó pálya"
+    }
+   ],
+   "seconds": 0.3
+  },
+  "nordic": {
+   "relations": 6684,
+   "totals": {
+    "standalone": 6484,
+    "variant": 42,
+    "stage": 150,
+    "parent": 8
+   },
+   "stage_by_name": 59,
+   "variant_by_name": 40,
+   "multi_parent_decided": 100,
+   "decided_by": {
+    "id": 1
+   },
+   "unknown_roles": {},
+   "countries": {
+    "AT": {
+     "standalone": 698,
+     "variant": 9,
+     "stage_by_name": 9,
+     "stage": 1,
+     "parent": 1
+    },
+    "BE": {
+     "standalone": 56
+    },
+    "BG": {
+     "standalone": 1
+    },
+    "CH": {
+     "standalone": 347,
+     "stage": 63,
+     "variant": 1,
+     "parent": 2
+    },
+    "CZ": {
+     "standalone": 273,
+     "variant": 2,
+     "stage_by_name": 2
+    },
+    "DE": {
+     "standalone": 1333,
+     "stage": 24,
+     "stage_by_name": 12,
+     "variant": 10,
+     "parent": 2
+    },
+    "DK": {
+     "standalone": 2
+    },
+    "EE": {
+     "standalone": 69
+    },
+    "ES": {
+     "standalone": 20
+    },
+    "FI": {
+     "standalone": 815,
+     "parent": 1,
+     "variant": 1
+    },
+    "FR": {
+     "standalone": 997,
+     "stage": 33,
+     "stage_by_name": 44,
+     "variant": 12,
+     "parent": 1
+    },
+    "HU": {
+     "standalone": 7,
+     "stage": 4,
+     "stage_by_name": 4
+    },
+    "IT": {
+     "standalone": 246,
+     "variant": 7,
+     "stage_by_name": 7
+    },
+    "LI": {
+     "standalone": 4
+    },
+    "LV": {
+     "standalone": 29
+    },
+    "NO": {
+     "standalone": 341,
+     "stage": 21,
+     "stage_by_name": 21
+    },
+    "PL": {
+     "standalone": 109
+    },
+    "SE": {
+     "standalone": 836,
+     "stage": 4,
+     "parent": 1
+    },
+    "SI": {
+     "standalone": 7
+    },
+    "SK": {
+     "standalone": 290
+    },
+    "UA": {
+     "standalone": 4
+    }
+   },
+   "rows_updated": {
+    "route_relations": 6684,
+    "none": 0
+   },
+   "name_fallback_sample": [
+    {
+     "osm_id": 2654148,
+     "country": "AT",
+     "name": "Hochau (Kurze Variante)"
+    },
+    {
+     "osm_id": 11010960,
+     "country": "AT",
+     "name": "Zubringer Wasenmoosloipe"
+    },
+    {
+     "osm_id": 13804305,
+     "country": "AT",
+     "name": "Variante Sonnenloipe"
+    },
+    {
+     "osm_id": 16806749,
+     "country": "AT",
+     "name": "Zubringer Loipe"
+    },
+    {
+     "osm_id": 18631314,
+     "country": "AT",
+     "name": "Möserloipe Variante 2"
+    },
+    {
+     "osm_id": 18631322,
+     "country": "AT",
+     "name": "Möserloipe Variante 3"
+    },
+    {
+     "osm_id": 18631388,
+     "country": "AT",
+     "name": "Möserloipe Variante 1"
+    },
+    {
+     "osm_id": 20057902,
+     "country": "AT",
+     "name": "Zubringer Lärchenwald"
+    },
+    {
+     "osm_id": 4465882,
+     "country": "CZ",
+     "name": "Zubringer von Unterwiesenthal"
+    },
+    {
+     "osm_id": 2082245,
+     "country": "DE",
+     "name": "5 - Verbindungsloipe Spiegelau-Riedlhütte = Teilstück Bayerwaldloip"
+    },
+    {
+     "osm_id": 4566584,
+     "country": "DE",
+     "name": "Zubringer Mühlenberg I"
+    },
+    {
+     "osm_id": 4566585,
+     "country": "DE",
+     "name": "Zubringer Mühlenberg II"
+    },
+    {
+     "osm_id": 4599916,
+     "country": "DE",
+     "name": "Zubringer Bruckmühl"
+    },
+    {
+     "osm_id": 4606021,
+     "country": "DE",
+     "name": "Zubringer Vagener Au"
+    },
+    {
+     "osm_id": 6812296,
+     "country": "DE",
+     "name": "Alternativ-Loipe Auerhahnstraße"
+    },
+    {
+     "osm_id": 7922234,
+     "country": "DE",
+     "name": "Zubringer Loipe Osterhofen"
+    },
+    {
+     "osm_id": 7924822,
+     "country": "DE",
+     "name": "Priental-Loipe (klassisch) - Variante"
+    },
+    {
+     "osm_id": 9553719,
+     "country": "DE",
+     "name": "Zubringer Lenneplätze"
+    },
+    {
+     "osm_id": 11091005,
+     "country": "DE",
+     "name": "9 - Rundkurs Filzwald"
+    },
+    {
+     "osm_id": 13020321,
+     "country": "DE",
+     "name": "Zubringer Gschwendloipe"
+    },
+    {
+     "osm_id": 5893756,
+     "country": "DE",
+     "name": "Knülle Loipe (Variante)"
+    },
+    {
+     "osm_id": 4457926,
+     "country": "AT",
+     "name": "Nachtloipe (Variante)"
+    },
+    {
+     "osm_id": 4465883,
+     "country": "CZ",
+     "name": "Zubringer zur Skiarena"
+    },
+    {
+     "osm_id": 1999553,
+     "country": "FR",
+     "name": "7 - L'Écureuil"
+    },
+    {
+     "osm_id": 1999554,
+     "country": "FR",
+     "name": "11- La Petite Scandinave"
+    },
+    {
+     "osm_id": 1999555,
+     "country": "FR",
+     "name": "9 - Le Lac"
+    },
+    {
+     "osm_id": 2004709,
+     "country": "FR",
+     "name": "10 - La Panoramique"
+    },
+    {
+     "osm_id": 2004710,
+     "country": "FR",
+     "name": "12 - Les Toboggans"
+    },
+    {
+     "osm_id": 2164225,
+     "country": "FR",
+     "name": "6 Raccourci Les Bioqués"
+    },
+    {
+     "osm_id": 2749355,
+     "country": "FR",
+     "name": "1 - Le Village / Verte"
+    },
+    {
+     "osm_id": 2749357,
+     "country": "FR",
+     "name": "2 - Le Village / Bleue"
+    },
+    {
+     "osm_id": 2859665,
+     "country": "FR",
+     "name": "Tour des Roches - variante"
+    },
+    {
+     "osm_id": 4489751,
+     "country": "FR",
+     "name": "8 - Les Échassoles"
+    },
+    {
+     "osm_id": 4601976,
+     "country": "FR",
+     "name": "5 - La Piste des Ours"
+    },
+    {
+     "osm_id": 4602136,
+     "country": "FR",
+     "name": "3 - Les Tranchants"
+    },
+    {
+     "osm_id": 4605356,
+     "country": "FR",
+     "name": "1 - Les Eperouses"
+    },
+    {
+     "osm_id": 4606005,
+     "country": "FR",
+     "name": "2 - Le Petit Bois"
+    },
+    {
+     "osm_id": 10843148,
+     "country": "FR",
+     "name": "Eyguine variante"
+    },
+    {
+     "osm_id": 10851797,
+     "country": "FR",
+     "name": "Le pré variante"
+    },
+    {
+     "osm_id": 12022850,
+     "country": "FR",
+     "name": "Variante"
+    }
+   ],
+   "seconds": 0.6
+  },
+  "winter_hike": {
+   "relations": 735,
+   "totals": {
+    "standalone": 726,
+    "variant": 3,
+    "stage": 5,
+    "parent": 1
+   },
+   "stage_by_name": 4,
+   "variant_by_name": 3,
+   "multi_parent_decided": 7,
+   "decided_by": {},
+   "unknown_roles": {},
+   "countries": {
+    "AD": {
+     "standalone": 1
+    },
+    "AT": {
+     "standalone": 135
+    },
+    "BE": {
+     "standalone": 7
+    },
+    "CH": {
+     "standalone": 184,
+     "variant": 1,
+     "stage_by_name": 1
+    },
+    "CZ": {
+     "standalone": 1
+    },
+    "DE": {
+     "standalone": 102,
+     "variant": 2,
+     "stage_by_name": 2
+    },
+    "ES": {
+     "standalone": 5
+    },
+    "FI": {
+     "standalone": 4
+    },
+    "FR": {
+     "standalone": 232,
+     "stage": 5,
+     "stage_by_name": 4,
+     "parent": 1
+    },
+    "IT": {
+     "standalone": 33
+    },
+    "LI": {
+     "standalone": 2
+    },
+    "NO": {
+     "standalone": 18
+    },
+    "SE": {
+     "standalone": 1
+    },
+    "UA": {
+     "standalone": 1
+    }
+   },
+   "rows_updated": {
+    "route_relations": 735,
+    "none": 0
+   },
+   "name_fallback_sample": [
+    {
+     "osm_id": 19547602,
+     "country": "CH",
+     "name": "Scheeschuhtour Eggberge-Ruogig Trail Variante"
+    },
+    {
+     "osm_id": 16813338,
+     "country": "DE",
+     "name": "Zubringer zum Winterwanderweg Schwarzes Moor - Frankenheim"
+    },
+    {
+     "osm_id": 16813339,
+     "country": "DE",
+     "name": "Zubringer zum Winterwanderweg Schwarzes Moor - Birx"
+    },
+    {
+     "osm_id": 2749354,
+     "country": "FR",
+     "name": "5 - Les Narces / Bleue"
+    },
+    {
+     "osm_id": 2749356,
+     "country": "FR",
+     "name": "4 - Les Narces / Verte"
+    },
+    {
+     "osm_id": 16691062,
+     "country": "FR",
+     "name": "6 - Les Narces / Noire"
+    },
+    {
+     "osm_id": 16789507,
+     "country": "FR",
+     "name": "7 - Liaison Boucles des Feuilles / Narces"
+    }
+   ],
+   "seconds": 0.1
+  },
+  "canoe": {
+   "relations": 673,
+   "totals": {
+    "standalone": 587,
+    "parent": 13,
+    "stage": 69,
+    "variant": 4
+   },
+   "stage_by_name": 0,
+   "variant_by_name": 0,
+   "multi_parent_decided": 16,
+   "decided_by": {
+    "id": 1,
+    "ancestor": 3,
+    "children": 12
+   },
+   "unknown_roles": {},
+   "countries": {
+    "AT": {
+     "standalone": 4
+    },
+    "BE": {
+     "standalone": 1
+    },
+    "CH": {
+     "standalone": 1
+    },
+    "CZ": {
+     "standalone": 8
+    },
+    "DE": {
+     "standalone": 58,
+     "parent": 7,
+     "stage": 27
+    },
+    "DK": {
+     "standalone": 12
+    },
+    "EE": {
+     "standalone": 1
+    },
+    "FI": {
+     "standalone": 22
+    },
+    "FR": {
+     "standalone": 146
+    },
+    "GB": {
+     "standalone": 4
+    },
+    "HU": {
+     "standalone": 1
+    },
+    "LT": {
+     "standalone": 1
+    },
+    "NL": {
+     "standalone": 284,
+     "stage": 38,
+     "parent": 4,
+     "variant": 4
+    },
+    "PL": {
+     "standalone": 14,
+     "stage": 4,
+     "parent": 2
+    },
+    "SE": {
+     "standalone": 29
+    },
+    "SK": {
+     "standalone": 1
+    }
+   },
+   "rows_updated": {
+    "route_relations": 673,
+    "none": 0
+   },
+   "name_fallback_sample": [],
+   "seconds": 0.1
+  },
+  "horse": {
+   "relations": 3422,
+   "totals": {
+    "standalone": 3235,
+    "stage": 134,
+    "variant": 31,
+    "parent": 22
+   },
+   "stage_by_name": 9,
+   "variant_by_name": 12,
+   "multi_parent_decided": 21,
+   "decided_by": {},
+   "unknown_roles": {
+    "member": 1
+   },
+   "countries": {
+    "AT": {
+     "standalone": 39
+    },
+    "BE": {
+     "standalone": 129,
+     "stage": 3,
+     "stage_by_name": 3
+    },
+    "CH": {
+     "standalone": 10
+    },
+    "CZ": {
+     "standalone": 197
+    },
+    "DE": {
+     "standalone": 209,
+     "variant": 9,
+     "stage_by_name": 14,
+     "stage": 33,
+     "parent": 10
+    },
+    "DK": {
+     "standalone": 16,
+     "variant": 18,
+     "stage": 21,
+     "parent": 1
+    },
+    "ES": {
+     "standalone": 7
+    },
+    "FI": {
+     "standalone": 4
+    },
+    "FR": {
+     "standalone": 152,
+     "parent": 7,
+     "stage": 66,
+     "variant": 3,
+     "stage_by_name": 2
+    },
+    "GB": {
+     "standalone": 86,
+     "stage": 4,
+     "parent": 1,
+     "variant": 1,
+     "stage_by_name": 1
+    },
+    "GR": {
+     "standalone": 1
+    },
+    "HU": {
+     "standalone": 19
+    },
+    "IE": {
+     "standalone": 37
+    },
+    "IT": {
+     "standalone": 23,
+     "stage": 3,
+     "stage_by_name": 1,
+     "parent": 1
+    },
+    "LU": {
+     "standalone": 2
+    },
+    "NL": {
+     "standalone": 2114
+    },
+    "NO": {
+     "standalone": 4
+    },
+    "PL": {
+     "standalone": 128,
+     "stage": 1,
+     "parent": 1
+    },
+    "PT": {
+     "standalone": 1
+    },
+    "RO": {
+     "standalone": 3
+    },
+    "SE": {
+     "standalone": 8,
+     "stage": 3,
+     "parent": 1
+    },
+    "SI": {
+     "standalone": 2
+    },
+    "SK": {
+     "standalone": 41
+    },
+    "UA": {
+     "standalone": 3
+    }
+   },
+   "rows_updated": {
+    "route_relations": 3422,
+    "none": 0
+   },
+   "name_fallback_sample": [
+    {
+     "osm_id": 17899880,
+     "country": "BE",
+     "name": "11. Promenade du Val-Dieu"
+    },
+    {
+     "osm_id": 17899915,
+     "country": "BE",
+     "name": "14. Cimetière américain"
+    },
+    {
+     "osm_id": 17899918,
+     "country": "BE",
+     "name": "15. Promenade de la Berwinne"
+    },
+    {
+     "osm_id": 2149972,
+     "country": "DE",
+     "name": "Deutscher Reiterpfad Alternativstrecke für Kutschen"
+    },
+    {
+     "osm_id": 2152055,
+     "country": "DE",
+     "name": "Deutscher Reiterpfad Nr. 1 Alternativroute"
+    },
+    {
+     "osm_id": 2182870,
+     "country": "DE",
+     "name": "Deutscher Reiterpfad Nr. 1 Alternativstrecke"
+    },
+    {
+     "osm_id": 5555930,
+     "country": "DE",
+     "name": "Tour 1: Bad Belzig - Schmerwitz - Buckau"
+    },
+    {
+     "osm_id": 6449914,
+     "country": "DE",
+     "name": "Reiten im Leistruper Wald (Zubringer Oberschönhagen)"
+    },
+    {
+     "osm_id": 6450408,
+     "country": "DE",
+     "name": "Reiten im Leistruper Wald (Zubringer Fissenknick)"
+    },
+    {
+     "osm_id": 6450410,
+     "country": "DE",
+     "name": "Reiten im Leistruper Wald (Zubringer Bad Meinberg)"
+    },
+    {
+     "osm_id": 6450416,
+     "country": "DE",
+     "name": "Reiten im Leistruper Wald (Zubringer Lenstrup)"
+    },
+    {
+     "osm_id": 6450463,
+     "country": "DE",
+     "name": "Reiten im Leistruper Wald (Zubringer Diestelbruch)"
+    },
+    {
+     "osm_id": 7108997,
+     "country": "DE",
+     "name": "Tour 3: Görzke - Wiesenburg - Mützdorf"
+    },
+    {
+     "osm_id": 7113711,
+     "country": "DE",
+     "name": "Tour 2: Reetzerhütten - Webig - Weitzgrund"
+    },
+    {
+     "osm_id": 7244827,
+     "country": "DE",
+     "name": "Tour 5: Baitz - Schlalach - Wühlmühle"
+    },
+    {
+     "osm_id": 7244828,
+     "country": "DE",
+     "name": "Tour 4: Baitz - Bad Belzig - Grubo"
+    },
+    {
+     "osm_id": 13445974,
+     "country": "DE",
+     "name": "Schusteracht Reitweg Alternativroute"
+    },
+    {
+     "osm_id": 17371366,
+     "country": "FR",
+     "name": "Trace équestre Saint-Bresson - Variante 01"
+    },
+    {
+     "osm_id": 17374992,
+     "country": "FR",
+     "name": "Les sources en forêt - Variante 01"
+    },
+    {
+     "osm_id": 11557397,
+     "country": "GB",
+     "name": "Tees Railway Path (cycle variant)"
+    },
+    {
+     "osm_id": 3999867,
+     "country": "IT",
+     "name": "138 - Horse"
+    }
+   ],
+   "seconds": 0.2
+  },
+  "skating": {
+   "relations": 231,
+   "totals": {
+    "standalone": 205,
+    "stage": 19,
+    "parent": 5,
+    "variant": 2
+   },
+   "stage_by_name": 0,
+   "variant_by_name": 0,
+   "multi_parent_decided": 0,
+   "decided_by": {},
+   "unknown_roles": {},
+   "countries": {
+    "AT": {
+     "standalone": 4,
+     "stage": 2,
+     "parent": 1
+    },
+    "BE": {
+     "standalone": 6
+    },
+    "CH": {
+     "standalone": 18,
+     "stage": 17,
+     "parent": 3
+    },
+    "CZ": {
+     "standalone": 8
+    },
+    "DE": {
+     "standalone": 94
+    },
+    "ES": {
+     "standalone": 2
+    },
+    "FI": {
+     "standalone": 1
+    },
+    "FR": {
+     "standalone": 6
+    },
+    "HU": {
+     "standalone": 1
+    },
+    "IT": {
+     "standalone": 1
+    },
+    "LV": {
+     "standalone": 1
+    },
+    "NL": {
+     "standalone": 57,
+     "variant": 2,
+     "parent": 1
+    },
+    "PL": {
+     "standalone": 5
+    },
+    "SK": {
+     "standalone": 1
+    }
+   },
+   "rows_updated": {
+    "route_relations": 231,
+    "none": 0
+   },
+   "name_fallback_sample": [],
+   "seconds": 0.0
   }
  },
  "francigena": {

@@ -658,6 +658,32 @@ destination attachments; the R6 caps are per activity for that reason.
 ```
 
 > **Done when:** each activity has published routes in at least five countries, trail running never surfaces a route that fails its own runnability rules, and node-network countries show a network summary rather than a route list.
+>
+> **Shipped 2026-09-13.** The relation graph turned out to be the right place to put every activity, so R1 to R6 were reused rather than re-implemented: the hierarchy, the multi-parent resolution and the dedup are all activity-agnostic, and a ski tour has stages and variants exactly as a pilgrim path does.
+>
+> | Activity | Relations | Countries | Parents | Stages |
+> |---|---|---|---|---|
+> | MTB | 16,467 | 40 | 203 | 1,883 |
+> | Nordic ski | 6,684 | 21 | 8 | 150 |
+> | Ski touring | 3,828 | 20 | 5 | 27 |
+> | Horse riding | 3,422 | 24 | 22 | 134 |
+> | Winter hiking | 735 | 14 | 1 | 5 |
+> | Canoe | 673 | 16 | 13 | 69 |
+> | Skating | 231 | 14 | 5 | 19 |
+>
+> Every one clears the five-country bar by a wide margin, including the two the prompt's own list implied might be thin. Winter hiking is not in the prompt at all; `piste:type=hike` is a real tag with 735 relations and it would have been dishonest to drop it because no line of the spec named it.
+>
+> **One scanning fix was needed and it was not small.** `route=ski` is the minority spelling: 399 of Austria's 401 ski tours carry `piste:type=skitour` with no `route` key, so a `KeyFilter("route")` pass finds almost none of them. The scan now runs two filtered passes and de-duplicates by relation id.
+>
+> **Via ferrata is not built, with a reason.** It is a WAY tag (`highway=via_ferrata`, 1,062 ways in Austria alone), not a relation, so it has no route to hang a hierarchy on. Publishing it would mean a way-assembly pass like `derive_routes.py`, which is a different piece of work from extending the relation graph, and pretending otherwise by shipping unassembled ways would put an exposed cable climb in a list of walks.
+>
+> **Derived activities are FLAGS, not rows** (`derived_activities.py`). One line on the ground is one line in the store however many sports it serves, so a walk that is also a good run is one route with two audiences rather than two rows to dedup, attach and ship twice. Trail running qualifies 3,187 routes in 31 countries and gravel 2,343 in 33, and **no flagged route fails its own rules**, checked by re-running the predicate over every flag. The rules are in the module docstring because a derived activity is an opinion wearing a filter's clothes. Running is scored for runnability rather than merely filtered, and the second-best result in Europe is called "Emmen hardlooprondje 10 km", which the rules found without being told to look for the word.
+>
+> **Bikepacking is not built**, because `stage_planner.py` already segments long cycle routes into day stages with an overnight near each break, behind ten hard checks, and publishes 15 tours. What is missing there is candidate routes, not a second segmenter.
+>
+> **Node networks get a sentence, never a list** (`node_networks.py`). The Dutch and Belgian mesh is 50,600 km in 24,171 signed edges, each a two kilometre connector between numbered posts, and the cycling harvest is right to filter it out of the catalogue: publishing it would give the Netherlands forty thousand two-kilometre "routes". But the silence that followed was false, so the page now says what is actually there. Amsterdam: 464 km of signed routes within 15 km, on 181 numbered junctions, the nearest one kilometre away. 188 of 192 destinations in those two countries get one.
+>
+> **Nothing was displaced**, which is what the R6 caps are per activity for: re-running the attach after adding seven activities left hiking at 16,493 rows and cycling at 1,864, both unchanged.
 
 ---
 

@@ -393,7 +393,8 @@ export function DestinationPage({
     highlights: highlights.length > 0 || !loading,
     do: doItems.length > 0,
     around: !!(around || nearbyRows.length),
-    routes: (routeRows.hiking?.length || 0) + (routeRows.cycling?.length || 0) > 0,
+    routes: (routeRows.hiking?.length || 0) + (routeRows.cycling?.length || 0) > 0
+      || !!routeRows.node_network?.km,
     trips: trips.length > 0,
     members: members?.length > 0,
     rating: verdict?.score != null,

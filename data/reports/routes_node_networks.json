@@ -1,0 +1,64 @@
+{
+ "generated_at": "2026-09-13T19:51:59+00:00",
+ "radius_km": 15.0,
+ "min_km": 25.0,
+ "countries": [
+  "BE",
+  "NL"
+ ],
+ "destinations_considered": 192,
+ "destinations_with_a_network": 188,
+ "biggest": [
+  {
+   "id": "gem:ronse",
+   "km": 823,
+   "junctions": 400
+  },
+  {
+   "id": "gem:hunnerberg",
+   "km": 760,
+   "junctions": 343
+  },
+  {
+   "id": "gem:rotterdam",
+   "km": 757,
+   "junctions": 461
+  },
+  {
+   "id": "gem:hoogmade",
+   "km": 746,
+   "junctions": 411
+  },
+  {
+   "id": "gem:lier",
+   "km": 732,
+   "junctions": 303
+  },
+  {
+   "id": "gem:utrecht",
+   "km": 726,
+   "junctions": 390
+  },
+  {
+   "id": "gem:soesterberg",
+   "km": 712,
+   "junctions": 366
+  },
+  {
+   "id": "gem:diksmuide",
+   "km": 711,
+   "junctions": 329
+  },
+  {
+   "id": "gem:leiden",
+   "km": 710,
+   "junctions": 425
+  },
+  {
+   "id": "gem:arnhem",
+   "km": 704,
+   "junctions": 270
+  }
+ ],
+ "seconds": 12.2
+}

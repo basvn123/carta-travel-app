@@ -1532,6 +1532,8 @@ TASKS = [
         "guard": guard_trailslab_up,
         "cmds": [
             [PY, "pipeline/trails/transit_stops.py"],
+            [PY, "pipeline/trails/derived_activities.py"],
+            [PY, "pipeline/trails/node_networks.py"],
             [PY, "pipeline/trails/attach.py"],
         ],
         "note": ("ROUTES.md R6. Writes data/derived/routes_attach.json, which "
@@ -1545,7 +1547,12 @@ TASKS = [
                  "passes named underneath, because a superroute is a "
                  "container rather than a walk and almost never publishes. "
                  "transit_stops.py runs first and is cheap after the first "
-                 "pass: it only re-reads extracts already on disk."),
+                 "pass: it only re-reads extracts already on disk. "
+                 "derived_activities.py (ROUTES.md R8) flags trail running "
+                 "and gravel on the routes that already exist rather than "
+                 "creating rows, and node_networks.py measures the Dutch and "
+                 "Belgian numbered mesh, which is deliberately never "
+                 "published as routes; the attach carries both."),
     },
     {
         "key": "joins",

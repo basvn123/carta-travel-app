@@ -31918,3 +31918,16 @@ button.ai-sched-main:focus-visible {
 .rstage-off { font-size: 0.8rem; color: var(--ink-mute); }
 .rbase-main { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
 .rbase-sub { font-size: 0.84rem; color: var(--ink-soft); }
+
+/* Node-network cycling (ROUTES.md R8): a measurement of the mesh, never a
+   list of its edges. Sits inside the routes block, after the routes. */
+.drh-nodenet { margin-top: 16px; }
+.drh-nn-line {
+  margin: 0;
+  font-weight: 600;
+}
+.drh-nn-how {
+  margin: 3px 0 0;
+  font-size: 0.84rem;
+  color: var(--ink-soft);
+}
