@@ -655,7 +655,7 @@ destination attachments; the R6 caps are per activity for that reason.
 | 2 | R1, R2 | Both done 2026-09-12. The relations-only scan is four minutes for all of Europe, so re-running it is never the expensive part. |
 | 3 | R3 | Done 2026-09-12. Classify is 25 seconds for Europe; dedup is the slow one. Registered as `trails_hierarchy` in run_pipeline.py, before trails_curate. |
 | 4 | R4, R5 | Both done 2026-09-13. R4 kept the recipe with evidence; R5 removed length from the rating and added tag richness. Neither score is re-run until the next `trails_rate`. |
-| 5 | R6 | First user-visible value. Ship here if you ship nothing else. |
+| 5 | R6 | Done 2026-09-13. The page, the PDF and the pipeline task all read one attach; `verify_routes_block.mjs` is 15/15. |
 | 6 | R7 | Route pages and Explore. Depends on PLAN.md phase C having landed. |
 | 7 | R8 | One commit per activity. |
 
