@@ -68,7 +68,15 @@ pipeline/trails/
                         first, bands, two tiers
   way_tags.py           NEW  a fourth extract pass for the MEMBER WAY tags
                         the relations never carried
-  elevation.py          Copernicus GLO-30 along every curated line
+  elevation.py          Copernicus GLO-30 along every curated line; since
+                        ROUTES.md R4 also ele_start_m, ele_end_m and the
+                        steep10_pct / steep15_pct shares (90 m spans), and
+                        --derive fills those from stored Z without a DEM pass
+  elevation_validate.py ROUTES.md R4: the published-figure table (ten core
+                        routes from their operators, four supplementary),
+                        the current recipe against ROUTES.md's proposal and
+                        a wider sweep, and the over-250 m/km outlier review.
+                        Report: data/reports/routes_elevation_validation.json
   scenic.py             one Overpass sweep per 1.5 degree cell, then the
                         spatial join that says what each route passes
   forests.py            NEW  named forests as AREAS, from the extracts, so

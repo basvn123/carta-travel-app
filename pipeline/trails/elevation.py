@@ -402,6 +402,81 @@ def max_grade_pct(pos, ele):
     return float(np.max(np.abs(dz[ok] / dd[ok])) * 100.0)
 
 
+# The grades the wire calls steep, measured over the same GRADE_SPAN_STEPS
+# span as max_grade_pct (about 90 m), so a single noisy step cannot make a
+# metre of a flat towpath "steep". ROUTES.md R4.
+STEEP_GRADES = ((10, 0.10), (15, 0.15))
+
+
+def steep_shares(pos, ele):
+    """{'steep10_pct', 'steep15_pct'} for one part, percent of its spans
+    steeper than each grade, or None when the part cannot span."""
+    span = min(GRADE_SPAN_STEPS, len(ele) - 1)
+    if span < 1:
+        return None
+    dd = pos[span:] - pos[:-span]
+    dz = ele[span:] - ele[:-span]
+    ok = dd >= 1.0
+    if not ok.any():
+        return None
+    grade = np.abs(dz[ok] / dd[ok])
+    n = len(grade)
+    return {f"steep{k}_pct": round(float((grade > g).sum()) / n * 100.0, 1)
+            for k, g in STEEP_GRADES}
+
+
+class SeriesFacts:
+    """Start and end elevation plus length-weighted steep shares, accumulated
+    part by part in relation order. Shared by the DEM pass and the derive
+    pass so both produce the same keys the same way."""
+
+    def __init__(self):
+        self.acc = {f"steep{k}_pct": 0.0 for k, _ in STEEP_GRADES}
+        self.length = 0.0
+        self.start = self.end = None
+
+    def add(self, pos, smoothed, part_len):
+        sh = steep_shares(pos, smoothed)
+        if sh:
+            for k, v in sh.items():
+                self.acc[k] += v * part_len
+            self.length += part_len
+        if self.start is None:
+            self.start = float(smoothed[0])
+        self.end = float(smoothed[-1])
+
+    def keys(self):
+        if self.start is None:
+            return {}
+        out = {"ele_start_m": round(self.start, 1),
+               "ele_end_m": round(self.end, 1)}
+        for k, v in self.acc.items():
+            out[k] = round(v / self.length, 1) if self.length else None
+        return out
+
+
+def derive_from_z(parts):
+    """The SeriesFacts keys from the stored per-vertex Z alone: resampled at
+    SAMPLE_STEP_M and smoothed exactly as process_trip does, so a row that
+    predates these keys gets them without a DEM pass. None when the geometry
+    carries no Z (a repaired line, or one never sampled)."""
+    facts = SeriesFacts()
+    for arr in parts:
+        if len(arr) < 2 or arr.shape[1] < 3:
+            continue
+        z = np.ascontiguousarray(arr[:, 2], dtype=np.float64)
+        if not np.isfinite(z).any() or np.all(z == 0):
+            continue
+        lons = np.ascontiguousarray(arr[:, 0], dtype=np.float64)
+        lats = np.ascontiguousarray(arr[:, 1], dtype=np.float64)
+        cum = cumdist_m(lons, lats)
+        if cum[-1] <= 0:
+            continue
+        pos = sample_positions(cum[-1])
+        facts.add(pos, smooth(np.interp(pos, cum, z)), float(cum[-1]))
+    return facts.keys() or None
+
+
 def duration_min_din33466(dist_km, ascent_m, descent_m):
     """DIN 33466: 4 km/h flat, 300 m/h up, 500 m/h down; slower component
     counts in full, the faster one half."""
@@ -473,6 +548,7 @@ def process_trip(row, tiles):
     ele_min, ele_max = np.inf, -np.inf
     bad_samples = zero_fixes = n_samples = 0
     prof_pos, prof_ele, breaks = [], [], []
+    facts = SeriesFacts()
     for i, ele_raw in zip(order, chunks):
         p = usable[i]
         n_samples += len(ele_raw)
@@ -491,6 +567,7 @@ def process_trip(row, tiles):
         g = max_grade_pct(p["pos"], sm)
         if g is not None:
             grade = max(grade or 0.0, g)
+        facts.add(p["pos"], sm, float(p["cum"][-1]))
         ele_min = min(ele_min, float(np.min(filled)))
         ele_max = max(ele_max, float(np.max(filled)))
         if offset > 0:
@@ -527,6 +604,7 @@ def process_trip(row, tiles):
         "profile": [[int(round(p)), round(float(e), 1)]
                     for p, e in zip(P[idx], E[idx])],
     })
+    elevation.update(facts.keys())
     if breaks:
         elevation["breaks_m"] = breaks
 
@@ -582,6 +660,55 @@ def ensure_elevation_column(conn):
     with conn.cursor() as cur:
         cur.execute("ALTER TABLE trips ADD COLUMN IF NOT EXISTS elevation jsonb")
     conn.commit()
+
+
+# ---------------------------------------------------------------------------
+# Derive pass: the R4 keys from stored Z, no DEM, for rows sampled before
+# ---------------------------------------------------------------------------
+
+DERIVE_KEY = "steep10_pct"      # present exactly when the R4 keys are
+
+
+def select_derive_ids(conn, countries, refresh, curated):
+    where_curated = "AND status IN ('approved', 'published')" if curated else ""
+    with conn.cursor() as cur:
+        cur.execute(f"""
+            SELECT id FROM trips
+            WHERE source IN ('osm', 'osm_ways') AND country = ANY(%s)
+              AND elevation->>'status' = 'ok'
+              AND (%s OR NOT (elevation ? %s))
+              {where_curated}
+            ORDER BY id""", (countries, refresh, DERIVE_KEY))
+        return [r[0] for r in cur.fetchall()]
+
+
+def run_derive(conn, ids):
+    """ele_start_m, ele_end_m and the steep shares from the per-vertex Z the
+    DEM pass already wrote, merged into the elevation jsonb. Rows whose
+    geometry carries no Z (a repair, or Z zeroed by a re-ingest) are
+    counted and left for a real --refresh pass."""
+    counts = Counter()
+    t0 = time.time()
+    for start in range(0, len(ids), 500):
+        batch = ids[start:start + 500]
+        with conn.cursor() as cur:
+            cur.execute("SELECT id, ST_AsBinary(geom) FROM trips WHERE id = ANY(%s)",
+                        (batch,))
+            rows = cur.fetchall()
+            updates = []
+            for tid, wkb in rows:
+                keys = derive_from_z(parse_wkb_lines(wkb))
+                if keys is None:
+                    counts["no_z"] += 1
+                    continue
+                updates.append((Jsonb(keys), tid))
+                counts["derived"] += 1
+            cur.executemany("UPDATE trips SET elevation = elevation || %s "
+                            "WHERE id = %s", updates)
+        conn.commit()
+    print(f"derived {counts['derived']} row(s), {counts['no_z']} without Z "
+          f"(need a DEM pass) in {time.time() - t0:.0f}s")
+    return counts
 
 
 def select_ids(conn, countries, refresh, limit, ids, curated=False):
@@ -709,6 +836,10 @@ def main():
     parser.add_argument("--evict-gb", type=float, default=0,
                         help="cap what this run leaves in data/raw/dem, in GB. "
                              "0 keeps every tile (the old behaviour)")
+    parser.add_argument("--derive", action="store_true",
+                        help="no DEM: fill ele_start_m, ele_end_m and the steep "
+                             "shares (ROUTES.md R4) from the stored Z on rows "
+                             "sampled before those keys existed")
     args = parser.parse_args()
 
     countries = [c.strip().upper() for c in args.countries.split(",") if c.strip()]
@@ -720,6 +851,14 @@ def main():
         countries = curated_countries(conn)
         print(f"no --countries given: using the {len(countries)} country(ies) "
               f"that have curated content")
+    if args.derive:
+        ids = ids_arg or select_derive_ids(conn, countries, args.refresh,
+                                           args.curated)
+        print(f"{len(ids)} trips to derive ({', '.join(countries)})")
+        if ids:
+            run_derive(conn, ids)
+        conn.close()
+        return
     ids = select_ids(conn, countries, args.refresh, args.limit, ids_arg,
                      curated=args.curated)
     if not ids:

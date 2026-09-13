@@ -1,0 +1,1183 @@
+{
+ "generated_at": "2026-09-13T10:02:14+00:00",
+ "accessed": "2026-09-13",
+ "tolerance": 0.15,
+ "methods": {
+  "A_current": {
+   "SAMPLE_STEP_M": 30.0,
+   "SMOOTH_WINDOW": 3,
+   "CLIMB_THRESHOLD_M": 5.0
+  },
+  "B_spec": {
+   "SAMPLE_STEP_M": 20.0,
+   "SMOOTH_WINDOW": 7,
+   "CLIMB_THRESHOLD_M": 8.0
+  }
+ },
+ "routes": [
+  {
+   "id": 7077,
+   "name": "Via Alpina (Swiss national route 1)",
+   "cc": "CH",
+   "core": true,
+   "official": {
+    "distance_km": 390,
+    "ascent_m": 23600,
+    "descent_m": 24800
+   },
+   "publisher": "SchweizMobil",
+   "source": "https://www.schweizmobil.ch/en/wanderland/route-01.html",
+   "note": "SchweizMobil route page; OSM ascent tag on the relation says 23500. Lab relation is 379.5 km, 20 stages.",
+   "stored": {
+    "distance_m": 379489,
+    "ascent_m": 22117,
+    "descent_m": 22196
+   },
+   "A_current": {
+    "status": "ok",
+    "distance_m": 379489,
+    "ascent_m": 22117,
+    "descent_m": 22196,
+    "ratio": 0.937,
+    "within": true
+   },
+   "B_spec": {
+    "status": "ok",
+    "distance_m": 379489,
+    "ascent_m": 21330,
+    "descent_m": 21408,
+    "ratio": 0.904,
+    "within": true
+   }
+  },
+  {
+   "id": 17370,
+   "name": "Adlerweg Etappe 11, Karwendelhaus to Hallerangerhaus",
+   "cc": "AT",
+   "core": true,
+   "official": {
+    "distance_km": 14.0,
+    "ascent_m": 1440,
+    "descent_m": null
+   },
+   "publisher": "Tirol Werbung",
+   "source": "https://www.tirol.at/aktivitaeten/sport/wandern/weitwanderwege/anspruchsvolle-weitwanderwege/adlerweg/etappen-karwendel",
+   "note": "Tirol's stage numbering matches OSM's for the Karwendel stages (8 to 15 checked by endpoints and length).",
+   "stored": {
+    "distance_m": 13903,
+    "ascent_m": 1443,
+    "descent_m": 1434
+   },
+   "A_current": {
+    "status": "ok",
+    "distance_m": 13903,
+    "ascent_m": 1443,
+    "descent_m": 1434,
+    "ratio": 1.002,
+    "within": true
+   },
+   "B_spec": {
+    "status": "ok",
+    "distance_m": 13903,
+    "ascent_m": 1428,
+    "descent_m": 1421,
+    "ratio": 0.992,
+    "within": true
+   }
+  },
+  {
+   "id": 17660,
+   "name": "Adlerweg Etappe 15, Solsteinhaus to Leutasch",
+   "cc": "AT",
+   "core": true,
+   "official": {
+    "distance_km": 20.0,
+    "ascent_m": 870,
+    "descent_m": null
+   },
+   "publisher": "Tirol Werbung",
+   "source": "https://www.tirol.at/aktivitaeten/sport/wandern/weitwanderwege/anspruchsvolle-weitwanderwege/adlerweg/etappen-karwendel",
+   "note": "",
+   "stored": {
+    "distance_m": 20080,
+    "ascent_m": 893,
+    "descent_m": 1564
+   },
+   "A_current": {
+    "status": "ok",
+    "distance_m": 20080,
+    "ascent_m": 893,
+    "descent_m": 1564,
+    "ratio": 1.026,
+    "within": true
+   },
+   "B_spec": {
+    "status": "ok",
+    "distance_m": 20080,
+    "ascent_m": 870,
+    "descent_m": 1542,
+    "ratio": 1.0,
+    "within": true
+   }
+  },
+  {
+   "id": 17675,
+   "name": "Adlerweg Etappe 16, Leutasch to Ehrwald",
+   "cc": "AT",
+   "core": true,
+   "official": {
+    "distance_km": 23.0,
+    "ascent_m": 590,
+    "descent_m": null
+   },
+   "publisher": "Tirol Werbung",
+   "source": "https://www.tirol.at/aktivitaeten/sport/wandern/weitwanderwege/anspruchsvolle-weitwanderwege/adlerweg/etappen-wettersteingebirge",
+   "note": "",
+   "stored": {
+    "distance_m": 22824,
+    "ascent_m": 453,
+    "descent_m": 920
+   },
+   "A_current": {
+    "status": "ok",
+    "distance_m": 22824,
+    "ascent_m": 453,
+    "descent_m": 920,
+    "ratio": 0.768,
+    "within": false
+   },
+   "B_spec": {
+    "status": "ok",
+    "distance_m": 22824,
+    "ascent_m": 425,
+    "descent_m": 881,
+    "ratio": 0.72,
+    "within": false
+   }
+  },
+  {
+   "id": 31151,
+   "name": "GR 20 (Calenzana to Conca)",
+   "cc": "FR",
+   "core": true,
+   "official": {
+    "distance_km": 178,
+    "ascent_m": 12800,
+    "descent_m": null
+   },
+   "publisher": "published guide (route managed by the Parc naturel regional de Corse)",
+   "source": "https://livre-gr20-corse.com/etapes",
+   "note": "176 km classic line, 180 km with the summit variants; 12,800 m D+ is the figure the French guides agree on. Lab relation 183.6 km.",
+   "stored": {
+    "distance_m": 183585,
+    "ascent_m": 12325,
+    "descent_m": 12350
+   },
+   "A_current": {
+    "status": "ok",
+    "distance_m": 183585,
+    "ascent_m": 12325,
+    "descent_m": 12350,
+    "ratio": 0.963,
+    "within": true
+   },
+   "B_spec": {
+    "status": "ok",
+    "distance_m": 183585,
+    "ascent_m": 11810,
+    "descent_m": 11834,
+    "ratio": 0.923,
+    "within": true
+   }
+  },
+  {
+   "id": 102744,
+   "name": "Malerweg",
+   "cc": "DE",
+   "core": true,
+   "official": {
+    "distance_km": 116,
+    "ascent_m": 3600,
+    "descent_m": null
+   },
+   "publisher": "Tourismusverband Saechsische Schweiz",
+   "source": "https://www.saechsische-schweiz.de/malerweg/wanderweg-malerweg/wanderweg-profil.html",
+   "note": "Publisher calls 3600 hm a Richtwert and says measurements vary by method; their own 2026-01 track analysis is quoted elsewhere at about 4,000.",
+   "stored": {
+    "distance_m": 116923,
+    "ascent_m": 4246,
+    "descent_m": 4301
+   },
+   "A_current": {
+    "status": "ok",
+    "distance_m": 116512,
+    "ascent_m": 4246,
+    "descent_m": 4301,
+    "ratio": 1.179,
+    "within": false
+   },
+   "B_spec": {
+    "status": "ok",
+    "distance_m": 116512,
+    "ascent_m": 3824,
+    "descent_m": 3879,
+    "ratio": 1.062,
+    "within": true
+   }
+  },
+  {
+   "id": 207956,
+   "name": "Rennsteig",
+   "cc": "DE",
+   "core": true,
+   "official": {
+    "distance_km": 169.28,
+    "ascent_m": 2690,
+    "descent_m": 2439
+   },
+   "publisher": "Tourismus Thueringer Wald",
+   "source": "https://www.tourismus-thueringer-wald.de/wanderroute/rennsteig",
+   "note": "A ridge path with hundreds of small undulations: the case that tests hysteresis rather than smoothing. Wanderbares Deutschland quotes 2186 / 1968.",
+   "stored": {
+    "distance_m": 169037,
+    "ascent_m": 4178,
+    "descent_m": 3958
+   },
+   "A_current": {
+    "status": "ok",
+    "distance_m": 169037,
+    "ascent_m": 4178,
+    "descent_m": 3958,
+    "ratio": 1.553,
+    "within": false
+   },
+   "B_spec": {
+    "status": "ok",
+    "distance_m": 169037,
+    "ascent_m": 3649,
+    "descent_m": 3428,
+    "ratio": 1.357,
+    "within": false
+   }
+  },
+  {
+   "id": 21667,
+   "name": "Besseggen (Memurubu to Gjendesheim)",
+   "cc": "NO",
+   "core": true,
+   "reversed": true,
+   "official": {
+    "distance_km": 13.7,
+    "ascent_m": 1020,
+    "descent_m": null
+   },
+   "publisher": "DNT (ut.no)",
+   "source": "https://ut.no/turforslag/114842/klassikeren-over-besseggen",
+   "note": "DNT quotes 1020 hoydemeter totalt Memurubu to Gjendesheim; the OSM relation runs Gjendesheim to Memurubu.",
+   "stored": {
+    "distance_m": 14868,
+    "ascent_m": 1066,
+    "descent_m": 1098
+   },
+   "A_current": {
+    "status": "ok",
+    "distance_m": 14168,
+    "ascent_m": 1066,
+    "descent_m": 1098,
+    "ratio": 1.076,
+    "within": true
+   },
+   "B_spec": {
+    "status": "ok",
+    "distance_m": 14168,
+    "ascent_m": 1054,
+    "descent_m": 1085,
+    "ratio": 1.064,
+    "within": true
+   }
+  },
+  {
+   "id": 22086,
+   "name": "Preikestolen round trip",
+   "cc": "NO",
+   "core": true,
+   "official": {
+    "distance_km": 8.0,
+    "ascent_m": 500,
+    "descent_m": null
+   },
+   "publisher": "Fjord Norway",
+   "source": "https://www.fjordnorway.com/en/see-and-do/preikestolen",
+   "note": "Round trip from the car park; 500 m of gain is the regional tourism board's figure.",
+   "stored": {
+    "distance_m": 8211,
+    "ascent_m": 463,
+    "descent_m": 464
+   },
+   "A_current": {
+    "status": "ok",
+    "distance_m": 8211,
+    "ascent_m": 463,
+    "descent_m": 464,
+    "ratio": 0.926,
+    "within": true
+   },
+   "B_spec": {
+    "status": "ok",
+    "distance_m": 8211,
+    "ascent_m": 417,
+    "descent_m": 417,
+    "ratio": 0.834,
+    "within": false
+   }
+  },
+  {
+   "id": 186740,
+   "name": "Ben Nevis Mountain Track",
+   "cc": "GB",
+   "core": true,
+   "official": {
+    "distance_km": 8.5,
+    "ascent_m": 1352,
+    "descent_m": null
+   },
+   "publisher": "Walkhighlands",
+   "source": "https://www.walkhighlands.co.uk/fortwilliam/bennevis.shtml",
+   "note": "17 km return, 1352 m ascent; the OSM relation is the one-way path (8.1 km). Net height 1345 minus 20 m.",
+   "stored": {
+    "distance_m": 8128,
+    "ascent_m": 1326,
+    "descent_m": 0
+   },
+   "A_current": {
+    "status": "ok",
+    "distance_m": 8128,
+    "ascent_m": 1326,
+    "descent_m": 0,
+    "ratio": 0.981,
+    "within": true
+   },
+   "B_spec": {
+    "status": "ok",
+    "distance_m": 8128,
+    "ascent_m": 1326,
+    "descent_m": 0,
+    "ratio": 0.981,
+    "within": true
+   }
+  },
+  {
+   "id": 190557,
+   "name": "Alta Via 1 (Braies to Belluno)",
+   "cc": "IT",
+   "core": false,
+   "reversed": true,
+   "official": {
+    "distance_km": 120,
+    "ascent_m": 7300,
+    "descent_m": 8400
+   },
+   "publisher": "published guides",
+   "source": "https://www.alpineexploratory.com/walking-guides/alta-via-1.html",
+   "note": "Alpine Exploratory says 6,665 m ascent; other guides 7,300 up and 8,400 down. OSM relation runs Belluno to Braies.",
+   "stored": {
+    "distance_m": 117874,
+    "ascent_m": 8914,
+    "descent_m": 7806
+   },
+   "A_current": {
+    "status": "ok",
+    "distance_m": 117874,
+    "ascent_m": 8914,
+    "descent_m": 7806,
+    "ratio": 1.069,
+    "within": true
+   },
+   "B_spec": {
+    "status": "ok",
+    "distance_m": 117874,
+    "ascent_m": 8436,
+    "descent_m": 7328,
+    "ratio": 1.004,
+    "within": true
+   }
+  },
+  {
+   "id": 7337,
+   "name": "Eiger Trail (Eigergletscher to Alpiglen)",
+   "cc": "CH",
+   "core": false,
+   "official": {
+    "distance_km": 6.0,
+    "ascent_m": 140,
+    "descent_m": 800
+   },
+   "publisher": "published guide (official Jungfrau page did not render)",
+   "source": "https://www.earthtrekkers.com/eiger-trail-hike-bernese-oberland-switzerland/",
+   "note": "Descent is the figure that matters on this one; the ascent is small enough that 50 m is a third.",
+   "stored": {
+    "distance_m": 6144,
+    "ascent_m": 86,
+    "descent_m": 778
+   },
+   "A_current": {
+    "status": "ok",
+    "distance_m": 6144,
+    "ascent_m": 86,
+    "descent_m": 778,
+    "ratio": 0.614,
+    "within": false
+   },
+   "B_spec": {
+    "status": "ok",
+    "distance_m": 6144,
+    "ascent_m": 84,
+    "descent_m": 774,
+    "ratio": 0.6,
+    "within": false
+   }
+  },
+  {
+   "id": 204468,
+   "name": "Rheinsteig",
+   "cc": "DE",
+   "core": false,
+   "official": {
+    "distance_km": 320,
+    "ascent_m": 9500,
+    "descent_m": null
+   },
+   "publisher": "published (Wikipedia; others say over 9,000 or over 10,000)",
+   "source": "https://en.wikipedia.org/wiki/Rheinsteig",
+   "note": "rheinsteig.de states no total. Lab relation is 314 km.",
+   "stored": {
+    "distance_m": 314118,
+    "ascent_m": 11553,
+    "descent_m": 11533
+   },
+   "A_current": {
+    "status": "ok",
+    "distance_m": 313551,
+    "ascent_m": 11553,
+    "descent_m": 11533,
+    "ratio": 1.216,
+    "within": false
+   },
+   "B_spec": {
+    "status": "ok",
+    "distance_m": 313551,
+    "ascent_m": 10449,
+    "descent_m": 10432,
+    "ratio": 1.1,
+    "within": true
+   }
+  },
+  {
+   "id": 185703,
+   "name": "West Highland Way",
+   "cc": "GB",
+   "core": false,
+   "official": {
+    "distance_km": 154,
+    "ascent_m": 3946,
+    "descent_m": null
+   },
+   "publisher": "published, sources disagree (3,155 Wikipedia; 4,020; 4,735 official site per forum; 4,800 Cicerone)",
+   "source": "https://www.cicerone.co.uk/west-highland-way-complete-planning-guide",
+   "note": "The midpoint of the published spread is used; our figure sits inside the spread whichever is right.",
+   "stored": {
+    "distance_m": 153181,
+    "ascent_m": 3603,
+    "descent_m": 3645
+   },
+   "A_current": {
+    "status": "ok",
+    "distance_m": 153181,
+    "ascent_m": 3603,
+    "descent_m": 3645,
+    "ratio": 0.913,
+    "within": true
+   },
+   "B_spec": {
+    "status": "ok",
+    "distance_m": 153181,
+    "ascent_m": 3219,
+    "descent_m": 3266,
+    "ratio": 0.816,
+    "within": false
+   }
+  }
+ ],
+ "summary": {
+  "A_current": {
+   "core_routes": 10,
+   "within_15pct": 7,
+   "median_ratio": 0.992,
+   "mean_ratio": 1.041,
+   "supplementary_within": 2
+  },
+  "B_spec": {
+   "core_routes": 10,
+   "within_15pct": 7,
+   "median_ratio": 0.986,
+   "mean_ratio": 0.984,
+   "supplementary_within": 2
+  },
+  "verdict": "tie on the count; the median ratio decides: A_current",
+  "systematically_high": {
+   "A_current": false,
+   "B_spec": false
+  }
+ },
+ "sweep": {
+  "step20_win3_gate5": {
+   "within_15pct": 7,
+   "core_routes": 10,
+   "median_ratio": 1.001,
+   "mean_ratio": 1.07,
+   "ratios": {
+    "7077": 0.96,
+    "17370": 1.013,
+    "17660": 1.037,
+    "17675": 0.773,
+    "31151": 0.989,
+    "102744": 1.24,
+    "207956": 1.649,
+    "21667": 1.085,
+    "22086": 0.974,
+    "186740": 0.982
+   }
+  },
+  "step20_win3_gate8": {
+   "within_15pct": 7,
+   "core_routes": 10,
+   "median_ratio": 0.986,
+   "mean_ratio": 1.029,
+   "ratios": {
+    "7077": 0.938,
+    "17370": 1.001,
+    "17660": 0.994,
+    "17675": 0.744,
+    "31151": 0.96,
+    "102744": 1.17,
+    "207956": 1.489,
+    "21667": 1.085,
+    "22086": 0.93,
+    "186740": 0.977
+   }
+  },
+  "step20_win3_gate12": {
+   "within_15pct": 8,
+   "core_routes": 10,
+   "median_ratio": 0.989,
+   "mean_ratio": 0.994,
+   "ratios": {
+    "7077": 0.917,
+    "17370": 1.001,
+    "17660": 1.006,
+    "17675": 0.683,
+    "31151": 0.938,
+    "102744": 1.104,
+    "207956": 1.352,
+    "21667": 1.085,
+    "22086": 0.872,
+    "186740": 0.977
+   }
+  },
+  "step20_win5_gate5": {
+   "within_15pct": 7,
+   "core_routes": 10,
+   "median_ratio": 0.99,
+   "mean_ratio": 1.034,
+   "ratios": {
+    "7077": 0.931,
+    "17370": 1.0,
+    "17660": 1.017,
+    "17675": 0.759,
+    "31151": 0.957,
+    "102744": 1.164,
+    "207956": 1.538,
+    "21667": 1.075,
+    "22086": 0.916,
+    "186740": 0.981
+   }
+  },
+  "step20_win5_gate8": {
+   "within_15pct": 8,
+   "core_routes": 10,
+   "median_ratio": 0.989,
+   "mean_ratio": 1.006,
+   "ratios": {
+    "7077": 0.92,
+    "17370": 0.997,
+    "17660": 1.009,
+    "17675": 0.736,
+    "31151": 0.937,
+    "102744": 1.106,
+    "207956": 1.412,
+    "21667": 1.075,
+    "22086": 0.886,
+    "186740": 0.981
+   }
+  },
+  "step20_win5_gate12": {
+   "within_15pct": 7,
+   "core_routes": 10,
+   "median_ratio": 0.989,
+   "mean_ratio": 0.973,
+   "ratios": {
+    "7077": 0.903,
+    "17370": 0.997,
+    "17660": 0.999,
+    "17675": 0.675,
+    "31151": 0.919,
+    "102744": 1.064,
+    "207956": 1.325,
+    "21667": 1.064,
+    "22086": 0.804,
+    "186740": 0.981
+   }
+  },
+  "step20_win7_gate5": {
+   "within_15pct": 8,
+   "core_routes": 10,
+   "median_ratio": 0.986,
+   "mean_ratio": 1.005,
+   "ratios": {
+    "7077": 0.915,
+    "17370": 0.992,
+    "17660": 1.001,
+    "17675": 0.741,
+    "31151": 0.932,
+    "102744": 1.101,
+    "207956": 1.44,
+    "21667": 1.064,
+    "22086": 0.882,
+    "186740": 0.981
+   }
+  },
+  "step20_win7_gate8": {
+   "within_15pct": 7,
+   "core_routes": 10,
+   "median_ratio": 0.986,
+   "mean_ratio": 0.984,
+   "ratios": {
+    "7077": 0.904,
+    "17370": 0.992,
+    "17660": 1.0,
+    "17675": 0.72,
+    "31151": 0.923,
+    "102744": 1.062,
+    "207956": 1.357,
+    "21667": 1.064,
+    "22086": 0.834,
+    "186740": 0.981
+   }
+  },
+  "step20_win7_gate12": {
+   "within_15pct": 7,
+   "core_routes": 10,
+   "median_ratio": 0.978,
+   "mean_ratio": 0.96,
+   "ratios": {
+    "7077": 0.897,
+    "17370": 0.992,
+    "17660": 0.976,
+    "17675": 0.685,
+    "31151": 0.902,
+    "102744": 1.031,
+    "207956": 1.287,
+    "21667": 1.056,
+    "22086": 0.796,
+    "186740": 0.981
+   }
+  },
+  "step30_win3_gate5": {
+   "within_15pct": 7,
+   "core_routes": 10,
+   "median_ratio": 0.992,
+   "mean_ratio": 1.041,
+   "ratios": {
+    "7077": 0.937,
+    "17370": 1.002,
+    "17660": 1.026,
+    "17675": 0.768,
+    "31151": 0.963,
+    "102744": 1.179,
+    "207956": 1.553,
+    "21667": 1.076,
+    "22086": 0.926,
+    "186740": 0.981
+   }
+  },
+  "step30_win3_gate8": {
+   "within_15pct": 8,
+   "core_routes": 10,
+   "median_ratio": 0.99,
+   "mean_ratio": 1.014,
+   "ratios": {
+    "7077": 0.924,
+    "17370": 0.998,
+    "17660": 1.013,
+    "17675": 0.742,
+    "31151": 0.941,
+    "102744": 1.121,
+    "207956": 1.429,
+    "21667": 1.076,
+    "22086": 0.912,
+    "186740": 0.981
+   }
+  },
+  "step30_win3_gate12": {
+   "within_15pct": 8,
+   "core_routes": 10,
+   "median_ratio": 0.99,
+   "mean_ratio": 0.984,
+   "ratios": {
+    "7077": 0.908,
+    "17370": 0.998,
+    "17660": 1.002,
+    "17675": 0.705,
+    "31151": 0.922,
+    "102744": 1.079,
+    "207956": 1.326,
+    "21667": 1.065,
+    "22086": 0.858,
+    "186740": 0.981
+   }
+  },
+  "step30_win5_gate5": {
+   "within_15pct": 8,
+   "core_routes": 10,
+   "median_ratio": 0.986,
+   "mean_ratio": 0.996,
+   "ratios": {
+    "7077": 0.911,
+    "17370": 0.991,
+    "17660": 0.994,
+    "17675": 0.729,
+    "31151": 0.928,
+    "102744": 1.086,
+    "207956": 1.426,
+    "21667": 1.062,
+    "22086": 0.856,
+    "186740": 0.981
+   }
+  },
+  "step30_win5_gate8": {
+   "within_15pct": 7,
+   "core_routes": 10,
+   "median_ratio": 0.986,
+   "mean_ratio": 0.979,
+   "ratios": {
+    "7077": 0.901,
+    "17370": 0.991,
+    "17660": 0.998,
+    "17675": 0.719,
+    "31151": 0.918,
+    "102744": 1.055,
+    "207956": 1.343,
+    "21667": 1.054,
+    "22086": 0.828,
+    "186740": 0.981
+   }
+  },
+  "step30_win5_gate12": {
+   "within_15pct": 7,
+   "core_routes": 10,
+   "median_ratio": 0.978,
+   "mean_ratio": 0.955,
+   "ratios": {
+    "7077": 0.895,
+    "17370": 0.991,
+    "17660": 0.976,
+    "17675": 0.671,
+    "31151": 0.901,
+    "102744": 1.022,
+    "207956": 1.268,
+    "21667": 1.054,
+    "22086": 0.792,
+    "186740": 0.981
+   }
+  },
+  "step30_win7_gate5": {
+   "within_15pct": 7,
+   "core_routes": 10,
+   "median_ratio": 0.978,
+   "mean_ratio": 0.965,
+   "ratios": {
+    "7077": 0.895,
+    "17370": 0.982,
+    "17660": 0.976,
+    "17675": 0.705,
+    "31151": 0.903,
+    "102744": 1.037,
+    "207956": 1.333,
+    "21667": 1.047,
+    "22086": 0.796,
+    "186740": 0.98
+   }
+  },
+  "step30_win7_gate8": {
+   "within_15pct": 7,
+   "core_routes": 10,
+   "median_ratio": 0.976,
+   "mean_ratio": 0.952,
+   "ratios": {
+    "7077": 0.89,
+    "17370": 0.982,
+    "17660": 0.971,
+    "17675": 0.68,
+    "31151": 0.895,
+    "102744": 1.014,
+    "207956": 1.294,
+    "21667": 1.042,
+    "22086": 0.774,
+    "186740": 0.98
+   }
+  },
+  "step30_win7_gate12": {
+   "within_15pct": 7,
+   "core_routes": 10,
+   "median_ratio": 0.97,
+   "mean_ratio": 0.936,
+   "ratios": {
+    "7077": 0.886,
+    "17370": 0.982,
+    "17660": 0.96,
+    "17675": 0.659,
+    "31151": 0.885,
+    "102744": 0.988,
+    "207956": 1.227,
+    "21667": 1.042,
+    "22086": 0.752,
+    "186740": 0.98
+   }
+  }
+ },
+ "outliers": [
+  {
+   "id": 65997,
+   "country": "SI",
+   "name": "Aljažev dom - Kredarica - Triglav",
+   "distance_m": 5846,
+   "ascent_m": 1878,
+   "descent_m": 84,
+   "m_per_km": 321,
+   "ele_min_m": 998.9,
+   "ele_max_m": 2799.7,
+   "net_m": 1801,
+   "ascent_over_net": 1.04,
+   "max_grade_pct": 97.8,
+   "nodata_frac": 0.0,
+   "sac_scale": null,
+   "grade": "very_hard",
+   "grade_src": "tagged",
+   "highlights": [
+    "hut",
+    "summit",
+    "viewpoint",
+    "gorge"
+   ],
+   "tier": "r",
+   "quality_score": 87.5,
+   "verdict": "genuine"
+  },
+  {
+   "id": 69532,
+   "country": "SK",
+   "name": "Czarny Staw Pod Rysami - Rysy",
+   "distance_m": 2836,
+   "ascent_m": 884,
+   "descent_m": 0,
+   "m_per_km": 312,
+   "ele_min_m": 1581.0,
+   "ele_max_m": 2469.2,
+   "net_m": 888,
+   "ascent_over_net": 1.0,
+   "max_grade_pct": 78.4,
+   "nodata_frac": 0.0,
+   "sac_scale": null,
+   "grade": "alpine",
+   "grade_src": "tagged",
+   "highlights": [
+    "waterfall",
+    "lake",
+    "summit"
+   ],
+   "tier": "r",
+   "quality_score": 100.0,
+   "verdict": "genuine"
+  },
+  {
+   "id": 17533,
+   "country": "AT",
+   "name": "Via Ferrata “Sentiero dello stivale” / Via Normale alla Creta di Collina",
+   "distance_m": 2134,
+   "ascent_m": 649,
+   "descent_m": 33,
+   "m_per_km": 304,
+   "ele_min_m": 1991.4,
+   "ele_max_m": 2625.5,
+   "net_m": 634,
+   "ascent_over_net": 1.02,
+   "max_grade_pct": 65.3,
+   "nodata_frac": 0.0,
+   "sac_scale": null,
+   "grade": "very_hard",
+   "grade_src": "tagged",
+   "highlights": [
+    "summit"
+   ],
+   "tier": "r",
+   "quality_score": 86.0,
+   "verdict": "genuine"
+  },
+  {
+   "id": 199021,
+   "country": "IT",
+   "name": "117 - Parte verso Carcoforo del Sentiero Genoni",
+   "distance_m": 4125,
+   "ascent_m": 1253,
+   "descent_m": 0,
+   "m_per_km": 304,
+   "ele_min_m": 1361.7,
+   "ele_max_m": 2617.6,
+   "net_m": 1256,
+   "ascent_over_net": 1.0,
+   "max_grade_pct": 60.9,
+   "nodata_frac": 0.0,
+   "sac_scale": null,
+   "grade": "moderate",
+   "grade_src": "tagged",
+   "highlights": [
+    "summit"
+   ],
+   "tier": "r",
+   "quality_score": 95.0,
+   "verdict": "genuine"
+  },
+  {
+   "id": 75245,
+   "country": "BG",
+   "name": "Предел - в. Пирин",
+   "distance_m": 5578,
+   "ascent_m": 1470,
+   "descent_m": 0,
+   "m_per_km": 264,
+   "ele_min_m": 1112.6,
+   "ele_max_m": 2584.1,
+   "net_m": 1472,
+   "ascent_over_net": 1.0,
+   "max_grade_pct": 63.9,
+   "nodata_frac": 0.0,
+   "sac_scale": null,
+   "grade": "alpine",
+   "grade_src": "derived",
+   "highlights": [
+    "summit"
+   ],
+   "tier": "r",
+   "quality_score": 95.0,
+   "verdict": "genuine"
+  },
+  {
+   "id": 63991,
+   "country": "BA",
+   "name": "Mery",
+   "distance_m": 2429,
+   "ascent_m": 635,
+   "descent_m": 6,
+   "m_per_km": 261,
+   "ele_min_m": 1271.1,
+   "ele_max_m": 1902.1,
+   "net_m": 631,
+   "ascent_over_net": 1.01,
+   "max_grade_pct": 56.9,
+   "nodata_frac": 0.0,
+   "sac_scale": null,
+   "grade": "moderate",
+   "grade_src": "tagged",
+   "highlights": [
+    "lake",
+    "summit"
+   ],
+   "tier": "r",
+   "quality_score": 87.5,
+   "verdict": "genuine"
+  },
+  {
+   "id": 62478,
+   "country": "ME",
+   "name": "Ljuban - Ljevorečki Kom",
+   "distance_m": 2363,
+   "ascent_m": 616,
+   "descent_m": 9,
+   "m_per_km": 261,
+   "ele_min_m": 1812.8,
+   "ele_max_m": 2423.2,
+   "net_m": 610,
+   "ascent_over_net": 1.01,
+   "max_grade_pct": 69.4,
+   "nodata_frac": 0.0,
+   "sac_scale": null,
+   "grade": "alpine",
+   "grade_src": "derived",
+   "highlights": [
+    "lake",
+    "summit"
+   ],
+   "tier": "r",
+   "quality_score": 100.0,
+   "verdict": "genuine"
+  },
+  {
+   "id": 74134,
+   "country": "GR",
+   "name": "Παχτούρι - Παχτουρνιάσκα / Mytikas (1976)",
+   "distance_m": 3782,
+   "ascent_m": 977,
+   "descent_m": 0,
+   "m_per_km": 258,
+   "ele_min_m": 1003.3,
+   "ele_max_m": 1981.8,
+   "net_m": 978,
+   "ascent_over_net": 1.0,
+   "max_grade_pct": 43.7,
+   "nodata_frac": 0.0,
+   "sac_scale": null,
+   "grade": "alpine",
+   "grade_src": "derived",
+   "highlights": [
+    "summit"
+   ],
+   "tier": "r",
+   "quality_score": 95.0,
+   "verdict": "genuine"
+  },
+  {
+   "id": 19303,
+   "country": "AT",
+   "name": "Nordalpenweg 01 - Variante Weichtalklamm",
+   "distance_m": 2499,
+   "ascent_m": 645,
+   "descent_m": 16,
+   "m_per_km": 258,
+   "ele_min_m": 549.4,
+   "ele_max_m": 1181.8,
+   "net_m": 632,
+   "ascent_over_net": 1.02,
+   "max_grade_pct": 74.8,
+   "nodata_frac": 0.0,
+   "sac_scale": null,
+   "grade": "hard",
+   "grade_src": "tagged",
+   "highlights": [
+    "gorge",
+    "summit"
+   ],
+   "tier": "r",
+   "quality_score": 90.0,
+   "verdict": "genuine"
+  },
+  {
+   "id": 21526,
+   "country": "SI",
+   "name": "Ravenska Kočna - Jenkova pl. - V. Baba",
+   "distance_m": 4107,
+   "ascent_m": 1059,
+   "descent_m": 0,
+   "m_per_km": 258,
+   "ele_min_m": 998.6,
+   "ele_max_m": 2058.6,
+   "net_m": 1060,
+   "ascent_over_net": 1.0,
+   "max_grade_pct": 61.6,
+   "nodata_frac": 0.0,
+   "sac_scale": null,
+   "grade": "very_hard",
+   "grade_src": "tagged",
+   "highlights": [
+    "waterfall",
+    "hut",
+    "summit"
+   ],
+   "tier": "l",
+   "quality_score": 95.0,
+   "verdict": "genuine"
+  },
+  {
+   "id": 24628,
+   "country": "NO",
+   "name": "Helgelandstrappa",
+   "distance_m": 3146,
+   "ascent_m": 803,
+   "descent_m": 0,
+   "m_per_km": 255,
+   "ele_min_m": 7.0,
+   "ele_max_m": 814.0,
+   "net_m": 807,
+   "ascent_over_net": 1.0,
+   "max_grade_pct": 46.7,
+   "nodata_frac": 0.0,
+   "sac_scale": null,
+   "grade": "very_hard",
+   "grade_src": "derived",
+   "highlights": [
+    "summit"
+   ],
+   "tier": "r",
+   "quality_score": 100.0,
+   "verdict": "genuine"
+  },
+  {
+   "id": 74022,
+   "country": "GR",
+   "name": "Αγια Αννα - Αθωνας",
+   "distance_m": 6767,
+   "ascent_m": 1707,
+   "descent_m": 5,
+   "m_per_km": 252,
+   "ele_min_m": 295.3,
+   "ele_max_m": 2005.3,
+   "net_m": 1710,
+   "ascent_over_net": 1.0,
+   "max_grade_pct": 62.2,
+   "nodata_frac": 0.0,
+   "sac_scale": null,
+   "grade": "hard",
+   "grade_src": "tagged",
+   "highlights": [
+    "gorge",
+    "summit"
+   ],
+   "tier": "r",
+   "quality_score": 95.0,
+   "verdict": "genuine"
+  },
+  {
+   "id": 74601,
+   "country": "GR",
+   "name": "Chrysa Melti Trail",
+   "distance_m": 3063,
+   "ascent_m": 770,
+   "descent_m": 12,
+   "m_per_km": 251,
+   "ele_min_m": 197.2,
+   "ele_max_m": 963.0,
+   "net_m": 766,
+   "ascent_over_net": 1.01,
+   "max_grade_pct": 51.2,
+   "nodata_frac": 0.0,
+   "sac_scale": null,
+   "grade": "very_hard",
+   "grade_src": "derived",
+   "highlights": [
+    "summit"
+   ],
+   "tier": "r",
+   "quality_score": 95.0,
+   "verdict": "genuine"
+  }
+ ]
+}

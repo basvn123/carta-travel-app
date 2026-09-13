@@ -222,6 +222,15 @@ class RouteSummary:
     rating: float | None = None         # 0-10, rate.py
     quality_score: float | None = None  # 0-100, validate.py
     thumbnail_hint: str | None = None
+    # ROUTES.md R4, from the elevation jsonb: where the line sits and how
+    # much of it is steep (percent of 90 m spans over 10% and 15% grade).
+    ele_min_m: float | None = None
+    ele_max_m: float | None = None
+    ele_start_m: float | None = None
+    ele_end_m: float | None = None
+    steep10_pct: float | None = None
+    steep15_pct: float | None = None
+    duration_rule: str | None = None    # DIN 33466 for a walk
     # Attach row only (ROUTES.md R6). None on a country row.
     distance_from_destination_km: float | None = None
     direction: dict | None = None       # {bearing, key}
@@ -288,7 +297,17 @@ def summary_from_row(row, activity="hiking", resolve_parent=None):
         name = row.get("title") or row.get("name")
     rating = row.get("rating")
     quality = row.get("quality_score", row.get("quality"))
+    ele = row.get("elevation") or {}
+    if ele.get("status") not in (None, "ok"):
+        ele = {}
     return RouteSummary(
+        ele_min_m=ele.get("ele_min_m"),
+        ele_max_m=ele.get("ele_max_m"),
+        ele_start_m=ele.get("ele_start_m"),
+        ele_end_m=ele.get("ele_end_m"),
+        steep10_pct=ele.get("steep10_pct"),
+        steep15_pct=ele.get("steep15_pct"),
+        duration_rule=ele.get("duration_rule"),
         route_id=row["id"],
         name=name,
         activity=activity,
@@ -403,9 +422,25 @@ def hierarchy_block(s):
             "i": s.stage_index, "n": s.stage_count}
 
 
-WIRE_KEYS = ("osm", "net", "descent_m", "sf", "h")
+WIRE_KEYS = ("osm", "net", "descent_m", "sf", "h", "ele", "steep")
 DETAIL_KEYS = ("osm", "sf", "h", "stages", "variants", "member_way_ids",
                "huts", "water_points", "gaps", "tags_raw")
+
+
+def elevation_block(s):
+    """`ele` {min, max, start, end} in metres, None until the DEM pass."""
+    if s.ele_min_m is None and s.ele_start_m is None:
+        return None
+    return {"min": s.ele_min_m, "max": s.ele_max_m,
+            "start": s.ele_start_m, "end": s.ele_end_m}
+
+
+def steep_block(s):
+    """`steep` {p10, p15}: percent of the line over 10% and 15% grade, None
+    until elevation.py --derive or a fresh DEM pass has run."""
+    if s.steep10_pct is None:
+        return None
+    return {"p10": s.steep10_pct, "p15": s.steep15_pct}
 
 
 def wire_keys(s):
@@ -417,6 +452,8 @@ def wire_keys(s):
         "descent_m": s.descent_m,
         "sf": s.surface_summary,
         "h": hierarchy_block(s),
+        "ele": elevation_block(s),
+        "steep": steep_block(s),
     }
 
 

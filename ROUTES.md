@@ -381,6 +381,31 @@ message.
 ```
 
 > **Done when:** the chosen method is within 15% of published figures on at least 8 of 10 routes, the 13 outliers are each explained or demoted, and the new fields appear in a `--dry-run` export.
+>
+> **Shipped 2026-09-13.** `elevation_validate.py` builds the table the layer never had: ten core routes whose operator publishes one clear figure (SchweizMobil, Tirol Werbung for three Adlerweg stages, the GR 20 guides, the Saxon and Thuringian tourism boards, DNT, Fjord Norway, Walkhighlands) plus four supplementary routes whose published figures disagree with each other by more than 15 percent and therefore cannot judge anything. Both recipes run on the same cached tiles by setting the module's constants for the run; `elevation.py` was not edited to measure it.
+>
+> | Route | Official | Current (30 m, 3, 5 m) | Spec (20 m, 7, 8 m) |
+> |---|---|---|---|
+> | Via Alpina, Swiss route 1 | 23,600 | 0.94 | 0.90 |
+> | Adlerweg stage 11 | 1,440 | 1.00 | 0.99 |
+> | Adlerweg stage 15 | 870 | 1.03 | 1.00 |
+> | Adlerweg stage 16 | 590 | 0.77 | 0.72 |
+> | GR 20 | 12,800 | 0.96 | 0.92 |
+> | Malerweg | 3,600 | 1.18 | 1.06 |
+> | Rennsteig | 2,690 | 1.55 | 1.36 |
+> | Besseggen | 1,020 | 1.08 | 1.06 |
+> | Preikestolen | 500 | 0.93 | 0.83 |
+> | Ben Nevis Mountain Track | 1,352 | 0.98 | 0.98 |
+>
+> Both land 7 of 10 within 15 percent, so the gate's 8 of 10 is not met by either. Neither is systematically high: medians 0.99 and 0.99, so the stop condition in the prompt does not apply. **`elevation.py` is unchanged**, per the tie-break the prompt sets, and because switching recipes means re-sampling 17,455 curated routes and re-ranking every rating that reads ascent.
+>
+> A wider sweep (18 combinations, in the report) says what the two named recipes hid: the smoothing window is not the lever, the hysteresis gate is. Every combination that reaches 8 of 10 keeps a 3-sample window and raises the gate; at 8 m the Malerweg comes inside the band and nothing else leaves it. That is a one-line change worth making the next time the whole layer is re-sampled anyway, and not worth a re-rank on its own.
+>
+> **Two routes miss by a mile and both are the publisher's fault, not the DEM's.** The Rennsteig at 1.55 is a ridge path of hundreds of small undulations: its own tourism board publishes 2,690 m while Wanderbares Deutschland publishes 2,186 for the same 169 km, and no hysteresis gate reconciles a 23 percent disagreement between two official sources. Adlerweg stage 16 at 0.77 is the reverse: Tirol publishes 590 m for a 23 km stage that the DEM reads as 453 m, and Tirol's own stage numbering shifted when the route was extended into East Tyrol, so the published stage and the OSM relation may not be the same walk end to end.
+>
+> **Outliers: 13 published routes over 250 m/km, all 13 genuine, none demoted.** The test is that a single sustained climb sums to about its own net height while noise inflates the sum: every one of the thirteen has summed ascent within 4 percent of the height between its lowest and highest point (Triglav 1,878 m over a 1,801 m net, Ben Nevis 1,326 over 1,342), all thirteen carry a summit highlight, and eleven of thirteen have a tagged or derived hard grade. The maximum is 321 m/km on the Triglav north face, which is what that face is.
+>
+> **New fields.** `ele_start_m`, `ele_end_m`, `steep10_pct` and `steep15_pct` join the elevation jsonb, measured over the same 90 m spans as `max_grade_pct` so one noisy step cannot make a towpath steep; `elevation.py --derive` filled them for 17,451 of 17,455 curated routes from the stored Z in 72 seconds without touching the DEM (4 rows carry no Z and need a real pass). The wire gains `ele` {min, max, start, end} and `steep` {p10, p15} on the country row through the R1 mapping, `descent_m` was already added in R1, and `sf` carries the surface summary. Cycling gains a `dur` of its own: there is no DIN 33466 for a bicycle, so the wire ships a house rule that names itself, `flat18_climb10` (18 km/h plus ten minutes per 100 m of climb), rather than borrowing a walking standard.
 
 ---
 
@@ -591,7 +616,7 @@ destination attachments; the R6 caps are per activity for that reason.
 | 1 | R0 | Done 2026-09-12. Reshaped this file. |
 | 2 | R1, R2 | Both done 2026-09-12. The relations-only scan is four minutes for all of Europe, so re-running it is never the expensive part. |
 | 3 | R3 | Done 2026-09-12. Classify is 25 seconds for Europe; dedup is the slow one. Registered as `trails_hierarchy` in run_pipeline.py, before trails_curate. |
-| 4 | R4, R5 | Validation-heavy, code-light. R4 has a hard gate on the comparison table. |
+| 4 | R4, R5 | R4 done 2026-09-13: the recipe stands, the evidence is in `data/reports/routes_elevation_validation.json`. R5 next. |
 | 5 | R6 | First user-visible value. Ship here if you ship nothing else. |
 | 6 | R7 | Route pages and Explore. Depends on PLAN.md phase C having landed. |
 | 7 | R8 | One commit per activity. |

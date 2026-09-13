@@ -118,7 +118,10 @@ FULL_DECIMALS = 6
 # Elevation fields worth shipping. The rest of the jsonb (geom_md5, nodata
 # fractions, coast fixes) is sampling bookkeeping the app has no use for.
 ELEVATION_KEYS = ("profile", "step_m", "ele_min_m", "ele_max_m",
-                  "max_grade_pct", "duration_rule", "source")
+                  "max_grade_pct", "duration_rule", "source",
+                  # ROUTES.md R4: where the line starts and ends, and how
+                  # much of it is steep, measured over 90 m spans.
+                  "ele_start_m", "ele_end_m", "steep10_pct", "steep15_pct")
 
 
 # ---------------------------------------------------------------------------
