@@ -202,6 +202,21 @@ REJECT_SUBJECT_RE = re.compile(
     r"information board|noticeboard|plaque)", re.I)
 
 
+def _no_credit_owed(licence):
+    """True for the licences that owe no name at all.
+
+    The reliable answer is Commons' own AttributionRequired flag, which the
+    harvest records via credit.stamp(). This string test is the fallback for
+    a row cached before that flag existed, and it is deliberately narrow:
+    anything it does not recognise is treated as owing a credit.
+    """
+    text = (licence or "").strip().lower()
+    if not text:
+        return False
+    return ("public domain" in text or text.startswith("cc0")
+            or "pd-" in text or text in ("pd", "no restrictions"))
+
+
 def usable_images(beach):
     """The picks that still pass, in the order they will be shown."""
     out = []
@@ -210,6 +225,17 @@ def usable_images(beach):
         if name.startswith("File:"):
             name = name[5:]
         if REJECT_SUBJECT_RE.search(name) and img.get("evidence") != "p18":
+            continue
+        # A share-alike or attribution licence with nobody named is not a
+        # credit, it is a licence notice with the obligation removed, and
+        # pipeline/photos/credit.py exists because a hundred photographs
+        # once shipped exactly that way. Commons has no Artist on a small
+        # number of older uploads, and the honest answer for those is to
+        # not publish the file rather than to publish it uncredited. Public
+        # domain and CC0 owe no name, so an empty author there is correct.
+        if not (img.get("author") or "").strip() \
+                and not img.get("no_attribution_required") \
+                and not _no_credit_owed(img.get("license")):
             continue
         out.append(img)
     # A rescored row (pipeline/photos/rescore.py) already encodes the whole
@@ -343,7 +369,7 @@ def wire_beach(beach, comps, score10, tier, reasons):
     base = beach.get("base") or {}
     wiki = beach.get("enwiki") or beach.get("localwiki") or ""
     row = {
-        "id": bi.beach_id(beach),
+        "id": bi.unique_beach_id(beach),
         "name": beach["name"],
         "cc": beach["iso2"],
         "lat": beach["lat"],
@@ -503,6 +529,11 @@ def score_country(cc, verbose=False):
     if not rich or not rich.get("beaches"):
         return []
     beaches = rich["beaches"]
+    # load_cache parses the file again, so these are NOT the dicts the caller
+    # stamped: the suffix has to be recomputed on whatever copy is about to
+    # become the wire. It is deterministic and cheap, so doing it in both
+    # places costs nothing and forgetting it here ships a duplicate id.
+    bi.disambiguate_ids(beaches)
     water_default = country_water_default(beaches)
     references = space_references(beaches)
     fames = [bi.fame_raw(b) for b in beaches] or [1.0]
@@ -619,7 +650,7 @@ def wire_listed(beach):
     if not images:
         why.append({"k": "no_photo_map_card"})
     row = {
-        "id": bi.beach_id(beach),
+        "id": bi.unique_beach_id(beach),
         "name": beach["name"],
         "cc": beach["iso2"],
         "lat": beach["lat"],
@@ -704,7 +735,7 @@ def floor_fill(rated, spare, qmod):
         for beach, _score in pool:
             if room <= 0:
                 break
-            bid = bi.beach_id(beach)
+            bid = bi.unique_beach_id(beach)
             if bid in picked:
                 continue          # already promoted for its other region key
             picked[bid] = True
@@ -988,6 +1019,12 @@ def main():
         if not rich or not rich.get("beaches"):
             continue
         pools[cc] = rich["beaches"]
+        # Ids have to be unique inside a country file before anything reads
+        # one. Rows from the EEA register alone carry no Wikidata item and no
+        # OSM way to disambiguate on, so two same-named bathing sites collide;
+        # this stamps a suffix on the later ones and leaves every already
+        # unique id exactly as it was.
+        bi.disambiguate_ids(rich["beaches"])
         for beach in rich["beaches"]:
             GLOBAL_MAX = max(GLOBAL_MAX, bi.fame_raw(beach))
 

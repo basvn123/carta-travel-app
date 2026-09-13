@@ -767,3 +767,39 @@ def beach_id(beach):
     it unique. A saved favourite must survive a re-harvest."""
     tail = beach.get("wd") or (beach.get("osm_id") or "").replace("/", "")
     return f"{beach['iso2'].lower()}-{slugify(beach['name'])[:36]}-{tail}".strip("-")
+
+
+def disambiguate_ids(beaches):
+    """Give every beach a unique `_id_suffix`, changing as few ids as possible.
+
+    `beach_id` disambiguates on the Wikidata item or the OSM way, and a row
+    that came from the EEA bathing register alone has neither, so its id is
+    just the country and the name. Two different bathing sites can share a
+    name (Spain publishes two "Playa Port d'Alcudia" and two "Playa Los
+    Lances", kilometres apart) and those ids then collide, which the export
+    validator refuses.
+
+    An id is a promise: a saved favourite has to survive a re-harvest. So
+    this never rewrites an id that is already unique. Only inside a
+    colliding group does it act, and there it keeps the FIRST row (by the
+    register's own stable site code, so the choice does not move between
+    runs) on the bare id and gives the others the site code as a suffix.
+    """
+    groups = {}
+    for beach in beaches:
+        groups.setdefault(beach_id(beach), []).append(beach)
+    for base, rows in groups.items():
+        if len(rows) < 2:
+            continue
+        for beach in sorted(rows, key=lambda b: b.get("key") or "")[1:]:
+            key = beach.get("key") or ""
+            suffix = slugify(key[4:]) if key.startswith("eea:") else ""
+            if suffix:
+                beach["_id_suffix"] = suffix
+
+
+def unique_beach_id(beach):
+    """`beach_id` plus whatever `disambiguate_ids` decided this row needs."""
+    base = beach_id(beach)
+    suffix = beach.get("_id_suffix")
+    return f"{base}-{suffix}" if suffix else base
