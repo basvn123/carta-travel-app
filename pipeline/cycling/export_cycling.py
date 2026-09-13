@@ -914,7 +914,11 @@ EV_RE = re.compile(r"^EV(\d+)$")
 # the wrong field.
 # Up to 48 characters inside the brackets (Istanbul's district tags run past
 # 24), and the closing bracket may be a mistyped "[" ("[CIMA JA10[ Iznatoraf").
-_NAME_TAG_RE = re.compile(r"^\s*\[[^\[\]]{1,48}[\]\[]\s*")
+# Repeated, because Istanbul stacks two: "[Paylasimli] [Kagithane] Imrahor
+# Caddesi Bisiklet Yolu" is a sharing tag and a district tag before the name
+# begins. Up to 48 characters inside the brackets (the district tags run past
+# 24), and the closing bracket may be a mistyped "[" ("[CIMA JA10[ ...").
+_NAME_TAG_RE = re.compile(r"^(?:\s*\[[^\[\]]{1,48}[\]\[])+\s*")
 _REF_ONLY_RE = re.compile(r"^\(?[A-Za-z]{0,3}[-. ]?\d{1,4}[A-Za-z]?\)?$")
 _TOUR_SUFFIX_RE = re.compile(r",\s*\d+\s+days\s+(relaxed|balanced|strong)\s*$")
 

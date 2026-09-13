@@ -1,0 +1,4 @@
+# The segment tiles are hundreds of megabytes and are mounted at run time,
+# never baked in; sending them as build context made every build slow.
+segments
+customprofiles

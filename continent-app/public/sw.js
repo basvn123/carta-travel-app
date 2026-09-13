@@ -49,6 +49,11 @@ self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys()
       .then((keys) => Promise.all(keys.filter((k) => k !== CACHE_VERSION).map((k) => caches.delete(k))))
+      // Take the open pages over at once. Without this the new worker sat
+      // waiting behind the old one until every tab closed, which is why a
+      // version bump used to need a hard reload to be seen; main.jsx reloads
+      // once when control changes hands.
+      .then(() => self.clients.claim())
       .then(() => self.clients.claim())
   );
 });

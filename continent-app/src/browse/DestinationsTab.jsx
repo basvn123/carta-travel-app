@@ -34,7 +34,10 @@ import { loadCyclingIndex, loadCycling, loadTopCycling } from '../lib/cycling.js
 import {
   countryPhrase, listedLine, paceLine, surfaceLine, whyLines,
 } from '../lib/cycleStory.js';
-import { cycleRating, routeTitle, paceLine as cyclePaceLine, bikeLine as cycleBikeLine } from '../lib/cycleStory.js';
+import {
+  cycleRating, routeTitle, paceLine as cyclePaceLine, bikeLine as cycleBikeLine,
+  CYCLE_FACET_GROUPS, cycleMatchesFacets, cycleFacetCounts, isLocalNetworkRow,
+} from '../lib/cycleStory.js';
 import {
   tripHeadline, shapeLabel, transportLabel, seasonLabel, tripTags, cardThumb,
 } from '../lib/tripStory.js';
@@ -395,6 +398,12 @@ const SORTS = [
  * in, so the list a country opens on is that country's best walks.
  */
 const TRAIL_SORTS = [
+  { key: 'rating', labelKey: 'places.sortRating', defaultDir: -1 },
+  { key: 'distance', labelKey: 'trails.sortDistance', defaultDir: 1 },
+  { key: 'az', labelKey: 'places.sortAZ', defaultDir: 1 },
+];
+// The same three orderings for a cycle route, under the same labels.
+const CYCLE_SORTS = [
   { key: 'rating', labelKey: 'places.sortRating', defaultDir: -1 },
   { key: 'distance', labelKey: 'trails.sortDistance', defaultDir: 1 },
   { key: 'az', labelKey: 'places.sortAZ', defaultDir: 1 },
@@ -1119,6 +1128,9 @@ export function DestinationsTab({
   // a ranked list (master spec section 3).
   const [cycleIndex, setCycleIndex] = useState(null);
   const [cycleTop, setCycleTop] = useState(null);
+  const [cycleFacets, setCycleFacets] = useState({});
+  const [cycleShowLocal, setCycleShowLocal] = useState(false);
+  const [cycleSort, setCycleSort] = useState({ key: 'rating', dir: -1 });
   const [countryCycling, setCountryCycling] = useState({});   // cc -> bundle
   const [cyclingLoading, setCyclingLoading] = useState(false);
   const [pageCycle, setPageCycle] = useState(null);
@@ -2130,18 +2142,48 @@ export function DestinationsTab({
   const cycleBundle = !isCycleCat ? null
     : wantCycleCountry ? countryCycling[wantCycleCountry] : cycleTop;
 
+  // Every row in scope before the facets, for the chip counts: a count is
+  // what the chip would leave on screen, so it is taken over the rows the
+  // query leaves and nothing else.
+  const cycleScope = useMemo(() => {
+    if (!isCycleCat || !cycleBundle) return [];
+    const inQuery = (r) => !q || queryCycleCountry
+      || norm(r.name || '').includes(q) || norm(r.ref || '').includes(q);
+    return [...(cycleBundle.routes || []), ...(cycleBundle.listed || [])].filter(inQuery);
+  }, [isCycleCat, cycleBundle, q, queryCycleCountry]);
+  const cycleCounts = useMemo(() => cycleFacetCounts(cycleScope), [cycleScope]);
+
   const cycleRows = useMemo(() => {
     if (!isCycleCat || !cycleBundle) return null;
-    const match = (r) => !q || queryCycleCountry
-      || norm(r.name || '').includes(q) || norm(r.ref || '').includes(q);
+    const match = (r) => (!q || queryCycleCountry
+      || norm(r.name || '').includes(q) || norm(r.ref || '').includes(q))
+      && cycleMatchesFacets(r, cycleFacets);
+    const d = cycleSort.dir;
+    const title = (r) => routeTitle(r, t);
+    const sortRows = (rows) => {
+      const arr = [...rows];
+      if (cycleSort.key === 'distance') {
+        arr.sort((a, b) => d * ((a.km || 0) - (b.km || 0)));
+      } else if (cycleSort.key === 'az') {
+        arr.sort((a, b) => d * title(a).localeCompare(title(b), lang));
+      } else {
+        arr.sort((a, b) => d * ((a.score || 0) - (b.score || 0)));
+      }
+      return arr;
+    };
+    const listedAll = (cycleBundle.listed || []).filter(match);
+    const localN = listedAll.filter(isLocalNetworkRow).length;
+    const listed = cycleShowLocal ? listedAll : listedAll.filter((r) => !isLocalNetworkRow(r));
     return {
       tours: (cycleBundle.tours || []).filter(
         (tr) => !q || queryCycleCountry || norm(tr.title || '').includes(q),
       ),
-      routes: (cycleBundle.routes || []).filter(match),
-      listed: (cycleBundle.listed || []).filter(match),
+      routes: sortRows((cycleBundle.routes || []).filter(match)),
+      listed: sortRows(listed),
+      localHidden: cycleShowLocal ? 0 : localN,
     };
-  }, [isCycleCat, cycleBundle, q, queryCycleCountry]);
+  }, [isCycleCat, cycleBundle, q, queryCycleCountry, cycleFacets, cycleShowLocal,
+    cycleSort, lang, t]);
 
   const absentMountainCountry = useMemo(() => {
     if (!isMountainCat || !q || q.length < 2 || !mountainIndex) return null;
@@ -2201,6 +2243,7 @@ export function DestinationsTab({
     if (cat !== 'mountains') setMtnFacets({});
     if (cat !== 'lakes') setLakeFacets({});
     if (cat !== 'beaches') setBeachFacets({});
+    if (cat !== 'cycling') { setCycleFacets({}); setCycleShowLocal(false); }
   }, [cat]);
 
   useEffect(() => {
@@ -2251,6 +2294,12 @@ export function DestinationsTab({
     setTrailSort((s) => (s.key === key
       ? { key, dir: -s.dir }
       : { key, dir: TRAIL_SORTS.find((x) => x.key === key).defaultDir }));
+  };
+
+  const toggleCycleSort = (key) => {
+    setCycleSort((s) => (s.key === key
+      ? { key, dir: -s.dir }
+      : { key, dir: CYCLE_SORTS.find((x) => x.key === key).defaultDir }));
   };
 
   const fmt = (n) => n.toLocaleString(lang);
@@ -2412,6 +2461,34 @@ export function DestinationsTab({
       fromCounts('suitability', t('trails.suitLabel'), SUITABILITY, suits,
         trailFacets.bySuit, setSuits);
     }
+    if (isCycleCat && cycleRows && cycleScope.length > 0) {
+      // Six groups, in the order a rider decides in. Same contract as the
+      // beach chips: a count is the rows it would leave, a zero chip is not
+      // rendered, and a chip already on survives at zero.
+      for (const group of CYCLE_FACET_GROUPS) {
+        const on = cycleFacets[group.key] || [];
+        const options = group.options
+          .map((o) => ({
+            key: o.key,
+            label: t(o.labelKey),
+            n: cycleCounts.get(`${group.key}:${o.key}`) ?? 0,
+            on: on.includes(o.key),
+          }))
+          .filter((o) => o.n > 0 || o.on);
+        if (!options.length) continue;
+        out.push({
+          key: `cycle-${group.key}`,
+          label: t(group.labelKey),
+          toolbar: !!group.toolbar,
+          onToggle: (k) => setCycleFacets((cur) => {
+            const was = cur[group.key] || [];
+            return { ...cur,
+              [group.key]: was.includes(k) ? was.filter((x) => x !== k) : [...was, k] };
+          }),
+          options,
+        });
+      }
+    }
     if (isBeachCat && beachRows) {
       // Nine groups (brief 03 section 4). Every chip carries a count, and a
       // chip whose count is zero in this scope is NOT RENDERED: not greyed
@@ -2504,7 +2581,7 @@ export function DestinationsTab({
       }
     }
     return out;
-  }, [cat, t, showCountryIndex, classCounts, classes, isItinCat, itinFacets,
+  }, [isCycleCat, cycleRows, cycleScope, cycleCounts, cycleFacets, cat, t, showCountryIndex, classCounts, classes, isItinCat, itinFacets,
     itinPace, itinScale, trailFacets, bands, loopsOnly,
     grades, climbs, shapes, hls, suits, isBeachCat, beachRows,
     beachFacets, beachCounts, isLakeCat, lakeRows, lakeFacets, lakeCounts,
@@ -2513,6 +2590,7 @@ export function DestinationsTab({
   // What the Filters badge counts, and what Clear all clears. The country is
   // one of them: it is the filter every tab now carries.
   const activeFilters = (country ? 1 : 0)
+    + Object.values(cycleFacets).reduce((n, list) => n + (list?.length || 0), 0)
     + classes.length + bands.length + (loopsOnly ? 1 : 0)
     + grades.length + climbs.length + shapes.length + hls.length + suits.length
     + Object.values(beachFacets).reduce((n, list) => n + (list?.length || 0), 0)
@@ -2533,16 +2611,22 @@ export function DestinationsTab({
     setBeachFacets({});
     setLakeFacets({});
     setMtnFacets({});
+    setCycleFacets({});
+    setCycleShowLocal(false);
     setItinDays(null);
     setItinPace(null);
     setItinScale(null);
   };
 
   // Which sorts this tab has, and whether there is a list for them to order.
-  const sortDefs = cat === 'trails' ? TRAIL_SORTS : (showPriceChrome ? SORTS : []);
+  const sortDefs = cat === 'trails' ? TRAIL_SORTS
+    : isCycleCat ? CYCLE_SORTS
+      : (showPriceChrome ? SORTS : []);
   const showSorts = cat === 'trails'
     ? (!showCountryIndex && !nearPlace && showTripRows)
-    : (!showCountryIndex && showPriceChrome);
+    : isCycleCat
+      ? Boolean(cycleRows && (cycleRows.routes.length + cycleRows.listed.length) > 0)
+      : (!showCountryIndex && showPriceChrome);
 
   // ── Desktop chrome ────────────────────────────────────────────────────
   //
@@ -2572,14 +2656,15 @@ export function DestinationsTab({
   ));
 
   const renderSortButtons = (cls) => sortDefs.map(({ key, labelKey }) => {
-    const cur = cat === 'trails' ? trailSort : sort;
-    const on = cat === 'trails' ? cur.key === key : (!nearPlace && cur.key === key);
+    const cur = cat === 'trails' ? trailSort : isCycleCat ? cycleSort : sort;
+    const on = (cat === 'trails' || isCycleCat) ? cur.key === key : (!nearPlace && cur.key === key);
     return (
       <button
         key={key}
         className={`${cls} ${on ? 'on' : ''}`}
         onClick={() => {
           if (cat === 'trails') { toggleTrailSort(key); return; }
+          if (isCycleCat) { toggleCycleSort(key); return; }
           setNearPlace(null);
           toggleSort(key);
         }}
@@ -3367,8 +3452,21 @@ export function DestinationsTab({
                   </>
                 )}
 
+                {wantCycleCountry && (cycleRows.localHidden > 0 || cycleShowLocal) && (
+                  <button
+                    type="button"
+                    className="cycle-localtoggle"
+                    data-testid="cycle-local-toggle"
+                    onClick={() => setCycleShowLocal((v) => !v)}
+                  >
+                    {cycleShowLocal
+                      ? t('cycle.hideLocal')
+                      : t('cycle.showLocal', { n: cycleRows.localHidden })}
+                  </button>
+                )}
+
                 {!cycleRows.tours.length && !cycleRows.routes.length
-                  && !cycleRows.listed.length && (
+                  && !cycleRows.listed.length && !cycleRows.localHidden && (
                   <p className="places-empty">{t('cycle.emptyCountry')}</p>
                 )}
               </>

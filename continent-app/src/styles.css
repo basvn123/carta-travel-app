@@ -29633,6 +29633,22 @@ button.ai-sched-main:focus-visible {
 }
 
 
+/* The one button that holds the local network back. */
+.cycle-localtoggle {
+  display: block;
+  margin: 6px 0 4px;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: var(--paper);
+  padding: 8px 14px;
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--ink);
+  cursor: pointer;
+}
+.cycle-localtoggle:hover { background: var(--paper-dim); }
+.cycle-localtoggle:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
 /* The Europe-wide list, and the note that says it is one. */
 .cycle-topnote { margin: 8px 0 2px; font-size: 13.5px; color: var(--ink-soft); }
 

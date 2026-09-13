@@ -40,7 +40,11 @@ import { readFileSync, existsSync, readdirSync, mkdirSync } from 'node:fs';
 
 const ARGS = process.argv.slice(2);
 const WIRE_ONLY = ARGS.includes('--wire');
-const URL = ARGS.find((a) => a.startsWith('http')) || 'http://localhost:4173/';
+// NOT `URL`: that shadows the global URL CONSTRUCTOR for the whole module,
+// so `new URL(...)` in the photo-host check threw and its catch marked
+// every photograph as coming from an unchecked host. The check could
+// never pass, and nothing noticed until a Scottish tour first reached it.
+const APP_URL = ARGS.find((a) => a.startsWith('http')) || 'http://localhost:4173/';
 const WIRE = 'public/cycling';
 
 const checks = [];
@@ -155,6 +159,32 @@ if (!existsSync(`${WIRE}/index.json`)) {
   check('every published tour carries its own photographs',
     tourNoPhotos === 0,
     `${tourNoPhotos} of ${tourTotal} tours have fewer than 4`);
+  // A route whose breaks were routed across says so in its own file: the
+  // osm block carries the repair record, bridge by bridge, with the mode
+  // (road, ferry, straight) and the metres, so a reader can see where the
+  // signed route stops and the routed piece starts.
+  {
+    const routeDir = `${WIRE}/route`;
+    let bridged = 0; let undocumented = 0;
+    for (const entry of index.countries || []) {
+      if (entry.country !== 'GB') continue;
+      const data = readJson(`${WIRE}/${entry.file.split('/').pop()}`);
+      for (const r of [...(data.routes || []), ...(data.listed || [])]) {
+        const f = `${routeDir}/${r.id}.json`;
+        if (!existsSync(f)) continue;
+        const rep = readJson(f).osm?.repair;
+        if (rep && rep.method === 'brouter') {
+          bridged += 1;
+          if (!Array.isArray(rep.bridge_list) || !rep.bridge_list.length
+            || !rep.bridge_list.every((b) => b.mode && b.routed_m != null)) undocumented += 1;
+        }
+      }
+    }
+    check('bridged routes are published', bridged > 0, `${bridged} GB routes routed across breaks`);
+    check('every bridged route documents its bridges', undocumented === 0,
+      `${undocumented} of ${bridged} without a bridge list`);
+  }
+
   // The Europe-wide top file: what the tab opens on with no country chosen.
   // Without it the tab defaulted to the first country in the index.
   const topPath = `${WIRE}/top.json`;
@@ -441,7 +471,7 @@ if (!WIRE_ONLY) {
       }
     });
     await seed(page);
-    await page.goto(URL, { waitUntil: 'networkidle' });
+    await page.goto(APP_URL, { waitUntil: 'networkidle' });
 
     // Into Destinations, then the Cycling category.
     //
@@ -493,6 +523,17 @@ if (!WIRE_ONLY) {
         await page.waitForTimeout(1200);
         check(`${label}: a route opens its page`,
           await page.locator('[data-testid=cycle-page]').count() > 0);
+      }
+
+      // Facets and sorts, like every other layer. The groups render in the
+      // side panel on desktop and in the sheet on a phone, so the desktop
+      // pass is where the chips are on screen.
+      if (label === 'desktop') {
+        check(`${label}: cycling has facet groups`,
+          await page.locator('.places-facet-group').count() >= 3,
+          `${await page.locator('.places-facet-group').count()} groups`);
+        check(`${label}: cycling has sort buttons`,
+          await page.locator('.places-sort:visible, [class*=sort]:visible').count() >= 3);
       }
 
       if (await page.locator('[data-testid=cycle-page]').count()) {
