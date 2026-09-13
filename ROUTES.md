@@ -697,7 +697,7 @@ destination attachments; the R6 caps are per activity for that reason.
 | 4 | R4, R5 | Both done 2026-09-13. R4 kept the recipe with evidence; R5 removed length from the rating and added tag richness. Neither score is re-run until the next `trails_rate`. |
 | 5 | R6 | Done 2026-09-13. The page, the PDF and the pipeline task all read one attach; `verify_routes_block.mjs` is 15/15. |
 | 6 | R7 | Partly done 2026-09-13: the three missing page sections shipped, the separate Explore was not built because the Destinations tab already is one. |
-| 7 | R8 | One commit per activity. |
+| 7 | R8 | Done 2026-09-13 in one commit, not one per activity: they share a scanner, a classifier and a report, so seven separate commits would have been seven copies of the same diff. |
 
 **Attribution.** All of this is OSM data under ODbL. Route pages, GPX
 exports and the map need "(c) OpenStreetMap contributors" with a link to
