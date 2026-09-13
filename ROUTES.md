@@ -541,6 +541,28 @@ the PDF section renders.
 ```
 
 > **Done when:** Rome shows the Via Francigena as a parent route with sensible figures, no stage names appear anywhere in the UI, the two runtime joins are one, and the per-destination route count distribution for both activities is reported alongside the R0 baseline (134 / 365 / 342 / 320 / 265 / 212 / 1,926 for 0 to 6 trails).
+>
+> **Shipped 2026-09-13**, with one design decision that departs from the prompt and is the heart of the step.
+>
+> **"Attach the parent" is impossible, and should be.** Only 94 of 1,463 published stages have a published parent, and that is correct rather than a gap: a superroute is a container, not a walk. The Via Francigena's own relation assembles into 54 disjoint parts whose summed ascent is 5,715 m over 1,921 km, a figure no reader should ever see. So a stage keeps its own line, its own figures and its own page, and wears the path's name: the row says "Romea Strata" where it used to say "Romea Strata in Italia - Tappa RSIT47", with "this stretch: Tappa RSIT47" underneath. Both names come from the relation graph, the distance is to the line that is actually there, and tapping the row opens the piece that has a GPX. Rome's seven rows now read Cammino Naturale dei Parchi, Cammino di San Tommaso Apostolo, Romea Strata, Via di Francesco, Antica Via Clodia and two local loops.
+>
+> **The Via Francigena does not appear at Rome, and that is the fix working.** Its Campagnano variant is published and the old block showed it at "9.3 km". Measured to the line it is 28.5 km away, outside the 25 km radius. The 9.3 km was the bounding-box centre of a route that passes nowhere near.
+>
+> | Routes | R0 trails | R6 hiking |
+> |---|---|---|
+> | 0 | 134 | 287 |
+> | 1 to 2 | 707 | 562 |
+> | 3 to 5 | 797 | 1,758 |
+> | 6 | 1,926 | 428 |
+> | 7 to 8 | not possible | 833 |
+>
+> The old join pinned 1,926 destinations at its cap of six because the bbox centre put everything in range; the new one spreads across the whole range and 287 destinations honestly show nothing. 3,605 of 3,868 have at least one route: 16,491 hiking rows and 1,864 cycling, 2,811 and 483 of them named for their path, and 1,179 and 257 carrying a car-free start. Cycling is thinner by design, since only 506 cycle routes are rated in the wire against 17,404 hiking rows, so 2,788 destinations get no cycling row at all.
+>
+> **Stations, because "car-free start" has to be a fact.** `transit_stops.py` reads 56,857 stations from the same extracts (44,593 railway, 12,264 coach) in 28 minutes, using the cycling layer's own classifier so a zoo miniature or a heritage line is not a way home. Ordinary bus stops are excluded: there are millions and one beside a trailhead proves nothing.
+>
+> **Two traps worth recording.** The first full pass took 14 seconds per destination because `ST_DWithin` over a transform cannot use the GiST index; a degree prefilter that the index serves, with the exact geography test behind it, took it under one second. And the first pass attached zero cycling rows: `cycle_routes.tier` is NULL for all 65,375 rows because the cycling layer derives the tier at export time and never writes it back, so "published" for cycling is a property of the wire. The attach now reads the wire's own ids.
+>
+> **Not done here:** the curate chain has not been re-run, so the published set is still the one from before R3 and R5. The attach reads whatever is published when it runs.
 
 ---
 

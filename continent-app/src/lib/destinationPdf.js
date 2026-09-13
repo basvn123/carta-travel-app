@@ -381,6 +381,49 @@ export async function downloadDestinationPdf({
     }
   }
 
+  // ------------------------------------------------------------ routes
+  // ROUTES.md R6: the same rows the page shows, from the same key, measured
+  // to the nearest point on the line and named for the path.
+  const routes = d.routes || {};
+  if ((routes.hiking?.length || 0) + (routes.cycling?.length || 0) > 0) {
+    h2(T('dest.routesTitle'));
+    for (const [key, label] of [['hiking', 'dest.routesHiking'],
+      ['cycling', 'dest.routesCycling']]) {
+      const rows = routes[key] || [];
+      if (!rows.length) continue;
+      h3(T(label));
+      for (const r of rows) {
+        const bits = [];
+        if (r.km_len != null) bits.push(`${Math.round(r.km_len)} km`);
+        if (r.ascent_m != null) bits.push(`${Math.round(r.ascent_m)} m up`);
+        if (r.car_free) bits.push(T('dest.routesCarFree'));
+        ensure(lh(9) + 1.5);
+        font(SANS, 'normal', 9, C.ink);
+        doc.text(doc.splitTextToSize(clean(r.name), W - 62)[0], M, y, { baseline: 'top' });
+        font(MONO, 'normal', 7.5, C.mute);
+        doc.text(bits.join('  '), M + W - 60, y + 0.4, { baseline: 'top' });
+        font(MONO, 'bold', 8, C.soft);
+        doc.text(`${kmFmt(r.km)} ${T(`dir.${r.dir}`)}`, PAGE_W - M, y + 0.3,
+          { baseline: 'top', align: 'right' });
+        y += lh(9) + 1.2;
+        if (r.stage?.name) {
+          ensure(lh(7.5) + 1);
+          font(SANS, 'italic', 7.5, C.mute);
+          doc.text(doc.splitTextToSize(
+            clean(T('dest.routesStretch', { name: r.stage.name })), W - 62)[0],
+          M + 3, y, { baseline: 'top' });
+          y += lh(7.5) + 0.8;
+        }
+      }
+      y += 1.5;
+    }
+    font(SANS, 'normal', 7.5, C.mute);
+    const note = doc.splitTextToSize(clean(T('dest.routesCoverage')), W);
+    ensure(note.length * lh(7.5));
+    doc.text(note, M, y, { baseline: 'top' });
+    y += note.length * lh(7.5) + 2;
+  }
+
   // ------------------------------------------------------------ trips
   const trips = d.trips || [];
   if (trips.length) {

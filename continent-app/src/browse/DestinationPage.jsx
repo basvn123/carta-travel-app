@@ -21,6 +21,7 @@ import { CrowdCalendar } from './CrowdCalendar.jsx';
 import { BathingWater } from './BathingWater.jsx';
 import { MemberPlaces } from './MemberPlaces.jsx';
 import { AroundHere, FeaturePhoto, summaryOf } from './AroundHere.jsx';
+import RoutesFromHere from './RoutesFromHere.jsx';
 import { ScoreChip } from '../components/RatingBadge.jsx';
 import { visitLength } from '../lib/nearby.js';
 import { roleOf } from '../lib/taxonomy.js';
@@ -33,7 +34,7 @@ import {
   ShoeIcon, SwimIcon, BootIcon, PlugIcon, BottleIcon, JacketIcon,
   BackpackIcon, ReceiptIcon, CheckIcon, BedIcon, InfoIcon, StarIcon,
   ChevronDownIcon, ChevronRightIcon, MusicIcon, SparkIcon, LinkIcon,
-  DownloadIcon, ShareIcon, BulbIcon, MedalIcon,
+  DownloadIcon, ShareIcon, BulbIcon, MedalIcon, RouteIcon,
 } from '../components/Icons.jsx';
 import { PlaneIcon } from '../components/TransportIcons.jsx';
 
@@ -308,6 +309,10 @@ export function DestinationPage({
   const links = d?.practical?.links || {};
   const credits = d?.credits || [];
   const when = d?.when || null;
+  // ROUTES.md R6: measured to the nearest point on the line, in the lab, and
+  // named for the path rather than for whichever stage of it passes. Trails
+  // left `nearby` with this block: see pipeline/dossier NEARBY_RULES.
+  const routeRows = d?.routes || {};
   const nearbyRows = ['trails', 'beaches', 'lakes', 'mountains']
     .flatMap((layer) => (nearby[layer] || []).slice(0, 3).map((f) => ({ ...f, layer })));
   const nearbyForMap = nearbyRows.filter((f) => f.lat != null);
@@ -388,6 +393,7 @@ export function DestinationPage({
     highlights: highlights.length > 0 || !loading,
     do: doItems.length > 0,
     around: !!(around || nearbyRows.length),
+    routes: (routeRows.hiking?.length || 0) + (routeRows.cycling?.length || 0) > 0,
     trips: trips.length > 0,
     members: members?.length > 0,
     rating: verdict?.score != null,
@@ -403,6 +409,7 @@ export function DestinationPage({
   };
   const navItems = [
     ['highlights', 'dest.nav.highlights'], ['do', 'dest.nav.do'], ['around', 'dest.nav.around'],
+    ['routes', 'dest.routesTitle'],
     ['trips', 'dest.nav.trips'], ['when', 'dest.nav.when'], ['sleep', 'dest.nav.sleep'],
     ['cost', 'dest.nav.cost'], ['park', 'dest.nav.park'],
   ].filter(([id]) => has[id]);
@@ -746,6 +753,27 @@ export function DestinationPage({
                   onOpenFeature={onOpenFeature}
                   onShowMap={aroundForMap.length || nearbyForMap.length ? showOnMap : null}
                 />
+              </Fold>
+            )}
+
+            {/* Routes from here: the paths that PASS this town, measured to
+                the line rather than to a bounding box, each named for the
+                path with the stretch that passes named underneath. */}
+            {has.routes && (
+              <Fold
+                id="sec-routes"
+                icon={RouteIcon}
+                title={t('dest.routesTitle')}
+                summary={[
+                  routeRows.hiking?.length
+                    && `${routeRows.hiking.length} ${t('dest.routesHiking').toLowerCase()}`,
+                  routeRows.cycling?.length
+                    && `${routeRows.cycling.length} ${t('dest.routesCycling').toLowerCase()}`,
+                ].filter(Boolean).join(', ')}
+                open={isOpen('routes')}
+                onToggle={() => toggle('routes')}
+              >
+                <RoutesFromHere routes={routeRows} t={t} onOpen={onOpenFeature} />
               </Fold>
             )}
 

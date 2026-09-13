@@ -3,6 +3,24 @@ import { useTrails } from '../lib/trails.js';
 import { useI18n } from '../i18n/index.jsx';
 import { RouteIcon } from './Icons.jsx';
 
+// ROUTES.md R6. The DESTINATION PAGE no longer joins trails at runtime at
+// all: pipeline/trails/attach.py measures every route to the nearest point on
+// its line in the lab, folds co-located paths, names each row for the path
+// rather than the stage, and the dossier carries the result (browse/
+// RoutesFromHere.jsx renders it). That is the one rule, and it lives in one
+// place.
+//
+// This component is what is left: the detail PANEL, which is a preview with
+// no dossier of its own, and whose job here is narrower. It answers "is there
+// anything to walk near here" to decide whether a tab exists, and it lists
+// the city's own composed day. It is deliberately LOOSER than the page (a
+// 40 km box around the city, measured to the bounding-box centre, which is
+// all the wire's country file supports without fetching detail files), and it
+// must never be read as the page's answer: a row here can be a stage name,
+// and its distance can be tens of kilometres out on a long path.
+//
+// If this ever needs to agree with the page, the fix is to load the dossier
+// here and read `routes`, not to improve the maths below.
 const NEARBY_KM = 40;
 const MAX_ROWS = 4;
 

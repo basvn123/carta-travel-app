@@ -1523,6 +1523,31 @@ TASKS = [
                  "wire standing."),
     },
     {
+        "key": "routes_attach",
+        "title": "Routes: which paths pass each destination, measured to the line",
+        "cadence": "after",
+        "after": ["trails_rate", "cycling_publish"],
+        "writes_app_data": False,
+        "soft": True,
+        "guard": guard_trailslab_up,
+        "cmds": [
+            [PY, "pipeline/trails/transit_stops.py"],
+            [PY, "pipeline/trails/attach.py"],
+        ],
+        "note": ("ROUTES.md R6. Writes data/derived/routes_attach.json, which "
+                 "the dossier build reads into each destination's `routes` "
+                 "key, so it MUST run before `dossier`. Every distance is to "
+                 "the nearest point on the route's line, in the lab where the "
+                 "geometry is: the join it replaced placed a route by the "
+                 "centre of its bounding box, which put a variant of the Via "
+                 "Francigena 9 km from Rome when the walk passes 28.5 km "
+                 "away. Rows are named for the PATH with the stretch that "
+                 "passes named underneath, because a superroute is a "
+                 "container rather than a walk and almost never publishes. "
+                 "transit_stops.py runs first and is cheap after the first "
+                 "pass: it only re-reads extracts already on disk."),
+    },
+    {
         "key": "joins",
         "title": "Cross-layer neighbours: nb ids stamped into every wire row",
         "cadence": "after",

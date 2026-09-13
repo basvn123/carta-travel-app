@@ -31785,3 +31785,65 @@ button.ai-sched-main:focus-visible {
 
 .destp-sleep-tier { display: inline-flex; align-items: center; }
 .destp-sleep-sep { display: inline-block; width: 1px; height: 11px; background: var(--rule); margin: 0 8px; }
+
+/* Routes from here (ROUTES.md R6). One row per PATH, with the stretch that
+   passes named underneath, so the reader can tell the Via Francigena from
+   the nine kilometres of it that happen to run past this town. Deliberately
+   text only: a route is a line and a 64px thumbnail of one is a smudge, which
+   is why this does not borrow .dar-row's photo column. */
+.drh-group + .drh-group { margin-top: 16px; }
+.drh-head {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0 0 4px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+}
+.drh-list { list-style: none; margin: 0; padding: 0; }
+.drh-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 11px;
+  width: 100%;
+  padding: 8px 0;
+  border: none;
+  background: none;
+  text-align: left;
+  border-bottom: 1px solid var(--rule-soft);
+  cursor: pointer;
+}
+.drh-list li:last-child .drh-row { border-bottom: none; }
+.drh-row:disabled { cursor: default; }
+.drh-main { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.drh-name { font-weight: 600; }
+.drh-facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 10px;
+  font-size: 0.86rem;
+  color: var(--ink-dim);
+}
+.drh-stage,
+.drh-carfree {
+  font-size: 0.84rem;
+  color: var(--ink-dim);
+}
+.drh-carfree {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--ink);
+}
+.drh-go { color: var(--ink-faint); }
+.drh-note,
+.drh-credit {
+  margin: 12px 0 0;
+  font-size: 0.8rem;
+  color: var(--ink-dim);
+}
+.drh-credit { color: var(--ink-faint); }

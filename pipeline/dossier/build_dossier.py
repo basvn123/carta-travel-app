@@ -51,7 +51,7 @@ from common import (  # noqa: E402
 )
 from derive_do import derive  # noqa: E402
 
-SCHEMA = "dossier_v1"
+SCHEMA = "dossier_v2"
 OUT_DIR = os.path.join(PUB, "dossier")
 
 # ---------------------------------------------------------------- trip model
@@ -637,12 +637,37 @@ def compose_do(dest, items, highlights, nearby, listings, events, poi_wd,
 # ---------------------------------------------------------------- S5 nearby
 
 # metres of radius by feature layer and place class; cap per layer (spec table)
+#
+# TRAILS ARE NOT HERE ANY MORE (ROUTES.md R6). Every layer in this table is
+# placed by a point: a beach, a lake, a summit. A route is a LINE, and the
+# point this join used was the centre of its bounding box, which for a long
+# path can sit a hundred kilometres from where it actually passes the town.
+# Rome's page showed the Campagnano variant of the Via Francigena at "9.3 km"
+# on that reading; measured to the line it is 28.5 km away and does not
+# qualify at all. pipeline/trails/attach.py measures to the line in the lab,
+# where the geometry is, and this file reads its result into `routes`.
 NEARBY_RULES = {
     "beaches": ({"village": 15, "town": 15, "city": 25, "metro": 35, "area": 35}, 6),
     "lakes": ({"village": 20, "town": 20, "city": 30, "metro": 40, "area": 40}, 4),
-    "trails": ({"village": 20, "town": 20, "city": 30, "metro": 45, "area": 45}, 6),
     "mountains": ({"village": 25, "town": 25, "city": 40, "metro": 60, "area": 60}, 5),
 }
+
+# What attach.py wrote, keyed by destination id. Absent on a clone that has
+# never run it, which is a missing block rather than an error: the page omits
+# the card and says nothing it cannot support.
+# REPORTS is <repo>/data/reports; the attach writes to <repo>/data/derived.
+ROUTES_ATTACH = os.path.join(os.path.dirname(REPORTS), "derived",
+                             "routes_attach.json")
+
+
+def load_routes_attach():
+    try:
+        with open(ROUTES_ATTACH, encoding="utf-8") as fh:
+            return json.load(fh)
+    except (OSError, ValueError):
+        print("  no data/derived/routes_attach.json: the routes block will be "
+              "absent (run pipeline/trails/attach.py)")
+        return {}
 INSIDE_KM = 0.8  # a feature this close is a highlight, not a neighbour
 
 
@@ -1365,6 +1390,7 @@ def load_context():
         "poi_wd": poi_wd, "parking": parking, "gonext": gonext,
         "destinfo": destinfo, "trips_by_cc": trips_by_cc,
         "dest_index": dest_index, "layer_index": layer_index,
+        "routes_attach": load_routes_attach(),
         "trip_model": _load_trip_model(), "tasl": TaslStore(),
         "meta": app.get("meta", {}),
     }
@@ -1542,6 +1568,9 @@ def build_one(dest, ctx, refusal_log):
         "do": do or None,
         "nearby": nearby,
         "around": around,
+        # ROUTES.md R6: measured in the lab to the nearest point on the line,
+        # and named for the path rather than the stage.
+        "routes": (ctx.get("routes_attach") or {}).get(did),
         "trips": trips,
         "when": when or None,
         "festivals": festivals or None,

@@ -88,6 +88,17 @@ pipeline/trails/
   validate.py           five checks -> quality_score, status routing
   regression.py         demotes published content that fell below the bar
   rate.py               the published 0 to 10 and its reason codes
+  transit_stops.py      ROUTES.md R6: railway and coach stations from the
+                        extracts, with the cycling layer's exclusions (no zoo
+                        miniatures, funiculars or heritage lines), so
+                        "car-free start" is a measured fact
+  attach.py             ROUTES.md R6: which routes pass each destination,
+                        measured to the NEAREST POINT ON THE LINE, folded on
+                        co_located then the relation tree then the family,
+                        each row named for the PATH with the stretch that
+                        passes named underneath. Writes
+                        data/derived/routes_attach.json, which the dossier
+                        build reads into each destination's `routes` key
   quality_report.py     ROUTES.md R5: where each scoring component actually
                         lives (gate, admission score or rating), both score
                         distributions, per country counts, and the best route
@@ -141,6 +152,8 @@ tools/trailslab/
   review/               the human approval queue, FastAPI on 127.0.0.1:8011
 
 continent-app/
+  src/browse/RoutesFromHere.jsx  the "Routes from here" block on a
+                        destination page, from the dossier's `routes` key
   src/lib/trails.js       loaders, the SPA-fallback guard, #trail= deep link
   src/lib/trailCards.js   the filter model the chips render from
   src/lib/trailStory.js   codes -> sentences, in six languages
