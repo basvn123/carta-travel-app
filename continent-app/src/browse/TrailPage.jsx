@@ -11,8 +11,9 @@ import {
 import { trailStory, trailReasons } from '../lib/trailStory.js';
 import {
   routePoints, routeLength, nearestOnRoute, sliceRoute, remainingRelief,
-  hikeTimeMin, isLoopRoute,
+  hikeTimeMin, isLoopRoute, basesAlong,
 } from '../lib/trailGeo.js';
+import { SurfaceBar, Stages, Bases } from './RouteParts.jsx';
 import {
   trailGpx, trailKml, trailFileBase, trailShareUrl, trailheadDirectionsUrl,
   shareOrDownloadFile, shareTrailLink, stopNamesOf, downloadTextFile,
@@ -232,7 +233,7 @@ function Fact({ label, value, word = false, title }) {
   );
 }
 
-export function TrailPage({ card, onClose, onSelectDest, onOpenNeighbour }) {
+export function TrailPage({ card, onClose, onSelectDest, onOpenNeighbour, dests }) {
   const { t } = useI18n();
   const paywall = usePaywall();
   const { tr, assoc, kindKey, price } = card;
@@ -285,6 +286,13 @@ export function TrailPage({ card, onClose, onSelectDest, onOpenNeighbour }) {
 
   const src = detail || tr;
   const pts = useMemo(() => routePoints(src.geometry), [src]);
+  // Bases along the route (ROUTES.md R7). Computed from the full-resolution
+  // geometry once the detail file lands, because the card's 90 m placeholder
+  // line would put a town on the wrong side of a valley.
+  const bases = useMemo(
+    () => (detail && dests ? basesAlong(routePoints(detail.geometry), dests) : []),
+    [detail, dests],
+  );
   const lineM = useMemo(() => routeLength(pts), [pts]);
   const totalM = isNum(src.distance_m) ? src.distance_m : lineM;
   // The wire's own answer wins. curate.py decides it from the full-resolution
@@ -740,6 +748,34 @@ export function TrailPage({ card, onClose, onSelectDest, onOpenNeighbour }) {
             <section className="tpage-sec">
               <h2 className="tpage-sec-title">{t('trails.elevTitle')}</h2>
               <ElevationChart elevation={detail.elevation} atM={follow && onRoute ? onRoute.m : null} t={t} />
+            </section>
+          )}
+
+          {/* What is underfoot (ROUTES.md R7). The unknown share is shown
+              rather than hidden: nobody having tagged it is not the same
+              claim as the ground being good. */}
+          {!follow && detail?.sf && (
+            <section className="tpage-sec">
+              <h2 className="tpage-sec-title">{t('route.surfaceTitle')}</h2>
+              <SurfaceBar sf={detail.sf} t={t} />
+            </section>
+          )}
+
+          {/* A path's own stages, in order. Only a parent has these; a stage
+              gets the path's name instead, which is the same relationship
+              read from the other end. */}
+          {!follow && detail?.stages?.length > 0 && (
+            <section className="tpage-sec">
+              <h2 className="tpage-sec-title">{t('route.stagesTitle')}</h2>
+              <Stages stages={detail.stages} t={t} onOpenRoute={null} />
+            </section>
+          )}
+
+          {/* Our own towns along the line, in the order you meet them. */}
+          {!follow && bases.length > 0 && (
+            <section className="tpage-sec">
+              <h2 className="tpage-sec-title">{t('route.basesTitle')}</h2>
+              <Bases bases={bases} t={t} onSelectDest={onSelectDest} />
             </section>
           )}
 

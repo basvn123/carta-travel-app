@@ -604,6 +604,20 @@ components, everything visible at rest, no horizontal body scroll at
 ```
 
 > **Done when:** a route page renders for the Via Francigena (a parent), the GR 20, EuroVelo 6 and a 6 km local loop without layout breaking at any of those scales, and the elevation chart reads correctly in both themes.
+>
+> **Partly shipped 2026-09-13, and the rest is deliberately not built.** Most of R7 already existed and the prompt did not know it: `TrailPage.jsx` (866 lines) and `CyclePage.jsx` (657) already draw the hero map, the elevation chart, the stat row, the photographs, GPX and KML export, ODbL attribution and live GPS following, and the Destinations tab already browses both activities with shared search, country filter, sort and the six filters the wire's own `filter_model` ships. Building `ExploreRoutes.jsx` beside that would have been a second catalogue over the same rows.
+>
+> **What was actually missing, and is now built** as `browse/RouteParts.jsx`, shared by both pages so they cannot drift apart again:
+>
+> - **Underfoot.** One stacked bar from the `sf` shares R1 added, with the unmapped share visible and hatched rather than coloured, because nobody having tagged the ground is not the same claim as the ground being good. The subject the harness picked is 79% unmapped, and says so.
+> - **Stages.** A parent lists its pieces in order, each opening its own page. This is R6's naming read from the other end: R6 names a row for its path, this names a path's rows.
+> - **Bases along the route.** Our own destinations within 10 km, ordered by distance ALONG the line rather than from it, so the list reads as an itinerary. `basesAlong` in `trailGeo.js` projects each candidate onto the route with the same maths the GPS follow uses, behind a latitude-corrected bounding box.
+>
+> **The wire had to be re-exported first.** Everything R1 through R5 built was in the lab but not in `public/trails`, which was still the 2 September build: no `sf`, no `h`, no `stages`, no steepness. The re-export promoted nothing (all 17,670 rows were already published) and rewrote them with the new keys. A detail file now carries `h: {cls: stage, of: "Romea Strata in Italia - 05 Lazio", top: "Romea Strata", i: 7}`, which is the three-level hierarchy R3 found, reaching a reader for the first time.
+>
+> **Two faults found by building on it.** The R6 CSS shipped three token names that do not exist in this codebase (`--ink-dim`, `--ink-faint`, `--good`), which browsers resolve to nothing; fixed in both blocks. And `verify_trail_page.mjs` has been broken since the country picker became a custom button: it calls `selectOption` on a `<button>` and dies before reaching a route. The new `verify_route_page.mjs` opens routes by deep link instead, which tests the page rather than the chrome in front of it, and passes 13 of 13 across a long path, a local loop, a parent and both themes.
+>
+> **Not built, with reasons.** A separate routes Explore, because the Destinations tab is one. A merged `RoutePage`, because the two pages differ in the things that matter (a walk has a sac_scale and a hut; a ride has a surface-by-metre and a bail-out station) and merging 1,500 lines to share a header would trade real duplication for a worse abstraction. Steep-section shading on the chart, because the `steep10_pct` figure R4 added is a share of the whole line, not a set of positions, and shading would need per-span data the wire does not carry.
 
 ---
 
@@ -656,7 +670,7 @@ destination attachments; the R6 caps are per activity for that reason.
 | 3 | R3 | Done 2026-09-12. Classify is 25 seconds for Europe; dedup is the slow one. Registered as `trails_hierarchy` in run_pipeline.py, before trails_curate. |
 | 4 | R4, R5 | Both done 2026-09-13. R4 kept the recipe with evidence; R5 removed length from the rating and added tag richness. Neither score is re-run until the next `trails_rate`. |
 | 5 | R6 | Done 2026-09-13. The page, the PDF and the pipeline task all read one attach; `verify_routes_block.mjs` is 15/15. |
-| 6 | R7 | Route pages and Explore. Depends on PLAN.md phase C having landed. |
+| 6 | R7 | Partly done 2026-09-13: the three missing page sections shipped, the separate Explore was not built because the Destinations tab already is one. |
 | 7 | R8 | One commit per activity. |
 
 **Attribution.** All of this is OSM data under ODbL. Route pages, GPX

@@ -3610,6 +3610,7 @@ export function DestinationsTab({
         <Suspense fallback={null}>
           <TrailPage
             card={pageCard}
+            dests={data?.destinations}
             onOpenNeighbour={openNeighbour}
             onClose={() => setPageCard(null)}
             onSelectDest={(id) => { setPageCard(null); onSelectDest(id); }}

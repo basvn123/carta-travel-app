@@ -100,6 +100,63 @@ export function nearestOnRoute(pts, lat, lon) {
 }
 
 /**
+ * Our own destinations along a route: the "Bases along the route" list
+ * (ROUTES.md R7).
+ *
+ * Ordered by distance ALONG the line rather than by distance from it, so the
+ * list reads as an itinerary: the towns in the order you would meet them,
+ * each with how far off the route it sits. A bounding-box prefilter keeps
+ * the projection off the 3,868 destinations that are nowhere near.
+ *
+ * `dests` is the catalogue map from app_data. maxOffKm is the corridor, and
+ * 10 km is R7's figure: a town you could reach at the end of a day.
+ */
+export function basesAlong(pts, dests, maxOffKm = 10, limit = 12) {
+  if (!pts?.length || !dests) return [];
+  let west = Infinity, east = -Infinity, south = Infinity, north = -Infinity;
+  for (const p of pts) {
+    if (p.lon < west) west = p.lon;
+    if (p.lon > east) east = p.lon;
+    if (p.lat < south) south = p.lat;
+    if (p.lat > north) north = p.lat;
+  }
+  // A degree of latitude is ~111 km; longitude shrinks with the cosine, so
+  // the box has to widen with latitude or it clips towns in the north.
+  const padLat = maxOffKm / 111;
+  const midLat = (north + south) / 2;
+  const padLon = maxOffKm / (111 * Math.max(0.25, Math.cos(midLat * RAD)));
+  const out = [];
+  for (const [id, d] of Object.entries(dests)) {
+    const lat = d.city_lat ?? d.lat;
+    const lon = d.city_lon ?? d.lon;
+    if (lat == null || lon == null) continue;
+    if (lat < south - padLat || lat > north + padLat) continue;
+    if (lon < west - padLon || lon > east + padLon) continue;
+    const near = nearestOnRoute(pts, lat, lon);
+    if (!near || near.offM > maxOffKm * 1000) continue;
+    out.push({
+      id,
+      city: String(d.city || '').replace(/\s*\([^)]*\)\s*$/, '').trim(),
+      country: d.country || null,
+      alongKm: Math.round(near.m / 100) / 10,
+      offKm: Math.round(near.offM / 100) / 10,
+    });
+  }
+  out.sort((a, b) => a.alongKm - b.alongKm || a.offKm - b.offKm);
+  // One entry per town name: a city with two airport gateways is one base.
+  const seen = new Set();
+  const unique = [];
+  for (const b of out) {
+    const key = b.city.toLowerCase();
+    if (seen.has(key)) continue;
+    seen.add(key);
+    unique.push(b);
+    if (unique.length >= limit) break;
+  }
+  return unique;
+}
+
+/**
  * The line split at a distance along it: what has been walked and what is
  * left, both as [lon, lat] arrays ready for a GeoJSON source. The split point
  * is added to both halves so the two lines meet.

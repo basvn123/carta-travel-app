@@ -31801,7 +31801,7 @@ button.ai-sched-main:focus-visible {
   font-weight: 600;
   letter-spacing: 0.02em;
   text-transform: uppercase;
-  color: var(--ink-dim);
+  color: var(--ink-soft);
 }
 .drh-list { list-style: none; margin: 0; padding: 0; }
 .drh-row {
@@ -31826,12 +31826,12 @@ button.ai-sched-main:focus-visible {
   flex-wrap: wrap;
   gap: 4px 10px;
   font-size: 0.86rem;
-  color: var(--ink-dim);
+  color: var(--ink-soft);
 }
 .drh-stage,
 .drh-carfree {
   font-size: 0.84rem;
-  color: var(--ink-dim);
+  color: var(--ink-soft);
 }
 .drh-carfree {
   display: inline-flex;
@@ -31839,11 +31839,82 @@ button.ai-sched-main:focus-visible {
   gap: 4px;
   color: var(--ink);
 }
-.drh-go { color: var(--ink-faint); }
+.drh-go { color: var(--ink-mute); }
 .drh-note,
 .drh-credit {
   margin: 12px 0 0;
   font-size: 0.8rem;
-  color: var(--ink-dim);
+  color: var(--ink-soft);
 }
-.drh-credit { color: var(--ink-faint); }
+.drh-credit { color: var(--ink-mute); }
+
+/* Route page parts (ROUTES.md R7): what is underfoot, the stages of a path,
+   and our own towns along the line. Shared by the trail and cycle pages via
+   browse/RouteParts.jsx. Colours come from the existing surface tokens where
+   they exist, so a gravel segment here and a gravel chip on a card cannot
+   drift apart. */
+.rsurf-bar {
+  display: flex;
+  height: 10px;
+  border-radius: 5px;
+  overflow: hidden;
+  background: var(--paper-dim);
+  border: 1px solid var(--rule-soft);
+}
+.rsurf-seg { display: block; height: 100%; }
+.rsurf-seg.is-paved,
+.rsurf-dot.is-paved { background: var(--ink-soft); }
+.rsurf-seg.is-gravel,
+.rsurf-dot.is-gravel { background: var(--rate); }
+.rsurf-seg.is-path,
+.rsurf-dot.is-path { background: var(--green); }
+.rsurf-seg.is-other,
+.rsurf-dot.is-other { background: var(--ink-mute); }
+/* The unmapped share is hatched rather than coloured: it is an absence of a
+   reading, and a flat block of colour would read as one more surface. */
+.rsurf-seg.is-unknown {
+  background: repeating-linear-gradient(
+    45deg, var(--paper-dim), var(--paper-dim) 3px,
+    var(--rule-soft) 3px, var(--rule-soft) 6px);
+}
+.rsurf-dot.is-unknown { background: var(--rule-soft); }
+.rsurf-keys {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 14px;
+  margin: 8px 0 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.84rem;
+  color: var(--ink-soft);
+}
+.rsurf-keys li { display: inline-flex; align-items: center; gap: 5px; }
+.rsurf-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 2px;
+  display: inline-block;
+}
+.rstages, .rbases { list-style: none; margin: 0; padding: 0; }
+.rstage, .rbase {
+  display: grid;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 8px 0;
+  border: none;
+  background: none;
+  text-align: left;
+  border-bottom: 1px solid var(--rule-soft);
+  cursor: pointer;
+}
+.rstage { grid-template-columns: 26px 1fr auto; }
+.rbase { grid-template-columns: 62px 1fr auto; }
+.rstages li:last-child .rstage,
+.rbases li:last-child .rbase { border-bottom: none; }
+.rstage:disabled, .rbase:disabled { cursor: default; }
+.rstage-n, .rbase-at { color: var(--ink-soft); font-size: 0.86rem; }
+.rstage-name, .rbase-name { font-weight: 600; }
+.rstage-off { font-size: 0.8rem; color: var(--ink-mute); }
+.rbase-main { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+.rbase-sub { font-size: 0.84rem; color: var(--ink-soft); }
