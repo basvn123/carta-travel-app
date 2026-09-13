@@ -72,7 +72,10 @@ def tile_name(lon, lat):
     """The .rd5 stem for the 5 by 5 degree cell with this SW corner."""
     ew = "E" if lon >= 0 else "W"
     ns = "N" if lat >= 0 else "S"
-    return f"{ew}{abs(int(lon)):03d}_{ns}{abs(int(lat)):02d}"
+    # No zero padding: the server has W5_N50.rd5 and E0_N50.rd5, and answers
+    # 404 to W005_N50. Padded names made every tile in Britain read as open
+    # water and the first run staged nothing.
+    return f"{ew}{abs(int(lon))}_{ns}{abs(int(lat))}"
 
 
 def tiles_for(bbox):

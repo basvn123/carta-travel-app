@@ -249,8 +249,15 @@ python run_pipeline.py --only cycling_publish
 
 ### 5. Smoke BRouter
 
-Configured but never started here: this machine has no Java and the Docker CLI
-was unreachable for most of the session.
+**Done 2026-09-13.** Two things were wrong with the setup as committed, and
+neither was Java: the compose file pointed at `abrensch/brouter:latest`,
+which does not exist on Docker Hub, and `prepare.py` zero-padded the tile
+names (`W005_N50`) where the server has `W5_N50`, so every tile in Britain
+read as open water. BRouter now builds locally from the release zip
+(`tools/brouter/Dockerfile`, Java inside the container only) and GB stages
+in about 330 MB. `pipeline/cycling/bridge_gaps.py` is the consumer: it routes
+across every break above the splice bound and writes the result to
+`cycle_repairs` with the bridge's own way tags in `way_spans`.
 
 ```bash
 python tools/brouter/prepare.py --country GB --up --wait

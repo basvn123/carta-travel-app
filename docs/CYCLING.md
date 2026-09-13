@@ -321,6 +321,22 @@ of the model and the model ships with the data:
 
 `python tools/brouter/prepare.py --country GB --up --wait` stages only the
 5-degree segment tiles that country needs and starts the stack on 127.0.0.1.
+The image is built locally from the release zip (`tools/brouter/Dockerfile`):
+there is no official BRouter image on Docker Hub, and Java lives in the
+container and nowhere else. Tile names are unpadded (`W5_N50.rd5`, not
+`W005_N50`); the padded form answers 404 and once made all of Britain look
+like open water.
+
+**Bridging real breaks** is `pipeline/cycling/bridge_gaps.py`. splice_cycling
+joins a break up to 300 m with a straight line; anything longer is routed,
+the house touring profile first and the stock `trekking` profile second
+because it is the one that knows about ferries, and a ferry leg is recorded
+as one. The routed piece brings its own way tags from BRouter's per-segment
+messages into `way_spans`, so a stage that crosses a bridge is measured on
+the road actually ridden. Three bounds keep a repair a repair: no single
+break over 40 km, no bridge over three times its straight line, and never
+more than a quarter of the ride bridged in total; a route that fails one
+stays as it was and says why.
 
 ---
 

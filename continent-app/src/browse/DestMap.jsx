@@ -4,23 +4,28 @@ import 'maplibre-gl/dist/maplibre-gl.css';
 import { isNum, declutterPins } from '../map/coords.js';
 
 /**
- * The destination page's one map. Three toggleable layers rather than three
- * maps: highlights (numbered, matching the cards under it), day trips, and
- * nearby nature. The parent owns the toggle; this component just renders the
- * layer it is told to.
+ * The destination page's one map. Four toggleable layers rather than four
+ * maps: highlights (numbered, matching the tiles under it), everything within
+ * 20 km (one colour per outdoor layer), nearby top picks, and day trips. The
+ * parent owns the toggle; this component renders the layer it is told to.
  *
- * Same two contained gotchas as PlaceMap: the lazily imported maplibre-gl.css
+ * Same two contained gotchas as before: the lazily imported maplibre-gl.css
  * lands after styles.css (so pin transforms live on an inner element the
  * library never touches), and every coordinate goes through isNum because one
  * NaN in setLngLat/fitBounds blanks the whole app via the error boundary.
  *
- * preserveDrawingBuffer is on, which PlaceMap deliberately avoids: the PDF
- * export snapshots this canvas with toDataURL, and without the flag WebGL
- * hands back transparent pixels. The cost (a retained back buffer) is paid
- * only while a destination page is actually open.
+ * Pins talk back: a numbered pin click calls onPickHighlight(index) so the
+ * matching tile can scroll into view, and the `focus` prop marks one pin as
+ * the tile the reader is looking at.
  */
 
 const MAP_STYLE = 'https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json';
+
+// One colour per outdoor layer, shared with the CSS (.dmap-pin.is-<layer>).
+const LAYER_COLOR = {
+  trails: '#3d7a4e', cycling: '#2c6376', mountains: '#6b5b95',
+  lakes: '#2a6f9e', beaches: '#c48a2a', nearby: '#3d7a4e',
+};
 
 function token(name, fallback) {
   if (typeof document === 'undefined') return fallback;
@@ -38,62 +43,24 @@ function makeEl(className, html) {
 const esc = (s) => String(s || '').replace(/[<>&]/g, '');
 
 const DestMap = React.forwardRef(function DestMap({
-  place, highlights = [], trips = [], nearby = [], active = 'highlights',
-  height = 300, onPickTrip,
+  place, highlights = [], trips = [], nearby = [], around = [],
+  active = 'highlights', height = 300, focus = null,
+  onPickTrip, onPickHighlight, onPickFeature,
 }, ref) {
   const holder = React.useRef(null);
   const mapRef = React.useRef(null);
   const readyRef = React.useRef(false);
   const markersRef = React.useRef([]);
   const declutterRef = React.useRef(null);
-  // What the active layer put on the map, kept for the snapshot: DOM markers
-  // are not part of the WebGL canvas, so the export redraws them by hand.
-  const pinsRef = React.useRef([]);
+  const pinElsRef = React.useRef([]);
 
   React.useImperativeHandle(ref, () => ({
-    snapshot() {
-      const map = mapRef.current;
-      if (!map) return null;
-      try {
-        const gl = map.getCanvas();
-        const out = document.createElement('canvas');
-        out.width = gl.width;
-        out.height = gl.height;
-        const ctx = out.getContext('2d');
-        ctx.drawImage(gl, 0, 0);
-        const scale = gl.width / gl.clientWidth;
-        const accent = token('--accent', '#e05a47');
-        for (const pin of pinsRef.current) {
-          let pt;
-          try { pt = map.project(pin.lngLat); } catch { continue; }
-          const x = pt.x * scale;
-          const y = pt.y * scale;
-          const r = (pin.n != null ? 9 : 6) * scale;
-          ctx.beginPath();
-          ctx.arc(x, y, r, 0, Math.PI * 2);
-          ctx.fillStyle = pin.color || accent;
-          ctx.fill();
-          ctx.lineWidth = 2 * scale;
-          ctx.strokeStyle = '#ffffff';
-          ctx.stroke();
-          if (pin.n != null) {
-            ctx.fillStyle = '#ffffff';
-            ctx.font = `600 ${10 * scale}px system-ui, sans-serif`;
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            ctx.fillText(String(pin.n), x, y + 0.5 * scale);
-          }
-        }
-        return out.toDataURL('image/jpeg', 0.85);
-      } catch { return null; }
-    },
+    resize() { try { mapRef.current?.resize(); } catch { /* not mounted */ } },
   }), []);
 
   const lat = place?.lat;
   const lon = place?.lon;
 
-  // Build the marker set for the active layer. Runs on layer switch and on
-  // map ready; tears its own markers down first.
   const renderLayer = React.useCallback(() => {
     const map = mapRef.current;
     if (!map || !readyRef.current) return;
@@ -101,12 +68,13 @@ const DestMap = React.forwardRef(function DestMap({
     markersRef.current = [];
     declutterRef.current?.();
     declutterRef.current = null;
+    pinElsRef.current = [];
 
     const accent = token('--accent', '#e05a47');
     const rows = active === 'trips' ? trips
-      : active === 'nearby' ? nearby : highlights;
+      : active === 'nearby' ? nearby
+        : active === 'around' ? around : highlights;
     const pts = [];
-    pinsRef.current = [];
 
     // The town itself, always.
     const main = makeEl('pm-pin', `<span class="pm-pin-in"><span class="pm-pin-dot" style="background:${accent}"></span><span class="pm-pin-name">${esc(place?.name)}</span></span>`);
@@ -121,7 +89,11 @@ const DestMap = React.forwardRef(function DestMap({
       pts.push([row.lon, row.lat]);
       let el;
       if (active === 'highlights') {
-        el = makeEl('dmap-pin', `<span class="dmap-pin-in"><span class="dmap-pin-n mono">${i + 1}</span><span class="dmap-pin-name">${esc(row.name)}</span></span>`);
+        el = makeEl(`dmap-pin is-hl ${focus === i ? 'is-focus' : ''}`, `<span class="dmap-pin-in"><span class="dmap-pin-n mono">${i + 1}</span><span class="dmap-pin-name">${esc(row.name)}</span></span>`);
+        if (onPickHighlight) {
+          el.style.cursor = 'pointer';
+          el.addEventListener('click', (e) => { e.stopPropagation(); onPickHighlight(i); });
+        }
       } else if (active === 'trips') {
         el = makeEl('dmap-pin is-trip', `<span class="dmap-pin-in"><span class="dmap-pin-dot"></span><span class="dmap-pin-name">${esc(row.name)}${row.travel?.minutes ? ` <span class="mono">${Math.round(row.travel.minutes)}m</span>` : ''}</span></span>`);
         if (onPickTrip && row.kind === 'destination') {
@@ -129,18 +101,19 @@ const DestMap = React.forwardRef(function DestMap({
           el.addEventListener('click', (e) => { e.stopPropagation(); onPickTrip(row); });
         }
       } else {
-        el = makeEl('dmap-pin is-nature', `<span class="dmap-pin-in"><span class="dmap-pin-dot"></span><span class="dmap-pin-name">${esc(row.name)}</span></span>`);
+        const color = LAYER_COLOR[row.layer] || LAYER_COLOR.nearby;
+        el = makeEl(`dmap-pin is-nature is-${row.layer || 'nearby'}`, `<span class="dmap-pin-in"><span class="dmap-pin-dot" style="background:${color}"></span><span class="dmap-pin-name">${esc(row.name)}</span></span>`);
+        if (onPickFeature && row.layer) {
+          el.style.cursor = 'pointer';
+          el.addEventListener('click', (e) => { e.stopPropagation(); onPickFeature(row.layer, row); });
+        }
       }
       el.title = row.name || '';
       const marker = new maplibregl.Marker({ element: el, anchor: 'center' })
         .setLngLat([row.lon, row.lat]).addTo(map);
       markersRef.current.push(marker);
       entries.push({ el, lngLat: [row.lon, row.lat] });
-      pinsRef.current.push({
-        lngLat: [row.lon, row.lat],
-        n: active === 'highlights' ? i + 1 : null,
-        color: active === 'nearby' ? '#3d7a4e' : null,
-      });
+      pinElsRef.current.push(el);
     });
 
     if (entries.length) {
@@ -155,13 +128,16 @@ const DestMap = React.forwardRef(function DestMap({
       for (const p of pts) b.extend(p);
       try {
         map.fitBounds(b, {
-          padding: 46,
-          maxZoom: active === 'highlights' ? 14 : 10.5,
+          padding: { top: 40, bottom: 28, left: 34, right: 34 },
+          maxZoom: active === 'highlights' ? 14 : active === 'trips' ? 10.5 : 11.5,
           duration: reduce ? 0 : 450,
         });
       } catch { /* a bad bound is not worth a blank page */ }
     }
-  }, [active, highlights, trips, nearby, lat, lon, place?.name, onPickTrip]);
+  // The focus pin is restyled in a lighter effect below; it must not rebuild
+  // every marker.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [active, highlights, trips, nearby, around, lat, lon, place?.name, onPickTrip, onPickHighlight, onPickFeature]);
 
   React.useEffect(() => {
     if (!holder.current || !isNum(lat) || !isNum(lon)) return undefined;
@@ -173,7 +149,6 @@ const DestMap = React.forwardRef(function DestMap({
       attributionControl: { compact: true },
       scrollZoom: false,
       cooperativeGestures: false,
-      preserveDrawingBuffer: true,
     });
     mapRef.current = map;
     map.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'top-right');
@@ -192,6 +167,12 @@ const DestMap = React.forwardRef(function DestMap({
   }, [lat, lon]); // eslint-disable-line react-hooks/exhaustive-deps
 
   React.useEffect(() => { renderLayer(); }, [renderLayer]);
+
+  // Focus: restyle in place, no marker rebuild.
+  React.useEffect(() => {
+    if (active !== 'highlights') return;
+    pinElsRef.current.forEach((el, i) => el.classList.toggle('is-focus', focus === i));
+  }, [focus, active]);
 
   if (!isNum(lat) || !isNum(lon)) return null;
   return <div className="place-map dmap" style={{ height }} ref={holder} />;

@@ -31,7 +31,10 @@
 
 services:
   carta-brouter:
-    image: abrensch/brouter:latest
+    # Built locally from the release zip (see Dockerfile): there is no
+    # official BRouter image on Docker Hub.
+    build: .
+    image: carta-brouter:1.7.10
     container_name: carta-brouter
     ports:
       - "127.0.0.1:17777:17777"
@@ -43,7 +46,9 @@ services:
       - ./profiles:/profiles:ro
       - ./customprofiles:/customprofiles
     environment:
-      JAVA_OPTS: "-Xmx1g -Xms256m -XX:MaxPermSize=128M"
+      # No MaxPermSize: the flag was removed in Java 8 and Java 17 refuses
+      # to start with it.
+      JAVA_OPTS: "-Xmx1g -Xms256m"
     restart: unless-stopped
     healthcheck:
       # BRouter answers /brouter with a usage error when it is up, which is

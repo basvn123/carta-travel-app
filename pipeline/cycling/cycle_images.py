@@ -132,7 +132,7 @@ TOUR_ROUTES = """
 
 
 def fetch_targets(conn, countries, refresh, missing=False, limit=0,
-                  tour_routes=False):
+                  tour_routes=False, ids=None):
     """Routes worth searching, best first.
 
     Two exclusions, the same pair the trails engine learned to need. Skipping
@@ -142,6 +142,11 @@ def fetch_targets(conn, countries, refresh, missing=False, limit=0,
     regional loops and without the record of the empty answer every re-run
     spends its first hour re-asking about them.
     """
+    # Named routes are the whole answer: the caller knows exactly which rows
+    # it wants re-asked (a tour one photograph short, say) and the exclusions
+    # below would only ever remove them.
+    if ids:
+        return list(ids)[:limit] if limit else list(ids)
     having = "" if refresh else (HAVE_PHOTOS if missing
                                  else HAVE_PHOTOS + SEARCHED_EMPTY)
     if tour_routes:
@@ -392,8 +397,8 @@ def mark_empty(conn, rid, n_candidates, n_points):
 # ---------------------------------------------------------------------------
 
 def run(conn, countries, refresh=False, missing=False, limit=0, verbose=False,
-        tour_routes=False):
-    ids = fetch_targets(conn, countries, refresh, missing, limit, tour_routes)
+        tour_routes=False, ids=None):
+    ids = fetch_targets(conn, countries, refresh, missing, limit, tour_routes, ids)
     log(f"photos: {len(ids)} route(s) to search")
     if not ids:
         return Counter()
@@ -465,6 +470,7 @@ def held():
 
 
 def main():
+    global PROBE_EVERY_M, PROBES_MAX
     sys.stdout.reconfigure(errors="replace")
     why = held()
     if why:
@@ -477,6 +483,12 @@ def main():
     ap.add_argument("--missing-only", action="store_true",
                     help="retry only the routes that still have no picture")
     ap.add_argument("--limit", type=int, default=0)
+    ap.add_argument("--ids", help="comma separated route ids, searched as given")
+    ap.add_argument("--probe-every", type=int, default=0,
+                    help="metres between probes along the line (default %d)"
+                         % PROBE_EVERY_M)
+    ap.add_argument("--probes-max", type=int, default=0,
+                    help="ceiling on probes per route (default %d)" % PROBES_MAX)
     ap.add_argument("--tour-routes", action="store_true",
                     help="only the routes a composed tour rides: the set "
                          "that decides whether tours can publish at all")
@@ -484,9 +496,17 @@ def main():
     args = ap.parse_args()
     countries = ([c.strip().upper() for c in args.countries.split(",")
                   if c.strip()] if args.countries else [])
+    ids = [int(x) for x in args.ids.split(",") if x.strip()] if args.ids else None
+    # Denser probing is how a route one photograph short gets asked again
+    # properly: the default is one probe every 12 km, sixteen at most, which
+    # on a 340 km route is a probe every 21 km.
+    if args.probe_every:
+        PROBE_EVERY_M = args.probe_every
+    if args.probes_max:
+        PROBES_MAX = args.probes_max
     with connect() as conn:
         run(conn, countries, args.refresh, args.missing_only, args.limit,
-            args.verbose, args.tour_routes)
+            args.verbose, args.tour_routes, ids)
 
 
 if __name__ == "__main__":

@@ -120,6 +120,12 @@ cache/trails/
 #   python pipeline/cycling/harvest_cycling.py --countries <name>
 cache/cycling/
 
+# BRouter segment tiles (tools/brouter/prepare.py): 464 MB for Britain alone,
+# re-downloaded from brouter.de in minutes and republished there weekly, so a
+# committed copy would be both large and stale. Same call as the caches above.
+#   python tools/brouter/prepare.py --country GB --up --wait
+tools/brouter/segments/
+
 # Region spine (pipeline/regions): ~600 MB of downloaded boundary sources
 # plus a 197 MB GeoPackage built from them, the single largest artifact any
 # layer produces. Same call as the caches below and more emphatically: it is

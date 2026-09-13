@@ -415,6 +415,25 @@ def _geo(text):
         return None
 
 
+# Riding time (ROUTES.md R4). The hiking side ships DIN 33466, a signpost
+# standard; there is no such standard for touring cyclists, so this is a
+# house rule and says so in the wire: a flat 18 km/h, plus ten minutes per
+# hundred metres of climb (600 m/h vertical, a loaded touring pace). The
+# stage planner's pace table is about km per DAY and does not give a speed,
+# which is why it is not reused here.
+RIDE_FLAT_KMH = 18.0
+RIDE_MIN_PER_100M = 10.0
+RIDE_RULE = "flat18_climb10"
+
+
+def ride_minutes(distance_m, ascent_m):
+    if not distance_m:
+        return None
+    minutes = distance_m / 1000.0 / RIDE_FLAT_KMH * 60.0
+    minutes += (ascent_m or 0) / 100.0 * RIDE_MIN_PER_100M
+    return int(round(minutes))
+
+
 def route_card(row, tier):
     """The country-file card. A listed row has NO score key."""
     surface = row.get("surface") or {}
@@ -437,6 +456,9 @@ def route_card(row, tier):
     }
     if row.get("ascent_m") is not None:
         card["asc"] = row["ascent_m"]
+    dur = ride_minutes(row.get("distance_m"), row.get("ascent_m"))
+    if dur is not None:
+        card["dur"] = {"min": dur, "rule": RIDE_RULE}
     if row.get("roundtrip"):
         card["loop"] = True
     if row.get("cycle_network"):
@@ -491,6 +513,12 @@ def route_full(row, tier):
             "bridges": row["repair_info"].get("bridges"),
             "total_bridge_m": row["repair_info"].get("total_bridge_m"),
             "method": row["repair_info"].get("method"),
+            # A routed repair (bridge_gaps.py) ships every bridge: where it
+            # starts and ends, whether it is road, ferry or a straight
+            # connector, and its metres. A count alone would say "bridged"
+            # without saying where the signed route stops.
+            "ferry_m": row["repair_info"].get("ferry_m"),
+            "bridge_list": row["repair_info"].get("bridge_list"),
         }
     family = (row.get("raw_tags") or {}).get("carta:family_ref")
     if family:
@@ -535,6 +563,8 @@ def route_full(row, tier):
         "km": round((row.get("distance_m") or 0) / 1000.0, 1),
         "asc": row.get("ascent_m"),
         "desc": row.get("descent_m"),
+        "dur": ({"min": ride_minutes(row.get("distance_m"), row.get("ascent_m")),
+                 "rule": RIDE_RULE} if row.get("distance_m") else None),
         "loop": bool(row.get("roundtrip")),
         "t": tier,
         "bbox": parse_bbox(row.get("bbox")),
@@ -882,7 +912,13 @@ EV_RE = re.compile(r"^EV(\d+)$")
 # as a separator between the route and its endpoints. And a name that is
 # nothing but a number ("(45)", "113", "19a") is a ref that was typed into
 # the wrong field.
-_NAME_TAG_RE = re.compile(r"^\s*\[[^\]]{1,24}\]\s*")
+# Up to 48 characters inside the brackets (Istanbul's district tags run past
+# 24), and the closing bracket may be a mistyped "[" ("[CIMA JA10[ Iznatoraf").
+# Repeated, because Istanbul stacks two: "[Paylasimli] [Kagithane] Imrahor
+# Caddesi Bisiklet Yolu" is a sharing tag and a district tag before the name
+# begins. Up to 48 characters inside the brackets (the district tags run past
+# 24), and the closing bracket may be a mistyped "[" ("[CIMA JA10[ ...").
+_NAME_TAG_RE = re.compile(r"^(?:\s*\[[^\[\]]{1,48}[\]\[])+\s*")
 _REF_ONLY_RE = re.compile(r"^\(?[A-Za-z]{0,3}[-. ]?\d{1,4}[A-Za-z]?\)?$")
 _TOUR_SUFFIX_RE = re.compile(r",\s*\d+\s+days\s+(relaxed|balanced|strong)\s*$")
 

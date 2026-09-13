@@ -1,240 +1,542 @@
 /**
- * destinationPdf.js, the printable destination guide.
+ * destinationPdf.js, the downloadable destination guide.
  *
  * Renders from the SAME dossier contract the full-screen page reads
  * (public/dossier/{id}.json), so the PDF cannot drift from the app: one
- * contract, two renderers. Same delivery mechanism as dayPlanPdf.js, the
- * proven path in this codebase: build one standalone document, open it in a
- * new window, wait for fonts and photographs, print. The reader saves it as
- * PDF from the print dialog.
+ * contract, two renderers. Built with jsPDF and saved straight to the
+ * reader's downloads, no print dialog.
+ *
+ * Text first, on purpose. The earlier print stylesheet spent a third of every
+ * page on hotlinked photographs that the reader had already seen on screen,
+ * and its licence gate meant some must-sees printed as grey boxes. A guide
+ * people carry needs the facts in a shape they can act on: the verdict and
+ * the time it takes, the sights ranked, the things to do with their evidence,
+ * the outdoors inventory, the day trips with travel times, the month table,
+ * bed prices, the cost receipt with a budget for the whole stay, parking
+ * with navigation links, a before-you-go checklist, and the booking links.
+ * Every link is live in the PDF.
  *
  * The three-month rule decides what is on the paper: climate normals yes,
  * this week's forecast no; the euro day cost with its provenance yes, live
- * fares no. Where the app shows a live product the PDF prints the search
- * link instead.
+ * fares no.
  *
- * The licence gate travels with the images: only photographs whose licence
- * allows redistribution WITH their author resolved (img.ok_print, decided in
- * pipeline/dossier/build_dossier.py) are embedded, and every one of them is
- * listed again on the closing credits page with author, licence and source.
- * An uncredited photo does not ship, full stop.
+ * Fonts are the app's own (Plus Jakarta Sans for prose, JetBrains Mono for
+ * every measured figure), fetched once from /fonts and embedded. House style
+ * travels too: no em dashes, no middots, sentence case.
  */
 
-import { eur } from './format.js';
+import { stripDashes } from './format.js';
 import { activityLink } from './activityAffiliates.js';
-
-const esc = (s) => String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+import { destShareUrl } from './dossier.js';
 
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+const MONTH_LONG = ['January', 'February', 'March', 'April', 'May', 'June', 'July',
+  'August', 'September', 'October', 'November', 'December'];
 
-const okImg = (img) => img && img.url && img.ok_print;
+// Ink and tint, from the app's :root. White paper: a printed alabaster ground
+// is a wasted ink cartridge.
+const C = {
+  ink: '#0f172a', soft: '#414b5e', mute: '#7d8393', rule: '#e2ded1', ruleStrong: '#ccc7b8',
+  accent: '#e05a47', rate: '#8f5a0c', rateBg: '#f6e6cb', dim: '#efece2', green: '#4a6a3a',
+};
+const hex = (h) => [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16));
 
-function creditRows(dossier) {
-  const seen = new Set();
-  const rows = [];
-  const add = (img, caption) => {
-    if (!okImg(img) || seen.has(img.url)) return;
-    seen.add(img.url);
-    rows.push({
-      caption: caption || img.caption || '',
-      author: img.author || '',
-      licence: img.licence || '',
-      page: img.page || '',
-    });
-  };
-  for (const g of dossier.gallery || []) add(g);
-  for (const h of dossier.highlights || []) add(h.image, h.name);
-  return rows;
+const PAGE_W = 210;
+const PAGE_H = 297;
+const M = 14;            // margin, mm
+const W = PAGE_W - 2 * M; // content width
+const FOOT = 12;         // footer band
+
+const FONT_FILES = [
+  ['PlusJakartaSans-Regular.ttf', 'Jakarta', 'normal'],
+  ['PlusJakartaSans-SemiBold.ttf', 'Jakarta', 'bold'],
+  ['JetBrainsMono-Regular.ttf', 'Mono', 'normal'],
+  ['JetBrainsMono-Medium.ttf', 'Mono', 'bold'],
+];
+let fontCache = null;
+
+async function loadFonts() {
+  if (fontCache) return fontCache;
+  const out = [];
+  for (const [file, family, style] of FONT_FILES) {
+    try {
+      const res = await fetch(`/fonts/${file}`);
+      if (!res.ok) throw new Error(String(res.status));
+      const buf = new Uint8Array(await res.arrayBuffer());
+      let bin = '';
+      for (let i = 0; i < buf.length; i += 0x8000) {
+        bin += String.fromCharCode.apply(null, buf.subarray(i, i + 0x8000));
+      }
+      out.push({ file, family, style, b64: btoa(bin) });
+    } catch { /* fall back to the built-in faces for this family */ }
+  }
+  fontCache = out;
+  return out;
 }
 
-function monthTable(normals, best, t) {
-  if (!normals?.length) return '';
-  const bestSet = new Set(best || []);
-  const cells = normals.map((m, i) => `
-    <div class="mcol ${bestSet.has(i + 1) ? 'is-best' : ''}">
-      <span class="mname">${MONTHS[i]}</span>
-      <span class="mhi mono">${Math.round(m[0])}°</span>
-      <span class="mlo mono">${Math.round(m[1])}°</span>
-    </div>`).join('');
-  return `
-    <div class="months">${cells}</div>
-    <p class="note">${esc(t('pdf.monthsNote'))}${best?.length ? ` ${esc(t('pdf.bestMonths', { months: best.map((m) => MONTHS[m - 1]).join(', ') }))}` : ''}</p>`;
-}
+const clean = (s) => stripDashes(String(s ?? '')).replace(/\s*[·•]\s*/g, ', ').replace(/\s+/g, ' ').trim();
+const slug = (s) => clean(s).toLowerCase().normalize('NFKD').replace(/[^\w]+/g, '-').replace(/^-+|-+$/g, '');
 
-export function openDestinationPdf({
-  dossier, destination, cost, t, lang, lifestyleLabel, mapSnapshot,
+export async function downloadDestinationPdf({
+  dossier, destination, cost, t, lang, lifestyleLabel, stayDays,
 }) {
   if (!dossier || !destination) return;
+  const { jsPDF } = await import('jspdf');
+  const fonts = await loadFonts();
+  const doc = new jsPDF({ unit: 'mm', format: 'a4', compress: true });
+  const has = { Jakarta: false, Mono: false };
+  for (const f of fonts) {
+    doc.addFileToVFS(f.file, f.b64);
+    doc.addFont(f.file, f.family, f.style);
+    has[f.family] = true;
+  }
+  const SANS = has.Jakarta ? 'Jakarta' : 'helvetica';
+  const MONO = has.Mono ? 'Mono' : 'courier';
+
   const d = dossier;
-  const city = (destination.city || d.place?.name || '').replace(/\s*\([^)]*\)\s*$/, '');
-  const country = destination.country || d.place?.country || '';
-  const heroes = (d.gallery || []).filter(okImg).slice(0, 5);
-  const credits = creditRows(d);
-  const links = d.practical?.links || {};
+  const city = clean((destination.city || d.place?.name || '').replace(/\s*\([^)]*\)\s*$/, ''));
+  const country = clean(destination.country || d.place?.country || '');
   const today = new Intl.DateTimeFormat(lang === 'en' ? 'en-GB' : lang, { dateStyle: 'long' }).format(new Date());
+  const links = d.practical?.links || {};
+  const getting = d.practical?.getting_there || {};
+  const unesco = (d.place?.designations || []).some((g) => g.kind === 'unesco_whc');
+  const eurFmt = (n) => (Number.isFinite(n) ? `EUR ${Math.round(n).toLocaleString('en-GB')}` : '');
+  const kmFmt = (km) => (km < 0.95 ? `${Math.round((km * 1000) / 10) * 10} m` : `${Math.round(km)} km`);
+  const monthList = (ms) => (ms || []).map((m) => MONTHS[m - 1]).join(', ');
+  const T = (key, vars) => clean(t(key, vars));
 
-  const sec = (title, body, cls = '') => (body ? `
-    <section class="sec ${cls}">
-      <h2>${esc(title)}</h2>
-      ${body}
-    </section>` : '');
+  // ------------------------------------------------------------ primitives
+  let y = M;
+  let page = 1;
+  const totalExp = '{total_pages}';
 
-  // -------------------------------------------------- highlights
-  // The must-sees, big, with room for the fact sentence. The printed map is
-  // gone on purpose: a static basemap crop with a few dots told a reader
-  // nothing they could act on, and it cost a third of a page that the
-  // photographs earn back.
-  const hl = (d.highlights || []);
-  // The picture cards go to the highest-ranked highlights that HAVE a
-  // printable photograph, in rank order; everything else keeps its place in
-  // the list underneath. Both halves matter: ordering by rank alone gave
-  // Valbona three grey rectangles where its peaks have no photo, and
-  // ordering by photo alone (an earlier cut) buried the Eiffel Tower under
-  // Pere Lachaise. Nothing is hidden either way, only laid out differently.
-  const hlLead = hl.filter((h) => okImg(h.image)).slice(0, 6);
-  const leadSet = new Set(hlLead);
-  const hlRest = hl.filter((h) => !leadSet.has(h)).slice(0, 10);
-  const hlBody = hl.length ? `
-    <div class="hl-grid">
-      ${hlLead.map((h, i) => `
-        <figure class="hl-card">
-          <img src="${esc(h.image.url)}" alt="">
-          <figcaption>
-            <div class="hl-name"><span class="hl-n mono">${i + 1}</span>${esc(h.name)}</div>
-            <div class="hl-sub">${esc(h.kind || '')}${h.dist_km != null ? ` · <span class="mono">${h.dist_km} km</span>` : ''}</div>
-            ${h.fact ? `<div class="hl-fact">${esc(h.fact)}</div>` : ''}
-          </figcaption>
-        </figure>`).join('')}
-    </div>
-    ${hlRest.length ? `
-      <ul class="hl-more">
-        ${hlRest.map((h) => `
-          <li><b>${esc(h.name)}</b><span>${esc(h.kind || '')}${h.dist_km != null ? ` · ${h.dist_km} km` : ''}</span></li>`).join('')}
-      </ul>` : ''}` : '';
+  const font = (family, style, size, color) => {
+    doc.setFont(family, style);
+    doc.setFontSize(size);
+    doc.setTextColor(...hex(color));
+  };
+  const lh = (size) => size * 0.3528 * 1.38;
+  const wrap = (text, size, width, family = SANS, style = 'normal') => {
+    doc.setFont(family, style);
+    doc.setFontSize(size);
+    return doc.splitTextToSize(clean(text), width);
+  };
+  const footer = () => {
+    doc.setDrawColor(...hex(C.rule));
+    doc.setLineWidth(0.2);
+    doc.line(M, PAGE_H - FOOT, PAGE_W - M, PAGE_H - FOOT);
+    font(SANS, 'normal', 7.5, C.mute);
+    doc.text(`Carta   carta-europetravel.com   ${city}`, M, PAGE_H - FOOT + 4);
+    font(MONO, 'normal', 7.5, C.mute);
+    doc.text(T('pdf.page', { n: page, of: totalExp }), PAGE_W - M, PAGE_H - FOOT + 4, { align: 'right' });
+  };
+  const newPage = () => {
+    footer();
+    doc.addPage();
+    page += 1;
+    y = M;
+  };
+  const ensure = (h) => { if (y + h > PAGE_H - FOOT - 3) newPage(); };
+  const para = (str, opts = {}) => {
+    const size = opts.size || 10;
+    const lines = wrap(str, size, opts.width || W, opts.family || SANS, opts.style || 'normal');
+    const h = lines.length * lh(size);
+    ensure(h);
+    doc.setTextColor(...hex(opts.color || C.ink));
+    doc.text(lines, opts.x || M, y, { baseline: 'top' });
+    y += h + (opts.after ?? 1.5);
+  };
+  const rule = (color = C.rule, weight = 0.2) => {
+    doc.setDrawColor(...hex(color));
+    doc.setLineWidth(weight);
+    doc.line(M, y, PAGE_W - M, y);
+  };
+  const h2 = (title) => {
+    // Keep a heading with at least a few lines of its section: a title as
+    // the last thing on a page is a promise the page cannot keep.
+    ensure(38);
+    y += 4;
+    font(SANS, 'bold', 13.5, C.ink);
+    doc.text(clean(title), M, y, { baseline: 'top' });
+    y += lh(13.5) + 1.2;
+    rule(C.ruleStrong, 0.35);
+    y += 3.2;
+  };
+  const h3 = (title) => {
+    ensure(22);
+    font(SANS, 'bold', 9.5, C.soft);
+    doc.text(clean(title), M, y, { baseline: 'top' });
+    y += lh(9.5) + 0.8;
+  };
+  const linkText = (label, url, x, yy, size = 7.5) => {
+    if (!url) return 0;
+    font(MONO, 'normal', size, C.rate);
+    const lines = doc.splitTextToSize(label || url, W - (x - M));
+    doc.text(lines, x, yy, { baseline: 'top' });
+    const h = lines.length * lh(size);
+    doc.link(x, yy, Math.min(W - (x - M), doc.getTextWidth(lines[0])), h, { url });
+    return h;
+  };
+  const keyValue = (rows, { labelW = 42, size = 9.5 } = {}) => {
+    for (const [k, v] of rows) {
+      if (v == null || v === '') continue;
+      const lines = wrap(v, size, W - labelW - 2);
+      const h = Math.max(lines.length * lh(size), lh(size)) + 1.8;
+      ensure(h);
+      font(SANS, 'bold', size, C.soft);
+      doc.text(clean(k), M, y + 0.9, { baseline: 'top' });
+      font(SANS, 'normal', size, C.ink);
+      doc.text(lines, M + labelW, y + 0.9, { baseline: 'top' });
+      y += h;
+      rule();
+    }
+    y += 1.5;
+  };
 
-  // -------------------------------------------------- things to do
-  const doBody = (d.do || []).length ? `
-    <ol class="dos">
-      ${(d.do || []).map((item, i) => `
-        <li>
-          <span class="do-n mono">${i + 1}</span>
-          <div class="do-body">
-            <div class="do-name">${esc(item.name)}
-              <span class="do-type">${esc(t(`dest.doType.${item.type}`) || item.type)}</span>
-            </div>
-            ${item.detail ? `<div class="do-detail">${esc(item.detail)}</div>` : ''}
-            <div class="do-meta">
-              ${item.season?.length ? `<span class="do-season mono">${item.season.map((m) => MONTHS[m - 1]).join(', ')}</span>` : ''}
-              ${item.evidence?.n_sources != null ? `<span>${esc(
-                item.evidence.method === 'open'
-                  ? (item.evidence.curated
-                    ? t('dest.evidenceCurated')
-                    : t('dest.evidenceOpen', { n: item.evidence.n_sources }))
-                  : t('dest.evidence', { n: item.evidence.n_sources, of: item.evidence.of })
-              )}</span>` : ''}
-              ${item.link ? `<span class="link">${esc(activityLink(item.link, 'pdf'))}</span>` : ''}
-            </div>
-          </div>
-        </li>`).join('')}
-    </ol>
-    <p class="note">${esc(t('pdf.bookNote'))}<br>
-      ${links.getyourguide ? `GetYourGuide: <span class="link">${esc(activityLink(links.getyourguide, 'pdf'))}</span><br>` : ''}
-      ${links.viator ? `Viator: <span class="link">${esc(activityLink(links.viator, 'pdf'))}</span>` : ''}
-    </p>` : '';
+  // ------------------------------------------------------------ cover
+  font(MONO, 'bold', 8, C.accent);
+  doc.setCharSpace(0.6);
+  doc.text('CARTA  TRAVEL GUIDE', M, y, { baseline: 'top' });
+  doc.setCharSpace(0);
+  y += 7;
+  font(SANS, 'bold', 30, C.ink);
+  doc.text(city, M, y, { baseline: 'top' });
+  y += lh(30) - 1;
+  font(SANS, 'normal', 11, C.soft);
+  doc.text(country + (unesco ? `   ${T('dest.unesco')}` : ''), M, y, { baseline: 'top' });
+  y += lh(11) + 2;
+  if (d.intro?.short || d.intro?.lead) {
+    para(d.intro.short || d.intro.lead, { size: 10.5, color: C.ink, after: 3 });
+  }
 
-  // -------------------------------------------------- trips
-  // A day trip is a recommendation, so each card carries the reason: what the
-  // place scores, what it is in one line, and how long the ride takes.
-  const tripsBody = (d.trips || []).length ? `
-    <div class="trips">
-      ${(d.trips || []).map((tr) => `
-        <div class="trip">
-          ${tr.image?.url ? `<img src="${esc(tr.image.url)}" alt="">` : '<span class="trip-noimg"></span>'}
-          <div class="trip-body">
-            <div class="trip-head">
-              <span class="trip-name">${esc(tr.name)}</span>
-              ${tr.rating?.score != null ? `<span class="trip-score mono">${tr.rating.score.toFixed(1)}</span>` : ''}
-            </div>
-            <div class="trip-sub">
-              ${tr.kind === 'composed_trip'
-                ? esc(t('dest.tripDays', { n: tr.days || 0 }))
-                : tr.travel?.minutes != null
-                  ? `<span class="mono">${tr.travel.minutes} min</span> ${esc(t(`mode.${tr.travel.mode}`) || tr.travel.mode)}${tr.dist_km != null ? ` · <span class="mono">${tr.dist_km} km</span>` : ''}`
-                  : ''}
-              ${tr.rating?.label ? ` · ${esc(tr.rating.label)}` : ''}
-            </div>
-            ${tr.blurb ? `<div class="trip-why">${esc(tr.blurb)}</div>` : ''}
-          </div>
-        </div>`).join('')}
-    </div>` : '';
+  // The fact strip.
+  const facts = [];
+  if (d.verdict?.score != null) facts.push([T('pdf.rating'), `${d.verdict.score.toFixed(1)} / 10`]);
+  if (d.place?.visit_h != null) facts.push([T('pdf.factVisit'), `${Math.round(d.place.visit_h)} h`]);
+  if (d.when?.best?.length) facts.push([T('pdf.factBest'), monthList(d.when.best)]);
+  if (cost?.dayEur != null) facts.push([T('pdf.factDay'), eurFmt(cost.dayEur)]);
+  const bedFrom = d.sleep?.tiers?.dorm_pp_night_eur ?? d.sleep?.per_person_night_eur;
+  if (bedFrom != null) facts.push([T('dest.factSleep'), eurFmt(bedFrom)]);
+  if (getting.airport) facts.push([T('pdf.airport'), getting.airport + (getting.transfer_min != null ? `, ${getting.transfer_min} min` : '')]);
+  if (facts.length) {
+    const colW = W / facts.length;
+    ensure(16);
+    doc.setFillColor(...hex(C.dim));
+    doc.roundedRect(M, y, W, 15, 2, 2, 'F');
+    facts.forEach(([k, v], i) => {
+      const x = M + i * colW + 3;
+      font(SANS, 'normal', 7, C.mute);
+      doc.text(clean(k), x, y + 3, { baseline: 'top' });
+      font(MONO, 'bold', 9.5, C.ink);
+      doc.text(doc.splitTextToSize(String(v), colW - 5)[0], x, y + 7.6, { baseline: 'top' });
+    });
+    y += 19;
+  }
 
-  // -------------------------------------------------- nearby nature
-  const layers = ['trails', 'beaches', 'lakes', 'mountains'];
-  const natRows = layers.flatMap((l) => (d.nearby?.[l] || []).slice(0, 4)
-    .map((f) => ({ ...f, layer: l })));
-  const natureBody = natRows.length ? `
-    <div class="nat-grid">
-      ${natRows.map((f) => `
-        <div class="nat">
-          ${f.thumb ? `<img src="${esc(f.thumb)}" alt="">` : '<span class="nat-noimg"></span>'}
-          <div class="nat-body">
-            <div class="nat-name">${esc(f.name)}</div>
-            <div class="nat-sub">${esc(t(`dest.layerKind.${f.layer}`))}${
-              f.km_len != null ? ` · ${f.km_len} km` : ''}${
-              f.elev_m != null ? ` · ${f.elev_m} m` : ''}</div>
-          </div>
-          <span class="nat-km mono">${f.km} km ${esc(f.bearing || '')}</span>
-        </div>`).join('')}
-    </div>` : '';
+  // ------------------------------------------------------------ at a glance
+  const glance = [];
+  if (d.verdict?.score != null) {
+    let v = `${d.verdict.score.toFixed(1)} / 10`;
+    if (d.verdict.label) v += `, ${d.verdict.label}`;
+    if (d.verdict.country_rank === 1) v += `. ${T('card.topOf', { country })}`;
+    else if (d.verdict.country_badge) v += `. ${T('card.rankIn', { n: d.verdict.country_rank, country })}`;
+    glance.push([T('pdf.rating'), v]);
+  }
+  if (d.place?.visit_h != null) {
+    const h = d.place.visit_h;
+    glance.push([T('pdf.stayLength'), h < 6 ? T('explore.stayHalfDay') : h < 14 ? T('explore.stayOneDay') : T('explore.stayNights', { n: Math.max(2, Math.round(h / 9)) })]);
+  }
+  if (d.when?.best?.length) glance.push([T('pdf.factBest'), d.when.best.map((m) => MONTH_LONG[m - 1]).join(', ')]);
+  if (d.when?.crowding?.label) glance.push([T('pdf.crowding'), `${d.when.crowding.label} (${d.when.crowding.year || ''})`]);
+  if (getting.airport) {
+    glance.push([T('pdf.airport'), getting.transfer_min != null
+      ? T('dest.flyToWithTransfer', { iata: getting.airport, n: getting.transfer_min, mode: T(`mode.${getting.transfer_mode || 'train'}`) })
+      : T('dest.flyTo', { iata: getting.airport })]);
+  }
+  if (getting.transit) glance.push([T('pdf.transit'), `${T(`dest.transit.${getting.transit}`)}${getting.why ? ` ${getting.why}` : ''}`]);
+  if (getting.car_needed != null) glance.push([T('pdf.car'), getting.car_needed ? `${T('dest.carYes')}${getting.rental_eur_day != null ? ` ${T('dest.carRental', { eur: getting.rental_eur_day })}` : ''}` : T('dest.carNo')]);
+  if (d.practical?.book_ahead?.length) glance.push([T('pdf.bookAhead'), d.practical.book_ahead.join(', ')]);
+  if (d.practical?.rhythm) glance.push([T('pdf.rhythm'), d.practical.rhythm]);
+  if (d.water?.rating) glance.push([T('pdf.water'), `${d.water.rating}${d.water.excellent_pct != null ? `, ${T('dest.waterShare', { pct: d.water.excellent_pct, n: d.water.n_sites })}` : ''}`]);
+  if (glance.length) {
+    h2(T('pdf.atGlance'));
+    keyValue(glance);
+  }
 
-  // -------------------------------------------------- festivals
-  // Its own section, and the date leads: "there is a film festival" answers
-  // nothing without a month, so undated ones say so rather than implying one.
-  const festBody = (d.festivals || []).length ? `
-    <div class="fests">
-      ${d.festivals.map((f) => `
-        <div class="fest">
-          <span class="fest-when mono">${f.months?.length
-            ? esc(f.months.map((m) => MONTHS[m - 1]).join(', '))
-            : `<span class="fest-nodate">${esc(t('pdf.dateVaries'))}</span>`}</span>
-          <div class="fest-body">
-            <div class="fest-name">${esc(f.name)}</div>
-            ${f.what ? `<div class="fest-what">${esc(f.what)}</div>` : ''}
-            ${f.url ? `<div class="link">${esc(f.url)}</div>` : ''}
-          </div>
-        </div>`).join('')}
-    </div>` : '';
+  // ------------------------------------------------------------ must-sees
+  const hl = [...(d.highlights || [])].sort((a, b) => (b.rank_score || 0) - (a.rank_score || 0));
+  if (hl.length) {
+    h2(T('pdf.mustSee'));
+    const colW = (W - 6) / 2;
+    const measure = (h) => {
+      const nameL = wrap(h.name, 10, colW - 8, SANS, 'bold');
+      const factL = h.fact ? wrap(h.fact, 8.5, colW - 8) : [];
+      return nameL.length * lh(10) + lh(7.5) + factL.length * lh(8.5) + 2.5;
+    };
+    const draw = (h, i, x) => {
+      font(MONO, 'bold', 8, C.accent);
+      doc.text(String(i + 1), x, y + 0.6, { baseline: 'top' });
+      const nameL = wrap(h.name, 10, colW - 8, SANS, 'bold');
+      font(SANS, 'bold', 10, C.ink);
+      doc.text(nameL, x + 7, y, { baseline: 'top' });
+      let yy = y + nameL.length * lh(10);
+      font(MONO, 'normal', 7.5, C.mute);
+      doc.text([h.kind, h.dist_km != null ? kmFmt(h.dist_km) : ''].filter(Boolean).join('   '), x + 7, yy, { baseline: 'top' });
+      yy += lh(7.5);
+      if (h.fact) {
+        const factL = wrap(h.fact, 8.5, colW - 8);
+        font(SANS, 'normal', 8.5, C.soft);
+        doc.text(factL, x + 7, yy, { baseline: 'top' });
+        yy += factL.length * lh(8.5);
+      }
+      if (h.wikipedia) doc.link(x, y, colW, yy - y, { url: h.wikipedia });
+    };
+    for (let i = 0; i < hl.length; i += 2) {
+      const a = hl[i];
+      const b = hl[i + 1];
+      const rowH = Math.max(measure(a), b ? measure(b) : 0);
+      ensure(rowH);
+      draw(a, i, M);
+      if (b) draw(b, i + 1, M + colW + 6);
+      y += rowH;
+    }
+    y += 1;
+  }
 
-  // -------------------------------------------------- costs
-  const costBody = cost?.dayEur != null ? `
-    <table class="receipt">
-      <tr><td>${esc(t('cost.bed'))}</td><td class="mono">${esc(eur(cost.stayEur))}</td></tr>
-      <tr><td>${esc(t('cost.food'))}</td><td class="mono">${esc(eur(cost.foodEur))}</td></tr>
-      <tr class="sum"><td>${esc(t('cost.dayTotal'))}</td><td class="mono">${esc(eur(cost.dayEur))}</td></tr>
-    </table>
-    <p class="note">${esc(lifestyleLabel || '')} ${esc(t('pdf.costNote'))}</p>` : '';
+  // ------------------------------------------------------------ things to do
+  const dos = d.do || [];
+  if (dos.length) {
+    h2(T('dest.doTitle'));
+    dos.forEach((item, i) => {
+      const nameL = wrap(item.name, 10, W - 9, SANS, 'bold');
+      const detL = item.detail ? wrap(item.detail, 8.8, W - 9) : [];
+      const ev = item.evidence;
+      const evText = ev?.n_sources != null
+        ? (ev.method === 'open'
+          ? (ev.curated ? T('dest.evidenceCurated') : T('dest.evidenceOpen', { n: ev.n_sources }))
+          : T('dest.evidence', { n: ev.n_sources, of: ev.of }))
+        : '';
+      const meta = [T(`dest.doType.${item.type}`) === `dest.doType.${item.type}` ? item.type : T(`dest.doType.${item.type}`),
+        item.season?.length ? monthList(item.season) : '', evText].filter(Boolean).join('   ');
+      const url = item.link ? activityLink(item.link, 'pdf') : '';
+      const h = nameL.length * lh(10) + detL.length * lh(8.8) + lh(7.5) + (url ? lh(7) : 0) + 3.2;
+      ensure(h);
+      doc.setFillColor(...hex(C.accent));
+      doc.circle(M + 2.2, y + 2.2, 2.2, 'F');
+      font(MONO, 'bold', 7, '#ffffff');
+      doc.text(String(i + 1), M + 2.2, y + 0.9, { baseline: 'top', align: 'center' });
+      font(SANS, 'bold', 10, C.ink);
+      doc.text(nameL, M + 8, y, { baseline: 'top' });
+      let yy = y + nameL.length * lh(10);
+      if (detL.length) {
+        font(SANS, 'normal', 8.8, C.soft);
+        doc.text(detL, M + 8, yy, { baseline: 'top' });
+        yy += detL.length * lh(8.8);
+      }
+      font(MONO, 'normal', 7.5, ev?.method === 'open' ? C.mute : C.rate);
+      doc.text(meta, M + 8, yy, { baseline: 'top' });
+      yy += lh(7.5);
+      if (url) yy += linkText(url.replace(/^https?:\/\//, '').slice(0, 96), url, M + 8, yy, 7);
+      y = yy + 2.2;
+      rule();
+      y += 1.4;
+    });
+    if (links.getyourguide || links.viator) {
+      ensure(10);
+      font(SANS, 'normal', 8, C.mute);
+      doc.text(T('pdf.bookNote'), M, y, { baseline: 'top' });
+      y += lh(8);
+      if (links.getyourguide) y += linkText(`GetYourGuide  ${activityLink(links.getyourguide, 'pdf')}`, activityLink(links.getyourguide, 'pdf'), M, y);
+      if (links.viator) y += linkText(`Viator  ${activityLink(links.viator, 'pdf')}`, activityLink(links.viator, 'pdf'), M, y);
+      y += 2;
+    }
+  }
 
-  // -------------------------------------------------- parking
-  const parkBody = (d.parking?.spots?.length || d.parking?.park_ride) ? `
-    <ul class="parks">
-      ${(d.parking.spots || []).map((s) => `
-        <li>
-          <div class="park-name">${esc(s.name || t('explore.parkUnnamed'))}</div>
-          <div class="park-sub">${esc(t(s.fee === 'no' ? 'explore.parkFree' : s.fee === 'yes' ? 'explore.parkPaid' : 'explore.parkFeeUnknown'))}${s.capacity != null ? ` · <span class="mono">${s.capacity}</span>` : ''} · ${esc(t('dest.walkMin', { n: s.walk_min }))}</div>
-          <div class="park-links">
-            <span class="link">${esc(s.nav.gmaps)}</span><br>
-            <span class="link">${esc(s.nav.waze)}</span>
-          </div>
-        </li>`).join('')}
-      ${d.parking.park_ride ? `
-        <li>
-          <div class="park-name">${esc(d.parking.park_ride.name || t('explore.park.park_ride'))} (${esc(t('explore.park.park_ride'))})</div>
-          <div class="park-links"><span class="link">${esc(d.parking.park_ride.nav.gmaps)}</span></div>
-        </li>` : ''}
-    </ul>
-    <p class="note">${esc(t('explore.parkCredit'))}</p>` : '';
+  // ------------------------------------------------------------ around
+  const around = d.around;
+  const LAYERS = ['trails', 'cycling', 'mountains', 'lakes', 'beaches'];
+  if (around && LAYERS.some((l) => around[l]?.length)) {
+    h2(T('pdf.around', { km: around.radius_km || 20 }));
+    for (const layer of LAYERS) {
+      const rows = around[layer] || [];
+      if (!rows.length) continue;
+      h3(`${T(`dest.layerKind.${layer}`)}   ${around.counts?.[layer] || rows.length}`);
+      for (const r of rows.slice(0, 6)) {
+        const bits = [];
+        if (r.km_len != null) bits.push(`${Math.round(r.km_len)} km`);
+        if (r.ascent_m != null) bits.push(`${Math.round(r.ascent_m)} m up`);
+        if (r.elev_m != null) bits.push(`${Math.round(r.elev_m)} m`);
+        if (r.difficulty) bits.push(T(`dest.diff.${r.difficulty}`));
+        if (r.water) bits.push(r.water);
+        ensure(lh(9) + 1.5);
+        font(SANS, 'normal', 9, C.ink);
+        doc.text(doc.splitTextToSize(clean(r.name), W - 62)[0], M, y, { baseline: 'top' });
+        font(MONO, 'normal', 7.5, C.mute);
+        doc.text(bits.join('  '), M + W - 60, y + 0.4, { baseline: 'top' });
+        font(MONO, 'bold', 8, C.soft);
+        doc.text(`${kmFmt(r.km)} ${r.bearing || ''}${r.score != null ? `   ${r.score.toFixed(1)}` : ''}`, PAGE_W - M, y + 0.3, { baseline: 'top', align: 'right' });
+        y += lh(9) + 1.2;
+      }
+      y += 1.5;
+    }
+  }
 
-  // -------------------------------------------------- tips
+  // ------------------------------------------------------------ trips
+  const trips = d.trips || [];
+  if (trips.length) {
+    h2(T('dest.tripsTitle'));
+    for (const tr of trips) {
+      const sub = tr.kind === 'composed_trip'
+        ? T('dest.tripDays', { n: tr.days || 0 })
+        : [tr.travel?.minutes != null ? T('dest.minutesBy', { n: tr.travel.minutes, mode: T(`mode.${tr.travel.mode}`) }) : '',
+          tr.dist_km != null ? `${tr.dist_km} km` : ''].filter(Boolean).join('   ');
+      const whyL = tr.blurb ? wrap(tr.blurb, 8.8, W - 30) : [];
+      const h = lh(10) + lh(7.8) + whyL.length * lh(8.8) + 3;
+      ensure(h);
+      font(SANS, 'bold', 10, C.ink);
+      doc.text(clean(tr.name), M, y, { baseline: 'top' });
+      if (tr.rating?.score != null) {
+        font(MONO, 'bold', 8.5, C.rate);
+        doc.text(`${tr.rating.score.toFixed(1)}${tr.rating.label ? `  ${clean(tr.rating.label)}` : ''}`, PAGE_W - M, y + 0.5, { baseline: 'top', align: 'right' });
+      }
+      let yy = y + lh(10);
+      font(MONO, 'normal', 7.8, C.mute);
+      doc.text(sub, M, yy, { baseline: 'top' });
+      yy += lh(7.8);
+      if (whyL.length) {
+        font(SANS, 'normal', 8.8, C.soft);
+        doc.text(whyL, M, yy, { baseline: 'top' });
+        yy += whyL.length * lh(8.8);
+      }
+      y = yy + 1.8;
+      rule();
+      y += 1.4;
+    }
+  }
+
+  // ------------------------------------------------------------ when to go
+  const normals = d.when?.normals;
+  if (normals?.length === 12) {
+    h2(T('explore.whenTitle'));
+    const best = new Set(d.when.best || []);
+    const colW = W / 12;
+    ensure(26);
+    normals.forEach((m, i) => {
+      const x = M + i * colW;
+      if (best.has(i + 1)) {
+        doc.setFillColor(...hex(C.rateBg));
+        doc.roundedRect(x + 0.4, y, colW - 0.8, 21, 1.2, 1.2, 'F');
+      }
+      font(MONO, 'normal', 7, C.mute);
+      doc.text(MONTHS[i], x + colW / 2, y + 2, { baseline: 'top', align: 'center' });
+      font(MONO, 'bold', 9, C.ink);
+      doc.text(`${Math.round(m[0])}°`, x + colW / 2, y + 6.5, { baseline: 'top', align: 'center' });
+      font(MONO, 'normal', 7.5, C.soft);
+      doc.text(`${Math.round(m[1])}°`, x + colW / 2, y + 11.5, { baseline: 'top', align: 'center' });
+      if (m[2] != null) {
+        font(MONO, 'normal', 6.5, C.mute);
+        doc.text(`${Math.round(m[2])}`, x + colW / 2, y + 16, { baseline: 'top', align: 'center' });
+      }
+    });
+    y += 23;
+    para(`${T('pdf.monthsNote')} ${T('pdf.rainNote')}${d.when.best?.length ? ` ${T('pdf.bestMonths', { months: monthList(d.when.best) })}` : ''}`, { size: 8, color: C.mute, after: 2 });
+    if (d.when.crowding?.label) para(`${T('pdf.crowding')}: ${d.when.crowding.label} (Eurostat ${d.when.crowding.year || ''}).`, { size: 9, color: C.soft, after: 2 });
+  }
+
+  // ------------------------------------------------------------ sleep
+  const sleep = d.sleep;
+  if (sleep && (sleep.tiers || sleep.neighbourhoods?.length || sleep.seasonality)) {
+    h2(T('dest.sleepTitle'));
+    const tiers = sleep.tiers || {};
+    const tierRows = [
+      ['dest.tierDorm', tiers.dorm_pp_night_eur], ['dest.tierPrivate', tiers.private_room_night_eur],
+      ['dest.tierHotel', tiers.hotel_night_eur], ['pdf.hotel4', tiers.hotel4_night_eur],
+    ].filter(([, v]) => v != null);
+    if (tierRows.length) {
+      keyValue(tierRows.map(([k, v]) => [T(k, { eur: Math.round(v) }).replace(/\s*(EUR|€)\s*\d[\d.,]*/i, '').replace(/^\w/, (c) => c.toUpperCase()), eurFmt(v)]), { labelW: 60 });
+    }
+    if (sleep.neighbourhoods?.length) {
+      h3(T('pdf.neighbourhoods'));
+      const rows = sleep.neighbourhoods;
+      const colW = (W - 6) / 2;
+      for (let i = 0; i < rows.length; i += 2) {
+        ensure(lh(9) + 1.5);
+        [rows[i], rows[i + 1]].forEach((n, j) => {
+          if (!n) return;
+          const x = M + j * (colW + 6);
+          font(SANS, 'normal', 9, C.ink);
+          doc.text(doc.splitTextToSize(clean(n.name), colW - 22)[0], x, y, { baseline: 'top' });
+          font(MONO, 'bold', 8.5, C.ink);
+          doc.text(n.night_eur != null ? eurFmt(n.night_eur) : '', x + colW, y + 0.3, { baseline: 'top', align: 'right' });
+        });
+        y += lh(9) + 1.2;
+      }
+      para(T('dest.sleepNote'), { size: 8, color: C.mute });
+    }
+    if (sleep.seasonality?.length === 12) {
+      const sMin = Math.min(...sleep.seasonality);
+      const cheap = sleep.seasonality.indexOf(sMin);
+      if (cheap >= 0) para(T('dest.cheapestMonth', { month: MONTH_LONG[cheap] }) + '.', { size: 9, color: C.soft });
+    }
+  }
+
+  // ------------------------------------------------------------ costs
+  if (cost?.dayEur != null) {
+    h2(T('cost.title'));
+    const rows = [[T('cost.bed'), eurFmt(cost.stayEur)], [T('cost.food'), eurFmt(cost.foodEur)]];
+    for (const [k, v] of rows) {
+      ensure(7);
+      font(SANS, 'normal', 9.5, C.ink);
+      doc.text(k, M, y, { baseline: 'top' });
+      font(MONO, 'normal', 9.5, C.ink);
+      doc.text(v, M + 100, y, { baseline: 'top', align: 'right' });
+      y += lh(9.5) + 1;
+      doc.setDrawColor(...hex(C.rule)); doc.setLineWidth(0.2); doc.line(M, y, M + 100, y);
+      y += 1;
+    }
+    ensure(10);
+    doc.setDrawColor(...hex(C.ink)); doc.setLineWidth(0.5); doc.line(M, y, M + 100, y);
+    y += 2;
+    font(SANS, 'bold', 10.5, C.ink);
+    doc.text(T('cost.dayTotal'), M, y, { baseline: 'top' });
+    font(MONO, 'bold', 12, C.ink);
+    doc.text(eurFmt(cost.dayEur), M + 100, y - 0.5, { baseline: 'top', align: 'right' });
+    y += lh(12) + 1;
+    if (stayDays >= 2) {
+      font(SANS, 'normal', 9.5, C.rate);
+      doc.text(T('pdf.budget', { n: stayDays, eur: Math.round(cost.dayEur * stayDays).toLocaleString('en-GB') }), M, y, { baseline: 'top' });
+      y += lh(9.5) + 1;
+    }
+    para(`${clean(lifestyleLabel || '')} ${T('pdf.costNote')}`, { size: 8, color: C.mute, after: 2 });
+  }
+
+  // ------------------------------------------------------------ festivals
+  const fests = d.festivals || [];
+  if (fests.length) {
+    h2(T('dest.festivalsTitle'));
+    for (const f of fests) {
+      const whatL = f.what ? wrap(f.what, 8.8, W - 32) : [];
+      const h = Math.max(lh(9.5) + whatL.length * lh(8.8), lh(9.5)) + 2.5;
+      ensure(h);
+      font(MONO, 'bold', 8, f.months?.length ? C.rate : C.mute);
+      doc.text(f.months?.length ? monthList(f.months) : T('pdf.dateVaries'), M, y + 0.5, { baseline: 'top' });
+      font(SANS, 'bold', 9.5, C.ink);
+      doc.text(clean(f.name), M + 30, y, { baseline: 'top' });
+      let yy = y + lh(9.5);
+      if (whatL.length) {
+        font(SANS, 'normal', 8.8, C.soft);
+        doc.text(whatL, M + 30, yy, { baseline: 'top' });
+        yy += whatL.length * lh(8.8);
+      }
+      if (f.url) doc.link(M + 30, y, W - 30, yy - y, { url: f.url });
+      y = yy + 1.6;
+      rule();
+      y += 1.2;
+    }
+  }
+
+  // ------------------------------------------------------------ tips
+  const tips = d.tips || [];
   const tipArgs = (tip) => {
     const args = { ...(tip.args || {}) };
     if (args.from_m) args.from = MONTHS[args.from_m - 1];
@@ -242,234 +544,117 @@ export function openDestinationPdf({
     if (args.month) args.month = MONTHS[args.month - 1];
     return args;
   };
-  const tipsBody = (d.tips || []).length ? `
-    <ul class="tips">
-      ${d.tips.map((tip) => `<li>${esc(t(`tip.${tip.code}`, tipArgs(tip)))}</li>`).join('')}
-    </ul>` : '';
-
-  // -------------------------------------------------- practical links
-  const linkRow = (label, url) => (url ? `<tr><td>${esc(label)}</td><td class="link">${esc(url)}</td></tr>` : '');
-  const practicalBody = `
-    <table class="linktable">
-      ${linkRow(t('dest.linkGflights'), links.flights_google)}
-      ${linkRow(t('dest.linkSkyscanner'), links.skyscanner)}
-      ${linkRow(t('dest.linkBooking'), links.booking)}
-      ${linkRow(t('dest.linkAirbnb'), links.airbnb)}
-      ${linkRow('GetYourGuide', links.getyourguide && activityLink(links.getyourguide, 'pdf'))}
-      ${linkRow('Viator', links.viator && activityLink(links.viator, 'pdf'))}
-    </table>
-    <p class="note">${esc(t('explore.furtherNote'))}</p>`;
-
-  // -------------------------------------------------- credits page
-  const creditsBody = `
-    ${credits.length ? `
-      <h3>${esc(t('pdf.photoCredits'))}</h3>
-      <ul class="credit-list">
-        ${credits.map((c) => `
-          <li>${c.caption ? `<b>${esc(c.caption)}</b>: ` : ''}${esc(c.author)}, ${esc(c.licence)}${c.page ? `, <span class="link">${esc(c.page)}</span>` : ''}</li>`).join('')}
-      </ul>` : ''}
-    <h3>${esc(t('pdf.dataCredits'))}</h3>
-    <ul class="credit-list">
-      ${(d.credits || []).map((c) => `<li>${esc(c.name)}, ${esc(c.licence)}, <span class="link">${esc(c.url)}</span></li>`).join('')}
-    </ul>
-    <p class="note">${esc(t('pdf.generatedNote', { date: today }))}</p>`;
-
-  const html = `<!doctype html><html lang="${esc(lang || 'en')}"><head><meta charset="utf-8">
-    <title>${esc(city)}, ${esc(t('pdf.guide'))}</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
-    <style>
-      /* Carta's own tokens, so a printed guide looks like the app that made
-         it: warm alabaster ground, deep slate ink, terracotta for actions,
-         ochre for measures, Fraunces on display and mono on every figure. */
-      :root {
-        --paper:#f8f6f0; --panel:#efece2; --card:#ffffff;
-        --ink:#0f172a; --ink-soft:#414b5e; --ink-mute:#7d8393;
-        --rule:#ccc7b8; --rule-soft:#e2ded1;
-        --accent:#e05a47; --accent-bg:#f7dcd4;
-        --rate:#8f5a0c; --rate-bg:#f6e6cb;
-        --display:'Fraunces','Iowan Old Style',Georgia,'Times New Roman',serif;
-        --ui:'Plus Jakarta Sans',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
-        --mono:'JetBrains Mono',ui-monospace,'Cascadia Mono',Consolas,monospace;
-      }
-      * { box-sizing:border-box; margin:0; padding:0; }
-      html { -webkit-print-color-adjust:exact; print-color-adjust:exact; }
-      body { font-family:var(--ui); color:var(--ink); background:var(--paper); padding:38px 44px; line-height:1.55; font-size:11.5px; }
-      .mono { font-family:var(--mono); font-variant-numeric:tabular-nums; }
-      .link { font-family:var(--mono); font-size:8.5px; color:var(--ink-mute); word-break:break-all; }
-      .note { font-size:9.5px; color:var(--ink-mute); margin-top:8px; line-height:1.5; }
-      a { color:inherit; text-decoration:none; }
-
-      /* ---- cover ---- */
-      .cover { page-break-after:avoid; }
-      .kicker { font-family:var(--mono); font-size:9px; letter-spacing:.2em; text-transform:uppercase; color:var(--accent); font-weight:500; }
-      h1 { font-family:var(--display); font-size:44px; font-weight:600; line-height:1.02; letter-spacing:-.018em; margin:12px 0 3px; }
-      .cover-country { font-size:13px; color:var(--ink-soft); margin-bottom:14px; }
-      .cover-unesco { color:var(--rate); font-weight:600; }
-      .cover-lead { font-family:var(--display); font-size:15px; line-height:1.5; color:var(--ink-soft); max-width:600px; margin-bottom:16px; }
-      .cover-strip { display:flex; gap:5px; margin:16px 0 4px; }
-      .cover-strip img { height:158px; flex:1 1 0; object-fit:cover; min-width:0; border-radius:6px; }
-      .cover-facts { display:flex; gap:30px; margin-top:14px; padding-top:11px; border-top:1px solid var(--rule); }
-      .cover-fact b { display:block; font-family:var(--mono); font-size:8px; font-weight:500; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-mute); }
-      .cover-fact span { font-family:var(--mono); font-size:14px; font-weight:500; }
-
-      /* ---- sections ---- */
-      .sec { margin-top:28px; page-break-inside:auto; }
-      .sec h2 { font-family:var(--display); font-size:20px; font-weight:600; letter-spacing:-.01em; border-bottom:1px solid var(--rule); padding-bottom:6px; margin-bottom:12px; }
-      .sec h3 { font-family:var(--mono); font-size:9px; font-weight:500; text-transform:uppercase; letter-spacing:.13em; color:var(--ink-mute); margin:12px 0 6px; }
-      .about { font-size:12px; line-height:1.7; max-width:640px; color:var(--ink-soft); }
-
-      /* ---- must-sees: photograph first, big enough to be worth printing ---- */
-      .hl-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:14px 12px; }
-      .hl-card { break-inside:avoid; }
-      .hl-card img, .hl-noimg { width:100%; height:112px; object-fit:cover; border-radius:6px; display:block; background:var(--panel); }
-      .hl-card figcaption { padding-top:6px; }
-      .hl-name { font-weight:600; font-size:11.5px; line-height:1.3; }
-      .hl-n { display:inline-block; min-width:14px; color:var(--accent); font-size:9.5px; font-weight:500; }
-      .hl-sub { font-family:var(--mono); font-size:8.5px; color:var(--ink-mute); text-transform:uppercase; letter-spacing:.06em; margin:2px 0 3px; }
-      .hl-fact { font-size:10px; color:var(--ink-soft); line-height:1.5; }
-      .hl-more { list-style:none; display:grid; grid-template-columns:1fr 1fr; gap:0 20px; margin-top:12px; padding-top:8px; border-top:1px solid var(--rule-soft); }
-      .hl-more li { display:flex; justify-content:space-between; gap:12px; font-size:10.5px; padding:3px 0; }
-      .hl-more span { font-family:var(--mono); font-size:8.5px; color:var(--ink-mute); white-space:nowrap; }
-
-      /* ---- things to do ---- */
-      .dos { list-style:none; counter-reset:none; }
-      .dos li { display:flex; gap:12px; padding:9px 0; border-bottom:1px solid var(--rule-soft); break-inside:avoid; }
-      .dos li:last-child { border-bottom:none; }
-      .do-n { flex:none; width:19px; height:19px; border-radius:50%; background:var(--accent); color:#fff; font-size:9.5px; font-weight:500; display:flex; align-items:center; justify-content:center; margin-top:1px; }
-      .do-name { font-weight:600; font-size:12px; }
-      .do-type { font-family:var(--mono); font-size:7.5px; font-weight:500; text-transform:uppercase; letter-spacing:.1em; color:var(--ink-mute); border:1px solid var(--rule); border-radius:3px; padding:1px 5px; margin-left:8px; vertical-align:2px; }
-      .do-detail { font-size:10.5px; color:var(--ink-soft); line-height:1.55; margin-top:2px; }
-      .do-meta { font-size:9px; color:var(--ink-mute); margin-top:3px; display:flex; gap:12px; flex-wrap:wrap; align-items:baseline; }
-      .do-season { color:var(--rate); font-weight:500; }
-
-      /* ---- day trips: the reason to go, not just the ride ---- */
-      .trips { display:grid; grid-template-columns:1fr 1fr; gap:10px 16px; }
-      .trip { display:flex; gap:10px; break-inside:avoid; padding-bottom:9px; border-bottom:1px solid var(--rule-soft); }
-      .trip img, .trip-noimg { width:72px; height:56px; object-fit:cover; border-radius:5px; flex:none; background:var(--panel); }
-      .trip-body { min-width:0; }
-      .trip-head { display:flex; align-items:baseline; justify-content:space-between; gap:8px; }
-      .trip-name { font-weight:600; font-size:11.5px; }
-      .trip-score { flex:none; font-size:10px; font-weight:500; color:var(--rate); background:var(--rate-bg); border-radius:3px; padding:1px 5px; }
-      .trip-sub { font-size:9.5px; color:var(--ink-mute); margin-top:1px; }
-      .trip-why { font-size:10px; color:var(--ink-soft); line-height:1.5; margin-top:3px; }
-
-      /* ---- nature ---- */
-      .nat-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px 16px; }
-      .nat { display:flex; align-items:center; gap:9px; break-inside:avoid; padding-bottom:7px; border-bottom:1px solid var(--rule-soft); }
-      .nat img, .nat-noimg { width:52px; height:40px; object-fit:cover; border-radius:5px; flex:none; background:var(--panel); }
-      .nat-body { flex:1; min-width:0; }
-      .nat-name { font-weight:600; font-size:10.5px; }
-      .nat-sub { font-family:var(--mono); font-size:8px; color:var(--ink-mute); text-transform:uppercase; letter-spacing:.05em; }
-      .nat-km { flex:none; font-size:9px; color:var(--ink-soft); }
-
-      /* ---- festivals: the date is the headline ---- */
-      .fests { display:grid; gap:0; }
-      .fest { display:flex; gap:14px; padding:8px 0; border-bottom:1px solid var(--rule-soft); break-inside:avoid; }
-      .fest:last-child { border-bottom:none; }
-      .fest-when { flex:none; width:74px; font-size:10px; font-weight:500; color:var(--rate); background:var(--rate-bg); border-radius:4px; padding:3px 6px; text-align:center; height:fit-content; }
-      .fest-nodate { color:var(--ink-mute); font-weight:400; }
-      .fest-name { font-weight:600; font-size:11.5px; }
-      .fest-what { font-size:10px; color:var(--ink-soft); line-height:1.5; }
-
-      .receipt { border-collapse:collapse; min-width:290px; }
-      .receipt td { padding:6px 0; font-size:11.5px; border-bottom:1px solid var(--rule-soft); }
-      .receipt td:last-child { text-align:right; padding-left:40px; font-family:var(--mono); }
-      .receipt .sum td { border-top:1.5px solid var(--ink); border-bottom:none; font-weight:600; font-size:15px; padding-top:8px; }
-
-      .months { display:flex; gap:2px; }
-      .mcol { flex:1; text-align:center; padding:6px 0 7px; border-radius:4px; }
-      .mcol.is-best { background:var(--rate-bg); }
-      .mname { display:block; font-family:var(--mono); font-size:8px; text-transform:uppercase; letter-spacing:.06em; color:var(--ink-mute); }
-      .mhi { display:block; font-size:11.5px; font-weight:600; margin-top:3px; }
-      .mlo { display:block; font-size:9px; color:var(--ink-mute); }
-
-      .parks { list-style:none; }
-      .parks li { padding:7px 0; border-bottom:1px solid var(--rule-soft); break-inside:avoid; }
-      .park-name { font-weight:600; font-size:11px; }
-      .park-sub { font-size:9.5px; color:var(--ink-mute); margin:1px 0 3px; }
-
-      .tips { list-style:none; background:var(--rate-bg); border-radius:8px; padding:13px 17px; }
-      .tips li { font-size:11px; padding:4px 0 4px 15px; position:relative; line-height:1.55; }
-      .tips li::before { content:''; position:absolute; left:0; top:11px; width:5px; height:5px; border-radius:50%; background:var(--rate); }
-
-      .linktable { border-collapse:collapse; width:100%; }
-      .linktable td { padding:5px 0; font-size:10.5px; border-bottom:1px solid var(--rule-soft); vertical-align:top; }
-      .linktable td:first-child { font-weight:600; width:130px; }
-
-      .credits-page { page-break-before:always; }
-      .credit-list { list-style:none; }
-      .credit-list li { font-size:8.5px; color:var(--ink-mute); padding:2.5px 0; line-height:1.5; }
-
-      footer { margin-top:36px; padding-top:11px; border-top:1px solid var(--rule); font-size:9px; color:var(--ink-mute); display:flex; justify-content:space-between; gap:12px; }
-      @page { margin:14mm; }
-      @media print { body { padding:0; } }
-    </style></head><body>
-    <header class="cover">
-      <div class="kicker">Carta · ${esc(t('pdf.guide'))}</div>
-      <h1>${esc(city)}</h1>
-      <div class="cover-country">${esc(country)}${
-        (d.place?.designations || []).some((g) => g.kind === 'unesco_whc')
-          ? ` · <span class="cover-unesco">${esc(t('dest.unesco'))}</span>` : ''
-      }</div>
-      ${d.intro?.lead ? `<p class="cover-lead">${esc(d.intro.lead)}</p>` : ''}
-      ${heroes.length ? `<div class="cover-strip">${heroes.map((g) => `<img src="${esc(g.url)}" alt="">`).join('')}</div>` : ''}
-      <div class="cover-facts">
-        ${d.place?.visit_h != null ? `<div class="cover-fact"><b>${esc(t('pdf.factVisit'))}</b><span>${Math.round(d.place.visit_h)} h</span></div>` : ''}
-        ${d.intro?.facts?.population ? `<div class="cover-fact"><b>${esc(t('pdf.factPop'))}</b><span>${Number(d.intro.facts.population).toLocaleString('en-GB')}</span></div>` : ''}
-        ${d.when?.best?.length ? `<div class="cover-fact"><b>${esc(t('pdf.factBest'))}</b><span>${d.when.best.map((m) => MONTHS[m - 1]).join(', ')}</span></div>` : ''}
-        ${cost?.dayEur != null ? `<div class="cover-fact"><b>${esc(t('pdf.factDay'))}</b><span>${esc(eur(cost.dayEur))}</span></div>` : ''}
-      </div>
-    </header>
-
-    ${sec(t('dest.aboutTitle'), d.intro?.body ? `<p class="about">${esc(d.intro.body)}</p>` : '')}
-    ${sec(t('pdf.mustSee'), hlBody, 'sec-hl')}
-    ${sec(t('dest.doTitle'), doBody)}
-    ${sec(t('dest.tripsTitle'), tripsBody)}
-    ${sec(t('dest.natureTitle'), natureBody)}
-    ${sec(t('cost.title'), costBody)}
-    ${sec(t('dest.festivalsTitle'), festBody)}
-    ${sec(t('explore.whenTitle'), monthTable(d.when?.normals, d.when?.best, t))}
-    ${sec(t('dest.tipsTitle'), tipsBody)}
-    ${sec(t('explore.parkTitle'), parkBody)}
-    ${sec(t('pdf.practical'), practicalBody)}
-    <section class="sec credits-page">
-      <h2>${esc(t('pdf.credits'))}</h2>
-      ${creditsBody}
-    </section>
-    <footer><span>Carta · carta-europetravel.com</span><span class="mono">${esc(today)}</span></footer>
-    </body></html>`;
-
-  const w = window.open('', '_blank');
-  if (!w) return;
-  w.document.write(html);
-  w.document.close();
-
-  let done = false;
-  const fire = () => {
-    if (done) return;
-    done = true;
-    try { w.focus(); w.print(); } catch { /* window closed */ }
-  };
-  // Photographs are hotlinked from Commons: wait for them (and the fonts)
-  // before printing, or the first print preview ships grey rectangles. The
-  // timeout keeps a stalled image from holding the whole document hostage.
-  const waitImages = () => {
-    const imgs = Array.from(w.document.images || []);
-    const pending = imgs.filter((im) => !im.complete);
-    if (!pending.length) { fire(); return; }
-    let left = pending.length;
-    const one = () => { left -= 1; if (left <= 0) fire(); };
-    pending.forEach((im) => {
-      im.addEventListener('load', one, { once: true });
-      im.addEventListener('error', one, { once: true });
+  if (tips.length) {
+    h2(T('dest.tipsTitle'));
+    const lines = tips.map((tip) => T(`tip.${tip.code}`, tipArgs(tip)));
+    const wrapped = lines.map((l) => wrap(l, 9.5, W - 14));
+    const h = wrapped.reduce((a, ls) => a + ls.length * lh(9.5) + 1.4, 0) + 6;
+    ensure(h);
+    doc.setFillColor(...hex(C.rateBg));
+    doc.roundedRect(M, y, W, h, 2, 2, 'F');
+    let yy = y + 3.5;
+    wrapped.forEach((ls) => {
+      doc.setFillColor(...hex(C.rate));
+      doc.circle(M + 5, yy + 1.9, 0.9, 'F');
+      font(SANS, 'normal', 9.5, C.ink);
+      doc.text(ls, M + 9, yy, { baseline: 'top' });
+      yy += ls.length * lh(9.5) + 1.4;
     });
-  };
-  if (w.document.fonts?.ready) {
-    w.document.fonts.ready.then(waitImages);
-  } else {
-    setTimeout(waitImages, 300);
+    y += h + 3;
   }
-  setTimeout(fire, 6000);
+
+  // ------------------------------------------------------------ parking
+  const pk = d.parking;
+  if (pk && (pk.spots?.length || pk.park_ride || pk.web)) {
+    h2(T('explore.parkTitle'));
+    if (pk.web) {
+      const w = pk.web;
+      para(T('dest.parkChecked', { date: w.checked }), { size: 8.5, color: C.green });
+      if (w.restricted) para(`${T('dest.parkRestricted')}${w.restricted_note ? ` ${w.restricted_note}` : ''}`, { size: 9, color: C.accent });
+      if (w.advice) para(w.advice, { size: 9, color: C.soft });
+      if (w.car_parks?.length) para(`${T('dest.parkCityNamed')}: ${w.car_parks.map((c) => c.name + (c.note ? ` (${c.note})` : '')).join(', ')}`, { size: 9 });
+      if (w.park_ride_names?.length) para(`${T('explore.park.park_ride')}: ${w.park_ride_names.join(', ')}`, { size: 9 });
+      if (w.official_url) { ensure(6); y += linkText(w.official_url, w.official_url, M, y) + 2; }
+    }
+    const spots = [...(pk.spots || []).map((s) => ({ ...s, kind: 'spot' })), ...(pk.park_ride ? [{ ...pk.park_ride, kind: 'pr' }] : [])];
+    for (const s of spots) {
+      ensure(lh(9.5) + lh(7.5) + lh(7) + 3);
+      font(SANS, 'bold', 9.5, C.ink);
+      doc.text(clean(s.name || (s.kind === 'pr' ? T('explore.park.park_ride') : T('explore.parkUnnamed'))), M, y, { baseline: 'top' });
+      y += lh(9.5);
+      font(MONO, 'normal', 7.5, C.mute);
+      const bits = [s.kind === 'pr' ? T('explore.park.park_ride') : T(s.fee === 'no' ? 'explore.parkFree' : s.fee === 'yes' ? 'explore.parkPaid' : 'explore.parkFeeUnknown'),
+        s.capacity != null ? T('explore.parkSpaces', { n: s.capacity }) : '', s.walk_min != null ? T('dest.walkMin', { n: s.walk_min }) : ''].filter(Boolean);
+      doc.text(bits.join('   '), M, y, { baseline: 'top' });
+      y += lh(7.5);
+      y += linkText(s.nav?.gmaps, s.nav?.gmaps, M, y, 7);
+      y += 1.6;
+      rule();
+      y += 1.2;
+    }
+    para(T('dest.parkSource'), { size: 8, color: C.mute });
+  }
+
+  // ------------------------------------------------------------ before you go
+  const check = [];
+  for (const n of d.practical?.book_ahead || []) check.push(T('pdf.checkBook', { name: n }));
+  for (const tip of tips) {
+    if (['vignetteNeeded', 'carNeeded', 'transferPain', 'crowdWarning'].includes(tip.code)) check.push(T(`tip.${tip.code}`, tipArgs(tip)));
+  }
+  if (d.when?.best?.length) check.push(T('pdf.checkMonths', { months: monthList(d.when.best) }));
+  check.push(T('pdf.checkShare', { url: destShareUrl(destination.id) || 'carta-europetravel.com' }));
+  if (check.length) {
+    h2(T('pdf.checklist'));
+    for (const line of check) {
+      const ls = wrap(line, 9.5, W - 10);
+      ensure(ls.length * lh(9.5) + 1.5);
+      doc.setDrawColor(...hex(C.ruleStrong)); doc.setLineWidth(0.3);
+      doc.rect(M, y + 0.6, 3.2, 3.2, 'S');
+      font(SANS, 'normal', 9.5, C.ink);
+      doc.text(ls, M + 6.5, y, { baseline: 'top' });
+      y += ls.length * lh(9.5) + 1.8;
+    }
+  }
+
+  // ------------------------------------------------------------ links
+  const linkRows = [
+    [T('dest.linkGflights'), links.flights_google], [T('dest.linkSkyscanner'), links.skyscanner],
+    [T('dest.linkBooking'), links.booking], [T('dest.linkAirbnb'), links.airbnb],
+    ['GetYourGuide', links.getyourguide && activityLink(links.getyourguide, 'pdf')],
+    ['Viator', links.viator && activityLink(links.viator, 'pdf')],
+  ].filter(([, u]) => u);
+  if (linkRows.length) {
+    h2(T('pdf.practical'));
+    for (const [label, url] of linkRows) {
+      ensure(lh(9) + 1.5);
+      font(SANS, 'bold', 9, C.ink);
+      doc.text(label, M, y, { baseline: 'top' });
+      linkText(url, url, M + 34, y + 0.4, 7.5);
+      y += lh(9) + 1.4;
+    }
+    para(T('explore.furtherNote'), { size: 8, color: C.mute });
+  }
+
+  // ------------------------------------------------------------ credits
+  h2(T('pdf.credits'));
+  for (const c of d.credits || []) {
+    ensure(lh(8) + 1);
+    font(SANS, 'normal', 8, C.mute);
+    doc.text(`${clean(c.name)}, ${clean(c.licence)}`, M, y, { baseline: 'top' });
+    linkText(c.url, c.url, M + 90, y + 0.3, 6.5);
+    y += lh(8) + 0.8;
+  }
+  if (d.intro?.grounding?.[0]?.url) {
+    ensure(lh(8) + 1);
+    font(SANS, 'normal', 8, C.mute);
+    doc.text(T('pdf.introCredit'), M, y, { baseline: 'top' });
+    linkText(d.intro.grounding[0].url, d.intro.grounding[0].url, M + 90, y + 0.3, 6.5);
+    y += lh(8) + 0.8;
+  }
+  y += 2;
+  para(T('pdf.generatedNote', { date: today }), { size: 8, color: C.mute });
+
+  footer();
+  if (typeof doc.putTotalPages === 'function') doc.putTotalPages(totalExp);
+  doc.save(`${slug(city) || 'destination'}-carta-guide.pdf`);
 }

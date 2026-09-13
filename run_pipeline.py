@@ -406,6 +406,22 @@ def guard_trailslab_up(ctx):
                        f"`cd tools/trailslab && docker compose up -d`")
 
 
+def guard_brouter_up(ctx):
+    """The gap bridge routes with BRouter on 127.0.0.1:17777, a local
+    container like the lab. Not running is a SKIP: the tours that need a
+    bridge simply stay unpublished until the next run finds it up."""
+    lab_ok, lab_msg = guard_trailslab_up(ctx)
+    if not lab_ok:
+        return False, lab_msg
+    try:
+        with socket.create_connection(("127.0.0.1", 17777), timeout=4):
+            return True, "brouter reachable at 127.0.0.1:17777"
+    except OSError as e:
+        return False, (f"brouter not reachable on 17777 ({type(e).__name__}) "
+                       "- start it with `python tools/brouter/prepare.py "
+                       "--country GB --up --wait`")
+
+
 # --------------------------------------------------------------------------- #
 # Freshness report + staleness-targeted fare refresh
 # --------------------------------------------------------------------------- #
@@ -1745,10 +1761,35 @@ TASKS = [
                  "finding new work as those countries start mapping routes."),
     },
     {
+        "key": "trails_hierarchy",
+        "title": "Routes: relation graph, hierarchy and co-located lines",
+        "cadence": "after",
+        "after": ["trails_ingest", "cycling_harvest"],
+        "writes_app_data": False,
+        "soft": True,
+        "guard": guard_trailslab_up,
+        "cmds": [
+            [PY, "pipeline/trails/hierarchy.py", "--scan", "--classify",
+             "--stitch-report"],
+            [PY, "pipeline/trails/dedup.py"],
+        ],
+        "note": ("ROUTES.md R2 and R3. One relations-only pass over the cached "
+                 "extracts (four minutes for Europe) fills route_relations with "
+                 "every tag, the ordered member list and the parent/child refs "
+                 "the ingest throws away; classify turns that into parent / "
+                 "stage / variant / standalone plus stage_of and top_of, copied "
+                 "onto trips AND cycle_routes; dedup.py writes co_located where "
+                 "two relations of comparable length share one line. Must run "
+                 "BEFORE trails_curate: the family collapse reads top_of and "
+                 "co_located as its first keys. Touches the two store tables "
+                 "only where a value changes, because the updated_at trigger "
+                 "fires on any UPDATE."),
+    },
+    {
         "key": "trails_curate",
         "title": "Trails: per-region quota, loop-first, continuity gated",
         "cadence": "after",
-        "after": ["trails_splice", "trails_regionize"],
+        "after": ["trails_splice", "trails_regionize", "trails_hierarchy"],
         "writes_app_data": False,
         "soft": True,
         "guard": guard_trailslab_up,
@@ -1953,10 +1994,34 @@ TASKS = [
                  "share of each OSM line the official source also draws."),
     },
     {
+        "key": "cycling_bridge",
+        "title": "Cycling: route across the real breaks with BRouter",
+        "cadence": "after",
+        "after": ["cycling_enrich"],
+        "writes_app_data": False,
+        "soft": True,
+        "guard": guard_brouter_up,
+        # GB only for now: it is the country whose tour candidates fail on
+        # continuity (95 of 103), and the only one with segment tiles staged.
+        # Elevation, surface, safety and services are re-run afterwards
+        # because a bridged route is a different line: the elevation step
+        # re-samples by geometry md5, the others read the extended way_spans.
+        "cmds": [[PY, "pipeline/cycling/bridge_gaps.py", "--countries", "GB",
+                  "--min-km", "100"],
+                 [PY, "pipeline/cycling/enrich_cycling.py", "--steps",
+                  "elevation,surface,safety,services", "--countries", "GB"]],
+        "note": ("splice_cycling joins breaks up to 300 m with a straight "
+                 "line; this routes across the longer ones, the house touring "
+                 "profile first and the ferry-aware trekking profile second, "
+                 "and refuses a route where the routed bridges would be over "
+                 "a quarter of it. The bridges are recorded in cycle_repairs "
+                 "and shipped in the route file's osm.repair block."),
+    },
+    {
         "key": "cycling_publish",
         "title": "Cycling: rate, compose tours, ten hard checks, publish",
         "cadence": "after",
-        "after": ["cycling_enrich"],
+        "after": ["cycling_enrich", "cycling_bridge"],
         "writes_app_data": False,
         "soft": True,
         "guard": guard_trailslab_up,

@@ -360,3 +360,132 @@ export function routeTitle(row, t) {
   const ref = ((row && row.ref) || '').trim();
   return t(NET_KEY[row && row.net] || 'cycle.netRoute', { ref });
 }
+
+/* ----------------------------------------------------------------- facets */
+
+/**
+ * The filter model, six groups in the order a rider decides in: how far,
+ * on what, whose signs, which bike, how much climb, what shape. Every band
+ * is read off the card fields the country files already carry (km, paved,
+ * net, bike, asc, free, loop), so the list filters without another fetch
+ * and a chip's count is exactly the rows it would leave on screen.
+ */
+export const CYCLE_LENGTH_BANDS = [
+  { key: 'short', labelKey: 'cycle.facLenShort' },
+  { key: 'day', labelKey: 'cycle.facLenDay' },
+  { key: 'long', labelKey: 'cycle.facLenLong' },
+  { key: 'multi', labelKey: 'cycle.facLenMulti' },
+];
+export const CYCLE_SURFACES = [
+  { key: 'paved', labelKey: 'cycle.facPaved' },
+  { key: 'mixed', labelKey: 'cycle.facMixed' },
+  { key: 'rough', labelKey: 'cycle.facRough' },
+];
+export const CYCLE_NETWORKS = [
+  { key: 'icn', labelKey: 'cycle.facNetIcn' },
+  { key: 'ncn', labelKey: 'cycle.facNetNcn' },
+  { key: 'rcn', labelKey: 'cycle.facNetRcn' },
+  { key: 'lcn', labelKey: 'cycle.facNetLcn' },
+];
+export const CYCLE_BIKES = [
+  { key: 'touring', labelKey: 'cycle.facTouring' },
+  { key: 'gravel', labelKey: 'cycle.facGravel' },
+  { key: 'mtb', labelKey: 'cycle.facMtb' },
+];
+export const CYCLE_CLIMBS = [
+  { key: 'flat', labelKey: 'cycle.facFlat' },
+  { key: 'rolling', labelKey: 'cycle.facRolling' },
+  { key: 'hilly', labelKey: 'cycle.facHilly' },
+];
+export const CYCLE_SHAPES = [
+  { key: 'loop', labelKey: 'cycle.facLoop' },
+  { key: 'carfree', labelKey: 'cycle.facCarfree' },
+];
+export const CYCLE_FACET_GROUPS = [
+  { key: 'length', labelKey: 'cycle.facLength', options: CYCLE_LENGTH_BANDS, toolbar: true },
+  { key: 'surface', labelKey: 'cycle.facSurface', options: CYCLE_SURFACES },
+  { key: 'network', labelKey: 'cycle.facNetwork', options: CYCLE_NETWORKS },
+  { key: 'bike', labelKey: 'cycle.facBike', options: CYCLE_BIKES },
+  { key: 'climb', labelKey: 'cycle.facClimb', options: CYCLE_CLIMBS },
+  { key: 'shape', labelKey: 'cycle.facShape', options: CYCLE_SHAPES },
+];
+
+export function cycleLengthBand(r) {
+  const km = (r && r.km) || 0;
+  return km < 15 ? 'short' : km < 60 ? 'day' : km < 150 ? 'long' : 'multi';
+}
+export function cycleSurfaceBand(r) {
+  if (!r || r.paved == null) return null;
+  return r.paved >= 0.9 ? 'paved' : r.paved >= 0.5 ? 'mixed' : 'rough';
+}
+export function cycleClimbBand(r) {
+  if (!r || r.asc == null || !r.km) return null;
+  const perKm = r.asc / r.km;
+  return perKm < 5 ? 'flat' : perKm < 12 ? 'rolling' : 'hilly';
+}
+const NET_BANDS = new Set(['icn', 'ncn', 'rcn', 'lcn']);
+export function cycleNetBand(r) {
+  return r && NET_BANDS.has(r.net) ? r.net : null;
+}
+export function cycleShapes(r) {
+  const out = [];
+  if (r && r.loop) out.push('loop');
+  if (r && r.free != null && r.free >= 0.7) out.push('carfree');
+  return out;
+}
+
+/** The value of every group for one row, in one place, so the counting and
+ *  the filtering cannot disagree about what a row is. */
+export function cycleFacetValues(r) {
+  return {
+    length: cycleLengthBand(r),
+    surface: cycleSurfaceBand(r),
+    network: cycleNetBand(r),
+    bike: (r && r.bike) || null,
+    climb: cycleClimbBand(r),
+    shape: cycleShapes(r),
+  };
+}
+
+export function cycleMatchesFacets(r, facets) {
+  if (!facets) return true;
+  const values = cycleFacetValues(r);
+  for (const group of CYCLE_FACET_GROUPS) {
+    const on = facets[group.key];
+    if (!on || !on.length) continue;
+    const v = values[group.key];
+    const hit = Array.isArray(v) ? v.some((x) => on.includes(x)) : on.includes(v);
+    if (!hit) return false;
+  }
+  return true;
+}
+
+/** Chip counts for the rows in scope, keyed "group:option". */
+export function cycleFacetCounts(rows) {
+  const counts = new Map();
+  for (const r of rows || []) {
+    const values = cycleFacetValues(r);
+    for (const group of CYCLE_FACET_GROUPS) {
+      const v = values[group.key];
+      for (const x of Array.isArray(v) ? v : [v]) {
+        if (x == null) continue;
+        const k = `${group.key}:${x}`;
+        counts.set(k, (counts.get(k) || 0) + 1);
+      }
+    }
+  }
+  return counts;
+}
+
+/**
+ * The local-network gate. A third of the catalogue is under 10 km and
+ * sixty percent of it is `lcn`, a council's signed lanes rather than a
+ * ride; listed as a whole it read as a database dump. An unscored row that
+ * is short AND local is held behind one button that says how many there
+ * are, so the list opens on rides and nothing is hidden without a word.
+ */
+export function isLocalNetworkRow(r) {
+  if (!r || r.score != null) return false;
+  if ((r.km || 0) >= 15) return false;
+  return !['icn', 'ncn', 'rcn'].includes(r.net);
+}
