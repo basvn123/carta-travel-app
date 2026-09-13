@@ -305,14 +305,38 @@ def difficulty_check(trip, cfg):
     return not contradictions, score, details
 
 
+# How richly the relation is tagged, beyond the three fields that decide
+# whether it is usable at all. ROUTES.md R5 asked for these by name; they are
+# worth a fifth of the check between them, because a relation carrying an
+# operator, a website and a surface has somebody behind it, while their
+# absence is a fact about the mapper and not about the walk. That asymmetry
+# is why they scale a bonus rather than gating anything.
+#
+# OSM MATURITY is deliberately absent. ROUTES.md asked for member way count
+# and last-edited recency: last-edited is not in a public Geofabrik extract
+# at all (no object metadata), and member way count measures how finely the
+# ways were split, not how mature the route is. A 3 km path mapped as one way
+# and the same path mapped as forty are the same walk. Recorded in
+# docs/TRAILS.md rather than scored here.
+RICHNESS_TAGS = ("surface", "sac_scale", "operator", "website", "description")
+RICHNESS_MAX = 20.0
+
+
 def completeness_check(trip, cfg):
     tags = trip["raw_tags"] or {}
     have = {"name": bool(tags.get("name")),
             "network": bool(trip["network"]),
             "description": bool(tags.get("description"))}
-    score = 50.0 * have["name"] + 30.0 * have["network"] \
-        + 20.0 * have["description"]
-    return have["name"] and have["network"], score, {"present": have}
+    # The three that decide usability keep four fifths of the check between
+    # them, in the proportions they always had.
+    base = 40.0 * have["name"] + 24.0 * have["network"] + 16.0 * have["description"]
+    rich = {t: bool(tags.get(t)) for t in RICHNESS_TAGS}
+    # sac_scale lives in its own column when the relation carried one.
+    rich["sac_scale"] = rich["sac_scale"] or bool(trip.get("sac_scale"))
+    n_rich = sum(rich.values())
+    score = base + RICHNESS_MAX * n_rich / len(RICHNESS_TAGS)
+    return have["name"] and have["network"], score, {
+        "present": have, "richness": rich, "richness_n": n_rich}
 
 
 def validate_trip(trip, cfg):

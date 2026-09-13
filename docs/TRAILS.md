@@ -88,6 +88,11 @@ pipeline/trails/
   validate.py           five checks -> quality_score, status routing
   regression.py         demotes published content that fell below the bar
   rate.py               the published 0 to 10 and its reason codes
+  quality_report.py     ROUTES.md R5: where each scoring component actually
+                        lives (gate, admission score or rating), both score
+                        distributions, per country counts, and the best route
+                        in each country so the result can be eyeballed.
+                        Report: data/reports/routes_quality.json
   export_wire.py        the last gate, and the wire
   popularity.py         fame signals + the curation shortlists
   market_demand.py      city demand stats, for the citytrip composer
@@ -348,6 +353,38 @@ either path.
 going to read 236,000 rows, and the first 545 that reached the app were
 picked on `quality_score` alone, which measures whether a relation is well
 FORMED, not whether the walk is any good.
+
+**There is no publish threshold, and that is deliberate.** No number in this
+layer decides publication. A route publishes when it passes the hard gates
+(one continuous line, a real name, inside the length band, one slot per
+family) and then WINS A SLOT inside its own NUTS3 region's quota, ranked
+against the other candidates in that region. So the bar is whatever the
+region's fortieth-best walk happens to be, and a thin region publishes its
+four. `rate.py` runs afterwards and scores only what was already chosen,
+which is why a rating can never decide whether a row ships and why no
+published row was rated against a pool it was not selected from. The cycling
+layer is the exception: `export_cycling.py` gates on its own score of 5.4
+and on a photograph count, which is why its listed tier is thirty times its
+rated one.
+
+**What the two scores are, and are not.** `quality_score` (0 to 100,
+`validate.py`) is an admission test: does the line hold together, does it sit
+in its country, are the elevation figures sane, is it tagged enough to use.
+`rating` (0 to 10, `rate.py`) is the recommendation, every component a
+percentile inside the route's own region or country. Neither carries LENGTH
+as a quality: a 4 km village loop and a 3,000 km E-path can both reach the
+top of the scale. Until 2026-09-13 the shape term paid a bonus for a
+day-length distance, which capped what a long path could score; it was
+removed and shape is now loop, point-to-point or out-and-back alone. The
+distance BANDS in curation are a selection budget, not a judgement.
+
+**OSM maturity is not scored, and cannot be.** Last-edited timestamps are not
+in a public Geofabrik extract (no object metadata), and member way count
+measures how finely the ways were split rather than how mature the route is:
+one path mapped as a single way and the same path mapped as forty are the
+same walk, so scoring the count would reward fragmentation. Tag richness
+(surface, sac_scale, operator, website, description) is scored instead, as a
+fifth of the completeness check.
 
 **The hard gate** is continuity, in the WHERE clause rather than in a scoring
 term, because a route whose GPX teleports is not a worse route, it is not a

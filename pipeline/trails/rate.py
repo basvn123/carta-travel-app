@@ -26,9 +26,12 @@ each component is a claim a reader could check:
                 A place people stop to photograph is a place worth walking,
                 and unlike the others this signal is about the view rather
                 than the infrastructure.
-  shape         loops score above there-and-back, which is the preference the
-                whole layer is tuned for, plus a mild bonus for a length that
-                fits a day.
+  shape         loops score above point-to-point, which scores above
+                there-and-back, because half an out-and-back is the same view
+                twice. Length is NOT part of this or any other term: a 4 km
+                village loop and a 3,000 km E-path can both reach the top of
+                the scale (ROUTES.md R5). Length is a filter, and curate.py's
+                band quotas are a selection budget, not a judgement.
   variety       how many DIFFERENT kinds of thing are on the line. A walk past
                 a waterfall, a lake and a castle beats one past nine trees,
                 and the scenery term above cannot tell those apart because it
@@ -112,8 +115,11 @@ FLOOR, CEILING = 4.0, 9.8
 # what it is.
 PAD = 0.12
 
-# A walk that fits a day without filling it. Used for the mild shape bonus
-# and for the "good day out" reason code.
+# A walk that fits a day without filling it. Used ONLY for the "good day out"
+# REASON code, never for a score: a reason states a fact about the walk, and
+# "this one fits a Saturday" is a fact. It used to pay into the shape term as
+# well, which made length a quality (ROUTES.md R5 forbids it) and capped what
+# a long path could score. That is gone; see shape_raw.
 DAY_MIN_M, DAY_MAX_M = 6_000, 22_000
 
 # Reason thresholds. Each one is the point where a fact is worth a sentence.
@@ -159,7 +165,7 @@ def pct_rank(values):
 FETCH_SQL = """
     SELECT t.id, t.country, t.title, t.network, t.distance_m, t.ascent_m,
            t.is_loop, t.highlights, t.elevation, t.nuts3,
-           t.highlight_kinds, t.surface,
+           t.highlight_kinds, t.surface, t.route_type,
            t.raw_tags->>'wikidata'  AS wikidata,
            t.raw_tags->>'wikipedia' AS wikipedia,
            p.score AS popularity,
@@ -186,7 +192,7 @@ CLEAR_LISTED_SQL = """
 
 COLS = ("id", "country", "title", "network", "distance_m", "ascent_m",
         "is_loop", "highlights", "elevation", "nuts3",
-        "highlight_kinds", "surface", "wikidata", "wikipedia",
+        "highlight_kinds", "surface", "route_type", "wikidata", "wikipedia",
         "popularity", "n_photos")
 
 
@@ -243,16 +249,29 @@ def designation_raw(row):
 
 
 def shape_raw(row):
-    """Loop first, then a walk whose length fits the day people have."""
-    score = 0.62 if row.get("is_loop") else 0.0
-    d = row.get("distance_m") or 0
-    if DAY_MIN_M <= d <= DAY_MAX_M:
-        score += 0.38
-    elif d < DAY_MIN_M:
-        score += 0.20
-    elif d <= 40_000:
-        score += 0.24
-    return min(1.0, score)
+    """The shape of the walk, and nothing about how long it is.
+
+    ROUTES.md R5: "Length must not be a quality term. A 4 km village loop and
+    a 3,000 km E-path should both be able to score 1.0; length is a filter,
+    not a quality." Until 2026-09-13 this term paid a graded bonus for a
+    distance between DAY_MIN_M and DAY_MAX_M, which is exactly the forbidden
+    thing wearing the name of shape: a 3,000 km path could not reach 1.0 here
+    however good it was. The day-length preference it encoded belongs to
+    curate.py, which already spends a quota per distance band, and to the
+    app's own distance filter.
+
+    What remains is the shape itself, from attributes.py's route_type where
+    it exists and the loop flag otherwise. A loop leads because it returns
+    you to the car, an out-and-back scores below a point-to-point because
+    half of it is the same view twice, and a figure of eight is a loop."""
+    rt = row.get("route_type")
+    if rt in ("loop", "figure8"):
+        return 1.0
+    if rt == "point":
+        return 0.55
+    if rt == "out_back":
+        return 0.40
+    return 1.0 if row.get("is_loop") else 0.55
 
 
 def variety_raw(row):

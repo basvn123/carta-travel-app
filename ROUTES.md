@@ -447,6 +447,22 @@ by name per activity so the result can be eyeballed.
 ```
 
 > **Done when:** the top 20 per activity reads like recognisable routes, no country with meaningful OSM coverage has zero published routes (Faroe and Monaco have one each today; say whether that is coverage or the bar), and the report exists.
+>
+> **Shipped 2026-09-13.** `quality_report.py` states, component by component, where each thing the prompt named actually lives, and the answer is that the prompt's list mixes three different mechanisms: the gate that decides publication, the 0 to 100 admission score, and the 0 to 10 rating. Network tier is in all three. Continuity is a hard gate and 30 points of the admission score. A real name is a hard gate. Scenic context is the largest rating term at 0.22. Waymarking is in neither score, deliberately: a painted symbol says a symbol is painted, and the designation term already carries what a signed network means, so scoring both counts one fact twice.
+>
+> **Two things were wrong and are fixed.**
+>
+> *Tag richness was missing.* The completeness check read three tags. It now keeps four fifths of its weight for the three that decide usability and scales a 20 point bonus over surface, sac_scale, operator, website and description. Their absence is a fact about the mapper rather than about the walk, which is why they lift a score and gate nothing.
+>
+> *Length was a quality term.* The shape term paid a graded bonus for a distance between 6 and 22 km, so a 3,000 km path could not reach 1.0 on it however good it was, which is exactly what the prompt forbids. Shape is now loop and figure-of-eight at 1.0, point-to-point at 0.55, out-and-back at 0.40, read from `route_type`, and nothing else in either score reads distance as a judgement. The day-length band survives only as a reason code, where "this one fits a Saturday" is a fact and not a mark. The rating is not re-run here; the next `trails_rate` applies it.
+>
+> **OSM maturity stays out, and the doc says why.** Last-edited is not in a public Geofabrik extract at all, and member way count measures how finely the ways were split rather than how mature the route is: one path mapped as one way and the same path mapped as forty are the same walk, so scoring the count would reward fragmentation.
+>
+> **The publish threshold is not a number**, and it is now written at the top of `curate.py` and in `docs/TRAILS.md`: hard gates (one continuous line, a real name, inside the length band, one slot per family) and then a slot won inside the route's own NUTS3 quota. `rate.py` runs afterwards and scores only what was already chosen, so no rating decides publication. Cycling is the exception and gates on its own score of 5.4 plus a photograph count, which is why its listed tier is 16,460 rows against 506 rated.
+>
+> **The thin countries.** Faroe stages exactly one route and publishes it, and Monaco has none at all: coverage, not the bar. Turkey and Ukraine publish nothing because they are outside the 43-country catalogue by an explicit scope decision, not because they failed a gate. No country with real coverage publishes nothing.
+>
+> **The top list needed a fix of its own.** Ordering by rating returns 52 rows tied at the 9.8 ceiling, because the rating is a percentile inside a region or country and every country therefore reaches its own top. The report now shows the best in each country, which is the list a reader can actually check: Mythenweg, Carros de Foc, the Aphrodite trail, Tour du Pic du Midi d'Ossau. Cycling's top is EuroVelo and national-network sections. Distributions for both scores and all counts are in `data/reports/routes_quality.json`.
 
 ---
 
@@ -616,7 +632,7 @@ destination attachments; the R6 caps are per activity for that reason.
 | 1 | R0 | Done 2026-09-12. Reshaped this file. |
 | 2 | R1, R2 | Both done 2026-09-12. The relations-only scan is four minutes for all of Europe, so re-running it is never the expensive part. |
 | 3 | R3 | Done 2026-09-12. Classify is 25 seconds for Europe; dedup is the slow one. Registered as `trails_hierarchy` in run_pipeline.py, before trails_curate. |
-| 4 | R4, R5 | R4 done 2026-09-13: the recipe stands, the evidence is in `data/reports/routes_elevation_validation.json`. R5 next. |
+| 4 | R4, R5 | Both done 2026-09-13. R4 kept the recipe with evidence; R5 removed length from the rating and added tag richness. Neither score is re-run until the next `trails_rate`. |
 | 5 | R6 | First user-visible value. Ship here if you ship nothing else. |
 | 6 | R7 | Route pages and Explore. Depends on PLAN.md phase C having landed. |
 | 7 | R8 | One commit per activity. |

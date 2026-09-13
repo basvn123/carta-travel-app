@@ -1,0 +1,893 @@
+{
+ "generated_at": "2026-09-13T15:11:19+00:00",
+ "models": {
+  "quality_score": {
+   "module": "pipeline/trails/validate.py",
+   "range": "0-100",
+   "weights": {
+    "continuity": 30,
+    "geometry_sanity": 20,
+    "elevation_sanity": 20,
+    "difficulty": 10,
+    "completeness": 20
+   },
+   "question": "is this relation well formed"
+  },
+  "rating": {
+   "module": "pipeline/trails/rate.py",
+   "range": "0-10",
+   "model": "open-signals-v2",
+   "weights": {
+    "scenery": 0.22,
+    "relief": 0.16,
+    "shape": 0.15,
+    "prominence": 0.14,
+    "designation": 0.13,
+    "photos": 0.12,
+    "variety": 0.05,
+    "surface": 0.03
+   },
+   "reference_class": "NUTS3 region with at least 20 rows, else country",
+   "question": "is this walk worth the day"
+  },
+  "cycling_rating": {
+   "module": "pipeline/cycling/cycle_index.py",
+   "range": "0-10"
+  }
+ },
+ "publish_threshold": "not a number. Publication is curate.py's gates (one continuous line, a real name, inside the length band, deduped) plus the NUTS3 quota from pipeline/regions/quotas.py. rate.py scores only what curate.py already chose, so no rating decides publication. The cycling layer does gate on its score (5.4) and on photographs, which is why its listed tier is large.",
+ "components": {
+  "network tier": {
+   "in_rating": "designation term, weight 0.13, via rate.NETWORK_LEVEL (iwn 1.0, nwn 0.85, rwn 0.6, lwn 0.35, else 0.2)",
+   "in_quality_score": "no",
+   "in_gate": "curate.NETWORK_LEVEL is 0.24 of the selection rank",
+   "in_wire": "net on the country row (R5), and the waymarked reason code"
+  },
+  "waymarking": {
+   "in_rating": "no, and deliberately: osmc:symbol says a symbol is painted, not that the route is worth walking. The designation term already carries what a signed network means, and scoring both would count one fact twice",
+   "in_quality_score": "osmc:status is read, but only as corroboration for a gap: a route flagged incomplete upstream fails continuity rather than passing on a technicality",
+   "in_gate": "no",
+   "in_wire": "f.way (presence of osmc:symbol) and waymark_ref"
+  },
+  "completeness": {
+   "in_rating": "no",
+   "in_quality_score": "continuity check, weight 30, from gap_info and a fresh accepted repair",
+   "in_gate": "HARD: curate refuses any route that is not one continuous line",
+   "in_wire": "bridges on the detail file when a line was spliced"
+  },
+  "tag richness": {
+   "in_rating": "no",
+   "in_quality_score": "completeness check, weight 20. Name, network and description decide usability (80 of the check); surface, sac_scale, operator, website and description scale a 20 point bonus. ADDED in R5; before that the check read three tags",
+   "in_gate": "a real name is required",
+   "in_wire": "no"
+  },
+  "OSM maturity": {
+   "in_rating": "no",
+   "in_quality_score": "no",
+   "in_gate": "no",
+   "in_wire": "no",
+   "note": "OMITTED ON PURPOSE. Last-edited is not available: a public Geofabrik extract carries no object metadata. Member way count measures how finely the ways were split, not maturity: one path mapped as one way and the same path mapped as forty are the same walk, and scoring the count would reward fragmentation"
+  },
+  "named": {
+   "in_rating": "no",
+   "in_quality_score": "completeness: a nameless relation cannot pass",
+   "in_gate": "HARD: curate.SYNTHETIC_PREFIX excludes 'OSM route 12345' titles from the candidate query outright",
+   "in_wire": "name"
+  },
+  "scenic context": {
+   "in_rating": "scenery term, weight 0.22, the largest: weighted scenic_pois features per kilometre from scenic.py, plus a separate variety term (0.05) for distinct kinds",
+   "in_quality_score": "no",
+   "in_gate": "no",
+   "in_wire": "f.hl codes and the reasons list"
+  },
+  "length": {
+   "in_rating": "NO, and this is a rule: R5 forbids it. The shape term paid a day-length bonus until 2026-09-13, which capped what a long path could score; removed, shape is now loop / point / out-and-back only",
+   "in_quality_score": "no (distance is compared with the OSM tag as a sanity check, which is not a quality judgement)",
+   "in_gate": "yes, as a QUOTA: curate spends a budget per distance band so a country's list is not all day loops. A budget is a selection rule, not a mark",
+   "in_wire": "distance_m"
+  }
+ },
+ "hiking": {
+  "staged": 239236,
+  "published": 17455,
+  "published_rated": 17404,
+  "published_listed": 51,
+  "quality_score_distribution_staged": {
+   "30-40": 6,
+   "40-50": 173,
+   "50-60": 1545,
+   "60-70": 3364,
+   "70-80": 7948,
+   "80-90": 92926,
+   "90-100": 132747,
+   "null": 527
+  },
+  "quality_score_distribution_published": {
+   "50-60": 1,
+   "60-70": 20,
+   "70-80": 291,
+   "80-90": 1102,
+   "90-100": 15751,
+   "null": 290
+  },
+  "rating_distribution_published": {
+   "4-5": 138,
+   "5-6": 1451,
+   "6-7": 5062,
+   "7-8": 6405,
+   "8-9": 3581,
+   "9-10": 767
+  }
+ },
+ "cycling": {
+  "staged": 65375,
+  "scored": 32264,
+  "published": 16966,
+  "published_rated": 506,
+  "published_listed": 16460,
+  "published_source": "continent-app/public/cycling (the wire), because export_cycling.py gates at write time and never sets status='published'",
+  "rating_distribution_staged": {
+   "1-2": 1,
+   "2-3": 732,
+   "3-4": 5268,
+   "4-5": 10144,
+   "5-6": 10064,
+   "6-7": 5294,
+   "7-8": 760,
+   "8-9": 1
+  },
+  "rating_distribution_published": {
+   "5-6": 107,
+   "6-7": 205,
+   "7-8": 192,
+   "8-9": 2
+  }
+ },
+ "per_country": {
+  "AD": {
+   "staged": 14,
+   "published": 8,
+   "rated": 8,
+   "listed": 0,
+   "avg_rating": 8.43,
+   "cycling_staged": 16,
+   "cycling_published": 0
+  },
+  "AL": {
+   "staged": 394,
+   "published": 164,
+   "rated": 164,
+   "listed": 0,
+   "avg_rating": 6.69,
+   "cycling_staged": 1,
+   "cycling_published": 0
+  },
+  "AT": {
+   "staged": 11426,
+   "published": 564,
+   "rated": 562,
+   "listed": 2,
+   "avg_rating": 7.15,
+   "cycling_staged": 1723,
+   "cycling_published": 0
+  },
+  "BA": {
+   "staged": 117,
+   "published": 65,
+   "rated": 65,
+   "listed": 0,
+   "avg_rating": 7.8,
+   "cycling_staged": 64,
+   "cycling_published": 0
+  },
+  "BE": {
+   "staged": 21311,
+   "published": 653,
+   "rated": 652,
+   "listed": 1,
+   "avg_rating": 6.98,
+   "cycling_staged": 1212,
+   "cycling_published": 0
+  },
+  "BG": {
+   "staged": 493,
+   "published": 250,
+   "rated": 250,
+   "listed": 0,
+   "avg_rating": 7.42,
+   "cycling_staged": 50,
+   "cycling_published": 0
+  },
+  "CH": {
+   "staged": 9320,
+   "published": 394,
+   "rated": 393,
+   "listed": 1,
+   "avg_rating": 7.32,
+   "cycling_staged": 708,
+   "cycling_published": 0
+  },
+  "CY": {
+   "staged": 204,
+   "published": 101,
+   "rated": 101,
+   "listed": 0,
+   "avg_rating": 7.09,
+   "cycling_staged": 7,
+   "cycling_published": 0
+  },
+  "CZ": {
+   "staged": 5554,
+   "published": 393,
+   "rated": 393,
+   "listed": 0,
+   "avg_rating": 7.31,
+   "cycling_staged": 3222,
+   "cycling_published": 0
+  },
+  "DE": {
+   "staged": 54174,
+   "published": 4678,
+   "rated": 4666,
+   "listed": 12,
+   "avg_rating": 7.35,
+   "cycling_staged": 31551,
+   "cycling_published": 0
+  },
+  "DK": {
+   "staged": 1623,
+   "published": 150,
+   "rated": 150,
+   "listed": 0,
+   "avg_rating": 7.16,
+   "cycling_staged": 476,
+   "cycling_published": 0
+  },
+  "EE": {
+   "staged": 386,
+   "published": 150,
+   "rated": 150,
+   "listed": 0,
+   "avg_rating": 7.06,
+   "cycling_staged": 105,
+   "cycling_published": 0
+  },
+  "ES": {
+   "staged": 6599,
+   "published": 525,
+   "rated": 525,
+   "listed": 0,
+   "avg_rating": 7.6,
+   "cycling_staged": 2158,
+   "cycling_published": 0
+  },
+  "FI": {
+   "staged": 942,
+   "published": 175,
+   "rated": 175,
+   "listed": 0,
+   "avg_rating": 7.34,
+   "cycling_staged": 307,
+   "cycling_published": 0
+  },
+  "FO": {
+   "staged": 1,
+   "published": 1,
+   "rated": 1,
+   "listed": 0,
+   "avg_rating": 4.7,
+   "cycling_staged": 4,
+   "cycling_published": 0
+  },
+  "FR": {
+   "staged": 18315,
+   "published": 964,
+   "rated": 962,
+   "listed": 2,
+   "avg_rating": 7.07,
+   "cycling_staged": 4486,
+   "cycling_published": 0
+  },
+  "GB": {
+   "staged": 4800,
+   "published": 1855,
+   "rated": 1846,
+   "listed": 9,
+   "avg_rating": 7.3,
+   "cycling_staged": 6065,
+   "cycling_published": 0
+  },
+  "GR": {
+   "staged": 1241,
+   "published": 548,
+   "rated": 548,
+   "listed": 0,
+   "avg_rating": 7.05,
+   "cycling_staged": 49,
+   "cycling_published": 0
+  },
+  "HR": {
+   "staged": 1101,
+   "published": 160,
+   "rated": 159,
+   "listed": 1,
+   "avg_rating": 7.27,
+   "cycling_staged": 521,
+   "cycling_published": 0
+  },
+  "HU": {
+   "staged": 3519,
+   "published": 190,
+   "rated": 190,
+   "listed": 0,
+   "avg_rating": 7.38,
+   "cycling_staged": 440,
+   "cycling_published": 0
+  },
+  "IE": {
+   "staged": 887,
+   "published": 157,
+   "rated": 156,
+   "listed": 1,
+   "avg_rating": 7.36,
+   "cycling_staged": 3144,
+   "cycling_published": 0
+  },
+  "IS": {
+   "staged": 148,
+   "published": 83,
+   "rated": 83,
+   "listed": 0,
+   "avg_rating": 7.39,
+   "cycling_staged": 35,
+   "cycling_published": 0
+  },
+  "IT": {
+   "staged": 14330,
+   "published": 1276,
+   "rated": 1268,
+   "listed": 8,
+   "avg_rating": 7.36,
+   "cycling_staged": 1493,
+   "cycling_published": 0
+  },
+  "LI": {
+   "staged": 141,
+   "published": 110,
+   "rated": 110,
+   "listed": 0,
+   "avg_rating": 7.3,
+   "cycling_staged": 7,
+   "cycling_published": 0
+  },
+  "LT": {
+   "staged": 301,
+   "published": 103,
+   "rated": 103,
+   "listed": 0,
+   "avg_rating": 7.24,
+   "cycling_staged": 54,
+   "cycling_published": 0
+  },
+  "LU": {
+   "staged": 408,
+   "published": 151,
+   "rated": 150,
+   "listed": 1,
+   "avg_rating": 7.52,
+   "cycling_staged": 343,
+   "cycling_published": 0
+  },
+  "LV": {
+   "staged": 396,
+   "published": 150,
+   "rated": 150,
+   "listed": 0,
+   "avg_rating": 6.96,
+   "cycling_staged": 219,
+   "cycling_published": 0
+  },
+  "MD": {
+   "staged": 25,
+   "published": 22,
+   "rated": 22,
+   "listed": 0,
+   "avg_rating": 6.04,
+   "cycling_staged": 5,
+   "cycling_published": 0
+  },
+  "ME": {
+   "staged": 156,
+   "published": 71,
+   "rated": 71,
+   "listed": 0,
+   "avg_rating": 6.79,
+   "cycling_staged": 63,
+   "cycling_published": 0
+  },
+  "MK": {
+   "staged": 91,
+   "published": 66,
+   "rated": 66,
+   "listed": 0,
+   "avg_rating": 6.73,
+   "cycling_staged": 5,
+   "cycling_published": 0
+  },
+  "MT": {
+   "staged": 38,
+   "published": 30,
+   "rated": 30,
+   "listed": 0,
+   "avg_rating": 7.49,
+   "cycling_staged": 4,
+   "cycling_published": 0
+  },
+  "NL": {
+   "staged": 62488,
+   "published": 616,
+   "rated": 610,
+   "listed": 6,
+   "avg_rating": 7.09,
+   "cycling_staged": 403,
+   "cycling_published": 0
+  },
+  "NO": {
+   "staged": 2967,
+   "published": 268,
+   "rated": 268,
+   "listed": 0,
+   "avg_rating": 7.01,
+   "cycling_staged": 458,
+   "cycling_published": 0
+  },
+  "PL": {
+   "staged": 3402,
+   "published": 861,
+   "rated": 860,
+   "listed": 1,
+   "avg_rating": 7.03,
+   "cycling_staged": 2503,
+   "cycling_published": 0
+  },
+  "PT": {
+   "staged": 1323,
+   "published": 235,
+   "rated": 234,
+   "listed": 1,
+   "avg_rating": 7.5,
+   "cycling_staged": 247,
+   "cycling_published": 0
+  },
+  "RO": {
+   "staged": 1581,
+   "published": 240,
+   "rated": 240,
+   "listed": 0,
+   "avg_rating": 7.6,
+   "cycling_staged": 111,
+   "cycling_published": 0
+  },
+  "RS": {
+   "staged": 565,
+   "published": 227,
+   "rated": 226,
+   "listed": 1,
+   "avg_rating": 7.66,
+   "cycling_staged": 57,
+   "cycling_published": 0
+  },
+  "SE": {
+   "staged": 3740,
+   "published": 304,
+   "rated": 303,
+   "listed": 1,
+   "avg_rating": 7.4,
+   "cycling_staged": 951,
+   "cycling_published": 0
+  },
+  "SI": {
+   "staged": 1640,
+   "published": 237,
+   "rated": 235,
+   "listed": 2,
+   "avg_rating": 7.34,
+   "cycling_staged": 225,
+   "cycling_published": 0
+  },
+  "SK": {
+   "staged": 2314,
+   "published": 163,
+   "rated": 162,
+   "listed": 1,
+   "avg_rating": 7.49,
+   "cycling_staged": 1598,
+   "cycling_published": 0
+  },
+  "TR": {
+   "staged": 150,
+   "published": 0,
+   "rated": 0,
+   "listed": 0,
+   "avg_rating": null,
+   "cycling_staged": 191,
+   "cycling_published": 0
+  },
+  "UA": {
+   "staged": 485,
+   "published": 0,
+   "rated": 0,
+   "listed": 0,
+   "avg_rating": null,
+   "cycling_staged": 91,
+   "cycling_published": 0
+  },
+  "XK": {
+   "staged": 126,
+   "published": 97,
+   "rated": 97,
+   "listed": 0,
+   "avg_rating": 6.49,
+   "cycling_staged": 3,
+   "cycling_published": 0
+  }
+ },
+ "countries_publishing_one_or_none": {
+  "FO": {
+   "staged": 1,
+   "published": 1,
+   "rated": 1,
+   "listed": 0,
+   "avg_rating": 4.7,
+   "cycling_staged": 4,
+   "cycling_published": 0,
+   "diagnosis": "coverage: OSM has almost no route relations here"
+  },
+  "TR": {
+   "staged": 150,
+   "published": 0,
+   "rated": 0,
+   "listed": 0,
+   "avg_rating": null,
+   "cycling_staged": 191,
+   "cycling_published": 0,
+   "diagnosis": "the bar: relations exist but none clears the continuity and naming gates"
+  },
+  "UA": {
+   "staged": 485,
+   "published": 0,
+   "rated": 0,
+   "listed": 0,
+   "avg_rating": null,
+   "cycling_staged": 91,
+   "cycling_published": 0,
+   "diagnosis": "the bar: relations exist but none clears the continuity and naming gates"
+  }
+ },
+ "top": {
+  "hiking": [
+   {
+    "id": 30507,
+    "country": "AD",
+    "name": "European long distance path E7 - Andorra",
+    "rating": 9.8,
+    "network": "iwn",
+    "km": 43.4
+   },
+   {
+    "id": 63433,
+    "country": "AL",
+    "name": "Mount Korab (9/1)",
+    "rating": 9.8,
+    "network": "lwn",
+    "km": 12.1
+   },
+   {
+    "id": 20050,
+    "country": "AT",
+    "name": "BergeSeen Trail 15: Gosau-Hintertal - Hallstatt",
+    "rating": 9.8,
+    "network": "rwn",
+    "km": 16.4
+   },
+   {
+    "id": 63905,
+    "country": "BA",
+    "name": "Planinarska staza na Konj I",
+    "rating": 9.8,
+    "network": "lwn",
+    "km": 6.4
+   },
+   {
+    "id": 86628,
+    "country": "BE",
+    "name": "Promenade du Lac de Nisramont",
+    "rating": 9.8,
+    "network": "lwn",
+    "km": 13.1
+   },
+   {
+    "id": 75259,
+    "country": "BG",
+    "name": "Мусаленска Пътека",
+    "rating": 9.8,
+    "network": "lwn",
+    "km": 12.4
+   },
+   {
+    "id": 5134,
+    "country": "CH",
+    "name": "Mythenweg",
+    "rating": 9.8,
+    "network": "lwn",
+    "km": 6.5
+   },
+   {
+    "id": 62630,
+    "country": "CY",
+    "name": "Aphrodite Natural Trail",
+    "rating": 9.8,
+    "network": "lwn",
+    "km": 6.6
+   },
+   {
+    "id": 105259,
+    "country": "CZ",
+    "name": "6668",
+    "rating": 9.8,
+    "network": "rwn",
+    "km": 12.8
+   },
+   {
+    "id": 206176,
+    "country": "DE",
+    "name": "Genießerpfad - Feldbergsteig",
+    "rating": 9.8,
+    "network": "lwn",
+    "km": 12.3
+   },
+   {
+    "id": 77805,
+    "country": "DK",
+    "name": "Mols Bjerge-stien Bjergetapen",
+    "rating": 9.8,
+    "network": "rwn",
+    "km": 20.6
+   },
+   {
+    "id": 63571,
+    "country": "EE",
+    "name": "Rannametsa-Tolkuse",
+    "rating": 9.8,
+    "network": "rwn",
+    "km": 2.2
+   },
+   {
+    "id": 176112,
+    "country": "ES",
+    "name": "Carros de Foc",
+    "rating": 9.8,
+    "network": "rwn",
+    "km": 54.2
+   },
+   {
+    "id": 112931,
+    "country": "FI",
+    "name": "Eino Leino",
+    "rating": 9.8,
+    "network": "lwn",
+    "km": 6.4
+   },
+   {
+    "id": 24830,
+    "country": "FR",
+    "name": "Tour du Pic du Midi d'Ossau",
+    "rating": 9.8,
+    "network": "rwn",
+    "km": 17.4
+   },
+   {
+    "id": 188593,
+    "country": "GB",
+    "name": "Bideam nam Bian Trail",
+    "rating": 9.8,
+    "network": "lwn",
+    "km": 11.0
+   },
+   {
+    "id": 73992,
+    "country": "GR",
+    "name": "Ios Agio Theodoti Chora (Profiti Ilias Trail)",
+    "rating": 9.8,
+    "network": "rwn",
+    "km": 7.3
+   },
+   {
+    "id": 66998,
+    "country": "HR",
+    "name": "Pješačka ruta C",
+    "rating": 9.8,
+    "network": "lwn",
+    "km": 9.1
+   },
+   {
+    "id": 72155,
+    "country": "HU",
+    "name": "Z, Lillafüredi Zöld körtúra",
+    "rating": 9.8,
+    "network": "rwn",
+    "km": 17.2
+   },
+   {
+    "id": 80758,
+    "country": "IE",
+    "name": "Dursey Island Loop",
+    "rating": 9.8,
+    "network": "rwn",
+    "km": 11.4
+   }
+  ],
+  "cycling": [
+   {
+    "id": 49051,
+    "country": "GB",
+    "name": "NCN National Route 1",
+    "rating": 8.1,
+    "network": "ncn",
+    "km": 28.6
+   },
+   {
+    "id": 1150,
+    "country": "AT",
+    "name": "EuroVelo 6 - part Austria - leg 3 common (Ottensheim - St. Georgen)",
+    "rating": 8.0,
+    "network": "icn",
+    "km": 25.2
+   },
+   {
+    "id": 413,
+    "country": "AT",
+    "name": "Innweg",
+    "rating": 7.9,
+    "network": "rcn",
+    "km": 64.7
+   },
+   {
+    "id": 1148,
+    "country": "AT",
+    "name": "EuroVelo 6 - part Austria - leg 1 south",
+    "rating": 7.9,
+    "network": "icn",
+    "km": 76.6
+   },
+   {
+    "id": 1518,
+    "country": "AT",
+    "name": "Murradweg Abs. 4 Ostufer (Frohnleiten - Großsulz)",
+    "rating": 7.9,
+    "network": "rcn",
+    "km": 48.6
+   },
+   {
+    "id": 49062,
+    "country": "GB",
+    "name": "NCN National Route 1",
+    "rating": 7.9,
+    "network": "ncn",
+    "km": 27.8
+   },
+   {
+    "id": 1147,
+    "country": "AT",
+    "name": "EuroVelo 6 - part Austria - leg 1 north",
+    "rating": 7.8,
+    "network": "icn",
+    "km": 57.1
+   },
+   {
+    "id": 2206,
+    "country": "AT",
+    "name": "Bodensee-Radweg",
+    "rating": 7.8,
+    "network": "icn",
+    "km": 30.7
+   },
+   {
+    "id": 3127,
+    "country": "BE",
+    "name": "Schelderoute - 6 - Antwerpen - Grens Nederland",
+    "rating": 7.8,
+    "network": "ncn",
+    "km": 29.9
+   },
+   {
+    "id": 11965,
+    "country": "FR",
+    "name": "EV3 France 27, Amboise - Tours",
+    "rating": 7.8,
+    "network": "icn",
+    "km": 32.3
+   },
+   {
+    "id": 13301,
+    "country": "DE",
+    "name": "Ruwer-Hochwald-Radweg",
+    "rating": 7.8,
+    "network": "rcn",
+    "km": 54.5
+   },
+   {
+    "id": 16359,
+    "country": "DE",
+    "name": "Elberadweg rechtselbisch [Abschnitt E]",
+    "rating": 7.8,
+    "network": "ncn",
+    "km": 51.6
+   },
+   {
+    "id": 2,
+    "country": "LU",
+    "name": "Piste cyclable des trois rivières",
+    "rating": 7.7,
+    "network": "ncn",
+    "km": 89.9
+   },
+   {
+    "id": 4351,
+    "country": "CZ",
+    "name": "33 Šumavská magistrála",
+    "rating": 7.7,
+    "network": "ncn",
+    "km": 212.0
+   },
+   {
+    "id": 9089,
+    "country": "FR",
+    "name": "Voie Verte Iguerande - Saint-Yan",
+    "rating": 7.7,
+    "network": "ncn",
+    "km": 25.1
+   },
+   {
+    "id": 9402,
+    "country": "FR",
+    "name": "La Voie Bleue, Moselle-Saône à vélo - Richardménil > Gripport",
+    "rating": 7.7,
+    "network": "ncn",
+    "km": 27.3
+   },
+   {
+    "id": 12018,
+    "country": "FR",
+    "name": "La-Charité-Sur-Loire - Cuffy",
+    "rating": 7.7,
+    "network": "icn",
+    "km": 26.9
+   },
+   {
+    "id": 12891,
+    "country": "FR",
+    "name": "Eurovélo 17 : Arles – Port-Saint-Louis-du-Rhône",
+    "rating": 7.7,
+    "network": "icn",
+    "km": 51.8
+   },
+   {
+    "id": 13559,
+    "country": "CH",
+    "name": "Aare-Route",
+    "rating": 7.7,
+    "network": "ncn",
+    "km": 43.2
+   },
+   {
+    "id": 17468,
+    "country": "DE",
+    "name": "EuroVelo 13 - Iron Curtain Trail - part 6",
+    "rating": 7.7,
+    "network": "icn",
+    "km": 34.4
+   }
+  ]
+ }
+}

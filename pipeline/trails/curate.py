@@ -65,6 +65,36 @@ the ledger always distinguishes a machine-curated route from a human-read one.
 Curating 15,000 routes by hand was never going to happen, and shipping 545 was
 the alternative.
 
+THE PUBLISH THRESHOLD IS NOT A NUMBER, and this is the place it is written
+down (ROUTES.md R5 asked for it here and in docs/TRAILS.md). Nothing in this
+layer publishes because it scored above a line. A route publishes when it
+
+  1. passes the HARD gates, each of which is a fact about the route rather
+     than a judgement of it:
+       continuity   one continuous line, zero gaps over tolerance, or a
+                    fresh accepted splice or repair that made it one. A
+                    multi-part GPX draws a walk that teleports.
+       a real name  'OSM route 12345' is not a name (SYNTHETIC_PREFIX).
+       length       MIN_M to MAX_M, or up to TREK_MAX_M when the route is
+                    famous, so the list is walks rather than fragments and
+                    continental paths.
+       one slot per family, where family now means the relation tree first
+       (hierarchy.py), then the dedup group (dedup.py), then the title, the
+       article and the E-path ref.
+  2. and then WINS A SLOT inside its NUTS3 region's quota
+     (pipeline/regions/quotas.py, unit nuts3), ranked against the other
+     candidates in that region by rank_of(): network tier, quality_score,
+     popularity and loop shape.
+
+So the bar moves with the region, which is the point: a region with forty
+good walks publishes its best, and one with four publishes four. rate.py
+runs AFTER this and scores only what was already chosen, which is why a
+rating never decides publication and why no published row can be rated
+against a pool it was not selected from.
+
+The cycling layer is deliberately different: export_cycling.py gates on its
+own score (5.4) and on photographs, which is why its listed tier is large.
+
 Runs after regionize.py (whose nuts3 column the quota groups by) and before
 way_tags.py, attributes.py, scenic.py, trail_images.py and rate.py, all of
 which work on the selection rather than on the whole pool.
