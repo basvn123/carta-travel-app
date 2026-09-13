@@ -2,16 +2,16 @@
  "layer": "beaches",
  "countries": {
   "GB": {
-   "gap": 92,
-   "name_matched": 11,
-   "resolved": 11
+   "gap": 45,
+   "name_matched": 1,
+   "resolved": 1
   },
   "IE": {
-   "gap": 77,
+   "gap": 76,
    "name_matched": 0,
    "resolved": 0
   }
  },
- "filled": 11,
- "examined": 169
+ "filled": 1,
+ "examined": 121
 }

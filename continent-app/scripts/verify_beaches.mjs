@@ -251,8 +251,28 @@ if (firstCountry) {
 
   // The listed tier on screen. Thousands of rows ship as listed and they live
   // in their own array in the wire, so a screen has to opt in to showing them.
-  await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
-  await page.waitForTimeout(1000);
+  // The screen shows the listed tier only once the RANKED list has run out,
+  // which is the point where "what else is here" is the real question. The
+  // ranked list pages in 36 at a time, so one scroll is not enough for a
+  // country with a lot of scored beaches: Sweden went from 21 to 89 and the
+  // block stopped appearing within a single screen. Keep scrolling until the
+  // card count stops growing, then look.
+  // Paging is driven by an IntersectionObserver whose root is the inner
+  // scroll container, not the window, so window.scrollTo never moves it and
+  // the count sat at PAGE for ever. Scroll every scrollable element.
+  let previousCards = -1;
+  for (let i = 0; i < 15; i += 1) {
+    const cards = await page.locator('.places-bcard').count();
+    if (cards === previousCards) break;
+    previousCards = cards;
+    await page.evaluate(() => {
+      window.scrollTo(0, document.body.scrollHeight);
+      document.querySelectorAll('*').forEach((el) => {
+        if (el.scrollHeight > el.clientHeight + 40) el.scrollTop = el.scrollHeight;
+      });
+    });
+    await page.waitForTimeout(900);
+  }
   const alsoBlocks = await page.locator('.places-alsohere').count();
   if (alsoBlocks) {
     const listedRows = await page.locator('.places-alsohere .places-listedrow').count();
