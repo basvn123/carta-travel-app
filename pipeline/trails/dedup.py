@@ -52,6 +52,10 @@ from ingest_osm_routes import COUNTRIES  # noqa: E402
 from route_schema import ensure_schema, TABLE_OF_ACTIVITY  # noqa: E402
 
 REPORT = ROOT / "data" / "reports" / "routes_dedup.json"
+# The measured pairs, saved before anything is written back: measuring
+# Europe takes half an hour and writing takes seconds, so a write that
+# fails must be retried from the file (--write-only), never re-measured.
+PAIRS_FILE = ROOT / "data" / "derived" / "routes_dedup_pairs.json"
 
 BUFFER_M = 30.0        # the corridor either side of the longer line
 SHARE = 0.8            # of the shorter's length that must lie in it
@@ -251,8 +255,10 @@ def write_groups(conn, table, groups, facts, touched):
             rows.append((arr, m))
             in_group.add(m)
     with conn.cursor() as cur:
-        cur.executemany(f"UPDATE {table} SET co_located = %s WHERE id = %s "
-                        f"AND co_located IS DISTINCT FROM %s",
+        # Explicit bigint[]: a Python list of small ints arrives as int4[] and
+        # Postgres has no operator between bigint[] and integer[].
+        cur.executemany(f"UPDATE {table} SET co_located = %s::bigint[] WHERE id = %s "
+                        f"AND co_located IS DISTINCT FROM %s::bigint[]",
                         [(arr, m, arr) for arr, m in rows])
         loners = [i for i in touched if i not in in_group]
         if loners:
@@ -269,6 +275,9 @@ def main():
     ap.add_argument("--activities", default=",".join(ACTIVITIES))
     ap.add_argument("--dry-run", action="store_true",
                     help="measure and report, write nothing")
+    ap.add_argument("--write-only", action="store_true",
+                    help="skip the measuring; group and write the pairs saved "
+                         f"by the last run in {PAIRS_FILE.relative_to(ROOT).as_posix()}")
     ap.add_argument("--verbose", action="store_true")
     args = ap.parse_args()
 
@@ -282,6 +291,11 @@ def main():
               "len_ratio_min": LEN_RATIO_MIN,
               "countries": countries, "activities": {}}
     t_all = time.time()
+    saved = {}
+    if args.write_only:
+        saved = json.loads(PAIRS_FILE.read_text(encoding="utf-8"))
+        print(f"write-only: pairs from {PAIRS_FILE.relative_to(ROOT).as_posix()} "
+              f"measured {saved.get('generated_at')}")
     for activity in activities:
         table = TABLE_OF_ACTIVITY[activity]
         groups = Groups()
@@ -289,25 +303,45 @@ def main():
         per_cc = {}
         n_pairs = n_cand = 0
         excluded = Counter()
-        for cc in countries:
-            t0 = time.time()
-            ids = country_ids(conn, table, activity, cc)
-            if not ids:
-                continue
-            pairs, n, left_out = pairs_for(conn, table, activity, ids)
-            conn.commit()
-            touched.update(ids)
-            for long_id, short_id, _la, _lb, _ratio in pairs:
-                groups.union(long_id, short_id)
-            n_pairs += len(pairs)
-            n_cand += n
-            excluded.update(left_out)
-            per_cc[cc] = {"rows": len(ids), "compared": n, **left_out,
-                          "pairs": len(pairs), "seconds": round(time.time() - t0, 1)}
-            print(f"{activity} {cc}: {len(ids):,} rows, {n:,} compared "
-                  f"({left_out['umbrellas']} umbrellas, {left_out['node_network']:,} "
-                  f"node-network, {left_out['under_min_len']} short left out), "
-                  f"{len(pairs):,} co-located pairs [{per_cc[cc]['seconds']}s]")
+        if args.write_only:
+            block = saved["activities"][activity]
+            touched = set(block["touched"])
+            per_cc = block["countries"]
+            n_cand = block["compared"]
+            excluded = Counter(block["excluded"])
+            all_pairs = [tuple(p) for p in block["pairs"]]
+        else:
+            all_pairs = []
+            for cc in countries:
+                t0 = time.time()
+                ids = country_ids(conn, table, activity, cc)
+                if not ids:
+                    continue
+                pairs, n, left_out = pairs_for(conn, table, activity, ids)
+                conn.commit()
+                touched.update(ids)
+                all_pairs.extend((int(a), int(b), float(r))
+                                 for a, b, _la, _lb, r in pairs)
+                n_cand += n
+                excluded.update(left_out)
+                per_cc[cc] = {"rows": len(ids), "compared": n, **left_out,
+                              "pairs": len(pairs), "seconds": round(time.time() - t0, 1)}
+                print(f"{activity} {cc}: {len(ids):,} rows, {n:,} compared "
+                      f"({left_out['umbrellas']} umbrellas, {left_out['node_network']:,} "
+                      f"node-network, {left_out['under_min_len']} short left out), "
+                      f"{len(pairs):,} co-located pairs [{per_cc[cc]['seconds']}s]")
+            # Saved the moment measuring ends, before any write.
+            saved.setdefault("activities", {})[activity] = {
+                "touched": sorted(touched), "countries": per_cc,
+                "compared": n_cand, "excluded": dict(excluded),
+                "pairs": all_pairs}
+            saved["generated_at"] = datetime.now(timezone.utc).isoformat(timespec="seconds")
+            if not args.dry_run:
+                PAIRS_FILE.parent.mkdir(parents=True, exist_ok=True)
+                PAIRS_FILE.write_text(json.dumps(saved), encoding="utf-8")
+        for long_id, short_id, _ratio in all_pairs:
+            groups.union(long_id, short_id)
+        n_pairs = len(all_pairs)
         glist = groups.groups()
         member_ids = {m for g in glist for m in g}
         facts = row_facts(conn, table, member_ids)
@@ -352,6 +386,8 @@ def main():
             print(f"   {g['size']:3d}  {g['country']} {g['head_name']}")
     conn.close()
     report["seconds"] = round(time.time() - t_all, 1)
+    if args.write_only:
+        report["measured_at"] = saved.get("generated_at")
     if not args.dry_run:
         REPORT.parent.mkdir(parents=True, exist_ok=True)
         REPORT.write_text(json.dumps(report, indent=1, ensure_ascii=False) + "\n",
