@@ -1,13 +1,13 @@
 {
- "generated_at": "2026-09-12T14:43:15Z",
+ "generated_at": "2026-09-14T11:07:50Z",
  "built": 3868,
- "written": 3868,
- "avg_gallery": 7.22,
- "avg_gallery_print": 5.08,
+ "written": 1470,
+ "avg_gallery": 7.14,
+ "avg_gallery_print": 4.98,
  "avg_highlights": 11.87,
  "merged_duplicates": 12612,
- "avg_do": 5.47,
- "n_with_licence_refusals": 2841,
+ "avg_do": 3.79,
+ "n_with_licence_refusals": 2865,
  "refusals_sample": {
   "CRL": [
    {
@@ -30,12 +30,6 @@
    },
    {
     "url": "https://upload.wikimedia.org/wikipedia/commons/d/d7/Alicante.museoasegurada.jpg",
-    "why": "licence"
-   }
-  ],
-  "IBZ": [
-   {
-    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b3/Dryfruits_%28109739433%29.jpeg/960px-Dryfruits_%28109739433%29.jpeg",
     "why": "licence"
    }
   ],
@@ -95,6 +89,26 @@
    {
     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/Faro_de_La_Entallada_Tuineje_Fuerteventura.jpg/960px-Faro_de_La_Entallada_Tuineje_Fuerteventura.jpg",
     "why": "not_a_photograph"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/01/Costa_Calma_D81_6928_%2838902689940%29.jpg/960px-Costa_Calma_D81_6928_%2838902689940%29.jpg",
+    "why": "licence"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/40/Top-down_areal_of_the_famous_surfing_spot_Playa_del_Viejo_Reyes_in_la_Pared_on_Fuerteventura_%2851123372646%29.jpg/960px-Top-down_areal_of_the_famous_surfing_spot_Playa_del_Viejo_Reyes_in_la_Pared_on_Fuerteventura_%2851123372646%29.jpg",
+    "why": "licence"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dc/Sea_View_-_Las_Playitas.jpg/960px-Sea_View_-_Las_Playitas.jpg",
+    "why": "licence"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Gran_Tarajal_%28from_the_west%29.jpg/960px-Gran_Tarajal_%28from_the_west%29.jpg",
+    "why": "licence"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/50/Tuineje_Ginigin%C3%A1mar_-_Calle_Palmeras_-_Playa_03_ies.jpg/960px-Tuineje_Ginigin%C3%A1mar_-_Calle_Palmeras_-_Playa_03_ies.jpg",
+    "why": "licence"
    }
   ],
   "TFN": [
@@ -115,13 +129,13 @@
   ],
   "XRY": [
    {
-    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/48/Embalse_de_Arcos.jpg/960px-Embalse_de_Arcos.jpg",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/33/Playa_de_Santa_Catalina_IMG_20250607_113021.jpg/960px-Playa_de_Santa_Catalina_IMG_20250607_113021.jpg",
     "why": "licence"
    }
   ],
   "TPS": [
    {
-    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a1/Panorama_da_Erice_con_Monte_Cofano.jpg/960px-Panorama_da_Erice_con_Monte_Cofano.jpg",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/Monte_Cofano_da_Cornino.jpg/960px-Monte_Cofano_da_Cornino.jpg",
     "why": "licence"
    }
   ],
@@ -132,6 +146,20 @@
    },
    {
     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/67/Cagliari_burg_elefantenturm.jpg/960px-Cagliari_burg_elefantenturm.jpg",
+    "why": "licence"
+   }
+  ],
+  "OLB": [
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/Olbia%2C_spiaggia_delle_Saline_%2802%29.jpg/960px-Olbia%2C_spiaggia_delle_Saline_%2802%29.jpg",
+    "why": "licence"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/14/Loiri-Porto_San_Paolo%2C_stagno_di_Porto_Taverna_%2802%29.jpg/960px-Loiri-Porto_San_Paolo%2C_stagno_di_Porto_Taverna_%2802%29.jpg",
+    "why": "licence"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/56/Olbia%2C_isola_Piana_%2806%29.jpg/960px-Olbia%2C_isola_Piana_%2806%29.jpg",
     "why": "licence"
    }
   ],
@@ -169,12 +197,12 @@
     "why": "not_a_photograph"
    },
    {
-    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/Concattedrale_di_Bova_02.jpg/960px-Concattedrale_di_Bova_02.jpg",
-    "why": "licence"
-   },
-   {
     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0f/Reggio_Calabria_cartolina_Duomo_900.jpg/960px-Reggio_Calabria_cartolina_Duomo_900.jpg",
     "why": "not_a_photograph"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/07/Ganzirri_%28Messina%29_01.jpg/960px-Ganzirri_%28Messina%29_01.jpg",
+    "why": "licence"
    },
    {
     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b1/Ganzirri_%28Messina%29_02.jpg/960px-Ganzirri_%28Messina%29_02.jpg",
