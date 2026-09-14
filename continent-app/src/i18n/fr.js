@@ -1339,6 +1339,7 @@ export const fr = {
   "region.kind.range": "Massif",
   "region.kind.nuts2": "Région",
   "region.notFound": "Cette région ne figure pas au catalogue",
+  "region.loading": "Ouverture de la région",
   "region.notFoundHint": "Le lien est peut-être ancien, ou la région n'a pas encore de lieux publiés.",
   "region.share": "Copier le lien",
   "region.shareDone": "Lien copié",

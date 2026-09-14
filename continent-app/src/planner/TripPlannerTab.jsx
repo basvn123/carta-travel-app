@@ -75,6 +75,30 @@ const ModeIcon = ({ mode, size = 13 }) => {
   return I ? <I size={size} className="trip-mode-icon" /> : null;
 };
 
+/**
+ * Anchor-city connection legs ("fly into Bergamo, then get to Como"), real
+ * journeys that belong in the receipt next to the flights they bracket.
+ *
+ * Module scope on purpose. Defined inside the tab's render body this was a
+ * NEW component type on every render, so React unmounted and remounted the
+ * rows each time anything in the planner changed.
+ */
+function AnchorLegRow({ leg, from, to }) {
+  const { t } = useI18n();
+  if (!leg || !leg.ground_total) return null;
+  const Icon = (leg.mode === 'taxi' || leg.mode === 'rental' || leg.mode === 'car') ? CarIcon
+    : (leg.mode === 'public' || leg.mode === 'bus') ? BusIcon : TrainIcon;
+  return (
+    <div className="trip-total-row">
+      <span className="lbl">
+        <Icon size={11} /> {from} → {to}
+        <small>{t('trip.legStats', { km: leg.road_km, hours: fmtHours(leg.hours) })}</small>
+      </span>
+      <span className="val">{`${estPrefix(fareProv(leg))}${eur(leg.ground_total)}`}</span>
+    </div>
+  );
+}
+
 /** One overland leg between two stops: the chosen mode inline, expandable to
  *  compare all three (train/bus/car), switch mode, and jump to booking links. */
 function LegRow({ leg, onMode }) {
@@ -510,22 +534,6 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, open
   };
 
   const groundTotal = tp.legs.reduce((sum, l) => sum + (l ? l.ground_total : 0), 0);
-  // Anchor-city connection legs ("fly into Bergamo, then get to Como"), real
-  // journeys that belong in the receipt next to the flights they bracket.
-  const AnchorLegRow = ({ leg, from, to }) => {
-    if (!leg || !leg.ground_total) return null;
-    const Icon = (leg.mode === 'taxi' || leg.mode === 'rental' || leg.mode === 'car') ? CarIcon
-      : (leg.mode === 'public' || leg.mode === 'bus') ? BusIcon : TrainIcon;
-    return (
-      <div className="trip-total-row">
-        <span className="lbl">
-          <Icon size={11} /> {from} → {to}
-          <small>{t('trip.legStats', { km: leg.road_km, hours: fmtHours(leg.hours) })}</small>
-        </span>
-        <span className="val">{`${estPrefix(fareProv(leg))}${eur(leg.ground_total)}`}</span>
-      </div>
-    );
-  };
 
   // Which itinerary days already have Day-planner picks on this device, so the
   // per-day button can honestly read "Modify" instead of "Plan". Re-read when

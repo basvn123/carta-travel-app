@@ -8,7 +8,7 @@ import { fareProv, estPrefix } from '../components/FareProvenance.jsx';
 import { HeroImage } from '../components/HeroImage.jsx';
 import { PlacesFilterSheet } from './PlacesFilterSheet.jsx';
 import { trailPath } from '../lib/trailShape.js';
-import { srcSetFor } from '../lib/heroImage.js';
+import { srcSetFor, fallbackSrc } from '../lib/heroImage.js';
 import { loadTrails, loadListedTrails, loadTrailsIndex } from '../lib/trails.js';
 import {
   loadBeachIndex, loadBeaches, loadListedBeaches, loadTopBeaches,
@@ -297,8 +297,14 @@ const COVER_FIT_BAD = 0.55;
 const COVER_RATING_GIVE_BAD = 1.2;
 const fitsBox = (ratio, box) => (ratio > box ? box / ratio : ratio / box);
 
+/* 'general' - the priced city catalogue - used to lead this rail. It was the
+ * same browse surface Explore already is, one tab away, so the two disagreed
+ * about which one was "the places list". Destinations is now the published,
+ * hand-checked content (trips, trails, beaches, lakes, mountains, cycling) and
+ * Explore is the catalogue. The code behind `cat === 'general'` is now
+ * unreachable and is queued for deletion; it is left in place here so this
+ * change is a one-line revert. */
 const CATS = [
-  { key: 'general', Icon: SkylineIcon, labelKey: 'places.catGeneral' },
   { key: 'trips', Icon: SuitcaseIcon, labelKey: 'places.catTrips' },
   { key: 'trails', Icon: BootIcon, labelKey: 'places.catTrails' },
   { key: 'beaches', Icon: BeachIcon, labelKey: 'places.catBeaches' },
@@ -480,6 +486,40 @@ function DestCard({ p, km, priceMode, onSelect, t }) {
  *   3. The walk drawn as itself, from the geometry the card already carries.
  *      No photograph exists, so the honest picture is the shape of the path.
  */
+/**
+ * The photo on a banner card (.places-bcard and friends).
+ *
+ * Every one of these used to be a bare `<img src={shot.u} loading="lazy" />`:
+ * no srcset, no sizes, no intrinsic dimensions. The wire ships Wikimedia heroes
+ * at their 960px rendering, so a 375px phone card downloaded three to five
+ * times the bytes it drew - on six card types at once - and every card
+ * reflowed as its photo landed. lib/heroImage.js has owned the fix since the
+ * destination grid got it (it knows the six widths Wikimedia will actually
+ * render); the published layers - beaches, lakes, mountains, cycling, trails -
+ * simply never went through it.
+ *
+ * width/height are the ASPECT, not pixels: CSS sizes the element, and the pair
+ * is what reserves the box before the bytes arrive.
+ */
+const CARD_SIZES = '(min-width: 769px) 720px, 100vw';
+
+function CardPhoto({ url, className = 'places-card-img' }) {
+  if (!url) return null;
+  return (
+    <img
+      className={className}
+      src={fallbackSrc(url, 500)}
+      srcSet={srcSetFor(url, 960)}
+      sizes={CARD_SIZES}
+      alt=""
+      width={25}
+      height={12}
+      loading="lazy"
+      decoding="async"
+    />
+  );
+}
+
 function TrailPicture({ tr, assoc }) {
   const shape = useMemo(
     () => (assoc.photoUrl ? null : trailPath(tr.geometry)),
@@ -488,7 +528,7 @@ function TrailPicture({ tr, assoc }) {
   if (assoc.photoUrl) {
     return (
       <>
-        <img className="places-card-img" src={assoc.photoUrl} alt="" loading="lazy" />
+        <CardPhoto url={assoc.photoUrl} />
         {assoc.photoOf && <span className="places-card-photoof">{assoc.photoOf}</span>}
       </>
     );
@@ -638,7 +678,7 @@ function CycleCard({ r, countryName, onOpen, t }) {
       onClick={() => onOpen(r)}
     >
       {r.img
-        ? <img className="places-card-img" src={r.img} alt="" loading="lazy" />
+        ? <CardPhoto url={r.img} />
         : <span className="places-card-img places-card-noimg" aria-hidden="true" />}
       <span className="places-card-scrim" aria-hidden="true" />
       <span className="places-card-km">
@@ -681,7 +721,7 @@ function CycleTourCard({ tr, countryName, onOpen, t }) {
       onClick={() => onOpen(tr)}
     >
       {tr.img
-        ? <img className="places-card-img" src={tr.img} alt="" loading="lazy" />
+        ? <CardPhoto url={tr.img} />
         : <span className="places-card-img places-card-noimg" aria-hidden="true" />}
       <span className="places-card-scrim" aria-hidden="true" />
       <span className="places-card-km">
@@ -715,7 +755,7 @@ function BeachCard({ beach, km, countryName, onOpen, t }) {
   return (
     <button className="places-bcard" onClick={() => onOpen(beach)}>
       {shot
-        ? <img className="places-card-img" src={shot.u} alt="" loading="lazy" />
+        ? <CardPhoto url={shot.u} />
         : <span className="places-card-img places-card-noimg" aria-hidden="true" />}
       <span className="places-card-scrim" aria-hidden="true" />
       {km != null && (
@@ -761,7 +801,7 @@ function LakeCard({ lake, km, countryName, onOpen, t }) {
   return (
     <button className="places-bcard places-lcard" onClick={() => onOpen(lake)}>
       {shot
-        ? <img className="places-card-img" src={shot.u} alt="" loading="lazy" />
+        ? <CardPhoto url={shot.u} />
         : <span className="places-card-img places-card-noimg" aria-hidden="true" />}
       <span className="places-card-scrim" aria-hidden="true" />
       {km != null && (
@@ -817,7 +857,7 @@ function MountainCard({ mountain, km, countryName, onOpen, t, lang }) {
   return (
     <button className="places-bcard places-mcard" onClick={() => onOpen(mountain)}>
       {shot
-        ? <img className="places-card-img" src={shot.u} alt="" loading="lazy" />
+        ? <CardPhoto url={shot.u} />
         : <span className="places-card-img places-card-noimg" aria-hidden="true" />}
       <span className="places-card-scrim" aria-hidden="true" />
       {km != null && (
@@ -955,13 +995,15 @@ const ItinCard = React.memo(function ItinCard({ tr, km, onOpen, t }) {
         </span>
         <span className="itin-card-head">
           <span className="itin-card-name">{tripHeadline(tr, t)}</span>
-          <span className="itin-card-score">{tr.score.toFixed(1)}</span>
+          {Number.isFinite(tr.score) && (
+            <span className="itin-card-score">{tr.score.toFixed(1)}</span>
+          )}
         </span>
       </span>
 
       <span className="itin-card-body">
         <span className="itin-card-route">
-          {tr.cities.map((c, i) => (
+          {(tr.cities || []).map((c, i) => (
             <React.Fragment key={`${c.city}-${i}`}>
               {i > 0 && <span className="itin-card-arrow" aria-hidden="true">&rsaquo;</span>}
               <span className="itin-card-city">
@@ -983,7 +1025,9 @@ const ItinCard = React.memo(function ItinCard({ tr, km, onOpen, t }) {
           <span className="itin-card-sights">{tr.sights.join(', ')}</span>
         )}
         <span className="itin-card-foot">
-          <span className="itin-card-cost">{t('trip.perDay', { eur: eur(tr.cost.per_day_eur) })}</span>
+          {Number.isFinite(tr.cost?.per_day_eur) && (
+            <span className="itin-card-cost">{t('trip.perDay', { eur: eur(tr.cost.per_day_eur) })}</span>
+          )}
           {tr.alsoDays?.length > 0 && (
             <span className="itin-card-also">
               {t('trip.alsoDays', { days: tr.alsoDays.join(', ') })}
@@ -1015,7 +1059,7 @@ export function DestinationsTab({
   const scrollRef = useRef(null);
   const sentinelRef = useRef(null);
 
-  const [cat, setCat] = useState('general');         // CATS key
+  const [cat, setCat] = useState('trips');           // CATS key
   const [classes, setClasses] = useState([]);        // CLASSES keys, [] = all sizes
   const [query, setQuery] = useState('');
   const [debouncedQuery, setDebouncedQuery] = useState('');
@@ -1291,6 +1335,9 @@ export function DestinationsTab({
    */
   const countryCover = useMemo(() => {
     const byCc = new Map();
+    // Only the (now removed) General country index ever read this, and building
+    // it sorted 40+ arrays over the whole catalogue on mount.
+    if (cat !== 'general') return byCc;
     for (const p of Object.values(data.destinations || {})) {
       // The catalogue carries the hero as an object, the priced rows carry it
       // as a bare URL (useExploreCatalog flattens it), and HeroImage wants the
@@ -1327,7 +1374,7 @@ export function DestinationsTab({
       out.set(cc, pick);
     }
     return out;
-  }, [data]);
+  }, [data, cat]);
 
   // Turkey and Ukraine publish walks and have no catalogue destination at all,
   // so no photograph of them exists anywhere in `data`. Their cover comes from
@@ -2906,6 +2953,14 @@ export function DestinationsTab({
             )}
 
             <div className="places-chips">
+              {/* The country picker sits immediately to the right of this
+                  button on every width, and the sheet used to open with a
+                  country dropdown of its own on top of whatever facets the tab
+                  had. On a tab with no facets that made Filters a door to a
+                  copy of the control beside it. Country now lives in one place
+                  (the chip), and Filters only appears when it has facets of
+                  its own to offer. */}
+              {facetGroups.length > 0 && (
               <button
                 type="button"
                 ref={filterBtnRef}
@@ -2918,6 +2973,7 @@ export function DestinationsTab({
                 <span>{t('filter.filters')}</span>
                 {activeFilters > 0 && <span className="filter-tray-badge">{activeFilters}</span>}
               </button>
+              )}
 
               {/* Every tab has a country now, including the three published
                   layers where the only way in used to be typing its name
@@ -3717,7 +3773,7 @@ export function DestinationsTab({
           groups={facetGroups}
           country={country}
           setCountry={(cc) => { setCountry(cc); setNearPlace(null); }}
-          countryOptions={countryOptions}
+          countryOptions={[]}
           activeFilters={activeFilters}
           resetAll={resetAll}
           resultCount={rowCount}

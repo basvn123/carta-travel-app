@@ -1339,6 +1339,7 @@ export const es = {
   "region.kind.range": "Cordillera",
   "region.kind.nuts2": "Región",
   "region.notFound": "Esa región no está en el catálogo",
+  "region.loading": "Abriendo la región",
   "region.notFoundHint": "El enlace puede ser antiguo, o la región aún no tiene lugares publicados.",
   "region.share": "Copiar enlace",
   "region.shareDone": "Enlace copiado",

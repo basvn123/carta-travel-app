@@ -1339,6 +1339,7 @@ export const it = {
   "region.kind.range": "Catena montuosa",
   "region.kind.nuts2": "Regione",
   "region.notFound": "Quella regione non è nel catalogo",
+  "region.loading": "Apertura della regione",
   "region.notFoundHint": "Il link potrebbe essere vecchio, o la regione non ha ancora luoghi pubblicati.",
   "region.share": "Copia link",
   "region.shareDone": "Link copiato",

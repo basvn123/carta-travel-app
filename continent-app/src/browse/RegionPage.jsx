@@ -111,13 +111,32 @@ export function RegionPage({ id, onClose, onOpenFeature, onOpenRegion }) {
     }
   };
 
-  const share = () => {
+  // writeText REJECTS rather than throws, so a synchronous try/catch around it
+  // never fires: the button said "Link copied" on a permission denial and the
+  // rejection went unhandled. Await it, and only then claim the copy happened.
+  const share = async () => {
     try {
-      navigator.clipboard.writeText(regionShareUrl(id));
+      await navigator.clipboard.writeText(regionShareUrl(id));
       setCopied(true);
       setTimeout(() => setCopied(false), 1800);
     } catch { /* clipboard refused; the button just stays */ }
   };
+
+  if (data === undefined) {
+    // Still fetching. Without this the page rendered its container with a
+    // back button and nothing else, which reads as a page that broke rather
+    // than one that has not arrived.
+    return (
+      <div className="rgnp" role="dialog" aria-modal="true">
+        <div className="rgnp-inner">
+          <button className="rgnp-back" onClick={onClose} aria-label="close">
+            {'←'}
+          </button>
+          <p className="rgnp-card-sub">{t('region.loading')}</p>
+        </div>
+      </div>
+    );
+  }
 
   if (data === null) {
     // An id that resolves to no file at all: a stale link, or a region

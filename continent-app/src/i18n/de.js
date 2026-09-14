@@ -1339,6 +1339,7 @@ export const de = {
   "region.kind.range": "Gebirge",
   "region.kind.nuts2": "Region",
   "region.notFound": "Diese Region steht nicht im Katalog",
+  "region.loading": "Region wird geöffnet",
   "region.notFoundHint": "Der Link ist vielleicht alt, oder die Region hat noch keine veröffentlichten Orte.",
   "region.share": "Link kopieren",
   "region.shareDone": "Link kopiert",

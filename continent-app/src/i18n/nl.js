@@ -1339,6 +1339,7 @@ export const nl = {
   "region.kind.range": "Gebergte",
   "region.kind.nuts2": "Regio",
   "region.notFound": "Die regio staat niet in de catalogus",
+  "region.loading": "Regio wordt geopend",
   "region.notFoundHint": "De link is misschien oud, of de regio heeft nog geen gepubliceerde plekken.",
   "region.share": "Link kopiëren",
   "region.shareDone": "Link gekopieerd",
