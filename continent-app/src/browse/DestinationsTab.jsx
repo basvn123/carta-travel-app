@@ -2232,6 +2232,22 @@ export function DestinationsTab({
   }, [isCycleCat, cycleBundle, q, queryCycleCountry, cycleFacets, cycleShowLocal,
     cycleSort, lang, t]);
 
+  // Cycling renders three stacked lists off one scroll, so its row count is
+  // their sum and the paging window is spent across them in order: the tours
+  // first, then whatever is left goes to the routes, then to the listed ones.
+  // Slicing each list at `visible` on its own would mount three pages at a
+  // time and the sentinel would never be reached.
+  const cycleTotal = cycleRows
+    ? cycleRows.tours.length + cycleRows.routes.length + cycleRows.listed.length
+    : 0;
+  const cycleWindow = useMemo(() => {
+    if (!cycleRows) return null;
+    const tours = Math.min(cycleRows.tours.length, visible);
+    const routes = Math.min(cycleRows.routes.length, Math.max(0, visible - tours));
+    const listed = Math.max(0, visible - tours - routes);
+    return { tours, routes, listed };
+  }, [cycleRows, visible]);
+
   const absentMountainCountry = useMemo(() => {
     if (!isMountainCat || !q || q.length < 2 || !mountainIndex) return null;
     for (const cc of Object.keys(mountainIndex.absent || {})) {
@@ -2270,17 +2286,33 @@ export function DestinationsTab({
     onOpenCycleConsumed?.();
   }, [openCycle, onOpenCycleConsumed]);
 
-  // New filter result: collapse the window and go back to the top.
+  // How many rows the open category actually has. Two arms were missing:
+  // cycling and the composed itineraries both fell through to tripRows,
+  // which is null with no country selected. That gave rowCount 0, and two
+  // things read it. The IntersectionObserver only grows `visible` while
+  // `visible < rowCount`, so the itinerary list was capped at one page
+  // forever while its sentinel scrolled by loading nothing; and the filter
+  // sheet renders its apply button from the same number, so Cycling said
+  // "show no results" over hundreds of routes.
   const rowCount = cat === 'general' ? destRows.length
     : isBeachCat ? (beachRows?.length ?? 0)
       : isLakeCat ? (lakeRows?.length ?? 0)
         : isMountainCat ? (mountainRows?.length ?? 0)
-          : (tripRows?.length ?? 0);
+          : isCycleCat ? cycleTotal
+            : isItinCat ? (itinRows?.length ?? 0)
+              : (tripRows?.length ?? 0);
+
+  // New filter result: collapse the window and go back to the top. Every
+  // filter that can change what the list holds belongs in these deps -
+  // ticking one that was missing left you mid-page in a four-row result.
   useEffect(() => {
     setVisible(PAGE);
     scrollRef.current?.scrollTo?.(0, 0);
   }, [cat, country, q, nearPlace, sort, classes, trailSort, bands, loopsOnly,
-    mtnFacets, lakeFacets, beachFacets, journeyView]);
+    mtnFacets, lakeFacets, beachFacets, journeyView,
+    grades, climbs, shapes, hls, suits,
+    itinDays, itinPace, itinScale,
+    cycleFacets, cycleSort, cycleShowLocal]);
 
   // Walk-shape filters belong to the Trails list and to nothing else. Leaving
   // them set while the traveller browses Trips would silently hide rows on a
@@ -3454,10 +3486,10 @@ export function DestinationsTab({
                     {t('cycle.topNote')}
                   </p>
                 )}
-                {cycleRows.tours.length > 0 && (
+                {cycleWindow.tours > 0 && (
                   <>
                     <p className="places-bandhead">{t('cycle.toursTitle')}</p>
-                    {cycleRows.tours.slice(0, Math.max(visible, 60)).map((tr) => (
+                    {cycleRows.tours.slice(0, cycleWindow.tours).map((tr) => (
                       <CycleTourCard
                         key={tr.slug}
                         tr={tr}
@@ -3471,10 +3503,10 @@ export function DestinationsTab({
                   </>
                 )}
 
-                {cycleRows.routes.length > 0 && (
+                {cycleWindow.routes > 0 && (
                   <>
                     <p className="places-bandhead">{t('cycle.routesTitle')}</p>
-                    {cycleRows.routes.slice(0, Math.max(visible, 60)).map((r) => (
+                    {cycleRows.routes.slice(0, cycleWindow.routes).map((r) => (
                       <CycleCard
                         key={r.id}
                         r={r}
@@ -3488,13 +3520,13 @@ export function DestinationsTab({
                   </>
                 )}
 
-                {cycleRows.listed.length > 0 && (
+                {cycleWindow.listed > 0 && (
                   <>
                     <p className="places-bandhead"
                       data-testid="cycle-listed-head">
                       {t('cycle.listedHeading')}
                     </p>
-                    {cycleRows.listed.slice(0, Math.max(visible, 60)).map((r) => (
+                    {cycleRows.listed.slice(0, cycleWindow.listed).map((r) => (
                       <CycleCard
                         key={r.id}
                         r={r}
@@ -3524,6 +3556,10 @@ export function DestinationsTab({
                 {!cycleRows.tours.length && !cycleRows.routes.length
                   && !cycleRows.listed.length && !cycleRows.localHidden && (
                   <p className="places-empty">{t('cycle.emptyCountry')}</p>
+                )}
+
+                {visible < cycleTotal && (
+                  <div ref={sentinelRef} className="places-sentinel" aria-hidden="true" style={{ height: 1 }} />
                 )}
               </>
             )}
