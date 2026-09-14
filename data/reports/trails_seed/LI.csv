@@ -1,0 +1,16 @@
+rank,curation_rank,title,ref,network,distance_km,popularity,pageviews_day,sitelinks,anchors,quality_score,portal_agreement,status,family_members,trip_id,osm_relation
+1,79.54,Via Alpina Stage 57: Gafadurahütte - Sücka,,iwn,11.5,0.667,0,0,"Vaduz (449/day, 1994 m); Rotes Haus (448/day, 1954 m); Landtag (448/day, 1940 m)",88.8,,needs_review,1,21179,20021107
+2,70.59,Lichtenstein-Weg,,nwn,8.9,0.308,0,0,"Burg Gutenberg (37/day, 62 m)",99.3,agree,needs_review,1,8190,16454213
+3,63.9,St. Peter - Triesen Post,,lwn,8.9,0.469,0,0,"Vaduz (449/day, 785 m); Landtag (448/day, 794 m); Rotes Haus (448/day, 854 m)",100,agree,needs_review,1,3369,3992773
+4,63.9,Triesen Post - Alte Rheinbruecke - Vaduz,,lwn,6.7,0.469,0,0,"Vaduz (449/day, 5 m); Landtag (448/day, 107 m); Rotes Haus (448/day, 412 m)",100,agree,needs_review,1,3378,3999447
+5,61.47,Via Alpina Green C1,VA-C1,iwn,12.1,0.071,0,0,"Vaduz (449/day, 98 m); Landtag (448/day, 229 m); Rotes Haus (448/day, 243 m)",100,,needs_review,1,62351,3989387
+6,58.27,Balzers - Ruettena - Triesen Post,1,lwn,6.2,0.308,0,0,"Burg Gutenberg (37/day, 175 m)",100,agree,needs_review,1,3341,3968916
+7,56.9,Triesenberg - Rotaboda-Samia - Schloss Vaduz - Vaduz,105,lwn,5.3,0.469,0,0,"Vaduz (449/day, 98 m); Landtag (448/day, 107 m); Rotes Haus (448/day, 281 m)",96,,needs_review,1,62309,3959876
+8,56.9,Gaflei - Silum - Triesenberg,107,lwn,7.7,0.469,0,0,"Vaduz (449/day, 1736 m); Landtag (448/day, 1675 m); Rotes Haus (448/day, 1752 m)",96,,needs_review,1,62310,3960115
+9,56.9,Schaan - Triesenberg,,lwn,9.4,0.469,0,0,"Vaduz (449/day, 317 m); Rotes Haus (448/day, 243 m); Landtag (448/day, 263 m)",96,,needs_review,1,62321,3965206
+10,56.9,Masescha - Baholz - Vaduz,,lwn,6.4,0.469,0,0,"Vaduz (449/day, 98 m); Landtag (448/day, 107 m); Rotes Haus (448/day, 11 m)",96,,needs_review,1,62322,3968911
+11,56.9,Triesenberg - Baholz - Vaduz,,lwn,8.4,0.469,0,0,"Vaduz (449/day, 98 m); Landtag (448/day, 107 m); Rotes Haus (448/day, 11 m)",96,,needs_review,1,62330,3969538
+12,56.9,Masescha - Schaan,124,lwn,8.5,0.469,0,0,"Vaduz (449/day, 1044 m); Landtag (448/day, 1072 m); Rotes Haus (448/day, 827 m)",96,,needs_review,1,62317,3962968
+13,56.9,Gafadura - Garsella Alp - Chemi - Bargella - Gaflei,24,lwn,10.4,0.469,0,0,"Vaduz (449/day, 1736 m); Rotes Haus (448/day, 1752 m); Landtag (448/day, 1695 m)",96,,needs_review,1,13221,3990465
+14,56.9,Gafadurahuette - Gaflei,30,lwn,10.4,0.469,0,0,"Vaduz (449/day, 1736 m); Rotes Haus (448/day, 1752 m); Landtag (448/day, 1695 m)",96,,needs_review,1,13222,3992774
+15,56.9,Gafadurahuette - Drei Schwestern - Kemmi - Silum - Steg,142,lwn,13.7,0.468,0,0,"Landtag (448/day, 1925 m); Schloss Vaduz (158/day, 1777 m); Vaduz Castle (158/day, 1807 m)",96,,needs_review,1,13174,3972276

@@ -10,6 +10,10 @@
  * Legacy v1 entries ({ id, label, destinationId, startDate, days }) are
  * migrated on read.
  *
+ * The traveller's own documents do NOT live here (localStorage is far too
+ * small for a PDF): they sit in IndexedDB, keyed by the same plan id, and
+ * deleting a plan takes them with it (see dayFileStore.js).
+ *
  * Cloud sync (see dayPlanSync.js) rides on two additions here rather than on
  * its own storage: a per-plan touched-at timestamp (so newest-wins merging is
  * possible across devices) and a change subscription. Every write is tagged
@@ -17,6 +21,8 @@
  * the account; writes applied FROM the account (remote: true) do neither,
  * they only notify the UI, so a pull can never echo back up as a push.
  */
+
+import { deletePlanFiles } from './dayFileStore.js';
 
 const STANDALONE_KEY = 'carta.dayplans.v1';
 const META_KEY = 'carta.dayplan.meta.v1';
@@ -164,6 +170,10 @@ export function deleteStandalonePlan(id, { remote = false } = {}) {
       window.localStorage.removeItem(extrasKey(id));
     } catch { /* ignore */ }
   }
+  // The plan's documents live outside localStorage, so they need their own
+  // sweep. Fire and forget: a browser that will not open IndexedDB (a private
+  // window) had nothing stored to begin with.
+  deletePlanFiles(id).catch(() => {});
   if (!remote) touch(id);
   notify(id, 'delete', remote);
   return next;
@@ -196,6 +206,10 @@ const EMPTY_EXTRAS = {
   // `inbox` until the traveller routes each one to a trip day; the routed ones
   // live in `dayExtras`, keyed by trip day number.
   inbox: [], dayExtras: {},
+  // A trip that already happened, told by hand: who came, how you travelled,
+  // what it cost, how it was, the photographs (see auth/pastTripMemory.js).
+  // Null on every trip the app itself planned.
+  memory: null,
 };
 
 /** Always returns the full shape, never null: callers render straight off it. */
@@ -213,6 +227,7 @@ export function loadTripExtras(planId) {
       people: Array.isArray(raw.people) ? raw.people : [],
       inbox: Array.isArray(raw.inbox) ? raw.inbox : [],
       dayExtras: raw.dayExtras && typeof raw.dayExtras === 'object' ? raw.dayExtras : {},
+      memory: raw.memory && typeof raw.memory === 'object' ? raw.memory : null,
     };
   } catch {
     return { ...EMPTY_EXTRAS };

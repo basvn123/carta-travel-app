@@ -1,0 +1,291 @@
+{
+  "id": "fi-hiking-hetta-pallas-wilderness-traverse",
+  "sourceId": "hetta-pallas-wilderness-traverse",
+  "slug": "fi-hiking-hetta-pallas-wilderness-traverse",
+  "title": "Hetta–Pallas Wilderness Traverse",
+  "country": "Finland",
+  "countryCode": "FI",
+  "countries": [
+    {
+      "name": "Finland",
+      "code": "FI"
+    }
+  ],
+  "isMultiCountry": false,
+  "region": "Northern Europe & Baltics",
+  "regionKey": "northern-baltics",
+  "subRegion": "Pallas–Yllästunturi National Park, Finnish Lapland",
+  "tripType": "Hiking & Alpine Trekking",
+  "tripTypeId": 6,
+  "tripTypeSlug": "hiking",
+  "durationDays": 7,
+  "bestPeriod": {
+    "months": [
+      6,
+      7,
+      8,
+      9
+    ],
+    "monthNames": [
+      "June",
+      "July",
+      "August",
+      "September"
+    ],
+    "window": "Mid-June to early October. Late June–July for midnight sun and mosquitoes; **early to mid-September for ruska**, the Lapland autumn colour, which is the single best week of the year here",
+    "note": null,
+    "avoid": null,
+    "raw": "Mid-June to early October. Late June–July for midnight sun and mosquitoes; **early to mid-September for ruska**, the Lapland autumn colour, which is the single best week of the year here"
+  },
+  "budgetTier": "€",
+  "budgetTierRange": [
+    1,
+    2
+  ],
+  "budgetTierRaw": "€–€€",
+  "budget": {
+    "currency": "EUR",
+    "totalEur": {
+      "low": 600,
+      "high": 950
+    },
+    "totalNote": "€600–950 per person",
+    "breakdown": {
+      "accommodation": {
+        "lowEur": 12,
+        "highEur": 20,
+        "note": "Wilderness open huts are free; reservation huts €12–20 pp; hotels at either end €90–160 per night, double"
+      },
+      "food": {
+        "lowEur": 20,
+        "highEur": 35,
+        "note": "€20–35 per day carried in; there is nowhere to buy anything on the trail"
+      },
+      "transport": {
+        "lowEur": 150,
+        "highEur": 250,
+        "note": "€150–250: flight to Kittilä, bus to Hetta, lake ferry, transfer from Pallas back to Kittilä"
+      },
+      "activities": {
+        "lowEur": 20,
+        "highEur": 60,
+        "note": "€20–60: national park visitor centres, one Sámi cultural visit in Hetta"
+      }
+    },
+    "perDayEur": {
+      "low": 86,
+      "high": 136
+    }
+  },
+  "profile": {
+    "difficulty": 3,
+    "difficultyLabel": "Active",
+    "difficultyNote": "Moderate. About 55 km over 3–4 walking days on a well-marked, duckboarded route, extendable to 7 days with side fells; the challenge is exposure on the open fell tops and full self-sufficiency",
+    "fitnessLevel": "Active",
+    "crowdLevel": null,
+    "familyFriendly": null,
+    "carRequired": null
+  },
+  "basecamps": [
+    "Hetta (Enontekiö)",
+    "Pallastunturi",
+    "Muonio"
+  ],
+  "gatewayAirport": null,
+  "gatewayAirportCode": null,
+  "languages": [
+    "Finnish",
+    "Northern Sámi",
+    "English"
+  ],
+  "currency": "EUR",
+  "emergencyNumber": "112 — install the 112 Suomi app, which transmits your exact location",
+  "coordinates": {
+    "lat": 68.386,
+    "lon": 23.63,
+    "precision": "source",
+    "matchedPlace": "Hetta (Enontekiö)",
+    "source": "source record"
+  },
+  "tags": [],
+  "summary": "A seven-day hiking & alpine trekking itinerary in Pallas–Yllästunturi National Park, Finnish Lapland, Finland.",
+  "summaryGenerated": true,
+  "hook": null,
+  "snapshot": {},
+  "itinerary": [
+    {
+      "day": 1,
+      "title": "Kittilä to Hetta, and Ounasjärvi",
+      "morning": "Fly to Kittilä, bus north to Hetta (Enontekiö), about 2 h. Hetta is a Sámi village and the northern trailhead.",
+      "afternoon": "Visit the Fell Lapland Visitor Centre for route conditions and the ferry times across Ounasjärvi. Walk the lakeshore and the Hetta church, which has a striking altar relief.",
+      "evening": "Last real meal and last shop. Buy everything: there is no resupply for 55 km.",
+      "dayStats": "travel day, 5 km",
+      "sleep": null
+    },
+    {
+      "day": 2,
+      "title": "Hetta across Ounasjärvi to Sioskuru",
+      "morning": "The small boat ferry across Lake Ounasjärvi — it is the official start of the trail, runs on demand in season, and can be called from the shore. Otherwise it is a long walk around. `verify: true`",
+      "afternoon": "Climb out onto the open fell. The route runs along the Pyhäkero ridge with the first big Lapland view: treeless rolling fells to every horizon, no roads, no buildings.",
+      "evening": "Sioskuru wilderness hut — a free open hut with bunks, a wood stove, firewood and a visitors' book. **Water:** streams and springs; Finnish fell water is drinkable straight from running sources.",
+      "dayStats": "16 km, 350 m",
+      "sleep": null
+    },
+    {
+      "day": 3,
+      "title": "Sioskuru to Hannukuru",
+      "morning": "Duckboard over aapa mire — the northern patterned bog that dominates this landscape — then back onto stony fell.",
+      "afternoon": "Pahakuru hut makes a good coffee stop. The going is easy, the scale is not: this is one of the emptiest walkable landscapes in the EU.",
+      "evening": "Hannukuru, the best hut on the route, in a valley by a stream with a **wood-fired sauna** you heat yourself. This is the night people plan the trip around. **Water:** the stream at the hut.",
+      "dayStats": "14 km, 300 m",
+      "sleep": null
+    },
+    {
+      "day": 4,
+      "title": "Hannukuru to Nammalakuru over the high fells",
+      "morning": "The route crosses the highest and most exposed section, with the Pallastunturi fell chain building ahead.",
+      "afternoon": "Side ascent of one of the fells if the weather is clear — Taivaskero (807 m) is the highest in the chain, and on a clear day the visibility is measured in tens of kilometres.",
+      "evening": "Nammalakuru hut in a sheltered valley. **Water:** streams before the ridge and at the hut; the ridge itself is dry.",
+      "dayStats": "13 km, 450 m",
+      "sleep": null
+    },
+    {
+      "day": 5,
+      "title": "Nammalakuru to Pallas",
+      "morning": "The final fell traverse over the Pallastunturi tops, past the Pallas summit area and the site where Finland's cleanest measured air is monitored — the Pallas atmospheric station records some of the purest air in the world.",
+      "afternoon": "Descend to the Pallas Visitor Centre and hotel. Shower, real food, the first chair in five days.",
+      "evening": "Pallas. The evening view over the fells from the hotel is the reward.",
+      "dayStats": "12 km, 400 m",
+      "sleep": null
+    },
+    {
+      "day": 6,
+      "title": "Day fells, Särkitunturi or the Ylläs extension",
+      "morning": "From Pallas you can continue south on the Hetta–Pallas–Ylläs route toward Ylläs for another two days, or do day loops: Pyhäkero, the Vatikuru gorge, or the nature trails from the visitor centre.",
+      "afternoon": "Alternatively transfer to Äkäslompolo/Ylläs and walk the Kesänki and Ylläs fell paths from there.",
+      "evening": "Sauna — Finnish, obligatory, and by now you will understand why.",
+      "dayStats": null,
+      "sleep": null
+    },
+    {
+      "day": 7,
+      "title": "Out via Muonio or Kittilä",
+      "morning": "Transfer south. If time allows, stop in Muonio or at the Särkijärvi area for a last lake swim.",
+      "afternoon": "Kittilä airport, or the long bus to Rovaniemi.",
+      "evening": null,
+      "dayStats": null,
+      "sleep": null
+    }
+  ],
+  "accommodationStrategy": [
+    {
+      "rank": 1,
+      "name": "Metsähallitus wilderness open huts",
+      "style": "Sioskuru, Pahakuru, Hannukuru, Nammalakuru",
+      "location": null,
+      "description": "Free, unlocked, first-come and never full in the sense that matters — the Finnish convention is that the last to arrive gets a place and the first to arrive gives way if someone needs shelter. Bunks, mattresses, a wood stove, an axe, firewood, a dry toilet and a logbook. Bring a sleeping bag, a stove and all your food. Reservation huts alongside some open huts can be booked for a small fee for guaranteed space.",
+      "booking": null,
+      "priceNote": null
+    },
+    {
+      "rank": 2,
+      "name": "Hotelli Hetta / Hetta guesthouses",
+      "style": null,
+      "location": "northern trailhead",
+      "description": "Comfortable base for the night before, with the visitor centre, the shop and the ferry all within walking distance. Several offer luggage storage and pick-up from the far end of the trail.",
+      "booking": null,
+      "priceNote": null
+    },
+    {
+      "rank": 3,
+      "name": "Pallas hotel and Äkäslompolo/Ylläs lodges",
+      "style": null,
+      "location": "southern end",
+      "description": "The hotel at Pallas sits inside the national park at the trail's end with a restaurant and sauna — the correct way to finish. Ylläs's Äkäslompolo village is the larger base if you extend south.",
+      "booking": null,
+      "priceNote": null
+    }
+  ],
+  "logistics": {
+    "connectivity": null,
+    "emergency": "112, and install the **112 Suomi** app — it sends your GPS coordinates to the operator, which is decisive in a landscape with no addresses. Mobile coverage is surprisingly good on the fell tops and poor in the valleys and mires.",
+    "weather": "The fells are treeless and exposed; a summer storm here brings horizontal rain at 5 °C and there is no shelter between huts. Snow is possible in June and from mid-September. Plan hut-to-hut days so you are never more than four hours from shelter.",
+    "bookingWindows": "Nothing on the trail needs booking. Hotels in Hetta and Pallas: 3–4 weeks, but the ruska fortnight in September is the exception — book two to three months ahead because Finns fill it.",
+    "money": null,
+    "transportRules": null,
+    "permits": null,
+    "health": null,
+    "gettingThere": null,
+    "other": [
+      {
+        "label": "Everyman's right (jokamiehenoikeus)",
+        "text": "Finland's right of public access is the broadest in Europe: you may walk, camp for a night, swim, and pick berries and mushrooms on most land, including private forest, without permission. Inside the national park, camping is directed to designated areas and open fires only in marked fireplaces. Fire bans (*metsäpalovaroitus*) are issued in dry spells and are binding."
+      },
+      {
+        "label": "Foraging rules",
+        "text": "Berries (cloudberry, bilberry, lingonberry) and mushrooms may be picked freely — cloudberry has a special local status in parts of Lapland and picking rights on some northern private land are restricted. Do not pick lichen or damage reindeer pasture. `verify: true`"
+      },
+      {
+        "label": "Reindeer",
+        "text": "Every reindeer in Lapland is owned. They are semi-domesticated, they will walk past your hut, and you must not feed, chase or drone them."
+      },
+      {
+        "label": "Gear essentials",
+        "text": "Waterproof shell and trousers, warm layers, gloves and hat, boots that cope with wet duckboard, gaiters, a sleeping bag rated to −5 °C for September, stove and fuel, head net in July, map (Pallas–Ylläs 1:50,000) and compass, and a power bank."
+      },
+      {
+        "label": "Getting back",
+        "text": "The trail is linear. Arrange the return transfer from Pallas to Hetta or Kittilä before you set off; taxi services exist but are not spontaneous in Lapland."
+      }
+    ]
+  },
+  "proTips": [
+    "Walk it during **ruska**, the two-week autumn colour window in early to mid-September, when the dwarf birch turns crimson across whole fellsides. Cold nights, no insects, aurora after dark, and huts that are busy but not full.",
+    "**Heat the Hannukuru sauna.** It takes about ninety minutes of feeding the stove and it is the best experience on this itinerary. Offer to share it with whoever else is at the hut — that is the etiquette, and it is how you meet Finns.",
+    "Walk **north to south**. You start at the Sámi village, finish at a hotel with a restaurant, and the prevailing weather is at your back.",
+    "Carry a **head net in July** and thank yourself. Lapland's mosquito density in the mire zone in mid-July is a serious and widely underestimated factor.",
+    "Hut etiquette is the real local knowledge: chop and stack more firewood than you burn, leave the hut cleaner than you found it, take all rubbish out, and write in the logbook — it is also the record rescuers read.",
+    "If the forecast turns, the route's huts are close enough together that you can walk a short 12 km day and sit out weather in a warm cabin. Building that flexibility in is why this is a seven-day plan for a 55 km trail."
+  ],
+  "typeSpecific": {
+    "raw": {
+      "technical_rating": "T1–T2. Duckboard over bog, stony fell paths, no scrambling; navigation matters in fog on the treeless sections",
+      "route_distance_km": 55,
+      "max_elevation_m": 807,
+      "hut_network": "Metsähallitus wilderness huts — Sioskuru, Pahakuru, Hannukuru (with sauna), Nammalakuru, plus Pallas at the southern end",
+      "gpx_ready": true
+    },
+    "surface": null,
+    "distanceKm": 55,
+    "elevationM": 807,
+    "verticalM": null,
+    "technicalRating": "T1–T2. Duckboard over bog, stony fell paths, no scrambling; navigation matters in fog on the treeless sections",
+    "transitPass": null,
+    "hutBooking": "Metsähallitus wilderness huts — Sioskuru, Pahakuru, Hannukuru (with sauna), Nammalakuru, plus Pallas at the southern end",
+    "liftNetwork": null,
+    "snowReliability": null,
+    "windConditions": null,
+    "gpxReady": true,
+    "bookingTimeline": null,
+    "audience": null
+  },
+  "packingNotes": [],
+  "whatCouldGoWrong": [],
+  "sources": {
+    "verified": null,
+    "confidenceNotes": null
+  },
+  "verifyFlags": [],
+  "verifyFlagCount": 0,
+  "volatilePricing": true,
+  "wordCount": 1545,
+  "dataVintage": 2026,
+  "provenance": {
+    "batch": "northern-baltics",
+    "sourceFile": "carta_northern_europe_baltics_trips.md#trip-18",
+    "sourceFormat": "single-file md, '## Trip NN' records with fenced YAML",
+    "sourceId": "hetta-pallas-wilderness-traverse",
+    "ingestedAt": "2026-09-02",
+    "synthesized": false
+  }
+}

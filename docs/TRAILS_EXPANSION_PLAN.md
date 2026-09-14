@@ -12,57 +12,65 @@ for CH only; portal cross-checks live for CH/FR/NO; 49 trips published (CH);
 20 citytrips at needs_review; popularity shortlists favour long famous
 routes; POI images carry no per-file licence metadata.
 
-## Wave A: finish the four started countries
+## Wave A: finish the four started countries - STAGED 2026-08-13
 
-Everything below runs inside the existing lab chain (elevation -> validate ->
-popularity -> crosscheck -> describe -> review -> export), no new code.
+- [x] Elevation NO (2,957) + AT (11,415) + FR (18,307), all zero
+  low-coverage; FR calibration medians exactly 1.00 for both distance and
+  ascent over thousands of tagged routes. (NO's ascent tag-check read 0.00
+  over its 11 tagged routes; profiles themselves are healthy, the tag
+  sample is junk.)
+- [x] validate.py for NO/AT/FR: quality scores + drafts to needs_review.
+- [x] Flagship + dayhike shortlists for NO/AT/FR (spot checks: Adlerweg
+  family rank 7, GR 5 top-10, Preikestolen surfaced).
+- [x] describe.py via Gemini (GEMINI_API_KEY was in .env all along): 65
+  hike descriptions (flagship + dayhikes) + 175 citytrip descriptions,
+  every sentence fact-mapped or dropped by the verification pass.
+- [x] Approval: owner-directed batch on 2026-08-13 ("approve everything"),
+  executed through the review API so every decision carries its
+  trip_reviews ledger row + note (pipeline/oneoff/batch_approve_
+  shortlists.py). Scope: the curated shortlists + all staged citytrips,
+  NOT the 236k raw needs_review ingest rows.
+- [x] Export: 43 country files, 760 published trips (hikes, dayhikes,
+  citytrips) + detail files + index; verify_trails_export PASS.
 
-- [ ] Elevation for FR, NO, AT (`pipeline/trails/elevation.py`, GLO-30
-  tiles; CH's window-3 + 5m gate calibration carries over). Watch the
-  re-ingest-zeroes-Z gotcha: run elevation AFTER any re-ingest.
-- [ ] Validate + repair for FR/NO/AT (repair needs the per-country Valhalla
-  tile swap; Valhalla far-snaps outside its loaded country).
-- [ ] Popularity shortlists for FR/NO/AT, then describe + drift-check, then
-  human review to publish. Target: the playbook's 5-15 flagship hikes per
-  country actually published, not just staged.
-- [ ] Citytrips: clear the 20 needs_review pilots through the review UI.
+DONE 2026-08-13: the benchmark fired continent-wide, not just for the
+four pilot countries. Europe-wide citytrips: market_demand run for all 43
+countries (Eurostat everywhere but TR/UA which use the rating fallback),
+compose_citytrips --top 8 per country, 290 validated at quality 100.
 
-Benchmark: 4 countries with published, elevation-profiled, portal-checked
-flagship trails; public/trails/{AT,FR,NO}.json no longer empty.
+## Wave B: DE + AT portal cross-checks - DONE 2026-08-13 (DE; AT n/a)
 
-## Wave B: DE + AT portal cross-checks
-
-`crosscheck_portals.py` gains two fetchers next to CH/FR/NO:
-
-- [ ] AT: BEV / geoland.at (CC BY 4.0, credit "(c) BEV"). Wanderwege layers
-  are federated per Bundesland on geoland.at's WFS; start with Tirol +
-  Salzburg (densest trail stock, covers Adlerweg/Zentralalpenweg spot
-  checks).
-- [ ] DE: BKG federal products are dl-de/by-2-0, but trail GEOMETRY lives at
-  Laender level under per-Land terms. Implement only Laender with clean
-  open WFS (Bayern and Baden-Wuerttemberg first), verify licence per Land
-  before each fetcher ships, add a data_licenses.md row per portal.
-- [ ] ST_Subdivide the portal geometries before the KNN match (the CH lesson:
-  unsubdivided portal multilines make index probes crawl).
+- [x] DE: BVV Wanderwege GPX bundle (geodaten.bayern.de, CC BY 4.0, updated
+  monthly): 330 named routes staged as 6,421 subdivided pieces; matching
+  restricted to a Bavaria coverage envelope so other Laender collect no
+  meaningless failed checks. Ledger row added. Germany OSM ingest started
+  so the check has trips to check.
+- [x] AT: surveyed 2026-08 and NOT implementable open-data-clean: the
+  Tirol/tiris hub publishes bike routes but no hiking vector layer, the
+  OeAV Wegenetz is closed, no other Land ships open trail geometry.
+  Documented in the loader; revisit if a Land opens one.
+- [x] Subdivision already happened at stage time (the CH lesson is baked
+  into stage_portal for every source).
 
 Benchmark: agreement rates reported for AT/DE shortlist trips; disagreements
 land in the review UI overlay like CH's.
 
-## Wave C: the day-hike blind spot
+## Wave C: the day-hike blind spot - SHIPPED 2026-08-13 (one known limit)
 
-Popularity scoring ramps short routes DOWN (extract-clipped crumbs of long
-routes had to be suppressed), which also buries genuine half-day loops. Fix
-by adding a second shortlist FAMILY rather than un-suppressing:
-
-- [ ] `popularity.py --family dayhikes`: 5-25 km, roundtrip tag or start/end
-  within 2 km of each other, sac_scale <= mountain_hiking, and ANCHORED
-  fame: score by the fame of catalogue destinations/POIs within 30 km of
-  the route (the app already knows which towns are worth visiting; a loop
-  above a famous lake inherits the lake's draw), not by the route's own
-  Wikipedia footprint, which day hikes rarely have.
-- [ ] Feed the dayhike shortlist into `compose_daytrips.py` so daytrips can
-  include a real short hike leg (its current pool skews long-distance).
-- [ ] Same gate as everything else: validate -> describe -> human review.
+- [x] `popularity.py --family dayhikes`: 5-25 km, loop (roundtrip tag or
+  ends within 2 km) OR own wikipedia/wikidata identity (A-to-B day routes
+  like Besseggen end at a boat dock), sac_scale up to
+  demanding_mountain_hiking (T3: the iconic alpine day hikes), ranked by
+  anchored catalogue fame with no network component and no length factor.
+  Own CSV ({CC}_dayhikes.csv) + validation check popularity_dayhike.
+  First NO run surfaced Preikestolen Roundtrip (flagship rank: 1194).
+- [ ] Feed the dayhike shortlist into `compose_daytrips.py` once the first
+  dayhikes are published (composer reads published content only).
+- KNOWN LIMIT: a famous route whose OSM relation carries no wikipedia/
+  wikidata tag AND has no catalogue anchor nearby (Besseggen: Jotunheimen
+  wilderness) stays invisible to fame ranking; there is no honest signal
+  to rank it with. Fix is upstream (tag the relation in OSM) or a future
+  name-to-article resolution pass with a verification gate.
 
 Benchmark: each published country carries at least 5 published day hikes
 (distinct from long-distance stages), and daytrips can attach one.

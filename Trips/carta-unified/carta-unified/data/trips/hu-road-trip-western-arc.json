@@ -1,0 +1,294 @@
+{
+  "id": "hu-road-trip-western-arc",
+  "sourceId": "hungary-western-arc-road-trip",
+  "slug": "hu-road-trip-western-arc",
+  "title": "The Western Arc: Seven Days from the Danube Bend to the Őrség",
+  "country": "Hungary",
+  "countryCode": "HU",
+  "countries": [
+    {
+      "name": "Hungary",
+      "code": "HU"
+    }
+  ],
+  "isMultiCountry": false,
+  "region": "Eastern & Southeastern Europe",
+  "regionKey": "eastern-southeastern",
+  "subRegion": "Transdanubia — Danube Bend, Bakony, Balaton Uplands, Őrség, Fertő",
+  "tripType": "Road Trips & Scenic Drives",
+  "tripTypeId": 5,
+  "tripTypeSlug": "road-trip",
+  "durationDays": 7,
+  "bestPeriod": {
+    "months": [
+      5,
+      6,
+      9
+    ],
+    "monthNames": [
+      "May",
+      "June",
+      "September"
+    ],
+    "window": "the second half of May and the first three weeks of September — Balaton traffic gone, Őrség green, Badacsony cellars open",
+    "note": null,
+    "avoid": "mid-July to late August (Balaton gridlock on roads 71 and 76, and the Káli-medence villages full)",
+    "raw": null
+  },
+  "budgetTier": "€€",
+  "budgetTierRange": [
+    2,
+    2
+  ],
+  "budgetTierRaw": "€€",
+  "budget": {
+    "currency": "EUR",
+    "totalEur": {
+      "low": 880,
+      "high": 1430
+    },
+    "totalNote": "€880–€1,430",
+    "breakdown": {
+      "accommodation": {
+        "lowEur": 350,
+        "highEur": 600,
+        "note": "€350–€600 (€50–€85/night, doubles in guesthouses and small hotels)"
+      },
+      "food": {
+        "lowEur": 190,
+        "highEur": 300,
+        "note": "€190–€300 (€27–€43/day)"
+      },
+      "transport": {
+        "lowEur": 250,
+        "highEur": 380,
+        "note": "€250–€380 (car hire €180–€280 + fuel ~€90 for ~870 km + e-matrica)"
+      },
+      "activities": {
+        "lowEur": 90,
+        "highEur": 150,
+        "note": "€90–€150 (palaces, abbey, thermal lake, castles)"
+      }
+    },
+    "perDayEur": {
+      "low": 126,
+      "high": 204
+    }
+  },
+  "profile": {
+    "difficulty": 1,
+    "difficultyLabel": "Easy",
+    "difficultyNote": "Easy",
+    "fitnessLevel": "Easy",
+    "crowdLevel": null,
+    "familyFriendly": null,
+    "carRequired": null
+  },
+  "basecamps": [
+    "Esztergom",
+    "Bakonybél",
+    "Badacsonytomaj",
+    "Szalafő",
+    "Sopron"
+  ],
+  "gatewayAirport": "Budapest Ferenc Liszt (BUD). Collect the car at the airport, not downtown — you avoid the city entirely on day 1 via the M0 and M2.",
+  "gatewayAirportCode": "BUD",
+  "languages": [
+    "Hungarian"
+  ],
+  "currency": "Hungarian forint (HUF)",
+  "emergencyNumber": "112",
+  "coordinates": {
+    "lat": 47.7928,
+    "lon": 18.7415,
+    "precision": "city",
+    "matchedPlace": "Esztergom",
+    "source": "geonames (geonamescache, cities > 15k)"
+  },
+  "tags": [
+    "road-trip",
+    "danube-bend",
+    "balaton-uplands",
+    "volcanic-hills",
+    "unesco",
+    "thermal-baths",
+    "wine"
+  ],
+  "summary": "A loop of roughly 870 km through the half of Hungary nobody flies in for: basalt buttes standing over Balaton like broken teeth, a stone sea in a valley of six villages, a Benedictine archabbey on a hill that has…",
+  "summaryGenerated": false,
+  "hook": "A loop of roughly 870 km through the half of Hungary nobody flies in for: basalt buttes standing over Balaton like broken teeth, a stone sea in a valley of six villages, a Benedictine archabbey on a hill that has been occupied since 996, and a corner of the far west where wooden bell towers still stand over hamlets of ten houses. Mostly two-lane roads, short legs, long lunches. Easy driving, dense payoff.",
+  "snapshot": {
+    "Country": "Hungary",
+    "Trip type": "Road Trips & Scenic Drives",
+    "Duration": "7 days",
+    "Best period": "May–June and September",
+    "Budget tier": "€€",
+    "Difficulty": "Easy",
+    "Start / End": "Budapest → Budapest (loop, ~870 km)",
+    "Getting there": "Budapest Ferenc Liszt (BUD). Collect the car at the airport, not downtown — you avoid the city entirely on day 1 via the M0 and M2."
+  },
+  "itinerary": [
+    {
+      "day": 1,
+      "title": "The Danube turns",
+      "morning": "Collect the car at BUD, buy the 10-day e-matrica before you leave the forecourt, and take the M0/M2 north, dropping onto **road 11** at Szentendre. Follow the water through Leányfalu and Dömös — the river is on your right the whole way.",
+      "afternoon": "**Visegrád**: the Royal Palace of the Angevin kings in the town, then the hairpin up to the **fellegvár** citadel for the Danube Bend's defining view. The **Nagyvillám** lookout tower is two minutes further up the ridge road.",
+      "evening": "On to **Esztergom** and its basilica, the largest church in Hungary, on the hill above the Mária Valéria bridge to Slovakia. Climb the cupola before closing, then eat on Széchenyi tér.",
+      "dayStats": "67 km / 1 h 30 driving",
+      "sleep": null
+    },
+    {
+      "day": 2,
+      "title": "Into the Bakony",
+      "morning": "South-west across the Transdanubian hills to **Zirc**, the Cistercian abbey town. The **Reguly Antal Műemlékkönyvtár**, the abbey's 1858 library hall, is the stop; the arboretum behind it is free to walk.",
+      "afternoon": "Detour to the **Cuha-völgy**, where the Győr–Veszprém railway threads a limestone gorge on viaducts and through tunnels. Park at Porva-Csesznek station and walk the marked riverside path an hour downstream — it is the prettiest hour of the Bakony.",
+      "evening": "**Bakonybél**, a village of 1,300 under Kőris-hegy with its own Benedictine monastery. Quiet to the point of silence; eat at the village *csárda* and sleep with the windows open [VERIFY: current opening hours of the Zirc abbey library].",
+      "dayStats": "125 km / 2 h 10",
+      "sleep": null
+    },
+    {
+      "day": 3,
+      "title": "Tihany and the stone sea",
+      "morning": "Down to the lake and out onto the **Tihany peninsula**. The **Benedictine abbey** of 1055 holds the oldest surviving document containing Hungarian words; below it the Belső-tó crater lake sits 25 m above Balaton.",
+      "afternoon": "North into the **Káli-medence**, the basin of six villages. **Köveskál** and **Szentbékkálla** are the two to walk. Above Szentbékkálla lies the ***kőtenger*** — the \"stone sea\", a field of wind-sculpted Pannonian sandstone blocks scattered across open pasture, twenty minutes on foot from the village.",
+      "evening": "Stay in the basin. Dinner at **Kővirág** in Köveskál, one of the restaurants that made this valley's reputation — book ahead, it is small [VERIFY: current Kővirág opening days].",
+      "dayStats": "115 km / 2 h 20",
+      "sleep": null
+    },
+    {
+      "day": 4,
+      "title": "Basalt, castle, thermal water",
+      "morning": "**Szent György-hegy** above Hegymagas: an hour up through vineyards to the basalt colonnade, organ pipes of columnar rock, with the whole western basin below.",
+      "afternoon": "**Badacsony**: the **Panoráma út** along the ridge, the **Kisfaludy** lookout, and a cellar for the *szürkebarát* and *kéknyelű* that only really grow here. Then **Szigliget**, castle on its cone, twenty minutes up from the village car park.",
+      "evening": "**Hévíz** — the largest biologically active thermal lake in the world, 38 m deep, water turning over roughly every 3 days, 33–35 °C in summer and swimmable in February. Float, don't swim; stay in no more than 90 minutes [VERIFY: current Hévíz day-ticket price].",
+      "dayStats": "67 km / 1 h 30",
+      "sleep": null
+    },
+    {
+      "day": 5,
+      "title": "Festetics, then the far west",
+      "morning": "**Keszthely** and the **Festetics Palace**, 101 rooms of Baroque with the Helikon Library's carved oak interiors intact — one of the few Hungarian aristocratic houses whose contents survived 1945.",
+      "afternoon": "West on roads 71 and 76, then across Zala into **Vas** county. The landscape changes: hills close in, oak and chestnut replace vine, and villages fragment into ***szer*** — scattered clusters of farmsteads rather than a street.",
+      "evening": "**Szalafő** in the **Őrség**, seven hamlets strung across ridges. Base here. Dinner is local: buckwheat, *dödölle* potato dumplings, and pumpkin-seed oil poured on everything [VERIFY: current Festetics Palace ticket price].",
+      "dayStats": "122 km / 2 h 15",
+      "sleep": null
+    },
+    {
+      "day": 6,
+      "title": "Bell towers and a walled town",
+      "morning": "**Pankasz**: the 1755 shingled wooden **bell tower**, a *kettős haranglába* on a bank above the road, the emblem of the Őrség. Then **Velemér**, whose 13th-century Romanesque church holds Johannes Aquila's 1378 frescoes — the light through the south windows is timed to the solstices.",
+      "afternoon": "North to **Kőszeg**, tight against the Austrian border under the Írottkő. Jurisics tér is a complete Renaissance square; the castle held Suleiman's army for 25 days in 1532 and the town bells still ring at 11:00 to mark it.",
+      "evening": "On to **Sopron**, the town that voted to stay Hungarian in 1921. Walk the Belváros horseshoe, climb the **Tűztorony** fire tower, and drink *kékfrankos* from the Sopron hills.",
+      "dayStats": "140 km / 2 h 30",
+      "sleep": null
+    },
+    {
+      "day": 7,
+      "title": "Fertő, the archabbey, and home",
+      "morning": "East to **Fertő/Neusiedlersee**, a UNESCO cultural landscape shared with Austria — reed beds, a steppe lake barely 1.5 m deep. **Fertőd's Esterházy Palace** at Eszterháza, where Haydn worked for thirty years, is 27 km from Sopron.",
+      "afternoon": "**Pannonhalma Archabbey**, UNESCO-listed and founded in 996 — a working Benedictine community for over a thousand years, with a basilica, a 360,000-volume library and a herb garden. Entry is by **timed guided tour only**; book online [VERIFY: current Pannonhalma tour price and timings].",
+      "evening": "Drop to **Győr** for the Baroque Káptalandomb and an early dinner, then the M1 back to Budapest, 125 km and 1 h 20 with the vignette already on the plate.",
+      "dayStats": "263 km / 3 h 15",
+      "sleep": null
+    }
+  ],
+  "accommodationStrategy": [
+    {
+      "rank": 1,
+      "name": "Kővirág",
+      "style": "village guesthouse with restaurant",
+      "location": "Köveskál",
+      "description": "eight rooms in a restored village house in the middle of the Káli-medence, walking distance to the Szentbékkálla trailhead, with the region's best-known kitchen downstairs so you do not drive after dinner — which matters at 0.0‰.",
+      "booking": "direct or by email, 2–3 months ahead for May, June and September weekends.",
+      "priceNote": null
+    },
+    {
+      "rank": 2,
+      "name": "Bakonybél village guesthouses",
+      "style": "rural panzió",
+      "location": "Bakonybél",
+      "description": "the only sensible base between the Danube Bend and Balaton, with free street parking, monastery bells instead of traffic, and trailheads for Kőris-hegy and the Gerence valley from the village edge.",
+      "booking": "3–4 weeks ahead; several houses take bookings only by phone, so use a booking platform if your Hungarian is thin.",
+      "priceNote": null
+    },
+    {
+      "rank": 3,
+      "name": "Őrségi vendégház, Szalafő-Pityerszer",
+      "style": "traditional szer farmstead",
+      "location": "Szalafő",
+      "description": "you sleep inside the settlement pattern the whole region is famous for — a *szer* of a handful of houses on a ridge, with dark skies, and Pankasz and Velemér both within 20 minutes' drive.",
+      "booking": "4–6 weeks ahead; the Őrség has few beds and September fills first.",
+      "priceNote": null
+    }
+  ],
+  "logistics": {
+    "connectivity": "4G/5G is solid on the whole route including the Őrség; Hungary is inside EU roaming. Download offline maps anyway for the Bakony forest roads, where signal drops in the Cuha gorge.",
+    "emergency": "**112** for everything. Motorway breakdown: use the orange SOS pillars rather than a mobile — they fix your location automatically. Carry the rental's assistance card.",
+    "weather": "Balaton produces fast, violent squalls; the lake's storm-warning system flashes from shore towers (one rate of flashing = come closer to shore, faster = get off the water). On the road, expect standing water on the 71 and vineyard mud washed onto the Panoráma út.",
+    "bookingWindows": "Pannonhalma tours and Káli-medence restaurants are the two hard constraints — both 4–8 weeks out for a weekend. Accommodation 3–6 weeks is generally enough outside July–August.",
+    "money": "Forint. Cards work almost everywhere including village petrol stations, but carry 20,000–30,000 HUF (~€50–€75) in cash for cellar tastings, castle car parks and small *csárda*. Reject dynamic currency conversion at terminals; pay in HUF.",
+    "transportRules": "**0.0‰ alcohol.** **Dipped headlights outside built-up areas at all times.** Vignette by plate before your first motorway metre. Winter tyres are not legally mandatory but are sensible before April. Parking in Balaton resort towns and Sopron's centre is paid by app or machine, typically 09:00–18:00 in season.",
+    "permits": "No permits needed anywhere on this route. Drones are restricted over Pannonhalma, Fertőd and the national parks — check before flying. The Fertő-Hanság and Balaton-felvidéki national parks ask you to keep to marked paths off-season during breeding.",
+    "health": null,
+    "gettingThere": null,
+    "other": []
+  },
+  "proTips": [
+    "Buy the **national 10-day e-matrica**, never county vignettes. Two counties already exceed it and this route touches six.",
+    "Do the **Káli-medence on foot, not by car**. Park in Szentbékkálla, walk to the *kőtenger* and on to Köveskál, and you see the basin the way it is meant to be seen — the villages are 3–4 km apart.",
+    "Climb **Szent György-hegy before 09:00**. The basalt colonnade faces south-east and the light on it is gone by mid-morning, along with the parking at Hegymagas.",
+    "**Hévíz for 90 minutes, not a day.** The water is medicinal-strength; the recommended maximum immersion is about 30 minutes at a time, three times daily. Go at 08:00 when the surface steams and the coach parties have not arrived.",
+    "At Badacsony cellars, ask for ***kéknyelű*** by name. It is grown almost nowhere else on earth, it is not on export lists, and asking for it marks you as someone who did the reading.",
+    "Ask the Őrség guesthouse for ***tökmagolaj*** from a named local press rather than a supermarket bottle — the difference between cold-pressed pumpkin-seed oil and the industrial version is total.",
+    "Do **Pannonhalma on the way home, not as a day trip**. Book the last tour of the afternoon, then drive the flat M1 in the evening — the hardest 125 km of the loop become the easiest."
+  ],
+  "typeSpecific": {
+    "raw": {
+      "Driving legs, km and time": "Budapest → **Visegrád** 43 km / 1 h (road 11 along the water, not the M2). Visegrád → **Esztergom** 24 km / 30 min. Esztergom → **Zirc** 105 km / 1 h 40. Zirc → **Bakonybél** 20 km / 30 min. Bakonybél → **Tihany** 70 km / 1 h 15. Tihany → **Köveskál** 25 km / 35 min. Köveskál → **Badacsony** 20 km / 30 min. Badacsony → **Szigliget** 10 km / 15 min. Szigliget → **Hévíz** 30 km / 40 min. Hévíz → **Keszthely** 7 km / 12 min. Keszthely → **Szalafő** 115 km / 2 h. Szalafő → **Kőszeg** 85 km / 1 h 30. Kőszeg → **Sopron** 55 km / 1 h. Sopron → **Fertőd** 27 km / 30 min. Sopron → **Pannonhalma** 90 km / 1 h 20. Pannonhalma → **Győr** 21 km / 25 min. Győr → Budapest 125 km / 1 h 20 (M1).",
+      "Vignette (e-matrica), 2026 category D1": "1-day **5,550 HUF** (~€14); 10-day **6,900 HUF** (~€17.50); monthly **11,170 HUF** (~€28); annual **61,760 HUF**. A county (*vármegyei*) annual vignette is **7,190 HUF** each — note that **two county vignettes already cost more than a national 10-day pass**, and this route crosses Pest, Komárom-Esztergom, Veszprém, Zala, Vas and Győr-Moson-Sopron. Buy the **10-day national** and stop thinking about it. Purchase at nemzetiutdij.hu, in the app, or at any large filling station; it is registered to the plate, there is no sticker, and enforcement is by camera.",
+      "No passes, but real gradients": "There is no alpine pass on this route. The climbs that matter are the **Panoráma út** ridge road above Badacsonytomaj, the switchbacks up to **Tihany** village, and the forest road over the Bakony between Zirc and Bakonybél. None close seasonally; all can be greasy after rain because of vineyard mud and beech leaf.",
+      "Named viewpoints and laybys": "**Visegrádi fellegvár** and the **Nagyvillám** tower over the Danube's turn; the **Badacsony kilátó** (Kisfaludy lookout) above the basalt columns; **Szent György-hegy** with its organ-pipe basalt colonnade, walk-up from Hegymagas; the **Panoráma út** laybys between Badacsonytomaj and Ábrahámhegy; **Szigliget castle** for the full sweep of the western basin; **Tihany's** Echo Hill and Belső-tó overlook; the **Pankasz** bell tower meadow in the Őrség.",
+      "Cross-border rental rules": "Hungarian rental fleets normally permit **Austria, Slovakia, Slovenia, Czechia, Croatia and Romania** as standard; each country needs **its own vignette** (Austria's Digitale Vignette, Slovenia's e-vinjeta, Slovakia's eZnámka) and a Hungarian one does not travel. **Serbia and Ukraine are usually excluded** outright, or need a written cross-border authorisation and a **Green Card** at a surcharge. Declare intent at pickup: crossing without authorisation voids the CDW [VERIFY: current cross-border fee at the major Budapest desks].",
+      "The rules that catch foreigners": "**Zero tolerance on alcohol: the limit is 0.0‰** — not 0.2, not a small beer with lunch, zero. **Dipped headlights are compulsory day and night outside built-up areas.** A hi-vis vest must be worn by the driver if you leave the car on a motorway or main road. Speed limits: 50 in villages, 90 on rural roads, 110 on dual carriageways, 130 on motorways, with fixed and mobile cameras common on road 71 along Balaton."
+    },
+    "surface": null,
+    "distanceKm": null,
+    "elevationM": null,
+    "verticalM": null,
+    "technicalRating": null,
+    "transitPass": null,
+    "hutBooking": null,
+    "liftNetwork": null,
+    "snowReliability": null,
+    "windConditions": null,
+    "gpxReady": null,
+    "bookingTimeline": null,
+    "audience": null
+  },
+  "packingNotes": [],
+  "whatCouldGoWrong": [],
+  "sources": {
+    "verified": null,
+    "confidenceNotes": "- Verified: 2026 e-matrica category D1 tariffs (1-day 5,550 HUF; 10-day 6,900 HUF; monthly 11,170 HUF; annual 61,760 HUF; county annual 7,190 HUF) and the fact that two county vignettes exceed a 10-day national; Hungary's 0.0‰ blood-alcohol limit; compulsory daytime dipped headlights outside built-up areas; UNESCO listing of Pannonhalma and the Fertő/Neusiedlersee cultural landscape; Hévíz as the world's largest biologically active thermal lake; emergency number 112. - `[VERIFY]` items in this file: 6 (see inline markers above) - Last reviewed: 2026-09-02"
+  },
+  "verifyFlags": [
+    "current cross-border fee at the major Budapest desks",
+    "current opening hours of the Zirc abbey library",
+    "current Kővirág opening days",
+    "current Hévíz day-ticket price",
+    "current Festetics Palace ticket price",
+    "current Pannonhalma tour price and timings"
+  ],
+  "verifyFlagCount": 6,
+  "volatilePricing": true,
+  "wordCount": 2367,
+  "dataVintage": 2026,
+  "provenance": {
+    "batch": "eastern-southeastern",
+    "sourceFile": "cartaeasterneuropetrips/trips/hungary-western-arc-road-trip.md",
+    "sourceFormat": "md+nested-yaml-frontmatter (one file per trip)",
+    "sourceId": "hungary-western-arc-road-trip",
+    "ingestedAt": "2026-09-02",
+    "synthesized": false
+  }
+}

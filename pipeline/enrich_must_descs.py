@@ -36,6 +36,7 @@ import urllib.parse
 import urllib.request
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
+from pipeline_io import atomic_write_json
 
 try:
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
@@ -116,7 +117,7 @@ def load_cache():
 
 
 def save_cache(cache):
-    CACHE.write_text(json.dumps(cache, ensure_ascii=False), encoding="utf-8")
+    atomic_write_json(CACHE, cache, indent=None, ensure_ascii=False)
 
 
 # ---------------------------------------------------------------------------
@@ -372,7 +373,7 @@ def apply_cache(data, cache):
             if card.get("wiki") and not target.get("wiki"):
                 target["wiki"] = card["wiki"]
                 filled_wiki += 1
-    DATA.write_text(json.dumps(data, ensure_ascii=False), encoding="utf-8")
+    atomic_write_json(DATA, data, indent=None, ensure_ascii=False)
     print(f"applied: {upgraded_desc} descriptions upgraded, "
           f"{filled_img} images filled, {filled_wiki} wiki links filled")
 

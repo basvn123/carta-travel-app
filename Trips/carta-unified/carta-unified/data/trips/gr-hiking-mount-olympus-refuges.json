@@ -1,0 +1,274 @@
+{
+  "id": "gr-hiking-mount-olympus-refuges",
+  "sourceId": "hiking-greece-mount-olympus-refuges",
+  "slug": "gr-hiking-mount-olympus-refuges",
+  "title": "Mount Olympus Refuges: Petrostrouga, the Muses Plateau and Mytikas",
+  "country": "Greece",
+  "countryCode": "GR",
+  "countries": [
+    {
+      "name": "Greece",
+      "code": "GR"
+    }
+  ],
+  "isMultiCountry": false,
+  "region": "Southern & Mediterranean Europe",
+  "regionKey": "southern-mediterranean",
+  "subRegion": "Central Macedonia & Thessaly — Olympus National Park, Pieria",
+  "tripType": "Hiking & Alpine Trekking",
+  "tripTypeId": 6,
+  "tripTypeSlug": "hiking",
+  "durationDays": 7,
+  "bestPeriod": {
+    "months": [
+      6,
+      9,
+      10
+    ],
+    "monthNames": [
+      "June",
+      "September",
+      "October"
+    ],
+    "window": "Mid-June–early October, with mid-September the best mix of stable rock and empty refuges",
+    "note": null,
+    "avoid": "November–May — Mytikas becomes a winter mountaineering route, refuges close and the Kaki Skala ices",
+    "raw": "Mid-June–early October, with mid-September the best mix of stable rock and empty refuges"
+  },
+  "budgetTier": "€",
+  "budgetTierRange": [
+    1,
+    1
+  ],
+  "budgetTierRaw": "€",
+  "budget": {
+    "currency": "EUR",
+    "totalEur": {
+      "low": 650,
+      "high": 1050
+    },
+    "totalNote": "€650–€1,050 per person, excl. international flights",
+    "breakdown": {
+      "accommodation": {
+        "lowEur": 220,
+        "highEur": 380,
+        "note": "Refuge dorms €18–€25 pppn; Litochoro rooms €55–€90"
+      },
+      "food": {
+        "lowEur": 190,
+        "highEur": 300,
+        "note": "Refuge dinner €14–€18, breakfast €7–€9; Litochoro taverna mains €9–€15"
+      },
+      "transport": {
+        "lowEur": 140,
+        "highEur": 250,
+        "note": "Thessaloniki transfer, Gortsia and Prionia taxis €25–€40 each, hire car for two days"
+      },
+      "activities": {
+        "lowEur": 100,
+        "highEur": 120,
+        "note": "Dion archaeological park €8, Platamonas castle €3–€4, optional guide for Mytikas"
+      }
+    },
+    "perDayEur": {
+      "low": 93,
+      "high": 150
+    }
+  },
+  "profile": {
+    "difficulty": 4,
+    "difficultyLabel": "Demanding",
+    "difficultyNote": "4/5, spiking to 5/5 on the Mytikas day — an exposed Grade II/III scramble on loose rock at 2,900 m",
+    "fitnessLevel": "Demanding",
+    "crowdLevel": null,
+    "familyFriendly": null,
+    "carRequired": null
+  },
+  "basecamps": [],
+  "gatewayAirport": "SKG Thessaloniki Makedonia, 1 h 10 min to Litochoro; ATH Athens 4 h 30 min by car or 4 h by train to Litochoro station",
+  "gatewayAirportCode": "SKG",
+  "languages": [],
+  "currency": null,
+  "emergencyNumber": "112",
+  "coordinates": {
+    "lat": 37.9838,
+    "lon": 23.7278,
+    "precision": "country",
+    "matchedPlace": "Athens",
+    "source": "country capital fallback"
+  },
+  "tags": [
+    "olympus",
+    "mytikas",
+    "kaki-skala",
+    "refuges",
+    "enipeas-gorge",
+    "muses-plateau",
+    "e4",
+    "greece"
+  ],
+  "summary": "Olympus is far more mountain than its mythology suggests: a limestone massif rising from a beach to 2,918 m in 18 kilometres, with a summit that is a genuine scramble rather than a walk. This week climbs it the sensible way — up the forested Gortsia ridge to Petrostrouga, onto the Plateau of the Muses, over Mytikas and Skolio, and then a long descent through the Enipeas gorge to Litochoro and the sea. The refuges are cheap, sociable and Greek in character, meaning enormous dinners and no nonsense about check-in times. It suits fit hikers with scrambling experience; the summit ridge is the crux and not everyone should attempt it.",
+  "summaryGenerated": false,
+  "hook": null,
+  "snapshot": {},
+  "itinerary": [
+    {
+      "day": 1,
+      "title": "Litochoro, the lower Enipeas and the sea",
+      "morning": "Arrive from Thessaloniki to **Litochoro, 300 m**, a stone town wedged at the gorge mouth with the massif filling the whole western sky. Register your route at the Olympus National Park information office and confirm the refuge bookings by phone.",
+      "afternoon": "Walk the **lower Enipeas gorge** from the town's Mylos to the **Agios Dionysios monastery ruins** and back — wooden footbridges, river crossings, plane trees, and a cold pool at the Enipeas springs.",
+      "evening": "Dinner at **Gastrodromio En Olympo** on the main square, the best kitchen in Pieria — wild greens, Olympus mushrooms, goat, and a Rapsani red from the mountain's own vineyards.",
+      "dayStats": "10 km round trip / 350 m ascent / Litochoro 300 m / 3 h 30 min realistic / national park registration completed",
+      "sleep": "Villa Drosos or Hotel Enipeas, Litochoro"
+    },
+    {
+      "day": 2,
+      "title": "Gortsia to the Petrostrouga refuge",
+      "morning": "Taxi 40 minutes to the **Gortsia trailhead at 1,100 m** (€25–€40). Start the E4 through beech and black pine, past the **Barba** clearing, on a broad ridge that gains height steadily rather than steeply.",
+      "afternoon": "Reach **Petrostrouga refuge, 1,920 m**, sitting on a shoulder with the tree line just above and the whole Thermaic Gulf below. Afternoon here is deliberate acclimatisation — you have gained 800 m and will gain 800 more tomorrow.",
+      "evening": "Refuge dinner — bean soup, pasta, plenty of it — and an early night. The refuge is the friendliest on the mountain and often has climbers coming down off Stefani.",
+      "dayStats": "6 km / 820 m ascent / Gortsia 1,100 m / Petrostrouga 1,920 m / 3 h 30 min–4 h realistic / bed €18–€22 cash",
+      "sleep": "Petrostrouga refuge, 1,920 m"
+    },
+    {
+      "day": 3,
+      "title": "Skourta and the Plateau of the Muses",
+      "morning": "Above Petrostrouga the forest ends within an hour. Climb the **Skourta ridge to 2,475 m**, then traverse the exposed **Lemos** ridge with the **Stefani** north face — the Throne of Zeus, the most dramatic thing on the mountain — appearing across the Kazania cirque.",
+      "afternoon": "Cross onto the **Plateau of the Muses at about 2,650 m** and check into **Giosos Apostolidis, 2,697 m**, the highest refuge in Greece, with **Christos Kakalos** a few hundred metres away.",
+      "evening": "Sunset from the plateau over the Kazania. Nights up here drop to 3–6 °C in August; the refuge has blankets but the dorm is not heated. Buy water now — there is none on the plateau.",
+      "dayStats": "7 km / 900 m ascent / 150 m descent / Skourta 2,475 m / refuge 2,697 m / 4–5 h realistic / no water source above the tree line",
+      "sleep": "Giosos Apostolidis refuge, 2,697 m"
+    },
+    {
+      "day": 4,
+      "title": "Mytikas, 2,918 m, and down to Refuge A",
+      "morning": "Leave at 06:00 with helmets on. Traverse the **Zonaria** below Stefani to **Skala, 2,866 m**, then the **Kaki Skala** — 30–45 minutes of exposed Grade II/III scrambling on loose limestone to the **summit of Mytikas, 2,918 m** and its metal box of a summit register. The direct **Louki couloir** from the plateau is shorter and considerably more dangerous.",
+      "afternoon": "Reverse to Skala, add the easy 20-minute ridge to **Skolio, 2,911 m** for the view down the 500 m Kazania wall, then take the long zigzagging descent to **Spilios Agapitos (Refuge A), 2,060 m**, in its stand of Bosnian pine.",
+      "evening": "Refuge A is the busiest and best-run hut on the mountain: dinner at 18:00, lights out at 22:00, and a warden's briefing on tomorrow's weather. Ouzo on the terrace as the Thermaic Gulf turns pink.",
+      "dayStats": "9 km / 450 m ascent / 1,100 m descent / summit 2,918 m / Kaki Skala 30–45 min each way at Grade II/III / 7–8 h realistic",
+      "sleep": "Spilios Agapitos (Refuge A), 2,060 m"
+    },
+    {
+      "day": 5,
+      "title": "Prionia and the full Enipeas gorge",
+      "morning": "Descend the classic mule path through beech and Bosnian pine to **Prionia, 1,100 m**, where a taverna sells bean soup, grilled sausage and the coldest spring water on the mountain.",
+      "afternoon": "Instead of taking the road, walk the **full Enipeas gorge** — 12 km and roughly 800 m of descent past the **monastery of Agios Dionysios**, the cave chapel, and a dozen plank bridges and cable-assisted river crossings — all the way back down to Litochoro at 300 m. It is the finest gorge walk in northern Greece and almost nobody does it in this direction.",
+      "evening": "Swim at Plaka Litochorou, five minutes from town, then dinner at To Pazari for grilled octopus and tsipouro.",
+      "dayStats": "18 km / 150 m ascent / 1,760 m descent / Prionia 1,100 m / gorge 12 km / 7–8 h realistic — the longest day of the week",
+      "sleep": "Villa Drosos or Hotel Enipeas, Litochoro"
+    },
+    {
+      "day": 6,
+      "title": "Dion, Platamonas and Palaios Panteleimonas",
+      "morning": "Drive 15 minutes to the **archaeological park of Dion**, the Macedonian sanctuary city at the mountain's foot where Alexander sacrificed before crossing into Asia — mosaics, a submerged sanctuary of Isis and an excellent museum (€8).",
+      "afternoon": "South to the **Platamonas castle**, a 13th-century Crusader fortress on a bluff above the sea, and up to the restored stone village of **Palaios Panteleimonas** at 500 m for the best view back at the whole Olympus escarpment.",
+      "evening": "Dinner in Palaios Panteleimonas's plane-shaded square — grilled lamb, local wine, and the massif you walked over silhouetted opposite.",
+      "dayStats": "60 km driving / Dion €8 / Platamonas €3–€4 / Palaios Panteleimonas 500 m / 3 km of village walking",
+      "sleep": "Villa Drosos or Hotel Enipeas, Litochoro"
+    },
+    {
+      "day": 7,
+      "title": "Rapsani, the Tembi gorge and out",
+      "morning": "Drive the mountain's south flank to **Rapsani**, the PDO wine village at 700 m, for a tasting of xinomavro-krassato-stavroto blends at Dougos or the Rapsani co-operative.",
+      "afternoon": "Continue through the **Vale of Tembi**, the gorge between Olympus and Ossa where the Pineios cuts to the sea, then north to Thessaloniki (1 h 10 min from Litochoro) or south to catch the Athens train from Litochoro station.",
+      "evening": "Thessaloniki's Ladadika or Modiano market for bougatsa, mezedes and the flight out.",
+      "dayStats": "Rapsani 700 m / Tembi gorge 10 km / Litochoro–SKG 1 h 10 min / Litochoro–Athens 4 h by train",
+      "sleep": "Thessaloniki, or the outbound flight"
+    }
+  ],
+  "accommodationStrategy": [
+    {
+      "rank": 1,
+      "name": "Spilios Agapitos (Refuge A)",
+      "style": "mountaineering-club refuge",
+      "location": "2,060 m",
+      "description": "The best-organised bed on Olympus, with 110 places, a real kitchen, hot food all day, and a warden family who have run it for generations and give an honest weather briefing. It is also the standard base for a Mytikas attempt from the Prionia side. Roughly €20–€25 for a bed, cash. Book on mountolympus.gr or by phone well ahead for July and August.",
+      "booking": null,
+      "priceNote": null
+    },
+    {
+      "rank": 2,
+      "name": "Giosos Apostolidis",
+      "style": "SEO refuge",
+      "location": "2,697 m",
+      "description": "The highest refuge in Greece, on the Plateau of the Muses, and the only bed that puts you within 90 minutes of Mytikas at dawn. Spartan, cold at night, no water source on the plateau, but the position is unmatched and the sunrise over the Aegean is the reason you came. Open roughly early June to end of October.",
+      "booking": null,
+      "priceNote": null
+    },
+    {
+      "rank": 3,
+      "name": "Villa Drosos",
+      "style": "small hotel",
+      "location": "Litochoro",
+      "description": "Quiet, ten minutes' walk from the gorge trailhead and the town square, with parking, secure storage for the bag you do not take up the mountain, and breakfast early enough for a Gortsia start. Roughly €60–€90 double, and a pool that matters after the Enipeas descent.",
+      "booking": null,
+      "priceNote": null
+    }
+  ],
+  "logistics": {
+    "connectivity": "Greece is in the EU roaming zone. Signal is surprisingly good on the Muses Plateau (line of sight to the coast) and at Refuge A, and poor in the Enipeas gorge and on the Gortsia forest ridge. Download offline maps — the Anavasi 1:25,000 Olympus sheet is the standard reference.",
+    "emergency": "112 for all emergencies, 166 for EKAB ambulance. Mountain rescue is the volunteer Hellenic Rescue Team with Air Force helicopter support; expect hours, not minutes, above 2,600 m. Nearest hospital: Katerini. Insurance must cover scrambling and mountaineering — many travel policies exclude ground above Grade II.",
+    "weather": "Olympus makes its own weather; cloud caps the summit ridge by mid-morning on many summer days and the Kaki Skala in cloud is a genuinely serious place. Afternoon thunderstorms are frequent in June and September. Summit attempts start at 06:00 for this reason. Check the EMY (Hellenic National Meteorological Service) mountain forecast and the refuge boards.",
+    "bookingWindows": "Refuges 2–4 weeks for July and August, less otherwise; reconfirm 48 hours ahead by phone. Litochoro hotels 3–6 weeks in August. Gortsia and Prionia taxis a day ahead. Guides for Mytikas 2–3 weeks in high season.",
+    "money": "Euro. **The refuges are cash-only in practice** — carry €250–€300 in small notes. Litochoro has ATMs; Prionia and above have none. Tipping is rounding up, or 5–10% in a taverna.",
+    "transportRules": "No vignette in Greece; the A1 Athens–Thessaloniki motorway is tolled at roughly €14–€18 for the Litochoro–Thessaloniki stretch of the network. The Prionia road is narrow, unsurfaced in its last kilometres and hard on a small hire car — use a taxi. Litochoro railway station is 5 km from the town and is served by the Athens–Thessaloniki intercity line.",
+    "permits": "No permit or entry fee for Olympus National Park. **Register your route** at the refuge or the Litochoro office. Wild camping and open fires are prohibited in the park core; drones need authorisation. Do not remove rocks or plants — the massif has 1,700 plant species, 23 of them endemic.",
+    "health": "Water above 2,000 m is bought, not found. The dominant hazard is **rockfall on the Kaki Skala and in the Louki couloir** — wear a helmet and never climb directly beneath another party. Heat is a genuine issue on the lower Enipeas in July and August, where the gorge floor exceeds 35 °C. Vipers occur on the lower slopes; ticks in the beech forest.",
+    "gettingThere": null,
+    "other": []
+  },
+  "proTips": [
+    "Climb **upward** across the week — Petrostrouga at 1,920 m, then Apostolidis at 2,697 m, then the summit — rather than the usual one-night dash from Refuge A. Two nights of acclimatisation transforms the Kaki Skala from an ordeal into a scramble.",
+    "Be on the Kaki Skala by **07:30**. After 09:30 there are parties above you on loose rock, and the summit block gets a queue that turns 45 minutes into two hours.",
+    "If the ridge is wet, in cloud, or busy, take **Skolio (2,911 m)** instead. It is a walk, it is 7 m lower than Mytikas, and it has the better view — of Mytikas.",
+    "Walk the **Enipeas gorge downhill from Prionia**, not up from Litochoro. Everyone does it the other way; downhill you get the monastery, the bridges and the pools with nobody on them.",
+    "Carry a helmet even if you plan only to walk. The Zonaria traverse below Stefani takes rockfall from the faces above regardless of what you personally are climbing.",
+    "Buy water at Apostolidis the evening before, not the morning of. The Muses Plateau has no source and the refuge's stock is helicoptered in and finite.",
+    "Book the Gortsia taxi through your Litochoro hotel the night before and ask for 07:00. The trailhead is unserved by public transport and the drivers know the forest road.",
+    "Rapsani on the last day is the mountain's own appellation and almost nobody links it to the hike. The co-operative pours the xinomavro blends for a few euros."
+  ],
+  "typeSpecific": {
+    "raw": {
+      "Hut-to-hut booking path": "**Petrostrouga (1,920 m, 72 places, effectively open year-round)** → **Giosos Apostolidis (2,697 m, 80 places, early June to end of October, run by the SEO mountaineering association of Thessaloniki)** → **Spilios Agapitos, universally called Refuge A (2,060 m, 110 places, early May to end of October, run by the Zolotas family for the Greek mountaineering club)**. The fourth hut, **Christos Kakalos (2,648 m, 17 places, late May to early November)**, sits on the Muses Plateau beside Apostolidis and is the overflow. **There is no central booking portal.** Refuge A books through mountolympus.gr and by phone on **+30 23520 81800**; Apostolidis and Petrostrouga take phone and email bookings, and Apostolidis will confirm by SMS. Expect **€18–€25 for a dormitory bed, dinner €14–€18 and breakfast €7–€9**, so a de facto half board of €40–€50. **All three are cash-only in practice** — the card machines are satellite-linked and rarely work — so carry €250–€300 for the week. **Bring a sleeping-bag liner**; blankets are provided and full sleeping bags are discouraged in the dorms for hygiene. **If a refuge is full:** Kakalos absorbs the Apostolidis overflow, and Greek refuge custom means a mattress on the dining-room floor rather than a refusal, but it is not a plan — phone two weeks out and reconfirm 48 hours before.",
+      "Safety markers and waymarking": "Olympus is threaded by the **E4 European long-distance path**, marked with the standard **black-on-yellow E4 square** and supported by **red paint blazes and red-white diamond markers** on the national-park network, with numbered wooden signposts at every junction (E4, the Gortsia route, the Prionia route, Louki, Zonaria). Above the tree line the marking becomes cairns and painted dots on rock, which vanish in cloud — the Zonaria traverse and the Skala–Mytikas section are where people get lost. **There are no via ferratas and no fixed cables anywhere on Olympus.**",
+      "The Kaki Skala grade and helmet reality": "The **Kaki Skala (\"Bad Staircase\")** runs from **Skala, 2,866 m**, along the west side of the summit ridge to **Mytikas, 2,918 m** — roughly **30–45 minutes each way of exposed Grade II/III scrambling (YDS Class 3)** on limestone that is loose, polished in the popular lines, and sits above 300–500 m drops. The alternative from the Muses Plateau, the **Louki couloir**, is shorter and steeper and is a **rockfall funnel**. **A helmet is the single most important item on this mountain** — the hazard is not your own fall so much as the stones dislodged by the party above you, and on an August morning there will be one. Guides run fixed-rope handrails for clients; independent scramblers should carry a short rope and know how to use it, or turn around at Skala and take **Skolio, 2,911 m**, which is a walk and only 7 m lower.",
+      "Registration and park rules": "Olympus has been a national park since 1938, Greece's first. Walkers are asked to **register at the refuge or at the Litochoro information office** before going high, giving route and expected return — this is what search and rescue works from. **Wild camping and fires are prohibited inside the park core**; bivouacking above the tree line is tolerated only in emergency. Drones need authorisation.",
+      "Elevation and gear essentials": "Cumulative ascent for the four mountain days is roughly **2,700 m**, with a single **1,800 m descent** on the Enipeas day that punishes knees more than anything on the way up. High points: **Mytikas 2,918 m, Skolio 2,911 m, Stefani (the Throne of Zeus) 2,909 m, Skala 2,866 m, Apostolidis 2,697 m, Skourta 2,475 m**. **Snow lingers in the Kazania cirque and the Louki couloir into late June**, and microspikes plus an axe are appropriate before roughly 20 June; after that it is a dry-rock mountain. Bring a **helmet**, sticky-soled B-rated boots, gloves and 3 litres of water capacity.",
+      "Water, food resupply and rubbish": "**Olympus is dry above 2,000 m.** There is a good spring at **Prionia (1,100 m)** and one at Petrostrouga; the **Muses Plateau has no water at all** and Apostolidis sells it. Refuge A has water. Carry **2.5–3 litres** for the summit day. Resupply only in Litochoro — there is no shop above 300 m. **All rubbish comes down with you**; refuges are supplied by mule and helicopter and will not take your packaging.",
+      "Bail-out options, rescue and insurance": "From the Muses Plateau the escape is the Zonaria traverse down to Refuge A and Prionia (3–4 h), or the long Gortsia descent. From Refuge A, Prionia is 2 h and has a road. **112 is the emergency number; EKAB ambulance is 166**, and mountain rescue on Olympus is run by the volunteer **Hellenic Rescue Team** with helicopter support from the Hellenic Air Force. Response above 2,600 m is measured in hours, not minutes. Rescue is not billed as a rule, but **medical evacuation and repatriation are not covered by EHIC/GHIC** — insure for mountaineering and scrambling, and check the policy does not exclude \"climbing above Grade II\".",
+      "Realistic walking times": "Greek signposts are optimistic and were largely written for local club members. Add **30%**. Gortsia to Petrostrouga is signed 3 h; plan 3.5–4 h. Refuge A to Mytikas and back is signed 5–6 h; plan 7–8 h, more if you queue on the Kaki Skala."
+    },
+    "surface": null,
+    "distanceKm": null,
+    "elevationM": null,
+    "verticalM": null,
+    "technicalRating": "Olympus is threaded by the **E4 European long-distance path**, marked with the standard **black-on-yellow E4 square** and supported by **red paint blazes and red-white diamond markers** on the national-park network, with numbered wooden signposts at every junction (E4, the Gortsia route, the Prionia route, Louki, Zonaria). Above the tree line the marking becomes cairns and painted dots on rock, which vanish in cloud — the Zonaria traverse and the Skala–Mytikas section are where people get lost. **There are no via ferratas and no fixed cables anywhere on Olympus.**",
+    "transitPass": null,
+    "hutBooking": "**Petrostrouga (1,920 m, 72 places, effectively open year-round)** → **Giosos Apostolidis (2,697 m, 80 places, early June to end of October, run by the SEO mountaineering association of Thessaloniki)** → **Spilios Agapitos, universally called Refuge A (2,060 m, 110 places, early May to end of October, run by the Zolotas family for the Greek mountaineering club)**. The fourth hut, **Christos Kakalos (2,648 m, 17 places, late May to early November)**, sits on the Muses Plateau beside Apostolidis and is the overflow. **There is no central booking portal.** Refuge A books through mountolympus.gr and by phone on **+30 23520 81800**; Apostolidis and Petrostrouga take phone and email bookings, and Apostolidis will confirm by SMS. Expect **€18–€25 for a dormitory bed, dinner €14–€18 and breakfast €7–€9**, so a de facto half board of €40–€50. **All three are cash-only in practice** — the card machines are satellite-linked and rarely work — so carry €250–€300 for the week. **Bring a sleeping-bag liner**; blankets are provided and full sleeping bags are discouraged in the dorms for hygiene. **If a refuge is full:** Kakalos absorbs the Apostolidis overflow, and Greek refuge custom means a mattress on the dining-room floor rather than a refusal, but it is not a plan — phone two weeks out and reconfirm 48 hours before.",
+    "liftNetwork": null,
+    "snowReliability": null,
+    "windConditions": null,
+    "gpxReady": null,
+    "bookingTimeline": null,
+    "audience": null
+  },
+  "packingNotes": [],
+  "whatCouldGoWrong": [],
+  "sources": {
+    "verified": "Refuge altitudes, capacities and seasons — Spilios Agapitos (Refuge A) at 2,060 m with 110 places, open early May to end of October; Giosos Apostolidis at 2,697 m with 80 places, open early June to end of October and year-round by arrangement with the manager; Petrostrouga at 1,920 m with 72 places, operating throughout the year; Christos Kakalos at 2,648 m with 17 places, open late May to early November plus a March–April winter window. All three main refuges require booking before arrival and none is served by a central portal.",
+    "confidenceNotes": "Refuge bed and meal prices are indicative 2025 figures and are not published consistently — re-verify with each refuge for 2026. The Refuge A phone number and the mountolympus.gr booking flow should be spot-checked. Card acceptance at refuges varies by season and satellite link; treat the cash-only guidance as the safe assumption. Whether hiker registration at the Litochoro national park office is mandatory or strongly recommended should be confirmed with the park authority. Kaki Skala grading is quoted variously as YDS Class 3 and UIAA II–III; the distinction matters for insurance wording. Gortsia and Prionia taxi fares, Dion and Platamonas entry fees, and A1 toll totals are seasonal estimates."
+  },
+  "verifyFlags": [],
+  "verifyFlagCount": 0,
+  "volatilePricing": false,
+  "wordCount": 3448,
+  "dataVintage": 2026,
+  "provenance": {
+    "batch": "southern-mediterranean",
+    "sourceFile": "carta-dataset/trips/hiking-greece-mount-olympus-refuges.md",
+    "sourceFormat": "md with '## Metadata' bullet block (one file per trip)",
+    "sourceId": "hiking-greece-mount-olympus-refuges",
+    "ingestedAt": "2026-09-02",
+    "synthesized": false
+  }
+}

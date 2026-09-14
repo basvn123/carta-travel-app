@@ -1,0 +1,316 @@
+{
+  "id": "de-city-hamburg-hafencity",
+  "sourceId": "de-city-hamburg-hafencity-water",
+  "slug": "de-city-hamburg-hafencity",
+  "title": "Hamburg on the Water",
+  "country": "Germany",
+  "countryCode": "DE",
+  "countries": [
+    {
+      "name": "Germany",
+      "code": "DE"
+    }
+  ],
+  "isMultiCountry": false,
+  "region": "Western & Central Europe",
+  "regionKey": "western-central",
+  "subRegion": "Hamburg & the Lower Elbe",
+  "tripType": "City Trips",
+  "tripTypeId": 3,
+  "tripTypeSlug": "city",
+  "durationDays": 7,
+  "bestPeriod": {
+    "months": [
+      5,
+      6,
+      7,
+      8,
+      9
+    ],
+    "monthNames": [
+      "May",
+      "June",
+      "July",
+      "August",
+      "September"
+    ],
+    "window": null,
+    "note": "The Elbe wind is cold until late April; June and September give long light without August prices.",
+    "avoid": null,
+    "raw": null
+  },
+  "budgetTier": "€€",
+  "budgetTierRange": [
+    2,
+    2
+  ],
+  "budgetTierRaw": "€€",
+  "budget": {
+    "currency": "EUR",
+    "totalEur": {
+      "low": 900,
+      "high": 1350
+    },
+    "totalNote": null,
+    "breakdown": {
+      "accommodation": {
+        "lowEur": 440,
+        "highEur": 660,
+        "note": null
+      },
+      "food": {
+        "lowEur": 240,
+        "highEur": 350,
+        "note": null
+      },
+      "transport": {
+        "lowEur": 70,
+        "highEur": 100,
+        "note": null
+      },
+      "activities": {
+        "lowEur": 150,
+        "highEur": 240,
+        "note": null
+      }
+    },
+    "perDayEur": {
+      "low": 129,
+      "high": 193
+    }
+  },
+  "profile": {
+    "difficulty": 2,
+    "difficultyLabel": "Moderate",
+    "difficultyNote": null,
+    "fitnessLevel": "Active",
+    "crowdLevel": "Moderate",
+    "familyFriendly": true,
+    "carRequired": false
+  },
+  "basecamps": [
+    "Neustadt or St. Pauli"
+  ],
+  "gatewayAirport": "Hamburg (HAM)",
+  "gatewayAirportCode": "HAM",
+  "languages": [
+    "German"
+  ],
+  "currency": "EUR",
+  "emergencyNumber": "112",
+  "coordinates": {
+    "lat": 53.5507,
+    "lon": 9.993,
+    "precision": "city",
+    "matchedPlace": "Hamburg",
+    "source": "geonames (geonamescache, cities > 15k)"
+  },
+  "tags": [
+    "speicherstadt",
+    "harbour-ferries",
+    "brick-expressionism",
+    "elbphilharmonie",
+    "hvv"
+  ],
+  "summary": "A week of Hamburg read through its water: Speicherstadt, HafenCity, the Alster, the Elbe ferries and a Sunday dawn at the Fischmarkt.",
+  "summaryGenerated": false,
+  "hook": "Hamburg makes sense only from the water. The city was built to move cargo, and every district still faces a canal, a basin or a lake. Ride the public ferries rather than the tourist barges, walk the warehouse quarters at low light, and let the harbour set the rhythm of the week.",
+  "snapshot": {
+    "Country": "Germany",
+    "Base(s)": "Neustadt or St. Pauli, single base all week",
+    "Trip Type": "City Trips",
+    "Duration": "7 days / 7 nights",
+    "Best Period": "May to September",
+    "Budget Tier": "€€",
+    "Total Distance / Terrain": "60–75 km on foot, flat, plus roughly 3 hours on public ferries",
+    "Getting There": "S1 from Hamburg Airport to Hauptbahnhof in 25 min; ICE from Berlin in 1h50",
+    "Who It Suits": "Architecture readers, harbour watchers, families who like boats more than queues"
+  },
+  "itinerary": [
+    {
+      "day": 1,
+      "title": "Speicherstadt and the Kontorhausviertel",
+      "morning": "Start at Kornhausbrücke and walk the Speicherstadt north to south. Built from 1883 on oak piles, it is the largest continuous warehouse district in the world and, with the Kontorhausviertel, a UNESCO site since 2015. Cross Poggenmühlenbrücke for the Wasserschloss view; go before 10:00 and you will have it.",
+      "afternoon": "Over Meßberg into the Kontorhausviertel. Fritz Höger's Chilehaus (1924) is the definitive brick expressionist building — walk to the eastern point on Pumpen for the ship's-prow corner. The Sprinkenhof (Höger with the Gerson brothers, 1927–43) opposite is bigger and less visited.",
+      "evening": "Dinner at the Oberhafen-Kantine, a listed 1925 dock canteen that has been leaning at an angle since the 1962 flood, then a walk along the Zollkanal.",
+      "dayStats": "9 km walking · districts: Speicherstadt, Altstadt, Kontorhausviertel · tickets approx €0.",
+      "sleep": null
+    },
+    {
+      "day": 2,
+      "title": "HafenCity and the Elbphilharmonie",
+      "morning": "Book the Elbphilharmonie Plaza slot. Herzog & de Meuron's glass wave (2017) sits on Werner Kallmorgen's 1963 Kaispeicher A; the Plaza at 37 m is a public terrace with an entry ticket of approx €5, timed online, with the long curved escalator ride included. Same-day slots exist but sell out by mid-morning in summer.",
+      "afternoon": "Walk east through HafenCity: Sandtorhafen and the Magellan-Terrassen, the Marco-Polo-Terrassen, Behnisch Architekten's Unilever-Haus (2009) at Strandkai, and the Lohsepark memorial on the site of the Hannoverscher Bahnhof deportation platform.",
+      "evening": "Miniatur Wunderland in the Speicherstadt runs late most nights and is the one attraction in Hamburg you must book weeks ahead; a timed ticket is approx €22 and evening slots are the quietest.",
+      "dayStats": "10 km walking · districts: HafenCity, Speicherstadt · tickets approx €27.",
+      "sleep": null
+    },
+    {
+      "day": 3,
+      "title": "Altstadt, Neustadt and the Binnenalster",
+      "morning": "The Rathaus (1897, Martin Haller and others) sits on 4,000 piles; guided tours run hourly and cost a few euros. Then the Alsterarkaden and the Binnenalster.",
+      "afternoon": "St. Michaelis — \"der Michel\" — by Johann Leonhard Prey and Ernst Georg Sonnin, consecrated 1762, with a 132 m tower and a lift to the viewing gallery for about €8. Behind it, the Krameramtsstuben on Krayenkamp (1676) are the last courtyard almshouses of their kind in the city.",
+      "evening": "Großneumarkt has the neighbourhood's restaurant tables; Café Paris on Rathausstraße, in a 1882 tiled butchers' hall, does a long dinner service.",
+      "dayStats": "8 km walking · districts: Altstadt, Neustadt · tickets approx €14.",
+      "sleep": null
+    },
+    {
+      "day": 4,
+      "title": "St. Pauli, the Landungsbrücken and the harbour",
+      "morning": "From the Landungsbrücken (1907) take HADAG ferry line 62 to Finkenwerder. It is an ordinary scheduled service, included in any HVV ticket, and it runs the same water as the commercial harbour tours for a fraction of the price. Get off at Neumühlen/Övelgönne on the way back.",
+      "afternoon": "Walk the Alter Elbtunnel (1911), 426 m under the river with tiled reliefs of eels and rats; the pedestrian crossing is free and the old car lifts still run on a restricted timetable.",
+      "evening": "Up the Reeperbahn, through the Große Freiheit, then a Fischbrötchen at Brücke 10 before the bars fill.",
+      "dayStats": "11 km walking, 1h on ferries · districts: St. Pauli, Steinwerder · tickets approx €9 (HVV day ticket covers the ferries).",
+      "sleep": null
+    },
+    {
+      "day": 5,
+      "title": "Eppendorf, Winterhude and the Außenalster",
+      "morning": "The Isemarkt runs under the U3 viaduct on Isestraße every Tuesday and Friday, 08:30–14:00, and is the longest open-air market in Germany. This is the food anchor of the week.",
+      "afternoon": "Walk the Alsterrundweg — 7.4 km around the Außenalster, past the Krugkoppelbrücke and the boathouses. Cut into Winterhude for the Goldbekufer and the Stadtpark, laid out by Fritz Schumacher from 1910.",
+      "evening": "Hire a rowing or pedal boat at one of the Alster jetties for the last hour of light, then eat on Mühlenkamp.",
+      "dayStats": "13 km walking · districts: Eppendorf, Harvestehude, Winterhude · tickets approx €10 (market spend, boat hire).",
+      "sleep": null
+    },
+    {
+      "day": 6,
+      "title": "Sternschanze and the Karolinenviertel",
+      "morning": "Schanzenstraße, Susannenstraße and the Rote Flora, a squatted 1888 theatre. The Schanzenpark water tower (1910) is now a hotel and marks the high point of the quarter.",
+      "afternoon": "The Karolinenviertel behind the Messe: Marktstraße's small shops, then the Kunsthalle if the weather breaks — Georg Theodor Schirrmacher's 1869 building plus O. M. Ungers' cube-perfect Galerie der Gegenwart (1997), about €16.",
+      "evening": "The Saturday market on Neuer Pferdemarkt, or dinner on Bartelsstraße, then a gig at the Fabrik in Altona.",
+      "dayStats": "9 km walking · districts: Sternschanze, Karolinenviertel, St. Georg edge · tickets approx €16.",
+      "sleep": null
+    },
+    {
+      "day": 7,
+      "title": "Altona, Ottensen and Blankenese",
+      "morning": "The Fischmarkt at Große Elbstraße runs Sunday from 05:00 in summer and 07:00 in winter, and ends at 09:30 sharp. The 1896 Fischauktionshalle beside it has a brass band and beer at breakfast, which is the point.",
+      "afternoon": "Walk the Elbe path from Neumühlen past the Museumshafen Övelgönne to the Elbstrand, then take the S1 from Klein Flottbek or Othmarschen to Blankenese and climb the Treppenviertel — 5,000 steps of car-free hillside village.",
+      "evening": "Back east for a last drink on the Altonaer Balkon over the container terminal.",
+      "dayStats": "12 km walking, 60 m of stair climbing · districts: Altona, Ottensen, Blankenese · tickets approx €9.",
+      "sleep": null
+    }
+  ],
+  "accommodationStrategy": [
+    {
+      "rank": 1,
+      "name": "25hours Hotel HafenCity",
+      "style": "Design hotel",
+      "location": "Überseeallee, HafenCity",
+      "description": "Puts you inside HafenCity, so the Elbphilharmonie, Speicherstadt and Miniatur Wunderland are all walkable and you never need a night transfer. The ground-floor bar keeps a late kitchen, which matters after an evening Plaza slot.",
+      "booking": "8 weeks ahead; 4 months for a cruise-turnaround weekend.",
+      "priceNote": "€130–€210 per night"
+    },
+    {
+      "rank": 2,
+      "name": "Hotel Hafen Hamburg",
+      "style": "Traditional hotel",
+      "location": "Seewartenstraße, St. Pauli",
+      "description": "Sits on the bluff directly above the Landungsbrücken, so the ferries, the Alter Elbtunnel and the Reeperbahn are five minutes downhill. Ask for a harbour-facing room in the Turmzimmer wing; the container cranes work all night and the view is the reason to be here.",
+      "booking": "6–10 weeks ahead.",
+      "priceNote": "€120–€190 per night"
+    },
+    {
+      "rank": 3,
+      "name": "Superbude St. Pauli",
+      "style": "Budget design hotel",
+      "location": "Juliusstraße, Sternschanze",
+      "description": "Family rooms with bunks, a laundry and bike hire, on the Schanze side rather than the Reeperbahn side, so it is quieter than the postcode suggests. U3 Feldstraße is four minutes away.",
+      "booking": "4–8 weeks ahead.",
+      "priceNote": "€85–€145 per night"
+    }
+  ],
+  "logistics": {
+    "connectivity": null,
+    "emergency": "112 for fire and ambulance, 110 for police. On the water, the DGzRS sea rescue service monitors VHF 16.",
+    "weather": "Schmuddelwetter is the local word for it: horizontal drizzle off the Elbe most months. Keep an indoor fallback for every afternoon.",
+    "bookingWindows": "Miniatur Wunderland: 3–6 weeks ahead in summer, longer for school holidays. Elbphilharmonie Plaza: online from about two weeks out, or same-day from 09:00. Elbphilharmonie concerts: the season goes on sale in a single spring release and the Grand Hall sells out within days.",
+    "money": "Markets, Imbiss stands and Fischmarkt traders are cash. Restaurants take cards. Tip by rounding up and saying the total as you pay.",
+    "transportRules": null,
+    "permits": null,
+    "health": null,
+    "gettingThere": null,
+    "other": [
+      {
+        "label": "HVV zones",
+        "text": "Ring A covers everything here except the airport, which sits in Ring B. A single Hamburg AB ticket is approx €3.90; the 9-Uhr-Tageskarte (valid from 09:00) approx €8.60; the all-day version approx €9.30. Buy in the hvv app or at machines."
+      },
+      {
+        "label": "The ferries are transit, not tours",
+        "text": "HADAG lines 61, 62, 64, 72, 73 and 75 are part of HVV and included in every ticket. Line 62 to Finkenwerder is the long one; line 72 links Landungsbrücken to the Elbphilharmonie in six minutes."
+      },
+      {
+        "label": "Deutschlandticket",
+        "text": "Approx €63 a month in 2026, valid on all regional and local transport nationwide including the whole HVV. It is a rolling subscription you must cancel, and it only beats a week of day tickets if you also travel to another German city. Buy it before the 1st of the month or it starts late."
+      },
+      {
+        "label": "Hamburg CARD",
+        "text": "Approx €12.90 for one adult-day, roughly €33 for three days, with HVV travel plus 20–50% off many museums. It pays only if you use two paid attractions a day."
+      },
+      {
+        "label": "Emergencies",
+        "text": "112 for fire and ambulance, 110 for police. On the water, the DGzRS sea rescue service monitors VHF 16."
+      }
+    ]
+  },
+  "proTips": [
+    "Ferry 62 westbound in the early evening puts the setting sun behind Steinwerder and the cranes; the same trip in the morning gives you flat grey light and no photographs.",
+    "St. Michaelis sells a combined ticket for the tower and the crypt; take the stairs down and the lift up, not the reverse, and go at opening for the clear eastward view before haze builds.",
+    "At the Fischmarkt, the traders start throwing in extras at 09:00 as they clear stock — the last thirty minutes is when the boxes of fruit get absurd.",
+    "Book the Elbphilharmonie Plaza for a slot after 19:00 in June and July; the Plaza stays open late and the harbour lights come on while you are up there.",
+    "Buy the day ticket rather than singles on any day involving a ferry: two ferry legs and one U-Bahn ride already beat the €9.30.",
+    "Blankenese's Treppenviertel has no through roads. Come down by the Süllbergsterrasse steps and out at the ferry pontoon rather than climbing back to the S-Bahn."
+  ],
+  "typeSpecific": {
+    "raw": {
+      "Total Distance / Terrain": "60–75 km on foot, flat, plus roughly 3 hours on public ferries",
+      "Who It Suits": "Architecture readers, harbour watchers, families who like boats more than queues"
+    },
+    "surface": "60–75 km on foot, flat, plus roughly 3 hours on public ferries",
+    "distanceKm": 60,
+    "elevationM": null,
+    "verticalM": null,
+    "technicalRating": null,
+    "transitPass": null,
+    "hutBooking": null,
+    "liftNetwork": null,
+    "snowReliability": null,
+    "windConditions": null,
+    "gpxReady": null,
+    "bookingTimeline": null,
+    "audience": "Architecture readers, harbour watchers, families who like boats more than queues"
+  },
+  "packingNotes": [
+    "A properly windproof shell with a hood; the Elbe funnel makes 20 km/h feel like 40.",
+    "Grippy soles for the Treppenviertel steps and wet warehouse cobbles in the Speicherstadt.",
+    "A warm layer for the ferries even in July — the open aft deck is where you want to stand and it is cold.",
+    "€30 in coins and small notes for the Fischmarkt and the Isemarkt.",
+    "A rain cover for a camera; harbour spray is real on line 62.",
+    "Smart shoes and a jacket if you plan an Elbphilharmonie concert — there is no formal code but the Grand Hall dresses up.",
+    "A tote for the Isemarkt; the stalls sell by weight and hand you paper."
+  ],
+  "whatCouldGoWrong": [
+    "**The Plaza is sold out on your chosen day.** Same-day tickets go on sale at 09:00 at the visitor centre on Platz der Deutschen Einheit, and the queue clears by mid-morning outside school holidays.",
+    "**A storm surge (Sturmflut).** Autumn and winter westerlies push the Elbe over the Fischmarkt and the lower Speicherstadt streets several times a season. Warnings are broadcast by the Sturmflutwarndienst; the ferries stop and the U4 keeps running.",
+    "**A ferry line is suspended for fog or works.** The 62 and 72 are the first to go. The S1/S3 to Altona and the U3 ring cover the same corridors on the same ticket.",
+    "**Miniatur Wunderland has nothing left.** Its cancellation returns appear online through the day, and the last hour before closing usually has stock. Otherwise the Internationales Maritimes Museum in Kaispeicher B absorbs the afternoon.",
+    "**Sunday shutdown.** Almost all shops close and the Fischmarkt ends at 09:30. Museums and the ferries run normally; plan Sunday around water and food, not shopping."
+  ],
+  "sources": {
+    "verified": null,
+    "confidenceNotes": null
+  },
+  "verifyFlags": [],
+  "verifyFlagCount": 0,
+  "volatilePricing": false,
+  "wordCount": 1995,
+  "dataVintage": 2026,
+  "provenance": {
+    "batch": "western-central",
+    "sourceFile": "cartatripsv1/trips/de-city-hamburg-hafencity-water.md",
+    "sourceFormat": "md+yaml-frontmatter (one file per trip)",
+    "sourceId": "de-city-hamburg-hafencity-water",
+    "ingestedAt": "2026-09-02",
+    "synthesized": false
+  }
+}

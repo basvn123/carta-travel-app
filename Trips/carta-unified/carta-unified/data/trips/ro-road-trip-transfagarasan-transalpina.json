@@ -1,0 +1,297 @@
+{
+  "id": "ro-road-trip-transfagarasan-transalpina",
+  "sourceId": "romania-transfagarasan-transalpina-road-trip",
+  "slug": "ro-road-trip-transfagarasan-transalpina",
+  "title": "Two Roads Over the Carpathians: The Transfăgărășan and Transalpina Loop from Sibiu",
+  "country": "Romania",
+  "countryCode": "RO",
+  "countries": [
+    {
+      "name": "Romania",
+      "code": "RO"
+    }
+  ],
+  "isMultiCountry": false,
+  "region": "Eastern & Southeastern Europe",
+  "regionKey": "eastern-southeastern",
+  "subRegion": "Făgăraș & Parâng Mountains, Southern Carpathians",
+  "tripType": "Road Trips & Scenic Drives",
+  "tripTypeId": 5,
+  "tripTypeSlug": "road-trip",
+  "durationDays": 7,
+  "bestPeriod": {
+    "months": [
+      6,
+      7,
+      8,
+      9
+    ],
+    "monthNames": [
+      "June",
+      "July",
+      "August",
+      "September"
+    ],
+    "window": "late June to mid-September, when both DN7C and DN67C are certain to be open end to end",
+    "note": null,
+    "avoid": "May and early June (Transfăgărășan still shut above Bâlea Cascadă), and the 15 July–20 August weekend crush at Bâlea Lac",
+    "raw": null
+  },
+  "budgetTier": "€€",
+  "budgetTierRange": [
+    2,
+    2
+  ],
+  "budgetTierRaw": "€€",
+  "budget": {
+    "currency": "EUR",
+    "totalEur": {
+      "low": 755,
+      "high": 1230
+    },
+    "totalNote": "€755–€1,230",
+    "breakdown": {
+      "accommodation": {
+        "lowEur": 300,
+        "highEur": 520,
+        "note": "€300–€520 (€45–€75/night, doubles in guesthouses and cabanas)"
+      },
+      "food": {
+        "lowEur": 140,
+        "highEur": 220,
+        "note": "€140–€220 (€20–€31/day)"
+      },
+      "transport": {
+        "lowEur": 270,
+        "highEur": 400,
+        "note": "€270–€400 (compact rental €35–€55/day + ~65 L fuel + rovinietă)"
+      },
+      "activities": {
+        "lowEur": 45,
+        "highEur": 90,
+        "note": "€45–€90 (Poenari, Vidraru boat, cable car, museums)"
+      }
+    },
+    "perDayEur": {
+      "low": 108,
+      "high": 176
+    }
+  },
+  "profile": {
+    "difficulty": 3,
+    "difficultyLabel": "Active",
+    "difficultyNote": "Moderate",
+    "fitnessLevel": "Moderate",
+    "crowdLevel": null,
+    "familyFriendly": null,
+    "carRequired": null
+  },
+  "basecamps": [
+    "Sibiu",
+    "Cârțișoara",
+    "Curtea de Argeș",
+    "Novaci",
+    "Alba Iulia"
+  ],
+  "gatewayAirport": "Sibiu International (SBZ), 5 km out; Cluj (CLJ) 3 h; Bucharest Otopeni (OTP) 4 h. CFR rail from Brașov 2 h 40.",
+  "gatewayAirportCode": "SBZ",
+  "languages": [
+    "Romanian",
+    "Hungarian",
+    "German"
+  ],
+  "currency": "Romanian leu (RON)",
+  "emergencyNumber": "112",
+  "coordinates": {
+    "lat": 45.8,
+    "lon": 24.15,
+    "precision": "city",
+    "matchedPlace": "Sibiu",
+    "source": "geonames (geonamescache, cities > 15k)"
+  },
+  "tags": [
+    "road-trip",
+    "mountain-passes",
+    "transfagarasan",
+    "transalpina",
+    "castles",
+    "carpathians",
+    "driving"
+  ],
+  "summary": "You climb out of the Făgăraș foothills in second gear, and past the eleventh hairpin the beech forest quits: nothing left but granite, snowmelt and hot brakes. A week of two mountain crossings — one famous, one…",
+  "summaryGenerated": false,
+  "hook": "You climb out of the Făgăraș foothills in second gear, and past the eleventh hairpin the beech forest quits: nothing left but granite, snowmelt and hot brakes. A week of two mountain crossings — one famous, one better — stitched together by monasteries, a Vlad Țepeș ruin up 1,480 steps, and valley roads where 60 km takes ninety minutes. For confident drivers who would rather stop twenty times than arrive early.",
+  "snapshot": {
+    "Country": "Romania",
+    "Trip type": "Road Trips & Scenic Drives",
+    "Duration": "7 days",
+    "Best period": "Late June–mid-September",
+    "Budget tier": "€€",
+    "Difficulty": "Moderate",
+    "Start / End": "Sibiu → Sibiu (loop, ~610 km)",
+    "Getting there": "Sibiu International (SBZ), 5 km out; Cluj (CLJ) 3 h; Bucharest Otopeni (OTP) 4 h. CFR rail from Brașov 2 h 40."
+  },
+  "itinerary": [
+    {
+      "day": 1,
+      "title": "Sibiu, and the paperwork that saves the week",
+      "morning": "Collect the car at Sibiu airport, then do the boring things properly: photograph every panel and the tyre tread, confirm the rovinietă is active on the plate, and get the cross-border annex emailed to you. Ask explicitly whether Moldova/Ukraine/Serbia are excluded — they almost certainly are.",
+      "afternoon": "Walk Piața Mare and Piața Mică, cross the Podul Minciunilor, and climb the Turnul Sfatului for the tin-roofed eye-windows that make Sibiu's rooftops famous. The Brukenthal National Museum on Piața Mare holds the best old-master collection in Romania [VERIFY: current hours].",
+      "evening": "Dinner at Crama Sibiul Vechi on Strada Papiu Ilarian — cellar vaults, ciorbă de burtă, bulz. Then fill the tank at the Petrom on Șoseaua Alba Iulia, because tomorrow's first proper station is 100 km away.",
+      "dayStats": "0 km driving",
+      "sleep": null
+    },
+    {
+      "day": 2,
+      "title": "Foothills, Cistercians and the first ramp",
+      "morning": "DN1 east through Avrig to **Cârța**, where the roofless Cistercian abbey of 1202 sits behind a Saxon fortified church — twenty minutes, and the only Gothic ruin on the route.",
+      "afternoon": "Făgăraș for the moated brick **Cetatea Făgărașului**, then turn south onto DN7C at Cârțișoara. Stop at the Bădea Cârțan museum, then run the easy lower section to **Bâlea Cascadă** (1,234 m). The road narrows and the temperature drops six degrees in fifteen minutes.",
+      "evening": "Sleep at the Bâlea Cascadă chalet by the cable-car station, or drop back to a Cârțișoara guesthouse if beds are gone. Walk the twenty minutes to the waterfall itself before the light goes. Cash only at several kiosks up here.",
+      "dayStats": "100 km / 2 h 15 driving",
+      "sleep": null
+    },
+    {
+      "day": 3,
+      "title": "The Transfăgărășan, north to south",
+      "morning": "Be at the Bâlea Cascadă barrier by 07:15 — the restricted sector opens at 07:00 and the coach traffic arrives around ten. Twelve kilometres of stacked hairpins lift you to **Bâlea Lac, 2,034 m**, a glacial tarn in a rock cirque. Coffee at **Cabana Bâlea Lac** on the shore.",
+      "afternoon": "Through the **884 m Bâlea tunnel** — unlit, wet, single lane each way, headlights on — and out onto the Argeș side, which is the better half: longer sightlines, fewer people, the Piscul Negru switchbacks unwinding for 20 km. Then the **Vidraru dam**, 166 m of concrete arch across the Argeș gorge [VERIFY: Vidraru dam crossing status during rehabilitation works].",
+      "evening": "**Poenari Citadel** — 1,480 concrete steps up the ridge to Vlad Țepeș's real fortress, roughly 45 minutes up in the cool of the evening [VERIFY: current hours and any bear-related closure]. Sleep in Curtea de Argeș.",
+      "dayStats": "75 km / 3 h 30 driving with stops",
+      "sleep": null
+    },
+    {
+      "day": 4,
+      "title": "Curtea de Argeș to the Parâng gate",
+      "morning": "The Curtea de Argeș Episcopal Cathedral, 1517, with its twisted turrets and the royal tombs of the Hohenzollern-Sigmaringen kings. Breakfast of covrigi from the bakery on Bulevardul Basarabilor.",
+      "afternoon": "DN7 west to Râmnicu Vâlcea, then DN67 along the Subcarpathian shelf through **Horezu** — UNESCO-listed Brâncovenesc monastery and the ceramics workshops on the main road, where the cockerel motif is genuinely local, not imported. Lunch at **Casa Argeşeană** if you leave late enough to still be near Argeș [VERIFY: current hours].",
+      "evening": "Arrive **Novaci** at the foot of the Parâng. Refuel here — this is the last reliable pump before Sebeș, 140 km of mountain later. Guesthouse dinner: tochitură and țuică from the plum orchards below town.",
+      "dayStats": "180 km / 3 h 40 driving",
+      "sleep": null
+    },
+    {
+      "day": 5,
+      "title": "The Transalpina, and Pasul Urdele at 2,145 m",
+      "morning": "Climb DN67C to **Rânca** (1,600 m), a scrappy ski hamlet that exists because of the road. Then keep going: the treeline falls away and the Transalpina turns into the thing people come for — a ribbon on open alpine grass with shepherds' flocks crossing without warning.",
+      "afternoon": "**Pasul Urdele, 2,145 m**, Romania's highest paved pass. Park at the saddle and walk fifteen minutes onto the ridge for the Parâng panorama. Descend past Pasul Ștefanu and Pasul Dengheru to **Obârșia Lotrului**, a road junction with two cabanas and no phone signal.",
+      "evening": "North on DN7A/DN67C down the Sebeș valley — long, narrow, unlit, and slower than the map claims. Sleep in **Sebeș** or push the extra 15 km to **Alba Iulia** for a better dinner.",
+      "dayStats": "72 km / 2 h 20 driving",
+      "sleep": null
+    },
+    {
+      "day": 6,
+      "title": "Alba Iulia and a rough-road monastery",
+      "morning": "**Cetatea Alba Carolina**, Romania's largest Vauban star fort, seven bastions and the 1918 Union Hall. Walk the Gate III sally-port carvings and the Orthodox Coronation Cathedral.",
+      "afternoon": "The **Râmeț detour**: Teiuș, then a narrowing county road to Râmeț Monastery in its limestone gorge — 45 km and 1 h 15 each way, last kilometres rough but fine in a normal car when dry. (**Cheile Bicazului** is 330 km each way in the Eastern Carpathians: a two-day add-on, not an afternoon.)",
+      "evening": "Back to Alba Iulia. Dinner at Pub 13 inside the bastion walls, then the 20:00 changing of the guard in period Habsburg uniform [VERIFY: 2026 guard-change schedule].",
+      "dayStats": "90 km / 2 h 30 with the detour",
+      "sleep": null
+    },
+    {
+      "day": 7,
+      "title": "Saxon fringe and the drop back to Sibiu",
+      "morning": "A10 and A1 south-east, then peel off to **Cisnădioara** for the 12th-century Romanesque church on its conical hill — ten minutes' walk up, the oldest intact church in Transylvania.",
+      "afternoon": "**Cisnădie**'s fortified church tower, then back into Sibiu. Refuel and clean the car before drop-off; Carpathian tar and grit will otherwise appear on the damage sheet.",
+      "evening": "Last dinner at Kulinarium on Piața Mică, then the walls at Strada Cetății. Fly out or take the 06:40 IR to Bucharest.",
+      "dayStats": "75 km / 1 h 30 driving",
+      "sleep": null
+    }
+  ],
+  "accommodationStrategy": [
+    {
+      "rank": 1,
+      "name": "Cabana Bâlea Lac",
+      "style": "mountain cabana",
+      "location": "Bâlea Lac, 2,034 m",
+      "description": "the lake at dawn and dusk without the day-trippers, and your car is already above the 07:00 barrier. Basic, cold, shared bathrooms, cash preferred [VERIFY: current rate].",
+      "booking": "direct by phone/Facebook, 4–8 weeks ahead for July–August weekends.",
+      "priceNote": null
+    },
+    {
+      "rank": 2,
+      "name": "Bâlea Cascadă chalet",
+      "style": "chalet at the cable-car base",
+      "location": "km 104 DN7C, 1,234 m",
+      "description": "the fallback when the tunnel sector is shut or the lake cabana is full, and the base station for the **Bâlea cable car**, which runs when the road above is closed — the winter way to the **Hotel of Ice**, rebuilt each December from lake ice [VERIFY: 2026 cable car tariff, hours and Hotel of Ice build].",
+      "booking": "direct, 2–3 weeks ahead.",
+      "priceNote": null
+    },
+    {
+      "rank": 3,
+      "name": "Hotel Kronprinz / Casa Luxemburg",
+      "style": "boutique town hotel",
+      "location": "Sibiu",
+      "description": "real parking rather than street roulette, walkable to both squares, and luggage held on your rental-return morning.",
+      "booking": "3–4 weeks ahead; Sibiu fills for the June Jazz and August Medieval festivals.",
+      "priceNote": null
+    }
+  ],
+  "logistics": {
+    "connectivity": "Orange and Vodafone cover the valleys; nothing between Piscul Negru and Vidraru, nothing at Obârșia Lotrului. Download offline maps for the whole loop.",
+    "emergency": "112 for everything. Mountain rescue is Salvamont, reachable via 112 or the Salvamont app; the Sibiu and Gorj county teams cover this route.",
+    "weather": "Afternoon storms build over Bâlea and Urdele from mid-July; fog can drop the tunnel sector to walking pace in an hour. Snow is possible at 2,000 m in any month.",
+    "bookingWindows": "Bâlea Lac and Rânca beds 4–8 weeks for summer weekends; Sibiu 3–4 weeks; the car 6–8 weeks (automatics are scarce and cost 30–40% more).",
+    "money": "Romanian leu (RON), roughly 5 RON to €1. Cards work in towns; carry €40–€60 in RON for cabanas, the Poenari kiosk and shepherd cheese stalls.",
+    "transportRules": "50 km/h in towns, 90 on DN roads, 130 on motorway. Zero-tolerance alcohol limit (0.00‰). Dipped headlights compulsory outside towns, day and night. Winter tyres required on snow-covered roads 1 November–31 March.",
+    "permits": "Rovinietă mandatory; DN7C's Bâlea Cascadă–Piscul Negru sector is 07:00–21:00 only, with extra restrictions on cyclists and pedestrians in peak weeks. Do not feed the bears on DN7C — it carries a fine and causes the closures.",
+    "health": null,
+    "gettingThere": null,
+    "other": []
+  },
+  "proTips": [
+    "Drive the Transfăgărășan **south-bound and early**: barrier at 07:00, Bâlea Lac by 08:15, through the tunnel before the coaches. Northbound afternoon traffic queues 40 minutes at the tunnel on August weekends.",
+    "Sleep at Bâlea Lac midweek, not on a Saturday. The same cabana bed costs less and you get the tarn to yourself at 06:00.",
+    "Climb Poenari's 1,480 steps at 17:30, not midday — the stairway is shaded and the ridge light on Vidraru is better.",
+    "Fill up in Novaci before the Transalpina and in Făgăraș before the Transfăgărășan. There is no fuel between Novaci and Sebeș.",
+    "The Transalpina is the better road and almost nobody outside Romania knows it. If weather forces a choice, drive DN67C.",
+    "Learn *\"Un plin, vă rog\"* (fill it up) and *\"Se poate cu cardul?\"* (can I pay by card?) — the second saves you at every cabana till.",
+    "If DN7C is shut for weather, take the **Bâlea cable car** from the Cascadă chalet — it runs year-round and gets you to the lake anyway."
+  ],
+  "typeSpecific": {
+    "raw": {
+      "Driving legs (km + realistic time)": "Sibiu→Cârța 40 km/50 min (DN1); Cârța→Făgăraș 25 km/30 min; Făgăraș→Bâlea Cascadă 35 km/55 min; Bâlea Cascadă→Bâlea Lac 13 km/40–55 min (the hairpin ladder); Bâlea Lac→Piscul Negru 20 km/45 min; Piscul Negru→Vidraru 25 km/40 min; Vidraru→Poenari 4 km/10 min; Poenari→Curtea de Argeș 25 km/30 min; Curtea de Argeș→Novaci 155 km/3 h 05 (DN7, then DN67 via Horezu); Novaci→Rânca 18 km/35 min; Rânca→Pasul Urdele 20 km/45 min; Urdele→Obârșia Lotrului 34 km/1 h; Obârșia Lotrului→Sebeș 85 km/1 h 50 (Valea Sebeșului, narrow and pot-holed); Sebeș→Alba Iulia 15 km/20 min; Alba Iulia→Sibiu 70 km/1 h 10 (A10/A1).",
+      "Named passes and closure dates": "Transfăgărășan DN7C: high point at the Bâlea tunnel, 884 m long, portal at roughly 2,040–2,050 m; **reopened Friday 12 June 2026 at noon** for the season, and the **Bâlea Cascadă (Sibiu) ↔ Piscul Negru (Argeș) sector is open to traffic 07:00–21:00 only** — outside those hours barriers drop. Typical annual closure runs late October/1 November to mid-June; never plan on it before mid-June. Transalpina DN67C: **reopened 29 May 2026** with traffic restrictions; high point **Pasul Urdele, 2,145 m**, the highest road pass in Romania.",
+      "Car rental cross-border rules": "Take a compact with real torque, not the cheapest 1.0 petrol — you pull 8–12% gradients loaded. The Green Card (Carte Verde) is standard for EU travel, but almost every Romanian rental **restricts or forbids entry to Moldova, Ukraine and Serbia**; going there needs prior **written authorisation** plus an extended Green Card, arranged days ahead and charged (€30–€60). Bulgaria and Hungary are normally permitted with notice. An unauthorised crossing voids CDW entirely.",
+      "Vignette": "The **rovinietă** is Romania's electronic vignette, mandatory on all national (DN) roads including DN7C and DN67C. Buy at any OMV/Petrom/Rompetrol till, at roviniete.ro or via the eRovinieta app; plates are scanned, no sticker. There is no 7-day product: category A (cars up to 8+1 seats) runs **1 day €3.50 (about 18 RON), 10 days €6 (about 31 RON), 30 days €9.50 (about 50 RON), 60 days €15 (about 79 RON), 12 months €50 (about 263 RON)** — the 2026 tariff, set in euro and billed in lei at the CNAIR monthly rate, so a fortnight's driving costs the price of a coffee stop. A Euro-emissions-banded tariff has been drafted to replace it but was not yet in force at the start of September 2026. Most rentals include it — confirm in writing.",
+      "Viewpoints and laybys": "Poarta Raiului above Rânca; the Cârțișoara-side terrace on DN7C over the hairpin ladder; the Vidraru dam crest under the Prometheus statue; the Piscul Negru switchbacks; the Urdele saddle car park; the Bâlea Cascadă chalet terrace."
+    },
+    "surface": null,
+    "distanceKm": null,
+    "elevationM": null,
+    "verticalM": null,
+    "technicalRating": null,
+    "transitPass": null,
+    "hutBooking": null,
+    "liftNetwork": null,
+    "snowReliability": null,
+    "windConditions": null,
+    "gpxReady": null,
+    "bookingTimeline": null,
+    "audience": null
+  },
+  "packingNotes": [],
+  "whatCouldGoWrong": [],
+  "sources": {
+    "verified": null,
+    "confidenceNotes": "- Verified: DN7C 2026 reopening (12 June, noon) and the 07:00–21:00 Bâlea Cascadă–Piscul Negru restriction; DN67C reopening 29 May 2026; Pasul Urdele 2,145 m; Bâlea Lac 2,034 m; Bâlea tunnel 884 m; Poenari's 1,480 steps; rovinietă; rental bans on Moldova/Ukraine/Serbia. - `[VERIFY]` items in this file: 7 (see inline markers above) - Last reviewed: 2026-09-02"
+  },
+  "verifyFlags": [
+    "current hours",
+    "Vidraru dam crossing status during rehabilitation works",
+    "current hours and any bear-related closure",
+    "2026 guard-change schedule",
+    "current rate",
+    "2026 cable car tariff, hours and Hotel of Ice build"
+  ],
+  "verifyFlagCount": 6,
+  "volatilePricing": true,
+  "wordCount": 2209,
+  "dataVintage": 2026,
+  "provenance": {
+    "batch": "eastern-southeastern",
+    "sourceFile": "cartaeasterneuropetrips/trips/romania-transfagarasan-transalpina-road-trip.md",
+    "sourceFormat": "md+nested-yaml-frontmatter (one file per trip)",
+    "sourceId": "romania-transfagarasan-transalpina-road-trip",
+    "ingestedAt": "2026-09-02",
+    "synthesized": false
+  }
+}

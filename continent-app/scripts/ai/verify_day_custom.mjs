@@ -152,55 +152,63 @@ try {
   await page.getByText('Brussels custom test').first().click({ timeout: 30000 });
   await page.waitForTimeout(2500);
 
-  // The timeline, the bot-finds list and the add-places browser all live
-  // inside the "Today's plan" card, which opens collapsed.
-  await page.locator('.day-plan-collapse .day-collapse-head').first().click();
+  // The workspace opens on today's plan; the browser lives one tab over.
+  await page.locator('.dayws-tabs').waitFor({ timeout: 60000 });
   await page.waitForTimeout(800);
 
   // ---- 1. Ratings stripped, titles readable. ----
-  check('no rating chips anywhere in the day lists', (await page.locator('.day-assigned-name .score-chip').count()) === 0);
-  const clipped = await page.locator('.day-assigned-title').evaluateAll((els) => els
+  check('no rating chips anywhere in the day lists', (await page.locator('.dayr-name .score-chip').count()) === 0);
+  const clipped = await page.locator('.dayr-name').evaluateAll((els) => els
     .filter((el) => el.scrollWidth > el.clientWidth + 1).length);
-  check('no clipped titles on the timeline', clipped === 0);
+  check('no clipped titles in the route list', clipped === 0);
 
   // ---- 6. The applied bot plan's unmapped find wears its tag. ----
   check('unmapped bot find keeps its listing', (await page.getByText('Gaisberg Panorama').count()) >= 1);
   check('unmapped bot find wears the custom-location tag', (await page.locator('.ai-unmapped-tag').count()) >= 1);
 
   // ---- 2. Search fallback: a geocodable custom place. ----
-  await page.locator('.day-collapse-head', { hasText: 'Add more places' }).first().click();
-  const search = page.locator('.day-poi-search input').first();
+  await page.locator('.dayws-tab').nth(1).click();
+  await page.locator('.daya-mode').nth(1).click();
+  const search = page.locator('.daya-search input').first();
   await search.fill('Gaisberg');
   await page.waitForTimeout(400);
-  const addBtn = page.locator('.day-custom-add');
+  const addBtn = page.locator('.daya-custom-add');
   check('custom-add action appears for an uncatalogued name', await addBtn.count() === 1);
   await addBtn.click();
   await page.waitForTimeout(1200);
-  const gaisRow = page.locator('.day-timeline-row', { hasText: 'Gaisberg' });
-  check('Gaisberg landed on the timeline', await gaisRow.count() === 1);
+  await page.locator('.dayws-tab').nth(0).click();
+  const gaisRow = page.locator('.dayr-row', { hasText: 'Gaisberg' });
+  check('Gaisberg landed on the route list', await gaisRow.count() === 1);
   check('it wears the custom badge', (await gaisRow.locator('.day-badge-custom').count()) === 1);
   check('a geocoded custom place is not marked approximate', !(await gaisRow.locator('.day-badge-custom').first().textContent()).includes('approximate'));
-  check('search cleared after adding', (await search.inputValue()) === '');
 
   // ---- 3. An unmappable name still lands, honestly badged. ----
+  await page.locator('.dayws-tab').nth(1).click();
+  check('search cleared after adding', (await search.inputValue()) === '');
   await search.fill('Uncle Bobs secret terrace');
   await page.waitForTimeout(400);
-  await page.locator('.day-custom-add').click();
+  await page.locator('.daya-custom-add').click();
   await page.waitForTimeout(1200);
-  const bobRow = page.locator('.day-timeline-row', { hasText: 'Uncle Bobs secret terrace' });
+  await page.locator('.dayws-tab').nth(0).click();
+  const bobRow = page.locator('.dayr-row', { hasText: 'Uncle Bobs secret terrace' });
   check('unmappable place still added', await bobRow.count() === 1);
   check('and marked location-approximate', (await bobRow.locator('.day-badge-custom').first().textContent()).includes('approximate'));
   await page.screenshot({ path: `${SHOTS}/custom-1-added.png`, fullPage: true });
 
   // ---- 4. Import ideas: link in, activities out, one tap onto the day. ----
-  await page.locator('.day-collapse-head', { hasText: 'Import ideas' }).first().click();
+  await page.locator('.dayws-tab').nth(2).click();
   await page.locator('.extras-drop-url input').fill('https://a-blog.example/one-day-in-brussels');
   await page.locator('.extras-drop-url .extras-add-btn').click();
   await page.locator('.extras-drop-status.ok').waitFor({ timeout: 10000 });
   check('ideas staged from the link', (await page.locator('.day-idea-row').count()) === 2);
   await page.locator('.day-idea-row', { hasText: 'Comic strip mural walk' }).locator('.day-idea-add').click();
   await page.waitForTimeout(1200);
-  check('idea became a stop on the day', (await page.locator('.day-timeline-row', { hasText: 'Comic strip mural walk' }).count()) === 1);
+  check('idea became a stop on the day', await (async () => {
+    await page.locator('.dayws-tab').nth(0).click();
+    const n = await page.locator('.dayr-row', { hasText: 'Comic strip mural walk' }).count();
+    await page.locator('.dayws-tab').nth(2).click();
+    return n === 1;
+  })());
   check('added idea left the drawer', (await page.locator('.day-idea-row').count()) === 1);
   await page.locator('.day-idea-row .trip-stop-remove').click();
   await page.waitForTimeout(300);
@@ -212,10 +220,10 @@ try {
   await page.waitForTimeout(2500);
   await page.getByText('Brussels custom test').first().click({ timeout: 30000 });
   await page.waitForTimeout(2500);
-  await page.locator('.day-plan-collapse .day-collapse-head').first().click();
+  await page.locator('.dayws-tabs').waitFor({ timeout: 60000 });
   await page.waitForTimeout(800);
-  check('custom stops survive a reload', (await page.locator('.day-timeline-row', { hasText: 'Gaisberg' }).count()) === 1
-    && (await page.locator('.day-timeline-row', { hasText: 'Comic strip mural walk' }).count()) === 1);
+  check('custom stops survive a reload', (await page.locator('.dayr-row', { hasText: 'Gaisberg' }).count()) === 1
+    && (await page.locator('.dayr-row', { hasText: 'Comic strip mural walk' }).count()) === 1);
   check('approximate badge survives a reload', (await page.locator('.day-badge-custom', { hasText: 'approximate' }).count()) >= 1);
 
   await browser.close();

@@ -18,10 +18,12 @@ import { loadRestorableDraft, persistTripDraft, clearTripDraft } from '../planne
 
 const DEFAULT_STOP_NIGHTS = 2;
 
-// The two ways between stops Carta cannot price from its own data: an
-// intra-trip flight and an island ferry. They only ever exist because the
-// traveller told us they booked one.
-const OWN_LEG_MODES = new Set(['fly', 'ferry']);
+// A hop the traveller paid for themselves. Flights and island ferries are the
+// two Carta cannot price at all, but the set is all five modes on purpose: the
+// wizard now asks what every leg cost, and a fare somebody actually paid beats
+// an estimate of the same journey. An own entry replaces the estimate for that
+// mode and leaves the other modes priced, so switching back is still one tap.
+const OWN_LEG_MODES = new Set(['fly', 'ferry', 'train', 'bus', 'car']);
 
 /** Airport-transfer choice as { in, out }. Accepts the legacy single-string
  *  shape from older drafts/saved trips (one mode for both directions). */
@@ -39,7 +41,7 @@ function normalizeTransferMode(v) {
  *  (combineTripLegs: fly into the first stop, out of the last) plus an
  *  estimated overland leg between consecutive stops (interCityGroundEstimate).
  */
-export function useTripPlanner(data, countryInsights = null) {
+export function useTripPlanner(data, countryInsights = null, preferredStayTier = 'home') {
   const destinations = data?.destinations || {};
   const carModel = data?.meta?.car_model || null;
 
@@ -79,8 +81,15 @@ export function useTripPlanner(data, countryInsights = null) {
   const [pace, setPace] = useState(draft?.pace || 'balanced'); // 'relaxed' | 'balanced' | 'packed'
   // How expensive the traveller wants to sleep: 'dorm' | 'private' | 'home' |
   // 'hotel3' | 'hotel4' | 'hotel5'. Home (entire place) is the default; other
-  // tiers price from the measured city tiers where they exist.
-  const [stayTier, setStayTier] = useState(draft?.stayTier || 'home');
+  // tiers price from the measured city tiers where they exist. The lifestyle
+  // panel owns this choice app-wide (`choices.stay_tier`), so it arrives as
+  // preferredStayTier and every later change to it re-prices the open trip:
+  // the planner has no picker of its own, and a plan that priced dorm beds
+  // while the map priced hotel rooms would be two different answers.
+  const [stayTier, setStayTier] = useState(draft?.stayTier || preferredStayTier || 'home');
+  useEffect(() => {
+    if (preferredStayTier) setStayTier(preferredStayTier);
+  }, [preferredStayTier]);
   // Ryanair baggage the traveller expects to book: 'cabin' (free small bag),
   // 'priority' (10 kg cabin bag) or 'checked' (20 kg hold bag). Priced per
   // person per flight leg on top of the seat fare.
@@ -344,6 +353,9 @@ export function useTripPlanner(data, countryInsights = null) {
       return {
         own: true,
         airline: ownFlight.airline || '',
+        // How they actually travel there. Older drafts and saved trips carry
+        // no mode because the only answer used to be a flight.
+        mode: ownFlight.mode || 'fly',
         cost_total: round2(ownFlight.costTotal || 0),
         out_date: ownFlight.outDate || null,
         ret_date: ownFlight.retDate || null,

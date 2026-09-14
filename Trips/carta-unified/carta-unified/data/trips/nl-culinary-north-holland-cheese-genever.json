@@ -1,0 +1,298 @@
+{
+  "id": "nl-culinary-north-holland-cheese-genever",
+  "sourceId": "nl-culinary-north-holland-cheese-genever",
+  "slug": "nl-culinary-north-holland-cheese-genever",
+  "title": "Cheese, Genever and the North Holland Table",
+  "country": "Netherlands",
+  "countryCode": "NL",
+  "countries": [
+    {
+      "name": "Netherlands",
+      "code": "NL"
+    }
+  ],
+  "isMultiCountry": false,
+  "region": "Western & Central Europe",
+  "regionKey": "western-central",
+  "subRegion": "North Holland and the Schiedam distilleries",
+  "tripType": "Culinary & Wine Tours",
+  "tripTypeId": 7,
+  "tripTypeSlug": "culinary",
+  "durationDays": 7,
+  "bestPeriod": {
+    "months": [
+      5,
+      6,
+      9
+    ],
+    "monthNames": [
+      "May",
+      "June",
+      "September"
+    ],
+    "window": null,
+    "note": "The Alkmaar and Edam demonstration markets run April to September, and Hollandse Nieuwe herring reaches the stalls from late May or early June.",
+    "avoid": null,
+    "raw": null
+  },
+  "budgetTier": "€€",
+  "budgetTierRange": [
+    2,
+    2
+  ],
+  "budgetTierRaw": "€€",
+  "budget": {
+    "currency": "EUR",
+    "totalEur": {
+      "low": 1200,
+      "high": 1650
+    },
+    "totalNote": null,
+    "breakdown": {
+      "accommodation": {
+        "lowEur": 560,
+        "highEur": 740,
+        "note": null
+      },
+      "food": {
+        "lowEur": 300,
+        "highEur": 400,
+        "note": null
+      },
+      "transport": {
+        "lowEur": 140,
+        "highEur": 210,
+        "note": null
+      },
+      "activities": {
+        "lowEur": 200,
+        "highEur": 300,
+        "note": null
+      }
+    },
+    "perDayEur": {
+      "low": 171,
+      "high": 236
+    }
+  },
+  "profile": {
+    "difficulty": 1,
+    "difficultyLabel": "Easy",
+    "difficultyNote": null,
+    "fitnessLevel": "Easy",
+    "crowdLevel": "Moderate",
+    "familyFriendly": false,
+    "carRequired": false
+  },
+  "basecamps": [
+    "Amsterdam and Alkmaar"
+  ],
+  "gatewayAirport": "Amsterdam Schiphol (AMS)",
+  "gatewayAirportCode": "AMS",
+  "languages": [
+    "Dutch"
+  ],
+  "currency": "EUR",
+  "emergencyNumber": "112",
+  "coordinates": {
+    "lat": 52.374,
+    "lon": 4.8897,
+    "precision": "city",
+    "matchedPlace": "Amsterdam",
+    "source": "geonames (geonamescache, cities > 15k)"
+  },
+  "tags": [
+    "cheese-market",
+    "jenever",
+    "herring-season",
+    "north-sea-seafood",
+    "amsterdam-brown-cafe"
+  ],
+  "summary": "A week from Amsterdam's brown cafés to Alkmaar's cheese-carrier guild and Schiedam's tall malt-mill distilleries, timed to the new herring season.",
+  "summaryGenerated": false,
+  "hook": "This week runs on three engines: cheese, grain spirit and the North Sea. Alkmaar's cheese carriers still work the Waagplein in white uniforms and coloured guild hats; Schiedam's windmills were built absurdly tall for one reason, to catch wind over the malt-house roofs for jenever distilling; and Amsterdam ties it together with a herring cart on every other corner once the new season starts.",
+  "snapshot": {
+    "Country": "Netherlands",
+    "Base(s)": "Amsterdam (5 nights) · Alkmaar (2 nights)",
+    "Trip Type": "Culinary & Wine Tours",
+    "Duration": "7 days / 7 nights",
+    "Best Period": "May, June, September",
+    "Budget Tier": "€€",
+    "Total Distance / Terrain": "Approx. 120 km of train travel across the week; flat city and polder walking throughout",
+    "Getting There": "Fly to Amsterdam Schiphol (AMS), direct train to Amsterdam Centraal, approx. 20 minutes",
+    "Who It Suits": "Cheese and spirits obsessives, herring-season completists, anyone happy eating standing up"
+  },
+  "itinerary": [
+    {
+      "day": 1,
+      "title": "Amsterdam, brown cafés and herring",
+      "morning": "Land at Schiphol and train to Amsterdam Centraal, about 20 minutes. Drop bags near the Jordaan.",
+      "afternoon": "Walk the Jordaan's canals and find a bruine kroeg, a \"brown café\" named for decades of tobacco-stained walls, for an orientation Genever borrel — poured to the brim in a tulip glass, traditionally sipped without lifting it first.",
+      "evening": "Broodje haring at a herring cart if the new season (Hollandse Nieuwe) has started; if not, order the cured, onion-topped version instead, and bitterballen with mustard as a bar snack.",
+      "dayStats": "Cellars visited: 0. Km travelled: 4 km on foot. Approx. tasting spend: €0.",
+      "sleep": null
+    },
+    {
+      "day": 2,
+      "title": "Albert Cuypmarkt and craft jenever",
+      "morning": "The Albert Cuypmarkt in De Pijp runs Monday to Saturday, roughly 09:00–17:00, the country's largest daily street market — cheese stalls, stroopwafel griddles, and produce from the polders sit side by side.",
+      "afternoon": "A. van Wees \"De Ooievaar,\" a small working jenever distillery in the Jordaan, still distils on-site and runs walk-in tastings through its tiny proeflokaal (tasting room), though a guided tour is best booked a day ahead by email.",
+      "evening": "Kaassoufflé, a deep-fried cheese-filled pastry, and a jenever tasting flight comparing jonge (young, neutral) against oude (old, malty) styles.",
+      "dayStats": "Cellars visited: 1. Km travelled: 6 km. Approx. tasting spend: €20–30.",
+      "sleep": null
+    },
+    {
+      "day": 3,
+      "title": "North to Alkmaar",
+      "morning": "Train from Amsterdam Centraal to Alkmaar, about 35 minutes. Check into Alkmaar and walk the Waagplein.",
+      "afternoon": "If it is a Friday between April and early September, the Alkmaar cheese market runs 10:00–13:00 — worth stressing plainly: this is a seasonal demonstration for visitors, staged by the historic cheese-carriers' guild on the Waagplein, not a working wholesale trade (that moved to closed auction decades ago). The ceremony is still genuine: guild members in white with coloured straw hats carry wheels on wooden barrows, weigh them at the 14th-century Waaggebouw, and settle the price with a ritual hand-clap.",
+      "evening": "Dinner in Alkmaar; smoked eel if a stall or restaurant has it, with a young Dutch Gouda to compare against the market wheels.",
+      "dayStats": "Cellars visited: 0. Km travelled: 4 km. Approx. tasting spend: €15–20.",
+      "sleep": null
+    },
+    {
+      "day": 4,
+      "title": "Edam and the smaller market",
+      "morning": "Train and bus (or a direct regional bus) to Edam, about 45 minutes from Alkmaar. Edam runs its own, smaller cheese demonstration market on Wednesdays in July and August, roughly 10:30–12:30, on Jan van Nieuwenhuizenplein — again a folkloric event rather than a trading market, on a shorter season than Alkmaar's.",
+      "afternoon": "Walk Edam's canals and the Grote Kerk; a working cheese farm near Volendam, such as the well-known Catharina Hoeve, gives a hands-on demonstration of traditional Edam-making outside market hours.",
+      "evening": "Back to Alkmaar. A plate of Dutch cheeses by age — jong, belegen, oud — tasted side by side.",
+      "dayStats": "Cellars visited: 1. Km travelled: 8 km plus transfers. Approx. tasting spend: €15–20.",
+      "sleep": null
+    },
+    {
+      "day": 5,
+      "title": "Volendam, Marken and North Sea fish",
+      "morning": "A short bus or boat hop from Edam to Volendam, the old fishing harbour on the IJsselmeer, still selling smoked eel (paling) straight off the boats.",
+      "afternoon": "Cross to Marken, a former island village of green-black wooden houses, on foot along the causeway or by the seasonal ferry from Volendam. The contrast between the two — Volendam loud and commercial, Marken quiet — is the point.",
+      "evening": "Return to Amsterdam by train via Amsterdam Centraal. Settle into the second Amsterdam base with a North Sea seafood dinner — mussels or plaice, depending on the season.",
+      "dayStats": "Cellars visited: 0. Km travelled: 12 km plus transfers. Approx. tasting spend: €20–25.",
+      "sleep": null
+    },
+    {
+      "day": 6,
+      "title": "Schiedam, city of tall mills",
+      "morning": "Train from Amsterdam to Schiedam Centrum, about an hour. Schiedam's skyline is genuinely unusual: its windmills, including De Noord and De Vrijheid, are among the tallest traditional mills in the world, built that height specifically to catch clean wind over the malt-house roofs that once ringed the town.",
+      "afternoon": "The Nationaal Jenevermuseum, housed in a former distillery on the Lange Haven, covers the malt-wine spirit's full history. Nolet's Distillery, family-run since 1691 and still producing genever alongside its better-known vodka, offers the House of Nolet visitor experience by advance booking only — reserve online at least a week ahead, more in summer.",
+      "evening": "Dinner back in Amsterdam; a last jenever, this time an oude style, with Kachkéis-style farm cheese and rye bread.",
+      "dayStats": "Cellars visited: 1–2 (Nolet reservation-dependent). Km travelled: 6 km plus transfers. Approx. tasting spend: €20–30.",
+      "sleep": null
+    },
+    {
+      "day": 7,
+      "title": "Amsterdam market close and departure",
+      "morning": "A last pass through the Albert Cuypmarkt or the Noordermarkt farmers' market (Saturdays, roughly 09:00–16:00) for cheese and preserves to take home.",
+      "afternoon": "A canal walk through the Nine Streets, then the train to Schiphol.",
+      "evening": "Departure from Amsterdam Schiphol (AMS).",
+      "dayStats": "Cellars visited: 0. Km travelled: 5 km plus airport transfer. Approx. tasting spend: €10–15.",
+      "sleep": null
+    }
+  ],
+  "accommodationStrategy": [
+    {
+      "rank": 1,
+      "name": "The Hoxton, Amsterdam",
+      "style": "Canal-house hotel",
+      "location": "Herengracht",
+      "description": "A well-known, centrally placed hotel in a row of converted canal houses, close to the Nine Streets, De Pijp trams and the train to both Alkmaar and Schiedam — a practical hub for a week built on day trips.",
+      "booking": "8 weeks ahead for May and September.",
+      "priceNote": "€190–€260 per night"
+    },
+    {
+      "rank": 2,
+      "name": "NH Alkmaar",
+      "style": "City-centre hotel",
+      "location": "Alkmaar",
+      "description": "A short walk from the Waagplein and the station, useful for being inside the old town before the market crowds arrive on a Friday morning and for the short hop to Edam and Volendam.",
+      "booking": "6 weeks ahead, earlier for a market Friday.",
+      "priceNote": "€120–€170 per night"
+    }
+  ],
+  "logistics": {
+    "connectivity": null,
+    "emergency": "112 pan-European; the Netherlands uses 112 for all services.",
+    "weather": null,
+    "bookingWindows": "The House of Nolet tour in Schiedam is by advance reservation only, made online; walk-ins are not accommodated.",
+    "money": "Cards, including contactless, are near-universal in the Netherlands; some very small stalls are card-only, the reverse of much of Europe.",
+    "transportRules": null,
+    "permits": null,
+    "health": null,
+    "gettingThere": null,
+    "other": [
+      {
+        "label": "The Alkmaar and Edam markets are demonstrations, not trade",
+        "text": "Alkmaar's runs Fridays only, April to early September, 10:00–13:00; Edam's runs Wednesdays only, July and August, 10:30–12:30. Both are seasonal and weather can shorten a session; check the tourist board's calendar before travelling for one specifically."
+      },
+      {
+        "label": "Trains",
+        "text": "NS regional trains connect Amsterdam, Alkmaar and Schiedam directly and frequently; buy an OV-chipkaart or use contactless bank card tap-in/tap-out on all trains, trams and buses."
+      },
+      {
+        "label": "Opening-hour traps",
+        "text": "Many Amsterdam shops open late on Sunday and Monday mornings; cheese farms outside the main towns often close for a midday break."
+      },
+      {
+        "label": "Drink-drive alternatives",
+        "text": "This trip runs entirely on foot, tram and train; there is no driving leg, so the only rule is timing trains around tastings rather than rushing between them."
+      }
+    ]
+  },
+  "proTips": [
+    "Arrive in Alkmaar the night before a Friday market and walk the empty Waagplein at 08:00 — the guild sets up in the hour before the ceremony starts.",
+    "Ask a herring cart to serve it \"Hollandse Nieuwe\" only once the season is confirmed open, usually late May or early June; earlier in the year it is last year's catch, still good but a different thing.",
+    "Book A. van Wees's guided distillery tour a day ahead by email; the walk-in proeflokaal is available without booking but the tour explains the copper stills.",
+    "Reserve Nolet's House of Nolet the moment dates are fixed — slots in June and September fill weeks out.",
+    "Compare Edam and Alkmaar cheese: Edam is traditionally the smaller, ball-shaped export cheese with a red wax coat; Alkmaar's market historically traded the flatter, larger Gouda-style wheels, which is why Alkmaar's ceremony is the bigger of the two.",
+    "Catch the Noordermarkt farmers' market on Saturday morning for organic and small-producer cheese away from the tourist stalls."
+  ],
+  "typeSpecific": {
+    "raw": {
+      "Total Distance / Terrain": "Approx. 120 km of train travel across the week; flat city and polder walking throughout",
+      "Who It Suits": "Cheese and spirits obsessives, herring-season completists, anyone happy eating standing up"
+    },
+    "surface": "Approx. 120 km of train travel across the week; flat city and polder walking throughout",
+    "distanceKm": 120,
+    "elevationM": null,
+    "verticalM": null,
+    "technicalRating": null,
+    "transitPass": null,
+    "hutBooking": null,
+    "liftNetwork": null,
+    "snowReliability": null,
+    "windConditions": null,
+    "gpxReady": null,
+    "bookingTimeline": null,
+    "audience": "Cheese and spirits obsessives, herring-season completists, anyone happy eating standing up"
+  },
+  "packingNotes": [
+    "Comfortable, flat shoes; Amsterdam and market-town cobbles punish anything else.",
+    "A rain shell that packs small — North Sea weather turns quickly even in June.",
+    "A small cooler bag or vacuum-seal option for cheese or smoked eel to take home.",
+    "Cash in small notes for herring carts and market stalls, even though cards work almost everywhere else.",
+    "A tote or basket bag; Dutch markets expect you to bring your own.",
+    "Sunglasses; the flat polder light off the IJsselmeer is sharper than it looks on a grey forecast."
+  ],
+  "whatCouldGoWrong": [
+    "**You arrive expecting Alkmaar's market to be a real trading floor.** It closed as a wholesale market long ago; go for the guild ceremony and the atmosphere, not for wholesale prices.",
+    "**Nolet's Distillery is fully booked.** The Nationaal Jenevermuseum in the same town gives comparable historical depth without a reservation.",
+    "**The herring season hasn't started yet.** Cured herring and smoked eel are available year-round at the same stalls.",
+    "**Rain washes out Marken or Volendam.** Both have enough covered cafés and the Marken church and Volendam's fishing museum to fill an hour.",
+    "**A market Friday or Wednesday falls outside the April–September window.** Alkmaar and Edam's cheese farms, including Catharina Hoeve near Volendam, run demonstrations independent of the town market calendar."
+  ],
+  "sources": {
+    "verified": null,
+    "confidenceNotes": null
+  },
+  "verifyFlags": [],
+  "verifyFlagCount": 0,
+  "volatilePricing": false,
+  "wordCount": 1732,
+  "dataVintage": 2026,
+  "provenance": {
+    "batch": "western-central",
+    "sourceFile": "cartatripsv1/trips/nl-culinary-north-holland-cheese-genever.md",
+    "sourceFormat": "md+yaml-frontmatter (one file per trip)",
+    "sourceId": "nl-culinary-north-holland-cheese-genever",
+    "ingestedAt": "2026-09-02",
+    "synthesized": false
+  }
+}

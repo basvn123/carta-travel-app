@@ -1,0 +1,197 @@
+{
+  "iso2": "ME",
+  "country": "Montenegro",
+  "checked_at": "2026-08-17",
+  "beaches": {
+    "wrong": [
+      {
+        "name": "Plaza Stefan Becici",
+        "class": "duplicate_of:Becici Beach",
+        "why": "Tier 2 rank 2. Sits at 42.28106,18.87706 - the identical latitude to the row 'Becici Beach' at 42.28106,18.86917, 650 m away. The name also conflates two different places: Sveti Stefan and Becici are separate beaches 2.5 km apart. With only four beach features in the whole country, one of them is a duplicate.",
+        "source_url": "https://en.wikipedia.org/wiki/Be%C4%8Di%C4%87i"
+      }
+    ],
+    "missing": [
+      {
+        "name": "Velika Plaza (Ulcinj)",
+        "qid": "Q5659361",
+        "lat": 41.8925,
+        "lon": 19.2958,
+        "why": "The 12 km sand beach at Ulcinj, the longest on the eastern Adriatic and the largest single beach in Montenegro. Absent from the file at every tier; Ulcinj contributes no feature of any kind.",
+        "source_url": "https://en.wikipedia.org/wiki/Velika_Pla%C5%BEa",
+        "verified": true
+      },
+      {
+        "name": "Ada Bojana",
+        "qid": "Q345872",
+        "lat": 41.8625,
+        "lon": 19.36111111,
+        "why": "The river-island sand beach at the Albanian border, Montenegro's best known naturist and kitesurfing beach. Absent at every tier.",
+        "source_url": "https://en.wikipedia.org/wiki/Ada_Bojana",
+        "verified": true
+      },
+      {
+        "name": "Sveti Stefan",
+        "qid": "Q844192",
+        "lat": 42.25583333,
+        "lon": 18.89111111,
+        "why": "The fortified islet joined to the mainland by a sand tombolo with a beach on each side. It is the single image of Montenegro used on almost every cover and country card. Absent at every tier; the file contains only a garbled 'Plaza Stefan Becici' 3 km away.",
+        "source_url": "https://en.wikipedia.org/wiki/Sveti_Stefan",
+        "verified": true
+      },
+      {
+        "name": "Mogren",
+        "qid": "Q92158398",
+        "lat": 42.27714,
+        "lon": 18.83274,
+        "why": "Wikidata instance-of beach. The twin coves reached by the cliff path from Budva old town, Budva's signature beach. Absent at every tier, although Jaz Beach 3 km west is the file's only tier 1 entry.",
+        "source_url": "https://www.wikidata.org/wiki/Q92158398",
+        "verified": true
+      },
+      {
+        "name": "Kraljicina plaza (Queen's Beach), Milocer",
+        "qid": null,
+        "lat": null,
+        "lon": null,
+        "why": "The former royal beach in Milocer park next to Sveti Stefan, on every Montenegrin best-of list. No Wikidata item could be confirmed under that label, so no QID or coordinate is asserted.",
+        "source_url": "https://en.wikipedia.org/wiki/Sveti_Stefan",
+        "verified": false
+      },
+      {
+        "name": "Plavi Horizonti (Lustica)",
+        "qid": null,
+        "lat": null,
+        "lon": null,
+        "why": "The pine-backed sand bay on the Lustica peninsula, the standard day trip beach from Tivat and Kotor. No Wikidata item confirmed. The whole Boka Kotorska contributes exactly one beach row, Plaza Savina at Herceg Novi.",
+        "source_url": "https://en.wikipedia.org/wiki/Lu%C5%A1tica",
+        "verified": false
+      },
+      {
+        "name": "Petrovac and Lucice",
+        "qid": null,
+        "lat": null,
+        "lon": null,
+        "why": "The Petrovac town beach and the small cove of Lucice next to it, the busiest stretch of the Budva riviera after Budva itself. No Wikidata items confirmed for the beaches.",
+        "source_url": "https://en.wikipedia.org/wiki/Petrovac,_Montenegro",
+        "verified": false
+      }
+    ],
+    "order": [
+      "There is no ranking to assess: the country has four beach features in total and one of them is a duplicate. Jaz Beach at rank 1 is a genuine and well known beach and is not the problem; the problem is that ranks 2, 3 and 4 are the only competition it has.",
+      "Becici Beach sits at rank 4 with score 0.525, below its own duplicate at rank 2 with 0.885. Whatever scored the duplicate higher than the real row is inverted.",
+      "water is null on all four rows, so the EEA bathing-water join produced nothing for Montenegro at all, which is likely why the country's beach harvest collapsed."
+    ]
+  },
+  "mountains": {
+    "wrong": [
+      {
+        "name": "Debeli Brijeg",
+        "class": "other",
+        "why": "Wikipedia opens 'Debeli Brijeg is the main Montenegrin border crossing with Croatia', 6 km from Igalo on the Adriatic Highway, facing the Croatian post at Karasovici. It is a customs post, ranked as Montenegro's sixth mountain. Wikidata Q25299061 at 42.48739,18.43758 matches the row's coordinate.",
+        "source_url": "https://en.wikipedia.org/wiki/Debeli_Brijeg"
+      },
+      {
+        "name": "Stirovnik",
+        "class": "duplicate_of:Lovcen",
+        "why": "Stirovnik is the highest peak of Lovcen at 1749 m, 1.2 km from the row 'Lovcen' which already holds rank 2 with the rounded massif centroid 42.40000,18.83333. One mountain is occupying two of the country's twelve tier 1 slots while Orjen, Komovi, Bjelasica, Sinjajevina and the entire Prokletije range are absent from the file.",
+        "source_url": "https://en.wikipedia.org/wiki/Lov%C4%87en"
+      },
+      {
+        "name": "Mala Rumija",
+        "class": "duplicate_of:Rumija",
+        "why": "A subsidiary bump 700 m from the row 'Rumija' at rank 4, on the same ridge above Bar. Same parent-and-child double count as Lovcen/Stirovnik; it holds rank 8.",
+        "source_url": "https://en.wikipedia.org/wiki/Rumija"
+      },
+      {
+        "name": "Dajbabska gora",
+        "class": "not_notable",
+        "why": "A low hill on the southern edge of Podgorica by the Dajbabe monastery, with no wikipedia article on the row. Ranked ninth in a country that contains Durmitor, Prokletije, Komovi and Orjen.",
+        "source_url": "https://en.wikipedia.org/wiki/Podgorica"
+      },
+      {
+        "name": "Runjevaca",
+        "class": "not_notable",
+        "why": "Tier 1 rank 10, no wikipedia, no image. One of a large block of minor Durmitor and Piva ridge bumps that the alphabetical tie-break pushed into tier 1.",
+        "source_url": "https://en.wikipedia.org/wiki/Durmitor"
+      },
+      {
+        "name": "Minin bogaz",
+        "class": "not_notable",
+        "why": "Tier 1 rank 11, no wikipedia, no image, 7 km from Zabljak. A minor Durmitor col or gully name, not a summit a traveller would seek.",
+        "source_url": "https://en.wikipedia.org/wiki/Durmitor"
+      },
+      {
+        "name": "Blizanac",
+        "class": "not_notable",
+        "why": "Tier 1 rank 12, no wikipedia, no image. First name alphabetically in the 13-row score tie at 0.854 that spans ranks 12 to 24 - which is the only reason it is tier 1 and Savin kuk, the Durmitor peak with the cable car above Black Lake, is tier 2 at rank 23.",
+        "source_url": "https://en.wikipedia.org/wiki/Durmitor"
+      }
+    ],
+    "missing": [
+      {
+        "name": "Zla Kolata",
+        "qid": "Q2720697",
+        "lat": 42.484918,
+        "lon": 19.89605,
+        "why": "2534 m, the highest point of Montenegro, in the Prokletije above Gusinje. Absent at every tier - the Prokletije range contributes not one feature to the file.",
+        "source_url": "https://en.wikipedia.org/wiki/Zla_Kolata",
+        "verified": true
+      },
+      {
+        "name": "Orjen",
+        "qid": "Q1757305",
+        "lat": 42.56888889,
+        "lon": 18.54888889,
+        "why": "The 1894 m karst massif directly above the Bay of Kotor and Herceg Novi, the highest coastal mountain of the Dinarides. Absent at every tier, although the file lists the Herceg Novi border crossing as a mountain.",
+        "source_url": "https://en.wikipedia.org/wiki/Orjen",
+        "verified": true
+      },
+      {
+        "name": "Komovi",
+        "qid": "Q1226167",
+        "lat": 42.681666666667,
+        "lon": 19.645555555556,
+        "why": "The twin horns above Andrijevica, Kom Vasojevicki and Kom Kucki, one of Montenegro's three signature ranges alongside Durmitor and Prokletije. Absent at every tier.",
+        "source_url": "https://en.wikipedia.org/wiki/Komovi",
+        "verified": true
+      },
+      {
+        "name": "Bjelasica",
+        "qid": "Q2721690",
+        "lat": 42.8666,
+        "lon": 19.6981,
+        "why": "The grassy massif of Biogradska Gora National Park with the Kolasin ski areas - one of Montenegro's five national parks, entirely absent from the file.",
+        "source_url": "https://en.wikipedia.org/wiki/Bjelasica",
+        "verified": true
+      },
+      {
+        "name": "Sinjajevina",
+        "qid": "Q3047008",
+        "lat": 42.95833333,
+        "lon": 19.33333333,
+        "why": "The second largest mountain massif in Montenegro and the largest high pasture in the Balkans, between Durmitor and Kolasin. Absent at every tier.",
+        "source_url": "https://en.wikipedia.org/wiki/Sinjajevina",
+        "verified": true
+      },
+      {
+        "name": "Prutas",
+        "qid": null,
+        "lat": null,
+        "lon": null,
+        "why": "The 2393 m striped-rock peak in Durmitor that is the most photographed summit of the range. No Wikidata item could be confirmed, so no QID or coordinate is asserted.",
+        "source_url": "https://en.wikipedia.org/wiki/Durmitor",
+        "verified": false
+      }
+    ],
+    "order": [
+      "Bobotov Kuk at rank 1 and Lovcen at rank 2 are both correct and correctly placed. From rank 6 down the order is noise.",
+      "Ranks 12 to 24 are one identical score of 0.854 ordered alphabetically after diacritic folding (Blizanac, Borjanica, Crvena Greda, Cvorov bogaz, Javorovaca, Kamena glava, Kraguljac, Kuk, Mali Stuoc, Pivska planina, Previja, Savin kuk, Semunica). The tier 1 cut at 12 falls on the letter B, so Blizanac is a top-twelve Montenegrin mountain and Savin kuk and Crvena Greda are not.",
+      "Ranks 25 to 55 are a second flat block at 0.806 with 31 rows, ranks 61-77 a third, 78-87 a fourth, 89-101 a fifth. Over 90 of the 101 mountain rows are inside a tie block.",
+      "Savin kuk (tier 2 rank 23) and Crvena Greda (tier 2 rank 14) are both plainly too low: they are named Durmitor peaks with cable car and trail infrastructure, below four unnamed ridge bumps.",
+      "Two junk rows sit mid tier 2 and should never reach any tier: 'Bezimeni vrh' at rank 26, which means 'unnamed peak' and is a placeholder, and 'Dubrovnik' at rank 29, a Croatian city name attached to a point at 43.16319,18.96677 in the Piva highlands."
+    ]
+  },
+  "counts_verdict": "The beach count is a failure, not a judgement call. Four beach features in total and one tier 1 entry, for a country whose entire tourism identity is 293 km of Adriatic coast and whose beach register lists over 100 beaches, is a broken harvest rather than a strict shortlist. Compare Croatia's 142 and Slovenia's 18 for 46 km of coast. The mountain count, 101 features and 12 tier 1, is a reasonable size, but eight of the twelve tier 1 entries are on Durmitor or Lovcen, and Prokletije, Komovi, Bjelasica, Sinjajevina and Orjen are absent from the file entirely, so the 101 is concentrated in two massifs.",
+  "top_pick_verdict": "Mountain yes, beach no. top_mountain Bobotov Kuk (2523 m, the Durmitor icon) is the right card even though Zla Kolata is 11 m higher, because Bobotov Kuk is the recognised image of the country. top_beach 'Jaz Beach' is a real and well known Budva beach but it is a wide plain arc of shingle; the country card should be Sveti Stefan (Q844192), which is the picture of Montenegro, or Velika Plaza (Q5659361) if the rule is best pure beach.",
+  "notes": "water is null on every Montenegrin beach row, so the EEA bathing-water join returned nothing for this country - Montenegro is not an EU member and is not in the EEA WISE bathing register, which is very likely the direct cause of the four-feature beach harvest. Any fix has to add a non-EEA fallback source for the Western Balkans, or the same collapse will hit AL, BA, RS, MK and XK. elevation_m is null on all 101 mountains, so a customs post and a Podgorica suburb hill rank above the highest point in the country. designations leak: 'Debeli Brijeg' is a border crossing but the row carries no flag while a dozen unnamed Piva ridges carry unesco from the Durmitor World Heritage polygon."
+}

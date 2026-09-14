@@ -6,6 +6,21 @@ import { hasLngLat, declutterPins } from './coords.js';
 // Same clean, key-less Carto Voyager basemap the main map uses.
 const MAP_STYLE = 'https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json';
 
+// Country outlines for the `countryFills` layer, fetched once per session and
+// shared by every map that asks for them. The basemap's vector tiles carry
+// boundary LINES but no admin polygons, so a country cannot be painted from
+// the tiles: these shapes ship with the app (see
+// pipeline/oneoff/build_country_shapes.py).
+let countryShapesPromise = null;
+const loadCountryShapes = () => {
+  if (!countryShapesPromise) {
+    countryShapesPromise = fetch('/country_shapes.json')
+      .then((r) => (r.ok ? r.json() : Promise.reject(new Error(String(r.status)))))
+      .catch(() => ({ type: 'FeatureCollection', features: [] }));
+  }
+  return countryShapesPromise;
+};
+
 // How close two numbered stop pins may come, in screen pixels, before the
 // later one is nudged clear. A pin is 26px wide, so this is "touching".
 const MIN_PIN_SEP = 30;
@@ -30,6 +45,13 @@ const POI_PLUS_ICON = S('<path d="M12 5v14M5 12h14"/>');
 const POI_SPARK_ICON = S('<path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/><path d="M18.5 15.5l.8 2.2 2.2.8-2.2.8-.8 2.2-.8-2.2-2.2-.8 2.2-.8z"/>');
 // Festivals and dated events, which the catalogue structurally cannot hold.
 const POI_EVENT_ICON = S('<path d="M4 8h16v3a2 2 0 0 0 0 4v3H4v-3a2 2 0 0 0 0-4z"/><path d="M14 8v12"/>');
+
+// The pushpin for places that are marked rather than sequenced (the travel
+// record). Colours live in the stylesheet so it stays on the palette.
+const PUSHPIN_SVG = '<svg class="trip-pin-push" viewBox="0 0 24 30" aria-hidden="true">'
+  + '<path class="trip-pin-needle" d="M10.5 16h3L12 29.6z"/>'
+  + '<circle class="trip-pin-head" cx="12" cy="9.6" r="8.4"/>'
+  + '<circle class="trip-pin-dot" cx="12" cy="9.6" r="3.1"/></svg>';
 
 /**
  * A chevron for the route line, drawn pixel by pixel into an RGBA buffer.
@@ -95,8 +117,18 @@ function routeArrowImage(px = 26) {
  * `onPoiClick(id)` - the Day planner adds it to the day, the pin becomes a
  * numbered stop, and the route redraws. Purely additive: without `pois` the
  * map behaves exactly as before.
+ *
+ * `countryFills` (optional) is a list of ISO2 codes to paint as filled
+ * countries under the pins, e.g. ['AT','DE'] for the travel record's map of
+ * where you have been.
+ *
+ * `photoZoom` (optional) is the zoom at which a plain pin carrying an `img`
+ * swaps its head for a photo of the place, so zooming in tells you more than
+ * zooming in on a dot would. `zoomControls` adds the +/- buttons, and
+ * `cooperativeGestures` makes the wheel scroll the page unless ctrl is held,
+ * which is what an embedded map inside a scrolling panel wants.
  */
-export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedIndex = null, routeGeometry = null, routeSegments = null, showRoute = true, focus = null, pois = null, onPoiClick = null, onViewChange = null, fitMaxZoom = 7.5, fitPadding = null, scrollZoom = true, easeToSelected = true }) {
+export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedIndex = null, routeGeometry = null, routeSegments = null, showRoute = true, focus = null, flyTo = null, pois = null, onPoiClick = null, onViewChange = null, fitMaxZoom = 7.5, fitPadding = null, scrollZoom = true, easeToSelected = true, countryFills = null, photoZoom = null, zoomControls = false, cooperativeGestures = false, mapLocale = null }) {
   const containerRef = useRef(null);
   const mapRef = useRef(null);
   const markersRef = useRef([]);
@@ -110,6 +142,17 @@ export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedInd
   onPoiClickRef.current = onPoiClick;
   const onViewChangeRef = useRef(onViewChange);
   onViewChangeRef.current = onViewChange;
+  // iso2 -> [west, south, east, north], filled once the shapes land, so the
+  // framing can hold a painted country whose pins sit in one corner of it.
+  const countryBoundsRef = useRef(new Map());
+  const countryFillsRef = useRef(countryFills);
+  countryFillsRef.current = countryFills;
+  const photoZoomRef = useRef(photoZoom);
+  photoZoomRef.current = photoZoom;
+  // The zoom the current framing settled on. Photos are meant to answer "I
+  // zoomed in", so the threshold is one step past whatever the map opened at,
+  // however wide or tight that was, and never later than `photoZoom`.
+  const frameZoomRef = useRef(null);
 
   // Two stops 80m apart land on the same 26px pin at the zoom a whole day fits
   // into, and the pin drawn last simply covers the one before it: that is how a
@@ -125,7 +168,10 @@ export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedInd
     const map = mapRef.current;
     if (!map) return [];
     const placed = [];
-    const clear = (x, y) => placed.every((p) => Math.hypot(p.x - x, p.y - y) >= MIN_PIN_SEP);
+    // A pin wearing a photo is 44px across, not 26, so it needs more room
+    // than a teardrop before two of them read as one.
+    const sep = containerRef.current?.classList.contains('pins-photo') ? 54 : MIN_PIN_SEP;
+    const clear = (x, y) => placed.every((p) => Math.hypot(p.x - x, p.y - y) >= sep);
     // Nowhere off the map. The pin is drawn UPWARD from its point (anchor
     // bottom), so a lift of 30-55px near the top edge put whole stop numbers
     // outside the canvas: on the full-screen map they hid under the header, and
@@ -139,7 +185,7 @@ export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedInd
     // Straight up first, then up-and-out, then sideways: a nudged pin should
     // read as lifted off a cluster, not as belonging to its neighbour.
     const fan = (pt) => {
-      for (const r of [MIN_PIN_SEP, MIN_PIN_SEP * 1.85]) {
+      for (const r of [sep, sep * 1.85]) {
         for (const deg of [-90, -50, -130, -20, -160, 0, 180, 40, 140, 90]) {
           const a = (deg * Math.PI) / 180;
           const dx = Math.round(Math.cos(a) * r);
@@ -185,7 +231,60 @@ export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedInd
       // past the AI proposal would zoom the map instead of scrolling the page.
       // Drag, double-tap and pinch still work, and the route frames itself.
       scrollZoom,
+      // The middle ground for an embedded map you are meant to explore: the
+      // wheel scrolls the page until you hold ctrl, and one finger pans the
+      // page while two move the map. MapLibre states both in an overlay.
+      cooperativeGestures,
+      ...(mapLocale ? { locale: mapLocale } : {}),
     });
+    if (zoomControls) {
+      map.addControl(new maplibregl.NavigationControl({ showCompass: false, showZoom: true }), 'top-right');
+    }
+    // Above a threshold a plain pin is worth more than a dot: it becomes the
+    // place's own photograph. The class rides the container so pins built
+    // later inherit the current zoom state without a second pass.
+    //
+    // The deferred photo URLs (see the pin build) become real backgrounds
+    // only once the photo zoom has HELD for a beat: the framing sequence
+    // computes its threshold before the camera starts moving, so the class
+    // can be on for a single frame while the map still stands at its
+    // pre-frame zoom, and hydrating on that flicker would fetch every
+    // photograph of a map nobody zoomed.
+    let hydrateTimer = 0;
+    const hydratePinPhotos = () => {
+      const el = containerRef.current;
+      if (!el || !el.classList.contains('pins-photo')) return;
+      // Mid-flight the class may still be about to turn off (the threshold
+      // was computed for where the camera is going, not where it is), so a
+      // moving camera reschedules instead of fetching: hydrate only once
+      // the map has landed with the photo zoom still in force.
+      if (map.isMoving()) { hydrateTimer = setTimeout(hydratePinPhotos, 250); return; }
+      el.querySelectorAll('.trip-pin-photo[data-img]').forEach((ph) => {
+        ph.style.backgroundImage = `url("${ph.dataset.img}")`;
+        delete ph.dataset.img;
+      });
+    };
+    const syncPinZoom = () => {
+      const el = containerRef.current;
+      const abs = photoZoomRef.current;
+      if (!el) return;
+      if (abs == null) { el.classList.remove('pins-photo'); return; }
+      const framed = frameZoomRef.current;
+      const at = framed == null ? abs : Math.min(abs, framed + 0.9);
+      const want = map.getZoom() >= at;
+      if (want === el.classList.contains('pins-photo')) return;
+      el.classList.toggle('pins-photo', want);
+      if (want) {
+        clearTimeout(hydrateTimer);
+        hydrateTimer = setTimeout(hydratePinPhotos, 250);
+      }
+      // Pins just changed size: re-spread them against the new separation.
+      spreadStopPins();
+      declutterRef.current?.rerun();
+    };
+    map._syncPinZoom = syncPinZoom;
+    map.on('zoom', syncPinZoom);
+    map.on('load', syncPinZoom);
     map.on('load', () => {
       map.addSource('trip-route', {
         type: 'geojson',
@@ -246,6 +345,7 @@ export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedInd
       map.resize();
       readyRef.current = true;
       mapRef.current._drawTrip?.();
+      mapRef.current._drawCountries?.();
     });
     // Let the parent react to where the map is looking (zoom-reveal of more
     // pins): report zoom + viewport bounds after every settle.
@@ -311,6 +411,7 @@ export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedInd
 
     return () => {
       declutterRef.current = null;
+      clearTimeout(hydrateTimer);
       stopDeclutter();
       ro?.disconnect();
       map.remove();
@@ -325,6 +426,15 @@ export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedInd
   useEffect(() => {
     const map = mapRef.current;
     if (!map) return;
+
+    // What zoom a framing will land on, worked out before the animation runs,
+    // so the photo-pin threshold is known the moment the map is framed.
+    const rememberFrameZoom = (bounds, opts) => {
+      let z = null;
+      try { z = map.cameraForBounds(bounds, { padding: opts.padding })?.zoom ?? null; } catch { z = null; }
+      frameZoomRef.current = z == null ? null : Math.min(z, opts.maxZoom ?? Infinity);
+      map._syncPinZoom?.();
+    };
 
     const draw = () => {
       const pts = stops.filter(hasLngLat);
@@ -366,10 +476,14 @@ export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedInd
       // number itself: the itinerary is the authority on which stop this is, so
       // a stop the map cannot plot (no coordinates) can never shift the numbers
       // of the ones it can, and the sidebar and the map always agree.
+      // `plain` is a place on the map that is not a step in anything: the
+      // travel record's visited cities have no order to carry, so they get the
+      // teardrop without a number.
       let stopNo = 0;
       markersRef.current = pts.map((p, i) => {
-        if (!p.stay) stopNo += 1;
-        const no = p.stay ? null : (p.no ?? stopNo);
+        const bare = p.stay || p.plain;
+        if (!bare) stopNo += 1;
+        const no = bare ? null : (p.no ?? stopNo);
         // The marker element belongs to maplibre: it rewrites that element's
         // inline `transform` on every frame, which beats anything a stylesheet
         // says. So the teardrop's rotation lives on an inner shape and the
@@ -377,14 +491,41 @@ export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedInd
         // what silently dropped the rotation and left every stop number tilted
         // 45 degrees, which is how a 6 came to read as a 9.
         const el = document.createElement('div');
-        el.className = p.stay ? 'trip-pin trip-pin-stay' : 'trip-pin';
+        const withPhoto = !!(p.plain && p.img);
+        el.className = `trip-pin${p.stay ? ' trip-pin-stay' : ''}${p.plain ? ' trip-pin-plain' : ''}${withPhoto ? ' has-photo' : ''}`;
         el.title = p.stay ? 'Your stay' : (p.city || `Stop ${no}`);
         const shape = document.createElement('span');
         shape.className = 'trip-pin-shape';
-        const num = document.createElement('span');
-        num.className = 'trip-pin-no';
-        num.textContent = p.stay ? '' : String(no);
-        shape.appendChild(num);
+        if (p.plain) {
+          // A pushpin, not a numbered teardrop: a round head on a needle
+          // whose tip is the coordinate (the marker is anchored bottom).
+          shape.innerHTML = PUSHPIN_SVG;
+          // Zoomed in, the head lifts into a photo of the place with its name
+          // under the needle. The needle never moves: the pin still points.
+          if (withPhoto) {
+            const photo = document.createElement('span');
+            photo.className = 'trip-pin-photo';
+            // Deferred: browsers fetch a background image even while the
+            // element is invisible, and the trips overview pins hundreds of
+            // places at continent zoom. The URL waits in a data attribute
+            // until the zoom that shows photos (syncPinZoom hydrates it);
+            // a pin built while the map is already zoomed in paints at once.
+            if (containerRef.current?.classList.contains('pins-photo')) {
+              photo.style.backgroundImage = `url("${p.img}")`;
+            } else {
+              photo.dataset.img = p.img;
+            }
+            const label = document.createElement('span');
+            label.className = 'trip-pin-label';
+            label.textContent = p.city || '';
+            el.append(photo, label);
+          }
+        } else {
+          const num = document.createElement('span');
+          num.className = 'trip-pin-no';
+          num.textContent = bare ? '' : String(no);
+          shape.appendChild(num);
+        }
         el.appendChild(shape);
         el.addEventListener('click', (e) => {
           e.stopPropagation();
@@ -406,6 +547,29 @@ export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedInd
       const frameKey = focus ? `${focus.lat},${focus.lon}` : null;
       if (pois != null && frameKey && lastFrameKeyRef.current === frameKey) return;
       lastFrameKeyRef.current = frameKey;
+      // A painted country belongs inside the frame: pins in one corner of
+      // Germany must not leave the rest of it off the map.
+      const fillBoxes = (countryFillsRef.current || [])
+        .map((iso) => countryBoundsRef.current.get(iso))
+        .filter(Boolean);
+      if (fillBoxes.length) {
+        const bounds = fillBoxes.reduce(
+          (b, [w, s, e, n]) => b.extend([w, s]).extend([e, n]),
+          new maplibregl.LngLatBounds(
+            [fillBoxes[0][0], fillBoxes[0][1]],
+            [fillBoxes[0][2], fillBoxes[0][3]],
+          ),
+        );
+        pts.forEach((p) => bounds.extend([p.lon, p.lat]));
+        const opts = {
+          padding: fitPadding || { top: 70, left: 60, right: 60, bottom: padBottom + 20 },
+          maxZoom: fitMaxZoom,
+          duration: 700,
+        };
+        rememberFrameZoom(bounds, opts);
+        map.fitBounds(bounds, opts);
+        return;
+      }
       if (pts.length === 0 && hasLngLat(focus)) {
         map.easeTo({
           center: [focus.lon, focus.lat],
@@ -414,20 +578,24 @@ export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedInd
           padding: { bottom: padBottom },
         });
       } else if (pts.length === 1) {
+        frameZoomRef.current = 6;
+        map._syncPinZoom?.();
         map.easeTo({ center: [pts[0].lon, pts[0].lat], zoom: 6, duration: 700, padding: { bottom: padBottom } });
       } else if (pts.length >= 2) {
         const bounds = pts.reduce(
           (b, p) => b.extend([p.lon, p.lat]),
           new maplibregl.LngLatBounds([pts[0].lon, pts[0].lat], [pts[0].lon, pts[0].lat]),
         );
-        map.fitBounds(bounds, {
+        const opts = {
           // Framing margins assume a full-screen map with a sheet over its
           // bottom. An embedded map (the AI proposal preview) is a few hundred
           // pixels tall and states its own, or the route fits into a letterbox.
           padding: fitPadding || { top: 70, left: 60, right: 60, bottom: padBottom + 20 },
           maxZoom: fitMaxZoom,
           duration: 700,
-        });
+        };
+        rememberFrameZoom(bounds, opts);
+        map.fitBounds(bounds, opts);
       }
     };
 
@@ -435,6 +603,75 @@ export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedInd
     map._drawTrip = draw;
     if (readyRef.current) draw();
   }, [stops, padBottom, routeGeometry, routeSegments, showRoute, focus?.lat, focus?.lon, pois != null, fitMaxZoom, fitPadding]);
+
+  // Glide to one place without reframing the route: "how far is this from
+  // today's walk?" is answered by moving the camera, not by refitting the
+  // bounds (which would throw the planned route off screen). Each request
+  // bumps flyTo.k, so asking for the same place twice still moves the map.
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || !hasLngLat(flyTo)) return;
+    const go = () => map.easeTo({
+      center: [flyTo.lon, flyTo.lat],
+      zoom: flyTo.zoom ?? 14,
+      duration: window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches ? 0 : 650,
+    });
+    if (readyRef.current) go();
+    else map.once('load', go);
+  }, [flyTo?.k]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Filled countries (the travel record): the shapes load on first use only,
+  // so every other map in the app pays nothing for this layer.
+  const fillsKey = (countryFills || []).join(',');
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map) return;
+    let cancelled = false;
+    const codes = (countryFills || []).filter(Boolean);
+    const apply = async () => {
+      if (!map.getSource('country-shapes')) {
+        if (!codes.length) return;
+        const data = await loadCountryShapes();
+        if (cancelled || mapRef.current !== map || map.getSource('country-shapes')) return;
+        map.addSource('country-shapes', { type: 'geojson', data });
+        (data.features || []).forEach((f) => {
+          let w = 180, s = 90, e = -180, n = -90;
+          f.geometry.coordinates.forEach((poly) => poly.forEach((ring) => ring.forEach(([x, y]) => {
+            if (x < w) w = x;
+            if (x > e) e = x;
+            if (y < s) s = y;
+            if (y > n) n = y;
+          })));
+          countryBoundsRef.current.set(f.properties.iso2, [w, s, e, n]);
+        });
+        // Beneath the basemap's first symbol layer: a painted country must sit
+        // under the place names it is there to give context to, never over them.
+        const firstSymbol = map.getStyle().layers.find((l) => l.type === 'symbol')?.id;
+        map.addLayer({
+          id: 'country-fill',
+          type: 'fill',
+          source: 'country-shapes',
+          paint: { 'fill-color': '#e05a47', 'fill-opacity': 0.2 },
+        }, firstSymbol);
+        map.addLayer({
+          id: 'country-outline',
+          type: 'line',
+          source: 'country-shapes',
+          paint: { 'line-color': '#c8501e', 'line-width': 1.1, 'line-opacity': 0.75 },
+        }, firstSymbol);
+      }
+      const filter = ['in', ['get', 'iso2'], ['literal', codes]];
+      map.setFilter('country-fill', filter);
+      map.setFilter('country-outline', filter);
+      // The shapes arrive after the first framing, and a painted country is
+      // part of what has to fit: frame again now that its extent is known.
+      lastFrameKeyRef.current = null;
+      map._drawTrip?.();
+    };
+    map._drawCountries = apply;
+    if (readyRef.current) apply();
+    return () => { cancelled = true; };
+  }, [fillsKey]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Pickable candidate pins (Day planner): rebuild when the visible set
   // changes, a tapped pin leaves this list (it becomes a numbered stop), so

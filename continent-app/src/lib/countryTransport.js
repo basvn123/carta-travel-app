@@ -136,6 +136,15 @@ const GB_ISLANDS = new Set([
 
 const IE_ISLANDS = new Set(['Aran Islands (Inishmore)', 'Inishbofin']);
 
+// Streymoy, Eysturoy, Vágar and the northern islands are joined by subsea
+// tunnels and causeways and drive as one island; these are the ones you can
+// only reach by ferry or helicopter. Treating every Faroese place as its own
+// landmass priced Tórshavn -> Gjógv, a 40-minute drive, as a sea crossing.
+const FO_FERRY_ONLY = new Set([
+  'Mykines', 'Kalsoy', 'Suðuroy', 'Nólsoy', 'Sandoy',
+  'Fugloy', 'Svínoy', 'Stóra Dímun', 'Skúvoy',
+]);
+
 // Multi-destination islands: stops here share a landmass with each other but
 // not with the continent.
 const ISLAND_GROUP = {
@@ -177,7 +186,7 @@ export function landmassOf(dest) {
   if (iso === 'IS') return city === 'Vestmannaeyjar' ? 'is:vestmannaeyjar' : 'iceland';
   if (iso === 'MT') return (city === 'Gozo' || city === 'Comino') ? `mt:${city}` : 'malta';
   if (iso === 'CY') return 'cyprus';
-  if (iso === 'FO') return city.startsWith('Vágar') ? 'fo-main' : `fo:${city}`;
+  if (iso === 'FO') return FO_FERRY_ONLY.has(city) ? `fo:${city}` : 'fo-main';
   if ((dest.local_transport || {}).road_connected === false) {
     if (MAINLAND_OVERRIDES.has(city)) return 'continent';
     return ISLAND_GROUP[city] || `island:${city}`;

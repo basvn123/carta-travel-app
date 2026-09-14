@@ -1,0 +1,167 @@
+{
+  "iso2": "BA",
+  "country": "Bosnia and Herzegovina",
+  "checked_at": "2026-08-17",
+  "beaches": {
+    "wrong": [],
+    "missing": [
+      {
+        "name": "Neum",
+        "qid": "Q320623",
+        "lat": 42.925,
+        "lon": 17.66666667,
+        "why": "Bosnia and Herzegovina has about 20 km of Adriatic coast at Neum, its only coastal municipality, with public swimming beaches along the town promenade and the Klek peninsula. Zero beach features for the country is therefore wrong, even if the correct number is small. The coordinate given is the Neum settlement, not an individual beach; no Wikidata item for a named Neum beach could be confirmed.",
+        "source_url": "https://en.wikipedia.org/wiki/Neum",
+        "verified": true
+      },
+      {
+        "name": "Una river bathing spots (Bihac, Strbacki buk)",
+        "qid": null,
+        "lat": null,
+        "lon": null,
+        "why": "If the tab admits inland bathing at all, the Una in Una National Park around Bihac and Kulen Vakuf, and Boracko Lake near Konjic, are the places Bosnians actually swim. No Wikidata items for named beaches could be confirmed, so nothing is asserted. Flagged because a zero-beach country page is a dead tab, and the Bihac destination already exists in the file's near-city list.",
+        "source_url": "https://en.wikipedia.org/wiki/Una_National_Park",
+        "verified": false
+      }
+    ],
+    "order": [
+      "No beach features exist, so there is nothing to order."
+    ]
+  },
+  "mountains": {
+    "wrong": [
+      {
+        "name": "Crnogorski Maglic",
+        "class": "wrong_country",
+        "why": "The name means Montenegrin Maglic. English Wikipedia: the 2388 m summit 'is located in Montenegro', while the 2386 m twin 'is located in Bosnia and Herzegovina and is the highest peak of the country'. The file proves the error itself: the Bosnian peak is present as plain 'Maglic' at tier 2 rank 29 (43.2812,18.7333, matching Q837723), so Bosnia's country card leads with Montenegro's summit while Bosnia's own highest point is buried in tier 2.",
+        "source_url": "https://en.wikipedia.org/wiki/Magli%C4%87_(mountain)"
+      },
+      {
+        "name": "Ilincica",
+        "class": "not_notable",
+        "why": "A low hill immediately above Tuzla carrying the city's transmitter mast, 1.0 km from the town centre. A local walk, ranked fourth in a country containing Prenj, Cvrsnica, Bjelasnica, Jahorina, Vlasic and Treskavica, none of which is in the file at any tier.",
+        "source_url": "https://hr.wikipedia.org/wiki/Ilin%C4%8Dica"
+      },
+      {
+        "name": "Zovnica",
+        "class": "not_notable",
+        "why": "A minor karst hill 5 km from Mostar with no English article and no national standing, holding tier 1 rank 6 while Prenj and Cvrsnica, the two great massifs that frame Mostar, are absent from the file entirely.",
+        "source_url": "https://hr.wikipedia.org/wiki/%C5%BDovnica"
+      },
+      {
+        "name": "Beskita",
+        "class": "not_notable",
+        "why": "Tier 1 rank 11, no wikipedia, no image, 1.6 km from Tjentiste. One of eight minor Sutjeska ridge bumps sharing the identical score 0.82 across ranks 11 to 18, ordered alphabetically - which is the only reason it is tier 1.",
+        "source_url": "https://en.wikipedia.org/wiki/Sutjeska_National_Park"
+      },
+      {
+        "name": "Jelovac",
+        "class": "not_notable",
+        "why": "Tier 1 rank 12, no wikipedia, no image, second name alphabetically in the same 0.82 Sutjeska tie block as Beskita. Five of the twelve tier 1 Bosnian mountains are unnamed-to-travellers bumps within 8 km of Tjentiste.",
+        "source_url": "https://en.wikipedia.org/wiki/Sutjeska_National_Park"
+      }
+    ],
+    "missing": [
+      {
+        "name": "Maglic (Bosnian summit, 2386 m)",
+        "qid": "Q837723",
+        "lat": 43.28111,
+        "lon": 18.73306,
+        "why": "The highest point of Bosnia and Herzegovina, in Sutjeska National Park above the Perucica primeval forest. It is in the file, as plain 'Maglic' at tier 2 rank 29, while the Montenegrin twin holds tier 1 rank 1. This is a swap to repair, not a row to add.",
+        "source_url": "https://en.wikipedia.org/wiki/Magli%C4%87_(mountain)",
+        "verified": true
+      },
+      {
+        "name": "Bjelasnica",
+        "qid": "Q879414",
+        "lat": 43.704,
+        "lon": 18.257,
+        "why": "2067 m, the 1984 Winter Olympics alpine mountain above Sarajevo, still the country's main ski area and its most visited mountain. Absent at every tier.",
+        "source_url": "https://en.wikipedia.org/wiki/Bjela%C5%A1nica",
+        "verified": true
+      },
+      {
+        "name": "Jahorina",
+        "qid": "Q187944",
+        "lat": 43.726666666667,
+        "lon": 18.576944444444,
+        "why": "1916 m, the other 1984 Olympic mountain and the largest ski resort in the country. Absent at every tier, so neither Olympic mountain appears in a Bosnian mountains tab.",
+        "source_url": "https://en.wikipedia.org/wiki/Jahorina",
+        "verified": true
+      },
+      {
+        "name": "Prenj",
+        "qid": "Q1276211",
+        "lat": 43.534806212483,
+        "lon": 17.904303464913,
+        "why": "The 2155 m massif between Konjic and Mostar, known as the Bosnian Himalaya and the most dramatic skyline in the country. Absent at every tier despite two Mostar-area hills in tier 1.",
+        "source_url": "https://en.wikipedia.org/wiki/Prenj",
+        "verified": true
+      },
+      {
+        "name": "Cvrsnica",
+        "qid": "Q1267542",
+        "lat": 43.616666666667,
+        "lon": 17.616666666667,
+        "why": "2228 m at Plocno, with Hajducka vrata and Blidinje Nature Park, the second highest massif in the country. Absent at every tier.",
+        "source_url": "https://en.wikipedia.org/wiki/%C4%8Cvrsnica",
+        "verified": true
+      },
+      {
+        "name": "Vranica",
+        "qid": "Q1392085",
+        "lat": 43.966666666667,
+        "lon": 17.733333333333,
+        "why": "The massif holding Prokosko Lake, summit Nadkrstac 2112 m. The summit is in the file at tier 2 rank 32 but the massif is not, and the file's two Prokosko Lake tier 1 entries are the minor Zec Planina and Scit instead.",
+        "source_url": "https://en.wikipedia.org/wiki/Vranica",
+        "verified": true
+      },
+      {
+        "name": "Treskavica",
+        "qid": "Q1508343",
+        "lat": 43.589722222222,
+        "lon": 18.355555555556,
+        "why": "2088 m at Djokin toranj, the glacial lake mountain south of Sarajevo. Absent at every tier.",
+        "source_url": "https://en.wikipedia.org/wiki/Treskavica",
+        "verified": true
+      },
+      {
+        "name": "Zelengora",
+        "qid": "Q619701",
+        "lat": 43.354722,
+        "lon": 18.5675,
+        "why": "The mountain of the eight glacial lakes inside Sutjeska National Park. Absent at every tier, while eight nameless bumps in the same national park occupy ranks 11 to 18.",
+        "source_url": "https://en.wikipedia.org/wiki/Zelengora",
+        "verified": true
+      },
+      {
+        "name": "Trebevic",
+        "qid": "Q612240",
+        "lat": 43.81861111,
+        "lon": 18.46,
+        "why": "Sarajevo's own mountain, with the restored cable car and the abandoned Olympic bobsleigh track - the most visited short trip from the capital. Absent at every tier; the file's Sarajevo entry is the transmitter hill Hum instead.",
+        "source_url": "https://en.wikipedia.org/wiki/Trebevi%C4%87",
+        "verified": true
+      },
+      {
+        "name": "Vlasic",
+        "qid": null,
+        "lat": null,
+        "lon": null,
+        "why": "The 1943 m mountain above Travnik, a ski centre and the source of the national cheese. The Wikidata label Vlasic resolves to a disambiguation page (Q2529611), so no QID or coordinate is asserted. The file has two minor Travnik hills, Paljenik and Karaula gora, in tier 2.",
+        "source_url": "https://en.wikipedia.org/wiki/Vla%C5%A1i%C4%87_(mountain)",
+        "verified": false
+      }
+    ],
+    "order": [
+      "Ranks 11 to 18 are a single score of 0.82 ordered alphabetically after diacritic folding (Beskita, Jelovac, Kosur, Kovacev panj, Mala Siljevica, Ozren, Plece, Velika Siljevica). The tier 1 cut at 12 falls between Jelovac and Kosur on the letter J. Ranks 22 to 34 are a second alphabetical block at 0.719 and ranks 35 to 64 a third at 0.338, so 51 of the 64 rows carry no ordering information.",
+      "Hum at rank 2 is an 812 m transmitter hill above Sarajevo. Real, but second in the country only because Bjelasnica, Jahorina, Trebevic and Igman are all missing.",
+      "Maglic, the actual highest point of Bosnia and Herzegovina, is at tier 2 rank 29 - the worst single ordering error in the file.",
+      "Nadkrstac (2112 m, summit of Vranica) at tier 2 rank 32 and Leotar (above Trebinje) at tier 2 rank 30 are both far too low relative to the Sutjeska bumps in tier 1.",
+      "Pometenik at tier 1 rank 10 is placed at 43.38248,17.80130 while the Wikipedia article for the mountain gives 43.47389,17.80556, roughly 10 km north. Worth checking whether the row is even the right feature."
+    ]
+  },
+  "counts_verdict": "Zero beaches is wrong. Bosnia and Herzegovina has roughly 20 km of Adriatic coast at Neum with real public beaches, plus the river and lake bathing at Bihac on the Una and Boracko Lake. The right answer is a small number, two to five, not zero - and the likely cause is the same one as Montenegro's four: the country is outside the EEA bathing-water register, so nothing joined. 64 mountain features and 12 tier 1 is the right size for the country, but the content is wrong: five of the twelve tier 1 rows are unnamed ridge bumps within 8 km of Tjentiste, two are city transmitter hills, one is in Montenegro, and none of Bjelasnica, Jahorina, Prenj, Cvrsnica, Vlasic, Treskavica, Zelengora or Trebevic is in the file at any tier.",
+  "top_pick_verdict": "No. top_mountain 'Crnogorski Maglic' is the Montenegrin summit and puts a foreign mountain on Bosnia's country card. The literal repair is the Bosnian Maglic (Q837723, 2386 m, the country's highest point), which is already in the file at tier 2 rank 29. If the card is meant to be the mountain a traveller will recognise and can reach, Bjelasnica (Q879414) is the better pick. top_beach is null, which is defensible only until Neum is added; a country with a coastline should not have a null beach card.",
+  "notes": "The Maglic case is the cleanest single demonstration of the border bug in the whole dataset: two rows, 500 m apart, one named 'Crnogorski Maglic' at tier 1 rank 1 and one named 'Maglic' at tier 2 rank 29, with the country assignment inverted between them. elevation_m is null for all 64 mountains, which is why 500 m and 800 m transmitter hills outrank the 2386 m national high point. Sutjeska National Park's polygon is flagging every knoll inside it, and because the resulting scores are identical, the alphabet decides which eight become the country's top mountains. Wikipedia links on the rows are mostly Croatian-language stubs (hr:Mitrusa, hr:Ilincica, hr:Zovnica), which is a fame signal weak enough that a hill with a two-line stub outranks mountains with full articles in six languages that were never harvested at all."
+}

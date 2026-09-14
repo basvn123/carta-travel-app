@@ -1,0 +1,288 @@
+{
+  "id": "ee-city-tallinn-limestone-bastions-telliskivi",
+  "sourceId": "tallinn-limestone-bastions-telliskivi",
+  "slug": "ee-city-tallinn-limestone-bastions-telliskivi",
+  "title": "Tallinn: Limestone, Bastions & Telliskivi",
+  "country": "Estonia",
+  "countryCode": "EE",
+  "countries": [
+    {
+      "name": "Estonia",
+      "code": "EE"
+    }
+  ],
+  "isMultiCountry": false,
+  "region": "Northern Europe & Baltics",
+  "regionKey": "northern-baltics",
+  "subRegion": "Harju County, Gulf of Finland",
+  "tripType": "City Trips",
+  "tripTypeId": 3,
+  "tripTypeSlug": "city",
+  "durationDays": 7,
+  "bestPeriod": {
+    "months": [
+      5,
+      6,
+      7,
+      8,
+      9,
+      12
+    ],
+    "monthNames": [
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "December"
+    ],
+    "window": "May to September for terraces and white nights; December for the Town Hall Square Christmas market; January–February is bitter, beautiful and half price",
+    "note": null,
+    "avoid": null,
+    "raw": "May to September for terraces and white nights; December for the Town Hall Square Christmas market; January–February is bitter, beautiful and half price"
+  },
+  "budgetTier": "€€",
+  "budgetTierRange": [
+    2,
+    2
+  ],
+  "budgetTierRaw": "€€",
+  "budget": {
+    "currency": "EUR",
+    "totalEur": {
+      "low": 800,
+      "high": 1300
+    },
+    "totalNote": "€800–1,300 per person",
+    "breakdown": {
+      "accommodation": {
+        "lowEur": 70,
+        "highEur": 150,
+        "note": "€70–150 per night, double; design hotels €180+; hostels €25–40 pp"
+      },
+      "food": {
+        "lowEur": 40,
+        "highEur": 70,
+        "note": "€40–70 per day; tasting menus €90–160 — Estonia's best value is at the top end"
+      },
+      "transport": {
+        "lowEur": 25,
+        "highEur": 50,
+        "note": "€25–50: airport tram, Tallinn Card, one Helsinki ferry day (€40–70 return)"
+      },
+      "activities": {
+        "lowEur": 60,
+        "highEur": 120,
+        "note": "€60–120: KUMU, Seaplane Harbour, Bastion tunnels, Kadriorg"
+      }
+    },
+    "perDayEur": {
+      "low": 114,
+      "high": 186
+    }
+  },
+  "profile": {
+    "difficulty": null,
+    "difficultyLabel": null,
+    "difficultyNote": null,
+    "fitnessLevel": null,
+    "crowdLevel": null,
+    "familyFriendly": null,
+    "carRequired": null
+  },
+  "basecamps": [],
+  "gatewayAirport": null,
+  "gatewayAirportCode": null,
+  "languages": [
+    "Estonian",
+    "Russian",
+    "English"
+  ],
+  "currency": "EUR",
+  "emergencyNumber": "112",
+  "coordinates": {
+    "lat": 59.437,
+    "lon": 24.7536,
+    "precision": "source",
+    "matchedPlace": null,
+    "source": "source record"
+  },
+  "tags": [],
+  "summary": "A seven-day city trip itinerary in Harju County, Gulf of Finland, Estonia.",
+  "summaryGenerated": true,
+  "hook": null,
+  "snapshot": {},
+  "itinerary": [
+    {
+      "day": 1,
+      "title": "Lower Old Town: the Hanseatic block",
+      "morning": "Tram 4 from the airport, 15 minutes. Start at Town Hall Square (Raekoja plats) with the only surviving Gothic town hall in Northern Europe, and the pharmacy on its corner — trading since 1422 and claiming to be Europe's oldest continuously operating one.",
+      "afternoon": "The merchant streets: Pikk with its guild halls, the Great Guild, the House of the Blackheads, and the Three Sisters merchant houses. Climb St Olaf's Church tower — briefly the tallest building in the world in the 16th century — for the best rooftop view in the Baltics.",
+      "evening": "Dinner in the Old Town but off Viru — Rataskaevu 16 and its neighbours are where Estonians actually eat inside the walls. Book ahead; it is small.",
+      "dayStats": null,
+      "sleep": null
+    },
+    {
+      "day": 2,
+      "title": "Toompea and the bastion tunnels",
+      "morning": "Up the Lühike jalg passage to Toompea, the upper town of nobility and power: Alexander Nevsky Cathedral, the Riigikogu parliament in its pink Baroque castle, and the Kohtuotsa and Patkuli viewing platforms.",
+      "afternoon": "Kiek in de Kök and the **Bastion Passages** — 17th-century Swedish tunnels under the earthworks, later used as Soviet bomb shelters and, in the 1980s, by the city's punks. Guided entry only, and genuinely cold; take a jacket.",
+      "evening": "Walk the surviving town wall towers, then down to the Rotermann Quarter for dinner in the converted mill and factory buildings between the Old Town and the port.",
+      "dayStats": null,
+      "sleep": null
+    },
+    {
+      "day": 3,
+      "title": "Kalamaja and Telliskivi",
+      "morning": "Kalamaja, the wooden district: pastel 1920s–30s \"Lender houses\" with limestone bases, once fishermen's and factory workers' homes and now the most desirable address in the city. Balti Jaam Market for breakfast — three floors of produce, street food and secondhand.",
+      "afternoon": "Telliskivi Creative City, a former railway repair complex: Fotografiska Tallinn, independent design shops, and a rotating wall of street art. Then walk the Kultuurikilomeeter seafront path.",
+      "evening": "Noblessner, the old submarine shipyard turned waterfront quarter — a brewery taproom, a seafront promenade, and the city's most ambitious restaurants. This is where to spend your one big dinner.",
+      "dayStats": null,
+      "sleep": null
+    },
+    {
+      "day": 4,
+      "title": "Kadriorg and KUMU",
+      "morning": "Tram 1 or 3 to Kadriorg: Peter the Great's Baroque palace and gardens, built after the Great Northern War, with the Kadriorg Art Museum inside.",
+      "afternoon": "KUMU, the Estonian national art museum — a copper-and-limestone building cut into the escarpment. Its 20th-century floors, covering the occupation years and Soviet-era nonconformist art, are the most affecting museum experience in the Baltics.",
+      "evening": "Walk to Pirita along the sea, past the Song Festival Grounds where 300,000 people sang during the 1988 Singing Revolution. Eat at the Pirita marina.",
+      "dayStats": null,
+      "sleep": null
+    },
+    {
+      "day": 5,
+      "title": "Seaplane Harbour and the Soviet edge",
+      "morning": "Lennusadam (Seaplane Harbour), a 1917 seaplane hangar of pioneering thin-shell concrete, now a maritime museum with the submarine *Lembit* sitting inside it. Excellent for all ages.",
+      "afternoon": "Patarei — a Tsarist sea fortress that became a Soviet prison, now partly open as a memorial to the victims of communism and Nazism. Sobering and essential; check the current opening status. `verify: true` Then Linnahall, the crumbling 1980 Olympic concrete monument on the shore, best seen from outside.",
+      "evening": "Kalamaja neighbourhood dinner, then a sauna — Estonian sauna culture is as serious here as in Finland and several public saunas operate in the city.",
+      "dayStats": null,
+      "sleep": null
+    },
+    {
+      "day": 6,
+      "title": "Helsinki day trip or Lahemaa",
+      "morning": "Option A: the fast ferry to Helsinki, roughly 2 hours each way, giving five hours in the Finnish capital — enough for the Design District and a market lunch. Option B: drive or take a tour to Lahemaa National Park for manor houses, bog boardwalks and the Baltic coast.",
+      "afternoon": "Whichever you chose, be back for the evening; the last ferries fill in summer.",
+      "evening": "Old Town cellar bars, or a folk-music evening if one is on.",
+      "dayStats": null,
+      "sleep": null
+    },
+    {
+      "day": 7,
+      "title": "Markets and departure",
+      "morning": "Balti Jaam Market or the Sunday flea section for last purchases; coffee in Kalamaja.",
+      "afternoon": "Tram 4 to the airport, or the ferry terminal for the Helsinki connection. Tallinn Airport is 4 km from the centre — the shortest airport transfer in this dataset.",
+      "evening": null,
+      "dayStats": null,
+      "sleep": null
+    }
+  ],
+  "accommodationStrategy": [
+    {
+      "rank": 1,
+      "name": "Hotel Telegraaf",
+      "style": "five-star, historic",
+      "location": "Old Town",
+      "description": "The former telegraph exchange on Vene street, with a spa and a courtyard. Inside the walls but on a quiet lane, so you get the Old Town at 07:00 without the Viru street noise at 23:00.",
+      "booking": null,
+      "priceNote": null
+    },
+    {
+      "rank": 2,
+      "name": "Hotel Palace / Rotermann-area design hotels",
+      "style": null,
+      "location": null,
+      "description": "Between the Old Town and the port, on the modern side of the divide. Best if you are arriving or leaving by ferry, and the walk to Telliskivi is 15 minutes.",
+      "booking": null,
+      "priceNote": null
+    },
+    {
+      "rank": 3,
+      "name": "Kalamaja apartments and small guesthouses",
+      "style": null,
+      "location": null,
+      "description": "The neighbourhood choice: wooden buildings, bakeries, and the district's own rhythm. Cheaper by a third than the Old Town, and it puts Days 3 and 5 on your doorstep. Look for buildings with renovated heating — the old wooden stock varies wildly in winter.",
+      "booking": null,
+      "priceNote": null
+    }
+  ],
+  "logistics": {
+    "connectivity": "Some of the fastest and cheapest mobile data in Europe; free public Wi-Fi is close to universal.",
+    "emergency": "112. The Estonian emergency system is well resourced and English-speaking. The North Estonia Medical Centre is the main hospital.",
+    "weather": "Continental with a maritime edge: −10 °C and dry in February, 25 °C and humid in July. White nights in June mean it never gets properly dark; blackout curtains are worth checking for.",
+    "bookingWindows": "Noblessner's top restaurants: 3–6 weeks. Bastion Passages tours: a few days, longer in summer. Helsinki ferries: book the specific sailing 1–2 weeks out in summer, walk-on the rest of the year. Hotels: 4–6 weeks except during the Song Festival years and December weekends.",
+    "money": null,
+    "transportRules": null,
+    "permits": null,
+    "health": null,
+    "gettingThere": null,
+    "other": [
+      {
+        "label": "Digital by default",
+        "text": "Estonia is the most digitised state in Europe: transport tickets, parking, restaurant bookings and museum entry are all app-based and all work in English. Contactless bank-card tapping works on trams and buses."
+      },
+      {
+        "label": "Old Town surfaces",
+        "text": "The limestone cobbles are savage in the wet and lethal in ice. Flat rubber soles, and in winter, spikes for shoes — sold in every Estonian pharmacy for a few euros, and locals genuinely use them."
+      },
+      {
+        "label": "Cruise-ship rhythm",
+        "text": "From May to September, several thousand cruise passengers walk the same Old Town loop between 09:30 and 15:00. Their route is fixed: Viru Gate → Town Hall Square → Toompea. Invert it."
+      }
+    ]
+  },
+  "proTips": [
+    "Do Toompea at **08:00**. The Kohtuotsa platform is empty, the light is on the Old Town roofs, and by 10:30 there are three tour groups on it.",
+    "The Old Town has two economies. Restaurants with medieval costumes and a menu in six languages are for cruise passengers; the ones on Vene, Rataskaevu and Sauna streets are for Estonians. The price difference is 40% and the quality difference is larger.",
+    "**KUMU on a Thursday evening** — the museum stays open late one evening a week and the top floors are silent. `verify: true`",
+    "Take the **Helsinki ferry as a foot passenger** and use the return leg as your restaurant: the ships' buffets are absurdly good value and the crossing gives you two hours of Gulf of Finland.",
+    "Estonian sauna is not a spa product, it is a social institution. Book a public sauna slot rather than the hotel's.",
+    "Winter visit? The Old Town in a snowstorm with Christmas-market glögi is the single most atmospheric week in this entire dataset, and hotel prices in January are less than half of July's."
+  ],
+  "typeSpecific": {
+    "raw": {
+      "walkability": "Very high. The Old Town, Kalamaja, Telliskivi and Noblessner form a continuous 4 km walkable arc; Kadriorg and Pirita need a tram",
+      "transit_pass": "Tallinn Card (transport + museums) or a contactless-tapped single ticket; public transport is free for registered residents but not for visitors",
+      "base_neighbourhoods": [
+        "Vanalinn",
+        "Kalamaja",
+        "Rotermann",
+        "Kadriorg"
+      ],
+      "architectural_focus": "Intact Hanseatic merchant town, Swedish and Tsarist bastions, wooden Kalamaja, Soviet modernism, and the 2010s industrial conversions",
+      "gpx_ready": true
+    },
+    "surface": null,
+    "distanceKm": null,
+    "elevationM": null,
+    "verticalM": null,
+    "technicalRating": null,
+    "transitPass": "Very high. The Old Town, Kalamaja, Telliskivi and Noblessner form a continuous 4 km walkable arc; Kadriorg and Pirita need a tram",
+    "hutBooking": null,
+    "liftNetwork": null,
+    "snowReliability": null,
+    "windConditions": null,
+    "gpxReady": true,
+    "bookingTimeline": null,
+    "audience": null
+  },
+  "packingNotes": [],
+  "whatCouldGoWrong": [],
+  "sources": {
+    "verified": null,
+    "confidenceNotes": null
+  },
+  "verifyFlags": [],
+  "verifyFlagCount": 0,
+  "volatilePricing": true,
+  "wordCount": 1461,
+  "dataVintage": 2026,
+  "provenance": {
+    "batch": "northern-baltics",
+    "sourceFile": "carta_northern_europe_baltics_trips.md#trip-08",
+    "sourceFormat": "single-file md, '## Trip NN' records with fenced YAML",
+    "sourceId": "tallinn-limestone-bastions-telliskivi",
+    "ingestedAt": "2026-09-02",
+    "synthesized": false
+  }
+}

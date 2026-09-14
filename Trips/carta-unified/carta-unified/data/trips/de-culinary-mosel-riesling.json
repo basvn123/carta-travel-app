@@ -1,0 +1,300 @@
+{
+  "id": "de-culinary-mosel-riesling",
+  "sourceId": "de-culinary-mosel-riesling",
+  "slug": "de-culinary-mosel-riesling",
+  "title": "Riesling on the Mosel Slate",
+  "country": "Germany",
+  "countryCode": "DE",
+  "countries": [
+    {
+      "name": "Germany",
+      "code": "DE"
+    }
+  ],
+  "isMultiCountry": false,
+  "region": "Western & Central Europe",
+  "regionKey": "western-central",
+  "subRegion": "Mittelmosel, Rhineland-Palatinate",
+  "tripType": "Culinary & Wine Tours",
+  "tripTypeId": 7,
+  "tripTypeSlug": "culinary",
+  "durationDays": 7,
+  "bestPeriod": {
+    "months": [
+      5,
+      6,
+      9,
+      10
+    ],
+    "monthNames": [
+      "May",
+      "June",
+      "September",
+      "October"
+    ],
+    "window": null,
+    "note": "Late September and October bring the Weinfeste and full cellars; May and June give quiet tasting rooms and the same growers pouring last year's vintage.",
+    "avoid": null,
+    "raw": null
+  },
+  "budgetTier": "€€",
+  "budgetTierRange": [
+    2,
+    2
+  ],
+  "budgetTierRaw": "€€",
+  "budget": {
+    "currency": "EUR",
+    "totalEur": {
+      "low": 1050,
+      "high": 1450
+    },
+    "totalNote": null,
+    "breakdown": {
+      "accommodation": {
+        "lowEur": 480,
+        "highEur": 620,
+        "note": null
+      },
+      "food": {
+        "lowEur": 270,
+        "highEur": 360,
+        "note": null
+      },
+      "transport": {
+        "lowEur": 140,
+        "highEur": 220,
+        "note": null
+      },
+      "activities": {
+        "lowEur": 160,
+        "highEur": 250,
+        "note": null
+      }
+    },
+    "perDayEur": {
+      "low": 150,
+      "high": 207
+    }
+  },
+  "profile": {
+    "difficulty": 1,
+    "difficultyLabel": "Easy",
+    "difficultyNote": null,
+    "fitnessLevel": "Easy",
+    "crowdLevel": "Moderate",
+    "familyFriendly": false,
+    "carRequired": false
+  },
+  "basecamps": [
+    "Bernkastel-Kues and Traben-Trarbach"
+  ],
+  "gatewayAirport": "Frankfurt-Hahn (HHN)",
+  "gatewayAirportCode": "HHN",
+  "languages": [
+    "German"
+  ],
+  "currency": "EUR",
+  "emergencyNumber": "112",
+  "coordinates": {
+    "lat": 52.5244,
+    "lon": 13.4105,
+    "precision": "country",
+    "matchedPlace": "Berlin",
+    "source": "country capital fallback"
+  },
+  "tags": [
+    "riesling",
+    "steep-slate",
+    "vdp-grosse-lage",
+    "pradikat",
+    "walk-in-and-email"
+  ],
+  "summary": "A week on the Mosel's blue-slate slopes, tasting Riesling by Prädikat and Grosse Lage from cooperative doors to appointment-only cellars.",
+  "summaryGenerated": false,
+  "hook": "The river doubles back on itself six times between Bernkastel and Traben-Trarbach, and the vines follow it up slopes steeper than a staircase. This week is built around slate: the blue-grey Devonian rock that heats the vineyards from below and gives Mosel Riesling its wet-stone bite. You taste at cooperative counters that never close for lunch, and at cellar doors that answer one email a week.",
+  "snapshot": {
+    "Country": "Germany",
+    "Base(s)": "Bernkastel-Kues (4 nights) · Traben-Trarbach (3 nights)",
+    "Trip Type": "Culinary & Wine Tours",
+    "Duration": "7 days / 7 nights",
+    "Best Period": "May, June, September, October",
+    "Budget Tier": "€€",
+    "Total Distance / Terrain": "Approx. 60 km between villages by train, bus and river boat; vineyard slopes up to 65% gradient, walked on graded paths only",
+    "Getting There": "Fly to Frankfurt-Hahn (HHN), approx. 45 minutes by taxi or the Bernkastel-Kues–Hahn Flughafenshuttle to the Markt",
+    "Who It Suits": "Riesling drinkers, terroir obsessives, anyone who wants to understand why the same grape tastes different fifty metres up a hill"
+  },
+  "itinerary": [
+    {
+      "day": 1,
+      "title": "Arrival on the river bend",
+      "morning": "Land at Frankfurt-Hahn and transfer by taxi or shuttle to Bernkastel-Kues, about 45 minutes through the Hunsrück hills. Drop bags at the Markt.",
+      "afternoon": "Bernkastel's half-timbered market square, the Spitzhäuschen and the St. Michael fountain are the orientation walk. Cross the Balduinbrücke to Kues and back for the view of the town stacked against the vineyard.",
+      "evening": "Dinner at a Straußwirtschaft if one is open — these seasonal wine taverns, licensed for a few weeks a year, serve Zwiebelkuchen mit Federweißer, onion tart with the cloudy, half-fermented new wine, a pairing that only exists in autumn. Outside that window, order the tart with a young Kabinett instead.",
+      "dayStats": "Cellars visited: 0. Km travelled: 3 km on foot. Approx. tasting spend: €0.",
+      "sleep": null
+    },
+    {
+      "day": 2,
+      "title": "The Doctor and the Prädikat ladder",
+      "morning": "Walk up into the Bernkasteler Doctor, the vineyard immediately behind the town whose name has been a byword for quality since the 1900s. The path to the Doctor-und-Graben viewpoint gives the full angle of the slope.",
+      "afternoon": "Dr. Loosen's Vinothek on St. Johannishof is walk-in, no appointment needed, and pours a flight across the Prädikat system: Kabinett, Spätlese, Auslese and, in the right vintage, Beerenauslese and Trockenbeerenauslese, each named for the sugar ripeness (Oechsle) of the grapes at picking, from lightest to most concentrated. Ask them to explain Eiswein alongside it — grapes picked frozen, usually in December. The Mittelmosel-Museum in the same building holds the region's viticultural history, including the wooden monorail carts still used on the steepest rows.",
+      "evening": "Riesling-poached Saibling (char) at a Markt-facing Weinstube, with a Kabinett from the afternoon's tasting.",
+      "dayStats": "Cellars visited: 1. Km travelled: 5 km. Approx. tasting spend: €20–30.",
+      "sleep": null
+    },
+    {
+      "day": 3,
+      "title": "Graach, Wehlen and the appointment-only door",
+      "morning": "Regional bus to Graach, then on foot along the Mosel-Weinwanderweg to Wehlen. The path runs through the Wehlener Sonnenuhr, the sundial-marked vineyard that gives the wine its name, and the neighbouring Graacher Himmelreich.",
+      "afternoon": "Joh. Jos. Prüm, in Wehlen, keeps no public tasting room and no signage worth photographing. Visits are by written appointment only, arranged weeks ahead by email through the estate, and the same discretion applies at Willi Schaefer in Graach, a tiny production seen only by prior arrangement. Book both well before the trip if you want in; otherwise taste the same sites' wines, by the glass, at the Weinstube am Markt in Bernkastel that evening.",
+      "evening": "Cross back by the passenger ferry from Zeltingen if it is running, or the regional bus, for dinner in Bernkastel-Kues.",
+      "dayStats": "Cellars visited: 0–1 (reservation-dependent). Km travelled: 9 km. Approx. tasting spend: €15–25.",
+      "sleep": null
+    },
+    {
+      "day": 4,
+      "title": "Ürzig's red slate and the VDP pyramid",
+      "morning": "Bus or train to Ürzig. The Ürziger Würzgarten sits on reddish, iron-rich slate rather than the usual blue-grey, and the wines carry a spice note locals will tell you comes straight from the soil.",
+      "afternoon": "Markus Molitor's Vinothek in Bernkastel (Trabener Straße) sells across the range and pours a walk-in flight; the cellars themselves, spread over more than twenty parcels in Bernkastel, Wehlen, Zeltingen and Erden, are shown only by arrangement. Ask for a Grosses Gewächs if they are pouring one: the VDP (Verband Deutscher Prädikatsweingüter) classifies its members' best single vineyards as VDP.Grosse Lage, roughly the Mosel's equivalent of a grand cru, and a dry wine from a Grosse Lage site labelled Grosses Gewächs (GG) is hand-harvested and released later than everyday bottlings.",
+      "evening": "Erden, next door, holds the Erdener Prälat and Erdener Treppchen sites. Dinner in Ürzig, river trout with new potatoes.",
+      "dayStats": "Cellars visited: 1. Km travelled: 12 km. Approx. tasting spend: €20–30.",
+      "sleep": null
+    },
+    {
+      "day": 5,
+      "title": "Downriver to Traben-Trarbach",
+      "morning": "Take the Kolb-Linie passenger boat (seasonal) or the regional bus from Bernkastel-Kues, past Kröv, to Traben-Trarbach — about 40 minutes either way.",
+      "afternoon": "Traben-Trarbach's fortune came from the wine trade, and the Jugendstil villas along the Moselufer, built by wine merchants around 1900, are the result. Walk up to the ruined Grevenburg or across to Mont Royal, the earthworks of a 17th-century French fortress on the hillside above town, for the long view down the valley.",
+      "evening": "Selbach-Oster's Vinothek in neighbouring Zeltingen is walk-in and worth the short detour if timed with the boat; otherwise taste the Traben-Trarbach range at a riverside Weinstube.",
+      "dayStats": "Cellars visited: 1. Km travelled: 8 km. Approx. tasting spend: €20–25.",
+      "sleep": null
+    },
+    {
+      "day": 6,
+      "title": "Calmont, the steepest vineyard in Europe",
+      "morning": "Drive or take a taxi from Traben-Trarbach to Bremm, about 40 minutes downriver, for the Calmont — Europe's steepest vineyard, worked on slopes over 65% gradient with monorail carts (Schrägaufzüge) because no tractor can climb it. The Calmont-Klettersteig via ferrata runs along its top edge for those with a head for exposure; the lower Calmont-Panoramaweg gives the same view without the cable.",
+      "afternoon": "Continue to Zell, home of the \"Schwarze Katz\" (black cat) vineyard, an old marketing name now attached to a real Ortslage. Lunch on the river.",
+      "evening": "Back to Traben-Trarbach. A quiet dinner; this is the longest driving day of the week.",
+      "dayStats": "Cellars visited: 0–1. Km travelled: 80 km round trip. Approx. tasting spend: €10–20.",
+      "sleep": null
+    },
+    {
+      "day": 7,
+      "title": "Piesport, the Roman ship, and departure",
+      "morning": "Regional bus or train to Neumagen-Dhron, the oldest documented wine town on the Mosel, where a Roman relief of a wine ship — the Neumagener Weinschiff — was excavated; a replica stands by the church. Walk on to Piesport.",
+      "afternoon": "The Piesporter Goldtröpfchen forms a natural amphitheatre above the village, one of the Mosel's best-known south-facing sites. A last tasting at a village cooperative counter, then transfer back toward Frankfurt-Hahn.",
+      "evening": "Departure from Hahn, or an overnight near the airport if the flight is early.",
+      "dayStats": "Cellars visited: 1. Km travelled: 15 km plus approx. 60 km transfer. Approx. tasting spend: €15–20.",
+      "sleep": null
+    }
+  ],
+  "accommodationStrategy": [
+    {
+      "rank": 1,
+      "name": "Romantik Hotel zur Post",
+      "style": "Historic wine-trade hotel",
+      "location": "Bernkastel-Kues",
+      "description": "On the Markt, a few steps from the bridge and the bus stop, this long-established house has hosted the wine trade for generations; the restaurant pours deep into the local list, and staff will call ahead to arrange the reservation-only cellar visits.",
+      "booking": "8–10 weeks ahead for September and October.",
+      "priceNote": "€140–€190 per night"
+    },
+    {
+      "rank": 2,
+      "name": "Hotel Bellevue",
+      "style": "Jugendstil landmark on the river",
+      "location": "Traben-Trarbach",
+      "description": "The Art Nouveau hotel that anchors the Moselufer, built by the wine trade at its 1900s peak and still trading. Rooms on the river side put you steps from the boat pier and the bridge to Trarbach.",
+      "booking": "6–8 weeks ahead.",
+      "priceNote": "€150–€210 per night"
+    }
+  ],
+  "logistics": {
+    "connectivity": null,
+    "emergency": "112 pan-European; Germany specifics: 110 police, 112 fire/ambulance. Mobile coverage is reliable along the valley, patchy on the high vineyard tracks above Calmont.",
+    "weather": null,
+    "bookingWindows": "J.J. Prüm, Willi Schaefer and similarly small growers do not run tasting rooms; email the estate directly, weeks ahead, stating your dates and group size, or ask the Bernkastel-Kues tourist office (part of Moselwein e.V.'s network) to make the introduction.",
+    "money": "Cards are accepted at hotels and larger Weinstuben; small growers and market stalls prefer cash — carry €50–€80 in small notes.",
+    "transportRules": null,
+    "permits": null,
+    "health": null,
+    "gettingThere": null,
+    "other": [
+      {
+        "label": "Rail and bus",
+        "text": "Bernkastel-Kues has no passenger rail station; the nearest is Wittlich, connected by bus. Piesport and Neumagen-Dhron sit on the Trier–Koblenz line. A VRT (Verkehrsverbund Region Trier) day ticket covers buses and trains across the valley."
+      },
+      {
+        "label": "The Kolb-Linie boats",
+        "text": "run seasonally, roughly Easter to October, and stop for weather; check the day's schedule at the pier before planning a one-way trip."
+      },
+      {
+        "label": "Opening-hour traps",
+        "text": "Village Vinotheken often close Sunday and Monday outside the main season; cooperative tasting rooms keep the most reliable hours."
+      },
+      {
+        "label": "Drink-drive alternatives",
+        "text": "Do not drive between tastings. Use the VRT buses, the Kolb-Linie boat, a pre-booked taxi (ask your hotel), or spread tastings across a walking or e-bike day on the flat Mosel-Radweg between villages."
+      }
+    ]
+  },
+  "proTips": [
+    "Email reservation-only estates at least six weeks out; the smallest growers answer correspondence once a week and September fills first.",
+    "Ask any Vinothek to pour a \"vertical by Prädikat\" — the same vineyard's Kabinett through Auslese side by side — it explains the whole system in fifteen minutes.",
+    "The Bernkasteler Doctor viewpoint is best walked in late afternoon light, when the slate visibly darkens the closer rows.",
+    "Buy futures (Subskription) if a grower offers it; VDP estates release Grosses Gewächs the following September at a lower price than the finished bottle.",
+    "Skip the Calmont via ferrata cable if you are short on time — the Panoramaweg gives the same view from the same ridge without the harness.",
+    "Ask cooperative staff which Ortsteil (village subsection) a pour comes from; Mosel labels can be confusing and locals read them instantly."
+  ],
+  "typeSpecific": {
+    "raw": {
+      "Total Distance / Terrain": "Approx. 60 km between villages by train, bus and river boat; vineyard slopes up to 65% gradient, walked on graded paths only",
+      "Who It Suits": "Riesling drinkers, terroir obsessives, anyone who wants to understand why the same grape tastes different fifty metres up a hill"
+    },
+    "surface": "Approx. 60 km between villages by train, bus and river boat; vineyard slopes up to 65% gradient, walked on graded paths only",
+    "distanceKm": 60,
+    "elevationM": null,
+    "verticalM": null,
+    "technicalRating": null,
+    "transitPass": null,
+    "hutBooking": null,
+    "liftNetwork": null,
+    "snowReliability": null,
+    "windConditions": null,
+    "gpxReady": null,
+    "bookingTimeline": null,
+    "audience": "Riesling drinkers, terroir obsessives, anyone who wants to understand why the same grape tastes different fifty metres up a hill"
+  },
+  "packingNotes": [
+    "Comfortable shoes with grip; vineyard tracks are steep gravel, not pavement.",
+    "A light rain shell; the valley catches river-borne showers even on sunny forecasts.",
+    "A soft cooler bag or bottle sleeves for anything you buy at cellar doors.",
+    "A phrasebook or app for German wine terms (trocken, feinherb, süß) — not every small grower's English extends to nuance.",
+    "Cash in small notes.",
+    "A daypack for the Neumagen-to-Piesport and Calmont walks."
+  ],
+  "whatCouldGoWrong": [
+    "**A reservation-only estate doesn't answer.** Have a walk-in backup ready (Dr. Loosen, Markus Molitor's Vinothek, Selbach-Oster) for the same afternoon.",
+    "**The Kolb-Linie boat is cancelled for high water or wind.** Fall back to the regional bus; the ride is less scenic but the same journey time.",
+    "**Rain closes out a vineyard walk.** Retreat to the Mittelmosel-Museum or a cellar tasting; slate paths get genuinely slippery wet.",
+    "**Calmont's via ferrata is closed for maintenance.** The lower Panoramaweg stays open and gives comparable views.",
+    "**You've tasted too much to drive back from Bremm.** Book a taxi for the return leg in advance; mobile signal on that stretch can be weak."
+  ],
+  "sources": {
+    "verified": null,
+    "confidenceNotes": null
+  },
+  "verifyFlags": [],
+  "verifyFlagCount": 0,
+  "volatilePricing": false,
+  "wordCount": 1886,
+  "dataVintage": 2026,
+  "provenance": {
+    "batch": "western-central",
+    "sourceFile": "cartatripsv1/trips/de-culinary-mosel-riesling.md",
+    "sourceFormat": "md+yaml-frontmatter (one file per trip)",
+    "sourceId": "de-culinary-mosel-riesling",
+    "ingestedAt": "2026-09-02",
+    "synthesized": false
+  }
+}

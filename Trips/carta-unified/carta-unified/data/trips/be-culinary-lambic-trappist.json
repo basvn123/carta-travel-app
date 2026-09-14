@@ -1,0 +1,300 @@
+{
+  "id": "be-culinary-lambic-trappist",
+  "sourceId": "be-culinary-lambic-trappist",
+  "slug": "be-culinary-lambic-trappist",
+  "title": "Lambic, Geuze and the Trappist Table",
+  "country": "Belgium",
+  "countryCode": "BE",
+  "countries": [
+    {
+      "name": "Belgium",
+      "code": "BE"
+    }
+  ],
+  "isMultiCountry": false,
+  "region": "Western & Central Europe",
+  "regionKey": "western-central",
+  "subRegion": "Pajottenland, Zenne Valley and Brussels",
+  "tripType": "Culinary & Wine Tours",
+  "tripTypeId": 7,
+  "tripTypeSlug": "culinary",
+  "durationDays": 7,
+  "bestPeriod": {
+    "months": [
+      4,
+      5,
+      9,
+      10
+    ],
+    "monthNames": [
+      "April",
+      "May",
+      "September",
+      "October"
+    ],
+    "window": null,
+    "note": "Even-numbered years bring the biennial Toer de Geuze open-cellar weekend, usually the first weekend of May — build the trip around it if the calendar allows.",
+    "avoid": null,
+    "raw": null
+  },
+  "budgetTier": "€€",
+  "budgetTierRange": [
+    2,
+    2
+  ],
+  "budgetTierRaw": "€€",
+  "budget": {
+    "currency": "EUR",
+    "totalEur": {
+      "low": 1100,
+      "high": 1550
+    },
+    "totalNote": null,
+    "breakdown": {
+      "accommodation": {
+        "lowEur": 480,
+        "highEur": 660,
+        "note": null
+      },
+      "food": {
+        "lowEur": 300,
+        "highEur": 410,
+        "note": null
+      },
+      "transport": {
+        "lowEur": 130,
+        "highEur": 190,
+        "note": null
+      },
+      "activities": {
+        "lowEur": 190,
+        "highEur": 290,
+        "note": null
+      }
+    },
+    "perDayEur": {
+      "low": 157,
+      "high": 221
+    }
+  },
+  "profile": {
+    "difficulty": 1,
+    "difficultyLabel": "Easy",
+    "difficultyNote": null,
+    "fitnessLevel": "Easy",
+    "crowdLevel": "Moderate",
+    "familyFriendly": false,
+    "carRequired": false
+  },
+  "basecamps": [
+    "Brussels and Beersel"
+  ],
+  "gatewayAirport": "Brussels (BRU)",
+  "gatewayAirportCode": "BRU",
+  "languages": [
+    "Dutch",
+    "French"
+  ],
+  "currency": "EUR",
+  "emergencyNumber": "112",
+  "coordinates": {
+    "lat": 50.8505,
+    "lon": 4.3488,
+    "precision": "city",
+    "matchedPlace": "Brussels",
+    "source": "geonames (geonamescache, cities > 15k)"
+  },
+  "tags": [
+    "beer",
+    "spontaneous-fermentation",
+    "trappist",
+    "geuze",
+    "brussels"
+  ],
+  "summary": "A week between Brussels tables and the Zenne valley's wild-fermenting lambic cellars, with one long day into Trappist country.",
+  "summaryGenerated": false,
+  "hook": "Lambic is beer that ferments itself: wild yeast blows in through open cellar windows in the Zenne valley and nowhere reliably reproduces it elsewhere. This week starts at the taps of Brussels, works out through Anderlecht and Pajottenland to the blenders who age and mix it into geuze, and takes one long day south to a Trappist abbey where the beer funds a monastery rather than a bar crawl.",
+  "snapshot": {
+    "Country": "Belgium",
+    "Base(s)": "Brussels (5 nights) · Beersel (2 nights)",
+    "Trip Type": "Culinary & Wine Tours",
+    "Duration": "7 days / 7 nights",
+    "Best Period": "April, May, September, October",
+    "Budget Tier": "€€",
+    "Total Distance / Terrain": "Approx. 60 km by train and bus across the week; flat Zenne valley walking, 5–8 km per cellar day",
+    "Getting There": "Fly to Brussels (BRU); Brussels Airport Express train to Bruxelles-Central, 20 min",
+    "Who It Suits": "Beer people who want the fermentation science explained on-site, and anyone who eats seriously while drinking"
+  },
+  "itinerary": [
+    {
+      "day": 1,
+      "title": "Brussels, on the plate",
+      "morning": "Land at Brussels Airport and take the train into Bruxelles-Central. Settle into the Marolles or Sablon area and walk down to the Grand-Place — allow it its own hour before you start thinking about beer.",
+      "afternoon": "Lunch of moules-frites or stoofvlees (Flemish beef stewed in beer, usually a dark abbey ale) near Rue des Bouchers, then a slower walk through the Marolles flea market streets.",
+      "evening": "Moeder Lambic Fontainas, a specialist lambic and geuze bar near the Bourse, keeps one of the country's deepest bottle lists and staff who will talk you through blends by producer. Start here rather than a tourist beer hall.",
+      "dayStats": "Cellars visited: 0. Km travelled: 6. Approx. tasting spend: €20–€30.",
+      "sleep": null
+    },
+    {
+      "day": 2,
+      "title": "Cantillon, inside Brussels itself",
+      "morning": "Walk or take the metro to Anderlecht for Brussels' own working lambic brewery, Cantillon — a small, unmodernised 1900 building that is simultaneously an operating brewery and a self-guided museum. Book online for a weekend slot; weekday mornings often take walk-ins.",
+      "afternoon": "The tasting at the end of the tour is bracingly sour if you've never had unblended lambic; order a Kriek made with Schaarbeekse cherries to see the fruit version. Lunch nearby: garnaalkroketten, North Sea shrimp croquettes, standard on almost any Brussels brasserie menu.",
+      "evening": "Dinner in Saint-Gilles. Order jets de houblon if they're in season (spring only) — hop shoots, a genuine Belgian delicacy tied to this region's brewing history.",
+      "dayStats": "Cellars visited: 1. Km travelled: 8. Approx. tasting spend: €15–€20.",
+      "sleep": null
+    },
+    {
+      "day": 3,
+      "title": "Into Pajottenland",
+      "morning": "Train from Brussels-Midi to Halle, then a local bus or taxi (about 15 minutes) to Lembeek, home of Brouwerij Boon — one of the last traditional lambic brewers still turning over the full spontaneous-fermentation process at scale. Tours run by reservation, booked online at least a week ahead.",
+      "afternoon": "Move to Beersel, a short bus ride away, and check into your base for the next two nights. Walk out to Kasteel van Beersel, the moated medieval castle that gives the town its postcard image.",
+      "evening": "Dinner at 3 Fonteinen's own restaurant in Beersel — part brewery-blendery, part kitchen, and the closest thing this valley has to a destination table. Reserve the table separately from any tour; it fills on weekends.",
+      "dayStats": "Cellars visited: 1. Km travelled: 10. Approx. tasting spend: €18–€25.",
+      "sleep": null
+    },
+    {
+      "day": 4,
+      "title": "Blenders and a village lane",
+      "morning": "Oud Beersel, a short walk from the castle, keeps a proper visitor programme: book a tour and tasting online in advance, though same-week slots often open up outside peak season.",
+      "afternoon": "Bus or taxi out to Gooik for De Cam Geuzestekerij, a small geuze blender that keeps limited public hours — check their site for the current open afternoon before you go, since this is one of the least tourist-oriented stops on the route. Explain the vocabulary to yourself here: geuze is a blend of old lambic (2–3 years, flat and acidic) and young lambic (about a year, still fermenting), bottled together so the young beer's residual sugar re-ferments the blend in the bottle.",
+      "evening": "Back in Beersel, a quieter dinner — stoofvlees again, or a plate of Belgian cheeses, with a Faro (lambic sweetened with candy sugar, the gentlest way into the style).",
+      "dayStats": "Cellars visited: 2. Km travelled: 14. Approx. tasting spend: €15–€22.",
+      "sleep": null
+    },
+    {
+      "day": 5,
+      "title": "Lindemans and back to the city",
+      "morning": "Vlezenbeek is a short bus ride from Beersel: Brouwerij Lindemans, one of the oldest continuously operating lambic producers in the valley, still brewing on a farm site. Tours are by appointment, best arranged a few days ahead by email.",
+      "afternoon": "Train back into Brussels-Midi. If your visit lands on a Sunday, the Marché du Midi around Gare du Midi is one of Europe's largest markets, running roughly 06:00–13:30 — a full sensory reset after a week of cellars.",
+      "evening": "Dinner in central Brussels: waterzooi or a proper carbonade flamande, with a grande marque or an abbey ale rather than lambic, as contrast.",
+      "dayStats": "Cellars visited: 1. Km travelled: 20. Approx. tasting spend: €12–€18.",
+      "sleep": null
+    },
+    {
+      "day": 6,
+      "title": "South to Trappist country",
+      "morning": "This is the long day. Train from Brussels-Midi to Charleroi-Central, then a regional bus (TEC) toward Chimay — plan on 2h to 2h30 door to door, and check the connection the evening before, since Sunday services thin out.",
+      "afternoon": "The Abbaye de Scourmont itself is not open to visitors — Trappist monasteries brew to fund the monastery, not to run a tasting room. What you can actually visit is the Espace Chimay, the official visitor centre at Baileux/Bourlers a few kilometres from the abbey, with an exhibition on Trappist brewing, a shop and a tasting room. It is the honest, real-world version of a Trappist \"tour\" for this abbey.",
+      "evening": "Return to Brussels by the same train-and-bus combination, or, if timing is tight, stay overnight in Chimay and return the following morning before your flight. Dinner: a plate of Ardennes charcuterie with a Chimay Bleue.",
+      "dayStats": "Cellars visited: 0 (visitor centre only). Km travelled: 190 (round trip). Approx. tasting spend: €15–€20.",
+      "sleep": null
+    },
+    {
+      "day": 7,
+      "title": "Last taps, and out",
+      "morning": "Back in Brussels, a final walk through the Sablon for chocolate (Wittamer or Pierre Marcolini, both long-established) and a coffee.",
+      "afternoon": "If you missed the Grand-Place proper on Day 1, do it now, then a last stop at Moeder Lambic Original in Saint-Gilles or the newer Fontainas branch for anything you haven't yet tried — ask staff for whatever's freshly tapped rather than the bottle list.",
+      "evening": "Train to the airport for the flight out.",
+      "dayStats": "Cellars visited: 0. Km travelled: 25. Approx. tasting spend: €15–€25.",
+      "sleep": null
+    }
+  ],
+  "accommodationStrategy": [
+    {
+      "rank": 1,
+      "name": "Hotel in the Marolles/Sablon area",
+      "style": "City base",
+      "location": "Brussels",
+      "description": "Puts you within walking distance of Cantillon (Anderlecht is a short metro hop), the Grand-Place restaurants, and Brussels-Midi and Brussels-Central for every regional train this trip needs. Ask for a quiet street-facing room away from the Sablon's weekend antiques market noise.",
+      "booking": "6 weeks ahead.",
+      "priceNote": "€110–€165 per night"
+    },
+    {
+      "rank": 2,
+      "name": "Guesthouse near Beersel castle",
+      "style": "Village stay",
+      "location": "Beersel",
+      "description": "Small, family-run rooms within walking distance of Oud Beersel and 3 Fonteinen, and a short bus from Lembeek and Vlezenbeek. Staying here instead of day-tripping saves the last evening train back from a valley where buses stop early.",
+      "booking": "4–6 weeks ahead.",
+      "priceNote": "€90–€130 per night"
+    }
+  ],
+  "logistics": {
+    "connectivity": null,
+    "emergency": "112 pan-European; also works for police and ambulance directly in Belgium.",
+    "weather": null,
+    "bookingWindows": "Cantillon and Boon want online booking, especially weekends; De Cam keeps genuinely limited hours and should be checked the week of your visit; Lindemans and Oud Beersel prefer a few days' email notice.",
+    "money": "Cards work everywhere in Brussels; smaller Pajottenland cellars and the Chimay visitor centre may prefer cards over cash but always carry €40–€60 for shop purchases.",
+    "transportRules": null,
+    "permits": null,
+    "health": null,
+    "gettingThere": null,
+    "other": [
+      {
+        "label": "Drink-drive alternative",
+        "text": "Do not rent a car. Use De Lijn buses (line 142 and others) between Halle, Lembeek, Beersel, Vlezenbeek and Gooik, and NMBS/SNCB trains for the Brussels–Halle–Charleroi legs. Taxis between Pajottenland villages run €15–€25."
+      },
+      {
+        "label": "Toer de Geuze",
+        "text": "HORAL, the lambic producers' association, runs this open-cellar weekend in even years only — 2026 qualifies. If your dates land on it, book accommodation months ahead; the valley's small hotels sell out."
+      },
+      {
+        "label": "Opening-hour traps",
+        "text": "Small blenders like De Cam are not open daily — treat their posted hours as absolute, not a guideline."
+      },
+      {
+        "label": "Language",
+        "text": "Pajottenland is Flemish-speaking; Brussels and the Chimay area are French-speaking. English covers tours reliably at every stop listed here."
+      }
+    ]
+  },
+  "proTips": [
+    "Taste lambic in age order where a venue allows it — young, then old, then blended geuze — the sourness curve makes the blending logic click immediately.",
+    "Ask any lambic brewery which window in the building is the actual \"coolship\" room (the open, shallow vessel where the wort cools and picks up wild yeast overnight); most will show you even off-tour.",
+    "Reserve 3 Fonteinen's restaurant table separately and earlier than the tour — the kitchen is the harder booking of the two.",
+    "If you can only fit one blender beyond Cantillon, make it Oud Beersel or Boon; both run structured, English-friendly tours built for first-timers.",
+    "Buy bottles to take home at the brewery rather than a Brussels shop — cellar-door prices are noticeably lower and the selection deeper.",
+    "On the Chimay day, check the TEC bus timetable the night before, not the morning of; rural Sunday schedules can run at half frequency."
+  ],
+  "typeSpecific": {
+    "raw": {
+      "Total Distance / Terrain": "Approx. 60 km by train and bus across the week; flat Zenne valley walking, 5–8 km per cellar day",
+      "Who It Suits": "Beer people who want the fermentation science explained on-site, and anyone who eats seriously while drinking"
+    },
+    "surface": "Approx. 60 km by train and bus across the week; flat Zenne valley walking, 5–8 km per cellar day",
+    "distanceKm": 60,
+    "elevationM": null,
+    "verticalM": null,
+    "technicalRating": null,
+    "transitPass": null,
+    "hutBooking": null,
+    "liftNetwork": null,
+    "snowReliability": null,
+    "windConditions": null,
+    "gpxReady": null,
+    "bookingTimeline": null,
+    "audience": "Beer people who want the fermentation science explained on-site, and anyone who eats seriously while drinking"
+  },
+  "packingNotes": [
+    "Comfortable walking shoes; Pajottenland villages are flat but distances between stops add up.",
+    "A soft-sided bag or beer tote for bottle purchases — glass gets heavy fast.",
+    "A light rain layer; the Zenne valley is exactly as damp as its beer culture implies.",
+    "A translation app for Dutch signage in Pajottenland villages.",
+    "A printed or saved copy of your tour confirmations — small breweries don't always have reliable mobile signal in the cellar.",
+    "An empty day bag for chocolate and bottled souvenirs on Day 7."
+  ],
+  "whatCouldGoWrong": [
+    "**Cantillon or Boon is sold out for your date.** Both run limited daily capacity; book as early as your itinerary allows, and hold Oud Beersel or Lindemans as the flexible backup.",
+    "**De Cam is closed the day you go.** This is common outside their posted hours — treat it as a bonus stop, not a fixed plan, and lean on Boon and Oud Beersel instead.",
+    "**The Chimay bus connection is missed.** Charleroi has taxis for the final leg to Baileux/Bourlers, roughly €25–€35, or fold Chimay out entirely and substitute a second Pajottenland day.",
+    "**Rain washes out village walking.** Moeder Lambic and the Brussels beer bars easily absorb a full wet afternoon."
+  ],
+  "sources": {
+    "verified": null,
+    "confidenceNotes": null
+  },
+  "verifyFlags": [],
+  "verifyFlagCount": 0,
+  "volatilePricing": false,
+  "wordCount": 1852,
+  "dataVintage": 2026,
+  "provenance": {
+    "batch": "western-central",
+    "sourceFile": "cartatripsv1/trips/be-culinary-lambic-trappist.md",
+    "sourceFormat": "md+yaml-frontmatter (one file per trip)",
+    "sourceId": "be-culinary-lambic-trappist",
+    "ingestedAt": "2026-09-02",
+    "synthesized": false
+  }
+}

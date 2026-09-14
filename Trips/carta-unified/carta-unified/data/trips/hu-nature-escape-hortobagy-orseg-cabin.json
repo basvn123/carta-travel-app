@@ -1,0 +1,295 @@
+{
+  "id": "hu-nature-escape-hortobagy-orseg-cabin",
+  "sourceId": "hungary-hortobagy-orseg-cabin-nature",
+  "slug": "hu-nature-escape-hortobagy-orseg-cabin",
+  "title": "Puszta, Karst and Szer: A Week in Hungary's Three Quietest National Parks",
+  "country": "Hungary",
+  "countryCode": "HU",
+  "countries": [
+    {
+      "name": "Hungary",
+      "code": "HU"
+    }
+  ],
+  "isMultiCountry": false,
+  "region": "Eastern & Southeastern Europe",
+  "regionKey": "eastern-southeastern",
+  "subRegion": "Őrség, Hortobágy (Great Plain), Aggtelek Karst",
+  "tripType": "Nature Escapes & Cabin Stays",
+  "tripTypeId": 9,
+  "tripTypeSlug": "nature-escape",
+  "durationDays": 7,
+  "bestPeriod": {
+    "months": [
+      5,
+      9,
+      10
+    ],
+    "monthNames": [
+      "May",
+      "September",
+      "October"
+    ],
+    "window": "mid-October to early November for the crane migration — the single best wildlife spectacle in Hungary",
+    "note": null,
+    "avoid": "July–August on the puszta (35 °C, heat shimmer kills the birding, and the grassland is bleached)",
+    "raw": null
+  },
+  "budgetTier": "€",
+  "budgetTierRange": [
+    1,
+    1
+  ],
+  "budgetTierRaw": "€",
+  "budget": {
+    "currency": "EUR",
+    "totalEur": {
+      "low": 680,
+      "high": 1080
+    },
+    "totalNote": "€680–€1,080",
+    "breakdown": {
+      "accommodation": {
+        "lowEur": 230,
+        "highEur": 400,
+        "note": "€230–€400 (€33–€57/night — village guesthouses, forest cabins, park lodges)"
+      },
+      "food": {
+        "lowEur": 130,
+        "highEur": 200,
+        "note": "€130–€200 (€19–€29/day; self-catering brings this down further)"
+      },
+      "transport": {
+        "lowEur": 230,
+        "highEur": 330,
+        "note": "€230–€330 (car hire €160–€250, fuel ~€110 for ~1,150 km, e-matrica 6,900 HUF)"
+      },
+      "activities": {
+        "lowEur": 90,
+        "highEur": 150,
+        "note": "€90–€150 (cave tours, guided puszta drives, narrow-gauge railway, park entries)"
+      }
+    },
+    "perDayEur": {
+      "low": 97,
+      "high": 154
+    }
+  },
+  "profile": {
+    "difficulty": 1,
+    "difficultyLabel": "Easy",
+    "difficultyNote": "Easy",
+    "fitnessLevel": "Easy",
+    "crowdLevel": null,
+    "familyFriendly": null,
+    "carRequired": null
+  },
+  "basecamps": [
+    "Szalafő",
+    "Hortobágy",
+    "Tiszacsege",
+    "Jósvafő",
+    "Aggtelek"
+  ],
+  "gatewayAirport": "Budapest Ferenc Liszt (BUD). A car is effectively required — the Őrség hamlets and the Aggtelek villages have one or two buses a day, and the puszta has none.",
+  "gatewayAirportCode": "BUD",
+  "languages": [
+    "Hungarian"
+  ],
+  "currency": "Hungarian forint (HUF)",
+  "emergencyNumber": "112",
+  "coordinates": {
+    "lat": 47.4984,
+    "lon": 19.0404,
+    "precision": "country",
+    "matchedPlace": "Budapest",
+    "source": "country capital fallback"
+  },
+  "tags": [
+    "national-parks",
+    "cranes",
+    "puszta",
+    "caves",
+    "dark-sky",
+    "cabins",
+    "unesco",
+    "foraging"
+  ],
+  "summary": "Three landscapes that share nothing except emptiness: the scattered ridge-hamlets of the Őrség, where a farmstead is its own village; the Hortobágy, Europe's largest continuous natural grassland, where in late…",
+  "summaryGenerated": false,
+  "hook": "Three landscapes that share nothing except emptiness: the scattered ridge-hamlets of the Őrség, where a farmstead is its own village; the Hortobágy, Europe's largest continuous natural grassland, where in late October tens of thousands of cranes come down onto the fishponds in a noise you feel in your chest; and the Aggtelek karst, where a 25-kilometre cave system runs under the border into Slovakia. Low budget, low light pollution, very few people.",
+  "snapshot": {
+    "Country": "Hungary",
+    "Trip type": "Nature Escapes & Cabin Stays",
+    "Duration": "7 days",
+    "Best period": "May, September, and mid-October to early November for cranes",
+    "Budget tier": "€",
+    "Difficulty": "Easy",
+    "Start / End": "Budapest → Budapest (loop, ~1,150 km)",
+    "Getting there": "Budapest Ferenc Liszt (BUD). A car is effectively required — the Őrség hamlets and the Aggtelek villages have one or two buses a day, and the puszta has none."
+  },
+  "itinerary": [
+    {
+      "day": 1,
+      "title": "West to the scattered hamlets",
+      "morning": "Collect the car at BUD, buy the 10-day e-matrica (**6,900 HUF**, ~€17.50), and take the M1/M86 west to Vas county. Stop in Körmend for supplies — the Őrség has village shops with limited hours and no supermarket.",
+      "afternoon": "Arrive **Szalafő**, the Őrség's western edge, seven hamlets on separate ridges. Walk to **Szalafő-Pityerszer**, the open-air museum of *kerített ház* farmsteads — timber-framed houses built around an enclosed yard, the local answer to a landscape with no defensible village centre.",
+      "evening": "Settle into the cabin. Dinner is *dödölle*, potato dumpling under sour cream, and everything under **pumpkin-seed oil (*tökmagolaj*)** — the Őrség's cold-pressed oil is the region's one export-grade product. Stars from about 20:30.",
+      "dayStats": "250 km / 3 h",
+      "sleep": null
+    },
+    {
+      "day": 2,
+      "title": "Őrség on foot",
+      "morning": "The **Őrségi Nemzeti Park** trails from Szalafő through the Csörgő-szer and Felsőszer hamlets: beech and oak, wet meadows, and the *szer* pattern visible from every rise. Marked in the Hungarian national system — coloured bands on trees.",
+      "afternoon": "**Vadása-tó** near Hegyhátszentjakab: a small forest lake with a circular path, swimmable in summer, and the park's best short family walk. Then **Pankasz** for the 1755 shingled wooden bell tower.",
+      "evening": "**Velemér**, whose Romanesque church holds Johannes Aquila's frescoes of 1378. Then back to the cabin for a wood-stove night [VERIFY: current Velemér church opening hours and key-holder arrangement].",
+      "dayStats": "12–15 km walking",
+      "sleep": null
+    },
+    {
+      "day": 3,
+      "title": "Across the country to the grassland",
+      "morning": "The long transfer: M86 to the M1, round Budapest on the M0, then the M3 east across the Great Plain. It is a genuinely dull four hours; leave early and treat it as the price of admission.",
+      "afternoon": "Arrive **Hortobágy** village. The **Kilenclyukú híd**, the Nine-Arch Bridge of 1833, carries the old salt road over the Hortobágy river — 167 m of stone, the longest stone road bridge in historical Hungary. Beside it, the **Hortobágyi Csárda** of 1781.",
+      "evening": "First reconnaissance drive on road 33 at dusk. In late October the sky begins to fill from about 16:30 as **common cranes (*Grus grus*)** move from the stubble fields to the fishponds to roost.",
+      "dayStats": "400 km / 4 h 15",
+      "sleep": null
+    },
+    {
+      "day": 4,
+      "title": "The crane day",
+      "morning": "Out before sunrise for the **morning flight** — cranes leave the roost at first light in ragged skeins and spread onto the maize stubble. The best line is the field roads east of the **Hortobágyi-halastó** and along the Kunkápolnási marsh edge; stay in or beside the car, which birds tolerate far better than a standing human.",
+      "afternoon": "The **Hortobágyi-halastó** fishponds, a Ramsar site, with a **narrow-gauge railway** running visitors out along the dykes to a lookout tower — the only way to reach the pond interior. Spoonbill, great white egret, marsh harrier, and in autumn a wall of noise from the roost [VERIFY: 2026 narrow-gauge railway timetable and fare].",
+      "evening": "The main event: build the whole day around the **evening roost flight**. From about an hour before sunset, tens of thousands of cranes come in over the water in waves, calling continuously. Bring a scope or good binoculars, a hat, and patience; it runs 45–60 minutes and ends in near-darkness.",
+      "dayStats": "all day, ~40 km driving",
+      "sleep": null
+    },
+    {
+      "day": 5,
+      "title": "Grey cattle, racka, and dark sky",
+      "morning": "The **Pusztai Állatpark** at Hortobágy and the **Mátai Ménes** stud: grey cattle, racka sheep, buffalo, and **Nonius horses** — the breed the puszta herdsmen created. The horse-show is touristy; the breeding stock and the guided cart ride onto the range are not [VERIFY: current Pusztai Állatpark and Mátai Ménes ticket prices].",
+      "afternoon": "A **guided puszta drive** into the core zone with a park guide — the only legal way into the interior grassland — for the great bustard flocks and the pumping stations. Arrange it the previous day at the park visitor centre [VERIFY: current guided puszta programme prices].",
+      "evening": "Stay out for the **Hortobágy Starry Sky Park**. From a field road 3 km from any village the Milky Way is unmistakable; late October gives you full dark by 18:30 and Andromeda naked-eye.",
+      "dayStats": "60 km / 1 h",
+      "sleep": null
+    },
+    {
+      "day": 6,
+      "title": "North to the karst",
+      "morning": "North-west through Tiszafüred and Miskolc into the Aggtelek hills. The plain ends abruptly; within twenty minutes you are in limestone, dolines and beech forest.",
+      "afternoon": "The **Baradla cave**, the Hungarian half of the **Baradla–Domica** system: about **25 km of surveyed passage**, of which roughly 5.6 km lies across the border in **Slovakia as Domica**. Tours run from three entrances — **Aggtelek** (the short tour, about 1 km / 1 hour), **Vörös-tó** (the middle tour, about 2.3 km / 1.5 hours) and **Jósvafő** (about 1.5 km / 1 hour). The long tour, Aggtelek to Jósvafő end-to-end, runs about 7 km and takes 5–7 hours, by arrangement and with a minimum group [VERIFY: current Baradla tour prices and departure times].",
+      "evening": "**Jósvafő** — 300 residents, one shop, one church, karst springs. The cave air is 10 °C year-round; bring a fleece regardless of the surface temperature.",
+      "dayStats": "170 km / 2 h 15",
+      "sleep": null
+    },
+    {
+      "day": 7,
+      "title": "Karst surface, then home",
+      "morning": "The surface trails above **Jósvafő** and **Aggtelek**: the Tohonya-Kuriszlán educational trail, the Szádvár ruin above Szögliget, and the sinkhole meadows. This is the UNESCO-listed \"Caves of Aggtelek Karst and Slovak Karst\" landscape seen from above.",
+      "afternoon": "The **Vörös-tó** entrance middle tour if you skipped it, or the Rákóczi cave at Bódvarákó. Lunch in Aggtelek village.",
+      "evening": "M30/M3 back to Budapest, 230 km, 2 h 30 with the vignette already valid.",
+      "dayStats": "230 km / 2 h 30",
+      "sleep": null
+    }
+  ],
+  "accommodationStrategy": [
+    {
+      "rank": 1,
+      "name": "Őrségi vendégház, Szalafő-Pityerszer",
+      "style": "traditional szer farmstead",
+      "location": "Szalafő",
+      "description": "you sleep inside the settlement pattern the park exists to protect, on a ridge with three neighbours, wood stove, no street light, and the Pityerszer museum and trailheads on foot from the door. Isolation 4.",
+      "booking": "4–6 weeks ahead; October fills first. Confirm whether firewood and bed linen are included.",
+      "priceNote": null
+    },
+    {
+      "rank": 2,
+      "name": "Hortobágy Club Hotel / village guesthouses",
+      "style": "park-village lodge",
+      "location": "Hortobágy",
+      "description": "five minutes from the Nine-Arch Bridge and the visitor centre where the guided puszta programmes are booked, with parking for a pre-dawn start and somewhere to leave a scope. The village is your only realistic base for the crane days.",
+      "booking": "**crane season (mid-Oct to early Nov) needs 2–3 months** — Hungarian and Austrian birders book it out.",
+      "priceNote": null
+    },
+    {
+      "rank": 3,
+      "name": "Tengerszem / Jósvafő park lodges",
+      "style": "cave-village cabin",
+      "location": "Jósvafő",
+      "description": "five minutes' walk from the Jósvafő cave entrance and the Tohonya trailhead, in a hamlet that goes silent at nine, with the Vörös-tó entrance a ten-minute drive for the middle tour.",
+      "booking": "3–4 weeks ahead; school groups take the lodges in May and September midweek.",
+      "priceNote": null
+    }
+  ],
+  "logistics": {
+    "connectivity": "4G is reliable in all three park villages and patchy on the puszta field roads. **No signal underground** in Baradla, obviously. Download offline maps — the Hortobágy field-road network is barely mapped by satnav.",
+    "emergency": "**112**. On the puszta, give your position by the nearest *csárda*, pumping station or road-33 kilometre post; there are no addresses. In the caves, you go nowhere without a guide, which is precisely why the rule exists.",
+    "weather": "The Great Plain has the widest temperature range in Hungary — frost in late October mornings, 20 °C by afternoon. There is **no shade and no shelter** on the puszta; a storm crossing it is fully exposed. The karst gets fog that sits in the valleys until midday.",
+    "bookingWindows": "Crane-season beds in Hortobágy 2–3 months. Baradla long tour and guided puszta drives, a few days to a week. Őrség cabins 4–6 weeks.",
+    "money": "Forint. Cards are accepted at park ticket offices and larger *csárda*, but village shops, cave car parks and small guesthouses may be cash-only — carry 30,000–40,000 HUF (~€75–€100). ATMs in Debrecen, Körmend, Szentgotthárd and Putnok, not in the villages.",
+    "transportRules": "10-day e-matrica **6,900 HUF** covers the M1, M0, M3 and M30 legs. **0.0‰ alcohol limit** — total, not nominal. **Dipped headlights are compulsory outside built-up areas.** Watch for horse carts, herds crossing and unlit tractors at dusk on the plain.",
+    "permits": "**The Hortobágy core grassland requires a park guide or a written permit from the park directorate in Debrecen** — do not simply walk in off a field road. Aggtelek caves: guided tour only. All three parks: no wild camping, no drones without permission, no off-path walking in strict reserves. Mushrooms must go past a **gombaszakellenőr** before they go in a pan.",
+    "health": null,
+    "gettingThere": null,
+    "other": []
+  },
+  "proTips": [
+    "**Book the crane week before you book anything else.** The roost flight peaks late October into the first days of November, and Hortobágy village has a few hundred beds against several thousand European birders.",
+    "**Watch the roost from inside the car.** Cranes accept a stationary vehicle at 200 m and will not accept a person on foot at 500 m. The field roads east of the Halastó are the position; arrive an hour early and switch the engine off.",
+    "**Take your mushrooms to the market inspector.** Any county-town market with a *gombavizsgáló* booth checks a private basket, usually free, usually before 11:00. It is the difference between a good dinner and a liver transplant, and locals do it as routine.",
+    "**Choose the Vörös-tó middle tour** over the short Aggtelek tour. It is the best formation-density-per-forint in the system, and it starts from a car park most coach groups skip.",
+    "**Buy pumpkin-seed oil from a named Őrség press**, not a supermarket. Ask the guesthouse whose oil they use — the cold-pressed product is dark green, smells of toasted seed, and does not survive heating.",
+    "**Do the long Baradla traverse only if you are four or more.** It needs a minimum group and 5–7 hours; splitting the cost across a party makes it the standout day of the week.",
+    "**Bring a red torch and stay out after 21:00 on the puszta.** The Starry Sky Park designation is real, the horizon is flat in every direction, and there is no other night sky like it this close to Budapest."
+  ],
+  "typeSpecific": {
+    "raw": {
+      "Access requirements": "**Őrség NP**: everything reachable on sealed lanes; no 4x4 needed, but the forest tracks between *szer* hamlets are clay and rut badly after rain. **Hortobágy NP**: the visitor sites (Nine-Arch Bridge, Pusztai Állatpark, Mátai Ménes, the fishpond boardwalk) are freely accessible on foot or by ticket, **but the grassland interior is not open access** — the core zones require either a **National Park guide** or a written **entry permit from the Hortobágyi Nemzeti Park Igazgatóság** in Debrecen, and the guided *puszta* drives are the ordinary way in. **Aggtelek NP**: the caves may be entered **only on a guided tour**, no exceptions; the surface trails around Jósvafő and Aggtelek are free and marked.",
+      "Isolation rating (1 = suburban, 5 = genuinely remote)": "Őrség: **4** — hamlets of five to fifteen houses, no street lighting, nearest supermarket 20 minutes away. Hortobágy village: **2**; the puszta itself once you are 3 km from the road: **5**, with no shade, no water and no landmarks. Aggtelek and Jósvafő: **3** — small villages, one shop each, the karst plateau above them empty.",
+      "Off-grid utilities": "Most Őrség guesthouses are on mains power and well or mains water but have **wood stoves as primary heating** — ask whether firewood is included. Puszta *csárda* lodges and shepherd huts on the plain run on limited hot water and sometimes solar; the Aggtelek park lodges are conventional. Everywhere on this route: **no fuel after about 20:00** in villages, and no ATMs outside the towns.",
+      "Foraging and the mushroom rule": "Hungary has a distinctive and strictly applied system: **wild mushrooms may only be sold or, in practice, safely eaten after inspection by a licensed *gombaszakellenőr*** — a state-certified mushroom inspector. **Public mushroom inspectors sit at municipal markets** (Debrecen's Nagypiac and most county-town markets keep one during the season, usually mornings), and the service to a private picker is free or nominal. Picking for personal use is generally tolerated in state forests up to about 2 kg per person per day; picking is **banned outright in national-park core zones and strict reserves**. Take your basket to the inspector before you cook anything. Berries, wild pear, rosehip and elderflower are unrestricted outside core zones [VERIFY: current statutory personal-use mushroom quota].",
+      "Wildlife protocol": "There are **no resident brown bears in Hungary**, though individuals occasionally wander into the northern Borsod and Aggtelek hills from Slovakia — if you meet one, back away, do not run, make yourself heard. Wolves are re-establishing in the same northern karst in very small numbers and are not a practical hazard. The real animals you will meet are **Hungarian grey cattle (*magyar szürke szarvasmarha*)**, **racka sheep** with their corkscrew horns, **Nonius horses** and water buffalo on the Hortobágy — all semi-wild, all on open range, all to be given distance. Grey cattle bulls with calves in the herd are the one genuine risk: stay outside the fence line.",
+      "Dark skies": "The **Hortobágy Starry Sky Park** is an International Dark Sky Park covering much of the national park; the Milky Way is naked-eye across the whole southern sky on a moonless night. The Őrség is similarly dark. Bring a red-filter torch."
+    },
+    "surface": null,
+    "distanceKm": null,
+    "elevationM": null,
+    "verticalM": null,
+    "technicalRating": null,
+    "transitPass": null,
+    "hutBooking": null,
+    "liftNetwork": null,
+    "snowReliability": null,
+    "windConditions": null,
+    "gpxReady": null,
+    "bookingTimeline": null,
+    "audience": null
+  },
+  "packingNotes": [],
+  "whatCouldGoWrong": [],
+  "sources": {
+    "verified": null,
+    "confidenceNotes": "- Verified: Hortobágy as a UNESCO World Heritage cultural landscape and Europe's largest continuous natural grassland; the Nine-Arch Bridge of 1833; Hortobágy as an International Dark Sky Park; the Baradla–Domica system at roughly 25 km with a Slovak section, and cave entry only on guided tours from the Aggtelek, Vörös-tó and Jósvafő entrances; the UNESCO listing \"Caves of Aggtelek Karst and Slovak Karst\"; the Hungarian licensed mushroom-inspector (*gombaszakellenőr*) system and market inspection booths; 2026 e-matrica 10-day price 6,900 HUF; 0.0‰ alcohol limit; emergency 112. - `[VERIFY]` items in this file: 6 (see inline markers above) - Last reviewed: 2026-09-02"
+  },
+  "verifyFlags": [
+    "current statutory personal-use mushroom quota",
+    "current Velemér church opening hours and key-holder arrangement",
+    "2026 narrow-gauge railway timetable and fare",
+    "current Pusztai Állatpark and Mátai Ménes ticket prices",
+    "current guided puszta programme prices",
+    "current Baradla tour prices and departure times"
+  ],
+  "verifyFlagCount": 6,
+  "volatilePricing": true,
+  "wordCount": 2532,
+  "dataVintage": 2026,
+  "provenance": {
+    "batch": "eastern-southeastern",
+    "sourceFile": "cartaeasterneuropetrips/trips/hungary-hortobagy-orseg-cabin-nature.md",
+    "sourceFormat": "md+nested-yaml-frontmatter (one file per trip)",
+    "sourceId": "hungary-hortobagy-orseg-cabin-nature",
+    "ingestedAt": "2026-09-02",
+    "synthesized": false
+  }
+}

@@ -1,0 +1,16 @@
+rank,curation_rank,title,ref,network,distance_km,popularity,pageviews_day,sitelinks,anchors,quality_score,portal_agreement,status,family_members,trip_id,osm_relation
+1,87.52,Via Sancti Martini HW-35-12c Leonberg - Stuttgart/Schlossplatz,VSM,iwn,23.1,0.815,0,0,"Stuttgart (1253/day, 163 m); Stuttgart Open (124/day, 1990 m); Stuttgart Central Station (52/day, 531 m)",100,,needs_review,54,223783,6229340
+2,87.42,"Nord Süd Trail, Abschnitt Bergedorf - Fischbek",NST,iwn,49.0,0.848,0,0,"CARLS an der Elbphilharmonie (2078/day, 1147 m); Miniatur Wunderland Restaurant (2078/day, 1191 m); Hamburg (2078/day, 802 m)",95,,needs_review,43,256434,19968633
+3,84.3,"Europäischer Fernwanderweg E11, Brandenburg (W)",E11,iwn,124.3,0.723,10,10,"Brandenburger Tor (981/day, 1294 m); Potsdam (597/day, 845 m); Glienicke Bridge (140/day, 427 m)",100,,needs_review,12,218147,3418908
+4,83.29,Hugenotten- und Waldenserpfad (Hauptweg - Teilstrecke Frankfurt - Braunfels),HuWa,nwn,83.2,0.837,0,0,"Senckenberganlage (1761/day, 1924 m); Frankfurt (1761/day, 370 m); Deutsche Bank (306/day, 760 m)",100,,needs_review,34,253515,18344011
+5,82.34,Jakobsweg Via Regia 2,,iwn,79.7,0.667,117,22,,100,,needs_review,6,205066,76417
+6,79.22,Via Alpina Purple A62,VA-A62,iwn,23.2,0.578,0,0,"Neuschwanstein Castle (2401/day, 30 m); Museum of the Bavarian Kings (2401/day, 608 m); Neuschwanstein (2401/day, 30 m)",100,,needs_review,1,218372,3496074
+7,78.56,Westweg (Östliche Variante),,nwn,92.7,0.53,0,0,"Basel (1158/day, 1665 m); Basel (1158/day, 1718 m); St. Jakob (124/day, 1927 m)",100,agree,needs_review,1,44,130310
+8,78.56,Westweg (Westliche Variante),,nwn,90.2,0.53,0,0,"Basel (1158/day, 1435 m); Basel (1158/day, 1868 m); Kunstmuseum Basel | Gegenwart (72/day, 1478 m)",100,agree,needs_review,1,13,62897
+9,78.51,"Europäischer Fernwanderweg E1 - Teil Deutschland, Hessen (Gebiet Odenwald Nord)",E1,iwn,95.4,0.558,0,0,"Frankfurt (1761/day, 1309 m); Commerzbank (294/day, 1692 m); Imperial Cathedral of Saint Bartholomew (120/day, 1203 m)",100,,needs_review,1,213742,2096486
+10,78.51,"Europäischer Fernwanderweg E1 - Teil Deutschland, Hessen (Gebiet Taunus Ost)",E1,iwn,51.0,0.558,0,0,"Senckenberganlage (1761/day, 1110 m); Frankfurt (1761/day, 469 m); WestendGate (1761/day, 1393 m)",100,,needs_review,1,213746,2096521
+11,78.25,Via Alpina Red R45,VA-R45,iwn,11.4,0.55,32,0,,100,,needs_review,3,16417,9978238
+12,78.01,Lutherweg 1521 (Teilstück Friedberg - Neu Isenburg),LW1521,nwn,51.1,0.722,0,0,"Senckenberganlage (1761/day, 1926 m); Frankfurt (1761/day, 115 m); Deutsche Bank (306/day, 760 m)",95,,needs_review,9,252875,18256656
+13,77.64,"European Long distance path E1 - part Germany, Hamburg",E1,iwn,57.5,0.568,0,0,"Hamburg (2078/day, 802 m); Miniatur Wunderland Restaurant (2078/day, 1191 m); CARLS an der Elbphilharmonie (2078/day, 1147 m)",95,,needs_review,1,204965,69471
+14,77.64,"Europäischer Fernwanderweg E9, Deutschland, Hamburg",E9,iwn,47.8,0.568,0,0,"CARLS an der Elbphilharmonie (2078/day, 1147 m); Hamburg (2078/day, 802 m); Miniatur Wunderland Restaurant (2078/day, 1191 m)",95,,needs_review,1,216981,3088071
+15,75.95,Grünes Band - Ost- und Südthüringen,GBT,nwn,103.7,0.663,114,8,,95,,needs_review,3,205238,91816

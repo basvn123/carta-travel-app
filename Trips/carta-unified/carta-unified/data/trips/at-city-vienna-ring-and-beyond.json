@@ -1,0 +1,301 @@
+{
+  "id": "at-city-vienna-ring-and-beyond",
+  "sourceId": "at-city-vienna-ring-and-beyond",
+  "slug": "at-city-vienna-ring-and-beyond",
+  "title": "Vienna — The Ring and Everything Behind It",
+  "country": "Austria",
+  "countryCode": "AT",
+  "countries": [
+    {
+      "name": "Austria",
+      "code": "AT"
+    }
+  ],
+  "isMultiCountry": false,
+  "region": "Western & Central Europe",
+  "regionKey": "western-central",
+  "subRegion": "Vienna",
+  "tripType": "City Trips",
+  "tripTypeId": 3,
+  "tripTypeSlug": "city",
+  "durationDays": 7,
+  "bestPeriod": {
+    "months": [
+      4,
+      5,
+      6,
+      9,
+      10
+    ],
+    "monthNames": [
+      "April",
+      "May",
+      "June",
+      "September",
+      "October"
+    ],
+    "window": null,
+    "note": "May and late September give warm terraces without the August closures; the Heuriger season peaks with Sturm in late September.",
+    "avoid": null,
+    "raw": null
+  },
+  "budgetTier": "€€",
+  "budgetTierRange": [
+    2,
+    2
+  ],
+  "budgetTierRaw": "€€",
+  "budget": {
+    "currency": "EUR",
+    "totalEur": {
+      "low": 980,
+      "high": 1420
+    },
+    "totalNote": null,
+    "breakdown": {
+      "accommodation": {
+        "lowEur": 560,
+        "highEur": 820,
+        "note": null
+      },
+      "food": {
+        "lowEur": 230,
+        "highEur": 330,
+        "note": null
+      },
+      "transport": {
+        "lowEur": 60,
+        "highEur": 100,
+        "note": null
+      },
+      "activities": {
+        "lowEur": 130,
+        "highEur": 170,
+        "note": null
+      }
+    },
+    "perDayEur": {
+      "low": 140,
+      "high": 203
+    }
+  },
+  "profile": {
+    "difficulty": 1,
+    "difficultyLabel": "Easy",
+    "difficultyNote": null,
+    "fitnessLevel": "Easy",
+    "crowdLevel": "High",
+    "familyFriendly": true,
+    "carRequired": false
+  },
+  "basecamps": [
+    "Vienna (Neubau or Landstrasse)"
+  ],
+  "gatewayAirport": "Vienna (VIE)",
+  "gatewayAirportCode": "VIE",
+  "languages": [
+    "German"
+  ],
+  "currency": "EUR",
+  "emergencyNumber": "112",
+  "coordinates": {
+    "lat": 48.2085,
+    "lon": 16.3721,
+    "precision": "city",
+    "matchedPlace": "Vienna",
+    "source": "geonames (geonamescache, cities > 15k)"
+  },
+  "tags": [
+    "ringstrasse",
+    "otto-wagner",
+    "coffee-houses",
+    "gemeindebau",
+    "markets"
+  ],
+  "summary": "Seven days of Vienna organised one district at a time, from Ringstrasse historicism to Ottakring's market streets and the Steinhof hill.",
+  "summaryGenerated": false,
+  "hook": "Vienna rewards people who stop moving. The city is small enough to walk, dense enough that one district will fill a day, and structured in rings — so the honest way to see it is to take one block at a time and finish each with a market, a Beisl or a Heuriger. Four of these seven days never touch the Innere Stadt at all, and they are the days you will remember.",
+  "snapshot": {
+    "Country": "Austria",
+    "Base(s)": "Vienna, single base (Neubau/7th or Landstrasse/3rd)",
+    "Trip Type": "City Trips",
+    "Duration": "7 days",
+    "Best Period": "April–June, September–October",
+    "Budget Tier": "€€",
+    "Total Distance / Terrain": "approx. 70–85 km on foot; flat except the Steinhof and Kahlenberg slopes; 9 of 23 districts covered",
+    "Getting There": "Fly to VIE; City Airport Train or S7 to Wien Mitte in 16–25 min. By rail, Wien Hauptbahnhof from Munich, Prague, Budapest and Zürich",
+    "Who It Suits": "Slow walkers, architecture readers, market shoppers; anyone allergic to a coach-tour itinerary"
+  },
+  "itinerary": [
+    {
+      "day": 1,
+      "title": "The Ring, read as one building",
+      "morning": "Start at the Staatsoper (August Sicard von Sicardsburg and Eduard van der Nüll, 1869) and walk the Ring anticlockwise as a single block: Burggarten, Heldenplatz, then the Parlament (Theophil Hansen, 1883, reopened after restoration in 2023), the Rathaus (Friedrich von Schmidt, 1883), the Burgtheater (Gottfried Semper and Karl von Hasenauer, 1888) and the Universität (Heinrich von Ferstel, 1884). Each borrowed a style to match its function — Greek for parliament, Flemish Gothic for the town hall.",
+      "afternoon": "The Kunsthistorisches Museum (Semper and Hasenauer, 1891) for the Bruegel room and the Kunstkammer. Book the timed slot online the night before.",
+      "evening": "Coffee at Café Landtmann (opened 1873) on the Ring, then Stehplätze at the Staatsoper — standing tickets go on sale at the Operngasse standing-room entrance about 80 minutes before curtain for roughly €13–€18.",
+      "dayStats": "8 km walked. Districts: 1. Ticket spend approx. €35–€50 (museum plus standing opera).",
+      "sleep": null
+    },
+    {
+      "day": 2,
+      "title": "Wienzeile: Wagner, the Secession and the Naschmarkt",
+      "morning": "One block, all morning: Linke Wienzeile. Otto Wagner's Majolikahaus at No. 40 and the gold-medallioned house at No. 38 (both 1899) face the market. Walk down to the Karlsplatz Stadtbahn Pavilions (Wagner, 1899) and the Secession (Joseph Maria Olbrich, 1898) for Klimt's Beethoven Frieze in the basement.",
+      "afternoon": "The Naschmarkt itself — the permanent stalls run Monday to Saturday, roughly 06:00 to 19:30, with Saturday the fullest day. Then Karlskirche (Johann Bernhard Fischer von Erlach, begun 1716) and the Wien Museum, whose permanent collection is free.",
+      "evening": "Café Sperl (1880) on Gumpendorfer Strasse, unrenovated on purpose, then dinner in Neubau around Siebensterngasse.",
+      "dayStats": "9 km walked. Districts: 4, 6, 1. Ticket spend approx. €22–€30.",
+      "sleep": null
+    },
+    {
+      "day": 3,
+      "title": "Belvedere and the Landstrasse",
+      "morning": "The Oberes Belvedere (Johann Lucas von Hildebrandt, 1723) holds Klimt's *Der Kuss*. Book a timed slot online at least a week ahead in high season and take the first entry of the day, around 09:00 — the Klimt room is a single small gallery and by 11:00 it is three deep. The Unteres Belvedere and the garden are quieter all day.",
+      "afternoon": "Walk north into Landstrasse. The Rochusmarkt on Landstrasser Hauptstrasse (Monday to Friday, plus Saturday morning) is a working neighbourhood market, not a tourist one. Then the Hundertwasserhaus (Friedensreich Hundertwasser with Josef Krawina, 1985) at Kegelgasse — five minutes of looking, no ticket needed.",
+      "evening": "Gmoakeller on Am Heumarkt, a Beisl running since 1858, for Backhendl or Tafelspitz.",
+      "dayStats": "7 km walked. Districts: 3. Ticket spend approx. €19–€26.",
+      "sleep": null
+    },
+    {
+      "day": 4,
+      "title": "Ottakring: Brunnenmarkt and the Gemeindebau",
+      "morning": "Off the spine entirely. Take U6 to Josefstädter Strasse and walk into the Brunnenmarkt on Brunnengasse — the longest street market in Europe, Monday to Saturday, Turkish and Balkan produce, and prices a third below the Naschmarkt. Saturday adds a farmers' market on Yppenplatz.",
+      "afternoon": "Walk to the Sandleitenhof (1928, by Emil Hoppe, Otto Schönthal, Franz Matuschek and others), Red Vienna's largest scheme: 1,500 flats built as a small town with courtyards, a library and shops. Then the Ottakringer Brauerei (1837) on Ottakringer Strasse for a tour and a Zwickl.",
+      "evening": "Back to Yppenplatz. Kent on Brunnengasse has been grilling lahmacun and Adana for decades and the terrace runs late.",
+      "dayStats": "8 km walked. Districts: 16, 17. Ticket spend approx. €12–€18.",
+      "sleep": null
+    },
+    {
+      "day": 5,
+      "title": "Penzing: Wagner's hill at Steinhof",
+      "morning": "The single most beautiful building in Vienna is a hospital chapel. Kirche am Steinhof (Otto Wagner, 1907) sits at the top of the former Otto-Wagner-Spital grounds in the 14th district — white marble panels bolted to brick, a copper dome, Kolo Moser glass. Access is by limited opening hours and guided tours, typically Saturday afternoon and Sunday midday; confirm the schedule, which shifts with the season and with works on the site. Get there by bus 48A from Ottakring U3.",
+      "afternoon": "Walk down through the pavilion grounds and take the tram to Hütteldorf for Wagner's own Villa I (1888) on Hüttelbergstrasse, now the Ernst Fuchs Museum. If the church is closed, substitute the Lainzer Tiergarten and the Hermesvilla (Karl von Hasenauer, 1886).",
+      "evening": "Eat in Hietzing or ride back to Neubau. A long, quiet, un-touristed day; take an early night.",
+      "dayStats": "10 km walked, including 120 m of climbing to Steinhof. Districts: 14, 13. Ticket spend approx. €14–€20.",
+      "sleep": null
+    },
+    {
+      "day": 6,
+      "title": "Döbling: Karl-Marx-Hof to the Heuriger",
+      "morning": "U4 to Heiligenstadt and out of the station straight into the Karl-Marx-Hof (Karl Ehn, 1930) — 1.1 km of ochre and red social housing with those four archway towers, still lived in. The Waschsalon museum in laundry courtyard 2 tells the Red Vienna story; it opens only a couple of afternoons a week.",
+      "afternoon": "Walk north to the Nussdorf Wehr- und Schleusenanlage (Otto Wagner, 1898), the sluice gate with the bronze lions where the Donaukanal begins. Then uphill through the vineyards on the Nussberg, with the whole city below you and the Danube flats beyond.",
+      "evening": "A proper Heuriger. Schübel-Auer on Kahlenberger Strasse and Mayer am Pfarrplatz in Heiligenstadt both serve their own wine by the Viertel with cold buffet food sold by weight. A pine branch over the door means open — *ausg'steckt*.",
+      "dayStats": "9 km walked, 180 m of climbing on the Nussberg. Districts: 19. Ticket spend approx. €8–€12 plus wine.",
+      "sleep": null
+    },
+    {
+      "day": 7,
+      "title": "Leopoldstadt: Karmelitermarkt and the Augarten",
+      "morning": "Cross the Donaukanal into the 2nd. The Karmelitermarkt is small, and best on Saturday morning when the farmers set up. Eat breakfast at one of the stall counters.",
+      "afternoon": "The Augarten: a Baroque park laid out in the 1650s, the porcelain manufactory established in 1718, and two vast concrete Flaktürme from 1944 that cannot be demolished and so simply stand there among the chestnuts. Then walk the Prater Hauptallee, 4.5 km of horse-chestnut avenue, to the Riesenrad (1897).",
+      "evening": "Schweizerhaus in the Prater, open roughly March to October, for Stelze and Budvar from wooden barrels, in a beer garden running since the 1920s.",
+      "dayStats": "11 km walked. Districts: 2. Ticket spend approx. €14–€20 with the Riesenrad.",
+      "sleep": null
+    }
+  ],
+  "accommodationStrategy": [
+    {
+      "rank": 1,
+      "name": "Hotel Altstadt Vienna",
+      "style": "Design hotel",
+      "location": "Kirchengasse, Neubau",
+      "description": "A converted 19th-century apartment building in the 7th, each room done differently, with a salon where breakfast runs long. The location is the argument: five minutes from the Volkstheater U2/U3 interchange, walking distance to the Ring, the MuseumsQuartier and the Naschmarkt, and the Spittelberg lanes for dinner.",
+      "booking": "8 weeks ahead; longer for the Christmas market weeks.",
+      "priceNote": "€160–€250 per night"
+    },
+    {
+      "rank": 2,
+      "name": "An apartment in Landstrasse or Leopoldstadt",
+      "style": "Self-catering",
+      "location": "3rd or 2nd district",
+      "description": "For a week, a flat near Rochusmarkt or Karmelitermarkt beats a hotel: you shop the market instead of eating out twice a day, and both districts sit one or two U-Bahn stops from the centre at far lower rates. Check the building has a lift — Viennese *Altbau* stairwells are handsome and four flights high.",
+      "booking": "8–10 weeks ahead.",
+      "priceNote": "€95–€150 per night for two"
+    }
+  ],
+  "logistics": {
+    "connectivity": "EU roaming applies; free WLAN covers most U-Bahn stations and the city centre. Vienna's continental weather swings hard — 30°C afternoons and 12°C evenings in May — and thunderstorms build fast in July. Carry a layer every day.",
+    "emergency": "112 pan-European. Austrian specifics: ambulance 144, police 133, fire 122. Pharmacies post the rotating night service on the door.",
+    "weather": null,
+    "bookingWindows": "Belvedere, Albertina and Kunsthistorisches release timed slots online weeks ahead; take the first hour of the day. Spanish Riding School morning exercise sells out weeks out. Staatsoper standing room cannot be pre-booked — same day, at the Operngasse door.",
+    "money": "Cards are near-universal, but small Beisln, market stalls and Heurigen prefer cash — carry €40–€60. Tip by rounding up plus 5–10 percent, handed to the waiter with payment, not left on the table.",
+    "transportRules": null,
+    "permits": null,
+    "health": null,
+    "gettingThere": null,
+    "other": [
+      {
+        "label": "The pass decision, honestly",
+        "text": "The Wien Karte costs roughly €25–€35 for 24/48/72 hours and bundles travel with discounts usually worth €1–€3 per attraction — it rarely repays itself. For seven days the **Wochenkarte** at approx. €20 is far cheaper, but it is a calendar-week ticket, valid Monday 00:00 to the following Monday 09:00 whenever you buy it, so it is useless on a Thursday arrival. The clean answer for a mid-week arrival is the **8-Tage-Klimakarte**, approx. €45–€50: eight day-strips, not necessarily consecutive, transferable between travellers."
+      },
+      {
+        "label": "Validation",
+        "text": "Wiener Linien runs on trust with heavy spot checks. Time and strip tickets must be stamped in the blue box at the platform entrance or on the tram before boarding. Unstamped is untkicketed: €105 on the spot."
+      },
+      {
+        "label": "Airport trap",
+        "text": "The city zone ends at Wien Mitte, so every city pass needs an add-on for the airport. Use the S7 with an outer-zone ticket for about €4.60 instead of the €14–€16 CAT."
+      },
+      {
+        "label": "Opening-hour traps",
+        "text": "Most museums close Monday (Belvedere and Albertina excepted). Supermarkets shut at 19:00 or 20:00 and all day Sunday; the Hauptbahnhof and Westbahnhof shops are the exception. Heurigen close for weeks at a time."
+      }
+    ]
+  },
+  "proTips": [
+    "Ride trams **1 and 2** around the Ring instead of paying for a sightseeing tram. Same track, same buildings, any valid ticket.",
+    "The Klimt room at the Oberes Belvedere is emptiest in the last hour before closing as well as the first. If 09:00 is gone, take the latest slot.",
+    "Buy Naschmarkt food from the stalls at the Kettenbrückengasse end, where locals shop. On Saturdays the Flohmarkt beyond it starts around 06:30 and the dealers have picked it over by 09:00.",
+    "Ride the U6 between Josefstädter Strasse and Nussdorfer Strasse for Otto Wagner's Stadtbahn viaducts and stations, still in daily use — the cheapest architecture tour in the city.",
+    "Vienna's street fountains are drinking water unless marked *Kein Trinkwasser*. The supply comes by aqueduct from the Rax; do not buy bottles.",
+    "For Steinhof, phone or email ahead. The church's opening pattern shifts with restoration work, and a wasted trip costs a whole morning."
+  ],
+  "typeSpecific": {
+    "raw": {
+      "Total Distance / Terrain": "approx. 70–85 km on foot; flat except the Steinhof and Kahlenberg slopes; 9 of 23 districts covered",
+      "Who It Suits": "Slow walkers, architecture readers, market shoppers; anyone allergic to a coach-tour itinerary"
+    },
+    "surface": "approx. 70–85 km on foot; flat except the Steinhof and Kahlenberg slopes; 9 of 23 districts covered",
+    "distanceKm": 70,
+    "elevationM": null,
+    "verticalM": null,
+    "technicalRating": null,
+    "transitPass": null,
+    "hutBooking": null,
+    "liftNetwork": null,
+    "snowReliability": null,
+    "windConditions": null,
+    "gpxReady": null,
+    "bookingTimeline": null,
+    "audience": "Slow walkers, architecture readers, market shoppers; anyone allergic to a coach-tour itinerary"
+  },
+  "packingNotes": [
+    "Shoes with real grip for granite setts and tram grooves, both slippery in rain.",
+    "A layer for museums: the Kunsthistorisches and Belvedere run cool even in July.",
+    "A folding shopping bag for the Brunnenmarkt and Karmelitermarkt; stalls charge for plastic.",
+    "One smart outfit — standing room at the Staatsoper is informal but not shorts.",
+    "A refillable bottle, for the fountains.",
+    "Cash in small notes for Heurigen, market stalls and older Beisln."
+  ],
+  "whatCouldGoWrong": [
+    "**You buy the Wochenkarte on a Friday.** It expires Monday morning. Fallback: at any Wiener Linien machine switch to the 8-Tage-Klimakarte and validate one strip a day; nothing is wasted.",
+    "**Kirche am Steinhof is shut on the day you climb the hill.** Fallback: the Otto-Wagner-Spital grounds and pavilions are freely walkable, and the Wagner Villa in Hütteldorf plus the Hermesvilla make a full day.",
+    "**Everything is closed on Monday.** Fallback: build Monday around the Belvedere or Albertina, both of which open, plus the Ottakring markets and Gemeindebau walk, which need no ticket.",
+    "**The Klimt slot sells out.** Fallback: the Secession's Beethoven Frieze and the Leopold Museum's Schiele rooms cover the same ground with far shorter queues."
+  ],
+  "sources": {
+    "verified": null,
+    "confidenceNotes": null
+  },
+  "verifyFlags": [],
+  "verifyFlagCount": 0,
+  "volatilePricing": false,
+  "wordCount": 2088,
+  "dataVintage": 2026,
+  "provenance": {
+    "batch": "western-central",
+    "sourceFile": "cartatripsv1/trips/at-city-vienna-ring-and-beyond.md",
+    "sourceFormat": "md+yaml-frontmatter (one file per trip)",
+    "sourceId": "at-city-vienna-ring-and-beyond",
+    "ingestedAt": "2026-09-02",
+    "synthesized": false
+  }
+}

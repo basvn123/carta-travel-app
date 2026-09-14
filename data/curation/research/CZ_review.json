@@ -1,0 +1,209 @@
+{
+  "iso2": "CZ",
+  "country": "Czechia",
+  "checked_at": "2026-08-17",
+  "beaches": {
+    "wrong": [],
+    "missing": [
+      {
+        "name": "Máchovo jezero",
+        "qid": "Q1720734",
+        "lat": 50.58306,
+        "lon": 14.64972,
+        "why": "Czechia is landlocked, so an empty sea-beach list is correct. But if the Beaches tab is meant to cover lake and reservoir bathing, Lake Mácha is the country's classic summer bathing destination and there is no row for it. Flagged as a scope question rather than a confirmed defect: I could not confirm whether inland bathing is in scope for this layer.",
+        "source_url": "https://www.wikidata.org/wiki/Q1720734",
+        "verified": false
+      }
+    ],
+    "order": [
+      "No ranking to judge: the beach list is empty."
+    ]
+  },
+  "mountains": {
+    "wrong": [
+      {
+        "name": "Petřín",
+        "class": "park_or_area",
+        "why": "A 327 m wooded hill inside Prague, almost entirely laid out as public parkland (Petřínské sady) with a lookout tower on top. Wikidata Q427604 types it as 'mountain', which is what let it through. It is ranked first in Czechia and shipped as the country's top_mountain, while Sněžka, the actual highest mountain of Czechia, is absent from the file entirely.",
+        "source_url": "https://www.wikidata.org/wiki/Q427604"
+      },
+      {
+        "name": "Szrenica",
+        "class": "wrong_country",
+        "why": "A Polish Karkonosze summit carrying its Polish name. The coordinate (50.7915, 15.5141) reverse-geocodes to Szklarska Poręba, powiat karkonoski, województwo dolnośląskie, Polska. Ranked 3rd in Czechia.",
+        "source_url": "https://www.openstreetmap.org/#map=17/50.7915/15.5141"
+      },
+      {
+        "name": "Śmielec",
+        "class": "wrong_country",
+        "why": "Wikidata Q3488142 gives P17 = Poland only, and the coordinate reverse-geocodes to Jagniątków, Jelenia Góra, województwo dolnośląskie, Polska. Ranked 9th in Czechia.",
+        "source_url": "https://www.wikidata.org/wiki/Q3488142"
+      },
+      {
+        "name": "Smogornia",
+        "class": "wrong_country",
+        "why": "The coordinate reverse-geocodes to Kocioł Smogorni, Borowice, gmina Podgórzyn, powiat karkonoski, Polska. Ranked 8th in Czechia, and it also appears in the Polish list at tier 2 rank 18.",
+        "source_url": "https://www.openstreetmap.org/#map=17/50.7558/15.6755"
+      },
+      {
+        "name": "Czeskie Kamienie",
+        "class": "wrong_country",
+        "why": "A rock group on the Karkonosze ridge, not a summit, listed under its Polish name. The coordinate reverse-geocodes to Koralowa Ścieżka, Jagniątków, Jelenia Góra, Polska. The Czech name for the neighbouring formation is Dívčí kameny. Ranked 12th in Czechia.",
+        "source_url": "https://www.openstreetmap.org/#map=17/50.7770/15.5912"
+      },
+      {
+        "name": "Žlutý kopec",
+        "class": "not_notable",
+        "why": "A 330 m urban slope in Brno (Wikidata Q16963218, two sitelinks, no English article), best known for a hospital campus and a street of the same name. Ranked 6th among Czechia's mountains.",
+        "source_url": "https://www.wikidata.org/wiki/Q16963218"
+      },
+      {
+        "name": "Hut at Kleť",
+        "class": "other",
+        "why": "The row is named after a building. The mountain is Kleť (Wikidata Q1757192, 1084 m, above Český Krumlov); 'Hut at Kleť' is the mountain hut on its summit, next to the observatory. The feature name needs to be the mountain, not the shelter. Ranked 7th.",
+        "source_url": "https://www.wikidata.org/wiki/Q1757192"
+      },
+      {
+        "name": "Hády",
+        "class": "not_notable",
+        "why": "A 424 m hill on the edge of Brno, largely a disused limestone quarry (Wikidata Q12021186, five sitelinks, no English article). Ranked 11th nationally.",
+        "source_url": "https://www.wikidata.org/wiki/Q12021186"
+      },
+      {
+        "name": "Łabski Szczyt",
+        "class": "other",
+        "why": "The coordinate is genuinely on the Czech side (it reverse-geocodes to Špindlerův Mlýn, okres Trutnov), so the country is right, but the row carries the Polish name. Czech users would look for Violík, the name on the information board standing at that exact point. A localisation defect rather than a wrong feature. Ranked 5th.",
+        "source_url": "https://www.openstreetmap.org/#map=17/50.7805/15.5457"
+      },
+      {
+        "name": "Śląskie Kamienie",
+        "class": "duplicate_of:Czeskie Kamienie",
+        "why": "Tier 2 rank 13, 800 m from the Czeskie Kamienie row, and it points at the same Wikipedia article ('en:Czeskie Kamienie') as that row, so the two are literally linked to one page. It is on the Czech side (the coordinate reverse-geocodes to Dívčí kameny, Špindlerův Mlýn) but is named in Polish; the Czech name is Dívčí kameny.",
+        "source_url": "https://www.openstreetmap.org/#map=17/50.7769/15.6019"
+      },
+      {
+        "name": "Kleiner Winterberg",
+        "class": "wrong_country",
+        "why": "In Saxon Switzerland, GERMANY. The coordinate reverse-geocodes to Oberer Fremdenweg, Ostrau, Bad Schandau, Sächsische Schweiz-Osterzgebirge, Sachsen, Deutschland. Tier 2 rank 18.",
+        "source_url": "https://www.openstreetmap.org/#map=17/50.9109/14.2572"
+      },
+      {
+        "name": "Column of the Virgin Mary Immaculate in Kutná Hora",
+        "class": "other",
+        "why": "A Baroque plague column, a stone monument standing in the pedestrian zone of Kutná Hora's UNESCO old town, classified as a mountain. The coordinate reverse-geocodes to Kutná Hora-Vnitřní Město. This is the single most absurd row in the Czech file. Tier 2 rank 19.",
+        "source_url": "https://en.wikipedia.org/wiki/Plague_Column,_Kutná_Hora"
+      },
+      {
+        "name": "Zirkelstein",
+        "class": "wrong_country",
+        "why": "In Saxony, GERMANY: the coordinate reverse-geocodes to Am Zirkelstein, Schöna, Reinhardtsdorf-Schöna, Bad Schandau, Sachsen, Deutschland. Tier 2 rank 29.",
+        "source_url": "https://www.openstreetmap.org/#map=17/50.8787/14.2208"
+      },
+      {
+        "name": "Großer Winterberg",
+        "class": "wrong_country",
+        "why": "In Saxony, GERMANY: the coordinate reverse-geocodes to Großer Winterberg 1, Ostrau, Bad Schandau, Sachsen, Deutschland. Tier 2 rank 52. Kleiner Zschirnstein at tier 2 rank 57 is the same family and is also in Saxony.",
+        "source_url": "https://www.openstreetmap.org/#map=17/50.8963/14.2595"
+      },
+      {
+        "name": "Krakonoš",
+        "class": "viewpoint_not_summit",
+        "why": "Krakonoš is the legendary mountain spirit of the Krkonoše, not a peak. The object at the coordinate is the Vyhlídka Kozí hřbety viewpoint above Špindlerův Mlýn. Tier 2 rank 71, so low priority, but it is the same class of error as Switzerland's 'View to Aletschgletscher'.",
+        "source_url": "https://www.openstreetmap.org/#map=17/50.7341/15.6650"
+      }
+    ],
+    "missing": [
+      {
+        "name": "Sněžka",
+        "qid": "Q617511",
+        "lat": 50.73611,
+        "lon": 15.74028,
+        "why": "The highest mountain in Czechia at 1603 m, the country's single most recognisable summit, with 58 Wikipedia sitelinks. It is absent from the Czech file at every tier under both spellings, while the very same feature sits in the Polish file at tier 1 rank 5. Twelve of the Czech tier-1 rows even carry 'Krkonoše (Sněžka)' as their nearest city label, so the pipeline knows the mountain exists and still failed to list it.",
+        "source_url": "https://www.wikidata.org/wiki/Q617511",
+        "verified": true
+      },
+      {
+        "name": "Praděd",
+        "qid": "Q674016",
+        "lat": 50.08319,
+        "lon": 17.23086,
+        "why": "1491 m, the highest of the Hrubý Jeseník and of all Moravia, with its landmark transmitter tower. Absent at every tier.",
+        "source_url": "https://www.wikidata.org/wiki/Q674016",
+        "verified": true
+      },
+      {
+        "name": "Lysá hora",
+        "qid": "Q1573557",
+        "lat": 49.54583,
+        "lon": 18.4475,
+        "why": "1324 m, the highest of the Moravian-Silesian Beskids and one of the most climbed mountains in the country. Absent at every tier.",
+        "source_url": "https://www.wikidata.org/wiki/Q1573557",
+        "verified": true
+      },
+      {
+        "name": "Ještěd",
+        "qid": "Q148998",
+        "lat": 50.73222,
+        "lon": 14.98528,
+        "why": "1012 m above Liberec, carrying the Ještěd Tower, one of the best known pieces of Czech architecture. The main summit is absent; only 'Malý Ještěd' made the file, at tier 2 rank 27, and eight minor hills labelled 'near Ještěd' fill the bottom of tier 2.",
+        "source_url": "https://www.wikidata.org/wiki/Q148998",
+        "verified": true
+      },
+      {
+        "name": "Klínovec",
+        "qid": "Q1569913",
+        "lat": 50.39611,
+        "lon": 12.96778,
+        "why": "1244 m, the highest of the Krušné hory (Ore Mountains) and the main ski mountain of north-west Bohemia. Absent at every tier.",
+        "source_url": "https://www.wikidata.org/wiki/Q1569913",
+        "verified": true
+      },
+      {
+        "name": "Boubín",
+        "qid": "Q594147",
+        "lat": 48.99111,
+        "lon": 13.81833,
+        "why": "1362 m in the Šumava, famous for the Boubín primeval forest. The Šumava is represented in the file only by Křemelná, Huťská hora, Antýgl and Hahnenbogen.",
+        "source_url": "https://www.wikidata.org/wiki/Q594147",
+        "verified": true
+      },
+      {
+        "name": "Milešovka",
+        "qid": "Q50482382",
+        "lat": 50.5549,
+        "lon": 13.93109,
+        "why": "837 m, the highest and most distinctive cone of the České středohoří, an extinct volcano with a meteorological observatory. Absent at every tier.",
+        "source_url": "https://www.wikidata.org/wiki/Q50482382",
+        "verified": true
+      },
+      {
+        "name": "Radhošť",
+        "qid": "Q1578621",
+        "lat": 49.49184,
+        "lon": 18.22279,
+        "why": "1129 m in the Beskids, with the Cyril and Methodius chapel and the Radegast statue, a Czech national pilgrimage spot. Absent at every tier.",
+        "source_url": "https://www.wikidata.org/wiki/Q1578621",
+        "verified": true
+      },
+      {
+        "name": "Říp",
+        "qid": "Q102079702",
+        "lat": 50.38653,
+        "lon": 14.28963,
+        "why": "Only 461 m, but the mountain of Czech national mythology, where Forefather Čech is said to have claimed the land, with a Romanesque rotunda on top. If a hill as small as Petřín can lead the list, Říp certainly belongs in it.",
+        "source_url": "https://www.wikidata.org/wiki/Q102079702",
+        "verified": true
+      }
+    ],
+    "order": [
+      "Rank 1 is a Prague city park. Rank 6 and rank 11 are Brno suburban hills. Three of the top eleven Czech mountains are urban parkland.",
+      "Nine of the twelve tier-1 rows sit in one eight-kilometre stretch of the Krkonoše ridge, and five of those nine carry Polish names (Szrenica, Łabski Szczyt, Śmielec, Smogornia, Czeskie Kamienie).",
+      "Luční hora at rank 2 is the only tier-1 row that is both a real Czech mountain and above 1300 m.",
+      "A Baroque plague column in Kutná Hora is ranked 19th among the mountains of Czechia.",
+      "Sněžka, Praděd, Lysá hora, Ještěd, Klínovec, Boubín, Milešovka, Radhošť and Říp, that is the highest summit of essentially every Czech range, are all below a Brno quarry hill, because none of them is in the file at all."
+    ]
+  },
+  "counts_verdict": "Zero beaches is the right answer for a landlocked country, with one caveat: the Czech file carries no bathing_year key and no EEA join at all, unlike the Polish and Hungarian files, so the tab is empty because the join never ran rather than because a decision was taken about lake bathing. If reservoir and lake bathing is in scope anywhere in this product, Czechia currently has none of it. 79 mountains is a reasonable volume for the country, but the distribution is badly skewed: about 30 rows are Krkonoše ridge points, another 12 are in Bohemian and Saxon Switzerland (at least four of them in Germany), and whole ranges (Jeseníky, Beskids, Krušné hory, České středohoří) contribute nothing to tier 1. A tier 1 of 12 is the right size; it should not contain two urban park hills and four rows whose coordinates are in Poland.",
+  "top_pick_verdict": "No. 'Petřín' as Czechia's top_mountain is the country-card equivalent of putting Parliament Hill on a mountains card for Britain: a 327 m public park with a lookout tower, inside the capital. It should be Sněžka, which is both the highest point and the national icon, and which is missing from the Czech file while sitting in the Polish one. If the card wants a hiking image rather than a superlative, Praděd or Lysá hora would both work.",
+  "notes": "The Czech list is the clearest illustration in this group of two systematic bugs. First, no country-of-coordinate check: five tier-1 rows and several tier-2 rows have coordinates inside Poland or Germany, and the border ridge peaks are duplicated into both neighbours' files. Second, blind trust in Wikidata P31: Petřín is typed 'mountain' in Wikidata, which is how a city park reached rank 1, and the Kutná Hora plague column reached rank 19 the same way. There is also a linking bug worth catching separately: 'Śląskie Kamienie' carries the Wikipedia link of 'Czeskie Kamienie', so two distinct rows resolve to one article. All country assignments above were established by reverse-geocoding the exact coordinate shipped in the wire, so they describe where the app would drop the pin."
+}

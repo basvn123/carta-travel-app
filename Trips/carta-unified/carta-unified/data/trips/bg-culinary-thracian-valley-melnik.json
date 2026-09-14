@@ -1,0 +1,294 @@
+{
+  "id": "bg-culinary-thracian-valley-melnik",
+  "sourceId": "bulgaria-thracian-valley-melnik-wine",
+  "slug": "bg-culinary-thracian-valley-melnik",
+  "title": "Mavrud and the Broad-Leaved Vine: Thrace to Melnik in Harvest Week",
+  "country": "Bulgaria",
+  "countryCode": "BG",
+  "countries": [
+    {
+      "name": "Bulgaria",
+      "code": "BG"
+    }
+  ],
+  "isMultiCountry": false,
+  "region": "Eastern & Southeastern Europe",
+  "regionKey": "eastern-southeastern",
+  "subRegion": "Thracian Lowlands PGI and the Struma Valley PGI",
+  "tripType": "Culinary & Wine Tours",
+  "tripTypeId": 7,
+  "tripTypeSlug": "culinary",
+  "durationDays": 7,
+  "bestPeriod": {
+    "months": [
+      9,
+      10
+    ],
+    "monthNames": [
+      "September",
+      "October"
+    ],
+    "window": "mid-September to mid-October — *grozdober*, the harvest, when the crush pads are running and the estates are at their most open",
+    "note": null,
+    "avoid": "July–August (40°C on the Thracian plain, cellars shut for holidays) and January–February, when most tasting rooms open by appointment only or not at all",
+    "raw": null
+  },
+  "budgetTier": "€",
+  "budgetTierRange": [
+    1,
+    2
+  ],
+  "budgetTierRaw": "€–€€",
+  "budget": {
+    "currency": "EUR",
+    "totalEur": {
+      "low": 940,
+      "high": 1580
+    },
+    "totalNote": "€940–€1,580",
+    "breakdown": {
+      "accommodation": {
+        "lowEur": 315,
+        "highEur": 560,
+        "note": "€315–€560 (€45–€80/night, Plovdiv boutique and Melnik estate stays)"
+      },
+      "food": {
+        "lowEur": 175,
+        "highEur": 280,
+        "note": "€175–€280 (€25–€40/day, including two long tasting lunches)"
+      },
+      "transport": {
+        "lowEur": 330,
+        "highEur": 520,
+        "note": "€330–€520 (7 days of a hired driver or a car plus daily driver hire, which is not optional here)"
+      },
+      "activities": {
+        "lowEur": 120,
+        "highEur": 220,
+        "note": "€120–€220 (tasting fees, cellar tours, one vineyard lunch)"
+      }
+    },
+    "perDayEur": {
+      "low": 134,
+      "high": 226
+    }
+  },
+  "profile": {
+    "difficulty": 1,
+    "difficultyLabel": "Easy",
+    "difficultyNote": "Easy",
+    "fitnessLevel": "Easy",
+    "crowdLevel": null,
+    "familyFriendly": null,
+    "carRequired": null
+  },
+  "basecamps": [
+    "Plovdiv",
+    "Melnik",
+    "Sandanski"
+  ],
+  "gatewayAirport": "Plovdiv (PDV) has limited flights; Sofia (SOF) is the practical arrival, 145 km and 1 h 45 from Plovdiv on the Trakia motorway, or 2 h by fast train. Melnik is 180 km south of Sofia on the E79 Struma motorway, 2 h 15.",
+  "gatewayAirportCode": "PDV",
+  "languages": [
+    "Bulgarian"
+  ],
+  "currency": "Euro (EUR) — sole legal tender since 1 February 2026; mandatory dual BGN display ended 8 August 2026",
+  "emergencyNumber": "112",
+  "coordinates": {
+    "lat": 42.1539,
+    "lon": 24.75,
+    "precision": "city",
+    "matchedPlace": "Plovdiv",
+    "source": "geonames (geonamescache, cities > 15k)"
+  },
+  "tags": [
+    "wine",
+    "mavrud",
+    "melnik",
+    "thracian-lowlands",
+    "struma-valley",
+    "harvest",
+    "plovdiv",
+    "rakia"
+  ],
+  "summary": "Bulgaria makes wine from grapes that grow nowhere else and are named after the places that kept them. Mavrud is dark, tannic and stubborn on the plain below Plovdiv; the broad-leaved Melnik vine will only ripen in…",
+  "summaryGenerated": false,
+  "hook": "Bulgaria makes wine from grapes that grow nowhere else and are named after the places that kept them. Mavrud is dark, tannic and stubborn on the plain below Plovdiv; the broad-leaved Melnik vine will only ripen in one hot sandstone valley near the Greek border. In harvest week you taste from tank, eat *kavarma* at a crush pad, sleep in a Revival house cut into a cliff, and never once get behind the wheel.",
+  "snapshot": {
+    "Country": "Bulgaria",
+    "Trip type": "Culinary & Wine Tours",
+    "Duration": "7 days",
+    "Best period": "September–October, peak at *grozdober*",
+    "Budget tier": "€–€€",
+    "Difficulty": "Easy",
+    "Start / End": "Plovdiv → Melnik (two bases, ~600 km with a driver)",
+    "Getting there": "Plovdiv (PDV) has limited flights; Sofia (SOF) is the practical arrival, 145 km and 1 h 45 from Plovdiv on the Trakia motorway, or 2 h by fast train. Melnik is 180 km south of Sofia on the E79 Struma motorway, 2 h 15."
+  },
+  "itinerary": [
+    {
+      "day": 1,
+      "title": "Plovdiv, and the food end first (arrival day)",
+      "morning": "Land at Sofia, transfer to **Plovdiv** — one of the oldest continuously inhabited cities in Europe, and the only sane base for the Thracian Lowlands.",
+      "afternoon": "Walk the Old Town's Revival houses and the Roman theatre, then drop into **Kapana**, the former craft quarter now full of small kitchens, wine bars and bakeries. Order *banitsa* and a coffee and do nothing else.",
+      "evening": "Dinner in Kapana: *shopska salata*, *sirene po shopski*, a *grozdova rakia* before the food and a glass of Asenovgrad Mavrud with it.",
+      "dayStats": null,
+      "sleep": null
+    },
+    {
+      "day": 2,
+      "title": "Brestovitsa, amphorae and the Mavrud heartland",
+      "morning": "Driver to **Brestovitsa**, twenty minutes south-west. Start at **Zagreus** for **amphora-fermented Mavrud** — clay-aged, unfined, and unlike anything else in the country. Appointment only.",
+      "afternoon": "**Todoroff** in the same village for a wider Mavrud vertical and lunch, then **Villa Yustina** at **Ustina** for their Rubin and Mavrud blends.",
+      "evening": "Back to Plovdiv. Eat lighter — *tarator* and grilled vegetables — and go to bed early, because tomorrow is the big estate.",
+      "dayStats": "~50 km",
+      "sleep": null
+    },
+    {
+      "day": 3,
+      "title": "Bessa Valley and Asenovgrad",
+      "morning": "North-west to **Ognianovo** and **Bessa Valley**, the Hauptmann estate whose *Enira* labels put Bulgarian reds back on export lists. The gravity-fed winery and the barrel cellar are the tour; book weeks ahead in harvest [VERIFY: current Bessa Valley tour and tasting price].",
+      "afternoon": "Swing south to **Asenovgrad**, the historic capital of Mavrud, and climb to **Asen's Fortress** on its rock above the Chepelare river for the view down the vineyard plain.",
+      "evening": "Plovdiv again. A *mehana* dinner with *kavarma* in the pot and a mature Mavrud — ten years old if the list allows.",
+      "dayStats": "~110 km",
+      "sleep": null
+    },
+    {
+      "day": 4,
+      "title": "East across the plain: Chirpan, Nova Zagora",
+      "morning": "Out on the Trakia motorway to **Midalidare Estate** at **Mogilovo** near Chirpan — a large, modern, appointment-only property with serious whites as well as reds.",
+      "afternoon": "On to **Rossidi** at **Nova Zagora**, a small producer known for skin-contact whites and precise Cabernet Franc, and **Château Copsa** if the timings hold [VERIFY: current Château Copsa location and visiting arrangements]. If you would rather go south-east, substitute **Katarzyna Estate** near Svilengrad on the Greek border — a longer day and appointment-only.",
+      "evening": "Return to Plovdiv. Buy *lyutenitsa* from the Central Market Hall to take home; September is when it is made.",
+      "dayStats": "~200 km round trip",
+      "sleep": null
+    },
+    {
+      "day": 5,
+      "title": "Across to the Struma and into Melnik",
+      "morning": "Leave Plovdiv, cross the Rhodope skirt to Blagoevgrad and turn south down the **E79 Struma** motorway. The landscape changes to fig, pomegranate and Mediterranean scrub.",
+      "afternoon": "Stop at **Damianitza**, near Sandanski, for the classic Melnik 55, then continue to **Melnik** itself — Bulgaria's smallest town, 200-odd inhabitants, standing under eroded **sandstone pyramids**.",
+      "evening": "The **Kordopulov House** (1754), the largest Revival house in the country, with a vast cellar tunnelled into the sandstone behind it. Taste there, then eat in the village.",
+      "dayStats": "~250 km / 3 h",
+      "sleep": null
+    },
+    {
+      "day": 6,
+      "title": "Villa Melnik, Rozhen and the pyramids",
+      "morning": "Up to **Villa Melnik** at **Harsovo** for a proper study of **Shiroka Melnishka Loza** against **Melnik 55** side by side — the older vine is leaner and more savoury, the selection rounder.",
+      "afternoon": "Walk or drive the ridge path to **Rozhen Monastery**, the largest in the Pirin region, then come back through the sandstone pyramids in late light.",
+      "evening": "Dinner at **Zornitza Estate** above Melnik, the most ambitious kitchen in the valley, with its own vineyard below [VERIFY: current Zornitza restaurant hours and booking policy].",
+      "dayStats": "~40 km",
+      "sleep": null
+    },
+    {
+      "day": 7,
+      "title": "Orbelus, then out",
+      "morning": "**Orbelus** at **Kromidovo** — certified organic, Melnik-focused, and the clearest expression of what the Struma does without oak. Buy here; their allocations are small.",
+      "afternoon": "Lunch in **Sandanski**, then the E79 north to Sofia, two and a quarter hours [VERIFY: current Struma motorway completion status through the Kresna gorge].",
+      "evening": "Last dinner in Sofia. If you have a bottle of Mavrud left, this is the night for it.",
+      "dayStats": "~200 km to Sofia",
+      "sleep": null
+    }
+  ],
+  "accommodationStrategy": [
+    {
+      "rank": 1,
+      "name": "A boutique hotel in Plovdiv Old Town",
+      "style": "boutique hotel",
+      "location": "Plovdiv",
+      "description": "three nights in one bed with every Thracian estate inside a 90-minute radius, and Kapana's kitchens on foot at the end of each tasting day. Ask for a room off the cobbles — Old Town streets echo.",
+      "booking": "four to six weeks ahead for September and October [VERIFY: current Plovdiv boutique room rates in harvest season].",
+      "priceNote": null
+    },
+    {
+      "rank": 2,
+      "name": "A guesthouse in Melnik village",
+      "style": "Revival-house guesthouse",
+      "location": "Melnik",
+      "description": "puts you inside the sandstone amphitheatre, walking distance from the Kordopulov cellar, so the evening tasting needs no driver at all. Family kitchens serve their own wine by the jug.",
+      "booking": "three to four weeks ahead; Melnik has very few beds.",
+      "priceNote": null
+    },
+    {
+      "rank": 3,
+      "name": "Zornitza Estate",
+      "style": "estate hotel with restaurant",
+      "location": "above Melnik",
+      "description": "sleep on the property you are tasting at, which removes the transport problem entirely for one night, and the restaurant is the best food in the Struma.",
+      "booking": "direct with the estate, six weeks ahead in harvest.",
+      "priceNote": null
+    }
+  ],
+  "logistics": {
+    "connectivity": "A1 and Yettel cover Plovdiv, Sandanski and the motorway corridor; Melnik village and the Rozhen ridge are patchy. Download offline maps for the Struma back roads.",
+    "emergency": "**112**, with English-speaking operators. Plovdiv and Blagoevgrad have the nearest large hospitals; Melnik has none.",
+    "weather": "The Thracian plain can still hit 35°C in early September, and the Struma is hotter still. Harvest weather is generally settled, but a Rhodope thunderstorm can shut a crush pad for a day.",
+    "bookingWindows": "Appointment-only estates want **two to four weeks**, more during *grozdober*. Book the wineries first and the hotels second — cellar slots in harvest are the constraint.",
+    "money": "Bulgaria has adopted the **euro**, with prices still dual-displayed in **BGN** at the fixed 1.95583 rate. Large estates take cards; village cellars, the Kordopulov House and small *mehanas* often do not. Carry €150 in cash.",
+    "transportRules": "A **vignette** is required on national roads and motorways. **Do not drive and taste** — Bulgaria's enforcement is aggressive and the practical standard for this trip is zero alcohol. Hire a driver for every tasting day.",
+    "permits": "No permits. Katarzyna sits in the former border zone near Svilengrad; carry your passport there. Duty-free allowances out of the EU are the limit on what you can carry home.",
+    "health": null,
+    "gettingThere": null,
+    "other": []
+  },
+  "proTips": [
+    "Book Bessa Valley, Zagreus and Katarzyna before you book anything else. They are appointment-only, they cap group sizes, and in harvest they close to visitors on picking days at no notice.",
+    "Ask at every cellar for *\"vino ot tank\"* — wine from tank. During *grozdober* winemakers will pull fermenting Mavrud with a pipette, and that is the taste you came for.",
+    "Order **Melnik 55 and Shiroka Melnishka Loza side by side** at Villa Melnik and pay for the extra glass. The difference between the selection and the original vine is the whole story of the Struma.",
+    "Buy *lyutenitsa* and *sirene* at Plovdiv's Central Market Hall in the third week of September, when the roasted-pepper smell fills the street outside.",
+    "Say *\"grozdova\"* or *\"slivova\"* when you order *rakia*. Asking by fruit signals you know the difference and usually gets you the homemade bottle from under the bar.",
+    "Stay in Melnik village rather than Sandanski. It is smaller, quieter, and the cellar tastings become a walk instead of a transfer.",
+    "Use the estates' own drivers where they offer them. Bessa Valley, Villa Melnik and Zornitza can all arrange transport, and it is often cheaper than a full-day city hire."
+  ],
+  "typeSpecific": {
+    "raw": {
+      "The appellations": "Two PGIs cover nearly everything you will drink. **Thracian Lowlands PGI** (*Тракийска низина*) runs east from Plovdiv across the Maritsa plain to the Turkish border — hot days, cool nights off the Rhodopes, and the home of Mavrud. **Struma Valley PGI** (*Долината на Струма*) is a narrow, Mediterranean-influenced corridor in the far south-west, hemmed by Pirin and the Greek frontier, and it is the only place in Bulgaria where the broad-leaved Melnik vine reliably ripens. A third, the **Danubian Plain PGI** in the north-west, is Gamza country and off this route.",
+      "The native grapes, correctly": "**Mavrud** — late-ripening, deeply coloured, high tannin, at its best around **Asenovgrad and Brestovitsa**; ages ten years and needs food. **Rubin** — a Bulgarian crossing of **Nebbiolo × Syrah** bred at the Pleven institute, giving perfume and structure and often blended with Mavrud. **Shiroka Melnishka Loza**, the broad-leaved Melnik vine — thin-skinned, high-acid, savoury, and so late that it only finishes ripening in the Struma. **Melnik 55**, an earlier-ripening selection from it, softer and more approachable. **Dimyat**, a crisp white of the east. **Red Misket** (*Cherven Misket*), aromatic, from around Sungurlare and Karlovo. **Gamza** in the north-west, light and sour-cherry, worth ordering if you see it.",
+      "Producers, and who to ask for": "Thracian Lowlands: **Bessa Valley** at **Ognianovo**, founded by **Karl-Heinz Hauptmann** with Stephan von Neipperg, the estate that proved Bulgaria could make serious Bordeaux-styled reds; **Villa Yustina** at Ustina; **Zagreus** at Brestovitsa, whose **amphora-fermented Mavrud** is the country's most interesting single wine; **Todoroff**, also at Brestovitsa, the most visitor-ready cellar in the region; **Midalidare Estate** at Mogilovo near Chirpan; **Rossidi** at Nova Zagora, small and experimental; **Château Copsa**; and **Katarzyna Estate**, hard against the Greek border near Svilengrad. Struma Valley: **Villa Melnik** at Harsovo; **Orbelus** at Kromidovo, certified organic and Melnik-focused; **Damianitza** at Damyanitsa near Sandanski, the old cooperative reborn; and **Zornitza Estate** above Melnik, which is also a hotel and restaurant.",
+      "Appointment-only — flag these clearly": "**Bessa Valley, Zagreus, Katarzyna, Rossidi, Midalidare and Château Copsa are strictly by prior appointment.** Katarzyna in particular is a working border-zone estate and does not take walk-ins. **Todoroff, Villa Melnik, Orbelus and Zornitza** keep more regular tasting-room hours but still prefer a booking, especially during harvest [VERIFY: current tasting fees and appointment lead times at each estate] [VERIFY: current Katarzyna Estate visitor policy].",
+      "Signature dishes, with their names": "*Shopska salata* — tomato, cucumber, roasted pepper, raw onion, grated white brine cheese, and the national dish by adoption. *Tarator* — cold cucumber, yoghurt, garlic, dill and walnut soup, served in a bowl or a glass. *Kavarma* — slow-cooked pork or chicken with peppers and onion, baked and served in its clay pot. *Sirene po shopski* — brine cheese baked in a pot with tomato, pepper and an egg cracked on top. *Banitsa* — coiled filo with *sirene* and egg, eaten for breakfast. *Lyutenitsa* — the roasted pepper, tomato and aubergine relish that every household makes in September.",
+      "*Rakia*, and the distinction that matters": "*Rakia* is fruit brandy, usually 40% and often much more when homemade. **Grozdova rakia** is distilled from grapes — cleaner, sharper, the standard aperitif with *shopska salata*. **Slivova rakia** is from plums — rounder, sweeter, the north-western and Balkan-foothill style. Ordering \"rakia\" without specifying gets you whatever the house has. *Muskatova* is a fragrant grape variant worth asking for.",
+      "Drinking and driving": "Bulgaria polices drink-driving hard and the only workable rule on a tasting trip is **zero tolerance**. **A hired driver is mandatory** — budget €80–€120 a day for a car and driver, or use estate-arranged transfers [VERIFY: current driver-hire day rates from Plovdiv and Sandanski]. Police checks on the Trakia and Struma motorways are routine."
+    },
+    "surface": null,
+    "distanceKm": null,
+    "elevationM": null,
+    "verticalM": null,
+    "technicalRating": null,
+    "transitPass": null,
+    "hutBooking": null,
+    "liftNetwork": null,
+    "snowReliability": null,
+    "windConditions": null,
+    "gpxReady": null,
+    "bookingTimeline": null,
+    "audience": null
+  },
+  "packingNotes": [],
+  "whatCouldGoWrong": [],
+  "sources": {
+    "verified": null,
+    "confidenceNotes": "- Verified: Thracian Lowlands PGI and Struma Valley PGI as the two relevant geographical indications, with Danubian Plain PGI as Gamza country; Mavrud's association with Asenovgrad and Brestovitsa; Rubin as a Bulgarian-bred Nebbiolo × Syrah crossing; Shiroka Melnishka Loza as the late-ripening broad-leaved Melnik vine and Melnik 55 as an earlier selection from it; Dimyat and Red Misket as native whites; Bessa Valley at Ognianovo founded by Karl-Heinz Hauptmann; Zagreus at Brestovitsa for amphora Mavrud; Todoroff at Brestovitsa; Villa Yustina at Ustina; Midalidare at Mogilovo; Rossidi at Nova Zagora; Katarzyna near the Greek border at Svilengrad; Villa Melnik at Harsovo, Orbelus at Kromidovo, Damianitza near Sandanski and Zornitza above Melnik; Melnik as Bulgaria's smallest town under its sandstone pyramids; the Kordopulov House (1754) and its rock-cut cellar; Rozhen Monastery; Kapana in Plovdiv; the dish names *shopska salata*, *tarator*, *kavarma*, *banitsa*, *lyutenitsa*, *sirene po shopski*; grape *grozdova* versus plum *slivova rakia*; *grozdober* as the September–October harvest; euro adoption with BGN dual display at 1.95583. - `[VERIFY]` items in this file: 8 (see inline markers above) - Last reviewed: 2026-09-02"
+  },
+  "verifyFlags": [
+    "current tasting fees and appointment lead times at each estate",
+    "current Katarzyna Estate visitor policy",
+    "current driver-hire day rates from Plovdiv and Sandanski",
+    "current Bessa Valley tour and tasting price",
+    "current Château Copsa location and visiting arrangements",
+    "current Zornitza restaurant hours and booking policy",
+    "current Struma motorway completion status through the Kresna gorge",
+    "current Plovdiv boutique room rates in harvest season"
+  ],
+  "verifyFlagCount": 8,
+  "volatilePricing": true,
+  "wordCount": 2307,
+  "dataVintage": 2026,
+  "provenance": {
+    "batch": "eastern-southeastern",
+    "sourceFile": "cartaeasterneuropetrips/trips/bulgaria-thracian-valley-melnik-wine.md",
+    "sourceFormat": "md+nested-yaml-frontmatter (one file per trip)",
+    "sourceId": "bulgaria-thracian-valley-melnik-wine",
+    "ingestedAt": "2026-09-02",
+    "synthesized": false
+  }
+}

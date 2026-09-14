@@ -1,0 +1,208 @@
+{
+  "iso2": "LV",
+  "country": "Latvia",
+  "checked_at": "2026-08-17",
+  "beaches": {
+    "wrong": [
+      {
+        "name": "Liepājas pludmales teniss",
+        "class": "other",
+        "why": "Tier 1 rank 6. 'Liepājas pludmales teniss' is the Liepāja beach tennis facility, a set of sand courts with nets, listed as one of Latvia's twelve best beaches. It is also the fourth Liepāja row in tier 1.",
+        "source_url": "https://www.openstreetmap.org/#map=16/56.4909/21.0018"
+      },
+      {
+        "name": "Beach house Seaborg",
+        "class": "hospitality",
+        "why": "Tier 1 rank 8. A guest house in Pāvilosta, at 56.8922,21.1855, which is 80 m from tier 1 rank 1 'Pelēkā Kāpa' and 90 m from tier 1 rank 10 'Pavilostas Pludmale'. An accommodation business occupying a national tier 1 beach slot.",
+        "source_url": "https://www.openstreetmap.org/#map=17/56.8922/21.1855"
+      },
+      {
+        "name": "jūras krastā",
+        "class": "other",
+        "why": "Tier 1 rank 9. Latvian for 'on the sea shore'. It is a caption, not a place name, and it sits on the same Liepāja shoreline as three other tier 1 rows.",
+        "source_url": "https://www.openstreetmap.org/#map=16/56.4871/21.0054"
+      },
+      {
+        "name": "Liepājas Pludmale",
+        "class": "duplicate_of:Liepājas Dienvidrietumu pludmalē",
+        "why": "Tier 1 ranks 3 and 4 carry coordinates 56.4916,20.9943 and 56.4916,20.9946, thirty metres apart, and are the same Liepāja beach under a full name and a directional name. With rank 5 (Liepājas Pludmales Kāpas), rank 6 (beach tennis) and rank 9 (jūras krastā), Liepāja takes five of Latvia's twelve tier 1 slots.",
+        "source_url": "https://www.openstreetmap.org/#map=16/56.4916/20.9943"
+      },
+      {
+        "name": "Pelēkā Kāpa",
+        "class": "duplicate_of:Pavilostas Pludmale",
+        "why": "Tier 1 rank 1 and the country's top_beach. The Grey Dune at Pāvilosta is a genuine protected dune landmark, but it is a dune rather than a beach, and its coordinates (56.8929,21.1855) are within 90 m of tier 1 rank 10 'Pavilostas Pludmale' and tier 1 rank 8 'Beach house Seaborg'. Three tier 1 rows, one spot.",
+        "source_url": "https://www.openstreetmap.org/#map=17/56.8929/21.1855"
+      },
+      {
+        "name": "Jaundubulti Beach",
+        "class": "duplicate_of:Jaundubultu pludmale",
+        "why": "Tier 1 rank 2 (56.9663,23.7499) duplicates tier 2 rank 24 'Jaundubultu Beach' (56.9698,23.7551) and tier 2 rank 25 'Jaundubultu pludmale' (56.9683,23.7486). Three rows for one 500 m stretch of Jūrmala.",
+        "source_url": "https://www.openstreetmap.org/#map=16/56.9663/23.7499"
+      },
+      {
+        "name": "Jurmala Beach",
+        "class": "duplicate_of:Dzintaru pludmale",
+        "why": "Tier 1 rank 11 sits at 56.9789,23.8103; tier 2 rank 23 'Dzintaru pludmale' sits at 56.9789,23.8107 and tier 2 rank 22 'Dzintari Beach | Dzintaru pludmale' at 56.9776,23.8124. 'Jurmala Beach' is a generic label pinned on the Dzintari section.",
+        "source_url": "https://www.openstreetmap.org/#map=16/56.9789/23.8103"
+      },
+      {
+        "name": "Beach volleyball stadium",
+        "class": "other",
+        "why": "Tier 2 rank 16. The Ventspils beach volleyball stadium, a sports venue, listed as a beach 250 m from the actual Ventspils Blue Flag beach at tier 2 rank 18.",
+        "source_url": "https://www.openstreetmap.org/#map=16/57.3897/21.5320"
+      },
+      {
+        "name": "Baltic Sea, Jurmala",
+        "class": "other",
+        "why": "Tier 2 rank 15. A geocoder string naming the sea and the town, at coordinates identical to tier 1 rank 11 'Jurmala Beach' (56.9793,23.8105 vs 56.9789,23.8103).",
+        "source_url": "https://www.openstreetmap.org/#map=16/56.9793/23.8105"
+      },
+      {
+        "name": "Jūra️",
+        "class": "other",
+        "why": "Tier 2 rank 26. The name is the Latvian word for 'sea' followed by a stray variation-selector character. Not a place name, and evidence that raw user-entered POI labels are reaching the wire unfiltered.",
+        "source_url": "https://www.openstreetmap.org/#map=16/56.9725/23.7874"
+      }
+    ],
+    "missing": [
+      {
+        "name": "Majori",
+        "qid": "Q6738400",
+        "lat": 56.97472,
+        "lon": 23.79639,
+        "why": "Majori is the central and by far the best known beach of Jūrmala, the beach at the end of Jomas iela and the one Latvians and visitors both mean by 'the beach'. It is in the wire only at tier 2 rank 30, below a beach volleyball stadium and a row called 'Jūra'.",
+        "source_url": "https://www.wikidata.org/wiki/Q6738400",
+        "verified": true
+      },
+      {
+        "name": "Cape Kolka",
+        "qid": "Q1728331",
+        "lat": 57.75861,
+        "lon": 22.60417,
+        "why": "Kolkasrags, the cape where the Gulf of Riga meets the open Baltic and the waves collide from two directions, in Slītere National Park. The most distinctive stretch of Latvian coast and a fixture of every itinerary. Absent from the file at every tier.",
+        "source_url": "https://www.wikidata.org/wiki/Q1728331",
+        "verified": true
+      },
+      {
+        "name": "Veczemju Cliffs",
+        "qid": "Q20406027",
+        "lat": 57.5894,
+        "lon": 24.3708,
+        "why": "The red sandstone sea cliffs at Veczemji on the Vidzeme coast, the most photographed shoreline formation in Latvia. Absent.",
+        "source_url": "https://www.wikidata.org/wiki/Q20406027",
+        "verified": true
+      },
+      {
+        "name": "Jūrkalne",
+        "qid": "Q15229937",
+        "lat": 57.0,
+        "lon": 21.38333,
+        "why": "The Jūrkalne bluffs (Jūrkalnes stāvkrasts), a long steep coastal escarpment above an empty beach on the Kurzeme coast, the classic Latvian sunset spot. Absent. The QID and coordinates given are for the village the bluffs are named after.",
+        "source_url": "https://www.wikidata.org/wiki/Q15229937",
+        "verified": true
+      },
+      {
+        "name": "Bernāti",
+        "qid": "Q15218668",
+        "lat": 56.37917,
+        "lon": 20.98806,
+        "why": "The dune and pine beach in Bernāti nature park south of Liepāja, a standard Latvian wild beach. Absent, while Liepāja town beach occupies five tier 1 slots.",
+        "source_url": "https://www.wikidata.org/wiki/Q15218668",
+        "verified": true
+      },
+      {
+        "name": "Baltā kāpa (Saulkrasti)",
+        "qid": "Q113192343",
+        "lat": 57.23434,
+        "lon": 24.39201,
+        "why": "The White Dune at Saulkrasti, with the Sunset Trail, the best known beach landmark on the Riga to Estonia coast. The Wikidata item at these coordinates carries the right name in the right place but has no description, so I record it unverified rather than assert the match.",
+        "source_url": "https://www.wikidata.org/wiki/Q113192343",
+        "verified": false
+      },
+      {
+        "name": "Ventspils Blue Flag beach",
+        "qid": null,
+        "lat": 57.3923,
+        "lon": 21.5293,
+        "why": "Ventspils has held a Blue Flag longer than any other Latvian beach and is the country's third beach destination after Jūrmala and Liepāja. It IS in the wire, at tier 2 rank 18, below a volleyball stadium. Coordinates are those the wire already holds; no Wikidata item confirmed for the beach itself.",
+        "source_url": null,
+        "verified": false
+      }
+    ],
+    "order": [
+      "Twelve tier 1 beaches resolve to four locations: Pāvilosta (3 rows), Liepāja (5 rows), Jūrmala (3 rows) and Ķemeri (1 row). Two of the twelve are not beaches at all (a tennis facility and a guest house) and one is a caption.",
+      "Ranks 2 to 7 are tied at 0.94 and are in alphabetical order (Jaundubulti, Liepājas x4, Mellužu). Ranks 8, 9, 10 are tied at 0.85 and are also alphabetical (Beach house, jūras, Pavilostas). Ties are broken by name, so a guest house beat the actual Pāvilosta beach because 'B' precedes 'P'.",
+      "Majori at tier 2 rank 30 is the single worst placement: the flagship beach of the flagship resort, thirty rows down.",
+      "Pelēkā Kāpa at rank 1 is a real and lovely place, but making the Pāvilosta grey dune the country's number one beach over Jūrmala is not a call I would defend on a country card."
+    ]
+  },
+  "mountains": {
+    "wrong": [
+      {
+        "name": "Baltā māja",
+        "class": "other",
+        "why": "Tier 1 rank 1, the only tier 1 mountain in Latvia, and the country's top_mountain. Baltā māja ('the White House') is Q4853021, a listed national architectural monument, that is to say a BUILDING, in the Rundāle Palace complex. Its Wikidata coordinates (56.41583,24.03028) match the wire's (56.4158,24.0303) to five decimal places, so the identification is certain. Latvia's entire Mountains tab is topped by a house next to a palace.",
+        "source_url": "https://www.wikidata.org/wiki/Q4853021"
+      },
+      {
+        "name": "Vīna kalns",
+        "class": "not_notable",
+        "why": "Tier 2 rank 4. 'Wine Hill', a small landscaped mound in the Rundāle Palace park, 1.5 km from Baltā māja. Two of Latvia's four harvested mountains are objects in one baroque garden.",
+        "source_url": "https://www.openstreetmap.org/#map=15/56.4353/24.0429"
+      },
+      {
+        "name": "Zaļā kāpa",
+        "class": "other",
+        "why": "Tier 2 rank 3. The Green Dune in Ķemeri, a coastal dune ridge. Not miscategorised as violently as a building, but a dune is a beach-side feature and it is here because the mountain set had nothing else to put in it.",
+        "source_url": "https://www.openstreetmap.org/#map=15/56.9503/23.4414"
+      }
+    ],
+    "missing": [
+      {
+        "name": "Gaiziņkalns",
+        "qid": "Q1122342",
+        "lat": 56.87004,
+        "lon": 25.95936,
+        "why": "311.9 m, the highest point of Latvia, in the Vidzeme uplands near Madona, with a ski slope and a visitor tower. Absent from all four harvested Latvian mountains. This is the row the tab exists for.",
+        "source_url": "https://www.wikidata.org/wiki/Q1122342",
+        "verified": true
+      },
+      {
+        "name": "Lielais Liepukalns",
+        "qid": "Q770418",
+        "lat": 56.27083,
+        "lon": 27.65439,
+        "why": "289.2 m, the highest hill of Latgale, in Rāzna National Park, with an observation tower over the lakes. Absent.",
+        "source_url": "https://www.wikidata.org/wiki/Q770418",
+        "verified": true
+      },
+      {
+        "name": "Zilaiskalns Hill",
+        "qid": "Q15220099",
+        "lat": 57.55361,
+        "lon": 25.21611,
+        "why": "The Blue Hill of Vidzeme, a sacred hill and nature reserve with a viewing tower, one of Latvia's best known elevations despite its modest height. Absent.",
+        "source_url": "https://www.wikidata.org/wiki/Q15220099",
+        "verified": true
+      },
+      {
+        "name": "Dzegužkalns",
+        "qid": "Q4160761",
+        "lat": 56.96139,
+        "lon": 24.06861,
+        "why": "The highest natural point in Riga, a wooded park hill in Pārdaugava with a sledding slope. It IS in the wire at tier 2 rank 2, which is the only genuinely correct mountain row Latvia has, and it is ranked below a building.",
+        "source_url": "https://www.wikidata.org/wiki/Q4160761",
+        "verified": true
+      }
+    ],
+    "order": [
+      "The order is not defensible in any sense: there are four rows, the top one is a building, and the only real hill in the set (Dzegužkalns, Riga's high point) is second and in tier 2.",
+      "The correct order for Latvia is Gaiziņkalns, Lielais Liepukalns, Zilaiskalns, Dzegužkalns, and three of those four are not in the file.",
+      "Baltā māja at rank 1 must be removed before this ships, not re-ranked."
+    ]
+  },
+  "counts_verdict": "32 beaches is a generous and roughly right count for 500 km of Latvian coast, though duplicate folding would cut it to about 15 real places; 12 tier 1 beaches is too many when four of them are the same Liepāja sand and three the same Pāvilosta spot. 4 mountains is the real story: Latvia's whole Mountains tab is four rows, one of which is a building, one a garden mound and one a dune, leaving a single genuine hill. Either the tab should not render for Latvia at all, or the harvest needs the national high point list added; four rows of which three are wrong is worse than an honest empty state.",
+  "top_pick_verdict": "No on both, and the mountain pick is the worst in the group. top_mountain 'Baltā māja' is a listed building at Rundāle Palace (Q4853021, confirmed by exact coordinate match) and putting it on a Latvia country card labelled as a mountain would be an outright factual error visible to any Latvian at a glance. The correct pick is Gaiziņkalns (Q1122342, 311.9 m). top_beach 'Pelēkā Kāpa' is at least a real natural landmark, but the Latvia beach card is Jūrmala, specifically Majori (Q6738400), which the wire holds at tier 2 rank 30.",
+  "notes": "The Latvian file is the clearest evidence of the building-into-mountains failure mode that also hit Estonia in this group: the token 'māja' (Latvian for house) and 'maja' (Estonian) are entering the mountain set, and here the affected row is the country's number one. It is also the clearest evidence of alphabetical tie-breaking: at score 0.85 the tier 1 beach block runs 'Beach house Seaborg', 'jūras krastā', 'Pavilostas Pludmale', which is exactly alphabetical, so a guest house outranks the beach it stands on."
+}

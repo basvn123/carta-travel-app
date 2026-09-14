@@ -74,6 +74,7 @@ import gzip, json, os, sys, time, threading, urllib.request, urllib.error
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import date, timedelta
 from pathlib import Path
+from pipeline_io import atomic_write_json
 
 ROOT = Path(__file__).resolve().parents[1]
 CACHE_DIR = ROOT / "cache"
@@ -175,8 +176,7 @@ def build_graph():
             "lon": coord.get("longitude"),
             "base": bool(a.get("base")),
         }
-    AIRPORTS_CACHE.write_text(json.dumps(airports, ensure_ascii=False, indent=0),
-                              encoding="utf-8")
+    atomic_write_json(AIRPORTS_CACHE, airports, indent=0, ensure_ascii=False)
     print(f"  {len(airports)} active airports -> {AIRPORTS_CACHE.name}")
 
     graph = json.loads(GRAPH_CACHE.read_text(encoding="utf-8")) if GRAPH_CACHE.exists() else {}
@@ -191,10 +191,10 @@ def build_graph():
             print(f"  {type(e).__name__} on routes/{c}; empty")
             graph[c] = []
         if i % 25 == 0:
-            GRAPH_CACHE.write_text(json.dumps(graph, indent=0), encoding="utf-8")
+            atomic_write_json(GRAPH_CACHE, graph, indent=0, ensure_ascii=True)
             print(f"  ...{i}/{len(todo)}")
         time.sleep(0.15)
-    GRAPH_CACHE.write_text(json.dumps(graph, indent=0), encoding="utf-8")
+    atomic_write_json(GRAPH_CACHE, graph, indent=0, ensure_ascii=True)
     total_edges = sum(len(v) for v in graph.values())
     print(f"graph complete: {len(graph)} origins, {total_edges} directed edges")
 
@@ -287,7 +287,7 @@ def harvest():
             cache[key] = result
             done[0] += 1
             if done[0] % 50 == 0:
-                FARE_CACHE.write_text(json.dumps(cache, indent=0), encoding="utf-8")
+                atomic_write_json(FARE_CACHE, cache, indent=0, ensure_ascii=True)
                 print(f"  ...{done[0]}/{len(todo)} fetched, flushed")
         time.sleep(DELAY_S)
 
@@ -300,7 +300,7 @@ def harvest():
             for _ in as_completed(futs):
                 pass
 
-    FARE_CACHE.write_text(json.dumps(cache, indent=0), encoding="utf-8")
+    atomic_write_json(FARE_CACHE, cache, indent=0, ensure_ascii=True)
     print(f"harvest complete: {len(cache)} legs in cache")
 
 
@@ -442,7 +442,7 @@ def merge_tp():
     data["fares"] = dict(sorted(fares.items()))
     data["meta"]["all_origins"] = sorted({o for a in fares.values() for o in a})
     data["meta"]["fares_model_tp"] = stats
-    APP_DATA.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
+    atomic_write_json(APP_DATA, data, indent=2, ensure_ascii=False)
     print(f"TP merge written; app_data.json is {APP_DATA.stat().st_size / 1e6:.1f} MB")
 
 
@@ -564,7 +564,7 @@ def merge_est():
         return
     data["fares"] = dict(sorted(fares.items()))
     data["meta"]["fares_model_est"] = stats
-    APP_DATA.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
+    atomic_write_json(APP_DATA, data, indent=2, ensure_ascii=False)
     print(f"est merge written; app_data.json is {APP_DATA.stat().st_size / 1e6:.1f} MB")
 
 
@@ -623,7 +623,7 @@ def patch():
     else:
         meta.pop("fares_model_est", None)
 
-    APP_DATA.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
+    atomic_write_json(APP_DATA, data, indent=2, ensure_ascii=False)
     size_mb = APP_DATA.stat().st_size / 1e6
     print(f"patched fares: {n_anchors} anchors, {len(all_origins)} distinct origins, "
           f"{n_legs} priced (anchor,origin) pairs")
@@ -660,7 +660,7 @@ def refresh():
     data = load_app_data()
     data["meta"]["start_date"] = start
     data["meta"]["end_date"] = end
-    APP_DATA.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
+    atomic_write_json(APP_DATA, data, indent=2, ensure_ascii=False)
     print(f"refresh: window rolled to {start} .. {end}")
     if FARE_CACHE.exists():
         FARE_CACHE.unlink()

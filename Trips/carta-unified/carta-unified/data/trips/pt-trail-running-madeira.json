@@ -1,0 +1,281 @@
+{
+  "id": "pt-trail-running-madeira",
+  "sourceId": "trail-running-portugal-madeira",
+  "slug": "pt-trail-running-madeira",
+  "title": "Madeira: Pico Ruivo & the Levadas",
+  "country": "Portugal",
+  "countryCode": "PT",
+  "countries": [
+    {
+      "name": "Portugal",
+      "code": "PT"
+    }
+  ],
+  "isMultiCountry": false,
+  "region": "Southern & Mediterranean Europe",
+  "regionKey": "southern-mediterranean",
+  "subRegion": "Madeira — Central Massif, Laurissilva & the north coast",
+  "tripType": "Trail Running",
+  "tripTypeId": 2,
+  "tripTypeSlug": "trail-running",
+  "durationDays": 7,
+  "bestPeriod": {
+    "months": [
+      3,
+      4,
+      5,
+      9,
+      10,
+      11
+    ],
+    "monthNames": [
+      "March",
+      "April",
+      "May",
+      "September",
+      "October",
+      "November"
+    ],
+    "window": "March–May & late September–November",
+    "note": null,
+    "avoid": "Late July–August (heat on the exposed east, peak crowds, trail quotas fill); December–February is runnable but the massif is frequently closed by wind and fog",
+    "raw": "March–May & late September–November"
+  },
+  "budgetTier": "€€",
+  "budgetTierRange": [
+    2,
+    2
+  ],
+  "budgetTierRaw": "€€",
+  "budget": {
+    "currency": "EUR",
+    "totalEur": {
+      "low": 1050,
+      "high": 1740
+    },
+    "totalNote": "€1,050–€1,700 per person, excl. international flights",
+    "breakdown": {
+      "accommodation": {
+        "lowEur": 450,
+        "highEur": 780,
+        "note": "North-coast quintas €80–€140 dbl/night; Funchal 3★ from €70"
+      },
+      "food": {
+        "lowEur": 220,
+        "highEur": 340,
+        "note": "Prato do dia €10–€14; a full dinner with wine €25–€40"
+      },
+      "transport": {
+        "lowEur": 280,
+        "highEur": 440,
+        "note": "Rental car 7 days €180–€300 plus fuel; taxi shuttles for point-to-point runs €25–€45 each"
+      },
+      "activities": {
+        "lowEur": 100,
+        "highEur": 180,
+        "note": "Official trail fees (from €4.50, PR1 at €10.50), booking charges, headtorch, one guided day"
+      }
+    },
+    "perDayEur": {
+      "low": 150,
+      "high": 249
+    }
+  },
+  "profile": {
+    "difficulty": 4,
+    "difficultyLabel": "Demanding",
+    "difficultyNote": "4/5 — endless volcanic stair-climbing and 1,000 m descents; the cardiovascular load is high and the eccentric load is brutal",
+    "fitnessLevel": "Demanding",
+    "crowdLevel": null,
+    "familyFriendly": null,
+    "carRequired": null
+  },
+  "basecamps": [],
+  "gatewayAirport": "FNC — Madeira Cristiano Ronaldo, Santa Cruz (20 min to Funchal, 40 min to Santana, 55 min to Porto Moniz)",
+  "gatewayAirportCode": "FNC",
+  "languages": [],
+  "currency": null,
+  "emergencyNumber": "112",
+  "coordinates": {
+    "lat": 38.7251,
+    "lon": -9.1498,
+    "precision": "country",
+    "matchedPlace": "Lisbon",
+    "source": "country capital fallback"
+  },
+  "tags": [
+    "trail-running",
+    "madeira",
+    "pico-ruivo",
+    "levada",
+    "laurissilva",
+    "miut",
+    "volcanic",
+    "pr-trails",
+    "atlantic",
+    "tunnels"
+  ],
+  "summary": "Madeira is a 1,862 m volcanic wall dropped into the Atlantic, and running it means alternating between two utterly different systems: the *veredas*, stone staircases cut along the ridges of the central massif with 500 m of air on both sides, and the *levadas*, 18th-century irrigation channels contouring for kilometres at a steady gradient through dripping laurel forest and pitch-dark tunnels. The week alternates hard massif days with flat levada days, which is both the smartest recovery structure available here and the way MIUT racers actually train. You will climb more stairs in seven days than in a year at home. It suits a runner with strong quads, no fear of exposure or of the dark, and the patience to deal with an official booking system for almost every trail.",
+  "summaryGenerated": false,
+  "hook": null,
+  "snapshot": {},
+  "itinerary": [
+    {
+      "day": 1,
+      "title": "Land, and an evening lap on Ponta de São Lourenço",
+      "morning": "Fly into FNC, collect the car, and drive fifteen minutes east to **Baía d'Abra**. Book the PR8 slot in advance on the SIMplifica portal — do it before you fly.",
+      "afternoon": "Run **PR8 Vereda da Ponta de São Lourenço** out to the Casa do Sardinha and the eastern viewpoint: red and ochre volcanic cliffs, no trees, the Atlantic on both sides, and a serious crosswind. Jetlag-proof, short, and the best introduction to Madeiran rock.",
+      "evening": "Drive to Funchal; dinner in the old town and a first poncha.",
+      "dayStats": "8 km / 400 m D+ / ITRA 2–3 / 1 h–1 h 20 / zero shade, zero water / fee from €4.50.",
+      "sleep": "Funchal, Zona Velha (3★ or aparthotel)"
+    },
+    {
+      "day": 2,
+      "title": "PR1: the Areeiro–Ruivo traverse",
+      "morning": "At the **Pico do Areeiro** car park (1,818 m) for sunrise — it fills by 06:30 in season. Run **PR1** across **Pico das Torres (1,851 m)** to **Pico Ruivo (1,862 m)**, through the rock tunnels and along the cut staircases with the whole massif dropping away.",
+      "afternoon": "Descend **PR1.3 to Achada do Teixeira**, taxi or shuttle back to your car at Areeiro. Coffee and bolo do caco at the Pico Ruivo shelter on the way through.",
+      "evening": "Drive north to Santana. Dinner at **Quinta do Furão** — Madeiran beef espetada on a laurel skewer, and a Verdelho.",
+      "dayStats": "7 km PR1 + 2.8 km PR1.3 / ~700 m up, 850 m down / ITRA 3–4 / 1 h 45–2 h 30 / **PR1 fee €10.50** / headtorch for tunnels.",
+      "sleep": "Quinta do Furão, Santana"
+    },
+    {
+      "day": 3,
+      "title": "PR9 Levada do Caldeirão Verde and the Inferno extension",
+      "morning": "From **Casa das Queimadas**, run the **PR9 Levada do Caldeirão Verde** — 6.5 km of contouring channel path through dense laurissilva, four unlit tunnels and a series of hanging ravines, ending at the Caldeirão Verde waterfall in its green amphitheatre.",
+      "afternoon": "Continue on **PR9.1 to the Caldeirão do Inferno** if the water level allows, then reverse. Flat, fast, cold and dark — a deliberate contrast to yesterday's stair-climbing.",
+      "evening": "Santana: the triangular palheiro houses, then a quiet dinner and legs up.",
+      "dayStats": "13 km (18 km with PR9.1) / 300 m D+ / ITRA 2 / 1 h 30–2 h 30 / 4+ tunnels, headtorch essential / fee from €4.50.",
+      "sleep": "Quinta do Furão, Santana"
+    },
+    {
+      "day": 4,
+      "title": "Recovery day: Fanal and the north coast",
+      "morning": "Deliberate low day. Drive across the **Paul da Serra** plateau (1,400–1,500 m of treeless moor, often in cloud) to **Fanal** and run the short, flat loop among the thousand-year-old **til laurel trees** — 6 km of soft grass and mist, no climbing, no exposure.",
+      "afternoon": "Down to **Porto Moniz** for the natural volcanic swimming pools, then the coast road to São Vicente. No further running.",
+      "evening": "Fresh limpets, black scabbardfish with banana, and a Madeira at a Porto Moniz seafront restaurant.",
+      "dayStats": "6 km / 120 m D+ / 100% flat grass and forest track / 45 min easy; Paul da Serra crossing ~40 min.",
+      "sleep": "Estalagem or quinta, São Vicente / Ponta Delgada"
+    },
+    {
+      "day": 5,
+      "title": "PR1.2 Vereda da Encumeada, the big one",
+      "morning": "Start at **Encumeada (1,007 m)** at first light. Climb **PR1.2** onto the western ridge of the massif — the longest, most exposed and least crowded route to Pico Ruivo, with ladders, narrow arêtes and views into both the north and south valleys at once.",
+      "afternoon": "Summit **Pico Ruivo (1,862 m)**, drop to the shelter for food, then descend **PR1.3** to Achada do Teixeira for a pre-arranged pickup. This is the day that most resembles racing MIUT.",
+      "evening": "Recovery dinner in Santana or São Vicente; get horizontal early.",
+      "dayStats": "11.5 km + 2.8 km / ~1,200 m up, 700 m down / ITRA 4 / 3 h 15–4 h 30 / one water point at the Ruivo shelter.",
+      "sleep": "Quinta near Santana / São Vicente"
+    },
+    {
+      "day": 6,
+      "title": "Ribeiro Frio levadas and the Curral rim",
+      "morning": "From **Ribeiro Frio**, run the classic pair: the **Levada do Furado (PR10) toward Portela** through mossy laurel forest, or the short **Balcões** viewpoint spur for the head-on view of the massif you have just run across.",
+      "afternoon": "Drive to **Eira do Serrado** above **Curral das Freiras** and run the rim path down into and back out of the \"Nuns' Valley\" — 500 m of descent into a volcanic caldera surrounded by 1,500 m walls, then the climb back out.",
+      "evening": "Chestnut soup and cherry liqueur in Curral das Freiras, then back toward Funchal.",
+      "dayStats": "12 km levada + 9 km Curral / ~900 m D+ combined / ITRA 2–3 / 2 h 30–3 h 20.",
+      "sleep": "Funchal"
+    },
+    {
+      "day": 7,
+      "title": "Funchal coastal shakeout and out",
+      "morning": "Easy 8 km along the **Funchal seafront promenade to Câmara de Lobos** — flat, paved, sea-level — then a poncha at the fishing harbour where the boats are painted.",
+      "afternoon": "Mercado dos Lavradores for passionfruit and bolo de mel, a Madeira tasting at Blandy's, then the twenty-minute drive to FNC.",
+      "evening": "Departure.",
+      "dayStats": "8 km / 80 m D+ / 100% paved promenade / 45 min–1 h; 20 min to the airport.",
+      "sleep": "Departure"
+    }
+  ],
+  "accommodationStrategy": [
+    {
+      "rank": 1,
+      "name": "Quinta do Furão",
+      "style": "cliff-top hotel and working vineyard",
+      "location": "Santana",
+      "description": "The north-coast base and the right side of the island for the massif: 40 minutes from Achada do Teixeira, 20 from the PR9 trailhead at Queimadas, with an early breakfast, secure parking, drying space and one of the best restaurants on Madeira on site. €110–€170 double depending on season.",
+      "booking": null,
+      "priceNote": null
+    },
+    {
+      "rank": 2,
+      "name": "Funchal Zona Velha aparthotel",
+      "style": "self-catering",
+      "location": "old town",
+      "description": "Cheap, central, and useful for the arrival and departure nights: walking distance to the seafront promenade, the market and the taxi ranks that get you to trailheads, from about €70. A kitchen matters when you are eating at 05:30 before an Areeiro sunrise start.",
+      "booking": null,
+      "priceNote": null
+    },
+    {
+      "rank": 3,
+      "name": "A small quinta in São Vicente or Ponta Delgada",
+      "style": "north-coast guesthouse",
+      "location": null,
+      "description": "For the middle of the week: it halves the driving to Encumeada and Fanal, sits on the wet, green side of the island where the recovery day belongs, and costs €80–€120. Check it has covered parking — north-coast rain is not a rumour.",
+      "booking": null,
+      "priceNote": null
+    }
+  ],
+  "logistics": {
+    "connectivity": "Portugal is EU — roaming at domestic rates, and coverage is good island-wide. **No signal in any levada tunnel**, in the Caldeirão ravine or in the upper Curral basin. Download offline maps; save your SIMplifica booking QR codes offline too, because rangers check them at trailheads.",
+    "emergency": "**112**; Madeira's Serviço Regional de Proteção Civil coordinates mountain and coastal rescue, with helicopter support based near Funchal. Rescues from the massif ridges are technical and slow. Insurance covering hiking/trail running with exposure is essential; note that some policies exclude \"unmarked trails\", which is a reason to stay on PR routes.",
+    "weather": "Madeira's defining phenomenon is the **north–south split**: it can be 24 °C and sunny in Funchal while the north coast is in horizontal rain and the massif is closed. The *capacete* cloud cap forms on Pico Ruivo most days from mid-morning. Winter and early spring bring Atlantic storms with 100 km/h+ gusts on the ridges, and the authorities close trails outright — check the IFCN trail-status page every morning, not just once.",
+    "bookingWindows": "**Official trails require a paid online reservation through the SIMplifica portal** for a dated slot; book PR1 as far ahead as you can, because it is capped and it sells out. Fees in 2026 start at a **€4.50 minimum**, with a reduced €3.00 rate retained for operators under protocol, and **PR1 Vereda do Areeiro priced at €10.50**. MIUT (late April) fills the whole island's accommodation — book six months out or avoid that week.",
+    "money": "Euro. Cards are accepted almost everywhere including small cafés; carry €50–€80 cash for rural bars and parking. Tipping 5–10% for good service.",
+    "transportRules": "A rental car is the practical choice, but Madeira's roads are extreme — 20% gradients, hairpins, and old ER roads with rockfall. Take full insurance and never leave anything visible at a trailhead car park; Areeiro and Queimadas have had break-ins. For point-to-point runs, pre-book a taxi shuttle (€25–€45); Funchal-based drivers will do a fixed-price Areeiro-to-Achada transfer. Buses (Rodoeste, SAM, Horários do Funchal) reach most villages but not most trailheads.",
+    "permits": "The paid reservation described above is a legal requirement on classified PR routes and is enforced by rangers with fines. Trails close for weather, fire damage and landslides frequently and without much notice. Camping is restricted to designated sites. Drone use over the natural park needs authorisation. Do not swim in levada channels.",
+    "health": "Tap water is potable island-wide; **levada water is not**. The real hazards are falls from unfenced levada edges, rockfall on the north-coast veredas, and hypothermia on the ridge in wind-driven rain — carry a windproof shell even on a 25 °C day at sea level. No ticks or venomous snakes. The 2024 wildfires damaged the central massif and left loose ground and dead standing timber in places; stay on the path.",
+    "gettingThere": null,
+    "other": []
+  },
+  "proTips": [
+    "**Book PR1 the day the slot opens, and take the first one.** It is the island's flagship route, it is capped, and at sunrise you get the ridge to yourself before the tour groups start at 08:00 — after which the tunnels become a queue.",
+    "**Run the massif traverses one-way with a taxi shuttle.** Areeiro to Achada do Teixeira, or Encumeada to Achada, costs €25–€45 and doubles the quality of the running compared with any out-and-back.",
+    "**Carry two headtorches, not one.** The PR9 tunnels are long, wet, low and completely unlit; a failed torch a kilometre into a tunnel is an actual emergency and phones die in that humidity.",
+    "**Use the north–south split as a weather strategy.** When the massif is closed, the south-coast levadas and the Funchal promenade are usually dry; when Funchal bakes, the Fanal and Ribeiro Frio forests are 10 °C cooler.",
+    "**Check the IFCN trail-status page every single morning.** Madeira closes and reopens individual PR routes constantly for landslip and storm damage; a booking is not a guarantee the trail is open.",
+    "**Alternate stairs and contours.** Madeira's eccentric loading is exceptional — a levada day after every ridge day is what makes six running days in seven survivable.",
+    "**Do Fanal in the mist, not in the sun.** The ancient til trees only look the way people photograph them when the Paul da Serra fog is in, which is most mornings and almost no afternoons.",
+    "**Time a spring trip against MIUT, deliberately.** Late April brings the Madeira Island Ultra Trail; go the week before to run a marked course with course support around, or steer well clear if you want empty trails and available beds."
+  ],
+  "typeSpecific": {
+    "raw": {
+      "Signature routes": "(1) **PR1 Vereda do Areeiro, Pico do Areeiro (1,818 m) → Pico das Torres (1,851 m) → Pico Ruivo (1,862 m)**: 7 km one way, roughly 700 m up / 550 m down, mid-pack 1 h 15–1 h 50 (signed 3 h 30 walking); the reopened tunnel variant after the 2024 fire damage. (2) **PR1.2 Vereda da Encumeada**, Encumeada (1,007 m) → Pico Ruivo: 11.5 km, ~1,100 m D+, 2 h 30–3 h 30. (3) **PR1.3 Vereda da Ilha / Achada do Teixeira → Pico Ruivo**: 5.6 km out-and-back, 300 m D+, 45 min–1 h. (4) **PR9 Levada do Caldeirão Verde**, Queimadas → Caldeirão Verde: 13 km out-and-back, 300 m D+, 1 h 30–2 h, four unlit tunnels. (5) **PR8 Vereda da Ponta de São Lourenço**: 8 km out-and-back, 400 m D+, 1 h–1 h 20, fully exposed. (6) **PR13 Vereda do Fanal** across the Paul da Serra plateau to the Fanal laurel wood: 10.8 km, 300 m D+, 1 h 15–1 h 45.",
+      "Technicality (ITRA-style 1–5; 1 = fire road, 5 = hands-on scrambling)": "Levada paths **2**, but with a permanent unprotected drop on the outside edge — the danger is falling off, not falling over. PR1 massif ridge **3–4**: cut steps, cabled sections, three tunnels, severe exposure. PR1.2 Encumeada **4** — the most sustained exposure on the island, with narrow arêtes and ladders. PR8 São Lourenço **2–3**, with wind as the actual hazard. Add one grade to everything in wet conditions: basalt polished by two hundred years of feet is genuinely slippery.",
+      "Terrain split, week average": "~30% cut basalt steps and rock staircase, ~25% levada-side dirt and cobble path, ~15% tunnel (unlit, wet, ankle-deep in places), ~15% laurissilva forest singletrack on root and leaf mould, ~10% volcanic gravel and ash on the high ridges, ~5% asphalt. Grip beats cushioning: sticky rubber and aggressive lugs, plus a spare dry pair, because nothing dries on the north coast.",
+      "Waymarking": "Official routes carry **PR numbers on yellow-topped wooden posts** with distance and walking time, plus green-and-yellow \"Percursos Pedestres Recomendados\" boards at each trailhead. Unofficial levada branches are unmarked and frequently unsafe. The **MIUT** course is signed only during race week; outside it, follow PR numbers.",
+      "Water refill points and month reliability": "*Levada water is irrigation water and not potable* — do not drink it untreated regardless of how clean it looks. Reliable fixed points: **Casa de Abrigo do Pico Ruivo** (shelter/café below the summit, drinks and water, generally open daily in season); **Casa das Queimadas** at the PR9 trailhead; **Ribeiro Frio** village fountain and cafés; **Achada do Teixeira** car park; **Encumeada** café; **Pico do Areeiro** café at the observatory; **Baía d'Abra** has nothing at all, so carry everything for PR8. Springs on the north slopes run year-round given Madeira's rainfall, but the **exposed east (São Lourenço) and the Paul da Serra plateau have no water at any time of year**.",
+      "Navigation": "Official route sheets and the **SIMplifica** booking portal from the regional forestry authority (IFCN); GPX from the visitmadeira trail pages, Komoot and the MIUT race site. Phone coverage is surprisingly good on the ridges and in the villages but **absent in every tunnel, in the Caldeirão Verde ravine, in Curral das Freiras' upper basin and in parts of the Fanal wood**. Bail-outs: the Pico Ruivo shelter and Achada do Teixeira road head are the massif's escape route; the Encumeada and Areeiro roads are the two other exits; on the levadas you simply reverse — there are rarely side exits.",
+      "Recovery, exposure and weather management": "Day 4 is the true low day. The structural rule for the week is **alternate ridge days with levada days**: the levadas are near-flat, shaded and cool, which lets you run six days out of seven. Start massif days at first light — the *capacete*, the cloud cap that forms on Pico Ruivo, typically builds from late morning and turns the ridge into a whiteout. Sea-level to 1,862 m in an hour's drive means no altitude issue, but the temperature difference between Funchal and the summit is routinely 12–15 °C and the wind on the ridge can be 60 km/h when the coast is still."
+    },
+    "surface": "~30% cut basalt steps and rock staircase, ~25% levada-side dirt and cobble path, ~15% tunnel (unlit, wet, ankle-deep in places), ~15% laurissilva forest singletrack on root and leaf mould, ~10% volcanic gravel and ash on the high ridges, ~5% asphalt. Grip beats cushioning: sticky rubber and aggressive lugs, plus a spare dry pair, because nothing dries on the north coast.",
+    "distanceKm": null,
+    "elevationM": null,
+    "verticalM": null,
+    "technicalRating": "Levada paths **2**, but with a permanent unprotected drop on the outside edge — the danger is falling off, not falling over. PR1 massif ridge **3–4**: cut steps, cabled sections, three tunnels, severe exposure. PR1.2 Encumeada **4** — the most sustained exposure on the island, with narrow arêtes and ladders. PR8 São Lourenço **2–3**, with wind as the actual hazard. Add one grade to everything in wet conditions: basalt polished by two hundred years of feet is genuinely slippery.",
+    "transitPass": null,
+    "hutBooking": null,
+    "liftNetwork": null,
+    "snowReliability": null,
+    "windConditions": null,
+    "gpxReady": null,
+    "bookingTimeline": null,
+    "audience": null
+  },
+  "packingNotes": [],
+  "whatCouldGoWrong": [],
+  "sources": {
+    "verified": "Madeira's classified walking routes require a paid dated reservation through the regional SIMplifica system, with a **€4.50 minimum fee for 2026** and a retained **€3.00 protocol rate**; **PR1 Vereda do Areeiro reopened in April 2026** after roughly two years closed following 2024 wildfire damage, and carries a **€10.50 fee**; PR1 links Pico do Areeiro (1,818 m), Pico das Torres (1,851 m) and Pico Ruivo (1,862 m) over about 7 km, signed at roughly 3 h 30 walking; **MIUT is scheduled for 25–26 April 2026**.",
+    "confidenceNotes": "Re-verify (a) **per-trail fee amounts and which routes are chargeable** — the IFCN fee schedule differs by trail and has changed more than once; (b) **live trail status for PR1, PR1.2, PR9/PR9.1 and PR8**, which close for storm and landslide damage at short notice; (c) whether the **PR1 tunnel variant or the original crest route** is the open alignment post-reopening; (d) **MIUT 2026/2027 distance ladder and elevation figures** (the 110–115 km flagship has been rebranded); (e) **Pico Ruivo shelter opening hours and whether it is currently serving food and water**; (f) taxi shuttle prices and rental car rates."
+  },
+  "verifyFlags": [],
+  "verifyFlagCount": 0,
+  "volatilePricing": false,
+  "wordCount": 3177,
+  "dataVintage": 2026,
+  "provenance": {
+    "batch": "southern-mediterranean",
+    "sourceFile": "carta-dataset/trips/trail-running-portugal-madeira.md",
+    "sourceFormat": "md with '## Metadata' bullet block (one file per trip)",
+    "sourceId": "trail-running-portugal-madeira",
+    "ingestedAt": "2026-09-02",
+    "synthesized": false
+  }
+}

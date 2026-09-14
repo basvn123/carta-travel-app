@@ -1,0 +1,295 @@
+{
+  "id": "pl-water-sports-masuria-hel",
+  "sourceId": "poland-masuria-hel-water-sports",
+  "slug": "pl-water-sports-masuria-hel",
+  "title": "Flat Water and Side-Shore: Masurian Sailing and a Kite Week on the Hel Peninsula",
+  "country": "Poland",
+  "countryCode": "PL",
+  "countries": [
+    {
+      "name": "Poland",
+      "code": "PL"
+    }
+  ],
+  "isMultiCountry": false,
+  "region": "Eastern & Southeastern Europe",
+  "regionKey": "eastern-southeastern",
+  "subRegion": "Great Masurian Lakes and the Hel Peninsula / Zatoka Pucka",
+  "tripType": "Water Sports & Coastal Trips",
+  "tripTypeId": 10,
+  "tripTypeSlug": "water-sports",
+  "durationDays": 7,
+  "bestPeriod": {
+    "months": [
+      6,
+      7,
+      9
+    ],
+    "monthNames": [
+      "June",
+      "July",
+      "September"
+    ],
+    "window": "the second half of June — long days, warm bay water, and wind before the August lull",
+    "note": null,
+    "avoid": "the first three weeks of August (Masurian marinas full, Hel road jammed, lightest wind of the year)",
+    "raw": null
+  },
+  "budgetTier": "€€",
+  "budgetTierRange": [
+    2,
+    2
+  ],
+  "budgetTierRaw": "€€",
+  "budget": {
+    "currency": "EUR",
+    "totalEur": {
+      "low": 935,
+      "high": 1510
+    },
+    "totalNote": "€935–€1,510",
+    "breakdown": {
+      "accommodation": {
+        "lowEur": 300,
+        "highEur": 520,
+        "note": "€300–€520 (€43–€74/night, including two nights aboard)"
+      },
+      "food": {
+        "lowEur": 175,
+        "highEur": 260,
+        "note": "€175–€260 (€25–€37/day)"
+      },
+      "transport": {
+        "lowEur": 180,
+        "highEur": 280,
+        "note": "€180–€280 (Warsaw or Gdańsk transfer, one-way car hire Masuria→Hel, SKM trains)"
+      },
+      "activities": {
+        "lowEur": 280,
+        "highEur": 450,
+        "note": "€280–€450 (yacht charter share, kayak hire, two kite lessons or gear rental)"
+      }
+    },
+    "perDayEur": {
+      "low": 134,
+      "high": 216
+    }
+  },
+  "profile": {
+    "difficulty": 2,
+    "difficultyLabel": "Moderate",
+    "difficultyNote": "Easy–Moderate",
+    "fitnessLevel": "Moderate",
+    "crowdLevel": null,
+    "familyFriendly": null,
+    "carRequired": null
+  },
+  "basecamps": [
+    "Giżycko",
+    "Mikołajki",
+    "Węgorzewo",
+    "Chałupy",
+    "Jastarnia"
+  ],
+  "gatewayAirport": "Warsaw (WAW/WMI) → Giżycko by train via Olsztyn/Korsze, 4–5 h. Gdańsk (GDN) is the exit airport: SKM/PKM to Gdynia, then the Hel line train down the peninsula, ~1 h 45.",
+  "gatewayAirportCode": "GDN",
+  "languages": [
+    "Polish"
+  ],
+  "currency": "Polish złoty (PLN)",
+  "emergencyNumber": "112 (water rescue WOPR: 601 100 100)",
+  "coordinates": {
+    "lat": 54.0381,
+    "lon": 21.7644,
+    "precision": "city",
+    "matchedPlace": "Giżycko",
+    "source": "geonames (geonamescache, cities > 15k)"
+  },
+  "tags": [
+    "sailing",
+    "kitesurfing",
+    "windsurfing",
+    "kayaking",
+    "masuria",
+    "hel",
+    "baltic",
+    "lakes"
+  ],
+  "summary": "Poland gives you two entirely separate water worlds in one week. Inland, a chain of connected lakes big enough to lose sight of the shore, linked by nineteenth-century canals and hand-cranked locks, where the whole…",
+  "summaryGenerated": false,
+  "hook": "Poland gives you two entirely separate water worlds in one week. Inland, a chain of connected lakes big enough to lose sight of the shore, linked by nineteenth-century canals and hand-cranked locks, where the whole country goes sailing in July. On the coast, a 35 km sandbar with a warm, shallow, flat bay on one side and open Baltic swell on the other — which is exactly why it became Poland's kite and windsurf capital. Two boats, two disciplines, one long drive between them.",
+  "snapshot": {
+    "Country": "Poland",
+    "Trip type": "Water Sports & Coastal Trips",
+    "Duration": "7 days",
+    "Best period": "June, July, September",
+    "Budget tier": "€€",
+    "Difficulty": "Easy–Moderate",
+    "Start / End": "Giżycko → Hel (point-to-point, ~330 km between the two halves)",
+    "Getting there": "Warsaw (WAW/WMI) → Giżycko by train via Olsztyn/Korsze, 4–5 h. Gdańsk (GDN) is the exit airport: SKM/PKM to Gdynia, then the Hel line train down the peninsula, ~1 h 45."
+  },
+  "itinerary": [
+    {
+      "day": 1,
+      "title": "Giżycko, the swing bridge, and taking the boat",
+      "morning": "Train to **Giżycko**, the capital of the lakes, sitting on the isthmus between **Niegocin** and **Kisajno**. Collect a charter from **Ekomarina Giżycko** on the Niegocin waterfront [VERIFY: current 2026 charter rates for a 30–34 ft lake yacht].",
+      "afternoon": "Watch the **most obrotowy**, the 1889 hand-cranked rotating bridge over the Łuczański Canal — one person turns a hundred tonnes of iron, on the hour, and boat traffic queues on both sides. Then a shakedown sail on Niegocin.",
+      "evening": "Provision at the marina, walk the Boyen Fortress ramparts, and eat fried *sielawa* (vendace) on the promenade.",
+      "dayStats": null,
+      "sleep": null
+    },
+    {
+      "day": 2,
+      "title": "North into Mamry and Sztynort",
+      "morning": "Sail north through Kisajno into **Mamry**, the second-largest lake in Poland and the most open water on the chain. The whole northern basin is exposed — reef early.",
+      "afternoon": "Into **Marina Sztynort**, the biggest charter base in Masuria, under the ruined Lehndorff palace. Lunch, then on to **Węgorzewo** at the top of the system, 12 km further, where **Ekomarina Węgorzewo** is the northern charter hub.",
+      "evening": "Overnight in Węgorzewo. The town is quieter and cheaper than Giżycko and the pizza at the port is better than it has any right to be.",
+      "dayStats": "25 km sailing",
+      "sleep": null
+    },
+    {
+      "day": 3,
+      "title": "Śniardwy, the big one",
+      "morning": "Back south through the Giżycko bridge — check the opening times posted at the marina — and down Niegocin and the Kula canal.",
+      "afternoon": "Out onto **Śniardwy**, at about 114 km² **the largest lake in Poland**: shallow, wide, and famous for turning nasty faster than its size suggests. Keep the shoreline in sight, watch for the marked shoals, and get off it if a squall line builds.",
+      "evening": "Into **Mikołajki**, the noisiest and most enjoyable port on the lakes — Port Mikołajki, the Kurki, the wooden promenade. Book a berth ahead in July [VERIFY: current Mikołajki marina berth fee].",
+      "dayStats": "35 km sailing",
+      "sleep": null
+    },
+    {
+      "day": 4,
+      "title": "Bełdany, the Guzianka locks, and the Krutynia",
+      "morning": "Sail south down **Bełdany**, the long, forested, wind-sheltered lake, to the **Śluza Guzianka** — the 1879 lock connecting Bełdany with Jezioro Guzianka Małe and the Nidzkie system, now doubled by the newer Guzianka II chamber. Locking through is the single most Masurian hour of the week.",
+      "afternoon": "Leave the yacht at Ruciane-Nida and hire kayaks for the last stage of the **Krutynia** — the classic Polish flatwater descent, roughly **91–100 km from Sorkwity to Ruciane-Nida**, normally paddled in **eight to ten day-stages** (Sorkwity → Bieńki → Babięta → Spychowo → Krutyń → Ukta → Nowy Most → Ruciane-Nida). The Krutyń–Ukta stage is the beautiful one: clear water over sand, alder tunnels, kingfishers.",
+      "evening": "Dinner at the Krutyń waterfront, then back to the boat. The **Mazurska Pętla Żeglarska**, the EU-funded Masurian Sailing Loop, is why every port on this route now has fuel, water and pump-out.",
+      "dayStats": "18 km sailing + 12 km paddling",
+      "sleep": null
+    },
+    {
+      "day": 5,
+      "title": "Handover, and the long move to the coast",
+      "morning": "Return the yacht at Giżycko or Mikołajki. Charter handovers are usually Saturday morning — check yours before booking flights.",
+      "afternoon": "Drive or ride to the coast: roughly **330 km, 4 h 15**, Giżycko → Elbląg → Gdańsk → Władysławowo → **Chałupy**. The last 10 km down the peninsula can take an hour in August.",
+      "evening": "Check the wind for tomorrow, walk the sandbar from bay to open sea in four minutes, and eat smoked flounder at a Chałupy fish shack.",
+      "dayStats": null,
+      "sleep": null
+    },
+    {
+      "day": 6,
+      "title": "Chałupy and Kuźnica, flat-water day",
+      "morning": "**Chałupy 3** and **Chałupy 6** at first thermal. On a W/NW wind this is textbook side-shore, waist-deep for 200 m, with a sandy bottom and no rock. A first kite lesson lives here.",
+      "afternoon": "Move 4 km to **Kuźnica** as the breeze fills — the narrowest, shallowest, flattest part of the whole bay and the reason beginners come to Hel at all. Rig small; the thermal peaks around 15:00.",
+      "evening": "Swap the bay for the open Baltic beach on the north side for the sunset and a swim. Water is honestly **17–20 °C in July–August**, 14–16 °C in June, and can drop to 11–12 °C overnight after an upwelling — the bay side runs 2–4 °C warmer than the open sea.",
+      "dayStats": null,
+      "sleep": null
+    },
+    {
+      "day": 7,
+      "title": "Jastarnia, Rewa, and the end of the sandbar",
+      "morning": "**Jastarnia** for stronger-wind day: deeper water, more space, a proper harbour. If the forecast is light, take the train to **Hel** at the tip for the Fokarium seal centre and the wartime coastal battery.",
+      "afternoon": "If you have a car, cross to **Rewa** on the mainland shore and walk out along **Cypel Rewski**, the Ryf Mew spit — a sand tongue running a kilometre into the bay, knee-deep either side, and the best flat-water launch on the whole Gulf.",
+      "evening": "Train from Hel or Władysławowo to Gdynia and Gdańsk, about 1 h 45. Last dinner on Gdańsk's Długie Pobrzeże.",
+      "dayStats": null,
+      "sleep": null
+    }
+  ],
+  "accommodationStrategy": [
+    {
+      "rank": 1,
+      "name": "Chartered yacht",
+      "style": "sailing yacht, 2–3 nights aboard",
+      "location": "Giżycko / Mikołajki",
+      "description": "on the Masurian lakes the boat is the accommodation, and every port on the Mazurska Pętla has showers, power and water. A 30–34 ft lake cruiser with an inboard sleeps 6–8.",
+      "booking": "**December to February** for a July charter — the good boats go at the boat shows. Direct with the base, not through an aggregator.",
+      "priceNote": null
+    },
+    {
+      "rank": 2,
+      "name": "Hotel Ekomarina",
+      "style": "marina hotel",
+      "location": "Giżycko",
+      "description": "the first and last nights on land, thirty seconds from the charter pontoon, with secure luggage storage while you are on the water and a laundry.",
+      "booking": "6–8 weeks ahead in season [VERIFY: current rates].",
+      "priceNote": null
+    },
+    {
+      "rank": 3,
+      "name": "Camping Chałupy 6 / Ośrodek Chałupy",
+      "style": "surf camp",
+      "location": "Chałupy",
+      "description": "you sleep on the sandbar, 60 seconds from the launch on the bay side, with gear storage, rinse tanks and an on-site school — the single biggest quality-of-life factor on a wind trip.",
+      "booking": "2–3 months ahead for July–August; the peninsula genuinely runs out of beds [VERIFY: current 2026 pitch and cabin rates].",
+      "priceNote": null
+    }
+  ],
+  "logistics": {
+    "connectivity": "Good 4G/5G across the lakes and the whole peninsula. Use **Windguru** or **Windy** for both halves — the Hel spot pages are the standard reference, and the Masurian forecast that matters is the squall risk on Śniardwy.",
+    "emergency": "**112**; water rescue is **WOPR on 601 100 100**. On the lakes, Mazurskie WOPR runs patrol boats out of Giżycko and Mikołajki; on the coast, lifeguarded beaches fly the standard red/yellow flags — a **red flag means swimming is prohibited**, not \"be careful\".",
+    "weather": "Masurian squalls arrive fast and from the west; the standard warning is a siren and a flashing light at the ports, and the rule is to be off Śniardwy and Mamry before a front. On Hel, the thermal collapses at dusk — do not launch at 18:00 expecting the afternoon breeze.",
+    "bookingWindows": "Yacht charters **6–9 months** for July. Kite courses 3–4 weeks. Hel accommodation 2–3 months. Marina berths in Mikołajki and Giżycko can be reserved by phone the same morning outside August.",
+    "money": "The złoty, roughly 4.3 PLN to the euro. Cards everywhere, including marinas and most fish shacks; carry 200 PLN for lock fees, berth fees at small ports and beach car parks.",
+    "transportRules": "The Hel Peninsula has **one road and one railway**, and the road is the bottleneck — in August, park at Władysławowo and use the **Hel line train**, which runs the full length of the sandbar and takes bikes and boards. Polish rail carries a bicycle for a flat **11.90 PLN** on PKP Intercity services with bike spaces.",
+    "permits": "The **patent żeglarski** matters. Polish law lets you sail **without any licence** on inland waters in a sailing yacht of up to **7.5 m hull length**, and drive a motorboat with an engine up to **10 kW**; anything larger requires at minimum the **żeglarz jachtowy** certificate, and charter bases will ask to see it or supply a skipper for around 350–500 PLN a day [VERIFY: current 2026 skipper day rate and the exact hull-length threshold under the current regulation]. On the sea, **kitesurfing is restricted to designated zones** on the Hel bay shore in high season and banned from the main lifeguarded swimming areas — the zones are marked and enforced by municipal patrols [VERIFY: 2026 Hel municipal kite-zone boundaries and hours].",
+    "health": null,
+    "gettingThere": null,
+    "other": []
+  },
+  "proTips": [
+    "**Check the wind direction, not just the strength, on the bay side.** W and NW are side-shore and safe; **S and SW are offshore and dangerous**. This one distinction separates a good Hel day from a rescue call.",
+    "**Jellyfish are a non-issue and worth knowing about anyway.** What you will meet is *chełbia modra*, the moon jelly — translucent, four purple rings, completely harmless. The occasional lion's mane (*bełtwa festonowa*) drifts in on easterlies and stings mildly. Nothing in the Baltic is dangerous.",
+    "**Go in the second half of June.** You get 17 hours of daylight, water already at 17 °C in the bay, statistically better wind than August, and the Polish school holidays have not started.",
+    "**Book the Krutynia as a one-way with transfer.** Every Masurian kayak operator will shuttle you and the boats; paddling upstream back to Sorkwity is a genuinely miserable idea.",
+    "**Time the Giżycko swing bridge.** It opens on a published schedule, not on demand, and a missed opening costs an hour. Read the board at Ekomarina before you plan the day's leg.",
+    "**Learn *\"Jaki jest wiatr?\"*** — what is the wind? — and *\"Czy jest wolne miejsce?\"* for a berth. Masurian harbourmasters answer both instantly.",
+    "**Do not swim outside the flags on the open Baltic side.** The rip currents run out through the gaps in the offshore bar, they are invisible from the beach, and the peninsula's unguarded stretches are where the drownings happen."
+  ],
+  "typeSpecific": {
+    "raw": {
+      "Prevailing wind: direction, force, months": "Both halves of this trip run on **westerlies**. On the Hel Peninsula the dominant flow is **W to NW**, typically **4–6 Bft in May–June and September**, softening in July–August to a **thermal sea breeze** that builds from around 12:00–13:00 and dies at dusk. May, June and September are the reliable statistical months; August is the warmest water and the weakest wind. On the bay side a **W/NW wind is beautifully side-shore** — flat water, steady pressure, safe drift back toward the sandbar.",
+      "The offshore danger, stated plainly": "A **southerly or south-westerly on the Zatoka Pucka shore blows straight offshore**, away from the peninsula and out into a bay 10–15 km wide. It looks perfect — flat, warm, sunny — and it will take a downed kite or a broken mast foot far beyond swimming range. Do not launch on the bay side in S/SW without a rescue boat. The reverse applies on the open-sea beaches with a northerly.",
+      "Launch spots by name": "**Chałupy 3** and **Chałupy 6** — the historic centre of Polish windsurfing, waist-deep water hundreds of metres out. **Kuźnica** — the narrowest point of the peninsula, the shallowest, flattest water, and the classic beginner spot. **Jastarnia** — deeper, more room, better in strong wind. **Jurata** — quieter, the same bay water. **Cypel Rewski** at Rewa, on the mainland side of the bay: the Ryf Mew sandspit, where you can walk out a kilometre in knee-deep water. Open-sea launches exist at Władysławowo and Hel but are for wave riders, not learners.",
+      "Rental and school hubs": "Chałupy and Kuźnica are wall-to-wall stations in season, with kite and wing gear, IKO-certified instruction, and storage. Jastarnia has the windsurf-focused operators. Book courses ahead in July — the good instructors sell out [VERIFY: current 2026 kite course prices and specific school names in Chałupy and Jastarnia].",
+      "Tide, current and the real hazards": "**The Baltic is effectively non-tidal** — the astronomical range in the Gulf of Gdańsk is a few centimetres and no one plans around it. What actually moves the water is **wind-driven set-up (*spiętrzenie wiatrowe*)**, which can raise or drop the level by half a metre or more over a day and floods the low Hel beaches in autumn gales; **seiches**, the slow sloshing oscillation of the Gulf of Gdańsk after a wind event; **upwelling**, which can drop open-sea water temperature by 8–10 °C overnight when the wind turns; and **rip currents** on the open Baltic side, which run out through the sandbar gaps and are the commonest cause of Polish drownings. On the lakes the equivalent risk is not current but fetch: **Śniardwy** builds a short, vicious 1 m chop in twenty minutes."
+    },
+    "surface": null,
+    "distanceKm": null,
+    "elevationM": null,
+    "verticalM": null,
+    "technicalRating": null,
+    "transitPass": null,
+    "hutBooking": null,
+    "liftNetwork": null,
+    "snowReliability": null,
+    "windConditions": "Both halves of this trip run on **westerlies**. On the Hel Peninsula the dominant flow is **W to NW**, typically **4–6 Bft in May–June and September**, softening in July–August to a **thermal sea breeze** that builds from around 12:00–13:00 and dies at dusk. May, June and September are the reliable statistical months; August is the warmest water and the weakest wind. On the bay side a **W/NW wind is beautifully side-shore** — flat water, steady pressure, safe drift back toward the sandbar.",
+    "gpxReady": null,
+    "bookingTimeline": null,
+    "audience": null
+  },
+  "packingNotes": [],
+  "whatCouldGoWrong": [],
+  "sources": {
+    "verified": null,
+    "confidenceNotes": "- Verified: Śniardwy is Poland's largest lake at about 114 km² and Mamry the second-largest; the Giżycko rotating bridge over the Łuczański Canal dates from 1889 and is hand-operated; the Guzianka lock (1879) links Bełdany with the Nidzkie system and has been doubled by Guzianka II; the Krutynia is a roughly 91–100 km staged descent from Sorkwity to Ruciane-Nida; the Mazurska Pętla Żeglarska is the EU-funded harbour network; the Hel Peninsula is ~35 km of sandbar with Chałupy, Kuźnica, Jastarnia, Jurata and Hel, shallow Zatoka Pucka on one side and open Baltic on the other; **the Baltic is effectively non-tidal**, with wind set-up, Gulf of Gdańsk seiches, upwelling and rip currents as the real variables; WOPR water rescue on 601 100 100; PKP Intercity flat bicycle ticket 11.90 PLN. - `[VERIFY]` items in this file: 7 (see inline markers above) - Last reviewed: 2026-09-02"
+  },
+  "verifyFlags": [
+    "current 2026 kite course prices and specific school names in Chałupy and Jastarnia",
+    "current 2026 charter rates for a 30–34 ft lake yacht",
+    "current Mikołajki marina berth fee",
+    "current rates",
+    "current 2026 pitch and cabin rates",
+    "current 2026 skipper day rate and the exact hull-length threshold under the current regulation",
+    "2026 Hel municipal kite-zone boundaries and hours"
+  ],
+  "verifyFlagCount": 7,
+  "volatilePricing": true,
+  "wordCount": 2469,
+  "dataVintage": 2026,
+  "provenance": {
+    "batch": "eastern-southeastern",
+    "sourceFile": "cartaeasterneuropetrips/trips/poland-masuria-hel-water-sports.md",
+    "sourceFormat": "md+nested-yaml-frontmatter (one file per trip)",
+    "sourceId": "poland-masuria-hel-water-sports",
+    "ingestedAt": "2026-09-02",
+    "synthesized": false
+  }
+}

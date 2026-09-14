@@ -1,0 +1,289 @@
+{
+  "id": "dk-city-copenhagen-by-neighbourhood-block",
+  "sourceId": "copenhagen-by-neighbourhood-block",
+  "slug": "dk-city-copenhagen-by-neighbourhood-block",
+  "title": "Copenhagen by Neighbourhood Block",
+  "country": "Denmark",
+  "countryCode": "DK",
+  "countries": [
+    {
+      "name": "Denmark",
+      "code": "DK"
+    }
+  ],
+  "isMultiCountry": false,
+  "region": "Northern Europe & Baltics",
+  "regionKey": "northern-baltics",
+  "subRegion": "Zealand / Øresund",
+  "tripType": "City Trips",
+  "tripTypeId": 3,
+  "tripTypeSlug": "city",
+  "durationDays": 7,
+  "bestPeriod": {
+    "months": [
+      5,
+      6,
+      7,
+      8,
+      9,
+      12
+    ],
+    "monthNames": [
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "December"
+    ],
+    "window": "May to September for harbour swimming and outdoor dining; late November–December for Tivoli's Christmas season; February is cheapest and the museums are empty",
+    "note": null,
+    "avoid": null,
+    "raw": "May to September for harbour swimming and outdoor dining; late November–December for Tivoli's Christmas season; February is cheapest and the museums are empty"
+  },
+  "budgetTier": "€€€",
+  "budgetTierRange": [
+    3,
+    3
+  ],
+  "budgetTierRaw": "€€€",
+  "budget": {
+    "currency": "EUR",
+    "totalEur": {
+      "low": 1600,
+      "high": 2600
+    },
+    "totalNote": "€1,600–2,600 per person",
+    "breakdown": {
+      "accommodation": {
+        "lowEur": 150,
+        "highEur": 260,
+        "note": "€150–260 per night, double, central; design hotels €280+; hostels €45–70 pp"
+      },
+      "food": {
+        "lowEur": 60,
+        "highEur": 120,
+        "note": "€60–120 per day; one high-end tasting menu adds €250–450 per person"
+      },
+      "transport": {
+        "lowEur": 45,
+        "highEur": 70,
+        "note": "€45–70 total: Copenhagen Card or City Pass plus a week of bike hire (€60–90)"
+      },
+      "activities": {
+        "lowEur": 90,
+        "highEur": 180,
+        "note": "€90–180: museums, Tivoli, Louisiana day trip, CopenHill"
+      }
+    },
+    "perDayEur": {
+      "low": 229,
+      "high": 371
+    }
+  },
+  "profile": {
+    "difficulty": null,
+    "difficultyLabel": null,
+    "difficultyNote": null,
+    "fitnessLevel": null,
+    "crowdLevel": null,
+    "familyFriendly": null,
+    "carRequired": null
+  },
+  "basecamps": [],
+  "gatewayAirport": null,
+  "gatewayAirportCode": null,
+  "languages": [
+    "Danish",
+    "English — near-universal"
+  ],
+  "currency": "DKK (Danish krone)",
+  "emergencyNumber": "112",
+  "coordinates": {
+    "lat": 55.6761,
+    "lon": 12.5683,
+    "precision": "source",
+    "matchedPlace": null,
+    "source": "source record"
+  },
+  "tags": [],
+  "summary": "A seven-day city trip itinerary in Zealand / Øresund, Denmark.",
+  "summaryGenerated": true,
+  "hook": null,
+  "snapshot": {},
+  "itinerary": [
+    {
+      "day": 1,
+      "title": "Indre By: the medieval core and the Golden Age block",
+      "morning": "Arrive by Metro M2 from the airport, 14 minutes to Kongens Nytorv. Start at Nyhavn early — by 10:00 it is a cruise-passenger crush — then walk the Strøget spine as far as Gammeltorv.",
+      "afternoon": "Ny Carlsberg Glyptotek: Rodin, Gauguin and Etruscan bronzes around a glass-domed winter garden, all funded by beer. Then the Round Tower (Rundetårn) for its 1642 spiral ramp — Christian IV built it so a horse could carry instruments to the observatory.",
+      "evening": "Aperitivo at Ved Stranden 10, a canal-side natural-wine bar in a merchant's house, then dinner in the Gammel Strand block. Walk back along the canal at dusk.",
+      "dayStats": null,
+      "sleep": null
+    },
+    {
+      "day": 2,
+      "title": "Vesterbro and Frederiksberg: meatpacking to marble",
+      "morning": "Coffee and cardamom pastry at a Vesterbro bakery, then the Carlsberg City District — the old brewery quarter, with the Elephant Gate and the new residential architecture around it.",
+      "afternoon": "Cisternerne: a former underground reservoir beneath Søndermarken, now a dripping, stalactite-hung art space that stays at 8 °C in August. Walk the Frederiksberg Gardens and the Chinese pavilion.",
+      "evening": "Kødbyen, the Meatpacking District: white-tiled 1930s halls now full of restaurants and bars. Eat at one of the seafood or Basque-leaning places, then bar-hop within three blocks — this is the densest nightlife square in the city.",
+      "dayStats": null,
+      "sleep": null
+    },
+    {
+      "day": 3,
+      "title": "Christianshavn, Refshaleøen and the harbour block",
+      "morning": "Bike over to Christianshavn — Christian IV's 17th-century Dutch-planned canal district. Climb the external spiral of Vor Frelsers Kirke's spire, 400 steps with the last hundred outdoors.",
+      "afternoon": "Cross to Refshaleøen, the old shipyard island: Copenhagen Contemporary in a welding hall, the Reffen street-food yard, and the harbour bath at La Banchina. Then CopenHill (Amager Bakke) — Bjarke Ingels' waste-to-energy plant with a dry ski slope, hiking path and the world's tallest climbing wall on its flanks.",
+      "evening": "Dinner on Refshaleøen. Note that the Copenhagen fine-dining landscape has shifted significantly since 2023 — confirm what is open and taking bookings before you build an evening around it. `verify: true`",
+      "dayStats": null,
+      "sleep": null
+    },
+    {
+      "day": 4,
+      "title": "Nørrebro and Østerbro: the lived-in city",
+      "morning": "Jægersborggade, one street of eleven shopfronts that contains a ceramicist, a natural-wine shop, a chocolatier and two of the best bakeries in Scandinavia. Then Assistens Cemetery — Kierkegaard and H.C. Andersen are buried in what is functionally the neighbourhood park.",
+      "afternoon": "Superkilen, the BIG/Superflex/Topotek urban park built from objects donated by residents of 60 nationalities — a red square, a black market and a green park in a line. Cycle east to Østerbro and the lakes.",
+      "evening": "Fælledparken and dinner in Østerbro's quieter restaurants, or return to Nørrebro for the wood-fired pizza and natural wine axis around Guldbergsgade.",
+      "dayStats": null,
+      "sleep": null
+    },
+    {
+      "day": 5,
+      "title": "Architecture day: Grundtvig, Bagsværd, Ørestad",
+      "morning": "Grundtvig's Church in Bispebjerg — expressionist brick Gothic, six million yellow bricks, an organ facade of a west front, and usually empty. Bus 6A gets you there.",
+      "afternoon": "Utzon's Bagsværd Church (S-train + walk): plain outside, and inside a white concrete cloud ceiling that is one of the finest interior spaces in Europe. Opening hours are limited to specific afternoons. `verify: true` Then Metro M1 to Ørestad for BIG's 8 House and the VM Houses.",
+      "evening": "Back to town via the Royal Library's Black Diamond and a harbour-front walk.",
+      "dayStats": null,
+      "sleep": null
+    },
+    {
+      "day": 6,
+      "title": "Louisiana and the coast",
+      "morning": "Train from Copenhagen Central to Humlebæk (36 minutes), then a 10-minute walk to the Louisiana Museum of Modern Art — a low glass-and-brick sequence of pavilions running through a sculpture park to the Øresund, with Sweden visible across the water. Half a day minimum.",
+      "afternoon": "Continue north to Helsingør for Kronborg Castle, the Hamlet castle, and the M/S Maritime Museum built into a dry dock beside it.",
+      "evening": "Return to Copenhagen. Last dinner in Indre By or the Torvehallerne market halls for a low-key final meal.",
+      "dayStats": null,
+      "sleep": null
+    },
+    {
+      "day": 7,
+      "title": "Islands Brygge, Amalienborg and departure",
+      "morning": "Swim at the Islands Brygge harbour bath if it is summer — the harbour water is clean enough to swim in the middle of the city, which is the single fact that best explains Copenhagen. Then the changing of the guard at Amalienborg at noon.",
+      "afternoon": "Designmuseum Danmark for the Danish chair collection if you have time, then Metro to the airport.",
+      "evening": null,
+      "dayStats": null,
+      "sleep": null
+    }
+  ],
+  "accommodationStrategy": [
+    {
+      "rank": 1,
+      "name": "Hotel Sanders",
+      "style": "boutique",
+      "location": "Indre By",
+      "description": "Behind the Royal Theatre, a small hotel with a residential feel and a rooftop bar. The point is the block: Nyhavn, Kongens Nytorv and the canals are all within 400 m, which lets you use Day 1 and Day 7 fully without transit.",
+      "booking": null,
+      "priceNote": null
+    },
+    {
+      "rank": 2,
+      "name": "Coco Hotel / Vesterbro boutique properties",
+      "style": null,
+      "location": "Vesterbro",
+      "description": "Mid-price, five minutes from Central Station and ten from Kødbyen. Best base if the food scene is your priority; you can walk home from dinner in the Meatpacking District, which no other neighbourhood allows.",
+      "booking": null,
+      "priceNote": null
+    },
+    {
+      "rank": 3,
+      "name": "Hotel Ottilia / Carlsberg district",
+      "style": null,
+      "location": null,
+      "description": "Built into the old Carlsberg brewhouse, with a rooftop terrace over the district. Quieter than the centre, on the S-train and metro network, and the right choice for a longer stay where you want space rather than a postcard address.",
+      "booking": null,
+      "priceNote": null
+    }
+  ],
+  "logistics": {
+    "connectivity": null,
+    "emergency": "112. Pharmacies: at least one 24-hour pharmacy operates near Central Station. EHIC/GHIC cards are accepted for EU/UK visitors.",
+    "weather": "Grey and windy is the default from October to April; the wind chill off the harbour is worse than the temperature suggests. Summer evenings cool quickly — a layer, always.",
+    "bookingWindows": "Top-tier tasting menus release seats on a fixed schedule 2–4 months out and sell in minutes. Louisiana and museums do not need advance booking except on rainy summer weekends. Tivoli: buy the entry online, skip the queue. Bagsværd Church: check the published visiting afternoons. `verify: true`",
+    "money": "DKK, not euro. Denmark is functionally cashless; some places no longer accept cash at all.",
+    "transportRules": null,
+    "permits": null,
+    "health": null,
+    "gettingThere": null,
+    "other": [
+      {
+        "label": "Transit",
+        "text": "The Metro's M1–M4 run 24 hours and are fully driverless. The City Pass covers metro, bus, S-train and the harbour buses (routes 991/992), which are effectively a public boat service along the harbour for the price of a bus ticket — the best-value sightseeing in the city. Rejsekort is being phased toward app-based ticketing; buy in the DOT Tickets app. `verify: true`"
+      },
+      {
+        "label": "Cycling rules that are actually enforced",
+        "text": "Hand signals are expected (arm out to turn, hand up to stop). Never stop in a cycle lane. Lights front and rear are mandatory after dark and police issue on-the-spot fines. Ride right, overtake left, and do not cross a bike lane on foot without looking — the traffic is fast and constant."
+      },
+      {
+        "label": "Christiania",
+        "text": "The Freetown is in a period of significant change following the 2024 dismantling of its open cannabis trade. Photography restrictions have historically applied in parts of it; respect posted signs and residents' privacy. `verify: true`"
+      }
+    ]
+  },
+  "proTips": [
+    "**Rent a bike for the whole week, not the day.** Copenhagen's geography is designed around 20 km/h, and every block in this itinerary is 8–12 minutes from the next one by bike. Donkey Republic and hotel rentals both work; take a bike with a proper lock and use the wheel lock plus a chain.",
+    "Nyhavn before 09:00 and after 21:00 is a different place from Nyhavn at 13:00.",
+    "Torvehallerne market opens at 10:00 — go at 10:15 for a smørrebrød lunch built from three stalls, at half the price of a sit-down version.",
+    "The **harbour bus (line 991/992)** at sunset costs the price of a metro ticket and covers the same water as the €20 canal tours.",
+    "Museum trick: many Copenhagen museums have a free or reduced evening once a week, and SMK (the National Gallery) has free permanent-collection access. Check the day before you plan a paid ticket. `verify: true`",
+    "Book **one** ambitious dinner and let the rest of the week be bakeries, smørrebrød and wine bars. The city's best value is at the €20 end, not the €400 end."
+  ],
+  "typeSpecific": {
+    "raw": {
+      "walkability": "Exceptional. The itinerary is built as six walkable neighbourhood blocks, each 3–6 km on foot, linked by metro and bike",
+      "transit_pass": "City Pass Small (zones 1–4, covers metro, bus, S-train, harbour buses) or Copenhagen Card (transport + 80+ attractions)",
+      "base_neighbourhoods": [
+        "Indre By",
+        "Vesterbro",
+        "Nørrebro",
+        "Christianshavn",
+        "Østerbro",
+        "Refshaleøen"
+      ],
+      "architectural_focus": "Golden Age classicism, Danish functionalism, Utzon and Jacobsen, and the 2000s BIG/COBE harbour generation",
+      "gpx_ready": true
+    },
+    "surface": null,
+    "distanceKm": null,
+    "elevationM": null,
+    "verticalM": null,
+    "technicalRating": null,
+    "transitPass": "Exceptional. The itinerary is built as six walkable neighbourhood blocks, each 3–6 km on foot, linked by metro and bike",
+    "hutBooking": null,
+    "liftNetwork": null,
+    "snowReliability": null,
+    "windConditions": null,
+    "gpxReady": true,
+    "bookingTimeline": null,
+    "audience": null
+  },
+  "packingNotes": [],
+  "whatCouldGoWrong": [],
+  "sources": {
+    "verified": null,
+    "confidenceNotes": null
+  },
+  "verifyFlags": [],
+  "verifyFlagCount": 0,
+  "volatilePricing": true,
+  "wordCount": 1540,
+  "dataVintage": 2026,
+  "provenance": {
+    "batch": "northern-baltics",
+    "sourceFile": "carta_northern_europe_baltics_trips.md#trip-07",
+    "sourceFormat": "single-file md, '## Trip NN' records with fenced YAML",
+    "sourceId": "copenhagen-by-neighbourhood-block",
+    "ingestedAt": "2026-09-02",
+    "synthesized": false
+  }
+}

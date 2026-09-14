@@ -1,0 +1,141 @@
+{
+  "iso2": "MT",
+  "country": "Malta",
+  "checked_at": "2026-08-17",
+  "beaches": {
+    "wrong": [
+      {
+        "name": "Ix-Xatt l-Ahmar",
+        "class": "other",
+        "why": "Tier 1, rank 6. Xatt l-Ahmar is on the south coast of Gozo, below Ghajnsielem between Mgarr harbour and Mgarr ix-Xini. The nearest feature I could pin exactly, the Xatt l-Ahmar Fougasse (Q38606396), sits at 36.01959, 14.28835. The wire places this row at 35.98806, 14.32898, which is roughly 5 km away on the Marfa peninsula of Malta, a different island. So either the coordinate is wrong or the name has been attached to an unrelated Marfa cove. Suggested filter class: geo_mismatch, testable by comparing the row coordinate against the Wikidata or OSM coordinate for the same toponym.",
+        "source_url": "https://www.wikidata.org/wiki/Q38606396"
+      },
+      {
+        "name": "Mellieah Beach",
+        "class": "duplicate_of:Ghadira Bay",
+        "why": "Tier 2, rank 10, 40 m from the tier-1 'Ghadira Bay' row at rank 5. English Wikipedia redirects 'Ghadira Bay' to 'Mellieha Bay' (Q20922822, 35.96986, 14.35033): they are the same beach. The misspelling 'Mellieah' is itself a signal.",
+        "source_url": "https://www.wikidata.org/wiki/Q20922822"
+      },
+      {
+        "name": "Mellieha Bay Beach",
+        "class": "duplicate_of:Ghadira Bay",
+        "why": "Tier 2, rank 11, 45 m from the 'Ghadira Bay' row. Third listing of Mellieha Bay.",
+        "source_url": "https://www.wikidata.org/wiki/Q20922822"
+      },
+      {
+        "name": "Mellieha Beach, Malta",
+        "class": "duplicate_of:Ghadira Bay",
+        "why": "Tier 2, rank 12, 290 m from the 'Ghadira Bay' row. Fourth listing of Mellieha Bay. Together with the three rows above, one beach occupies four of Malta's sixteen slots, which is the Nesebar failure mode repeated.",
+        "source_url": "https://www.wikidata.org/wiki/Q20922822"
+      },
+      {
+        "name": "Triq ir-Ramla",
+        "class": "other",
+        "why": "Tier 2, rank 15. 'Triq' is Maltese for street. This is the road name Triq ir-Ramla tat-Torri at Marfa, not a beach. Suggested filter class: street_or_road, catchable on the leading token Triq / Vjal / Sqaq in Maltese, and the equivalents in other languages.",
+        "source_url": "https://www.openstreetmap.org/#map=17/35.98724/14.34772"
+      },
+      {
+        "name": "Ramala Bay",
+        "class": "duplicate_of:Marfa",
+        "why": "Tier 2, rank 14, 240 m from the 'Marfa' row at rank 9 and 60 m from 'Triq ir-Ramla' at rank 15. All three are Ramla tat-Torri on the Marfa ridge. The spelling 'Ramala' is a corruption; it also collides confusingly with the genuinely different and far more famous Ramla Bay on Gozo, which is missing from the file entirely.",
+        "source_url": "https://www.openstreetmap.org/#map=17/35.98667/14.34707"
+      },
+      {
+        "name": "Crystal Lagoon",
+        "class": "other",
+        "why": "Tier 2, rank 16. The Crystal Lagoon is the open-water channel between Comino and Cominotto, a boat and snorkelling spot with no beach at all: there is nowhere to lay a towel. It is also 600 m from the Blue Lagoon row at rank 4 and is normally sold as part of the same boat trip. Suggested filter class: no_shore, i.e. a water feature with no adjacent OSM natural=beach polygon.",
+        "source_url": "https://www.openstreetmap.org/#map=16/36.00962/14.32881"
+      },
+      {
+        "name": "Palm Beach Malta",
+        "class": "not_notable",
+        "why": "Tier 2, rank 13. A small commercially named strip on the Armier and White Tower Bay shoreline, 400 m from the 'Armier Bay' row at rank 3. I could not confirm an official or gazetteer use of the name 'Palm Beach' for any Maltese bay, so treat this as unconfirmed rather than proven wrong; but the name pattern is a lido or concession name, not a toponym.",
+        "source_url": "https://www.openstreetmap.org/#map=17/35.98882/14.35702"
+      }
+    ],
+    "missing": [
+      {
+        "name": "Ramla Bay / Ir-Ramla l-Hamra, Gozo",
+        "qid": "Q909059",
+        "lat": 36.062,
+        "lon": 14.283,
+        "why": "Absent from all sixteen rows. The largest sandy beach on Gozo and the one with the distinctive red-orange sand, which is the reason it is on the cover of most Malta beach guides including Visit Malta's own. Its omission is the single biggest failure in the Maltese file, made worse by the fact that a small Marfa cove is listed as 'Ramala Bay'.",
+        "source_url": "https://www.wikidata.org/wiki/Q909059",
+        "verified": true
+      },
+      {
+        "name": "Ghajn Tuffieha (Riviera Bay)",
+        "qid": "Q2005526",
+        "lat": 35.93222,
+        "lon": 14.34722,
+        "why": "Absent. The bay immediately south of Golden Bay, reached by about 200 steps, and the one most often named Malta's most beautiful beach in national and international guides. Golden Bay is in the file at rank 1 and Ghajn Tuffieha is 1.2 km from it, so this is not a proximity-radius casualty; it was simply not harvested or not scored.",
+        "source_url": "https://www.wikidata.org/wiki/Q2005526",
+        "verified": true
+      },
+      {
+        "name": "San Blas Bay, Gozo",
+        "qid": "Q2219310",
+        "lat": 36.05694,
+        "lon": 14.3025,
+        "why": "Absent. The second red-sand beach of Gozo, a standard entry alongside Ramla in Malta's own tourism material.",
+        "source_url": "https://www.wikidata.org/wiki/Q2219310",
+        "verified": true
+      },
+      {
+        "name": "Gnejna Bay",
+        "qid": "Q8080003",
+        "lat": 35.9242,
+        "lon": 14.3408,
+        "why": "Absent. The third bay in the Golden Bay / Ghajn Tuffieha / Gnejna chain on Malta's north-west coast, and one of the six main sandy beaches on the island of Malta.",
+        "source_url": "https://www.wikidata.org/wiki/Q8080003",
+        "verified": true
+      },
+      {
+        "name": "Hondoq ir-Rummien, Qala, Gozo",
+        "qid": "Q8080010",
+        "lat": 36.02778,
+        "lon": 14.32194,
+        "why": "Absent. A sandy beach on Gozo facing Comino, and the closest thing Gozo has to a swimming beach on the Comino channel.",
+        "source_url": "https://www.wikidata.org/wiki/Q8080010",
+        "verified": true
+      },
+      {
+        "name": "St Peter's Pool, Delimara",
+        "qid": null,
+        "lat": null,
+        "lon": null,
+        "why": "Absent. A natural limestone swimming pool on the Delimara peninsula that is one of the most visited swim spots in the south of Malta. The file has the neighbouring 'Kalanka Bay, Delimara' at rank 7 but not this one. I could not confirm a clean Wikidata item: Q108567720 under this label is a disambiguation page, and I found no coordinate I am willing to assert, so no QID or coordinate is given here.",
+        "source_url": "https://www.wikidata.org/wiki/Q108567720",
+        "verified": false
+      }
+    ],
+    "order": [
+      "The Blue Lagoon at rank 4 is too low. It is the single image most associated with Malta and the reason most day-trippers cross to Comino. It should be rank 1 or 2, and it currently ships with no photo at all, which makes it unusable on a card even where it is placed.",
+      "St Thomas Bay at rank 2 is too high. It is a largely rocky and shingle bay near Marsaskala with boathouses along it, useful locally but nowhere near Malta's top two.",
+      "Golden Beach at rank 1 is a defensible pick on merit, but the name should be the official 'Golden Bay' (Q20922839); 'Golden Beach' is not the Maltese or English official name.",
+      "Geographic collapse: eleven of the sixteen rows (ranks 3, 5, 6, 8, 9, 10, 11, 12, 13, 14, 15) lie within about 5 km of the Marfa and Mellieha corner of one island, and after deduplication that whole corner is really three or four distinct beaches. Gozo, which holds Malta's two best-known beaches, contributes nothing.",
+      "Scores are tied at 0.775 for nine consecutive rows (ranks 5 to 15), so the order inside that block is arbitrary and the tier 1 / tier 2 cut at rank 6 falls in the middle of a tie."
+    ]
+  },
+  "mountains": {
+    "wrong": [],
+    "missing": [
+      {
+        "name": "Dingli Cliffs",
+        "qid": null,
+        "lat": null,
+        "lon": null,
+        "why": "Not listed as its own feature, although it is the actual landscape attraction at Malta's high point and is what visitors are sent to see. The file's Ta' Dmejrek row already carries a Dingli cliffs photo, so the pipeline is effectively showing Dingli Cliffs under a summit name. I could not confirm a Wikidata item for the cliffs themselves as distinct from Dingli the village (Q905641, 35.86028, 14.38139), so no QID or coordinate is asserted here. Low priority: this is a naming and framing fix, not a genuine gap.",
+        "source_url": "https://www.wikidata.org/wiki/Q905641",
+        "verified": false
+      }
+    ],
+    "order": [
+      "The mountain list is short and correct. Ta' Dmejrek at rank 1 is Malta's high point at 253 m (Q1850604), Ta' Dbiegi at rank 2 is the highest point of Gozo at about 191 m, and Tas-Salvatur Hill at rank 3 is the Ghajnsielem hill carrying the Christ statue. All three are real landforms and the order matches their heights and their prominence.",
+      "The only reservation is framing rather than ordering: calling a 253 m karst plateau edge a mountain will read oddly, and the tab would be more honest for Malta as viewpoints or high points."
+    ]
+  },
+  "counts_verdict": "3 mountains for Malta is right, and it is the number I would defend: the country's high point is 253 m and there is genuinely nothing else to list. 16 beaches is nominally the right order of magnitude for an island state whose main draw is the sea, but the number is inflated: after collapsing the four Mellieha Bay rows into one, the three Marfa Ramla rows into one, and removing the Triq ir-Ramla street and the Crystal Lagoon, the file holds about eight distinct beaches, and zero of them are on Gozo. Six tier-1 beaches for Malta is a reasonable allowance; the problem is which six.",
+  "top_pick_verdict": "top_mountain 'Ta' Dmejrek' is exactly right: it is the country's high point, it is confirmed at 253 m, and there is no rival. top_beach 'Golden Beach' is a real and reasonable beach but I would not ship it as the Malta card. The name is wrong (it is Golden Bay), and the honest country card is the Blue Lagoon at Comino, or Ramla l-Hamra on Gozo if a sandy beach is wanted. Both would need a photo added first: Blue Lagoon currently has no image in the wire, and Ramla is not in the file at all.",
+  "notes": "Three of the six tier-1 Maltese beaches (Blue Lagoon, Ghadira Bay, Ix-Xatt l-Ahmar) ship with no image, so half the Malta beach tab cannot render a card. The dominant defect here is duplication rather than junk: unlike Italy, Malta has no hospitality rows in tier 1, but one beach appears four times and another three times, which alone accounts for six of sixteen rows. A simple 300 m radius plus name-token dedupe would fix most of it, and folding 'Ghadira' to 'Mellieha' needs a synonym table since the two names share no tokens. Second defect is island coverage: the harvest appears to have reached Comino but essentially not Gozo, which costs the file Ramla, San Blas and Hondoq ir-Rummien, three of Malta's best-known beaches. Third, Maltese street prefixes (Triq) need excluding, and the coordinate for Ix-Xatt l-Ahmar should be checked against its toponym before it ships."
+}

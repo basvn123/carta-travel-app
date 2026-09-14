@@ -1,0 +1,326 @@
+{
+  "id": "nl-cycling-wadden-frisian-dikes",
+  "sourceId": "nl-cycling-wadden-frisian-dikes",
+  "slug": "nl-cycling-wadden-frisian-dikes",
+  "title": "Frisian Dikes and the Wadden Coast",
+  "country": "Netherlands",
+  "countryCode": "NL",
+  "countries": [
+    {
+      "name": "Netherlands",
+      "code": "NL"
+    }
+  ],
+  "isMultiCountry": false,
+  "region": "Western & Central Europe",
+  "regionKey": "western-central",
+  "subRegion": "Friesland and Groningen",
+  "tripType": "Cycling Trips",
+  "tripTypeId": 1,
+  "tripTypeSlug": "cycling",
+  "durationDays": 7,
+  "bestPeriod": {
+    "months": [
+      5,
+      6,
+      7,
+      9
+    ],
+    "monthNames": [
+      "May",
+      "June",
+      "July",
+      "September"
+    ],
+    "window": null,
+    "note": "May and September carry the wader migrations across the Wadden mudflats; July has the longest evenings and the fullest ferries.",
+    "avoid": null,
+    "raw": null
+  },
+  "budgetTier": "€€",
+  "budgetTierRange": [
+    2,
+    2
+  ],
+  "budgetTierRaw": "€€",
+  "budget": {
+    "currency": "EUR",
+    "totalEur": {
+      "low": 850,
+      "high": 1260
+    },
+    "totalNote": null,
+    "breakdown": {
+      "accommodation": {
+        "lowEur": 430,
+        "highEur": 640,
+        "note": null
+      },
+      "food": {
+        "lowEur": 230,
+        "highEur": 320,
+        "note": null
+      },
+      "transport": {
+        "lowEur": 110,
+        "highEur": 180,
+        "note": null
+      },
+      "activities": {
+        "lowEur": 80,
+        "highEur": 120,
+        "note": null
+      }
+    },
+    "perDayEur": {
+      "low": 121,
+      "high": 180
+    }
+  },
+  "profile": {
+    "difficulty": 3,
+    "difficultyLabel": "Active",
+    "difficultyNote": null,
+    "fitnessLevel": "Active",
+    "crowdLevel": "Low",
+    "familyFriendly": true,
+    "carRequired": false
+  },
+  "basecamps": [
+    "Leeuwarden"
+  ],
+  "gatewayAirport": "Amsterdam Schiphol (AMS)",
+  "gatewayAirportCode": "AMS",
+  "languages": [
+    "Dutch",
+    "Frisian"
+  ],
+  "currency": "EUR",
+  "emergencyNumber": "112",
+  "coordinates": {
+    "lat": 53.2027,
+    "lon": 5.8097,
+    "precision": "city",
+    "matchedPlace": "Leeuwarden",
+    "source": "geonames (geonamescache, cities > 15k)"
+  },
+  "tags": [
+    "waddenzeeroute",
+    "eurovelo-12",
+    "ameland-ferry",
+    "sea-dikes",
+    "elfstedenroute"
+  ],
+  "summary": "A week along the Waddenzee sea dikes of Friesland and Groningen on EuroVelo 12, with two days on Ameland and the terp villages inland.",
+  "summaryGenerated": false,
+  "hook": "The northern coast of the Netherlands is a raised green line with the sea on one side and land that is lower than the sea on the other. There is nothing between you and the Wadden except a dike, and nothing between the dike and Denmark except sandbanks. This week rides that line eastward, takes a ferry to Ameland for two days, and returns through the terp villages that were the only dry ground before the dikes existed.",
+  "snapshot": {
+    "Country": "Netherlands",
+    "Base(s)": "Leeuwarden (1 night), Harlingen (1), Dokkum (1), Ameland (2), Lauwersoog (1), Groningen (1)",
+    "Trip Type": "Cycling Trips",
+    "Duration": "7 days",
+    "Best Period": "May, June, July, September",
+    "Budget Tier": "€€ (approx. €850–€1,260 per person, excluding flights)",
+    "Total Distance / Terrain": "Approx. 305 km, +500 m cumulative. Asphalt dike roads, brick village streets, shell and sand paths on Ameland",
+    "Getting There": "Fly to Schiphol, then direct trains to Leeuwarden in about 2 h 15; bikes need a day ticket and are banned in weekday rush hours",
+    "Who It Suits": "Riders who want emptiness, big skies and tidal landscape, and who accept that the wind decides the day"
+  },
+  "itinerary": [
+    {
+      "day": 1,
+      "title": "Leeuwarden, Franeker, Harlingen",
+      "morning": "Collect bikes in Leeuwarden. OV-fiets is available at the station but needs a Dutch NS-Flex account; visitors should book a trekking bike or e-bike from a Bike Totaal or Profile dealer in town, or have Dutch Bike Tours deliver a supported set-up with daily luggage transfer.",
+      "afternoon": "West on the Elfstedenroute alignment through Deinum and Dronrijp to Franeker. The Eise Eisinga Planetarium there, built into a canalside living room between 1774 and 1781, is the oldest working planetarium in the world and gained UNESCO listing in 2023. Continue to Harlingen on the Van Harinxmakanaal path.",
+      "evening": "Harlingen. The Noorderhaven is lined with 17th-century warehouses and the town still runs working ferries to Terschelling and Vlieland.",
+      "dayStats": "38 km · +50 m · asphalt canal path and brick town streets.",
+      "sleep": null
+    },
+    {
+      "day": 2,
+      "title": "The sea dike to Dokkum",
+      "morning": "North out of Harlingen to the Waddenzeedijk at Koehool. From here you ride the dike crown east on EuroVelo 12, the North Sea Cycle Route, with the mudflats exposed at low tide and the salt marsh green at high.",
+      "afternoon": "Zwarte Haan, where a single row of houses faces the sea, then inland briefly through Sint-Jacobiparochie and the Bildt polders reclaimed in 1505. Rejoin the dike and continue to Holwerd, then cut south to Dokkum.",
+      "evening": "Dokkum, one of the eleven cities, ringed by bastions with two windmills on them. Boniface was killed near here in 754.",
+      "dayStats": "62 km · +80 m · asphalt dike road, fully exposed.",
+      "sleep": null
+    },
+    {
+      "day": 3,
+      "title": "Wierum, Moddergat and the crossing to Ameland",
+      "morning": "North-east to Wierum, where the church sits directly against the dike, then Paesens-Moddergat and the memorial to the 1883 fishing disaster that drowned 83 men from two villages.",
+      "afternoon": "Ride back west to Holwerd for the Wagenborg ferry to Ameland, 45 minutes to Nes. A return passenger ticket runs about €18 and a bicycle about €10 return. Sailings are roughly every two hours and the last one leaves in the early evening.",
+      "evening": "Nes. Ride the 6 km out to Buren for the evening light on the dunes.",
+      "dayStats": "34 km on the mainland plus 12 km on the island · +40 m · asphalt and shell paths.",
+      "sleep": null
+    },
+    {
+      "day": 4,
+      "title": "Ameland end to end",
+      "morning": "West to Ballum and Hollum. The Bornrif lighthouse at Hollum, built in 1880 and 55 m tall, can be climbed. The old Hollum lifeboat is still launched by draught horses in summer demonstrations.",
+      "afternoon": "The island is 25 km long. Cross to the north side and ride the dune paths east through the Nieuwlandsreid to the Oerd, the wild eastern end, where the path becomes sand and the terns nest above the tide line. Return along the Wadden side dike through Buren.",
+      "evening": "Nes. The island has no light pollution to speak of; on a clear night the Milky Way is visible from the Oerd track.",
+      "dayStats": "48 km · +90 m · asphalt, shell paths and 4 km of soft sand.",
+      "sleep": null
+    },
+    {
+      "day": 5,
+      "title": "Back to the mainland and east to Lauwersoog",
+      "morning": "Early ferry to Holwerd. The crossing follows a dredged channel and can be delayed at the lowest tides.",
+      "afternoon": "East along the dike through Ternaard, Wierum and Anjum to the Lauwersmeer, a sea inlet closed by a dam in 1969 and now a national park. The Lauwersmeer is a certified dark-sky park and one of the few in the country.",
+      "evening": "Lauwersoog. The fish auction and the Wadden centre sit beside the harbour, and the mussel and shrimp boats unload late.",
+      "dayStats": "45 km · +60 m · asphalt dike road with short gravel through the reserve.",
+      "sleep": null
+    },
+    {
+      "day": 6,
+      "title": "Groningen's north coast",
+      "morning": "East from Lauwersoog through Zoutkamp, the old Zuiderzee-style fishing village stranded inland when the dam went in, then north to Pieterburen. The seal rehabilitation centre here has treated Wadden seals since 1971.",
+      "afternoon": "The dike again through Westernieland and Usquert to Uithuizen, where Menkemaborg is a moated 14th-century manor with its formal gardens intact. This coast is emptier than the Frisian side and the villages are further apart.",
+      "evening": "Uithuizen or back to Lauwersoog. Wadlopen, guided mudflat walking, launches from Pieterburen and Wierum with licensed guides only. Book weeks ahead and expect hours of knee-deep mud.",
+      "dayStats": "50 km · +70 m · asphalt.",
+      "sleep": null
+    },
+    {
+      "day": 7,
+      "title": "Terp villages to Groningen",
+      "morning": "Turn inland. Warffum, Baflo and Winsum sit on terpen, the artificial mounds raised from about 500 BC as the only dry ground in a tidal marsh. Niehove and Ezinge are the clearest surviving examples, laid out as concentric rings around a church.",
+      "afternoon": "Follow the Reitdiep south into Groningen, a canal that was the city's sea link until 1876. Finish at the Grote Markt under the Martinitoren.",
+      "evening": "Train back to Leeuwarden or south to Schiphol, roughly 2 h 20, with a bike day ticket.",
+      "dayStats": "48 km · +60 m · asphalt with brick village streets.",
+      "sleep": null
+    }
+  ],
+  "accommodationStrategy": [
+    {
+      "rank": 1,
+      "name": "Hotel Anna Casparii",
+      "style": "Harbour-front",
+      "location": "Harlingen",
+      "description": "On the Noorderhaven quay, family-run, with bike storage in the rear and a kitchen that serves North Sea sole and Wadden shrimp. Harlingen is the correct first coastal night because the dike starts 4 km north of the door and the ferries give you a bad-weather escape to Terschelling.",
+      "booking": "two months ahead, three for July.",
+      "priceNote": "€110–€160 per night"
+    },
+    {
+      "rank": 2,
+      "name": "Hotel Nobel",
+      "style": "Village inn",
+      "location": "Ballum, Ameland",
+      "description": "Run by the same family since 1889, in the smallest of the island villages, with a locked bike shed and a jenever distillery attached. Ballum sits mid-island, which halves the distance to both Hollum and the Oerd on the full island day.",
+      "booking": "four months ahead for July and August; the island has a hard bed ceiling.",
+      "priceNote": "€120–€180 per night"
+    },
+    {
+      "rank": 3,
+      "name": "Vrienden op de Fiets network",
+      "style": "Homestays",
+      "location": "throughout",
+      "description": "Not a hotel but a national scheme of private homes that host cyclists for a fixed rate of roughly €27.50 per person including breakfast, with membership around €12 a year. Dozens of addresses along this coast, all with somewhere dry to put a bike, and the cheapest way to ride the route.",
+      "booking": "direct by phone, a week or two ahead.",
+      "priceNote": "€27–€35 per night"
+    }
+  ],
+  "logistics": {
+    "connectivity": null,
+    "emergency": "Emergency number is 112. The KNRM lifeboat service and the Kustwacht handle incidents on the Wadden; never walk onto the mudflats without a licensed guide.",
+    "weather": null,
+    "bookingWindows": null,
+    "money": null,
+    "transportRules": null,
+    "permits": null,
+    "health": null,
+    "gettingThere": null,
+    "other": [
+      {
+        "label": null,
+        "text": "Emergency number is 112. The KNRM lifeboat service and the Kustwacht handle incidents on the Wadden; never walk onto the mudflats without a licensed guide."
+      },
+      {
+        "label": null,
+        "text": "Bikes on trains need a Dagkaart Fiets at approximately €7.50, valid on NS and the regional operator Arriva, which runs the Leeuwarden, Harlingen and Groningen lines. Bikes are barred on weekdays 06:30–09:00 and 16:00–18:30."
+      },
+      {
+        "label": null,
+        "text": "The Holwerd to Ameland ferry is run by Wagenborg Passagiersdiensten. Bikes are carried for a supplement of roughly €10 return and do not need booking, but the ferry itself can be delayed or rerouted at extreme low water. Lauwersoog to Schiermonnikoog is the same operator; Harlingen to Terschelling and Vlieland is Rederij Doeksen."
+      },
+      {
+        "label": null,
+        "text": "Navigate by fietsknooppunten. The LF Waddenzeeroute and EuroVelo 12 share the dike alignment; the LF Elfstedenroute covers the inland Frisian legs."
+      },
+      {
+        "label": null,
+        "text": "Tides govern everything visual on this coast. Check the getijden tables; at low water the flats extend for kilometres and the birds are distant, at high water the birds are pushed onto the salt marsh right beside the dike."
+      },
+      {
+        "label": null,
+        "text": "The Waddenzee has been a UNESCO World Heritage site since 2009. Salt marsh and mudflat access is restricted in the bird breeding season from mid-April to mid-July, and dogs must be leashed."
+      },
+      {
+        "label": null,
+        "text": "Village shops close at 18:00 and many shut on Sunday. Dokkum, Harlingen and Uithuizen have supermarkets; the dike between them has nothing."
+      },
+      {
+        "label": null,
+        "text": "Frisian is a separate official language, not a dialect, and signs carry both spellings. Leeuwarden is also Ljouwert."
+      }
+    ]
+  },
+  "proTips": [
+    "Ride west to east. The prevailing wind here is south-westerly and this coast has no shelter at all, so an eastbound week converts a fight into a push.",
+    "Cross to Ameland on a mid-morning sailing rather than the first one. The first ferry carries the island's supply traffic and the bike deck fills.",
+    "On Ameland, ride the north-side dune paths in the morning and the Wadden-side dike in the afternoon. The sun is behind you both times and the wind is usually cross rather than head.",
+    "Book wadlopen at Pieterburen or Wierum for a rest half-day, not a riding day. It is exhausting and you will finish covered to the waist in mud.",
+    "When the wind is brutal, drop off the seaward dike crown onto the landward service road; it is two metres lower and noticeably calmer.",
+    "Join Vrienden op de Fiets before you travel. The membership pays for itself on the second night and it solves the bed shortage in villages with no hotel at all."
+  ],
+  "typeSpecific": {
+    "raw": {
+      "Total Distance / Terrain": "Approx. 305 km, +500 m cumulative. Asphalt dike roads, brick village streets, shell and sand paths on Ameland",
+      "Who It Suits": "Riders who want emptiness, big skies and tidal landscape, and who accept that the wind decides the day"
+    },
+    "surface": "Approx. 305 km, +500 m cumulative. Asphalt dike roads, brick village streets, shell and sand paths on Ameland",
+    "distanceKm": 305,
+    "elevationM": null,
+    "verticalM": null,
+    "technicalRating": null,
+    "transitPass": null,
+    "hutBooking": null,
+    "liftNetwork": null,
+    "snowReliability": null,
+    "windConditions": null,
+    "gpxReady": null,
+    "bookingTimeline": null,
+    "audience": "Riders who want emptiness, big skies and tidal landscape, and who accept that the wind decides the day"
+  },
+  "packingNotes": [
+    "A genuinely windproof shell and a spare warm layer. Wind chill off the Wadden in May is severe even in sunshine.",
+    "37–42 mm tyres. Ameland's shell and sand tracks bog down anything narrower.",
+    "Compact binoculars. This is a major wader coast in spring and autumn.",
+    "Sunscreen. Cloud does not stop the glare off wet mudflats.",
+    "Offline tidal tables and the ferry timetable.",
+    "Cash in small notes for the island bike sheds, the ferry kiosks and the village bakeries."
+  ],
+  "whatCouldGoWrong": [
+    "**A storm-force westerly.** Riding an exposed dike in 7 Bft is unsafe. Fall back to the Arriva line between Harlingen, Leeuwarden and Groningen and ride the sheltered inland canal paths instead.",
+    "**A missed or delayed ferry.** Extreme low water can delay the Holwerd crossing by an hour or more. Build slack into Day 3 and Day 5 and do not plan a train connection tight to the arrival.",
+    "**No bed on Ameland.** The island sells out in July and during the Ameland Adventure and beach events. Book both island nights first, then build the rest of the week around them.",
+    "**Breeding-season closures.** Salt marsh paths shut from mid-April to mid-July without much warning. The dike crown always stays open; take it and skip the marsh detours.",
+    "**Mechanical trouble on the coast.** There is no bike shop between Harlingen and Zoutkamp. Carry tubes, a spare tyre boot and a chain link, and note that Dokkum and Uithuizen have the only workshops on the eastern half."
+  ],
+  "sources": {
+    "verified": null,
+    "confidenceNotes": null
+  },
+  "verifyFlags": [],
+  "verifyFlagCount": 0,
+  "volatilePricing": false,
+  "wordCount": 1988,
+  "dataVintage": 2026,
+  "provenance": {
+    "batch": "western-central",
+    "sourceFile": "cartatripsv1/trips/nl-cycling-wadden-frisian-dikes.md",
+    "sourceFormat": "md+yaml-frontmatter (one file per trip)",
+    "sourceId": "nl-cycling-wadden-frisian-dikes",
+    "ingestedAt": "2026-09-02",
+    "synthesized": false
+  }
+}

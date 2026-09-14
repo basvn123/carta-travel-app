@@ -1,0 +1,91 @@
+{
+  "iso2": "MC",
+  "country": "Monaco",
+  "checked_at": "2026-08-17",
+  "beaches": {
+    "wrong": [
+      {
+        "name": "Eden Plage Mala",
+        "class": "wrong_country",
+        "why": "Shipped as Monaco's tier-1 top_beach, but it lies in the cove of La Mala in Cap-d'Ail, Alpes-Maritimes, FRANCE, about 2 km west of the Monegasque border. Its own coordinates in the snapshot (43.72246, 7.39062) are outside Monaco's territory (roughly 43.723-43.752 N, 7.409-7.440 E). It is also not a public beach at all: it is a branded private beach-restaurant-bar with paid sunbeds, a shop and a spa, so it is simultaneously a hospitality venue. The near.city field already says 'Eze', which is a French commune; the country assignment ignored its own proximity data.",
+        "source_url": "https://cotedazurfrance.com/offers/eden-plage-mala-cap-dail-en-4588357/"
+      },
+      {
+        "name": "Plage du Buse",
+        "class": "wrong_country",
+        "why": "A pebble beach on the west side of the Cap Martin peninsula in the commune of Roquebrune-Cap-Martin, FRANCE. Snapshot coordinates 43.76014, 7.45965 are north-east of and outside Monaco. The same feature is also shipped in the French file at beach rank 129 under near.city Menton, so it is double-counted across two countries.",
+        "source_url": "https://www.menton-riviera-merveilles.co.uk/offers/buse-beach-roquebrune-cap-martin-en-4652864/"
+      },
+      {
+        "name": "Plage Petite Afrique",
+        "class": "wrong_country",
+        "why": "The Petite Afrique beach is in Beaulieu-sur-Mer, Alpes-Maritimes, FRANCE. Snapshot coordinates 43.71201, 7.33774 sit roughly 6 km west of Monaco, past Cap-d'Ail and Eze-sur-Mer; the snapshot's own near.city is Villefranche-sur-Mer, another French commune.",
+        "source_url": "https://www.explorenicecotedazur.com/en/info/plage-mala-en/"
+      }
+    ],
+    "missing": [
+      {
+        "name": "Larvotto beach (Plage du Larvotto)",
+        "qid": "Q122942810",
+        "lat": 43.74603,
+        "lon": 7.43313,
+        "why": "This is the only real beach inside Monaco and the one every visitor means by 'the beach in Monaco': the public urban beach of the Larvotto quarter, rebuilt and reopened alongside the Mareterra extension. It is absent from the file entirely while three French beaches occupy its place. Wikidata types it as a beach (Q7900097) with country Monaco (Q235).",
+        "source_url": "https://www.wikidata.org/wiki/Q122942810",
+        "verified": true
+      }
+    ],
+    "order": [
+      "Ranking is moot because every ranked row belongs to a different country. Once the three French rows are removed the correct list is a single entry, Larvotto, at rank 1.",
+      "All three beaches carry an identical score of 0.659, which means the score is doing no discriminating work here at all; it is almost certainly just the EEA 'Excellent' class plus a constant. A score that cannot separate three items should not be used to assign tiers."
+    ]
+  },
+  "mountains": {
+    "wrong": [
+      {
+        "name": "Mont Agel",
+        "class": "wrong_country",
+        "why": "Shipped as Monaco's tier-1 top_mountain, but the 1,148 m summit is in FRANCE, in the communes of Peille and La Turbie, Alpes-Maritimes, and carries a French Air Force radar station. Monaco's own highest point is only a spot on the Chemin des Revoires at 162 m on the mountain's lower slope. Snapshot coordinates 43.77051, 7.41988 are about 2 km north of the Monegasque border. The same peak is correctly listed in the French file at mountain rank 15, so it is double-counted.",
+        "source_url": "https://en.wikipedia.org/wiki/Mont_Agel"
+      },
+      {
+        "name": "Tete de Chien",
+        "class": "wrong_country",
+        "why": "A 550 m limestone promontory above Monaco but in the commune of La Turbie, FRANCE. Snapshot coordinates 43.7308, 7.40222 fall just west of Monaco's western boundary. Also listed in the French file at mountain rank 47.",
+        "source_url": "https://en.wikipedia.org/wiki/T%C3%AAte_de_Chien"
+      },
+      {
+        "name": "Cime de Baudon",
+        "class": "wrong_country",
+        "why": "A 1,264 m summit in the Alpes-Maritimes above Menton (Castellar / Sainte-Agnes), FRANCE, roughly 8 km from Monaco. Snapshot coordinates 43.80941, 7.42894 are far outside the principality; near.city is already Menton. Also listed in the French file at mountain rank 118.",
+        "source_url": "https://fr.wikipedia.org/wiki/Cime_de_Baudon"
+      }
+    ],
+    "missing": [
+      {
+        "name": "Chemin des Revoires",
+        "qid": "Q1069352",
+        "lat": 43.732777,
+        "lon": 7.4125,
+        "why": "The actual highest point of Monaco, 162 m, on the lower slope of Mont Agel in the Jardin Exotique quarter. It is the only defensible 'high point' entry the country has, but it is a residential street with no view and no summit character, which is exactly why the honest answer is that Monaco should show zero mountains rather than three French ones. Listed here as the factually correct substitute, not as a recommendation to publish.",
+        "source_url": "https://www.wikidata.org/wiki/Q1069352",
+        "verified": true
+      },
+      {
+        "name": "Rock of Monaco (Le Rocher)",
+        "qid": "Q3351922",
+        "lat": 43.73102,
+        "lon": 7.42516,
+        "why": "If the tab must show a relief feature inside Monaco, the Rock is the only one a traveller recognises: the 62 m headland carrying Monaco-Ville and the Prince's Palace. Wikidata types it as a rock formation (Q631305) in Monaco (Q235), not a mountain, so it belongs on a landmark card rather than a Mountains tab.",
+        "source_url": "https://www.wikidata.org/wiki/Q3351922",
+        "verified": true
+      }
+    ],
+    "order": [
+      "Not assessable: none of the three ranked peaks is in the country. The internal order (Agel 0.994 > Tete de Chien 0.874 > Baudon 0.724) does track prominence and fame sensibly, which suggests the scorer is fine and the country assignment is the broken step.",
+      "Note that all three French peaks rank far HIGHER in Monaco's file than in France's own file (Agel is FR #15, Tete de Chien FR #47, Baudon FR #118). Leaking a feature into a tiny neighbouring country inflates it to tier 1 because it has no local competition. That is a systemic amplifier, not a one-off."
+    ]
+  },
+  "counts_verdict": "No. 3 beaches and 3 mountains is wrong in both directions: the true counts are 1 beach (Larvotto) and 0 mountains. Monaco is 2.08 km2 with a single public beach and a high point of 162 m; a country card promising three of each is promising things that do not exist. Every one of the six rows was harvested from French territory within a 2-8 km radius, which points at a nearest-country-by-buffer assignment rather than a point-in-polygon test against the Monegasque boundary.",
+  "top_pick_verdict": "No on both. top_beach 'Eden Plage Mala' is a private French beach club in Cap-d'Ail and top_mountain 'Mont Agel' is a French military summit in Peille; publishing either on a Monaco country card is a factual error a Monegasque or any Riviera visitor would spot instantly. The beach card should be Larvotto (Q122942810). The mountain card should not exist.",
+  "notes": "Monaco is the cleanest demonstration of the wrong_country failure mode in the whole dataset: 6 of 6 features, 100 percent, are in France, and the file's own near.city values (Eze, Menton, Villefranche-sur-Mer) name French communes for five of the six rows. Three of the six are also duplicated inside the French file, so a plain global dedupe by (kind, name) would catch half of them for free. A point-in-polygon test on the Monaco boundary would catch all six. Monaco's small area makes this cheap to fix and expensive to ship: there is no ambiguity about where the border runs."
+}

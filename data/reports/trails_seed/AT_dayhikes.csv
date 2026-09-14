@@ -1,0 +1,16 @@
+rank,curation_rank,title,ref,network,distance_km,popularity,pageviews_day,sitelinks,anchors,quality_score,portal_agreement,status,family_members,trip_id,osm_relation
+1,86.7,Stadtwanderweg 9 - Prater,S9,lwn,13.0,0.882,0,0,"Vienna (3369/day, 1808 m); Battle of Vienna (1891/day, 1755 m); Siege of Vienna (1891/day, 1754 m)",96,,needs_review,1,11819,2194265
+2,79.52,Wanderweg 1,1,lwn,12.0,0.71,0,0,"Kalvarienberg (694/day, 1943 m)",100,,needs_review,10,10071,375805
+3,78.15,Stangensteig-Trail,08,lwn,9.0,0.711,0,0,"Innsbruck (697/day, 1243 m); Hospital Church (686/day, 1681 m); Jesuit Church (686/day, 1897 m)",96,,needs_review,1,11155,1618712
+4,78.15,Knappentrail,12,lwn,7.0,0.711,0,0,"Innsbruck (697/day, 1481 m); Innsbruck Airport (146/day, 1072 m)",96,,needs_review,1,16756,10990136
+5,78.15,Rauschbrunnen-Runde,07,lwn,7.9,0.711,0,0,"Innsbruck (697/day, 1303 m); Hospital Church (686/day, 1679 m); Jesuit Church (686/day, 1884 m)",96,,needs_review,1,11154,1618711
+6,78.12,Arnold Schwarzenegger Wanderweg,,lwn,7.3,0.71,0,0,"Fürstenstand (694/day, 1810 m)",96,,needs_review,1,10076,376254
+7,78.06,Lanser-Kopf-Lauf,,lwn,10.3,0.709,0,0,"Wilten Abbey (686/day, 1030 m); Wilten Basilica (686/day, 1174 m); Ambras Castle (82/day, 857 m)",96,,needs_review,1,11163,1619508
+8,78.06,Tatzlwurm-Runde,04,lwn,7.4,0.709,0,0,"Jesuit Church (686/day, 1961 m); Golden Roof (64/day, 1968 m); Golden Roof Museum (64/day, 1959 m)",96,,needs_review,1,11151,1617897
+9,78.06,Wolfele-Wilde-Weg,05,lwn,10.3,0.709,0,0,"Jesuit Church (686/day, 1893 m); Golden Roof (64/day, 1816 m); Golden Roof Museum (64/day, 1807 m)",96,,needs_review,1,11152,1618593
+10,77.52,BergeSeen Trail 16: Hallstatt - Bad Aussee,16 S Trail,rwn,17.8,0.698,0,0,"Hallstatt-Dachstein Salzkammergut cultural landscape (621/day, 245 m); Hallstatt (621/day, 15 m); Rathaus (287/day, 207 m)",96,,needs_review,1,20049,18013618
+11,77.52,BergeSeen Trail D5: Simonyhütte - Hallstatt,D5,rwn,11.7,0.698,0,0,"Hallstatt (621/day, 571 m); Hallstatt-Dachstein Salzkammergut cultural landscape (621/day, 236 m)",96,,needs_review,1,20085,18040383
+12,77.52,BergeSeen Trail 15: Gosau-Hintertal - Hallstatt,15 S Trail,rwn,16.4,0.698,0,0,"Hallstatt (621/day, 68 m); Hallstatt-Dachstein Salzkammergut cultural landscape (621/day, 131 m)",96,,needs_review,1,20050,18013619
+13,76.15,Stadtwanderweg Pöstlingberg,2,lwn,7.5,0.671,0,0,"Linz (482/day, 22 m); Castle Museum Linz (480/day, 266 m); Dreifaltigkeitssäule (480/day, 91 m)",96,,needs_review,1,9676,27794
+14,76.13,Turmwanderweg,,lwn,7.8,0.671,0,0,"Castle Museum Linz (480/day, 1984 m); Linz Castle (480/day, 1920 m); Hummelhofbad (480/day, 1968 m)",96,,needs_review,1,21368,20610320
+15,75.72,Sebastian-Kandler-Lauf,03,lwn,5.6,0.709,0,0,"Jesuit Church (686/day, 1961 m); Golden Roof (64/day, 1968 m); Golden Roof Museum (64/day, 1959 m)",89.3,,needs_review,1,11149,1617865

@@ -1,0 +1,295 @@
+{
+  "id": "sk-culinary-small-carpathian",
+  "sourceId": "slovakia-small-carpathian-wine",
+  "slug": "sk-culinary-small-carpathian",
+  "title": "Veltlínske and Furmint: The Small Carpathian Wine Route and Slovakia's Secret Tokaj",
+  "country": "Slovakia",
+  "countryCode": "SK",
+  "countries": [
+    {
+      "name": "Slovakia",
+      "code": "SK"
+    }
+  ],
+  "isMultiCountry": false,
+  "region": "Eastern & Southeastern Europe",
+  "regionKey": "eastern-southeastern",
+  "subRegion": "Malokarpatská vinohradnícka oblasť and the Slovak Tokaj",
+  "tripType": "Culinary & Wine Tours",
+  "tripTypeId": 7,
+  "tripTypeSlug": "culinary",
+  "durationDays": 7,
+  "bestPeriod": {
+    "months": [
+      5,
+      9,
+      10
+    ],
+    "monthNames": [
+      "May",
+      "September",
+      "October"
+    ],
+    "window": "mid-September to mid-October — harvest, burčiak on every square, and the November open-cellar weekend within reach",
+    "note": null,
+    "avoid": "January–March (cellars shut, nothing green) and August, when growers are watching the fruit and will not host you",
+    "raw": null
+  },
+  "budgetTier": "€€",
+  "budgetTierRange": [
+    2,
+    2
+  ],
+  "budgetTierRaw": "€€",
+  "budget": {
+    "currency": "EUR",
+    "totalEur": {
+      "low": 685,
+      "high": 1170
+    },
+    "totalNote": "€685–€1,170",
+    "breakdown": {
+      "accommodation": {
+        "lowEur": 280,
+        "highEur": 490,
+        "note": "€280–€490 (€40–€70/night, penzióny and winery rooms)"
+      },
+      "food": {
+        "lowEur": 175,
+        "highEur": 260,
+        "note": "€175–€260 (€25–€37/day)"
+      },
+      "transport": {
+        "lowEur": 110,
+        "highEur": 200,
+        "note": "€110–€200 (Bratislava–Pezinok rail, one rental-car day, transfers to Tokaj)"
+      },
+      "activities": {
+        "lowEur": 120,
+        "highEur": 220,
+        "note": "€120–€220 (tastings €8–€25, open-cellar ticket, museum entries)"
+      }
+    },
+    "perDayEur": {
+      "low": 98,
+      "high": 167
+    }
+  },
+  "profile": {
+    "difficulty": 1,
+    "difficultyLabel": "Easy",
+    "difficultyNote": "Easy",
+    "fitnessLevel": "Easy",
+    "crowdLevel": null,
+    "familyFriendly": null,
+    "carRequired": null
+  },
+  "basecamps": [
+    "Pezinok",
+    "Modra",
+    "Malá Tŕňa"
+  ],
+  "gatewayAirport": "Bratislava (BTS) or Vienna (VIE, 60 km, direct bus). Return from Košice (KSC). ZSSK regional trains Bratislava hl. st. → Pezinok in ~25 min, twice hourly.",
+  "gatewayAirportCode": "BTS",
+  "languages": [
+    "Slovak"
+  ],
+  "currency": "Euro (EUR)",
+  "emergencyNumber": "112",
+  "coordinates": {
+    "lat": 48.2899,
+    "lon": 17.2666,
+    "precision": "city",
+    "matchedPlace": "Pezinok",
+    "source": "geonames (geonamescache, cities > 15k)"
+  },
+  "tags": [
+    "wine",
+    "tokaj",
+    "gruner-veltliner",
+    "burciak",
+    "open-cellars",
+    "majolica",
+    "food"
+  ],
+  "summary": "Twenty minutes by train from Bratislava the vines start and do not stop for forty kilometres. This is the Malokarpatská route: Grüner Veltliner from limestone slopes, a Slovak-bred white nobody outside the country…",
+  "summaryGenerated": false,
+  "hook": "Twenty minutes by train from Bratislava the vines start and do not stop for forty kilometres. This is the Malokarpatská route: Grüner Veltliner from limestone slopes, a Slovak-bred white nobody outside the country has heard of, cellars you enter through a house door, and *burčiak* drunk cloudy and still fermenting in September. Then a long eastward jump to the seven Slovak villages that are legally, genuinely Tokaj. Easy, cheap, and almost entirely undiscovered.",
+  "snapshot": {
+    "Country": "Slovakia",
+    "Trip type": "Culinary & Wine Tours",
+    "Duration": "7 days",
+    "Best period": "September–October",
+    "Budget tier": "€–€€",
+    "Difficulty": "Easy",
+    "Start / End": "Bratislava → Košice (point-to-point, with a 380 km transfer east on Day 5)",
+    "Getting there": "Bratislava (BTS) or Vienna (VIE, 60 km, direct bus). Return from Košice (KSC). ZSSK regional trains Bratislava hl. st. → Pezinok in ~25 min, twice hourly."
+  },
+  "itinerary": [
+    {
+      "day": 1,
+      "title": "Rača and Svätý Jur (Bratislava base, by train)",
+      "morning": "Arrive and take the S-line train to **Bratislava-Rača**, the city's own vineyard suburb. **Villa Vino Rača** occupies the old cooperative cellar and takes visitors without an appointment.",
+      "afternoon": "Train on to **Svätý Jur**, ten minutes further — a tiny walled wine town of gated cellar courtyards below the ruin of Biely Kameň. Walk the Šúr nature reserve boardwalk east of town.",
+      "evening": "Back into Bratislava. Eat *bryndzové halušky* and drink Frankovka in the Old Town, and note that with a **0.0‰** limit, the train was not optional.",
+      "dayStats": null,
+      "sleep": null
+    },
+    {
+      "day": 2,
+      "title": "Pezinok and the press museum (Pezinok base)",
+      "morning": "Relocate to Pezinok, 25 minutes by rail. The **Malokarpatské múzeum** on Štefánikova holds the largest collection of historic wine presses in central Europe — vast oak beam presses from the 17th century onward — plus a cellar tasting under the building [VERIFY: current museum entry and tasting price].",
+      "afternoon": "**Pavelka** on the edge of town for a structured tasting through Veltlínske zelené, Rizling vlašský and Devín. Book ahead.",
+      "evening": "*Kapustnica* and roast duck with *lokše* at a Pezinok cellar restaurant. In September, order *burčiak* — partly fermented must, cloudy, sweet, mildly alcoholic and available for about three weeks only.",
+      "dayStats": null,
+      "sleep": null
+    },
+    {
+      "day": 3,
+      "title": "Modra, majolica and Štúr (Pezinok base)",
+      "morning": "Bus or ride to **Modra**, the route's heart. The **Slovenská ľudová majolika** workshop still hand-throws and hand-paints the blue-and-white Modra ware; you can watch the painters at the bench [VERIFY: current workshop visiting hours].",
+      "afternoon": "The **Ľudovít Štúr Museum** — Štúr, who codified written Slovak in the 1840s, died in Modra in 1856 and is buried here. Then **Elesko** on the town's edge: a glass cube of a winery with the **Zoya Museum** collection inside, and a proper restaurant.",
+      "evening": "Drive or taxi ten minutes to **Limbach** for a hillside cellar with a view down to the Danube plain, then back. Nominate a driver or use a local taxi — there is no evening bus worth the wait.",
+      "dayStats": null,
+      "sleep": null
+    },
+    {
+      "day": 4,
+      "title": "Doľany, Častá and Trnava",
+      "morning": "North along the route through **Doľany** — small, stone-cellared, unfashionable — to **Častá** and **Červený Kameň**, the Fugger-built Renaissance fortress whose cellars are among the largest vaulted spaces in Europe [VERIFY: current Červený Kameň tour times].",
+      "afternoon": "East to **Trnava**, \"little Rome\" for the ring of church towers inside its intact brick town walls — St Nicholas, the vast Jesuit University Church, the Trinity. **Mrva & Stanko** are based here; book a tasting before you travel.",
+      "evening": "Trnava's square at dusk with a glass of Dunaj. Sleep here, or return to Pezinok.",
+      "dayStats": "Pezinok → Trnava, 55 km",
+      "sleep": null
+    },
+    {
+      "day": 5,
+      "title": "East to Tokaj",
+      "morning": "Long transfer day. D1 motorway the whole way to Košice, then 70 km south-east to the Tokaj villages. By rail it is IC to Košice and a regional connection to Slovenské Nové Mesto [VERIFY: current ZSSK IC fares].",
+      "afternoon": "Arrive in **Malá Tŕňa**. The landscape changes completely: volcanic tuff hills, loess, and cellars cut horizontally into the rock, furred with *Cladosporium cellare* mould.",
+      "evening": "**Tokaj Macik Winery** for the first tasting: dry Furmint, then Lipovina, then a *Tokajský výber* sweet wine. Dinner at the winery; it also has rooms.",
+      "dayStats": "Trnava → Malá Tŕňa, 380 km / 4 h",
+      "sleep": null
+    },
+    {
+      "day": 6,
+      "title": "Viničky and the puttony ladder (Malá Tŕňa base)",
+      "morning": "**J&J Ostrožovič** at Veľká Tŕňa — a tour of the deep cellar galleries and a vertical through the *výber* levels, three to six puttony, plus *Tokajská esencia* if they have it open [VERIFY: current Ostrožovič tour and tasting rates].",
+      "afternoon": "Drive to **Viničky** for the cellar street and the view across the Bodrog to Hungary. The Slovak and Hungarian Tokaj are one geological region divided by the 1920 Trianon border.",
+      "evening": "Local cooking — bean soup, *pirohy*, and the sweet wine after rather than with dessert, which is how it is drunk here.",
+      "dayStats": null,
+      "sleep": null
+    },
+    {
+      "day": 7,
+      "title": "Košice and out",
+      "morning": "Drive back to Košice via the vine terraces at Čerhov. If you are here on the right weekend, the Tokaj open-cellar day runs in May [VERIFY: 2027 Tokaj open-cellar dates].",
+      "afternoon": "Košice's Hlavná ulica and St Elisabeth Cathedral, the largest church in Slovakia and the easternmost Gothic cathedral in Europe. Buy bottles here rather than at the airport.",
+      "evening": "Fly out of Košice, or take the evening IC back to Bratislava (about 5 h 30).",
+      "dayStats": "Malá Tŕňa → Košice, 90 km",
+      "sleep": null
+    }
+  ],
+  "accommodationStrategy": [
+    {
+      "rank": 1,
+      "name": "Penzión Grand Matysová",
+      "style": "town guesthouse",
+      "location": "Pezinok",
+      "description": "five minutes from the Pezinok station, so the whole Small Carpathian half of the week runs on trains and short taxis with nobody driving. Parking if you do rent, and cellar restaurants within walking distance.",
+      "booking": "direct or Booking.com, 4 weeks ahead; much earlier for an open-cellar weekend [VERIFY: current nightly rate].",
+      "priceNote": null
+    },
+    {
+      "rank": 2,
+      "name": "Elesko Wine Park",
+      "style": "winery hotel and restaurant",
+      "location": "Modra",
+      "description": "sleeping at the winery removes the driving problem entirely for one night, and the on-site restaurant and gallery mean an evening with no logistics. Good for a mid-week upgrade.",
+      "booking": "direct, 3–4 weeks ahead; weekends fill with weddings.",
+      "priceNote": null
+    },
+    {
+      "rank": 3,
+      "name": "Tokaj Macik Winery",
+      "style": "winery guest rooms",
+      "location": "Malá Tŕňa",
+      "description": "there is essentially no other accommodation in the Slovak Tokaj villages, and staying with a producer gets you into the cellar in the evening and a breakfast that includes the estate's own bread and *lekvár*. Walking distance to nothing, which is the point.",
+      "booking": "direct by email, 3–6 weeks ahead; the winery is small.",
+      "priceNote": null
+    }
+  ],
+  "logistics": {
+    "connectivity": "Full 4G/5G along the Small Carpathian route. Signal drops inside the Tokaj rock cellars, obviously, and thins on the back roads between Čerhov and Viničky.",
+    "emergency": "112. Bratislava and Košice have major hospitals; Pezinok and Trebišov have district ones. If you walk the Malé Karpaty ridge (the red-marked Štefánikova magistrála), mountain rescue is **HZS 18 300** and is chargeable without insurance.",
+    "weather": "Harvest weather is fine and warm, but the first fortnight of October can turn cold and wet fast. Cellars sit at 10–12 °C year-round; take a jacket into every tasting.",
+    "bookingWindows": "Cellars 3–7 days by phone. **Deň otvorených pivníc** — the Small Carpathian open-cellar day, run twice yearly in May and November — is ticketed, capped, and the ticket includes a glass and a passport stamped at each cellar; buy online the moment sales open and book your bed the same day [VERIFY: 2027 Deň otvorených pivníc dates and ticket price].",
+    "money": "Euro. Big producers take cards; village cellars often do not. Carry €150–€200 cash for the week, more if you intend to buy Tokaj sweet wines, which run €25–€60 a half-bottle.",
+    "transportRules": "**Slovakia enforces 0.0‰ blood alcohol — zero tolerance, no allowance whatsoever.** Either nominate a non-drinking driver or run the western half on the Bratislava–Pezinok–Modra rail and bus corridor, which is frequent and cheap. Motorway driving requires the plate-registered **e-vignette** from eznamka.sk.",
+    "permits": "None for tasting. There is no duty limit moving wine within the EU for personal use, but airline hold-baggage rules and 100 ml cabin limits still apply — ship or check a wine box.",
+    "health": null,
+    "gettingThere": null,
+    "other": []
+  },
+  "proTips": [
+    "Anchor the trip on **Deň otvorených pivníc**. One ticket, one glass, dozens of cellars in Pezinok, Modra, Vinosady and Limbach open on the same day, and shuttle buses between them — it solves the appointment problem and the driving problem at once.",
+    "Come in the second half of September for **burčiak**. It is sold by the litre from barrels on the squares, it must be transported with the cap loose because it is still fermenting, and it disappears by mid-October.",
+    "Email cellars in advance in Slovak or German rather than English. Many growers over 50 have better German, and a booking request that opens *\"Dobrý deň, radi by sme ochutnali…\"* gets answered faster.",
+    "Taste **Devín** at three producers before deciding what you think of it. It is Slovakia's own crossing, made nowhere else in quantity, and it swings from lychee-aromatic to almost Riesling-taut depending on the maker.",
+    "Buy Modra majolica at the workshop, not the town-square stalls. Seconds with tiny glaze flaws sell at a third of the price and are indistinguishable on a table.",
+    "In Tokaj, ask for the **dry Furmint** first. The Slovak side has quietly gone very good at dry wine, it is a fraction of the price of the sweet bottles, and no producer will offer it unprompted.",
+    "Take the train from Bratislava to Svätý Jur, walk the two kilometres of vine track to Pezinok, and train home. It is the cheapest good day in Slovak wine and costs under €4 in fares [VERIFY: current ZSSK regional fare]."
+  ],
+  "typeSpecific": {
+    "raw": {
+      "Appellations": "The **Malokarpatská vinohradnícka oblasť** (Small Carpathian wine region) is the largest and best-known of Slovakia's six regions, running along the south-east foot of the Malé Karpaty from Bratislava-Rača to Trnava. The **Malokarpatská vínna cesta** is the signed wine route through it. In the far east, the **Vinohradnícka oblasť Tokaj** covers just seven cadastral villages — Malá Tŕňa, Veľká Tŕňa, Viničky, Čerhov, Černochov, Slovenské Nové Mesto and Bara — a small, legally protected Tokaj on the Hungarian border. Slovak Tokaj is made under the same rules of *výber* puttony counts as its Hungarian neighbour.",
+      "Grapes": "Whites: **Veltlínske zelené** (Grüner Veltliner, the regional workhorse — white pepper, green apple, high volume), **Rizling vlašský** (Welschriesling), **Devín** — a Slovak-bred crossing of Tramín červený and Veltlínske červenobiele, aromatic and unmistakably local — and **Muškát moravský**. Reds: **Frankovka modrá** (Blaufränkisch), **Svätovavrinecké** (St Laurent), **Dunaj** (another Slovak crossing, dark and dense) and **Alibernet**, a teinturier with black juice. Tokaj: **Furmint**, **Lipovina** (Hárslevelű) and **Muškát žltý** (Sárgamuskotály).",
+      "Named producers": "**Elesko** (Modra — big glass winery with the Zoya art gallery attached), **Karpatská Perla** (Šenkvice), **Mrva & Stanko** (Trnava/Skalica, one of the country's benchmark makers), **Château Belá** (Belá, near Štúrovo — **Egon Müller**'s Slovak Riesling project, and the reason serious wine people know Slovakia exists), **Villa Vino Rača**, **Pavelka** (Pezinok), **Repa Winery** (Vinosady). In Tokaj: **J&J Ostrožovič** (Veľká Tŕňa) and **Tokaj Macik Winery** (Malá Tŕňa).",
+      "Reservation-only, flagged clearly": "Most Small Carpathian cellars are family operations with no tasting-room staff: **you must book, by phone or email, usually 3–7 days ahead**, and many will not open for fewer than four people. Elesko and Villa Vino Rača have proper visitor centres and take walk-ins; Château Belá, Mrva & Stanko and both Tokaj producers are appointment-only [VERIFY: current tasting fees and minimum group sizes at each producer].",
+      "Signature dishes": "*Bryndzové halušky* (potato dumplings with sheep bryndza and bacon — the national dish), *kapustnica* (sauerkraut soup with sausage and dried mushrooms, richest at Christmas), *lokše* (thin potato flatbreads, served with goose in the November season), *šúľance s makom* (poppy-seed rolled dumplings), *trdelník* — which is a Hungarian-Slovak *kürtőskalács* originating in Skalica in western Slovakia, not a Czech invention, whatever the Prague stalls claim."
+    },
+    "surface": null,
+    "distanceKm": null,
+    "elevationM": null,
+    "verticalM": null,
+    "technicalRating": null,
+    "transitPass": null,
+    "hutBooking": null,
+    "liftNetwork": null,
+    "snowReliability": null,
+    "windConditions": null,
+    "gpxReady": null,
+    "bookingTimeline": null,
+    "audience": null
+  },
+  "packingNotes": [],
+  "whatCouldGoWrong": [],
+  "sources": {
+    "verified": null,
+    "confidenceNotes": "- Verified: the Malokarpatská vinohradnícka oblasť and the Malokarpatská vínna cesta; the Slovak Tokaj as a legally protected region of seven villages on the Hungarian border; Devín and Dunaj as Slovak-bred crossings; Château Belá as Egon Müller's Slovak Riesling project; Slovakia's 0.0‰ zero-tolerance drink-driving law; Bratislava–Pezinok regional rail at ~25 minutes; the euro; emergency 112 and HZS 18 300, with Slovak mountain rescue chargeable without insurance; the electronic plate-registered motorway vignette. - `[VERIFY]` items in this file: 10 (see inline markers above) - Last reviewed: 2026-09-02"
+  },
+  "verifyFlags": [
+    "current tasting fees and minimum group sizes at each producer",
+    "current museum entry and tasting price",
+    "current workshop visiting hours",
+    "current Červený Kameň tour times",
+    "current ZSSK IC fares",
+    "current Ostrožovič tour and tasting rates",
+    "2027 Tokaj open-cellar dates",
+    "current nightly rate",
+    "2027 Deň otvorených pivníc dates and ticket price",
+    "current ZSSK regional fare"
+  ],
+  "verifyFlagCount": 10,
+  "volatilePricing": true,
+  "wordCount": 2128,
+  "dataVintage": 2026,
+  "provenance": {
+    "batch": "eastern-southeastern",
+    "sourceFile": "cartaeasterneuropetrips/trips/slovakia-small-carpathian-wine.md",
+    "sourceFormat": "md+nested-yaml-frontmatter (one file per trip)",
+    "sourceId": "slovakia-small-carpathian-wine",
+    "ingestedAt": "2026-09-02",
+    "synthesized": false
+  }
+}

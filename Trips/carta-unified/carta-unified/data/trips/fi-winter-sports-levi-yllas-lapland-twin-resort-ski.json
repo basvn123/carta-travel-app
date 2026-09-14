@@ -1,0 +1,299 @@
+{
+  "id": "fi-winter-sports-levi-yllas-lapland-twin-resort-ski",
+  "sourceId": "levi-yllas-lapland-twin-resort-ski-week",
+  "slug": "fi-winter-sports-levi-yllas-lapland-twin-resort-ski",
+  "title": "Levi & Ylläs: Lapland Twin-Resort Ski Week",
+  "country": "Finland",
+  "countryCode": "FI",
+  "countries": [
+    {
+      "name": "Finland",
+      "code": "FI"
+    }
+  ],
+  "isMultiCountry": false,
+  "region": "Northern Europe & Baltics",
+  "regionKey": "northern-baltics",
+  "subRegion": "Kittilä & Kolari, Finnish Lapland",
+  "tripType": "Winter Sports & Skiing",
+  "tripTypeId": 8,
+  "tripTypeSlug": "winter-sports",
+  "durationDays": 7,
+  "bestPeriod": {
+    "months": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      11,
+      12
+    ],
+    "monthNames": [
+      "January",
+      "February",
+      "March",
+      "April",
+      "May",
+      "November",
+      "December"
+    ],
+    "window": "Late November to early May. **February–April is the sweet spot** — returning daylight, deep cold-dry snow and long cross-country conditions. December is dark (the sun barely clears the horizon at this latitude); late April gives spring skiing with 18 hours of light",
+    "note": null,
+    "avoid": null,
+    "raw": "Late November to early May. **February–April is the sweet spot** — returning daylight, deep cold-dry snow and long cross-country conditions. December is dark (the sun barely clears the horizon at this latitude); late April gives spring skiing with 18 hours of light"
+  },
+  "budgetTier": "€€",
+  "budgetTierRange": [
+    2,
+    3
+  ],
+  "budgetTierRaw": "€€–€€€",
+  "budget": {
+    "currency": "EUR",
+    "totalEur": {
+      "low": 1500,
+      "high": 2400
+    },
+    "totalNote": "€1,500–2,400 per person",
+    "breakdown": {
+      "accommodation": {
+        "lowEur": 120,
+        "highEur": 260,
+        "note": "€120–260 per night for a 2–4 person ski cabin; hotel doubles €150–280; peak Christmas–New Year and Easter can double this"
+      },
+      "food": {
+        "lowEur": 55,
+        "highEur": 95,
+        "note": "€55–95 per day; cabins have full kitchens and the supermarket is far cheaper than the slope restaurants"
+      },
+      "transport": {
+        "lowEur": 250,
+        "highEur": 420,
+        "note": "€250–420: flights to Kittilä (Levi is 15 minutes away) or Kolari rail, plus airport transfer and a ski bus pass"
+      },
+      "activities": {
+        "lowEur": 55,
+        "highEur": 70,
+        "note": "Lift passes €55–70 per day, roughly €250–320 for six days; add €150–350 for a husky or reindeer day, snowmobile safari or a guided off-piste day"
+      }
+    },
+    "perDayEur": {
+      "low": 214,
+      "high": 343
+    }
+  },
+  "profile": {
+    "difficulty": null,
+    "difficultyLabel": null,
+    "difficultyNote": null,
+    "fitnessLevel": null,
+    "crowdLevel": null,
+    "familyFriendly": null,
+    "carRequired": null
+  },
+  "basecamps": [
+    "Levi (Sirkka)",
+    "Äkäslompolo",
+    "Ylläsjärvi"
+  ],
+  "gatewayAirport": null,
+  "gatewayAirportCode": null,
+  "languages": [
+    "Finnish",
+    "Northern Sámi",
+    "English",
+    "Swedish"
+  ],
+  "currency": "EUR",
+  "emergencyNumber": "112 — install the 112 Suomi app",
+  "coordinates": {
+    "lat": 67.805,
+    "lon": 24.8,
+    "precision": "source",
+    "matchedPlace": "Levi (Sirkka)",
+    "source": "source record"
+  },
+  "tags": [],
+  "summary": "A seven-day winter sports & skiing itinerary in Kittilä & Kolari, Finnish Lapland, Finland.",
+  "summaryGenerated": true,
+  "hook": null,
+  "snapshot": {},
+  "itinerary": [
+    {
+      "day": 1,
+      "title": "Arrival at Levi and the first laps",
+      "morning": "Fly to Kittilä — the airport is 15 minutes from Levi, one of the shortest ski transfers in Europe. Collect your lift pass and hire skis at the base.",
+      "afternoon": "Warm up on the front-face pistes served by the gondola. Levi's fell is broad and rounded rather than steep; the pleasure here is width, grooming and empty snow, not vertical.",
+      "evening": "Levi village has an actual après scene by Nordic standards. Eat early; Finnish kitchens close earlier than Alpine ones.",
+      "dayStats": null,
+      "sleep": null
+    },
+    {
+      "day": 2,
+      "title": "Levi's full network and the floodlit evening",
+      "morning": "Ski the whole mountain: the World Cup slalom face on the front side, the longer blues on the back, and the tree runs on the lower flanks where the *tykky* — crown snow-load — turns the pines into white sculptures.",
+      "afternoon": "The freestyle parks and the family areas, or a lesson if you are new to Nordic conditions, which are colder and faster than Alpine snow.",
+      "evening": "**Floodlit skiing** is the answer to the short winter day: several Levi slopes are lit into the evening, and skiing under lights with the temperature at −15 °C is genuinely wonderful.",
+      "dayStats": null,
+      "sleep": null
+    },
+    {
+      "day": 3,
+      "title": "Cross-country: the Levi track network",
+      "morning": "Finland's real ski culture is Nordic. Levi has around 230 km of machine-groomed track, including illuminated loops, running through forest and out onto the open fell.",
+      "afternoon": "Hire classic gear and take an instructor for two hours; the technique differs enough from alpine that a lesson transforms the week. Stop at a *laavu* — an open wooden shelter with a fire pit — and grill sausages, which is the correct Finnish lunch.",
+      "evening": "Smoke sauna, then a cold plunge or a roll in the snow. Non-negotiable.",
+      "dayStats": null,
+      "sleep": null
+    },
+    {
+      "day": 4,
+      "title": "Transfer to Ylläs and the long runs",
+      "morning": "Drive or transfer 40 minutes to Ylläs. The fell rises to 718 m with 63 slopes across two sides, and it feels twice as empty as Levi.",
+      "afternoon": "Ski the long blue from the top of the Ylläsjärvi side — around 3 km, the longest run in Finland — then cross the fell to the Äkäslompolo side. The views from the top run all the way to the Pallas fells.",
+      "evening": "Äkäslompolo is a village, not a resort strip: wooden houses in pine forest around a lake. Self-cater or eat at one of the handful of restaurants.",
+      "dayStats": null,
+      "sleep": null
+    },
+    {
+      "day": 5,
+      "title": "Ylläs off-piste, tree skiing and the ski bus",
+      "morning": "Ylläs's tree skiing between the marked runs is the best lift-served off-piste in Finland, and after a snowfall the low-density powder in the *tykky* forest is extraordinary. Take a **local guide** — the fells are rounded and disorienting in flat light, and the tree zones are easy to get lost in.",
+      "afternoon": "The two base areas are linked by piste and by a frequent ski bus; use the bus to ski both sides without repeating.",
+      "evening": "Northern lights. Ylläs's low light pollution and the fell tops make it one of the better aurora bases in Lapland; the season runs roughly September to April on clear, dark nights.",
+      "dayStats": null,
+      "sleep": null
+    },
+    {
+      "day": 6,
+      "title": "A day off the skis: huskies, reindeer or the Pallas fells",
+      "morning": "A husky safari, a reindeer farm visit with a Sámi host, or a snowmobile route — all standard, all bookable in advance, all better booked with the smaller local operators.",
+      "afternoon": "Alternatively, ski-tour or snowshoe into **Pallas–Yllästunturi National Park**, which surrounds both resorts — the same fells as the summer traverse in Trip 18, under two metres of snow.",
+      "evening": "Ice fishing on a frozen lake, or a last sauna.",
+      "dayStats": null,
+      "sleep": null
+    },
+    {
+      "day": 7,
+      "title": "Last laps and departure",
+      "morning": "Morning skiing on the pass you have already paid for — most passes run to the day's end regardless of your flight.",
+      "afternoon": "Transfer to Kittilä (from Ylläs, about 1 h 15) and fly out.",
+      "evening": null,
+      "dayStats": null,
+      "sleep": null
+    }
+  ],
+  "accommodationStrategy": [
+    {
+      "rank": 1,
+      "name": "Levi ski-in/ski-out hotels and apartments",
+      "style": null,
+      "location": null,
+      "description": "Levi Hotel Spa and the Panorama-style properties on the fell put you on the snow with a pool and a spa. The village is compact, the ski bus is frequent and free with the pass, and the supermarket is walkable — which matters, because self-catering halves the food budget.",
+      "booking": null,
+      "priceNote": null
+    },
+    {
+      "rank": 2,
+      "name": "Äkäslompolo log cabins",
+      "style": null,
+      "location": "Ylläs",
+      "description": "Traditional Finnish *mökki* in pine forest: two to four bedrooms, a full kitchen, a drying room, a fireplace and a private sauna. €140–260 for the cabin, not per person, which makes Ylläs the best value in Lapland for a group of four. Ski-track access from the door is standard.",
+      "booking": null,
+      "priceNote": null
+    },
+    {
+      "rank": 3,
+      "name": "Ylläsjärvi slope-side apartments",
+      "style": null,
+      "location": null,
+      "description": "The quieter southern base, closest to the longest run and the gondola-side lifts. Fewer restaurants, more snow, and a shorter transfer to the national park trailheads.",
+      "booking": null,
+      "priceNote": null
+    }
+  ],
+  "logistics": {
+    "connectivity": null,
+    "emergency": "112 and the **112 Suomi** app for GPS location. Pisteside first aid at both resorts; the hospital is in Kittilä with the main facility in Rovaniemi.",
+    "weather": null,
+    "bookingWindows": "Christmas–New Year and the Finnish and Central European school holiday weeks in February–March are the peaks — cabins go 6–12 months ahead. Late March to April is quieter, sunnier and cheaper.",
+    "money": null,
+    "transportRules": null,
+    "permits": null,
+    "health": null,
+    "gettingThere": null,
+    "other": [
+      {
+        "label": "Lift pass tiers",
+        "text": "Passes are sold per resort by day, with meaningful discounts from three days upward and further reductions for children and seniors. Regional multi-resort options and combined Levi/Ylläs products have existed in some seasons — check the current arrangement before buying two separate passes. Prices and structures change every season. `verify: true`"
+      },
+      {
+        "label": "Darkness is the real planning variable",
+        "text": "At 67.8° N the sun does not rise for a period around the winter solstice, and even in January the skiable daylight is short. This is why floodlit slopes and headtorch Nordic loops exist. From late February onward the light is generous and by April it is endless."
+      },
+      {
+        "label": "Cold",
+        "text": "−20 °C is a normal January morning and −30 °C happens. Goggles not sunglasses, a face covering, mittens over gloves, and battery-warmed insoles if you feel the cold. Phones die fast — keep them inside a layer."
+      },
+      {
+        "label": "Off-piste guides",
+        "text": "Finnish fells are avalanche-poor by Alpine standards because of the low angles, but the risks here are different: whiteout on featureless rounded terrain, tree wells, extreme cold, and getting lost. Use local guides; several operate from both resorts."
+      },
+      {
+        "label": "Sámi culture",
+        "text": "Reindeer herding is a living livelihood, not a show. Choose operators run by Sámi families, do not photograph people or corrals without asking, and be aware that \"Lapland Sámi experiences\" vary enormously in authenticity."
+      }
+    ]
+  },
+  "proTips": [
+    "Come in **March**. You get full winter snow, ten hours of daylight, aurora still active at night, and prices well below the Christmas peak.",
+    "Rent a **cabin, not a hotel room**. Finnish self-catering cabins with a private sauna are the local standard, are cheaper for groups, and are the actual cultural experience.",
+    "Give **cross-country a proper half day** even if you came to ski downhill. The Levi and Ylläs track networks are among the best in the world and this is what Finns are really doing out there.",
+    "The *laavu* shelters on the track networks have firewood and a grill. Carry sausages and a thermos and lunch costs €3 instead of €25.",
+    "**Book Levi first, Ylläs second.** Arriving at the bigger, busier resort while you are fresh and finishing in the quiet forest at Äkäslompolo gives the week the right shape.",
+    "Aurora tip: you do not need a tour. Walk 15 minutes from the village edge, away from lights, on a clear night, and check an aurora forecast app. At this latitude a modest geomagnetic reading is enough."
+  ],
+  "typeSpecific": {
+    "raw": {
+      "resort_profile": "Two large fell resorts 40 minutes apart. Levi is Finland's biggest and busiest, with the country's most complete lift network, a World Cup slalom slope and a real village; Ylläs has more pistes and the longest run in Finland, spread across two quiet villages",
+      "lift_network": "Levi: roughly 43 slopes and 26 lifts including a gondola, with floodlit skiing. Ylläs: about 63 slopes and 29 lifts across two base areas (Äkäslompolo and Ylläsjärvi) linked by piste and ski bus",
+      "vertical_drop_m": 325,
+      "snow_reliability": "Very high — this is Arctic Finland. Cold, dry, low-density snow from late November to early May, with extensive snowmaking to guarantee an early-season opening. The limitation is darkness and cold, not snow cover",
+      "nordic_network_km": 560,
+      "gpx_ready": true
+    },
+    "surface": null,
+    "distanceKm": 560,
+    "elevationM": null,
+    "verticalM": 325,
+    "technicalRating": null,
+    "transitPass": null,
+    "hutBooking": null,
+    "liftNetwork": "Two large fell resorts 40 minutes apart. Levi is Finland's biggest and busiest, with the country's most complete lift network, a World Cup slalom slope and a real village; Ylläs has more pistes and the longest run in Finland, spread across two quiet villages",
+    "snowReliability": "Very high — this is Arctic Finland. Cold, dry, low-density snow from late November to early May, with extensive snowmaking to guarantee an early-season opening. The limitation is darkness and cold, not snow cover",
+    "windConditions": null,
+    "gpxReady": true,
+    "bookingTimeline": null,
+    "audience": null
+  },
+  "packingNotes": [],
+  "whatCouldGoWrong": [],
+  "sources": {
+    "verified": null,
+    "confidenceNotes": null
+  },
+  "verifyFlags": [],
+  "verifyFlagCount": 0,
+  "volatilePricing": true,
+  "wordCount": 1613,
+  "dataVintage": 2026,
+  "provenance": {
+    "batch": "northern-baltics",
+    "sourceFile": "carta_northern_europe_baltics_trips.md#trip-22",
+    "sourceFormat": "single-file md, '## Trip NN' records with fenced YAML",
+    "sourceId": "levi-yllas-lapland-twin-resort-ski-week",
+    "ingestedAt": "2026-09-02",
+    "synthesized": false
+  }
+}

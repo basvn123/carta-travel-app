@@ -1,0 +1,195 @@
+{
+  "iso2": "HR",
+  "country": "Croatia",
+  "checked_at": "2026-08-17",
+  "beaches": {
+    "wrong": [
+      {
+        "name": "Lokrum Beaches",
+        "class": "island",
+        "why": "Resolves to Lokrum itself, an island nature reserve 600 m off Dubrovnik (wikipedia link on the row is en:Lokrum, the island). Lokrum has no beach: it is a rocky bathing shelf plus the small saltwater lake called Mrtvo more. Shipping it as Croatia's number 1 beach and as the country card's top_beach is the single worst entry in this file.",
+        "source_url": "https://en.wikipedia.org/wiki/Lokrum"
+      },
+      {
+        "name": "Badija",
+        "class": "island",
+        "why": "Badija is the largest island of the Skoji archipelago off Korcula (Q2706296), not a beach. The row's coordinate 42.96138,17.13677 is the island interior, not a shoreline.",
+        "source_url": "https://en.wikipedia.org/wiki/Badija"
+      },
+      {
+        "name": "Sveti Jerolim",
+        "class": "island",
+        "why": "A 7.84 ha island of the Brijuni archipelago inside Brijuni National Park, per the national park's own site. It is an island with a bathing shore, not a named beach, and it carries the park's national_park designation into a beach ranking.",
+        "source_url": "https://www.np-brijuni.hr/en/brijuni/the-brijuni-archipelago/sv-jerolim"
+      },
+      {
+        "name": "Jerolim Island, Hvar",
+        "class": "island",
+        "why": "Jerolim (Q6591833, 43.15917,16.43389) is an uninhabited islet in the Pakleni Islands off Hvar. The row's own name says Island. Note this is a different island from the Brijuni Sveti Jerolim at rank 3, so the file spends two of twelve tier 1 beach slots on two islands that share a name.",
+        "source_url": "https://hr.wikipedia.org/wiki/Jerolim"
+      },
+      {
+        "name": "Otocic Mala Stupa",
+        "class": "island",
+        "why": "Tier 2 rank 15. The name is literally 'islet Mala Stupa'. Same failure family as ranks 1, 2, 3 and 9: the harvester is treating small islands as beaches.",
+        "source_url": "https://en.wikipedia.org/wiki/Badija"
+      },
+      {
+        "name": "Bol, Brac",
+        "class": "town_or_village",
+        "why": "Tier 2 rank 133, score 0.394. The coordinate 43.25674,16.63401 is Zlatni Rat (Q1262826, 43.255833,16.633889), so Croatia's most famous beach is in the file under the name of the town instead of the beach, and buried at the bottom of tier 2. Listed here because the town_or_village class is exactly what a filter has to catch and repair, not just delete.",
+        "source_url": "https://www.wikidata.org/wiki/Q1262826"
+      }
+    ],
+    "missing": [
+      {
+        "name": "Zlatni Rat",
+        "qid": "Q1262826",
+        "lat": 43.255833,
+        "lon": 16.633889,
+        "why": "The shifting shingle spit at Bol on Brac is the single most photographed beach in Croatia and the default image of the Croatian coast. Present in the file only as the mislabelled 'Bol, Brac' at tier 2 rank 133.",
+        "source_url": "https://en.wikipedia.org/wiki/Zlatni_Rat",
+        "verified": true
+      },
+      {
+        "name": "Stiniva",
+        "qid": "Q12803521",
+        "lat": 43.01844,
+        "lon": 16.17104,
+        "why": "The cliff-walled cove on the south coast of Vis, described on Wikidata as 'beach/bay of the island of Vis, Croatia'. Absent from the file entirely, while Prirovo Beach in Vis town made tier 2 rank 18.",
+        "source_url": "https://www.wikidata.org/wiki/Q12803521",
+        "verified": true
+      },
+      {
+        "name": "Sakarun",
+        "qid": "Q6961232",
+        "lat": 44.13387,
+        "lon": 14.87182,
+        "why": "The white sand and turquoise shallow bay on Dugi Otok, Wikidata description 'beach in Croatia'. Absent from the file entirely; there is no Dugi Otok beach at any tier.",
+        "source_url": "https://www.wikidata.org/wiki/Q6961232",
+        "verified": true
+      },
+      {
+        "name": "Zrce",
+        "qid": "Q227190",
+        "lat": 44.54,
+        "lon": 14.915,
+        "why": "The Novalja party beach on Pag, the best known beach in the northern Adriatic by visitor volume. The file has Pag entries (Plaza Rucica - Metajna, Zubovici) but not Zrce.",
+        "source_url": "https://en.wikipedia.org/wiki/Zr%C4%87e",
+        "verified": true
+      },
+      {
+        "name": "Punta Rata (Brela)",
+        "qid": null,
+        "lat": null,
+        "lon": null,
+        "why": "The pine-framed pebble beach at Brela on the Makarska riviera, routinely on national and international best-of lists. No Wikidata item could be confirmed, so no QID or coordinate is asserted. The file has Bratus and Nugal on the same riviera but not Brela.",
+        "source_url": "https://en.wikipedia.org/wiki/Brela",
+        "verified": false
+      },
+      {
+        "name": "Banje (Dubrovnik)",
+        "qid": null,
+        "lat": null,
+        "lon": null,
+        "why": "Dubrovnik's town beach directly below the old city walls. No Wikidata item confirmed. The file gives Dubrovnik Copacabana and Lokrum but not Banje.",
+        "source_url": "https://en.wikipedia.org/wiki/Dubrovnik",
+        "verified": false
+      }
+    ],
+    "order": [
+      "The ranking is not a ranking below rank 3. Ranks 4 to 22 all carry the identical score 0.96 and are ordered strictly alphabetically after diacritic folding (Bratus, Copacabana, Crnikovica, Histria, Jadrija, Jerolim, Kampor, Kostrena, Lumbarda, then Nugal, Okrug, Otocic, plaza Maslenica...). The tier 1 cut at 12 therefore lands mid-alphabet inside a 19-way tie: Lumbarda Plaza is tier 1 and Nugal Beach is tier 2 purely because L precedes N.",
+      "Same pattern repeats at score 0.905 (ranks 27-40), 0.762 (88-99) and 0.394 (100-142). Roughly 100 of 142 beach rows sit inside an alphabetical tie block.",
+      "Lokrum Beaches at rank 1 is too high on two counts: it is an island, and it outranks every real beach in the country.",
+      "Copacabana Beach (rank 5) is a genuine Dubrovnik beach on Babin Kuk and is fine, but it should not outrank Nugal, Okrug Gornji or Vestar, all of which are stronger beaches and all of which fell to tier 2 on the alphabet.",
+      "Bol, Brac at rank 133 with score 0.394 is the most misplaced row in the file: it is Zlatni Rat."
+    ]
+  },
+  "mountains": {
+    "wrong": [
+      {
+        "name": "Battle of Gvozd Mountain",
+        "class": "other",
+        "why": "Not a feature at all: it is the 1097 battle between Petar Snacic and Coloman of Hungary. The article itself says the location is disputed between Petrova Gora and the Kapela pass, so the row does not even have a settled place. The coordinate 44.90,15.51667 sits by Plitvice, from which it has inherited a bogus unesco designation. This is Croatia's top_mountain on the country card.",
+        "source_url": "https://en.wikipedia.org/wiki/Battle_of_Gvozd_Mountain"
+      },
+      {
+        "name": "Premuda",
+        "class": "island",
+        "why": "Premuda (Q988673) is a small inhabited island off the northern Adriatic coast near Mali Losinj, high point under 100 m. It is ranked as Croatia's fourth mountain.",
+        "source_url": "https://en.wikipedia.org/wiki/Premuda"
+      },
+      {
+        "name": "Mrcara",
+        "class": "island",
+        "why": "Mrcara (Q3435331) is a small uninhabited island west of Prezba and Lastovo in southern Dalmatia. Ranked seventh among Croatian mountains.",
+        "source_url": "https://en.wikipedia.org/wiki/Mr%C4%8Dara"
+      },
+      {
+        "name": "Marjan",
+        "class": "park_or_area",
+        "why": "Croatian Wikipedia opens 'Marjan je brdo, poluotok i park suma' - a 178 m hill, peninsula and protected forest park inside the city of Split. It is a city park, and its coordinate 43.50000,16.43333 is a rounded low-precision centroid, not a summit fix.",
+        "source_url": "https://hr.wikipedia.org/wiki/Marjan"
+      },
+      {
+        "name": "Stari Draguc",
+        "class": "not_notable",
+        "why": "A roughly 503 m hillfort ridge above the village of Draguc in inland Istria. A real elevation, but of no mountaineering, scenic or touristic standing, and it holds a tier 1 slot in a country whose Dinara, Ucka, Risnjak and Medvednica are absent from the file at every tier.",
+        "source_url": "https://www.istra.hr/en/destinations/pazin/town-and-surroundings/880"
+      },
+      {
+        "name": "Crni vrh",
+        "class": "not_notable",
+        "why": "Represents a block of ten forest knolls inside Plitvice that occupy tier 2 ranks 14 to 23 on one identical score of 0.868, alphabetically ordered: Crni vrh, Ivar, Kameniti vrh, Pavlinov vrh, Prokres, Rasovacki ogradak, Seliski vrh, Stubica, Tavanak, Trnovski tavan. None is a mountain any traveller would recognise; they scored high only by inheriting Plitvice's national_park and unesco flags. Ten of the top twenty-three Croatian mountains are these.",
+        "source_url": "https://en.wikipedia.org/wiki/Plitvice_Lakes_National_Park"
+      }
+    ],
+    "missing": [
+      {
+        "name": "Dinara",
+        "qid": "Q736047",
+        "lat": 44.0624764,
+        "lon": 16.3829092,
+        "why": "The highest point of Croatia (Sinjal on Dinara, 1831 m) and the mountain the country is named for in every school atlas. Absent from the file at every tier. The coordinate given is the Wikidata P625 for the massif; the English Wikipedia article places the Sinjal summit at approximately 43.945, 16.597.",
+        "source_url": "https://en.wikipedia.org/wiki/Dinara",
+        "verified": true
+      },
+      {
+        "name": "Ucka",
+        "qid": "Q1257749",
+        "lat": 45.25,
+        "lon": 14.2,
+        "why": "The Istrian massif above Opatija, summit Vojak 1401 m, a nature park and the standard viewpoint over the Kvarner. Absent at every tier, although the file contains four Opatija-area beaches.",
+        "source_url": "https://en.wikipedia.org/wiki/U%C4%8Dka",
+        "verified": true
+      },
+      {
+        "name": "Risnjak",
+        "qid": "Q1519978",
+        "lat": 45.431388888889,
+        "lon": 14.621388888889,
+        "why": "1528 m massif and the core of Risnjak National Park in Gorski Kotar, one of eight Croatian national parks. Absent at every tier.",
+        "source_url": "https://en.wikipedia.org/wiki/Risnjak",
+        "verified": true
+      },
+      {
+        "name": "Medvednica (Sljeme)",
+        "qid": "Q743452",
+        "lat": 45.91666667,
+        "lon": 15.96666667,
+        "why": "Zagreb's mountain, summit Sljeme 1035 m, a nature park, ski slope and the day trip every visitor to the capital is offered. Absent at every tier, which also means the Zagreb region contributes nothing to the mountains tab.",
+        "source_url": "https://en.wikipedia.org/wiki/Medvednica",
+        "verified": true
+      }
+    ],
+    "order": [
+      "Ranks 2 and 3, Vaganski vrh (1757 m, highest of Velebit, Paklenica) and Sveti Jure (1762 m, Biokovo), are the two genuinely correct entries and are correctly near the top. Everything else in tier 1 is either an island, a park, a battle or a village hillfort.",
+      "Srd (rank 5) is a real 412 m hill above Dubrovnik with a cable car, defensible in a top 20 but not fifth in a country that contains Velebit, Biokovo, Dinara and the Gorski Kotar.",
+      "Veliki Zavizan (rank 10) is a real Northern Velebit peak and is ranked too low relative to Premuda, Mrcara, Marjan and the battle above it.",
+      "Ranks 14 to 23 are one alphabetical block of Plitvice knolls; ranks 36-48, 50-87 and 105-145 are three more alphabetical tie blocks. Below rank 13 the file has no ordering signal at all."
+    ]
+  },
+  "counts_verdict": "Twelve tier 1 beaches and twelve tier 1 mountains is a sensible shortlist size for a country with 6,000 km of coast, 1,200 islands and eight national parks, so the counts are not the problem: the composition is. Four of twelve tier 1 beaches are islands and none of the four beaches a Croatian would name first (Zlatni Rat, Stiniva, Sakarun, Zrce) is in tier 1 at all. On the mountain side, 145 harvested features contain neither Dinara nor Ucka nor Risnjak nor Medvednica, while ten of the top twenty-three are unnamed Plitvice hillocks, so the harvest is drawing from POI density near existing destinations rather than from the mountains themselves.",
+  "top_pick_verdict": "No on both. top_beach 'Lokrum Beaches' is an island with no beach; it must be Zlatni Rat (Q1262826). top_mountain 'Battle of Gvozd Mountain' is a medieval battle of disputed location; it should be Dinara (Q736047) if the rule is highest point, or Sveti Jure on Biokovo (already rank 3, 1762 m, road to the summit above the Makarska riviera) if the rule is what looks best on a country card.",
+  "notes": "Cross-cutting: elevation_m is null for all 145 Croatian mountains, which is precisely the field that would have demoted Marjan (178 m), Premuda and Mrcara (islands) and Stari Draguc (503 m). designations are leaking from nearby polygons: the battle row 6.4 km from Plitvice carries unesco, and Sveti Jerolim carries national_park into a beach ranking. water is 'Excellent' on every single beach row, so the EEA bathing class contributes no discrimination in this country. The dominant structural defect is score ties broken alphabetically: 19 beaches share score 0.96, 43 share 0.394, 38 mountains share 0.775, and tier boundaries therefore fall on the alphabet."
+}

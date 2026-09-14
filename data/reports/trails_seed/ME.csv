@@ -1,0 +1,16 @@
+rank,curation_rank,title,ref,network,distance_km,popularity,pageviews_day,sitelinks,anchors,quality_score,portal_agreement,status,family_members,trip_id,osm_relation
+1,63.83,Crnogorska Transverzala 1,CT-1,nwn,140.0,0.309,0,0,"Durmitor (Žabljak) (38/day, 736 m)",96,,needs_review,1,62486,2777368
+2,63.58,Žabljak - Šarban (via Bobotov kuk),101,nwn,11.7,0.309,0,0,"Minin bogaz (38/day, 547 m); Durmitor (Žabljak) (38/day, 1348 m); Durmitor National Park (38/day, 222 m)",95,,needs_review,1,62525,8135709
+3,63.58,Žabljak - Šljeme,120,nwn,10.3,0.309,0,0,"Minin bogaz (38/day, 1437 m); Durmitor (Žabljak) (38/day, 293 m); Durmitor National Park (38/day, 1762 m)",95,,needs_review,1,62530,8136213
+4,61.31,Primorska planinarska transverzala,PPT,nwn,178.9,0.423,0,0,"Cetinje (223/day, 1592 m); Royal Theatre Zetski Dom (222/day, 1754 m); Royal Theatre Zetski Dom (222/day, 1754 m)",70,,needs_review,1,62485,2776159
+5,60.78,Velika Previja - Bolj,107,nwn,5.6,0.309,0,0,"Durmitor (38/day, 1990 m); Durmitor National Park (38/day, 571 m); Minin bogaz (38/day, 498 m)",83.8,,needs_review,1,62528,8135898
+6,60.78,Crno jezero - Terzin Bogaz - Lokvice,115,nwn,9.2,0.309,0,0,"Minin bogaz (38/day, 729 m); Durmitor National Park (38/day, 1002 m)",83.8,,needs_review,1,62529,8136159
+7,60.78,Crno jezero - Škrčka jezera,102,nwn,21.3,0.309,0,0,"Durmitor (38/day, 441 m)",83.8,,needs_review,1,62526,8135828
+8,60.2,759,,rwn,28.9,0.471,0,0,"Fort Vrmac (469/day, 1845 m); Fort Vrmac (469/day, 1845 m); Kotor Old Town (469/day, 286 m)",83.8,,needs_review,1,62492,2788860
+9,60.15,Peaks of the Balkans,POB,iwn,89.6,0.419,15,5,"Dobra Kolata / Kollate e Mires (165/day, 892 m); Rodi e Kollatës (165/day, 1652 m); Prokletije National Park (165/day, 72 m)",46,,draft,1,62432,4726204
+10,59.67,Radigojna - Goleš - Biogradsko jezero - Kraljevo kolo,322,nwn,23.3,0.278,0,0,"Biogradska Gora (Kolašin) (23/day, 106 m)",83.8,,needs_review,1,62532,8138954
+11,57.95,Šarban - Škrka - Nedajno,105,nwn,22.3,0.309,0,0,"Durmitor National Park (38/day, 1684 m); Durmitor (38/day, 186 m); Minin bogaz (38/day, 1880 m)",72.5,,needs_review,1,62527,8135845
+12,57.95,Ivan Do - Gornja Ališnica,151,nwn,7.5,0.309,0,0,"Minin bogaz (38/day, 847 m); Durmitor (38/day, 1304 m); Durmitor National Park (38/day, 660 m)",72.5,,needs_review,1,62531,8138866
+13,55.47,Lunje - Sutorman,771A,nwn,30.2,0.071,0,0,,96,,needs_review,1,62565,14616531
+14,55.22,Vinicka - Jelovica,375,nwn,22.8,0.071,0,0,,95,,needs_review,1,62515,8133813
+15,55.22,Berane - Šiško jezero,307,nwn,22.7,0.071,0,0,,95,,needs_review,1,62516,8133850

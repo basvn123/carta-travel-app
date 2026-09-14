@@ -1,0 +1,10 @@
+rank,curation_rank,title,ref,network,distance_km,popularity,pageviews_day,sitelinks,anchors,quality_score,portal_agreement,status,family_members,trip_id,osm_relation
+1,78.35,HRP Étape 32,HRP,nwn,12.5,0.524,1,8,,100,agree,needs_review,3,25575,3360574
+2,77.45,GR 7 - Andorra,GR 7,nwn,43.4,0.892,0,0,"Esglesia Sant Esteve de Andorra la Vella (4112/day, 423 m); Andorra la Vella (359/day, 334 m); Esglesia Sant Esteve de Andorra la Vella (358/day, 423 m)",86.9,mismatch,needs_review,1,27736,7614536
+3,72.67,European long distance path E7 - Andorra,E7,iwn,43.4,0.613,0,0,"Esglesia Sant Esteve de Andorra la Vella (4112/day, 423 m); Andorra la Vella (359/day, 334 m); Esglesia Sant Esteve de Andorra la Vella (358/day, 423 m)",86.9,mismatch,needs_review,1,30507,11878137
+4,68.93,Senda Pirenaica - E14,GR 11,nwn,15.0,0.462,0,11,"Roc de les Bruixes (4112/day, 1332 m); Roc de les Bruixes (4112/day, 1332 m); Encamp (51/day, 27 m)",95,,needs_review,3,62423,10603161
+5,67.77,HRP Variante 31.1,HRP Var.,nwn,9.5,0.429,0,0,"Soldeu (Vall d'Incles) (27/day, 688 m)",95,,needs_review,2,62421,7091760
+6,64.27,El Camí IT1TR5 El Camí Capçaler: de Salzes a Balaguer,CC-C,nwn,83.5,0.458,1,1,"Esglesia Sant Esteve de Andorra la Vella (4112/day, 272 m); Roc de les Bruixes (4112/day, 351 m); Roc de les Bruixes (4112/day, 351 m)",95,mismatch,needs_review,1,39826,18664165
+7,61.95,Camí de l'Ossa,CO,lwn,33.9,0.613,0,0,"Roc de les Bruixes (4112/day, 1683 m); Roc de les Bruixes (4112/day, 1683 m); Encamp (51/day, 39 m)",96,,needs_review,1,62419,5511185
+8,51.24,GRP La volta a Andorra,GRP,rwn,110.9,0.303,0,0,"Madriu-Perafita-Claror Valley (11/day, 1619 m)",89.5,mismatch,needs_review,1,26566,5511920
+9,4.16,Via ferrata Canal de la Mora,,,0.4,0.613,0,0,"Roc de les Bruixes (4112/day, 1467 m); Roc de les Bruixes (4112/day, 1467 m); Canillo (31/day, 452 m)",87.5,,needs_review,1,62430,18997884

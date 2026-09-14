@@ -1,0 +1,16 @@
+rank,curation_rank,title,ref,network,distance_km,popularity,pageviews_day,sitelinks,anchors,quality_score,portal_agreement,status,family_members,trip_id,osm_relation
+1,77.69,E4: Beograd (Krnjača) – Osipaonica,E4-5,iwn,147.6,0.562,0,0,"Belgrade (1900/day, 44 m); Ruins of National Library from 1941 Nazi bombing (1887/day, 397 m); Academy Park (1887/day, 14 m)",96,,needs_review,1,67982,18981432
+2,73.53,E7-17: Горња Трнава – Власотинце,E7-17,iwn,100.3,0.451,0,0,"Nis (341/day, 1196 m); Sacred Heart Church, Niš (341/day, 1803 m); Archaeological Hall (341/day, 1497 m)",95,,needs_review,1,67966,18404717
+3,73.51,E7-04: Бач – Петроварадин,E7-4,iwn,80.1,0.53,0,0,"Mileva Maric Einstein House (1157/day, 802 m); Futoški park (562/day, 980 m); Novi Sad (562/day, 87 m)",83.8,,needs_review,1,67409,18206217
+4,71.25,E4: Beljanica vrh – Lepenski Vir,E4-8,iwn,117.7,0.379,0,0,"Lepenski Vir (112/day, 741 m); Lepenski Vir (112/day, 602 m); Visitors center Lepenski Vir (112/day, 605 m)",96,,needs_review,1,67987,19282616
+5,69.99,E4: Veliko Gradište – Beljanica vrh,E4-7,iwn,150.5,0.343,0,0,"Golubac Fortress (64/day, 984 m); Golubac (27/day, 987 m)",96,,needs_review,1,67985,19232993
+6,69.63,E7-15: Крива Река – Жуч,E7-15,iwn,68.0,0.34,0,0,"Kopaonik National Park (61/day, 1267 m); Kopaonik (61/day, 506 m); Kopaonik (61/day, 506 m)",95,,needs_review,1,62470,18374951
+7,69.07,ST410 Despotovac - Manasija tour,ST410,iwn,9.8,0.288,0,0,"Manasija Monastery (27/day, 54 m)",100,,needs_review,1,68014,19885919
+8,68.8,E7-14: Градац – Крива Река,E7-14,iwn,124.1,0.316,0,0,"Studenica Monastery (42/day, 68 m); Studenica Monastery (42/day, 272 m)",95,,needs_review,1,67963,18371638
+9,67.97,Sultans Trail Section 4: Belgrade - Sofia,ST4,iwn,457.8,0.256,14,11,"Belgrade (1900/day, 63 m); Bombing of Belgrade in World War II (1887/day, 570 m); Pobednik Cafe (1887/day, 177 m)",100,,needs_review,1,68004,19873446
+10,67.9,E7-11: Кремна – Тара – Мокра гора – Златибор – Муртеница (Бријач),E7-11,iwn,147.8,0.29,0,0,"Mokra Gora & Tara (28/day, 372 m)",95,,needs_review,1,64046,18360637
+11,67.16,E7-19: Жуч – Лебане,E7-19,iwn,101.7,0.269,0,0,"Đavolja Varoš (20/day, 573 m)",95,,needs_review,1,67964,18378518
+12,65.17,E4: Lepenski Vir – Derdap,E4-9,iwn,113.9,0.412,0,0,"Iron Gates (Danube Boilers) (188/day, 711 m); Iron Gate (186/day, 710 m); Visitors center Lepenski Vir (112/day, 1001 m)",67,,needs_review,1,67991,19505827
+13,64.95,E4: Derdap – Vratna,E4-10-1,iwn,81.7,0.206,45,15,"Iron Gates (Danube Boilers) (188/day, 624 m); Iron Gate (186/day, 624 m); Iron Gate I Hydroelectric Power Station (45/day, 582 m)",95,,needs_review,1,67848,14300658
+14,64.95,E4: Jalovik izvor – Gradina,E4-13,iwn,124.7,0.206,45,15,,95,,needs_review,1,67910,16088826
+15,64.95,E4: Horgoš – Ada,E4-1,iwn,67.1,0.206,45,15,,95,,needs_review,1,67826,14185952

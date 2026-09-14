@@ -1,0 +1,1824 @@
+country,nuts3,region_name,layer,published,quota,deficit,candidate_id,candidate_name,rejected_by,rejected_detail
+DK,DK041,Vestjylland,beach,,60,60,osm:way/749604566,Østre Strand,photo_gate,imgs_0_strong_0
+DK,DK041,Vestjylland,beach,,60,60,osm:way/33899155,Holtbjerg Sø Badestrand,photo_gate,imgs_0_strong_0
+DK,DK041,Vestjylland,beach,,60,60,osm:way/77316322,Nørhede Strand,score_gate,score_5.5_below_5.6
+DK,DK041,Vestjylland,beach,,60,60,osm:node/11365892468,Hostrup beach,score_gate,score_5.3_below_5.6
+FI,FI1D7,Lappi,beach,,60,60,osm:way/379148082,Ounaspaviljongin uimaranta,photo_gate,imgs_0_strong_0
+FI,FI200,Åland,beach,,60,60,,,,
+FI,FI1DC,Pohjois-Karjala,beach,,60,60,osm:way/24065785,Timitranniemen uimaranta,photo_gate,imgs_0_strong_0
+FI,FI1DC,Pohjois-Karjala,beach,,60,60,osm:way/59996345,Linnunlahden uimaranta,photo_gate,imgs_0_strong_0
+FI,FI1DC,Pohjois-Karjala,beach,,60,60,osm:way/59996350,Ilosaaren uimaranta,photo_gate,imgs_3_strong_0
+FI,FI1DC,Pohjois-Karjala,beach,,60,60,osm:way/88099347,Vehkalahden uimaranta,photo_gate,imgs_0_strong_0
+FI,FI1DC,Pohjois-Karjala,beach,,60,60,osm:way/651256249,Sataman uimaranta,score_gate,score_5.1_below_5.6
+FI,FI1C1,Varsinais-Suomi,beach,,60,60,wd:Q123415768,Nunnavuori,photo_gate,imgs_1_strong_1
+FI,FI1C1,Varsinais-Suomi,beach,,60,60,osm:way/606158598,Brinkhallin uimaranta,photo_gate,imgs_0_strong_0
+FI,FI1C1,Varsinais-Suomi,beach,,60,60,osm:way/1528229302,Isonkiven uimaranta,photo_gate,imgs_0_strong_0
+FI,FI1C1,Varsinais-Suomi,beach,,60,60,osm:way/192472777,Salkolan uimaranta,photo_gate,imgs_1_strong_1
+FI,FI1C1,Varsinais-Suomi,beach,,60,60,osm:way/376545876,Sorttamäen uimaranta,photo_gate,imgs_0_strong_0
+FI,FI19A,Pohjanmaa,beach,,60,60,wd:Q10500670,Fäboda,photo_gate,imgs_1_strong_1
+FI,FI1C5,Etelä-Karjala,beach,,60,60,,,,
+NO,NO0B2,Svalbard,beach,,60,60,wd:Q16897211,Snøsporvstranda,score_gate,score_5.5_below_5.6
+NO,NO0B2,Svalbard,beach,,60,60,wd:Q17761593,Calypsostranda,score_gate,score_5.5_below_5.6
+NO,NO0A3,Møre og Romsdal,beach,,60,60,wd:Q11981995,Kringstadbukta,photo_gate,imgs_0_strong_0
+NO,NO0A3,Møre og Romsdal,beach,,60,60,osm:way/295336168,Farstadsanden,photo_gate,imgs_0_strong_0
+NO,NO0A3,Møre og Romsdal,beach,,60,60,osm:node/8919322345,Blimsanden,photo_gate,imgs_0_strong_0
+NO,NO0A3,Møre og Romsdal,beach,,60,60,osm:way/818528359,Bakkesanden,score_gate,score_5.1_below_5.6
+NO,NO060,Trøndelag/Trööndelage,beach,,60,60,,,,
+NO,NO073,Finnmark/Finnmárku/Finmarkku,beach,,60,60,,,,
+TR,TR310,İzmir,beach,,60,60,,,,
+TR,TR323,Muğla,beach,,60,60,,,,
+TR,TRA23,Iğdır,beach,,60,60,,,,
+TR,TRA24,Ardahan,beach,,60,60,,,,
+TR,TR631,Hatay,beach,,60,60,,,,
+SE,SE122,Södermanlands län,beach,,60,60,osm:way/243764416,Jogersöbadet strand,photo_gate,imgs_0_strong_0
+SE,SE122,Södermanlands län,beach,,60,60,osm:way/219145044,Mälarbadens badplats,photo_gate,imgs_0_strong_0
+SE,SE122,Södermanlands län,beach,,60,60,osm:node/10060308043,Solvik Badplats,photo_gate,imgs_0_strong_0
+SE,SE122,Södermanlands län,beach,,60,60,osm:way/219437945,Ängsholmen Badplats,photo_gate,imgs_0_strong_0
+SE,SE122,Södermanlands län,beach,,60,60,osm:way/320210172,Kattbergets badplats,photo_gate,imgs_0_strong_0
+SE,SE122,Södermanlands län,beach,,60,60,osm:way/221180209,Roxnäs badplats,score_gate,score_5.4_below_5.6
+SE,SE122,Södermanlands län,beach,,60,60,osm:way/219437944,Ängsholmen Badplats,score_gate,score_5.3_below_5.6
+SE,SE313,Gävleborgs län,beach,,60,60,,,,
+SE,SE121,Uppsala län,beach,,60,60,osm:way/321307784,Ekillabadet,photo_gate,imgs_0_strong_0
+SE,SE121,Uppsala län,beach,,60,60,wd:Q106695584,Lerhagsbadet,photo_gate,imgs_0_strong_0
+SE,SE121,Uppsala län,beach,,60,60,wd:Q106697447,Fjällnora hundbad,photo_gate,imgs_0_strong_0
+SE,SE121,Uppsala län,beach,,60,60,osm:way/1545943137,Skälsund,photo_gate,imgs_0_strong_0
+SE,SE121,Uppsala län,beach,,60,60,osm:way/886611619,Siggeforabadet,score_gate,score_5.4_below_5.6
+SE,SE121,Uppsala län,beach,,60,60,osm:way/156518310,Kalmarsandsbadet,score_gate,score_5.3_below_5.6
+SE,SE121,Uppsala län,beach,,60,60,wd:Q106702291,Prästängens hundbad,score_gate,score_5.3_below_5.6
+SE,SE331,Västerbottens län,beach,,60,60,osm:way/225487501,Boviksbadet,photo_gate,imgs_0_strong_0
+SE,SE331,Västerbottens län,beach,,60,60,osm:way/356953545,Kläppsand Havsbad,photo_gate,imgs_0_strong_0
+SE,SE331,Västerbottens län,beach,,60,60,osm:way/361391572,Skatasanden,score_gate,score_5.4_below_5.6
+SE,SE123,Östergötlands län,beach,,60,60,osm:way/163592273,Jerusalemsbadet,photo_gate,imgs_0_strong_0
+SE,SE123,Östergötlands län,beach,,60,60,osm:way/123956284,Varamobaden,score_gate,score_5.0_below_5.6
+SE,SE332,Norrbottens län,beach,,60,60,osm:way/173910974,Pite Havsbad,photo_gate,imgs_1_strong_1
+SE,SE332,Norrbottens län,beach,,60,60,osm:way/833957263,Niporna,score_gate,score_5.5_below_5.6
+SE,SE332,Norrbottens län,beach,,60,60,osm:way/482859192,Notviksbadet,score_gate,score_5.2_below_5.6
+UA,UA-74538382B91806639169097,Lenine,beach,,60,60,,,,
+UA,UA-74538382B87705908812983,Holo Prystan,beach,,60,60,,,,
+UA,UA-74538382B36709578446445,Milove,beach,,60,60,,,,
+GR,EL642,Evvoia,beach,,60,59,,,,
+GR,EL421,"Kalymnos, Karpathos, Kasos, Kos, Rodos",beach,,60,59,wd:Q123068047,Kyra Panagia beach,score_gate,score_5.3_below_5.6
+DK,DK031,Fyn,beach,,60,59,osm:way/25465895,Sydstranden,photo_gate,imgs_0_strong_0
+DK,DK031,Fyn,beach,,60,59,osm:way/25465886,Nordstrand,photo_gate,imgs_0_strong_0
+DK,DK031,Fyn,beach,,60,59,wd:Q23754174,Smørmosen,score_gate,score_5.3_below_5.6
+FI,FI196,Satakunta,beach,,60,59,osm:way/299711308,Meriristin uimaranta,photo_gate,imgs_0_strong_0
+NO,NO093,Vestfold,beach,,60,59,wd:Q33326788,Hvittensand,photo_gate,imgs_0_strong_0
+NO,NO093,Vestfold,beach,,60,59,wd:Q33327049,Langeby,photo_gate,imgs_0_strong_0
+NO,NO093,Vestfold,beach,,60,59,osm:way/405899010,Svinevika,photo_gate,imgs_0_strong_0
+NO,NO093,Vestfold,beach,,60,59,osm:way/190872038,Gurvika,photo_gate,imgs_0_strong_0
+NO,NO093,Vestfold,beach,,60,59,osm:way/190872045,Oddane Sand,photo_gate,imgs_0_strong_0
+NO,NO093,Vestfold,beach,,60,59,wd:Q19391643,Sønstegård,photo_gate,imgs_1_strong_1
+NO,NO093,Vestfold,beach,,60,59,wd:Q19388691,Skallevold,photo_gate,imgs_0_strong_0
+NO,NO093,Vestfold,beach,,60,59,osm:way/894410537,Dulpen,photo_gate,imgs_0_strong_0
+NO,NO093,Vestfold,beach,,60,59,osm:way/183400337,Skitnerødstranda,photo_gate,imgs_0_strong_0
+NO,NO093,Vestfold,beach,,60,59,osm:way/725431474,Skjellsand,photo_gate,imgs_0_strong_0
+NO,NO093,Vestfold,beach,,60,59,wd:Q97625542,Furustrand,photo_gate,imgs_1_strong_1
+NO,NO093,Vestfold,beach,,60,59,osm:way/310603447,Jordestranda,photo_gate,imgs_0_strong_0
+NO,NO093,Vestfold,beach,,60,59,osm:way/552122629,Jordestranda,photo_gate,imgs_0_strong_0
+NO,NO093,Vestfold,beach,,60,59,osm:way/126778116,Stretrestranda,photo_gate,imgs_0_strong_0
+NO,NO093,Vestfold,beach,,60,59,osm:way/606055380,Batteristranda,photo_gate,imgs_0_strong_0
+NO,NO093,Vestfold,beach,,60,59,osm:way/225019462,Karistranda,score_gate,score_5.5_below_5.6
+NO,NO093,Vestfold,beach,,60,59,wd:Q56063311,Skjellvika,score_gate,score_5.3_below_5.6
+NO,NO093,Vestfold,beach,,60,59,osm:way/552122627,Støperistranda,score_gate,score_5.3_below_5.6
+NO,NO093,Vestfold,beach,,60,59,osm:way/163605608,Langholtstranda,score_gate,score_4.8_below_5.6
+NO,NO093,Vestfold,beach,,60,59,osm:way/552122699,Jordfallet,score_gate,score_4.7_below_5.6
+NO,NO093,Vestfold,beach,,60,59,osm:way/612591756,Lydhusstranda,score_gate,score_4.5_below_5.6
+NO,NO093,Vestfold,beach,,60,59,osm:way/563074201,Sukkerstranda,score_gate,score_4.3_below_5.6
+NO,NO083,Østfold,beach,,60,59,osm:way/598620092,Trouville bad,photo_gate,imgs_0_strong_0
+NO,NO083,Østfold,beach,,60,59,osm:node/798881230,Sandvika,photo_gate,imgs_0_strong_0
+NO,NO083,Østfold,beach,,60,59,osm:way/291725777,Storesand,photo_gate,imgs_0_strong_0
+NO,NO083,Østfold,beach,,60,59,osm:way/669928963,Lervikstranda,photo_gate,imgs_0_strong_0
+NO,NO083,Østfold,beach,,60,59,osm:way/29561170,Vepsen,photo_gate,imgs_0_strong_0
+NO,NO083,Østfold,beach,,60,59,osm:relation/20004216,Helleskilen,photo_gate,imgs_0_strong_0
+NO,NO083,Østfold,beach,,60,59,osm:way/29429936,Vårlistranda,photo_gate,imgs_0_strong_0
+NO,NO083,Østfold,beach,,60,59,osm:way/368654327,Refsnesstranda,photo_gate,imgs_0_strong_0
+NO,NO083,Østfold,beach,,60,59,osm:way/29429938,Sølystranda,photo_gate,imgs_0_strong_0
+NO,NO083,Østfold,beach,,60,59,osm:way/1317850925,Granodden badeplass,photo_gate,imgs_0_strong_0
+NO,NO083,Østfold,beach,,60,59,osm:way/365098560,Kålvika,photo_gate,imgs_0_strong_0
+NO,NO083,Østfold,beach,,60,59,osm:way/669928936,Enhus,photo_gate,imgs_0_strong_0
+NO,NO083,Østfold,beach,,60,59,osm:way/515634731,Foten,photo_gate,imgs_0_strong_0
+NO,NO083,Østfold,beach,,60,59,osm:way/29429944,Sjøbadet,score_gate,score_4.7_below_5.6
+NO,NO083,Østfold,beach,,60,59,osm:node/798881317,Tunevannet,score_gate,score_4.5_below_5.6
+NO,NO0A2,Vestland,beach,,60,59,wd:Q6427382,Kollevågen,photo_gate,imgs_0_strong_0
+NO,NO0A2,Vestland,beach,,60,59,osm:way/158002904,Handelslagsfjøro,photo_gate,imgs_0_strong_0
+NO,NO0A2,Vestland,beach,,60,59,osm:way/700348182,Skjoldabukta,photo_gate,imgs_0_strong_0
+NO,NO0A2,Vestland,beach,,60,59,wd:Q7336022,Rishamn,photo_gate,imgs_1_strong_1
+NO,NO0A2,Vestland,beach,,60,59,osm:way/162891833,Kollevåg badestrand,photo_gate,imgs_0_strong_0
+NO,NO0A2,Vestland,beach,,60,59,osm:way/943914107,Vetvika,score_gate,score_5.5_below_5.6
+NO,NO0A2,Vestland,beach,,60,59,osm:node/2498266802,Lotestranda,score_gate,score_5.3_below_5.6
+NO,NO0A2,Vestland,beach,,60,59,osm:way/587310376,Møhlenpris badeplass,score_gate,score_5.2_below_5.6
+NO,NO0A2,Vestland,beach,,60,59,osm:node/12879566482,Grandeparken,score_gate,score_4.8_below_5.6
+NO,NO071,Nordland/Nordlánnda,beach,,60,59,osm:node/11177633082,Raen,photo_gate,imgs_1_strong_0
+NO,NO071,Nordland/Nordlánnda,beach,,60,59,osm:relation/5597064,Buneset,photo_gate,imgs_1_strong_1
+NO,NO071,Nordland/Nordlánnda,beach,,60,59,osm:relation/5597065,Horseid,photo_gate,imgs_0_strong_0
+NO,NO071,Nordland/Nordlánnda,beach,,60,59,osm:relation/7536398,Geitvågstranda,score_gate,score_4.9_below_5.6
+NO,NO072,Troms/Romsa/Tromssa,beach,,60,59,osm:node/12922349825,Ballesvika,photo_gate,imgs_1_strong_1
+NO,NO072,Troms/Romsa/Tromssa,beach,,60,59,wd:Q33345903,Sørstesanden,photo_gate,imgs_0_strong_0
+NO,NO072,Troms/Romsa/Tromssa,beach,,60,59,wd:Q33326679,Heimstesanden,score_gate,score_5.3_below_5.6
+SE,SE232,Västra Götalands län,beach,,60,59,osm:relation/10605543,Bergsjöbadet,photo_gate,imgs_0_strong_0
+SE,SE232,Västra Götalands län,beach,,60,59,osm:relation/10729121,Härlanda tjärns badplats,photo_gate,imgs_1_strong_1
+SE,SE232,Västra Götalands län,beach,,60,59,osm:node/12211680251,Landvettersjöns badplats,photo_gate,imgs_0_strong_0
+SE,SE232,Västra Götalands län,beach,,60,59,osm:relation/13653681,Ekelund,photo_gate,imgs_0_strong_0
+SE,SE232,Västra Götalands län,beach,,60,59,osm:node/11055531337,Nordkrokens badplats,score_gate,score_5.5_below_5.6
+SE,SE321,Västernorrlands län,beach,,60,59,osm:relation/10239714,Sjöviken,score_gate,score_5.3_below_5.6
+SE,SE213,Kalmar län,beach,,60,59,wd:Q138553112,"Eskilslund Beach, Öland",photo_gate,imgs_1_strong_1
+SE,SE213,Kalmar län,beach,,60,59,osm:way/350121920,Sandviksbadet,photo_gate,imgs_0_strong_0
+SE,SE213,Kalmar län,beach,,60,59,osm:way/167951592,Köpingsviksbadet,photo_gate,imgs_0_strong_0
+SE,SE213,Kalmar län,beach,,60,59,osm:way/315920360,Bjärby strand,score_gate,score_5.5_below_5.6
+FO,FO-FRO,Faroe Islands,beach,,60,59,osm:way/799122836,Leynarsandur,photo_gate,imgs_0_strong_0
+FO,FO-FRO,Faroe Islands,beach,,60,59,osm:way/1083169213,Trogarásandur,photo_gate,imgs_0_strong_0
+FO,FO-FRO,Faroe Islands,beach,,60,59,osm:way/66990272,Gøtusandur,score_gate,score_5.5_below_5.6
+GR,EL653,"Lakonia, Messinia",beach,,60,58,wd:Q25162391,Kalamitsi beach,photo_gate,imgs_0_strong_0
+GR,EL653,"Lakonia, Messinia",beach,,60,58,wd:Q25168390,Pori beach,photo_gate,imgs_1_strong_1
+GR,EL653,"Lakonia, Messinia",beach,,60,58,wd:Q25168376,Zanga Beach,score_gate,score_5.3_below_5.6
+GR,EL653,"Lakonia, Messinia",beach,,60,58,wd:Q107139401,Tsapi Beach of Chrysokellaria,score_gate,score_4.8_below_5.6
+GR,EL653,"Lakonia, Messinia",beach,,60,58,wd:Q25162388,Ritsa beach,score_gate,score_4.8_below_5.6
+GR,EL307,"Peiraias, Nisoi",beach,,60,58,wd:Q53631093,Kapsali,score_gate,score_5.3_below_5.6
+GR,EL307,"Peiraias, Nisoi",beach,,60,58,wd:Q53629277,Ag. Marina,score_gate,score_5.1_below_5.6
+FI,FI1C7,Kymenlaakso,beach,,60,58,osm:way/160941539,Vennanranta,photo_gate,imgs_0_strong_0
+FI,FI1C7,Kymenlaakso,beach,,60,58,osm:way/150319645,Lautaron uimaranta,photo_gate,imgs_0_strong_0
+FI,FI1C7,Kymenlaakso,beach,,60,58,osm:way/150517147,Särkkien uimaranta,photo_gate,imgs_0_strong_0
+FI,FI1C7,Kymenlaakso,beach,,60,58,osm:way/162069038,Jokelan uimaranta,photo_gate,imgs_1_strong_1
+FI,FI1C7,Kymenlaakso,beach,,60,58,osm:way/167174769,Valkealan kirkonkylän uimaranta,photo_gate,imgs_0_strong_0
+FI,FI1C7,Kymenlaakso,beach,,60,58,osm:way/150319736,Käyrälammen uimaranta,photo_gate,imgs_0_strong_0
+HR,HR033,Zadarska županija,beach,,60,58,osm:way/436605123,Plaža Jadro Zapad,score_gate,score_5.0_below_5.6
+HR,HR033,Zadarska županija,beach,,60,58,osm:way/337031128,Pod vruljom,score_gate,score_4.9_below_5.6
+HR,HR033,Zadarska županija,beach,,60,58,osm:way/337031127,Janice,score_gate,score_3.9_below_5.6
+NO,NO0A1,Rogaland,beach,,60,58,osm:relation/18988346,Dørvika,photo_gate,imgs_0_strong_0
+NO,NO0A1,Rogaland,beach,,60,58,osm:way/258832843,Botne strand,photo_gate,imgs_0_strong_0
+PT,PT200,Região Autónoma dos Açores,beach,,60,58,wd:Q1454473,Praia da Vinha da Areia,country_cap,rank_158
+TR,TR222,Çanakkale,beach,,58,58,,,,
+SE,SE221,Blekinge län,beach,,60,58,osm:way/201174328,Sandviken Badplats,photo_gate,imgs_0_strong_0
+SE,SE221,Blekinge län,beach,,60,58,osm:way/186723958,Skönstavik Badplats,photo_gate,imgs_0_strong_0
+SE,SE221,Blekinge län,beach,,60,58,osm:way/231817624,Rågångsnabben,photo_gate,imgs_0_strong_0
+SE,SE221,Blekinge län,beach,,60,58,osm:relation/11632013,Grönadals Strand,score_gate,score_5.1_below_5.6
+GR,EL411,"Lesvos, Limnos",beach,,57,57,wd:Q53632974,Nyfida,score_gate,score_5.3_below_5.6
+FI,FI1D9,Pohjois-Pohjanmaa,beach,,60,57,osm:way/1006856400,Hietamaan uimaranta,photo_gate,imgs_0_strong_0
+FI,FI1D9,Pohjois-Pohjanmaa,beach,,60,57,osm:relation/11096974,Valkiaisjärvi Beach,photo_gate,imgs_0_strong_0
+FI,FI1D9,Pohjois-Pohjanmaa,beach,,60,57,wd:Q24349602,Sarkkiranta,photo_gate,imgs_0_strong_0
+FI,FI1D9,Pohjois-Pohjanmaa,beach,,60,57,wd:Q24349728,Munahiedanranta,photo_gate,imgs_0_strong_0
+FI,FI1D9,Pohjois-Pohjanmaa,beach,,60,57,osm:relation/16871833,Parkkisenkankaan epävirallinen uimaranta,photo_gate,imgs_1_strong_0
+FI,FI1D9,Pohjois-Pohjanmaa,beach,,60,57,osm:node/2321805667,Jäälin monttu,photo_gate,imgs_0_strong_0
+FI,FI1D9,Pohjois-Pohjanmaa,beach,,60,57,osm:relation/11049255,Rantakylän uimapaikka,photo_gate,imgs_0_strong_0
+FI,FI1D9,Pohjois-Pohjanmaa,beach,,60,57,osm:way/87344654,Kiikelin uimaranta,score_gate,score_5.2_below_5.6
+FI,FI1D9,Pohjois-Pohjanmaa,beach,,60,57,wd:Q138837368,Tuira swimming beach,score_gate,score_5.0_below_5.6
+DK,DK022,Vest- og Sydsjælland,beach,,60,56,osm:way/304376807,Skelby,photo_gate,imgs_0_strong_0
+DK,DK022,Vest- og Sydsjælland,beach,,60,56,osm:way/855102811,Kramnitze Strand,photo_gate,imgs_1_strong_0
+DK,DK022,Vest- og Sydsjælland,beach,,60,56,osm:way/1143778588,Ulvshale Strand,photo_gate,imgs_0_strong_0
+DK,DK022,Vest- og Sydsjælland,beach,,60,56,wd:Q23750435,Bildsøstrand,photo_gate,imgs_1_strong_1
+DK,DK022,Vest- og Sydsjælland,beach,,60,56,osm:way/173299989,Gudmindrup Strand,photo_gate,imgs_1_strong_1
+DK,DK022,Vest- og Sydsjælland,beach,,60,56,wd:Q12303619,Bisserup Beach,photo_gate,imgs_0_strong_0
+DK,DK022,Vest- og Sydsjælland,beach,,60,56,osm:way/1141219405,Mullerup Strand,photo_gate,imgs_0_strong_0
+DK,DK022,Vest- og Sydsjælland,beach,,60,56,osm:way/1254274979,Ceresstranden,photo_gate,imgs_0_strong_0
+DK,DK022,Vest- og Sydsjælland,beach,,60,56,wd:Q23754184,Bjerge Nordstrand,photo_gate,imgs_0_strong_0
+DK,DK022,Vest- og Sydsjælland,beach,,60,56,osm:way/264342001,Frederikskilde Strand,photo_gate,imgs_0_strong_0
+DK,DK022,Vest- og Sydsjælland,beach,,60,56,wd:Q23752186,Gisseløre Sand,photo_gate,imgs_0_strong_0
+DK,DK022,Vest- og Sydsjælland,beach,,60,56,osm:way/173299442,Kisserup Strand,photo_gate,imgs_0_strong_0
+DK,DK022,Vest- og Sydsjælland,beach,,60,56,osm:way/173307260,Tengslemark Strand,photo_gate,imgs_0_strong_0
+DK,DK022,Vest- og Sydsjælland,beach,,60,56,osm:way/173307524,Lumsaas Sønderstrand,photo_gate,imgs_0_strong_0
+DK,DK022,Vest- og Sydsjælland,beach,,60,56,wd:Q23754176,Hestehovedet,score_gate,score_5.2_below_5.6
+DK,DK022,Vest- og Sydsjælland,beach,,60,56,osm:way/30603908,Enø Strand,score_gate,score_5.1_below_5.6
+DK,DK022,Vest- og Sydsjælland,beach,,60,56,osm:way/341801348,Hårbølle Strand,score_gate,score_5.1_below_5.6
+DK,DK022,Vest- og Sydsjælland,beach,,60,56,osm:way/172664772,Vemmetofte Strand,score_gate,score_4.8_below_5.6
+DK,DK022,Vest- og Sydsjælland,beach,,60,56,osm:way/629047833,Glumsø Badestrand,score_gate,score_4.5_below_5.6
+HR,HR034,Šibensko-kninska županija,beach,,60,56,osm:way/610041946,Vortex Beach Bar,score_gate,score_5.4_below_5.6
+HR,HR034,Šibensko-kninska županija,beach,,60,56,wd:Q97446135,Blue Beach,score_gate,score_5.3_below_5.6
+GR,EL613,"Magnisia, Sporades",beach,,60,55,wd:Q53632924,Anavros beach,photo_gate,imgs_1_strong_1
+GR,EL613,"Magnisia, Sporades",beach,,60,55,wd:Q16328682,Paltsi,photo_gate,imgs_0_strong_0
+GR,EL613,"Magnisia, Sporades",beach,,60,55,wd:Q25535481,Καστάνι,photo_gate,imgs_0_strong_0
+GR,EL613,"Magnisia, Sporades",beach,,60,55,wd:Q4693276,Agnontas,photo_gate,imgs_1_strong_1
+GR,EL613,"Magnisia, Sporades",beach,,60,55,wd:Q25164288,Paralia Vromolimnos,photo_gate,imgs_0_strong_0
+GR,EL613,"Magnisia, Sporades",beach,,60,55,wd:Q25162336,Papa Nero Beach,score_gate,score_5.4_below_5.6
+GR,EL613,"Magnisia, Sporades",beach,,60,55,wd:Q25162365,Chorefto Beach,score_gate,score_5.2_below_5.6
+GR,EL613,"Magnisia, Sporades",beach,,60,55,wd:Q25162331,Plaka Beach,score_gate,score_4.7_below_5.6
+GB,TLM20,Highlands and Islands,beach,,60,55,wd:Q6474114,Lairo Water,photo_gate,imgs_0_strong_0
+SE,SE214,Gotlands län,beach,,60,54,wd:Q66132387,"Las Palmas, Gotska sandön",photo_gate,imgs_1_strong_1
+SE,SE214,Gotlands län,beach,,60,54,wd:Q106687430,Ardrestranden,photo_gate,imgs_0_strong_0
+SE,SE214,Gotlands län,beach,,60,54,osm:way/436131422,Nordersand,photo_gate,imgs_0_strong_0
+SE,SE214,Gotlands län,beach,,60,54,osm:way/292514531,Gnisvärds strand,photo_gate,imgs_0_strong_0
+SE,SE214,Gotlands län,beach,,60,54,osm:way/708078874,Sandvikens Strand,photo_gate,imgs_0_strong_0
+SE,SE214,Gotlands län,beach,,60,54,osm:way/1081103331,Vitvikens Strand,score_gate,score_5.3_below_5.6
+ES,ES111,A Coruña,beach,,60,53,,,,
+HR,HR031,Primorsko-goranska županija,beach,,60,53,osm:way/24872295,Bunculuka,photo_gate,imgs_1_strong_1
+HR,HR031,Primorsko-goranska županija,beach,,60,53,osm:way/220301222,Drenova beach,photo_gate,imgs_3_strong_0
+HR,HR031,Primorsko-goranska županija,beach,,60,53,osm:way/220301223,Rajla,photo_gate,imgs_2_strong_0
+HR,HR031,Primorsko-goranska županija,beach,,60,53,osm:way/161979978,Bok,photo_gate,imgs_0_strong_0
+HR,HR031,Primorsko-goranska županija,beach,,60,53,osm:way/229296083,Spjaža,score_gate,score_5.5_below_5.6
+HR,HR031,Primorsko-goranska županija,beach,,60,53,osm:way/87333081,Oprna,score_gate,score_5.5_below_5.6
+HR,HR031,Primorsko-goranska županija,beach,,60,53,osm:way/977917277,Krajska Lučica,score_gate,score_5.3_below_5.6
+HR,HR031,Primorsko-goranska županija,beach,,60,53,osm:way/285483171,Politin,score_gate,score_5.3_below_5.6
+HR,HR031,Primorsko-goranska županija,beach,,60,53,wd:Q31856612,Slatina Beach,score_gate,score_5.2_below_5.6
+HR,HR031,Primorsko-goranska županija,beach,,60,53,osm:way/117000156,Macel,score_gate,score_4.6_below_5.6
+HR,HR031,Primorsko-goranska županija,beach,,60,53,osm:node/7651575620,Radenci - Mlin,score_gate,score_5.5_below_5.6
+FR,FRL04,Bouches-du-Rhône,beach,,60,53,wd:Q65131265,Calanque de la Melette,photo_gate,imgs_1_strong_1
+NO,NO092,Agder,beach,,60,53,osm:way/585758300,Åmlandsstranda,photo_gate,imgs_0_strong_0
+NO,NO092,Agder,beach,,60,53,osm:way/19191266,Lundesanden,photo_gate,imgs_0_strong_0
+NO,NO092,Agder,beach,,60,53,osm:way/391080392,Grefstadviga,photo_gate,imgs_0_strong_0
+NO,NO092,Agder,beach,,60,53,osm:way/649268236,EB-Stranda - Tangen strand,photo_gate,imgs_0_strong_0
+NO,NO092,Agder,beach,,60,53,osm:node/12726152506,Osbu beach,photo_gate,imgs_0_strong_0
+NO,NO092,Agder,beach,,60,53,osm:way/391080396,Fugleviga,photo_gate,imgs_0_strong_0
+NO,NO092,Agder,beach,,60,53,osm:way/391080406,Morvigsanden,photo_gate,imgs_0_strong_0
+NO,NO092,Agder,beach,,60,53,osm:way/391080394,Moysanden,score_gate,score_5.5_below_5.6
+NO,NO092,Agder,beach,,60,53,osm:node/6006683044,Solstrand,score_gate,score_5.2_below_5.6
+NO,NO092,Agder,beach,,60,53,osm:way/294896492,Osevollen badeplass,score_gate,score_5.0_below_5.6
+NO,NO092,Agder,beach,,60,53,osm:way/547873461,Bystranda,score_gate,score_5.0_below_5.6
+NO,NO092,Agder,beach,,60,53,osm:way/369739581,Bystranda,score_gate,score_4.4_below_5.6
+TR,TR611,Antalya,beach,,53,53,,,,
+UA,UA-74538382B38253727574875,Novoazovsk,beach,,53,53,,,,
+DE,DE80L,Vorpommern-Rügen,beach,,60,52,wd:Q1388707,Schmale Heide,photo_gate,imgs_0_strong_0
+DE,DE80L,Vorpommern-Rügen,beach,,60,52,wd:Q15785306,Bakenberg,photo_gate,imgs_0_strong_0
+DE,DE80L,Vorpommern-Rügen,beach,,60,52,wd:Q33326586,Großer Strand,photo_gate,imgs_0_strong_0
+GR,EL631,Aitoloakarnania,beach,,52,52,wd:Q25159885,Asprogiali,photo_gate,imgs_0_strong_0
+GR,EL631,Aitoloakarnania,beach,,52,52,wd:Q12731735,Kryoneri,photo_gate,imgs_1_strong_1
+GR,EL631,Aitoloakarnania,beach,,52,52,wd:Q110425525,Gribovo,score_gate,score_3.8_below_5.6
+DK,DK050,Nordjylland,beach,,60,52,wd:Q107118110,"Skagen Syd, V, Damstedvej",photo_gate,imgs_1_strong_1
+DK,DK050,Nordjylland,beach,,60,52,wd:Q23754167,Novo Public beach,photo_gate,imgs_0_strong_0
+DK,DK050,Nordjylland,beach,,60,52,wd:Q17489403,Hals strand,photo_gate,imgs_1_strong_1
+DK,DK050,Nordjylland,beach,,60,52,wd:Q23754163,Mulbjerg public beach,photo_gate,imgs_0_strong_0
+DK,DK050,Nordjylland,beach,,60,52,wd:Q107172399,Lyngby Strand,photo_gate,imgs_1_strong_1
+DK,DK050,Nordjylland,beach,,60,52,wd:Q107117888,"Skagen Søndre Strand, V.vippefyr",photo_gate,imgs_1_strong_1
+DK,DK050,Nordjylland,beach,,60,52,wd:Q23754165,Toft public beach,photo_gate,imgs_0_strong_0
+DK,DK050,Nordjylland,beach,,60,52,wd:Q23754160,Toftskov public beach,photo_gate,imgs_0_strong_0
+DK,DK050,Nordjylland,beach,,60,52,wd:Q136689360,Danzigmand,photo_gate,imgs_0_strong_0
+DK,DK050,Nordjylland,beach,,60,52,wd:Q23754158,Øster Hurup Strand,score_gate,score_5.5_below_5.6
+DK,DK050,Nordjylland,beach,,60,52,osm:node/13811547973,Hesteskoen,score_gate,score_5.4_below_5.6
+IE,IE042,West,beach,,60,52,osm:way/816242815,Mags Boreen,photo_gate,imgs_2_strong_0
+IE,IE042,West,beach,,60,52,wd:Q56290076,Uggool Beach,photo_gate,imgs_0_strong_0
+IE,IE042,West,beach,,60,52,wd:Q26718955,Barnynagappul Strand,photo_gate,imgs_0_strong_0
+IE,IE042,West,beach,,60,52,osm:relation/3582944,An Trá Mhór,photo_gate,imgs_0_strong_0
+IE,IE042,West,beach,,60,52,osm:way/162430159,Ballyloughane Beach,photo_gate,imgs_1_strong_1
+IE,IE042,West,beach,,60,52,osm:way/203887975,Trá na Tismeáine,photo_gate,imgs_0_strong_0
+IE,IE042,West,beach,,60,52,osm:way/165341458,Furbo Beach,photo_gate,imgs_3_strong_0
+IE,IE042,West,beach,,60,52,osm:way/173129105,Gorteen Beach,score_gate,score_5.3_below_5.6
+TR,TR905,Artvin,beach,,52,52,,,,
+GR,EL527,Chalkidiki,beach,,53,51,wd:Q25162324,Polychrono Beach,score_gate,score_4.6_below_5.6
+EE,EE004,Lääne-Eesti,beach,,60,51,osm:way/1106533746,Seljametsa beach,photo_gate,imgs_1_strong_1
+EE,EE004,Lääne-Eesti,beach,,60,51,osm:way/706170757,Puise beach,photo_gate,imgs_1_strong_1
+EE,EE004,Lääne-Eesti,beach,,60,51,osm:way/1074581694,Ermistu puhkeküla beach,photo_gate,imgs_0_strong_0
+EE,EE004,Lääne-Eesti,beach,,60,51,osm:way/837246397,Luidja beach,photo_gate,imgs_1_strong_1
+EE,EE004,Lääne-Eesti,beach,,60,51,osm:node/7801647974,Kaleste rand,photo_gate,imgs_0_strong_0
+EE,EE004,Lääne-Eesti,beach,,60,51,wd:Q113145689,Kassari beach,photo_gate,imgs_0_strong_0
+EE,EE004,Lääne-Eesti,beach,,60,51,osm:way/69162906,Pallasmaa beach,photo_gate,imgs_0_strong_0
+EE,EE004,Lääne-Eesti,beach,,60,51,osm:way/1150264544,Liivalauka beach,photo_gate,imgs_0_strong_0
+EE,EE004,Lääne-Eesti,beach,,60,51,osm:way/649659468,Metskonna Beach,photo_gate,imgs_0_strong_0
+EE,EE004,Lääne-Eesti,beach,,60,51,osm:way/1184941880,Paope beach,photo_gate,imgs_0_strong_0
+EE,EE004,Lääne-Eesti,beach,,60,51,osm:way/45531447,Matsi rand,photo_gate,imgs_0_strong_0
+EE,EE004,Lääne-Eesti,beach,,60,51,osm:way/511674961,Vasikaholm beach,score_gate,score_5.5_below_5.6
+EE,EE004,Lääne-Eesti,beach,,60,51,osm:relation/4256178,Valgerand,score_gate,score_5.5_below_5.6
+EE,EE004,Lääne-Eesti,beach,,60,51,wd:Q31275507,Vana-Pärnu rand,score_gate,score_5.5_below_5.6
+EE,EE004,Lääne-Eesti,beach,,60,51,osm:way/1172585588,Pärnu Veteran park beach,score_gate,score_5.5_below_5.6
+EE,EE004,Lääne-Eesti,beach,,60,51,osm:way/443042622,Roosta Beach,score_gate,score_5.4_below_5.6
+EE,EE004,Lääne-Eesti,beach,,60,51,osm:way/507951893,Mändjala Beach,score_gate,score_5.2_below_5.6
+EE,EE004,Lääne-Eesti,beach,,60,51,wd:Q133515082,Parnu ladies beach,score_gate,score_5.1_below_5.6
+EE,EE004,Lääne-Eesti,beach,,60,51,wd:Q21694719,Pärnu Beach,score_gate,score_4.8_below_5.6
+EE,EE004,Lääne-Eesti,beach,,60,51,osm:way/957798997,Kärdla police beach,score_gate,score_4.2_below_5.6
+DK,DK032,Sydjylland,beach,,60,51,osm:way/1408415556,Avbæk Strand,photo_gate,imgs_1_strong_1
+DK,DK032,Sydjylland,beach,,60,51,wd:Q23753425,Flovt Strand,photo_gate,imgs_0_strong_0
+DK,DK032,Sydjylland,beach,,60,51,osm:way/103943569,Hvidbjerg strand,photo_gate,imgs_1_strong_0
+DK,DK032,Sydjylland,beach,,60,51,wd:Q20202455,Houstrup Strand,photo_gate,imgs_1_strong_0
+DK,DK032,Sydjylland,beach,,60,51,wd:Q23747694,Grærup Strand,photo_gate,imgs_0_strong_0
+DK,DK032,Sydjylland,beach,,60,51,wd:Q23747361,Havsand,photo_gate,imgs_1_strong_1
+DK,DK032,Sydjylland,beach,,60,51,osm:way/286314799,Halk Strand,photo_gate,imgs_0_strong_0
+DK,DK032,Sydjylland,beach,,60,51,wd:Q23753282,Rindby Strand,photo_gate,imgs_0_strong_0
+DK,DK032,Sydjylland,beach,,60,51,osm:way/103941265,Høll strand,photo_gate,imgs_0_strong_0
+DK,DK032,Sydjylland,beach,,60,51,osm:way/1138871938,Houstrup Strand,photo_gate,imgs_0_strong_0
+DK,DK032,Sydjylland,beach,,60,51,osm:way/237070208,Knud Strand,photo_gate,imgs_0_strong_0
+DK,DK032,Sydjylland,beach,,60,51,osm:relation/7187432,Sandersvig,photo_gate,imgs_0_strong_0
+DK,DK032,Sydjylland,beach,,60,51,wd:Q12304896,Børsmose Strand,score_gate,score_5.4_below_5.6
+DK,DK032,Sydjylland,beach,,60,51,wd:Q113549770,Aabenraa Strand,score_gate,score_5.1_below_5.6
+FR,FRD12,Manche ,beach,,53,51,wd:Q3390871,Plage de la Vieille église,score_gate,score_5.1_below_5.6
+IE,IE041,Border,beach,,60,51,osm:relation/4255261,Fintra Beach,photo_gate,imgs_0_strong_0
+IE,IE041,Border,beach,,60,51,wd:Q15212166,Culleenamore Strand,photo_gate,imgs_1_strong_1
+IE,IE041,Border,beach,,60,51,wd:Q26717877,Yellow Strand,photo_gate,imgs_0_strong_0
+IE,IE041,Border,beach,,60,51,osm:way/87255228,Enniscrone Beach,photo_gate,imgs_1_strong_1
+IE,IE041,Border,beach,,60,51,osm:node/9126911109,Murvagh Beach,photo_gate,imgs_0_strong_0
+IE,IE041,Border,beach,,60,51,osm:way/203805140,Marble Hill Strand,photo_gate,imgs_0_strong_0
+IE,IE041,Border,beach,,60,51,osm:way/207626696,Sweet Nellie's,photo_gate,imgs_0_strong_0
+IE,IE041,Border,beach,,60,51,osm:way/207626697,White Strand,photo_gate,imgs_0_strong_0
+IE,IE041,Border,beach,,60,51,osm:relation/6928064,Braade Strand,photo_gate,imgs_0_strong_0
+IE,IE041,Border,beach,,60,51,osm:relation/6950989,Drumnatinney Beach,photo_gate,imgs_0_strong_0
+IE,IE041,Border,beach,,60,51,wd:Q26717878,Ardtermon Strand,score_gate,score_5.3_below_5.6
+IE,IE041,Border,beach,,60,51,osm:node/12118369929,Tra Mór,score_gate,score_5.3_below_5.6
+IS,IS002,Landsbyggð,beach,,60,50,osm:relation/14455130,Gjábakkafjara,photo_gate,imgs_1_strong_0
+IS,IS002,Landsbyggð,beach,,60,50,wd:Q16419944,Langisandur,photo_gate,imgs_0_strong_0
+IS,IS002,Landsbyggð,beach,,60,50,wd:Q27000065,Sólheimafjara,photo_gate,imgs_0_strong_0
+IS,IS002,Landsbyggð,beach,,60,50,wd:Q27016400,Skógarströnd,photo_gate,imgs_0_strong_0
+IS,IS002,Landsbyggð,beach,,60,50,wd:Q135067752,Minnibakki beach,score_gate,score_5.5_below_5.6
+IS,IS002,Landsbyggð,beach,,60,50,wd:Q26999584,Svínafellsfjara,score_gate,score_5.4_below_5.6
+IS,IS002,Landsbyggð,beach,,60,50,wd:Q27000506,Skaftafellsfjara,score_gate,score_5.4_below_5.6
+IS,IS002,Landsbyggð,beach,,60,50,wd:Q26996912,Vopnafjarðarströnd,score_gate,score_5.4_below_5.6
+IS,IS002,Landsbyggð,beach,,60,50,wd:Q27001378,Rifsmalir,score_gate,score_5.4_below_5.6
+IS,IS002,Landsbyggð,beach,,60,50,wd:Q27005084,Hvalfjara,score_gate,score_5.4_below_5.6
+IS,IS002,Landsbyggð,beach,,60,50,osm:relation/12182692,Dyrhólafjara,score_gate,score_5.0_below_5.6
+IS,IS002,Landsbyggð,beach,,60,50,osm:relation/9397496,Landeyjasandur,score_gate,score_5.0_below_5.6
+IS,IS002,Landsbyggð,beach,,60,50,osm:relation/13563181,Vestri-Fellsfjara,score_gate,score_5.0_below_5.6
+IS,IS002,Landsbyggð,beach,,60,50,wd:Q27011173,Sveinseyri,score_gate,score_4.8_below_5.6
+IS,IS002,Landsbyggð,beach,,60,50,osm:node/7119519062,Thorli beach,score_gate,score_4.8_below_5.6
+IS,IS002,Landsbyggð,beach,,60,50,osm:way/37921526,Víkin,score_gate,score_4.8_below_5.6
+IS,IS002,Landsbyggð,beach,,60,50,osm:way/148985504,Brúnavík,score_gate,score_4.7_below_5.6
+IS,IS002,Landsbyggð,beach,,60,50,osm:way/1374687539,Stafsnes,score_gate,score_4.7_below_5.6
+IE,IE053,South-West ,beach,,60,50,wd:Q4461740,Tragumna,photo_gate,imgs_0_strong_0
+IE,IE053,South-West ,beach,,60,50,wd:Q15264841,Owenahincha,photo_gate,imgs_1_strong_0
+IE,IE053,South-West ,beach,,60,50,osm:way/256859659,The Long Strand,photo_gate,imgs_0_strong_0
+IE,IE053,South-West ,beach,,60,50,osm:way/983603155,An Cúl Tráigh,photo_gate,imgs_0_strong_0
+IE,IE053,South-West ,beach,,60,50,osm:way/165985941,White Strand,photo_gate,imgs_1_strong_1
+IE,IE053,South-West ,beach,,60,50,osm:way/1002791361,Stony Beach,photo_gate,imgs_0_strong_0
+IE,IE053,South-West ,beach,,60,50,osm:way/979142775,Trá na Bó,photo_gate,imgs_0_strong_0
+IE,IE053,South-West ,beach,,60,50,osm:way/175567926,Tralispean,photo_gate,imgs_0_strong_0
+IE,IE053,South-West ,beach,,60,50,wd:Q105612820,Inny Strand,photo_gate,imgs_0_strong_0
+IE,IE053,South-West ,beach,,60,50,osm:node/9497480163,Trá Phraisce,photo_gate,imgs_1_strong_0
+IE,IE053,South-West ,beach,,60,50,osm:way/320560459,Emlagh Strand,photo_gate,imgs_1_strong_0
+IE,IE053,South-West ,beach,,60,50,osm:way/330908387,Back strand,photo_gate,imgs_0_strong_0
+IE,IE053,South-West ,beach,,60,50,osm:way/431190156,Reenrow Beach,photo_gate,imgs_0_strong_0
+IE,IE053,South-West ,beach,,60,50,osm:way/256859658,Little Island Strand,photo_gate,imgs_0_strong_0
+IE,IE053,South-West ,beach,,60,50,osm:relation/5957120,Barley Cove,score_gate,score_5.5_below_5.6
+IE,IE053,South-West ,beach,,60,50,osm:way/980846003,An Geocán,score_gate,score_5.3_below_5.6
+IE,IE053,South-West ,beach,,60,50,osm:node/6055376430,Kilcolman Strand,score_gate,score_5.3_below_5.6
+IE,IE053,South-West ,beach,,60,50,osm:node/9497548957,Trá na h Úine,score_gate,score_5.3_below_5.6
+IE,IE053,South-West ,beach,,60,50,osm:node/9497533103,Trá an Ghleanntáin,score_gate,score_5.2_below_5.6
+DK,DK042,Østjylland,beach,,58,49,osm:way/1244675521,Vibæk Strand,photo_gate,imgs_0_strong_0
+DK,DK042,Østjylland,beach,,58,49,osm:way/1244696208,Fuglsø Strand,photo_gate,imgs_0_strong_0
+DK,DK042,Østjylland,beach,,58,49,osm:way/588193475,Strandkær Strand,photo_gate,imgs_0_strong_0
+DK,DK042,Østjylland,beach,,58,49,osm:way/88281611,Aggerholm,photo_gate,imgs_0_strong_0
+DK,DK042,Østjylland,beach,,58,49,osm:way/88281544,Vestre Søbad,photo_gate,imgs_0_strong_0
+DK,DK042,Østjylland,beach,,58,49,osm:way/232022620,Bogens Strand,photo_gate,imgs_0_strong_0
+DK,DK042,Østjylland,beach,,58,49,wd:Q107117858,Tålfor Strand,score_gate,score_5.4_below_5.6
+DK,DK042,Østjylland,beach,,58,49,osm:way/60931068,Knudhule,score_gate,score_5.3_below_5.6
+DK,DK042,Østjylland,beach,,58,49,osm:way/909621061,Udbyhøj Strand,score_gate,score_5.1_below_5.6
+FI,FI1B1,Helsinki-Uusimaa,beach,,60,49,osm:way/37117790,Laajasalon uimaranta,photo_gate,imgs_2_strong_0
+FI,FI1B1,Helsinki-Uusimaa,beach,,60,49,osm:relation/17867985,Palettilampi beach,photo_gate,imgs_0_strong_0
+FI,FI1B1,Helsinki-Uusimaa,beach,,60,49,osm:way/44047200,Laaksolahden uimaranta,photo_gate,imgs_1_strong_0
+FI,FI1B1,Helsinki-Uusimaa,beach,,60,49,osm:relation/14720968,Kasinonranta,photo_gate,imgs_1_strong_0
+FI,FI1B1,Helsinki-Uusimaa,beach,,60,49,osm:node/1167724114,Oittaan koirauimaranta,photo_gate,imgs_0_strong_0
+FI,FI1B1,Helsinki-Uusimaa,beach,,60,49,osm:way/1103673727,Liessaaren uimaranta,photo_gate,imgs_0_strong_0
+FI,FI1B1,Helsinki-Uusimaa,beach,,60,49,osm:way/33360539,Aurinkolahden uimaranta,photo_gate,imgs_4_strong_0
+FI,FI1B1,Helsinki-Uusimaa,beach,,60,49,osm:way/362033651,Usmin uimaranta,photo_gate,imgs_1_strong_0
+FI,FI1B1,Helsinki-Uusimaa,beach,,60,49,osm:way/478558114,Otalammen uimaranta,photo_gate,imgs_0_strong_0
+FI,FI1B1,Helsinki-Uusimaa,beach,,60,49,osm:way/413940781,Luukin uimaranta,photo_gate,imgs_0_strong_0
+FI,FI1B1,Helsinki-Uusimaa,beach,,60,49,osm:way/26371617,Hanikan uimaranta,photo_gate,imgs_0_strong_0
+FI,FI1B1,Helsinki-Uusimaa,beach,,60,49,osm:relation/2397188,Vetokannaksen uimaranta,photo_gate,imgs_0_strong_0
+FI,FI1B1,Helsinki-Uusimaa,beach,,60,49,osm:way/27373430,Lippajärven uimaranta,photo_gate,imgs_0_strong_0
+FI,FI1B1,Helsinki-Uusimaa,beach,,60,49,osm:way/1105249079,Nälköönlammen uimaranta,photo_gate,imgs_0_strong_0
+FI,FI1B1,Helsinki-Uusimaa,beach,,60,49,osm:way/1096376775,Tervanokan uimaranta,photo_gate,imgs_1_strong_0
+FI,FI1B1,Helsinki-Uusimaa,beach,,60,49,osm:way/115222071,Laurinlahden uimaranta,photo_gate,imgs_0_strong_0
+FI,FI1B1,Helsinki-Uusimaa,beach,,60,49,osm:way/1068654509,Pyhäjärven Vattolan uimaranta,photo_gate,imgs_0_strong_0
+FI,FI1B1,Helsinki-Uusimaa,beach,,60,49,osm:way/499669312,Myllylammen uimaranta,photo_gate,imgs_0_strong_0
+FI,FI1B1,Helsinki-Uusimaa,beach,,60,49,osm:node/1167723540,Vanhankylänniemen uimaranta,photo_gate,imgs_0_strong_0
+FI,FI1B1,Helsinki-Uusimaa,beach,,60,49,osm:way/33524556,Vilniemen uimaranta,photo_gate,imgs_0_strong_0
+FI,FI1B1,Helsinki-Uusimaa,beach,,60,49,osm:node/2254966749,Koirien uimapaikka Vetokannas,photo_gate,imgs_0_strong_0
+FI,FI1B1,Helsinki-Uusimaa,beach,,60,49,osm:way/514350838,Aurlahden uimaranta,photo_gate,imgs_0_strong_0
+FI,FI1B1,Helsinki-Uusimaa,beach,,60,49,osm:way/25810153,Matarinpuiston uimaranta,photo_gate,imgs_0_strong_0
+FI,FI1B1,Helsinki-Uusimaa,beach,,60,49,osm:way/25810154,Tapionranta,photo_gate,imgs_0_strong_0
+FI,FI1B1,Helsinki-Uusimaa,beach,,60,49,osm:way/257201316,Rusutjärven uimaranta,photo_gate,imgs_0_strong_0
+FI,FI1B1,Helsinki-Uusimaa,beach,,60,49,osm:way/996480474,Lasitehdas beach,photo_gate,imgs_0_strong_0
+FI,FI1B1,Helsinki-Uusimaa,beach,,60,49,osm:way/26405568,Westendin uimaranta,photo_gate,imgs_0_strong_0
+FI,FI1B1,Helsinki-Uusimaa,beach,,60,49,osm:way/195271204,Tulliniemen eteläinen uimaranta,photo_gate,imgs_0_strong_0
+FI,FI1B1,Helsinki-Uusimaa,beach,,60,49,osm:way/34420676,Tampajan uimaranta,photo_gate,imgs_0_strong_0
+FI,FI1B1,Helsinki-Uusimaa,beach,,60,49,wd:Q24364868,Otaranta,photo_gate,imgs_0_strong_0
+FI,FI1B1,Helsinki-Uusimaa,beach,,60,49,osm:way/291743551,Saaren uimaranta,photo_gate,imgs_0_strong_0
+FI,FI1B1,Helsinki-Uusimaa,beach,,60,49,osm:node/4728614890,Lappohjan uimaranta,score_gate,score_4.4_below_5.6
+FR,FRH04,Morbihan,beach,,60,49,wd:Q120212371,plage du Poudrantais,photo_gate,imgs_1_strong_1
+FR,FRH04,Morbihan,beach,,60,49,wd:Q123258140,plage du Goret de l’Île aux Moines,photo_gate,imgs_1_strong_1
+FR,FRH04,Morbihan,beach,,60,49,wd:Q115137082,Plage de Kerminihy,photo_gate,imgs_1_strong_1
+FR,FRH02,Finistère,beach,,60,49,wd:Q49322682,plage de Sainte Anne,photo_gate,imgs_1_strong_1
+TR,TR221,Balıkesir,beach,,48,48,,,,
+EE,EE00A,Kirde-Eesti,beach,,49,47,wd:Q18626754,Utria savikallas,photo_gate,imgs_0_strong_0
+EE,EE00A,Kirde-Eesti,beach,,49,47,osm:way/35379993,Joaoru rand,photo_gate,imgs_0_strong_0
+EE,EE00A,Kirde-Eesti,beach,,49,47,wd:Q14948300,Aa Beach,photo_gate,imgs_1_strong_1
+HR,HR037,Dubrovačko-neretvanska županija,beach,,60,47,osm:way/1420433151,Natutist / FKK Beach,photo_gate,imgs_0_strong_0
+HR,HR037,Dubrovačko-neretvanska županija,beach,,60,47,wd:Q97445872,Vela Pržina,photo_gate,imgs_0_strong_0
+HR,HR037,Dubrovačko-neretvanska županija,beach,,60,47,osm:way/234554370,Blaca,photo_gate,imgs_0_strong_0
+HR,HR037,Dubrovačko-neretvanska županija,beach,,60,47,wd:Q16111067,Srebreno Beach,score_gate,score_5.5_below_5.6
+HR,HR037,Dubrovačko-neretvanska županija,beach,,60,47,osm:way/199784489,Plaža Medvinjak,score_gate,score_5.5_below_5.6
+HR,HR037,Dubrovačko-neretvanska županija,beach,,60,47,wd:Q16115003,Ingalo Beach,score_gate,score_5.3_below_5.6
+HR,HR037,Dubrovačko-neretvanska županija,beach,,60,47,osm:way/1198022406,secret beach,score_gate,score_5.3_below_5.6
+HR,HR037,Dubrovačko-neretvanska županija,beach,,60,47,osm:way/199964756,Plaža Žrnovska banja,score_gate,score_5.2_below_5.6
+HR,HR037,Dubrovačko-neretvanska županija,beach,,60,47,wd:Q12639832,Mlini Beach,score_gate,score_5.1_below_5.6
+HR,HR037,Dubrovačko-neretvanska županija,beach,,60,47,wd:Q16111055,Astarea Beach,score_gate,score_5.0_below_5.6
+HR,HR037,Dubrovačko-neretvanska županija,beach,,60,47,osm:way/238361036,Tri žala,score_gate,score_5.0_below_5.6
+HR,HR037,Dubrovačko-neretvanska županija,beach,,60,47,osm:way/199965701,Plaža Dom sam.,score_gate,score_4.9_below_5.6
+HR,HR037,Dubrovačko-neretvanska županija,beach,,60,47,osm:way/301637430,Paljevina,score_gate,score_4.7_below_5.6
+HR,HR037,Dubrovačko-neretvanska županija,beach,,60,47,osm:way/195657433,Aminess Vival Port9 beach,score_gate,score_4.3_below_5.6
+NO,NO094,Telemark,beach,,47,47,osm:way/435222551,Hydrostranda,photo_gate,imgs_1_strong_1
+NO,NO094,Telemark,beach,,47,47,wd:Q33325595,Bjørnehistranda,photo_gate,imgs_0_strong_0
+NO,NO094,Telemark,beach,,47,47,wd:Q33346474,Vinjestranda,photo_gate,imgs_0_strong_0
+NO,NO094,Telemark,beach,,47,47,wd:Q33326876,Kleivstrand,photo_gate,imgs_0_strong_0
+NO,NO094,Telemark,beach,,47,47,osm:way/113514770,Bakkestranda,photo_gate,imgs_1_strong_1
+HR,HR035,Splitsko-dalmatinska županija,beach,,60,46,wd:Q135238795,Cvitačka Beach,photo_gate,imgs_1_strong_1
+HR,HR035,Splitsko-dalmatinska županija,beach,,60,46,osm:node/2460993667,FKK,photo_gate,imgs_0_strong_0
+HR,HR035,Splitsko-dalmatinska županija,beach,,60,46,osm:way/42438398,Plaža Ramova,photo_gate,imgs_0_strong_0
+HR,HR035,Splitsko-dalmatinska županija,beach,,60,46,wd:Q130272298,Lučice Beach,photo_gate,imgs_1_strong_1
+HR,HR035,Splitsko-dalmatinska županija,beach,,60,46,wd:Q97446232,Pantan,photo_gate,imgs_1_strong_1
+HR,HR035,Splitsko-dalmatinska županija,beach,,60,46,osm:way/42438416,Pliševac,photo_gate,imgs_4_strong_0
+HR,HR035,Splitsko-dalmatinska županija,beach,,60,46,osm:relation/18169344,Trstenik,photo_gate,imgs_0_strong_0
+HR,HR035,Splitsko-dalmatinska županija,beach,,60,46,osm:way/27849537,Beach Tatijna,score_gate,score_5.4_below_5.6
+HR,HR035,Splitsko-dalmatinska županija,beach,,60,46,wd:Q97446240,Okrug Gornji,score_gate,score_5.4_below_5.6
+HR,HR035,Splitsko-dalmatinska županija,beach,,60,46,osm:node/4696107112,Plaża Okrug,score_gate,score_5.4_below_5.6
+HR,HR035,Splitsko-dalmatinska županija,beach,,60,46,osm:way/397083675,Matejuška,score_gate,score_5.3_below_5.6
+HR,HR035,Splitsko-dalmatinska županija,beach,,60,46,osm:way/38102640,Copacabana,score_gate,score_5.2_below_5.6
+HR,HR035,Splitsko-dalmatinska županija,beach,,60,46,osm:way/198582911,Garma,score_gate,score_5.2_below_5.6
+HR,HR035,Splitsko-dalmatinska županija,beach,,60,46,osm:way/27849592,Uvala Bočići,score_gate,score_5.1_below_5.6
+HR,HR035,Splitsko-dalmatinska županija,beach,,60,46,osm:way/523236987,Dračevac beach,score_gate,score_5.1_below_5.6
+HR,HR035,Splitsko-dalmatinska županija,beach,,60,46,osm:way/1548911931,Beach bar Music,score_gate,score_5.1_below_5.6
+HR,HR035,Splitsko-dalmatinska županija,beach,,60,46,osm:way/142955197,Žnjan,score_gate,score_5.0_below_5.6
+HR,HR035,Splitsko-dalmatinska županija,beach,,60,46,osm:way/1086815017,Gradska plaža,score_gate,score_5.0_below_5.6
+HR,HR035,Splitsko-dalmatinska županija,beach,,60,46,osm:way/42438417,Kraj,score_gate,score_4.9_below_5.6
+HR,HR035,Splitsko-dalmatinska županija,beach,,60,46,osm:way/45567733,Mavarštica,score_gate,score_4.6_below_5.6
+HR,HR035,Splitsko-dalmatinska županija,beach,,60,46,osm:way/973549633,Dračevice,score_gate,score_4.6_below_5.6
+HR,HR035,Splitsko-dalmatinska županija,beach,,60,46,osm:node/10249702022,Šaldun,score_gate,score_4.4_below_5.6
+TR,TR100,İstanbul,beach,,46,46,,,,
+GR,EL422,"Andros, Thira, Kea - Kythnos, Milos, Mykonos, Naxos, Paros,  Syros, Tinos",beach,,60,45,wd:Q111913444,Kalotaritissa,photo_gate,imgs_1_strong_1
+GR,EL422,"Andros, Thira, Kea - Kythnos, Milos, Mykonos, Naxos, Paros,  Syros, Tinos",beach,,60,45,wd:Q25166752,Achivadolimni Beach,photo_gate,imgs_0_strong_0
+GR,EL422,"Andros, Thira, Kea - Kythnos, Milos, Mykonos, Naxos, Paros,  Syros, Tinos",beach,,60,45,wd:Q1472325,Ftelia,photo_gate,imgs_1_strong_1
+GR,EL422,"Andros, Thira, Kea - Kythnos, Milos, Mykonos, Naxos, Paros,  Syros, Tinos",beach,,60,45,wd:Q25162369,Lotos beach,photo_gate,imgs_0_strong_0
+GR,EL422,"Andros, Thira, Kea - Kythnos, Milos, Mykonos, Naxos, Paros,  Syros, Tinos",beach,,60,45,wd:Q25162377,Megas Gialos beach,score_gate,score_5.4_below_5.6
+GR,EL422,"Andros, Thira, Kea - Kythnos, Milos, Mykonos, Naxos, Paros,  Syros, Tinos",beach,,60,45,wd:Q7254006,Psarrou,score_gate,score_5.3_below_5.6
+GR,EL422,"Andros, Thira, Kea - Kythnos, Milos, Mykonos, Naxos, Paros,  Syros, Tinos",beach,,60,45,wd:Q12875866,Δελφίνι Σύρου,score_gate,score_5.2_below_5.6
+GR,EL422,"Andros, Thira, Kea - Kythnos, Milos, Mykonos, Naxos, Paros,  Syros, Tinos",beach,,60,45,wd:Q25161960,Perissa,score_gate,score_5.2_below_5.6
+GR,EL422,"Andros, Thira, Kea - Kythnos, Milos, Mykonos, Naxos, Paros,  Syros, Tinos",beach,,60,45,wd:Q25162359,Aghios Prokopios beach,score_gate,score_5.1_below_5.6
+GR,EL422,"Andros, Thira, Kea - Kythnos, Milos, Mykonos, Naxos, Paros,  Syros, Tinos",beach,,60,45,wd:Q25162374,Agathopes,score_gate,score_5.1_below_5.6
+GR,EL422,"Andros, Thira, Kea - Kythnos, Milos, Mykonos, Naxos, Paros,  Syros, Tinos",beach,,60,45,wd:Q18692241,Kolymbithres,score_gate,score_4.9_below_5.6
+GR,EL422,"Andros, Thira, Kea - Kythnos, Milos, Mykonos, Naxos, Paros,  Syros, Tinos",beach,,60,45,wd:Q25162354,Kastraki beach,score_gate,score_4.9_below_5.6
+GR,EL422,"Andros, Thira, Kea - Kythnos, Milos, Mykonos, Naxos, Paros,  Syros, Tinos",beach,,60,45,wd:Q25162356,Maragkas beach,score_gate,score_4.9_below_5.6
+GR,EL422,"Andros, Thira, Kea - Kythnos, Milos, Mykonos, Naxos, Paros,  Syros, Tinos",beach,,60,45,wd:Q25162355,Plaka beach,score_gate,score_4.9_below_5.6
+GR,EL422,"Andros, Thira, Kea - Kythnos, Milos, Mykonos, Naxos, Paros,  Syros, Tinos",beach,,60,45,wd:Q25162367,Asteria beach,score_gate,score_4.9_below_5.6
+GR,EL422,"Andros, Thira, Kea - Kythnos, Milos, Mykonos, Naxos, Paros,  Syros, Tinos",beach,,60,45,wd:Q53630627,Otzias,score_gate,score_4.7_below_5.6
+GR,EL422,"Andros, Thira, Kea - Kythnos, Milos, Mykonos, Naxos, Paros,  Syros, Tinos",beach,,60,45,wd:Q25162357,Aghia Anna beach,score_gate,score_4.3_below_5.6
+GR,EL422,"Andros, Thira, Kea - Kythnos, Milos, Mykonos, Naxos, Paros,  Syros, Tinos",beach,,60,45,wd:Q124336556,Sifneiko beach,score_gate,score_4.2_below_5.6
+SE,SE224,Skåne län,beach,,48,45,osm:way/893269405,Östra Stranden,photo_gate,imgs_0_strong_0
+SE,SE224,Skåne län,beach,,48,45,osm:way/893286203,Dalabadet,photo_gate,imgs_0_strong_0
+SE,SE224,Skåne län,beach,,48,45,osm:node/13072540795,Ålabodarna Nakenstrand,photo_gate,imgs_0_strong_0
+SE,SE224,Skåne län,beach,,48,45,osm:node/10781369253,Svanebäcksstranden,photo_gate,imgs_0_strong_0
+SE,SE224,Skåne län,beach,,48,45,wd:Q32240630,Gislövs Strandmark,photo_gate,imgs_0_strong_0
+SE,SE224,Skåne län,beach,,48,45,osm:way/936201386,Hjärtasjöbadet,photo_gate,imgs_0_strong_0
+SE,SE224,Skåne län,beach,,48,45,osm:way/128544595,Åhus Strand,photo_gate,imgs_0_strong_0
+SE,SE224,Skåne län,beach,,48,45,osm:way/169558285,Fria Bad,score_gate,score_5.1_below_5.6
+SE,SE224,Skåne län,beach,,48,45,osm:way/290690347,Knähakenbadet - naturistbad,score_gate,score_5.1_below_5.6
+SE,SE224,Skåne län,beach,,48,45,osm:way/320572299,Lursjöbadet,score_gate,score_4.8_below_5.6
+GB,TLM92,Dumfries and Galloway,beach,,45,45,,,,
+IE,IE051,Mid-West ,beach,,47,44,osm:relation/4250166,White Strand,photo_gate,imgs_1_strong_0
+IE,IE051,Mid-West ,beach,,47,44,osm:relation/4244420,Seafield North Beach,score_gate,score_5.3_below_5.6
+SE,SE110,Stockholms län,beach,,60,44,osm:way/447686617,Långsjöbadet,photo_gate,imgs_1_strong_0
+SE,SE110,Stockholms län,beach,,60,44,osm:way/120402853,Grills havsbad,photo_gate,imgs_0_strong_0
+SE,SE110,Stockholms län,beach,,60,44,osm:way/169452615,Skavlötsbadet,photo_gate,imgs_0_strong_0
+SE,SE110,Stockholms län,beach,,60,44,wd:Q106687169,Rönningesjöns hundbad,photo_gate,imgs_0_strong_0
+SE,SE110,Stockholms län,beach,,60,44,osm:way/24492952,Mälarhöjdsbadet,photo_gate,imgs_1_strong_1
+SE,SE110,Stockholms län,beach,,60,44,osm:way/123464439,Fittjaängsbadet,photo_gate,imgs_0_strong_0
+SE,SE110,Stockholms län,beach,,60,44,wd:Q106687171,Rösjö hundstrand,photo_gate,imgs_0_strong_0
+SE,SE110,Stockholms län,beach,,60,44,osm:way/1305224384,Gårdens bad,photo_gate,imgs_1_strong_1
+SE,SE110,Stockholms län,beach,,60,44,osm:way/595474611,Malmsjöbadet,photo_gate,imgs_0_strong_0
+SE,SE110,Stockholms län,beach,,60,44,osm:way/35969333,Hökmossbadet,photo_gate,imgs_0_strong_0
+SE,SE110,Stockholms län,beach,,60,44,wd:Q106687167,Sätra hundstrand,photo_gate,imgs_1_strong_1
+SE,SE110,Stockholms län,beach,,60,44,osm:relation/18099409,Badberget,photo_gate,imgs_0_strong_0
+SE,SE110,Stockholms län,beach,,60,44,wd:Q106687111,Dog bath Drevviken,photo_gate,imgs_0_strong_0
+SE,SE110,Stockholms län,beach,,60,44,osm:way/129128863,Hästhagsbadet,photo_gate,imgs_0_strong_0
+SE,SE110,Stockholms län,beach,,60,44,osm:way/1305222522,Norrby Holme,photo_gate,imgs_0_strong_0
+SE,SE110,Stockholms län,beach,,60,44,osm:way/757046045,Överbybadet,photo_gate,imgs_0_strong_0
+SE,SE110,Stockholms län,beach,,60,44,osm:relation/15631889,Kärsön nudist beach,photo_gate,imgs_0_strong_0
+SE,SE110,Stockholms län,beach,,60,44,osm:way/129128821,Kumlabadet,photo_gate,imgs_0_strong_0
+SE,SE110,Stockholms län,beach,,60,44,osm:node/9316273352,Ullnabadet,photo_gate,imgs_0_strong_0
+SE,SE110,Stockholms län,beach,,60,44,osm:way/129128862,Fornuddsbadet,photo_gate,imgs_0_strong_0
+SE,SE110,Stockholms län,beach,,60,44,osm:way/375610000,Badplats,photo_gate,imgs_0_strong_0
+SE,SE110,Stockholms län,beach,,60,44,wd:Q106814787,Svinninge hundbad,photo_gate,imgs_0_strong_0
+SE,SE110,Stockholms län,beach,,60,44,osm:way/887613892,Stockbybadet,photo_gate,imgs_0_strong_0
+SE,SE110,Stockholms län,beach,,60,44,osm:way/51070895,Erstaviksbadet,photo_gate,imgs_0_strong_0
+SE,SE110,Stockholms län,beach,,60,44,osm:way/97014978,Vårbybadet,photo_gate,imgs_0_strong_0
+SE,SE110,Stockholms län,beach,,60,44,wd:Q106687168,Långholmens hundbad,photo_gate,imgs_1_strong_1
+SE,SE110,Stockholms län,beach,,60,44,osm:way/19784690,Hässelby allmänna bad,photo_gate,imgs_1_strong_0
+SE,SE110,Stockholms län,beach,,60,44,osm:way/1502219087,Vintervikens badplats,photo_gate,imgs_0_strong_0
+SE,SE110,Stockholms län,beach,,60,44,osm:way/19782892,Lövstabadet,photo_gate,imgs_0_strong_0
+SE,SE110,Stockholms län,beach,,60,44,osm:way/135109114,Bonäsbadet,photo_gate,imgs_0_strong_0
+SE,SE110,Stockholms län,beach,,60,44,osm:relation/7162697,Stora Sandarna,photo_gate,imgs_0_strong_0
+SE,SE110,Stockholms län,beach,,60,44,osm:node/10697344377,Långsjöbadet,photo_gate,imgs_0_strong_0
+SE,SE110,Stockholms län,beach,,60,44,osm:way/135107924,Stigstorpsbadet,photo_gate,imgs_0_strong_0
+SE,SE110,Stockholms län,beach,,60,44,osm:way/188086190,Södersved havsbad,score_gate,score_5.5_below_5.6
+SE,SE110,Stockholms län,beach,,60,44,osm:way/54621760,Schweizerbadet,score_gate,score_5.5_below_5.6
+SE,SE110,Stockholms län,beach,,60,44,osm:way/518396470,Dyviken,score_gate,score_5.5_below_5.6
+SE,SE110,Stockholms län,beach,,60,44,osm:node/11886224807,Sandstrand BRF Doppingen,score_gate,score_5.3_below_5.6
+SE,SE110,Stockholms län,beach,,60,44,osm:way/156553606,Rudan norra strand (Lillrudan),score_gate,score_5.3_below_5.6
+SE,SE110,Stockholms län,beach,,60,44,osm:way/187763510,Björviks havsbad,score_gate,score_5.2_below_5.6
+SE,SE110,Stockholms län,beach,,60,44,osm:way/24413706,Farsta strandbad,score_gate,score_5.2_below_5.6
+SE,SE110,Stockholms län,beach,,60,44,osm:way/322051121,Andra pumpviken,score_gate,score_5.2_below_5.6
+SE,SE110,Stockholms län,beach,,60,44,osm:way/38566800,Hökarängsbadet,score_gate,score_5.1_below_5.6
+SE,SE110,Stockholms län,beach,,60,44,osm:way/322036768,Tian,score_gate,score_4.7_below_5.6
+DE,DEF07,Nordfriesland,beach,,44,43,,,,
+FR,FRM01,Corse-du-Sud,beach,,46,42,,,,
+ES,ES615,Huelva,beach,,40,40,,,,
+UA,UA-74538382B33781793273381,Henichesk,beach,,40,40,,,,
+FI,FI1D8,Kainuu,beach,,39,39,,,,
+IT,ITG2D,Sassari,beach,,60,39,wd:Q33325710,Cala Andreana,photo_gate,imgs_1_strong_1
+IT,ITG2D,Sassari,beach,,60,39,wd:Q3828296,Spiaggia delle Bombarde,photo_gate,imgs_1_strong_1
+IT,ITG2D,Sassari,beach,,60,39,wd:Q33325432,Bau Bau Beach,photo_gate,imgs_2_strong_0
+IT,ITG2D,Sassari,beach,,60,39,wd:Q33342792,Spiaggia La Licciola,photo_gate,imgs_0_strong_0
+IT,ITG2D,Sassari,beach,,60,39,wd:Q33332880,Rena Bianca,photo_gate,imgs_1_strong_1
+IT,ITG2D,Sassari,beach,,60,39,wd:Q33332897,Rena Majori,photo_gate,imgs_1_strong_1
+IT,ITG2D,Sassari,beach,,60,39,wd:Q33333449,spiaggia di Li Vitriceddi,photo_gate,imgs_1_strong_1
+IT,ITG2D,Sassari,beach,,60,39,wd:Q33339684,spiaggia  di Portisco,photo_gate,imgs_1_strong_1
+IT,ITG2D,Sassari,beach,,60,39,wd:Q33342828,Spiaggia La Marinedda,photo_gate,imgs_1_strong_1
+IT,ITG2D,Sassari,beach,,60,39,wd:Q33335190,Spiaggia della Baia Salinedda,photo_gate,imgs_1_strong_1
+IT,ITG2D,Sassari,beach,,60,39,wd:Q33331647,Playa Razza de junco,photo_gate,imgs_1_strong_1
+IT,ITG2D,Sassari,beach,,60,39,wd:Q33339176,Spiaggia di Murta Maria,photo_gate,imgs_1_strong_1
+IT,ITG2D,Sassari,beach,,60,39,wd:Q33335168,Spiaggia della Baia delle Mimose,photo_gate,imgs_1_strong_1
+IT,ITG2D,Sassari,beach,,60,39,wd:Q33345439,Spiaggia Zia Culumba,photo_gate,imgs_1_strong_1
+IT,ITG2D,Sassari,beach,,60,39,wd:Q30285659,Lazzaretto,score_gate,score_5.4_below_5.6
+IT,ITG2D,Sassari,beach,,60,39,wd:Q33334622,Spiaggia del Golfo delle Saline,score_gate,score_5.3_below_5.6
+IT,ITG2D,Sassari,beach,,60,39,wd:Q33335627,Spiaggia Delle Dune,score_gate,score_5.3_below_5.6
+IT,ITG2D,Sassari,beach,,60,39,wd:Q33339648,Spiaggia di Pittulongu,score_gate,score_5.2_below_5.6
+IT,ITG2D,Sassari,beach,,60,39,wd:Q33340242,spiaggia di Punta Negra,score_gate,score_4.9_below_5.6
+LT,LT023,Klaipėdos apskritis,beach,,39,37,wd:Q135581306,Nida nudist beach,photo_gate,imgs_1_strong_1
+LT,LT023,Klaipėdos apskritis,beach,,39,37,osm:relation/20776981,Juodkrantės paplūdimys,photo_gate,imgs_1_strong_0
+LT,LT023,Klaipėdos apskritis,beach,,39,37,osm:relation/20743732,Pietinis Šventosios paplūdimys,photo_gate,imgs_1_strong_0
+LT,LT023,Klaipėdos apskritis,beach,,39,37,osm:relation/20743741,Palangos paplūdimys,photo_gate,imgs_1_strong_1
+LT,LT023,Klaipėdos apskritis,beach,,39,37,osm:node/11640079852,Pervalka nudist beach,photo_gate,imgs_1_strong_1
+LT,LT023,Klaipėdos apskritis,beach,,39,37,osm:relation/20776662,Melnragės II paplūdimys,photo_gate,imgs_1_strong_0
+LT,LT023,Klaipėdos apskritis,beach,,39,37,osm:relation/20776983,Juodkrantė Nudist Beach,photo_gate,imgs_0_strong_0
+LT,LT023,Klaipėdos apskritis,beach,,39,37,osm:relation/20776722,Naujosios Smiltynės Perkėlos paplūdimys,photo_gate,imgs_0_strong_0
+LT,LT023,Klaipėdos apskritis,beach,,39,37,osm:way/1086603475,Veiviržėnų maudykla,photo_gate,imgs_1_strong_1
+LT,LT023,Klaipėdos apskritis,beach,,39,37,osm:relation/20776666,Klaipėdos centrinis paplūdimys,photo_gate,imgs_0_strong_0
+LT,LT023,Klaipėdos apskritis,beach,,39,37,osm:relation/20743740,Palangos moterų paplūdimys,photo_gate,imgs_0_strong_0
+LT,LT023,Klaipėdos apskritis,beach,,39,37,osm:relation/20743730,Nemirsetos paplūdimys,photo_gate,imgs_0_strong_0
+LT,LT023,Klaipėdos apskritis,beach,,39,37,osm:relation/20776667,Girulių paplūdimys,photo_gate,imgs_0_strong_0
+LT,LT023,Klaipėdos apskritis,beach,,39,37,osm:relation/20776720,Smiltynės vyrų paplūdimys,photo_gate,imgs_0_strong_0
+LT,LT023,Klaipėdos apskritis,beach,,39,37,osm:relation/20776982,Juodkrantės moterų paplūdimys,photo_gate,imgs_0_strong_0
+LT,LT023,Klaipėdos apskritis,beach,,39,37,osm:relation/20743731,Nemirseta Nudist Beach,photo_gate,imgs_0_strong_0
+LT,LT023,Klaipėdos apskritis,beach,,39,37,osm:relation/20776663,Melnragės I moterų paplūdymys,score_gate,score_5.5_below_5.6
+LT,LT023,Klaipėdos apskritis,beach,,39,37,osm:relation/20743739,Vanagupės paplūdimys,score_gate,score_5.5_below_5.6
+LT,LT023,Klaipėdos apskritis,beach,,39,37,osm:relation/17638718,Skuodo paplūdimys,score_gate,score_5.4_below_5.6
+LT,LT023,Klaipėdos apskritis,beach,,39,37,osm:relation/7873226,Dovilų karjeras,score_gate,score_5.4_below_5.6
+LT,LT023,Klaipėdos apskritis,beach,,39,37,osm:relation/7873227,Gargždų karjeras,score_gate,score_5.4_below_5.6
+LT,LT023,Klaipėdos apskritis,beach,,39,37,wd:Q107125617,Nidos,score_gate,score_5.3_below_5.6
+LT,LT023,Klaipėdos apskritis,beach,,39,37,osm:relation/20776721,Smiltynė nudist beach,score_gate,score_5.3_below_5.6
+LT,LT023,Klaipėdos apskritis,beach,,39,37,osm:relation/20743738,Palangos vyrų paplūdimys,score_gate,score_4.9_below_5.6
+LT,LT023,Klaipėdos apskritis,beach,,39,37,osm:relation/20743734,Šventosios moterų paplūdymys,score_gate,score_4.7_below_5.6
+HR,HR036,Istarska županija,beach,,39,36,osm:way/40897014,Njive,photo_gate,imgs_0_strong_0
+HR,HR036,Istarska županija,beach,,39,36,osm:way/1090524666,Dražice,photo_gate,imgs_0_strong_0
+HR,HR036,Istarska županija,beach,,39,36,osm:way/40897004,Polje,photo_gate,imgs_1_strong_1
+HR,HR036,Istarska županija,beach,,39,36,osm:node/9939448678,Školjić,photo_gate,imgs_0_strong_0
+HR,HR036,Istarska županija,beach,,39,36,osm:way/40897010,Plovanije,photo_gate,imgs_0_strong_0
+HR,HR036,Istarska županija,beach,,39,36,osm:way/970111851,Podlokva,photo_gate,imgs_0_strong_0
+HR,HR036,Istarska županija,beach,,39,36,osm:way/977481047,Mali Portić,photo_gate,imgs_0_strong_0
+HR,HR036,Istarska županija,beach,,39,36,osm:way/1090524662,Debeljak,score_gate,score_5.1_below_5.6
+HR,HR036,Istarska županija,beach,,39,36,osm:way/997119092,Munte Beach,score_gate,score_5.1_below_5.6
+HR,HR036,Istarska županija,beach,,39,36,osm:node/8094630369,Matićev pisak,score_gate,score_5.1_below_5.6
+HR,HR036,Istarska županija,beach,,39,36,osm:node/1783326622,Pomer,score_gate,score_4.9_below_5.6
+HR,HR036,Istarska županija,beach,,39,36,wd:Q97445756,Bijeca,score_gate,score_4.8_below_5.6
+HR,HR036,Istarska županija,beach,,39,36,osm:way/966350084,Lijom,score_gate,score_4.7_below_5.6
+HR,HR036,Istarska županija,beach,,39,36,osm:node/13025676056,Dog Beach Fazana,score_gate,score_4.6_below_5.6
+HR,HR036,Istarska županija,beach,,39,36,osm:way/1244665099,Lost Beach,score_gate,score_4.6_below_5.6
+HR,HR036,Istarska županija,beach,,39,36,osm:node/9988597236,Runke,score_gate,score_4.4_below_5.6
+HR,HR036,Istarska županija,beach,,39,36,osm:node/12993333766,Bura Bura,score_gate,score_4.3_below_5.6
+HR,HR036,Istarska županija,beach,,39,36,osm:way/1182339160,Batana Beach,score_gate,score_4.1_below_5.6
+HR,HR036,Istarska županija,beach,,39,36,osm:way/437657200,Ščuza,score_gate,score_4.1_below_5.6
+HR,HR036,Istarska županija,beach,,39,36,osm:way/262830323,FKK / Naturist Beach Valkane,score_gate,score_3.7_below_5.6
+SE,SE231,Hallands län,beach,,40,36,osm:node/13381681846,Badplats Glommen,photo_gate,imgs_0_strong_0
+SE,SE231,Hallands län,beach,,40,36,osm:relation/10492784,Östra Stranden,photo_gate,imgs_0_strong_0
+SE,SE231,Hallands län,beach,,40,36,osm:node/10130075458,Balgö Brygga,photo_gate,imgs_0_strong_0
+SE,SE231,Hallands län,beach,,40,36,osm:relation/8529089,Skrea Strand,photo_gate,imgs_1_strong_1
+GR,EL623,"Ithaki, Kefallinia",beach,,38,35,wd:Q8044038,Xi Beach,photo_gate,imgs_4_strong_4
+GR,EL623,"Ithaki, Kefallinia",beach,,38,35,wd:Q7917175,Vatsa Bay,score_gate,score_5.2_below_5.6
+GR,EL623,"Ithaki, Kefallinia",beach,,38,35,wd:Q53629502,Antisamos,score_gate,score_5.0_below_5.6
+GR,EL623,"Ithaki, Kefallinia",beach,,38,35,wd:Q123059149,Vouti beach,score_gate,score_4.9_below_5.6
+GR,EL623,"Ithaki, Kefallinia",beach,,38,35,wd:Q20553127,Trapezaki,score_gate,score_4.8_below_5.6
+IT,ITH35,Venezia,beach,,37,35,wd:Q33338466,Spiaggia di Levante,score_gate,score_5.1_below_5.6
+UA,UA-74538382B78065593112494,Dzhankoy,beach,,35,35,,,,
+UA,UA-74538382B24236776375789,Sorokyne,beach,,35,35,,,,
+CY,CY000,Kýpros,beach,,60,33,osm:way/137702796,Kotsia Beach,photo_gate,imgs_1_strong_0
+CY,CY000,Kýpros,beach,,60,33,osm:way/998252647,North Lara Beach,photo_gate,imgs_0_strong_0
+CY,CY000,Kýpros,beach,,60,33,wd:Q109558840,Landa Golden Beach,photo_gate,imgs_1_strong_1
+CY,CY000,Kýpros,beach,,60,33,osm:way/286275732,Diana Beach,photo_gate,imgs_0_strong_0
+CY,CY000,Kýpros,beach,,60,33,osm:way/1041621407,Venus blue beach,photo_gate,imgs_0_strong_0
+CY,CY000,Kýpros,beach,,60,33,osm:relation/1236241,Green Bay,photo_gate,imgs_0_strong_0
+CY,CY000,Kýpros,beach,,60,33,osm:node/9090949264,Paradisos,photo_gate,imgs_4_strong_0
+CY,CY000,Kýpros,beach,,60,33,osm:way/612326180,Armyropigado Beach,photo_gate,imgs_4_strong_0
+CY,CY000,Kýpros,beach,,60,33,osm:relation/8311055,Skoutari Beach,photo_gate,imgs_0_strong_0
+CY,CY000,Kýpros,beach,,60,33,osm:way/298687591,Elysium Beach,photo_gate,imgs_0_strong_0
+CY,CY000,Kýpros,beach,,60,33,osm:relation/1241141,Potami Bay Beach,photo_gate,imgs_4_strong_0
+CY,CY000,Kýpros,beach,,60,33,osm:way/45199815,Firemans Beach,photo_gate,imgs_4_strong_0
+CY,CY000,Kýpros,beach,,60,33,wd:Q5436159,Faros Beach,photo_gate,imgs_0_strong_0
+CY,CY000,Kýpros,beach,,60,33,osm:way/400612591,Vizakia Beach,photo_gate,imgs_4_strong_0
+CY,CY000,Kýpros,beach,,60,33,osm:way/606238633,Beach Club,photo_gate,imgs_0_strong_0
+CY,CY000,Kýpros,beach,,60,33,osm:way/82305392,Nissia Bay Beach,photo_gate,imgs_0_strong_0
+CY,CY000,Kýpros,beach,,60,33,osm:way/663447863,Kafizis Beach,photo_gate,imgs_0_strong_0
+CY,CY000,Kýpros,beach,,60,33,osm:way/606238631,Silver Beach,photo_gate,imgs_0_strong_0
+CY,CY000,Kýpros,beach,,60,33,osm:way/632302189,Amphitheatre,photo_gate,imgs_0_strong_0
+CY,CY000,Kýpros,beach,,60,33,osm:way/226555170,Alagadi Turtle Beach 2,photo_gate,imgs_1_strong_0
+CY,CY000,Kýpros,beach,,60,33,osm:way/226555171,Alagadi Beach 3,photo_gate,imgs_1_strong_1
+CY,CY000,Kýpros,beach,,60,33,osm:way/606238634,Derinya Halk Plajı,photo_gate,imgs_0_strong_0
+CY,CY000,Kýpros,beach,,60,33,osm:relation/1236242,Nisia Loumbardi Beach,photo_gate,imgs_0_strong_0
+CY,CY000,Kýpros,beach,,60,33,wd:Q22991913,Makronisos Bay Beach,photo_gate,imgs_0_strong_0
+CY,CY000,Kýpros,beach,,60,33,osm:way/1354214220,CTO Beach,photo_gate,imgs_1_strong_0
+CY,CY000,Kýpros,beach,,60,33,osm:way/510986434,Nowhere Beach,photo_gate,imgs_0_strong_0
+CY,CY000,Kýpros,beach,,60,33,osm:way/835851046,Alki Beach,score_gate,score_5.5_below_5.6
+CY,CY000,Kýpros,beach,,60,33,osm:way/1050087817,Pachyamos Beach,score_gate,score_5.5_below_5.6
+CY,CY000,Kýpros,beach,,60,33,osm:way/1395325670,Lefke Belediyesi Halk Plajı,score_gate,score_5.5_below_5.6
+CY,CY000,Kýpros,beach,,60,33,wd:Q109587776,Vathia Gonia Beach,score_gate,score_5.4_below_5.6
+CY,CY000,Kýpros,beach,,60,33,osm:way/636796199,Zygi Public Beach,score_gate,score_5.4_below_5.6
+CY,CY000,Kýpros,beach,,60,33,osm:way/289625766,Kermia (Limnara) Beach,score_gate,score_5.4_below_5.6
+CY,CY000,Kýpros,beach,,60,33,osm:way/1049384228,Tpoulorotsos Beach,score_gate,score_5.4_below_5.6
+ES,ES532,Mallorca,beach,,45,33,wd:Q24023568,Cala Gran,country_cap,rank_132
+ES,ES532,Mallorca,beach,,45,33,wd:Q6729649,Magaluf Beach,score_gate,score_5.4_below_5.6
+ES,ES532,Mallorca,beach,,45,33,wd:Q5412136,Ciutat Jardí,score_gate,score_5.0_below_5.6
+FR,FRM02,Haute-Corse,beach,,35,33,,,,
+FR,FRH01,Côtes-d’Armor,beach,,37,33,,,,
+NL,NL342,Overig Zeeland,beach,,34,33,osm:way/77867306,Yerseke Beach,photo_gate,imgs_0_strong_0
+NL,NL342,Overig Zeeland,beach,,34,33,osm:way/98470428,Stavenisse Badstrand,score_gate,score_5.4_below_5.6
+NL,NL342,Overig Zeeland,beach,,34,33,wd:Q129566166,Nollestrand,score_gate,score_5.3_below_5.6
+NL,NL342,Overig Zeeland,beach,,34,33,osm:way/78392431,Kaloot,score_gate,score_4.8_below_5.6
+NL,NL342,Overig Zeeland,beach,,34,33,osm:way/854494209,Badstrand,score_gate,score_4.5_below_5.6
+TR,TR622,Mersin,beach,,33,33,,,,
+GB,TLK30,Cornwall and Isles of Scilly,beach,,60,33,wd:Q6705328,Lusty Glaze,country_cap,rank_122
+DE,DE80N,Vorpommern-Greifswald,beach,,36,32,,,,
+GR,EL412,"Ikaria, Samos",beach,,32,32,,,,
+IT,ITG13,Messina,beach,,32,32,,,,
+FI,FI1D5,Keski-Pohjanmaa,beach,,30,30,wd:Q24349732,Vattajanhietikko,photo_gate,imgs_0_strong_0
+IE,IE052,South-East ,beach,,35,30,osm:node/6462851824,Carne Beach,photo_gate,imgs_1_strong_1
+IE,IE052,South-East ,beach,,35,30,osm:way/35221218,Bunmahon Strand,photo_gate,imgs_1_strong_1
+IE,IE052,South-East ,beach,,35,30,osm:way/58744470,Cullenstown Strand,photo_gate,imgs_0_strong_0
+IE,IE052,South-East ,beach,,35,30,osm:way/57042639,Ballinesker Beach,photo_gate,imgs_0_strong_0
+IE,IE052,South-East ,beach,,35,30,osm:way/668358567,Councillors Strand,photo_gate,imgs_1_strong_0
+IE,IE052,South-East ,beach,,35,30,osm:way/57019994,Duffcarrig Rocks Beach,photo_gate,imgs_0_strong_0
+IE,IE052,South-East ,beach,,35,30,osm:relation/13472334,Curracloe Beach,photo_gate,imgs_1_strong_1
+IE,IE052,South-East ,beach,,35,30,osm:way/43909756,Lawlor's Strand,photo_gate,imgs_1_strong_0
+IE,IE052,South-East ,beach,,35,30,osm:relation/5379270,Curragh/Pebble Beach,score_gate,score_5.1_below_5.6
+IE,IE052,South-East ,beach,,35,30,osm:relation/14642303,Portally Cove,score_gate,score_5.1_below_5.6
+IE,IE052,South-East ,beach,,35,30,osm:way/778609707,Ladies Cove,score_gate,score_4.1_below_5.6
+GB,TLK43,Devon CC,beach,,42,30,wd:Q124358179,Wildersmouth Beach,country_cap,rank_121
+EE,EE001,Põhja-Eesti,beach,,39,29,osm:way/290530048,Suurupi beach,photo_gate,imgs_0_strong_0
+EE,EE001,Põhja-Eesti,beach,,39,29,osm:way/684178527,Maardu beach,photo_gate,imgs_1_strong_1
+EE,EE001,Põhja-Eesti,beach,,39,29,osm:way/1182167449,Rohuneeme Otilõuka beach,photo_gate,imgs_1_strong_0
+EE,EE001,Põhja-Eesti,beach,,39,29,osm:way/940728497,Jüri beach,photo_gate,imgs_0_strong_0
+EE,EE001,Põhja-Eesti,beach,,39,29,osm:way/1075280517,Loo beach,photo_gate,imgs_0_strong_0
+EE,EE001,Põhja-Eesti,beach,,39,29,osm:way/1169135128,Lagedi beach,photo_gate,imgs_0_strong_0
+EE,EE001,Põhja-Eesti,beach,,39,29,osm:way/1312431541,Põhjarand,photo_gate,imgs_0_strong_0
+EE,EE001,Põhja-Eesti,beach,,39,29,osm:way/958658262,Alavere beach,photo_gate,imgs_1_strong_1
+EE,EE001,Põhja-Eesti,beach,,39,29,osm:way/1181714279,Purgatsi lake's beach,photo_gate,imgs_1_strong_1
+EE,EE001,Põhja-Eesti,beach,,39,29,osm:way/862097253,Kelvingi beach,photo_gate,imgs_0_strong_0
+EE,EE001,Põhja-Eesti,beach,,39,29,osm:way/1354658377,The beach of Lake Männiku,photo_gate,imgs_0_strong_0
+EE,EE001,Põhja-Eesti,beach,,39,29,osm:way/865123472,Uuesalu beach,photo_gate,imgs_0_strong_0
+EE,EE001,Põhja-Eesti,beach,,39,29,osm:way/1019467387,Kurgala beach,photo_gate,imgs_0_strong_0
+EE,EE001,Põhja-Eesti,beach,,39,29,osm:way/1186827520,Ihasalu Laheranna beach,photo_gate,imgs_0_strong_0
+EE,EE001,Põhja-Eesti,beach,,39,29,osm:way/766568073,Lake Klooga beach,photo_gate,imgs_0_strong_0
+EE,EE001,Põhja-Eesti,beach,,39,29,osm:way/517022095,Nikerjärve beach,photo_gate,imgs_0_strong_0
+EE,EE001,Põhja-Eesti,beach,,39,29,osm:way/1384281565,Tuulevälja AÜ ujumiskoht,photo_gate,imgs_0_strong_0
+EE,EE001,Põhja-Eesti,beach,,39,29,osm:way/256663053,Kakumäe rand,photo_gate,imgs_0_strong_0
+EE,EE001,Põhja-Eesti,beach,,39,29,osm:way/171045557,Valkla-Salmistu rand,photo_gate,imgs_0_strong_0
+EE,EE001,Põhja-Eesti,beach,,39,29,osm:way/1188926621,Patika beach,score_gate,score_5.1_below_5.6
+EE,EE001,Põhja-Eesti,beach,,39,29,osm:way/618607485,Kolga-Aabla beach,score_gate,score_5.0_below_5.6
+EE,EE001,Põhja-Eesti,beach,,39,29,wd:Q12367117,Klooga rand,score_gate,score_4.8_below_5.6
+PL,PL621,Elbląski,beach,,29,29,,,,
+GR,EL434,Chania,beach,,36,28,wd:Q53630154,Kavros,score_gate,score_4.9_below_5.6
+GR,EL434,Chania,beach,,36,28,wd:Q53631006,Sougia,score_gate,score_4.6_below_5.6
+LV,LV00B,Kurzeme,beach,,31,28,osm:way/694265797,Pludmales volejbola zona,photo_gate,imgs_0_strong_0
+LV,LV00B,Kurzeme,beach,,31,28,osm:relation/15656134,Ragaciema pludmale,photo_gate,imgs_2_strong_0
+LV,LV00B,Kurzeme,beach,,31,28,osm:way/434337815,Jumpravas ezera peldvieta,photo_gate,imgs_0_strong_0
+LV,LV00B,Kurzeme,beach,,31,28,osm:way/1157931580,Peldvieta Lapmežciemā - “Starpiņupītes peldvieta”,photo_gate,imgs_1_strong_1
+LV,LV00B,Kurzeme,beach,,31,28,osm:relation/15654076,Gausās jūdzes Kuplās priedes pludmale,photo_gate,imgs_0_strong_0
+LV,LV00B,Kurzeme,beach,,31,28,osm:relation/15656135,Gausās jūdzes Aizraga pludmale,photo_gate,imgs_0_strong_0
+LV,LV00B,Kurzeme,beach,,31,28,osm:relation/15656133,Lapmežciema - Bigauņciema pludmale,photo_gate,imgs_1_strong_0
+LV,LV00B,Kurzeme,beach,,31,28,osm:way/55953951,Nudist beach zone,photo_gate,imgs_0_strong_0
+LV,LV00B,Kurzeme,beach,,31,28,osm:relation/15655615,Engures pludmale,photo_gate,imgs_0_strong_0
+LV,LV00B,Kurzeme,beach,,31,28,osm:relation/15656136,Apšuciema pludmale,score_gate,score_5.3_below_5.6
+LV,LV00B,Kurzeme,beach,,31,28,osm:relation/15656139,Ķesterciema pludmale,score_gate,score_5.1_below_5.6
+LV,LV00B,Kurzeme,beach,,31,28,osm:relation/15655614,Engures promenādes pludmale,score_gate,score_5.0_below_5.6
+LV,LV00B,Kurzeme,beach,,31,28,osm:node/8165017740,Dzirnavas dīķa peldētava,score_gate,score_4.9_below_5.6
+PL,PL428,Szczeciński,beach,,29,28,wd:Q138583899,"Beach Przytór, Świnoujście",photo_gate,imgs_1_strong_1
+PL,PL428,Szczeciński,beach,,29,28,osm:way/600107305,Plaża Miejska,photo_gate,imgs_0_strong_0
+PL,PL428,Szczeciński,beach,,29,28,osm:relation/3250355,Naturist beach,photo_gate,imgs_0_strong_0
+PL,PL428,Szczeciński,beach,,29,28,wd:Q49323526,Pobierowo beach,score_gate,score_5.4_below_5.6
+PL,PL428,Szczeciński,beach,,29,28,osm:way/1243248128,Kąpielisko w Stepnicy nad Zalewem Szczecińskim,score_gate,score_5.0_below_5.6
+TR,TRC21,Şanlıurfa,beach,,28,28,,,,
+GB,TLL42,South West Wales,beach,,39,28,,,,
+GR,EL413,Chios,beach,,27,27,wd:Q53629376,Karfas,score_gate,score_5.1_below_5.6
+GR,EL413,Chios,beach,,27,27,wd:Q25164037,Mavra Volia,score_gate,score_4.7_below_5.6
+GR,EL432,Lasithi,beach,,34,27,wd:Q121011277,Kalamaki beach,photo_gate,imgs_0_strong_0
+GR,EL432,Lasithi,beach,,34,27,wd:Q53633932,Almyros Lasithi,photo_gate,imgs_1_strong_1
+GR,EL432,Lasithi,beach,,34,27,wd:Q7331108,Richtis Gorge,photo_gate,imgs_0_strong_0
+GR,EL432,Lasithi,beach,,34,27,wd:Q60848073,Langada Beach,score_gate,score_5.5_below_5.6
+GR,EL432,Lasithi,beach,,34,27,wd:Q12883234,Achlia Schinokapsalon,score_gate,score_5.2_below_5.6
+GR,EL432,Lasithi,beach,,34,27,wd:Q13651473,Myrtos Beach in Myrtos,score_gate,score_5.1_below_5.6
+GR,EL432,Lasithi,beach,,34,27,wd:Q60848162,Argilos,score_gate,score_5.0_below_5.6
+GR,EL432,Lasithi,beach,,34,27,wd:Q16627476,Παραλία Θόλος,score_gate,score_5.0_below_5.6
+GR,EL432,Lasithi,beach,,34,27,wd:Q60848243,Chiona,score_gate,score_4.8_below_5.6
+IT,ITG11,Trapani,beach,,28,26,,,,
+ES,ES120,Asturias,beach,,30,25,wd:Q9060729,San Lorenzo Beach,country_cap,rank_134
+ES,ES120,Asturias,beach,,30,25,wd:Q17625295,Playa de Arnao de Figueras,photo_gate,imgs_1_strong_1
+ES,ES114,Pontevedra,beach,,34,25,wd:Q11699713,Praia do Abra,country_cap,rank_125
+ES,ES114,Pontevedra,beach,,34,25,wd:Q6078602,Bascuas,photo_gate,imgs_1_strong_1
+ES,ES114,Pontevedra,beach,,34,25,wd:Q20543532,Praia da Ladeira,photo_gate,imgs_1_strong_1
+FR,FRI32,Charente-Maritime,beach,,29,25,wd:Q49322734,Plage des Nonnes,photo_gate,imgs_1_strong_1
+IT,ITG2H,Sud Sardegna,beach,,38,25,wd:Q33339760,Spiaggia di Porto Botte,photo_gate,imgs_1_strong_1
+IT,ITG2H,Sud Sardegna,beach,,38,25,wd:Q33335740,Spiaggia delle Saline,photo_gate,imgs_1_strong_1
+IT,ITG2H,Sud Sardegna,beach,,38,25,wd:Q33337323,Spiaggia di Coacuaddus,photo_gate,imgs_1_strong_1
+IT,ITG2H,Sud Sardegna,beach,,38,25,wd:Q33341813,Spiaggia di Tuerredda,photo_gate,imgs_0_strong_0
+IT,ITG2H,Sud Sardegna,beach,,38,25,wd:Q33338861,Spiaggia di Marina Rei,score_gate,score_5.1_below_5.6
+TR,TR621,Adana,beach,,25,25,,,,
+UA,UA-74538382B72369548204787,Bilozerka,beach,,25,25,,,,
+GR,EL651,"Argolida, Arkadia",beach,,28,24,wd:Q53630967,Xeropigado beach,score_gate,score_4.3_below_5.6
+GR,EL622,Kerkyra,beach,,27,24,wd:Q53632183,Canal D Amour,photo_gate,imgs_2_strong_0
+GR,EL622,Kerkyra,beach,,27,24,wd:Q53632172,Almyros,score_gate,score_5.2_below_5.6
+GR,EL622,Kerkyra,beach,,27,24,wd:Q53631604,Issos beach,score_gate,score_4.8_below_5.6
+FR,FRL05,Var,beach,,33,24,wd:Q135109335,plage du Pellegrin,photo_gate,imgs_1_strong_1
+FR,FRL05,Var,beach,,33,24,wd:Q123334065,Brouis Beach,photo_gate,imgs_1_strong_1
+FR,FRL05,Var,beach,,33,24,wd:Q49322604,almanarre beach,score_gate,score_5.4_below_5.6
+FR,FRL05,Var,beach,,33,24,wd:Q130387892,plage de la Badine,score_gate,score_5.4_below_5.6
+NL,NL127,Noord-Friesland,beach,,28,24,osm:way/642677769,Naaktstrandje Groene Ster,photo_gate,imgs_1_strong_1
+NL,NL127,Noord-Friesland,beach,,28,24,wd:Q55526483,Noordoosthoek,photo_gate,imgs_0_strong_0
+NL,NL127,Noord-Friesland,beach,,28,24,osm:relation/20733569,Noorderstrand,photo_gate,imgs_0_strong_0
+NL,NL127,Noord-Friesland,beach,,28,24,osm:way/79643386,Zwemplaats Earnewâld,score_gate,score_5.1_below_5.6
+UA,UA-74538382B63146168478131,Bilovodsk,beach,,24,24,,,,
+GR,EL541,"Arta, Preveza",beach,,25,23,wd:Q16330480,Alonaki,photo_gate,imgs_0_strong_0
+IT,ITH37,Rovigo,beach,,23,23,,,,
+NO,NO084,Akershus,beach,,26,23,wd:Q33326736,Holmenskjæret,photo_gate,imgs_0_strong_0
+NO,NO084,Akershus,beach,,26,23,wd:Q33325486,Bestemorstranda,photo_gate,imgs_0_strong_0
+NO,NO084,Akershus,beach,,26,23,osm:way/436801594,Stampetjernet Stranden,photo_gate,imgs_0_strong_0
+NO,NO084,Akershus,beach,,26,23,wd:Q49320034,Apotekerstranda,photo_gate,imgs_0_strong_0
+NO,NO084,Akershus,beach,,26,23,osm:way/689114092,Julekvelden,photo_gate,imgs_0_strong_0
+NO,NO084,Akershus,beach,,26,23,osm:node/807752425,Bondistranda,score_gate,score_5.4_below_5.6
+NO,NO084,Akershus,beach,,26,23,wd:Q49324532,Rulletostranda,score_gate,score_5.3_below_5.6
+NO,NO084,Akershus,beach,,26,23,osm:way/691821710,Haugerstranda,score_gate,score_5.2_below_5.6
+NO,NO084,Akershus,beach,,26,23,osm:node/4586255364,Torkilstranda,score_gate,score_5.1_below_5.6
+NO,NO084,Akershus,beach,,26,23,osm:way/688312055,Holvik,score_gate,score_5.0_below_5.6
+NO,NO084,Akershus,beach,,26,23,osm:way/491959276,Oksval,score_gate,score_4.9_below_5.6
+NO,NO084,Akershus,beach,,26,23,osm:node/4586262041,Skiphellebukta badeplass,score_gate,score_4.6_below_5.6
+RO,RO223,Constanţa,beach,,27,23,osm:way/563711871,Plaja Agigea Nord,photo_gate,imgs_0_strong_0
+RO,RO223,Constanţa,beach,,27,23,osm:way/32534073,Plajă nudiști,photo_gate,imgs_3_strong_0
+RO,RO223,Constanţa,beach,,27,23,wd:Q124658614,Plajă Corbu,photo_gate,imgs_1_strong_1
+RO,RO223,Constanţa,beach,,27,23,osm:way/849430210,Cochilia,photo_gate,imgs_1_strong_0
+RO,RO223,Constanţa,beach,,27,23,osm:way/88002653,Plaja Midia,photo_gate,imgs_0_strong_0
+RO,RO223,Constanţa,beach,,27,23,osm:way/301026323,Plaja Șincai,photo_gate,imgs_0_strong_0
+RO,RO223,Constanţa,beach,,27,23,osm:node/5873712649,Plaja Corsa,score_gate,score_5.4_below_5.6
+RO,RO223,Constanţa,beach,,27,23,osm:way/32534060,Plaja 23 August,score_gate,score_5.3_below_5.6
+RO,RO223,Constanţa,beach,,27,23,osm:way/563466553,Plaja Chituc,score_gate,score_5.3_below_5.6
+RO,RO223,Constanţa,beach,,27,23,osm:way/563673382,Plaja Pricop,score_gate,score_5.3_below_5.6
+RO,RO223,Constanţa,beach,,27,23,osm:way/32534117,Plaja Júpiter,score_gate,score_5.1_below_5.6
+RO,RO223,Constanţa,beach,,27,23,osm:relation/13638447,Pescărie,score_gate,score_4.8_below_5.6
+RO,RO223,Constanţa,beach,,27,23,osm:node/2963157252,Habibi Beach Mamaia,score_gate,score_4.8_below_5.6
+RO,RO223,Constanţa,beach,,27,23,osm:way/32534031,Plaja Diana,score_gate,score_4.4_below_5.6
+RO,RO223,Constanţa,beach,,27,23,osm:way/32534053,"Nude beach (unofficial, traditional)",score_gate,score_4.4_below_5.6
+RO,RO223,Constanţa,beach,,27,23,osm:way/32534106,Plaja Saturn,score_gate,score_4.3_below_5.6
+RO,RO223,Constanţa,beach,,27,23,osm:node/5873782618,Plaja Cupidon,score_gate,score_4.3_below_5.6
+RO,RO223,Constanţa,beach,,27,23,osm:way/220266725,Plaja Costinești,score_gate,score_4.2_below_5.6
+RO,RO223,Constanţa,beach,,27,23,osm:way/1411131515,Plaja Costinești,score_gate,score_4.1_below_5.6
+RO,RO223,Constanţa,beach,,27,23,osm:node/7847038142,Golful Francezului nude beach,score_gate,score_3.9_below_5.6
+RO,RO223,Constanţa,beach,,27,23,osm:way/32534091,Plaja 2 Mai,score_gate,score_3.8_below_5.6
+RO,RO223,Constanţa,beach,,27,23,osm:node/2963203571,Crush Beach,score_gate,score_3.8_below_5.6
+RO,RO223,Constanţa,beach,,27,23,osm:node/13662028720,Plaja Delta,score_gate,score_3.8_below_5.6
+TR,TRB24,Hakkari,beach,,23,23,,,,
+GB,TLN09,Ards and North Down,beach,,23,23,,,,
+UA,UA-74538382B13057195168049,Manhush,beach,,23,23,,,,
+GR,EL515,"Thasos, Kavala",beach,,24,22,wd:Q53631725,Ammolofoi,photo_gate,imgs_0_strong_0
+FR,FRG05,Vendée,beach,,22,22,,,,
+TR,TR321,Aydın,beach,,22,22,,,,
+ES,ES514,Tarragona,beach,,21,21,,,,
+GR,EL644,Fthiotida,beach,,20,20,,,,
+GR,EL624,Lefkada,beach,,22,20,,,,
+GR,EL305,Anatoliki Attiki,beach,,22,20,wd:Q53631129,Vouliagmeni Beach,score_gate,score_4.8_below_5.6
+ES,ES620,Murcia,beach,,21,20,,,,
+FR,FRI12,Gironde,beach,,20,20,,,,
+IT,ITI16,Livorno,beach,,26,20,wd:Q3966668,spiaggia  di Fetovaia,photo_gate,imgs_1_strong_1
+IT,ITI16,Livorno,beach,,26,20,wd:Q33339287,Spiaggia di Nisporto,score_gate,score_4.8_below_5.6
+IT,ITF45,Lecce,beach,,21,20,wd:Q33332819,Punta della suina,photo_gate,imgs_1_strong_1
+IT,ITF45,Lecce,beach,,21,20,wd:Q116254821,Spiaggia della Purità,score_gate,score_5.2_below_5.6
+PT,PT300,Região Autónoma da Madeira,beach,,28,20,wd:Q10353089,Porto Santo beach,country_cap,rank_126
+PT,PT300,Região Autónoma da Madeira,beach,,28,20,wd:Q10352661,Ribeira Brava beach,country_cap,rank_139
+PL,PL634,Gdański,beach,,24,20,osm:relation/18728931,Plaża Naturystów Dębki,photo_gate,imgs_0_strong_0
+PL,PL634,Gdański,beach,,24,20,osm:node/9807982219,Wejście 35 Białogóra,photo_gate,imgs_0_strong_0
+PL,PL634,Gdański,beach,,24,20,osm:node/9807971647,Wejście 33 Białogóra,photo_gate,imgs_0_strong_0
+PL,PL634,Gdański,beach,,24,20,osm:node/9807985860,Wejście 31 Białogóra,photo_gate,imgs_0_strong_0
+PL,PL634,Gdański,beach,,24,20,osm:way/510077054,Cypel,photo_gate,imgs_0_strong_0
+PL,PL634,Gdański,beach,,24,20,osm:way/936810631,Kąpielisko gminne Jezioro Białe,photo_gate,imgs_0_strong_0
+PL,PL634,Gdański,beach,,24,20,osm:node/5795364720,plaża nudystów,photo_gate,imgs_0_strong_0
+PL,PL634,Gdański,beach,,24,20,osm:relation/21232115,Duża Plaża - Bałtycka,score_gate,score_5.2_below_5.6
+PL,PL634,Gdański,beach,,24,20,osm:way/1393991676,Kąpielisko w Chałupach,score_gate,score_5.2_below_5.6
+PL,PL634,Gdański,beach,,24,20,osm:way/1298711991,Plaża Kaprów,score_gate,score_5.1_below_5.6
+PL,PL634,Gdański,beach,,24,20,osm:way/122153849,Zielona plaża,score_gate,score_5.0_below_5.6
+TR,TR831,Samsun,beach,,20,20,,,,
+AL,AL035,Vlorë,beach,,24,19,osm:way/963974689,Porto Novo Beach,photo_gate,imgs_0_strong_0
+AL,AL035,Vlorë,beach,,24,19,osm:way/676541761,King beach,photo_gate,imgs_2_strong_0
+AL,AL035,Vlorë,beach,,24,19,osm:way/719397234,Puerto Rico Beach,photo_gate,imgs_2_strong_0
+AL,AL035,Vlorë,beach,,24,19,osm:way/676538410,Bora Bora-Beach,photo_gate,imgs_4_strong_0
+AL,AL035,Vlorë,beach,,24,19,osm:way/676557200,Free public beach,photo_gate,imgs_4_strong_0
+AL,AL035,Vlorë,beach,,24,19,osm:way/219957228,Drymades Beach,photo_gate,imgs_1_strong_1
+AL,AL035,Vlorë,beach,,24,19,osm:way/676534889,Free public beach,photo_gate,imgs_3_strong_0
+AL,AL035,Vlorë,beach,,24,19,osm:way/676536365,Principotes,photo_gate,imgs_3_strong_0
+AL,AL035,Vlorë,beach,,24,19,osm:way/235474851,Shpella e Pëllumbave,photo_gate,imgs_3_strong_0
+AL,AL035,Vlorë,beach,,24,19,osm:way/285639673,Kakome Beach,photo_gate,imgs_0_strong_0
+AL,AL035,Vlorë,beach,,24,19,osm:node/14089199997,Dave's Bay,photo_gate,imgs_0_strong_0
+AL,AL035,Vlorë,beach,,24,19,osm:way/436076767,Lori Beach,photo_gate,imgs_2_strong_0
+AL,AL035,Vlorë,beach,,24,19,osm:way/676538408,Castle Beach,score_gate,score_5.5_below_5.6
+AL,AL035,Vlorë,beach,,24,19,osm:way/833440089,Plazhi Romines,score_gate,score_5.5_below_5.6
+AL,AL035,Vlorë,beach,,24,19,osm:way/219955500,Plazhi i Gjipes,score_gate,score_5.5_below_5.6
+AL,AL035,Vlorë,beach,,24,19,osm:way/219955504,Dhërmi Beach,score_gate,score_5.5_below_5.6
+AL,AL035,Vlorë,beach,,24,19,osm:way/362641787,Plazhi i Livadhit,score_gate,score_5.5_below_5.6
+AL,AL035,Vlorë,beach,,24,19,osm:way/1420228027,Morsi,score_gate,score_5.5_below_5.6
+AL,AL035,Vlorë,beach,,24,19,osm:way/430747473,Lukovë Beach,score_gate,score_5.5_below_5.6
+HR,HR032,Ličko-senjska županija,beach,,21,19,osm:way/1532659856,Novalja Gaj,score_gate,score_5.3_below_5.6
+HR,HR032,Ličko-senjska županija,beach,,21,19,osm:way/442834708,Tatinja,score_gate,score_5.2_below_5.6
+HR,HR032,Ličko-senjska županija,beach,,21,19,osm:way/522867238,Skver,score_gate,score_4.8_below_5.6
+IT,ITH43,Gorizia,beach,,19,19,,,,
+IT,ITF61,Cosenza,beach,,19,19,,,,
+PT,PT1B0,Península de Setúbal,beach,,27,19,wd:Q109400917,Alfarim Beach,country_cap,rank_145
+PT,PT1B0,Península de Setúbal,beach,,27,19,wd:Q99534461,Ouro Beach,country_cap,rank_146
+UA,UA-74538382B17328028725822,Chornomorske,beach,,19,19,,,,
+UA,UA-74538382B3276437105714,Nakhimovskyi,beach,,19,19,,,,
+ES,ES533,Menorca,beach,,21,18,wd:Q6120200,Playa Santo Tomás,country_cap,rank_136
+ES,ES704,Fuerteventura,beach,,18,18,,,,
+IT,ITF65,Reggio Calabria,beach,,18,18,,,,
+PT,PT1C1,Alentejo Litoral,beach,,20,18,wd:Q10352381,Atlântica Beach,country_cap,rank_129
+PT,PT1C1,Alentejo Litoral,beach,,20,18,wd:Q10352827,Melides beach,country_cap,rank_131
+PT,PT1C1,Alentejo Litoral,beach,,20,18,wd:Q20059448,Praia de São Torpes,country_cap,rank_144
+PT,PT191,Região de Aveiro,beach,,20,18,,,,
+TR,TRB21,Van,beach,,18,18,,,,
+GB,TLL32,Gwynedd,beach,,25,18,,,,
+GB,TLM01,Clackmannanshire and Fife,beach,,18,18,,,,
+GB,TLM50,Aberdeen City and Aberdeenshire,beach,,19,18,,,,
+GB,TLN08,"Newry, Mourne and Down",beach,,18,18,,,,
+UA,UA-74538382B43795583594371,Skadovsk,beach,,18,18,,,,
+GR,EL652,Korinthia,beach,,17,17,,,,
+GR,EL431,Irakleio,beach,,20,17,wd:Q53631924,Fodele,score_gate,score_5.1_below_5.6
+DE,DEF08,Ostholstein,beach,,19,17,osm:way/442026900,FKK-Bereich,photo_gate,imgs_4_strong_0
+ES,ES612,Cádiz,beach,,30,17,wd:Q23979201,Playa Santa María del Mar,country_cap,rank_127
+ES,ES612,Cádiz,beach,,30,17,wd:Q4906648,Playa de Santa Bárbara,country_cap,rank_128
+ES,ES612,Cádiz,beach,,30,17,wd:Q5945144,Playa de la Barrosa,country_cap,rank_137
+ES,ES612,Cádiz,beach,,30,17,wd:Q4907172,Playa de Poniente,country_cap,rank_140
+ES,ES612,Cádiz,beach,,30,17,wd:Q24022072,Playa de la Caleta,photo_gate,imgs_4_strong_4
+ES,ES612,Cádiz,beach,,30,17,wd:Q3277360,La Cachucha beach,photo_gate,imgs_1_strong_1
+ES,ES612,Cádiz,beach,,30,17,wd:Q24698174,Western Beach,photo_gate,imgs_1_strong_1
+FR,FRJ13,Hérault,beach,,19,17,wd:Q140959604,plage de la Vigie,score_gate,score_5.4_below_5.6
+IT,ITG2G,Oristano,beach,,20,17,wd:Q33340541,Spiaggia di Sa Capanna,photo_gate,imgs_1_strong_1
+IT,ITG2G,Oristano,beach,,20,17,wd:Q33338698,Spiaggia di Mari Ermi,score_gate,score_5.5_below_5.6
+IT,ITG2G,Oristano,beach,,20,17,wd:Q33340706,Beach of San Giovanni di Sinis,score_gate,score_5.0_below_5.6
+IT,ITF33,Napoli,beach,,18,17,wd:Q581560,Citara,photo_gate,imgs_1_strong_1
+IS,IS001,Höfuðborgarsvæði,beach,,17,17,osm:relation/11007647,Ylströndin í Nauthólsvík,photo_gate,imgs_1_strong_1
+IS,IS001,Höfuðborgarsvæði,beach,,17,17,osm:relation/2580608,Skarfaklettur,photo_gate,imgs_1_strong_1
+IS,IS001,Höfuðborgarsvæði,beach,,17,17,osm:relation/17338008,Bæjarvör,photo_gate,imgs_1_strong_0
+IS,IS001,Höfuðborgarsvæði,beach,,17,17,osm:relation/17338009,Hulduvör,photo_gate,imgs_1_strong_0
+IS,IS001,Höfuðborgarsvæði,beach,,17,17,wd:Q27016382,Kirkjusandur,score_gate,score_5.4_below_5.6
+IS,IS001,Höfuðborgarsvæði,beach,,17,17,osm:relation/17338017,Sandsteinsfjara,score_gate,score_5.3_below_5.6
+IS,IS001,Höfuðborgarsvæði,beach,,17,17,osm:relation/17338006,Kapalfjara,score_gate,score_4.7_below_5.6
+IS,IS001,Höfuðborgarsvæði,beach,,17,17,osm:relation/17338007,Kapalsandur,score_gate,score_4.7_below_5.6
+DK,DK013,Nordsjælland,beach,,19,16,osm:way/25563244,Vedbæk Sydstrand,photo_gate,imgs_1_strong_0
+DK,DK013,Nordsjælland,beach,,19,16,osm:way/172741162,Babylone Strand,photo_gate,imgs_0_strong_0
+DK,DK013,Nordsjælland,beach,,19,16,wd:Q17489429,Tisvildeleje Strand,photo_gate,imgs_0_strong_0
+DK,DK013,Nordsjælland,beach,,19,16,osm:way/172681792,Frydenlund Strand,photo_gate,imgs_0_strong_0
+DK,DK013,Nordsjælland,beach,,19,16,wd:Q110189711,Snekkersten Strand,photo_gate,imgs_1_strong_1
+DK,DK013,Nordsjælland,beach,,19,16,osm:way/152445903,Gråstensvej Strand,photo_gate,imgs_0_strong_0
+DK,DK013,Nordsjælland,beach,,19,16,osm:way/1524059017,Bjerre Beach,photo_gate,imgs_1_strong_0
+DK,DK013,Nordsjælland,beach,,19,16,osm:way/172743577,Julebæk Strand,photo_gate,imgs_0_strong_0
+DK,DK013,Nordsjælland,beach,,19,16,osm:way/172741325,Stranden ved Ida Tesdorpfs Vej,photo_gate,imgs_0_strong_0
+DK,DK013,Nordsjælland,beach,,19,16,osm:way/172744179,Stranden ved Hornbæk Plantage,photo_gate,imgs_0_strong_0
+DK,DK013,Nordsjælland,beach,,19,16,osm:way/172796100,Stængehus - Melby Strand,photo_gate,imgs_0_strong_0
+DK,DK013,Nordsjælland,beach,,19,16,osm:way/172745431,Stængehus Strand,photo_gate,imgs_0_strong_0
+DK,DK013,Nordsjælland,beach,,19,16,osm:way/98901276,Peder Mads Strand,score_gate,score_5.5_below_5.6
+DK,DK013,Nordsjælland,beach,,19,16,wd:Q126142795,Struckmann Park,score_gate,score_5.5_below_5.6
+DK,DK013,Nordsjælland,beach,,19,16,osm:way/172744363,Gilleleje Strand,score_gate,score_5.5_below_5.6
+DK,DK013,Nordsjælland,beach,,19,16,osm:way/172621167,Rungsted Badestrand,score_gate,score_5.4_below_5.6
+ES,ES611,Almería,beach,,19,16,wd:Q6079277,Playa del Peñón Blanco,country_cap,rank_121
+FR,FRJ11,Aude,beach,,17,16,wd:Q49322720,plage des chalets,score_gate,score_5.4_below_5.6
+IT,ITG12,Palermo,beach,,16,16,,,,
+IT,ITF35,Salerno,beach,,16,16,wd:Q33327672,Mingardo,photo_gate,imgs_1_strong_1
+IT,ITF35,Salerno,beach,,16,16,wd:Q33334933,Spiaggia del Troncone,photo_gate,imgs_0_strong_0
+NL,NL341,Zeeuwsch-Vlaanderen,beach,,16,16,osm:way/263501094,Naaktstrand,score_gate,score_4.5_below_5.6
+PT,PT150,Algarve,beach,,43,16,wd:Q20058875,Beijinhos beach,country_cap,rank_121
+PT,PT150,Algarve,beach,,43,16,wd:Q10352953,Praia do Barril,country_cap,rank_122
+PT,PT150,Algarve,beach,,43,16,wd:Q7237762,Praia da Angrinha,country_cap,rank_124
+PT,PT150,Algarve,beach,,43,16,wd:Q49323873,Alvor beach,country_cap,rank_137
+PT,PT150,Algarve,beach,,43,16,wd:Q18129063,Praia da Oura,country_cap,rank_151
+PT,PT150,Algarve,beach,,43,16,wd:Q10352954,Praia do Beliche,country_cap,rank_156
+PT,PT150,Algarve,beach,,43,16,wd:Q10352829,Praia de Monte Gordo,score_gate,score_5.0_below_5.6
+TR,TRC33,Şırnak,beach,,16,16,,,,
+GB,TLD13,Cumberland,beach,,17,16,,,,
+GB,TLH34,Essex Haven Gateway,beach,,16,16,,,,
+GB,TLL31,Isle of Anglesey,beach,,19,16,,,,
+DE,DE947,Aurich,beach,,17,15,wd:Q32193088,Nordstrand,photo_gate,imgs_1_strong_1
+DE,DE947,Aurich,beach,,17,15,osm:way/54355791,Strand am Timmeler Meer,score_gate,score_5.3_below_5.6
+DE,DE947,Aurich,beach,,17,15,wd:Q136005793,Beaches of Juist,score_gate,score_4.9_below_5.6
+ES,ES130,Cantabria,beach,,23,15,wd:Q6152065,Playa de Tregandín,country_cap,rank_130
+ES,ES130,Cantabria,beach,,23,15,wd:Q6078924,Playa de Oyambre,photo_gate,imgs_1_strong_1
+ES,ES709,Tenerife,beach,,18,15,wd:Q205081,El Médano,country_cap,rank_124
+ES,ES521,Alicante/Alacant,beach,,21,15,wd:Q6079112,platja de la Fustera,country_cap,rank_122
+ES,ES521,Alicante/Alacant,beach,,21,15,wd:Q9060728,San Juan Playa,country_cap,rank_131
+ES,ES521,Alicante/Alacant,beach,,21,15,wd:Q3944448,Platja de Mutxavista,country_cap,rank_135
+ES,ES521,Alicante/Alacant,beach,,21,15,wd:Q6079212,Platja de l'Altet,photo_gate,imgs_0_strong_0
+ES,ES531,Eivissa y Formentera,beach,,25,15,wd:Q4886872,Cala de Sant Vicent,country_cap,rank_123
+ES,ES531,Eivissa y Formentera,beach,,25,15,wd:Q133540584,Es Canar,country_cap,rank_142
+ES,ES531,Eivissa y Formentera,beach,,25,15,wd:Q4890409,Sa Caleta,photo_gate,imgs_4_strong_3
+ES,ES531,Eivissa y Formentera,beach,,25,15,wd:Q4885911,Agua Blanca,photo_gate,imgs_1_strong_1
+ES,ES531,Eivissa y Formentera,beach,,25,15,wd:Q5018250,Cala Benirràs,score_gate,score_5.3_below_5.6
+ES,ES531,Eivissa y Formentera,beach,,25,15,wd:Q5739586,Cala Llonga,score_gate,score_5.1_below_5.6
+ES,ES531,Eivissa y Formentera,beach,,25,15,wd:Q1026167,Cala Vadella,score_gate,score_5.0_below_5.6
+IT,ITG14,Agrigento,beach,,16,15,wd:Q33345091,Spiaggia Torre Salsa,photo_gate,imgs_1_strong_1
+IT,ITG14,Agrigento,beach,,16,15,wd:Q33331258,Playa Lido Garibaldi,photo_gate,imgs_1_strong_1
+IT,ITG14,Agrigento,beach,,16,15,wd:Q3947467,San Leone,score_gate,score_5.0_below_5.6
+NL,NL366,Groot-Rijnmond,beach,,17,15,osm:way/152383716,Strand Ouddorp,photo_gate,imgs_0_strong_0
+NL,NL366,Groot-Rijnmond,beach,,17,15,wd:Q2283100,Autostrand Oostvoorne,photo_gate,imgs_0_strong_0
+NL,NL366,Groot-Rijnmond,beach,,17,15,osm:way/957546947,Binnenmaasstrandje Mijnsheerenland,photo_gate,imgs_0_strong_0
+NL,NL366,Groot-Rijnmond,beach,,17,15,wd:Q2175440,Maasvlaktestrand,photo_gate,imgs_0_strong_0
+NL,NL366,Groot-Rijnmond,beach,,17,15,osm:way/436213784,Zwemmersstrandje,photo_gate,imgs_0_strong_0
+NL,NL366,Groot-Rijnmond,beach,,17,15,osm:way/143481703,Herkingen Badstrand,photo_gate,imgs_0_strong_0
+NL,NL366,Groot-Rijnmond,beach,,17,15,osm:way/103183444,Costa del Spui,photo_gate,imgs_0_strong_0
+NL,NL366,Groot-Rijnmond,beach,,17,15,osm:way/1479606701,Haringvlietbrug Oost,photo_gate,imgs_0_strong_0
+NL,NL366,Groot-Rijnmond,beach,,17,15,osm:relation/19688014,Twins,photo_gate,imgs_0_strong_0
+NL,NL366,Groot-Rijnmond,beach,,17,15,osm:way/940981484,Rockanje Naaktstrand,photo_gate,imgs_0_strong_0
+NL,NL366,Groot-Rijnmond,beach,,17,15,osm:way/102925324,De Banaan,photo_gate,imgs_0_strong_0
+NL,NL366,Groot-Rijnmond,beach,,17,15,wd:Q33325251,Badstrand Rockanje,score_gate,score_5.5_below_5.6
+TR,TRC31,Mardin,beach,,15,15,,,,
+TR,TR823,Sinop,beach,,15,15,,,,
+TR,TR421,Kocaeli,beach,,15,15,,,,
+GB,TLC42,Northumberland,beach,,15,15,,,,
+GB,TLK64,Dorset,beach,,19,15,wd:Q18161139,Little Beach,photo_gate,imgs_1_strong_0
+GB,TLK64,Dorset,beach,,19,15,wd:Q1070604,Chesil Beach,photo_gate,imgs_1_strong_1
+GB,TLK64,Dorset,beach,,19,15,wd:Q7990355,Weymouth Beach,score_gate,score_5.4_below_5.6
+GR,EL645,Fokida,beach,,14,14,,,,
+DE,DEF0C,Schleswig-Flensburg,beach,,15,14,,,,
+FR,FRG01,Loire-Atlantique,beach,,16,14,wd:Q21552927,Plage de Port Lin,score_gate,score_5.5_below_5.6
+FR,FRG01,Loire-Atlantique,beach,,16,14,wd:Q24265967,plage du Nau,score_gate,score_5.5_below_5.6
+FR,FRG01,Loire-Atlantique,beach,,16,14,wd:Q3390878,plage des Libraires,score_gate,score_4.8_below_5.6
+IT,ITI44,Latina,beach,,14,14,wd:Q33334977,Spiaggia Dell'Agave,photo_gate,imgs_0_strong_0
+IT,ITI44,Latina,beach,,14,14,wd:Q33345233,Vindicio,score_gate,score_4.8_below_5.6
+IT,ITF46,Foggia,beach,,16,14,,,,
+IE,IE062,Mid-East,beach,,15,14,osm:way/172552777,North Beach,photo_gate,imgs_1_strong_1
+IE,IE062,Mid-East,beach,,15,14,wd:Q26718604,Leamore Strand,photo_gate,imgs_0_strong_0
+IE,IE062,Mid-East,beach,,15,14,osm:way/1323883239,Clogga Strand,score_gate,score_5.3_below_5.6
+IE,IE062,Mid-East,beach,,15,14,osm:way/299875392,Greystones South Beach,score_gate,score_5.2_below_5.6
+IE,IE062,Mid-East,beach,,15,14,osm:way/60903886,The Cove,score_gate,score_4.0_below_5.6
+GB,TLD14,Westmorland and Furness,beach,,14,14,wd:Q31845089,Roanhead Beach,photo_gate,imgs_0_strong_0
+GB,TLH37,Essex Thames Gateway,beach,,14,14,,,,
+UA,UA-74538382B30714686760712,Prymorsk,beach,,14,14,,,,
+BG,BG341,Burgas,beach,,22,13,osm:way/228529543,Плажът на Велека,photo_gate,imgs_0_strong_0
+BG,BG341,Burgas,beach,,22,13,osm:way/312797184,Pearl Beach,photo_gate,imgs_0_strong_0
+BG,BG341,Burgas,beach,,22,13,wd:Q1142729,Bulgarian Coastline of the Black Sea,photo_gate,imgs_1_strong_1
+BG,BG341,Burgas,beach,,22,13,osm:way/435541079,Nude Beach,photo_gate,imgs_2_strong_0
+BG,BG341,Burgas,beach,,22,13,osm:relation/8508223,Созопол-Запад,photo_gate,imgs_0_strong_0
+BG,BG341,Burgas,beach,,22,13,osm:node/12434172176,Nudist Beach,photo_gate,imgs_4_strong_0
+BG,BG341,Burgas,beach,,22,13,osm:way/842369595,Beach camping Delphin,photo_gate,imgs_0_strong_0
+BG,BG341,Burgas,beach,,22,13,osm:way/221183330,"""Tsarski"" Beach",photo_gate,imgs_2_strong_0
+BG,BG341,Burgas,beach,,22,13,osm:way/298258275,Централен плаж,photo_gate,imgs_0_strong_0
+BG,BG341,Burgas,beach,,22,13,osm:way/339152265,Свободна зона,photo_gate,imgs_0_strong_0
+BG,BG341,Burgas,beach,,22,13,osm:way/439501426,"Small Beach ""Budjaka""",photo_gate,imgs_0_strong_0
+BG,BG341,Burgas,beach,,22,13,osm:way/228529739,Butamyata beach,photo_gate,imgs_1_strong_0
+BG,BG341,Burgas,beach,,22,13,osm:way/228530461,Липите,photo_gate,imgs_0_strong_0
+DE,DE80M,Nordwestmecklenburg,beach,,13,13,osm:way/85044673,FKK,photo_gate,imgs_3_strong_0
+DE,DE80M,Nordwestmecklenburg,beach,,13,13,osm:node/11508626389,Hundestrand Wohlenberg,score_gate,score_5.1_below_5.6
+GR,EL621,Zakynthos,beach,,14,13,,,,
+GR,EL542,Thesprotia,beach,,13,13,,,,
+DE,DEF05,Dithmarschen,beach,,13,13,,,,
+GR,EL511,Evros,beach,,13,13,,,,
+GR,EL522,Thessaloniki,beach,,13,13,,,,
+FR,FRD22,Seine-Maritime,beach,,14,13,wd:Q124736610,Plage du Havre,score_gate,score_5.0_below_5.6
+ES,ES512,Girona,beach,,17,13,wd:Q8255023,Cala Montjoi,country_cap,rank_133
+ES,ES512,Girona,beach,,17,13,wd:Q24019697,Platja de Port Alguer,score_gate,score_5.4_below_5.6
+ES,ES512,Girona,beach,,17,13,wd:Q20978066,La Fosca,score_gate,score_5.2_below_5.6
+ES,ES512,Girona,beach,,17,13,wd:Q24019698,Platja Gran,score_gate,score_5.0_below_5.6
+ES,ES512,Girona,beach,,17,13,wd:Q24019694,Platja des Poal,score_gate,score_4.6_below_5.6
+IT,ITI43,Roma,beach,,13,13,wd:Q3657228,Capocotta,photo_gate,imgs_1_strong_1
+IT,ITI43,Roma,beach,,13,13,wd:Q33339413,Spiaggia di Ostia,score_gate,score_5.1_below_5.6
+IT,ITF43,Taranto,beach,,13,13,,,,
+GB,TLE12,East Riding of Yorkshire,beach,,13,13,,,,
+UA,UA-74538382B85800934600856,Kirovske,beach,,13,13,,,,
+UA,UA-74538382B80563569865238,Nyzhniohirskyi,beach,,13,13,,,,
+UA,UA-74538382B87091028068119,Dovzhansk,beach,,13,13,,,,
+UA,UA-74538382B52948461958272,Balakavaskyi,beach,,13,13,,,,
+GR,EL633,Ileia,beach,,12,12,wd:Q4692434,Aghios Andreas Beach,photo_gate,imgs_0_strong_0
+GR,EL641,Voiotia,beach,,12,12,,,,
+ES,ES705,Gran Canaria,beach,,14,12,wd:Q1929363,Playa del Inglés,score_gate,score_5.3_below_5.6
+ME,ME000,Crna Gora,beach,,21,12,wd:Q130272321,Lučice Beach,photo_gate,imgs_4_strong_0
+ME,ME000,Crna Gora,beach,,21,12,osm:way/374848799,Plaža Rijeka Marsenića,photo_gate,imgs_1_strong_1
+ME,ME000,Crna Gora,beach,,21,12,osm:way/440018552,Zagorski Pijesak,photo_gate,imgs_1_strong_0
+ME,ME000,Crna Gora,beach,,21,12,osm:way/984851225,Црвене Стене,photo_gate,imgs_0_strong_0
+ME,ME000,Crna Gora,beach,,21,12,osm:way/1436750020,Jaz nude beach,photo_gate,imgs_0_strong_0
+ME,ME000,Crna Gora,beach,,21,12,wd:Q5659361,Velika Plaža,photo_gate,imgs_1_strong_1
+ME,ME000,Crna Gora,beach,,21,12,wd:Q27572189,Milašinović Beach,photo_gate,imgs_4_strong_0
+ME,ME000,Crna Gora,beach,,21,12,wd:Q116287499,Slovenska Beach,score_gate,score_5.5_below_5.6
+ME,ME000,Crna Gora,beach,,21,12,osm:way/208434767,Plaža Sutomore,score_gate,score_5.5_below_5.6
+ME,ME000,Crna Gora,beach,,21,12,osm:way/172411779,Queen Beach,score_gate,score_5.5_below_5.6
+ME,ME000,Crna Gora,beach,,21,12,osm:way/56213868,Kamenovo,score_gate,score_5.5_below_5.6
+ME,ME000,Crna Gora,beach,,21,12,osm:way/165090347,Rafaello,score_gate,score_5.5_below_5.6
+IT,ITH56,Ferrara,beach,,12,12,wd:Q1902951,Lido degli Scacchi,photo_gate,imgs_0_strong_0
+IT,ITH56,Ferrara,beach,,12,12,wd:Q1121290,Lido di Pomposa,photo_gate,imgs_1_strong_1
+IT,ITG19,Siracusa,beach,,16,12,wd:Q18470459,Arenella,score_gate,score_4.9_below_5.6
+IT,ITI1A,Grosseto,beach,,16,12,,,,
+NL,NL321,Kop van Noord-Holland,beach,,13,12,osm:node/4356511096,Strand Julianadorp,photo_gate,imgs_1_strong_1
+NL,NL321,Kop van Noord-Holland,beach,,13,12,osm:way/90040769,'t Hondehemeltje,photo_gate,imgs_0_strong_0
+NL,NL321,Kop van Noord-Holland,beach,,13,12,osm:way/1082737497,Naaktstrand Den Hoorn,photo_gate,imgs_0_strong_0
+NL,NL321,Kop van Noord-Holland,beach,,13,12,osm:way/1302578497,honden zwemplek,score_gate,score_4.8_below_5.6
+RO,RO225,Tulcea,beach,,12,12,osm:way/449367297,Plaja Ciuperca,photo_gate,imgs_0_strong_0
+RO,RO225,Tulcea,beach,,12,12,osm:way/88004297,Plaja Sfântu Gheorghe,photo_gate,imgs_0_strong_0
+RO,RO225,Tulcea,beach,,12,12,osm:way/301537560,Sulina Beach,score_gate,score_5.1_below_5.6
+RO,RO225,Tulcea,beach,,12,12,wd:Q56008278,Sfântu Gheorghe Beach,score_gate,score_4.0_below_5.6
+TR,TR821,Kastamonu,beach,,12,12,,,,
+TR,TR211,Tekirdağ,beach,,12,12,,,,
+TR,TR411,Bursa,beach,,12,12,,,,
+GB,TLH36,Heart of Essex,beach,,12,12,,,,
+GB,TLH52,North and West Norfolk,beach,,14,12,,,,
+GB,TLN0C,Causeway Coast and Glens,beach,,14,12,,,,
+UA,UA-74538382B42205538030067,Novotroitske,beach,,12,12,,,,
+GR,EL632,Achaia,beach,,12,11,wd:Q55885891,Gianiskari beach,photo_gate,imgs_1_strong_1
+EE,EE009,Kesk-Eesti,beach,,12,11,osm:way/374718479,Viitna beach,photo_gate,imgs_1_strong_1
+EE,EE009,Kesk-Eesti,beach,,12,11,osm:way/1132500770,Tarbja beach,photo_gate,imgs_0_strong_0
+EE,EE009,Kesk-Eesti,beach,,12,11,osm:way/1181273220,Rava Lake Beach,photo_gate,imgs_1_strong_1
+EE,EE009,Kesk-Eesti,beach,,12,11,osm:way/230488774,Järlepa beach,photo_gate,imgs_1_strong_1
+EE,EE009,Kesk-Eesti,beach,,12,11,osm:way/25345751,Võsu Beach,photo_gate,imgs_0_strong_0
+EE,EE009,Kesk-Eesti,beach,,12,11,osm:way/1031707047,Väinjärve beach,photo_gate,imgs_0_strong_0
+EE,EE009,Kesk-Eesti,beach,,12,11,osm:way/1098566229,Pirgu beach,photo_gate,imgs_0_strong_0
+EE,EE009,Kesk-Eesti,beach,,12,11,osm:way/1131264849,Türi beach,photo_gate,imgs_1_strong_1
+EE,EE009,Kesk-Eesti,beach,,12,11,osm:way/1184430349,Tarbja beach,photo_gate,imgs_0_strong_0
+EE,EE009,Kesk-Eesti,beach,,12,11,osm:way/446632294,Saarjärv beach,photo_gate,imgs_0_strong_0
+EE,EE009,Kesk-Eesti,beach,,12,11,osm:way/423454044,Kalvi beach,photo_gate,imgs_0_strong_0
+FR,FRE12,Pas-de-Calais,beach,,11,11,wd:Q85316726,Cran-aux-Oeufs,photo_gate,imgs_1_strong_1
+ES,ES617,Málaga,beach,,15,11,wd:Q6078811,Playa de La Malagueta,country_cap,rank_129
+ES,ES617,Málaga,beach,,15,11,wd:Q6078775,Playa de la Caleta,photo_gate,imgs_4_strong_4
+FR,FRJ15,Pyrénées-Orientales,beach,,11,11,,,,
+IT,ITG2F,Cagliari,beach,,12,11,wd:Q3650053,Spiaggia di Calamosca,photo_gate,imgs_1_strong_1
+IT,ITG2F,Cagliari,beach,,12,11,wd:Q33341204,Spiaggia di Solanas,photo_gate,imgs_1_strong_1
+IT,ITG2F,Cagliari,beach,,12,11,wd:Q33338715,Spiaggia di Mari Pintau,score_gate,score_5.5_below_5.6
+IT,ITG2F,Cagliari,beach,,12,11,wd:Q33337979,Spiaggia di Genn'e Mari,score_gate,score_5.3_below_5.6
+IT,ITG2F,Cagliari,beach,,12,11,wd:Q33334791,Spiaggia del Poetto di Quartu Sant'Elena,score_gate,score_5.0_below_5.6
+NO,NO0B1,Jan Mayen,beach,,11,11,,,,
+UA,UA-74538382B72550121130033,Ochakiv,beach,,11,11,,,,
+DK,DK021,Østsjælland,beach,,11,10,osm:way/173297437,Vigen Strandpark,photo_gate,imgs_0_strong_0
+DK,DK021,Østsjælland,beach,,11,10,osm:way/173298552,Herslev Strand,score_gate,score_5.4_below_5.6
+DK,DK021,Østsjælland,beach,,11,10,osm:way/237000886,Trylleskoven strand,score_gate,score_5.3_below_5.6
+ES,ES707,La Palma,beach,,10,10,,,,
+ES,ES708,Lanzarote,beach,,12,10,,,,
+IT,ITH42,Udine,beach,,10,10,,,,
+IT,ITC33,Genova,beach,,11,10,,,,
+IT,ITF62,Crotone,beach,,10,10,,,,
+NL,NL115,Overig Groningen,beach,,10,10,osm:way/99150401,Meerwijck Beach,score_gate,score_4.9_below_5.6
+NL,NL115,Overig Groningen,beach,,10,10,osm:way/430861753,Stadsstrand,score_gate,score_3.6_below_5.6
+TR,TR811,Zonguldak,beach,,10,10,,,,
+TR,TR901,Trabzon,beach,,10,10,,,,
+TR,TR902,Ordu,beach,,10,10,,,,
+TR,TR425,Yalova,beach,,10,10,,,,
+GB,TLF30,Lincolnshire CC,beach,,10,10,,,,
+GB,TLH63,East Suffolk,beach,,11,10,wd:Q136419035,Felixstowe Beach,score_gate,score_5.2_below_5.6
+GB,TLJ43,Kent Thames Gateway,beach,,10,10,,,,
+UA,UA-74538382B36897928857836,Kalanchak,beach,,10,10,,,,
+UA,UA-74538382B54958880930265,Ovidiopol,beach,,10,10,,,,
+ES,ES112,Lugo,beach,,11,9,,,,
+DK,DK011,Byen København,beach,,12,9,osm:way/25637738,Dragør Sydstrand,photo_gate,imgs_0_strong_0
+DK,DK011,Byen København,beach,,12,9,osm:way/569796913,Havnevigen,score_gate,score_5.4_below_5.6
+DK,DK011,Byen København,beach,,12,9,osm:way/379672358,Christiania Beach,score_gate,score_5.4_below_5.6
+DK,DK011,Byen København,beach,,12,9,wd:Q23754180,Copencabana,score_gate,score_5.2_below_5.6
+DE,DEF0B,Rendsburg-Eckernförde,beach,,9,9,,,,
+GR,EL306,Dytiki Attiki,beach,,9,9,,,,
+IT,ITF63,Catanzaro,beach,,9,9,,,,
+IT,ITF44,Brindisi,beach,,9,9,,,,
+TR,TR903,Giresun,beach,,9,9,,,,
+TR,TR904,Rize,beach,,9,9,,,,
+GB,TLJ27,West Sussex (South West),beach,,11,9,,,,
+GB,TLJ34,Isle of Wight,beach,,11,9,,,,
+GB,TLJ35,South Hampshire,beach,,9,9,,,,
+GB,TLJ44,East Kent,beach,,11,9,,,,
+UA,UA-74538382B1113173119948,Berezanka,beach,,9,9,,,,
+UA,UA-74538382B42406222783177,Berdiansk,beach,,9,9,,,,
+DE,DE932,Cuxhaven,beach,,8,8,osm:way/293584133,FKK-Strand Duhnen,score_gate,score_5.2_below_5.6
+ES,ES213,Bizkaia,beach,,12,8,wd:Q5183580,Bakio,country_cap,rank_138
+DK,DK014,Bornholm,beach,,10,8,wd:Q23753274,Hullehavn,photo_gate,imgs_0_strong_0
+FR,FRE23,Somme,beach,,8,8,,,,
+ES,ES511,Barcelona,beach,,12,8,wd:Q3329668,Platja de la Nova Mar Bella,photo_gate,imgs_1_strong_1
+ES,ES511,Barcelona,beach,,12,8,wd:Q1053014,Barceloneta Beach,score_gate,score_5.5_below_5.6
+ES,ES523,Valencia/València,beach,,12,8,,,,
+FR,FRI13,Landes,beach,,9,8,,,,
+IT,ITG18,Ragusa,beach,,8,8,,,,
+IT,ITF47,Bari,beach,,9,8,,,,
+PL,PL426,Koszaliński,beach,,8,8,osm:way/1171112725,Plaża Wicie 3W,score_gate,score_5.5_below_5.6
+TR,TR813,Bartın,beach,,8,8,,,,
+TR,TRA22,Kars,beach,,8,8,,,,
+TR,TR212,Edirne,beach,,8,8,,,,
+GB,TLN0F,Mid and East Antrim,beach,,8,8,,,,
+UA,UA-74538382B10810755627981,Sovietsky,beach,,8,8,,,,
+AL,AL032,Fier,beach,,7,7,osm:way/977778133,Samuel King seaside,score_gate,score_5.1_below_5.6
+BG,BG332,Dobrich,beach,,8,7,osm:way/1545053488,Детски плаж,photo_gate,imgs_0_strong_0
+BG,BG332,Dobrich,beach,,8,7,osm:way/497837601,Бабешкия плаж,photo_gate,imgs_3_strong_0
+BG,BG332,Dobrich,beach,,8,7,osm:way/842205763,Кибела,photo_gate,imgs_0_strong_0
+BG,BG332,Dobrich,beach,,8,7,osm:node/9129900527,Women,photo_gate,imgs_0_strong_0
+BG,BG332,Dobrich,beach,,8,7,osm:way/254529417,Централен плаж,photo_gate,imgs_0_strong_0
+BG,BG332,Dobrich,beach,,8,7,osm:way/109844210,Болата,photo_gate,imgs_0_strong_0
+BG,BG332,Dobrich,beach,,8,7,osm:node/9129895151,Men,photo_gate,imgs_0_strong_0
+GR,EL512,Xanthi,beach,,7,7,,,,
+GR,EL513,Rodopi,beach,,7,7,wd:Q12885126,Synaksi,photo_gate,imgs_1_strong_1
+GR,EL525,Pieria,beach,,9,7,wd:Q3565376,Paralia Panteleimonos,score_gate,score_5.5_below_5.6
+GR,EL525,Pieria,beach,,9,7,wd:Q3560574,Paralia Skotinas,score_gate,score_5.4_below_5.6
+GR,EL525,Pieria,beach,,9,7,wd:Q25164457,Pantelehmonas Beach,score_gate,score_5.3_below_5.6
+GR,EL525,Pieria,beach,,9,7,wd:Q3491767,Leptokarya,score_gate,score_5.2_below_5.6
+GR,EL525,Pieria,beach,,9,7,wd:Q53633404,Olympiaki,score_gate,score_5.1_below_5.6
+GR,EL525,Pieria,beach,,9,7,wd:Q25162341,Nei Pori Beach,score_gate,score_4.9_below_5.6
+ES,ES703,El Hierro,beach,,7,7,,,,
+ES,ES522,Castellón/Castelló,beach,,11,7,wd:Q9060809,Platja del Carregador,country_cap,rank_141
+GB,TLD44,Lancaster and Wyre,beach,,7,7,,,,
+GB,TLJ41,Medway,beach,,7,7,,,,
+GB,TLK62,Somerset,beach,,8,7,,,,
+GB,TLM03,Angus and Dundee City,beach,,7,7,,,,
+GB,TLM94,South Ayrshire,beach,,8,7,,,,
+UA,UA-74538382B24072865224387,Rozdolne,beach,,7,7,,,,
+UA,UA-74538382B12626856106214,Krasnoperekopsk,beach,,7,7,,,,
+DE,DE94A,Friesland (DE),beach,,7,6,,,,
+DE,DE94G,Wesermarsch,beach,,6,6,,,,
+DE,DE94H,Wittmund,beach,,6,6,,,,
+DE,DE80K,Landkreis Rostock,beach,,6,6,,,,
+FR,FRD11,Calvados ,beach,,10,6,,,,
+ES,ES706,La Gomera,beach,,6,6,,,,
+FR,FRL03,Alpes-Maritimes,beach,,11,6,wd:Q49322817,plage de la Petite Afrique,photo_gate,imgs_1_strong_1
+FR,FRL03,Alpes-Maritimes,beach,,11,6,osm:relation/10693585,Plage du Pont de Fer,score_gate,score_5.2_below_5.6
+FR,FRL03,Alpes-Maritimes,beach,,11,6,osm:way/158189835,Marquet Beach,score_gate,score_4.4_below_5.6
+IT,ITH57,Ravenna,beach,,6,6,,,,
+IT,ITG17,Catania,beach,,6,6,,,,
+IT,ITC31,Imperia,beach,,6,6,,,,
+PL,PL636,Słupski,beach,,6,6,osm:way/226921454,Plaża dla psów,photo_gate,imgs_0_strong_0
+PL,PL636,Słupski,beach,,6,6,osm:way/293206250,Plaża C,score_gate,score_4.0_below_5.6
+TR,TRA21,Ağrı,beach,,6,6,,,,
+GB,TLE13,North and North East Lincolnshire,beach,,6,6,,,,
+GB,TLJ22,East Sussex CC,beach,,7,6,wd:Q5430552,Fairlight Glen,photo_gate,imgs_1_strong_0
+GB,TLJ22,East Sussex CC,beach,,7,6,wd:Q5025038,Camber Sands,score_gate,score_5.5_below_5.6
+GB,TLL52,Cardiff and Vale of Glamorgan,beach,,6,6,,,,
+UA,UA-74538382B97836372307066,Kiliia,beach,,6,6,,,,
+AL,AL012,Durrës,beach,,6,5,osm:way/268077646,Plazhi Portez,score_gate,score_4.5_below_5.6
+AL,AL012,Durrës,beach,,6,5,osm:node/9135982133,Malibu beach,score_gate,score_4.4_below_5.6
+AL,AL012,Durrës,beach,,6,5,osm:node/12985161701,Sandy beach,score_gate,score_4.3_below_5.6
+AL,AL012,Durrës,beach,,6,5,osm:node/7015715032,Green Park Beach,score_gate,score_2.2_below_5.6
+AL,AL014,Lezhë,beach,,6,5,osm:way/366173500,Bar Ledh Mario,score_gate,score_4.7_below_5.6
+AL,AL014,Lezhë,beach,,6,5,osm:node/14019844762,Jawa Park,score_gate,score_2.0_below_5.6
+AL,AL014,Lezhë,beach,,6,5,osm:node/14019844763,Saca Beach,score_gate,score_2.0_below_5.6
+BG,BG331,Varna,beach,,6,5,osm:way/40970984,Central beach,photo_gate,imgs_4_strong_0
+BG,BG331,Varna,beach,,6,5,wd:Q12282579,Karadere beach,photo_gate,imgs_1_strong_1
+BG,BG331,Varna,beach,,6,5,wd:Q121307834,Централен плаж (Варна),photo_gate,imgs_4_strong_0
+BG,BG331,Varna,beach,,6,5,wd:Q121307264,Южен плаж (Варна),photo_gate,imgs_2_strong_0
+BG,BG331,Varna,beach,,6,5,osm:way/172436707,Chayka,photo_gate,imgs_0_strong_0
+GR,EL433,Rethymni,beach,,11,5,wd:Q53633220,Plakias,score_gate,score_4.5_below_5.6
+FR,FRH03,Ille-et-Vilaine,beach,,12,5,wd:Q66932115,Plage de Saint-Énogat,score_gate,score_5.5_below_5.6
+FR,FRH03,Ille-et-Vilaine,beach,,12,5,wd:Q56849077,Plage des Bas Sablons,score_gate,score_5.1_below_5.6
+FR,FRH03,Ille-et-Vilaine,beach,,12,5,wd:Q124789462,Plage de la Hoguette,score_gate,score_5.0_below_5.6
+FR,FRH03,Ille-et-Vilaine,beach,,12,5,wd:Q66930200,Plage de l'Écluse,score_gate,score_4.3_below_5.6
+LV,LV00C,Vidzeme,beach,,7,5,osm:node/9816488984,"Cēsu aktīvās atpūtas parks ""Karjers""",photo_gate,imgs_0_strong_0
+LV,LV00C,Vidzeme,beach,,7,5,osm:relation/14649152,Ogres pilsētas peldētava,photo_gate,imgs_1_strong_0
+LV,LV00C,Vidzeme,beach,,7,5,osm:way/475114300,Daliņu Pludmale,photo_gate,imgs_0_strong_0
+LV,LV00C,Vidzeme,beach,,7,5,osm:relation/14726503,Centrs,photo_gate,imgs_0_strong_0
+LV,LV00C,Vidzeme,beach,,7,5,osm:way/969616137,Burtnieku centra pludmale,photo_gate,imgs_1_strong_1
+IT,ITH44,Trieste,beach,,5,5,,,,
+IT,ITF48,Barletta-Andria-Trani,beach,,5,5,,,,
+IT,ITC32,Savona,beach,,7,5,wd:Q115785065,Spiaggia dei Pescatori,score_gate,score_5.2_below_5.6
+IT,ITC34,La Spezia,beach,,8,5,wd:Q33342127,Spiaggia Eco Del Mare,photo_gate,imgs_1_strong_1
+IT,ITC34,La Spezia,beach,,8,5,wd:Q33343687,Spiaggia Marinella di Sarzana,score_gate,score_4.7_below_5.6
+IT,ITF64,Vibo Valentia,beach,,6,5,,,,
+IT,ITF14,Chieti,beach,,6,5,,,,
+PT,PT1A0,Grande Lisboa,beach,,14,5,wd:Q49323672,Praia da Cresmina,country_cap,rank_123
+PT,PT1A0,Grande Lisboa,beach,,14,5,wd:Q10352638,Praia da Parede,country_cap,rank_125
+PT,PT1A0,Grande Lisboa,beach,,14,5,wd:Q10353035,Praia do Magoito,country_cap,rank_136
+PT,PT1A0,Grande Lisboa,beach,,14,5,wd:Q49323776,Praia da Rainha,country_cap,rank_149
+PT,PT1A0,Grande Lisboa,beach,,14,5,wd:Q49323897,Praia de Caxias,country_cap,rank_154
+TR,TR213,Kırklareli,beach,,5,5,,,,
+GB,TLE22,North Yorkshire,beach,,6,5,,,,
+GB,TLM11,East Lothian and Midlothian,beach,,6,5,,,,
+GB,TLM93,North Ayrshire and East Ayrshire,beach,,5,5,,,,
+UA,UA-74538382B57790499946350,Yakymivka,beach,,5,5,,,,
+UA,UA-74538382B88986400051477,Tatarbunary,beach,,5,5,,,,
+DE,DE945,"Wilhelmshaven, Kreisfreie Stadt",beach,,4,4,,,,
+GR,EL612,Larisa,beach,,4,4,wd:Q6426671,Kokkino Nero,photo_gate,imgs_1_strong_1
+GR,EL612,Larisa,beach,,4,4,wd:Q7286716,Rakopotamos,photo_gate,imgs_0_strong_0
+GR,EL612,Larisa,beach,,4,4,wd:Q7127573,Paliouria,photo_gate,imgs_0_strong_0
+GR,EL612,Larisa,beach,,4,4,wd:Q25162339,Kouloura Beach,photo_gate,imgs_1_strong_1
+DE,DEF03,"Lübeck, Kreisfreie Stadt",beach,,4,4,,,,
+FR,FRE11,Nord,beach,,4,4,,,,
+IT,ITF12,Teramo,beach,,4,4,,,,
+IE,IE061,Dublin,beach,,14,4,osm:relation/6499065,Rush South Beach,photo_gate,imgs_1_strong_1
+IE,IE061,Dublin,beach,,14,4,wd:Q42852329,Burrow Beach,photo_gate,imgs_0_strong_0
+IE,IE061,Dublin,beach,,14,4,osm:way/22907706,Donabate Beach,photo_gate,imgs_0_strong_0
+IT,ITF31,Caserta,beach,,4,4,,,,
+NL,NL112,Delfzijl en omgeving,beach,,4,4,,,,
+NL,NL411,West-Noord-Brabant,beach,,5,4,osm:way/931922280,Naaktstrand Galderse Meren,photo_gate,imgs_0_strong_0
+NL,NL411,West-Noord-Brabant,beach,,5,4,osm:way/100202521,Gat van de kerksloot Biesbosch,photo_gate,imgs_0_strong_0
+PT,PT1D1,Oeste,beach,,12,4,wd:Q49324296,Praia Formosa,country_cap,rank_150
+PT,PT192,Região de Coimbra,beach,,5,4,wd:Q304257,Praia de Quiaios,country_cap,rank_157
+TR,TR422,Sakarya,beach,,4,4,,,,
+GB,TLJ31,Portsmouth,beach,,4,4,,,,
+GB,TLJ36,Central Hampshire,beach,,7,4,,,,
+GB,TLK63,"Bournemouth, Christchurch and Poole",beach,,5,4,wd:Q5646479,Hamworthy Beach,score_gate,score_5.3_below_5.6
+GB,TLL33,Conwy and Denbighshire,beach,,6,4,,,,
+UA,UA-74538382B62779126534418,Chaplynka,beach,,4,4,,,,
+UA,UA-74538382B73890092439247,Pryazovske,beach,,4,4,,,,
+UA,UA-74538382B85654458417277,Lyman,beach,,4,4,,,,
+AL,AL011,Dibër,beach,,3,3,osm:way/960711931,Rera per Plazh,score_gate,score_4.7_below_5.6
+AL,AL013,Kukës,beach,,3,3,,,,
+AL,AL031,Berat,beach,,3,3,osm:node/11156762608,"Plazhi ""Ballkonet""",photo_gate,imgs_0_strong_0
+AL,AL031,Berat,beach,,3,3,osm:node/11156762617,"Plazhi ""Vau""",score_gate,score_5.3_below_5.6
+AL,AL031,Berat,beach,,3,3,osm:node/11156762607,Plazhi i Varishtit,score_gate,score_5.1_below_5.6
+AL,AL034,Korcë,beach,,3,3,osm:way/1101726265,Erlin,score_gate,score_5.3_below_5.6
+AL,AL034,Korcë,beach,,3,3,wd:Q97027822,Beach of Pogradec,score_gate,score_5.0_below_5.6
+AL,AL034,Korcë,beach,,3,3,osm:way/913037175,Park Aleksander,score_gate,score_4.5_below_5.6
+AL,AL021,Elbasan,beach,,3,3,osm:way/1076294841,"Plazhi në Liqen ""LIO""",score_gate,score_4.5_below_5.6
+AL,AL022,Tiranë,beach,,3,3,wd:Q22009508,Plazhi i Golemit,score_gate,score_5.1_below_5.6
+AL,AL022,Tiranë,beach,,3,3,wd:Q16363409,Mali i Robit,score_gate,score_4.9_below_5.6
+AL,AL022,Tiranë,beach,,3,3,osm:way/335879203,Plazhi i Gjeneralit,score_gate,score_4.9_below_5.6
+AT,AT126,Wiener Umland/Nordteil,beach,,3,3,osm:way/25546879,Naturbadeplatz,photo_gate,imgs_0_strong_0
+AT,AT122,Niederösterreich-Süd,beach,,3,3,,,,
+AT,AT311,Innviertel,beach,,3,3,osm:way/177865417,Badeplatz Perwang am Grabensee,photo_gate,imgs_0_strong_0
+AT,AT213,Unterkärnten,beach,,3,3,,,,
+AT,AT222,Liezen,beach,,3,3,osm:node/3300716356,FKK-Badestrand,score_gate,score_5.0_below_5.6
+AT,AT223,Östliche Obersteiermark,beach,,3,3,,,,
+AT,AT315,Traunviertel,beach,,3,3,osm:way/646958799,FKK-Strand Weißenbachtal,photo_gate,imgs_0_strong_0
+AT,AT315,Traunviertel,beach,,3,3,osm:way/685038415,Öffentlicher Badeplatz,score_gate,score_5.3_below_5.6
+AT,AT315,Traunviertel,beach,,3,3,osm:way/230535596,Badeplatz Weiße Taube,score_gate,score_5.2_below_5.6
+AT,AT334,Tiroler Oberland,beach,,3,3,,,,
+AT,AT341,Bludenz-Bregenzer Wald,beach,,3,3,,,,
+BE,BE211,Arr. Antwerpen,beach,,3,3,osm:way/19783271,Sint-Annastrand,score_gate,score_4.9_below_5.6
+AT,AT322,Pinzgau-Pongau,beach,,3,3,osm:way/1038963987,Badesee Neukirchen,score_gate,score_5.0_below_5.6
+AT,AT323,Salzburg und Umgebung,beach,,3,3,osm:way/465374286,FKK Bereich,photo_gate,imgs_0_strong_0
+AT,AT323,Salzburg und Umgebung,beach,,3,3,osm:way/1081407164,Seekirchner Gemeindestrand,photo_gate,imgs_0_strong_0
+AT,AT323,Salzburg und Umgebung,beach,,3,3,osm:way/1277801832,Salzachschleife Laufen,score_gate,score_5.4_below_5.6
+AT,AT331,Außerfern,beach,,3,3,osm:node/13698271539,Vils Ufer,photo_gate,imgs_0_strong_0
+AT,AT331,Außerfern,beach,,3,3,osm:way/81550258,Strand/Liegewiese,score_gate,score_4.8_below_5.6
+BE,BE255,Arr. Oostende,beach,,3,3,osm:way/72895496,Naaktstrand,photo_gate,imgs_1_strong_0
+BE,BE258,Arr. Veurne,beach,,3,3,,,,
+BE,BE323,Arr. Mons,beach,,3,3,,,,
+BE,BE224,Arr. Hasselt,beach,,3,3,,,,
+BE,BE232,Arr. Dendermonde,beach,,3,3,,,,
+BE,BE236,Arr. Sint-Niklaas,beach,,3,3,,,,
+BE,BE336,Bezirk Verviers — Deutschsprachige Gemeinschaft,beach,,3,3,osm:way/241166364,VENNtastic Beach,score_gate,score_4.9_below_5.6
+BE,BE341,Arr. Arlon,beach,,3,3,,,,
+BE,BE353,Arr. Philippeville,beach,,3,3,,,,
+BG,BG311,Vidin,beach,,3,3,osm:way/1375100541,Градски плаж,photo_gate,imgs_0_strong_0
+BE,BE343,Arr. Marche-en-Famenne,beach,,3,3,osm:way/1531906884,Plage de Maboge,photo_gate,imgs_0_strong_0
+BE,BE343,Arr. Marche-en-Famenne,beach,,3,3,osm:way/719928480,Plage de Maboge,score_gate,score_5.2_below_5.6
+BE,BE343,Arr. Marche-en-Famenne,beach,,3,3,osm:way/836761808,Plage de Hotton,score_gate,score_4.1_below_5.6
+BE,BE345,Arr. Virton,beach,,3,3,osm:way/837098923,Plage du lac de Conchibois,score_gate,score_5.3_below_5.6
+BE,BE345,Arr. Virton,beach,,3,3,osm:way/1532019018,Plage de Lacuisine,score_gate,score_4.5_below_5.6
+BE,BE352,Arr. Namur,beach,,3,3,osm:way/112871512,Plage du Lac de Bambois,score_gate,score_5.1_below_5.6
+BE,BE32D,Arr. Thuin,beach,,3,3,,,,
+BE,BE335,Arr. Verviers — communes francophones,beach,,3,3,,,,
+BG,BG325,Silistra,beach,,3,3,,,,
+BG,BG321,Veliko Tarnovo,beach,,3,3,osm:way/1412477825,Руски плаж,photo_gate,imgs_0_strong_0
+BG,BG322,Gabrovo,beach,,3,3,,,,
+BG,BG342,Sliven,beach,,3,3,,,,
+BG,BG344,Stara Zagora,beach,,3,3,,,,
+BG,BG411,Sofia (stolitsa),beach,,3,3,osm:node/10178824960,плаж Буковски,score_gate,score_5.3_below_5.6
+BG,BG423,Pazardzhik,beach,,3,3,,,,
+BG,BG424,Smolyan,beach,,3,3,,,,
+BG,BG425,Kardzhali,beach,,3,3,,,,
+BG,BG412,Sofia,beach,,3,3,,,,
+BG,BG414,Pernik,beach,,3,3,,,,
+BG,BG415,Kyustendil,beach,,3,3,,,,
+BG,BG422,Haskovo,beach,,3,3,,,,
+CH,CH023,Solothurn,beach,,3,3,osm:way/576341929,Lido,score_gate,score_4.7_below_5.6
+CH,CH023,Solothurn,beach,,3,3,osm:way/625795863,Schachenbad,score_gate,score_4.2_below_5.6
+CH,CH021,Bern / Berne,beach,,3,3,osm:way/380322751,Nase,score_gate,score_5.5_below_5.6
+CH,CH021,Bern / Berne,beach,,3,3,osm:node/3670060464,Sundlauenen Beach,score_gate,score_5.5_below_5.6
+CH,CH021,Bern / Berne,beach,,3,3,osm:node/10537569534,Badewiese Funtelen,score_gate,score_5.2_below_5.6
+CH,CH012,Valais / Wallis,beach,,3,3,osm:way/227887747,Plage du Bouveret,photo_gate,imgs_0_strong_0
+CH,CH055,St. Gallen,beach,,3,3,osm:way/504571981,Badestrand Lago Mio,photo_gate,imgs_1_strong_1
+CH,CH057,Thurgau,beach,,3,3,osm:way/442989459,Baggerweiher,photo_gate,imgs_0_strong_0
+CH,CH057,Thurgau,beach,,3,3,osm:way/97385116,Strandbad,score_gate,score_5.1_below_5.6
+CH,CH057,Thurgau,beach,,3,3,osm:way/1275525622,Kiesstrand Naturschutzgebiet Aachmündung,score_gate,score_4.9_below_5.6
+CH,CH033,Aargau,beach,,3,3,osm:way/1047427875,Tränkibödeli,photo_gate,imgs_0_strong_0
+CH,CH033,Aargau,beach,,3,3,osm:way/1144795776,Nachtigall-Strand,photo_gate,imgs_0_strong_0
+CH,CH033,Aargau,beach,,3,3,osm:way/1198618169,Pirateninsel,photo_gate,imgs_0_strong_0
+CH,CH051,Glarus,beach,,3,3,osm:way/414811257,Badestrand Gäsi,photo_gate,imgs_1_strong_1
+CH,CH051,Glarus,beach,,3,3,osm:node/12185736800,Oberblegisee,photo_gate,imgs_0_strong_0
+CZ,CZ031,Jihočeský kraj,beach,,3,3,osm:way/232919729,pláž Horní Planá,score_gate,score_5.5_below_5.6
+CZ,CZ031,Jihočeský kraj,beach,,3,3,wd:Q135907942,Sluneční ostrov,score_gate,score_4.8_below_5.6
+CH,CH061,Luzern,beach,,3,3,osm:way/1080073499,Badeplatz Villa Krämerstein,photo_gate,imgs_0_strong_0
+CH,CH063,Schwyz,beach,,3,3,osm:node/5045992438,Meier's Badhüttli,photo_gate,imgs_0_strong_0
+CH,CH063,Schwyz,beach,,3,3,osm:way/441783024,Badeplatz Choli,score_gate,score_5.3_below_5.6
+CH,CH064,Obwalden,beach,,3,3,,,,
+CH,CH065,Nidwalden,beach,,3,3,,,,
+CH,CH066,Zug,beach,,3,3,osm:way/1301765969,Zigünerplätzli,photo_gate,imgs_0_strong_0
+CH,CH066,Zug,beach,,3,3,osm:node/663870228,Lido,score_gate,score_5.5_below_5.6
+CH,CH066,Zug,beach,,3,3,osm:node/7756253980,Strandbad Oberägeri,score_gate,score_5.0_below_5.6
+CZ,CZ041,Karlovarský kraj,beach,,3,3,,,,
+CZ,CZ042,Ústecký kraj,beach,,3,3,osm:node/8586278572,Strážný,photo_gate,imgs_0_strong_0
+CZ,CZ042,Ústecký kraj,beach,,3,3,osm:way/1201053788,Pláž Kyjovská přehrada,photo_gate,imgs_0_strong_0
+CZ,CZ042,Ústecký kraj,beach,,3,3,osm:way/1531233647,Hundestrand,photo_gate,imgs_0_strong_0
+CZ,CZ051,Liberecký kraj,beach,,3,3,osm:way/231455080,nudistická pláž,score_gate,score_5.4_below_5.6
+CZ,CZ051,Liberecký kraj,beach,,3,3,osm:way/695728199,Studentská pláž,score_gate,score_5.3_below_5.6
+CZ,CZ051,Liberecký kraj,beach,,3,3,osm:way/477967843,Pláž U Prutu,score_gate,score_4.6_below_5.6
+CZ,CZ064,Jihomoravský kraj,beach,,3,3,osm:way/1282637171,Pláž u apolonova chrámu,photo_gate,imgs_0_strong_0
+CZ,CZ064,Jihomoravský kraj,beach,,3,3,osm:way/1309534020,Jedovnice,score_gate,score_5.1_below_5.6
+CZ,CZ072,Zlínský kraj,beach,,3,3,,,,
+CZ,CZ063,Kraj Vysočina,beach,,3,3,osm:node/14000532649,Bělizna,photo_gate,imgs_0_strong_0
+DE,DEB12,Ahrweiler,beach,,3,3,,,,
+DE,DEE04,Altmarkkreis Salzwedel,beach,,3,3,,,,
+DE,DEE05,Anhalt-Bitterfeld,beach,,3,3,,,,
+DE,DE929,Region Hannover,beach,,3,3,,,,
+DE,DE939,Stade,beach,,3,3,,,,
+DE,DEE0B,Saalekreis,beach,,3,3,osm:way/553839351,FKK-Strand,photo_gate,imgs_0_strong_0
+DE,DEE0B,Saalekreis,beach,,3,3,osm:way/191057227,FKK,score_gate,score_5.1_below_5.6
+DE,DE942,"Emden, Kreisfreie Stadt",beach,,3,3,,,,
+DE,DE946,Ammerland,beach,,3,3,osm:node/6395415329,FKK,photo_gate,imgs_0_strong_0
+DE,DE80O,Ludwigslust-Parchim,beach,,3,3,osm:relation/17897333,Barracuda Beach,photo_gate,imgs_1_strong_0
+DE,DE94C,Leer,beach,,4,3,,,,
+DE,DED2D,Görlitz,beach,,3,3,osm:way/67386784,FKK-Strand Halbendorfer See,photo_gate,imgs_0_strong_0
+DE,DEA23,"Köln, Kreisfreie Stadt",beach,,3,3,,,,
+DE,DED51,"Leipzig, Kreisfreie Stadt",beach,,3,3,osm:way/1000851759,Nacktbadestrand,photo_gate,imgs_2_strong_0
+DE,DEA5B,Soest,beach,,3,3,,,,
+DE,DE27E,Oberallgäu,beach,,3,3,,,,
+DE,DE228,"Passau, Landkreis",beach,,3,3,,,,
+DE,DE40A,Oberhavel,beach,,3,3,,,,
+DE,DE803,"Rostock, Kreisfreie Stadt",beach,,3,3,,,,
+DE,DE404,"Potsdam, Kreisfreie Stadt",beach,,3,3,,,,
+DE,DE40C,Oder-Spree,beach,,3,3,osm:way/24428117,Werlsee Nordstrand,photo_gate,imgs_1_strong_1
+DE,DE40C,Oder-Spree,beach,,3,3,osm:node/1293078486,Freibad,photo_gate,imgs_0_strong_0
+DE,DE40C,Oder-Spree,beach,,3,3,osm:node/6594587726,Badestelle Haus Katharinensee,photo_gate,imgs_0_strong_0
+DE,DE80J,Mecklenburgische Seenplatte,beach,,3,3,osm:way/158005641,Reitbahnsee Strand,photo_gate,imgs_0_strong_0
+DE,DE80J,Mecklenburgische Seenplatte,beach,,3,3,osm:way/233511522,Brodaer Strand,photo_gate,imgs_0_strong_0
+DE,DE405,Barnim,beach,,3,3,osm:way/28074011,Strandbad Wandlitzsee,score_gate,score_5.0_below_5.6
+DE,DE406,Dahme-Spreewald,beach,,3,3,osm:way/77629048,Strand2,photo_gate,imgs_1_strong_0
+DE,DE406,Dahme-Spreewald,beach,,3,3,osm:way/159545735,Strand1,photo_gate,imgs_1_strong_0
+DE,DE406,Dahme-Spreewald,beach,,3,3,osm:way/77629165,Strand3,score_gate,score_4.9_below_5.6
+DE,DE40E,Potsdam-Mittelmark,beach,,3,3,osm:way/42822828,Summer Lounge,photo_gate,imgs_0_strong_0
+DE,DE40E,Potsdam-Mittelmark,beach,,3,3,osm:way/479150686,Strand am Flachsberg,photo_gate,imgs_0_strong_0
+DE,DE147,Bodenseekreis,beach,,3,3,osm:node/11330724122,Eriskirch beach,photo_gate,imgs_1_strong_1
+DE,DE147,Bodenseekreis,beach,,3,3,osm:way/121926624,FKK-Strand,score_gate,score_5.2_below_5.6
+DE,DE149,Sigmaringen,beach,,3,3,,,,
+DE,DE215,Berchtesgadener Land,beach,,3,3,,,,
+DE,DE40I,Uckermark,beach,,3,3,osm:node/3012138082,FKK-Strand,photo_gate,imgs_0_strong_0
+DE,DE501,"Bremen, Kreisfreie Stadt",beach,,3,3,osm:way/44600191,FKK-Strand,photo_gate,imgs_0_strong_0
+DE,DE501,"Bremen, Kreisfreie Stadt",beach,,3,3,osm:way/32304128,Werderseestrand,photo_gate,imgs_0_strong_0
+DE,DE501,"Bremen, Kreisfreie Stadt",beach,,3,3,osm:way/23904865,Weserstrand,score_gate,score_5.5_below_5.6
+DE,DE502,"Bremerhaven, Kreisfreie Stadt",beach,,3,3,,,,
+DE,DE600,Hamburg,beach,,3,3,osm:way/24017388,Boberger Strand,photo_gate,imgs_1_strong_1
+DE,DE600,Hamburg,beach,,3,3,osm:way/158077522,Badestelle,photo_gate,imgs_1_strong_0
+DE,DE600,Hamburg,beach,,3,3,osm:way/252802573,Badestelle Nord,photo_gate,imgs_0_strong_0
+DE,DE21D,Garmisch-Partenkirchen,beach,,3,3,,,,
+DE,DE21E,Landsberg am Lech,beach,,3,3,,,,
+DE,DE21F,Miesbach,beach,,3,3,,,,
+DE,DE21K,"Rosenheim, Landkreis",beach,,3,3,osm:node/14031751582,Hunde Badestrand,score_gate,score_5.0_below_5.6
+DE,DE21L,Starnberg,beach,,3,3,osm:way/35097329,Kustermannpark,score_gate,score_5.4_below_5.6
+DE,DE21M,Traunstein,beach,,3,3,,,,
+DE,DE27B,Ostallgäu,beach,,3,3,,,,
+ES,ES243,Zaragoza,beach,,3,3,,,,
+GR,EL643,Evrytania,beach,,3,3,,,,
+ES,ES413,León,beach,,3,3,,,,
+ES,ES424,Guadalajara,beach,,3,3,,,,
+ES,ES300,Madrid,beach,,3,3,,,,
+ES,ES415,Salamanca,beach,,3,3,,,,
+GR,EL611,"Karditsa, Trikala",beach,,3,3,,,,
+ES,ES220,Navarra,beach,,3,3,,,,
+ES,ES113,Ourense,beach,,3,3,,,,
+ES,ES419,Zamora,beach,,3,3,,,,
+ES,ES241,Huesca,beach,,3,3,,,,
+GR,EL531,"Grevena, Kozani",beach,,3,3,,,,
+GR,EL532,Kastoria,beach,,3,3,,,,
+GR,EL533,Florina,beach,,3,3,,,,
+GR,EL543,Ioannina,beach,,3,3,,,,
+DE,DEF04,"Neumünster, Kreisfreie Stadt",beach,,3,3,,,,
+DE,DEF0D,Segeberg,beach,,3,3,,,,
+GR,EL521,Imathia,beach,,3,3,,,,
+GR,EL523,Kilkis,beach,,3,3,,,,
+GR,EL524,Pella,beach,,3,3,,,,
+GR,EL302,Dytikos Tomeas Athinon,beach,,3,3,,,,
+GR,EL304,Notios Tomeas Athinon,beach,,3,3,,,,
+GR,EL526,Serres,beach,,3,3,,,,
+FR,FRE21,Aisne,beach,,3,3,,,,
+FR,FRC12,Nièvre,beach,,3,3,,,,
+FR,FRC21,Doubs,beach,,3,3,,,,
+FR,FRC22,Jura,beach,,3,3,,,,
+FR,FRC23,Haute-Saône,beach,,3,3,,,,
+FR,FRF12,Haut-Rhin,beach,,3,3,,,,
+FR,FRC14,Yonne,beach,,3,3,,,,
+FR,FRB03,Indre,beach,,3,3,,,,
+FI,FI1DA,Etelä-Savo,beach,,3,3,wd:Q109016515,Pistohiekka,photo_gate,imgs_0_strong_0
+FI,FI1DA,Etelä-Savo,beach,,3,3,osm:way/161480564,Pitkäjärven uimaranta,photo_gate,imgs_0_strong_0
+FI,FI1DA,Etelä-Savo,beach,,3,3,osm:way/83825504,Heikinpohjan uimaranta,photo_gate,imgs_0_strong_0
+FI,FI1DB,Pohjois-Savo,beach,,3,3,osm:way/28233890,Peräniemen uimaranta,photo_gate,imgs_1_strong_1
+FI,FI1DB,Pohjois-Savo,beach,,3,3,osm:way/284106619,Särkilahden uimaranta,photo_gate,imgs_0_strong_0
+FI,FI1DB,Pohjois-Savo,beach,,3,3,osm:way/868143353,Paloniemen uimaranta,photo_gate,imgs_0_strong_0
+FR,FRC11,Côte-d’Or,beach,,3,3,,,,
+FI,FI1C2,Kanta-Häme,beach,,3,3,osm:way/611865093,Sairion ranta,photo_gate,imgs_0_strong_0
+FI,FI1C2,Kanta-Häme,beach,,3,3,osm:way/19745732,Ahvenistonjärven uimaranta,photo_gate,imgs_0_strong_0
+FI,FI1C2,Kanta-Häme,beach,,3,3,osm:way/144918511,Kahtoilammen uimaranta,photo_gate,imgs_0_strong_0
+ES,ES613,Córdoba,beach,,3,3,,,,
+ES,ES431,Badajoz,beach,,3,3,,,,
+ES,ES616,Jaén,beach,,3,3,,,,
+ES,ES432,Cáceres,beach,,3,3,,,,
+ES,ES513,Lleida,beach,,3,3,,,,
+FI,FI1C6,Päijät-Häme,beach,,3,3,osm:way/46035281,Ank­ku­rin Ran­ta­puis­ton ui­ma­ran­ta,photo_gate,imgs_0_strong_0
+FI,FI1C6,Päijät-Häme,beach,,3,3,osm:way/1058194306,Merrasjärven uimaranta,photo_gate,imgs_0_strong_0
+FI,FI1C6,Päijät-Häme,beach,,3,3,osm:way/1072599127,Kuotaan uimaranta,photo_gate,imgs_0_strong_0
+FI,FI199,Etelä-Pohjanmaa,beach,,3,3,,,,
+HU,HU213,Veszprém,beach,,3,3,osm:relation/3116257,Sajkodi strand,photo_gate,imgs_0_strong_0
+HU,HU213,Veszprém,beach,,3,3,osm:relation/3116656,Bercsényi strand,photo_gate,imgs_0_strong_0
+HU,HU213,Veszprém,beach,,3,3,osm:node/4888168594,"Tihany, Belső-tó, kutyás fürdetőhely",photo_gate,imgs_0_strong_0
+HU,HU221,Győr-Moson-Sopron,beach,,3,3,osm:way/1292036242,Szentei hídi strand,score_gate,score_5.3_below_5.6
+FR,FRK24,Isère,beach,,3,3,,,,
+HU,HU223,Zala,beach,,3,3,osm:node/4891863442,Kutyastrand,score_gate,score_5.3_below_5.6
+HU,HU223,Zala,beach,,3,3,osm:node/4888181520,Hotel Villa Natura tó,score_gate,score_4.8_below_5.6
+FR,FRK27,Savoie,beach,,3,3,,,,
+HU,HU231,Baranya,beach,,3,3,wd:Q33345534,Strand,photo_gate,imgs_0_strong_0
+HU,HU231,Baranya,beach,,3,3,osm:relation/7064642,Újmohácsi strand,photo_gate,imgs_0_strong_0
+HU,HU231,Baranya,beach,,3,3,osm:node/3440813461,Szabadstrand,score_gate,score_4.9_below_5.6
+HU,HU232,Somogy,beach,,3,3,osm:node/3445485884,Városi szabadstrand,photo_gate,imgs_1_strong_1
+HU,HU232,Somogy,beach,,3,3,osm:relation/3116850,Báthori utcai szabadstrand,photo_gate,imgs_1_strong_1
+HU,HU232,Somogy,beach,,3,3,osm:node/4888171430,Fonyódi Kutyabarát Fürdőhely,photo_gate,imgs_0_strong_0
+FR,FRK12,Cantal,beach,,3,3,,,,
+FR,FRK13,Haute-Loire,beach,,3,3,,,,
+FR,FRL01,Alpes-de-Haute-Provence,beach,,3,3,,,,
+HR,HR050,Grad Zagreb,beach,,3,3,,,,
+HR,HR062,Varaždinska županija,beach,,3,3,,,,
+HR,HR063,Koprivničko-križevačka županija,beach,,3,3,,,,
+FR,FRK14,Puy-de-Dôme,beach,,3,3,,,,
+HR,HR065,Zagrebačka županija,beach,,3,3,,,,
+FR,FRK21,Ain,beach,,3,3,,,,
+HR,HR024,Brodsko-posavska županija,beach,,3,3,,,,
+FR,FRK22,Ardèche,beach,,3,3,,,,
+HU,HU211,Fejér,beach,,3,3,osm:node/3729081814,Naturista napozó,score_gate,score_4.9_below_5.6
+HU,HU211,Fejér,beach,,3,3,osm:way/259235435,Sukorói Szabadstrand,score_gate,score_4.4_below_5.6
+HU,HU211,Fejér,beach,,3,3,osm:way/195609427,Pannon Partszakasz Szabadstrand,score_gate,score_3.7_below_5.6
+HR,HR027,Karlovačka županija,beach,,3,3,wd:Q135602856,Foginovo Beach,score_gate,score_3.6_below_5.6
+FR,FRJ25,Lot,beach,,3,3,,,,
+FR,FRJ26,Hautes-Pyrénées ,beach,,3,3,,,,
+FR,FRJ27,Tarn,beach,,3,3,,,,
+FR,FRF34,Vosges,beach,,3,3,,,,
+FR,FRF22,Aube,beach,,3,3,,,,
+FR,FRJ14,Lozère,beach,,3,3,,,,
+FR,FRF23,Marne,beach,,3,3,,,,
+FR,FRJ21,Ariège,beach,,3,3,,,,
+FR,FRF24,Haute-Marne,beach,,3,3,,,,
+FR,FRJ22,Aveyron,beach,,3,3,,,,
+FR,FRF31,Meurthe-et-Moselle ,beach,,3,3,,,,
+FR,FRJ23,Haute-Garonne,beach,,3,3,,,,
+FR,FRF32,Meuse ,beach,,3,3,,,,
+LV,LV009,Zemgale,beach,,3,3,osm:way/238572321,Jēkabpils Zilā karoga pludmale,photo_gate,imgs_0_strong_0
+LV,LV009,Zemgale,beach,,3,3,osm:way/1395575844,Mazsunākstes ezera peldvieta,photo_gate,imgs_0_strong_0
+LV,LV009,Zemgale,beach,,3,3,osm:node/3728771702,Dobājs,score_gate,score_5.3_below_5.6
+IT,ITI22,Terni,beach,,3,3,,,,
+IT,ITI32,Ancona,beach,,6,3,,,,
+LI,LI000,Liechtenstein,beach,,3,3,,,,
+IT,ITI33,Macerata,beach,,3,3,,,,
+IT,ITI34,Ascoli Piceno,beach,,3,3,wd:Q33332974,Riviera delle Palme,score_gate,score_4.7_below_5.6
+IT,ITI34,Ascoli Piceno,beach,,3,3,wd:Q33338113,Spiaggia di Grottammare,score_gate,score_4.3_below_5.6
+IT,ITI35,Fermo,beach,,3,3,,,,
+IT,ITI41,Viterbo,beach,,3,3,,,,
+IT,ITH10,Bolzano-Bozen,beach,,3,3,,,,
+LT,LT011,Vilniaus apskritis,beach,,3,3,osm:way/165578387,Šivrintų miesto paplūdimys,photo_gate,imgs_0_strong_0
+LT,LT011,Vilniaus apskritis,beach,,3,3,osm:way/559536047,Akmena Nudist Beach,photo_gate,imgs_0_strong_0
+LT,LT011,Vilniaus apskritis,beach,,3,3,osm:way/1087520446,Swimming Hole,photo_gate,imgs_0_strong_0
+LT,LT021,Alytaus apskritis,beach,,3,3,osm:relation/8375947,Ilgio ežero paplūdimys,score_gate,score_5.5_below_5.6
+LT,LT021,Alytaus apskritis,beach,,3,3,osm:node/9127351423,Daugų irklavimo bazės paplūdimys,score_gate,score_5.3_below_5.6
+LT,LT021,Alytaus apskritis,beach,,3,3,osm:node/11640065365,Alytus nudist beach,score_gate,score_5.3_below_5.6
+MK,MK004,Jugoistočen,beach,,3,3,wd:Q20939747,Кочини,photo_gate,imgs_0_strong_0
+MK,MK004,Jugoistočen,beach,,3,3,osm:way/1240890759,Плажа Фук Так,photo_gate,imgs_1_strong_0
+MK,MK004,Jugoistočen,beach,,3,3,wd:Q20939744,Солишта,photo_gate,imgs_0_strong_0
+IT,ITI42,Rieti,beach,,3,3,,,,
+IT,ITH20,Trento,beach,,3,3,,,,
+LT,LT022,Kauno apskritis,beach,,3,3,osm:way/670701882,Šančių paplūdimys,photo_gate,imgs_0_strong_0
+LT,LT022,Kauno apskritis,beach,,3,3,osm:way/1532851050,Lampėdžių paplūdimys,photo_gate,imgs_2_strong_0
+LT,LT022,Kauno apskritis,beach,,3,3,osm:relation/6588822,Panemunės paplūdymys,photo_gate,imgs_0_strong_0
+IT,ITH31,Verona,beach,,3,3,,,,
+MK,MK002,Istočen,beach,,3,3,,,,
+IT,ITH33,Belluno,beach,,3,3,,,,
+LT,LT025,Panevėžio apskritis,beach,,3,3,osm:relation/8426073,Didysis paplūdimys,photo_gate,imgs_1_strong_0
+LT,LT025,Panevėžio apskritis,beach,,3,3,osm:node/12843513600,Panevėžio nudistų paplūdimys,score_gate,score_5.4_below_5.6
+LT,LT025,Panevėžio apskritis,beach,,3,3,osm:relation/7389888,Biržų centrinis pliažas,score_gate,score_5.3_below_5.6
+IT,ITH58,Forlì-Cesena,beach,,3,3,,,,
+IT,ITH59,Rimini,beach,,3,3,,,,
+LT,LT026,Šiaulių apskritis,beach,,3,3,osm:way/330333276,Pietinis pliažas,photo_gate,imgs_0_strong_0
+LT,LT026,Šiaulių apskritis,beach,,3,3,osm:way/122133120,Maudyklės,score_gate,score_5.4_below_5.6
+LT,LT026,Šiaulių apskritis,beach,,3,3,osm:way/258470330,Pabalių paplūdimys,score_gate,score_5.3_below_5.6
+IT,ITI11,Massa-Carrara,beach,,3,3,wd:Q33343535,Spiaggia Marina di Massa,score_gate,score_4.7_below_5.6
+IT,ITI12,Lucca,beach,,3,3,wd:Q3966660,Lecciona,photo_gate,imgs_0_strong_0
+IT,ITH36,Padova,beach,,3,3,,,,
+LT,LT027,Tauragės apskritis,beach,,3,3,osm:node/3436701414,Keramikos Pliažas,photo_gate,imgs_0_strong_0
+LT,LT027,Tauragės apskritis,beach,,3,3,osm:way/1280156818,Balskų Pliažas,photo_gate,imgs_0_strong_0
+LT,LT027,Tauragės apskritis,beach,,3,3,osm:way/174795709,Jurbarko paplūdimys,score_gate,score_4.5_below_5.6
+IT,ITG15,Caltanissetta,beach,,3,3,,,,
+LT,LT028,Telšių apskritis,beach,,3,3,osm:way/1534403621,Tryškių maudykla,photo_gate,imgs_1_strong_1
+IT,ITG16,Enna,beach,,3,3,,,,
+IT,ITH41,Pordenone,beach,,3,3,,,,
+LT,LT029,Utenos apskritis,beach,,3,3,osm:relation/4728948,Arino ežero paplūdimys,photo_gate,imgs_0_strong_0
+LT,LT029,Utenos apskritis,beach,,3,3,osm:relation/8249444,Salako paplūdimys,photo_gate,imgs_1_strong_1
+LT,LT029,Utenos apskritis,beach,,3,3,osm:way/857222436,Pliažas,photo_gate,imgs_0_strong_0
+IT,ITI18,Arezzo,beach,,3,3,,,,
+IT,ITI21,Perugia,beach,,3,3,,,,
+IT,ITC20,Valle d’Aosta/Vallée d’Aoste,beach,,3,3,,,,
+IT,ITC46,Bergamo,beach,,3,3,,,,
+IT,ITC47,Brescia,beach,,3,3,,,,
+IT,ITF51,Potenza,beach,,3,3,,,,
+IT,ITF52,Matera,beach,,3,3,,,,
+IT,ITC42,Como,beach,,3,3,,,,
+IT,ITC44,Sondrio,beach,,3,3,,,,
+HU,HU312,Heves,beach,,3,3,osm:way/289249774,Beach,score_gate,score_5.1_below_5.6
+IT,ITC4C,Milano,beach,,3,3,,,,
+IT,ITF11,L’Aquila,beach,,3,3,,,,
+IT,ITF13,Pescara,beach,,3,3,,,,
+IT,ITF22,Campobasso,beach,,3,3,,,,
+IT,ITC11,Torino,beach,,3,3,,,,
+HU,HU323,Szabolcs-Szatmár-Bereg,beach,,3,3,osm:relation/14724504,Rakamazi strand,photo_gate,imgs_0_strong_0
+HU,HU323,Szabolcs-Szatmár-Bereg,beach,,3,3,osm:node/3689671428,Ibrányi szabadstrand,score_gate,score_5.5_below_5.6
+HU,HU323,Szabolcs-Szatmár-Bereg,beach,,3,3,osm:way/1100709915,Szabadstrand,score_gate,score_5.3_below_5.6
+IT,ITC13,Biella,beach,,3,3,,,,
+IT,ITC15,Novara,beach,,3,3,,,,
+HU,HU332,Békés,beach,,3,3,osm:node/5069663814,Városi szabadstrand,photo_gate,imgs_3_strong_0
+HU,HU332,Békés,beach,,3,3,osm:way/709695998,Szanazugi strand (Doboz),score_gate,score_5.1_below_5.6
+IE,IE063,Midland,beach,,3,3,,,,
+IT,ITC18,Alessandria,beach,,3,3,,,,
+PL,PL225,Bielski,beach,,3,3,,,,
+PL,PL22C,Tyski,beach,,3,3,,,,
+PL,PL415,Miasto Poznań,beach,,3,3,osm:way/362155252,Plaża Dzika,photo_gate,imgs_0_strong_0
+PL,PL415,Miasto Poznań,beach,,3,3,osm:way/181239287,Plaża Malibu,photo_gate,imgs_0_strong_0
+PL,PL415,Miasto Poznań,beach,,3,3,osm:way/363523230,Plaża Smocza,photo_gate,imgs_0_strong_0
+PL,PL414,Koniński,beach,,3,3,osm:way/595844935,Wiekowo Plaża,photo_gate,imgs_0_strong_0
+PL,PL414,Koniński,beach,,3,3,osm:way/373348824,Dzika Plaża,score_gate,score_5.5_below_5.6
+PL,PL414,Koniński,beach,,3,3,osm:way/310771427,Plaża GOSiR w Wilczynie,score_gate,score_5.2_below_5.6
+PL,PL218,Nowosądecki,beach,,3,3,,,,
+NO,NO085,Buskerud,beach,,4,3,osm:way/893322007,Svangstrand,photo_gate,imgs_0_strong_0
+NO,NO085,Buskerud,beach,,4,3,osm:way/664753522,Lokallandet,score_gate,score_4.7_below_5.6
+NO,NO085,Buskerud,beach,,4,3,osm:way/948666510,Tyrifjord hotell,score_gate,score_4.6_below_5.6
+PL,PL219,Nowotarski,beach,,3,3,,,,
+NL,NL423,Zuid-Limburg,beach,,3,3,,,,
+NO,NO020,Innlandet,beach,,3,3,osm:way/830800014,Leirfallet,photo_gate,imgs_0_strong_0
+MK,MK006,Pološki,beach,,3,3,,,,
+MK,MK007,Severoistočen,beach,,3,3,,,,
+MK,MK008,Skopski,beach,,3,3,,,,
+NL,NL114,Oost-Groningen,beach,,3,3,,,,
+NL,NL128,Zuidwest-Friesland,beach,,3,3,,,,
+NL,NL131,Noord-Drenthe,beach,,3,3,osm:way/97059037,Ronostrand,photo_gate,imgs_0_strong_0
+NL,NL327,Het Gooi en Vechtstreek,beach,,3,3,osm:way/687778014,Noord Oost strand,photo_gate,imgs_0_strong_0
+NL,NL327,Het Gooi en Vechtstreek,beach,,3,3,osm:way/93255882,Vuntusstrand,score_gate,score_5.2_below_5.6
+NL,NL327,Het Gooi en Vechtstreek,beach,,3,3,osm:way/1161762806,Zomerkade,score_gate,score_4.2_below_5.6
+NL,NL328,Alkmaar en omgeving,beach,,3,3,,,,
+NL,NL350,Utrecht,beach,,3,3,osm:way/37938370,Zwemstrand Haarrijn,photo_gate,imgs_1_strong_1
+NL,NL350,Utrecht,beach,,3,3,osm:way/82302301,Strand Cattenbroek,photo_gate,imgs_1_strong_1
+NL,NL350,Utrecht,beach,,3,3,osm:node/1345534245,Eiland 5,photo_gate,imgs_0_strong_0
+NL,NL364,Zuidoost-Zuid-Holland,beach,,3,3,osm:way/133329319,Lammetjeswiel - strand,photo_gate,imgs_0_strong_0
+RS,RS127,Sremska oblast,beach,,3,3,osm:node/7723929574,Чортановачка плажа,score_gate,score_4.3_below_5.6
+RS,RS127,Sremska oblast,beach,,3,3,osm:way/250105719,Плажа,score_gate,score_4.0_below_5.6
+RS,RS127,Sremska oblast,beach,,3,3,osm:way/73173192,Венеција,score_gate,score_3.7_below_5.6
+RS,RS211,Zlatiborska oblast,beach,,3,3,osm:way/414339612,"Gradska Plaža ""Kolovrat""",score_gate,score_5.0_below_5.6
+RS,RS211,Zlatiborska oblast,beach,,3,3,osm:node/7358516784,Пицин вир,photo_gate,imgs_0_strong_0
+RS,RS211,Zlatiborska oblast,beach,,3,3,osm:node/7358541753,Сунчани вир,photo_gate,imgs_0_strong_0
+RO,RO312,Călăraşi,beach,,3,3,osm:way/75137160,Plaja Tineretului,score_gate,score_5.3_below_5.6
+RO,RO312,Călăraşi,beach,,3,3,osm:relation/2908706,Plaja Pod 4,score_gate,score_4.4_below_5.6
+RO,RO312,Călăraşi,beach,,3,3,osm:way/789314681,Plaja Mare,score_gate,score_4.3_below_5.6
+RO,RO321,Bucureşti,beach,,3,3,,,,
+RO,RO322,Ilfov,beach,,3,3,,,,
+RS,RS212,Kolubarska oblast,beach,,3,3,,,,
+RS,RS213,Mačvanska oblast,beach,,3,3,osm:way/1235031007,"Beach ""Stari grad""",score_gate,score_3.7_below_5.6
+RO,RO112,Bistriţa-Năsăud,beach,,3,3,,,,
+RO,RO113,Cluj,beach,,3,3,osm:way/628105681,Yachting Club Tarnita,photo_gate,imgs_1_strong_1
+RS,RS218,Šumadijska oblast,beach,,3,3,,,,
+RS,RS221,Borska oblast,beach,,3,3,osm:way/1430785693,Sip Beach,score_gate,score_5.4_below_5.6
+RS,RS221,Borska oblast,beach,,3,3,osm:way/326209811,Брза Паланка,score_gate,score_3.8_below_5.6
+RS,RS221,Borska oblast,beach,,3,3,osm:way/300842903,Плажа Кладово,score_gate,score_3.7_below_5.6
+RO,RO315,Ialomiţa,beach,,3,3,osm:node/6639533421,Plaja Nudiștilor (femei),score_gate,score_4.4_below_5.6
+RO,RO424,Timiş,beach,,3,3,osm:way/1304585705,Periam Port,score_gate,score_5.2_below_5.6
+RS,RS110,City of Belgrade,beach,,3,3,osm:way/1091241316,Plaza jezero,photo_gate,imgs_1_strong_1
+RS,RS110,City of Belgrade,beach,,3,3,osm:relation/10315316,Lido,score_gate,score_5.3_below_5.6
+RS,RS110,City of Belgrade,beach,,3,3,osm:way/659201374,Nudist Beach Ada Ciganlija,score_gate,score_4.6_below_5.6
+RS,RS122,Južnobanatska oblast,beach,,3,3,osm:node/12914995348,Nude beach,score_gate,score_4.7_below_5.6
+RS,RS122,Južnobanatska oblast,beach,,3,3,osm:way/1306551601,Плажа на Шљункари,score_gate,score_4.7_below_5.6
+RS,RS122,Južnobanatska oblast,beach,,3,3,osm:relation/4596718,Бела стена,score_gate,score_4.7_below_5.6
+RO,RO224,Galaţi,beach,,3,3,osm:way/1289744004,Brateș beach,photo_gate,imgs_0_strong_0
+PT,PT1D3,Lezíria do Tejo,beach,,3,3,,,,
+RS,RS125,Severnobačka oblast,beach,,3,3,,,,
+RS,RS126,Srednjobanatska oblast,beach,,3,3,osm:way/583441760,Купалиште Пескара,score_gate,score_4.7_below_5.6
+RS,RS126,Srednjobanatska oblast,beach,,3,3,osm:way/1015933222,Gradska plaza Mamuze,score_gate,score_4.7_below_5.6
+RS,RS126,Srednjobanatska oblast,beach,,3,3,osm:node/9907840262,Knićanin plaža na Tisi,score_gate,score_4.1_below_5.6
+PL,PL638,Starogardzki,beach,,3,3,,,,
+PL,PL821,Krośnieński,beach,,3,3,osm:way/176837635,Wyspa Mała,score_gate,score_5.3_below_5.6
+PL,PL518,Wrocławski,beach,,3,3,,,,
+PL,PL912,Warszawski wschodni,beach,,3,3,osm:way/330292165,Kąpielisko Glinianki,photo_gate,imgs_1_strong_1
+PL,PL912,Warszawski wschodni,beach,,3,3,osm:way/1007648948,Plaża Arciechów,score_gate,score_5.3_below_5.6
+PL,PL523,Nyski,beach,,3,3,,,,
+PL,PL524,Opolski,beach,,3,3,osm:way/314717774,Kąpielisko Bolko,photo_gate,imgs_0_strong_0
+PL,PL616,Grudziądzki,beach,,3,3,osm:way/438966024,Plaża miejska,photo_gate,imgs_0_strong_0
+PL,PL616,Grudziądzki,beach,,3,3,osm:way/174369346,Kąpielisko Plaża Tarpno,photo_gate,imgs_0_strong_0
+PL,PL616,Grudziądzki,beach,,3,3,osm:way/228653036,Plaża Gminnego Ośrodka Sportów Wodnych w Białym Borze,photo_gate,imgs_0_strong_0
+PL,PL923,Płocki,beach,,3,3,osm:way/424828923,Plaża Sobótka,photo_gate,imgs_0_strong_0
+PL,PL923,Płocki,beach,,3,3,osm:way/358631205,Plaża Patelnia,photo_gate,imgs_0_strong_0
+PL,PL424,Miasto Szczecin,beach,,3,3,wd:Q136215010,Zakątek wodny Trzebuskie Łęgi,photo_gate,imgs_1_strong_1
+PL,PL424,Miasto Szczecin,beach,,3,3,osm:way/70847686,Dziewoklicz,photo_gate,imgs_0_strong_0
+PL,PL424,Miasto Szczecin,beach,,3,3,osm:way/39327259,Plaża Dąbie,score_gate,score_4.5_below_5.6
+PL,PL617,Inowrocławski,beach,,3,3,osm:way/148351426,Plaża w Wąsoszu,photo_gate,imgs_0_strong_0
+PL,PL427,Szczecinecko-pyrzycki,beach,,3,3,osm:way/657924743,Plaża MOSiR,score_gate,score_5.5_below_5.6
+PL,PL427,Szczecinecko-pyrzycki,beach,,3,3,osm:way/608437964,Plaża Miejska,score_gate,score_5.1_below_5.6
+PL,PL427,Szczecinecko-pyrzycki,beach,,3,3,osm:way/233793022,Plaża Miejska w Myśliborzu,score_gate,score_4.9_below_5.6
+PL,PL623,Ełcki,beach,,3,3,osm:way/596177995,Szyjka,photo_gate,imgs_0_strong_0
+PL,PL623,Ełcki,beach,,3,3,osm:way/234548445,Plaża Miejska,photo_gate,imgs_0_strong_0
+PL,PL623,Ełcki,beach,,3,3,osm:way/365182653,Plaża miejska,photo_gate,imgs_0_strong_0
+PL,PL432,Zielonogórski,beach,,3,3,osm:node/13015503952,Plaża Kormoran,score_gate,score_4.6_below_5.6
+SK,SK041,Prešovský kraj,beach,,3,3,osm:node/11968671204,Pláž Eva Palermo,photo_gate,imgs_0_strong_0
+SK,SK041,Prešovský kraj,beach,,3,3,osm:node/11209975587,Pláž Zátoka,score_gate,score_4.7_below_5.6
+SK,SK042,Košický kraj,beach,,3,3,osm:node/12168588077,FKK/Nudapláž Bukovec,photo_gate,imgs_0_strong_0
+SK,SK042,Košický kraj,beach,,3,3,osm:way/504562879,Klokočov,score_gate,score_5.4_below_5.6
+SK,SK042,Košický kraj,beach,,3,3,osm:way/504562014,Kamenec,score_gate,score_4.6_below_5.6
+TR,TR423,Düzce,beach,,3,3,,,,
+SK,SK021,Trnavský kraj,beach,,3,3,osm:way/935469119,Osada,photo_gate,imgs_0_strong_0
+SK,SK021,Trnavský kraj,beach,,3,3,osm:way/871887571,Štrková pláž,photo_gate,imgs_1_strong_1
+SK,SK021,Trnavský kraj,beach,,3,3,osm:way/720908221,Ostrov s vodnou atrakciou mečovej fontány,score_gate,score_4.2_below_5.6
+SE,SE312,Dalarnas län,beach,,3,3,osm:way/360072621,Hundbadet/Hästbadet/Första badplats,photo_gate,imgs_0_strong_0
+SE,SE312,Dalarnas län,beach,,3,3,osm:node/3994030987,Strandbaden,score_gate,score_5.1_below_5.6
+SE,SE322,Jämtlands län,beach,,3,3,,,,
+RS,RS224,Jablanička oblast,beach,,3,3,,,,
+RS,RS225,Nišavska oblast,beach,,3,3,,,,
+RS,RS226,Pirotska oblast,beach,,3,3,,,,
+RS,RS228,Pčinjska oblast,beach,,3,3,,,,
+SE,SE212,Kronobergs län,beach,,3,3,osm:relation/10844202,Mjälen,score_gate,score_5.5_below_5.6
+SI,SI038,Primorsko-notranjska,beach,,3,3,,,,
+SI,SI042,Gorenjska,beach,,3,3,osm:way/1545933676,Godic FKK beach area,photo_gate,imgs_0_strong_0
+SI,SI042,Gorenjska,beach,,3,3,osm:node/13650635023,Skalca,score_gate,score_5.4_below_5.6
+SI,SI042,Gorenjska,beach,,3,3,osm:node/9938888795,Kamp Perun Lipce - plaža,score_gate,score_5.1_below_5.6
+SE,SE311,Värmlands län,beach,,3,3,osm:relation/3952824,Stora Björnrukan,photo_gate,imgs_0_strong_0
+XK,XK001,Prishtinë,beach,,3,3,,,,
+XK,XK002,Mitrovicë,beach,,3,3,,,,
+XK,XK007,Gjakovë,beach,,3,3,,,,
+GB,TLC31,Hartlepool and Stockton-on-Tees,beach,,3,3,,,,
+GB,TLC32,South Teesside,beach,,3,3,,,,
+GB,TLC41,Durham,beach,,3,3,,,,
+GB,TLC44,Sunderland,beach,,3,3,,,,
+GB,TLD42,Blackpool,beach,,3,3,,,,
+GB,TLD45,Mid Lancashire,beach,,3,3,,,,
+GB,TLD47,Chorley and West Lancashire,beach,,3,3,,,,
+GB,TLD63,Cheshire West and Chester,beach,,3,3,,,,
+GB,TLD71,East Merseyside,beach,,3,3,,,,
+GB,TLD72,Liverpool,beach,,3,3,,,,
+GB,TLD74,Wirral,beach,,4,3,,,,
+GB,TLE11,"Kingston upon Hull, City of",beach,,3,3,,,,
+GB,TLF13,South and West Derbyshire,beach,,3,3,,,,
+GB,TLF22,Leicestershire CC and Rutland,beach,,3,3,,,,
+GB,TLH31,Southend-on-Sea,beach,,3,3,,,,
+GB,TLH32,Thurrock,beach,,3,3,,,,
+GB,TLH51,Norwich and East Norfolk,beach,,3,3,,,,
+GB,TLH61,Babergh and Mid Suffolk,beach,,3,3,,,,
+GB,TLJ21,Brighton and Hove,beach,,3,3,,,,
+GB,TLJ25,West Surrey,beach,,3,3,,,,
+GB,TLJ32,Southampton,beach,,3,3,,,,
+GB,TLK41,Plymouth,beach,,3,3,,,,
+GB,TLK51,"Bristol, City of",beach,,3,3,,,,
+GB,TLK52,Bath & North East Somerset and South Gloucestershire,beach,,3,3,,,,
+GB,TLK61,North Somerset,beach,,3,3,,,,
+GB,TLL34,Flintshire and Wrexham,beach,,3,3,,,,
+GB,TLL41,Mid Wales,beach,,8,3,,,,
+GB,TLL51,Central Valleys and Bridgend,beach,,3,3,,,,
+GB,TLL54,Monmouthshire and Newport,beach,,3,3,,,,
+GB,TLM02,"Perth and Kinross, and Stirling",beach,,3,3,,,,
+GB,TLM12,Falkirk,beach,,3,3,,,,
+GB,TLM13,City of Edinburgh,beach,,3,3,,,,
+GB,TLM14,West Lothian,beach,,3,3,,,,
+GB,TLM31,East Dunbartonshire and West Dunbartonshire,beach,,3,3,,,,
+GB,TLM33,"Inverclyde, East Renfrewshire, and Renfrewshire",beach,,3,3,,,,
+GB,TLM91,Scottish Borders,beach,,3,3,,,,
+GB,TLN06,Belfast,beach,,3,3,,,,
+GB,TLN0A,Derry City and Strabane,beach,,3,3,,,,
+GB,TLN0D,Antrim and Newtownabbey,beach,,3,3,,,,
+GB,TLN0G,Fermanagh and Omagh,beach,,3,3,,,,
+UA,UA-74538382B84610439401970,Bakhchysarai,beach,,3,3,,,,
+UA,UA-74538382B84040377374615,Simferopol,beach,,3,3,,,,
+UA,UA-74538382B21297633796285,Oleshky,beach,,3,3,,,,
+UA,UA-74538382B2161330582129,Vitovka,beach,,3,3,,,,
+UA,UA-74538382B8424812087391,Mykolaiv,beach,,3,3,,,,
+UA,UA-74538382B97641778556925,Bilhorod Dnistrovskyi,beach,,3,3,,,,
+UA,UA-74538382B44725547103458,Reni,beach,,3,3,,,,
+UA,UA-74538382B60964237816069,Amvrosiivka,beach,,3,3,,,,
+UA,UA-74538382B47758211773177,Saky,beach,,3,3,,,,
+UA,UA-74538382B30799636343123,Leninskyi,beach,,3,3,,,,
+MD,MD-MD-CA,Cahul,beach,,3,3,,,,
+MD,MD-MD-AN,Anenii Noi,beach,,3,3,,,,
+MD,MD-MD-DU,Dubasari,beach,,3,3,osm:relation/12074936,Городской пляж им. Юрия Никулина,score_gate,score_5.5_below_5.6
+MD,MD-MD-DU,Dubasari,beach,,3,3,osm:way/1413413273,Plaja Cocieri,score_gate,score_4.7_below_5.6
+MD,MD-MD-DU,Dubasari,beach,,3,3,osm:way/1523952870,Plaja „Coșnița”,score_gate,score_4.6_below_5.6
+MC,MC-MCO,Monaco,beach,,3,3,osm:relation/2220209,Crique des Pêcheurs,photo_gate,imgs_2_strong_0
+MC,MC-MCO,Monaco,beach,,3,3,wd:Q99206150,Plage du Solarium,photo_gate,imgs_1_strong_1
+MC,MC-MCO,Monaco,beach,,3,3,wd:Q122942810,Larvotto beach,score_gate,score_5.4_below_5.6
+AL,AL015,Shkodër,beach,,3,2,osm:way/583583314,Shala Beach,score_gate,score_5.2_below_5.6
+AL,AL015,Shkodër,beach,,3,2,osm:way/478247111,Bregu i Renës,score_gate,score_5.1_below_5.6
+AL,AL015,Shkodër,beach,,3,2,osm:way/457216971,Rrezervari,score_gate,score_4.9_below_5.6
+AT,AT112,Nordburgenland,beach,,3,2,osm:way/369344957,Lodge Badestrand,photo_gate,imgs_0_strong_0
+AT,AT112,Nordburgenland,beach,,3,2,osm:way/369405192,Summer Island,photo_gate,imgs_0_strong_0
+AT,AT112,Nordburgenland,beach,,3,2,osm:way/924836489,Kitestrand,photo_gate,imgs_0_strong_0
+AT,AT130,Wien,beach,,3,2,osm:way/954394292,Pirat Bucht,photo_gate,imgs_0_strong_0
+AT,AT130,Wien,beach,,3,2,osm:way/1281413721,Arena Beach,photo_gate,imgs_0_strong_0
+AT,AT130,Wien,beach,,3,2,osm:way/44364785,Südstrand,score_gate,score_5.4_below_5.6
+AT,AT212,Oberkärnten,beach,,3,2,osm:node/11398944281,Freier Seezugang Weißensee,photo_gate,imgs_0_strong_0
+AT,AT212,Oberkärnten,beach,,3,2,osm:node/12015153521,"Privatstrand ""Hotel zur Post""",photo_gate,imgs_0_strong_0
+AT,AT212,Oberkärnten,beach,,3,2,osm:way/1536296895,Privat Strand Pension Sonnenhof bei Familie Domenig,photo_gate,imgs_0_strong_0
+AT,AT335,Tiroler Unterland,beach,,3,2,,,,
+AT,AT312,Linz-Wels,beach,,3,2,osm:way/435428649,Traunstrand,photo_gate,imgs_0_strong_0
+AT,AT312,Linz-Wels,beach,,3,2,osm:way/340129011,Sandstrand,photo_gate,imgs_0_strong_0
+AT,AT312,Linz-Wels,beach,,3,2,osm:way/986364809,FKK,score_gate,score_5.4_below_5.6
+CH,CH022,Fribourg / Freiburg,beach,,3,2,osm:way/1077229170,Plage d'Autavaux,photo_gate,imgs_0_strong_0
+CH,CH022,Fribourg / Freiburg,beach,,3,2,osm:way/1077229162,Plage de Font,photo_gate,imgs_0_strong_0
+CH,CH022,Fribourg / Freiburg,beach,,3,2,osm:node/11036210540,Plage de Pont-la-Ville,photo_gate,imgs_0_strong_0
+CH,CH056,Graubünden / Grigioni / Grischun,beach,,3,2,,,,
+CH,CH040,Zürich,beach,,3,2,osm:way/137558717,Eggrank,score_gate,score_5.4_below_5.6
+CZ,CZ020,Středočeský kraj,beach,,3,2,osm:way/355254610,Komárovský rybník – pláž Peklo,photo_gate,imgs_1_strong_1
+CZ,CZ020,Středočeský kraj,beach,,3,2,osm:way/677237427,Na Kamínkách,photo_gate,imgs_0_strong_0
+CZ,CZ020,Středočeský kraj,beach,,3,2,osm:way/1318315820,Pláž Nový rybník,photo_gate,imgs_0_strong_0
+CZ,CZ010,Hlavní město Praha,beach,,3,2,osm:way/1278245745,Písčitá plážička,photo_gate,imgs_0_strong_0
+CZ,CZ010,Hlavní město Praha,beach,,3,2,osm:way/1304979771,Jezerooo,photo_gate,imgs_0_strong_0
+CH,CH062,Uri,beach,,3,2,osm:way/434335983,Gruonbach,photo_gate,imgs_1_strong_1
+CH,CH062,Uri,beach,,3,2,osm:way/434332033,Strandbad Flüelen,photo_gate,imgs_0_strong_0
+CZ,CZ080,Moravskoslezský kraj,beach,,3,2,wd:Q134973585,Pláž Stříbrné jezero - západ,photo_gate,imgs_1_strong_1
+CZ,CZ071,Olomoucký kraj,beach,,3,2,osm:node/11935833713,Pláž Přední skála,score_gate,score_5.4_below_5.6
+DE,DE138,Konstanz,beach,,3,2,osm:way/169453463,Schmuggler Bucht,score_gate,score_4.8_below_5.6
+DE,DE132,Breisgau-Hochschwarzwald,beach,,3,2,,,,
+DE,DE922,Diepholz,beach,,3,2,,,,
+DE,DE804,"Schwerin, Kreisfreie Stadt",beach,,3,2,,,,
+DE,DE401,"Brandenburg an der Havel, Kreisfreie Stadt",beach,,3,2,,,,
+ES,ES212,Gipuzkoa,beach,,6,2,,,,
+DE,DEF06,Herzogtum Lauenburg,beach,,3,2,,,,
+DE,DEF0A,Plön,beach,,5,2,osm:way/123452297,Badestelle Prinzeninsel,photo_gate,imgs_0_strong_0
+DE,DEF0A,Plön,beach,,5,2,osm:way/37393123,Stakendorfer Strand,photo_gate,imgs_0_strong_0
+DE,DEF0A,Plön,beach,,5,2,osm:way/124892086,Kurstrand,photo_gate,imgs_4_strong_0
+ES,ES614,Granada,beach,,6,2,wd:Q6118577,"Playa de San Cristóbal, Almuñécar",country_cap,rank_139
+ES,ES614,Granada,beach,,6,2,wd:Q6079038,"Playa de Tesorillo, Almuñécar",country_cap,rank_143
+ES,ES614,Granada,beach,,6,2,wd:Q6160073,Playa de Velilla,photo_gate,imgs_1_strong_1
+ES,ES640,Melilla,beach,,3,2,,,,
+FR,FRK28,Haute-Savoie,beach,,3,2,wd:Q120309338,Impérial beach,score_gate,score_4.4_below_5.6
+HU,HU212,Komárom-Esztergom,beach,,3,2,,,,
+FR,FRJ12,Gard,beach,,3,2,,,,
+IT,ITG2E,Nuoro,beach,,14,2,wd:Q108103576,Orvile beach,photo_gate,imgs_0_strong_0
+IT,ITG2E,Nuoro,beach,,14,2,wd:Q1026141,Cala Ginepro,photo_gate,imgs_0_strong_0
+IT,ITG2E,Nuoro,beach,,14,2,wd:Q33339453,Spiaggia di Palmasera,photo_gate,imgs_1_strong_1
+IT,ITI31,Pesaro e Urbino,beach,,4,2,wd:Q112192776,Baia Flaminia,score_gate,score_4.6_below_5.6
+MK,MK003,Jugozapaden,beach,,3,2,osm:relation/19533597,Labino Beach,photo_gate,imgs_0_strong_0
+MK,MK003,Jugozapaden,beach,,3,2,osm:way/1528103711,Beach Potpesh,photo_gate,imgs_1_strong_0
+MK,MK003,Jugozapaden,beach,,3,2,wd:Q20935285,Инекс,photo_gate,imgs_0_strong_0
+IT,ITI17,Pisa,beach,,3,2,,,,
+IT,ITC41,Varese,beach,,3,2,,,,
+HU,HU331,Bács-Kiskun,beach,,3,2,osm:node/4644131975,Sóstó Strandfürdő,photo_gate,imgs_0_strong_0
+HU,HU331,Bács-Kiskun,beach,,3,2,osm:node/7733583091,Kutyafürdető,photo_gate,imgs_0_strong_0
+HU,HU331,Bács-Kiskun,beach,,3,2,osm:node/3273986927,Dudás beach,score_gate,score_5.2_below_5.6
+HU,HU333,Csongrád-Csanád,beach,,3,2,osm:way/507411950,Mindszenti kutyás strand,photo_gate,imgs_1_strong_0
+HU,HU333,Csongrád-Csanád,beach,,3,2,osm:relation/8420677,Lapos Beach,score_gate,score_5.3_below_5.6
+HU,HU333,Csongrád-Csanád,beach,,3,2,osm:way/507642429,Szabadstrand,score_gate,score_4.8_below_5.6
+MK,MK005,Pelagoniski,beach,,3,2,osm:way/1312101749,Свети Илија,photo_gate,imgs_4_strong_0
+MK,MK005,Pelagoniski,beach,,3,2,wd:Q20935309,Маркова Нога,photo_gate,imgs_0_strong_0
+MK,MK005,Pelagoniski,beach,,3,2,wd:Q124649361,Dupeni Beach,score_gate,score_4.8_below_5.6
+NL,NL323,IJmond,beach,,3,2,,,,
+NL,NL32A,Agglomeratie Haarlem,beach,,3,2,osm:way/416324291,Strand Zandvoort,score_gate,score_5.4_below_5.6
+NL,NL32A,Agglomeratie Haarlem,beach,,3,2,osm:way/229802071,Naturist Beach Zandvoort,score_gate,score_5.2_below_5.6
+NL,NL32B,Groot-Amsterdam,beach,,3,2,osm:way/75300721,Kure-Janstrand,photo_gate,imgs_0_strong_0
+NL,NL32B,Groot-Amsterdam,beach,,3,2,osm:way/75300788,Speelsloot,photo_gate,imgs_0_strong_0
+NL,NL32B,Groot-Amsterdam,beach,,3,2,osm:way/75303363,De Leers,photo_gate,imgs_0_strong_0
+NL,NL361,Agglomeratie ’s-Gravenhage,beach,,3,2,osm:way/95710755,Swimming beach,photo_gate,imgs_0_strong_0
+NL,NL361,Agglomeratie ’s-Gravenhage,beach,,3,2,osm:way/95707996,Surf beach,score_gate,score_5.4_below_5.6
+NL,NL361,Agglomeratie ’s-Gravenhage,beach,,3,2,wd:Q33326604,Habana Beach,score_gate,score_5.1_below_5.6
+NL,NL363,Agglomeratie Leiden en Bollenstreek,beach,,3,2,osm:node/4248522241,Naaktstrand Noordwijk,photo_gate,imgs_1_strong_1
+NL,NL363,Agglomeratie Leiden en Bollenstreek,beach,,3,2,osm:way/1306372295,Kleipoel,score_gate,score_5.4_below_5.6
+NL,NL363,Agglomeratie Leiden en Bollenstreek,beach,,3,2,osm:way/440381380,Vadedostrand,score_gate,score_5.1_below_5.6
+PL,PL843,Suwalski,beach,,3,2,osm:way/383801139,Piaski,photo_gate,imgs_0_strong_0
+PL,PL843,Suwalski,beach,,3,2,osm:way/225776958,plaża miejska,score_gate,score_5.3_below_5.6
+PL,PL843,Suwalski,beach,,3,2,osm:node/11959940375,nieznana,score_gate,score_4.4_below_5.6
+PT,PT193,Região de Leiria,beach,,3,2,wd:Q3332363,Praia da Vieira,country_cap,rank_140
+PL,PL613,Bydgosko-toruński,beach,,3,2,osm:way/172122726,Plaża Pieczyska,score_gate,score_5.3_below_5.6
+PL,PL613,Bydgosko-toruński,beach,,3,2,osm:way/449494702,Plaża Kręgiel,score_gate,score_4.9_below_5.6
+PT,PT111,Alto Minho,beach,,3,2,,,,
+PT,PT112,Cávado,beach,,3,2,wd:Q2107546,Praia de Ofir,country_cap,rank_133
+PT,PT112,Cávado,beach,,3,2,wd:Q10352535,Apulia beach,country_cap,rank_153
+PL,PL622,Olsztyński,beach,,3,2,osm:way/845089405,Plaża Trawiasta,photo_gate,imgs_0_strong_0
+PL,PL622,Olsztyński,beach,,3,2,osm:way/111547516,Plaża miejska,photo_gate,imgs_0_strong_0
+PL,PL622,Olsztyński,beach,,3,2,wd:Q136088536,plaża miejska Barczewa w Zalesiu,score_gate,score_5.5_below_5.6
+PL,PL431,Gorzowski,beach,,3,2,osm:way/483710574,Plaża Lubikowska,photo_gate,imgs_0_strong_0
+PL,PL431,Gorzowski,beach,,3,2,osm:way/571061842,Plaża Skwierzyńska,photo_gate,imgs_0_strong_0
+PL,PL431,Gorzowski,beach,,3,2,osm:way/258676285,Kąpielisko miejskie,photo_gate,imgs_1_strong_0
+SK,SK031,Žilinský kraj,beach,,3,2,osm:way/1395973885,Mestská pláž pri Liptovskej Mare,photo_gate,imgs_0_strong_0
+SK,SK031,Žilinský kraj,beach,,3,2,osm:way/1418867972,Sielnická zátoka,photo_gate,imgs_1_strong_1
+SK,SK031,Žilinský kraj,beach,,3,2,osm:way/700736132,Plážové kúpalisko Liptovský Trnovec,score_gate,score_5.5_below_5.6
+RS,RS223,Zaječarska oblast,beach,,3,2,osm:node/9964337849,Бараница,photo_gate,imgs_0_strong_0
+RS,RS223,Zaječarska oblast,beach,,3,2,osm:way/914185390,Шест каца,photo_gate,imgs_4_strong_0
+SE,SE125,Västmanlands län,beach,,3,2,,,,
+SE,SE211,Jönköpings län,beach,,3,2,osm:way/717545003,Örserum Strand,score_gate,score_5.2_below_5.6
+GB,TLC43,Tyneside,beach,,3,2,,,,
+GB,TLK73,Gloucestershire CC,beach,,3,2,,,,
+GB,TLL43,Swansea,beach,,10,2,,,,
+GB,TLL44,Neath Port Talbot,beach,,3,2,,,,
+MD,MD-MD-CU,Chisinau,beach,,3,2,osm:way/1286248219,Plaja orășănească „Vadul lui Vodă”,score_gate,score_5.5_below_5.6
+MD,MD-MD-CU,Chisinau,beach,,3,2,osm:way/37954907,Plaja Ghidighici,score_gate,score_5.0_below_5.6
+MD,MD-MD-CU,Chisinau,beach,,3,2,osm:way/89610961,Plaja „La Izvor”,score_gate,score_4.8_below_5.6
+AT,AT211,Klagenfurt-Villach,beach,,3,1,osm:way/138980995,Strandbad Egg,photo_gate,imgs_0_strong_0
+AT,AT211,Klagenfurt-Villach,beach,,3,1,osm:node/11398976275,Freier Seezugang Afritzer See Am Nordufer,score_gate,score_5.5_below_5.6
+AT,AT211,Klagenfurt-Villach,beach,,3,1,osm:node/11398974279,Freier Seezugang Feldsee (Brennsee) - An der Seestraße,score_gate,score_5.5_below_5.6
+BE,BE251,Arr. Brugge,beach,,3,1,osm:way/827012307,Beachvolleybalterrein Drogenbrood,photo_gate,imgs_0_strong_0
+CH,CH070,Ticino,beach,,3,1,osm:way/1198478355,Bagno pubblico Tenero,photo_gate,imgs_0_strong_0
+CH,CH070,Ticino,beach,,3,1,osm:way/850634877,Lido di Magliaso,score_gate,score_5.5_below_5.6
+CH,CH070,Ticino,beach,,3,1,osm:way/1287466451,Spiaggietta di Arbedo,score_gate,score_5.5_below_5.6
+CZ,CZ052,Královéhradecký kraj,beach,,3,1,osm:way/1364317638,"Nudistická pláž, FKK",photo_gate,imgs_0_strong_0
+CZ,CZ052,Královéhradecký kraj,beach,,3,1,osm:way/176276603,naturista,photo_gate,imgs_0_strong_0
+CZ,CZ052,Královéhradecký kraj,beach,,3,1,osm:way/1418760611,Podharťská pláž,photo_gate,imgs_0_strong_0
+CZ,CZ053,Pardubický kraj,beach,,3,1,,,,
+CZ,CZ032,Plzeňský kraj,beach,,3,1,osm:way/1359629982,Pláž Tůně,photo_gate,imgs_0_strong_0
+CZ,CZ032,Plzeňský kraj,beach,,3,1,osm:node/10282725890,Městská plovárna Plzeň,photo_gate,imgs_1_strong_1
+CZ,CZ032,Plzeňský kraj,beach,,3,1,osm:node/12565349265,Pláž lom Břasy,photo_gate,imgs_0_strong_0
+DE,DEF01,"Flensburg, Kreisfreie Stadt",beach,,3,1,,,,
+DE,DE40B,Oberspreewald-Lausitz,beach,,3,1,osm:way/172564734,Textil-Strand Buchwalde,photo_gate,imgs_1_strong_0
+DE,DEF02,"Kiel, Kreisfreie Stadt",beach,,3,1,,,,
+FI,FI19B,Pirkanmaa,beach,,3,1,osm:way/104405025,Kaupinojan uimaranta,photo_gate,imgs_1_strong_1
+FI,FI19B,Pirkanmaa,beach,,3,1,wd:Q18515548,Pyynikki beach,photo_gate,imgs_0_strong_0
+FI,FI19B,Pirkanmaa,beach,,3,1,osm:way/41418589,Hervantajärvi Beach,photo_gate,imgs_0_strong_0
+FI,FI198,Keski-Suomi,beach,,3,1,osm:way/10577403,Tuomiojärven uimaranta,photo_gate,imgs_3_strong_0
+FI,FI198,Keski-Suomi,beach,,3,1,osm:way/57385584,Ristikiven uimaranta,photo_gate,imgs_0_strong_0
+FI,FI198,Keski-Suomi,beach,,3,1,osm:way/32139494,Viitaniemen uimaranta,photo_gate,imgs_1_strong_0
+HU,HU120,Pest,beach,,3,1,osm:way/624221492,Öböl Strand,photo_gate,imgs_2_strong_0
+HU,HU120,Pest,beach,,3,1,osm:way/625783091,Szigetbecse szabad strand,photo_gate,imgs_0_strong_0
+HU,HU120,Pest,beach,,3,1,osm:way/694648894,Szigetcsúcs,photo_gate,imgs_0_strong_0
+MT,MT001,Malta,beach,,14,1,osm:way/608397385,Amazonia Beach,photo_gate,imgs_2_strong_0
+MT,MT001,Malta,beach,,14,1,osm:way/33550962,Little Armier Beach,photo_gate,imgs_0_strong_0
+MT,MT001,Malta,beach,,14,1,osm:way/27092226,Palm Beach Lido,photo_gate,imgs_1_strong_0
+NL,NL230,Flevoland,beach,,3,1,osm:way/547521147,Havenstrand,photo_gate,imgs_1_strong_0
+NL,NL230,Flevoland,beach,,3,1,wd:Q2155726,Almeerderstrand,photo_gate,imgs_0_strong_0
+NL,NL230,Flevoland,beach,,3,1,osm:way/66341306,Spijkstrand,photo_gate,imgs_0_strong_0
+NL,NL362,Delft en Westland,beach,,3,1,,,,
+PL,PL637,Chojnicki,beach,,3,1,osm:way/237268953,Dzika plaza,photo_gate,imgs_0_strong_0
+PL,PL637,Chojnicki,beach,,3,1,osm:way/126665252,plaża Ostrowite,photo_gate,imgs_0_strong_0
+PL,PL637,Chojnicki,beach,,3,1,osm:way/234988552,Plaża Żuczek,score_gate,score_5.4_below_5.6
+GB,TLD73,Sefton,beach,,3,1,,,,

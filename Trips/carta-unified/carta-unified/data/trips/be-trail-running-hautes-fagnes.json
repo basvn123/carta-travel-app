@@ -1,0 +1,319 @@
+{
+  "id": "be-trail-running-hautes-fagnes",
+  "sourceId": "be-trail-running-hautes-fagnes",
+  "slug": "be-trail-running-hautes-fagnes",
+  "title": "Boardwalks and Bog — Running the Hautes Fagnes",
+  "country": "Belgium",
+  "countryCode": "BE",
+  "countries": [
+    {
+      "name": "Belgium",
+      "code": "BE"
+    }
+  ],
+  "isMultiCountry": false,
+  "region": "Western & Central Europe",
+  "regionKey": "western-central",
+  "subRegion": "Hautes Fagnes & Amblève Valley, Liège Province",
+  "tripType": "Trail Running",
+  "tripTypeId": 2,
+  "tripTypeSlug": "trail-running",
+  "durationDays": 7,
+  "bestPeriod": {
+    "months": [
+      5,
+      6,
+      9,
+      10
+    ],
+    "monthNames": [
+      "May",
+      "June",
+      "September",
+      "October"
+    ],
+    "window": null,
+    "note": "The plateau closes to walkers during high fire risk in dry spring spells; late September gives dry boardwalks, russet moor grass and no ticks.",
+    "avoid": null,
+    "raw": null
+  },
+  "budgetTier": "€€",
+  "budgetTierRange": [
+    2,
+    2
+  ],
+  "budgetTierRaw": "€€",
+  "budget": {
+    "currency": "EUR",
+    "totalEur": {
+      "low": 700,
+      "high": 1000
+    },
+    "totalNote": null,
+    "breakdown": {
+      "accommodation": {
+        "lowEur": 300,
+        "highEur": 430,
+        "note": null
+      },
+      "food": {
+        "lowEur": 180,
+        "highEur": 260,
+        "note": null
+      },
+      "transport": {
+        "lowEur": 140,
+        "highEur": 200,
+        "note": null
+      },
+      "activities": {
+        "lowEur": 80,
+        "highEur": 110,
+        "note": null
+      }
+    },
+    "perDayEur": {
+      "low": 100,
+      "high": 143
+    }
+  },
+  "profile": {
+    "difficulty": 3,
+    "difficultyLabel": "Active",
+    "difficultyNote": null,
+    "fitnessLevel": "Active",
+    "crowdLevel": "Moderate",
+    "familyFriendly": false,
+    "carRequired": true
+  },
+  "basecamps": [
+    "Malmedy"
+  ],
+  "gatewayAirport": "Brussels (BRU)",
+  "gatewayAirportCode": "BRU",
+  "languages": [
+    "French",
+    "German"
+  ],
+  "currency": "EUR",
+  "emergencyNumber": "112",
+  "coordinates": {
+    "lat": 50.8505,
+    "lon": 4.3488,
+    "precision": "gateway",
+    "matchedPlace": "Brussels",
+    "source": "geonames (geonamescache, cities > 15k)"
+  },
+  "tags": [
+    "moorland",
+    "boardwalks",
+    "gr-routes",
+    "volume-block",
+    "low-altitude"
+  ],
+  "summary": "A high-volume running week on Belgium's peat plateau, with two genuinely technical valley days in the Amblève gorges to break up the flat.",
+  "summaryGenerated": false,
+  "hook": "The Hautes Fagnes is not mountainous and pretending otherwise wastes the week. It is a 700 m peat plateau of cotton grass, black water and duckboard, cold and open, and it lets you run long. Treat it as a volume block: five flat-to-rolling days on the moor, two hard technical days in the Amblève and Warche gorges.",
+  "snapshot": {
+    "Country": "Belgium",
+    "Base(s)": "Malmedy (5 nights), one night option at Robertville / Ovifat",
+    "Trip Type": "Trail Running",
+    "Duration": "7 days",
+    "Best Period": "May–June and September–October",
+    "Budget Tier": "€€",
+    "Total Distance / Terrain": "approx. 115–135 km, 2,400–3,000 m vert; peat, boardwalk, forest track, rock-and-root river trail",
+    "Getting There": "Brussels (BRU) or Liège; train to Verviers-Central or Trois-Ponts, then hire car or TEC bus",
+    "Who It Suits": "Runners chasing weekly volume and comfort in bad weather, not vertical gain"
+  },
+  "itinerary": [
+    {
+      "day": 1,
+      "title": "Signal de Botrange and the Poleur boardwalk",
+      "morning": "Collect the car at Liège or Verviers and drive to the Centre Nature de Botrange. Sort access here: the reserve is zoned and the staff will tell you which zones are open today.",
+      "afternoon": "An easy opener. From Botrange, run the boardwalk loop across the Fagne de la Poleur, touch the Signal de Botrange (694 m, the highest point in Belgium, with a stone staircase built to push it past 700 m), and return on the plateau tracks. Duckboard running is a skill — short quick steps, land flat, never push off a wet plank.",
+      "evening": "Settle in Malmedy and eat around Place de Rome.",
+      "dayStats": "13 km, 180 m vert. Grade T1, boardwalk and peat track, fully exposed to wind. Water: Centre Nature de Botrange (café and taps). Bail-out: the N676 plateau road is never far.",
+      "sleep": null
+    },
+    {
+      "day": 2,
+      "title": "The GR56 to Baraque Michel and the Fagne Wallonne",
+      "morning": "The signature moor day. Pick up the GR56 near Botrange and run north-west across the Fagne Wallonne to Baraque Michel, the old inn and the Chapelle Fischbach at the crossroads on the plateau. The peat here is dark and deep and the sightlines are enormous.",
+      "afternoon": "Continue to the Mont Rigi research station, then loop south past the Noir Flohay — the stand of dead bleached spruce that is now the plateau's landmark — and back to Botrange on duckboard and sand track.",
+      "evening": "Wash your shoes. Peat stains everything.",
+      "dayStats": "24 km, 320 m vert. Grade T1–T2, boardwalk, wet peat, occasional ankle-deep bog. High exposure to wind and rain, no shelter. Water: Baraque Michel (inn, seasonal hours), Mont Rigi, Botrange. Bail-out: the N68 and N676 cross the plateau; both carry traffic and TEC buses.",
+      "sleep": null
+    },
+    {
+      "day": 3,
+      "title": "Vertical day above Robertville: Reinhardstein and Bayehon",
+      "morning": "Drive 20 minutes to Robertville, where the Fagnes finally has gradient. Descend into the Warche gorge below the Barrage de Robertville, run up under the walls of the Château de Reinhardstein, and climb out the far side.",
+      "afternoon": "Link east to the Cascade du Bayehon, Belgium's highest waterfall at about nine metres, on a rooty trail along the stream. Repeat the gorge climb: 180 m of gain in under a kilometre, three times, is a proper hill session.",
+      "evening": "Back to Malmedy. Legs up.",
+      "dayStats": "17 km, 750 m vert. Grade T2, wet rock, roots, steep switchbacks; short exposed sections above the Warche. Water: Robertville village, Ovifat. Bail-out: the Robertville–Ovifat road sits above both valleys.",
+      "sleep": null
+    },
+    {
+      "day": 4,
+      "title": "Recovery on the Vennbahn and the Warche",
+      "morning": "Nothing hard. Run out of Malmedy on the Vennbahn RAVeL — the old railway rebuilt as a crushed-stone greenway — north toward Sourbrodt. Flat, wide and forgiving, which is the point after Day 3.",
+      "afternoon": "Turn back at will; 60–75 minutes total. Then the cathedral and the Malmundarium in the old abbey buildings.",
+      "evening": "Early night.",
+      "dayStats": "12 km, 150 m vert. Grade T1, crushed limestone greenway, no exposure. Water: Malmedy public fountains, Sourbrodt. Bail-out: the greenway parallels the road throughout.",
+      "sleep": null
+    },
+    {
+      "day": 5,
+      "title": "Ninglinspo and the Fonds de Quarreux",
+      "morning": "Drive or train to Aywaille and start at Nonceveux. The Ninglinspo is the closest thing Belgium has to an alpine stream trail: a narrow path crossing and re-crossing a clear brook over rock slabs, past the Bain de Diane pools, climbing through beech to Sedoz.",
+      "afternoon": "Loop back down the Chefna valley, then run the Amblève bank through the Fonds de Quarreux, the field of huge quartzite boulders in the river. Technical, slow, the best running of the week.",
+      "evening": "Check the plateau's fire-risk status before planning Day 6.",
+      "dayStats": "21 km, 700 m vert. Grade T2–T3, wet rock slabs, roots, stream crossings; slippery rather than exposed. Water: Nonceveux and Aywaille village taps; do not drink the Amblève. Bail-out: the valley road at Nonceveux, and Aywaille station for the train back to Verviers.",
+      "sleep": null
+    },
+    {
+      "day": 6,
+      "title": "Long traverse: Ternell to Hockai across the plateau",
+      "morning": "The big one. Start at Haus Ternell, the nature centre in the beech forest east of Eupen, and run south past the Getzbach and the Eupen dam catchment onto the open moor. Join the GR56 near Botrange.",
+      "afternoon": "Cross the plateau west via Baraque Michel and the Fagne de la Poleur, then descend through the Hockai woods to Hockai. Arrange a pickup, or add 8 km down to Francorchamps. Four to five hours of continuous moor running is a real endurance day even without gradient.",
+      "evening": "Eat everything. Trout is on most local menus.",
+      "dayStats": "30–34 km, 550 m vert. Grade T1–T2, forest track, peat, boardwalk; sustained wind exposure with no shelter for long stretches. Water: Haus Ternell, Botrange, Baraque Michel. Bail-out: Botrange and Mont Rigi both sit on roads with bus stops at roughly the halfway mark.",
+      "sleep": null
+    },
+    {
+      "day": 7,
+      "title": "Dawn on the moor, then out",
+      "morning": "Drive up before sunrise. The Fagnes in low light with mist in the hollows is the reason to come; 45 easy minutes on the Poleur boardwalk is enough.",
+      "afternoon": "Coffee at Botrange, drop the car at Verviers or Liège, train onward.",
+      "evening": "Travel.",
+      "dayStats": "7 km, 90 m vert. Grade T1, boardwalk. Water: Botrange. Bail-out: none needed.",
+      "sleep": null
+    }
+  ],
+  "accommodationStrategy": [
+    {
+      "rank": 1,
+      "name": "Hôtel-restaurant options on Place de Rome and Rue Devant les Religieuses, Malmedy",
+      "style": "Small-town hotel",
+      "location": "town centre",
+      "description": "The only town of size within 20 minutes of both the plateau and the Amblève gorges, with supermarkets, a pharmacy and kitchens serving after 21:00. Ask for a room away from the N68 traffic and confirm parking, which is tight.",
+      "booking": "4–6 weeks ahead, longer over Belgian school holidays and the Spa-Francorchamps race weekends.",
+      "priceNote": "€90–€140 per night"
+    },
+    {
+      "rank": 2,
+      "name": "Gîtes and holiday cottages around Ovifat and Robertville",
+      "style": "Self-catering",
+      "location": "lake and moor edge",
+      "description": "A gîte at Ovifat is five minutes from the Warche gorge and fifteen from Botrange, with a kitchen for the volume of food this week needs and space to dry sodden kit. You will drive to eat out. Good for a group splitting the cost.",
+      "booking": "8 weeks ahead for autumn weekends.",
+      "priceNote": "€110–€180 per night for the whole cottage"
+    },
+    {
+      "rank": 3,
+      "name": "Guesthouses in Eupen",
+      "style": "Town base",
+      "location": "German-speaking East Cantons",
+      "description": "Worth one night for the Ternell forest and the Vesdre catchment without a long drive. Eupen has a station with direct trains to Verviers and Liège — the practical choice if you are doing the week car-free.",
+      "booking": "3–4 weeks ahead.",
+      "priceNote": "€80–€120 per night"
+    }
+  ],
+  "logistics": {
+    "connectivity": "Mobile coverage is patchy mid-moor and in the Ninglinspo gorge. Download offline maps; the white-red GR waymarks are reliable but sparse in fog.",
+    "emergency": "112. There is no mountain rescue service here; the plateau is served by ordinary ambulance and fire brigade, and the limiting factor is that they cannot drive to you. Know which road you are nearest to.",
+    "weather": "The plateau makes its own weather and holds fog for days. It can be 8°C with horizontal rain in June while Malmedy is dry 300 m below. Carry a shell every day.",
+    "bookingWindows": null,
+    "money": "Cards work everywhere in Belgium, including small cafés. Kitchens in the East Cantons stop serving around 21:00 and many restaurants close Monday and Tuesday.",
+    "transportRules": null,
+    "permits": null,
+    "health": null,
+    "gettingThere": null,
+    "other": [
+      {
+        "label": "Reserve zoning is a legal rule",
+        "text": "The Hautes Fagnes reserve is divided into zones; some are freely accessible on marked paths, some (notably zones C and D) may only be entered with an accredited guide, and leaving the marked path elsewhere is prohibited. The Centre Nature de Botrange posts the current status."
+      },
+      {
+        "label": "Fire-risk closures",
+        "text": "In dry spells the plateau closes outright — the ban is publicised in stages and enforced with fines, most often in March–May. Always check before driving up."
+      },
+      {
+        "label": "Boardwalks are slippery",
+        "text": "Wet duckboard with algae is the single most common injury cause here; some sections have chicken wire, some do not. Shorten your stride and never corner hard on a plank."
+      },
+      {
+        "label": "Language",
+        "text": "Malmedy is French-speaking; Robertville, Bütgenbach, Eupen and Ovifat are in the German-speaking Community, and signage flips accordingly. *Fagne* and *Venn* mean the same bog."
+      },
+      {
+        "label": "Camping, fires and ticks",
+        "text": "Wild camping and fires are prohibited in the reserve without exception. Ticks are numerous all season and Lyme is endemic in the Ardennes — check after every run."
+      }
+    ]
+  },
+  "proTips": [
+    "Start plateau runs from the Mont Rigi car park rather than Botrange at weekends. Botrange takes the coach traffic and its boardwalks become a queue by 11:00.",
+    "Run the Fagne Wallonne early and the wooded Amblève valleys in the afternoon. The moor is at its best in low morning light and its worst under a flat midday sky.",
+    "Use the Vennbahn as your recovery surface. Crushed limestone at zero gradient is kinder than any forest track here and it runs straight out of Malmedy.",
+    "Do the Ninglinspo upstream, not down. The path crosses the brook repeatedly and reading the line uphill is far easier; downstream you will end up wading.",
+    "Peat-black water is not drinkable and no filter fixes the tannin. Plan every run around the four reliable named water points — Botrange, Mont Rigi, Baraque Michel, Haus Ternell — and carry the rest.",
+    "If a fire-risk closure kills the plateau, move the whole week south to the Amblève and Salm valleys around Trois-Ponts, Coo and Stavelot, all on the Liège–Luxembourg rail line.",
+    "Buy food at the Saturday market on Place Albert I in Malmedy. Sunday supply in the East Cantons is thin."
+  ],
+  "typeSpecific": {
+    "raw": {
+      "Total Distance / Terrain": "approx. 115–135 km, 2,400–3,000 m vert; peat, boardwalk, forest track, rock-and-root river trail",
+      "Who It Suits": "Runners chasing weekly volume and comfort in bad weather, not vertical gain"
+    },
+    "surface": "approx. 115–135 km, 2,400–3,000 m vert; peat, boardwalk, forest track, rock-and-root river trail",
+    "distanceKm": 115,
+    "elevationM": null,
+    "verticalM": null,
+    "technicalRating": null,
+    "transitPass": null,
+    "hutBooking": null,
+    "liftNetwork": null,
+    "snowReliability": null,
+    "windConditions": null,
+    "gpxReady": null,
+    "bookingTimeline": null,
+    "audience": "Runners chasing weekly volume and comfort in bad weather, not vertical gain"
+  },
+  "packingNotes": [
+    "Shoes with soft, widely spaced lugs. Deep aggressive lugs clog in peat and slide on wet planks; moderate sticky rubber is better here than a mud spike.",
+    "A second pair kept dry, and newspaper to stuff them. You will soak one pair a day.",
+    "A genuinely waterproof hooded jacket, not a wind shell. The plateau delivers sustained cold rain.",
+    "Low gaiters — peat, sand and grit get into everything on the moor tracks.",
+    "Full-length tights or long shorts for the Ninglinspo; the beech scrub scratches.",
+    "Tick removal tool and antiseptic, used nightly.",
+    "Offline map plus a paper 1:25,000 of the Fagnes. Fog on the plateau is total and featureless.",
+    "Two 500 ml flasks and a 1 L reserve for the Day 6 traverse.",
+    "Headtorch and something reflective for early Vennbahn runs; it passes through cuttings and short tunnels.",
+    "About €30 cash for the Baraque Michel inn, which is not always card-friendly."
+  ],
+  "whatCouldGoWrong": [
+    "**The plateau is closed for fire risk on your long-traverse day.** Fallback: run the Amblève valley network from Trois-Ponts to Coo and Stavelot — similar distance, more shade, more gradient, no closure risk.",
+    "**Fog reduces visibility to 30 m mid-moor.** Fallback: navigate to the nearest of the two crossing roads, the N68 or the N676, rather than trying to hold a line to the next waypoint, and walk out on tarmac. That is the standard local advice and it is correct.",
+    "**You roll an ankle in the Ninglinspo.** It is narrow, wet and 45 minutes from a road at the top end, with unreliable signal on the gorge floor. Fallback: descend to Nonceveux rather than continuing over the plateau, and climb toward the ridge to make the call.",
+    "**Bus timings strand you at Hockai.** Rural TEC services run a handful of times a day and thin out after 18:00. Fallback: pre-book a taxi from Malmedy for the Day 6 finish, or leave a second car at Hockai.",
+    "**Cold-wet hypothermia on an easy day.** The risk here is not altitude, it is 6°C, 40 km/h wind and rain in a t-shirt. Fallback: never leave the car park without a shell and gloves, even in July."
+  ],
+  "sources": {
+    "verified": null,
+    "confidenceNotes": null
+  },
+  "verifyFlags": [],
+  "verifyFlagCount": 0,
+  "volatilePricing": false,
+  "wordCount": 2174,
+  "dataVintage": 2026,
+  "provenance": {
+    "batch": "western-central",
+    "sourceFile": "cartatripsv1/trips/be-trail-running-hautes-fagnes.md",
+    "sourceFormat": "md+yaml-frontmatter (one file per trip)",
+    "sourceId": "be-trail-running-hautes-fagnes",
+    "ingestedAt": "2026-09-02",
+    "synthesized": false
+  }
+}

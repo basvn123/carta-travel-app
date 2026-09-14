@@ -1,14 +1,13 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo, Suspense, lazy } from 'react';
 import { AppHeader } from './components/AppHeader.jsx';
-import { FilterBar } from './browse/FilterBar.jsx';
 import { BottomNav } from './components/BottomNav.jsx';
-import { DetailPanel } from './browse/DetailPanel.jsx';
+import { AnnouncementBar, PassExpiryBanner } from './components/AnnouncementBar.jsx';
+import { MaintenanceGate } from './components/MaintenanceGate.jsx';
+import { ExploreTab } from './browse/ExploreTab.jsx';
+import { DestinationPage } from './browse/DestinationPage.jsx';
 import { LifestylePanel } from './browse/LifestylePanel.jsx';
-import { ResultsList } from './browse/ResultsList.jsx';
-import { ComparePanel } from './browse/ComparePanel.jsx';
-import { InfoIcon } from './components/Icons.jsx';
+import { DestinationsTab } from './browse/DestinationsTab.jsx';
 import Logo from './components/Logo.jsx';
-import { HomePage } from './components/HomePage.jsx';
 
 // A failed dynamic import is almost always a stale bundle: the client is still
 // running an old index.html whose chunk hashes no longer exist on the server
@@ -38,31 +37,50 @@ function lazyWithReload(factory) {
   });
 }
 
-// Code-split the map (maplibre-gl is by far the heaviest dependency) and the
-// two planner tabs, so the first paint only ships the browse UI shell.
-const MapView = lazyWithReload(() => import('./map/MapView.jsx').then((m) => ({ default: m.MapView })));
+// Code-split the two planner tabs (maplibre-gl rides along with them), so the
+// first paint only ships the browse UI shell. The Explore tab itself no
+// longer mounts a map at all.
 const TripPlannerTab = lazyWithReload(() => import('./planner/TripPlannerTab.jsx').then((m) => ({ default: m.TripPlannerTab })));
 const DayPlannerTab = lazyWithReload(() => import('./planner/DayPlannerTab.jsx').then((m) => ({ default: m.DayPlannerTab })));
+// The back office. Lazy because it ships to one account in the whole user
+// base, and every traveller would otherwise pay for its bytes.
+const AdminPage = lazyWithReload(() => import('./admin/AdminPage.jsx').then((m) => ({ default: m.AdminPage })));
 
 // A quiet placeholder while a lazy chunk downloads (fast; usually one frame).
 function TabFallback() {
   return <div className="loading-screen"><div className="pulse" /></div>;
 }
-import { tripDaysBetween, DEFAULT_LIFESTYLE, needsDriveHome } from './lib/runtime_pricing.js';
-import { OriginPicker } from './components/OriginPicker.jsx';
+import { tripDaysBetween, DEFAULT_LIFESTYLE } from './lib/runtime_pricing.js';
+import { computeCosts } from './lib/costIndex.js';
 import { loadInitialState } from './lib/urlState.js';
 import { readTripShareFromUrl, decodeTripShare } from './lib/shareLink.js';
+import { readShareTokenFromUrl, stripShareTokenFromUrl } from './auth/tripShares.js';
+import { readFriendHandleFromUrl, stripFriendHandleFromUrl } from './auth/friends.js';
+import { readGuideIdFromUrl, stripGuideIdFromUrl } from './community/guides.js';
+
+// The guides gallery streams in on demand: it is a whole browse surface
+// plus the trip map, and most sessions never open it.
+const GuidesPanel = lazy(() => import('./community/GuidesPanel.jsx').then((m) => ({ default: m.GuidesPanel })));
+const RegionPage = lazy(() => import('./browse/RegionPage.jsx').then((m) => ({ default: m.RegionPage })));
+import { readTrailFromUrl } from './lib/trails.js';
+import { readDestFromUrl } from './lib/dossier.js';
+import { readBeachFromUrl } from './lib/beaches.js';
+import { readRegionFromUrl } from './lib/regions.js';
+import { readLakeFromUrl } from './lib/lakes.js';
+import { readMountainFromUrl } from './lib/mountains.js';
+import { readCycleFromUrl } from './lib/cycling.js';
+import { readTripFromUrl } from './lib/trips.js';
 import { loadTripDraft } from './planner/tripDraftStore.js';
 import { bindDayPlanCloud } from './planner/dayPlanSync.js';
 import { AuthProvider, useAuth } from './auth/AuthContext.jsx';
 import { I18nProvider, useI18n } from './i18n/index.jsx';
 import { AuthModal } from './auth/AuthModal.jsx';
 import { AuthGate } from './auth/AuthGate.jsx';
+import { SharedTripView } from './auth/SharedTripView.jsx';
 import { ResetPasswordScreen } from './auth/ResetPasswordScreen.jsx';
 import { AccountPanel } from './auth/AccountPanel.jsx';
 import { SavedTripsPanel } from './auth/SavedTripsPanel.jsx';
-import { PassModal } from './components/PassModal.jsx';
-import { useEntitlement } from './hooks/useEntitlement.js';
+import { PaywallProvider } from './hooks/usePaywall.jsx';
 import { originHome } from './lib/origins.js';
 import { useAppData } from './hooks/useAppData.js';
 import { useDestinationSearch } from './hooks/useDestinationSearch.js';
@@ -76,29 +94,21 @@ import { useReach } from './lib/reach.js';
 // ask again on this device, only a fresh sign-in should bring accounts back.
 const GUEST_KEY = 'continent.guestMode.v1';
 
-// The pass picker, reachable from chrome (the header's "See pricing" and the
-// homepage cards) rather than only from a spent allowance. Mounted only while
-// open so the ai_status read happens when somebody actually looks at prices,
-// not on every app load.
-function GlobalPassModal({ signedIn, onClose, onSignIn }) {
-  const entitlement = useEntitlement();
-  return (
-    <PassModal
-      entitlement={entitlement}
-      reason=""
-      signedIn={signedIn}
-      onClose={onClose}
-      onSignIn={onSignIn}
-    />
-  );
-}
+// The pass picker used to be mounted here, in the account panel and in the
+// day planner, each opening it on its own terms. It now lives inside
+// PaywallProvider (hooks/usePaywall.jsx), which is the single place that
+// decides when a traveller is asked and how often.
 
 
 export default function App() {
   return (
     <I18nProvider>
       <AuthProvider>
-        <TravelApp />
+        {/* Inside AuthProvider because the gate lets admins through, and it
+            cannot know who is asking before the session resolves. */}
+        <MaintenanceGate>
+          <TravelApp />
+        </MaintenanceGate>
       </AuthProvider>
     </I18nProvider>
   );
@@ -115,7 +125,7 @@ function TravelApp() {
 
   // Grouped UI state (see usePanelState / useFilterState).
   const {
-    compareOpen, setCompareOpen, authModalOpen, setAuthModalOpen,
+    authModalOpen, setAuthModalOpen,
     authModalMode, setAuthModalMode, accountOpen, setAccountOpen,
     savedTripsOpen, setSavedTripsOpen, lifestyleOpen, setLifestyleOpen,
   } = usePanelState();
@@ -123,6 +133,7 @@ function TravelApp() {
     priceMode, setPriceMode, countryFilter, setCountryFilter,
     tripKinds, setTripKinds, ratingRange, setRatingRange, gemOnly, setGemOnly,
     unescoOnly, setUnescoOnly, topBeachOnly, setTopBeachOnly,
+    bigOnly, setBigOnly,
     topPick, setTopPick, reachHours, setReachHours,
     sortKey, setSortKey, showFavOnly, setShowFavOnly,
   } = useFilterState(init);
@@ -132,8 +143,98 @@ function TravelApp() {
   const [guestMode, setGuestMode] = useState(
     () => typeof window !== 'undefined' && localStorage.getItem(GUEST_KEY) === '1'
   );
-  // The pass picker, opened from the header or the homepage pricing cards.
-  const [passOpen, setPassOpen] = useState(false);
+  // Which spoke the account panel opens on. The header's Friends button is
+  // its own door into the same panel, so it says where to land. The nonce
+  // remounts the panel on every such open: initialView only seeds state, so
+  // without it a second press while the panel already stands open would do
+  // nothing at all.
+  const [adminOpen, setAdminOpen] = useState(false);
+  const [accountView, setAccountView] = useState('home');
+  const [accountEntry, setAccountEntry] = useState(0);
+  // Somebody's invite link (#friend=<handle>). Read once at startup, like
+  // every other hash this app answers, and stripped from the bar right away.
+  const [pendingFriend, setPendingFriend] = useState(() => readFriendHandleFromUrl());
+  useEffect(() => {
+    if (pendingFriend) stripFriendHandleFromUrl();
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  // An invite opens the friends page as soon as there is an account to open
+  // it for. A guest lands on the account hub instead, which is where signing
+  // in is, and the handle waits: dropping it would waste the one tap the
+  // sender was trying to save.
+  useEffect(() => {
+    if (!pendingFriend) return;
+    setSavedTripsOpen(false);
+    setAccountView(user ? 'friends' : 'home');
+    setAccountEntry((n) => n + 1);
+    setAccountOpen(true);
+  }, [pendingFriend, user]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // The published guides gallery, and a direct link to one of them
+  // (#guide=<id>). Same rule as every other hash this app answers: read once
+  // at startup, acted on, then stripped from the bar. A guide is readable
+  // signed out, so this deliberately does not wait for an account.
+  const [guidesOpen, setGuidesOpen] = useState(false);
+  const [pendingGuide, setPendingGuide] = useState(() => readGuideIdFromUrl());
+  useEffect(() => {
+    if (!pendingGuide) return;
+    stripGuideIdFromUrl();
+    setAccountOpen(false);
+    setSavedTripsOpen(false);
+    setGuidesOpen(true);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const openGuides = () => {
+    setAccountOpen(false);
+    setSavedTripsOpen(false);
+    setPendingGuide('');
+    setGuidesOpen(true);
+  };
+
+  const openAccountAt = (view) => {
+    setGuidesOpen(false);
+    setSavedTripsOpen(false);
+    setAccountView(view);
+    setAccountEntry((n) => n + 1);
+    setAccountOpen(true);
+  };
+  // Account and Friends are doors, not one-way streets: pressing the control
+  // that opened a page closes it again, the way the phone's bottom bar has
+  // always behaved. On desktop this is the ONLY affordance, since the panel
+  // gives up its cross there (see .account-panel .panel-close) on the promise
+  // that the header can be pressed a second time.
+  //
+  // The avatar is the door to the whole page, not to one spoke inside it, so
+  // a second press closes it whichever spoke is showing; the rail is how you
+  // move between spokes. Friends is the exception, because it is a second
+  // door onto the same page: it only closes the page it itself opened.
+  const toggleAccount = () => (accountOpen ? setAccountOpen(false) : openAccountAt('home'));
+  const toggleFriends = () => (accountOpen && accountView === 'friends'
+    ? setAccountOpen(false)
+    : openAccountAt('friends'));
+
+  // One door into a section, whatever pressed it: the header tabs, the brand
+  // mark, the phone's bottom bar and the empty-shelf links all land on the
+  // tab AND clear whatever was standing over it. Account and My trips are
+  // full-height pages on desktop (z-index 56, everything below the bar), so a
+  // switch that left one open moved the underline to Explore while Explore
+  // stayed hidden behind the account page: the tab said one thing and the
+  // screen said another. Lifestyle goes with them, since every tab that can
+  // reprice from it carries its own button.
+  //
+  // Stable: the handovers further down take it as a dependency, and every
+  // setter it closes over is a useState setter.
+  const goToTab = useCallback((key) => {
+    setSavedTripsOpen(false);
+    setAccountOpen(false);
+    setLifestyleOpen(false);
+    setActiveTab(key);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  // My trips is the fifth door in the same row, so it clears the same things.
+  const toggleSaved = () => {
+    setAccountOpen(false);
+    setLifestyleOpen(false);
+    setSavedTripsOpen((v) => !v);
+  };
   // Shown before any data/route decisions: sign in, create an account, or
   // continue as a guest. Skipped entirely when accounts aren't configured,
   // once already signed in, or once guest mode has been chosen before.
@@ -157,20 +258,22 @@ function TravelApp() {
     prevUserRef.current = user;
   }, [user]);
 
-  // Which top-level section is showing: Home (the front page), Map (the
-  // browse/search experience), Trip planner, or Day planner. EVERY visit
-  // opens on Home, first or fiftieth: it is a tab like the others, it shows
-  // today's real prices, and the tabs to leave it are in the header and the
-  // bottom bar. (The localStorage mirror's remembered tab is deliberately
-  // ignored.)
+  // Which top-level section is showing: Destinations (the catalogue +
+  // published trips), Map (the browse/search experience), Trip planner, or
+  // Day planner. EVERY visit opens on Destinations, first or fiftieth: there
+  // is no marketing front page in front of the app any more, so the first
+  // thing anybody sees is real places. (The localStorage mirror's remembered
+  // tab is deliberately ignored.)
   // A query string, though, means the view was shared or reloaded, so it
   // decides which tab opens. The encoder omits `tab` for the map (it is the
   // URL's implicit default), so a link carrying filters but no tab is a map
-  // link, not a reason to drop someone on the front page.
+  // link. Links from the old front page (`tab=home`) land on Destinations,
+  // which is what replaced it.
   const urlTab = typeof window !== 'undefined' && !!window.location.search
-    ? (['home', 'map', 'trip', 'day'].includes(init.activeTab) ? init.activeTab : 'map')
+    ? (init.activeTab === 'home' ? 'places'
+      : (['map', 'places', 'trip', 'day'].includes(init.activeTab) ? init.activeTab : 'map'))
     : null;
-  const [activeTab, setActiveTab] = useState(urlTab || 'home');
+  const [activeTab, setActiveTab] = useState(urlTab || 'places');
 
   const [selectedId, setSelectedId] = useState(init.selectedId ?? null);
 
@@ -202,7 +305,7 @@ function TravelApp() {
 
   // Planner tabs mount on first visit and then stay alive (hidden) so a quick
   // look at another tab never wipes an in-progress plan.
-  const [visitedTabs, setVisitedTabs] = useState(() => new Set(['map', urlTab || 'map']));
+  const [visitedTabs, setVisitedTabs] = useState(() => new Set(['map', urlTab || 'places']));
   useEffect(() => {
     setVisitedTabs((prev) => (prev.has(activeTab) ? prev : new Set([...prev, activeTab])));
   }, [activeTab]);
@@ -221,6 +324,18 @@ function TravelApp() {
   // captured synchronously before useUrlSync's first URL write would drop it,
   // decoded async, then offered in a confirm dialog rather than silently
   // replacing whatever plan is already in the recipient's planner.
+  // A SAVED trip shared by token (#shared=<uuid>, see auth/tripShares.js).
+  // Unlike #trip=, the payload is not in the link: the token is fetched
+  // through get_shared_trip, which is what lets the owner withdraw it and what
+  // keeps the ledger and the booking references out of the reader's hands.
+  // Read once at startup for the same reason the trip hash is, and stripped
+  // from the address bar right away so a reload does not reopen it.
+  const [shareToken, setShareToken] = useState(() => readShareTokenFromUrl());
+  useEffect(() => {
+    if (shareToken) stripShareTokenFromUrl();
+    // Once only: stripping the hash must not be able to re-trigger the read.
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
   const [sharedTripRaw] = useState(() => readTripShareFromUrl());
   const [sharedTrip, setSharedTrip] = useState(null);
   const [pendingSharedTrip, setPendingSharedTrip] = useState(null);
@@ -231,8 +346,91 @@ function TravelApp() {
     return () => { live = false; };
   }, [sharedTripRaw]);
 
-  // Stable identity: this lands on every ResultsList row, so a fresh function
-  // per render would defeat the list's React.memo.
+  // A single TRAIL shared as a link (#trail=63478&tc=AL, see lib/trailExport.js):
+  // read once at startup and handed to the Destinations tab, which loads that
+  // country's published trips and opens the trail's own page. The hash carries
+  // nothing else, so the recipient's saved dates, origin and lifestyle survive
+  // opening someone else's trail.
+  const [pendingTrail, setPendingTrail] = useState(() => readTrailFromUrl());
+  useEffect(() => {
+    if (pendingTrail) setActiveTab('places');
+  }, [pendingTrail]);
+
+  // A single DESTINATION shared as a link (#dest=gem:valbona, see
+  // lib/dossier.js): read once at startup, then the full-screen destination
+  // page opens over whichever tab loads. Same contract as the trail hash: it
+  // carries nothing else, so the recipient's own state survives.
+  const [pendingDest] = useState(() => readDestFromUrl());
+  useEffect(() => {
+    if (pendingDest) setSelectedId(pendingDest);
+    // Once, at boot: the hash was already stripped by the reader.
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // A single BEACH shared as a link (#beach=gr-navagio-Q1234&bc=GR, see
+  // lib/beaches.js), read the same way and for the same reasons: the hash
+  // carries nothing else, so opening someone else's beach leaves the
+  // recipient's own dates, origin and lifestyle exactly where they were.
+  const [pendingBeach, setPendingBeach] = useState(() => readBeachFromUrl());
+  useEffect(() => {
+    if (pendingBeach) setActiveTab('places');
+  }, [pendingBeach]);
+
+  // And a single LAKE (#lake=si-lake-bled-Q207302&lc=SI, see lib/lakes.js).
+  // Same hash, same reasons.
+  const [pendingLake, setPendingLake] = useState(() => readLakeFromUrl());
+  useEffect(() => {
+    if (pendingLake) setActiveTab('places');
+  }, [pendingLake]);
+
+  // And a single MOUNTAIN (#mtn=ch-matterhorn-Q1090&mc=CH, lib/mountains.js).
+  const [pendingMountain, setPendingMountain] = useState(() => readMountainFromUrl());
+  useEffect(() => {
+    if (pendingMountain) setActiveTab('places');
+  }, [pendingMountain]);
+
+  // And a single CYCLE ROUTE or TOUR (#cycle=63478&cc=GB, #tour=slug, see
+  // lib/cycling.js). The reader has existed since the layer shipped and was
+  // never called, so a shared cycle link opened the app on whatever tab the
+  // recipient was last on and dropped the route. It is also the door a region
+  // page needs: cycling is the largest layer on those pages.
+  const [pendingCycle, setPendingCycle] = useState(() => readCycleFromUrl());
+  useEffect(() => {
+    if (pendingCycle) setActiveTab('places');
+  }, [pendingCycle]);
+
+  // A shared REGION link (#region=COAST:ES-LUZ-CADIZ, see lib/regions.js).
+  // Not a tab: the region page is a hoisted overlay like DestinationPage,
+  // so it opens over whatever tab the recipient was on.
+  const [pendingRegion, setPendingRegion] = useState(() => readRegionFromUrl());
+
+  // A shared TRIP link (#itin=at-salzburg-vienna-chain-5d, see lib/trips.js),
+  // read once at startup and handed to the Destinations tab, exactly like a
+  // shared trail, beach, lake or mountain. The hash carries nothing else, so
+  // opening someone else's itinerary leaves the recipient's own dates, origin
+  // and lifestyle where they were.
+  const [pendingTrip, setPendingTrip] = useState(() => readTripFromUrl());
+  useEffect(() => {
+    if (pendingTrip) setActiveTab('places');
+  }, [pendingTrip]);
+
+  // A published itinerary handed to the trip planner, where every stop, night
+  // and date stays editable. It goes in through the same door a shared trip
+  // uses, so the planner needs no new code path for it.
+  const openTripInPlanner = useCallback((trip) => {
+    const stops = (trip.stops || [])
+      .map((st) => ({ destinationId: st.dest, nights: st.nights, activities: [] }))
+      .filter((st) => st.destinationId && st.nights);
+    if (!stops.length) return;
+    setPendingSharedTrip({
+      stops,
+      label: trip.name || '',
+      transportPref: trip.transport === 'car' ? 'owncar' : 'public',
+    });
+    goToTab('trip');
+  }, [goToTab]);
+
+  // Stable identity: this lands on every Explore card, so a fresh function
+  // per render would defeat the card's React.memo.
   const toggleFav = useCallback((id) => setFavorites((prev) => {
     const next = new Set(prev);
     if (next.has(id)) next.delete(id); else next.add(id);
@@ -251,7 +449,7 @@ function TravelApp() {
   // URL, and applied to the filtered set so the list AND map narrow together.
   const [locationQuery, setLocationQuery] = useState('');
   // Debounced for the actual filter/map pipeline so every keystroke doesn't
-  // force MapView to reconcile markers; the input itself stays instant since
+  // force the grid to reconcile hundreds of cards; the input stays instant since
   // it reads `locationQuery`, not this.
   const [debouncedLocationQuery, setDebouncedLocationQuery] = useState('');
   useEffect(() => {
@@ -260,59 +458,28 @@ function TravelApp() {
   }, [locationQuery]);
 
 
-  // Persistent guidance pill anchored to the top bar. It's always available on
-  // the map tab so first-timers can re-open the "how this works" tip any time.
-  // The tip is collapsed to a small pill by default so it never crowds the map;
-  // tapping the pill expands the text in a popover that overlays the map rather
-  // than pushing it down.
-  const [mapGuideOpen, setMapGuideOpen] = useState(false);
-  // Once the visitor has clicked any destination they have "started": the
-  // START HERE pill has done its job and must not keep floating over the map.
-  // Persisted so it stays gone on the next visit too.
-  const [mapGuideDone, setMapGuideDone] = useState(() => {
-    try { return localStorage.getItem('carta.mapGuideDone') === '1'; } catch { return false; }
-  });
-
-  // Nudges TripPlannerTab to open the guided wizard (homepage CTA): bumping
-  // the counter is the signal, the tab consumes it via an effect.
-  const [wizardLaunch, setWizardLaunch] = useState(0);
-
   // Escape closes the top-most dismissable surface (the shared-trip offer,
-  // then the destination detail, then the homepage falls through to the map).
-  // Gives keyboard users a way out that the click-outside backdrop alone
-  // never provided.
+  // then Account / My trips, then the destination detail). Gives keyboard
+  // users a way out that the click-outside backdrop alone never provided, and
+  // it is the exit those two slide-overs rely on now that their cross is
+  // desktop-only.
   useEffect(() => {
     const onKey = (e) => {
       if (e.key !== 'Escape') return;
       if (sharedTrip) { setSharedTrip(null); return; }
-      if (selectedId) { setSelectedId(null); return; }
-      if (activeTab === 'home') { setActiveTab('map'); }
+      if (guidesOpen) { setGuidesOpen(false); return; }
+      if (accountOpen) { setAccountOpen(false); return; }
+      if (savedTripsOpen) { setSavedTripsOpen(false); return; }
+      if (selectedId) { setSelectedId(null); }
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [sharedTrip, selectedId, activeTab]);
+  }, [sharedTrip, guidesOpen, accountOpen, savedTripsOpen, selectedId]);
 
-  // Let the user collapse the destinations list to give the map the full width.
-  // On phones (<=768px) it starts collapsed so the map opens as big as possible;
-  // a "Destinations" pill (top-left) expands it back over the map. Desktop starts
-  // expanded since there's room for both side-by-side.
-  const [listCollapsed, setListCollapsed] = useState(
-    () => typeof window !== 'undefined' && window.innerWidth <= 768
-  );
-
-  // Stable so MapView's marker effect doesn't rebuild every render.
+  // Stable so every Explore card's memo survives parent re-renders.
   const openDetail = useCallback((id) => {
     setSelectedId(id);
-    setMapGuideOpen(false);
-    setMapGuideDone(true);
-    try { localStorage.setItem('carta.mapGuideDone', '1'); } catch { /* private mode */ }
   }, []);
-  const collapseList = useCallback(() => setListCollapsed(true), []);
-  const openCompare = useCallback(() => setCompareOpen(true), []);
-  // "Top picks" hides the unreachable set, and an unanswered "where do you
-  // drive from?" hides both sets; a fresh [] every render would re-render the
-  // memoized list/map for nothing, so keep one empty constant.
-  const noResults = useRef([]).current;
 
   // Fetch app_data.json, apply its defaults into `choices`, and derive the
   // fare-date bounds used to default/clamp the depart & return pickers.
@@ -335,24 +502,40 @@ function TravelApp() {
     setChoices((prev) => ({ ...prev, drive_home: point || null }));
   }, []);
 
-  // Drive mode with the question still open. The engine falls back to flight
-  // prices in this state (which is what the flights-first homepage wants), so
-  // it is the MAP tab that holds its results back: showing fares under a car
-  // toggle would answer a question nobody asked.
-  const driveHomeMissing = needsDriveHome(choices);
-
-  // Bumping this counter opens the picker's popover. It fires the moment the
-  // question becomes blocking (switching to Drive with no town set) and again
-  // from the map's prompt, so the answer is never something to go hunting for.
-  const [originAsk, setOriginAsk] = useState(0);
-  const [originPopOpen, setOriginPopOpen] = useState(false);
+  // How much width the scrollbar takes out of a tab panel. The panels
+  // (.explore-tab, .places-tab) scroll and the top bar does not, so wherever
+  // the scrollbar is a real gutter rather than a macOS-style overlay, the bar
+  // was that much wider than the cards inside those panels and the Passes
+  // chip overhung the toolbar's right edge.
+  //
+  // Measured off the panel that is actually on screen rather than a synthetic
+  // probe: a detached test div reports the platform default, which is not
+  // always what the panel gets, and the hidden panels behind a tab hop
+  // measure zero. The panels reserve the gutter unconditionally
+  // (scrollbar-gutter: stable), so the number does not move when a list grows
+  // past one screen.
+  //
+  // Nothing measurable means nothing to write, rather than zero: the planner
+  // tabs have no scrolling panel at all, and neither does the first render,
+  // before the data lands. Writing 0 in those two cases made the bar's right
+  // edge jump the gutter's width on every hop to a planner and back, and left
+  // the Passes chip overhanging on the very first paint until the first tab
+  // switch corrected it. `data` is in the deps for the second half of that:
+  // the panels only exist once it has arrived.
+  const dataReady = !!data;
   useEffect(() => {
-    if (!driveHomeMissing) return;
-    setOriginAsk((n) => n + 1);
-    // The open destination card was priced under the old mode and the map it
-    // came from is now empty, so it cannot stay up behind the question.
-    setSelectedId(null);
-  }, [driveHomeMissing]);
+    const apply = () => {
+      let gutter = null;
+      for (const el of document.querySelectorAll('.explore-tab, .places-tab')) {
+        if (el.offsetWidth > 0) { gutter = el.offsetWidth - el.clientWidth; break; }
+      }
+      if (gutter === null) return;
+      document.documentElement.style.setProperty('--sbw', `${gutter}px`);
+    };
+    apply();
+    window.addEventListener('resize', apply);
+    return () => window.removeEventListener('resize', apply);
+  }, [activeTab, dataReady]);
 
   // Keep --filter-h in sync with the filter bar's real height. The bar uses
   // min-height + wraps its controls; everything below it is positioned at
@@ -396,37 +579,30 @@ function TravelApp() {
   // filter bar to show its quiet "no data yet" state instead of dead chips.
   const reachMinutes = useReach(choices.origin);
 
-  // Price every destination for the current dates/choices, then narrow that
-  // down through the location search, filter bar, and "top picks" shortcut.
+  // Price every destination for the current dates/choices. The Explore tab
+  // no longer reads fares at all; this keeps running for the Destinations
+  // tab's price chips and the URL contract (priceRange restore).
   const {
-    pricedAll, unreachableAll, availableCountries, priceBounds,
-    priceRange, setPriceRange,
-    priced, unreachable, dealThreshold, stats,
+    pricedAll, availableCountries, priceRange, setPriceRange, priceBounds,
   } = useDestinationSearch({
     data, departDate, returnDate, choices: pricingChoices,
     locationQuery: debouncedLocationQuery, countryFilter, priceMode, tripKinds,
-    ratingRange, gemOnly, unescoOnly, topBeachOnly, topPick,
+    ratingRange, gemOnly, unescoOnly, topBeachOnly, bigOnly, topPick,
     reachHours, reachMinutes,
     initialPriceRange: init.priceRange,
   });
-
-  // What the Map tab is allowed to show. Everything else (the homepage's pins
-  // and receipt) keeps the full priced set: those are fares, and they do not
-  // depend on the answer the map is waiting for.
-  const mapPriced = driveHomeMissing ? noResults : priced;
-  const mapUnreachable = (driveHomeMissing || topPick) ? noResults : unreachable;
 
   // Keep the URL + localStorage in sync so the view is shareable and survives a
   // reload (debounced; runs only once data has loaded). See useUrlSync.
   useUrlSync(!!data, {
     departDate, returnDate, choices, priceMode, countryFilter,
     tripKinds, priceRange, priceBounds, selectedId, favorites, sortKey, showFavOnly,
-    ratingRange, gemOnly, unescoOnly, topBeachOnly, topPick, reachHours, activeTab,
+    ratingRange, gemOnly, unescoOnly, topBeachOnly, bigOnly, topPick, reachHours, activeTab,
   });
 
   // Sync a signed-in user's filter/lifestyle preferences with their account,
   // and expose the "save"/"load a saved trip" actions.
-  const { handleSaveTrip, handleLoadTrip } = useAccountSync({
+  const { handleLoadTrip } = useAccountSync({
     user, cameFromUrl,
     // A departure airport restored from the URL/local mirror must survive the
     // account-settings pull, so a changed "flying from" stays put app-wide.
@@ -448,8 +624,33 @@ function TravelApp() {
 
   const selectedDest = data && selectedId ? data.destinations[selectedId] : null;
 
+  // The Explore page's two price-level indices, computed once per dataset and
+  // shared by the grid and the open destination panel.
+  // Recomputed whenever the Lifestyle panel changes a stay tier, a party
+  // size or a single frequency. That is 3,038 destinations repriced in about
+  // 7 ms, which is why there is no loading state anywhere near it: the grid
+  // simply renders the new numbers on the next frame.
+  const exploreIndices = useMemo(
+    () => (data ? computeCosts(data.destinations, choices) : null),
+    [data, choices],
+  );
+
   if (recoveryMode) {
     return <ResetPasswordScreen />;
+  }
+
+  // A shared trip opens BEFORE the entry gate and before the session resolves,
+  // and that ordering is the feature: a share whose first screen asks the
+  // reader to sign up does not get opened. The token is the only credential
+  // this screen needs, so it never waits on auth.
+  if (shareToken) {
+    return (
+      <SharedTripView
+        token={shareToken}
+        destinations={data?.destinations}
+        onDismiss={() => setShareToken(null)}
+      />
+    );
   }
 
   // Resolve whether there's an existing session before deciding whether to
@@ -509,87 +710,30 @@ function TravelApp() {
   }
 
   return (
-    <div className={`app ${listCollapsed ? 'list-collapsed' : ''}`} onClick={() => setSelectedId(null)}>
+    /* Every paid surface in the app asks this provider for permission, and it
+       owns the one pass modal. It sits inside TravelApp rather than beside
+       AuthProvider because the sign-in handoff is TravelApp's own modal. */
+    <PaywallProvider
+      onSignIn={() => {
+        setAuthModalMode('signin');
+        setAuthModalOpen(true);
+      }}
+    >
+    <div className="app" onClick={() => setSelectedId(null)}>
       <div className="top-bar" ref={filterBarRef} onClick={(e) => e.stopPropagation()}>
         <AppHeader
           user={user}
-          onOpenAccount={() => setAccountOpen(true)}
-          onSeePricing={() => setPassOpen(true)}
-          isHome={activeTab === 'home'}
-          onGoHome={() => setActiveTab('home')}
+          onOpenAccount={toggleAccount}
+          accountOpen={accountOpen}
+          onOpenFriends={toggleFriends}
+          friendsOpen={accountOpen && accountView === 'friends'}
+          onBrandClick={() => goToTab('places')}
           activeTab={activeTab}
-          onChangeTab={(key) => { setSavedTripsOpen(false); setActiveTab(key); }}
+          onChangeTab={goToTab}
           savedOpen={savedTripsOpen}
-          onToggleSaved={() => setSavedTripsOpen((v) => !v)}
-        >
-          {activeTab === 'map' && (
-            <FilterBar
-              data={data}
-              choices={choices}
-              setChoices={setChoices}
-              departDate={departDate}
-              setDepartDate={setDepartDate}
-              returnDate={returnDate}
-              setReturnDate={setReturnDate}
-              dateBounds={dateBounds}
-              stats={stats}
-              priceMode={priceMode}
-              setPriceMode={setPriceMode}
-              countryFilter={countryFilter}
-              setCountryFilter={setCountryFilter}
-              availableCountries={availableCountries}
-              priceRange={priceRange}
-              setPriceRange={setPriceRange}
-              priceBounds={priceBounds}
-              tripKinds={tripKinds}
-              setTripKinds={setTripKinds}
-              ratingRange={ratingRange}
-              setRatingRange={setRatingRange}
-              gemOnly={gemOnly}
-              setGemOnly={setGemOnly}
-              unescoOnly={unescoOnly}
-              setUnescoOnly={setUnescoOnly}
-              topBeachOnly={topBeachOnly}
-              setTopBeachOnly={setTopBeachOnly}
-              topPick={topPick}
-              setTopPick={setTopPick}
-              reachHours={reachHours}
-              setReachHours={setReachHours}
-              reachAvailable={!!reachMinutes}
-              onOpenLifestyle={() => setLifestyleOpen(true)}
-            />
-          )}
-        </AppHeader>
+          onToggleSaved={toggleSaved}
+        />
 
-        {/* Guidance tip: a small floating pill anchored to the bottom-right of
-            the header. It's absolutely positioned, so its height is NOT folded
-            into --filter-h - the map fills the space right under the header and
-            the expanded text overlays the map instead of pushing it down.
-            Hidden while a slide-over panel is up: it would float on top of the
-            panel with nothing behind it to point at. */}
-        {activeTab === 'map' && !accountOpen && !savedTripsOpen && !mapGuideDone && (
-          <div className={`map-guide ${mapGuideOpen ? 'open' : ''}`} role="note">
-            <button
-              className="map-guide-toggle"
-              onClick={() => setMapGuideOpen((v) => !v)}
-              aria-expanded={mapGuideOpen}
-            >
-              <InfoIcon size={13} />
-              <span>{t('guide.startHere')}</span>
-              <span className="map-guide-caret" aria-hidden="true">▾</span>
-            </button>
-            {mapGuideOpen && (
-              <div className="map-guide-pop">
-                <p className="map-guide-text">
-                  {t('guide.text')}
-                </p>
-                <button className="map-guide-dismiss" onClick={() => setMapGuideOpen(false)}>
-                  {t('common.gotIt')}
-                </button>
-              </div>
-            )}
-          </div>
-        )}
       </div>
 
       {/* A trip arrived via share link: offer it, never silently apply it. */}
@@ -612,7 +756,7 @@ function TravelApp() {
                 onClick={() => {
                   setPendingSharedTrip(sharedTrip);
                   setSharedTrip(null);
-                  setActiveTab('trip');
+                  goToTab('trip');
                 }}
               >
                 {t('share.open')}
@@ -625,194 +769,110 @@ function TravelApp() {
         </div>
       )}
 
-      {/* The homepage: a tab body like the map and the planners, sitting
-          under the same .app-header rather than over it, so leaving Home is
-          one tap on chrome that never moved. Every visit lands here, the
-          brand mark comes back any time, and the hero's search strip edits
-          the live app state so the CTA hand-off arrives on an already-priced
-          map. */}
-      {activeTab === 'home' && (
-        <HomePage
-          data={data}
-          choices={choices}
-          setChoices={setChoices}
-          onChangeOrigin={setOrigin}
-          departDate={departDate}
-          setDepartDate={setDepartDate}
-          returnDate={returnDate}
-          setReturnDate={setReturnDate}
-          dateBounds={dateBounds}
-          // Cheapest-first, so the landing page can take its receipt
-          // destination and its map pins straight off the front of it.
-          pricedAll={pricedAll}
-          totalCount={Object.keys(data.destinations).length}
-          countryCount={availableCountries.length}
-          onOpenAccount={() => setAccountOpen(true)}
-          onOpenPass={() => setPassOpen(true)}
-          onExplore={() => setActiveTab('map')}
-          onPlanTrip={() => {
-            setActiveTab('trip');
-            setWizardLaunch((n) => n + 1);
-          }}
-          onNavigate={(key) => { setSavedTripsOpen(false); setActiveTab(key); }}
-        />
-      )}
-
-      {/* The map tab gets the same keep-alive as the planners: destroying it
-          on every tab hop meant a full MapLibre teardown + rebuild (style,
-          tiles, WebGL context, ~1500 markers) on every return to Home. The
-          wrapper div is unpositioned, so the absolutely-placed panels inside
-          keep anchoring to .app exactly as before. */}
+      {/* The Explore tab: the catalogue as a readable grid, no map and no
+          fares. Keep-alive like the planners, so scroll position, the open
+          panel and the loaded images survive a tab hop. */}
       {visitedTabs.has('map') && (
         <div className={activeTab === 'map' ? undefined : 'tab-keep-hidden'}>
           <div onClick={(e) => e.stopPropagation()}>
-            <ResultsList
-              priced={mapPriced}
-              unreachable={mapUnreachable}
+            <ExploreTab
+              data={data}
+              isActive={activeTab === 'map'}
               locationQuery={locationQuery}
               setLocationQuery={setLocationQuery}
-              priceMode={priceMode}
-              dealThreshold={dealThreshold}
-              selectedId={selectedId}
-              onSelect={openDetail}
-              favorites={favorites}
-              onToggleFav={toggleFav}
+              countryFilter={countryFilter}
+              setCountryFilter={setCountryFilter}
+              tripKinds={tripKinds}
+              setTripKinds={setTripKinds}
+              ratingRange={ratingRange}
+              setRatingRange={setRatingRange}
+              gemOnly={gemOnly}
+              setGemOnly={setGemOnly}
+              unescoOnly={unescoOnly}
+              setUnescoOnly={setUnescoOnly}
+              topBeachOnly={topBeachOnly}
+              setTopBeachOnly={setTopBeachOnly}
+              bigOnly={bigOnly}
+              setBigOnly={setBigOnly}
+              topPick={topPick}
+              setTopPick={setTopPick}
+              reachHours={reachHours}
+              setReachHours={setReachHours}
+              reachAvailable={!!reachMinutes}
+              reachMinutes={reachMinutes}
               sortKey={sortKey}
               setSortKey={setSortKey}
               showFavOnly={showFavOnly}
               setShowFavOnly={setShowFavOnly}
-              onOpenCompare={openCompare}
-              reachableCount={pricedAll.length}
-              totalCount={Object.keys(data.destinations).length}
-              homeCity={data.meta?.origins?.[data.meta?.selected_origin]?.city || data.meta?.home_city || 'your airport'}
-              transportMode={choices.transport_mode || 'plane'}
-              needsDriveHome={driveHomeMissing}
-              onCollapse={collapseList}
-            />
-          </div>
-
-          {/* The map's own control row, floating just under the top panel and
-              tracking the left edge of the map (so it clears the destinations
-              gutter when that is open). Holds the list-reopen tab, only shown
-              when the list is collapsed, and the "travelling from" picker,
-              which needs the room here to ask a real question in Drive mode
-              rather than being a 12px pill lost in the header. */}
-          <div className="map-toolrow" onClick={(e) => e.stopPropagation()}>
-            <button
-              className="list-reopen"
-              onClick={() => setListCollapsed(false)}
-              title={t('results.showListTitle')}
-              aria-label={t('results.showListTitle')}
-            >
-              <span className="chev">›</span>
-              <span>{t('results.destinations')}</span>
-            </button>
-
-            <OriginPicker
-              data={data}
-              origin={choices.origin}
-              onChangeOrigin={setOrigin}
-              mode={choices.transport_mode === 'car' ? 'car' : 'plane'}
-              driveHome={choices.drive_home}
-              onChangeDriveHome={setDriveHome}
-              askOpen={originAsk}
-              onOpenChange={setOriginPopOpen}
-            />
-          </div>
-
-          {/* Drive mode with no starting town: the map is empty on purpose, so
-              say so instead of leaving a blank continent behind. Only while the
-              picker is shut, though: the popover asks the same question, and
-              both on screen at once reads as a stutter. */}
-          {driveHomeMissing && !originPopOpen && (
-            <div className="drive-ask" onClick={(e) => e.stopPropagation()}>
-              <p className="drive-ask-title">{t('wizard.carFromLabel')}</p>
-              <p className="drive-ask-body">{t('origin.driveWhy')}</p>
-              <div className="drive-ask-actions">
-                <button className="drive-ask-btn" onClick={() => setOriginAsk((n) => n + 1)}>
-                  {t('origin.driveSetPoint')}
-                </button>
-                <button
-                  className="drive-ask-alt"
-                  onClick={() => setChoices((prev) => ({ ...prev, transport_mode: 'plane' }))}
-                >
-                  {t('origin.driveBackToFlights')}
-                </button>
-              </div>
-            </div>
-          )}
-
-          <Suspense fallback={null}>
-            <MapView
-              priced={mapPriced}
-              unreachable={mapUnreachable}
-              priceMode={priceMode}
-              groupSize={choices.group_size}
+              favorites={favorites}
+              onToggleFav={toggleFav}
               selectedId={selectedId}
               onSelect={openDetail}
-              dealThreshold={dealThreshold}
-              transportMode={choices.transport_mode || 'plane'}
-            />
-          </Suspense>
-
-          {data.meta?.is_mock && (
-            <div style={{
-              position: 'absolute', top: 'calc(var(--filter-h) + 12px)',
-              left: 'calc(var(--panel-w) + 16px)',
-              fontFamily: 'var(--mono)', fontSize: 10,
-              background: 'var(--accent-bg)', color: 'var(--accent)',
-              padding: '4px 10px', borderRadius: 999,
-              textTransform: 'uppercase', letterSpacing: '0.12em',
-              zIndex: 5, pointerEvents: 'none',
-            }}>
-              Mock data
-            </div>
-          )}
-
-          {lifestyleOpen && (
-            <div onClick={(e) => e.stopPropagation()}>
-              <LifestylePanel
-                choices={choices}
-                setChoices={setChoices}
-                onClose={() => setLifestyleOpen(false)}
-              />
-            </div>
-          )}
-
-          <div onClick={(e) => e.stopPropagation()}>
-            <DetailPanel
-              destination={selectedDest}
-              departDate={departDate}
-              returnDate={returnDate}
+              indices={exploreIndices}
               choices={choices}
-              setChoices={setChoices}
-              priceMode={priceMode}
-              onClose={() => setSelectedId(null)}
               onOpenLifestyle={() => setLifestyleOpen(true)}
-              onSelect={openDetail}
-              data={data}
-              isFavorite={selectedId ? favorites.has(selectedId) : false}
-              onToggleFavorite={selectedId ? () => toggleFav(selectedId) : undefined}
-              onSaveTrip={authConfigured ? handleSaveTrip : undefined}
-              onShiftDates={(depart, ret) => { setDepartDate(depart); setReturnDate(ret); }}
+              onOpenGuides={openGuides}
+              isMock={!!data.meta?.is_mock}
             />
           </div>
 
-          {compareOpen && favorites.size >= 2 && (
-            <div onClick={(e) => e.stopPropagation()}>
-              <ComparePanel
-                data={data}
-                favorites={favorites}
-                departDate={departDate}
-                returnDate={returnDate}
-                choices={choices}
-                priceMode={priceMode}
-                onClose={() => setCompareOpen(false)}
-                onSelect={(id) => { setCompareOpen(false); openDetail(id); }}
-                onToggleFav={toggleFav}
-              />
-            </div>
+        </div>
+      )}
+
+      {/* Lifestyle lives outside the tab blocks: where you sleep and how you
+          eat price the map, the catalogue and the planners alike, so the panel
+          has to open over whichever tab asked for it. */}
+      {lifestyleOpen && (
+        <div onClick={(e) => e.stopPropagation()}>
+          {/* On Explore the panel is a right-hand drawer over a scrim, so the
+              grid it reprices stays visible behind it. Everywhere else it
+              keeps the left-hand position the map layout was built around. */}
+          {activeTab === 'map' && (
+            <div className="lifestyle-scrim" onClick={() => setLifestyleOpen(false)} aria-hidden="true" />
           )}
+          <LifestylePanel
+            side={activeTab === 'map' ? 'right' : 'left'}
+            choices={choices}
+            setChoices={setChoices}
+            onClose={() => setLifestyleOpen(false)}
+            data={data}
+          />
+        </div>
+      )}
+
+      {/* The Destinations tab: the catalogue and the published trips as a
+          browsable section of their own. Picking a place hands over to the
+          map tab, where the detail panel already knows how to price it. */}
+      {visitedTabs.has('places') && (
+        <div className={activeTab === 'places' ? undefined : 'tab-keep-hidden'} onClick={(e) => e.stopPropagation()}>
+          <DestinationsTab
+            data={data}
+            pricedAll={pricedAll}
+            priceMode={priceMode}
+            availableCountries={availableCountries}
+            onSelectDest={openDetail}
+            stayTier={choices.stay_tier || 'home'}
+            lifestyle={choices.lifestyle}
+            onOpenLifestyle={() => setLifestyleOpen(true)}
+            origin={choices.origin}
+            onChangeOrigin={setOrigin}
+            transportMode={choices.transport_mode || 'plane'}
+            driveHome={choices.drive_home}
+            onChangeDriveHome={setDriveHome}
+            openTrail={pendingTrail}
+            onOpenTrailConsumed={() => setPendingTrail(null)}
+            openBeach={pendingBeach}
+            onOpenBeachConsumed={() => setPendingBeach(null)}
+            openLake={pendingLake}
+            onOpenLakeConsumed={() => setPendingLake(null)}
+            openMountain={pendingMountain}
+            onOpenMountainConsumed={() => setPendingMountain(null)}
+            openCycle={pendingCycle}
+            onOpenCycleConsumed={() => setPendingCycle(null)}
+            openTrip={pendingTrip}
+            onOpenTripConsumed={() => setPendingTrip(null)}
+            onOpenTripInPlanner={openTripInPlanner}
+          />
         </div>
       )}
 
@@ -831,12 +891,14 @@ function TravelApp() {
               onOpenPlanConsumed={() => setPendingTripPlanId(null)}
               openSharedTrip={pendingSharedTrip}
               onSharedTripConsumed={() => setPendingSharedTrip(null)}
-              openWizardSignal={wizardLaunch}
               origin={choices.origin}
               onChangeOrigin={setOrigin}
+              lifestyle={choices.lifestyle}
+              onOpenLifestyle={() => setLifestyleOpen(true)}
+              stayTier={choices.stay_tier || 'home'}
               onPlanDay={(target) => {
                 setPendingDayPlanId(target); // { planId|null, stopIndex, dayIndex }
-                setActiveTab('day');
+                goToTab('day');
               }}
             />
           </Suspense>
@@ -856,12 +918,75 @@ function TravelApp() {
         </div>
       )}
 
+      {/* The full-screen region page, hoisted for the same reason the
+          destination page is: a shared Costa de la Luz link opens over
+          whatever tab the recipient happens to be on. */}
+      {pendingRegion && (
+        <div onClick={(e) => e.stopPropagation()}>
+          <Suspense fallback={null}>
+            <RegionPage
+              id={pendingRegion.id}
+              onClose={() => setPendingRegion(null)}
+              onOpenRegion={(rid) => setPendingRegion({ id: rid })}
+              onOpenFeature={(layer, ref) => {
+                setPendingRegion(null);
+                if (layer === 'trails') setPendingTrail({ id: Number(ref.id), country: ref.cc });
+                else if (layer === 'beaches') setPendingBeach({ id: String(ref.id), cc: ref.cc });
+                else if (layer === 'lakes') setPendingLake({ id: String(ref.id), cc: ref.cc });
+                else if (layer === 'mountains') setPendingMountain({ id: String(ref.id), cc: ref.cc });
+                else if (layer === 'cycling') {
+                  setPendingCycle({ kind: 'route', id: Number(ref.id), country: ref.cc });
+                }
+                goToTab('places');
+              }}
+            />
+          </Suspense>
+        </div>
+      )}
+
+      {/* The full-screen destination page, hoisted above the tab blocks so it
+          opens over Explore AND Destinations without a tab hop. Renders from
+          the dossier contract; the PDF export renders from the same file. */}
+      {selectedDest && (
+        <div onClick={(e) => e.stopPropagation()}>
+          <DestinationPage
+            destination={selectedDest}
+            data={data}
+            indices={exploreIndices}
+            choices={choices}
+            onOpenLifestyle={() => setLifestyleOpen(true)}
+            onClose={() => setSelectedId(null)}
+            onSelect={openDetail}
+            isFavorite={selectedId ? favorites.has(selectedId) : false}
+            onToggleFavorite={selectedId ? () => toggleFav(selectedId) : undefined}
+            onOpenFeature={(layer, ref) => {
+              setSelectedId(null);
+              if (layer === 'trails') setPendingTrail({ id: Number(ref.id), country: ref.cc });
+              else if (layer === 'beaches') setPendingBeach({ id: String(ref.id), cc: ref.cc });
+              else if (layer === 'lakes') setPendingLake({ id: String(ref.id), cc: ref.cc });
+              else if (layer === 'mountains') setPendingMountain({ id: String(ref.id), cc: ref.cc });
+              else if (layer === 'cycling') {
+                setPendingCycle({ kind: 'route', id: Number(ref.id), country: ref.cc });
+              }
+              goToTab('places');
+            }}
+            onOpenItin={(id) => {
+              setSelectedId(null);
+              setPendingTrip({ id });
+              goToTab('places');
+            }}
+          />
+        </div>
+      )}
+
       <div onClick={(e) => e.stopPropagation()}>
         <BottomNav
           activeTab={activeTab}
-          onChangeTab={(key) => { setSavedTripsOpen(false); setActiveTab(key); }}
+          onChangeTab={goToTab}
           savedOpen={savedTripsOpen}
-          onToggleSaved={() => setSavedTripsOpen((v) => !v)}
+          onToggleSaved={toggleSaved}
+          accountOpen={accountOpen}
+          onToggleAccount={toggleAccount}
         />
       </div>
 
@@ -875,48 +1000,70 @@ function TravelApp() {
             onClose={() => setSavedTripsOpen(false)}
             onLoadTrip={(trip) => {
               handleLoadTrip(trip);
-              setSavedTripsOpen(false);
-              setActiveTab('map'); // the loaded trip opens as a map detail panel
+              goToTab('map'); // the loaded trip opens as a map detail panel
             }}
             onOpenAuth={() => { setSavedTripsOpen(false); setAuthModalMode('signin'); setAuthModalOpen(true); }}
             /* An empty shelf offers the tab that fills it, so "nothing here
                yet" comes with somewhere to go. */
-            onGoToTab={(key) => { setSavedTripsOpen(false); setActiveTab(key); }}
+            onGoToTab={goToTab}
             onOpenDayPlan={(id) => {
-              setSavedTripsOpen(false);
               setPendingDayPlanId(id);
-              setActiveTab('day');
+              goToTab('day');
             }}
             onLoadTripPlan={(id) => {
-              setSavedTripsOpen(false);
               setPendingTripPlanId(id);
-              setActiveTab('trip');
+              goToTab('trip');
             }}
           />
         </div>
       )}
+      {guidesOpen && (
+        <Suspense fallback={<TabFallback />}>
+          <div onClick={(e) => e.stopPropagation()}>
+            <GuidesPanel
+              onClose={() => { setGuidesOpen(false); setPendingGuide(''); }}
+              destinations={data?.destinations}
+              openGuideId={pendingGuide || ''}
+            />
+          </div>
+        </Suspense>
+      )}
       {accountOpen && (
         <div onClick={(e) => e.stopPropagation()}>
           <AccountPanel
+            key={accountEntry}
+            initialView={accountView}
+            onViewChange={setAccountView}
+            pendingFriendHandle={pendingFriend}
+            destinations={data?.destinations}
             onClose={() => setAccountOpen(false)}
+            onOpenAdmin={() => setAdminOpen(true)}
+            onOpenLifestyle={() => { setAccountOpen(false); setLifestyleOpen(true); }}
+            onOpenSaved={() => { setAccountOpen(false); setSavedTripsOpen(true); }}
+            onOpenGuides={openGuides}
+            stayTier={choices.stay_tier || 'home'}
+            lifestyle={choices.lifestyle}
             onOpenAuth={() => { setAccountOpen(false); setAuthModalMode('signin'); setAuthModalOpen(true); }}
           />
         </div>
       )}
 
-      {passOpen && (
-        <div onClick={(e) => e.stopPropagation()}>
-          <GlobalPassModal
-            signedIn={!!user && authConfigured}
-            onClose={() => setPassOpen(false)}
-            onSignIn={() => {
-              setPassOpen(false);
-              setAuthModalMode('signin');
-              setAuthModalOpen(true);
-            }}
-          />
-        </div>
+      {/* The back office, over everything. It renders only for accounts on
+          the admin list, and every call it makes is re-checked server side,
+          so this flag is a door rather than a permission. */}
+      {adminOpen && (
+        <Suspense fallback={<TabFallback />}>
+          <div onClick={(e) => e.stopPropagation()}>
+            <AdminPage onClose={() => setAdminOpen(false)} />
+          </div>
+        </Suspense>
       )}
+
+      {/* The site notice from site_config, switched on from the admin panel.
+          Renders nothing unless one is live, so it costs the layout nothing. */}
+      <AnnouncementBar />
+      {/* A pass expires quietly by design, so the only warning is this one. */}
+      <PassExpiryBanner />
 
       {emailConfirmed && (
         <div className="confirm-toast" role="status" onClick={(e) => e.stopPropagation()}>
@@ -932,5 +1079,6 @@ function TravelApp() {
         </div>
       )}
     </div>
+    </PaywallProvider>
   );
 }

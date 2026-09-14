@@ -18,6 +18,7 @@
  * trails yet, which is most of them.
  */
 import { useEffect, useState } from 'react';
+import { applyOverrides, applyOverride, overridesReady } from './overrides.js';
 
 const COUNTRY_RE = /^[A-Z]{2}$/;
 
@@ -55,27 +56,103 @@ export function loadTrailsIndex() {
   });
 }
 
-/** Every published trip in one country. Resolves an empty array for a country
- *  with nothing published, null when there is no file to read at all. */
+/** A trip with no line cannot be drawn and cannot be measured on the map, so
+ *  it never reaches a caller that assumes both. */
+const drawable = (t) => t && t.id && t.geometry
+  && Array.isArray(t.geometry.coordinates) && t.geometry.coordinates.length > 0;
+
+/** Every published RATED trip in one country. Resolves an empty array for a
+ *  country with nothing published, null when there is no file to read at all.
+ *
+ *  Rated only, deliberately: this is what every existing caller means by "the
+ *  trails of this country", and a listed row carries no rating, so quietly
+ *  folding them in here would put unscored rows into a price list, a nearby
+ *  strip and a city-day lookup that all assume a score. Listed rows come
+ *  through loadListedTrails, which a screen has to ask for. */
 export function loadTrails(country) {
   const cc = String(country || '').toUpperCase();
   if (!COUNTRY_RE.test(cc)) return Promise.resolve(null);
-  return cached(`/trails/${cc}.json`).then((raw) => {
-    if (!raw || !Array.isArray(raw.trips)) return null;
-    // A trip with no line cannot be drawn and cannot be measured on the map,
-    // so it never reaches a caller that assumes both.
-    return raw.trips.filter((t) => t && t.id && t.geometry
-      && Array.isArray(t.geometry.coordinates)
-      && t.geometry.coordinates.length > 0);
-  });
+  return Promise.all([cached(`/trails/${cc}.json`), overridesReady()])
+    .then(([raw]) => {
+      if (!raw || !Array.isArray(raw.trips)) return null;
+      // Trails carry one `img` string rather than an images array.
+      return applyOverrides('trail', raw.trips.filter(drawable), { imageKey: 'img' });
+    });
+}
+
+/**
+ * The `listed` tier of one country: routes verified to exist, named, deduped
+ * and in region, and deliberately NOT scored.
+ *
+ * They exist so a region page in Moldova or Kosovo is not empty. The wire
+ * omits the rating key entirely rather than nulling it, which is what lets a
+ * card render "not scored yet" instead of a zero, so nothing here invents a
+ * score and nothing downstream should either.
+ *
+ * Resolves an empty array for a country with none, which is most of them.
+ */
+export function loadListedTrails(country) {
+  const cc = String(country || '').toUpperCase();
+  if (!COUNTRY_RE.test(cc)) return Promise.resolve([]);
+  return Promise.all([cached(`/trails/${cc}.json`), overridesReady()])
+    .then(([raw]) => {
+      if (!raw || !Array.isArray(raw.listed)) return [];
+      return applyOverrides('trail', raw.listed.filter(drawable), { imageKey: 'img' });
+    });
+}
+
+/**
+ * The per-country facet counts the export shipped, or null.
+ *
+ * How many rows in this country can answer each filter value, counted by the
+ * pipeline over the rows it wrote. The app uses them to grey out a chip that
+ * would lead to an empty list before it has looked at a single row, and the
+ * harness holds them against the rows so a stale count cannot survive a
+ * re-export.
+ */
+export function loadTrailFacets(country) {
+  const cc = String(country || '').toUpperCase();
+  if (!COUNTRY_RE.test(cc)) return Promise.resolve(null);
+  return cached(`/trails/${cc}.json`).then((raw) => raw?.facets || null);
 }
 
 /** One trip in full, for the detail view: full-resolution geometry, the whole
  *  description, the elevation profile and the stops. */
 export function loadTrail(id) {
   if (!Number.isInteger(Number(id))) return Promise.resolve(null);
-  return cached(`/trails/trip/${Number(id)}.json`)
-    .then((raw) => (raw && raw.id ? raw : null));
+  return Promise.all([cached(`/trails/trip/${Number(id)}.json`), overridesReady()])
+    .then(([raw]) => (raw && raw.id
+      ? applyOverride('trail', raw, { imageKey: 'img' })
+      : null));
+}
+
+/**
+ * A shared trail link, read once at startup: "#trail=63478&tc=AL".
+ *
+ * The hash, not the query string, for the same reasons shareLink.js uses it:
+ * the payload never reaches a server log, it never collides with the
+ * browse-state params useUrlSync writes, and a link that carries nothing else
+ * leaves the recipient's own saved dates and origin alone. Supabase auth links
+ * also land in the hash, so only a hash carrying our own `trail=` is touched.
+ *
+ * Cached, so React's double-invoked StrictMode mount reads the same value
+ * instead of losing it to the first strip.
+ */
+let trailReadResult;
+
+export function readTrailFromUrl() {
+  if (trailReadResult !== undefined) return trailReadResult;
+  if (typeof window === 'undefined') return null;
+  const hash = window.location.hash || '';
+  if (!hash.startsWith('#') || !hash.includes('trail=')) return (trailReadResult = null);
+  const params = new URLSearchParams(hash.slice(1));
+  const id = Number(params.get('trail'));
+  const cc = String(params.get('tc') || '').toUpperCase();
+  if (!Number.isInteger(id) || id <= 0 || !COUNTRY_RE.test(cc)) return (trailReadResult = null);
+  try {
+    window.history.replaceState(null, '', window.location.pathname + window.location.search);
+  } catch { /* the trail still opens; only the address bar stays busy */ }
+  return (trailReadResult = { id, country: cc });
 }
 
 /** The published trips for a country, or null while loading. */

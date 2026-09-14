@@ -1,0 +1,234 @@
+{
+  "iso2": "AT",
+  "country": "Austria",
+  "checked_at": "2026-08-17",
+  "beaches": {
+    "wrong": [
+      {
+        "name": "Hundewiese Strandbad",
+        "class": "duplicate_of:Strandbad Klagenfurt",
+        "why": "Tier 1 #3, and it sits 101 m from the tier 1 #1 entry. 'Hundewiese' is the dog meadow inside the Strandbad Klagenfurt complex, not a separate beach. A user tapping #1 and #3 lands in the same lido.",
+        "source_url": "https://www.wikidata.org/wiki/Q2353398"
+      },
+      {
+        "name": "Pipeline zur Mili",
+        "class": "duplicate_of:Pipeline Beach",
+        "why": "Tier 1 #5, 260 m from the tier 1 #4 entry 'Pipeline Beach'. Both are informal names for the same stretch of Bregenz Bodensee shoreline along the old pipeline path; the two rows occupy two of Austria's seven tier-1 beach slots.",
+        "source_url": "https://www.openstreetmap.org/#map=17/47.50981/9.75157"
+      },
+      {
+        "name": "Businessbeach Klagenfurt Am Woerthersee",
+        "class": "hospitality",
+        "why": "A commercial beach bar and event venue on the Woerthersee, 47 m from 'Strandbad Maria Loretto' and 476 m from Strandbad Klagenfurt. It is a licensed venue, not a beach, and it is one of the 52 hospitality rows already flagged group-wide.",
+        "source_url": "https://www.openstreetmap.org/#map=18/46.61517/14.25144"
+      },
+      {
+        "name": "Strandbad",
+        "class": "other",
+        "why": "Tier 2 #16, at 47.52819, 9.75143 in Lochau. The name is the bare German common noun for 'lido' with no proper name attached. It cannot be rendered as a card title and it is unresolvable against any source.",
+        "source_url": "https://www.openstreetmap.org/#map=18/47.52819/9.75143"
+      },
+      {
+        "name": "Lochau Hafen",
+        "class": "other",
+        "why": "Tier 2 #14. This is the Lochau harbour, a boat facility, not a bathing beach; it lies 269 m from 'Schwarzbad' and 295 m from 'Badestrand am Hafen Lochau'.",
+        "source_url": "https://www.openstreetmap.org/#map=18/47.53049/9.74254"
+      },
+      {
+        "name": "Bodensee Strand",
+        "class": "duplicate_of:Kaiserstrand Lochau",
+        "why": "Part of a six-row cluster (ranks 11, 12, 13, 14, 15, 16) that all sit inside about 500 m of the same Lochau shoreline in Vorarlberg: Badestrand am Hafen Lochau, Bodensee Strand, Kaiserstrand Lochau, Lochau Hafen, Schwarzbad and the unnamed 'Strandbad'. One entry, Kaiserstrand Lochau, is enough. This single 500 m strip currently outweighs the entire Neusiedler See, Millstaetter See, Weissensee, Attersee and Faaker See combined, which contribute nothing.",
+        "source_url": "https://www.openstreetmap.org/#map=16/47.5285/9.7420"
+      },
+      {
+        "name": "Schwarzbad",
+        "class": "duplicate_of:Kaiserstrand Lochau",
+        "why": "88 m from 'Badestrand am Hafen Lochau' and 412 m from 'Kaiserstrand Lochau'; same Lochau shore cluster as above.",
+        "source_url": "https://www.openstreetmap.org/#map=18/47.52984/9.73909"
+      },
+      {
+        "name": "Badestrand am Hafen Lochau",
+        "class": "duplicate_of:Kaiserstrand Lochau",
+        "why": "Same Lochau cluster. Note additionally that this exact row (name and coordinate identical) is ALSO published in DE.json at tier 1 rank 12, so the same Austrian beach is served as a German tier-1 beach.",
+        "source_url": "https://www.openstreetmap.org/#map=18/47.53056/9.73861"
+      }
+    ],
+    "missing": [
+      {
+        "name": "PODOBEACH Strandbad Podersdorf am See (Neusiedler See)",
+        "qid": "Q661040",
+        "lat": 47.85,
+        "lon": 16.83333,
+        "why": "The largest lido on Austria's largest lake: a 2 km barrier-free beach on the Neusiedler See, the country's flagship summer bathing and windsurf destination. Austria's entire Burgenland lake coast is absent from the file. The QID cited is the municipality Podersdorf am See; I could not confirm a separate Wikidata item for the beach itself, hence verified false.",
+        "source_url": "https://www.burgenland.info/dc/detail/POI/podobeach-strandbad-podersdorf-am-see",
+        "verified": false
+      },
+      {
+        "name": "Gaensehaeufel",
+        "qid": "Q23256",
+        "lat": 48.22806,
+        "lon": 16.43056,
+        "why": "A 20 ha wooded sand island in the Alte Donau used as a bathing complex, Vienna's and arguably Austria's single most-visited bathing site. Vienna contributes zero beach rows to the file.",
+        "source_url": "https://www.wikidata.org/wiki/Q23256",
+        "verified": true
+      },
+      {
+        "name": "Strandbad Alte Donau",
+        "qid": "Q1484483",
+        "lat": 48.242375,
+        "lon": 16.417472,
+        "why": "The municipal Alte Donau lido in Vienna's 22nd district, the second pillar of Vienna's lake bathing along with the Gaensehaeufel.",
+        "source_url": "https://www.wikidata.org/wiki/Q1484483",
+        "verified": true
+      },
+      {
+        "name": "Woerthersee, Millstaetter See, Weissensee, Faaker See and Ossiacher See bathing beaches beyond Klagenfurt",
+        "qid": null,
+        "lat": null,
+        "lon": null,
+        "why": "Carinthia is Austria's lake-bathing region and the file represents it only with three rows at one spot in Klagenfurt (Strandbad Klagenfurt, Hundewiese, Maria Loretto, plus the Businessbeach). Not one row exists for the Millstaetter See, the Weissensee, the Faaker See or the Ossiacher See. I could not confirm individual Wikidata items for their Strandbaeder, so this is flagged as a coverage gap rather than a named missing feature.",
+        "source_url": "https://www.wikidata.org/wiki/Q546146",
+        "verified": false
+      }
+    ],
+    "order": [
+      "Strandbad Klagenfurt at #1 is correct: it is one of the largest inland-lake lidos in Europe (Q2353398) and the obvious Austrian beach card.",
+      "Hundewiese Strandbad at #3 is the worst placement in the beach list: a dog meadow occupying a national tier-1 slot ahead of Strandbad Obertraun (Hallstaetter See) and Strandbad Pertisau (Achensee).",
+      "Two of the seven tier-1 slots go to the same Bregenz pipeline strip (#4 and #5). After deduping Klagenfurt and Bregenz, tier 1 collapses to four genuinely distinct places.",
+      "Esplanade Altmuenster at #2 (a Traunsee promenade) is generous; Strandbad Obertraun and Strandbad Pertisau are the stronger cards and should move up."
+    ]
+  },
+  "mountains": {
+    "wrong": [
+      {
+        "name": "Schlossberg",
+        "class": "viewpoint_not_summit",
+        "why": "Ranked #1 mountain in Austria. The Grazer Schlossberg is a dolomite rock in the middle of the Graz old town that rises 123 m above the Mur (473 m asl), landscaped as a city park with a clock tower and a funicular. It is a city viewpoint, not a mountain, and putting it at the head of Austria's Mountains tab is the single worst entry in this whole group.",
+        "source_url": "https://www.wikidata.org/wiki/Q264176"
+      },
+      {
+        "name": "Kapuzinerberg",
+        "class": "viewpoint_not_summit",
+        "why": "Tier 1 #2. A 640 m wooded hill on the east bank of the Salzach INSIDE the city of Salzburg, part of the old-town World Heritage site. A city hill, not a mountain.",
+        "source_url": "https://www.wikidata.org/wiki/Q873917"
+      },
+      {
+        "name": "Moenchsberg",
+        "class": "viewpoint_not_summit",
+        "why": "Tier 1 #8. A 508 m city hill flanking the western side of Salzburg's historic centre, 0.9 km from the city centre. It sits 358 m from 'Rainberg' (#20) and 531 m from 'Festungsberg' (#11), so Salzburg's old town alone supplies four of Austria's mountain rows.",
+        "source_url": "https://www.wikidata.org/wiki/Q1329815"
+      },
+      {
+        "name": "Festungsberg",
+        "class": "viewpoint_not_summit",
+        "why": "Tier 1 #11. The 542 m rock the Hohensalzburg fortress stands on, inside the Salzburg old town. It is a castle rock, not a summit.",
+        "source_url": "https://www.wikidata.org/wiki/Q1409030"
+      },
+      {
+        "name": "Nordkette",
+        "class": "park_or_area",
+        "why": "Tier 1 #5. Wikidata resolves this to Q1664252 'Inntalkette', a Gebirgsgruppe, i.e. a mountain RANGE, not a peak. The wire coordinate 47.3, 11.35 is a range centroid rounded to two decimal places, unlike every other row in the file. The correct summit row for Innsbruck already exists in the file as Hafelekarspitze (Q875071) at rank 40.",
+        "source_url": "https://www.wikidata.org/wiki/Q1664252"
+      },
+      {
+        "name": "Rainberg",
+        "class": "viewpoint_not_summit",
+        "why": "Tier 2 #20, a Salzburg city hill 0.8 km from the centre and 358 m from the Moenchsberg row.",
+        "source_url": "https://www.wikidata.org/wiki/Q1651678"
+      },
+      {
+        "name": "Plainberg",
+        "class": "viewpoint_not_summit",
+        "why": "Tier 2 #18. A 549 m hill at Bergheim north of Salzburg carrying the Maria Plain pilgrimage church; a church hill in the Flysch foothills, not a mountain.",
+        "source_url": "https://www.wikidata.org/wiki/Q1785452"
+      },
+      {
+        "name": "Gebhardsberg",
+        "class": "viewpoint_not_summit",
+        "why": "Tier 2 #15. German Wikipedia calls it a 598 m 'Bergsporn', a spur on the south-west flank of the Pfaender, with a castle restaurant on top. The parent mountain (Pfaender) is already tier 1 #3, so this is a redundant viewpoint on an existing entry.",
+        "source_url": "https://de.wikipedia.org/wiki/Gebhardsberg"
+      },
+      {
+        "name": "Bergisel",
+        "class": "viewpoint_not_summit",
+        "why": "Tier 2 #34. A hill south of Innsbruck in Wilten, known for the ski jump and the 1809 battle. Q683996 describes it as a hill in the city; it is a stadium site, not a mountain.",
+        "source_url": "https://www.wikidata.org/wiki/Q683996"
+      }
+    ],
+    "missing": [
+      {
+        "name": "Grossglockner",
+        "qid": "Q3388",
+        "lat": 47.07487,
+        "lon": 12.69525,
+        "why": "3798 m, the highest mountain in Austria and the highest in the Alps east of the Brenner. Completely absent from the file while three minor peaks along the Grossglockner High Alpine Road (Fuscherkarkopf #13, Racherin #22, Edelweissspitze #26) are present. The cause is the roughly 10 km proximity cap: the summit is about 11 km from the Glockner Road anchor, and the anchor is on the wrong side of it. This is the single most damaging omission in the group.",
+        "source_url": "https://www.wikidata.org/wiki/Q3388",
+        "verified": true
+      },
+      {
+        "name": "Wildspitze",
+        "qid": "Q679277",
+        "lat": 46.88528,
+        "lon": 10.86722,
+        "why": "3768 m, Austria's second-highest mountain and the highest in North Tyrol. The file contains only 'Stubaier Wildspitze' (tier 2 #32), a different and much lower peak in the Stubai Alps, which will read as the real one to any user.",
+        "source_url": "https://www.wikidata.org/wiki/Q679277",
+        "verified": true
+      },
+      {
+        "name": "Hoher Dachstein",
+        "qid": "Q686841",
+        "lat": 47.47528,
+        "lon": 13.60639,
+        "why": "2995 m, the second-highest peak of the Northern Limestone Alps and the high point of both Upper Austria and Styria; the skyline of the entire Salzkammergut. The file has Krippenstein (#37) and Obertraun beaches nearby but not the Dachstein itself.",
+        "source_url": "https://www.wikidata.org/wiki/Q686841",
+        "verified": true
+      },
+      {
+        "name": "Grossvenediger",
+        "qid": "Q697907",
+        "lat": 47.10944,
+        "lon": 12.34556,
+        "why": "Austria's fourth-highest mountain and the main peak of the Venediger Group in the Hohe Tauern.",
+        "source_url": "https://www.wikidata.org/wiki/Q697907",
+        "verified": true
+      },
+      {
+        "name": "Kitzsteinhorn",
+        "qid": "Q668012",
+        "lat": 47.18778,
+        "lon": 12.68722,
+        "why": "The Kaprun glacier mountain, Austria's best-known year-round glacier lift destination. The file covers Zell am See with Schmittenhoehe (#27) but not the Kitzsteinhorn.",
+        "source_url": "https://www.wikidata.org/wiki/Q668012",
+        "verified": true
+      },
+      {
+        "name": "Rax",
+        "qid": "Q149533",
+        "lat": 47.68917,
+        "lon": 15.68833,
+        "why": "With the neighbouring Schneeberg, the traditional Vienna-facing hiking massif and the site of continental Europe's first passenger cable car. Eastern Austria contributes no mountain row at all.",
+        "source_url": "https://www.wikidata.org/wiki/Q149533",
+        "verified": true
+      },
+      {
+        "name": "Schneeberg (Klosterwappen)",
+        "qid": "Q143330",
+        "lat": null,
+        "lon": null,
+        "why": "2076 m, the highest mountain of Lower Austria and the easternmost 2000er in the Alps, reached by the Schneebergbahn. Its Wikipedia summary carries no coordinate, so the coordinate is marked unverified; the QID is confirmed.",
+        "source_url": "https://www.wikidata.org/wiki/Q143330",
+        "verified": false
+      }
+    ],
+    "order": [
+      "The ranking is not defensible at the top. Ranks 1, 2, 8 and 11 are city hills in Graz and Salzburg; the first genuine alpine summit is Pfaender at #3 and the first serious one is Hahnenkamm at #4.",
+      "No peak above 3000 m appears anywhere in the top 30. The first is Stubaier Wildspitze at #32, then Wilde Leck at #52, Hohe Geige at #69, Reichenspitze at #70. For a country whose mountain identity is the Hohe Tauern and Oetztal, that inversion alone makes the tab wrong.",
+      "Braunarlspitze at #12 (a 2649 m Lechquellengebirge peak with no lift) outranks Valluga (#17), Schesaplana (#19), Kitzbueheler Horn (#31) and Krippenstein (#37), which are far better known and far easier to reach.",
+      "Hafelekarspitze at #40 while its own mountain range sits at #5 as 'Nordkette' is a straightforward inversion: swap them.",
+      "Salzburg supplies five rows in the top 20 (Kapuzinerberg, Gaisberg, Moenchsberg, Festungsberg, Plainberg, plus Rainberg at 20). Only Gaisberg (1287 m) belongs there. A per-city cap is needed."
+    ]
+  },
+  "counts_verdict": "Mountains: 162 candidates is a sensible volume for Austria, but the 12-slot tier 1 is spent on four city hills, one mountain range and a set of second-rank lift mountains, and it omits every one of the country's flagship peaks. Beaches: 17 is far too thin. Austria is landlocked but lake bathing is a mass summer product, and the file covers exactly four water bodies (Woerthersee, Bodensee, Traunsee/Hallstaetter See area, Achensee) while a third of the rows are one 500 m stretch of Lochau shore. A defensible Austrian beach set is 30 to 40 rows spanning the Neusiedler See, Vienna's Alte Donau, the Carinthian lakes and the Salzkammergut.",
+  "top_pick_verdict": "top_beach = 'Strandbad Klagenfurt': yes, keep. It is a real, historic, very large lake lido and the only rival is PODOBEACH Podersdorf. top_mountain = 'Schlossberg': no. A country card showing Austria's mountain as a park hill in the middle of Graz is a failure. It should be the Grossglockner (Q3388), or, if the pipeline must stay inside the current catalogue reach, the Hoher Dachstein or the Nordkette/Hafelekarspitze.",
+  "notes": "Systemic causes seen in AT.json. (1) Proximity cap: the maximum near.km in this file is 8.9, so any feature more than roughly 10 km from a catalogue destination is structurally unreachable. That single rule removes the Grossglockner, the Wildspitze, the Dachstein and the Grossvenediger. (2) The score correlates with closeness to a large catalogue city rather than with the feature's stature, which is exactly why Graz and Salzburg city hills top the list. (3) Designation join bug: Kapuzinerberg, Gaisberg, Moenchsberg, Festungsberg, Rainberg and Plainberg all carry designations ['national_park']. None of these Salzburg city hills is in a national park; the polygon join is matching the wrong geometry, and since designations plainly feed the score this bug is directly promoting city hills. (4) Cross-border leakage: five Lochau (Vorarlberg) beach rows are published in BOTH AT.json and DE.json with identical names and coordinates, one of them at DE tier 1. (5) The unnamed row 'Strandbad' proves there is no minimum-name-quality gate."
+}

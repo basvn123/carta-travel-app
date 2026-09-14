@@ -1,0 +1,300 @@
+{
+  "id": "pl-cycling-green-velo-podlasie",
+  "sourceId": "poland-green-velo-podlasie-cycling",
+  "slug": "pl-cycling-green-velo-podlasie",
+  "title": "Green Velo Through Podlasie: Marsh, Forest and the Eastern Trail",
+  "country": "Poland",
+  "countryCode": "PL",
+  "countries": [
+    {
+      "name": "Poland",
+      "code": "PL"
+    }
+  ],
+  "isMultiCountry": false,
+  "region": "Eastern & Southeastern Europe",
+  "regionKey": "eastern-southeastern",
+  "subRegion": "Podlaskie — Puszcza Knyszyńska, Narew & Biebrza valleys, Puszcza Białowieska",
+  "tripType": "Cycling Trips",
+  "tripTypeId": 1,
+  "tripTypeSlug": "cycling",
+  "durationDays": 7,
+  "bestPeriod": {
+    "months": [
+      5,
+      6,
+      9
+    ],
+    "monthNames": [
+      "May",
+      "June",
+      "September"
+    ],
+    "window": "the second half of May, when the Biebrza marshes are at their loudest and the aquatic warblers and great snipe are displaying",
+    "note": null,
+    "avoid": "April snowmelt (Carska Droga floods and the meadows are impassable) and the July mosquito peak on the Biebrza",
+    "raw": null
+  },
+  "budgetTier": "€€",
+  "budgetTierRange": [
+    2,
+    2
+  ],
+  "budgetTierRaw": "€€",
+  "budget": {
+    "currency": "EUR",
+    "totalEur": {
+      "low": 560,
+      "high": 950
+    },
+    "totalNote": "€560–€950",
+    "breakdown": {
+      "accommodation": {
+        "lowEur": 230,
+        "highEur": 420,
+        "note": "€230–€420 (€33–€60/night, agroturystyka and small hotels)"
+      },
+      "food": {
+        "lowEur": 120,
+        "highEur": 190,
+        "note": "€120–€190 (€17–€27/day)"
+      },
+      "transport": {
+        "lowEur": 150,
+        "highEur": 230,
+        "note": "€150–€230 (bike rental €80–€130 + PKP tickets, bike reservations, one shuttle transfer)"
+      },
+      "activities": {
+        "lowEur": 60,
+        "highEur": 110,
+        "note": "€60–€110 (national park entry, licensed Białowieża guide, museums, boat trip)"
+      }
+    },
+    "perDayEur": {
+      "low": 80,
+      "high": 136
+    }
+  },
+  "profile": {
+    "difficulty": 2,
+    "difficultyLabel": "Moderate",
+    "difficultyNote": "Easy–Moderate",
+    "fitnessLevel": "Moderate",
+    "crowdLevel": null,
+    "familyFriendly": null,
+    "carRequired": null
+  },
+  "basecamps": [
+    "Białystok",
+    "Supraśl",
+    "Kurowo/Łapy",
+    "Tykocin",
+    "Goniądz",
+    "Białowieża"
+  ],
+  "gatewayAirport": "Warsaw Chopin (WAW) or Modlin (WMI), then PKP Intercity Warszawa Centralna → Białystok, roughly 2 h 20 on the fastest services. Białystok also has a small airport at Krywlany with negligible traffic. Return from Białowieża via Hajnówka, the nearest passenger railhead, 20 km away.",
+  "gatewayAirportCode": "WAW",
+  "languages": [
+    "Polish",
+    "Belarusian",
+    "Lithuanian"
+  ],
+  "currency": "Polish złoty (PLN)",
+  "emergencyNumber": "112",
+  "coordinates": {
+    "lat": 53.1333,
+    "lon": 23.1643,
+    "precision": "city",
+    "matchedPlace": "Białystok",
+    "source": "geonames (geonamescache, cities > 15k)"
+  },
+  "tags": [
+    "cycling",
+    "green-velo",
+    "marshland",
+    "birdwatching",
+    "bison",
+    "national-parks",
+    "jewish-heritage"
+  ],
+  "summary": "Podlasie is the flattest, emptiest and least-visited corner of Poland, and the Green Velo runs straight through the middle of it. Seven days of near-zero gradient, wooden Orthodox churches, storks on every second…",
+  "summaryGenerated": false,
+  "hook": "Podlasie is the flattest, emptiest and least-visited corner of Poland, and the Green Velo runs straight through the middle of it. Seven days of near-zero gradient, wooden Orthodox churches, storks on every second telegraph pole, and two of Europe's great wetlands. You will ride 30 km of gravel causeway across a bog on the Tsar's Road and finish among the last lowland primeval forest on the continent. Bring binoculars and a headnet.",
+  "snapshot": {
+    "Country": "Poland",
+    "Trip type": "Cycling Trips",
+    "Duration": "7 days",
+    "Best period": "Second half of May, June, or September",
+    "Budget tier": "€–€€",
+    "Difficulty": "Easy–Moderate",
+    "Start / End": "Białystok → Białowieża (linear, ~330 km ridden)",
+    "Getting there": "Warsaw Chopin (WAW) or Modlin (WMI), then PKP Intercity Warszawa Centralna → Białystok, roughly 2 h 20 on the fastest services. Białystok also has a small airport at Krywlany with negligible traffic. Return from Białowieża via Hajnówka, the nearest passenger railhead, 20 km away."
+  },
+  "itinerary": [
+    {
+      "day": 1,
+      "title": "Białystok: Branicki's palace and a shakedown spin",
+      "morning": "Arrive by Intercity, collect the bike, and ride the flat city loop. **Pałac Branickich**, the 18th-century \"Versailles of Podlasie\", now the medical university, with formal gardens open to walk through free of charge.",
+      "afternoon": "**Rynek Kościuszki** and the neo-Gothic *ratusz*, then the Jewish heritage trail — the Great Synagogue memorial on Suraska, and the birthplace plaque of Ludwik Zamenhof, who invented Esperanto in a city where five languages met on one street.",
+      "evening": "Eat Podlasie properly: **kartacze** (potato dumplings stuffed with meat), **babka** and **kiszka ziemniaczana**, and *sękacz*, the spit-baked layer cake. Finish with a *rurka z kremem* at a **Cukiernia Sowa**, the patisserie chain that started here [VERIFY: current Białystok restaurant recommendations and hours].",
+      "dayStats": "25 km / +130 m",
+      "sleep": null
+    },
+    {
+      "day": 2,
+      "title": "Into the Knyszyn forest to Supraśl",
+      "morning": "Pick up the Green Velo waymarks north-east out of the city and into the **Park Krajobrazowy Puszczy Knyszyńskiej** — pine and spruce on sandy moraine, with the trail alternating asphalt and forest gravel. Detour to the **Arboretum w Kopnej Górze** and the adjacent **Silvarium** open-air forestry exhibition.",
+      "afternoon": "Roll into **Supraśl**, a spa-status town on the river of the same name. The **Monaster Zwiastowania NMP** — the Orthodox Monastery of the Annunciation, founded 1498, blown up in 1944 and painstakingly rebuilt — houses the **Muzeum Ikon**, the best icon collection in Poland and worth an unhurried hour [VERIFY: Muzeum Ikon current hours and ticket price].",
+      "evening": "Supraśl is small, walkable, and full of restored wooden villas. Stay here rather than doubling back to Białystok; the MPR guesthouses are cheap and the evening light on the monastery walls is the reason to be in Podlasie.",
+      "dayStats": "38 km / +230 m",
+      "sleep": null
+    },
+    {
+      "day": 3,
+      "title": "West to the Narew and Poland's Amazon",
+      "morning": "Back through the forest edge and around Białystok's northern side to **Choroszcz**, where the Branicki summer palace sits in its rococo garden. Then west onto quiet county asphalt.",
+      "afternoon": "The **Narwiański Park Narodowy** — not one river but dozens of braided channels through 20 km of reed and sedge, which is why it is nicknamed the Polish Amazon. Park HQ is at **Kurowo**, in a restored manor, and the **kładka w Kurowie** carries you a kilometre out on a boardwalk over the marsh. Watch for marsh harriers, bitterns and, in May, a wall of noise from sedge warblers.",
+      "evening": "Sleep at Kurowo, in **Waniewo** — where a chain of hand-hauled pontoon footbridges crosses the whole valley — or in **Łapy** if you want a shop and a station. Dinner is whatever the agroturystyka is cooking, and it will be good.",
+      "dayStats": "62 km / +260 m",
+      "sleep": null
+    },
+    {
+      "day": 4,
+      "title": "Tykocin: the synagogue, the castle, the bison at Kiermusy",
+      "morning": "North along the Narew's left bank on flat asphalt with the marsh on your right. Stop at **Góra Strękowa**, the low bluff above the river where Captain Władysław Raginis held the Wizna position in September 1939 — the bunker and memorial are on the trail.",
+      "afternoon": "**Tykocin**, the finest small town on this route. The **Wielka Synagoga** of 1642 is one of the oldest surviving synagogues in Poland, its bimah and painted Hebrew inscriptions intact, and now the **Muzeum w Tykocinie** [VERIFY: current hours and combined-ticket price]. Add the baroque **Alumnat**, the Czarniecki monument on the market square, and the reconstructed **Zamek w Tykocinie** across the river.",
+      "evening": "Three kilometres out at **Kiermusy Dworzysko nad Łąkami**, a cluster of relocated timber cottages with a **żubrowisko** — an enclosure holding European bison — and a kitchen doing old Podlasie recipes. Or eat at **Tejsza** in Tykocin, in the former Talmudic house beside the synagogue [VERIFY: current opening days].",
+      "dayStats": "44 km / +180 m",
+      "sleep": null
+    },
+    {
+      "day": 5,
+      "title": "The Biebrza: Osowiec-Twierdza and the Carska Droga",
+      "morning": "North-west to **Osowiec-Twierdza**, the Russian fortress of 1882–1892 that sits on the only firm ground for miles and is the headquarters of the **Biebrzański Park Narodowy**, Poland's largest national park at roughly 592 km². Buy the day entry ticket here — 10 PLN (~€2.30) adult, 5 PLN reduced, with a weekend ticket at 20 PLN and a seven-day at 50 PLN, set by the park director's order of April 2025 and sold online at biebrza.eparki.pl as well as at the HQ — and take the guided fortress tour if the timing works.",
+      "afternoon": "The **Carska Droga**, the Tsar's Road: about 30 km of gravel causeway laid across the **Bagno Ławki** marsh between Osowiec and Laskowiec, dead straight, dead flat, with sedge and open water on both sides and elk crossing in the early evening. Climb the **wieża widokowa nad Bagnem Ławki** and the tower at **Barwik**, and walk the **Długa Luka** boardwalk out into the fen.",
+      "evening": "**Goniądz**, on its bluff above the Biebrza — the best sunset in Podlasie, over a floodplain that stretches to the horizon. Beds at **Dworek Bartlowizna** or a village agroturystyka [VERIFY: current rates]. Eat elk sausage and drink Biebrza-brewed beer.",
+      "dayStats": "58 km / +190 m",
+      "sleep": null
+    },
+    {
+      "day": 6,
+      "title": "South to the great forest",
+      "morning": "The gap between the Biebrza and Białowieża is 130 km of not-very-much, and the honest move is to shortcut it: a pre-booked minibus with a bike trailer from Goniądz or Mońki to **Hajnówka** (roughly 2 h 15), or POLREGIO Mońki → Białystok → Hajnówka with a change and a bike ticket. Riding it is possible and adds a day.",
+      "afternoon": "From Hajnówka — visit the concrete-tented **Cerkiew św. Trójcy**, one of Poland's boldest modern Orthodox churches — ride the dedicated 20 km bike path north-east to **Białowieża**, arrow-straight through the forest beside the old road. Detour to the **Szlak Dębów Królewskich**, where each of ten giant oaks carries the name of a Lithuanian or Polish monarch.",
+      "evening": "Arrive in **Białowieża** village. Dinner at **Restauracja Carska**, in the restored tsarist railway station on the branch line the Romanovs built for their hunting trips — Russian-Polish cooking, samovar tea [VERIFY: current opening days and reservation policy].",
+      "dayStats": "transfer + 42 km / +240 m",
+      "sleep": null
+    },
+    {
+      "day": 7,
+      "title": "The strict reserve, the bison, and out",
+      "morning": "The **Obręb Ochrony Ścisłej** — the strict reserve of Białowieski Park Narodowy, the last fragment of primeval lowland forest in Europe and a UNESCO site — can **only be entered with a licensed guide**, on the fixed route to the Dąb Jagiełły — about 7 km there and back, roughly three hours — from the gate at the Palace Park. The cap is a hard **ten people per guide**; entry is by ticket bought alongside the guide, and you must book in advance. The park entry ticket is 10 PLN (~€2.30) adult and 5 PLN reduced; Białowieża agencies running scheduled reserve walks charge about 80 PLN (~€19) per head on top, usually with a seven-person minimum, so a small private party pays more per person. Book through an agency on the park's licensed-guide list at least a week ahead, longer in May.",
+      "afternoon": "Ride the **Park Pałacowy**, the Museum of Nature and Forest, and the **Rezerwat Pokazowy Żubrów** 4 km west on the Hajnówka road — the show reserve where żubr, tarpan-type horses, elk and wolves are kept, and the reliable way to actually see a bison if the wild ones stay hidden.",
+      "evening": "Ride or shuttle back to Hajnówka for the POLREGIO to Białystok and the Intercity onward, or stay a last night in Białowieża and take the early train. Hand the bike to the rental operator's drop-off point before you go.",
+      "dayStats": "35 km / +160 m + a 4 km guided walk",
+      "sleep": null
+    }
+  ],
+  "accommodationStrategy": [
+    {
+      "rank": 1,
+      "name": "An MPR-certified guesthouse in Supraśl",
+      "style": "small-town guesthouse",
+      "location": "Supraśl",
+      "description": "MPR certification guarantees the locked bike parking, tools and water you actually need, and Supraśl puts the monastery, the icon museum and the Knyszyn forest trailheads within walking distance of the door.",
+      "booking": "2–4 weeks ahead; Supraśl fills for the August theatre festival and for Orthodox feast days.",
+      "priceNote": null
+    },
+    {
+      "rank": 2,
+      "name": "Dworek Bartlowizna",
+      "style": "manor-style hotel on the Biebrza",
+      "location": "Goniądz",
+      "description": "it is the established base for Biebrza birders, which means early breakfasts, drying space, secure storage and staff who know which section of the marsh is flooded this week. Fifteen minutes from the Carska Droga's northern end.",
+      "booking": "4–8 weeks ahead for the May migration and display season — this is the one genuinely competitive booking of the trip [VERIFY: current rates].",
+      "priceNote": null
+    },
+    {
+      "rank": 3,
+      "name": "Restauracja Carska / a Białowieża village pensjonat",
+      "style": "forest guesthouse",
+      "location": "Białowieża",
+      "description": "staying in the village rather than in Hajnówka means you can make an 07:00 guided entry into the strict reserve, which is when the forest is worth the trip, and you are a short ride from the show reserve and the Royal Oaks.",
+      "booking": "3–6 weeks ahead; Białowieża has limited beds and school groups take blocks of them in May and June.",
+      "priceNote": null
+    }
+  ],
+  "logistics": {
+    "connectivity": "Play, Orange, T-Mobile and Plus all cover the towns. Signal is thin on the Carska Droga and patchy in the Białowieża forest interior, and near the eastern frontier your phone may latch onto a Belarusian network — turn off roaming to avoid non-EU charges. Download offline maps.",
+    "emergency": "112. Also useful: 985 for mountain and water rescue nationally, though here the real hazards are dehydration, ticks and getting benighted on a causeway. There are hospitals in Białystok, Mońki and Hajnówka.",
+    "weather": "Podlasie has Poland's most continental climate. May can deliver 28 °C and a night frost in the same week; Biebrza fog sits until 09:00. Spring floods can close sections of the Carska Droga outright — check the Biebrzański PN website before you commit to Day 5.",
+    "bookingWindows": "Białowieża strict-reserve guide, 1–3 weeks. Accommodation 2–4 weeks, 4–8 for Goniądz in May. PKP Intercity bike reservations as early as the timetable opens.",
+    "money": "Polish złoty, roughly 4.2–4.4 PLN to €1. Cards and BLIK work almost everywhere including village shops, but carry 150–250 PLN for national park kiosks, guide fees and the smaller agroturystyka.",
+    "transportRules": "Lights front and rear plus a rear reflector are compulsory after dark. Helmets are not legally required. The cyclist blood-alcohol limit is 0.2‰ and enforced. On shared county roads ride single file — Podlasie's agricultural traffic is fast and wide.",
+    "permits": "Biebrzański PN charges a day entry fee and restricts cycling to marked routes; the Carska Droga is a public road and always open. Białowieski PN's strict reserve is **guided entry only, no exceptions, no cycling inside**. Critically, the frontier with Belarus runs through the forest and the **buffer zone (*strefa buforowa*) with a ban on presence is still in force** — first imposed in June 2024 and extended again from **1 September 2026 for a further 90 days**. It covers 78.29 km of the border across five Border Guard posts including **Białowieża and Narewka**: a 200 m strip along most of it, widening to about 2 km through the nature reserves and to about 4 km on one 3.79 km section. Villages and marked tourist trails are as a rule left outside it, so a normal Białowieża itinerary is unaffected — but the boundary is redrawn every renewal, entry inside it needs written permission from the local Border Guard post commander, and you should re-check the *strefa* with Straż Graniczna or the park before planning any route close to the border. Carry your passport at all times east of Hajnówka.",
+    "health": null,
+    "gettingThere": null,
+    "other": []
+  },
+  "proTips": [
+    "**Ride the Carska Droga in the last two hours of daylight.** Elk come out to the causeway edges, the marsh light goes copper, and the day-trip cars are gone. Carry lights and a headnet — this is also when the mosquitoes arrive.",
+    "**Book the Białowieża guide before you book anything else.** The strict reserve is the point of the week and the licensed guide slots, not the beds, are the limiting factor.",
+    "**Use MPR plaques as your planning grid.** They mark guaranteed water, tools and a toilet with no purchase required — space your Podlasie days between them rather than between towns.",
+    "**Go in the second half of May.** Aquatic warblers and great snipe are displaying on the Biebrza, the meadows are dry enough, and the mosquito peak is still three weeks away.",
+    "**The wind is the hill.** Podlasie's prevailing westerly means the west-to-east days (3, 6, 7) are easier. If a strong easterly is forecast, reverse Day 3 and take the train leg on the windy day instead.",
+    "**Say it right:** *\"Czy jest przechowalnia na rower?\"* (is there bike storage?) and *\"Poproszę bilet na rower\"* (a bike ticket, please) will handle 90% of the logistics.",
+    "**Eat at Kiermusy once, and order the game.** It is the one meal on this route worth planning a day around, and the bison enclosure is fifty metres from the table."
+  ],
+  "typeSpecific": {
+    "raw": {
+      "The route": "The **Wschodni Szlak Rowerowy Green Velo** is a single waymarked route of roughly 2,071 km across five eastern voivodeships; the podlaskie section is the longest and, most cyclists agree, the best. This week rides a ~330 km selection of it, not the whole voivodeship.",
+      "Surface split": "Across the podlaskie section expect roughly **70% asphalt** (much of it purpose-built or resurfaced low-traffic county road), **25% compacted gravel and crushed stone**, and **5% concrete slab, sand or grass track** — the sandy fraction concentrated in the Knyszyn forest and on the far side of the Narew. The **Carska Droga** through the Biebrza is a graded gravel causeway for its full ~30 km. A gravel bike or a trekking bike on 38–42 mm tyres is the right tool; a road bike is not. [VERIFY: current Green Velo podlaskie surface percentages — the operator resurfaces sections most years.]",
+      "Elevation, honestly": "Podlasie is a moraine plain. Białystok sits around 140 m, Goniądz at 120 m, the Biebrza floodplain at 105–110 m, Białowieża at 165 m. Daily gain runs **+120 to +350 m over 45–70 km** — the biggest single climb of the week is the moraine ramp out of the Narew valley at Góra Strękowa, all of 60 m. Wind, not gradient, is what makes a hard day here.",
+      "Miejsca Przyjazne Rowerzystom (MPR)": "Green Velo's certified **cyclist-friendly places** scheme — several hundred cafés, guesthouses, museums, shops and campsites along the trail carrying the green MPR plaque. Certification obliges them to provide **free bike parking, a basic tool kit and pump, drinking water and a toilet, with no obligation to buy**. Many also offer bike washing and secure overnight storage. The trail is additionally punctuated by **MOR** (*Miejsce Obsługi Rowerzystów*) rest stops — timber shelters with racks, tables and information boards, roughly every 15–25 km.",
+      "Bike rental and rates": "Rental in Białystok runs about **€10–€15/day (45–65 PLN)** for a trekking bike and **€20–€28/day (90–120 PLN)** for a gravel or e-bike, with weekly rates around 30% lower; several Białystok and Supraśl operators will collect the bike in Białowieża for a fee of €25–€45 (110–200 PLN), which is what makes this linear route practical. [VERIFY: 2026 Białystok rental operators, rates and one-way drop-off fees.]",
+      "Trains with a bike (PKP)": "On **PKP Intercity** a bike needs its own **bike reservation** in addition to your ticket, bought at the same time — capacity is a handful of spaces per train, and Warsaw–Białystok services sell those out on Friday and Sunday. Reserve online at intercity.pl or at a *kasa* well ahead; the bike ticket is a flat 11.90 PLN (~€2.75) regardless of distance, raised by about 31% in the July 2026 tariff. On **POLREGIO** regional trains (Białystok–Hajnówka, Białystok–Mońki) bikes go without reservation on a cheap bike ticket, subject to space. Note that **Białowieża has no passenger rail service** — Hajnówka is the railhead, then 20 km by bike or the local bus.",
+      "Bike-friendly accommodation features": "Ask for a *zamykana przechowalnia rowerów* (locked bike store), a drying room — Podlasie rain is horizontal — and breakfast before 08:00. MPR-certified stays advertise all three."
+    },
+    "surface": "Across the podlaskie section expect roughly **70% asphalt** (much of it purpose-built or resurfaced low-traffic county road), **25% compacted gravel and crushed stone**, and **5% concrete slab, sand or grass track** — the sandy fraction concentrated in the Knyszyn forest and on the far side of the Narew. The **Carska Droga** through the Biebrza is a graded gravel causeway for its full ~30 km. A gravel bike or a trekking bike on 38–42 mm tyres is the right tool; a road bike is not. [VERIFY: current Green Velo podlaskie surface percentages — the operator resurfaces sections most years.]",
+    "distanceKm": null,
+    "elevationM": null,
+    "verticalM": null,
+    "technicalRating": null,
+    "transitPass": null,
+    "hutBooking": null,
+    "liftNetwork": null,
+    "snowReliability": null,
+    "windConditions": null,
+    "gpxReady": null,
+    "bookingTimeline": null,
+    "audience": null
+  },
+  "packingNotes": [],
+  "whatCouldGoWrong": [],
+  "sources": {
+    "verified": null,
+    "confidenceNotes": "- Verified: Green Velo (Wschodni Szlak Rowerowy) as a ~2,071 km waymarked route across five eastern voivodeships; the MPR *Miejsca Przyjazne Rowerzystom* certification scheme and its free-parking/tools/water/toilet obligations, plus the MOR rest-stop network; Biebrzański Park Narodowy as Poland's largest at ~592 km², with the Carska Droga running ~30 km across Bagno Ławki between Osowiec and Laskowiec; Białowieski PN's strict reserve as licensed-guide-only access and a UNESCO World Heritage site; the Tykocin Great Synagogue of 1642; Supraśl's Monastery of the Annunciation founded 1498 and its Museum of Icons; Pałac Branickich in Białystok; Białowieża having no passenger rail, with Hajnówka the railhead 20 km away; PKP Intercity requiring a separate bike reservation with very limited capacity. - Verified 2026-09-02: PKP Intercity's flat 11.90 PLN bike ticket under the July 2026 tariff (intercity.pl); BbPN day, weekend and weekly entry tickets (bbpn.gov.pl, director's order of April 2025); BPN strict-reserve entry at 10/5 PLN, the ten-person cap per licensed guide and typical agency guide rates (bpn.gov.pl); the buffer zone's extension from 1 September 2026 for 90 days, its 78.29 km extent and its 200 m / 2 km / 4 km widths (Podlaski Oddział Straży Granicznej). - `[VERIFY]` items in this file: 9 (see inline markers above) - Last reviewed: 2026-09-02"
+  },
+  "verifyFlags": [
+    "current Green Velo podlaskie surface percentages — the operator resurfaces sections most years.",
+    "2026 Białystok rental operators, rates and one-way drop-off fees.",
+    "current Białystok restaurant recommendations and hours",
+    "Muzeum Ikon current hours and ticket price",
+    "current hours and combined-ticket price",
+    "current opening days",
+    "current rates",
+    "current opening days and reservation policy"
+  ],
+  "verifyFlagCount": 8,
+  "volatilePricing": true,
+  "wordCount": 3092,
+  "dataVintage": 2026,
+  "provenance": {
+    "batch": "eastern-southeastern",
+    "sourceFile": "cartaeasterneuropetrips/trips/poland-green-velo-podlasie-cycling.md",
+    "sourceFormat": "md+nested-yaml-frontmatter (one file per trip)",
+    "sourceId": "poland-green-velo-podlasie-cycling",
+    "ingestedAt": "2026-09-02",
+    "synthesized": false
+  }
+}

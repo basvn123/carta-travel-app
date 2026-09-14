@@ -41,6 +41,7 @@ Usage:
 import json
 import sys
 from pathlib import Path
+from pipeline_io import atomic_write_json
 
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_TARGETS = [
@@ -196,8 +197,7 @@ def patch(path: Path) -> None:
         elif accom and accom.get("tourist_premium"):
             _strip_block(accom)
     data["meta"]["tourist_premium_model"] = PREMIUM_MODEL
-    path.write_text(json.dumps(data, indent=1, ensure_ascii=False),
-                    encoding="utf-8")
+    atomic_write_json(path, data, indent=1, ensure_ascii=False)
     unmatched = [d for d in PREMIUM_TIERS if d not in dests]
     print(f"  {path.name}: dining premium on {n_cost}, accommodation premium "
           f"on {n_accom} destinations"

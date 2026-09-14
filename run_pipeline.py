@@ -33,11 +33,17 @@ So you schedule ONE weekly job and each layer self-selects how often it fires:
   weekly    fares (live Ryanair re-fetch, rolling window) + ship
   weekly    fare snapshot archive -> drift check -> model retrain -> estimates
   weekly    raw open-data mirror (src/ingestion: schedules, realtime, ADS-B)
-  monthly   fame (pageviews) -> beauty -> rating; flight times for covered origins
+  monthly   fame (pageviews) -> designations -> beauty -> place -> rating;
+            flight times for covered origins
   monthly   holiday calendars (demand catalysts for the estimation model)
   monthly   trails popularity (curation shortlists for the review queue)
+  monthly   natural features: the beach and summit wire, rebuilt behind its gate
+  quarterly beaches: the named coves of Europe, scored and photographed
+  quarterly lakes: the best water bodies, scored, with a swimming verdict
+  quarterly mountains: the summits worth travelling for, and how you get up
   quarterly open-data snapshots (crowding, bathing water, lodging) *
   quarterly trails ingest (Geofabrik hiking relations -> the trailslab lab)
+  quarterly coverage gaps (what Europe has that the catalogue does not)
   after     trails elevation + validation: no interval of their own; they are
             due when the task they depend on last succeeded more recently than
             they did (trails_ingest -> trails_elevation -> trails_validate).
@@ -90,6 +96,13 @@ serve".
 DB (a sampled validation pass plus the full regression detection), so you can
 see what a real run would move before it moves anything.
 
+NATURAL FEATURES: RETIRED
+-------------------------
+The `features` task (pipeline/features -> public/features) was retired
+2026-09-02 per brief 08. Its wire predated the beaches and mountains layers
+that replaced it and no app surface ever read it. Code lives under
+archive/pipeline_features; the beaches/lakes/mountains tasks are the layer now.
+
 USAGE
 -----
   python run_pipeline.py                     # run every task that is DUE
@@ -121,6 +134,13 @@ import sys
 import time
 from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
+
+if sys.platform == "win32":
+    # Task Scheduler, a piped console and cmd.exe all hand this process cp1252,
+    # and the tasks it drives print real place names (Puy de Dome,
+    # Eyjafjallajokull). Every pipeline script already reconfigures; the driver
+    # that tees their output has to as well, or it dies on their success.
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
 ROOT = Path(__file__).parent
 APP_DATA = ROOT / "app_data" / "app_data.json"
@@ -222,6 +242,24 @@ def now_utc():
     return datetime.now(timezone.utc)
 
 
+def heartbeat(suffix=""):
+    """Ping the external dead-man's-switch (Healthchecks.io style: base URL =
+    success, /start and /fail variants). The Scheduled Task and pg-style
+    schedulers fail SILENTLY (machine asleep, task disabled, lock stuck), so
+    an external monitor that expects a ping per cadence window is the only
+    thing that notices a run that never happened. No env var = no-op; a ping
+    failure is logged and never breaks the run."""
+    base = os.environ.get("CARTA_HEARTBEAT_URL", "").rstrip("/")
+    if not base:
+        return
+    import urllib.request
+    url = base + suffix
+    try:
+        urllib.request.urlopen(url, timeout=10).read()
+    except Exception as e:
+        log(f"(heartbeat {suffix or '/'} failed: {type(e).__name__})")
+
+
 # --------------------------------------------------------------------------- #
 # Safety helpers
 # --------------------------------------------------------------------------- #
@@ -289,13 +327,22 @@ def save_state(state):
 
 
 def run_cmd(argv, cwd=None):
-    """Stream a subprocess, tee its output to the log, return the exit code."""
+    """Stream a subprocess, tee its output to the log, return the exit code.
+
+    UTF-8 both ways, deliberately: the child's pipe is not a console, so a
+    python step that does not reconfigure would default to cp1252 and a step
+    that does (every pipeline/ script) would not, and one accented place name
+    in a progress line would then kill the driver mid-task with a decode error
+    rather than anything to do with the data. errors="replace" keeps a stray
+    byte from a non-python child cosmetic."""
     pretty = " ".join(str(a) for a in argv)
     log(f"  $ {pretty}")
+    env = dict(os.environ, PYTHONIOENCODING="utf-8")
     try:
         proc = subprocess.Popen(
             argv, cwd=str(cwd or ROOT), stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT, text=True, bufsize=1,
+            encoding="utf-8", errors="replace", env=env,
         )
     except FileNotFoundError as e:
         log(f"  ! command not found: {e}")
@@ -357,6 +404,22 @@ def guard_trailslab_up(ctx):
         return False, (f"trails lab not reachable at {host}:{port} "
                        f"({type(e).__name__}) - start it with "
                        f"`cd tools/trailslab && docker compose up -d`")
+
+
+def guard_brouter_up(ctx):
+    """The gap bridge routes with BRouter on 127.0.0.1:17777, a local
+    container like the lab. Not running is a SKIP: the tours that need a
+    bridge simply stay unpublished until the next run finds it up."""
+    lab_ok, lab_msg = guard_trailslab_up(ctx)
+    if not lab_ok:
+        return False, lab_msg
+    try:
+        with socket.create_connection(("127.0.0.1", 17777), timeout=4):
+            return True, "brouter reachable at 127.0.0.1:17777"
+    except OSError as e:
+        return False, (f"brouter not reachable on 17777 ({type(e).__name__}) "
+                       "- start it with `python tools/brouter/prepare.py "
+                       "--country GB --up --wait`")
 
 
 # --------------------------------------------------------------------------- #
@@ -820,36 +883,311 @@ def trails_validate_dry(ctx):
                     "--dry-run", "--verbose"]) == 0
 
 
+def hero_audit_dry(ctx):
+    """The read-only half of the hero audit: classify every hero that is on
+    disk right now and write the report, but look for no replacement and touch
+    no cache. `check` is network-heavy the first time only; the Commons
+    metadata it reads is cached per file title."""
+    log("  dry-run probe: classifying heroes, replacing nothing")
+    return run_cmd([PY, "pipeline/audit_hero_images.py", "check"]) == 0
+
+
+# How many destinations may lack a resolvable Wikipedia article before the fame
+# step refuses to clear the pageviews cache. Small on purpose: a handful of
+# genuinely article-less places is normal, hundreds means the resolver did not
+# finish and the cache is the only copy of their fame.
+FAME_CLEAR_TOLERANCE = 15
+
+
+def _fame_measurable():
+    """(total destinations, how many have an article fame can be read from)."""
+    import json as _json
+    sys.path.insert(0, str(ROOT / "pipeline"))
+    try:
+        import harvest_pageviews as _hp
+        overrides = set(_hp.FAME_ARTICLE_OVERRIDES)
+    except Exception:
+        overrides = set()
+    try:
+        dests = _json.loads((ROOT / "app_data" / "app_data.json")
+                            .read_text(encoding="utf-8"))["destinations"]
+    except Exception:
+        return 0, 0
+    try:
+        articles = _json.loads((CACHE / "dest_articles.json")
+                               .read_text(encoding="utf-8"))
+    except Exception:
+        articles = {}
+    ok = 0
+    for did, d in dests.items():
+        page = (d.get("image") or {}).get("page") or ""
+        is_article = (".wikipedia.org/wiki/" in page
+                      and "commons.wikimedia.org" not in page)
+        if did in overrides or is_article or (articles.get(did) or {}).get("url"):
+            ok += 1
+    return len(dests), ok
+
+
 def fame_step(ctx):
-    """Refresh destination fame. The dest pageviews cache is never invalidated
-    by the harvester (it only fills missing ids), so to pick up drifted fame we
-    drop it first, then re-harvest, then re-derive beauty + rating."""
+    """Refresh destination fame, then everything downstream of it.
+
+    The pageviews cache is never invalidated by the harvester (it only fills
+    missing ids), so drifted fame is only picked up by deleting it first. That
+    deletion is also the dangerous part of this step: harvest_pageviews can
+    only fetch a destination that HAS a resolvable article, and 334 of them
+    store a Wikimedia Commons `File:` page in `image.page` - a photograph, not
+    an article. Clearing the cache without resolving those first silently drops
+    the fame of Bilbao, Ibiza, Alicante and 331 others, and nothing fails.
+    resolve_dest_articles runs first for exactly that reason.
+
+    The chain that follows was previously beauty -> rating, which skipped two
+    inputs the rating actually reads: `designations` feeds the acclaim term,
+    and `place.class` decides which per-class curve appeal_scale puts a
+    destination on. A monthly run that refreshed neither re-derived the rating
+    from stale versions of both.
+    """
+    if run_cmd([PY, "pipeline/resolve_dest_articles.py", "--all"]) != 0:
+        return False
+
+    # Only destroy the cache if we can actually refill it. resolve_dest_articles
+    # exits 0 even when Wikipedia rate-limits it, because a 429 is a temporary
+    # failure rather than a bad run - so "it succeeded" does NOT mean "every
+    # destination is now measurable". Deleting the cache on that assumption is
+    # precisely the bug this whole guard exists to prevent, one level up: the
+    # clear is unconditional, the refill is not, and the difference is silent.
+    #
+    # So the coverage is measured, and the clear only happens when a refill can
+    # actually replace what is being thrown away. Below the bar the refresh
+    # still runs, just additively: fame goes stale rather than missing, which is
+    # the better of the two failures.
+    total, measurable = _fame_measurable()
     pv = CACHE / "dest_pageviews.json"
-    if pv.exists():
-        try:
-            pv.unlink()
-            log("  cleared cache/dest_pageviews.json to force fresh fame")
-        except OSError as e:
-            log(f"  (could not clear pageviews cache: {e})")
-    if run_cmd([PY, "pipeline/harvest_pageviews.py", "dests"]) != 0:
-        return False
-    if run_cmd([PY, "pipeline/apply_beauty_layer.py"]) != 0:
-        return False
-    return run_cmd([PY, "pipeline/apply_rating_layer.py"]) == 0
+    if measurable >= total - FAME_CLEAR_TOLERANCE:
+        if pv.exists():
+            try:
+                pv.unlink()
+                log(f"  cleared cache/dest_pageviews.json ({measurable}/{total} "
+                    f"destinations resolvable) to force fresh fame")
+            except OSError as e:
+                log(f"  (could not clear pageviews cache: {e})")
+    else:
+        log(f"  KEEPING cache/dest_pageviews.json: only {measurable}/{total} "
+            f"destinations have a resolvable article, so a full refresh would "
+            f"drop fame for {total - measurable} of them. Refreshing additively; "
+            f"re-run resolve_dest_articles.py to clear the backlog.")
+    for step in (["pipeline/harvest_pageviews.py", "dests"],
+                 ["pipeline/apply_designations.py"],
+                 ["pipeline/apply_beauty_layer.py"],
+                 ["pipeline/apply_place_layer.py"],
+                 ["pipeline/apply_rating_layer.py"]):
+        if run_cmd([PY] + step) != 0:
+            return False
+    return True
 
 
 # --------------------------------------------------------------------------- #
 # Task registry
 # --------------------------------------------------------------------------- #
+def guard_regions(ctx=None):
+    """The region spine needs its module and its sources on disk, or a
+    network to fetch them. A missing GeoPackage does not fail the OTHER
+    layers (enrich degrades to a warning and exports skip the quota step),
+    but the coverage audit and the region wire are this task's whole
+    output, so they refuse to run on nothing."""
+    missing = [s for s in ("region_sources.py", "build_regions.py",
+                           "assign.py", "quotas.py", "coasts.py",
+                           "seed_coasts.py", "opportunity.py", "coverage.py",
+                           "export_regions.py")
+               if not (ROOT / "pipeline" / "regions" / s).exists()]
+    if missing:
+        return False, f"pipeline/regions is missing {', '.join(missing)}"
+    try:
+        import geopandas  # noqa: F401
+        import h3  # noqa: F401
+    except ImportError as exc:
+        return False, f"regions needs geopandas and h3 ({exc})"
+    return True, "region stages present"
+
+
+def guard_beaches(ctx=None):
+    """The beach layer needs its own scripts and the EEA bathing water cache.
+
+    Without the cache the water component silently falls back to the country
+    default for every beach, which does not fail, it just quietly scores worse
+    beaches higher. That is exactly the kind of degradation a guard is for."""
+    missing = [s for s in ("sources.py", "harvest_beaches.py",
+                           "enrich_beaches.py", "beauty_index.py",
+                           "export_beaches.py", "build_beaches.py")
+               if not (ROOT / "pipeline" / "beaches" / s).exists()]
+    if missing:
+        return False, f"pipeline/beaches is missing {', '.join(missing)}"
+    if not (CACHE / "eea_bathing_water.json").exists():
+        return False, ("cache/eea_bathing_water.json is missing; run the "
+                       "`bathing` task first, water quality is 16% of the score")
+    return True, "beach stages present, EEA bathing water cached"
+
+
+def guard_lakes(ctx=None):
+    """The lake layer needs its own scripts, the EEA bathing water cache, the
+    CHELSA climate crop and the Geofabrik extracts.
+
+    Each of these degrades quietly rather than loudly if it is missing, which
+    is what a guard is for. Without the EEA cache every lake loses its water
+    class AND its count of official bathing sites, which is the strongest
+    evidence this layer has that swimming somewhere is lawful. Without the
+    CHELSA crop there is no swimming season at all, so a lake page loses the
+    one number a traveller reads first. And without the extracts the OSM spine
+    never runs, which is the difference between Great Britain publishing eight
+    lakes and publishing a national list.
+
+    CHELSA replaced WorldClim 2.1 on 2026-08-30: WorldClim is licensed for
+    non-commercial use, and a number under an affiliate link cannot stand on
+    it. The crop is one keyless download, so the guard offers the command
+    rather than sending anybody to another task."""
+    missing = [s for s in ("water_sources.py", "seed_lakes.py",
+                           "harvest_lakes.py", "enrich_lakes.py",
+                           "lake_index.py", "lake_climate.py", "osm_water.py",
+                           "export_lakes.py", "build_lakes.py")
+               if not (ROOT / "pipeline" / "lakes" / s).exists()]
+    if missing:
+        return False, f"pipeline/lakes is missing {', '.join(missing)}"
+    if not (CACHE / "eea_bathing_water.json").exists():
+        return False, ("cache/eea_bathing_water.json is missing; run the "
+                       "`bathing` task first, it decides the swimming verdict")
+    if not (CACHE / "lakes" / "chelsa" / "tas_07_europe.tif").exists():
+        return False, ("cache/lakes/chelsa is missing; run "
+                       "`python pipeline/lakes/lake_climate.py --fetch` "
+                       "first, the swimming season is modelled from it")
+    extracts = list((ROOT / "data" / "raw" / "geofabrik").glob("*/*.osm.pbf"))
+    if len(extracts) < 20:
+        return False, (f"only {len(extracts)} Geofabrik extracts under "
+                       "data/raw/geofabrik; the OSM water spine reads them, "
+                       "run pipeline/trails/ingest_osm_routes.py to download")
+    return True, ("lake stages present, EEA bathing water, CHELSA normals and "
+                  f"{len(extracts)} extracts cached")
+
+
+def guard_mountains(ctx=None):
+    """The mountain layer needs its own scripts and the Wikidata spine.
+
+    The spine is the one input that is not re-queried: cache/features_wikidata
+    .json already holds every Wikidata mountain in these countries with its
+    elevation, prominence and sitelink count, and re-harvesting it would cost
+    hours to arrive at the same rows. Without it a build still runs, but it
+    falls back to the seed and the P610 high points alone, which is a few
+    hundred mountains instead of a few thousand. That is exactly the kind of
+    quiet degradation a guard is for.
+
+    Overpass is deliberately NOT guarded. It is the flakiest source in the
+    layer and the layer is designed to ship without it (see build_peaks.py),
+    so a missing access sweep is a documented state rather than a failure."""
+    missing = [s for s in ("peak_sources.py", "seed_peaks.py",
+                           "harvest_peaks.py", "enrich_peaks.py",
+                           "peak_index.py", "export_peaks.py", "build_peaks.py")
+               if not (ROOT / "pipeline" / "mountains" / s).exists()]
+    if missing:
+        return False, f"pipeline/mountains is missing {', '.join(missing)}"
+    if not (CACHE / "features_wikidata.json").exists():
+        return False, ("cache/features_wikidata.json is missing; without the "
+                       "Wikidata spine the layer falls back to the seed and "
+                       "the national high points alone")
+    return True, "mountain stages present, Wikidata spine cached"
+
+def guard_trips(ctx=None):
+    """The trip layer needs its own scripts and the catalogue master.
+
+    The master is the spine: ratings, city centre coordinates, accommodation
+    anchors, climate normals and the POI shortlists all come from it, and
+    without it there is nothing to compose. The Wikivoyage route cache is NOT
+    guarded on purpose: the layer ships without it, composing on distance and
+    quality alone, and the trips it produces then carry no editorialRoute
+    reason. That is a documented, visible degradation rather than a failure,
+    and the harvest inside build_trips.py rebuilds it anyway."""
+    missing = [s for s in ("trip_sources.py", "trip_model.py",
+                           "harvest_routes.py", "compose_trips.py",
+                           "validate_trips.py", "export_trips.py",
+                           "build_trips.py")
+               if not (ROOT / "pipeline" / "trips" / s).exists()]
+    if missing:
+        return False, f"pipeline/trips is missing {', '.join(missing)}"
+    if not APP_DATA.exists():
+        return False, "app_data/app_data.json is missing; there is nothing to compose"
+    routes = CACHE / "trips" / "routes.json"
+    if not routes.exists():
+        return True, ("trip stages present; no Wikivoyage route cache yet, so "
+                      "the harvest will run cold (a few minutes)")
+    return True, "trip stages present, catalogue master and route graph cached"
+
+
+def dossier_audit_dry(ctx):
+    """The read-only half of the dossier task, for --dry-run: run the same gate
+    the real task ends on, over the dossiers that are shipped right now.
+
+    audit.py reads continent-app/public/dossier and writes one thing, its own
+    report under data/reports. It builds nothing and touches no wire, so the
+    plan can answer the only question worth asking before a monthly rebuild:
+    are the files currently in front of readers passing every hard check?"""
+    d = CONTINENT / "public" / "dossier"
+    if not d.exists() or not any(d.glob("*.json")):
+        log("  no continent-app/public/dossier yet: a real run would build it "
+            "first, so there is nothing to audit")
+        return False
+    log("  dry-run probe: auditing the shipped dossiers, building nothing")
+    return run_cmd([PY, "pipeline/dossier/audit.py", "--strict"]) == 0
+
+
+def guard_dossier(ctx=None):
+    """The dossier contract is a JOIN, so it is only as good as its inputs.
+
+    It reads the shipped wires rather than any database: app_data for the
+    catalogue and its ratings, activities_full for the rated things a place
+    has, and the layer wires for the nature join. Missing app_data means there
+    is nothing to build at all; missing activities means every dossier still
+    builds but arrives without the one section a reader came for.
+
+    The landmark cache is deliberately NOT guarded. The first run of this task
+    creates it (three hours, resumable), and refusing to start until it exists
+    would mean the task could never bootstrap itself on a new machine. Same for
+    the research cache: no file is a documented state, not a failure, because
+    the open-data tier covers every destination without one."""
+    missing = [s for s in ("common.py", "derive_do.py", "build_dossier.py",
+                           "fill_licences.py", "harvest_landmarks.py",
+                           "reclassify_landmarks.py", "harvest_city_intros.py",
+                           "fix_airport_listings.py", "harvest_event_dates.py",
+                           "plan_research.py", "research_do.py", "web_sweep.py",
+                           "audit.py")
+               if not (ROOT / "pipeline" / "dossier" / s).exists()]
+    if missing:
+        return False, f"pipeline/dossier is missing {', '.join(missing)}"
+    pub = CONTINENT / "public"
+    if not (pub / "app_data.json").exists():
+        return False, ("continent-app/public/app_data.json is missing; the "
+                       "dossier builds off the shipped wires, not the master")
+    if not (pub / "activities_full.json").exists():
+        return False, ("continent-app/public/activities_full.json is missing; "
+                       "every dossier would ship without its things to do")
+    if not (CACHE / "dossier" / "landmarks.json").exists():
+        return True, ("dossier stages present; no landmark cache yet, so the "
+                      "Wikidata harvest runs cold (about three hours, "
+                      "resumable, shardable with --shard/--of)")
+    return True, "dossier stages present, wires and landmark cache on disk"
+
+
 # Each task: key, title, cadence, writes_app_data, and either cmds or run.
 #   cadence         weekly | monthly | quarterly | after | backfill
 #                   (after = event-driven, see `after`; backfill = --only only)
 #   after           task keys this one follows; due when one of them succeeded
 #                   more recently than this task did
 #   writes_app_data -> pre-write backup + concurrency guard
+#   writes_wire     -> writes continent-app/public/ directly, never the master:
+#                      no backup and no lock, but the ship still has to run or
+#                      the new files never reach dist
 #   run(ctx)->bool  custom step (preferred where logic is needed)
 #   cmds            list of argv lists, run in order; any non-zero fails the task
-#   guard(ctx)      optional; (ok, reason). ok=False SKIPS (not a failure)
+#   guard(ctx)      optional; (ok, reason). ok=False SKIPS (not a failure).
+#                   It is CALLED with ctx, so declare ctx even when unused
+#                   (`def guard_x(ctx=None)`): the call is not wrapped, so a
+#                   zero-arg guard raises TypeError and takes down the run.
 #   dry_run(ctx)    optional read-only probe executed under --dry-run
 #   soft            failures are logged and retried next run, never block the ship
 #   note            printed reminder (e.g. "bump the YEAR first")
@@ -954,11 +1292,39 @@ TASKS = [
     },
     {
         "key": "fame",
-        "title": "Wikipedia fame -> beauty -> traveller rating",
+        "title": "Fame -> designations -> beauty -> place -> traveller rating",
         "cadence": "monthly",
         "writes_app_data": True,
         "run": fame_step,
-        "note": "fame is a rolling 12-mo average; monthly is plenty. Cheap, additive.",
+        "note": ("fame is a rolling 12-mo average; monthly is plenty. Resolves "
+                 "missing articles FIRST (the step deletes the pageviews cache, "
+                 "and a destination with no resolvable article silently loses "
+                 "its fame), then refreshes every input the rating reads: "
+                 "designations feed acclaim, place.class picks the appeal "
+                 "curve. apply_rating_layer last, and it REFUSES to write when "
+                 "its validation gate fails."),
+    },
+    {
+        "key": "coverage",
+        "title": "Coverage gaps: what Europe has that the catalogue does not",
+        "cadence": "quarterly",
+        "writes_app_data": False,
+        "soft": True,
+        "cmds": [
+            [PY, "pipeline/build_place_candidates.py"],
+            [PY, "pipeline/harvest_place_signals.py"],
+            [PY, "pipeline/score_place_candidates.py"],
+        ],
+        "note": ("docs/COVERAGE.md. Rebuilds data/reports/coverage/ (one ranked "
+                 "review sheet per country) and coverage_gaps.json. READ-ONLY "
+                 "with respect to the catalogue: it proposes, a human disposes. "
+                 "Promotion is deliberately NOT scheduled - "
+                 "promote_place_candidates writes a spec file and apply_new_gems "
+                 "inserts it, both run by hand, because adding destinations is "
+                 "an editorial act and a cron job should never make one. "
+                 "Quarterly because the gazetteer and the registers move slowly; "
+                 "the expensive part is the ~70 MB candidate rebuild (~75 s, no "
+                 "network) plus one Wikidata pass."),
     },
     {
         "key": "poi_significance",
@@ -984,6 +1350,34 @@ TASKS = [
                  "dest rating's things component saturates on the new rates."),
     },
     {
+        "key": "country_context",
+        "title": "Country context: rank/percentile/badge within each country",
+        "cadence": "weekly",
+        "writes_app_data": True,
+        "soft": True,
+        "cmds": [[PY, "pipeline/country_context_layer.py"]],
+        "note": ("A6 (PLAN.md): country_rank/_n/_percentile/_badge and "
+                 "class_percentile beside the absolute score, so a browsing "
+                 "user sees where a place stands in the country they are "
+                 "going to. Reads rating.score only and refuses to write if "
+                 "any absolute score moved, so it runs safely after every "
+                 "rating refresh. Multi-airport cities hold one slot."),
+    },
+    {
+        "key": "register_intake",
+        "title": "Register intake: which members do we NOT have (report only)",
+        "cadence": "monthly",
+        "writes_app_data": False,
+        "soft": True,
+        "cmds": [[PY, "pipeline/intake/register_intake.py"]],
+        "note": ("B3 (PLAN.md): full membership of every modelled place "
+                 "register from WDQS, diffed against the catalogue and the "
+                 "B1 member lists -> reports/intake_candidates.csv with an "
+                 "auto_admit flag. NEVER ingests anything: candidates wait "
+                 "for review, per the plan's hard stop. Unmodelled registers "
+                 "are printed as a visible gap."),
+    },
+    {
         "key": "audit",
         "title": "Data-quality audit scorecard (read-only)",
         "cadence": "monthly",
@@ -993,6 +1387,218 @@ TASKS = [
         "note": ("coords/dupes/rate-inflation/coverage report -> "
                  "logs/audit_quality_report.json; never blocks, but read it "
                  "after any POI-layer change."),
+    },
+    # The `features` task (pipeline/features -> public/features) was RETIRED
+    # on 2026-09-02 per brief 08: the wire predated the beaches and mountains
+    # layers that replaced it and nothing under continent-app/src ever read
+    # it, while it carried live attribution obligations (data_licenses.md S8).
+    # Code is preserved under archive/pipeline_features.
+    {
+        "key": "beaches",
+        "title": "Beaches: named coves + the beauty index -> public/beaches",
+        "cadence": "quarterly",
+        "writes_app_data": False,
+        "writes_wire": True,
+        "soft": True,
+        "cmds": [[PY, "pipeline/beaches/build_beaches.py"]],
+        "guard": guard_beaches,
+        "note": ("the Beaches category on the Destinations tab. Three stages "
+                 "in one command (harvest -> enrich -> export), each cached "
+                 "per country in cache/beaches, so a re-run with the caches "
+                 "in place is seconds and produces the same wire. A COLD "
+                 "build is a few hours, nearly all of it waiting politely on "
+                 "Overpass: one country query each, then one context query "
+                 "per 30 shortlisted beaches. Quarterly because coastlines "
+                 "and coves move slowly; run it by hand after the `bathing` "
+                 "task lands a new EEA season, since water quality is 16 per "
+                 "cent of the score. The export validates before it writes "
+                 "anything, so a failure leaves the previous wire standing. "
+                 "Delete cache/beaches/rich_*.json to re-photograph without "
+                 "re-harvesting."),
+    },
+    {
+        "key": "lakes",
+        "title": "Lakes: the best water bodies in Europe -> public/lakes",
+        "cadence": "quarterly",
+        "writes_app_data": False,
+        "writes_wire": True,
+        "soft": True,
+        "cmds": [[PY, "pipeline/lakes/build_lakes.py"]],
+        "guard": guard_lakes,
+        "note": ("the Lakes category on the Destinations tab: lakes, "
+                 "reservoirs, lagoons, tarns and crater lakes, each with three "
+                 "sub scores (setting, swimming, things to do) and a SWIMMING "
+                 "VERDICT. Five stages in one command (climate -> osm -> "
+                 "harvest -> enrich -> export), each cached per country in "
+                 "cache/lakes, so a warm re-run is seconds and produces the "
+                 "same wire. lake_index_v2 added a second spine: OSM named "
+                 "water bodies read offline from the Geofabrik extracts, "
+                 "which is what lets Great Britain, Ireland, Norway and "
+                 "Iceland publish a national list instead of the eight, nine, "
+                 "thirteen and four that the two Wikidata rankings could "
+                 "reach. A cold build is a day, most of it the extract filter "
+                 "(CPU, offline) and Wikimedia photographs (network, paced). "
+                 "Quarterly, and by hand after the `bathing` task lands a new "
+                 "EEA season or after pipeline/lakes/seed_lakes.py changes, "
+                 "since the seed carries the swimming rules that override "
+                 "every machine signal. The export validates before it writes "
+                 "anything, so a failure leaves the previous wire standing."),
+    },
+    {
+        "key": "mountains",
+        "title": "Mountains: the summits worth travelling for -> public/mountains",
+        "cadence": "quarterly",
+        "writes_app_data": False,
+        "writes_wire": True,
+        "soft": True,
+        # Five commands rather than one, because v2 added two measurement
+        # passes that are separable on purpose and one spine that is not on
+        # the same clock. Order matters: the OSM spine feeds the harvest, the
+        # terrain and season passes read what enrich shortlisted, and the
+        # export reads all of it. Every one of them is cache first, so a
+        # warm quarterly run is seconds and a cold one is a day.
+        "cmds": [
+            [PY, "pipeline/mountains/osm_spine.py"],
+            [PY, "pipeline/mountains/build_peaks.py", "--skip-export"],
+            [PY, "pipeline/mountains/terrain.py", "--workers", "4"],
+            [PY, "pipeline/mountains/season.py"],
+            [PY, "pipeline/mountains/export_peaks.py"],
+        ],
+        "guard": guard_mountains,
+        "note": ("the Mountains category on the Destinations tab: summits, "
+                 "volcanoes, ridges, sea cliffs and lowland high points, each "
+                 "with three sub scores (scenery, getting up, what is at the "
+                 "top) and the WAY UP on it, which is the question most people "
+                 "bring to this tab. Three stages in one command (harvest -> "
+                 "enrich -> export), each cached per country in "
+                 "cache/mountains, so a warm re-run is seconds and produces "
+                 "the same wire. The harvest re-queries almost nothing: the "
+                 "Wikidata spine is already on disk from the features build, "
+                 "and only the P610 high points, the thin-country hill pass "
+                 "and the unresolved seed entries go over the network. A cold "
+                 "build is a few hours, most of it Commons photographs. "
+                 "Quarterly, and by hand after pipeline/mountains/seed_peaks.py "
+                 "changes, since the seed is what pins the mountains fame does "
+                 "not find and the lift-served viewpoints that are nobody's "
+                 "highest. If Overpass is down, run it with --no-context and "
+                 "fill the access layer in later with enrich_peaks.py "
+                 "--context-only; the export validates before it writes "
+                 "anything, so a failure leaves the previous wire standing. "
+                 "v2 adds three passes in front of the export: osm_spine.py "
+                 "(the second spine, Overpass, one query per country tile), "
+                 "terrain.py (Copernicus GLO-30, windowed: prominence, "
+                 "isolation, the viewshed, about six seconds a summit) and "
+                 "season.py (one climatology call per 0.5 degree cell). All "
+                 "three are cache first and resumable, and all three are "
+                 "optional: a row they have not reached scores on the "
+                 "components it does have."),
+    },
+    {
+        "key": "trips",
+        "title": "Trips: ready-made itineraries of 2 to 14 days -> public/trips",
+        "cadence": "monthly",
+        "writes_app_data": False,
+        "writes_wire": True,
+        "soft": True,
+        "cmds": [[PY, "pipeline/trips/build_trips.py"]],
+        "guard": guard_trips,
+        "note": ("the Trips half of the Explore tab: a traveller says how many "
+                 "days they have and where, and gets itineraries that were "
+                 "composed and checked offline rather than generated on the "
+                 "spot. Three shapes, which are the three real shapes a "
+                 "European trip takes: one base with days out from it, a chain "
+                 "of two to five bases joined by trains the app's own "
+                 "estimator agrees run, and a car loop that returns to where "
+                 "it started. Three stages in one command (harvest Wikivoyage "
+                 "-> compose -> validate and export), cached in cache/trips, "
+                 "so a warm re-run is about three minutes and produces the "
+                 "same wire. Monthly, because it reads the ratings, the "
+                 "accommodation anchors and the POI shortlists, and a trip is "
+                 "only as current as those. Run it by hand after a rating "
+                 "recalibration or an accommodation refresh. Every trip goes "
+                 "through ten hard checks before it is written and the export "
+                 "prints what it dropped and why, so a rule that starts "
+                 "quietly deleting a country shows up in the run rather than "
+                 "in the app as an empty page. A failure leaves the previous "
+                 "wire standing."),
+    },
+    {
+        "key": "routes_attach",
+        "title": "Routes: which paths pass each destination, measured to the line",
+        "cadence": "after",
+        "after": ["trails_rate", "cycling_publish"],
+        "writes_app_data": False,
+        "soft": True,
+        "guard": guard_trailslab_up,
+        "cmds": [
+            [PY, "pipeline/trails/transit_stops.py"],
+            [PY, "pipeline/trails/derived_activities.py"],
+            [PY, "pipeline/trails/node_networks.py"],
+            [PY, "pipeline/trails/attach.py"],
+        ],
+        "note": ("ROUTES.md R6. Writes data/derived/routes_attach.json, which "
+                 "the dossier build reads into each destination's `routes` "
+                 "key, so it MUST run before `dossier`. Every distance is to "
+                 "the nearest point on the route's line, in the lab where the "
+                 "geometry is: the join it replaced placed a route by the "
+                 "centre of its bounding box, which put a variant of the Via "
+                 "Francigena 9 km from Rome when the walk passes 28.5 km "
+                 "away. Rows are named for the PATH with the stretch that "
+                 "passes named underneath, because a superroute is a "
+                 "container rather than a walk and almost never publishes. "
+                 "transit_stops.py runs first and is cheap after the first "
+                 "pass: it only re-reads extracts already on disk. "
+                 "derived_activities.py (ROUTES.md R8) flags trail running "
+                 "and gravel on the routes that already exist rather than "
+                 "creating rows, and node_networks.py measures the Dutch and "
+                 "Belgian numbered mesh, which is deliberately never "
+                 "published as routes; the attach carries both."),
+    },
+    {
+        "key": "joins",
+        "title": "Cross-layer neighbours: nb ids stamped into every wire row",
+        "cadence": "after",
+        "after": ["beaches", "lakes", "mountains", "trails_rate",
+                  "cycling_publish", "trips"],
+        "writes_app_data": False,
+        "writes_wire": True,
+        "soft": True,
+        "cmds": [[PY, "pipeline/joins/neighbours.py"]],
+        "note": ("brief 08's join: one spatial pass over the published wires "
+                 "writes an `nb` object of neighbour ids into every row "
+                 "(trails up this mountain, the lake on this walk), plus "
+                 "per-stop neighbours into the trip detail files. Runs after "
+                 "ANY layer re-exports, because an export rewrites its files "
+                 "without nb; sits BEFORE regions in this list so the region "
+                 "pages are composed from stamped rows. Key is `nb`, not "
+                 "`near`: mountains already ship `near` as the nearest "
+                 "priceable hub."),
+    },
+    {
+        "key": "regions",
+        "title": "Regions: the spine, quotas, coverage audit -> public/region",
+        "cadence": "quarterly",
+        "writes_app_data": False,
+        "writes_wire": True,
+        "soft": True,
+        "cmds": [
+            [PY, "pipeline/regions/build_regions.py", "--skip-fetch"],
+            [PY, "pipeline/regions/coverage.py"],
+            [PY, "pipeline/regions/export_regions.py", "--all"],
+        ],
+        "guard": guard_regions,
+        "note": ("the unit between beach and country. build_regions "
+                 "normalises NUTS/ITL/geoBoundaries, the coastal stretches, "
+                 "GMBA ranges, basins and biogeo into cache/regions/"
+                 "regions.gpkg and recomputes the opportunity measures; "
+                 "coverage writes public/coverage.json plus the backlog CSVs "
+                 "in reports/ (every deficit joined to the candidates the "
+                 "gate rejected and why); export_regions writes the region "
+                 "pages. --skip-fetch on the scheduled run: the sources "
+                 "change yearly, delete cache/regions/src to refresh them. "
+                 "Sits AFTER the beach, lake, mountain and trip tasks in "
+                 "this list on purpose: the audit reads the wire that "
+                 "actually shipped."),
     },
     {
         "key": "flight_times",
@@ -1073,12 +1679,25 @@ TASKS = [
         "writes_app_data": False,
         "soft": True,
         "guard": guard_trailslab_up,
-        "cmds": [[PY, "pipeline/trails/elevation.py"]],
+        "cmds": [[PY, "pipeline/trails/elevation.py",
+                  "--countries",
+                  "AL,AD,AT,BE,BA,BG,HR,CY,CZ,DK,EE,FI,FR,DE,GB,GR,HU,IS,IE,IT,"
+                  "XK,LV,LI,LT,LU,MK,MT,MD,MC,ME,NL,NO,PL,PT,RO,RS,SK,SI,ES,SE,"
+                  "CH,SM,FO",
+                  "--curated", "--evict-gb", "4"],
+                 [PY, "pipeline/trails/splice.py", "--sync-only"]],
         "note": ("geometry-change driven twice over: the task is due after an "
                  "ingest, and the script itself only samples trips whose "
                  "elevation is missing or whose 2D geometry hash moved, so an "
-                 "ingest that changed nothing costs one query. DEM tiles are "
-                 "cached under data/raw/dem."),
+                 "ingest that changed nothing costs one query. --curated keeps "
+                 "it to what trails_curate approved: sampling all ~236k staged "
+                 "relations would pull most of Europe's DEM for routes nobody "
+                 "can open. --evict-gb 4 bounds what the run leaves in "
+                 "data/raw/dem, which already holds 15.6 GB for the four pilot "
+                 "countries and would otherwise fill the disk. The splice "
+                 "--sync-only step after it is not optional: this pass "
+                 "measures the ORIGINAL relation, so a spliced trip would "
+                 "otherwise state a length shorter than the line it ships."),
     },
     {
         "key": "trails_validate",
@@ -1097,6 +1716,14 @@ TASKS = [
                  "freshness report. Nothing is ever unpublished or deleted. "
                  "--dry-run runs both halves read-only against staging."),
     },
+    # trails_describe is RETIRED, not disabled. pipeline/trails/describe.py
+    # composed prose from the same numbers the facts row prints, in a script's
+    # voice, and TrailPage stopped reading it: lib/trailStory.js composes every
+    # line from structured fields instead. It kept exactly three things the
+    # fields did not know, and attributes.py now promotes all three into the
+    # wire as fields (waymark_ref, passes, publisher). Keeping the task alive
+    # would have meant a monthly job spending free-tier quota for three
+    # strings. See docs/TRAILS.md, "Two debts, closed".
     {
         "key": "trails_popularity",
         "title": "Trails: popularity + curation shortlists (data/reports/trails_seed)",
@@ -1109,6 +1736,338 @@ TASKS = [
                  "in the newest quality and portal signals, which is why it "
                  "sits after trails_validate in this list. Writes a "
                  "curation_rank row per trip for the review queue's ordering."),
+    },
+    {
+        "key": "trails_splice",
+        "title": "Trails: bridge the short breaks in otherwise whole relations",
+        "cadence": "monthly",
+        "writes_app_data": False,
+        "soft": True,
+        "guard": guard_trailslab_up,
+        "cmds": [[PY, "pipeline/trails/splice.py"]],
+        "note": ("joins parts separated only by breaks short enough to be "
+                 "mapping artefacts (every gap under 300 m, at most 8, under "
+                 "750 m in total) and stores the joined line in trip_repairs, "
+                 "so the continuity gate can pass a route whose relation lost "
+                 "a ten metre connector at a road crossing. Recovered ~10,000 "
+                 "routes including the Walker's Haute Route, which was being "
+                 "refused over a SEVEN metre break. Runs before trails_curate, "
+                 "which is what decides whether a recovered route earns a "
+                 "place. Anything with a real gap stays out."),
+    },
+    {
+        "key": "trails_regionize",
+        "title": "Trails: region ids on every staged route",
+        "cadence": "after",
+        "after": ["trails_ingest"],
+        "writes_app_data": False,
+        "soft": True,
+        "guard": guard_trailslab_up,
+        "cmds": [[PY, "pipeline/trails/regionize.py", "--all"]],
+        "note": ("stamps rg, nuts3 and region_crosses onto all ~236k staged "
+                 "routes, which is what lets trails_curate spend a quota per "
+                 "NUTS3 region instead of a flat 150 per country. Must run "
+                 "BEFORE trails_curate: the gate groups by the column this "
+                 "writes. Batched per country (one query over the whole pool "
+                 "killed the server twice) and skips rows it has already "
+                 "placed, so a re-run after an ingest only costs the new "
+                 "relations."),
+    },
+    {
+        "key": "trails_derive_routes",
+        "title": "Trails: routes built from way-level paths (MD, XK, MK, MT, AL)",
+        "cadence": "quarterly",
+        "writes_app_data": False,
+        "soft": True,
+        "guard": guard_trailslab_up,
+        "cmds": [[PY, "pipeline/trails/derive_routes.py"]],
+        "note": ("five countries have paths on the ground and almost no "
+                 "type=route relations, so the relation ingest reads almost "
+                 "nothing there and Moldova published 3 walks. This clusters "
+                 "connected named or graded paths out of the same Geofabrik "
+                 "extracts and stages them as needs_review with "
+                 "derived_route = true, to face the same continuity gate and "
+                 "the same quotas as everything else. Quarterly, because it "
+                 "reads the extracts the ingest downloads; a derived route "
+                 "that overlaps a real relation is rejected, so this stops "
+                 "finding new work as those countries start mapping routes."),
+    },
+    {
+        "key": "trails_hierarchy",
+        "title": "Routes: relation graph, hierarchy and co-located lines",
+        "cadence": "after",
+        "after": ["trails_ingest", "cycling_harvest"],
+        "writes_app_data": False,
+        "soft": True,
+        "guard": guard_trailslab_up,
+        "cmds": [
+            [PY, "pipeline/trails/hierarchy.py", "--scan", "--classify",
+             "--stitch-report"],
+            [PY, "pipeline/trails/dedup.py"],
+        ],
+        "note": ("ROUTES.md R2 and R3. One relations-only pass over the cached "
+                 "extracts (four minutes for Europe) fills route_relations with "
+                 "every tag, the ordered member list and the parent/child refs "
+                 "the ingest throws away; classify turns that into parent / "
+                 "stage / variant / standalone plus stage_of and top_of, copied "
+                 "onto trips AND cycle_routes; dedup.py writes co_located where "
+                 "two relations of comparable length share one line. Must run "
+                 "BEFORE trails_curate: the family collapse reads top_of and "
+                 "co_located as its first keys. Touches the two store tables "
+                 "only where a value changes, because the updated_at trigger "
+                 "fires on any UPDATE."),
+    },
+    {
+        "key": "trails_curate",
+        "title": "Trails: per-region quota, loop-first, continuity gated",
+        "cadence": "after",
+        "after": ["trails_splice", "trails_regionize", "trails_hierarchy"],
+        "writes_app_data": False,
+        "soft": True,
+        "guard": guard_trailslab_up,
+        "cmds": [[PY, "pipeline/trails/curate.py"]],
+        "note": ("spends a quota per NUTS3 region (pipeline/regions/quotas.py) "
+                 "out of the ~236k staged, so a country's count is the sum of "
+                 "its regions rather than a constant: "
+                 "hard continuity gate (one merged segment, zero gaps, so no "
+                 "published GPX can teleport), route families collapsed to "
+                 "one slot, loops filled first, then distance-band quotas, "
+                 "with the country's famous routes guaranteed a share. "
+                 "Demotes anything published that no longer survives "
+                 "re-selection. Runs after trails_popularity, whose rank it "
+                 "reads. Re-run it whenever the ingest brings new relations."),
+    },
+    {
+        "key": "trails_forests",
+        "title": "Trails: named forest areas from the extracts",
+        "cadence": "quarterly",
+        "writes_app_data": False,
+        "soft": True,
+        "guard": guard_trailslab_up,
+        "cmds": [[PY, "pipeline/trails/forests.py"]],
+        "note": ("the tenth highlight code, and the only one that is an AREA "
+                 "rather than a point: 'does this walk go through the Forest "
+                 "of Dean' cannot be asked of a centroid, whose answer is "
+                 "wrong in both directions for anything large. Reads the "
+                 "Geofabrik extracts already on disk rather than Overpass, "
+                 "because named woods over a 1.5 degree cell took the sweep "
+                 "from 2,215 to 12,246 features per cell and Europe from an "
+                 "hour to thirteen, with both mirrors 504ing. Quarterly with "
+                 "the extracts; skips countries already stored, so an "
+                 "interrupted run resumes for free. Must run before "
+                 "trails_scenic, whose link step reads the table."),
+    },
+    {
+        "key": "trails_scenic",
+        "title": "Trails: scenic landmarks along the curated routes (Overpass)",
+        "cadence": "after",
+        "after": ["trails_curate", "trails_forests"],
+        "writes_app_data": False,
+        "soft": True,
+        "guard": guard_trailslab_up,
+        "cmds": [[PY, "pipeline/trails/scenic.py"]],
+        "note": ("one Overpass sweep per 1.5 degree cell the curated routes "
+                 "touch, deduped across countries, then a spatial join that "
+                 "writes each route's highlight list and its scenic density. "
+                 "Cells are cached on disk, so a re-run after a curation pass "
+                 "only fetches the cells the new routes reach. Probes the "
+                 "mirrors first and skips the dead ones."),
+    },
+    {
+        "key": "trails_images",
+        "title": "Trails: Commons photographs taken on the route",
+        "cadence": "after",
+        "after": ["trails_curate", "trails_scenic"],
+        "writes_app_data": False,
+        "soft": True,
+        "guard": guard_trailslab_up,
+        "cmds": [[PY, "pipeline/trails/trail_images.py"]],
+        "note": ("geosearches Commons at points along each route and at the "
+                 "landmarks scenic.py found, keeps only frames shot within "
+                 "400 m of the line, and ranks a hero plus a gallery spread "
+                 "ALONG the walk. Skips routes that already have photographs, "
+                 "so it resumes for free. This is what stopped trail cards "
+                 "borrowing the nearest town's hero image."),
+    },
+    {
+        "key": "trails_way_tags",
+        "title": "Trails: member way tags (grade, surface, access)",
+        "cadence": "after",
+        "after": ["trails_curate"],
+        "writes_app_data": False,
+        "soft": True,
+        "guard": guard_trailslab_up,
+        "cmds": [[PY, "pipeline/trails/way_tags.py"]],
+        "note": ("a fourth pass over the Geofabrik extracts already on disk, "
+                 "for what the route RELATIONS never carried: sac_scale, "
+                 "trail_visibility, via_ferrata_scale, surface, smoothness, "
+                 "wheelchair and dog live on the member WAYS, and the ingest "
+                 "read node refs and threw the tags away. Reduced to "
+                 "length-weighted shares per route, because a route is fifty "
+                 "20 m ways through a village and two 3 km ways over the "
+                 "pass. Skips routes that already have a summary, so it "
+                 "resumes for free."),
+    },
+    {
+        "key": "trails_attributes",
+        "title": "Trails: the six published filters",
+        "cadence": "after",
+        "after": ["trails_curate", "trails_scenic", "trails_way_tags"],
+        "writes_app_data": False,
+        "soft": True,
+        "guard": guard_trailslab_up,
+        "cmds": [[PY, "pipeline/trails/attributes.py"]],
+        "note": ("difficulty (worst member way segment wins, DEM where "
+                 "nothing is tagged), route type, highlight codes and "
+                 "suitability, plus the surface term rate.py reads, the "
+                 "season estimate and the three facts the retired describe.py "
+                 "knew that the fields did not. Tagged and derived claims "
+                 "never merge and wheelchair is never derived. Must run "
+                 "before trails_rate, which reads the surface term."),
+    },
+    {
+        "key": "trails_rate",
+        "title": "Trails: published 0-10 rating and its reason codes",
+        "cadence": "after",
+        "after": ["trails_curate", "trails_scenic", "trails_images",
+                  "trails_attributes"],
+        "writes_app_data": False,
+        "soft": True,
+        "guard": guard_trailslab_up,
+        "cmds": [
+            [PY, "pipeline/trails/rate.py"],
+            [PY, "pipeline/trails/export_wire.py", "--countries",
+             "AL,AD,AT,BE,BA,BG,HR,CY,CZ,DK,EE,FI,FR,DE,GB,GR,HU,IS,IE,IT,"
+             "XK,LV,LI,LT,LU,MK,MT,MD,MC,ME,NL,NO,PL,PT,RO,RS,SK,SI,ES,SE,"
+             "CH,SM,FO"],
+        ],
+        "note": ("last in the chain, because the rating reads every earlier "
+                 "pass: scenic density, DEM relief, photograph count, "
+                 "designation, prominence and loop shape, each converted to "
+                 "its WITHIN-COUNTRY percentile so a Dutch walk is ranked "
+                 "against Dutch walks. Exports straight after, since the wire "
+                 "order is the rating order the app renders."),
+    },
+
+    # ---- cycling layer (pipeline/cycling, same lab): soft + guarded ---- #
+    #
+    # Deliberately the same shape as the trails chain above, because it is the
+    # same lab and the same failure modes. Two things differ and both are
+    # about not repeating an afternoon that was already paid for once:
+    #
+    #   the harvest is QUARTERLY and reuses the cached Geofabrik extracts
+    #   rather than re-downloading them. trails_ingest already pays the
+    #   multi-GB download on its own quarterly tick, and running two extract
+    #   passes at once is what put this Postgres into crash recovery on
+    #   2026-08-30.
+    #
+    #   the splice runs BEFORE enrich and again with --sync-only after it.
+    #   Not optional either time: services attached before the splice measure
+    #   position along a discontinuous line and come back without one, and
+    #   elevation measures the ORIGINAL relation, so a spliced route would
+    #   otherwise state a length shorter than the line it ships.
+    {
+        "key": "cycling_harvest",
+        "title": "Cycling: OSM route=bicycle relations -> cycle_routes",
+        "cadence": "quarterly",
+        "writes_app_data": False,
+        "soft": True,
+        "guard": guard_trailslab_up,
+        "cmds": [[PY, "pipeline/cycling/harvest_cycling.py"],
+                 [PY, "pipeline/cycling/splice_cycling.py"]],
+        "note": ("reads the cached per-country .osm.pbf that trails_ingest "
+                 "already downloads, so this adds a long pyosmium pass and no "
+                 "bandwidth. Separates node-network connections from real "
+                 "routes (Belgium is 11,693 of the former against 1,298 of "
+                 "the latter) and keeps per-way surface tags positioned along "
+                 "the line, which is what every later surface and safety "
+                 "figure is measured from. Triggers cycling_enrich."),
+    },
+    {
+        "key": "cycling_enrich",
+        "title": "Cycling: regions, elevation, surface, safety, services, scenic",
+        "cadence": "after",
+        "after": ["cycling_harvest"],
+        "writes_app_data": False,
+        "soft": True,
+        "guard": guard_trailslab_up,
+        "cmds": [[PY, "pipeline/cycling/cycle_sources.py", "--reference"],
+                 [PY, "pipeline/cycling/enrich_cycling.py", "--countries",
+                  "AL,AD,AT,BE,BA,BG,HR,CY,CZ,DK,EE,FI,FR,DE,GB,GR,HU,IS,IE,IT,"
+             "XK,LV,LI,LT,LU,MK,MT,MD,MC,ME,NL,NO,PL,PT,RO,RS,SK,SI,ES,SE,"
+             "CH,SM,FO"],
+                 [PY, "pipeline/cycling/splice_cycling.py", "--sync-only"]],
+        "note": ("the reference step mirrors Natura 2000, Emerald and the EEA "
+                 "coastline into the lab; without them the scenic score drops "
+                 "its protection and coast components and renormalises rather "
+                 "than scoring a zero nobody earned. Elevation goes through "
+                 "the trails sampler, so the Swiss-calibrated smoothing is "
+                 "literally the same code and a canal towpath cannot grow "
+                 "fake metres here that it does not have on the hiking side."),
+    },
+    {
+        "key": "cycling_photos",
+        "title": "Cycling: Commons and Geograph, anchored on the route line",
+        "cadence": "after",
+        "after": ["cycling_enrich"],
+        "writes_app_data": False,
+        "soft": True,
+        "guard": guard_trailslab_up,
+        "cmds": [[PY, "pipeline/cycling/cycle_images.py", "--countries",
+                  "AL,AD,AT,BE,BA,BG,HR,CY,CZ,DK,EE,FI,FR,DE,GB,GR,HU,IS,IE,IT,"
+             "XK,LV,LI,LT,LU,MK,MT,MD,MC,ME,NL,NO,PL,PT,RO,RS,SK,SI,ES,SE,"
+             "CH,SM,FO"],
+                 [PY, "pipeline/cycling/harvest_cycling.py", "--crosscheck"]],
+        "note": ("politely paced against Commons, and it records the EMPTY "
+                 "answers as well as the hits, so a re-run does not spend its "
+                 "first hour re-asking about the anonymous regional loops that "
+                 "have no free photograph. The crosscheck after it downloads "
+                 "the EuroVelo GPX and the national portals and measures what "
+                 "share of each OSM line the official source also draws."),
+    },
+    {
+        "key": "cycling_bridge",
+        "title": "Cycling: route across the real breaks with BRouter",
+        "cadence": "after",
+        "after": ["cycling_enrich"],
+        "writes_app_data": False,
+        "soft": True,
+        "guard": guard_brouter_up,
+        # GB only for now: it is the country whose tour candidates fail on
+        # continuity (95 of 103), and the only one with segment tiles staged.
+        # Elevation, surface, safety and services are re-run afterwards
+        # because a bridged route is a different line: the elevation step
+        # re-samples by geometry md5, the others read the extended way_spans.
+        "cmds": [[PY, "pipeline/cycling/bridge_gaps.py", "--countries", "GB",
+                  "--min-km", "100"],
+                 [PY, "pipeline/cycling/enrich_cycling.py", "--steps",
+                  "elevation,surface,safety,services", "--countries", "GB"]],
+        "note": ("splice_cycling joins breaks up to 300 m with a straight "
+                 "line; this routes across the longer ones, the house touring "
+                 "profile first and the ferry-aware trekking profile second, "
+                 "and refuses a route where the routed bridges would be over "
+                 "a quarter of it. The bridges are recorded in cycle_repairs "
+                 "and shipped in the route file's osm.repair block."),
+    },
+    {
+        "key": "cycling_publish",
+        "title": "Cycling: rate, compose tours, ten hard checks, publish",
+        "cadence": "after",
+        "after": ["cycling_enrich", "cycling_bridge"],
+        "writes_app_data": False,
+        "soft": True,
+        "guard": guard_trailslab_up,
+        "cmds": [[PY, "pipeline/cycling/seed_bike_rail.py"],
+                 [PY, "pipeline/cycling/cycle_index.py"],
+                 [PY, "pipeline/cycling/stage_planner.py"],
+                 [PY, "pipeline/cycling/validate_cycling.py"],
+                 [PY, "pipeline/cycling/export_cycling.py"]],
+        "note": ("last in the chain because the rating reads every earlier "
+                 "pass and the stage planner reads the rating. Tours are "
+                 "composed HERE, at build time, never at request time, and "
+                 "each faces ten hard checks before the export writes "
+                 "anything; a tour that fails one is not published and the "
+                 "previous wire stands."),
     },
 
     # ---- backfill / on catalogue growth: MANUAL (--only), coverage-guarded ---- #
@@ -1130,14 +2089,31 @@ TASKS = [
     },
     {
         "key": "climate",
-        "title": "WorldClim climate normals (new dests)",
+        "title": "NASA POWER climate normals (full catalogue)",
         "cadence": "backfill",
         "writes_app_data": True,
         "cmds": [
-            [PY, "pipeline/harvest_climate_worldclim.py"],
+            [PY, "pipeline/harvest_climate_power.py"],
             [PY, "pipeline/apply_climate.py"],
         ],
-        "note": "needs cache/worldclim/*.tif + rasterio; fixed 1970-2000 normals (static).",
+        "note": ("switched from WorldClim 2.1 on 2026-08-26: WorldClim is "
+                 "non-commercial-only and the dossier PDFs redistribute the "
+                 "monthly values. POWER is US-gov open data, one small call "
+                 "per dest, resumable memo in cache/climate_power_raw.json. "
+                 "harvest_climate_worldclim.py stays for reference only."),
+    },
+    {
+        "key": "unesco",
+        "title": "UNESCO World Heritage list refresh",
+        "cadence": "quarterly",
+        "soft": True,
+        "cmds": [
+            [PY, "pipeline/harvest_unesco_whc.py"],
+        ],
+        "note": ("provenance for cache/unesco_whc.json (ledger item 6, closed "
+                 "2026-08-26). Consumers (rating/beauty/features/trips) pick "
+                 "the file up on their own cadences; new inscriptions land in "
+                 "July, so quarterly is enough."),
     },
     {
         "key": "guide",
@@ -1163,6 +2139,81 @@ TASKS = [
         ],
         "guard": guard_cache_covers("cache/wiki_images.json", 0.95),
         "note": "NULL-RISK: patch nulls images for dests absent from the cache - guarded.",
+    },
+    {
+        "key": "hero_audit",
+        "title": "Hero image audit: flag maps/emblems/thumbnails, swap in photographs",
+        "cadence": "monthly",
+        "writes_app_data": True,
+        "soft": True,
+        "cmds": [
+            [PY, "pipeline/audit_hero_images.py", "check"],
+            [PY, "pipeline/audit_hero_images.py", "fix"],
+            [PY, "pipeline/audit_hero_images.py", "patch"],
+        ],
+        "dry_run": hero_audit_dry,
+        "note": ("every new destination arrives with whatever Wikipedia leads its "
+                 "article with, which for a small town is often a locator map or a "
+                 "coat of arms. Monthly because it only has work to do after a "
+                 "catalogue expansion. Writes the same cache/wiki_images.json as "
+                 "`images`, so it MUST run after it. Review "
+                 "data/reports/hero_images_contact_sheet.html before shipping: the "
+                 "swaps are automatic, the taste is not. Then, against a served "
+                 "build: node scripts/verify_hero_images.mjs - it samples the "
+                 "audited heroes and loads each one, which is how the spliced "
+                 "tracking-param thumb URLs were caught."),
+    },
+    {
+        "key": "image_audit",
+        "title": "Cross-layer image audit: every wire, one set of checks",
+        "cadence": "weekly",
+        "writes_app_data": False,
+        "soft": True,
+        "cmds": [
+            [PY, "pipeline/images/fix_url_queries.py"],
+            [PY, "pipeline/images/audit_all.py", "--probe", "20"],
+        ],
+        "note": ("sweep over destinations, features, beaches, lakes, "
+                 "mountains, trips and trails: URL shape, thumb widths, frame "
+                 "fit against the real card CSS, licence/credit/evidence "
+                 "contracts, coverage, country covers, cross-layer duplicate "
+                 "files, plus a sampled HTTP probe (content-type, not status: "
+                 "the SPA fallback answers 200 with HTML). The wash step first "
+                 "strips Commons tracking params (idempotent, byte-identical "
+                 "image); every other finding is only reported. Report at "
+                 "data/reports/image_audit.json, flagged entries eyeballable "
+                 "at data/reports/image_audit_sheet.html; deeper fixes belong "
+                 "to each layer's own harvester, Special:FilePath rot to "
+                 "pipeline/images/fix_special_filepath.py."),
+    },
+    {
+        "key": "events",
+        "title": "Recurring events/festivals (Wikidata) -> public/destinfo",
+        "cadence": "monthly",
+        "writes_app_data": False,
+        "soft": True,
+        "cmds": [
+            [PY, "pipeline/harvest_events.py"],
+            [PY, "pipeline/export_destinfo.py"],
+        ],
+        "note": ("the Explore panel's events section. Full rebuild each run (a "
+                 "few minutes of WDQS queries); export_destinfo ships whatever "
+                 "both destinfo caches hold, so this also republishes parking."),
+    },
+    {
+        "key": "parking",
+        "title": "Best parking per destination (OSM Overpass) -> public/destinfo",
+        "cadence": "quarterly",
+        "writes_app_data": False,
+        "soft": True,
+        "cmds": [
+            [PY, "pipeline/harvest_parking.py"],
+            [PY, "pipeline/export_destinfo.py"],
+        ],
+        "note": ("the Explore panel's where-to-park section. Resumable batch "
+                 "harvest (~150 Overpass queries, 1-2 h); quarterly because car "
+                 "parks move slowly. Delete cache/parking_osm.json to force a "
+                 "from-scratch pass after a catalogue expansion."),
     },
     {
         "key": "activities",
@@ -1235,6 +2286,64 @@ TASKS = [
             [PY, "pipeline/enrich_must_descs.py"],
         ],
         "note": "all additive (never null); heavy Wikipedia sweeps - run after activities.",
+    },
+    {
+        "key": "dossier",
+        "title": "Destination dossiers: the per-destination contract for panel + PDF",
+        "cadence": "monthly",
+        "writes_wire": True,
+        "soft": True,
+        "cmds": [
+            # Sources first: landmarks and city intros are what let a remote
+            # village say anything and stop a gateway describing its airport.
+            [PY, "pipeline/dossier/harvest_landmarks.py"],
+            [PY, "pipeline/dossier/reclassify_landmarks.py"],
+            [PY, "pipeline/dossier/harvest_city_intros.py"],
+            [PY, "pipeline/dossier/fix_airport_listings.py"],
+            [PY, "pipeline/dossier/harvest_event_dates.py"],
+            [PY, "pipeline/export_destinfo.py"],
+            # Research settles BEFORE the build, or a sweep lands one run late:
+            # the sibling fill and the validator have to happen while the build
+            # can still read what they produced. web_sweep is a no-op without a
+            # key, which is why it can sit on the critical path unconditionally.
+            [PY, "pipeline/dossier/web_sweep.py", "--all", "--if-configured"],
+            [PY, "pipeline/dossier/plan_research.py", "--tier", "2", "--copy-siblings"],
+            [PY, "pipeline/dossier/research_do.py"],
+            # Then the build-fill-build sandwich, then the gate.
+            [PY, "pipeline/dossier/build_dossier.py", "--all"],
+            [PY, "pipeline/dossier/fill_licences.py"],
+            [PY, "pipeline/dossier/build_dossier.py", "--all"],
+            [PY, "pipeline/dossier/audit.py", "--strict"],
+        ],
+        "guard": guard_dossier,
+        "dry_run": dossier_audit_dry,
+        "note_landmarks": ("harvest_landmarks.py is the slow one, about three "
+                           "hours single-threaded for the full catalogue. It "
+                           "is resumable and shardable: run four workers with "
+                           "--shard i --of 4 --out cache/dossier/landmarks_s{i}"
+                           ".json and then --merge them, which brings it under "
+                           "an hour. Never point two workers at one --out; each "
+                           "writes the whole cache atomically and they clobber."),
+        "note_sweep": ("things-to-do evidence has two tiers and the UI labels "
+                       "which is which. derive_do.py is a MODULE, imported by "
+                       "build_dossier, so the open tier (>=2 independent "
+                       "institutions) is derived for all 3,038 on every build "
+                       "with nothing to schedule. The web tier (>=3 distinct "
+                       "registrable domains) is web_sweep.py, which needs "
+                       "CARTA_SEARCH_KEY; with --if-configured an unset key is "
+                       "a no-op rather than a failure, so the stage is safe to "
+                       "keep on the critical path and starts working the day a "
+                       "key exists. It only researches destinations with no "
+                       "file yet, so a wave written by hand is never redone. "
+                       "research_do.py validates both and reports coverage."),
+        "note": ("public/dossier/{id}.json: highlights (deduped + retyped), gallery "
+                 "with per-image TASL, intro, things to do, nearby nature join, day "
+                 "trips, parking with nav deeplinks, tips, credits. Runs offline off "
+                 "the shipped wires except fill_licences (Commons extmetadata) - so "
+                 "run AFTER images/activities/features tasks. The build-fill-build "
+                 "sandwich is deliberate: the first pass discovers which images lack "
+                 "TASL, the fill resolves them, the second pass flips ok_print. "
+                 "Unchanged content keeps its content_hash, so re-runs are cheap."),
     },
 ]
 TASK_BY_KEY = {t["key"]: t for t in TASKS}
@@ -1433,6 +2542,7 @@ def main():
            "max_origins": args.max_origins}
     backed_up = False
     ran, skipped, failed, soft_failed = [], [], [], []
+    heartbeat("/start")
     try:
         for t in plan:
             log("\n" + "-" * 70)
@@ -1498,8 +2608,11 @@ def main():
             except OSError:
                 pass
 
-    # Ship, only if a writer ran and none failed.
-    if ran and not failed and any(TASK_BY_KEY[k].get("writes_app_data") for k in ran):
+    # Ship, only if a writer ran and none failed. A wire writer counts: it puts
+    # new files in public/ that only the build copies into dist.
+    if ran and not failed and any(TASK_BY_KEY[k].get("writes_app_data")
+                                  or TASK_BY_KEY[k].get("writes_wire")
+                                  for k in ran):
         if args.ship == "none":
             log("\n--ship none: skipping build. Run `npm run build` in continent-app to ship.")
         elif args.ship == "data":
@@ -1529,6 +2642,7 @@ def main():
     log(f"done. ran={ran or '-'}  skipped={skipped or '-'}  failed={failed or '-'}"
         f"  soft-failed={soft_failed or '-'}")
     log("=" * 70)
+    heartbeat("/fail" if failed else "")
     return 1 if failed else 0
 
 

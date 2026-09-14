@@ -1,0 +1,90 @@
+{
+  "iso2": "LI",
+  "country": "Liechtenstein",
+  "checked_at": "2026-08-17",
+  "beaches": {
+    "wrong": [],
+    "missing": [],
+    "order": [
+      "The file has 0 beaches, which is the correct answer. Liechtenstein is landlocked, the Rhine is a channelised flood-control river with no bathing beach, and the Gaenglesee at Steg is a small reservoir. No beach entry should be manufactured for this country."
+    ]
+  },
+  "mountains": {
+    "wrong": [
+      {
+        "name": "Gauschla",
+        "class": "wrong_country",
+        "why": "Ranked tier 1 #3 for Liechtenstein, but Gauschla (2310 m) is a mountain of the Appenzell Alps north of Sargans in the canton of St. Gallen, SWITZERLAND, on the far side of the Rhine valley. The wire coordinate 47.10127, 9.42309 is about 9 km west of the Liechtenstein border. It should sit in CH.json, not LI.json.",
+        "source_url": "https://www.wikidata.org/wiki/Q5527806"
+      },
+      {
+        "name": "Saroja",
+        "class": "wrong_country",
+        "why": "Ranked tier 1 #2. The Sarojahoehe (1658 m) sits on the Austria/Liechtenstein border and German Wikipedia is explicit that the summit is on the Austrian side: 'Die Erhebung befindet sich auf Vorarlberger Seite im Flurstueck Piramida'. It is also a minor grassy ridge bump with no independent visitor draw, placed second in the country ahead of every 2000 m summit Liechtenstein actually markets.",
+        "source_url": "https://de.wikipedia.org/wiki/Sarojah%C3%B6he"
+      },
+      {
+        "name": "Kuhgrat",
+        "class": "duplicate_of:Drei Schwestern",
+        "why": "Tier 2 #5, 2.6 km from the tier 1 #1 entry. English Wikipedia: 'Kuhgrat is the highest of a group of three peaks known as the Drei Schwestern'. It is the same massif and the same hike (Fuerstensteig), and the wire even reuses the identical photo file (Fuerstensteig, Raetikon) for Saroja and Kuhgrat.",
+        "source_url": "https://www.wikidata.org/wiki/Q4244296"
+      }
+    ],
+    "missing": [
+      {
+        "name": "Vorder Grauspitz (Grauspitz)",
+        "qid": "Q665000",
+        "lat": 47.05278,
+        "lon": 9.58194,
+        "why": "2599 m, the highest mountain in Liechtenstein, on the border with Graubuenden. A Mountains tab for Liechtenstein without its own high point is not credible. It is 10.8 km from the Vaduz anchor, i.e. just outside the roughly 10 km catalogue-proximity cap that the snapshot enforces.",
+        "source_url": "https://www.wikidata.org/wiki/Q665000",
+        "verified": true
+      },
+      {
+        "name": "Augstenberg (Schafaelpler)",
+        "qid": "Q4072361",
+        "lat": 47.08239,
+        "lon": 9.61011,
+        "why": "2358 m, the second-highest Liechtenstein summit and the high point of the Galina group directly above Malbun, the country's only mountain resort. It is 9.4 km from Vaduz, INSIDE the proximity cap, so its absence is a gap in the candidate set itself and not a radius artefact.",
+        "source_url": "https://de.wikipedia.org/wiki/Augstenberg_(Liechtenstein)",
+        "verified": true
+      },
+      {
+        "name": "Naafkopf",
+        "qid": "Q666531",
+        "lat": 47.06071,
+        "lon": 9.60715,
+        "why": "2570 m, the Austria/Liechtenstein/Switzerland tripoint marked with the three-sided summit cross. One of the two signature high walks in the country alongside the Fuerstensteig. 11.1 km from Vaduz.",
+        "source_url": "https://www.wikidata.org/wiki/Q666531",
+        "verified": true
+      },
+      {
+        "name": "Falknis",
+        "qid": "Q75570",
+        "lat": 47.05053,
+        "lon": 9.56453,
+        "why": "2562 m on the Liechtenstein/Graubuenden border, the dominant pyramid at the southern end of the country. 10.6 km from Vaduz.",
+        "source_url": "https://www.wikidata.org/wiki/Q75570",
+        "verified": true
+      },
+      {
+        "name": "Rappenstein",
+        "qid": "Q4390062",
+        "lat": 47.07639,
+        "lon": 9.56667,
+        "why": "2222 m and, unlike most of the list, lies entirely inside Liechtenstein rather than on a border. 8.0 km from Vaduz, inside the proximity cap, and still absent.",
+        "source_url": "https://www.wikidata.org/wiki/Q4390062",
+        "verified": true
+      }
+    ],
+    "order": [
+      "Drei Schwestern at #1 is correct and I would not change it: it is the country's emblematic ridge and the Fuerstensteig is its best-known walk.",
+      "Saroja at #2 and Gauschla at #3 are both indefensible: one is an Austrian ridge bump, the other is Swiss. Removing them leaves only Drei Schwestern and Galinakopf in tier 1.",
+      "Galinakopf (2198 m, AT/LI border, Q642396) at #4 is a fair entry and would be a reasonable #3 after the corrections.",
+      "Nothing in tier 1 exceeds 2200 m in a country whose entire mountain identity is the 2300-2600 m Raetikon crest above Malbun. The correct tier 1 is roughly: Drei Schwestern, Vorder Grauspitz, Naafkopf, Augstenberg, Galinakopf, Falknis."
+    ]
+  },
+  "counts_verdict": "Beaches 0 is right. Mountains: 11 candidates with only 4 in tier 1 is too thin a shelf for a country with at least eight named 2000 m summits, and it is the wrong four: three of the four tier-1 rows are either foreign or minor. A country this small should carry a tier 1 of 5 to 6 real Raetikon summits and can safely leave tier 2 short.",
+  "top_pick_verdict": "top_mountain = 'Drei Schwestern'. Yes, keep it. It is the image Liechtenstein Marketing itself leads with and it is genuinely on the Liechtenstein border, unlike the #2 and #3 rows. Vorder Grauspitz would be the only serious alternative and it is a less recognisable card.",
+  "notes": "Structural causes visible in this file. (1) A hard catalogue-proximity cap of roughly 10 km: the maximum near.km in LI.json is 8.7, and Grauspitz (10.8 km), Naafkopf (11.1 km) and Falknis (10.6 km) all fall just outside it. Every LI feature is anchored to Vaduz because Malbun and Triesenberg are not destinations in the catalogue, so the whole east of the country is unreachable. (2) The cap does not explain everything: Augstenberg (9.4 km) and Rappenstein (8.0 km) are inside it and still absent, so the candidate harvest itself is missing peaks. (3) LI.json carries no elevation_m, no water and no designations fields on any row, so there is no elevation signal available to demote ridge bumps like Saroja. (4) Image reuse: Saroja (#2) and Kuhgrat (#5) share the identical Wikimedia file, which is a reliable duplicate signal the pipeline is not using."
+}

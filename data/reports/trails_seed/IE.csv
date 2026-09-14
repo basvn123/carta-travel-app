@@ -1,0 +1,16 @@
+rank,curation_rank,title,ref,network,distance_km,popularity,pageviews_day,sitelinks,anchors,quality_score,portal_agreement,status,family_members,trip_id,osm_relation
+1,73.56,The Royal Canal Way,RCW,nwn,147.8,0.587,0,0,"Dublin (2785/day, 1278 m); Croke Park (637/day, 145 m); Aviva Stadium (554/day, 1629 m)",96,,needs_review,1,80459,3466963
+2,71.31,National Famine Way,,nwn,169.3,0.587,0,0,"Dublin (2785/day, 673 m); Croke Park (637/day, 145 m); Aviva Stadium (554/day, 1613 m)",87,,needs_review,1,80592,12204775
+3,71.01,Wicklow Way,WW,nwn,128.2,0.514,29,10,"Glendalough Round Tower (179/day, 156 m); Glendalough Cathedral (179/day, 282 m); Glendalough (Wicklow) (179/day, 101 m)",96,,needs_review,1,80253,2740
+4,67.79,The Dingle Way,DW,nwn,181.3,0.423,11,7,"Dingle (211/day, 91 m); Riasc Monastic Settlement (93/day, 846 m); Gallarus Oratory (41/day, 1395 m)",96,,needs_review,1,80254,21664
+5,66.98,International Appalachian Trail Ulster-Ireland,,iwn,4.8,0.357,0,0,"Slieve League (80/day, 93 m); Slieve League (80/day, 39 m); Slieve League (80/day, 94 m)",95,,needs_review,1,81109,20065641
+6,66.97,European long distance path E8 - part Ireland,E8,iwn,605.7,0.263,19,13,"Aviva Stadium (554/day, 160 m); Battle of Clontarf (210/day, 1438 m); Leinster House (179/day, 1712 m)",95,,needs_review,1,80457,3070643
+7,65.51,Boyne Valley Camino,,rwn,22.7,0.508,0,0,"Battle of the Boyne (817/day, 223 m); The Boyne Obelisk (134/day, 17 m)",100,,needs_review,1,81044,19204847
+8,65.03,Causeway Coast Way,,rwn,49.6,0.522,0,0,"Giant's Causeway (1026/day, 195 m); Giant's Causeway (1026/day, 194 m); Portrush (Causeway Coast) (212/day, 138 m)",96,,needs_review,1,80287,1085994
+9,64.33,Miners' Way,MRW,rwn,17.2,0.502,0,0,"Glendalough (179/day, 592 m); Glendalough Round Tower (179/day, 557 m); Glendalough Cathedral (179/day, 395 m)",96,,needs_review,1,80468,4677070
+10,63.97,Sligo Way,,nwn,80.1,0.285,2,4,,100,,needs_review,1,80336,1686070
+11,63.68,The Barrow Way,BW,nwn,116.3,0.305,3,4,,96,,needs_review,1,80311,1330012
+12,62.46,Dublin Mountains Way,DMW,nwn,41.1,0.27,7,4,,96,,needs_review,1,80257,286707
+13,62.28,The Columban Way,,iwn,19.3,0.13,0,1,,95,,needs_review,1,81045,19215390
+14,61.31,Lagan Towpath,,rwn,19.5,0.609,0,0,"Belfast (2055/day, 892 m); Windsor Park (243/day, 1670 m); Titanic Belfast (173/day, 1395 m)",69,,needs_review,2,80299,1116068
+15,61.31,Croagh Patrick Heritage Trail,CPHT,nwn,59.9,0.237,1,3,"Aghagower Round Tower (46/day, 30 m)",96,,needs_review,1,80497,6997300

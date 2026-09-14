@@ -1,0 +1,12 @@
+{
+ "layer": "lakes",
+ "countries": {
+  "GB": {
+   "gap": 4,
+   "name_matched": 1,
+   "resolved": 1
+  }
+ },
+ "filled": 1,
+ "examined": 4
+}

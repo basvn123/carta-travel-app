@@ -432,8 +432,31 @@ class Travelpayouts(Collector):
             records.append({"org": org, "dst": dst, "d": day, "eur": cents,
                             "link": link, "obs": today_days, "exp": expires})
 
+        # ACCUMULATIVE staging: keep prior unexpired quotes for origins this
+        # run did not touch, so the pull can run in origin chunks (a desktop
+        # machine sleeps; a 5h single pass dies, four 80min passes land).
+        # Origins in this run are fully replaced by their fresh quotes.
+        run_set = set(origins)
+        kept_prev = 0
+        all_origins = set(origins)
+        if DERIVED_PATH.exists():
+            try:
+                prev = json.loads(DERIVED_PATH.read_text(encoding="utf-8"))
+            except (OSError, ValueError):
+                prev = None
+            for r in ((prev or {}).get("fares") or []):
+                if (r.get("org") not in run_set
+                        and isinstance(r.get("exp"), int) and r["exp"] >= today_days):
+                    records.append(r)
+                    kept_prev += 1
+                    all_origins.add(r["org"])
+        records.sort(key=lambda r: (r["org"], r["dst"], r["d"]))
+        if kept_prev:
+            print(f"    [{self.name}] kept {kept_prev} unexpired quotes from "
+                  f"origins outside this run")
+
         DERIVED_PATH.parent.mkdir(parents=True, exist_ok=True)
-        staged = {"meta": {"generated_at": utcnow(), "origins": origins},
+        staged = {"meta": {"generated_at": utcnow(), "origins": sorted(all_origins)},
                   "fares": records}
         DERIVED_PATH.write_text(
             json.dumps(staged, ensure_ascii=False, separators=(",", ":")),

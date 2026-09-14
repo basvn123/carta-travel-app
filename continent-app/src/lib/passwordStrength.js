@@ -59,3 +59,36 @@ export function passwordStrength(pw) {
 
 /** The floor the form enforces. Eight, per current guidance, not six. */
 export const MIN_PASSWORD_LENGTH = 8;
+
+/**
+ * The composition rules the change-password form checks off as you type.
+ *
+ * These are a floor, not the measurement. The entropy score above is still the
+ * honest signal, and it is worth saying plainly that composition rules are a
+ * weaker tool than length: NIST SP 800-63B advises against imposing them
+ * precisely because they push people towards Password1! rather than towards a
+ * long phrase. They are here because the product asked for a visible, learnable
+ * checklist, and a checklist people can satisfy deliberately beats a bar that
+ * moves for reasons they cannot see. The meter stays alongside it, so a
+ * four-word passphrase that clears every rule still reads as strong and a
+ * rule-clearing eight-character mangle still reads as weak.
+ *
+ * "Symbol" is anything that is not a letter or a digit, which counts a space
+ * and keeps accented letters on the letter side of the line.
+ */
+export const PASSWORD_RULES = [
+  { key: 'len', test: (pw) => pw.length >= MIN_PASSWORD_LENGTH },
+  { key: 'upper', test: (pw) => /[A-Z]/.test(pw) },
+  { key: 'number', test: (pw) => /[0-9]/.test(pw) },
+  { key: 'symbol', test: (pw) => /[^\p{L}\p{N}]/u.test(pw) },
+];
+
+/** Each rule with whether this password meets it, in checklist order. */
+export function checkPasswordRules(pw) {
+  return PASSWORD_RULES.map((r) => ({ key: r.key, met: r.test(pw || '') }));
+}
+
+/** Every rule met. What the submit button gates on. */
+export function passwordMeetsRules(pw) {
+  return PASSWORD_RULES.every((r) => r.test(pw || ''));
+}

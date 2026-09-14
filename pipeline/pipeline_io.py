@@ -20,6 +20,7 @@ Usage:
     atomic_write_json(MASTER, data)
 """
 import json
+import time
 import os
 
 
@@ -38,7 +39,34 @@ def atomic_write_json(path, data, *, indent=1, ensure_ascii=False,
                   separators=separators)
         f.flush()
         os.fsync(f.fileno())
-    os.replace(tmp, path)
+    _replace_with_retry(tmp, path)
+
+
+# On Windows os.replace raises PermissionError (WinError 5) whenever ANY other
+# handle is open on the target: a second pipeline script reading it, an editor,
+# or the virus scanner that opens every file the moment it is written. It is
+# transient and clears in seconds, but it aborted a four-hour POI harvest on
+# 2026-08-17 at the very last write, leaving the finished work stranded in the
+# .tmp file. Retrying costs nothing and turns a lost run into a pause.
+_REPLACE_TRIES = 6
+_REPLACE_BACKOFF_S = 1.5
+
+
+def _replace_with_retry(tmp, path):
+    last = None
+    for attempt in range(_REPLACE_TRIES):
+        try:
+            os.replace(tmp, path)
+            return
+        except PermissionError as e:          # Windows: target handle is open
+            last = e
+            time.sleep(_REPLACE_BACKOFF_S * (attempt + 1))
+    # Out of retries. The temp file is complete and valid, so say exactly where
+    # it is: the caller's work is recoverable with a single move.
+    raise PermissionError(
+        f"could not replace {path} after {_REPLACE_TRIES} attempts "
+        f"({last}). The finished data is intact at {tmp} - close whatever "
+        f"holds the target and move it into place.")
 
 
 def load_json(path, default=None):

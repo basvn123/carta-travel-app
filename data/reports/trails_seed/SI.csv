@@ -1,0 +1,16 @@
+rank,curation_rank,title,ref,network,distance_km,popularity,pageviews_day,sitelinks,anchors,quality_score,portal_agreement,status,family_members,trip_id,osm_relation
+1,79.87,Via Alpina Stage 5: Predjama - Črni vrh,,iwn,20.5,0.596,0,0,"Predjama Castle (151/day, 191 m); Bukovje (128/day, 790 m); Gorenje (128/day, 1346 m)",100,,needs_review,8,66129,20014826
+2,78.46,Alpe Adria Trail E25,AATE25,iwn,22.3,0.592,0,0,"Soča Valley (Bovec) (80/day, 44 m); Bovec (30/day, 9 m)",95,,needs_review,8,65258,13871093
+3,78.25,Via Alpina Red R15,VA-R15,iwn,16.9,0.55,32,0,"Peč (76/day, 1 m); Letalnica Bratov Gorišek (40/day, 194 m); Planica (33/day, 287 m)",100,,published,6,12233,2716464
+4,77.58,European long distance path E12 - part Slovenia,E12,iwn,46.1,0.559,0,0,"Piran (145/day, 26 m); Piran Town Hall (145/day, 64 m); St.Peter Church (145/day, 75 m)",96,,needs_review,1,65060,8537199
+5,74.0,Jakobova pot (var.),,iwn,7.9,0.429,0,0,"Liplje (128/day, 897 m); Planina (128/day, 1423 m)",100,,needs_review,2,65594,17399909
+6,73.12,Via Dinarica,,iwn,161.9,0.439,0,0,"Predjama Castle (151/day, 191 m); Bukovje (128/day, 15 m); Planina (128/day, 137 m)",95,,needs_review,1,66288,20973970
+7,71.91,Via Alpina Purple A1,VA-A1,iwn,9.4,0.397,0,0,"Julian Alps (150/day, 150 m)",96,,needs_review,1,65195,12506428
+8,68.7,Jakobova pot – Maribor,,iwn,40.1,0.313,30,0,"Jewish Tower (280/day, 230 m); Maribor (280/day, 1072 m); Maribor Cemetery (280/day, 1623 m)",95,,needs_review,1,64990,5854006
+9,68.56,Zaka - Šport hotel Pokljuka,,nwn,13.6,0.452,0,0,"Lake Bled (346/day, 946 m); Bled Island (346/day, 647 m); Bled Castle (61/day, 1655 m)",95,,needs_review,1,65233,13406351
+10,68.08,011 ~ Pot kurirjev in vezistov NOV Slovenije,TV-011,nwn,5.0,0.438,0,0,"Maribor Studenci (280/day, 941 m); Maribor (280/day, 6 m); Column of Saint Florian (280/day, 14 m)",95,,needs_review,1,65344,15624185
+11,67.36,Jakobova pot – Prekmursko-Štajerska veja,,iwn,268.7,0.542,0,0,"Ilirija swimming complex (1397/day, 341 m); Ljubljana (1397/day, 828 m); Ljubljana ZOO (1397/day, 1641 m)",57.5,,draft,1,65309,14769914
+12,67.36,Jakobova pot Slovenija,,iwn,732.1,0.542,0,0,"Ilirija swimming complex (1397/day, 341 m); Ljubljana (1397/day, 828 m); Ljubljana (1397/day, 16 m)",57.5,,draft,1,65310,14781298
+13,67.36,Jakobova pot – Primorska veja,,iwn,110.3,0.542,0,0,"Ilirija swimming complex (1397/day, 1228 m); Ljubljana (1397/day, 1369 m); Ljubljana (1397/day, 511 m)",57.5,,draft,1,65592,17392204
+14,67.36,Jakobova pot – Dolenjska veja,,iwn,154.4,0.542,0,0,"Ljubljana (1397/day, 96 m); Ljubljana (1397/day, 831 m); Ilirija swimming complex (1397/day, 862 m)",57.5,,draft,1,65418,16145504
+15,67.36,Jakobova pot – Gorenjska veja,,iwn,119.8,0.542,0,0,"Ljubljana (1397/day, 16 m); Ilirija swimming complex (1397/day, 349 m); Ljubljana ZOO (1397/day, 1641 m)",57.5,,draft,1,65666,17653320

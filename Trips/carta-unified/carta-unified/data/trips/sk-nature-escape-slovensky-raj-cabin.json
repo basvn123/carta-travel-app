@@ -1,0 +1,295 @@
+{
+  "id": "sk-nature-escape-slovensky-raj-cabin",
+  "sourceId": "slovakia-slovensky-raj-cabin-nature",
+  "slug": "sk-nature-escape-slovensky-raj-cabin",
+  "title": "Ladders in the Waterfall: A Cabin Week in Slovenský raj and on Muránska planina",
+  "country": "Slovakia",
+  "countryCode": "SK",
+  "countries": [
+    {
+      "name": "Slovakia",
+      "code": "SK"
+    }
+  ],
+  "isMultiCountry": false,
+  "region": "Eastern & Southeastern Europe",
+  "regionKey": "eastern-southeastern",
+  "subRegion": "Slovenský raj National Park and Muránska planina",
+  "tripType": "Nature Escapes & Cabin Stays",
+  "tripTypeId": 9,
+  "tripTypeSlug": "nature-escape",
+  "durationDays": 7,
+  "bestPeriod": {
+    "months": [
+      6,
+      7,
+      9
+    ],
+    "monthNames": [
+      "June",
+      "July",
+      "September"
+    ],
+    "window": "the first half of September — gorges open, water low, the summer crowds gone from the Suchá Belá ladders",
+    "note": null,
+    "avoid": "November–April, when the ladder gorges are closed outright, and any day within 48 hours of heavy rain",
+    "raw": null
+  },
+  "budgetTier": "€",
+  "budgetTierRange": [
+    1,
+    1
+  ],
+  "budgetTierRaw": "€",
+  "budget": {
+    "currency": "EUR",
+    "totalEur": {
+      "low": 565,
+      "high": 975
+    },
+    "totalNote": "€565–€975",
+    "breakdown": {
+      "accommodation": {
+        "lowEur": 245,
+        "highEur": 455,
+        "note": "€245–€455 (€35–€65/night, chata and penzión)"
+      },
+      "food": {
+        "lowEur": 140,
+        "highEur": 210,
+        "note": "€140–€210 (€20–€30/day; self-cater at the cabin, eat out in Hrabušice)"
+      },
+      "transport": {
+        "lowEur": 120,
+        "highEur": 200,
+        "note": "€120–€200 (rental car — essential for Muráň)"
+      },
+      "activities": {
+        "lowEur": 60,
+        "highEur": 110,
+        "note": "€60–€110 (NP entry, Dobšinská ice cave, Domica)"
+      }
+    },
+    "perDayEur": {
+      "low": 81,
+      "high": 139
+    }
+  },
+  "profile": {
+    "difficulty": 3,
+    "difficultyLabel": "Active",
+    "difficultyNote": "Moderate",
+    "fitnessLevel": "Moderate",
+    "crowdLevel": null,
+    "familyFriendly": null,
+    "carRequired": null
+  },
+  "basecamps": [
+    "Hrabušice",
+    "Podlesok",
+    "Muráň"
+  ],
+  "gatewayAirport": "Poprad-Tatry (TAT), 35 km to Hrabušice; Košice (KSC) 95 km. Rail to Spišská Nová Ves, then a regional bus to Hrabušice-Podlesok — but a car is close to essential for the Muráň half.",
+  "gatewayAirportCode": "TAT",
+  "languages": [
+    "Slovak"
+  ],
+  "currency": "Euro (EUR)",
+  "emergencyNumber": "112 (mountain rescue HZS: 18 300)",
+  "coordinates": {
+    "lat": 48.1482,
+    "lon": 17.1067,
+    "precision": "country",
+    "matchedPlace": "Bratislava",
+    "source": "country capital fallback"
+  },
+  "tags": [
+    "gorges",
+    "ladders",
+    "karst",
+    "ice-cave",
+    "brown-bear",
+    "cabin",
+    "off-grid",
+    "mushrooms"
+  ],
+  "summary": "There is nowhere else in Europe where the official trail goes straight up the inside of a waterfall on bolted iron ladders, one way only, with the water hitting your boots. Slovenský raj is a small national park of…",
+  "summaryGenerated": false,
+  "hook": "There is nowhere else in Europe where the official trail goes straight up the inside of a waterfall on bolted iron ladders, one way only, with the water hitting your boots. Slovenský raj is a small national park of deep limestone gorges and it is genuinely unlike anything in the Alps or the Carpathians. Add a karst plateau with a semi-wild horse herd, an ice cave that only opens for a few months, and a log cabin with a wood stove. Wet feet guaranteed.",
+  "snapshot": {
+    "Country": "Slovakia",
+    "Trip type": "Nature Escapes & Cabin Stays",
+    "Duration": "7 days",
+    "Best period": "June–September; ladder gorges closed in winter",
+    "Budget tier": "€",
+    "Difficulty": "Moderate",
+    "Start / End": "Poprad → Poprad (loop, ~260 km driving)",
+    "Getting there": "Poprad-Tatry (TAT), 35 km to Hrabušice; Košice (KSC) 95 km. Rail to Spišská Nová Ves, then a regional bus to Hrabušice-Podlesok — but a car is close to essential for the Muráň half."
+  },
+  "itinerary": [
+    {
+      "day": 1,
+      "title": "Arrival and the easy viewpoint",
+      "morning": "Land at Poprad, pick up the car, shop properly in Spišská Nová Ves — there is no supermarket in Hrabušice worth the name — and drive to the cabin.",
+      "afternoon": "Walk in gently: from **Čingov**, the green then yellow trail to **Tomášovský výhľad**, a limestone prow 145 m above the Hornád with the whole gorge below. About 90 minutes round trip, and popular with climbers on the wall beneath.",
+      "evening": "Light the stove, cook, and read the park map. Note where the one-way arrows are — you will plan every day around them.",
+      "dayStats": "Poprad → Hrabušice, 35 km",
+      "sleep": null
+    },
+    {
+      "day": 2,
+      "title": "Suchá Belá, upward only",
+      "morning": "The classic. **Suchá Belá** from Podlesok is a stepped gorge climbed on **iron ladders, chains and log stemples** bolted directly into the waterfalls, including the 20 m Misové vodopády section. It is **one-way, ascent only, and legally enforced** — the park's visitor regulations, not a suggestion. Start by 08:00; a queue on a ladder is the worst place in the park to be.",
+      "afternoon": "Top out on the plateau at Pod Vtáčím hrbom, then take the green trail round and descend the forest road back to Podlesok. Three to four hours total.",
+      "evening": "Dry the boots by the stove. Everything you wore is wet — this is normal and unavoidable.",
+      "dayStats": "7 km / +400 m",
+      "sleep": null
+    },
+    {
+      "day": 3,
+      "title": "Piecky and Kláštorisko",
+      "morning": "**Piecky**, the neighbouring gorge, also ascent-only: longer, greener, less crowded than Suchá Belá and with a fine ladder cascade at Kaplnka.",
+      "afternoon": "Traverse the plateau to **Kláštorisko** — the ruin of the only Carthusian monastery in the Spiš, founded after the Mongol invasion of 1241 and reachable **only on foot**. There is a chata serving soup and goulash [VERIFY: current Kláštorisko chata opening hours].",
+      "evening": "Descend the Kláštorisko rokliny path to Podlesok. Beer, and an early night.",
+      "dayStats": "11 km / +560 m",
+      "sleep": null
+    },
+    {
+      "day": 4,
+      "title": "Prielom Hornádu, the water route",
+      "morning": "The **Prielom Hornádu** gorge, from Čingov downstream to Letanovský mlyn: chains and steel catwalks bolted to the cliff **over the river itself**, plus wading sections at low water. This one runs in both directions but is best done west to east.",
+      "afternoon": "Climb out at Kláštorisko or continue to Podlesok. Watch the river gauge — after heavy rain the Hornád catwalks flood and the route is closed.",
+      "evening": "Drive fifteen minutes to Hrabušice for *bryndzové halušky* somewhere you do not have to wash up.",
+      "dayStats": "12 km / +250 m",
+      "sleep": null
+    },
+    {
+      "day": 5,
+      "title": "The ice cave and Sokolia dolina",
+      "morning": "**Dobšinská ľadová jaskyňa**, UNESCO-listed and one of the most important ice caves in the world — 110,000 m³ of ice, an ice floor up to 26 m thick. The season is short, typically mid-May to end September, tours are quota-limited and small, and the walk up from the car park is a stiff 20 minutes. **Reserve online in advance** [VERIFY: 2027 season dates, tour times and ticket price].",
+      "afternoon": "From Biele Vody, **Sokolia dolina** — the wildest of the gorges, ascent-only, with the park's highest waterfall at around 75 m climbed on a long vertical ladder chain. Not for anyone unhappy with exposure.",
+      "evening": "Relocate east to a cabin under **Muránska planina**, around Muráň or Predná Hora.",
+      "dayStats": "transfer, 45 km",
+      "sleep": null
+    },
+    {
+      "day": 6,
+      "title": "The plateau and the horses",
+      "morning": "Walk up from Muráň village to the ruin of **Muránsky hrad** on its limestone spur, then out onto the karst plateau — dolines, shakeholes, dry valleys and beech forest, with almost no water on the surface.",
+      "afternoon": "Cross to **Veľká Lúka**, the big plateau meadow at around 1,400 m, and look for the **Norik muránsky** — the semi-wild horse herd bred here since 1950 and left to range on the plateau. They are not tame; keep 50 m and never feed them.",
+      "evening": "Cabin cooking. This is the quietest night of the week; the plateau has no light pollution to speak of.",
+      "dayStats": "14 km / +500 m",
+      "sleep": null
+    },
+    {
+      "day": 7,
+      "title": "Karst caves and out",
+      "morning": "South-east into the **Slovak Karst** to **Domica**, a UNESCO cave on the Hungarian border, continuous with Baradla on the other side; the tour includes a boat section on the Styx when water levels allow [VERIFY: current Domica boat-section availability and ticket price].",
+      "afternoon": "Drive back via Rožňava and the Slovenský raj southern rim. If time allows, stop at Dedinky reservoir.",
+      "evening": "Return the car at Poprad. Eat *pirohy*, and count the bruises.",
+      "dayStats": "Muráň → Poprad, 120 km",
+      "sleep": null
+    }
+  ],
+  "accommodationStrategy": [
+    {
+      "rank": 1,
+      "name": "Chata Sova / Podlesok-area log cabin",
+      "style": "self-catering chata",
+      "location": "Hrabušice",
+      "description": "a ten-minute walk or two-minute drive from the Podlesok road-head, so you are at the foot of Suchá Belá before the day-trippers arrive from Poprad. Wood stove, drying space, kitchen — the three things that matter after a gorge day.",
+      "booking": "direct or via a Slovak cabin portal (chalupy.sk), 6–10 weeks ahead for July–August; 3 weeks in September [VERIFY: current nightly rate].",
+      "priceNote": null
+    },
+    {
+      "rank": 2,
+      "name": "Chata Kláštorisko",
+      "style": "walk-in mountain chata",
+      "location": "Kláštorisko, inside the park",
+      "description": "the only bed inside the park interior, reached only on foot, which gives you the Prielom Hornádu and the plateau trails with nobody on them at 07:00. Basic, communal, cash-friendly.",
+      "booking": "direct by phone/email, well ahead for summer weekends; carry cash and a sleeping bag liner.",
+      "priceNote": null
+    },
+    {
+      "rank": 3,
+      "name": "Penzión Zlatá Podkova",
+      "style": "village guesthouse",
+      "location": "Muráň",
+      "description": "at the foot of the plateau road-head for Muránsky hrad and Veľká Lúka, with parking, half-board and hosts who know which forest tracks are open and where the Norik herd has been grazing this week.",
+      "booking": "direct, 2–3 weeks ahead.",
+      "priceNote": null
+    }
+  ],
+  "logistics": {
+    "connectivity": "Nothing inside the gorges — the walls are 100 m high and the signal is gone the moment you enter. Usable 4G at Podlesok, Čingov, Hrabušice and Muráň village; patchy on Veľká Lúka. Download offline maps before you leave the cabin.",
+    "emergency": "**112**, and mountain rescue **HZS 18 300** (the HZS covers Slovenský raj and Muránska planina, not just the Tatras). **Slovak mountain rescue is chargeable to the rescued person** — a ladder-gorge extraction is not cheap. Buy mountain-rescue insurance; it costs a few euros a day.",
+    "weather": "The gorges are the hazard. Heavy rain raises the streams within hours, makes the stemples greasy and closes the Hornád catwalks; the park closes routes at short notice and posts it at the road-head kiosks. Check before you drive, not after you park.",
+    "bookingWindows": "Cabins 6–10 weeks for summer, 3 weeks in September. The **Dobšinská ice cave is quota-limited and books out** — reserve as soon as the season's slots open.",
+    "money": "Euro. Carry €100–€150 cash: the NP entry kiosks, the Kláštorisko chata and some village guesthouses are cash-preferred. ATMs in Hrabušice, Spišská Nová Ves and Revúca.",
+    "transportRules": "Motorway sections need the plate-registered **e-vignette** (eznamka.sk). **Winter tyres are legally required in winter conditions.** Blood alcohol limit is **0.0‰**. Forest roads on Muránska planina are closed to private vehicles — do not drive past a barrier.",
+    "permits": "Slovak national park rules apply and are enforced: **no wild camping, no open fires, dogs on a lead at all times, bivouac only at designated spots**, marked trails only, and **the one-way gorges are one-way by law**. The ladder gorges close for winter — typically **1 November to 15 June** [VERIFY: current seasonal closure dates for the roklinas]. No mushroom or plant collecting inside the park. No drones.",
+    "health": null,
+    "gettingThere": null,
+    "other": []
+  },
+  "proTips": [
+    "Understand what one-way means before you plan. Suchá Belá, Piecky, Sokolia dolina and Kyseľ are **ascent-only**: every gorge day is therefore a loop, climbing the gorge and walking back over the plateau on a forest road. Budget the return leg — it is often longer than the gorge.",
+    "Start at 08:00, always. Ladders are single-file. Ninety minutes' head start on the Poprad day-trippers is the difference between climbing and queueing.",
+    "Wear shoes you accept will be soaked, and bring a second pair. Trail runners with good grip beat stiff boots on wet stemples, but nothing keeps your feet dry.",
+    "Do **Kyseľ** if it is open — it was devastated by fire in 1976 and reopened after long restoration, and it is the least crowded of the big four [VERIFY: current Kyseľ access and whether a guide is required].",
+    "Sleep at Kláštorisko one night. Walking the Prielom Hornádu from the inside out, at dawn, is a different park entirely.",
+    "Pick mushrooms outside the boundary, in the state forest above Stratená or towards Dobšiná — and take them to a village *penzión*, which will usually cook them for you.",
+    "Make noise. Slovak walkers clap or talk loudly on blind forest corners; it is not superstition, it is bear management, and the Muráň forests are dense."
+  ],
+  "typeSpecific": {
+    "raw": {
+      "Access": "Three road-heads serve the park: **Podlesok** (above Hrabušice — the main northern entry, big car park, campsite, the foot of Suchá Belá), **Čingov** (north-east, for Prielom Hornádu and Tomášovský výhľad) and **Dedinky/Biele Vody** in the south for Zejmarská roklina. All three are on sealed public road; no 4x4 needed. On **Muránska planina** the tarmac ends at Muráň and Predná Hora, and the plateau tracks beyond are forest roads — legally closed to private cars, walked or cycled only. Kláštorisko has **no road at all**: it is reachable on foot, minimum 50 minutes uphill from Podlesok.",
+      "Isolation rating: 3 of 5": "Villages and a bus stop within 5 km of every cabin, but no shop in Podlesok itself, no signal in most of the gorges, and on the Muráň plateau you can walk four hours without meeting anyone.",
+      "Entry fee": "Slovenský raj NP charges a day entry fee collected at the road-head kiosks — roughly €2–€3 per adult per day, with multi-day tickets [VERIFY: current 2026 NP entry tariff]. Cash is safest.",
+      "Foraging": "Slovakia has a real national mushrooming culture — *hríby* (ceps), *kuriatka* (chanterelles), *bedle* (parasols). The personal-use allowance under Slovak law is commonly taken as **up to 10 kg of fresh fungi per person per day**, for own consumption, on ordinary forest land [VERIFY: exact current statutory allowance]. **Inside the national park, collecting is banned outright.** Pick in the state forest outside the boundary, and never sell.",
+      "Wildlife protocol — brown bear": "The Low Tatras–Muráň population is substantial and Slovakia has had fatal encounters, including a death in 2024. Practically: make noise on blind forest bends, never walk at dusk or dawn alone, keep dogs leashed, do not run, do not climb a tree. If a bear stands or huffs, back away sideways while talking calmly. **Never get between a sow and cubs.** Store all food inside the cabin, not on the porch; bins at Podlesok are bear-latched for a reason. Bear spray is not routinely sold in Slovakia — do not count on it.",
+      "Off-grid utilities": "Rented *chaty* around Hrabušice, Stratená and Muráň typically run on: mains electricity but often only a wood stove for heat, a well or spring-fed tank rather than town water (boil or treat), bottled propane for cooking, and a dry or septic WC. Wi-Fi is rare and mobile data is the fallback. Bring a headtorch and buy firewood locally, by the crate."
+    },
+    "surface": null,
+    "distanceKm": null,
+    "elevationM": null,
+    "verticalM": null,
+    "technicalRating": null,
+    "transitPass": null,
+    "hutBooking": null,
+    "liftNetwork": null,
+    "snowReliability": null,
+    "windConditions": null,
+    "gpxReady": null,
+    "bookingTimeline": null,
+    "audience": null
+  },
+  "packingNotes": [],
+  "whatCouldGoWrong": [],
+  "sources": {
+    "verified": null,
+    "confidenceNotes": "- Verified: Slovenský raj's gorges are climbed on fixed ladders, chains and log stemples and the principal roklinas are legally one-way (ascent only); Kláštorisko is a Carthusian monastery ruin reachable only on foot; Dobšinská ľadová jaskyňa is UNESCO-listed with a short, quota-limited season; Domica is a UNESCO Slovak Karst cave continuous with Hungary's Baradla; the Norik muránsky semi-wild horse herd on Muránska planina; Slovak national park rules banning wild camping, fires and off-lead dogs; Slovakia's genuine mushroom-foraging culture with a park-wide collecting ban; a real brown-bear population with fatal encounters recorded; emergency 112, HZS 18 300, and Slovak mountain rescue chargeable without insurance; the euro; 0.0‰ alcohol limit; winter tyres legally required in winter conditions. - `[VERIFY]` items in this file: 8 (see inline markers above) - Last reviewed: 2026-09-02"
+  },
+  "verifyFlags": [
+    "current 2026 NP entry tariff",
+    "exact current statutory allowance",
+    "current Kláštorisko chata opening hours",
+    "2027 season dates, tour times and ticket price",
+    "current Domica boat-section availability and ticket price",
+    "current nightly rate",
+    "current seasonal closure dates for the roklinas",
+    "current Kyseľ access and whether a guide is required"
+  ],
+  "verifyFlagCount": 8,
+  "volatilePricing": true,
+  "wordCount": 2237,
+  "dataVintage": 2026,
+  "provenance": {
+    "batch": "eastern-southeastern",
+    "sourceFile": "cartaeasterneuropetrips/trips/slovakia-slovensky-raj-cabin-nature.md",
+    "sourceFormat": "md+nested-yaml-frontmatter (one file per trip)",
+    "sourceId": "slovakia-slovensky-raj-cabin-nature",
+    "ingestedAt": "2026-09-02",
+    "synthesized": false
+  }
+}

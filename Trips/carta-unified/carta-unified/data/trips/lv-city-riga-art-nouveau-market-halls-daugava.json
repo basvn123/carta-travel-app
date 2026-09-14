@@ -1,0 +1,288 @@
+{
+  "id": "lv-city-riga-art-nouveau-market-halls-daugava",
+  "sourceId": "riga-art-nouveau-market-halls-daugava",
+  "slug": "lv-city-riga-art-nouveau-market-halls-daugava",
+  "title": "Riga: Art Nouveau, Market Halls & the Daugava",
+  "country": "Latvia",
+  "countryCode": "LV",
+  "countries": [
+    {
+      "name": "Latvia",
+      "code": "LV"
+    }
+  ],
+  "isMultiCountry": false,
+  "region": "Northern Europe & Baltics",
+  "regionKey": "northern-baltics",
+  "subRegion": "Riga & the Gulf of Riga",
+  "tripType": "City Trips",
+  "tripTypeId": 3,
+  "tripTypeSlug": "city",
+  "durationDays": 7,
+  "bestPeriod": {
+    "months": [
+      5,
+      6,
+      7,
+      8,
+      9,
+      12
+    ],
+    "monthNames": [
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "December"
+    ],
+    "window": "May to September; June for the Jāņi midsummer festival; December for the Christmas market on Doma laukums; February is cheap, dark and atmospheric",
+    "note": null,
+    "avoid": null,
+    "raw": "May to September; June for the Jāņi midsummer festival; December for the Christmas market on Doma laukums; February is cheap, dark and atmospheric"
+  },
+  "budgetTier": "€€",
+  "budgetTierRange": [
+    2,
+    2
+  ],
+  "budgetTierRaw": "€€",
+  "budget": {
+    "currency": "EUR",
+    "totalEur": {
+      "low": 700,
+      "high": 1150
+    },
+    "totalNote": "€700–1,150 per person",
+    "breakdown": {
+      "accommodation": {
+        "lowEur": 65,
+        "highEur": 140,
+        "note": "€65–140 per night, double; design hotels €170+; hostels €20–35 pp"
+      },
+      "food": {
+        "lowEur": 35,
+        "highEur": 65,
+        "note": "€35–65 per day; a top tasting menu €80–140"
+      },
+      "transport": {
+        "lowEur": 25,
+        "highEur": 45,
+        "note": "€25–45: airport bus, trams, one Jūrmala train, one Sigulda train"
+      },
+      "activities": {
+        "lowEur": 55,
+        "highEur": 110,
+        "note": "€55–110: Art Nouveau Museum, National Museum of Art, Academy of Sciences terrace, Occupation Museum"
+      }
+    },
+    "perDayEur": {
+      "low": 100,
+      "high": 164
+    }
+  },
+  "profile": {
+    "difficulty": null,
+    "difficultyLabel": null,
+    "difficultyNote": null,
+    "fitnessLevel": null,
+    "crowdLevel": null,
+    "familyFriendly": null,
+    "carRequired": null
+  },
+  "basecamps": [],
+  "gatewayAirport": null,
+  "gatewayAirportCode": null,
+  "languages": [
+    "Latvian",
+    "Russian",
+    "English"
+  ],
+  "currency": "EUR",
+  "emergencyNumber": "112",
+  "coordinates": {
+    "lat": 56.9496,
+    "lon": 24.1052,
+    "precision": "source",
+    "matchedPlace": null,
+    "source": "source record"
+  },
+  "tags": [],
+  "summary": "A seven-day city trip itinerary in Riga & the Gulf of Riga, Latvia.",
+  "summaryGenerated": true,
+  "hook": null,
+  "snapshot": {},
+  "itinerary": [
+    {
+      "day": 1,
+      "title": "Vecrīga: the Old Town block",
+      "morning": "Airport bus 22 into town, 30 minutes. Begin at Doma laukums with Riga Cathedral, the largest medieval church in the Baltics, and its 6,700-pipe organ.",
+      "afternoon": "The House of the Blackheads — a reconstructed Hanseatic guild house with an outrageous Dutch Renaissance facade — then St Peter's Church for the lift to the 72 m spire viewing platform, the definitive Riga panorama.",
+      "evening": "Dinner in the Old Town, then a beer in Folkklubs Ala Pagrabs, a cellar with Latvian folk music, local ciders and a crowd that is genuinely local despite the location.",
+      "dayStats": null,
+      "sleep": null
+    },
+    {
+      "day": 2,
+      "title": "The Quiet Centre: Art Nouveau block",
+      "morning": "Alberta iela is the reason this city is on UNESCO's list: a single street of Mikhail Eisenstein facades with screaming masks, peacocks, sphinxes and blue-tiled reliefs. Walk it slowly, then Elizabetes iela and Strēlnieku iela.",
+      "afternoon": "The Riga Art Nouveau Museum in a restored 1903 apartment — the only place you see how these buildings were actually lived in, down to the kitchen and the servant's stair. Then the Latvian National Museum of Art in its neo-Baroque palace on the edge of the Esplanade.",
+      "evening": "Miera iela — \"the street of peace\" — for the city's independent coffee roastery, a chocolate factory, small bars and a distinctly unpolished bohemian energy.",
+      "dayStats": null,
+      "sleep": null
+    },
+    {
+      "day": 3,
+      "title": "Central Market and the Moscow Suburb",
+      "morning": "Riga Central Market: five converted Zeppelin hangars from the First World War, one of the largest markets in Europe. Dairy hall, fish hall, meat hall, and the produce rows outside. Eat breakfast here — grey peas with bacon, smoked fish, rye bread, curd cheese.",
+      "afternoon": "Behind the market, the Latvian Academy of Sciences, a Stalinist skyscraper known locally as \"Stalin's birthday cake\", with a 17th-floor open observation terrace that costs a few euros and beats every other viewpoint in the city. Continue into the Maskavas forštate, the old wooden Moscow Suburb, sobering and half-abandoned.",
+      "evening": "The Spīķeri warehouse quarter beside the market for dinner and a riverside walk.",
+      "dayStats": null,
+      "sleep": null
+    },
+    {
+      "day": 4,
+      "title": "Left bank: Āgenskalns, Kalnciema and wooden Riga",
+      "morning": "Cross the Daugava. Āgenskalns Market and the wooden residential streets around it are what Riga looked like before the boulevards.",
+      "afternoon": "The Kalnciema Quarter, a restored block of 19th-century wooden buildings that hosts a Saturday farmers' and craft market — time this day for a Saturday if you can. Then the Latvian National Library, Gunnar Birkerts' \"Castle of Light\", whose reading terraces give the classic skyline view back across the river.",
+      "evening": "Return over the bridge at dusk; the Old Town spires from the left bank at sunset are the postcard.",
+      "dayStats": null,
+      "sleep": null
+    },
+    {
+      "day": 5,
+      "title": "Jūrmala and the pine coast",
+      "morning": "Commuter train from Riga Central to Majori, about 35 minutes. Jūrmala is a 25 km strip of white sand and pine forest with 4,000 wooden dachas, an aristocratic spa town first, a Soviet resort second, and now something in between.",
+      "afternoon": "Walk Jomas iela, then the beach itself as far as Dubulti and its modernist 1977 railway station. Dzintari forest park has a viewing tower over the canopy.",
+      "evening": "Spa treatment at one of the Jūrmala sanatorium-hotels, or a seafood dinner and the train back.",
+      "dayStats": null,
+      "sleep": null
+    },
+    {
+      "day": 6,
+      "title": "Sigulda and the Gauja valley",
+      "morning": "Train to Sigulda, about 1 h 15. Turaida Castle's red-brick tower over the Gauja valley, the Dainu Hill sculpture park of Latvian folk songs, and Gūtmaņa cave with its centuries of carved graffiti.",
+      "afternoon": "The cable car across the valley, and Krimulda. In autumn this valley is the best foliage in the Baltics; in winter it has a bobsleigh track you can ride.",
+      "evening": "Back to Riga. Last dinner at one of the city's ambitious modern-Latvian kitchens — Latvia's restaurant scene has gained significant international recognition in recent years. `verify: true`",
+      "dayStats": null,
+      "sleep": null
+    },
+    {
+      "day": 7,
+      "title": "Mežaparks or the Occupation Museum, then out",
+      "morning": "Choose: Mežaparks, Europe's first garden city (planned 1901), with wooden villas under pines and the vast Song Festival stage; or the Museum of the Occupation of Latvia in the centre, which explains the 20th century that made this city.",
+      "afternoon": "Bus 22 to the airport, 30 minutes.",
+      "evening": null,
+      "dayStats": null,
+      "sleep": null
+    }
+  ],
+  "accommodationStrategy": [
+    {
+      "rank": 1,
+      "name": "Grand Poet / Neiburgs",
+      "style": null,
+      "location": "Old Town and Quiet Centre edge",
+      "description": "Neiburgs occupies a 1903 Art Nouveau building in the Old Town — you sleep inside the architecture you came to look at, with apartment-style rooms. Grand Poet sits on the Esplanade side, closest to Alberta iela and the museums.",
+      "booking": null,
+      "priceNote": null
+    },
+    {
+      "rank": 2,
+      "name": "Quiet Centre boutique apartments",
+      "style": "Klusais centrs",
+      "location": null,
+      "description": "The residential blocks north of Elizabetes iela are quiet, elegant, and full of well-restored apartments at €70–110 a night. Best value in the city and a five-minute walk to both the Art Nouveau district and the Old Town.",
+      "booking": null,
+      "priceNote": null
+    },
+    {
+      "rank": 3,
+      "name": "Āgenskalns / left-bank guesthouses",
+      "style": null,
+      "location": null,
+      "description": "Cheaper still, wooden-house neighbourhood, tram straight over the bridge. Choose this if you want the version of Riga that residents actually live in, and if the Kalnciema Saturday market is a fixed point in your week.",
+      "booking": null,
+      "priceNote": null
+    }
+  ],
+  "logistics": {
+    "connectivity": null,
+    "emergency": "112. Riga's East Clinical University Hospital is the main facility. Pharmacies (*aptieka*) are plentiful; some in the centre run 24 hours.",
+    "weather": "Cold continental winters (−5 to −15 °C, dark by 16:00 in December), warm humid summers up to 28 °C. Spring arrives late — April is still bare.",
+    "bookingWindows": "Hotels: 4–6 weeks; much longer for the Song and Dance Festival, held every five years, when the city fills completely. `verify: true` Top restaurants: 2–4 weeks. Jūrmala spa treatments: a week.",
+    "money": "Euro. Cards are accepted almost everywhere, but the Central Market's produce rows are cash-friendlier and haggling is normal for volume.",
+    "transportRules": null,
+    "permits": null,
+    "health": null,
+    "gettingThere": null,
+    "other": [
+      {
+        "label": "Transit",
+        "text": "One integrated tram, trolleybus and bus network. Buy an e-talons at a kiosk or tap a contactless card. Trams are the useful mode — routes 2, 5 and 10 cover most of this itinerary."
+      },
+      {
+        "label": "Language",
+        "text": "Latvian is the state language; Russian is widely spoken and this is a live political subject. English is standard in hospitality and near-universal under 40."
+      },
+      {
+        "label": "Stag-party zones",
+        "text": "Parts of the Old Town around Kaļķu iela have an aggressive nightlife economy with a long history of tourist overcharging. Check prices before ordering, avoid street touts for clubs entirely, and drink where locals do — Miera iela, Spīķeri, Kalnciema."
+      }
+    ]
+  },
+  "proTips": [
+    "The **Academy of Sciences terrace** costs a fraction of St Peter's tower, has no queue, and gives you the view *including* the Old Town rather than from inside it. Go 90 minutes before sunset.",
+    "Central Market at **08:00** is a working market; at 12:00 it is a tourist attraction. The dairy hall before nine is one of the best food experiences in this dataset.",
+    "Time your week so Day 4 lands on a **Saturday** for the Kalnciema Quarter market.",
+    "Riga Black Balsam is the local herbal bitter and is punishing neat. The blackcurrant version, or a spoonful in coffee, is how Latvians actually drink it.",
+    "The Art Nouveau facades are all above eye level. Walk Alberta iela **twice** — once looking up, once looking at doorways and stairwell glass, which is where the real detail is.",
+    "Combine Days 5 and 6 differently if the weather turns: Jūrmala is a fair-weather day, Sigulda works in rain, and the museums absorb a whole wet afternoon."
+  ],
+  "typeSpecific": {
+    "raw": {
+      "walkability": "High. Old Town, the Quiet Centre and the Central Market are one continuous 3 km walk; Āgenskalns and Kalnciema need a tram or a short taxi",
+      "transit_pass": "Rīgas Satiksme e-talons card, or contactless; trams, trolleybuses and buses on one system",
+      "base_neighbourhoods": [
+        "Vecrīga",
+        "Klusais centrs",
+        "Miera iela",
+        "Āgenskalns"
+      ],
+      "architectural_focus": "The largest concentration of Art Nouveau architecture in the world — roughly a third of central Riga's buildings — plus wooden suburbs and Stalinist monumentalism",
+      "gpx_ready": true
+    },
+    "surface": null,
+    "distanceKm": null,
+    "elevationM": null,
+    "verticalM": null,
+    "technicalRating": null,
+    "transitPass": "High. Old Town, the Quiet Centre and the Central Market are one continuous 3 km walk; Āgenskalns and Kalnciema need a tram or a short taxi",
+    "hutBooking": null,
+    "liftNetwork": null,
+    "snowReliability": null,
+    "windConditions": null,
+    "gpxReady": true,
+    "bookingTimeline": null,
+    "audience": null
+  },
+  "packingNotes": [],
+  "whatCouldGoWrong": [],
+  "sources": {
+    "verified": null,
+    "confidenceNotes": null
+  },
+  "verifyFlags": [],
+  "verifyFlagCount": 0,
+  "volatilePricing": true,
+  "wordCount": 1449,
+  "dataVintage": 2026,
+  "provenance": {
+    "batch": "northern-baltics",
+    "sourceFile": "carta_northern_europe_baltics_trips.md#trip-09",
+    "sourceFormat": "single-file md, '## Trip NN' records with fenced YAML",
+    "sourceId": "riga-art-nouveau-market-halls-daugava",
+    "ingestedAt": "2026-09-02",
+    "synthesized": false
+  }
+}

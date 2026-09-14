@@ -20,6 +20,7 @@ import sys
 from pathlib import Path
 
 import airport_categories
+from pipeline_io import atomic_write_json
 
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_TARGETS = [
@@ -62,7 +63,7 @@ def patch(path: Path) -> None:
     vocab.update(used_tags)
     meta["categories"] = sorted(vocab)
 
-    path.write_text(json.dumps(data, indent=1, ensure_ascii=False), encoding="utf-8")
+    atomic_write_json(path, data, indent=1, ensure_ascii=False)
     n = len(data.get("destinations", {}))
     print(f"  {path.name}: {n} destinations, {n_airports} airports "
           f"({n_changed} updated)")

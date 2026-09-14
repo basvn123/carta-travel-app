@@ -1,0 +1,280 @@
+{
+  "id": "sm-cozy-towns-montefeltro",
+  "sourceId": "cozy-towns-san-marino-montefeltro",
+  "slug": "sm-cozy-towns-montefeltro",
+  "title": "San Marino & the Montefeltro: Towers, Truffles and Block-Printed Linen",
+  "country": "San Marino",
+  "countryCode": "SM",
+  "countries": [
+    {
+      "name": "San Marino",
+      "code": "SM"
+    }
+  ],
+  "isMultiCountry": false,
+  "region": "Southern & Mediterranean Europe",
+  "regionKey": "southern-mediterranean",
+  "subRegion": "San Marino & the Emilia-Romagna / Marche border",
+  "tripType": "Cozy Towns Trips",
+  "tripTypeId": 4,
+  "tripTypeSlug": "cozy-towns",
+  "durationDays": 7,
+  "bestPeriod": {
+    "months": [
+      4,
+      5,
+      6,
+      9,
+      10,
+      11
+    ],
+    "monthNames": [
+      "April",
+      "May",
+      "June",
+      "September",
+      "October",
+      "November"
+    ],
+    "window": "Late April–June & September–early November (October for the truffle fair)",
+    "note": null,
+    "avoid": "Mid July–August, when Rimini's coastal traffic clogs every approach road and Monte Titano bakes; also February, when Montefeltro fog sits all day and hill restaurants close",
+    "raw": "Late April–June & September–early November (October for the truffle fair)"
+  },
+  "budgetTier": "€€",
+  "budgetTierRange": [
+    2,
+    2
+  ],
+  "budgetTierRaw": "€€",
+  "budget": {
+    "currency": "EUR",
+    "totalEur": {
+      "low": 1090,
+      "high": 1780
+    },
+    "totalNote": "€1,100–€1,700 per person, excl. international flights",
+    "breakdown": {
+      "accommodation": {
+        "lowEur": 520,
+        "highEur": 880,
+        "note": "Two bases; €75–€125 pp/night in small historic hotels"
+      },
+      "food": {
+        "lowEur": 270,
+        "highEur": 400,
+        "note": "€12–€20 Romagnolo mains; truffle dishes €25–€40 in October"
+      },
+      "transport": {
+        "lowEur": 160,
+        "highEur": 260,
+        "note": "Small rental car 5 days, or Bonelli buses and regional trains"
+      },
+      "activities": {
+        "lowEur": 140,
+        "highEur": 240,
+        "note": "Three Towers ticket, San Leo fortress, printing workshop, museums"
+      }
+    },
+    "perDayEur": {
+      "low": 156,
+      "high": 254
+    }
+  },
+  "profile": {
+    "difficulty": 2,
+    "difficultyLabel": "Moderate",
+    "difficultyNote": "2 — the Titano ridge path between the towers and San Leo's approach are steep but short; nothing longer than 4 km",
+    "fitnessLevel": "Moderate",
+    "crowdLevel": null,
+    "familyFriendly": null,
+    "carRequired": null
+  },
+  "basecamps": [],
+  "gatewayAirport": "RMI — Rimini Federico Fellini, 30 min to San Marino; BLQ Bologna is the bigger hub, 1 h 40 by car or 1 h by train to Rimini plus a 50 min bus",
+  "gatewayAirportCode": "RMI",
+  "languages": [],
+  "currency": null,
+  "emergencyNumber": "112",
+  "coordinates": {
+    "lat": 43.9367,
+    "lon": 12.4464,
+    "precision": "city",
+    "matchedPlace": "San Marino",
+    "source": "geonames (geonamescache, cities > 15k)"
+  },
+  "tags": [
+    "san-marino",
+    "montefeltro",
+    "truffle",
+    "block-printing",
+    "hill-towns",
+    "slow-travel",
+    "malatesta",
+    "romagna"
+  ],
+  "summary": "Two nights on a limestone crag that has been an independent republic since the fourth century, then four in the Malatesta hill country that surrounds it. San Marino is best understood as a strange, steep, self-governing village rather than a curiosity, and it is transformed the moment the last day-tripper takes the cable car down. Below it, the Montefeltro gives you San Leo's cliff fortress, Pennabilli's poet's gardens, Verucchio's Iron Age museum and Santarcangelo's tufa caves and printing workshop — all within a 40 km radius. One move, two open afternoons, and, if you time it for October, four Sundays of white truffle in Sant'Agata Feltria. It suits people who like small, dense places and don't need a coastline.",
+  "summaryGenerated": false,
+  "hook": null,
+  "snapshot": {},
+  "itinerary": [
+    {
+      "day": 1,
+      "title": "Up Monte Titano",
+      "morning": "Land at Rimini and take the Bonelli bus or a car up to San Marino — the road climbs 700 m in 20 km and the republic appears as a wall of rock with buildings on top of it. Leave the car in the multi-storey car parks below the walls.",
+      "afternoon": "Check in inside the walls, then walk the ridge: Guaita first, then the Passo delle Streghe to Cesta, where the museum of ancient weapons sits at the republic's high point.",
+      "evening": "The town after 18:00 is a different place. Aperitivo on Piazza della Libertà, then dinner at Ristorante Righi or a smaller osteria off Contrada Omerelli — try the nidi di rondine, Romagna's baked rolled pasta.",
+      "dayStats": "RMI–San Marino 27 km / 35 min; Bonelli bus roughly 50 min, about €5 each way, 10–12 daily. Cesta at 755 m. Two-tower ticket roughly €7–€10.",
+      "sleep": "Hotel Titano, Città di San Marino"
+    },
+    {
+      "day": 2,
+      "title": "Market morning below the crag",
+      "morning": "Take the cable car down to Borgo Maggiore — 90 seconds, and the best two euros in the republic — for the Thursday market on Piazza Grande from 06:00. Cheese, cured meat, plants, cheap clothes and locals doing their weekly shop.",
+      "afternoon": "Walk back up the old path rather than riding, then the State Museum and the Basilica del Santo Marino. Late in the day, the terrace outside Cesta faces the Adriatic and, on clear days, shows the Croatian coast.",
+      "evening": "Second night on the crag, and the only night it makes sense to eat late in the upper town. Piadina and Sangiovese if you want the honest version.",
+      "dayStats": "Cable car 1.5 min, roughly €2.80 single / €4.50 return, every 15 min. Market 06:00–14:00 Thursday. Uphill path 1.8 km / 200 m.",
+      "sleep": "Hotel Titano, Città di San Marino"
+    },
+    {
+      "day": 3,
+      "title": "San Leo's cliff, then down to Santarcangelo",
+      "morning": "Drive south-west to San Leo, where a fortress sits on a sheer sandstone block above a village of 300 people. Cagliostro died in a cell here in 1795 with no door — food was lowered through the ceiling. The Romanesque Pieve and Duomo below are the best of their kind in the region.",
+      "afternoon": "North to Santarcangelo di Romagna, on the flat, and check in. Walk the tufa grotte beneath the hill — a network of tunnels of contested purpose — and then Piazza Ganganelli.",
+      "evening": "Dinner at Osteria La Sangiovesa in the Palazzo Nadiani, a Romagnolo institution of piadina, tagliatelle and a great deal of Sangiovese.",
+      "dayStats": "San Marino–San Leo 25 km / 40 min; San Leo–Santarcangelo 35 km / 45 min. San Leo at 601 m, fortress entry roughly €10. Grotte tour about 45 min, €4–€6.",
+      "sleep": "Hotel Della Porta, Santarcangelo di Romagna"
+    },
+    {
+      "day": 4,
+      "title": "Printing linen, then nothing at all",
+      "morning": "Stamperia Marchi for the block-printing session: choose a pear-wood block, ink it in rust dye, press it onto linen, and watch the mangano — a stone-weighted wooden press from the 1700s — finish the cloth.",
+      "afternoon": "Blank. Santarcangelo is a town made for sitting: the arcades of Via Cesare Battisti, a bar table, a book. If you must move, the Rocca Malatestiana is a ten-minute walk up.",
+      "evening": "Piazza Ganganelli fills from 18:30. Eat where the queue is, and order the cappelletti in brodo if it's autumn.",
+      "dayStats": "Workshop 60–90 min, roughly €25–€45 depending on the cloth. Santarcangelo at 42 m — the only flat night of the week. Rocca walk 700 m / 45 m.",
+      "sleep": "Hotel Della Porta, Santarcangelo di Romagna"
+    },
+    {
+      "day": 5,
+      "title": "Verucchio and the Marecchia valley",
+      "morning": "Verucchio, 15 km up the valley, for the Museo Civico Archeologico — the Villanovan princely burials found here are among the richest Iron Age finds in Italy, with 8th-century BC textiles and a wooden throne. Then the Rocca Malatestiana on the ridge.",
+      "afternoon": "Continue up the Marecchia to Pennabilli for Tonino Guerra's gardens: the Orto dei Frutti Dimenticati with its forgotten fruit varieties and hand-painted ceramics, and the Giardino Pietrificato's mosaics.",
+      "evening": "Back down the valley. Dinner in Santarcangelo again — the advantage of a four-night base.",
+      "dayStats": "Santarcangelo–Verucchio 15 km / 20 min; Verucchio–Pennabilli 35 km / 50 min. Verucchio at 333 m, Pennabilli at 629 m. Museum entry roughly €6–€8; Guerra's gardens free.",
+      "sleep": "Hotel Della Porta, Santarcangelo di Romagna"
+    },
+    {
+      "day": 6,
+      "title": "Sant'Agata Feltria, truffles and an idle afternoon",
+      "morning": "Sant'Agata Feltria for the Sunday truffle fair if you are here in October — the whole village turns into a market, with the Rocca Fregoso above and the 1605 Teatro Angelo Mariani open. Out of season, come anyway for the theatre and a quiet lunch.",
+      "afternoon": "Nothing scheduled. Drive back over the ridge slowly, stop where the view is good, and be back in Santarcangelo by mid-afternoon.",
+      "evening": "Last dinner. If it's truffle season, this is the night to spend money on a plate of tagliolini al tartufo bianco.",
+      "dayStats": "Santarcangelo–Sant'Agata Feltria 45 km / 1 h. Sant'Agata at 607 m. Fair Sundays: 4, 11, 18, 25 October and 1 November 2026. White truffle at fair prices roughly €200–€400 per 100 g depending on the season.",
+      "sleep": "Hotel Della Porta, Santarcangelo di Romagna"
+    },
+    {
+      "day": 7,
+      "title": "Rimini, and out",
+      "morning": "Drive or train down to Rimini. The Tempio Malatestiano, Alberti's unfinished 15th-century masterpiece, and the Roman Ponte di Tiberio are both a short walk from the station.",
+      "afternoon": "Return the car at Rimini airport, or take the Adriatic line north to Bologna in about an hour for a wider choice of flights.",
+      "evening": "Flight home.",
+      "dayStats": "Santarcangelo–RMI 15 km / 20 min. Santarcangelo–Rimini by regional train 8 min, 1–2 hourly. Rimini–Bologna 1 h by Frecciarossa, 1 h 20 by Regionale.",
+      "sleep": "—"
+    }
+  ],
+  "accommodationStrategy": [
+    {
+      "rank": 1,
+      "name": "Hotel Titano",
+      "style": "44-room historic hotel",
+      "location": "Città di San Marino",
+      "description": "Open since 1894 on Contrada del Collegio, inside the walls and a minute from Piazza della Libertà, with a terrace restaurant looking down the whole Adriatic plain. Staying inside the walls is the entire argument for two nights here — the town belongs to residents and hotel guests after 18:00. Roughly €95–€150 per double.",
+      "booking": null,
+      "priceNote": null
+    },
+    {
+      "rank": 2,
+      "name": "Hotel Della Porta",
+      "style": "22-room townhouse hotel",
+      "location": "Santarcangelo di Romagna",
+      "description": "A converted house on Via Andrea Costa in the old town, with a small courtyard, an underground spa in the tufa, and parking — the practical point when you are driving out to a different hill town each day. Two minutes from Piazza Ganganelli. Roughly €110–€160 per double.",
+      "booking": null,
+      "priceNote": null
+    },
+    {
+      "rank": 3,
+      "name": "Locanda San Leone or a Montefeltro agriturismo",
+      "style": null,
+      "location": "rural alternative",
+      "description": "If you would rather sleep among the hills than in a town, take a small relais in the Marecchia valley between San Leo and Verucchio. It costs less, it is quieter, and it removes the evening square from your week — decide which you want before booking.",
+      "booking": null,
+      "priceNote": null
+    }
+  ],
+  "logistics": {
+    "connectivity": "**San Marino uses the euro but is not an EU member and is outside the EU roaming area.** Many operators bundle it anyway, but some bill it as rest-of-world; check before you arrive, and be aware that phones on the crag frequently hop between San Marinese and Italian networks. Coverage in the Marecchia valley is good, patchy above Pennabilli.",
+    "emergency": "112 works in both San Marino and Italy. San Marino has its own Gendarmeria and Civil Protection, reachable via 112 or 113 locally. Italian EHIC/GHIC cover does **not** extend to San Marino — check your travel insurance explicitly names it.",
+    "weather": "Monte Titano makes its own weather — the republic can be in cloud while Rimini is in sun 700 m below, and the ridge path between the towers is genuinely windy. Montefeltro fog sits in the valleys on autumn mornings and burns off by 11:00. October evenings at Sant'Agata drop to 5–8°C.",
+    "bookingWindows": "Beds within 30 km of Sant'Agata Feltria on the October fair Sundays need 3–4 months. Stamperia Marchi sessions want a week's notice. San Marino's hotels are easy midweek, tight on summer weekends.",
+    "money": "Euro on both sides of the border — San Marino uses it under a monetary agreement with the EU and mints its own collectable coins, which are legal tender but which nobody will want to spend. Cards are near-universal; carry €50 for the Borgo Maggiore market and the truffle fair. San Marino has no VAT but a similar import levy, so the \"duty-free\" reputation is largely marketing. Tipping is Italian: round up.",
+    "transportRules": "There is no border control between Italy and San Marino, but it is a separate customs territory. Italian rental cars may be driven in freely; check your policy names it. San Marino's historic centre is closed to non-resident traffic — park in the terraced car parks and walk or take the lift shafts. Bonelli Bus runs Rimini station to San Marino roughly 10–12 times daily. Rimini is the rail gateway, on the Milan–Ancona–Bari Adriatic line.",
+    "permits": "The Three Towers use a combined ticket; Montale's interior is permanently closed. Drones are prohibited over San Marino's historic centre and require authorisation in Italian airspace. Truffle hunting requires a licence in Italy — buy at the fair.",
+    "health": "Tap water is potable throughout. The Passo delle Streghe ridge has low parapets and long drops; it is not a place for unsupervised small children in wind. Santarcangelo's grotte are cool and damp year-round — bring a layer.",
+    "gettingThere": null,
+    "other": []
+  },
+  "proTips": [
+    "Sleep inside San Marino's walls for at least one night. Between 18:30 and 09:30 the republic reverts to a quiet hill village of 4,000 people, and this is a completely different experience from the daytime souvenir gauntlet.",
+    "Take the cable car down to Borgo Maggiore and walk back up. The Thursday market is where the country actually shops, and the return path gives you the crag from below.",
+    "For the truffle fair, arrive in Sant'Agata before 09:30. Parking is on the approach roads and fills by mid-morning; the serious truffle buying is also done early.",
+    "Buy truffle by weight from a licensed *tartufaio* at the fair rather than jarred paste in a shop. Ask when it was dug — anything over four days old has lost most of its aroma.",
+    "At Stamperia Marchi, ask to see the mangano operated rather than only the printing. The stone-weighted press is the rarer thing and the family will run it if the shop is not busy.",
+    "San Leo and San Marino look similar on a map and are not remotely similar in feel. Do San Leo on a weekday morning — it holds perhaps a fifth of San Marino's visitors and has the better fortress.",
+    "Skip the Rimini coast entirely unless you want it. This week's landscape is the hills behind it, and the beach strip in season will cost you two hours of traffic for very little."
+  ],
+  "typeSpecific": {
+    "raw": {
+      "Piazza della Libertà, Città di San Marino": "is the republic's stage: the Palazzo Pubblico, the Statue of Liberty, and — in the summer season — the changing of the guard on the hour. It empties dramatically after 18:00 when the coaches leave, and the corso then runs along Contrada del Collegio and Via Basilicius.",
+      "Piazza Grande, Borgo Maggiore — Thursday market, 06:00 to 14:00": "The republic's real weekly market, in the town below the crag, where San Marinese actually shop. An **antiques market runs the third Sunday of the month, March to December**, in the same square.",
+      "Piazza Ganganelli, Santarcangelo di Romagna": "is the flat-town counterweight — arcaded, café-lined, busy from 18:30, with the tufa grotte tunnelled beneath the hill above it.",
+      "Fiera Nazionale del Tartufo Bianco Pregiato, Sant'Agata Feltria — Sundays 4, 11, 18 and 25 October and 1 November 2026": "The whole village becomes a market: truffle stalls, cheese, chestnuts, and the 1605 Teatro Angelo Mariani, one of Italy's oldest surviving wooden theatres, open alongside it.",
+      "Stamperia Marchi, Santarcangelo": "has hand-block-printed linen since 1633, using pear-wood blocks and a rust-based dye, finished under an 18th-century wooden *mangano* press turned by a stone counterweight — the last of its kind still in working use.",
+      "Pennabilli": "carries Tonino Guerra's *Luoghi dell'Anima*: the Orto dei Frutti Dimenticati, an orchard of abandoned fruit varieties, and the Giardino Pietrificato, both free and both odd in the best way.",
+      "The Three Towers": "run along the Titano ridge: Guaita (the oldest, 11th century), Cesta at 755 m on the summit, and Montale, closed to visitors. The Passo delle Streghe — the Witches' Pass — is the exposed ridge path linking the first two.",
+      "Hands-on experience": "a block-printing session at **Stamperia Marchi**, inking a pear-wood block and pressing your own tablecloth or runner in the Romagna motifs.",
+      "Pacing": "one move (San Marino → Santarcangelo on Day 3), blank afternoons on Days 4 and 6, and the short walks that exist: Guaita to Cesta along the ridge (600 m), Borgo Maggiore to Città on the old Costa dell'Arnella path (1.8 km, 200 m of climb), San Leo's Pieve to the fortress (1.1 km)."
+    },
+    "surface": null,
+    "distanceKm": null,
+    "elevationM": null,
+    "verticalM": null,
+    "technicalRating": null,
+    "transitPass": null,
+    "hutBooking": null,
+    "liftNetwork": null,
+    "snowReliability": null,
+    "windConditions": null,
+    "gpxReady": null,
+    "bookingTimeline": null,
+    "audience": null
+  },
+  "packingNotes": [],
+  "whatCouldGoWrong": [],
+  "sources": {
+    "verified": "Borgo Maggiore market confirmed as Thursday, 06:00–14:00, Piazza Grande, with a monthly antiques market on the third Sunday, March–December. Sant'Agata Feltria's Fiera Nazionale del Tartufo Bianco Pregiato 2026 confirmed for Sundays 4, 11, 18 and 25 October plus 1 November 2026. San Marino's use of the euro outside EU membership confirmed.",
+    "confidenceNotes": "San Marino's roaming treatment varies by operator and is the single most likely thing to catch users out — keep the warning prominent. Cable car and Three Towers ticket prices change annually and were not re-confirmed this run. Bonelli Bus frequency (10–12 daily) is typical but seasonal; direct users to the current timetable. Stamperia Marchi's workshop format and pricing should be confirmed directly, as should Hotel Titano's and Hotel Della Porta's room counts. Truffle price ranges are highly volatile year to year and should be presented as indicative only."
+  },
+  "verifyFlags": [],
+  "verifyFlagCount": 0,
+  "volatilePricing": false,
+  "wordCount": 2804,
+  "dataVintage": 2026,
+  "provenance": {
+    "batch": "southern-mediterranean",
+    "sourceFile": "carta-dataset/trips/cozy-towns-san-marino-montefeltro.md",
+    "sourceFormat": "md with '## Metadata' bullet block (one file per trip)",
+    "sourceId": "cozy-towns-san-marino-montefeltro",
+    "ingestedAt": "2026-09-02",
+    "synthesized": false
+  }
+}

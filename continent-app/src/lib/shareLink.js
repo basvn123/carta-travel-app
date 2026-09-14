@@ -87,7 +87,7 @@ const oneOf = (v, opts, dflt) => (opts.includes(v) ? v : dflt);
 const LEG_MODES = new Set(['train', 'bus', 'car']);
 // Hops the sender booked themselves; they travel with a price because Carta
 // cannot re-derive one at the other end.
-const OWN_LEG_MODES = new Set(['fly', 'ferry']);
+const OWN_LEG_MODES = new Set(['fly', 'ferry', 'train', 'bus', 'car']);
 
 /** Whitelist + clamp a decoded payload into a safe draft; null when unusable. */
 function sanitizeShared(d) {
@@ -122,6 +122,9 @@ function sanitizeShared(d) {
   const ownFlight = d.ownFlight && typeof d.ownFlight === 'object'
     ? {
       airline: String(d.ownFlight.airline || '').slice(0, 60),
+      // How they get there. Absent on links shared before the wizard could
+      // ask, which is what 'fly' meant back then.
+      mode: oneOf(d.ownFlight.mode, ['fly', 'train', 'bus', 'car', 'ferry'], 'fly'),
       costTotal: Number.isFinite(Number(d.ownFlight.costTotal))
         ? Math.max(0, Math.min(99999, Number(d.ownFlight.costTotal)))
         : null,

@@ -1,8 +1,8 @@
 // Headless check of the day planner's landing flow after the visual-review
 // pass: the progress rail is on screen from the FIRST question, saved work
-// sits in the question column instead of a screen below the map, the map and
-// its instruction are one framed surface, the date grid has thumb-sized
-// targets, and the fork shows one filled action rather than two.
+// sits close under the question card, the locator map is gone (the popular
+// city chips carry the choice), the date grid has thumb-sized targets, and
+// the fork shows one filled action rather than two.
 //
 // It also drives the chat to its build state (with the catalogue fetch held
 // open) so the route-building animation can be measured instead of guessed at.
@@ -61,27 +61,29 @@ try {
     const page = await ctx.newPage();
     await seed(page);
     await page.goto(`${BASE}/?tab=day&o=CRL`);
-    await page.locator('.day-flow-steps').waitFor({ timeout: 120000 });
+    await page.locator('.day-flow-top .wiz-steps').waitFor({ timeout: 120000 });
     await page.waitForTimeout(700);
 
     // 1. The rail is present and readable on step 1, not from step 2 onward.
+    //    It is the trip planner's rail now (.wiz-steps, shared classes), so
+    //    the three pills and their connectors became three named segments.
     const rail = await page.evaluate(() => {
-      const dots = [...document.querySelectorAll('.day-flow-step-dot')];
-      const on = document.querySelector('.day-flow-step-dot.on');
-      const count = document.querySelector('.day-flow-stepcount');
-      const upcoming = dots.find((d) => d.disabled);
-      const cs = upcoming ? getComputedStyle(upcoming) : null;
+      const steps = [...document.querySelectorAll('.day-flow-top .wiz-step')];
+      const on = document.querySelector('.day-flow-top .wiz-step.now');
+      const count = document.querySelector('.day-flow-top .shape-head-step');
+      const upcoming = steps.find((d) => d.classList.contains('todo'));
+      const cs = upcoming ? getComputedStyle(upcoming.querySelector('.wiz-step-name')) : null;
       return {
-        dots: dots.length,
-        rails: document.querySelectorAll('.day-flow-step-rail').length,
-        onIsFirst: on === dots[0],
+        dots: steps.length,
+        named: steps.every((d) => (d.querySelector('.wiz-step-name')?.textContent || '').trim().length > 0),
+        onIsFirst: on === steps[0],
         count: count ? count.textContent.trim() : '',
         upcomingColor: cs ? cs.color : '',
         visible: on ? on.getBoundingClientRect().top >= 0 : false,
       };
     });
-    if (rail.dots !== 3) fail(`${size.name}: expected 3 step pills, got ${rail.dots}`);
-    if (rail.rails !== 2) fail(`${size.name}: expected 2 connectors, got ${rail.rails}`);
+    if (rail.dots !== 3) fail(`${size.name}: expected 3 steps in the rail, got ${rail.dots}`);
+    if (!rail.named) fail(`${size.name}: a step in the rail has no name`);
     if (!rail.onIsFirst) fail(`${size.name}: step 1 is not the active step on the landing screen`);
     if (!/1/.test(rail.count)) fail(`${size.name}: no "step 1 of 3" counter, got "${rail.count}"`);
     if (!rail.visible) fail(`${size.name}: the rail is off screen on step 1`);
@@ -117,37 +119,45 @@ try {
       else ok(`saved work ${gap}px under the ${gapInfo.stacked ? 'map' : 'card'}, same column`);
     }
 
-    // 3. Map and caption are one framed surface, and the caption fits inside it.
-    const mapPanel = await page.evaluate(() => {
-      const panel = document.querySelector('.day-flow-mappanel');
-      const cap = document.querySelector('.day-flow-mapcap');
-      if (!panel || !cap) return null;
-      const p = panel.getBoundingClientRect();
-      const c = cap.getBoundingClientRect();
-      const cs = getComputedStyle(panel);
+    // 3. The locator map is gone: the popular-city chips carry the choice,
+    //    and the question column is one centered reading width.
+    const column = await page.evaluate(() => {
+      const split = document.querySelector('.day-flow-split');
+      const flow = document.querySelector('.day-flow');
+      if (!split || !flow) return null;
+      const s = split.getBoundingClientRect();
+      const f = flow.getBoundingClientRect();
       return {
-        bordered: cs.borderTopWidth !== '0px',
-        capInside: c.bottom <= p.bottom + 1 && c.right <= p.right + 1,
-        capClipped: cap.scrollHeight - cap.clientHeight > 1,
-        capSize: parseFloat(getComputedStyle(cap).fontSize),
+        mapGone: !document.querySelector('.day-flow-mapside, .day-flow-mappanel'),
+        width: Math.round(s.width),
+        centered: Math.abs((s.left - f.left) - (f.right - s.right)) <= 2,
       };
     });
-    if (!mapPanel) fail(`${size.name}: no framed map panel`);
+    if (!column) fail(`${size.name}: no question column on the landing screen`);
     else {
-      if (!mapPanel.bordered) fail(`${size.name}: the map panel has no frame`);
-      if (!mapPanel.capInside) fail(`${size.name}: the map caption hangs outside the frame`);
-      if (mapPanel.capClipped) fail(`${size.name}: the map caption is clipped`);
-      if (mapPanel.capSize < 12) fail(`${size.name}: map caption at ${mapPanel.capSize}px`);
-      else ok(`map + caption one frame, caption ${mapPanel.capSize}px`);
+      if (!column.mapGone) fail(`${size.name}: the locator map still renders on the landing`);
+      if (column.width > 660) fail(`${size.name}: question column is ${column.width}px, wider than a reading column`);
+      if (!column.centered) fail(`${size.name}: question column is not centered`);
+      else ok(`no locator map, question column ${column.width}px centered`);
     }
     await page.screenshot({ path: `${SHOTS}/day-landing-${size.name}.png`, fullPage: size.name === 'phone' });
 
-    // 4. Step 2: the date grid's touch targets.
+    // 4. Step 2: the date grid's touch targets, and the chosen-destination
+    //    banner standing in for the removed locator map.
     const chip = page.locator('.day-flow-chip').first();
+    const chipCity = (await chip.innerText()).replace(/[\d.]+/g, '').trim();
     await chip.click();
     await page.locator('.day-flow-next').click();
     await page.locator('.day-flow-date').waitFor({ timeout: 30000 });
     await page.waitForTimeout(400);
+    const destBanner = page.locator('.day-flow-dest');
+    if (await destBanner.count() !== 1) fail(`${size.name}: no chosen-destination banner on step 2`);
+    else {
+      const bannerText = (await destBanner.innerText()).trim();
+      if (!bannerText.includes(chipCity)) fail(`${size.name}: banner says "${bannerText}", expected "${chipCity}"`);
+      if (await destBanner.locator('.day-thumb').count() !== 1) fail(`${size.name}: destination banner has no thumb`);
+      else ok(`destination banner: "${chipCity}" with thumb`);
+    }
     const cal = await page.evaluate(() => {
       const d = document.querySelector('.day-flow-date .cal-day');
       const r = d ? d.getBoundingClientRect() : null;
@@ -168,10 +178,14 @@ try {
     }
     await page.screenshot({ path: `${SHOTS}/day-when-${size.name}.png` });
 
-    // 5. Step 3: one filled action, and a badge you can read.
+    // 5. Step 3: one filled action, a badge you can read, and the banner now
+    //    carries the picked date too.
     await page.locator('.day-flow-next').click();
     await page.locator('.day-flow-cards').waitFor({ timeout: 30000 });
     await page.waitForTimeout(300);
+    if (await page.locator('.day-flow-dest .day-flow-dest-date').count() !== 1) {
+      fail(`${size.name}: the banner does not show the picked date on step 3`);
+    } else ok('banner carries the picked date on step 3');
     const fork = await page.evaluate(() => {
       const solid = (el) => {
         const bg = getComputedStyle(el).backgroundColor;
@@ -191,6 +205,28 @@ try {
     if (fork.tagSize < 10.5) fail(`${size.name}: "Recommended" badge at ${fork.tagSize}px`);
     else ok(`fork: ${fork.filled}/2 filled, badge ${fork.tagSize}px`);
     await page.screenshot({ path: `${SHOTS}/day-how-${size.name}.png` });
+
+    // 5b. Pick places, start the plan, then come back. Starting a plan clears
+    //     the chosen stay, and every step past the first is built around that
+    //     stay, so the flow has to be back on question 1 (the only step that
+    //     also lists saved day plans). Parked on "how" it rendered an empty
+    //     page holding one dead "Start planning" button.
+    await page.locator('.day-flow-card').nth(1).click();
+    await page.locator('.day-explore-search-input').waitFor({ timeout: 30000 });
+    await page.locator('.day-explore-search-input').fill('Tivoli');
+    await page.locator('.day-explore-search-result').first().click({ timeout: 15000 });
+    await page.locator('.guide-city-side-add').first().click({ timeout: 15000 });
+    await page.locator('.day-build-btn').click();
+    await page.locator('.trip-newtrip-btn').first().click({ timeout: 30000 });
+    const back = await page.evaluate(() => ({
+      count: document.querySelector('.day-flow-top .shape-head-step')?.textContent.trim() || '',
+      question: !!document.querySelector('.day-flow-search'),
+      saved: document.querySelectorAll('.day-flow-saved .trip-saved-item').length,
+      stranded: !!document.querySelector('.day-build') && !document.querySelector('.day-explore'),
+    }));
+    if (back.stranded) fail(`${size.name}: back from a plan lands on the stayless build screen`);
+    else if (!back.count.endsWith('1 of 3') || !back.question) fail(`${size.name}: back from a plan lands on "${back.count}", no stay question`);
+    else ok(`back from a plan: ${back.count}, ${back.saved} saved plan(s) listed`);
 
     await ctx.close();
   }

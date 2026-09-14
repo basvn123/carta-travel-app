@@ -39,7 +39,7 @@ function unpackLifestyle(s) {
 export function encodeState({
   departDate, returnDate, choices, priceMode, countryFilter,
   tripKinds, priceRange, priceBounds, selectedId, favorites, sortKey, showFavOnly,
-  ratingRange, gemOnly, unescoOnly, topBeachOnly, topPick, reachHours, activeTab,
+  ratingRange, gemOnly, unescoOnly, topBeachOnly, bigOnly, topPick, reachHours, activeTab,
 }) {
   const q = new URLSearchParams();
   if (activeTab && activeTab !== 'map') q.set('tab', activeTab);
@@ -80,6 +80,9 @@ export function encodeState({
   if (gemOnly) q.set('gem', '1');
   if (unescoOnly) q.set('un', '1');
   if (topBeachOnly) q.set('tb', '1');
+  // The map's size toggle: cities only, no towns or villages (place_layer.py
+  // classes). Off is the default, so only the narrowed state is stored.
+  if (bigOnly) q.set('big', '1');
   if (topPick && topPick.by && topPick.n) q.set('top', `${topPick.by}.${topPick.n}`);
   // "Reachable within N hours" cutoff, whole hours (see ReachFilter).
   if (Number.isFinite(reachHours) && reachHours > 0) q.set('rh', String(Math.round(reachHours)));
@@ -138,6 +141,7 @@ export function decodeState(search) {
   if (has('gem')) out.gemOnly = q.get('gem') === '1';
   if (has('un')) out.unescoOnly = q.get('un') === '1';
   if (has('tb')) out.topBeachOnly = q.get('tb') === '1';
+  if (has('big')) out.bigOnly = q.get('big') === '1';
   if (has('top')) {
     const [by, n] = q.get('top').split('.');
     const count = parseInt(n, 10);
@@ -164,11 +168,28 @@ export function loadInitialState() {
   return {};
 }
 
-/** Push the encoded state into the URL (replaceState) and the localStorage mirror. */
+
+// Every key encodeState can write; persistState replaces exactly these.
+const OWN_KEYS = ['b', 'big', 'cf', 'd', 'dh', 'fav', 'favonly', 'g', 'gem', 'ls', 'o', 'pm', 'pr', 'r', 'rh', 'rr', 'sort', 'st', 't', 'tab', 'tb', 'tk', 'top', 'un'];
+
+/** Push the encoded state into the URL (replaceState) and the localStorage mirror.
+ *
+ * Foreign query params are PRESERVED: the Explore rebuild keeps its filter
+ * state (xk/xv/xr/xm/xp/xc/xg/xu/xs) and the member anchor (dm) in the URL,
+ * and this writer used to rebuild the query from scratch and silently wipe
+ * them 300 ms after any state change. Own keys are replaced wholesale; keys
+ * this encoder never writes are left standing. Only the OWN keys go to the
+ * localStorage mirror, exactly as before.
+ */
 export function persistState(state) {
   if (typeof window === 'undefined') return;
   const qs = encodeState(state);
-  const url = qs ? `${window.location.pathname}?${qs}` : window.location.pathname;
+  const own = new URLSearchParams(qs);
+  const merged = new URLSearchParams(window.location.search);
+  for (const key of OWN_KEYS) merged.delete(key);
+  for (const [k, v] of own) merged.set(k, v);
+  const ms = merged.toString();
+  const url = ms ? `${window.location.pathname}?${ms}` : window.location.pathname;
   try { window.history.replaceState(null, '', url); } catch { /* ignore */ }
   try { window.localStorage.setItem(STORAGE_KEY, qs); } catch { /* ignore */ }
 }

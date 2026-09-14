@@ -22,6 +22,7 @@ import json
 import math
 import sys
 from pathlib import Path
+from pipeline_io import atomic_write_json
 
 ROOT = Path(__file__).resolve().parents[1]
 DATA = ROOT / "app_data" / "app_data.json"
@@ -102,7 +103,7 @@ def main():
             })
 
     rows.sort(key=lambda r: -abs(r["gap"]))
-    OUT.write_text(json.dumps(rows, indent=1, ensure_ascii=False), encoding="utf-8")
+    atomic_write_json(OUT, rows, indent=1, ensure_ascii=False)
     over = sum(1 for r in rows if r["gap"] > 0)
     print(f"flagged {len(rows)} of {len(curated)} curated entries "
           f"(|gap| >= {GAP_FLAG}): {over} curators-above-data, "

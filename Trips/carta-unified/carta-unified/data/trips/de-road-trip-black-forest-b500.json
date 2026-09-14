@@ -1,0 +1,313 @@
+{
+  "id": "de-road-trip-black-forest-b500",
+  "sourceId": "de-road-trip-black-forest-b500",
+  "slug": "de-road-trip-black-forest-b500",
+  "title": "The B500 — Schwarzwaldhochstrasse, Panoramastrasse and Baden Wine",
+  "country": "Germany",
+  "countryCode": "DE",
+  "countries": [
+    {
+      "name": "Germany",
+      "code": "DE"
+    }
+  ],
+  "isMultiCountry": false,
+  "region": "Western & Central Europe",
+  "regionKey": "western-central",
+  "subRegion": "Schwarzwald and the Baden wine terraces, Baden-Württemberg",
+  "tripType": "Road Trips & Scenic Drives",
+  "tripTypeId": 5,
+  "tripTypeSlug": "road-trip",
+  "durationDays": 7,
+  "bestPeriod": {
+    "months": [
+      5,
+      6,
+      9,
+      10
+    ],
+    "monthNames": [
+      "May",
+      "June",
+      "September",
+      "October"
+    ],
+    "window": null,
+    "note": "The B500 ridge is open all year but drifts and freezing fog close sections in midwinter; late September brings the wine harvest and the clearest air.",
+    "avoid": null,
+    "raw": null
+  },
+  "budgetTier": "€€",
+  "budgetTierRange": [
+    2,
+    2
+  ],
+  "budgetTierRaw": "€€",
+  "budget": {
+    "currency": "EUR",
+    "totalEur": {
+      "low": 980,
+      "high": 1450
+    },
+    "totalNote": null,
+    "breakdown": {
+      "accommodation": {
+        "lowEur": 480,
+        "highEur": 700,
+        "note": null
+      },
+      "food": {
+        "lowEur": 230,
+        "highEur": 340,
+        "note": null
+      },
+      "transport": {
+        "lowEur": 190,
+        "highEur": 280,
+        "note": null
+      },
+      "activities": {
+        "lowEur": 80,
+        "highEur": 130,
+        "note": null
+      }
+    },
+    "perDayEur": {
+      "low": 140,
+      "high": 207
+    }
+  },
+  "profile": {
+    "difficulty": 1,
+    "difficultyLabel": "Easy",
+    "difficultyNote": null,
+    "fitnessLevel": "Easy",
+    "crowdLevel": "Moderate",
+    "familyFriendly": true,
+    "carRequired": true
+  },
+  "basecamps": [
+    "Baden-Baden, Triberg and Freiburg im Breisgau"
+  ],
+  "gatewayAirport": "Karlsruhe/Baden-Baden (FKB) or Basel–Mulhouse–Freiburg (BSL/MLH/EAP)",
+  "gatewayAirportCode": "FKB",
+  "languages": [
+    "German"
+  ],
+  "currency": "EUR",
+  "emergencyNumber": "112",
+  "coordinates": {
+    "lat": 48.7606,
+    "lon": 8.2398,
+    "precision": "city",
+    "matchedPlace": "Baden-Baden",
+    "source": "geonames (geonamescache, cities > 15k)"
+  },
+  "tags": [
+    "ridge-road",
+    "panorama-route",
+    "baden-wine",
+    "low-emission-zone",
+    "hairpins"
+  ],
+  "summary": "The Schwarzwaldhochstrasse and Panoramastrasse driven end to end, with Baden vineyards, the Kandel hairpins and a Kaiserstuhl finish.",
+  "summaryGenerated": false,
+  "hook": "Germany's oldest scenic road runs along a fir ridge above the Rhine plain, and on a clear evening you can see the Vosges from it. Below the ridge the same trip becomes something else entirely: hairpins into vine terraces, a wine village every eight kilometres, and cake taken seriously.",
+  "snapshot": {
+    "Country": "Germany",
+    "Base(s)": "Baden-Baden (2 nights), Freudenstadt (1), Triberg (1), Freiburg im Breisgau (3)",
+    "Trip Type": "Road Trips & Scenic Drives",
+    "Duration": "7 days",
+    "Best Period": "May–June and September–October",
+    "Total Distance / Terrain": "approx. 780 km; ridge roads and hairpin descents, gradients to 10%, max altitude 1,241 m",
+    "Getting There": "Fly to Karlsruhe/Baden-Baden (FKB), Stuttgart (STR) or Basel (EAP); rail to Offenburg also works",
+    "Who It Suits": "Unhurried drivers, cake enthusiasts, anyone who wants scenery without altitude sickness"
+  },
+  "itinerary": [
+    {
+      "day": 1,
+      "title": "Baden-Baden and the Ortenau terraces",
+      "morning": "Collect the car and check for a green **Umweltplakette** on the windscreen. Baden-Baden and Freiburg itself no longer run low-emission zones, but Karlsruhe still does, and the sticker is what gets you in there.",
+      "afternoon": "Drive the Badische Weinstrasse north-south through **Neuweier** and **Varnhalt**, terraced Riesling slopes where the local bottle shape is the flat-sided Bocksbeutel, then **Sasbachwalden**, half-timbered and steep. Small Winzergenossenschaft tasting rooms sit directly on the road with free parking.",
+      "evening": "Baden-Baden. Leave the car in the Kongresshaus garage and walk the Lichtentaler Allee to the Trinkhalle; the historic Friedrichsbad and the Caracalla Therme are five minutes apart.",
+      "dayStats": "70 km · 1h40 driving · no passes · max altitude 420 m.",
+      "sleep": null
+    },
+    {
+      "day": 2,
+      "title": "Schwarzwaldhochstrasse",
+      "morning": "The **B500 Schwarzwaldhochstrasse** proper: 60 km from Baden-Baden to Freudenstadt, opened in 1930 and never tolled. It climbs quickly to the ridge at Sand and stays between 800 and 1,000 m the whole way, with the Rhine plain on the right and spruce on the left.",
+      "afternoon": "Stop at the **Mummelsee** (1,036 m) — a glacial tarn with a large paid car park that fills by 11:00 on summer Sundays — and walk 25 minutes up to the **Hornisgrinde**, 1,164 m, the northern Black Forest's highest point, with a boardwalk across the moor and a viewing tower. Continue to the **Nationalparkzentrum Ruhestein**, a striking stack of cantilevered timber boxes above the pass at 915 m, then **Schliffkopf** (1,055 m) and the **Kniebis** saddle (935 m).",
+      "evening": "Freudenstadt, whose market square is the largest in Germany and is essentially a car park with arcades. Free parking, which is unusual and welcome.",
+      "dayStats": "80 km · 2h00 driving · 3 saddles (Ruhestein, Schliffkopf, Kniebis) · max altitude 1,036 m.",
+      "sleep": null
+    },
+    {
+      "day": 3,
+      "title": "Kinzig valley and the clock country",
+      "morning": "South on the B294 to **Alpirsbach** and its Romanesque monastery church, then **Schiltach**, a raft-builders' town of white-and-black timber houses stacked up a hillside. Park below the Marktplatz; the square itself is on a slope and cobbled.",
+      "afternoon": "The **Vogtsbauernhof** open-air museum at Gutach preserves real Black Forest farmhouses moved from across the region, including the low-slung roofs that run down to the ground. Then **Triberg**: the waterfall drops 163 m in seven cascades and charges entry; the upper Wasserfall car park saves the climb.",
+      "evening": "Stay in Triberg or Schonach. Ask your hotel for the **KONUS Gästekarte** — it makes all regional buses and trains free for overnight guests, which is worth knowing on a driving trip too.",
+      "dayStats": "115 km · 2h30 driving · no passes · max altitude 1,000 m.",
+      "sleep": null
+    },
+    {
+      "day": 4,
+      "title": "Schwarzwald-Panoramastrasse and the Kandel",
+      "morning": "Join the signposted **Schwarzwald-Panoramastrasse**, a 275 km route that links the high plateaux. Take it via Furtwangen — the Deutsches Uhrenmuseum has the original cuckoo mechanisms and the world's largest clock collection — over the **Thurner** at 1,036 m to **St. Märgen** and **St. Peter**, whose Baroque abbey library is one of the finest interiors in Baden.",
+      "afternoon": "The **Kandelstrasse**: 11 km of tight, cambered hairpins from the Kandel pass at 1,241 m down to Waldkirch, with gradients to 10% and a well-earned reputation among motorcyclists. Drive it downhill in the afternoon with the Rhine plain opening ahead.",
+      "evening": "Into Freiburg im Breisgau for three nights. The city centre is largely pedestrianised (its Umweltzone was lifted in May 2025); use the Schlossberg or Rotteckring garages and walk.",
+      "dayStats": "140 km · 3h20 driving · 2 passes (Thurner, Kandel) · max altitude 1,241 m.",
+      "sleep": null
+    },
+    {
+      "day": 5,
+      "title": "Schauinsland, Belchen and the Münstertal",
+      "morning": "The **Schauinslandstrasse** climbs from Horben in about 170 curves — a former hill-climb course, now speed-limited and camera-watched — to a summit car park near 1,220 m. Parking is paid; the tower is a ten-minute walk.",
+      "afternoon": "Over the **Notschrei** pass (1,121 m) and down to Todtnau, then up to Multen for the **Belchen**, 1,414 m. Private cars are banned from the last stretch to the summit: you park at Multen and take the Belchen-Seilbahn cable car or the shuttle bus. This is the region's best 360-degree view — Vosges, Jura, and the Alps on a clear autumn day.",
+      "evening": "Over the **Wiedener Eck** (1,037 m) and down through the **Münstertal** to Staufen, where the Fausthaus faces the market square, then back to Freiburg.",
+      "dayStats": "130 km · 3h10 driving · 3 passes (Schauinsland, Notschrei, Wiedener Eck) · max altitude 1,220 m.",
+      "sleep": null
+    },
+    {
+      "day": 6,
+      "title": "Höllental, Feldberg and the Wutach",
+      "morning": "East on the **B31 through the Höllental**, a narrow rock gorge with the Hirschsprung statue on a ledge above the road, to **Titisee**. Then the **Feldbergpass** at 1,231 m, the highest through-road in the Black Forest, under the 1,493 m Feldberg summit.",
+      "afternoon": "Round the **Schluchsee**, then **St. Blasien**, whose enormous domed cathedral is a shock in a village of that size. Loop east to the **Wutachschlucht** gorge — the Schattenmühle car park is the standard access point for the two-hour walk in.",
+      "evening": "Return via Titisee and the Höllental. Watch for evening deer on the B500 stretches south of Hinterzarten.",
+      "dayStats": "165 km · 3h20 driving · 1 pass (Feldbergpass) · max altitude 1,231 m.",
+      "sleep": null
+    },
+    {
+      "day": 7,
+      "title": "Kaiserstuhl and out",
+      "morning": "West to the **Kaiserstuhl**, a volcanic hill island in the Rhine plain planted almost entirely with vines. Drive the loess terraces via Ihringen, Achkarren and Oberbergen; the Vulkanfelsen and Badberg viewpoints look across to Alsace.",
+      "afternoon": "**Breisach** on the Rhine, with the Stephansmünster on its rock and the French bank in walking distance. Lunch, a last Spätburgunder tasting at a village cooperative, then the A5 north or south.",
+      "evening": "Drop the car. If flying from Basel's EuroAirport, note the terminal has separate French and Swiss sectors — return to the sector your contract names, since the Swiss side implies the Swiss motorway vignette.",
+      "dayStats": "80 km · 1h50 driving · no passes · max altitude 560 m.",
+      "sleep": null
+    }
+  ],
+  "accommodationStrategy": [
+    {
+      "rank": 1,
+      "name": "Hotel am Markt",
+      "style": "Small family hotel",
+      "location": "Baden-Baden",
+      "description": "A modest, long-run house on the market square by the Stiftskirche, uphill from the spa quarter and inside the old town — so the Friedrichsbad, the Trinkhalle and the Lichtentaler Allee are all walkable. Parking is arranged nearby rather than on site, which is normal in Baden-Baden's old streets.",
+      "booking": "six weeks; longer for the Iffezheim race meetings.",
+      "priceNote": "€110–€160 per night for two"
+    },
+    {
+      "rank": 2,
+      "name": "Parkhotel Wehrle",
+      "style": "Historic town hotel",
+      "location": "Triberg",
+      "description": "A 17th-century inn with its own park in the middle of Triberg, five minutes from the waterfall entrance and with proper on-site parking — which matters, because Triberg's centre is a narrow valley floor with very little of it. It also fixes the trip's weak spot: the middle Black Forest is short on characterful beds.",
+      "booking": "a month.",
+      "priceNote": "€120–€180 per night for two"
+    },
+    {
+      "rank": 3,
+      "name": "Hotel Zum Roten Bären",
+      "style": "Historic inn",
+      "location": "Freiburg im Breisgau",
+      "description": "Documented from 1120 and arguably the oldest inn in Germany, on the Oberlinden by the Schwabentor. Its garage is the practical point: Freiburg's centre is pedestrianised and crossed by tram lines and Bächle water channels, and having a parked car inside the ring for three nights is worth paying for.",
+      "booking": "two months in September.",
+      "priceNote": "€140–€200 per night for two"
+    }
+  ],
+  "logistics": {
+    "connectivity": null,
+    "emergency": "112 for everything; 110 for police. Bergwacht Schwarzwald handles gorge and forest rescues through 112.",
+    "weather": "Winter tyres are legally required in winter conditions (the *situative Winterreifenpflicht*), and the B500 above 900 m gets freezing fog and drifting snow from November. Sections around Ruhestein and Schliffkopf close for hours at a time.",
+    "bookingWindows": null,
+    "money": "Cards are widely taken but small Winzergenossenschaften, mountain Gasthäuser and cake counters still prefer cash or Girocard. Shops shut at 20:00 and everything closes on Sunday except bakeries and petrol stations.",
+    "transportRules": null,
+    "permits": null,
+    "health": null,
+    "gettingThere": null,
+    "other": [
+      {
+        "label": "No car toll, but a sticker",
+        "text": "Germany charges cars nothing for Autobahn use. What you do need is the green **Umweltplakette** for Umweltzonen — in this region Karlsruhe, Stuttgart, Mannheim and Heidelberg (Freiburg's zone was lifted in May 2025). It costs €6–€20 at TÜV, DEKRA or a workshop; German rentals normally carry one, foreign-plated cars usually do not, and the fine is charged per entry."
+      },
+      {
+        "label": "Cross-border",
+        "text": "Alsace is 20 minutes from Freiburg and Basel is 60. In France you need a **Crit'Air** sticker for the Strasbourg zone; in Switzerland the motorway **Autobahnvignette** costs CHF 40 and is sold only as an annual, valid from 1 December to 31 January of the following year, now also as an e-vignette linked to the plate."
+      },
+      {
+        "label": "Rental restrictions",
+        "text": "German rentals allow France, Switzerland, Austria and the Benelux as standard; eastward travel is often restricted and one-way drops abroad — Freiburg to Basel or Strasbourg — attract fees from €100. Confirm the Swiss vignette question before crossing."
+      },
+      {
+        "label": "Emergencies",
+        "text": "112 for everything; 110 for police. Bergwacht Schwarzwald handles gorge and forest rescues through 112."
+      },
+      {
+        "label": "Speed and cameras",
+        "text": "The Schauinslandstrasse, the Kandel and the B500 all carry permanent speed and noise cameras, aimed mainly at motorcycles. Limits drop to 50 or 60 km/h without much warning."
+      }
+    ]
+  },
+  "proTips": [
+    "Take the **KONUS Gästekarte** from any participating hotel: free regional trains and buses for overnight guests. Use it to ride up to Feldberg or Schauinsland and walk down, leaving the car behind.",
+    "Drive the Kandel and the Schauinsland downhill in late afternoon. Both face west, and both are jammed with motorcycles on Sunday mornings.",
+    "Do the Mummelsee before 10:00 or after 17:00. The car park is the bottleneck for the whole northern B500 on summer weekends.",
+    "You cannot drive up the Belchen — build in the cable car at Multen or the road is a dead end with a barrier.",
+    "Café Schäfer in Triberg still makes Schwarzwälder Kirschtorte to the documented original recipe. It is a small shop, and it sells out.",
+    "In the Kaiserstuhl, aim for a village cooperative rather than a roadside shop: Achkarren, Oberrotweil and Ihringen all pour Spätburgunder and Grauburgunder for a couple of euros a glass.",
+    "The Wutachschlucht is best walked one way with the bus back, which the KONUS card makes free."
+  ],
+  "typeSpecific": {
+    "raw": {
+      "Total Distance / Terrain": "approx. 780 km; ridge roads and hairpin descents, gradients to 10%, max altitude 1,241 m",
+      "Who It Suits": "Unhurried drivers, cake enthusiasts, anyone who wants scenery without altitude sickness"
+    },
+    "surface": "approx. 780 km; ridge roads and hairpin descents, gradients to 10%, max altitude 1,241 m",
+    "distanceKm": 780,
+    "elevationM": null,
+    "verticalM": null,
+    "technicalRating": null,
+    "transitPass": null,
+    "hutBooking": null,
+    "liftNetwork": null,
+    "snowReliability": null,
+    "windConditions": null,
+    "gpxReady": null,
+    "bookingTimeline": null,
+    "audience": "Unhurried drivers, cake enthusiasts, anyone who wants scenery without altitude sickness"
+  },
+  "packingNotes": [
+    "Walking shoes with tread: the Wutach gorge path is rooty, wet and unimproved.",
+    "A warm layer for the ridge — Hornisgrinde in May is often 10°C colder than Baden-Baden.",
+    "Swimwear and flip-flops for the Baden-Baden thermal baths; the Friedrichsbad is textile-free, the Caracalla is not.",
+    "A cool bag for wine bought at cooperatives; car boots in the Rhine plain reach 50°C in summer.",
+    "Cash, roughly €150, for parking meters, small tastings and cake.",
+    "Insect repellent for the Wutach and the moorland boardwalks in June.",
+    "Sunglasses — the ridge road runs west-facing all afternoon."
+  ],
+  "whatCouldGoWrong": [
+    "**Snow or fog shuts the B500 ridge.** Fallback: the parallel B462 and B33 through the Kinzig and Murg valleys stay open and reach the same towns; you lose the view, not the day.",
+    "**You enter Karlsruhe without an Umweltplakette.** Fallback: buy one at a TÜV or DEKRA station on the edge of the city before driving in, or park at a Park-and-Ride tram stop outside the zone.",
+    "**Sunday closures strand you without food.** Fallback: Autobahn service areas and bakery cafés open Sunday mornings; buy provisions on Saturday before 20:00.",
+    "**Motorcycle weekend traffic on the passes.** Fallback: move the Kandel, Schauinsland and Mummelsee legs to weekdays and use Saturday and Sunday for the Kaiserstuhl and the wine villages."
+  ],
+  "sources": {
+    "verified": null,
+    "confidenceNotes": null
+  },
+  "verifyFlags": [],
+  "verifyFlagCount": 0,
+  "volatilePricing": false,
+  "wordCount": 2104,
+  "dataVintage": 2026,
+  "provenance": {
+    "batch": "western-central",
+    "sourceFile": "cartatripsv1/trips/de-road-trip-black-forest-b500.md",
+    "sourceFormat": "md+yaml-frontmatter (one file per trip)",
+    "sourceId": "de-road-trip-black-forest-b500",
+    "ingestedAt": "2026-09-02",
+    "synthesized": false
+  }
+}

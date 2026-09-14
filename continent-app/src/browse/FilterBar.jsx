@@ -1,5 +1,4 @@
 import React from 'react';
-import { TRIP_KINDS } from '../lib/trip_kinds.js';
 import { Dropdown } from '../components/Dropdown.jsx';
 import { DateField } from '../components/DateField.jsx';
 import { GemIcon } from '../components/GemRating.jsx';
@@ -10,6 +9,7 @@ import { offeredStayTiers } from '../lib/runtime_pricing.js';
 import { useI18n } from '../i18n/index.jsx';
 import { NumberField, DualRange } from '../components/FilterControls.jsx';
 import { ReachFilter } from '../components/ReachFilter.jsx';
+import { FilterSheet } from './FilterSheet.jsx';
 import {
   isFullRatingRange, FULL_RATING_RANGE, RATING_MIN, RATING_MAX,
 } from '../lib/rating.js';
@@ -25,7 +25,10 @@ export function FilterBar({
   availableCountries,
   priceRange, setPriceRange,
   priceBounds,
-  tripKinds, setTripKinds,
+  priceHistogram,
+  // Edited on the map (the category rail, the size toggle), kept here only so
+  // Reset clears them too.
+  setTripKinds, setBigOnly,
   ratingRange, setRatingRange,
   gemOnly, setGemOnly,
   unescoOnly, setUnescoOnly,
@@ -35,19 +38,34 @@ export function FilterBar({
   reachAvailable,
   onOpenLifestyle,
 }) {
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
   const baggageOpts = data?.meta?.baggage_options || {};
   // Only the stay tiers this dataset measured (see apply_stay_tiers.py).
   const stayTierOptions = React.useMemo(
     () => offeredStayTiers(data?.meta), [data?.meta]);
 
-  // Mobile-only: the dense filter set collapses behind a filter icon, and the
-  // depart/return pickers collapse behind a separate calendar icon. On desktop
-  // the CSS keeps everything always visible and hides these triggers, so this
-  // state is inert there.
+  // Mobile-only: the dense filter set collapses behind a labelled Filters
+  // segment, and the depart/return pickers behind the dates segment beside it,
+  // both halves of one segmented pill. On desktop the CSS keeps everything
+  // always visible and hides these triggers, so this state is inert there.
   const [mobileFiltersOpen, setMobileFiltersOpen] = React.useState(false);
   const [mobileDatesOpen, setMobileDatesOpen] = React.useState(false);
   const datesAnchorRef = React.useRef(null);
+
+  // Phones get a real modal bottom sheet (FilterSheet) instead of the desktop
+  // rows folded into a grid: the two layouts want different controls, not the
+  // same controls at a different width. Tracked in JS rather than CSS so only
+  // one of them is ever mounted, and the sheet can portal out of this header
+  // (whose backdrop-filter would otherwise capture its fixed positioning).
+  const [isPhone, setIsPhone] = React.useState(
+    () => typeof window !== 'undefined' && window.matchMedia('(max-width: 768px)').matches,
+  );
+  React.useEffect(() => {
+    const mq = window.matchMedia('(max-width: 768px)');
+    const onChange = (e) => setIsPhone(e.matches);
+    mq.addEventListener('change', onChange);
+    return () => mq.removeEventListener('change', onChange);
+  }, []);
 
   // Desktop: everything that NARROWS the result set (budget, place, quality,
   // trip style) lives in a tray that drops below the header, so the bar itself
@@ -94,10 +112,11 @@ export function FilterBar({
 
   // One count per narrowing control that is actually doing something, shown as
   // a badge on the tray toggle so a filter left on inside a closed tray can
-  // never silently explain an empty map.
+  // never silently explain an empty map. Trip kinds are deliberately NOT
+  // counted: they live on the category rail, lit up in plain sight, so a badge
+  // for them would send you into a tray that no longer holds them.
   const activeFilters = [
     countryFilter.length > 0,
-    tripKinds.length > 0,
     ratingNarrowed,
     gemOnly,
     unescoOnly,
@@ -112,7 +131,10 @@ export function FilterBar({
 
   const resetAll = () => {
     setCountryFilter([]);
+    // Reset means the whole board: the rail chips and the map's size toggle go
+    // too, even though neither is what put the badge there.
     setTripKinds([]);
+    setBigOnly(false);
     setRatingRange([...FULL_RATING_RANGE]);
     setGemOnly(false);
     setUnescoOnly(false);
@@ -174,84 +196,144 @@ export function FilterBar({
   ];
   const [rLo, rHi] = ratingRange;
 
+  // Mobile pill: the dates segment reads the chosen window back as a fact
+  // ("12 to 19 Sep") rather than a generic label, and falls back to the plain
+  // word only while nothing is picked yet. Within one month the first date
+  // drops its month, which is what keeps the widest locales on the pill.
+  const shortDate = React.useCallback((iso, dayOnly) => {
+    if (!iso) return null;
+    try {
+      const opts = dayOnly
+        ? { day: 'numeric', timeZone: 'UTC' }
+        : { day: 'numeric', month: 'short', timeZone: 'UTC' };
+      // Plain 'en' means US month-first ("Aug 25"); the audience is European,
+      // so English gets day-first like every other supported locale.
+      const locale = lang === 'en' ? 'en-GB' : lang;
+      return new Intl.DateTimeFormat(locale, opts).format(new Date(iso + 'T00:00:00Z'));
+    } catch { return iso; }
+  }, [lang]);
+  const sameMonth = !!(departDate && returnDate && departDate.slice(0, 7) === returnDate.slice(0, 7));
+  const dateSummary = departDate && returnDate
+    ? t('filter.dateSpan', { a: shortDate(departDate, sameMonth), b: shortDate(returnDate) })
+    : (shortDate(departDate) || t('filter.dates'));
+
   return (
     <div className={`filter-bar ${mobileFiltersOpen ? 'mobile-open' : 'mobile-collapsed'}`}>
       {/* Header wrapper is `display: contents` on desktop (so its content stays a
-          direct flex child) and a real flex row on mobile (the calendar/filter
-          icon triggers - brand and account now live in the always-mounted
-          AppHeader above this bar). */}
+          direct flex child) and a real flex row on mobile. There it carries ONE
+          segmented pill instead of the old row of unlabelled icon circles: a
+          dates segment that states the chosen window, a hairline, then a
+          labelled Filters segment with the active count. Lifestyle has no
+          standalone trigger any more; it lives inside the filter sheet with
+          the rest of the spend controls. */}
       <div className="filter-mobile-header">
         <div className="mobile-header-actions">
-          <div className="mobile-dates-anchor" ref={datesAnchorRef}>
-            <button
-              className={`icon-btn ${mobileDatesOpen ? 'open' : ''}`}
-              onClick={openMobileDates}
-              aria-expanded={mobileDatesOpen}
-              aria-label={t('filter.datesAria')}
-              title={t('filter.datesTitle')}
-            >
-              <CalendarIcon size={18} />
-            </button>
+          <div className="mobile-seg">
+            <div className="mobile-dates-anchor" ref={datesAnchorRef}>
+              <button
+                type="button"
+                className={`mobile-seg-btn ${mobileDatesOpen ? 'open' : ''}`}
+                onClick={openMobileDates}
+                aria-expanded={mobileDatesOpen}
+                aria-label={t('filter.datesAria')}
+                title={t('filter.datesTitle')}
+              >
+                <CalendarIcon size={16} />
+                <span className="mobile-seg-value">{dateSummary}</span>
+              </button>
 
-            {mobileDatesOpen && (
-              <div className="mobile-dates-pop">
-                <div className="filter">
-                  <label className="filter-label">{t('filter.depart')}</label>
-                  <div className="filter-control">
-                    <DateField
-                      value={departDate || ''}
-                      min={dateBounds?.min}
-                      max={dateBounds?.max}
-                      onChange={onDepartChange}
-                    />
+              {mobileDatesOpen && (
+                <div className="mobile-dates-pop">
+                  <div className="filter">
+                    <label className="filter-label">{t('filter.depart')}</label>
+                    <div className="filter-control">
+                      <DateField
+                        value={departDate || ''}
+                        min={dateBounds?.min}
+                        max={dateBounds?.max}
+                        onChange={onDepartChange}
+                      />
+                    </div>
+                  </div>
+                  <div className="filter">
+                    <label className="filter-label">{t('filter.return')}</label>
+                    <div className="filter-control">
+                      <DateField
+                        value={returnDate || ''}
+                        min={departDate || dateBounds?.min}
+                        max={dateBounds?.max}
+                        onChange={(v) => setReturnDate(v)}
+                      />
+                    </div>
                   </div>
                 </div>
-                <div className="filter">
-                  <label className="filter-label">{t('filter.return')}</label>
-                  <div className="filter-control">
-                    <DateField
-                      value={returnDate || ''}
-                      min={departDate || dateBounds?.min}
-                      max={dateBounds?.max}
-                      onChange={(v) => setReturnDate(v)}
-                    />
-                  </div>
-                </div>
-              </div>
-            )}
+              )}
+            </div>
+
+            <span className="mobile-seg-rule" aria-hidden="true" />
+
+            <button
+              type="button"
+              className={`mobile-seg-btn ${mobileFiltersOpen ? 'open' : ''} ${anyFilterActive ? 'has-active' : ''}`}
+              onClick={openMobileFilters}
+              aria-expanded={mobileFiltersOpen}
+              title={t('filter.filters')}
+            >
+              <FilterIcon size={16} />
+              <span className="mobile-seg-label">{t('filter.filters')}</span>
+              {anyFilterActive && <span className="mobile-seg-count">{activeFilters}</span>}
+            </button>
           </div>
-
-          <button
-            className={`icon-btn ${mobileFiltersOpen ? 'open' : ''} ${anyFilterActive ? 'has-active' : ''}`}
-            onClick={openMobileFilters}
-            aria-expanded={mobileFiltersOpen}
-            aria-label={t('filter.filters')}
-            title={t('filter.filters')}
-          >
-            <FilterIcon size={18} />
-            {anyFilterActive && <span className="icon-btn-dot" aria-hidden="true" />}
-          </button>
-
-          {onOpenLifestyle && (
-            <button
-              className="icon-btn"
-              onClick={() => { setMobileFiltersOpen(false); setMobileDatesOpen(false); onOpenLifestyle(); }}
-              aria-label={t('filter.lifestyleAria')}
-              title={t('filter.lifestyleTitle')}
-            >
-              <LifestyleIcon size={18} />
-            </button>
-          )}
         </div>
       </div>
+
+      {/* The phone surface: a modal bottom sheet over a scrim, mounted only at
+          phone widths so the desktop rows below never render twice. */}
+      {isPhone && mobileFiltersOpen && (
+        <FilterSheet
+          onClose={() => setMobileFiltersOpen(false)}
+          data={data}
+          choices={choices}
+          setChoices={setChoices}
+          priceMode={priceMode}
+          setPriceMode={setPriceMode}
+          countryFilter={countryFilter}
+          setCountryFilter={setCountryFilter}
+          availableCountries={availableCountries}
+          priceRange={priceRange}
+          setPriceRange={setPriceRange}
+          priceBounds={priceBounds}
+          priceHistogram={priceHistogram}
+          ratingRange={ratingRange}
+          setRatingRange={setRatingRange}
+          gemOnly={gemOnly}
+          setGemOnly={setGemOnly}
+          unescoOnly={unescoOnly}
+          setUnescoOnly={setUnescoOnly}
+          topBeachOnly={topBeachOnly}
+          setTopBeachOnly={setTopBeachOnly}
+          topPick={topPick}
+          setTopPick={setTopPick}
+          reachHours={reachHours}
+          setReachHours={setReachHours}
+          reachAvailable={reachAvailable}
+          onOpenLifestyle={onOpenLifestyle}
+          onNightsCommit={onNightsCommit}
+          nights={choices.trip_days || 0}
+          activeFilters={activeFilters}
+          resetAll={resetAll}
+          resultCount={stats?.priced ?? 0}
+          cheapest={stats?.min ?? null}
+          priceNarrowed={priceNarrowed}
+          ratingNarrowed={ratingNarrowed}
+        />
+      )}
 
       {/* Desktop layout: ONE always-visible row that defines the trip (when,
           who, how it's priced), plus a tray holding everything that narrows the
           result set. The tray is absolutely positioned over the map, so opening
-          it never grows the header or shrinks the map. On mobile every
-          `.filter-group` / `.filter-tray` is `display: contents`, so the
-          individual `.filter` children fall straight into the sheet's 2-column
-          grid and the desktop grouping disappears. */}
+          it never grows the header or shrinks the map. */}
+      {!isPhone && (
       <div className="filter-rows">
 
         <div className="filter-row filter-row-primary">
@@ -462,13 +544,14 @@ export function FilterBar({
                                 value={priceRange}
                                 onChange={setPriceRange}
                                 fmt={eur}
+                                hist={priceHistogram}
                                 hideValueRow
                               />
                             </div>
                             <div className={`range-band-box ${priceNarrowed ? 'is-narrowed' : ''}`}>
                               {priceNarrowed ? (
                                 <span className="range-band-nums">
-                                  {eur(priceRange[0])}<span className="range-band-dash">to</span>{eur(priceRange[1])}
+                                  {eur(priceRange[0])}<span className="range-band-dash">{t('filter.to')}</span>{eur(priceRange[1])}
                                 </span>
                               ) : (
                                 <span className="range-band-any">{t('filter.anyPrice')}</span>
@@ -509,7 +592,7 @@ export function FilterBar({
                           <div className="filter-control">
                             <button
                               className="pill-toggle lifestyle-pill"
-                              onClick={onOpenLifestyle}
+                              onClick={() => { setTrayOpen(false); onOpenLifestyle(); }}
                               title={t('filter.setLifestyleTitle')}
                             >
                               <LifestyleIcon size={13} /> {t('filter.setLifestyle')}
@@ -547,7 +630,7 @@ export function FilterBar({
                           <div className={`range-band-box ${ratingNarrowed ? 'is-narrowed' : ''}`}>
                             <span className="range-band-nums">
                               {ratingNarrowed ? rLo.toFixed(1) : RATING_MIN}
-                              <span className="range-band-dash">to</span>
+                              <span className="range-band-dash">{t('filter.to')}</span>
                               {ratingNarrowed ? rHi.toFixed(1) : RATING_MAX}
                             </span>
                           </div>
@@ -616,31 +699,10 @@ export function FilterBar({
                     </div>
                   </div>
 
-                  {/* Style: what kind of trip it should be. A multi-select
-                      dropdown, mirroring Country, so the choices live in a
-                      popover instead of wrapping a wide chip block. */}
-                  <div className="filter-group group-style">
-                    <div className="group-caption">{t('filter.groupStyle')}</div>
-                    <div className="group-fields">
-                      <div className="filter filter-triptype">
-                        <label className="filter-label">{t('filter.tripType')}</label>
-                        <div className="filter-control">
-                          <Dropdown
-                            multiple
-                            value={tripKinds}
-                            onChange={setTripKinds}
-                            options={TRIP_KINDS.map((k) => ({ value: k.key, label: k.label }))}
-                            placeholder={t('filter.allTypes')}
-                            multiLabel={(vals) =>
-                              vals.length === 1
-                                ? (TRIP_KINDS.find((k) => k.key === vals[0])?.label || t('filter.oneType'))
-                                : t('filter.nTypes', { n: vals.length })
-                            }
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+                  {/* Trip style used to be a fourth quadrant here. The category
+                      rail under the header edits the same tripKinds and is
+                      always on screen, so the tray was asking a question that
+                      was already answered a row above it. */}
                 </div>
 
                 {/* Desktop-only footer: says what the tray is currently doing to
@@ -665,6 +727,7 @@ export function FilterBar({
           </div>
         </div>
       </div>
+      )}
     </div>
   );
 }

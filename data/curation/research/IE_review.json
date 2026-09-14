@@ -1,0 +1,262 @@
+{
+  "iso2": "IE",
+  "country": "Ireland",
+  "checked_at": "2026-08-17",
+  "beaches": {
+    "wrong": [
+      {
+        "name": "Barley Cove Beach",
+        "class": "duplicate_of:Barleycove Beach",
+        "why": "Tier 2 rank 10 at 51.46902,-9.77694 is the same beach as tier 1 rank 1 'Barleycove Beach' at 51.46877,-9.7692, about 55 m apart. One beach, two spacings of the same name, occupying both the country's top slot and a tier-2 slot.",
+        "source_url": "https://en.wikipedia.org/wiki/Barleycove"
+      },
+      {
+        "name": "Inchidoney Island Clonakilty",
+        "class": "duplicate_of:Inchydoney Beach",
+        "why": "Tier 2 rank 21. This names the tied island and townland of Inchydoney, not a beach, and it duplicates 'Inchadoney Beach' at tier 2 rank 20, which is itself a misspelling of Inchydoney. Three tier-2 rows around Clonakilty (this, Inchadoney Beach, Stoney Beach Ring) resolve to the same stretch of coast.",
+        "source_url": "https://en.wikipedia.org/wiki/Inchydoney"
+      },
+      {
+        "name": "Inchadoney Beach",
+        "class": "duplicate_of:Inchydoney Beach",
+        "why": "Tier 2 rank 20. A misspelling of Inchydoney, the Blue Flag beach at Clonakilty. The canonical spelling appears nowhere in the file, so the app can never show the correct name for the region's best-known beach.",
+        "source_url": "https://en.wikipedia.org/wiki/Inchydoney"
+      },
+      {
+        "name": "Horn Head, Donegal",
+        "class": "park_or_area",
+        "why": "Tier 2 rank 19. Horn Head (Wikidata Q1137228, Irish Corran Binne) is a cliff-bound peninsula on Sheephaven Bay north of Dunfanaghy, with sea cliffs over 180 m. It is a headland drive and a seabird site, not a beach.",
+        "source_url": "https://www.wikidata.org/wiki/Q1137228",
+        "verified": true
+      },
+      {
+        "name": "Stoney Beach Ring",
+        "class": "not_notable",
+        "why": "Tier 1 rank 9. An obscure strand near Ring, outside Clonakilty, holding one of only nine tier-1 slots for the whole country while Keem Bay, Inch Beach and Curracloe are absent from the file. The name itself reads as a fragment rather than a place name.",
+        "source_url": "https://www.epa.ie/environment-and-you/water/bathing-water/",
+        "verified": false
+      },
+      {
+        "name": "Rusheen Bay",
+        "class": "other",
+        "why": "Family: bay_not_beach. Tier 1 rank 3. Rusheen Bay west of Galway city is a shallow tidal bay used for windsurfing and kitesurfing rather than a named swimming beach; the sand beach on that shore is Silverstrand. Classified with lower confidence than the other rows here.",
+        "source_url": "https://www.galwaycity.ie/beaches",
+        "verified": false
+      },
+      {
+        "name": "Sandymount Strand",
+        "class": "not_notable",
+        "why": "Tier 1 rank 5. A vast intertidal sand and mudflat on Dublin Bay where the tide goes out roughly a kilometre. The app's own joined water class for it is 'Sufficient', the lowest passing EEA grade and the only non-Excellent value in the tier-1 list, yet it is ranked above four Excellent-rated beaches. It is a famous walk and a Joyce landmark, not a top-five Irish beach.",
+        "source_url": "https://en.wikipedia.org/wiki/Sandymount_Strand"
+      },
+      {
+        "name": "Dooega Beach",
+        "class": "not_notable",
+        "why": "Tier 1 rank 2. A small village strand on the south coast of Achill. Real, but it is second in the country while Keem Bay, on the same island and the beach the app's own anchor destination is named after, is absent from the file entirely.",
+        "source_url": "https://www.mayo.ie/things-to-do/beaches",
+        "verified": false
+      }
+    ],
+    "missing": [
+      {
+        "name": "Keem Bay",
+        "qid": "Q6382837",
+        "lat": 53.968,
+        "lon": -10.1939,
+        "why": "The horseshoe cove under Croaghaun on Achill Island, Blue Flag, and the most photographed beach in Ireland. The app's anchor destination is literally called 'Achill Island (Keem Bay)' and from it the file returns Dooega, Barnynagappul, Dookinella, Gubnahardia and Keel, but not Keem.",
+        "source_url": "https://www.wikidata.org/wiki/Q6382837",
+        "verified": true
+      },
+      {
+        "name": "Inch Beach",
+        "qid": "Q111417107",
+        "lat": 52.12448,
+        "lon": -9.96834,
+        "why": "A 5 km sand spit into Dingle Bay, County Kerry, drivable onto and one of the two or three most recognised beaches in the country. Absent from the file although the app carries a 'Dingle' anchor.",
+        "source_url": "https://www.wikidata.org/wiki/Q111417107",
+        "verified": true
+      },
+      {
+        "name": "Brittas Bay",
+        "qid": "Q4179009",
+        "lat": 52.88333,
+        "lon": -6.05,
+        "why": "The dune beach of County Wicklow and the default seaside day out from Dublin; the entire east coast south of Sandymount is unrepresented.",
+        "source_url": "https://www.wikidata.org/wiki/Q4179009",
+        "verified": true
+      },
+      {
+        "name": "Curracloe",
+        "qid": "Q3007699",
+        "lat": 52.3929,
+        "lon": -6.3885,
+        "why": "The 11 km Wexford strand used for the Normandy landing sequence in Saving Private Ryan; the whole south east is unrepresented in the file.",
+        "source_url": "https://www.wikidata.org/wiki/Q3007699",
+        "verified": true
+      },
+      {
+        "name": "Coumeenoole Beach",
+        "qid": null,
+        "lat": null,
+        "lon": null,
+        "why": "The cove at Slea Head on the Dingle peninsula, on the Wild Atlantic Way. No Wikidata entity confirmed, so listed unverified.",
+        "source_url": "https://www.dinglepeninsula.ie/",
+        "verified": false
+      },
+      {
+        "name": "Dog's Bay and Gurteen Bay",
+        "qid": null,
+        "lat": null,
+        "lon": null,
+        "why": "The back-to-back white shell-sand bays at Roundstone, Connemara, the best-known beaches in Galway. No Wikidata entity confirmed, so listed unverified.",
+        "source_url": "https://www.discoverireland.ie/galway",
+        "verified": false
+      },
+      {
+        "name": "Silver Strand, Malin Beg",
+        "qid": null,
+        "lat": null,
+        "lon": null,
+        "why": "The horseshoe cove reached by a long stair below Slieve League, County Donegal. The app already carries a 'Slieve League' anchor. No Wikidata entity confirmed, so listed unverified.",
+        "source_url": "https://www.govisitdonegal.com/",
+        "verified": false
+      },
+      {
+        "name": "Banna Strand",
+        "qid": null,
+        "lat": null,
+        "lon": null,
+        "why": "The long Blue Flag dune beach in north Kerry; no Kerry beach at all appears in the file. No Wikidata entity confirmed, so listed unverified.",
+        "source_url": "https://www.discoverireland.ie/kerry",
+        "verified": false
+      }
+    ],
+    "order": [
+      "Tier 1 ranks 1 to 4 (Barleycove, Dooega, Rusheen Bay, Tragumna) all carry the identical score 0.956 and are ordered alphabetically by first letter B, D, R, T. The country's top four beaches are therefore alphabetised, not ranked.",
+      "Tier 2 ranks 10 to 23 all carry the identical score 0.494 and run strictly alphabetically: Barley Cove, Barnynagappul, Blackrock, Coral, Dookinella, Duneen, Dunfanaghy, Garretstown, Gubnahardia, Horn Head, Inchadoney, Inchidoney, Keel, Kilcolman. Keel Beach, the main Achill beach, is 22nd in the country because of its initial letter. There is no ranking signal below tier 1 at all.",
+      "Sandymount Strand at rank 5, water class 'Sufficient', is above Bertra, Killahoey and Portsalon, all 'Excellent'. Whatever the score is weighting, it is not the water class it joined.",
+      "Portsalon Beach at rank 6 is the strongest entry in the list on external evidence (a Blue Flag beach in Ballymastocker Bay, widely cited in best-beach rankings) and should be well above Rusheen Bay and Tragumna."
+    ]
+  },
+  "mountains": {
+    "wrong": [
+      {
+        "name": "Diamond Hill",
+        "class": "not_notable",
+        "why": "Tier 1 rank 1 and the country's top_mountain. Diamond Hill (Binn Ghuaire) is 442 m above Letterfrack in Connemara National Park. English Wikipedia states outright that at 442 m 'it does not rank as an Arderin, or a Vandeleur-Lynam', that is, it falls below Ireland's own two standard mountain-listing thresholds. It is a fine two-hour national park loop; it is not Ireland's mountain.",
+        "source_url": "https://en.wikipedia.org/wiki/Diamond_Hill_(Ireland)"
+      },
+      {
+        "name": "Purple Mountain NE Top",
+        "class": "duplicate_of:Purple Mountain",
+        "why": "Tier 1 rank 5. A subsidiary top of Purple Mountain (Wikidata Q7261438, 832 m, County Kerry), carrying the parent's Wikipedia link. 'NE Top' is a hill-list suffix, not a place name a traveller would search for.",
+        "source_url": "https://en.wikipedia.org/wiki/Purple_Mountain_(Kerry)"
+      },
+      {
+        "name": "Tomies Mountain",
+        "class": "duplicate_of:Purple Mountain",
+        "why": "Tier 1 rank 6. A named top of the Purple Mountain Group above Lough Leane, carrying the same Wikipedia link, en:Purple Mountain (Kerry), as ranks 5 and 10.",
+        "source_url": "https://en.wikipedia.org/wiki/Purple_Mountain_(Kerry)"
+      },
+      {
+        "name": "Shehy Mountain",
+        "class": "duplicate_of:Purple Mountain",
+        "why": "Tier 1 rank 10. Third row of the same Killarney massif, same Wikipedia link. Purple Mountain therefore occupies three of Ireland's twelve tier-1 mountain slots under three different names, while Carrauntoohil, 6 km away and 200 m higher, is absent from the file.",
+        "source_url": "https://en.wikipedia.org/wiki/Purple_Mountain_(Kerry)"
+      },
+      {
+        "name": "Brandon Peak",
+        "class": "duplicate_of:Mount Brandon",
+        "why": "Tier 1 rank 9. Brandon Peak is the 840 m subsidiary top on the Mount Brandon ridge and carries the parent's Wikipedia link. The parent, Mount Brandon (Wikidata Q1478911, 952 m, the eighth highest mountain in Ireland and its great pilgrimage peak), does not exist anywhere in the file, so a sub-top is standing in for it.",
+        "source_url": "https://www.wikidata.org/wiki/Q1478911"
+      },
+      {
+        "name": "Inishbiggle",
+        "class": "island",
+        "why": "Tier 2 rank 20. Inishbiggle is an inhabited island in the sound between Achill and the Ballycroy mainland, reached by currach or cable-free ferry. Its highest point is a few tens of metres. It is not a mountain.",
+        "source_url": "https://en.wikipedia.org/wiki/Inishbiggle"
+      },
+      {
+        "name": "Truskmore SE Cairn",
+        "class": "duplicate_of:Truskmore",
+        "why": "Present in the file alongside Truskmore near the Sligo anchor. A cairned subsidiary point of the same Dartry plateau, another hill-list suffix ingested as a distinct feature.",
+        "source_url": "https://en.wikipedia.org/wiki/Truskmore"
+      }
+    ],
+    "missing": [
+      {
+        "name": "Carrauntoohil",
+        "qid": "Q503368",
+        "lat": 51.99889,
+        "lon": -9.74278,
+        "why": "1,038.6 m, the highest mountain in Ireland, the summit of the MacGillycuddy's Reeks, with the Devil's Ladder and the Coomloughra Horseshoe. It does not appear anywhere in the IE file in any tier. This is the country's single worst omission.",
+        "source_url": "https://www.wikidata.org/wiki/Q503368",
+        "verified": true
+      },
+      {
+        "name": "Croagh Patrick",
+        "qid": "Q628687",
+        "lat": 53.7595,
+        "lon": -9.6584,
+        "why": "764 m above Clew Bay, Ireland's pilgrimage mountain, climbed by tens of thousands on Reek Sunday every July and one of the most recognisable mountain profiles in the country. The app carries a 'Westport' anchor 8 km away and still does not have it.",
+        "source_url": "https://www.wikidata.org/wiki/Q628687",
+        "verified": true
+      },
+      {
+        "name": "Lugnaquilla",
+        "qid": "Q514648",
+        "lat": 52.966,
+        "lon": -6.463,
+        "why": "925 m, the highest mountain in Leinster and outside Kerry, and the roof of the Wicklow Mountains. The app carries a 'Glendalough (Wicklow)' anchor and returns Tonelagee, Turlough Hill, Conavalla and Cloghernagh instead.",
+        "source_url": "https://www.wikidata.org/wiki/Q514648",
+        "verified": true
+      },
+      {
+        "name": "Ben Bulben",
+        "qid": "Q816458",
+        "lat": 54.36667,
+        "lon": -8.46667,
+        "why": "The flat-topped limestone prow over Sligo, Yeats country, one of the most photographed landforms in Ireland. The app's anchor destination is literally named 'Sligo (Benbulbin)' and returns only Truskmore and Truskmore SE Cairn from it.",
+        "source_url": "https://www.wikidata.org/wiki/Q816458",
+        "verified": true
+      },
+      {
+        "name": "Mount Brandon",
+        "qid": "Q1478911",
+        "lat": 52.2341,
+        "lon": -10.2543,
+        "why": "952 m on the Dingle peninsula, the highest mountain in Ireland outside the MacGillycuddy's Reeks and a pilgrimage route since early medieval times. Only its subsidiary Brandon Peak made the file.",
+        "source_url": "https://www.wikidata.org/wiki/Q1478911",
+        "verified": true
+      },
+      {
+        "name": "Mweelrea",
+        "qid": "Q1956300",
+        "lat": 53.636,
+        "lon": -9.831,
+        "why": "814 m, the highest mountain in Connacht, above Killary Harbour. Absent, while three tops of one Kerry massif hold tier-1 slots.",
+        "source_url": "https://www.wikidata.org/wiki/Q1956300",
+        "verified": true
+      },
+      {
+        "name": "Galtymore",
+        "qid": "Q2333034",
+        "lat": 52.366,
+        "lon": -8.179,
+        "why": "917 m, the highest inland mountain in Ireland and the summit of the Galty range in Tipperary and Limerick. The entire Irish midlands and south east are absent from the file.",
+        "source_url": "https://www.wikidata.org/wiki/Q2333034",
+        "verified": true
+      }
+    ],
+    "order": [
+      "Diamond Hill (442 m) at rank 1 above Slieve League (rank 4) and Errigal (rank 7) is indefensible. Errigal, the quartzite cone in Donegal, is the most recognisable mountain in the country and should be rank 1 or 2 of what is actually in the file.",
+      "Slieve League, the sea cliffs at 601 m, at rank 4 is far too low relative to three Purple Mountain sub-tops at ranks 5, 6 and 10.",
+      "Slievemore (Achill) at rank 12 sits below three rows for one Killarney massif.",
+      "Tier 2 has no ordering signal: ranks 15 to 17 all score 0.916, ranks 22 and 23 both score 0.876, and within ties the sort is alphabetical.",
+      "The Killarney anchor alone supplies four of the twelve tier-1 mountains (Torc, Purple Mountain NE Top, Tomies, Shehy), and three of those four are the same hill."
+    ]
+  },
+  "counts_verdict": "No. 23 beaches for Ireland is far too few for a country with roughly 148 identified bathing waters and an entire tourism brand, the Wild Atlantic Way, built on its coast; and of the nine tier-1 beaches at least four are duplicates, headlands or non-notable strands, so the honest shipped total is closer to five. 60 mountains is also thin, and thin in the worst way: Carrauntoohil, Croagh Patrick, Lugnaquilla, Mount Brandon, Mweelrea, Galtymore and Ben Bulben, that is, essentially every mountain an Irish traveller could name, are all absent from the file entirely. Twelve tier-1 mountains against nine tier-1 beaches is roughly the right shape for Ireland, but the tier-1 cut is too generous when three of the twelve are one massif. The cause is structural: only 17 anchor destinations exist for the whole country and the maximum near.km is 10.1, so anything more than 10 km from one of those 17 points cannot enter the dataset.",
+  "top_pick_verdict": "Beach yes, mountain no. top_beach 'Barleycove Beach' is a genuine, Excellent-rated West Cork beach behind a dune boardwalk and is defensible on a country card, though Keem Bay or Inch Beach would be stronger and more recognisable. top_mountain 'Diamond Hill' is not defensible: a 442 m hill that Ireland's own hill-listing criteria exclude cannot represent the country. It should be Carrauntoohil, or Croagh Patrick if the card is optimising for recognition; of what is actually in the file today, Errigal is the only acceptable substitute.",
+  "notes": "The Killarney and Clonakilty clusters show the same failure twice over: near-duplicate rows for one feature under variant spellings and hill-list suffixes ('Purple Mountain NE Top', 'Tomies', 'Shehy' all share one Wikipedia link; 'Barleycove'/'Barley Cove'; 'Inchadoney'/'Inchidoney'; 'Truskmore'/'Truskmore SE Cairn'). A dedupe keyed on the Wikipedia or Wikidata target, plus a geo-radius merge, would clear most of tier 1 and free the slots the real mountains need. Second observation: every IE beach except Sandymount carries water 'Excellent', so the EEA class is effectively a constant and contributes no discrimination, which is why the top four beaches end up alphabetised on an identical score of 0.956."
+}

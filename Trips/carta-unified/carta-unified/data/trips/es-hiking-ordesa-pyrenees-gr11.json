@@ -1,0 +1,273 @@
+{
+  "id": "es-hiking-ordesa-pyrenees-gr11",
+  "sourceId": "hiking-spain-ordesa-pyrenees-gr11",
+  "slug": "es-hiking-ordesa-pyrenees-gr11",
+  "title": "Ordesa y Monte Perdido: Góriz, the Fajas and the GR-11",
+  "country": "Spain",
+  "countryCode": "ES",
+  "countries": [
+    {
+      "name": "Spain",
+      "code": "ES"
+    }
+  ],
+  "isMultiCountry": false,
+  "region": "Southern & Mediterranean Europe",
+  "regionKey": "southern-mediterranean",
+  "subRegion": "Aragonese Pyrenees — Ordesa y Monte Perdido National Park, Sobrarbe",
+  "tripType": "Hiking & Alpine Trekking",
+  "tripTypeId": 6,
+  "tripTypeSlug": "hiking",
+  "durationDays": 7,
+  "bestPeriod": {
+    "months": [
+      7,
+      9
+    ],
+    "monthNames": [
+      "July",
+      "September"
+    ],
+    "window": "Mid-July–late September, with early September the best combination of clear rock and thin crowds",
+    "note": null,
+    "avoid": "November–May — Monte Perdido is a full winter route, the Añisclo road closes and the Torla shuttle does not run",
+    "raw": "Mid-July–late September, with early September the best combination of clear rock and thin crowds"
+  },
+  "budgetTier": "€€",
+  "budgetTierRange": [
+    2,
+    2
+  ],
+  "budgetTierRaw": "€€",
+  "budget": {
+    "currency": "EUR",
+    "totalEur": {
+      "low": 900,
+      "high": 1400
+    },
+    "totalNote": "€900–€1,400 per person, excl. international flights",
+    "breakdown": {
+      "accommodation": {
+        "lowEur": 330,
+        "highEur": 520,
+        "note": "Góriz half board €63.40 (approx. 25% less for federados); Torla hotels €75–€120"
+      },
+      "food": {
+        "lowEur": 200,
+        "highEur": 320,
+        "note": "Village menú del día €15–€20, Torla bar dinners €20–€30"
+      },
+      "transport": {
+        "lowEur": 220,
+        "highEur": 380,
+        "note": "Zaragoza transfer, hire car, Torla shuttle bus, Bielsa tunnel fuel"
+      },
+      "activities": {
+        "lowEur": 150,
+        "highEur": 180,
+        "note": "Shuttle tickets, guide for Monte Perdido if hired, crampon and ice-axe hire at Góriz"
+      }
+    },
+    "perDayEur": {
+      "low": 129,
+      "high": 200
+    }
+  },
+  "profile": {
+    "difficulty": 4,
+    "difficultyLabel": "Demanding",
+    "difficultyNote": "4/5, rising to 5/5 on the Monte Perdido day — 1,200 m ascent days and one 3,355 m summit on snow and scree",
+    "fitnessLevel": "Demanding",
+    "crowdLevel": null,
+    "familyFriendly": null,
+    "carRequired": null
+  },
+  "basecamps": [],
+  "gatewayAirport": "ZAZ Zaragoza, 3 h 15 min to Torla; TLS Toulouse 3 h 30 min via the Bielsa tunnel; BCN Barcelona 4 h 15 min",
+  "gatewayAirportCode": "ZAZ",
+  "languages": [],
+  "currency": null,
+  "emergencyNumber": "112",
+  "coordinates": {
+    "lat": 41.6561,
+    "lon": -0.8773,
+    "precision": "gateway",
+    "matchedPlace": "Zaragoza",
+    "source": "geonames (geonamescache, cities > 15k)"
+  },
+  "tags": [
+    "ordesa",
+    "monte-perdido",
+    "goriz",
+    "gr11",
+    "anisclo",
+    "pineta",
+    "faja-de-las-flores",
+    "pyrenees"
+  ],
+  "summary": "Ordesa is the Pyrenees at their most architectural: a 15 km glacial trench with 900 m walls, terraced by *fajas* — horizontal ledges a metre wide that let you walk across the cliff face — and closed at its head by the Cola de Caballo. Above it sits Monte Perdido, 3,355 m, the highest limestone mountain in Europe, and around it three more canyons of the same family: Añisclo, Escuaín and Pineta. This week uses Refugio de Góriz as a two-night base for the summit, then crosses out through Añisclo to Pineta and returns over the north-side fajas. It suits strong hill walkers who can handle a snow slope with crampons and are not troubled by exposure on a ledge.",
+  "summaryGenerated": false,
+  "hook": null,
+  "snapshot": {},
+  "itinerary": [
+    {
+      "day": 1,
+      "title": "Torla, the Puente de los Navarros and Bujaruelo",
+      "morning": "Arrive in **Torla, 1,033 m**, a slate-roofed village with the park visitor centre on the main street. Confirm your Góriz booking, ask about Cotatuero clavijas access, and buy two days of food.",
+      "afternoon": "Walk the **GR-11** from the **Puente de los Navarros** up the Ara valley to **San Nicolás de Bujaruelo**, where a Romanesque bridge and the old pilgrim hospice sit in a meadow at 1,338 m. Two hours each way, or drive the rough track and walk further.",
+      "evening": "Dinner at **El Duende** in Torla — Sobrarbe lamb, migas, local Somontano red — or the simpler *menú* at Restaurante El Rebeco.",
+      "dayStats": "12 km / 350 m ascent / Torla 1,033 m / Bujaruelo 1,338 m / 3 h 30 min–4 h realistic",
+      "sleep": "Hotel Villa de Torla or Hotel Bujaruelo, Torla"
+    },
+    {
+      "day": 2,
+      "title": "Ordesa canyon, Cola de Caballo and up to Góriz",
+      "morning": "Shuttle from Torla to **La Pradera de Ordesa, 1,320 m** on the first bus at 06:00 — the canyon is empty for an hour and the light on the north wall is the best of the day. Follow the valley floor past the **Arripas** and **Cascada del Estrecho** waterfalls.",
+      "afternoon": "Climb the **Gradas de Soaso** staircase to the **Circo de Soaso** and the **Cola de Caballo, 1,760 m**, the horsetail fall at the canyon head, then the **Clavijas de Soaso** zigzags to **Refugio de Góriz, 2,195 m**, under the south face of Monte Perdido.",
+      "evening": "Dinner at 19:30 in the refuge — soup, stew, and the noise of eighty people planning the same summit. Order tomorrow's packed lunch and check crampon hire.",
+      "dayStats": "14 km / 900 m ascent / 5–5.5 h realistic / Cola de Caballo 1,760 m / Góriz 2,195 m / half board €63.40, ~25% off for *federados*",
+      "sleep": "Refugio de Góriz, 2,195 m"
+    },
+    {
+      "day": 3,
+      "title": "Monte Perdido, 3,355 m",
+      "morning": "Away by 05:30 with head torch. Up the **Escalera** to the **Lago Helado** basin at around 2,990 m, then the **Escupidera**, a 40° snow and ice slope where crampons and axe come out and stay out.",
+      "afternoon": "The final scree and rock to the **summit of Monte Perdido, 3,355 m** — Ordesa on one side, the Pineta cirque a vertical kilometre down the other. Reverse the route carefully; most accidents here happen descending the Escupidera in soft afternoon snow, so aim to be off it by 13:00.",
+      "evening": "Second night at Góriz. Sit outside for the alpenglow on the Tres Sorores and drink the refuge's rough red.",
+      "dayStats": "10 km / 1,180 m ascent and descent / summit 3,355 m / 8–10 h realistic / Escupidera up to 40°, crampons and axe required",
+      "sleep": "Refugio de Góriz, 2,195 m"
+    },
+    {
+      "day": 4,
+      "title": "Collado de Añisclo and the Añisclo canyon",
+      "morning": "East from Góriz across bare karst to the **Collado de Añisclo, 2,453 m**, then a steep descent into the **Fuen Blanca** basin, where a spring bursts straight out of the cliff and feeds the Bellós river.",
+      "afternoon": "Walk the length of the upper **Cañón de Añisclo**, a narrower, wilder and far quieter trench than Ordesa, to the Ripareta and out toward **Nerín** or the San Urbez road, where a pre-arranged taxi runs you round to Bielsa via Escalona.",
+      "evening": "Bielsa's Plaza Mayor; dinner at Restaurante La Casa de Nuria or the Parador's dining room. Sobrarbe *chiretas* if they are on.",
+      "dayStats": "18 km / 400 m ascent / 1,600 m descent / Collado de Añisclo 2,453 m / 7–8 h realistic / taxi Nerín–Bielsa €60–€90",
+      "sleep": "Parador de Bielsa (Pineta) or a Bielsa hotel"
+    },
+    {
+      "day": 5,
+      "title": "Circo de Pineta and the Balcón",
+      "morning": "From the **Parador de Bielsa at 1,240 m** in the **Circo de Pineta**, climb the relentless zigzags of the **Balcón de Pineta** — 1,250 m in about 4 km, one of the steepest waymarked ascents in the Pyrenees — to the hanging shelf at roughly 2,500 m and the **Lago de Marboré**.",
+      "afternoon": "Descend the same route, or take the gentler alternative up the **Llanos de la Larri** and the Cascada del Cinca instead if the legs are done after Monte Perdido. The Marboré north faces above the lake are the Pyrenees' finest limestone amphitheatre.",
+      "evening": "Back at the Parador; the terrace looks straight up the cirque wall you have just climbed.",
+      "dayStats": "10 km / 1,250 m ascent and descent / Balcón 2,500 m / 7–8 h realistic / Pineta valley floor 1,240 m",
+      "sleep": "Parador de Bielsa (Pineta)"
+    },
+    {
+      "day": 6,
+      "title": "Back to Torla and the Faja de las Flores",
+      "morning": "Drive round via Ainsa and Broto to Torla (about 2 h), take the shuttle to La Pradera and climb the north side by the **Senda de los Cazadores** to the **Mirador de Calcilarruego**.",
+      "afternoon": "Traverse the **Faja de Pelay**, the great south-facing ledge that runs the length of the canyon 600 m above the floor, and — for those with a steady head and the right conditions — link to the **Faja de las Flores** via the **Clavijas de Salarons**, a metre-wide shelf on a vertical wall with the best flowers and the worst exposure in the park.",
+      "evening": "Return to Torla by the last shuttle. Dinner at **Casa Frauca** in Sarvisé, 10 km down the valley, which is the best kitchen in the Ara valley.",
+      "dayStats": "18 km / 1,100 m ascent / 1,100 m descent / Faja de Pelay ~1,900 m / Faja de las Flores ~2,300 m / 7–8 h realistic",
+      "sleep": "Hotel Villa de Torla, Torla"
+    },
+    {
+      "day": 7,
+      "title": "Cotatuero, then out",
+      "morning": "A short final loop from La Pradera to the **Circo de Cotatuero** and its 200 m waterfall, with the option of the **Clavijas de Cotatuero** iron pegs for anyone still hungry — check current access rules at the visitor centre first.",
+      "afternoon": "Return the shuttle ticket stub, coffee in Torla's Plaza Nueva, then drive out via Ainsa's arcaded Plaza Mayor, the best medieval square in Aragón, en route to Zaragoza.",
+      "evening": "Dinner in Ainsa at Restaurante Callizo or Bodegas del Sobrarbe before the airport leg, or straight to Zaragoza in 3 h 15 min.",
+      "dayStats": "9 km / 550 m ascent / 3 h 30 min realistic / Cotatuero fall approx. 200 m / Torla–Zaragoza 3 h 15 min",
+      "sleep": "Zaragoza, or the outbound flight"
+    }
+  ],
+  "accommodationStrategy": [
+    {
+      "rank": 1,
+      "name": "Refugio de Góriz",
+      "style": "FAM refuge",
+      "location": "2,195 m",
+      "description": "The only bed inside the high park and the reason a Monte Perdido summit is realistic rather than epic. Eighty dormitory places plus a booked 50-pitch camping zone, half board at €63.40 with a federation discount, crampon and ice-axe hire on site, dinner at 19:30 and breakfast from 06:30. Book on alberguesyrefugios.com the day the summer diary opens.",
+      "booking": null,
+      "priceNote": null
+    },
+    {
+      "rank": 2,
+      "name": "Hotel Villa de Torla",
+      "style": "village hotel",
+      "location": "Torla",
+      "description": "Central in Torla with parking, a pool, and a five-minute walk to the shuttle stop and the visitor centre, at roughly €80–€120 double. It lets you leave a bag while you are at Góriz and takes 06:00 breakfast requests in season.",
+      "booking": null,
+      "priceNote": null
+    },
+    {
+      "rank": 3,
+      "name": "Parador de Bielsa",
+      "style": "state parador",
+      "location": "Circo de Pineta, 1,240 m",
+      "description": "Sits at the trailhead in the Pineta cirque, so the Balcón climb starts at the door and the descent ends at a bar. More expensive at €130–€190, but there is essentially nothing else in the valley, and it makes the east-side approach to Monte Perdido feasible.",
+      "booking": null,
+      "priceNote": null
+    }
+  ],
+  "logistics": {
+    "connectivity": "Spain is in the EU roaming zone. Coverage is decent in Torla and Bielsa, patchy at Góriz, and absent on the canyon floor, in Añisclo and on the fajas. Download offline maps — the Editorial Alpina 1:25,000 *Ordesa y Monte Perdido* sheet is the standard.",
+    "emergency": "112 for the Guardia Civil GREIM mountain-rescue unit and the Aragón 061 helicopter. Rescue is normally free at the point of use, but Aragón may charge where recklessness or ignoring a closure is established. Nearest hospitals: Barbastro and Huesca. Carry mountaineering insurance to 3,500 m regardless.",
+    "weather": "Afternoon storms build over the Tres Sorores from 14:00 in July and August, and the fajas and Escupidera are both bad places to be caught. Autumn brings sudden fog into the Ordesa trench. Check AEMET's Pyrenees mountain bulletin daily, which also carries snow-condition notes for the high routes.",
+    "bookingWindows": "Góriz opens its summer diary in spring and August dates disappear within hours — set a reminder and book the moment it opens. Torla hotels 4–8 weeks for August. The Parador de Bielsa 6–10 weeks. Shuttle tickets are bought on the day at the Torla car park.",
+    "money": "Euro. Cards work in Torla, Bielsa and Ainsa. Carry €150–€200 cash for the refuge, the shuttle and the mountain bars. Tipping is minimal — round up or leave 5%.",
+    "transportRules": "The Torla shuttle is compulsory in the high-season window and traffic to La Pradera is capped at 1,800 simultaneous visitors. The Bielsa–Aragnouet tunnel to France closes overnight in winter for maintenance. No motorway vignette applies in Spain; the A-23 and A-22 are free.",
+    "permits": "No entry fee for the national park. **Free camping and bivouacking are prohibited** — only the booked Góriz camping zone is legal. Drones are banned without park authorisation. Dogs are not allowed inside the national park, even on a lead. Do not take rocks, fossils or flowers; the fajas are protected habitat.",
+    "health": "Canyon-floor water from the Arazas is generally clean but treat anything downstream of La Pradera's day-visitor volume. The Escupidera is the single most dangerous piece of ground on the itinerary and has a long accident record. Griffon vultures and the reintroduced bearded vulture are common overhead; the *sarrio* (Pyrenean chamois) trigger stonefall on the scree above Góriz.",
+    "gettingThere": null,
+    "other": []
+  },
+  "proTips": [
+    "If the Góriz dormitory will not book, take the **camping zone** instead. It is released separately, is far easier to secure at €17.30, and the refuge will still sell you dinner and breakfast.",
+    "Join a UIAA-affiliated club before booking. The *federado* rate is roughly 25% off every Góriz service and applies to bed, half board and camping alike.",
+    "Take the **first shuttle at 06:00** on the Góriz day. You will have the Gradas de Soaso to yourself and be at the refuge by early afternoon with the summit weather window still readable.",
+    "Hire crampons and an ice axe **at Góriz** rather than flying with them. The refuge rents both, which removes a checked bag from the trip.",
+    "Do Monte Perdido on your **second** morning at altitude, not your first. Sleeping at 2,195 m the night before is the difference between an 8-hour day and a 10-hour one.",
+    "Walk the Faja de Pelay **east to west** from the Senda de los Cazadores: you climb the steep, shaded side in the morning and finish with the canyon opening ahead rather than behind.",
+    "Ask at the Torla visitor centre about current access to the **Clavijas de Cotatuero** before planning around it. The authorisation requirement and the state of the pegs have both changed in recent years.",
+    "Base the Añisclo exit on a **pre-booked taxi** from Nerín or the San Urbez road. There is no public transport, and the walk out to a road that has a bus adds four hours.",
+    "Eat at Casa Frauca in Sarvisé rather than in Torla on your last night. It is 10 km and a different league of cooking."
+  ],
+  "typeSpecific": {
+    "raw": {
+      "Hut-to-hut booking path": "**Refugio de Góriz (2,195 m)** is the only staffed refuge inside the national park, run under the **Federación Aragonesa de Montaña (FAM)**, and it is the single hardest bed to obtain in the Spanish Pyrenees. **Booking is exclusively online through the central federation system at alberguesyrefugios.com**, with same-week bookings inside 48 hours handled by email or by phone on **+34 974 341 201**. The refuge holds **80 places in shared dormitories plus a regulated 50-place camping zone**. **2026 rates: €28.40 for the bed alone, €63.40 half board, €79.60 full board, and €17.30 for a camping-zone pitch**, with roughly **25% off for members of a recognised mountain federation (*federados*)** — FEDME, FFCAM, CAI, ÖAV and other UIAA clubs qualify, and the card is checked at the desk. **Reservations are required for both the refuge and the camping zone.** Dinner is served at 19:30, breakfast 06:30–08:30, and packed lunches are ordered the night before. **Bring a sleeping-bag liner.** Card payment works at the refuge but the connection is unreliable — carry cash. **If Góriz is full:** take the camping zone (it releases separately and is far easier to get), or sleep in Torla and walk the canyon as a long day from La Pradera, or approach the summit from **Refugio de Pineta (1,240 m)** on the east side, which is far quieter.",
+      "Bivouac and camping law": "Free camping is **prohibited throughout Ordesa y Monte Perdido National Park**. The only legal overnight ground on the high route is the **booked Góriz camping zone**, where tents may go up in the evening and must come down in the morning. Rangers patrol the Soaso basin and the Faja de Pelay and do issue fines. Góriz also **rents crampons, ice axes and tents**, which solves the airline-baggage problem for the Monte Perdido day.",
+      "The Torla shuttle obligation": "In high season **private vehicles cannot drive to La Pradera de Ordesa**. You park in the **Torla car park** and take the **shuttle**, which runs every 15–20 minutes from around 06:00, with the last return between 20:30 and 22:00 depending on the month, and a **hard cap of 1,800 simultaneous visitors in the valley** — when the count is reached, the bus stops loading and you wait. Budget roughly **€6–€7 for an adult return**. Outside the mandatory window, cars are admitted to La Pradera only until the small car park fills, which is by about 08:30 on any fine day.",
+      "Safety markers and waymarking": "Spain uses the FEDME system — **GR long-distance routes are marked with a horizontal red-over-white stripe**, and the **GR-11 (Senda Pirenaica)** crosses this itinerary between Bujaruelo, the Puente de los Navarros and, on the high variant, Góriz and Añisclo. **PR local routes use yellow-over-white**, and **SL short routes green-over-white**. Inside the national park, paths carry additional wooden signposts with the park logo. The exposed iron-peg ladders — **Clavijas de Cotatuero** and **Clavijas de Salarons** — are not via ferratas with continuous cable; they are pegs and short chains on a vertical step, and a helmet plus a short lanyard is sensible. Access to the Cotatuero clavijas has at times required a free authorisation from the park visitor centre in Torla.",
+      "Elevation and gear essentials": "Cumulative ascent across the week is roughly **5,300 m**. High points: **Monte Perdido 3,355 m**, Collado de Añisclo 2,453 m, Balcón de Pineta 2,500 m, Faja de las Flores at about 2,300 m, Cola de Caballo 1,760 m, La Pradera 1,320 m. The **Escupidera snow slope** below the Monte Perdido summit block holds **hard névé into August in most years** — **crampons and an ice axe are genuinely required, not optional**, and a rope is normal practice for guided parties. Microspikes are not sufficient there. Elsewhere, B-rated boots and poles suffice; the fajas want a head for heights rather than hardware.",
+      "Water, food resupply and rubbish": "The Ordesa canyon floor has abundant water — the Gradas de Soaso, the Arripas and Cascada del Estrecho falls — but **the ground above Góriz is bare karst and completely dry**. Fill 2.5–3 litres at the refuge for the Monte Perdido day. Resupply in **Torla** (two small supermarkets), Broto, Sarvisé and Bielsa; **there is no shop between Torla and Bielsa on the high route**. All rubbish is carried out; Góriz is supplied by helicopter and asks walkers to take their own packaging down.",
+      "Bail-out options, rescue and insurance": "From Góriz the fast escape is the Soaso path back to La Pradera (3 h). From the Collado de Añisclo you can drop to Fuen Blanca and Nerín; from the Balcón de Pineta the descent to the Parador de Bielsa is 1,300 m in 3 h. **112 reaches the Guardia Civil's GREIM mountain-rescue unit and the Aragonese 061 helicopter.** Mountain rescue in Spain is publicly funded and normally free at the point of use, but **Aragón's legislation permits charging for rescues arising from recklessness or from ignoring closures**, so carry insurance covering mountaineering to 3,500 m all the same.",
+      "Realistic walking times": "Spanish park signage is fair but assumes no queueing. For an averagely fit walker add **20–30%**, and add a full hour to Monte Perdido if you are behind a party on the Escupidera. La Pradera to Góriz is signed 4 h; plan 5–5.5 h with a pack."
+    },
+    "surface": null,
+    "distanceKm": null,
+    "elevationM": null,
+    "verticalM": null,
+    "technicalRating": "Spain uses the FEDME system — **GR long-distance routes are marked with a horizontal red-over-white stripe**, and the **GR-11 (Senda Pirenaica)** crosses this itinerary between Bujaruelo, the Puente de los Navarros and, on the high variant, Góriz and Añisclo. **PR local routes use yellow-over-white**, and **SL short routes green-over-white**. Inside the national park, paths carry additional wooden signposts with the park logo. The exposed iron-peg ladders — **Clavijas de Cotatuero** and **Clavijas de Salarons** — are not via ferratas with continuous cable; they are pegs and short chains on a vertical step, and a helmet plus a short lanyard is sensible. Access to the Cotatuero clavijas has at times required a free authorisation from the park visitor centre in Torla.",
+    "transitPass": null,
+    "hutBooking": "**Refugio de Góriz (2,195 m)** is the only staffed refuge inside the national park, run under the **Federación Aragonesa de Montaña (FAM)**, and it is the single hardest bed to obtain in the Spanish Pyrenees. **Booking is exclusively online through the central federation system at alberguesyrefugios.com**, with same-week bookings inside 48 hours handled by email or by phone on **+34 974 341 201**. The refuge holds **80 places in shared dormitories plus a regulated 50-place camping zone**. **2026 rates: €28.40 for the bed alone, €63.40 half board, €79.60 full board, and €17.30 for a camping-zone pitch**, with roughly **25% off for members of a recognised mountain federation (*federados*)** — FEDME, FFCAM, CAI, ÖAV and other UIAA clubs qualify, and the card is checked at the desk. **Reservations are required for both the refuge and the camping zone.** Dinner is served at 19:30, breakfast 06:30–08:30, and packed lunches are ordered the night before. **Bring a sleeping-bag liner.** Card payment works at the refuge but the connection is unreliable — carry cash. **If Góriz is full:** take the camping zone (it releases separately and is far easier to get), or sleep in Torla and walk the canyon as a long day from La Pradera, or approach the summit from **Refugio de Pineta (1,240 m)** on the east side, which is far quieter.",
+    "liftNetwork": null,
+    "snowReliability": null,
+    "windConditions": null,
+    "gpxReady": null,
+    "bookingTimeline": null,
+    "audience": null
+  },
+  "packingNotes": [],
+  "whatCouldGoWrong": [],
+  "sources": {
+    "verified": "Refugio de Góriz's 2026 published rates — €28.40 overnight, €17.30 camping, €63.40 half board, €79.60 full board — with roughly a 25% discount for federation members; booking exclusively online through the alberguesyrefugios.com central system with last-minute bookings inside 48 hours by phone on 974 341 201; capacity of 80 dormitory places plus a 50-place camping zone; the requirement to reserve for both the refuge and the camping area; dinner at 19:30, breakfast 06:30–08:30 and packed lunches available; on-site rental of crampons, ice axes and tents. Ordesa's visitor cap of 1,800 simultaneous visitors and the shuttle running every 15–20 minutes from the Torla car park with first departures at 06:00 and seasonal last returns of 20:30–22:00.",
+    "confidenceNotes": "The exact 2026 dates on which the Torla shuttle is compulsory, and the adult and child fares, must be re-checked against ordesabus.com and rednaturaldearagon.com — the schedule changes annually and by month. Góriz's summer booking-opening date is announced on goriz.es and should be confirmed. The authorisation requirement for the Clavijas de Cotatuero has varied; verify with the Torla visitor centre. Escupidera snow conditions vary hugely year to year — the crampon cut-off month is a generalisation. Nerín and San Urbez taxi fares are estimates. Parador de Bielsa rates are seasonal."
+  },
+  "verifyFlags": [],
+  "verifyFlagCount": 0,
+  "volatilePricing": false,
+  "wordCount": 3483,
+  "dataVintage": 2026,
+  "provenance": {
+    "batch": "southern-mediterranean",
+    "sourceFile": "carta-dataset/trips/hiking-spain-ordesa-pyrenees-gr11.md",
+    "sourceFormat": "md with '## Metadata' bullet block (one file per trip)",
+    "sourceId": "hiking-spain-ordesa-pyrenees-gr11",
+    "ingestedAt": "2026-09-02",
+    "synthesized": false
+  }
+}

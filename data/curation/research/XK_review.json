@@ -1,0 +1,103 @@
+{
+  "iso2": "XK",
+  "country": "Kosovo",
+  "checked_at": "2026-08-17",
+  "beaches": {
+    "wrong": [],
+    "missing": [],
+    "order": [
+      "Nothing to judge. Kosovo is landlocked and has no bathing lake of national touring significance comparable to Ohrid or Ada Ciganlija, so an empty beach list is the correct outcome here. The reservoirs at Batlava, Badovc and Gazivoda have local swimming areas but none belongs in a country top 10."
+    ]
+  },
+  "mountains": {
+    "wrong": [
+      {
+        "name": "Arneni Peak",
+        "class": "duplicate_of:Maja e Arnenit",
+        "why": "Rank 4 and rank 5 are the same peak, the English and Albanian names of Maja e Arnenit, 190 m apart at 42.1839,20.9622 and 42.1856,20.9626, both linked to the same Wikipedia article 'Maja e Arnenit Strict Nature Reserve'. Two of only seven tier-1 slots are spent on one summit.",
+        "source_url": "https://en.wikipedia.org/wiki/Maja_e_Arnenit_Strict_Nature_Reserve"
+      },
+      {
+        "name": "Rugova",
+        "class": "park_or_area",
+        "why": "Rugova (Wikidata Q342426) is the canyon and the mountain region west of Peja, not a summit. It has no elevation in the row and its coordinate 42.6635,20.2087 is inside the valley system, so it competes with the actual peaks around it.",
+        "source_url": "https://www.wikidata.org/wiki/Q342426"
+      },
+      {
+        "name": "2286",
+        "class": "not_notable",
+        "why": "The feature's entire name is the number 2286, an elevation label carried over as a toponym. It has no name in any language and cannot be shown to a user.",
+        "source_url": "https://www.openstreetmap.org/#map=14/42.1582/21.0161"
+      },
+      {
+        "name": "Maja me e larte e Butocit",
+        "class": "duplicate_of:Maja e Butocit",
+        "why": "The name means literally 'the highest peak of Butoc' and the row sits 2.5 km from 'Maja e Butocit' on the same ridge near Pristina. One ridge, two rows, one of them a descriptive phrase rather than a toponym.",
+        "source_url": "https://www.openstreetmap.org/#map=13/42.6745/21.2295"
+      },
+      {
+        "name": "Streocka Mountain",
+        "class": "duplicate_of:Maja e Strellcit",
+        "why": "Streoc and Strellc are the Serbian and Albanian forms of the same place name above Decani, and the two rows are 3.3 km apart on the same massif. The dedupe missed them because it does not fold Serbian and Albanian variants of the same toponym.",
+        "source_url": "https://www.openstreetmap.org/#map=12/42.5850/20.2367"
+      }
+    ],
+    "missing": [
+      {
+        "name": "Gjeravica (Djeravica)",
+        "qid": "Q341983",
+        "lat": 42.5328,
+        "lon": 20.1408,
+        "why": "The highest mountain in Kosovo at 2656 m, in the Accursed Mountains above the Rugova and Decani valleys, and the country's single best known summit and hiking objective. Absent from all 18 rows, while the neighbouring and lower Kopranik holds rank 1 and the country card.",
+        "source_url": "https://www.wikidata.org/wiki/Q341983",
+        "verified": true
+      },
+      {
+        "name": "Hajla",
+        "qid": "Q2194967",
+        "lat": 42.7847,
+        "lon": 20.1385,
+        "why": "2403 m on the Montenegro border above Rugova, the emblematic peak of the Peja mountains and a Peaks of the Balkans trail highlight. Absent.",
+        "source_url": "https://www.wikidata.org/wiki/Q2194967",
+        "verified": true
+      },
+      {
+        "name": "Bogicevica (Maja e Marjashit)",
+        "qid": "Q3299979",
+        "lat": 42.6,
+        "lon": 20.08,
+        "why": "The massif on the Kosovo, Albania and Montenegro tripoint that the Peaks of the Balkans route crosses, with the Gjeravica lakes on its flank. Absent.",
+        "source_url": "https://www.wikidata.org/wiki/Q3299979",
+        "verified": true
+      },
+      {
+        "name": "Ljuboten (Luboten)",
+        "qid": "Q927599",
+        "lat": 42.21,
+        "lon": 21.12,
+        "why": "2498 m at the eastern end of the Sar Mountains on the Kosovo and North Macedonia border, the most distinctive silhouette of the Sar range. Absent even though the file already covers Brezovica and the Sar ridge.",
+        "source_url": "https://www.wikidata.org/wiki/Q927599",
+        "verified": true
+      },
+      {
+        "name": "Koritnik",
+        "qid": "Q1164619",
+        "lat": 42.0833,
+        "lon": 20.5667,
+        "why": "2394 m above the Sharr national park near Dragash and the Albanian border, a named national park summit. Absent.",
+        "source_url": "https://www.wikidata.org/wiki/Q1164619",
+        "verified": true
+      }
+    ],
+    "order": [
+      "Rank 1 Kopranik (Q2623904, 2460 m, confirmed as a mountain in Kosovo in the Accursed Mountains) is a real peak and correctly located, but it is not Kosovo's mountain. Gjeravica, 200 m higher and incomparably better known, does not appear at all, so the whole ordering is built on an incomplete field.",
+      "Rank 2 'Black Peak, Sar Mountains' is a genuine border peak: Wikipedia states it lies in Kosovo and North Macedonia, although its coordinate 42.1532,21.0273 reverse-geocodes to Prvce in the municipality of Tearce, North Macedonia. Keeping it under XK is defensible; the same row should not also be claimed by the MK file without a shared-summit rule.",
+      "Ranks 4 and 5 are the same peak twice, so the effective tier 1 is six entries, not seven.",
+      "Rank 7 Zar Mountain at 1511 m (Q27340591) sits above nothing, but it outranks the Rugova peaks in tier 2 despite being a thousand metres lower than the Accursed Mountains summits, which is the wrong way round for a country whose mountain identity is the 2400 to 2650 m range.",
+      "The Butoc rows near Pristina are 600 to 900 m ridges holding tier-2 slots that should belong to Gjeravica, Hajla, Koritnik and Bogicevica."
+    ]
+  },
+  "counts_verdict": "0 beaches is right. 18 mountains is far too few and is the smallest list of any Balkan country in the snapshot, which is backwards: Kosovo is a mountain country with two major ranges, the Accursed Mountains in the west and the Sar Mountains in the south, and two national parks covering roughly a sixth of its territory. After removing the five wrong rows the country has 13 usable mountains, of which the highest, Gjeravica, is not one. Compare Albania at 68 and Serbia at 54 for a similar or smaller mountain area. The harvest is anchored on four catalogue points (Peja/Rugova, Brezovica, Prizren, Visoki Decani, Pristina) and nothing outside a 9 km radius of those exists in the file, which is exactly why Gjeravica, sitting deeper in the massif, was never seen.",
+  "top_pick_verdict": "No. top_mountain 'Kopranik' is a correct feature but the wrong card: it is a secondary Rugova summit that no traveller names. It should be Gjeravica (Q341983, 42.5328,20.1408, 2656 m), the highest mountain in Kosovo, with Hajla (Q2194967) as the alternative if a more photographed ridge is preferred. There is no top_beach and none is needed.",
+  "notes": "Kosovo is the clearest illustration in this group of the anchor-radius problem: every one of the 18 rows sits within 9 km of a catalogue destination, so the file describes the mountains you can see from five towns rather than the mountains of the country. A whitelist seeded from Wikidata (highest point of the country P610, plus any peak in the country with more than N Wikipedia sitelinks) would have caught Gjeravica, Hajla, Koritnik, Bogicevica and Ljuboten in one pass. Two smaller notes: the file needs a shared-summit policy for border peaks, since Black Peak and Piribeg both straddle the Kosovo and North Macedonia line and Hajla straddles Montenegro; and the dedupe must fold Albanian and Serbian forms of the same toponym (Streoc/Strellc, Arneni/Arnenit, Djeravica/Gjeravica) or the same mountain will keep appearing twice."
+}

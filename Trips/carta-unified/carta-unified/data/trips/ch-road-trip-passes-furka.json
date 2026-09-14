@@ -1,0 +1,326 @@
+{
+  "id": "ch-road-trip-passes-furka",
+  "sourceId": "ch-road-trip-alpine-passes-furka",
+  "slug": "ch-road-trip-passes-furka",
+  "title": "The Pass Quadrilateral — Furka, Grimsel, Susten, Nufenen",
+  "country": "Switzerland",
+  "countryCode": "CH",
+  "countries": [
+    {
+      "name": "Switzerland",
+      "code": "CH"
+    }
+  ],
+  "isMultiCountry": false,
+  "region": "Western & Central Europe",
+  "regionKey": "western-central",
+  "subRegion": "Bernese Oberland, Uri and Goms (Upper Valais)",
+  "tripType": "Road Trips & Scenic Drives",
+  "tripTypeId": 5,
+  "tripTypeSlug": "road-trip",
+  "durationDays": 7,
+  "bestPeriod": {
+    "months": [
+      7,
+      8,
+      9
+    ],
+    "monthNames": [
+      "July",
+      "August",
+      "September"
+    ],
+    "window": null,
+    "note": "The Nufenen is usually the last of the four to open, often not until mid-June.",
+    "avoid": null,
+    "raw": null
+  },
+  "budgetTier": "€€€",
+  "budgetTierRange": [
+    3,
+    3
+  ],
+  "budgetTierRaw": "€€€",
+  "budget": {
+    "currency": "EUR",
+    "totalEur": {
+      "low": 1480,
+      "high": 2340
+    },
+    "totalNote": null,
+    "breakdown": {
+      "accommodation": {
+        "lowEur": 700,
+        "highEur": 1150,
+        "note": null
+      },
+      "food": {
+        "lowEur": 330,
+        "highEur": 480,
+        "note": null
+      },
+      "transport": {
+        "lowEur": 340,
+        "highEur": 520,
+        "note": null
+      },
+      "activities": {
+        "lowEur": 110,
+        "highEur": 190,
+        "note": null
+      }
+    },
+    "perDayEur": {
+      "low": 211,
+      "high": 334
+    }
+  },
+  "profile": {
+    "difficulty": 3,
+    "difficultyLabel": "Active",
+    "difficultyNote": null,
+    "fitnessLevel": "Moderate",
+    "crowdLevel": "Moderate",
+    "familyFriendly": true,
+    "carRequired": true
+  },
+  "basecamps": [
+    "Meiringen, Andermatt and Oberwald"
+  ],
+  "gatewayAirport": "Zürich (ZRH)",
+  "gatewayAirportCode": "ZRH",
+  "languages": [
+    "German",
+    "Swiss German"
+  ],
+  "currency": "CHF",
+  "emergencyNumber": "112",
+  "coordinates": {
+    "lat": 47.3667,
+    "lon": 8.55,
+    "precision": "gateway",
+    "matchedPlace": "Zürich",
+    "source": "geonames (geonamescache, cities > 15k)"
+  },
+  "tags": [
+    "alpine-passes",
+    "hairpins",
+    "glaciers",
+    "hydro-engineering",
+    "high-altitude"
+  ],
+  "summary": "Four high passes inside one small triangle of Switzerland — 2,478 m at the top, granite everywhere, and a season that lasts about four months.",
+  "summaryGenerated": false,
+  "hook": "Four passes, three valleys, and barely 900 km all week. The Furka, Grimsel, Susten and Nufenen enclose a compact block of granite around the head of the Rhône, and the point of the trip is to drive each of them in the right direction at the right hour. They are also shut for more than half the year, which concentrates the mind.",
+  "snapshot": {
+    "Country": "Switzerland",
+    "Base(s)": "Meiringen (2 nights), Andermatt (2), Oberwald / Goms (2), Grimsel (1)",
+    "Trip Type": "Road Trips & Scenic Drives",
+    "Duration": "7 days",
+    "Best Period": "Early July to late September",
+    "Budget Tier": "€€€",
+    "Total Distance / Terrain": "approx. 865 km; four high passes, sustained 8–13% gradients, hundreds of hairpins",
+    "Getting There": "Zürich (ZRH); vignette on arrival, then A4/A2 to Luzern and the Brünig",
+    "Who It Suits": "Confident mountain drivers; anyone who likes hydro-engineering as much as scenery"
+  },
+  "itinerary": [
+    {
+      "day": 1,
+      "title": "Vignette, Brünig, Haslital",
+      "morning": "Collect the car at Zürich. If it is a Swiss rental the motorway vignette is already on the screen; if not, buy one before the first motorway metre. Then A4 and A2 to Luzern.",
+      "afternoon": "The Brünigpass (1,008 m) drops you into the Haslital. It is open year-round and is the gentle overture. Stop at Meiringen and walk the Aareschlucht, a 1.4 km gorge on galleries bolted to the rock.",
+      "evening": "The Reichenbachfall funicular runs to the falls where Conan Doyle disposed of Holmes. Meiringen is small, has fuel, and is the last cheap supermarket before the passes.",
+      "dayStats": "138 km · 2 h drive · Brünigpass (1,008 m) · max altitude 1,008 m",
+      "sleep": null
+    },
+    {
+      "day": 2,
+      "title": "The Susten, the engineered one",
+      "morning": "From Innertkirchen the **Sustenpass (2,224 m)** climbs east through Gadmen. Built between 1938 and 1945 as a strategic route, it is the widest and most forgiving of the four: gradients rarely exceed 9%, the radii are generous, and long gallery tunnels take the worst of the avalanche terrain. Normally open from early June to late October.",
+      "afternoon": "Stop at the Steingletscher, where a moraine lake sits below the retreating ice and there is a large free layby. Cross the summit tunnel and descend to Wassen in the Reuss valley — the eastern side is tighter than the western.",
+      "evening": "Return the same way to Meiringen; the light on the Gadmertal in the late afternoon is the reason to drive it twice.",
+      "dayStats": "96 km · 2 h 30 drive · 1 pass (Susten, twice) · max altitude 2,224 m",
+      "sleep": null
+    },
+    {
+      "day": 3,
+      "title": "Grimsel and Furka in one afternoon",
+      "morning": "South from Innertkirchen up the **Grimselpass (2,164 m)**: long ramps over bare granite slabs, dammed lakes stacked one above another, gradients to 11%. Break at Handegg for the Gelmerbahn, a former works funicular with a maximum gradient of 106%; seats must be reserved.",
+      "afternoon": "At the summit, park by the Totensee and walk five minutes for the view down into the Rhône valley. Descend the hairpins to Gletsch, then turn up the **Furkapass (2,429 m)** — the narrowest and most exposed of the four, with a switchback stack past the derelict Belvédère hotel and the Rhône Glacier ice grotto (approx. CHF 10, open roughly June to October).",
+      "evening": "Down the eastern side to Realp and Andermatt for two nights.",
+      "dayStats": "112 km · 3 h 15 drive · Grimsel and Furka · max altitude 2,429 m",
+      "sleep": null
+    },
+    {
+      "day": 4,
+      "title": "Oberalp and the Schöllenen",
+      "morning": "East from Andermatt over the **Oberalppass (2,044 m)** to Sedrun: broad, open, less dramatic than its neighbours and a good rest for tyres. A 45-minute walk from the summit lake reaches the Tomasee, the source of the Rhine.",
+      "afternoon": "Back to Andermatt and north into the Schöllenenschlucht, where the Teufelsbrücke crosses a granite slot that blocked north–south traffic for a thousand years. Park at the Devil's Bridge layby, not on the road.",
+      "evening": "Andermatt has fuel, a supermarket and the last proper garage before the Goms. Use it.",
+      "dayStats": "84 km · 2 h drive · Oberalppass (2,044 m) · max altitude 2,044 m",
+      "sleep": null
+    },
+    {
+      "day": 5,
+      "title": "Nufenen, the high one",
+      "morning": "West over the Furka again — the Valais descent is better driven downhill — through Gletsch to Oberwald and Ulrichen in the Goms.",
+      "afternoon": "From Ulrichen the **Nufenenpass / Passo della Novena (2,478 m)** climbs to the highest point of any road lying entirely within Switzerland. Opened only in 1969, it is the last of the four to clear each spring, and the Ticino side pitches to 13%. A wind turbine turns on the summit ridge; the layby there is the coldest place on the trip.",
+      "evening": "Drop to Airolo for a coffee in Italian, then climb straight back over. Base in Oberwald or Obergesteln.",
+      "dayStats": "152 km · 3 h 30 drive · Furka and Nufenen (twice) · max altitude 2,478 m",
+      "sleep": null
+    },
+    {
+      "day": 6,
+      "title": "Goms, glacier and the steam railway",
+      "morning": "In July and August the Dampfbahn Furka-Bergstrecke runs restored steam trains over the old Furka mountain line between Realp and Oberwald. Book weeks ahead; it is the only way to see the abandoned upper trackbed.",
+      "afternoon": "Drive down-valley to Fiesch and take the cable car to the Eggishorn for the Aletsch Glacier — 20 km of ice, the largest in the Alps, and unreachable by road.",
+      "evening": "A short detour into the Binntal, a dead-end side valley on a single-lane road with passing places, for the quietest hour of the week.",
+      "dayStats": "114 km · 2 h 20 drive · no passes · max altitude 1,400 m at Fiesch (2,869 m by cable car)",
+      "sleep": null
+    },
+    {
+      "day": 7,
+      "title": "Grimsel northbound, then out",
+      "morning": "Back up the Rhône to Gletsch and over the **Grimselpass** northbound — the direction that gives the reservoir staircase in sequence. Coffee at the Grimsel Hospiz on its rock spur above the lake.",
+      "afternoon": "Descend to Innertkirchen and Meiringen, then the Brünig to Luzern.",
+      "evening": "A2 and A4 to Zürich, 110 km from Luzern, roughly 1 h 15 outside rush hour.",
+      "dayStats": "204 km · 3 h drive · Grimsel and Brünig · max altitude 2,164 m",
+      "sleep": null
+    }
+  ],
+  "accommodationStrategy": [
+    {
+      "rank": 1,
+      "name": "Parkhotel du Sauvage",
+      "style": "Historic hotel",
+      "location": "Meiringen",
+      "description": "A 19th-century grand hotel in its own park, with proper parking and a five-minute walk to the Aareschlucht bus. It sits at the junction of the Susten and Grimsel approaches, so two nights here covers both without moving.",
+      "booking": "2 months for July–August.",
+      "priceNote": "CHF 180–260 (approx. €190–€275) per night"
+    },
+    {
+      "rank": 2,
+      "name": "Hotel 3 Könige & Post",
+      "style": "Traditional inn",
+      "location": "Andermatt",
+      "description": "On the old village street, family-run for generations, with a garage and a kitchen that serves after mountain hours. Andermatt is the hinge of the whole route — Furka, Oberalp, Susten and the Schöllenen all start within ten minutes.",
+      "booking": "6–8 weeks.",
+      "priceNote": "CHF 170–250 (approx. €180–€265) per night"
+    },
+    {
+      "rank": 3,
+      "name": "Historisches Alpinhotel Grimsel Hospiz",
+      "style": "Mountain hotel",
+      "location": "Grimselpass",
+      "description": "Perched on a rock spur above the Grimselsee at 1,980 m, hydro-powered and reachable only while the pass is open. One night here puts you above the day-trippers for sunset and sunrise on the granite, and it is the single most atmospheric bed on the trip.",
+      "booking": "4–6 months; it sells out first.",
+      "priceNote": "CHF 220–340 (approx. €235–€360) per night"
+    }
+  ],
+  "logistics": {
+    "connectivity": null,
+    "emergency": "112 works; 144 for ambulance, 117 police, and 1414 for Rega air rescue. Mobile coverage is good on the roads and patchy in the Binntal.",
+    "weather": "Snow above 2,000 m is possible in any month. A summit can go from 20°C to sleet in an hour, and passes close at short notice in September.",
+    "bookingWindows": null,
+    "money": "Swiss francs; euros are often accepted at a poor rate and change comes in francs. Cards are universal, including at summit kiosks.",
+    "transportRules": null,
+    "permits": null,
+    "health": null,
+    "gettingThere": null,
+    "other": [
+      {
+        "label": "The vignette is CHF 40 and there is no shorter option",
+        "text": "No day pass, no week pass. It is valid from 1 December of the previous year to 31 January of the following — fourteen months for everyone, whether you stay two days or two months. Buy the sticker at the border, a post office or a petrol station, or an e-vignette online tied to the plate. Driving without one costs CHF 200 plus the price of the vignette."
+      },
+      {
+        "label": "The passes are closed all winter",
+        "text": "Susten, Grimsel, Furka, Nufenen and Oberalp all shut, typically from late October to late May or June, with the Nufenen last to open. The **Furka Base Tunnel car shuttle** between Realp and Oberwald runs year-round, roughly CHF 30–35 per car, several times an hour — the only way through when the Furka is white."
+      },
+      {
+        "label": "Headlights on, day and night",
+        "text": ", everywhere in Switzerland. It is a legal requirement and it is enforced."
+      },
+      {
+        "label": "Uphill has priority",
+        "text": "where a pass road narrows, and PostAuto coaches have absolute right of way, announced by the three-tone horn. On blind hairpins, expect one."
+      },
+      {
+        "label": "Gradients and brakes",
+        "text": "Nufenen (13%), Furka and Grimsel (11%) all reward engine braking. Descending an automatic in D with the brakes on for 12 km is how rentals end up smoking at Gletsch."
+      },
+      {
+        "label": "Fuel",
+        "text": "Fill in Meiringen, Andermatt, Ulrichen or Airolo. There is nothing at Realp, Gletsch or any summit, and nothing at all after 20:00 in the Goms."
+      },
+      {
+        "label": "Opening-hour traps",
+        "text": "Village shops close 12:00–14:00 and all day Sunday. Mountain restaurants stop serving hot food around 20:00."
+      },
+      {
+        "label": "Cross-border rental",
+        "text": "Swiss hires can enter Italy, France, Austria and Germany freely. One-way drops into another country add CHF 200–500, and picking up in Italy or Germany means buying your own vignette."
+      }
+    ]
+  },
+  "proTips": [
+    "Drive every pass **before 09:30 or after 16:30** on summer weekends. Between those hours the motorcycle traffic makes overtaking on the hairpins unpleasant.",
+    "Reserve the **Gelmerbahn** online the moment dates are fixed. Walk-up slots vanish by mid-morning, and the funicular stops running at the first real cold snap.",
+    "Take the **Furka westbound in the morning and eastbound in the evening**: the Valais side faces west and is backlit until midday.",
+    "Check the **cantonal pass-status pages** at breakfast, not the night before. Uri, Bern and Valais each publish live opening data and a September closure can be decided at 06:00.",
+    "The **Grimsel Hospiz stays open past the last car** most years; if the pass shuts while you are up there, staff know the timing before anyone else does.",
+    "Buy a **half-price rail card only if you plan the Eggishorn and the steam railway** — otherwise pay per ride; three cable-car trips will not recover the fee.",
+    "Park at the **Steingletscher layby rather than the summit** for lunch. Same altitude, a glacier lake instead of a car park, and no coach traffic."
+  ],
+  "typeSpecific": {
+    "raw": {
+      "Total Distance / Terrain": "approx. 865 km; four high passes, sustained 8–13% gradients, hundreds of hairpins",
+      "Who It Suits": "Confident mountain drivers; anyone who likes hydro-engineering as much as scenery"
+    },
+    "surface": "approx. 865 km; four high passes, sustained 8–13% gradients, hundreds of hairpins",
+    "distanceKm": 865,
+    "elevationM": null,
+    "verticalM": null,
+    "technicalRating": null,
+    "transitPass": null,
+    "hutBooking": null,
+    "liftNetwork": null,
+    "snowReliability": null,
+    "windConditions": null,
+    "gpxReady": null,
+    "bookingTimeline": null,
+    "audience": "Confident mountain drivers; anyone who likes hydro-engineering as much as scenery"
+  },
+  "packingNotes": [
+    "A warm jacket and hat that live in the car, not in the boot — the Nufenen summit runs 15°C below the valley.",
+    "Sunglasses and high-factor cream; UV at 2,400 m is brutal even under cloud.",
+    "Motion-sickness remedies for passengers. The Furka's Valais side is 30 hairpins in 10 km.",
+    "Offline maps and downloaded pass-status bookmarks; signal drops in the Schöllenen and Binntal.",
+    "Walking boots for the Tomasee and the Aareschlucht galleries.",
+    "A CHF coin float for summit toilets and small laybys.",
+    "Swimwear for the Goms thermal pools at Brigerbad if a pass shuts."
+  ],
+  "whatCouldGoWrong": [
+    "**A pass closes mid-trip.** Fresh snow shuts the Nufenen or Furka at any time from September. Fallback: the Furka Base Tunnel car shuttle keeps Realp–Oberwald open year-round, and the Grimsel usually stays open longest.",
+    "**Brake fade on a long descent.** Fallback: pull into a layby, let the brakes cool for fifteen minutes, and use low gears afterwards. Do not coast in neutral.",
+    "**The Gelmerbahn or Eggishorn is shut for wind.** Both stop above roughly 60 km/h gusts. Fallback: the Aareschlucht and the Binntal are wind-immune.",
+    "**Rental without a vignette.** Cars hired in Germany, Italy or France often arrive without one, and the first Swiss motorway camera does not care. Fallback: buy at the border crossing before joining the motorway.",
+    "**Weekend gridlock at the Grimsel.** On fine August Sundays the summit car parks overflow onto the road. Fallback: reverse the day and drive it in the opposite direction after 16:00."
+  ],
+  "sources": {
+    "verified": null,
+    "confidenceNotes": null
+  },
+  "verifyFlags": [],
+  "verifyFlagCount": 0,
+  "volatilePricing": false,
+  "wordCount": 2105,
+  "dataVintage": 2026,
+  "provenance": {
+    "batch": "western-central",
+    "sourceFile": "cartatripsv1/trips/ch-road-trip-alpine-passes-furka.md",
+    "sourceFormat": "md+yaml-frontmatter (one file per trip)",
+    "sourceId": "ch-road-trip-alpine-passes-furka",
+    "ingestedAt": "2026-09-02",
+    "synthesized": false
+  }
+}

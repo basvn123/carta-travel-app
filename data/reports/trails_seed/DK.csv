@@ -1,0 +1,16 @@
+rank,curation_rank,title,ref,network,distance_km,popularity,pageviews_day,sitelinks,anchors,quality_score,portal_agreement,status,family_members,trip_id,osm_relation
+1,78.89,Nordsøstien,NST,iwn,1556.9,0.691,6,10,"Skagen (151/day, 110 m); Hvide Fyr (151/day, 27 m); Museum of the Vikings of Ribe (79/day, 242 m)",58.8,agree,draft,1,21809,1956134
+2,78.25,Hærvejen,,nwn,16.7,0.722,0,0,"Vor Frelser Kirke (299/day, 585 m); Sankt Markus Kirken (299/day, 1538 m); Church of Our Lady, Aalborg (299/day, 528 m)",96,,needs_review,41,78385,13278741
+3,74.64,European long distance path E1 - part Denmark,E1,iwn,383.4,0.483,0,0,"Diocese of Århus (556/day, 617 m); Aarhus (553/day, 164 m); Gorms Mound (240/day, 41 m)",95,,needs_review,1,77264,297398
+4,71.71,European long distance path E6: Kastrup - Roskilde - Korsør,E6,iwn,175.7,0.479,0,0,"Copenhagen Airport (526/day, 1330 m); Copenhagen Airport (526/day, 1330 m); Roskilde (156/day, 324 m)",83.8,,needs_review,1,78806,20032553
+5,71.01,European long distance path E6 - part Denmark,E6,iwn,407.5,0.479,0,0,"Copenhagen Airport (526/day, 1330 m); Copenhagen Airport (526/day, 1330 m); Ragnarock (156/day, 1442 m)",81,,needs_review,1,77279,556666
+6,69.52,European long distance path E6: Ærøskøbing - Søby,E6,iwn,19.5,0.336,0,0,"Ærø (58/day, 1651 m); Aeroskobing (13/day, 18 m)",95,,needs_review,1,78804,20032551
+7,69.1,European long distance path E6: Nyborg - Svendborg,E6,iwn,60.5,0.324,0,0,"Svendborg (48/day, 373 m); Vejstrup kirke (47/day, 429 m); Thurø Church (47/day, 1289 m)",95,,needs_review,1,78805,20032552
+8,66.97,European long distance path E6: Helsingør - Roskilde,E6,iwn,100.1,0.424,0,0,"Kronborg Castle (226/day, 444 m); Kronborg Castle (226/day, 455 m); Gimle (156/day, 1340 m)",72.5,,needs_review,1,78807,20032554
+9,66.91,Vandreruten Aarhus-Silkeborg,,rwn,79.5,0.576,0,0,"Diocese of Århus (556/day, 706 m); Aarhus (553/day, 935 m); Aqua (83/day, 222 m)",96,,needs_review,4,77571,3029875
+10,66.8,Amarminoen,,rwn,26.6,0.58,0,0,"Islands Brygge Harbor Bath (2489/day, 1676 m); Dragør fort (335/day, 311 m); DR (112/day, 386 m)",95,,needs_review,1,77921,11741012
+11,64.7,Kyststien,,rwn,120.5,0.52,0,0,"Bornholms Museum of Arts (334/day, 180 m); Gudhjem (Bornholm) (9/day, 180 m)",95,,needs_review,3,78317,13045749
+12,63.26,Den danske Pilgrimsrute - Østsjælland,Kastrup - Roskilde,rwn,51.3,0.479,0,0,"Copenhagen Airport (526/day, 1330 m); Copenhagen Airport (526/day, 1330 m); Gimle (156/day, 563 m)",95,,needs_review,1,77684,4835414
+13,62.23,Højlyngsstien,,rwn,67.2,0.449,0,0,"Bornholm (334/day, 214 m)",95,,needs_review,1,78079,12540655
+14,62.23,Rø Plantage - Almindingen Nord,,rwn,6.5,0.449,0,0,"Bornholm (334/day, 1557 m)",95,,needs_review,1,78073,12540347
+15,62.23,Almidingen Nord - Bastemose,,rwn,11.0,0.449,0,0,"Bornholm (334/day, 214 m)",95,,needs_review,1,78074,12540348

@@ -1,0 +1,326 @@
+{
+  "iso2": "IT",
+  "country": "Italy",
+  "checked_at": "2026-08-17",
+  "beaches": {
+    "wrong": [
+      {
+        "name": "La Capannina di Portonovo",
+        "class": "hospitality",
+        "why": "Tier 1, rank 9. Not a beach: it is a stabilimento balneare and seafood restaurant in the bay of Portonovo, with its own website, menu and umbrella booking. It occupies a top-12 national slot on the strength of a business name.",
+        "source_url": "https://www.lacapanninadiportonovo.it/en/"
+      },
+      {
+        "name": "Portonovo-Da Ramona",
+        "class": "hospitality",
+        "why": "Tier 1, rank 11. 'Da Ramona' (also listed as Bar Nedus da Ramona) is a bar and beach concession in the Portonovo bay services list, not a named beach.",
+        "source_url": "https://www.baiadiportonovo.it/en/servizi"
+      },
+      {
+        "name": "La Grotta Spiaggia Urbani",
+        "class": "hospitality",
+        "why": "Tier 1, rank 10. Ristorante La Grotta sits on Spiaggia Urbani in Sirolo. It is also a duplicate: it is 95 m from the 'Spiaggia Urbani' row at rank 6, i.e. the same beach counted twice, once under a restaurant's name.",
+        "source_url": "https://www.ristorantelagrottasirolo.it/en/"
+      },
+      {
+        "name": "Cala Selvaggia - Palau (Sardinia)",
+        "class": "not_notable",
+        "why": "Tier 1, rank 8. A small cove on the coastal path towards the Capo d'Orso lighthouse near Palau. Real, but one of twenty-plus minor coves around Palau and nowhere near a national top 12. The trailing '- Palau (Sardinia)' qualifier is the signature of a user-typed POI title rather than a gazetteer name.",
+        "source_url": "https://palauturismo.com/contenuti/328135/spiagge"
+      },
+      {
+        "name": "Spiaggia Bogliaco",
+        "class": "not_notable",
+        "why": "Tier 1, rank 12. A small municipal lakefront at Bogliaco (Gargnano) on Lake Garda. A lake shore of local interest holding a top-12 slot for a country with Sardinia, Sicily, Puglia and the Amalfi Coast.",
+        "source_url": "https://www.openstreetmap.org/#map=17/45.67252/10.65310"
+      },
+      {
+        "name": "costa tra Ancona e Portonovo",
+        "class": "other",
+        "why": "Tier 2, rank 15. This is a bathing-water monitoring stretch name from the EEA/Ministero della Salute dataset ('coast between Ancona and Portonovo'), not a beach a traveller can be sent to. Suggested filter class: bathing_station_name. Same family in the high tier 2: 'Scoglio del Mingardo e spiaggia di Cala del Cefalo' (r17), 'Costiera Amalfitana tra Maiori e il Torrente Bonea' (r22), and deeper 'Costa rocciosa tra Sperlonga e Gaeta' (r342), 'Venezia Lido 100 M Sud Inizio Diga Santa Nicolo' (r340), 'Costiera amalfitana tra Nerano e Positano' (r381).",
+        "source_url": "https://water.europa.eu/marine/state-of-the-environment/bathing-water-quality"
+      },
+      {
+        "name": "Associazione Amici dell'Enfola",
+        "class": "hospitality",
+        "why": "Tier 2, rank 25. A members' association at Enfola on Elba, not a beach; and a duplicate of the 'Enfola' row at rank 31, 30 m away.",
+        "source_url": "https://www.openstreetmap.org/#map=17/42.82472/10.26877"
+      },
+      {
+        "name": "Bagni Pagana",
+        "class": "hospitality",
+        "why": "Tier 2, rank 26. 'Bagni' is the Ligurian term for a paying beach establishment. Same family at rank 27 (Bagni Pietra Blu), 69 (Bagni Maremola), 89 (Bagni Rosa), 124 (Bagni Fiore), 125 (Bagni Lido).",
+        "source_url": "https://www.openstreetmap.org/#map=17/44.34090/9.22424"
+      },
+      {
+        "name": "Lido Santo Stefano",
+        "class": "hospitality",
+        "why": "Tier 2, rank 35. A lido concession at Monopoli. Note the 'Lido ' prefix is ambiguous in Italian and must not be blanket-filtered: Lido di Venezia is a genuine barrier-island beach. Filter on 'Lido <personal or brand name>' plus an OSM leisure/amenity tag, not on the word alone. Roughly 20 further rows in tier 2 share this pattern (Lido Aragosta, Lido Bansay, Lido Samsara Gallipoli, Lido 3 stelle, Lido Raggio Di Luna Ischia).",
+        "source_url": "https://www.openstreetmap.org/#map=17/40.92839/17.33176"
+      },
+      {
+        "name": "20 Riviera Varigotti",
+        "class": "duplicate_of:Lungomare Varigotti",
+        "why": "Tier 2, rank 24, 60 m from 'Lungomare Varigotti' at rank 36. Both are the Varigotti seafront. The leading '20 ' is a house number, another user-typed-title tell.",
+        "source_url": "https://www.openstreetmap.org/#map=17/44.18150/8.39831"
+      },
+      {
+        "name": "Favazzina :)",
+        "class": "other",
+        "why": "Tier 2, rank 32. A place name with an emoticon appended. Suggested filter class: junk_title (any name containing emoticons, emoji, URLs, phone numbers or 'www.'). The same rule catches Poland's current top_beach, 'Apartamenty w Swinoujsciu - www.baltic-plaza.pl'.",
+        "source_url": "https://www.openstreetmap.org/#map=15/38.26050/15.75728"
+      },
+      {
+        "name": "Villa EstRosa, Torre delle Stelle, Sardinia",
+        "class": "hospitality",
+        "why": "Tier 2, rank 260. A holiday villa listing, not a beach. Included here because it shows the accommodation family survived the harvest.",
+        "source_url": "https://www.openstreetmap.org/#map=16/39.15000/9.35000"
+      },
+      {
+        "name": "Scala Dei Turchi, Sicilia",
+        "class": "duplicate_of:Spiaggia di Scala dei Turchi",
+        "why": "Tier 2. Scala dei Turchi is present three times under three titles: 'Agrigento Scala Dei Turchi' (r267), 'Scala Dei Turchi, Sicilia' (r333) and 'Spiaggia di Scala dei Turchi' (r437). Exactly the Nesebar failure mode. Wikidata Q3951389.",
+        "source_url": "https://www.wikidata.org/wiki/Q3951389"
+      }
+    ],
+    "missing": [
+      {
+        "name": "Cala Goloritze",
+        "qid": "Q2933429",
+        "lat": 40.10793,
+        "lon": 9.68978,
+        "why": "Absent from the file entirely. An Italian natural monument since 1995 and part of the Golfo di Orosei, the beach on nearly every Italian best-beach list. The file does carry Cala Luna 15 km north, which suggests Goloritze fell outside the ~11 km destination-proximity radius rather than being judged unworthy.",
+        "source_url": "https://www.wikidata.org/wiki/Q2933429",
+        "verified": true
+      },
+      {
+        "name": "Cala Mariolu",
+        "qid": "Q3649989",
+        "lat": 40.12333,
+        "lon": 9.67639,
+        "why": "Absent entirely. The other Golfo di Orosei headline cove, reachable only by boat or a long trail, permanently in Italian top-10 rankings.",
+        "source_url": "https://www.wikidata.org/wiki/Q3649989",
+        "verified": true
+      },
+      {
+        "name": "Spiaggia dei Conigli (Rabbit Beach), Lampedusa",
+        "qid": "Q152430",
+        "lat": 35.51002,
+        "lon": 12.55841,
+        "why": "Absent entirely. Repeatedly named the best beach in Italy and a loggerhead turtle nesting site inside the Isola di Lampedusa nature reserve. Caveat: Q152430 is the offshore islet the beach is named after; the beach itself has no separate Wikidata item I could confirm, so the QID is a proxy and the coordinate is the islet's, not the sand.",
+        "source_url": "https://www.wikidata.org/wiki/Q152430",
+        "verified": false
+      },
+      {
+        "name": "Spiaggia della Pelosa, Stintino",
+        "qid": "Q33335398",
+        "lat": 40.966,
+        "lon": 8.20944,
+        "why": "Present but at tier 2 rank 322 of 483. Sardinia's most photographed beach, access-capped by the comune of Stintino since 2020 precisely because of demand. Rank 322 for La Pelosa while a Portonovo bar holds rank 11 is the single clearest ranking failure in the Italian file.",
+        "source_url": "https://www.wikidata.org/wiki/Q33335398",
+        "verified": true
+      },
+      {
+        "name": "Scala dei Turchi, Realmonte",
+        "qid": "Q3951389",
+        "lat": 37.28993,
+        "lon": 13.47268,
+        "why": "Present but only at tier 2 rank 267, and split across three duplicate rows. A white marl cliff and beach, one of Sicily's signature images.",
+        "source_url": "https://www.wikidata.org/wiki/Q3951389",
+        "verified": true
+      },
+      {
+        "name": "Baia dei Turchi, Otranto",
+        "qid": "Q3633027",
+        "lat": 40.19231,
+        "lon": 18.46427,
+        "why": "Absent under its own name. Puglia has zero tier-1 beaches in this file despite being one of Italy's two biggest domestic beach regions.",
+        "source_url": "https://www.wikidata.org/wiki/Q3633027",
+        "verified": true
+      },
+      {
+        "name": "Punta Prosciutto, Porto Cesareo",
+        "qid": "Q18447974",
+        "lat": 40.29655,
+        "lon": 17.77854,
+        "why": "Absent entirely. The anchor of the Salento Ionian coast inside the Palude del Conte marine protected area.",
+        "source_url": "https://www.wikidata.org/wiki/Q18447974",
+        "verified": true
+      },
+      {
+        "name": "Mondello, Palermo",
+        "qid": "Q1082173",
+        "lat": 38.19979,
+        "lon": 13.32679,
+        "why": "Absent entirely. Sicily's best-known city beach and the default beach for anyone flying into Palermo, which is a Carta destination. Note the it.wikipedia article carries a bad coordinate (38.1156, 13.3614); the Wikidata P625 value given here is the correct one.",
+        "source_url": "https://www.wikidata.org/wiki/Q1082173",
+        "verified": true
+      }
+    ],
+    "order": [
+      "Four of the twelve tier-1 beaches (ranks 6, 9, 10, 11) are inside the same 4 km stretch of the Conero riviera at Portonovo and Sirolo, and three of those four are businesses. One small Marche bay outranks the whole of Puglia, Campania, Calabria and the Amalfi Coast, which contribute zero tier-1 beaches between them.",
+      "Guvano Beach at rank 5 is too high. It is a genuine Cinque Terre cove but a naturist one whose tunnel access from Corniglia has long been shut, so it is not a beach the tab can send a general traveller to; the Cinque Terre slot should go to Monterosso or Vernazza.",
+      "Spiaggia Bogliaco at rank 12 is too high: a Lake Garda village lakefront ahead of every beach in Sardinia's Costa Smeralda, Puglia and Sicily outside Vendicari.",
+      "Spiaggia di Calamosche at rank 1 is defensible and is a real, protected, well-regarded beach inside the Vendicari reserve. Cala Luna at 2, Spiaggia di Cavoli at 3 and Cala Coticcio at 7 are all correctly present and correctly high.",
+      "The score column is nearly flat: ranks 9 to 12 all score 0.986 and 17 tier-2 rows all score 0.960, so the ordering inside those bands is arbitrary. Whatever tie-break is running is what let a restaurant land at rank 9."
+    ]
+  },
+  "mountains": {
+    "wrong": [
+      {
+        "name": "Vulcano",
+        "class": "island",
+        "why": "Tier 1, rank 2, above the Matterhorn. Vulcano is an Aeolian island (Q207323, 500 m). Wikidata does also type it as a mountain because it is a volcanic cone, so a P31 filter alone will not catch it; the reliable test is that it is also P31 island (Q23442) and that its name is the island's name. It is additionally duplicated at rank 9.",
+        "source_url": "https://www.wikidata.org/wiki/Q207323"
+      },
+      {
+        "name": "Isola di Lipari",
+        "class": "island",
+        "why": "Tier 1, rank 3. 'Isola di' is in the name. The largest Aeolian island, not a summit. Rank 3 of all Italian mountains.",
+        "source_url": "https://it.wikipedia.org/wiki/Isola_di_Lipari"
+      },
+      {
+        "name": "Isola Bella",
+        "class": "island",
+        "why": "Tier 1, rank 8. A roughly one-hectare islet at Taormina, connected to the shore by a shingle spit and only a few metres above sea level. Wikidata Q642924 is P31 island only. This is Italy's eighth-ranked mountain.",
+        "source_url": "https://www.wikidata.org/wiki/Q642924"
+      },
+      {
+        "name": "Isola di Vulcano",
+        "class": "duplicate_of:Vulcano",
+        "why": "Tier 1, rank 9, 415 m from the rank-2 'Vulcano' row. Same island, two names, two tier-1 slots.",
+        "source_url": "https://it.wikipedia.org/wiki/Isola_di_Vulcano"
+      },
+      {
+        "name": "Glacier des Grandes Jorasses",
+        "class": "other",
+        "why": "Tier 2, rank 15. A glacier, not a summit; the peak is the Grandes Jorasses. Suggested filter class: glacier_not_summit. It also carries a French name for an Italian-side feature, so the label will read wrong on an Italy tab.",
+        "source_url": "https://en.wikipedia.org/wiki/Grandes_Jorasses"
+      },
+      {
+        "name": "Monti Sibillini",
+        "class": "park_or_area",
+        "why": "Tier 2, rank 30. A mountain range and national park, not a peak, sitting seven places above the file's own entry for Monte Vettore, which is the actual highest summit of that range. Same family: 'Sextener Rotwand - Croda Rossa di Sesto' (r25) is linked to the Sexten Dolomites range article, and 'Torre di Brenta' (r22) to the Brenta group article.",
+        "source_url": "https://en.wikipedia.org/wiki/Sibillini_Mountains"
+      },
+      {
+        "name": "Punta Palascia Lighthouse",
+        "class": "other",
+        "why": "Tier 2, rank 39. A lighthouse on Italy's easternmost cape near Otranto, elevation a few tens of metres. Suggested filter class: building_or_structure. The same class catches 'Mont Blanc Tunnel' at rank 313, which is a road tunnel currently listed as an Italian mountain.",
+        "source_url": "https://en.wikipedia.org/wiki/Punta_Palascia"
+      }
+    ],
+    "missing": [
+      {
+        "name": "Mount Vesuvius",
+        "qid": "Q524",
+        "lat": 40.82261,
+        "lon": 14.42919,
+        "why": "Present, but at tier 2 rank 264 of 327. The most famous volcano in Europe, a national park, and the mountain every visitor to Naples and Pompeii sees. It must be tier 1 and arguably top three.",
+        "source_url": "https://www.wikidata.org/wiki/Q524",
+        "verified": true
+      },
+      {
+        "name": "Tre Cime di Lavaredo",
+        "qid": "Q1257207",
+        "lat": 46.61861,
+        "lon": 12.30556,
+        "why": "Absent entirely, which is the most surprising gap in the file: Carta already uses 'Tre Cime di Lavaredo' as a destination name in this very dataset (it is the near.city for Monte Piana, Schwalbenkofel and Cima Undici), yet the three peaks themselves are not features. The most photographed mountain group in the Dolomites.",
+        "source_url": "https://www.wikidata.org/wiki/Q1257207",
+        "verified": true
+      },
+      {
+        "name": "Marmolada",
+        "qid": "Q203241",
+        "lat": 46.42444,
+        "lon": 11.85,
+        "why": "Absent entirely. At 3343 m the highest mountain in the Dolomites, the 'Queen of the Dolomites', with the only glacier in the range. A Dolomites tier-1 list of six peaks that omits it is not credible.",
+        "source_url": "https://www.wikidata.org/wiki/Q203241",
+        "verified": true
+      },
+      {
+        "name": "Gran Paradiso",
+        "qid": "Q1372",
+        "lat": 45.53333,
+        "lon": 7.26667,
+        "why": "Absent entirely. At 4061 m the highest peak lying wholly within Italy, and the name of Italy's oldest national park.",
+        "source_url": "https://www.wikidata.org/wiki/Q1372",
+        "verified": true
+      },
+      {
+        "name": "Mont Blanc / Monte Bianco",
+        "qid": "Q583",
+        "lat": 45.83278,
+        "lon": 6.865,
+        "why": "Absent entirely, although the file does contain 'Mont Blanc du Tacul', 'Mont Blanc du Creton' and 'Mont Blanc Tunnel'. The highest mountain in the Alps, shared with France, seen from Courmayeur which is already a destination in the file.",
+        "source_url": "https://www.wikidata.org/wiki/Q583",
+        "verified": true
+      },
+      {
+        "name": "Corno Grande",
+        "qid": "Q636540",
+        "lat": 42.46917,
+        "lon": 13.56556,
+        "why": "The main 2912 m summit is absent; only 'Corno Grande - Vetta Centrale' (the central, lower summit) appears, at tier 2 rank 211. The highest peak of the Apennines and of peninsular Italy, above Campo Imperatore which is already a destination in the file.",
+        "source_url": "https://www.wikidata.org/wiki/Q636540",
+        "verified": true
+      },
+      {
+        "name": "Stromboli (volcano)",
+        "qid": "Q31445600",
+        "lat": 38.79,
+        "lon": 15.21,
+        "why": "Absent entirely, while two other Aeolian islands hold tier-1 mountain slots. Q31445600 is the volcano item specifically, distinct from Q131148 the island, so it is the correct id to use if the pipeline wants a volcano without importing an island. Permanently erupting; the night ascent is one of Italy's signature outdoor experiences.",
+        "source_url": "https://www.wikidata.org/wiki/Q31445600",
+        "verified": true
+      },
+      {
+        "name": "Sassolungo / Langkofel",
+        "qid": "Q1805312",
+        "lat": 46.524722,
+        "lon": 11.735278,
+        "why": "Absent entirely, although the file is dense with Val Gardena features (Seceda at rank 5, Sas Rigais at 12, Piz Duleda at 23). Sassolungo is the skyline of Val Gardena and the Sella Ronda.",
+        "source_url": "https://it.wikipedia.org/wiki/Sassolungo",
+        "verified": true
+      },
+      {
+        "name": "Monviso",
+        "qid": "Q1248",
+        "lat": 44.668531,
+        "lon": 7.09013,
+        "why": "Absent entirely. The isolated 3841 m pyramid that is the emblem of Piedmont, the source of the Po and a UNESCO biosphere reserve. Piedmont has no tier-1 mountain in this file.",
+        "source_url": "https://www.wikidata.org/wiki/Q1248",
+        "verified": true
+      },
+      {
+        "name": "Ortles / Ortler",
+        "qid": "Q650695",
+        "lat": 46.51056,
+        "lon": 10.54194,
+        "why": "Absent entirely. At 3905 m the highest mountain in South Tyrol and the centre of Stelvio National Park.",
+        "source_url": "https://www.wikidata.org/wiki/Q650695",
+        "verified": true
+      },
+      {
+        "name": "Cinque Torri",
+        "qid": "Q933666",
+        "lat": 46.50925,
+        "lon": 12.05397,
+        "why": "Absent entirely despite being 8 km from Cortina, which is a destination in the file and already supplies four tier-1 and tier-2 rows.",
+        "source_url": "https://www.wikidata.org/wiki/Q933666",
+        "verified": true
+      }
+    ],
+    "order": [
+      "Ranks 2, 3, 8 and 9 are islands. Four of twelve tier-1 Italian mountain slots are occupied by islands, and one of those pairs is the same island twice. The Matterhorn, an unarguable top-three Italian mountain, sits at rank 4 behind two of them.",
+      "Mount Etna at rank 1 is correct and is the right country card. It is the only tier-1 mountain I would leave exactly where it is.",
+      "Monte Faloria at rank 10 is too high: a real 2123 m peak but essentially the top station of a Cortina cable car, ranked above Monte Conero, Piz Boe, Monte Vettore and Tofana di Rozes.",
+      "Monte Subasio at rank 11 is too high for a 1290 m Umbrian ridge; it is there because it is 4.5 km from Assisi, which is a symptom of the proximity-driven scoring rather than a judgement about the mountain.",
+      "Tofana di Rozes at rank 60, Corno Grande at 211 and Vesuvius at 264 are all far too low. Sorting the file by any measure of fame rather than by proximity to a Carta destination would move all three into tier 1.",
+      "The near.km column never exceeds 10.8 km anywhere in the Italian file. That is the structural cause of most of the misses above: a feature more than about 11 km from an existing Carta destination cannot enter the dataset at any rank, which is why Marmolada, Gran Paradiso, Tre Cime, Monviso, Stromboli, Cala Goloritze and Spiaggia dei Conigli are absent rather than merely low."
+    ]
+  },
+  "counts_verdict": "The raw volumes are plausible for Italy (483 beaches, 327 mountains across tiers 1 and 2), but the tier-1 allowance of 12 and 12 is far too small for a country that has to represent Sardinia, Sicily, Liguria, Puglia, the Amalfi Coast, Elba, the Dolomites, the western Alps and the Apennines at once, and the twelve chosen are badly clustered: four tier-1 beaches in one Marche bay, four tier-1 mountains that are Aeolian or Sicilian islands. Italy should carry a tier 1 of roughly 25 to 30 per kind, allocated with a per-region cap, and no more than one entry per 5 km cluster.",
+  "top_pick_verdict": "top_mountain 'Mount Etna' is exactly right and I would put it on the country card unchanged. top_beach 'Spiaggia di Calamosche' is a genuine, protected, well-regarded Sicilian beach and not an embarrassment, but it is not the image that says Italy: Cala Goloritze or Cala Luna would carry the card better, and Calamosche only wins here because it happens to sit 8 km from Noto.",
+  "notes": "Root causes visible in the Italian file, in order of damage. 1) A hard destination-proximity ceiling of about 11 km, which excludes whole mountain ranges and island beaches rather than merely demoting them. 2) No hospitality filter: beach clubs, bars, restaurants, bagni, lidi, associations and at least one holiday villa are competing on equal terms with beaches, and three of them hold tier-1 slots. 3) No deduplication: Scala dei Turchi appears three times, Vulcano twice, Varigotti twice, Enfola twice, Spiaggia Urbani twice. 4) EEA bathing-water station names ('costa tra X e Y', 'Costiera Amalfitana tra Maiori e il Torrente Bonea') are being shipped as beach names; these are recognisable by the pattern 'tra <place> e <place>' and by the absence of any OSM natural=beach geometry. 5) Islands are entering the mountain kind, sometimes with Wikidata's blessing because volcanic islands are typed as both; the safe rule is to reject anything P31 island (Q23442) or whose name starts with 'Isola'. 6) Scores are heavily tied (0.986 x4, 0.960 x17), so the tie-break decides the visible order and it is currently arbitrary. Man-made structures also leak in: 'Mont Blanc Tunnel' and 'Punta Palascia Lighthouse' are both listed as mountains."
+}

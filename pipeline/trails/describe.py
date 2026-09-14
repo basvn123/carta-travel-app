@@ -256,25 +256,46 @@ def build_facts(trip):
     facts = {}
 
     facts["name"] = trip["title"]
+    citytrip = trip.get("category") == "citytrip"
     if tags.get("ref"):
         facts["signpost_code"] = f"signposted as {tags['ref']}"
-    facts["route_type"] = ROUTE_LABELS.get((tags.get("route") or "").strip(),
-                                           "waymarked hiking route")
+    if citytrip:
+        # A composed sightseeing day is not a hiking route, and describing it
+        # as one (the 2026-08 first batch did) is exactly the kind of
+        # plausible-but-wrong copy the product cannot afford.
+        facts["route_type"] = ("a one day city sightseeing walk between the "
+                               "city's main sights")
+        stops = tags.get("stops")
+        n_stops = len(stops) if isinstance(stops, list) else stops
+        if n_stops:
+            facts["stops"] = f"{n_stops} sightseeing stops"
+        city = tags.get("anchor_city")
+        if city:
+            facts["city"] = f"the day is anchored in {city}"
+    else:
+        facts["route_type"] = ROUTE_LABELS.get(
+            (tags.get("route") or "").strip(), "waymarked hiking route")
     facts["country"] = COUNTRY_NAMES.get(trip["country"], trip["country"])
 
     if trip["distance_m"]:
-        facts["distance_km"] = f"{trip['distance_m'] / 1000:.1f} km"
-    if trip["ascent_m"] is not None:
+        facts["distance_km"] = (
+            f"{trip['distance_m'] / 1000:.1f} km of walking between stops"
+            if citytrip else f"{trip['distance_m'] / 1000:.1f} km")
+    if not citytrip and trip["ascent_m"] is not None:
         facts["ascent_m"] = f"{int(trip['ascent_m'])} m of ascent"
-    if trip["descent_m"] is not None:
+    if not citytrip and trip["descent_m"] is not None:
         facts["descent_m"] = f"{int(trip['descent_m'])} m of descent"
     if trip["duration_min"]:
         hours = trip["duration_min"] / 60.0
         # A decimal on a 92 hour through hike is false precision; a decimal on
         # a 1.4 hour stroll is the useful part of the number.
         shown = f"{hours:.0f}" if hours >= 10 else f"{hours:.1f}"
-        facts["walking_time"] = (f"about {shown} hours on the DIN 33466 "
-                                 f"hiking time rule")
+        if citytrip:
+            facts["day_length"] = (f"about {shown} hours for the full day, "
+                                   f"visit time at each stop included")
+        else:
+            facts["walking_time"] = (f"about {shown} hours on the DIN 33466 "
+                                     f"hiking time rule")
     if trip["difficulty"] in DIFFICULTY_LABELS:
         facts["difficulty"] = (f"{DIFFICULTY_LABELS[trip['difficulty']]}, "
                                f"derived from distance and ascent")
@@ -935,6 +956,11 @@ def main():
                              f"pilot set is {PILOT_COUNTRIES})")
     parser.add_argument("--ids", default="",
                         help="comma separated trip ids, bypasses the shortlist")
+    parser.add_argument("--pending", action="store_true",
+                        help="select PUBLISHED trips whose description is "
+                             "missing or stale (citytrips still describing "
+                             "themselves as hiking routes); the self-healing "
+                             "mode run_pipeline uses, safe to rerun any time")
     parser.add_argument("--top", type=int, default=15,
                         help="shortlist rows per country (default: 15)")
     parser.add_argument("--provider", choices=("auto", "claude", "gemini"),
@@ -960,7 +986,18 @@ def main():
         cur.execute(DESCRIPTIONS_DDL.read_text())   # fresh labs and old volumes
     conn.commit()
 
-    if args.ids:
+    if args.pending:
+        with conn.cursor() as cur:
+            cur.execute("""
+                SELECT id FROM trips WHERE status = 'published'
+                  AND (description_md IS NULL OR description_md = ''
+                       OR (category = 'citytrip'
+                           AND description_md NOT ILIKE '%%sightseeing%%'))
+                ORDER BY id""")
+            ids = [r[0] for r in cur.fetchall()]
+        args.redescribe = True          # stale text is the point of the mode
+        print(f"[pending] {len(ids)} published trips need a description")
+    elif args.ids:
         ids = [int(i) for i in args.ids.split(",") if i.strip()]
     else:
         ids = []
@@ -976,6 +1013,9 @@ def main():
             ids.extend(picked)
     if not ids:
         conn.close()
+        if args.pending:
+            print("[pending] nothing to do: every published trip is described")
+            return
         sys.exit("no trips selected; run popularity.py first or pass --ids")
 
     trips = load_trips(conn, ids)

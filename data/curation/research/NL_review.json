@@ -1,0 +1,432 @@
+{
+  "iso2": "NL",
+  "country": "Netherlands",
+  "checked_at": "2026-08-17",
+  "beaches": {
+    "wrong": [
+      {
+        "name": "Strandje Geistingen",
+        "class": "wrong_country",
+        "why": "Geistingen is a kerkdorp of Ophoven in the Belgian municipality of Kinrooi, province of Limburg (BE). Reverse-geocoding the shipped coordinate 51.13154,5.81633 returns 'Ophoven, Kinrooi, Maaseik, Limburg, Vlaanderen, Belgie' with country_code 'be'. It is shipped in the Dutch beach list at tier 1 rank 8 because the nearest catalogue city was set to Thorn (NL) across the Maas border.",
+        "source_url": "https://nl.wikipedia.org/wiki/Geistingen"
+      },
+      {
+        "name": "Fun Beach Event & Leisurepark Panheel",
+        "class": "hospitality",
+        "why": "A gated commercial leisure park at a gravel-pit lake in Heel, Limburg. It sells day tickets, and the ticket price includes the aquapark, a 14 m Super Slide, a fenced Kids Area with a swimming pool and a food corner. It is an attraction operator, not a public natural beach, and it is the country's tier 1 rank 2.",
+        "source_url": "https://www.funbeach.nl/"
+      },
+      {
+        "name": "StrandLAB Almere",
+        "class": "other",
+        "why": "Not a beach. StrandLAB Almere is a cultural foundation and outdoor art laboratory with an atelier and artist residency on the Almeerderstrand. Its own site describes it as a 'breeding ground and outdoor laboratory for culture'. Filter family: cultural organisation or venue whose address happens to sit on a beach.",
+        "source_url": "https://strandlab-almere.nl/en/about/"
+      },
+      {
+        "name": "Nudist Beach Almere - Zilverstrand Naaktstrand",
+        "class": "duplicate_of:Zilverstrand Almere",
+        "why": "Same lake beach as tier 1 rank 11 'Zilverstrand Almere', 250 m apart (52.32496,5.14486 vs 52.32760,5.14725). Both occupy tier 1 slots.",
+        "source_url": "https://www.openstreetmap.org/#map=16/52.3265/5.1460"
+      },
+      {
+        "name": "Strandje 4 Hemmeland",
+        "class": "duplicate_of:Hemmeland 1E Strandje",
+        "why": "Both are numbered swimming spots on the same Hemmeland recreation peninsula at Monnickendam, 380 m apart. Two of the twelve national tier 1 slots go to two numbered segments of one small IJsselmeer recreation area.",
+        "source_url": "https://www.openstreetmap.org/#map=16/52.4565/5.0497"
+      },
+      {
+        "name": "Domburg Strand Watertoren West",
+        "class": "duplicate_of:Domburg Strand",
+        "why": "An informal segment label for the Domburg beach next to the water tower. 'Domburg Strand' itself is present at tier 2 rank 22. The segment outranks the parent and is the national top_beach.",
+        "source_url": "https://nl.wikipedia.org/wiki/Domburg"
+      },
+      {
+        "name": "Hemmeland 1E Strandje",
+        "class": "not_notable",
+        "why": "A small unnamed-in-practice swimming spot on the Hemmeland recreation peninsula at Monnickendam. It has no Wikipedia article, no image credit chain and no national profile, yet it is tier 1 rank 3. Its 'near' city is also wrong: it is attributed to Marken, 4 km across the Gouwzee, while Monnickendam is adjacent.",
+        "source_url": "https://www.openstreetmap.org/#map=16/52.4550/5.0481"
+      },
+      {
+        "name": "Strand Zuiderplas",
+        "class": "not_notable",
+        "why": "A small municipal swimming lake beach at Engelen near 's-Hertogenbosch, ~90 km from the sea. Local amenity, no national standing, yet tier 1 rank 6.",
+        "source_url": "https://www.openstreetmap.org/#map=16/51.6757/5.3133"
+      },
+      {
+        "name": "Veerse Strandje",
+        "class": "not_notable",
+        "why": "A small beach on the Veerse Meer at Veere. Real, but a local swimming spot on an enclosed lake rather than a top-12 national beach.",
+        "source_url": "https://www.openstreetmap.org/#map=16/51.5504/3.6654"
+      },
+      {
+        "name": "Hoofdstrand 8",
+        "class": "duplicate_of:Badstrand Schiermonnikoog",
+        "why": "Tier 2 rank 13. 'Hoofdstrand 6', 'Hoofdstrand 7' and 'Hoofdstrand 8' are three numbered beach-pole segments of the single Schiermonnikoog main beach, which is itself listed separately as 'Badstrand Schiermonnikoog'. Four rows for one beach.",
+        "source_url": "https://nl.wikipedia.org/wiki/Schiermonnikoog"
+      },
+      {
+        "name": "Hoofdstrand 7",
+        "class": "duplicate_of:Badstrand Schiermonnikoog",
+        "why": "Numbered segment of the Schiermonnikoog main beach, 1 km from 'Hoofdstrand 8' and 700 m from 'Hoofdstrand 6'.",
+        "source_url": "https://nl.wikipedia.org/wiki/Schiermonnikoog"
+      },
+      {
+        "name": "Hoofdstrand 6",
+        "class": "duplicate_of:Badstrand Schiermonnikoog",
+        "why": "Numbered segment of the Schiermonnikoog main beach.",
+        "source_url": "https://nl.wikipedia.org/wiki/Schiermonnikoog"
+      },
+      {
+        "name": "Beachclub Bodelaeke",
+        "class": "hospitality",
+        "why": "Tier 2 rank 15. A beach club and holiday-park amenity at Bodelaeke, Giethoorn. Commercial venue, not a public beach.",
+        "source_url": "https://www.openstreetmap.org/#map=17/52.7204/6.0715"
+      },
+      {
+        "name": "Strandpaviljoen Oase B.V.",
+        "class": "hospitality",
+        "why": "Tier 2 rank 30. 'Strandpaviljoen ... B.V.' is a Dutch limited company operating a beach restaurant at Domburg. The company suffix B.V. in a feature name is a reliable hospitality marker.",
+        "source_url": "https://www.openstreetmap.org/#map=18/51.5645/3.4911"
+      },
+      {
+        "name": "Oase Domburg",
+        "class": "duplicate_of:Strandpaviljoen Oase B.V.",
+        "why": "Tier 2 rank 28. Identical coordinate pair to 'Strandpaviljoen Oase B.V.' (51.56445,3.49112 vs 51.56452,3.49112): the same beach pavilion under a shortened name.",
+        "source_url": "https://www.openstreetmap.org/#map=18/51.5645/3.4911"
+      },
+      {
+        "name": "ActiviteitenStrand Noordduine",
+        "class": "hospitality",
+        "why": "Tier 2 rank 19. An activity-beach concession at Domburg, a commercial operator rather than a beach.",
+        "source_url": "https://www.openstreetmap.org/#map=17/51.5633/3.4887"
+      },
+      {
+        "name": "Beachhouse Six Fiftyfive-Fiftysix",
+        "class": "hospitality",
+        "why": "Tier 2 rank 39. A numbered beach house rental near Veere.",
+        "source_url": "https://www.openstreetmap.org/#map=17/51.5834/3.6264"
+      },
+      {
+        "name": "Het Lido, Dierenweide, Speeltuin & Wandelbos Waalwijk",
+        "class": "lido_or_pool",
+        "why": "Tier 2 rank 32. A Waalwijk municipal recreation complex: an open-air lido plus a petting zoo (dierenweide), a playground (speeltuin) and a walking wood. Same failure family as the UK's Brockwell Lido. It is triplicated as 'Lido, Waalwijk' (rank 33) and 'Speeltuin Het Lido' (rank 34).",
+        "source_url": "https://www.openstreetmap.org/#map=16/51.6779/5.0925"
+      },
+      {
+        "name": "Speeltuin Het Lido",
+        "class": "lido_or_pool",
+        "why": "Tier 2 rank 34. 'Speeltuin' is Dutch for playground. A playground at the Waalwijk lido, shipped as a beach.",
+        "source_url": "https://www.openstreetmap.org/#map=16/51.6769/5.0914"
+      },
+      {
+        "name": "Lido, Waalwijk",
+        "class": "duplicate_of:Het Lido, Dierenweide, Speeltuin & Wandelbos Waalwijk",
+        "why": "Tier 2 rank 33. Third row for the same Waalwijk lido complex.",
+        "source_url": "https://www.openstreetmap.org/#map=16/51.6778/5.0949"
+      },
+      {
+        "name": "Werkenalsstrandwacht",
+        "class": "other",
+        "why": "Tier 2 rank 31. 'Werkenalsstrandwacht' is Dutch for 'work as a lifeguard' run together as one word. It is a recruitment slogan or a web handle, not a place name. Filter family: single concatenated lowercase-word strings with no space.",
+        "source_url": "https://www.openstreetmap.org/#map=17/51.5289/3.4514"
+      },
+      {
+        "name": "Niederlande, Domburg",
+        "class": "duplicate_of:Domburg Strand",
+        "why": "Tier 2 rank 26. A German-language geotag ('Netherlands, Domburg'), not a name. Together with 'Nl - Domburg Strand' (rank 27), 'Domburg, Holland' (rank 21), 'Bomburgbeach' (rank 20, a typo), 'Strand Dbg' (rank 29) and 'Domburg Strand' (rank 22), the Domburg beach is shipped under at least seven names.",
+        "source_url": "https://nl.wikipedia.org/wiki/Domburg"
+      },
+      {
+        "name": "Nl - Domburg Strand",
+        "class": "duplicate_of:Domburg Strand",
+        "why": "Tier 2 rank 27. Country-prefixed geotag of the same Domburg beach, 340 m from 'Domburg Strand'.",
+        "source_url": "https://nl.wikipedia.org/wiki/Domburg"
+      },
+      {
+        "name": "Bomburgbeach",
+        "class": "duplicate_of:Domburg Strand",
+        "why": "Tier 2 rank 20. Misspelling of Domburg ('Bomburg') run together with 'beach'. Nothing named Bomburg exists.",
+        "source_url": "https://nl.wikipedia.org/wiki/Domburg"
+      },
+      {
+        "name": "Kotje 85",
+        "class": "other",
+        "why": "Tier 2 rank 24. 'Kotje 85' is beach hut number 85 at Domburg, an individual cabin.",
+        "source_url": "https://www.openstreetmap.org/#map=17/51.5544/3.4702"
+      },
+      {
+        "name": "Domburgse Duinen",
+        "class": "other",
+        "why": "Tier 2 rank 23. The Domburg dunes are a dune belt behind the beach, not a beach.",
+        "source_url": "https://www.openstreetmap.org/#map=16/51.5645/3.4912"
+      }
+    ],
+    "missing": [
+      {
+        "name": "Scheveningen",
+        "qid": "Q837211",
+        "lat": 52.10805556,
+        "lon": 4.27305556,
+        "why": "The best-known beach in the Netherlands: the seaside district of The Hague with the Pier, the Kurhaus and the country's busiest stretch of North Sea sand. Absent from the file at every tier. A Dutch Beaches tab without Scheveningen is a failure regardless of what else is listed. QID and coordinate are those of the Scheveningen district; the beach itself has no separate Wikidata item confirmed here.",
+        "source_url": "https://www.wikidata.org/wiki/Q837211",
+        "verified": true
+      },
+      {
+        "name": "Zandvoort",
+        "qid": "Q9980",
+        "lat": 52.375,
+        "lon": 4.53583333,
+        "why": "Amsterdam's beach resort, reachable by direct train from Amsterdam Centraal, and the second name any Dutch traveller gives after Scheveningen. Absent. QID and coordinate are for the municipality/village.",
+        "source_url": "https://www.wikidata.org/wiki/Q9980",
+        "verified": true
+      },
+      {
+        "name": "De Koog (Texel)",
+        "qid": "Q517053",
+        "lat": 53.09833333,
+        "lon": 4.76694444,
+        "why": "The main beach village of Texel, the largest Wadden island and the country's flagship island beach destination. Texel appears in the file only as 'Strandloper 627', a numbered beach-pole marker at tier 2 rank 18. QID and coordinate are for the village of De Koog.",
+        "source_url": "https://www.wikidata.org/wiki/Q517053",
+        "verified": true
+      },
+      {
+        "name": "Terschelling",
+        "qid": "Q204412",
+        "lat": 53.40111111,
+        "lon": 5.33138889,
+        "why": "Wadden island with a 30 km uninterrupted North Sea beach and the Oerol festival. Entirely absent from the file. QID and coordinate are for the island.",
+        "source_url": "https://www.wikidata.org/wiki/Q204412",
+        "verified": true
+      },
+      {
+        "name": "Renesse",
+        "qid": "Q1024702",
+        "lat": 51.73222222,
+        "lon": 3.77305556,
+        "why": "The main Zeeland beach resort on Schouwen-Duiveland, wider and more visited than Domburg, which supplies fifteen of the thirty-nine rows in this file. Absent. QID and coordinate are for the village.",
+        "source_url": "https://www.wikidata.org/wiki/Q1024702",
+        "verified": true
+      },
+      {
+        "name": "Cadzand-Bad",
+        "qid": "Q1025353",
+        "lat": 51.37833333,
+        "lon": 3.38888889,
+        "why": "The Zeeuws-Vlaanderen resort beach, the Dutch beach most used by Belgian and German visitors and a shell-hunting destination. Absent. QID and coordinate are for the resort.",
+        "source_url": "https://www.wikidata.org/wiki/Q1025353",
+        "verified": true
+      },
+      {
+        "name": "Bloemendaal aan Zee",
+        "qid": "Q2695652",
+        "lat": 52.40277778,
+        "lon": 4.54527778,
+        "why": "The Netherlands' best-known beach-club strip (Bloemendaal beach pavilions). Note the file does contain 'Kopje van Bloemendaal' but only as a mountain, so the beach is missing while the dune behind it is present.",
+        "source_url": "https://www.wikidata.org/wiki/Q2695652",
+        "verified": true
+      },
+      {
+        "name": "Egmond aan Zee",
+        "qid": "Q1616324",
+        "lat": 52.61861111,
+        "lon": 4.62416667,
+        "why": "A classic North Holland resort beach with a lighthouse, in every Dutch top-ten beach list. Absent.",
+        "source_url": "https://www.wikidata.org/wiki/Q1616324",
+        "verified": true
+      },
+      {
+        "name": "Bergen aan Zee",
+        "qid": "Q770885",
+        "lat": 52.66222222,
+        "lon": 4.6325,
+        "why": "North Holland dune-backed resort beach inside the Noordhollands Duinreservaat. Absent.",
+        "source_url": "https://www.wikidata.org/wiki/Q770885",
+        "verified": true
+      },
+      {
+        "name": "Wijk aan Zee",
+        "qid": "Q913649",
+        "lat": 52.49305556,
+        "lon": 4.59361111,
+        "why": "North Sea beach village, the country's main surf beach. Absent.",
+        "source_url": "https://www.wikidata.org/wiki/Q913649",
+        "verified": true
+      },
+      {
+        "name": "Kijkduin",
+        "qid": "Q1949664",
+        "lat": null,
+        "lon": null,
+        "why": "The Hague's second, quieter beach resort alongside Scheveningen. Wikidata item confirmed, but the nl.wikipedia coordinates property returned no lat/lon, so the coordinate is not verified here.",
+        "source_url": "https://www.wikidata.org/wiki/Q1949664",
+        "verified": false
+      },
+      {
+        "name": "Noordwijk aan Zee",
+        "qid": null,
+        "lat": null,
+        "lon": null,
+        "why": "Major South Holland resort beach between Katwijk and Zandvoort, expected in any Dutch top ten. The nl.wikipedia API returned neither a wikibase item nor coordinates for this exact title, so neither QID nor coordinate is confirmed.",
+        "source_url": "https://nl.wikipedia.org/wiki/Noordwijk_aan_Zee",
+        "verified": false
+      }
+    ],
+    "order": [
+      "Not defensible. Eight of the twelve tier-1 rows are inland fresh-water bathing spots (Zilverstrand Almere, Nudist Beach Almere, StrandLAB Almere, Hemmeland 1E Strandje, Strandje 4 Hemmeland, Strand Zuiderplas, Veerse Strandje, Fun Beach Panheel) while not a single North Sea resort beach appears. The scorer is rewarding the EEA bathing-water class, which inland lakes reliably hold at 'Excellent', instead of beach fame.",
+      "Domburg Strand Watertoren West at rank 1 is too high: it is an informal segment name for the Domburg beach, and the parent 'Domburg Strand' sits at tier 2 rank 22, below its own child.",
+      "Westerstrand (rank 12, last in tier 1) is too low. It is the only tier-1 entry that is a genuine named North Sea beach with a Wikipedia article (nl:Westerstrand, the west beach of Schiermonnikoog); it should be at or near the top of what remains after deduping.",
+      "Badstrand Schiermonnikoog (tier 2 rank 14), Ameland Strand Buren (rank 37), Badstrand Badhuis Vlieland (rank 38), Strandloper 627 on Texel (rank 18) and Almeerderstrand (rank 36) are all too low: real Wadden-island and lake beaches ranked beneath a stack of Domburg pavilion and geotag duplicates.",
+      "Almeerderstrand at rank 36 sits below 'StrandLAB Almere' at rank 9 even though StrandLAB is the arts venue that stands on the Almeerderstrand. Parent below child, twice over.",
+      "One anchor city, Domburg, supplies fifteen of the thirty-nine rows. Ranking is being driven by the density of the POI layer around a single catalogue city, not by national salience."
+    ]
+  },
+  "mountains": {
+    "wrong": [
+      {
+        "name": "aan de Bergweg te Vlissingen",
+        "class": "other",
+        "why": "Not a name at all. This is a lowercase Dutch prepositional phrase, 'on the Bergweg in Vlissingen', lifted verbatim from a heritage or archaeological monument register description field. It is shipped at tier 1 rank 7, so it is user-visible on the Dutch Mountains tab.",
+        "source_url": "https://www.openstreetmap.org/#map=17/51.4765/3.5744"
+      },
+      {
+        "name": "Door een gracht/kreek omgeven terrein waarin zich een vlucht/kasteelberg bevindt met aangrenzend een verhoogd gelegen voorburcht of bruggehoofd",
+        "class": "other",
+        "why": "A 143-character full Dutch sentence from the archaeological monuments register ('terrain surrounded by a moat/creek containing a refuge or castle mound with an adjoining raised bailey or bridgehead'), shipped as a mountain name at tier 2 rank 16. Same source family as 'aan de Bergweg te Vlissingen'.",
+        "source_url": "https://www.openstreetmap.org/#map=17/51.5023/3.5713"
+      },
+      {
+        "name": "Vliedberg Boudewijnskerke",
+        "class": "other",
+        "why": "A vliedberg is a small artificial medieval refuge mound, typically a few metres high, of which Zeeland has dozens. It is an archaeological earthwork, not a hill anyone climbs, and it is at tier 1 rank 6. The same family recurs at tier 2 ranks 14 and 15 (Vliedberg Hazenberg, Vliedberg Sint Jan Ten Heere).",
+        "source_url": "https://nl.wikipedia.org/wiki/Vliedberg"
+      },
+      {
+        "name": "Vliedberg Hazenberg",
+        "class": "other",
+        "why": "Tier 2 rank 14. Artificial medieval refuge mound in Zeeland, same family as above.",
+        "source_url": "https://nl.wikipedia.org/wiki/Vliedberg"
+      },
+      {
+        "name": "Vliedberg Sint Jan Ten Heere",
+        "class": "other",
+        "why": "Tier 2 rank 15. Artificial medieval refuge mound in Zeeland, same family as above.",
+        "source_url": "https://nl.wikipedia.org/wiki/Vliedberg"
+      },
+      {
+        "name": "Woensberg",
+        "class": "not_notable",
+        "why": "Tier 1 rank 4. nl.wikipedia describes it as an 'opgeworpen heuvel' (raised/man-made hill) in Huizen, 22.3 metres high. A 22 m artificial mound in a suburban wood is not a national top-five mountain.",
+        "source_url": "https://nl.wikipedia.org/wiki/Woensberg"
+      },
+      {
+        "name": "Eukenberg",
+        "class": "not_notable",
+        "why": "Tier 1 rank 5. Also an 'opgeworpen heuvel' on the Naarder Eng in the Gooi. Together with Woensberg and Tafelberg (tier 2 rank 13) the small Gooi mounds take three of the seventeen Dutch rows.",
+        "source_url": "https://nl.wikipedia.org/wiki/Eukenberg"
+      }
+    ],
+    "missing": [
+      {
+        "name": "Vaalserberg",
+        "qid": "Q159860",
+        "lat": 50.75466667,
+        "lon": 6.02083333,
+        "why": "The highest point of the European Netherlands at 322.4 m above NAP and the site of the Drielandenpunt where the Dutch, Belgian and German borders meet, with the Wilhelminatoren and Boudewijntoren observation towers. It is the single answer to 'the mountain of the Netherlands' and it is absent from the file at every tier. Its omission is the largest single defect in this country.",
+        "source_url": "https://www.wikidata.org/wiki/Q159860",
+        "verified": true
+      },
+      {
+        "name": "Sint-Pietersberg",
+        "qid": "Q1754591",
+        "lat": 50.81444444,
+        "lon": 5.685,
+        "why": "Not strictly absent but effectively so: it is present only under its English label 'Mount Saint Peter' at tier 2 rank 10, while D'n Observant, the artificial marl spoil heap standing on the Sint-Pietersberg plateau, is at tier 1 rank 3. The natural marl plateau with the Zonneberg caves and Fort Sint-Pieter should be the tier-1 entry and its spoil heap the child.",
+        "source_url": "https://www.wikidata.org/wiki/Q1754591",
+        "verified": true
+      },
+      {
+        "name": "Gulperberg",
+        "qid": "Q1554374",
+        "lat": 50.81414444,
+        "lon": 5.89953611,
+        "why": "A South Limburg hill and a fixture of the Amstel Gold Race, sitting in the same walking country as the Cauberg that the file already ranks first. Absent.",
+        "source_url": "https://www.wikidata.org/wiki/Q1554374",
+        "verified": true
+      },
+      {
+        "name": "Keutenberg",
+        "qid": "Q3113119",
+        "lat": 50.84300833,
+        "lon": 5.87331111,
+        "why": "The steepest paved climb in the Netherlands, in the Geul valley near Schin op Geul, and a Dutch cycling landmark. Absent.",
+        "source_url": "https://www.wikidata.org/wiki/Q3113119",
+        "verified": true
+      },
+      {
+        "name": "Posbank",
+        "qid": "Q1855065",
+        "lat": 52.02861111,
+        "lon": 6.02111111,
+        "why": "The heather escarpment and viewpoint in Veluwezoom National Park, the most-photographed piece of Dutch upland and a national walking and cycling destination. Absent, while the file lists 'Drieberg' and 'Franse berg' from the same Veluwe.",
+        "source_url": "https://www.wikidata.org/wiki/Q1855065",
+        "verified": true
+      },
+      {
+        "name": "Tankenberg",
+        "qid": "Q944854",
+        "lat": 52.32333333,
+        "lon": 6.95555556,
+        "why": "The highest natural point of the province of Overijssel and the highest point of the Netherlands north of the great rivers. Absent.",
+        "source_url": "https://www.wikidata.org/wiki/Q944854",
+        "verified": true
+      },
+      {
+        "name": "Holterberg",
+        "qid": "Q2659943",
+        "lat": 52.31128333,
+        "lon": 6.41816111,
+        "why": "The main ridge of the Sallandse Heuvelrug National Park, the Netherlands' most-walked upland heath after the Veluwe. Absent.",
+        "source_url": "https://www.wikidata.org/wiki/Q2659943",
+        "verified": true
+      },
+      {
+        "name": "Amerongse Berg",
+        "qid": "Q470165",
+        "lat": 52.00809167,
+        "lon": 5.48294444,
+        "why": "The highest point of the Utrechtse Heuvelrug and of the province of Utrecht. Absent.",
+        "source_url": "https://www.wikidata.org/wiki/Q470165",
+        "verified": true
+      },
+      {
+        "name": "Wageningse Berg",
+        "qid": "Q2420501",
+        "lat": 51.965,
+        "lon": 5.68611111,
+        "why": "The Rhine escarpment above Wageningen, a classic Dutch viewpoint over the river valley. Absent.",
+        "source_url": "https://www.wikidata.org/wiki/Q2420501",
+        "verified": true
+      },
+      {
+        "name": "Lemelerberg",
+        "qid": "Q4428417",
+        "lat": null,
+        "lon": null,
+        "why": "Overijssel heath ridge and nature reserve, a standard Dutch upland walk. Wikidata item confirmed, but the nl.wikipedia coordinates property returned no lat/lon, so the coordinate is not verified here.",
+        "source_url": "https://www.wikidata.org/wiki/Q4428417",
+        "verified": false
+      }
+    ],
+    "order": [
+      "Cauberg at rank 1 is defensible in isolation: it is a genuine Limburg hill, slope and street, and it is the Netherlands' most famous climb through the Amstel Gold Race. But it can only be rank 1 in a list that has lost the Vaalserberg, the country's highest point.",
+      "De Observant at rank 3 is above 'Mount Saint Peter' at tier 2 rank 10, yet D'n Observant is an artificial marl spoil heap standing on the Sint-Pietersberg plateau. The spoil heap outranks the mountain it sits on by seven places.",
+      "Vliedberg Boudewijnskerke (rank 6) and 'aan de Bergweg te Vlissingen' (rank 7) are far too high: both are Zeeland archaeological-register rows, and the second is not even a name.",
+      "Woensberg (rank 4, 22.3 m man-made) and Eukenberg (rank 5, man-made) are too high. Three of the seventeen Dutch rows come from small artificial mounds in the Gooi around Naarden.",
+      "Kopje van Bloemendaal at rank 2 is reasonable as a named 43 m dune summit with a Wikipedia article, and is one of only two entries in the tier-1 list that a Dutch walker would recognise.",
+      "Goudsberg at tier 2 rank 17 with score 0.477 sits below the Zeeland mound rows despite being a real Limburg hill near Valkenburg."
+    ]
+  },
+  "counts_verdict": "Beaches: 39 rows and 12 tier-1 slots is the right order of magnitude for a country with roughly 450 km of North Sea coast plus five inhabited Wadden islands, but the allocation is wrong twice over. First, the rows are not distinct features: Domburg alone supplies fifteen of the thirty-nine (Domburg Strand, Domburg Strand Watertoren West, Domburg, Holland, Niederlande Domburg, Nl - Domburg Strand, Strand Dbg, Bomburgbeach, Oase Domburg, Strandpaviljoen Oase B.V., Naaktstrand Domburg, Domburgse Duinen, ActiviteitenStrand Noordduine, Kotje 85, Werkenalsstrandwacht, Strand Westhove), Schiermonnikoog supplies four numbered segments of one beach, Almere four rows of one lake shore, Waalwijk three rows of one lido. Deduped, the file holds roughly ten distinct beaches, not thirty-nine. Second, the twelve tier-1 slots contain zero North Sea resort beaches. Twelve is the right budget; the occupants are wrong. Mountains: 17 rows for a country whose highest point is 322 m is generous but not unreasonable if the rows were real hills. Three of the seventeen are archaeological-register rows (two vliedbergen plus a full register sentence) and one more is a lowercase prepositional phrase. A defensible Dutch mountain set is about 10 to 12 hills: Vaalserberg, Sint-Pietersberg, Cauberg, Keutenberg, Gulperberg, Posbank, Holterberg, Amerongse Berg, Tankenberg, Wageningse Berg, Lemelerberg, Kopje van Bloemendaal.",
+  "top_pick_verdict": "Beach: no. top_beach 'Domburg Strand Watertoren West' would not be recognised by a Dutch traveller as a place name; it is a segment of the Domburg beach labelled after a water tower, and its own parent row sits in tier 2. The country card should carry Scheveningen (Q837211) or Zandvoort (Q9980), or Texel/De Koog (Q517053) if the card wants the Wadden look rather than the pier-and-boulevard look. Mountain: half yes. top_mountain 'Cauberg' is a real hill and a genuine Dutch icon through the Amstel Gold Race, so it is not embarrassing on a card. But the correct answer is the Vaalserberg (Q159860, 50.75467, 6.02083): 322.4 m, the highest point of the European Netherlands and the Drielandenpunt where three countries meet. It is absent from the file entirely, so the top pick is the best of a set that never contained the right answer.",
+  "notes": "Three distinct root causes are visible in this country. (1) The score is driven by the EEA bathing-water class: inland lakes hold 'Excellent' reliably, open North Sea beaches less so, so the ranking systematically inverts fame. Eight of twelve tier-1 beaches are inland fresh water and every North Sea resort is absent. (2) There is no name normalisation or geographic dedupe, so one beach ships under up to seven strings including a German geotag ('Niederlande, Domburg'), a country-prefixed geotag ('Nl - Domburg Strand'), an abbreviation ('Strand Dbg') and a typo ('Bomburgbeach'). (3) The mountain kind is ingesting Dutch archaeological and heritage register rows verbatim, producing entries that are description sentences rather than names, plus the vliedberg family of medieval earth mounds. Separately, 'Strandje Geistingen' at tier 1 rank 8 is physically in Belgium (Ophoven, Kinrooi): the country assignment is following the nearest catalogue city rather than a point-in-polygon test, and Thorn (NL) is nearer than any Belgian catalogue city. Also worth noting: the 'near' city field is unreliable at the same time. Hemmeland is attributed to Marken instead of adjacent Monnickendam, and both Almere lake beaches and StrandLAB are attributed to Naarden rather than Almere."
+}

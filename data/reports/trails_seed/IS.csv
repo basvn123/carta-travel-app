@@ -1,0 +1,16 @@
+rank,curation_rank,title,ref,network,distance_km,popularity,pageviews_day,sitelinks,anchors,quality_score,portal_agreement,status,family_members,trip_id,osm_relation
+1,59.83,Kelduleið,,lwn,9.3,0.56,0,0,"Reykjavík (1816/day, 1079 m); Botanical Garden of Reykjavik (1816/day, 1705 m); Laugardalshöll (31/day, 1894 m)",95,,needs_review,1,62904,10626842
+2,59.83,Sólarleið,,lwn,8.1,0.56,0,0,"The Culture House (1816/day, 1749 m); The Icelandic Phallological Museum (1816/day, 1639 m); Reykjavik (Keflavik) (1816/day, 1374 m)",95,,needs_review,1,62907,10631094
+3,59.83,Mánaleið,,lwn,6.4,0.56,0,0,"Botanical Garden of Reykjavik (1816/day, 810 m); The Living Art Museum (1816/day, 101 m); Reykjavik Art Museum (1816/day, 503 m)",95,,needs_review,1,62905,10626843
+4,59.83,Eyjaleið,,lwn,6.1,0.56,0,0,"Reykjavík (1816/day, 1849 m)",95,,needs_review,1,62909,10631190
+5,58.52,Látrabjarg,RW_ISL41,rwn,7.3,0.308,0,0,"Latrabjarg (37/day, 717 m)",100,,needs_review,1,62878,6224393
+6,57.69,Þórsmörk,RW_ISL2,rwn,5.7,0.427,0,0,"Valahnúkur (236/day, 922 m); Þórsmörk (20/day, 478 m)",80,,needs_review,1,62854,6129893
+7,57.65,Hellismannaleið,,rwn,53.7,0.319,0,0,"Fjallabak natural reserve (44/day, 1480 m); Landmannalaugar (44/day, 223 m); Landmannalaugar (44/day, 851 m)",95,,needs_review,1,62902,7492896
+8,55.63,Heimaey hringur,,lwn,19.2,0.439,0,0,"Elephant Rock (286/day, 302 m); Vestmannaeyjar (180/day, 690 m); Vestmannaeyjar (180/day, 99 m)",95,,needs_review,1,62961,17890094
+9,55.59,Kristinartindar,RW_ISL14,rwn,17.6,0.367,0,0,"Skaftafell / Vatnajökull (49/day, 31 m)",80,,needs_review,2,62866,6161045
+10,54.14,Morsárdalur,RW_ISL13,rwn,15.1,0.325,0,0,"Skaftafell / Vatnajökull (49/day, 31 m)",80,,needs_review,1,62865,6161020
+11,53.9,Hrafntinnusker,RW_ISL9,rwn,12.5,0.319,0,0,"Landmannalaugar (44/day, 851 m); Landmannalaugar (44/day, 223 m)",80,,needs_review,1,62861,6133182
+12,53.9,Brennisteinsalda,RW_ISL8,rwn,5.6,0.319,0,0,"Landmannalaugar (44/day, 235 m); Landmannalaugar (44/day, 851 m)",80,,needs_review,1,62860,6133137
+13,53.9,Suðurnámur,RW_ISL10,rwn,9.2,0.319,0,0,"Landmannalaugar (44/day, 223 m); Landmannalaugar (44/day, 851 m)",80,,needs_review,1,62862,6133192
+14,53.74,Fimmvörðuháls,F,rwn,23.0,0.407,2,20,"Þórsmörk (20/day, 314 m)",67,,needs_review,1,62832,396940
+15,53.34,Dimmuborgir,RW_ISL30,rwn,8.1,0.367,0,0,"Dimmuborgir (49/day, 108 m); Hverfjall Crater (40/day, 500 m)",71,,needs_review,2,62888,6227765

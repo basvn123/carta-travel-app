@@ -1,0 +1,283 @@
+{
+  "id": "gr-cycling-peloponnese-arcadia",
+  "sourceId": "cycling-greece-peloponnese-arcadia",
+  "slug": "gr-cycling-peloponnese-arcadia",
+  "title": "Peloponnese: Arcadia & the Argolid",
+  "country": "Greece",
+  "countryCode": "GR",
+  "countries": [
+    {
+      "name": "Greece",
+      "code": "GR"
+    }
+  ],
+  "isMultiCountry": false,
+  "region": "Southern & Mediterranean Europe",
+  "regionKey": "southern-mediterranean",
+  "subRegion": "Peloponnese — Arcadia & the Argolid",
+  "tripType": "Cycling Trips",
+  "tripTypeId": 1,
+  "tripTypeSlug": "cycling",
+  "durationDays": 7,
+  "bestPeriod": {
+    "months": [
+      3,
+      4,
+      5,
+      6,
+      9,
+      10,
+      11
+    ],
+    "monthNames": [
+      "March",
+      "April",
+      "May",
+      "June",
+      "September",
+      "October",
+      "November"
+    ],
+    "window": "Late March–early June & mid-September–early November",
+    "note": null,
+    "avoid": "July–August, when Arcadian afternoons pass 36°C and the Argolid coast road fills with weekend traffic from Athens",
+    "raw": "Late March–early June & mid-September–early November"
+  },
+  "budgetTier": "€€",
+  "budgetTierRange": [
+    2,
+    2
+  ],
+  "budgetTierRaw": "€€",
+  "budget": {
+    "currency": "EUR",
+    "totalEur": {
+      "low": 1200,
+      "high": 1900
+    },
+    "totalNote": "€1,200–€1,900 per person, excl. international flights",
+    "breakdown": {
+      "accommodation": {
+        "lowEur": 520,
+        "highEur": 900,
+        "note": "Nafplio boutique €90–€150 pppn; Arcadian stone guesthouses €70–€120"
+      },
+      "food": {
+        "lowEur": 280,
+        "highEur": 440,
+        "note": "Taverna mains €9–€15; a Nafplio dinner with wine €25–€35"
+      },
+      "transport": {
+        "lowEur": 200,
+        "highEur": 340,
+        "note": "Athens transfer, van shuttles between Nafplio, Dimitsana and Leonidio"
+      },
+      "activities": {
+        "lowEur": 200,
+        "highEur": 220,
+        "note": "Bike hire €200–€280/week, Epidaurus €12, Mycenae €12, Palamidi €8"
+      }
+    },
+    "perDayEur": {
+      "low": 171,
+      "high": 271
+    }
+  },
+  "profile": {
+    "difficulty": 4,
+    "difficultyLabel": "Demanding",
+    "difficultyNote": "4/5 — the Leonidio–Kosmas ascent and the Arcadian gorge roads deliver 1,200–1,900 m days on relentlessly uneven surfaces",
+    "fitnessLevel": "Demanding",
+    "crowdLevel": null,
+    "familyFriendly": null,
+    "carRequired": null
+  },
+  "basecamps": [],
+  "gatewayAirport": "ATH Athens Eleftherios Venizelos, 2 h to Nafplio by road; KLX Kalamata is 2 h 15 min to Dimitsana",
+  "gatewayAirportCode": "ATH",
+  "languages": [],
+  "currency": null,
+  "emergencyNumber": "112",
+  "coordinates": {
+    "lat": 37.9838,
+    "lon": 23.7278,
+    "precision": "country",
+    "matchedPlace": "Athens",
+    "source": "country capital fallback"
+  },
+  "tags": [
+    "road-cycling",
+    "gravel",
+    "leonidio",
+    "arcadia",
+    "lousios-gorge",
+    "nafplio",
+    "mountain-climbs",
+    "ancient-sites"
+  ],
+  "summary": "The Peloponnese hides its cycling behind its archaeology. Behind Nafplio's Venetian waterfront and the theatre at Epidaurus sits Arcadia, a highland of stone villages, plane-shaded ravines and roads that switchback for twenty kilometres without a village. This week works three distinct terrains: the Argolid's low, fast, ruin-studded coastal plain; the Lousios gorge country around Dimitsana and Stemnitsa, where monasteries are built into cliff faces; and the eastern seaboard at Leonidio, where 300 m orange limestone walls rise straight out of a village and the road to Kosmas is one of the great climbs of southern Europe. It rewards riders who accept rough chip-seal, long empty stretches and a genuine language barrier once you leave the coast.",
+  "summaryGenerated": false,
+  "hook": null,
+  "snapshot": {},
+  "itinerary": [
+    {
+      "day": 1,
+      "title": "Nafplio, Palamidi and a coastal opener",
+      "morning": "Arrive from Athens, take delivery of the bike, and walk Nafplio's old town — Syntagma Square, the Venetian arsenal, and the Bourtzi fortress on its islet.",
+      "afternoon": "An easy coastal spin south-east to Karathona beach and back via Arvanitia, then the optional 999 steps up to the Palamidi fortress on foot. The view down the Argolic gulf is the geographic orientation for the whole week.",
+      "evening": "Aiolos Tavern on Vasilissis Olgas for kokkinisto and a carafe of Nemea red, or Ta Fanaria under the bougainvillea on Staikopoulou.",
+      "dayStats": "34 km / 320 m ascent / 95% paved / Palamidi 999 steps, €8 entry",
+      "sleep": "Amfitriti Pension or Hotel Ippoliti, Nafplio"
+    },
+    {
+      "day": 2,
+      "title": "Epidaurus, Mycenae and the Argolid ring",
+      "morning": "East on the quiet inland road through Ligourio to the Sanctuary of Asklepios at Epidaurus. The fourth-century theatre seats 14,000 and its acoustics still work from the top row — test it before the coaches arrive at 10:00.",
+      "afternoon": "Loop north-west through the citrus plain to Mycenae for the Lion Gate and the beehive Treasury of Atreus, then back to Nafplio past the Bronze Age Tiryns walls.",
+      "evening": "To Kentrikon on Plateia Syntagmatos for mezze, then a nightcap on the Akronafplia waterfront.",
+      "dayStats": "88 km / 940 m ascent / 100% paved / Epidaurus €12, Mycenae €12",
+      "sleep": "Hotel Ippoliti, Nafplio"
+    },
+    {
+      "day": 3,
+      "title": "Artemisio pass into Arcadia",
+      "morning": "West through Argos and up the old Tripoli road to the Artemisio pass — 18.7 km at 3.9% to 720 m, effectively abandoned by traffic since the A7 motorway tunnel opened, which makes it one of the best-surfaced empty climbs in Greece.",
+      "afternoon": "Descend to the Tripoli plain and continue west into the Menalon foothills toward Dimitsana, climbing steadily through fir. The last 12 km gain 500 m.",
+      "evening": "Arrive Dimitsana at 950 m. Eat at a taverna on the main street — the Arcadian standard is goat, hilopites pasta and mountain greens.",
+      "dayStats": "106 km / 1,880 m ascent / 92% paved, 8% hardpack / Artemisio summit 720 m, Dimitsana 950 m",
+      "sleep": "Hotel Dimitsana, Dimitsana"
+    },
+    {
+      "day": 4,
+      "title": "Lousios gorge, Prodromou and Stemnitsa",
+      "morning": "Drop into the Lousios gorge and ride to the trailhead for Moni Prodromou, a fourteenth-century monastery built into an overhang above the river. The last approach is on foot; bikes stay at the top.",
+      "afternoon": "Climb the 4.8 km at 8.2% out of the gorge to Stemnitsa at 1,080 m, a stone village of silversmiths, then loop back to Dimitsana via the Open-Air Water Power Museum, which explains how these villages made gunpowder for the 1821 revolution.",
+      "evening": "Dinner at Trikolonion Country Hotel in Stemnitsa — Arcadian cooking taken seriously, with a fire in shoulder season.",
+      "dayStats": "38 km / 1,120 m ascent / 70% paved, 25% hardpack, 5% loose gravel / Stemnitsa 1,080 m",
+      "sleep": "Trikolonion Country Hotel, Stemnitsa"
+    },
+    {
+      "day": 5,
+      "title": "Across the Parnon flank to Leonidio",
+      "morning": "East and south from Stemnitsa toward Tripoli and the Parnon road, a long transitional day through highland villages with almost no services. Fill bottles at Vourvoura; the next reliable water is 40 km on.",
+      "afternoon": "The descent to Leonidio is the reward — a 25 km drop through the Dafnonas gorge with orange limestone walls closing overhead. Arrive at sea level in a village of tower houses.",
+      "evening": "Taverna Michael & Margaret in Leonidio, the climbers' canteen, for stuffed aubergine and the local tsakoniki melitzana.",
+      "dayStats": "92 km / 1,340 m ascent / 88% paved, 12% gravel / descent 25 km losing 1,150 m",
+      "sleep": "Panjika guesthouse, Leonidio"
+    },
+    {
+      "day": 6,
+      "title": "Leonidio to Kosmas, the queen stage",
+      "morning": "The main event: 30.4 km and 1,180 m from the sea to Kosmas at 1,150 m, passing the Elonis monastery bolted into the cliff at kilometre 13. Start by 08:00 — the gorge holds heat all afternoon.",
+      "afternoon": "Coffee under the plane trees in Kosmas square, then descend the same road. The surface is good but the corners are blind and goats use them.",
+      "evening": "Back in Leonidio, eat at Panjika and look up at the Mars and Kokkinovrachos walls turning red at dusk — this is one of Europe's major sport-climbing venues and the village fills with climbers in spring.",
+      "dayStats": "62 km / 1,290 m ascent / 100% paved / Kosmas 1,150 m, 30.4 km at 3.9% average, max 11%",
+      "sleep": "Panjika guesthouse, Leonidio"
+    },
+    {
+      "day": 7,
+      "title": "The Argolic coast road back to Nafplio",
+      "morning": "North along the coast through Tyros, Paralio Astros and the Astros wetlands, a rolling seaside road with constant 3–6% undulations and views across to the Argolid.",
+      "afternoon": "Finish in Nafplio, return the bike to the operator's drop-off, and spend the last hours at the Archaeological Museum on Syntagma Square, which holds the Dendra bronze panoply.",
+      "evening": "Final dinner at Ta Fanaria, then the 2 h transfer to Athens.",
+      "dayStats": "76 km / 890 m ascent / 100% paved / one-way drop-off charge €50–€90",
+      "sleep": "Hotel Ippoliti, Nafplio, or an Athens airport hotel"
+    }
+  ],
+  "accommodationStrategy": [
+    {
+      "rank": 1,
+      "name": "Hotel Ippoliti",
+      "style": "neoclassical boutique",
+      "location": "Nafplio",
+      "description": "A restored mansion a block from the waterfront with a courtyard that will take bikes and a location that avoids the old town's stone staircases. Walking distance to every taverna on this route and to the Palamidi steps. Roughly €130–€190 double.",
+      "booking": null,
+      "priceNote": null
+    },
+    {
+      "rank": 2,
+      "name": "Trikolonion Country Hotel",
+      "style": "stone village hotel",
+      "location": "Stemnitsa",
+      "description": "The best base in Arcadia: a lockable ground-floor room for bikes, a serious kitchen, and a position at 1,080 m that puts the Lousios gorge circuit on the doorstep. Cold at night in April and October — it has fireplaces for a reason. €110–€160 double.",
+      "booking": null,
+      "priceNote": null
+    },
+    {
+      "rank": 3,
+      "name": "Panjika",
+      "style": "guesthouse and café",
+      "location": "Leonidio",
+      "description": "Built around the climbing community, which means indoor gear storage, a kitchen that opens early, and staff who know the condition of every road on Parnon. Simple rooms, excellent information, and the social centre of the village. €70–€110 double.",
+      "booking": null,
+      "priceNote": null
+    }
+  ],
+  "logistics": {
+    "connectivity": "4G is good on the coast and in Nafplio, patchy through the Lousios gorge and unreliable on the Parnon flank. Greece is in the EU so roaming applies. Offline maps are essential in Arcadia, where village signage is Greek-script-only and many road numbers on maps do not exist on the ground.",
+    "emergency": "112 nationally; the Hellenic Coast Guard is 108 and matters on the Argolic coast. Greece honours EHIC/GHIC. Hospitals are at Nafplio and Tripoli; Leonidio has a health centre only, and serious cases go to Tripoli, ninety minutes away over the mountains.",
+    "weather": "The meltemi north wind is a summer Aegean phenomenon and affects the Argolic coast less than the islands, but it still builds afternoon headwinds on the Astros stretch. Arcadia gets sharp afternoon thunderstorms from May, and the Menalon highlands can drop below freezing in April and November. Leonidio's gorge acts as a heat trap.",
+    "bookingWindows": "Leonidio fills completely with climbers in March, April and October — book three months ahead for those windows. Trikolonion has few rooms; two months. GR Cycling bikes need four weeks. Epidaurus summer festival performances sell out months in advance and fill Nafplio's hotels on those weekends.",
+    "money": "Greece is in the eurozone. Cards are accepted in Nafplio and Leonidio; mountain tavernas in Arcadia and village kafeneia are often cash-only and ATMs are absent between Dimitsana and Leonidio. Tipping is rounding up, or 5–10% for a full meal.",
+    "transportRules": "Greek motorway tolls are barrier-paid in cash or card; there is no vignette. The A7 Moreas motorway is prohibited to bicycles. KTEL buses take boxed bikes in the hold at driver's discretion. Hellenic Train's Proastiakos services carry bikes but do not serve any town on this route. Rental cars may not be taken to Albania or North Macedonia without written permission.",
+    "permits": "Archaeological sites charge separately: Epidaurus €12, Mycenae €12, Palamidi €8, with reduced winter pricing from November to March. Bicycles cannot be taken inside site boundaries — plan for a lock or a rotation. Monasteries including Prodromou and Elonis enforce dress codes: covered shoulders and knees, no cycling shorts. Drones are banned over all archaeological sites and require Hellenic CAA registration.",
+    "health": "Tap water is potable in Nafplio and most Arcadian villages fed by mountain springs, but bottled is the norm on the coast. Livestock guardian dogs on Arcadian roads are the most common cyclist incident here — do not sprint, dismount and put the bike between you and the dog. Sea urchins are widespread on rocky Argolic entries. Snakes are present but rarely an issue on road.",
+    "gettingThere": null,
+    "other": []
+  },
+  "proTips": [
+    "Ride to Epidaurus for opening at 08:00. The theatre is empty for the first forty minutes and the acoustic demonstration only works without a crowd in it.",
+    "The old Artemisio road is the hidden gem of the Argolid — since the A7 tunnel opened it carries almost nothing, and it is far better surfaced than its map status suggests.",
+    "In Leonidio, ask at Panjika about road conditions on Parnon before committing. The upper forest roads are frequently damaged by winter runoff and no online map reflects it.",
+    "Carry a bike lock. Every archaeological site on this route requires you to leave the bike outside, often unsupervised.",
+    "Kosmas square is the only reliable food and water on the queen stage after kilometre 6. Do not descend on empty bottles assuming you will find a village.",
+    "Tsakonian aubergine from around Leonidio is a PDO product and appears on menus for a short season from late summer. Ask whether it is the real thing.",
+    "Time Arcadia for mid-May, when the Menalon meadows are in flower and Dimitsana is still cool enough to climb comfortably at midday.",
+    "If you want the Odontotos rack railway from Diakofto to Kalavryta, treat it as a rest-day excursion by car and leave the bikes behind — it is a 22 km gorge line with limited capacity, not a bike-transport option.",
+    "Book van shuttles through your Nafplio hotel rather than online. There is no useful public transport between Nafplio, Dimitsana and Leonidio, and local drivers are cheaper than agency bookings."
+  ],
+  "typeSpecific": {
+    "raw": {
+      "Queen climb — Leonidio to Kosmas (via Moni Elonis)": "30.4 km, 1,180 m ascent, 3.9% average with sustained 7–9% sections through the Dafnonas gorge and a maximum of 11%, summit 1,150 m at Kosmas village square. The Elonis monastery is bolted into the cliff at kilometre 13.",
+      "Second climb — Artemisio pass from Argos": "18.7 km, 730 m ascent, 3.9% average, high point 720 m on the old Tripoli road, now near-empty since traffic moved to the A7 motorway tunnel.",
+      "Mount Parnon approach — Leonidio to Karyes shoulder": "24 km with 1,340 m ascent on progressively rougher tarmac to roughly 1,250 m, with the Parnon summit at 1,935 m reachable only by gravel forest road beyond.",
+      "Lousios gorge circuit (Dimitsana–Stemnitsa–Prodromou–Dimitsana)": "38 km, 1,120 m ascent, on a mixture of narrow tarmac and hardpack track, with a 4.8 km ramp at 8.2% out of the gorge floor back to Stemnitsa at 1,080 m.",
+      "Week surface split": "approximately 68% paved — Greek chip-seal, often coarse, patched, and gravelly on bends — 22% hardpack and forest track in Arcadia, 8% loose gravel on the Parnon and Prodromou approaches, 2% cobbled village lanes. A 30–35 mm tyre on a road bike, or a proper gravel setup, is the sensible choice; 25 mm is punishment.",
+      "Bike hire": "GR Cycling operates a dedicated Leonidio programme with road and gravel fleets and self-guided packages, and is the most established rental option for this corner of the Peloponnese; they will deliver bikes to Nafplio and Leonidio. Indicative rates run €30–€45/day for carbon road or gravel, €45–€60/day e-bike, and roughly €200–€320/week. Rental in Arcadia's mountain villages does not exist — arrange delivery. One-way drop-off between Nafplio and Leonidio is feasible with a repositioning charge in the €50–€90 band; bike boxes are typically held at the operator's base rather than at hotels.",
+      "Bike-friendly accommodation logistics": "Leonidio's guesthouses are geared to sport climbers and are used to storing gear — Panjika in the village centre is the community hub with indoor storage and an early-opening kitchen. Trikolonion Country Hotel in Stemnitsa has a lockable ground-floor room. In Nafplio, ask for a hotel in the Pronia district rather than the old town, where every property is up stone stairs. Hose access is rare — carry a chain-cleaning kit.",
+      "Bike on public transport": "Hellenic Train's Athens–Kiato and Kiato–Aigio Proastiakos services take bikes in designated spaces, but the network does not reach Nafplio, Leonidio or Arcadia — there is no rail option inside this route. KTEL intercity buses will carry a bike in the hold at the driver's discretion for €5–€10, boxed or bagged, and refuse them when the hold is full. The Odontotos rack railway from Diakofto to Kalavryta, 22 km through the Vouraikos gorge, is a spectacular optional day but is not a practical bike-carriage service — treat it as a bike-free excursion, and confirm bike policy directly with Hellenic Train if you intend otherwise."
+    },
+    "surface": "approximately 68% paved — Greek chip-seal, often coarse, patched, and gravelly on bends — 22% hardpack and forest track in Arcadia, 8% loose gravel on the Parnon and Prodromou approaches, 2% cobbled village lanes. A 30–35 mm tyre on a road bike, or a proper gravel setup, is the sensible choice; 25 mm is punishment.",
+    "distanceKm": null,
+    "elevationM": null,
+    "verticalM": null,
+    "technicalRating": null,
+    "transitPass": null,
+    "hutBooking": null,
+    "liftNetwork": null,
+    "snowReliability": null,
+    "windConditions": null,
+    "gpxReady": null,
+    "bookingTimeline": null,
+    "audience": null
+  },
+  "packingNotes": [],
+  "whatCouldGoWrong": [],
+  "sources": {
+    "verified": "GR Cycling's existence as an operating Greek cycling company with a specific Leonidio Peloponnese programme, including self-guided trips, which supports it as the primary rental and logistics contact for this route.",
+    "confidenceNotes": "Rental day and weekly rates, the delivery radius to Nafplio and Arcadia, and one-way drop-off pricing are indicative and must be confirmed with GR Cycling before publishing. Bike carriage on KTEL buses is entirely at driver discretion and cannot be relied on as published. The Odontotos rack railway's bicycle policy was not confirmed and should be checked directly with Hellenic Train before any itinerary depends on it. Climb figures for Leonidio–Kosmas, Artemisio and the Lousios gorge ramp are from standard published profiles and should be spot-checked. Archaeological site entry fees change annually and have reduced winter rates — re-verify. Guesthouse names and rates in Leonidio, Dimitsana and Stemnitsa are prior-season and should be confirmed as still trading. Parnon forest-road condition varies year to year with winter damage."
+  },
+  "verifyFlags": [],
+  "verifyFlagCount": 0,
+  "volatilePricing": false,
+  "wordCount": 2778,
+  "dataVintage": 2026,
+  "provenance": {
+    "batch": "southern-mediterranean",
+    "sourceFile": "carta-dataset/trips/cycling-greece-peloponnese-arcadia.md",
+    "sourceFormat": "md with '## Metadata' bullet block (one file per trip)",
+    "sourceId": "cycling-greece-peloponnese-arcadia",
+    "ingestedAt": "2026-09-02",
+    "synthesized": false
+  }
+}

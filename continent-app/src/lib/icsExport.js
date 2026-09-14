@@ -9,6 +9,7 @@
  * Apple Calendar or Outlook; no account, no sync, no service.
  */
 
+import { ownTravelWord } from './transportLinks.js';
 import { flightTimes } from './format.js';
 import { addDays } from './dates.js';
 import { carrierName } from './carriers.js';
@@ -119,7 +120,7 @@ export function tripIcs({ label, stopDetails = [], flight = null, groupSize = 1,
       uid: `${stamp}-fly-out@carta`,
       date: first.arriveDate,
       time: null,
-      summary: flight.airline ? `Flight in with ${flight.airline}` : 'Your own flight in',
+      summary: `Getting there: ${ownTravelWord(flight)}`,
       description: `${people}.${refFor('flight')} Planned with Carta.`,
     }));
   }
@@ -149,7 +150,7 @@ export function tripIcs({ label, stopDetails = [], flight = null, groupSize = 1,
       uid: `${stamp}-fly-home@carta`,
       date: last.departDate,
       time: null,
-      summary: flight.airline ? `Flight home with ${flight.airline}` : 'Your own flight home',
+      summary: `Getting home: ${ownTravelWord(flight)}`,
       description: `${people}.${refFor('flight')} Planned with Carta.`,
     }));
   }

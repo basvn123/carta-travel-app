@@ -1,0 +1,16 @@
+rank,curation_rank,title,ref,network,distance_km,popularity,pageviews_day,sitelinks,anchors,quality_score,portal_agreement,status,family_members,trip_id,osm_relation
+1,85.08,CNP - 01 - Roma - Castel Gandolfo,CNP,nwn,23.8,0.888,0,0,"Goddess of Rome (4059/day, 1290 m); Rome (Fiumicino) (4029/day, 1085 m); Rome (Ciampino) (4029/day, 1085 m)",100,,needs_review,29,196926,11189466
+2,84.25,Via Alpina Red R134,VA-R134,iwn,14.4,0.55,32,0,,100,agree,needs_review,22,26097,4267487
+3,84.21,Romea Strata in Italia - Tappa RSIT47,RS,iwn,18.6,0.836,0,0,"Porta Musei Vaticani (4059/day, 592 m); Porta Musei Vaticani (4059/day, 592 m); Statue of the Angel (4029/day, 777 m)",83.8,,needs_review,17,203612,19331901
+4,83.52,Il Cammino di Sant'Antonio: Tappa A,CSA,nwn,27.7,0.872,0,0,"Venice (Treviso) (3014/day, 709 m); Venice (Marco Polo) (3014/day, 709 m); Bridge of Sighs (2954/day, 628 m)",96,,needs_review,39,192762,5561622
+5,83.31,Il Cammino di San Jacopo - Tappa 1,,iwn,27.1,0.695,0,0,"Florence (2034/day, 53 m); David (2032/day, 256 m); Santa Maria del Fiore (966/day, 95 m)",100,,needs_review,6,196854,11156759
+6,82.5,Dolomites World Heritage Geotrail 13,,nwn,17.0,0.85,0,0,"Monte Castello (2151/day, 1996 m)",95,,needs_review,48,201993,16206573
+7,80.84,Sentiero dei Celti e dei Liguri - tappa 1,SCL,nwn,34.4,0.802,0,0,"Milan (3233/day, 236 m); Milan (3233/day, 236 m); Milan (3233/day, 236 m)",95,,needs_review,14,202706,17336709
+8,80.62,SI,SI,nwn,17.5,0.85,0,0,"Monte Castello (2151/day, 1287 m); Dolomites (1537/day, 1947 m); Tofana di Mezzo (33/day, 1845 m)",87.5,,needs_review,506,196155,9958140
+9,80.45,Via Alpina Stage 26: Silianer Hütte - Drei-Zinnen-Hütte / Rifugio Locatelli,,iwn,18.4,0.613,0,0,"Monte Paterno - Paternkofel (195/day, 794 m); Passportenkopf (195/day, 1599 m); Sexten Dolomites (195/day, 1325 m)",100,,needs_review,4,21176,20017003
+10,79.53,Alpe Adria Trail E35,AATE35,iwn,18.4,0.622,0,0,"Miramare Castle (129/day, 1379 m); Lipica Stud Farm (19/day, 847 m)",95,,needs_review,11,65253,13857097
+11,78.21,Cammino del beato Enrico - Tappa 1,CBE,nwn,17.0,0.727,0,0,"Municipal Museum (1449/day, 423 m); Bolzano (585/day, 386 m); Bolzano - Bozen (556/day, 393 m)",95,,needs_review,11,202247,16570026
+12,78.02,Il Cammino di Sant'Antonio - Tappa 10G,,nwn,31.3,0.722,0,0,"Veneto (850/day, 1684 m); Castello di Asolo (258/day, 27 m); Asolo (68/day, 393 m)",95,,needs_review,15,202128,16352017
+13,77.89,Italia Coast to Coast,C2C,nwn,410.9,0.718,0,0,"Assisi (375/day, 7 m); Porziuncola (292/day, 1848 m); Basilica superiore di San Francesco d'Assisi (216/day, 89 m)",95,,needs_review,21,203349,18571941
+14,77.69,Con le Ali ai piedi - 12,CAP,nwn,33.2,0.705,0,0,"Italian Peninsula (233/day, 543 m); Chiesa di Santa Maria della Tomba (98/day, 97 m); Santissima Annunziata (98/day, 22 m)",96,,needs_review,33,204358,20969869
+15,76.37,Romea Strata in Italia - 05 Lazio,RS,iwn,158.7,0.612,0,0,"Porta Musei Vaticani (4059/day, 592 m); Porta Musei Vaticani (4059/day, 592 m); Statue of the Angel (4029/day, 777 m)",83.8,,needs_review,1,203605,19331500

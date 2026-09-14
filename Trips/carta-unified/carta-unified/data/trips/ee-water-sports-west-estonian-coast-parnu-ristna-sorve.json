@@ -1,0 +1,311 @@
+{
+  "id": "ee-water-sports-west-estonian-coast-parnu-ristna-sorve",
+  "sourceId": "west-estonian-coast-parnu-ristna-sorve",
+  "slug": "ee-water-sports-west-estonian-coast-parnu-ristna-sorve",
+  "title": "West Estonian Coast: Pärnu, Ristna & Sõrve",
+  "country": "Estonia",
+  "countryCode": "EE",
+  "countries": [
+    {
+      "name": "Estonia",
+      "code": "EE"
+    }
+  ],
+  "isMultiCountry": false,
+  "region": "Northern Europe & Baltics",
+  "regionKey": "northern-baltics",
+  "subRegion": "Pärnu Bay, Hiiumaa and Saaremaa, West Estonian Archipelago",
+  "tripType": "Water Sports & Coastal Trips",
+  "tripTypeId": 10,
+  "tripTypeSlug": "water-sports",
+  "durationDays": 7,
+  "bestPeriod": {
+    "months": [
+      6,
+      7,
+      8,
+      9,
+      10
+    ],
+    "monthNames": [
+      "June",
+      "July",
+      "August",
+      "September",
+      "October"
+    ],
+    "window": "**June to September for warm water and thermals; late September to November for the autumn storm swell** that makes Ristna Estonia's real surf season. Winter brings ice-surfing photos and very few participants",
+    "note": null,
+    "avoid": null,
+    "raw": "**June to September for warm water and thermals; late September to November for the autumn storm swell** that makes Ristna Estonia's real surf season. Winter brings ice-surfing photos and very few participants"
+  },
+  "budgetTier": "€€",
+  "budgetTierRange": [
+    2,
+    2
+  ],
+  "budgetTierRaw": "€€",
+  "budget": {
+    "currency": "EUR",
+    "totalEur": {
+      "low": 800,
+      "high": 1250
+    },
+    "totalNote": "€800–1,250 per person",
+    "breakdown": {
+      "accommodation": {
+        "lowEur": 60,
+        "highEur": 130,
+        "note": "€60–130 per night, double; island guesthouses €50–90; Pärnu spa hotels €90–160"
+      },
+      "food": {
+        "lowEur": 30,
+        "highEur": 55,
+        "note": "€30–55 per day"
+      },
+      "transport": {
+        "lowEur": 150,
+        "highEur": 250,
+        "note": "€150–250: car hire €40–55 per day, island ferries (car €10–20 each way), fuel"
+      },
+      "activities": {
+        "lowEur": 30,
+        "highEur": 55,
+        "note": "Board and wetsuit hire €30–55 per day; lessons €50–80; a guided sea-kayak day €60–110"
+      }
+    },
+    "perDayEur": {
+      "low": 114,
+      "high": 179
+    }
+  },
+  "profile": {
+    "difficulty": null,
+    "difficultyLabel": null,
+    "difficultyNote": null,
+    "fitnessLevel": null,
+    "crowdLevel": null,
+    "familyFriendly": null,
+    "carRequired": null
+  },
+  "basecamps": [
+    "Pärnu",
+    "Kõrgessaare/Kalana (Hiiumaa)",
+    "Kuressaare/Nasva (Saaremaa)"
+  ],
+  "gatewayAirport": null,
+  "gatewayAirportCode": null,
+  "languages": [
+    "Estonian",
+    "Russian",
+    "English"
+  ],
+  "currency": "EUR",
+  "emergencyNumber": "112",
+  "coordinates": {
+    "lat": 58.92,
+    "lon": 22.19,
+    "precision": "source",
+    "matchedPlace": "Pärnu",
+    "source": "source record"
+  },
+  "tags": [],
+  "summary": "A seven-day water sports & coastal trip itinerary in Pärnu Bay, Hiiumaa and Saaremaa, West Estonian Archipelago, Estonia.",
+  "summaryGenerated": true,
+  "hook": null,
+  "snapshot": {},
+  "itinerary": [
+    {
+      "day": 1,
+      "title": "Pärnu: Estonia's summer capital",
+      "morning": "Drive from Tallinn (about 2 h) or Riga (about 2 h 30) to **Pärnu**, a spa town since the 19th century with a long shallow sand beach and Estonia's densest concentration of watersports hire.",
+      "afternoon": "Get on the water immediately: the bay is shallow, warm and forgiving, with a summer sea breeze that fills in through the afternoon — ideal for a first kite or windsurf session.",
+      "evening": "Pärnu's beach promenade, the wooden Rannahotell functionalist landmark, and dinner in the old town.",
+      "dayStats": null,
+      "sleep": null
+    },
+    {
+      "day": 2,
+      "title": "Pärnu bay: lessons and flatwater",
+      "morning": "A lesson or a coached session. Pärnu's shallow bay lets beginners stand across a wide area, and the local schools run structured courses.",
+      "afternoon": "Downwinder south to Tahkuranna, or SUP the Pärnu river up into the reed beds.",
+      "evening": "Estonian spa culture: Pärnu's sanatorium-hotels sell affordable evening spa entry with saunas and seawater pools. Use it.",
+      "dayStats": null,
+      "sleep": null
+    },
+    {
+      "day": 3,
+      "title": "To Hiiumaa",
+      "morning": "Drive north to Rohuküla and take the ferry to **Hiiumaa** (about 1 h 20). Hiiumaa has around 9,000 residents on 1,000 km² and a reputation, even among Estonians, for being pleasantly odd.",
+      "afternoon": "Drive to the **Kõpu peninsula** — the island's western arm — and the Kõpu lighthouse, one of the oldest continuously operating lighthouses in the world, in service since the 1530s.",
+      "evening": "Stay near Kalana or Kõrgessaare. Simple guesthouses, pine forest, empty roads.",
+      "dayStats": null,
+      "sleep": null
+    },
+    {
+      "day": 4,
+      "title": "Ristna: Estonia's surf beach",
+      "morning": "**Ristna**, at the tip of Kõpu, faces the open Baltic and is where Estonian surfing happens. In summer it is a beautiful empty beach; from late September, westerly storms produce short-period but genuinely rideable waves.",
+      "afternoon": "Ristna and Kalana also work for wave windsurfing on the same swells. The local surf operation runs seasonally — check whether they are open before you plan around rental. `verify: true`",
+      "evening": "Hiiumaa's coastal dark. There is essentially no light pollution here.",
+      "dayStats": null,
+      "sleep": null
+    },
+    {
+      "day": 5,
+      "title": "Hiiumaa coast and the crossing to Saaremaa",
+      "morning": "Sea kayak the sheltered north coast or the Kassari area — shallow, island-scattered, and full of birds.",
+      "afternoon": "The **Soela ferry** from Hiiumaa to Saaremaa runs seasonally and saves a long mainland detour; check operation before relying on it. `verify: true` Otherwise return via Rohuküla and Virtsu.",
+      "evening": "Arrive Saaremaa. Kuressaare or Nasva for the night.",
+      "dayStats": null,
+      "sleep": null
+    },
+    {
+      "day": 6,
+      "title": "Saaremaa: Nasva, Mändjala and the Sõrve tip",
+      "morning": "**Nasva** and **Mändjala** on Saaremaa's south coast: shallow, sandy, pine-backed launches with side-shore southwesterlies and the island's small watersports cluster.",
+      "afternoon": "Drive the **Sõrve peninsula** to its lighthouse at the tip, where the Gulf of Riga meets the open Baltic — strong wind, converging swell and a genuinely exposed feel. Advanced conditions on a windy day; a beautiful walk on a calm one.",
+      "evening": "Kuressaare. Spa hotel evening slot, castle floodlit across the moat.",
+      "dayStats": null,
+      "sleep": null
+    },
+    {
+      "day": 7,
+      "title": "Last session and out",
+      "morning": "A dawn session at Mändjala, then the drive east.",
+      "afternoon": "Ferry Kuivastu–Virtsu (27 minutes) and on to Tallinn (about 2 h 30) or Riga.",
+      "evening": null,
+      "dayStats": null,
+      "sleep": null
+    }
+  ],
+  "accommodationStrategy": [
+    {
+      "rank": 1,
+      "name": "Pärnu beach-district hotels and apartments",
+      "style": null,
+      "location": null,
+      "description": "Everything from the historic Rannahotell to modern apartments, all within walking distance of the beach and the hire shops. The spa hotels' evening entry is the cheapest recovery in the Baltics.",
+      "booking": null,
+      "priceNote": null
+    },
+    {
+      "rank": 2,
+      "name": "Kõpu peninsula guesthouses",
+      "style": null,
+      "location": "Hiiumaa",
+      "description": "Small family guesthouses and cabins near Kalana and Ristna, €50–90, often with a sauna and breakfast. There is nothing else out here, which is precisely why the surf beach is empty.",
+      "booking": null,
+      "priceNote": null
+    },
+    {
+      "rank": 3,
+      "name": "Nasva and Mändjala guesthouses",
+      "style": null,
+      "location": "Saaremaa",
+      "description": "Pine-backed properties on the south coast, minutes from the launches and 15 minutes from Kuressaare's restaurants and spas. See Trip 03 for the wider Saaremaa picture.",
+      "booking": null,
+      "priceNote": null
+    }
+  ],
+  "logistics": {
+    "connectivity": null,
+    "emergency": "112. Hospitals in Pärnu and Kuressaare; Hiiumaa has a small hospital in Kärdla. The Kõpu peninsula is 40 minutes from it. Mobile coverage is excellent almost everywhere in Estonia, including offshore.",
+    "weather": null,
+    "bookingWindows": "Pärnu in July: 2–3 months, it is where Estonia goes on holiday. Hiiumaa guesthouses in summer: 4–6 weeks. Ferries with a car in high summer: as early as the timetable opens.",
+    "money": null,
+    "transportRules": null,
+    "permits": null,
+    "health": null,
+    "gettingThere": null,
+    "other": [
+      {
+        "label": "No tide, but a moving water level",
+        "text": "The Baltic's tidal range is negligible. What changes the depth here is wind: a sustained westerly pushes water into the shallow western bays and raises them; a hard easterly can drop the level enough to make a shallow launch unusable. Check the last two days' wind, not a tide table."
+      },
+      {
+        "label": "Cold-water reality",
+        "text": "Even in August the open-sea spots at Ristna and Sõrve are colder than the sheltered bays. Autumn surfing at Ristna needs a 5/4 with hood and boots, and there is no lifeguard cover."
+      },
+      {
+        "label": "Ferries",
+        "text": "Rohuküla–Heltermaa (Hiiumaa) and Virtsu–Kuivastu (Muhu/Saaremaa) run frequently; **car spaces must be booked in July and August** and sell out. Foot passengers with boards are usually fine. The direct Soela link between the islands is seasonal. `verify: true`"
+      },
+      {
+        "label": "Protected coast",
+        "text": "Much of the western Estonian coastline is in nature reserves or the West Estonian Archipelago Biosphere Reserve, with seasonal restrictions on landing on islets during bird nesting (roughly April–July). Check local signage before launching somewhere new."
+      },
+      {
+        "label": "Ticks",
+        "text": "Both islands are TBE areas. If you are camping or walking through long grass between sessions, take it seriously."
+      }
+    ]
+  },
+  "proTips": [
+    "Split the week by season logic: if you are here in **July**, weight it toward Pärnu and the shallow bays; if in **late September or October**, weight it toward Ristna and Sõrve, where the autumn westerlies actually produce waves.",
+    "Estonia is the **cheapest good watersports destination in the EU** — lessons, hire and accommodation all run at roughly half Western European rates, with the same equipment brands.",
+    "The **spa evening** is the local secret: Pärnu and Kuressaare's sanatorium hotels sell after-19:00 entry for the price of two coffees, and it is the correct end to a cold session.",
+    "Ristna is not Nazaré. Expect short-period wind swell, not groundswell — sessions are about timing a storm window, and the reward is an empty world-class-looking beach with three people on it.",
+    "Take a **sea kayak day** in the Vilsandi or Kassari archipelagos. The water is shallow, the islets are full of seals and birds, and it is the best way to see this coast from the water when the wind is off.",
+    "Book the **car ferry** the moment your dates are fixed. The single most common way to lose a day on the Estonian islands is arriving at Virtsu in August without a booking."
+  ],
+  "typeSpecific": {
+    "raw": {
+      "disciplines": [
+        "windsurf",
+        "kitesurf",
+        "surf",
+        "SUP",
+        "sea kayak",
+        "wing foil"
+      ],
+      "prevailing_wind": "Southwest to west dominant year-round, strengthening markedly from September. Pärnu Bay adds a reliable summer sea breeze; the exposed western capes get the raw gradient wind",
+      "wind_statistics": "Summer is thermal-dependent and moderate; **autumn is the strong season**, with frequent 10–16 m/s westerlies and the swell that comes with them",
+      "launch_spots": [
+        "Pärnu city beach and Valgeranna",
+        "Tahkuranna",
+        "Ristna and Kalana on Hiiumaa's Kõpu peninsula",
+        "Nasva and Mändjala on Saaremaa",
+        "Sõrve peninsula tip",
+        "Käsmu for sea kayaking"
+      ],
+      "equipment_hubs": "Pärnu is the main hub for windsurf, kite and SUP hire and lessons; Hiiumaa's Ristna area has a small seasonal surf operation; Saaremaa's Nasva serves the southern spots",
+      "tidal_awareness": "The Baltic is effectively **non-tidal**. Water level is wind-driven — a strong westerly can raise the shallow Pärnu and Väinameri bays noticeably, an easterly drops them. Plan sessions from wind history and forecast, never from a tide table",
+      "water_temp_c": "16–20 in July–August in the shallow bays, 12–15 in late September, 6–10 in November",
+      "wetsuit_guidance": "Shorty or 3/2 in high summer; 4/3 from late September; 5/4 with hood and boots for the autumn storm swell at Ristna",
+      "gpx_ready": true
+    },
+    "surface": null,
+    "distanceKm": null,
+    "elevationM": null,
+    "verticalM": null,
+    "technicalRating": null,
+    "transitPass": null,
+    "hutBooking": null,
+    "liftNetwork": null,
+    "snowReliability": null,
+    "windConditions": "Southwest to west dominant year-round, strengthening markedly from September. Pärnu Bay adds a reliable summer sea breeze; the exposed western capes get the raw gradient wind",
+    "gpxReady": true,
+    "bookingTimeline": null,
+    "audience": null
+  },
+  "packingNotes": [],
+  "whatCouldGoWrong": [],
+  "sources": {
+    "verified": null,
+    "confidenceNotes": null
+  },
+  "verifyFlags": [],
+  "verifyFlagCount": 0,
+  "volatilePricing": true,
+  "wordCount": 1889,
+  "dataVintage": 2026,
+  "provenance": {
+    "batch": "northern-baltics",
+    "sourceFile": "carta_northern_europe_baltics_trips.md#trip-30",
+    "sourceFormat": "single-file md, '## Trip NN' records with fenced YAML",
+    "sourceId": "west-estonian-coast-parnu-ristna-sorve",
+    "ingestedAt": "2026-09-02",
+    "synthesized": false
+  }
+}

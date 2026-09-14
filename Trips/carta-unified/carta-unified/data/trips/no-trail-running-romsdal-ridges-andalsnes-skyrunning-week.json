@@ -1,0 +1,277 @@
+{
+  "id": "no-trail-running-romsdal-ridges-andalsnes-skyrunning-week",
+  "sourceId": "romsdal-ridges-andalsnes-skyrunning-week",
+  "slug": "no-trail-running-romsdal-ridges-andalsnes-skyrunning-week",
+  "title": "Romsdal Ridges: Åndalsnes Skyrunning Week",
+  "country": "Norway",
+  "countryCode": "NO",
+  "countries": [
+    {
+      "name": "Norway",
+      "code": "NO"
+    }
+  ],
+  "isMultiCountry": false,
+  "region": "Northern Europe & Baltics",
+  "regionKey": "northern-baltics",
+  "subRegion": "Møre og Romsdal, Western Norway",
+  "tripType": "Trail Running",
+  "tripTypeId": 2,
+  "tripTypeSlug": "trail-running",
+  "durationDays": 7,
+  "bestPeriod": {
+    "months": [
+      6,
+      7,
+      8,
+      9
+    ],
+    "monthNames": [
+      "June",
+      "July",
+      "August",
+      "September"
+    ],
+    "window": "Late June to late September. Snow lingers on north-facing ridge sections into early July; September gives firm ground, no mosquitoes and cold clear air",
+    "note": null,
+    "avoid": null,
+    "raw": "Late June to late September. Snow lingers on north-facing ridge sections into early July; September gives firm ground, no mosquitoes and cold clear air"
+  },
+  "budgetTier": "€€€",
+  "budgetTierRange": [
+    3,
+    3
+  ],
+  "budgetTierRaw": "€€€",
+  "budget": {
+    "currency": "EUR",
+    "totalEur": {
+      "low": 1600,
+      "high": 2300
+    },
+    "totalNote": "€1,600–2,300 per person",
+    "breakdown": {
+      "accommodation": {
+        "lowEur": 130,
+        "highEur": 220,
+        "note": "€130–220 per night, double; DNT cabins €35–55 pp for members"
+      },
+      "food": {
+        "lowEur": 60,
+        "highEur": 90,
+        "note": "€60–90 per day — Norway is the most expensive country in this dataset; self-cater breakfasts and trail food"
+      },
+      "transport": {
+        "lowEur": 180,
+        "highEur": 300,
+        "note": "€180–300: Oslo–Åndalsnes rail via Dombås (the Rauma Line), local buses, one gondola ticket, optional car hire €65/day"
+      },
+      "activities": {
+        "lowEur": 90,
+        "highEur": 160,
+        "note": "€90–160: Romsdalen Gondola, one guided ridge day, via ferrata option"
+      }
+    },
+    "perDayEur": {
+      "low": 229,
+      "high": 329
+    }
+  },
+  "profile": {
+    "difficulty": 4,
+    "difficultyLabel": "Demanding",
+    "difficultyNote": "Hard. Exposed ridgelines with scrambling sections, 1,000–1,400 m vertical on the big days, sustained steep descents",
+    "fitnessLevel": "Demanding",
+    "crowdLevel": null,
+    "familyFriendly": null,
+    "carRequired": null
+  },
+  "basecamps": [
+    "Åndalsnes",
+    "Isfjorden",
+    "Innfjorden"
+  ],
+  "gatewayAirport": null,
+  "gatewayAirportCode": null,
+  "languages": [
+    "Norwegian",
+    "English"
+  ],
+  "currency": "NOK (Norwegian krone)",
+  "emergencyNumber": "112 (police / mountain rescue), 113 (medical)",
+  "coordinates": {
+    "lat": 62.5675,
+    "lon": 7.687,
+    "precision": "source",
+    "matchedPlace": "Åndalsnes",
+    "source": "source record"
+  },
+  "tags": [],
+  "summary": "A seven-day trail running itinerary in Møre og Romsdal, Western Norway, Norway.",
+  "summaryGenerated": true,
+  "hook": null,
+  "snapshot": {},
+  "itinerary": [
+    {
+      "day": 1,
+      "title": "Arrival and the Nesaksla shakeout",
+      "morning": "Rauma Line train from Dombås to Åndalsnes — 100 minutes through the Romsdalen gorge past the Trollveggen wall, Europe's tallest vertical rock face at around 1,100 m. Sit on the right.",
+      "afternoon": "Straight up the Rampestreken trail from town to the steel viewing platform cantilevered over the fjord, then continue to Nesaksla summit (715 m). Steep, stepped, stone-pitched — a perfect legs-opening effort at about 45–60 minutes climbing.",
+      "evening": "Ride the Romsdalen Gondola down (or run it), eat at the Eggen restaurant at the top station if you go up late instead. **Water:** the stream crossing at roughly 400 m on the Rampestreken path; nothing above it.",
+      "dayStats": "6 km, 700 m",
+      "sleep": null
+    },
+    {
+      "day": 2,
+      "title": "Litlefjellet and Mjølva reconnaissance",
+      "morning": "Drive or bus 15 minutes to Venjesdalen. Litlefjellet is the short one — 45 minutes up to a knife of rock with the entire Romsdalen valley and Romsdalshorn opposite. Run it early with a headtorch for sunrise.",
+      "afternoon": "Mjølva above Åndalsnes: a runnable grassy ridge, 950 m of climb on trail the whole way, the best pure aerobic day of the week and a good test of whether tomorrow's big ridge is on.",
+      "evening": "Sauna and fjord swim. Trail food shopping at the Åndalsnes Coop for the ridge day. **Water:** Mjølvabekken crosses the trail at about 550 m — reliable all summer.",
+      "dayStats": "11 km, 900 m",
+      "sleep": null
+    },
+    {
+      "day": 3,
+      "title": "Romsdalseggen, the main event",
+      "morning": "Take the early shuttle bus from Åndalsnes to Vengedalen — the standard start since the route was reversed and rebuilt. From the car park you climb steadily to the ridge proper.",
+      "afternoon": "The ridge: rock steps, chains at two short sections, sustained exposure with the Isterdalen valley 900 m below on one side and Romsdalen on the other. Highest point around 1,216 m at Blånebba if you take the optional extension. Finish over Nesaksla and descend Rampestreken into town — or take the gondola down to spare your quads.",
+      "evening": "Rest properly. **Water:** two streams in the first 300 m of climbing out of Vengedalen; after that the ridge is dry for 8 km. Carry 1.5 litres minimum.",
+      "dayStats": "10–12 km, 970 m, 5–7 h hiking pace / 2.5–4 h running",
+      "sleep": null
+    },
+    {
+      "day": 4,
+      "title": "Recovery: Isterdalen valley and the Trollstigen approach",
+      "morning": "Easy running on the valley floor track through Isterdalen beneath the Trollstigen hairpins, with the peaks Bispen, Kongen and Dronningen (the Bishop, the King and the Queen) overhead.",
+      "afternoon": "The Trollstigen mountain road and its viewing platform have been subject to rockfall closures in recent seasons — check status before planning to run the hairpins. `verify: true` Substitute the Kløvstien old packhorse path if the road is shut.",
+      "evening": "Isfjorden village; the Norsk Tindesenter climbing centre in Åndalsnes has an indoor wall and the national mountaineering museum for a wet afternoon. **Water:** Istra river tributaries throughout; abundant.",
+      "dayStats": "14 km flat-ish, 350 m",
+      "sleep": null
+    },
+    {
+      "day": 5,
+      "title": "Kyrkjetaket or Skarven long day",
+      "morning": "From Isterdalen up to Kyrkjetaket (1,439 m) — a long, mostly runnable ascent on a marked path with a rocky final 200 m. Fewer people than Romsdalseggen by a factor of twenty, bigger views of the Trolltindane.",
+      "afternoon": "Descend the same line or traverse toward Alnesvatnet. Snowfields on the north side can persist to mid-July; micro-spikes are worth the 200 g in June and early July.",
+      "evening": "Dinner at Hotel Aak — Norway's oldest tourist hotel, founded 1880 for the English salmon-fishing gentry. **Water:** the outflow of Alnesvatnet, and streams to about 1,100 m.",
+      "dayStats": "18 km, 1,200 m",
+      "sleep": null
+    },
+    {
+      "day": 6,
+      "title": "Fjord ridge: Innfjorden and Middagstinden",
+      "morning": "Drive 20 minutes south to Innfjorden. The Middagstinden and Skorgedalen ridgelines look straight down the fjord, with sheep tracks that run better than the marked path.",
+      "afternoon": "Descend to the fjord and swim. On a clear day the Måsvassbu direction offers an add-on ridgeline traverse with no infrastructure at all.",
+      "evening": "Last dinner in Åndalsnes; pack for an early train. **Water:** Skorgedalselva at the valley floor; treat nothing above the last farm.",
+      "dayStats": "13 km, 1,000 m",
+      "sleep": null
+    },
+    {
+      "day": 7,
+      "title": "Rauma Line and out",
+      "morning": "Optional 5 km shakeout along the Rauma river's salmon pools and the Kylling Bridge viewpoint if you have a car.",
+      "afternoon": "Train Åndalsnes–Dombås–Oslo, or the bus to Molde/Ålesund airports (1.5 h and 2 h respectively).",
+      "evening": null,
+      "dayStats": null,
+      "sleep": null
+    }
+  ],
+  "accommodationStrategy": [
+    {
+      "rank": 1,
+      "name": "Hotel Aak",
+      "style": "historic mountain hotel",
+      "location": "Åndalsnes",
+      "description": "Two kilometres out of town at the foot of the valley, built for climbers and still run for them. Drying room, packed breakfasts on request from 06:00, and staff who know current ridge conditions better than any website. Trailheads for Mjølva and Isterdalen start effectively from the door.",
+      "booking": null,
+      "priceNote": null
+    },
+    {
+      "rank": 2,
+      "name": "Grand Hotel Bellevue",
+      "style": "town centre",
+      "location": "Åndalsnes",
+      "description": "On the fjord, three minutes from the station and the gondola base. The practical choice if you are travelling car-free: the Vengedalen shuttle for Romsdalseggen leaves from town, and you can be on the ridge without ever hiring a vehicle.",
+      "booking": null,
+      "priceNote": null
+    },
+    {
+      "rank": 3,
+      "name": "Trollstigen Camping / Åndalsnes cabins",
+      "style": null,
+      "location": "Isterdalen",
+      "description": "Simple hytter with kitchenettes, €70–110 for two, positioned for Days 4 and 5. Self-catering matters in Norway: three restaurant dinners will cost more than two nights of accommodation.",
+      "booking": null,
+      "priceNote": null
+    }
+  ],
+  "logistics": {
+    "connectivity": "4G is good in the valleys, intermittent above 1,000 m. Norwegian eSIMs are cheap; EU roaming does **not** cover Norway on all plans since it is outside the EU — check your bundle. `verify: true`",
+    "emergency": "113 for medical, 112 for police and mountain rescue. Download the **Hjelp 113** app before you arrive — it transmits your GPS position to the emergency operator, and it is the standard tool used by Norwegian rescue services. Mobile coverage on the Romsdalseggen ridge is patchy but usually present at high points.",
+    "weather": "Romsdal is a fjord-head microclimate: the town can be sunny at 18 °C while the ridge sits in cloud at 4 °C with 15 m/s wind and zero visibility. Yr.no gives point forecasts by altitude — use the 1,000 m layer, not the town figure. Turn around at the first sign of the ridge clouding in; the chained sections are unpleasant in wet fog.",
+    "bookingWindows": "Hotel Aak and Bellevue: 3–4 months for July and August, the cruise-ship days fill the town. The Vengedalen shuttle: book the day before online in high season. Guided ridge days with Romsdal guides: 2–4 weeks.",
+    "money": null,
+    "transportRules": null,
+    "permits": null,
+    "health": null,
+    "gettingThere": null,
+    "other": [
+      {
+        "label": "Gear floor for the ridge days",
+        "text": "Trail shoes with real lugs, waterproof shell and trousers, hat and gloves even in July, headtorch, 1.5–2 l capacity, whistle, a foil bivvy, and a charged phone. Poles help enormously on the descent and are a nuisance on the chained steps — collapsible only."
+      },
+      {
+        "label": "Allemannsretten",
+        "text": "Norway's right to roam allows wild camping on uncultivated land, at least 150 m from any inhabited house, for up to two nights in the same place. Fires are banned in or near forest 15 April–15 September."
+      }
+    ]
+  },
+  "proTips": [
+    "Run Romsdalseggen on the **first bus of the day**. The ridge takes 5–7 hours at hiking pace, which means the crowd is strung out between 10:00 and 16:00; leaving at 07:30 puts you ahead of all of it and lets you use the chained sections without queuing.",
+    "Buy a **single gondola down-ticket** rather than a return. The climb is the point; the 900 m descent on tired quads on day three is not.",
+    "The **Rauma Line** is one of Europe's great rail journeys and it is a normal scheduled service, not a tourist train — the tourist version costs several times as much for the same track.",
+    "Norwegian supermarkets close early (Coop and Rema 1000 around 21:00–23:00, and Sunday closures are near-total). Buy your Sunday food on Saturday, always.",
+    "The best free viewpoint nobody runs: **Litlefjellet at 05:30** in late June, when the sun hits Romsdalshorn and there is nobody within two kilometres.",
+    "If a storm cancels a ridge day, the fallback is not the hotel gym — it is the fjord-level Rauma river path plus the Norsk Tindesenter's 21 m indoor wall."
+  ],
+  "typeSpecific": {
+    "raw": {
+      "technical_rating": "T3–T4 alpine (UIAA I scrambling on Romsdalseggen); not suitable for runners without exposure tolerance",
+      "weekly_vertical_m": 6500,
+      "water_strategy": "Named refill points listed per day; running mountain streams above the treeline and above grazing are drinkable — filter anything below a farm",
+      "gpx_ready": true
+    },
+    "surface": null,
+    "distanceKm": null,
+    "elevationM": null,
+    "verticalM": 6500,
+    "technicalRating": "T3–T4 alpine (UIAA I scrambling on Romsdalseggen); not suitable for runners without exposure tolerance",
+    "transitPass": null,
+    "hutBooking": null,
+    "liftNetwork": null,
+    "snowReliability": null,
+    "windConditions": null,
+    "gpxReady": true,
+    "bookingTimeline": null,
+    "audience": null
+  },
+  "packingNotes": [],
+  "whatCouldGoWrong": [],
+  "sources": {
+    "verified": null,
+    "confidenceNotes": null
+  },
+  "verifyFlags": [],
+  "verifyFlagCount": 0,
+  "volatilePricing": true,
+  "wordCount": 1573,
+  "dataVintage": 2026,
+  "provenance": {
+    "batch": "northern-baltics",
+    "sourceFile": "carta_northern_europe_baltics_trips.md#trip-04",
+    "sourceFormat": "single-file md, '## Trip NN' records with fenced YAML",
+    "sourceId": "romsdal-ridges-andalsnes-skyrunning-week",
+    "ingestedAt": "2026-09-02",
+    "synthesized": false
+  }
+}

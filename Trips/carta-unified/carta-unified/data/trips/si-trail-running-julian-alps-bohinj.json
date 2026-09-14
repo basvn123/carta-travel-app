@@ -1,0 +1,275 @@
+{
+  "id": "si-trail-running-julian-alps-bohinj",
+  "sourceId": "trail-running-slovenia-julian-alps-bohinj",
+  "slug": "si-trail-running-julian-alps-bohinj",
+  "title": "Julian Alps: Bohinj & Pokljuka",
+  "country": "Slovenia",
+  "countryCode": "SI",
+  "countries": [
+    {
+      "name": "Slovenia",
+      "code": "SI"
+    }
+  ],
+  "isMultiCountry": false,
+  "region": "Southern & Mediterranean Europe",
+  "regionKey": "southern-mediterranean",
+  "subRegion": "Gorenjska — Bohinj, Pokljuka & the Triglav Lakes Valley",
+  "tripType": "Trail Running",
+  "tripTypeId": 2,
+  "tripTypeSlug": "trail-running",
+  "durationDays": 7,
+  "bestPeriod": {
+    "months": [
+      6,
+      7,
+      9
+    ],
+    "monthNames": [
+      "June",
+      "July",
+      "September"
+    ],
+    "window": "Mid-June–mid-July & September (huts staffed, snow gone, lakes running)",
+    "note": null,
+    "avoid": "Late July–mid-August (hut beds gone, Vogel and Savica car parks full by 08:00); late October–May (snow above 1,500 m, huts closed, Pokljuka is a cross-country ski plateau)",
+    "raw": "Mid-June–mid-July & September (huts staffed, snow gone, lakes running)"
+  },
+  "budgetTier": "€€",
+  "budgetTierRange": [
+    2,
+    2
+  ],
+  "budgetTierRaw": "€€",
+  "budget": {
+    "currency": "EUR",
+    "totalEur": {
+      "low": 1050,
+      "high": 1650
+    },
+    "totalNote": "€1,050–€1,650 per person, excl. international flights",
+    "breakdown": {
+      "accommodation": {
+        "lowEur": 480,
+        "highEur": 760,
+        "note": "Bohinj pensions €70–€120 dbl/night; mountain hut bed €25–€35, half-board €45–€60"
+      },
+      "food": {
+        "lowEur": 220,
+        "highEur": 330,
+        "note": "Gostilna main €12–€18; hut dinner €12–€16; planina sour milk and cheese €5"
+      },
+      "transport": {
+        "lowEur": 260,
+        "highEur": 400,
+        "note": "Rental car 7 days €190–€290, Slovenian motorway vignette, Vogel cable car"
+      },
+      "activities": {
+        "lowEur": 90,
+        "highEur": 160,
+        "note": "Vogel return ~€28, Savica waterfall ~€4–€6, Blato/Savica parking, PZS membership if bought"
+      }
+    },
+    "perDayEur": {
+      "low": 150,
+      "high": 236
+    }
+  },
+  "profile": {
+    "difficulty": 4,
+    "difficultyLabel": "Demanding",
+    "difficultyNote": "4/5 — sustained 1,200–1,600 m days on Julian limestone with one hut night at 1,685 m; no glacier, but plenty of loose rock and cable",
+    "fitnessLevel": "Demanding",
+    "crowdLevel": null,
+    "familyFriendly": null,
+    "carRequired": null
+  },
+  "basecamps": [],
+  "gatewayAirport": "LJU — Ljubljana Jože Pučnik (1 h 15 drive to Bohinj; bus via Bled ~2 h); KLU Klagenfurt and TRS Trieste are both ~2 h",
+  "gatewayAirportCode": "LJU",
+  "languages": [],
+  "currency": null,
+  "emergencyNumber": "112",
+  "coordinates": {
+    "lat": 46.0511,
+    "lon": 14.5051,
+    "precision": "country",
+    "matchedPlace": "Ljubljana",
+    "source": "country capital fallback"
+  },
+  "tags": [
+    "trail-running",
+    "julian-alps",
+    "bohinj",
+    "triglav-national-park",
+    "pokljuka",
+    "seven-lakes",
+    "planina",
+    "knafelc",
+    "komna",
+    "vogel"
+  ],
+  "summary": "Bohinj is the quiet end of the Julian Alps — a 525 m glacial lake with a 1,400 m wall of the Lower Bohinj range on one side and the Triglav massif on the other — and it gives a runner two contrasting playgrounds within twenty minutes. South and west: the Vogel–Rodica ridge and the Komna plateau, high, dry limestone with enormous views to Triglav. North and east: the Pokljuka plateau, a 1,200–1,400 m spruce-and-karst tableland whose *planine* (summer dairy pastures) link into some of the most runnable singletrack in the Alps. The week builds through a lake orientation day and a Vogel ridge day into an overnight in the Triglav Lakes Valley, then swings to Pokljuka for the Debela peč rim and the planina circuit, with a deliberate recovery day on the Bohinj lake path. It suits a runner who wants alpine scale, a functioning hut network and Slovenian prices.",
+  "summaryGenerated": false,
+  "hook": null,
+  "snapshot": {},
+  "itinerary": [
+    {
+      "day": 1,
+      "title": "Arrive at Bohinj, circle the lake",
+      "morning": "Land at LJU, collect the car, buy a Slovenian **motorway vignette** at the airport or first petrol station, and drive 1 h 15 via Bled to **Ribčev Laz** on Lake Bohinj (525 m).",
+      "afternoon": "Loosen off on the **Bohinj lake circuit** — 12 km around, gravel and lakeside root path, the north shore the quieter half, finishing at the stone bridge and St John the Baptist church. Swim if it is warm; the lake is around 18–20 °C in July.",
+      "evening": "Dinner at **Gostilna Mihovc** in Stara Fužina — Bohinj cheese, ričet, and a Union beer.",
+      "dayStats": "12 km / 120 m D+ / SAC T1 / 55 min–1 h 15; transfer 1 h 15 from LJU.",
+      "sleep": "Pension in Stara Fužina or Ribčev Laz"
+    },
+    {
+      "day": 2,
+      "title": "Vogel ridge to Rodica",
+      "morning": "First **Vogel cable car** from Ukanc (up to 1,535 m, return around €28). Run the ridge west over **Šija (1,880 m)** to **Rodica (1,966 m)** — grass, then limestone, with Triglav filling the northern horizon and the Soča side falling away south.",
+      "afternoon": "Return along the ridge and either ride down or run the steep old descent to Ukanc. Then the short walk to **Slap Savica**, the waterfall at the head of the valley (small entry fee).",
+      "evening": "Pizza and a beer in Bohinjska Bistrica at **Foksner**; get to bed early — tomorrow is a hut day.",
+      "dayStats": "14 km / 900 m D+ / SAC T2 with one T3 step / 2 h 15–3 h / high point 1,966 m / cable car ~€28.",
+      "sleep": "Pension in Stara Fužina or Ribčev Laz"
+    },
+    {
+      "day": 3,
+      "title": "Into the Seven Lakes Valley",
+      "morning": "Drive to **Planina Blato (1,147 m)** and pay the parking. Climb through **Planina pri Jezeru (1,453 m)** — dairy hut, water, sour milk — then over the shoulder into the **Dolina Triglavskih jezer**, past **Črno jezero (1,294 m)**, the lowest of the seven.",
+      "afternoon": "Continue up the valley to **Koča pri Triglavskih jezerih (1,685 m)**, drop your pack, and run the easy upper-valley out-and-back past Dvojno jezero toward Zeleno jezero for the full sequence of lakes and the dolomite amphitheatre above.",
+      "evening": "Hut half-board — jota, štruklji, and a very early night in a 135-bed hut where the water is limited and the showers are cold.",
+      "dayStats": "12 km in / 900 m D+, plus 6 km / 300 m upper valley / SAC T2–T3 / 2 h 15–3 h / hut at 1,685 m, 135 beds.",
+      "sleep": "Koča pri Triglavskih jezerih (booking compulsory)"
+    },
+    {
+      "day": 4,
+      "title": "Over to Komna and down",
+      "morning": "From the hut, run south-west across the plateau to **Dom na Komni (1,520 m)**, a big old hut on the Komna shelf with the WWI Isonzo-front history and a view down the Bohinj trough.",
+      "afternoon": "Descend the **Komna zigzags to the Savica** trailhead at Ukanc — a 900 m drop on stepped, cobbled path that is a proper eccentric-strength test. Retrieve the car from Blato by taxi or a pre-arranged shuttle.",
+      "evening": "Recovery dinner at **Gostilna Rupa** in Srednja vas — Bohinj mutton, buckwheat žganci.",
+      "dayStats": "16 km / 400 m up, 1,150 m down / SAC T2 / 2 h 30–3 h 30 / water at Komna only.",
+      "sleep": "Pension in Stara Fužina or Srednja vas"
+    },
+    {
+      "day": 5,
+      "title": "Recovery day in the Voje valley",
+      "morning": "True low day. An easy 9 km from **Stara Fužina up the Mostnica gorge** to the **Voje valley** and the Mostnica waterfall — flat, shaded, riverside, with the gorge's carved potholes and the famous \"elephant\" rock.",
+      "afternoon": "Nothing. Coffee at the Voje hut, the Bohinj cheese dairy museum in Stara Fužina, and legs up by the lake.",
+      "evening": "Grilled trout and a Rebula on the lakefront at Ribčev Laz.",
+      "dayStats": "9 km / 250 m D+ / SAC T1 / 55 min–1 h 10 easy / entirely shaded.",
+      "sleep": "Pension in Stara Fužina or Srednja vas"
+    },
+    {
+      "day": 6,
+      "title": "Pokljuka: Lipanci and Debela peč",
+      "morning": "Drive up to **Rudno polje (1,347 m)**, the Pokljuka biathlon centre, and climb the Slovenska planinska pot line to **Blejska koča na Lipanci (1,630 m)**, then the rim over **Lipanski vrh** to **Debela peč (2,014 m)** — a narrow, cabled summit ridge looking straight across the Krma valley at Triglav's north side.",
+      "afternoon": "Return over **Brda and Mrežce** and descend through the spruce to Rudno polje. Add the **Planina Konjščica** loop if the legs allow.",
+      "evening": "Dinner in Srednja vas or Bohinjska Bistrica; toast the last big day.",
+      "dayStats": "15 km / 800 m D+ / SAC T3 on the summit ridge / 2 h–2 h 45 / high point 2,014 m.",
+      "sleep": "Pension in Stara Fužina or Srednja vas"
+    },
+    {
+      "day": 7,
+      "title": "Planina circuit and out",
+      "morning": "The best-value run of the week: the **Pokljuka planina circuit** — Rudno polje to **Zajamniki** (the photogenic row of hay barns on the ridge), across to **Uskovnica (1,154 m)** and down to Srednja vas. Fast, soft, forested, and dotted with dairy huts where you can buy sour milk mid-run.",
+      "afternoon": "Shower, buy Bohinj cheese and honey in Stara Fužina, and drive to Ljubljana — with an hour in the old town if the flight allows.",
+      "evening": "Departure from LJU.",
+      "dayStats": "16 km / 550 m D+ / SAC T1–T2 / 1 h 50–2 h 30; drive to LJU 1 h 15.",
+      "sleep": "Departure"
+    }
+  ],
+  "accommodationStrategy": [
+    {
+      "rank": 1,
+      "name": "A family pension in Stara Fužina",
+      "style": "village guesthouse",
+      "location": "Bohinj",
+      "description": "The right base: on the Mostnica/Voje trailhead, five minutes from Ribčev Laz, twenty from the Blato and Rudno polje roads, and cheaper than the lakefront hotels at €70–€110 double. Slovenian pensions habitually do early breakfast or a packed one if you ask, and all of them have somewhere to hang wet kit.",
+      "booking": null,
+      "priceNote": null
+    },
+    {
+      "rank": 2,
+      "name": "Koča pri Triglavskih jezerih",
+      "style": "mountain hut",
+      "location": "1,685 m, Triglav National Park",
+      "description": "The one high night, and the only way to see the Seven Lakes Valley without a punishing there-and-back. 135 places across rooms and dormitories, spring water outside the door, no hot showers, and a **compulsory advance reservation** — its 2026 season ran roughly 6 June to 30 September. Bring a sleeping-bag liner and cash for extras.",
+      "booking": null,
+      "priceNote": null
+    },
+    {
+      "rank": 3,
+      "name": "A pension in Srednja vas or Bohinjska Bistrica",
+      "style": "valley village",
+      "location": "eastern Bohinj",
+      "description": "For the Pokljuka half of the week: fifteen minutes closer to the Rudno polje road and noticeably quieter than the lake, with parking and easy access to Gostilna Rupa. Similar price band, and a better bet than the lake in the first three weeks of August.",
+      "booking": null,
+      "priceNote": null
+    }
+  ],
+  "logistics": {
+    "connectivity": "Slovenia is EU; roam at domestic rates. Coverage is good in the Bohinj basin and on ridges but **absent in the Mostnica gorge, patchy in the Lakes Valley and in the Krma-side gullies**. Download offline maps and the hut phone numbers.",
+    "emergency": "**112**; Slovenia's mountain rescue (GRZS) is professional, fast and helicopter-equipped. Membership of the Alpine Association of Slovenia (PZS) includes rescue and repatriation cover and gives roughly 30–50% off hut beds — for a week with two or more hut nights it can pay for itself. Otherwise carry insurance with alpine rescue cover.",
+    "weather": "Julian Alps summer convection is the main hazard — clear mornings, towering cumulus by 13:00, and violent lightning on exposed limestone ridges by mid-afternoon. The region also gets sudden **jugo**-driven Adriatic fronts from the south-west that dump remarkable rainfall on Bohinj (one of the wettest places in Slovenia). ARSO's mountain forecast is the source to use.",
+    "bookingWindows": "**Mountain huts require reservation** and Koča pri Triglavskih jezerih fills for July and August weekends months ahead — book as soon as the season's calendar opens, and note it takes card payment for the reservation. Bohinj accommodation for August wants 3–4 months. Vogel cable car does not need booking.",
+    "money": "Euro. Cards are widely accepted including at most huts, but carry €100 in cash for planina dairy huts, parking machines and small gostilne. Tipping: round up or 10%.",
+    "transportRules": "Slovenia requires a **motorway vignette** (weekly e-vignette, around €16 for a car) — buy it before you touch the A2. Parking at **Savica, Planina Blato and Rudno polje is paid and limited**, and Blato in particular fills by 08:00 in summer. Bohinj runs a summer shuttle bus network, and the **Bohinj Card / Julian Alps guest card** given by many accommodations includes free buses — check before you rent. Bikes and dogs have their own rules on Pokljuka forest roads.",
+    "permits": "**Triglav National Park charges no entry fee** and needs no running permit, but parking, the Savica waterfall and the Vogel lift are all paid. Wild camping and bivouacking are prohibited in the park. Drones need permission. Hut etiquette matters: reserve, arrive before dinner service, remove shoes at the door, and pay cash for anything the card machine won't take.",
+    "health": "Tap and hut spring water is potable and excellent; treat surface water. **Tick-borne encephalitis is endemic in Slovenian forests** — the vaccine is genuinely worth considering for a week spent in Pokljuka spruce, and do daily tick checks. Vipers exist on sunny limestone but are rarely seen. Snow patches can linger in north-facing gullies above 1,800 m into early July.",
+    "gettingThere": null,
+    "other": []
+  },
+  "proTips": [
+    "**Buy a PZS (Alpine Association of Slovenia) membership before you travel.** It cuts hut bed prices substantially and includes mountain rescue and repatriation insurance — for a trip with a Lakes Valley night it is usually cheaper than the alternatives.",
+    "**Park at Planina Blato before 07:30 or take the shuttle.** It is the gateway to the Seven Lakes Valley, the car park is tiny, and by mid-morning in summer you will be turned around at the barrier.",
+    "**Use Pokljuka as the bad-weather plan.** When the Julians are electric, Rudno polje's forest tracks and planina circuits are safe, shaded, low-relief and genuinely enjoyable in rain.",
+    "**Buy lunch from the planina dairies.** Sour milk (kislo mleko), fresh cheese and štruklji sold from the huts at Uskovnica, Zajamniki and Blato cost a few euros, are excellent, and solve both food and water on the Pokljuka days.",
+    "**Ride Vogel up and run down.** The cable car buys you 1,000 m of ascent and turns a hard out-and-back into a ridge traverse with a long descent — the best value €28 on the trip.",
+    "**Do the lake circuit anticlockwise, starting on the north shore.** The south shore is where the day-trip crowds are; going the other way you get the quiet half of the loop first and the swimming spots to yourself.",
+    "**Confirm the hut season dates before booking flights.** Koča pri Triglavskih jezerih's summer window is roughly early June to end September, and a trip in late May or October has no high accommodation at all.",
+    "**Get the TBE vaccine if you can plan far enough ahead.** Slovenia has one of Europe's highest tick-borne encephalitis rates and this itinerary spends three days in exactly the habitat."
+  ],
+  "typeSpecific": {
+    "raw": {
+      "Signature routes": "(1) **Vogel–Šija–Rodica ridge** from the Vogel cable-car top station (1,535 m): 14 km, 900 m D+, mid-pack 2 h 15–3 h, with **Rodica at 1,966 m** and a continuous balcony over Bohinj. (2) **Komna plateau loop** from Ukanc via the Savica path to **Dom na Komni (1,520 m)** and back over Črna prst side paths: 17 km, 1,150 m D+, 3 h–4 h. (3) **Seven Lakes Valley (Dolina Triglavskih jezer)** from Planina Blato via Planina pri Jezeru and **Črno jezero (1,294 m)** to **Koča pri Triglavskih jezerih (1,685 m)**: 12 km, 900 m D+, 2 h 15–3 h. (4) **Debela peč (2,014 m) rim from Rudno polje (1,347 m)** via **Blejska koča na Lipanci (1,630 m)** and Lipanski vrh: 15 km, 800 m D+, 2 h–2 h 45. (5) **Pokljuka planina circuit**, Rudno polje–Zajamniki–Uskovnica–Konjščica: 21 km, 750 m D+, 2 h 30–3 h 30, the fastest ground of the week. (6) **Bohinj lake circuit** from Ribčev Laz: 12 km, 120 m D+, 55 min–1 h 15.",
+      "Technicality (SAC hiking scale T1–T5, stated explicitly)": "Bohinj lake path and Pokljuka planina tracks **T1–T2**. Vogel–Rodica ridge **T2**, with one short **T3** step near Šija. Seven Lakes approach **T2–T3**, with cabled sections above Planina pri Jezeru. Debela peč summit ridge **T3**, narrow, with a short cabled traverse and real exposure north into the Krma valley. Komna **T2**. Nothing on this itinerary needs a via ferrata set, but the Debela peč and Šija steps will feel serious to anyone who has only run forest trails.",
+      "Terrain split, week average": "~30% Julian limestone slab, scree and rubble above 1,600 m, ~25% spruce forest singletrack on needle duff (Pokljuka, and it is glorious), ~20% grass pasture and cart track through the planine, ~15% cobbled and stepped hut approach path, ~5% gravel forest road, ~5% asphalt. Pokljuka's needle duff is the softest running of any trip in this collection; the Komna and Lakes limestone is the sharpest.",
+      "Waymarking": "The **Knafelc mark** — a red circle with a white centre — is used across Slovenia, backed by wooden signposts giving hut names and walking times. The **Slovenska planinska pot** (Slovenian Mountain Trail, the first European long-distance path, established 1953, 600+ km Maribor–Ankaran) crosses this whole area: its Pokljuka–Bohinj–Komna sections are the spine of Days 3, 4 and 6. Marking density is excellent; the weak spots are the open karst above Komna and the plateau between Lipanci and Debela peč in fog.",
+      "Water refill points and month reliability": "The **planina dairy huts are the water system**: **Planina Blato (1,147 m), Planina pri Jezeru (1,453 m), Planina Uskovnica (1,154 m), Planina Zajamniki, Planina Konjščica, Planina Viševnik** all have troughs or taps and most sell sour milk, cheese and štruklji — staffed roughly **mid-June to mid-September**, dry and shut outside that. Fixed points: **Koča pri Triglavskih jezerih** (spring tap outside the hut, drinkable, but consumption is limited and there are no hot showers), **Dom na Komni**, **Blejska koča na Lipanci**, **Koča na Uskovnici**, **Vogel top station**, and every village in the Bohinj basin. **The high limestone between Komna and the Lakes Valley, and the Debela peč rim, hold no surface water at all** — this is porous karst. Carry 1.5–2 L for any high day after mid-July.",
+      "Navigation": "PZS 1:25,000 \"Bohinj\" and \"Triglav\" sheets, or the Kartografija \"Julijske Alpe – Vzhodni del\"; GPX from the Hiking Bohinj and PZS portals, Komoot and the Slovenian Mountain Trail route files. Coverage: decent on ridges and in the Bohinj basin, **patchy to absent in the Voje valley, the Lakes Valley floor, and the Krma-side gullies below Debela peč**. Bail-outs: the **Vogel cable car** will take you down from the ridge in bad weather; from the Lakes Valley, the descent to Planina Blato is the only quick exit; from Pokljuka, forest roads run everywhere and you are never more than an hour from tarmac.",
+      "Recovery, altitude and weather management": "Day 5 is the low day. Altitude tops at 2,014 m from a 525 m base, so no acclimatisation issue, but the one night at 1,685 m is a useful stimulus. Julian Alps convective storms are frequent and violent from mid-June onward, typically firing between 13:00 and 17:00 — be off Rodica and Debela peč well before that. Pokljuka is the all-weather option: forest cover, low relief and a plateau that stays runnable in rain."
+    },
+    "surface": "~30% Julian limestone slab, scree and rubble above 1,600 m, ~25% spruce forest singletrack on needle duff (Pokljuka, and it is glorious), ~20% grass pasture and cart track through the planine, ~15% cobbled and stepped hut approach path, ~5% gravel forest road, ~5% asphalt. Pokljuka's needle duff is the softest running of any trip in this collection; the Komna and Lakes limestone is the sharpest.",
+    "distanceKm": null,
+    "elevationM": null,
+    "verticalM": null,
+    "technicalRating": "Bohinj lake path and Pokljuka planina tracks **T1–T2**. Vogel–Rodica ridge **T2**, with one short **T3** step near Šija. Seven Lakes approach **T2–T3**, with cabled sections above Planina pri Jezeru. Debela peč summit ridge **T3**, narrow, with a short cabled traverse and real exposure north into the Krma valley. Komna **T2**. Nothing on this itinerary needs a via ferrata set, but the Debela peč and Šija steps will feel serious to anyone who has only run forest trails.",
+    "transitPass": null,
+    "hutBooking": null,
+    "liftNetwork": null,
+    "snowReliability": null,
+    "windConditions": null,
+    "gpxReady": null,
+    "bookingTimeline": null,
+    "audience": null
+  },
+  "packingNotes": [],
+  "whatCouldGoWrong": [],
+  "sources": {
+    "verified": "Koča pri Triglavskih jezerih sits at **1,686 m**, sleeps **135** (46 beds in 15 rooms plus 89 in 6 dormitories), has drinkable spring water at an outside tap with consumption limited and no hot showers, requires advance reservation, and ran a **6 June–30 September** season in 2026; Triglav National Park charges no entrance fee; Slovenia is in the EU and the eurozone.",
+    "confidenceNotes": "Re-verify (a) **hut opening dates and bed/half-board prices** for Koča pri Triglavskih jezerih, Dom na Komni and Blejska koča na Lipanci, which the Alpine Association sets annually; (b) **Vogel cable car fare and operating hours**, and whether the top station is running out of season; (c) **parking charges and capacity at Planina Blato, Savica and Rudno polje**, plus current Bohinj shuttle-bus routes and whether the guest card still covers them; (d) **Slovenian e-vignette price**; (e) **planina dairy hut staffing dates** in the travel month — they follow the grazing calendar, not the tourist one; (f) named gostilne (Mihovc, Rupa, Foksner) trading status and opening days."
+  },
+  "verifyFlags": [],
+  "verifyFlagCount": 0,
+  "volatilePricing": false,
+  "wordCount": 3240,
+  "dataVintage": 2026,
+  "provenance": {
+    "batch": "southern-mediterranean",
+    "sourceFile": "carta-dataset/trips/trail-running-slovenia-julian-alps-bohinj.md",
+    "sourceFormat": "md with '## Metadata' bullet block (one file per trip)",
+    "sourceId": "trail-running-slovenia-julian-alps-bohinj",
+    "ingestedAt": "2026-09-02",
+    "synthesized": false
+  }
+}

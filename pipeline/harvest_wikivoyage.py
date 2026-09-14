@@ -41,6 +41,7 @@ import urllib.parse
 import urllib.request
 from math import radians, sin, cos, asin, sqrt
 from pathlib import Path
+from pipeline_io import atomic_write_json
 
 if sys.platform == "win32":
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
@@ -227,13 +228,13 @@ def main():
 
         if (bi // TITLES_PER_REQ) % CHECKPOINT_EVERY == 0:
             CACHE.parent.mkdir(exist_ok=True)
-            CACHE.write_text(json.dumps(cache, ensure_ascii=False), encoding="utf-8")
+            atomic_write_json(CACHE, cache, indent=None, ensure_ascii=False)
             print(f"    {bi + len(batch)}/{len(todo)} done "
                   f"({hits} hits, {misses} misses this run)")
         time.sleep(1.0)            # be gentle on the shared-IP rate limit
 
     CACHE.parent.mkdir(exist_ok=True)
-    CACHE.write_text(json.dumps(cache, ensure_ascii=False), encoding="utf-8")
+    atomic_write_json(CACHE, cache, indent=None, ensure_ascii=False)
     total_hits = sum(1 for v in cache.values() if not v.get("miss"))
     print(f"[wikivoyage] done: {hits} new hits, {misses} new misses; "
           f"{total_hits} guides cached total -> cache/{CACHE.name}")

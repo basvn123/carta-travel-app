@@ -1,0 +1,173 @@
+{
+  "iso2": "EE",
+  "country": "Estonia",
+  "checked_at": "2026-08-17",
+  "beaches": {
+    "wrong": [
+      {
+        "name": "Paala järv",
+        "class": "other",
+        "why": "Tier 1 rank 4. Paala järv is a lake in Viljandi; the row names the lake, not a beach. It has a municipal swimming spot, but ranking an inland town lake as Estonia's fourth beach while Pärnu sits in tier 2 is wrong on the object as well as the order.",
+        "source_url": "https://www.openstreetmap.org/#map=15/58.3721/25.5893"
+      },
+      {
+        "name": "Väike Viik",
+        "class": "duplicate_of:Aafrika rand",
+        "why": "Tier 1 rank 6. Väike viik is the shallow bay in Haapsalu; the beach on it is Aafrika rand. The same water appears four more times in tier 2: 'Africa Beach and Promenade' (r13), 'Aafrika rand' (r14), 'Beach at Väike viik' (r15) and 'Holmi Rand' (r16), all within 500 m. Five rows, one Haapsalu bay.",
+        "source_url": "https://www.openstreetmap.org/#map=16/58.9519/23.5305"
+      },
+      {
+        "name": "Joaoru Liivarand",
+        "class": "not_notable",
+        "why": "Tier 1 rank 3. The Joaoru municipal sand beach on the Narva river inside Narva city. A real local beach, but not one of Estonia's six best, and it is ranked while Narva-Jõesuu, the country's longest sand beach 13 km downstream, is absent from the file entirely.",
+        "source_url": "https://www.openstreetmap.org/#map=16/59.3725/28.2023"
+      },
+      {
+        "name": "Paralepa beach",
+        "class": "duplicate_of:Paralepa rand",
+        "why": "Tier 2 ranks 7 and 9 are 'Paralepa rand' (58.9428,23.5167) and 'Paralepa beach' (58.9427,23.5167), the Estonian and English names of the same Haapsalu beach at coordinates ten metres apart, and they are separated in rank by Pärnu Beach.",
+        "source_url": "https://www.openstreetmap.org/#map=16/58.9428/23.5167"
+      },
+      {
+        "name": "Valgevälja karjäär",
+        "class": "other",
+        "why": "Tier 2 rank 12. A flooded quarry ('karjäär' means quarry) near Haapsalu, listed among Estonia's top beaches.",
+        "source_url": "https://www.openstreetmap.org/#map=15/58.9089/23.5550"
+      }
+    ],
+    "missing": [
+      {
+        "name": "Pärnu Beach",
+        "qid": "Q21694719",
+        "lat": 58.37417,
+        "lon": 24.49528,
+        "why": "Estonia's summer capital and unambiguously the country's number one beach: a long shallow Blue Flag sand bay with the promenade, the mud baths and the whole national summer season attached to it. It IS in the wire, at tier 2 rank 8, held down by a 'Sufficient' bathing-water class while five 'Excellent' town ponds and lakes sit above it in tier 1. This is a scoring failure, not a recall failure.",
+        "source_url": "https://www.wikidata.org/wiki/Q21694719",
+        "verified": true
+      },
+      {
+        "name": "Narva-Jõesuu",
+        "qid": "Q723372",
+        "lat": 59.4625,
+        "lon": 28.04194,
+        "why": "The longest sand beach in Estonia, 13 km of dune and pine at the mouth of the Narva river, a historic spa resort. Absent from the file at every tier, while the Narva city river beach 13 km upstream holds tier 1 rank 3.",
+        "source_url": "https://www.wikidata.org/wiki/Q723372",
+        "verified": true
+      },
+      {
+        "name": "Valgeranna",
+        "qid": "Q2026548",
+        "lat": 58.38778,
+        "lon": 24.39306,
+        "why": "The 'White Beach' west of Pärnu, a pine-backed dune beach and a standard alternative to the town strand. Absent.",
+        "source_url": "https://www.wikidata.org/wiki/Q2026548",
+        "verified": true
+      },
+      {
+        "name": "Ristna",
+        "qid": "Q4708074",
+        "lat": 58.94,
+        "lon": 22.05528,
+        "why": "The cape and surf beach on the Kõpu peninsula of Hiiumaa, the best known beach on the Estonian islands. Absent, and so is every other beach on Saaremaa and Hiiumaa: the two big islands contribute nothing to a 16-row beach set for a country of 2,000 islands.",
+        "source_url": "https://www.wikidata.org/wiki/Q4708074",
+        "verified": true
+      },
+      {
+        "name": "Käsmu",
+        "qid": null,
+        "lat": null,
+        "lon": null,
+        "why": "The captains' village beach and boulder field in Lahemaa National Park, the signature north-coast shoreline. Absent; Lahemaa's only row is 'Tammispea rand' at tier 2 rank 10. I could not confirm a Wikidata item within this check, so it is recorded unverified.",
+        "source_url": null,
+        "verified": false
+      }
+    ],
+    "order": [
+      "Five of the sixteen Estonian beaches are the same Haapsalu bay, and Haapsalu takes one tier 1 slot plus six of the ten tier 2 slots. Haapsalu is a pleasant small town; it is not half of Estonia's coast.",
+      "Pärnu Beach at tier 2 rank 8 is the single clearest 'too low' in the group. It is ranked below Paala lake in Viljandi and Väike viik in Haapsalu because those carry an 'Excellent' bathing-water class and Pärnu carries 'Sufficient'. Bathing-water class is being used as a fame proxy and it is not one.",
+      "Pirita Beach at rank 1 is defensible: it is Tallinn's beach, it is genuinely popular, and it is the only tier 1 row with an English Wikipedia link. It is a good city beach, not the country's best beach.",
+      "Ranks 3 to 6 are tied at 0.91 and are in alphabetical order (Joaoru, Paala, Pühajärve, Väike Viik), so again ties break by name.",
+      "Pühajärve rand at rank 5 is the one inland row I would keep: Pühajärv at Otepää is a genuine national destination."
+    ]
+  },
+  "mountains": {
+    "wrong": [
+      {
+        "name": "Põlluvahi maja",
+        "class": "other",
+        "why": "Tier 1 rank 2, that is to say Estonia's second mountain. Q14955490 is P31 = Q41176, a BUILDING, a farmhouse on Saaremaa, and its Wikidata coordinates (58.25004,22.48339) match the wire's (58.2501,22.4834) exactly. 'maja' is Estonian for house.",
+        "source_url": "https://www.wikidata.org/wiki/Q14955490"
+      },
+      {
+        "name": "Hopneri maja",
+        "class": "other",
+        "why": "Tier 2 rank 3. Hopner's House (Q55973604), the merchant house on Tallinn Town Hall Square, coordinates matching the wire's 59.4371,24.7458. A 15th century townhouse listed as a mountain.",
+        "source_url": "https://www.wikidata.org/wiki/Q55973604"
+      },
+      {
+        "name": "Tiigiveski maja",
+        "class": "other",
+        "why": "Tier 2 rank 4. Another Tallinn building ('the pond-mill house'). Three of Estonia's five harvested mountains are houses; the 'maja' token is going straight into the mountain set.",
+        "source_url": "https://www.openstreetmap.org/#map=17/59.4275/24.7618"
+      },
+      {
+        "name": "Võllamägi",
+        "class": "not_notable",
+        "why": "Tier 1 rank 1 and the country's top_mountain. Q12379098 confirms it is genuinely a hill (P31 = Q54050) at the wire's coordinates, so it is not miscategorised, but it is Gallows Hill, a small wooded rise on the eastern edge of Tallinn. Making it Estonia's number one mountain while Suur Munamägi, the highest point in the Baltic states, is absent is indefensible.",
+        "source_url": "https://www.wikidata.org/wiki/Q12379098"
+      },
+      {
+        "name": "Haapsalu Võllamägi",
+        "class": "not_notable",
+        "why": "Tier 2 rank 5. A second, unrelated 'gallows hill' in Haapsalu. Two of five Estonian mountains share a name that simply means gallows hill, which is a generic historic toponym found in many Estonian towns, not a destination class.",
+        "source_url": "https://www.openstreetmap.org/#map=16/58.9360/23.5473"
+      }
+    ],
+    "missing": [
+      {
+        "name": "Suur Munamägi",
+        "qid": "Q504991",
+        "lat": 57.71404,
+        "lon": 27.06005,
+        "why": "317.4 m, the highest point of Estonia AND of the entire Baltic states, in Haanja, with the observation tower that is one of the country's most visited landmarks. Absent from all five harvested Estonian mountains.",
+        "source_url": "https://www.wikidata.org/wiki/Q504991",
+        "verified": true
+      },
+      {
+        "name": "Väike Munamägi",
+        "qid": "Q12378956",
+        "lat": 58.03717,
+        "lon": 26.51315,
+        "why": "207.5 m, the hill at Otepää and the heart of Estonia's winter sports area. Absent, although the app already carries Otepää as a destination (Pühajärve rand is tier 1 rank 5).",
+        "source_url": "https://www.wikidata.org/wiki/Q12378956",
+        "verified": true
+      },
+      {
+        "name": "Emumägi",
+        "qid": "Q3509259",
+        "lat": 58.93755,
+        "lon": 26.37409,
+        "why": "166 m, the highest point of northern Estonia, with a viewing tower and a nature park. Absent.",
+        "source_url": "https://www.wikidata.org/wiki/Q3509259",
+        "verified": true
+      },
+      {
+        "name": "Vällamägi",
+        "qid": "Q15648039",
+        "lat": 57.73557,
+        "lon": 27.06649,
+        "why": "The steepest hill in Estonia, in Haanja next to Suur Munamägi, a named landform on every Estonian relief list. Absent. Note the name collision risk with the wire's 'Võllamägi': Vällamägi and Võllamägi are different hills 250 km apart.",
+        "source_url": "https://www.wikidata.org/wiki/Q15648039",
+        "verified": true
+      }
+    ],
+    "order": [
+      "There is effectively nothing to order. Five rows, of which three are buildings and two are minor hills that happen to share the name 'gallows hill'.",
+      "The correct Estonian order is Suur Munamägi, Väike Munamägi, Vällamägi, Emumägi, and none of the four is in the file.",
+      "Põlluvahi maja at rank 2 and Hopneri maja at rank 3 should be deleted, not re-ranked. Võllamägi can stay in the set but not at rank 1."
+    ]
+  },
+  "counts_verdict": "16 beaches is far too few for a country with 3,800 km of coastline and 2,000 islands, and the shortfall is structural rather than numerical: Saaremaa, Hiiumaa and the whole Lahemaa coast are almost unrepresented while five of the sixteen rows are one Haapsalu bay. 6 tier 1 beaches is a sensible tier size, but four of the six are inland or urban water. 5 mountains, of which three are houses, means Estonia effectively has two mountain rows, and the tab should not render in that state. Estonia's relief is genuinely modest, but Suur Munamägi and the Haanja hills are real destinations with towers, trails and visitor numbers, so a properly harvested Estonian mountain set would be small but not empty.",
+  "top_pick_verdict": "No on both. top_beach 'Pirita Beach' is a real and popular Tallinn beach and would not embarrass anyone, but Estonia's country card beach is Pärnu (Q21694719), which the wire demotes to tier 2 over a bathing-water class. top_mountain 'Võllamägi' is a wooded knoll on the edge of Tallinn; the card must be Suur Munamägi (Q504991), the high point of the Baltics, which is not in the file at all.",
+  "notes": "Estonia and Latvia show the same defect from two languages: 'maja' and 'māja' both mean house, and both countries have buildings sitting in the top three of their Mountains tab (Põlluvahi maja at EE rank 2, Hopneri maja at EE tier 2 rank 3, Baltā māja at LV rank 1). A P31 check against Wikidata would have caught every one of them, since all three items are typed as buildings and all three carry coordinates matching the wire exactly. Separately, Pärnu is the cleanest demonstration that EEA bathing-water class is being used as a fame signal: 'Sufficient' pushed the country's best beach out of tier 1, while 'Excellent' promoted a Viljandi lake and a Haapsalu pond into it."
+}

@@ -48,6 +48,7 @@ import sys
 from pathlib import Path
 
 import car_layer  # for the drivable() check (home, detour, max_drive_km)
+from pipeline_io import atomic_write_json
 
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_TARGETS = [
@@ -147,7 +148,7 @@ def patch(path: Path) -> None:
             v["no_ryanair_route"] = unreachable
             fixed_flags += 1
 
-    path.write_text(json.dumps(data, indent=1, ensure_ascii=False), encoding="utf-8")
+    atomic_write_json(path, data, indent=1, ensure_ascii=False)
     print(f"  {path.name}: {len(ds)} dests | anchored {anchored} (<= {int(ANCHOR_MAX_STRAIGHT_KM)}km airport) | "
           f"still unreachable {still_unreachable} (shown, flagged no_ryanair_route) | "
           f"flag fixes {fixed_flags} | {path.stat().st_size / 1024 / 1024:.2f} MB")

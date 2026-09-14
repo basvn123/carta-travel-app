@@ -1,0 +1,274 @@
+{
+  "id": "pt-city-lisbon",
+  "sourceId": "city-portugal-lisbon",
+  "slug": "pt-city-lisbon",
+  "title": "Lisbon on Foot: Seven Hills, Seven Days",
+  "country": "Portugal",
+  "countryCode": "PT",
+  "countries": [
+    {
+      "name": "Portugal",
+      "code": "PT"
+    }
+  ],
+  "isMultiCountry": false,
+  "region": "Southern & Mediterranean Europe",
+  "regionKey": "southern-mediterranean",
+  "subRegion": "Lisboa & the Tagus Estuary",
+  "tripType": "City Trips",
+  "tripTypeId": 3,
+  "tripTypeSlug": "city",
+  "durationDays": 7,
+  "bestPeriod": {
+    "months": [
+      3,
+      6,
+      9,
+      10
+    ],
+    "monthNames": [
+      "March",
+      "June",
+      "September",
+      "October"
+    ],
+    "window": "Mid-March–early June & mid-September–end October",
+    "note": null,
+    "avoid": "July–August — 35°C on the calçada, Alfama unwalkable by noon, peak prices.",
+    "raw": "Mid-March–early June & mid-September–end October"
+  },
+  "budgetTier": "€€",
+  "budgetTierRange": [
+    2,
+    2
+  ],
+  "budgetTierRaw": "€€",
+  "budget": {
+    "currency": "EUR",
+    "totalEur": {
+      "low": 1025,
+      "high": 1675
+    },
+    "totalNote": "€1,025–€1,675 per person, excl. international flights",
+    "breakdown": {
+      "accommodation": {
+        "lowEur": 560,
+        "highEur": 980,
+        "note": "Boutique guesthouse double, per-person share, Chiado or Príncipe Real"
+      },
+      "food": {
+        "lowEur": 280,
+        "highEur": 420,
+        "note": "Tasca lunches €10–16, one €50–70 dinner, €6/day coffee and pastéis"
+      },
+      "transport": {
+        "lowEur": 55,
+        "highEur": 85,
+        "note": "Navegante card, Sintra return, ferries, funiculars, airport metro"
+      },
+      "activities": {
+        "lowEur": 130,
+        "highEur": 190,
+        "note": "Gulbenkian, MAAT, Azulejo, Jerónimos, two Sintra palaces"
+      }
+    },
+    "perDayEur": {
+      "low": 146,
+      "high": 239
+    }
+  },
+  "profile": {
+    "difficulty": 2,
+    "difficultyLabel": "Moderate",
+    "difficultyNote": "2 — 8–12 km a day on steep basalt cobbles, 150–250 m cumulative ascent; hard on ankles, not on lungs.",
+    "fitnessLevel": "Moderate",
+    "crowdLevel": null,
+    "familyFriendly": null,
+    "carRequired": null
+  },
+  "basecamps": [],
+  "gatewayAirport": "LIS — Humberto Delgado; Metro Red Line to Alameda 20 min, taxi to Baixa 20–25 min (€15–20)",
+  "gatewayAirportCode": "LIS",
+  "languages": [],
+  "currency": null,
+  "emergencyNumber": "112",
+  "coordinates": {
+    "lat": 38.7251,
+    "lon": -9.1498,
+    "precision": "city",
+    "matchedPlace": "Lisbon",
+    "source": "geonames (geonamescache, cities > 15k)"
+  },
+  "tags": [
+    "azulejos",
+    "miradouros",
+    "fado",
+    "pastelaria",
+    "manueline",
+    "day-trip-sintra",
+    "walkable",
+    "riverfront"
+  ],
+  "summary": "Lisbon rewards people who accept that the city is a staircase. This week trades the tram-28 conveyor belt for a neighbourhood sequence: the Moorish tangle of Alfama and Mouraria, then the Pombaline grid and the literary hills of Chiado and Bairro Alto, then Príncipe Real, then the river — Belém's Manueline stonework west, Marvila's warehouse breweries east. Distances are short, gradients are not. A Sintra day breaks the week open with fog and Romantic follies. It suits travellers who want architecture and food weighted equally.",
+  "summaryGenerated": false,
+  "hook": null,
+  "snapshot": {},
+  "itinerary": [
+    {
+      "day": 1,
+      "title": "Landing on the Grid: Baixa and Chiado",
+      "morning": "Metro to Baixa-Chiado, drop bags, walk the Pombaline grid from Praça do Comércio up Rua Augusta — note the standardised window bays, Manuel da Maia's prefab logic in stone. A *bica* standing at Confeitaria Nacional on Praça da Figueira, open since 1829.",
+      "afternoon": "The roofless **Convento do Carmo** (€7) is the truest surviving image of 1 November 1755. Then Museu Nacional de Arte Contemporânea–Chiado on Rua Serpa Pinto, and up via the **Elevador da Glória** to Miradouro de São Pedro de Alcântara.",
+      "evening": "**Taberna da Rua das Flores** (no. 103), no reservations — arrive 19:00, chalkboard menu, €25–35pp. Ginjinha at **A Ginjinha**, Largo de São Domingos, €1.60.",
+      "dayStats": "5.5 km, 130 m ascent; Metro Red + Green; Navegante €0.50 + 24h pass €7.25; Carmo 10:00–19:00.",
+      "sleep": "Casa Balthazar, Rua do Duque 26."
+    },
+    {
+      "day": 2,
+      "title": "Alfama and Mouraria end to end",
+      "morning": "Bus 737 from Praça da Figueira to **Castelo de São Jorge** (€15) for the 09:00 opening and empty ramparts, then walk down through Largo do Contador Mor.",
+      "afternoon": "Rua de São Pedro and Beco do Carneiro into lower Alfama; the **Sé** (Romanesque, 1147, twin fortress towers, cloister €5). Cross into **Mouraria** by Rua dos Cavaleiros for Largo da Severa and the grocers of Rua do Benformoso — the least gentrified inner quarter.",
+      "evening": "Fado at **Mesa de Frades**, Rua dos Remédios 139A, a tiled former chapel; 20:00 sitting, book 3–5 days ahead, ~€45 with food. Cheaper walk-in alternative: **Tasca do Chico**, Rua do Diário de Notícias 39.",
+      "dayStats": "7.8 km, 210 m ascent; bus 737; castle €15, opens 09:00; fado 20:00–21:00 starts.",
+      "sleep": "Casa Balthazar."
+    },
+    {
+      "day": 3,
+      "title": "Belém: Manueline stone, modern riverfront",
+      "morning": "Tram 15E from Praça da Figueira (25 min). **Mosteiro dos Jerónimos** on a 09:30 slot (€18 combined with Torre de Belém; church nave free). The two-storey cloister and Castilho's south portal are the reason to come.",
+      "afternoon": "**MAAT** (€11) — Levete's crouching pavilion plus the 1908 Central Tejo boiler hall, which is the better half. Torre de Belém from outside; the interior queue rarely repays 45 minutes.",
+      "evening": "**Cervejaria Ramiro**, Av. Almirante Reis 1 — garlic prawns, then a *prego* as dessert. No bookings; take a ticket, expect 30–50 min, €35–45pp.",
+      "dayStats": "6.2 km flat; tram 15E ~€1.66; Jerónimos 09:30–18:00, closed Mon; MAAT closed Tue.",
+      "sleep": "Casa Balthazar."
+    },
+    {
+      "day": 4,
+      "title": "Príncipe Real, Estrela, Gulbenkian",
+      "morning": "Up through **Praça das Flores** to **Praça do Príncipe Real** and its 1863 cedar canopy; Embaixada inside the neo-Moorish Ribeiro da Cunha palace. On to **Jardim da Estrela** and the 1790 **Basílica da Estrela** dome.",
+      "afternoon": "Metro Blue Line to São Sebastião for the **Calouste Gulbenkian** (€14, Founder's + Modern; free Sun after 14:00). Two hours minimum — the Lalique room, the Rembrandt wall, and Gonçalo Ribeiro Telles's garden.",
+      "evening": "**A Cevicheria**, Rua Dom Pedro V 129 (no reservations, leave your name, drink pisco next door), or **Cantinho do Avillez**, Rua dos Duques de Bragança 7, booked a week out, €40–55pp.",
+      "dayStats": "7.1 km, 170 m ascent; Metro Blue; Gulbenkian €14, 10:00–18:00, closed Tue.",
+      "sleep": "Casa Balthazar."
+    },
+    {
+      "day": 5,
+      "title": "Sintra day trip",
+      "morning": "Rossio 08:11 train, 40 min, ~€2.40. Bus 434 up to **Palácio da Pena** for a 09:30–10:00 slot (park + palace €20) — Ferdinand II's 1840s Romantic collage of Manueline quotation, Moorish tile and Bavarian battlement.",
+      "afternoon": "Walk the **Castelo dos Mouros** ramparts (€12), then the **Palácio Nacional de Sintra** with its conical kitchen chimneys (€13). In heavy fog, swap for **Quinta da Regaleira** (€15) and its initiation well.",
+      "evening": "Back by 19:00. **Bistro 100 Maneiras**, Largo da Trindade 9 (book 2 weeks, €70–90pp) or petiscos at **Taberna Sal Grosso**, Calçada do Forte 22.",
+      "dayStats": "9.4 km incl. Sintra hills, 320 m ascent; ~€4.80 train return; Pena last entry 18:00.",
+      "sleep": "Casa Balthazar."
+    },
+    {
+      "day": 6,
+      "title": "Azulejos east: Xabregas, Marvila, Beato",
+      "morning": "Bus 794 to the **Museu Nacional do Azulejo** in the Madre de Deus convent (€8, closed Mon). The 23-metre panorama of pre-earthquake Lisbon upstairs explains what 1755 erased better than any text.",
+      "afternoon": "North into **Marvila/Beato**: Dois Corvos taproom on Rua Capitão Leitão, the Fábrica Braço de Prata warehouse, Underdogs Gallery's wall on Rua Fernando Palha. Industrial Lisbon converting itself in real time.",
+      "evening": "**Prado**, Travessa das Pedras Negras 2 — produce-led, book 2–3 weeks, €45–60pp. Late drink at Pensão Amor, Rua do Alecrim 19.",
+      "dayStats": "8.6 km, flat; bus 794/210; Azulejo 10:00–13:00 & 14:00–18:00; taproom pints €4–5.",
+      "sleep": "Casa Balthazar."
+    },
+    {
+      "day": 7,
+      "title": "Estuary morning and departure",
+      "morning": "Ferry Cais do Sodré → **Cacilhas** (10 min, ~€1.55) for the reverse skyline and lunch at **Ponto Final**, Rua do Ginjal 72, booked ahead. Or Elevador de Santa Justa at 08:30, before the queue.",
+      "afternoon": "Last pastéis at **Manteigaria**, Rua do Loreto 2 (€1.40, at the marble counter), then Metro Red Line to LIS from Alameda.",
+      "evening": "Flight out; a closing vermouth at Comida Independente, Rua Cais do Tojo 28, if the slot is late.",
+      "dayStats": "4.5 km; ferry 10 min; airport 25 min from Baixa-Chiado with one change; allow 2 h before departure.",
+      "sleep": "n/a — departure day."
+    }
+  ],
+  "accommodationStrategy": [
+    {
+      "rank": 1,
+      "name": "Casa Balthazar",
+      "style": "Boutique guesthouse",
+      "location": "Chiado/Rua do Duque",
+      "description": "Mid-slope between Baixa and Bairro Alto, so both are downhill and you never need a taxi. Private terraces, plunge pool, and a small lift up from Rossio that saves sixty steps a day. €160–210 double with breakfast; ask for a Tagus-facing room.",
+      "booking": null,
+      "priceNote": null
+    },
+    {
+      "rank": 2,
+      "name": "Memmo Alfama",
+      "style": "Design hotel",
+      "location": "Travessa das Merceeiras, Alfama",
+      "description": "The right base if Alfama is the priority: red-tiled pool terrace over the Tagus, in a lane no tour group reaches with wheeled bags. Steep approach — taxi to Largo de São Rafael on arrival. €190–260.",
+      "booking": null,
+      "priceNote": "€190–260"
+    },
+    {
+      "rank": 3,
+      "name": "Casa Amora",
+      "style": "Guesthouse apartments",
+      "location": "Príncipe Real",
+      "description": "Quieter and greener for a full week, with kitchenettes for the Mercado de Campo de Ourique haul and a flat ten minutes to Metro Rato. €130–180.",
+      "booking": null,
+      "priceNote": "€130–180"
+    }
+  ],
+  "logistics": {
+    "connectivity": "Full EU roaming, no local SIM needed for EU residents. 4G/5G is complete; download offline maps only for the Pena woods, where signal drops.",
+    "emergency": "112 for everything. Tourist police post at Palácio Foz, Praça dos Restauradores. EU/EHIC applies; insurance still matters because timed monument tickets are strictly non-refundable.",
+    "weather": "The *nortada*, a hard afternoon northerly, cools summer but leaves riverfront terraces cold after 19:00 even in June. Autumn downpours make calçada portuguesa genuinely slippery — rubber soles, never leather.",
+    "bookingWindows": "Pena 5–7 days; Jerónimos/Belém 1–2 weeks; Prado and 100 Maneiras 2–3 weeks; fado houses 3–5 days. Gulbenkian, MAAT and Azulejo are same-day.",
+    "money": "Euro, contactless everywhere, though small tascas prefer cash. Use Multibanco ATMs, not Euronet. Tip by rounding up, 5–10% at dinner. The *couvert* is chargeable — decline it.",
+    "transportRules": "Validate on every boarding including trams and funiculars; inspectors work 28E and 15E hard. Some CP gates reject zapping for Sintra — buy at the Rossio counter if so. Santa Justa is €6.15 standalone but included in the 24h Carris pass.",
+    "permits": "City tourist tax €4 per person per night, capped at seven nights, collected at check-out and usually absent from booking-site totals. Drones banned over the historic centre and all Parques de Sintra sites.",
+    "health": "Tap water is potable and good. Real risks are pickpockets on tram 28 and at Santa Justa, and harmless drug-hawkers on Rua Augusta. Wet cobbles injure more visitors here than anything else.",
+    "gettingThere": null,
+    "other": []
+  },
+  "proTips": [
+    "Ride **tram 12E** on the same rails as the 28 for a shorter Alfama loop with a fraction of the crowd — or take the 28 eastbound from Martim Moniz at 07:15.",
+    "Load **zapping**, not the 24h pass, unless you'll make five-plus rides that day. Lisbon is a walking city; most days you use two.",
+    "For Pena, book the first slot, take bus 434 up and **walk down** through the Parque da Pena past the Chalet da Condessa d'Edla — the half everyone skips.",
+    "**Manteigaria over Pastéis de Belém** when time is tight: same custard tart, no 40-minute queue, and you watch the lamination through the window.",
+    "**Miradouro da Senhora do Monte** in Graça beats São Pedro de Alcântara at sunset and has a fraction of the buskers — 12 minutes uphill from Largo da Graça.",
+    "Most museums close **Monday** (Azulejo, Jerónimos, Ancient Art); the Gulbenkian closes **Tuesday**. Build Monday around the Castelo, Belém exteriors and Marvila.",
+    "If Sintra is fogged in before 11:00 — common in spring — reverse the day: Regaleira and the town palace first, Pena at 14:00 when cloud usually lifts."
+  ],
+  "typeSpecific": {
+    "raw": {
+      "Walkable blocks": "Alfama/Mouraria (Largo das Portas do Sol → Rua de São Pedro → Rua dos Cavaleiros, 1.8 km loop, 90 m ascent); Baixa/Chiado (Rua Augusta → Largo do Carmo, 1.2 km); Bairro Alto/Príncipe Real (Rua da Rosa → Praça das Flores → Praça do Príncipe Real, 1.6 km); Belém (Jerónimos → MAAT, 1.1 km flat); Marvila/Beato (Rua do Açúcar → Fábrica Braço de Prata, 1.4 km flat).",
+      "Transit pass": "the **Navegante Ocasional** card costs **€0.50** at any metro machine and holds one mode at a time — singles, a **24h Carris/Metro pass (€7.25)**, or **zapping** stored credit (~€1.66 a ride versus €1.80–€2.20 on board). You cannot hold zapping and a 24h pass together.",
+      "Airport transfer": "Metro Red Line (Aeroporto → Alameda, change Green for Baixa-Chiado), ~25 min, roughly €2.00–€2.50 with the airport surcharge. Bolt/Uber to Chiado €12–18.",
+      "Booking timeline": "Sintra's **Palácio da Pena** — 5–7 days ahead on parquesdesintra.pt, half-hour entry slots, 09:30–11:00 goes first. **Jerónimos + Torre de Belém** — 1–2 weeks on patrimoniocultural.gov.pt. Gulbenkian, MAAT and Museu Nacional do Azulejo take same-day walk-ups.",
+      "Architectural focal points": "Manueline at Jerónimos (Boytac and João de Castilho, 1501–1541 — rope, armillary spheres, artichokes in limestone); Pombaline seismic *gaiola* framing across the post-1755 Baixa grid; Mesnier du Ponsard's 1902 Elevador de Santa Justa; the 1969 Gulbenkian by Athayde and Cid; Amanda Levete's tiled MAAT wave-roof (2016).",
+      "Eating structure": "tascas at lunch (€10–16), one booked dinner mid-week (€45–70), pastelarias as fuel. Prado and Bistro 100 Maneiras want 2–3 weeks; Ramiro and Taberna da Rua das Flores take no bookings at all.",
+      "Day trip": "Sintra on the **CP Linha de Sintra** from Rossio, 40 min, ~€2.40 each way, departures every 10–20 min from 06:00."
+    },
+    "surface": null,
+    "distanceKm": null,
+    "elevationM": null,
+    "verticalM": null,
+    "technicalRating": null,
+    "transitPass": "Alfama/Mouraria (Largo das Portas do Sol → Rua de São Pedro → Rua dos Cavaleiros, 1.8 km loop, 90 m ascent); Baixa/Chiado (Rua Augusta → Largo do Carmo, 1.2 km); Bairro Alto/Príncipe Real (Rua da Rosa → Praça das Flores → Praça do Príncipe Real, 1.6 km); Belém (Jerónimos → MAAT, 1.1 km flat); Marvila/Beato (Rua do Açúcar → Fábrica Braço de Prata, 1.4 km flat).",
+    "hutBooking": null,
+    "liftNetwork": null,
+    "snowReliability": null,
+    "windConditions": null,
+    "gpxReady": null,
+    "bookingTimeline": "Sintra's **Palácio da Pena** — 5–7 days ahead on parquesdesintra.pt, half-hour entry slots, 09:30–11:00 goes first. **Jerónimos + Torre de Belém** — 1–2 weeks on patrimoniocultural.gov.pt. Gulbenkian, MAAT and Museu Nacional do Azulejo take same-day walk-ups.",
+    "audience": null
+  },
+  "packingNotes": [],
+  "whatCouldGoWrong": [],
+  "sources": {
+    "verified": "Navegante Ocasional card cost (€0.50), 24h Carris/Metro pass (€7.25), zapping versus on-board single fares, and the airport Red Line routing were checked against 2026 Lisbon fare summaries; the €4 per person per night city tax was confirmed for 2026.",
+    "confidenceNotes": "Museum admissions (Gulbenkian €14, MAAT €11, Azulejo €8, Jerónimos/Belém combined €18) and Sintra prices (Pena €20, Regaleira €15, Castelo dos Mouros €12) come from 2025–26 published rates and are revised each January — re-verify. The Sintra train fare is a zapping-rate approximation. Restaurant booking policies (Prado, Bistro 100 Maneiras, A Cevicheria, Ramiro) shift often. Mesa de Frades pricing is indicative. Tram 28 routing is periodically cut on the Graça section for works."
+  },
+  "verifyFlags": [],
+  "verifyFlagCount": 0,
+  "volatilePricing": false,
+  "wordCount": 2235,
+  "dataVintage": 2026,
+  "provenance": {
+    "batch": "southern-mediterranean",
+    "sourceFile": "carta-dataset/trips/city-portugal-lisbon.md",
+    "sourceFormat": "md with '## Metadata' bullet block (one file per trip)",
+    "sourceId": "city-portugal-lisbon",
+    "ingestedAt": "2026-09-02",
+    "synthesized": false
+  }
+}

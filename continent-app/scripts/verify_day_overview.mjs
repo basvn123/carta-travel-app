@@ -109,17 +109,17 @@ try {
   console.log('opening the seeded plan...');
   await card.click();
 
-  // "Today's plan" is a collapsible whose BODY (the timeline) is unmounted
-  // while closed, so it has to be opened before anything can be asserted.
-  const planHead = page.locator('.day-plan-collapse .day-collapse-head').first();
-  await planHead.waitFor({ timeout: 60000 });
-  const timelineRows = page.locator('.day-timeline-row');
-  if (await timelineRows.count() === 0) await planHead.click();
+  // The workspace opens on today's plan, so the route list is already there.
+  await page.locator('.dayws-tabs').waitFor({ timeout: 60000 });
+  const timelineRows = page.locator('.dayr-row');
   await timelineRows.first().waitFor({ timeout: 30000 });
   console.log('day view open');
   await page.waitForTimeout(1500);
 
   console.log('\n1. Map filter toolbar');
+  // The pin filters belong to the Add more tab: nothing on the other two
+  // tabs is a pin a traveller would want to filter.
+  await page.locator('.dayws-tab').nth(1).click();
   const card1 = page.locator('.day-map-card');
   await card1.first().waitFor({ timeout: 30000 });
   const cards = await card1.count();
@@ -167,15 +167,20 @@ try {
   });
   if (hintGap == null || hintGap < 8) fail(`helper text is cramped under the card (gap ${hintGap}px)`);
   else pass(`helper text sits ${hintGap}px clear of the controls`);
+  await page.locator('.dayws-tab').nth(0).click();
+  await timelineRows.first().waitFor({ timeout: 20000 });
 
   console.log('\n2. One itinerary, not two');
   const rows = await timelineRows.count();
-  if (rows !== STOPS.length) fail(`expected ${STOPS.length} timeline rows, got ${rows}`);
-  else pass(`${rows} timeline rows for ${STOPS.length} stops`);
-  // The bot's own <ol> listing is gone; its card is a header only.
-  const schedLists = await page.locator('.ai-day-panel .ai-sched').count();
+  if (rows !== STOPS.length) fail(`expected ${STOPS.length} route rows, got ${rows}`);
+  else pass(`${rows} route rows for ${STOPS.length} stops`);
+  // The bot's own listing is gone; what survives is one summary line.
+  const schedLists = await page.locator('.ai-day-panel, .ai-sched').count();
   if (schedLists !== 0) fail('the bot schedule still renders its own copy of the stops');
-  else pass('bot card is a header, not a second list');
+  else pass('bot card is a summary line, not a second list');
+  const summaries = await page.locator('.dayp-summary').count();
+  if (summaries !== 1) fail(`expected 1 bot summary line, got ${summaries}`);
+  else pass('the bot summary reads once, above the route');
   // Belt and braces: no stop name appears twice in the sidebar.
   for (const s of STOPS) {
     const n = await page.locator('.trip-sheet-scroll', { hasText: s.name })
@@ -183,34 +188,29 @@ try {
     if (n > 1) fail(`"${s.name}" is rendered ${n} times in the sidebar`);
   }
   if (!failed) pass('no stop name is duplicated in the sidebar');
-  // The bot's reasons survived the merge, on the timeline rows themselves.
-  const notes = await page.locator('.day-assigned-note.from-ai').count();
-  if (notes !== STOPS.length) fail(`expected ${STOPS.length} bot reasons on rows, got ${notes}`);
-  else pass('every row kept the bot reason that justified it');
-  // Out-of-catalogue finds are listed once, outside the plan.
-  const finds = await page.locator('.day-ai-find').count();
+  // Out-of-catalogue finds are listed once, outside the route.
+  const finds = await page.locator('.dayp-find').count();
   if (finds !== 1) fail(`expected 1 bot discovery listed, got ${finds}`);
   else pass('bot discovery listed once beside its map pin');
 
-  console.log('\n3. Macro blocks, no clock face, no truncation');
-  const phases = await page.locator('.day-phase-label').allTextContents();
-  if (!phases.length) fail('no macro phase headers on the timeline');
-  else pass(`phase headers: ${phases.join(', ')}`);
-
-  const timelineText = await page.locator('.day-timeline').innerText();
+  console.log('\n3. Places only, no clock face, no truncation');
+  // The list is the places in order. The day's numbers (stops, km, done
+  // by) live once in the header strip, never repeated per row.
+  const timelineText = await page.locator('.dayr-list').innerText();
   const clocks = timelineText.match(/\b([01]\d|2[0-3]):[0-5]\d\b/g) || [];
-  if (clocks.length) fail(`timeline still shows arrival clock times: ${clocks.join(', ')}`);
-  else pass('no per-stop arrival times on the timeline');
-
-  const stays = await page.locator('.day-assigned-when').count();
-  if (stays !== STOPS.length) fail(`expected ${STOPS.length} visit estimates, got ${stays}`);
-  else pass('every stop carries a visit estimate instead');
+  if (clocks.length) fail(`the route list still shows clock times: ${clocks.join(', ')}`);
+  else pass('no per-stop arrival times in the route list');
+  if (/\bkm\b|\d+\s*min/.test(timelineText)) fail('the route list still carries leg distances');
+  else pass('no leg distances in the route list');
+  const statText = await page.locator('.day-topcard-stats').innerText();
+  if (!/km/.test(statText)) fail(`the header strip lost the walking total: "${statText}"`);
+  else pass(`the day's numbers live once, in the header: "${statText.replace(/\s+/g, ' ').trim()}"`);
 
   // No title is visually clipped. textContent is always the full name even
   // when CSS ellipsises it, so the check is on the layout: the title must be
   // allowed to wrap, must not clip its overflow, and its text must actually
   // fit the box it was given.
-  const titles = await page.$$eval('.day-timeline-row .day-assigned-title', (els) => els.map((e) => {
+  const titles = await page.$$eval('.dayr-row .dayr-name', (els) => els.map((e) => {
     const s = getComputedStyle(e);
     return {
       text: e.textContent,

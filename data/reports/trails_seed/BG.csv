@@ -1,0 +1,16 @@
+rank,curation_rank,title,ref,network,distance_km,popularity,pageviews_day,sitelinks,anchors,quality_score,portal_agreement,status,family_members,trip_id,osm_relation
+1,73.32,Камино България,,nwn,80.8,0.588,0,0,"Church St. St. Cyril and Methodius (2799/day, 10 m); Church of the Theotokos in Sozopol (2799/day, 328 m); Archaeological Museum (77/day, 50 m)",95,,needs_review,1,75681,21080289
+2,66.97,European long distance path E8 - part Bulgaria,E8,iwn,426.3,0.263,19,13,"Golyam Perelik (102/day, 524 m); Rhodope Mountains (102/day, 656 m); Trigrad Gorge (11/day, 235 m)",95,,needs_review,1,75393,8541760
+3,66.77,Sultans Trail Section 5: Sofia - Rhodope - Edirne,ST5,iwn,596.8,0.222,14,11,"National Assembly of the Republic of Bulgaria (500/day, 923 m); Rila Monastery Ecclesiastical and Historical Museum (150/day, 69 m); Sofia Metro (149/day, 213 m)",100,,needs_review,1,74935,19900770
+4,64.95,"Европейски пешеходен маршрут Е4, България",E4,iwn,235.6,0.206,45,15,"Seven Rila Lakes (57/day, 460 m); Seven Rila Lakes (55/day, 460 m); Seven Rila Lakes (55/day, 460 m)",95,,needs_review,1,73961,1144854
+5,63.5,ST701 Sofia - Mladost3,ST701,iwn,11.9,0.129,14,11,"Sofia (1407/day, 668 m); National Assembly of the Republic of Bulgaria (500/day, 46 m); Sofia Metro (149/day, 147 m)",100,,needs_review,1,75624,19900488
+6,61.68,ST424 Dimitrovgrad - Dragoman,ST424,iwn,17.9,0.076,14,0,,100,,needs_review,1,68028,19895086
+7,61.68,ST427 Bankya - Sofia,ST427,iwn,17.9,0.076,14,0,"National Assembly of the Republic of Bulgaria (500/day, 923 m); Sofia Metro (149/day, 213 m); St. Alexander Nevsky Square (127/day, 839 m)",100,,needs_review,1,75623,19898068
+8,61.68,ST501 Sofia - Aleko,ST501,iwn,16.4,0.076,14,0,"National Assembly of the Republic of Bulgaria (500/day, 923 m); Sofia Metro (149/day, 213 m); Alexander Nevsky Cathedral (127/day, 899 m)",100,,needs_review,1,75625,19900841
+9,61.68,ST702 Mladost3 - Red Cross,ST702,iwn,17.5,0.076,14,0,,100,,needs_review,1,75626,19901064
+10,61.68,ST703 Red Cross - Novi Han,ST703,iwn,11.2,0.076,14,0,,100,,needs_review,1,75627,19904138
+11,61.68,ST704 Novi Han - Paunovo,ST704,iwn,23.0,0.076,14,0,,100,,needs_review,1,75628,19904218
+12,61.68,ST705 Paunovo - Ihtiman,ST705,iwn,17.0,0.076,14,0,,100,,needs_review,1,75629,19905103
+13,61.68,ST708 Vetren - Septemvri,ST708,iwn,13.6,0.076,14,0,,100,,needs_review,1,75632,19908891
+14,61.68,ST709 Septemvri - Pazardzhik,,iwn,20.6,0.076,14,0,,100,,needs_review,1,75633,19908946
+15,61.68,ST710 Pazardzhik - Stambolijski,ST710,iwn,23.2,0.076,14,0,,100,,needs_review,1,75634,19910495

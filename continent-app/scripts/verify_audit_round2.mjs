@@ -103,22 +103,8 @@ try {
   if (pinRate && pinRate !== chipC.bg) fail(`map pin rating uses ${pinRate}, chip uses ${chipC.bg}`);
   else pass('map pin ratings share the rating colour');
 
-  const capC = await page.locator('.day-flow-mapcap').evaluate((el, fn) => {
-    const s = getComputedStyle(el);
-    let bgEl = el, bg = 'rgba(0, 0, 0, 0)';
-    while (bgEl && (bg === 'rgba(0, 0, 0, 0)' || bg === 'transparent')) {
-      bg = getComputedStyle(bgEl).backgroundColor; bgEl = bgEl.parentElement;
-    }
-    return {
-      family: s.fontFamily, size: parseFloat(s.fontSize), caps: s.textTransform,
-      contrast: eval(fn)(s.color, bg),
-    };
-  }, CONTRAST_FN);
-  if (capC.contrast < 4.5) fail(`map instruction contrast ${capC.contrast}:1`);
-  else pass(`map instruction contrast ${capC.contrast}:1 at ${capC.size}px`);
-  if (/mono|Menlo/i.test(capC.family) || capC.caps === 'uppercase') {
-    fail(`map instruction is still ${capC.caps} ${capC.family}`);
-  } else pass(`map instruction is set in ${capC.family.split(',')[0]}`);
+  // The wizard's map caption was asserted here until commit 6493177c took
+  // the landing map out altogether. Nothing left to measure.
 
   console.log('\n2. A saved plan reads as a row you can open');
   const rowInfo = await page.$$eval('.trip-saved-item', (els) => els.map((e) => ({
@@ -186,10 +172,8 @@ try {
   const card = page.locator('.trip-saved-main', { hasText: 'Salzburg day' }).first();
   await card.waitFor({ timeout: 90000 });
   await card.click();
-  const planHead = page.locator('.day-plan-collapse .day-collapse-head').first();
-  await planHead.waitFor({ timeout: 60000 });
-  const rows = page.locator('.day-timeline-row');
-  if (await rows.count() === 0) await planHead.click();
+  await page.locator('.dayws-tabs').waitFor({ timeout: 60000 });
+  const rows = page.locator('.dayr-row');
   await rows.first().waitFor({ timeout: 30000 });
   await page.waitForTimeout(5000); // give OSRM its answer and the map its settle
 
@@ -214,12 +198,12 @@ try {
     };
   }));
   const nums = pins.filter((p) => !p.stay).map((p) => p.n);
-  const timelineNums = await page.$$eval('.day-timeline-num', (els) => els.map((e) => e.textContent));
+  const timelineNums = await page.$$eval('.dayr-no', (els) => els.map((e) => e.textContent));
   if (new Set(nums).size !== nums.length) fail(`duplicate stop numbers on the map: ${nums.join(',')}`);
   else pass(`map numbers unique: ${nums.join(',')}`);
   if (nums.join(',') !== timelineNums.join(',')) {
-    fail(`map numbers ${nums.join(',')} do not match the timeline ${timelineNums.join(',')}`);
-  } else pass(`map and timeline agree: ${timelineNums.join(',')}`);
+    fail(`map numbers ${nums.join(',')} do not match the route list ${timelineNums.join(',')}`);
+  } else pass(`map and route list agree: ${timelineNums.join(',')}`);
   // Nothing may be buried: pin centres must stand at least a pin apart.
   let closest = Infinity;
   for (let i = 0; i < pins.length; i += 1) {

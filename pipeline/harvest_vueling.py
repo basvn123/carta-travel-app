@@ -46,6 +46,7 @@ import json, os, sys, time, threading, urllib.request, urllib.error, ssl, gzip
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import date
 from pathlib import Path
+from pipeline_io import atomic_write_json
 
 ROOT = Path(__file__).resolve().parents[1]
 CACHE_DIR = ROOT / "cache"
@@ -147,9 +148,7 @@ def _chunks(seq, n):
 def build_graph(limit=None):
     data = load_app_data()
     anchors = sorted(anchor_set(data))
-    AIRPORTS_CACHE.write_text(
-        json.dumps(_airport_meta(data, set(anchors)), ensure_ascii=False, indent=0),
-        encoding="utf-8")
+    atomic_write_json(AIRPORTS_CACHE, _airport_meta(data, set(anchors)), indent=0, ensure_ascii=False)
 
     graph = json.loads(GRAPH_CACHE.read_text(encoding="utf-8")) if GRAPH_CACHE.exists() else {}
     done = set(graph.pop("_done", []))
@@ -176,12 +175,12 @@ def build_graph(limit=None):
         done.add(o)
         if i % 20 == 0 or i == len(origins):
             out = dict(graph); out["_done"] = sorted(done)
-            GRAPH_CACHE.write_text(json.dumps(out, indent=0), encoding="utf-8")
+            atomic_write_json(GRAPH_CACHE, out, indent=0, ensure_ascii=True)
             print(f"  ...{i}/{len(origins)} origins probed, "
                   f"{len(graph)} with routes, flushed")
 
     out = dict(graph); out["_done"] = sorted(done)
-    GRAPH_CACHE.write_text(json.dumps(out, indent=0), encoding="utf-8")
+    atomic_write_json(GRAPH_CACHE, out, indent=0, ensure_ascii=True)
     edges = sum(len(v) for v in graph.values())
     print(f"route discovery complete: {len(graph)} Vueling origins, {edges} directed edges")
 
@@ -268,7 +267,7 @@ def harvest(limit=None):
             cache[key] = result
             done[0] += 1
             if done[0] % 50 == 0:
-                FARE_CACHE.write_text(json.dumps(cache, indent=0), encoding="utf-8")
+                atomic_write_json(FARE_CACHE, cache, indent=0, ensure_ascii=True)
                 print(f"  ...{done[0]}/{len(todo)} fetched, flushed")
         time.sleep(DELAY_S)
 
@@ -280,7 +279,7 @@ def harvest(limit=None):
             for _ in as_completed([ex.submit(run, job) for job in todo]):
                 pass
 
-    FARE_CACHE.write_text(json.dumps(cache, indent=0), encoding="utf-8")
+    atomic_write_json(FARE_CACHE, cache, indent=0, ensure_ascii=True)
     print(f"harvest complete: {len(cache) - 1} legs in cache")
 
 
@@ -371,7 +370,7 @@ def patch(dry_run=False):
         "days_undercut": tot_undercut,
         "harvested_from": date.today().isoformat(),
     }
-    APP_DATA.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
+    atomic_write_json(APP_DATA, data, indent=2, ensure_ascii=False)
     size_mb = APP_DATA.stat().st_size / 1e6
     print(f"patched Vueling fares: +{new_routes} new routes, {tot_added} day-prices added, "
           f"{tot_undercut} undercut existing, {tot_kept} kept")

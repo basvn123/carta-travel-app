@@ -1,0 +1,279 @@
+{
+  "id": "si-road-trip-julian-alps-passes",
+  "sourceId": "road-trip-slovenia-julian-alps-passes",
+  "slug": "si-road-trip-julian-alps-passes",
+  "title": "Julian Alps Passes: Vršič, Predel & Mangart",
+  "country": "Slovenia",
+  "countryCode": "SI",
+  "countries": [
+    {
+      "name": "Slovenia",
+      "code": "SI"
+    }
+  ],
+  "isMultiCountry": false,
+  "region": "Southern & Mediterranean Europe",
+  "regionKey": "southern-mediterranean",
+  "subRegion": "Gorenjska & Primorska — Upper Sava, Trenta and the Soča Valley",
+  "tripType": "Road Trips & Scenic Drives",
+  "tripTypeId": 5,
+  "tripTypeSlug": "road-trip",
+  "durationDays": 7,
+  "bestPeriod": {
+    "months": [
+      6,
+      7,
+      9,
+      10
+    ],
+    "monthNames": [
+      "June",
+      "July",
+      "September",
+      "October"
+    ],
+    "window": "Mid-June–early July & September–early October (all three passes reliably open)",
+    "note": null,
+    "avoid": "November–mid-May — Vršič is closed or chained-only, Mangart and Predel shut entirely; August brings Vršič shuttle-season congestion",
+    "raw": "Mid-June–early July & September–early October (all three passes reliably open)"
+  },
+  "budgetTier": "€€€",
+  "budgetTierRange": [
+    3,
+    3
+  ],
+  "budgetTierRaw": "€€€",
+  "budget": {
+    "currency": "EUR",
+    "totalEur": {
+      "low": 1150,
+      "high": 1750
+    },
+    "totalNote": "€1,150–€1,750 per person, excl. international flights",
+    "breakdown": {
+      "accommodation": {
+        "lowEur": 480,
+        "highEur": 760,
+        "note": "Bovec and Kranjska Gora mid-range; one splurge night in Bohinj"
+      },
+      "food": {
+        "lowEur": 230,
+        "highEur": 350,
+        "note": "Gostilna dinners €25–€40; Soča trout is the local extravagance"
+      },
+      "transport": {
+        "lowEur": 330,
+        "highEur": 480,
+        "note": "Rental, fuel, weekly e-vinjeta €16, Mangart toll €10, parking"
+      },
+      "activities": {
+        "lowEur": 110,
+        "highEur": 180,
+        "note": "Vintgar, Kobarid Museum, Boka viewpoint, optional rafting"
+      }
+    },
+    "perDayEur": {
+      "low": 164,
+      "high": 250
+    }
+  },
+  "profile": {
+    "difficulty": 2,
+    "difficultyLabel": "Moderate",
+    "difficultyNote": "2 — mostly driving, with a 1 h 30 Vintgar gorge boardwalk and a 40-minute walk to the Mangart Saddle",
+    "fitnessLevel": "Moderate",
+    "crowdLevel": null,
+    "familyFriendly": null,
+    "carRequired": null
+  },
+  "basecamps": [],
+  "gatewayAirport": "LJU — Ljubljana Jože Pučnik; 62 km / 50 min to Kranjska Gora via A2 and Route 201",
+  "gatewayAirportCode": "LJU",
+  "languages": [],
+  "currency": null,
+  "emergencyNumber": "112",
+  "coordinates": {
+    "lat": 46.0511,
+    "lon": 14.5051,
+    "precision": "country",
+    "matchedPlace": "Ljubljana",
+    "source": "country capital fallback"
+  },
+  "tags": [
+    "road-trip",
+    "julian-alps",
+    "vrsic-pass",
+    "mangart",
+    "soca-valley",
+    "mountain-passes",
+    "triglav-national-park",
+    "hairpins",
+    "vignette",
+    "alpine-driving"
+  ],
+  "summary": "Slovenia packs three genuinely serious alpine roads into an area you can cross in ninety minutes, and this week drives all of them properly rather than ticking them off. Vršič is the headline — 1,611 m, fifty numbered hairpins, several of them still surfaced in the original 1915 Russian-laid cobbles — but Mangart is the one that stays with you, a 12 km toll road drilled through five unlit tunnels to the highest asphalt in the country. Between the passes you get the Soča itself, a river the colour of glacier milk running past Trenta, Bovec and Kobarid, and a Predel crossing into Italy that takes twenty minutes and feels like a different century. It suits drivers who enjoy technical roads for their own sake, and who are content to spend an entire afternoon covering 40 km.",
+  "summaryGenerated": false,
+  "hook": null,
+  "snapshot": {},
+  "itinerary": [
+    {
+      "day": 1,
+      "title": "Ljubljana to Kranjska Gora, and Zelenci at dusk",
+      "morning": "Collect the car at LJU. Buy the weekly e-vinjeta before you leave the airport forecourt — the A2 begins immediately and enforcement is camera-based. Run the A2 to Jesenice, then Route 201 up the Sava valley.",
+      "afternoon": "Settle in Kranjska Gora and walk or drive the 4 km to the Zelenci nature reserve, where the Sava Dolinka rises out of an emerald spring pool. There is a small paid car park at the trailhead.",
+      "evening": "Dinner at Gostilna Pri Martinu in Kranjska Gora — a proper valley inn; order the ričet with smoked pork, or the beef goulash with buckwheat žganci.",
+      "dayStats": "62 km / 50 min; weekly e-vinjeta €16; A2 is fully vignette-covered; Zelenci parking €3.",
+      "sleep": "Hotel Kotnik, Kranjska Gora — small, family-run, free parking on site."
+    },
+    {
+      "day": 2,
+      "title": "Vršič: fifty hairpins and the Russian Chapel",
+      "morning": "Leave by 08:00 to have the cobbles to yourself. The 24 northern hairpins are numbered on stone markers; bend 8 carries the Russian Chapel, built in 1916 by prisoners of war who died in an avalanche while constructing this road. Park in the layby just past it.",
+      "afternoon": "At the 1,611 m summit, walk ten minutes up toward the Poštarski dom for the Prisojnik \"window\" view. Then descend the 26 southern hairpins into Trenta — this is where cobbles alternate with new asphalt and the drop-offs are unguarded. Stop at the Trenta source of the Soča (Izvir Soče), a 20-minute scramble with fixed cables.",
+      "evening": "Down the Soča road (Route 206) to Bovec. Eat at Gostilna Sovdat for Soča trout, or Thirsty River Brewery for a post-drive beer.",
+      "dayStats": "52 km / 4 h with stops; 50 hairpins; summit 1,611 m; max gradient 12%; no toll; ~1,100 m of descent into Trenta.",
+      "sleep": "Hotel Sanje ob Soči, Bovec — designer rooms, generous free parking, five minutes from town."
+    },
+    {
+      "day": 3,
+      "title": "Mangart, the highest asphalt in Slovenia",
+      "morning": "Drive Bovec to Log pod Mangartom, then onto the Mangartska cesta. Pay the €10 toll at the barrier. The five tunnels are unlit, unsigned and single-lane — headlights on, horn before entry, and give way to anything descending. Ascend in second gear.",
+      "afternoon": "Park at the km 9 lot (90 spaces; arrive before 10:00 in July–August or you will be turned back at the automatic barrier). Walk the 40 minutes to the Mangart Saddle at 2,055 m, with Jôf di Montasio and the Italian Julians filling the horizon. Descend using engine braking only; riding the brakes for 9 km will fade them.",
+      "evening": "Back in Bovec, walk to the Boka waterfall viewpoint layby on the road toward Žaga — Slovenia's highest falls, best in late afternoon when the west light hits the cliff face.",
+      "dayStats": "46 km / 3 h 30; Mangart toll €10; 12 km climb, 980 m ascent; 5 unlit tunnels; saddle 2,055 m; road open mid-June to November.",
+      "sleep": "Hotel Sanje ob Soči, Bovec (second night)."
+    },
+    {
+      "day": 4,
+      "title": "Predel into Italy, and back over the border",
+      "morning": "Take Route 203 up to the Predel Pass at 1,156 m — a short, well-surfaced climb past the ruined Predel fort and the Log pod Mangartom war cemetery. Cross into Italy at Cave del Predil.",
+      "afternoon": "Drop to Tarvisio on the SS54, then loop back via the SS13 and the Rateče border into Slovenia — a 90 km circuit that crosses two national borders without a single passport check. Stop at Lago del Predil for lunch on the water.",
+      "evening": "Return to Bovec via Vršič or the Soča road (choose the valley road if it has rained — the cobbles are slick). Dinner at Martinov Hram in Kobarid if you extend the loop south.",
+      "dayStats": "95 km / 2 h 45; Predel 1,156 m; Italian autostrade not used, so no Telepass needed; Slovenian vignette still required on return to A-roads.",
+      "sleep": "Hotel Hvala, Kobarid — moving base south; paid garage under the hotel."
+    },
+    {
+      "day": 5,
+      "title": "Kobarid, the Soča gorge and the Napoleon Bridge",
+      "morning": "The Kobarid Museum on the Isonzo Front is the best small war museum in the Alps — two hours, and it recontextualises every fortification you have driven past. Then walk the Kozjak waterfall loop from the Napoleon Bridge car park.",
+      "afternoon": "Drive the Route 102 south along the Soča toward Tolmin, stopping at the Tolmin gorges (Tolminska korita) — the lowest point of Triglav National Park at 180 m, and a striking contrast to yesterday's 2,055 m.",
+      "evening": "Dinner at Hiša Franko in Staro Selo, 3 km from Kobarid — Ana Roš's three-Michelin-star restaurant. Book months ahead, or eat superbly for a fifth of the price at Gostilna Breza in Kobarid.",
+      "dayStats": "55 km / 1 h 20; Tolmin gorge entry €8; Kobarid Museum €8; Kozjak loop 3.5 km / 1 h.",
+      "sleep": "Hotel Hvala, Kobarid (second night)."
+    },
+    {
+      "day": 6,
+      "title": "Over the Soriška planina to Bohinj",
+      "morning": "Take Route 403 from Podbrdo over the Soriška Planina saddle (1,277 m) — a quiet, wide, beautifully graded road with about a dozen open bends and no traffic. It drops you into the Selška valley.",
+      "afternoon": "Cross to Lake Bohinj via Bohinjska Bistrica. Drive the north shore road to Ukanc; the Savica waterfall car park is at the road's end. In peak summer Bohinj closes the Ukanc road to non-residents from mid-morning — arrive before 09:30 or use the Bohinj park-and-ride.",
+      "evening": "Sunset from the Church of St John the Baptist at the lake's eastern outlet, then dinner at Gostilna Rupa in Srednja vas for žlikrofi and Bohinj cheese.",
+      "dayStats": "78 km / 1 h 50; Soriška Planina 1,277 m; Bohinj parking €10–€15/day; Savica entry €4.",
+      "sleep": "Hotel Bohinj, Bohinjsko jezero — lakeside, underground parking included."
+    },
+    {
+      "day": 7,
+      "title": "Vintgar gorge and the run to Ljubljana",
+      "morning": "Drive to Zgornje Gorje for the Vintgar Gorge. Entry is timed-slot only and must be booked online; the 1.6 km boardwalk hangs over the Radovna river and ends at the Šum waterfall. First slot at 08:00 is the one worth having.",
+      "afternoon": "Bled for coffee at Slaščičarna Zima and a kremšnita, then the A2 south to Ljubljana. If you have time, stop at Radovljica's medieval core — the free car park sits just outside the walls.",
+      "evening": "Return the car at LJU with a full tank. Fuel at the Petrol station on the airport approach road.",
+      "dayStats": "82 km / 1 h 30; Vintgar €20 adult, timed entry; Bled parking €3/h; A2 vignette-covered.",
+      "sleep": "Departure, or Vander Urbani Resort, Ljubljana old town."
+    }
+  ],
+  "accommodationStrategy": [
+    {
+      "rank": 1,
+      "name": "Hotel Kotnik",
+      "style": "Family hotel",
+      "location": "Kranjska Gora",
+      "description": "Twelve rooms above one of the valley's better pizzerias, with free off-street parking directly outside — a real advantage in a resort where hotel garages cost €15 a night. It sits 400 m from the Vršič turn-off, so you can be on the first hairpin eight minutes after breakfast. €95–€135 a double.",
+      "booking": null,
+      "priceNote": null
+    },
+    {
+      "rank": 2,
+      "name": "Hotel Sanje ob Soči",
+      "style": "Design apartments",
+      "location": "Bovec",
+      "description": "Two nights here cover both the Vršič descent and the Mangart day without moving. Large gravel car park with room for a roof box, drying space for wet gear, and breakfast from 07:30 which is early enough to beat the Mangart barrier queue. €120–€180.",
+      "booking": null,
+      "priceNote": "€120–€180"
+    },
+    {
+      "rank": 3,
+      "name": "Hotel Hvala",
+      "style": "Historic hotel",
+      "location": "Kobarid",
+      "description": "The Soča valley's grande dame, on the main square, with a covered garage — a genuine consideration in Kobarid where the square fills with tour coaches by 10:00. Walking distance to the Kobarid Museum and the Napoleon Bridge trailhead, and Hiša Franko is a nine-minute drive. €130–€190.",
+      "booking": null,
+      "priceNote": "€130–€190"
+    }
+  ],
+  "logistics": {
+    "connectivity": "Slovenia is in the EU roaming zone — your EU plan works at domestic rates. Coverage is good in the valleys and drops entirely in the Mangart tunnels and the Vršič north face. Download offline maps; nav apps routinely mis-time these roads.",
+    "emergency": "112 for everything, including the Slovenian Mountain Rescue Association (GRZS). Rescue is not free for non-members; a €30 GRZS card or comprehensive alpine cover is strongly advised. Road assistance is 1987 (AMZS).",
+    "weather": "The Soča valley gets Mediterranean moisture funnelled into alpine terrain, producing some of Europe's highest rainfall. Afternoon thunderstorms are near-daily in July. A **foehn** wind can lift temperatures 10°C in an hour, and autumn fog fills the Trenta valley below 800 m while the passes sit in sunshine.",
+    "bookingWindows": "Vintgar Gorge requires a timed online ticket — book 3–7 days ahead in summer. Hiša Franko takes reservations 2–3 months out. Bovec and Kobarid hotels fill for the late-July Soča festivals. Vršič itself needs no booking.",
+    "money": "Euro. Cards are accepted essentially everywhere, including the Mangart toll booth and mountain huts. Keep €20 in coins for parking meters and gorge turnstiles. Tipping is 5–10%, rounded.",
+    "transportRules": "The e-vinjeta is plate-registered and mandatory on all motorways and expressways — verify your rental already has one and that it is registered to the correct plate. Headlights are mandatory 24/7. Winter equipment (winter tyres or chains carried) is legally required 15 November–15 March and any time there is snow. Alcohol limit 0.05%.",
+    "permits": "Most of this route lies inside Triglav National Park. Wild camping and campervan overnighting are banned within the park and actively fined. Drones require permission from the park authority and are prohibited over Vintgar, Bohinj and Vršič. Off-road driving on forest tracks is illegal.",
+    "health": "Tap water is excellent throughout and free at village fountains. **Tick-borne encephalitis is endemic in Slovenia** — it is one of Europe's highest-incidence countries; consider vaccination if you plan forest walking. The Soča is 8–12°C even in August; cold shock is the real swimming risk. Altitude on this route tops out at 2,055 m on foot, which needs no acclimatisation.",
+    "gettingThere": null,
+    "other": []
+  },
+  "proTips": [
+    "Drive Vršič **north to south, before 09:00**. The cobbled bends are in shade and the descent hairpins into Trenta open toward the light. After 10:00 the pass fills with motorcycle groups and the free shuttle, and passing on the cobbles becomes genuinely unpleasant.",
+    "Reach the Mangart barrier before 10:00. The km 9 car park has 90 spaces and an automatic barrier that simply stops admitting cars when full — arriving at midday in August can mean a wasted €10 and a turnaround on a single-track road.",
+    "Descending Mangart and Vršič, select second gear and stay off the brake pedal. Brake fade on a 980 m descent is the single most common cause of rental damage claims in this region.",
+    "Check promet.si the morning of each pass day. It carries live status for Vršič, Mangart and Predel — including the \"chains required\" flag that appears surprisingly often in September.",
+    "Buy the weekly e-vinjeta rather than the monthly even for a nine-day trip if you can stay off motorways for the extra days: €16 versus €32. Confirm the rental's existing vignette expiry date before you assume you are covered.",
+    "Vršič's summit parking has been restricted through the 2026 season. Park at the Erjavčeva koča layby just below the summit on the north side, or use the free shuttle from Kranjska Gora and drive the pass on a different day.",
+    "The Predel loop into Italy is the cheapest way to add a country: fuel is often €0.10–€0.15/litre cheaper on the Italian side at Tarvisio, and the Tarvisio Saturday market is worth timing for.",
+    "In Bohinj, the Ukanc road closes to non-resident traffic on peak days. Park at the Bohinjsko jezero lot and take the free Bohinj Card shuttle instead of circling.",
+    "If it has rained, take the valley road back from Trenta rather than re-crossing Vršič. Wet historic cobbles on a 12% gradient offer roughly half the grip of the adjacent asphalt."
+  ],
+  "typeSpecific": {
+    "raw": {
+      "Total distance": "~620 km over 7 days. Deliberately short. The Vršič day is 52 km and takes four hours; treat any nav estimate on these roads as roughly 60% of reality.",
+      "Vršič Pass (Route 206), 1,611 m": "Slovenia's highest road pass. 50 numbered hairpins — 24 on the Kranjska Gora side, 26 on the Trenta side — with several still cobbled in the original Russian-prisoner masonry, notably bends 8, 17 and 22. Gradients reach 12%, the road is 5 m wide in places with no barrier, and the cobbles are treacherous when wet or when leaf-covered in October. Free to drive; no toll, no vignette required (it is a regional road).",
+      "Vršič 2026 traffic regime": "control barriers monitoring flow were introduced 15 June 2026 but do **not** charge a toll — through traffic remains free for cars, motorcycles and bicycles. Summit parking was suspended for part of the 2026 season, with a managed 117-space lot reopening 1 September. A free shuttle runs Kranjska Gora–Bovec over the pass 1 June–30 September, with higher frequency 26 June–31 August.",
+      "Mangart Saddle road (Mangartska cesta)": "12 km, ~980 m of ascent, five unlit tunnels hacked straight into rock, some barely single-vehicle. Toll €10 per car (motorbikes and coaches up to 35 seats included; trailers banned). Typically open mid-June to November depending on snow. In 2026 rockslide damage means vehicles reach only the km 9 car park (90 spaces, automatic barrier), from which the saddle at 2,055 m is a waymarked 40-minute walk.",
+      "Predel Pass (Route 203 / Italian SS54), 1,156 m": "the quiet one. A 20-minute climb from Log pod Mangartom to the Italian border above Cave del Predil, past the Predel fort. Open year-round in principle but frequently snow-closed. Crossing into Italy is a Schengen non-event — no booth, no check.",
+      "Vignette & tolls": "Slovenia requires an **e-vinjeta**, registered to the plate — no windscreen sticker since 2022. 2026 prices: weekly €16, monthly €32, annual €117.50 for a standard car under 1.3 m front-axle height; taller vehicles and camper vans pay double. Buy at evinjeta.dars.si or any petrol station. Fines run to €300. The Karavanke tunnel to Austria is €9 extra and is not covered by the vignette.",
+      "Car rental & cross-border": "Slovenian and Italian rentals both work. Crossing into Italy on the Predel is routinely permitted, but a Green Card and written cross-border permission are still needed for Croatia, Bosnia, Serbia or Montenegro; Ljubljana agencies charge €30–€80. One-way LJU-to-Venice or LJU-to-Trieste drops start at €150. Take a manual with real engine braking — an underpowered automatic on the Vršič descent will cook its brakes.",
+      "Fuel": "last fuel before Vršič northbound is Kranjska Gora; southbound it is Bovec. Nothing between. Bovec's station closes around 20:00 and is closed Sunday afternoons out of season."
+    },
+    "surface": null,
+    "distanceKm": 620,
+    "elevationM": null,
+    "verticalM": null,
+    "technicalRating": null,
+    "transitPass": null,
+    "hutBooking": null,
+    "liftNetwork": null,
+    "snowReliability": null,
+    "windConditions": null,
+    "gpxReady": null,
+    "bookingTimeline": null,
+    "audience": null
+  },
+  "packingNotes": [],
+  "whatCouldGoWrong": [],
+  "sources": {
+    "verified": "Vršič Pass altitude (1,611 m), ~50 hairpins, partly cobbled surface, and the 2026 traffic regime — control barriers from 15 June 2026 with no toll, free Kranjska Gora–Bovec shuttle 1 June–30 September, summit parking suspended until 31 August with a 117-space lot reopening 1 September; Mangart road 2026 €10 toll, five unlit tunnels, 12 km / 980 m ascent, mid-June to November season, and vehicles limited to the km 9 car park (90 spaces) after rockslide damage; Slovenian e-vinjeta 2026 prices (weekly €16, monthly €32, annual €117.50) and the €9 Karavanke tunnel charge.",
+    "confidenceNotes": "The Mangart km 9 restriction is a live rockslide consequence and could either extend to the saddle or tighten further — re-verify on tnp.si and promet.si before publishing. Vršič's 2026 parking arrangement and shuttle schedule are a new scheme and likely to change for 2027. Mangart and Predel have no fixed opening dates; both are snow-dependent and the \"mid-June\" figure reflects the 2026 opening only. Vintgar Gorge pricing and timed-entry rules are revised annually. Hiša Franko's status and booking window should be re-checked. Mangart Saddle altitude is cited variously as 2,055 m (road/saddle) and 2,072 m in older sources — the 2,055 m figure is the current one."
+  },
+  "verifyFlags": [],
+  "verifyFlagCount": 0,
+  "volatilePricing": false,
+  "wordCount": 3106,
+  "dataVintage": 2026,
+  "provenance": {
+    "batch": "southern-mediterranean",
+    "sourceFile": "carta-dataset/trips/road-trip-slovenia-julian-alps-passes.md",
+    "sourceFormat": "md with '## Metadata' bullet block (one file per trip)",
+    "sourceId": "road-trip-slovenia-julian-alps-passes",
+    "ingestedAt": "2026-09-02",
+    "synthesized": false
+  }
+}

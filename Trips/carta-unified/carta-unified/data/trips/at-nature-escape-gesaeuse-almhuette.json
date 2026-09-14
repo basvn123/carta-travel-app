@@ -1,0 +1,319 @@
+{
+  "id": "at-nature-escape-gesaeuse-almhuette",
+  "sourceId": "at-nature-gesaeuse-almhuette",
+  "slug": "at-nature-escape-gesaeuse-almhuette",
+  "title": "A Self-Catering Week in the Gesäuse Gorge",
+  "country": "Austria",
+  "countryCode": "AT",
+  "countries": [
+    {
+      "name": "Austria",
+      "code": "AT"
+    }
+  ],
+  "isMultiCountry": false,
+  "region": "Western & Central Europe",
+  "regionKey": "western-central",
+  "subRegion": "Gesäuse National Park, Ennstal Alps, Styria",
+  "tripType": "Nature Escapes & Cabin Stays",
+  "tripTypeId": 9,
+  "tripTypeSlug": "nature-escape",
+  "durationDays": 7,
+  "bestPeriod": {
+    "months": [
+      6,
+      7,
+      8,
+      9
+    ],
+    "monthNames": [
+      "June",
+      "July",
+      "August",
+      "September"
+    ],
+    "window": null,
+    "note": "The Alm access track is unploughed and closed by snow from roughly late October to April; June evenings are still cold enough for the wood stove.",
+    "avoid": null,
+    "raw": null
+  },
+  "budgetTier": "€€",
+  "budgetTierRange": [
+    2,
+    2
+  ],
+  "budgetTierRaw": "€€",
+  "budget": {
+    "currency": "EUR",
+    "totalEur": {
+      "low": 680,
+      "high": 950
+    },
+    "totalNote": null,
+    "breakdown": {
+      "accommodation": {
+        "lowEur": 280,
+        "highEur": 380,
+        "note": null
+      },
+      "food": {
+        "lowEur": 180,
+        "highEur": 260,
+        "note": null
+      },
+      "transport": {
+        "lowEur": 120,
+        "highEur": 180,
+        "note": null
+      },
+      "activities": {
+        "lowEur": 100,
+        "highEur": 130,
+        "note": null
+      }
+    },
+    "perDayEur": {
+      "low": 97,
+      "high": 136
+    }
+  },
+  "profile": {
+    "difficulty": 3,
+    "difficultyLabel": "Active",
+    "difficultyNote": null,
+    "fitnessLevel": "Active",
+    "crowdLevel": "Low",
+    "familyFriendly": false,
+    "carRequired": true
+  },
+  "basecamps": [
+    "Johnsbach"
+  ],
+  "gatewayAirport": "Graz (GRZ)",
+  "gatewayAirportCode": "GRZ",
+  "languages": [
+    "German"
+  ],
+  "currency": "EUR",
+  "emergencyNumber": "112",
+  "coordinates": {
+    "lat": 47.0673,
+    "lon": 15.442,
+    "precision": "gateway",
+    "matchedPlace": "Graz",
+    "source": "geonames (geonamescache, cities > 15k)"
+  },
+  "tags": [
+    "self-catering",
+    "alm-hut",
+    "dark-sky",
+    "gorge",
+    "wood-stove",
+    "wildlife"
+  ],
+  "summary": "Seven off-grid nights in a self-catering Almhütte above the Enns gorge, splitting wood, hauling water and watching chamois on the Xeis crags.",
+  "summaryGenerated": false,
+  "hook": "Gesäuse is Austria's most vertical national park: the Enns River saws a green-white gorge straight through the limestone Xeis massif, and the side valleys above it hide a scatter of rentable Almhütten with no electricity, no neighbours and a wood stove that is the only heat you get. This week is not a hike with a hut attached — it is a hut with hikes attached. You haul your own water, split your own kindling, and the payoff is a night sky over the Johnsbachtal that most of Austria lost fifty years ago.",
+  "snapshot": {
+    "Country": "Austria",
+    "Base(s)": "A self-catering Almhütte in the Johnsbachtal, above Johnsbach (7 nights)",
+    "Trip Type": "Nature Escapes & Cabin Stays",
+    "Duration": "7 days",
+    "Best Period": "June – September",
+    "Budget Tier": "€€",
+    "Total Distance / Terrain": "approx. 45–60 km walking, 2,200–2,800 m cumulative ascent; forestry track, alpine meadow, gorge path",
+    "Getting There": "Fly to Graz (GRZ), train to Admont via Selzthal, then a pre-arranged pickup or taxi up the Johnsbachtal (no bus serves the upper valley)",
+    "Who It Suits": "Self-sufficient couples or small groups happy to fetch water, feed a fire and go two days without a shower"
+  },
+  "itinerary": [
+    {
+      "day": 1,
+      "title": "Gstatterboden to the Alm",
+      "morning": "Train from Graz to Admont via Selzthal, then a taxi or the pre-arranged hut owner's pickup along the B146 to Gstatterboden, where the road turns up the Johnsbachtal. Buy final groceries in Admont before you leave — this is your last real shop for a week.",
+      "afternoon": "The last stretch to the hut is a narrow, partly gravel forestry road that a normal car manages in dry summer conditions; after rain the final switchbacks are better done in a vehicle with good clearance, and the last 15–20 minutes is a walk-in with your packs from the parking pull-out, since no vehicle is left running at the hut itself. Light the wood stove, find the spring, learn the composting toilet.",
+      "evening": "No signal up here beyond one bar near the ridge. Cook on the wood stove, read by gas lamp, watch the gorge walls go black.",
+      "dayStats": "4 km walk-in with packs, 220 m ascent. No phone signal at the hut; nearest reliable signal is on the ridge path above, 25 minutes up.",
+      "sleep": null
+    },
+    {
+      "day": 2,
+      "title": "Settling in: the Johnsbachtal loop",
+      "morning": "Short orientation walk down to Johnsbach village — its plain 15th-century church, the mountain guides' cemetery, and the small Alpine Club information point. Confirm your firewood allowance with the hut owner if it isn't already stacked.",
+      "afternoon": "Loop back via the Kölblwirt inn, useful as a fallback meal if you don't want to cook, then up through larch pasture to the hut. Split and stack a day's wood — you'll need it.",
+      "evening": "Dinner from your carried supplies. First proper dark-sky test: step outside once your eyes adjust.",
+      "dayStats": "9 km, 350 m ascent/descent. Grade easy, gravel lane and meadow path.",
+      "sleep": null
+    },
+    {
+      "day": 3,
+      "title": "Haindlkarhütte and the Xeis balcony",
+      "morning": "Climb the marked path from Johnsbach toward the Haindlkarhütte (Alpine Club hut, seasonal refreshments), a steady pull through spruce forest into dwarf pine.",
+      "afternoon": "From the hut terrace the Xeis crest — Hochtor, Planspitze — fills the skyline; chamois are routinely visible on the scree bands above. Descend the same path, refilling water bottles at the hut's spring tap.",
+      "evening": "Wood-stove stew. Watch for bats working the meadow at dusk.",
+      "dayStats": "14 km, 950 m ascent/descent. Grade moderate, well-marked alpine path, no technical exposure.",
+      "sleep": null
+    },
+    {
+      "day": 4,
+      "title": "Rest day and resupply run",
+      "morning": "Deliberately slow. Drive or get a lift down to Admont for the one resupply run of the week — go before 12:00 on a weekday. Austrian shops shut for good by 18:30 on weekdays and by early afternoon on Saturday, and everything, without exception, is closed on Sunday.",
+      "afternoon": "Wander Admont itself: the Benedictine Admont Abbey and its library are worth the detour if you've never seen it. Back at the hut by mid-afternoon.",
+      "evening": "Restock the woodpile, hang washing, do nothing.",
+      "dayStats": "Effectively a rest day; under 3 km on foot at the hut end.",
+      "sleep": null
+    },
+    {
+      "day": 5,
+      "title": "The Enns gorge trail",
+      "morning": "Drive to Gstatterboden and pick up the Gesäuse gorge path, which runs along the true right bank of the Enns beneath the Hochtor and Planspitze cliffs — the park's signature walk, with the river running turquoise-white over limestone slabs below.",
+      "afternoon": "Continue toward the Kummerbrücke area and back, watching the cliffs for peregrine falcons, which nest on these walls. Return to the hut by late afternoon; the forestry track access closes to vehicle traffic after dark in places, so time your return.",
+      "evening": "A simpler dinner — you'll be tired from the heat down in the gorge, which sits noticeably warmer than the hut.",
+      "dayStats": "16 km, 250 m ascent/descent. Grade easy-moderate, riverside path, some exposed sections with fixed cable near the narrows.",
+      "sleep": null
+    },
+    {
+      "day": 6,
+      "title": "Kölbleck ridge and the deer rut listening walk",
+      "morning": "Climb from the hut onto the Kölbleck ridge for open views across the Ennstal to the Gesäuse's northern peaks, including the Admonter Reichenstein.",
+      "afternoon": "Descend through the Kalktal side valley, watching the treeline for red deer — in late September, stags roar across the valley at dusk.",
+      "evening": "Last full evening — finish the firewood, pack out every scrap of rubbish you've generated all week; nothing is collected up here.",
+      "dayStats": "17 km, 900 m ascent/descent. Grade moderate-demanding, some steep forest sections.",
+      "sleep": null
+    },
+    {
+      "day": 7,
+      "title": "Departure",
+      "morning": "Clean the hut properly — ash out, floor swept, toilet serviced per the owner's instructions — and carry down every bag of rubbish and recycling with you; there is no bin.",
+      "afternoon": "Drive or taxi to Admont, train back to Graz via Selzthal.",
+      "evening": "Flight home from Graz.",
+      "dayStats": "4 km walk-out with packs, then transfer day.",
+      "sleep": null
+    }
+  ],
+  "accommodationStrategy": [
+    {
+      "rank": 1,
+      "name": "The Almhütte, Johnsbachtal",
+      "style": "Self-catering Alm hut",
+      "location": "above Johnsbach",
+      "description": "The whole point of this trip: a single, isolated, wood-heated hut booked through Erlebnisregion Gesäuse's short list of self-catering Alm properties in the Johnsbachtal and around Weng im Gesäuse. Confirm before booking exactly what's included — bedding is often not provided, only a mattress, so bring or hire a sleeping bag and liner. Ask specifically about the water source (piped spring vs. cistern) and whether firewood is stacked or you split your own.",
+      "booking": "10–12 weeks ahead for July–August.",
+      "priceNote": "€55–€90 per night for the whole hut"
+    },
+    {
+      "rank": 2,
+      "name": "Kölblwirt, Johnsbach",
+      "style": "Village inn",
+      "location": "valley floor",
+      "description": "Not where you sleep, but worth knowing as your one nearby fallback for a cooked meal, a hot shower arrangement if the hut's is basic, or a place to wait out a bad-weather afternoon. Useful psychologically as much as practically: a 20-minute walk from most Johnsbachtal Alm huts.",
+      "booking": "no booking needed, but check it's open — smaller Gasthöfe close one weekday.",
+      "priceNote": "€15–€30 for a meal"
+    },
+    {
+      "rank": 3,
+      "name": "A guesthouse in Admont",
+      "style": "Guesthouse",
+      "location": "valley town",
+      "description": "Book one night here either side of the Alm stay if your flight times are tight or you want a proper shower and a supermarket at hand before or after a week without either. Admont also has the region's best selection of shops and a pharmacy, useful for topping up first-aid supplies.",
+      "booking": "2–3 weeks ahead.",
+      "priceNote": "€70–€110 per night with breakfast"
+    }
+  ],
+  "logistics": {
+    "connectivity": null,
+    "emergency": "112 pan-European; Austrian mountain rescue (Bergrettung) **140**; the hut owner's number should be saved before you lose signal.",
+    "weather": "The gorge traps heat and the ridges trap wind; afternoon thunderstorms build fast over the Xeis massif in summer — start exposed ridge walks early.",
+    "bookingWindows": null,
+    "money": "Cards work in Admont; carry cash for the hut deposit, firewood top-ups and the Gasthof.",
+    "transportRules": null,
+    "permits": null,
+    "health": null,
+    "gettingThere": null,
+    "other": [
+      {
+        "label": "Isolation, specifically",
+        "text": "No phone signal at the hut itself; the nearest doctor is in Admont (approx. 25–30 minutes by car); the nearest shop is Admont's Nah&Frisch or Spar."
+      },
+      {
+        "label": "Foraging",
+        "text": "Outside the national park boundary, Styrian law allows personal mushroom picking up to roughly 2 kg per person per day. Inside the Gesäuse National Park itself — which includes most of the Johnsbachtal slopes — picking anything, mushrooms included, is prohibited; this is enforced by park rangers, not a courtesy rule."
+      },
+      {
+        "label": "Fire",
+        "text": "Open fires outside the hut's own stove and any designated ring are prohibited under Austrian forest law without landowner permission, and are banned outright within the national park. The wood stove indoors is the only fire you get."
+      },
+      {
+        "label": "Water and waste",
+        "text": "Treat the spring supply as untreated — boil or filter if you have any doubt after heavy rain. There is no rubbish collection: everything you bring in, you carry out, including food waste that could draw wildlife to the hut."
+      },
+      {
+        "label": "Opening hours",
+        "text": "Austrian shops close by 18:30 on weekdays, early on Saturday, and are shut all day Sunday — plan the one resupply trip around this, not around it being convenient."
+      }
+    ]
+  },
+  "proTips": [
+    "Ask the hut owner for the water source before booking. A piped spring is reliable in a dry August; a rain-fed cistern is not.",
+    "Do the single resupply run on Day 4, not Day 1 — you arrive with enough for two days, and shopping mid-week means fresher bread and no rush before the long drive up.",
+    "Time the Enns gorge path for morning; by early afternoon the valley floor is noticeably hotter than the hut, and the light on the limestone walls is better before noon.",
+    "Bring a head torch stronger than you think you need — Alm huts use gas or battery lamps, and the walk to the composting toilet at 2 a.m. is genuinely dark.",
+    "If you're here in the second half of September, sit outside near dusk on the Kölbleck side and listen for the stags; you don't need to hike far to hear the rut.",
+    "Ask about buying pre-split firewood at the hut rather than relying only on what's stacked — a week's stove use burns more than first-timers expect.",
+    "Check trail-condition notices at the Gesäuse National Park visitor centre in Admont before the Kölbleck ridge day; a wet week makes it slick."
+  ],
+  "typeSpecific": {
+    "raw": {
+      "Total Distance / Terrain": "approx. 45–60 km walking, 2,200–2,800 m cumulative ascent; forestry track, alpine meadow, gorge path",
+      "Who It Suits": "Self-sufficient couples or small groups happy to fetch water, feed a fire and go two days without a shower"
+    },
+    "surface": "approx. 45–60 km walking, 2,200–2,800 m cumulative ascent; forestry track, alpine meadow, gorge path",
+    "distanceKm": 45,
+    "elevationM": null,
+    "verticalM": null,
+    "technicalRating": null,
+    "transitPass": null,
+    "hutBooking": null,
+    "liftNetwork": null,
+    "snowReliability": null,
+    "windConditions": null,
+    "gpxReady": null,
+    "bookingTimeline": null,
+    "audience": "Self-sufficient couples or small groups happy to fetch water, feed a fire and go two days without a shower"
+  },
+  "packingNotes": [
+    "A warm sleeping bag or liner — bedding is frequently not supplied in self-catering Alm huts, even in July.",
+    "A head torch, spare batteries, and a lighter or matches for the stove.",
+    "A day pack for hut resupply, plus a proper hiking pack for the walk-in itself.",
+    "Water purification tablets or a filter as backup for the spring.",
+    "Sturdy boots for the gorge path's cable sections and the Kölbleck's rougher ground.",
+    "Bin bags for carrying out all rubbish — you will generate more than you expect.",
+    "Tick repellent and a tick-removal tool; Styria is a TBE-endemic region and vaccination is worth discussing with a travel doctor before you go.",
+    "Binoculars for chamois on the Xeis crags and peregrines on the gorge walls.",
+    "Cash in small denominations for the hut deposit and any village Gasthof meals.",
+    "A basic first-aid kit — the nearest doctor is a 25–30 minute drive away."
+  ],
+  "whatCouldGoWrong": [
+    "**The access track is washed out after heavy rain.** Fallback: park at the lower pull-out and treat the last stretch as a longer walk-in; tell the hut owner in advance.",
+    "**You misjudge firewood and run low mid-week.** Fallback: most Alm owners keep a small reserve stack for this — ask in advance whether extra wood is available on request.",
+    "**A thunderstorm traps you on the Kölbleck ridge.** Fallback: descend immediately via the nearest marked path into the Kalktal rather than continuing along the exposed crest; there is no shelter on the ridge itself.",
+    "**Someone gets sick or hurt with no signal at the hut.** Fallback: know the short walk up to the ridge point where signal returns, and carry the Bergrettung number written down, not just saved on a phone that may be dead.",
+    "**The Sunday closing catches you out and you're low on food.** Fallback: Kölblwirt in Johnsbach serves meals most days even when shops are shut; treat it as your emergency kitchen, not your default one."
+  ],
+  "sources": {
+    "verified": null,
+    "confidenceNotes": null
+  },
+  "verifyFlags": [],
+  "verifyFlagCount": 0,
+  "volatilePricing": false,
+  "wordCount": 2094,
+  "dataVintage": 2026,
+  "provenance": {
+    "batch": "western-central",
+    "sourceFile": "cartatripsv1/trips/at-nature-gesaeuse-almhuette.md",
+    "sourceFormat": "md+yaml-frontmatter (one file per trip)",
+    "sourceId": "at-nature-gesaeuse-almhuette",
+    "ingestedAt": "2026-09-02",
+    "synthesized": false
+  }
+}

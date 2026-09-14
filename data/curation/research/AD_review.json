@@ -1,0 +1,64 @@
+{
+  "iso2": "AD",
+  "country": "Andorra",
+  "checked_at": "2026-08-17",
+  "beaches": {
+    "wrong": [],
+    "missing": [],
+    "order": [
+      "Nothing to rank. Andorra is landlocked, has no coastline and no EEA designated bathing waters, so a beach count of 0 is the correct answer and the empty list is the right output."
+    ]
+  },
+  "mountains": {
+    "wrong": [
+      {
+        "name": "Serra d'Enclar",
+        "class": "park_or_area",
+        "why": "A serra is a mountain RANGE, not a summit. Serra d'Enclar is the massif in south-west Andorra bounded by the Montaner, Valira del Nord and Gran Valira rivers; its own high point is a separate named peak, Bony de la Pica (2,404 m). Ranking the range as a mountain also double-counts it against Pic d'Enclar (rank 9, 2,382 m), which is one of the summits inside it. The snapshot coordinate 42.51417, 1.48333 is a range centroid rounded to five decimals of a whole-arcminute value, which is a tell for an area centroid rather than a surveyed summit.",
+        "source_url": "https://ca.wikipedia.org/wiki/Serra_d'Enclar"
+      },
+      {
+        "name": "Serra Airosa",
+        "class": "park_or_area",
+        "why": "Same family as Serra d'Enclar: a named ridge/serra above the Estanys de la Pera, not a peak. It sits at rank 10, above several genuine summits, on the strength of a Commons photo whose subject is actually the Estany Petit de la Pera lake rather than any summit.",
+        "source_url": "https://ca.wikipedia.org/wiki/Serra_Airosa"
+      },
+      {
+        "name": "Cylindre d'Escobes",
+        "class": "not_notable",
+        "why": "Rank 17 with no Wikipedia article in any language and no image, unlike every other entry above it. The name is French-formed ('Cylindre d') while the entire rest of the Andorran list is Catalan, and its coordinates 42.60787, 1.73264 are 0.4 km from Pic d'Escobes (rank 5) on the Andorra-France border ridge, so it is either a subsidiary rock tower of that peak or a French-side OSM label that crossed the border. Either way it is not an independent Andorran mountain a traveller would seek out.",
+        "source_url": "https://ca.wikipedia.org/wiki/Pic_d'Escobes"
+      }
+    ],
+    "missing": [
+      {
+        "name": "Coma Pedrosa (Pic de Coma Pedrosa)",
+        "qid": "Q62467",
+        "lat": 42.5918057,
+        "lon": 1.44365,
+        "why": "The highest mountain in Andorra at 2,942 m, the country's roof, the centrepiece of the Comapedrosa Valleys communal nature park above Arinsal, and the single peak that belongs on an Andorra country card. It is absent from the file entirely, not merely ranked low. Wikidata: instance of mountain (Q8502), country Andorra (Q228), elevation 2,942 m. A Mountains tab for Andorra without Coma Pedrosa is the same class of failure as a Portugal Beaches tab without Praia da Marinha.",
+        "source_url": "https://www.wikidata.org/wiki/Q62467",
+        "verified": true
+      },
+      {
+        "name": "Pic de Casamanya",
+        "qid": "Q3030915",
+        "lat": 42.587,
+        "lon": 1.5703,
+        "why": "2,740 m, in the geographic centre of the country between the parishes of Ordino and Canillo. It is Andorra's signature day hike and best-known 360-degree viewpoint, reachable in about two hours and 760 m of ascent from the Coll d'Ordino road pass, which makes it far more useful to a traveller than most of the remote border summits the file does list. Absent from the file entirely. Wikidata: mountain (Q8502), Andorra (Q228), 2,750 m.",
+        "source_url": "https://www.visitordino.com/es/que-hacer/@@route_view/pic-de-casamanya",
+        "verified": true
+      }
+    ],
+    "order": [
+      "Pic de l'Estanyo at rank 1 is a real and respectable summit (2,915 m, among the country's three highest) but it cannot be the top pick while the actual highest peak, Coma Pedrosa, is missing from the file. The number 1 slot is only correct by default.",
+      "The ranking is dominated by proximity to two catalogue destinations rather than by fame. Seven of the top ten are within 8 km of either 'Soldeu (Vall d'Incles)' or 'Madriu-Perafita-Claror Valley'; the entire western half of the country, which is exactly where Coma Pedrosa and the Comapedrosa park are, contributes nothing above rank 9. The near.km field looks like it is feeding the score, so peaks near a seeded destination win and peaks near Arinsal or La Massana, which are not seeded, lose.",
+      "Alt del Griu and Pic Alt del Cubil share an identical score of 0.830 with Pic del Sirvent, yet the first two are tier 1 and the third is tier 2. A tie broken silently by sort order should not decide tier membership; ties at the tier boundary need an explicit tiebreak or all three should sit in the same tier.",
+      "Monturull at rank 3 is a genuine 2,761 m summit but it sits on the Andorra-Spain border in the Cerdanya, so it will also be claimable by ES. It is correct to list it under AD, but the pair should be deduplicated deliberately rather than by accident.",
+      "Pic d'Enclar at rank 9 should outrank Serra d'Enclar at rank 16 and, once the range row is deleted, will do so naturally."
+    ]
+  },
+  "counts_verdict": "Half right. 0 beaches is exactly correct and should stay 0. 18 mountains is a defensible depth for a 468 km2 country, but 7 tier-1 entries is too generous when the two peaks that actually define Andorran mountain tourism, Coma Pedrosa and Casamanya, are both absent: the tab shows seven top picks and misses the two that matter. Tier 1 of 4-5 with Coma Pedrosa and Casamanya inserted at ranks 1 and 3 would be both shorter and far more useful. Coverage skews heavily to the eastern and southern border ridges; the Comapedrosa massif in the north-west is a hole in the harvest, not a genuine absence of mountains.",
+  "top_pick_verdict": "No. top_mountain is 'Pic de l'Estanyo', which is a fine peak but not the one on any Andorran postcard, tourist board homepage or summit-bagger's list. The country card should be Coma Pedrosa (Q62467, 42.5918057, 1.44365), Andorra's 2,942 m high point. Casamanya (Q3030915) would be the better pick if the card wants a peak an average visitor can actually climb. top_beach is correctly null.",
+  "notes": "Andorra's problem is not junk rows, it is a hole. Unlike GB or FR the list contains almost no non-mountains: the three flagged entries are two ridges and one probable subsidiary rock, and everything else is a real Pyrenean summit with a Catalan Wikipedia article and a Commons image. What is broken is recall. The country's highest peak and its most-climbed peak are both simply not in the file, and the near.city distribution shows why: the harvest clustered around seeded destinations (Soldeu, Madriu, Andorra la Vella) and never reached Arinsal, La Massana or the Tristaina cirque. A count-based quality gate would pass this country; only a 'does the list contain the national high point' check catches it. That check is cheap and worth running for every country: compare tier 1 against the Wikidata national-highest-point value (P610) for the country item."
+}

@@ -1,0 +1,313 @@
+{
+  "iso2": "HU",
+  "country": "Hungary",
+  "checked_at": "2026-08-17",
+  "beaches": {
+    "wrong": [
+      {
+        "name": "Annabella Strand",
+        "class": "hospitality",
+        "why": "The private beach of Danubius Hotel Annabella, Deák Ferenc utca 25, Balatonfüred, which the hotel advertises as its own beach at the end of the Tagore promenade. It is ranked first in the country and shipped as Hungary's top_beach. The coordinate also sits 130 m from the Eszterházy strand rows, on the same Balatonfüred bathing strip, so it doubles as a duplicate.",
+        "source_url": "https://www.danubiushotels.com/en/our-hotels-balatonfured/hotel-annabella"
+      },
+      {
+        "name": "Esterházy Strand és Élményfürdő Balatonfüred",
+        "class": "duplicate_of:Balatonfüred Eszterházi strand",
+        "why": "Rank 4, 40 m from the rank 2 row. The same Balatonfüred beach under a fuller trading name.",
+        "source_url": "https://www.openstreetmap.org/#map=18/46.9560/17.9021"
+      },
+      {
+        "name": "Strand, Balatonfüred",
+        "class": "duplicate_of:Balatonfüred Eszterházi strand",
+        "why": "Rank 5, 10 m from the rank 2 row, and the name is the bare Hungarian common noun for a lido beach plus the town. Same beach again.",
+        "source_url": "https://www.openstreetmap.org/#map=18/46.9558/17.9011"
+      },
+      {
+        "name": "Eszterházy Strand",
+        "class": "duplicate_of:Balatonfüred Eszterházi strand",
+        "why": "Tier 2 rank 12, 10 m from the rank 2 row. Fourth spelling of the same beach.",
+        "source_url": "https://www.openstreetmap.org/#map=18/46.9559/17.9020"
+      },
+      {
+        "name": "Balatonfüredi strandok (Esterházy és Kisfaludy)",
+        "class": "duplicate_of:Balatonfüred Eszterházi strand",
+        "why": "Tier 2 rank 10. The name is literally the plural, 'the beaches of Balatonfüred', so one row is standing in for a set that other rows already list individually. Fifth version of the same strip.",
+        "source_url": "https://www.openstreetmap.org/#map=18/46.9554/17.9084"
+      },
+      {
+        "name": "Szegedi Partfürdő Kemping és Apartman",
+        "class": "hospitality",
+        "why": "A campsite and apartment business on the Tisza in Szeged; 'Kemping és Apartman' is in the name. The coordinate resolves to 'Partfürdő Büfé', a fast-food kiosk. Ranked 6th in the country.",
+        "source_url": "https://www.openstreetmap.org/#map=18/46.2529/20.1594"
+      },
+      {
+        "name": "Petőházi Strand",
+        "class": "lido_or_pool",
+        "why": "Tagged leisure=water_park in OSM: a village pool complex on Kinizsi Pál utca in Petőháza, inland in Győr-Moson-Sopron county, with no bathing-water class in the row. Ranked 7th in the country. Same family as the London lidos.",
+        "source_url": "https://www.openstreetmap.org/#map=18/47.5947/16.8914"
+      },
+      {
+        "name": "Annagora Gastro",
+        "class": "hospitality",
+        "why": "The catering outlet of Annagora Aquapark in Balatonfüred, a commercial water park with slides and a wave pool, 500 m back from the lake shore. The coordinate resolves to the aquapark itself (OSM leisure=water_park). A food counter inside a water park, ranked 8th among Hungary's beaches.",
+        "source_url": "https://annagora.com/en/"
+      },
+      {
+        "name": "Balatonpart Zamárdi",
+        "class": "other",
+        "why": "The name is a generic descriptor, 'Balaton shore, Zamárdi', not a place name, and the coordinate lands about 800 m inland on Eötvös utca in the Kőhegy district, above the town rather than on the water. The actual beach is Zamárdi Nagystrand at 46.88458, 17.93245. Ranked 3rd in the country.",
+        "source_url": "https://www.openstreetmap.org/#map=18/46.8851/17.9415"
+      },
+      {
+        "name": "Gödrös Szabadstrand",
+        "class": "duplicate_of:Gödrösi szabadstrand",
+        "why": "Tier 2 rank 13, roughly 30 m from tier 2 rank 14, which carries the same name in a different grammatical form. OSM has one feature here, 'Gödrösi szabadstrand'.",
+        "source_url": "https://www.openstreetmap.org/#map=18/46.9240/17.8714"
+      },
+      {
+        "name": "Holtág",
+        "class": "not_notable",
+        "why": "'Holtág' is the Hungarian common noun for an oxbow or dead river branch, not a name. The coordinate resolves to a house on Tábor utca in the Pataháza district of Győr. Tier 2 rank 15.",
+        "source_url": "https://www.openstreetmap.org/#map=18/47.6994/17.6397"
+      },
+      {
+        "name": "Kacsa sziget",
+        "class": "island",
+        "why": "'Duck Island' on the Danube at Leányfalu; the coordinate resolves to a picnic site (OSM tourism=picnic_site) on Móricz Zsigmond út. Tier 2 rank 18.",
+        "source_url": "https://www.openstreetmap.org/#map=18/47.7075/19.0923"
+      },
+      {
+        "name": "Lapos Beach Szeged",
+        "class": "duplicate_of:Lapos Beach",
+        "why": "Tier 2 rank 21, 250 m from tier 2 rank 20, which is the same Tisza riverside spot without the city suffix.",
+        "source_url": "https://www.openstreetmap.org/#map=17/46.2498/20.1517"
+      },
+      {
+        "name": "Mike's Füred Beach",
+        "class": "hospitality",
+        "why": "A beach bar trading name on the same Balatonfüred strip as ranks 1, 2, 4, 5, 10, 11 and 12. Tier 2 rank 22.",
+        "source_url": "https://www.openstreetmap.org/#map=18/46.9557/17.9092"
+      }
+    ],
+    "missing": [
+      {
+        "name": "Siófok Nagystrand",
+        "qid": null,
+        "lat": 46.91212,
+        "lon": 18.05246,
+        "why": "The main beach of Siófok, the largest and best known resort on Lake Balaton and the centre of the Hungarian summer. Named leisure=beach_resort in OSM. Siófok does not appear anywhere in the file, at any tier, which is the single biggest gap in the Hungarian beach list.",
+        "source_url": "https://www.openstreetmap.org/#map=17/46.91212/18.05246",
+        "verified": true
+      },
+      {
+        "name": "Aranyparti szabadstrand, Siófok",
+        "qid": null,
+        "lat": 46.92368,
+        "lon": 18.08598,
+        "why": "The free beach on Siófok's Aranypart (Golden Shore), the busiest stretch of the Balaton's south shore. Named in OSM, absent from the file.",
+        "source_url": "https://www.openstreetmap.org/#map=17/46.92368/18.08598",
+        "verified": true
+      },
+      {
+        "name": "Zamárdi Nagystrand",
+        "qid": null,
+        "lat": 46.88458,
+        "lon": 17.93245,
+        "why": "The main beach of Zamárdi, a long shallow south-shore beach. The file has a 'Balatonpart Zamárdi' row instead, pinned 800 m inland, so the real beach is missing while a mislocated stand-in holds rank 3.",
+        "source_url": "https://www.openstreetmap.org/#map=17/46.88458/17.93245",
+        "verified": true
+      },
+      {
+        "name": "Wesselényi strand, Balatonalmádi",
+        "qid": null,
+        "lat": 47.02584,
+        "lon": 18.01397,
+        "why": "The main beach of Balatonalmádi, one of the principal north-shore resorts. Named in OSM, absent from the file at every tier.",
+        "source_url": "https://www.openstreetmap.org/#map=17/47.02584/18.01397",
+        "verified": true
+      },
+      {
+        "name": "Fonyód, Városi szabadstrand",
+        "qid": null,
+        "lat": 46.74486,
+        "lon": 17.54395,
+        "why": "Fonyód's town beach, with the classic view across to Badacsony. Named in OSM, absent from the file.",
+        "source_url": "https://www.openstreetmap.org/#map=17/46.74486/17.54395",
+        "verified": true
+      },
+      {
+        "name": "Szigligeti Községi Strandfürdő",
+        "qid": null,
+        "lat": 46.78541,
+        "lon": 17.43755,
+        "why": "The beach at Szigliget, one of the most scenic corners of the Balaton uplands under the castle hill. Named in OSM, absent from the file.",
+        "source_url": "https://www.openstreetmap.org/#map=17/46.78541/17.43755",
+        "verified": true
+      },
+      {
+        "name": "Császtai strand, Révfülöp",
+        "qid": null,
+        "lat": 46.82282,
+        "lon": 17.62046,
+        "why": "Révfülöp's main beach, a north-shore favourite. Named in OSM, absent from the file.",
+        "source_url": "https://www.openstreetmap.org/#map=17/46.82282/17.62046",
+        "verified": true
+      },
+      {
+        "name": "Északi Strand, Velence (Lake Velence)",
+        "qid": null,
+        "lat": 47.2381,
+        "lon": 18.63604,
+        "why": "Lake Velence (Wikidata Q847072) is Hungary's second bathing lake and the closest one to Budapest, and it has no row anywhere in the file. This is its main beach, named in OSM.",
+        "source_url": "https://www.openstreetmap.org/#map=17/47.2381/18.63604",
+        "verified": true
+      },
+      {
+        "name": "Abádszalók strand (Lake Tisza)",
+        "qid": null,
+        "lat": 47.48215,
+        "lon": 20.58665,
+        "why": "Lake Tisza (Wikidata Q1072359) is Hungary's third great summer water and Abádszalók is its main beach resort. No Lake Tisza row exists in the file at any tier.",
+        "source_url": "https://www.openstreetmap.org/#map=17/47.48215/20.58665",
+        "verified": true
+      }
+    ],
+    "order": [
+      "Ranks 1, 2, 4 and 5 are one beach in Balatonfüred, and tier 2 ranks 10, 11, 12 and 22 are the same beach again. Eight of the twenty-three rows in the country describe a single 500 m strip.",
+      "Rank 1 is a hotel's private beach; rank 8 is a food counter inside a water park; rank 6 is a campsite business; rank 7 is an inland village pool. Four of the nine tier-1 rows are not public beaches at all.",
+      "Siófok, the biggest resort on the lake, has no row at any tier, so Hungary's beach list opens without the place most Hungarians would name first.",
+      "Keszthelyi Városi Strand (tier 2 rank 19) and the Tihany Napsugár beach (tier 2 rank 23) are both genuinely notable and sit below a Győr oxbow, a Danube picnic island and two Szeged riverside duplicates.",
+      "Lake Velence and Lake Tisza, the country's second and third bathing lakes, are absent while the Tisza riverbank at Szeged holds three rows."
+    ]
+  },
+  "mountains": {
+    "wrong": [
+      {
+        "name": "Gellért Hill",
+        "class": "park_or_area",
+        "why": "A 235 m hill inside Budapest, largely laid out as public park around the Citadella and the Liberty Statue. It is a city viewpoint, not a mountain destination, and it is ranked first in the country and shipped as Hungary's top_mountain while Kékes, the highest point of Hungary, is absent from the file entirely.",
+        "source_url": "https://www.wikidata.org/wiki/Q577122"
+      },
+      {
+        "name": "Urak asztala",
+        "class": "not_notable",
+        "why": "A minor rock table in the Visegrád hills (Wikidata Q26230544, four sitelinks, no English article, no elevation recorded). Ranked 8th among the mountains of Hungary.",
+        "source_url": "https://www.wikidata.org/wiki/Q26230544"
+      },
+      {
+        "name": "Bölcső-hegy",
+        "class": "not_notable",
+        "why": "A wooded knoll in the Visegrád hills behind Szentendre, one of ten near-identical local hills the file carries from that one small area. Ranked 9th nationally, above every summit in the Mátra, the Bükk and the Börzsöny, none of which appear at all.",
+        "source_url": "https://hu.wikipedia.org/wiki/Bölcső-hegy"
+      },
+      {
+        "name": "Lom-hegy",
+        "class": "not_notable",
+        "why": "Same family as the row above: a small Visegrád-hills knoll 1 km from it, ranked 10th nationally.",
+        "source_url": "https://hu.wikipedia.org/wiki/Lom-hegy"
+      },
+      {
+        "name": "Nagy-Csikóvár",
+        "class": "not_notable",
+        "why": "A third Visegrád-hills knoll in the same cluster, ranked 12th nationally.",
+        "source_url": "https://hu.wikipedia.org/wiki/Nagy-Csikóvár"
+      },
+      {
+        "name": "Sípoló-hegy",
+        "class": "not_notable",
+        "why": "A minor hill outside Esztergom, ranked 11th nationally. Four of Hungary's twelve tier-1 mountains are small hills in the Visegrád and Esztergom cluster.",
+        "source_url": "https://hu.wikipedia.org/wiki/Sípoló-hegy"
+      },
+      {
+        "name": "Szent György-hill",
+        "class": "other",
+        "why": "A half-translated hybrid name: the feature is Szent György-hegy (Wikidata Q1296341), a basalt witness hill in the Balaton uplands, and the pipeline has translated the 'hegy' suffix into English while leaving the saint's name in Hungarian. Tier 2 rank 19. The feature itself is real and deserves a much higher rank.",
+        "source_url": "https://www.wikidata.org/wiki/Q1296341"
+      },
+      {
+        "name": "Modrý vrch",
+        "class": "wrong_country",
+        "why": "A Slovak name on a Slovak hill: the coordinate reverse-geocodes to Kamenný Most, okres Nové Zámky, Nitriansky kraj, Slovensko, on the far bank of the Danube from Esztergom. Tier 2 rank 20.",
+        "source_url": "https://www.openstreetmap.org/#map=16/47.8263/18.6436"
+      },
+      {
+        "name": "Čertova diera",
+        "class": "wrong_country",
+        "why": "In Slovakia: the coordinate reverse-geocodes to Kečovo, okres Rožňava, Košický kraj, Slovensko, just across the border from Aggtelek. The name also means 'devil's hole', a cave feature rather than a summit. Tier 2 rank 48.",
+        "source_url": "https://www.openstreetmap.org/#map=16/48.4835/20.4734"
+      },
+      {
+        "name": "Galya-tető",
+        "class": "other",
+        "why": "Two separate rows carry this name (tier 2 ranks 25 and 58), one near Lillafüred at 48.0672, 20.7047 and one near Aggtelek at 48.4762, 20.5176, and neither is the famous Galya-tető, which is Hungary's second highest summit in the Mátra at 47.91667, 19.9 (Wikidata Q747656). A common toponym has produced two obscure look-alikes while the real one is missing, which will read as a duplicate to any user who searches for it.",
+        "source_url": "https://www.wikidata.org/wiki/Q747656"
+      }
+    ],
+    "missing": [
+      {
+        "name": "Kékes",
+        "qid": "Q747618",
+        "lat": 47.87222,
+        "lon": 20.01278,
+        "why": "1014 m, the highest point of Hungary, in the Mátra, with a television tower and a ski slope. It is absent from the file at every tier. Every Hungarian schoolchild can name it, and a Mountains tab for Hungary without it is not credible.",
+        "source_url": "https://www.wikidata.org/wiki/Q747618",
+        "verified": true
+      },
+      {
+        "name": "Galya-tető",
+        "qid": "Q747656",
+        "lat": 47.91667,
+        "lon": 19.9,
+        "why": "964 m, Hungary's second highest summit, also in the Mátra, a classic resort and hiking base. The real peak is absent; two unrelated hills with the same common name occupy tier 2.",
+        "source_url": "https://www.wikidata.org/wiki/Q747656",
+        "verified": true
+      },
+      {
+        "name": "Dobogó-kő",
+        "qid": "Q907082",
+        "lat": 47.71996,
+        "lon": 18.89868,
+        "why": "700 m, the landmark of the Pilis, the traditional home of Hungarian organised hiking and the most walked summit near Budapest. Absent at every tier, while ten smaller hills in the neighbouring Visegrád group fill tier 1 and tier 2.",
+        "source_url": "https://www.wikidata.org/wiki/Q907082",
+        "verified": true
+      },
+      {
+        "name": "Badacsony",
+        "qid": "Q642172",
+        "lat": 46.80351,
+        "lon": 17.49584,
+        "why": "437 m, the basalt witness hill above Lake Balaton and one of the most photographed landforms in Hungary, at the centre of a famous wine region. Absent at every tier.",
+        "source_url": "https://www.wikidata.org/wiki/Q642172",
+        "verified": true
+      },
+      {
+        "name": "Írott-kő",
+        "qid": "Q630494",
+        "lat": 47.35281,
+        "lon": 16.43369,
+        "why": "884 m, the highest point of Transdanubia, on the Austrian border in the Kőszeg mountains, with a lookout tower. Absent at every tier.",
+        "source_url": "https://www.wikidata.org/wiki/Q630494",
+        "verified": true
+      },
+      {
+        "name": "Csóványos",
+        "qid": "Q876273",
+        "lat": 47.94889,
+        "lon": 18.94833,
+        "why": "938 m, the highest of the Börzsöny and one of the finest viewpoints over the Danube Bend. The whole Börzsöny range is absent from the file.",
+        "source_url": "https://www.wikidata.org/wiki/Q876273",
+        "verified": true
+      }
+    ],
+    "order": [
+      "Rank 1 is a public park inside Budapest. Ranks 8 to 12 are five small hills in the Visegrád and Esztergom cluster.",
+      "The Mátra, which contains both of Hungary's highest summits, contributes nothing to either tier. The Bükk and the Börzsöny contribute nothing either.",
+      "Three of the twelve tier-1 rows (Jakab-hegy, Tubes, Misina) are the same Mecsek ridge above Pécs, which is defensible individually but takes a quarter of the country's top list for one city.",
+      "Tokaji-hegy at rank 4 and Nagy-Eged hegy at rank 5 are good, well-chosen entries: both are real landmark hills of famous wine regions.",
+      "Szent György-hegy, a genuine Balaton-uplands landmark, sits at tier 2 rank 19 under a broken half-translated name, below several forest knolls."
+    ]
+  },
+  "counts_verdict": "Both counts are too low and, more importantly, mostly duplicates. 23 beaches for a country whose entire summer culture is Lake Balaton is far too few, and after dedupe it is roughly eight distinct places, because eight rows are one Balatonfüred strip and four more are Szeged and Győr riverside pairs. Siófok, Balatonalmádi, Fonyód, Szigliget, Révfülöp, Zamárdi's real beach, Lake Velence and Lake Tisza are all absent. Nine tier-1 beach slots for Hungary is about right in size; the problem is that four of them are not beaches. 58 mountains is a fair volume for a country this flat, but the distribution is wrong: ten rows come from the Visegrád hills and none from the Mátra, the Bükk or the Börzsöny, and the tier-1 count of 12 includes a city park and four forest knolls.",
+  "top_pick_verdict": "No on both. top_beach is 'Annabella Strand', a hotel's private beach in Balatonfüred, which is both a hospitality row and one of eight duplicates of the same strip; the country card should carry Siófok Nagystrand for the resort image or Tihany for the scenic one. top_mountain is 'Gellért Hill', a 235 m park in Budapest; it should be Kékes as the highest point, or Badacsony or Dobogó-kő if the card wants a picture worth looking at. Both current picks are absent-canon failures: the right answer in each case is not merely ranked low, it is not in the file at all.",
+  "notes": "Hungary shows the duplicate failure mode more severely than Bulgaria's Nesebar case: one Balatonfüred beach is present eight times, under Hungarian, part-English and trading-name variants, and it takes four of the nine tier-1 slots plus the country's top_beach. A name-normalising, geo-clustered dedupe at roughly 150 m would collapse it. The hospitality problem is also systematic here rather than incidental: the venue names that leak in are exactly the ones with a business suffix (Kemping és Apartman, Gastro, Mike's, Strandoase) or an OSM leisure=water_park tag, both of which are cheap to filter. On the mountain side the ranking clearly rewards OSM node density, which is why the Visegrád hills, well mapped and close to Budapest, dominate while the Mátra, the Bükk and the Börzsöny are missing entirely. There is also a name-mangling bug to catch separately: 'Szent György-hill' has had its Hungarian suffix machine-translated, which is the same class of defect as Poland's 'Kasprov vrch / Kasprowy Wierch' string."
+}

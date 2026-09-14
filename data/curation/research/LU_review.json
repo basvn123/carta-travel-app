@@ -1,0 +1,220 @@
+{
+  "iso2": "LU",
+  "country": "Luxembourg",
+  "checked_at": "2026-08-17",
+  "beaches": {
+    "wrong": [],
+    "missing": [
+      {
+        "name": "Insenborn (Lac de la Haute-Sure / Stausei)",
+        "qid": null,
+        "lat": null,
+        "lon": null,
+        "why": "One of the six official designated bathing beaches on the Upper Sure reservoir, rated Excellent in the national 2025 bathing-water report. Insenborn is the main swimming and watersports beach on the lake and is at least as visited as Lultzhausen, the only site the file contains. The reservoir itself is Wikidata Q2621998 (49.9, 5.867); I could not confirm a per-beach QID or surveyed coordinate, so the individual beach is unverified.",
+        "source_url": "https://www.chronicle.lu/category/things-to-see-do/54691-luxembourg-opens-2025-bathing-season-at-monitored-inland-sites",
+        "verified": false
+      },
+      {
+        "name": "Liefrange (Lac de la Haute-Sure)",
+        "qid": null,
+        "lat": null,
+        "lon": null,
+        "why": "Official designated bathing beach on the Upper Sure reservoir, Excellent class in the 2025 national report. Absent from the file.",
+        "source_url": "https://www.chronicle.lu/category/things-to-see-do/54691-luxembourg-opens-2025-bathing-season-at-monitored-inland-sites",
+        "verified": false
+      },
+      {
+        "name": "Burfelt (Lac de la Haute-Sure)",
+        "qid": null,
+        "lat": null,
+        "lon": null,
+        "why": "Official designated bathing beach on the Upper Sure reservoir, Excellent class in the 2025 national report. Absent from the file.",
+        "source_url": "https://www.chronicle.lu/category/things-to-see-do/54691-luxembourg-opens-2025-bathing-season-at-monitored-inland-sites",
+        "verified": false
+      },
+      {
+        "name": "Rommwiss (Lac de la Haute-Sure)",
+        "qid": null,
+        "lat": null,
+        "lon": null,
+        "why": "Official designated bathing beach on the Upper Sure reservoir, Excellent class in the 2025 national report. Absent from the file.",
+        "source_url": "https://www.chronicle.lu/category/things-to-see-do/54691-luxembourg-opens-2025-bathing-season-at-monitored-inland-sites",
+        "verified": false
+      },
+      {
+        "name": "Fuussefeld (Lac de la Haute-Sure)",
+        "qid": null,
+        "lat": null,
+        "lon": null,
+        "why": "Official designated bathing beach on the Upper Sure reservoir, Excellent class in the 2025 national report. Absent from the file.",
+        "source_url": "https://www.chronicle.lu/category/things-to-see-do/54691-luxembourg-opens-2025-bathing-season-at-monitored-inland-sites",
+        "verified": false
+      },
+      {
+        "name": "Remerschen ponds / Haff Reimech (Baggerweieren)",
+        "qid": "Q16764280",
+        "lat": null,
+        "lon": null,
+        "why": "The country's second bathing destination after the Upper Sure lake: former gravel-pit lakes on the Moselle at Remerschen, with zones 1-3 rated Excellent and zone 4 Good in the 2025 national report, plus a Ramsar-listed nature reserve and biodiversity centre alongside. Absent from the file. Q16764280 is the nature reserve item, not the bathing beach, so the coordinate is left unset rather than borrowed from the reserve.",
+        "source_url": "https://www.chronicle.lu/category/things-to-see-do/54691-luxembourg-opens-2025-bathing-season-at-monitored-inland-sites",
+        "verified": false
+      },
+      {
+        "name": "Weiswampach lakes",
+        "qid": null,
+        "lat": null,
+        "lon": null,
+        "why": "Designated bathing waters in the far north (zone 1 Good, zones 2-4 Excellent in the 2025 report), a standard family swimming destination in the Oesling. Absent from the file.",
+        "source_url": "https://www.chronicle.lu/category/things-to-see-do/54691-luxembourg-opens-2025-bathing-season-at-monitored-inland-sites",
+        "verified": false
+      },
+      {
+        "name": "Echternach lake",
+        "qid": null,
+        "lat": null,
+        "lon": null,
+        "why": "Designated bathing area (Good in the 2025 report) beside Echternach, which is already a seeded catalogue destination in this app, so its absence is a straightforward recall miss rather than an obscure site.",
+        "source_url": "https://www.chronicle.lu/category/things-to-see-do/54691-luxembourg-opens-2025-bathing-season-at-monitored-inland-sites",
+        "verified": false
+      }
+    ],
+    "order": [
+      "Lultzhausen-Plage is a genuine, officially designated Excellent bathing beach and is not a wrong entry. But it is the ONLY row, and it sits in tier 2, so Luxembourg ships a Beaches tab with zero tier-1 entries while index.json still advertises it as the country's top_beach. A tier-2 row being surfaced as a country's headline pick is an internal inconsistency the wire format should not permit.",
+      "With eight or more official sites missing, there is no meaningful order to assess. Once they are added the defensible order is Lultzhausen and Insenborn at the top (largest, best-equipped Upper Sure beaches), then the remaining lake beaches, then Remerschen and Weiswampach."
+    ]
+  },
+  "mountains": {
+    "wrong": [
+      {
+        "name": "365.5",
+        "class": "not_notable",
+        "why": "This is not a name, it is a spot elevation in metres that was ingested from an OSM node as if it were a toponym. Shipping a row labelled '365.5' to a user is a visible data-quality failure regardless of what is at that coordinate. Any name that is purely numeric must be dropped.",
+        "source_url": "https://www.openstreetmap.org/copyright"
+      },
+      {
+        "name": "Gaalgebierg",
+        "class": "not_notable",
+        "why": "The Gaalgebierg that a Luxembourger recognises is the wooded park hill above Esch-sur-Alzette in the south of the country. This row's coordinates, 49.92113, 6.25116, put it near Vianden in the north, about 60 km away, so the entry carries a recognisable name attached to the wrong place. It has no Wikipedia article and no image, and sits in a block of eight identically-scored Vianden knolls.",
+        "source_url": "https://www.openstreetmap.org/copyright"
+      },
+      {
+        "name": "Niklosbierg",
+        "class": "not_notable",
+        "why": "Rank 2, and therefore the second thing a user sees, yet it has no Wikipedia article in any language, no image and no elevation. It is a wooded knoll in the Our valley near Vianden in a country whose highest point is 560 m. Nothing distinguishes it as a destination.",
+        "source_url": "https://www.openstreetmap.org/copyright"
+      },
+      {
+        "name": "Apelberg",
+        "class": "not_notable",
+        "why": "No article, no image, no elevation; an unremarkable forest rise near Echternach. Part of the block of nine rows sharing the identical score 0.737, which indicates the scorer had no distinguishing signal for any of them and fell back to a constant.",
+        "source_url": "https://www.openstreetmap.org/copyright"
+      },
+      {
+        "name": "Apfelberg",
+        "class": "not_notable",
+        "why": "No article, no image, no elevation; one of eight woodland knolls clustered within 5 km of Vianden, all scored 0.737.",
+        "source_url": "https://www.openstreetmap.org/copyright"
+      },
+      {
+        "name": "Hahnenkopf",
+        "class": "not_notable",
+        "why": "No article, no image, no elevation; part of the Vianden 0.737 block. A 'Kopf' here is a forestry parcel name, not a climbable summit.",
+        "source_url": "https://www.openstreetmap.org/copyright"
+      },
+      {
+        "name": "Heidenkopf",
+        "class": "not_notable",
+        "why": "No article, no image, no elevation; part of the Vianden 0.737 block, 3.2 km from Hahnenkopf and Lichtenkopf which are the same kind of feature.",
+        "source_url": "https://www.openstreetmap.org/copyright"
+      },
+      {
+        "name": "Lichtenkopf",
+        "class": "not_notable",
+        "why": "No article, no image, no elevation; part of the Vianden 0.737 block.",
+        "source_url": "https://www.openstreetmap.org/copyright"
+      },
+      {
+        "name": "Peitschesfeld",
+        "class": "not_notable",
+        "why": "A 'feld' is a field. No article, no image, no elevation; part of the Vianden 0.737 block. The name itself indicates open farmland rather than a summit.",
+        "source_url": "https://www.openstreetmap.org/copyright"
+      },
+      {
+        "name": "Pellenberg",
+        "class": "not_notable",
+        "why": "No article, no image, no elevation; a low rise 8.8 km from Remich in the Moselle vineyards, scored identically to eight unrelated northern knolls.",
+        "source_url": "https://www.openstreetmap.org/copyright"
+      },
+      {
+        "name": "Urmescht",
+        "class": "not_notable",
+        "why": "No article, no image, no elevation; part of the Vianden 0.737 block.",
+        "source_url": "https://www.openstreetmap.org/copyright"
+      },
+      {
+        "name": "Ale Schack",
+        "class": "not_notable",
+        "why": "No article, no image, no elevation, and a score of 0.302, the floor of the list. Luxembourgish for 'old jaw/shack'; a woodland locality near Bourscheid, not a mountain.",
+        "source_url": "https://www.openstreetmap.org/copyright"
+      },
+      {
+        "name": "Buergknapp",
+        "class": "not_notable",
+        "why": "No article, no image, no elevation, score 0.302. A knoll below Bourscheid castle; the castle is the destination, this label is not.",
+        "source_url": "https://www.openstreetmap.org/copyright"
+      },
+      {
+        "name": "Burschend",
+        "class": "not_notable",
+        "why": "No article, no image, no elevation, score 0.302. Near-identical in spelling to 'Burschent' at rank 16 but 15 km away near Clervaux rather than Esch-sur-Sure, so the pair is either two genuine but trivial toponyms or one toponym duplicated with a spelling variant; neither case justifies publication.",
+        "source_url": "https://www.openstreetmap.org/copyright"
+      },
+      {
+        "name": "Burschent",
+        "class": "not_notable",
+        "why": "No article, no image, no elevation, score 0.302. See Burschend at rank 15: same name to within one letter, different coordinate.",
+        "source_url": "https://www.openstreetmap.org/copyright"
+      },
+      {
+        "name": "Haard",
+        "class": "not_notable",
+        "why": "No article, no image, no elevation, score 0.302. 'Haard' is a common Germanic term for wooded upland used across dozens of localities; as a standalone row it identifies nothing.",
+        "source_url": "https://www.openstreetmap.org/copyright"
+      },
+      {
+        "name": "Hei",
+        "class": "not_notable",
+        "why": "No article, no image, no elevation, score 0.302. Luxembourgish for 'heath/height'; a generic land-cover word promoted to a named mountain.",
+        "source_url": "https://www.openstreetmap.org/copyright"
+      }
+    ],
+    "missing": [
+      {
+        "name": "Kneiff",
+        "qid": "Q24457",
+        "lat": 50.157317,
+        "lon": 6.036944,
+        "why": "The highest point in Luxembourg, 560 m, a hill in the commune of Troisvierges near Huldange, recognised as the national high point since a 1997 resurvey. It is absent from the file while seventeen unnamed woodland knolls are present. Wikidata: hill (Q2319498) and peak, country Luxembourg (Q32), elevation 560 m.",
+        "source_url": "https://www.wikidata.org/wiki/Q24457",
+        "verified": true
+      },
+      {
+        "name": "Buurgplaatz",
+        "qid": "Q993417",
+        "lat": 50.161944,
+        "lon": 6.023611,
+        "why": "The second-highest point in Luxembourg, 559 m, in the commune of Troisvierges, and in practice the more visited of the two: it carries the marked viewpoint and orientation table while Kneiff is an unmarked field corner. It held the title of national high point until 1997. Absent from the file. Wikidata: country Luxembourg (Q32), elevation 558.35 m.",
+        "source_url": "https://www.wikidata.org/wiki/Q993417",
+        "verified": true
+      }
+    ],
+    "order": [
+      "Napoleonsgaard at rank 1 is a legitimate hill and is NOT a wrong entry: 554 m, in Rambrouch, the third-highest summit in the country and the high point of the canton of Redange, planted on Napoleon's orders in 1811 to mark the supposed high point of the Departement des Forets. But it is the country's number 3, and the two summits above it, Buurgplaatz and Kneiff, are both missing, so the tab's top mountain is factually the bronze medal.",
+      "Ranks 2 through 18 are indefensible as an ordering because they are not ordered. Nine rows share the score 0.737 and seven share 0.302; within each block the sequence is alphabetical (Apelberg, Apfelberg, Gaalgebierg, Hahnenkopf, Heidenkopf, Lichtenkopf, Peitschesfeld, Pellenberg, Urmescht), which means rank is being read off a name sort. Alphabetical order presented to a user as a quality ranking is worse than no ranking.",
+      "The one row with a real claim to prominence after Napoleonsgaard, and the only other one with an image and an article, is Napoleonsgaard itself; everything below rank 1 could be deleted without loss."
+    ]
+  },
+  "counts_verdict": "No, and wrong in opposite directions for the two kinds. 1 beach is far too few: Luxembourg's 2025 national bathing-water report lists roughly thirteen designated sites (six on the Upper Sure lake, four Remerschen zones, four Weiswampach zones, Echternach), so the file captures under a tenth of the official set, and the one it does capture is not even tier 1. 18 mountains is far too many for a country whose high point is 560 m: seventeen of the eighteen have no article, no image and no elevation, and two of the three genuine summits, Kneiff and Buurgplaatz, are missing. The honest shape is roughly 8-13 beaches and 2-3 mountains, i.e. the counts should be close to inverted.",
+  "top_pick_verdict": "No on both. top_beach 'Lultzhausen-Plage' names a real Excellent-rated beach, but it is a tier-2 row being promoted to a country headline, which the wire should not allow; on the merits Lultzhausen or Insenborn on the Upper Sure lake is a reasonable card once tiering is fixed. top_mountain 'Napoleonsgaard' should be Kneiff (Q24457, 50.157317, 6.036944) if the card wants the national high point, or Buurgplaatz (Q993417, 50.161944, 6.023611) if it wants the one with the viewpoint and orientation table. The larger question is whether Luxembourg should have a Mountains tab at all; the country's actual relief attraction is the Mullerthal / Little Switzerland sandstone landscape, which is a rock-formation and hiking region rather than a set of summits.",
+  "notes": "Luxembourg exposes a threshold problem rather than a classification problem. The pipeline appears to take the top N OSM peak nodes per country with no absolute quality floor, so in a country with almost no mountains it scrapes all the way down to forestry parcel names ('Peitschesfeld' is a field, 'Haard' is a generic word for wooded upland, '365.5' is an elevation number). At the same time the beach side under-harvests badly because Luxembourg's bathing waters are inland lake beaches that carry no coastline geometry. The two fixes are independent: add an absolute floor (require an article, an image, or a confirmed elevation) before a mountain row may be published, and join the national/EEA designated bathing-water register directly for landlocked countries instead of relying on coastal POI geometry. Also worth noting: the identical-score blocks (0.737 x9, 0.302 x7) are a reliable machine-detectable signature of 'the scorer had nothing to work with' and can be used as a suppression trigger anywhere in the dataset, not just here."
+}

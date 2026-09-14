@@ -1,0 +1,300 @@
+{
+  "id": "de-culinary-baden-black-forest",
+  "sourceId": "de-culinary-baden-black-forest",
+  "slug": "de-culinary-baden-black-forest",
+  "title": "Baden Wine and the Black Forest Table",
+  "country": "Germany",
+  "countryCode": "DE",
+  "countries": [
+    {
+      "name": "Germany",
+      "code": "DE"
+    }
+  ],
+  "isMultiCountry": false,
+  "region": "Western & Central Europe",
+  "regionKey": "western-central",
+  "subRegion": "Kaiserstuhl and Ortenau, Baden-Württemberg",
+  "tripType": "Culinary & Wine Tours",
+  "tripTypeId": 7,
+  "tripTypeSlug": "culinary",
+  "durationDays": 7,
+  "bestPeriod": {
+    "months": [
+      4,
+      5,
+      9,
+      10
+    ],
+    "monthNames": [
+      "April",
+      "May",
+      "September",
+      "October"
+    ],
+    "window": null,
+    "note": "Early April brings almond blossom to the Kaiserstuhl; late September and October bring harvest and the first Straußwirtschaften of the year.",
+    "avoid": null,
+    "raw": null
+  },
+  "budgetTier": "€€",
+  "budgetTierRange": [
+    2,
+    2
+  ],
+  "budgetTierRaw": "€€",
+  "budget": {
+    "currency": "EUR",
+    "totalEur": {
+      "low": 1100,
+      "high": 1500
+    },
+    "totalNote": null,
+    "breakdown": {
+      "accommodation": {
+        "lowEur": 500,
+        "highEur": 650,
+        "note": null
+      },
+      "food": {
+        "lowEur": 280,
+        "highEur": 370,
+        "note": null
+      },
+      "transport": {
+        "lowEur": 130,
+        "highEur": 200,
+        "note": null
+      },
+      "activities": {
+        "lowEur": 190,
+        "highEur": 280,
+        "note": null
+      }
+    },
+    "perDayEur": {
+      "low": 157,
+      "high": 214
+    }
+  },
+  "profile": {
+    "difficulty": 1,
+    "difficultyLabel": "Easy",
+    "difficultyNote": null,
+    "fitnessLevel": "Easy",
+    "crowdLevel": "Moderate",
+    "familyFriendly": false,
+    "carRequired": true
+  },
+  "basecamps": [
+    "Freiburg im Breisgau"
+  ],
+  "gatewayAirport": "EuroAirport Basel-Mulhouse-Freiburg (EAP)",
+  "gatewayAirportCode": "EAP",
+  "languages": [
+    "German"
+  ],
+  "currency": "EUR",
+  "emergencyNumber": "112",
+  "coordinates": {
+    "lat": 47.9959,
+    "lon": 7.8522,
+    "precision": "city",
+    "matchedPlace": "Freiburg",
+    "source": "geonames (geonamescache, cities > 15k)"
+  },
+  "tags": [
+    "spatburgunder",
+    "kaiserstuhl",
+    "winzergenossenschaft",
+    "black-forest-kitchen",
+    "freiburg-market"
+  ],
+  "summary": "A week on Germany's warmest wine hills, from Kaiserstuhl cooperatives and Ortenau growers to the Black Forest kitchen and Freiburg's daily market.",
+  "summaryGenerated": false,
+  "hook": "The Kaiserstuhl is an extinct volcano wearing a skirt of loess, and it runs hotter than anywhere else in Germany — which is why Spätburgunder ripens here the way it does nowhere else north of Burgundy. This week works two ends of Baden at once: the cooperative-driven villages of the Kaiserstuhl and Ortenau, and the smoked-ham, cherry-cake kitchen of the Black Forest above them, with Freiburg's cathedral-square market as the daily anchor.",
+  "snapshot": {
+    "Country": "Germany",
+    "Base(s)": "Freiburg im Breisgau (7 nights, with day trips)",
+    "Trip Type": "Culinary & Wine Tours",
+    "Duration": "7 days / 7 nights",
+    "Best Period": "April, May, September, October",
+    "Budget Tier": "€€",
+    "Total Distance / Terrain": "Approx. 250 km of day-trip driving; volcanic hill roads with grades up to 15% in the Kaiserstuhl",
+    "Getting There": "Fly to EuroAirport Basel-Mulhouse-Freiburg (EAP), approx. 45 minutes by airport bus to Freiburg",
+    "Who It Suits": "Spätburgunder drinkers, cooperative-cellar tasters, anyone who wants ham, cake and wine in the same afternoon"
+  },
+  "itinerary": [
+    {
+      "day": 1,
+      "title": "Freiburg orientation",
+      "morning": "Land at EuroAirport and take the airport bus to Freiburg, about 45 minutes. Drop bags near the Altstadt.",
+      "afternoon": "Walk the Münsterplatz, where Freiburg's daily market runs Monday to Saturday, roughly 07:30–13:30, thickest on Wednesday and Saturday — the cathedral's red sandstone tower rises directly over the stalls. Note the Bächle, the shallow water channels threading the old town.",
+      "evening": "Dinner in the Altstadt: Bibeleskäs mit Bubespitzle, fresh herbed quark with hand-rolled potato noodles, a genuine Baden farmhouse dish, with a Freiburg Spätburgunder.",
+      "dayStats": "Cellars visited: 0. Km travelled: 4 km on foot. Approx. tasting spend: €0.",
+      "sleep": null
+    },
+    {
+      "day": 2,
+      "title": "Into the Kaiserstuhl",
+      "morning": "Drive west into the Kaiserstuhl, about 25 minutes to Ihringen, the warmest point in Germany and the source of most of the region's Grauburgunder and Spätburgunder. Walk the terraced Winklerberg vineyard, cut into volcanic loess with dry-stone retaining walls.",
+      "afternoon": "Weingut Dr. Heger in Ihringen shows appointment-led tastings; email ahead. For a walk-in alternative, the Winzergenossenschaft Achkarren, one of Germany's oldest wine cooperatives, opened in 1929, pours a full flight with no booking needed.",
+      "evening": "Dinner at a Straußwirtschaft if the calendar allows — these seasonal taverns, licensed by Baden-Württemberg law for a few weeks a year, are the classic setting for Zwiebelkuchen mit Federweißer, onion tart with the cloudy, half-fermented new wine. Outside that window, order Flammkuchen (locally \"Dünnele\"), the thin-crust tart of cream, onion and bacon, instead.",
+      "dayStats": "Cellars visited: 1–2. Km travelled: 45 km round trip. Approx. tasting spend: €20–30.",
+      "sleep": null
+    },
+    {
+      "day": 3,
+      "title": "Volcanic villages and the Franz Keller table",
+      "morning": "Drive on to Oberrotweil and Oberbergen, the Kaiserstuhl's highest villages, for a walk along the Vulkanpfad, the marked path explaining the extinct volcano's geology among the vines.",
+      "afternoon": "Weingut Salwey in Oberrotweil pours by appointment; the Winzergenossenschaft Oberbergen/Bickensohl area cooperatives are walk-in.",
+      "evening": "Dinner at Schwarzer Adler in Oberbergen, the Keller family's long-established restaurant-with-rooms, built directly into its own vineyard and known for Baden classics done precisely — Schäufele, roasted pork shoulder blade with a dark gravy and Kartoffelsalat, is the dish to order.",
+      "dayStats": "Cellars visited: 2. Km travelled: 55 km round trip. Approx. tasting spend: €25–35.",
+      "sleep": null
+    },
+    {
+      "day": 4,
+      "title": "Freiburg market day and the Umweltzone",
+      "morning": "A full morning at the Münsterplatz market: farm cheese, Schwarzwälder Schinken (Black Forest ham, smoked over fir and spruce), stone fruit in season, and bread from the surrounding villages.",
+      "afternoon": "Walk the Altstadt properly — the university quarter, the Augustinerplatz, the Schwabentor gate. If driving into the city, remember Freiburg's Umweltzone: only cars with a green environmental sticker (Feinstaubplakette) may enter the centre, checked at the ring boundary.",
+      "evening": "Slice of Schwarzwälder Kirschtorte, Black Forest cherry cake, made properly with Schwarzwälder Kirschwasser, the region's protected cherry brandy, at a Konditorei in the old town.",
+      "dayStats": "Cellars visited: 0. Km travelled: 5 km. Approx. tasting spend: €15–20.",
+      "sleep": null
+    },
+    {
+      "day": 5,
+      "title": "Ortenau and Durbach",
+      "morning": "Drive north to Durbach, about an hour, where Riesling is grown under its old local name, Klingelberger, on granite rather than the Kaiserstuhl's loess.",
+      "afternoon": "The Durbacher Winzergenossenschaft is walk-in and pours the full Klingelberger range. For a private grower, the historic Schloss Staufenberg estate above the village keeps a public Vinothek with terrace views over the Rhine plain.",
+      "evening": "Return to Freiburg. A lighter dinner: Flädlesuppe, pancake-strip broth, ahead of a Winzergenossenschaft Spätburgunder.",
+      "dayStats": "Cellars visited: 2. Km travelled: 110 km round trip. Approx. tasting spend: €20–25.",
+      "sleep": null
+    },
+    {
+      "day": 6,
+      "title": "Up into the Black Forest kitchen",
+      "morning": "Drive up into the hills above Freiburg — the Schauinsland or the villages around Kandel — for the Black Forest side of the trip: working smokehouses and farm kitchens that supply the ham and Kirschwasser tasted on Day 4.",
+      "afternoon": "A farmhouse Vesper plate (cured meats, farm bread, mountain cheese) at a Schwarzwaldhof; several of the working farms sell direct and will explain the smoking process, which takes weeks over cold fir smoke.",
+      "evening": "Back down to Freiburg. A last Kaiserstuhl bottle with dinner in the Altstadt.",
+      "dayStats": "Cellars visited: 0. Km travelled: 60 km round trip. Approx. tasting spend: €15–20.",
+      "sleep": null
+    },
+    {
+      "day": 7,
+      "title": "Königschaffhausen and departure",
+      "morning": "A final Kaiserstuhl stop at Königschaffhausen, whose cooperative cellar is known for a particularly structured Spätburgunder from the Steingrüble vineyard. Walk-in tasting, no appointment.",
+      "afternoon": "Last errands at the Münsterplatz market if it is a market day, then the airport bus back to EuroAirport.",
+      "evening": "Departure.",
+      "dayStats": "Cellars visited: 1. Km travelled: 50 km round trip plus airport transfer. Approx. tasting spend: €10–15.",
+      "sleep": null
+    }
+  ],
+  "accommodationStrategy": [
+    {
+      "rank": 1,
+      "name": "Hotel Oberkirch",
+      "style": "Historic house on the Münsterplatz",
+      "location": "Freiburg",
+      "description": "Faces the cathedral and the market stalls directly, putting the daily food anchor and the old town's restaurants within a two-minute walk; useful for a car-free base between Kaiserstuhl and Ortenau day trips.",
+      "booking": "6–8 weeks ahead.",
+      "priceNote": "€140–€190 per night"
+    },
+    {
+      "rank": 2,
+      "name": "Colombi Hotel",
+      "style": "Established city hotel",
+      "location": "Freiburg",
+      "description": "A long-standing Freiburg address a short walk from the Altstadt with private parking, which matters given the number of driving day trips this itinerary needs; ask for a car with the green Umweltzone sticker if renting locally.",
+      "booking": "8 weeks ahead for April and September.",
+      "priceNote": "€190–€260 per night"
+    }
+  ],
+  "logistics": {
+    "connectivity": null,
+    "emergency": "112 pan-European; Germany specifics: 110 police, 112 fire/ambulance.",
+    "weather": null,
+    "bookingWindows": "Dr. Heger, Salwey, and other private Kaiserstuhl growers pour by appointment; email a week or more ahead, or ask the Kaiserstuhl Tourismus office to arrange it. Cooperative (Winzergenossenschaft) cellars are walk-in with posted hours.",
+    "money": "Cards work in Freiburg; village cooperatives and farm stalls often prefer cash.",
+    "transportRules": null,
+    "permits": null,
+    "health": null,
+    "gettingThere": null,
+    "other": [
+      {
+        "label": "The Umweltzone",
+        "text": "Freiburg's low-emission zone requires a green Feinstaubplakette sticker on any car entering the ring road; rental cars from German agencies carry one by default, but check."
+      },
+      {
+        "label": "Rail alternative",
+        "text": "The Breisgau-S-Bahn reaches Endingen and the Kaiserstuhlbahn branch serves several villages, though the highest hill villages (Oberrotweil, Achkarren) are car- or taxi-only."
+      },
+      {
+        "label": "Opening-hour traps",
+        "text": "Cooperative tasting rooms usually close Sundays; the Münsterplatz market does not run on Sunday at all."
+      },
+      {
+        "label": "Drink-drive alternatives",
+        "text": "With driving days built in, designate a non-tasting driver each day, use a wine-tour minibus service booked through Freiburg or Kaiserstuhl Tourismus, or ride the flat Kaiserstuhl-Radweg between villages by rental or e-bike instead of driving."
+      }
+    ]
+  },
+  "proTips": [
+    "Time a visit for early April if you can: the Kaiserstuhl's almond trees blossom around Ihringen before anywhere else in Germany, and the Mandelblütenweg path is at its best for about two weeks.",
+    "Ask any Winzergenossenschaft which single vineyard (Einzellage) a pour comes from — Kaiserstuhl cooperatives blend widely but usually keep a few site-specific bottlings back for tasting only.",
+    "Buy Schwarzwälder Schinken direct from a farm smokehouse rather than a supermarket; ask how many weeks it hung, and expect to pay more for it.",
+    "The Münsterplatz market is calmest before 09:00; by 11:00 it is standing room only.",
+    "Straußwirtschaften post a wreath of fir branches (Besen or Kranz) over the door when open — there is no fixed calendar, so check the current list at the village tourist office.",
+    "Ask Schwarzer Adler and similar restaurants for the Kirschwasser used in their Kirschtorte by name; several buy from named local Brennereien worth seeking out separately."
+  ],
+  "typeSpecific": {
+    "raw": {
+      "Total Distance / Terrain": "Approx. 250 km of day-trip driving; volcanic hill roads with grades up to 15% in the Kaiserstuhl",
+      "Who It Suits": "Spätburgunder drinkers, cooperative-cellar tasters, anyone who wants ham, cake and wine in the same afternoon"
+    },
+    "surface": "Approx. 250 km of day-trip driving; volcanic hill roads with grades up to 15% in the Kaiserstuhl",
+    "distanceKm": 250,
+    "elevationM": null,
+    "verticalM": null,
+    "technicalRating": null,
+    "transitPass": null,
+    "hutBooking": null,
+    "liftNetwork": null,
+    "snowReliability": null,
+    "windConditions": null,
+    "gpxReady": null,
+    "bookingTimeline": null,
+    "audience": "Spätburgunder drinkers, cooperative-cellar tasters, anyone who wants ham, cake and wine in the same afternoon"
+  },
+  "packingNotes": [
+    "A car adaptor or app for German fuel-price comparison; Kaiserstuhl villages have few stations.",
+    "Comfortable shoes for vineyard-hill walking; loess paths turn to mud after rain.",
+    "A cooler bag for ham and cheese bought at farm stalls.",
+    "Light layers: the Kaiserstuhl runs several degrees warmer than the Black Forest hills above it.",
+    "Cash in small notes for cooperatives and farm sales.",
+    "A printed list of Straußwirtschaft opening dates from the tourist office; online listings lag."
+  ],
+  "whatCouldGoWrong": [
+    "**A private grower doesn't reply to your email.** Fall back on the local Winzergenossenschaft, which is always walk-in and pours a comparable range.",
+    "**You can't find an open Straußwirtschaft.** Order Zwiebelkuchen and Federweißer at any Weinstube during the autumn weeks instead; most kitchens keep it on the menu regardless.",
+    "**Rain washes out a hill walk.** Retreat to a cooperative cellar tasting or the K3 ceramics-and-glass museum in Freiburg.",
+    "**You've had too much to drive back from the Kaiserstuhl.** Book a taxi in advance — village mobile coverage can be thin — or overnight at a Kaiserstuhl inn rather than returning to Freiburg.",
+    "**The Umweltzone catches you without a sticker.** Rental agencies at EuroAirport stock compliant vehicles by default; confirm at pickup rather than after a fine arrives."
+  ],
+  "sources": {
+    "verified": null,
+    "confidenceNotes": null
+  },
+  "verifyFlags": [],
+  "verifyFlagCount": 0,
+  "volatilePricing": false,
+  "wordCount": 1655,
+  "dataVintage": 2026,
+  "provenance": {
+    "batch": "western-central",
+    "sourceFile": "cartatripsv1/trips/de-culinary-baden-black-forest.md",
+    "sourceFormat": "md+yaml-frontmatter (one file per trip)",
+    "sourceId": "de-culinary-baden-black-forest",
+    "ingestedAt": "2026-09-02",
+    "synthesized": false
+  }
+}

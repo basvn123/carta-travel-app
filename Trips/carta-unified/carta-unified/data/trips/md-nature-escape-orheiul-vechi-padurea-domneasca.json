@@ -1,0 +1,298 @@
+{
+  "id": "md-nature-escape-orheiul-vechi-padurea-domneasca",
+  "sourceId": "moldova-orheiul-vechi-padurea-domneasca-nature",
+  "slug": "md-nature-escape-orheiul-vechi-padurea-domneasca",
+  "title": "Limestone, Floodplain and Well Water: Seven Quiet Days in Rural Moldova",
+  "country": "Moldova",
+  "countryCode": "MD",
+  "countries": [
+    {
+      "name": "Moldova",
+      "code": "MD"
+    }
+  ],
+  "isMultiCountry": false,
+  "region": "Eastern & Southeastern Europe",
+  "regionKey": "eastern-southeastern",
+  "subRegion": "The Răut Canyon, the Dniester Cliffs & the Prut Floodplain",
+  "tripType": "Nature Escapes & Cabin Stays",
+  "tripTypeId": 9,
+  "tripTypeSlug": "nature-escape",
+  "durationDays": 7,
+  "bestPeriod": {
+    "months": [
+      5,
+      6,
+      9,
+      10
+    ],
+    "monthNames": [
+      "May",
+      "June",
+      "September",
+      "October"
+    ],
+    "window": "mid-May to late June, then mid-September to mid-October",
+    "note": null,
+    "avoid": "July–August (35 °C, dust, dry riverbeds); February–March (thaw turns unsealed roads to black mud)",
+    "raw": null
+  },
+  "budgetTier": "€",
+  "budgetTierRange": [
+    1,
+    1
+  ],
+  "budgetTierRaw": "€",
+  "budget": {
+    "currency": "EUR",
+    "totalEur": {
+      "low": 390,
+      "high": 710
+    },
+    "totalNote": "€390–€710",
+    "breakdown": {
+      "accommodation": {
+        "lowEur": 140,
+        "highEur": 280,
+        "note": "€140–€280 (€20–€40/night, pensiune double with half board)"
+      },
+      "food": {
+        "lowEur": 70,
+        "highEur": 120,
+        "note": "€70–€120 (€10–€17/day; most pensiuni feed you)"
+      },
+      "transport": {
+        "lowEur": 150,
+        "highEur": 250,
+        "note": "€150–€250 (car hire from Chișinău plus fuel; roughly 900 km driven)"
+      },
+      "activities": {
+        "lowEur": 30,
+        "highEur": 60,
+        "note": "€30–€60 (monastery donations, guides, Beleu boat, museums)"
+      }
+    },
+    "perDayEur": {
+      "low": 56,
+      "high": 101
+    }
+  },
+  "profile": {
+    "difficulty": 2,
+    "difficultyLabel": "Moderate",
+    "difficultyNote": "Easy–Moderate",
+    "fitnessLevel": "Moderate",
+    "crowdLevel": null,
+    "familyFriendly": null,
+    "carRequired": null
+  },
+  "basecamps": [
+    "Butuceni",
+    "Trebujeni",
+    "Saharna",
+    "Lozova",
+    "Slobozia Mare"
+  ],
+  "gatewayAirport": "Chișinău International (KIV), 13 km from the centre; overland by bus or rail from Iași or Odesa. Hire a car at KIV — rural buses run on farm timetables and will not fit this route.",
+  "gatewayAirportCode": "KIV",
+  "languages": [
+    "Romanian",
+    "Russian"
+  ],
+  "currency": "Moldovan leu (MDL); roughly 19–20 MDL to €1",
+  "emergencyNumber": "112",
+  "coordinates": {
+    "lat": 47.009,
+    "lon": 28.8594,
+    "precision": "country",
+    "matchedPlace": "Chisinau",
+    "source": "country capital fallback"
+  },
+  "tags": [
+    "cabin",
+    "canyon",
+    "monasteries",
+    "birding",
+    "floodplain",
+    "foraging",
+    "wine-cellar",
+    "slow-travel"
+  ],
+  "summary": "This is not wilderness and it does not pretend to be. It is a farmed country with three wild seams: a white limestone canyon where monks cut cells into the cliff, the wooded bluffs above the Dniester, and a Prut…",
+  "summaryGenerated": false,
+  "hook": "This is not wilderness and it does not pretend to be. It is a farmed country with three wild seams: a white limestone canyon where monks cut cells into the cliff, the wooded bluffs above the Dniester, and a Prut floodplain full of herons. You sleep in village houses with a masonry stove and a bucket well in the yard, eat what the household grew, and drive dirt roads that mud takes away after rain. Suits travellers who want quiet and do not need infrastructure.",
+  "snapshot": {
+    "Country": "Moldova",
+    "Trip type": "Nature Escapes & Cabin Stays",
+    "Duration": "7 days",
+    "Best period": "Mid-May–June; mid-September–mid-October",
+    "Budget tier": "€",
+    "Difficulty": "Easy–Moderate (walking days under 12 km; the driving is the effort)",
+    "Start / End": "Chișinău → Chișinău (anticlockwise loop, ~900 km)",
+    "Getting there": "Chișinău International (KIV), 13 km from the centre; overland by bus or rail from Iași or Odesa. Hire a car at KIV — rural buses run on farm timetables and will not fit this route."
+  },
+  "itinerary": [
+    {
+      "day": 1,
+      "title": "Codrii, Moldova's oldest reserve",
+      "morning": "Collect the car at KIV and drive west on the M1 to Lozova, gateway to Rezervația Naturală Codrii, founded 1971 and the country's oldest protected area. Report at the reserve office before walking.",
+      "afternoon": "Walk the marked paths through hornbeam and sessile oak — the last large fragment of the forest that once covered central Moldova — then the reserve's natural history museum and dendrarium at Lozova, open **daily 08:00–17:00** but guided only by prior arrangement — ring 0237 47 386 or 0698 82 478, or email codrii@moldsilva.gov.md, a day ahead so a guide is on site [VERIFY: entry fee — the reserve publishes none online].",
+      "evening": "Continue 20 km to Mănăstirea Hâncu, founded 1678 and one of Moldova's most-visited monasteries, then to a village guesthouse near Lozova or Bursuc. Eat *zeamă* and *mămăligă cu brânză*; drink what the cellar offers.",
+      "dayStats": "55 km driving / 8 km walking",
+      "sleep": null
+    },
+    {
+      "day": 2,
+      "title": "Căpriana, then east to the Răut canyon",
+      "morning": "Detour to Căpriana, the monastery first documented in 1429 and the burial place of Moldovan boyars, restored in the 2000s. It is quieter before 10:00, before the Chișinău weekend coaches.",
+      "afternoon": "Drive north-east past Chișinău to Trebujeni, roughly 60 km from the capital, where the Răut suddenly cuts a 100 m gorge through Sarmatian reef limestone. Park high, and walk the rim before descending.",
+      "evening": "Cross the isthmus to Butuceni, a single-street village on the canyon floor, and settle in for three nights. Eco-Resort Butuceni and Casa din Luncă in Trebujeni are the two established houses [VERIFY: current nightly rates].",
+      "dayStats": "110 km driving",
+      "sleep": null
+    },
+    {
+      "day": 3,
+      "title": "Orheiul Vechi in full",
+      "morning": "Climb to the Peștera cave monastery, cut into the cliff face by Orthodox monks and reached through a low rock passage that opens onto a terrace above the river. It is an active church — cover shoulders, women a headscarf. Buy the reserve ticket first at the Butuceni information point — **20 MDL (about €1) adult, 10 MDL concessions**, free for pre-schoolers, with a 1½-hour guided walk 200 MDL in Romanian or 300 MDL in English for up to ten people (2026 tariff). The Butuceni point opens 08:00–18:00 on weekdays and 08:00–20:00 at weekends; the Belvedere platform point only Wednesday–Sunday. The landscape itself is open around the clock.",
+      "afternoon": "Walk the plateau above: the earthworks of Shehr al-Jedid, the Golden Horde town that stood here in the 14th century, then the Butuceni promontory with the river looped 90 m below on three sides.",
+      "evening": "Return along the valley floor for the light. Butuceni's houses sell walnuts, honey and *must* in September straight from the gate; the exchange is cash and conversation, not a shopfront.",
+      "dayStats": "12 km walking",
+      "sleep": null
+    },
+    {
+      "day": 4,
+      "title": "Curchi and the Dniester cliffs at Saharna",
+      "morning": "Drive north via Curchi, whose 19th-century Nașterea Domnului church is the finest neoclassical monastery building in the country, then east toward Rezina and the Dniester.",
+      "afternoon": "Walk up the Saharna gorge from the monastery car park: a stepped path past a chain of small waterfalls and pools to the Grimidon rock and the rock-cut cells of the old skete, with the Trinity monastery below.",
+      "evening": "Stay in a Saharna or Rezina guesthouse. Across the water is Transnistria; Rezina faces Râbnița over a road bridge, and the lights on the far bank are a different administration [VERIFY: current border-crossing and registration procedure].",
+      "dayStats": "120 km driving",
+      "sleep": null
+    },
+    {
+      "day": 5,
+      "title": "Țipova and north to the Prut",
+      "morning": "Drive to Țipova and walk 30 minutes down the gorge to the rock monastery, three levels of cells and a church hewn into the Dniester cliff and reputedly the largest cave monastery in eastern Europe.",
+      "afternoon": "Continue up the gorge to the waterfall, then take the long transfer west and north through Telenești and Fălești to Glodeni district. The roads narrow; allow three hours, not two.",
+      "evening": "Base near Cobani or Balatina at the edge of Pădurea Domnească, the Prut floodplain reserve. Guesthouses here are genuinely rural; confirm dinner when you book, because there is nowhere else to eat.",
+      "dayStats": "180 km driving",
+      "sleep": null
+    },
+    {
+      "day": 6,
+      "title": "Pădurea Domnească",
+      "morning": "Walk into Suta de Movile, the \"Hundred Knolls\" — several thousand low mounds spread over the Prut terrace, a landform with no agreed explanation, best read in low side-light.",
+      "afternoon": "Find the Stejarul lui Ștefan cel Mare near Cobani, an oak of several centuries standing alone in meadow, then the grey heron colony in the floodplain willows. Watch from the track; the birds abandon nests if walked under. The reserve also holds a fenced European bison enclosure [VERIFY: current bison enclosure access and hours].",
+      "evening": "Drive south down the Prut through Ungheni and Leova — slow, flat, agricultural — toward Cahul. This is the trip's long transfer, roughly four hours; break it in Leova.",
+      "dayStats": "10 km walking / 60 km driving",
+      "sleep": null
+    },
+    {
+      "day": 7,
+      "title": "Lake Beleu and the run back",
+      "morning": "At Slobozia Mare, enter Rezervația Prutul de Jos, a Ramsar wetland and UNESCO biosphere reserve built around Lake Beleu. Arrange a boat or a warden walk at the reserve office rather than turning up at the shore [VERIFY: current boat arrangement and price].",
+      "afternoon": "Beleu in September holds pelicans, spoonbills, glossy ibis and thousands of staging ducks. Bring binoculars and repellent; the reedbed is head-high and gives up nothing to the naked eye.",
+      "evening": "Drive back to Chișinău, 190 km on the R34/M3, roughly three hours. If your flight is early, sleep in Cahul instead and cut the airport run to a single morning.",
+      "dayStats": "250 km driving",
+      "sleep": null
+    }
+  ],
+  "accommodationStrategy": [
+    {
+      "rank": 1,
+      "name": "Eco-Resort Butuceni",
+      "style": "restored village houses",
+      "location": "Butuceni",
+      "description": "separate clay-and-stone houses on the canyon floor, so the Peștera monastery and the Butuceni promontory are a walk rather than a drive. Village produce in the kitchen, wine cellar on site.",
+      "booking": "4–8 weeks ahead for May or September weekends, direct; midweek is usually available late [VERIFY: current rates].",
+      "priceNote": null
+    },
+    {
+      "rank": 2,
+      "name": "Casa din Luncă",
+      "style": "family pensiune",
+      "location": "Trebujeni",
+      "description": "the meadow side of the river, cheaper than Butuceni, same canyon on the doorstep, and a household that cooks *plăcinte* on request. Well water, wood stove, yard parking.",
+      "booking": "direct with the family — Moldovan pensiuni answer phone and messaging apps faster than platforms.",
+      "priceNote": null
+    },
+    {
+      "rank": 3,
+      "name": "A Cobani or Balatina household pensiune",
+      "style": "rural homestay",
+      "location": "Glodeni district",
+      "description": "nothing else exists within 25 km of Pădurea Domnească, and only staying in the district gets you to Suta de Movile at first light. Expect a *sobă*, a well and half board.",
+      "booking": "by phone the week before, and confirm dinner explicitly.",
+      "priceNote": null
+    }
+  ],
+  "logistics": {
+    "connectivity": "national coverage is good and mobile data is cheap; buy an Orange or Moldcell prepaid SIM at the airport. Signal drops only in the Saharna and Țipova gorges.",
+    "emergency": "112, with English support limited. Rural clinics are basic — anything serious means Chișinău. Carry a first-aid kit, tick removers and full travel insurance.",
+    "weather": "continental extremes. May thunderstorms are violent and brief, and the risk they leave is mud, not lightning. Late September still reaches 28 °C by day and 6 °C at night.",
+    "bookingWindows": "two to four weeks suffices everywhere except Butuceni at peak weekends. National Wine Day and the early-October harvest weekends fill Chișinău and the Orhei valley.",
+    "money": "Moldovan lei. Cards work in Chișinău, Orhei, Cahul and larger pensiuni; assume cash everywhere else. Draw lei in Chișinău — village ATMs are unreliable, and euro notes are not spendable.",
+    "transportRules": "no vignette for foreign-registered cars entering Moldova, but green card insurance is checked at the border; hire cars come with it. Speed enforcement is active on the M1 and M3. Fuel up in district towns, not villages.",
+    "permits": "the scientific reserves (Codrii, Pădurea Domnească, Prutul de Jos) are entered via their administration offices, not freely — telephone ahead, check in on arrival and take the warden where one is offered. **Prutul de Jos** runs two set routes from its Slobozia Mare headquarters, a 3 km two-hour walk to the Beleu viewing platform and a boat leg up the Manolescu channel that only runs when water levels allow; ring 062122295 or email prutuldejos@moldsilva.gov.md. **Pădurea Domnească** works the same way through Moldsilva on +373 22 27 23 06, and its bison herd — five animals — sits in a fenced enclosure you must be taken to. None of the three publishes a tariff; budget a modest cash fee and a tip for the warden [VERIFY: published entry fees — none of the reserves lists one]. Transnistria is not on this itinerary and does not need to be; if you do cross at Rezina–Râbnița, you are registered at a checkpoint, your hire-car agreement may exclude the territory, and stays beyond a set number of hours require registration [VERIFY: current registration threshold].",
+    "health": null,
+    "gettingThere": null,
+    "other": []
+  },
+  "proTips": [
+    "Do Orheiul Vechi at 07:00 or after 17:00. The site is a Chișinău day-trip and the coaches occupy the middle of the day; the canyon light is better at either end anyway.",
+    "Ask your host to open the *beci*. House wine — usually Rară Neagră, Fetească or a plain white — is served free or for a few lei, and it is the honest version of the country's wine story rather than the tour version.",
+    "Book Mileștii Mici or Cricova before you fly if you want a cellar visit on the way out; these are driven underground tours, sold in advance, and walk-ins do not reliably work.",
+    "Carry 1,000–1,500 MDL in small notes. Monastery donations, village honey, warden fees and roadside plum sellers are all cash, and nobody has change for a 500.",
+    "Time Pădurea Domnească for early morning. The heron colony is active at dawn, the mounds of Suta de Movile only read as mounds in low light, and the floodplain haze closes in by 10:00.",
+    "Skip Transnistria unless it interests you specifically. It costs half a day, adds paperwork, and nothing on the left bank improves this particular trip."
+  ],
+  "typeSpecific": {
+    "raw": {
+      "Access requirements": "National roads (M and R numbers) are asphalt and mostly decent. Everything else is a *drum de țară*: graded earth over black chernozem, dust in September, and after two days of rain a greasy surface on which front-wheel-drive saloons slide sideways on a 6% grade. The approaches that bite are the descent into Butuceni from Trebujeni, the track to Țipova monastery, and the floodplain tracks in Pădurea Domnească, which flood outright in spring. Clearance is what helps; true 4x4 is rarely needed. Țipova and the Saharna gorge both end in a 20–40 minute walk-in.",
+      "Isolation level: 2/5": "Remoteness here is about infrastructure, not distance from people. You are never more than 15 km from a village, but that village may have one shop, no fuel, no pharmacy and no card terminal. Nowhere on this route is more than three hours from Chișinău.",
+      "Foraging norms": "There is no permit culture: household gathering is universal and expected. Walnuts, rosehips, elderflower, cornelian cherry (*coarne*), wild garlic (*leurdă*) in spring and honey fungus (*ghebe*) after the first autumn rains all get picked, and become *dulceață*, *zacuscă* and cellar wine. Personal-use collecting in Moldsilva state forest is tolerated; inside the scientific reserves — Codrii, Pădurea Domnească, Prutul de Jos — you are a visitor in a protected area: stay on tracks, take nothing.",
+      "Wildlife protocol": "No bears, and wolves are transient at most, so this is nuisance protocol rather than danger: roe deer, red deer and wild boar in Codrii, badger and pine marten, and free-roaming farm dogs — the one real hazard. Carry a stick, do not run, do not stare. Birds are the reason to be here: heron and egret colonies in Pădurea Domnească, black stork and white-tailed eagle over the Prut, and the migration funnelling down the Prut corridor to Lake Beleu. Keep 100 m from nesting colonies.",
+      "Off-grid utilities": "A rural *pensiune* means a *sobă* (masonry stove), a bucket or pump well in the yard, hot water from an electric boiler, sometimes an outside *veceu*, and a *beci* where the house wine lives. Well water is usually drinkable, but nitrate levels in farming villages can be high — ask, and use bottled water for children. Mobile coverage is good and fails mainly in the gorges."
+    },
+    "surface": null,
+    "distanceKm": null,
+    "elevationM": null,
+    "verticalM": null,
+    "technicalRating": null,
+    "transitPass": null,
+    "hutBooking": null,
+    "liftNetwork": null,
+    "snowReliability": null,
+    "windConditions": null,
+    "gpxReady": null,
+    "bookingTimeline": null,
+    "audience": null
+  },
+  "packingNotes": [],
+  "whatCouldGoWrong": [],
+  "sources": {
+    "verified": null,
+    "confidenceNotes": "- Verified: Orheiul Vechi as the Răut limestone canyon at Butuceni/Trebujeni with an active cave monastery; Codrii as Moldova's oldest reserve (1971), hornbeam-oak forest near Lozova; Hâncu founded 1678, Căpriana first documented 1429; Saharna and Țipova as rock monasteries on the Dniester right bank; Pădurea Domnească as the Prut floodplain reserve holding Suta de Movile and the Stejarul lui Ștefan cel Mare; Prutul de Jos / Lake Beleu as a Ramsar and UNESCO biosphere wetland; no resident brown bears in Moldova. - `[VERIFY]` items in this file: 8 (see inline markers above) - Last reviewed: 2026-09-02"
+  },
+  "verifyFlags": [
+    "entry fee — the reserve publishes none online",
+    "current nightly rates",
+    "current border-crossing and registration procedure",
+    "current bison enclosure access and hours",
+    "current boat arrangement and price",
+    "current rates",
+    "published entry fees — none of the reserves lists one",
+    "current registration threshold"
+  ],
+  "verifyFlagCount": 8,
+  "volatilePricing": true,
+  "wordCount": 2392,
+  "dataVintage": 2026,
+  "provenance": {
+    "batch": "eastern-southeastern",
+    "sourceFile": "cartaeasterneuropetrips/trips/moldova-orheiul-vechi-padurea-domneasca-nature.md",
+    "sourceFormat": "md+nested-yaml-frontmatter (one file per trip)",
+    "sourceId": "moldova-orheiul-vechi-padurea-domneasca-nature",
+    "ingestedAt": "2026-09-02",
+    "synthesized": false
+  }
+}

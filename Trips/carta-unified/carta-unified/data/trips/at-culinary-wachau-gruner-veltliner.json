@@ -1,0 +1,304 @@
+{
+  "id": "at-culinary-wachau-gruner-veltliner",
+  "sourceId": "at-culinary-wachau-gruner-veltliner",
+  "slug": "at-culinary-wachau-gruner-veltliner",
+  "title": "Grüner Veltliner and the Wachau Terraces",
+  "country": "Austria",
+  "countryCode": "AT",
+  "countries": [
+    {
+      "name": "Austria",
+      "code": "AT"
+    }
+  ],
+  "isMultiCountry": false,
+  "region": "Western & Central Europe",
+  "regionKey": "western-central",
+  "subRegion": "Wachau, Lower Austria",
+  "tripType": "Culinary & Wine Tours",
+  "tripTypeId": 7,
+  "tripTypeSlug": "culinary",
+  "durationDays": 7,
+  "bestPeriod": {
+    "months": [
+      5,
+      6,
+      9,
+      10
+    ],
+    "monthNames": [
+      "May",
+      "June",
+      "September",
+      "October"
+    ],
+    "window": null,
+    "note": "September and early October bring the Marillenernte's tail end and the first Sturm; May is blossom season on the terraces.",
+    "avoid": null,
+    "raw": null
+  },
+  "budgetTier": "€€",
+  "budgetTierRange": [
+    2,
+    2
+  ],
+  "budgetTierRaw": "€€",
+  "budget": {
+    "currency": "EUR",
+    "totalEur": {
+      "low": 1250,
+      "high": 1750
+    },
+    "totalNote": null,
+    "breakdown": {
+      "accommodation": {
+        "lowEur": 500,
+        "highEur": 700,
+        "note": null
+      },
+      "food": {
+        "lowEur": 350,
+        "highEur": 470,
+        "note": null
+      },
+      "transport": {
+        "lowEur": 150,
+        "highEur": 220,
+        "note": null
+      },
+      "activities": {
+        "lowEur": 250,
+        "highEur": 360,
+        "note": null
+      }
+    },
+    "perDayEur": {
+      "low": 179,
+      "high": 250
+    }
+  },
+  "profile": {
+    "difficulty": 1,
+    "difficultyLabel": "Easy",
+    "difficultyNote": null,
+    "fitnessLevel": "Easy",
+    "crowdLevel": "Moderate",
+    "familyFriendly": false,
+    "carRequired": false
+  },
+  "basecamps": [
+    "Krems an der Donau and Dürnstein"
+  ],
+  "gatewayAirport": "Vienna (VIE)",
+  "gatewayAirportCode": "VIE",
+  "languages": [
+    "German"
+  ],
+  "currency": "EUR",
+  "emergencyNumber": "112",
+  "coordinates": {
+    "lat": 48.2085,
+    "lon": 16.3721,
+    "precision": "gateway",
+    "matchedPlace": "Vienna",
+    "source": "geonames (geonamescache, cities > 15k)"
+  },
+  "tags": [
+    "wine",
+    "dac-appellation",
+    "heuriger",
+    "apricot",
+    "unesco-landscape"
+  ],
+  "summary": "A week on the Danube terraces tasting Grüner Veltliner and Riesling by classification, from walk-in cooperatives to email-only growers.",
+  "summaryGenerated": false,
+  "hook": "Twenty-five kilometres of river and thirty-three degrees of slope, terraced by hand since the Babenbergs. This week moves on foot, by regional train and by the Wachaubahn, from the cooperative tasting rooms of Dürnstein to growers who answer email once a week. You leave understanding why a Federspiel and a Smaragd from the same vineyard taste like different vintages.",
+  "snapshot": {
+    "Country": "Austria",
+    "Base(s)": "Krems an der Donau (4 nights) · Dürnstein (3 nights)",
+    "Trip Type": "Culinary & Wine Tours",
+    "Duration": "7 days / 7 nights",
+    "Best Period": "May, June, September, October",
+    "Budget Tier": "€€",
+    "Total Distance / Terrain": "Approx. 40 km of rail/road between villages; 20–25 km walked among terraced vineyards, gentle but with steep short climbs to single sites",
+    "Getting There": "Fly to Vienna (VIE), then Franz-Josefs-Bahn train from Wien Franz-Josefs-Bahnhof to Krems, approx. 1h",
+    "Who It Suits": "Wine drinkers who want appellation detail, not just tastings; anyone happy to plan a day around a 30-minute train"
+  },
+  "itinerary": [
+    {
+      "day": 1,
+      "title": "Krems, and the shape of the valley",
+      "morning": "Land in Vienna and take the Franz-Josefs-Bahn direct to Krems an der Donau, about an hour. Drop bags in Krems' old town, then walk the Steiner Landstraße into the neighbouring district of Stein — one continuous Renaissance street.",
+      "afternoon": "At the Krems tourist office on Utzstraße, pick up the Vinea Wachau map, which shows every producer by village and marks who tastes by appointment only. Walk up to the Piaristenkirche for the first proper view down the valley: terraces stacked above the river on both banks, the pattern this whole week is built around.",
+      "evening": "A Heuriger in Stein — look for the *Buschen*, the bundle of pine or straw hung over a door that signals a wine tavern is currently pouring its own vintage. Order a Grüner Veltliner Steinfeder, the lightest of the three Wachau classifications, alongside a cold Brettljause of cheese and speck.",
+      "dayStats": "Cellars visited: 0 (Heuriger only). Km travelled: 5. Approx. tasting spend: €15–€20.",
+      "sleep": null
+    },
+    {
+      "day": 2,
+      "title": "The classification, explained by drinking it",
+      "morning": "Walk or taxi the 6 km to Dürnstein and start at Domäne Wachau, the large growers' cooperative in the former Klosterkeller — no appointment needed, and the tasting room walks you through the three-tier system in order. Steinfeder is lightest, capped at 11.5% alcohol, for drinking within the year; Federspiel sits in the middle, 11.5–12.5%, roughly the weight of a German Kabinett; Smaragd is fullest and latest-picked, minimum 12.5%, named for the green lizards that sun themselves on the hot stone walls.",
+      "afternoon": "Climb the path above Dürnstein to the ruined castle where Richard the Lionheart was held in 1192 — 20 minutes of steep steps, and the view over the river bend is the one on every postcard. Coming down, walk the Marktstraße past the blue-and-white baroque tower of the Stiftskirche.",
+      "evening": "Dinner in Dürnstein with Tafelspitz, boiled beef with apfelkren and chive sauce — not a Wachau dish originally, but standard on every serious Lower Austrian menu, and it sits well against a Federspiel Riesling.",
+      "dayStats": "Cellars visited: 1. Km travelled: 6. Approx. tasting spend: €10–€15 (cooperative flight).",
+      "sleep": null
+    },
+    {
+      "day": 3,
+      "title": "Loiben, and a reservation kept",
+      "morning": "Walk the vineyard path from Dürnstein into Unterloiben and Oberloiben, past the Loibenberg and Kellerberg sites — two of the Wachau's most quoted single vineyards, both facing due south into the river's heat trap.",
+      "afternoon": "Reservation at Weingut Emmerich Knoll in Unterloiben, one of the valley's most consistent producers. Email three to four weeks ahead — slots are limited and there are no walk-ins in high season; expect a working cellar visit, not a shop counter, and a modest tasting fee.",
+      "evening": "Back in Krems, dinner near the Südtiroler Platz. Order Marillenknödel if it's on the card — apricot dumplings made from a quark or potato dough, wrapped around a whole Wachauer Marille, rolled in buttered breadcrumbs.",
+      "dayStats": "Cellars visited: 1. Km travelled: 4. Approx. tasting spend: €20–€30.",
+      "sleep": null
+    },
+    {
+      "day": 4,
+      "title": "Weissenkirchen and the apricot",
+      "morning": "Regional train or the seasonal Wachaubahn heritage line to Weissenkirchen in der Wachau, one stop past Dürnstein. The Teisenhoferhof, a fortified Renaissance courtyard, houses the small Wachau Museum — worth twenty minutes for context on the terracing before you walk out into it.",
+      "afternoon": "Reservation at Weingut Prager on the Weissenkirchen waterfront — email or call at least three weeks out, since their Smaragd bottlings from the Achleiten site are heavily allocated. If Prager is full, the Weinkolonie tasting room pours flights from several smaller growers without a booking.",
+      "evening": "Walk an orchard path above the village if the season allows — apricot trees planted on the terrace edges, protected as Wachauer Marille, a PGI product that cannot legally be grown or sold under that name outside this valley. Dinner: Marillenknödel again, or a savoury version with Marillenschnaps as digestif.",
+      "dayStats": "Cellars visited: 1. Km travelled: 5. Approx. tasting spend: €18–€25.",
+      "sleep": null
+    },
+    {
+      "day": 5,
+      "title": "Nikolaihof and Stift Göttweig",
+      "morning": "Cross to Mautern and Nikolaihof, Austria's oldest documented winery, biodynamic since the 1970s on a site the Romans planted first. Book ahead — limited daily tasting schedule, email preferred.",
+      "afternoon": "Taxi or bus up to Stift Göttweig, the Benedictine abbey on its own hill above the valley, which has grown its own vines since the 11th century. The terrace café has the single best panoramic view of the whole Wachau — worth the detour even without wine in mind.",
+      "evening": "Krems' Saturday market fills Südtiroler Platz roughly 07:00–13:00 — apricots in season, Waldviertel poppy-seed products, cured meats. Time this day for a Saturday if you can, and shop for a picnic rather than sit down.",
+      "dayStats": "Cellars visited: 1. Km travelled: 8. Approx. tasting spend: €20–€28.",
+      "sleep": null
+    },
+    {
+      "day": 6,
+      "title": "F.X. Pichler, if you can get in",
+      "morning": "Weingut F.X. Pichler in Oberloiben is the valley's most quoted address and hardest to book — write months ahead by email, expect a firm minimum purchase, and no reply during harvest. If the date doesn't line up, Weingut Alzinger, two doors down, pours similarly serious Smaragd Rieslings on shorter notice.",
+      "afternoon": "Free the rest of the day for the Danube itself: a Wachau boat trip from Dürnstein to Spitz and back gives you the terraces from the water, the angle they were actually built to be seen from.",
+      "evening": "A last Heuriger evening in Stein, ordering by classification this time — a Steinfeder to start, a Smaragd with the main course.",
+      "dayStats": "Cellars visited: 1. Km travelled: 20 (mostly by boat). Approx. tasting spend: €30–€45.",
+      "sleep": null
+    },
+    {
+      "day": 7,
+      "title": "Spitz, and out",
+      "morning": "Wachaubahn or bus to Spitz, the prettiest of the villages and the one built around the Tausendeimerberg, \"thousand-bucket hill,\" reputedly capable of a thousand buckets of must in a single good year. Walk up to the ruined Hinterhaus castle for a last view.",
+      "afternoon": "Buy at the source: most Wachau growers sell bottles directly from the cellar, and several will ship. Back to Krems by early afternoon.",
+      "evening": "Train to Vienna (about 1h) for the flight out, or one final night in Krems if your departure is early.",
+      "dayStats": "Cellars visited: 1. Km travelled: 12. Approx. tasting spend: €40–€80 (bottle purchases).",
+      "sleep": null
+    }
+  ],
+  "accommodationStrategy": [
+    {
+      "rank": 1,
+      "name": "Hotel Alte Post",
+      "style": "Historic coaching inn",
+      "location": "Krems",
+      "description": "A 16th-century post house on Krems' main pedestrian street, close to the station and Stein. The courtyard restaurant pours Wachau wines by the glass across the whole classification range, useful for orienting your palate before the cellar visits start.",
+      "booking": "6 weeks ahead for September.",
+      "priceNote": "€110–€160 per night"
+    },
+    {
+      "rank": 2,
+      "name": "Hotel Sänger Blondel",
+      "style": "Family-run",
+      "location": "Dürnstein",
+      "description": "Steps from the Marktstraße and the path up to the castle ruin, run by the same family for generations, with a serious wine list drawn almost entirely from Loiben growers. Being based in Dürnstein rather than day-tripping from Krems saves the last train back after long cellar afternoons.",
+      "booking": "8 weeks ahead; Dürnstein sells out fast in autumn.",
+      "priceNote": "€140–€200 per night"
+    },
+    {
+      "rank": 3,
+      "name": "Pension am Stein",
+      "style": "Simple guesthouse",
+      "location": "Stein",
+      "description": "A quieter, cheaper base a 15-minute walk from central Krems, useful if you'd rather keep the budget for tastings than for the room. Parking is easy and it's on the Wachaubahn's Krems-Stein stop.",
+      "booking": "4 weeks ahead.",
+      "priceNote": "€80–€110 per night"
+    }
+  ],
+  "logistics": {
+    "connectivity": null,
+    "emergency": "112 pan-European. Austria specifics: 144 ambulance, 133 police, 122 fire.",
+    "weather": "The Danube funnels heat into the terraces; summer afternoons can hit 35°C on the stone walls. Carry water on any vineyard walk.",
+    "bookingWindows": "Email in German or English 3–6 weeks ahead for Prager, Knoll and Alzinger; F.X. Pichler needs months and usually a minimum purchase. The Krems and Dürnstein tourist offices (Vinea Wachau member list) will also relay booking requests for smaller growers who don't check email daily.",
+    "money": "Cards are accepted at cooperatives and restaurants; small growers often prefer cash for cellar-door sales.",
+    "transportRules": null,
+    "permits": null,
+    "health": null,
+    "gettingThere": null,
+    "other": [
+      {
+        "label": "Rail",
+        "text": "The Wachaubahn heritage line runs seasonally, roughly May–October, mainly weekends and holidays; the regular Franz-Josefs-Bahn/regional service between Krems, Dürnstein, Weissenkirchen and Spitz runs year-round, hourly."
+      },
+      {
+        "label": "Drink-drive alternative",
+        "text": "Do not rent a car for this trip. The valley is served end to end by train and by the summer Wachau boat line (Brandner/DDSG); taxis between villages run €15–€25."
+      },
+      {
+        "label": "Opening-hour traps",
+        "text": "Cooperative tasting rooms (Domäne Wachau) keep regular hours; individual growers often close for the harvest in late September and early October — always confirm the week before, not just the day before."
+      }
+    ]
+  },
+  "proTips": [
+    "Learn the three words — Steinfeder, Federspiel, Smaragd — before Day 2. Every tasting room in the valley organises its list by them, and staff assume you know the order.",
+    "Ask any grower to pour the same site in two classifications side by side (a Federspiel and a Smaragd from the same vineyard) rather than tasting across villages — it's the clearest way to feel what ripeness does.",
+    "Book Nikolaihof and Prager for the same week but different days; both keep short tasting windows and neither takes same-day requests reliably.",
+    "The Wachau boat (Dürnstein–Spitz) runs a proper timetable in summer and thins sharply outside July–August — check before planning Day 6 around it.",
+    "Buy apricot schnaps (Marillenschnaps) directly from a Weissenkirchen orchard stand rather than a shop in Krems; the difference in a good year is real.",
+    "Krems' Saturday market starts early and thins by midday — go before 09:00 for the best produce."
+  ],
+  "typeSpecific": {
+    "raw": {
+      "Total Distance / Terrain": "Approx. 40 km of rail/road between villages; 20–25 km walked among terraced vineyards, gentle but with steep short climbs to single sites",
+      "Who It Suits": "Wine drinkers who want appellation detail, not just tastings; anyone happy to plan a day around a 30-minute train"
+    },
+    "surface": "Approx. 40 km of rail/road between villages; 20–25 km walked among terraced vineyards, gentle but with steep short climbs to single sites",
+    "distanceKm": 40,
+    "elevationM": null,
+    "verticalM": null,
+    "technicalRating": null,
+    "transitPass": null,
+    "hutBooking": null,
+    "liftNetwork": null,
+    "snowReliability": null,
+    "windConditions": null,
+    "gpxReady": null,
+    "bookingTimeline": null,
+    "audience": "Wine drinkers who want appellation detail, not just tastings; anyone happy to plan a day around a 30-minute train"
+  },
+  "packingNotes": [
+    "Comfortable shoes for cobbled village streets and short steep vineyard paths.",
+    "A sunhat and real sun protection — the terraces reflect heat back at you all afternoon.",
+    "A soft cooler bag or wine tote if you plan to carry bottles between cellars.",
+    "Light layers: river mornings are cool even in a hot week.",
+    "A phrasebook or translation app; small growers may not speak fluent English.",
+    "Cash in small notes (€20s and under) for cellar-door purchases."
+  ],
+  "whatCouldGoWrong": [
+    "**A reservation-only estate doesn't reply.** Fall back to Domäne Wachau's cooperative room or the Weinkolonie in Weissenkirchen, both walk-in and both pouring a genuine cross-section of the valley.",
+    "**Harvest closes a grower's tasting room without notice.** This is normal in late September; ask your hotel to call ahead same-morning rather than showing up unannounced.",
+    "**The Wachaubahn isn't running that day.** The parallel bus and regional train cover every stop on the line.",
+    "**You've had too much to taste and drive is off the table anyway.** Taxi numbers are posted in every hotel lobby; a Dürnstein–Krems fare runs about €18–€22."
+  ],
+  "sources": {
+    "verified": null,
+    "confidenceNotes": null
+  },
+  "verifyFlags": [],
+  "verifyFlagCount": 0,
+  "volatilePricing": false,
+  "wordCount": 1994,
+  "dataVintage": 2026,
+  "provenance": {
+    "batch": "western-central",
+    "sourceFile": "cartatripsv1/trips/at-culinary-wachau-gruner-veltliner.md",
+    "sourceFormat": "md+yaml-frontmatter (one file per trip)",
+    "sourceId": "at-culinary-wachau-gruner-veltliner",
+    "ingestedAt": "2026-09-02",
+    "synthesized": false
+  }
+}

@@ -59,6 +59,33 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from db import connect  # noqa: E402  (also puts pipeline/ on sys.path)
 from validate import PILOT_COUNTRIES  # noqa: E402
+import route_schema  # noqa: E402  (ROUTES.md R1: the route-layer keys)
+
+# The lake layer's card-shape helpers, loaded by path as the beach, peak and
+# trip layers load them. The frame here is the 9/4 .places-tcard strip.
+import importlib.util  # noqa: E402
+
+_LAKE_IMAGES = ROOT / "pipeline" / "lakes" / "lake_images.py"
+if "carta_lake_images" in sys.modules:
+    lake_images = sys.modules["carta_lake_images"]
+else:
+    _lake_spec = importlib.util.spec_from_file_location("carta_lake_images",
+                                                        _LAKE_IMAGES)
+    lake_images = importlib.util.module_from_spec(_lake_spec)
+    sys.modules["carta_lake_images"] = lake_images
+    _lake_spec.loader.exec_module(lake_images)
+
+TRAIL_CARD_AR = 9 / 4
+
+
+def card_images(trip):
+    """The trip's ranked photographs, with a card-shaped one leading.
+
+    Rank order is preserved for everything else, and no picture is dropped:
+    this only decides which of them the card crops."""
+    return lake_images.lead_by_fit(list(trip.get("images") or []),
+                                   lambda i: (i.get("w"), i.get("h")),
+                                   frame_ar=TRAIL_CARD_AR)
 
 OUT_DIR = ROOT / "continent-app" / "public" / "trails"
 REVIEWS_DDL = ROOT / "tools" / "trailslab" / "initdb" / "04_trip_reviews.sql"
@@ -68,10 +95,19 @@ REVIEWS_DDL = ROOT / "tools" / "trailslab" / "initdb" / "04_trip_reviews.sql"
 REVIEWER = "pipeline:trails_export"
 
 # Douglas-Peucker tolerance in metres, applied in EPSG:3035 so it means the
-# same thing from Marseille to Tromso. 20 m keeps a trail's shape honest well
-# past the zoom where a whole route fits the screen, and is far below the
-# 30 m DEM step the elevation figures come from.
-SIMPLIFY_M = 20.0
+# same thing from Marseille to Tromso.
+#
+# 20 m was right when a country shipped 13 routes. At 150 it is not: France
+# carried 44 routes in 692 KB, so the same tolerance over a full list would
+# make the browser fetch well over 2 MB before it can draw a single card.
+#
+# The line in the country file is a PLACEHOLDER. It exists so the trail page
+# can sketch the route in the moment between the card being tapped and
+# trip/{id}.json arriving, after which the full-resolution geometry replaces
+# it and is what the map, the GPX and the follow maths all use. 90 m is
+# invisible at the zoom where a whole route fits the screen and cuts the
+# country files by roughly four fifths.
+SIMPLIFY_M = 90.0
 
 # Wire coordinate precision. 5 decimals is about 1.1 m of longitude at the
 # equator and less further north: below the simplification tolerance, so it
@@ -82,7 +118,10 @@ FULL_DECIMALS = 6
 # Elevation fields worth shipping. The rest of the jsonb (geom_md5, nodata
 # fractions, coast fixes) is sampling bookkeeping the app has no use for.
 ELEVATION_KEYS = ("profile", "step_m", "ele_min_m", "ele_max_m",
-                  "max_grade_pct", "duration_rule", "source")
+                  "max_grade_pct", "duration_rule", "source",
+                  # ROUTES.md R4: where the line starts and ends, and how
+                  # much of it is steep, measured over 90 m spans.
+                  "ele_start_m", "ele_end_m", "steep10_pct", "steep15_pct")
 
 
 # ---------------------------------------------------------------------------
@@ -97,6 +136,12 @@ ELEVATION_KEYS = ("profile", "step_m", "ele_min_m", "ele_max_m",
 # ST_Multi on both: simplifying a single-part route hands back a LineString,
 # and a wire whose geometry type depends on how many parts a trail happens to
 # have would make every consumer branch. Always MultiLineString.
+# Publishes the REPAIRED geometry when there is a fresh accepted one, which is
+# how a route whose relation had a seven metre break ships as the continuous
+# line it is on the ground. `eff` resolves that once and every geometry
+# expression below reads it, so the extent, the placeholder line, the
+# full-resolution line and the point count can never disagree about which
+# geometry this trip is.
 TRIPS_SQL = """
     SELECT t.id, t.country, t.category::text, t.title, t.description_md,
            t.distance_m, t.ascent_m, t.descent_m, t.duration_min,
@@ -104,17 +149,40 @@ TRIPS_SQL = """
            t.source, t.license, t.attribution_text,
            t.quality_score, t.status::text, t.updated_at,
            t.raw_tags, t.elevation,
-           ST_NPoints(t.geom) AS n_full,
-           ST_XMin(t.geom), ST_YMin(t.geom), ST_XMax(t.geom), ST_YMax(t.geom),
+           t.rating, t.rating_parts, t.is_loop, t.loop_source, t.highlights,
+           t.tier, t.rg, t.nuts3, t.region_crosses, t.derived_route,
+           t.grade, t.grade_src, t.grade_parts,
+           t.route_type, t.route_type_src,
+           t.highlight_kinds, t.suitability, t.surface, t.season,
+           t.waymark_ref, t.publisher, t.passes,
+           t.portal_ok, t.portal_source,
+           t.family_key, t.family_name, t.family_size,
+           t.source_ref, t.way_tags, t.gap_info,
+           t.hierarchy, t.hierarchy_src, t.parent_refs,
+           t.stage_index, t.stage_count, t.co_located,
+           t.stage_of, t.top_of,
+           eff.info AS repair_info,
+           ST_NPoints(eff.geom) AS n_full,
+           ST_XMin(eff.geom), ST_YMin(eff.geom),
+           ST_XMax(eff.geom), ST_YMax(eff.geom),
            ST_AsGeoJSON(
                ST_Multi(ST_Force2D(ST_Transform(ST_SimplifyPreserveTopology(
-                   ST_Transform(t.geom, 3035), %(tol)s), 4326))),
+                   ST_Transform(eff.geom, 3035), %(tol)s), 4326))),
                %(wire_dp)s) AS wire_geom,
-           ST_AsGeoJSON(ST_Multi(t.geom), %(full_dp)s) AS full_geom
+           ST_AsGeoJSON(ST_Multi(eff.geom), %(full_dp)s) AS full_geom
     FROM trips t
+    CROSS JOIN LATERAL (
+        SELECT COALESCE(r.geom, t.geom) AS geom, r.repair_info AS info
+        FROM (SELECT 1) one
+        LEFT JOIN trip_repairs r
+          ON r.trip_id = t.id AND r.repaired
+         AND r.repair_info->>'source_geom_md5'
+             = md5(ST_AsBinary(ST_Force2D(t.geom)))
+    ) eff
     WHERE t.status::text = ANY(%(statuses)s)
       AND (%(countries)s::text[] IS NULL OR t.country = ANY(%(countries)s))
-    ORDER BY t.country, t.category, t.quality_score DESC NULLS LAST, t.id
+    ORDER BY t.country, t.category, t.rating DESC NULLS LAST,
+             t.quality_score DESC NULLS LAST, t.id
 """
 
 TRIP_COLS = ("id", "country", "category", "title", "description",
@@ -122,6 +190,19 @@ TRIP_COLS = ("id", "country", "category", "title", "description",
              "difficulty", "sac_scale", "network",
              "source", "license", "attribution_text",
              "quality", "status", "updated_at", "raw_tags", "elevation",
+             "rating", "rating_parts", "is_loop", "loop_source", "highlights",
+             "tier", "rg", "nuts3", "region_crosses", "derived_route",
+             "grade", "grade_src", "grade_parts",
+             "route_type", "route_type_src",
+             "highlight_kinds", "suitability", "surface", "season",
+             "waymark_ref", "publisher", "passes",
+             "portal_ok", "portal_source",
+             "family_key", "family_name", "family_size",
+             "source_ref", "way_tags", "gap_info",
+             "hierarchy", "hierarchy_src", "parent_refs",
+             "stage_index", "stage_count", "co_located",
+             "stage_of", "top_of",
+             "repair_info",
              "n_full", "xmin", "ymin", "xmax", "ymax",
              "wire_geom", "full_geom")
 
@@ -143,6 +224,78 @@ def published_ids(conn):
     with conn.cursor() as cur:
         cur.execute("SELECT id FROM trips WHERE status = 'published'::trip_status")
         return {r[0] for r in cur.fetchall()}
+
+
+COMMONS_CREDIT = ("Photographs from Wikimedia Commons, "
+                  "per-file licences on record")
+
+# Commons' Artist field is free-form wikitext, and a good number of uploads
+# put the licence there instead of a name: "This file is available under the
+# Creative Commons ...". Printed as an author under a photograph that reads
+# as nonsense, and worse, it looks like we mangled the credit. When the field
+# is not a name we ship no author and let the licence line stand alone, which
+# is what the licence actually requires when no author is asserted.
+NOT_A_NAME_RE = re.compile(
+    r"^\s*(this file|the (copyright|original)|available under|licen[cs]ed?|"
+    r"creative commons|public domain|unknown|no machine[- ]readable)", re.I)
+LICENCE_BLURB_RE = re.compile(
+    r"available under|creative commons attribution|gnu free documentation",
+    re.I)
+
+
+def clean_author(raw):
+    """The photographer's name, or None when the field is not one."""
+    text = " ".join(str(raw or "").split())
+    if not text or len(text) > 120:
+        return None
+    if NOT_A_NAME_RE.match(text) or LICENCE_BLURB_RE.search(text):
+        return None
+    return text
+
+
+# The MediaWiki imageinfo API appends its own campaign tracking to every
+# thumbnail URL it hands back ("?utm_source=commons.wikimedia.org&
+# utm_campaign=imageinfo&..."). It is theirs, not ours, it says nothing about
+# the file, and shipping it puts a tracking query string in front of every
+# reader. The bare thumbnail URL serves the identical image.
+UTM_RE = re.compile(r"[?&]utm_[^&]*")
+
+
+def clean_url(url):
+    if not url:
+        return url
+    cleaned = UTM_RE.sub("", str(url))
+    # Removing the first parameter can leave a dangling separator.
+    return cleaned.replace("?&", "?").rstrip("?&")
+
+
+def fetch_images(conn, ids):
+    """Ranked photographs per trip, hero first.
+
+    Only rows the photo pass ranked: the citytrip layer stores unranked
+    candidates in the same table and those are borrowed city pictures, which
+    is exactly what this layer exists to stop showing on a trail."""
+    if not ids:
+        return {}
+    out = defaultdict(list)
+    with conn.cursor() as cur:
+        cur.execute("""
+            SELECT subject_id, rank, url, title, author, license, license_url,
+                   source_url, width, height, caption, along_m
+            FROM images
+            WHERE subject_type = 'trip' AND subject_id = ANY(%s)
+              AND rank IS NOT NULL
+            ORDER BY subject_id, rank""", (ids,))
+        for (tid, rank, url, title, author, lic, lic_url, page, w, h,
+             caption, along_m) in cur.fetchall():
+            out[tid].append({
+                "u": clean_url(url), "w": w, "h": h, "rank": rank,
+                "title": (title or "").replace("File:", ""),
+                "author": clean_author(author), "license": lic,
+                "license_url": lic_url or None, "page": page,
+                "caption": caption or None, "along_m": along_m,
+            })
+    return out
 
 
 def fetch_stops(conn, ids):
@@ -248,7 +401,308 @@ def elevation_of(raw):
     return {k: raw[k] for k in ELEVATION_KEYS if raw.get(k) is not None}
 
 
-def wire_item(t, n_stops):
+# How many reasons a card carries. The list shows one or two; the page
+# shows the lot, and it reads them from the detail file.
+WIRE_REASONS = 3
+
+
+def reasons_of(rating_parts, limit=None):
+    """The reason codes rate.py wrote, trimmed for the wire.
+
+    Codes and numbers only. The sentence is composed in the app through t(),
+    so it lands in six languages instead of being frozen in English here."""
+    reasons = (rating_parts or {}).get("reasons") or []
+    return reasons[:limit] if limit else reasons
+
+
+def bridges_of(repair_info):
+    """How much of a published line was joined rather than mapped."""
+    info = repair_info or {}
+    if info.get("method") != "straight-splice" or not info.get("bridges"):
+        return None
+    return {
+        "n": int(info["bridges"]),
+        "max_m": info.get("max_bridge_m"),
+        "total_m": info.get("total_bridge_m"),
+    }
+
+
+def highlights_of(raw):
+    """The named things on the line, in walking order, for the detail file."""
+    features = (raw or {}).get("features") or []
+    if not features:
+        return None
+    return [{
+        "kind": f.get("kind"),
+        "name": f.get("name"),
+        "ele_m": f.get("ele_m"),
+        "along_m": f.get("along_m"),
+        "lat": f.get("lat"),
+        "lon": f.get("lon"),
+    } for f in features]
+
+
+def _regions_assign():
+    """pipeline/regions/assign.py under a neutral name, loaded on first use.
+    The trails store is the lab database, so this layer's assignment happens
+    at export where the geometry is in hand; a clone without the region
+    spine still exports, its rows just ship without rg until the spine is
+    built."""
+    mod = sys.modules.get("carta_regions_assign")
+    if mod is None:
+        path = ROOT / "pipeline" / "regions" / "assign.py"
+        try:
+            spec = importlib.util.spec_from_file_location("carta_regions_assign",
+                                                          path)
+            mod = importlib.util.module_from_spec(spec)
+            sys.modules["carta_regions_assign"] = mod
+            spec.loader.exec_module(mod)
+        except Exception:
+            return None
+    return mod
+
+
+_RG_WARNED = [False]
+
+
+def rg_of(t):
+    """The region block for one route: midpoint of its length owns it, per
+    the assignment contract for lines.
+
+    Read from the column regionize.py stamped, exactly like every other
+    layer's export reads what its enrich stored: assignment is STORED, not
+    recomputed, so the wire never depends on this module being loadable and
+    the gate that spent a region's quota and the file that ships the row
+    cannot disagree about which region it is in.
+
+    The live computation below is the fallback for a lab regionize.py has not
+    reached yet, and only that. Falls back to nothing, never to a guess."""
+    stored = t.get("rg")
+    if stored:
+        return stored
+    mod = _regions_assign()
+    if mod is None:
+        return None
+    wire = t.get("wire") or []
+    if isinstance(wire, dict):  # a GeoJSON geometry rather than bare arrays
+        wire = wire.get("coordinates") or []
+    coords = [(pt[1], pt[0]) for part in wire for pt in part]
+    if len(coords) < 2:
+        return None
+    try:
+        line = mod.assign_line(coords, sample_km=8.0)
+        return mod.wire_rg(line.ids)
+    except Exception as exc:
+        if not _RG_WARNED[0]:
+            print(f"  rg unavailable ({type(exc).__name__}: {exc}), "
+                  f"trails ship without region ids")
+            _RG_WARNED[0] = True
+        return None
+
+
+# ---------------------------------------------------------------------------
+# The filter block: the six things a walker narrows a list by
+# ---------------------------------------------------------------------------
+
+def filters_of(t):
+    """Everything a chip reads, as codes, on both the card and the page.
+
+    One nested object rather than eight top level keys, so a consumer can
+    tell "this route has not been through attributes.py yet" (no `f` at all)
+    from "this route has no highlights" (`f` with no `hl`). The distinction
+    matters to the harness, which counts how much of the wire each filter can
+    actually answer for.
+
+    Derived and tagged never merge. `gs` says which decided the grade and the
+    suitability object keeps two lists, because a chip that promises a
+    wheelchair route on the strength of a gradient reading is the one claim
+    in this layer that could put somebody in trouble."""
+    out = {}
+    if t.get("grade"):
+        out["g"] = t["grade"]
+        out["gs"] = t.get("grade_src")
+    if t.get("route_type"):
+        out["rt"] = t["route_type"]
+    kinds = t.get("highlight_kinds")
+    if kinds:
+        out["hl"] = list(kinds)
+    suit = t.get("suitability") or {}
+    tagged, derived = suit.get("tagged") or [], suit.get("derived") or []
+    if tagged:
+        out["su"] = tagged
+    if derived:
+        out["sd"] = derived
+    if t.get("waymark_ref"):
+        out["ref"] = t["waymark_ref"]
+    # osmc:symbol is the painted waymark itself. Its presence is the claim
+    # ("this route is signed on the ground"); the symbol string is not
+    # something the app can draw, so only the fact ships.
+    if (t.get("raw_tags") or {}).get("osmc:symbol"):
+        out["way"] = True
+    if t.get("season"):
+        out["se"] = t["season"]
+    if t.get("portal_ok"):
+        out["pv"] = t.get("portal_source") or True
+    if t.get("derived_route"):
+        out["dr"] = True
+    surface = t.get("surface") or {}
+    if surface.get("road_share"):
+        out["road"] = surface["road_share"]
+    return out or None
+
+
+def facet_counts(items):
+    """How many rows in this country can answer each filter value.
+
+    Shipped with the file so a chip can carry its own number and grey itself
+    out before the app has read a single row, and so the harness can hold the
+    counts against the rows rather than trusting them."""
+    counts = defaultdict(Counter)
+    for i in items:
+        f = i.get("f") or {}
+        if f.get("g"):
+            counts["grade"][f["g"]] += 1
+        if f.get("rt"):
+            counts["route_type"][f["rt"]] += 1
+        for code in f.get("hl") or []:
+            counts["highlights"][code] += 1
+        for code in f.get("su") or []:
+            counts["suitability"][code] += 1
+        for code in f.get("sd") or []:
+            counts["suitability"][f"{code}:derived"] += 1
+        if f.get("pv"):
+            counts["verified"]["portal"] += 1
+        if f.get("dr"):
+            counts["derived"]["route"] += 1
+        band = ascent_band(i.get("ascent_m"))
+        if band:
+            counts["ascent"][band] += 1
+    return {k: dict(v) for k, v in counts.items() if v}
+
+
+# Ascent bands, the brief's own cut points, in metres. Counted here so the
+# file can offer the chip; the app computes the same bands from ascent_m so a
+# slider and a chip can never disagree (continent-app/src/lib/trailCards.js
+# ASCENT_BANDS holds the same five rows).
+ASCENT_BANDS = [("flat", 0, 150), ("rolling", 150, 500), ("hilly", 500, 1000),
+                ("steep", 1000, 1800), ("serious", 1800, None)]
+
+# The distance bands curate.py fills its quota with, so a chip a traveller
+# taps maps onto a slice the selection is actually built to contain.
+DISTANCE_BANDS = [("short", 0, 5_000), ("half", 5_000, 10_000),
+                  ("day", 10_000, 20_000), ("long", 20_000, 40_000),
+                  ("trek", 40_000, None)]
+
+FILTER_MODEL_VERSION = "trail_filters_v1"
+
+
+def ascent_band(ascent_m):
+    if ascent_m is None:
+        return None
+    for key, low, high in ASCENT_BANDS:
+        if ascent_m >= low and (high is None or ascent_m < high):
+            return key
+    return None
+
+
+def filter_model():
+    """The six filters, their values and where each one comes from.
+
+    Ships in index.json for the same reason the region quota block ships with
+    the region wire: the model travels with the data. The app renders chips
+    from this rather than from a list of its own, so a value added here cannot
+    go missing in the UI and a value removed cannot leave a dead chip behind,
+    and verify_trails_export.mjs holds the app's copy against this one."""
+    return {
+        "version": FILTER_MODEL_VERSION,
+        "difficulty": {
+            "key": "f.g", "src": "f.gs",
+            "values": ["easy", "moderate", "hard", "very_hard", "alpine"],
+            "sources": ["tagged", "derived"],
+            "from": "worst member way sac_scale / trail_visibility / "
+                    "via_ferrata_scale, else DEM sustained gradient and "
+                    "ascent per km; raised by distance and ascent",
+        },
+        "distance": {
+            "key": "distance_m",
+            "bands": [{"k": k, "min": lo, "max": hi}
+                      for k, lo, hi in DISTANCE_BANDS],
+        },
+        "ascent": {
+            "key": "ascent_m",
+            "bands": [{"k": k, "min": lo, "max": hi}
+                      for k, lo, hi in ASCENT_BANDS],
+            "from": "Copernicus GLO-30, 3 sample moving average, 5 m "
+                    "hysteresis before a climb commits",
+        },
+        "route_type": {
+            "key": "f.rt",
+            "values": ["loop", "out_back", "point", "figure8"],
+            "from": "geometry: retrace overlap first, then the endpoint gap",
+        },
+        "highlights": {
+            "key": "f.hl",
+            "values": ["waterfall", "lake", "summit", "viewpoint", "castle",
+                       "hut", "gorge", "coast", "forest", "village"],
+            "from": "OSM features within 250 m of the line (scenic.py)",
+        },
+        "suitability": {
+            "key": "f.su", "derived_key": "f.sd",
+            "values": ["family", "dog", "stroller", "wheelchair", "winter",
+                       "beginner"],
+            "note": "f.su is tagged in OSM, f.sd is derived by us. "
+                    "wheelchair is never derived.",
+        },
+        "extras": {
+            "designation": "network",
+            "waymarked": "f.way",
+            "season": "f.se",
+            "portal_verified": "f.pv",
+            "derived_route": "f.dr",
+        },
+    }
+
+
+class Hierarchy:
+    """ROUTES.md R1 context for the added keys: the route_relations rows
+    behind this run's trips and their parents, plus the two resolvers that
+    turn a relation id into something the wire can name. Empty until R2 has
+    scanned and R3 has classified, which is what makes the keys null."""
+
+    def __init__(self, conn, trips):
+        self.by_osm = {}
+        for t in trips:
+            oid = route_schema.osm_id_of(t)
+            if oid is not None:
+                self.by_osm[oid] = t
+        wanted = set(self.by_osm)
+        for t in trips:
+            wanted.update(int(p) for p in (t.get("parent_refs") or []))
+            for k in ("stage_of", "top_of"):
+                if t.get(k):
+                    wanted.add(int(t[k]))
+        self.relations = route_schema.fetch_relations(conn, "hiking", wanted)
+
+    def resolve_route(self, osm_id):
+        """A child relation as a wire id, when it is in this run."""
+        t = self.by_osm.get(osm_id)
+        return t["id"] if t else None
+
+    def resolve_parent(self, osm_id):
+        """A parent as a wire id when it is published here, else its name
+        when the relation graph knows it, else None."""
+        t = self.by_osm.get(osm_id)
+        if t:
+            return t["id"]
+        rel = self.relations.get(osm_id)
+        return (rel.get("tags_all") or {}).get("name") if rel else None
+
+    def relation_of(self, t):
+        oid = route_schema.osm_id_of(t)
+        return self.relations.get(oid) if oid is not None else None
+
+
+def wire_item(t, n_stops, hier=None):
     """One trip as the country file carries it: enough to list it, filter it,
     draw it and credit it, and a pointer to the rest."""
     item = {
@@ -269,15 +723,60 @@ def wire_item(t, n_stops):
         "attribution_text": t["attribution_text"],
         "detail": f"/trails/trip/{t['id']}.json",
     }
+    rg = rg_of(t)
+    if rg:
+        item["rg"] = rg
+    # The tier, on every row, and the rating ONLY on a rated one. Absent, not
+    # null: the app tests for the key, and a null would render as a number
+    # nobody earned the moment somebody wrote `row.rating ?? 0`.
+    item["t"] = t.get("tier") or "r"
+    if item["t"] == "l":
+        # The same `why` shape the beach, lake and mountain layers put on a
+        # listed row. lib/*Story.js maps the code to one sentence in all six
+        # UI languages ("we list it so this area is not empty"), so emitting
+        # it is what makes a listed trail card read like a listed peak card
+        # on a region page instead of rendering an empty reason list.
+        item["why"] = [{"k": "unrated_coverage"}]
+    if item["t"] != "l" and t.get("rating") is not None:
+        item["rating"] = float(t["rating"])
+    if t.get("is_loop") is not None:
+        item["is_loop"] = bool(t["is_loop"])
+    filters = filters_of(t)
+    if filters:
+        item["f"] = filters
+    if t.get("family_key"):
+        item["fam"] = {"k": t["family_key"], "n": t.get("family_name"),
+                       "size": t.get("family_size") or 1}
+    if item["t"] != "l":
+        reasons = reasons_of(t.get("rating_parts"), WIRE_REASONS)
+        if reasons:
+            item["reasons"] = reasons
+    # The hero, and only the hero. A card shows one picture; the gallery is
+    # part of the detail file, which is fetched when the trail is opened.
+    #
+    # The rank the photo pass assigned is a judgement about the photograph and
+    # says nothing about the shape of the card it lands in (.places-tcard, a
+    # 9/4 strip). Where the best-ranked shot is a tall or a panoramic frame
+    # and another ranked shot of the same walk fills the card, that one leads:
+    # the gallery keeps every picture, and the reader is not shown a sliver.
+    hero = (card_images(t) or [None])[0]
+    if hero:
+        item["img"] = {"u": hero["u"], "w": hero["w"], "h": hero["h"]}
     if n_stops:
         item["n_stops"] = n_stops
     anchor = anchor_of(t["raw_tags"])
     if anchor:
         item["anchor"] = anchor
+    # ROUTES.md R1: the route-layer keys, appended after everything the app
+    # reads today so a diff of the wire shows additions only. Each is null
+    # until the pass that fills it has run (route_schema.py says which).
+    summary = route_schema.summary_from_row(
+        t, "hiking", hier.resolve_parent if hier else None)
+    item.update(route_schema.wire_keys(summary))
     return item
 
 
-def detail_item(t, stops, generated_at):
+def detail_item(t, stops, generated_at, hier=None):
     """One trip in full: the on-demand half. Full-resolution 3D geometry lives
     here and only here, one file per trip, so nothing serves the lab's
     geometry in bulk."""
@@ -305,23 +804,152 @@ def detail_item(t, stops, generated_at):
     elevation = elevation_of(t["elevation"])
     if elevation:
         out["elevation"] = elevation
+    out["t"] = t.get("tier") or "r"
+    if out["t"] != "l" and t.get("rating") is not None:
+        parts = t.get("rating_parts") or {}
+        out["rating"] = float(t["rating"])
+        out["rating_model"] = parts.get("model")
+        out["rating_parts"] = parts.get("components")
+        # What the components were ranked against, and how many rows were in
+        # that field. "8.4 out of what" is a fair question and this answers it.
+        if parts.get("scored_within"):
+            out["rated_within"] = {"id": parts["scored_within"],
+                                   "n": parts.get("scored_against")}
+    if t.get("is_loop") is not None:
+        out["is_loop"] = bool(t["is_loop"])
+        out["loop_source"] = t.get("loop_source")
+    filters = filters_of(t)
+    if filters:
+        out["f"] = filters
+    # The grade's own evidence, on the page and not on the card: which member
+    # way grade decided it, how much of the line carried it, and the DEM terms
+    # where no tag did. A reader who wants to know why a walk is called alpine
+    # gets the reason rather than the label.
+    if t.get("grade_parts"):
+        out["grade_parts"] = t["grade_parts"]
+    if t.get("suitability"):
+        out["suitability"] = t["suitability"]
+    if t.get("surface"):
+        out["surface"] = t["surface"]
+    if t.get("passes"):
+        out["passes"] = t["passes"]
+    if t.get("publisher"):
+        out["publisher"] = t["publisher"]
+    if t.get("waymark_ref"):
+        out["waymark_ref"] = t["waymark_ref"]
+    if t.get("family_key"):
+        out["family"] = {"k": t["family_key"], "n": t.get("family_name"),
+                         "size": t.get("family_size") or 1}
+    if t.get("region_crosses"):
+        out["region_crosses"] = list(t["region_crosses"])
+    if t.get("derived_route"):
+        out["derived_route"] = True
+        out["derived_join"] = (t.get("raw_tags") or {}).get("derived_join")
+    if out["t"] != "l":
+        reasons = reasons_of(t.get("rating_parts"))
+        if reasons:
+            out["reasons"] = reasons
+    highlights = highlights_of(t.get("highlights"))
+    if highlights:
+        out["highlights"] = highlights
+    # A straight connector is a claim about ground nobody checked, so it is
+    # said out loud rather than smoothed over (pipeline/trails/splice.py).
+    bridges = bridges_of(t.get("repair_info"))
+    if bridges:
+        out["bridges"] = bridges
+    images = t.get("images") or []
+    if images:
+        out["images"] = images
+        out["image_credit"] = COMMONS_CREDIT
     if stops:
         out["stops"] = stops
+    # ROUTES.md R1, same rule as wire_item: additions only, null until filled.
+    detail = route_schema.detail_from_row(
+        t, hier.relation_of(t) if hier else None, "hiking",
+        hier.resolve_parent if hier else None,
+        hier.resolve_route if hier else None)
+    out.update(route_schema.detail_keys(detail))
     return out
 
 
-def country_file(country, items, generated_at, tolerance):
-    counts = Counter(i["category"] for i in items)
-    return {
+def validate_listed(rows):
+    """A listed row's own bar: a real name, a real line, and no rating of any
+    spelling. The mountain layer makes the same assertion for the same reason,
+    and it is the only reliable way to guarantee the app cannot render a
+    number nobody earned."""
+    bad = []
+    for row in rows:
+        where = f"{row.get('country')}/{row.get('id')}"
+        for key in ("rating", "reasons", "score"):
+            if key in row:
+                bad.append(f"{where}: listed row carries {key}")
+        if not str(row.get("name") or "").strip():
+            bad.append(f"{where}: no name")
+        geom = row.get("geometry") or {}
+        if not (geom.get("coordinates") or []):
+            bad.append(f"{where}: no geometry")
+    return bad
+
+
+def country_file(country, rated, listed, generated_at, tolerance):
+    items = rated + listed
+    counts = Counter(i["category"] for i in rated)
+    credits = {i["attribution_text"] for i in items if i["attribution_text"]}
+    if any(i.get("img") for i in items):
+        credits.add(COMMONS_CREDIT)
+    n_loops = sum(1 for i in rated if i.get("is_loop"))
+    # The families a country's rated list stands for, so a long path whose
+    # stages collapsed to one slot still has a page. The E paths (E1..E12) are
+    # the case that forces this: they are OSM route=hiking network=iwn
+    # relations mapped as national stages, so a family of forty ships as one
+    # row and the family it belongs to would otherwise be nameless.
+    # Keyed on the NAME where there is one, not on the internal family key.
+    # Two rows can be stages of the same path and still carry different family
+    # keys (the key is derived from a title, and E4's stages are named after
+    # the towns they run between), which would list one path several times and
+    # defeat the point of naming it. The key is the fallback for a family with
+    # no display name.
+    families = {}
+    for i in rated:
+        fam = i.get("fam")
+        if not fam or not fam.get("k"):
+            continue
+        key = fam.get("n") or fam["k"]
+        rec = families.setdefault(key, {"k": fam["k"], "n": fam.get("n"),
+                                        "size": 0, "trips": []})
+        rec["size"] += fam.get("size") or 1
+        rec["trips"].append(i["id"])
+    doc = {
         "country": country,
         "generated_at": generated_at,
         "simplify_m": tolerance,
-        "n_trips": len(items),
+        "n_trips": len(rated),
+        "n_listed": len(listed),
         "counts": dict(sorted(counts.items())),
-        "attribution": sorted({i["attribution_text"] for i in items
-                               if i["attribution_text"]}),
-        "trips": items,
+        # What a filter can offer before the file is read: the app uses these
+        # to decide whether a chip is worth showing for this country, and to
+        # put a number on it without walking every row first.
+        "n_loops": n_loops,
+        "facets": facet_counts(rated),
+        "regions": sorted({(i.get("rg") or {}).get("n3") for i in rated
+                           if (i.get("rg") or {}).get("n3")}),
+        "families": sorted(families.values(),
+                           key=lambda f: (-f["size"], f["k"]))[:FAMILY_MAX],
+        "attribution": sorted(credits),
+        "trips": rated,
     }
+    # Absent rather than empty for a country with nothing listed: an empty
+    # array reads as "we looked and there is nothing", which is true, and a
+    # missing key reads the same to every consumer here. Present only when it
+    # carries something keeps the files honest about which countries needed it.
+    if listed:
+        doc["listed"] = listed
+    return doc
+
+
+# How many families one country file names. The list exists so a family page
+# can be reached, not as a second catalogue.
+FAMILY_MAX = 60
 
 
 # ---------------------------------------------------------------------------
@@ -353,7 +981,9 @@ def previous_countries(out_dir, wanted):
         kept.append({
             "country": code,
             "n_trips": len(doc.get("trips") or []),
+            "n_listed": len(doc.get("listed") or []),
             "counts": doc.get("counts") or {},
+            "facets": doc.get("facets") or {},
             "file": f"/trails/{code}.json",
             "_attribution": doc.get("attribution") or [],
         })
@@ -414,6 +1044,9 @@ def main():
     with conn.cursor() as cur:      # labs created before the review app exists
         cur.execute(REVIEWS_DDL.read_text(encoding="utf-8"))
     conn.commit()
+    # The hierarchy columns the SELECT below reads (09_hierarchy.sql), through
+    # the guard: a lab that already has them takes no lock.
+    route_schema.ensure_schema(conn, verbose=args.verbose)
 
     statuses = ["published"] if args.no_promote else ["approved", "published"]
     trips = fetch_trips(conn, statuses, countries, args.tolerance)
@@ -426,6 +1059,9 @@ def main():
             if t["wire"]["type"].startswith("Multi") else len(t["wire"]["coordinates"])
         t["quality"] = float(t["quality"]) if t["quality"] is not None else None
 
+    hier = Hierarchy(conn, trips)
+    conn.commit()
+
     no_summary = [t for t in trips if not summary_of(t["description"])]
     if args.require_summary and no_summary:
         held = {t["id"] for t in no_summary}
@@ -437,14 +1073,26 @@ def main():
           f"{' (' + ', '.join(countries) + ')' if countries else ''}: "
           f"{len(already)} already published, {len(fresh)} newly approved")
     if no_summary:
+        # Not a warning any more. describe.py is retired (docs/TRAILS.md,
+        # "Two debts, closed"): the page composes from structured fields, and
+        # the three things the prose knew are wire fields now. A trip with no
+        # description_md is the normal case, and pointing at a retired script
+        # would send the next reader to run it.
         verb = "held back" if args.require_summary else "exported without one"
-        print(f"  {len(no_summary)} trip(s) have no generated description, "
-              f"{verb} (run pipeline/trails/describe.py)")
+        print(f"  {len(no_summary)} trip(s) carry no lab description, {verb}. "
+              f"That is expected: the page composes its copy from the "
+              f"structured fields (lib/trailStory.js)")
 
     if args.dry_run:
         for t in trips:
             print(f"  would publish [{t['id']}] {t['country']} {t['category']}: "
                   f"{t['title'][:52]} ({t['n_wire']} of {t['n_full']} points)")
+        fill = route_schema.fill_report(
+            [route_schema.wire_keys(route_schema.summary_from_row(
+                t, "hiking", hier.resolve_parent)) for t in trips],
+            route_schema.WIRE_KEYS)
+        print("  route keys (ROUTES.md R1), rows carrying a value: "
+              + ", ".join(f"{k} {n}/{tot}" for k, (n, tot) in fill.items()))
         countries_with = sorted({t["country"] for t in trips})
         print(f"dry run: nothing promoted, nothing written. Would write "
               f"{len(countries or countries_with)} country file(s) plus "
@@ -459,7 +1107,13 @@ def main():
             print(f"  SKIPPED [{t['id']}] {t['title'][:48]}: {t['skipped']}")
         trips = [t for t in trips if not t.get("skipped")]
 
-    stops = fetch_stops(conn, [t["id"] for t in trips])
+    trip_ids = [t["id"] for t in trips]
+    stops = fetch_stops(conn, trip_ids)
+    images = fetch_images(conn, trip_ids)
+    for t in trips:
+        t["images"] = images.get(t["id"], [])
+    n_shot = sum(1 for t in trips if t["images"])
+    print(f"  {n_shot} of {len(trips)} trip(s) carry a photograph of the route")
     live_ids = published_ids(conn)
     conn.commit()
     conn.close()
@@ -474,21 +1128,39 @@ def main():
         else sorted(by_country)
 
     total_bytes, index_countries, credits = 0, [], set()
+    listed_total = 0
     for country in wanted:
         rows = by_country.get(country, [])
-        items = [wire_item(t, len(stops.get(t["id"], []))) for t in rows]
-        payload = country_file(country, items, generated_at, args.tolerance)
+        items = [wire_item(t, len(stops.get(t["id"], [])), hier) for t in rows]
+        rated = [i for i in items if i.get("t") != "l"]
+        listed = [i for i in items if i.get("t") == "l"]
+        bad = validate_listed(listed)
+        if bad:
+            # The same rule the other layers' exports live by: a failure
+            # leaves the previous wire standing rather than writing a file
+            # that breaks the promise the tier is for.
+            print(f"  {country}.json NOT written, the listed tier failed its "
+                  f"own gate:")
+            for line in bad[:8]:
+                print(f"    {line}")
+            continue
+        listed_total += len(listed)
+        payload = country_file(country, rated, listed, generated_at,
+                               args.tolerance)
         size = write_json(out_dir / f"{country}.json", payload)
         total_bytes += size
         credits.update(payload["attribution"])
-        index_countries.append({"country": country, "n_trips": len(items),
+        index_countries.append({"country": country, "n_trips": len(rated),
+                                "n_listed": len(listed),
                                 "counts": payload["counts"],
+                                "facets": payload["facets"],
                                 "file": f"/trails/{country}.json"})
         if args.verbose:
             for t in rows:
                 print(f"  [{t['id']}] {country} {t['category']}: "
                       f"{t['title'][:48]} {t['n_wire']}/{t['n_full']} points")
-        print(f"  {country}.json: {len(items)} trip(s), {size / 1024:.1f} KB")
+        print(f"  {country}.json: {len(rated)} rated + {len(listed)} listed, "
+              f"{size / 1024:.1f} KB")
 
     # Countries this run did not cover keep their files and their index entry.
     for entry in previous_countries(out_dir, set(wanted)):
@@ -500,16 +1172,45 @@ def main():
     for t in trips:
         total_bytes += write_json(detail_dir / f"{t['id']}.json",
                                   detail_item(t, stops.get(t["id"], []),
-                                              generated_at))
+                                              generated_at, hier))
     # A held-back trip is published but deliberately absent from the wire, so
     # its detail file goes too: nothing is served that no country file lists.
     held_back = {t["id"] for t in no_summary} if args.require_summary else set()
     dropped = prune_details(detail_dir, live_ids - held_back)
 
+    # The quota model ships with the data (invariant 2), the same block the
+    # beach, lake and mountain indexes carry; trails was the one quota-bearing
+    # layer whose wire did not say what its quota was.
+    quota_model = None
+    try:
+        import importlib.util as _ilu
+        _qp = ROOT / "pipeline" / "regions" / "quotas.py"
+        _spec = _ilu.spec_from_file_location("carta_region_quotas", _qp)
+        _qmod = _ilu.module_from_spec(_spec)
+        _spec.loader.exec_module(_qmod)
+        quota_model = _qmod.model_block()
+    except Exception as exc:  # quota model missing is a note, not a failure
+        print(f"  (region quota model unavailable: {exc})")
+
     total_bytes += write_json(out_dir / "index.json", {
         "generated_at": generated_at,
         "simplify_m": args.tolerance,
         "n_trips": sum(e["n_trips"] for e in index_countries),
+        "n_listed": sum(e.get("n_listed") or 0 for e in index_countries),
+        # The filter model ships WITH the data, the same rule the region quota
+        # block follows: the app renders chips from this rather than from a
+        # list of its own, so a value added in the pipeline cannot go missing
+        # in the UI and a value removed cannot leave a dead chip behind.
+        "filter_model": filter_model(),
+        "model": ({"region_quota": quota_model} if quota_model else {}),
+        # The TR/UA asymmetry is a decision, not an accident: recorded in
+        # docs/tos/data_licenses.md section 13 and stated here so a consumer
+        # counting files reads the empty shells the way they are meant.
+        "scope": {
+            "TR": "out of catalogue this cycle; staged in the lab only",
+            "UA": "staged in the lab; empty wire shell ships so nothing "
+                  "404s into SPA HTML; wartime advisory applies",
+        },
         "countries": index_countries,
         "attribution": sorted(credits),
     })
@@ -517,6 +1218,9 @@ def main():
     print(f"wrote {len(wanted)} country file(s) + {len(trips)} detail file(s) "
           f"+ index.json to {out_dir} ({total_bytes / 1024:.1f} KB total)"
           + (f", pruned {dropped} stale detail file(s)" if dropped else ""))
+    print(f"  {sum(e['n_trips'] for e in index_countries):,} rated and "
+          f"{listed_total:,} listed row(s) across "
+          f"{len(index_countries)} country file(s)")
     return 0
 
 

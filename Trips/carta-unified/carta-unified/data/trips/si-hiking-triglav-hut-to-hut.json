@@ -1,0 +1,274 @@
+{
+  "id": "si-hiking-triglav-hut-to-hut",
+  "sourceId": "hiking-slovenia-triglav-hut-to-hut",
+  "slug": "si-hiking-triglav-hut-to-hut",
+  "title": "Triglav Hut-to-Hut: Vrata, Kredarica and the Seven Lakes",
+  "country": "Slovenia",
+  "countryCode": "SI",
+  "countries": [
+    {
+      "name": "Slovenia",
+      "code": "SI"
+    }
+  ],
+  "isMultiCountry": false,
+  "region": "Southern & Mediterranean Europe",
+  "regionKey": "southern-mediterranean",
+  "subRegion": "Julian Alps & Triglav National Park — Vrata, Kredarica, Triglavska jezera, Bohinj",
+  "tripType": "Hiking & Alpine Trekking",
+  "tripTypeId": 6,
+  "tripTypeSlug": "hiking",
+  "durationDays": 7,
+  "bestPeriod": {
+    "months": [
+      6,
+      7,
+      9
+    ],
+    "monthNames": [
+      "June",
+      "July",
+      "September"
+    ],
+    "window": "Mid-July–mid-September, with the huts fully staffed roughly 20 June–30 September",
+    "note": null,
+    "avoid": "October–June — the Mali Triglav ridge holds verglas and old snow, Kredarica's reservation system is closed and Hribarice is a snow slope",
+    "raw": "Mid-July–mid-September, with the huts fully staffed roughly 20 June–30 September"
+  },
+  "budgetTier": "€€",
+  "budgetTierRange": [
+    2,
+    2
+  ],
+  "budgetTierRaw": "€€",
+  "budget": {
+    "currency": "EUR",
+    "totalEur": {
+      "low": 850,
+      "high": 1300
+    },
+    "totalNote": "€850–€1,300 per person, excl. international flights",
+    "breakdown": {
+      "accommodation": {
+        "lowEur": 330,
+        "highEur": 520,
+        "note": "Hut beds €22–€38 with PZS discount, €40–€60 without; Bohinj hotel €90–€130"
+      },
+      "food": {
+        "lowEur": 220,
+        "highEur": 330,
+        "note": "Hut dinners €12–€18, breakfast €8–€10, a litre of hut water €3–€4"
+      },
+      "transport": {
+        "lowEur": 130,
+        "highEur": 250,
+        "note": "Airport transfer, Mojstrana shuttle, Bohinj bus, Vogel cable car €25–€30 return"
+      },
+      "activities": {
+        "lowEur": 170,
+        "highEur": 200,
+        "note": "Ferrata set hire €12–€18/day, PZS membership €40–€65, Savica waterfall €4–€6"
+      }
+    },
+    "perDayEur": {
+      "low": 121,
+      "high": 186
+    }
+  },
+  "profile": {
+    "difficulty": 5,
+    "difficultyLabel": "Expert",
+    "difficultyNote": "5/5 — a 1,500 m ascent day followed by an exposed cabled ridge at 2,864 m, then four more walking days above 1,500 m",
+    "fitnessLevel": "Expert",
+    "crowdLevel": null,
+    "familyFriendly": null,
+    "carRequired": null
+  },
+  "basecamps": [],
+  "gatewayAirport": "LJU Ljubljana Jože Pučnik, 55 min to Mojstrana; KLU Klagenfurt 1 h 40 min; TRS Trieste 2 h",
+  "gatewayAirportCode": "LJU",
+  "languages": [],
+  "currency": null,
+  "emergencyNumber": "112",
+  "coordinates": {
+    "lat": 46.0511,
+    "lon": 14.5051,
+    "precision": "country",
+    "matchedPlace": "Ljubljana",
+    "source": "country capital fallback"
+  },
+  "tags": [
+    "triglav",
+    "julian-alps",
+    "via-ferrata",
+    "pzs",
+    "kredarica",
+    "seven-lakes",
+    "hut-to-hut",
+    "bohinj"
+  ],
+  "summary": "Triglav is a national obsession compressed into one mountain, and this week climbs it the honest way — up the Vrata valley from 1,015 m, over the summit at 2,864 m, then away from the crowds south across the Hribarice plateau into the Valley of the Seven Lakes and down to Bohinj. Day two is the hardest day's walking in Slovenia outside a rope; day three is a cabled ridge with 800 m of air on the left. After that the week softens into high karst, larch, glacial tarns and a lake swim. It suits fit hikers who are comfortable with exposure and clipped into a self-belay kit, not first-time mountain walkers.",
+  "summaryGenerated": false,
+  "hook": null,
+  "snapshot": {},
+  "itinerary": [
+    {
+      "day": 1,
+      "title": "Mojstrana, the Peričnik waterfall and Vrata",
+      "morning": "Transfer to **Mojstrana** and spend an hour in the **Slovenski planinski muzej**, the Slovenian Alpine Museum, which explains why this mountain sits on the flag. Hire the ferrata set here and check the lanyard's date stamp.",
+      "afternoon": "Drive or walk 12 km up the **Vrata valley** to **Aljažev dom, 1,015 m**, stopping at the **Peričnik waterfall** — the path passes behind the 52 m upper fall. In the valley head, the **Triglav north face** rises 1,000 m in one sweep, and the **Aljaž memorial piton** stands opposite the hut.",
+      "evening": "Dinner at Aljažev dom: *jota*, *ričet*, sausage and buckwheat *žganci*. Pack tonight, because tomorrow starts at 05:30.",
+      "dayStats": "12 km valley road / Aljažev dom 1,015 m / Peričnik upper fall 52 m / north face 1,000 m of relief / ferrata hire €12–€18 per day",
+      "sleep": "Aljažev dom v Vratih, 1,015 m"
+    },
+    {
+      "day": 2,
+      "title": "Tominškova pot: 1,500 metres to Kredarica",
+      "morning": "Leave at 05:30 on the **Tominškova pot**, the steeper and more spectacular of the two Vrata routes, cabled and pegged from roughly 1,300 m across slabs beneath the north face. Helmet on from the first cable — this route has rockfall.",
+      "afternoon": "Above the cables the path joins the **Prag** route at the Kredarica plateau and grinds up scree and old snow to **Triglavski dom na Kredarici, 2,515 m**, the highest building in Slovenia, with the meteorological station beside it and the shrunken Triglav glacier below.",
+      "evening": "Hut dinner at 18:00 sharp, lights out at 22:00, and the best sunset in the country off the terrace. Show your PZS card at check-in or pay the full rate.",
+      "dayStats": "9 km / 1,500 m ascent / 7–8 h realistic (signed 5–6 h) / cables from ~1,300 m / hut 2,515 m / water sold at €3–€4/litre",
+      "sleep": "Triglavski dom na Kredarici, 2,515 m"
+    },
+    {
+      "day": 3,
+      "title": "Mali Triglav, the summit at 2,864 m, and down to Planika",
+      "morning": "Start at 06:00 to beat the queue. Up the scree to **Mali Triglav, 2,725 m**, then the **cabled summit arête** — narrow, continuously exposed, and where the entire kit earns its hire fee. Sign the book in the **Aljažev stolp**, the 1895 tin tower on the 2,864 m summit.",
+      "afternoon": "Reverse the ridge and descend south past the Kredarica cirque to **Dom Planika pod Triglavom, 2,401 m**, a short but real day. Strong parties continue to Koča na Doliču.",
+      "evening": "Planika is smaller and quieter than Kredarica, with the same rationed water and better soup. Watch the last summit parties come off the ridge at dusk and be glad you are not among them.",
+      "dayStats": "7 km / 400 m ascent / 500 m descent / summit 2,864 m / 4–5 h realistic including cable queues / ridge drops 500–800 m",
+      "sleep": "Dom Planika pod Triglavom, 2,401 m"
+    },
+    {
+      "day": 4,
+      "title": "Dolič, Hribarice and the crossing to Prehodavci",
+      "morning": "Traverse west and down to **Tržaška koča na Doliču, 2,151 m** in the saddle between Triglav and Kanjavec, with a possible 1 h 15 min detour up **Kanjavec, 2,568 m** for the view back at the whole massif.",
+      "afternoon": "Climb the stony **Hribarice plateau at 2,358 m**, a lunar karst pavement of sinkholes and snow patches, then descend to **Zasavska koča na Prehodavcih, 2,071 m**, above the two highest of the Triglav lakes.",
+      "evening": "Sunset from the Prehodavci saddle over Jezero v Ledvicah. This is the emptiest hut of the week and the one that most feels like the old Julian Alps.",
+      "dayStats": "11 km / 550 m ascent / 900 m descent / Hribarice 2,358 m / 5–6 h realistic / snow patches on the plateau into mid-July",
+      "sleep": "Zasavska koča na Prehodavcih, 2,071 m"
+    },
+    {
+      "day": 5,
+      "title": "The Valley of the Seven Lakes",
+      "morning": "Descend past **Jezero v Ledvicah** (\"kidney lake\") and the **Rjavo jezero**, then the long larch-and-limestone staircase through the **Dolina Triglavskih jezer** to **Koča pri Triglavskih jezerih, 1,685 m**, beside the Dvojno jezero.",
+      "afternoon": "A short, deliberately easy day. Walk the extra hour up **Mala Ticarica, 2,071 m** or simply lie on the slabs. Swimming in the lakes is prohibited — this is the strictest rule in the park and it is enforced.",
+      "evening": "The Lakes hut has the best kitchen at altitude in Slovenia: *štruklji*, blueberry *žganje* and trout when it is flown in. Book it — it is the most sought-after hut in TNP after Kredarica.",
+      "dayStats": "7 km / 150 m ascent / 550 m descent / Dvojno jezero 1,669 m / 3–4 h realistic / swimming banned park-wide",
+      "sleep": "Koča pri Triglavskih jezerih, 1,685 m"
+    },
+    {
+      "day": 6,
+      "title": "Komna and the drop to Bohinj",
+      "morning": "Climb gently south-west over the **Komna plateau** — WW1 Isonzo Front mule roads, gun emplacements and the **Dom na Komni, 1,520 m**, where the Slovene partisan hospital operated.",
+      "afternoon": "The knee-punishing 1,000 m descent on the old military switchbacks to **Slap Savica** and **Ukanc** at the west end of **Lake Bohinj** (526 m). Swim; it is the only legal one of the week.",
+      "evening": "Dinner at Gostilna Rupa in Srednja vas or Pri Hrvatu in Bohinjska Bistrica — Bohinj cheese, *ričet*, trout — and a Union on a terrace with dry socks.",
+      "dayStats": "14 km / 300 m ascent / 1,300 m descent / Komna 1,520 m / 6–7 h realistic / Bohinj 526 m / Savica entry €4–€6",
+      "sleep": "Hotel Bohinj or Penzion Gasperin, Bohinjska Bistrica"
+    },
+    {
+      "day": 7,
+      "title": "Vogel, Ribčev Laz and out",
+      "morning": "Take the **Vogel cable car** from Ukanc to 1,535 m (roughly €25–€30 return) for the classic head-on view of the Triglav massif you have just crossed, and an easy ridge walk toward Šija.",
+      "afternoon": "Bus or bike the lakeshore to **Ribčev Laz** for the stone bridge and the frescoed **church of St John the Baptist**, then the Mostnica gorge at Stara Fužina if legs allow.",
+      "evening": "Return the ferrata set in Mojstrana or Bled on the way out, and finish with dinner in Bled or Ljubljana. Airport is 55–75 minutes.",
+      "dayStats": "Vogel top station 1,535 m / cable car €25–€30 return / lakeshore 12 km / LJU 75 min from Bohinj",
+      "sleep": "Bled or Ljubljana, or the outbound flight"
+    }
+  ],
+  "accommodationStrategy": [
+    {
+      "rank": 1,
+      "name": "Triglavski dom na Kredarici",
+      "style": "PZS hut",
+      "location": "2,515 m",
+      "description": "The pivot of the whole week: 300-plus places, the only bed close enough to make a dawn summit realistic, and the only one bookable through a proper online system with an immediate card charge. Show your PZS card at the desk. Expect noise, thin air and rationed water, and accept it as the price of position.",
+      "booking": null,
+      "priceNote": null
+    },
+    {
+      "rank": 2,
+      "name": "Koča pri Triglavskih jezerih",
+      "style": "PZS hut",
+      "location": "1,685 m",
+      "description": "The most attractive hut in the park, at the lakes, below the tree line, warm enough to sleep properly and with a genuinely good kitchen. It is also the most contested bed after Kredarica — email or phone the managing *planinsko društvo* as soon as the season's dates are published.",
+      "booking": null,
+      "priceNote": null
+    },
+    {
+      "rank": 3,
+      "name": "Aljažev dom v Vratih",
+      "style": "valley hut",
+      "location": "1,015 m",
+      "description": "Road-accessible, so you can arrive with a full bag, eat a large dinner and leave anything you do not want on the ridge. Directly under the Triglav north face, with the Aljaž piton monument opposite, and cheap. Its 05:00 breakfast arrangement is what makes Day 2 possible.",
+      "booking": null,
+      "priceNote": null
+    }
+  ],
+  "logistics": {
+    "connectivity": "Slovenia is in the EU roaming zone. Signal is good at Kredarica (the meteorological station sits there), patchy in Vrata, and absent on Hribarice and in the lakes valley. Download the PZS mapping or the 1:25,000 Triglav sheet offline.",
+    "emergency": "112 reaches GRZS mountain rescue. State the hut and path name, not just coordinates. PZS membership includes rescue and repatriation cover in Slovenia and abroad; without it, a helicopter lift is billed to you and EHIC/GHIC will not pay. Nearest hospital: Jesenice, 30 min from Mojstrana.",
+    "weather": "Afternoon thunderstorms over the massif are near-daily in July and August and the summit ridge is the worst possible place for one — the cables are a lightning path. Aim to be off the arête by 11:00. The **foehn** can push the freezing level up and destabilise snow patches; autumn *burja* squalls hit the Komna plateau. Check meteo.si and the ARSO mountain forecast.",
+    "bookingWindows": "Kredarica's 2026 online system runs 10 June–30 September; book the moment your dates are fixed, since August Saturdays fill first. The Lakes hut and Planika need 4–8 weeks. Ferrata hire 3–5 days in high summer. PZS membership takes a few days to issue a card — do it before you book.",
+    "money": "Euro. Huts prefer cash and card terminals fail at altitude; €200–€300 for the week. Tipping is not expected; round up.",
+    "transportRules": "A Slovenian e-vinjeta (€16 weekly) is required for the A2 to Jesenice. The Vrata valley road has a seasonal parking charge at Aljažev dom and fills by 08:00. Bohinj runs a summer shuttle to Savica and Ukanc; buses take bikes for a small fee.",
+    "permits": "No permit is needed to walk in TNP, and there is no entry fee, but **wild camping and bivouacking are prohibited throughout the park**, as are fires, drones without authorisation, swimming in the Triglav lakes, and picking flowers. Off-path travel on the karst plateaus damages protected habitat.",
+    "health": "Hut water is rainwater and is sold, not free; do not assume potability from streams below pastures. Rockfall on Tominškova pot is real — helmet from the first cable. Altitude at 2,515 m causes poor sleep rather than sickness in most people, but allow for it. Ticks and TBE are a genuine risk in the valley forests up to about 1,500 m; Slovenia has one of Europe's highest incidences.",
+    "gettingThere": null,
+    "other": []
+  },
+  "proTips": [
+    "Take PZS membership **before** booking Kredarica. The discount is applied inside the booking flow by selecting your affiliation — you cannot claim it retrospectively at the desk.",
+    "Book Kredarica for a **Sunday to Thursday night**. Slovenes climb Triglav at weekends, and the cable queue on a Saturday morning can add 90 minutes to the ridge.",
+    "Reverse the usual plan and sleep at Planika, not Kredarica, on summit night if you want a quieter hut — you lose 100 m of altitude and gain a great deal of sleep.",
+    "Carry 2.5 litres from Aljažev dom. Water at Kredarica is sold by the litre and the Day 2 ascent is the thirstiest of the week.",
+    "Check the hire lanyard's inspection date and that it is an energy-absorbing set, not an old rope-and-carabiner rig. Shops near Bled still rent obsolete kit.",
+    "Ask at Kredarica whether the **zimska soba** is open before you plan a late arrival. It is the difference between shelter and a very long night if the hut is full.",
+    "Do the Kanjavec detour from Dolič on Day 4. It is 75 minutes for the only view that shows both the north face and the lakes valley at once.",
+    "Save the Vogel cable car for Day 7 rather than Day 1. Looking at the ridge you climbed is worth far more than looking at the ridge you are about to."
+  ],
+  "typeSpecific": {
+    "raw": {
+      "Hut-to-hut booking path": "Aljažev dom v Vratih (1,015 m, PD Dovje-Mojstrana) → **Triglavski dom na Kredarici** (2,515 m, PD Ljubljana-Matica) → Dom Planika pod Triglavom (2,401 m, PD Ljubljana-Matica) → Zasavska koča na Prehodavcih (2,071 m, PD Zasavje) → Koča pri Triglavskih jezerih (1,685 m, PD Ljubljana-Matica) → Dom na Komni (1,520 m, PD Ljubljana-Matica). Almost every hut here belongs to a **planinsko društvo** affiliated to the **Planinska zveza Slovenije (PZS)**. **Kredarica books exclusively online at triglavskidom.si**, with the **2026 reservation window running 10 June to 30 September** and the full amount charged to a Visa or Mastercard at the moment of booking; the exact staffed opening date is announced a few days beforehand. Free cancellation is allowed **up to two days before arrival** via the link in the confirmation email, with automatic refund; after that there is no refund, but the reservation may be **modified up to three times** subject to space. Other huts take email or phone bookings and several use the PZS-wide reservation pages on pzs.si. **A sleeping-bag liner or personal clean sheet is compulsory and full sleeping bags are prohibited** at Kredarica; single-use linen can be rented for a few euros. Huts prefer cash — carry €200–€300, since the card link at 2,515 m is not dependable. **If a hut is full**, Slovenian mountain custom and PZS house rules require the warden to shelter you rather than turn you out, but that means a mattress in the *zimska soba* or the dining room; the practical fallbacks are Dom Planika and Koča na Doliču for Kredarica, and Koča na Prehodavcih or Koča pri Triglavskih jezerih for each other.",
+      "PZS membership and reciprocity": "An annual PZS membership (roughly €40–€65 depending on category) is selected during the Kredarica booking flow and **must be proved with a valid physical or digital card on arrival, or you pay the full rate**. Members under 17 get a further reduction. Membership typically halves the overnight fee, so over five hut nights it pays for itself, and it carries **reciprocal rights in CAI, ÖAV, DAV and other UIAA-affiliated huts** across the Alps. It also bundles mountain-rescue and repatriation insurance valid in Slovenia and abroad.",
+      "Safety markers and waymarking": "Slovenia uses the **Knafelc blaze** — a red circle with a white centre, painted on rock and tree — plus wooden signposts with the destination and hours. Route numbers appear on the signposts rather than the blazes. TNP paths are graded on signposts as **lahka pot** (easy), **zahtevna pot** (demanding, some cable) and **zelo zahtevna pot** (very demanding, sustained cable and exposure). The Vrata approaches and the summit ridge are *zelo zahtevna*.",
+      "Via ferrata reality on Triglav": "The **Tominškova pot** from Vrata and the **Prag** route both carry fixed cables and pegs from around 1,300 m. The **Kredarica → Mali Triglav → Triglav** ridge is a sustained, narrow, cabled arête with 500–800 m drops on both sides — a **helmet, harness and full via ferrata lanyard set are the standard of care**, and TNP, PZS and every local guide treat them as required equipment rather than a suggestion. Slovenian mountain rescue statistics are dominated by unprotected falls on exactly this ridge. Hire in Mojstrana at Slovenski planinski muzej's shop or in Bled and Bohinj, €12–€18 a day; expect a €100–€200 deposit.",
+      "Elevation and gear essentials": "Cumulative ascent is roughly **3,000 m and 3,500 m of descent** over six walking days. High points: **Triglav 2,864 m**, Mali Triglav 2,725 m, Kredarica 2,515 m, Hribarice 2,358 m, Prehodavci 2,071 m. **Snow lingers in the Triglav north-face couloirs, on the Hribarice plateau and in the Kredarica cirque well into July** — before roughly 15 July carry microspikes, and an ice axe with the skill to use it if you go in June. Full-shank B/C boots, gloves for the cables, and a helmet that fits over a hat.",
+      "Water, food resupply and rubbish": "The Julian Alps are limestone and the high route is effectively **waterless between huts**. Kredarica and Planika collect rainwater and melt: drinking water is sold, often **€3–€4 per litre**, showers may be unavailable, and washing water is rationed. Fill 2 litres at Aljažev dom and carry 2.5–3 on the ascent day. Resupply in Mojstrana, and again only in Ukanc/Bohinj on Day 6. **Everything is flown or cable-hauled up, so all rubbish comes back down with you** — huts will not take your packaging.",
+      "Bail-out options, rescue and insurance": "From Kredarica the fastest escape is south to Dom Planika and down to **Vodnikov dom na Velem polju (1,817 m)** and the Pokljuka road. From Prehodavci you can drop east to Trenta in 3–4 h. **112 reaches GRZS (Gorska reševalna zveza Slovenije)**; helicopter rescue for a Slovenian resident or PZS member is covered through the membership package, but a foreign walker without cover is billed. EHIC/GHIC does not pay for helicopter evacuation. Nearest hospital: Jesenice.",
+      "Realistic walking times": "Slovenian signpost hours are calculated for a fit, unladen local and are among the tightest in Europe. Add **30–40%**. Vrata to Kredarica is signed 5–6 h; plan 7–8 h with a pack. Kredarica to the summit and back is signed 3 h; plan 4–5 h if the ridge is busy, because on an August morning you queue at the cables."
+    },
+    "surface": null,
+    "distanceKm": null,
+    "elevationM": null,
+    "verticalM": null,
+    "technicalRating": "Slovenia uses the **Knafelc blaze** — a red circle with a white centre, painted on rock and tree — plus wooden signposts with the destination and hours. Route numbers appear on the signposts rather than the blazes. TNP paths are graded on signposts as **lahka pot** (easy), **zahtevna pot** (demanding, some cable) and **zelo zahtevna pot** (very demanding, sustained cable and exposure). The Vrata approaches and the summit ridge are *zelo zahtevna*.",
+    "transitPass": null,
+    "hutBooking": "Aljažev dom v Vratih (1,015 m, PD Dovje-Mojstrana) → **Triglavski dom na Kredarici** (2,515 m, PD Ljubljana-Matica) → Dom Planika pod Triglavom (2,401 m, PD Ljubljana-Matica) → Zasavska koča na Prehodavcih (2,071 m, PD Zasavje) → Koča pri Triglavskih jezerih (1,685 m, PD Ljubljana-Matica) → Dom na Komni (1,520 m, PD Ljubljana-Matica). Almost every hut here belongs to a **planinsko društvo** affiliated to the **Planinska zveza Slovenije (PZS)**. **Kredarica books exclusively online at triglavskidom.si**, with the **2026 reservation window running 10 June to 30 September** and the full amount charged to a Visa or Mastercard at the moment of booking; the exact staffed opening date is announced a few days beforehand. Free cancellation is allowed **up to two days before arrival** via the link in the confirmation email, with automatic refund; after that there is no refund, but the reservation may be **modified up to three times** subject to space. Other huts take email or phone bookings and several use the PZS-wide reservation pages on pzs.si. **A sleeping-bag liner or personal clean sheet is compulsory and full sleeping bags are prohibited** at Kredarica; single-use linen can be rented for a few euros. Huts prefer cash — carry €200–€300, since the card link at 2,515 m is not dependable. **If a hut is full**, Slovenian mountain custom and PZS house rules require the warden to shelter you rather than turn you out, but that means a mattress in the *zimska soba* or the dining room; the practical fallbacks are Dom Planika and Koča na Doliču for Kredarica, and Koča na Prehodavcih or Koča pri Triglavskih jezerih for each other.",
+    "liftNetwork": null,
+    "snowReliability": null,
+    "windConditions": null,
+    "gpxReady": null,
+    "bookingTimeline": null,
+    "audience": null
+  },
+  "packingNotes": [],
+  "whatCouldGoWrong": [],
+  "sources": {
+    "verified": "Triglavski dom na Kredarici's 2026 reservation window of 10 June–30 September, its exclusively online booking at triglavskidom.si with immediate full card charge on Visa/Mastercard, PZS member discount selected at booking and enforced by card check on arrival, additional discount for members under 17, the prohibition on full sleeping bags with liners or personal linen required and single-use linen rentable, free cancellation up to two days before arrival with automatic refund, and up to three modifications subject to capacity.",
+    "confidenceNotes": "Hut overnight and half-board prices are indicative and must be re-checked against the 2026 PZS price lists (*ceniki*) for each *planinsko društvo*. The staffed opening date at Kredarica is announced only days ahead and depends on snow. PZS membership categories and fees change annually — confirm the rescue-insurance scope for non-residents. Ferrata-set hire prices and deposit levels in Mojstrana, Bled and Bohinj are estimates. Vogel cable car fares and the Savica waterfall entry fee are seasonal. Whether a via ferrata set is legally mandatory versus strongly required in practice on the Triglav ridge should be confirmed with TNP before publication."
+  },
+  "verifyFlags": [],
+  "verifyFlagCount": 0,
+  "volatilePricing": false,
+  "wordCount": 3382,
+  "dataVintage": 2026,
+  "provenance": {
+    "batch": "southern-mediterranean",
+    "sourceFile": "carta-dataset/trips/hiking-slovenia-triglav-hut-to-hut.md",
+    "sourceFormat": "md with '## Metadata' bullet block (one file per trip)",
+    "sourceId": "hiking-slovenia-triglav-hut-to-hut",
+    "ingestedAt": "2026-09-02",
+    "synthesized": false
+  }
+}

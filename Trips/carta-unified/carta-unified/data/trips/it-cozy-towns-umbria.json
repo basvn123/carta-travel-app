@@ -1,0 +1,277 @@
+{
+  "id": "it-cozy-towns-umbria",
+  "sourceId": "cozy-towns-italy-umbria",
+  "slug": "it-cozy-towns-umbria",
+  "title": "Umbrian Hill Towns: Spello, Bevagna & the Sagrantino Hills",
+  "country": "Italy",
+  "countryCode": "IT",
+  "countries": [
+    {
+      "name": "Italy",
+      "code": "IT"
+    }
+  ],
+  "isMultiCountry": false,
+  "region": "Southern & Mediterranean Europe",
+  "regionKey": "southern-mediterranean",
+  "subRegion": "Valle Umbra — Spello, Bevagna, Montefalco, Trevi",
+  "tripType": "Cozy Towns Trips",
+  "tripTypeId": 4,
+  "tripTypeSlug": "cozy-towns",
+  "durationDays": 7,
+  "bestPeriod": {
+    "months": [
+      4,
+      5,
+      6,
+      9,
+      10
+    ],
+    "monthNames": [
+      "April",
+      "May",
+      "June",
+      "September",
+      "October"
+    ],
+    "window": "Late April–mid June & mid September–late October",
+    "note": null,
+    "avoid": "July–August (valley heat above 35°C, kitchens shut in late August) and January–February, when many hill-town restaurants close entirely",
+    "raw": "Late April–mid June & mid September–late October"
+  },
+  "budgetTier": "€€",
+  "budgetTierRange": [
+    2,
+    2
+  ],
+  "budgetTierRaw": "€€",
+  "budget": {
+    "currency": "EUR",
+    "totalEur": {
+      "low": 1150,
+      "high": 1800
+    },
+    "totalNote": "€1,150–€1,800 per person, excl. international flights",
+    "breakdown": {
+      "accommodation": {
+        "lowEur": 560,
+        "highEur": 910,
+        "note": "Two bases only; €80–€130 pp/night in small palazzo hotels"
+      },
+      "food": {
+        "lowEur": 280,
+        "highEur": 400,
+        "note": "€14–€22 trattoria mains, two €35–€55 tasting menus"
+      },
+      "transport": {
+        "lowEur": 140,
+        "highEur": 230,
+        "note": "Small rental car 6 days, or Busitalia regional fares plus taxis"
+      },
+      "activities": {
+        "lowEur": 170,
+        "highEur": 260,
+        "note": "Cellar visits €15–€30, papermaking workshop, museums"
+      }
+    },
+    "perDayEur": {
+      "low": 164,
+      "high": 257
+    }
+  },
+  "profile": {
+    "difficulty": 2,
+    "difficultyLabel": "Moderate",
+    "difficultyNote": "2 — steep cobbled lanes and one 5.5 km valley walk; every town is crossable in under an hour",
+    "fitnessLevel": "Moderate",
+    "crowdLevel": null,
+    "familyFriendly": null,
+    "carRequired": null
+  },
+  "basecamps": [],
+  "gatewayAirport": "PEG — Perugia San Francesco d'Assisi, 27 km / 30 min to Spello; FCO Rome is the fallback, 2 h 15 by car",
+  "gatewayAirportCode": "PEG",
+  "languages": [],
+  "currency": null,
+  "emergencyNumber": "112",
+  "coordinates": {
+    "lat": 41.8919,
+    "lon": 12.5113,
+    "precision": "country",
+    "matchedPlace": "Rome",
+    "source": "country capital fallback"
+  },
+  "tags": [
+    "hill-towns",
+    "sagrantino",
+    "olive-oil",
+    "medieval-crafts",
+    "slow-travel",
+    "umbria",
+    "artisan-markets",
+    "infiorata"
+  ],
+  "summary": "A week built around two squares and the hills between them. You settle into Spello for three nights and Bevagna for four; Montefalco's Sagrantino cellars, Trevi's olive presses and Rasiglia's water channels happen as half-day loops that return you to a familiar doorway before dark. The rhythm is deliberately Umbrian — shutters down 13:30–16:00, then the whole town reappearing on the corso at 18:30. Two town moves in seven days, two written-in \"do nothing\" blocks.",
+  "summaryGenerated": false,
+  "hook": null,
+  "snapshot": {},
+  "itinerary": [
+    {
+      "day": 1,
+      "title": "Landing softly in Spello",
+      "morning": "Land at Perugia, collect a small car (Panda-class suits these gates) and drive to Spello. Park in the lot below Porta Consolare rather than attempting the walled lanes. Check in; do nothing more ambitious than a coffee on Via Cavour.",
+      "afternoon": "Walk the spine from Porta Consolare up to Porta dell'Arce. Stop in Santa Maria Maggiore for the Cappella Baglioni — Pinturicchio's 1501 cycle, majolica floor intact.",
+      "evening": "Aperitivo at Enoteca Properzio beside the church, then dinner at Il Molino on Piazza Matteotti, in the old olive-mill room: strangozzi al tartufo nero.",
+      "dayStats": "PEG–Spello 27 km / 30 min. Spine walk 1.6 km, 95 m ascent. Spello at 280 m, valley floor 220 m.",
+      "sleep": "Palazzo Bocci, Spello"
+    },
+    {
+      "day": 2,
+      "title": "Market morning, olive terraces",
+      "morning": "Tuesday market outside Porta Consolare, 08:00–13:00: Valnerina cheese, farro, chickpeas, whatever fruit is dictating the trattoria menus that week. Buy lunch rather than book it.",
+      "afternoon": "The Fonte Bulgarella loop out of Porta Montanara — CAI-marked track through terraced Moraiolo olives to the spring, back along the aqueduct line, with Assisi and Monte Subasio in view throughout.",
+      "evening": "Passeggiata peaks around 19:15 on Via Garibaldi. Dinner at La Bastiglia's terrace at the top of town; book two days ahead.",
+      "dayStats": "Loop 5.5 km / 210 m ascent / 2 h at a talking pace. Market 08:00–13:00. Monte Subasio above at 1,290 m.",
+      "sleep": "Palazzo Bocci, Spello"
+    },
+    {
+      "day": 3,
+      "title": "Trevi olive oil, then an afternoon of nothing",
+      "morning": "Drive to Trevi, spiralled on its hill above the Flaminia. The Museo della Civiltà dell'Ulivo in the San Francesco complex, then down to Bovara for the Ulivo di Sant'Emiliano, credibly over a thousand years old. Taste at Frantoio Gaudenzi in Pigge.",
+      "afternoon": "Deliberately blank. Back by 14:30 — sleep, read, sit in the courtyard. The town is shuttered until 16:00 anyway, and that is the point.",
+      "evening": "Trattoria Il Pinturicchio on Via Sant'Angelo: torta al testo with sausage, grilled porcini, half last night's bill.",
+      "dayStats": "Spello–Trevi 13 km / 20 min. Trevi old town 412 m, Bovara 240 m; 2.5 km each way to the tree. Frantoio tastings €10–€15.",
+      "sleep": "Palazzo Bocci, Spello"
+    },
+    {
+      "day": 4,
+      "title": "Move to Bevagna; Piazza Silvestri at dusk",
+      "morning": "Slow start, then the short drive down to the valley floor into Bevagna — the only genuinely flat town of the week, and the easiest to live in. Check in and leave the car parked for two full days.",
+      "afternoon": "The Botteghe delle Gaite circuit — medieval paper mill, silk workshop, candle-maker, dyer — then the 2nd-century Roman mosaic on Via Porta Guelfa: black-and-white sea creatures, ten minutes, unforgettable.",
+      "evening": "Sit in Piazza Silvestri from 18:15 and watch the town arrive. Dinner at Osteria Il Podestà, two doors off the square: pigeon, chickpea soup, a bottle of Montefalco Rosso.",
+      "dayStats": "Spello–Bevagna 13 km / 18 min. Botteghe ticket ~€8–€10. Bevagna at 210 m. Passeggiata 18:15–20:00.",
+      "sleep": "L'Orto degli Angeli, Bevagna"
+    },
+    {
+      "day": 5,
+      "title": "Sagrantino day in Montefalco",
+      "morning": "Up to Montefalco, \"the balcony of Umbria,\" for the circular Piazza del Comune and the Museo di San Francesco, where Benozzo Gozzoli's 1452 life of St Francis fills the apse.",
+      "afternoon": "Two cellars, no more. Antonelli San Marco for the organic, restrained house style and a vineyard walk; Scacciadiavoli at Cantinone for the 19th-century gravity-flow cellar and its Metodo Classico. Book both.",
+      "evening": "Back to Bevagna for Ristorante Redibis, built inside the curved wall of the Roman theatre — the room is the reason to go, but the food holds up.",
+      "dayStats": "Bevagna–Montefalco 7 km / 12 min; Montefalco 473 m vs Bevagna 210 m. Cellar visits €15–€30, 75–90 min. Thursday market on Piazza del Comune.",
+      "sleep": "L'Orto degli Angeli, Bevagna"
+    },
+    {
+      "day": 6,
+      "title": "A hands-on hour, Rasiglia's water, Bettona's walls",
+      "morning": "Unstructured, with one option: the papermaking hour at the Cartiera. Pull your own sheet from the vat, press it, leave it drying while you have lunch. Otherwise the flat 8 km riverside there-and-back to Cantalupo.",
+      "afternoon": "Rasiglia — thirty houses threaded by the Menotre's channels, water running under and beside the lanes. Timed entry now applies on peak weekends; book ahead. Loop back via Bettona, Etruscan-walled, good Pinacoteca, almost no visitors.",
+      "evening": "Last night on Piazza Silvestri. Aperitivo outside, then Serpillo for a lighter, vegetable-forward dinner and a glass of Sagrantino Passito.",
+      "dayStats": "Bevagna–Rasiglia 25 km / 35 min via Foligno; Rasiglia at 648 m. Bettona 355 m, 15 km from Bevagna. Cantalupo walk 8 km, flat.",
+      "sleep": "L'Orto degli Angeli, Bevagna"
+    },
+    {
+      "day": 7,
+      "title": "Foligno, and out",
+      "morning": "With a late flight, drive to Foligno for the Saturday market and the Calamita Cosmica — Gino de Dominicis's 24-metre skeleton in the deconsecrated church of the Santissima Trinità in Annunziata. The strangest thing in Umbria and a perfect last stop.",
+      "afternoon": "Return the car at Perugia. Training out instead, Foligno station sits on the Rome–Ancona line.",
+      "evening": "Flight home, or an early dinner in Perugia with a night in hand.",
+      "dayStats": "Bevagna–Foligno 10 km / 15 min; Foligno–PEG 40 km / 45 min. Foligno–Roma Termini 1 h 50–2 h 10 by Regionale, roughly hourly.",
+      "sleep": "—"
+    }
+  ],
+  "accommodationStrategy": [
+    {
+      "rank": 1,
+      "name": "Palazzo Bocci",
+      "style": "23-room historic palazzo hotel",
+      "location": "Spello",
+      "description": "A 17th-century house on Via Cavour, directly on the passeggiata line, with frescoed salons and a hanging garden over the valley. Ask for a valley-facing room; lane-side rooms are cheaper but hear the 19:00 crowd. Its restaurant, Il Molino, is across the street. Roughly €120–€180 per double.",
+      "booking": null,
+      "priceNote": null
+    },
+    {
+      "rank": 2,
+      "name": "L'Orto degli Angeli",
+      "style": "14-room relais",
+      "location": "Bevagna",
+      "description": "Built over a Roman temple podium, with a hanging garden and Redibis in the theatre below. Fourteen rooms means staff learn your name by day two — the point of a four-night base. Thirty seconds from Piazza Silvestri. Roughly €150–€230 per double.",
+      "booking": null,
+      "priceNote": null
+    },
+    {
+      "rank": 3,
+      "name": "Palazzo Brunamonti",
+      "style": "20-room family hotel",
+      "location": "Bevagna",
+      "description": "The value alternative on Corso Matteotti: 18th-century townhouse, vaulted breakfast room, and a garage — the pick if you're driving. Roughly €90–€130 per double.",
+      "booking": null,
+      "priceNote": null
+    }
+  ],
+  "logistics": {
+    "connectivity": "Italy is in the EU roaming zone. 4G is solid in every town named here; the olive terraces above Spello and the ridge to Rasiglia are patchy, so download Umbria offline.",
+    "emergency": "112 for everything; Soccorso Alpino Umbria responds via 112 for Subasio and the Menotre gorge. EHIC/GHIC covers state care; insure the rental excess.",
+    "weather": "The Valle Umbra holds fog on late-autumn mornings and heat on summer afternoons. Storms build over Subasio from about 16:00 and pass within the hour. October evenings drop to 8–10°C, and the hill towns run colder than the valley floor.",
+    "bookingWindows": "Beds for the Gaite (18–28 June 2026) and the Infiorata (6–7 June 2026) go 6–9 months ahead. Antonelli San Marco and Scacciadiavoli want 3–5 days. Rasiglia uses timed entry on peak weekends. Redibis and La Bastiglia, 2–3 days.",
+    "money": "Euro. Cards work almost everywhere, but carry €50–€80 cash for market stalls, church donations and smaller frantoi. Tipping isn't expected; round up, or leave €5 on a good dinner.",
+    "transportRules": "Every walled town has a camera-enforced ZTL and fines reach your rental company months later — park outside the gates, always, and give your plate to the hotel if it sits inside. Busitalia Umbria runs Foligno–Bevagna–Montefalco 6–8 times on weekdays and barely at all on Sundays; Spello and Foligno are on the Perugia–Foligno rail line with 1–2 trains hourly.",
+    "permits": "No permits for any walk here. Truffle foraging needs a regional licence — buy, don't dig. Drones are banned over the historic centres. Churches expect covered shoulders and no flash.",
+    "health": "Tap water is potable, including the public fountains in Bevagna and Spello. Ticks are present in long grass on Subasio April–October. Cobbles in Trevi and Spello are polished and lethal in rain — bring shoes with grip.",
+    "gettingThere": null,
+    "other": []
+  },
+  "proTips": [
+    "See Spello's Infiorata at 02:00 on the Sunday, not 10:00. The infioratori are still laying petals under work lights, you can talk to them, and there's no crowd — the carpets are destroyed by the procession a few hours later anyway.",
+    "Book the Gaite's second half rather than the opening weekend: workshops are fully staffed and the taverns have found their rhythm, but day-tripper crush drops sharply after the first Sunday.",
+    "Ask Antonelli San Marco about the Trebbiano Spoletino, not just the Sagrantino. It's the most interesting white in central Italy right now and almost nobody visiting Montefalco orders it.",
+    "If you're not there for the November pressing, ask Frantoio Gaudenzi specifically for last-harvest Moraiolo in a tin, not a clear bottle — light is what kills good oil on the drive home.",
+    "The Botteghe delle Gaite run a reduced rota outside June. Phone the Museo di Bevagna the day before rather than trusting posted hours; a call reliably gets a workshop unlocked.",
+    "Walk the passeggiata in the right direction — uphill in Spello after 18:30, back down after 20:00. Going against it means you never get a table when the bars fill.",
+    "Rasiglia is a 200-person hamlet now receiving coach traffic. Arrive before 09:30 or after 17:00 on a weekday and the water channels are essentially yours."
+  ],
+  "typeSpecific": {
+    "raw": {
+      "Piazza Filippo Silvestri, Bevagna": "is the anchor of the week: a crooked medieval trapezoid with two Romanesque churches (San Silvestro, 1195; San Michele Arcangelo), a Gothic fountain and the Teatro Torti. Passeggiata builds from 18:15 and peaks 19:00–20:00.",
+      "Piazza della Repubblica, Spello": "is a passage square, not a sitting square — evening flow runs uphill along Via Cavour and Via Garibaldi, then back down after 20:00. Shops shut 13:00–15:30/16:00; almost nothing but bars opens Monday morning.",
+      "Mercato delle Gaite, Bevagna — 18–28 June 2026": "The four quarters reopen medieval workshops and taverns; evening opening from 18:30, 16:00 on public holidays. Beds need booking 6+ months out.",
+      "Infiorate di Spello — 6–7 June 2026": "(Corpus Domini weekend; 29–30 May in 2027). Flower carpets laid overnight Saturday, walked by the procession Sunday morning, gone by early afternoon.",
+      "Weekly markets": "Spello Tuesday morning outside Porta Consolare; Bevagna Wednesday around Piazza Garibaldi; Montefalco Thursday on Piazza del Comune; Foligno Tuesday and Saturday, the biggest of the four. All wind down by 13:00.",
+      "Named producers": "Antonelli San Marco, Arnaldo Caprai, Scacciadiavoli and Tabarrini for Sagrantino di Montefalco DOCG; Frantoio Gaudenzi at Pigge di Trevi for single-varietal Moraiolo oil.",
+      "Hands-on experience": "hand-made paper at the medieval **Cartiera** in Bevagna's Botteghe delle Gaite circuit — rag pulp, wire mould, felt pressing, your own sheet to take home.",
+      "Short village-to-village walks": "Spello to Fonte Bulgarella through the olive terraces (5.5 km / 210 m); Bevagna to Cantalupo along the Teverone (4 km each way, flat); Trevi down to the Ulivo di Sant'Emiliano at Bovara (2.5 km)."
+    },
+    "surface": null,
+    "distanceKm": null,
+    "elevationM": null,
+    "verticalM": null,
+    "technicalRating": null,
+    "transitPass": null,
+    "hutBooking": null,
+    "liftNetwork": null,
+    "snowReliability": null,
+    "windConditions": null,
+    "gpxReady": null,
+    "bookingTimeline": null,
+    "audience": null
+  },
+  "packingNotes": [],
+  "whatCouldGoWrong": [],
+  "sources": {
+    "verified": "Infiorate di Spello 2026 confirmed as 6–7 June 2026 (Corpus Domini weekend; date moves annually with Easter — 29–30 May in 2027). Mercato delle Gaite 2026 confirmed as 18–28 June 2026, evening opening from 18:30 and 16:00 on public holidays. Continued operation of Antonelli San Marco, Scacciadiavoli and Frantoio Gaudenzi spot-checked.",
+    "confidenceNotes": "Weekly market days (Spello Tue, Bevagna Wed, Montefalco Thu, Foligno Tue/Sat) are long-standing but not individually re-confirmed this run. Rasiglia's timed-entry rules shift season to season. Room counts are approximate; prices indicative for 2026 shoulder season. Botteghe delle Gaite opening outside June is genuinely irregular — flag it rather than state fixed hours."
+  },
+  "verifyFlags": [],
+  "verifyFlagCount": 0,
+  "volatilePricing": false,
+  "wordCount": 2321,
+  "dataVintage": 2026,
+  "provenance": {
+    "batch": "southern-mediterranean",
+    "sourceFile": "carta-dataset/trips/cozy-towns-italy-umbria.md",
+    "sourceFormat": "md with '## Metadata' bullet block (one file per trip)",
+    "sourceId": "cozy-towns-italy-umbria",
+    "ingestedAt": "2026-09-02",
+    "synthesized": false
+  }
+}

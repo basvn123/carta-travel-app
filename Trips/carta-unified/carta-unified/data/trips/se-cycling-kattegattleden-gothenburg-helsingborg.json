@@ -1,0 +1,291 @@
+{
+  "id": "se-cycling-kattegattleden-gothenburg-helsingborg",
+  "sourceId": "kattegattleden-gothenburg-helsingborg",
+  "slug": "se-cycling-kattegattleden-gothenburg-helsingborg",
+  "title": "Kattegattleden: Gothenburg to Helsingborg",
+  "country": "Sweden",
+  "countryCode": "SE",
+  "countries": [
+    {
+      "name": "Sweden",
+      "code": "SE"
+    }
+  ],
+  "isMultiCountry": false,
+  "region": "Northern Europe & Baltics",
+  "regionKey": "northern-baltics",
+  "subRegion": "Halland & northwest Skåne coast",
+  "tripType": "Cycling Trips",
+  "tripTypeId": 1,
+  "tripTypeSlug": "cycling",
+  "durationDays": 7,
+  "bestPeriod": {
+    "months": [
+      5,
+      6,
+      7,
+      8,
+      9
+    ],
+    "monthNames": [
+      "May",
+      "June",
+      "July",
+      "August",
+      "September"
+    ],
+    "window": "May to late September; warmest swimming July–August; best light and empty roads late August–mid September",
+    "note": null,
+    "avoid": null,
+    "raw": "May to late September; warmest swimming July–August; best light and empty roads late August–mid September"
+  },
+  "budgetTier": "€€",
+  "budgetTierRange": [
+    2,
+    2
+  ],
+  "budgetTierRaw": "€€",
+  "budget": {
+    "currency": "EUR",
+    "totalEur": {
+      "low": 1150,
+      "high": 1650
+    },
+    "totalNote": "€1,150–1,650 per person",
+    "breakdown": {
+      "accommodation": {
+        "lowEur": 95,
+        "highEur": 170,
+        "note": "€95–170 per night, double; STF hostels €40–60 pp; two seaside spa nights push the top end"
+      },
+      "food": {
+        "lowEur": 50,
+        "highEur": 75,
+        "note": "€50–75 per day (bakery breakfast, harbour lunch, one proper dinner)"
+      },
+      "transport": {
+        "lowEur": 150,
+        "highEur": 220,
+        "note": "€150–220: bike hire €120–160 for the week, plus one-way rail return Helsingborg–Gothenburg"
+      },
+      "activities": {
+        "lowEur": 50,
+        "highEur": 90,
+        "note": "€50–90: Tjolöholm Castle, Varberg fortress and cold bathhouse, museum entries"
+      }
+    },
+    "perDayEur": {
+      "low": 164,
+      "high": 236
+    }
+  },
+  "profile": {
+    "difficulty": 1,
+    "difficultyLabel": "Easy",
+    "difficultyNote": "Easy. Sweden's flattest long-distance route; 45–70 km per day, rarely more than 250 m gain, one real climb over Hallandsåsen",
+    "fitnessLevel": "Easy",
+    "crowdLevel": null,
+    "familyFriendly": null,
+    "carRequired": null
+  },
+  "basecamps": [
+    "Gothenburg",
+    "Varberg",
+    "Falkenberg",
+    "Halmstad",
+    "Båstad",
+    "Helsingborg"
+  ],
+  "gatewayAirport": null,
+  "gatewayAirportCode": null,
+  "languages": [
+    "Swedish",
+    "English"
+  ],
+  "currency": "SEK (Swedish krona)",
+  "emergencyNumber": "112",
+  "coordinates": {
+    "lat": 57.0,
+    "lon": 12.25,
+    "precision": "source",
+    "matchedPlace": "Gothenburg",
+    "source": "source record"
+  },
+  "tags": [],
+  "summary": "A seven-day cycling trip itinerary in Halland & northwest Skåne coast, Sweden.",
+  "summaryGenerated": true,
+  "hook": null,
+  "snapshot": {},
+  "itinerary": [
+    {
+      "day": 1,
+      "title": "Gothenburg to Kungsbacka",
+      "morning": "Collect touring bikes in central Gothenburg — reserve panniers and a rear rack explicitly, most shops rent them separately. Coffee at Da Matteo in Magasinsgatan before you roll.",
+      "afternoon": "Out through Askim and Billdal on segregated cycleway, then the coastal stretch past Särö Västerskog nature reserve, a rare wind-sculpted oak forest on the shore. Swim stop at Vallda Sandö if the wind is off the land.",
+      "evening": "Kungsbacka's old town on Storgatan for dinner. Short day by design: the first afternoon on a loaded bike is where blisters get decided.",
+      "dayStats": "43 km, asphalt",
+      "sleep": null
+    },
+    {
+      "day": 2,
+      "title": "Kungsbacka to Varberg",
+      "morning": "Tjolöholm Castle, an Arts-and-Crafts manor on its own peninsula, opens at 11:00 in season — the stables café does a good early lunch.",
+      "afternoon": "Through Åsa and Frillesås on quiet lanes, then the long open coast toward Varberg. The last 10 km run past Apelviken, Sweden's most consistent surf and windsurf beach — expect to be overtaken by kite buggies.",
+      "evening": "Varberg. Swim from the Varberg Kallbadhus, a Moorish-style 1903 cold bathhouse on the pier with separate sex-segregated open-air pools and a wood sauna. Dinner in the Societetsparken pavilion.",
+      "dayStats": "62 km, 240 m gain",
+      "sleep": null
+    },
+    {
+      "day": 3,
+      "title": "Varberg to Falkenberg (32 km) plus Ätran valley loop",
+      "morning": "Varberg Fortress, where the Bocksten Man — a fully clothed 14th-century bog body — is displayed. One hour, genuinely unsettling.",
+      "afternoon": "Short flat coastal ride via Träslövsläge and Ugglarps to Falkenberg. Check in early, then ride the Ätran river loop inland: the Ätran is one of Europe's original catch-and-release salmon rivers and the old town of wooden houses around Tullbron bridge is the prettiest hour on the whole route.",
+      "evening": "Falkenberg has a serious brewing scene; the town's brewery taproom plus a river-side dinner.",
+      "dayStats": "20 km",
+      "sleep": null
+    },
+    {
+      "day": 4,
+      "title": "Falkenberg to Halmstad",
+      "morning": "Coastal cycleway via Skrea Strand and Glommen, a working fishing harbour where the smoked prawn stands open around 10:00.",
+      "afternoon": "Steninge and the Möllegård cliffs, then into Halmstad along the Nissan river. Detour to Tylösand, a 7 km white-sand beach that is essentially Sweden's summer capital.",
+      "evening": "Halmstad Castle waterfront, dinner in the Stora Torg quarter, evening swim at Tylösand where the sun sets straight into the Kattegat.",
+      "dayStats": "42 km",
+      "sleep": null
+    },
+    {
+      "day": 5,
+      "title": "Halmstad to Båstad over Hallandsåsen",
+      "morning": "South via Trönninge and Eldsberga, gently rolling farmland. Fuel properly in Laholm — the ascent is next.",
+      "afternoon": "Hallandsåsen ridge: a steady 5–6 km climb to about 200 m with a fast, technical descent into Båstad on the Bjäre peninsula. Not steep, but it is where the day is won.",
+      "evening": "Båstad. Tennis town, old harbour, Norrviken Gardens on the headland. Dinner overlooking Laholm Bay.",
+      "dayStats": "48 km, the route's only real climb",
+      "sleep": null
+    },
+    {
+      "day": 6,
+      "title": "Bjäre peninsula and on to Ängelholm",
+      "morning": "The Bjäre loop is the best riding on the route: Kattvik, Hovs Hallar's red cliffs (where Bergman filmed *The Seventh Seal*), and the potato fields the Bjärehalvön is famous for. Rolling, hedged, lanes barely wider than a car.",
+      "afternoon": "Down the west side via Torekov and Båstad's back roads, then south through Skälderviken to Ängelholm.",
+      "evening": "Ängelholm Havsbaden beach and a quiet last-but-one night.",
+      "dayStats": "55 km, 300 m gain",
+      "sleep": null
+    },
+    {
+      "day": 7,
+      "title": "Ängelholm to Helsingborg and out",
+      "morning": "The finest final stretch on Kattegattleden: Rönnen nature reserve, then the cliff-edge cycleway past Domsten and Viken with Denmark two miles across the Sound.",
+      "afternoon": "Arrive Helsingborg. Climb Kärnan tower for the view over to Helsingør. Return bikes, then train north to Gothenburg (about 2 h 15) or the 20-minute ferry to Denmark for a Copenhagen flight.",
+      "evening": null,
+      "dayStats": "38 km",
+      "sleep": null
+    }
+  ],
+  "accommodationStrategy": [
+    {
+      "rank": 1,
+      "name": "Varbergs Kusthotell",
+      "style": null,
+      "location": "Varberg",
+      "description": "Directly on the promenade beside the Kallbadhus, with a spa you will want on Day 2 evening. Secure bike room and a drying cabinet for wet kit. Book a sea-side room, the rail-side ones face the tracks.",
+      "booking": null,
+      "priceNote": null
+    },
+    {
+      "rank": 2,
+      "name": "Hotel Skansen / Båstad harbour properties",
+      "style": null,
+      "location": "Båstad",
+      "description": "Base for the Bjäre loop day. Choose a property in the harbour rather than upper Båstad: after the Hallandsåsen descent you will not want the extra 60 m of climbing home each evening.",
+      "booking": null,
+      "priceNote": null
+    },
+    {
+      "rank": 3,
+      "name": "STF Hostels along the route",
+      "style": "Kungsbacka, Halmstad, Ängelholm",
+      "location": null,
+      "description": "Sweden's touring club network — clean, cheap, always with a kitchen and a lockable cycle shed, and the standard fallback if you decide to reshape the stages mid-week. Bring or hire bed linen; it is charged extra by default.",
+      "booking": null,
+      "priceNote": null
+    }
+  ],
+  "logistics": {
+    "connectivity": null,
+    "emergency": "112. Hospitals in Varberg, Halmstad and Helsingborg. Sweden's *Trafikverket* road-condition service and the SMHI weather app are both usable in English.",
+    "weather": "Southwesterly prevailing wind. A frontal day in Halland means 10–14 m/s straight off the sea with no shelter for 20 km at a stretch. Build one flex day into a 7-day plan or accept a train hop.",
+    "bookingWindows": "July is Swedish industrial holiday season — coastal hotels sell out 3–4 months out and prices roughly double. Late August and September are half the price with better riding.",
+    "money": null,
+    "transportRules": null,
+    "permits": null,
+    "health": null,
+    "gettingThere": null,
+    "other": [
+      {
+        "label": "Signage",
+        "text": "Kattegattleden is Sweden's first national tourist cycle route and is fully signposted with distinctive blue-and-white markers in both directions. Signage is reliable enough that a GPX file is a backup, not a necessity."
+      },
+      {
+        "label": "Bikes on trains",
+        "text": "Rules differ by operator and change often: Skåne's Pågatåg and Öresundståg carry bikes with restrictions in rush hour; long-distance SJ services generally require a boxed bike or a booked bike space on selected trains. Plan the return leg before you book — this is the single most common trip-ruining detail on this route. `verify: true`"
+      },
+      {
+        "label": "Luggage transfer",
+        "text": "Several Halland-based operators run pannier transfer between the standard overnight towns, roughly €20–30 per bag per stage. Worth it if you are riding on a light road bike rather than a tourer."
+      },
+      {
+        "label": "Right to roam",
+        "text": "*Allemansrätten* allows wild camping for one night on unenclosed land away from dwellings — but not on the Bjäre peninsula's fenced farmland, and not on the beach reserves, which are explicitly excluded."
+      }
+    ]
+  },
+  "proTips": [
+    "Ride **north to south**. Finishing at Helsingborg gives you a fast train home, a Danish ferry option, and a downhill last day.",
+    "The **Kallbadhus at Varberg** is open early. Go at 07:00 on Day 3 before you ride — sauna, cold Kattegat, empty pier.",
+    "Swedish *fika* is a logistics tool, not a cliché: bakeries in Falkenberg and Torekov open at 07:00 and close at 15:00. Plan the long afternoon stages with a packed lunch, not a hopeful one.",
+    "Hovs Hallar is packed 11:00–15:00 with car tourists. Ride it at **08:30** and you will have the cliffs to yourself.",
+    "If a headwind day arrives, take the regional train **Halmstad–Ängelholm** and use the saved hours on the Bjäre loop instead. The Bjäre is the good part; the flat farmland is not what you came for.",
+    "Book Tjolöholm Castle's guided tour slot online the night before — the walk-up queue on a July Saturday is over an hour."
+  ],
+  "typeSpecific": {
+    "raw": {
+      "surface_mix": "≈90% asphalt (much of it dedicated cycleway), 10% compacted gravel through nature reserves",
+      "total_distance_km": 390,
+      "max_elevation_m": 226,
+      "route_direction": "North to south — the prevailing southwesterly is a headwind either way, but south-bound keeps the sea on your right and ends at a fast rail hub",
+      "gpx_ready": true
+    },
+    "surface": "≈90% asphalt (much of it dedicated cycleway), 10% compacted gravel through nature reserves",
+    "distanceKm": 390,
+    "elevationM": 226,
+    "verticalM": null,
+    "technicalRating": null,
+    "transitPass": null,
+    "hutBooking": null,
+    "liftNetwork": null,
+    "snowReliability": null,
+    "windConditions": null,
+    "gpxReady": true,
+    "bookingTimeline": null,
+    "audience": null
+  },
+  "packingNotes": [],
+  "whatCouldGoWrong": [],
+  "sources": {
+    "verified": null,
+    "confidenceNotes": null
+  },
+  "verifyFlags": [],
+  "verifyFlagCount": 0,
+  "volatilePricing": true,
+  "wordCount": 1385,
+  "dataVintage": 2026,
+  "provenance": {
+    "batch": "northern-baltics",
+    "sourceFile": "carta_northern_europe_baltics_trips.md#trip-02",
+    "sourceFormat": "single-file md, '## Trip NN' records with fenced YAML",
+    "sourceId": "kattegattleden-gothenburg-helsingborg",
+    "ingestedAt": "2026-09-02",
+    "synthesized": false
+  }
+}

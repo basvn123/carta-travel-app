@@ -1,0 +1,327 @@
+{
+  "id": "be-water-sports-de-panne-kite-landyacht",
+  "sourceId": "be-water-de-panne-kite-landyacht",
+  "slug": "be-water-sports-de-panne-kite-landyacht",
+  "title": "Kitesurfing and Land Yachting at De Panne",
+  "country": "Belgium",
+  "countryCode": "BE",
+  "countries": [
+    {
+      "name": "Belgium",
+      "code": "BE"
+    }
+  ],
+  "isMultiCountry": false,
+  "region": "Western & Central Europe",
+  "regionKey": "western-central",
+  "subRegion": "West Flanders, Belgian Coast",
+  "tripType": "Water Sports & Coastal Trips",
+  "tripTypeId": 10,
+  "tripTypeSlug": "water-sports",
+  "durationDays": 7,
+  "bestPeriod": {
+    "months": [
+      5,
+      6,
+      9
+    ],
+    "monthNames": [
+      "May",
+      "June",
+      "September"
+    ],
+    "window": null,
+    "note": "May, June and September carry the steadiest south-westerlies with fewer bathing-zone restrictions than the peak July–August holiday weeks.",
+    "avoid": null,
+    "raw": null
+  },
+  "budgetTier": "€€",
+  "budgetTierRange": [
+    2,
+    2
+  ],
+  "budgetTierRaw": "€€",
+  "budget": {
+    "currency": "EUR",
+    "totalEur": {
+      "low": 880,
+      "high": 1280
+    },
+    "totalNote": null,
+    "breakdown": {
+      "accommodation": {
+        "lowEur": 420,
+        "highEur": 610,
+        "note": null
+      },
+      "food": {
+        "lowEur": 220,
+        "highEur": 300,
+        "note": null
+      },
+      "transport": {
+        "lowEur": 90,
+        "highEur": 140,
+        "note": null
+      },
+      "activities": {
+        "lowEur": 150,
+        "highEur": 230,
+        "note": null
+      }
+    },
+    "perDayEur": {
+      "low": 126,
+      "high": 183
+    }
+  },
+  "profile": {
+    "difficulty": 3,
+    "difficultyLabel": "Active",
+    "difficultyNote": null,
+    "fitnessLevel": "Active",
+    "crowdLevel": "Moderate",
+    "familyFriendly": true,
+    "carRequired": false
+  },
+  "basecamps": [
+    "De Panne"
+  ],
+  "gatewayAirport": "Brussels (BRU)",
+  "gatewayAirportCode": "BRU",
+  "languages": [
+    "Dutch",
+    "French"
+  ],
+  "currency": "EUR",
+  "emergencyNumber": "112",
+  "coordinates": {
+    "lat": 50.8505,
+    "lon": 4.3488,
+    "precision": "gateway",
+    "matchedPlace": "Brussels",
+    "source": "geonames (geonamescache, cities > 15k)"
+  },
+  "tags": [
+    "kitesurfing",
+    "land-yachting",
+    "blokarten",
+    "north-sea",
+    "westhoek-dunes"
+  ],
+  "summary": "A week of kitesurfing and land yachting on De Panne's wide low-tide beach, with the Westhoek dunes and Koksijde as neighbouring bases.",
+  "summaryGenerated": false,
+  "hook": "De Panne has the widest beach on the Belgian coast, and at low tide it turns into one of the biggest hard-sand expanses in Europe. That single fact explains this town: it is why the land yacht was reinvented here in the 1890s, why kitesurfers travel from across the Low Countries to launch here, and why the strip is now governed by a legally zoned system separating swimmers, kiters and yacht sailors by flag and hour. This week works both disciplines against that tide and zone calendar, based between De Panne and neighbouring Koksijde.",
+  "snapshot": {
+    "Country": "Belgium",
+    "Base(s)": "De Panne (5 nights), Koksijde (2 nights)",
+    "Trip Type": "Water Sports & Coastal Trips",
+    "Duration": "7 days",
+    "Best Period": "May, June, September",
+    "Budget Tier": "€€ (approx. €880–€1,280 per person, excluding flights)",
+    "Total Distance / Terrain": "Approx. 3 km of open low-tide beach at De Panne, widening to over 400 m at spring low water; the Westhoek dune reserve behind it",
+    "Getting There": "Fly to Brussels, train to De Panne via Ostend or Veurne (about 2 h), then the coastal Kusttram runs along the whole strip",
+    "Who It Suits": "Kitesurfers and land-sailors who want a wide, flat, wind-reliable beach and are willing to work around Belgium's zoned bathing-season rules"
+  },
+  "itinerary": [
+    {
+      "day": 1,
+      "title": "Arrival and orientation on the flats",
+      "morning": "Train from Brussels to De Panne, changing at Ostend or Veurne. Check into base and walk the promenade at low tide to see the scale of the beach — De Panne's is the widest on the Belgian coast, backed directly by the Westhoek, the country's largest coastal dune reserve.",
+      "afternoon": "Register with a De Panne kite school for a beach briefing and zone induction. Belgian coastal kitesurfing is legally restricted by municipality: De Panne designates specific kite zones and hours that shift with the bathing season (roughly June to September) and with the tide, and every school walks new arrivals through the current flag and zone map first.",
+      "evening": "Dinner in central De Panne; an early night ahead of a wind-dependent week.",
+      "dayStats": "0 h water time · orientation only · no kit needed.",
+      "sleep": null
+    },
+    {
+      "day": 2,
+      "title": "First kite session on the flats",
+      "morning": "The Belgian coast's dominant pattern is a south-westerly, typically Force 3–5, funnelled cleanly across the flat beach with almost nothing to break it up; De Panne's width means the wind is honest and gust-free. Launch with an instructor from the designated kite zone at low to mid tide, when the sand is widest and firmest.",
+      "afternoon": "Continue independent riding once cleared, staying inside the marked zone boundaries — these are enforced by local beach wardens and move with the calendar, so check the day's posted flags rather than yesterday's.",
+      "evening": "Walk into the Westhoek reserve behind the beach — 340 hectares of shifting dune, the largest such reserve in Belgium, with waymarked paths and grazing Konik ponies.",
+      "dayStats": "2.5 h water time · SW Force 3–4 · twin-tip board, 9–12 m² kite depending on wind, 3 mm wetsuit.",
+      "sleep": null
+    },
+    {
+      "day": 3,
+      "title": "Land yachting (blokarten)",
+      "morning": "De Panne is the genuine home of Belgian land yachting — the sport was popularised here from the 1890s and the wide, hard, flat low-tide sand remains one of the best surfaces in Europe for it. Book a blokart or traditional three-wheeled yacht with a beach-sports operator; low tide is again the key window, since the yachts need firm, obstacle-free sand.",
+      "afternoon": "A second session or a lesson upgrade to faster three-wheelers for confident beginners. The same south-westerly that powers the kites drives the yachts, and the wide beach gives long, safe run-out lanes.",
+      "evening": "Fish restaurant on the De Panne seafront; the Belgian coast's grey shrimp (grijze garnaal) and North Sea sole are the standing order along this whole stretch.",
+      "dayStats": "2 h land-sailing · SW Force 3–5 · blokart, helmet, gloves.",
+      "sleep": null
+    },
+    {
+      "day": 4,
+      "title": "Koksijde and the wider kite scene",
+      "morning": "Take the Kusttram, the coastal tram that runs the full length of the Belgian coast from De Panne to Knokke, three stops to Koksijde. Koksijde's beach is narrower than De Panne's but has its own established kite zone and a strong windsurf tradition alongside it.",
+      "afternoon": "Kitesurf or windsurf with a Koksijde-based school, working strictly within the posted zone and tide window — Koksijde's rules run on the same seasonal logic as De Panne's but with different exact hours, hence checking locally every day.",
+      "evening": "Tram back to De Panne.",
+      "dayStats": "2 h water time · SW Force 4 · twin-tip board, 3 mm wetsuit.",
+      "sleep": null
+    },
+    {
+      "day": 5,
+      "title": "Rest tide, dune walking and beach fitness",
+      "morning": "A lighter day timed around a poor tide window. Walk the Westhoek's Sahara dune trail, the reserve's tallest and most mobile dune system, with information panels on the marram grass stabilisation work that has shaped this coast since the 1970s.",
+      "afternoon": "Return to the beach for kite-handling drills on land if the tide or wind is wrong, or a second land-yacht session if conditions favour it — yachting is far less tide-sensitive than kiting on the upper flats.",
+      "evening": "De Panne's Sunday market tradition and seafront cafés; an easy evening.",
+      "dayStats": "1 h kite drills or 1.5 h land yacht · variable · trainer kite or blokart.",
+      "sleep": null
+    },
+    {
+      "day": 6,
+      "title": "Full kite day and downwinder",
+      "morning": "With a full tide cycle to work with, ride the morning low water in the De Panne zone, focusing on transitions and light upwind technique on the wide sand.",
+      "afternoon": "A supervised downwind session toward Koksijde, staying inside the connected kite corridor and coordinating with the school's support vehicle, standard practice given the shipping-lane proximity offshore.",
+      "evening": "Farewell dinner in De Panne, overlooking the beach at the incoming tide.",
+      "dayStats": "4 h water time total · SW Force 4–5 · twin-tip, impact vest, 3 mm wetsuit.",
+      "sleep": null
+    },
+    {
+      "day": 7,
+      "title": "Final session and departure",
+      "morning": "A last low-tide session or, if the wind has dropped, a final land-yacht run — De Panne's yachts sail happily in lighter air than a kite needs.",
+      "afternoon": "Return gear, shower, and take the train back via Ostend or Veurne to Brussels.",
+      "evening": "Flight home from Brussels.",
+      "dayStats": "1.5 h water time or land-sailing · variable, whatever the tide and wind allow · own or final rental kit.",
+      "sleep": null
+    }
+  ],
+  "accommodationStrategy": [
+    {
+      "rank": 1,
+      "name": "Seafront apartment or B&B, central De Panne",
+      "style": null,
+      "location": null,
+      "description": "A stay directly on or just behind the Zeedijk promenade, within walking distance of the kite zone and land-yacht beach access — this coast is entirely walkable and removes any need for a car.",
+      "booking": "six to eight weeks ahead for June and September.",
+      "priceNote": "€85–€130 per night"
+    },
+    {
+      "rank": 2,
+      "name": "Hotel near Koksijde's Zeelaan, Koksijde",
+      "style": null,
+      "location": null,
+      "description": "Convenient for the Day 4 session without a return trip on the Kusttram; useful if splitting the week between the two towns.",
+      "booking": "four to six weeks ahead.",
+      "priceNote": "€95–€140 per night"
+    },
+    {
+      "rank": 3,
+      "name": "Guesthouse near the Westhoek reserve edge, De Panne",
+      "style": null,
+      "location": null,
+      "description": "A quieter option set back from the seafront strip, walking distance to both beach and dune trailheads.",
+      "booking": "four weeks ahead.",
+      "priceNote": "€75–€110 per night"
+    }
+  ],
+  "logistics": {
+    "connectivity": null,
+    "emergency": "Emergency number is 112. The Belgian coastguard (Kustwacht/Garde côtière) coordinates maritime incidents; the maritime distress channel is VHF 16, monitored by MRCC Ostend.",
+    "weather": null,
+    "bookingWindows": null,
+    "money": null,
+    "transportRules": null,
+    "permits": null,
+    "health": null,
+    "gettingThere": null,
+    "other": [
+      {
+        "label": null,
+        "text": "Emergency number is 112. The Belgian coastguard (Kustwacht/Garde côtière) coordinates maritime incidents; the maritime distress channel is VHF 16, monitored by MRCC Ostend."
+      },
+      {
+        "label": null,
+        "text": "Belgian kitesurf zones are a legal matter, not a courtesy: each coastal municipality designates specific beach sections and hours for kiting, tighter during the June-to-September bathing season, wider outside it. Riding outside the marked zone or hours is an enforceable offence."
+      },
+      {
+        "label": null,
+        "text": "Lifeguard-supervised bathing season runs broadly mid-June to early September; outside those dates the beach is unsupervised and zone rules relax, but tide and wind risk do not."
+      },
+      {
+        "label": null,
+        "text": "The Kusttram (De Lijn) runs the entire coast from De Panne to Knokke and is the easiest way to move between spots without a car; buy a coastal day pass on arrival."
+      },
+      {
+        "label": null,
+        "text": "Tidal range here is large, typically 4–5 m at springs. Check the tide tables daily — beach width and kite-zone boundaries both change materially between low and high water."
+      },
+      {
+        "label": null,
+        "text": "Weather turns quickly: a clear morning can bring a squally frontal band by afternoon. Check the marine forecast each morning before committing to a full session."
+      },
+      {
+        "label": null,
+        "text": "Cash and card both work at rental counters; some smaller beach kiosks are card-only or cash-only depending on the operator, so carry both."
+      },
+      {
+        "label": null,
+        "text": "Book kite and land-yacht lessons at least a few days ahead in peak wind season — the reliable May–June and September windows fill the better-known schools' calendars fast."
+      }
+    ]
+  },
+  "proTips": [
+    "Time every session around the tide table, not the clock — usable beach width roughly triples between high and low water.",
+    "Ask the school for that week's zone map on arrival; boundaries and hours shift through the bathing season and boards are updated daily.",
+    "Land yacht in mid-morning or early evening when the wind is steady but the beach is least crowded with bathers.",
+    "Ride the Kusttram once purely for orientation — from the window you can see exactly where each town's kite zone sits relative to the swimming beach.",
+    "Walk the Westhoek's Sahara dune on a rest tide; a genuinely unusual landscape, free beyond the walk.",
+    "Choose September over July if flexible — the wind is just as reliable, the water nearly as warm, and zone restrictions looser.",
+    "Carry a whistle or use an impact vest with one built in; downwind sessions run close to the shipping-lane buoyage."
+  ],
+  "typeSpecific": {
+    "raw": {
+      "Total Distance / Terrain": "Approx. 3 km of open low-tide beach at De Panne, widening to over 400 m at spring low water; the Westhoek dune reserve behind it",
+      "Who It Suits": "Kitesurfers and land-sailors who want a wide, flat, wind-reliable beach and are willing to work around Belgium's zoned bathing-season rules"
+    },
+    "surface": "Approx. 3 km of open low-tide beach at De Panne, widening to over 400 m at spring low water; the Westhoek dune reserve behind it",
+    "distanceKm": 3,
+    "elevationM": null,
+    "verticalM": null,
+    "technicalRating": null,
+    "transitPass": null,
+    "hutBooking": null,
+    "liftNetwork": null,
+    "snowReliability": null,
+    "windConditions": null,
+    "gpxReady": null,
+    "bookingTimeline": null,
+    "audience": "Kitesurfers and land-sailors who want a wide, flat, wind-reliable beach and are willing to work around Belgium's zoned bathing-season rules"
+  },
+  "packingNotes": [
+    "A 3 mm wetsuit for June and September; consider a 4/3 mm for cooler early-season mornings.",
+    "Booties for the tidal flats — shells and the odd groyne stone are common on the lower beach.",
+    "An impact vest for kiting; most schools require one for independent sessions.",
+    "A dry bag for phone, ID and the Kusttram day pass.",
+    "Layers for the beach between sessions — the North Sea wind is cool even on a sunny day.",
+    "Comfortable closed shoes for the Westhoek dune trails.",
+    "Sunglasses with a strap and reef-safe sunscreen; the glare off the wet flats is strong.",
+    "Euro cash in small denominations for beach kiosks and tram top-ups."
+  ],
+  "whatCouldGoWrong": [
+    "**Wrong tide for the booked lesson.** Sessions are tide-dependent here; schools reschedule around low water, so keep the week's plan loose rather than fixed to a single hour.",
+    "**Zone or flag restrictions closing the usual launch spot.** A busy bathing-season weekend can shrink the kite zone. Have Koksijde as a fallback via the Kusttram.",
+    "**A dead-calm day.** The south-westerly can drop entirely for a day or two. Fall back to land yachting, which needs less wind than kiting, or a dune-reserve walk.",
+    "**A sudden frontal squall.** Come off the water at the first sign of a fast-moving dark band offshore — conditions can shift from steady Force 4 to gusty Force 7 within the hour.",
+    "**Overcrowded peak-season beach.** July and August bring heavy bather numbers that shrink zones. Shifting to June or September avoids this entirely."
+  ],
+  "sources": {
+    "verified": null,
+    "confidenceNotes": null
+  },
+  "verifyFlags": [],
+  "verifyFlagCount": 0,
+  "volatilePricing": false,
+  "wordCount": 1907,
+  "dataVintage": 2026,
+  "provenance": {
+    "batch": "western-central",
+    "sourceFile": "cartatripsv1/trips/be-water-de-panne-kite-landyacht.md",
+    "sourceFormat": "md+yaml-frontmatter (one file per trip)",
+    "sourceId": "be-water-de-panne-kite-landyacht",
+    "ingestedAt": "2026-09-02",
+    "synthesized": false
+  }
+}

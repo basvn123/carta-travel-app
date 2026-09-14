@@ -9,10 +9,12 @@ import { TripItinerary, TransferModePicker } from './TripItinerary.jsx';
 import { GuidedTripWizard } from './GuidedTripWizard.jsx';
 import { CheapTipsSection } from './CheapTipsSection.jsx';
 import { eur, fmtHours, flightTimes } from '../lib/format.js';
-import { fmtDate } from '../lib/dates.js';
+import { fmtDate, laterISO, useToday } from '../lib/dates.js';
 import { fetchDrivingRoute } from '../lib/routing.js';
 import { useTripPlanner } from '../hooks/useTripPlanner.js';
 import { useCountryInsights } from '../hooks/useCountryInsights.js';
+import { usePaywall } from '../hooks/usePaywall.jsx';
+import { fetchTripPlans } from '../auth/tripPlanStorage.js';
 import { useI18n } from '../i18n/index.jsx';
 import { loadAssignments, TRIP_DRAFT_PLAN_ID } from './dayPlanStore.js';
 import { SparkIcon, TrainIcon, BusIcon, CarIcon, FerryIcon, BulbIcon, InfoIcon, ReceiptIcon, BedIcon } from '../components/Icons.jsx';
@@ -209,12 +211,31 @@ function Suggestions({ suggestions, onPick }) {
   );
 }
 
-export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, openPlanId, onOpenPlanConsumed, origin, onChangeOrigin, onPlanDay, openSharedTrip, onSharedTripConsumed, openWizardSignal }) {
+export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, openPlanId, onOpenPlanConsumed, origin, onChangeOrigin, onPlanDay, openSharedTrip, onSharedTripConsumed, stayTier = 'home', lifestyle = null, onOpenLifestyle = null }) {
   const { t } = useI18n();
+  const paywall = usePaywall();
   const countryInsights = useCountryInsights();
-  const tp = useTripPlanner(data, countryInsights);
+  // `stayTier` is the lifestyle panel's "where you sleep" choice; the planner
+  // prices its stays from the same setting as the map and the receipt.
+  const tp = useTripPlanner(data, countryInsights, stayTier);
+  // A finished itinerary is the one moment the traveller is looking at
+  // something they built and want to keep, which is where an offer belongs.
+  // Fires on the TRANSITION into the planned view and only for a trip that
+  // has never been saved, so reopening an old trip is never interrupted; the
+  // once-a-session and thirty-day rules are the provider's, not ours.
+  const wasPlanned = useRef(false);
+  useEffect(() => {
+    const nowPlanned = !!tp.planned && tp.stopDetails.length > 0;
+    if (nowPlanned && !wasPlanned.current && !tp.planId) {
+      paywall.nudge('celebrate');
+    }
+    wasPlanned.current = nowPlanned;
+  }, [tp.planned, tp.stopDetails.length, tp.planId, paywall]);
   const destinations = data?.destinations || {};
-  const dateMin = data?.meta?.start_date;
+  // Trip dates start today at the earliest, never at the fare window's
+  // harvest date (see useToday).
+  const today = useToday();
+  const dateMin = laterISO(data?.meta?.start_date, today);
   const dateMax = data?.meta?.end_date;
 
   const [pendingCountry, setPendingCountry] = useState('');
@@ -255,16 +276,6 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, open
     mq.addEventListener('change', onChange);
     return () => mq.removeEventListener('change', onChange);
   }, []);
-
-  // The welcome landing's "Plan a full trip" CTA lands here: the App shell
-  // bumps this counter, and the guided wizard opens without the visitor having
-  // to find the launcher card first. 0 = never asked.
-  useEffect(() => {
-    if (openWizardSignal) {
-      setWizardOpen(true);
-      setSheetOpen(true);
-    }
-  }, [openWizardSignal]);
 
   const persistHeight = (h) => {
     try { localStorage.setItem(SHEET_H_KEY, String(Math.round(h))); } catch { /* private mode */ }
@@ -311,6 +322,10 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, open
   // the route on the map. Edit / Replan / Start over stay one tap away.
   const handleWizardComplete = (selection) => {
     tp.loadFromWizard(selection);
+    // The wizard's travel style decides what a bed costs (budget hostels vs
+    // 4-star); the planner's receipt must price the same tier the estimate
+    // promised.
+    if (selection.stayTier) tp.setStayTier(selection.stayTier);
     tp.setPlanned(true);
     setWizardOpen(false);
     setSelectedStop(null);
@@ -469,6 +484,15 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, open
     if (!user) { onRequestAuth && onRequestAuth(); return; }
     const wasUpdate = Boolean(tp.planId);
     const fromEdit = !tp.planned;
+    // A free traveller keeps one trip. The second one is somebody who came
+    // back, which is the person worth asking. Saving over an existing trip is
+    // never gated, and the count is only fetched when it can change the
+    // answer, so a pass holder never pays for the round trip.
+    if (!wasUpdate && !paywall.paid) {
+      let existing = [];
+      try { existing = await fetchTripPlans(user.id); } catch { existing = []; }
+      if (existing.length >= 1 && !paywall.require('save')) return;
+    }
     try {
       await tp.savePlan(user.id);
       setSaveNotice(wasUpdate ? t('trip.updatedNotice') : t('trip.savedNotice'));
@@ -537,6 +561,28 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, open
       </div>
     </>
   );
+
+  // An empty planner has nothing to put on a map: no stops, no route, no
+  // prices. So the tab opens on the question instead of on a locator map of
+  // Europe, and the guide runs as the page itself, under the app header,
+  // rather than as a modal that covers it. The map layout returns the moment
+  // there is a trip to draw.
+  const emptyPlanner = !tp.planned && tp.stopDetails.length === 0;
+  if (emptyPlanner) {
+    return (
+      <div className="trip-planner-screen trip-planner-blank">
+        <GuidedTripWizard
+          inline
+          data={data}
+          stayTier={tp.stayTier}
+          lifestyle={lifestyle}
+          onOpenLifestyle={onOpenLifestyle}
+          onCancel={() => setWizardOpen(false)}
+          onComplete={handleWizardComplete}
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="trip-planner-screen">
@@ -1103,7 +1149,7 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, open
       )}
 
       {wizardOpen && (
-        <GuidedTripWizard data={data} origin={origin} onChangeOrigin={onChangeOrigin} onCancel={() => setWizardOpen(false)} onComplete={handleWizardComplete} />
+        <GuidedTripWizard data={data} stayTier={tp.stayTier} lifestyle={lifestyle} onOpenLifestyle={onOpenLifestyle} onCancel={() => setWizardOpen(false)} onComplete={handleWizardComplete} />
       )}
     </div>
   );

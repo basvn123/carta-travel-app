@@ -1,0 +1,763 @@
+{
+ "generated_at": "2026-09-04T20:17:44+00:00",
+ "input_meta": {
+  "schema_version": 17,
+  "rating_model": "rating_v4",
+  "generated_at": "2026-06-07T13:21:17.357184+00:00",
+  "n_destinations": 3868,
+  "n_rated": 3868
+ },
+ "weights": {
+  "appeal": 0.7,
+  "beauty": 0.13,
+  "acclaim": 0.06,
+  "highlights": 0.11
+ },
+ "components": {
+  "appeal": {
+   "weight": 0.7,
+   "stats": {
+    "n": 1570,
+    "min": 0.25,
+    "p10": 0.6,
+    "median": 0.7,
+    "p90": 0.842,
+    "p95": 0.873,
+    "max": 1.0,
+    "mean": 0.7054,
+    "sd": 0.1072
+   },
+   "modal": {
+    "value": 0.65,
+    "count": 202,
+    "share": 0.1287
+   },
+   "modal_nonzero": {
+    "value": 0.65,
+    "count": 202,
+    "share": 0.1287
+   },
+   "score_sd_contribution": 0.7503
+  },
+  "beauty": {
+   "weight": 0.13,
+   "stats": {
+    "n": 3868,
+    "min": 0.06,
+    "p10": 0.13,
+    "median": 0.34,
+    "p90": 0.55,
+    "p95": 0.62,
+    "max": 0.98,
+    "mean": 0.3419,
+    "sd": 0.1631
+   },
+   "modal": {
+    "value": 0.29,
+    "count": 104,
+    "share": 0.0269
+   },
+   "modal_nonzero": {
+    "value": 0.29,
+    "count": 104,
+    "share": 0.0269
+   },
+   "score_sd_contribution": 0.212
+  },
+  "highlights": {
+   "weight": 0.11,
+   "stats": {
+    "n": 3868,
+    "min": 0.0,
+    "p10": 0.649,
+    "median": 0.887,
+    "p90": 0.984,
+    "p95": 0.993,
+    "max": 1.0,
+    "mean": 0.8297,
+    "sd": 0.2012
+   },
+   "modal": {
+    "value": 0.795,
+    "count": 193,
+    "share": 0.0499
+   },
+   "modal_nonzero": {
+    "value": 0.795,
+    "count": 193,
+    "share": 0.0515
+   },
+   "score_sd_contribution": 0.2213
+  },
+  "acclaim": {
+   "weight": 0.06,
+   "stats": {
+    "n": 3868,
+    "min": 0.0,
+    "p10": 0.0,
+    "median": 0.0,
+    "p90": 1.0,
+    "p95": 1.0,
+    "max": 1.0,
+    "mean": 0.3515,
+    "sd": 0.4122
+   },
+   "modal": {
+    "value": 0.0,
+    "count": 2016,
+    "share": 0.5212
+   },
+   "modal_nonzero": {
+    "value": 0.95,
+    "count": 461,
+    "share": 0.2489
+   },
+   "score_sd_contribution": 0.2473
+  }
+ },
+ "split": {
+  "all": {
+   "scores": {
+    "n": 3868,
+    "min": 2.9,
+    "p10": 5.6,
+    "median": 6.6,
+    "p90": 7.8,
+    "p95": 7.9,
+    "max": 9.8,
+    "mean": 6.6131,
+    "sd": 0.8699
+   },
+   "tiers": {
+    "3": 51,
+    "2": 355,
+    "1": 1030,
+    "0": 2432
+   },
+   "hidden_gems": 338
+  },
+  "curated": {
+   "scores": {
+    "n": 1570,
+    "min": 2.9,
+    "p10": 5.6,
+    "median": 6.6,
+    "p90": 7.9,
+    "p95": 8.3,
+    "max": 9.8,
+    "mean": 6.6549,
+    "sd": 0.9907
+   },
+   "tiers": {
+    "3": 48,
+    "2": 171,
+    "1": 394,
+    "0": 957
+   },
+   "tier2_plus_rate": 0.1395,
+   "labelled_rate": 0.3904
+  },
+  "fitted": {
+   "scores": {
+    "n": 2298,
+    "min": 3.5,
+    "p10": 5.7,
+    "median": 6.6,
+    "p90": 7.6,
+    "p95": 7.8,
+    "max": 9.0,
+    "mean": 6.5846,
+    "sd": 0.7756
+   },
+   "tiers": {
+    "3": 3,
+    "2": 184,
+    "1": 636,
+    "0": 1475
+   },
+   "tier2_plus_rate": 0.0814,
+   "labelled_rate": 0.3581
+  },
+  "by_confidence": {
+   "curated": {
+    "n": 1570,
+    "tiers": {
+     "3": 48,
+     "2": 171,
+     "1": 394,
+     "0": 957
+    },
+    "scores": {
+     "n": 1570,
+     "min": 2.9,
+     "p10": 5.6,
+     "median": 6.6,
+     "p90": 7.9,
+     "p95": 8.3,
+     "max": 9.8,
+     "mean": 6.6549,
+     "sd": 0.9907
+    }
+   },
+   "modelled": {
+    "n": 2185,
+    "tiers": {
+     "3": 3,
+     "2": 184,
+     "1": 636,
+     "0": 1362
+    },
+    "scores": {
+     "n": 2185,
+     "min": 4.3,
+     "p10": 5.8,
+     "median": 6.6,
+     "p90": 7.7,
+     "p95": 7.9,
+     "max": 9.0,
+     "mean": 6.6556,
+     "sd": 0.7101
+    }
+   },
+   "provisional": {
+    "n": 113,
+    "tiers": {
+     "3": 0,
+     "2": 0,
+     "1": 0,
+     "0": 113
+    },
+    "scores": {
+     "n": 113,
+     "min": 3.5,
+     "p10": 4.4,
+     "median": 5.3,
+     "p90": 6.0,
+     "p95": 6.2,
+     "max": 6.8,
+     "mean": 5.2115,
+     "sd": 0.7097
+    }
+   }
+  }
+ },
+ "countries": {
+  "Italy": {
+   "n": 651,
+   "curated": 161,
+   "appeal_coverage": 0.2473,
+   "tiers": {
+    "3": 19,
+    "2": 85,
+    "1": 193,
+    "0": 354
+   },
+   "any_label": 297
+  },
+  "France": {
+   "n": 591,
+   "curated": 144,
+   "appeal_coverage": 0.2437,
+   "tiers": {
+    "3": 3,
+    "2": 49,
+    "1": 167,
+    "0": 372
+   },
+   "any_label": 219
+  },
+  "United Kingdom": {
+   "n": 526,
+   "curated": 129,
+   "appeal_coverage": 0.2452,
+   "tiers": {
+    "3": 6,
+    "2": 19,
+    "1": 108,
+    "0": 393
+   },
+   "any_label": 133
+  },
+  "Spain": {
+   "n": 300,
+   "curated": 129,
+   "appeal_coverage": 0.43,
+   "tiers": {
+    "3": 3,
+    "2": 55,
+    "1": 128,
+    "0": 114
+   },
+   "any_label": 186
+  },
+  "Germany": {
+   "n": 248,
+   "curated": 75,
+   "appeal_coverage": 0.3024,
+   "tiers": {
+    "3": 3,
+    "2": 37,
+    "1": 68,
+    "0": 140
+   },
+   "any_label": 108
+  },
+  "Greece": {
+   "n": 155,
+   "curated": 104,
+   "appeal_coverage": 0.671,
+   "tiers": {
+    "3": 3,
+    "2": 14,
+    "1": 38,
+    "0": 100
+   },
+   "any_label": 55
+  },
+  "Netherlands": {
+   "n": 144,
+   "curated": 37,
+   "appeal_coverage": 0.2569,
+   "tiers": {
+    "3": 1,
+    "2": 7,
+    "1": 54,
+    "0": 82
+   },
+   "any_label": 62
+  },
+  "Portugal": {
+   "n": 122,
+   "curated": 94,
+   "appeal_coverage": 0.7705,
+   "tiers": {
+    "3": 2,
+    "2": 9,
+    "1": 39,
+    "0": 72
+   },
+   "any_label": 50
+  },
+  "Sweden": {
+   "n": 90,
+   "curated": 27,
+   "appeal_coverage": 0.3,
+   "tiers": {
+    "3": 0,
+    "2": 6,
+    "1": 15,
+    "0": 69
+   },
+   "any_label": 21
+  },
+  "Poland": {
+   "n": 82,
+   "curated": 44,
+   "appeal_coverage": 0.5366,
+   "tiers": {
+    "3": 1,
+    "2": 7,
+    "1": 13,
+    "0": 61
+   },
+   "any_label": 21
+  },
+  "Czechia": {
+   "n": 80,
+   "curated": 31,
+   "appeal_coverage": 0.3875,
+   "tiers": {
+    "3": 1,
+    "2": 8,
+    "1": 28,
+    "0": 43
+   },
+   "any_label": 37
+  },
+  "Denmark": {
+   "n": 66,
+   "curated": 33,
+   "appeal_coverage": 0.5,
+   "tiers": {
+    "3": 0,
+    "2": 5,
+    "1": 18,
+    "0": 43
+   },
+   "any_label": 23
+  },
+  "Romania": {
+   "n": 61,
+   "curated": 43,
+   "appeal_coverage": 0.7049,
+   "tiers": {
+    "3": 0,
+    "2": 0,
+    "1": 15,
+    "0": 46
+   },
+   "any_label": 15
+  },
+  "Croatia": {
+   "n": 59,
+   "curated": 45,
+   "appeal_coverage": 0.7627,
+   "tiers": {
+    "3": 2,
+    "2": 4,
+    "1": 13,
+    "0": 40
+   },
+   "any_label": 19
+  },
+  "Bulgaria": {
+   "n": 56,
+   "curated": 33,
+   "appeal_coverage": 0.5893,
+   "tiers": {
+    "3": 0,
+    "2": 3,
+    "1": 6,
+    "0": 47
+   },
+   "any_label": 9
+  },
+  "Norway": {
+   "n": 55,
+   "curated": 35,
+   "appeal_coverage": 0.6364,
+   "tiers": {
+    "3": 1,
+    "2": 5,
+    "1": 17,
+    "0": 32
+   },
+   "any_label": 23
+  },
+  "Hungary": {
+   "n": 53,
+   "curated": 25,
+   "appeal_coverage": 0.4717,
+   "tiers": {
+    "3": 0,
+    "2": 1,
+    "1": 6,
+    "0": 46
+   },
+   "any_label": 7
+  },
+  "Austria": {
+   "n": 53,
+   "curated": 33,
+   "appeal_coverage": 0.6226,
+   "tiers": {
+    "3": 3,
+    "2": 7,
+    "1": 10,
+    "0": 33
+   },
+   "any_label": 20
+  },
+  "Switzerland": {
+   "n": 53,
+   "curated": 36,
+   "appeal_coverage": 0.6792,
+   "tiers": {
+    "3": 1,
+    "2": 7,
+    "1": 13,
+    "0": 32
+   },
+   "any_label": 21
+  },
+  "Belgium": {
+   "n": 48,
+   "curated": 26,
+   "appeal_coverage": 0.5417,
+   "tiers": {
+    "3": 1,
+    "2": 3,
+    "1": 19,
+    "0": 25
+   },
+   "any_label": 23
+  },
+  "Ireland": {
+   "n": 42,
+   "curated": 37,
+   "appeal_coverage": 0.881,
+   "tiers": {
+    "3": 0,
+    "2": 3,
+    "1": 6,
+    "0": 33
+   },
+   "any_label": 9
+  },
+  "Slovenia": {
+   "n": 30,
+   "curated": 20,
+   "appeal_coverage": 0.6667,
+   "tiers": {
+    "3": 0,
+    "2": 5,
+    "1": 6,
+    "0": 19
+   },
+   "any_label": 11
+  },
+  "Slovakia": {
+   "n": 28,
+   "curated": 20,
+   "appeal_coverage": 0.7143,
+   "tiers": {
+    "3": 0,
+    "2": 1,
+    "1": 8,
+    "0": 19
+   },
+   "any_label": 9
+  },
+  "Finland": {
+   "n": 28,
+   "curated": 17,
+   "appeal_coverage": 0.6071,
+   "tiers": {
+    "3": 0,
+    "2": 0,
+    "1": 2,
+    "0": 26
+   },
+   "any_label": 2
+  },
+  "Serbia": {
+   "n": 28,
+   "curated": 14,
+   "appeal_coverage": 0.5,
+   "tiers": {
+    "3": 0,
+    "2": 0,
+    "1": 3,
+    "0": 25
+   },
+   "any_label": 3
+  },
+  "Iceland": {
+   "n": 23,
+   "curated": 20,
+   "appeal_coverage": 0.8696,
+   "tiers": {
+    "3": 0,
+    "2": 2,
+    "1": 11,
+    "0": 10
+   },
+   "any_label": 13
+  },
+  "Latvia": {
+   "n": 23,
+   "curated": 12,
+   "appeal_coverage": 0.5217,
+   "tiers": {
+    "3": 0,
+    "2": 1,
+    "1": 1,
+    "0": 21
+   },
+   "any_label": 2
+  },
+  "Montenegro": {
+   "n": 21,
+   "curated": 18,
+   "appeal_coverage": 0.8571,
+   "tiers": {
+    "3": 1,
+    "2": 1,
+    "1": 3,
+    "0": 16
+   },
+   "any_label": 5
+  },
+  "Albania": {
+   "n": 21,
+   "curated": 19,
+   "appeal_coverage": 0.9048,
+   "tiers": {
+    "3": 0,
+    "2": 2,
+    "1": 4,
+    "0": 15
+   },
+   "any_label": 6
+  },
+  "Cyprus": {
+   "n": 20,
+   "curated": 13,
+   "appeal_coverage": 0.65,
+   "tiers": {
+    "3": 0,
+    "2": 0,
+    "1": 1,
+    "0": 19
+   },
+   "any_label": 1
+  },
+  "Estonia": {
+   "n": 17,
+   "curated": 14,
+   "appeal_coverage": 0.8235,
+   "tiers": {
+    "3": 0,
+    "2": 1,
+    "1": 0,
+    "0": 16
+   },
+   "any_label": 1
+  },
+  "Bosnia and Herzegovina": {
+   "n": 17,
+   "curated": 17,
+   "appeal_coverage": 1.0,
+   "tiers": {
+    "3": 0,
+    "2": 0,
+    "1": 4,
+    "0": 13
+   },
+   "any_label": 4
+  },
+  "North Macedonia": {
+   "n": 15,
+   "curated": 9,
+   "appeal_coverage": 0.6,
+   "tiers": {
+    "3": 0,
+    "2": 2,
+    "1": 0,
+    "0": 13
+   },
+   "any_label": 2
+  },
+  "Lithuania": {
+   "n": 14,
+   "curated": 13,
+   "appeal_coverage": 0.9286,
+   "tiers": {
+    "3": 0,
+    "2": 2,
+    "1": 0,
+    "0": 12
+   },
+   "any_label": 2
+  },
+  "Faroe Islands": {
+   "n": 9,
+   "curated": 9,
+   "appeal_coverage": 1.0,
+   "tiers": {
+    "3": 0,
+    "2": 1,
+    "1": 4,
+    "0": 4
+   },
+   "any_label": 5
+  },
+  "Malta": {
+   "n": 8,
+   "curated": 5,
+   "appeal_coverage": 0.625,
+   "tiers": {
+    "3": 0,
+    "2": 3,
+    "1": 3,
+    "0": 2
+   },
+   "any_label": 6
+  },
+  "Kosovo": {
+   "n": 8,
+   "curated": 8,
+   "appeal_coverage": 1.0,
+   "tiers": {
+    "3": 0,
+    "2": 0,
+    "1": 2,
+    "0": 6
+   },
+   "any_label": 2
+  },
+  "Moldova": {
+   "n": 8,
+   "curated": 8,
+   "appeal_coverage": 1.0,
+   "tiers": {
+    "3": 0,
+    "2": 0,
+    "1": 0,
+    "0": 8
+   },
+   "any_label": 0
+  },
+  "Luxembourg": {
+   "n": 7,
+   "curated": 7,
+   "appeal_coverage": 1.0,
+   "tiers": {
+    "3": 0,
+    "2": 0,
+    "1": 1,
+    "0": 6
+   },
+   "any_label": 1
+  },
+  "Andorra": {
+   "n": 5,
+   "curated": 3,
+   "appeal_coverage": 0.6,
+   "tiers": {
+    "3": 0,
+    "2": 0,
+    "1": 3,
+    "0": 2
+   },
+   "any_label": 3
+  },
+  "Liechtenstein": {
+   "n": 1,
+   "curated": 1,
+   "appeal_coverage": 1.0,
+   "tiers": {
+    "3": 0,
+    "2": 0,
+    "1": 0,
+    "0": 1
+   },
+   "any_label": 0
+  },
+  "San Marino": {
+   "n": 1,
+   "curated": 1,
+   "appeal_coverage": 1.0,
+   "tiers": {
+    "3": 0,
+    "2": 0,
+    "1": 0,
+    "0": 1
+   },
+   "any_label": 0
+  },
+  "Monaco": {
+   "n": 1,
+   "curated": 1,
+   "appeal_coverage": 1.0,
+   "tiers": {
+    "3": 0,
+    "2": 0,
+    "1": 0,
+    "0": 1
+   },
+   "any_label": 0
+  }
+ },
+ "input_path": "C:\\Users\\Gebruiker\\Documents\\Portfolio\\Travel App\\app_data\\app_data.json"
+}

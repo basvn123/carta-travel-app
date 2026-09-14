@@ -1,0 +1,16 @@
+rank,curation_rank,title,ref,network,distance_km,popularity,pageviews_day,sitelinks,anchors,quality_score,portal_agreement,status,family_members,trip_id,osm_relation
+1,73.4,Camino Dubrovnik,,iwn,57.3,0.527,0,0,"Dubrovnik (1106/day, 182 m); Copacabana (1094/day, 1989 m); Big Onofrio Fountain (1094/day, 290 m)",83.8,,needs_review,1,64045,18103779
+2,71.31,E12,E12,iwn,56.3,0.477,0,0,"Grožnjan (40/day, 532 m)",82.5,,needs_review,1,66084,19702153
+3,68.69,Planinarska staza Medvednica 12,12,lwn,12.1,0.812,0,0,"Zagreb (1210/day, 590 m); Archaeological Museum of Zagreb (1206/day, 913 m); Zagreb Central Railway Station (200/day, 1620 m)",95,,needs_review,52,66442,1540353
+4,62.77,Via Dinarica Green Trail,,iwn,122.0,0.411,0,0,"Galovački buk (186/day, 1066 m); Big Waterfall (186/day, 45 m); Plitvice (69/day, 147 m)",57.5,,draft,1,63989,8817040
+5,62.05,Premužićeva staza,,rwn,44.1,0.444,15,4,"Northern Velebit (55/day, 277 m)",95,,needs_review,2,66503,3059569
+6,61.68,ST322 Bačka Palanka - Neštin,ST322,iwn,10.7,0.076,14,0,,100,,needs_review,1,67446,19862052
+7,61.68,ST355 Vukovar - Ilok,ST355,iwn,48.5,0.076,14,0,,100,,needs_review,1,67452,20108379
+8,61.68,ST351 Mohács-Osijek,ST351,iwn,65.8,0.076,14,0,"Muzej Slavonije Osijek 1877 (268/day, 22 m); Osijek (268/day, 472 m)",100,,needs_review,1,67450,20078870
+9,61.68,ST353 Osijek - Vukovar,ST353,iwn,46.9,0.076,14,0,"Muzej Slavonije Osijek 1877 (268/day, 34 m); Osijek (268/day, 394 m); Battle of Mursa Major (57/day, 1892 m)",100,,needs_review,1,67451,20081782
+10,61.51,Camino Zadar,,rwn,151.8,0.486,0,0,"Forum (587/day, 88 m); Defensive System of Zadar (587/day, 133 m); Kopnena Vrata/Porta terraferma (587/day, 0 m)",87,,needs_review,1,67455,20174450
+11,61.06,Kanal SV. Ante,09,rwn,6.0,0.409,0,0,"Bishop's Palace (179/day, 1111 m); Šibenik (179/day, 1304 m); Banj (179/day, 1572 m)",96,,needs_review,1,67431,19436296
+12,60.22,Marijin put M02/40 (Donji Miholjac-Bokšić Lug),M02/40,iwn,24.4,0.071,0,0,,95,,needs_review,1,66577,4795526
+13,60.22,Marijin put M02/41 (Bokšić Lug-Našice),M02/41,iwn,20.5,0.071,0,0,,95,,needs_review,1,66578,4795527
+14,60.22,Marijin put M02/42 (Našice-Čaglin),M02/42,iwn,21.9,0.071,0,0,,95,,needs_review,1,66579,4795577
+15,60.22,Crnopac,HR-W-18,iwn,21.4,0.071,0,0,,95,,needs_review,1,66948,7388367

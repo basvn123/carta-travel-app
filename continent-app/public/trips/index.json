@@ -1,0 +1,1315 @@
+{
+ "generated_at": "2026-08-26T15:58:04Z",
+ "model": "trips_v1",
+ "n_trips": 3984,
+ "n_dropped": 19,
+ "shapes": {
+  "base": 1778,
+  "chain": 1676,
+  "loop": 530
+ },
+ "days": [
+  2,
+  3,
+  4,
+  5,
+  6,
+  7,
+  8,
+  10,
+  12,
+  14
+ ],
+ "countries": [
+  {
+   "cc": "AD",
+   "n": 64,
+   "best": 9.0,
+   "cover": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/Girona_des_de_l_aire_edited.jpg/960px-Girona_des_de_l_aire_edited.jpg",
+    "credit": "Girona",
+    "page": "https://en.wikipedia.org/wiki/Girona",
+    "city": "Girona",
+    "band": "stop"
+   },
+   "days": [
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    10,
+    12,
+    14
+   ],
+   "shapes": {
+    "loop": 13,
+    "chain": 28,
+    "base": 23
+   },
+   "dropped": 1
+  },
+  {
+   "cc": "AL",
+   "n": 125,
+   "best": 8.5,
+   "cover": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f1/Berat_57.jpg/960px-Berat_57.jpg",
+    "credit": "Berat",
+    "page": "https://en.wikipedia.org/wiki/Berat",
+    "city": "Berat",
+    "band": "stop"
+   },
+   "days": [
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    10,
+    12,
+    14
+   ],
+   "shapes": {
+    "loop": 31,
+    "chain": 63,
+    "base": 31
+   },
+   "dropped": 0
+  },
+  {
+   "cc": "AT",
+   "n": 277,
+   "best": 9.9,
+   "cover": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Salzburg_%2848489551981%29.jpg/960px-Salzburg_%2848489551981%29.jpg",
+    "credit": "Salzburg",
+    "page": "https://en.wikipedia.org/wiki/Salzburg",
+    "city": "Salzburg",
+    "band": "stop"
+   },
+   "days": [
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    10,
+    12,
+    14
+   ],
+   "shapes": {
+    "chain": 178,
+    "base": 66,
+    "loop": 33
+   },
+   "dropped": 1
+  },
+  {
+   "cc": "BA",
+   "n": 124,
+   "best": 9.2,
+   "cover": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/Stari_Most_viewed_from_North.jpg/960px-Stari_Most_viewed_from_North.jpg",
+    "credit": "Mostar",
+    "page": "https://en.wikipedia.org/wiki/Mostar",
+    "city": "Mostar",
+    "band": "stop"
+   },
+   "days": [
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    10,
+    12,
+    14
+   ],
+   "shapes": {
+    "chain": 56,
+    "loop": 42,
+    "base": 26
+   },
+   "dropped": 1
+  },
+  {
+   "cc": "BE",
+   "n": 232,
+   "best": 9.5,
+   "cover": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9a/Br%C3%BCgge_Blick_vom_Belfried_4.jpg/960px-Br%C3%BCgge_Blick_vom_Belfried_4.jpg",
+    "credit": "Bruges",
+    "page": "https://en.wikipedia.org/wiki/Bruges",
+    "city": "Bruges",
+    "band": "stop"
+   },
+   "days": [
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    10,
+    12,
+    14
+   ],
+   "shapes": {
+    "chain": 131,
+    "base": 72,
+    "loop": 29
+   },
+   "dropped": 0
+  },
+  {
+   "cc": "BG",
+   "n": 94,
+   "best": 7.8,
+   "cover": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4a/20140620_Veliko_Tarnovo_245.jpg/960px-20140620_Veliko_Tarnovo_245.jpg",
+    "credit": "20140620 Veliko Tarnovo 245",
+    "page": "https://commons.wikimedia.org/wiki/File:20140620_Veliko_Tarnovo_245.jpg",
+    "city": "Veliko Tarnovo",
+    "band": "stop"
+   },
+   "days": [
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    10,
+    12,
+    14
+   ],
+   "shapes": {
+    "chain": 38,
+    "base": 51,
+    "loop": 5
+   },
+   "dropped": 0
+  },
+  {
+   "cc": "CH",
+   "n": 213,
+   "best": 9.5,
+   "cover": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/06/Exterior_Winter_2016_17_Fotograf_Romano_Salis_%2821%29.jpg/960px-Exterior_Winter_2016_17_Fotograf_Romano_Salis_%2821%29.jpg",
+    "credit": "St. Moritz",
+    "page": "https://en.wikipedia.org/wiki/St._Moritz",
+    "city": "St. Moritz",
+    "band": "stop"
+   },
+   "days": [
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    10,
+    12,
+    14
+   ],
+   "shapes": {
+    "chain": 96,
+    "loop": 54,
+    "base": 63
+   },
+   "dropped": 3
+  },
+  {
+   "cc": "CY",
+   "n": 21,
+   "best": 6.0,
+   "cover": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a3/Nicosia%27s_skyline_2024.jpg/960px-Nicosia%27s_skyline_2024.jpg",
+    "credit": "Nicosia",
+    "page": "https://en.wikipedia.org/wiki/Nicosia",
+    "city": "Nicosia",
+    "band": "stop"
+   },
+   "days": [
+    2,
+    3,
+    4,
+    5,
+    6
+   ],
+   "shapes": {
+    "base": 21
+   },
+   "dropped": 0
+  },
+  {
+   "cc": "CZ",
+   "n": 253,
+   "best": 9.4,
+   "cover": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/Prague_%286365119737%29.jpg/960px-Prague_%286365119737%29.jpg",
+    "credit": "Prague",
+    "page": "https://en.wikipedia.org/wiki/Prague",
+    "city": "Prague",
+    "band": "stop"
+   },
+   "days": [
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    10,
+    12,
+    14
+   ],
+   "shapes": {
+    "chain": 148,
+    "base": 68,
+    "loop": 37
+   },
+   "dropped": 1
+  },
+  {
+   "cc": "DE",
+   "n": 239,
+   "best": 9.2,
+   "cover": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/51/Tramonto_a_Verona.jpg/960px-Tramonto_a_Verona.jpg",
+    "credit": "Verona",
+    "page": "https://en.wikipedia.org/wiki/Verona",
+    "city": "Verona",
+    "band": "stop"
+   },
+   "days": [
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    10,
+    12,
+    14
+   ],
+   "shapes": {
+    "chain": 127,
+    "loop": 41,
+    "base": 71
+   },
+   "dropped": 1
+  },
+  {
+   "cc": "DK",
+   "n": 225,
+   "best": 8.8,
+   "cover": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/2018_-_Christiansborg_from_the_Marble_Bridge.jpg/960px-2018_-_Christiansborg_from_the_Marble_Bridge.jpg",
+    "credit": "Copenhagen",
+    "page": "https://en.wikipedia.org/wiki/Copenhagen",
+    "city": "Copenhagen",
+    "band": "stop"
+   },
+   "days": [
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    10,
+    12,
+    14
+   ],
+   "shapes": {
+    "chain": 114,
+    "loop": 39,
+    "base": 72
+   },
+   "dropped": 0
+  },
+  {
+   "cc": "EE",
+   "n": 74,
+   "best": 8.2,
+   "cover": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/70/Raekoja_plats_at_night.jpg/960px-Raekoja_plats_at_night.jpg",
+    "credit": "Tallinn",
+    "page": "https://en.wikipedia.org/wiki/Tallinn",
+    "city": "Tallinn",
+    "band": "stop"
+   },
+   "days": [
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    10,
+    12,
+    14
+   ],
+   "shapes": {
+    "base": 29,
+    "chain": 32,
+    "loop": 13
+   },
+   "dropped": 0
+  },
+  {
+   "cc": "ES",
+   "n": 204,
+   "best": 9.5,
+   "cover": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/56/Granada_%2825987961022%29.jpg/960px-Granada_%2825987961022%29.jpg",
+    "credit": "Granada",
+    "page": "https://en.wikipedia.org/wiki/Granada",
+    "city": "Granada",
+    "band": "stop"
+   },
+   "days": [
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    10,
+    12,
+    14
+   ],
+   "shapes": {
+    "chain": 100,
+    "base": 72,
+    "loop": 32
+   },
+   "dropped": 0
+  },
+  {
+   "cc": "FI",
+   "n": 70,
+   "best": 8.0,
+   "cover": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/Suomenlinna_%28cropped%29.jpg/960px-Suomenlinna_%28cropped%29.jpg",
+    "credit": "Helsinki",
+    "page": "https://en.wikipedia.org/wiki/Helsinki",
+    "city": "Helsinki",
+    "band": "stop"
+   },
+   "days": [
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    10,
+    12,
+    14
+   ],
+   "shapes": {
+    "chain": 43,
+    "base": 15,
+    "loop": 12
+   },
+   "dropped": 0
+  },
+  {
+   "cc": "FO",
+   "n": 13,
+   "best": 8.5,
+   "cover": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/S%C3%B8rv%C3%A1gsvatn_4.jpg/960px-S%C3%B8rv%C3%A1gsvatn_4.jpg",
+    "credit": "Sørvágsvatn 4",
+    "page": "https://commons.wikimedia.org/wiki/File:S%C3%B8rv%C3%A1gsvatn_4.jpg",
+    "city": "Vágar",
+    "band": "stop"
+   },
+   "days": [
+    2,
+    3,
+    4,
+    5
+   ],
+   "shapes": {
+    "base": 13
+   },
+   "dropped": 0
+  },
+  {
+   "cc": "FR",
+   "n": 265,
+   "best": 9.5,
+   "cover": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/La_Tour_Eiffel_vue_de_la_Tour_Saint-Jacques%2C_Paris_ao%C3%BBt_2014_%282%29.jpg/960px-La_Tour_Eiffel_vue_de_la_Tour_Saint-Jacques%2C_Paris_ao%C3%BBt_2014_%282%29.jpg",
+    "credit": "Paris",
+    "page": "https://en.wikipedia.org/wiki/Paris",
+    "city": "Paris",
+    "band": "stop"
+   },
+   "days": [
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    10,
+    12,
+    14
+   ],
+   "shapes": {
+    "base": 72,
+    "chain": 144,
+    "loop": 49
+   },
+   "dropped": 0
+  },
+  {
+   "cc": "GB",
+   "n": 161,
+   "best": 9.1,
+   "cover": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/67/London_Skyline_%28125508655%29.jpeg/960px-London_Skyline_%28125508655%29.jpeg",
+    "credit": "London",
+    "page": "https://en.wikipedia.org/wiki/London",
+    "city": "London",
+    "band": "stop"
+   },
+   "days": [
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    10,
+    12,
+    14
+   ],
+   "shapes": {
+    "chain": 66,
+    "base": 72,
+    "loop": 23
+   },
+   "dropped": 0
+  },
+  {
+   "cc": "GR",
+   "n": 145,
+   "best": 8.8,
+   "cover": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/Pontikonisi.jpg/960px-Pontikonisi.jpg",
+    "credit": "Corfu",
+    "page": "https://en.wikipedia.org/wiki/Corfu",
+    "city": "Corfu",
+    "band": "stop"
+   },
+   "days": [
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    10,
+    12,
+    14
+   ],
+   "shapes": {
+    "base": 49,
+    "chain": 64,
+    "loop": 32
+   },
+   "dropped": 1
+  },
+  {
+   "cc": "HR",
+   "n": 200,
+   "best": 9.7,
+   "cover": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/67/The_walls_of_the_fortress_and_View_of_the_old_city._panorama.jpg/960px-The_walls_of_the_fortress_and_View_of_the_old_city._panorama.jpg",
+    "credit": "Dubrovnik",
+    "page": "https://en.wikipedia.org/wiki/Dubrovnik",
+    "city": "Dubrovnik",
+    "band": "stop"
+   },
+   "days": [
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    10,
+    12,
+    14
+   ],
+   "shapes": {
+    "chain": 114,
+    "base": 35,
+    "loop": 51
+   },
+   "dropped": 1
+  },
+  {
+   "cc": "HU",
+   "n": 90,
+   "best": 9.0,
+   "cover": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a3/Krakow_Rynek_Glowny_panorama_2.jpg/960px-Krakow_Rynek_Glowny_panorama_2.jpg",
+    "credit": "Kraków",
+    "page": "https://en.wikipedia.org/wiki/Krak%C3%B3w",
+    "city": "Krakow",
+    "band": "stop"
+   },
+   "days": [
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    10,
+    12,
+    14
+   ],
+   "shapes": {
+    "chain": 39,
+    "loop": 20,
+    "base": 31
+   },
+   "dropped": 0
+  },
+  {
+   "cc": "IE",
+   "n": 121,
+   "best": 8.2,
+   "cover": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0f/Irelands_history.jpg/960px-Irelands_history.jpg",
+    "credit": "Newgrange",
+    "page": "https://en.wikipedia.org/wiki/Newgrange",
+    "city": "Newgrange",
+    "band": "stop"
+   },
+   "days": [
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    10,
+    12,
+    14
+   ],
+   "shapes": {
+    "chain": 49,
+    "base": 50,
+    "loop": 22
+   },
+   "dropped": 0
+  },
+  {
+   "cc": "IS",
+   "n": 31,
+   "best": 8.4,
+   "cover": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/Reykjav%C3%ADk%2C_view_from_Hallgr%C3%ADmskirkja_%282%29.jpg/960px-Reykjav%C3%ADk%2C_view_from_Hallgr%C3%ADmskirkja_%282%29.jpg",
+    "credit": "Reykjavík",
+    "page": "https://en.wikipedia.org/wiki/Reykjav%C3%ADk",
+    "city": "Reykjavik",
+    "band": "stop"
+   },
+   "days": [
+    2,
+    3,
+    4,
+    5,
+    6
+   ],
+   "shapes": {
+    "base": 28,
+    "chain": 3
+   },
+   "dropped": 0
+  },
+  {
+   "cc": "IT",
+   "n": 341,
+   "best": 9.9,
+   "cover": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/88/Napoli_-_Maschio_Angioino_-_202209302342_3.jpg/960px-Napoli_-_Maschio_Angioino_-_202209302342_3.jpg",
+    "credit": "Naples",
+    "page": "https://en.wikipedia.org/wiki/Naples",
+    "city": "Naples",
+    "band": "stop"
+   },
+   "days": [
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    10,
+    12,
+    14
+   ],
+   "shapes": {
+    "chain": 206,
+    "base": 72,
+    "loop": 63
+   },
+   "dropped": 0
+  },
+  {
+   "cc": "LI",
+   "n": 22,
+   "best": 9.0,
+   "cover": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/View_of_Vaduz.jpg/960px-View_of_Vaduz.jpg",
+    "credit": "Vaduz",
+    "page": "https://en.wikipedia.org/wiki/Vaduz",
+    "city": "Vaduz",
+    "band": "stop"
+   },
+   "days": [
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    10,
+    12,
+    14
+   ],
+   "shapes": {
+    "chain": 9,
+    "loop": 7,
+    "base": 6
+   },
+   "dropped": 1
+  },
+  {
+   "cc": "LT",
+   "n": 107,
+   "best": 8.5,
+   "cover": {
+    "url": "https://upload.wikimedia.org/wikipedia/en/thumb/8/84/The_White_Bridge_and_%C5%A0nipi%C5%A1k%C4%97s_district_in_Vilnius_in_2023_by_Augustas_Did%C5%BEgalvis.jpg/960px-The_White_Bridge_and_%C5%A0nipi%C5%A1k%C4%97s_district_in_Vilnius_in_2023_by_Augustas_Did%C5%BEgalvis.jpg",
+    "credit": "Vilnius",
+    "page": "https://en.wikipedia.org/wiki/Vilnius",
+    "city": "Vilnius",
+    "band": "stop"
+   },
+   "days": [
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    10,
+    12,
+    14
+   ],
+   "shapes": {
+    "chain": 63,
+    "base": 35,
+    "loop": 9
+   },
+   "dropped": 0
+  },
+  {
+   "cc": "LU",
+   "n": 70,
+   "best": 9.0,
+   "cover": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/86/Ville-Haute_vue_du_Fort_Verlorenkost_%28cropped%29.jpg/960px-Ville-Haute_vue_du_Fort_Verlorenkost_%28cropped%29.jpg",
+    "credit": "Luxembourg City",
+    "page": "https://en.wikipedia.org/wiki/Luxembourg_City",
+    "city": "Luxembourg",
+    "band": "stop"
+   },
+   "days": [
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    10,
+    12,
+    14
+   ],
+   "shapes": {
+    "chain": 29,
+    "loop": 13,
+    "base": 28
+   },
+   "dropped": 0
+  },
+  {
+   "cc": "LV",
+   "n": 93,
+   "best": 8.5,
+   "cover": {
+    "url": "https://upload.wikimedia.org/wikipedia/en/thumb/8/84/The_White_Bridge_and_%C5%A0nipi%C5%A1k%C4%97s_district_in_Vilnius_in_2023_by_Augustas_Did%C5%BEgalvis.jpg/960px-The_White_Bridge_and_%C5%A0nipi%C5%A1k%C4%97s_district_in_Vilnius_in_2023_by_Augustas_Did%C5%BEgalvis.jpg",
+    "credit": "Vilnius",
+    "page": "https://en.wikipedia.org/wiki/Vilnius",
+    "city": "Vilnius",
+    "band": "stop"
+   },
+   "days": [
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    10,
+    12,
+    14
+   ],
+   "shapes": {
+    "chain": 54,
+    "base": 29,
+    "loop": 10
+   },
+   "dropped": 0
+  },
+  {
+   "cc": "MC",
+   "n": 23,
+   "best": 8.3,
+   "cover": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/da/Panorama_von_Monaco-La_Turbie.jpg/960px-Panorama_von_Monaco-La_Turbie.jpg",
+    "credit": "Monte Carlo",
+    "page": "https://en.wikipedia.org/wiki/Monte_Carlo",
+    "city": "Monaco",
+    "band": "stop"
+   },
+   "days": [
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    10,
+    12,
+    14
+   ],
+   "shapes": {
+    "chain": 13,
+    "base": 10
+   },
+   "dropped": 0
+  },
+  {
+   "cc": "MD",
+   "n": 12,
+   "best": 4.5,
+   "cover": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fe/Consiliul_Municipal_Chi%C8%99in%C4%83u_%28cropped%29.jpg/960px-Consiliul_Municipal_Chi%C8%99in%C4%83u_%28cropped%29.jpg",
+    "credit": "Chișinău",
+    "page": "https://en.wikipedia.org/wiki/Chi%C8%99in%C4%83u",
+    "city": "Chișinău",
+    "band": "stop"
+   },
+   "days": [
+    2,
+    3,
+    4,
+    5,
+    6
+   ],
+   "shapes": {
+    "base": 12
+   },
+   "dropped": 0
+  },
+  {
+   "cc": "ME",
+   "n": 96,
+   "best": 9.4,
+   "cover": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/67/The_walls_of_the_fortress_and_View_of_the_old_city._panorama.jpg/960px-The_walls_of_the_fortress_and_View_of_the_old_city._panorama.jpg",
+    "credit": "Dubrovnik",
+    "page": "https://en.wikipedia.org/wiki/Dubrovnik",
+    "city": "Dubrovnik",
+    "band": "stop"
+   },
+   "days": [
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    10,
+    12,
+    14
+   ],
+   "shapes": {
+    "chain": 45,
+    "loop": 31,
+    "base": 20
+   },
+   "dropped": 0
+  },
+  {
+   "cc": "MK",
+   "n": 126,
+   "best": 8.5,
+   "cover": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/82/03760-Ohrid_%2816064511578%29.jpg/960px-03760-Ohrid_%2816064511578%29.jpg",
+    "credit": "Ohrid",
+    "page": "https://en.wikipedia.org/wiki/Ohrid",
+    "city": "Ohrid",
+    "band": "stop"
+   },
+   "days": [
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    10,
+    12,
+    14
+   ],
+   "shapes": {
+    "chain": 61,
+    "loop": 36,
+    "base": 29
+   },
+   "dropped": 0
+  },
+  {
+   "cc": "MT",
+   "n": 7,
+   "best": 8.2,
+   "cover": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4d/Malta_Skyline.jpg/960px-Malta_Skyline.jpg",
+    "credit": "Malta",
+    "page": "https://en.wikipedia.org/wiki/Malta",
+    "city": "Malta",
+    "band": "stop"
+   },
+   "days": [
+    2,
+    4
+   ],
+   "shapes": {
+    "base": 7
+   },
+   "dropped": 0
+  },
+  {
+   "cc": "NL",
+   "n": 193,
+   "best": 9.4,
+   "cover": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/57/Imagen_de_los_canales_conc%C3%A9ntricos_en_%C3%81msterdam.png/960px-Imagen_de_los_canales_conc%C3%A9ntricos_en_%C3%81msterdam.png",
+    "credit": "Amsterdam",
+    "page": "https://en.wikipedia.org/wiki/Amsterdam",
+    "city": "Amsterdam",
+    "band": "stop"
+   },
+   "days": [
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    10,
+    12,
+    14
+   ],
+   "shapes": {
+    "chain": 94,
+    "base": 71,
+    "loop": 28
+   },
+   "dropped": 1
+  },
+  {
+   "cc": "NO",
+   "n": 116,
+   "best": 9.2,
+   "cover": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/Bergen_panorama_at_night_-_panoramio_%281%29.jpg/960px-Bergen_panorama_at_night_-_panoramio_%281%29.jpg",
+    "credit": "Bergen",
+    "page": "https://en.wikipedia.org/wiki/Bergen",
+    "city": "Bergen",
+    "band": "stop"
+   },
+   "days": [
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    10,
+    12,
+    14
+   ],
+   "shapes": {
+    "base": 46,
+    "chain": 59,
+    "loop": 11
+   },
+   "dropped": 0
+  },
+  {
+   "cc": "PL",
+   "n": 210,
+   "best": 9.0,
+   "cover": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a3/Krakow_Rynek_Glowny_panorama_2.jpg/960px-Krakow_Rynek_Glowny_panorama_2.jpg",
+    "credit": "Kraków",
+    "page": "https://en.wikipedia.org/wiki/Krak%C3%B3w",
+    "city": "Krakow",
+    "band": "stop"
+   },
+   "days": [
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    10,
+    12,
+    14
+   ],
+   "shapes": {
+    "chain": 112,
+    "base": 68,
+    "loop": 30
+   },
+   "dropped": 3
+  },
+  {
+   "cc": "PT",
+   "n": 154,
+   "best": 9.3,
+   "cover": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f2/Lisboa_-_Portugal_%2852597836992%29.jpg/960px-Lisboa_-_Portugal_%2852597836992%29.jpg",
+    "credit": "Lisbon",
+    "page": "https://en.wikipedia.org/wiki/Lisbon",
+    "city": "Lisbon",
+    "band": "stop"
+   },
+   "days": [
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    10,
+    12,
+    14
+   ],
+   "shapes": {
+    "base": 72,
+    "chain": 54,
+    "loop": 28
+   },
+   "dropped": 0
+  },
+  {
+   "cc": "RO",
+   "n": 85,
+   "best": 8.4,
+   "cover": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/Hermannstadt_Romania%2C_the_Small_Plaza.jpg/960px-Hermannstadt_Romania%2C_the_Small_Plaza.jpg",
+    "credit": "Sibiu",
+    "page": "https://en.wikipedia.org/wiki/Sibiu",
+    "city": "Sibiu",
+    "band": "stop"
+   },
+   "days": [
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    10,
+    12,
+    14
+   ],
+   "shapes": {
+    "chain": 32,
+    "loop": 20,
+    "base": 33
+   },
+   "dropped": 3
+  },
+  {
+   "cc": "RS",
+   "n": 82,
+   "best": 8.2,
+   "cover": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a0/Panorama_Belgrad.jpg/960px-Panorama_Belgrad.jpg",
+    "credit": "Belgrade",
+    "page": "https://en.wikipedia.org/wiki/Belgrade",
+    "city": "Belgrade",
+    "band": "stop"
+   },
+   "days": [
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    10,
+    12,
+    14
+   ],
+   "shapes": {
+    "chain": 34,
+    "loop": 9,
+    "base": 39
+   },
+   "dropped": 0
+  },
+  {
+   "cc": "SE",
+   "n": 189,
+   "best": 8.2,
+   "cover": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/97/G%C3%B6teborg_2503_stitch_%2828573994096%29.jpg/960px-G%C3%B6teborg_2503_stitch_%2828573994096%29.jpg",
+    "credit": "Gothenburg",
+    "page": "https://en.wikipedia.org/wiki/Gothenburg",
+    "city": "Gothenburg",
+    "band": "stop"
+   },
+   "days": [
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    10,
+    12,
+    14
+   ],
+   "shapes": {
+    "chain": 101,
+    "base": 65,
+    "loop": 23
+   },
+   "dropped": 0
+  },
+  {
+   "cc": "SI",
+   "n": 133,
+   "best": 9.5,
+   "cover": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/Ljubljana_Old_Town%2C_Slovenia_%28Old_Camera%29_%2833286165680%29.jpg/960px-Ljubljana_Old_Town%2C_Slovenia_%28Old_Camera%29_%2833286165680%29.jpg",
+    "credit": "Ljubljana",
+    "page": "https://en.wikipedia.org/wiki/Ljubljana",
+    "city": "Ljubljana",
+    "band": "stop"
+   },
+   "days": [
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    10,
+    12,
+    14
+   ],
+   "shapes": {
+    "chain": 74,
+    "loop": 16,
+    "base": 43
+   },
+   "dropped": 0
+  },
+  {
+   "cc": "SK",
+   "n": 138,
+   "best": 8.4,
+   "cover": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/View_from_Gell%C3%A9rt_Hill_to_the_Danube%2C_Hungary_-_Budapest_%2828493220635%29.jpg/960px-View_from_Gell%C3%A9rt_Hill_to_the_Danube%2C_Hungary_-_Budapest_%2828493220635%29.jpg",
+    "credit": "Budapest",
+    "page": "https://en.wikipedia.org/wiki/Budapest",
+    "city": "Budapest",
+    "band": "stop"
+   },
+   "days": [
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    10,
+    12,
+    14
+   ],
+   "shapes": {
+    "loop": 42,
+    "chain": 65,
+    "base": 31
+   },
+   "dropped": 0
+  },
+  {
+   "cc": "SM",
+   "n": 21,
+   "best": 9.1,
+   "cover": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3d/View_of_Mount_Titano_-_San_Marino.jpg/960px-View_of_Mount_Titano_-_San_Marino.jpg",
+    "credit": "San Marino",
+    "page": "https://en.wikipedia.org/wiki/San_Marino",
+    "city": "San Marino",
+    "band": "stop"
+   },
+   "days": [
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    10,
+    12,
+    14
+   ],
+   "shapes": {
+    "chain": 9,
+    "loop": 7,
+    "base": 5
+   },
+   "dropped": 0
+  },
+  {
+   "cc": "XK",
+   "n": 65,
+   "best": 8.7,
+   "cover": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/33/Rugova_Canyon.jpg/960px-Rugova_Canyon.jpg",
+    "credit": "Rugova Canyon",
+    "page": "https://en.wikipedia.org/wiki/Rugova_Canyon",
+    "city": "Peja & Rugova Canyon",
+    "band": "stop"
+   },
+   "days": [
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    10,
+    12,
+    14
+   ],
+   "shapes": {
+    "chain": 23,
+    "loop": 15,
+    "base": 27
+   },
+   "dropped": 1
+  }
+ ],
+ "absent": {},
+ "attribution": [
+  {
+   "name": "Wikivoyage contributors",
+   "url": "https://en.wikivoyage.org/",
+   "license": "CC BY-SA 4.0",
+   "note": "Guide status, See and Do shortlists, Go next links, itinerary articles"
+  },
+  {
+   "name": "Wikidata",
+   "url": "https://www.wikidata.org",
+   "license": "CC0",
+   "note": "Points of interest, designations, festivals"
+  },
+  {
+   "name": "Wikimedia Commons contributors",
+   "url": "https://commons.wikimedia.org",
+   "license": "Free licenses, checked per file",
+   "note": "Photographs"
+  },
+  {
+   "name": "OpenStreetMap contributors",
+   "url": "https://www.openstreetmap.org/copyright",
+   "license": "ODbL 1.0",
+   "note": "Points of interest, parking, protected areas"
+  },
+  {
+   "name": "Eurostat",
+   "url": "https://ec.europa.eu/eurostat",
+   "license": "Eurostat licence, attribution required",
+   "note": "Tourist nights per NUTS3 region, used as a demand check"
+  },
+  {
+   "name": "WorldClim 2.1",
+   "url": "https://www.worldclim.org",
+   "license": "CC BY-SA 4.0",
+   "note": "Climate normals behind the best months"
+  }
+ ]
+}

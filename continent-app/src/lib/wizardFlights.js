@@ -29,11 +29,14 @@ export function monthOptions(minIso, maxIso) {
   return out;
 }
 
-/** Cheapest stored fare in a { date: eur } map, optionally within one month. */
-function minFare(fares, monthPrefix) {
+/** Cheapest stored fare in a { date: eur } map, optionally within one month
+ *  and never before `notBefore` (the fare window opens on the day the fares
+ *  were harvested, so its first weeks are already in the past). */
+function minFare(fares, monthPrefix, notBefore = '') {
   let best = null;
   for (const [date, eur] of Object.entries(fares || {})) {
     if (eur == null) continue;
+    if (notBefore && date < notBefore) continue;
     if (monthPrefix && !date.startsWith(monthPrefix)) continue;
     if (!best || eur < best.eur || (eur === best.eur && date < best.date)) best = { date, eur };
   }
@@ -64,7 +67,7 @@ function minFare(fares, monthPrefix) {
  *             gem_score }] one per arrival airport, sorted cheapest-first
  *             (exact-date fares before options with no fare stored on that date)
  */
-export function flyInOptions(destinations, countries, { startDate = '', flexMonth = '' } = {}) {
+export function flyInOptions(destinations, countries, { startDate = '', flexMonth = '', notBefore = '' } = {}) {
   // anchor IATA -> the cheapest way in (across the airport's own routes and any
   // gem/town that routes through it).
   const airports = new Map();
@@ -73,8 +76,9 @@ export function flyInOptions(destinations, countries, { startDate = '', flexMont
     for (const [origin, r] of Object.entries(d.routes || {})) {
       const anchor = r.anchor_airport || d.iata;
       if (!anchor) continue;
-      const exact = startDate ? (r.outbound_fare?.[startDate] ?? null) : null;
-      const cheapest = minFare(r.outbound_fare, startDate ? '' : flexMonth);
+      const exact = startDate && !(notBefore && startDate < notBefore)
+        ? (r.outbound_fare?.[startDate] ?? null) : null;
+      const cheapest = minFare(r.outbound_fare, startDate ? '' : flexMonth, notBefore);
       if (exact == null && !cheapest) continue;
       const cand = {
         origin,
@@ -134,7 +138,7 @@ export function flyInOptions(destinations, countries, { startDate = '', flexMont
  *           nearest-first (priced-on-the-day before options with no fare stored)
  */
 export function flyHomeOptions(destinations, {
-  origin, lastDest = null, returnDate = '', flexMonth = '', maxKm = 320, outAnchorId = '',
+  origin, lastDest = null, returnDate = '', flexMonth = '', maxKm = 320, outAnchorId = '', notBefore = '',
 } = {}) {
   if (!origin) return [];
   const airports = new Map();
@@ -144,7 +148,7 @@ export function flyHomeOptions(destinations, {
     const anchor = r.anchor_airport || d.iata;
     if (!anchor) continue;
     const exact = returnDate ? (r.return_fare?.[returnDate] ?? null) : null;
-    const cheapest = minFare(r.return_fare, returnDate ? '' : flexMonth);
+    const cheapest = minFare(r.return_fare, returnDate ? '' : flexMonth, notBefore);
     if (exact == null && !cheapest) continue;
     const cand = {
       origin,

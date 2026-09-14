@@ -10,13 +10,16 @@
 //
 // What it checks:
 //   1. The hub: profile card seeded with the identity, invite banner, menu.
-//   2. Profile spoke: editable name/email, stated once, saves and confirms.
+//   2. Profile spoke: editable name/email, stated once, saves and confirms,
+//      plus the handle: seeded, normalised as you type, refused when it is
+//      too short, and reported as taken without naming who took it.
 //   3. The pass card sells the next tier instead of printing one word.
 //   4. Changing the password requires the current one (real re-auth call).
 //   5. Passwords revealable, measured live, floor at 8.
 //   6. Forgot password reaches the reset mail.
 //   7. Sign out sits clear of the delete button; deletion is red and gated.
-//   8. FAQ spoke: nine questions, answers open on tap.
+//   8. FAQ spoke: fourteen questions in four groups, answers open on tap,
+//      figures interpolated from pricing.js, no retired fare copy left.
 //   9. Feedback spoke: the send button stays off until there is a message.
 //  10. Google-only accounts get the email route, never a password form.
 // Plus the quality floor: 44px targets, label contrast, 380px clean.
@@ -33,6 +36,10 @@ mkdirSync(SHOTS, { recursive: true });
 
 const PROJECT_REF = 'ntssxktaduxzpsmejwyv';
 const RIGHT_PASSWORD = 'correct-horse-battery';
+// The handle this traveller already holds, and one the stub will report as
+// belonging to somebody else.
+const SEEDED_HANDLE = 'sam_okonkwo';
+const TAKEN_HANDLE = 'lisbon';
 const USER = {
   id: '00000000-0000-4000-8000-000000000001',
   aud: 'authenticated',
@@ -107,7 +114,42 @@ async function stubSupabase(page, state) {
     state.recoverCalls += 1;
     return route.fulfill({ status: 200, contentType: 'application/json', body: '{}' });
   });
-  await page.route('**/auth/v1/logout*', (route) => route.fulfill({ status: 204, body: '' }));
+  // Supabase puts the scope in the query string: ?scope=others for the sweep
+  // of other devices, no scope (or global) for an ordinary sign out.
+  await page.route('**/auth/v1/logout*', (route) => {
+    state.logoutScopes.push(new URL(route.request().url()).searchParams.get('scope') || 'global');
+    return route.fulfill({ status: 204, body: '' });
+  });
+
+  // public.profiles, added in migration 010. The GET seeds the handle field;
+  // the PATCH records what was written and refuses one reserved-in-this-test
+  // handle with the same 23505 a real unique violation returns, so the "that
+  // handle is taken" path is exercised rather than assumed.
+  await page.route('**/rest/v1/profiles*', async (route) => {
+    const method = route.request().method();
+    if (method === 'PATCH') {
+      const body = JSON.parse(route.request().postData() || '{}');
+      state.profileUpdates.push(body);
+      if (body.handle === TAKEN_HANDLE) {
+        return route.fulfill({
+          status: 409,
+          contentType: 'application/json',
+          body: JSON.stringify({
+            code: '23505',
+            message: 'duplicate key value violates unique constraint "profiles_handle_key"',
+            details: null, hint: null,
+          }),
+        });
+      }
+      state.profile = { ...state.profile, ...body };
+      return route.fulfill({ status: 204, body: '' });
+    }
+    return route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify(state.profile),
+    });
+  });
 }
 
 const seedSession = (ref, user) => `(() => {
@@ -131,10 +173,35 @@ async function goToProfile(page) {
   await page.locator('#acct-name').waitFor({ timeout: 10000 });
 }
 
+// Browse chrome v4: the spokes are drawn twice from one list, as the hub's
+// menu rows on a phone and as the left panel's rows on desktop, with CSS
+// showing one arrangement or the other. :visible picks whichever this
+// viewport has, so one helper walks the panel at every width.
+const navRow = (page, label) => page.locator('.account-nav:visible', { hasText: label });
+async function goTo(page, label) {
+  await navRow(page, label).first().click();
+  await page.waitForTimeout(300);
+}
+// Back to the hub. The phone has the back control in the header; desktop has
+// Overview standing at the head of the panel.
+async function goHome(page) {
+  const back = page.locator('.account-back:visible');
+  if (await back.count()) await back.first().click();
+  else await goTo(page, 'Overview');
+  await page.locator('.account-profile-card').waitFor({ timeout: 5000 });
+}
+
 try {
   await waitForServer();
   const browser = await chromium.launch();
-  const state = { reauthAttempts: [], userUpdates: [], recoverCalls: 0 };
+  const state = {
+    reauthAttempts: [], userUpdates: [], recoverCalls: 0, logoutScopes: [],
+    profileUpdates: [],
+    profile: {
+      user_id: USER.id, handle: SEEDED_HANDLE,
+      display_name: USER.user_metadata.full_name, avatar_emoji: null,
+    },
+  };
 
   const ctx = await browser.newContext({
     viewport: { width: 1360, height: 950 },
@@ -143,7 +210,7 @@ try {
   await ctx.addInitScript(seedSession(PROJECT_REF, USER));
   const page = await ctx.newPage();
   await stubSupabase(page, state);
-  await page.goto(`${BASE}/?o=CRL&tab=home`);
+  await page.goto(`${BASE}/?o=CRL`);
   await page.locator('.account-avatar-btn').first().waitFor({ timeout: 120000 });
   await openPanel(page);
 
@@ -157,10 +224,27 @@ try {
   const mono = await page.locator('.account-hub-avatar').first().innerText();
   if (mono.trim() !== 'SO') fail(`monogram for Sam Okonkwo is "${mono}", expected SO`);
   if (!(await page.locator('.account-invite').count())) fail('the invite banner is missing');
-  const menuRows = await page.locator('.account-menu-row').count();
-  if (menuRows !== 3) fail(`expected 3 help menu rows, found ${menuRows}`);
-  const rowBox = await page.locator('.account-menu-row').first().boundingBox();
-  if (!rowBox || rowBox.height < 44) fail(`menu rows are ${rowBox?.height}px tall, under the 44px target`);
+  // Four help rows: feedback, FAQ, privacy, data sources. Friends is NOT among
+  // them; it has its own door in the header (see verify_friends.mjs), because
+  // seeing who you travel with is a place you go, not a setting you change.
+  // Counted by label rather than by row total: Lifestyle joined the hub as a
+  // preference row in its own section, and a bare count could not tell the
+  // two apart.
+  const menuLabels = await page.locator('.account-nav:visible').allInnerTexts();
+  const menuRows = menuLabels.length;
+  for (const label of ['Send feedback', 'Common questions', 'Privacy', 'Data sources']) {
+    if (!menuLabels.some((l) => l.includes(label))) fail(`the panel has no "${label}" row`);
+  }
+  if (await page.locator('.account-menu-row').filter({ hasText: 'Friends' }).count()) {
+    fail('Friends is back in the account hub, competing with its header door');
+  }
+  const rowBox = await page.locator('.account-nav:visible').first().boundingBox();
+  if (!rowBox || rowBox.height < 34) fail(`navigation rows are ${rowBox?.height}px tall`);
+  // Two colours on this page, beige and terracotta: the page you are on wears
+  // the full accent, exactly as a selected filter does on Destinations.
+  const railOn = await page.locator('.account-side .side-navrow.on').first()
+    .evaluate((el) => getComputedStyle(el).backgroundColor).catch(() => '');
+  if (railOn !== 'rgb(224, 90, 71)') fail(`the current page in the panel is ${railOn}, not the accent`);
   if (await page.locator('#acct-name').count()) fail('the profile form leaks onto the hub');
   ok(`hub: profile card (SO), invite banner, ${menuRows} menu rows at ${Math.round(rowBox.height)}px`);
 
@@ -209,71 +293,235 @@ try {
   if (!state.userUpdates.some((u) => u.data?.full_name === 'Sam O.')) fail('saving the profile sent no name update');
   ok('an edited name saves and confirms');
   await emailInput.fill('new@example.com');
-  await page.locator('.auth-hint').first().waitFor({ timeout: 5000 });
+  await page.locator('.auth-hint:not(.acct-handle-hint)').first().waitFor({ timeout: 5000 });
   ok('changing the email warns that it needs confirming first');
   await emailInput.fill(USER.email);
 
-  // ---- 4 & 5. Password: current required, measured, revealable, 8 not 6.
+  // ---- 3b. The handle: how another account will be able to find you.
+  console.log('3b. handle');
+  const handleInput = page.locator('#acct-handle');
+  if (!(await handleInput.count())) {
+    fail('the profile spoke shows no handle field');
+  } else {
+    if (await handleInput.inputValue() !== SEEDED_HANDLE) {
+      fail(`handle field is not seeded from the profile: ${await handleInput.inputValue()}`);
+    } else ok('the handle is seeded from the account');
+
+    // The @ belongs to the field, not to what you type, so it cannot be
+    // deleted and cannot be typed twice.
+    if (!(await page.locator('.acct-handle-at').count())) fail('no @ prefix on the handle field');
+
+    // Typed illegally, corrected in place rather than rejected after the fact.
+    await handleInput.fill('Sam Okonkwo!!');
+    if (await handleInput.inputValue() !== 'samokonkwo') {
+      fail(`the handle field did not normalise what was typed: ${await handleInput.inputValue()}`);
+    } else ok('capitals, spaces and punctuation are folded away as you type');
+
+    // Each field says whether it is fine on its own line, so one error at the
+    // foot of the form never has to be traced back to a field.
+    const markOf = (f) => page.locator(`.auth-field:has(#acct-${f}) .auth-label-row .auth-mark`);
+    for (const f of ['name', 'handle', 'email']) {
+      if (!(await markOf(f).count())) fail(`the ${f} field carries no verdict of its own`);
+      if (!/is-ok/.test(await markOf(f).getAttribute('class'))) fail(`a valid ${f} does not read as valid`);
+    }
+    await handleInput.fill('ab');
+    if (!/is-bad/.test(await markOf('handle').getAttribute('class'))) fail('a refusable handle still reads as fine');
+    if (/is-bad/.test(await markOf('name').getAttribute('class'))) fail('one bad field marked the others bad');
+    ok('every profile field carries its own verdict, and only its own');
+
+    // The avatar is a saved choice, not a decoration.
+    await page.locator('.account-avatar-edit').click();
+    const opt = page.locator('.account-avatar-opt').first();
+    if (!(await opt.count())) fail('editing the avatar offers nothing to pick');
+    await opt.click();
+    if (await opt.getAttribute('aria-pressed') !== 'true') fail('picking an avatar does not select it');
+    const picked = (await opt.innerText()).trim();
+    if ((await page.locator('.account-hub-avatar-lg').innerText()).trim() !== picked) {
+      fail('the circle still shows the monogram after an avatar was picked');
+    }
+    await handleInput.fill(SEEDED_HANDLE);
+    ok('picking an avatar shows in the circle at once');
+
+    // The rule shows up when it is being broken, and not while it is being kept.
+    if (await page.locator('.acct-handle-hint').count()) {
+      fail('the handle rule is on show over a handle that already fits it');
+    }
+    await handleInput.fill('ab');
+    const rule = await page.locator('.acct-handle-hint').innerText();
+    if (!/3 to 24/.test(rule)) fail(`a handle that does not fit explains nothing: ${rule}`);
+    if (await handleInput.getAttribute('aria-describedby') !== 'acct-handle-hint') {
+      fail('the rule is not tied to the field it is about');
+    }
+    await handleInput.fill('sam_okonkwo');
+    if (await page.locator('.acct-handle-hint').count()) fail('the rule stayed up after the handle fitted again');
+    ok('the handle rule appears only while the handle does not fit');
+
+    // Too short: caught before it ever reaches the database.
+    await handleInput.fill('ab');
+    await save.click();
+    await page.locator('.auth-error').first().waitFor({ timeout: 5000 });
+    let err = await page.locator('.auth-error').first().innerText();
+    if (!/at least 3/i.test(err)) fail(`a 2-character handle was not refused clearly: ${err}`);
+    else ok('a handle under 3 characters is refused inline');
+    if (state.profileUpdates.some((u) => u.handle === 'ab')) {
+      fail('the too-short handle was sent to the database anyway');
+    }
+
+    // Taken: said plainly, and without naming who holds it.
+    await handleInput.fill(TAKEN_HANDLE);
+    await save.click();
+    await page.waitForTimeout(600);
+    err = await page.locator('.auth-error').first().innerText();
+    if (!/taken/i.test(err)) fail(`a taken handle was not reported as taken: ${err}`);
+    else ok('a taken handle says so');
+    if (/@|owned|belongs|by /i.test(err)) fail(`the taken-handle error names who holds it: ${err}`);
+    else ok('and does not say whose it is');
+
+    // A free one saves.
+    await handleInput.fill('sam_travels');
+    await save.click();
+    await page.locator('.auth-notice-inline').first().waitFor({ timeout: 10000 });
+    if (!state.profileUpdates.some((u) => u.handle === 'sam_travels')) {
+      fail('a valid handle was never written');
+    } else ok('a free handle saves');
+    if (!state.profileUpdates.some((u) => u.avatar_emoji)) {
+      fail('the avatar was picked but never written to the profile');
+    } else ok('the avatar rides along on the same save, as a real profile field');
+    await page.locator('.account-panel').screenshot({ path: `${SHOTS}/account-handle.png` });
+  }
+
+  // ---- 4 & 5. Password: the whole production contract, field by field.
   console.log('4. password security');
   const current = page.locator('#acct-current-pw');
   const next = page.locator('#acct-new-pw');
   const confirm = page.locator('#acct-confirm-pw');
+  const submit = page.locator('.auth-submit', { hasText: 'Update password' });
   if (!(await current.count())) fail('no current-password field: the panel still lets a borrowed session take the account');
-  if (await current.getAttribute('autocomplete') !== 'current-password') fail('current password has the wrong autocomplete attribute');
-  if (await next.getAttribute('autocomplete') !== 'new-password') fail('new password has the wrong autocomplete attribute');
 
+  // Attributes: masked, autofilled by the right heuristic, required.
+  for (const [name, loc, auto] of [
+    ['current', current, 'current-password'],
+    ['new', next, 'new-password'],
+    ['confirm', confirm, 'new-password'],
+  ]) {
+    if (await loc.getAttribute('type') !== 'password') fail(`the ${name} password field is not masked`);
+    if (await loc.getAttribute('autocomplete') !== auto) fail(`${name} password has the wrong autocomplete attribute`);
+    if (await loc.getAttribute('required') === null) fail(`${name} password is not marked required`);
+  }
+  ok('all three fields are masked, required, and carry the right autocomplete');
+
+  // The reveal toggle is a real toggle, and says which state it is in.
+  const revealNew = page.locator('.pw-input-wrap:has(#acct-new-pw) .pw-reveal').first();
+  if (await revealNew.getAttribute('aria-pressed') !== 'false') fail('the reveal toggle does not report its state');
+  await revealNew.click();
+  if (await next.getAttribute('type') !== 'text') fail('the reveal toggle did not unmask the field');
+  if (await revealNew.getAttribute('aria-pressed') !== 'true') fail('the reveal toggle did not flip aria-pressed');
+  await revealNew.click();
+  ok('reveal toggles are real toggles, with aria-pressed following the field');
+
+  // Nothing is submittable until it could succeed. This is what stops the
+  // double submit, and it is why there is no "press to find out" step.
+  if (await submit.isEnabled()) fail('the empty form is submittable');
   await next.fill('abcdefg');
   await confirm.fill('abcdefg');
-  await page.locator('button', { hasText: 'Update password' }).click();
-  let err = await page.locator('.auth-error').first().innerText();
-  if (!/current password/i.test(err)) fail(`empty current password was not the first complaint: ${err}`);
-  ok('the current password is demanded before anything else');
+  if (await submit.isEnabled()) fail('a 7-character password with no current password is submittable');
+  ok('submit stays disabled until the form could actually succeed');
 
+  // The checklist is live, and it is the same four rules the button gates on.
+  const rules = page.locator('.pw-reqs .pw-req');
+  if (await rules.count() !== 4) fail(`expected four rules in the checklist, got ${await rules.count()}`);
+  if (await page.locator('.pw-req.met').count() !== 0) fail('"abcdefg" met a rule it should not have');
+  await next.fill('abcdefgH');
+  if (await page.locator('.pw-req.met').count() !== 2) fail('length and capital did not tick together');
+  await next.fill('abcdefgH9');
+  if (await page.locator('.pw-req.met').count() !== 3) fail('the digit did not tick');
+  await next.fill('abcdefgH9!');
+  if (await page.locator('.pw-req.met').count() !== 4) fail('the symbol did not tick');
+  ok('the checklist ticks each rule off as it is typed');
+
+  // Confirm reports the match live, without waiting for a submit.
+  // A mismatch says so in words; a match is the tick inside the field, so the
+  // good news costs no line.
+  const confirmMark = page.locator('.auth-field:has(#acct-confirm-pw) .auth-mark');
+  if (await confirmMark.evaluate((el) => el.className).catch(() => '') === '') fail('confirm carries no state mark');
+  if (!/is-bad/.test(await confirmMark.getAttribute('class'))) fail('mismatched confirm reads as matching');
+  if (!(await page.locator('.pw-match').count())) fail('a mismatch is never said in words');
+  await confirm.fill('abcdefgH9!');
+  if (!/is-ok/.test(await confirmMark.getAttribute('class'))) fail('a matching confirm does not say so');
+  if (await page.locator('.pw-match').count()) fail('a matched confirm still spends a line saying so');
+  ok('confirm ticks in the field on a match, and says why in words on a mismatch');
+  await confirm.fill('abcdefgH9');
+  await page.locator('.account-panel').screenshot({ path: `${SHOTS}/account-password-live.png` });
+  await confirm.fill('abcdefgH9!');
+
+  // The meter is still the honest reading next to the checklist.
+  await next.fill('aaaaaaaaAA11!!');
+  await confirm.fill('aaaaaaaaAA11!!');
+  if (/strong/.test(await page.locator('.pw-strength').getAttribute('class'))) {
+    fail('fourteen characters of repeats read as strong just for clearing the rules');
+  }
+  await next.fill('Ferry timetable rhubarb 41!');
+  await confirm.fill('Ferry timetable rhubarb 41!');
+  if (!/strong/.test(await page.locator('.pw-strength').getAttribute('class'))) {
+    fail('a long passphrase did not read as strong');
+  }
+  ok('the meter still separates a strong passphrase from a rule-clearing mangle');
+
+  // A wrong current password is reported under the current password field.
   await current.fill('whatever-is-wrong');
-  await page.locator('button', { hasText: 'Update password' }).click();
-  err = await page.locator('.auth-error').first().innerText();
-  if (!/at least 8/i.test(err)) fail(`a 7-character password was accepted at the length check: ${err}`);
-  ok('the floor is 8 characters, not 6');
-
-  await next.fill('aaaaaaaaaaaa');
-  await confirm.fill('aaaaaaaaaaaa');
-  await page.locator('.pw-strength').waitFor({ timeout: 5000 });
-  const weak = await page.locator('.pw-strength').getAttribute('class');
-  if (!/weak/.test(weak)) fail(`twelve repeated letters did not read as weak: ${weak}`);
-  await next.fill('ferry timetable rhubarb 41');
-  await confirm.fill('ferry timetable rhubarb 41');
-  const strong = await page.locator('.pw-strength').getAttribute('class');
-  if (!/strong/.test(strong)) fail(`a long passphrase did not read as strong: ${strong}`);
-  const met = await page.locator('.pw-req.met').count();
-  if (met !== 2) fail(`expected both requirements met, got ${met}`);
-  ok('meter: weak for repeats, strong for a passphrase, both requirements live');
-
-  if (await next.getAttribute('type') !== 'password') fail('the new password field is not masked');
-  await page.locator('.pw-input-wrap:has(#acct-new-pw) .pw-reveal').first().click();
-  if (await next.getAttribute('type') !== 'text') fail('the reveal toggle did not unmask the field');
-  ok('passwords can be revealed while typing');
-
-  await page.locator('button', { hasText: 'Update password' }).click();
-  await page.waitForTimeout(600);
-  err = await page.locator('.auth-error').first().innerText();
-  if (!/isn't right|is not right/i.test(err)) fail(`a wrong current password did not stop the change: ${err}`);
+  await submit.click();
+  await page.waitForTimeout(700);
+  const fieldErr = await page.locator('#acct-current-pw-error').innerText();
+  if (!/isn't right|is not right/i.test(fieldErr)) fail(`the re-auth failure did not land on the field: ${fieldErr}`);
+  if (await current.getAttribute('aria-invalid') !== 'true') fail('the failed field is not marked invalid');
   if (!state.reauthAttempts.includes('whatever-is-wrong')) fail('no re-authentication call was made at all');
-  ok('a wrong current password is rejected by a real re-auth call');
-
+  ok('a wrong current password is rejected by a real re-auth call, and said so under the field');
   await current.fill(RIGHT_PASSWORD);
-  await page.locator('button', { hasText: 'Update password' }).click();
-  await page.waitForTimeout(800);
-  const notice = await page.locator('.auth-notice-inline').last().innerText();
-  if (!/updated/i.test(notice)) fail(`the correct current password did not complete the change: ${notice}`);
-  if (!state.userUpdates.some((u) => u.password)) fail('no password update was sent after re-auth');
-  ok('the correct current password completes the change');
+  if (await page.locator('#acct-current-pw-error').count()) fail('the field error survived a correction');
+  ok('the error clears the moment the field is corrected');
 
-  // ---- 6. Forgot password reaches the reset mail.
+  // The sweep of other devices is opt-in, and really happens.
+  const sweep = page.locator('.auth-check input[type="checkbox"]');
+  if (!(await sweep.count())) fail('there is no way to sign out the other devices');
+  if (await sweep.isChecked()) fail('other devices are signed out by default');
+  await sweep.check();
+  const scopesBefore = state.logoutScopes.length;
+  await submit.click();
+  await page.waitForTimeout(900);
+  if (!state.userUpdates.some((u) => u.password)) fail('no password update was sent after re-auth');
+  if (!state.logoutScopes.slice(scopesBefore).includes('others')) {
+    fail(`the checkbox sent no others-scoped sign out: ${JSON.stringify(state.logoutScopes)}`);
+  }
+  ok('the correct current password completes the change and sweeps the other devices');
+
+  // Success is a banner you can close, over fields that emptied themselves.
+  const banner = page.locator('.auth-banner');
+  if (!(await banner.count())) fail('a completed change showed no success banner');
+  if (!/signed out/i.test(await banner.innerText())) fail('the banner does not report the device sweep it just did');
+  for (const [name, loc] of [['current', current], ['new', next], ['confirm', confirm]]) {
+    if (await loc.inputValue() !== '') fail(`the ${name} field still holds the password after a successful change`);
+  }
+  if (await sweep.isChecked()) fail('the device sweep stayed armed for the next change');
+  await page.screenshot({ path: `${SHOTS}/account-password-success.png` });
+  await banner.locator('.auth-banner-x').click();
+  if (await page.locator('.auth-banner').count()) fail('the success banner cannot be dismissed');
+  ok('success is a dismissible banner, and the fields empty behind it');
+
+  // ---- 6. Forgot password says where the link is going before it goes.
   console.log('5. recovery');
   await page.locator('.auth-forgot-inline').click();
-  await page.waitForTimeout(600);
+  const forgot = page.locator('.auth-forgot-confirm');
+  if (!(await forgot.count())) fail('the forgot-password link fires with no confirmation step');
+  if (!(await forgot.innerText()).includes(USER.email)) fail('the confirmation does not name the address');
+  if (state.recoverCalls) fail('opening the confirmation already sent the mail');
+  await forgot.locator('button', { hasText: 'Send the link' }).click();
+  await page.waitForTimeout(700);
   if (!state.recoverCalls) fail('the forgot-password link sent no reset mail');
-  ok('forgot password sends the reset link to the address on file');
+  if (!/Reset link sent/i.test(await page.locator('.auth-banner').innerText())) {
+    fail('sending the reset link reported nothing');
+  }
+  ok('forgot password names the address, then sends the reset link to it');
+  await page.locator('.auth-banner-x').click();
 
   // ---- 7. Sign out clear of deletion; deletion red, confirmed, gated.
   console.log('6. layout and deletion');
@@ -281,7 +529,7 @@ try {
   console.log('   profile sections:', order.map((s) => s.trim()).join(' / '));
   const idx = (re) => order.findIndex((s) => re.test(s));
   const [profile, pw, session, danger] = [
-    idx(/profile/i), idx(/change password/i), idx(/session/i), idx(/delete/i),
+    idx(/profile/i), idx(/security/i), idx(/session/i), idx(/danger/i),
   ];
   if ([profile, pw, session, danger].some((i) => i < 0)) fail(`a section is missing: ${order.join(' | ')}`);
   if (!(profile < pw && pw < session && session < danger)) {
@@ -297,7 +545,16 @@ try {
 
   const dangerColor = await page.locator('.account-delete-arm').evaluate((el) => getComputedStyle(el).color);
   if (!/^rgb\(1[6-9]\d,\s*\d+,\s*\d+\)/.test(dangerColor)) fail(`the delete button is not red: ${dangerColor}`);
+  // Closed, the danger box is one button: what deletion costs is the answer
+  // to pressing it, not a notice standing over a panel people open to change
+  // their name.
+  if (await page.locator('.account-danger-text').count()) {
+    fail('the deletion warning is showing before anybody asked to delete anything');
+  }
   await page.locator('.account-delete-arm').click();
+  const warning = await page.locator('.account-danger-text').innerText();
+  if (!/cannot be undone/i.test(warning)) fail(`arming shows no warning about what is lost: "${warning}"`);
+  ok('the warning appears on pressing Delete my account, not before');
   const delPw = page.locator('#acct-delete-pw');
   if (!(await delPw.count())) fail('deletion does not ask for the password');
   await page.locator('button', { hasText: 'Delete forever' }).click();
@@ -319,27 +576,57 @@ try {
 
   // ---- 8. Back to the hub, then the FAQ spoke.
   console.log('7. faq spoke');
-  await page.locator('.account-back').click();
-  await page.locator('.account-profile-card').waitFor({ timeout: 5000 });
-  ok('the back control returns to the hub');
-  await page.locator('.account-menu-row', { hasText: 'Common questions' }).click();
+  await goHome(page);
+  ok('the panel returns to the hub');
+  await goTo(page, 'Common questions');
   const faqItems = await page.locator('.account-faq-item').count();
-  if (faqItems !== 9) fail(`expected 9 FAQ entries, found ${faqItems}`);
+  if (faqItems !== 14) fail(`expected 14 FAQ entries, found ${faqItems}`);
+  const groups = await page.locator('.account-faq-grouplabel').allInnerTexts();
+  if (groups.length !== 4) fail(`expected 4 FAQ group headings, found ${groups.length}`);
   if (await page.locator('.account-faq-a').count()) fail('an answer is open before anything was tapped');
   const firstQ = page.locator('.account-faq-q').first();
   await firstQ.click();
   if (await firstQ.getAttribute('aria-expanded') !== 'true') fail('the opened question does not say aria-expanded');
   const answer = await page.locator('.account-faq-a').first().innerText();
   if (answer.length < 40) fail(`the first answer is suspiciously short: "${answer}"`);
-  await page.locator('.account-faq-q').nth(5).click();
+  // The catalogue size is interpolated, so an unresolved placeholder here means
+  // the answer is quoting a variable name at the traveller.
+  if (/\{\w+\}/.test(answer)) fail(`an unfilled placeholder survived into an answer: "${answer}"`);
+  // Open a question in a later group: the open row is keyed by its i18n key,
+  // and an index-keyed accordion would open two rows at once here.
+  await page.locator('.account-faq-group').nth(3).locator('.account-faq-q').first().click();
   if (await page.locator('.account-faq-a').count() !== 1) fail('two answers are open at once');
-  ok(`${faqItems} questions, answers open one at a time`);
+  // The pass answer has to quote the shipped prices, never a rounded retelling.
+  const passQ = page.locator('.account-faq-q', { hasText: 'What does a pass add?' });
+  await passQ.click();
+  const passA = await page.locator('.account-faq-item.open .account-faq-a').innerText();
+  for (const figure of ['€6.99', '€14.99', '60', '40', '300', '120']) {
+    if (!passA.includes(figure)) fail(`the pass answer never names ${figure}: "${passA}"`);
+  }
+  // Carta stopped pricing flights; an answer that still sells fares is a lie
+  // about the product, which is the failure this FAQ exists to avoid.
+  const allAnswers = (await page.locator('.account-faq-q').allInnerTexts()).join(' ');
+  for (const stale of ['Ryanair', 'Wizz', 'on the map']) {
+    if (allAnswers.includes(stale)) fail(`a question still describes the retired fare map: ${stale}`);
+  }
+  if (!(await page.locator('.account-faq-foot button').count())) fail('the FAQ has no route to feedback');
+  ok(`${faqItems} questions in ${groups.length} groups, one answer at a time, figures interpolated`);
   await page.screenshot({ path: `${SHOTS}/account-faq.png` });
+
+  // ---- 8b. The data credits spoke. The licenses that ask for a visible
+  //          credit are answered here now that the front page is gone, so an
+  //          empty list is a compliance problem, not a cosmetic one.
+  await goHome(page);
+  await goTo(page, 'Data sources');
+  const creditLines = await page.locator('.account-credits li').allInnerTexts();
+  if (creditLines.length < 10) fail(`data sources spoke lists ${creditLines.length} credits`);
+  if (!creditLines.some((l) => /OpenStreetMap/.test(l))) fail('credits never name OpenStreetMap');
+  ok(`data sources: ${creditLines.length} credits, OpenStreetMap among them`);
 
   // ---- 9. The feedback spoke.
   console.log('8. feedback spoke');
-  await page.locator('.account-back').click();
-  await page.locator('.account-menu-row', { hasText: 'Send feedback' }).click();
+  await goHome(page);
+  await goTo(page, 'Send feedback');
   const feedbackBox = page.locator('#acct-feedback');
   await feedbackBox.waitFor({ timeout: 5000 });
   const sendBtn = page.locator('button', { hasText: 'Send by email' });
@@ -351,12 +638,19 @@ try {
 
   // ---- Quality floor on the hub.
   console.log('9. quality floor');
-  await page.locator('.account-back').click();
-  const closeBox = await page.locator('.account-panel .panel-close').boundingBox();
-  if (closeBox.width < 44 || closeBox.height < 44) {
-    fail(`close button is ${Math.round(closeBox.width)}x${Math.round(closeBox.height)}, under 44px`);
+  await goHome(page);
+  // Account is a page on desktop now, not a slide-over, so it carries no
+  // cross: the way out is the header (press the avatar again) or Escape, the
+  // same two doors My trips has. A cross would be the only close control in
+  // the app that closes a page rather than an overlay.
+  if (await page.locator('.account-panel .panel-close:visible').count()) {
+    fail('the desktop account page still carries a cross');
   }
-  ok(`close button is ${Math.round(closeBox.width)}x${Math.round(closeBox.height)}`);
+  await page.keyboard.press('Escape');
+  await page.waitForTimeout(400);
+  if (await page.locator('.account-panel').count()) fail('Escape did not close the account page');
+  await openPanel(page);
+  ok('no cross on the page, and Escape is the way out');
 
   // ---- 10. A Google-only account has no password. Every password control
   // must step aside for the email route, and deletion must still ask.
@@ -370,7 +664,7 @@ try {
   await ctxG.addInitScript(seedSession(PROJECT_REF, GOOGLE_USER));
   const pageG = await ctxG.newPage();
   await stubSupabase(pageG, state);
-  await pageG.goto(`${BASE}/?o=CRL&tab=home`);
+  await pageG.goto(`${BASE}/?o=CRL`);
   await pageG.locator('.account-avatar-btn').first().waitFor({ timeout: 120000 });
   await openPanel(pageG);
   await goToProfile(pageG);
@@ -402,7 +696,9 @@ try {
   await stubSupabase(page2, state);
   await page2.goto(`${BASE}/?o=CRL&tab=map`);
   await page2.waitForTimeout(2500);
-  const mobileBtn = page2.locator('.mobile-account-btn, .bottom-nav-item:has-text("Account"), .account-avatar-btn').first();
+  // :visible keeps the header avatar (display:none on mobile since Account
+  // moved to the bottom bar) from shadowing the item that can be clicked.
+  const mobileBtn = page2.locator('.mobile-account-btn:visible, .bottom-nav-item:has-text("Account"), .account-avatar-btn:visible').first();
   await mobileBtn.click({ timeout: 30000 });
   await page2.locator('.account-panel').waitFor({ timeout: 15000 });
   await page2.waitForTimeout(500);
@@ -414,12 +710,22 @@ try {
   });
   const hubSpill = await spillCheck();
   if (hubSpill.scrolls) fail(`the hub scrolls sideways at 380px: ${hubSpill.wide.join(' | ')}`);
+  // Where a thumb is the input, the 44px floor holds: the hub's rows are the
+  // phone's copy of the doors the desktop page stands in its left panel.
+  const thumbRow = await page2.locator('.account-menu-row:visible').first().boundingBox();
+  if (!thumbRow || thumbRow.height < 44) fail(`hub rows are ${thumbRow?.height}px on a phone, under 44px`);
+  ok(`the hub's rows are ${Math.round(thumbRow.height)}px under a thumb`);
   await page2.screenshot({ path: `${SHOTS}/account-hub-380.png`, fullPage: true });
   await page2.locator('.account-profile-card').click();
   await page2.locator('#acct-name').waitFor({ timeout: 10000 });
   const profSpill = await spillCheck();
   if (profSpill.scrolls) fail(`the profile spoke scrolls sideways at 380px: ${profSpill.wide.join(' | ')}`);
   ok('380px: no horizontal scroll on the hub or the profile spoke');
+  // The whole spoke in one frame, for reading the layout rather than testing it.
+  await page2.setViewportSize({ width: 400, height: 1500 });
+  await page2.mouse.move(0, 0);
+  await page2.waitForTimeout(400);
+  await page2.locator('.account-panel').screenshot({ path: `${SHOTS}/account-profile-spoke.png` });
   await page2.screenshot({ path: `${SHOTS}/account-profile-380.png`, fullPage: true });
 
   await browser.close();

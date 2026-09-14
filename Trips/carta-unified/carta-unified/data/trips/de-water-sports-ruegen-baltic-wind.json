@@ -1,0 +1,322 @@
+{
+  "id": "de-water-sports-ruegen-baltic-wind",
+  "sourceId": "de-water-ruegen-baltic-wind",
+  "slug": "de-water-sports-ruegen-baltic-wind",
+  "title": "Rügen and Fehmarn: A Baltic Wind Week",
+  "country": "Germany",
+  "countryCode": "DE",
+  "countries": [
+    {
+      "name": "Germany",
+      "code": "DE"
+    }
+  ],
+  "isMultiCountry": false,
+  "region": "Western & Central Europe",
+  "regionKey": "western-central",
+  "subRegion": "Rügen and Fehmarn, Baltic Coast",
+  "tripType": "Water Sports & Coastal Trips",
+  "tripTypeId": 10,
+  "tripTypeSlug": "water-sports",
+  "durationDays": 7,
+  "bestPeriod": {
+    "months": [
+      6,
+      7,
+      8,
+      9
+    ],
+    "monthNames": [
+      "June",
+      "July",
+      "August",
+      "September"
+    ],
+    "window": null,
+    "note": "June and September bring the most reliable westerlies; July and August add the warmest water but more midday lulls between the thermal and the gradient wind.",
+    "avoid": null,
+    "raw": null
+  },
+  "budgetTier": "€€",
+  "budgetTierRange": [
+    2,
+    2
+  ],
+  "budgetTierRaw": "€€",
+  "budget": {
+    "currency": "EUR",
+    "totalEur": {
+      "low": 980,
+      "high": 1400
+    },
+    "totalNote": null,
+    "breakdown": {
+      "accommodation": {
+        "lowEur": 480,
+        "highEur": 650,
+        "note": null
+      },
+      "food": {
+        "lowEur": 230,
+        "highEur": 320,
+        "note": null
+      },
+      "transport": {
+        "lowEur": 140,
+        "highEur": 220,
+        "note": null
+      },
+      "activities": {
+        "lowEur": 130,
+        "highEur": 210,
+        "note": null
+      }
+    },
+    "perDayEur": {
+      "low": 140,
+      "high": 200
+    }
+  },
+  "profile": {
+    "difficulty": 3,
+    "difficultyLabel": "Active",
+    "difficultyNote": null,
+    "fitnessLevel": "Active",
+    "crowdLevel": "Moderate",
+    "familyFriendly": false,
+    "carRequired": true
+  },
+  "basecamps": [
+    "Glowe, Rügen"
+  ],
+  "gatewayAirport": "Hamburg Airport (HAM)",
+  "gatewayAirportCode": "HAM",
+  "languages": [
+    "German"
+  ],
+  "currency": "EUR",
+  "emergencyNumber": "112",
+  "coordinates": {
+    "lat": 52.5244,
+    "lon": 13.4105,
+    "precision": "country",
+    "matchedPlace": "Berlin",
+    "source": "country capital fallback"
+  },
+  "tags": [
+    "windsurf",
+    "kitesurf",
+    "sea-kayak",
+    "baltic-sea",
+    "chalk-cliffs",
+    "bodden"
+  ],
+  "summary": "A week of Baltic windsurf and kite between Rügen's sheltered Bodden and open coast, chalk-cliff kayaking at Jasmund, and a crossing to Fehmarn.",
+  "summaryGenerated": false,
+  "hook": "The Baltic does not swell like the open Atlantic and it barely tides at all, but it moves fast: a westerly can go from 12 to 25 knots in an hour and the water behind the dunes at Glowe is often flat while the open coast three kilometres away is stacking whitecaps. This week uses that split deliberately, working the Bodden for skill-building and the outer coast for power, then finishes with a crossing to Fehmarn, Germany's other serious wind island.",
+  "snapshot": {
+    "Country": "Germany",
+    "Base(s)": "Glowe, Rügen (4 nights), Westermarkelsdorf, Fehmarn (3 nights)",
+    "Trip Type": "Water Sports & Coastal Trips",
+    "Duration": "7 days",
+    "Best Period": "June, July, August, September",
+    "Budget Tier": "€€ (approx. €980–€1,400 per person, excluding flights)",
+    "Total Distance / Terrain": "Approx. 230 km transfer drive plus daily sessions of 2–4 water hours; open Baltic coast, sheltered Bodden lagoon, chalk-cliff sea kayaking",
+    "Getting There": "Fly to Hamburg, hire a car for the roughly 3-hour drive to Rügen via Stralsund; a rental board and rig are cheaper picked up locally than flown in",
+    "Who It Suits": "Intermediate windsurfers and kiters who want a genuine wind week with a rest-day backup plan, plus paddlers drawn to the chalk coast"
+  },
+  "itinerary": [
+    {
+      "day": 1,
+      "title": "Glowe and the Jasmunder Bodden",
+      "morning": "Arrive in Glowe on Rügen's north-east shoulder. Rig up on the Grosser Jasmunder Bodden side, the shallow lagoon that separates the Schaabe sandspit from the rest of the island. It rarely tops a metre in depth and never builds real chop, which makes it the right place to shake off travel legs before committing to open water.",
+      "afternoon": "A VDWS-certified school based on the Bodden shoreline (Verband Deutscher Windsurfing- und Wassersport-Schulen, Germany's standard watersports certification body) can check gear, re-tune a rig, or run a refresher for anyone who hasn't sailed since last season. Book equipment at least a day ahead in July and August.",
+      "evening": "Walk the Schaabe pine strip to the open Baltic side and judge tomorrow's forecast against the sound of the surf.",
+      "dayStats": "2 water hours · Bodden flat water, 10–14 knots WSW · 5.5 m² sail, freeride board, 4/3 mm wetsuit.",
+      "sleep": null
+    },
+    {
+      "day": 2,
+      "title": "Nonnevitz and Kap Arkona",
+      "morning": "Drive 30 minutes to Nonnevitz on the Wittow peninsula, the open-coast spot that draws Rügen's serious kite and wave-sailing crowd. It faces north-west with clean fetch across open Baltic water, and works from a moderate breeze up to genuinely strong wind, unlike the sheltered Bodden.",
+      "afternoon": "Session as long as the wind holds, then rinse gear at the car park showers. If the forecast has dropped below 12 knots, fall back to the Bodden at Juliusruh instead of forcing a marginal open-water session.",
+      "evening": "Kap Arkona, the northern tip of Rügen, with its two lighthouses (1827 and 1902) and the clifftop views back down the coast you sailed.",
+      "dayStats": "3 water hours · Open Baltic, 16–22 knots NW, wind waves to 0.6 m · 4.7 m² sail or 9 m² kite, wave board, 4/3 mm wetsuit and boots.",
+      "sleep": null
+    },
+    {
+      "day": 3,
+      "title": "Jasmund chalk cliffs by sea kayak",
+      "morning": "Swap sail for paddle. Launch a sea kayak from Sassnitz harbour with a licensed local outfitter running trips into Jasmund National Park. The chalk cliffs rise straight from the water here, unlike anywhere else on the German Baltic coast.",
+      "afternoon": "Paddle north past the Wissower Klinken, the collapsed chalk section made famous by Caspar David Friedrich's paintings, toward the Königsstuhl viewpoint 118 m above the water. Landing is not permitted inside the national park core zone; this is a from-the-water look, not a beach stop.",
+      "evening": "Return to Sassnitz and drive back to Glowe. The DGzRS (Deutsche Gesellschaft zur Rettung Schiffbrüchiger, the German sea rescue service) keeps a lifeboat station at Sassnitz that covers this stretch.",
+      "dayStats": "3.5 water hours · Calm to 10 knots, negligible Baltic tide · sea kayak, spray deck, buoyancy aid, 3 mm wetsuit.",
+      "sleep": null
+    },
+    {
+      "day": 4,
+      "title": "Bodden freestyle and Prora",
+      "morning": "A deliberately easier day. Back on the Jasmunder Bodden for freestyle practice, jibe drills, or a first attempt at foiling in flat water with no chop to fight.",
+      "afternoon": "Visit Prora, the 4.5 km Nazi-era holiday complex on Rügen's east coast, now part museum and part hotel conversion — an odd, sobering counterpoint to the beach week, a short drive south of Binz.",
+      "evening": "Early night in Glowe. Check the extended forecast for the Fehmarn crossing; a strong westerly makes the drive itself unpleasant with a roof-rack rig.",
+      "dayStats": "2 water hours · Bodden flat water, 8–13 knots · lightwind sail or foil board.",
+      "sleep": null
+    },
+    {
+      "day": 5,
+      "title": "Transfer to Fehmarn",
+      "morning": "Pack and drive south: Stralsund, Rostock, Wismar, Lübeck, then the Fehmarnsundbrücke onto the island, roughly three hours without stops.",
+      "afternoon": "Check into Westermarkelsdorf on Fehmarn's west end, then rig for a late session at the flat-water lagoon behind the beach if the wind is still up. This spot is sheltered enough for an evening arrival session even after a long drive.",
+      "evening": "Fehmarn's west coast catches the sunset directly over open water — one of the better reasons to base here rather than at Puttgarden.",
+      "dayStats": "1.5 water hours · Sheltered lagoon, 10–16 knots W · freeride gear.",
+      "sleep": null
+    },
+    {
+      "day": 6,
+      "title": "Fehmarn's wind coast",
+      "morning": "Grüner Brink, on Fehmarn's south-west shoulder, is the island's benchmark wave and freestyle spot, with a long sandy beach and enough fetch from the west to build real Baltic chop.",
+      "afternoon": "A VDWS school cluster operates seasonal bases along this stretch; rental rigs are available by the session or the day, useful if checked baggage costs put you off flying your own gear from home.",
+      "evening": "Burg auf Fehmarn for dinner; the town centre is a 20-minute drive from the west-coast beaches.",
+      "dayStats": "3.5 water hours · Open Baltic, 15–20 knots W, waves to 0.5 m · wave board or twin-tip kite, 4/3 mm wetsuit.",
+      "sleep": null
+    },
+    {
+      "day": 7,
+      "title": "Last session and departure",
+      "morning": "A final short session at Westermarkelsdorf while the morning wind is usually cleanest, then derig and pack the car.",
+      "afternoon": "Drive north back to Hamburg, roughly 2.5 hours, for the evening flight home.",
+      "evening": "Return flight from Hamburg.",
+      "dayStats": "1.5 water hours · Variable, typically 10–16 knots · freeride gear.",
+      "sleep": null
+    }
+  ],
+  "accommodationStrategy": [
+    {
+      "rank": 1,
+      "name": "Strandhotel or guesthouse, Glowe",
+      "style": null,
+      "location": null,
+      "description": "Glowe sits directly between the Bodden and the Schaabe dune strip, so gear can be rigged on either water within a five-minute carry rather than driven. Look for a room with secure outdoor storage for boards; several family-run guesthouses along the Bodden promenade offer exactly this.",
+      "booking": "two months ahead for July and August.",
+      "priceNote": "€90–€135 per night"
+    },
+    {
+      "rank": 2,
+      "name": "Ferienwohnung, Westermarkelsdorf, Fehmarn",
+      "style": null,
+      "location": null,
+      "description": "Self-catering apartments cluster behind the dunes at the island's west end, a short walk to both Grüner Brink and the sheltered lagoon spot. A ground-floor unit with a hose point for rinsing gear is worth the small premium.",
+      "booking": "six weeks ahead; Fehmarn fills fast on strong-wind weekends.",
+      "priceNote": "€95–€150 per night"
+    },
+    {
+      "rank": 3,
+      "name": "Campingplatz option, either island",
+      "style": null,
+      "location": null,
+      "description": "Both islands run well-established campsites directly behind the dune line with power hook-ups and drying rooms for wetsuits — the cheapest and most sailor-friendly option if the schedule is weather-flexible.",
+      "booking": "three to four weeks ahead.",
+      "priceNote": "€25–€45 per night"
+    }
+  ],
+  "logistics": {
+    "connectivity": null,
+    "emergency": "Emergency number 112. The DGzRS runs lifeboat stations at Sassnitz and along Fehmarn; contact via VHF Channel 16 or 112 if in genuine difficulty offshore.",
+    "weather": null,
+    "bookingWindows": null,
+    "money": null,
+    "transportRules": null,
+    "permits": null,
+    "health": null,
+    "gettingThere": null,
+    "other": [
+      {
+        "label": null,
+        "text": "Emergency number 112. The DGzRS runs lifeboat stations at Sassnitz and along Fehmarn; contact via VHF Channel 16 or 112 if in genuine difficulty offshore."
+      },
+      {
+        "label": null,
+        "text": "DLRG-staffed beaches run a red/yellow flag system in the main season, roughly mid-May to mid-September; red means no bathing or launching, yellow means caution. Outside DLRG hours, spots are unsupervised — self-assess."
+      },
+      {
+        "label": null,
+        "text": "A car is essential. Bike-and-board is impractical here and public transport does not reach Nonnevitz or Grüner Brink usefully."
+      },
+      {
+        "label": null,
+        "text": "Rügen's Bodden and Fehmarn's inner lagoons have no meaningful tide, but strong sustained wind pushes real water-level change — a westerly can drop the Bodden by 30–40 cm and expose sandbars that were covered that morning."
+      },
+      {
+        "label": null,
+        "text": "Water temperature: roughly 14–16°C in June, 18–20°C in July–August, dropping to 15–16°C by late September. A 4/3 mm wetsuit covers the shoulder season; a 3 mm shorty suffices on the warmest August afternoons."
+      },
+      {
+        "label": null,
+        "text": "Jasmund National Park's core zone is landing-restricted; kayak tours stay on the water and do not put in below the cliffs."
+      },
+      {
+        "label": null,
+        "text": "Book equipment rental ahead for peak weeks; Baltic wind weeks with strong forecasts sell out school gear by mid-morning."
+      }
+    ]
+  },
+  "proTips": [
+    "Check the Bodden first if the open coast looks marginal. A day that is unsailable at Nonnevitz is often a perfectly good freestyle session on the lagoon.",
+    "Westerlies build through the morning and often peak early-to-mid afternoon on both islands; plan the harder open-coast session for midday, not first thing.",
+    "On Fehmarn, Grüner Brink gets crowded on strong-forecast weekends; a weekday session or the quieter Westermarkelsdorf lagoon avoids the queue for space.",
+    "Carry cash for the small harbourside kiosks in Sassnitz and Glowe; card readers are inconsistent at the smaller operators.",
+    "The Fehmarnsundbrücke has a lower speed limit and can be windy for a roof-rigged car; slow down rather than fight a crosswind gust on the bridge deck.",
+    "Pair a forced rest day with Prora or Kap Arkona rather than losing it entirely — both are worthwhile even with zero wind."
+  ],
+  "typeSpecific": {
+    "raw": {
+      "Total Distance / Terrain": "Approx. 230 km transfer drive plus daily sessions of 2–4 water hours; open Baltic coast, sheltered Bodden lagoon, chalk-cliff sea kayaking",
+      "Who It Suits": "Intermediate windsurfers and kiters who want a genuine wind week with a rest-day backup plan, plus paddlers drawn to the chalk coast"
+    },
+    "surface": "Approx. 230 km transfer drive plus daily sessions of 2–4 water hours; open Baltic coast, sheltered Bodden lagoon, chalk-cliff sea kayaking",
+    "distanceKm": 230,
+    "elevationM": null,
+    "verticalM": null,
+    "technicalRating": null,
+    "transitPass": null,
+    "hutBooking": null,
+    "liftNetwork": null,
+    "snowReliability": null,
+    "windConditions": null,
+    "gpxReady": null,
+    "bookingTimeline": null,
+    "audience": "Intermediate windsurfers and kiters who want a genuine wind week with a rest-day backup plan, plus paddlers drawn to the chalk coast"
+  },
+  "packingNotes": [
+    "4/3 mm wetsuit as the core suit, with a thin base layer for early June or late September.",
+    "Wetsuit boots and gloves; Bodden bottoms can be silty and sharp shell fragments turn up on the open coast.",
+    "A dedicated board bag; budget airlines charge heavily for oversized sports gear, and local rental is often cheaper than flying rigs in.",
+    "A drysuit or extra insulating layer if kayaking in the shoulder season — the chalk-cliff paddle is exposed with no quick exit.",
+    "Reef-safe sunscreen and a peaked cap; Baltic glare off flat water is stronger than it looks under grey skies.",
+    "A tide-independent dry bag; while tide is not the issue here, sudden wind-driven chop is, and electronics need protecting on every crossing."
+  ],
+  "whatCouldGoWrong": [
+    "**No wind at all.** The Baltic has genuine lulls, especially at midday in high summer. Fall back to kayaking Jasmund or visiting Prora and Kap Arkona rather than waiting on the beach.",
+    "**Too much wind for the open coast.** A strong low-pressure passage can push conditions past comfortable limits at Nonnevitz or Grüner Brink. Retreat to the Bodden or the Fehmarn lagoon, both of which stay manageable in stronger blows.",
+    "**Gear damage mid-week.** Neither island has a same-day repair shop for a snapped mast; carry a spare or confirm the rental school's replacement policy before signing.",
+    "**A rough Fehmarn crossing day.** If a westerly is forecast for transfer day, drive early before the wind builds rather than fighting a loaded roof rack in gusts.",
+    "**Sold-out rental gear.** Strong-forecast weekends draw day-trippers from Hamburg and Berlin. Reserve boards two or three days ahead once a good window appears."
+  ],
+  "sources": {
+    "verified": null,
+    "confidenceNotes": null
+  },
+  "verifyFlags": [],
+  "verifyFlagCount": 0,
+  "volatilePricing": false,
+  "wordCount": 1903,
+  "dataVintage": 2026,
+  "provenance": {
+    "batch": "western-central",
+    "sourceFile": "cartatripsv1/trips/de-water-ruegen-baltic-wind.md",
+    "sourceFormat": "md+yaml-frontmatter (one file per trip)",
+    "sourceId": "de-water-ruegen-baltic-wind",
+    "ingestedAt": "2026-09-02",
+    "synthesized": false
+  }
+}

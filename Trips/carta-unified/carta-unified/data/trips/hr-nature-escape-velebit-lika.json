@@ -1,0 +1,279 @@
+{
+  "id": "hr-nature-escape-velebit-lika",
+  "sourceId": "nature-escape-croatia-velebit-lika",
+  "slug": "hr-nature-escape-velebit-lika",
+  "title": "Velebit Stone and Lika Forest: A Karst Cabin Week",
+  "country": "Croatia",
+  "countryCode": "HR",
+  "countries": [
+    {
+      "name": "Croatia",
+      "code": "HR"
+    }
+  ],
+  "isMultiCountry": false,
+  "region": "Southern & Mediterranean Europe",
+  "regionKey": "southern-mediterranean",
+  "subRegion": "Lika, Northern Velebit & Paklenica",
+  "tripType": "Nature Escapes & Cabin Stays",
+  "tripTypeId": 9,
+  "tripTypeSlug": "nature-escape",
+  "durationDays": 7,
+  "bestPeriod": {
+    "months": [
+      6,
+      7,
+      9,
+      10
+    ],
+    "monthNames": [
+      "June",
+      "July",
+      "September",
+      "October"
+    ],
+    "window": "Mid-June–mid-July & early September–mid-October",
+    "note": null,
+    "avoid": "November–April — the Oltari–Zavižan road is snow-blocked, the NP shepherd huts close, and bura closes the coastal roads",
+    "raw": "Mid-June–mid-July & early September–mid-October"
+  },
+  "budgetTier": "€€",
+  "budgetTierRange": [
+    2,
+    2
+  ],
+  "budgetTierRaw": "€€",
+  "budget": {
+    "currency": "EUR",
+    "totalEur": {
+      "low": 1050,
+      "high": 1600
+    },
+    "totalNote": "€1,050–€1,600 per person, excl. international flights",
+    "breakdown": {
+      "accommodation": {
+        "lowEur": 420,
+        "highEur": 680,
+        "note": "NP shepherd huts €100–€200 per hut; Zavižan bunk ~€20; coastal hotels €80–€120"
+      },
+      "food": {
+        "lowEur": 230,
+        "highEur": 350,
+        "note": "Lika konoba mains €10–€16; two nights are self-catered because there is no restaurant"
+      },
+      "transport": {
+        "lowEur": 260,
+        "highEur": 400,
+        "note": "Rental car with genuine ground clearance €45–€70/day, fuel, A1 tolls"
+      },
+      "activities": {
+        "lowEur": 140,
+        "highEur": 170,
+        "note": "Two NP tickets, Velebit House, Cerovac caves, Manita peć, a guided bear/wolf morning"
+      }
+    },
+    "perDayEur": {
+      "low": 150,
+      "high": 229
+    }
+  },
+  "profile": {
+    "difficulty": 3,
+    "difficultyLabel": "Active",
+    "difficultyNote": "3/5 — daily walks of 8–16 km with 400–900 m ascent on sharp karst; no technical ground, but the rock punishes soft footwear",
+    "fitnessLevel": "Active",
+    "crowdLevel": null,
+    "familyFriendly": null,
+    "carRequired": null
+  },
+  "basecamps": [],
+  "gatewayAirport": "ZAD Zadar, 55 min to Starigrad-Paklenica and 2 h 05 to Krasno; RJK Rijeka 2 h 10 to Krasno; ZAG Zagreb 2 h 40",
+  "gatewayAirportCode": "ZAD",
+  "languages": [],
+  "currency": null,
+  "emergencyNumber": "112",
+  "coordinates": {
+    "lat": 44.1158,
+    "lon": 15.2251,
+    "precision": "gateway",
+    "matchedPlace": "Zadar",
+    "source": "geonames (geonamescache, cities > 15k)"
+  },
+  "tags": [
+    "velebit",
+    "lika",
+    "cabin-stay",
+    "bear-refuge",
+    "old-growth-forest",
+    "karst",
+    "bura",
+    "mushroom-foraging",
+    "off-grid"
+  ],
+  "summary": "Velebit is 145 km of waterless limestone standing between the Adriatic and the forested plateau of Lika, and this week works both sides of it. You start soft in the Gacka valley among watermills and trout springs, climb to Zavižan where Croatia's highest year-round weather station sits beside an alpine botanical garden, then walk the Premužić Trail — a 1930s dry-stone path engineered so beautifully that it crosses cliffs without a single exposed step. The middle of the week is deliberately slow: a day in the old-growth spruce of Štirovača, an afternoon at Kuterevo's bear refuge, a cave day underground. It ends on the seaward face at Paklenica, where the mountain drops 1,700 m to the sea in eight kilometres. It suits people who want silence, a wood stove, and no phone signal, and who accept that on this mountain you carry your own water.",
+  "summaryGenerated": false,
+  "hook": null,
+  "snapshot": {},
+  "itinerary": [
+    {
+      "day": 1,
+      "title": "Gacka springs and the slow entry to Lika",
+      "morning": "Pick the car up at Zadar and drive north on the A1 to Otočac, stopping at Majerovo vrilo, one of the Gacka's three karst source springs, where the water rises at a constant 8–10°C and the restored watermill sits over the outflow. Walk the short circuit and look for grayling holding in the weed.",
+      "afternoon": "Continue to Tonkovića vrilo and the Gacka fly-fishing beats — day permits are sold through the Otočac angling association and the river's brown trout are famously hard. Buy a week's food in Otočac; this is the last full supermarket before Krasno.",
+      "evening": "Dinner in Otočac on Lika staples — sour cabbage, lamb, and the local basa cheese spread.",
+      "dayStats": "118 km drive / 1 h 40 / Gacka springs at 452 m / river temperature 8–10°C year-round / last full supermarket for 4 days",
+      "sleep": "Guesthouse or hotel in Otočac"
+    },
+    {
+      "day": 2,
+      "title": "Kuterevo bears and the climb to Zavižan",
+      "morning": "Drive 20 km to Kuterevo for the Velebit Refuge for Young Bears, a volunteer-run sanctuary founded in 2002 that keeps orphaned bears that could never be returned to the wild. It opens roughly 09:00–17:00 in spring, summer and autumn, closes in winter so the animals are not disturbed, and asks for a donation rather than a ticket. Rules are strict and non-negotiable: no feeding, no noise, no reaching over barriers.",
+      "afternoon": "Drive via Krasno — stop at Velebit House (Kuća Velebita), the park's interpretation centre — then up through Oltari onto the macadam to Zavižan. Walk the Velebit Botanical Garden loop below the hut, established 1967 in a dolina at 1,480 m, and the 15-minute path to Vučjak (1,644 m) for the whole Kvarner archipelago at once.",
+      "evening": "Dinner is whatever the hut is cooking — usually soup and something stewed — eaten at long tables with mountaineers. Cash only.",
+      "dayStats": "62 km drive / last 8.5 km unsealed / Zavižan 1,594 m / NP 1-day ticket €7, Velebit House €6, combined €10 / hut has generator power only",
+      "sleep": "Planinarski dom Zavižan, bunkroom"
+    },
+    {
+      "day": 3,
+      "title": "Premužić Trail to Alan",
+      "morning": "Start at 07:00 on the Premužić Trail, the dry-stone path built 1930–33 by forest engineer Ante Premužić across the most broken limestone in the range. The Zavižan–Alan section runs roughly 16 km with modest cumulative ascent but constant undulation, threading the Rožanski kukovi strict reserve — a chaos of towers and shafts including Lukina jama, one of the deepest caves in the world at over 1,400 m.",
+      "afternoon": "Drop into the Lubenovac basin, a grassy karst polje ringed by rock where shepherds summered until the 1960s. This is the day's best chance of wolf or bear sign — scat, hair on fence posts, torn stumps.",
+      "evening": "At Alan, the park's restored shepherd huts have wood stoves and solar lighting. Cook what you carried, then sit outside; on a clear night the Adriatic light pollution stops at the ridge and the sky is genuinely dark.",
+      "dayStats": "16 km walk / 450 m cumulative ascent, 600 m descent / 5–6 h / no water source en route, carry 3 L / Alan hut €140–€200 for 7–10 people",
+      "sleep": "Alan shepherd huts, Northern Velebit NP"
+    },
+    {
+      "day": 4,
+      "title": "A slow day in Štirovača old-growth forest",
+      "morning": "Deliberately unhurried. Drive or arrange a park lift down the Alan spur and across to Štirovača, a valley of old-growth Norway spruce at 1,050–1,200 m that feels nothing like the bare ridge — moss, deadwood, cold air pooling even in August. Walk 6–8 km on the forest track and the marked loop, slowly, looking up.",
+      "afternoon": "Nap, read, do nothing. If it is September or October and you are outside the national park boundary, this is legal mushroom country: ceps, chanterelles, saffron milkcaps, within the 3 kg personal limit. Take nothing you cannot name twice.",
+      "evening": "Grill on the hut's built fireplace if the fire ban permits, otherwise the stove. Wolves in this valley call most often in the two hours after dark in late autumn.",
+      "dayStats": "14 km forest road, high-clearance advised / 6–8 km walk / valley floor 1,050 m / mushroom limit 3 kg pp/day, zero inside NP boundaries / no signal all day",
+      "sleep": "Alan shepherd huts or Lubenovac hut (€100, sleeps 4)"
+    },
+    {
+      "day": 5,
+      "title": "Cerovac caves and the crossing to the sea",
+      "morning": "Descend the eastern flank via Baške Oštarije (928 m), the historic pass village where the road crosses the range, then drive south to the Cerovac caves near Gračac — three linked systems in the Crnopac massif, with the Upper and Lower caves developed for visitors, Pleistocene cave-bear bones in the sediment and a constant 8°C inside. Take a fleece.",
+      "afternoon": "Continue to Starigrad-Paklenica and walk the first, easy hour of the Velika Paklenica canyon, past the anchor-studded Anića kuk wall where climbers have been working 350 m of limestone since the 1930s.",
+      "evening": "Fish and grilled squid on the coast road, with the whole Velebit wall behind you turning orange.",
+      "dayStats": "165 km drive / Baške Oštarije pass 928 m / cave interior 8°C / Paklenica 1-day adult €9.50 May–Sep, €7.60 Mar–Apr & Oct, €4.75 winter",
+      "sleep": "Family hotel in Starigrad-Paklenica"
+    },
+    {
+      "day": 6,
+      "title": "Paklenica canyon, Manita peć and the mountain hut",
+      "morning": "Walk Velika Paklenica to the Manita peć cave (an add-on ticket, opening days limited outside summer — usually a few fixed days a week in spring and autumn), 90 minutes up with a 500 m climb off the canyon floor and a guided 30-minute tour inside.",
+      "afternoon": "Continue to Lugarnica, the forester's house that serves soup and beer in season, then to Planinarski dom Paklenica at 480 m. Those with legs left can push toward Vaganski vrh (1,757 m), the range high point, but it is a full day in itself.",
+      "evening": "Eat at the hut. Below you the canyon funnels cold air down after sunset — even in July it drops sharply.",
+      "dayStats": "14 km round trip / 850 m ascent / Manita peć at 570 m, interior 400 m of passage / hut at 480 m / 600+ equipped climbing routes in the canyon",
+      "sleep": "Planinarski dom Paklenica, or back down in Starigrad"
+    },
+    {
+      "day": 7,
+      "title": "Bura, the coast road and out",
+      "morning": "Check the wind before anything else. If the bura is running, the Adriatic Highway under Velebit is where it hits hardest — gusts over 200 km/h have been recorded near Maslenica, and Croatian police impose vehicle-category bans rather than closing the road outright. If it is calm, walk the short Mala Paklenica canyon, far quieter than its big sister.",
+      "afternoon": "Drive the old coast road south through Seline and Rovanjska, then over the Maslenica bridge with the whole karst wall on your left.",
+      "evening": "Last dinner in Zadar's old town before the airport, 20 minutes away.",
+      "dayStats": "85 km to ZAD / bura gusts recorded above 200 km/h at Maslenica / A1 Sveti Rok–Maslenica is the alternative when the coast road is restricted / vehicle bans posted by HAK",
+      "sleep": "Zadar or airport hotel"
+    }
+  ],
+  "accommodationStrategy": [
+    {
+      "rank": 1,
+      "name": "Planinarski dom Zavižan",
+      "style": "mountain hut",
+      "location": "1,594 m, Northern Velebit NP",
+      "description": "Staffed year-round beside the meteorological station and the botanical garden, with bunkrooms, a wood stove and a kitchen serving whatever is on. It is the only way to be on the ridge at dawn without a tent, and the price is a fraction of anything on the coast. Bring cash, a sleeping bag liner and earplugs.",
+      "booking": null,
+      "priceNote": null
+    },
+    {
+      "rank": 2,
+      "name": "Alan and Lubenovac shepherd huts",
+      "style": "restored stone huts",
+      "location": "Northern Velebit NP",
+      "description": "The park rents restored shepherds' huts as whole units: Alan sleeps 7–10 for roughly €140–€200 a night, Lubenovac sleeps 4 for around €100, tourist tax extra. Solar lighting, wood stove with firewood supplied, cistern water, no shop for 25 km. Book direct with the park office — this is the trip's defining night.",
+      "booking": null,
+      "priceNote": null
+    },
+    {
+      "rank": 3,
+      "name": "A family hotel in Starigrad-Paklenica",
+      "style": null,
+      "location": "coastal base for the canyon days",
+      "description": "Starigrad's small family-run hotels sit within 10 minutes of the Paklenica gate, have parking, and give you a shower and a washing machine after three off-grid nights. Around €80–€120 a double in shoulder season, more in August. The trade-off is traffic noise from the coast road: ask for a rear room.",
+      "booking": null,
+      "priceNote": null
+    }
+  ],
+  "logistics": {
+    "connectivity": "Croatia is in the EU, so EU roaming applies with no surcharge. Coverage is good on the coast and in Lika villages, absent in Štirovača, Lubenovac and most of the Premužić Trail. Download offline tiles for the whole massif before Krasno.",
+    "emergency": "112 for everything; it dispatches HGSS, the Croatian Mountain Rescue Service, which has stations in Gospić and Zadar. Carry the HGSS app, which transmits coordinates. Rescue on Velebit is slow because access roads are bad — expect hours, not minutes. Insurance should name off-trail hiking and caving if you enter Cerovac beyond the tourist route.",
+    "weather": "The bura is the defining phenomenon — a katabatic north-easterly that accelerates over the ridge and slams the Velebit Channel, strongest between Senj and Maslenica, most frequent October–April but possible any month. It arrives fast and can make ridge walking impossible. Summer thunderstorms build over the plateau from mid-afternoon; on bare karst there is no shelter, so be off the ridge by 15:00.",
+    "bookingWindows": "NP shepherd huts at Alan and Lubenovac go early for July–August weekends — book two to three months ahead by email. Zavižan cannot be reliably reserved for individuals in peak weeks; phone ahead. Manita peć runs on a limited weekly schedule outside summer, so check the Paklenica site before committing a day to it.",
+    "money": "Croatia uses the euro (since January 2023) and is in Schengen. Cards work in towns; the mountain huts, Kuterevo's donation box and the Štirovača area are cash. Carry €150 in small notes. Tipping is rounding up, or 10% for a sit-down meal.",
+    "transportRules": "The A1 is tolled — Zagreb to Zadar is roughly €20 by car — and paid at barriers by card or cash; there is no vignette. Rental agreements often prohibit unsealed roads: read the contract, because Oltari–Zavižan and Štirovača are exactly the sort of track that voids a CDW. Cross-border into Bosnia or Slovenia needs a green card and prior permission from the rental desk.",
+    "permits": "Northern Velebit NP charges €7 for a basic one-day ticket, €6 for Velebit House, €10 combined; guided ranger days run around €60 per adult. Paklenica charges €4.75–€9.50 per day depending on season, with 3- and 5-day passes. Camping and open fires are banned in both parks. The Rožanski and Hajdučki kukovi are strict reserves: stay on the Premužić Trail. Drones need Croatian CAA registration and are banned over national parks without written permission.",
+    "health": "Tap water in Lika towns is potable; cistern water at the huts should be treated. Ticks are abundant April–October in Lika's forest and grassland, and tick-borne encephalitis is present in continental Croatia — consider vaccination and check nightly. Nose-horned viper (*Vipera ammodytes*) lives on sunny Velebit scree; watch where you put your hands, and the antivenom is in Zadar and Gospić hospitals, not in the mountains. There is no water on the ridge — dehydration is the single most common problem HGSS deals with here.",
+    "gettingThere": null,
+    "other": []
+  },
+  "proTips": [
+    "Do the Premužić Trail south to north from Alan if you can arrange a car swap — the light is better on your back, and you finish at Zavižan with a hut instead of a hut-less saddle.",
+    "Ask the Northern Velebit park office to leave the Alan hut key at the Babić Siča entrance station rather than Krasno; it saves a 40-minute detour on a bad road.",
+    "Kuterevo's refuge runs on volunteers and donations, not ticket revenue. Turn up mid-morning on a weekday, buy something from the wood-carving stall, and skip the weekend coach hours.",
+    "Fill every water container in Krasno. There is no potable tap between Oltari and Baške Oštarije, a distance of 40 km along the ridge.",
+    "If the bura forecast is above force 8, move the Paklenica days earlier and the Zavižan days later — the ridge is unpleasant but the coast road is the part that actually gets restricted.",
+    "Štirovača is state forest with active logging. Phone Hrvatske šume in Gospić the day before, or simply reverse out of the valley if you meet a loaded lorry — they cannot.",
+    "Buy the Paklenica 3- or 5-day ticket if you plan two canyon days plus Manita peć; the arithmetic beats two singles.",
+    "September is the best week of the year here: beech mast brings bears low, mushrooms are up, the bura has not started, and the huts are half empty after the Croatian holiday exodus ends.",
+    "Carry a 20-litre dry bag as your Zavižan-to-Alan luggage. Nothing on this trip is wheelable, and the park's vehicle transfer is not guaranteed."
+  ],
+  "typeSpecific": {
+    "raw": {
+      "Remote access — the Oltari–Zavižan road": "From Krasno the asphalt runs 12 km to Oltari (1,050 m), after which 8.5 km of narrow, potholed macadam climbs to Zavižan at 1,594 m. A normal hatchback manages it dry and slowly (allow 35–40 minutes); after heavy rain the gravel scours into ruts and a high-clearance vehicle earns its money. It is snow-blocked roughly late November to mid-May, and the park closes the barrier at Babić Siča. The Štirovača forest road from Baške Oštarije is 14 km of active logging track — genuinely 4x4 or high-clearance after rain, and closed without notice when timber lorries are working.",
+      "Last-mile walk-ins": "Alan shepherd huts sit at the end of a rough 6 km spur from the Alan saddle; Lubenovac is a 25-minute walk from the nearest turning circle. Zavižan hut is a 400 m walk from the car park. Budget a rucksack, not a wheeled case.",
+      "Transfers": "Northern Velebit NP (npsv@np-sjeverni-velebit.hr, +385 53 665 380) will arrange a ranger vehicle to the huts for luggage on request; local taxi and shuttle work out of Otočac and Senj rather than Krasno. There is no bus to Zavižan at any time of year.",
+      "Wilderness isolation — Level 4 of 5 at Zavižan and Štirovača": "45 min to paved road at Krasno, no permanent neighbours within 6 km, nearest shop and fuel in Krasno (roughly 25 km, closes 19:00 and Sunday afternoons), nearest pharmacy in Otočac (48 km), nearest hospital Opća bolnica Gospić (about 1 h 20). Paklenica drops this to Level 2: Starigrad has shops, a pharmacy and Zadar hospital 50 minutes away.",
+      "Off-grid reality": "Velebit is pure karst — no springs, no streams, no surface water anywhere on the ridge. The huts run on rainwater cisterns and delivered tanks, and cistern water should be boiled or filtered even where locals drink it. Zavižan has a generator and limited hours of power; the shepherd huts at Alan and Lubenovac are solar with a wood-burning stove, firewood provided by the park, dry composting or chemical toilets, and no shower in some units. Bring 3 litres per person per day, a head torch, a power bank, matches, and all food: the last shop is Krasno.",
+      "Phone signal": "Patchy A1/HT coverage on the Zavižan summit ridge, nothing in Štirovača or the Lubenovac basin, good on the Paklenica coast. Download offline maps; the Premužić Trail is well marked but the side branches to Alan are not.",
+      "Foraging rules": "Croatia's protected-species ordinance caps wild mushrooms at 3 kg per person per day for personal use, with commercial collection requiring a permit and a certified sorter; picking is banned outright inside national park zones (Northern Velebit and Paklenica), and permitted with the personal-use limit in the surrounding Velebit Nature Park and Lika state forests. Berries and herbs are capped separately (typically 2 kg of berries, 1 kg of dried herb material). Edelweiss, Velebit degenia (*Degenia velebitica*, the massif's endemic yellow crucifer) and all orchids are strictly protected — photograph only. Have any mushroom haul checked at a mycological inspection point; the nearest reliable ones are in Gospić and Rijeka, run through the county public-health institutes.",
+      "Wildlife": "Brown bear (roughly 1,000 in Croatia, concentrated in Gorski kotar and Lika) is active at dawn and dusk from April to November, feeding on beech mast in September–October. Grey wolf packs use the Štirovača–Lubenovac corridor; Eurasian lynx, reintroduced to the Dinarides in 1973 and still numbering only a few dozen in Croatia, is present but effectively unseeable. Ethical rules: no baiting, no playback calls, no approaching a sow with cubs, keep dogs leashed, and never leave food outside a hut. Kuterevo's refuge is a sanctuary, not a zoo — bears there are orphans that cannot be released.",
+      "Fire and open flame": "Croatia's high fire-risk season on the coastal slope runs 1 June–31 October, when open fires, barbecues outside built fireplaces and stubble burning are banned in and near forest; fines run into four figures. Cooking is on hut stoves only. Inland Lika is less restricted but the same common sense applies in an August drought."
+    },
+    "surface": null,
+    "distanceKm": null,
+    "elevationM": null,
+    "verticalM": null,
+    "technicalRating": null,
+    "transitPass": null,
+    "hutBooking": null,
+    "liftNetwork": null,
+    "snowReliability": null,
+    "windConditions": null,
+    "gpxReady": null,
+    "bookingTimeline": null,
+    "audience": null
+  },
+  "packingNotes": [],
+  "whatCouldGoWrong": [],
+  "sources": {
+    "verified": "Northern Velebit NP price list (basic 1-day €7, Velebit House €6, combined €10, ranger day €60, Alan shepherd huts €140–€200 for 7–10 people, Lubenovac €100 for 4, tourist tax from €1.90, office +385 53 665 380 / npsv@np-sjeverni-velebit.hr); Paklenica online ticket pricing tiers (€9.50 peak, €7.60 shoulder, €4.75 low season, 5-day €28.50, Manita peć and visitor centre ticketed separately, 600+ equipped climbing routes); Kuterevo bear refuge open spring–autumn, closed in winter for hibernation, roughly 09:00–17:00, volunteer-staffed.",
+    "confidenceNotes": "The 3 kg per person per day mushroom limit is the widely cited Croatian personal-use figure but the ordinance is amended periodically — re-verify against the current *Pravilnik* before publishing, and confirm the Gospić mycological inspection point still operates. Cerovac caves ticket prices and tour times were not confirmed this run. Manita peć opening days vary week to week outside July–August. The Oltari–Zavižan road surface and the Štirovača logging-track condition change every season; both should be checked with the park office within a week of travel. Alan spur road condition and whether park vehicle transfers are currently offered need direct confirmation. Bura gust figures near Maslenica are historical records, not typical conditions. Specific Otočac and Starigrad hotels were deliberately left generic — insert verified named properties before publishing."
+  },
+  "verifyFlags": [],
+  "verifyFlagCount": 0,
+  "volatilePricing": false,
+  "wordCount": 3546,
+  "dataVintage": 2026,
+  "provenance": {
+    "batch": "southern-mediterranean",
+    "sourceFile": "carta-dataset/trips/nature-escape-croatia-velebit-lika.md",
+    "sourceFormat": "md with '## Metadata' bullet block (one file per trip)",
+    "sourceId": "nature-escape-croatia-velebit-lika",
+    "ingestedAt": "2026-09-02",
+    "synthesized": false
+  }
+}

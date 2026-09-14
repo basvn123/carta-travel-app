@@ -1,0 +1,294 @@
+{
+  "id": "hu-cozy-towns-danube-bend-cserhat",
+  "sourceId": "hungary-danube-bend-cserhat-cozy-towns",
+  "slug": "hu-cozy-towns-danube-bend-cserhat",
+  "title": "The Bend and the Hills: Szentendre, Esztergom and the Palóc Villages",
+  "country": "Hungary",
+  "countryCode": "HU",
+  "countries": [
+    {
+      "name": "Hungary",
+      "code": "HU"
+    }
+  ],
+  "isMultiCountry": false,
+  "region": "Eastern & Southeastern Europe",
+  "regionKey": "eastern-southeastern",
+  "subRegion": "Danube Bend (Dunakanyar) & the Cserhát Hills, Nógrád County",
+  "tripType": "Cozy Towns Trips",
+  "tripTypeId": 4,
+  "tripTypeSlug": "cozy-towns",
+  "durationDays": 7,
+  "bestPeriod": {
+    "months": [
+      4,
+      5,
+      9,
+      10
+    ],
+    "monthNames": [
+      "April",
+      "May",
+      "September",
+      "October"
+    ],
+    "window": "late April to early June, and the whole of September into mid-October",
+    "note": null,
+    "avoid": "July–August (Szentendre's Fő tér is shoulder-to-shoulder, Danube boats sold out) and January–February (Hollókő shuts down)",
+    "raw": null
+  },
+  "budgetTier": "€",
+  "budgetTierRange": [
+    1,
+    2
+  ],
+  "budgetTierRaw": "€–€€",
+  "budget": {
+    "currency": "EUR",
+    "totalEur": {
+      "low": 580,
+      "high": 970
+    },
+    "totalNote": "€580–€970",
+    "breakdown": {
+      "accommodation": {
+        "lowEur": 300,
+        "highEur": 500,
+        "note": "€300–€500 (€43–€72/night, panzió and village house, 2 bases)"
+      },
+      "food": {
+        "lowEur": 130,
+        "highEur": 215,
+        "note": "€130–€215 (€19–€31/day)"
+      },
+      "transport": {
+        "lowEur": 90,
+        "highEur": 150,
+        "note": "€90–€150 (small hire car for days 4–7, or rail + ferry throughout)"
+      },
+      "activities": {
+        "lowEur": 60,
+        "highEur": 105,
+        "note": "€60–€105 (Skanzen, citadel, basilica cupola, Hollókő castle, museums)"
+      }
+    },
+    "perDayEur": {
+      "low": 83,
+      "high": 139
+    }
+  },
+  "profile": {
+    "difficulty": 1,
+    "difficultyLabel": "Easy",
+    "difficultyNote": "Easy",
+    "fitnessLevel": "Easy",
+    "crowdLevel": null,
+    "familyFriendly": null,
+    "carRequired": null
+  },
+  "basecamps": [
+    "Szentendre",
+    "Hollókő"
+  ],
+  "gatewayAirport": "Budapest Liszt Ferenc (BUD). The **HÉV H5** suburban railway from Batthyány tér reaches Szentendre in about 40 min: a 500 HUF Budapest single plus a suburban supplementary ticket of about 450 HUF for the Békásmegyer–Szentendre section, roughly 950 HUF (~€2.40) each way. A party is better off with MÁV's HÉV *kirándulójegy*, 6,200 HUF for unlimited Békásmegyer–Szentendre travel for up to ten people in a day (2026 tariff). From Day 4, a small hire car picked up in Vác or Budapest makes the Cserhát practical.",
+  "gatewayAirportCode": "BUD",
+  "languages": [
+    "Hungarian"
+  ],
+  "currency": "Hungarian forint (HUF)",
+  "emergencyNumber": "112",
+  "coordinates": {
+    "lat": 47.6694,
+    "lon": 19.0756,
+    "precision": "city",
+    "matchedPlace": "Szentendre",
+    "source": "geonames (geonamescache, cities > 15k)"
+  },
+  "tags": [
+    "cozy-towns",
+    "unesco",
+    "danube",
+    "folk-art",
+    "baroque",
+    "slow-travel",
+    "paloc"
+  ],
+  "summary": "Budapest is forty minutes behind you and it may as well be a different country. This week runs along the Danube where it turns hard south — Serbian church towers in Szentendre, a citadel above Visegrád, Hungary's…",
+  "summaryGenerated": false,
+  "hook": "Budapest is forty minutes behind you and it may as well be a different country. This week runs along the Danube where it turns hard south — Serbian church towers in Szentendre, a citadel above Visegrád, Hungary's largest basilica staring across a bridge into Slovakia — then turns inland into the Cserhát, where Hollókő's whitewashed Ófalu has fifty-eight protected houses, an embroidery tradition still worked by hand, and no traffic. Two beds all week. Ferries, slow trains, long lunches.",
+  "snapshot": {
+    "Country": "Hungary",
+    "Trip type": "Cozy Towns Trips",
+    "Duration": "7 days",
+    "Best period": "Late April–early June; September to mid-October",
+    "Budget tier": "€–€€",
+    "Difficulty": "Easy",
+    "Start / End": "Szentendre → Hollókő → Budapest (one-way, ~180 km total)",
+    "Getting there": "Budapest Liszt Ferenc (BUD). The **HÉV H5** suburban railway from Batthyány tér reaches Szentendre in about 40 min: a 500 HUF Budapest single plus a suburban supplementary ticket of about 450 HUF for the Békásmegyer–Szentendre section, roughly 950 HUF (~€2.40) each way. A party is better off with MÁV's HÉV *kirándulójegy*, 6,200 HUF for unlimited Békásmegyer–Szentendre travel for up to ten people in a day (2026 tariff). From Day 4, a small hire car picked up in Vác or Budapest makes the Cserhát practical."
+  },
+  "itinerary": [
+    {
+      "day": 1,
+      "title": "Serbian Szentendre",
+      "morning": "HÉV H5 from Batthyány tér. Drop bags, walk into **Fő tér** and stand at the Merchants' Cross while the day-trippers are still on the train.",
+      "afternoon": "The **Blagovestenska church** on Fő tér itself (1752, an iconostasis behind a plain baroque street front), then up to the Belgrade Cathedral and the Serbian Ecclesiastical Art Collection in the episcopal quarter — the surviving trace of the Serbs who fled north in 1690.",
+      "evening": "Climb Templom tér for the roofs and the river, then dinner in the old town.",
+      "dayStats": "4 km on foot",
+      "sleep": null
+    },
+    {
+      "day": 2,
+      "title": "Skanzen and Marzipan",
+      "morning": "Bus or a 4 km ride out to **Skanzen**, the Hungarian Open Air Museum on Sztaravodai út — 300-plus relocated buildings across regional villages, including a full Nógrád street. Allow three hours; the internal narrow-gauge railway is running and saves legs, on its own ticket of 1,400 HUF (1,200 HUF reduced). Admission is 4,000 HUF (~€10) full and 2,000 HUF reduced, rising to 5,000/2,500 HUF on festival days such as Easter, Pentecost and St Martin's; under-6s and over-70s free, and free for under-26s on the second Sunday of the month (2026 tariff).",
+      "afternoon": "Back into town for the **Szabó Marzipan** museum and shop on Dumtsa Jenő utca, then the Margit Kovács ceramic collection — Szentendre's best single art holding.",
+      "evening": "A slow supper on Bogdányi utca; Szentendre empties dramatically after the last HÉV crowd goes home.",
+      "dayStats": "12 km round trip",
+      "sleep": null
+    },
+    {
+      "day": 3,
+      "title": "Visegrád by Water",
+      "morning": "Take the **MAHART** boat upriver to Visegrád if the timetable serves, otherwise the H5 to Szentendre station and the bus. The **Royal Palace** of Matthias Corvinus — the Renaissance loggia and the Hercules fountain — sits at river level.",
+      "afternoon": "Up to the **Fellegvár citadel**, 300 m above the river. The bend is the whole point: the Danube swings 90 degrees below you with the Börzsöny on the far bank. Walk or take the shuttle from the Nagyvillám road.",
+      "evening": "Dinner at **Malomkert Panzió** in Visegrád, then the last boat or bus back to Szentendre.",
+      "dayStats": "45 km round trip",
+      "sleep": null
+    },
+    {
+      "day": 4,
+      "title": "Esztergom, and a Bridge into Slovakia",
+      "morning": "Train or car to **Esztergom**. The **Basilica** is the largest church in Hungary — climb the cupola for the Danube and the Slovak hills, and go into the **Bakócz Chapel**, red marble, 1506, dismantled and reassembled stone by stone inside the newer building.",
+      "afternoon": "The Christian Museum in the Primate's Palace, then walk the **Mária Valéria bridge** across to **Štúrovo** in Slovakia — ten minutes, no formalities inside Schengen, and a coffee on the far bank looking back at the dome.",
+      "evening": "Return via **Vác** if the schedule allows: **Március 15. tér**, the 1764 **Triumphal Arch** built by Isidore Canevale for a visit by Maria Theresa, and dinner at **Vén Hajó** on the embankment. Then back to Szentendre and pack.",
+      "dayStats": "55 km each way",
+      "sleep": null
+    },
+    {
+      "day": 5,
+      "title": "Over the Cserhát to Hollókő",
+      "morning": "Collect the car and drive east and north via the M3 and Pásztó. Stop at the **Nógrád** castle ruins on their basalt knoll for twenty minutes and the view over the Cserhát.",
+      "afternoon": "Arrive in **Hollókő** and walk **Ófalu** end to end — two rows of whitewashed houses with carved timber galleries, the wooden-towered church of 1889 at the fork, and the craft houses: weaving, pottery, embroidery, the doll collection.",
+      "evening": "Settle into **Hollókői Vendégház**. Village dinner, a glass of Nógrád wine, and a street with no cars on it after dark.",
+      "dayStats": "95 km, ~1h40",
+      "sleep": null
+    },
+    {
+      "day": 6,
+      "title": "The Castle, and the Palóc Museum",
+      "morning": "Climb to **Hollókő castle** above the village — 13th century, restored, 25 minutes up through oak wood, with the Cserhát ridges laid out in every direction.",
+      "afternoon": "Drive to **Szécsény** for the Forgách castle and the **Kubinyi Ferenc Museum**, then on to **Balassagyarmat** for the **Palóc Museum** — costume, embroidery, the reconstructed Palóc house in the garden [VERIFY: current opening hours for the Palóc Museum and Kubinyi Ferenc Museum].",
+      "evening": "Back to Hollókő the slow way through the villages. Eat where you are staying.",
+      "dayStats": "60 km round trip",
+      "sleep": null
+    },
+    {
+      "day": 7,
+      "title": "Last Morning in Ófalu, then Budapest",
+      "morning": "Buy embroidery directly from the workshop rather than the gift counter, and one piece of black burnished pottery. If it is Easter weekend, stay for the **Húsvéti Fesztivál** — the Palóc costumes come out and the water-throwing *locsolkodás* is real, not staged; the autumn **wine and harvest weekend** is quieter and better for eating [VERIFY: 2027 Hollókő Easter and wine festival dates].",
+      "afternoon": "Drive back to Budapest, dropping the car at the airport or in the city.",
+      "evening": "Fly out, or one last dinner in Budapest with the week's embroidery in your bag.",
+      "dayStats": "105 km, ~1h50",
+      "sleep": null
+    }
+  ],
+  "accommodationStrategy": [
+    {
+      "rank": 1,
+      "name": "A Fő tér-area panzió",
+      "style": "small-town guesthouse",
+      "location": "Szentendre",
+      "description": "four nights without repacking, with the HÉV, the MAHART pier and the bus station all within 10 minutes on foot. That combination is what makes the whole Danube leg car-free.",
+      "booking": "4–6 weeks ahead; longer for the September wine weekend.",
+      "priceNote": null
+    },
+    {
+      "rank": 2,
+      "name": "Malomkert Panzió",
+      "style": "mill-garden guesthouse with restaurant",
+      "location": "Visegrád",
+      "description": "the alternative Danube base if you prefer the citadel side of the bend to Szentendre's crowds — quieter, greener, its own kitchen, and the Nagymaros ferry five minutes away for the rail connection.",
+      "booking": "3–5 weeks ahead direct [VERIFY: current rates].",
+      "priceNote": null
+    },
+    {
+      "rank": 3,
+      "name": "Hollókői Vendégház",
+      "style": "protected village house",
+      "location": "Hollókő Ófalu",
+      "description": "sleeping inside the UNESCO village, not in a hotel below it. Thick whitewashed walls, a timber gallery, and the street to yourself once the coaches leave at five.",
+      "booking": "6–10 weeks ahead, and much further for Easter weekend, when the village is fully booked months out.",
+      "priceNote": null
+    }
+  ],
+  "logistics": {
+    "connectivity": "EU roaming; 4G/5G along the Danube, thinner in the Cserhát but fine in Hollókő.",
+    "emergency": "112. Hospitals at Vác, Esztergom and Salgótarján; Hollókő has no pharmacy, so stock up in Szécsény.",
+    "weather": "the Danube Bend funnels wind and the citadel is 300 m above the river, routinely 5 °C colder and much windier than the bank. Cserhát mornings in October drop close to freezing. Spring Danube high water occasionally closes the Szentendre and Vác embankments and suspends ferry services.",
+    "bookingWindows": "Hollókő 6–10 weeks (Easter: months); Szentendre 4–6 weeks; MAHART boats a few days ahead in season, same-day midweek; nothing else requires reservation.",
+    "money": "forint, roughly **€1 ≈ 390–405 HUF** [VERIFY: current exchange rate]. Cards are near-universal, including on MÁV trains and at Skanzen; carry HUF cash for the Hollókő craft houses, the Nagymaros ferry and village markets. Always decline dynamic currency conversion and pay in HUF.",
+    "transportRules": "Hungarian motorways require an **e-matrica** vignette — a county sticker is enough if you stay off the M3, but the M3 leg needs a national one; hire cars usually include it, so confirm. Trains on the Szob line are MÁV; buy at the machine or the Vonatinfó app. Bikes travel on the HÉV and on Danube boats for a supplement. Drink-driving limit is zero.",
+    "permits": "Ófalu is a living village with residents — photography of house exteriors is fine, of interiors and people only with permission. Drones are prohibited over the Hollókő World Heritage core and over Esztergom Basilica.",
+    "health": null,
+    "gettingThere": null,
+    "other": []
+  },
+  "proTips": [
+    "Do Szentendre's Fő tér **before 10:00 or after 18:00**. The HÉV delivers Budapest day-trippers in a wave mid-morning and reclaims them by early evening; the square is a genuinely quiet baroque space on either side of that.",
+    "Take the **Nagymaros–Visegrád ferry** rather than driving round via Vác. Five minutes across, costs a couple of euros, and the approach to the citadel from the water is the view the palace was designed for.",
+    "At Esztergom, buy the **cupola climb** ticket, not just basilica entry. The nave is free to enter; the dome and the Bakócz Chapel are what you are paying for.",
+    "Eat lunch at **Vén Hajó** in Vác on a weekday. Weekend Danube-side tables are booked out by Budapest families by Friday evening.",
+    "In Hollókő, the craft houses close around 17:00 with the coaches. Arrange your **embroidery purchase in the afternoon of Day 5** so you are not scrambling on the last morning.",
+    "Skanzen's Nógrád section is the same architecture you sleep in three days later. Walk it first, in that order — it turns Hollókő from a pretty street into something you can read.",
+    "Useful Hungarian: *\"Egy kávét kérek\"* and *\"a számlát, legyen szíves\"*. Tipping is 10%, often already added as *szervizdíj* — check the bill."
+  ],
+  "typeSpecific": {
+    "raw": {
+      "Village and town squares by name": "**Fő tér**, Szentendre — the triangular baroque square with the 1763 Merchants' Cross, ringed by former Serbian merchant houses. **Március 15. tér**, Vác — the Danube-facing main square with its Dominican church, above which lies the crypt where the 18th-century mummies were found. **Széchenyi tér**, Esztergom, in the Vízivárosi lower town beneath the basilica hill. **Ófalu**, Hollókő — not a square but a single forked street of 58 protected houses on the slope below the castle, UNESCO-listed in 1987 as the surviving example of a pre-agricultural-revolution Palóc village. **Szécsény's** Kubinyi Ferenc square below the Forgách castle and the leaning fire tower.",
+      "Market days and artisan specialities": "the **Palóc embroidery** of the Nógrád villages — dense red-and-blue floral work on white linen, distinct from Kalocsa's brighter style and still stitched to order in Hollókő and Balassagyarmat. **Palóc pottery**, black-fired and burnished, sold in the Ófalu craft houses. **Szabó Marzipan** in Szentendre, Dumtsa Jenő utca, with its museum room and Hungarian Parliament sculpted in almond paste. Szentendre's produce market off Bükkös part runs strongest on Friday and Saturday mornings; Vác's covered market and Balassagyarmat's weekly market follow the standard Hungarian rhythm of early mornings and Wednesday/Saturday peaks [VERIFY: current market days for Szentendre, Vác and Balassagyarmat]. The **Palóc Museum** in Balassagyarmat, founded 1891, is the reference collection for both traditions.",
+      "Boutique and characterful stays": "**Malomkert Panzió** in Visegrád, a mill-garden guesthouse with its own restaurant a short walk from the Royal Palace [VERIFY: current rates and restaurant hours]. **Hollókői Vendégház** — village houses inside the protected Ófalu, whitewashed, timber-galleried, some with a *kemence* stove [VERIFY: current rates and which houses are let]. **Vén Hajó** in Vác, the moored-boat restaurant on the Danube embankment, for a long lunch [VERIFY: current hours and seasonal operation]. **Prima Pékség** for morning pastry and coffee — the reliable small-town bakery counter for a *kakaós csiga* before a train [VERIFY: exact branch locations in Szentendre and Vác].",
+      "Deliberate slow-travel pacing (max one relocation per two days)": "**two bases only.** **Szentendre nights 1–4** covers Szentendre itself, Visegrád, Esztergom and Vác by boat, ferry and train, with no packing. **Hollókő nights 5–7** covers Nógrád, Szécsény and Balassagyarmat within a 35 km radius. The single relocation is Szentendre → Hollókő, about 95 km and 1h40 by car via the M3 and the road through Pásztó. Everything on the Danube leg can be done without a car: the **MAHART PassNave** hydrofoil and boat services run Budapest–Szentendre–Visegrád–Esztergom on a seasonal timetable. In 2026 the Budapest–Szentendre–Leányfalu–Visegrád excursion boat ran 22 June to 30 August, Thursday to Sunday, at 7,500 HUF one-way and 9,000 HUF return; the *Bíbic* hydrofoil ran May to September on selected weekends, 11,000 HUF to Visegrád and 13,000 HUF to Esztergom one-way, advance booking only because there is no on-board sale. Treat the timetable as conditional: low water on the Danube suspended or rerouted the Budapest–Szentendre, Budapest–Visegrád and hydrofoil services from 13 July to 13 September 2026, so check mahartpassnave.hu before you build a day around a boat; the Budapest Nyugati–**Szob** line stops at **Nagymaros-Visegrád** and at **Szob**, and the small **Nagymaros–Visegrád ferry** crosses in five minutes, on demand, all year."
+    },
+    "surface": null,
+    "distanceKm": null,
+    "elevationM": null,
+    "verticalM": null,
+    "technicalRating": null,
+    "transitPass": null,
+    "hutBooking": null,
+    "liftNetwork": null,
+    "snowReliability": null,
+    "windConditions": null,
+    "gpxReady": null,
+    "bookingTimeline": null,
+    "audience": null
+  },
+  "packingNotes": [],
+  "whatCouldGoWrong": [],
+  "sources": {
+    "verified": null,
+    "confidenceNotes": "- Verified: Hollókő Ófalu's 1987 UNESCO inscription and its 58 protected houses; Szentendre's Serbian heritage after 1690 and the Blagovestenska church of 1752; Vác's 1764 Triumphal Arch by Isidore Canevale; Esztergom Basilica as Hungary's largest church and the 1506 Bakócz Chapel; the Mária Valéria bridge to Štúrovo; Visegrád's Fellegvár and Royal Palace; the Palóc Museum, founded 1891; distances on the Danube Bend and Cserhát legs. - Verified 2026-09-02: the HÉV H5 fare structure — Budapest single plus suburban supplement, and MÁV's 6,200 HUF ten-person excursion ticket (bkk.hu, mavcsoport.hu); MAHART PassNave's 2026 Danube Bend timetable and fares, and the low-water suspensions of 13 July–13 September 2026 (mahartpassnave.hu); Skanzen admission, festival-day pricing and the kisvasút fare (skanzen.hu). - `[VERIFY]` items in this file: 9 (see inline markers above) - Last reviewed: 2026-09-02"
+  },
+  "verifyFlags": [
+    "current market days for Szentendre, Vác and Balassagyarmat",
+    "current rates and restaurant hours",
+    "current rates and which houses are let",
+    "current hours and seasonal operation",
+    "exact branch locations in Szentendre and Vác",
+    "current opening hours for the Palóc Museum and Kubinyi Ferenc Museum",
+    "2027 Hollókő Easter and wine festival dates",
+    "current rates",
+    "current exchange rate"
+  ],
+  "verifyFlagCount": 9,
+  "volatilePricing": true,
+  "wordCount": 2371,
+  "dataVintage": 2026,
+  "provenance": {
+    "batch": "eastern-southeastern",
+    "sourceFile": "cartaeasterneuropetrips/trips/hungary-danube-bend-cserhat-cozy-towns.md",
+    "sourceFormat": "md+nested-yaml-frontmatter (one file per trip)",
+    "sourceId": "hungary-danube-bend-cserhat-cozy-towns",
+    "ingestedAt": "2026-09-02",
+    "synthesized": false
+  }
+}

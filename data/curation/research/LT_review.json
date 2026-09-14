@@ -1,0 +1,212 @@
+{
+  "iso2": "LT",
+  "country": "Lithuania",
+  "checked_at": "2026-08-17",
+  "beaches": {
+    "wrong": [
+      {
+        "name": "Baltijos Pajuris",
+        "class": "duplicate_of:Palangos paplūdimys",
+        "why": "Tier 1 rank 1 and the country's top_beach. 'Baltijos pajūris' is Lithuanian for 'the Baltic seaside', a generic descriptor rather than a place name, sitting on the Palanga strand 0.3 km from the town and about 2 km from tier 1 rank 6 'Palangos paplūdimys', which is the same beach under its real name. Note tier 2 ranks 20 and 22 are 'Baltic Seaside' and 'Baltijos Jūra', the same phrase again.",
+        "source_url": "https://www.openstreetmap.org/#map=15/55.9196/21.0719"
+      },
+      {
+        "name": "Palangos jura",
+        "class": "duplicate_of:Palangos paplūdimys",
+        "why": "Tier 1 rank 4. 'Palangos jūra' means 'the Palanga sea'. It is the water, not a beach, and it is 200 m from tier 1 rank 6, the actual Palanga beach.",
+        "source_url": "https://www.openstreetmap.org/#map=16/55.9127/21.0510"
+      },
+      {
+        "name": "Užupis Beach",
+        "class": "not_notable",
+        "why": "Tier 1 rank 9. A small urban river beach on the Vilnia in the Užupis district of Vilnius, 300 km from the sea. It also carries a bogus 'national_park' designation, since Vilnius city centre is in no national park, which is what lifted its score to 0.87.",
+        "source_url": "https://www.openstreetmap.org/#map=16/54.6787/25.2974"
+      },
+      {
+        "name": "Ginučių vandens malūno paplūdimys",
+        "class": "not_notable",
+        "why": "Tier 1 rank 8. The swimming spot beside the Ginučiai water mill in Aukštaitija National Park: a lakeside patch by a museum mill, not one of Lithuania's nine best beaches. Same inherited 'national_park' designation bonus.",
+        "source_url": "https://www.openstreetmap.org/#map=15/55.3856/25.9947"
+      },
+      {
+        "name": "Akmeninis papludimys",
+        "class": "duplicate_of:Akmena Nudist Beach",
+        "why": "Tier 2 ranks 10, 11 and 12 are 'Akmena Nudist Beach' (54.6604,24.9041), 'Akmeninis papludimys' (54.6685,24.9073) and 'Akmenos Nudistu Papludimys' (54.6603,24.9046). Rows 10 and 12 are 40 m apart and are the same beach transliterated twice.",
+        "source_url": "https://www.openstreetmap.org/#map=15/54.6604/24.9041"
+      },
+      {
+        "name": "Platelių Jachtklubas",
+        "class": "hospitality",
+        "why": "Tier 2 rank 17. The Plateliai yacht club, a members' club and marina on the lake in Žemaitija National Park, listed as a beach.",
+        "source_url": "https://www.openstreetmap.org/#map=15/56.0474/21.8320"
+      },
+      {
+        "name": "Platelių Ežeras",
+        "class": "other",
+        "why": "Tier 2 rank 16. Plateliai Lake, the lake itself, listed as a beach; it duplicates tier 2 rank 14 'Linelis Plateliai' at 56.0537,21.8805 (30 m away).",
+        "source_url": "https://www.openstreetmap.org/#map=14/56.0534/21.8793"
+      }
+    ],
+    "missing": [
+      {
+        "name": "Nida",
+        "qid": "Q1004306",
+        "lat": 55.30397,
+        "lon": 21.00532,
+        "why": "The Nida beach on the Curonian Spit is the most famous shoreline in Lithuania and part of a UNESCO World Heritage site. It appears in the wire only as a tier 2 row called 'Baltic Sea, Nida' at rank 19 with score 0.35, below the Plateliai yacht club.",
+        "source_url": "https://www.wikidata.org/wiki/Q1004306",
+        "verified": true
+      },
+      {
+        "name": "Curonian Spit",
+        "qid": "Q5595",
+        "lat": 55.27444,
+        "lon": 20.97083,
+        "why": "The UNESCO World Heritage dune peninsula that carries Lithuania's best beaches end to end. Not one tier 1 beach slot goes to it; the Lithuanian Beaches tab is a Palanga tab.",
+        "source_url": "https://www.wikidata.org/wiki/Q5595",
+        "verified": true
+      },
+      {
+        "name": "Juodkrantė",
+        "qid": "Q20990",
+        "lat": null,
+        "lon": null,
+        "why": "The second resort of the Curonian Spit, with the Hill of Witches and a long sea beach. Absent from the file at every tier. The Wikidata item carries no P625, so no coordinate is asserted here.",
+        "source_url": "https://www.wikidata.org/wiki/Q20990",
+        "verified": false
+      },
+      {
+        "name": "Šventoji",
+        "qid": null,
+        "lat": null,
+        "lon": null,
+        "why": "The northernmost Lithuanian seaside resort, above Palanga at the Latvian border, a standard family beach destination. Absent. I could not confirm a Wikidata item for the resort within this check, so it is recorded unverified.",
+        "source_url": null,
+        "verified": false
+      },
+      {
+        "name": "Nemirseta Beach",
+        "qid": null,
+        "lat": 55.8734,
+        "lon": 21.0567,
+        "why": "The quiet dune beach between Palanga and Klaipėda, at the northern edge of the Seaside Regional Park. It IS in the wire but at tier 2 rank 18, below three Trakai lake rows and the Plateliai yacht club. The coordinates are those the wire already holds; no Wikidata item confirmed.",
+        "source_url": null,
+        "verified": false
+      }
+    ],
+    "order": [
+      "Seven of the nine tier 1 beaches are the Palanga strand under seven names, plus Melnragė and Smiltynė at Klaipėda. Two more Palanga aliases sit in tier 2. Lithuania has only about 90 km of coast, so a Palanga-heavy list is not absurd, but seven slots for one 4 km beach is.",
+      "Ranks 1 to 7 are all tied at score 0.94 and are in alphabetical order (Baltijos, Birutės, I Melnragė, Palangos jura, Palangos moterų, Palangos paplūdimys, Smiltyne). Ties are being broken by name, so 'the best beach in Lithuania' is decided by the letter B.",
+      "'Baltic Sea, Nida' at tier 2 rank 19 with score 0.35 is the single most misplaced row in the country: the Curonian Spit at UNESCO level, ranked below a yacht club and three nudist-beach aliases at Trakai.",
+      "The two national park rows (Ginučiai mill, Užupis) are ranked 8 and 9 purely on an inherited designation, and one of the two designations is factually wrong."
+    ]
+  },
+  "mountains": {
+    "wrong": [
+      {
+        "name": "Veršvai hillfort",
+        "class": "not_notable",
+        "why": "Tier 1 rank 4. An archaeological hillfort site (piliakalnis) on the edge of Kaunas. Lithuania has no mountains, so hillforts are a fair substitute in principle, but Veršvai is a minor suburban one; the country's two actual high points are absent.",
+        "source_url": "https://www.openstreetmap.org/#map=15/54.9175/23.8389"
+      },
+      {
+        "name": "Pelėdų kalnas",
+        "class": "not_notable",
+        "why": "Tier 1 rank 5. Owl Hill, a wooded slope inside Kaunas city, 600 m from the centre. A city park hill ranked fifth nationally.",
+        "source_url": "https://www.openstreetmap.org/#map=16/54.9004/23.9002"
+      },
+      {
+        "name": "Preila hill",
+        "class": "not_notable",
+        "why": "Tier 1 rank 6. An unnamed rise near Preila on the Curonian Spit, with no article and no elevation, ranked above Vecekrugas, which is the spit's highest dune at 67 m and is absent from the file.",
+        "source_url": "https://www.openstreetmap.org/#map=15/55.3649/21.0485"
+      },
+      {
+        "name": "Purvyne Dune",
+        "class": "not_notable",
+        "why": "Tier 1 rank 7. A minor spit dune, in tier 1 while the Dead Dunes of the Nagliai strict reserve and Vecekrugas dune are missing entirely.",
+        "source_url": "https://www.openstreetmap.org/#map=15/55.3269/21.0234"
+      },
+      {
+        "name": "Gedimino Kalnas",
+        "class": "duplicate_of:Gediminas Hill",
+        "why": "Tier 2 ranks 9 and 10 are 'Gediminas Hill' (54.6869,25.2915) and 'Gedimino Kalnas' (54.6869,25.2914), the English and Lithuanian names of the same Vilnius castle hill at coordinates that differ by 10 cm.",
+        "source_url": "https://www.wikidata.org/wiki/Q9283406"
+      }
+    ],
+    "missing": [
+      {
+        "name": "Aukštojas Hill",
+        "qid": "Q771431",
+        "lat": 54.52944,
+        "lon": 25.63444,
+        "why": "293.84 m, the highest point of Lithuania, in the Medininkai uplands southeast of Vilnius. Absent from the file at every tier. For a flat country the national high point is exactly the row a Mountains tab exists to show.",
+        "source_url": "https://www.wikidata.org/wiki/Q771431",
+        "verified": true
+      },
+      {
+        "name": "Juozapinė Hill",
+        "qid": "Q1566132",
+        "lat": 54.52722,
+        "lon": 25.61944,
+        "why": "293.6 m, the second highest point of Lithuania and for decades believed to be the first; it carries the summit monument and the visitor infrastructure. Absent.",
+        "source_url": "https://www.wikidata.org/wiki/Q1566132",
+        "verified": true
+      },
+      {
+        "name": "Vecekrugas Dune",
+        "qid": "Q16475711",
+        "lat": 55.35444,
+        "lon": 21.03861,
+        "why": "67 m, the highest dune on the Curonian Spit, above Preila. Absent, while an unnamed 'Preila hill' 3 km away holds tier 1 rank 6.",
+        "source_url": "https://www.wikidata.org/wiki/Q16475711",
+        "verified": true
+      },
+      {
+        "name": "Nagliai Nature Strict Reserve",
+        "qid": "Q20504110",
+        "lat": 55.47295,
+        "lon": 21.08995,
+        "why": "The Dead Dunes (Grey Dunes), the most spectacular dune landscape in Lithuania and a fixture of every Curonian Spit itinerary. Absent; the only 'Nagl' string in the file is 'Naglio kalnas' at Palanga, a different feature.",
+        "source_url": "https://www.wikidata.org/wiki/Q20504110",
+        "verified": true
+      },
+      {
+        "name": "Ladakalnis",
+        "qid": "Q4252502",
+        "lat": 55.36636,
+        "lon": 25.99075,
+        "why": "The classic viewpoint hill over the six lakes of Aukštaitija National Park, on every Lithuanian tourism poster. It is in the wire but at tier 2 rank 13, below two Kaunas city hills and two unnamed spit bumps.",
+        "source_url": "https://www.wikidata.org/wiki/Q4252502",
+        "verified": true
+      },
+      {
+        "name": "Castle Hill (Gediminas Hill)",
+        "qid": "Q9283406",
+        "lat": 54.6867,
+        "lon": 25.2914,
+        "why": "The hill under Gediminas' Tower in Vilnius, the national symbol of Lithuania. Sitting at tier 2 ranks 9 and 10 as two duplicate rows.",
+        "source_url": "https://www.wikidata.org/wiki/Q9283406",
+        "verified": true
+      },
+      {
+        "name": "Rambynas",
+        "qid": "Q1793504",
+        "lat": 55.0875,
+        "lon": 22.02111,
+        "why": "46 m, the sacred hill above the Nemunas at the former Prussian border, a national heritage site with its own regional park. Absent.",
+        "source_url": "https://www.wikidata.org/wiki/Q1793504",
+        "verified": true
+      }
+    ],
+    "order": [
+      "Ranks 1 to 3 are good. Parnidis dune (rank 1) is the emblem of the Curonian Spit and a fair national number one for a country with no mountains; Birutė Hill at Palanga (rank 2) and the Gliders' dune (rank 3) are both real, well known features.",
+      "Ranks 4 to 7 are indefensible: two Kaunas city slopes and two unnamed spit bumps, chosen over the national high point (Aukštojas), the second high point (Juozapinė), the spit's highest dune (Vecekrugas), the Dead Dunes and Gediminas Hill.",
+      "Ladakalnis at tier 2 rank 13 is the clearest 'too low' call in the country: it is the standard postcard viewpoint of Aukštaitija.",
+      "Ranks 5, 6 and 7 are all tied at 0.81, and ranks 8 to 16 are all tied at 0.68, so the tier 1 and tier 2 boundary again cuts through a flat score band."
+    ]
+  },
+  "counts_verdict": "24 beaches and 18 mountains are reasonable magnitudes for a country with 90 km of coast and a 294 m high point, and 9 tier 1 beaches and 7 tier 1 mountains are sensible tier sizes. The distribution is the problem: after folding duplicates the 9 tier 1 beaches are really about 3 places (Palanga, Melnragė, Smiltynė), and the Curonian Spit, which is the reason anyone visits the Lithuanian coast, has no tier 1 beach at all. For the mountains, 18 rows that exclude both national high points means the recall, not the count, is the failure.",
+  "top_pick_verdict": "top_beach 'Baltijos Pajuris' is a no: it is a generic phrase meaning 'the Baltic seaside' and it would look like a placeholder on a country card. The card should show Nida on the Curonian Spit (Q1004306) or, if a resort is wanted, Palanga beach under its own name. top_mountain 'Parnidis dune' is a yes and I would keep it: the Parnidis dune with its sundial above Nida is the correct visual shorthand for Lithuanian relief, and it is the one top pick in this whole group I would ship unchanged.",
+  "notes": "Two joins are demonstrably wrong here. Užupis Beach in central Vilnius carries a 'national_park' designation, which is false and is the only reason it reached tier 1; the same designation is what promoted the Ginučiai mill swimming spot. Separately, every tie in this country is broken alphabetically, visible in tier 1 beaches ranks 1 to 7 at a flat 0.94 running B, B, I, P, P, P, S. That means the top pick for Lithuania was chosen by sort order."
+}

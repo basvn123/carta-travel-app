@@ -1,0 +1,16 @@
+rank,curation_rank,title,ref,network,distance_km,popularity,pageviews_day,sitelinks,anchors,quality_score,portal_agreement,status,family_members,trip_id,osm_relation
+1,84.38,E11 section 63: Vaišvydava – Kaunas,E11,iwn,18.9,0.754,0,0,"Church of the Holy Cross (Carmelites), Kaunas (491/day, 767 m); Kaunas mosque (491/day, 271 m); Oak Grove (491/day, 139 m)",96,,needs_review,37,64649,12482833
+2,83.64,E9 section 67: Klaipėda – Palanga,E9,iwn,28.5,0.733,0,0,"Biržos bridge (354/day, 24 m); Klaipeda Musical Theatre (354/day, 48 m); Klaipeda (354/day, 227 m)",96,,needs_review,10,64677,12636231
+3,69.61,Camino Lituano 13 etapas: Kaunas–Pažaislis,,nwn,13.7,0.474,0,0,"Synagogue of Kaunas (491/day, 129 m); Church of Jesuites (491/day, 145 m); Church of Saint George the Martyr (491/day, 207 m)",96,,needs_review,1,64630,12424332
+4,67.38,Camino Lituano Žemaitija 9 etapai: Šiauliai - Sereikiai (Rusliai),,nwn,29.5,0.411,0,0,"Hill of Crosses (184/day, 71 m); Hill of Crosses (184/day, 82 m)",96,,needs_review,1,64712,14303435
+5,67.06,Vilnius-Vygriai,,iwn,202.6,0.534,0,0,"Karoliniškės landscape nature reserve (1224/day, 354 m); House of Histories (1224/day, 731 m); Pasakų Park (1224/day, 1538 m)",57.5,,draft,1,64583,10852389
+6,65.11,Camino Lituano 12 etapas: Biliūnai–Kaunas,,nwn,21.9,0.474,0,0,"National Theater of Drama in Kaunas (491/day, 1279 m); Church of Jesuites (491/day, 149 m); Church of Saint George the Martyr (491/day, 183 m)",78,,needs_review,1,64629,12424231
+7,60.56,Camino Lituano Aukštaitijos,,nwn,131.6,0.223,14,77,,95,,needs_review,1,64324,14303714
+8,60.56,Camino Lituano Žemaitija,,nwn,215.6,0.223,14,77,"Hill of Crosses (184/day, 82 m); Hill of Crosses (184/day, 71 m)",95,,needs_review,1,64714,14303641
+9,60.05,L10 Paupio takas,L10,lwn,7.3,0.646,0,0,"Vilniaus universiteto teatras (1224/day, 1540 m); House of Histories (1224/day, 606 m); Vilnius (1224/day, 1372 m)",83.8,,needs_review,1,64728,18309985
+10,58.94,Takas aplink Vilnių,v100,rwn,108.4,0.534,0,0,"Vilniaus universiteto teatras (1224/day, 337 m); House of Histories (1224/day, 402 m); Pasakų Park (1224/day, 66 m)",70,,needs_review,1,64645,12468129
+11,58.94,L11 Parko takas,L11,lwn,8.3,0.534,0,0,"House of Histories (1224/day, 1041 m); Karoliniškės landscape nature reserve (1224/day, 722 m); Vilniaus universiteto teatras (1224/day, 388 m)",95,,needs_review,1,64732,19126285
+12,55.47,Camino Lituano 10 etapas: Kėdainiai–Panevėžiukas,,nwn,28.7,0.071,0,0,,96,,needs_review,1,64627,12422799
+13,55.47,Camino Lituano 20 etapas: Meteliai–Lazdijai,,nwn,27.2,0.071,0,0,,96,,needs_review,1,64637,12428243
+14,55.47,Camino Lituano Žemaitija 2 etapai: Pakapiai - Viekšnaliai,,nwn,23.5,0.071,0,0,,96,,needs_review,1,64704,13946299
+15,55.47,Camino Lituano Žemaitija 5 etapai: Kolainiai - Vaiguva,,nwn,23.6,0.071,0,0,,96,,needs_review,1,64713,14303640

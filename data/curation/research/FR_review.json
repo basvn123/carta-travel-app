@@ -1,0 +1,431 @@
+{
+  "iso2": "FR",
+  "country": "France",
+  "checked_at": "2026-08-17",
+  "beaches": {
+    "wrong": [
+      {
+        "name": "Le Site classe de l'Anse de Paulilles",
+        "class": "park_or_area",
+        "why": "Tier 1, rank 7. This is the name of a 32-hectare protected coastal ESTATE, not a beach: a former Nobel dynamite factory site on the Cote Vermeille at Port-Vendres, classified under the 1930 law by decree in 1979, owned by the Conservatoire du littoral and managed by the Pyrenees-Orientales department, with a boat-restoration workshop and a cafe. It contains beaches but is not one. It is also the head of a four-way duplicate family: 'Plage de Paulilles' (rank 63), 'Paulille' (rank 85) and 'Site De Paulilles' (rank 118) are the same place.",
+        "source_url": "https://www.conservatoire-du-littoral.fr/siteLittoral/317/28-anse-de-paulilles-66_pyrenees-orientales.htm"
+      },
+      {
+        "name": "La Plage Du Festival",
+        "class": "hospitality",
+        "why": "Tier 1, rank 6. The capitalised branded form 'La Plage du Festival' is one of the largest private beach clubs and restaurants on the Croisette in Cannes, with paid sunbeds and table service; the separate public beach at the Palais des Festivals is a different site with a different name (Plage publique du Palais des Festivals), and is in any case closed to the public during the film festival and the summer Electronic Beaches events. The rows immediately below it in the Cannes cluster are unambiguously beach clubs, which corroborates the reading.",
+        "source_url": "https://www.plagedufestival.com/"
+      },
+      {
+        "name": "Croisette Beach",
+        "class": "hospitality",
+        "why": "Rank 72. A hotel/beach-club brand name on the Cannes Croisette, not a named public beach.",
+        "source_url": "https://en.cannes-france.com/offers/public-beach-in-front-of-the-palais-des-festivals-cannes-en-3663097/"
+      },
+      {
+        "name": "3.14 Beach",
+        "class": "hospitality",
+        "why": "Rank 67. The private beach of the Hotel 3.14 in Cannes. A numeric-prefixed venue name is a strong machine signal on its own.",
+        "source_url": "https://cannes.city-life.fr/plages.php"
+      },
+      {
+        "name": "O'Key Beach",
+        "class": "hospitality",
+        "why": "Rank 81. A private beach club and restaurant on the Croisette in Cannes.",
+        "source_url": "https://cannes.city-life.fr/plages.php"
+      },
+      {
+        "name": "Palais Stephanie Beach",
+        "class": "hospitality",
+        "why": "Rank 83. The private beach attached to the former Palais Stephanie hotel in Cannes, named after the hotel rather than the shore.",
+        "source_url": "https://cannes.city-life.fr/plages.php"
+      },
+      {
+        "name": "Plage du Martinez Cannes",
+        "class": "hospitality",
+        "why": "Rank 106. The private beach of the Hotel Martinez.",
+        "source_url": "https://cannes.city-life.fr/plages.php"
+      },
+      {
+        "name": "Residence Veles Plage",
+        "class": "hospitality",
+        "why": "Rank 172. A residence, i.e. an accommodation building, in Cannes. 'Residence' is a lodging keyword and should never survive into a beach list.",
+        "source_url": "https://cannes.city-life.fr/plages.php"
+      },
+      {
+        "name": "La Plage Casadelmar",
+        "class": "hospitality",
+        "why": "Rank 155. The private beach of the Casadelmar hotel at Porto-Vecchio, Corsica.",
+        "source_url": "https://www.tourisme-occitanie.com/"
+      },
+      {
+        "name": "Club des Korrigans",
+        "class": "hospitality",
+        "why": "Rank 201. A club/campsite name near Guerande, not a beach.",
+        "source_url": "https://www.openstreetmap.org/copyright"
+      },
+      {
+        "name": "Amicale Petanque Capbreton Plage",
+        "class": "hospitality",
+        "why": "Rank 174. A petanque club at Capbreton. This is a sports association clubhouse that happens to carry 'Plage' in its name, and is the single clearest proof that the pipeline is matching on the substring 'plage' rather than on a feature type.",
+        "source_url": "https://www.openstreetmap.org/copyright"
+      },
+      {
+        "name": "La Paillotte de La Fourb",
+        "class": "hospitality",
+        "why": "Rank 78. A paillote, i.e. a beach snack shack, near Saint-Malo. It duplicates 'Plage de la Fourberie' at rank 93, which is the actual beach it stands on.",
+        "source_url": "https://www.openstreetmap.org/copyright"
+      },
+      {
+        "name": "Domaine La Rouillere",
+        "class": "hospitality",
+        "why": "Rank 212. A wine estate on the Saint-Tropez peninsula (Ramatuelle). Not a beach, not on the shore, and not a swimming location.",
+        "source_url": "https://www.openstreetmap.org/copyright"
+      },
+      {
+        "name": "Venetian Carousel - Promenade du Lido - SETE",
+        "class": "other",
+        "why": "Rank 173. A funfair carousel on the Lido promenade at Sete. It entered the beach list because its address contains 'Promenade du Lido'; the row describes a ride, not a shore.",
+        "source_url": "https://www.openstreetmap.org/copyright"
+      },
+      {
+        "name": "St Maxime Plage",
+        "class": "duplicate_of:Plage de Sainte-Maxime",
+        "why": "Rank 26, tier 2 top. One of FOUR rows for the single town beach of Sainte-Maxime, alongside 'Plage de la promenade, Sainte-Maxime' (34), 'Plage de Sainte-Maxime' (37) and 'Saint Maxime Beach' (40). This is the exact Nesebar failure mode: the same beach under an abbreviated form, a French form, an English form and a descriptive form. All four are additionally filed under near.city 'Saint-Tropez', a different commune across the gulf.",
+        "source_url": "https://fr.wikipedia.org/wiki/Sainte-Maxime"
+      },
+      {
+        "name": "Plage de la promenade, Sainte-Maxime",
+        "class": "duplicate_of:Plage de Sainte-Maxime",
+        "why": "Rank 34. Third of the four Sainte-Maxime rows; the comma-plus-town-name form is a descriptive label, not a distinct beach.",
+        "source_url": "https://fr.wikipedia.org/wiki/Sainte-Maxime"
+      },
+      {
+        "name": "Saint Maxime Beach",
+        "class": "duplicate_of:Plage de Sainte-Maxime",
+        "why": "Rank 40. English-language form of the same beach. Note that a pure string comparison fails here (St / Saint / Sainte, Plage / Beach), which is why the dedupe has to be geographic as well as lexical.",
+        "source_url": "https://fr.wikipedia.org/wiki/Sainte-Maxime"
+      },
+      {
+        "name": "Plage municipale d'Excenevex",
+        "class": "duplicate_of:Excenevex Plage",
+        "why": "Rank 39. Same Lake Geneva beach as 'Excenevex Plage' at rank 27, twelve places above it. Two forms of one name, both in tier 2, both surfaced to the user.",
+        "source_url": "https://fr.wikipedia.org/wiki/Excenevex"
+      },
+      {
+        "name": "Plage Du Lido",
+        "class": "duplicate_of:Lido de Thau",
+        "why": "Rank 145. The same sandbar beach at Sete as the tier-1 rank 2 entry 'Lido de Thau'.",
+        "source_url": "https://fr.wikipedia.org/wiki/Lido_de_Thau"
+      },
+      {
+        "name": "Site De Paulilles",
+        "class": "duplicate_of:Le Site classe de l'Anse de Paulilles",
+        "why": "Rank 118. Third of four rows for the Paulilles site.",
+        "source_url": "https://www.conservatoire-du-littoral.fr/siteLittoral/317/28-anse-de-paulilles-66_pyrenees-orientales.htm"
+      },
+      {
+        "name": "Paulille",
+        "class": "duplicate_of:Plage de Paulilles",
+        "why": "Rank 85. Fourth of four rows for the Paulilles site, here with the terminal 's' dropped.",
+        "source_url": "https://www.conservatoire-du-littoral.fr/siteLittoral/317/28-anse-de-paulilles-66_pyrenees-orientales.htm"
+      },
+      {
+        "name": "Plage du Buse",
+        "class": "duplicate_of:Plage du Buse",
+        "why": "Rank 129. Correctly placed in France (it is in Roquebrune-Cap-Martin), but the identical feature is ALSO shipped in the Monaco file as tier 2 rank 2. A cross-country duplicate: the same beach appears twice in the product under two nationalities.",
+        "source_url": "https://www.menton-riviera-merveilles.co.uk/offers/buse-beach-roquebrune-cap-martin-en-4652864/"
+      },
+      {
+        "name": "Biarritz",
+        "class": "town_or_village",
+        "why": "Rank 126. The name of a city, ingested as a beach. Biarritz has several named beaches (Grande Plage, Cote des Basques, Port Vieux, Miramar) and most of them are separately present in the same list, so this row is a bare settlement name on top of its own components.",
+        "source_url": "https://fr.wikipedia.org/wiki/Biarritz"
+      },
+      {
+        "name": "HOSSEGOR",
+        "class": "town_or_village",
+        "why": "Rank 127. A town name in all caps, ingested as a beach.",
+        "source_url": "https://fr.wikipedia.org/wiki/Soorts-Hossegor"
+      },
+      {
+        "name": "Bayonne Anglet Biarritz",
+        "class": "town_or_village",
+        "why": "Rank 187. Three city names concatenated, which is the BAB urban-area label, not a beach.",
+        "source_url": "https://fr.wikipedia.org/wiki/Biarritz"
+      },
+      {
+        "name": "Biarritz Anglet Bayonne",
+        "class": "town_or_village",
+        "why": "Rank 189. The same three city names in reverse order, so the list contains the BAB label twice, permuted. A word-set comparison rather than a string comparison is required to catch this.",
+        "source_url": "https://fr.wikipedia.org/wiki/Biarritz"
+      },
+      {
+        "name": "Arcachon Beach, France",
+        "class": "town_or_village",
+        "why": "Rank 179. A town name plus the country name, in English. It duplicates 'Arcachon Beach' at rank 66 in the same list.",
+        "source_url": "https://fr.wikipedia.org/wiki/Arcachon"
+      },
+      {
+        "name": "Ile De Porquerole",
+        "class": "island",
+        "why": "Rank 228. The island of Porquerolles (misspelled, singular), not a beach. Four of its actual beaches (Langoustier, Alycastre, Argent, Notre-Dame) are separately present in the list.",
+        "source_url": "https://fr.wikipedia.org/wiki/Porquerolles"
+      },
+      {
+        "name": "Ile de Porquerolles. Baie Des Langoustiers",
+        "class": "island",
+        "why": "Rank 229. Island name plus a bay name, duplicating both the island row above and 'Plage noire du Langoustier' at tier 2 rank 24.",
+        "source_url": "https://fr.wikipedia.org/wiki/Porquerolles"
+      },
+      {
+        "name": "Dune du Pyla",
+        "class": "other",
+        "why": "Rank 213. The Dune of Pilat is Europe's tallest sand dune, a 100 m+ landform. It is a genuine and famous destination but it is not a beach and is filed under the beach kind; the beach at its foot is a different feature. Note also the misspelling: the official form is Pilat, and the list separately contains 'PYLA plage' at rank 147.",
+        "source_url": "https://fr.wikipedia.org/wiki/Dune_du_Pilat"
+      },
+      {
+        "name": "Falaises d'Etretat",
+        "class": "other",
+        "why": "Rank 216. The cliffs of Etretat: a chalk cliff formation and arch, classified here as a beach. The actual beach, 'Plage d'Etretat', is separately present at rank 140.",
+        "source_url": "https://fr.wikipedia.org/wiki/Falaises_d'%C3%89tretat"
+      }
+    ],
+    "missing": [
+      {
+        "name": "Plage de Pampelonne",
+        "qid": "Q1760862",
+        "lat": 43.227944,
+        "lon": 6.66853,
+        "why": "The 4.5 km beach at Ramatuelle that IS the Saint-Tropez beach in the public imagination, and the most internationally recognised stretch of sand on the French Riviera. Completely absent from the file, while four rows for the modest town beach of Sainte-Maxime occupy tier-2 ranks 26-40. Wikidata types it as a beach (Q18751767) in France (Q142).",
+        "source_url": "https://www.wikidata.org/wiki/Q1760862",
+        "verified": true
+      },
+      {
+        "name": "Plage de Saleccia",
+        "qid": "Q3390865",
+        "lat": 42.72646,
+        "lon": 9.20474,
+        "why": "The white-sand beach of the Agriates desert in northern Corsica, reachable only by boat or 4x4 track, and one of the two or three Corsican beaches that appear on every French best-beaches list. Absent from the file. Wikidata: sandy beach (Q28060923), France (Q142).",
+        "source_url": "https://www.wikidata.org/wiki/Q3390865",
+        "verified": true
+      },
+      {
+        "name": "Rondinara (Baie de Rondinara)",
+        "qid": "Q17621745",
+        "lat": 41.4701,
+        "lon": 9.26918,
+        "why": "The near-circular shell-shaped bay between Bonifacio and Porto-Vecchio, routinely named among the finest beaches in France and in Europe. Absent from the file even though its neighbours Palombaggia and Grand Sperone are present. Wikidata: bay (Q39594), France (Q142).",
+        "source_url": "https://www.wikidata.org/wiki/Q17621745",
+        "verified": true
+      },
+      {
+        "name": "Plage de l'Espiguette",
+        "qid": "Q3393664",
+        "lat": 43.5,
+        "lon": 4.12,
+        "why": "The vast wild dune beach at Le Grau-du-Roi in the Gard, one of the largest undeveloped beaches on the Mediterranean coast of mainland France and a Camargue landmark. Absent from the file. Note the QID given is the Espiguette cape/dune system (instance of cape Q473972 and protected natural area) and its coordinate is the cape, not a surveyed beach centroid, so treat the coordinate as approximate.",
+        "source_url": "https://www.wikidata.org/wiki/Q3393664",
+        "verified": true
+      },
+      {
+        "name": "Plage de Santa Giulia",
+        "qid": null,
+        "lat": null,
+        "lon": null,
+        "why": "The turquoise lagoon-like bay south of Porto-Vecchio, consistently listed alongside Palombaggia as one of Corsica's two signature beaches. Absent from the file. I could not confirm a Wikidata item specifically for the beach (the nearest candidate, Q108076801, is a French protected area rather than the beach itself), so no QID or coordinate is asserted.",
+        "source_url": "https://www.wikidata.org/wiki/Q108076801",
+        "verified": false
+      }
+    ],
+    "order": [
+      "The single biggest problem: not one internationally recognised French beach is in tier 1. Tier 1 is Plage Valentin, Lido de Thau, Plage des Libraires, Plages de Montsarrac, Plage de Port Miquel, La Plage Du Festival, Anse de Paulilles, Plage de Caudon, Ilbarritz, Le Grand Sperone, Ricanto and Pianottoli. Meanwhile Plage de Palombaggia is at rank 49, Plage Notre-Dame at Porquerolles (repeatedly voted among Europe's best) at rank 64, Plage d'Etretat at 140 and the Dune du Pilat at 213. A user opening the France Beaches tab sees twelve beaches, eleven of which they have never heard of.",
+      "Ranks 1, 3, 4 and 5 are four small beaches in Loire-Atlantique and the Gulf of Morbihan (Plage Valentin and Plage des Libraires at Batz-sur-Mer/Le Croisic, Plages de Montsarrac and Plage de Port Miquel near Sene/Vannes). They are real beaches and not wrong entries, but placing four minor Breton coves above every beach in Corsica, the Riviera and the Basque coast is not defensible. The cause is visible in the scores: ranks 1-12 are all 'Excellent' EEA bathing water and their scores run 0.994 down to 0.962 in near-continuous steps, while dozens of tier-2 rows share the flat value 0.962 or 0.940. Water class is doing nearly all the ranking work, and in France almost every bathing water is Excellent, so the signal has no discriminating power and small over-monitored sites float to the top.",
+      "Plage de Caudon at rank 8 is a river bathing spot on the Dordogne at Vitrac, unsupervised, with a season running only 29 June to 31 August. A pleasant swim, but it cannot be the eighth-best beach in a country with 5,500 km of coastline.",
+      "Plage d'Apigne at rank 13 is an artificial lake beach in a park on the edge of Rennes. Same issue as Caudon: legitimate as a bathing water, absurd as a national top-15 beach.",
+      "The tier-2 head is largely lake beaches on the French shore of Lake Geneva (Messery 19, Nernier 20, Excenevex 27 and 39, Promenthoux 52) and Lake Annecy (Veyrier-du-Lac 21). Correct as bathing waters, badly over-ranked as beaches.",
+      "Palombaggia (rank 49), Plage Notre-Dame (64), Plage d'Argent (48) and Calanque d'en-Vau (70) should all sit inside the top 15. Calanque d'en-Vau in particular is one of the most photographed inlets in France and is ranked below four rows for Sainte-Maxime."
+    ]
+  },
+  "mountains": {
+    "wrong": [
+      {
+        "name": "Monte Perdido",
+        "class": "wrong_country",
+        "why": "Rank 13, the top of tier 2. Monte Perdido is in the province of Huesca, SPAIN, inside Ordesa y Monte Perdido National Park; Wikidata Q215662 gives country Spain (Q29) and coordinates 42.673889, 0.033333. The Franco-Spanish border runs north of the summit, so it is not a shared peak. The snapshot's own near.city is 'Ordesa & Monte Perdido', a Spanish destination.",
+        "source_url": "https://www.wikidata.org/wiki/Q215662"
+      },
+      {
+        "name": "Monte Perdido Massif",
+        "class": "duplicate_of:Monte Perdido",
+        "why": "Rank 14, immediately below the peak itself, and pointing at the same English Wikipedia article. It is additionally a massif rather than a summit, so it is a park_or_area as well as a duplicate. Two adjacent rows for one thing at the head of tier 2.",
+        "source_url": "https://www.wikidata.org/wiki/Q8554028"
+      },
+      {
+        "name": "Cilindro de Marbore",
+        "class": "wrong_country",
+        "why": "Rank 45. A 3,328 m summit of the Monte Perdido massif on the Spanish side, in Huesca. Its Spanish name form in an otherwise French list is itself the signal.",
+        "source_url": "https://es.wikipedia.org/wiki/Cilindro_de_Marbor%C3%A9"
+      },
+      {
+        "name": "Soum de Ramond",
+        "class": "wrong_country",
+        "why": "Rank 73. Also known as Pico Anisclo, 3,254 m, entirely within Ordesa y Monte Perdido National Park in Huesca, SPAIN. near.city is 'Ordesa & Monte Perdido'.",
+        "source_url": "https://es.wikipedia.org/wiki/Soum_de_Ramond"
+      },
+      {
+        "name": "Tozal del Mallo",
+        "class": "wrong_country",
+        "why": "Rank 104. A rock tower above the Ordesa valley in Huesca, SPAIN. Filed under near.city 'Cirque de Gavarnie', which is on the French side of the watershed, so the assignment appears to be nearest-seeded-destination rather than territory.",
+        "source_url": "https://es.wikipedia.org/wiki/Tozal_del_Mallo"
+      },
+      {
+        "name": "Punta de las Olas",
+        "class": "wrong_country",
+        "why": "Rank 114. A 3,022 m summit in the Monte Perdido massif, Huesca, SPAIN; near.city 'Ordesa & Monte Perdido'.",
+        "source_url": "https://es.wikipedia.org/wiki/Punta_de_las_Olas"
+      },
+      {
+        "name": "Gabieto Oriental",
+        "class": "wrong_country",
+        "why": "Rank 153. A summit of the Gabietos above the Ordesa valley, Huesca, SPAIN.",
+        "source_url": "https://es.wikipedia.org/wiki/Gabietos"
+      },
+      {
+        "name": "Mont-Saint-Michel and its Bay",
+        "class": "park_or_area",
+        "why": "Rank 24. This is the name of the UNESCO World Heritage property, an inscribed area covering the abbey, the islet and the surrounding bay, not a mountain. The 'Mont' in the name is a tidal islet 92 m high crowned by an abbey; classifying the whole World Heritage bay as a summit puts a cathedral and a mudflat into the Mountains tab.",
+        "source_url": "https://whc.unesco.org/en/list/80/"
+      },
+      {
+        "name": "Tombelaine",
+        "class": "island",
+        "why": "Rank 34. A 45 m granite ISLET in the bay of Mont-Saint-Michel, 3 km from the Mont, owned by the state and an ornithological reserve since 1985. Access is closed to the public from 15 March to 31 July for seabird nesting and permitted only on foot with an authorised guide, so it is not merely mis-typed but largely unvisitable during the season the tab is used.",
+        "source_url": "https://www.conservatoire-du-littoral.fr/siteLittoral/488/28-ilot-de-tombelaine-50_manche.htm"
+      },
+      {
+        "name": "Ratonneau",
+        "class": "island",
+        "why": "Rank 61. One of the four islands of the Frioul archipelago off Marseille, 2.5 km long, connected to Pomegues by the Berry dike and administratively part of Marseille's 7th arrondissement. An island, not a mountain.",
+        "source_url": "https://fr.wikipedia.org/wiki/%C3%8Eles_du_Frioul"
+      },
+      {
+        "name": "Le Tremplin Olympique du Mont",
+        "class": "other",
+        "why": "Rank 40. A SKI JUMP: the venue built at Le Mont in Chamonix for the 1924 Winter Olympics, which hosted the ski jumping and Nordic combined events and is still used for training. Wikidata Q1784243 types it as ski jump (Q1109069) and sports venue (Q1076486), coordinates 45.89993, 6.84061. It is in the list because the toponym 'Le Mont' contains the word mont.",
+        "source_url": "https://www.wikidata.org/wiki/Q1784243"
+      },
+      {
+        "name": "Cote d'Or",
+        "class": "park_or_area",
+        "why": "Rank 43. The Cote d'Or is the limestone escarpment and wine region of Burgundy, and the name of a French department. It is a region, not a summit, and there is no peak to visit at the given point.",
+        "source_url": "https://fr.wikipedia.org/wiki/C%C3%B4te-d'Or_(coteau)"
+      },
+      {
+        "name": "Monts du Cantal",
+        "class": "park_or_area",
+        "why": "Rank 142. A mountain RANGE, the eroded Cantal stratovolcano, whose individual summits (Plomb du Cantal rank 31, Puy Mary 32, Puy Griou 64, Puy de Peyre Arse 94) are already listed separately in the same file. The range row therefore both mis-types and double-counts.",
+        "source_url": "https://fr.wikipedia.org/wiki/Monts_du_Cantal"
+      },
+      {
+        "name": "Mont Blanc glacier flood",
+        "class": "other",
+        "why": "Rank 86. This is the title of a historical EVENT, the 1892 glacial outburst flood from the Tete Rousse glacier that destroyed Saint-Gervais and killed around 175 people. The wikipedia field even points at 'en:Tete Rousse Glacier'. A disaster narrative has been ingested as a mountain, and it is the only row in the entire French file whose name contains the string 'Mont Blanc' at the top level, which makes the real omission below even starker.",
+        "source_url": "https://en.wikipedia.org/wiki/T%C3%AAte_Rousse_Glacier"
+      },
+      {
+        "name": "Glacier d'Envers du Plan",
+        "class": "other",
+        "why": "Rank 134. A glacier in the Mont Blanc massif. Glaciers are not summits and cannot be climbed to; they should be their own kind or excluded.",
+        "source_url": "https://fr.wikipedia.org/wiki/Glacier_d'Envers_du_Plan"
+      },
+      {
+        "name": "Glacier des Grands Montets",
+        "class": "other",
+        "why": "Rank 135. A glacier above Argentiere. Same family as the row above; note that the corresponding summit, Aiguille des Grands Montets, is separately present at rank 80, so this is also a near-duplicate.",
+        "source_url": "https://fr.wikipedia.org/wiki/Aiguille_des_Grands_Montets"
+      },
+      {
+        "name": "Dune de Donnant",
+        "class": "other",
+        "why": "Rank 137. A coastal sand DUNE behind the beach of Donnant on Belle-Ile-en-Mer, filed as a mountain. The mirror image of 'Dune du Pyla' being filed as a beach, and evidence that the kind assignment for dunes is essentially random.",
+        "source_url": "https://fr.wikipedia.org/wiki/Belle-%C3%8Ele-en-Mer"
+      }
+    ],
+    "missing": [
+      {
+        "name": "Mont Blanc",
+        "qid": "Q583",
+        "lat": 45.83278,
+        "lon": 6.865,
+        "why": "The highest mountain in the Alps and in western Europe, 4,805 m, the defining mountain of France and one of the most recognisable summits on earth. It is ABSENT FROM THE FRENCH FILE ENTIRELY. The only rows carrying the string are 'Mont Blanc du Tacul' (rank 37), a satellite peak, and 'Mont Blanc glacier flood' (rank 86), a historical disaster article. Wikidata Q583: instance of mountain (Q8502), countries France (Q142) and Italy (Q38), elevation 4,805.59 m. This is the single most serious omission in the group and probably in the dataset: a French Mountains tab without Mont Blanc is a product failure even though every listed peak is real.",
+        "source_url": "https://www.wikidata.org/wiki/Q583",
+        "verified": true
+      },
+      {
+        "name": "Monte Cinto",
+        "qid": "Q1415428",
+        "lat": 42.37972,
+        "lon": 8.945833,
+        "why": "The highest mountain in Corsica at 2,706 m and the high point of the GR20 region. Absent from the file, although lesser Corsican summits (Monte Incudine rank 51, Monte Stello 54, Monte Grossu 110, Monte Revincu 161) are present. Wikidata: mountain (Q8502), France (Q142).",
+        "source_url": "https://www.wikidata.org/wiki/Q1415428",
+        "verified": true
+      },
+      {
+        "name": "Barre des Ecrins",
+        "qid": "Q30480",
+        "lat": 44.922161,
+        "lon": 6.359547,
+        "why": "4,102 m, the highest summit entirely within France (Mont Blanc is shared with Italy), the centrepiece of Ecrins National Park and the southernmost 4,000er in the Alps. Absent from the file; the Ecrins massif contributes nothing at all to the French list.",
+        "source_url": "https://www.wikidata.org/wiki/Q30480",
+        "verified": true
+      },
+      {
+        "name": "Vignemale",
+        "qid": "Q1348903",
+        "lat": 42.773889,
+        "lon": -0.1475,
+        "why": "3,299 m, the highest French summit of the Pyrenees, above Cauterets and Gavarnie. Absent, even though the file carries more than a dozen minor Gavarnie-cirque and Ordesa rows including several Spanish ones. Wikidata: countries Spain and France, elevation 3,299 m.",
+        "source_url": "https://www.wikidata.org/wiki/Q1348903",
+        "verified": true
+      },
+      {
+        "name": "Pic du Canigou (Canigo)",
+        "qid": "Q6650",
+        "lat": 42.518902,
+        "lon": 2.45656,
+        "why": "2,784 m, the sacred mountain of Catalonia, a French Grand Site and the emblem of the Pyrenees-Orientales. Absent, while the same department contributes 'Pic de Sallfort' (rank 42) and the Paulilles beach site.",
+        "source_url": "https://www.wikidata.org/wiki/Q6650",
+        "verified": true
+      },
+      {
+        "name": "Montagne Sainte-Victoire",
+        "qid": "Q1518970",
+        "lat": 43.539167,
+        "lon": 5.645278,
+        "why": "1,011 m, the limestone ridge east of Aix-en-Provence that Cezanne painted more than 80 times, a Grand Site de France and one of the most walked mountains in the country. Absent, while the neighbouring Marseille calanque hills (Mont Puget 33, Mont Carpiagne 67) and even the island of Ratonneau are present.",
+        "source_url": "https://www.wikidata.org/wiki/Q1518970",
+        "verified": true
+      },
+      {
+        "name": "Mont Aiguille",
+        "qid": "Q1337859",
+        "lat": 44.841944,
+        "lon": 5.5525,
+        "why": "2,087 m, the isolated tabular tower in the Vercors whose 1492 ascent is conventionally called the birth of mountaineering. Absent; the Vercors massif contributes nothing to the file.",
+        "source_url": "https://www.wikidata.org/wiki/Q1337859",
+        "verified": true
+      }
+    ],
+    "order": [
+      "Nine of the twelve tier-1 mountains are cinder cones of the Chaine des Puys: Puy de Dome (1), Puy de la Vache (4), Puy de Lemptegy (5), Puy de Come (6), Puy de Lassolas (7), Puy de Pariou (8), Puy des Goules (9), Puy de Gravenoire (11) and Grand Sarcouy (12). Every one carries designation 'unesco'. The whole volcanic field was inscribed as one World Heritage property in 2018, so a single inscription is being credited to each of its 80-odd cones individually, and one flat bonus has captured three quarters of the country's top tier. Counting the whole file, more than 20 rows are Chaine des Puys cones. This is the clearest ranking defect in the French data and it is a one-line fix: award a designation bonus to the property, not to every component feature.",
+      "Puy de Lemptegy at rank 5, above Le Brevent and above every Alpine summit in the country, is a commercially operated visitor attraction (an excavated volcano with a guided tour and a train) rather than a peak anyone climbs. It is not a wrong entry, since the cone is real, but its position is indefensible.",
+      "Mont Ventoux at rank 2 and Aiguille du Midi at rank 3 are both genuinely correct picks and would be reasonable top-3 entries. Aiguille du Midi is a 3,842 m aiguille reached by cable car, so it is a real summit rather than a viewpoint name; it should sit below Mont Blanc, not above it, once Mont Blanc exists.",
+      "By massif the coverage is badly skewed. Chamonix and the Mont Blanc massif contribute about 30 rows, almost all of them technical aiguilles that no general traveller will visit (Aiguille du Fou, Aiguille de Roc, Dent du Requin, Les Periades, Aiguille de la Republique), while Mont Blanc itself is absent. The Cirque de Gavarnie and Ordesa contribute about 15, several of them Spanish. Meanwhile the Ecrins, the Vanoise, the Vercors, the Chartreuse, the Belledonne, the Queyras and the Jura contribute essentially nothing, and Corsica's highest peak is missing. The list is not a ranking of French mountains, it is a ranking of three well-mapped OSM clusters.",
+      "Trivial hills are ranked above famous ones: 'Colline de Longueau' (126) and 'Mont Martin' (160) are minor rises near Amiens in Picardy, and 'Mont Afrique' (46) and 'Notre-Dame-d'Etang' (74) are low hills near Dijon, all ranked while Sainte-Victoire, Canigou and Mont Aiguille are absent."
+    ]
+  },
+  "counts_verdict": "Plausible in magnitude, unreliable in composition. 228 beaches and 163 mountains is a sensible order of magnitude for a country with 5,500 km of coast and four major mountain ranges, and France should certainly have the largest or second-largest counts in the dataset. But roughly a quarter of the beach rows are not distinct public beaches: 12 are hospitality venues (hotel and club beaches, a wine estate, a petanque club, a carousel), at least 8 are duplicates of another row in the same list, 5 are bare town names and 4 are islands or non-beach landforms. On the mountain side about 7 rows are Spanish summits in Huesca, 4 are islands, ranges or World Heritage areas, 3 are glaciers or a ski jump, and one is a nineteenth-century flood. Net of those the real counts are closer to 190 beaches and 145 mountains, and the missing entries listed above show the shortfall is not evenly distributed: it is concentrated exactly on the famous features.",
+  "top_pick_verdict": "No on both, emphatically. top_mountain is 'Puy de Dome', a 1,465 m lava dome in Auvergne with a rack railway. It is a fine mountain and a legitimate UNESCO component, but no traveller, atlas or tourist board would put it on a France country card ahead of Mont Blanc (Q583, 45.83278, 6.865), which is not in the file at all. top_beach is 'Plage Valentin', a small cove at Batz-sur-Mer in Loire-Atlantique that essentially no one outside the region has heard of; the card should carry Plage de Palombaggia (Q3361665, 41.558, 9.326, already in the file at rank 49) or Plage de Pampelonne (Q1760862, 43.227944, 6.66853, missing). Both current top picks would read to a French user as a mistake.",
+  "notes": "France is the country where every failure mode in the brief appears at once, so it is the best single test case for a filter. Three structural causes are visible. (1) A designation bonus applied per component rather than per property, which let one UNESCO inscription hand nine of twelve tier-1 mountain slots to one volcanic field. (2) EEA water class carrying nearly all the beach score in a country where almost every bathing water is rated Excellent, which pushes small monitored lake and river sites above every famous sea beach: Plage d'Apigne in a Rennes park outranks Palombaggia, and the four Lake Geneva beaches outrank Etretat. (3) Nearest-seeded-destination country assignment, which pulled at least seven Spanish summits in Huesca into the French list and, symmetrically, pushed three French Riviera peaks and three French beaches into Monaco's. Also worth flagging for the wider dataset: the same physical feature can appear in two countries at once. Plage du Buse, Mont Agel, Tete de Chien and Cime de Baudon each appear in both FR and MC, so a global dedupe pass on (kind, rounded coordinate) is needed on top of the per-country name dedupe. Finally, the beach and mountain kinds leak into each other in a way that is easy to test: 'Dune du Pyla' is filed as a beach and 'Dune de Donnant' as a mountain, and 'Falaises d'Etretat' (cliffs) is filed as a beach while 'Tombelaine' (an islet) is filed as a mountain."
+}

@@ -1,0 +1,299 @@
+{
+  "id": "cz-culinary-moravia-and-beer",
+  "sourceId": "cz-culinary-moravia-wine-and-beer",
+  "slug": "cz-culinary-moravia-and-beer",
+  "title": "Moravian Cellars and Bohemian Lager",
+  "country": "Czechia",
+  "countryCode": "CZ",
+  "countries": [
+    {
+      "name": "Czechia",
+      "code": "CZ"
+    }
+  ],
+  "isMultiCountry": false,
+  "region": "Western & Central Europe",
+  "regionKey": "western-central",
+  "subRegion": "South Moravia, Plzeň Region and Prague",
+  "tripType": "Culinary & Wine Tours",
+  "tripTypeId": 7,
+  "tripTypeSlug": "culinary",
+  "durationDays": 7,
+  "bestPeriod": {
+    "months": [
+      5,
+      6,
+      9,
+      10
+    ],
+    "monthNames": [
+      "May",
+      "June",
+      "September",
+      "October"
+    ],
+    "window": null,
+    "note": "September through mid-October is harvest (vinobraní) season in Moravia; cellars are busiest and most alive but book further ahead.",
+    "avoid": null,
+    "raw": null
+  },
+  "budgetTier": "€€",
+  "budgetTierRange": [
+    2,
+    2
+  ],
+  "budgetTierRaw": "€€",
+  "budget": {
+    "currency": "EUR",
+    "totalEur": {
+      "low": 980,
+      "high": 1400
+    },
+    "totalNote": null,
+    "breakdown": {
+      "accommodation": {
+        "lowEur": 380,
+        "highEur": 540,
+        "note": null
+      },
+      "food": {
+        "lowEur": 280,
+        "highEur": 380,
+        "note": null
+      },
+      "transport": {
+        "lowEur": 150,
+        "highEur": 230,
+        "note": null
+      },
+      "activities": {
+        "lowEur": 170,
+        "highEur": 250,
+        "note": null
+      }
+    },
+    "perDayEur": {
+      "low": 140,
+      "high": 200
+    }
+  },
+  "profile": {
+    "difficulty": 1,
+    "difficultyLabel": "Easy",
+    "difficultyNote": null,
+    "fitnessLevel": "Easy",
+    "crowdLevel": "Moderate",
+    "familyFriendly": false,
+    "carRequired": true
+  },
+  "basecamps": [
+    "Mikulov and Prague"
+  ],
+  "gatewayAirport": "Prague (PRG)",
+  "gatewayAirportCode": "PRG",
+  "languages": [
+    "Czech"
+  ],
+  "currency": "CZK",
+  "emergencyNumber": "112",
+  "coordinates": {
+    "lat": 50.088,
+    "lon": 14.4208,
+    "precision": "city",
+    "matchedPlace": "Prague",
+    "source": "geonames (geonamescache, cities > 15k)"
+  },
+  "tags": [
+    "wine",
+    "beer",
+    "sklepy",
+    "voc-appellation",
+    "pilsner"
+  ],
+  "summary": "A week from Prague's beer halls to Pilsner Urquell's cellars and on to Moravia's VOC wine villages and cliffside sklepy lanes.",
+  "summaryGenerated": false,
+  "hook": "Czechia runs two drinking cultures on two very different clocks: Bohemian lager, brewed to a method fixed at Plzeň in 1842, and Moravian wine, made in villages that still write their own quality rules through a local appellation system. This week does both — three nights in Prague and Plzeň for beer, four in the Mikulov–Znojmo wine country, with a rental car for the cellar lanes where no train goes.",
+  "snapshot": {
+    "Country": "Czechia",
+    "Base(s)": "Prague (2 nights) · Plzeň (1 night) · Mikulov (4 nights)",
+    "Trip Type": "Culinary & Wine Tours",
+    "Duration": "7 days / 7 nights",
+    "Best Period": "May, June, September, October",
+    "Budget Tier": "€€",
+    "Total Distance / Terrain": "Approx. 480 km by train and car across the week; flat to gently rolling vineyard walking in Moravia, 5–10 km per cellar day",
+    "Getting There": "Fly to Prague (PRG); Airport Express bus into the centre, 35–45 min",
+    "Who It Suits": "Drinkers happy to switch registers mid-week, from pub to appellation wine, with a car for the last four days"
+  },
+  "itinerary": [
+    {
+      "day": 1,
+      "title": "Prague, on tap",
+      "morning": "Land in Prague, settle into the centre, and walk down to the Vltava for orientation — Charles Bridge, then up into the Old Town.",
+      "afternoon": "Klášterní pivovar Strahov, the monastery brewhouse inside Strahov Monastery, brews on-site and takes walk-in visitors; the terrace looks out over the whole city. No reservation needed outside peak lunch hours.",
+      "evening": "U Fleku, trading continuously since 1499, serves only its own dark 13° lager, brewed downstairs. It's a tourist fixture, but a genuine one — go for the beer and the fact of the place rather than the food.",
+      "dayStats": "Cellars visited: 1. Km travelled: 6. Approx. tasting spend: €12–€18.",
+      "sleep": null
+    },
+    {
+      "day": 2,
+      "title": "Vinohrady, then west",
+      "morning": "Walk Vinohrady, Prague's turn-of-the-century residential district, and stop at a neighbourhood pub for lunch: vepřo-knedlo-zelo, roast pork with bread dumpling and braised cabbage, the baseline Czech plate against which everything else is measured.",
+      "afternoon": "Train to Plzeň, about an hour on a fast regional service from Praha hlavní nádraží. Check in near the historic centre.",
+      "evening": "Walk Plzeň's main square (náměstí Republiky) and the Gothic Cathedral of St. Bartholomew, then dinner at a pub pouring unfiltered, unpasteurised Pilsner Urquell straight from tank — noticeably different from the bottled export version.",
+      "dayStats": "Cellars visited: 0. Km travelled: 95. Approx. tasting spend: €15–€20.",
+      "sleep": null
+    },
+    {
+      "day": 3,
+      "title": "Where lager was invented",
+      "morning": "Pilsner Urquell Brewery tour: book online in advance for an English-language slot, since groups fill fast even on weekdays. The tour covers the original 1842 brewhouse and the historic underground cellars, cut 9 kilometres into the sandstone beneath the town, where the beer was matured in oak before refrigeration existed.",
+      "afternoon": "Train back toward Prague, changing there for a fast train south to Brno (total journey around 4h with the connection); alternatively, take an earlier Plzeň departure to make the connection comfortably. Collect a rental car in Brno for the Moravia leg.",
+      "evening": "Drive to Mikulov, about 55 minutes south of Brno. Settle into your base for the next four nights; an easy dinner in the main square.",
+      "dayStats": "Cellars visited: 1 (Pilsner Urquell). Km travelled: 340 (rail plus drive). Approx. tasting spend: €10–€15.",
+      "sleep": null
+    },
+    {
+      "day": 4,
+      "title": "Mikulov, and the VOC system",
+      "morning": "Walk Mikulov's main square and climb to Mikulov Castle for the view over the Pálava hills and, on a clear day, into Austria. The Dietrichstein family crypt beneath the Church of St. Wenceslas is a quiet ten-minute stop.",
+      "afternoon": "Drive out to Sedlec, one of the villages inside the VOC system — \"Vinařská obec,\" or wine municipality, a set of quality rules that individual village associations write and police themselves, on top of the standard EU designation. VOC Mikulov requires single-variety, single-vintage wines that pass a blind tasting panel before they can carry the local seal; it's stricter, and more locally meaningful, than the regional PDO alone. Look for the VOC seal on the bottle neck at any cellar you visit.",
+      "evening": "Dinner in Mikulov: svíčková, marinated beef sirloin in a cream vegetable sauce with bread dumpling and cranberries, alongside a Sedlec Riesling or Pálava (a Moravian cross-variety grown almost nowhere else).",
+      "dayStats": "Cellars visited: 1. Km travelled: 30. Approx. tasting spend: €15–€22.",
+      "sleep": null
+    },
+    {
+      "day": 5,
+      "title": "Velké Pavlovice and the sklepy lanes",
+      "morning": "Drive about 35 minutes to Velké Pavlovice, the unofficial capital of Moravian red wine — Frankovka and André both do well on these south-facing slopes. Walk the village's cellar lane and stop at a family-run sklep with posted tasting hours; several take walk-ins on weekend mornings, but a phone call the day before secures a proper sit-down flight rather than a bottle at the counter.",
+      "afternoon": "Drive on to Nechory near Velké Bílovice for the sklepní uličky — rows of small, low, whitewashed cellar buildings built directly into the hillside, none grander than a garage, each belonging to one family. This is the working, unpolished version of Moravian wine culture, distinct from the château-style tasting rooms further west.",
+      "evening": "Back in Mikulov. Order Moravský vrabec, \"Moravian sparrow,\" a roast pork dish with caraway and garlic, nothing to do with the bird.",
+      "dayStats": "Cellars visited: 2–3 (village cellars). Km travelled: 60. Approx. tasting spend: €20–€30.",
+      "sleep": null
+    },
+    {
+      "day": 6,
+      "title": "Znojmo and Šobes",
+      "morning": "Drive about 40 minutes to Znojmo. Znovín Znojmo runs a walk-in visitor centre with a tasting room in town — no reservation needed for a standard flight, though the vineyard tour up to Šobes itself, a dramatically steep site on a bend of the Dyje river inside Podyjí National Park, should be booked a few days ahead through the winery.",
+      "afternoon": "Walk Znojmo's old town and, if time allows, the Znojmo underground — a network of medieval cellar tunnels beneath the streets, unrelated to wine storage but a good wet-weather hour. Znojmo is also known for pickled cucumbers (Znojemské okurky), a protected regional product; buy a jar at the town market if it's running.",
+      "evening": "Last dinner in the Mikulov area. If your week lines up with September, ask about vinobraní — the harvest festival atmosphere spills into ordinary weeknights across the wine villages at this time of year.",
+      "dayStats": "Cellars visited: 1. Km travelled: 80. Approx. tasting spend: €15–€22.",
+      "sleep": null
+    },
+    {
+      "day": 7,
+      "title": "Brno market, then home",
+      "morning": "Drive to Brno, about an hour, and drop the rental car. Walk to Zelný trh, the Cabbage Market — a working produce and flower market that has operated on this square since the Middle Ages, open daily (best Tuesday to Saturday mornings).",
+      "afternoon": "Lunch in Brno: a last svíčková or a plate of Moravian cheeses, with a glass of whatever VOC wine the kitchen is pouring by the glass.",
+      "evening": "Train to Prague (about 2h30) to connect with your flight, or fly out of Brno–Tuřany if your itinerary allows it.",
+      "dayStats": "Cellars visited: 0. Km travelled: 220. Approx. tasting spend: €10–€15.",
+      "sleep": null
+    }
+  ],
+  "accommodationStrategy": [
+    {
+      "rank": 1,
+      "name": "Hotel near Old Town Square",
+      "style": "City base",
+      "location": "Prague",
+      "description": "Central enough to walk to Strahov and Vinohrady, with easy access to the airport bus and the train station for the onward leg to Plzeň. Two nights is enough for the beer-culture half of the trip without over-committing to the capital.",
+      "booking": "6 weeks ahead.",
+      "priceNote": "€90–€140 per night"
+    },
+    {
+      "rank": 2,
+      "name": "Hotel Rohatý Krokodýl or similar central Mikulov guesthouse",
+      "style": "Village base",
+      "location": "Mikulov",
+      "description": "A short walk from the main square and castle, with easy driving access to Sedlec, Velké Pavlovice and Znojmo — the natural hub for a car-based four-night wine stay, since none of the villages themselves have much lodging.",
+      "booking": "6–8 weeks ahead for September harvest season.",
+      "priceNote": "€70–€110 per night"
+    }
+  ],
+  "logistics": {
+    "connectivity": null,
+    "emergency": "112 pan-European. Czechia specifics: 155 ambulance, 158 police, 150 fire.",
+    "weather": null,
+    "bookingWindows": "Pilsner Urquell tours fill on weekends — book at least a week ahead. Šobes vineyard tours at Znovín should be arranged a few days out. Village sklep visits in Velké Pavlovice and Nechory are best confirmed by phone the day before.",
+    "money": "Czechia uses the koruna (CZK), not the euro; cards are widely accepted in cities, but small village cellars often prefer cash.",
+    "transportRules": null,
+    "permits": null,
+    "health": null,
+    "gettingThere": null,
+    "other": [
+      {
+        "label": "Drink-drive alternative",
+        "text": "A designated non-drinking driver is the realistic solution in the wine villages, since cellars are spread across hillsides with no public transport between them; several Mikulov hotels can also arrange a local driver for a half-day cellar circuit. In Prague and Plzeň, walk or use trams and buses — do not drive at all."
+      },
+      {
+        "label": "Rental car",
+        "text": "Pick up in Brno on Day 3, not before — there is no need for a car in Prague or Plzeň, and city parking there is a genuine hassle."
+      },
+      {
+        "label": "Vignette",
+        "text": "Czech motorways require an electronic vignette; buy it online or at a border kiosk before driving out of Brno."
+      },
+      {
+        "label": "Opening-hour traps",
+        "text": "Rural sklepy keep informal hours, often weekend-only outside harvest season — don't assume a weekday walk-in will find anyone home."
+      }
+    ]
+  },
+  "proTips": [
+    "Order lager \"tankové pivo\" (tank beer) wherever it's offered in Plzeň — unpasteurised and unfiltered, served straight from insulated tanks rather than kegs, and noticeably softer than the bottled version most people know abroad.",
+    "Ask specifically for the VOC seal on a bottle in Moravia; it signals the producer submitted to blind tasting, which is a genuinely useful shortcut when a cellar's whole list is unfamiliar.",
+    "Nechory's cellar lane is at its best in late afternoon light — plan the Velké Bílovice stop for 16:00–18:00 rather than midday.",
+    "Zelný trh in Brno is a working market, not a tourist stall row — go early for the best produce and to see it as locals use it.",
+    "If you can only fit one Moravian appellation village beyond Mikulov, choose Velké Pavlovice for reds or Znojmo for whites and the Šobes vineyard — they represent the two ends of the region's range.",
+    "Buy Znojmo pickles at the source; the protected-name product tastes markedly different from supermarket versions elsewhere in the country."
+  ],
+  "typeSpecific": {
+    "raw": {
+      "Total Distance / Terrain": "Approx. 480 km by train and car across the week; flat to gently rolling vineyard walking in Moravia, 5–10 km per cellar day",
+      "Who It Suits": "Drinkers happy to switch registers mid-week, from pub to appellation wine, with a car for the last four days"
+    },
+    "surface": "Approx. 480 km by train and car across the week; flat to gently rolling vineyard walking in Moravia, 5–10 km per cellar day",
+    "distanceKm": 480,
+    "elevationM": null,
+    "verticalM": null,
+    "technicalRating": null,
+    "transitPass": null,
+    "hutBooking": null,
+    "liftNetwork": null,
+    "snowReliability": null,
+    "windConditions": null,
+    "gpxReady": null,
+    "bookingTimeline": null,
+    "audience": "Drinkers happy to switch registers mid-week, from pub to appellation wine, with a car for the last four days"
+  },
+  "packingNotes": [
+    "Comfortable shoes for cobbled town squares and gently sloped vineyard paths.",
+    "A light jacket for cellar visits — sklepy and underground tunnels run cool even in summer.",
+    "Cash in koruna for rural cellars and market stalls.",
+    "International driving permit if your home licence isn't EU-format, plus your rental car documents for the Brno pickup.",
+    "A phrasebook or app for Czech; English coverage thins out fast once you leave Prague, Plzeň and the main wine-tourism addresses.",
+    "A soft bag or box for wine bottles bought at cellar doors."
+  ],
+  "whatCouldGoWrong": [
+    "**A village sklep is shut when you arrive.** Treat any unconfirmed cellar as a bonus; Sedlec and Velké Pavlovice both have enough density that another will usually be open nearby.",
+    "**The Plzeň–Brno rail connection runs late.** Build in a buffer day if possible, or collect the rental car a day later and start the Moravia leg from Day 4 instead.",
+    "**Harvest season overbooks the Mikulov area.** Book accommodation 8+ weeks ahead for September, and have Znojmo as a lodging backup if Mikulov itself is full.",
+    "**Rain washes out a vineyard walk.** Znojmo's underground tunnels and Zelný trh's covered stalls are solid wet-weather alternatives."
+  ],
+  "sources": {
+    "verified": null,
+    "confidenceNotes": null
+  },
+  "verifyFlags": [],
+  "verifyFlagCount": 0,
+  "volatilePricing": false,
+  "wordCount": 1936,
+  "dataVintage": 2026,
+  "provenance": {
+    "batch": "western-central",
+    "sourceFile": "cartatripsv1/trips/cz-culinary-moravia-wine-and-beer.md",
+    "sourceFormat": "md+yaml-frontmatter (one file per trip)",
+    "sourceId": "cz-culinary-moravia-wine-and-beer",
+    "ingestedAt": "2026-09-02",
+    "synthesized": false
+  }
+}

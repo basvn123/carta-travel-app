@@ -1,0 +1,902 @@
+{
+ "AD": {
+  "beaches": [],
+  "mountains": [
+   "Pic de l'Estanyó",
+   "Pic de la Serrera",
+   "Monturull",
+   "Montmalús",
+   "Pic d'Escobes",
+   "Alt del Griu",
+   "Pic Alt del Cubil"
+  ]
+ },
+ "AL": {
+  "beaches": [
+   "Palase Beach",
+   "Spille beach, Himare",
+   "Stone Beach Qeparo",
+   "Himare, Albania",
+   "Ksamil",
+   "Turquoise Beach",
+   "Jale Beach",
+   "King beach",
+   "Stela beach",
+   "Abiori Beach",
+   "Afa Beach",
+   "Akoli beach"
+  ],
+  "mountains": [
+   "Maja Jezercë",
+   "ÇIka Mountain",
+   "Zla Kolata / Kollate e Keqe",
+   "Mount Dhëmbel",
+   "Maja e Rosit",
+   "Maja e Harapit",
+   "Maja e Radohimës",
+   "Maja Kokervhake",
+   "Maja Grykat e Hapëta",
+   "Maja Shkurt",
+   "Mount Çika",
+   "Rosi Peak"
+  ]
+ },
+ "AT": {
+  "beaches": [
+   "Strandbad Klagenfurt",
+   "Esplanade Altmünster",
+   "Hundewiese Strandbad",
+   "Pipeline Beach",
+   "Pipeline zur Mili",
+   "Strandbad Obertraun",
+   "Strandbad Pertisau"
+  ],
+  "mountains": [
+   "Schlossberg",
+   "Kapuzinerberg",
+   "Pfänder",
+   "Hahnenkamm",
+   "Nordkette",
+   "Gaisberg",
+   "Loser",
+   "Mönchsberg",
+   "Schafberg",
+   "Traunstein",
+   "Festungsberg",
+   "Braunarlspitze"
+  ]
+ },
+ "BA": {
+  "beaches": [],
+  "mountains": [
+   "Crnogorski Maglić",
+   "Hum",
+   "Mitruša",
+   "Ilinčica",
+   "Zec Planina",
+   "Žovnica",
+   "Volujak",
+   "Šćit",
+   "Lovnica",
+   "Pometenik",
+   "Beškita",
+   "Jelovac"
+  ]
+ },
+ "BE": {
+  "beaches": [
+   "Bredene Beach",
+   "De Haan Vosseslag",
+   "Strand Oostende (Mariakerke)",
+   "Naaktstrand",
+   "De Haan Beach"
+  ],
+  "mountains": [
+   "Baraque Michel",
+   "Signal de Botrange",
+   "Blandijnberg",
+   "Lettenberg",
+   "Terril de Ciply",
+   "Monument to the Battle of Sprimont",
+   "Mont Éribus"
+  ]
+ },
+ "BG": {
+  "beaches": [
+   "Sinemorec, Veleka Beach",
+   "Arena Beach",
+   "Beach Golden Fish",
+   "Budjaka Beach Sozopol",
+   "Cape Agalina",
+   "Central Beach, Sozopol",
+   "Chaika Beach",
+   "Green Life Beach",
+   "Harmani Beach Water Sport",
+   "Харманите (Harmanite)",
+   "Hermanite Nudist Beach",
+   "Каравани Aloha"
+  ],
+  "mountains": [
+   "Vezhen",
+   "Konarevo",
+   "Църна могила",
+   "Дуниното куче",
+   "Калята",
+   "Kulia",
+   "Шилигарника",
+   "Голям Персенк",
+   "Малък Персенк",
+   "Широколъшки снежник",
+   "Безимен",
+   "Буная"
+  ]
+ },
+ "CH": {
+  "beaches": [
+   "Genève-Plage",
+   "Badi Mammern",
+   "Strandbad Öhningen",
+   "Badewiese Minusio",
+   "Lanca - Bagno Pubblico Locarno",
+   "Lido Di Brusimpiano"
+  ],
+  "mountains": [
+   "Eiger",
+   "Matterhorn",
+   "Jungfrau",
+   "View to Aletschgletscher",
+   "Moench",
+   "Mount Pilatus",
+   "Breithorn",
+   "Aletschhorn",
+   "Uetliberg",
+   "Silberhorn",
+   "Mont Fort",
+   "Crap Sogn Gion"
+  ]
+ },
+ "CY": {
+  "beaches": [
+   "Nissi beach",
+   "Paralia Larnaca",
+   "Latchi Beach",
+   "Lighthouse Beach",
+   "Zapalo Episkopi",
+   "Cape Greco Sea Caves",
+   "Cyprus, Famagusta, Paralimni, Protaras Area",
+   "Kermia (Limnara) Beach",
+   "Limnara Beach",
+   "Stekkis Beach",
+   "Lady's Mile Beach",
+   "Akti Olympion Beach"
+  ],
+  "mountains": [
+   "Kyrenia Mountains"
+  ]
+ },
+ "CZ": {
+  "beaches": [],
+  "mountains": [
+   "Petřín",
+   "Luční hora",
+   "Szrenica",
+   "Medvědín",
+   "Łabski Szczyt",
+   "Žlutý kopec",
+   "Hut at Kleť",
+   "Smogornia",
+   "Śmielec",
+   "Křemelná",
+   "Hády",
+   "Czeskie Kamienie"
+  ]
+ },
+ "DE": {
+  "beaches": [
+   "Strandbad Wannsee",
+   "Strandbad Plötzensee",
+   "Strandbad Bad Schachen",
+   "Badestrand Silbersee",
+   "Strandbad Pflegersee",
+   "Freizeit- und Erholungspark Nordstrand",
+   "Sportstrand Prerow",
+   "Strandbad Chieming",
+   "Strandbad Gollenshausen",
+   "Strandpromenade",
+   "Westerland",
+   "Badestrand am Hafen Lochau"
+  ],
+  "mountains": [
+   "Lorelei",
+   "Vaalserberg",
+   "Heiligenberg",
+   "Birkenkopf",
+   "Lousberg",
+   "Alpspitze",
+   "Schachen",
+   "Wank",
+   "Königstuhl",
+   "Calmont",
+   "Ruinenberg",
+   "Tegelberg"
+  ]
+ },
+ "DK": {
+  "beaches": [
+   "Bellevue Strand",
+   "Boserup Strand",
+   "Tisvildeleje Strand",
+   "Snekkersten Strand",
+   "Kandestederne Beach",
+   "Skagen Søndre Strand, V.vippefyr",
+   "Skiveren Strand, Syd For Skiverrenden",
+   "Babylone Strand",
+   "Babylone Stranden",
+   "Gl. Humlebæk strand",
+   "Humlebæk Strand",
+   "Jammerbugten Ved Skallerup Klit Feriecenter"
+  ],
+  "mountains": [
+   "Aborrebjerg",
+   "Skamlingsbanken",
+   "Jelshøj",
+   "Sindbjerg",
+   "Stoltenbjerg",
+   "Kobanke",
+   "Timmesøbjerg",
+   "Blegsti Bakke",
+   "Havrehøj",
+   "Køkken",
+   "Kalsterbjerg",
+   "Kongsbjerg"
+  ]
+ },
+ "EE": {
+  "beaches": [
+   "Pirita Beach",
+   "Pikakari rand",
+   "Joaoru Liivarand",
+   "Paala järv",
+   "Pühajärve rand",
+   "Väike Viik"
+  ],
+  "mountains": [
+   "Võllamägi",
+   "Põlluvahi maja"
+  ]
+ },
+ "ES": {
+  "beaches": [
+   "Es Trenc Beach",
+   "Playa de la Concha - Kontxa hondartza",
+   "Praia das Catedrais",
+   "Platja des Cavallet",
+   "Playa de Los Lances",
+   "Cala de l'Illa Roja",
+   "Playa de Monsul",
+   "Playa de Oyambre",
+   "Magdalena Beach",
+   "Playa del Orzán",
+   "Playa de La Caleta",
+   "Playa de la Malagueta"
+  ],
+  "mountains": [
+   "Roque de Agando",
+   "Torre Cerredo",
+   "Picos de Europa",
+   "Gaztelugatxeko Doniene / San Juan de Gaztelugatxe",
+   "San Juan de Gaztelugatxe",
+   "Mendizorrotza",
+   "Monte Perdido",
+   "Monte Perdido Massif",
+   "Sierra de Gata",
+   "Puig Major",
+   "Pico de las Nieves",
+   "Sierra del Torcal"
+  ]
+ },
+ "FI": {
+  "beaches": [
+   "Hamarin Ranta",
+   "Hangon uimaranta",
+   "Kuparivuoren_uimaranta",
+   "Kyrönniemen uimaranta",
+   "Lämsänjärven uimaranta",
+   "Pyynikin uimaranta",
+   "Rauman seurakunta Kesäkoti",
+   "Savonlinnan uimaranta",
+   "Syväraumanlahti",
+   "Taimon uimaranta",
+   "Tuiran uimaranta",
+   "Siikajärvi"
+  ],
+  "mountains": [
+   "Ounasvaara",
+   "Kakolanmäki",
+   "Yliopistonmäki",
+   "Kätkätunturi",
+   "Samppalinnan vuori",
+   "Paha-Koli",
+   "Akka-Koli"
+  ]
+ },
+ "FO": {
+  "beaches": [],
+  "mountains": [
+   "Slættaratindur",
+   "Gráfelli",
+   "Gluggarnir",
+   "Borgarknappur",
+   "Árnafjall",
+   "Gjógvaráfjall",
+   "Heyggjurin Mikli",
+   "Nónfjall",
+   "Vørðufelli",
+   "Vørufelli",
+   "Húsareyn",
+   "Eysturtindur"
+  ]
+ },
+ "FR": {
+  "beaches": [
+   "Plage Valentin",
+   "Lido de Thau",
+   "Plage des Libraires",
+   "Plages de Montsarrac",
+   "Plage de Port Miquel",
+   "La Plage Du Festival",
+   "Le Site classé de l’Anse de Paulilles",
+   "Plage de Caudon",
+   "Ilbarritz Plage",
+   "Le Grand Sperone",
+   "Ricanto Plage",
+   "Pianottoli, Plage"
+  ],
+  "mountains": [
+   "Puy de Dôme",
+   "Mont Ventoux",
+   "Aiguille du Midi",
+   "Puy de la Vache",
+   "Puy de Lemptégy",
+   "Puy de Côme",
+   "Puy de Lassolas",
+   "Puy de Pariou",
+   "Puy des Goules",
+   "Le Brévent",
+   "Puy de Gravenoire",
+   "Grand Sarcouy"
+  ]
+ },
+ "GB": {
+  "beaches": [
+   "Whitesands Beach",
+   "Brockwell Lido",
+   "Parliament Hill Lido",
+   "Readymoney Cove Beach",
+   "Fistral Beach"
+  ],
+  "mountains": [
+   "Glastonbury Tor",
+   "Pen y Fan",
+   "Ben Nevis",
+   "Arthur's Seat",
+   "Cairn Gorm",
+   "Scafell Pike",
+   "Peak District National Park",
+   "Cuilcagh",
+   "Glen Coe",
+   "Bass Rock",
+   "Helvellyn",
+   "Les Platons"
+  ]
+ },
+ "GR": {
+  "beaches": [
+   "Voidokilia beach",
+   "Palm Beach Vai",
+   "Preveli Beach",
+   "Valtos Beach",
+   "Agia Theodoti",
+   "Agios Ioannis, Pelion - Αγιος Ιωάννης, Πήλιο",
+   "Azolimnos",
+   "Damouchari Beach",
+   "Kiveri Beach",
+   "Mylopotas Beach",
+   "Paralia Apo Chrysoskalitissa Mechri Akrotirio Krios",
+   "Patitiri town beach"
+  ],
+  "mountains": [
+   "Pnyx",
+   "Pelion",
+   "Philopappos Hill",
+   "Cynthus",
+   "Aspronisi",
+   "Ypsilotera",
+   "Patroklos, Attica",
+   "Fengari",
+   "Nimos",
+   "Mitsikeli",
+   "Petsofas",
+   "Exomvourgo"
+  ]
+ },
+ "HR": {
+  "beaches": [
+   "Lokrum Beaches",
+   "Badija",
+   "Sveti Jerolim",
+   "Bratus Beach",
+   "Copacabana Beach",
+   "Črnikovica-Volosko",
+   "Histria Beach",
+   "Jadrija Beach",
+   "Jerolim Island, Hvar",
+   "Kampor Mel Rab",
+   "Kostrena Beach, Rijeka",
+   "Lumbarda Plaža"
+  ],
+  "mountains": [
+   "Battle of Gvozd Mountain",
+   "Vaganski vrh",
+   "Sveti Jure",
+   "Premuda",
+   "Srđ",
+   "Marjan",
+   "Mrčara",
+   "Vidova gora",
+   "Hum",
+   "Veliki Zavižan",
+   "Stari Draguć",
+   "Veliki Plišivac"
+  ]
+ },
+ "HU": {
+  "beaches": [
+   "Annabella Strand",
+   "Balatonfüred Eszterházi strand",
+   "Balatonpart Zamárdi",
+   "Esterházy Strand és Élményfürdő Balatonfüred",
+   "Strand, Balatonfüred",
+   "Szegedi Partfürdő Kemping és Apartman",
+   "Petőházi Strand",
+   "Annagora Gastro",
+   "Balatonfüred Széchenyi Strand"
+  ],
+  "mountains": [
+   "Gellért Hill",
+   "Jakab-hegy",
+   "Prédikálószék",
+   "Tokaji-hegy",
+   "Nagy-Eged hegy",
+   "Tubes",
+   "Misina",
+   "Urak asztala",
+   "Bölcső-hegy",
+   "Lom-hegy",
+   "Sípoló-hegy",
+   "Nagy-Csikóvár"
+  ]
+ },
+ "IE": {
+  "beaches": [
+   "Barleycove Beach",
+   "Dooega Beach",
+   "Rusheen Bay",
+   "Tragumna Beach",
+   "Sandymount Strand",
+   "Portsalon Beach",
+   "Bertra Beach",
+   "Killahoey Beach",
+   "Stoney Beach Ring"
+  ],
+  "mountains": [
+   "Diamond Hill",
+   "Tonelagee",
+   "Torc Mountain",
+   "Slieve League",
+   "Purple Mountain NE Top",
+   "Tomies Mountain",
+   "Errigal",
+   "Benbaun",
+   "Brandon Peak",
+   "Shehy Mountain",
+   "Muckish",
+   "Slievemore"
+  ]
+ },
+ "IS": {
+  "beaches": [],
+  "mountains": [
+   "Eyjafjallajökull volcano",
+   "Eldfell",
+   "Stórhöfði",
+   "Kerlingarfjöll",
+   "Thórsmörk",
+   "Ármannsfell",
+   "Hlíðarfjall",
+   "Brennisteinsalda",
+   "Súlur",
+   "Svartsengi",
+   "Bláhnjúkur",
+   "Helgrindur"
+  ]
+ },
+ "IT": {
+  "beaches": [
+   "Spiaggia di Calamosche",
+   "Cala Luna",
+   "Spiaggia di Cavoli",
+   "Canneto Beach",
+   "Guvano Beach",
+   "Spiaggia Urbani",
+   "Cala Coticcio TAHITI - Isola Di Caprera",
+   "Cala Selvaggia - Palau (Sardinia)",
+   "La Capannina di Portonovo",
+   "La Grotta Spiaggia Urbani",
+   "Portonovo-Da Ramona",
+   "Spiaggia Bogliaco"
+  ],
+  "mountains": [
+   "Mount Etna",
+   "Vulcano",
+   "Isola di Lipari",
+   "Matterhorn",
+   "Seceda",
+   "Monte Cristallo",
+   "Monte Piana",
+   "Isola Bella",
+   "Isola di Vulcano",
+   "Monte Faloria",
+   "Monte Subasio",
+   "Sas Rigais"
+  ]
+ },
+ "LI": {
+  "beaches": [],
+  "mountains": [
+   "Drei Schwestern",
+   "Saroja",
+   "Gauschla",
+   "Galinakopf"
+  ]
+ },
+ "LT": {
+  "beaches": [
+   "Baltijos Pajuris",
+   "Birutės paplūdimys",
+   "I Melnragė",
+   "Palangos jura",
+   "Palangos moterų pležas",
+   "Palangos paplūdimys",
+   "Smiltyne, Klaipeda",
+   "Ginučių vandens malūno paplūdimys",
+   "Užupis Beach"
+  ],
+  "mountains": [
+   "Parnidis dune",
+   "Birutės kalnas",
+   "Sklandytojų kopa",
+   "Veršvai hillfort",
+   "Pelėdų kalnas",
+   "Preila hill",
+   "Purvyne Dune"
+  ]
+ },
+ "LU": {
+  "beaches": [],
+  "mountains": [
+   "Napoléonsgaard"
+  ]
+ },
+ "LV": {
+  "beaches": [
+   "Pelēkā Kāpa",
+   "Jaundubulti Beach",
+   "Liepājas Dienvidrietumu pludmalē",
+   "Liepājas Pludmale",
+   "Liepājas Pludmales Kāpas",
+   "Liepājas pludmales teniss",
+   "Mellužu Pludmale   Melluži Beach",
+   "Beach house Seaborg",
+   "jūras krastā",
+   "Pavilostas Pludmale",
+   "Jurmala Beach",
+   "Jaunķemeru pludmale"
+  ],
+  "mountains": [
+   "Baltā māja"
+  ]
+ },
+ "MC": {
+  "beaches": [
+   "Eden Plage Mala"
+  ],
+  "mountains": [
+   "Mont Agel"
+  ]
+ },
+ "MD": {
+  "beaches": [],
+  "mountains": []
+ },
+ "ME": {
+  "beaches": [
+   "Jaz Beach"
+  ],
+  "mountains": [
+   "Bobotov Kuk",
+   "Lovćen",
+   "Stožina",
+   "Rumija",
+   "Štirovnik",
+   "Debeli Brijeg",
+   "Orlov krš",
+   "Mala Rumija",
+   "Dajbabska gora",
+   "Runjevača",
+   "Minin bogaz",
+   "Blizanac"
+  ]
+ },
+ "MK": {
+  "beaches": [],
+  "mountains": [
+   "Mechkin Kamen",
+   "Vodno",
+   "Baba Mountain",
+   "Бушева Планина",
+   "Crn Kamen",
+   "Dobra Voda",
+   "Mount Bistra",
+   "Pelister",
+   "Mrazarnik",
+   "Baba",
+   "Golema Griva (Big Mane)",
+   "Ilinden"
+  ]
+ },
+ "MT": {
+  "beaches": [
+   "Golden Beach",
+   "St Thomas Bay",
+   "Armier Bay",
+   "Blue Lagoon",
+   "Ghadira Bay",
+   "Ix-Xatt l-Ahmar"
+  ],
+  "mountains": [
+   "Ta' Dmejrek"
+  ]
+ },
+ "NL": {
+  "beaches": [
+   "Domburg Strand Watertoren West",
+   "Fun Beach Event & Leisurepark Panheel",
+   "Hemmeland 1E Strandje",
+   "Nudist Beach Almere - Zilverstrand Naaktstrand",
+   "Strand Westhove",
+   "Strand Zuiderplas",
+   "Strandje 4 Hemmeland",
+   "Strandje Geistingen",
+   "StrandLAB Almere",
+   "Veerse Strandje",
+   "Zilverstrand Almere",
+   "Westerstrand"
+  ],
+  "mountains": [
+   "Cauberg",
+   "Kopje van Bloemendaal",
+   "De Observant",
+   "Woensberg",
+   "Eukenberg",
+   "Vliedberg Boudewijnskerke",
+   "aan de Bergweg te Vlissingen"
+  ]
+ },
+ "NO": {
+  "beaches": [],
+  "mountains": [
+   "Dalsnibba",
+   "Gaustatoppen",
+   "Preikestolen",
+   "Kjeragbolten",
+   "Kjerag",
+   "Blåhornet",
+   "Eidshornet",
+   "Sætertverrfjellet",
+   "Glittertinden",
+   "Holedalsfjellet",
+   "Fløyen",
+   "Ulriken"
+  ]
+ },
+ "PL": {
+  "beaches": [
+   "Apartamenty w Świnoujściu - www.baltic-plaza.pl",
+   "Bulwar J. Szymańskiego",
+   "Plaża Gdynia Kolibki",
+   "Plaża w Świnoujściu",
+   "Kołobrzeg Zachód",
+   "Baseny letnie w Toruniu",
+   "Plaża Kmiecie",
+   "Plaża miejska Chwaliszewo",
+   "Strand Ahlbeck",
+   "Ahlbeck FKK Strand"
+  ],
+  "mountains": [
+   "Kasprov vrch / Kasprowy Wierch",
+   "Babia Góra",
+   "Giewont",
+   "Rysy",
+   "Sněžka",
+   "Gerlachovský štít",
+   "Krokiew",
+   "Igła Deotymy",
+   "Sarnia Skała",
+   "Szczeliniec Mały",
+   "Świnica",
+   "Luční hora"
+  ]
+ },
+ "PT": {
+  "beaches": [
+   "Praia do Guincho",
+   "Praia da Marinha",
+   "Praia do Norte",
+   "Praia de Albarquel",
+   "Falesia Beach",
+   "Praia da Foz do Lizandro",
+   "Praia da Adraga",
+   "Praia Formosa",
+   "Praia de Monte Clérigo",
+   "Oura Beach",
+   "Praia de Machico",
+   "Praia de São Rafael"
+  ],
+  "mountains": [
+   "Pico Ruivo",
+   "Pico do Areeiro",
+   "Paul da Serra",
+   "Pico das Torres",
+   "Achada do Teixeira",
+   "Mount Pico",
+   "Monte Aloia",
+   "Morro Alto",
+   "Estrela",
+   "Arrábida Mountain",
+   "Pico Alto",
+   "Buçaco"
+  ]
+ },
+ "RO": {
+  "beaches": [
+   "Vama Veche Beach",
+   "Plaja Eminescu",
+   "plaja nudiști",
+   "plaja Golful Pescarilor",
+   "Biblioteca",
+   "Cap Kaliakra"
+  ],
+  "mountains": [
+   "Peleaga",
+   "Negoiu",
+   "Ciomadul",
+   "Caraiman",
+   "Vânătoarea lui Buteanu",
+   "Păpușa",
+   "Piatra Șoimului",
+   "Bucura I",
+   "Bucura II",
+   "Dealu Turului",
+   "Dealul Arsenalului",
+   "Dealul Galata"
+  ]
+ },
+ "RS": {
+  "beaches": [],
+  "mountains": [
+   "Pančićev vrh",
+   "Tara",
+   "Pančić's Peak",
+   "Vračar plateau",
+   "Čegar",
+   "Radočelo",
+   "Алибеговац",
+   "Stražilovo",
+   "Битовик",
+   "Trescovăț",
+   "Карагача",
+   "Suvo Rudište"
+  ]
+ },
+ "SE": {
+  "beaches": [
+   "Stranden - Ystad Sandskog",
+   "Strandstugan i sandskogen",
+   "Kattrumpan",
+   "public beach Notviken",
+   "Brf Kungsholms Strand 165",
+   "Battle of Marstrand",
+   "public beach Nyhamnsläge,  bryggan",
+   "public beach Strandbaden",
+   "Waxholms Strand",
+   "public beach Lerhamn, hamnpiren,",
+   "Bogesunds Strand",
+   "Marstrands Nakenbad"
+  ],
+  "mountains": [
+   "Åreskutan",
+   "Kiirunavaara",
+   "Mariaberget",
+   "Luossavaara",
+   "Skinnarviksberget",
+   "Ramberget",
+   "Mjaltön",
+   "Höghäll",
+   "Ramnefjäll",
+   "Runnholmsbramen",
+   "Gregers backar"
+  ]
+ },
+ "SI": {
+  "beaches": [
+   "Lucija Beach",
+   "Plaža Portorož",
+   "Crveni vrh plaža",
+   "Am Strand von Portoroz",
+   "Kanegra Beach",
+   "Meduza Exclusive Beach",
+   "park ob vili tartini"
+  ],
+  "mountains": [
+   "Vremščica",
+   "Monte Cocusso",
+   "Ojstrica",
+   "Brana",
+   "Mrzla gora",
+   "Grintovec",
+   "Planjava",
+   "Stol",
+   "Krofička",
+   "Škrlatica",
+   "Olševa",
+   "Lubnik"
+  ]
+ },
+ "SK": {
+  "beaches": [],
+  "mountains": [
+   "Rysy",
+   "Gerlachovský štít",
+   "Kriváň",
+   "Kasprov vrch / Kasprowy Wierch",
+   "Trzy Korony",
+   "Świnica",
+   "Okrąglica (Trzy Korony)",
+   "Chleb",
+   "Veľký Kriváň",
+   "Kozi Wierch",
+   "Poludňový grúň",
+   "Vtáčnik"
+  ]
+ },
+ "SM": {
+  "beaches": [],
+  "mountains": [
+   "Monte Titano",
+   "Guaita"
+  ]
+ },
+ "XK": {
+  "beaches": [],
+  "mountains": [
+   "Kopranik",
+   "Black Peak, Šar Mountains",
+   "Kabaš Mountain",
+   "Arneni Peak",
+   "Maja e Arnenit",
+   "Piribeg",
+   "Žar Mountain"
+  ]
+ }
+}

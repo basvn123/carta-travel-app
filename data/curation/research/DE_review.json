@@ -1,0 +1,328 @@
+{
+  "iso2": "DE",
+  "country": "Germany",
+  "checked_at": "2026-08-17",
+  "beaches": {
+    "wrong": [
+      {
+        "name": "Badestrand am Hafen Lochau",
+        "class": "wrong_country",
+        "why": "Tier 1 #12, i.e. inside Germany's twelve-slot top shelf. Lochau is a municipality in Vorarlberg, AUSTRIA, on the Austrian shore of Lake Constance; the coordinate 47.53056, 9.73861 is in Austria. The identical row (same name, same coordinate) is also published in AT.json at rank 11, so one Austrian beach is being served as both a German and an Austrian beach.",
+        "source_url": "https://www.wikidata.org/wiki/Q668055"
+      },
+      {
+        "name": "Bodensee Strand",
+        "class": "wrong_country",
+        "why": "Tier 2 #14 at 47.50562, 9.70027, on the Austrian Lake Constance shore near Bregenz/Lochau. Also duplicated into AT.json at rank 12.",
+        "source_url": "https://www.openstreetmap.org/#map=17/47.50562/9.70027"
+      },
+      {
+        "name": "Kaiserstrand Lochau",
+        "class": "wrong_country",
+        "why": "Tier 2 #22, Lochau, Vorarlberg, Austria. Also in AT.json at rank 13.",
+        "source_url": "https://www.openstreetmap.org/#map=18/47.52767/9.74354"
+      },
+      {
+        "name": "Lochau Hafen",
+        "class": "wrong_country",
+        "why": "Tier 2 #25, Lochau harbour, Vorarlberg, Austria. It is also a harbour rather than a beach. Also in AT.json at rank 14.",
+        "source_url": "https://www.openstreetmap.org/#map=18/47.53049/9.74254"
+      },
+      {
+        "name": "Schwarzbad",
+        "class": "wrong_country",
+        "why": "Tier 2 #31, Lochau, Vorarlberg, Austria. Also in AT.json at rank 15. Five Austrian rows in total leak into Germany's beach list.",
+        "source_url": "https://www.openstreetmap.org/#map=18/47.52984/9.73909"
+      },
+      {
+        "name": "Strandpromenade",
+        "class": "other",
+        "why": "Tier 1 #10 at 54.51592, 13.65161 near Sassnitz on Ruegen. The name is the bare German common noun for 'beach promenade' with no proper name; a promenade is also not a beach. Unrenderable as a card and unresolvable against any source.",
+        "source_url": "https://www.openstreetmap.org/#map=16/54.51592/13.65161"
+      },
+      {
+        "name": "Freizeit- und Erholungspark Nordstrand",
+        "class": "park_or_area",
+        "why": "Tier 1 #6. This is a leisure and recreation PARK at the Nordstrand lake in Erfurt, Thuringia, roughly 300 km from any sea. It is the sixth-best beach in Germany in this file.",
+        "source_url": "https://www.openstreetmap.org/#map=16/50.99854/11.05022"
+      },
+      {
+        "name": "Westerland",
+        "class": "town_or_village",
+        "why": "Tier 1 #11. Westerland is the main TOWN of Sylt, not a beach. The file separately carries 'Hauptstrand Westerland' at #18, which is the actual beach, so the town row is both wrong in kind and redundant.",
+        "source_url": "https://www.openstreetmap.org/#map=15/54.90797/8.29858"
+      },
+      {
+        "name": "Hauptstrand Westerland",
+        "class": "duplicate_of:Westerland",
+        "why": "Tier 2 #18, 96 m from the 'Westerland' row at tier 1 #11. Same beach, two rows in two tiers.",
+        "source_url": "https://www.openstreetmap.org/#map=17/54.90871/8.29781"
+      },
+      {
+        "name": "Kampen Strand",
+        "class": "duplicate_of:Westerland",
+        "why": "Tier 2 #23, and its coordinate 54.90809, 8.29801 is 39 m from the 'Westerland' row. Kampen is about 5 km NORTH of Westerland on Sylt, so this row is both a duplicate of Westerland's beach and mislocated: a user routed to 'Kampen Strand' would arrive in Westerland.",
+        "source_url": "https://www.wikidata.org/wiki/Q314716"
+      },
+      {
+        "name": "Marinara Beachclub",
+        "class": "hospitality",
+        "why": "Tier 2 #27 on Sylt, 108 m from 'Strand Nordseeklinik Sylt' and 207 m from 'Hundestrand Nordseeklink'. A commercial beach club, same family as the 52 hospitality rows already flagged.",
+        "source_url": "https://www.openstreetmap.org/#map=18/54.92570/8.30979"
+      }
+    ],
+    "missing": [
+      {
+        "name": "Sankt Peter-Ording beach",
+        "qid": "Q20749",
+        "lat": 54.30417,
+        "lon": 8.65111,
+        "why": "Germany's best-known North Sea beach: a 12 km wide sand plain with the stilt houses that are a national visual shorthand for a German beach holiday. The file has no Schleswig-Holstein North Sea mainland entry at all. The QID cited is the municipality; I found no separate Wikidata item for the beach, hence verified false.",
+        "source_url": "https://www.wikidata.org/wiki/Q20749",
+        "verified": false
+      },
+      {
+        "name": "Binz beach (Ruegen)",
+        "qid": "Q523490",
+        "lat": 54.4,
+        "lon": 13.6,
+        "why": "The largest seaside resort on Germany's largest island, the centrepiece of the German National Tourist Board's Ruegen page (60 km of sandy beach, chalk cliffs, Baederarchitektur). The file's only Ruegen row is the unnamed 'Strandpromenade'. QID is the municipality, hence verified false for a beach-level item.",
+        "source_url": "https://germany.travel/en/leisure-and-recreation/germanys-islands/ruegen-island.html",
+        "verified": false
+      },
+      {
+        "name": "Warnemuende beach",
+        "qid": "Q311849",
+        "lat": 54.16667,
+        "lon": 12.08333,
+        "why": "Rostock's seaside district and the widest beach on the German Baltic, plus the busiest cruise call on that coast. Mecklenburg-Vorpommern contributes a single beach row to the whole file (Sportstrand Prerow). QID is the district, hence verified false for a beach-level item.",
+        "source_url": "https://www.wikidata.org/wiki/Q311849",
+        "verified": false
+      },
+      {
+        "name": "Heringsdorf / Usedom beach",
+        "qid": "Q543232",
+        "lat": 53.96667,
+        "lon": 14.16667,
+        "why": "germany.travel describes Usedom's 42 km continuous sand beach and its imperial spa resorts (Heringsdorf, Ahlbeck, Bansin). Usedom is entirely absent from the file. QID is the municipality, hence verified false for a beach-level item.",
+        "source_url": "https://www.germany.travel/en/nature-outdoor-activities/usedom-island.html",
+        "verified": false
+      },
+      {
+        "name": "Kniepsand (Amrum)",
+        "qid": "Q20624",
+        "lat": 54.64056,
+        "lon": 8.32861,
+        "why": "A roughly 10 km2 sandbank forming the beach along the west of Amrum, one of the largest sand beaches in Europe and, unlike most German beaches, a natural feature with its own Wikidata item and coordinate. It should be a strong tier-1 German beach.",
+        "source_url": "https://www.wikidata.org/wiki/Q20624",
+        "verified": true
+      },
+      {
+        "name": "Darsser Ort / Weststrand (Darss)",
+        "qid": "Q1167034",
+        "lat": 54.48028,
+        "lon": 12.52361,
+        "why": "The wild, undeveloped Weststrand at the northern tip of the Darss inside the Vorpommersche Boddenlandschaft national park, routinely named Germany's most beautiful natural beach. The file reaches Prerow, 6 km away, but not this.",
+        "source_url": "https://www.wikidata.org/wiki/Q1167034",
+        "verified": true
+      },
+      {
+        "name": "Rotes Kliff, Kampen (Sylt)",
+        "qid": "Q314716",
+        "lat": 54.95083,
+        "lon": 8.32417,
+        "why": "The 30 m red cliff between Wenningstedt and Kampen on Sylt's open-sea west side, the island's signature beach backdrop. The file's 'Kampen Strand' row is mislocated to Westerland instead.",
+        "source_url": "https://www.wikidata.org/wiki/Q314716",
+        "verified": true
+      },
+      {
+        "name": "Ellenbogen, Sylt",
+        "qid": "Q878464",
+        "lat": 55.05222,
+        "lon": 8.42111,
+        "why": "The northernmost land in Germany, a dune peninsula with wide empty beaches on both the North Sea and Wadden Sea sides.",
+        "source_url": "https://www.wikidata.org/wiki/Q878464",
+        "verified": true
+      },
+      {
+        "name": "Timmendorfer Strand",
+        "qid": "Q541750",
+        "lat": 53.99444,
+        "lon": 10.7825,
+        "why": "The classic Luebeck Bay resort beach, together with Travemuende the Baltic beach nearest to Hamburg and one of the most-used in Germany. QID is the municipality, hence verified false for a beach-level item.",
+        "source_url": "https://www.wikidata.org/wiki/Q541750",
+        "verified": false
+      }
+    ],
+    "order": [
+      "Strandbad Wannsee at #1 is a real and historic site (Q1545614, one of the largest inland-water lidos in Europe), but ranking a Berlin lake bath as Germany's number one beach in a country with about 2,400 km of North Sea and Baltic coast is not defensible for a Beaches tab.",
+      "Strandbad Ploetzensee at #2 is a small Berlin neighbourhood lake bath ranked above Sportstrand Prerow (#7) and above every Sylt, Ruegen and Usedom entry.",
+      "Strandbad Pflegersee at #5 is a small mountain lake bath near Garmisch-Partenkirchen; Badestrand Silbersee at #4 is a quarry lake near Bremen. Both are above the only genuine Baltic beach in tier 1.",
+      "Seven of the twelve tier-1 rows are inland lake baths, one is a leisure park, one is an unnamed promenade and one is in Austria. Only Sportstrand Prerow and the Westerland pair are sea beaches.",
+      "Ordering is being driven by proximity to a large catalogue city (Berlin, Bremen, Erfurt) rather than by the stature of the beach."
+    ]
+  },
+  "mountains": {
+    "wrong": [
+      {
+        "name": "Vaalserberg",
+        "class": "wrong_country",
+        "why": "Tier 1 #2, i.e. Germany's second mountain. Q159860: the Vaalserberg is the highest point of the European NETHERLANDS (322.4 m) and lies in the province of Limburg; the wire coordinate 50.75471, 6.02073 is the Drielandenpunt on the Dutch side of the tripoint. It belongs in NL, and at 322 m it is not a mountain in any case.",
+        "source_url": "https://www.wikidata.org/wiki/Q159860"
+      },
+      {
+        "name": "Lorelei",
+        "class": "viewpoint_not_summit",
+        "why": "Tier 1 #1 and the country's top_mountain in the index. Q4168: a 132 m steep slate ROCK on the right bank of the Rhine at Sankt Goarshausen, famous as a viewpoint and a legend, part of the Upper Middle Rhine Valley World Heritage site. It is a river cliff with a car park, not a summit, and it is Germany's mountain card.",
+        "source_url": "https://www.wikidata.org/wiki/Q4168"
+      },
+      {
+        "name": "Lousberg",
+        "class": "park_or_area",
+        "why": "Tier 1 #5. Q153664: a 264 m rise on the northern edge of Aachen city centre, laid out in the early 19th century by Maximilian Friedrich Weyhe as a 'Wald- und Bergpark'. It is a designed urban park, 1.3 km from the city centre.",
+        "source_url": "https://www.wikidata.org/wiki/Q153664"
+      },
+      {
+        "name": "Ruinenberg",
+        "class": "park_or_area",
+        "why": "Tier 1 #11. Q895622: a hill in the Bornstedt borough of Potsdam, just north of Sanssouci Park, on which Frederick the Great had a water tank built in 1748 disguised as artificial classical ruins. It is a garden folly in a palace park, ranked above the Hoher Goell (2522 m, #13).",
+        "source_url": "https://www.wikidata.org/wiki/Q895622"
+      },
+      {
+        "name": "Schachen",
+        "class": "other",
+        "why": "Tier 1 #7. The row's wikipedia link is 'en:King's House on Schachen' (Q256160), which is a small villa built by Ludwig II, i.e. a BUILDING. The entry's fame, and therefore its rank, comes entirely from a royal chalet rather than from any summit.",
+        "source_url": "https://www.wikidata.org/wiki/Q256160"
+      },
+      {
+        "name": "Birkenkopf",
+        "class": "other",
+        "why": "Tier 1 #4. Q865568: a 511 m hill in Stuttgart that is in part a Schuttberg, an artificial mound built from the city's Second World War rubble. A rubble tip in the national top five.",
+        "source_url": "https://www.wikidata.org/wiki/Q865568"
+      },
+      {
+        "name": "Fockeberg",
+        "class": "other",
+        "why": "Tier 2 #16. Q369705: 'Trummerkippe Bauernwiesen', a Leipzig rubble tip raised between 1947 and the late 1960s from demolished war ruins. Same artificial-mound family as Birkenkopf and Olympiaberg (#92).",
+        "source_url": "https://www.wikidata.org/wiki/Q369705"
+      },
+      {
+        "name": "Heiligenberg",
+        "class": "not_notable",
+        "why": "Tier 1 #3. Q1595132: a 440 m wooded hill above Heidelberg. A real hill and an interesting archaeological site, but as Germany's third mountain, above the Alpspitze, it is indefensible.",
+        "source_url": "https://www.wikidata.org/wiki/Q1595132"
+      },
+      {
+        "name": "Calmont",
+        "class": "not_notable",
+        "why": "Tier 1 #10. Q154158: a 380 m ridge above the Mosel between Bremm and Ediger-Eller, known as Europe's steepest vineyard. It is a vineyard slope with a via ferrata, not a mountain, and it holds a national tier-1 slot.",
+        "source_url": "https://www.wikidata.org/wiki/Q154158"
+      },
+      {
+        "name": "Monte Troodeloeh",
+        "class": "not_notable",
+        "why": "Tier 2 #35. Q1226401: at 118.04 m the highest point of the CITY OF COLOGNE, a marker stone in the Koenigsforst. A city high point of 118 m in the German mountains list.",
+        "source_url": "https://www.wikidata.org/wiki/Q1226401"
+      },
+      {
+        "name": "Schmausenbuckturm",
+        "class": "other",
+        "why": "Tier 2 #47. An observation TOWER, 21 m from the 'Schmausenbuck' row at #118, so the tower and its hill are both listed and the tower outranks the hill by 71 places.",
+        "source_url": "https://www.openstreetmap.org/#map=18/49.45/11.15"
+      }
+    ],
+    "missing": [
+      {
+        "name": "Zugspitze",
+        "qid": "Q3375",
+        "lat": 47.42111,
+        "lon": 10.98528,
+        "why": "2962 m, the highest mountain in Germany and the country's single most-visited alpine summit (two cable cars, a rack railway, a summit terrace). Completely absent. It is about 11.4 km from Garmisch-Partenkirchen, just outside the roughly 10 km proximity cap the snapshot uses, while eight lesser Garmisch peaks around it are in the file.",
+        "source_url": "https://www.wikidata.org/wiki/Q3375",
+        "verified": true
+      },
+      {
+        "name": "Watzmann",
+        "qid": "Q163919",
+        "lat": 47.55444,
+        "lon": 12.92194,
+        "why": "2713 m, the third-highest in Germany and the highest lying entirely on German soil; the skyline of Berchtesgaden and the Koenigssee. The file carries Hoher Goell, Jenner, Schneibstein, Hohes Brett, Grunstein and Kneifelspitze around Berchtesgaden but not the Watzmann.",
+        "source_url": "https://www.wikidata.org/wiki/Q163919",
+        "verified": true
+      },
+      {
+        "name": "Brocken",
+        "qid": "Q155721",
+        "lat": 51.80056,
+        "lon": 10.61722,
+        "why": "1141 m, the highest peak of the Harz and of northern Germany, reached by the Brockenbahn steam railway and one of the most-walked mountains in the country. The file's only Harz entries are the Armeleuteberg (#15), the Hohnekamm and the Wolfsklippen.",
+        "source_url": "https://www.wikidata.org/wiki/Q155721",
+        "verified": true
+      },
+      {
+        "name": "Feldberg (Black Forest)",
+        "qid": "Q316401",
+        "lat": 47.87861,
+        "lon": 8.01111,
+        "why": "1493 m, the highest mountain of the Black Forest and of Baden-Wuerttemberg, and the highest in Germany outside the Alps. The Black Forest is represented only by the Rohrhardsberg (#29) and Mooswaldkopf.",
+        "source_url": "https://www.wikidata.org/wiki/Q316401",
+        "verified": true
+      },
+      {
+        "name": "Bastei",
+        "qid": "Q671486",
+        "lat": 50.96222,
+        "lon": 14.07139,
+        "why": "The rock formation and bridge 194 m above the Elbe that IS Saxon Switzerland in every photograph of it. The file carries Lilienstein (#20), Pfaffenstein (#27), Papststein, Barbarine, Quirl, Gamrig and both Zschirnsteine from that park, but not the Bastei.",
+        "source_url": "https://www.wikidata.org/wiki/Q671486",
+        "verified": true
+      },
+      {
+        "name": "Nebelhorn",
+        "qid": "Q696067",
+        "lat": 47.42167,
+        "lon": 10.3425,
+        "why": "2224 m above Oberstdorf, the Allgaeu's principal cable-car mountain and the site of Germany's longest lift chain. The file lists Rubihorn and Gaisalphorn near Oberstdorf instead.",
+        "source_url": "https://www.wikidata.org/wiki/Q696067",
+        "verified": true
+      },
+      {
+        "name": "Fichtelberg",
+        "qid": "Q164561",
+        "lat": 50.42861,
+        "lon": 12.95472,
+        "why": "1214.6 m, the highest mountain in Saxony and the Erzgebirge's winter-sports centre. The Erzgebirge has no representative in the file.",
+        "source_url": "https://www.wikidata.org/wiki/Q164561",
+        "verified": true
+      },
+      {
+        "name": "Grosser Arber",
+        "qid": "Q260073",
+        "lat": 49.11222,
+        "lon": 13.13444,
+        "why": "1455.5 m, the highest peak of the Bavarian Forest and Lower Bavaria, the 'King of the Bavarian Forest'. The whole Bavarian Forest is absent from the file.",
+        "source_url": "https://www.wikidata.org/wiki/Q260073",
+        "verified": true
+      },
+      {
+        "name": "Wendelstein",
+        "qid": "Q819671",
+        "lat": 47.70278,
+        "lon": 12.01222,
+        "why": "1838 m, the Bavarian Pre-Alps landmark with the historic cog railway, observatory and summit church, and the standard Munich day-trip mountain. The file has nothing between Garmisch and Berchtesgaden.",
+        "source_url": "https://www.wikidata.org/wiki/Q819671",
+        "verified": true
+      }
+    ],
+    "order": [
+      "The top five are a Rhine river rock, a Dutch hill, a Heidelberg wooded hill, a Stuttgart rubble mound and an Aachen city park. The first genuine alpine summit is the Alpspitze at #6.",
+      "Only four tier-1 rows are defensible at all: Alpspitze (#6), Wank (#8), Tegelberg (#12) and arguably Koenigstuhl (#9) as a funicular viewpoint. Hoher Goell (2522 m) sits at #13, below the Ruinenberg garden folly.",
+      "Eight of the top 30 are minor Garmisch-area summits (Schachen, Osterfelderkopf, Kreuzeck, Hochblassen, Bernadeinkopf, Hoher Fricken, Notkarspitze, Westliche Karwendelspitze) purely because Garmisch-Partenkirchen is a catalogue destination, while entire ranges (Harz, Black Forest, Bavarian Forest, Erzgebirge, Rhoen, Fichtelgebirge) have no tier-1 representative.",
+      "Lippische Velmerstot (#14) and Velmerstot (#54) are the two summits of the same hill listed 40 places apart.",
+      "Ranking should be re-cut on elevation plus prominence plus reachability. As it stands, no German mountain above 2000 m appears before rank 6 and only four appear in the top 30."
+    ]
+  },
+  "counts_verdict": "Beaches: 35 is far too few and badly composed. Germany has roughly 2,400 km of North Sea and Baltic coast, three coastal national parks and the Wadden Sea World Heritage site, and this file gives Mecklenburg-Vorpommern one row, Usedom none, mainland Schleswig-Holstein none, the East Frisian islands none, while five rows are in Austria and roughly half are inland lake baths. 80 to 120 rows would be defensible. Mountains: 125 is a reasonable volume, but the tier-1 shelf holds no summit above 2000 m outside a single valley and omits every regional high point in the country.",
+  "top_pick_verdict": "Neither top pick survives. top_beach = 'Strandbad Wannsee' is a Berlin lake lido, not a German beach card; it should be Sylt (Westerland/Kampen or the Rotes Kliff), Sankt Peter-Ording or Binz on Ruegen. top_mountain = 'Lorelei' is a 132 m river cliff; it should be the Zugspitze (Q3375) as the country card, or the Watzmann (Q163919) if a wilder, less lift-shaped image is wanted.",
+  "notes": "Systemic causes seen in DE.json. (1) Proximity cap: 159 of 160 rows are within 9.0 km of a catalogue destination (the sole outlier is Rugard at 19.4 km), and the Zugspitze at about 11.4 km from Garmisch falls just outside it. The same rule removes the Grossglockner in AT and the Dufourspitze in CH, so this is one fix, not three. (2) Catalogue coverage, not feature quality, decides what exists: coasts with no destination row (Usedom, mainland North Sea, East Frisia, Fehmarn) produce zero beaches, and destination-dense valleys produce eight near-identical peaks. (3) Border leakage: five Lochau (Austria) beaches are published in DE.json, one at tier 1, and simultaneously in AT.json; the Vaalserberg (Netherlands) is DE tier 1 #2. There is no point-in-country check. (4) No landform-type gate: a leisure park, a promenade, a town, an observation tower, a royal chalet, two war-rubble mounds and a vineyard slope all pass. (5) Coordinate error: 'Kampen Strand' is placed 39 m from Westerland, about 5 km from Kampen."
+}

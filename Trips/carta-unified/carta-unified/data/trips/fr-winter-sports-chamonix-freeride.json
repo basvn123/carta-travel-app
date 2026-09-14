@@ -1,0 +1,307 @@
+{
+  "id": "fr-winter-sports-chamonix-freeride",
+  "sourceId": "fr-winter-chamonix-freeride",
+  "slug": "fr-winter-sports-chamonix-freeride",
+  "title": "Chamonix Freeride: Grands Montets, Vallée Blanche and the Off-Piste Circuit",
+  "country": "France",
+  "countryCode": "FR",
+  "countries": [
+    {
+      "name": "France",
+      "code": "FR"
+    }
+  ],
+  "isMultiCountry": false,
+  "region": "Western & Central Europe",
+  "regionKey": "western-central",
+  "subRegion": "Chamonix-Mont-Blanc, Haute-Savoie",
+  "tripType": "Winter Sports & Skiing",
+  "tripTypeId": 8,
+  "tripTypeSlug": "winter-sports",
+  "durationDays": 7,
+  "bestPeriod": {
+    "months": [
+      1,
+      2,
+      3
+    ],
+    "monthNames": [
+      "January",
+      "February",
+      "March"
+    ],
+    "window": null,
+    "note": "February and March give the most stable glacier crossings; January can be colder but the Vallée Blanche moraine exit is icier.",
+    "avoid": null,
+    "raw": null
+  },
+  "budgetTier": "€€€",
+  "budgetTierRange": [
+    3,
+    3
+  ],
+  "budgetTierRaw": "€€€",
+  "budget": {
+    "currency": "EUR",
+    "totalEur": {
+      "low": 1450,
+      "high": 2050
+    },
+    "totalNote": null,
+    "breakdown": {
+      "accommodation": {
+        "lowEur": 560,
+        "highEur": 780,
+        "note": null
+      },
+      "food": {
+        "lowEur": 260,
+        "highEur": 360,
+        "note": null
+      },
+      "transport": {
+        "lowEur": 160,
+        "highEur": 240,
+        "note": null
+      },
+      "activities": {
+        "lowEur": 470,
+        "highEur": 670,
+        "note": null
+      }
+    },
+    "perDayEur": {
+      "low": 207,
+      "high": 293
+    }
+  },
+  "profile": {
+    "difficulty": 5,
+    "difficultyLabel": "Expert",
+    "difficultyNote": null,
+    "fitnessLevel": "Expert",
+    "crowdLevel": "High",
+    "familyFriendly": false,
+    "carRequired": false
+  },
+  "basecamps": [
+    "Chamonix-Mont-Blanc"
+  ],
+  "gatewayAirport": "Geneva (GVA)",
+  "gatewayAirportCode": "GVA",
+  "languages": [
+    "French"
+  ],
+  "currency": "EUR",
+  "emergencyNumber": "112",
+  "coordinates": {
+    "lat": 48.8534,
+    "lon": 2.3488,
+    "precision": "country",
+    "matchedPlace": "Paris",
+    "source": "country capital fallback"
+  },
+  "tags": [
+    "freeride",
+    "off-piste",
+    "glacier-skiing",
+    "guided-skiing",
+    "big-mountain"
+  ],
+  "summary": "A week of guided and self-directed freeride in Chamonix, built around the Vallée Blanche, Grands Montets and Le Tour, with avalanche and crevasse discipline throughout.",
+  "summaryGenerated": false,
+  "hook": "Chamonix does not have one ski area — it has five separate mountains stitched together by a valley bus and a shared lift pass, and the best skiing on most of them is off the marked piste. This week uses all five, ends with the Vallée Blanche glacier descent from the Aiguille du Midi, and treats avalanche and crevasse risk as the daily planning question it actually is.",
+  "snapshot": {
+    "Country": "France",
+    "Base(s)": "Chamonix-Mont-Blanc, with two nights positioned toward Argentière",
+    "Trip Type": "Winter Sports & Skiing",
+    "Duration": "7 days",
+    "Best Period": "January–March; February and March for the most reliable Vallée Blanche exit",
+    "Budget Tier": "€€€",
+    "Total Distance / Terrain": "Five linked sectors (Brévent-Flégère, Grands Montets, Le Tour-Balme, Aiguille du Midi/Vallée Blanche); base 1,035 m at Chamonix, top 3,842 m at the Aiguille du Midi",
+    "Getting There": "Fly to Geneva (GVA); shuttle or train (via Saint-Gervais and the Mont-Blanc Express) to Chamonix, roughly 1h15–1h45",
+    "Who It Suits": "Confident off-piste skiers and riders comfortable on variable snow, roped glacier travel and long unmarked descents"
+  },
+  "itinerary": [
+    {
+      "day": 1,
+      "title": "Arrival and orientation",
+      "morning": "Fly into Geneva and take the shuttle or the Léman Express/Mont-Blanc Express rail combination to Chamonix. Check into the base hotel and rent skis or a splitboard, boots and an avalanche kit (transceiver, probe, shovel) from a rental shop on Rue Joseph Vallot or Rue du Docteur Paccard.",
+      "afternoon": "Walk to the Maison de la Montagne on Place de l'Église, home of the Compagnie des Guides de Chamonix and the Office de Haute Montagne (OHM), the free walk-in service where guides brief on snowpack, glacier conditions and the daily avalanche bulletin (Météo-France BRA). Buy the Chamonix Le Pass covering Brévent-Flégère, Grands Montets, Le Tour-Balme and Les Houches.",
+      "evening": "Group briefing with the guide if pre-booked, or a solo transceiver practice session in the search field most rental shops keep near their counters.",
+      "dayStats": "0 vertical metres skied · 0 sectors · 0 lift hours.",
+      "sleep": null
+    },
+    {
+      "day": 2,
+      "title": "Brévent-Flégère, orientation day",
+      "morning": "Take the Téléphérique du Brévent from Chamonix centre up to 2,525 m. This south-facing sector catches the sun earliest and holds up best after fresh snow blows through the Grands Montets side, so it is the sensible opener while you read how the group skis together.",
+      "afternoon": "Ride across to La Flégère (1,877 m base, Index at 2,385 m) via the valley traverse, and ski the open bowls below the Refuge de Bellachat side of the ridge, staying inside the pisted boundary until the guide has assessed the day's danger rating on the European five-level scale.",
+      "evening": "Aprés-ski on Rue du Docteur Paccard; check tomorrow's Grands Montets lift status before dinner — the sector is wind-exposed and the Argentière side often closes above Lognan when the valley itself is calm.",
+      "dayStats": "approx. 3,200 m vertical · 1 sector (Brévent-Flégère) · 4.5 lift hours.",
+      "sleep": null
+    },
+    {
+      "day": 3,
+      "title": "Grands Montets and the Argentière glacier",
+      "morning": "Bus to Argentière and ride the Télécabine de Plan-Joran. Note before you go: the historic cable car from Lognan to the Aiguille des Grands Montets summit (3,295 m) has been shut since a 2018 fire destroyed the mid-station, and the upper mountain has run on a reduced, rebuilt lift configuration since — check the current top station with the lift company before committing a day to this sector, the interconnect most likely to have changed since last season.",
+      "afternoon": "Ski the accessible pistes and marked off-piste variants above Lognan, with views onto the Argentière glacier and the Aiguille Verte. With a guide, the Pas de Chèvre passage links this basin toward the Mer de Glace system for skiers planning ahead to the Vallée Blanche exit later in the week.",
+      "evening": "Early return to Chamonix; the Argentière-side buses thin out after 17:00.",
+      "dayStats": "approx. 2,600 m vertical · 1 sector (Grands Montets) · 4 lift hours.",
+      "sleep": null
+    },
+    {
+      "day": 4,
+      "title": "Le Tour-Balme and the Vallée du Trient",
+      "morning": "Bus to Le Tour and ride the Télécabine de Charamillon to Col de Balme (2,270 m), the highest and most north-facing sector in the valley and the most snow-reliable when the lower mountain is thin.",
+      "afternoon": "With the Compagnie des Guides, this is the launch point for the Vallée du Trient ski tour: a short skin over the col into Switzerland, then a long glacier and forest descent past the Trient glacier toward Vallorcine, finishing at the train station. Crevasses on the upper glacier make this a roped, guided day only.",
+      "evening": "Train back from Vallorcine on the Mont-Blanc Express, a scenic 25-minute ride down the valley.",
+      "dayStats": "approx. 1,900 m vertical (plus one uphill skin) · 1 sector (Le Tour-Balme) · 3 lift hours.",
+      "sleep": null
+    },
+    {
+      "day": 5,
+      "title": "Vallée Blanche, guided",
+      "morning": "Early start at the Aiguille du Midi téléphérique — arrive before 07:30 to beat the queue, since the ride to 3,842 m runs in two stages. Meet the Compagnie des Guides party at the top; the guide fits harnesses and rope for the exposed ridge walk off the summit station, the single most consequence-heavy few minutes of the week.",
+      "afternoon": "Ski or ride the Vallée Blanche itself: roughly 20 km and 2,700 m of descent down the Géant and Mer de Glace glaciers to Chamonix or, in low-snow years, to a shuttle pickup partway down. Crevasses are real and hidden by snow bridges; the route is skied roped and guided, never solo, regardless of how many tracks are already visible.",
+      "evening": "A long, satisfied dinner — this is the trip's centrepiece and most parties are tired by 18:00.",
+      "dayStats": "approx. 2,700 m vertical · 1 itinerary (Vallée Blanche) · 1 lift ride (Aiguille du Midi).",
+      "sleep": null
+    },
+    {
+      "day": 6,
+      "title": "Second freeride day, weather-dependent",
+      "morning": "Check the Aiguille du Midi status before making plans — it is the valley's most wind-sensitive lift, with holds common above 60–70 km/h at altitude, so keep this day flexible. If it is running and conditions are stable, a second glacier tour (the Envers du Plan variant off the Vallée Blanche, or a return to Grands Montets) extends the week's off-piste mileage.",
+      "afternoon": "If the Midi is on hold, default to Grands Montets or Le Tour, both of which sit lower and are less exposed to wind than the Aiguille du Midi's summit ridge.",
+      "evening": "Gear rinse and dry — wet skins and rope need to dry overnight before packing.",
+      "dayStats": "approx. 2,400 m vertical · 1 sector (weather-dependent) · 3.5 lift hours.",
+      "sleep": null
+    },
+    {
+      "day": 7,
+      "title": "Final morning and departure",
+      "morning": "A short session at Brévent-Flégère, the most forgiving last-morning sector, then return skis and boots by the shop's midday deadline.",
+      "afternoon": "Shuttle or train to Geneva for the flight home.",
+      "evening": "—",
+      "dayStats": "approx. 1,200 m vertical · 1 sector (Brévent-Flégère) · 2 lift hours.",
+      "sleep": null
+    }
+  ],
+  "accommodationStrategy": [
+    {
+      "rank": 1,
+      "name": "Heliopic Hôtel & Spa",
+      "style": "Modern 4-star",
+      "location": "Chamonix centre",
+      "description": "Sits at the base of the Aiguille du Midi téléphérique, which matters directly on the Vallée Blanche day: no valley transfer, no early bus, just a walk to the lift queue before 07:30. Ski/boot storage and a drying room are standard.",
+      "booking": "October for a February–March week.",
+      "priceNote": "€260–€380 per night for two"
+    },
+    {
+      "rank": 2,
+      "name": "Hôtel Les Grands Montets",
+      "style": "Alpine hotel",
+      "location": "Argentière",
+      "description": "Sits in Argentière itself, a two-minute walk from the Plan-Joran gondola base, so the Grands Montets and Le Tour days start without a bus. Quieter and slightly cheaper than central Chamonix.",
+      "booking": "eight weeks ahead.",
+      "priceNote": "€180–€260 per night for two"
+    },
+    {
+      "rank": 3,
+      "name": "Hôtel Faucigny",
+      "style": "Central boutique",
+      "location": "Chamonix",
+      "description": "A straightforward central option on Rue Joseph Vallot, close to the Maison de la Montagne, rental shops and the Brévent lift base — useful for the orientation and departure days.",
+      "booking": "six weeks ahead.",
+      "priceNote": "€150–€220 per night for two"
+    }
+  ],
+  "logistics": {
+    "connectivity": null,
+    "emergency": "112 pan-European; French mountain rescue (PGHM) is reached via 112.",
+    "weather": "The Aiguille du Midi cable car suspends in high wind several times most winters; build a spare day into the itinerary rather than scheduling the Vallée Blanche on the last possible morning.",
+    "bookingWindows": "Compagnie des Guides Vallée Blanche departures fill weeks ahead in February half-term and around Easter; book on arrival or before.",
+    "money": "Cards are accepted everywhere in town; carry cash for the smaller Argentière bakeries and the OHM donation box.",
+    "transportRules": null,
+    "permits": null,
+    "health": null,
+    "gettingThere": null,
+    "other": [
+      {
+        "label": "Avalanche bulletin",
+        "text": "Météo-France issues the BRA daily for the Mont-Blanc massif on the European 1–5 danger scale; read it every morning at the OHM or online before choosing a sector."
+      },
+      {
+        "label": "Mandatory kit for anything off-piste",
+        "text": "Transceiver, probe and shovel, carried and switched on, for every skier — rental shops and guides check this and will refuse an unequipped client."
+      },
+      {
+        "label": "Lift pass logistics",
+        "text": "The Chamonix Le Pass does not automatically include the Aiguille du Midi téléphérique or Vallée Blanche access — these are ticketed separately, often bundled into a guided day."
+      },
+      {
+        "label": "Insurance",
+        "text": "Standard travel insurance rarely covers off-piste or glacier skiing — check for an off-piste/ski-touring extension before you go."
+      }
+    ]
+  },
+  "proTips": [
+    "Ride the Aiguille du Midi before 07:30; the queue triples by 09:00 and any wind hold usually shows by mid-morning.",
+    "Ski Brévent-Flégère on the first storm-cycle morning — its south aspect sheds new snow into rideable corn faster than the shadier Grands Montets side.",
+    "Confirm the Grands Montets top-lift configuration with the lift company on the day, not from a website the night before — this sector has changed more than any other since the 2018 fire.",
+    "The Vallée du Trient tour finishes at Vallorcine station; buy the return train ticket that morning rather than searching for a machine with skis on.",
+    "Use the OHM's free morning briefing even on days you ski without a guide — it is the most current route-condition source in the valley.",
+    "Eat mountain lunch before 12:00 or after 13:30; Flégère and Lognan are packed in the standard slot."
+  ],
+  "typeSpecific": {
+    "raw": {
+      "Total Distance / Terrain": "Five linked sectors (Brévent-Flégère, Grands Montets, Le Tour-Balme, Aiguille du Midi/Vallée Blanche); base 1,035 m at Chamonix, top 3,842 m at the Aiguille du Midi",
+      "Who It Suits": "Confident off-piste skiers and riders comfortable on variable snow, roped glacier travel and long unmarked descents"
+    },
+    "surface": "Five linked sectors (Brévent-Flégère, Grands Montets, Le Tour-Balme, Aiguille du Midi/Vallée Blanche); base 1,035 m at Chamonix, top 3,842 m at the Aiguille du Midi",
+    "distanceKm": 1035,
+    "elevationM": null,
+    "verticalM": null,
+    "technicalRating": null,
+    "transitPass": null,
+    "hutBooking": null,
+    "liftNetwork": null,
+    "snowReliability": null,
+    "windConditions": null,
+    "gpxReady": null,
+    "bookingTimeline": null,
+    "audience": "Confident off-piste skiers and riders comfortable on variable snow, roped glacier travel and long unmarked descents"
+  },
+  "packingNotes": [
+    "Full avalanche kit: transceiver, probe, shovel — rent locally if you are not bringing your own.",
+    "A climbing harness is provided by the guide for the Vallée Blanche but bring your own gloves thin enough to clip a carabiner.",
+    "Glacier glasses or goggles with a category 4 lens; the Vallée Blanche at midday is blindingly bright.",
+    "A buff or balaclava for the Aiguille du Midi summit ridge, which is routinely 15–20°C colder than valley Chamonix.",
+    "Wide-platform freeride or all-mountain skis; piste skis are the wrong tool for every sector on this trip bar the final morning.",
+    "A small day pack with space for skins, a spare layer and water — most days involve at least one short walk or skin."
+  ],
+  "whatCouldGoWrong": [
+    "**The Aiguille du Midi is on wind hold.** Fallback: swap the Vallée Blanche day for Grands Montets or Le Tour and keep a spare day at the end of the week for a rescheduled attempt.",
+    "**The Grands Montets top section is closed or reconfigured.** Fallback: the lower Plan-Joran sector still skis well after a fresh dump; Le Tour-Balme is the better full-mountain alternative.",
+    "**A storm cycle strips the valley of visibility for two days.** Fallback: Brévent-Flégère's tree-lined lower slopes remain skiable in flat light when the higher glacier terrain does not.",
+    "**Vallée Blanche departures are fully booked.** Fallback: book on Day 1 at the Maison de la Montagne rather than waiting, and hold a mid-week weather window as backup.",
+    "**Someone in the group is not fit for a full glacier day.** Fallback: split the party — the guide can choose a shorter, gentler Vallée Blanche variant depending on conditions and ability."
+  ],
+  "sources": {
+    "verified": null,
+    "confidenceNotes": null
+  },
+  "verifyFlags": [],
+  "verifyFlagCount": 0,
+  "volatilePricing": false,
+  "wordCount": 2004,
+  "dataVintage": 2026,
+  "provenance": {
+    "batch": "western-central",
+    "sourceFile": "cartatripsv1/trips/fr-winter-chamonix-freeride.md",
+    "sourceFormat": "md+yaml-frontmatter (one file per trip)",
+    "sourceId": "fr-winter-chamonix-freeride",
+    "ingestedAt": "2026-09-02",
+    "synthesized": false
+  }
+}

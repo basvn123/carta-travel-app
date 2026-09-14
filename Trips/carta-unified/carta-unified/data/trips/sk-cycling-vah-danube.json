@@ -1,0 +1,297 @@
+{
+  "id": "sk-cycling-vah-danube",
+  "sourceId": "slovakia-vah-danube-cycling",
+  "slug": "sk-cycling-vah-danube",
+  "title": "Two Rivers: The Váh Cycle Trunk and the Danube Dyke from Žilina to Štúrovo",
+  "country": "Slovakia",
+  "countryCode": "SK",
+  "countries": [
+    {
+      "name": "Slovakia",
+      "code": "SK"
+    }
+  ],
+  "isMultiCountry": false,
+  "region": "Eastern & Southeastern Europe",
+  "regionKey": "eastern-southeastern",
+  "subRegion": "Považie (the Váh valley) and the Slovak Danube",
+  "tripType": "Cycling Trips",
+  "tripTypeId": 1,
+  "tripTypeSlug": "cycling",
+  "durationDays": 7,
+  "bestPeriod": {
+    "months": [
+      5,
+      6,
+      9
+    ],
+    "monthNames": [
+      "May",
+      "June",
+      "September"
+    ],
+    "window": "the first three weeks of September — warm, dry, the Danube dyke empty of Austrian weekend traffic",
+    "note": null,
+    "avoid": "late July–August (35 °C on the shadeless dyke) and March–April, when the Danube floodplain paths can be under water",
+    "raw": null
+  },
+  "budgetTier": "€",
+  "budgetTierRange": [
+    1,
+    1
+  ],
+  "budgetTierRaw": "€",
+  "budget": {
+    "currency": "EUR",
+    "totalEur": {
+      "low": 575,
+      "high": 950
+    },
+    "totalNote": "€575–€950",
+    "breakdown": {
+      "accommodation": {
+        "lowEur": 245,
+        "highEur": 420,
+        "note": "€245–€420 (€35–€60/night, cyklopríjemné penzióny)"
+      },
+      "food": {
+        "lowEur": 160,
+        "highEur": 230,
+        "note": "€160–€230 (€23–€33/day)"
+      },
+      "transport": {
+        "lowEur": 120,
+        "highEur": 210,
+        "note": "€120–€210 (bike rental €70–€120, ZSSK trains + bike tickets, one-way fee)"
+      },
+      "activities": {
+        "lowEur": 50,
+        "highEur": 90,
+        "note": "€50–€90 (Trenčín castle, Komárno fortress, Piešťany spa island)"
+      }
+    },
+    "perDayEur": {
+      "low": 82,
+      "high": 136
+    }
+  },
+  "profile": {
+    "difficulty": 2,
+    "difficultyLabel": "Moderate",
+    "difficultyNote": "Easy–Moderate",
+    "fitnessLevel": "Moderate",
+    "crowdLevel": null,
+    "familyFriendly": null,
+    "carRequired": null
+  },
+  "basecamps": [
+    "Žilina",
+    "Trenčín",
+    "Bratislava",
+    "Komárno"
+  ],
+  "gatewayAirport": "Fly Bratislava (BTS) or Vienna (VIE); ZSSK train Bratislava → Žilina, 2 h 20, bikes carried. Return from Štúrovo by train to Bratislava (~2 h 15) or cross the Mária Valéria bridge for Esztergom and Budapest.",
+  "gatewayAirportCode": "BTS",
+  "languages": [
+    "Slovak",
+    "Hungarian (Komárno and the south)"
+  ],
+  "currency": "Euro (EUR)",
+  "emergencyNumber": "112",
+  "coordinates": {
+    "lat": 49.2231,
+    "lon": 18.7394,
+    "precision": "city",
+    "matchedPlace": "Žilina",
+    "source": "geonames (geonamescache, cities > 15k)"
+  },
+  "tags": [
+    "cycling",
+    "eurovelo-6",
+    "danube",
+    "vah",
+    "castles",
+    "spa",
+    "river-touring"
+  ],
+  "summary": "Slovakia has one finished long-distance cycle route and one that is half-built, and this week rides both honestly. The Danube dyke below Bratislava is flat, smooth asphalt across Europe's largest river island, with a…",
+  "summaryGenerated": false,
+  "hook": "Slovakia has one finished long-distance cycle route and one that is half-built, and this week rides both honestly. The Danube dyke below Bratislava is flat, smooth asphalt across Europe's largest river island, with a basilica in another country as the finish line. The Váh is the opposite: castle rock after castle rock, a spa town with a colonnade bridge, and stretches where the cycleway simply stops and you take the road. Come for the rivers, not for perfect infrastructure.",
+  "snapshot": {
+    "Country": "Slovakia",
+    "Trip type": "Cycling Trips",
+    "Duration": "7 days",
+    "Best period": "May–June and September",
+    "Budget tier": "€",
+    "Difficulty": "Easy–Moderate",
+    "Start / End": "Žilina → Štúrovo (point-to-point, ~430 km ridden)",
+    "Getting there": "Fly Bratislava (BTS) or Vienna (VIE); ZSSK train Bratislava → Žilina, 2 h 20, bikes carried. Return from Štúrovo by train to Bratislava (~2 h 15) or cross the Mária Valéria bridge for Esztergom and Budapest."
+  },
+  "itinerary": [
+    {
+      "day": 1,
+      "title": "Through the Strečno gorge",
+      "morning": "From Žilina's Mariánske námestie, pick up the Váh downstream. The **Strečno** gorge comes at 12 km: the castle on its limestone crag above the river, and the route's worst infrastructure — short shared stretches on road I/18. Ride it early, before the truck traffic.",
+      "afternoon": "Past Vrútky, a spur into **Martin** for the Slovak National Museum's open-air Museum of the Slovak Village at Jahodnícke háje, then back onto the valley route through Považská Bystrica.",
+      "evening": "Reach **Trenčín** under its castle rock. Eat on Mierové námestie and look up: the castle is floodlit and vertical.",
+      "dayStats": "78 km / +380 m",
+      "sleep": null
+    },
+    {
+      "day": 2,
+      "title": "The Roman inscription",
+      "morning": "Climb into **Trenčín Castle** first. Behind the Hotel Elizabeth, cut into the rock, is the **Roman inscription of 179 AD** recording the victory of Legio II Adiutrix at Laugaricio — **the only Roman inscription north of the Danube limes**, and viewable through a window in the hotel [VERIFY: current viewing arrangement and hours].",
+      "afternoon": "An easy 48 km on the finished cycleway south to **Piešťany**. This is the best-surfaced stretch of the whole Váh strand.",
+      "evening": "Cross the **Kolonádový most**, the 1933 covered colonnade bridge, to the spa island. Eat on the Winterova pedestrian street.",
+      "dayStats": "48 km / +180 m",
+      "sleep": null
+    },
+    {
+      "day": 3,
+      "title": "Spa island to the Váh dams",
+      "morning": "A thermal soak or a walk round the spa island — the mud here has treated rheumatism since the 18th century [VERIFY: current spa day-pass price].",
+      "afternoon": "South to **Hlohovec** on levee and quiet road, past the Empire château above the town. The **Hlohovec–Sereď** section is the second unfinished gap: signed, partly unsurfaced, and with two short stretches on a busy road.",
+      "evening": "**Sereď** is unremarkable and that is fine — it is a bed, a supper and 62 km done. The Holocaust museum in the former labour camp is worth an hour if it is open.",
+      "dayStats": "62 km / +190 m",
+      "sleep": null
+    },
+    {
+      "day": 4,
+      "title": "Onto the Danube",
+      "morning": "West through the Trnava lowlands on quiet farm roads to Senec, then down into **Bratislava**. If the wind is against you, take the regional train from Sereď — it is a legitimate shortcut and costs a few euros.",
+      "afternoon": "Ride the Bratislava riverfront under the Nový most and out to Devín, where the Morava joins the Danube under the castle ruin. Then back into the Old Town.",
+      "evening": "Change bikes if you are switching rental, and sleep in Bratislava. Tomorrow is the flat river.",
+      "dayStats": "58 km / +120 m",
+      "sleep": null
+    },
+    {
+      "day": 5,
+      "title": "Žitný ostrov and the barrage",
+      "morning": "Leave on **EuroVelo 6** along the left-bank dyke into the **Žitný ostrov (Csallóköz)** — at roughly 1,600 km², **Europe's largest river island**, formed between the Danube and the Little Danube, flat, agricultural and Hungarian-speaking.",
+      "afternoon": "Smooth asphalt all the way to **Šamorín** and on to the **Gabčíkovo** barrage — the vast, contested hydroelectric works on the Danube, whose locks you can ride across and watch from above.",
+      "evening": "Stay in Gabčíkovo or Vojka nad Dunajom. Fish soup, and an early night.",
+      "dayStats": "62 km / +40 m",
+      "sleep": null
+    },
+    {
+      "day": 6,
+      "title": "The dyke to the fortress town",
+      "morning": "Pure dyke riding: asphalt, no traffic, no gradient, the Danube on your right and the Hungarian bank beyond it. The **Vojka–Kyselica ferry** and the **Šamorín-area crossings** operate seasonally if you want the right bank [VERIFY: current Danube ferry timetables and fares].",
+      "afternoon": "Into **Komárno**, where the Váh finally meets the Danube. The **Komárno fortress system** is one of the largest surviving 19th-century bastion complexes in central Europe — the Old and New Fortress plus the Monostor works across the river [VERIFY: current Monostor and Nová pevnosť opening hours].",
+      "evening": "Komárno is a bilingual Slovak-Hungarian town; eat *halászlé* or *kapustnica* depending on which side of the menu you read.",
+      "dayStats": "58 km / +30 m",
+      "sleep": null
+    },
+    {
+      "day": 7,
+      "title": "To the basilica",
+      "morning": "Continue east on EuroVelo 6, still on the dyke, through Iža — where the Roman fort of **Kelemantia**, a bridgehead of the Danube limes, sits in a field — and Radvaň nad Dunajom.",
+      "afternoon": "Roll into **Štúrovo**, with **Esztergom's basilica** — the largest church in Hungary — filling the far bank. Cross the **Mária Valéria bridge**, destroyed in 1944 and not rebuilt until 2001; it is open to cyclists and pedestrians, there is no border check inside Schengen, and the crossing takes four minutes.",
+      "evening": "Climb to the basilica dome for the view back over Slovakia, then take the train from Štúrovo to Bratislava — or from Esztergom to Budapest, which is the better ending.",
+      "dayStats": "62 km / +90 m",
+      "sleep": null
+    }
+  ],
+  "accommodationStrategy": [
+    {
+      "rank": 1,
+      "name": "Hotel Elizabeth",
+      "style": "historic hotel, cyclist-friendly",
+      "location": "Trenčín",
+      "description": "the Roman inscription of 179 AD is literally in the building's basement rock face, the castle is a ten-minute climb, and there is enclosed parking for bikes. Worth the one splurge night of the week.",
+      "booking": "direct, 3–4 weeks ahead [VERIFY: current nightly rate].",
+      "priceNote": null
+    },
+    {
+      "rank": 2,
+      "name": "Penzión Sandra",
+      "style": "spa-town guesthouse, cyklopríjemné",
+      "location": "Piešťany",
+      "description": "a locked bike room, a hose and a drying line, five minutes from the Kolonádový most, so you can wash the bike, wash yourself in the thermal water and be back for dinner. Central, cheap, and used to touring riders.",
+      "booking": "direct or Booking.com, 2–3 weeks ahead.",
+      "priceNote": null
+    },
+    {
+      "rank": 3,
+      "name": "Penzión Panoráma",
+      "style": "fortress-town guesthouse",
+      "location": "Komárno",
+      "description": "on the flat right in the fortress quarter, secure storage, and walkable to the Nová pevnosť and the Danube confluence — plus a station five minutes away if the last day's weather turns and you want the train to Štúrovo.",
+      "booking": "direct, 2 weeks ahead; earlier around the Komárno Days festival in late April.",
+      "priceNote": null
+    }
+  ],
+  "logistics": {
+    "connectivity": "Continuous 4G/5G on both strands. The Žitný ostrov dyke is open farmland with excellent signal and no shade — the risk here is sun, not isolation.",
+    "emergency": "112. The Danube strand is never more than 8 km from a village. On the Váh, the Strečno gorge is the one place with poor shoulder and fast traffic — ride it defensively, with lights on, and use a mirror.",
+    "weather": "The Danube plain gets 33–36 °C in July with no tree cover on the dyke; carry 2 L and start at 07:00. Spring high water can close short floodplain sections between Gabčíkovo and Komárno. The Váh valley funnels afternoon thunderstorms off the Strážovské vrchy.",
+    "bookingWindows": "Guesthouses 2–4 weeks. The exception is the **IC bike reservation** — book it the moment you fix your dates, because the bike spaces on the Bratislava–Žilina IC sell out well before the seats.",
+    "money": "Euro. Cards work in towns; carry €60–€100 cash for village *potraviny*, ferries and small guesthouses, which sometimes prefer it. ATMs in every town on the route.",
+    "transportRules": "ZSSK carries bikes only on services with the bike pictogram, needs a separate bicycle ticket, and **requires a compulsory bike-space reservation on IC trains**. Slovak law requires a **helmet outside built-up areas** for all cyclists (and everywhere for under-15s), **lights and a rear reflector after dark**, and a **reflective element outside built-up areas at night**. Cyclist blood-alcohol tolerance is effectively **0.0‰**, same as drivers.",
+    "permits": "No permits. The Mária Valéria bridge and the Danube ferries are inside Schengen — no checks, but carry ID. Cycling on the Gabčíkovo barrage structures is permitted only on the marked route.",
+    "health": null,
+    "gettingThere": null,
+    "other": []
+  },
+  "proTips": [
+    "Ride the Danube **west to east**. The prevailing north-westerly gives you 180 km of tailwind to Štúrovo, and reversing the direction turns an easy week into a hard one.",
+    "Do the Váh first and the Danube second, as here. The Váh's rough sections are best done on fresh legs, and finishing on flat asphalt under Esztergom's dome is a far better last day than grinding through the Strečno gorge.",
+    "If the Žilina–Strečno shared section worries you, take the local train Žilina–Vrútky (15 minutes, bikes carried without reservation) and start riding there. You lose the castle view and gain the least stressful morning of the trip.",
+    "Book the **IC bike space** before anything else. It is the hardest reservation of the week and the fallback — a regional stopping train from Bratislava to Žilina — costs you three and a half hours.",
+    "Ask specifically for *\"cyklopríjemné ubytovanie\"* when you phone a guesthouse. The phrase gets you the locked bike room; asking whether you can \"keep a bike somewhere\" gets you a corridor.",
+    "Carry 32–35 mm tyres. The Danube dyke would take anything, but the Hlohovec–Sereď levee and the Považská gravel connectors will punish 25 mm.",
+    "Finish in Esztergom, not Štúrovo. The direct trains to Budapest are frequent, the basilica is the natural full stop, and the border crossing on a bike bridge is a good last kilometre."
+  ],
+  "typeSpecific": {
+    "raw": {
+      "Daily distances and elevation": "Day 1 Žilina–Trenčín 78 km / +380 m. Day 2 Trenčín–Piešťany 48 km / +180 m. Day 3 Piešťany–Sereď via Hlohovec 62 km / +190 m. Day 4 Sereď–Bratislava 58 km / +120 m (or train the last section). Day 5 Bratislava–Gabčíkovo 62 km / +40 m. Day 6 Gabčíkovo–Komárno 58 km / +30 m. Day 7 Komárno–Štúrovo 62 km / +90 m. Total ~428 km, ~1,030 m of climbing — almost all of it in the first three days.",
+      "Surface split, and this is the honest part": "The **EuroVelo 6 / Danube** strand from Bratislava to Štúrovo is roughly **85% smooth asphalt on the flood dyke, 10% quiet paved lane, 5% short gravel or village cobble** — genuinely flat, genuinely finished, rideable on 28 mm tyres. The **Vážska cyklomagistrála** down the Váh is roughly **50% dedicated asphalt cycleway, 35% quiet secondary road, and 15% unfinished gaps where you share a main road with traffic**. The gaps that matter: **Žilina–Strečno** (short shared sections through the gorge on road I/18, narrow, with trucks — this is the least pleasant hour of the week); **Púchov–Trenčín**, where the completed cycleway is discontinuous and drops you onto road II/507 in places; and **Hlohovec–Sereď**, where the route is signed but partly unsurfaced levee. The Piešťany–Nové Mesto nad Váhom middle section, by contrast, is finished, wide and excellent [VERIFY: current completion status of the Považská cyklotrasa gap sections — new segments open most years].",
+      "Elevation per day": "is negligible on the Danube (+30 to +120 m) and modest but real on the Váh, where the route repeatedly climbs off the floodplain to skirt Strečno, Považská Bystrica and Trenčín.",
+      "Prevailing wind": "The Danube corridor blows predominantly from the **north-west**, which means riding Bratislava → Komárno → Štúrovo is a tailwind week and the reverse is a grind. This is the single reason to ride the Danube strand west to east.",
+      "Bike rental by name": "In Bratislava, **Bratislava Bike Point** and **Cyklopožičovňa Trnka** rent trekking and gravel bikes from roughly €18–€28 a day with panniers and helmet, with one-way drop-off negotiable to Komárno or Štúrovo for a fee [VERIFY: current rental rates and one-way drop fees]. In Žilina, **CykloCentrum Žilina** rents trekking bikes; one-way returns down the Váh are harder to arrange, so many riders rent in Bratislava and take the bike north on the train.",
+      "Bike-friendly accommodation": "Look for the **cyklopríjemné ubytovanie** mark — it means a locked room or cage for bikes, a wash point, basic tools and a drying line, and it is the thing to ask about before price. Standard along the Váh in Trenčín and Piešťany, and on the Danube dyke at Šamorín, Gabčíkovo and Komárno.",
+      "Trains with bikes (ZSSK)": "ZSSK carries bicycles on services marked with a bike pictogram in the timetable; you buy a separate **cestovný lístok pre bicykel** at a fraction of the passenger fare [VERIFY: current ZSSK bicycle ticket price]. On **IC services a bike-space reservation is compulsory and capacity is small — book it when you book the seat**, not at the station. Regional trains on the Bratislava–Komárno and Bratislava–Štúrovo lines take bikes without reservation but fill on summer weekends."
+    },
+    "surface": "The **EuroVelo 6 / Danube** strand from Bratislava to Štúrovo is roughly **85% smooth asphalt on the flood dyke, 10% quiet paved lane, 5% short gravel or village cobble** — genuinely flat, genuinely finished, rideable on 28 mm tyres. The **Vážska cyklomagistrála** down the Váh is roughly **50% dedicated asphalt cycleway, 35% quiet secondary road, and 15% unfinished gaps where you share a main road with traffic**. The gaps that matter: **Žilina–Strečno** (short shared sections through the gorge on road I/18, narrow, with trucks — this is the least pleasant hour of the week); **Púchov–Trenčín**, where the completed cycleway is discontinuous and drops you onto road II/507 in places; and **Hlohovec–Sereď**, where the route is signed but partly unsurfaced levee. The Piešťany–Nové Mesto nad Váhom middle section, by contrast, is finished, wide and excellent [VERIFY: current completion status of the Považská cyklotrasa gap sections — new segments open most years].",
+    "distanceKm": null,
+    "elevationM": null,
+    "verticalM": null,
+    "technicalRating": null,
+    "transitPass": null,
+    "hutBooking": null,
+    "liftNetwork": null,
+    "snowReliability": null,
+    "windConditions": "The Danube corridor blows predominantly from the **north-west**, which means riding Bratislava → Komárno → Štúrovo is a tailwind week and the reverse is a grind. This is the single reason to ride the Danube strand west to east.",
+    "gpxReady": null,
+    "bookingTimeline": null,
+    "audience": null
+  },
+  "packingNotes": [],
+  "whatCouldGoWrong": [],
+  "sources": {
+    "verified": null,
+    "confidenceNotes": "- Verified: EuroVelo 6 runs along the Slovak Danube from Bratislava through the Žitný ostrov to Štúrovo; the Žitný ostrov is Europe's largest river island; the Trenčín Roman inscription of 179 AD at Laugaricio is the only Roman inscription north of the Danube limes; the Mária Valéria bridge between Štúrovo and Esztergom was destroyed in 1944 and rebuilt in 2001, and carries cyclists and pedestrians; Piešťany's Kolonádový most dates from 1933; Komárno holds one of central Europe's largest 19th-century bastion fortress systems; the Vážska cyklomagistrála is incomplete with sections still on shared road; ZSSK requires a separate bicycle ticket and a compulsory bike reservation on IC services; Slovak law requires helmets outside built-up areas; the euro; emergency 112. - `[VERIFY]` items in this file: 8 (see inline markers above) - Last reviewed: 2026-09-02"
+  },
+  "verifyFlags": [
+    "current completion status of the Považská cyklotrasa gap sections — new segments open most years",
+    "current rental rates and one-way drop fees",
+    "current ZSSK bicycle ticket price",
+    "current viewing arrangement and hours",
+    "current spa day-pass price",
+    "current Danube ferry timetables and fares",
+    "current Monostor and Nová pevnosť opening hours",
+    "current nightly rate"
+  ],
+  "verifyFlagCount": 8,
+  "volatilePricing": true,
+  "wordCount": 2360,
+  "dataVintage": 2026,
+  "provenance": {
+    "batch": "eastern-southeastern",
+    "sourceFile": "cartaeasterneuropetrips/trips/slovakia-vah-danube-cycling.md",
+    "sourceFormat": "md+nested-yaml-frontmatter (one file per trip)",
+    "sourceId": "slovakia-vah-danube-cycling",
+    "ingestedAt": "2026-09-02",
+    "synthesized": false
+  }
+}

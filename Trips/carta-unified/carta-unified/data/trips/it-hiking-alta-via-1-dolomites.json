@@ -1,0 +1,276 @@
+{
+  "id": "it-hiking-alta-via-1-dolomites",
+  "sourceId": "hiking-italy-alta-via-1-dolomites",
+  "slug": "it-hiking-alta-via-1-dolomites",
+  "title": "Alta Via 1 in Seven Days: Braies to the Civetta Wall",
+  "country": "Italy",
+  "countryCode": "IT",
+  "countries": [
+    {
+      "name": "Italy",
+      "code": "IT"
+    }
+  ],
+  "isMultiCountry": false,
+  "region": "Southern & Mediterranean Europe",
+  "regionKey": "southern-mediterranean",
+  "subRegion": "Dolomiti Bellunesi & Ampezzane — Fanes-Sennes-Braies, Lagazuoi, Civetta",
+  "tripType": "Hiking & Alpine Trekking",
+  "tripTypeId": 6,
+  "tripTypeSlug": "hiking",
+  "durationDays": 7,
+  "bestPeriod": {
+    "months": [
+      6,
+      7,
+      8,
+      9
+    ],
+    "monthNames": [
+      "June",
+      "July",
+      "August",
+      "September"
+    ],
+    "window": "Late June–mid-September, with 10 July–10 September the fully staffed window",
+    "note": null,
+    "avoid": "October–mid-June — rifugi shut, Forcella del Lago and Forcella Coldai hold hard snow, and the Lagazuoi cable car stops mid-October",
+    "raw": "Late June–mid-September, with 10 July–10 September the fully staffed window"
+  },
+  "budgetTier": "€€",
+  "budgetTierRange": [
+    2,
+    2
+  ],
+  "budgetTierRaw": "€€",
+  "budget": {
+    "currency": "EUR",
+    "totalEur": {
+      "low": 1150,
+      "high": 1700
+    },
+    "totalNote": "€1,150–€1,700 per person, excl. international flights",
+    "breakdown": {
+      "accommodation": {
+        "lowEur": 520,
+        "highEur": 720,
+        "note": "Six rifugio half-board nights €70–€95 plus one valley hotel"
+      },
+      "food": {
+        "lowEur": 150,
+        "highEur": 260,
+        "note": "Lunches, a beer at €5–€7, packed lunch (pranzo al sacco) €10–€13"
+      },
+      "transport": {
+        "lowEur": 200,
+        "highEur": 360,
+        "note": "Venice transfers, Dolomiti Bus, Lagazuoi cable car, Passo Duran taxi"
+      },
+      "activities": {
+        "lowEur": 280,
+        "highEur": 360,
+        "note": "Ferrata set hire €12–€18/day, tourist tax, Lagazuoi tunnel head torch, CAI membership"
+      }
+    },
+    "perDayEur": {
+      "low": 164,
+      "high": 243
+    }
+  },
+  "profile": {
+    "difficulty": 4,
+    "difficultyLabel": "Demanding",
+    "difficultyNote": "4/5 — seven consecutive days of 550–950 m ascent and up to 1,350 m descent at 1,500–2,750 m, with exposed but non-technical ground",
+    "fitnessLevel": "Demanding",
+    "crowdLevel": null,
+    "familyFriendly": null,
+    "carRequired": null
+  },
+  "basecamps": [],
+  "gatewayAirport": "VCE Venice Marco Polo, 2 h 40 min to Lago di Braies via Dobbiaco; INN Innsbruck 2 h; TSF Treviso 2 h 45 min",
+  "gatewayAirportCode": "VCE",
+  "languages": [],
+  "currency": null,
+  "emergencyNumber": "112",
+  "coordinates": {
+    "lat": 41.8919,
+    "lon": 12.5113,
+    "precision": "country",
+    "matchedPlace": "Rome",
+    "source": "country capital fallback"
+  },
+  "tags": [
+    "alta-via-1",
+    "dolomites",
+    "rifugio",
+    "hut-to-hut",
+    "lagazuoi",
+    "civetta",
+    "via-ferrata",
+    "cai"
+  ],
+  "summary": "The Alta Via 1 is the Dolomites' introductory grand traverse and the one that actually delivers on the postcard: turquoise Braies, the high karst desert of Fanes and Sennes, the Great War tunnels bored through Lagazuoi, then a full day walking beneath the 1,200 m Civetta wall. Compressed into seven days it becomes serious walking — 5 to 8 hours daily, twelve passes, and no rest day — but it stays a hiking route, not a climbing one. You sleep in rifugi with duvets, three-course dinners and a wine list, which is why the beds vanish in February. It suits confident hill walkers who want altitude and scenery without needing rope work.",
+  "summaryGenerated": false,
+  "hook": null,
+  "snapshot": {},
+  "itinerary": [
+    {
+      "day": 1,
+      "title": "Lago di Braies to Rifugio Biella",
+      "morning": "Transfer to **Lago di Braies (Pragser Wildsee), 1,494 m**. Note that private cars need a pre-booked slot in summer; arrive by the Dobbiaco bus instead. Walk the lake's east shore, then start path 1 up the Valle di Braies Vecchia.",
+      "afternoon": "A steady 850 m climb on scree and rock steps to **Forcella Sora Forno, 2,388 m**, then a short traverse to **Rifugio Biella** at 2,327 m under the Croda del Becco. Fit walkers add the 1 h 15 min ascent of **Croda del Becco (Seekofel), 2,810 m**, the finest first-day view on the route.",
+      "evening": "Dinner at Biella — barley soup, *canederli*, apple strudel. The hut is small and social; sit at the long table and swap the next four days' bookings with everyone else.",
+      "dayStats": "6.5 km / 850 m ascent / 50 m descent / high point 2,388 m / 3 h 30 min–4 h realistic",
+      "sleep": "Rifugio Biella, 2,327 m (dorm half board approx. €70–€80)"
+    },
+    {
+      "day": 2,
+      "title": "The Sennes plateau, Pederü and the climb to Fanes",
+      "morning": "A long, gentle karst crossing on path 6/26 past **Rifugio Sennes (2,116 m)** and Rifugio Fodara Vedla — treeless limestone pavement, marmots, and no water at all.",
+      "afternoon": "Drop 570 m on the jeep road to **Pederü, 1,548 m** (the only shop and the day's bail-out), then climb 500 m up the Val dai Tamersc to the twin huts **Rifugio Lavarella and Rifugio Fanes** at 2,050–2,060 m.",
+      "evening": "Lavarella runs the highest brewery in Europe — drink its unfiltered Sisyphus. Fanes next door does the better *casunziei*. Book whichever you sleep in; they are separate businesses.",
+      "dayStats": "17 km / 700 m ascent / 900 m descent / Pederü low point 1,548 m / 6–7 h realistic / zero water between huts",
+      "sleep": "Rifugio Lavarella or Rifugio Fanes, Alta Badia"
+    },
+    {
+      "day": 3,
+      "title": "Forcella del Lago and the ascent to Lagazuoi",
+      "morning": "South on path 11 past Lago Limo and the Passo Tadega, then the day's crux: a steep, sometimes snow-filled couloir to **Forcella del Lago, 2,486 m**, with a fixed cable on the final rock step.",
+      "afternoon": "Descend to Lago di Lagazuoi, then climb again over **Forcella Lagazuoi, 2,573 m** and up the ridge to **Rifugio Lagazuoi, 2,752 m**, the highest bed of the week and directly above the WW1 galleries.",
+      "evening": "Lagazuoi's terrace at sunset is the picture everyone comes for; the sauna is genuinely good after 900 m of ascent. Book this hut the day reservations open.",
+      "dayStats": "13 km / 950 m ascent / 400 m descent / two passes above 2,480 m / 6–6 h 30 min realistic / hut at 2,752 m",
+      "sleep": "Rifugio Lagazuoi, 2,752 m (half board approx. €85–€100)"
+    },
+    {
+      "day": 4,
+      "title": "The Lagazuoi tunnels, Cinque Torri and Nuvolau",
+      "morning": "Descend through the **Galleria del Lagazuoi**, the Italian mine tunnel driven into the mountain in 1916–17 — 1 km of stepped, wet, unlit gallery losing 600 m. **Helmet and head torch essential**, ferrata set recommended. The Kaiserjäger path is the exposed alternative. Cable car for anyone who would rather not.",
+      "afternoon": "Cross **Passo Falzarego, 2,105 m** (coffee, bus stop, gear shop) and climb path 440/439 past the **Cinque Torri** climbing towers and the restored Italian trench museum to **Rifugio Averau**, then the final 25-minute pull to **Rifugio Nuvolau, 2,575 m**.",
+      "evening": "Nuvolau is a stone box on a summit with a 360° horizon and eighteen beds. Eat at Averau below if you want the best kitchen on the route (its *casunziei all'ampezzana* is the local benchmark) and walk up after.",
+      "dayStats": "12 km / 700 m ascent / 950 m descent / tunnel 1 km, −600 m / Falzarego 2,105 m / 5 h 30 min–6 h 30 min",
+      "sleep": "Rifugio Nuvolau, 2,575 m (or Rifugio Averau, 2,413 m)"
+    },
+    {
+      "day": 5,
+      "title": "Passo Giau, Forcella Ambrizzola and Monte Pelmo",
+      "morning": "Descend to **Forcella Nuvolau** and traverse under Ra Gusela to **Passo Giau, 2,236 m**, then climb the grassy shoulder on path 436 to **Forcella Ambrizzola, 2,277 m** — the day's pivot, with Monte Pelmo suddenly filling the south.",
+      "afternoon": "Contour on path 467 over Forcella Col Duro and Forcella Roan, then down through larch to **Rifugio Città di Fiume, 1,918 m**, sitting on a meadow directly beneath Pelmo's north wall.",
+      "evening": "Città di Fiume is the friendliest kitchen on the AV1 — polenta with *schiz* cheese, venison ragù. The dinosaur footprint slab on Pelmo is a 40-minute walk if you still have legs.",
+      "dayStats": "14 km / 600 m ascent / 1,250 m descent / three forcelle / 6–7 h realistic / Dolomiti Bus at Passo Giau",
+      "sleep": "Rifugio Città di Fiume, 1,918 m"
+    },
+    {
+      "day": 6,
+      "title": "Passo Staulanza to the Civetta: Coldai and Tissi",
+      "morning": "Path 472 to **Passo Staulanza, 1,766 m** (bar, bus stop, last resupply), then the sustained 400 m climb on path 556 through pine to **Rifugio Coldai, 2,132 m**.",
+      "afternoon": "Over **Forcella Coldai, 2,191 m** to the emerald **Lago Coldai**, then a rising traverse on path 560 beneath the **Civetta north-west wall** — 1,200 m of vertical limestone, one of the great faces of the Alps — to **Rifugio Tissi, 2,250 m** on its rock knoll.",
+      "evening": "Tissi at sunset turns the Civetta orange and the queue for the terrace bench is real. Small hut, big view; book it in February or accept Coldai.",
+      "dayStats": "14 km / 900 m ascent / 600 m descent / Forcella Coldai 2,191 m / 6–7 h realistic / Civetta wall 1,200 m",
+      "sleep": "Rifugio Tissi, 2,250 m (fallback Rifugio Coldai)"
+    },
+    {
+      "day": 7,
+      "title": "Vazzoler, Carestiato and out at Passo Duran",
+      "morning": "Descend path 560/555 past the Col Reàn to **Rifugio Vazzoler, 1,714 m**, whose alpine botanical garden sits under the Torre Venezia. This is the quietest, greenest hour of the week.",
+      "afternoon": "Climb path 554 over **Forcella del Camp, 1,933 m** to **Rifugio Carestiato, 1,834 m** under the Moiazza, then down to **Passo Duran, 1,601 m**, where the pre-booked taxi runs you to Agordo and the Belluno bus. Purists continue three more days to La Pissa and Belluno.",
+      "evening": "Belluno's Piazza dei Martiri: dinner at Al Borgo in Anzù for *pastin* and Prosecco Superiore, or a simpler *osteria* plate in the old town before the train to Venice.",
+      "dayStats": "17 km / 700 m ascent / 1,350 m descent / Passo Duran 1,601 m / 7–8 h realistic / taxi Duran–Agordo €40–€60",
+      "sleep": "Hotel in Belluno, or Rifugio Carestiato if you extend the route"
+    }
+  ],
+  "accommodationStrategy": [
+    {
+      "rank": 1,
+      "name": "Rifugio Lagazuoi",
+      "style": "private mountain hotel",
+      "location": "2,752 m",
+      "description": "The highest and most comfortable bed on the AV1, with hot showers, a sauna, private rooms as well as dorms and a terrace over the entire Ampezzo basin. Booked through its own website months ahead; roughly €85–€100 dorm half board. Cable-car access means you can send a bag up or bail out cleanly.",
+      "booking": null,
+      "priceNote": null
+    },
+    {
+      "rank": 2,
+      "name": "Rifugio Città di Fiume",
+      "style": "CAI hut",
+      "location": "1,918 m",
+      "description": "Low enough for warm nights, positioned directly under Monte Pelmo, and the best value on the route at around €70–€78 half board with the CAI discount. Bookable via prenotarifugi.cai.it, with parking and bus access at nearby Passo Staulanza for a partial-week itinerary.",
+      "booking": null,
+      "priceNote": null
+    },
+    {
+      "rank": 3,
+      "name": "Rifugio Tissi",
+      "style": "CAI hut",
+      "location": "2,250 m",
+      "description": "Twenty-odd beds on a knoll facing the Civetta wall, and the single most contested night on the trail. Small, spartan and cash-friendly. If it will not book, take Rifugio Coldai an hour back and walk the traverse in the early morning light instead.",
+      "booking": null,
+      "priceNote": null
+    }
+  ],
+  "logistics": {
+    "connectivity": "Italy is in the EU roaming zone, so an EU SIM works at no extra cost. Coverage is good at Lagazuoi, Nuvolau and Falzarego, weak on the Sennes plateau and in the Val dai Tamersc, and absent in the tunnels. Download the Tabacco 03, 031 and 025 sheets offline.",
+    "emergency": "112 or 118 for Soccorso Alpino. Give the CAI path number and the nearest forcella name, not GPS alone. Italian helicopter rescue is charged — insure specifically for it or join CAI, whose subscription includes cover. Nearest hospitals: Cortina (Codivilla-Putti) and Belluno.",
+    "weather": "Convective thunderstorms build from 13:00–15:00 on most July and August afternoons and the exposed forcelle are lightning traps. Aim to be inside by 15:00. Late-August cold fronts can drop snow above 2,500 m overnight. Check meteo.provincia.bz.it and arpa.veneto.it.",
+    "bookingWindows": "Rifugi open the following summer's diary between February and April; Lagazuoi, Nuvolau and Tissi go within days. Lago di Braies car access needs a summer slot booked online. Ferrata hire in Cortina is walk-in but thin on August weekends.",
+    "money": "Euro. Several huts take cards but the satellite terminals fail regularly; carry €300–€400 cash for the week. Tipping is not customary; round up the bar bill.",
+    "transportRules": "Dolomiti Bus and SAD serve Falzarego, Passo Giau and Passo Staulanza; buy tickets on the app or at bars, not from the driver. Lago di Braies has a summer traffic ban for private cars in the middle of the day. The Lagazuoi cable car runs roughly 6 June–18 October.",
+    "permits": "No permit is needed to walk the AV1. Fanes-Sennes-Braies and the Dolomiti Bellunesi are protected areas: **wild camping and bivouacking are prohibited**, as are fires and drones without authorisation. Do not remove WW1 artefacts from the Lagazuoi galleries — unexploded ordnance still surfaces.",
+    "health": "Hut tap water is usually potable but signed where it is not; assume rainwater cisterns at Nuvolau and Tissi are non-potable unless told otherwise. Altitude is modest but 2,750 m sleeping affects poor sleepers. The main injury risk is a twisted ankle on wet limestone on the long descents.",
+    "gettingThere": null,
+    "other": []
+  },
+  "proTips": [
+    "Join CAI (or use a reciprocal UIAA club card) before booking. It cuts €12–€15 a night off four of the seven huts, includes rescue cover, and moves you up the waiting list.",
+    "Book Lagazuoi, Nuvolau and Tissi on the first morning their diaries open, then build the rest of the week around whatever they give you. Trying the reverse wastes February.",
+    "Walk the Lagazuoi tunnel **downhill** as the route does. Uphill through 600 m of wet stepped gallery in a queue is a different and much worse experience.",
+    "Order the *pranzo al sacco* at dinner, not at breakfast. By 07:00 the kitchen is on breakfast service and will hand you whatever is left.",
+    "Stop at Rifugio Averau for lunch even if you sleep at Nuvolau. It is 25 minutes below, has the best food on the trail, and Nuvolau's kitchen is tiny.",
+    "Fill two litres at every hut and treat the day between huts as waterless. The Sennes plateau in August has caught out more walkers than any pass on the route.",
+    "Take the Croda del Becco summit on Day 1 while you are fresh and the pack is at its lightest — it is the only 2,800 m viewpoint on the itinerary.",
+    "Carry a €50 note reserve in a separate pocket. When the card terminal at a CAI hut fails at 21:00, that is the difference between paying and an awkward morning."
+  ],
+  "typeSpecific": {
+    "raw": {
+      "Hut-to-hut booking path": "Rifugio Biella (2,327 m, CAI) → Rifugio Lavarella or Rifugio Fanes (2,050–2,060 m, both private, Alta Badia families) → Rifugio Lagazuoi (2,752 m, private, Pompanin family) → Rifugio Nuvolau (2,575 m, CAI Cortina — the oldest refuge in the Dolomites, 1883) → Rifugio Città di Fiume (1,918 m, CAI Fiume) → Rifugio Tissi (2,250 m, CAI) with Rifugio Coldai (2,132 m, CAI Venezia) as the fallback → Rifugio Carestiato (1,834 m, CAI Agordo). **There is no central portal.** CAI-managed huts take bookings through prenotarifugi.cai.it; private huts (Lagazuoi, Fanes, Lavarella) use their own website or email plus a phone confirmation. Most open the following summer's diary between **early February and April**, and the Lagazuoi and Nuvolau nights sell out within days of opening. Half board runs **€70–€95 in a dorm and €110–€140 in a small room**, plus a **tourist tax of €1.50–€2.50 per person per night**. Several huts still prefer cash and card readers fail when the satellite link drops — **carry €300–€400**. A **sleeping-bag liner (*sacco lenzuolo*) is mandatory**; full sleeping bags are refused. If a hut is full: ring the *gestore* directly rather than trusting the online form, ask to be put on the *lista d'attesa*, and take the standard fallback for each stage — Sennes or Pederü for Biella, Averau for Nuvolau, Coldai for Tissi, Vazzoler for Carestiato. Under Italian mountain custom a *rifugio* may not turn away a walker in danger, but that means a mattress on the dining-room floor, not a bed.",
+      "CAI membership discount": "A CAI or reciprocal UIAA/Alpine Club membership cuts roughly **€12–€15 per night** off a CAI hut and gives priority on waiting lists. Over four CAI nights it broadly pays for itself.",
+      "Safety markers and waymarking": "The Dolomites use **red-white-red CAI paint blazes with the path number stencilled in black**, plus wooden signposts giving hours to the next rifugio. The Alta Via 1 is additionally marked with a **blue triangle containing the numeral 1**. The route follows CAI paths 1, 6, 7, 10, 11, 20, 26, 436, 467, 472, 554, 556, 558, 560 and 563 in sequence — the AV1 triangle is the reliable identifier where numbers conflict. **Via ferrata:** the AV1 itself has no obligatory ferrata, but two optional Lagazuoi variants are graded — the **Galleria del Lagazuoi** WW1 tunnel descent (easy, but requires helmet, head torch and ideally a set) and the **Kaiserjäger path** (ferrata grade A/B). The Piz Dles Cunturines and Averau ferratas nearby are grade B/C.",
+      "Elevation and gear essentials": "Cumulative ascent for the seven days is roughly **4,900 m and 5,700 m of descent**. High points: Rifugio Lagazuoi 2,752 m, Forcella Lagazuoi 2,573 m, Nuvolau 2,575 m, Forcella del Lago 2,486 m, Forcella Coldai 2,191 m. **Snow patches** persist on the north side of Forcella del Lago and above Lago di Coldai until **early July**; before 10 July carry microspikes, and a walking axe only for a June crossing. A **ferrata set (harness, lanyard, helmet) plus head torch** is needed only for the Lagazuoi tunnel and Kaiserjäger — hire in Cortina at Cooperativa di Cortina or K2 Sport, €12–€18/day.",
+      "Water, food resupply and rubbish": "The Dolomites are karst and **the route is dry between huts** — there are no reliable springs on the Sennes plateau or the Civetta traverse. Every rifugio sells drinking water, some at €1–€3 a litre; fill 2 litres each morning and carry 3 on the Fanes-to-Lagazuoi day. Order a *pranzo al sacco* the evening before (€10–€13). Resupply villages: Pederü, Passo Falzarego, Passo Staulanza, Passo Duran. **Pack out all rubbish** — rifugi are supplied and cleared by helicopter and cargo cableway, and they will ask you to carry your own waste down.",
+      "Bail-out options and cable-car shortcuts": "Day 2 bails at **Pederü** (1,548 m, shuttle jeep to San Vigilio). Day 3–4 bails at **Passo Falzarego** via the **Lagazuoi cable car** — summer 2026 season runs roughly **6 June to 18 October**, first cabin 09:00, last up 16:40, last down 17:00, cabins every 15 minutes, with a small online-booking discount. Day 5 bails at Passo Giau or Passo Staulanza on Dolomiti Bus. Day 7 ends at **Passo Duran**, where a pre-booked taxi to Agordo (€40–€60) connects to Belluno buses. Cortina's Dolomiti Bus lines 30/31 serve Falzarego.",
+      "Rescue and insurance": "**118 or 112** reaches the Soccorso Alpino e Speleologico Veneto/Alto Adige. Helicopter rescue in Italy is **billed** — commonly €80–€120 per minute of flight in the Veneto — and EHIC/GHIC does not cover it. Either buy alpine-trekking insurance naming helicopter recovery, or take CAI membership, which includes a rescue and repatriation package.",
+      "Realistic walking times": "Dolomite signposts quote fit local times. For an averagely fit walker with a 9–11 kg pack, add **25–35%** and a further 20 minutes per hour in wet limestone. The signed \"5.30 h\" from Nuvolau to Città di Fiume is honestly 6.5–7 h with photo stops."
+    },
+    "surface": null,
+    "distanceKm": null,
+    "elevationM": null,
+    "verticalM": null,
+    "technicalRating": "The Dolomites use **red-white-red CAI paint blazes with the path number stencilled in black**, plus wooden signposts giving hours to the next rifugio. The Alta Via 1 is additionally marked with a **blue triangle containing the numeral 1**. The route follows CAI paths 1, 6, 7, 10, 11, 20, 26, 436, 467, 472, 554, 556, 558, 560 and 563 in sequence — the AV1 triangle is the reliable identifier where numbers conflict. **Via ferrata:** the AV1 itself has no obligatory ferrata, but two optional Lagazuoi variants are graded — the **Galleria del Lagazuoi** WW1 tunnel descent (easy, but requires helmet, head torch and ideally a set) and the **Kaiserjäger path** (ferrata grade A/B). The Piz Dles Cunturines and Averau ferratas nearby are grade B/C.",
+    "transitPass": null,
+    "hutBooking": "Rifugio Biella (2,327 m, CAI) → Rifugio Lavarella or Rifugio Fanes (2,050–2,060 m, both private, Alta Badia families) → Rifugio Lagazuoi (2,752 m, private, Pompanin family) → Rifugio Nuvolau (2,575 m, CAI Cortina — the oldest refuge in the Dolomites, 1883) → Rifugio Città di Fiume (1,918 m, CAI Fiume) → Rifugio Tissi (2,250 m, CAI) with Rifugio Coldai (2,132 m, CAI Venezia) as the fallback → Rifugio Carestiato (1,834 m, CAI Agordo). **There is no central portal.** CAI-managed huts take bookings through prenotarifugi.cai.it; private huts (Lagazuoi, Fanes, Lavarella) use their own website or email plus a phone confirmation. Most open the following summer's diary between **early February and April**, and the Lagazuoi and Nuvolau nights sell out within days of opening. Half board runs **€70–€95 in a dorm and €110–€140 in a small room**, plus a **tourist tax of €1.50–€2.50 per person per night**. Several huts still prefer cash and card readers fail when the satellite link drops — **carry €300–€400**. A **sleeping-bag liner (*sacco lenzuolo*) is mandatory**; full sleeping bags are refused. If a hut is full: ring the *gestore* directly rather than trusting the online form, ask to be put on the *lista d'attesa*, and take the standard fallback for each stage — Sennes or Pederü for Biella, Averau for Nuvolau, Coldai for Tissi, Vazzoler for Carestiato. Under Italian mountain custom a *rifugio* may not turn away a walker in danger, but that means a mattress on the dining-room floor, not a bed.",
+    "liftNetwork": null,
+    "snowReliability": null,
+    "windConditions": null,
+    "gpxReady": null,
+    "bookingTimeline": null,
+    "audience": null
+  },
+  "packingNotes": [],
+  "whatCouldGoWrong": [],
+  "sources": {
+    "verified": "Lagazuoi cable car summer 2026 season approximately 6 June–18 October with first cabin 09:00, last ascent 16:40 and last descent 17:00, running every 15 minutes with an online-booking discount; the absence of any central Dolomites rifugio booking portal, with CAI huts on prenotarifugi.cai.it and private huts booking direct; rifugio half-board pricing broadly in the €70–€130 band with a per-person tourist tax added; the mandatory sleeping-bag-liner rule; typical reservation opening between February and April for the following summer.",
+    "confidenceNotes": "Individual half-board prices are 2025-season indications and must be re-checked per hut for 2026. Hut ownership attributions (which CAI section runs Biella, Tissi and Carestiato) should be confirmed against prenotarifugi.cai.it before publication. CAI path numbers vary between map editions — verify against Tabacco 03/031/025. Lago di Braies private-car restrictions and the booking slot system change annually. Passo Duran taxi fares and Dolomiti Bus timetables are seasonal. The Galleria del Lagazuoi is occasionally closed for maintenance or after rockfall; confirm status with the rifugio."
+  },
+  "verifyFlags": [],
+  "verifyFlagCount": 0,
+  "volatilePricing": false,
+  "wordCount": 3297,
+  "dataVintage": 2026,
+  "provenance": {
+    "batch": "southern-mediterranean",
+    "sourceFile": "carta-dataset/trips/hiking-italy-alta-via-1-dolomites.md",
+    "sourceFormat": "md with '## Metadata' bullet block (one file per trip)",
+    "sourceId": "hiking-italy-alta-via-1-dolomites",
+    "ingestedAt": "2026-09-02",
+    "synthesized": false
+  }
+}

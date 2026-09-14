@@ -1,0 +1,1757 @@
+{
+ "_generated_by": "per-country feature review 2026-08-17, data/curation/research/*_review.json, measured against data/curation/wire_snapshot/ (5,472 rows: 2,177 beaches, 3,295 mountains, 43 countries)",
+ "_how_to_read": {
+  "rank": "1 is the rule to ship first: highest wrong-entry removal for the lowest good-entry loss. Rules that lose nothing rank above rules that lose something, and within each group by volume.",
+  "action": "drop = delete the row. merge = collapse into a surviving row and inherit its best name and image. reassign = move to another country. renormalise / rename_or_drop / strip_then_dedupe = repair the string first, delete only if nothing survives. cap_tier2 / cap_tier3 / demote_band = a TIER gate, the row stays in the file. quarantine_image = drop the photo, keep the row. flag_for_p31 = select rows for the type test, never delete. resolve_to_highest_peak = replace a range with its summit. fold_into_parent = replace a sub-top with its parent, or promote the parent if it is absent. reroute = move to another kind.",
+  "measurement": "rows_removed_total is a real count over the wire snapshot, not an estimate. of_which_reviewers_had_flagged_as_wrong is how many of those rows appear in the 648 wrong entries the 11 reviewers wrote up. collateral is the remainder, every row of which was read for rules under 120 hits.",
+  "good_entries_wrongly_removed": "the shippability test. A rule that also deletes Zandvoort aan Zee is not shippable. Every rule here was run against a 480-name regression corpus built from top_picks_seed.json plus the top picks the reviewers endorsed, and tightened until it stopped hitting it."
+ },
+ "_coverage": {
+  "reviewer_wrong_entries": 648,
+  "removed_by_at_least_one_rule_here": 300,
+  "not_reachable_by_name_or_geometry": 348,
+  "what_the_other_348_need": [
+   "OSM tags: 27 hospitality rows whose names are clean (Albania's King Beach, Coco Beach, Lori Beach are natural=beach polygons tagged access=customers), plus every private concession on the Ksamil strand",
+   "Wikidata P31: 19 island rows, 17 viewpoint rows, 25 park or area rows and most of the 72 'other' rows. No regex distinguishes San Marino's Guaita (a sub-summit AND a tower, P31 Q8502) from Monte Titano",
+   "elevation_m: 91 not_notable rows. The field is null on 100% of the 5,472 shipped rows and on 100% of the 3,295 mountains, so no elevation floor can be applied anywhere in Europe today",
+   "a second dedupe pass: 65 duplicate rows sit outside 250 m and below 0.60 name overlap, mostly Greek/Latin and Cyrillic/Latin script pairs"
+  ],
+  "distinct_wire_rows_touched_by_an_actionable_rule": 957
+ },
+ "_regression_corpus": "every rule was tested against the 434 seed entries in data/curation/top_picks_seed.json plus 46 endorsed top picks. Remaining hits are documented per rule and are all on non-delete actions, except three rows that survive only because seeds bypass the filters: Ilha da Barreta (PT), Castle Hill / Gediminas Hill (LT) and Serra do Marao (PT).",
+ "_counts": {
+  "rules": 38,
+  "classes": 9
+ },
+ "rules_by_class": {
+  "duplicate": [
+   {
+    "rank": 4,
+    "id": "dup.geo_250m",
+    "class": "duplicate",
+    "kinds": [
+     "beach",
+     "mountain"
+    ],
+    "scope_iso2": null,
+    "action": "merge",
+    "what_it_catches": "Same-kind rows within 250 m of each other in one country: union-find into one row, keeping the member with an article",
+    "test": {
+     "geometry_or_cluster": "union-find same (iso2, kind) rows whose great-circle distance is <= 250 m"
+    },
+    "measurement": {
+     "method": "measured over the 5,472-row wire snapshot in data/curation/wire_snapshot/",
+     "rows_removed_total": 549,
+     "rows_removed_tier1": 24,
+     "of_which_reviewers_had_flagged_as_wrong": 117,
+     "of_which_reviewers_flagged_in_THIS_class": 0,
+     "collateral_not_on_the_reviewers_list": 432,
+     "countries_touched": 34,
+     "per_country": {
+      "AL": 20,
+      "AT": 4,
+      "BE": 2,
+      "BG": 20,
+      "CH": 2,
+      "CY": 13,
+      "DE": 8,
+      "DK": 6,
+      "EE": 2,
+      "ES": 61,
+      "FI": 4,
+      "FO": 4,
+      "FR": 48,
+      "GB": 3,
+      "GR": 41,
+      "HR": 29,
+      "HU": 8,
+      "IE": 2,
+      "IS": 1,
+      "IT": 179,
+      "LT": 6,
+      "LV": 10,
+      "MK": 2,
+      "MT": 3,
+      "NL": 9,
+      "NO": 2,
+      "PL": 7,
+      "PT": 25,
+      "RO": 4,
+      "RS": 2,
+      "SE": 5,
+      "SI": 9,
+      "SK": 7,
+      "XK": 1
+     }
+    },
+    "good_entries_wrongly_removed": {
+     "count": 2,
+     "named": [
+      "FI mountain t1 r7 Akka-Koli and t2 r16 Ukko-Koli are two named Koli summits; the merge keeps one and Ukko-Koli is the national landscape.",
+      "XK mountain t1 r5 Maja e Arnenit.",
+      "Tier-1 collateral was read in full: 6 rows of 432. The tier-2 tail was sampled at 60 rows and every sampled row was a genuine duplicate (Balatonfured, Sozopol, Palanga, Liepaja, Domburg, Humlebaek families)."
+     ]
+    },
+    "wrong_entries_removed": 547,
+    "wrong_per_good_lost": 273.5,
+    "wrong_per_good_note": "274 wrong entries removed for every good entry lost",
+    "note": "Merge, not delete: the surviving row must inherit the best image and the best name of the cluster."
+   },
+   {
+    "rank": 6,
+    "id": "dup.cross_country",
+    "class": "duplicate",
+    "kinds": [
+     "beach",
+     "mountain"
+    ],
+    "scope_iso2": null,
+    "action": "merge",
+    "what_it_catches": "The same coordinate published in two countries' files at once",
+    "test": {
+     "geometry_or_cluster": "group all rows by (kind, lat rounded to 3 dp, lon rounded to 3 dp); flag any group spanning two iso2"
+    },
+    "measurement": {
+     "method": "measured over the 5,472-row wire snapshot in data/curation/wire_snapshot/",
+     "rows_removed_total": 48,
+     "rows_removed_tier1": 7,
+     "of_which_reviewers_had_flagged_as_wrong": 13,
+     "of_which_reviewers_flagged_in_THIS_class": 0,
+     "collateral_not_on_the_reviewers_list": 35,
+     "countries_touched": 8,
+     "per_country": {
+      "CH": 2,
+      "CZ": 2,
+      "DE": 6,
+      "ES": 9,
+      "FR": 7,
+      "IT": 2,
+      "PL": 16,
+      "SK": 4
+     }
+    },
+    "good_entries_wrongly_removed": {
+     "count": 0,
+     "named": [
+      "Every one of the 35 collateral rows is a real feature; the rule must assign it to ONE country, never delete it. Matterhorn (IT t1 r4 / CH), Rysy (PL t1 r4 / SK), Swinica (PL t1 r11), Kozi Wierch, the six Marbore rows in ES and FR, Mont Agel and Tete de Chien in FR and MC."
+     ]
+    },
+    "wrong_entries_removed": 48,
+    "wrong_per_good_lost": null,
+    "wrong_per_good_note": "no good entry lost: every row it removes is junk",
+    "note": "Plage du Buse, Mont Agel, Tete de Chien and Cime de Baudon ship in both FR and MC; Matterhorn, Trockener Steg and Furggen in both CH and IT; five Lochau beach rows in both DE and AT."
+   },
+   {
+    "rank": 14,
+    "id": "dup.geo_name_2km",
+    "class": "duplicate",
+    "kinds": [
+     "beach",
+     "mountain"
+    ],
+    "scope_iso2": null,
+    "action": "merge",
+    "what_it_catches": "Same-kind rows within 2 km whose romanised, accent-folded, article-stripped names share 60% or more of their content tokens",
+    "test": {
+     "geometry_or_cluster": "same (iso2, kind), distance <= 2 km AND Jaccard overlap of romanised, accent-folded, generic-stripped name tokens >= 0.60"
+    },
+    "measurement": {
+     "method": "measured over the 5,472-row wire snapshot in data/curation/wire_snapshot/",
+     "rows_removed_total": 92,
+     "rows_removed_tier1": 5,
+     "of_which_reviewers_had_flagged_as_wrong": 25,
+     "of_which_reviewers_flagged_in_THIS_class": 0,
+     "collateral_not_on_the_reviewers_list": 67,
+     "countries_touched": 22,
+     "per_country": {
+      "AT": 1,
+      "BG": 3,
+      "CY": 1,
+      "DE": 1,
+      "DK": 1,
+      "EE": 2,
+      "ES": 14,
+      "FR": 11,
+      "GB": 1,
+      "GR": 2,
+      "HR": 1,
+      "IE": 1,
+      "IT": 29,
+      "LV": 2,
+      "NL": 4,
+      "NO": 1,
+      "PL": 2,
+      "PT": 9,
+      "RO": 2,
+      "SE": 1,
+      "SI": 1,
+      "SK": 2
+     }
+    },
+    "good_entries_wrongly_removed": {
+     "count": 3,
+     "named": [
+      "ES beach t2 r305 Gaztetape and t2 r306 Itzurun hondartza are two distinct Basque beaches about 1 km apart.",
+      "IT beach t2 r139 'Cala della Vela' and t2 r191 'Portonovo, Spiaggia della Vela' are different coves. Raise the token threshold to 0.75 for rows that both carry an article.",
+      "No tier-1 row is lost: 0 of 92."
+     ]
+    },
+    "wrong_entries_removed": 89,
+    "wrong_per_good_lost": 29.7,
+    "wrong_per_good_note": "30 wrong entries removed for every good entry lost",
+    "note": "Romanisation is what makes the Balkan and Greek cases work: Paralia Kalamakiou == Kalamaki Beach, Харманите == Harmanite, Pancicev vrh == Panchichev vrh. Guard: name similarity ALONE must never merge. Heyggjurin Mikli names two different Faroese mountains 60 km apart (Q2421269 and Q31844565)."
+   },
+   {
+    "rank": 15,
+    "id": "dup.sub_top",
+    "class": "duplicate",
+    "kinds": [
+     "mountain"
+    ],
+    "scope_iso2": null,
+    "action": "fold_into_parent",
+    "what_it_catches": "The name is a subsidiary top of a parent summit",
+    "test": {
+     "name_regex": "\\b(ne|nw|se|sw|north|south|east|west|far|near|middle|central)\\s+(top|cairn|peak|summit|tor|spur)\\b|\\b(vorgipfel|nebengipfel|s[u\\u00fc]dgipfel|nordgipfel|ostgipfel|westgipfel|ostoppen|vesttoppen|s[o\\u00f8]rtoppen)\\b",
+     "regex_flags": "i, u"
+    },
+    "measurement": {
+     "method": "measured over the 5,472-row wire snapshot in data/curation/wire_snapshot/",
+     "rows_removed_total": 11,
+     "rows_removed_tier1": 1,
+     "of_which_reviewers_had_flagged_as_wrong": 3,
+     "of_which_reviewers_flagged_in_THIS_class": 0,
+     "collateral_not_on_the_reviewers_list": 8,
+     "countries_touched": 3,
+     "per_country": {
+      "CH": 1,
+      "IE": 9,
+      "NO": 1
+     }
+    },
+    "good_entries_wrongly_removed": {
+     "count": 0,
+     "named": []
+    },
+    "wrong_entries_removed": 11,
+    "wrong_per_good_lost": null,
+    "wrong_per_good_note": "no good entry lost: every row it removes is junk",
+    "note": "Where the parent is absent from the file, PROMOTE the parent instead of dropping the child: Brandon Peak becomes Mount Brandon (Q1478911), Benbreen North Top becomes Benbreen."
+   },
+   {
+    "rank": 16,
+    "id": "dup.numbered_segment",
+    "class": "duplicate",
+    "kinds": [
+     "beach"
+    ],
+    "scope_iso2": null,
+    "action": "merge",
+    "what_it_catches": "The name is a numbered segment of a longer strand, not a beach in its own right ('Hoofdstrand 6/7/8' are three parts of Badstrand Schiermonnikoog)",
+    "test": {
+     "name_regex": "^(hoofdstrand|strandje|strandpaal|strandloper|kotje|plage|playa|praia|spiaggia|strand|paralia|beach|pla[z\\u017c]a)\\s*\\d{1,3}\\b|\\b\\d{1,3}\\s?(e|de|st|nd|rd|th)?\\s+(strandje|hoofdstrand|plage|beach)\\b",
+     "regex_flags": "i, u"
+    },
+    "measurement": {
+     "method": "measured over the 5,472-row wire snapshot in data/curation/wire_snapshot/",
+     "rows_removed_total": 10,
+     "rows_removed_tier1": 2,
+     "of_which_reviewers_had_flagged_as_wrong": 8,
+     "of_which_reviewers_flagged_in_THIS_class": 0,
+     "collateral_not_on_the_reviewers_list": 2,
+     "countries_touched": 3,
+     "per_country": {
+      "CH": 1,
+      "FR": 2,
+      "NL": 7
+     }
+    },
+    "good_entries_wrongly_removed": {
+     "count": 0,
+     "named": []
+    },
+    "wrong_entries_removed": 10,
+    "wrong_per_good_lost": null,
+    "wrong_per_good_note": "no good entry lost: every row it removes is junk"
+   },
+   {
+    "rank": 29,
+    "id": "dup.shared_article",
+    "class": "duplicate",
+    "kinds": [
+     "beach",
+     "mountain"
+    ],
+    "scope_iso2": null,
+    "action": "merge",
+    "what_it_catches": "Two or more rows in one (country, kind) resolve to the same Wikipedia article or QID: keep the one whose name matches the article title, drop the rest",
+    "test": {
+     "geometry_or_cluster": "group rows by (iso2, kind, wikipedia article); in each group keep the row whose name matches the article title, re-resolve the others"
+    },
+    "measurement": {
+     "method": "measured over the 5,472-row wire snapshot in data/curation/wire_snapshot/",
+     "rows_removed_total": 36,
+     "rows_removed_tier1": 7,
+     "of_which_reviewers_had_flagged_as_wrong": 14,
+     "of_which_reviewers_flagged_in_THIS_class": 0,
+     "collateral_not_on_the_reviewers_list": 22,
+     "countries_touched": 12,
+     "per_country": {
+      "CH": 5,
+      "CZ": 1,
+      "ES": 4,
+      "FR": 2,
+      "GB": 8,
+      "IE": 7,
+      "IT": 2,
+      "NO": 2,
+      "RS": 1,
+      "SI": 2,
+      "SK": 1,
+      "XK": 1
+     }
+    },
+    "good_entries_wrongly_removed": {
+     "count": 6,
+     "named": [
+      "CH mountain t2 r122 Sustenhorn, t2 r157 Mittler Tierberg, t2 r158 Vorder Tierberg, t2 r171 Sattelhorn; GB t2 r187/188 Sgurr an Utha; SI t2 r25 Mala Rinka. These are distinct summits that share one Wikipedia article, so the merge must keep the row whose name matches the article title and re-resolve the others rather than deleting them."
+     ]
+    },
+    "wrong_entries_removed": 30,
+    "wrong_per_good_lost": 5.0,
+    "wrong_per_good_note": "5 wrong entries removed for every good entry lost",
+    "note": "The name-match condition matters. A blind keep-the-best-scoring merge folds Sustenhorn into Hinter Tierberg and Mittler Tierberg into Vorder Tierberg, which are different mountains that share one article. With the name test the drop set is exactly the sub-tops (Benbreen North Top, Camaderry South East Top, Purple Mountain NE Top) and the Aloia / Aloia Mountain family."
+   }
+  ],
+  "other": [
+   {
+    "rank": 3,
+    "id": "other.image_name_incoherent",
+    "class": "other",
+    "kinds": [
+     "beach",
+     "mountain"
+    ],
+    "scope_iso2": null,
+    "action": "quarantine_image",
+    "what_it_catches": "The card photo's Commons filename shares no content token with the feature name: quarantine the image, do not ship it",
+    "test": {},
+    "measurement": {
+     "method": "measured over the 5,472-row wire snapshot in data/curation/wire_snapshot/",
+     "rows_removed_total": 724,
+     "rows_removed_tier1": 154,
+     "of_which_reviewers_had_flagged_as_wrong": 100,
+     "of_which_reviewers_flagged_in_THIS_class": 18,
+     "collateral_not_on_the_reviewers_list": 624,
+     "countries_touched": 42,
+     "per_country": {
+      "AD": 5,
+      "AL": 5,
+      "AT": 28,
+      "BA": 2,
+      "BE": 4,
+      "BG": 1,
+      "CH": 72,
+      "CY": 2,
+      "CZ": 18,
+      "DE": 31,
+      "DK": 6,
+      "EE": 4,
+      "ES": 121,
+      "FI": 5,
+      "FO": 7,
+      "FR": 47,
+      "GB": 33,
+      "GR": 10,
+      "HR": 8,
+      "HU": 5,
+      "IE": 13,
+      "IS": 10,
+      "IT": 101,
+      "LI": 2,
+      "LT": 7,
+      "LU": 2,
+      "LV": 5,
+      "MC": 2,
+      "ME": 1,
+      "MK": 1,
+      "MT": 1,
+      "NL": 3,
+      "NO": 35,
+      "PL": 33,
+      "PT": 30,
+      "RO": 5,
+      "RS": 4,
+      "SE": 7,
+      "SI": 10,
+      "SK": 33,
+      "SM": 1,
+      "XK": 4
+     }
+    },
+    "good_entries_wrongly_removed": {
+     "count": 0,
+     "named": [
+      "An image quarantine, not a row delete, so no feature is lost. Of the 154 tier-1 hits, the tier-1 list was read in full: roughly two thirds are correct-but-uninformative Commons filenames (the Eiger's photo is called 'North face.jpg'), and the rest are genuine mis-joins (FO Arnafjall ships a postage stamp of Gasadalur, PT Estrela a wheel of cheese, SM two rows a relief map). Ship the geotag test as the primary and this as secondary."
+     ]
+    },
+    "wrong_entries_removed": 724,
+    "wrong_per_good_lost": null,
+    "wrong_per_good_note": "no good entry lost: every row it removes is junk",
+    "note": "An IMAGE gate, never a row delete: a real mountain with the wrong photo is still a real mountain. Portugal's 'Estrela' ships a photograph of a wheel of cheese; San Marino ships the same relief map on two rows; Malta's Kattrumpan ships a bastion; Hangon uimaranta ships an Orthodox church. Pair with a geotag test: the Commons file's coordinate must fall within 1 km of the feature."
+   },
+   {
+    "rank": 5,
+    "id": "geo.wrong_country",
+    "class": "other",
+    "kinds": [
+     "beach",
+     "mountain"
+    ],
+    "scope_iso2": null,
+    "action": "reassign",
+    "what_it_catches": "The shipped coordinate lies more than 2 km inside another country's boundary: reassign the row to that country, and delete it only when the receiving country's file already carries the same feature",
+    "test": {
+     "geometry_or_cluster": "point-in-polygon against admin_level=2; flag when the point is outside the filed country AND more than 2 km inside another country's polygon",
+     "geometry_test": "point-in-polygon against admin_level=2 (NUTS3 2021 where it covers the country, Natural Earth 50m elsewhere)"
+    },
+    "measurement": {
+     "method": "measured over the 5,472-row wire snapshot in data/curation/wire_snapshot/",
+     "rows_removed_total": 124,
+     "rows_removed_tier1": 22,
+     "of_which_reviewers_had_flagged_as_wrong": 52,
+     "of_which_reviewers_flagged_in_THIS_class": 1,
+     "collateral_not_on_the_reviewers_list": 72,
+     "countries_touched": 25,
+     "per_country": {
+      "AD": 5,
+      "AL": 1,
+      "AT": 2,
+      "CH": 3,
+      "CZ": 13,
+      "DE": 10,
+      "DK": 1,
+      "EE": 1,
+      "ES": 1,
+      "FI": 1,
+      "FR": 12,
+      "GB": 2,
+      "HR": 1,
+      "HU": 2,
+      "IT": 15,
+      "LI": 2,
+      "LU": 5,
+      "MC": 4,
+      "NL": 1,
+      "PL": 20,
+      "PT": 3,
+      "RO": 1,
+      "RS": 1,
+      "SK": 15,
+      "XK": 2
+     }
+    },
+    "good_entries_wrongly_removed": {
+     "count": 0,
+     "named": [
+      "All 22 tier-1 hits are real features in the wrong file. Reassign, never delete: Matterhorn (IT->CH), Black Peak and Piribeg (XK->MK, border ridge), Monturull and Pic d'Escobes (AD->ES/FR, coarse Andorra polygon), Gauschla (LI->CH). The delete branch is only safe when the receiving country already ships the same feature."
+     ]
+    },
+    "wrong_entries_removed": 124,
+    "wrong_per_good_lost": null,
+    "wrong_per_good_note": "no good entry lost: every row it removes is junk",
+    "note": "NEVER a blind delete. Ridge-line border summits are real in both countries and must survive in exactly one file: Matterhorn, Black Peak (Sar), Piribeg, Cuilcagh, Monte Cocusso. The delete branch is safe for Monaco (all six rows are in France and three of them already ship in the FR file), for the five Lochau beaches in DE, and for Monte Aloia in PT."
+   },
+   {
+    "rank": 12,
+    "id": "other.manmade_structure",
+    "class": "other",
+    "kinds": [
+     "mountain"
+    ],
+    "scope_iso2": null,
+    "action": "drop",
+    "what_it_catches": "A mountain that is a built structure: lighthouse, tower, castle, fort, monument, stadium, transmitter, ski jump, spoil heap, mine, museum, archaeological site",
+    "test": {
+     "name_regex": "\\b(lighthouse|faro|fyr|vuurtoren|leuchtturm|latarnia|tower|turm|wie[z\\u017c]a|v[e\\u011b][z\\u017e]|torony|castle|castello|castillo|ch[a\\u00e2]teau|schloss|zamek|hrad|fortress|forte|fuerte|fortaleza|twierdza|citadel|kastro|monument|monumento|pomnik|pelourinho|obelisk|column|kolumna|stadium|stadion|est[a\\u00e1]dio|estadio|transmitter|vys[i\\u00ed]la[c\\u010d]|maszt|antenna|tunnel|traforo|funicular|funicolare|seilbahn|cable ?car|kopiec|mound|kurgan|terril|slag ?heap|spoil ?heap|coal ?mine|charbonnage|kopalnia|quarry|steinbruch|ski ?jump|skocznia|schanze|tremplin|museum|muzeum|mus[e\\u00e9]e|observatory|obserwatorium|prehistoric|necr[o\\u00f3]pole|archaeological)\\b",
+     "regex_flags": "i, u",
+     "wikidata_p31_test": "reject P31/P279* in {Q41176 building, Q57831 fortification, Q39715 lighthouse, Q12518 tower, Q483110 stadium, Q1109069 ski jump, Q1281193 pillory, Q820477 mine, Q188040 spoil tip, Q839954 archaeological site}"
+    },
+    "measurement": {
+     "method": "measured over the 5,472-row wire snapshot in data/curation/wire_snapshot/",
+     "rows_removed_total": 16,
+     "rows_removed_tier1": 2,
+     "of_which_reviewers_had_flagged_as_wrong": 10,
+     "of_which_reviewers_flagged_in_THIS_class": 10,
+     "collateral_not_on_the_reviewers_list": 6,
+     "countries_touched": 10,
+     "per_country": {
+      "BE": 3,
+      "CZ": 1,
+      "FR": 1,
+      "GB": 1,
+      "GR": 1,
+      "IT": 2,
+      "PL": 3,
+      "PT": 2,
+      "RO": 1,
+      "SK": 1
+     }
+    },
+    "good_entries_wrongly_removed": {
+     "count": 0,
+     "named": []
+    },
+    "wrong_entries_removed": 16,
+    "wrong_per_good_lost": null,
+    "wrong_per_good_note": "no good entry lost: every row it removes is junk",
+    "note": "Do NOT blanket-ban 'torre': Torre Cerredo, Torre de Llambrion and Torre (Serra da Estrela) are real Iberian summits. Restrict to 'Torre de los/las/la' plus a building P31. Note also that this rule CANNOT catch San Marino's Guaita and Montale: those are the names of Monte Titano's sub-summits as well as of the towers on them, and Wikidata types both as P31 Q8502 mountain. Only the 500 m proximity collapse gets them."
+   },
+   {
+    "rank": 19,
+    "id": "other.event_article",
+    "class": "other",
+    "kinds": [
+     "beach",
+     "mountain"
+    ],
+    "scope_iso2": null,
+    "action": "drop",
+    "what_it_catches": "The row is a historical event, not a landform: the name or the linked article title is 'Battle of ...', 'Siege of ...', or names a flood, avalanche or eruption",
+    "test": {
+     "name_regex": "^(battle|siege|slaget|slag ved|uprising|massacre|bitka|bitwa|batalla|bataille|battaglia|schlacht)\\s+(of|at|ved|u|pod|de|di|von|bei|na)\\b|\\b(battle|siege|uprising|massacre|flood|disaster|avalanche|eruption)\\b",
+     "regex_flags": "i, u",
+     "wikidata_p31_test": "reject P31 Q178561 battle, Q188055 siege, Q1190554 occurrence, Q5003624 memorial"
+    },
+    "measurement": {
+     "method": "measured over the 5,472-row wire snapshot in data/curation/wire_snapshot/",
+     "rows_removed_total": 6,
+     "rows_removed_tier1": 4,
+     "of_which_reviewers_had_flagged_as_wrong": 6,
+     "of_which_reviewers_flagged_in_THIS_class": 6,
+     "collateral_not_on_the_reviewers_list": 0,
+     "countries_touched": 6,
+     "per_country": {
+      "BE": 1,
+      "ES": 1,
+      "FR": 1,
+      "HR": 1,
+      "MK": 1,
+      "SE": 1
+     }
+    },
+    "good_entries_wrongly_removed": {
+     "count": 0,
+     "named": []
+    },
+    "wrong_entries_removed": 6,
+    "wrong_per_good_lost": null,
+    "wrong_per_good_note": "no good entry lost: every row it removes is junk",
+    "note": "Croatia's top_mountain is 'Battle of Gvozd Mountain' (1097). North Macedonia's top_mountain is 'Mechkin Kamen', whose own link is 'Battle of Mecking Kamen'. Serbia ranks Cegar 5th. Sweden ships 'Battle of Marstrand' as a tier-1 BEACH. France's rank 86 mountain 'Mont Blanc glacier flood' is the 1892 Tete Rousse outburst."
+   },
+   {
+    "rank": 21,
+    "id": "other.artificial_hill",
+    "class": "other",
+    "kinds": [
+     "mountain"
+    ],
+    "scope_iso2": null,
+    "action": "reroute",
+    "what_it_catches": "A war-rubble mound, spoil tip, Dutch vliedberg or motte shipped as a mountain",
+    "test": {
+     "name_regex": "\\b(sch[u\\u00fc]ttberg|tr[u\\u00fc]mmerberg|tr[u\\u00fc]mmerkippe|rubble ?hill|spoil ?tip|stortheuvel|halde|terril|vliedberg|terp|kasteelberg|vluchtberg|motte)\\b",
+     "regex_flags": "i, u"
+    },
+    "measurement": {
+     "method": "measured over the 5,472-row wire snapshot in data/curation/wire_snapshot/",
+     "rows_removed_total": 5,
+     "rows_removed_tier1": 2,
+     "of_which_reviewers_had_flagged_as_wrong": 5,
+     "of_which_reviewers_flagged_in_THIS_class": 5,
+     "collateral_not_on_the_reviewers_list": 0,
+     "countries_touched": 2,
+     "per_country": {
+      "BE": 1,
+      "NL": 4
+     }
+    },
+    "good_entries_wrongly_removed": {
+     "count": 0,
+     "named": []
+    },
+    "wrong_entries_removed": 5,
+    "wrong_per_good_lost": null,
+    "wrong_per_good_note": "no good entry lost: every row it removes is junk",
+    "note": "Germany ships Birkenkopf, a Stuttgart rubble hill, at tier 1 rank 4, plus Fockeberg and Olympiaberg. The Netherlands ships three Zeeland vliedbergen and Belgium four Walloon terrils. If these are wanted, route them to a separate 'man-made hills' kind; they are never a country's top mountain."
+   },
+   {
+    "rank": 32,
+    "id": "other.building_house",
+    "class": "other",
+    "kinds": [
+     "mountain"
+    ],
+    "scope_iso2": [
+     "LV",
+     "EE",
+     "LT",
+     "DE",
+     "AT",
+     "CH",
+     "CZ",
+     "SK",
+     "PL",
+     "NO",
+     "DK",
+     "SE",
+     "FI",
+     "IT",
+     "FR",
+     "SI"
+    ],
+    "action": "drop",
+    "what_it_catches": "A mountain whose name is a house, a hut or a mountain refuge",
+    "test": {
+     "name_regex": "\\b(m[a\\u0101]ja|namas|namai|haus|h[a\\u00e4]user|hus|hytte|hytta|chata|chalupa|schronisko|rifugio|h[u\\u00fc]tte|cabane|refuge|cottage|farmhouse)\\b",
+     "regex_flags": "i, u",
+     "wikidata_p31_test": "reject P31/P279* in {Q41176 building, Q3947 house, Q811979 architectural structure, Q35112127 heritage building, Q17106017 mountain hut}"
+    },
+    "measurement": {
+     "method": "measured over the 5,472-row wire snapshot in data/curation/wire_snapshot/",
+     "rows_removed_total": 5,
+     "rows_removed_tier1": 2,
+     "of_which_reviewers_had_flagged_as_wrong": 4,
+     "of_which_reviewers_flagged_in_THIS_class": 4,
+     "collateral_not_on_the_reviewers_list": 1,
+     "countries_touched": 3,
+     "per_country": {
+      "EE": 3,
+      "IT": 1,
+      "LV": 1
+     }
+    },
+    "good_entries_wrongly_removed": {
+     "count": 1,
+     "named": [
+      "IT mountain t2 r284 'Croda del Rifugio' is a real Dolomites crag named after the hut below it. The P31 test clears it; the name test does not."
+     ]
+    },
+    "wrong_entries_removed": 4,
+    "wrong_per_good_lost": 4.0,
+    "wrong_per_good_note": "4 wrong entries removed for every good entry lost",
+    "note": "Scoped away from AL, XK, ME and MK on purpose: 'Maja' is Albanian for PEAK, so an unscoped rule would delete Maja Jezerce, Maja e Arnenit and every Albanian summit in the file. Latvia's tier-1 rank 1 and top_mountain 'Balta maja' is Q4853021, a listed house in the Rundale Palace complex; Estonia's rank 2 'Polluvahi maja' is Q14955490 with P31 Q41176."
+   },
+   {
+    "rank": 34,
+    "id": "other.street_name",
+    "class": "other",
+    "kinds": [
+     "beach",
+     "mountain"
+    ],
+    "scope_iso2": null,
+    "action": "drop",
+    "what_it_catches": "The name is a street: it starts with a street-class word in the local language ('Triq ir-Ramla' is a road, not a Maltese beach)",
+    "test": {
+     "name_regex": "^(triq|vjal|sqaq|via|viale|corso|calle|carrer|rua|rue|stra[s\\u00df]e|weg|laan|gata|gatan|katu|ulica|ulice|utca|bulevar)\\s",
+     "regex_flags": "i, u",
+     "osm_tag_test": "highway=* on the source element",
+     "geometry_test": "point falls inside an OSM landuse=residential polygon"
+    },
+    "measurement": {
+     "method": "measured over the 5,472-row wire snapshot in data/curation/wire_snapshot/",
+     "rows_removed_total": 1,
+     "rows_removed_tier1": 0,
+     "of_which_reviewers_had_flagged_as_wrong": 1,
+     "of_which_reviewers_flagged_in_THIS_class": 1,
+     "collateral_not_on_the_reviewers_list": 0,
+     "countries_touched": 1,
+     "per_country": {
+      "MT": 1
+     }
+    },
+    "good_entries_wrongly_removed": {
+     "count": 0,
+     "named": []
+    },
+    "wrong_entries_removed": 1,
+    "wrong_per_good_lost": null,
+    "wrong_per_good_note": "no good entry lost: every row it removes is junk",
+    "note": "This is what would have caught Iceland's worst row, Bergthorugata, a 460 m residential street in central Reykjavik shipped at tier 2 rank 38 of the MOUNTAINS layer with a natural_monument designation. 'gata' is in the list for exactly that reason."
+   }
+  ],
+  "hospitality": [
+   {
+    "rank": 10,
+    "id": "hosp.trading_token",
+    "class": "hospitality",
+    "kinds": [
+     "beach",
+     "mountain"
+    ],
+    "scope_iso2": null,
+    "action": "drop",
+    "what_it_catches": "The name carries an unambiguous trading token: hotel, resort, beach club, restaurant, camping, bagni, stabilimento balneare",
+    "test": {
+     "name_regex": "\\b(hotels?|hostels?|motels?|resorts?|aparthotel|apartments?|apartament\\w*|apartman\\w*|apartamentos?|appartement\\w*|residence|r[e\\u00e9]sidence|guest ?houses?|guesthouse|panzi[o\\u00f3]|camping|kemping|campsite|campground|glamping|feriecenter|sommerhus|bungalows?|beach ?club|beachclub|strandpaviljoen|strandtent|stranduitbating|beach ?bar|beachbar|strandbar|beach ?house|beachhouse|restaurants?|restaurante|ristorante|restorant\\w*|trattoria|osteria|pizzeria|taverna|bistro|chiringuito|paillote|chiosco|kiosko|b[u\\u00fc]f[e\\u00e9]|gastro|stabilimento ?balneare|bagni|jachtklub|jacht ?club|yacht ?club|surf ?school|escuela de surf|water ?sports?|watersports?|beach ?racer|weddings|badelaug|amicale|p[e\\u00e9]tanque|nightclub|discoteca|suites)\\b",
+     "regex_flags": "i, u",
+     "osm_tag_test": "tourism=hotel|apartment|guest_house|hostel|chalet|camp_site, amenity=restaurant|bar|cafe|pub|nightclub|fast_food, leisure=beach_resort, shop=*, or the element carries website / phone / opening_hours / cuisine / rooms"
+    },
+    "measurement": {
+     "method": "measured over the 5,472-row wire snapshot in data/curation/wire_snapshot/",
+     "rows_removed_total": 48,
+     "rows_removed_tier1": 6,
+     "of_which_reviewers_had_flagged_as_wrong": 19,
+     "of_which_reviewers_flagged_in_THIS_class": 19,
+     "collateral_not_on_the_reviewers_list": 29,
+     "countries_touched": 14,
+     "per_country": {
+      "BE": 1,
+      "BG": 1,
+      "CY": 1,
+      "DE": 1,
+      "DK": 3,
+      "ES": 1,
+      "FR": 2,
+      "GR": 2,
+      "HU": 2,
+      "IT": 28,
+      "LV": 1,
+      "NL": 3,
+      "PL": 1,
+      "PT": 1
+     }
+    },
+    "good_entries_wrongly_removed": {
+     "count": 1,
+     "named": [
+      "IT beach t2 r307 'Spiaggia dei Bagni' is a beach named after the baths beside it, not a bathing establishment. One row in 48."
+     ]
+    },
+    "wrong_entries_removed": 47,
+    "wrong_per_good_lost": 47.0,
+    "wrong_per_good_note": "47 wrong entries removed for every good entry lost",
+    "note": "'marina', 'villa', 'club' and 'bar' are deliberately NOT in the list. Marina Piccola (Capri), Marina di Campo (Elba), Agia Marina, Spiaggia di Villa Romana are real beaches and Bar is a Montenegrin town. Those four tokens need the tag test, never the name test."
+   },
+   {
+    "rank": 20,
+    "id": "hosp.url_or_company",
+    "class": "hospitality",
+    "kinds": [
+     "beach",
+     "mountain"
+    ],
+    "scope_iso2": null,
+    "action": "drop",
+    "what_it_catches": "The name contains a URL, a domain, a phone number or a company suffix",
+    "test": {
+     "name_regex": "https?://|www\\.|\\.(com|net|eu|pl|hu|cz|sk|nl|be|de|it|es|pt|gr|hr|si|dk|se|no|fi|lv|lt|ee|ie|uk|at|ch)\\b|\\b(b\\.?v\\.?|n\\.?v\\.?|bvba|sprl|gmbh|s\\.?r\\.?l\\.?|d\\.?o\\.?o\\.?|ltd|brf|bostadsr[a\\u00e4]ttsf[o\\u00f6]rening)\\b|\\+\\d{2,3}[\\s\\d]{7,}",
+     "regex_flags": "i, u"
+    },
+    "measurement": {
+     "method": "measured over the 5,472-row wire snapshot in data/curation/wire_snapshot/",
+     "rows_removed_total": 6,
+     "rows_removed_tier1": 2,
+     "of_which_reviewers_had_flagged_as_wrong": 3,
+     "of_which_reviewers_flagged_in_THIS_class": 2,
+     "collateral_not_on_the_reviewers_list": 3,
+     "countries_touched": 6,
+     "per_country": {
+      "GR": 1,
+      "HR": 1,
+      "IT": 1,
+      "NL": 1,
+      "PL": 1,
+      "SE": 1
+     }
+    },
+    "good_entries_wrongly_removed": {
+     "count": 0,
+     "named": []
+    },
+    "wrong_entries_removed": 6,
+    "wrong_per_good_lost": null,
+    "wrong_per_good_note": "no good entry lost: every row it removes is junk",
+    "note": "Poland's top_beach is 'Apartamenty w Swinoujsciu - www.baltic-plaza.pl'; Sweden ships tier-1 'Brf Kungsholms Strand 165', a housing cooperative."
+   },
+   {
+    "rank": 33,
+    "id": "hosp.possessive_brand",
+    "class": "hospitality",
+    "kinds": [
+     "beach",
+     "mountain"
+    ],
+    "scope_iso2": null,
+    "action": "drop",
+    "what_it_catches": "Possessive venue name (\"Evaristo's Beach\", \"Mike's Fured Beach\")",
+    "test": {
+     "name_regex": "^[A-Z][\\w'\\u00c0-\\u024f]{2,}['\\u2019]s\\s",
+     "regex_flags": "i, u"
+    },
+    "measurement": {
+     "method": "measured over the 5,472-row wire snapshot in data/curation/wire_snapshot/",
+     "rows_removed_total": 6,
+     "rows_removed_tier1": 1,
+     "of_which_reviewers_had_flagged_as_wrong": 2,
+     "of_which_reviewers_flagged_in_THIS_class": 2,
+     "collateral_not_on_the_reviewers_list": 4,
+     "countries_touched": 5,
+     "per_country": {
+      "CY": 2,
+      "GR": 1,
+      "HU": 1,
+      "LT": 1,
+      "PT": 1
+     }
+    },
+    "good_entries_wrongly_removed": {
+     "count": 2,
+     "named": [
+      "CY beach t1 r11 \"Lady's Mile Beach\" is a real 7 km Limassol beach with no article, so the evidence guard does not save it.",
+      "CY beach t2 r25 \"Aphrodite's Beach\" is the Petra tou Romiou shore."
+     ]
+    },
+    "wrong_entries_removed": 4,
+    "wrong_per_good_lost": 2.0,
+    "wrong_per_good_note": "2 wrong entries removed for every good entry lost"
+   },
+   {
+    "rank": 36,
+    "id": "hosp.private_access",
+    "class": "hospitality",
+    "kinds": [
+     "beach",
+     "mountain"
+    ],
+    "scope_iso2": null,
+    "action": "drop",
+    "what_it_catches": "natural=beach polygon tagged access=customers / private / permissive, or supervised=yes with opening_hours",
+    "test": {
+     "osm_tag_test": "access=customers|private|permissive on a natural=beach polygon"
+    },
+    "measurement": {
+     "method": "NOT measurable from the wire: the field it needs is absent",
+     "rows_removed_total": 0,
+     "rows_removed_tier1": 0,
+     "of_which_reviewers_had_flagged_as_wrong": 0,
+     "of_which_reviewers_flagged_in_THIS_class": 0,
+     "collateral_not_on_the_reviewers_list": 0,
+     "countries_touched": 0,
+     "per_country": {}
+    },
+    "good_entries_wrongly_removed": {
+     "count": 0,
+     "named": []
+    },
+    "wrong_entries_removed": 0,
+    "wrong_per_good_lost": null,
+    "wrong_per_good_note": "nothing removed from the wire today: the rule needs a field the wire does not carry",
+    "note": "NOT MEASURABLE from the wire. This is the rule that shatters the Ksamil strand into nine concession rows in Albania, and it is the only one that catches King Beach, Coco Beach and Lori Beach, whose names are clean."
+   }
+  ],
+  "not_notable": [
+   {
+    "rank": 1,
+    "id": "junk.constant_score_band",
+    "class": "not_notable",
+    "kinds": [
+     "beach",
+     "mountain"
+    ],
+    "scope_iso2": null,
+    "action": "demote_band",
+    "what_it_catches": "Any score value shared by 8 or more rows in one (country, kind) is a scorer fallback, not a ranking: demote the whole band below every row with a distinct score and never let it fill a tier-1 seat",
+    "test": {
+     "geometry_or_cluster": "histogram score per (iso2, kind); any value shared by >= 8 rows is a scorer fallback"
+    },
+    "measurement": {
+     "method": "measured over the 5,472-row wire snapshot in data/curation/wire_snapshot/",
+     "rows_removed_total": 2530,
+     "rows_removed_tier1": 96,
+     "of_which_reviewers_had_flagged_as_wrong": 298,
+     "of_which_reviewers_flagged_in_THIS_class": 80,
+     "collateral_not_on_the_reviewers_list": 2232,
+     "countries_touched": 33,
+     "per_country": {
+      "AL": 79,
+      "BA": 51,
+      "BE": 8,
+      "BG": 102,
+      "CH": 11,
+      "CY": 34,
+      "DE": 24,
+      "DK": 43,
+      "ES": 220,
+      "FI": 24,
+      "FO": 60,
+      "FR": 218,
+      "GR": 225,
+      "HR": 241,
+      "HU": 54,
+      "IE": 14,
+      "IS": 19,
+      "IT": 488,
+      "LT": 17,
+      "LU": 9,
+      "LV": 19,
+      "ME": 84,
+      "MK": 19,
+      "MT": 11,
+      "NL": 23,
+      "NO": 30,
+      "PL": 15,
+      "PT": 187,
+      "RO": 66,
+      "RS": 34,
+      "SE": 26,
+      "SI": 30,
+      "SK": 45
+     }
+    },
+    "good_entries_wrongly_removed": {
+     "count": 0,
+     "named": [
+      "A demotion, not a delete. 2,530 rows sit in a score band shared by 8 or more rows of the same country and kind, which is 46% of the whole wire."
+     ]
+    },
+    "wrong_entries_removed": 2530,
+    "wrong_per_good_lost": null,
+    "wrong_per_good_note": "no good entry lost: every row it removes is junk"
+   },
+   {
+    "rank": 2,
+    "id": "junk.no_witness_tier1",
+    "class": "not_notable",
+    "kinds": [
+     "beach",
+     "mountain"
+    ],
+    "scope_iso2": null,
+    "action": "cap_tier2",
+    "what_it_catches": "No article, no formal designation and no shippable photo: never eligible for tier 1, in any country",
+    "test": {},
+    "measurement": {
+     "method": "measured over the 5,472-row wire snapshot in data/curation/wire_snapshot/",
+     "rows_removed_total": 1787,
+     "rows_removed_tier1": 27,
+     "of_which_reviewers_had_flagged_as_wrong": 239,
+     "of_which_reviewers_flagged_in_THIS_class": 69,
+     "collateral_not_on_the_reviewers_list": 1548,
+     "countries_touched": 38,
+     "per_country": {
+      "AD": 2,
+      "AL": 47,
+      "AT": 8,
+      "BA": 40,
+      "BE": 18,
+      "BG": 68,
+      "CY": 43,
+      "DE": 25,
+      "DK": 25,
+      "EE": 5,
+      "ES": 71,
+      "FI": 28,
+      "FO": 63,
+      "FR": 174,
+      "GR": 224,
+      "HR": 157,
+      "HU": 55,
+      "IE": 17,
+      "IS": 28,
+      "IT": 224,
+      "LT": 8,
+      "LU": 17,
+      "LV": 26,
+      "MC": 3,
+      "MD": 3,
+      "ME": 15,
+      "MK": 16,
+      "MT": 4,
+      "NL": 26,
+      "NO": 10,
+      "PL": 17,
+      "PT": 190,
+      "RO": 54,
+      "RS": 33,
+      "SE": 33,
+      "SI": 3,
+      "SK": 3,
+      "XK": 4
+     }
+    },
+    "good_entries_wrongly_removed": {
+     "count": 0,
+     "named": [
+      "This is a tier gate, not a delete, so nothing is lost. Applied as a DELETE it would remove 1,548 rows the reviewers never flagged, including MT beach t1 r4 Blue Lagoon and BG mountain t2 r8 Golyam Perelik, both real."
+     ]
+    },
+    "wrong_entries_removed": 1787,
+    "wrong_per_good_lost": null,
+    "wrong_per_good_note": "no good entry lost: every row it removes is junk",
+    "note": "A TIER GATE, never a delete. rank_features.py already refuses tier 1 without a witness, but its witness set counts a bathing-water class as a witness, which is why 27 rows with no article, no photo and no designation still hold tier-1 seats. An EEA row says the water is clean, not that the place is worth the journey."
+   },
+   {
+    "rank": 11,
+    "id": "junk.generic_only_name",
+    "class": "not_notable",
+    "kinds": [
+     "beach",
+     "mountain"
+    ],
+    "scope_iso2": null,
+    "action": "merge_or_drop",
+    "what_it_catches": "The name has no proper part at all: it is only the common noun for the kind, or the name of the sea",
+    "test": {
+     "name_regex": "^\\s*(the\\s+)?(beach|beaches|strand|stranden|badestrand|plage|playa|praia|spiaggia|lido|cala|naaktstrand|nudist ?beach|nudistenstrand|plaja nudi[s\\u015f]ti|bathing ?beach|badstrand|szabadstrand|strandf[u\\u00fc]rd[o\\u0151]|paralia|plazh|pla[z\\u017e]a|j[u\\u016b]ra|j[u\\u016b]ras krast[a\\u0101]|baltijos j[u\\u016b]ra|baltijos paj[u\\u016b]ris|baltic ?sea|baltic ?seaside|baltija|adriatic ?sea|balatonpart|holt[a\\u00e1]g|sea|mare|meer|more|bezimeni ?vrh|unnamed|no ?name|highest ?point|strandpromenade|promenade|vrh|gora|hora|berg|dune|duna|jezero|see)\\s*$",
+     "regex_flags": "i, u"
+    },
+    "measurement": {
+     "method": "measured over the 5,472-row wire snapshot in data/curation/wire_snapshot/",
+     "rows_removed_total": 17,
+     "rows_removed_tier1": 4,
+     "of_which_reviewers_had_flagged_as_wrong": 7,
+     "of_which_reviewers_flagged_in_THIS_class": 1,
+     "collateral_not_on_the_reviewers_list": 10,
+     "countries_touched": 10,
+     "per_country": {
+      "BE": 1,
+      "DE": 1,
+      "GR": 2,
+      "HR": 1,
+      "HU": 1,
+      "IT": 2,
+      "LT": 6,
+      "LV": 1,
+      "ME": 1,
+      "SI": 1
+     }
+    },
+    "good_entries_wrongly_removed": {
+     "count": 0,
+     "named": []
+    },
+    "wrong_entries_removed": 17,
+    "wrong_per_good_lost": null,
+    "wrong_per_good_note": "no good entry lost: every row it removes is junk",
+    "note": "Merge into a qualified feature of the same kind within 1 km when one exists ('Naaktstrand' is Naaktstrand Bredene), otherwise drop."
+   },
+   {
+    "rank": 23,
+    "id": "junk.numeric_name",
+    "class": "not_notable",
+    "kinds": [
+     "beach",
+     "mountain"
+    ],
+    "scope_iso2": null,
+    "action": "rename_or_drop",
+    "what_it_catches": "The name is a bare number or only an elevation in brackets (Luxembourg ships a mountain called '365.5')",
+    "test": {
+     "name_regex": "^\\s*\\d+([.,]\\d+)?\\s*$|^[^()]{0,30}\\(\\s*\\d+\\s*\\)\\s*$",
+     "regex_flags": "i, u"
+    },
+    "measurement": {
+     "method": "measured over the 5,472-row wire snapshot in data/curation/wire_snapshot/",
+     "rows_removed_total": 4,
+     "rows_removed_tier1": 0,
+     "of_which_reviewers_had_flagged_as_wrong": 3,
+     "of_which_reviewers_flagged_in_THIS_class": 3,
+     "collateral_not_on_the_reviewers_list": 1,
+     "countries_touched": 4,
+     "per_country": {
+      "AL": 1,
+      "LU": 1,
+      "MK": 1,
+      "XK": 1
+     }
+    },
+    "good_entries_wrongly_removed": {
+     "count": 0,
+     "named": [
+      "MK mountain t2 r21 'Plavica (1297)' is a real hill wearing its elevation: strip the bracket and keep the row."
+     ]
+    },
+    "wrong_entries_removed": 4,
+    "wrong_per_good_lost": null,
+    "wrong_per_good_note": "no good entry lost: every row it removes is junk",
+    "note": "'Plavica (1297)' in North Macedonia is a real hill wearing its elevation: strip the bracket and keep it. A name that is ONLY a number ('365.5', '2286') has nothing to strip and is dropped."
+   },
+   {
+    "rank": 24,
+    "id": "junk.emoji_or_symbol",
+    "class": "not_notable",
+    "kinds": [
+     "beach",
+     "mountain"
+    ],
+    "scope_iso2": null,
+    "action": "strip_then_dedupe",
+    "what_it_catches": "The name contains an emoji or a variation selector, so it came from a user-submitted POI title",
+    "test": {},
+    "measurement": {
+     "method": "measured over the 5,472-row wire snapshot in data/curation/wire_snapshot/",
+     "rows_removed_total": 4,
+     "rows_removed_tier1": 0,
+     "of_which_reviewers_had_flagged_as_wrong": 3,
+     "of_which_reviewers_flagged_in_THIS_class": 1,
+     "collateral_not_on_the_reviewers_list": 1,
+     "countries_touched": 3,
+     "per_country": {
+      "BE": 1,
+      "ES": 1,
+      "LV": 2
+     }
+    },
+    "good_entries_wrongly_removed": {
+     "count": 0,
+     "named": [
+      "LV beach t2 r27 'Jurina' and BE t2 r9 'Oosterstrand' are real beaches with a stray symbol: strip and re-dedupe, do not delete."
+     ]
+    },
+    "wrong_entries_removed": 4,
+    "wrong_per_good_lost": null,
+    "wrong_per_good_note": "no good entry lost: every row it removes is junk",
+    "note": "Strip the symbol and re-run the dedupe rather than deleting: 'Oosterstrand' with a beach emoji is a real Belgian beach, and the two Latvian rows 'Jura' and 'Jurina' collapse into one once the variation selector is gone."
+   },
+   {
+    "rank": 25,
+    "id": "junk.description_not_name",
+    "class": "not_notable",
+    "kinds": [
+     "beach",
+     "mountain"
+    ],
+    "scope_iso2": null,
+    "action": "drop",
+    "what_it_catches": "The string is a register description or a sentence, not a name: over 70 characters, a subordinate clause, or a Dutch/German preposition plus article at the start",
+    "test": {},
+    "measurement": {
+     "method": "measured over the 5,472-row wire snapshot in data/curation/wire_snapshot/",
+     "rows_removed_total": 4,
+     "rows_removed_tier1": 1,
+     "of_which_reviewers_had_flagged_as_wrong": 3,
+     "of_which_reviewers_flagged_in_THIS_class": 0,
+     "collateral_not_on_the_reviewers_list": 1,
+     "countries_touched": 3,
+     "per_country": {
+      "IT": 1,
+      "NL": 2,
+      "PL": 1
+     }
+    },
+    "good_entries_wrongly_removed": {
+     "count": 0,
+     "named": []
+    },
+    "wrong_entries_removed": 4,
+    "wrong_per_good_lost": null,
+    "wrong_per_good_note": "no good entry lost: every row it removes is junk",
+    "note": "Catches the Dutch heritage-register rows in the NL mountain list: 'aan de Bergweg te Vlissingen' at tier 1, and a 143-character kasteelberg sentence at tier 2. The leading-preposition half is deliberately restricted to aan/bij/te/op/door/met plus an article, because a bare 'La'/'Le'/'De' test deletes Le Brevent, La Pala de Dellui and De Haan Beach."
+   },
+   {
+    "rank": 37,
+    "id": "junk.elevation_floor",
+    "class": "not_notable",
+    "kinds": [
+     "mountain"
+    ],
+    "scope_iso2": null,
+    "action": "cap_tier2",
+    "what_it_catches": "Backfill elevation from Wikidata P2044 and OSM ele, then bar any mountain under 300 m from tier 1 unless its prominence exceeds 200 m or it is a national or regional high point; in an Alpine country raise the tier-1 floor to 1,200 m",
+    "test": {},
+    "measurement": {
+     "method": "NOT measurable from the wire: the field it needs is absent",
+     "rows_removed_total": 0,
+     "rows_removed_tier1": 0,
+     "of_which_reviewers_had_flagged_as_wrong": 0,
+     "of_which_reviewers_flagged_in_THIS_class": 0,
+     "collateral_not_on_the_reviewers_list": 0,
+     "countries_touched": 0,
+     "per_country": {}
+    },
+    "good_entries_wrongly_removed": {
+     "count": 0,
+     "named": []
+    },
+    "wrong_entries_removed": 0,
+    "wrong_per_good_lost": null,
+    "wrong_per_good_note": "nothing removed from the wire today: the rule needs a field the wire does not carry",
+    "note": "NOT MEASURABLE: elevation_m is null on 100% of the 5,472 shipped rows and on 100% of the 3,295 mountains. This is the single highest-leverage missing field in the whole dataset. It is what would have caught Glastonbury Tor (158 m ranked above Ben Nevis), Les Platons (136 m), Calton Hill (103 m), Vordufelli (284 m), Gellert Hill (235 m), Vracar (134 m) and Grazer Schlossberg (123 m above the Mur) automatically, without a single regex."
+   }
+  ],
+  "park_or_area": [
+   {
+    "rank": 7,
+    "id": "area.range_name",
+    "class": "park_or_area",
+    "kinds": [
+     "mountain"
+    ],
+    "scope_iso2": null,
+    "action": "resolve_to_highest_peak",
+    "what_it_catches": "The name is a range or massif, not a summit",
+    "test": {
+     "name_regex": "(^|\\s)(sierras?|serras?|serres?|serran[i\\u00ed]as?|massif|massiccio|cordillera|cha[i\\u00ee]ne|monts|montes|monti|gebirge|pohorie|g[o\\u00f3]ry|hory)\\s|\\b(mountains|mountain ?range|mts\\.?|h[o\\u00f6]henzug|planina)\\b",
+     "regex_flags": "i, u",
+     "wikidata_p31_test": "reject P31 Q46831 mountain range, Q3777462 massif, Q133056 mountain chain"
+    },
+    "measurement": {
+     "method": "measured over the 5,472-row wire snapshot in data/curation/wire_snapshot/",
+     "rows_removed_total": 45,
+     "rows_removed_tier1": 5,
+     "of_which_reviewers_had_flagged_as_wrong": 9,
+     "of_which_reviewers_flagged_in_THIS_class": 9,
+     "collateral_not_on_the_reviewers_list": 36,
+     "countries_touched": 12,
+     "per_country": {
+      "AD": 2,
+      "BA": 1,
+      "CY": 1,
+      "CZ": 2,
+      "ES": 23,
+      "FR": 2,
+      "IT": 1,
+      "ME": 1,
+      "PT": 6,
+      "RS": 3,
+      "SI": 2,
+      "XK": 1
+     }
+    },
+    "good_entries_wrongly_removed": {
+     "count": 0,
+     "named": [
+      "XK mountain t1 r2 'Black Peak, Sar Mountains' is a real 2,584 m summit whose name carries its range. The summit-word guard (peak/pico/vrh/stit/cima) is what saves it and it is already in the test; it is listed here because a looser version of this rule deletes Kosovo's second mountain."
+     ]
+    },
+    "wrong_entries_removed": 45,
+    "wrong_per_good_lost": null,
+    "wrong_per_good_note": "no good entry lost: every row it removes is junk",
+    "note": "Resolve to the range's highest peak rather than deleting: Kyrenia Mountains -> Mount Selvili, Ceraunian Mountains -> Cika."
+   },
+   {
+    "rank": 13,
+    "id": "area.extent_string",
+    "class": "park_or_area",
+    "kinds": [
+     "beach"
+    ],
+    "scope_iso2": null,
+    "action": "drop",
+    "what_it_catches": "The name is a bathing-water or conservation EXTENT string ('X to Y', 'costa tra Ancona e Portonovo', 'Paralia Apo X Mechri Y'), which describes a stretch of coast, not a beach",
+    "test": {
+     "name_regex": "\\b(to|tra|entre|between|mechri|\\u03bc\\u03ad\\u03c7\\u03c1\\u03b9)\\s+[A-Z\\u0391-\\u03a9\\u0410-\\u042f]|^(costa|costiera|litorale|foce|lungomare)\\b|;",
+     "regex_flags": "i, u"
+    },
+    "measurement": {
+     "method": "measured over the 5,472-row wire snapshot in data/curation/wire_snapshot/",
+     "rows_removed_total": 16,
+     "rows_removed_tier1": 1,
+     "of_which_reviewers_had_flagged_as_wrong": 3,
+     "of_which_reviewers_flagged_in_THIS_class": 1,
+     "collateral_not_on_the_reviewers_list": 13,
+     "countries_touched": 3,
+     "per_country": {
+      "GB": 1,
+      "GR": 1,
+      "IT": 14
+     }
+    },
+    "good_entries_wrongly_removed": {
+     "count": 0,
+     "named": []
+    },
+    "wrong_entries_removed": 16,
+    "wrong_per_good_lost": null,
+    "wrong_per_good_note": "no good entry lost: every row it removes is junk",
+    "note": "The second toponym must be capitalised and the separator must be a whole word. Without both guards the Portuguese article 'do' turns the rule into a mass deletion of Praia do Guincho, Praia do Camilo, Praia do Amado and 40 other real Portuguese beaches, and a bare ' / ' test eats bilingual names like 'Duene / Helgoland'."
+   },
+   {
+    "rank": 26,
+    "id": "area.designation_name",
+    "class": "park_or_area",
+    "kinds": [
+     "beach",
+     "mountain"
+    ],
+    "scope_iso2": null,
+    "action": "drop",
+    "what_it_catches": "The name is a designation, not a place: park, reserve, SSSI, AONB, Natura 2000 site, site classe",
+    "test": {
+     "name_regex": "(national ?park|nationalpark|nasjonalpark|nemzeti ?park|n[a\\u00e1]rodn[i\\u00ed] ?park|park ?narodowy|parc ?national|parco ?nazionale|parque ?nacional|parque ?natural|parc ?naturel|naturpark|nature ?reserve|naturreservat|natuurreservaat|nature ?park|reserva ?natural|r[e\\u00e9]serve ?naturelle|riserva ?naturale|prirodni ?rezervat|rezerwat|rezerv[a\\u00e1]cia|site of special scientific interest|\\bSSSI\\b|\\bAONB\\b|protected ?area|strict nature|natura ?2000|\\bZEC\\b|\\bZPE\\b|site ?class[e\\u00e9]|[a\\u00e1]rea ?recreativa|landschaftsschutzgebiet|naturschutzgebiet|natura2000)",
+     "regex_flags": "i, u",
+     "osm_tag_test": "source element boundary=protected_area or leisure=nature_reserve",
+     "wikidata_p31_test": "reject P31/P279* in {Q46169 national park, Q473972 protected area, Q179049 nature reserve, Q22698 park, Q1435554 regional nature park, Q9309252 natural monument}"
+    },
+    "measurement": {
+     "method": "measured over the 5,472-row wire snapshot in data/curation/wire_snapshot/",
+     "rows_removed_total": 7,
+     "rows_removed_tier1": 3,
+     "of_which_reviewers_had_flagged_as_wrong": 5,
+     "of_which_reviewers_flagged_in_THIS_class": 4,
+     "collateral_not_on_the_reviewers_list": 2,
+     "countries_touched": 7,
+     "per_country": {
+      "BA": 1,
+      "DK": 1,
+      "ES": 1,
+      "FR": 1,
+      "GB": 1,
+      "IT": 1,
+      "PT": 1
+     }
+    },
+    "good_entries_wrongly_removed": {
+     "count": 1,
+     "named": [
+      "IT beach t2 r311 'Spiaggia Di Minareto , Riserva Naturale Del Plemmirio.' is a real Siracusa beach wearing a trailing reserve name. Strip the designation clause first, then re-test; do not delete."
+     ]
+    },
+    "wrong_entries_removed": 6,
+    "wrong_per_good_lost": 6.0,
+    "wrong_per_good_note": "6 wrong entries removed for every good entry lost"
+   },
+   {
+    "rank": 38,
+    "id": "geo.designation_spatial",
+    "class": "park_or_area",
+    "kinds": [
+     "beach",
+     "mountain"
+    ],
+    "scope_iso2": null,
+    "action": "strip_designation",
+    "what_it_catches": "Recompute every designation by point-in-polygon, never by nearest-polygon-within-N-km; drop any designation whose polygon does not contain the point",
+    "test": {},
+    "measurement": {
+     "method": "NOT measurable from the wire: the field it needs is absent",
+     "rows_removed_total": 0,
+     "rows_removed_tier1": 0,
+     "of_which_reviewers_had_flagged_as_wrong": 0,
+     "of_which_reviewers_flagged_in_THIS_class": 0,
+     "collateral_not_on_the_reviewers_list": 0,
+     "countries_touched": 0,
+     "per_country": {}
+    },
+    "good_entries_wrongly_removed": {
+     "count": 0,
+     "named": []
+    },
+    "wrong_entries_removed": 0,
+    "wrong_per_good_lost": null,
+    "wrong_per_good_note": "nothing removed from the wire today: the rule needs a field the wire does not carry",
+    "note": "rank_features.py joins UNESCO by a 10 km radius around the property's CENTROID (UNESCO_KM = 10.0) and build_features.py joins protected areas at PROTECTED_KM = 5.0. That is why two Reykjavik city streets carry natural_monument, why six Salzburg city hills carry national_park, why a 1097 battle site 6.4 km from Plitvice carries unesco, and why the whole Ibiza beach blob carries unesco. Designation is worth 0.20 of a beach score and 0.15 of a mountain score, so a bad polygon join is directly promoting junk."
+   }
+  ],
+  "island": [
+   {
+    "rank": 17,
+    "id": "island.mountain_is_island",
+    "class": "island",
+    "kinds": [
+     "mountain"
+    ],
+    "scope_iso2": null,
+    "action": "drop",
+    "what_it_catches": "A mountain row whose name says island",
+    "test": {
+     "name_regex": "(^|\\s)(isola|isole|isla|islas|illa|illes|ilha|ilh[e\\u00e9]u|[i\\u00ce]les?|islands?|islet|otok|oto[c\\u010d]i[c\\u0107]|ostrvo|sziget|wyspa|eiland|holmen)(\\s|$)|\\b(island|islet|sziget)\\b",
+     "regex_flags": "i, u",
+     "wikidata_p31_test": "reject when P31/P279* reaches Q23442 island, Q34763 islet or Q42523 archipelago EVEN IF the item is also P31 Q8502 mountain. For a volcanic island the island reading wins and the volcano must be seeded from its own item (Stromboli is Q31445600, the island is Q131148)."
+    },
+    "measurement": {
+     "method": "measured over the 5,472-row wire snapshot in data/curation/wire_snapshot/",
+     "rows_removed_total": 8,
+     "rows_removed_tier1": 3,
+     "of_which_reviewers_had_flagged_as_wrong": 6,
+     "of_which_reviewers_flagged_in_THIS_class": 4,
+     "collateral_not_on_the_reviewers_list": 2,
+     "countries_touched": 2,
+     "per_country": {
+      "IT": 3,
+      "PT": 5
+     }
+    },
+    "good_entries_wrongly_removed": {
+     "count": 0,
+     "named": []
+    },
+    "wrong_entries_removed": 8,
+    "wrong_per_good_lost": null,
+    "wrong_per_good_note": "no good entry lost: every row it removes is junk"
+   },
+   {
+    "rank": 31,
+    "id": "island.beach_is_island",
+    "class": "island",
+    "kinds": [
+     "beach"
+    ],
+    "scope_iso2": null,
+    "action": "drop",
+    "what_it_catches": "A beach row that is the whole island, with no beach of its own",
+    "test": {
+     "name_regex": "^(ile|[i\\u00ce]le|isola|ilha|otok|isla)\\b|\\b(islands?|islet)\\b",
+     "regex_flags": "i, u",
+     "wikidata_p31_test": "reject beach rows whose P31 is island/islet and which carry no natural=beach geometry"
+    },
+    "measurement": {
+     "method": "measured over the 5,472-row wire snapshot in data/curation/wire_snapshot/",
+     "rows_removed_total": 11,
+     "rows_removed_tier1": 1,
+     "of_which_reviewers_had_flagged_as_wrong": 7,
+     "of_which_reviewers_flagged_in_THIS_class": 3,
+     "collateral_not_on_the_reviewers_list": 4,
+     "countries_touched": 7,
+     "per_country": {
+      "DK": 1,
+      "ES": 1,
+      "FR": 2,
+      "HR": 1,
+      "IE": 1,
+      "IT": 3,
+      "PT": 2
+     }
+    },
+    "good_entries_wrongly_removed": {
+     "count": 2,
+     "named": [
+      "IT beach t2 r34 'Isola Verde Seiano' is a real Vico Equense beach.",
+      "PT beach t2 r165 'Ilha de Faro' is a real barrier-island beach in the Ria Formosa. Both survive only because top_picks_seed.json overrides the filters; on the name test alone they are lost."
+     ]
+    },
+    "wrong_entries_removed": 9,
+    "wrong_per_good_lost": 4.5,
+    "wrong_per_good_note": "4 wrong entries removed for every good entry lost"
+   }
+  ],
+  "town_or_village": [
+   {
+    "rank": 8,
+    "id": "town.geocoder_breadcrumb",
+    "class": "town_or_village",
+    "kinds": [
+     "beach",
+     "mountain"
+    ],
+    "scope_iso2": null,
+    "action": "renormalise",
+    "what_it_catches": "The name is a geocoder breadcrumb, not a toponym: three or more comma-separated admin tokens, or a name plus a bare country tag",
+    "test": {},
+    "measurement": {
+     "method": "measured over the 5,472-row wire snapshot in data/curation/wire_snapshot/",
+     "rows_removed_total": 41,
+     "rows_removed_tier1": 3,
+     "of_which_reviewers_had_flagged_as_wrong": 19,
+     "of_which_reviewers_flagged_in_THIS_class": 3,
+     "collateral_not_on_the_reviewers_list": 22,
+     "countries_touched": 14,
+     "per_country": {
+      "AL": 2,
+      "BE": 1,
+      "BG": 1,
+      "CY": 2,
+      "DK": 1,
+      "ES": 6,
+      "FR": 2,
+      "GR": 13,
+      "HR": 3,
+      "IT": 4,
+      "MT": 1,
+      "NL": 2,
+      "PT": 2,
+      "RO": 1
+     }
+    },
+    "good_entries_wrongly_removed": {
+     "count": 0,
+     "named": [
+      "GR beach t2 r212 'Elafonissi Beach Lagoon, Crete, Greece' IS Elafonisi, one of the beaches the reviewers list as missing.",
+      "GR beach t2 r182 'Chora Beach, Chania, Crete'; GR t2 r188 'Dasia Beach, Corfu, Greece'; HR t2 r53 'Makarska Beach, Croatia'; IT t2 r147 'Camogli, Riviera Ligure, Italia'; ES t2 r133 'Los Escullos, cabo de Gata, almeria'; ES t2 r257 'Playa des cavallet , Ibiza'; NL t2 r21 'Domburg, Holland'. All eight are real beaches wearing a breadcrumb, which is exactly why the action is renormalise and not drop: strip the trailing admin tokens, then run the dedupe. Delete only when the head token is itself a settlement."
+     ]
+    },
+    "wrong_entries_removed": 41,
+    "wrong_per_good_lost": null,
+    "wrong_per_good_note": "no good entry lost: every row it removes is junk",
+    "note": "Repair before delete: 'Elafonisi Beach, Crete' and 'Balos Lagoon, Crete' are real beaches wearing a breadcrumb. Strip the trailing admin tokens, then run the dedupe. Only delete when the head token is itself a settlement."
+   },
+   {
+    "rank": 30,
+    "id": "town.equals_settlement_anchor",
+    "class": "town_or_village",
+    "kinds": [
+     "beach",
+     "mountain"
+    ],
+    "scope_iso2": null,
+    "action": "drop",
+    "what_it_catches": "The name carries no beach or summit word and reduces exactly to the name of its anchor destination, and that anchor is a city, town or village",
+    "test": {
+     "osm_tag_test": "OSM place=city|town|village|suburb|hamlet|locality within 1 km, or an exact GeoNames P/PPL match"
+    },
+    "measurement": {
+     "method": "measured over the 5,472-row wire snapshot in data/curation/wire_snapshot/",
+     "rows_removed_total": 6,
+     "rows_removed_tier1": 0,
+     "of_which_reviewers_had_flagged_as_wrong": 3,
+     "of_which_reviewers_flagged_in_THIS_class": 3,
+     "collateral_not_on_the_reviewers_list": 3,
+     "countries_touched": 2,
+     "per_country": {
+      "FR": 2,
+      "PT": 4
+     }
+    },
+    "good_entries_wrongly_removed": {
+     "count": 1,
+     "named": [
+      "PT beach t2 r165 'Ilha de Faro' - see island.beach_is_island."
+     ]
+    },
+    "wrong_entries_removed": 5,
+    "wrong_per_good_lost": 5.0,
+    "wrong_per_good_note": "5 wrong entries removed for every good entry lost",
+    "note": "The anchor-category test is what makes this shippable. Without it the same string test deletes Puy de Dome, Mont Ventoux, Preikestolen, Kjerag, Voidokilia and Es Trenc, all of which are catalogue destinations in their own right."
+   }
+  ],
+  "viewpoint_not_summit": [
+   {
+    "rank": 9,
+    "id": "view.self_anchor",
+    "class": "viewpoint_not_summit",
+    "kinds": [
+     "beach",
+     "mountain"
+    ],
+    "scope_iso2": null,
+    "action": "flag_for_p31",
+    "what_it_catches": "The row IS its own anchor: a nature or national-park destination rediscovered inside its own radius and promoted as a summit",
+    "test": {},
+    "measurement": {
+     "method": "measured over the 5,472-row wire snapshot in data/curation/wire_snapshot/",
+     "rows_removed_total": 26,
+     "rows_removed_tier1": 12,
+     "of_which_reviewers_had_flagged_as_wrong": 8,
+     "of_which_reviewers_flagged_in_THIS_class": 0,
+     "collateral_not_on_the_reviewers_list": 18,
+     "countries_touched": 12,
+     "per_country": {
+      "CH": 1,
+      "CY": 2,
+      "ES": 2,
+      "FR": 5,
+      "GB": 1,
+      "GR": 3,
+      "IS": 2,
+      "IT": 2,
+      "ME": 1,
+      "NL": 2,
+      "NO": 1,
+      "PT": 4
+     }
+    },
+    "good_entries_wrongly_removed": {
+     "count": 0,
+     "named": [
+      "FR mountain t1 r1 Puy de Dome; FR t1 r2 Mont Ventoux; NO t1 r3 Preikestolen; GR beach t1 r1 Voidokilia; ES beach t1 r3 Praia das Catedrais; PT beach t1 r5 Falesia Beach; PT t2 r82 Nazare beach; FR t2 r140 Plage d'Etretat; CH t2 r36 Creux du Van; ME t2 r57 Biogradska Gora. Eighteen of the 26 hits are features that ARE catalogue destinations, which is why this rule may only flag rows for the P31 test and may never delete."
+     ]
+    },
+    "wrong_entries_removed": 26,
+    "wrong_per_good_lost": null,
+    "wrong_per_good_note": "no good entry lost: every row it removes is junk",
+    "note": "Thorsmork (IS rank 5, 0.0 km from the Thorsmork anchor), Kerlingarfjoll (IS rank 4, 0.0 km) and Glen Coe (GB rank 9, 0.0 km) are valleys and massifs, not peaks. Where the anchor is a genuine single summit the P31 test clears it, so this rule only flags. The same condition is true of Puy de Dome, Mont Ventoux, Preikestolen, Voidokilia, Praia das Catedrais and Falesia Beach, which are catalogue destinations BECAUSE they are the feature, so this must never delete: it selects the 26 rows P31 has to judge."
+   },
+   {
+    "rank": 27,
+    "id": "view.viewpoint_words",
+    "class": "viewpoint_not_summit",
+    "kinds": [
+     "beach",
+     "mountain"
+    ],
+    "scope_iso2": null,
+    "action": "drop",
+    "what_it_catches": "The name is a viewpoint label, not a landform ('View to Aletschgletscher', 'Mirador de los Quebrantos')",
+    "test": {
+     "name_regex": "\\b(mirador(es|o)?|miradouro|viewpoint|vista ?point|belvedere|aussichtspunkt|aussichtsturm|kil[a\\u00e1]t[o\\u00f3]|vidikovac|razgledi[s\\u0161][c\\u010d]e|utsiktspunkt|utsikts?punkt|n[a\\u00e4]k[o\\u00f6]alapaikka|vyhl[i\\u00ed]dka|punkt widokowy)\\b|^(view|vue|blick|widok|udsigt|utsikt)\\s+(to|sur|auf|na|over|til|towards)\\b",
+     "regex_flags": "i, u",
+     "osm_tag_test": "tourism=viewpoint with no natural=peak within 100 m"
+    },
+    "measurement": {
+     "method": "measured over the 5,472-row wire snapshot in data/curation/wire_snapshot/",
+     "rows_removed_total": 3,
+     "rows_removed_tier1": 1,
+     "of_which_reviewers_had_flagged_as_wrong": 3,
+     "of_which_reviewers_flagged_in_THIS_class": 3,
+     "collateral_not_on_the_reviewers_list": 0,
+     "countries_touched": 3,
+     "per_country": {
+      "CH": 1,
+      "ES": 1,
+      "PT": 1
+     }
+    },
+    "good_entries_wrongly_removed": {
+     "count": 0,
+     "named": []
+    },
+    "wrong_entries_removed": 3,
+    "wrong_per_good_lost": null,
+    "wrong_per_good_note": "no good entry lost: every row it removes is junk"
+   },
+   {
+    "rank": 35,
+    "id": "view.urban_hill",
+    "class": "viewpoint_not_summit",
+    "kinds": [
+     "mountain"
+    ],
+    "scope_iso2": null,
+    "action": "cap_tier3",
+    "what_it_catches": "Mountain under 700 m whose point falls inside an OSM landuse=residential / commercial / retail or leisure=park polygon less than 4 km from a city centre",
+    "test": {
+     "geometry_test": "point-in-polygon against OSM landuse and leisure=park"
+    },
+    "measurement": {
+     "method": "NOT measurable from the wire: the field it needs is absent",
+     "rows_removed_total": 0,
+     "rows_removed_tier1": 0,
+     "of_which_reviewers_had_flagged_as_wrong": 0,
+     "of_which_reviewers_flagged_in_THIS_class": 0,
+     "collateral_not_on_the_reviewers_list": 0,
+     "countries_touched": 0,
+     "per_country": {}
+    },
+    "good_entries_wrongly_removed": {
+     "count": 0,
+     "named": []
+    },
+    "wrong_entries_removed": 0,
+    "wrong_per_good_lost": null,
+    "wrong_per_good_note": "nothing removed from the wire today: the rule needs a field the wire does not carry",
+    "note": "NOT MEASURABLE from the wire: it needs OSM landuse and the elevation backfill. It is the only rule that catches the two Reykjavik street rows, the six Salzburg city hills, Grazer Schlossberg, Gellert Hill, Petrin, Vracar and Calton Hill without also catching Floyen, Ulriken and Puy de Dome. Cap at tier 3 rather than dropping: a city hill with a funicular is a real visit, it is just not a country's number one mountain."
+   }
+  ],
+  "lido_or_pool": [
+   {
+    "rank": 18,
+    "id": "lido.english_pool",
+    "class": "lido_or_pool",
+    "kinds": [
+     "beach"
+    ],
+    "scope_iso2": [
+     "GB",
+     "IE",
+     "NL",
+     "MT",
+     "PT"
+    ],
+    "action": "drop",
+    "what_it_catches": "'lido' in a country where the word means a built open-air pool",
+    "test": {
+     "name_regex": "\\blido\\b",
+     "regex_flags": "i, u",
+     "osm_tag_test": "leisure=swimming_pool OR leisure=water_park"
+    },
+    "measurement": {
+     "method": "measured over the 5,472-row wire snapshot in data/curation/wire_snapshot/",
+     "rows_removed_total": 7,
+     "rows_removed_tier1": 2,
+     "of_which_reviewers_had_flagged_as_wrong": 6,
+     "of_which_reviewers_flagged_in_THIS_class": 5,
+     "collateral_not_on_the_reviewers_list": 1,
+     "countries_touched": 3,
+     "per_country": {
+      "GB": 3,
+      "NL": 3,
+      "PT": 1
+     }
+    },
+    "good_entries_wrongly_removed": {
+     "count": 0,
+     "named": []
+    },
+    "wrong_entries_removed": 7,
+    "wrong_per_good_lost": null,
+    "wrong_per_good_note": "no good entry lost: every row it removes is junk",
+    "note": "Country-scoped on purpose. In IT and FR the Lido IS the shore (Lido di Venezia, Lido de Thau), so an unscoped ban is unshippable."
+   },
+   {
+    "rank": 22,
+    "id": "lido.playground",
+    "class": "lido_or_pool",
+    "kinds": [
+     "beach"
+    ],
+    "scope_iso2": null,
+    "action": "drop",
+    "what_it_catches": "Name names a playground, petting zoo or leisure park",
+    "test": {
+     "name_regex": "\\b(speeltuin|dierenweide|playground|spielplatz|leisurepark|freizeitpark|erholungspark|amusement|j[a\\u00e1]tsz[o\\u00f3]t[e\\u00e9]r)\\b",
+     "regex_flags": "i, u"
+    },
+    "measurement": {
+     "method": "measured over the 5,472-row wire snapshot in data/curation/wire_snapshot/",
+     "rows_removed_total": 4,
+     "rows_removed_tier1": 2,
+     "of_which_reviewers_had_flagged_as_wrong": 4,
+     "of_which_reviewers_flagged_in_THIS_class": 2,
+     "collateral_not_on_the_reviewers_list": 0,
+     "countries_touched": 2,
+     "per_country": {
+      "DE": 1,
+      "NL": 3
+     }
+    },
+    "good_entries_wrongly_removed": {
+     "count": 0,
+     "named": []
+    },
+    "wrong_entries_removed": 4,
+    "wrong_per_good_lost": null,
+    "wrong_per_good_note": "no good entry lost: every row it removes is junk"
+   },
+   {
+    "rank": 28,
+    "id": "lido.pool_words",
+    "class": "lido_or_pool",
+    "kinds": [
+     "beach"
+    ],
+    "scope_iso2": null,
+    "action": "drop",
+    "what_it_catches": "Name names a built pool, thermal bath or water park (12 languages)",
+    "test": {
+     "name_regex": "\\b(swimming ?pool|open.?air ?pool|outdoor ?pool|bathing ?complex|piscina|piscine|zwembad|basen|baseny|k[a\\u0105]pielisko|aquapark|aqua ?park|water ?park|waterpark|uszoda|[e\\u00e9]lm[e\\u00e9]nyf[u\\u00fc]rd[o\\u0151]|thermal ?bath|freibad|schwimmbad|badeanstalt|hallenbad|termalno kopali[s\\u0161]e)\\b",
+     "regex_flags": "i, u",
+     "osm_tag_test": "leisure=swimming_pool / leisure=water_park / sport=swimming with no natural=beach on the same element",
+     "geometry_test": "reject any beach whose point is more than 2 km from an OSM natural=coastline way or a mapped lake/river polygon"
+    },
+    "measurement": {
+     "method": "measured over the 5,472-row wire snapshot in data/curation/wire_snapshot/",
+     "rows_removed_total": 3,
+     "rows_removed_tier1": 2,
+     "of_which_reviewers_had_flagged_as_wrong": 2,
+     "of_which_reviewers_flagged_in_THIS_class": 1,
+     "collateral_not_on_the_reviewers_list": 1,
+     "countries_touched": 3,
+     "per_country": {
+      "HU": 1,
+      "PL": 1,
+      "PT": 1
+     }
+    },
+    "good_entries_wrongly_removed": {
+     "count": 0,
+     "named": []
+    },
+    "wrong_entries_removed": 3,
+    "wrong_per_good_lost": null,
+    "wrong_per_good_note": "no good entry lost: every row it removes is junk"
+   }
+  ]
+ }
+}

@@ -1,0 +1,297 @@
+{
+  "id": "gr-cozy-towns-pelion",
+  "sourceId": "cozy-towns-greece-pelion",
+  "slug": "gr-cozy-towns-pelion",
+  "title": "Pelion Kalderimia: Mansions, Plane Trees and the Little Train",
+  "country": "Greece",
+  "countryCode": "GR",
+  "countries": [
+    {
+      "name": "Greece",
+      "code": "GR"
+    }
+  ],
+  "isMultiCountry": false,
+  "region": "Southern & Mediterranean Europe",
+  "regionKey": "southern-mediterranean",
+  "subRegion": "Thessaly — Mount Pelion & the Pagasetic Gulf",
+  "tripType": "Cozy Towns Trips",
+  "tripTypeId": 4,
+  "tripTypeSlug": "cozy-towns",
+  "durationDays": 7,
+  "bestPeriod": {
+    "months": [
+      5,
+      6,
+      9,
+      10,
+      11
+    ],
+    "monthNames": [
+      "May",
+      "June",
+      "September",
+      "October",
+      "November"
+    ],
+    "window": "Mid-May–late June & mid-September–early November",
+    "note": null,
+    "avoid": "August — Greek domestic holidays fill every archontiko and the east-coast beach road jams; January–February closes many village kitchens and can snow the Chania pass shut.",
+    "raw": "Mid-May–late June & mid-September–early November"
+  },
+  "budgetTier": "€€",
+  "budgetTierRange": [
+    2,
+    2
+  ],
+  "budgetTierRaw": "€€",
+  "budget": {
+    "currency": "EUR",
+    "totalEur": {
+      "low": 900,
+      "high": 1450
+    },
+    "totalNote": "€900–€1,450 per person, excl. international flights",
+    "breakdown": {
+      "accommodation": {
+        "lowEur": 420,
+        "highEur": 700,
+        "note": "Restored archontiko double €90–€160 per room; per-person share"
+      },
+      "food": {
+        "lowEur": 230,
+        "highEur": 380,
+        "note": "Village taverna mains €8–€14; a Volos tsipouradiko round €6–€9 with meze"
+      },
+      "transport": {
+        "lowEur": 180,
+        "highEur": 290,
+        "note": "Small hire car for the week plus fuel; or KTEL buses at a fraction of it"
+      },
+      "activities": {
+        "lowEur": 70,
+        "highEur": 120,
+        "note": "Moutzouris train, Milies library, co-op visit, museum entries"
+      }
+    },
+    "perDayEur": {
+      "low": 129,
+      "high": 207
+    }
+  },
+  "profile": {
+    "difficulty": 2,
+    "difficultyLabel": "Moderate",
+    "difficultyNote": "2/5 — optional cobbled walks of 40 minutes to 2 hours with real descent; everything else is sitting down",
+    "fitnessLevel": "Moderate",
+    "crowdLevel": null,
+    "familyFriendly": null,
+    "carRequired": null
+  },
+  "basecamps": [],
+  "gatewayAirport": "SKG Thessaloniki — 2 h 30 min drive to Makrinitsa; VOL Nea Anchialos (seasonal) 45 min; ATH Athens 3 h 30 min, or 3 h by train to Volos with a change at Larissa",
+  "gatewayAirportCode": "SKG",
+  "languages": [],
+  "currency": null,
+  "emergencyNumber": "112",
+  "coordinates": {
+    "lat": 40.6407,
+    "lon": 22.9349,
+    "precision": "gateway",
+    "matchedPlace": "Thessaloníki",
+    "source": "geonames (geonamescache, cities > 15k)"
+  },
+  "tags": [
+    "archontika",
+    "kalderimi",
+    "plane-trees",
+    "steam-train",
+    "apples",
+    "tsipouro",
+    "slow-travel",
+    "mountain-villages"
+  ],
+  "summary": "Pelion is the mountain the centaurs were given, a 1,600 m ridge that drops on one side into the flat Pagasetic Gulf and on the other straight into the Aegean, and it is stitched together by *kalderimia* — cobbled mule paths, laid by hand, that were the only roads until the 1960s. The villages on it are unlike anywhere else in Greece: slate-roofed stone mansions with painted ceilings, built by a merchant class that got rich on silk and never quite left. This week uses three bases and no more, walks between villages rather than driving where possible, rides the metre-gauge Moutzouris train down to Milies, and spends deliberate hours doing nothing under thousand-year-old plane trees. It is a slow week by design: two moves, two long walks, several blocks of afternoon with nothing in them at all.",
+  "summaryGenerated": false,
+  "hook": null,
+  "snapshot": {},
+  "itinerary": [
+    {
+      "day": 1,
+      "title": "Up to Makrinitsa, and the balcony at dusk",
+      "morning": "Drive up from Volos or SKG to **Makrinitsa** and park at the village entrance — the core is cobbled and closed to cars. Walk in with a bag; someone will help.",
+      "afternoon": "Nothing scheduled. Sit on the square, look at the **Theophilos mural** in the old kafeneio, and let the coach tours leave.",
+      "evening": "Dinner on a terrace above the gulf; the lights of Volos come on 600 m below you, and the mountain goes quiet at about nine.",
+      "dayStats": "Drive Volos→Makrinitsa 17 km / 30 min; village altitude ≈600 m; walking 1.5 km",
+      "sleep": "Archontiko Repana, Makrinitsa"
+    },
+    {
+      "day": 2,
+      "title": "The kalderimi to Portaria and back",
+      "morning": "Walk the **Makrinitsa → Portaria kalderimi**, 40–50 minutes down through the Karavos gorge past the Mana springs. Coffee in Portaria's square under the planes.",
+      "afternoon": "Walk back up, slowly, or take the road. Then the Museum of Folk Art and History of Pelion in Makrinitsa's Topali mansion — one hour, no more.",
+      "evening": "Grilled meats and *spetsofai* — the Pelion sausage-and-pepper stew that is the mountain's actual signature dish — with a carafe of local tsipouro.",
+      "dayStats": "5 km walking / 150 m descent and ascent / kalderimi 2.5 km, 40–50 min each way",
+      "sleep": "Archontiko Repana, Makrinitsa"
+    },
+    {
+      "day": 3,
+      "title": "Move to Vizitsa; Milies and the painted ceiling",
+      "morning": "Drive over to **Vizitsa**, 30 km of hairpins and 50 minutes. Park at the edge and walk your bags into the car-free core.",
+      "afternoon": "Walk the **Vizitsa → Milies kalderimi**, 35–45 minutes under chestnuts, to **Milies**. See the **Church of Agioi Taxiarches** and its zodiac-painted vault, and the **Public Historical Library of Milies**, founded 1814 — a genuine Enlightenment collection in a mountain village of a few hundred people.",
+      "evening": "Eat in Milies' square and walk the kalderimi back in the dark with a torch, or take the five-minute road transfer.",
+      "dayStats": "Drive 30 km / 50 min; kalderimi 2.2 km each way, 35–45 min; Milies ≈400 m",
+      "sleep": "Archontiko Karagiannopoulou, Vizitsa"
+    },
+    {
+      "day": 4,
+      "title": "The Moutzouris, and a deliberately empty afternoon",
+      "morning": "If it is a Saturday or Sunday and the line is running, drive down to **Ano Lechonia** for the **10:00 Moutzouris departure** — 15 km of 60 cm gauge built by Evaristo de Chirico, over stone viaducts and through hand-cut cuttings, with a halt at **Ano Gatzea**, arriving Milies about 90 minutes later. Otherwise walk the old alignment from Milies down toward Ano Gatzea.",
+      "afternoon": "**Do nothing.** The archontiko *sala*, a book, the shade. This is the point of the week, not a gap in it.",
+      "evening": "Vizitsa has one or two kitchens and they close early. Eat at eight, sleep at ten.",
+      "dayStats": "Train €10 single / €18 return, 15 km in ≈90 min, Sat–Sun, dep. Ano Lechonia 10:00 / Milies 15:00; drive Vizitsa→Ano Lechonia 12 km / 25 min",
+      "sleep": "Archontiko Karagiannopoulou, Vizitsa"
+    },
+    {
+      "day": 5,
+      "title": "Cross the mountain to Tsagarada",
+      "morning": "Drive east over the ridge to **Tsagarada** — 35 km, a full hour, endless hairpins through beech and chestnut, with the Aegean appearing suddenly on the far side.",
+      "afternoon": "Find the **plane tree in the square of Agia Paraskevi**: a thousand years old, roughly 14 m around, with a stone bench built into the roots. Sit under it. Walk the lanes between the four hamlets, which are further apart than any map suggests.",
+      "evening": "Dinner and the bar at the **Lost Unicorn**, or a taverna in Agios Stefanos.",
+      "dayStats": "Drive 35 km / 1 h; Tsagarada ≈500 m; four hamlets spread over ≈3 km",
+      "sleep": "Lost Unicorn Hotel, Tsagarada"
+    },
+    {
+      "day": 6,
+      "title": "Zagora apples, and the co-op",
+      "morning": "**Nothing before eleven.** Breakfast slowly.",
+      "afternoon": "Drive to **Zagora**, 18 km and 35 minutes north, for the **Agricultural Cooperative of Zagora** — the shop, the packing line if it is October, and the terraced orchards of **Mila Zagoras Piliou PDO** and **Firiki Piliou**. Walk the four quarters and look into the 1762 library.",
+      "evening": "Down to **Chorefto** for fish on the beach, or back to Tsagarada.",
+      "dayStats": "Drive 18 km / 35 min each way; harvest season late Sept–end Oct; walking 3 km",
+      "sleep": "Lost Unicorn Hotel, Tsagarada"
+    },
+    {
+      "day": 7,
+      "title": "Down to Damouchari, and Volos tsipouradika",
+      "morning": "Walk the **kalderimi from Agia Paraskevi down to Damouchari**, 4 km and 450 m of descent in 1 h 10–1 h 30, ending at the only natural harbour on Pelion's east coast — a pebble cove of stone houses and a ruined Venetian tower, used as a location for *Mamma Mia!*. Swim. Arrange a lift back up rather than walking it.",
+      "afternoon": "Drive down to **Volos**, 55 km and 1 h 20.",
+      "evening": "The **tsipouradika** ritual, which is Volos's real institution: you order tsipouro by the small bottle and a plate of meze arrives with each round, different every time, chosen by the kitchen. Go to **Kavouras**, Hatziargiri 3 near the port, one of the oldest; or into **Nea Ionia** for **Demiris**, Efremidou 23, for shellfish and *kolitsiani*, or **Bokos**, Meandrou 143, where the tables are entirely local. A round is €6–€9. Three rounds is dinner.",
+      "dayStats": "Kalderimi 4 km / 450 m descent / 1 h 10–1 h 30; drive to Volos 55 km / 1 h 20; tsipouro round €6–€9",
+      "sleep": "Volos waterfront hotel, or out on an evening flight from SKG"
+    }
+  ],
+  "accommodationStrategy": [
+    {
+      "rank": 1,
+      "name": "Archontiko Repana",
+      "style": "restored 19th-century mansion",
+      "location": "Makrinitsa",
+      "description": "A genuine merchant's archontiko of roughly eight to ten rooms on the upper lanes, with carved wooden ceilings, a stone-flagged breakfast room and the whole Pagasetic Gulf below the windows. There is no vehicle access — you park at the village entrance and walk in on cobbles, which is the trade for sleeping inside a car-free village. Roughly €90–€140 per room with breakfast. **Archontiko Xiradaki** and **Archontiko Karamarli** are equivalents on the same lanes.",
+      "booking": null,
+      "priceNote": null
+    },
+    {
+      "rank": 2,
+      "name": "Archontiko Karagiannopoulou",
+      "style": "traditional guesthouse",
+      "location": "Vizitsa",
+      "description": "Vizitsa's core is entirely pedestrian and its archontika are the reason the village is protected. Six to nine rooms around a shared *sala*, wood-burning stoves that matter in May and October, and a hostess who will cook if you ask by lunchtime. **Archontiko Blana** is the near-neighbour alternative. Around €80–€130 per room.",
+      "booking": null,
+      "priceNote": null
+    },
+    {
+      "rank": 3,
+      "name": "Lost Unicorn Hotel",
+      "style": "country house",
+      "location": "Tsagarada",
+      "description": "Ten or so rooms, a proper library, a bar that stays open, and a garden — the right base for the east side because Tsagarada's four hamlets have almost no evening life of their own. Two minutes from the Agia Paraskevi plane tree and the head of the Damouchari kalderimi. Roughly €100–€160 per room.",
+      "booking": null,
+      "priceNote": null
+    }
+  ],
+  "logistics": {
+    "connectivity": "EU roaming applies, no surcharge. 4G is good in Volos, Makrinitsa, Portaria and Zagora, patchy in the Tsagarada hamlets and on the cross-mountain road, and effectively absent on the kalderimi in the gorges. Download offline maps: the cobbled paths are unnumbered and the junctions are ambiguous.",
+    "emergency": "112 nationwide; ambulance 166. The referral hospital is **Achillopouleio General Hospital in Volos** — 1 h 20 from Tsagarada on hairpins, which is the real argument for driving carefully. Greece is in the EU, so EHIC/GHIC covers state care; carry travel insurance for repatriation.",
+    "weather": "Pelion is far wetter and cooler than the Greek stereotype — the ridge catches Aegean moisture and Tsagarada is one of the rainiest inhabited places in Greece. Expect fog on the ridge road, sudden autumn downpours, and 10 °C between the gulf shore and the villages. Snow closes the Chania pass several times each winter. Cobbles become genuinely dangerous when wet.",
+    "bookingWindows": "Archontika for late September and October need **6–10 weeks**; for August, months. The Moutzouris train should be booked ahead at weekends through Hellenic Train — capacity is small and it sells out. The Zagora co-op visit needs a phone call a week ahead. Village tavernas rarely need booking except at weekends.",
+    "money": "Euro. Cards are widely taken in Volos and at hotels, but **village kafeneia, kalderimi-side tavernas and the co-op shop often prefer cash** — carry €100–€150. The train sells tickets onboard **cash only**. Tipping is rounding up or 5–10%.",
+    "transportRules": "A small car is strongly preferable to a large one — the Pelion roads are narrow, cambered and hairpinned, and several village approaches end in a wall. **Do not attempt to drive into Makrinitsa or Vizitsa's cores.** KTEL Magnisias buses serve the west side well and the east side barely; a Volos→Tsagarada return by bus commits you to two departures a day. Greek motorway tolls to Volos are cash or card at barriers. Cross-border rental to North Macedonia or Albania needs written permission.",
+    "permits": "No park fees. The villages of Makrinitsa, Vizitsa, Milies and parts of Tsagarada are **protected traditional settlements** — hence the cobbles, the slate roofs and the parking restrictions. Drones need Greek CAA registration and are restricted over settlements. Foraging chestnuts and herbs on private terraces is not yours to do; ask.",
+    "health": "Tap water in the Pelion villages is spring-fed and excellent — the fountains on the squares are drinkable. Ticks are present in the chestnut and beech woods spring to autumn. Adders exist but are rarely seen. The genuine hazards are the **wet kalderimi** and the **descent to Damouchari**, where a 450 m drop on uneven cobbles turns knees to mush — take poles.",
+    "gettingThere": null,
+    "other": []
+  },
+  "proTips": [
+    "**Confirm the Moutzouris is actually running before you build a day on it.** The line has been suspended for extended periods in recent years and reinstated at short notice. Check Hellenic Train's Pelion page in the week of travel and have Day 4 work without it — the old railway alignment on foot from Milies is a good substitute.",
+    "**Stay in Makrinitsa overnight rather than visiting it.** Between 11:00 and 15:00 it is a coach stop; from 17:00 to 10:00 it is one of the loveliest villages in Greece, and only guests are there.",
+    "**Walk the kalderimia downhill and arrange a lift back.** Makrinitsa→Portaria and Tsagarada→Damouchari are both far better descended, and every guesthouse can organise the return leg for €15–€25.",
+    "**Order tsipouro the Volos way.** Do not order food. Order a round of tsipouro — *me anise* or *choris* — and the meze comes with it, different each round. Ordering a menu marks you out immediately and costs more.",
+    "**Come in October if you can.** Apple harvest at Zagora, chestnuts at Xourichti, the *kazania* firing for tsipouro, empty guesthouses at shoulder rates, and the beech woods turning. It is the single best month on the mountain.",
+    "**Book one archontiko room with a *sala* and a stove.** The shared sitting room is the architecture — carved ceilings, low divans, stained glass — and the point of paying for a mansion rather than a hotel.",
+    "**Cross the mountain in daylight.** The Portaria–Chania–Tsagarada road is beautiful and completely unlit, with a hairpin every two hundred metres and free-ranging goats. An hour becomes ninety minutes after dark, in fog it becomes two.",
+    "**Ask your host about a *kazani* in late October.** Tsipouro distillation is licensed, communal and entirely social; there is no ticket and no schedule, only an invitation.",
+    "**Eat spetsofai at least twice.** It is Pelion's own dish — country sausage, peppers, tomato — and every village kitchen makes it differently."
+  ],
+  "typeSpecific": {
+    "raw": {
+      "Village squares and their daily rhythm": "",
+      "Makrinitsa (≈600 m), the \"balcony of Pelion\"": "the square is a shelf hanging over Volos with a marble fountain, four enormous plane trees, the Church of Agios Ioannis Prodromos, and the old kafeneio holding a **mural by Theophilos Hatzimihail**. Rhythm: dead until 09:00, coffee and *loukoumades* until noon, a coach-tour surge 11:00–15:00, then genuinely empty and beautiful from 17:00.",
+      "Portaria (≈600 m)": "a working village rather than a museum, plane-shaded square by Panagia Portarea, busiest at the 18:00–20:00 *volta*.",
+      "Vizitsa (≈500 m)": "no vehicles reach the core — you park at the edge and walk cobbles in. A single small square, one or two kitchens, silent by 22:00.",
+      "Milies (≈400 m)": "the square holds the **Church of Agioi Taxiarches (1741)**, whose vaulted ceiling is painted with a cosmological scheme including the zodiac, and the **Public Historical Library of Milies**, founded in 1814 by Anthimos Gazis. Life peaks around the train's arrival late morning at weekends.",
+      "Tsagarada (≈500 m)": "four separate hamlets — Agios Stefanos, Agia Paraskevi, Agioi Taxiarches, Agia Kyriaki — each with its own square. **Agia Paraskevi's plane tree is around a thousand years old with a trunk roughly 14 m in circumference.** The square is a place people sit for hours; join them.",
+      "Zagora (≈500 m)": "the largest and least prettified village, four quarters around Agios Georgios, with the historic Zagora Public Library (1762) and the apple co-op at its economic centre.",
+      "Named producers and markets, with the exact day or month": "",
+      "Agricultural Cooperative of Zagora": ", Zagora — the growers' co-operative behind **Zagorin** apples and the PDO **Mila Zagoras Piliou**. Its shop sells apples, juice and preserves on weekday working hours; the **harvest runs roughly late September to the end of October** and is when the whole village is in the orchards.",
+      "Firiki Piliou PDO": "— the small, elongated heritage apple, picked **October**, sold at village shops and as spoon sweet.",
+      "Volos Municipal Market (Dimotiki Agora)": "— Monday to Saturday mornings, the place to buy Pelion olive oil, herbs and *tsipouro*.",
+      "Tsipouro distillation (*kazania*)": "fires in Pelion villages **from mid-October through November**, by permit; ask your host, because these are family events, not attractions.",
+      "Chestnuts": "around Xourichti and Tsagarada, **October**; **olive pressing** on the Pagasetic side, **November–December**.",
+      "Small named archontika and boutique stays, with room counts": "**Archontiko Repana**, Makrinitsa — a restored 19th-century mansion of roughly 8–10 rooms on the upper lanes. **Archontiko Xiradaki**, Makrinitsa — similar scale, painted ceilings, gulf views. **Archontiko Karamarli**, Makrinitsa. **Archontiko Karagiannopoulou** and **Archontiko Blana**, Vizitsa — both inside the car-free cobbled core, typically 6–9 rooms each, with a shared *sala* and wood-burning stoves. **Lost Unicorn Hotel**, Tsagarada — an English-run country house of around 10 rooms with a library and a proper bar. **Aegli Hotel**, Portaria — larger and more conventional, useful if you want a lift and a pool.",
+      "Pacing": "**Two base moves in the whole week** (Makrinitsa → Vizitsa on Day 3, Vizitsa → Tsagarada on Day 5). Three explicit do-nothing blocks: the whole of Day 4 afternoon, Day 6 morning, and Day 7 afternoon. No day contains more than one \"sight\".",
+      "Kalderimi walks between villages, with times": "",
+      "Makrinitsa → Portaria": ", ≈2.5 km, **40–50 minutes**, 150 m of descent on well-kept cobbles through the Karavos gorge and the Mana springs.",
+      "Vizitsa → Milies": ", ≈2.2 km, **35–45 minutes**, one of the best-preserved kalderimia on the mountain, chestnut shade the whole way.",
+      "Milies → Ano Gatzea": "along the old railway alignment, ≈5 km, **1 h 15**, nearly flat.",
+      "Tsagarada (Agia Paraskevi) → Damouchari": ", ≈4 km, **1 h 10–1 h 30 descending**, roughly 450 m down through plane and oak to a stone-built cove. Walk down, get a lift back — the ascent is a different proposition.",
+      "Tsagarada → Mouresi → Agios Ioannis": ", ≈5 km, **1 h 20**.",
+      "notes": [
+        "Cobbles are slick when wet and uneven throughout: proper shoes, not sandals."
+      ],
+      "Named transport lines and drive legs": "**KTEL Magnisias** runs Volos → **Portaria/Makrinitsa** frequently through the day, about 30 minutes; Volos → **Milies/Vizitsa** a few times daily, about 1 hour; Volos → **Tsagarada/Agios Ioannis** typically only **two or three services a day**, around 2 hours — check the timetable before relying on it, and never on a Sunday. **Hellenic Train's Moutzouris line** runs **Ano Lechonia → Milies**, 15 km in about 90 minutes with a 15-minute halt at **Ano Gatzea**; the standard pattern is **Saturdays and Sundays, departing Ano Lechonia at 10:00 and Milies at 15:00**, at roughly **€10 single / €18 return** (children 4–12 €6/€10). Drive legs: Volos→Makrinitsa 17 km / 30 min; Makrinitsa→Vizitsa 30 km / 50 min; Vizitsa→Tsagarada 35 km / 1 h on continuous hairpins; Tsagarada→Zagora 18 km / 35 min; Tsagarada→Volos 55 km / 1 h 20.",
+      "One named hands-on experience": "The **Agricultural Cooperative of Zagora** — arrange in advance to join the October apple harvest and see the grading and packing line that turns Zagorin fruit into the crate stamped with the PDO. Out of season, the co-op shop and a walk through the terraces still explain the village better than any museum."
+    },
+    "surface": null,
+    "distanceKm": null,
+    "elevationM": null,
+    "verticalM": null,
+    "technicalRating": null,
+    "transitPass": null,
+    "hutBooking": null,
+    "liftNetwork": null,
+    "snowReliability": null,
+    "windConditions": null,
+    "gpxReady": null,
+    "bookingTimeline": null,
+    "audience": null
+  },
+  "packingNotes": [],
+  "whatCouldGoWrong": [],
+  "sources": {
+    "verified": "Hellenic Train's official Pelion page — the **Ano Lechonia–Milies route, 15 km in roughly 90 minutes with a 15-minute halt at Ano Gatzea, the Saturday/Sunday pattern with 10:00 and 15:00 departures, and fares of €10 single / €18 return (€6/€10 children 4–12), with onboard purchase cash only**. Critically, the same page has carried a standing notice that services were **cancelled from 19 September 2024 until further notice**, and Greek press reported the line returning to service from **14 December 2024** following hotelier protest. Named Volos tsipouradika and addresses — **Kavouras (Hatziargiri 3), Demiris (Efremidou 23, Nea Ionia), Bokos (Meandrou 143, Nea Ionia)** — from a Greek travel-press round-up.",
+    "confidenceNotes": "Re-verify before publishing — (1) the **Moutzouris operating status, days and fares** are the single most volatile fact in this file; the line has been suspended and reinstated repeatedly and the schedule differs between summer and shoulder season. Do not publish a fixed departure time without checking hellenictrain.gr in the fortnight before travel. (2) **KTEL Magnisias frequencies** to Tsagarada and Vizitsa, which are seasonal and thin out sharply outside July–August. (3) **Room counts and rates for Archontiko Repana, Xiradaki, Karamarli, Karagiannopoulou, Blana and the Lost Unicorn** — all indicative, none checked against a 2026 rate sheet, and several Pelion archontika change ownership or close for winter. (4) **Agricultural Cooperative of Zagora** visitor access and whether harvest participation can actually be arranged — this needs a direct call; the shop is confirmed, the hands-on element is not. (5) The **Theophilos mural** in Makrinitsa's kafeneio and the **Milies library** opening hours. (6) The **Tsagarada plane tree's** age and girth are traditional claims widely repeated locally rather than measured facts. (7) Kalderimi distances and walking times, estimated from route descriptions rather than surveyed, and condition after winter storms — several Pelion paths have been damaged by flooding in recent years and repairs are ongoing."
+  },
+  "verifyFlags": [],
+  "verifyFlagCount": 0,
+  "volatilePricing": false,
+  "wordCount": 3563,
+  "dataVintage": 2026,
+  "provenance": {
+    "batch": "southern-mediterranean",
+    "sourceFile": "carta-dataset/trips/cozy-towns-greece-pelion.md",
+    "sourceFormat": "md with '## Metadata' bullet block (one file per trip)",
+    "sourceId": "cozy-towns-greece-pelion",
+    "ingestedAt": "2026-09-02",
+    "synthesized": false
+  }
+}

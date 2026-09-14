@@ -29,6 +29,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 
 import enrich_activities as ea
+from pipeline_io import atomic_write_json
 
 ROOT = Path(__file__).resolve().parents[1]
 DATA = ROOT / "app_data" / "app_data.json"
@@ -71,10 +72,22 @@ def _load(path):
 
 def harvest_dests(data):
     cache = _load(DEST_CACHE)
+    # Fallback articles for destinations with no photograph. `image.page` is a
+    # by-product of the image harvest, so a place that has no picture had no
+    # article either and was skipped outright - not measured as obscure, just
+    # never asked. resolve_dest_articles.py finds those by geosearch.
+    articles = _load(ROOT / "cache" / "dest_articles.json")
     todo = []
+    skipped_no_url = 0
     for did, d in data["destinations"].items():
-        url = FAME_ARTICLE_OVERRIDES.get(did) or (d.get("image") or {}).get("page")
+        page = (d.get("image") or {}).get("page")
+        if page and (".wikipedia.org/wiki/" not in page
+                     or "commons.wikimedia.org" in page):
+            page = None      # a Commons File: page is a photo, not an article
+        url = (FAME_ARTICLE_OVERRIDES.get(did) or page
+               or (articles.get(did) or {}).get("url"))
         if not url:
+            skipped_no_url += 1
             continue
         if did in cache and did not in FAME_ARTICLE_OVERRIDES:
             continue
@@ -83,6 +96,9 @@ def harvest_dests(data):
         todo.append((did, url))
     print(f"[dests] {len(todo)} articles to fetch ({len(cache)} cached), "
           f"window {ea.PV_START}..{ea.PV_END}")
+    if skipped_no_url:
+        print(f"[dests] {skipped_no_url} destinations have no article at all; "
+              f"run resolve_dest_articles.py to give them one")
 
     def work(pair):
         did, url = pair
@@ -102,10 +118,9 @@ def harvest_dests(data):
                     cache[f"_ovr_{did}"] = True
             done += 1
             if done % 100 == 0:
-                DEST_CACHE.write_text(json.dumps(cache, indent=1),
-                                      encoding="utf-8")
+                atomic_write_json(DEST_CACHE, cache)
                 print(f"    {done}/{len(todo)} ({fails} failures)")
-    DEST_CACHE.write_text(json.dumps(cache, indent=1), encoding="utf-8")
+    atomic_write_json(DEST_CACHE, cache)
     print(f"[dests] done: {len(cache)} cached, {fails} failed")
 
 

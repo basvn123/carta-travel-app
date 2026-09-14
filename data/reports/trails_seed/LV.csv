@@ -1,0 +1,16 @@
+rank,curation_rank,title,ref,network,distance_km,popularity,pageviews_day,sitelinks,anchors,quality_score,portal_agreement,status,family_members,trip_id,osm_relation
+1,86.47,E11 section 102: Bulduri - Rīgas centrs,E11,iwn,21.1,0.813,0,0,"Riga (1229/day, 224 m); Old Riga (1229/day, 111 m); Museum of the history of Riga and navigation (1229/day, 147 m)",96,,needs_review,32,64236,12556982
+2,86.47,E9 Section 24: Riga City Centre - Vecāķi,E9,iwn,22.2,0.813,0,0,"Museum of the history of Riga and navigation (1229/day, 157 m); Old Riga (1229/day, 38 m); Riga (1229/day, 112 m)",96,,needs_review,30,64082,10016280
+3,71.69,Svētā Jēkaba ceļš (Valka-Rīga) 12 etaps: Vecāķi – Rīga,,nwn,22.5,0.534,0,0,"Latvian National History Museum (1229/day, 48 m); Old Riga (1229/day, 188 m); Riga (1229/day, 69 m)",96,,needs_review,1,64210,12304214
+4,69.51,Svētā Jēkaba ceļš (Valka-Rīga) 7 etaps: Līgatne – Sigulda,,nwn,26.3,0.472,0,0,"Satezele hillfort (471/day, 705 m); Sigulda (53/day, 163 m)",96,,needs_review,1,64206,12303250
+5,67.26,Svētā Jēkaba ceļš (Valka-Rīga) 8 etaps: Sigulda – Krimulda,,nwn,10.2,0.472,0,0,"Satezele hillfort (471/day, 1772 m); Sigulda (53/day, 300 m)",87,,needs_review,1,64207,12303505
+6,67.19,Svētā Jēkaba ceļš (Rīga-Skaistkalne) 1 etaps: Rīga – Salaspils,,nwn,22.8,0.534,0,0,"Old Riga (1229/day, 61 m); Museum of the history of Riga and navigation (1229/day, 79 m); Riga (1229/day, 101 m)",78,,needs_review,1,64251,12664270
+7,67.19,Svētā Jēkaba ceļš (Rīga-Žagare) 1 etaps: Rīga – Jaunmārupe,,nwn,17.5,0.534,0,0,"Riga (1229/day, 101 m); Latvian National History Museum (1229/day, 644 m); Museum of the history of Riga and navigation (1229/day, 79 m)",78,,needs_review,1,64166,11343115
+8,64.44,Svētā Jēkaba ceļš (Valka-Rīga) 5 etaps: Liepa – Cēsis,,nwn,22.4,0.327,0,0,"Church of Saint John the Baptist in Cēsis (50/day, 28 m); Riekstu mound (50/day, 106 m); Cēsis (50/day, 86 m)",96,,needs_review,1,64204,12301974
+9,63.31,"Europa Jūrtaka E9, Latvia",E9,iwn,567.7,0.159,21,17,"Old Riga (1229/day, 38 m); Museum of the history of Riga and navigation (1229/day, 147 m); Riga (1229/day, 112 m)",95,,needs_review,1,63720,9645842
+10,60.69,Mežtaka Biķernieku un Šmerļa mežā,ME1,iwn,6.5,0.164,0,0,,83.8,,needs_review,1,64181,11804228
+11,58.94,1836 (Piejūras ceļš),1836,nwn,540.8,0.534,0,0,"Museum of the history of Riga and navigation (1229/day, 106 m); Latvian National History Museum (1229/day, 48 m); Riga (1229/day, 112 m)",45,,draft,1,63744,11803322
+12,56.94,Svētā Jēkaba ceļš (Valka-Rīga) 6 etaps: Cēsis – Līgatne,,nwn,25.9,0.327,0,0,"Riekstu mound (50/day, 174 m); Church of Saint John the Baptist in Cēsis (50/day, 36 m); Cēsis (50/day, 165 m)",66,,needs_review,1,64205,12302992
+13,56.76,Turaidas gravas un alas,TUR,lwn,5.1,0.472,0,0,"Satezele hillfort (471/day, 1397 m)",95,,needs_review,1,64146,11118610
+14,56.51,Sigulda - Līgatne,,rwn,26.5,0.472,0,0,"Satezele hillfort (471/day, 705 m); Sigulda (53/day, 248 m)",69,,needs_review,1,64136,11112447
+15,55.47,Svētā Jēkaba ceļš (Valka-Rīga) 1 etaps: Valka – Turna,,nwn,19.9,0.071,0,0,,96,,needs_review,1,63776,12298788

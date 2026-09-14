@@ -1,0 +1,277 @@
+{
+  "id": "me-trail-running-durmitor",
+  "sourceId": "trail-running-montenegro-durmitor",
+  "slug": "me-trail-running-durmitor",
+  "title": "Durmitor Ridges",
+  "country": "Montenegro",
+  "countryCode": "ME",
+  "countries": [
+    {
+      "name": "Montenegro",
+      "code": "ME"
+    }
+  ],
+  "isMultiCountry": false,
+  "region": "Southern & Mediterranean Europe",
+  "regionKey": "southern-mediterranean",
+  "subRegion": "Durmitor National Park & Žabljak, northern Montenegro",
+  "tripType": "Trail Running",
+  "tripTypeId": 2,
+  "tripTypeSlug": "trail-running",
+  "durationDays": 7,
+  "bestPeriod": {
+    "months": [
+      6,
+      7,
+      9,
+      10
+    ],
+    "monthNames": [
+      "June",
+      "July",
+      "September",
+      "October"
+    ],
+    "window": "Mid-June–mid-July & early September–early October",
+    "note": null,
+    "avoid": "November–May (Sedlo pass road snow-blocked, high ridges unrunnable, Žabljak is a ski town); late July–August has the crowds and afternoon storms",
+    "raw": "Mid-June–mid-July & early September–early October"
+  },
+  "budgetTier": "€",
+  "budgetTierRange": [
+    1,
+    1
+  ],
+  "budgetTierRaw": "€",
+  "budget": {
+    "currency": "EUR",
+    "totalEur": {
+      "low": 780,
+      "high": 1320
+    },
+    "totalNote": "€780–€1,250 per person, excl. international flights",
+    "breakdown": {
+      "accommodation": {
+        "lowEur": 300,
+        "highEur": 560,
+        "note": "Žabljak guesthouses €35–€70 dbl/night; Škrka mountain hut ~€15–€20"
+      },
+      "food": {
+        "lowEur": 170,
+        "highEur": 260,
+        "note": "Main course €7–€12; a full dinner with rakija under €20"
+      },
+      "transport": {
+        "lowEur": 250,
+        "highEur": 380,
+        "note": "Rental car 7 days €180–€280, fuel, Sozina/Tara tolls"
+      },
+      "activities": {
+        "lowEur": 60,
+        "highEur": 120,
+        "note": "NP daily entry ~€5, or the all-parks card ~€13.50; Tara rafting half-day €40–€55"
+      }
+    },
+    "perDayEur": {
+      "low": 111,
+      "high": 189
+    }
+  },
+  "profile": {
+    "difficulty": 4,
+    "difficultyLabel": "Demanding",
+    "difficultyNote": "4/5 — 1,000–1,400 m days on sharp karst with short exposed scrambles; no glacier, but very little forgiving ground",
+    "fitnessLevel": "Demanding",
+    "crowdLevel": null,
+    "familyFriendly": null,
+    "carRequired": null
+  },
+  "basecamps": [],
+  "gatewayAirport": "TGD — Podgorica (2 h–2 h 30 drive to Žabljak via Nikšić or the Tara bridge); TIV — Tivat is 2 h 45",
+  "gatewayAirportCode": "TGD",
+  "languages": [],
+  "currency": null,
+  "emergencyNumber": "112",
+  "coordinates": {
+    "lat": 42.4412,
+    "lon": 19.2631,
+    "precision": "country",
+    "matchedPlace": "Podgorica",
+    "source": "country capital fallback"
+  },
+  "tags": [
+    "trail-running",
+    "durmitor",
+    "bobotov-kuk",
+    "tara-canyon",
+    "karst",
+    "via-dinarica",
+    "zabljak",
+    "prutas",
+    "katun",
+    "montenegro"
+  ],
+  "summary": "Durmitor is a compact, savage limestone massif with 48 peaks over 2,000 m packed into an area you can drive across in forty minutes, and Žabljak at 1,456 m is the highest town in the Balkans — which means you sleep at altitude and start every run from a car park rather than a valley. The rock is pale, fluted karst with almost no soil, so the running is fast on the grass shelves and genuinely sharp on the ridges. The week arcs from a lake-circuit warm-up through the two showpiece summits, Bobotov Kuk and Prutaš, into a two-day Škrčka lakes excursion with a hut night, then a recovery day on the Tara canyon rim and a fast finish on Savin Kuk. It suits runners who like empty mountains, do not need refuge comfort, and can carry their own water.",
+  "summaryGenerated": false,
+  "hook": null,
+  "snapshot": {},
+  "itinerary": [
+    {
+      "day": 1,
+      "title": "Drive up from Podgorica, warm up at Crno jezero",
+      "morning": "Land at TGD, collect the car, drive north through the Moraća canyon and over to **Žabljak (1,456 m)** — 2 h to 2 h 30 depending on route. Buy the national park ticket at the Crno jezero booth or the visitor centre.",
+      "afternoon": "Shake out on the **Crno jezero (Black Lake) circuit**, 3.6 km around both basins on flat forest track, then add the gentle climb to the **Zminje jezero** for another 4 km. Enough to feel the altitude, not enough to cost anything.",
+      "evening": "Dinner in Žabljak — cicvara, kajmak and lamb ispod sača at one of the town's konobas; wash it down with a local Vranac.",
+      "dayStats": "8 km / 220 m D+ / T1 / 55 min–1 h 15; drive 2 h–2 h 30; NP entry ~€5.",
+      "sleep": "Hotel Soa, Žabljak"
+    },
+    {
+      "day": 2,
+      "title": "Prutaš, the slab mountain",
+      "morning": "Drive the **P14 road to Sedlo pass (1,907 m)**, 25 minutes from Žabljak, and park at the col. Run the ridge south-west to **Prutaš (2,393 m)** — grass shelves, then the famous banded limestone strata tilted like the pages of a book.",
+      "afternoon": "Return over Sedlo and add the short spur north toward **Velika Previja** for the first sight of the Škrka cirque and Bobotov's south face. Back to Žabljak by mid-afternoon.",
+      "evening": "Beer on the Žabljak main street; early dinner and a properly early night before tomorrow.",
+      "dayStats": "8.2 km / 560 m D+ / T2–T3 / 1 h 30–2 h / high point 2,393 m / no water above Žabljak.",
+      "sleep": "Hotel Soa, Žabljak"
+    },
+    {
+      "day": 3,
+      "title": "Bobotov Kuk, 2,523 m",
+      "morning": "Leave Žabljak at 06:15 for Sedlo. Climb the scree gully and the traverse to **Velika Previja**, then the cabled, exposed final ridge onto **Bobotov Kuk (2,523 m)**, the classic Durmitor summit, with the whole Tara canyon system on one side and Bosnian ranges on the other.",
+      "afternoon": "Descend by the same route to Sedlo — or, if fit, take the long variant down to **Lokvice katun** and out via Ivan Do to Žabljak, refilling at the katun spring and buying cheese from the shepherds.",
+      "evening": "Recovery meal in Žabljak; a soak in the hotel wellness if it has one.",
+      "dayStats": "9.9 km / 940 m D+ (or 19 km / 1,450 m by Lokvice) / T3 with cables / 2 h 15–3 h / 2 L water minimum.",
+      "sleep": "Hotel Soa, Žabljak"
+    },
+    {
+      "day": 4,
+      "title": "Down into the Škrka cirque, hut night",
+      "morning": "Sedlo again, but this time run north-west over **Velika Previja** and drop into the **Škrka cirque**, a 500 m descent on loose karst steps into the most isolated bowl in the park, holding **Veliko and Malo Škrčko jezero** at about 1,686 m.",
+      "afternoon": "Easy exploration of the two lakes and the surrounding pastures, then check into the **Škrka mountain hut** — basic, bunk-bed, hot food, and the only building for hours in any direction.",
+      "evening": "Hut dinner and one of the darkest night skies in Europe; the cirque walls block every light source.",
+      "dayStats": "9 km in / 250 m up, 550 m down / T3 / 1 h 30–2 h / hut at ~1,700 m, ~€15–€20.",
+      "sleep": "Planinarski dom Škrka, Škrčka jezera"
+    },
+    {
+      "day": 5,
+      "title": "Climb out, then a genuine recovery afternoon on the Tara rim",
+      "morning": "Reverse the climb out of the cirque to Sedlo — 550 m up, taken slowly as the only hard effort of the day — and drive back to Žabljak.",
+      "afternoon": "True low day. An easy 7 km jog out to the **Ćurevac viewpoint (1,625 m)** on soft forest track for the head-on view 1,300 m down into the **Tara canyon**, the deepest in Europe. Then coffee and nothing else.",
+      "evening": "Dinner in Žabljak; plan the last two days around the forecast.",
+      "dayStats": "8 km out / 550 m D+, then 7 km / 300 m D+ / total ~1 h 50 running / Tara canyon depth ~1,300 m.",
+      "sleep": "Hotel Soa, Žabljak"
+    },
+    {
+      "day": 6,
+      "title": "Savin Kuk and the Tara river",
+      "morning": "From Crno jezero, climb **Savin Kuk (2,313 m)** on the ski-area flank and the summit ridge — a shorter, less committing summit than Bobotov with an equally complete panorama over the Žabljak plateau and the Piva side.",
+      "afternoon": "Drive to the **Đurđevića Tara bridge** and take a half-day raft on the Tara — cold, fast, green water at the bottom of the canyon you looked into yesterday. The best possible active recovery.",
+      "evening": "Grilled trout and rakija at a riverside restaurant near the bridge.",
+      "dayStats": "12 km / 900 m D+ / T2–T3 / 2 h–2 h 45; rafting €40–€55 half-day; 35 min drive to the bridge.",
+      "sleep": "Hotel Soa, Žabljak"
+    },
+    {
+      "day": 7,
+      "title": "Katun loop and the drive out",
+      "morning": "Last run: the **Ivan Do–Lokvice katun** loop from Crno jezero, up through black pine to the shepherds' summer settlement at about 1,800 m and back on the Zminje side — the most characteristic Durmitor ground, all pasture, karst pavement and sheep bells.",
+      "afternoon": "Buy cheese and honey in Žabljak, then the drive south to Podgorica, ideally via the **Tara bridge and the Piva canyon** if the flight allows.",
+      "evening": "Departure from TGD.",
+      "dayStats": "13 km / 700 m D+ / 2 h–2 h 30; drive to TGD 2 h–2 h 30.",
+      "sleep": "Departure"
+    }
+  ],
+  "accommodationStrategy": [
+    {
+      "rank": 1,
+      "name": "Hotel Soa",
+      "style": "small modern hotel",
+      "location": "Žabljak",
+      "description": "The pragmatic town base: five minutes' drive from the Crno jezero park entrance and the P14 Sedlo road, parking, a proper breakfast, and staff who will do an early one if you ask the night before. Good value at €55–€90 double in shoulder season, and it has drying space, which matters when Durmitor weather turns.",
+      "booking": null,
+      "priceNote": null
+    },
+    {
+      "rank": 2,
+      "name": "Planinarski dom Škrka",
+      "style": "~1,700 m",
+      "location": "basic mountain hut, Škrčka jezera",
+      "description": "The only accommodation inside the high massif and the reason Day 4 works. Bunks, a stove, simple hot food and no electricity to speak of — bring cash, a sleeping bag liner and a headtorch. Confirm it is staffed before you commit to descending into the cirque; outside high summer it may be locked.",
+      "booking": null,
+      "priceNote": null
+    },
+    {
+      "rank": 3,
+      "name": "Guesthouse or apartman in Ivan Do",
+      "style": "self-catering",
+      "location": "edge of the park",
+      "description": "The runner's alternative: apartments a kilometre from the Crno jezero trailhead, €35–€55 a night, with a kitchen for early breakfasts and late dinners. Ideal if you want to start on foot rather than driving to the lake each morning.",
+      "booking": null,
+      "priceNote": null
+    }
+  ],
+  "logistics": {
+    "connectivity": "Montenegro is **not** in the EU, but it participates in the Western Balkans roaming arrangement and most EU operators now apply reduced or roam-like-at-home terms — check your tariff, and consider a local Telekom/One prepaid SIM. **No signal in the Škrka cirque, the Tara canyon floor, or the deep forest bowls.**",
+    "emergency": "**112**; mountain rescue in Montenegro is run by the Gorska služba spašavanja (GSS) and is volunteer-based, so response is slower than in the Alps. Helicopter availability is limited. Carry insurance with mountain cover and repatriation, and leave your route with your accommodation.",
+    "weather": "Durmitor makes its own weather. Violent afternoon thunderstorms from mid-June through August, often building from 13:00; sudden temperature drops of 15 °C; and snow possible on the ridges in any month. The massif also catches Adriatic fronts, which arrive fast from the south-west. Check the Montenegrin hydrometeorological service each morning.",
+    "bookingWindows": "Žabljak beds are plentiful except in the first three weeks of August — 2–4 weeks ahead is enough otherwise. The **Škrka hut** should be confirmed by phone through the Žabljak visitor centre a few days ahead. Tara rafting books same-day outside August. Rental cars for August need months.",
+    "money": "**Montenegro uses the euro** although it is not in the eurozone. Cards work in hotels and larger restaurants in Žabljak; **the national park booth, the hut, katuns and small konobas are cash-only** — bring €200 in small notes. Tipping: round up, 10% for a good meal.",
+    "transportRules": "A rental car is essentially required — buses reach Žabljak but nothing inside the park. Montenegro has no vignette; the **Sozina tunnel** on the coast route is tolled (a few euros). Check that your rental agreement permits the unpaved sections; the P14 to Sedlo is paved but narrow and gated by snow into June. Green Card insurance is needed to cross into Bosnia for the Piva loop.",
+    "permits": "**Durmitor National Park charges a daily entry fee of roughly €5 per person**, collected at Crno jezero and other entry points; an all-parks annual card is around €13.50 and pays for itself in three days. No running permit needed. Wild camping is restricted to designated areas; drones need park permission. Do not disturb katun livestock or leave gates open.",
+    "health": "Žabljak tap water is potable; treat all lake and stream water. **Nose-horned viper (poskok)** is present on sunny karst below 1,800 m — Europe's most venomous snake, though bites are rare; wear proper shoes and don't put hands blind onto ledges. Ticks in the pine and beech forest. Karst edges are sharp and undercut: a slip on Bobotov's summit block is a serious injury, not a graze.",
+    "gettingThere": null,
+    "other": []
+  },
+  "proTips": [
+    "**Buy the all-parks card, not day tickets.** At roughly €13.50 against ~€5 a day, it pays back on day three and also covers Biogradska Gora and Lovćen if you drive out via the coast.",
+    "**Do Bobotov Kuk from Sedlo, not from Crno jezero, on your first attempt.** The Sedlo start saves 500 m of climbing and puts you on the summit two hours earlier — which on a storm day is the whole safety margin.",
+    "**Refill at Lokvice katun and buy the cheese.** The shepherds' summer settlement is the only reliable water between Žabljak and the high ridges, and the sheep's cheese and kajmak sold there is better than anything in town.",
+    "**Check the Sedlo road before you plan the week.** The P14 over Sedlo is the key to three of the seven days and it can stay snow-blocked into mid-June and close early after an autumn storm.",
+    "**Descend into Škrka in the morning, never the afternoon.** The climb out is 500 m on loose karst with no water and no phone signal; doing it in evening light or a storm is the classic Durmitor epic.",
+    "**Run Prutaš in low side-light.** The banded strata that make the mountain famous only read properly early or late — mid-morning flattens them completely.",
+    "**Use the Tara raft as your recovery session.** Half a day of cold water and no impact after a Bobotov day does more for your legs than a rest morning in the hotel.",
+    "**Watch the sheepdogs at the katuns.** Šarplaninac guard dogs work loose around the summer settlements. Stop running, walk, and wait for a shepherd — never try to outrun one."
+  ],
+  "typeSpecific": {
+    "raw": {
+      "Signature routes": "(1) **Bobotov Kuk (2,523 m) from Sedlo pass (1,907 m)**: 9.9 km out-and-back, 940 m D+, mid-pack run 2 h 15–3 h (hiking guides quote 5 h 30). (2) **Bobotov Kuk the long way from Crno jezero** via Ivan Do, Lokvice katun and Velika Previja: 19 km, 1,450 m D+, 4 h–5 h 30. (3) **Prutaš (2,393 m) from Sedlo**: 8.2 km out-and-back, 560 m D+, 1 h 30–2 h — the most photogenic striated slabs in the Balkans. (4) **Škrčka jezera (1,686 m) circuit from Sedlo** down the Škrka cirque and back over Velika Previja: 17 km, 1,100 m D+, 3 h–4 h. (5) **Savin Kuk (2,313 m) from Crno jezero**: 12 km, 900 m D+, 2 h–2 h 45. (6) **Crno jezero circuit**: 3.6 km, 60 m D+, 22–30 min. (7) **Ćurevac (1,625 m) Tara rim** from Tepca road: 7 km, 300 m D+, 50 min–1 h 10.",
+      "Technicality (SAC hiking scale T1–T5, stated explicitly)": "Crno jezero circuit **T1**. Prutaš and Savin Kuk **T2–T3**. Bobotov Kuk **T3**, with a cabled section and about 80 m of easy but genuinely exposed scrambling on the summit block, plus a steep scree gully on the Sedlo side. Škrka descent **T3** on loose karst steps. Nothing needs a rope, but Bobotov Kuk in the wet is a different mountain — the polished limestone becomes lethal.",
+      "Terrain split, week average": "~40% bare fluted karst and limestone slab, ~20% scree and gully, ~15% high grass shelf and katun pasture (the only genuinely fast ground), ~15% black-pine and beech forest singletrack around the lakes, ~10% gravel park track. The karst is razor-edged: it shreds soft uppers and destroys hands in a fall, so long shoes with a rock plate and light gloves are sensible.",
+      "Waymarking": "Balkan standard **red circle with a white dot**, plus numbered wooden posts installed by the national park and the Via Dinarica **White Trail** (a \"VD\" white blaze) crossing the massif. Marking is good on the main peaks and thin in the Škrka cirque, where cairns take over. Timings on posts are hiking times — halve them.",
+      "Water refill points and month reliability": "Durmitor is porous karst and **water is the planning constraint**. Reliable: **Žabljak town taps and the Crno jezero café**, all season; **Lokvice katun spring** (shepherds' summer settlement below Bobotov Kuk), reliable while the katun is occupied, roughly **mid-June to mid-September**, dry outside it; **Škrčka jezera** lake water and the hut at Škrka, treat or ask the hut; **Crno jezero** itself, treat. **Nothing at all at Sedlo pass, on Prutaš, on the Bobotov ridge or on the Ćurevac rim.** Snow patches in the north gullies give melt into early July and nothing after. Carry 2 L on any Sedlo day.",
+      "Navigation": "The Durmitor 1:25,000 hiking map sold at the NP visitor centre in Žabljak is the standard; GPX from the Via Dinarica portal, Wikiloc and Komoot. Coverage: reasonable in Žabljak and on ridges, **dead in the Škrka cirque, in the Tara canyon below the rim and in the Zminje/Crno forest bowls**. Bail-outs: from Bobotov Kuk, back to Sedlo (fastest) or down to Lokvice and Ivan Do; from Škrka, the Škrka hut is the only shelter and the exit is a 500 m climb — do not descend into that cirque late in the day.",
+      "Recovery, altitude and heat": "Day 5 is a real low day on the Tara rim. Working altitude 1,900–2,520 m from a 1,456 m base, so no acclimatisation problem but noticeably thinner air on the Bobotov scramble. Convective storms build over the massif from about 13:00 in July and are severe — the ridges are the highest ground for a long way and lightning strikes here are not theoretical. Be off Bobotov Kuk by early afternoon, every time."
+    },
+    "surface": "~40% bare fluted karst and limestone slab, ~20% scree and gully, ~15% high grass shelf and katun pasture (the only genuinely fast ground), ~15% black-pine and beech forest singletrack around the lakes, ~10% gravel park track. The karst is razor-edged: it shreds soft uppers and destroys hands in a fall, so long shoes with a rock plate and light gloves are sensible.",
+    "distanceKm": null,
+    "elevationM": null,
+    "verticalM": null,
+    "technicalRating": "Crno jezero circuit **T1**. Prutaš and Savin Kuk **T2–T3**. Bobotov Kuk **T3**, with a cabled section and about 80 m of easy but genuinely exposed scrambling on the summit block, plus a steep scree gully on the Sedlo side. Škrka descent **T3** on loose karst steps. Nothing needs a rope, but Bobotov Kuk in the wet is a different mountain — the polished limestone becomes lethal.",
+    "transitPass": null,
+    "hutBooking": null,
+    "liftNetwork": null,
+    "snowReliability": null,
+    "windConditions": null,
+    "gpxReady": null,
+    "bookingTimeline": null,
+    "audience": null
+  },
+  "packingNotes": [],
+  "whatCouldGoWrong": [],
+  "sources": {
+    "verified": "Durmitor National Park entry is charged per person per day at approximately €5, with a Montenegro all-national-parks card around €13.50; the Bobotov Kuk out-and-back from Sedlo is about 9.9 km with roughly 939 m of ascent and the Sedlo trailhead is around a 25-minute drive from Žabljak on the P14; Montenegro uses the euro without being in the eurozone.",
+    "confidenceNotes": "Re-verify (a) **the current Durmitor entry fee and card price**, which the park revises; (b) **Škrka mountain hut staffing, opening dates, price and booking channel** — it is the single most volatile item in this itinerary and should be confirmed by phone before Day 4 is committed; (c) **P14 Sedlo pass road opening date** for the travel month, which depends entirely on snow clearance; (d) **Ćurevac viewpoint access** — the approach road has been closed or restricted in some seasons for erosion; (e) **Montenegro roaming terms** for the traveller's specific EU operator; (f) named Žabljak restaurants and hotel price bands, which turn over frequently."
+  },
+  "verifyFlags": [],
+  "verifyFlagCount": 0,
+  "volatilePricing": false,
+  "wordCount": 3079,
+  "dataVintage": 2026,
+  "provenance": {
+    "batch": "southern-mediterranean",
+    "sourceFile": "carta-dataset/trips/trail-running-montenegro-durmitor.md",
+    "sourceFormat": "md with '## Metadata' bullet block (one file per trip)",
+    "sourceId": "trail-running-montenegro-durmitor",
+    "ingestedAt": "2026-09-02",
+    "synthesized": false
+  }
+}

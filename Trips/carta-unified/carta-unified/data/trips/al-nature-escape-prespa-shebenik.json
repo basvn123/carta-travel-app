@@ -1,0 +1,279 @@
+{
+  "id": "al-nature-escape-prespa-shebenik",
+  "sourceId": "nature-escape-albania-prespa-shebenik",
+  "slug": "al-nature-escape-prespa-shebenik",
+  "title": "Pelicans, Beech and Bujtina: Eastern Albania Off the Grid",
+  "country": "Albania",
+  "countryCode": "AL",
+  "countries": [
+    {
+      "name": "Albania",
+      "code": "AL"
+    }
+  ],
+  "isMultiCountry": false,
+  "region": "Southern & Mediterranean Europe",
+  "regionKey": "southern-mediterranean",
+  "subRegion": "Korçë, Prespa & Librazhd (Shebenik-Jabllanicë)",
+  "tripType": "Nature Escapes & Cabin Stays",
+  "tripTypeId": 9,
+  "tripTypeSlug": "nature-escape",
+  "durationDays": 7,
+  "bestPeriod": {
+    "months": [
+      5,
+      6,
+      9,
+      10
+    ],
+    "monthNames": [
+      "May",
+      "June",
+      "September",
+      "October"
+    ],
+    "window": "Mid-May–late June & September–mid-October",
+    "note": null,
+    "avoid": "December–March — the Shebenik glacial-lake tracks are snowbound, most Prespa homestays close, and the Rrajcë road ices badly",
+    "raw": "Mid-May–late June & September–mid-October"
+  },
+  "budgetTier": "€",
+  "budgetTierRange": [
+    1,
+    1
+  ],
+  "budgetTierRaw": "€",
+  "budget": {
+    "currency": "EUR",
+    "totalEur": {
+      "low": 700,
+      "high": 1100
+    },
+    "totalNote": "€700–€1,100 per person, excl. international flights",
+    "breakdown": {
+      "accommodation": {
+        "lowEur": 200,
+        "highEur": 330,
+        "note": "Bujtina homestays 2,500–4,000 ALL (€25–€40) per person with dinner; Korçë and Pogradec hotels €35–€60 a double"
+      },
+      "food": {
+        "lowEur": 120,
+        "highEur": 200,
+        "note": "Village dinners are usually included; town mains 600–1,200 ALL (€6–€12)"
+      },
+      "transport": {
+        "lowEur": 280,
+        "highEur": 420,
+        "note": "High-clearance rental €40–€60/day, fuel around 200 ALL/litre (€2.00), no motorway tolls except the Kalimash tunnel (not on this route)"
+      },
+      "activities": {
+        "lowEur": 80,
+        "highEur": 150,
+        "note": "Guides, Maligrad boat, Voskopojë church keyholders, a pelican morning; both national parks are free to enter"
+      }
+    },
+    "perDayEur": {
+      "low": 100,
+      "high": 157
+    }
+  },
+  "profile": {
+    "difficulty": 3,
+    "difficultyLabel": "Active",
+    "difficultyNote": "3/5 — walks of 8–15 km with 400–800 m ascent on shepherd paths and forest track; nothing technical, but way-marking in Shebenik is thin and a guide changes the day",
+    "fitnessLevel": "Active",
+    "crowdLevel": null,
+    "familyFriendly": null,
+    "carRequired": null
+  },
+  "basecamps": [],
+  "gatewayAirport": "TIA Tirana, 2 h 30 to Korçë via Elbasan and 1 h 40 to Librazhd; OHD Ohrid (North Macedonia), 50 min to Pogradec via the Qafë Thanë border",
+  "gatewayAirportCode": "TIA",
+  "languages": [],
+  "currency": null,
+  "emergencyNumber": "112",
+  "coordinates": {
+    "lat": 40.6186,
+    "lon": 20.7808,
+    "precision": "city",
+    "matchedPlace": "Korçë",
+    "source": "geonames (geonamescache, cities > 15k)"
+  },
+  "tags": [
+    "prespa",
+    "shebenik-jabllanice",
+    "balkan-lynx",
+    "dalmatian-pelican",
+    "homestay",
+    "primeval-beech",
+    "off-grid",
+    "cabin-stay",
+    "caj-mali"
+  ],
+  "summary": "Eastern Albania is the country's quiet half: a high plateau of lakes at 700–900 m, walled in by 2,200 m ridges, with the Greek and Macedonian borders on three sides and almost no coach tourism. This week starts in Korçë among Ottoman bazaar streets and the painted churches of Voskopojë, drops to the Prespa lakes where a Macedonian-speaking minority farms beans on the shore of a lake full of Dalmatian pelicans, then works north through Lin and Pogradec on Lake Ohrid before finishing in the beech forest of Shebenik-Jabllanicë — a UNESCO primeval-beech site and the best-documented Albanian habitat of the Balkan lynx. You sleep almost entirely in *bujtina*, family homestays where dinner is not optional and the rakia is homemade. It suits people who want genuinely empty landscape, are relaxed about rough road, and accept that most of the week is cash, no signal, and a wood stove.",
+  "summaryGenerated": false,
+  "hook": null,
+  "snapshot": {},
+  "itinerary": [
+    {
+      "day": 1,
+      "title": "Into Korçë",
+      "morning": "Drive from Tirana over the Krrabë and through Elbasan and Librazhd, then up the Devoll to Korçë at 850 m — a city of low nineteenth-century houses, a serious Ottoman-era bazaar restored in the 2010s, and the country's first Albanian-language school, now a museum.",
+      "afternoon": "Walk the Old Bazaar, the Mirahori mosque (founded in the 1490s), and the National Museum of Medieval Art, which holds the best collection of Albanian icons in the country, including work by the Onufri school. Buy a week's supplies here — it is the last full supermarket before the mountains.",
+      "evening": "Dinner in the bazaar on Korçë staples: lakror pie, kernacka sausages, and a Birra Korça, brewed in the city since 1928.",
+      "dayStats": "180 km drive / 2 h 30 / Korçë 850 m / last full supermarket for 3 days / museum entry roughly 700 ALL (€7)",
+      "sleep": "Hani i Pazarit or a bazaar guesthouse, Korçë"
+    },
+    {
+      "day": 2,
+      "title": "Voskopojë churches and Dardhë",
+      "morning": "Drive 21 km west to Voskopojë, which in the eighteenth century was one of the largest cities in the Balkans with a printing press and an academy, and is now a village of a few hundred among the ruins. Five post-Byzantine churches survive with extensive frescoes — St Nicholas, St Athanasius and the Prodromos among them. Several are locked; the keyholder lives nearby and is found by asking in the café.",
+      "afternoon": "Continue over to Dardhë, a stone village at 1,344 m in beech forest, then walk one of the loops above it. Slow afternoon by design; this is acclimatisation and the pleasantest air in eastern Albania.",
+      "evening": "Eat where you sleep — grilled meat, mountain trout, and the local honey and walnut everything.",
+      "dayStats": "21 km to Voskopojë / Dardhë 1,344 m / 8 km walk, 350 m ascent / keyholder tip 300–500 ALL per church (€3–€5) / five surviving frescoed churches",
+      "sleep": "Guesthouse in Dardhë, or back in Korçë"
+    },
+    {
+      "day": 3,
+      "title": "Over the ridge to Prespa",
+      "morning": "Drive north-east from Korçë through Zvezdë and over the ridge into the Prespa basin, dropping to Greater Prespa at 850 m. The moment the lake appears, the character changes: the villages here — Pustec, Gollomboç, Gorica e Madhe, Zaroshkë, Cerje — are Macedonian-speaking, and the municipality is bilingual.",
+      "afternoon": "Take a boat from Gorica or Pustec to Maligrad, the small rock island in Albanian water, where the fourteenth-century cave church of Shën Maria is built into an overhang with surviving frescoes. Back on shore, walk up to the rock-cut hermitages above Zaroshkë, cut into the cliff face and reached by a steep scramble.",
+      "evening": "Homestay dinner: Prespa beans, which are the local pride, lake fish, and rakia poured by the host until you stop him.",
+      "dayStats": "55 km drive / 1 h 15 / Prespa 850 m, Ohrid 695 m, 155 m apart and connected through karst / Maligrad boat roughly 3,000–5,000 ALL (€30–€50) per boat / homestay 2,500–4,000 ALL per person with dinner",
+      "sleep": "Bujtina homestay, Pustec or Gollomboç"
+    },
+    {
+      "day": 4,
+      "title": "A slow day on the lake",
+      "morning": "Be on the shore at first light with binoculars. Dalmatian pelicans move between Lesser and Greater Prespa and are most reliably seen on the water early; from the northern shore near Gorica you also look straight across at Golem Grad, the Macedonian island in the middle of the lake, notorious for its tortoises and water snakes and closed to Albanian-side boats.",
+      "afternoon": "Deliberately nothing. Swim — Prespa is warm and clean by August. Walk the shore path between two villages. Watch the bean harvest if it is September. There is no attraction to tick here and that is the point.",
+      "evening": "Sunset from the Zaroshkë cliffs, then back for dinner. Ask your host about the winter, when the lake sometimes freezes at the edges and the village halves.",
+      "dayStats": "0–8 km walking / Prespa NP Albania roughly 27,750 ha, declared 1999 / Lesser Prespa holds the world's largest Dalmatian pelican colony / no entry fee / power cuts common, charge everything when you can",
+      "sleep": "Bujtina homestay, Pustec or Gollomboç"
+    },
+    {
+      "day": 5,
+      "title": "Lin, Pogradec and the Ohrid shore",
+      "morning": "Drive north around the lakes and over to Lake Ohrid's Albanian shore. Stop at Lin, a peninsula village of steep lanes where a hilltop early-Christian basilica keeps sixth-century floor mosaics, and where excavation from 2023 revealed a Neolithic pile-dwelling settlement in the shallows dated to around 6000 BC — among the oldest lakeside villages known in Europe.",
+      "afternoon": "Continue to Pogradec and Tushemisht, where the Drilon springs feed a channel of clear water under plane trees. This is a resort strip by Albanian standards; treat it as the week's shower-and-laundry day.",
+      "evening": "Grilled koran — the Ohrid trout, subject to catch restrictions, so ask what is actually on the plate — on the lakefront.",
+      "dayStats": "75 km drive / 1 h 40 / Lin basilica mosaics 6th c., pile dwellings dated to roughly 6000 BC / Ohrid 695 m / Qafë Thanë border 20 min from Pogradec",
+      "sleep": "Hotel Enkelana or a Pogradec lakefront hotel"
+    },
+    {
+      "day": 6,
+      "title": "Rrajcë, the primeval beech, and up into Shebenik",
+      "morning": "Drive north on the SH3 to Rrajcë in Librazhd municipality. The beech forest above the village is inscribed on the UNESCO World Heritage list as part of the transnational Ancient and Primeval Beech Forests of the Carpathians and Other Regions of Europe — old, structurally complex, full of deadwood, and completely unlike the grazed hillsides around it. Walk it slowly with a park guide.",
+      "afternoon": "Arrange the 4x4 up from Fushë-Studë towards the glacial lakes. Shebenik-Jabllanicë covers about 34,500 hectares and holds fourteen glacial lakes between roughly 1,500 and 1,900 m, most of them shallow, cold and completely silent. Walk in from wherever the track gives up.",
+      "evening": "Back down to a Rrajcë or Fushë-Studë bujtina. Wood stove, spring water, no signal, dinner from the garden and the flock.",
+      "dayStats": "60 km drive / 4x4 track 9–12 km from Fushë-Studë / lakes at 1,500–1,900 m / park roughly 34,500 ha, free entry / 14 glacial lakes / Shebenik peak 2,262 m",
+      "sleep": "Bujtina at Rrajcë or Fushë-Studë"
+    },
+    {
+      "day": 7,
+      "title": "Jabllanica ridge, çaj mali, and out",
+      "morning": "A last walk on the Jabllanica side towards Stëblevë, the border village, on slopes where çaj mali grows in dry limestone grassland. In July and August you will meet people cutting it; watch how they do it — knife, above the wood, never the root — before you touch any yourself.",
+      "afternoon": "Descend and choose an exit. Qafë Thanë into North Macedonia puts you at Ohrid airport in under an hour; the SH3 west takes you to Tirana in two and a half. Clear the rental agency's cross-border paperwork in advance if you are leaving through Macedonia.",
+      "evening": "Last dinner in Librazhd or Elbasan, or on the Ohrid lakefront if you have crossed.",
+      "dayStats": "8–12 km walk, 400–600 m ascent / çaj mali harvest July–August / Qafë Thanë border 55 min to OHD / Tirana 2 h 30 from Librazhd / green card and written permission needed for a border crossing in a rental",
+      "sleep": "Ohrid, Tirana or an airport hotel"
+    }
+  ],
+  "accommodationStrategy": [
+    {
+      "rank": 1,
+      "name": "A Prespa bujtina",
+      "style": "family homestay",
+      "location": "Pustec, Gollomboç or Gorica e Madhe",
+      "description": "The village homestay network on the Albanian Prespa shore is the reason to come here rather than to the Greek side: a room in a family house, dinner and breakfast included, roughly 2,500–4,000 ALL (€25–€40) per person. Book by phone or through the municipality rather than online — many are not on booking platforms. Expect no card machine, no English beyond basics, and Macedonian as the household language.",
+      "booking": null,
+      "priceNote": null
+    },
+    {
+      "rank": 2,
+      "name": "A Shebenik bujtina at Rrajcë or Fushë-Studë",
+      "style": "mountain homestay",
+      "location": "900–1,200 m",
+      "description": "These are the only beds within reach of the glacial lakes, and they double as the way you arrange the 4x4 and the guide. Wood stove, spring water, solar or intermittent mains, no shop worth the name. The trade-off for the isolation is that you eat what the household eats, at their hour, which is the best deal on this trip.",
+      "booking": null,
+      "priceNote": null
+    },
+    {
+      "rank": 3,
+      "name": "Hani i Pazarit",
+      "style": "restored bazaar hotel",
+      "location": "Korçë",
+      "description": "A comfortable, central base inside the Old Bazaar with parking and a proper breakfast, useful as bookends at either end of the week when you want a shower, a laundry and a restaurant with a menu. Around €40–€70 a double. It is also the last place to draw serious cash before the mountains.",
+      "booking": null,
+      "priceNote": null
+    }
+  ],
+  "logistics": {
+    "connectivity": "Albania is not in the EU, so EU roam-like-home does not apply; Western Balkans operators run a regional scheme among themselves, and EU–Western Balkans rates were reduced in late 2023 but you can still be billed. A Vodafone AL or One Albania prepaid SIM costs a few hundred lek with generous data. The real trap is border spillover — near Prespa, Qafë Thanë and Stëblevë your phone may register on a Greek or Macedonian network. Lock the network manually.",
+    "emergency": "112 is the single European number and works; 127 for ambulance, 129 police, 128 fire, are still in circulation. Organised mountain rescue in Albania is thin and largely volunteer — assume self-rescue and long evacuation times from Shebenik. Albania is outside the EU health system: travel insurance naming hiking, remote evacuation and repatriation is not optional. The nearest serious hospitals are in Elbasan and Korçë; Tirana for anything major.",
+    "weather": "The eastern plateau is continental, not Mediterranean — Korçë and Prespa are genuinely cold, with hard frost from November and snow that closes upland tracks. Summer afternoon thunderstorms build over Shebenik and Jabllanica from mid-afternoon; on the open ridge there is no shelter. Prespa gets sudden lake winds that make small-boat crossings to Maligrad unwise; the boatmen will tell you and they are right.",
+    "bookingWindows": "Nothing here needs months of notice except beds in Korçë during the mid-August diaspora return and the Carnival week, when the city fills. Prespa and Shebenik homestays want two or three days' warning, mainly so someone shops. The 4x4 to the Shebenik lakes should be arranged the day before, not on the morning.",
+    "money": "The lek (ALL) trades at roughly 97–100 to the euro, so treat 100 ALL as €1. Cards work in Korçë, Pogradec and Elbasan and essentially nowhere else on this route. Draw 40,000–60,000 ALL in Korçë for the week and carry small notes; homestays, boatmen, guides, church keyholders and village shops are all cash. Tipping is rounding up; guides expect 10%.",
+    "transportRules": "No vignette, and no tolls on this route. Albanian roads are much improved on the main SH corridors and still poor everywhere else — assume half the map speed on anything unnumbered. Rental cars need explicit written permission plus a green card to cross into North Macedonia or Greece, and many desks refuse; arrange it at booking if you plan to fly out of Ohrid. Drink-driving enforcement is strict and the limit is low.",
+    "permits": "Both Prespa and Shebenik-Jabllanicë national parks are free to enter and open year-round; there is no gate and no ticket. Camping in the strict-protection zones is not permitted, and the Rrajcë UNESCO core zone should be walked with a park guide. Commercial collection of medicinal and aromatic plants including çaj mali requires authorisation; household picking does not. Drone flight over the Prespa lakes, the pelican areas and within the border strip is a bad idea legally and ethically — do not.",
+    "health": "Tap water in Korçë and Pogradec is chlorinated and generally fine; village spring water is usually excellent but filter above grazing. Ticks are present April–October in the beech belt. Nose-horned viper lives on sunny limestone across the region and antivenom is in hospitals, not villages. Livestock guard dogs at the Shebenik stani are serious animals — stop, do not run, wait for the shepherd. Prespa's shallow shore is safe swimming but the lake drops off fast off the rock spurs.",
+    "gettingThere": null,
+    "other": []
+  },
+  "proTips": [
+    "Arrange the Shebenik 4x4 through the bujtina you are sleeping in, not through an agency in Tirana. It is half the price, and the driver knows which section of the track failed this spring.",
+    "Go to Voskopojë on a weekday morning and ask at the café for the keyholder before you walk to the churches — turning up at a locked door and waiting is the standard tourist experience there.",
+    "Lock your phone to a specific Albanian network by hand while you are within 10 km of Prespa or Qafë Thanë. Automatic selection will find a Greek or Macedonian mast and bill you for it.",
+    "Buy Prespa beans and çaj mali directly from the household you stay with. It is the cleanest way to leave money in a village that has almost no other income, and the tea is a fraction of Tirana airport prices.",
+    "Time Prespa for early morning: the pelicans are on the water, the light is on the Macedonian shore, and by 11:00 the wind is usually up.",
+    "Treat Pogradec as the mid-week reset. It is the only town on the route with reliable laundry, a pharmacy, an ATM that works and a hotel shower with pressure.",
+    "If you want the Balkan lynx story rather than the animal, contact PPNEA in Tirana before travelling — their camera-trap and monitoring work in Shebenik is the reason the park exists, and they occasionally take visitors.",
+    "September is the strongest single month: the pelicans are back on Greater Prespa, the beans are being harvested, the Shebenik track has dried out, and the heat has gone off Korçë.",
+    "Carry a small first-aid kit and any prescription you need for the whole week. There is no pharmacy in Pustec, Rrajcë or Fushë-Studë, and Librazhd's closes in the evening."
+  ],
+  "typeSpecific": {
+    "raw": {
+      "Remote access — the tracks that matter": "The Prespa shore road from Zvezdë to Pustec, Gollomboç and Zaroshkë is asphalt but narrow, unlit and rockfall-prone; a normal car is fine. Everything worth doing in Shebenik-Jabllanicë is not. The track from Fushë-Studë up to the glacial lakes at 1,500–1,900 m is roughly 9–12 km of stone and washed-out clay and genuinely needs a 4x4 or a high-clearance pickup; after rain the last section is winch territory, and snow patches block it until early June. The Rrajcë–Prevall forest road and the Stëblevë spur towards the border are the same story on a smaller scale. The main SH3 through Librazhd and Prrenjas is good asphalt throughout.",
+      "Last-mile walk-ins and transfers": "From the highest driveable point above Fushë-Studë it is 45–90 minutes on foot to the lake basins depending on where the track has failed that year. Zaroshkë's rock-cut hermitages are a 20–30 minute scramble above the shore. Maligrad island is boat-only, 20 minutes from Gorica or Pustec. Transfers are arranged through the homestay you are staying in — every valley has a cousin with a Mitsubishi L200 — and cost roughly 5,000–8,000 ALL (€50–€80) for a half-day, cash, agreed the night before.",
+      "Wilderness isolation — Level 4 of 5 in the Shebenik lake basins": "Roughly 50–60 minutes to paved road at Fushë-Studë, no neighbours within 5 km once the summer stani are empty, nearest shop in Fushë-Studë or Rrajcë (small, erratic hours), nearest fuel and pharmacy in Librazhd (about 35 km / 1 h 10 from the trailhead), nearest hospital the regional hospital in Elbasan, roughly 1 h 50 from the lakes. Prespa is Level 3: Pustec has a shop and a health post, but the nearest full pharmacy and hospital are in Korçë, about 1 h 15 away over the Zvezdë ridge.",
+      "Off-grid reality": "Prespa villages are on mains power but suffer cuts; the Shebenik uplands are solar, generator or nothing. Bujtina water comes from mountain spring boxes and is usually excellent — filter or boil anyway above grazing. Heating and cooking are wood stove, and firewood is the household's own; in Shebenik it is cut and stacked in autumn, so do not burn through it casually. Wastewater is soakaway; there is no drainage system in the upland villages, so nothing goes down a sink that would not go on a garden. Bring what you cannot buy: head torch, power bank, a water filter, cash in small notes, and any medication — there is no pharmacy in Pustec, Rrajcë or Fushë-Studë.",
+      "Phone signal": "Vodafone AL and One Albania cover Korçë, Pogradec, Librazhd and most of the Prespa shore. There is no usable signal in the Shebenik lake basins, in the Rrajcë forest, or on the Zaroshkë cliffs, and phones near the borders latch onto Greek and Macedonian networks — a real bill risk. Download offline maps for the whole region before Korçë; Shebenik's way-marking is patchy and some marked routes on hiking apps are shepherd tracks that no longer exist.",
+      "Foraging and çaj mali": "Albania is one of Europe's largest exporters of wild-collected medicinal and aromatic plants, and mountain tea — *çaj mali*, the ironwort *Sideritis raeseri* — is the flagship. It is harvested in July and August on the dry limestone slopes of Shebenik, Jabllanica and the Prespa ridges, cut with a knife above the woody base so the plant regrows, never uprooted. Wild collection for household use is normal and unremarked; collection for sale falls under the forest and biodiversity legislation and needs authorisation from the municipality or forest service, and heavy wild harvesting has pushed the species enough that much commercial supply is now cultivated. Wild mushrooms and berries are gathered freely for the pot, with no functioning public mycological inspection service anywhere in eastern Albania — the only sensible rule is to eat nothing you did not have identified by the household you are staying with. Collection of anything inside a national park's strict-protection zone is prohibited, and protected species — including several Prespa and Shebenik endemics and all orchids — are photograph-only.",
+      "Named places to sleep and their character": "The Prespa homestays are a village-scale network in Pustec, Gollomboç, Gorica e Madhe and Zaroshkë, developed with conservation-NGO support, where you sleep in a family's spare room and eat beans, lake fish and pickles at their table. In Shebenik, the bases are Rrajcë and Fushë-Studë, with the park's visitor infrastructure at Rrajcë. Korçë has proper hotels — Hani i Pazarit sits inside the restored Old Bazaar — and Pogradec has the long-established lakeside Hotel Enkelana. Dardhë, at 1,344 m above Korçë, is a stone-built summer and ski village with several guesthouses and the coldest air in the region.",
+      "Wildlife": "Lesser Prespa holds the world's largest breeding colony of Dalmatian pelicans, mostly on the Greek side but ranging across the whole basin; birds are on the water from February, breeding through spring, and the colony is still rebuilding after the avian-influenza outbreak that killed a large share of the adults in early 2022. Greater Prespa carries pygmy cormorant, great white pelican and wintering wildfowl. Shebenik-Jabllanicë is a core Albanian site for the Balkan lynx, alongside brown bear, grey wolf, chamois and wildcat — the lynx is monitored by camera trap by PPNEA and effectively unseeable in person. Ethical rules: watch pelicans from the shore or a boat kept well off, never approach a raft of birds, no drones over the lakes or colonies at any time of year, and no playback.",
+      "Fire and open flame": "Albania's high fire-risk season runs roughly 1 June to 30 September, when open fires, stubble burning and barbecues outside built fireplaces in and near forest are banned, and enforcement has hardened after several severe seasons. Cook on the stove. In Prespa the shore reedbeds burn easily and are legally protected habitat; a discarded cigarette there is a serious matter."
+    },
+    "surface": null,
+    "distanceKm": null,
+    "elevationM": null,
+    "verticalM": null,
+    "technicalRating": null,
+    "transitPass": null,
+    "hutBooking": null,
+    "liftNetwork": null,
+    "snowReliability": null,
+    "windConditions": null,
+    "gpxReady": null,
+    "bookingTimeline": null,
+    "audience": null
+  },
+  "packingNotes": [],
+  "whatCouldGoWrong": [],
+  "sources": {
+    "verified": "Shebenik-Jabllanicë National Park area of roughly 34,500 ha, free entry, 14 glacial lakes at 1,500–1,900 m, Balkan lynx / brown bear / grey wolf presence, and the Rrajca beech forest's inscription as part of the UNESCO Ancient and Primeval Beech Forests of the Carpathians and Other Regions of Europe; Lesser Prespa as the world's largest Dalmatian pelican breeding colony and the catastrophic avian-influenza outbreak that struck it in early 2022; Balkan Lynx Recovery Programme monitoring in Albania run by PPNEA.",
+    "confidenceNotes": "No named Prespa or Shebenik homestay is given because none could be confirmed against a live source this run — the file describes the village homestay network instead, and specific *bujtina* names, phone numbers and prices must be inserted and verified before publishing. Hani i Pazarit (Korçë) and Hotel Enkelana (Pogradec) should be re-checked as trading. The legal position on commercial *çaj mali* / medicinal-plant collection is described in general terms because no current statutory text or permit threshold was confirmed this run; have it checked against the Albanian forest and biodiversity legislation before publication. The Prespa NP area figure (roughly 27,750 ha, declared 1999) and the Fushë-Studë track distance and driveability were not confirmed against an official source and vary year to year. Maligrad boat prices, museum entries and keyholder tips are indicative only. The current Dalmatian pelican population figure after the 2022 outbreak was not established this run and should be sourced from the Society for the Protection of Prespa or PONT before publishing. Lek-to-euro conversions and fuel prices need refreshing at publication."
+  },
+  "verifyFlags": [],
+  "verifyFlagCount": 0,
+  "volatilePricing": false,
+  "wordCount": 4074,
+  "dataVintage": 2026,
+  "provenance": {
+    "batch": "southern-mediterranean",
+    "sourceFile": "carta-dataset/trips/nature-escape-albania-prespa-shebenik.md",
+    "sourceFormat": "md with '## Metadata' bullet block (one file per trip)",
+    "sourceId": "nature-escape-albania-prespa-shebenik",
+    "ingestedAt": "2026-09-02",
+    "synthesized": false
+  }
+}

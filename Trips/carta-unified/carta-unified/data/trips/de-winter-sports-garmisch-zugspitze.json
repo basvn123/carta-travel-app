@@ -1,0 +1,307 @@
+{
+  "id": "de-winter-sports-garmisch-zugspitze",
+  "sourceId": "de-winter-garmisch-zugspitze",
+  "slug": "de-winter-sports-garmisch-zugspitze",
+  "title": "Garmisch-Partenkirchen: The Classic Area and the Zugspitze Glacier",
+  "country": "Germany",
+  "countryCode": "DE",
+  "countries": [
+    {
+      "name": "Germany",
+      "code": "DE"
+    }
+  ],
+  "isMultiCountry": false,
+  "region": "Western & Central Europe",
+  "regionKey": "western-central",
+  "subRegion": "Wetterstein Range, Bavaria",
+  "tripType": "Winter Sports & Skiing",
+  "tripTypeId": 8,
+  "tripTypeSlug": "winter-sports",
+  "durationDays": 7,
+  "bestPeriod": {
+    "months": [
+      1,
+      2,
+      3
+    ],
+    "monthNames": [
+      "January",
+      "February",
+      "March"
+    ],
+    "window": null,
+    "note": "The Classic area sits low (750-2050 m) and is snow-dependent; the Zugspitze glacier above 2000 m holds snow reliably from December into April.",
+    "avoid": null,
+    "raw": null
+  },
+  "budgetTier": "€€",
+  "budgetTierRange": [
+    2,
+    2
+  ],
+  "budgetTierRaw": "€€",
+  "budget": {
+    "currency": "EUR",
+    "totalEur": {
+      "low": 980,
+      "high": 1380
+    },
+    "totalNote": null,
+    "breakdown": {
+      "accommodation": {
+        "lowEur": 420,
+        "highEur": 580,
+        "note": null
+      },
+      "food": {
+        "lowEur": 220,
+        "highEur": 300,
+        "note": null
+      },
+      "transport": {
+        "lowEur": 90,
+        "highEur": 140,
+        "note": null
+      },
+      "activities": {
+        "lowEur": 250,
+        "highEur": 360,
+        "note": null
+      }
+    },
+    "perDayEur": {
+      "low": 140,
+      "high": 197
+    }
+  },
+  "profile": {
+    "difficulty": 3,
+    "difficultyLabel": "Active",
+    "difficultyNote": null,
+    "fitnessLevel": "Moderate",
+    "crowdLevel": "Moderate",
+    "familyFriendly": true,
+    "carRequired": false
+  },
+  "basecamps": [
+    "Garmisch-Partenkirchen"
+  ],
+  "gatewayAirport": "Munich (MUC)",
+  "gatewayAirportCode": "MUC",
+  "languages": [
+    "German"
+  ],
+  "currency": "EUR",
+  "emergencyNumber": "112",
+  "coordinates": {
+    "lat": 47.4921,
+    "lon": 11.0958,
+    "precision": "city",
+    "matchedPlace": "Garmisch-Partenkirchen",
+    "source": "geonames (geonamescache, cities > 15k)"
+  },
+  "tags": [
+    "glacier-skiing",
+    "low-altitude-snow",
+    "alpine-classic",
+    "ski-touring",
+    "family-friendly"
+  ],
+  "summary": "A week on Garmisch-Partenkirchen's Classic area and the Zugspitze glacier, with an honest plan for the low-altitude snow years Bavaria actually has.",
+  "summaryGenerated": false,
+  "hook": "Garmisch-Partenkirchen skis two different mountains with two different personalities: a low, historic race-piste area that needs real winter to work, and a genuine glacier that does not. This week uses both, treats the Zugspitzplatt as the honest fallback it is, and builds in the queue-avoidance logic the Eibsee cable car demands.",
+  "snapshot": {
+    "Country": "Germany",
+    "Base(s)": "Garmisch-Partenkirchen",
+    "Trip Type": "Winter Sports & Skiing",
+    "Duration": "7 days",
+    "Best Period": "January–March; the Classic area's lower slopes are marginal outside a cold, snowy winter",
+    "Budget Tier": "€€",
+    "Total Distance / Terrain": "Garmisch-Classic (Kandahar, Hausberg, Kreuzeck, Alpspitze), base 720 m to 2,050 m; Zugspitze glacier, 2,000 m to 2,962 m",
+    "Getting There": "Fly to Munich (MUC); direct train from Munich Hauptbahnhof to Garmisch-Partenkirchen, roughly 1h20",
+    "Who It Suits": "Intermediate to advanced skiers who want race-pedigree pistes plus a high-altitude glacier day; families on the gentler Hausberg slopes"
+  },
+  "itinerary": [
+    {
+      "day": 1,
+      "title": "Arrival and the town area",
+      "morning": "Train from Munich to Garmisch-Partenkirchen. Check into the base hotel and walk to a rental shop on Marienplatz or Zugspitzstraße for skis, boots and, if the week includes any touring, skins.",
+      "afternoon": "Ride the Hausbergbahn, the gentlest of the four Classic sectors, to get a first read on snow depth low in the valley — this tells you within an hour whether the week needs to lean on the glacier earlier than planned.",
+      "evening": "Dinner in the old Partenkirchen quarter around Ludwigstraße, with its painted Lüftlmalerei house façades.",
+      "dayStats": "approx. 1,400 m vertical · 1 sector (Hausberg) · 3 lift hours.",
+      "sleep": null
+    },
+    {
+      "day": 2,
+      "title": "Kandahar and Kreuzeck",
+      "morning": "Bus or walk to the Kreuzeckbahn. The Kreuzeck sector links across to the Kandahar piste, home of the annual FIS World Cup downhill and slalom — steep, race-groomed, and the benchmark run of the Classic area.",
+      "afternoon": "Ski the Kandahar itself if conditions allow (it demands real snow cover to be worthwhile — a thin year turns it icy and unpleasant) or stay on the connecting Kreuzeck blues and reds, which hold snow better on their partly shaded aspect.",
+      "evening": "Free evening in town; the Partnachklamm gorge trailhead is a short taxi ride for anyone wanting a non-ski outing.",
+      "dayStats": "approx. 2,200 m vertical · 2 sectors (Kreuzeck, Kandahar) · 4 lift hours.",
+      "sleep": null
+    },
+    {
+      "day": 3,
+      "title": "Alpspitze and the Gatterl freeride zone",
+      "morning": "Ride the Alpspitzbahn cable car to Osterfelderkopf (2,050 m), the highest and most reliably snow-holding point in the Classic area, with views onto the Zugspitze massif and the Höllental below.",
+      "afternoon": "For confident skiers, the marked-but-ungroomed Gatterl zone near the top station offers short, steep off-piste pitches inside the ski area boundary — check the local avalanche and closure signage before dropping in, since it is patrolled but not pisted.",
+      "evening": "Early return; this sector's cable car has limited late-afternoon capacity in high season.",
+      "dayStats": "approx. 1,900 m vertical · 1 sector (Alpspitze) · 3.5 lift hours.",
+      "sleep": null
+    },
+    {
+      "day": 4,
+      "title": "Rest and valley day, or bad-snow Plan B",
+      "morning": "This is the week's flex day. If the Classic area's lower slopes are thin — a real possibility in a mild Bavarian winter — skip them entirely and go straight to the Zugspitze glacier instead (see Day 5); otherwise use the morning for a valley activity: the Olympic Ski Stadium (1936 Winter Games venue) or the Partnachklamm.",
+      "afternoon": "Sauna and recovery, or a short cross-country loop on the valley-floor Loipe network if snow is present at town level.",
+      "evening": "Early dinner and an early night before the glacier day.",
+      "dayStats": "0-1,900 m vertical (conditional) · 0-1 sector · flexible lift hours.",
+      "sleep": null
+    },
+    {
+      "day": 5,
+      "title": "Zugspitze glacier day",
+      "morning": "Take the Eibsee-Seilbahn cable car from the Eibsee lake shore — one of the world's steepest cable cars — direct to the Zugspitze summit at 2,962 m, or the Bayerische Zugspitzbahn cogwheel train via Grainau if the cable car queue is long, which connects into the glacier system at the Sonn Alpin/Zugspitzplatt station.",
+      "afternoon": "Ski the Zugspitzplatt glacier ski area, a compact but genuinely snow-sure zone between roughly 2,000 m and 2,600 m, well above the rain line that troubles the valley slopes. The terrain is short and lift-served rather than expansive — plan on repeated laps rather than long point-to-point runs.",
+      "evening": "Ride back down; both the cable car and the cogwheel train stop running by late afternoon in winter, so do not linger past the posted last-descent time.",
+      "dayStats": "approx. 2,600 m vertical · 1 sector (Zugspitzplatt) · 3.5 lift hours.",
+      "sleep": null
+    },
+    {
+      "day": 6,
+      "title": "Second Classic day or the Höllental approach",
+      "morning": "With good snow cover and a guide, the Höllental — the dramatic valley between the Alpspitze and the Zugspitze — is the area's serious off-piste and ski-mountaineering objective, descending from near the Zugspitze summit through glaciated and then forested terrain to Hammersbach station. This is a committing, guided-only day: crevasses on the upper Höllentalferner and a roped downclimb section make it unsuitable without a certified mountain guide, arranged through the German Alpine Club's Summit Club alpine school or a local Bergführer.",
+      "afternoon": "For everyone not doing the Höllental, a second lap of Kreuzeck-Kandahar-Alpspitze, mixing sectors based on which aspect is skiing best that day.",
+      "evening": "Relaxed dinner; this is the last full ski day.",
+      "dayStats": "approx. 2,000-2,700 m vertical · 1-3 sectors · 4 lift hours.",
+      "sleep": null
+    },
+    {
+      "day": 7,
+      "title": "Final morning and departure",
+      "morning": "A short session on Hausberg's forgiving slopes, gear return, and a last coffee on Marienplatz.",
+      "afternoon": "Train back to Munich for the flight home.",
+      "evening": "—",
+      "dayStats": "approx. 1,000 m vertical · 1 sector (Hausberg) · 2 lift hours.",
+      "sleep": null
+    }
+  ],
+  "accommodationStrategy": [
+    {
+      "rank": 1,
+      "name": "Hotel Zugspitze",
+      "style": "Alpine hotel",
+      "location": "central Garmisch-Partenkirchen",
+      "description": "Central location within walking distance of the Hausbergbahn and Kreuzeckbahn base stations, with ski storage and a drying room — useful on the days the plan pivots at short notice between Classic-area sectors.",
+      "booking": "eight weeks ahead for February.",
+      "priceNote": "€150–€210 per night for two"
+    },
+    {
+      "rank": 2,
+      "name": "Reindl's Partenkirchner Hof",
+      "style": "Traditional Bavarian hotel",
+      "location": "Partenkirchen",
+      "description": "A long-established family-run hotel in the old Partenkirchen quarter, close to the Alpspitzbahn base and an easy walk to the Ludwigstraße restaurants for the evening after a glacier day.",
+      "booking": "two to three months ahead.",
+      "priceNote": "€180–€260 per night for two"
+    },
+    {
+      "rank": 3,
+      "name": "Hotel am Kurpark",
+      "style": "Mid-range",
+      "location": "near the Kurpark and spa quarter",
+      "description": "A quieter, lower-cost base within a short bus ride of both the Classic-area lift stations and the Eibsee-Seilbahn departure point, good for a family group balancing skiing with spa time.",
+      "booking": "four to six weeks ahead.",
+      "priceNote": "€120–€170 per night for two"
+    }
+  ],
+  "logistics": {
+    "connectivity": null,
+    "emergency": "112 pan-European; Bavarian mountain rescue (Bergwacht Bayern) is reached via 112.",
+    "weather": "The Föhn wind can strip the valley of cloud in hours but also brings rapid warming that softens or ruins lower-mountain snow; check the Deutscher Wetterdienst mountain forecast each morning.",
+    "bookingWindows": "Reindl's and other Partenkirchen hotels fill for the Kandahar World Cup weekend (check the FIS calendar) — avoid or book many months ahead if that weekend falls inside your dates.",
+    "money": "Cards are near-universal; the regional GVB day ticket covers Garmisch's local buses between hotel and lift base stations.",
+    "transportRules": null,
+    "permits": null,
+    "health": null,
+    "gettingThere": null,
+    "other": [
+      {
+        "label": "The ZugspitzCard",
+        "text": "Combines Garmisch-Classic and the Zugspitze glacier under one ticket; useful precisely because the two areas need such different snow conditions to work — check current pricing at the ticket office or zugspitze.de before buying single-area passes."
+      },
+      {
+        "label": "Snow reality",
+        "text": "Garmisch town sits at 720 m and the lower Classic-area slopes can be thin, wet or closed in a mild winter; the Zugspitze glacier above 2,000 m is the honest Plan B and should be treated as a scheduled day, not an emergency backup."
+      },
+      {
+        "label": "Eibsee-Seilbahn queues",
+        "text": "This cable car is extremely popular with sightseers as well as skiers; arrive at opening or use the Bayerische Zugspitzbahn cogwheel train from Garmisch station as the less crowded alternative on peak days."
+      },
+      {
+        "label": "Avalanche awareness",
+        "text": "The Gatterl zone and any Höllental approach are avalanche terrain rated on the same European 1–5 scale as the Alps generally — carry a transceiver, probe and shovel for both, and check the Bavarian avalanche report (Lawinenwarndienst Bayern)."
+      }
+    ]
+  },
+  "proTips": [
+    "Check the Lawinenwarndienst Bayern snow depth chart before booking which day is the glacier day — moving Day 5 earlier in a thin week salvages the trip.",
+    "Ride the Bayerische Zugspitzbahn cogwheel train up and the Eibsee-Seilbahn cable car down (or vice versa) rather than doing both legs on the same lift — it halves your time in each queue.",
+    "Ski the Kandahar piste in the first two hours after opening; by midday it is heavily skied off and considerably rougher.",
+    "The Gatterl freeride zone skis best the morning after fresh snow — by afternoon the short pitches are tracked out.",
+    "Use the ZugspitzCard rather than buying Classic-area and glacier tickets separately if your week genuinely mixes both areas; work out the break-even against your planned day split before committing.",
+    "Book Höllental with a guide at least a week ahead in high season — the Summit Club and local Bergführer run limited group sizes on this route."
+  ],
+  "typeSpecific": {
+    "raw": {
+      "Total Distance / Terrain": "Garmisch-Classic (Kandahar, Hausberg, Kreuzeck, Alpspitze), base 720 m to 2,050 m; Zugspitze glacier, 2,000 m to 2,962 m",
+      "Who It Suits": "Intermediate to advanced skiers who want race-pedigree pistes plus a high-altitude glacier day; families on the gentler Hausberg slopes"
+    },
+    "surface": "Garmisch-Classic (Kandahar, Hausberg, Kreuzeck, Alpspitze), base 720 m to 2,050 m; Zugspitze glacier, 2,000 m to 2,962 m",
+    "distanceKm": 720,
+    "elevationM": null,
+    "verticalM": null,
+    "technicalRating": null,
+    "transitPass": null,
+    "hutBooking": null,
+    "liftNetwork": null,
+    "snowReliability": null,
+    "windConditions": null,
+    "gpxReady": null,
+    "bookingTimeline": null,
+    "audience": "Intermediate to advanced skiers who want race-pedigree pistes plus a high-altitude glacier day; families on the gentler Hausberg slopes"
+  },
+  "packingNotes": [
+    "Layers for a genuine altitude and temperature range: 720 m in town to 2,962 m at the Zugspitze summit.",
+    "A hardshell rather than just a softshell — the glacier can be windy and wet valley snow at low altitude needs waterproofing too.",
+    "Goggles for two very different light conditions: flat valley light in the Classic area, intense glare on the glacier.",
+    "Transceiver, probe and shovel if any off-piste or Höllental day is planned.",
+    "Comfortable warm boots for the Eibsee cable car queue, which is often an outdoor wait.",
+    "A base-layer change for the transition between the low, potentially wet Classic-area slopes and the cold, dry glacier."
+  ],
+  "whatCouldGoWrong": [
+    "**The Classic area is thin or closed at low altitude.** Fallback: shift days to the Zugspitze glacier, which holds snow independent of valley conditions; this is why Day 4 is built as a flex day.",
+    "**The Eibsee-Seilbahn is fully booked or queued for hours.** Fallback: the Bayerische Zugspitzbahn cogwheel train from Garmisch station reaches the same glacier system with a shorter wait most days.",
+    "**Föhn wind brings rapid warming mid-week.** Fallback: move remaining Classic-area days to the shadier Kreuzeck aspect and prioritise glacier time while it lasts.",
+    "**The Kandahar piste is icy after a thin, cold spell.** Fallback: Hausberg's gentler, more sheltered slopes ski better in exactly these conditions.",
+    "**A planned Höllental day is cancelled for crevasse or weather risk.** Fallback: the guide will substitute a lower-risk glacier tour on the Zugspitzplatt at short notice — never attempt the descent independently if the guided day falls through."
+  ],
+  "sources": {
+    "verified": null,
+    "confidenceNotes": null
+  },
+  "verifyFlags": [],
+  "verifyFlagCount": 0,
+  "volatilePricing": false,
+  "wordCount": 1861,
+  "dataVintage": 2026,
+  "provenance": {
+    "batch": "western-central",
+    "sourceFile": "cartatripsv1/trips/de-winter-garmisch-zugspitze.md",
+    "sourceFormat": "md+yaml-frontmatter (one file per trip)",
+    "sourceId": "de-winter-garmisch-zugspitze",
+    "ingestedAt": "2026-09-02",
+    "synthesized": false
+  }
+}

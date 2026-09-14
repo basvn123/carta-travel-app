@@ -1,0 +1,16 @@
+rank,curation_rank,title,ref,network,distance_km,popularity,pageviews_day,sitelinks,anchors,quality_score,portal_agreement,status,family_members,trip_id,osm_relation
+1,65.01,Beşparmak Trail,,nwn,235.0,0.35,0,0,"flag of Northern Cyprus (72/day, 1092 m); Karpas Peninsula (19/day, 1451 m)",95,,needs_review,1,62816,18856455
+2,57.15,"European Walking Route E4, Cyprus, Main Route",E4,nwn,558.0,0.206,45,15,"Larnaca Salt lake (319/day, 1638 m); Ayia Napa & Cape Greco (206/day, 182 m); Agia Napa Monastery (202/day, 324 m)",83.8,,needs_review,1,62628,157354
+3,56.63,European long distance path E4 - part Cyprus,E4,nwn,558.0,0.191,9,0,"Larnaca Salt lake (319/day, 1638 m); Ayia Napa & Cape Greco (206/day, 182 m); Agia Napa Monastery (202/day, 324 m)",83.8,,needs_review,1,62632,2376091
+4,54.8,T116,T116,nwn,8.7,0.266,0,0,"Karpas Peninsula (19/day, 911 m)",66,,needs_review,1,62633,2657055
+5,54.63,Artemis Trail,19,lwn,7.2,0.375,0,0,"Olympus (106/day, 263 m)",100,,needs_review,1,62654,4199105
+6,53.63,Αταλάντη,20,lwn,13.2,0.375,0,0,"Olympus (106/day, 476 m)",96,,needs_review,1,62655,4200191
+7,52.97,T129,T129,nwn,7.0,0.071,0,0,,86,,needs_review,1,62639,2657061
+8,50.72,T134,T134,nwn,6.6,0.071,0,0,,77,,needs_review,1,62642,2657069
+9,50.58,Xystarouda Discovery Trail,5,lwn,10.8,0.375,0,0,"Panagia tou Moutoulla (106/day, 1283 m)",83.8,,needs_review,1,62695,14171884
+10,50.58,Kalopanayotis Mountain Trail,,lwn,7.8,0.375,0,0,"Panagia tou Moutoulla (106/day, 960 m)",83.8,,needs_review,1,62771,15065982
+11,49.89,Protaras Panagia Konno Profitis Ilias Nature Trail,,lwn,6.8,0.355,0,0,"Fig Tree (78/day, 309 m)",83.8,,needs_review,1,62721,14457100
+12,49.77,Kalopanagiotis Vineyard Trail,,lwn,4.7,0.375,0,0,"Panagia tou Moutoulla (106/day, 1645 m)",95,,needs_review,1,62745,14646036
+13,49.22,Moniatis Hike,,rwn,16.0,0.071,0,0,,96,,needs_review,1,62793,15822983
+14,49.22,K1.5 hike,,rwn,11.8,0.071,0,0,,96,,needs_review,1,62791,15692133
+15,49.0,Kannouris - Ayios Nikolaos Tis Stegis Trail,,,8.1,0.375,0,0,"Olympus (106/day, 1509 m)",87.5,,needs_review,1,62659,4215742

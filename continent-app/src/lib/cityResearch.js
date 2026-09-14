@@ -99,7 +99,13 @@ function haversineKm(lat1, lon1, lat2, lon2) {
 }
 
 /** Lowercase, unaccented, punctuation-free: the key two spellings of the same
- *  place collapse onto. */
+ *  place collapse onto.
+ *
+ *  The punctuation strip is \p{L}\p{N}, not [^a-z0-9]. An ASCII class does not
+ *  strip punctuation from a Greek or Cyrillic name, it deletes the name: every
+ *  such title folded to the empty string, so they all shared one dedupe key
+ *  and only the first survived line 520's map. Anything used as a comparison
+ *  key has to keep every script's letters. */
 function fold(s) {
   return (s || '')
     // Wikipedia disambiguates titles that OpenStreetMap doesn't ("Markt
@@ -109,12 +115,25 @@ function fold(s) {
     .normalize('NFD').replace(/[̀-ͯ]/g, '')
     .replace(/ł/g, 'l')
     .toLowerCase()
-    .replace(/[^a-z0-9]+/g, ' ')
+    .replace(/[^\p{L}\p{N}]+/gu, ' ')
     .trim();
 }
 
+/** An id fragment, which unlike a fold key has to stay ASCII: it lands in
+ *  `found:<slug>-<iso2>` and is compared, stored and put in URLs.
+ *
+ *  A name with no ASCII in it at all (a Cyrillic or Greek village) cannot
+ *  produce a readable slug, so it gets a short stable hash of the folded
+ *  name instead of the literal word "place" that every one of them would
+ *  otherwise share, and with it an id collision inside the same country. */
 function slugify(s) {
-  return fold(s).replace(/\s+/g, '-').slice(0, 48) || 'place';
+  const ascii = fold(s).replace(/[^a-z0-9]+/g, ' ').trim();
+  if (ascii) return ascii.replace(/\s+/g, '-').slice(0, 48);
+  const folded = fold(s);
+  if (!folded) return 'place';
+  let h = 5381;
+  for (let i = 0; i < folded.length; i++) h = (((h << 5) + h) ^ folded.charCodeAt(i)) >>> 0;
+  return `place-${h.toString(36)}`;
 }
 
 /** The opening sentence of a Wikipedia intro, which is reliably the "what is

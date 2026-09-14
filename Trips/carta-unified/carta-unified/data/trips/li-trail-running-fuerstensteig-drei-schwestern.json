@@ -1,0 +1,314 @@
+{
+  "id": "li-trail-running-fuerstensteig-drei-schwestern",
+  "sourceId": "li-trail-running-fuerstensteig-drei-schwestern",
+  "slug": "li-trail-running-fuerstensteig-drei-schwestern",
+  "title": "The Principality Ridge — Fürstensteig and the Drei Schwestern",
+  "country": "Liechtenstein",
+  "countryCode": "LI",
+  "countries": [
+    {
+      "name": "Liechtenstein",
+      "code": "LI"
+    }
+  ],
+  "isMultiCountry": false,
+  "region": "Western & Central Europe",
+  "regionKey": "western-central",
+  "subRegion": "Rätikon, Liechtenstein Alps",
+  "tripType": "Trail Running",
+  "tripTypeId": 2,
+  "tripTypeSlug": "trail-running",
+  "durationDays": 7,
+  "bestPeriod": {
+    "months": [
+      6,
+      7,
+      8,
+      9,
+      10
+    ],
+    "monthNames": [
+      "June",
+      "July",
+      "August",
+      "September",
+      "October"
+    ],
+    "window": null,
+    "note": "The Fürstensteig ledges stay iced or snow-patched until mid-June and again from late October.",
+    "avoid": null,
+    "raw": null
+  },
+  "budgetTier": "€€€",
+  "budgetTierRange": [
+    3,
+    3
+  ],
+  "budgetTierRaw": "€€€",
+  "budget": {
+    "currency": "EUR",
+    "totalEur": {
+      "low": 1150,
+      "high": 1650
+    },
+    "totalNote": null,
+    "breakdown": {
+      "accommodation": {
+        "lowEur": 560,
+        "highEur": 800,
+        "note": null
+      },
+      "food": {
+        "lowEur": 330,
+        "highEur": 480,
+        "note": null
+      },
+      "transport": {
+        "lowEur": 130,
+        "highEur": 200,
+        "note": null
+      },
+      "activities": {
+        "lowEur": 130,
+        "highEur": 170,
+        "note": null
+      }
+    },
+    "perDayEur": {
+      "low": 164,
+      "high": 236
+    }
+  },
+  "profile": {
+    "difficulty": 4,
+    "difficultyLabel": "Demanding",
+    "difficultyNote": null,
+    "fitnessLevel": "Demanding",
+    "crowdLevel": "Moderate",
+    "familyFriendly": false,
+    "carRequired": false
+  },
+  "basecamps": [
+    "Vaduz (nights 1–3) and Malbun (nights 4–7)"
+  ],
+  "gatewayAirport": "Zürich (ZRH)",
+  "gatewayAirportCode": "ZRH",
+  "languages": [
+    "German"
+  ],
+  "currency": "CHF",
+  "emergencyNumber": null,
+  "coordinates": {
+    "lat": 47.1415,
+    "lon": 9.5215,
+    "precision": "city",
+    "matchedPlace": "Vaduz",
+    "source": "geonames (geonamescache, cities > 15k)"
+  },
+  "tags": [
+    "ridge-running",
+    "exposed-terrain",
+    "micro-state",
+    "cross-border",
+    "hut-support"
+  ],
+  "summary": "Liechtenstein's whole running country is one 25 km ridge — so you learn it, rehearse it, then run it end to end in a single day.",
+  "summaryGenerated": false,
+  "hook": "Liechtenstein is 160 square kilometres, and almost all of its good running sits on a single limestone crest above the Rhine. That is not a limitation once you accept it. You get to run the same ground twice, in different directions and different light, and you get to know a mountain range properly instead of collecting it.",
+  "snapshot": {
+    "Country": "Liechtenstein",
+    "Base(s)": "Vaduz (nights 1–3), Malbun (nights 4–7)",
+    "Trip Type": "Trail Running",
+    "Duration": "7 days",
+    "Best Period": "Mid-June to mid-October",
+    "Budget Tier": "€€€",
+    "Total Distance / Terrain": "Approx. 95–105 km and 5,500–6,000 m of ascent; Rhine gravel, alp track, limestone ledge and cabled rock, T1–T4",
+    "Getting There": "Fly Zürich (ZRH), train to Sargans or Buchs SG, LIEmobil bus 11 to Vaduz (approx. 25–30 min)",
+    "Who It Suits": "Runners with a head for exposure who would rather learn one range deeply than tick five"
+  },
+  "itinerary": [
+    {
+      "day": 1,
+      "title": "The Rhine, Flat and Fast",
+      "morning": "Arrive in Vaduz, drop bags, fill bottles at the fountain in the Städtle. The country's only genuinely flat running is the Rhine dyke, and it is worth using properly.",
+      "afternoon": "Run the dyke path north from Vaduz through Schaan to Bendern and back — hard-packed gravel, T1, dead level at 450 m, the Drei Schwestern wall on your right throughout. Forty-odd minutes each way at easy pace.",
+      "evening": "Walk up to Schloss Vaduz's gate for the light on the crest, then eat in the Städtle.",
+      "dayStats": "14 km, 90 m ascent, T1, fully runnable. Water: Städtle fountain in Vaduz and the village fountain in Bendern.",
+      "sleep": null
+    },
+    {
+      "day": 2,
+      "title": "Eschnerberg, Aerobic Volume",
+      "morning": "Bus to Bendern and pick up the Historischer Höhenweg Eschnerberg, the 15 km way-marked route over the low limestone island of the Eschnerberg to Schellenberg. Forest, orchard edge and gravel farm track at 500–700 m, T1 with brief T2 root sections, and almost entirely runnable.",
+      "afternoon": "Loop back past the ruins of Obere Burg Schellenberg. If the legs allow, add the Schaan–Planken climb as a single 400 m tempo effort — a preview of Friday's approach.",
+      "evening": "Back in Vaduz. Eat early; tomorrow you learn the technical ground.",
+      "dayStats": "20 km, 520 m ascent, T1–T2. Water: village fountains in Bendern, Schellenberg and Planken. **Bail-out:** LIEmobil buses run the valley floor constantly; nothing here is more than 3 km from a stop.",
+      "sleep": null
+    },
+    {
+      "day": 3,
+      "title": "Fürstensteig, the Rehearsal",
+      "morning": "Bus to Triesenberg and up to Gaflei (check the LIEmobil timetable — the Gaflei service is seasonal and thin; the alternative is a 500 m climb on foot from Triesenberg). From Gaflei the Fürstensteig starts almost at once: a ledge blasted into the west face in 1898, one metre wide in places, cable-secured, with several hundred metres of air below.",
+      "afternoon": "Follow the path to the Alpspitz saddle and on to the Kuegrat (2,123 m), the crest's high point, then return the same way. T4 where it is exposed — walking pace with hands — and T3 between. Reversing it while tired is the point: the ledges must be familiar before Friday.",
+      "evening": "Triesenberg for the terrace view down the Rhine valley, then Vaduz.",
+      "dayStats": "12 km, 900 m ascent, T4 on the ledges. Water: none on the ridge — carry 1.5 l; fill at the Triesenberg village fountain. **Bail-out:** the Fürstensteig is an out-and-back with no mid-route escape; the decision point is the Gaflei end.",
+      "sleep": null
+    },
+    {
+      "day": 4,
+      "title": "Relocation and the Fürstin-Gina-Weg",
+      "morning": "Move up to Malbun (1,600 m) on bus 21 via Triesenberg and Steg. Check in, then take the Sareisbahn chairlift to Sareis at 2,000 m.",
+      "afternoon": "Run the Fürstin-Gina-Weg south along the Sareiserjoch flank to the Bettlerjoch and the Pfälzerhütte (2,108 m) — a broad, grassy, panoramic traverse at T2, genuinely runnable for long stretches, with the Rätikon opening up into Austria and Switzerland. Descend from the hut into the Valünatal and out to Steg, or run back over the Joch to Malbun.",
+      "evening": "Malbun. Eat well and sleep; tomorrow is the whole point of the week.",
+      "dayStats": "15 km, 620 m ascent (plus 400 m bought on the chairlift), T2. Water: Bergrestaurant Sareis at the top station (open when the lift runs), Pfälzerhütte (staffed roughly mid-June to mid-October). **Bail-out:** ride the Sareisbahn back down; from Steg, bus 21 to Malbun.",
+      "sleep": null
+    },
+    {
+      "day": 5,
+      "title": "Peak Day: The Whole Crest, Planken to Gaflei",
+      "morning": "Early bus down to Schaan and on to Planken (800 m). Climb the forest path to the Gafadurahütte (1,428 m), then up onto the border crest for the Drei Schwestern (2,052 m) — the ridge that separates Liechtenstein from Vorarlberg, with the Austrian approach from Frastanz joining from the north-east. The Drei-Schwestern-Steig is cabled, ladder-assisted in two places, and unambiguously T4.",
+      "afternoon": "Continue south over the Garsellikopf (2,105 m) and along the crest to the Kuegrat, then reverse Tuesday's Fürstensteig down to Gaflei and the descent to Triesenberg. It is the length of the country's alpine skyline in one push, and the technical rehearsal on Day 3 is what makes the second half safe when you are tired.",
+      "evening": "Bus back to Malbun. Do nothing else.",
+      "dayStats": "24 km, 1,750 m ascent, T4 in three distinct sections, T2–T3 between. Water: Gafadurahütte (staffed weekends and summer high season — treat it as a bonus, not a plan) and nothing else until Triesenberg. Carry 2 l. **Bail-out:** descend west from the Gafadurahütte to Planken, or bail from Gaflei; there is no exit from the crest between them.",
+      "sleep": null
+    },
+    {
+      "day": 6,
+      "title": "Naafkopf and the Three Countries",
+      "morning": "Sareisbahn again, then the ridge to the Augstenberg (2,359 m) — a straightforward, stony T3 line with big drops on the Austrian side but no cables — and down to the Pfälzerhütte.",
+      "afternoon": "From the hut, climb the Naafkopf (2,570 m), where Liechtenstein, Austria and Switzerland meet on one summit. T3, loose in the upper section, and a proper 460 m of climbing on tired legs. Return to the hut, then descend the Valünatal track to Steg — a fast, non-technical 6 km on alp road that lets you actually run.",
+      "evening": "Steg or Malbun for dinner.",
+      "dayStats": "18 km, 1,150 m ascent, T3. Water: Pfälzerhütte (twice on this route — the single most useful refill in the country), Berggasthaus Sücka above Steg. **Bail-out:** the Valünatal track from the Pfälzerhütte is drivable by rescue vehicles and joins bus 21 at Steg.",
+      "sleep": null
+    },
+    {
+      "day": 7,
+      "title": "Valüna, Gänglesee, Home",
+      "morning": "Easy loop from Steg around the Gänglesee and up the Valünatal on the flat alp road as far as Alp Valüna, then back. Gravel, gentle gradient, T1 — 45 minutes of genuine recovery running at 1,300–1,500 m.",
+      "afternoon": "Bus 21 to Vaduz, then bus 11 to Sargans or Buchs for the train.",
+      "evening": "Zürich.",
+      "dayStats": "10 km, 220 m ascent, T1. Water: Alp Valüna in summer; the Steg fountain year-round.",
+      "sleep": null
+    }
+  ],
+  "accommodationStrategy": [
+    {
+      "rank": 1,
+      "name": "Hotel Turna Malbun",
+      "style": "Mountain Hotel",
+      "location": "Malbun",
+      "description": "Fifty metres from the Sareisbahn base station, which is the start of three of this week's days, with a sauna, a drying room and a kitchen that will feed you after a long day out. Being at 1,600 m also means the last hour of every evening is spent recovering at altitude rather than in the valley.",
+      "booking": "March for July and August.",
+      "priceNote": "CHF 160–230 (approx. €165–€240) per night for two, half board available"
+    },
+    {
+      "rank": 2,
+      "name": "Gasthof Löwen Vaduz",
+      "style": "Historic Inn",
+      "location": "Vaduz",
+      "description": "A 14th-century building in the Städtle, five minutes from the bus interchange that reaches every trailhead in the country and directly on the flat Rhine running. The right base for the low, high-volume first half of the week.",
+      "booking": "two months ahead; Vaduz has very few beds.",
+      "priceNote": "CHF 190–280 (approx. €195–€290) per night for two"
+    }
+  ],
+  "logistics": {
+    "connectivity": null,
+    "emergency": "works throughout Liechtenstein. Locally: 117 police, 118 fire, 144 ambulance. Helicopter rescue is flown by Swiss **Rega — 1414** — and a Rega patronage membership is worth more here than travel insurance small print.",
+    "weather": null,
+    "bookingWindows": null,
+    "money": null,
+    "transportRules": null,
+    "permits": null,
+    "health": null,
+    "gettingThere": null,
+    "other": [
+      {
+        "label": "112",
+        "text": "works throughout Liechtenstein. Locally: 117 police, 118 fire, 144 ambulance. Helicopter rescue is flown by Swiss **Rega — 1414** — and a Rega patronage membership is worth more here than travel insurance small print."
+      },
+      {
+        "label": null,
+        "text": "Liechtenstein uses the Swiss franc. Cards work everywhere including huts, but the Pfälzerhütte and Gafadurahütte appreciate cash and can lose connectivity."
+      },
+      {
+        "label": null,
+        "text": "Liechtenstein is in Schengen and the Swiss customs union but outside the EU, so no EU roaming deal applies — buy a Swiss eSIM. Coverage is good on the crest, patchy in the Valünatal."
+      },
+      {
+        "label": null,
+        "text": "LIEmobil bus 21 (Vaduz–Triesenberg–Steg–Malbun) is the spine of the week and runs roughly hourly, more often in high season. Buy a day ticket from the driver or use the LIEmobil app; the Gaflei branch is seasonal and sparse."
+      },
+      {
+        "label": null,
+        "text": "Wild camping and bivouacking are prohibited in the Liechtenstein alpine zone, and much of the ridge is a protected area. Drones require authorisation and are effectively off-limits near the border crest."
+      },
+      {
+        "label": null,
+        "text": "The Fürstensteig closes after rockfall and stays closed until the route is cleared. The Liechtenstein Marketing hiking pages and notices at the Gaflei and Malbun trailheads carry the status — check the morning you plan to run it."
+      },
+      {
+        "label": null,
+        "text": "The Pfälzerhütte is run by the Liechtensteiner Alpenverein and takes bookings by phone and online; even for a day visit, a call the evening before tells you whether the kitchen is open."
+      }
+    ]
+  },
+  "proTips": [
+    "Run the Fürstensteig southbound in the morning and northbound in the afternoon. The face is west-facing, so morning gives you shade and dry rock, and afternoon gives you light down the Rhine.",
+    "The Sareisbahn's first ride of the day is usually mid-morning, not dawn. If you want an early start on Day 6, climb to Sareis on foot in 55 minutes and save the lift for the descent.",
+    "The Liechtenstein Trail's 75 km of way-marked route links all eleven municipalities and is signposted throughout — use its markers as a backup navigation layer when cloud drops onto the crest.",
+    "Stay in Malbun and ask about the guest card: several hotels include LIEmobil bus travel, which covers your entire transport budget for the second half of the week.",
+    "Weekdays on the Drei Schwestern are close to solitary; on Sundays Vorarlberg day walkers arrive from the Austrian side and the cabled sections become single-file queues.",
+    "Book one night at the Pfälzerhütte (2,108 m) to turn Day 6 into a two-day traverse and drop the Sareisbahn dependency."
+  ],
+  "typeSpecific": {
+    "raw": {
+      "Total Distance / Terrain": "Approx. 95–105 km and 5,500–6,000 m of ascent; Rhine gravel, alp track, limestone ledge and cabled rock, T1–T4",
+      "Who It Suits": "Runners with a head for exposure who would rather learn one range deeply than tick five"
+    },
+    "surface": "Approx. 95–105 km and 5,500–6,000 m of ascent; Rhine gravel, alp track, limestone ledge and cabled rock, T1–T4",
+    "distanceKm": 95,
+    "elevationM": null,
+    "verticalM": null,
+    "technicalRating": null,
+    "transitPass": null,
+    "hutBooking": null,
+    "liftNetwork": null,
+    "snowReliability": null,
+    "windConditions": null,
+    "gpxReady": null,
+    "bookingTimeline": null,
+    "audience": "Runners with a head for exposure who would rather learn one range deeply than tick five"
+  },
+  "packingNotes": [
+    "Shoes with a firm edge and reliable grip on smooth limestone. Soft, cushioned trainers slide on the polished Fürstensteig ledges.",
+    "Light gloves. There is more cable-handling on the Drei-Schwestern-Steig than most runners expect.",
+    "Two-litre carrying capacity for Day 3 and Day 5 — the crest has no water at all.",
+    "Swiss francs in small notes for hut drinks and bus tickets.",
+    "A wind shell that survives a Rätikon föhn, plus a warm layer for the Naafkopf summit.",
+    "Sun protection: the ridge is entirely shadeless from the Alpspitz southwards.",
+    "A paper 1:25,000 map of the Liechtenstein Alps or an offline map layer — cloud on the crest removes every visual reference at once."
+  ],
+  "whatCouldGoWrong": [
+    "**Wet rock on the Fürstensteig.** The ledges are slick and unforgiving in rain. Swap to the Eschnerberg or the Valünatal on any wet morning; the ridge is not worth it.",
+    "**Fürstensteig closed for rockfall.** The fallback peak day is Malbun–Sareis–Augstenberg–Pfälzerhütte–Naafkopf–Steg, which delivers similar distance and vert without exposure.",
+    "**Thin bus service.** Miss the last bus 21 from Malbun and you are looking at a 15 km road descent to Triesenberg. Photograph the timetable at the stop on your first day.",
+    "**Underestimating a small country.** Ninety-five kilometres with 6,000 m of ascent in a week is a serious load regardless of the map's scale. If Day 5 goes badly, cut Day 6 to the Sareis–Pfälzerhütte traverse and keep the recovery day intact."
+  ],
+  "sources": {
+    "verified": null,
+    "confidenceNotes": null
+  },
+  "verifyFlags": [],
+  "verifyFlagCount": 0,
+  "volatilePricing": false,
+  "wordCount": 2024,
+  "dataVintage": 2026,
+  "provenance": {
+    "batch": "western-central",
+    "sourceFile": "cartatripsv1/trips/li-trail-running-fuerstensteig-drei-schwestern.md",
+    "sourceFormat": "md+yaml-frontmatter (one file per trip)",
+    "sourceId": "li-trail-running-fuerstensteig-drei-schwestern",
+    "ingestedAt": "2026-09-02",
+    "synthesized": false
+  }
+}

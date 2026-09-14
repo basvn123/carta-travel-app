@@ -1,0 +1,315 @@
+{
+  "id": "at-hiking-berliner-hoehenweg",
+  "sourceId": "at-hiking-berliner-hoehenweg",
+  "slug": "at-hiking-berliner-hoehenweg",
+  "title": "The Berliner Höhenweg — Zillertal Alps Hut Chain",
+  "country": "Austria",
+  "countryCode": "AT",
+  "countries": [
+    {
+      "name": "Austria",
+      "code": "AT"
+    }
+  ],
+  "isMultiCountry": false,
+  "region": "Western & Central Europe",
+  "regionKey": "western-central",
+  "subRegion": "Zillertal Alps, Tyrol",
+  "tripType": "Hiking & Alpine Trekking",
+  "tripTypeId": 6,
+  "tripTypeSlug": "hiking",
+  "durationDays": 7,
+  "bestPeriod": {
+    "months": [
+      7,
+      8,
+      9
+    ],
+    "monthNames": [
+      "July",
+      "August",
+      "September"
+    ],
+    "window": null,
+    "note": "The Mörchenscharte and Lapenscharte hold old snow into early July; go after mid-July for the cleanest rock on the cabled sections.",
+    "avoid": null,
+    "raw": null
+  },
+  "budgetTier": "€€",
+  "budgetTierRange": [
+    2,
+    2
+  ],
+  "budgetTierRaw": "€€",
+  "budget": {
+    "currency": "EUR",
+    "totalEur": {
+      "low": 800,
+      "high": 1150
+    },
+    "totalNote": null,
+    "breakdown": {
+      "accommodation": {
+        "lowEur": 420,
+        "highEur": 570,
+        "note": null
+      },
+      "food": {
+        "lowEur": 180,
+        "highEur": 250,
+        "note": null
+      },
+      "transport": {
+        "lowEur": 110,
+        "highEur": 170,
+        "note": null
+      },
+      "activities": {
+        "lowEur": 90,
+        "highEur": 160,
+        "note": null
+      }
+    },
+    "perDayEur": {
+      "low": 114,
+      "high": 164
+    }
+  },
+  "profile": {
+    "difficulty": 4,
+    "difficultyLabel": "Demanding",
+    "difficultyNote": null,
+    "fitnessLevel": "Demanding",
+    "crowdLevel": "Moderate",
+    "familyFriendly": false,
+    "carRequired": false
+  },
+  "basecamps": [
+    "Mayrhofen"
+  ],
+  "gatewayAirport": "Innsbruck (INN)",
+  "gatewayAirportCode": "INN",
+  "languages": [
+    "German"
+  ],
+  "currency": "EUR",
+  "emergencyNumber": "112",
+  "coordinates": {
+    "lat": 47.2627,
+    "lon": 11.3945,
+    "precision": "gateway",
+    "matchedPlace": "Innsbruck",
+    "source": "geonames (geonamescache, cities > 15k)"
+  },
+  "tags": [
+    "hut-to-hut",
+    "alpine",
+    "via-ferrata-cable",
+    "zillertal",
+    "glacier-views"
+  ],
+  "summary": "A hut-to-hut week from Mayrhofen along the Berliner Höhenweg, crossing the cable-secured Mörchenscharte beneath the Zillertal's glaciers.",
+  "summaryGenerated": false,
+  "hook": "The Berliner Höhenweg is the classic hut chain of the Zillertal Alps: four days of glacier-rimmed saddles between the 1879 Berliner Hütte and the Kasseler Hütte, bookended by an approach through the Zemmgrund and an easier finish on the Tuxer side. Mayrhofen, at the head of the Zillertal, supplies the buses in and the schnitzel out.",
+  "snapshot": {
+    "Country": "Austria",
+    "Base(s)": "Mayrhofen (start/finish), five huts en route",
+    "Trip Type": "Hiking & Alpine Trekking",
+    "Duration": "7 days",
+    "Best Period": "Mid-July – late September",
+    "Budget Tier": "€€",
+    "Total Distance / Terrain": "approx. 55–65 km, 5,200 m ascent / 5,200 m descent; glacier-moraine paths, cable-secured rock steps, T3–T4",
+    "Getting There": "Fly to Innsbruck (INN), then rail to Jenbach and the Zillertalbahn to Mayrhofen (about 1.5 hours total)",
+    "Who It Suits": "Experienced hut hikers comfortable with fixed cable and glacier-adjacent exposure; not a beginner's first hut trip"
+  },
+  "itinerary": [
+    {
+      "day": 1,
+      "title": "Mayrhofen to Furtschaglhaus",
+      "morning": "Bus from Mayrhofen up the Zemmgrund to Breitlahner (1,290 m), the roadhead. The valley narrows fast once you're on foot, following the Zemmbach upstream through larch forest.",
+      "afternoon": "Beyond the Grüne-Wand-Hütte the path steepens toward the Schlegeis reservoir side-valley, climbing to Furtschaglhaus (2,295 m), a large Deutscher Alpenverein hut with the Furtschaglspitze and Großer Möseler filling the head of the valley.",
+      "evening": "Book Furtschaglhaus through the DAV/Alpenvereinshütten online portal — it also serves day visitors who drive to the Schlegeis dam, so beds go fast on clear-forecast weekends.",
+      "dayStats": "16 km, 1,000 m ascent, negligible descent, 5.5–6.5 hours. Grade T2–T3, well-built valley path, no exposure.",
+      "sleep": null
+    },
+    {
+      "day": 2,
+      "title": "Furtschaglhaus to Berliner Hütte via the Zsigmondyweg",
+      "morning": "The Zsigmondyweg leaves Furtschaglhaus as a high balcony path, contouring well above the Waxeggkees glacier's tongue rather than crossing it — the non-glacier alternative most hikers take.",
+      "afternoon": "Rock steps and one short cabled section lead over a shoulder before the path drops to Berliner Hütte (2,042 m), the grandest building on the whole circuit — a genuine 1879 alpine hotel in miniature, with the Waxeggkees and Hornkees glaciers framing the view from its terrace.",
+      "evening": "Berliner Hütte is the trip's showpiece and its busiest bed — reserve it as early as the ÖAV calendar allows, by phone if the online system shows no space, since wardens hold back a few beds for exactly that call.",
+      "dayStats": "12 km, 650 m ascent, 850 m descent, 5–6 hours. Grade T3, one short fixed-cable rock step, moderate exposure on the balcony traverse.",
+      "sleep": null
+    },
+    {
+      "day": 3,
+      "title": "Berliner Hütte to Greizer Hütte via the Mörchenscharte",
+      "morning": "The signature day. Climb steadily to the Mörchenscharte (2,872 m), a narrow gap between the Mörchner and the Wildgerlosspitze where the final 150 m of ascent is on fixed steel cable bolted to slabby rock.",
+      "afternoon": "The descent on the far side is equally cabled and equally exposed before easing into the upper Floitengrund, where Greizer Hütte (2,227 m) sits below the Floitenkees glacier.",
+      "evening": "This is the crux day of the week; arrive with daylight and appetite to spare rather than cutting it fine. Cash only for the bar tab here.",
+      "dayStats": "11 km, 850 m ascent, 700 m descent, 6–7 hours. Grade T4, sustained fixed-cable sections both sides of the scharte, real exposure — the trip's mandatory via-ferrata set (harness, lanyard, karabiners) earns its weight here even though the cable itself is continuous handrail rather than a full via ferrata course.",
+      "sleep": null
+    },
+    {
+      "day": 4,
+      "title": "Greizer Hütte to Kasseler Hütte via the Lapenscharte",
+      "morning": "Climb out of the Floitengrund to the Lapenscharte (2,701 m), a broader and less technical saddle than the Mörchenscharte but still with a short cabled step near the top.",
+      "afternoon": "Descend into the Stilluppgrund, where Kasseler Hütte (2,177 m) looks back at the Reichenspitze group across a wide glacial cirque — quieter than Berliner or Greizer, and a good place to slow down.",
+      "evening": "Kasseler Hütte's kitchen does a proper Kaspressknödelsuppe; the terrace catches the last sun of the day.",
+      "dayStats": "10 km, 700 m ascent, 750 m descent, 5–6 hours. Grade T3–T4, one short cabled step below the scharte, moderate exposure.",
+      "sleep": null
+    },
+    {
+      "day": 5,
+      "title": "Kasseler Hütte to Ginzling",
+      "morning": "A long, steady descent through the Stilluppgrund, dropping through larch and spruce forest as the valley opens toward the Zillertal floor.",
+      "afternoon": "Arrive in Ginzling by early-to-mid afternoon — a genuine break from altitude, with a chance to wash kit and eat something that isn't hut soup. A family-run gasthof in the village is the standard overnight for hikers finishing this stage.",
+      "evening": "Ginzling has small grocers for restocking snacks before the final Tuxer-side day; nothing stays open much past 19:00, so shop early.",
+      "dayStats": "14 km, 100 m ascent, 1,650 m descent, 4.5–5.5 hours. Grade T1–T2, forest track and farm road, no exposure.",
+      "sleep": null
+    },
+    {
+      "day": 6,
+      "title": "Ginzling to Gams Hütte and back",
+      "morning": "A regional bus (or a taxi if timing is tight) runs from Ginzling to Finkenberg, from where the path climbs through forest to Gams Hütte (2,048 m) on the Tuxer Alps side of the valley — a deliberate change of scenery from the glaciated Zillertal peaks.",
+      "afternoon": "From the hut's meadow terrace the whole Berliner Höhenweg horseshoe is visible across the valley, a proper vantage on the week just walked. Descend the same way, or loop via the Wanglalm for variety.",
+      "evening": "Return to Ginzling or continue straight to Mayrhofen if the day started early enough.",
+      "dayStats": "12 km, 950 m ascent, 950 m descent, 5–6 hours. Grade T2, wide forest and alpine meadow path, no exposure.",
+      "sleep": null
+    },
+    {
+      "day": 7,
+      "title": "Ginzling to Mayrhofen and the Ahornbahn",
+      "morning": "An easy valley walk or short bus ride down to Mayrhofen along the Zillertal floor, following the Ziller river.",
+      "afternoon": "Ride the Ahornbahn cable car above town for a last panoramic look back at the peaks the week has crossed, without the boots.",
+      "evening": "Dinner in Mayrhofen — the town has no shortage of Gasthöfe serving Tiroler classics for a returning hut party.",
+      "dayStats": "8 km walking plus cable car, 250 m ascent (lift-assisted), 250 m descent, 2–3 hours on foot.",
+      "sleep": null
+    }
+  ],
+  "accommodationStrategy": [
+    {
+      "rank": 1,
+      "name": "Furtschaglhaus, Berliner Hütte, Greizer Hütte, Kasseler Hütte",
+      "style": "Alpenverein huts",
+      "location": null,
+      "description": "Book the four-hut chain as one block through the Alpenvereinshütten online reservation system the day each hut's calendar opens; Berliner Hütte is the hardest bed on the whole route, given its fame and its car-accessible-ish approach from the Schlegeis dam.",
+      "booking": "6–8 weeks ahead for August, sooner for Berliner Hütte.",
+      "priceNote": "€25–€40 half-board for Alpenverein members, €45–€60 for non-members"
+    },
+    {
+      "rank": 2,
+      "name": "Family-run gasthof in Ginzling",
+      "style": null,
+      "location": "Mid-trip valley break",
+      "description": "Ginzling has several small, long-running gasthöfe used to hikers coming off the Stilluppgrund; ask about drying rooms for wet boots and packs before the Tuxer-side day.",
+      "booking": "3–4 weeks ahead.",
+      "priceNote": "€60–€100 per night"
+    },
+    {
+      "rank": 3,
+      "name": "Hotel or apartment in Mayrhofen",
+      "style": null,
+      "location": "Bookend nights",
+      "description": "Mayrhofen has a deep hotel base built for exactly this kind of trip; ask about secure gear storage for the days you're on the huts.",
+      "booking": "4–6 weeks ahead in August.",
+      "priceNote": "€80–€150 per night"
+    }
+  ],
+  "logistics": {
+    "connectivity": null,
+    "emergency": "112 pan-European; Austrian alpine rescue (Bergrettung) direct on **140**. Every hut on this chain has radio contact even where mobile signal drops in the Zemmgrund and Stilluppgrund.",
+    "weather": "Storms build over the Zillertal peaks from early afternoon in high summer; cross the Mörchenscharte and Lapenscharte in the morning.",
+    "bookingWindows": "Berliner Hütte and Furtschaglhaus fill first, both reachable by strong day visitors as well as trekkers; book them the moment the season's calendar opens.",
+    "money": null,
+    "transportRules": null,
+    "permits": null,
+    "health": null,
+    "gettingThere": null,
+    "other": [
+      {
+        "label": "Via-ferrata set is genuinely needed",
+        "text": "for Day 3's Mörchenscharte — the cable is continuous and the exposure real, even though it isn't marketed as a formal via ferrata route. Rent one in Mayrhofen if you don't own one; several outdoor shops on the main street do daily hire."
+      },
+      {
+        "label": "Hüttenschlafsack mandatory",
+        "text": "at every hut on the chain."
+      },
+      {
+        "label": "Cash for huts",
+        "text": "Carry €300–€350 in small notes; card acceptance is patchy above Breitlahner."
+      },
+      {
+        "label": "Snow on the saddles",
+        "text": "Both cabled scharten hold old snow into early July on their shaded sides — confirm conditions with the warden the evening before."
+      },
+      {
+        "label": "Camping is prohibited",
+        "text": "outside designated sites in this alpine zone."
+      }
+    ]
+  },
+  "proTips": [
+    "Book Berliner Hütte first and build the rest of the chain around its availability — it is the one bed that can force a re-route.",
+    "Hire the via-ferrata set in Mayrhofen before the bus to Breitlahner; nothing sells it on the trail itself.",
+    "Cross the Mörchenscharte before midday — the cabled rock warms and the traffic (this is a popular crossing) thins in the early morning.",
+    "Detour to the Grüne-Wand-Hütte terrace on Day 1 for a coffee stop; it is the last easy espresso before four days of hut filter coffee.",
+    "Ask the Kasseler Hütte warden about the Wanglalm loop variant on Day 6 — it adds little distance but avoids retracing the direct ascent path.",
+    "Buy the Zillertalbahn ticket as a return from Jenbach; it is a heritage narrow-gauge line and worth timing to catch a steam-hauled service if one is running that week.",
+    "Ride the Ahornbahn on the last afternoon rather than the first — the view means more once you recognise the ridgeline you've just crossed."
+  ],
+  "typeSpecific": {
+    "raw": {
+      "Total Distance / Terrain": "approx. 55–65 km, 5,200 m ascent / 5,200 m descent; glacier-moraine paths, cable-secured rock steps, T3–T4",
+      "Who It Suits": "Experienced hut hikers comfortable with fixed cable and glacier-adjacent exposure; not a beginner's first hut trip"
+    },
+    "surface": "approx. 55–65 km, 5,200 m ascent / 5,200 m descent; glacier-moraine paths, cable-secured rock steps, T3–T4",
+    "distanceKm": 55,
+    "elevationM": null,
+    "verticalM": null,
+    "technicalRating": null,
+    "transitPass": null,
+    "hutBooking": null,
+    "liftNetwork": null,
+    "snowReliability": null,
+    "windConditions": null,
+    "gpxReady": null,
+    "bookingTimeline": null,
+    "audience": "Experienced hut hikers comfortable with fixed cable and glacier-adjacent exposure; not a beginner's first hut trip"
+  },
+  "packingNotes": [
+    "A proper via-ferrata set (harness, lanyard with shock absorber, karabiners) for the Mörchenscharte — this is the mandatory item, not the over-pack.",
+    "Hüttenschlafsack for every hut night.",
+    "Trekking poles for the long descents on Days 2, 5 and 7.",
+    "A headtorch for dorm rooms and early starts.",
+    "Cash in small notes, more than you think you need.",
+    "A lightweight hard-shell for the exposed scharten.",
+    "Sun protection — the glacier-adjacent cols reflect UV even under cloud.",
+    "What people over-pack: hiking food for the whole week. Every hut sells meals and packed lunches; carry snacks for between huts, not seven days of rations.",
+    "What people under-pack: gloves for the cabled sections — bare hands on cold morning steel wear through fast."
+  ],
+  "whatCouldGoWrong": [
+    "**Berliner Hütte fully booked.** Fallback: stay at Furtschaglhaus one extra night and do a longer single push to Greizer Hütte the next day, or check for late cancellations by phone the morning of.",
+    "**Old snow on the Mörchenscharte.** Fallback: ask the Berliner Hütte warden the evening before; in a heavy-snow year the crossing is sometimes deferred until conditions are confirmed safe by hut staff who cross it daily.",
+    "**Afternoon storm building near a scharte.** Fallback: retreat to the hut just left — both Berliner and Greizer are within 2–3 hours of the Mörchenscharte for most of its approach.",
+    "**Fatigue after the Day 3 crux.** Fallback: Kasseler Hütte is a genuinely restful hut; treat Day 4 as the easier day it is rather than pushing straight through to the valley.",
+    "**Bus timing from Ginzling to Finkenberg on Day 6.** Fallback: confirm the regional timetable the night before at the gasthof, or use a local taxi — the gap between buses can be over an hour."
+  ],
+  "sources": {
+    "verified": null,
+    "confidenceNotes": null
+  },
+  "verifyFlags": [],
+  "verifyFlagCount": 0,
+  "volatilePricing": false,
+  "wordCount": 1911,
+  "dataVintage": 2026,
+  "provenance": {
+    "batch": "western-central",
+    "sourceFile": "cartatripsv1/trips/at-hiking-berliner-hoehenweg.md",
+    "sourceFormat": "md+yaml-frontmatter (one file per trip)",
+    "sourceId": "at-hiking-berliner-hoehenweg",
+    "ingestedAt": "2026-09-02",
+    "synthesized": false
+  }
+}

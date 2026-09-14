@@ -1,0 +1,150 @@
+{
+  "iso2": "MK",
+  "country": "North Macedonia",
+  "checked_at": "2026-08-17",
+  "beaches": {
+    "wrong": [],
+    "missing": [
+      {
+        "name": "Lake Ohrid shoreline beaches",
+        "qid": "Q156258",
+        "lat": 41.03,
+        "lon": 20.72,
+        "why": "The file gives North Macedonia zero beaches, but the pipeline clearly counts freshwater bathing beaches elsewhere: Austria's top_beach is Strandbad Klagenfurt, Germany's is Strandbad Wannsee, Switzerland's is Geneve-Plage. On the same rule Lake Ohrid, a UNESCO World Heritage lake whose shoreline is the country's single biggest summer destination, must produce beaches. The QID and coordinate are the lake itself, not an individual beach.",
+        "source_url": "https://www.wikidata.org/wiki/Q156258",
+        "verified": true
+      },
+      {
+        "name": "Ljubanista / Gradiste beach, Lake Ohrid",
+        "qid": "Q3084584",
+        "lat": null,
+        "lon": null,
+        "why": "The long sand and pebble stretch at the southern end of Lake Ohrid by Sveti Naum, the country's best known lake beach and campsite. QID given is the village of Ljubanista; no separate item or authoritative coordinate for the beach was confirmed, so it is left unverified rather than guessed.",
+        "source_url": "https://www.wikidata.org/wiki/Q3084584",
+        "verified": false
+      },
+      {
+        "name": "Kaneo beach, Ohrid",
+        "qid": null,
+        "lat": null,
+        "lon": null,
+        "why": "The town beach below the church of St John at Kaneo in Ohrid (Q1223508, 41.12,20.80), the postcard view of the country. No Wikidata item confirmed for the beach itself.",
+        "source_url": "https://www.wikidata.org/wiki/Q1223508",
+        "verified": false
+      },
+      {
+        "name": "Otesevo / Stenje, Lake Prespa",
+        "qid": "Q204392",
+        "lat": 40.9,
+        "lon": 21.03,
+        "why": "Lake Prespa's western shore holds the country's second lake-beach cluster, inside the Galicica national park. QID and coordinate are the lake, not a beach.",
+        "source_url": "https://www.wikidata.org/wiki/Q204392",
+        "verified": false
+      },
+      {
+        "name": "Star Dojran lakefront",
+        "qid": "Q3305084",
+        "lat": null,
+        "lon": null,
+        "why": "Lake Dojran in the southeast is the third bathing lake and a domestic summer resort. QID given is the village of Star Dojran; no beach item confirmed.",
+        "source_url": "https://www.wikidata.org/wiki/Q3305084",
+        "verified": false
+      }
+    ],
+    "order": [
+      "No order to judge: the beach list is empty. The failure here is the empty list itself, not the ranking."
+    ]
+  },
+  "mountains": {
+    "wrong": [
+      {
+        "name": "Mechkin Kamen",
+        "class": "other",
+        "why": "Rank 1 and the country's top_mountain. Meckin Kamen is the site of the 12 August 1903 battle of the Ilinden uprising, a few kilometres south of Krusevo, marked by a memorial. The row's own Wikipedia link is 'Battle of Meckin Kamen', an article about an event, not a landform. This is the North Macedonian equivalent of Austria's Schlossberg failure and it is worse, because the country card claims a battlefield memorial is the nation's mountain.",
+        "source_url": "https://en.wikipedia.org/wiki/Battle_of_Me%C4%8Dkin_Kamen"
+      },
+      {
+        "name": "Dobra Voda",
+        "class": "duplicate_of:Baba Mountain",
+        "why": "Rank 6 at 40.9156,21.1661 is 150 m from the rank 3 'Baba Mountain' row at 40.9167,21.1667. No Wikipedia article, no designation, no elevation, and no independent source confirms a distinct summit of this name; 'Dobra Voda' means 'good water' and reads as a spring or hut name attached to the Baba massif point.",
+        "source_url": "https://www.wikidata.org/wiki/Q797539"
+      },
+      {
+        "name": "Baba",
+        "class": "duplicate_of:Baba Mountain",
+        "why": "Rank 10 repeats rank 3 under the short form of the same massif name. Baba is the range whose summit is Pelister; listing the range twice and its summit separately at rank 8 triple-counts one mountain.",
+        "source_url": "https://en.wikipedia.org/wiki/Baba_(North_Macedonia)"
+      },
+      {
+        "name": "Ilinden",
+        "class": "other",
+        "why": "Rank 12 at 41.0054,21.1917, one kilometre from the Pelister summit. Ilinden is the name of the 1903 uprising and of the memorial complex and hotel commemorating it, not of a named summit; no source confirms a peak of this name. Same event-named failure family as Meckin Kamen.",
+        "source_url": "https://en.wikipedia.org/wiki/Ilinden_Uprising"
+      },
+      {
+        "name": "Krstovar",
+        "class": "duplicate_of:Vodno",
+        "why": "41.9651,21.3949 is 60 m from the rank 2 'Vodno' row at 41.9653,21.3944. Krstovar ('place of the cross') is the summit point of Vodno where the Millennium Cross stands, so it is the same mountain top under a second name.",
+        "source_url": "https://en.wikipedia.org/wiki/Vodno"
+      }
+    ],
+    "missing": [
+      {
+        "name": "Golem Korab (Mount Korab)",
+        "qid": "Q912579",
+        "lat": 41.7903,
+        "lon": 20.5467,
+        "why": "The highest mountain in North Macedonia at 2764 m, in Mavrovo national park on the Albanian border, and the site of the annual state-supported Korab ascent. Absent from all 33 rows. The country's highest peak is missing from its mountain tab.",
+        "source_url": "https://www.wikidata.org/wiki/Q912579",
+        "verified": true
+      },
+      {
+        "name": "Titov Vrv",
+        "qid": "Q1638613",
+        "lat": 41.99,
+        "lon": 20.8,
+        "why": "2748 m, the highest peak lying entirely inside North Macedonia and the summit of the Sar Mountains. Absent, and so is the entire Sar range, which is one of the country's two great massifs and its main ski area (Popova Sapka).",
+        "source_url": "https://www.wikidata.org/wiki/Q1638613",
+        "verified": true
+      },
+      {
+        "name": "Solunska Glava",
+        "qid": "Q12294161",
+        "lat": 41.7035,
+        "lon": 21.4039,
+        "why": "2540 m, the summit of the Jakupica massif in the centre of the country and the classic long ascent from Skopje. Absent.",
+        "source_url": "https://www.wikidata.org/wiki/Q12294161",
+        "verified": true
+      },
+      {
+        "name": "Galicica (Magaro)",
+        "qid": "Q953691",
+        "lat": 40.94,
+        "lon": 20.81,
+        "why": "A national park and 2254 m range forming the ridge between Lake Ohrid and Lake Prespa, and the most driven mountain road in the country. Absent while seven minor Pelister sub-peaks hold tier 1 slots.",
+        "source_url": "https://www.wikidata.org/wiki/Q953691",
+        "verified": true
+      },
+      {
+        "name": "Ljuboten",
+        "qid": "Q927599",
+        "lat": 42.21,
+        "lon": 21.12,
+        "why": "2498 m, the pyramid at the eastern end of the Sar Mountains visible from Skopje and a national symbol. Absent.",
+        "source_url": "https://www.wikidata.org/wiki/Q927599",
+        "verified": true
+      }
+    ],
+    "order": [
+      "Rank 1 Meckin Kamen is a battlefield memorial and must not appear at all, let alone first.",
+      "Pelister, the country's most famous named summit at 2601 m in its oldest national park, is ranked 8th, behind Meckin Kamen, a Skopje city hill and two duplicates of its own massif.",
+      "Vodno at rank 2 is a genuine and much-visited mountain, but at 1066 m it should never outrank Pelister, Korab or Titov Vrv.",
+      "Baba Mountain (3), Dobra Voda (6), Pelister (8) and Baba (10) are four tier-1 slots spent on one massif.",
+      "7 of the 12 tier-1 rows sit inside Pelister national park, five of them minor sub-peaks (Mrazarnik, Golema Griva, Ilinden, plus Mala Griva and Partisan Peak just below the cut). One park owns the tab.",
+      "The tier-2 tail collapses to a flat 0.302 score across 12 rows, so nothing there is meaningfully ranked."
+    ]
+  },
+  "counts_verdict": "Both counts are wrong. 0 beaches is a genuine gap, not a correct answer for a landlocked country, because the same pipeline counts lake bathing beaches in Austria, Germany and Switzerland; Lake Ohrid, Lake Prespa and Lake Dojran should yield a respectable beach list and the country's tourism identity is built on Ohrid's shoreline. 33 mountains is far too few and badly distributed for a country that is 80 percent mountainous: the Sar Mountains, Jakupica, Galicica, Osogovo, Kozuf and Belasica ranges contribute nothing, while Pelister national park contributes over half the list.",
+  "top_pick_verdict": "No. top_mountain 'Mechkin Kamen' is a memorial site for a 1903 battle and should not be on a country card. The correct pick is Golem Korab (Q912579) if you want the highest, Titov Vrv (Q1638613) if you want the highest wholly domestic peak, or Pelister (Baba, Q797539) if you want the most recognisable and most visited. There is no top_beach to judge; once Ohrid is harvested the pick should be an Ohrid or Ljubanista lakefront beach.",
+  "notes": "The two systemic causes visible here are both cheap to fix. First, features whose only encyclopedic reference is an event article ('Battle of Meckin Kamen') are being scored as landforms, which is the same defect that produced 'Battle of Marstrand' as a Swedish beach; a P31 or title check kills the whole family. Second, the harvest is anchored to catalogue cities, so Pelister national park (which is a catalogue destination) floods the list while the Sar Mountains and Jakupica, which have no catalogue city near them, produce nothing. The absence of Korab from both the Albanian and the Macedonian file confirms the anchoring problem rather than a naming problem: the mountain simply was never in range of a seed point."
+}

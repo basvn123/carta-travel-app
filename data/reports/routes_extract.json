@@ -1,0 +1,1289 @@
+{
+ "countries": {
+  "LI": {
+   "extract": "data/raw/geofabrik/2026-08-13/liechtenstein-latest.osm.pbf",
+   "extract_date": "2026-08-13",
+   "size_mb": 3.3,
+   "scanned_at": "2026-09-12T15:05:40+00:00",
+   "hiking": {
+    "relations": 197,
+    "superroutes": 2,
+    "node_networks": 0,
+    "in_store": 168,
+    "owned": 170,
+    "duplicates_seen": 27,
+    "with_children": 3,
+    "with_parents": 9
+   },
+   "cycling": {
+    "relations": 20,
+    "superroutes": 4,
+    "node_networks": 0,
+    "in_store": 15,
+    "owned": 12,
+    "duplicates_seen": 8,
+    "with_children": 4,
+    "with_parents": 3
+   },
+   "seconds": 0.2,
+   "scan_seconds": 0.1
+  },
+  "CH": {
+   "extract": "data/raw/geofabrik/2026-08-06/switzerland-latest.osm.pbf",
+   "extract_date": "2026-08-06",
+   "size_mb": 516.5,
+   "scanned_at": "2026-09-12T15:01:28+00:00",
+   "hiking": {
+    "relations": 25914,
+    "superroutes": 592,
+    "node_networks": 93,
+    "in_store": 9654,
+    "owned": 25565,
+    "duplicates_seen": 349,
+    "with_children": 700,
+    "with_parents": 2622
+   },
+   "cycling": {
+    "relations": 1018,
+    "superroutes": 93,
+    "node_networks": 3,
+    "in_store": 917,
+    "owned": 804,
+    "duplicates_seen": 214,
+    "with_children": 96,
+    "with_parents": 346
+   },
+   "seconds": 14.1,
+   "scan_seconds": 8.5
+  },
+  "AD": {
+   "extract": "data/raw/geofabrik/2026-08-13/andorra-latest.osm.pbf",
+   "extract_date": "2026-08-13",
+   "size_mb": 3.3,
+   "scanned_at": "2026-09-12T15:00:47+00:00",
+   "hiking": {
+    "relations": 47,
+    "superroutes": 8,
+    "node_networks": 0,
+    "in_store": 44,
+    "owned": 17,
+    "duplicates_seen": 30,
+    "with_children": 17,
+    "with_parents": 29
+   },
+   "cycling": {
+    "relations": 16,
+    "superroutes": 0,
+    "node_networks": 0,
+    "in_store": 16,
+    "owned": 16,
+    "duplicates_seen": 0,
+    "with_children": 0,
+    "with_parents": 0
+   },
+   "seconds": 0.1,
+   "scan_seconds": 0.1
+  },
+  "AL": {
+   "extract": "data/raw/geofabrik/2026-08-13/albania-latest.osm.pbf",
+   "extract_date": "2026-08-13",
+   "size_mb": 51.4,
+   "scanned_at": "2026-09-12T15:00:48+00:00",
+   "hiking": {
+    "relations": 110,
+    "superroutes": 0,
+    "node_networks": 0,
+    "in_store": 70,
+    "owned": 93,
+    "duplicates_seen": 17,
+    "with_children": 3,
+    "with_parents": 4
+   },
+   "cycling": {
+    "relations": 11,
+    "superroutes": 1,
+    "node_networks": 0,
+    "in_store": 10,
+    "owned": 2,
+    "duplicates_seen": 9,
+    "with_children": 1,
+    "with_parents": 3
+   },
+   "seconds": 0.3,
+   "scan_seconds": 0.3
+  },
+  "AT": {
+   "extract": "data/raw/geofabrik/2026-08-06/austria-latest.osm.pbf",
+   "extract_date": "2026-08-06",
+   "size_mb": 768.9,
+   "scanned_at": "2026-09-12T15:00:56+00:00",
+   "hiking": {
+    "relations": 12975,
+    "superroutes": 106,
+    "node_networks": 3,
+    "in_store": 12011,
+    "owned": 12328,
+    "duplicates_seen": 647,
+    "with_children": 165,
+    "with_parents": 797
+   },
+   "cycling": {
+    "relations": 2177,
+    "superroutes": 57,
+    "node_networks": 133,
+    "in_store": 1960,
+    "owned": 1928,
+    "duplicates_seen": 249,
+    "with_children": 79,
+    "with_parents": 204
+   },
+   "seconds": 12.2,
+   "scan_seconds": 8.8
+  },
+  "BA": {
+   "extract": "data/raw/geofabrik/2026-08-13/bosnia-herzegovina-latest.osm.pbf",
+   "extract_date": "2026-08-13",
+   "size_mb": 152.7,
+   "scanned_at": "2026-09-12T15:01:00+00:00",
+   "hiking": {
+    "relations": 196,
+    "superroutes": 6,
+    "node_networks": 0,
+    "in_store": 163,
+    "owned": 150,
+    "duplicates_seen": 46,
+    "with_children": 8,
+    "with_parents": 35
+   },
+   "cycling": {
+    "relations": 81,
+    "superroutes": 0,
+    "node_networks": 0,
+    "in_store": 76,
+    "owned": 69,
+    "duplicates_seen": 12,
+    "with_children": 2,
+    "with_parents": 2
+   },
+   "seconds": 0.7,
+   "scan_seconds": 0.6
+  },
+  "BE": {
+   "extract": "data/raw/geofabrik/2026-08-13/belgium-latest.osm.pbf",
+   "extract_date": "2026-08-13",
+   "size_mb": 659.5,
+   "scanned_at": "2026-09-12T15:01:12+00:00",
+   "hiking": {
+    "relations": 21953,
+    "superroutes": 38,
+    "node_networks": 17859,
+    "in_store": 21914,
+    "owned": 21350,
+    "duplicates_seen": 603,
+    "with_children": 90,
+    "with_parents": 340
+   },
+   "cycling": {
+    "relations": 13152,
+    "superroutes": 155,
+    "node_networks": 11693,
+    "in_store": 1295,
+    "owned": 13068,
+    "duplicates_seen": 84,
+    "with_children": 160,
+    "with_parents": 760
+   },
+   "seconds": 17.6,
+   "scan_seconds": 11.9
+  },
+  "BG": {
+   "extract": "data/raw/geofabrik/2026-08-13/bulgaria-latest.osm.pbf",
+   "extract_date": "2026-08-13",
+   "size_mb": 163.6,
+   "scanned_at": "2026-09-12T15:01:19+00:00",
+   "hiking": {
+    "relations": 573,
+    "superroutes": 7,
+    "node_networks": 0,
+    "in_store": 516,
+    "owned": 550,
+    "duplicates_seen": 23,
+    "with_children": 11,
+    "with_parents": 77
+   },
+   "cycling": {
+    "relations": 63,
+    "superroutes": 3,
+    "node_networks": 0,
+    "in_store": 58,
+    "owned": 52,
+    "duplicates_seen": 11,
+    "with_children": 3,
+    "with_parents": 14
+   },
+   "seconds": 1.3,
+   "scan_seconds": 1.1
+  },
+  "CY": {
+   "extract": "data/raw/geofabrik/2026-08-13/cyprus-latest.osm.pbf",
+   "extract_date": "2026-08-13",
+   "size_mb": 35.3,
+   "scanned_at": "2026-09-12T15:01:34+00:00",
+   "hiking": {
+    "relations": 220,
+    "superroutes": 2,
+    "node_networks": 0,
+    "in_store": 205,
+    "owned": 219,
+    "duplicates_seen": 1,
+    "with_children": 11,
+    "with_parents": 11
+   },
+   "cycling": {
+    "relations": 10,
+    "superroutes": 1,
+    "node_networks": 0,
+    "in_store": 7,
+    "owned": 9,
+    "duplicates_seen": 1,
+    "with_children": 1,
+    "with_parents": 1
+   },
+   "seconds": 0.4,
+   "scan_seconds": 0.3
+  },
+  "CZ": {
+   "extract": "data/raw/geofabrik/2026-08-13/czech-republic-latest.osm.pbf",
+   "extract_date": "2026-08-13",
+   "size_mb": 899.6,
+   "scanned_at": "2026-09-12T15:01:41+00:00",
+   "hiking": {
+    "relations": 7183,
+    "superroutes": 58,
+    "node_networks": 0,
+    "in_store": 6224,
+    "owned": 6500,
+    "duplicates_seen": 683,
+    "with_children": 222,
+    "with_parents": 516
+   },
+   "cycling": {
+    "relations": 3574,
+    "superroutes": 44,
+    "node_networks": 1,
+    "in_store": 3503,
+    "owned": 3272,
+    "duplicates_seen": 302,
+    "with_children": 57,
+    "with_parents": 122
+   },
+   "seconds": 10.0,
+   "scan_seconds": 7.0
+  },
+  "DE": {
+   "extract": "data/raw/geofabrik/2026-08-13/germany-latest.osm.pbf",
+   "extract_date": "2026-08-13",
+   "size_mb": 4594.1,
+   "scanned_at": "2026-09-12T15:02:22+00:00",
+   "hiking": {
+    "relations": 57850,
+    "superroutes": 724,
+    "node_networks": 18932,
+    "in_store": 56128,
+    "owned": 55658,
+    "duplicates_seen": 2192,
+    "with_children": 923,
+    "with_parents": 7249
+   },
+   "cycling": {
+    "relations": 50904,
+    "superroutes": 515,
+    "node_networks": 16671,
+    "in_store": 32012,
+    "owned": 50276,
+    "duplicates_seen": 628,
+    "with_children": 607,
+    "with_parents": 7059
+   },
+   "seconds": 51.3,
+   "scan_seconds": 38.2
+  },
+  "DK": {
+   "extract": "data/raw/geofabrik/2026-08-13/denmark-latest.osm.pbf",
+   "extract_date": "2026-08-13",
+   "size_mb": 469.7,
+   "scanned_at": "2026-09-12T15:02:37+00:00",
+   "hiking": {
+    "relations": 1718,
+    "superroutes": 17,
+    "node_networks": 1,
+    "in_store": 1635,
+    "owned": 1706,
+    "duplicates_seen": 12,
+    "with_children": 37,
+    "with_parents": 175
+   },
+   "cycling": {
+    "relations": 925,
+    "superroutes": 22,
+    "node_networks": 413,
+    "in_store": 485,
+    "owned": 899,
+    "duplicates_seen": 26,
+    "with_children": 28,
+    "with_parents": 59
+   },
+   "seconds": 2.0,
+   "scan_seconds": 1.6
+  },
+  "EE": {
+   "extract": "data/raw/geofabrik/2026-08-13/estonia-latest.osm.pbf",
+   "extract_date": "2026-08-13",
+   "size_mb": 116.2,
+   "scanned_at": "2026-09-12T15:02:38+00:00",
+   "hiking": {
+    "relations": 398,
+    "superroutes": 10,
+    "node_networks": 0,
+    "in_store": 398,
+    "owned": 386,
+    "duplicates_seen": 12,
+    "with_children": 14,
+    "with_parents": 119
+   },
+   "cycling": {
+    "relations": 120,
+    "superroutes": 4,
+    "node_networks": 0,
+    "in_store": 113,
+    "owned": 109,
+    "duplicates_seen": 11,
+    "with_children": 4,
+    "with_parents": 8
+   },
+   "seconds": 0.5,
+   "scan_seconds": 0.3
+  },
+  "ES": {
+   "extract": "data/raw/geofabrik/2026-08-13/spain-latest.osm.pbf",
+   "extract_date": "2026-08-13",
+   "size_mb": 1402.6,
+   "scanned_at": "2026-09-12T15:02:42+00:00",
+   "hiking": {
+    "relations": 6933,
+    "superroutes": 97,
+    "node_networks": 278,
+    "in_store": 6792,
+    "owned": 6740,
+    "duplicates_seen": 193,
+    "with_children": 185,
+    "with_parents": 1246
+   },
+   "cycling": {
+    "relations": 2391,
+    "superroutes": 29,
+    "node_networks": 142,
+    "in_store": 2180,
+    "owned": 2366,
+    "duplicates_seen": 25,
+    "with_children": 47,
+    "with_parents": 277
+   },
+   "seconds": 4.9,
+   "scan_seconds": 3.8
+  },
+  "FI": {
+   "extract": "data/raw/geofabrik/2026-08-13/finland-latest.osm.pbf",
+   "extract_date": "2026-08-13",
+   "size_mb": 704.4,
+   "scanned_at": "2026-09-12T15:02:44+00:00",
+   "hiking": {
+    "relations": 1072,
+    "superroutes": 4,
+    "node_networks": 2,
+    "in_store": 959,
+    "owned": 1055,
+    "duplicates_seen": 17,
+    "with_children": 18,
+    "with_parents": 79
+   },
+   "cycling": {
+    "relations": 331,
+    "superroutes": 8,
+    "node_networks": 0,
+    "in_store": 314,
+    "owned": 320,
+    "duplicates_seen": 11,
+    "with_children": 16,
+    "with_parents": 142
+   },
+   "seconds": 1.9,
+   "scan_seconds": 1.7
+  },
+  "FO": {
+   "extract": "data/raw/geofabrik/2026-08-13/faroe-islands-latest.osm.pbf",
+   "extract_date": "2026-08-13",
+   "size_mb": 7.4,
+   "scanned_at": "2026-09-12T15:02:45+00:00",
+   "hiking": {
+    "relations": 1,
+    "superroutes": 0,
+    "node_networks": 0,
+    "in_store": 1,
+    "owned": 1,
+    "duplicates_seen": 0,
+    "with_children": 0,
+    "with_parents": 0
+   },
+   "cycling": {
+    "relations": 4,
+    "superroutes": 0,
+    "node_networks": 0,
+    "in_store": 4,
+    "owned": 4,
+    "duplicates_seen": 0,
+    "with_children": 0,
+    "with_parents": 0
+   },
+   "seconds": 0.0,
+   "scan_seconds": 0.0
+  },
+  "FR": {
+   "extract": "data/raw/geofabrik/2026-08-07/france-latest.osm.pbf",
+   "extract_date": "2026-08-07",
+   "size_mb": 4822.4,
+   "scanned_at": "2026-09-12T15:03:00+00:00",
+   "hiking": {
+    "relations": 46346,
+    "superroutes": 325,
+    "node_networks": 28456,
+    "in_store": 19011,
+    "owned": 45471,
+    "duplicates_seen": 875,
+    "with_children": 624,
+    "with_parents": 3245
+   },
+   "cycling": {
+    "relations": 8179,
+    "superroutes": 165,
+    "node_networks": 3243,
+    "in_store": 4715,
+    "owned": 7535,
+    "duplicates_seen": 644,
+    "with_children": 212,
+    "with_parents": 1190
+   },
+   "seconds": 21.1,
+   "scan_seconds": 15.2
+  },
+  "GB": {
+   "extract": "data/raw/geofabrik/2026-08-13/great-britain-latest.osm.pbf",
+   "extract_date": "2026-08-13",
+   "size_mb": 2059.3,
+   "scanned_at": "2026-09-12T15:03:12+00:00",
+   "hiking": {
+    "relations": 5060,
+    "superroutes": 106,
+    "node_networks": 0,
+    "in_store": 4808,
+    "owned": 5052,
+    "duplicates_seen": 8,
+    "with_children": 180,
+    "with_parents": 711
+   },
+   "cycling": {
+    "relations": 6606,
+    "superroutes": 301,
+    "node_networks": 23,
+    "in_store": 6068,
+    "owned": 6597,
+    "duplicates_seen": 9,
+    "with_children": 494,
+    "with_parents": 1734
+   },
+   "seconds": 8.4,
+   "scan_seconds": 6.1
+  },
+  "GR": {
+   "extract": "data/raw/geofabrik/2026-08-13/greece-latest.osm.pbf",
+   "extract_date": "2026-08-13",
+   "size_mb": 323.3,
+   "scanned_at": "2026-09-12T15:03:15+00:00",
+   "hiking": {
+    "relations": 1381,
+    "superroutes": 6,
+    "node_networks": 0,
+    "in_store": 1257,
+    "owned": 1363,
+    "duplicates_seen": 18,
+    "with_children": 18,
+    "with_parents": 52
+   },
+   "cycling": {
+    "relations": 56,
+    "superroutes": 3,
+    "node_networks": 0,
+    "in_store": 53,
+    "owned": 49,
+    "duplicates_seen": 7,
+    "with_children": 3,
+    "with_parents": 6
+   },
+   "seconds": 1.2,
+   "scan_seconds": 1.0
+  },
+  "HR": {
+   "extract": "data/raw/geofabrik/2026-08-13/croatia-latest.osm.pbf",
+   "extract_date": "2026-08-13",
+   "size_mb": 189.3,
+   "scanned_at": "2026-09-12T15:03:16+00:00",
+   "hiking": {
+    "relations": 1280,
+    "superroutes": 13,
+    "node_networks": 1,
+    "in_store": 1193,
+    "owned": 1187,
+    "duplicates_seen": 93,
+    "with_children": 21,
+    "with_parents": 82
+   },
+   "cycling": {
+    "relations": 597,
+    "superroutes": 14,
+    "node_networks": 0,
+    "in_store": 567,
+    "owned": 542,
+    "duplicates_seen": 55,
+    "with_children": 14,
+    "with_parents": 30
+   },
+   "seconds": 1.0,
+   "scan_seconds": 0.7
+  },
+  "HU": {
+   "extract": "data/raw/geofabrik/2026-08-13/hungary-latest.osm.pbf",
+   "extract_date": "2026-08-13",
+   "size_mb": 307.3,
+   "scanned_at": "2026-09-12T15:03:18+00:00",
+   "hiking": {
+    "relations": 3711,
+    "superroutes": 35,
+    "node_networks": 0,
+    "in_store": 3675,
+    "owned": 3555,
+    "duplicates_seen": 156,
+    "with_children": 62,
+    "with_parents": 351
+   },
+   "cycling": {
+    "relations": 564,
+    "superroutes": 19,
+    "node_networks": 0,
+    "in_store": 535,
+    "owned": 455,
+    "duplicates_seen": 109,
+    "with_children": 24,
+    "with_parents": 160
+   },
+   "seconds": 2.1,
+   "scan_seconds": 1.5
+  },
+  "IE": {
+   "extract": "data/raw/geofabrik/2026-08-13/ireland-and-northern-ireland-latest.osm.pbf",
+   "extract_date": "2026-08-13",
+   "size_mb": 390.6,
+   "scanned_at": "2026-09-12T15:03:20+00:00",
+   "hiking": {
+    "relations": 992,
+    "superroutes": 3,
+    "node_networks": 2,
+    "in_store": 890,
+    "owned": 989,
+    "duplicates_seen": 3,
+    "with_children": 19,
+    "with_parents": 43
+   },
+   "cycling": {
+    "relations": 3443,
+    "superroutes": 30,
+    "node_networks": 0,
+    "in_store": 3148,
+    "owned": 3438,
+    "duplicates_seen": 5,
+    "with_children": 73,
+    "with_parents": 240
+   },
+   "seconds": 2.1,
+   "scan_seconds": 1.5
+  },
+  "IS": {
+   "extract": "data/raw/geofabrik/2026-08-13/iceland-latest.osm.pbf",
+   "extract_date": "2026-08-13",
+   "size_mb": 61.6,
+   "scanned_at": "2026-09-12T15:03:21+00:00",
+   "hiking": {
+    "relations": 173,
+    "superroutes": 1,
+    "node_networks": 0,
+    "in_store": 150,
+    "owned": 171,
+    "duplicates_seen": 2,
+    "with_children": 3,
+    "with_parents": 3
+   },
+   "cycling": {
+    "relations": 35,
+    "superroutes": 0,
+    "node_networks": 0,
+    "in_store": 35,
+    "owned": 35,
+    "duplicates_seen": 0,
+    "with_children": 0,
+    "with_parents": 0
+   },
+   "seconds": 0.2,
+   "scan_seconds": 0.2
+  },
+  "IT": {
+   "extract": "data/raw/geofabrik/2026-08-13/italy-latest.osm.pbf",
+   "extract_date": "2026-08-13",
+   "size_mb": 2116.3,
+   "scanned_at": "2026-09-12T15:03:29+00:00",
+   "hiking": {
+    "relations": 35567,
+    "superroutes": 216,
+    "node_networks": 146,
+    "in_store": 14789,
+    "owned": 34360,
+    "duplicates_seen": 1207,
+    "with_children": 415,
+    "with_parents": 3304
+   },
+   "cycling": {
+    "relations": 1617,
+    "superroutes": 30,
+    "node_networks": 1,
+    "in_store": 1524,
+    "owned": 1566,
+    "duplicates_seen": 51,
+    "with_children": 55,
+    "with_parents": 255
+   },
+   "seconds": 14.0,
+   "scan_seconds": 8.4
+  },
+  "LT": {
+   "extract": "data/raw/geofabrik/2026-08-13/lithuania-latest.osm.pbf",
+   "extract_date": "2026-08-13",
+   "size_mb": 211.7,
+   "scanned_at": "2026-09-12T15:03:35+00:00",
+   "hiking": {
+    "relations": 321,
+    "superroutes": 6,
+    "node_networks": 0,
+    "in_store": 319,
+    "owned": 303,
+    "duplicates_seen": 18,
+    "with_children": 11,
+    "with_parents": 93
+   },
+   "cycling": {
+    "relations": 77,
+    "superroutes": 4,
+    "node_networks": 0,
+    "in_store": 69,
+    "owned": 58,
+    "duplicates_seen": 19,
+    "with_children": 4,
+    "with_parents": 10
+   },
+   "seconds": 0.7,
+   "scan_seconds": 0.5
+  },
+  "LU": {
+   "extract": "data/raw/geofabrik/2026-08-13/luxembourg-latest.osm.pbf",
+   "extract_date": "2026-08-13",
+   "size_mb": 45.1,
+   "scanned_at": "2026-09-12T15:03:36+00:00",
+   "hiking": {
+    "relations": 512,
+    "superroutes": 18,
+    "node_networks": 15,
+    "in_store": 496,
+    "owned": 422,
+    "duplicates_seen": 90,
+    "with_children": 25,
+    "with_parents": 36
+   },
+   "cycling": {
+    "relations": 378,
+    "superroutes": 3,
+    "node_networks": 10,
+    "in_store": 365,
+    "owned": 343,
+    "duplicates_seen": 35,
+    "with_children": 6,
+    "with_parents": 9
+   },
+   "seconds": 0.5,
+   "scan_seconds": 0.3
+  },
+  "LV": {
+   "extract": "data/raw/geofabrik/2026-08-13/latvia-latest.osm.pbf",
+   "extract_date": "2026-08-13",
+   "size_mb": 132.9,
+   "scanned_at": "2026-09-12T15:03:37+00:00",
+   "hiking": {
+    "relations": 429,
+    "superroutes": 12,
+    "node_networks": 0,
+    "in_store": 425,
+    "owned": 400,
+    "duplicates_seen": 29,
+    "with_children": 19,
+    "with_parents": 132
+   },
+   "cycling": {
+    "relations": 253,
+    "superroutes": 6,
+    "node_networks": 0,
+    "in_store": 242,
+    "owned": 222,
+    "duplicates_seen": 31,
+    "with_children": 8,
+    "with_parents": 20
+   },
+   "seconds": 0.6,
+   "scan_seconds": 0.4
+  },
+  "MC": {
+   "extract": "data/raw/geofabrik/2026-08-13/monaco-latest.osm.pbf",
+   "extract_date": "2026-08-13",
+   "size_mb": 0.7,
+   "scanned_at": "2026-09-12T15:03:37+00:00",
+   "hiking": {
+    "relations": 4,
+    "superroutes": 1,
+    "node_networks": 0,
+    "in_store": 4,
+    "owned": 0,
+    "duplicates_seen": 4,
+    "with_children": 1,
+    "with_parents": 1
+   },
+   "cycling": {
+    "relations": 0,
+    "superroutes": 0,
+    "node_networks": 0,
+    "in_store": 0,
+    "owned": 0,
+    "duplicates_seen": 0,
+    "with_children": 0,
+    "with_parents": 0
+   },
+   "seconds": 0.0,
+   "scan_seconds": 0.0
+  },
+  "MD": {
+   "extract": "data/raw/geofabrik/2026-08-13/moldova-latest.osm.pbf",
+   "extract_date": "2026-08-13",
+   "size_mb": 96.1,
+   "scanned_at": "2026-09-12T15:03:37+00:00",
+   "hiking": {
+    "relations": 2,
+    "superroutes": 0,
+    "node_networks": 0,
+    "in_store": 1,
+    "owned": 2,
+    "duplicates_seen": 0,
+    "with_children": 0,
+    "with_parents": 0
+   },
+   "cycling": {
+    "relations": 5,
+    "superroutes": 0,
+    "node_networks": 0,
+    "in_store": 5,
+    "owned": 5,
+    "duplicates_seen": 0,
+    "with_children": 0,
+    "with_parents": 0
+   },
+   "seconds": 0.3,
+   "scan_seconds": 0.2
+  },
+  "ME": {
+   "extract": "data/raw/geofabrik/2026-08-13/montenegro-latest.osm.pbf",
+   "extract_date": "2026-08-13",
+   "size_mb": 32.4,
+   "scanned_at": "2026-09-12T15:03:37+00:00",
+   "hiking": {
+    "relations": 241,
+    "superroutes": 3,
+    "node_networks": 0,
+    "in_store": 173,
+    "owned": 214,
+    "duplicates_seen": 27,
+    "with_children": 4,
+    "with_parents": 13
+   },
+   "cycling": {
+    "relations": 72,
+    "superroutes": 1,
+    "node_networks": 0,
+    "in_store": 70,
+    "owned": 64,
+    "duplicates_seen": 8,
+    "with_children": 1,
+    "with_parents": 3
+   },
+   "seconds": 0.2,
+   "scan_seconds": 0.1
+  },
+  "MK": {
+   "extract": "data/raw/geofabrik/2026-08-13/macedonia-latest.osm.pbf",
+   "extract_date": "2026-08-13",
+   "size_mb": 28.1,
+   "scanned_at": "2026-09-12T15:03:37+00:00",
+   "hiking": {
+    "relations": 52,
+    "superroutes": 3,
+    "node_networks": 0,
+    "in_store": 42,
+    "owned": 36,
+    "duplicates_seen": 16,
+    "with_children": 5,
+    "with_parents": 11
+   },
+   "cycling": {
+    "relations": 13,
+    "superroutes": 3,
+    "node_networks": 0,
+    "in_store": 9,
+    "owned": 6,
+    "duplicates_seen": 7,
+    "with_children": 3,
+    "with_parents": 7
+   },
+   "seconds": 0.1,
+   "scan_seconds": 0.1
+  },
+  "MT": {
+   "extract": "data/raw/geofabrik/2026-08-13/malta-latest.osm.pbf",
+   "extract_date": "2026-08-13",
+   "size_mb": 8.4,
+   "scanned_at": "2026-09-12T15:03:37+00:00",
+   "hiking": {
+    "relations": 38,
+    "superroutes": 0,
+    "node_networks": 0,
+    "in_store": 38,
+    "owned": 38,
+    "duplicates_seen": 0,
+    "with_children": 0,
+    "with_parents": 0
+   },
+   "cycling": {
+    "relations": 5,
+    "superroutes": 1,
+    "node_networks": 0,
+    "in_store": 4,
+    "owned": 4,
+    "duplicates_seen": 1,
+    "with_children": 1,
+    "with_parents": 1
+   },
+   "seconds": 0.1,
+   "scan_seconds": 0.0
+  },
+  "NL": {
+   "extract": "data/raw/geofabrik/2026-08-13/netherlands-latest.osm.pbf",
+   "extract_date": "2026-08-13",
+   "size_mb": 1332.0,
+   "scanned_at": "2026-09-12T15:03:45+00:00",
+   "hiking": {
+    "relations": 63548,
+    "superroutes": 107,
+    "node_networks": 57526,
+    "in_store": 63449,
+    "owned": 62586,
+    "duplicates_seen": 962,
+    "with_children": 275,
+    "with_parents": 1717
+   },
+   "cycling": {
+    "relations": 17533,
+    "superroutes": 61,
+    "node_networks": 16956,
+    "in_store": 511,
+    "owned": 16624,
+    "duplicates_seen": 909,
+    "with_children": 65,
+    "with_parents": 443
+   },
+   "seconds": 23.3,
+   "scan_seconds": 7.9
+  },
+  "NO": {
+   "extract": "data/raw/geofabrik/2026-08-06/norway-latest.osm.pbf",
+   "extract_date": "2026-08-06",
+   "size_mb": 1308.9,
+   "scanned_at": "2026-09-12T15:04:05+00:00",
+   "hiking": {
+    "relations": 3306,
+    "superroutes": 38,
+    "node_networks": 0,
+    "in_store": 3055,
+    "owned": 3218,
+    "duplicates_seen": 88,
+    "with_children": 53,
+    "with_parents": 368
+   },
+   "cycling": {
+    "relations": 491,
+    "superroutes": 18,
+    "node_networks": 1,
+    "in_store": 467,
+    "owned": 475,
+    "duplicates_seen": 16,
+    "with_children": 21,
+    "with_parents": 48
+   },
+   "seconds": 5.7,
+   "scan_seconds": 4.7
+  },
+  "PL": {
+   "extract": "data/raw/geofabrik/2026-08-13/poland-latest.osm.pbf",
+   "extract_date": "2026-08-13",
+   "size_mb": 1988.1,
+   "scanned_at": "2026-09-12T15:04:14+00:00",
+   "hiking": {
+    "relations": 4108,
+    "superroutes": 34,
+    "node_networks": 2,
+    "in_store": 3940,
+    "owned": 3532,
+    "duplicates_seen": 576,
+    "with_children": 93,
+    "with_parents": 354
+   },
+   "cycling": {
+    "relations": 3204,
+    "superroutes": 27,
+    "node_networks": 344,
+    "in_store": 2762,
+    "owned": 2842,
+    "duplicates_seen": 362,
+    "with_children": 39,
+    "with_parents": 108
+   },
+   "seconds": 9.9,
+   "scan_seconds": 7.7
+  },
+  "PT": {
+   "extract": "data/raw/geofabrik/2026-08-13/portugal-latest.osm.pbf",
+   "extract_date": "2026-08-13",
+   "size_mb": 400.6,
+   "scanned_at": "2026-09-12T15:04:18+00:00",
+   "hiking": {
+    "relations": 1386,
+    "superroutes": 10,
+    "node_networks": 0,
+    "in_store": 1369,
+    "owned": 1339,
+    "duplicates_seen": 47,
+    "with_children": 15,
+    "with_parents": 67
+   },
+   "cycling": {
+    "relations": 273,
+    "superroutes": 5,
+    "node_networks": 0,
+    "in_store": 263,
+    "owned": 252,
+    "duplicates_seen": 21,
+    "with_children": 5,
+    "with_parents": 100
+   },
+   "seconds": 2.1,
+   "scan_seconds": 1.6
+  },
+  "RO": {
+   "extract": "data/raw/geofabrik/2026-08-13/romania-latest.osm.pbf",
+   "extract_date": "2026-08-13",
+   "size_mb": 311.0,
+   "scanned_at": "2026-09-12T15:04:20+00:00",
+   "hiking": {
+    "relations": 1735,
+    "superroutes": 6,
+    "node_networks": 0,
+    "in_store": 1633,
+    "owned": 1682,
+    "duplicates_seen": 53,
+    "with_children": 20,
+    "with_parents": 84
+   },
+   "cycling": {
+    "relations": 141,
+    "superroutes": 5,
+    "node_networks": 0,
+    "in_store": 128,
+    "owned": 121,
+    "duplicates_seen": 20,
+    "with_children": 9,
+    "with_parents": 41
+   },
+   "seconds": 1.8,
+   "scan_seconds": 1.4
+  },
+  "RS": {
+   "extract": "data/raw/geofabrik/2026-08-13/serbia-latest.osm.pbf",
+   "extract_date": "2026-08-13",
+   "size_mb": 227.5,
+   "scanned_at": "2026-09-12T15:04:21+00:00",
+   "hiking": {
+    "relations": 624,
+    "superroutes": 9,
+    "node_networks": 0,
+    "in_store": 607,
+    "owned": 581,
+    "duplicates_seen": 43,
+    "with_children": 11,
+    "with_parents": 90
+   },
+   "cycling": {
+    "relations": 87,
+    "superroutes": 9,
+    "node_networks": 0,
+    "in_store": 78,
+    "owned": 57,
+    "duplicates_seen": 30,
+    "with_children": 9,
+    "with_parents": 28
+   },
+   "seconds": 1.1,
+   "scan_seconds": 0.9
+  },
+  "SE": {
+   "extract": "data/raw/geofabrik/2026-08-13/sweden-latest.osm.pbf",
+   "extract_date": "2026-08-13",
+   "size_mb": 775.3,
+   "scanned_at": "2026-09-12T15:04:24+00:00",
+   "hiking": {
+    "relations": 4071,
+    "superroutes": 111,
+    "node_networks": 1,
+    "in_store": 3883,
+    "owned": 3927,
+    "duplicates_seen": 144,
+    "with_children": 147,
+    "with_parents": 1096
+   },
+   "cycling": {
+    "relations": 1001,
+    "superroutes": 28,
+    "node_networks": 0,
+    "in_store": 960,
+    "owned": 978,
+    "duplicates_seen": 23,
+    "with_children": 30,
+    "with_parents": 289
+   },
+   "seconds": 4.5,
+   "scan_seconds": 3.0
+  },
+  "SI": {
+   "extract": "data/raw/geofabrik/2026-08-13/slovenia-latest.osm.pbf",
+   "extract_date": "2026-08-13",
+   "size_mb": 296.8,
+   "scanned_at": "2026-09-12T15:04:27+00:00",
+   "hiking": {
+    "relations": 2114,
+    "superroutes": 22,
+    "node_networks": 0,
+    "in_store": 1902,
+    "owned": 1787,
+    "duplicates_seen": 327,
+    "with_children": 49,
+    "with_parents": 233
+   },
+   "cycling": {
+    "relations": 394,
+    "superroutes": 16,
+    "node_networks": 47,
+    "in_store": 316,
+    "owned": 284,
+    "duplicates_seen": 110,
+    "with_children": 18,
+    "with_parents": 50
+   },
+   "seconds": 1.9,
+   "scan_seconds": 1.2
+  },
+  "SK": {
+   "extract": "data/raw/geofabrik/2026-08-13/slovakia-latest.osm.pbf",
+   "extract_date": "2026-08-13",
+   "size_mb": 326.4,
+   "scanned_at": "2026-09-12T15:04:30+00:00",
+   "hiking": {
+    "relations": 3146,
+    "superroutes": 28,
+    "node_networks": 0,
+    "in_store": 2593,
+    "owned": 2835,
+    "duplicates_seen": 311,
+    "with_children": 58,
+    "with_parents": 211
+   },
+   "cycling": {
+    "relations": 1754,
+    "superroutes": 18,
+    "node_networks": 1,
+    "in_store": 1718,
+    "owned": 1613,
+    "duplicates_seen": 141,
+    "with_children": 23,
+    "with_parents": 50
+   },
+   "seconds": 3.3,
+   "scan_seconds": 1.8
+  },
+  "TR": {
+   "extract": "data/raw/geofabrik/2026-08-13/turkey-latest.osm.pbf",
+   "extract_date": "2026-08-13",
+   "size_mb": 611.8,
+   "scanned_at": "2026-09-12T15:04:35+00:00",
+   "hiking": {
+    "relations": 166,
+    "superroutes": 4,
+    "node_networks": 4,
+    "in_store": 155,
+    "owned": 161,
+    "duplicates_seen": 5,
+    "with_children": 9,
+    "with_parents": 58
+   },
+   "cycling": {
+    "relations": 198,
+    "superroutes": 2,
+    "node_networks": 0,
+    "in_store": 195,
+    "owned": 192,
+    "duplicates_seen": 6,
+    "with_children": 4,
+    "with_parents": 6
+   },
+   "seconds": 4.1,
+   "scan_seconds": 3.9
+  },
+  "UA": {
+   "extract": "data/raw/geofabrik/2026-08-13/ukraine-latest.osm.pbf",
+   "extract_date": "2026-08-13",
+   "size_mb": 832.2,
+   "scanned_at": "2026-09-12T15:04:38+00:00",
+   "hiking": {
+    "relations": 572,
+    "superroutes": 3,
+    "node_networks": 2,
+    "in_store": 517,
+    "owned": 538,
+    "duplicates_seen": 34,
+    "with_children": 5,
+    "with_parents": 8
+   },
+   "cycling": {
+    "relations": 120,
+    "superroutes": 1,
+    "node_networks": 9,
+    "in_store": 108,
+    "owned": 102,
+    "duplicates_seen": 18,
+    "with_children": 3,
+    "with_parents": 3
+   },
+   "seconds": 3.0,
+   "scan_seconds": 2.7
+  },
+  "XK": {
+   "extract": "data/raw/geofabrik/2026-08-13/kosovo-latest.osm.pbf",
+   "extract_date": "2026-08-13",
+   "size_mb": 29.2,
+   "scanned_at": "2026-09-12T15:04:38+00:00",
+   "hiking": {
+    "relations": 48,
+    "superroutes": 2,
+    "node_networks": 0,
+    "in_store": 43,
+    "owned": 29,
+    "duplicates_seen": 19,
+    "with_children": 3,
+    "with_parents": 15
+   },
+   "cycling": {
+    "relations": 6,
+    "superroutes": 0,
+    "node_networks": 0,
+    "in_store": 6,
+    "owned": 3,
+    "duplicates_seen": 3,
+    "with_children": 0,
+    "with_parents": 0
+   },
+   "seconds": 0.2,
+   "scan_seconds": 0.2
+  }
+ },
+ "generated_at": "2026-09-12T15:05:42+00:00",
+ "last_run": {
+  "countries": [
+   "LI"
+  ],
+  "skipped": [],
+  "full": false,
+  "seconds": 1.7
+ },
+ "totals": {
+  "hiking": {
+   "relations": 308266,
+   "superroutes": 2159,
+   "node_networks": 121161,
+   "in_store": 238709,
+   "cross_border": 9443,
+   "with_children": 3668,
+   "with_parents": 23934,
+   "owner_not_scanned": 0
+  },
+  "cycling": {
+   "relations": 117668,
+   "superroutes": 1272,
+   "node_networks": 48441,
+   "in_store": 65375,
+   "cross_border": 3885,
+   "with_children": 1768,
+   "with_parents": 12993,
+   "owner_not_scanned": 0
+  }
+ },
+ "store": {
+  "hiking": 238709,
+  "cycling": 65375
+ },
+ "store_rows_without_relation": {
+  "hiking": 0,
+  "cycling": 0
+ },
+ "gate": {
+  "hiking": {
+   "scanned_excluding_node_networks": 308266,
+   "store": 238709,
+   "ratio": 1.291,
+   "ok": true
+  },
+  "cycling": {
+   "scanned_excluding_node_networks": 69227,
+   "store": 65375,
+   "ratio": 1.059,
+   "ok": true
+  }
+ }
+}

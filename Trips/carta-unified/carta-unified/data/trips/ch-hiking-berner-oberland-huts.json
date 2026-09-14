@@ -1,0 +1,310 @@
+{
+  "id": "ch-hiking-berner-oberland-huts",
+  "sourceId": "ch-hiking-berner-oberland-huts",
+  "slug": "ch-hiking-berner-oberland-huts",
+  "title": "Berner Oberland Hut Chain — Kandersteg to Grindelwald",
+  "country": "Switzerland",
+  "countryCode": "CH",
+  "countries": [
+    {
+      "name": "Switzerland",
+      "code": "CH"
+    }
+  ],
+  "isMultiCountry": false,
+  "region": "Western & Central Europe",
+  "regionKey": "western-central",
+  "subRegion": "Bernese Alps, Berner Oberland",
+  "tripType": "Hiking & Alpine Trekking",
+  "tripTypeId": 6,
+  "tripTypeSlug": "hiking",
+  "durationDays": 7,
+  "bestPeriod": {
+    "months": [
+      7,
+      8,
+      9
+    ],
+    "monthNames": [
+      "July",
+      "August",
+      "September"
+    ],
+    "window": null,
+    "note": "The Hohtürli approach and Sefinenfurgge can hold hard snow into July; the cable-secured Chindbetti step near Hohtürli is safest dry.",
+    "avoid": null,
+    "raw": null
+  },
+  "budgetTier": "€€€",
+  "budgetTierRange": [
+    3,
+    3
+  ],
+  "budgetTierRaw": "€€€",
+  "budget": {
+    "currency": "EUR",
+    "totalEur": {
+      "low": 900,
+      "high": 1240
+    },
+    "totalNote": null,
+    "breakdown": {
+      "accommodation": {
+        "lowEur": 500,
+        "highEur": 680,
+        "note": null
+      },
+      "food": {
+        "lowEur": 180,
+        "highEur": 230,
+        "note": null
+      },
+      "transport": {
+        "lowEur": 130,
+        "highEur": 190,
+        "note": null
+      },
+      "activities": {
+        "lowEur": 90,
+        "highEur": 140,
+        "note": null
+      }
+    },
+    "perDayEur": {
+      "low": 129,
+      "high": 177
+    }
+  },
+  "profile": {
+    "difficulty": 4,
+    "difficultyLabel": "Demanding",
+    "difficultyNote": null,
+    "fitnessLevel": "Demanding",
+    "crowdLevel": "Moderate",
+    "familyFriendly": false,
+    "carRequired": false
+  },
+  "basecamps": [
+    "Kandersteg"
+  ],
+  "gatewayAirport": "Zürich (ZRH)",
+  "gatewayAirportCode": "ZRH",
+  "languages": [
+    "German"
+  ],
+  "currency": "CHF",
+  "emergencyNumber": "112",
+  "coordinates": {
+    "lat": 47.3667,
+    "lon": 8.55,
+    "precision": "gateway",
+    "matchedPlace": "Zürich",
+    "source": "geonames (geonamescache, cities > 15k)"
+  },
+  "tags": [
+    "via-alpina",
+    "hut-to-hut",
+    "sac-hut",
+    "glacier-views",
+    "hohtuerli"
+  ],
+  "summary": "A hut-to-hut week on the Via Alpina from Kandersteg over Hohtürli to Blüemlisalphütte, then on through Griesalp and Mürren to Grindelwald.",
+  "summaryGenerated": false,
+  "hook": "This is the Berner Oberland at its most classic: a steep, cable-assisted climb from Kandersteg's Oeschinensee to the Hohtürli pass and Blüemlisalphütte, a glacier-fringed SAC hut with the Blüemlisalp icefall at the door, then a Via Alpina traverse through Griesalp and over the Sefinenfurgge to Mürren, finishing along the Eiger's north face to Grindelwald. Four valleys, one waymarked national route, and a genuinely alpine week.",
+  "snapshot": {
+    "Country": "Switzerland",
+    "Base(s)": "Kandersteg to start, Grindelwald to finish, huts and villages between",
+    "Trip Type": "Hiking & Alpine Trekking",
+    "Duration": "7 days",
+    "Best Period": "Mid-July to late September",
+    "Budget Tier": "€€€",
+    "Total Distance / Terrain": "approx. 75–85 km, 5,800–6,400 m combined ascent; white-red-white T3 throughout, one cable-secured step near Hohtürli",
+    "Getting There": "Fly to Zürich (ZRH), train to Spiez, change for Kandersteg (about 2h total)",
+    "Who It Suits": "Fit hut-to-hut hikers comfortable with a steep cable-assisted pass and consecutive long days"
+  },
+  "itinerary": [
+    {
+      "day": 1,
+      "title": "Kandersteg and the Oeschinensee",
+      "morning": "Arrive Kandersteg by train from Spiez. Walk or take the gondola up to Oeschinensee, one of the most photographed alpine lakes in Switzerland, sitting at 1,578 m below the Blüemlisalp wall.",
+      "afternoon": "Circle the lake on the lower path, checking the Hohtürli route's condition board at the Berghotel before returning to Kandersteg.",
+      "evening": "Early dinner; the Hohtürli climb starts before sunrise tomorrow to beat the afternoon cloud buildup.",
+      "dayStats": "9 km, 350 m ascent, 350 m descent. Grade T1–T2, well-graded lakeside path.",
+      "sleep": null
+    },
+    {
+      "day": 2,
+      "title": "Hohtürli and Blüemlisalphütte",
+      "morning": "From Oeschinensee, climb the long switchbacked path toward Hohtürli (2,778 m), steepening through the final section known locally as the Chindbetti, where fixed cable assists a short exposed rock step.",
+      "afternoon": "Cross Hohtürli and drop the short distance to Blüemlisalphütte (2,834 m), a Swiss Alpine Club hut sitting directly beside the Blüemlisalp glacier, with the Blüemlisalphorn and Morgenhorn filling the skyline.",
+      "evening": "The hut terrace looks straight onto the icefall — arrive with enough daylight to sit and watch it before dinner.",
+      "dayStats": "13 km, 1,250 m ascent, negligible descent. Grade T3, cable-secured rock step near the pass, otherwise steady switchback trail.",
+      "sleep": null
+    },
+    {
+      "day": 3,
+      "title": "Descent to Griesalp via the Gamchi side",
+      "morning": "From Blüemlisalphütte, descend the glacier-carved Gamchi valley on the hut's western approach, a quieter and less-trodden line than the Kandersteg side.",
+      "afternoon": "Continue down through alp pasture to Griesalp, a small road-end hamlet in the Kiental, reachable only by postbus or on foot — no through road.",
+      "evening": "Griesalp is tiny; the single guesthouse is the only option, so confirm the booking before setting out.",
+      "dayStats": "14 km, 100 m ascent, 1,350 m descent. Grade T3, steep scree and switchback upper section, easing to forest track lower down.",
+      "sleep": null
+    },
+    {
+      "day": 4,
+      "title": "Sefinenfurgge to Mürren",
+      "morning": "Climb from Griesalp on the Via Alpina Route 1 waymarking toward the Sefinenfurgge (2,612 m), a demanding pass with loose rock on both approaches and, in a heavy year, old snow into July.",
+      "afternoon": "Descend into the Sefinental, passing below the Rottal glacier's outwash, and climb the final stretch to Mürren, the car-free village terraced above the Lauterbrunnen valley.",
+      "evening": "Mürren's Eiger–Mönch–Jungfrau panorama from the village promenade is one of the best in the region — worth the walk before dinner.",
+      "dayStats": "18 km, 950 m ascent, 850 m descent. Grade T3–T4, loose rock near the Furgge, genuinely demanding in poor visibility.",
+      "sleep": null
+    },
+    {
+      "day": 5,
+      "title": "Gimmelwald and down to Lauterbrunnen",
+      "morning": "An easier day after Sefinenfurgge: walk or ride the cable car down to Gimmelwald, one of the smallest and least-changed villages in the valley, then continue on foot along the valley-side path.",
+      "afternoon": "Descend to Lauterbrunnen itself, in the valley of 72 waterfalls, with time to see the Staubbach Fall directly above the village.",
+      "evening": "A valley-floor rest night; gear dries out properly for the first time since Kandersteg.",
+      "dayStats": "11 km, 150 m ascent, 950 m descent. Grade T1–T2, well-graded path and some cable-car assistance.",
+      "sleep": null
+    },
+    {
+      "day": 6,
+      "title": "Wengen and the Kleine Scheidegg balcony",
+      "morning": "Train from Lauterbrunnen up to Wengen, a car-free terrace village, then continue on foot along the balcony trail toward Kleine Scheidegg, with the Eiger's north face rising directly overhead.",
+      "afternoon": "Continue on the classic Männlichen or Eigergletscher path, contouring below the face before dropping toward Grindelwald.",
+      "evening": "Grindelwald marks the end of the high walking; a proper final dinner is in order.",
+      "dayStats": "16 km, 550 m ascent, 750 m descent. Grade T2, wide balcony trail, no exposure despite the dramatic setting.",
+      "sleep": null
+    },
+    {
+      "day": 7,
+      "title": "Bachalpsee and departure",
+      "morning": "A last short walk: gondola to First, then the easy path out to Bachalpsee, a glacier-fed tarn that mirrors the Wetterhorn and Schreckhorn on a calm morning.",
+      "afternoon": "Return to Grindelwald, train to Interlaken and onward toward Zürich for the flight home.",
+      "evening": "Depart.",
+      "dayStats": "8 km, 200 m ascent, 200 m descent (excluding lift-assisted sections). Grade T1, easy path throughout.",
+      "sleep": null
+    }
+  ],
+  "accommodationStrategy": [
+    {
+      "rank": 1,
+      "name": "Hotel or B&B in Kandersteg",
+      "style": "Village lodging",
+      "location": null,
+      "description": "Close to the Oeschinensee gondola and the train station, useful for the pre-dawn Hohtürli start on Day 2.",
+      "booking": "6–8 weeks ahead for August.",
+      "priceNote": "CHF 100–150 (approx. €105–160) per night"
+    },
+    {
+      "rank": 2,
+      "name": "Blüemlisalphütte",
+      "style": "SAC mountain hut",
+      "location": "above the Blüemlisalp glacier",
+      "description": "Book directly through the SAC/CAS online hut reservation portal well ahead — this is one of the most popular huts in the Berner Oberland and regularly sells out on August weekends.",
+      "booking": "8–12 weeks ahead.",
+      "priceNote": "CHF 80–100 (approx. €85–105) half-board per night"
+    },
+    {
+      "rank": 3,
+      "name": "Gasthaus in Griesalp or Mürren",
+      "style": "Village guesthouse",
+      "location": null,
+      "description": "Griesalp has a single small guesthouse that is the only overnight in the hamlet; Mürren has more choice but fills fast in high season, given its car-free status and Eiger-north-face views.",
+      "booking": "8–10 weeks ahead, especially for Griesalp.",
+      "priceNote": "CHF 110–160 (approx. €115–170) per night"
+    }
+  ],
+  "logistics": {
+    "connectivity": null,
+    "emergency": "112 pan-European; Switzerland's alpine and helicopter rescue is Rega, on **1414**.",
+    "weather": "Afternoon storms build over the glaciated peaks from around 13:00 in summer; both Hohtürli and Sefinenfurgge should be crossed in the morning.",
+    "bookingWindows": "Blüemlisalphütte runs on the SAC's online reservation system; book it as soon as dates are set, since demand consistently outstrips beds through August.",
+    "money": null,
+    "transportRules": null,
+    "permits": null,
+    "health": null,
+    "gettingThere": null,
+    "other": [
+      {
+        "label": "Waymarks",
+        "text": "White-red-white blazes mark the mountain trail standard used throughout this route (Bergweg, T2–T3); the short cable-secured step below Hohtürli is the only section approaching Alpine-trail character."
+      },
+      {
+        "label": "Griesalp access",
+        "text": "No through road serves Griesalp; the postbus from Kiental is the only vehicle link, useful to know if weather forces an early exit from Day 3."
+      },
+      {
+        "label": "Via Alpina waymarking",
+        "text": "Route 1 signage overlays the standard Swiss trail network with its own logo; follow the white-red-white blazes as the primary reference where the two diverge."
+      },
+      {
+        "label": "Cash",
+        "text": "Griesalp's guesthouse and the hut bar both prefer cash; carry Swiss francs in small notes."
+      }
+    ]
+  },
+  "proTips": [
+    "Book Blüemlisalphütte before anything else on this trip — it is the hardest bed on the route to secure.",
+    "Start the Hohtürli climb by 07:00; the Chindbetti cable step is far more pleasant with cool rock and no queue.",
+    "Take the Gamchi-side descent to Griesalp rather than retracing to Kandersteg — it is the quieter, more rewarding line and avoids doubling back.",
+    "Confirm the Griesalp postbus timetable before Day 3, since it is the only backup if legs or weather demand an early exit from the valley.",
+    "Walk the Kleine Scheidegg balcony in the morning; afternoon cloud regularly hides the Eiger face by early afternoon in July and August.",
+    "Reserve the First gondola for an early Day 7 slot — Bachalpsee gets crowded by mid-morning in high season.",
+    "Eat Alpkäse at the Griesalp or Mürren guesthouse rather than waiting for Grindelwald; both sit close to working alp dairies."
+  ],
+  "typeSpecific": {
+    "raw": {
+      "Total Distance / Terrain": "approx. 75–85 km, 5,800–6,400 m combined ascent; white-red-white T3 throughout, one cable-secured step near Hohtürli",
+      "Who It Suits": "Fit hut-to-hut hikers comfortable with a steep cable-assisted pass and consecutive long days"
+    },
+    "surface": "approx. 75–85 km, 5,800–6,400 m combined ascent; white-red-white T3 throughout, one cable-secured step near Hohtürli",
+    "distanceKm": 75,
+    "elevationM": null,
+    "verticalM": null,
+    "technicalRating": null,
+    "transitPass": null,
+    "hutBooking": null,
+    "liftNetwork": null,
+    "snowReliability": null,
+    "windConditions": null,
+    "gpxReady": null,
+    "bookingTimeline": null,
+    "audience": "Fit hut-to-hut hikers comfortable with a steep cable-assisted pass and consecutive long days"
+  },
+  "packingNotes": [
+    "Trekking poles, essential for the Hohtürli and Sefinenfurgge descents.",
+    "Gloves for the cable-secured Chindbetti step, even though it is short.",
+    "Hüttenschlafsack for the Blüemlisalphütte night.",
+    "A warm layer for the pass crossings; both sit above 2,600 m.",
+    "Sturdy boots with real ankle support for the loose rock near Sefinenfurgge.",
+    "Cash in Swiss francs for Griesalp and hut extras.",
+    "Sun protection; the glacier-adjacent terrain at Blüemlisalphütte reflects strongly.",
+    "A light rain shell — Berner Oberland weather can turn inside an hour even on a good forecast."
+  ],
+  "whatCouldGoWrong": [
+    "**Snow on the Chindbetti step early in the season.** Fallback: ask the Oeschinensee Berghotel or Kandersteg tourist office for current conditions before committing; if unsafe, delay the crossing a day and use Kandersteg's lower trails instead.",
+    "**Blüemlisalphütte fully booked.** Fallback: day-hike to Hohtürli and back to Kandersteg instead, then rejoin the itinerary at Griesalp via the Kiental postbus the next morning.",
+    "**Old snow blocks the Sefinenfurgge.** Fallback: descend from Griesalp to Reichenbach and take the train around via Interlaken to Lauterbrunnen, rejoining the route at Day 5.",
+    "**Weather closes in for the Kleine Scheidegg balcony day.** Fallback: the Wengen–Grindelwald train link runs regardless of trail conditions, letting you skip the balcony walk without losing the connection.",
+    "**Fatigue after the Hohtürli–Sefinenfurgge back-to-back.** Fallback: split Day 4 by overnighting in Griesalp an extra night and treating the Sefinenfurgge crossing as a fresh, well-rested day rather than pushing straight through."
+  ],
+  "sources": {
+    "verified": null,
+    "confidenceNotes": null
+  },
+  "verifyFlags": [],
+  "verifyFlagCount": 0,
+  "volatilePricing": false,
+  "wordCount": 1610,
+  "dataVintage": 2026,
+  "provenance": {
+    "batch": "western-central",
+    "sourceFile": "cartatripsv1/trips/ch-hiking-berner-oberland-huts.md",
+    "sourceFormat": "md+yaml-frontmatter (one file per trip)",
+    "sourceId": "ch-hiking-berner-oberland-huts",
+    "ingestedAt": "2026-09-02",
+    "synthesized": false
+  }
+}

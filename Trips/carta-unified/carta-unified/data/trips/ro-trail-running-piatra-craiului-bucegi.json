@@ -1,0 +1,303 @@
+{
+  "id": "ro-trail-running-piatra-craiului-bucegi",
+  "sourceId": "romania-piatra-craiului-bucegi-trail-running",
+  "slug": "ro-trail-running-piatra-craiului-bucegi",
+  "title": "The Knife and the Plateau: Running Piatra Craiului and the Bucegi",
+  "country": "Romania",
+  "countryCode": "RO",
+  "countries": [
+    {
+      "name": "Romania",
+      "code": "RO"
+    }
+  ],
+  "isMultiCountry": false,
+  "region": "Eastern & Southeastern Europe",
+  "regionKey": "eastern-southeastern",
+  "subRegion": "Piatra Craiului & Bucegi Mountains, Southern Carpathians",
+  "tripType": "Trail Running",
+  "tripTypeId": 2,
+  "tripTypeSlug": "trail-running",
+  "durationDays": 7,
+  "bestPeriod": {
+    "months": [
+      7,
+      8,
+      9
+    ],
+    "monthNames": [
+      "July",
+      "August",
+      "September"
+    ],
+    "window": "mid-July to mid-September, once the ridge snow patches have gone and before the first autumn storms",
+    "note": null,
+    "avoid": "May–June (verglas and wet limestone on the chained sections) and any period of afternoon thunderstorm warnings — the Piatra Craiului ridge is a 25 km lightning rod with no escape",
+    "raw": null
+  },
+  "budgetTier": "€€",
+  "budgetTierRange": [
+    2,
+    2
+  ],
+  "budgetTierRaw": "€€",
+  "budget": {
+    "currency": "EUR",
+    "totalEur": {
+      "low": 560,
+      "high": 960
+    },
+    "totalNote": "€560–€960",
+    "breakdown": {
+      "accommodation": {
+        "lowEur": 250,
+        "highEur": 430,
+        "note": "€250–€430 (€35–€62/night, pensiuni and cabanas; cabana bunks far cheaper)"
+      },
+      "food": {
+        "lowEur": 130,
+        "highEur": 200,
+        "note": "€130–€200 (€19–€29/day)"
+      },
+      "transport": {
+        "lowEur": 120,
+        "highEur": 200,
+        "note": "€120–€200 (car hire or transfers Brașov–Zărnești–Bușteni, plus the Bușteni cable car)"
+      },
+      "activities": {
+        "lowEur": 60,
+        "highEur": 130,
+        "note": "€60–€130 (park fees, one guided ridge day, cable car, Libearty sanctuary)"
+      }
+    },
+    "perDayEur": {
+      "low": 80,
+      "high": 137
+    }
+  },
+  "profile": {
+    "difficulty": 4,
+    "difficultyLabel": "Demanding",
+    "difficultyNote": "Hard",
+    "fitnessLevel": "Demanding",
+    "crowdLevel": null,
+    "familyFriendly": null,
+    "carRequired": null
+  },
+  "basecamps": [
+    "Zărnești",
+    "Măgura",
+    "Bran",
+    "Râșnov",
+    "Bușteni"
+  ],
+  "gatewayAirport": "Bucharest Otopeni (OTP) then CFR to Brașov (2 h 30–3 h) or Bușteni (2 h); Brașov → Zărnești by local train (~50 min) or road (~28 km, 40 min). Bușteni is on the DN1/Prahova valley main line, so the week's ending point is the easiest place in Romania to leave from.",
+  "gatewayAirportCode": "OTP",
+  "languages": [
+    "Romanian",
+    "Hungarian",
+    "German"
+  ],
+  "currency": "Romanian leu (RON)",
+  "emergencyNumber": "112",
+  "coordinates": {
+    "lat": 45.5609,
+    "lon": 25.3179,
+    "precision": "city",
+    "matchedPlace": "Zărnești",
+    "source": "geonames (geonamescache, cities > 15k)"
+  },
+  "tags": [
+    "trail-running",
+    "ridge-running",
+    "limestone",
+    "karst",
+    "carpathians",
+    "bears",
+    "salvamont"
+  ],
+  "summary": "Piatra Craiului is a 25 km limestone blade standing on end, and it is one of the few places in Europe where a runner meets fixed chains before breakfast. Then the Bucegi does the opposite: a vast tilted plateau at…",
+  "summaryGenerated": false,
+  "hook": "Piatra Craiului is a 25 km limestone blade standing on end, and it is one of the few places in Europe where a runner meets fixed chains before breakfast. Then the Bucegi does the opposite: a vast tilted plateau at 2,200 m where you can hold a pace for an hour. This week is fast grass, sharp karst, a 1,600 m descent that will ruin your quads, and a genuine obligation to think about bears. It suits confident mountain runners, not first-timers.",
+  "snapshot": {
+    "Country": "Romania",
+    "Trip type": "Trail Running",
+    "Duration": "7 days",
+    "Best period": "Mid-July to mid-September",
+    "Budget tier": "€–€€",
+    "Difficulty": "Hard",
+    "Start / End": "Zărnești → Bușteni (linear, ~135 km run, ~7,500 m of vertical)",
+    "Getting there": "Bucharest Otopeni (OTP) then CFR to Brașov (2 h 30–3 h) or Bușteni (2 h); Brașov → Zărnești by local train (~50 min) or road (~28 km, 40 min). Bușteni is on the DN1/Prahova valley main line, so the week's ending point is the easiest place in Romania to leave from."
+  },
+  "itinerary": [
+    {
+      "day": 1,
+      "title": "Zărnești, the gorge, and legs that remember the altitude",
+      "morning": "Train or transfer from Brașov to **Zărnești**. Register the week's plan with your accommodation and check the **Parcul Național Piatra Craiului** visitor centre for trail and bear notices [VERIFY: current park entry fee and visitor-centre hours].",
+      "afternoon": "Run the **Prăpăstiile Zărneștiului** from **Fântâna lui Botorog** past **Cabana Diana** — the gorge narrows to a slot, the temperature drops, and the trail turns to polished limestone — up to **Cabana Curmătura** at 1,470 m for the first view of the ridge you will be on in two days.",
+      "evening": "Back down the same way. Ciorbă de burtă and a beer in Zărnești, kit laid out, and a serious look at tomorrow's forecast — Piatra Craiului makes its own weather and the ridge day depends on it.",
+      "dayStats": "13 km / +650 m",
+      "sleep": null
+    },
+    {
+      "day": 2,
+      "title": "Măgura and Peștera: the good-legs day",
+      "morning": "Shuttle or run the road up to **Măgura**, the scattered village on the shelf above Zărnești. Meadow trails between hay barns and limestone dolines, past **Peștera** and its cave, toward **Șirnea**.",
+      "afternoon": "Loop back with the entire east face of Piatra Craiului on your right — a 1,000 m wall of grey limestone running 20 km without a break. This is the run people remember, and it is easy enough to hold a conversation.",
+      "evening": "Down to **Bran** for the castle if you must, or better, the **Libearty Bear Sanctuary** at Zărnești, home to over a hundred rescued brown bears and the most useful hour you will spend on bear behaviour before the ridge [VERIFY: current hours and ticket price].",
+      "dayStats": "17 km / +700 m",
+      "sleep": null
+    },
+    {
+      "day": 3,
+      "title": "Creasta Nordică: Curmătura to La Om",
+      "morning": "Out of Zărnești before first light, up the Prăpăstii, and at **Cabana Curmătura** by 07:30. Fill everything you carry. Onto the red stripe for **Vârful Turnu (1,923 m)** and the start of the ridge proper.",
+      "afternoon": "The crest: Padinile Frumoase, Vârful Ascuțit, the **lanțuri**, and the long airy walk to **La Om (Vârful Baciului), 2,238 m**. Drop east to **Izvorul lui Ivan** if you need water. Turn around at a hard time, not a hard place — 14:00 is the sensible cut-off with afternoon storms building.",
+      "evening": "Return over the ridge or descend via **Șaua Grindului** and **Refugiul Grind** to Plaiul Foii if you have arranged a pick-up. Eat everything. Sleep hard.",
+      "dayStats": "20 km / +1,150 m",
+      "sleep": null
+    },
+    {
+      "day": 4,
+      "title": "Padina lui Călineț, or a rest day earned",
+      "morning": "Road transfer 12 km up the valley to **Cabana Plaiul Foii (849 m)**, the western trailhead. Into **Padina lui Călineț** — a raw, silent limestone valley where the trail crosses scree fans under 500 m walls.",
+      "afternoon": "Climb to **Șaua Călineț** on the ridge, touch the crest from the other side, and descend the same line. If the ridge day has taken more out of you than expected, swap this for an easy 8 km in the Zărnești forest and the thermal recovery of doing nothing.",
+      "evening": "Transfer to **Bușteni** over the Bran and Predeal saddles, about 70 km and 1 h 30. Check into a Prahova valley pension and shift your head from limestone to plateau.",
+      "dayStats": "16 km / +1,250 m",
+      "sleep": null
+    },
+    {
+      "day": 5,
+      "title": "Babele, the Sfinx and Vârful Omu",
+      "morning": "First cabin on the **Bușteni–Babele cable car** — from 885 m to about 2,200 m in one lift, which is the honest way to get onto the Bucegi plateau with fresh legs [VERIFY: 2026 Telecabina Bușteni tariff, hours and any maintenance closure]. Run out to **Babele (2,206 m)** and the **Sfinxul (2,216 m)** before the coach crowd arrives at ten.",
+      "afternoon": "North across the plateau, high open gravel and grass, past Curmătura Văii Cerbului to **Cabana Omu** and **Vârful Omu, 2,505 m** — the roof of the Bucegi, with the Făgăraș on the horizon. Hot tea at the cabana, which is the highest staffed hut in Romania.",
+      "evening": "Back to Babele and down on the cable car, or run the whole plateau return if the weather is holding. Dinner in Bușteni on Bulevardul Libertății.",
+      "dayStats": "14 km / +550 m",
+      "sleep": null
+    },
+    {
+      "day": 6,
+      "title": "Omu to Bușteni down Valea Cerbului",
+      "morning": "Cable car up, plateau traverse back to **Cabana Omu**, then commit: the **Valea Cerbului** descent drops 1,600 m into Bușteni in one uninterrupted line. Steep grass at the top, then a boulder-choked valley floor, then Poiana Coștilei and forest track.",
+      "afternoon": "This is a quad-destroying descent and the reason to have trained eccentric loading. Take it in stages, keep your feet quiet, and stop at the Poiana Coștilei meadow to look back up at the Coștila and Morarul walls — the alpine climbing heart of Romania.",
+      "evening": "Ice-cold feet in the Prahova, then papanași. Do not plan anything for tomorrow morning that requires stairs.",
+      "dayStats": "12 km / −1,600 m",
+      "sleep": null
+    },
+    {
+      "day": 7,
+      "title": "Jepii Mici, Poiana Izvoarelor, and out",
+      "morning": "A choice. The hard version: the blue-stripe **Jepii Mici** rib straight out of Bușteni toward Cabana Piatra Arsă, 1,100 m of climbing on a rocky spur with the Caraiman cross above you. The kind version: the forest circuit to **Cabana Gura Diham** and **Cabana Poiana Izvoarelor (1,455 m)**, soft underfoot and shaded.",
+      "afternoon": "Down to Bușteni, a last look at the **Crucea Eroilor** on Caraiman — the 1928 monument standing 28 m tall at 2,291 m — and the Cantacuzino Castle gardens if there is time.",
+      "evening": "CFR from Bușteni: 2 h to Bucharest Nord, or 45 minutes back to Brașov. Kit smells of limestone dust and spruce. That is correct.",
+      "dayStats": "15 km / +900 m",
+      "sleep": null
+    }
+  ],
+  "accommodationStrategy": [
+    {
+      "rank": 1,
+      "name": "A Zărnești pensiune near Strada Mitropolit Ioan Mețianu",
+      "style": "village guesthouse",
+      "location": "Zărnești",
+      "description": "the Prăpăstii trailhead and **Fântâna lui Botorog** are a 3 km jog from town, transfers to Plaiul Foii and Măgura are easy to arrange from here, and the national park office is in town for trail and bear updates.",
+      "booking": "2–4 weeks ahead for July–August; Zărnești has far more beds than it used to.",
+      "priceNote": null
+    },
+    {
+      "rank": 2,
+      "name": "Vila Hermani",
+      "style": "mountain guesthouse",
+      "location": "Măgura",
+      "description": "it sits at 900 m in the meadow village with the east wall of Piatra Craiului out of the window, which turns Day 2 into a run from the door. Long-established with walkers and runners, so early breakfasts and packed lunches are normal.",
+      "booking": "4–6 weeks ahead in summer, direct by email [VERIFY: current rates].",
+      "priceNote": null
+    },
+    {
+      "rank": 3,
+      "name": "Cabana Curmătura",
+      "style": "mountain cabana",
+      "location": "1,470 m, Piatra Craiului",
+      "description": "sleeping at 1,470 m puts you on the ridge at dawn with 650 m of climbing already banked, which is the difference between finishing the Creasta Nordică before the storms and turning back. Bunks, blankets, no shower worth the name, cash only.",
+      "booking": "direct by phone; bunks are first-come in practice, so arrive early or call the day before [VERIFY: current rate and whether reservations are taken].",
+      "priceNote": null
+    }
+  ],
+  "logistics": {
+    "connectivity": "Orange, Vodafone and Digi cover the valleys and, surprisingly, much of the Piatra Craiului crest and the Bucegi plateau — the ridges are line-of-sight to Brașov and the Prahova valley. Expect nothing in Padina lui Călineț or the lower Valea Cerbului.",
+    "emergency": "**112** for everything. **Salvamont** is the mountain rescue service; the national Salvamont dispatch number is **0725 826 668**, and **Salvamont Brașov** covers Piatra Craiului, Bran and Râșnov, with the Prahova county team covering the Bucegi from Bușteni. Carry a charged phone, a foil bivvy and a whistle. Tell your guesthouse your route and expected return time every single day.",
+    "weather": "Convective storms build over both ranges from roughly 13:00 in July and August. On the Piatra Craiului ridge there is no shelter and no fast way down. Start at dawn, be off the crest by early afternoon, and treat a forecast of afternoon storms as a rest day rather than a gamble. Snow patches survive in north-facing gullies into early July.",
+    "bookingWindows": "Guesthouses 2–6 weeks. A guide for the Creasta Nordică 2–3 weeks. Cabana Omu bunks are not really bookable — arrive or don't.",
+    "money": "Romanian leu (RON), roughly 5 RON to €1. Cards work in Zărnești, Bran and Bușteni. **Every cabana above the treeline is cash only** — carry 300–500 RON in small notes for the week.",
+    "transportRules": "No car is needed if you use transfers, but one makes Plaiul Foii and Măgura far easier. Local minibuses (*maxi-taxi*) run Brașov–Zărnești and Brașov–Bran frequently. The Bușteni cable car queues badly after 09:30 in August.",
+    "permits": "No permit is needed to run in either national park, but **Parcul Național Piatra Craiului** and **Parcul Natural Bucegi** both restrict you to marked trails, ban wild camping outside designated areas, and ban fires. Bivouacking is tolerated only at named spots. **Bears:** Romania holds the largest brown bear population in the EU and the Zărnești–Bran corridor is among the most active areas in the country. Never run at dawn or dusk in the beech zone alone; make noise on blind corners; carry food sealed and never leave it outside a hut; if you meet a bear, **stop, do not run, back away slowly while facing it and talking**; a bear standing up is assessing you, not charging. Report any close encounter to Salvamont or 112 so it is logged. **Bear spray** is legal in Romania for personal defence — no permit, over-18s only — and sells for roughly **100–350 RON (€20–€70)** in outdoor and hunting shops in Brașov and online (TW1000 Bear Defender, Umarex, Sabre Frontiersman, Bear Stopper are the names on the shelf). The catch is that you cannot fly with it, in cabin *or* hold, so buy it on arrival and leave it behind; carry it on a hip belt where you can reach it in seconds, not buried in a running vest.",
+    "health": null,
+    "gettingThere": null,
+    "other": []
+  },
+  "proTips": [
+    "**Sleep at Cabana Curmătura the night before the ridge.** It removes 650 m of climbing and two hours from the front of the Creasta Nordică day, and it is the only way to be on the crest at sunrise.",
+    "**Set a turn-around time, not a turn-around summit.** 14:00 on the ridge, regardless of where you are. The chains in wet limestone are the single highest-consequence thing on this itinerary.",
+    "**Hire a local guide for the Creasta Nordică once.** One day with a Zărnești or Salvamont-affiliated guide teaches you the escape lines and the chain sequence, and makes every subsequent day safer. Roughly €90–€150 for a small group [VERIFY: current guide day rates].",
+    "**Take the cable car up and run down.** In the Bucegi the plateau is the good running and the ascent from Bușteni is a grind. Buying the lift buys you the best 14 km of the week.",
+    "**Carry more water than the profile suggests.** Both ranges are limestone: rain vanishes underground. Izvorul lui Ivan is a genuine spring but a detour, and the Bucegi plateau has nothing at all between the cabanas.",
+    "**Shoes with a rock plate, and take a second pair.** Piatra Craiului karst will cut a soft midsole in three days and the Valea Cerbului descent will find any weakness in your lacing.",
+    "**Learn three words:** *\"Ajutor\"* (help), *\"potecă\"* (trail) and *\"urs\"* (bear). Shepherds and their dogs are everywhere above the treeline — walk, don't run, past a flock, keep the shepherd between you and the dogs, and greet him loudly."
+  ],
+  "typeSpecific": {
+    "raw": {
+      "Run 1 — Prăpăstiile Zărneștiului to Cabana Curmătura": "13 km round trip, +650 m / −650 m. From the **Fântâna lui Botorog** spring at the gorge mouth, the blue-triangle trail threads the **Prăpăstii** — a limestone slot barely three metres wide in places — then climbs scree and beech to **Cabana Curmătura** (1,470 m). Technical grade **T2–T3**: runnable up, genuinely runnable down, loose gravel on the exit ramp.",
+      "Run 2 — Creasta Nordică, Curmătura to La Om (Vârful Baciului, 2,238 m)": "18–20 km out-and-back from Curmătura, +1,150 m. The main ridge, red stripe: **Vârful Turnu (1,923 m)**, Padinile Frumoase, Vârful Ascuțit, Șaua Grindului, then the long summit ridge to **La Om, 2,238 m**, the range's high point. Grade **T4 with sections of secured scrambling**. This is not a running route end to end — expect 40% moving on hands, 30% careful walking, 30% actual running.",
+      "Run 3 — Padina lui Călineț from Plaiul Foii": "16 km, +1,250 m. The western approach: a wild limestone valley of scree fans and pine, climbing to **Șaua Călineț** and the ridge. Grade **T4**, with a long unrunnable grohotiș (scree) middle section — a strong hiker's route done at running pace, and the quietest day of the week.",
+      "Run 4 — Măgura and Peștera meadow circuit": "17 km, +700 m. Hay meadows, haystacks and karst dolines between **Măgura**, **Peștera** and **Șirnea** villages, with Piatra Craiului's whole east wall as backdrop. Grade **T1–T2** and the most purely enjoyable running of the trip.",
+      "Run 5 — Bucegi plateau: Babele to Vârful Omu": "14 km round trip from the Babele cable-car top station, +550 m. **Babele (2,206 m)** and the **Sfinxul (2,216 m)** wind-carved rock, then the yellow-stripe plateau traverse north over Curmătura Văii Cerbului to **Cabana Omu** and **Vârful Omu, 2,505 m**. Grade **T2** on the plateau, **T3** on the final rocky pull.",
+      "Run 6 — Omu down Valea Cerbului to Bușteni": "12 km, −1,600 m in one continuous drop from 2,505 m to Bușteni at ~880 m. Steep alpine grass, then boulder-strewn stream bed, then forest track. Grade **T3–T4** at the top, **T2** below the treeline. [VERIFY: current waymark colour on the Valea Cerbului trail — repainted in recent seasons.]",
+      "Run 7 — Jepii Mici and Poiana Izvoarelor": "15 km, +900 m / −900 m. Blue-stripe from Bușteni up the **Jepii Mici** rib toward Cabana Piatra Arsă, or the gentler forest circuit via **Cabana Gura Diham** and **Cabana Poiana Izvoarelor (1,455 m)**. Grade **T2–T3**.",
+      "Terrain": "Piatra Craiului is **karst**: fluted limestone, sharp edges that shred a soft-lugged shoe, and mobile scree. Wear a stiffer shoe with a rock plate and expect to replace it. The Bucegi plateau is **alpine grass and gravel** — fast, high, exposed. Below the treeline both ranges are **root and mud** beech-and-spruce.",
+      "The chains (lanțuri)": "The Creasta Nordică carries fixed chains and cables on several short exposed steps between Vârful Ascuțit and the summit ridge. They are old, sometimes loose, and lethal when wet or iced. Treat any of the following as a turn-around: rain on the limestone, cloud on the ridge, wind above ~50 km/h, or a thunderstorm within an hour. There is **no bail-out from the middle of the ridge** — the escape points are Curmătura at the north end and Șaua Funduri / the Grind descent, and both are long.",
+      "Water points by name": "**Fântâna lui Botorog** at the mouth of the Prăpăstii (reliable, the last certain water before the ridge). **Izvorul lui Ivan**, on the eastern flank below the main ridge, is the classic ridge-runner's refill and a signposted detour off the crest — allow 20–30 minutes there and back and do not count on it in a dry August. **Cabana Curmătura** and **Cabana Plaiul Foii** sell water and refill bottles. In the Bucegi, **Cabana Omu** and **Cabana Piatra Arsă** are the only reliable sources on the plateau; the plateau itself is dry karst and you must carry 2–2.5 L for the Babele–Omu day.",
+      "Bail-outs and refuges": "**Refugiul Grind (~1,620 m)** on the west side is an unstaffed emergency shelter, not accommodation. **Cabana Curmătura**, **Cabana Plaiul Foii (849 m)**, **Cabana Diana** at the Zărnești gorge entrance, **Cabana Omu (2,505 m)**, **Cabana Babele**, **Cabana Piatra Arsă**, **Cabana Gura Diham** and **Cabana Poiana Izvoarelor** are all staffed in season and all take walk-ins for soup and a bunk if you get caught out [VERIFY: current cabana bed rates and season dates]."
+    },
+    "surface": "Piatra Craiului is **karst**: fluted limestone, sharp edges that shred a soft-lugged shoe, and mobile scree. Wear a stiffer shoe with a rock plate and expect to replace it. The Bucegi plateau is **alpine grass and gravel** — fast, high, exposed. Below the treeline both ranges are **root and mud** beech-and-spruce.",
+    "distanceKm": null,
+    "elevationM": null,
+    "verticalM": null,
+    "technicalRating": null,
+    "transitPass": null,
+    "hutBooking": null,
+    "liftNetwork": null,
+    "snowReliability": null,
+    "windConditions": null,
+    "gpxReady": null,
+    "bookingTimeline": null,
+    "audience": null
+  },
+  "packingNotes": [],
+  "whatCouldGoWrong": [],
+  "sources": {
+    "verified": null,
+    "confidenceNotes": "- Verified: Piatra Craiului's high point **La Om (Vârful Baciului) at 2,238 m** and Vârful Turnu at 1,923 m; **Vârful Omu at 2,505 m** as the Bucegi high point, with Cabana Omu the highest staffed hut in Romania; Babele at ~2,206 m and the Sfinx at ~2,216 m; Cabana Curmătura at 1,470 m and Cabana Plaiul Foii at 849 m; Refugiul Grind as an unstaffed emergency shelter; the Crucea Eroilor on Caraiman, 1928, ~28 m tall at ~2,291 m; the Creasta Nordică carrying fixed chains (*lanțuri*) on exposed sections; Salvamont as Romania's mountain rescue service with national dispatch on **0725 826 668** and 112; Romania holding the EU's largest brown bear population, with the Libearty sanctuary at Zărnești. - `[VERIFY]` items in this file: 8 (see inline markers above) - Last reviewed: 2026-09-02"
+  },
+  "verifyFlags": [
+    "current waymark colour on the Valea Cerbului trail — repainted in recent seasons.",
+    "current cabana bed rates and season dates",
+    "current park entry fee and visitor-centre hours",
+    "current hours and ticket price",
+    "2026 Telecabina Bușteni tariff, hours and any maintenance closure",
+    "current rates",
+    "current rate and whether reservations are taken",
+    "current guide day rates"
+  ],
+  "verifyFlagCount": 8,
+  "volatilePricing": true,
+  "wordCount": 3022,
+  "dataVintage": 2026,
+  "provenance": {
+    "batch": "eastern-southeastern",
+    "sourceFile": "cartaeasterneuropetrips/trips/romania-piatra-craiului-bucegi-trail-running.md",
+    "sourceFormat": "md+nested-yaml-frontmatter (one file per trip)",
+    "sourceId": "romania-piatra-craiului-bucegi-trail-running",
+    "ingestedAt": "2026-09-02",
+    "synthesized": false
+  }
+}

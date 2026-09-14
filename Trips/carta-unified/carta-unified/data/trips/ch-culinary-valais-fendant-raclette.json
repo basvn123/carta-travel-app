@@ -1,0 +1,297 @@
+{
+  "id": "ch-culinary-valais-fendant-raclette",
+  "sourceId": "ch-culinary-valais-fendant-raclette",
+  "slug": "ch-culinary-valais-fendant-raclette",
+  "title": "Fendant, Raclette and the Valais Vineyard Trail",
+  "country": "Switzerland",
+  "countryCode": "CH",
+  "countries": [
+    {
+      "name": "Switzerland",
+      "code": "CH"
+    }
+  ],
+  "isMultiCountry": false,
+  "region": "Western & Central Europe",
+  "regionKey": "western-central",
+  "subRegion": "Valais, between Sion and Sierre",
+  "tripType": "Culinary & Wine Tours",
+  "tripTypeId": 7,
+  "tripTypeSlug": "culinary",
+  "durationDays": 7,
+  "bestPeriod": {
+    "months": [
+      5,
+      6,
+      9,
+      10
+    ],
+    "monthNames": [
+      "May",
+      "June",
+      "September",
+      "October"
+    ],
+    "window": null,
+    "note": "September and October bring the vendanges and full raclette season; May and June give clear bisses paths and the same growers pouring the previous vintage.",
+    "avoid": null,
+    "raw": null
+  },
+  "budgetTier": "€€€",
+  "budgetTierRange": [
+    3,
+    3
+  ],
+  "budgetTierRaw": "€€€",
+  "budget": {
+    "currency": "EUR",
+    "totalEur": {
+      "low": 1500,
+      "high": 2050
+    },
+    "totalNote": null,
+    "breakdown": {
+      "accommodation": {
+        "lowEur": 650,
+        "highEur": 850,
+        "note": null
+      },
+      "food": {
+        "lowEur": 380,
+        "highEur": 500,
+        "note": null
+      },
+      "transport": {
+        "lowEur": 180,
+        "highEur": 260,
+        "note": null
+      },
+      "activities": {
+        "lowEur": 290,
+        "highEur": 440,
+        "note": null
+      }
+    },
+    "perDayEur": {
+      "low": 214,
+      "high": 293
+    }
+  },
+  "profile": {
+    "difficulty": 1,
+    "difficultyLabel": "Easy",
+    "difficultyNote": null,
+    "fitnessLevel": "Easy",
+    "crowdLevel": "Low",
+    "familyFriendly": false,
+    "carRequired": false
+  },
+  "basecamps": [
+    "Sion and Sierre"
+  ],
+  "gatewayAirport": "Geneva (GVA)",
+  "gatewayAirportCode": "GVA",
+  "languages": [
+    "French",
+    "German"
+  ],
+  "currency": "CHF",
+  "emergencyNumber": "112",
+  "coordinates": {
+    "lat": 46.2274,
+    "lon": 7.3556,
+    "precision": "city",
+    "matchedPlace": "Sitten",
+    "source": "geonames (geonamescache, cities > 15k)"
+  },
+  "tags": [
+    "fendant",
+    "raclette-aop",
+    "viande-sechee",
+    "chemin-du-vignoble",
+    "bisses"
+  ],
+  "summary": "A week between Sion and Sierre on Switzerland's driest, sunniest wine slope, tasting Fendant and native reds and following the historic irrigation bisses.",
+  "summaryGenerated": false,
+  "hook": "The Rhône valley between Sion and Sierre is Switzerland's largest and driest wine region, kept alive for centuries by the bisses — hand-dug channels that carry glacier meltwater sideways across the hillside to vines that would otherwise bake. This week follows the Chemin du Vignoble along that same slope, tasting Fendant, Cornalin and Petite Arvine against Raclette du Valais AOP and air-dried beef, from a cooperative the size of a small factory to a biodynamic domaine that answers one email a week.",
+  "snapshot": {
+    "Country": "Switzerland",
+    "Base(s)": "Sion (4 nights) · Sierre (3 nights)",
+    "Trip Type": "Culinary & Wine Tours",
+    "Duration": "7 days / 7 nights",
+    "Best Period": "May, June, September, October",
+    "Budget Tier": "€€€",
+    "Total Distance / Terrain": "Approx. 45 km on the Chemin du Vignoble and bisses paths, gently graded with some steeper vineyard sections",
+    "Getting There": "Fly to Geneva (GVA), direct SBB train to Sion, approx. 2h10",
+    "Who It Suits": "Native-grape hunters, raclette purists, anyone happy to walk an irrigation channel for an hour to earn a tasting"
+  },
+  "itinerary": [
+    {
+      "day": 1,
+      "title": "Sion by rail",
+      "morning": "Land at Geneva and take the direct SBB train along the Rhône valley to Sion, about 2h10. Note the budget is presented in euro-equivalent figures; Switzerland trades in Swiss francs (CHF), currently trading close to parity with the euro.",
+      "afternoon": "Walk up to the twin hills of Valère and Tourbillon above the old town, with the vineyards of the Sion amphitheatre spread below — Fendant, the local name for Chasselas, is the valley's signature white and the one to start with.",
+      "evening": "Dinner in the old town: Raclette du Valais AOP, the protected raw-milk cheese melted traditionally by open flame and scraped onto boiled potatoes and pickles, with a glass of Fendant on the side rather than water, the traditional Valaisan pairing.",
+      "dayStats": "Cellars visited: 0. Km travelled: 4 km on foot. Approx. tasting spend: €0.",
+      "sleep": null
+    },
+    {
+      "day": 2,
+      "title": "Provins and the Bisse de Clavau",
+      "morning": "Provins, the largest wine producer in Switzerland and a cooperative owned by its own growers, runs a walk-in cellar and shop in Sion — a good baseline tasting across Fendant, Dôle (the valley's Pinot Noir–Gamay blend) and Johannisberg, the local name for Sylvaner.",
+      "afternoon": "Walk the Bisse de Clavau, a historic irrigation channel above Sion still carrying meltwater along the hillside; the path traces the channel above the vines toward Nax, with views back down over the amphitheatre.",
+      "evening": "Viande séchée du Valais IGP, air-dried beef sliced paper-thin, as a starter, followed by a Dôle from the afternoon's tasting.",
+      "dayStats": "Cellars visited: 1. Km travelled: 10 km. Approx. tasting spend: €30–40.",
+      "sleep": null
+    },
+    {
+      "day": 3,
+      "title": "Vétroz and the native whites",
+      "morning": "Train or bus to Vétroz, a short hop, for Amigne, a rare native white grown almost nowhere else, and Petite Arvine, the valley's most distinctive white variety — floral, saline, unmistakable once tasted.",
+      "afternoon": "Domaine Simon Maye et Fils in nearby St-Pierre-de-Clages pours by appointment; email or call ahead a week or two out. St-Pierre-de-Clages itself is worth the stop regardless, a Romanesque village built around its priory church.",
+      "evening": "Back to Sion. Cholera pie — a savoury pastry of potato, cheese, leek and apple, born in the Val de Bagnes during a 19th-century epidemic when villagers avoided market travel — makes an appearance on several old-town menus this time of year.",
+      "dayStats": "Cellars visited: 1. Km travelled: 12 km plus transfers. Approx. tasting spend: €25–35.",
+      "sleep": null
+    },
+    {
+      "day": 4,
+      "title": "Chamoson, Fully and Domaine Chappaz",
+      "morning": "Train to Fully, then a short taxi or walk up into the vineyards for Domaine Chappaz, Marie-Thérèse Chappaz's internationally regarded biodynamic estate. It does not run a public tasting room; visits are by appointment only, arranged by email several weeks ahead, and slots in September are the first to go.",
+      "afternoon": "Without a confirmed slot, Chamoson's cooperative Cave La Romaine, walk-in and no booking needed, gives a reliable alternative tasting from the same stretch of hillside, including Cornalin, the valley's oldest native red.",
+      "evening": "Return to Sion for a Cornalin-focused dinner.",
+      "dayStats": "Cellars visited: 0–1 (reservation-dependent). Km travelled: 15 km plus transfers. Approx. tasting spend: €25–40.",
+      "sleep": null
+    },
+    {
+      "day": 5,
+      "title": "Move to Sierre, and the Röstigraben cellar door",
+      "morning": "Short train to Sierre, about 10 minutes, and check in.",
+      "afternoon": "Walk the Sentier Viticole between Sierre and Salgesch — the point where the wine road crosses Switzerland's French–German language line — stopping at Château de Villa in Sierre, whose cellar-restaurant pours a huge by-the-glass list of small Valaisan producers, a good way to taste widely without booking each estate separately.",
+      "evening": "Dinner in Salgesch, where German-language menus reappear; a Humagne Rouge or Humagne Blanche, two more Valais natives, with the meal.",
+      "dayStats": "Cellars visited: 1–2. Km travelled: 8 km. Approx. tasting spend: €30–40.",
+      "sleep": null
+    },
+    {
+      "day": 6,
+      "title": "Up the Val d'Anniviers for raclette and Vin des Glaciers",
+      "morning": "CarPostal postbus from Sierre up the Val d'Anniviers to Grimentz, a steep switchback climb of about 45 minutes past larch forest to the traditional wooden mazots, granaries raised on stone \"mushroom\" stilts to keep rodents out.",
+      "afternoon": "Grimentz is one of the last villages to keep Vin des Glaciers, a Rèze-based white aged for decades in a shared communal barrel, solera-style, topped up rather than emptied — ask any local cellar or the village bourgeoisie office whether a taste is available that day.",
+      "evening": "A traditional raclette evening in a Val d'Anniviers cave, the cheese scraped from a half-wheel over an open flame course by course, before the postbus back down to Sierre.",
+      "dayStats": "Cellars visited: 1. Km travelled: 30 km round trip by bus, 4 km on foot. Approx. tasting spend: €30–45.",
+      "sleep": null
+    },
+    {
+      "day": 7,
+      "title": "Salgesch's wine museum and departure",
+      "morning": "The Musée de la Vigne et du Vin, split between the Zumofenhaus in Salgesch and the Château de Villa in Sierre, gives the valley's full growing history — worth a last visit before travelling.",
+      "afternoon": "Train back to Sion, then on to Geneva for the flight, about 2h10.",
+      "evening": "Departure from Geneva (GVA).",
+      "dayStats": "Cellars visited: 0. Km travelled: 6 km plus rail transfer. Approx. tasting spend: €10–15.",
+      "sleep": null
+    }
+  ],
+  "accommodationStrategy": [
+    {
+      "rank": 1,
+      "name": "Hôtel du Rhône",
+      "style": "Long-established hotel",
+      "location": "Sion",
+      "description": "Centrally placed a short walk from the old town and the station, with easy access to the Provins cellar and the Bisse de Clavau trailhead; useful for the week's four Sion-based nights without needing a car.",
+      "booking": "6–8 weeks ahead.",
+      "priceNote": "CHF 160–220 per night"
+    },
+    {
+      "rank": 2,
+      "name": "Hôtel Atlantic",
+      "style": "City hotel",
+      "location": "Sierre",
+      "description": "A steady, well-known Sierre address close to the station and the start of the Sentier Viticole toward Salgesch, and the practical base for the Val d'Anniviers postbus departure.",
+      "booking": "6 weeks ahead, earlier around the vendanges in late September.",
+      "priceNote": "CHF 150–210 per night"
+    }
+  ],
+  "logistics": {
+    "connectivity": null,
+    "emergency": "112 pan-European; Switzerland specifics: 144 ambulance, 117 police, 1414 Rega air rescue.",
+    "weather": "The Valais is Switzerland's driest canton, but afternoon thunderstorms build over the side valleys in summer; check conditions before a bisse walk with exposed stretches.",
+    "bookingWindows": "Domaine Chappaz and Domaine Simon Maye do not run walk-in tasting rooms; email several weeks ahead, or ask the Office des Vins du Valais or the local tourist office to help arrange a slot. Provins, Cave La Romaine and most village cooperatives are walk-in.",
+    "money": "Switzerland uses Swiss francs (CHF); cards are widely accepted, but small cellar doors and mountain villages sometimes prefer cash, and euro cash is often accepted at a poor rate — better to carry francs.",
+    "transportRules": null,
+    "permits": null,
+    "health": null,
+    "gettingThere": null,
+    "other": [
+      {
+        "label": "Trains and postbuses",
+        "text": "The Sion–Sierre stretch runs on the main SBB Rhône-valley line, every 15–30 minutes; CarPostal (postbus) covers the side valleys, including Val d'Anniviers, on a published timetable — check the last return departure before heading up."
+      },
+      {
+        "label": "Opening-hour traps",
+        "text": "Village cooperative cellars often close for a midday break and on Sundays; confirm hours before a special trip."
+      },
+      {
+        "label": "Drink-drive alternatives",
+        "text": "Rely on the SBB Sion–Sierre line and CarPostal postbuses rather than driving; both run late enough to make a Val d'Anniviers raclette evening workable without a car."
+      }
+    ]
+  },
+  "proTips": [
+    "Email Domaine Chappaz the moment your dates are fixed; September slots are usually gone by midsummer.",
+    "Ask any cooperative which Bisse feeds its vineyard — Provins and the smaller Sion-area growers can usually point to the exact channel, and it changes how the wine is explained.",
+    "Order raclette in a Val d'Anniviers cave rather than a Sion restaurant at least once; the wood-fire version, scraped course by course, is a different dish from the electric-grill version served lower down.",
+    "Compare Fendant from Sion against Fendant from Salgesch side by side — the same grape reads noticeably different across ten kilometres of soil change.",
+    "At Château de Villa, ask for a flight built around Cornalin and Humagne Rouge together; both are old Valais reds rarely poured elsewhere.",
+    "Buy Viande séchée directly from a village boucherie rather than a supermarket; ask how many weeks it air-dried."
+  ],
+  "typeSpecific": {
+    "raw": {
+      "Total Distance / Terrain": "Approx. 45 km on the Chemin du Vignoble and bisses paths, gently graded with some steeper vineyard sections",
+      "Who It Suits": "Native-grape hunters, raclette purists, anyone happy to walk an irrigation channel for an hour to earn a tasting"
+    },
+    "surface": "Approx. 45 km on the Chemin du Vignoble and bisses paths, gently graded with some steeper vineyard sections",
+    "distanceKm": 45,
+    "elevationM": null,
+    "verticalM": null,
+    "technicalRating": null,
+    "transitPass": null,
+    "hutBooking": null,
+    "liftNetwork": null,
+    "snowReliability": null,
+    "windConditions": null,
+    "gpxReady": null,
+    "bookingTimeline": null,
+    "audience": "Native-grape hunters, raclette purists, anyone happy to walk an irrigation channel for an hour to earn a tasting"
+  },
+  "packingNotes": [
+    "Comfortable walking shoes for the bisses paths, some of which run along narrow ledges with a rail rather than open ground.",
+    "A warm layer for the Val d'Anniviers evening, which cools quickly once the sun drops behind the ridge.",
+    "Sun protection; the Valais gets more annual sunshine than almost anywhere else in Switzerland.",
+    "A small amount of Swiss franc cash for cooperative cellars and mountain villages.",
+    "A light daypack for the Bisse de Clavau and Sentier Viticole walks.",
+    "A reusable water bottle; several bisses have safe refill points along the path."
+  ],
+  "whatCouldGoWrong": [
+    "**Domaine Chappaz can't fit you in.** Cave La Romaine in Chamoson and Provins in Sion both pour comparable native-grape flights without a booking.",
+    "**A thunderstorm closes a bisse path.** Retreat to Château de Villa's cellar-restaurant or the Sion old town museums for the afternoon.",
+    "**The last CarPostal down from Grimentz is missed.** A taxi from the village runs the same route in about 35 minutes; arrange it through the raclette cave before dinner rather than after.",
+    "**A cooperative cellar is closed for its midday break.** Time cellar visits for mid-afternoon rather than around noon.",
+    "**You want Vin des Glaciers and none is available that day.** It is poured irregularly from a communal barrel; ask the Grimentz tourist office which cellar is serving it that week rather than any single address."
+  ],
+  "sources": {
+    "verified": null,
+    "confidenceNotes": null
+  },
+  "verifyFlags": [],
+  "verifyFlagCount": 0,
+  "volatilePricing": false,
+  "wordCount": 1803,
+  "dataVintage": 2026,
+  "provenance": {
+    "batch": "western-central",
+    "sourceFile": "cartatripsv1/trips/ch-culinary-valais-fendant-raclette.md",
+    "sourceFormat": "md+yaml-frontmatter (one file per trip)",
+    "sourceId": "ch-culinary-valais-fendant-raclette",
+    "ingestedAt": "2026-09-02",
+    "synthesized": false
+  }
+}

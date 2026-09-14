@@ -1,0 +1,291 @@
+{
+  "id": "bg-winter-sports-bansko-pirin",
+  "sourceId": "bulgaria-bansko-pirin-skiing",
+  "slug": "bg-winter-sports-bansko-pirin",
+  "title": "Bansko: Seven Days Under Todorka, Gondola Queue Included",
+  "country": "Bulgaria",
+  "countryCode": "BG",
+  "countries": [
+    {
+      "name": "Bulgaria",
+      "code": "BG"
+    }
+  ],
+  "isMultiCountry": false,
+  "region": "Eastern & Southeastern Europe",
+  "regionKey": "eastern-southeastern",
+  "subRegion": "The Pirin, Blagoevgrad province — Bansko, Bunderishka Polyana and Dobrinishte",
+  "tripType": "Winter Sports & Skiing",
+  "tripTypeId": 8,
+  "tripTypeSlug": "winter-sports",
+  "durationDays": 7,
+  "bestPeriod": {
+    "months": [
+      1,
+      2,
+      3
+    ],
+    "monthNames": [
+      "January",
+      "February",
+      "March"
+    ],
+    "window": "mid-January to mid-March — cold, settled snow on the north-facing upper mountain",
+    "note": null,
+    "avoid": "27 December–6 January (peak tariff, two-hour gondola queues) and after mid-April (lifts closed)",
+    "raw": null
+  },
+  "budgetTier": "€",
+  "budgetTierRange": [
+    1,
+    2
+  ],
+  "budgetTierRaw": "€–€€",
+  "budget": {
+    "currency": "EUR",
+    "totalEur": {
+      "low": 935,
+      "high": 1450
+    },
+    "totalNote": "€935–€1,450",
+    "breakdown": {
+      "accommodation": {
+        "lowEur": 280,
+        "highEur": 520,
+        "note": "€280–€520 (€40–€75/night; apartment or 4-star with shuttle)"
+      },
+      "food": {
+        "lowEur": 145,
+        "highEur": 230,
+        "note": "€145–€230 (€21–€33/day; mehana dinners run €12–€20 a head)"
+      },
+      "transport": {
+        "lowEur": 110,
+        "highEur": 180,
+        "note": "€110–€180 (Sofia airport transfer ~€25–€35 each way, plus road shuttles and one day trip)"
+      },
+      "activities": {
+        "lowEur": 400,
+        "highEur": 520,
+        "note": "€400–€520 (6-day lift pass €341, plus a guided touring day and equipment hire)"
+      }
+    },
+    "perDayEur": {
+      "low": 134,
+      "high": 207
+    }
+  },
+  "profile": {
+    "difficulty": 3,
+    "difficultyLabel": "Active",
+    "difficultyNote": "Moderate",
+    "fitnessLevel": "Moderate",
+    "crowdLevel": null,
+    "familyFriendly": null,
+    "carRequired": null
+  },
+  "basecamps": [
+    "Bansko",
+    "Dobrinishte"
+  ],
+  "gatewayAirport": "Sofia (SOF), 160 km north; road transfer 2 h 30–3 h via the E79 and Simitli. Bansko Express, the established airport shuttle, has published its **26 December 2026 – 22 March 2027** shared winter fares at **£25–£39 per person each way (roughly €29–€45)** depending on party size — cheapest at four or more, plus a £1 per person booking fee — and runs the shared service only for flights landing or leaving Sofia between 10:00 and 23:55. The public Sofia–Bansko coach is about **€17** and takes 2 h 45–3 h. Plovdiv (PDV) is 190 km east. The narrow-gauge Septemvri–Dobrinishte railway reaches Bansko slowly and beautifully, but not usefully with ski bags.",
+  "gatewayAirportCode": "SOF",
+  "languages": [
+    "Bulgarian"
+  ],
+  "currency": "Euro (EUR) — sole legal tender since 1 February 2026; mandatory dual BGN display ended 8 August 2026",
+  "emergencyNumber": "112",
+  "coordinates": {
+    "lat": 42.6975,
+    "lon": 23.3241,
+    "precision": "gateway",
+    "matchedPlace": "Sofia",
+    "source": "geonames (geonamescache, cities > 15k)"
+  },
+  "tags": [
+    "skiing",
+    "ski-touring",
+    "freeride",
+    "national-park",
+    "gondola",
+    "mehana",
+    "budget-alps-alternative"
+  ],
+  "summary": "Bansko is the cheapest serious ski week in Europe and it makes you earn it. The whole mountain hangs off one gondola out of a town at 990 m, and at 08:30 in February that gondola has a queue you can see from three…",
+  "summaryGenerated": false,
+  "hook": "Bansko is the cheapest serious ski week in Europe and it makes you earn it. The whole mountain hangs off one gondola out of a town at 990 m, and at 08:30 in February that gondola has a queue you can see from three streets away. Beat it and you get north-facing snow, a 16 km run home, and a stone-built old town where dinner with wine costs less than a lift ticket in the Alps. Skiers who plan mornings win here.",
+  "snapshot": {
+    "Country": "Bulgaria",
+    "Trip type": "Winter Sports & Skiing",
+    "Duration": "7 days",
+    "Best period": "Mid-January to mid-March",
+    "Budget tier": "€–€€",
+    "Difficulty": "Moderate",
+    "Start / End": "Sofia → Bansko → Sofia (single base, no relocation)",
+    "Getting there": "Sofia (SOF), 160 km north; road transfer 2 h 30–3 h via the E79 and Simitli. Bansko Express, the established airport shuttle, has published its **26 December 2026 – 22 March 2027** shared winter fares at **£25–£39 per person each way (roughly €29–€45)** depending on party size — cheapest at four or more, plus a £1 per person booking fee — and runs the shared service only for flights landing or leaving Sofia between 10:00 and 23:55. The public Sofia–Bansko coach is about **€17** and takes 2 h 45–3 h. Plovdiv (PDV) is 190 km east. The narrow-gauge Septemvri–Dobrinishte railway reaches Bansko slowly and beautifully, but not usefully with ski bags."
+  },
+  "itinerary": [
+    {
+      "day": 1,
+      "title": "Arrival, Fitting, and the Old Town (walking only)",
+      "morning": "Sofia transfer down the E79 through Blagoevgrad and Simitli, then the climb east into the Pirin. Two and a half to three hours.",
+      "afternoon": "Hire skis in town rather than at the gondola — the shops on Pirin Street and around Nikola Vaptsarov Square fit faster and store gear overnight for a few euro.",
+      "evening": "Walk the old town: the 1835 **Sveta Troitsa** church and its heavy stone tower, **Velyanova Kashta** with its painted interiors, the Vaptsarov house-museum. Dinner at **Dedo Pene Inn** — bean soup, kavarma, sipped rakia.",
+      "dayStats": null,
+      "sleep": null
+    },
+    {
+      "day": 2,
+      "title": "First Turns and the Queue Lesson (gondola, 990 → 2,560 m)",
+      "morning": "Be in the gondola line by **08:00**, not 08:30. In peak season the difference between those two times is 40 minutes to an hour.",
+      "afternoon": "Ski the **Plato** area to find your legs, then take the Bunderitsa chairs to the top station under Todorka for the first big view over the Pirin ridge.",
+      "evening": "Ski the **Alberto Tomba** road back to town at around 15:45 when it empties, then eat at **Baryakova Mehana** — the courtyard grill in a 19th-century house off Pirin Street [VERIFY: current mehana opening hours].",
+      "dayStats": null,
+      "sleep": null
+    },
+    {
+      "day": 3,
+      "title": "The Road Alternative and Balkaniada (2,560 → 1,635 m)",
+      "morning": "Skip the gondola entirely: take a **jeep-taxi or minibus up the 12 km mountain road** to Shiligarnika or Bunderishka Polyana, roughly €10–€15 per person, 25–35 minutes, and be on snow before the gondola's first cabins arrive [VERIFY: current road shuttle fares]. In heavy snowfall the road needs chains and can close.",
+      "afternoon": "Ski the **Balkaniada** race piste repeatedly while the crowds are still queuing below, then the Todorka side for the steeper pitches.",
+      "evening": "**Come Prima** on Pirin Street for pizza and pasta when you have had enough grilled meat; it is the town's most consistently busy non-Bulgarian table.",
+      "dayStats": null,
+      "sleep": null
+    },
+    {
+      "day": 4,
+      "title": "Ski Touring into the Pirin (900–1,100 m ascent on skins)",
+      "morning": "Meet your guide at Bunderishka Polyana and skin south into the **Bunderitsa valley** toward the Vihren massif — dwarf pine, then open bowls, then a summit or col depending on the avalanche bulletin.",
+      "afternoon": "Transceiver check, then descend. National park terrain: no infrastructure, no patrol, long carries if it goes wrong.",
+      "evening": "A quiet night. **Victoria** for a sit-down dinner, then the sauna at your hotel; tomorrow is a long day.",
+      "dayStats": null,
+      "sleep": null
+    },
+    {
+      "day": 5,
+      "title": "Day Trip: Borovets or Dobrinishte",
+      "morning": "Two options, opposite characters. **Borovets** in the Rila, 130 km and about 2 h 15 by road, gives tree-lined pistes off the Yastrebets gondola and different snow entirely; the last published Borovets tariff is 2025/26, at **100 BGN (about €51)** for an adult day pass and 520 BGN (about €266) for six non-consecutive days, with 2026/27 prices not yet out. **Dobrinishte**, 6 km down the valley, is the cheap local alternative with almost no queue.",
+      "afternoon": "Whichever you chose, get back for the last hour of light. Dobrinishte makes this easy; Borovets does not.",
+      "evening": "Thermal soak at the Dobrinishte mineral baths if you went short, then dinner back in Bansko.",
+      "dayStats": "130 km or 6 km",
+      "sleep": null
+    },
+    {
+      "day": 6,
+      "title": "The Full Vertical Day (1,570 m of lift-served descent)",
+      "morning": "Gondola at 08:00, straight to the top station, and lap the upper mountain while the mid-station crowds churn. Coffee at the Bunderishka Polyana huts, not at the base.",
+      "afternoon": "Work the **Plato → Shiligarnika → Balkaniada** circuit, then take the long way home: top station to town on the **Alberto Tomba** in one run, 16 km, ideally around 15:30.",
+      "evening": "Après on **Pirin Street** — this is the night for it. The mehanas run live folk music from about 20:00 and the tables fill from 19:30.",
+      "dayStats": null,
+      "sleep": null
+    },
+    {
+      "day": 7,
+      "title": "Half Day and Out (gondola return €27)",
+      "morning": "A last three hours on the mountain, or the **gondola return ticket at €27 (52.81 BGN)** if you are done skiing but want the ridge view one more time.",
+      "afternoon": "Lunch, gear return, then the market street for lyutenitsa, banitsa for the road and a bottle of Melnik red from the Struma valley an hour west.",
+      "evening": "Transfer to Sofia. Allow three hours plus a buffer; the E79 through the Kresna gorge slows badly in bad weather.",
+      "dayStats": null,
+      "sleep": null
+    }
+  ],
+  "accommodationStrategy": [
+    {
+      "rank": 1,
+      "name": "Kempinski Hotel Grand Arena",
+      "style": "4/5-star, gondola-adjacent",
+      "location": "Pirin Street, Bansko",
+      "description": "effectively at the gondola station, which on this mountain is the most valuable thing money buys. Ski storage, boot dryers, spa, and you can watch the queue from the window before joining it.",
+      "booking": "8–12 weeks ahead for February; longer for the New Year fortnight.",
+      "priceNote": null
+    },
+    {
+      "rank": 2,
+      "name": "Hotel Perun Lodge",
+      "style": "4-star with shuttle",
+      "location": "central Bansko",
+      "description": "10 minutes' walk from the gondola, a reliable morning ski-bus, and a boot room that actually dries boots. Better value than the gondola-side hotels for a week.",
+      "booking": "6–8 weeks ahead; check whether the shuttle runs to the road drop-off as well as the gondola [VERIFY: current hotel shuttle arrangements].",
+      "priceNote": null
+    },
+    {
+      "rank": 3,
+      "name": "Self-catering apartment in the Grand Manastira or Terra Complex quarter",
+      "style": "apartment",
+      "location": "Bansko",
+      "description": "a kitchen, a washing machine and a supermarket 200 m away change the economics of a family week. Take one with ground-floor ski storage.",
+      "booking": "4–8 weeks ahead; confirm heating is included in the rate, not metered.",
+      "priceNote": null
+    }
+  ],
+  "logistics": {
+    "connectivity": "EU roaming applies. 4G/5G is good in town and along the gondola line, patchy in the Bunderitsa valley beyond the ski area — do not rely on a phone for touring navigation.",
+    "emergency": "112, which routes to mountain rescue (PSS). Carry transceiver, shovel and probe for anything off-piste, and note that the town clinic handles fractures but serious cases go to Blagoevgrad or Sofia. Check that your travel insurance covers off-piste skiing *with a guide* — many policies do not.",
+    "weather": "Mediterranean-fed storms arrive from the southwest; 40–60 cm in 24 hours happens, and closes the mountain road before it closes the gondola. Wind holds on the upper chairs are common, and Plato keeps running when the top station does not.",
+    "bookingWindows": "hotels 6–12 weeks for February half-term; ski hire on arrival is fine; guided touring 2–3 weeks; lift passes are bought on the spot, with no meaningful online discount [VERIFY: current online pass purchase options].",
+    "money": "Bulgaria has adopted the euro, and lift prices are published in EUR alongside BGN at the fixed rate of 1.95583 BGN to €1. Cards are accepted at the lift office, hotels and most mehanas; carry some cash for jeep-taxis and small shops. Refuse dynamic currency conversion at terminals.",
+    "transportRules": "winter tyres are compulsory on Bulgarian roads from **15 November to 1 March**, and the mountain road demands them plus chains after snowfall. A vignette is required on national roads — hire cars normally include it, transfers always do. Drink-driving limits are strictly enforced.",
+    "permits": "no permit for skiing, but the zone abuts **Pirin National Park**, where camping, fires and off-trail vehicle access are restricted. Uphill skinning is tolerated at the piste edges — ask patrol, and never skin a groomed race slope in opening hours.",
+    "health": null,
+    "gettingThere": null,
+    "other": []
+  },
+  "proTips": [
+    "Use the **mountain road** at least twice. A €10–€15 jeep seat up to Shiligarnika buys back an hour of queue every time, and on a powder morning it is the difference between first tracks and third.",
+    "Ski down to the gondola mid-station at the end of the day rather than riding down. The 16 km **Alberto Tomba** run is nearly empty after 15:30 and it is the resort's best single piece of skiing.",
+    "Buy the **6-day pass, not six 1-day passes**: €341 against €354 at peak, and you skip the ticket window every morning.",
+    "Eat where the queue is Bulgarian. **Dedo Pene** and **Baryakova** are the old-town benchmarks; a full dinner with wine lands around €15–€20 a head, less than a mountain-restaurant lunch in the Alps.",
+    "If a storm shuts the top station, do not write the day off — head to **Dobrinishte**, 6 km away, which often keeps running when Bansko's upper lifts are wind-held.",
+    "Learn *\"Едно кафе, моля\"* (one coffee, please) and note the head-shake reversal: a nod can mean no, a shake can mean yes. It matters when you are asking whether a lift is open.",
+    "Take an afternoon off for the old town. Bansko is a working Bulgarian town of 18th- and 19th-century stone houses, not a purpose-built resort, and the museums are open when the queue is worst."
+  ],
+  "typeSpecific": {
+    "raw": {
+      "Lift pass pricing (2025/26 tariff, published in EUR with BGN)": "Season ran **1 December 2025 – 12 April 2026**. **Peak, 27 December – 31 March:** 1-day adult **€59 (115.39 BGN)**, child 7–11.99 **€30 (58.67 BGN)**; 6-day adult **€341 (666.94 BGN)**, child **€164 (320.76 BGN)**. **Spring, 1–12 April:** 1-day adult **€45 (88.01 BGN)**, child €20; 6-day adult **€259**, child €110. A **gondola return ticket is €27 (52.81 BGN)**, unchanged across the season — the pedestrian/non-skier option. Treat all of the above as 2025/26 rates: **as of early September 2026 Ulen has not published a 2026/27 tariff** — banskoski.com still shows only the 2025/26 table and the last early-bird season-pass promotion it ran was the December 2025 one — so budget on the figures above plus a single-digit percentage and re-check from about mid-November.",
+      "Lift network and interconnects": "Everything starts with the **Bansko gondola** from the edge of town (990 m) to **Bunderishka Polyana** (1,635 m), roughly 25 minutes. Above it the mountain splits into two linked bowls: the **Shiligarnika** side (chairlifts to the Plato area, around 1,700–2,000 m) and the **Bunderitsa** side climbing to the top station at **2,560 m** beneath **Todorka** peak (2,746 m). The **Balkaniada** race piste under Shiligarnika is the FIS slope; **Plato** is the wide intermediate playground; the **Alberto Tomba** run is the ski road home, about 16 km from the upper mountain to the gondola base — the longest continuous descent in the country and a genuine reason to ski until the light goes. The old **Chalin Valog** sector on the lower slopes is worth knowing only as a bad-weather fallback [VERIFY: current Chalin Valog lift operation].",
+      "Snow reliability": "The 990 m base is too low to hold snow — hence the gondola, and hence the heavy snowmaking on the lower ski road. Above 1,600 m the bowls are predominantly **north- and northeast-facing**, shaded through short days, with mid-winter temperatures at 2,000–2,500 m below freezing for weeks. Mid-January to mid-March is when the upper mountain skis like a proper alpine resort; April is corn on top, slush below.",
+      "Off-piste, touring and guiding": "Lift-served terrain is modest; the reason to bring skins is the **Pirin National Park**, a UNESCO site whose boundary sits immediately beyond the pistes. Objectives from Bunderishka Polyana run toward **Vihren** (2,914 m), the Bunderitsa valley huts and the Todorka ridgelines. Take a guide: convex, wind-loaded, lightly trafficked terrain with long rescue times. Bulgarian operators running Pirin ski touring and freeride include **Traventuria** and **Odysseia-In** out of Sofia, plus Bansko-based guides working through the ski schools [VERIFY: current Bansko-based guiding operators and day rates]. Mountain rescue is the Bulgarian Red Cross **Planinska Spasitelna Sluzhba (PSS)**; call 112 and ask for mountain rescue [VERIFY: current PSS direct number].",
+      "The constraint nobody advertises": "Bansko's ski zone is a concession bounded by the national park, so it cannot build its way out of the queue. Lift capacity has grown far more slowly than bed capacity, and that mismatch — not snow, not terrain — defines a week here."
+    },
+    "surface": null,
+    "distanceKm": null,
+    "elevationM": null,
+    "verticalM": null,
+    "technicalRating": null,
+    "transitPass": null,
+    "hutBooking": null,
+    "liftNetwork": "Everything starts with the **Bansko gondola** from the edge of town (990 m) to **Bunderishka Polyana** (1,635 m), roughly 25 minutes. Above it the mountain splits into two linked bowls: the **Shiligarnika** side (chairlifts to the Plato area, around 1,700–2,000 m) and the **Bunderitsa** side climbing to the top station at **2,560 m** beneath **Todorka** peak (2,746 m). The **Balkaniada** race piste under Shiligarnika is the FIS slope; **Plato** is the wide intermediate playground; the **Alberto Tomba** run is the ski road home, about 16 km from the upper mountain to the gondola base — the longest continuous descent in the country and a genuine reason to ski until the light goes. The old **Chalin Valog** sector on the lower slopes is worth knowing only as a bad-weather fallback [VERIFY: current Chalin Valog lift operation].",
+    "snowReliability": "The 990 m base is too low to hold snow — hence the gondola, and hence the heavy snowmaking on the lower ski road. Above 1,600 m the bowls are predominantly **north- and northeast-facing**, shaded through short days, with mid-winter temperatures at 2,000–2,500 m below freezing for weeks. Mid-January to mid-March is when the upper mountain skis like a proper alpine resort; April is corn on top, slush below.",
+    "windConditions": null,
+    "gpxReady": null,
+    "bookingTimeline": null,
+    "audience": null
+  },
+  "packingNotes": [],
+  "whatCouldGoWrong": [],
+  "sources": {
+    "verified": null,
+    "confidenceNotes": "- Verified against banskoski.com/en/page/prices (2025/26): season dates 01.12.2025–12.04.2026; peak 27 Dec–31 Mar 1-day adult €59 (115.39 BGN) and child 7–11.99 €30 (58.67 BGN); 6-day adult €341 (666.94 BGN) and child €164 (320.76 BGN); spring 1–12 Apr 1-day €45 (88.01 BGN) / child €20 and 6-day €259 / child €110; gondola return €27 (52.81 BGN) all season. Euro adoption in effect with BGN shown at the fixed rate. Also verified: Bansko base altitude 990 m; the gondola to Bunderishka Polyana; Pirin National Park's UNESCO status and its boundary constraint on expansion; Vihren 2,914 m. - `[VERIFY]` items in this file: 7 (see inline markers above) - Last reviewed: 2026-09-02"
+  },
+  "verifyFlags": [
+    "current Chalin Valog lift operation",
+    "current Bansko-based guiding operators and day rates",
+    "current PSS direct number",
+    "current mehana opening hours",
+    "current road shuttle fares",
+    "current hotel shuttle arrangements",
+    "current online pass purchase options"
+  ],
+  "verifyFlagCount": 7,
+  "volatilePricing": true,
+  "wordCount": 2348,
+  "dataVintage": 2026,
+  "provenance": {
+    "batch": "eastern-southeastern",
+    "sourceFile": "cartaeasterneuropetrips/trips/bulgaria-bansko-pirin-skiing.md",
+    "sourceFormat": "md+nested-yaml-frontmatter (one file per trip)",
+    "sourceId": "bulgaria-bansko-pirin-skiing",
+    "ingestedAt": "2026-09-02",
+    "synthesized": false
+  }
+}

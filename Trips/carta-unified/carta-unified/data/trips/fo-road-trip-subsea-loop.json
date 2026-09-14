@@ -1,0 +1,295 @@
+{
+  "id": "fo-road-trip-subsea-loop",
+  "sourceId": "faroe-islands-subsea-loop",
+  "slug": "fo-road-trip-subsea-loop",
+  "title": "Faroe Islands Subsea Loop: Eighteen Islands, Six Tunnels",
+  "country": "Faroe Islands",
+  "countryCode": "FO",
+  "countries": [
+    {
+      "name": "Faroe Islands",
+      "code": "FO"
+    }
+  ],
+  "isMultiCountry": false,
+  "region": "Northern Europe & Baltics",
+  "regionKey": "northern-baltics",
+  "subRegion": "Streymoy, Eysturoy, Norðoyar, Sandoy, Vágar",
+  "tripType": "Road Trips & Scenic Drives",
+  "tripTypeId": 5,
+  "tripTypeSlug": "road-trip",
+  "durationDays": 7,
+  "bestPeriod": {
+    "months": [
+      5,
+      6,
+      7,
+      8,
+      9
+    ],
+    "monthNames": [
+      "May",
+      "June",
+      "July",
+      "August",
+      "September"
+    ],
+    "window": "May to September for open roads, ferries and puffins; late September for autumn light; winter driving is feasible but daylight is short and mountain roads close in gales",
+    "note": null,
+    "avoid": null,
+    "raw": "May to September for open roads, ferries and puffins; late September for autumn light; winter driving is feasible but daylight is short and mountain roads close in gales"
+  },
+  "budgetTier": "€€€",
+  "budgetTierRange": [
+    3,
+    3
+  ],
+  "budgetTierRaw": "€€€",
+  "budget": {
+    "currency": "EUR",
+    "totalEur": {
+      "low": 1800,
+      "high": 2600
+    },
+    "totalNote": "€1,800–2,600 per person",
+    "breakdown": {
+      "accommodation": {
+        "lowEur": 120,
+        "highEur": 200,
+        "note": "€120–200 per night, double; guesthouses €85–140"
+      },
+      "food": {
+        "lowEur": 55,
+        "highEur": 90,
+        "note": "€55–90 per day; heimablídni home dinners €70–110 pp"
+      },
+      "transport": {
+        "lowEur": 400,
+        "highEur": 600,
+        "note": "€400–600: flights, car hire €70–95 per day, tunnel tolls, inter-island ferries"
+      },
+      "activities": {
+        "lowEur": 100,
+        "highEur": 200,
+        "note": "€100–200: Vestmanna bird cliffs boat, Kalsoy ferry and lighthouse hike fee, museums"
+      }
+    },
+    "perDayEur": {
+      "low": 257,
+      "high": 371
+    }
+  },
+  "profile": {
+    "difficulty": null,
+    "difficultyLabel": null,
+    "difficultyNote": null,
+    "fitnessLevel": null,
+    "crowdLevel": null,
+    "familyFriendly": null,
+    "carRequired": null
+  },
+  "basecamps": [
+    "Tórshavn",
+    "Klaksvík",
+    "Gjógv",
+    "Sørvágur"
+  ],
+  "gatewayAirport": null,
+  "gatewayAirportCode": null,
+  "languages": [
+    "Faroese",
+    "Danish",
+    "English"
+  ],
+  "currency": "DKK / Faroese króna",
+  "emergencyNumber": "112",
+  "coordinates": {
+    "lat": 62.0,
+    "lon": -6.79,
+    "precision": "source",
+    "matchedPlace": "Tórshavn",
+    "source": "source record"
+  },
+  "tags": [],
+  "summary": "A seven-day road trips & scenic drive itinerary in Streymoy, Eysturoy, Norðoyar, Sandoy, Vágar, Faroe Islands.",
+  "summaryGenerated": true,
+  "hook": null,
+  "snapshot": {},
+  "itinerary": [
+    {
+      "day": 1,
+      "title": "Vágar: Gásadalur and the western edge",
+      "morning": "Land at Vágar, collect the car. Drive first to Bøur, a village of turf roofs facing the sea stacks of Tindhólmur.",
+      "afternoon": "Through the old single-lane tunnel — or the new one — to Gásadalur, a village of sixteen people that had no road access until 2004; the postman used to walk over the mountain three times a week. The Múlafossur waterfall drops straight off the cliff beside it into the Atlantic.",
+      "evening": "Sørvágur or Miðvágur for the night. Buy food; shops close early and are shut on Sundays.",
+      "dayStats": "45 km",
+      "sleep": null
+    },
+    {
+      "day": 2,
+      "title": "Streymoy: Saksun, Tjørnuvík and the old high road",
+      "morning": "Take the Oyggjarvegur, the old mountain road over Streymoy, rather than the tunnel — it climbs into cloud with the whole island beneath it.",
+      "afternoon": "Saksun: a turf-roofed church, a tidal lagoon that empties completely at low water, and a handful of farms in an amphitheatre of cliffs. Then across to Tjørnuvík on the north coast, facing the Risin og Kellingin sea stacks — the giant and the witch, petrified while trying to drag the Faroes to Iceland.",
+      "evening": "Drive to Tórshavn. Walk Tinganes, the peninsula of red turf-roofed government buildings where the Løgting has met since Viking times — arguably the oldest continuous parliamentary site in the world.",
+      "dayStats": "90 km",
+      "sleep": null
+    },
+    {
+      "day": 3,
+      "title": "Eysturoy: Gjógv, Funningur and the pass",
+      "morning": "Through the Eysturoy subsea tunnel, past the illuminated undersea roundabout with its light installation and jellyfish sculpture. North to Funningur, said to be the first Norse settlement in the islands.",
+      "afternoon": "The Eiðisskarð pass beneath Slættaratindur (882 m, the highest point), then Gjógv, built around a 200 m natural sea gorge that served as its harbour.",
+      "evening": "Stay in Gjógv. There is one guesthouse, no restaurant, and complete silence.",
+      "dayStats": "110 km",
+      "sleep": null
+    },
+    {
+      "day": 4,
+      "title": "Norðoyar: Klaksvík, Viðareiði and Kalsoy",
+      "morning": "The Norðoya tunnel to Klaksvík, the second town and the fishing capital, with the extraordinary Christianskirkjan — a modern church with a Viking longhouse form and a rowing boat hung from the ceiling.",
+      "afternoon": "Drive to Viðareiði, the northernmost settlement, under Enniberg — one of the highest sea cliffs in Europe at 754 m. Alternatively take the small ferry from Klaksvík to Kalsoy and drive its chain of single-lane tunnels to Trøllanes for the Kallur lighthouse walk, the most photographed ridge in the Faroes. Ferry capacity is tiny; queue early. `verify: true`",
+      "evening": "Klaksvík. The town brewery is a national institution.",
+      "dayStats": "120 km + ferry",
+      "sleep": null
+    },
+    {
+      "day": 5,
+      "title": "Vestmanna bird cliffs and Sandoy",
+      "morning": "The Vestmanna sea-cliff boat trip: two hours through sea caves and under 600 m cliffs stacked with guillemots, fulmars and puffins. It cancels in swell, so treat it as first-choice-if-calm.",
+      "afternoon": "Through the new Sandoy tunnel to Sandoy — sand dunes, the village of Skopun, and Húsavík with its medieval ruins. Sandoy is where Faroese people go when they want to be somewhere quiet, which tells you something.",
+      "evening": "Back to Tórshavn.",
+      "dayStats": "100 km + boat",
+      "sleep": null
+    },
+    {
+      "day": 6,
+      "title": "Tórshavn, Kirkjubøur and a home dinner",
+      "morning": "Kirkjubøur, the medieval episcopal seat: the roofless Gothic Magnus Cathedral begun around 1300, the small St Olav's church still in use, and Kirkjubøargarður, a farmhouse continuously inhabited for centuries.",
+      "afternoon": "Tórshavn properly — the National Museum, the Nordic House, the old town's black tarred houses with grass roofs, and the harbour.",
+      "evening": "Book a **heimablídni**: dinner in a Faroese family's home, several courses of lamb, fish and rhubarb, with the family eating alongside you. It is the single best thing you can do in the islands.",
+      "dayStats": "40 km",
+      "sleep": null
+    },
+    {
+      "day": 7,
+      "title": "Trøllkonufingur, Sørvágsvatn or Mykines, then out",
+      "morning": "Depending on wind: the Mykines boat for puffins, or the short walk to the Trælanípa cliff over Sørvágsvatn.",
+      "afternoon": "Fly out from Vágar. Allow generous slack for weather.",
+      "evening": null,
+      "dayStats": null,
+      "sleep": null
+    }
+  ],
+  "accommodationStrategy": [
+    {
+      "rank": 1,
+      "name": "Hotel Føroyar or Hotel Brandan",
+      "style": null,
+      "location": "Tórshavn",
+      "description": "Two contrasting bases in the capital: Føroyar is turf-roofed on the hill with the harbour view; Brandan is newer, in town, with a spa. Both have secure parking, which matters more than it sounds in a place where the wind removes car doors.",
+      "booking": null,
+      "priceNote": null
+    },
+    {
+      "rank": 2,
+      "name": "Gjáargarður",
+      "style": null,
+      "location": "Gjógv",
+      "description": "The guesthouse at the gorge village, with home-cooked dinners booked at check-in. Essential for Day 3 because the alternative is an hour's drive back to Tórshavn on a mountain road in the dark.",
+      "booking": null,
+      "priceNote": null
+    },
+    {
+      "rank": 3,
+      "name": "Klaksvík guesthouses",
+      "style": null,
+      "location": "Norðoyar",
+      "description": "Simple, cheap, and positioned so that the Kalsoy ferry and the Viðareiði drive both start from your door rather than 90 minutes away. Book the ferry morning and stay the night before — this is the sequencing that makes Day 4 work.",
+      "booking": null,
+      "priceNote": null
+    }
+  ],
+  "logistics": {
+    "connectivity": null,
+    "emergency": "112. The national hospital is in Tórshavn with smaller facilities in Klaksvík and Suðuroy. Helicopter evacuation is available and used.",
+    "weather": "Wind, not rain, drives the itinerary. Above 15 m/s, mountain roads and ferries stop. Build two flexible days into seven and reorder daily around the forecast rather than fighting it.",
+    "bookingWindows": "Cars: 2–3 months for summer. Heimablídni dinners: 3–6 weeks. Vestmanna boats: a few days, but expect cancellation. Guesthouses in Gjógv and Viðareiði: 2–3 months.",
+    "money": null,
+    "transportRules": null,
+    "permits": null,
+    "health": null,
+    "gettingThere": null,
+    "other": [
+      {
+        "label": "Tunnel tolls",
+        "text": "The Vágar, Eysturoy and Sandoy subsea tunnels are tolled by automatic plate recognition and billed to the rental company, typically with an administration fee. Expect a bill after you get home. `verify: true`"
+      },
+      {
+        "label": "Single-lane tunnels",
+        "text": "Several older mountain tunnels — notably on Kalsoy and in the outer islands — are one lane with passing bays (marked **M**). The rule: the vehicle with the bay on its side pulls in. They are unlit, wet, and rock-walled. Drive slowly with headlights on."
+      },
+      {
+        "label": "Sheep",
+        "text": "There are more sheep than people and they own the roads. Hitting one makes you liable to the owner. Assume a sheep behind every blind crest."
+      },
+      {
+        "label": "Ferries",
+        "text": "Strandfaraskip Landsins runs the inter-island ferries; the Kalsoy and Mykines routes have small capacity and fill in summer. The Suðuroy ferry (2 h) is large and reliable. `verify: true`"
+      },
+      {
+        "label": "Sundays",
+        "text": "Shops, most restaurants and many attractions close. Fuel stations are largely automated. Plan food on Saturday."
+      }
+    ]
+  },
+  "proTips": [
+    "Always take the **old mountain road** where one exists beside a tunnel. The Oyggjarvegur, the Norðradalsskarð and the Eiðisskarð are the three best drives in the North Atlantic and everyone else is underground.",
+    "Check **wind, not rain**. A Faroese 4 mm rain day with 6 m/s wind is a great day out; a dry day at 18 m/s is not.",
+    "The **Faroese helicopter** service links remote villages at subsidised fares and is one of Europe's great transport oddities. Seat release is scheduled and tourists may be limited to one-way sectors — check the current rules well ahead. `verify: true`",
+    "Fill the tank whenever you are below half. Fuel stations outside Tórshavn, Klaksvík and Vágar are sparse and several are card-only automats.",
+    "Photograph Saksun and Gásadalur **before 09:00 or after 20:00**. Both are tiny private settlements where residents have had real problems with visitor volume — arrive early, stay on marked paths, park only in the designated areas.",
+    "If a storm eats a day, the Nordic House, the National Museum and the Tórshavn swimming baths absorb it well — and a storm-day heimablídni is better than a calm-day one."
+  ],
+  "typeSpecific": {
+    "raw": {
+      "total_driving_km": 480,
+      "driving_character": "Short legs on excellent tarmac, punctuated by subsea tunnels, single-lane mountain tunnels with passing bays, and hairpin descents into fjord villages",
+      "mountain_passes": "The old Oyggjarvegur high road over Streymoy, the Eiðisskarð pass on Eysturoy, and the Norðradalsskarð — all worth taking instead of the tunnel",
+      "tunnels": "Vágatunnilin (2002), Norðoyatunnilin (2006), Eysturoyartunnilin (2020, with the world's only undersea roundabout), Sandoyartunnilin (2023)",
+      "cross_border_rules": "The Faroes are outside the EU and the Schengen customs union though within the Nordic passport area; hire cars cannot leave the archipelago",
+      "gpx_ready": true
+    },
+    "surface": null,
+    "distanceKm": null,
+    "elevationM": null,
+    "verticalM": null,
+    "technicalRating": null,
+    "transitPass": null,
+    "hutBooking": null,
+    "liftNetwork": null,
+    "snowReliability": null,
+    "windConditions": null,
+    "gpxReady": true,
+    "bookingTimeline": null,
+    "audience": null
+  },
+  "packingNotes": [],
+  "whatCouldGoWrong": [],
+  "sources": {
+    "verified": null,
+    "confidenceNotes": null
+  },
+  "verifyFlags": [],
+  "verifyFlagCount": 0,
+  "volatilePricing": true,
+  "wordCount": 1470,
+  "dataVintage": 2026,
+  "provenance": {
+    "batch": "northern-baltics",
+    "sourceFile": "carta_northern_europe_baltics_trips.md#trip-14",
+    "sourceFormat": "single-file md, '## Trip NN' records with fenced YAML",
+    "sourceId": "faroe-islands-subsea-loop",
+    "ingestedAt": "2026-09-02",
+    "synthesized": false
+  }
+}

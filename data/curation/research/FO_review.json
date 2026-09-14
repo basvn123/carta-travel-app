@@ -1,0 +1,134 @@
+{
+  "iso2": "FO",
+  "country": "Faroe Islands",
+  "checked_at": "2026-08-17",
+  "beaches": {
+    "wrong": [],
+    "missing": [
+      {
+        "name": "Tjornuvik beach",
+        "qid": "Q1093578",
+        "lat": 62.28806,
+        "lon": -7.14083,
+        "why": "The black-sand beach in the bay at Tjornuvik on northern Streymoy, looking out to the Risin og Kellingin sea stacks. It is the one genuine beach in the country and the only entry that would justify the Faroes appearing in a Beaches tab at all. QID and coordinates are the village.",
+        "source_url": "https://www.wikidata.org/wiki/Q1093578",
+        "verified": true
+      },
+      {
+        "name": "Leynar beach",
+        "qid": null,
+        "lat": null,
+        "lon": null,
+        "why": "The sheltered sand beach on Streymoy south of Vestmanna, the closest thing the Faroes has to a swimming beach. No Wikidata entity confirmed, so listed unverified.",
+        "source_url": "https://visitfaroeislands.com/",
+        "verified": false
+      }
+    ],
+    "order": [
+      "Nothing to order: the FO file contains zero beaches and the index reports top_beach null.",
+      "For the Faroes a near-zero beach count is close to correct. The islands are cliff and fjord coast at 62 degrees north with sea temperatures around 10 degrees; there is no beach culture and no EEA bathing water class in the file. Shipping zero is a defensible outcome, unlike Iceland where zero loses genuine top attractions.",
+      "The only cost of a hard zero is Tjornuvik, which is a real named black-sand beach and a standard stop on the northern Streymoy drive. One entry would be better than none."
+    ]
+  },
+  "mountains": {
+    "wrong": [
+      {
+        "name": "Vorufelli",
+        "class": "duplicate_of:Vordufelli",
+        "why": "Tier 1 rank 10 at 62.0787,-7.29108, against tier 1 rank 9 'Vordufelli' at 62.07871,-7.29107. The coordinates agree to five decimal places, roughly one metre. This is one 284 m hill above Sorvagur occupying two of the country's twelve tier-1 slots under a spelling variant that drops the eth.",
+        "source_url": "https://www.wikidata.org/wiki/Q3467630"
+      },
+      {
+        "name": "Vordufelli",
+        "class": "not_notable",
+        "why": "Tier 1 rank 9. Wikidata Q3467630 gives 284 m, the lowest entry in the entire tier-1 list, ranked above Eysturtindur (715 m) and Husareyn. A 284 m rise above a village is not one of the Faroe Islands' twelve mountains, and it is here twice.",
+        "source_url": "https://www.wikidata.org/wiki/Q3467630"
+      },
+      {
+        "name": "Gjogvarafjall",
+        "class": "not_notable",
+        "why": "Tier 1 rank 6. Wikidata Q728389 gives 345 m, on Suduroy. Ranked sixth in the country, above the 715 m Eysturtindur and above the entirely absent 841 m Villingadalsfjall.",
+        "source_url": "https://www.wikidata.org/wiki/Q728389"
+      },
+      {
+        "name": "Nonfjall",
+        "class": "not_notable",
+        "why": "Tier 1 rank 8. Wikidata Q3880027 gives 367 m, on Suduroy. One of four Suduroy hills in a twelve-entry national tier 1, none of them above 610 m.",
+        "source_url": "https://www.wikidata.org/wiki/Q3880027"
+      },
+      {
+        "name": "Gjogvarafjall (Kalsoy row)",
+        "class": "duplicate_of:Gjogvarafjall",
+        "why": "Tier 2 rank 13, stored at 62.22665,-6.85092 and attributed to the Kalsoy anchor, while the tier 1 rank 6 row of the same name is at 61.47307,-6.85096 on Suduroy, 84 km south. The two longitudes agree to four decimal places while the latitudes differ by 0.75 degrees, which is the signature of a coordinate-assembly error rather than of two genuinely distinct mountains. Could not confirm a second Gjogvarafjall on Kalsoy, so this classification is marked unverified and needs a gazetteer check before either row is deleted.",
+        "source_url": "https://www.wikidata.org/wiki/Q728389",
+        "verified": false
+      }
+    ],
+    "missing": [
+      {
+        "name": "Villingadalsfjall",
+        "qid": "Q903556",
+        "lat": 62.3828,
+        "lon": -6.5685,
+        "why": "841 m on Vidoy, the third highest mountain in the Faroe Islands and the walk that leads to Cape Enniberg. It is absent from the file entirely, while a 284 m hill holds two tier-1 slots.",
+        "source_url": "https://www.wikidata.org/wiki/Q903556",
+        "verified": true
+      },
+      {
+        "name": "Cape Enniberg",
+        "qid": "Q585416",
+        "lat": 62.38333,
+        "lon": -6.56667,
+        "why": "754 m, the northern tip of Vidoy and one of the highest vertical sea cliffs in Europe, the single most cited natural superlative in the islands. Strictly a cliff rather than a summit, so it belongs in the mountains layer only if the layer admits cliffs; either way it should not be invisible.",
+        "source_url": "https://www.wikidata.org/wiki/Q585416",
+        "verified": true
+      },
+      {
+        "name": "Sornfelli",
+        "qid": "Q903953",
+        "lat": 62.08333,
+        "lon": -6.83333,
+        "why": "The radar mountain on Streymoy above the Vestmanna road, with a service road to near the summit, which makes it one of the few Faroese high viewpoints reachable without a hike. Absent from the file.",
+        "source_url": "https://www.wikidata.org/wiki/Q903953",
+        "verified": true
+      },
+      {
+        "name": "Kirkjubour mountain (Kirkjuboreyn)",
+        "qid": "Q923452",
+        "lat": 61.9855,
+        "lon": -6.8129,
+        "why": "351 m between Torshavn and Kirkjubour, carrying the old postal path that is the most walked route in the country and the standard half day out from the capital. Absent, while a 284 m hill on Vagar is in tier 1 twice.",
+        "source_url": "https://www.wikidata.org/wiki/Q923452",
+        "verified": true
+      },
+      {
+        "name": "Traelanipan and Sorvagsvatn",
+        "qid": "Q932408",
+        "lat": 62.05,
+        "lon": -7.23333,
+        "why": "The cliff at the south end of Sorvagsvatn on Vagar, the optical-illusion 'lake above the ocean' that is the most reproduced image of the Faroe Islands anywhere. The QID and coordinates are the lake, not the cliff, so the entity type needs deciding, but the feature must exist somewhere in the wire.",
+        "source_url": "https://www.wikidata.org/wiki/Q932408",
+        "verified": true
+      },
+      {
+        "name": "Klakkur",
+        "qid": null,
+        "lat": null,
+        "lon": null,
+        "why": "The short, steep hill directly above Klaksvik with the classic view over the northern isles, the most walked short hike outside the capital. The app carries a 'Klaksvik' anchor destination and returns eight other mountains from it (Fyramarkaknukur, Grislatindur, Hafjall, Krunufjall, Myrkjanoyrarfjall, Sudur a Nakki, Toftaknukur, Tolvmarkaknukur) but not Klakkur, so this is a POI-layer gap rather than a radius gap. No Wikidata entity found for the Faroese Klakkur, so listed unverified; the several Wikidata Klakkur entries all resolve to Icelandic mountains.",
+        "source_url": "https://visitfaroeislands.com/",
+        "verified": false
+      }
+    ],
+    "order": [
+      "Ranks 1 and 2 are exactly right and are the only part of the list that is: Slaettaratindur at 880 m (Q738746) and Grafelli at 856 m (Q1028361) are the two highest points in the country in the correct order.",
+      "From rank 3 down the ordering collapses against elevation: rank 6 Gjogvarafjall is 345 m, rank 8 Nonfjall is 367 m, ranks 9 and 10 are the same 284 m hill twice, and rank 11 Husareyn is 345 m, while the 715 m Eysturtindur is last at rank 12 and the 841 m Villingadalsfjall is not in the file at all.",
+      "Suduroy supplies four of the twelve tier-1 entries (Gluggarnir, Borgarknappur, Gjogvarafjall, Nonfjall) because 'Suduroy' is one of only nine anchor destinations, and Suduroy is the most remote and least visited of the large islands. Vidoy, Kunoy and Bordoy, the northern isles that carry the country's postcard scenery, supply none.",
+      "Tier 2 is unranked: ranks 15 to 24 all carry the identical score 0.688 and run strictly alphabetically from Bollufjall through Bolaflottur, Borgin, Botnstindur, Byttufelli, Eggjarmuli, Egilsfjall, Eidisskard, Eindalsfjall to Eystanfyri Herdabladid. Ranks 13 and 14 likewise share 0.815.",
+      "Heyggjurin Mikli at rank 7 is correct and should probably be higher: Danish Wikipedia resolves it to Q2421269 at 62.2825,-7.1817 with an elevation of 692 m, matching the stored coordinates, so this is a genuine high Streymoy mountain sitting below two sub-400 m hills."
+    ]
+  },
+  "counts_verdict": "Volume yes, tier cut no. 75 mountains across 18 islands is a reasonable raw harvest for a country of 1,400 km2, and unlike the other countries in this group the Faroes are small enough that a 9 km radius around nine anchors covers a real share of the land. But twelve tier-1 entries is too many for a nation of 54,000 people: as shipped, tier 1 contains one exact duplicate pair, three hills under 400 m, and a fourfold over-weighting of Suduroy, while the third highest mountain in the country is absent. Six to eight entries, with Villingadalsfjall and Klakkur added and the sub-400 m hills demoted, would be an honest tier 1. Zero beaches is close to right for the Faroes and is the one count in this group I would not change much, beyond adding Tjornuvik.",
+  "top_pick_verdict": "Yes, and it is the only fully correct top pick in this group. top_mountain 'Slaettaratindur' is the right country card: 880 m, the highest point in the Faroe Islands, the classic ascent from the Eidisskard pass, and by legend the place from which Norway and Iceland can both be seen at midsummer. top_beach null is the right answer for the Faroes rather than a data failure.",
+  "notes": "One name-collision trap to guard before any dedupe is written: there are two genuinely distinct mountains called Heyggjurin Mikli, one on Streymoy at Q2421269 (692 m, 62.2825,-7.1817, the row the app ships) and one on Skuvoy at Q31844565 (391 m, 61.75,-6.8167). A name-only merge would wrongly collapse them, so dedupe here must be name plus geometry, not name alone. By contrast Vordufelli and Vorufelli are one metre apart and must be merged, so the same rule has to handle both cases: merge on distance under roughly 200 m with a fuzzy name match that folds the Faroese eth, split otherwise. Second observation: the eight mountains returned from the Klaksvik anchor are all obscure hill names while Klakkur itself, the one hike every visitor to Klaksvik does, is absent, which shows the source POI layer has real gaps independent of the radius cap."
+}

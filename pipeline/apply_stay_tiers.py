@@ -43,6 +43,7 @@ import argparse
 import json
 import math
 from pathlib import Path
+from pipeline_io import atomic_write_json
 
 ROOT = Path(__file__).resolve().parents[1]
 HOSTELS = ROOT / "cache" / "hostel_city_anchors.json"
@@ -179,7 +180,7 @@ def patch(path, hostel_anchors, hotel_anchors):
     n_added, n_cleared = assign(dests, hostel_anchors, hotel_anchors)
     tiers = available_tiers(dests)
     data.setdefault("meta", {})["stay_tiers_available"] = tiers
-    path.write_text(json.dumps(data, indent=1, ensure_ascii=False), encoding="utf-8")
+    atomic_write_json(path, data, indent=1, ensure_ascii=False)
     print(f"  {path.name}: stay tiers on {n_added} destinations "
           f"({n_cleared} prior blocks reset); measured tiers: {tiers or 'none'}")
 
@@ -199,7 +200,7 @@ def main():
                 continue
             data = json.loads(t.read_text(encoding="utf-8"))
             _, n_cleared = assign(data.get("destinations", {}), [], [])
-            t.write_text(json.dumps(data, indent=1, ensure_ascii=False), encoding="utf-8")
+            atomic_write_json(t, data, indent=1, ensure_ascii=False)
             print(f"  {t.name}: stripped {n_cleared} tiers blocks")
         return
 

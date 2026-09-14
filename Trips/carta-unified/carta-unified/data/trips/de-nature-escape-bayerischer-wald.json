@@ -1,0 +1,317 @@
+{
+  "id": "de-nature-escape-bayerischer-wald",
+  "sourceId": "de-nature-bayerischer-wald",
+  "slug": "de-nature-escape-bayerischer-wald",
+  "title": "Let It Be Wild: A Week in the Bayerischer Wald",
+  "country": "Germany",
+  "countryCode": "DE",
+  "countries": [
+    {
+      "name": "Germany",
+      "code": "DE"
+    }
+  ],
+  "isMultiCountry": false,
+  "region": "Western & Central Europe",
+  "regionKey": "western-central",
+  "subRegion": "Bavarian Forest, Lower Bavaria",
+  "tripType": "Nature Escapes & Cabin Stays",
+  "tripTypeId": 9,
+  "tripTypeSlug": "nature-escape",
+  "durationDays": 7,
+  "bestPeriod": {
+    "months": [
+      5,
+      6,
+      9,
+      10
+    ],
+    "monthNames": [
+      "May",
+      "June",
+      "September",
+      "October"
+    ],
+    "window": null,
+    "note": "Deep snow closes the high trails December to April; July and August bring the biggest crowds and the worst midge hatches in the lowland bogs.",
+    "avoid": null,
+    "raw": null
+  },
+  "budgetTier": "€€",
+  "budgetTierRange": [
+    2,
+    2
+  ],
+  "budgetTierRaw": "€€",
+  "budget": {
+    "currency": "EUR",
+    "totalEur": {
+      "low": 780,
+      "high": 1080
+    },
+    "totalNote": null,
+    "breakdown": {
+      "accommodation": {
+        "lowEur": 380,
+        "highEur": 520,
+        "note": null
+      },
+      "food": {
+        "lowEur": 190,
+        "highEur": 260,
+        "note": null
+      },
+      "transport": {
+        "lowEur": 110,
+        "highEur": 160,
+        "note": null
+      },
+      "activities": {
+        "lowEur": 100,
+        "highEur": 140,
+        "note": null
+      }
+    },
+    "perDayEur": {
+      "low": 111,
+      "high": 154
+    }
+  },
+  "profile": {
+    "difficulty": 3,
+    "difficultyLabel": "Active",
+    "difficultyNote": null,
+    "fitnessLevel": "Active",
+    "crowdLevel": "Moderate",
+    "familyFriendly": true,
+    "carRequired": false
+  },
+  "basecamps": [
+    "Waldhäuser"
+  ],
+  "gatewayAirport": "Munich (MUC)",
+  "gatewayAirportCode": "MUC",
+  "languages": [
+    "German"
+  ],
+  "currency": "EUR",
+  "emergencyNumber": "112",
+  "coordinates": {
+    "lat": 48.1374,
+    "lon": 11.5755,
+    "precision": "gateway",
+    "matchedPlace": "Munich",
+    "source": "geonames (geonamescache, cities > 15k)"
+  },
+  "tags": [
+    "national-park",
+    "bark-beetle-wilderness",
+    "hut-stay",
+    "wildlife-enclosure",
+    "dark-sky"
+  ],
+  "summary": "A week on Lusen and Rachel in Germany's oldest national park, with one off-grid night at Waldschmidthaus among the standing dead spruce the park deliberately left alone.",
+  "summaryGenerated": false,
+  "hook": "The Bayerischer Wald was Germany's first national park, founded in 1970, and it is still the country's boldest ecological experiment: since the 1990s bark beetle, storm and management have been allowed to kill huge stands of spruce in the core zone, and the park has let them stand. You walk through silver deadwood forest, past young beech and rowan already filling the gaps, on trails that lead to two granite summits, a wolf-and-lynx enclosure, and a single hut with no road to it.",
+  "snapshot": {
+    "Country": "Germany",
+    "Base(s)": "Waldhäuser (5 nights), Chamanna-style overnight at Waldschmidthaus (1 night), Zwiesel (1 night)",
+    "Trip Type": "Nature Escapes & Cabin Stays",
+    "Duration": "7 days",
+    "Best Period": "May–June, September–October",
+    "Budget Tier": "€€",
+    "Total Distance / Terrain": "approx. 55–65 km walking, 2,300 m cumulative ascent; forest track, granite ridge path, boardwalk over deadwood, one hut approach with no vehicle access",
+    "Getting There": "Munich (MUC) → train to Plattling or Zwiesel, then the Igelbus shuttle to Waldhäuser (approx. 3h total)",
+    "Who It Suits": "Walkers who want real off-grid nights without alpine technicality, and anyone curious about a forest managed by non-intervention"
+  },
+  "itinerary": [
+    {
+      "day": 1,
+      "title": "Zwiesel and the Waldbahn in",
+      "morning": "Fly into Munich and take the regional train toward Plattling, changing for the Waldbahn line to Zwiesel — a narrow forested branch line that is scenery in itself.",
+      "afternoon": "The Igelbus (the park's cheap, frequent shuttle, named for the hedgehog) runs up to Waldhäuser, a scattered hamlet at 940 m and the highest settlement in the park. This is the last road; the core zone beyond is on foot only.",
+      "evening": "Check in and walk the short loop to the Nationalparkzentrum Lusen area for orientation.",
+      "dayStats": "6 km, 150 m vert. Forest track, no exposure. Water: Waldhäuser shop and guesthouses. Bail-out: village is the base itself.",
+      "sleep": null
+    },
+    {
+      "day": 2,
+      "title": "Lusen and the deadwood forest",
+      "morning": "Walk the Himmelsleiter path up through the Latschenfilz bog fringe onto Lusen's granite shoulder — the transition from living spruce-beech forest to standing grey deadwood is abrupt and striking, the result of a bark beetle outbreak the park let run rather than fell.",
+      "afternoon": "Summit Lusen (1,373 m) for the open granite-block top, one of the few unforested viewpoints in the range, with the Bohemian Forest running unbroken into Czechia. Descend via the Waldschmidt-Ausblick to Waldhäuser.",
+      "evening": "Dinner in the village; ask about the \"Natur Natur sein lassen\" policy — every guesthouse here has an opinion on it.",
+      "dayStats": "15 km, 550 m vert. Grade: moderate marked path, granite blocks near the summit, no technical exposure. Water: taps in Waldhäuser only — carry 1.5 L, no reliable spring on this route. Bail-out: the path down from the Himmelsleiter junction returns to Waldhäuser in 40 minutes from any point.",
+      "sleep": null
+    },
+    {
+      "day": 3,
+      "title": "Tier-Freigelände and the Baumwipfelpfad",
+      "morning": "Bus down to Neuschönau. The Tier-Freigelände is a large forested enclosure where animals the park protects but rarely shows in the wild — lynx, wolf, brown bear, wisent, otter — live in naturalistic paddocks along a 7 km loop.",
+      "afternoon": "Next door, the Baumwipfelpfad climbs through the canopy to its 44-metre egg-shaped tower, with a long view back to Lusen and Rachel — low-effort, high-payoff, a good rest for legs after Lusen.",
+      "evening": "Return to Waldhäuser and pack — nothing more is available at Waldschmidthaus than what you carry in.",
+      "dayStats": "9 km, 200 m vert. Level paths and boardwalk. Water: cafés at both sites. Bail-out: none needed, both low-commitment.",
+      "sleep": null
+    },
+    {
+      "day": 4,
+      "title": "Rachel and a night at Waldschmidthaus",
+      "morning": "Full pack on. Climb from Waldhäuser via Racheldiensthütte to the Rachelsee, a dark cirque lake pinned under Rachel's north face, then up the final steep pitch to the Großer Rachel summit (1,453 m).",
+      "afternoon": "Descend the ridge side to Waldschmidthaus (1,361 m), a Deutscher Alpenverein hut with no road, reached only on foot from Gfäll or Waldhäuser. It runs on solar power and a spring-fed tank; the toilet is dry-composting, and you carry your rubbish back out — nothing is collected up here.",
+      "evening": "Hut dinner (simple, hearty, cash and card both usually accepted), and if the sky is clear, no village light pollution touches this ridge — the Milky Way is properly visible.",
+      "dayStats": "13 km, 700 m ascent, 250 m descent to the hut. Grade: steep granite steps near the Rachel summit, otherwise forest and open ridge. Water: Racheldiensthütte en route, hut supply at Waldschmidthaus. Off-grid facilities: solar lighting, spring water (treat or ask staff), dry toilet, bring a sleeping-bag liner (Hüttenschlafsack) — bedding is a shared dormitory mattress only. Bail-out: descend to Gfäll or back to Waldhäuser, both under 2 hours.",
+      "sleep": null
+    },
+    {
+      "day": 5,
+      "title": "Descent, Spiegelau glass villages",
+      "morning": "Easy descent from Waldschmidthaus to Waldhäuser, retracing yesterday's line downhill — legs will thank you for the gentler gradient.",
+      "afternoon": "Bus to Spiegelau, on the Bavarian Forest's Glasstraße (Glass Route). This is glassmaking country going back centuries; several working studios still blow and cut glass you can watch being made, a good counterpoint to two days of trees and granite.",
+      "evening": "Overnight in Zwiesel — a small town with more restaurant choice than the park hamlets, and the regional glass museum if you want context before shopping tomorrow.",
+      "dayStats": "11 km descent, 700 m negative. Forest track throughout. Water: Waldschmidthaus taps at the start, Zwiesel thereafter. Bail-out: bus stops exist at every village on this route.",
+      "sleep": null
+    },
+    {
+      "day": 6,
+      "title": "Schachten-Filz and foraging with a ranger",
+      "morning": "Igelbus back to Waldhäuser. Join a ranger-led forest walk (bookable at the Nationalparkzentrum, small fee) — the only legal way to learn foraging here, since picking anything unsupervised in the core zone is against park rules.",
+      "afternoon": "Free walk on the Schachten-Filz trail, half-open wooded pastures grazed for centuries and now slowly returning to closed forest — one of the gentlest, quietest corners of the park.",
+      "evening": "Last dinner in Waldhäuser; watch for red deer at the forest edge near dusk.",
+      "dayStats": "14 km, 400 m vert. Easy gradients, forest track and boardwalk. Water: Waldhäuser only. Bail-out: the loop passes back through the village at its midpoint.",
+      "sleep": null
+    },
+    {
+      "day": 7,
+      "title": "Zwiesel and out",
+      "morning": "Igelbus down to Zwiesel with time to spare, a last coffee near the Waldbahn station.",
+      "afternoon": "Train to Plattling and on to Munich.",
+      "evening": "Onward flight or connection from Munich.",
+      "dayStats": "Transfer day, no walking distance logged.",
+      "sleep": null
+    }
+  ],
+  "accommodationStrategy": [
+    {
+      "rank": 1,
+      "name": "Gasthof in Waldhäuser",
+      "style": "Guesthouse",
+      "location": "park-edge hamlet at 940 m",
+      "description": "The only settlement inside the park boundary, so any guesthouse here is the shortest walk to every trailhead in this itinerary. Take half-board — the village has one small shop and little else after dark.",
+      "booking": "6–8 weeks ahead for the September rut season.",
+      "priceNote": "€55–€85 per night with half-board"
+    },
+    {
+      "rank": 2,
+      "name": "Waldschmidthaus",
+      "style": "DAV mountain hut",
+      "location": "ridge below Rachel at 1,361 m",
+      "description": "The only overnight with no road access anywhere on this trip, reached solely on foot from Waldhäuser or Gfäll. Off-grid by necessity: solar power, spring water, dry toilet, carry-in carry-out rubbish. Book the dormitory directly with the warden; DAV membership discounts but isn't required.",
+      "booking": "4–6 weeks ahead; short season, fills on clear weekends.",
+      "priceNote": "€28–€45 per person, half-board, dormitory"
+    },
+    {
+      "rank": 3,
+      "name": "Pension in Zwiesel",
+      "style": "Guesthouse",
+      "location": "market town on the Waldbahn line",
+      "description": "Just outside the park, with rail connections, more restaurant choice and the glass museum, for under 20 minutes' extra shuttle time to the trailheads. Good bookend nights.",
+      "booking": "3–4 weeks ahead.",
+      "priceNote": "€50–€75 per night"
+    }
+  ],
+  "logistics": {
+    "connectivity": null,
+    "emergency": "112 pan-European. Bavarian mountain rescue (Bergwacht Bayern) covers this range; the Nationalparkzentrum and Waldschmidthaus can raise them directly.",
+    "weather": "The Lusen–Rachel ridge makes its own weather — pack a windproof layer regardless of the valley forecast, and treat any storm warning as a reason to stay below the treeline.",
+    "bookingWindows": null,
+    "money": "Euro. Cards work in Zwiesel and Neuschönau; carry cash for the Waldhäuser shop and for Waldschmidthaus, where terminal connectivity can drop.",
+    "transportRules": null,
+    "permits": null,
+    "health": null,
+    "gettingThere": null,
+    "other": [
+      {
+        "label": "Access",
+        "text": "The last public road ends at Waldhäuser — paved, no 4x4 needed, but winter tyres or chains are required October–April and heavy snow can close it. Beyond the village, movement is on foot only; the Igelbus shuttle keeps private cars out of the core zone in summer."
+      },
+      {
+        "label": "Isolation level",
+        "text": "Waldhäuser has one small shop (closed Sunday afternoon) and the nearest pharmacy is a 25-minute bus ride in Grafenau or Zwiesel. Signal is patchy on the ridges and largely absent at Rachelsee and Waldschmidthaus — genuinely quiet forest, not parkland minutes from a supermarket."
+      },
+      {
+        "label": "Resupply",
+        "text": "The Waldhäuser Dorfladen covers basics; the weekly market and full supermarkets are in Grafenau (Tuesday/Friday market) or Zwiesel, both a short bus away."
+      },
+      {
+        "label": "Foraging and fire law",
+        "text": "The core zone (\"Naturzone\") bans picking mushrooms, berries, plants or deadwood, and requires marked paths only. The buffer zone allows limited personal foraging under general Bavarian forest law, but the line is unclear on the ground — the Day 6 ranger walk is the reliable way to do it legally. Campfires are banned outside a few designated rings; none at Waldschmidthaus."
+      },
+      {
+        "label": "Wildlife and ticks",
+        "text": "Bavaria is a TBE risk area — vaccination or careful checks matter off the boardwalks. Red deer show at forest edges dawn and dusk in September–October; lynx live wild here but are almost never seen outside the Tier-Freigelände."
+      }
+    ]
+  },
+  "proTips": [
+    "Do the Lusen ascent before 09:00 — the Himmelsleiter path is the park's busiest by midday, and early light on the deadwood is the week's best photography.",
+    "Book the ranger-led foraging walk two weeks out in shoulder season; it runs on a fixed small schedule and explains \"let nature be nature\" better than any signboard.",
+    "The Tier-Freigelände's wolves are most active at mid-morning feeding time — ask the entrance kiosk for that day's schedule.",
+    "Carry your Waldschmidthaus booking confirmation printed; signal is unreliable and the warden checks a paper list.",
+    "September's Brunft (rut) is loud and visible from the Schachten-Filz pastures at dusk — keep back and use binoculars, not a closer approach.",
+    "Many Waldhäuser guesthouses issue a Gästekarte that covers the Igelbus automatically — ask before buying separate tickets.",
+    "A Bayern-Ticket covers the Waldbahn and connecting buses for the whole day at a flat group rate if travelling with others."
+  ],
+  "typeSpecific": {
+    "raw": {
+      "Total Distance / Terrain": "approx. 55–65 km walking, 2,300 m cumulative ascent; forest track, granite ridge path, boardwalk over deadwood, one hut approach with no vehicle access",
+      "Who It Suits": "Walkers who want real off-grid nights without alpine technicality, and anyone curious about a forest managed by non-intervention"
+    },
+    "surface": "approx. 55–65 km walking, 2,300 m cumulative ascent; forest track, granite ridge path, boardwalk over deadwood, one hut approach with no vehicle access",
+    "distanceKm": 55,
+    "elevationM": null,
+    "verticalM": null,
+    "technicalRating": null,
+    "transitPass": null,
+    "hutBooking": null,
+    "liftNetwork": null,
+    "snowReliability": null,
+    "windConditions": null,
+    "gpxReady": null,
+    "bookingTimeline": null,
+    "audience": "Walkers who want real off-grid nights without alpine technicality, and anyone curious about a forest managed by non-intervention"
+  },
+  "packingNotes": [
+    "A windproof shell — the open granite tops catch wind the forest below never shows you.",
+    "A sleeping-bag liner for the Waldschmidthaus dormitory; blankets are provided but a liner is expected hut etiquette.",
+    "A headtorch for the hut's minimal solar lighting and Day 6 dusk deer-watching.",
+    "1.5–2 L water capacity; reliable taps are village- and hut-based, not trailside.",
+    "Insect repellent for the lowland bogs in July–August.",
+    "A dry bag for rubbish carried out from the hut — there is no collection at Waldschmidthaus.",
+    "Binoculars for the Tier-Freigelände and dusk red-deer watching.",
+    "Sturdy boots with ankle support for the granite-block summit approaches.",
+    "Small-denomination cash for the hut and the Waldhäuser shop."
+  ],
+  "whatCouldGoWrong": [
+    "**Waldschmidthaus is fully booked.** Fallback: Racheldiensthütte lower on the same approach sometimes has late space, or swap to a long day-hike over Rachel and back to Waldhäuser without the overnight.",
+    "**Thunderstorms on the ridge.** Fallback: reroute to the sheltered Schachten-Filz pastures or the Baumwipfelpfad, both largely under canopy.",
+    "**Igelbus gaps in shoulder season.** Services thin outside July–August; check the timetable the night before and build in a buffer, or arrange a taxi from Grafenau.",
+    "**A closed core-zone trail after storm damage.** Deadwood sections occasionally close for safety. Fallback: the Nationalparkzentrum posts daily closures — check each morning.",
+    "**Ticks after an off-boardwalk detour.** Check skin nightly; pharmacies stock removal tools without prescription, and a spreading rash near a bite warrants a doctor in Grafenau or Zwiesel."
+  ],
+  "sources": {
+    "verified": null,
+    "confidenceNotes": null
+  },
+  "verifyFlags": [],
+  "verifyFlagCount": 0,
+  "volatilePricing": false,
+  "wordCount": 2032,
+  "dataVintage": 2026,
+  "provenance": {
+    "batch": "western-central",
+    "sourceFile": "cartatripsv1/trips/de-nature-bayerischer-wald.md",
+    "sourceFormat": "md+yaml-frontmatter (one file per trip)",
+    "sourceId": "de-nature-bayerischer-wald",
+    "ingestedAt": "2026-09-02",
+    "synthesized": false
+  }
+}

@@ -1,0 +1,16 @@
+rank,curation_rank,title,ref,network,distance_km,popularity,pageviews_day,sitelinks,anchors,quality_score,portal_agreement,status,family_members,trip_id,osm_relation
+1,82.55,"Svatojakubská cesta, Žitavská trasa, Praha Prosek - Praha Staré Město",I24,nwn,8.5,0.852,0,0,"Prague (3518/day, 251 m); Astronomical clock (680/day, 308 m); Prague Castle (612/day, 1727 m)",95,,needs_review,21,108399,20141345
+2,76.16,"Evropská dálková trasa E10, Česká republika, Severočeský kraj",E10,iwn,85.4,0.526,3,11,,95,,needs_review,4,105875,5465691
+3,75.09,"Svatojakubská cesta, Česko, Praha - Zbraslav",,nwn,15.7,0.603,0,0,"Prague (3518/day, 25 m); Astronomical clock (680/day, 9 m); Prague Castle (612/day, 1113 m)",100,,needs_review,1,108272,19354268
+4,70.72,"Svatojakubská cesta, Česko, Žitavská trasa",,iwn,153.9,0.603,0,0,"Prague (3518/day, 251 m); Astronomical clock (680/day, 308 m); Prague Castle (612/day, 1727 m)",62.5,,needs_review,1,107597,12183420
+5,70.2,[Č] Obřany - soutok Svratky a Svitavy,,nwn,11.3,0.499,0,0,"Brno (712/day, 1498 m); Jewish cemetery in Brno (702/day, 1129 m); Old Town Hall (Brno) (702/day, 1424 m)",95,,needs_review,1,108125,18044055
+6,70.17,[Ž] Údolí Ponávky - Ježkovice (bus),7518,nwn,32.7,0.498,0,0,"Swede's Table (702/day, 221 m); Švédův stůl Cave (702/day, 212 m); Obřany (Castle) (702/day, 1212 m)",95,,needs_review,1,102702,86238
+7,70.17,[Ž] Obřany - Soběšice - Řečkovice,7524,nwn,7.6,0.498,0,0,"Obřany (Castle) (702/day, 1677 m)",95,,needs_review,1,102685,76763
+8,70.17,[Č] Cesta S. K. Neumana,,nwn,20.1,0.498,0,0,"Obřany (Castle) (702/day, 223 m); Church of Saint John the Baptist (378/day, 65 m); Moravian Karst (17/day, 1312 m)",95,,needs_review,1,102708,87976
+9,70.17,[Ž] Těsnohlídkovo údolí (lávka) - Liduščin památník (rozc.),,nwn,5.3,0.498,0,0,"Obřany (Castle) (702/day, 105 m)",95,,needs_review,1,102709,87977
+10,70.17,[Ž] Líšeň-Velká Klajdovka (MHD) - Kopaniny - Líšeň-hřbitov (MHD),,nwn,9.8,0.498,0,0,"Obřany (Castle) (702/day, 1026 m)",95,,needs_review,1,102962,253476
+11,70.17,[Č] Líšeň Mariánské údolí (MHD) - Rousínov (bus),,nwn,23.4,0.498,0,0,"Swede's Table (702/day, 587 m); Švédův stůl Cave (702/day, 582 m)",95,,needs_review,1,103072,326610
+12,69.26,[Č] Karlovy Vary - Kadaň,0244,nwn,59.1,0.472,0,0,"Castle Colonnade (471/day, 156 m); Castle Spa (471/day, 123 m); Market Colonnade (471/day, 109 m)",95,,needs_review,1,104225,2090901
+13,69.26,"[Č] Karlovy vary, vřídlo - Střela (lávka)",0236,nwn,51.8,0.472,0,0,"Imperial Spa (471/day, 63 m); Goethe (471/day, 9 m); Hot Spring Colonnade (471/day, 102 m)",95,,needs_review,1,105654,4485389
+14,68.76,[M] Brno-Medlánky (MHD) - Pod Ronovem,2013,nwn,31.9,0.457,0,0,"Church of Saint John the Baptist (378/day, 1521 m); Moravian Karst (17/day, 700 m)",95,,needs_review,1,102682,76743
+15,68.76,[Ž] Lelekovice - Adamov (žst.),7516,nwn,27.9,0.457,0,0,"Church of Saint John the Baptist (378/day, 453 m)",95,,needs_review,1,103330,593647

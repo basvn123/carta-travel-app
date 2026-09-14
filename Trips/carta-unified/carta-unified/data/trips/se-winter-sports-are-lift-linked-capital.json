@@ -1,0 +1,299 @@
+{
+  "id": "se-winter-sports-are-lift-linked-capital",
+  "sourceId": "are-sweden-lift-linked-winter-capital",
+  "slug": "se-winter-sports-are-lift-linked-capital",
+  "title": "Åre: Sweden's Lift-Linked Winter Capital",
+  "country": "Sweden",
+  "countryCode": "SE",
+  "countries": [
+    {
+      "name": "Sweden",
+      "code": "SE"
+    }
+  ],
+  "isMultiCountry": false,
+  "region": "Northern Europe & Baltics",
+  "regionKey": "northern-baltics",
+  "subRegion": "Jämtland, central Sweden",
+  "tripType": "Winter Sports & Skiing",
+  "tripTypeId": 8,
+  "tripTypeSlug": "winter-sports",
+  "durationDays": 7,
+  "bestPeriod": {
+    "months": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      12
+    ],
+    "monthNames": [
+      "January",
+      "February",
+      "March",
+      "April",
+      "May",
+      "December"
+    ],
+    "window": "Early December to early May. **March and April** are the best weeks — long light, deep base, spring sun and the resort's biggest events; February is coldest and reliably snowy; December is dark but festive",
+    "note": null,
+    "avoid": null,
+    "raw": "Early December to early May. **March and April** are the best weeks — long light, deep base, spring sun and the resort's biggest events; February is coldest and reliably snowy; December is dark but festive"
+  },
+  "budgetTier": "€€€",
+  "budgetTierRange": [
+    3,
+    3
+  ],
+  "budgetTierRaw": "€€€",
+  "budget": {
+    "currency": "EUR",
+    "totalEur": {
+      "low": 1800,
+      "high": 2700
+    },
+    "totalNote": "€1,800–2,700 per person",
+    "breakdown": {
+      "accommodation": {
+        "lowEur": 140,
+        "highEur": 280,
+        "note": "€140–280 per night for an apartment sleeping 4; hotel doubles €160–300; ski-in/ski-out mountain lodges €300+"
+      },
+      "food": {
+        "lowEur": 60,
+        "highEur": 100,
+        "note": "€60–100 per day; apartment self-catering roughly halves it"
+      },
+      "transport": {
+        "lowEur": 200,
+        "highEur": 350,
+        "note": "€200–350: night train Stockholm–Åre (the station is in the village) or flights to Åre Östersund, plus transfers"
+      },
+      "activities": {
+        "lowEur": 55,
+        "highEur": 70,
+        "note": "Lift passes roughly €55–70 per day, €270–330 for six days; guided off-piste €150–250; heliskiing where operating, considerably more"
+      }
+    },
+    "perDayEur": {
+      "low": 257,
+      "high": 386
+    }
+  },
+  "profile": {
+    "difficulty": null,
+    "difficultyLabel": null,
+    "difficultyNote": null,
+    "fitnessLevel": null,
+    "crowdLevel": null,
+    "familyFriendly": null,
+    "carRequired": null
+  },
+  "basecamps": [
+    "Åre By",
+    "Duved",
+    "Tegefjäll",
+    "Åre Björnen"
+  ],
+  "gatewayAirport": null,
+  "gatewayAirportCode": null,
+  "languages": [
+    "Swedish",
+    "English"
+  ],
+  "currency": "SEK (Swedish krona)",
+  "emergencyNumber": "112",
+  "coordinates": {
+    "lat": 63.399,
+    "lon": 13.081,
+    "precision": "source",
+    "matchedPlace": "Åre By",
+    "source": "source record"
+  },
+  "tags": [],
+  "summary": "A seven-day winter sports & skiing itinerary in Jämtland, central Sweden, Sweden.",
+  "summaryGenerated": true,
+  "hook": null,
+  "snapshot": {},
+  "itinerary": [
+    {
+      "day": 1,
+      "title": "Night train to Åre",
+      "morning": "Arrive on the overnight train from Stockholm, which pulls in at Åre station in the middle of the village — no transfer, no hire car, boots on within twenty minutes.",
+      "afternoon": "Collect passes and gear. Ski the village-side runs off the Kabinbanan cable car to get oriented.",
+      "evening": "Åre has the best après in the Nordics by a distance, and it starts at 15:00 on the mountain. Pace accordingly.",
+      "dayStats": null,
+      "sleep": null
+    },
+    {
+      "day": 2,
+      "title": "Åre By and the Kabinbanan sector",
+      "morning": "The main face above the village: long groomed reds, the World Championship courses, and the cable car to the mid-mountain.",
+      "afternoon": "Explore toward Tegefjäll on the connected lift chain. Åre's four areas are linked, but the links are lift-and-piste chains rather than a single ridge — learn the map on day two, not day five.",
+      "evening": "Dinner in the village. Åre's restaurant scene is unusually good for a ski resort and the village has a proper high street.",
+      "dayStats": null,
+      "sleep": null
+    },
+    {
+      "day": 3,
+      "title": "Duved and Tegefjäll",
+      "morning": "Duved, the western area, is quieter, more sheltered and better in bad weather — its tree runs work when the summit is closed.",
+      "afternoon": "Tegefjäll's north-facing terrain holds snow well and is where locals ski on a powder day.",
+      "evening": "Sauna, then an early dinner. Swedish *afterski* is an institution but it is also a trap on a seven-day trip.",
+      "dayStats": null,
+      "sleep": null
+    },
+    {
+      "day": 4,
+      "title": "The summit and the north face",
+      "morning": "If the wind allows, ride to the **Åreskutan** summit sector. The mountain top at 1,420 m stands alone above the Jämtland plateau and the view over the lakes is the reason the resort exists. The summit lifts close in wind regularly — take the window when it opens rather than saving it for later in the week.",
+      "afternoon": "With a guide, the north face and the Ullådalen valley off-piste. Without one, the long marked descent from the top to the village — around 6 km — is the classic run.",
+      "evening": "Buustamons Fjällgård or one of the mountain restaurants reached by snowcat or skis for dinner, which is an Åre tradition worth booking.",
+      "dayStats": null,
+      "sleep": null
+    },
+    {
+      "day": 5,
+      "title": "Cross-country, or a rest day in Jämtland",
+      "morning": "Åre's Nordic tracks run along the valley and up onto the plateau. Jämtland is also Sweden's most interesting rural food region — a genuine artisan-cheese and charcuterie culture, with producers within an hour's drive.",
+      "afternoon": "Alternatively, Tännforsen — Sweden's largest waterfall by volume, 38 m wide, spectacularly frozen in midwinter and reachable in half an hour.",
+      "evening": "Cook in the apartment with what you bought from the producers.",
+      "dayStats": null,
+      "sleep": null
+    },
+    {
+      "day": 6,
+      "title": "Big ski day: whole-mountain traverse",
+      "morning": "Ski all four areas end to end, Björnen to Duved, using the lift chain. It takes a full day at a steady pace and it is the best way to understand the resort's scale.",
+      "afternoon": "Finish on the village face; the last cable car down is a fixed time and it matters.",
+      "evening": "Last dinner, last après. Åre's bars in April, in daylight at 20:00, are a particular pleasure.",
+      "dayStats": null,
+      "sleep": null
+    },
+    {
+      "day": 7,
+      "title": "Morning ski and out",
+      "morning": "A final two hours on the pass, then pack.",
+      "afternoon": "Night train south from the village station, or the drive to Åre Östersund airport (about 1 h 20).",
+      "evening": null,
+      "dayStats": null,
+      "sleep": null
+    }
+  ],
+  "accommodationStrategy": [
+    {
+      "rank": 1,
+      "name": "Copperhill Mountain Lodge",
+      "style": null,
+      "location": "Åre Björnen",
+      "description": "A designed mountain lodge on a ridge above the resort with panoramic glass, a spa and a serious kitchen. Away from the village noise, ski access from the door, and the best architecture in Swedish skiing.",
+      "booking": null,
+      "priceNote": null
+    },
+    {
+      "rank": 2,
+      "name": "Åre By village apartments and Hotell Åregården",
+      "style": null,
+      "location": null,
+      "description": "In the village itself, walking distance to the cable car, the station, the restaurants and the après. The right base if you came without a car and want to use the night train at both ends.",
+      "booking": null,
+      "priceNote": null
+    },
+    {
+      "rank": 3,
+      "name": "Duved and Tegefjäll apartments",
+      "style": null,
+      "location": null,
+      "description": "Cheaper, quieter, family-oriented, and next to the areas that ski best in poor weather. Ski bus links them to the village. Best value for a group of four or more, and a shorter lift queue every morning.",
+      "booking": null,
+      "priceNote": null
+    }
+  ],
+  "logistics": {
+    "connectivity": null,
+    "emergency": "112. Åre has a medical centre; the hospital is in Östersund, about an hour away. Ski patrol is on the mountain during lift hours.",
+    "weather": null,
+    "bookingWindows": "Swedish sportlov (the February school ski weeks, staggered by region) and Easter fill everything 6–9 months out. January and early December are the value windows. Mountain restaurants like the snowcat-access lodges: 3–6 weeks.",
+    "money": null,
+    "transportRules": null,
+    "permits": null,
+    "health": null,
+    "gettingThere": null,
+    "other": [
+      {
+        "label": "Lift pass tiers",
+        "text": "Åre is a SkiStar resort: passes are priced by duration with significant online pre-booking discounts, and cover all four linked areas. Multi-resort options exist across the group's Swedish and Norwegian mountains. Prices and structures change every season — check before buying. `verify: true`"
+      },
+      {
+        "label": "Wind closures",
+        "text": "The Åreskutan summit sector is the resort's signature and its least reliable asset. Ski the summit the first clear, calm morning you get. The lower and tree-lined areas — Duved and Tegefjäll — are the bad-weather plan."
+      },
+      {
+        "label": "Avalanche and off-piste",
+        "text": "The north face and Ullådalen are avalanche terrain with real accident history. Sweden's avalanche forecast for the Jämtland mountains is published by the national authority; carry transceiver, shovel and probe, and hire a guide unless you are trained and equipped."
+      },
+      {
+        "label": "The night train",
+        "text": "The Stockholm–Åre sleeper arrives in the village and is the single best way to reach a Nordic ski resort. Cabins sell out for the February and Easter weeks months ahead."
+      },
+      {
+        "label": "Alcohol",
+        "text": "Systembolaget is the only off-licence, closes early Saturday and is shut Sunday. Åre's bar prices are Swedish-resort prices; buy for the apartment during the week."
+      }
+    ]
+  },
+  "proTips": [
+    "Take the **night train** both ways. It saves two hotel nights, arrives at the lifts, and is genuinely comfortable in a two-berth cabin.",
+    "**Ski the summit the first calm morning.** Do not save Åreskutan for a planned day later in the week; the mountain decides, not you.",
+    "Book one **mountain-restaurant dinner** reached by snowcat or skis. It is an Åre institution and the ride back down in the dark is half the experience.",
+    "April in Åre is the underrated week: full snow base, 14 hours of daylight, spring corn snow in the afternoon, and terrace après in sunglasses.",
+    "Buy the pass online **before you travel**. SkiStar's dynamic pricing means the same pass can differ by 30% between an early online purchase and the ticket window.",
+    "If you have a car and one spare afternoon, drive to **Tännforsen** frozen, and buy Jämtland cheese on the way back. It is the best two hours you will spend off the snow."
+  ],
+  "typeSpecific": {
+    "raw": {
+      "resort_profile": "Sweden's largest and most complete ski destination: four linked base areas — Åre By, Åre Björnen, Tegefjäll and Duved — under the Åreskutan massif, with a genuine village, three Alpine World Ski Championships in its history, and the Nordics' widest terrain variety",
+      "lift_network": "Around 85–90 marked runs and roughly 40 lifts across the linked areas, including the Kabinbanan cable car from the village and the summit sector on Åreskutan",
+      "vertical_drop_m": 890,
+      "top_elevation_m": 1274,
+      "summit_elevation_m": 1420,
+      "snow_reliability": "Good and long, with heavy snowmaking investment. The caveat is that Åre is a high-latitude but relatively maritime-influenced mountain — the exposed **summit sector closes in wind frequently**, and thaw–freeze cycles happen at village level in midwinter",
+      "nordic_network_km": 100,
+      "off_piste_terrain": "The Åreskutan north face and the Ullådalen valley are the classic lines; both are avalanche terrain and guided access is strongly advised",
+      "gpx_ready": true
+    },
+    "surface": "The Åreskutan north face and the Ullådalen valley are the classic lines; both are avalanche terrain and guided access is strongly advised",
+    "distanceKm": 100,
+    "elevationM": 1274,
+    "verticalM": 890,
+    "technicalRating": null,
+    "transitPass": null,
+    "hutBooking": null,
+    "liftNetwork": "Sweden's largest and most complete ski destination: four linked base areas — Åre By, Åre Björnen, Tegefjäll and Duved — under the Åreskutan massif, with a genuine village, three Alpine World Ski Championships in its history, and the Nordics' widest terrain variety",
+    "snowReliability": "Good and long, with heavy snowmaking investment. The caveat is that Åre is a high-latitude but relatively maritime-influenced mountain — the exposed **summit sector closes in wind frequently**, and thaw–freeze cycles happen at village level in midwinter",
+    "windConditions": null,
+    "gpxReady": true,
+    "bookingTimeline": null,
+    "audience": null
+  },
+  "packingNotes": [],
+  "whatCouldGoWrong": [],
+  "sources": {
+    "verified": null,
+    "confidenceNotes": null
+  },
+  "verifyFlags": [],
+  "verifyFlagCount": 0,
+  "volatilePricing": true,
+  "wordCount": 1425,
+  "dataVintage": 2026,
+  "provenance": {
+    "batch": "northern-baltics",
+    "sourceFile": "carta_northern_europe_baltics_trips.md#trip-24",
+    "sourceFormat": "single-file md, '## Trip NN' records with fenced YAML",
+    "sourceId": "are-sweden-lift-linked-winter-capital",
+    "ingestedAt": "2026-09-02",
+    "synthesized": false
+  }
+}

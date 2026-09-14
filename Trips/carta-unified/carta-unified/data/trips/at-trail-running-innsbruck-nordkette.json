@@ -1,0 +1,312 @@
+{
+  "id": "at-trail-running-innsbruck-nordkette",
+  "sourceId": "at-trail-running-innsbruck-nordkette",
+  "slug": "at-trail-running-innsbruck-nordkette",
+  "title": "Nordkette Skyline — A Running Week Above Innsbruck",
+  "country": "Austria",
+  "countryCode": "AT",
+  "countries": [
+    {
+      "name": "Austria",
+      "code": "AT"
+    }
+  ],
+  "isMultiCountry": false,
+  "region": "Western & Central Europe",
+  "regionKey": "western-central",
+  "subRegion": "Karwendel & Tuxer Alps, Tyrol",
+  "tripType": "Trail Running",
+  "tripTypeId": 2,
+  "tripTypeSlug": "trail-running",
+  "durationDays": 7,
+  "bestPeriod": {
+    "months": [
+      6,
+      7,
+      8,
+      9
+    ],
+    "monthNames": [
+      "June",
+      "July",
+      "August",
+      "September"
+    ],
+    "window": null,
+    "note": "Old snow lingers in the north-facing gullies of the Karwendel until late June; September gives the cleanest rock and the shortest lift queues.",
+    "avoid": null,
+    "raw": null
+  },
+  "budgetTier": "€€",
+  "budgetTierRange": [
+    2,
+    2
+  ],
+  "budgetTierRaw": "€€",
+  "budget": {
+    "currency": "EUR",
+    "totalEur": {
+      "low": 780,
+      "high": 1120
+    },
+    "totalNote": null,
+    "breakdown": {
+      "accommodation": {
+        "lowEur": 340,
+        "highEur": 480,
+        "note": null
+      },
+      "food": {
+        "lowEur": 190,
+        "highEur": 270,
+        "note": null
+      },
+      "transport": {
+        "lowEur": 130,
+        "highEur": 200,
+        "note": null
+      },
+      "activities": {
+        "lowEur": 120,
+        "highEur": 170,
+        "note": null
+      }
+    },
+    "perDayEur": {
+      "low": 111,
+      "high": 160
+    }
+  },
+  "profile": {
+    "difficulty": 4,
+    "difficultyLabel": "Demanding",
+    "difficultyNote": null,
+    "fitnessLevel": "Demanding",
+    "crowdLevel": "Moderate",
+    "familyFriendly": false,
+    "carRequired": false
+  },
+  "basecamps": [
+    "Innsbruck"
+  ],
+  "gatewayAirport": "Innsbruck (INN)",
+  "gatewayAirportCode": "INN",
+  "languages": [
+    "German"
+  ],
+  "currency": "EUR",
+  "emergencyNumber": "112",
+  "coordinates": {
+    "lat": 47.2627,
+    "lon": 11.3945,
+    "precision": "city",
+    "matchedPlace": "Innsbruck",
+    "source": "geonames (geonamescache, cities > 15k)"
+  },
+  "tags": [
+    "ridgeline",
+    "lift-assisted-vert",
+    "karwendel",
+    "alpine-huts",
+    "recovery-structured"
+  ],
+  "summary": "Seven days of lift-assisted vertical above Innsbruck, from the Nordkette crest to the Zirbenweg, with the recovery days built in.",
+  "summaryGenerated": false,
+  "hook": "Innsbruck is the rare city where you can drink a coffee on Maria-Theresien-Straße and be standing on a 2,300 m limestone ridge forty minutes later, without a car. That funicular-and-cable-car chain is the point of the week: it lets you spend your legs on descending and ridge running instead of grinding up the same forest road twice. Karwendel rock and exposure to the north, rolling larch trail to the south.",
+  "snapshot": {
+    "Country": "Austria",
+    "Base(s)": "Innsbruck (single base, all week)",
+    "Trip Type": "Trail Running",
+    "Duration": "7 days",
+    "Best Period": "Late June – late September",
+    "Budget Tier": "€€",
+    "Total Distance / Terrain": "approx. 95–115 km, 5,500–6,500 m vert; limestone ridge (T3), larch singletrack (T1–T2), river gravel",
+    "Getting There": "Fly to Innsbruck (INN), 20 min by bus F into town; or rail via Munich / Zürich to Innsbruck Hbf",
+    "Who It Suits": "Runners comfortable with exposure and 1,000 m descents; not a first mountain-running week"
+  },
+  "itinerary": [
+    {
+      "day": 1,
+      "title": "Legs open on the Höttinger terraces",
+      "morning": "Land, drop bags, do nothing hard. Walk the Innpromenade to the Hungerburgbahn valley station at Congress.",
+      "afternoon": "Ride the Hungerburgbahn to 860 m and run the Höttinger Alm loop: west on the Höhenweg past the Höttinger Bild chapel, up forest track to Höttinger Alm (1,487 m), then down the Höttinger Graben to Hötting. Shaded almost throughout, which matters in July.",
+      "evening": "Eat early in Wilten and go to bed. Innsbruck's tap water comes from the Mühlau springs — fill from any Altstadt fountain rather than buying bottles.",
+      "dayStats": "12 km, 550 m vert, 550 m descent. Grade T1–T2, forest road and firm singletrack, no exposure. Water: Höttinger Alm (staffed in summer), Altstadt fountains. Bail-out: the Hungerburgbahn or a walk of 30 min down to Hötting.",
+      "sleep": null
+    },
+    {
+      "day": 2,
+      "title": "The Goetheweg into the Karwendel",
+      "morning": "First cabin on the Nordkettenbahnen. Hungerburg to Seegrube (1,905 m), change, Seegrube to Hafelekar (2,269 m). From the top station take the Goetheweg east — a narrow, cable-secured traverse under the Hafelekarspitze and Gleirschspitze that stays high on scree and slabs before dropping through the Mandlscharte to Pfeishütte (1,922 m).",
+      "afternoon": "Soup and a litre of water at Pfeishütte, then return on the same line or, if legs are good, descend the Arzler Scharte to Arzler Alm (1,067 m) and finish on forest trail into Hungerburg.",
+      "evening": "Rehydrate hard. There is no water at all between Hafelekar and Pfeishütte.",
+      "dayStats": "18–21 km, 700 m vert (lift-assisted), 1,300–1,600 m descent. Grade T3 with short secured sections; loose scree, exposure to the north on the Goetheweg traverse. Water: Seegrube restaurant, Pfeishütte, Arzler Alm. Bail-out: back to Hafelekar and ride down, or the Arzler Scharte valley path.",
+      "sleep": null
+    },
+    {
+      "day": 3,
+      "title": "Recovery on the Zirbenweg",
+      "morning": "Bus to Igls, then the Patscherkofelbahn to 1,952 m. The Zirbenweg contours east through one of the largest stone-pine stands in the Alps, almost flat, with the whole Nordkette opposite.",
+      "afternoon": "Run gently to Boscheben and Tulfeinalm, then take the Glungezerbahn down to Tulfes and the bus back. Conversational pace only.",
+      "evening": "Swim at the Baggersee on the western edge of town.",
+      "dayStats": "11 km, 250 m vert, 200 m descent. Grade T1, wide compacted path, no exposure. Water: Patscherkofel top station, Boscheben, Tulfeinalm. Bail-out: the path is never more than 40 min from a lift or a road.",
+      "sleep": null
+    },
+    {
+      "day": 4,
+      "title": "Vertical session, then nothing",
+      "morning": "The quality day. Warm up along the Inn, then run the Hungerburg-to-Seegrube line as one sustained climb: roughly 1,050 m on switchbacked forest and open grass. Threshold effort, not a race. Ride the cable car down — descending 1,000 m on tired quads after a vertical effort is how weeks end early.",
+      "afternoon": "Twenty easy minutes on the Innpromenade gravel, then stop.",
+      "evening": "Bergisel and the Zaha Hadid ski jump tower, on foot, slowly.",
+      "dayStats": "9 km running, 1,050 m vert, 100 m descent. Grade T2, steep switchback trail, no exposure. Water: Seegrube. Bail-out: the Hungerburgbahn intersects the route at 860 m.",
+      "sleep": null
+    },
+    {
+      "day": 5,
+      "title": "Rest day with a rope-free ridge walk",
+      "morning": "No running. The Hofkirche, the Domplatz, a long breakfast.",
+      "afternoon": "If you cannot sit still, ride to Hungerburg and walk — walk — the Umbrüggler Alm circuit, 300 m of gain, 90 minutes round trip.",
+      "evening": "Check the forecast. Tomorrow only works with a clear morning window.",
+      "dayStats": "6 km walked, 300 m vert. Grade T1. Water: Umbrüggler Alm. Bail-out: not applicable.",
+      "sleep": null
+    },
+    {
+      "day": 6,
+      "title": "Long day: Hochzirl, Solsteinhaus and the Erlsattel",
+      "morning": "Early S-Bahn west to Hochzirl (10 minutes from Innsbruck Hbf). Climb the Solsteinhaus trail through beech and then pine to Solsteinhaus (1,806 m) — steady, runnable in the lower half, hiking pace above.",
+      "afternoon": "Continue east over the Erlsattel, traverse the flank of the Großer Solstein toward Höttinger Alm, then descend the long forest line into Hötting and run home along the Inn. Hours of limestone with nobody on it.",
+      "evening": "Kaspressknödelsuppe and a Gröstl will do more for you than a protein bar.",
+      "dayStats": "26–29 km, 1,600 m vert, 1,900 m descent. Grade T2–T3, rooty forest below, scree and rock steps above the hut; moderate exposure on the Erlsattel traverse. Water: Solsteinhaus (staffed June–October), Höttinger Alm; nothing in between, so carry 1.5 L. Bail-out: return to Hochzirl station, or drop south to Zirl and take the train.",
+      "sleep": null
+    },
+    {
+      "day": 7,
+      "title": "Sunrise on the Hafelekarspitze",
+      "morning": "First lift again, this time only to stand on it. From Hafelekar station the scramble to Hafelekarspitze (2,334 m) takes 20 minutes and gives the whole Inn valley in low light.",
+      "afternoon": "Run down from Seegrube on the Seegrubensteig for a last 1,000 m descent, or ride down if the week has taken enough. Shower, eat, airport bus.",
+      "evening": "Out.",
+      "dayStats": "6–10 km, 150 m vert, 150–1,150 m descent. Grade T3 on the summit scramble, T2 on the descent. Water: Seegrube. Bail-out: the cable car runs all day.",
+      "sleep": null
+    }
+  ],
+  "accommodationStrategy": [
+    {
+      "rank": 1,
+      "name": "Nepomuks",
+      "style": "Hostel",
+      "location": "Kiebachgasse, Altstadt",
+      "description": "Small, long-running, and 90 seconds from the Altstadt fountains and the bus stops that feed Igls and Hungerburg. Rooms are simple but there is space to hang wet kit. Best if you are solo and want walking distance to every trailhead bus.",
+      "booking": "6 weeks ahead for July–August.",
+      "priceNote": "€45–€75 per night"
+    },
+    {
+      "rank": 2,
+      "name": "Hotel Innsbruck",
+      "style": "Mid-range hotel",
+      "location": "Innrain, riverside",
+      "description": "Directly on the Inn, so the recovery jog starts at the door, and a 10-minute walk to the Hungerburgbahn valley station. The pool and sauna are the single most useful hotel feature on a vert-heavy week.",
+      "booking": "8–10 weeks ahead; it fills during Innsbruck congress weeks.",
+      "priceNote": "€140–€210 per night"
+    },
+    {
+      "rank": 3,
+      "name": "Apartments in Hötting or Mühlau",
+      "style": "Self-catering",
+      "location": "north bank",
+      "description": "The north bank is the correct side of the river for the Nordkette trails, and a kitchen matters when you are eating 3,500 kcal a day. Look for anything within 10 minutes of the Hungerburgbahn line.",
+      "booking": "8 weeks ahead.",
+      "priceNote": "€95–€150 per night for two"
+    }
+  ],
+  "logistics": {
+    "connectivity": null,
+    "emergency": "112 pan-European; Austrian alpine rescue is **140**, which reaches the Bergrettung dispatcher directly. Save both before you leave the valley.",
+    "weather": "The Karwendel is a north-facing limestone wall that generates its own cloud, and convective storms build from about 13:00 in July and August. Check the GeoSphere Austria forecast the night before and plan to be off the crest by early afternoon.",
+    "bookingWindows": null,
+    "money": "Cards work across the city, but several alms are cash-only or have unreliable terminals — carry €40–€60 in small notes. Huts close one day a week, usually Monday or Tuesday, and shut for the season in early October. Supermarkets close at 18:00–19:00 and all day Sunday.",
+    "transportRules": null,
+    "permits": null,
+    "health": null,
+    "gettingThere": null,
+    "other": [
+      {
+        "label": "Guest card",
+        "text": "Most Innsbruck-region accommodations issue a Welcome Card at check-in covering regional buses and trains, with lift discounts that vary by property and season. Confirm the exact terms at check-in."
+      },
+      {
+        "label": "Lift hours",
+        "text": "The Nordkettenbahnen run roughly 08:00 to 17:30 in summer, the Hafelekar section closing first. Missing the last cabin from Seegrube means a 1,000 m descent on tired legs in fading light."
+      },
+      {
+        "label": "Water is scarce, not absent",
+        "text": "Limestone drains instantly. Above 1,900 m there is effectively no surface water and the huts are the supply. Plan 1.5–2 L for any Goetheweg or Solsteinhaus day."
+      },
+      {
+        "label": "Camping and drones",
+        "text": "Camping in the Tyrolean alpine zone is prohibited outside designated sites, and the Karwendel Nature Park adds its own restrictions. Drones are restricted over the park and inside Innsbruck airport's control zone, which covers most of the valley floor."
+      }
+    ]
+  },
+  "proTips": [
+    "Buy the Nordkettenbahnen return even if you intend to run down. The price gap is small and it removes the temptation to descend 1,300 m on shredded quads.",
+    "Take the first cabin of the day, not the second. The Goetheweg is single-file with passing places; twenty minutes earlier means an empty path and cooler rock.",
+    "Run the Zirbenweg west to east in the afternoon. The light is behind you, the Nordkette opposite is lit, and you finish at a lift instead of starting at one.",
+    "Use the S-Bahn as a trail shuttle. Hochzirl, Zirl and Hall in Tirol are 10–20 minutes from Innsbruck Hbf and open point-to-point routes that a car would ruin.",
+    "Fill both flasks at Pfeishütte even if you feel fine. The return over the Mandlscharte is dry and slower than it looks.",
+    "If Day 6 is stormed off, the Rumer Alm and Arzler Alm circuit from Hungerburg stays below the treeline and runs in weather that closes the ridge.",
+    "Innsbruck's public fountains are drinking water unless marked *Kein Trinkwasser* — the cheapest hydration strategy in the Alps."
+  ],
+  "typeSpecific": {
+    "raw": {
+      "Total Distance / Terrain": "approx. 95–115 km, 5,500–6,500 m vert; limestone ridge (T3), larch singletrack (T1–T2), river gravel",
+      "Who It Suits": "Runners comfortable with exposure and 1,000 m descents; not a first mountain-running week"
+    },
+    "surface": "approx. 95–115 km, 5,500–6,500 m vert; limestone ridge (T3), larch singletrack (T1–T2), river gravel",
+    "distanceKm": 95,
+    "elevationM": null,
+    "verticalM": null,
+    "technicalRating": null,
+    "transitPass": null,
+    "hutBooking": null,
+    "liftNetwork": null,
+    "snowReliability": null,
+    "windConditions": null,
+    "gpxReady": null,
+    "bookingTimeline": null,
+    "audience": "Runners comfortable with exposure and 1,000 m descents; not a first mountain-running week"
+  },
+  "packingNotes": [
+    "Shoes with a real rock plate and moderate lugs; sharp limestone scree shreds soft trail shoes and offers nothing on slabs.",
+    "1.5 L carrying capacity: two soft flasks plus a collapsible half-litre for hut taps.",
+    "A wind shell that actually blocks wind. Hafelekar runs 15°C colder than the Altstadt.",
+    "Light gloves and a beanie even in August, for the Day 7 sunrise.",
+    "Foldable poles — they pay for themselves on the Solsteinhaus climb and the Arzler Scharte descent.",
+    "Sunscreen and a cap: the ridge is unshaded above 2,200 m.",
+    "Cash in small notes for hut soup.",
+    "A headtorch, even on days you plan to finish at 16:00. Lift closures change plans."
+  ],
+  "whatCouldGoWrong": [
+    "**Afternoon storm on the Goetheweg.** A cable-secured traverse is the worst possible place in lightning. Fallback: turn at the Mandlscharte and descend to Pfeishütte, a staffed hut with beds, rather than continuing on the crest.",
+    "**Hafelekar closed for wind.** It happens several times a summer. Fallback: Seegrube still runs — use it for the Day 4 vertical session and shift the Karwendel day later in the week.",
+    "**Old snow in the Mandlscharte in early season.** The north-facing gully holds hard névé into late June. Fallback: ask the Nordkettenbahnen staff at Hafelekar before committing, and substitute the Zirbenweg or the Solsteinhaus day.",
+    "**Quad failure by Day 5.** Common on a lift-assisted week, where ascents are cheap and descents are long. Fallback: the Day 5 rest day is structural, not padding, and ride the lift down on Day 7.",
+    "**Hut closed on the day you counted on its tap.** Fallback: carry the full day's water on any Karwendel route and treat hut taps as a bonus, not a plan."
+  ],
+  "sources": {
+    "verified": null,
+    "confidenceNotes": null
+  },
+  "verifyFlags": [],
+  "verifyFlagCount": 0,
+  "volatilePricing": false,
+  "wordCount": 1970,
+  "dataVintage": 2026,
+  "provenance": {
+    "batch": "western-central",
+    "sourceFile": "cartatripsv1/trips/at-trail-running-innsbruck-nordkette.md",
+    "sourceFormat": "md+yaml-frontmatter (one file per trip)",
+    "sourceId": "at-trail-running-innsbruck-nordkette",
+    "ingestedAt": "2026-09-02",
+    "synthesized": false
+  }
+}

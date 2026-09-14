@@ -1,0 +1,16 @@
+rank,curation_rank,title,ref,network,distance_km,popularity,pageviews_day,sitelinks,anchors,quality_score,portal_agreement,status,family_members,trip_id,osm_relation
+1,82.23,E11 section 50: Püünsi‒Tallinn,E11,iwn,16.3,0.821,0,0,"Tallinn (1378/day, 718 m); Viru Hill (1378/day, 655 m); Walls of Tallinn (191/day, 1092 m)",78,,needs_review,36,63772,12041002
+2,73.33,E9 section 58: Laulasmaa - Vääna-Jõesuu,E9,iwn,18.2,0.438,21,17,,96,,needs_review,20,63608,6991370
+3,70.56,Peraküla-Aegviidu-Ähijärve haru. II lõik: Vihterpalu-Ohtu,PAÄ,nwn,45.9,0.473,0,0,"Rummu Quarry (22/day, 196 m)",100,,needs_review,12,63563,5555081
+4,69.94,Heltermaa-Ristna-Sarve haru II lõik Kärdla-Ristna,HRS,nwn,106.6,0.484,0,0,"Hiiumaa (101/day, 12 m); Hiiumaa (97/day, 11 m)",96,,needs_review,5,63791,13176706
+5,67.03,"Euroopa matkarada E9, Eesti",,iwn,8.8,0.229,21,17,,100,,needs_review,3,63511,1794139
+6,64.56,"d49_Euroopa matkarada E9, Eesti",E9,iwn,32.0,0.159,21,17,,100,,needs_review,1,63698,9323678
+7,64.56,"d48_Euroopa matkarada E9, Eesti",E9,iwn,16.5,0.159,21,17,"Kuursaal (57/day, 11 m); Haapsalu Old Town Hall (57/day, 206 m); Haapsalu (57/day, 566 m)",100,,needs_review,1,63699,9329792
+8,64.56,"d47_Euroopa matkarada E9, Eesti",E9,iwn,19.2,0.159,21,17,,100,,needs_review,1,63700,9329870
+9,64.56,"d46_Euroopa matkarada E9, Eesti",E9,iwn,13.6,0.159,21,17,,100,,needs_review,1,63701,9329905
+10,64.56,"d55_Euroopa matkarada E9, Eesti",E9,iwn,18.0,0.159,21,17,,100,,needs_review,1,63690,9050146
+11,64.56,"d53_Euroopa matkarada E9, Eesti",E9,iwn,22.7,0.159,21,17,,100,,needs_review,1,63692,9052764
+12,64.56,"d52_Euroopa matkarada E9, Eesti",E9,iwn,15.1,0.159,21,17,,100,,needs_review,1,63693,9056642
+13,64.56,"d51_Euroopa matkarada E9, Eesti",E9,iwn,12.2,0.159,21,17,,100,,needs_review,1,63696,9323577
+14,64.56,"d54_Euroopa matkarada E9, Eesti",E9,iwn,24.7,0.159,21,17,,100,,needs_review,1,63691,9052756
+15,64.46,Eesti Jaakobitee Day 1: Tallinn – Saku,,nwn,21.6,0.542,0,0,"Viru Hill (1378/day, 625 m); Tallinn (1378/day, 386 m); Walls of Tallinn (191/day, 103 m)",66,,needs_review,1,63807,13818638

@@ -1,0 +1,276 @@
+{
+  "id": "hr-culinary-istria-truffles",
+  "sourceId": "culinary-croatia-istria-truffles",
+  "slug": "hr-culinary-istria-truffles",
+  "title": "Istria in Truffle Season: Motovun Forest, Malvazija & the World's Best Oil",
+  "country": "Croatia",
+  "countryCode": "HR",
+  "countries": [
+    {
+      "name": "Croatia",
+      "code": "HR"
+    }
+  ],
+  "isMultiCountry": false,
+  "region": "Southern & Mediterranean Europe",
+  "regionKey": "southern-mediterranean",
+  "subRegion": "Central Istria, the Mirna valley & the west coast",
+  "tripType": "Culinary & Wine Tours",
+  "tripTypeId": 7,
+  "tripTypeSlug": "culinary",
+  "durationDays": 7,
+  "bestPeriod": {
+    "months": [
+      4,
+      5,
+      6,
+      9,
+      11
+    ],
+    "monthNames": [
+      "April",
+      "May",
+      "June",
+      "September",
+      "November"
+    ],
+    "window": "Mid-September–late November for white truffle; late April–June for a quieter, cheaper version",
+    "note": null,
+    "avoid": "Mid-July–late August — coastal towns are gridlocked, inland hill villages hit 35°C, and there is no white truffle",
+    "raw": "Mid-September–late November for white truffle; late April–June for a quieter, cheaper version"
+  },
+  "budgetTier": "€€",
+  "budgetTierRange": [
+    2,
+    3
+  ],
+  "budgetTierRaw": "€€–€€€",
+  "budget": {
+    "currency": "EUR",
+    "totalEur": {
+      "low": 1400,
+      "high": 2300
+    },
+    "totalNote": "€1,400–€2,300 per person, excl. international flights",
+    "breakdown": {
+      "accommodation": {
+        "lowEur": 560,
+        "highEur": 980,
+        "note": "Hill-village guesthouse €90–€150 pppn; Rovinj boutique €120–€190"
+      },
+      "food": {
+        "lowEur": 430,
+        "highEur": 720,
+        "note": "Konoba mains €14–€24; a fresh white-truffle dish €35–€70; Rovinj fish €25–€40"
+      },
+      "transport": {
+        "lowEur": 220,
+        "highEur": 350,
+        "note": "Rental car 6 days, Učka tunnel toll, fuel, one driver day"
+      },
+      "activities": {
+        "lowEur": 280,
+        "highEur": 400,
+        "note": "Truffle hunt €80–€150, oil tastings €12–€25, winery visits €15–€35"
+      }
+    },
+    "perDayEur": {
+      "low": 200,
+      "high": 329
+    }
+  },
+  "profile": {
+    "difficulty": 2,
+    "difficultyLabel": "Moderate",
+    "difficultyNote": "2/5 — a two-hour truffle hunt on wet forest floor, steep hill-village lanes, olive-grove walking",
+    "fitnessLevel": "Moderate",
+    "crowdLevel": null,
+    "familyFriendly": null,
+    "carRequired": null
+  },
+  "basecamps": [],
+  "gatewayAirport": "PUY Pula, 50 min to Motovun; TRS Trieste 1 h 30 min; ZAG Zagreb 3 h; VCE Venice 2 h 45 min",
+  "gatewayAirportCode": "PUY",
+  "languages": [],
+  "currency": null,
+  "emergencyNumber": "112",
+  "coordinates": {
+    "lat": 44.8683,
+    "lon": 13.8481,
+    "precision": "gateway",
+    "matchedPlace": "Pula",
+    "source": "geonames (geonamescache, cities > 15k)"
+  },
+  "tags": [
+    "truffles",
+    "motovun",
+    "malvazija-istarska",
+    "teran",
+    "olive-oil",
+    "flos-olei",
+    "boskarin",
+    "buzet"
+  ],
+  "summary": "Istria in autumn is the only place in Europe where the white truffle, world-class olive oil and a serious indigenous white grape occupy the same forty kilometres. You base inland among the hill villages — Motovun on its 277 m cone, Grožnjan, Buzet — hunt Tuber magnatum in the oak and poplar woods of the Mirna floodplain, and eat it grated over fuži by the gram. Between truffle days you work through Malvazija Istarska and Teran, taste down a Flos Olei shortlist, meet boškarin ox, and finish at Rovinj with Kvarner scampi. No drive exceeds an hour.",
+  "summaryGenerated": false,
+  "hook": null,
+  "snapshot": {},
+  "itinerary": [
+    {
+      "day": 1,
+      "title": "Pula, then up into the hills",
+      "morning": "Land at PUY, see the Roman amphitheatre and the Temple of Augustus, then drive inland before lunch.",
+      "afternoon": "Up to **Motovun**, walled and 277 m above the Mirna floodplain, and walk the ramparts for the view over the truffle forest you will be standing in tomorrow.",
+      "evening": "**Konoba Mondo** just below the town gate — fuži with truffle, and a Malvazija from Benvenuti up the road.",
+      "dayStats": "50 min PUY–Motovun / 1,052 steps up from the car park, or the shuttle / truffle fuži €28–€45 / Malvazija bottle €10–€20",
+      "sleep": "Hotel Kaštel or Roxanich Wine & Heritage Hotel, Motovun"
+    },
+    {
+      "day": 2,
+      "title": "The hunt in the Motovun forest",
+      "morning": "A two-hour hunt with **Karlić Tartufi** at Paladini or **Prodan Tartufi** — lagotto romagnolo dogs working the poplar and oak floodplain, then a tasting of truffle products in the farmhouse.",
+      "afternoon": "**Livade** and the **Zigante** shop to see the market itself: fresh magnatum weighed on a jeweller's scale, and which preserved products are worth buying.",
+      "evening": "**Zigante Restaurant** at Livade for the full truffle menu, or **Konoba Dolina** at Gradinje for the same ingredient at half the price.",
+      "dayStats": "Hunt €80–€150 pp, 2 h / fresh white truffle €2,500–€5,000/kg / 12 km Motovun–Livade / boots essential",
+      "sleep": "Hotel Kaštel or Roxanich, Motovun"
+    },
+    {
+      "day": 3,
+      "title": "Momjan: Malvazija, Muškat and amphorae",
+      "morning": "North to **Momjan** for **Kozlović** — a cantilevered concrete winery cut into the hillside, with a structured Malvazija flight from fresh to acacia-aged.",
+      "afternoon": "**Kabola** next door for organic and amphora-aged Malvazija buried in the courtyard, then the sweet **Muškat Momjanski**.",
+      "evening": "**Konoba Rino** in Momjan or down to **Buje** for dinner; order the boškarin carpaccio if it is on.",
+      "dayStats": "2 wineries / fees €15–€30 each / 35 km / Muškat Momjanski 0.5 l €18–€30 / driver day recommended",
+      "sleep": "Hotel Kaštel or Roxanich, Motovun"
+    },
+    {
+      "day": 4,
+      "title": "Vodnjan olive oil and the Flos Olei shortlist",
+      "morning": "South to **Vodnjan** and **Chiavalon** for a structured tasting: single-variety Buža, Istarska bjelica and Karbonaca poured blind against a supermarket oil.",
+      "afternoon": "**Ipša** at Ipši, a hilltop mill with a terrace over the Mirna valley — and, from mid-October, a live pressing you can watch. Buy here rather than at the coast.",
+      "evening": "**Konoba Boškarin** or a Vodnjan konoba for ox stew and pljukanci.",
+      "dayStats": "2 mills / tastings €12–€25 each / 68 Istrian producers in Flos Olei 2026 / 500 ml single-variety €18–€30 / 95 km round trip",
+      "sleep": "Hotel Kaštel or Roxanich, Motovun"
+    },
+    {
+      "day": 5,
+      "title": "Grožnjan, Roč to Hum and the Glagolitic Alley",
+      "morning": "**Grožnjan**, the artists' village, near-abandoned in the 1960s and now full of galleries and one very good gelato counter.",
+      "afternoon": "The **Glagolitic Alley** from **Roč to Hum** — 7 km punctuated by eleven sculptural monuments to the Glagolitic script, ending at Hum, which bills itself the world's smallest town at around twenty inhabitants. Biska at **Aura** in Buzet on the way.",
+      "evening": "**Humska Konoba** at Hum for maneštra and a shot of the mistletoe brandy.",
+      "dayStats": "7 km Roč–Hum, 11 monuments / Hum population ~20 / Aura tasting €8–€15 / biska bottle €14–€22",
+      "sleep": "Hotel Kaštel or Roxanich, Motovun"
+    },
+    {
+      "day": 6,
+      "title": "Buzet, Subotina and a hands-on kitchen",
+      "morning": "If your dates hit the second Saturday of September, be in **Buzet** for **Subotina** and the giant truffle omelette. Otherwise, book a **truffle and fuži cookery class** at Karlić or a Motovun agroturizam — rolling fuži by hand, then shaving truffle over them.",
+      "afternoon": "Buzet's old town on its ridge, then the Mirna valley road back.",
+      "evening": "**Toklarija** at Sovinjsko Polje, a slow-food restaurant in a 500-year-old olive mill with a single long tasting menu and no choices.",
+      "dayStats": "Class €70–€110, 3 h / Subotina omelette uses 1,000+ eggs in a 2 m pan / Toklarija menu €90–€140, book 2–3 weeks",
+      "sleep": "Hotel Kaštel or Roxanich, Motovun"
+    },
+    {
+      "day": 7,
+      "title": "Rovinj, scampi and out",
+      "morning": "Down to **Rovinj**, the Venetian fishing town on its peninsula, and up to St Euphemia's campanile.",
+      "afternoon": "**Kvarner scampi** and grilled fish at **Konoba Batelina** in Banjole near Pula — David Skoko's restaurant, still the region's best seafood — or **Monte** in Rovinj for the Michelin-starred version.",
+      "evening": "PUY is 40 minutes from Rovinj and 15 from Banjole. Truffle products travel; fresh truffle does not.",
+      "dayStats": "45 min Motovun–Rovinj / Batelina mains €18–€32, book 2–4 weeks / Monte menu €150–€220 / PUY 40 min",
+      "sleep": "Airport hotel near Pula, or fly out"
+    }
+  ],
+  "accommodationStrategy": [
+    {
+      "rank": 1,
+      "name": "Hotel Kaštel",
+      "style": "historic hotel",
+      "location": "Motovun",
+      "description": "The only real hotel inside Motovun's walls, on the main square with parking below and its own spa. Central to every inland drive, and you can walk to Konoba Mondo after a bottle. €110–€180 double.",
+      "booking": null,
+      "priceNote": null
+    },
+    {
+      "rank": 2,
+      "name": "Roxanich Wine & Heritage Hotel",
+      "style": "winery hotel",
+      "location": "Motovun",
+      "description": "A converted cooperative building on the hill below town, with a working cellar of long-macerated Malvazija and Teran underneath. Tasting and bed in the same place, which resolves the 0.0-limit problem for younger drivers. €160–€260.",
+      "booking": null,
+      "priceNote": "€160–€260"
+    },
+    {
+      "rank": 3,
+      "name": "San Canzian Village & Hotel",
+      "style": "restored hamlet",
+      "location": "Buje",
+      "description": "An abandoned stone village rebuilt as a hotel between Momjan and Grožnjan, well placed for the wine and oil days and quieter than Motovun in October. €180–€300.",
+      "booking": null,
+      "priceNote": "€180–€300"
+    }
+  ],
+  "logistics": {
+    "connectivity": "Croatia is in EU roaming — no surcharge. 4G is good in hill towns, weak in the Mirna floodplain and the Učka foothills. Download offline maps; agroturizam addresses are hamlet names, not streets.",
+    "emergency": "112. The main hospital is in Pula. Croatia is in the EU, so EHIC/GHIC applies; add rental-excess cover for the narrow inland roads.",
+    "weather": "The **bura** hits the eastern side and the Učka pass with gusts over 100 km/h, closing bridges and exposed motorway sections; the Mirna valley is sheltered but fogs heavily on autumn mornings. Rain makes the truffle season — a wet October is good news you must dress for.",
+    "bookingWindows": "Truffle hunts 1–2 weeks in October–November, longer for weekends. Toklarija 2–3 weeks. Batelina 2–4 weeks. Kozlović and Chiavalon a few days online. Motovun hotels 2–3 months for the truffle peak.",
+    "money": "Croatia adopted the **euro in 2023** — no kuna. Cards are widely accepted; hunt operators, small mills and konobas in hamlets often want cash, so carry €150.",
+    "transportRules": "Blood-alcohol limit 0.5 g/l, and **0.0 for drivers under 25 or with under two years' licence** — stricter than most of the EU and enforced. The Učka tunnel costs about €5 each way; the A8/A9 Istrian Y is ticket-tolled. Headlights are mandatory in daylight in the winter half of the year. Croatia is in Schengen, so the Slovenian and Italian borders are open.",
+    "permits": "Truffle hunting requires a licence and registered dogs — you attend, you do not dig. Fresh truffle moves freely within the EU but is declarable beyond it. Oil and truffle products are hold-baggage items.",
+    "health": "Tap water is drinkable. The forest floor in truffle season is deep mud and standing water — the operator supplies boots but rarely in every size. Ticks are present in Istrian woodland into November.",
+    "gettingThere": null,
+    "other": []
+  },
+  "proTips": [
+    "Book the hunt directly with Karlić or Prodan rather than through a coastal agency. You get the family's own forest, a smaller group and a real tasting instead of a bus stop.",
+    "Buy truffle by the gram in a restaurant before you buy any at a shop. A 7–10 g shaving over fuži tells you what fresh magnatum actually smells like, and most jarred products bear no relation.",
+    "Read the label on truffle oil. Almost all of it, including brands sold in Istria, is flavoured with synthetic bis(methylthio)methane — the mills and honest shops will tell you so.",
+    "Taste olive oil at the mill in the second half of October and you can drink the *novello* straight from the press, cloudy and stinging. It is a different substance from the filtered version sold in spring.",
+    "Ask for single-variety Istarska bjelica. It is the bitterest and most pungent of the four local varieties, the one that wins the Flos Olei entries, and the one supermarkets blend away.",
+    "Malvazija comes in two entirely different styles from the same estates — fresh stainless and acacia-aged or macerated. Always ask for both; the price difference is smaller than the flavour gap.",
+    "The first two weeks of November stack white-truffle peak, olive pressing and empty hill villages. September Subotina is more fun but the truffles are smaller and wetter."
+  ],
+  "typeSpecific": {
+    "raw": {
+      "Truffle species and seasons": "**Tuber magnatum**, the Istrian white, runs roughly **1 September–31 January** with the peak in **October and November**; the Motovun forest floodplain around Livade produces the largest specimens in Europe, including a record-setting 1.31 kg find. Black truffles split into summer **Tuber aestivum** (May–September, cheap, mild) and winter **Tuber melanosporum/brumale** (November–March). The price gap is the point: white runs €2,500–€5,000/kg at source in a normal year and climbs in a dry autumn; summer black is €200–€400.",
+      "Hunting and the named names": "**Zigante Tartufi**, based at **Livade** in the Mirna valley, is the region's dominant house — a shop, a truffle-focused restaurant and organised hunts. **Karlić Tartufi** at Paladini near Buzet is the long-established family operation whose hunts include a tasting in the farmhouse; **Prodan Tartufi** and **Miro Tartufi** are the other reliable family hunters. A hunt runs about two hours with lagotto dogs, costs roughly **€80–€150 per person** with a tasting, needs a week's notice in October and November, and is wet underfoot. Book direct, not through a coastal desk.",
+      "Appellations and wine": "Croatia's system uses PDO/ZOI at regional level: **Hrvatska Istra** is the designation. **Malvazija Istarska** is the flagship white — fresh and acacia-scented young, or macerated and aged in acacia wood for the amber style; **Teran** is the high-acid local red, distinct from Slovenian Kras Teran and the subject of a long-running EU naming dispute; **Muškat Momjanski** from the Momjan hills near Buje is the sweet speciality. Estates to book: **Kozlović** at Momjan (architecturally the best visit, €15–€30, online booking, English fluent), **Kabola** at Momjan (organic, amphora Malvazija), **Benvenuti** at Kaldir, **Matošević** at Krunčići, **Coronica** at Koreniki, and **Roxanich** at Motovun, which pairs long-macerated wines with a hotel. Two weeks' notice is comfortable; Saturdays fill first.",
+      "Olive oil": "Istria has topped the **Flos Olei** guide as the world's best olive-growing region for nine editions, with **68 Istrian producers in the 2026 guide** — 13.6% of the 500 worldwide. **Uljara Mate** of Savudrija scored a perfect 100/100 in the Hall of Fame for the third time, and **OPG Rheos** of Novigrad took Best Blended Medium Fruity. Others around **Vodnjan** and **Buje**: **Chiavalon** (purpose-built tasting room, €12–€25, book online), **Ipša** (hilltop mill with a terrace near Livade), **Meloto** and **Belci**. Varieties to ask for: **Buža**, **Istarska bjelica**, **Karbonaca**, **Rosinjola** — Bjelica is the bitter, pungent one.",
+      "Dishes and other producers": "**Fuži** (rolled quills) and **pljukanci** (hand-rolled spindles) are the two Istrian pastas; both are the correct vehicle for truffle. **Boškarin**, the near-extinct Istrian ox, appears as carpaccio, stew and salami — **Konoba Boškarin** and the butchers around Kanfanar handle it. **Kvarner scampi** (*Nephrops norvegicus*) are the region's protected shellfish, best simply boiled. **Aura** distillery at Buzet makes biska, the mistletoe brandy, and medica.",
+      "Festivals and timing": "**Subotina** in **Buzet**, on the second Saturday of September, opens the season with a giant truffle omelette cooked in a two-metre pan using upwards of a thousand eggs. **Tuberfest / Truffle Days** run at Livade and across central Istria through **October and November**. The olive harvest and pressing runs **mid-October to late November**, overlapping the truffle peak perfectly — the single best fortnight of the Istrian year is the first half of November.",
+      "Transport and the sober-driving plan": "Croatia's limit is **0.5 g/l, and 0.0 for drivers under 25 or with under two years' licence**. Inland roads are narrow, wet and unlit in autumn, and the Pula–Buzet rail line is minimal — plan two driver days with **Istria Wine Tours** or a Rovinj-based transfer operator, roughly €280–€450 per car. The **Učka tunnel** costs about €5 each way; the A8/A9 Istrian Y is ticket-tolled. Croatia is in the EU, Schengen and the eurozone, so the borders are open."
+    },
+    "surface": null,
+    "distanceKm": null,
+    "elevationM": null,
+    "verticalM": null,
+    "technicalRating": null,
+    "transitPass": null,
+    "hutBooking": null,
+    "liftNetwork": null,
+    "snowReliability": null,
+    "windConditions": null,
+    "gpxReady": null,
+    "bookingTimeline": null,
+    "audience": null
+  },
+  "packingNotes": [],
+  "whatCouldGoWrong": [],
+  "sources": {
+    "verified": "Istria named the world's best olive-oil region by Flos Olei for a ninth time, with 68 Istrian producers in the 2026 guide representing 13.6% of the global top 500, Uljara Mate of Savudrija scoring 100/100 in the Hall of Fame for a third time, and OPG Rheos of Novigrad taking Best Blended Medium Fruity; the Istrian white-truffle season running through autumn with an October–November peak and Livade/Motovun forest as its centre; Zigante's Livade base.",
+    "confidenceNotes": "Truffle hunt prices (€80–€150) and winery/mill tasting fees are estimated bands and must be re-checked with Karlić, Prodan, Kozlović, Kabola, Chiavalon and Ipša directly. Fresh white-truffle per-kilo prices swing enormously with rainfall and should never be quoted as fixed. Subotina's exact date moves within early September and should be confirmed against Buzet's tourist board each year. Toklarija, Konoba Batelina and Monte have seasonal closures and Batelina in particular closes for extended periods — confirm before building Day 7 around it. The Zigante restaurant's format and the Livade shop's opening have changed in recent years. Croatia's 0.0 limit for under-25 drivers should be re-confirmed against current traffic law before publishing. Hotel rates are prior-season estimates."
+  },
+  "verifyFlags": [],
+  "verifyFlagCount": 0,
+  "volatilePricing": false,
+  "wordCount": 2676,
+  "dataVintage": 2026,
+  "provenance": {
+    "batch": "southern-mediterranean",
+    "sourceFile": "carta-dataset/trips/culinary-croatia-istria-truffles.md",
+    "sourceFormat": "md with '## Metadata' bullet block (one file per trip)",
+    "sourceId": "culinary-croatia-istria-truffles",
+    "ingestedAt": "2026-09-02",
+    "synthesized": false
+  }
+}

@@ -1,0 +1,16 @@
+rank,curation_rank,title,ref,network,distance_km,popularity,pageviews_day,sitelinks,anchors,quality_score,portal_agreement,status,family_members,trip_id,osm_relation
+1,52.94,The Peter Andre Memorial Loop,,rwn,14.6,0.148,2,0,,100,,needs_review,1,63503,21026601
+2,52.6,Theth - Qereç - Curraj i Eperm,,lwn,16.9,0.353,0,0,"Grunas Waterfall (75/day, 350 m); Church of Theth (75/day, 11 m); Thethi National Park (75/day, 1973 m)",95,,needs_review,1,63457,6020578
+3,52.38,Theth - Qafë Pejë - Nikç - Vukël - Lëpushë,,lwn,48.5,0.404,0,0,"Maja e Harapit (165/day, 756 m); Maja e Risklit (165/day, 1775 m); Thethi National Park (75/day, 475 m)",87,,needs_review,1,63459,8220395
+4,51.7,Peshtan - Përmet,,rwn,50.6,0.309,0,0,"Përmet (38/day, 435 m)",72.5,,needs_review,1,63476,14086539
+5,50.22,Hiking trail Leskovik-Sarandapor (historic route),,rwn,14.0,0.071,0,0,,100,,needs_review,1,63483,14925247
+6,50.22,Hiking trail Leskovik-Postenan,,rwn,8.1,0.071,0,0,,100,,needs_review,1,63478,14924690
+7,49.8,7 (The Blue Eye),,lwn,10.9,0.353,0,0,"Grunas Waterfall (75/day, 400 m); Church of Theth (75/day, 1693 m)",83.8,,needs_review,1,63461,8467265
+8,49.8,Red 2a (Hardedaj - Nenreth - Theth),,lwn,5.5,0.353,0,0,"Grunas Waterfall (75/day, 1334 m); Church of Theth (75/day, 23 m); Thethi National Park (75/day, 267 m)",83.8,,needs_review,1,63460,8467107
+9,49.77,Dragobi-Valbonë,,lwn,6.9,0.272,0,0,"Valbona Valley (21/day, 1725 m)",95,,needs_review,1,63496,19515512
+10,48.97,Hazelnut path (SH-MR-004),4,rwn,5.4,0.071,0,0,,95,,needs_review,1,63467,13326282
+11,48.97,Hiking trail Nivica-Bolena,,rwn,19.3,0.071,0,0,,95,,needs_review,1,63484,14925666
+12,48.97,Liqeni i Lepurit Circuit,,rwn,10.4,0.071,0,0,,95,,needs_review,1,63504,21053446
+13,48.97,Infokullë – Qafë Munaz- Bërshemi (SH-MR-009),9,rwn,7.1,0.071,0,0,,95,,needs_review,1,63470,13326399
+14,48.33,Rrëja e Zezë- Bërshemi (SH-MR-005),5,rwn,4.9,0.071,0,0,,95,,needs_review,1,63468,13326397
+15,48.32,LK 08,LK 08,rwn,16.9,0.141,0,0,,82.5,,needs_review,3,63485,15026938

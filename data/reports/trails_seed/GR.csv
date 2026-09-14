@@ -1,0 +1,16 @@
+rank,curation_rank,title,ref,network,distance_km,popularity,pageviews_day,sitelinks,anchors,quality_score,portal_agreement,status,family_members,trip_id,osm_relation
+1,71.47,Εθνικό μονοπάτι O2,O2,nwn,174.6,0.535,0,0,"The broader region of Mount Olympus (1242/day, 51 m); Mount Olympus (Litochoro) (1242/day, 1139 m); Mytikas (1242/day, 1198 m)",95,,needs_review,1,74254,13307215
+2,71.22,Το Μονοπάτι της Εκεχειρίας,,nwn,49.7,0.52,0,0,"Statue of Zeus at Olympia (996/day, 615 m); Olympia (474/day, 619 m); Theokoleon (474/day, 525 m)",96,,needs_review,1,75195,20980203
+3,70.97,Εθνικό μονοπάτι O31,O31,nwn,109.1,0.52,0,0,"Statue of Zeus at Olympia (996/day, 799 m); Metroon (474/day, 730 m); Olympia East Baths (474/day, 875 m)",95,,needs_review,1,74255,13460421
+4,70.79,E6 alternative route,,iwn,1255.3,0.373,0,0,"Kastoria (102/day, 724 m); Saint George on the Hill Church (101/day, 907 m); Byzantine Museum (101/day, 598 m)",95,,needs_review,1,63452,20777812
+5,70.66,O33,O33,nwn,17.5,0.601,0,0,"Monemvasia (391/day, 1387 m); Church of Agios Nikolaos (391/day, 1663 m); Monemvasia (391/day, 1218 m)",82.5,,needs_review,6,75003,20326253
+6,69.57,Εθνικό μονοπάτι O4,O4,nwn,322.4,0.56,0,0,"Ataturk Birth House (1841/day, 1381 m); Rotonda (1841/day, 1444 m); Rotonda Park (1841/day, 1442 m)",83.8,,needs_review,1,73989,4052075
+7,67.78,Κλασικός Μαραθώνιος Αθηνών,,nwn,42.2,0.429,8,10,"The Pnyx monument (2494/day, 1869 m); Athens (2494/day, 1381 m); Parthenon (1869/day, 1175 m)",95,,needs_review,1,74210,9705303
+8,65.66,Ithaca Trail 12,,lwn,5.3,0.69,0,0,"Ithaca (1089/day, 747 m)",100,,needs_review,9,74627,15882904
+9,65.28,Ithaca Trail 012A,12A,lwn,6.6,0.68,0,0,"Ithaca (1089/day, 787 m)",100,,needs_review,2,74667,15948743
+10,65.17,European long distance path E6 - part Greece,E6,iwn,1139.6,0.373,0,0,"Kastoria (102/day, 724 m); Saint George on the Hill Church (101/day, 907 m); Byzantine Museum (101/day, 598 m)",72.5,,needs_review,1,63431,13586835
+11,63.63,Εθνικό μονοπάτι O3,O3,nwn,172.0,0.311,0,0,"Vikos Gorge (39/day, 114 m); Viewpoint Oxia (39/day, 433 m); Vikos Gorge (39/day, 79 m)",95,,needs_review,1,74077,6517551
+12,62.58,Skiathos Trail 09A,ST9A,lwn,6.8,0.602,0,0,"Skiathos (166/day, 1160 m); Skiathos (166/day, 190 m); Papadiamanti (166/day, 1003 m)",100,,needs_review,13,74650,15886091
+13,62.26,Ios Agio Theodoti Chora (Profiti Ilias Trail),Ios AC,rwn,7.3,0.414,0,0,"Ios (195/day, 1549 m); Archaeological museum of Ios (195/day, 404 m)",100,,needs_review,1,73992,4069856
+14,61.95,M41 Valley of the Watermills,M41,lwn,5.0,0.584,0,0,"Agia Sofia Cave (896/day, 894 m)",100,,needs_review,2,74715,17152539
+15,61.68,ST721 Svilengrad - Dikaia,ST721,iwn,14.7,0.076,14,0,,100,,needs_review,1,74936,19921943

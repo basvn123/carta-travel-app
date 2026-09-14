@@ -1,0 +1,117 @@
+# carta-scenic: weights the scenic signals heavily and accepts a longer
+# route for them. The profile behind "the nicest part of Scotland".
+#
+# The scenic score in pipeline/cycling/enrich_cycling.py is measured on a
+# whole route after the fact: protection, views per kilometre, the sea, our
+# own published places, and quiet. A cost function cannot see any of that,
+# because it sees one way at a time. What it CAN see is the tags that those
+# things correlate with, and this profile leans on them:
+#
+#   inside a protected area          protect_class, boundary, leisure
+#   along water                      a way next to a river, lake or coast
+#   away from settlement             residential and service roads cost more
+#                                    here than they do in carta-touring
+#   quiet by construction            the traffic penalties are steeper still
+#
+# And it accepts the consequence: a scenic route is longer. The road cost
+# ladder below is not normalised to 1.0 at its best, because the point is to
+# buy detours, and a profile that refuses to spend distance cannot find a
+# coast road that runs the long way round a sea loch.
+#
+# This is a house profile, not a standard, and the layer says so out loud.
+
+---context:global
+
+assign turnInstructionMode    = 1
+assign considerTurnRestrictions = true
+assign processUnusedTags      = false
+assign validForBikes          = 1
+
+assign downhillcost           = 50
+assign downhillcutoff         = 1.5
+# Deliberately lower than carta-touring: a scenic route earns its climbing,
+# and a profile that avoids hills avoids the views on top of them.
+assign uphillcost             = 45
+assign uphillcutoff           = 1.5
+assign uphillbuffer           = 0
+assign downhillbuffer         = 0
+
+assign avoid_unsafe           = true
+assign allow_steps            = false
+assign allow_ferries          = true
+
+---context:way
+
+assign turncost = 60
+assign initialcost = 0
+
+assign is_ldcr =
+  or route_bicycle_icn=yes
+  or route_bicycle_ncn=yes
+  or route_bicycle_rcn=yes route_bicycle_lcn=yes
+
+assign in_protected =
+  or boundary=protected_area
+  or boundary=national_park
+  or leisure=nature_reserve
+  or protect_class=2 protect_class=5
+
+assign by_water =
+  or waterway=riverbank
+  or natural=coastline
+  or natural=water name:water=yes
+
+assign too_rough =
+  or tracktype=grade5
+  or smoothness=very_horrible smoothness=impassable
+
+assign bike_denied =
+  or bicycle=no
+  or bicycle=private
+  or access=no access=private
+
+assign road_cost =
+  switch highway=cycleway                      1.0
+  switch or highway=path highway=footway       1.05
+  switch highway=track                         1.15
+  switch highway=bridleway                     1.15
+  switch highway=unclassified                  1.35
+  switch highway=living_street                 1.4
+  switch highway=residential                   1.5
+  switch highway=service                       1.6
+  switch highway=tertiary                      1.9
+  switch or highway=tertiary_link highway=secondary_link 2.4
+  switch highway=secondary                     3.4
+  switch or highway=primary highway=primary_link 8.0
+  switch or highway=trunk highway=trunk_link   10000
+  switch highway=motorway                      10000
+  switch highway=                              10000
+  2.2
+
+assign surface_cost =
+  switch too_rough 10000
+  switch smoothness=horrible 2.0
+  switch smoothness=very_bad 1.3
+  1.0
+
+# The scenic discounts. Multiplicative and deliberately large: 0.6 for a
+# protected area means the profile will ride 60 percent further to stay in
+# one, which is exactly the trade the name of this profile promises.
+assign scenic_bonus =
+  multiply
+    switch in_protected 0.6 1.0
+    multiply
+      switch by_water 0.75 1.0
+      switch is_ldcr 0.85 1.0
+
+assign costfactor =
+  switch bike_denied 10000
+  multiply road_cost multiply surface_cost scenic_bonus
+
+---context:node
+
+assign initialcost =
+  switch or barrier=gate or barrier=lift_gate barrier=cycle_barrier 30
+  switch highway=traffic_signals 25
+  switch barrier=bollard 5
+  0

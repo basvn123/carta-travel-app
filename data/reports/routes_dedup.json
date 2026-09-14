@@ -1,0 +1,1484 @@
+{
+ "generated_at": "2026-09-12T20:02:28+00:00",
+ "buffer_m": 30.0,
+ "share": 0.8,
+ "min_len_m": 200.0,
+ "len_ratio_min": 0.5,
+ "countries": [
+  "AD",
+  "AL",
+  "AT",
+  "BA",
+  "BE",
+  "BG",
+  "CH",
+  "CY",
+  "CZ",
+  "DE",
+  "DK",
+  "EE",
+  "ES",
+  "FI",
+  "FO",
+  "FR",
+  "GB",
+  "GR",
+  "HR",
+  "HU",
+  "IE",
+  "IS",
+  "IT",
+  "LI",
+  "LT",
+  "LU",
+  "LV",
+  "MC",
+  "MD",
+  "ME",
+  "MK",
+  "MT",
+  "NL",
+  "NO",
+  "PL",
+  "PT",
+  "RO",
+  "RS",
+  "SE",
+  "SI",
+  "SK",
+  "TR",
+  "UA",
+  "XK"
+ ],
+ "activities": {
+  "hiking": {
+   "rows_touched": 239236,
+   "compared": 142659,
+   "excluded": {
+    "under_min_len": 14758,
+    "umbrellas": 4055,
+    "node_network": 98823
+   },
+   "pairs": 5054,
+   "groups": 3828,
+   "size_distribution": {
+    "2": 3362,
+    "3": 388,
+    "4": 60,
+    "5": 13,
+    "6": 3,
+    "7": 1,
+    "8": 1
+   },
+   "rows_in_groups": 8226,
+   "five_largest": [
+    {
+     "size": 8,
+     "head": 193403,
+     "head_name": "SI",
+     "country": "IT",
+     "members": [
+      {
+       "id": 191121,
+       "name": "101 - Tappa 3",
+       "tier": 1,
+       "km": 7.9,
+       "status": "needs_review"
+      },
+      {
+       "id": 191123,
+       "name": "101 - Tappa 4",
+       "tier": 1,
+       "km": 7.5,
+       "status": "needs_review"
+      },
+      {
+       "id": 193403,
+       "name": "SI",
+       "tier": 3,
+       "km": 12.0,
+       "status": "needs_review"
+      },
+      {
+       "id": 197147,
+       "name": "Sentiero delle Orobie Occidentali - Tappa 2",
+       "tier": 2,
+       "km": 15.6,
+       "status": "needs_review"
+      },
+      {
+       "id": 197235,
+       "name": "Alta Via della Valsassina - Tappa 3",
+       "tier": 1,
+       "km": 15.3,
+       "status": "published"
+      },
+      {
+       "id": 199623,
+       "name": "CamminaForeste - Tappa 7C",
+       "tier": 2,
+       "km": 7.7,
+       "status": "needs_review"
+      },
+      {
+       "id": 201897,
+       "name": "Sentiero dei Laghi Alto - Tappa 2",
+       "tier": 2,
+       "km": 7.6,
+       "status": "needs_review"
+      },
+      {
+       "id": 201898,
+       "name": "Sentiero dei Laghi Alto - Tappa 1",
+       "tier": 2,
+       "km": 7.4,
+       "status": "needs_review"
+      }
+     ]
+    },
+    {
+     "size": 7,
+     "head": 110893,
+     "head_name": "Örby 11 km Motionsspår",
+     "country": "SE",
+     "members": [
+      {
+       "id": 110870,
+       "name": "Örby 1,25 km Motionsspår",
+       "tier": 1,
+       "km": 1.3,
+       "status": "needs_review"
+      },
+      {
+       "id": 110871,
+       "name": "Örby 2,5 km Motionsspår",
+       "tier": 1,
+       "km": 2.5,
+       "status": "needs_review"
+      },
+      {
+       "id": 110872,
+       "name": "Örby 3,7 km Motionsspår",
+       "tier": 1,
+       "km": 3.7,
+       "status": "needs_review"
+      },
+      {
+       "id": 110890,
+       "name": "Örby 5 km Motionsspår",
+       "tier": 1,
+       "km": 4.8,
+       "status": "needs_review"
+      },
+      {
+       "id": 110891,
+       "name": "Örby 6 km Motionsspår",
+       "tier": 1,
+       "km": 6.0,
+       "status": "needs_review"
+      },
+      {
+       "id": 110892,
+       "name": "Örby 9 km Motionsspår",
+       "tier": 1,
+       "km": 9.6,
+       "status": "needs_review"
+      },
+      {
+       "id": 110893,
+       "name": "Örby 11 km Motionsspår",
+       "tier": 1,
+       "km": 11.2,
+       "status": "needs_review"
+      }
+     ]
+    },
+    {
+     "size": 6,
+     "head": 197653,
+     "head_name": "Via Alpina Blue D11",
+     "country": "IT",
+     "members": [
+      {
+       "id": 194467,
+       "name": "SI",
+       "tier": 3,
+       "km": 8.5,
+       "status": "needs_review"
+      },
+      {
+       "id": 195612,
+       "name": "SI",
+       "tier": 3,
+       "km": 8.1,
+       "status": "needs_review"
+      },
+      {
+       "id": 197653,
+       "name": "Via Alpina Blue D11",
+       "tier": 4,
+       "km": 16.6,
+       "status": "needs_review"
+      },
+      {
+       "id": 199266,
+       "name": "GTA: Alpe del Lago - Campello Monti",
+       "tier": 3,
+       "km": 8.5,
+       "status": "needs_review"
+      },
+      {
+       "id": 199267,
+       "name": "GTA: Molini di Calasca - Alpe del Lago",
+       "tier": 3,
+       "km": 8.5,
+       "status": "needs_review"
+      },
+      {
+       "id": 201902,
+       "name": "B97 - Ca Pioda - Colle dell'Usciolo",
+       "tier": 1,
+       "km": 10.1,
+       "status": "needs_review"
+      }
+     ]
+    },
+    {
+     "size": 6,
+     "head": 198373,
+     "head_name": "E1 Toscana 06 Passo di Pradarena - Passo delle Radici",
+     "country": "IT",
+     "members": [
+      {
+       "id": 196824,
+       "name": "Garfagnana Trekking - Tappa 7",
+       "tier": 1,
+       "km": 9.7,
+       "status": "needs_review"
+      },
+      {
+       "id": 196825,
+       "name": "Garfagnana Trekking - Tappa 8",
+       "tier": 1,
+       "km": 17.2,
+       "status": "needs_review"
+      },
+      {
+       "id": 198137,
+       "name": "Alta via dei Parchi: Tappa 05",
+       "tier": 1,
+       "km": 12.8,
+       "status": "needs_review"
+      },
+      {
+       "id": 198373,
+       "name": "E1 Toscana 06 Passo di Pradarena - Passo delle Radici",
+       "tier": 4,
+       "km": 22.5,
+       "status": "needs_review"
+      },
+      {
+       "id": 201975,
+       "name": "Grande Escursione Appenninica - Tappa 18",
+       "tier": 3,
+       "km": 11.8,
+       "status": "needs_review"
+      },
+      {
+       "id": 201976,
+       "name": "Grande Escursione Appenninica - Tappa 17",
+       "tier": 3,
+       "km": 11.6,
+       "status": "needs_review"
+      }
+     ]
+    },
+    {
+     "size": 6,
+     "head": 229862,
+     "head_name": "3-Gemeinden-Wege (1 / blau-kurz)",
+     "country": "DE",
+     "members": [
+      {
+       "id": 229862,
+       "name": "3-Gemeinden-Wege (1 / blau-kurz)",
+       "tier": 1,
+       "km": 12.5,
+       "status": "published"
+      },
+      {
+       "id": 229863,
+       "name": "Reichertshausen-Ilmmünster-Weg (2 / grün)",
+       "tier": 1,
+       "km": 8.9,
+       "status": "published"
+      },
+      {
+       "id": 229864,
+       "name": "Paunzhausen-Ilmmünster-Weg (3 / lila)",
+       "tier": 1,
+       "km": 9.8,
+       "status": "published"
+      },
+      {
+       "id": 229865,
+       "name": "Ilmmünsterer Wege (5 / gelb-lang)",
+       "tier": 1,
+       "km": 5.1,
+       "status": "published"
+      },
+      {
+       "id": 229867,
+       "name": "Paunzhausener Wege (6 / orange-kurz)",
+       "tier": 1,
+       "km": 4.4,
+       "status": "published"
+      },
+      {
+       "id": 229888,
+       "name": "Paunzhausener Wege (6 / orange-lang)",
+       "tier": 1,
+       "km": 6.0,
+       "status": "published"
+      }
+     ]
+    }
+   ],
+   "published_sharing_a_group": {
+    "groups": 209,
+    "rows": 444,
+    "examples": [
+     [
+      {
+       "id": 62507,
+       "name": "Maja Rosit"
+      },
+      {
+       "id": 311141,
+       "name": "Rosni vrh / Maja Rosit"
+      }
+     ],
+     [
+      {
+       "id": 10630,
+       "name": "Karnischer Höhenweg (Ausweichroute 403a)"
+      },
+      {
+       "id": 18039,
+       "name": "Südalpenweg 03 - Etappe 23"
+      }
+     ],
+     [
+      {
+       "id": 20080,
+       "name": "BergeSeen Trail L2: Loserhütte - Appelhaus"
+      },
+      {
+       "id": 20081,
+       "name": "BergeSeen Trail L1: Bad Aussee - Loserhütte"
+      }
+     ],
+     [
+      {
+       "id": 13196,
+       "name": "Galinakopf - Malbun Bergbahnen"
+      },
+      {
+       "id": 13197,
+       "name": "Guschgfiel - Malbun Bergbahnen"
+      }
+     ],
+     [
+      {
+       "id": 13177,
+       "name": "Guschg - Steg"
+      },
+      {
+       "id": 13178,
+       "name": "Schoenberg - Steg"
+      },
+      {
+       "id": 13185,
+       "name": "Malbun Bergbahnen - Steg"
+      },
+      {
+       "id": 13235,
+       "name": "Malbun - Steg"
+      }
+     ],
+     [
+      {
+       "id": 11089,
+       "name": "Audorfer Rundweg (Sommervariante)"
+      },
+      {
+       "id": 13564,
+       "name": "Rund um Oberaudorf"
+      },
+      {
+       "id": 14868,
+       "name": "Audorfer Rundweg"
+      }
+     ],
+     [
+      {
+       "id": 13173,
+       "name": "Gafadurahuette - Bargaella - Steg"
+      },
+      {
+       "id": 13174,
+       "name": "Gafadurahuette - Drei Schwestern - Kemmi - Silum - Steg"
+      },
+      {
+       "id": 13221,
+       "name": "Gafadura - Garsella Alp - Chemi - Bargella - Gaflei"
+      },
+      {
+       "id": 13222,
+       "name": "Gafadurahuette - Gaflei"
+      }
+     ],
+     [
+      {
+       "id": 11673,
+       "name": "Naturschauweg Naßfeld (große Runde)"
+      },
+      {
+       "id": 11674,
+       "name": "Naturschauweg Naßfeld (kleine Runde)"
+      }
+     ],
+     [
+      {
+       "id": 13193,
+       "name": "Bergstation Sareis - Pfaelzerhuette"
+      },
+      {
+       "id": 13236,
+       "name": "Malbun - Augstenberg - Pfaelzerhuette"
+      }
+     ],
+     [
+      {
+       "id": 18025,
+       "name": "Südalpenweg 03 - Etappe 17"
+      },
+      {
+       "id": 19689,
+       "name": "Panoramaweg Südalpen 01"
+      }
+     ]
+    ]
+   },
+   "countries": {
+    "AD": {
+     "rows": 44,
+     "compared": 26,
+     "under_min_len": 0,
+     "umbrellas": 18,
+     "node_network": 0,
+     "pairs": 1,
+     "seconds": 7.1
+    },
+    "AL": {
+     "rows": 411,
+     "compared": 409,
+     "under_min_len": 0,
+     "umbrellas": 2,
+     "node_network": 0,
+     "pairs": 7,
+     "seconds": 2.4
+    },
+    "AT": {
+     "rows": 12011,
+     "compared": 11676,
+     "under_min_len": 168,
+     "umbrellas": 164,
+     "node_network": 3,
+     "pairs": 479,
+     "seconds": 366.9
+    },
+    "BA": {
+     "rows": 163,
+     "compared": 152,
+     "under_min_len": 4,
+     "umbrellas": 7,
+     "node_network": 0,
+     "pairs": 11,
+     "seconds": 1.7
+    },
+    "BE": {
+     "rows": 21914,
+     "compared": 3946,
+     "under_min_len": 1852,
+     "umbrellas": 89,
+     "node_network": 17857,
+     "pairs": 161,
+     "seconds": 88.7
+    },
+    "BG": {
+     "rows": 516,
+     "compared": 501,
+     "under_min_len": 5,
+     "umbrellas": 10,
+     "node_network": 0,
+     "pairs": 9,
+     "seconds": 7.3
+    },
+    "CH": {
+     "rows": 9654,
+     "compared": 8978,
+     "under_min_len": 337,
+     "umbrellas": 301,
+     "node_network": 48,
+     "pairs": 324,
+     "seconds": 54.4
+    },
+    "CY": {
+     "rows": 205,
+     "compared": 197,
+     "under_min_len": 0,
+     "umbrellas": 8,
+     "node_network": 0,
+     "pairs": 4,
+     "seconds": 1.0
+    },
+    "CZ": {
+     "rows": 6224,
+     "compared": 5731,
+     "under_min_len": 279,
+     "umbrellas": 214,
+     "node_network": 0,
+     "pairs": 144,
+     "seconds": 136.3
+    },
+    "DE": {
+     "rows": 56128,
+     "compared": 35969,
+     "under_min_len": 3049,
+     "umbrellas": 890,
+     "node_network": 18860,
+     "pairs": 1262,
+     "seconds": 984.2
+    },
+    "DK": {
+     "rows": 1635,
+     "compared": 1586,
+     "under_min_len": 12,
+     "umbrellas": 36,
+     "node_network": 1,
+     "pairs": 54,
+     "seconds": 6.6
+    },
+    "EE": {
+     "rows": 398,
+     "compared": 383,
+     "under_min_len": 1,
+     "umbrellas": 14,
+     "node_network": 0,
+     "pairs": 7,
+     "seconds": 1.7
+    },
+    "ES": {
+     "rows": 6792,
+     "compared": 6318,
+     "under_min_len": 19,
+     "umbrellas": 185,
+     "node_network": 278,
+     "pairs": 128,
+     "seconds": 241.5
+    },
+    "FI": {
+     "rows": 959,
+     "compared": 931,
+     "under_min_len": 11,
+     "umbrellas": 15,
+     "node_network": 2,
+     "pairs": 34,
+     "seconds": 3.0
+    },
+    "FO": {
+     "rows": 1,
+     "compared": 1,
+     "under_min_len": 0,
+     "umbrellas": 0,
+     "node_network": 0,
+     "pairs": 0,
+     "seconds": 0.2
+    },
+    "FR": {
+     "rows": 19011,
+     "compared": 14161,
+     "under_min_len": 485,
+     "umbrellas": 614,
+     "node_network": 4175,
+     "pairs": 369,
+     "seconds": 243.9
+    },
+    "GB": {
+     "rows": 4808,
+     "compared": 4530,
+     "under_min_len": 100,
+     "umbrellas": 178,
+     "node_network": 0,
+     "pairs": 154,
+     "seconds": 55.0
+    },
+    "GR": {
+     "rows": 1257,
+     "compared": 1233,
+     "under_min_len": 7,
+     "umbrellas": 17,
+     "node_network": 0,
+     "pairs": 11,
+     "seconds": 25.7
+    },
+    "HR": {
+     "rows": 1193,
+     "compared": 1157,
+     "under_min_len": 15,
+     "umbrellas": 20,
+     "node_network": 1,
+     "pairs": 49,
+     "seconds": 5.7
+    },
+    "HU": {
+     "rows": 3675,
+     "compared": 3253,
+     "under_min_len": 360,
+     "umbrellas": 62,
+     "node_network": 0,
+     "pairs": 63,
+     "seconds": 49.8
+    },
+    "IE": {
+     "rows": 890,
+     "compared": 843,
+     "under_min_len": 28,
+     "umbrellas": 18,
+     "node_network": 1,
+     "pairs": 35,
+     "seconds": 2.3
+    },
+    "IS": {
+     "rows": 150,
+     "compared": 146,
+     "under_min_len": 1,
+     "umbrellas": 3,
+     "node_network": 0,
+     "pairs": 5,
+     "seconds": 0.6
+    },
+    "IT": {
+     "rows": 14789,
+     "compared": 14184,
+     "under_min_len": 146,
+     "umbrellas": 391,
+     "node_network": 72,
+     "pairs": 650,
+     "seconds": 160.5
+    },
+    "LI": {
+     "rows": 168,
+     "compared": 164,
+     "under_min_len": 1,
+     "umbrellas": 3,
+     "node_network": 0,
+     "pairs": 28,
+     "seconds": 7.6
+    },
+    "LT": {
+     "rows": 319,
+     "compared": 306,
+     "under_min_len": 2,
+     "umbrellas": 11,
+     "node_network": 0,
+     "pairs": 1,
+     "seconds": 0.9
+    },
+    "LU": {
+     "rows": 496,
+     "compared": 457,
+     "under_min_len": 0,
+     "umbrellas": 24,
+     "node_network": 15,
+     "pairs": 12,
+     "seconds": 35.5
+    },
+    "LV": {
+     "rows": 425,
+     "compared": 403,
+     "under_min_len": 3,
+     "umbrellas": 19,
+     "node_network": 0,
+     "pairs": 12,
+     "seconds": 1.3
+    },
+    "MC": {
+     "rows": 4,
+     "compared": 3,
+     "under_min_len": 0,
+     "umbrellas": 1,
+     "node_network": 0,
+     "pairs": 0,
+     "seconds": 0.3
+    },
+    "MD": {
+     "rows": 25,
+     "compared": 25,
+     "under_min_len": 0,
+     "umbrellas": 0,
+     "node_network": 0,
+     "pairs": 1,
+     "seconds": 0.1
+    },
+    "ME": {
+     "rows": 173,
+     "compared": 168,
+     "under_min_len": 1,
+     "umbrellas": 4,
+     "node_network": 0,
+     "pairs": 2,
+     "seconds": 2.5
+    },
+    "MK": {
+     "rows": 106,
+     "compared": 101,
+     "under_min_len": 0,
+     "umbrellas": 5,
+     "node_network": 0,
+     "pairs": 4,
+     "seconds": 4.2
+    },
+    "MT": {
+     "rows": 38,
+     "compared": 38,
+     "under_min_len": 0,
+     "umbrellas": 0,
+     "node_network": 0,
+     "pairs": 0,
+     "seconds": 0.2
+    },
+    "NL": {
+     "rows": 63449,
+     "compared": 5628,
+     "under_min_len": 7598,
+     "umbrellas": 274,
+     "node_network": 57501,
+     "pairs": 276,
+     "seconds": 54.3
+    },
+    "NO": {
+     "rows": 3055,
+     "compared": 2993,
+     "under_min_len": 9,
+     "umbrellas": 53,
+     "node_network": 0,
+     "pairs": 271,
+     "seconds": 33.5
+    },
+    "PL": {
+     "rows": 3940,
+     "compared": 3790,
+     "under_min_len": 55,
+     "umbrellas": 93,
+     "node_network": 2,
+     "pairs": 48,
+     "seconds": 112.7
+    },
+    "PT": {
+     "rows": 1369,
+     "compared": 1351,
+     "under_min_len": 4,
+     "umbrellas": 14,
+     "node_network": 0,
+     "pairs": 20,
+     "seconds": 13.8
+    },
+    "RO": {
+     "rows": 1633,
+     "compared": 1584,
+     "under_min_len": 29,
+     "umbrellas": 20,
+     "node_network": 0,
+     "pairs": 16,
+     "seconds": 18.1
+    },
+    "RS": {
+     "rows": 607,
+     "compared": 594,
+     "under_min_len": 2,
+     "umbrellas": 11,
+     "node_network": 0,
+     "pairs": 15,
+     "seconds": 9.3
+    },
+    "SE": {
+     "rows": 3883,
+     "compared": 3726,
+     "under_min_len": 11,
+     "umbrellas": 146,
+     "node_network": 1,
+     "pairs": 243,
+     "seconds": 10.1
+    },
+    "SI": {
+     "rows": 1902,
+     "compared": 1839,
+     "under_min_len": 17,
+     "umbrellas": 46,
+     "node_network": 0,
+     "pairs": 76,
+     "seconds": 69.9
+    },
+    "SK": {
+     "rows": 2593,
+     "compared": 2398,
+     "under_min_len": 135,
+     "umbrellas": 60,
+     "node_network": 0,
+     "pairs": 57,
+     "seconds": 112.1
+    },
+    "TR": {
+     "rows": 155,
+     "compared": 133,
+     "under_min_len": 9,
+     "umbrellas": 9,
+     "node_network": 4,
+     "pairs": 0,
+     "seconds": 0.9
+    },
+    "UA": {
+     "rows": 517,
+     "compared": 509,
+     "under_min_len": 3,
+     "umbrellas": 3,
+     "node_network": 2,
+     "pairs": 2,
+     "seconds": 8.6
+    },
+    "XK": {
+     "rows": 141,
+     "compared": 138,
+     "under_min_len": 0,
+     "umbrellas": 3,
+     "node_network": 0,
+     "pairs": 9,
+     "seconds": 1.6
+    }
+   },
+   "rows_written": 8226
+  },
+  "cycling": {
+   "rows_touched": 65375,
+   "compared": 63084,
+   "excluded": {
+    "under_min_len": 4286,
+    "umbrellas": 523,
+    "node_network": 0
+   },
+   "pairs": 1354,
+   "groups": 1080,
+   "size_distribution": {
+    "2": 990,
+    "3": 80,
+    "4": 9,
+    "6": 1
+   },
+   "rows_in_groups": 2262,
+   "five_largest": [
+    {
+     "size": 6,
+     "head": 12923,
+     "head_name": "EuroVélo 17 - 10: Thonon – Chens-sur-Léman",
+     "country": "FR",
+     "members": [
+      {
+       "id": 9272,
+       "name": "Circuit du Bas Chablais",
+       "tier": 1,
+       "km": 52.0,
+       "status": "draft"
+      },
+      {
+       "id": 9901,
+       "name": "EV17",
+       "tier": 3,
+       "km": 33.7,
+       "status": "draft"
+      },
+      {
+       "id": 9906,
+       "name": "EV17",
+       "tier": 3,
+       "km": 32.4,
+       "status": "draft"
+      },
+      {
+       "id": 10492,
+       "name": "Tour du Léman",
+       "tier": 2,
+       "km": 62.8,
+       "status": "draft"
+      },
+      {
+       "id": 12923,
+       "name": "EuroVélo 17 - 10: Thonon – Chens-sur-Léman",
+       "tier": 4,
+       "km": 30.8,
+       "status": "draft"
+      },
+      {
+       "id": 12925,
+       "name": "EuroVélo 17 - 09: Saint-Gingolph – Thonon",
+       "tier": 4,
+       "km": 29.2,
+       "status": "draft"
+      }
+     ]
+    },
+    {
+     "size": 4,
+     "head": 3910,
+     "head_name": "4",
+     "country": "HR",
+     "members": [
+      {
+       "id": 3907,
+       "name": "1",
+       "tier": 1,
+       "km": 14.2,
+       "status": "draft"
+      },
+      {
+       "id": 3908,
+       "name": "2",
+       "tier": 1,
+       "km": 21.7,
+       "status": "draft"
+      },
+      {
+       "id": 3909,
+       "name": "3",
+       "tier": 1,
+       "km": 24.2,
+       "status": "draft"
+      },
+      {
+       "id": 3910,
+       "name": "4",
+       "tier": 1,
+       "km": 30.1,
+       "status": "draft"
+      }
+     ]
+    },
+    {
+     "size": 4,
+     "head": 7797,
+     "head_name": "Nordby - Sønderho - Nordby",
+     "country": "DK",
+     "members": [
+      {
+       "id": 7797,
+       "name": "Nordby - Sønderho - Nordby",
+       "tier": 1,
+       "km": 28.2,
+       "status": "draft"
+      },
+      {
+       "id": 7798,
+       "name": "Nordby - Pælebjerg - Nordby",
+       "tier": 1,
+       "km": 22.7,
+       "status": "draft"
+      },
+      {
+       "id": 7801,
+       "name": "Sønderho - Pælebjerg - Sønderho",
+       "tier": 1,
+       "km": 14.7,
+       "status": "draft"
+      },
+      {
+       "id": 7802,
+       "name": "Halen - Pælebjerg",
+       "tier": 1,
+       "km": 27.6,
+       "status": "draft"
+      }
+     ]
+    },
+    {
+     "size": 4,
+     "head": 12643,
+     "head_name": "10a",
+     "country": "FR",
+     "members": [
+      {
+       "id": 12643,
+       "name": "10a",
+       "tier": 1,
+       "km": 2.2,
+       "status": "draft"
+      },
+      {
+       "id": 12644,
+       "name": "10b",
+       "tier": 1,
+       "km": 2.2,
+       "status": "draft"
+      },
+      {
+       "id": 12645,
+       "name": "10b",
+       "tier": 1,
+       "km": 1.9,
+       "status": "draft"
+      },
+      {
+       "id": 12646,
+       "name": "10a",
+       "tier": 1,
+       "km": 1.9,
+       "status": "draft"
+      }
+     ]
+    },
+    {
+     "size": 4,
+     "head": 38454,
+     "head_name": "Römer-und-Ritter-Tour",
+     "country": "DE",
+     "members": [
+      {
+       "id": 14081,
+       "name": null,
+       "tier": 1,
+       "km": 23.8,
+       "status": "draft"
+      },
+      {
+       "id": 38454,
+       "name": "Römer-und-Ritter-Tour",
+       "tier": 1,
+       "km": 28.1,
+       "status": "draft"
+      },
+      {
+       "id": 44014,
+       "name": "Rundtour 3",
+       "tier": 1,
+       "km": 10.6,
+       "status": "draft"
+      },
+      {
+       "id": 44015,
+       "name": "Rundtour 7",
+       "tier": 1,
+       "km": 16.3,
+       "status": "draft"
+      }
+     ]
+    }
+   ],
+   "published_sharing_a_group": {
+    "groups": 0,
+    "rows": 0,
+    "examples": []
+   },
+   "countries": {
+    "AD": {
+     "rows": 16,
+     "compared": 16,
+     "under_min_len": 0,
+     "umbrellas": 0,
+     "node_network": 0,
+     "pairs": 0,
+     "seconds": 0.2
+    },
+    "AL": {
+     "rows": 10,
+     "compared": 10,
+     "under_min_len": 0,
+     "umbrellas": 0,
+     "node_network": 0,
+     "pairs": 0,
+     "seconds": 2.1
+    },
+    "AT": {
+     "rows": 1960,
+     "compared": 1902,
+     "under_min_len": 32,
+     "umbrellas": 26,
+     "node_network": 0,
+     "pairs": 57,
+     "seconds": 46.0
+    },
+    "BA": {
+     "rows": 76,
+     "compared": 72,
+     "under_min_len": 2,
+     "umbrellas": 2,
+     "node_network": 0,
+     "pairs": 0,
+     "seconds": 1.8
+    },
+    "BE": {
+     "rows": 1295,
+     "compared": 1247,
+     "under_min_len": 41,
+     "umbrellas": 7,
+     "node_network": 0,
+     "pairs": 37,
+     "seconds": 13.8
+    },
+    "BG": {
+     "rows": 58,
+     "compared": 57,
+     "under_min_len": 0,
+     "umbrellas": 1,
+     "node_network": 0,
+     "pairs": 2,
+     "seconds": 3.5
+    },
+    "CH": {
+     "rows": 917,
+     "compared": 888,
+     "under_min_len": 24,
+     "umbrellas": 5,
+     "node_network": 0,
+     "pairs": 30,
+     "seconds": 26.4
+    },
+    "CY": {
+     "rows": 7,
+     "compared": 7,
+     "under_min_len": 0,
+     "umbrellas": 0,
+     "node_network": 0,
+     "pairs": 0,
+     "seconds": 0.3
+    },
+    "CZ": {
+     "rows": 3503,
+     "compared": 3459,
+     "under_min_len": 31,
+     "umbrellas": 13,
+     "node_network": 0,
+     "pairs": 26,
+     "seconds": 55.4
+    },
+    "DE": {
+     "rows": 32012,
+     "compared": 29120,
+     "under_min_len": 2800,
+     "umbrellas": 92,
+     "node_network": 0,
+     "pairs": 486,
+     "seconds": 409.6
+    },
+    "DK": {
+     "rows": 485,
+     "compared": 481,
+     "under_min_len": 0,
+     "umbrellas": 4,
+     "node_network": 0,
+     "pairs": 15,
+     "seconds": 45023.2
+    },
+    "EE": {
+     "rows": 113,
+     "compared": 112,
+     "under_min_len": 1,
+     "umbrellas": 0,
+     "node_network": 0,
+     "pairs": 4,
+     "seconds": 11.6
+    },
+    "ES": {
+     "rows": 2180,
+     "compared": 2110,
+     "under_min_len": 53,
+     "umbrellas": 17,
+     "node_network": 0,
+     "pairs": 55,
+     "seconds": 11.7
+    },
+    "FI": {
+     "rows": 314,
+     "compared": 300,
+     "under_min_len": 4,
+     "umbrellas": 10,
+     "node_network": 0,
+     "pairs": 2,
+     "seconds": 5.2
+    },
+    "FO": {
+     "rows": 4,
+     "compared": 4,
+     "under_min_len": 0,
+     "umbrellas": 0,
+     "node_network": 0,
+     "pairs": 0,
+     "seconds": 0.2
+    },
+    "FR": {
+     "rows": 4715,
+     "compared": 4611,
+     "under_min_len": 59,
+     "umbrellas": 45,
+     "node_network": 0,
+     "pairs": 190,
+     "seconds": 114.2
+    },
+    "GB": {
+     "rows": 6068,
+     "compared": 4953,
+     "under_min_len": 931,
+     "umbrellas": 190,
+     "node_network": 0,
+     "pairs": 141,
+     "seconds": 34.1
+    },
+    "GR": {
+     "rows": 53,
+     "compared": 53,
+     "under_min_len": 0,
+     "umbrellas": 0,
+     "node_network": 0,
+     "pairs": 1,
+     "seconds": 1.6
+    },
+    "HR": {
+     "rows": 567,
+     "compared": 555,
+     "under_min_len": 10,
+     "umbrellas": 2,
+     "node_network": 0,
+     "pairs": 27,
+     "seconds": 14.0
+    },
+    "HU": {
+     "rows": 535,
+     "compared": 526,
+     "under_min_len": 3,
+     "umbrellas": 6,
+     "node_network": 0,
+     "pairs": 28,
+     "seconds": 7.5
+    },
+    "IE": {
+     "rows": 3148,
+     "compared": 2924,
+     "under_min_len": 190,
+     "umbrellas": 35,
+     "node_network": 0,
+     "pairs": 67,
+     "seconds": 5.9
+    },
+    "IS": {
+     "rows": 35,
+     "compared": 35,
+     "under_min_len": 0,
+     "umbrellas": 0,
+     "node_network": 0,
+     "pairs": 1,
+     "seconds": 0.4
+    },
+    "IT": {
+     "rows": 1524,
+     "compared": 1483,
+     "under_min_len": 14,
+     "umbrellas": 27,
+     "node_network": 0,
+     "pairs": 37,
+     "seconds": 29.1
+    },
+    "LI": {
+     "rows": 15,
+     "compared": 15,
+     "under_min_len": 0,
+     "umbrellas": 0,
+     "node_network": 0,
+     "pairs": 0,
+     "seconds": 0.3
+    },
+    "LT": {
+     "rows": 69,
+     "compared": 69,
+     "under_min_len": 0,
+     "umbrellas": 0,
+     "node_network": 0,
+     "pairs": 7,
+     "seconds": 2.8
+    },
+    "LU": {
+     "rows": 365,
+     "compared": 349,
+     "under_min_len": 13,
+     "umbrellas": 3,
+     "node_network": 0,
+     "pairs": 7,
+     "seconds": 2.0
+    },
+    "LV": {
+     "rows": 242,
+     "compared": 241,
+     "under_min_len": 0,
+     "umbrellas": 1,
+     "node_network": 0,
+     "pairs": 11,
+     "seconds": 9.1
+    },
+    "MD": {
+     "rows": 5,
+     "compared": 5,
+     "under_min_len": 0,
+     "umbrellas": 0,
+     "node_network": 0,
+     "pairs": 0,
+     "seconds": 0.1
+    },
+    "ME": {
+     "rows": 70,
+     "compared": 70,
+     "under_min_len": 0,
+     "umbrellas": 0,
+     "node_network": 0,
+     "pairs": 0,
+     "seconds": 26.8
+    },
+    "MK": {
+     "rows": 9,
+     "compared": 9,
+     "under_min_len": 0,
+     "umbrellas": 0,
+     "node_network": 0,
+     "pairs": 0,
+     "seconds": 0.3
+    },
+    "MT": {
+     "rows": 4,
+     "compared": 4,
+     "under_min_len": 0,
+     "umbrellas": 0,
+     "node_network": 0,
+     "pairs": 0,
+     "seconds": 0.2
+    },
+    "NL": {
+     "rows": 511,
+     "compared": 496,
+     "under_min_len": 9,
+     "umbrellas": 6,
+     "node_network": 0,
+     "pairs": 7,
+     "seconds": 13.6
+    },
+    "NO": {
+     "rows": 467,
+     "compared": 449,
+     "under_min_len": 15,
+     "umbrellas": 3,
+     "node_network": 0,
+     "pairs": 12,
+     "seconds": 11.4
+    },
+    "PL": {
+     "rows": 2762,
+     "compared": 2738,
+     "under_min_len": 11,
+     "umbrellas": 13,
+     "node_network": 0,
+     "pairs": 29,
+     "seconds": 37.5
+    },
+    "PT": {
+     "rows": 263,
+     "compared": 256,
+     "under_min_len": 7,
+     "umbrellas": 0,
+     "node_network": 0,
+     "pairs": 9,
+     "seconds": 1.4
+    },
+    "RO": {
+     "rows": 128,
+     "compared": 124,
+     "under_min_len": 1,
+     "umbrellas": 3,
+     "node_network": 0,
+     "pairs": 2,
+     "seconds": 3.9
+    },
+    "RS": {
+     "rows": 78,
+     "compared": 77,
+     "under_min_len": 1,
+     "umbrellas": 0,
+     "node_network": 0,
+     "pairs": 2,
+     "seconds": 4.8
+    },
+    "SE": {
+     "rows": 960,
+     "compared": 946,
+     "under_min_len": 12,
+     "umbrellas": 2,
+     "node_network": 0,
+     "pairs": 7,
+     "seconds": 13.9
+    },
+    "SI": {
+     "rows": 316,
+     "compared": 313,
+     "under_min_len": 1,
+     "umbrellas": 2,
+     "node_network": 0,
+     "pairs": 23,
+     "seconds": 7.1
+    },
+    "SK": {
+     "rows": 1718,
+     "compared": 1694,
+     "under_min_len": 20,
+     "umbrellas": 4,
+     "node_network": 0,
+     "pairs": 30,
+     "seconds": 11.2
+    },
+    "TR": {
+     "rows": 195,
+     "compared": 192,
+     "under_min_len": 1,
+     "umbrellas": 2,
+     "node_network": 0,
+     "pairs": 2,
+     "seconds": 0.7
+    },
+    "UA": {
+     "rows": 108,
+     "compared": 106,
+     "under_min_len": 0,
+     "umbrellas": 2,
+     "node_network": 0,
+     "pairs": 0,
+     "seconds": 1.2
+    },
+    "XK": {
+     "rows": 6,
+     "compared": 6,
+     "under_min_len": 0,
+     "umbrellas": 0,
+     "node_network": 0,
+     "pairs": 0,
+     "seconds": 0.2
+    }
+   },
+   "rows_written": 2262
+  }
+ },
+ "seconds": 48915.7
+}

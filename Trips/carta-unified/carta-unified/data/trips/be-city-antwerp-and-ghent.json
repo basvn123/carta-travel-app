@@ -1,0 +1,320 @@
+{
+  "id": "be-city-antwerp-and-ghent",
+  "sourceId": "be-city-antwerp-and-ghent",
+  "slug": "be-city-antwerp-and-ghent",
+  "title": "Antwerp, With a Day in Ghent",
+  "country": "Belgium",
+  "countryCode": "BE",
+  "countries": [
+    {
+      "name": "Belgium",
+      "code": "BE"
+    }
+  ],
+  "isMultiCountry": false,
+  "region": "Western & Central Europe",
+  "regionKey": "western-central",
+  "subRegion": "Flanders (Antwerp & East Flanders)",
+  "tripType": "City Trips",
+  "tripTypeId": 3,
+  "tripTypeSlug": "city",
+  "durationDays": 7,
+  "bestPeriod": {
+    "months": [
+      4,
+      5,
+      6,
+      9,
+      10
+    ],
+    "monthNames": [
+      "April",
+      "May",
+      "June",
+      "September",
+      "October"
+    ],
+    "window": null,
+    "note": "May and September give long evenings on the Scheldt quays; Flanders in July is warm but the Zuid empties for holidays.",
+    "avoid": null,
+    "raw": null
+  },
+  "budgetTier": "€€",
+  "budgetTierRange": [
+    2,
+    2
+  ],
+  "budgetTierRaw": "€€",
+  "budget": {
+    "currency": "EUR",
+    "totalEur": {
+      "low": 900,
+      "high": 1360
+    },
+    "totalNote": null,
+    "breakdown": {
+      "accommodation": {
+        "lowEur": 500,
+        "highEur": 760,
+        "note": null
+      },
+      "food": {
+        "lowEur": 220,
+        "highEur": 320,
+        "note": null
+      },
+      "transport": {
+        "lowEur": 70,
+        "highEur": 120,
+        "note": null
+      },
+      "activities": {
+        "lowEur": 110,
+        "highEur": 160,
+        "note": null
+      }
+    },
+    "perDayEur": {
+      "low": 129,
+      "high": 194
+    }
+  },
+  "profile": {
+    "difficulty": 1,
+    "difficultyLabel": "Easy",
+    "difficultyNote": null,
+    "fitnessLevel": "Easy",
+    "crowdLevel": "Moderate",
+    "familyFriendly": true,
+    "carRequired": false
+  },
+  "basecamps": [
+    "Antwerp (Zuid or Historic Centre)"
+  ],
+  "gatewayAirport": "Brussels (BRU)",
+  "gatewayAirportCode": "BRU",
+  "languages": [
+    "Dutch",
+    "French",
+    "English"
+  ],
+  "currency": "EUR",
+  "emergencyNumber": "112",
+  "coordinates": {
+    "lat": 51.2205,
+    "lon": 4.4003,
+    "precision": "city",
+    "matchedPlace": "Antwerp",
+    "source": "geonames (geonamescache, cities > 15k)"
+  },
+  "tags": [
+    "rubens",
+    "art-nouveau",
+    "docklands",
+    "fashion-district",
+    "flemish-markets"
+  ],
+  "summary": "A week in Antwerp taken district by district — Rubens, the diamond and fashion quarters, the docks, Zurenborg — with one full day in Ghent.",
+  "summaryGenerated": false,
+  "hook": "Antwerp is a port city that behaves like a capital and a village at once: a Baroque cathedral, a fashion school that reset the industry in the 1980s, and a Sunday bird market where people still buy chickens. It is compact enough that each district is a morning's walk, and the tram network exists mainly to get you home. Ghent, fifty minutes away by train, is the counterweight — smaller, denser, and built entirely around one river fork.",
+  "snapshot": {
+    "Country": "Belgium",
+    "Base(s)": "Antwerp, single base; one day trip to Ghent",
+    "Trip Type": "City Trips",
+    "Duration": "7 days",
+    "Best Period": "April–June, September–October",
+    "Budget Tier": "€€",
+    "Total Distance / Terrain": "approx. 65–80 km on foot; entirely flat, cobbled in the centre; 6 Antwerp districts plus central Ghent",
+    "Getting There": "Fly to Brussels (BRU), then direct train to Antwerpen-Centraal in about 45 min; Eurostar and ICE arrive at Brussels-Midi, 40 min further",
+    "Who It Suits": "People who like paintings, buildings and beer in roughly equal measure; a good first Belgian city week"
+  },
+  "itinerary": [
+    {
+      "day": 1,
+      "title": "Grote Markt, Vlaeykensgang and the cathedral block",
+      "morning": "Arrive into Antwerpen-Centraal (Louis Delacenserie, 1905), which is worth twenty minutes before you leave it — the stone hall, the dome, and the four track levels stacked below. Then tram 3 or 5 to Groenplaats and start with the Onze-Lieve-Vrouwekathedraal (begun 1352, tower finished 1521), holding four Rubens altarpieces including *The Descent from the Cross*.",
+      "afternoon": "The block behind it: the Stadhuis (Cornelis Floris de Vriendt, 1565), the guild houses on Grote Markt, the Vleeshuis (Herman de Waghemakere, 1504) in its striped brick, and Het Steen on the quay. Slip into the Vlaeykensgang off Oude Koornmarkt — a 16th-century alley of cobbles and courtyards, free and almost always empty.",
+      "evening": "A Belgian beer café with a serious list, then dinner around Hoogstraat. Try Bolleke, the amber De Koninck brewed in Antwerp since 1833, served in its own round glass.",
+      "dayStats": "7 km walked. Districts: Historic Centre. Ticket spend approx. €14–€20.",
+      "sleep": null
+    },
+    {
+      "day": 2,
+      "title": "Sint-Andries: the fashion district and Kloosterstraat",
+      "morning": "The whole day fits inside a triangle of Nationalestraat, Kammenstraat and Kloosterstraat. Start at MoMu, the ModeMuseum on Nationalestraat, reopened in 2021 after a full rebuild — the rotating exhibitions cover the Antwerp Six and the school that produced them. Book online; capacity is small and Saturday sells out.",
+      "afternoon": "Nationalestraat for the flagship shops, including Dries Van Noten's Het Modepaleis at No. 16 in its 1881 corner building. Then Kloosterstraat, four blocks of antiques, lighting and mid-century dealers, and Sint-Andrieskerk with the memorial to Mary Stuart's ladies-in-waiting.",
+      "evening": "Eat in the Zuid end of Sint-Andries and walk the Scheldt quays at dusk — the whole west-facing waterfront gets the light.",
+      "dayStats": "6 km walked. Districts: Sint-Andries. Ticket spend approx. €12–€18.",
+      "sleep": null
+    },
+    {
+      "day": 3,
+      "title": "Het Zuid: KMSKA and Leopold de Waelplaats",
+      "morning": "The Koninklijk Museum voor Schone Kunsten (Jacob Winders and Frans Van Dijk, 1890, with the white inserted galleries by KAAN Architecten, reopened 2022) is the reason for the day. Book a timed slot — they release online and the first hour, from opening, is by far the calmest. Van Eyck, Memling, Rubens, Ensor and Rik Wouters, hung with room to breathe.",
+      "afternoon": "Walk the Zuid grid: Leopold de Waelplaats, Volkstraat, Marnixplaats with its fountain, Vlaamsekaai and Waalsekaai. FOMU, the photography museum on Waalsekaai, is a good second stop and rarely crowded.",
+      "evening": "The Zuid is where Antwerp eats. Marnixplaats and Volkstraat have the terraces; the fish restaurants near Vlaamsekaai are the local default for a splurge.",
+      "dayStats": "7 km walked. Districts: Zuid. Ticket spend approx. €25–€35.",
+      "sleep": null
+    },
+    {
+      "day": 4,
+      "title": "Het Eilandje and the docks",
+      "morning": "North to the old dock island. The MAS (Neutelings Riedijk Architecten, 2011) stacks red Indian sandstone boxes ten storeys high; the spiral escalator route through the building to the rooftop is free and open late, and gives the best view of the port, the city and the Scheldt bend. Pay only for the collection floors if you want them.",
+      "afternoon": "The Red Star Line Museum in the old embarkation sheds on Montevideostraat — two million people left Europe from this quay for New York. Then walk the Bonapartedok and Willemdok, the Sint-Felixpakhuis warehouse, and out to Zaha Hadid's Havenhuis (2016), the glass hull landed on the old fire station at Mexicostraat.",
+      "evening": "Droogdokkenpark at sunset, then back for mussels or a shrimp croquette in the Eilandje cafés.",
+      "dayStats": "9 km walked. Districts: Eilandje. Ticket spend approx. €16–€24.",
+      "sleep": null
+    },
+    {
+      "day": 5,
+      "title": "Ghent: Patershol, Graslei and the Van Eyck",
+      "morning": "Take an IC train from Antwerpen-Centraal to Gent-Sint-Pieters, roughly 50–60 minutes, about €11–€13 one way, four an hour. Tram 1 into the centre. Start at Sint-Baafskathedraal for the Van Eyck brothers' *Adoration of the Mystic Lamb* (1432), now shown in its own climate-controlled chapel. This is a strict timed entry: slots release online, they run every 15 minutes, and summer weekends sell out several days ahead. Take a morning slot.",
+      "afternoon": "Walk the Graslei and Korenlei guild fronts, then the Gravensteen (rebuilt 1180) if the queue is short, and the Patershol — the medieval lanes north of Kraanlei, now Ghent's restaurant quarter. Buy mustard scooped from the barrel at Tierenteyn-Verlent on Groentenmarkt, trading since 1790, and cuberdons from the stalls at Groentenmarkt.",
+      "evening": "A jenever bar near the Vrijdagmarkt, then the last train back — services run late, but check the final IC to Antwerp before you settle in.",
+      "dayStats": "10 km walked, plus 2 hours on trains. Districts: central Ghent. Ticket spend approx. €35–€45 including rail.",
+      "sleep": null
+    },
+    {
+      "day": 6,
+      "title": "Zurenborg and Berchem",
+      "morning": "Tram 11 or a 25-minute walk to Cogels-Osylei, the most concentrated street of late-19th-century domestic architecture in Belgium: eclectic, neo-Gothic and Art Nouveau villas built 1894–1906. Look for De Vier Seizoenen, the four-house cycle of the seasons at the Waterloostraat corner, and Jules Hofman's Zonnebloem (1900). It is all private housing — you walk and look, nothing is ticketed.",
+      "afternoon": "Continue to Draakplaats for the tram shelter and the Art Nouveau corners, then Dageraadplaats, the square Antwerp actually lives on: plane trees, playground, and a full ring of terraces. Zeezicht on the square has been the neighbourhood café for decades.",
+      "evening": "Stay put. Dageraadplaats at 20:00 on a warm evening is the point of the day.",
+      "dayStats": "8 km walked. Districts: Zurenborg, Berchem. Ticket spend approx. €4–€8 (trams only).",
+      "sleep": null
+    },
+    {
+      "day": 7,
+      "title": "The Rubens circuit and the Sunday markets",
+      "morning": "If it is Sunday, start at the Vogelenmarkt on Theaterplein — birds, plants, food and clothing since the 18th century, roughly 08:00 to 13:00, with the Exotische Markt alongside. Then the Rubens itinerary that does not depend on one museum: Sint-Pauluskerk on Veemarkt for the Mysteries of the Rosary series, Sint-Jacobskerk on Lange Nieuwstraat where Rubens is buried behind the altar, and the Snijders&Rockoxhuis on Keizerstraat, the restored home of Rubens' patron Nicolaas Rockox.",
+      "afternoon": "The Plantin-Moretus Museum on Vrijdagmarkt — a UNESCO-listed printing house with the two oldest surviving printing presses in the world, still in the family rooms. Timed tickets online; it is small and caps numbers. Note that the Rubenshuis on Wapper has been closed for a multi-year renovation, so check its status before building a morning around it.",
+      "evening": "Last walk on the Scheldt quays, then a final Bolleke.",
+      "dayStats": "7 km walked. Districts: Historic Centre, Sint-Jacob. Ticket spend approx. €24–€34.",
+      "sleep": null
+    }
+  ],
+  "accommodationStrategy": [
+    {
+      "rank": 1,
+      "name": "Hotel Julien",
+      "style": "Boutique",
+      "location": "Korte Nieuwstraat, historic centre",
+      "description": "Two merchant houses knocked together behind a plain door, with a roof terrace that looks straight at the cathedral tower. The location is the argument: three minutes to Grote Markt, ten to the Zuid trams, and you can walk home from anywhere in this itinerary except Zurenborg. Quiet rooms at the back for a centre-of-town address.",
+      "booking": "10 weeks ahead, longer for weekends.",
+      "priceNote": "€200–€300 per night"
+    },
+    {
+      "rank": 2,
+      "name": "Hotel Banks",
+      "style": "Mid-range design hotel",
+      "location": "Steenhouwersvest, Sint-Andries",
+      "description": "Sits inside the fashion district triangle, one street from Nationalestraat, which makes Day 2 a stroll and Day 3's KMSKA a ten-minute walk. Bike rental at reception and secure storage — useful, because Antwerp is genuinely better by bicycle than by tram.",
+      "booking": "6 weeks ahead.",
+      "priceNote": "€130–€190 per night"
+    },
+    {
+      "rank": 3,
+      "name": "An apartment in Zuid or Zurenborg",
+      "style": "Self-catering",
+      "location": "south or east",
+      "description": "A week is long enough that a kitchen pays. Zuid puts you among the restaurants and the museums; Zurenborg is quieter, cheaper and served by trams 11 and 24. Either way ask about the stairs — Antwerp townhouses are narrow and steep, and lifts are rare.",
+      "booking": "8 weeks ahead.",
+      "priceNote": "€100–€160 per night for two"
+    }
+  ],
+  "logistics": {
+    "connectivity": null,
+    "emergency": "112 across Belgium for all services. Non-urgent medical after hours: 1733. Pharmacies post the rotating night duty on the door.",
+    "weather": null,
+    "bookingWindows": "The Mystic Lamb in Ghent and the Plantin-Moretus are the two genuine sell-outs; book both a week or more ahead in summer. KMSKA and MoMu release timed slots online and are usually fine two or three days out, except Saturdays. Nothing else on this week requires advance purchase.",
+    "money": "Cards, including contactless, work everywhere; Belgium is close to cashless. Keep €20 for market stalls and church donation boxes. Service is included — round up rather than tipping a percentage.",
+    "transportRules": null,
+    "permits": null,
+    "health": null,
+    "gettingThere": null,
+    "other": [
+      {
+        "label": "The transit maths",
+        "text": "Antwerp's trams and buses are run by De Lijn. A single m-ticket bought in the app costs roughly €2.50; a day pass is around €7.50–€8, and a 10-journey card is cheaper per ride. There is no Antwerp weekly tourist ticket worth the name, and on this itinerary you will walk most days — buy singles or a couple of day passes rather than anything bundled."
+      },
+      {
+        "label": "The city pass trap",
+        "text": "The Antwerp City Pass (roughly €45–€70 for 24 to 72 hours) includes museums plus De Lijn travel, and its clock runs continuously from first use, not by calendar day. It only wins if you compress KMSKA, MAS collection floors, Plantin-Moretus, MoMu and Red Star Line into two consecutive days — which is the opposite of how this week is built."
+      },
+      {
+        "label": "Rail to Ghent",
+        "text": "Buy point-to-point online or at the machine. If you are two people travelling at a weekend, the SNCB/NMBS weekend return is significantly discounted; a 10-journey Rail Pass is the better buy if you add Bruges or Mechelen. Trains from Antwerpen-Centraal leave from the lower levels — allow ten minutes to descend."
+      },
+      {
+        "label": "Opening-hour traps",
+        "text": "Most Flemish museums close Monday, and several also close Tuesday. Churches keep their own hours: Sint-Pauluskerk and Sint-Jacobskerk typically open afternoons only, and close entirely in winter months. Shops shut around 18:00 and most are closed Sunday except in the centre."
+      },
+      {
+        "label": "Cycling law",
+        "text": "If you rent a Velo Antwerpen bike, ride on the marked cycle paths where they exist, use lights after dark (enforced), and never leave a bike unlocked. Trams have absolute priority and their rails will take a wheel."
+      }
+    ]
+  },
+  "proTips": [
+    "The MAS rooftop is free and stays open well beyond the museum floors, typically until 22:00 in summer. Go up at dusk when the port lights come on — it costs nothing and beats any paid viewpoint in the city.",
+    "Book the first Mystic Lamb slot of the day in Ghent and you will have the Van Eyck chapel almost to yourself for the first ten minutes; by 11:00 the room is at capacity for the rest of the day.",
+    "Antwerp's cathedral is free to enter for worship and charges for the art. Sunday morning services are the exception — respect them, and come back paying on a weekday.",
+    "Take tram 11 through Zurenborg rather than walking out. It runs down Cogels-Osylei's cross streets and gives you a moving preview of the façades.",
+    "The Ghent day works better in reverse if you are a late riser: take a mid-afternoon Lamb slot, eat in the Patershol, and walk the illuminated Graslei at night — Ghent's lighting plan is one of the best in Europe.",
+    "Buy chocolate and mustard in Ghent, not Antwerp. Tierenteyn-Verlent on Groentenmarkt fills a stoneware pot from the barrel, and it survives the flight home.",
+    "Skip the diamond district as a sight — it is offices and security doors — but the DIVA museum on Suikerrui gives the trade's actual history in an hour."
+  ],
+  "typeSpecific": {
+    "raw": {
+      "Total Distance / Terrain": "approx. 65–80 km on foot; entirely flat, cobbled in the centre; 6 Antwerp districts plus central Ghent",
+      "Who It Suits": "People who like paintings, buildings and beer in roughly equal measure; a good first Belgian city week"
+    },
+    "surface": "approx. 65–80 km on foot; entirely flat, cobbled in the centre; 6 Antwerp districts plus central Ghent",
+    "distanceKm": 65,
+    "elevationM": null,
+    "verticalM": null,
+    "technicalRating": null,
+    "transitPass": null,
+    "hutBooking": null,
+    "liftNetwork": null,
+    "snowReliability": null,
+    "windConditions": null,
+    "gpxReady": null,
+    "bookingTimeline": null,
+    "audience": "People who like paintings, buildings and beer in roughly equal measure; a good first Belgian city week"
+  },
+  "packingNotes": [
+    "A properly waterproof jacket with a hood, not an umbrella. Flanders rain arrives sideways off the North Sea in every month.",
+    "Shoes for cobbles and tram rails; Antwerp's setts are large, uneven and slick when wet.",
+    "One smarter layer — Antwerp dresses well and the Zuid restaurants notice.",
+    "A small daypack: several museums, including KMSKA, require larger bags in the cloakroom.",
+    "A refillable bottle; Belgian tap water is safe and restaurants will fill it.",
+    "A phone holder or paper map for the Zurenborg walk — the streets loop and the house numbers are the whole point.",
+    "Layers for museum interiors, which run cold, and for the Scheldt quays, which are windier than the streets behind them.",
+    "A folding bag for Ghent's market buys."
+  ],
+  "whatCouldGoWrong": [
+    "**The Mystic Lamb is sold out on your Ghent day.** Fallback: move the Ghent day within the week — any day works — or see the cathedral without the chapel and spend the time on the Patershol, the Gravensteen and the Design Museum instead.",
+    "**Rain settles in for 48 hours.** Entirely plausible in April or October. Fallback: this itinerary has four indoor-heavy days (KMSKA, MoMu, Plantin-Moretus, MAS and Red Star Line). Reorder to put them against the weather and save Zurenborg and the quays for the clear day.",
+    "**Monday closures wipe out your museum plan.** Fallback: Monday is the day for Zurenborg, the docks walk, the Vlaeykensgang and the churches — none of which need a ticket. Keep it flexible rather than fixed.",
+    "**You count on the Rubenshuis.** It has been shut for a long renovation and its reopening has moved more than once. Fallback: the Day 7 circuit — Sint-Pauluskerk, Sint-Jacobskerk, the Rockoxhuis and the cathedral altarpieces — delivers more Rubens than the house ever did.",
+    "**You miss the last train from Ghent.** Fallback: services to Antwerp run until late evening, but if you do miss it, an IC via Brussels or a Gent–Sint-Niklaas connection usually still works; check the SNCB/NMBS app before ordering the last round."
+  ],
+  "sources": {
+    "verified": null,
+    "confidenceNotes": null
+  },
+  "verifyFlags": [],
+  "verifyFlagCount": 0,
+  "volatilePricing": false,
+  "wordCount": 2468,
+  "dataVintage": 2026,
+  "provenance": {
+    "batch": "western-central",
+    "sourceFile": "cartatripsv1/trips/be-city-antwerp-and-ghent.md",
+    "sourceFormat": "md+yaml-frontmatter (one file per trip)",
+    "sourceId": "be-city-antwerp-and-ghent",
+    "ingestedAt": "2026-09-02",
+    "synthesized": false
+  }
+}

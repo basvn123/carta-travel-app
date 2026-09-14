@@ -20,6 +20,7 @@ Usage:
 """
 
 import json
+from pipeline_io import atomic_write_json
 
 
 def _kind_of(src):
@@ -76,6 +77,5 @@ class ResumeCache:
     def flush(self):
         if not self.rows:
             return
-        self.path.write_text(json.dumps(self.rows, indent=1, ensure_ascii=False),
-                             encoding="utf-8")
+        atomic_write_json(self.path, self.rows, indent=1, ensure_ascii=False)
         self._pending = 0

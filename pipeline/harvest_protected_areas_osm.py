@@ -50,6 +50,7 @@ from math import radians
 from pathlib import Path
 
 import numpy as np
+from pipeline_io import atomic_write_json
 
 if sys.platform == "win32":
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
@@ -196,8 +197,7 @@ def sweep(refresh):
             continue
         _absorb(by_key, els)
         done.add(",".join(map(str, (s, w, n, e))))
-        CACHE.write_text(json.dumps({"by_key": by_key, "done": sorted(done)},
-                                    ensure_ascii=False), encoding="utf-8")
+        atomic_write_json(CACHE, {"by_key": by_key, "done": sorted(done)}, indent=None, ensure_ascii=False)
         print(f"  tile {i + 1}/{len(todo)} [{s:.0f},{w:.0f}]: "
               f"{len(els)} elements, {len(by_key)} unique so far")
         time.sleep(1.0)
@@ -296,7 +296,7 @@ def main():
         "radius_km": int(RADIUS_KM),
     }
 
-    MASTER.write_text(json.dumps(data, ensure_ascii=False), encoding="utf-8")
+    atomic_write_json(MASTER, data, indent=None, ensure_ascii=False)
     print(f"  wrote {MASTER}")
     print("done. Run `npm run data` (or dev/build) to ship it to the app.")
 

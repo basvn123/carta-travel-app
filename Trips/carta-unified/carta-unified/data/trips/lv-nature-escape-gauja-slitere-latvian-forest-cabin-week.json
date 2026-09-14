@@ -1,0 +1,304 @@
+{
+  "id": "lv-nature-escape-gauja-slitere-latvian-forest-cabin-week",
+  "sourceId": "gauja-slitere-latvian-forest-cabin-week",
+  "slug": "lv-nature-escape-gauja-slitere-latvian-forest-cabin-week",
+  "title": "Gauja & Slītere: Latvian Forest Cabin Week",
+  "country": "Latvia",
+  "countryCode": "LV",
+  "countries": [
+    {
+      "name": "Latvia",
+      "code": "LV"
+    }
+  ],
+  "isMultiCountry": false,
+  "region": "Northern Europe & Baltics",
+  "regionKey": "northern-baltics",
+  "subRegion": "Gauja National Park (Vidzeme) and Slītere National Park / Livonian Coast (northern Kurzeme)",
+  "tripType": "Nature Escapes & Cabin Stays",
+  "tripTypeId": 9,
+  "tripTypeSlug": "nature-escape",
+  "durationDays": 7,
+  "bestPeriod": {
+    "months": [
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10
+    ],
+    "monthNames": [
+      "April",
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "October"
+    ],
+    "window": "**Late April–May for the bird migration at Cape Kolka**, June for long light and river paddling, **September–October for mushrooms and the best foliage in the Baltics**",
+    "note": null,
+    "avoid": null,
+    "raw": "**Late April–May for the bird migration at Cape Kolka**, June for long light and river paddling, **September–October for mushrooms and the best foliage in the Baltics**"
+  },
+  "budgetTier": "€",
+  "budgetTierRange": [
+    1,
+    1
+  ],
+  "budgetTierRaw": "€",
+  "budget": {
+    "currency": "EUR",
+    "totalEur": {
+      "low": 550,
+      "high": 900
+    },
+    "totalNote": "€550–900 per person",
+    "breakdown": {
+      "accommodation": {
+        "lowEur": 45,
+        "highEur": 110,
+        "note": "€45–110 per night for a forest cabin or guesthouse; whole cottages from €70; camping €8–15"
+      },
+      "food": {
+        "lowEur": 25,
+        "highEur": 45,
+        "note": "€25–45 per day; self-catering with roadside honey, smoked fish and market vegetables"
+      },
+      "transport": {
+        "lowEur": 150,
+        "highEur": 230,
+        "note": "€150–230: car hire €40–55 per day (required for Slītere), fuel, canoe rental €25–40 per day"
+      },
+      "activities": {
+        "lowEur": 40,
+        "highEur": 90,
+        "note": "€40–90: Turaida Castle, Līgatne trails, canoe hire, Slītere lighthouse, Kolka nature centre"
+      }
+    },
+    "perDayEur": {
+      "low": 79,
+      "high": 129
+    }
+  },
+  "profile": {
+    "difficulty": null,
+    "difficultyLabel": null,
+    "difficultyNote": null,
+    "fitnessLevel": null,
+    "crowdLevel": null,
+    "familyFriendly": null,
+    "carRequired": null
+  },
+  "basecamps": [
+    "Sigulda",
+    "Cēsis",
+    "Līgatne",
+    "Mazirbe",
+    "Kolka"
+  ],
+  "gatewayAirport": null,
+  "gatewayAirportCode": null,
+  "languages": [
+    "Latvian",
+    "Russian",
+    "Livonian (revitalising)",
+    "English"
+  ],
+  "currency": "EUR",
+  "emergencyNumber": "112",
+  "coordinates": {
+    "lat": 57.32,
+    "lon": 24.85,
+    "precision": "source",
+    "matchedPlace": "Sigulda",
+    "source": "source record"
+  },
+  "tags": [],
+  "summary": "A seven-day nature escapes & cabin stay itinerary in Gauja National Park (Vidzeme) and Slītere National Park / Livonian Coast (northern Kurzeme), Latvia.",
+  "summaryGenerated": true,
+  "hook": null,
+  "snapshot": {},
+  "itinerary": [
+    {
+      "day": 1,
+      "title": "Riga to the Gauja valley",
+      "morning": "Collect a car in Riga and drive an hour northeast to Sigulda, inside **Gauja National Park** — Latvia's oldest and largest, a forested river valley of Devonian sandstone cliffs.",
+      "afternoon": "Turaida Castle's red brick tower over the valley, the Gūtmaņa cave with inscriptions going back centuries, and the cable car across the gorge.",
+      "evening": "Check into a forest cabin outside town. Heat the sauna; Latvian cabins almost all have a *pirts*.",
+      "dayStats": null,
+      "sleep": null
+    },
+    {
+      "day": 2,
+      "title": "Canoeing the Gauja",
+      "morning": "Rent a canoe at Cēsis or Līgatne. The Gauja is a slow, brown, forest river with sandstone cliffs rising 20–40 m out of the water — no rapids, no difficulty, just current and silence.",
+      "afternoon": "Paddle a half-day section, passing Zvārte rock and the Ērgļu cliffs, with sandbank stops for swimming. Operators run the shuttle back.",
+      "evening": "Cook at the cabin. In September, this is where you eat the day's mushrooms.",
+      "dayStats": null,
+      "sleep": null
+    },
+    {
+      "day": 3,
+      "title": "Cēsis, Līgatne and the forest trails",
+      "morning": "**Cēsis**, a medieval Livonian Order castle town, where you tour the ruined castle by candle lantern — genuinely, they hand you one at the door.",
+      "afternoon": "**Līgatne** nature trails, a large enclosure network where rescued native wildlife — bison, elk, lynx, bears — lives in forest paddocks, plus the extraordinary **Līgatne Soviet secret bunker**, a fully equipped nuclear command facility hidden under a rehabilitation centre until 2003.",
+      "evening": "Last Gauja night.",
+      "dayStats": null,
+      "sleep": null
+    },
+    {
+      "day": 4,
+      "title": "Across to the Livonian coast",
+      "morning": "Drive west and north, about three hours, around the Gulf of Riga to the **Slītere National Park** and the Livonian coast. Stop at Roja or Mērsrags for smoked fish from a harbour smokehouse.",
+      "afternoon": "Arrive **Mazirbe**, historic centre of the **Livonians** — a Finnic people whose language had its last fluent native speaker die in 2013 and is now being revived. The Livonian People's House stands in the pines.",
+      "evening": "A wooden fisherman's house in Košrags or Sīkrags: level-3 isolation, wood stove, well water, sea two hundred metres through the pines.",
+      "dayStats": null,
+      "sleep": null
+    },
+    {
+      "day": 5,
+      "title": "Cape Kolka and the coast villages",
+      "morning": "**Cape Kolka (Kolkasrags)** is where the Gulf of Riga meets the open Baltic — two seas colliding over a shallow sandbank, with visible standing waves and a lighthouse offshore. In spring it is one of Europe's biggest bird migration bottlenecks.",
+      "afternoon": "The coast road north through Vaide, Saunags and Pitrags — twelve historic Livonian villages, most with fewer than fifty residents, all of them inside a Soviet border zone that was closed to the public until 1991, which is exactly why the coast is undeveloped today.",
+      "evening": "Beach fire where permitted, or the cabin sauna and the sea.",
+      "dayStats": null,
+      "sleep": null
+    },
+    {
+      "day": 6,
+      "title": "Slītere: the blue hills and the lighthouse",
+      "morning": "The **Slītere lighthouse** stands not on the coast but inland, on the **Blue Hills** — an ancient shoreline cliff from the Littorina Sea, now a forested ridge several kilometres from the water. Climb it for the view over an unbroken forest canopy to the sea.",
+      "afternoon": "The Slītere nature trail through old-growth broadleaf forest, one of the least disturbed woodlands in the Baltics, and the bog boardwalks.",
+      "evening": "Last night on the coast.",
+      "dayStats": null,
+      "sleep": null
+    },
+    {
+      "day": 7,
+      "title": "Ķemeri bog and back to Riga",
+      "morning": "Drive south and stop at **Ķemeri National Park** for the Great Ķemeri Bog boardwalk — a 3.4 km loop over a raised bog of pools and stunted pines, best at sunrise when mist sits in the hollows.",
+      "afternoon": "Riga is forty minutes further. Airport, or a night in the city.",
+      "evening": null,
+      "dayStats": null,
+      "sleep": null
+    }
+  ],
+  "accommodationStrategy": [
+    {
+      "rank": 1,
+      "name": "Gauja valley forest cabins and river cottages",
+      "style": null,
+      "location": null,
+      "description": "Wooden cabins with a stove, a sauna and a river or forest outlook, €50–110 for the whole house. Many are on farms, and the owners will cook if asked in advance. Sigulda, Līgatne and Cēsis all have clusters within fifteen minutes.",
+      "booking": null,
+      "priceNote": null
+    },
+    {
+      "rank": 2,
+      "name": "Livonian coast fishermen's houses",
+      "style": "Košrags, Vaide, Mazirbe",
+      "location": null,
+      "description": "Restored wooden houses in the historic villages — a handful of rooms, a wood stove, a well, and pine forest between you and the beach. This is the most atmospheric accommodation in Latvia and there are perhaps two dozen beds along the whole coast.",
+      "booking": null,
+      "priceNote": null
+    },
+    {
+      "rank": 3,
+      "name": "Kolka and Roja guesthouses",
+      "style": null,
+      "location": null,
+      "description": "The practical coastal base with a shop, fuel and a restaurant. Useful for the first coastal night before you commit to a village with no services.",
+      "booking": null,
+      "priceNote": null
+    }
+  ],
+  "logistics": {
+    "connectivity": null,
+    "emergency": "112. Hospitals in Cēsis, Sigulda and Talsi; the Livonian coast is 60–90 minutes from the nearest. Mobile coverage is good on roads and thin in the deep forest.",
+    "weather": null,
+    "bookingWindows": "Two to four weeks for most of the year. The exceptions are the **Jāņi midsummer holiday (23–24 June)**, when rural Latvia is fully booked and largely shut, and the September mushroom weekends.",
+    "money": null,
+    "transportRules": null,
+    "permits": null,
+    "health": null,
+    "gettingThere": null,
+    "other": [
+      {
+        "label": "Mushrooming",
+        "text": "From August to October the forests fill with Latvians at dawn carrying baskets and knives. Picking is legal on public forest land, and every guesthouse host will teach you the four species you should take and the two you must not. Never eat an unverified find."
+      },
+      {
+        "label": "Ticks",
+        "text": "Latvia is a TBE and Lyme area, and both Gauja and Slītere are prime habitat. Vaccination is worth considering; check daily, use repellent, tuck trousers into socks."
+      },
+      {
+        "label": "Driving",
+        "text": "Headlights on at all times, year-round. Gravel roads along the coast are well maintained but slow. **Elk and boar collisions at dawn and dusk are the main road hazard** in both parks."
+      },
+      {
+        "label": "The Livonian coast's history",
+        "text": "This was a restricted Soviet border zone; residents needed permits and the villages emptied. The result is an undeveloped coastline that Latvians treat as culturally precious. Respect private yards, do not photograph people's houses up close, and note that some beach areas remain protected."
+      },
+      {
+        "label": "Fires and camping",
+        "text": "Fires only in designated fireplaces, and wild camping in national parks is restricted to marked sites. Fire bans are issued and enforced in dry summers."
+      }
+    ]
+  },
+  "proTips": [
+    "Go to **Cape Kolka at dawn in late April or early May**. The migration is spectacular, the cape is empty, and the two seas meeting on the sandbar is a genuinely strange sight.",
+    "Book a **pirts ritual** with a *pirtnieks* at a Gauja guesthouse. It is a two-hour ceremony with birch and oak whisks, herbal infusions and cold immersion, and it is the deepest cultural experience available in rural Latvia.",
+    "Paddle the **Gauja from Cēsis downstream** rather than upstream from Sigulda — the sandstone cliffs are more dramatic on that section and the shuttle logistics are simpler.",
+    "The Livonian coast has almost **no restaurants**. Buy smoked fish at Roja or Mērsrags harbour, bread and vegetables in Talsi, and cook. That constraint is the point of the place.",
+    "Combine with **Trip 12 (Kurzeme cozy towns)** for a fortnight — Kuldīga is ninety minutes from Mazirbe and the two weeks share no ground at all.",
+    "September is the best single month: mushrooms, warm sea, autumn colour on the Gauja cliffs, no ticks worth worrying about, and rural prices at their lowest."
+  ],
+  "typeSpecific": {
+    "raw": {
+      "remote_access": "Sealed roads to Gauja; **the Livonian coast road north of Mazirbe includes long gravel sections** that are fine in a normal car but slow, and forest tracks to some cabins are soft after rain. No 4x4 required in summer; winter changes that",
+      "isolation_levels": {
+        "level_1": "Sigulda and Cēsis — small towns inside Gauja National Park with restaurants and rail links to Riga",
+        "level_2": "Forest cabin or riverside cottage in the Gauja valley — private, wood-heated, 20 minutes from a shop",
+        "level_3": "Livonian coast villages — Košrags, Sīkrags, Vaide — a handful of wooden houses each, no shops, a closed Soviet border zone until 1991 and empty ever since"
+      },
+      "foraging_rules": "Latvia allows berry and mushroom picking on public forest land, and mushrooming is close to a national sport. Restrictions apply in strict nature reserve zones. Fires only in designated places; a fire ban applies in dry spells",
+      "wildlife": "Elk, roe and red deer, wild boar, beaver, black stork, lesser spotted eagle; lynx and wolf present and almost never seen. **Cape Kolka is one of Europe's great migration bottlenecks** — hundreds of thousands of birds funnel past in spring",
+      "gpx_ready": true
+    },
+    "surface": null,
+    "distanceKm": null,
+    "elevationM": null,
+    "verticalM": null,
+    "technicalRating": null,
+    "transitPass": null,
+    "hutBooking": null,
+    "liftNetwork": null,
+    "snowReliability": null,
+    "windConditions": null,
+    "gpxReady": true,
+    "bookingTimeline": null,
+    "audience": null
+  },
+  "packingNotes": [],
+  "whatCouldGoWrong": [],
+  "sources": {
+    "verified": null,
+    "confidenceNotes": null
+  },
+  "verifyFlags": [],
+  "verifyFlagCount": 0,
+  "volatilePricing": true,
+  "wordCount": 1540,
+  "dataVintage": 2026,
+  "provenance": {
+    "batch": "northern-baltics",
+    "sourceFile": "carta_northern_europe_baltics_trips.md#trip-27",
+    "sourceFormat": "single-file md, '## Trip NN' records with fenced YAML",
+    "sourceId": "gauja-slitere-latvian-forest-cabin-week",
+    "ingestedAt": "2026-09-02",
+    "synthesized": false
+  }
+}

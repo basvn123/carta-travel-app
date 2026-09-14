@@ -1,0 +1,16 @@
+rank,curation_rank,title,ref,network,distance_km,popularity,pageviews_day,sitelinks,anchors,quality_score,portal_agreement,status,family_members,trip_id,osm_relation
+1,67.66,Via Dinarica Kosovo - Stage 1,VD,rwn,10.4,0.605,0,0,"Haxhi Zeka Mill Museum (154/day, 899 m); Patriarchate of Peja (154/day, 1764 m); Peja & Rugova Canyon (17/day, 31 m)",95,,needs_review,13,62466,16718686
+2,54.22,Vjellak Peak Trail,KS01,lwn,8.5,0.399,0,0,"Patriarchate of Peja (154/day, 958 m); Haxhi Zeka Mill Museum (154/day, 1741 m); Peja & Rugova Canyon (17/day, 869 m)",95,,needs_review,1,62447,13051563
+3,48.97,Shtegu i Ujkut,,rwn,7.0,0.071,0,0,,95,,needs_review,1,62457,16447296
+4,48.97,Shtegu i Drenushave,,rwn,7.3,0.071,0,0,,95,,needs_review,1,62458,16447375
+5,48.97,Shtegu i Ariut,,rwn,21.5,0.071,0,0,,95,,needs_review,1,62459,16447377
+6,48.97,Shtegu i Fllanzave,,rwn,7.8,0.071,0,0,,95,,needs_review,1,62460,16447465
+7,48.97,Shtegu i Bletëve,,rwn,9.9,0.071,0,0,,95,,needs_review,1,62461,16448118
+8,46.97,Kosovo Sweden friendship trail,,rwn,6.5,0.071,0,0,,87,,needs_review,1,62471,19464147
+9,45.77,South to West Hiking Trail,AM-SW,lwn,37.6,0.399,0,0,"Patriarchate of Peja (154/day, 370 m); Haxhi Zeka Mill Museum (154/day, 958 m); Peja & Rugova Canyon (17/day, 63 m)",61.2,,needs_review,1,62446,13051182
+10,39.92,Guri i Kuq Peak Trail,KS02,lwn,19.0,0.071,0,0,,83.8,,needs_review,1,62448,13051632
+11,39.74,Përjetoni Kalanë e Prizrenit,Kalaja,,4.1,0.44,0,0,"Mosque (287/day, 32 m); Prizren (287/day, 459 m); Haxhi Kasëm Mosque (287/day, 964 m)",76.2,,needs_review,1,62438,7405798
+12,38.98,Rruga e Marashit,,,3.8,0.44,0,0,"Prizren (287/day, 459 m); Mosque (287/day, 147 m); Haxhi Kasëm Mosque (287/day, 1117 m)",87.5,,needs_review,1,62436,7405796
+13,38.35,Oshlak Trail,,,20.5,0.071,0,0,"Prizren (287/day, 614 m); Our Lady of Promise (287/day, 891 m); Fortress of Prizren (287/day, 345 m)",87.5,,needs_review,1,62439,7883603
+14,33.35,North to West Hiking Trail,AM-NW,lwn,45.5,0.071,0,0,,57.5,,draft,1,62444,11630515
+15,26.52,Thematic Trail,TT,lwn,3.3,0.071,0,0,,83.8,,needs_review,1,62435,7347441

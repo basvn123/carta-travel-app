@@ -14,7 +14,7 @@ export const FULL_RATING_RANGE = [RATING_MIN, RATING_MAX];
 // numbers ship in data.meta.rating_model.tier_cutoffs so the UI tracks whatever
 // the scoring model used; these are only the fallback when meta is unavailable
 // (e.g. the URL/localStorage migration runs before app_data.json has loaded).
-export const TIER_CUTOFFS = { 1: 6.8, 2: 7.5, 3: 8.5 };
+export const TIER_CUTOFFS = { 1: 6.9, 2: 7.8, 3: 8.7 };
 
 /** Resolve the tier cutoffs from loaded meta, falling back to the constant. */
 export function tierCutoffs(meta) {

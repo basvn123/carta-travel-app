@@ -1,0 +1,277 @@
+{
+  "id": "it-trail-running-dolomites-cortina",
+  "sourceId": "trail-running-italy-dolomites-cortina",
+  "slug": "it-trail-running-dolomites-cortina",
+  "title": "Cortina d'Ampezzo Ridgelines",
+  "country": "Italy",
+  "countryCode": "IT",
+  "countries": [
+    {
+      "name": "Italy",
+      "code": "IT"
+    }
+  ],
+  "isMultiCountry": false,
+  "region": "Southern & Mediterranean Europe",
+  "regionKey": "southern-mediterranean",
+  "subRegion": "Dolomiti Ampezzane, Belluno (Veneto)",
+  "tripType": "Trail Running",
+  "tripTypeId": 2,
+  "tripTypeSlug": "trail-running",
+  "durationDays": 7,
+  "bestPeriod": {
+    "months": [
+      6,
+      7,
+      9,
+      10
+    ],
+    "monthNames": [
+      "June",
+      "July",
+      "September",
+      "October"
+    ],
+    "window": "Late June–mid-July & early September–early October",
+    "note": null,
+    "avoid": "Late July–third week of August (peak Italian holidays, refuge queues, Tre Cime gridlock); November–May (snow on all high traverses, refuges closed)",
+    "raw": "Late June–mid-July & early September–early October"
+  },
+  "budgetTier": "€€€",
+  "budgetTierRange": [
+    3,
+    3
+  ],
+  "budgetTierRaw": "€€€",
+  "budget": {
+    "currency": "EUR",
+    "totalEur": {
+      "low": 1600,
+      "high": 2660
+    },
+    "totalNote": "€1,650–€2,600 per person, excl. international flights",
+    "breakdown": {
+      "accommodation": {
+        "lowEur": 780,
+        "highEur": 1400,
+        "note": "Cortina 3★ €110–€190 dbl/night; rifugio half-board €65–€85"
+      },
+      "food": {
+        "lowEur": 340,
+        "highEur": 520,
+        "note": "Refuge lunch €18–€26; Cortina dinner €35–€60"
+      },
+      "transport": {
+        "lowEur": 280,
+        "highEur": 480,
+        "note": "Cortina Express both ways ~€52, local Dolomitibus, Tre Cime toll road, taxis"
+      },
+      "activities": {
+        "lowEur": 200,
+        "highEur": 260,
+        "note": "Tre Cime road toll ~€30/car, Lagazuoi cable car ~€22 single, Faloria ~€20, tunnel headtorch"
+      }
+    },
+    "perDayEur": {
+      "low": 229,
+      "high": 380
+    }
+  },
+  "profile": {
+    "difficulty": 4,
+    "difficultyLabel": "Demanding",
+    "difficultyNote": "4/5 — repeated 1,200–1,600 m days on high, exposed limestone; you need descending legs and a head for drops",
+    "fitnessLevel": "Demanding",
+    "crowdLevel": null,
+    "familyFriendly": null,
+    "carRequired": null
+  },
+  "basecamps": [],
+  "gatewayAirport": "VCE — Venice Marco Polo (2 h 15 by Cortina Express coach, ~€26 one way, or 2 h drive); TSF — Treviso is a similar transfer",
+  "gatewayAirportCode": "VCE",
+  "languages": [],
+  "currency": null,
+  "emergencyNumber": "112",
+  "coordinates": {
+    "lat": 46.1426,
+    "lon": 12.2156,
+    "precision": "city",
+    "matchedPlace": "Belluno",
+    "source": "geonames (geonamescache, cities > 15k)"
+  },
+  "tags": [
+    "trail-running",
+    "dolomites",
+    "cortina",
+    "tre-cime",
+    "cai-waymarks",
+    "rifugio",
+    "lavaredo",
+    "limestone",
+    "via-ferrata",
+    "alta-via"
+  ],
+  "summary": "Cortina sits at 1,224 m in a bowl ringed by Tofane, Cristallo, Sorapis, Croda da Lago and Nuvolau, and almost every classic run here is a lift-assisted or road-assisted ascent onto a limestone balcony followed by a very long, very technical descent. The week builds from the postcard laps — Tre Cime, Cinque Torri, Lago Federa — into two genuine ridge days on the Nuvolau–Averau crest and the Lagazuoi WWI tunnel system, with one full recovery day on the valley Dolomiti bike path. Trails are CAI-numbered, superbly signed and busy: the whole game is being on them at 07:00 rather than 11:00. It suits a confident mountain runner who can descend 1,200 m of scree and rock step without wrecking their quads on day two.",
+  "summaryGenerated": false,
+  "hook": null,
+  "snapshot": {},
+  "itinerary": [
+    {
+      "day": 1,
+      "title": "Arrive, and an easy Cinque Torri orientation lap",
+      "morning": "Cortina Express from Venice Marco Polo (2 h 15). Drop bags, collect a Tabacco 03 map from the newsagent on Corso Italia, and get lunch.",
+      "afternoon": "Drive or bus to the Bai de Dones lift and run the easy loop up to **Rifugio Scoiattoli** (2,255 m) and around the **Cinque Torri** WWI open-air museum trenches on CAI 439 — short, low-commitment, and the fastest way to learn what dolomite gravel feels like underfoot.",
+      "evening": "Dinner at **Baita Fraina** above town — casunziei (beetroot ravioli) and a Lagrein.",
+      "dayStats": "9 km / 450 m D+ / T2 / 1 h 15–1 h 45; transfer 2 h 15.",
+      "sleep": "Hotel Montana, central Cortina"
+    },
+    {
+      "day": 2,
+      "title": "Tre Cime circuit at dawn",
+      "morning": "Leave Cortina at 06:00 for Misurina and the **Tre Cime toll road** to Rifugio Auronzo (2,320 m; car toll around €30, and access is periodically shuttle-only in high season — check the day before). Run the circuit anticlockwise on CAI 101 past Rifugio Lavaredo and **Forcella Lavaredo** for the classic north-face reveal at **Rifugio Locatelli**.",
+      "afternoon": "Complete the loop via Malga Langalm and CAI 105, then add the short spur to **Forcella Col di Mezzo** if legs are fresh. Coffee at Auronzo, down before the coach traffic peaks.",
+      "evening": "Aperitivo on Corso Italia, then dinner at **Al Camin** — smoked ricotta, deer, and grappa.",
+      "dayStats": "10.2 km circuit / 380 m D+ / 1 h 10–1 h 40 / high point 2,454 m / toll ~€30 per car.",
+      "sleep": "Hotel Montana, central Cortina"
+    },
+    {
+      "day": 3,
+      "title": "Lago Federa and the Croda da Lago loop",
+      "morning": "Start at **Ponte de Ru Curto** on the Passo Giau road. Climb CAI 434 through larch forest to **Rifugio Palmieri al Lago Federa** (2,046 m), where the Croda da Lago wall drops straight into the lake — the best 20 minutes of forest running in the Ampezzo.",
+      "afternoon": "Continue on CAI 437 under the Croda's east face to Forcella Ambrizzola, then close the loop down to Ru Curto. Strong runners extend over Forcella Giau to Passo Giau and bus back.",
+      "evening": "Dinner at **SanBrite** on the Alverà road — a working malga kitchen, everything from the family's own herd.",
+      "dayStats": "14.5 km / 900 m D+ / T2–T3 / 2 h 30–3 h 20 / water at Palmieri only.",
+      "sleep": "Hotel Montana, central Cortina"
+    },
+    {
+      "day": 4,
+      "title": "Recovery day on the Lunga Via delle Dolomiti",
+      "morning": "True rest day. Jog or ride the **Lunga Via delle Dolomiti**, the old Calalzo–Dobbiaco railway bed, from Cortina north to **Ospitale** — packed gravel, 2% average gradient, viaducts and tunnels, zero technical demand.",
+      "afternoon": "Legs up. Cortina's outdoor pool, a massage, or the Museo della Grande Guerra. Restock food for the ridge days.",
+      "evening": "Pizza and a beer at a Corso Italia trattoria; nothing ambitious.",
+      "dayStats": "12 km out-and-back / 180 m D+ / 100% gravel rail-trail / 1 h 10 easy.",
+      "sleep": "Hotel Montana, central Cortina"
+    },
+    {
+      "day": 5,
+      "title": "Nuvolau ridge and a night at 2,413 m",
+      "morning": "Bus to **Passo Falzarego** (2,105 m). Climb CAI 441/440 to **Forcella Nuvolau**, then the cabled final steps to **Rifugio Nuvolau (2,575 m)** — a 360° platform over the Averau, Tofane and Marmolada.",
+      "afternoon": "Drop to **Rifugio Averau (2,413 m)**, run the Cinque Torri traverse on CAI 439/443 and the Averau circumnavigation, then return to Averau for the night. Sunset from the Nuvolau terrace is worth a second climb.",
+      "evening": "Half-board at Rifugio Averau — its kitchen is the best of any refuge in the Ampezzo; book weeks ahead.",
+      "dayStats": "16 km / 1,150 m D+ / T3 with cables / 3 h–4 h / sleeping at 2,413 m.",
+      "sleep": "Rifugio Averau (half-board, €65–€85)"
+    },
+    {
+      "day": 6,
+      "title": "Lagazuoi tunnels and the Sentiero Astaldi",
+      "morning": "Descend to Falzarego, take the **Lagazuoi cable car** to 2,778 m, and explore the **Galleria del Lagazuoi** WWI tunnel entrances with a headtorch — the running exit is the CAI 402 path down the Falzarego side, not the ferrata.",
+      "afternoon": "Transfer to **Rifugio Angelo Dibona** (2,083 m) and run the **Sentiero Astaldi** balcony under the Tofana di Rozes south face on CAI 404/412 to Pomedes, then descend to Cortina. Narrow, cabled in two places, and utterly exposed to the wall above.",
+      "evening": "Recovery dinner in town; order the local Ampezzo cheese board and go to bed early.",
+      "dayStats": "18 km combined / 900 m up / 1,700 m down / T3 / cable car ~€22 / headtorch mandatory.",
+      "sleep": "Camina Suite & Spa, Cortina"
+    },
+    {
+      "day": 7,
+      "title": "Faloria descent and out",
+      "morning": "First Faloria cable car (2,123 m), then the long, fast descent via **Son Forca** and the CAI 215/212 forest trails toward **Passo Tre Croci** — the classic Cortina Trail (now branded Lavaredo 50K) descent section, and a chance to run one of the race's best fifteen kilometres.",
+      "afternoon": "Shower, a last plate of casunziei, and the Cortina Express back to Venice.",
+      "evening": "Departure from VCE.",
+      "dayStats": "13 km / 400 m up, 1,200 m down / 1 h 40–2 h 20; coach 2 h 15 to VCE.",
+      "sleep": "Departure"
+    }
+  ],
+  "accommodationStrategy": [
+    {
+      "rank": 1,
+      "name": "Hotel Montana",
+      "style": "classic central 3★",
+      "location": "Corso Italia, Cortina",
+      "description": "The pragmatic base: central enough to walk to the Dolomitibus stops and the Faloria lift, cheap by Cortina standards (€110–€160 double in shoulder season), and used to runners leaving before breakfast — ask for a packed bag the night before. Ski/boot room doubles as gear-drying space.",
+      "booking": null,
+      "priceNote": null
+    },
+    {
+      "rank": 2,
+      "name": "Rifugio Averau",
+      "style": "high refuge",
+      "location": "2,413 m, Nuvolau group",
+      "description": "The one night you should sleep high. Half-board, bunk rooms, and a kitchen with a reputation that fills the place on weekends — book six to eight weeks out for late June or September. It removes the Falzarego shuttle from both ends of the biggest ridge day.",
+      "booking": null,
+      "priceNote": null
+    },
+    {
+      "rank": 3,
+      "name": "Camina Suite & Spa",
+      "style": "small design hotel",
+      "location": "Cortina",
+      "description": "Last-night comfort with a proper wellness area for the post-Astaldi legs, ten minutes' walk from the centre and with parking, which in Cortina is the real luxury. €160–€240 a night, worth it once.",
+      "booking": null,
+      "priceNote": null
+    }
+  ],
+  "logistics": {
+    "connectivity": "Italy is EU; roaming at domestic rates. TIM and Vodafone both cover the valley and ridges well. **No signal in the Lagazuoi tunnels, in Val Travenanzes or in the Federa forest** — carry offline maps.",
+    "emergency": "**112** for everything; the Soccorso Alpino Veneto operates helicopters out of Pieve di Cadore. Italian mountain rescue can bill non-residents for helicopter recovery — carry insurance with explicit heli-evacuation cover, and note that many policies exclude \"via ferrata\" ground, which the Astaldi and Lagazuoi sections may be read as.",
+    "weather": "Afternoon convective storms are near-daily from mid-July to late August, typically firing between 14:00 and 17:00; the Dolomites also get sudden Adriatic-driven fog banks that erase visibility on the Nuvolau ridge in minutes. Check the ARPAV Veneto Dolomiti bulletin each morning. Early-season névé lingers in north-facing gullies into early July.",
+    "bookingWindows": "Refuges take direct bookings by phone/email or through their own sites; **Averau, Nuvolau, Scoiattoli and Locatelli are the ones that sell out** — book 6–8 weeks ahead, more for August weekends. Cortina hotels for the first two weeks of August need 4–6 months. The Lavaredo/Cortina Trail races fill by lottery months ahead of the late-June event weekend.",
+    "money": "Euro. Cards work almost everywhere including most refuges, but carry €80–€100 in cash — some high refuges and the Tre Cime toll booth prefer or require it. Tipping is not expected; round up.",
+    "transportRules": "The **Tre Cime toll road** to Rifugio Auronzo charges roughly €30 per car and is subject to seasonal shuttle-only restrictions and daily quotas — verify the current rule before driving. Dolomitibus serves Falzarego, Giau and Tre Croci but with sparse timetables; check the last return. Italian motorways to Venice are tolled. Rental cars into Austria are usually permitted but need a vignette.",
+    "permits": "No permit or fee to run the trails. Wild camping is prohibited across the Dolomiti d'Ampezzo natural park; bivouacking above 2,500 m from dusk to dawn is tolerated in practice but not guaranteed. Drones are banned over the park. The WWI tunnels are open free but you enter at your own risk.",
+    "health": "Tap water throughout Cortina and the refuges is potable and excellent. Ticks are present in the larch forest below 1,800 m. Rockfall is the real hazard on the Astaldi and under the Tofana — a helmet is not absurd on that section. No altitude sickness risk below 2,800 m, but UV at 2,500 m is severe.",
+    "gettingThere": null,
+    "other": []
+  },
+  "proTips": [
+    "**Do Tre Cime before 07:30 or after 17:00.** The toll road and Auronzo car park saturate by 09:00 in summer; the same 10 km loop is a different, almost empty experience at dawn, with the north faces in shadow and the Cadini spires lit.",
+    "**Sleep at Averau to own the Nuvolau sunrise.** Guests can be on the 2,575 m summit terrace at first light with nobody else on the ridge — the single best photograph of the week and a 25-minute climb from your bunk.",
+    "**Halve the CAI signpost times.** Every wooden junction post gives walking hours. A mid-pack runner reliably does 50–55% of them on ascent and 40% on descent — use that to plan turnarounds rather than trusting a GPS estimate.",
+    "**Buy a Cortina Skyline / Dolomiti Supersummer lift pass only if you'll use three lifts.** Single rides on Faloria and Lagazuoi are €20–€22 and often cheaper than a multi-day pass for this itinerary.",
+    "**Carry a real headtorch, not a phone light, for Lagazuoi.** The tunnels are pitch dark, wet and uneven, and phone torches die fast in the cold.",
+    "**Run the Cortina Trail descent sections in reverse of race direction.** Faloria down to Tre Croci and the Ospitale rail-trail let you preview the course's decisive kilometres without the 48 km / ~2,650 m of the full race.",
+    "**Use the Lunga Via delle Dolomiti as your weather bail-out.** When the ridges are electric, the old railway gives you a shaded, safe, tunnel-covered 20 km at 2% gradient.",
+    "**Eat lunch at a refuge, not in Cortina.** A €20 plate of canederli at Palmieri or Averau at 2,000 m is both cheaper and better than the valley equivalent, and it solves your water resupply."
+  ],
+  "typeSpecific": {
+    "raw": {
+      "Signature routes": "(1) **Tre Cime di Lavaredo circuit** from Rifugio Auronzo (2,320 m) via CAI 101 → Forcella Lavaredo → **Rifugio Locatelli/Dreizinnenhütte** (2,405 m) → Malga Langalm → CAI 105: 10.2 km, 380 m D+, mid-pack 1 h 10–1 h 40. (2) **Croda da Lago loop to Rifugio Palmieri al Lago Federa** (2,046 m) from Ponte de Ru Curto on CAI 434/437: 14.5 km, 900 m D+, 2 h 30–3 h 20. (3) **Cinque Torri–Averau–Nuvolau ridge** from Passo Falzarego via CAI 441/439/440 to **Rifugio Nuvolau** (2,575 m, the oldest refuge in the Dolomites, 1883) and **Rifugio Averau** (2,413 m): 16 km, 1,150 m D+, 3 h–4 h. (4) **Sentiero Astaldi balcony**, Rifugio Angelo Dibona (2,083 m) → Pomedes under the Tofana di Rozes south face on CAI 404/412: 11 km, 700 m D+, 1 h 45–2 h 30. (5) **Faloria–Son Forca–Passo Tre Croci descent** off the Faloria cable car (2,123 m): 13 km, 400 m up / 1,200 m down, 1 h 40–2 h 20.",
+      "Technicality (SAC hiking scale T1–T5, stated explicitly)": "Tre Cime circuit **T2**, entirely runnable. Croda da Lago loop **T2–T3**. Nuvolau final ridge **T3** with cabled steps and genuine exposure on the summit approach. Sentiero Astaldi **T3**, a narrow balcony with fixed cable on two short sections — a slip is consequential. Lagazuoi tunnel exit **T3** and requires a headtorch; the full Galleria descent is via ferrata territory and beyond scope for running.",
+      "Terrain split, week average": "~35% dolomite scree and gravel, ~25% hard rock step and slab, ~20% larch and pine forest singletrack on needle duff, ~15% white-gravel refuge access track, ~5% asphalt. Scree above Forcella Nuvolau is small, ball-bearing dolomite — light shoes with sticky rubber beat maximal cushioning.",
+      "Waymarking": "CAI red-white-red flashes with **numbered trail signs on wooden posts at every junction, with walking times in hours** — halve them for a mid-pack run. Alta Via 1 (marked \"1\" in a triangle) crosses the Falzarego–Nuvolau ground; Alta Via 3 runs the Cristallo side. Numbers used this week: 101, 104, 105, 401, 402, 404, 412, 434, 437, 439, 440, 441.",
+      "Water refill points and month reliability": "Refuges are the water system here: **Auronzo, Lavaredo, Locatelli, Palmieri, Scoiattoli, Averau, Dibona, Faloria, Lagazuoi** all sell or dispense water while open (roughly **20 June–20 September**, some to early October). **Rifugio Nuvolau has no spring** — water is hauled up, so buy, don't expect to refill free. Cortina town fountains and the Fanes/Ru Curto stream crossings are reliable all summer. Natural sources on the high karst plateaux are effectively **nil from mid-July** — this is porous limestone and it does not hold water. Plan 1.5 L minimum per high day.",
+      "Navigation": "Tabacco 1:25,000 sheet **03 \"Cortina d'Ampezzo e Dolomiti Ampezzane\"** is the standard; GPX from Dolomiti Trekking/Cortina Skyline portals, Komoot and the Lavaredo race site. Phone coverage is good on ridges and around refuges but **dead in the Lagazuoi tunnels, in the Val Travenanzes trench and on the Federa north side**. Bail-outs: Passo Falzarego, Passo Giau and Passo Tre Croci all have bus stops; the Faloria and Lagazuoi cable cars will take you down if the weather turns.",
+      "Recovery, altitude and heat": "Day 4 is a genuine low day on the valley floor. Working altitude is 2,000–2,800 m; sleeping at 1,224 m in Cortina means no acclimatisation problem, but expect 10–15% slower climbing pace on day one at altitude. Dolomite thunderstorms are near-daily from mid-July: be off the Nuvolau and Lagazuoi ridges by 14:00, and treat a rising anvil cloud over the Tofane as a hard turnaround signal."
+    },
+    "surface": "~35% dolomite scree and gravel, ~25% hard rock step and slab, ~20% larch and pine forest singletrack on needle duff, ~15% white-gravel refuge access track, ~5% asphalt. Scree above Forcella Nuvolau is small, ball-bearing dolomite — light shoes with sticky rubber beat maximal cushioning.",
+    "distanceKm": null,
+    "elevationM": null,
+    "verticalM": null,
+    "technicalRating": "Tre Cime circuit **T2**, entirely runnable. Croda da Lago loop **T2–T3**. Nuvolau final ridge **T3** with cabled steps and genuine exposure on the summit approach. Sentiero Astaldi **T3**, a narrow balcony with fixed cable on two short sections — a slip is consequential. Lagazuoi tunnel exit **T3** and requires a headtorch; the full Galleria descent is via ferrata territory and beyond scope for running.",
+    "transitPass": null,
+    "hutBooking": null,
+    "liftNetwork": null,
+    "snowReliability": null,
+    "windConditions": null,
+    "gpxReady": null,
+    "bookingTimeline": null,
+    "audience": null
+  },
+  "packingNotes": [],
+  "whatCouldGoWrong": [],
+  "sources": {
+    "verified": "The Lavaredo Ultra Trail by UTMB event is held in the last week of June out of Cortina and the historic Cortina Trail 50K is now presented within the UTMB-branded distance ladder (Lavaredo 120K/80K/50K/20K/10K); Rifugio Locatelli/Dreizinnenhütte at 2,405 m and Rifugio Auronzo at 2,320 m; Rifugio Nuvolau at 2,575 m as the oldest Dolomites refuge; VCE as base airport with a ~2 h 15 coach transfer.",
+    "confidenceNotes": "Re-verify (a) the **Tre Cime toll road price and whether private-car access is restricted to shuttle-only or a daily quota** in the travel month — this rule has changed repeatedly; (b) **exact 2026 race names, dates and course distances/elevation for the Cortina Trail / Lavaredo 50K**, which UTMB has re-branded; (c) **refuge opening and closing dates and half-board prices** for Averau, Nuvolau, Scoiattoli, Palmieri and Locatelli; (d) **Lagazuoi and Faloria cable-car fares and operating dates**; (e) **Sentiero Astaldi condition** — it is closed for rockfall repair in some seasons; (f) Cortina Express fares and timetable."
+  },
+  "verifyFlags": [],
+  "verifyFlagCount": 0,
+  "volatilePricing": false,
+  "wordCount": 2941,
+  "dataVintage": 2026,
+  "provenance": {
+    "batch": "southern-mediterranean",
+    "sourceFile": "carta-dataset/trips/trail-running-italy-dolomites-cortina.md",
+    "sourceFormat": "md with '## Metadata' bullet block (one file per trip)",
+    "sourceId": "trail-running-italy-dolomites-cortina",
+    "ingestedAt": "2026-09-02",
+    "synthesized": false
+  }
+}

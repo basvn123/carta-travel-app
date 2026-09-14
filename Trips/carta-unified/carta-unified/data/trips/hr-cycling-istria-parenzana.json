@@ -1,0 +1,278 @@
+{
+  "id": "hr-cycling-istria-parenzana",
+  "sourceId": "cycling-croatia-istria-parenzana",
+  "slug": "hr-cycling-istria-parenzana",
+  "title": "Istria: The Parenzana & the Hilltowns",
+  "country": "Croatia",
+  "countryCode": "HR",
+  "countries": [
+    {
+      "name": "Croatia",
+      "code": "HR"
+    }
+  ],
+  "isMultiCountry": false,
+  "region": "Southern & Mediterranean Europe",
+  "regionKey": "southern-mediterranean",
+  "subRegion": "Istria",
+  "tripType": "Cycling Trips",
+  "tripTypeId": 1,
+  "tripTypeSlug": "cycling",
+  "durationDays": 7,
+  "bestPeriod": {
+    "months": [
+      4,
+      5,
+      6,
+      9,
+      10
+    ],
+    "monthNames": [
+      "April",
+      "May",
+      "June",
+      "September",
+      "October"
+    ],
+    "window": "Late April–mid-June & September–end October",
+    "note": null,
+    "avoid": "July–August — coastal roads saturated with Austrian and Italian holiday traffic, and the Mirna valley sits at 34°C with high humidity",
+    "raw": "Late April–mid-June & September–end October"
+  },
+  "budgetTier": "€€",
+  "budgetTierRange": [
+    2,
+    2
+  ],
+  "budgetTierRaw": "€€",
+  "budget": {
+    "currency": "EUR",
+    "totalEur": {
+      "low": 1200,
+      "high": 1850
+    },
+    "totalNote": "€1,200–€1,850 per person, excl. international flights",
+    "breakdown": {
+      "accommodation": {
+        "lowEur": 560,
+        "highEur": 950,
+        "note": "Hilltown boutique €90–€150 pppn; Rovinj coastal night pushes higher"
+      },
+      "food": {
+        "lowEur": 320,
+        "highEur": 520,
+        "note": "Konoba mains €14–€22; truffle dishes €28–€45 in season"
+      },
+      "transport": {
+        "lowEur": 140,
+        "highEur": 260,
+        "note": "Airport transfers, luggage moves between Buje, Motovun and Rovinj"
+      },
+      "activities": {
+        "lowEur": 260,
+        "highEur": 320,
+        "note": "Gravel hire €180–€250/week, Parenzana Museum €4, Učka park access"
+      }
+    },
+    "perDayEur": {
+      "low": 171,
+      "high": 264
+    }
+  },
+  "profile": {
+    "difficulty": 3,
+    "difficultyLabel": "Active",
+    "difficultyNote": "3/5 — the rail-trail itself is graded at railway gradients, but the hilltown spurs and the optional Vojak day are genuinely hard",
+    "fitnessLevel": "Active",
+    "crowdLevel": null,
+    "familyFriendly": null,
+    "carRequired": null
+  },
+  "basecamps": [],
+  "gatewayAirport": "TRS Trieste–Ronchi, 75 min to Buje; PUY Pula, 60 min to Motovun; LJU and VCE both around 2 h 30 min",
+  "gatewayAirportCode": "TRS",
+  "languages": [],
+  "currency": null,
+  "emergencyNumber": "112",
+  "coordinates": {
+    "lat": 45.8144,
+    "lon": 15.978,
+    "precision": "country",
+    "matchedPlace": "Zagreb",
+    "source": "country capital fallback"
+  },
+  "tags": [
+    "parenzana",
+    "rail-trail",
+    "gravel",
+    "hilltowns",
+    "truffles",
+    "motovun",
+    "ucka",
+    "malvazija"
+  ],
+  "summary": "The Parenzana is an abandoned narrow-gauge railway that ran 123 km from Trieste to Poreč between 1902 and 1935, and its Croatian section is now the best-surfaced long gravel corridor in the northern Adriatic. This week uses it as a spine: hardpack embankments, unlit stone tunnels and viaducts through the Mirna valley, with detours climbing off it to Grožnjan, Motovun, Buje and Oprtalj, each a walled hilltown on its own knoll. Add a truffle lunch in Livade, two days of Malvazija tasting, an optional 1,401 m ascent of Vojak on Učka, and a finish on the Rovinj coast. It is the gentlest week in this collection on paper and the most tempting to overcook, because every hilltown demands a climb.",
+  "summaryGenerated": false,
+  "hook": null,
+  "snapshot": {},
+  "itinerary": [
+    {
+      "day": 1,
+      "title": "Buje, and the first tunnels",
+      "morning": "Transfer from Trieste to Buje and take delivery of the bike. Climb into Buje's old town for the loggia and the view over the Mirna basin — the whole week's terrain visible in one sweep.",
+      "afternoon": "Join the Parenzana north of Buje and ride the restored section toward Kostanjica, through the first stone tunnel and across the viaducts. Turn at Završje, a half-abandoned village with a leaning bell tower.",
+      "evening": "Konoba Morgan in Brtonigla — game, Istrian beef and one of the region's most serious wine lists, heavy on Teran and Malvazija.",
+      "dayStats": "38 km / 470 m ascent / 70% hardpack, 30% paved / two unlit tunnels",
+      "sleep": "Hotel San Rocco, Brtonigla"
+    },
+    {
+      "day": 2,
+      "title": "Grožnjan, the artists' town on the ridge",
+      "morning": "Ride the Parenzana east and take the spur up to Grožnjan — 3.4 km at 6.8%. The town has been an artists' colony since the 1960s and its lanes are mostly galleries and studios; ride in early and it is silent.",
+      "afternoon": "Descend to the trail and continue toward Livade through the longest tunnel section, then loop back on the valley road via Oprtalj's lower slopes.",
+      "evening": "Konoba Bastia in Grožnjan for fuži with truffle and a bottle of Kozlović Malvazija.",
+      "dayStats": "54 km / 780 m ascent / 60% hardpack, 35% paved, 5% setts / Grožnjan summit 288 m",
+      "sleep": "Hotel San Rocco, Brtonigla"
+    },
+    {
+      "day": 3,
+      "title": "Mirna valley, Livade truffles and up to Motovun",
+      "morning": "Follow the Parenzana into the Mirna valley floor and stop at the Parenzana Museum in Livade for the railway's history, rolling stock photographs and old timetables — €4, twenty minutes, worth it.",
+      "afternoon": "Ride the valley flats to the Motovun forest, then the ramp: 1.6 km at 9.1%, setts for the final 400 m. Push if it is wet. Walk the Motovun town walls at golden hour.",
+      "evening": "Konoba Mondo just below the Motovun gate — the region's best-known truffle kitchen, small, book ahead. In autumn ask what the white truffle price is before ordering.",
+      "dayStats": "47 km / 690 m ascent / 55% hardpack, 40% paved, 5% cobbles / Motovun 277 m, max 12%",
+      "sleep": "Hotel Kaštel, Motovun"
+    },
+    {
+      "day": 4,
+      "title": "Oprtalj, Zavrsje and the Istrian interior",
+      "morning": "Climb north from Livade to Oprtalj (378 m), a 6.2 km ascent at 5.9% with continuous switchbacks and the finest single panorama in inland Istria.",
+      "afternoon": "A gravel loop through Sovinjak and Buzet's outskirts on farm hardpack, returning down the Mirna. Buzet is the truffle capital and its Subotina festival in September serves a giant truffle omelette in the square.",
+      "evening": "Restaurant Zigante in Livade, the truffle house that made the region's name. Expensive and unapologetic; the tasting menu runs €90–€130.",
+      "dayStats": "63 km / 1,120 m ascent / 45% hardpack, 55% paved / Oprtalj 6.2 km at 5.9%",
+      "sleep": "Hotel Kaštel, Motovun"
+    },
+    {
+      "day": 5,
+      "title": "The Vojak day, or the Vižinada alternative",
+      "morning": "For the queen stage, van-transfer to Lovran and climb Učka: 22.6 km, 1,380 m, via Poklon at 922 m to Vojak at 1,401 m, with the Kvarner gulf and the Julian Alps from the summit tower. The Učka tunnel is closed to bikes, so this pass road is the only line.",
+      "afternoon": "Descend the same way to Lovran, or continue to Opatija for the Lungomare. Riders skipping Vojak instead take the Parenzana west from Motovun to Vižinada and Baldaši, the loosest and least restored gravel on the route.",
+      "evening": "Konoba Batelina at Banjole near Pula if you have transport — a fish restaurant that treats offcuts and shark as seriously as sea bass. Otherwise Konoba Mondo again in Motovun.",
+      "dayStats": "45 km / 1,380 m ascent (Vojak option) or 52 km / 540 m (Vižinada option) / summit 1,401 m",
+      "sleep": "Hotel Kaštel, Motovun"
+    },
+    {
+      "day": 6,
+      "title": "Parenzana to Poreč, then the coast to Rovinj",
+      "morning": "Complete the Parenzana to Poreč through Vižinada and Nova Vas, finishing at the sea. In Poreč, the Euphrasian Basilica's sixth-century apse mosaics are a UNESCO site and open all day.",
+      "afternoon": "Ride south on the coastal lanes via Funtana and Vrsar, skirting the Limski kanal — a drowned karst canyon rather than a fjord, whatever the signage says — into Rovinj.",
+      "evening": "Monte, just under the church of St Euphemia in Rovinj, holds a Michelin star; book weeks out. The cheaper move is grilled fish on the Rovinj waterfront.",
+      "dayStats": "71 km / 640 m ascent / 50% hardpack, 50% paved / Parenzana Croatian section complete",
+      "sleep": "Hotel Adriatic or Hotel Angelo d'Oro, Rovinj"
+    },
+    {
+      "day": 7,
+      "title": "Rovinj, Bale and the ride out",
+      "morning": "A flat loop inland to Bale, a compact stone village with a Venetian palace, then back through the Kamenjak vineyards on white roads.",
+      "afternoon": "Return the bike at the operator's Rovinj or Poreč drop-off, then walk Rovinj's Grisia street up to St Euphemia and climb the 60 m bell tower.",
+      "evening": "Ice cream and a Malvazija on the Rovinj harbour before the Pula or Trieste transfer.",
+      "dayStats": "42 km / 380 m ascent / 65% paved, 35% white road / drop-off fee €40–€70 outside the Parenzana corridor",
+      "sleep": "Hotel Adriatic, Rovinj, or an airport hotel"
+    }
+  ],
+  "accommodationStrategy": [
+    {
+      "rank": 1,
+      "name": "Hotel San Rocco",
+      "style": "family boutique",
+      "location": "Brtonigla",
+      "description": "Purpose-built for the Parenzana crowd: lockable garage, wash-down point, early breakfast on request, and a restaurant that will feed you at cyclist hours. Brtonigla sits between Buje and Umag, which puts three trail access points within 6 km. Around €150–€210 double.",
+      "booking": null,
+      "priceNote": null
+    },
+    {
+      "rank": 2,
+      "name": "Hotel Kaštel",
+      "style": "historic town hotel",
+      "location": "Motovun",
+      "description": "The only real hotel inside Motovun's walls, with a vaulted ground-floor room for bikes and a spa that is unusually good for the price. Being inside the gate means you avoid re-climbing the 9% ramp after dinner. €120–€180 double.",
+      "booking": null,
+      "priceNote": null
+    },
+    {
+      "rank": 3,
+      "name": "La Parenzana",
+      "style": "trailside guesthouse",
+      "location": "Volpija near Buje",
+      "description": "Literally on the old railway formation, with a bike shed, a workshop bench and a restaurant doing Istrian home cooking. The budget option at roughly €70–€100 double, and the most convenient base if you intend to ride the corridor end to end rather than detour.",
+      "booking": null,
+      "priceNote": null
+    }
+  ],
+  "logistics": {
+    "connectivity": "4G is good in the valleys and towns, weak in the Motovun forest and inside every tunnel. Croatia is in the EU, so roaming is included. Download the Parenzana GPX before travelling — junctions on unrestored sections near Baldaši are poorly signed.",
+    "emergency": "112. HGSS mountain rescue covers Učka. Croatia honours EHIC/GHIC. The main hospitals are in Pula and Rijeka; Motovun and Grožnjan have no out-of-hours medical cover at all.",
+    "weather": "The bora funnels down from the Ćićarija in autumn and spring, gusting hard on the Vojak summit road and the exposed Buje ridge. The Mirna valley traps fog until mid-morning in October, which makes the unlit tunnels genuinely dangerous. Summer thunderstorms build over Učka after 15:00.",
+    "bookingWindows": "Motovun and Grožnjan beds sell out for the September truffle season three to four months ahead. Zigante and Monte want two to four weeks. Rental gravel bikes need three to four weeks in shoulder season. The Motovun Film Festival in late July fills every bed in the Mirna valley.",
+    "money": "Croatia adopted the euro on 1 January 2023, so no kuna and no exchange step. Cards are widely accepted; small konobas in the interior and the Parenzana Museum sometimes take cash only. Round up rather than tipping a percentage.",
+    "transportRules": "Croatian motorway tolls are distance-based and paid at barriers or by ENC transponder — there is no vignette. The Učka road tunnel is tolled and prohibited to cyclists. Bikes on regional buses depend on the driver and hold space; they are refused on busy summer services. Cross-border car rental into Slovenia and Italy is usually permitted but must be declared. Bicycle lights and a bell are legally required.",
+    "permits": "Učka Nature Park is free to enter on a bicycle but has marked no-cycling footpaths. The Parenzana is a public route with no fee. Truffle hunting requires a licence and cannot be done casually. Drone use near the Euphrasian Basilica and Rovinj's old town is restricted; register with the Croatian CAA.",
+    "health": "Tap water is potable everywhere including hilltown fountains. Ticks are present in the Motovun forest and on Učka from spring to autumn; TBE occurs in inland Istria. Nose-horned vipers live on dry karst slopes — a real if low risk when scrambling off-trail. Adriatic jellyfish blooms hit in late summer.",
+    "gettingThere": null,
+    "other": []
+  },
+  "proTips": [
+    "Carry a 600-lumen front light and a rear light for the tunnels. Several are over 100 m, curved, wet and completely dark; phone torches are not adequate.",
+    "Ride the Motovun ramp before 09:00. After that you share 3.5 m of cobbled lane with delivery vans and tour minibuses that cannot reverse.",
+    "Truffle prices are seasonal and volatile — white truffle from October to December, black from spring. Ask for the day's price per gram before ordering a shaved dish, not after.",
+    "The Vižinada–Baldaši section is the roughest on the corridor and unsuitable for e-bikes with narrow tyres. If your fleet is trekking-spec, skip it and use the parallel asphalt.",
+    "Buy Malvazija directly at Kozlović near Momjan or Kabola at Kanedolo. Cellar-door prices are far below Rovinj restaurant markups and both will ship.",
+    "Time the trip for the Subotina festival in Buzet on the second weekend of September if you want the giant truffle omelette, but book beds two months out.",
+    "Ask your hotel to book the luggage transfer with the same operator supplying the bikes. Splitting them across two companies is how bags end up in the wrong hilltown.",
+    "If the bora is forecast above 60 km/h, abandon the Vojak plan outright. The summit road has no barriers and the crosswind on the final 6 km is unmanageable on a bike."
+  ],
+  "typeSpecific": {
+    "raw": {
+      "Spine route — Parenzana, Croatian section (Plovanija–Buje–Grožnjan–Livade–Vižinada–Poreč)": "roughly 78 km with about 900 m of cumulative ascent, held to railway gradients of 1–3% wherever the original formation survives, with sharper modern link ramps into villages.",
+      "Motovun ramp": "1.6 km at 9.1% average from the Mirna valley floor to the town gate, the final 400 m on polished limestone setts that are lethal when wet. Summit 277 m.",
+      "Grožnjan spur": "3.4 km at 6.8% from the Parenzana embankment, 220 m ascent, summit 288 m. Mixed hardpack and broken asphalt.",
+      "Optional queen stage — Vojak, Učka": "from Lovran on the Kvarner side, 22.6 km with 1,380 m of ascent, averaging 6.2% via the Poklon saddle at 922 m, then the narrow 6 km summit road to Vojak at 1,401 m, the highest point in Istria. Fully paved but exposed. Note the Učka road tunnel is tolled and closed to bicycles — the pass road is the only cycling option.",
+      "Week surface split": "approximately 40% compacted limestone hardpack (the Parenzana formation), 45% paved secondary road, 10% loose gravel on unrestored sections between Vižinada and Baldaši, 5% cobbled hilltown setts. Tunnels are unlit — a real front light is mandatory, not optional.",
+      "Bike hire": "Rental Center in Umag rents Parenzana-specific gravel and trekking bikes plus e-bikes and handles trailhead delivery; CCT Bike Rental serves the Parenzana corridor with road and gravel machines delivered to accommodation; Bike Tours Istria run guided and self-guided Parenzana packages with hire included. Indicative rates: €25–€35/day gravel or trekking, €40–€55/day e-bike, €180–€280/week. One-way drop-off between Buje, Motovun and Poreč is standard within the Parenzana operators and usually free inside the corridor; drop-off in Rovinj or Pula typically costs €40–€70. Bike-box storage is generally free for the rental period.",
+      "Bike-friendly accommodation logistics": "Hotel San Rocco in Brtonigla has a lockable garage, a wash-down point and will produce a 07:00 breakfast on request; Hotel Kaštel in Motovun stores bikes in a vaulted ground-floor room, which matters because you cannot leave anything in the square overnight; La Parenzana in Volpija sits directly on the trail with a bike shed and a basic workshop bench.",
+      "Bike on public transport": "Istrian rail is largely irrelevant to this route — the Pula–Divača line does not serve the Parenzana towns usefully and bike space is limited. Regional buses (Autotrans, Arriva) will carry bikes in the hold at driver's discretion for €3–€5, but never on full summer services. Jadrolinija and Venezia Lines coastal catamarans out of Poreč and Rovinj generally refuse full-size bikes; car ferries take them free or for a nominal fee. Plan on van transfers rather than public transport."
+    },
+    "surface": "approximately 40% compacted limestone hardpack (the Parenzana formation), 45% paved secondary road, 10% loose gravel on unrestored sections between Vižinada and Baldaši, 5% cobbled hilltown setts. Tunnels are unlit — a real front light is mandatory, not optional.",
+    "distanceKm": null,
+    "elevationM": null,
+    "verticalM": null,
+    "technicalRating": null,
+    "transitPass": null,
+    "hutBooking": null,
+    "liftNetwork": null,
+    "snowReliability": null,
+    "windConditions": null,
+    "gpxReady": null,
+    "bookingTimeline": null,
+    "audience": null
+  },
+  "packingNotes": [],
+  "whatCouldGoWrong": [],
+  "sources": {
+    "verified": "The Parenzana's route Trieste/Muggia–Poreč and its promotion as a cross-border cycling trail; existence of Rental Center in Umag and CCT Bike Rental serving the Parenzana corridor; Bike Tours Istria running Parenzana packages; Croatia's euro adoption.",
+    "confidenceNotes": "Rental day and weekly rates, one-way drop-off fees and free bike-box storage are indicative and need checking against 2026 price lists. The Croatian Parenzana section's exact rideable length and the condition of the unrestored Vižinada–Baldaši stretch change with maintenance funding — verify locally before publishing. Učka summit road access, any seasonal vehicle restrictions and the confirmed prohibition of bicycles in the Učka tunnel should be re-checked with Učka Nature Park. Konoba Bastia, Konoba Mondo and Zigante opening seasons vary; Zigante menu pricing is an estimate. Bus bike-carriage rules are discretionary and unreliable as published. Hotel rates are prior-season estimates."
+  },
+  "verifyFlags": [],
+  "verifyFlagCount": 0,
+  "volatilePricing": false,
+  "wordCount": 2660,
+  "dataVintage": 2026,
+  "provenance": {
+    "batch": "southern-mediterranean",
+    "sourceFile": "carta-dataset/trips/cycling-croatia-istria-parenzana.md",
+    "sourceFormat": "md with '## Metadata' bullet block (one file per trip)",
+    "sourceId": "cycling-croatia-istria-parenzana",
+    "ingestedAt": "2026-09-02",
+    "synthesized": false
+  }
+}

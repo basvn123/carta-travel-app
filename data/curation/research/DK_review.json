@@ -1,0 +1,304 @@
+{
+  "iso2": "DK",
+  "country": "Denmark",
+  "checked_at": "2026-08-17",
+  "beaches": {
+    "wrong": [
+      {
+        "name": "Babylone Stranden",
+        "class": "duplicate_of:Babylone Strand",
+        "why": "Tier 1, rank 9, at 55.9755/12.5470, the same coordinate as tier 1 rank 8 'Babylone Strand' (55.9757/12.5472) and tier 1 rank 10 'Gl. Humlebaek strand' (55.9755/12.5470). Three tier 1 slots, one beach at Humlebaek, all scored 0.906. This is the Nesebar failure repeated in Denmark.",
+        "source_url": "data/curation/wire_snapshot/DK.json"
+      },
+      {
+        "name": "Gl. Humlebaek strand",
+        "class": "duplicate_of:Babylone Strand",
+        "why": "Tier 1, rank 10. Identical coordinate to Babylone Stranden (55.9755/12.5470). The third name for the same beach in front of the Louisiana museum destination.",
+        "source_url": "data/curation/wire_snapshot/DK.json"
+      },
+      {
+        "name": "Vesterhavet V. Klitmoller",
+        "class": "duplicate_of:Orhage Klitmoller",
+        "why": "Tier 2, rank 22 at 57.0433/8.4827 versus tier 2 rank 17 'Orhage Klitmoller' at 57.0434/8.4828: about 15 m apart. Cold Hawaii's beach counted twice, once under the sea's name and once under the headland's.",
+        "source_url": "data/curation/wire_snapshot/DK.json"
+      },
+      {
+        "name": "Stranden, Lonstrup",
+        "class": "duplicate_of:Lonstrup strand og klit",
+        "why": "Tier 2, rank 19. One of three Lonstrup rows (tier 1 rank 12 'Jammerbugten Ved Skallerup Klit Feriecenter', tier 2 rank 14 'Lonstrup strand og klit', tier 2 rank 19) all on the same 4 km of Jammerbugten coast.",
+        "source_url": "data/curation/wire_snapshot/DK.json"
+      },
+      {
+        "name": "Lakolk Beach, Island Romo, Denmark",
+        "class": "duplicate_of:Lakolk Strand",
+        "why": "Tier 2, rank 15. The same Romo beach as the row named 'Lakolk Strand', with an English tourist-brochure name including the country.",
+        "source_url": "data/curation/wire_snapshot/DK.json"
+      },
+      {
+        "name": "Skotterup Strand",
+        "class": "duplicate_of:Snekkersten Strand",
+        "why": "Tier 2, rank 18 at 56.0053/12.5797, about 250 m from tier 1 rank 4 'Snekkersten Strand' (56.0038/12.5770) on the same continuous Oresund shoreline. Helsingor supplies six rows for essentially three beaches.",
+        "source_url": "data/curation/wire_snapshot/DK.json"
+      },
+      {
+        "name": "Jammerbugten Ved Skallerup Klit Feriecenter",
+        "class": "hospitality",
+        "why": "Tier 1, rank 12. The row names a holiday centre, not a beach: it is the stretch of Jammerbugten in front of Skallerup Klit Feriecenter. A tier 1 national entry should never be named after a resort.",
+        "source_url": "data/curation/wire_snapshot/DK.json"
+      },
+      {
+        "name": "Sommerhus Handrup Strand - Ebeltoft",
+        "class": "hospitality",
+        "why": "Tier 2, rank 32. A summer house rental listing near Ebeltoft that has been ingested as a beach feature.",
+        "source_url": "data/curation/wire_snapshot/DK.json"
+      },
+      {
+        "name": "Beachracer Fano",
+        "class": "hospitality",
+        "why": "Tier 2, rank 47. A beach racing business or event on Fano, not a beach. Note the only Fano row in the whole country is this one, while Fano's Rindby and Sonderho beaches are absent.",
+        "source_url": "data/curation/wire_snapshot/DK.json"
+      },
+      {
+        "name": "Vestre Fjordpark",
+        "class": "lido_or_pool",
+        "why": "Tier 2, rank 23. Aalborg's municipal bathing park on the Limfjord, an OSM landuse=recreation_ground with pools, pontoons and a sauna. A city bathing facility, the Danish equivalent of the London lidos already flagged in the United Kingdom.",
+        "source_url": "https://nominatim.openstreetmap.org/ui/search.html?q=Vestre+Fjordpark+Aalborg"
+      },
+      {
+        "name": "Natura 2000-omrade nr. 6 Kaersgard Strand, Vandplasken og Liver A",
+        "class": "park_or_area",
+        "why": "Tier 2, rank 38. A Natura 2000 designation polygon covering a beach, a wetland and a river. A protection area record, not a beach a user can visit.",
+        "source_url": "data/curation/wire_snapshot/DK.json"
+      },
+      {
+        "name": "Badehusene i Tisvildeleje",
+        "class": "other",
+        "why": "Tier 2, rank 46. The bathing houses at Tisvildeleje, that is buildings on the beach, admitted as a separate feature alongside 'Tisvildeleje Strand' at tier 1 rank 3.",
+        "source_url": "data/curation/wire_snapshot/DK.json"
+      }
+    ],
+    "missing": [
+      {
+        "name": "Dueodde",
+        "qid": "Q2189435",
+        "lat": 54.9877,
+        "lon": 15.07941,
+        "why": "Bornholm's ultra fine white sand beach, the island's most famous beach and listed by VisitDenmark among the country's twenty exceptional beaches. Bornholm contributes zero beaches to the Danish list.",
+        "source_url": "https://www.visitdenmark.com/denmark/things-do/outdoor-nature/best-beaches",
+        "verified": true
+      },
+      {
+        "name": "Grenen",
+        "qid": "Q1537592",
+        "lat": 57.7456,
+        "lon": 10.6469,
+        "why": "The sand spit at the northern tip of Denmark where the Skagerrak and Kattegat meet, one of the few places in the world where you can watch two seas collide. Skagen is in the list only as 'Skagen Sondre Strand, V.vippefyr'.",
+        "source_url": "https://www.visitdenmark.com/denmark/destinations/jutland/north-jutland",
+        "verified": true
+      },
+      {
+        "name": "Marielyst",
+        "qid": "Q450216",
+        "lat": 54.6903,
+        "lon": 11.965,
+        "why": "Falster's long Baltic beach, repeatedly voted Denmark's best beach and the main summer resort of the southern islands. Lolland-Falster is absent from the list.",
+        "source_url": "https://www.wikidata.org/wiki/Q450216",
+        "verified": true
+      },
+      {
+        "name": "Blokhus",
+        "qid": "Q884930",
+        "lat": 57.25,
+        "lon": 9.5853,
+        "why": "VisitDenmark calls Blokhus beach one of the most beautiful in Northern Europe: wide white sand, high dunes, and one of the beaches you may drive onto.",
+        "source_url": "https://www.visitdenmark.com/denmark/things-do/outdoor-nature/best-beaches",
+        "verified": true
+      },
+      {
+        "name": "Lokken",
+        "qid": "Q1021910",
+        "lat": 57.3706,
+        "lon": 9.71667,
+        "why": "The other classic North Sea beach town of Vendsyssel, with its white bathing huts, 12 km from the Lonstrup rows that appear three times.",
+        "source_url": "https://www.wikidata.org/wiki/Q1021910",
+        "verified": true
+      },
+      {
+        "name": "Bellevue Strand (Klampenborg)",
+        "qid": "Q3375957",
+        "lat": 55.778,
+        "lon": 12.5923,
+        "why": "Copenhagen's beach at Klampenborg with Arne Jacobsen's lifeguard towers and kiosks. Important for a second reason: the index top_beach 'Bellevue Strand' is the Aarhus namesake at 56.19/10.248, so the country card currently shows the wrong Bellevue.",
+        "source_url": "https://www.wikidata.org/wiki/Q3375957",
+        "verified": true
+      },
+      {
+        "name": "Amager Strandpark",
+        "qid": "Q452470",
+        "lat": 55.65764,
+        "lon": 12.63921,
+        "why": "Copenhagen's 4.6 km artificial beach island, the capital's main bathing beach. It appears in the data only as 'Strandholmen ved Amager Strand' (tier 2, rank 20), an internal lagoon name that no visitor would search for.",
+        "source_url": "https://www.wikidata.org/wiki/Q452470",
+        "verified": true
+      },
+      {
+        "name": "Henne Strand",
+        "qid": "Q660242",
+        "lat": 55.73856,
+        "lon": 8.1819,
+        "why": "West Jutland's best known dune beach and resort village on the North Sea.",
+        "source_url": "https://www.wikidata.org/wiki/Q660242",
+        "verified": true
+      },
+      {
+        "name": "Vejers Strand",
+        "qid": "Q12340620",
+        "lat": 55.626,
+        "lon": 8.124,
+        "why": "Wide North Sea beach north of Blavand, one of the drive-on beaches of West Jutland.",
+        "source_url": "https://www.wikidata.org/wiki/Q12340620",
+        "verified": true
+      },
+      {
+        "name": "Saltum Strand",
+        "qid": "Q3543607",
+        "lat": 57.2719,
+        "lon": 9.6972,
+        "why": "Jammerbugten beach between Blokhus and Lokken; the coordinate given is the village of Saltum, which is the anchor for the beach of the same name.",
+        "source_url": "https://www.wikidata.org/wiki/Q3543607",
+        "verified": true
+      }
+    ],
+    "order": [
+      "Three of the twelve tier 1 beaches are the same beach at Humlebaek (ranks 8, 9 and 10, all 0.906). Counting near-duplicates, roughly a third of the 49 Danish beach rows describe another row.",
+      "Bellevue Strand at rank 1 is the Aarhus beach at Risskov. It is a real, good city beach, but ranking it first nationally over Skagen, Dueodde and Marielyst is not defensible.",
+      "Boserup Strand at rank 2 is a small forest beach on Roskilde Fjord, lifted by a national_park designation flag rather than by any national profile.",
+      "Snekkersten (rank 4) plus Skotterup, Julebaek, Strandpromenaden Helsingor, Kronborg beach and Tropical Beach means the Helsingor commuter coast occupies six rows while Bornholm, Fano, Falster and Lolland occupy none.",
+      "Names are shipped raw: 'Skagen Sondre Strand, V.vippefyr', 'Skiveren Strand, Syd For Skiverrenden', 'Jammerbugten Ved Skallerup Klit Feriecenter'."
+    ]
+  },
+  "mountains": {
+    "wrong": [
+      {
+        "name": "Kokken",
+        "class": "not_notable",
+        "why": "Tier 1, rank 10. The name means 'the kitchen'. It is one of ten unnamed-in-any-guide knolls in the fields behind Mons Klint, all scored exactly 0.789 because they fall inside the world heritage polygon (11 of the 33 Danish mountains carry sources ['osm','whc']).",
+        "source_url": "data/curation/wire_snapshot/DK.json"
+      },
+      {
+        "name": "Blegsti Bakke",
+        "class": "not_notable",
+        "why": "Tier 1, rank 8. Same Mons Klint knoll cluster, 1.4 km from the cliff, no article in any language, no path, no view of its own.",
+        "source_url": "data/curation/wire_snapshot/DK.json"
+      },
+      {
+        "name": "Havrehoj",
+        "class": "not_notable",
+        "why": "Tier 1, rank 9. Same cluster, same score, a field name on Hojerup farmland.",
+        "source_url": "data/curation/wire_snapshot/DK.json"
+      },
+      {
+        "name": "Kalsterbjerg",
+        "class": "not_notable",
+        "why": "Tier 1, rank 11. Same cluster, 900 m from Mons Klint.",
+        "source_url": "data/curation/wire_snapshot/DK.json"
+      },
+      {
+        "name": "Kongsbjerg",
+        "class": "not_notable",
+        "why": "Tier 1, rank 12. Same cluster. Together with Timmesobjerg (rank 7) this puts six Mons Klint knolls in a twelve slot tier 1, and four more (Kostnehoj, Lollikebakke, Ormehoj, Siesa Bjerg) immediately below in tier 2.",
+        "source_url": "data/curation/wire_snapshot/DK.json"
+      },
+      {
+        "name": "Timmesobjerg",
+        "class": "not_notable",
+        "why": "Tier 1, rank 7, 1.0 km from Mons Klint. The cliff itself (Mons Klint, 7 km long, up to 128 m, UNESCO listed in 2025) is not in the list, but ten of its field knolls are.",
+        "source_url": "https://da.wikipedia.org/wiki/M%C3%B8ns_Klint"
+      }
+    ],
+    "missing": [
+      {
+        "name": "Himmelbjerget",
+        "qid": "Q1619098",
+        "lat": 56.10517,
+        "lon": 9.68503,
+        "why": "The 147 m hill between Ry and Silkeborg with the 1875 tower, historically believed to be Denmark's highest point and still one of its most visited natural landmarks, reachable by the Hjejlen paddle steamer. A Danish hills list without Himmelbjerget is not a Danish list. Silkeborg is already a catalogue destination and is represented by Sindbjerg and Stoubjerg instead.",
+        "source_url": "https://da.wikipedia.org/wiki/Himmelbjerget",
+        "verified": true
+      },
+      {
+        "name": "Mollehoj",
+        "qid": "Q689106",
+        "lat": 55.97746,
+        "lon": 9.82633,
+        "why": "The highest natural point in Denmark at 170.86 m, confirmed by survey in 2005.",
+        "source_url": "https://www.wikidata.org/wiki/Q689106",
+        "verified": true
+      },
+      {
+        "name": "Ejer Bavnehoj",
+        "qid": "Q185326",
+        "lat": 55.977033,
+        "lon": 9.83065,
+        "why": "170.35 m with the memorial tower, the point most Danes still name as the country's highest and the one with the visitor facilities.",
+        "source_url": "https://www.wikidata.org/wiki/Q185326",
+        "verified": true
+      },
+      {
+        "name": "Yding Skovhoj",
+        "qid": "Q529888",
+        "lat": 55.992778,
+        "lon": 9.795556,
+        "why": "170.77 m, the second highest natural point in Denmark, completing the trio of high points in the Ejer Bjerge.",
+        "source_url": "https://www.wikidata.org/wiki/Q529888",
+        "verified": true
+      },
+      {
+        "name": "Rytterknaegten",
+        "qid": "Q1128011",
+        "lat": 55.11165,
+        "lon": 14.88944,
+        "why": "162 m, the highest point of Bornholm in Almindingen forest, with the Kongemindet tower. Bornholm's only current entry is Bokul (tier 2, rank 27, score 0.291).",
+        "source_url": "https://www.wikidata.org/wiki/Q1128011",
+        "verified": true
+      },
+      {
+        "name": "Mons Klint",
+        "qid": "Q1517331",
+        "lat": 54.96667,
+        "lon": 12.55,
+        "why": "The 7 km chalk cliff up to 128 m on Mon, added to the UNESCO world heritage list in 2025 and the reason the ten knolls behind it were flagged in the first place. The cliff is the feature; the knolls are noise.",
+        "source_url": "https://da.wikipedia.org/wiki/M%C3%B8ns_Klint",
+        "verified": true
+      },
+      {
+        "name": "Rubjerg Knude",
+        "qid": "Q1971143",
+        "lat": 57.448892,
+        "lon": 9.774367,
+        "why": "The migrating dune and lighthouse on the Jammerbugt coast, one of the most visited natural sights in Denmark. The app already carries the destination gem:lonstrup labelled 'Lonstrup (Rubjerg Knude)', yet the feature itself is not in either tab.",
+        "source_url": "https://www.wikidata.org/wiki/Q1971143",
+        "verified": true
+      },
+      {
+        "name": "Dollerup Bakker",
+        "qid": "Q12308800",
+        "lat": 56.37385,
+        "lon": 9.32851,
+        "why": "The hills above Hald So near Viborg, one of the classic Danish hill landscapes and a natural companion to Himmelbjerget.",
+        "source_url": "https://www.wikidata.org/wiki/Q12308800",
+        "verified": true
+      }
+    ],
+    "order": [
+      "Half of tier 1 (ranks 7 to 12) is one cluster of field knolls at Mons Klint, all scoring 0.789 from the same world heritage flag. That single flag outweighs every fame signal in the country.",
+      "Aborrebjerg at rank 1 is legitimate (143 m, the highest point of Mon, with a view to Stevns and the Farø bridges) but it is the seventh Mon feature in the tab.",
+      "Skamlingsbanken at rank 2 is a good pick: 113 m, the highest point of southern Jutland and a national memorial site.",
+      "Ranks 3 to 6 (Jelshoj, Sindbjerg, Stoltenbjerg, Kobanke) are defensible local high points, but they are all outranking Himmelbjerget, Mollehoj, Ejer Bavnehoj and Rytterknaegten, which are absent.",
+      "From tier 2 rank 25 down every entry shares the score 0.291 (Bangshoj, Bjerget, Bokul, Brushoj, Duedal Bjerg, Dyret), so the tail is unranked field names."
+    ]
+  },
+  "counts_verdict": "49 beaches is a plausible count for 7400 km of Danish coastline, but not this 49: roughly a third are duplicate names of another row, and Bornholm, Fano, Falster, Lolland and Copenhagen proper are effectively missing while Humlebaek gets four rows and Helsingor six. 33 mountains for a country whose highest point is 171 m is only defensible if the tab is framed as hills and viewpoints, and then it must lead with Himmelbjerget, Mollehoj, Ejer Bavnehoj and Rytterknaegten rather than with ten unnamed knolls behind one cliff.",
+  "top_pick_verdict": "top_beach 'Bellevue Strand' is a real beach but the wrong one: it resolves to Aarhus (56.19/10.248) while most readers will picture Klampenborg, and neither is the beach for a Denmark card. Use Skagen and Grenen or Dueodde. top_mountain 'Aborrebjerg' is a surprisingly reasonable pick (Mon's high point with a genuine view) but the culturally expected card is Himmelbjerget, with Mollehoj as the technical answer.",
+  "notes": "The world heritage flag is doing damage in exactly the way the UNESCO flag did in Norway: 11 of 33 Danish mountains and 2 beaches carry 'whc', and they are the Mons Klint and Stevns Klint clusters. Deep tier 2 also holds several ingest artefacts worth a filter even though they are far down the list: 'Tropical Beach' and 'Kronborg beach' near Helsingor (unconfirmed in any source; likely venue names), 'Badelauget Hollselund Strand' (a bathing club association) and 'Strand Damstederne'. Two of the 49 beaches sit at Rodvig under a UNESCO flag from Stevns Klint, which is the same designation-lift pattern. Three beaches have no EEA row at all (sources ['osm']), and those are among the odd names."
+}

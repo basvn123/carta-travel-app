@@ -1,0 +1,1092 @@
+"""The gate and the wire. Nothing reaches the app except through this file.
+
+Four artifacts, and the split between the first two is a licence decision,
+not a file-size one:
+
+  index.json         which countries have content, the counts, the model
+                     blocks (the model ships with the data, invariant 2) and
+                     the attribution every consumer has to carry.
+  {CC}.json          one file per country: rated route cards, listed route
+                     cards in their own array, and the tour cards.
+  route/{id}.json    one route in full. TWO BLOCKS, on purpose:
+                       "osm"   the geometry and the source tags. This is a
+                               database extract. ODbL travels with it, and
+                               the attribution string is inside the object
+                               so it cannot be separated from the data.
+                       "carta" our scenic score, safety score, service towns
+                               and reasons. Original work layered on top;
+                               share-alike attaches to the OSM facts, not to
+                               this.
+  tour/{slug}.json   one composed tour in full: stages, overnights, surfaces,
+                     bail-outs. Ours entirely, and it references route ids
+                     rather than restating their geometry.
+
+That structure is the whole of section 7 of the brief made concrete. A
+rendered tile is a produced work and may be licensed freely; a GPX export is
+a database extract and the OSMF's own guideline names it as the paradigm
+case. So the GPX the app writes carries the credit in its own <copyright>
+and <desc>, fed from `osm.attribution` here.
+
+THE TIER MODEL (master spec section 3), enforced here and nowhere else:
+
+  r  rated     clears the score gate and the photo gate. Ranked lists,
+               top.json, everywhere.
+  l  listed    exists, named, deduped, in region, but under one of the two
+               gates. HAS NO score KEY AT ALL. Not null, not zero: absent,
+               because the app cannot render what is not there and that is
+               the only reliable way to guarantee a number nobody earned is
+               never shown.
+  e  editorial a person vouched for it. Same photo bar as listed, pinned.
+
+Publication is by REGION QUOTA, not by country cap. quotas.published_target
+decides how many rated rows a region gets from how much cycling there
+actually is in it; the country cap survives only as a sanity ceiling far
+above the sum, so that no country's published count can ever equal a global
+constant.
+
+THE GATE RUNS BEFORE THE WRITE (invariant 7). Every file is composed and
+checked in memory first; a validation failure leaves the previous wire
+standing.
+
+Usage, from the repo root (DB up: cd tools/trailslab && docker compose up -d):
+    python pipeline/cycling/export_cycling.py
+    python pipeline/cycling/export_cycling.py --dry-run --verbose
+    python pipeline/cycling/export_cycling.py --countries GB
+"""
+
+import argparse
+import json
+import re
+import sys
+from collections import Counter, defaultdict
+from datetime import datetime, timezone
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[2]
+HERE = Path(__file__).resolve().parent
+sys.path.insert(0, str(HERE))
+sys.path.insert(0, str(ROOT / "pipeline" / "trails"))
+sys.path.insert(0, str(ROOT / "pipeline" / "regions"))
+
+import cycle_index as IDX  # noqa: E402
+import cycle_sources as S  # noqa: E402
+import stage_planner as P  # noqa: E402
+import validate_cycling as V  # noqa: E402
+from db import connect as _db_connect  # noqa: E402,F401
+
+# Every lab connection in this layer goes through the patient wrapper:
+# the machine is shared and a ten second connect timeout loses runs.
+connect = S.lab_connect
+
+try:
+    import quotas as Q
+except Exception:                                          # noqa: BLE001
+    Q = None
+
+OUT_DIR = ROOT / "continent-app" / "public" / "cycling"
+
+# Douglas-Peucker tolerance in metres for the country-file placeholder line,
+# applied in EPSG:3035 so it means the same thing from Malaga to Tromso. The
+# same 90 m the trails layer settled on, and for the same reason: the line in
+# the country file exists so a card can sketch the route in the moment before
+# route/{id}.json arrives, and 90 m is invisible at the zoom where a whole
+# route fits the screen.
+SIMPLIFY_M = 90.0
+WIRE_DECIMALS = 5
+FULL_DECIMALS = 6
+
+# The score gate. A route below this is listed rather than rated: it exists,
+# it is named, but nothing here says it is worth the day.
+SCORE_GATE = 5.4
+# The photo gate for a rated row. The programme target is four; two with one
+# strong is the floor a row must clear to carry a score at all.
+PHOTOS_RATED_MIN = 2
+PHOTOS_TARGET = 4
+# A country may never publish exactly a global constant (definition of done),
+# so this is a ceiling far above any region quota sum, not a cap that binds.
+COUNTRY_CEILING = 900
+
+ATTRIBUTION = [
+    {"source": "OpenStreetMap",
+     "license": "ODbL 1.0",
+     "credit": "Cycle route geometry and the surface, safety and service "
+               "tags behind every figure on these pages "
+               "(c) OpenStreetMap contributors, ODbL"},
+    {"source": "EuroVelo",
+     "license": "ODbL 1.0",
+     "credit": None},        # filled per download date, see eurovelo_credit
+    {"source": "Copernicus",
+     "license": "Copernicus DEM terms (free use with credit)",
+     "credit": "Elevation data: Copernicus GLO-30 (c) ESA and Airbus"},
+    {"source": "European Environment Agency",
+     "license": "EEA re-use policy (CC BY 4.0)",
+     "credit": "Natura 2000 and Emerald Network site boundaries, and the "
+               "coastline for analysis, from the European Environment Agency"},
+    {"source": "NASA POWER",
+     "license": "US Government work (no restriction)",
+     "credit": "Best months from the NASA POWER project, NASA Langley "
+               "Research Center"},
+    {"source": "Walk Wheel Cycle Trust (Sustrans)",
+     "license": "Open Government Licence v3.0",
+     "credit": "National Cycle Network alignments used to cross-check the "
+               "British routes (c) Walk Wheel Cycle Trust, OGL v3.0; "
+               "contains Ordnance Survey data (c) Crown copyright and "
+               "database right"},
+]
+
+RESERVED = {"con", "prn", "aux", "nul", "com1", "com2", "com3", "com4",
+            "com5", "com6", "com7", "com8", "com9", "lpt1", "lpt2", "lpt3",
+            "lpt4", "lpt5", "lpt6", "lpt7", "lpt8", "lpt9"}
+
+
+def log(msg):
+    print(f"[cycling] {msg}", flush=True)
+
+
+def safe_name(stem):
+    """Windows refuses a file called PRN.json. The fare layer paid for this
+    lesson once already; every layer that writes per-key files inherits it."""
+    if stem.split(".")[0].lower() in RESERVED:
+        return "R_" + stem
+    return stem
+
+
+# ---------------------------------------------------------------------------
+# Reads
+# ---------------------------------------------------------------------------
+
+ROUTES_SQL = """
+    SELECT r.id, r.country, r.name, r.ref, r.network, r.cycle_network,
+           r.operator, r.distance_m, r.ascent_m, r.descent_m, r.roundtrip,
+           r.source, r.source_ref, r.license, r.attribution_text,
+           r.status::text, r.tier, r.rating, r.rating_parts, r.reasons,
+           r.surface, r.safety, r.scenic, r.services, r.elevation, r.season,
+           r.regions, r.near, r.images, r.agreement, r.raw_tags, r.gap_info,
+           cr.repair_info,
+           ST_AsGeoJSON(ST_Simplify(
+               ST_Transform(ST_Force2D(coalesce(cr.geom, r.geom)), 3035),
+               %(tol)s)::geometry, %(dec)s) AS placeholder_3035,
+           ST_AsGeoJSON(ST_Transform(ST_Simplify(
+               ST_Transform(ST_Force2D(coalesce(cr.geom, r.geom)), 3035),
+               %(tol)s), 4326), %(dec)s) AS placeholder,
+           ST_AsGeoJSON(ST_Force2D(coalesce(cr.geom, r.geom)), %(fdec)s)
+               AS full_line,
+           Box2D(coalesce(cr.geom, r.geom))::text AS bbox,
+           ST_NumGeometries(ST_LineMerge(ST_Force2D(coalesce(cr.geom, r.geom))))
+               AS merged_parts
+    FROM cycle_routes r
+    LEFT JOIN cycle_repairs cr
+           ON cr.route_id = r.id AND cr.repaired
+          AND cr.repair_info->>'source_geom_md5'
+              = md5(ST_AsBinary(ST_Force2D(r.geom)))
+    WHERE r.status <> 'rejected'
+      AND r.distance_m >= 3000
+      AND (%(countries)s::text[] IS NULL OR r.country = ANY(%(countries)s))
+    ORDER BY r.country, r.rating DESC NULLS LAST, r.id
+"""
+
+ROUTE_COLS = ("id", "country", "name", "ref", "network", "cycle_network",
+              "operator", "distance_m", "ascent_m", "descent_m", "roundtrip",
+              "source", "source_ref", "license", "attribution_text", "status",
+              "tier", "rating", "rating_parts", "reasons", "surface",
+              "safety", "scenic", "services", "elevation", "season",
+              "regions", "near", "images", "agreement", "raw_tags",
+              "gap_info", "repair_info", "_ph3035", "placeholder", "full_line",
+              "bbox", "merged_parts")
+
+TOURS_SQL = """
+    SELECT t.id, t.country, t.slug, t.title, t.route_ids, t.pace,
+           t.bike_type, t.days, t.distance_m, t.ascent_m, t.stages, t.checks,
+           t.season, t.scenic, t.safety, t.rating, t.regions, t.near,
+           t.images, t.status::text,
+           ST_AsGeoJSON(ST_Transform(ST_Simplify(
+               ST_Transform(ST_Force2D(t.geom), 3035), %(tol)s), 4326),
+               %(dec)s) AS line,
+           Box2D(t.geom)::text AS bbox
+    FROM cycle_tours t
+    WHERE t.status IN ('needs_review', 'approved', 'published')
+      AND (%(countries)s::text[] IS NULL OR t.country = ANY(%(countries)s))
+    ORDER BY t.country, t.rating DESC NULLS LAST, t.slug
+"""
+
+TOUR_COLS = ("id", "country", "slug", "title", "route_ids", "pace",
+             "bike_type", "days", "distance_m", "ascent_m", "stages",
+             "checks", "season", "scenic", "safety", "rating", "regions",
+             "near", "images", "status", "line", "bbox")
+
+
+def parse_bbox(text):
+    """BOX(minx miny,maxx maxy) -> [minx, miny, maxx, maxy]."""
+    nums = re.findall(r"-?\d+\.?\d*", text or "")
+    return [round(float(n), 5) for n in nums[:4]] if len(nums) >= 4 else None
+
+
+def load_routes(conn, countries):
+    with conn.cursor() as cur:
+        cur.execute(ROUTES_SQL, {"tol": SIMPLIFY_M, "dec": WIRE_DECIMALS,
+                                 "fdec": FULL_DECIMALS,
+                                 "countries": list(countries) or None})
+        return [dict(zip(ROUTE_COLS, r)) for r in cur.fetchall()]
+
+
+def load_tours(conn, countries):
+    with conn.cursor() as cur:
+        cur.execute(TOURS_SQL, {"tol": SIMPLIFY_M, "dec": WIRE_DECIMALS,
+                                "countries": list(countries) or None})
+        return [dict(zip(TOUR_COLS, r)) for r in cur.fetchall()]
+
+
+# ---------------------------------------------------------------------------
+# The gate
+# ---------------------------------------------------------------------------
+
+# WHY THIS IMPORTS RATHER THAN DECIDES. A photograph whose licence demands a
+# credit we cannot give must not reach a card: "CC BY-SA 3.0" printed with
+# nobody named is the credit removed and the licence notice kept, which is
+# worse than shipping no photograph because it looks like compliance.
+#
+# This layer had one such row of 1,186 and originally answered the question
+# here, with a licence-string test. That test FAILED OPEN: it asked whether a
+# licence begins with "cc by", which is true of everything in this layer today
+# and false of GFDL, which requires attribution too.
+#
+# pipeline/photos/credit.owes_credit is now the single answer for every layer.
+# It is a whitelist of exemptions, so an unrecognised licence fails closed; it
+# reads the `no_attribution_required` flag that the photo engine stamps at
+# HARVEST time from Commons' own AttributionRequired field, which beats any
+# string test; it makes no network calls; and it accepts both cache-shaped
+# records (license/author) and wire-shaped ones (lic/by). Verified against all
+# twelve cases this layer cares about, including the two easy ones to get
+# wrong: CC0 with a null author ships, and a record with no licence at all
+# does not.
+#
+# The division of labour: the HARVEST decides when the metadata is in hand and
+# the request is already paid for, the GATE reads the answer. Parsing a
+# licence string at export time was always the fallback, and it is now only
+# the fallback inside credit.py for records harvested before the flag existed.
+sys.path.insert(0, str(ROOT / "pipeline" / "photos"))
+from credit import owes_credit  # noqa: E402
+
+
+def creditable(img):
+    """False for a photograph whose licence demands a credit we cannot give."""
+    return not owes_credit(img)
+
+
+def usable_images(row):
+    """This row's photographs, minus any we cannot lawfully credit."""
+    return [img for img in (row.get("images") or []) if creditable(img)]
+
+
+# A tour carries no photographs of its own and never has: `cycle_tours.images`
+# is a column nothing writes, so every tour published an empty gallery while
+# its `images` check reported passed. A tour IS its routes, though, and those
+# routes have been photographed, credit-checked and positioned by
+# cycle_images.py already. So the gallery is COMPOSED from them rather than
+# re-harvested: no new fetch, no second licence path, and a photograph that
+# stops being creditable disappears from the tour the moment it disappears
+# from the route.
+TOUR_GALLERY_MAX = 8
+
+
+def tour_gallery(tour, routes_by_id):
+    """The tour's photographs, in riding order, drawn from its own routes.
+
+    `off_m` is the metres along the ROUTE a picture was taken at, which is
+    the right order within one route and meaningless across two. Routes are
+    therefore walked in the order the tour rides them, and each route's own
+    pictures sorted within it, so a gallery reads start to finish.
+    """
+    seen, out = set(), []
+    for rid in (tour.get("route_ids") or []):
+        row = routes_by_id.get(rid)
+        if not row:
+            continue
+        for img in sorted(usable_images(row),
+                          key=lambda i: (i.get("off_m") if i.get("off_m")
+                                         is not None else 1 << 30)):
+            url = img.get("url") or img.get("thumb")
+            if not url or url in seen:
+                continue
+            seen.add(url)
+            out.append(dict(img, route_id=rid))
+            if len(out) >= TOUR_GALLERY_MAX:
+                return out
+    return out
+
+
+def photo_count(row):
+    return len(usable_images(row))
+
+
+def has_strong_photo(row):
+    """One photograph that is of the route rather than merely near it."""
+    for img in usable_images(row):
+        if (img.get("evidence") or "") in ("on_line", "named", "view"):
+            return True
+        if (img.get("rank") == 0) and (img.get("score") or 0) >= 2.0:
+            return True
+    return False
+
+
+def basic_row(row):
+    """The floor for existing in the wire at all, in any tier.
+
+    Named, long enough to be a route, one continuous line, and with the
+    riding actually measured. A row that fails this is not listed, it is
+    absent: 'listed' means verified to exist and correctly named, and an
+    unnamed fragment of somebody's working set is neither.
+    """
+    if not (row.get("name") or row.get("ref")):
+        return "unnamed"
+    if (row.get("distance_m") or 0) < 3000:
+        return "too_short"
+    if (row.get("merged_parts") or 0) != 1:
+        return "not_continuous"
+    if not row.get("regions"):
+        return "no_region"
+    return None
+
+
+def tier_of(row):
+    """r, l or e, derived. Never hand set, except e from a seed."""
+    if (row.get("tier") or "") == "e":
+        return "e"
+    score = row.get("rating")
+    if score is None or float(score) < SCORE_GATE:
+        return "l"
+    if photo_count(row) < PHOTOS_RATED_MIN or not has_strong_photo(row):
+        return "l"
+    return "r"
+
+
+def region_key(row):
+    rg = row.get("regions") or {}
+    return rg.get("n3") or rg.get("n2") or rg.get("co")
+
+
+def apply_quotas(rows, verbose=False):
+    """Region quotas decide how many RATED rows publish, per region.
+
+    The soft target is a target: the score gate still applies and nothing is
+    invented to hit it. What the quota changes is the direction of the
+    binding constraint. A country cap gave Spain and Belgium the same budget;
+    a region quota gives the Highlands a budget drawn from how much cycling
+    is in the Highlands.
+    """
+    if Q is None or not Q.has_data():
+        log("quotas: opportunity table unavailable, publishing every row "
+            "that clears the gate")
+        return rows, Counter()
+
+    by_region = defaultdict(list)
+    for row in rows:
+        by_region[region_key(row)].append(row)
+    kept, demoted = [], Counter()
+    for rid, group in by_region.items():
+        group.sort(key=lambda r: -(r.get("rating") or 0))
+        rated = [r for r in group if r["_tier"] == "r"]
+        listed = [r for r in group if r["_tier"] != "r"]
+        quota = Q.published_target(rid, "cycling") if rid else 0
+        if rid and quota and len(rated) > quota:
+            for row in rated[quota:]:
+                row["_tier"] = "l"
+                demoted[rid] += 1
+            rated = rated[:quota]
+        # The floor: a region page is never empty when the region has
+        # anything at all. Satisfied by listed rows when nothing is rated.
+        floor = Q.floor(rid, "cycling") if rid else 0
+        if rid and floor and not rated and not listed:
+            demoted["_empty_region"] += 1
+        kept.extend(rated + listed)
+    return kept, demoted
+
+
+# ---------------------------------------------------------------------------
+# Cards
+# ---------------------------------------------------------------------------
+
+def _geo(text):
+    if not text:
+        return None
+    try:
+        return json.loads(text)
+    except json.JSONDecodeError:
+        return None
+
+
+# Riding time (ROUTES.md R4). The hiking side ships DIN 33466, a signpost
+# standard; there is no such standard for touring cyclists, so this is a
+# house rule and says so in the wire: a flat 18 km/h, plus ten minutes per
+# hundred metres of climb (600 m/h vertical, a loaded touring pace). The
+# stage planner's pace table is about km per DAY and does not give a speed,
+# which is why it is not reused here.
+RIDE_FLAT_KMH = 18.0
+RIDE_MIN_PER_100M = 10.0
+RIDE_RULE = "flat18_climb10"
+
+
+def ride_minutes(distance_m, ascent_m):
+    if not distance_m:
+        return None
+    minutes = distance_m / 1000.0 / RIDE_FLAT_KMH * 60.0
+    minutes += (ascent_m or 0) / 100.0 * RIDE_MIN_PER_100M
+    return int(round(minutes))
+
+
+def route_card(row, tier):
+    """The country-file card. A listed row has NO score key."""
+    surface = row.get("surface") or {}
+    safety = row.get("safety") or {}
+    scenic = row.get("scenic") or {}
+    images = usable_images(row)
+    card = {
+        "id": row["id"],
+        "cc": row["country"],
+        "name": display_name(row),
+        "ref": row.get("ref"),
+        "net": row.get("network"),
+        "km": round((row.get("distance_m") or 0) / 1000.0, 1),
+        "t": tier,
+        "bbox": parse_bbox(row.get("bbox")),
+        "geometry": _geo(row.get("placeholder")),
+        "rg": row.get("regions") or {},
+        "src": row.get("source"),
+        "lic": row.get("license"),
+    }
+    if row.get("ascent_m") is not None:
+        card["asc"] = row["ascent_m"]
+    dur = ride_minutes(row.get("distance_m"), row.get("ascent_m"))
+    if dur is not None:
+        card["dur"] = {"min": dur, "rule": RIDE_RULE}
+    if row.get("roundtrip"):
+        card["loop"] = True
+    if row.get("cycle_network"):
+        card["fam"] = row["cycle_network"]
+    if surface.get("paved_share") is not None:
+        card["paved"] = surface["paved_share"]
+    if surface.get("traffic_free_share") is not None:
+        card["free"] = surface["traffic_free_share"]
+    if surface.get("bike"):
+        card["bike"] = surface["bike"]
+    if safety.get("score") is not None:
+        card["safe"] = safety["score"]
+    if images:
+        card["img"] = images[0].get("thumb") or images[0].get("url")
+        card["nimg"] = len(images)
+    if row.get("near"):
+        card["near"] = row["near"]
+    if row.get("season"):
+        card["season"] = row["season"]
+
+    # `why` is evidence, not a verdict: every code in it restates a measured
+    # fact, so it ships on a listed row too. Without it a listed card has
+    # nothing to say but its own length, because all the app's prose is
+    # composed from these codes. See route_full for the full argument.
+    if row.get("reasons"):
+        card["why"] = row["reasons"][:6]
+
+    # The tier contract: a score key exists only on a rated row.
+    if tier == "r":
+        card["score"] = round(float(row["rating"]), 1)
+        if scenic.get("score") is not None:
+            card["scenic"] = round(float(scenic["score"]), 1)
+    else:
+        card["k"] = "unrated_coverage"
+    return card
+
+
+def route_full(row, tier):
+    """route/{id}.json: the licence split made structural."""
+    osm = {
+        "geometry": _geo(row.get("full_line")),
+        "source": row.get("source"),
+        "source_ref": row.get("source_ref"),
+        "license": row.get("license"),
+        "attribution": row.get("attribution_text"),
+        "tags": {k: v for k, v in (row.get("raw_tags") or {}).items()
+                 if not k.startswith("carta:")},
+        "gap_info": row.get("gap_info"),
+    }
+    if row.get("repair_info"):
+        osm["repair"] = {
+            "bridges": row["repair_info"].get("bridges"),
+            "total_bridge_m": row["repair_info"].get("total_bridge_m"),
+            "method": row["repair_info"].get("method"),
+            # A routed repair (bridge_gaps.py) ships every bridge: where it
+            # starts and ends, whether it is road, ferry or a straight
+            # connector, and its metres. A count alone would say "bridged"
+            # without saying where the signed route stops.
+            "ferry_m": row["repair_info"].get("ferry_m"),
+            "bridge_list": row["repair_info"].get("bridge_list"),
+        }
+    family = (row.get("raw_tags") or {}).get("carta:family_ref")
+    if family:
+        osm["family_ref"] = family
+
+    carta = {
+        "surface": row.get("surface"),
+        "safety": row.get("safety"),
+        "scenic": row.get("scenic"),
+        "services": row.get("services"),
+        "elevation": {k: v for k, v in (row.get("elevation") or {}).items()
+                      if k in ("profile", "step_m", "ele_min_m", "ele_max_m",
+                               "max_grade_pct", "source", "status")},
+        "season": row.get("season"),
+        "near": row.get("near"),
+        "regions": row.get("regions"),
+        "agreement": row.get("agreement"),
+        "images": row.get("images"),
+        "model": IDX.MODEL_VERSION,
+    }
+    # REASONS ARE NOT A SCORE, and the distinction is the whole tier contract.
+    # A score is a verdict this route earned; a reason is a restatement of
+    # something measured ("93% away from motor traffic", "58 m of climbing"),
+    # and it is true whether or not the route cleared the photo gate.
+    # cycle_index.py computes reasons for every scored row, so withholding
+    # them from listed rows discarded work already done and left 97% of route
+    # pages with numbers and no sentences: the app composes every line of
+    # prose from these codes. The score and its parts stay gated.
+    if row.get("reasons"):
+        carta["reasons"] = row["reasons"]
+    if tier == "r":
+        carta["score"] = round(float(row["rating"]), 1)
+        carta["parts"] = row.get("rating_parts")
+
+    return {
+        "id": row["id"],
+        "country": row["country"],
+        "name": display_name(row) or row.get("ref"),
+        "ref": row.get("ref"),
+        "net": row.get("network"),
+        "operator": row.get("operator"),
+        "km": round((row.get("distance_m") or 0) / 1000.0, 1),
+        "asc": row.get("ascent_m"),
+        "desc": row.get("descent_m"),
+        "dur": ({"min": ride_minutes(row.get("distance_m"), row.get("ascent_m")),
+                 "rule": RIDE_RULE} if row.get("distance_m") else None),
+        "loop": bool(row.get("roundtrip")),
+        "t": tier,
+        "bbox": parse_bbox(row.get("bbox")),
+        "osm": osm,
+        "carta": carta,
+    }
+
+
+def tour_card(tour):
+    stages = tour.get("stages") or []
+    return {
+        "slug": tour["slug"],
+        "cc": tour["country"],
+        "title": tour_title(tour),
+        "pace": tour["pace"],
+        "bike": tour["bike_type"],
+        "days": tour["days"],
+        "km": round((tour.get("distance_m") or 0) / 1000.0),
+        "asc": tour.get("ascent_m"),
+        "routes": list(tour.get("route_ids") or []),
+        "bbox": parse_bbox(tour.get("bbox")),
+        "geometry": _geo(tour.get("line")),
+        "towns": [(s.get("to") or {}).get("name") for s in stages],
+        "season": tour.get("season"),
+        "scenic": round(float(tour["scenic"]), 1) if tour.get("scenic") else None,
+        "safe": round(float(tour["safety"]), 1) if tour.get("safety") else None,
+        "rg": tour.get("regions") or {},
+        "img": ((tour.get("images") or [{}])[0] or {}).get("thumb"),
+    }
+
+
+def tour_full(tour):
+    return {
+        "slug": tour["slug"],
+        "cc": tour["country"],
+        "country": tour["country"],
+        "title": tour_title(tour),
+        "pace": tour["pace"],
+        "bike": tour["bike_type"],
+        "days": tour["days"],
+        "km": round((tour.get("distance_m") or 0) / 1000.0, 1),
+        "asc": tour.get("ascent_m"),
+        "routes": list(tour.get("route_ids") or []),
+        "bbox": parse_bbox(tour.get("bbox")),
+        "geometry": _geo(tour.get("line")),
+        "stages": tour.get("stages"),
+        "season": tour.get("season"),
+        "checks": tour.get("checks"),
+        "scenic": tour.get("scenic") and round(float(tour["scenic"]), 1),
+        "safe": tour.get("safety") and round(float(tour["safety"]), 1),
+        "rg": tour.get("regions"),
+        "near": tour.get("near"),
+        "images": tour.get("images") or [],
+        "model": P.MODEL_VERSION,
+        "note": ("Composed at build time and checked against ten hard rules "
+                 "before publication. Nothing here was generated when you "
+                 "asked for it."),
+    }
+
+
+# ---------------------------------------------------------------------------
+# Write
+# ---------------------------------------------------------------------------
+
+def write_json(path, payload, dry_run=False):
+    if dry_run:
+        return 0
+    path.parent.mkdir(parents=True, exist_ok=True)
+    tmp = path.with_suffix(".tmp")
+    with open(tmp, "w", encoding="utf-8") as fh:
+        json.dump(payload, fh, ensure_ascii=False, separators=(",", ":"))
+    tmp.replace(path)
+    return path.stat().st_size
+
+
+def eurovelo_credit_line():
+    """The ECF's prescribed sentence, with the real download date."""
+    import cycle_sources as S
+    table = S.load_cache("eurovelo_ids", default={}) or {}
+    dates = []
+    base = S.ingest_config.DATA_DIR / "eurovelo"
+    if base.exists():
+        dates = sorted(p.name for p in base.iterdir() if p.is_dir())
+    if not dates:
+        return None
+    return S.eurovelo_credit(dates[-1])
+
+
+def country_list(conn, countries):
+    """Which countries to export, in a stable order."""
+    if countries:
+        return sorted(countries)
+    with conn.cursor() as cur:
+        cur.execute("SELECT DISTINCT country FROM cycle_routes ORDER BY 1")
+        return [r[0] for r in cur.fetchall()]
+
+
+def build(conn, countries, dry_run=False, verbose=False):
+    """Compose and write the whole wire, ONE COUNTRY AT A TIME.
+
+    The per-country loop is a memory decision, not an organisational one.
+    Loading every route at once was fine at 6,065 rows for Great Britain and
+    is not at 65,375 across 43 countries: each row carries its full-resolution
+    geometry as GeoJSON, so the whole set is gigabytes of Python objects on a
+    16 GB machine shared with three other sessions.
+
+    Nothing about the gate changes. The region quota groups by region id and a
+    region belongs to exactly one country, so quotas computed per country are
+    the same quotas. What crosses countries is the index and the EuroVelo
+    families, and both need only a few fields per route, which is why the loop
+    keeps a slim family row rather than the route itself.
+    """
+    ccs = country_list(conn, countries)
+    stamp = datetime.now(timezone.utc).replace(microsecond=0).isoformat()
+    by_country = defaultdict(lambda: {"routes": [], "listed": [], "tours": []})
+    counts = defaultdict(Counter)
+    fam_rows = []
+    published_ids = set()
+    published_slugs = set()
+    refused_all = Counter()
+    written = total_bytes = n_routes_seen = n_usable = n_tours_kept = 0
+
+    for cc in ccs:
+        got = _build_country(conn, cc, stamp, by_country, counts,
+                             fam_rows, published_ids, published_slugs,
+                             refused_all, dry_run, verbose)
+        n_routes_seen += got["seen"]
+        n_usable += got["usable"]
+        n_tours_kept += got["tours"]
+        written += got["written"]
+        total_bytes += got["bytes"]
+
+    log(f"{n_routes_seen} route(s) read from the lab across {len(ccs)} country(ies)")
+    log("refused before tiering: "
+        + (", ".join(f"{k}={v}" for k, v in refused_all.most_common()) or "none"))
+    log(f"tours: {n_tours_kept} pass all ten checks")
+
+    # A tour that stops passing the gate has to STOP BEING A URL, not merely
+    # drop out of the country file. Route files are rewritten every run and
+    # so correct themselves; tour files are written only when they pass, so
+    # a refused tour used to sit on disk indefinitely, still serving its old
+    # record and still claiming all ten checks passed. That is the same
+    # "looks like compliance" failure the credit gate exists to prevent.
+    #
+    # Only on a full export: a targeted --countries run knows nothing about
+    # the other countries' tours and must not delete them.
+    if not countries and not dry_run:
+        pruned = 0
+        for path in (OUT_DIR / "tour").glob("*.json"):
+            if path.name not in published_slugs:
+                path.unlink()
+                pruned += 1
+        if pruned:
+            log(f"pruned {pruned} tour file(s) that no longer pass the gate")
+
+    families = family_files(fam_rows, published_ids, stamp, dry_run)
+    top_file(by_country, stamp, dry_run)
+    return _write_index(by_country, counts, families, stamp, written,
+                        total_bytes, n_usable, n_tours_kept, dry_run)
+
+
+def _build_country(conn, cc, stamp, by_country, counts, fam_rows,
+                   published_ids, published_slugs, refused_all, dry_run,
+                   verbose):
+    routes = load_routes(conn, [cc])
+    tours = load_tours(conn, [cc])
+
+    # 1. the floor
+    usable = []
+    for row in routes:
+        # The slim family row, kept before anything is discarded: a section
+        # that fails the gate still belongs to its EuroVelo and should appear
+        # in the manifest marked unpublished.
+        fam = (row.get("raw_tags") or {}).get("carta:family_ref")
+        if fam and EV_RE.match(fam):
+            fam_rows.append({
+                "id": row["id"], "country": row["country"],
+                "name": row.get("name"), "ref": row.get("ref"),
+                "distance_m": row.get("distance_m"),
+                # from/to travel with the slim row because most EuroVelo
+                # sections have no name and those two tags are the only
+                # thing that tells one from another. See section_name().
+                "raw_tags": {
+                    "carta:family_ref": fam,
+                    "from": (row.get("raw_tags") or {}).get("from"),
+                    "to": (row.get("raw_tags") or {}).get("to"),
+                },
+                "agreement": row.get("agreement"),
+            })
+        why = basic_row(row)
+        if why:
+            refused_all[why] += 1
+            continue
+        row["_tier"] = tier_of(row)
+        usable.append(row)
+
+    # 2. region quotas
+    usable, demoted = apply_quotas(usable, verbose)
+    if demoted:
+        log(f"quotas demoted {sum(v for k, v in demoted.items() if not k.startswith('_'))} "
+            f"rated row(s) over their region's target")
+
+    # 3. the tour gate
+    #
+    # The gallery is attached BEFORE validation, not after, because the
+    # images check is part of the gate: a tour that cannot show the ride has
+    # to be able to fail on that, and it cannot fail on a field that is
+    # always empty. Composed from `routes` rather than `usable` on purpose:
+    # a route can miss the RATED photo bar and still have one creditable
+    # picture worth showing, and the tour is not publishing a score for it.
+    routes_by_id = {r["id"]: r for r in routes}
+    for t in tours:
+        t["images"] = tour_gallery(t, routes_by_id)
+
+    kept_tours, dropped_tours, reasons = V.validate(
+        [dict(t, parts=1, bike=t["bike_type"]) for t in tours])
+    if verbose and reasons:
+        for why, n in reasons.most_common(6):
+            log(f"    [{cc}] {why}: {n}")
+    tours_by_slug = {t["slug"]: t for t in tours}
+
+    # 4. compose every file in memory, then write
+    # by_country and counts are the CALLER's, accumulated across every
+    # country; re-declaring them here shadowed the shared ones and made
+    # the index report zero of everything while the files wrote fine.
+
+    for row in usable:
+        tier = row["_tier"]
+        card = route_card(row, tier)
+        bucket = "routes" if tier == "r" else "listed"
+        by_country[row["country"]][bucket].append(card)
+        counts[row["country"]][tier] += 1
+        counts[row["country"]]["photos"] += photo_count(row)
+        if photo_count(row) >= PHOTOS_TARGET:
+            counts[row["country"]]["four_plus"] += 1
+    for tour in kept_tours:
+        full = tours_by_slug[tour["slug"]]
+        by_country[full["country"]]["tours"].append(tour_card(full))
+        counts[full["country"]]["tours"] += 1
+
+    # A country over the sanity ceiling means the region quota is not
+    # binding and something upstream is wrong. Say so; do not silently trim.
+    for cc, bundle in by_country.items():
+        n = len(bundle["routes"])
+        if n > COUNTRY_CEILING:
+            log(f"WARNING {cc}: {n} rated rows is over the sanity ceiling "
+                f"({COUNTRY_CEILING}); the region quota is not binding")
+
+    written, total_bytes = 0, 0
+    for _cc, bundle in [(cc, by_country[cc])]:
+        bundle["routes"].sort(key=lambda c: -(c.get("score") or 0))
+        bundle["listed"].sort(key=lambda c: c.get("name") or "")
+        bundle["tours"].sort(key=lambda c: -(c.get("scenic") or 0))
+        payload = {"generated_at": stamp, "country": cc,
+                   "simplify_m": SIMPLIFY_M, **bundle}
+        total_bytes += write_json(OUT_DIR / safe_name(f"{cc}.json"), payload,
+                                  dry_run)
+        written += 1
+
+    for row in usable:
+        published_ids.add(row["id"])
+        total_bytes += write_json(
+            OUT_DIR / "route" / f"{row['id']}.json",
+            route_full(row, row["_tier"]), dry_run)
+    for tour in kept_tours:
+        full = tours_by_slug[tour["slug"]]
+        full["checks"] = tour.get("checks")
+        published_slugs.add(safe_name(f"{tour['slug']}.json"))
+        total_bytes += write_json(
+            OUT_DIR / "tour" / safe_name(f"{tour['slug']}.json"),
+            tour_full(full), dry_run)
+
+    return {"seen": len(routes), "usable": len(usable),
+            "tours": len(kept_tours), "written": written,
+            "bytes": total_bytes}
+
+
+def _write_index(by_country, counts, families, stamp, written, total_bytes,
+                 n_usable, n_tours, dry_run):
+    attribution = [a for a in ATTRIBUTION if a["credit"]]
+    ev = eurovelo_credit_line()
+    if ev:
+        attribution.insert(1, {"source": "EuroVelo", "license": "ODbL 1.0",
+                               "credit": ev})
+    index = {
+        "generated_at": stamp,
+        "simplify_m": SIMPLIFY_M,
+        "n_routes": sum(len(b["routes"]) for b in by_country.values()),
+        "n_listed": sum(len(b["listed"]) for b in by_country.values()),
+        "n_tours": sum(len(b["tours"]) for b in by_country.values()),
+        "tiers": {"r": "rated, carries a score",
+                  "l": "listed, exists and is named, no score key",
+                  "e": "editorial, a person vouched for it"},
+        "model": {
+            "rating": IDX.model_block(),
+            "tours": P.model_block(),
+            "gate": {"score": SCORE_GATE,
+                     "photos_rated_min": PHOTOS_RATED_MIN,
+                     "photos_target": PHOTOS_TARGET,
+                     "country_ceiling": COUNTRY_CEILING},
+            "quota": Q.model_block() if (Q and Q.has_data()) else None,
+            "scenic": {"weights": dict(P.E.SCENIC_WEIGHTS),
+                       "version": P.E.SCENIC_MODEL},
+            "safety": {"highway_penalty": dict(P.E.HIGHWAY_PENALTY),
+                       "speed_free_kmh": P.E.SPEED_FREE_KMH,
+                       "speed_per_kmh": P.E.SPEED_PER_KMH,
+                       "segregation_bonus": P.E.SEGREGATION_BONUS,
+                       "version": "carta_cycle_safety_v1"},
+        },
+        "checks": [name for name, _ in V.HARD_CHECKS],
+        # EV1 to EV19, each a manifest of its per-country sections.
+        "families": [
+            {"ref": f["ref"], "km": f["km"], "n_sections": f["n_sections"],
+             "n_published": f["n_published"],
+             "countries": [c["cc"] for c in f["countries"]],
+             "ecf_agreement": f["ecf_agreement"],
+             "file": f"/cycling/family/{safe_name(f['ref'] + '.json')}"}
+            for f in families],
+        "attribution": attribution,
+        "countries": [
+            {"country": cc,
+             "n_routes": len(bundle["routes"]),
+             "n_listed": len(bundle["listed"]),
+             "n_tours": len(bundle["tours"]),
+             "photos_four_plus": counts[cc]["four_plus"],
+             "file": f"/cycling/{safe_name(cc + '.json')}"}
+            for cc, bundle in sorted(by_country.items())],
+    }
+    total_bytes += write_json(OUT_DIR / "index.json", index, dry_run)
+
+    log(f"{'would write' if dry_run else 'wrote'} {written} country file(s), "
+        f"{n_usable} route file(s), {n_tours} tour file(s), "
+        f"{len(families)} family file(s), "
+        f"{total_bytes / 1e6:.1f} MB")
+    log(f"rated {index['n_routes']:,}, listed {index['n_listed']:,}, "
+        f"tours {index['n_tours']:,}")
+    return index
+
+
+EV_RE = re.compile(r"^EV(\d+)$")
+
+
+# Two things operators put in an OSM name that are not the name: a bracketed
+# catalogue tag at the front ("[CIMA AN02] Coll de la Gallina"), and " * "
+# as a separator between the route and its endpoints. And a name that is
+# nothing but a number ("(45)", "113", "19a") is a ref that was typed into
+# the wrong field.
+# Up to 48 characters inside the brackets (Istanbul's district tags run past
+# 24), and the closing bracket may be a mistyped "[" ("[CIMA JA10[ Iznatoraf").
+# Repeated, because Istanbul stacks two: "[Paylasimli] [Kagithane] Imrahor
+# Caddesi Bisiklet Yolu" is a sharing tag and a district tag before the name
+# begins. Up to 48 characters inside the brackets (the district tags run past
+# 24), and the closing bracket may be a mistyped "[" ("[CIMA JA10[ ...").
+_NAME_TAG_RE = re.compile(r"^(?:\s*\[[^\[\]]{1,48}[\]\[])+\s*")
+_REF_ONLY_RE = re.compile(r"^\(?[A-Za-z]{0,3}[-. ]?\d{1,4}[A-Za-z]?\)?$")
+_TOUR_SUFFIX_RE = re.compile(r",\s*\d+\s+days\s+(relaxed|balanced|strong)\s*$")
+
+
+def _clean_name(raw):
+    name = _NAME_TAG_RE.sub("", (raw or "").strip())
+    name = re.sub(r"\s*\*\s*", ", ", name)
+    name = re.sub(r"\s{2,}", " ", name).strip(" ,")
+    return name
+
+
+def display_name(row):
+    """The name a reader sees, or None when OSM has nothing that is one.
+
+    None is deliberate. The app composes "Regional route 45" from the network
+    level and the ref in the reader's own language, which is a title; the
+    old fallback shipped "(45)" as the name and every card and page printed
+    it as one. Where the relation has no name but says where it runs, the
+    `from` and `to` tags are the name: "Galisteo - Caceres".
+    """
+    name = _clean_name(row.get("name"))
+    ref = (row.get("ref") or "").strip()
+    if name and name != ref and not _REF_ONLY_RE.match(name):
+        return name
+    tags = row.get("raw_tags") or {}
+    a = (tags.get("from") or "").strip()
+    b = (tags.get("to") or "").strip()
+    if a and b:
+        return f"{a} - {b}"
+    return None
+
+
+def tour_title(tour):
+    """The route's name, not "Chilterns Cycleway, 3 days strong": the days
+    and the pace are facts the card and the page already show as facts, and
+    a title that restates them reads as a filename."""
+    raw = (tour.get("title") or "").strip()
+    return _clean_name(_TOUR_SUFFIX_RE.sub("", raw)) or raw
+
+
+def section_name(row):
+    """What to call one country section of a EuroVelo.
+
+    Falling back to `ref` gave a manifest of 141 rows all reading "EV1": the
+    name of the FAMILY repeated once per section, which identifies nothing.
+    display_name() reads the `from` and `to` tags most of these relations
+    carry instead of a name; measured on the wire that rescues 173 of the
+    174 unnamed sections, and the last one keeps the ref.
+    """
+    return display_name(row) or row.get("ref")
+
+
+# cycling/top.json: what the tab opens on when no country is chosen. Every
+# other layer publishes one; without it the app defaulted to the first
+# country in the index and opened "All countries" on one Andorran route.
+# Rated rows only, best first, capped per country so Germany cannot fill it
+# alone, plus every published tour. Cards, not routes: the same objects the
+# country files carry, so the list draws them with the same code.
+TOP_N = 200
+TOP_PER_COUNTRY = 24
+
+
+def top_file(by_country, stamp, dry_run):
+    routes = []
+    for bundle in by_country.values():
+        best = sorted(bundle["routes"], key=lambda c: -(c.get("score") or 0))
+        routes.extend(best[:TOP_PER_COUNTRY])
+    routes.sort(key=lambda c: -(c.get("score") or 0))
+    routes = routes[:TOP_N]
+    tours = [t for b in by_country.values() for t in b["tours"]]
+    tours.sort(key=lambda c: -(c.get("scenic") or 0))
+    payload = {
+        "generated_at": stamp,
+        "n_routes": len(routes),
+        "n_tours": len(tours),
+        "n_countries": len({c.get("cc") for c in routes}),
+        "per_country_cap": TOP_PER_COUNTRY,
+        "routes": routes,
+        "tours": tours,
+    }
+    size = write_json(OUT_DIR / "top.json", payload, dry_run)
+    log(f"top.json: {len(routes)} routes from {payload['n_countries']} "
+        f"countries, {len(tours)} tours, {size / 1024:.0f} kB")
+    return payload
+
+
+def family_files(rows, published_ids, stamp, dry_run):
+    """family/{EV1}.json: a EuroVelo route as one thing across its countries.
+
+    The brief asks for EV1 to EV19 "published as families". In OSM a
+    EuroVelo is not one relation: it is one `route=bicycle` relation PER
+    COUNTRY SECTION, grouped under a `type=superroute`. The harvest
+    deliberately does not assemble the superroute, because a continental
+    relation clipped by a country extract is a broken line, and stamps
+    `carta:family_ref` on each child instead.
+
+    This is where that membership becomes a surface. A family file is a
+    manifest, not geometry: the sections in riding order by country, what each
+    contributes, and where the whole thing runs. The geometry stays in the
+    per-route files, so nothing here restates an ODbL extract and the
+    prescribed EuroVelo credit travels with the object.
+    """
+    fams = defaultdict(list)
+    for row in rows:
+        ref = (row.get("raw_tags") or {}).get("carta:family_ref") or ""
+        if EV_RE.match(ref):
+            fams[ref].append(row)
+    out = []
+    for ref, members in fams.items():
+        members.sort(key=lambda r: (r["country"], -(r["distance_m"] or 0)))
+        per_cc = defaultdict(lambda: {"n": 0, "km": 0.0})
+        for m in members:
+            slot = per_cc[m["country"]]
+            slot["n"] += 1
+            slot["km"] += (m["distance_m"] or 0) / 1000.0
+        # Only sections that actually reached the wire can be opened, so the
+        # manifest says which are published rather than implying all are.
+        published = published_ids
+        agree = [ (m.get("agreement") or {}).get("eurovelo_gpx", {}).get("share")
+                  for m in members ]
+        agree = [a for a in agree if a is not None]
+        payload = {
+            "ref": ref,
+            "n": int(EV_RE.match(ref).group(1)),
+            "generated_at": stamp,
+            "n_sections": len(members),
+            "n_published": sum(1 for m in members if m["id"] in published),
+            "km": round(sum((m["distance_m"] or 0) for m in members) / 1000.0),
+            "countries": [
+                {"cc": cc, "n": v["n"], "km": round(v["km"])}
+                for cc, v in sorted(per_cc.items())],
+            # The share of the OSM line the ECF's own developed-sections GPX
+            # also draws. A LOW number is not a fault in either: the ECF
+            # publishes only developed sections, so this reads as how much of
+            # the signed route the ECF considers finished.
+            "ecf_agreement": (round(sum(agree) / len(agree), 3)
+                              if agree else None),
+            "sections": [
+                {"id": m["id"], "cc": m["country"],
+                 "name": section_name(m),
+                 "km": round((m["distance_m"] or 0) / 1000.0),
+                 "published": m["id"] in published}
+                for m in members],
+            "license": "ODbL 1.0",
+            "attribution": eurovelo_credit_line() or ATTRIBUTION[0]["credit"],
+        }
+        out.append(payload)
+        write_json(OUT_DIR / "family" / safe_name(f"{ref}.json"),
+                   payload, dry_run)
+    out.sort(key=lambda f: f["n"])
+    return out
+
+
+def main():
+    sys.stdout.reconfigure(errors="replace")
+    ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
+    ap.add_argument("--countries", help="comma separated ISO2")
+    ap.add_argument("--dry-run", action="store_true")
+    ap.add_argument("--verbose", action="store_true")
+    args = ap.parse_args()
+    countries = ([c.strip().upper() for c in args.countries.split(",")
+                  if c.strip()] if args.countries else [])
+    with connect() as conn:
+        index = build(conn, countries, args.dry_run, args.verbose)
+    for row in index["countries"]:
+        print(f"  {row['country']}: {row['n_routes']} rated, "
+              f"{row['n_listed']} listed, {row['n_tours']} tours")
+
+
+if __name__ == "__main__":
+    main()

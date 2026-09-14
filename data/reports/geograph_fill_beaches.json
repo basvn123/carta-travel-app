@@ -1,0 +1,17 @@
+{
+ "layer": "beaches",
+ "countries": {
+  "GB": {
+   "gap": 45,
+   "name_matched": 1,
+   "resolved": 1
+  },
+  "IE": {
+   "gap": 76,
+   "name_matched": 0,
+   "resolved": 0
+  }
+ },
+ "filled": 1,
+ "examined": 121
+}

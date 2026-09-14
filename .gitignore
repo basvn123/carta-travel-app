@@ -56,9 +56,123 @@ logs/pipeline.lock
 app_data/app_data.json
 app_data/app_data.backup.json
 app_data/*.pre_*.json
+# The wave-2 intake snapshot, 111 MB and over GitHub's 100 MB limit, same
+# class as app_data.json directly above: a whole-file rewrite of derived
+# intake data that the catalogue is built from rather than served from.
+app_data/app_data.wave2.json
+
+# ---------------------------------------------------------------------------
+# Adding a rule for a new cache directory? Two things, learned the same day by
+# two people who each thought they were the only one who had missed it.
+#
+# 1. A cache directory created after these conventions were written does not
+#    inherit them, and nobody notices until a `git add -A` sweeps the tree.
+#    cache/regions and cache/photos were both unignored months after the
+#    convention was set, the second at 1.6 GB.
+# 2. Before writing the rule, check whether the directory has quietly
+#    accumulated something that is a RECORD rather than an output: a ledger, a
+#    human decision, anything whose loss is not repaired by rebuilding. The
+#    rule written in a hurry is a plain `cache/thing/`, and that is the one
+#    shape whose contents cannot be re-admitted afterwards, because excluding
+#    a directory makes every negation inside it unreachable. Ignore the
+#    CONTENTS (`cache/thing/*`) whenever there is any doubt, and name the
+#    exceptions. cache/photos below is the worked example: two ledgers, one of
+#    which is what stops a taken-down photograph coming back.
+# ---------------------------------------------------------------------------
+
+# Beach layer harvest caches (pipeline/beaches): 159 MB and rewritten whole on
+# every refresh, which is the same treadmill as the master above. Note that the
+# LFS rule a few lines up is `cache/*.json`, which does NOT match a
+# subdirectory, so these would land as ordinary blobs in an already 3 GB .git.
+# They are derived data: the app serves continent-app/public/beaches, and the
+# caches only save a cold rebuild (hours of polite Overpass). Rebuild with
+# python pipeline/beaches/build_beaches.py
+cache/beaches/
+
+# Mountain layer harvest caches (pipeline/mountains): 17 MB of raw and rich
+# per country snapshots, rewritten whole on every refresh. Same call as
+# cache/beaches above and for the same reasons: it is derived data, the app
+# serves continent-app/public/mountains, and the .git here is already 3 GB.
+# A cold rebuild is
+#   python pipeline/mountains/build_peaks.py
+# and the Wikidata spine it reads (cache/features_wikidata.json) is the part
+# that would actually be slow to re-fetch.
+cache/mountains/
+
+# Lake layer harvest caches (pipeline/lakes): 29 MB, same call again. These
+# did briefly get committed, by a `git add -A` that swept the whole working
+# tree, so this rule comes with a `git rm --cached` rather than on its own.
+# The blobs already in history stay there; what this stops is the next one.
+cache/lakes/
+
+# Trail layer caches (pipeline/trails, tools/trailslab): 135 MB of per-trip
+# photo and geometry snapshots, rewritten whole on every refresh. Same call as
+# the three above, and the same reason the .git here is already 3 GB. The app
+# serves continent-app/public/trails; these only save a cold rebuild.
+cache/trails/
+
+# Cycle layer harvest caches (pipeline/cycling): 521 MB of raw portal and
+# protected-area downloads, THREE of them over GitHub's 100 MB hard limit
+# (portal_bnac_france.json alone is 318 MB), so this is not a preference:
+# a commit including them cannot be pushed at all. Same call as the four
+# above. The app serves continent-app/public/cycling; these only save a cold
+# re-fetch, and the portals are static national downloads. Rebuild with
+#   python pipeline/cycling/harvest_cycling.py --countries <name>
+cache/cycling/
+
+# BRouter segment tiles (tools/brouter/prepare.py): 464 MB for Britain alone,
+# re-downloaded from brouter.de in minutes and republished there weekly, so a
+# committed copy would be both large and stale. Same call as the caches above.
+#   python tools/brouter/prepare.py --country GB --up --wait
+tools/brouter/segments/
+
+# Region spine (pipeline/regions): ~600 MB of downloaded boundary sources
+# plus a 197 MB GeoPackage built from them, the single largest artifact any
+# layer produces. Same call as the caches below and more emphatically: it is
+# derived data with a one line rebuild, the app serves
+# continent-app/public/region, and this .git is already 3 GB. The sources are
+# static yearly files, so a cold rebuild is a download and a wait:
+#   python pipeline/regions/build_regions.py
+# Delete cache/regions/src to force a re-fetch of NUTS, LAU, ITL, GMBA and
+# the EEA layers.
+cache/regions/
+
+# Trip layer caches (pipeline/trips): the composed candidate set and the
+# Wikivoyage route harvest, both rewritten whole on every refresh. Same call
+# as the three above: derived data, the app serves continent-app/public/trips,
+# and a cold rebuild is
+#   python pipeline/trips/harvest_routes.py   (a few minutes of Wikimedia)
+#   python pipeline/trips/compose_trips.py && python pipeline/trips/export_trips.py
+# The harvest is the only slow part, and it is resumable.
+cache/trips/
+
+# Photo engine caches (pipeline/photos): 1.6 GB across ~4,900 files, and the
+# largest single thing in it is not ours. It holds the OpenCLIP ViT-L/14
+# weights and the LAION aesthetic head (downloaded, ~1.7 GB together), one
+# 768 float embedding per photograph the engine has ever scored, the contact
+# sheets a reviewer looks at, and the pHash and beauty numbers that ride in
+# the layer caches rather than here. All derived, all re-fetchable, and a
+# cold rebuild is a download plus CPU:
+#   python pipeline/photos/rescore.py <layer>     (re-embeds what it needs)
+# The embeddings are the expensive half, hours per layer on this box, which
+# is exactly why they are cached and exactly why they do not belong in git.
+#
+# The two exceptions are not derived data and must survive a cache wipe.
+# takedowns.json is the record of photographs somebody asked us to stop
+# publishing: lose it and a takedown silently expires at the next harvest,
+# because every layer's candidate pass consults it to keep a file out.
+# review_ledger.jsonl is the human half, who promoted or rejected what and
+# why. Both are small, both are obligations rather than outputs, so the rule
+# ignores the CONTENTS of the directory and re-admits those two by name (a
+# plain `cache/photos/` would exclude the directory itself and make the
+# negations below unreachable).
+cache/photos/*
+!cache/photos/takedowns.json
+!cache/photos/review_ledger.jsonl
 
 # Headless verification screenshots (regenerated by scripts/verify_*.mjs)
 continent-app/scripts/shots/
+continent-app/shots/
 tools/trailslab/review/scripts/shots/
 
 # Raw ingestion mirrors (src/ingestion): re-downloadable, often tens of GB.
@@ -77,3 +191,13 @@ data/deadletter/
 # master. The merge (harvest_all_origins.py tp) tolerates its absence, and
 # the merged result ships in continent-app/public/fares/ anyway.
 data/derived/tp_fares.json
+
+# Coverage candidate universe (docs/COVERAGE.md): ~70 MB of every plausible
+# European destination with its measurements, rebuilt offline in ~75 seconds
+# by build_place_candidates.py from the gazetteer and the POI corpus, both of
+# which ARE tracked. The scored output that people actually read is small and
+# committed: data/reports/coverage/ and coverage_gaps.json.
+data/derived/place_candidates.json
+
+# Personal Claude Code overrides (the shared skills in .claude/skills/ stay tracked)
+.claude/settings.local.json

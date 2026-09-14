@@ -1,0 +1,1251 @@
+country,nuts3,region_name,layer,published,quota,deficit,candidate_id,candidate_name,rejected_by,rejected_detail
+ES,ES513,Lleida,mountain,,11,9,Q6906641,Monturull,score_gate,score_4.8_below_5.0
+ES,ES513,Lleida,mountain,,11,9,Q2209719,Pic de Sanfonts,score_gate,score_4.3_below_5.0
+ES,ES513,Lleida,mountain,,11,9,Q948850,Pic de Médécourbe,score_gate,score_4.2_below_5.0
+ES,ES513,Lleida,mountain,,11,9,Q11941543,Tossa Plana de Lles,score_gate,score_4.1_below_5.0
+ES,ES513,Lleida,mountain,,11,9,Q17483009,Pic del Sirvent,score_gate,score_4.1_below_5.0
+ES,ES513,Lleida,mountain,,11,9,Q11952606,Tossal Bovinar,score_gate,score_3.8_below_5.0
+ES,ES513,Lleida,mountain,,11,9,Q21330590,Agulla de Baiau,photo_gate,imgs_3
+ES,ES513,Lleida,mountain,,11,9,Q11941530,Pic dels Llacs,photo_gate,imgs_2
+ES,ES513,Lleida,mountain,,11,9,Q11952912,Tosseta de Vallcivera,score_gate,score_3.4_below_5.0
+ES,ES220,Navarra,mountain,,5,5,Q3178771,Montejurra,score_gate,score_4.7_below_5.0
+ES,ES220,Navarra,mountain,,5,5,Q3128667,Hautza,photo_gate,imgs_0
+ES,ES220,Navarra,mountain,,5,5,Q3573794,Txamantxoia,score_gate,score_4.5_below_5.0
+ES,ES220,Navarra,mountain,,5,5,Q8538688,Peña Izaga,photo_gate,imgs_3
+ES,ES220,Navarra,mountain,,5,5,Q3756086,Beriain,score_gate,score_4.4_below_5.0
+HR,HR033,Zadarska županija,mountain,,5,5,Q3003109,Crnopac,photo_gate,imgs_3
+HR,HR033,Zadarska županija,mountain,,5,5,Q26224723,Crni vrh,photo_gate,imgs_2
+HR,HR033,Zadarska županija,mountain,,5,5,Q25286840,Sveti Vid,photo_gate,imgs_0
+HR,HR033,Zadarska županija,mountain,,5,5,Q26224659,Anića kuk,score_gate,score_4.2_below_5.0
+HR,HR033,Zadarska županija,mountain,,5,5,Q136434052,Vela Straža,photo_gate,imgs_1
+IT,ITC44,Sondrio,mountain,,6,5,Q1092025,Cima Piazzi,photo_gate,imgs_6
+IT,ITC44,Sondrio,mountain,,6,5,Q739961,Monte Disgrazia,photo_gate,imgs_4
+IT,ITC44,Sondrio,mountain,,6,5,Q3906020,Pizzo Scalino,photo_gate,imgs_6
+IT,ITC44,Sondrio,mountain,,6,5,Q1287528,Monte Cevedale,score_gate,score_4.6_below_5.0
+IT,ITC44,Sondrio,mountain,,6,5,Q1092025,Cima Piazzi,score_gate,score_4.5_below_5.0
+IE,IE053,South-West ,mountain,,7,5,Q503368,Carrauntoohil,photo_gate,imgs_6
+IE,IE053,South-West ,mountain,,7,5,Q3777099,Torc Mountain,score_gate,score_4.8_below_5.0
+IE,IE053,South-West ,mountain,,7,5,Q22030601,Mount Eagle (Ireland),score_gate,score_4.6_below_5.0
+IE,IE053,South-West ,mountain,,7,5,Q4879913,Beenkeragh,score_gate,score_4.4_below_5.0
+IE,IE053,South-West ,mountain,,7,5,Q429937,Baurtregaum,score_gate,score_4.3_below_5.0
+GB,TLM50,Aberdeen City and Aberdeenshire,mountain,,6,5,Q897186,Braeriach,score_gate,score_4.9_below_5.0
+GB,TLM50,Aberdeen City and Aberdeenshire,mountain,,6,5,Q1867453,Lochnagar,score_gate,score_4.7_below_5.0
+GB,TLM50,Aberdeen City and Aberdeenshire,mountain,,6,5,Q3397864,Beinn Bhrotain,score_gate,score_4.0_below_5.0
+GB,TLM50,Aberdeen City and Aberdeenshire,mountain,,6,5,Q3397469,Ben Avon,score_gate,score_4.0_below_5.0
+GB,TLM50,Aberdeen City and Aberdeenshire,mountain,,6,5,Q13125504,An Sgarsoch,score_gate,score_4.0_below_5.0
+UA,UA-74538382B40204965193592,Velykyy Bereznyi,mountain,,5,5,Q218703,Polonyna Runa,score_gate,score_4.2_below_5.0
+UA,UA-74538382B40204965193592,Velykyy Bereznyi,mountain,,5,5,Q166138,Liutianska Holytsia,photo_gate,imgs_0
+UA,UA-74538382B40204965193592,Velykyy Bereznyi,mountain,,5,5,Q114253,Hostra Hora,photo_gate,imgs_3
+UA,UA-74538382B40204965193592,Velykyy Bereznyi,mountain,,5,5,Q3199602,Krasiia,photo_gate,imgs_0
+UA,UA-74538382B40204965193592,Velykyy Bereznyi,mountain,,5,5,Q4536038,Yavirnyk,photo_gate,imgs_3
+AL,AL033,Gjirokastër,mountain,,4,4,Q8528315,Papingu,photo_gate,imgs_1
+AL,AL033,Gjirokastër,mountain,,4,4,Q6921920,Mali i Lunxhërisë,score_gate,score_4.2_below_5.0
+AL,AL033,Gjirokastër,mountain,,4,4,Q1337784,Nemërçka,score_gate,score_4.1_below_5.0
+AL,AL033,Gjirokastër,mountain,,4,4,Q8536495,Këndrevica,photo_gate,imgs_0
+CZ,CZ071,Olomoucký kraj,mountain,,6,4,Q4052,Dlouhé stráně,score_gate,score_4.9_below_5.0
+CZ,CZ071,Olomoucký kraj,mountain,,6,4,Q23824298,Příčný vrch,photo_gate,imgs_1
+CZ,CZ071,Olomoucký kraj,mountain,,6,4,Q681415,Smrk,score_gate,score_4.2_below_5.0
+CZ,CZ071,Olomoucký kraj,mountain,,6,4,Q951650,Fidlův kopec,photo_gate,imgs_3
+ES,ES212,Gipuzkoa,mountain,,5,4,Q3756051,Hernio,photo_gate,imgs_5
+ES,ES212,Gipuzkoa,mountain,,5,4,Q115694749,Aketegi,photo_gate,imgs_2
+ES,ES212,Gipuzkoa,mountain,,5,4,Q576888,Jaizkibel,score_gate,score_4.8_below_5.0
+ES,ES212,Gipuzkoa,mountain,,5,4,Q411031,Aitxuri,photo_gate,imgs_0
+ES,ES512,Girona,mountain,,7,4,Q7419105,Sant Miquel de Solterra,score_gate,score_4.9_below_5.0
+ES,ES512,Girona,mountain,,7,4,Q4850026,Balandrau,score_gate,score_4.8_below_5.0
+ES,ES512,Girona,mountain,,7,4,Q1859850,Santa Margarida Volcano,score_gate,score_4.7_below_5.0
+ES,ES512,Girona,mountain,,7,4,Q6785970,Matagalls,score_gate,score_4.6_below_5.0
+ES,ES514,Tarragona,mountain,,4,4,Q5184752,Creu de Santos,photo_gate,imgs_3
+ES,ES514,Tarragona,mountain,,4,4,Q599722,Mont Caro,score_gate,score_4.3_below_5.0
+ES,ES514,Tarragona,mountain,,4,4,Q7827873,Tossal de la Baltasana,photo_gate,imgs_2
+ES,ES514,Tarragona,mountain,,4,4,Q7259035,Puig de la Talaia,score_gate,score_4.0_below_5.0
+FR,FRJ21,Ariège,mountain,,5,4,Q30912931,Pic de Creussans,score_gate,score_4.9_below_5.0
+FR,FRJ21,Ariège,mountain,,5,4,Q21330160,Pic del Pla de l'Estany,score_gate,score_4.0_below_5.0
+FR,FRJ21,Ariège,mountain,,5,4,Q21329204,Pic de Cabanyó,photo_gate,imgs_3
+FR,FRJ21,Ariège,mountain,,5,4,Q21332188,Pic d'Anrodat,photo_gate,imgs_0
+IE,IE042,West,mountain,,7,4,Q4886968,Bencorr,score_gate,score_4.5_below_5.0
+IE,IE042,West,mountain,,7,4,Q66372667,Leenaun Hill,score_gate,score_4.5_below_5.0
+IE,IE042,West,mountain,,7,4,Q5169842,Corcogemore,score_gate,score_4.4_below_5.0
+IE,IE042,West,mountain,,7,4,Q3057479,Errisbeg,score_gate,score_4.3_below_5.0
+IT,ITC11,Torino,mountain,,4,4,Q2289005,Monte Granero,photo_gate,imgs_6
+IT,ITC11,Torino,mountain,,4,4,Q608238,Rocciamelone,photo_gate,imgs_6
+IT,ITC11,Torino,mountain,,4,4,Q3113607,Punta Merciantaira,score_gate,score_4.5_below_5.0
+IT,ITC11,Torino,mountain,,4,4,Q590343,Uia di Ciamarella,photo_gate,imgs_6
+IE,IE062,Mid-East,mountain,,6,4,Q3033072,Djouce,score_gate,score_4.8_below_5.0
+IE,IE062,Mid-East,mountain,,6,4,Q3079088,Great Sugar Loaf,score_gate,score_4.8_below_5.0
+IE,IE062,Mid-East,mountain,,6,4,Q514648,Lugnaquilla,score_gate,score_4.7_below_5.0
+IE,IE062,Mid-East,mountain,,6,4,Q3140122,Tonelagee,score_gate,score_4.5_below_5.0
+SE,SE332,Norrbottens län,mountain,,8,4,Q11250682,Ristačohkka,photo_gate,imgs_0
+SE,SE332,Norrbottens län,mountain,,8,4,Q21795325,Strájdastjåhkkå,photo_gate,imgs_0
+SE,SE332,Norrbottens län,mountain,,8,4,Q11249038,Nuorttasávllo,photo_gate,imgs_0
+SE,SE332,Norrbottens län,mountain,,8,4,Kebnekaise,Kebnekaise,photo_gate,imgs_2
+UA,UA-74538382B15580280288408,Mizhhiria,mountain,,4,4,Q16565187,Kamianka,photo_gate,imgs_2
+UA,UA-74538382B15580280288408,Mizhhiria,mountain,,4,4,Q4316000,Nehrovets,photo_gate,imgs_3
+UA,UA-74538382B15580280288408,Mizhhiria,mountain,,4,4,Q4444012,Strymba,photo_gate,imgs_5
+UA,UA-74538382B15580280288408,Mizhhiria,mountain,,4,4,Q31519958,Tapesh,photo_gate,imgs_0
+AT,AT341,Bludenz-Bregenzer Wald,mountain,,6,3,Q257718,Glatthorn,score_gate,score_4.8_below_5.0
+AT,AT341,Bludenz-Bregenzer Wald,mountain,,6,3,Q874590,Damülser Mittagsspitze,score_gate,score_4.7_below_5.0
+AT,AT341,Bludenz-Bregenzer Wald,mountain,,6,3,Q452114,Braunarlspitze,score_gate,score_4.6_below_5.0
+AT,AT313,Mühlviertel,mountain,,3,3,Q2523130,Viehberg,photo_gate,imgs_2
+AT,AT313,Mühlviertel,mountain,,3,3,Q2345976,Sternstein,photo_gate,imgs_6
+BG,BG424,Smolyan,mountain,,3,3,Q12294108,Snezhanka (Peak),photo_gate,imgs_3
+BG,BG424,Smolyan,mountain,,3,3,Q1548833,Golyam Perelik,photo_gate,imgs_2
+BG,BG424,Smolyan,mountain,,3,3,Q3110295,Golyam Persenk,photo_gate,imgs_0
+DE,DEA45,Lippe,mountain,,3,3,Q314674,Barnacken,score_gate,score_4.0_below_5.0
+DE,DEA45,Lippe,mountain,,3,3,Q475264,Köterberg,score_gate,score_3.7_below_5.0
+DE,DE734,"Kassel, Landkreis",mountain,,3,3,Q1623968,Hohes Gras,score_gate,score_4.3_below_5.0
+DE,DE734,"Kassel, Landkreis",mountain,,3,3,Q1633990,Staufenberg (Reinhardswald),score_gate,score_3.9_below_5.0
+DE,DE27E,Oberallgäu,mountain,,6,3,Q459121,Hochgrat,photo_gate,imgs_6
+DE,DE27E,Oberallgäu,mountain,,6,3,Q554414,Fellhorn,score_gate,score_4.3_below_5.0
+DE,DE27E,Oberallgäu,mountain,,6,3,Q316061,Großer Daumen,score_gate,score_4.8_below_5.0
+DE,DE24D,Wunsiedel i. Fichtelgebirge,mountain,,3,3,Q314166,Schneeberg,photo_gate,imgs_6
+DE,DE24D,Wunsiedel i. Fichtelgebirge,mountain,,3,3,Q314166,Schneeberg (Fichtel Mountains),score_gate,score_4.7_below_5.0
+ES,ES413,León,mountain,,3,3,Q15622232,La Camperona,photo_gate,imgs_2
+ES,ES413,León,mountain,,3,3,Q2645930,Torre Santa,photo_gate,imgs_3
+ES,ES413,León,mountain,,3,3,Q3330247,Peña Ubiña,score_gate,score_4.3_below_5.0
+ES,ES300,Madrid,mountain,,4,3,Q2095610,Bola del Mundo,score_gate,score_4.6_below_5.0
+ES,ES300,Madrid,mountain,,4,3,Q1412468,La Maliciosa,score_gate,score_4.4_below_5.0
+ES,ES300,Madrid,mountain,,4,3,Q5763351,cerro de San Pedro,score_gate,score_4.2_below_5.0
+ES,ES411,Ávila,mountain,,4,3,Q5747046,Canchal de la Ceja,score_gate,score_4.6_below_5.0
+ES,ES411,Ávila,mountain,,4,3,Q3612390,La Mira,score_gate,score_3.9_below_5.0
+ES,ES411,Ávila,mountain,,4,3,Q8355779,Cerro de Gorría,score_gate,score_2.9_below_5.0
+ES,ES211,Araba/Álava,mountain,,3,3,Q3756092,Aratz,score_gate,score_4.2_below_5.0
+ES,ES211,Araba/Álava,mountain,,3,3,Q3055443,Orisol,score_gate,score_4.0_below_5.0
+ES,ES211,Araba/Álava,mountain,,3,3,Q3055491,Tellamendi,score_gate,score_3.3_below_5.0
+ES,ES242,Teruel,mountain,,3,3,Q6748219,Tossal dels Tres Reis,photo_gate,imgs_3
+ES,ES242,Teruel,mountain,,3,3,Q6075083,Peñarroya,photo_gate,imgs_2
+GR,EL533,Florina,mountain,,3,3,Q106157200,Dambenska planina,photo_gate,imgs_0
+GR,EL533,Florina,mountain,,3,3,Q1288074,Kajmakčalan,photo_gate,imgs_5
+GR,EL533,Florina,mountain,,3,3,Q2302492,Verno,photo_gate,imgs_4
+ES,ES611,Almería,mountain,,3,3,Q743570,Alboran Island,score_gate,score_4.8_below_5.0
+ES,ES611,Almería,mountain,,3,3,Q6024445,Morrón de la Lagunilla,score_gate,score_4.0_below_5.0
+ES,ES611,Almería,mountain,,3,3,Q3650066,Calar Alto,score_gate,score_3.7_below_5.0
+ES,ES616,Jaén,mountain,,3,3,Q6075022,Pico Mágina,score_gate,score_4.1_below_5.0
+ES,ES616,Jaén,mountain,,3,3,Q5737959,Pico Cabañas,photo_gate,imgs_3
+HR,HR032,Ličko-senjska županija,mountain,,5,3,Q3359206,Ozeblin,photo_gate,imgs_0
+HR,HR032,Ličko-senjska županija,mountain,,5,3,Q15443284,Rožanski kukovi,score_gate,score_4.6_below_5.0
+HR,HR032,Ličko-senjska županija,mountain,,5,3,Q12644741,Visočica,score_gate,score_4.2_below_5.0
+FR,FRJ23,Haute-Garonne,mountain,,3,3,Q3382382,Pic de Maupas,score_gate,score_3.4_below_5.0
+FR,FRJ23,Haute-Garonne,mountain,,3,3,Q3382388,Pic de Sauvegarde,score_gate,score_3.4_below_5.0
+FR,FRJ23,Haute-Garonne,mountain,,3,3,Q2717767,Grand Quayrat,score_gate,score_3.9_below_5.0
+IT,ITI12,Lucca,mountain,,3,3,Q1945906,Monte Pisanino,score_gate,score_4.9_below_5.0
+IT,ITI12,Lucca,mountain,,3,3,Q745907,Monte Serra,photo_gate,imgs_0
+IT,ITI12,Lucca,mountain,,3,3,Q3893275,Pania della Croce,score_gate,score_3.5_below_5.0
+IT,ITI18,Arezzo,mountain,,3,3,Q3861529,Monte Falco,photo_gate,imgs_3
+IT,ITI18,Arezzo,mountain,,3,3,Q3861529,Monte Falco,photo_gate,imgs_3
+IT,ITH53,Reggio nell’Emilia,mountain,,3,3,Q1810954,Alpe di Succiso,score_gate,score_4.4_below_5.0
+IT,ITH53,Reggio nell’Emilia,mountain,,3,3,Q2641550,Monte Cusna,score_gate,score_4.0_below_5.0
+IT,ITF46,Foggia,mountain,,3,3,Q3861289,Monte Calvo,score_gate,score_4.2_below_5.0
+IT,ITF46,Foggia,mountain,,3,3,Q16579599,Monte Cornacchia (Daunian Mountains),score_gate,score_4.0_below_5.0
+IT,ITC32,Savona,mountain,,3,3,Q3861409,Monte Carmo di Loano,score_gate,score_4.6_below_5.0
+IT,ITC32,Savona,mountain,,3,3,Q3862013,Monte Settepani,photo_gate,imgs_3
+IT,ITF51,Potenza,mountain,,3,3,Q509433,Monte Vulture,score_gate,score_4.9_below_5.0
+IT,ITF51,Potenza,mountain,,3,3,Q3862131,Monte Volturino,score_gate,score_3.9_below_5.0
+IT,ITC41,Varese,mountain,,3,3,Q3861789,Monte Nudo,photo_gate,imgs_5
+IT,ITC41,Varese,mountain,,3,3,Q3861789,Monte Nudo,score_gate,score_4.0_below_5.0
+IT,ITC42,Como,mountain,,3,3,Q1232330,Pizzo di Gino,photo_gate,imgs_2
+IT,ITC42,Como,mountain,,3,3,Q1132166,Monte San Primo,score_gate,score_4.6_below_5.0
+IT,ITC42,Como,mountain,,3,3,Q1232330,Pizzo di Gino,photo_gate,imgs_2
+IE,IE051,Mid-West ,mountain,,4,3,Q2333034,Galtymore,score_gate,score_4.3_below_5.0
+IE,IE051,Mid-West ,mountain,,4,3,Q1520625,Slievenamon,score_gate,score_3.9_below_5.0
+IE,IE051,Mid-West ,mountain,,4,3,Q3777228,Slievecallan,score_gate,score_3.7_below_5.0
+IE,IE052,South-East ,mountain,,4,3,Q4956906,Brandon Hill,score_gate,score_4.7_below_5.0
+IE,IE052,South-East ,mountain,,4,3,Q2485323,Mount Leinster,score_gate,score_4.1_below_5.0
+IE,IE052,South-East ,mountain,,4,3,Q3362066,Annagh Hill,score_gate,score_3.9_below_5.0
+IE,IE061,Dublin,mountain,,3,3,Q3381390,Ben of Howth,score_gate,score_4.7_below_5.0
+IE,IE061,Dublin,mountain,,3,3,Q3778155,Two Rock,photo_gate,imgs_2
+IT,ITC14,Verbano-Cusio-Ossola,mountain,,5,3,Q1152462,Scherbadung,score_gate,score_4.4_below_5.0
+IT,ITC14,Verbano-Cusio-Ossola,mountain,,5,3,Q3862074,Monte Togano,photo_gate,imgs_2
+IT,ITC14,Verbano-Cusio-Ossola,mountain,,5,3,Q691910,Ofenhorn,photo_gate,imgs_3
+IE,IE063,Midland,mountain,,3,3,Q3621876,Arderin,photo_gate,imgs_2
+IE,IE063,Midland,mountain,,3,3,Q5043755,Carn Clonhugh,photo_gate,imgs_3
+IE,IE063,Midland,mountain,,3,3,Q6934086,Mullaghmeen,score_gate,score_2.3_below_5.0
+IT,ITC16,Cuneo,mountain,,5,3,Q1248,Viso,photo_gate,imgs_6
+IT,ITC16,Cuneo,mountain,,5,3,Q2060375,Monte Argentera,photo_gate,imgs_6
+IT,ITC16,Cuneo,mountain,,5,3,Q3861796,Monte Oronaye,score_gate,score_3.9_below_5.0
+NO,NO071,Nordland/Nordlánnda,mountain,,5,3,Q11239096,Heilhornet,photo_gate,imgs_2
+NO,NO071,Nordland/Nordlánnda,mountain,,5,3,Q11250945,Botnkrona,photo_gate,imgs_1
+NO,NO071,Nordland/Nordlánnda,mountain,,5,3,Q3441445,Dønnmannen,photo_gate,imgs_4
+RO,RO423,Hunedoara,mountain,,4,3,Q1232288,Peleaga,photo_gate,imgs_3
+RO,RO423,Hunedoara,mountain,,4,3,Q897451,Parângu Mare,score_gate,score_4.9_below_5.0
+RO,RO423,Hunedoara,mountain,,4,3,Q3505131,Păpușa,photo_gate,imgs_2
+SE,SE322,Jämtlands län,mountain,,5,3,Q123357,Storsola,photo_gate,imgs_1
+SE,SE322,Jämtlands län,mountain,,5,3,Q128617919,Sonfjället,score_gate,score_4.4_below_5.0
+SE,SE322,Jämtlands län,mountain,,5,3,Q4992097,Hoverberget,photo_gate,imgs_3
+SE,SE331,Västerbottens län,mountain,,3,3,Q3075826,Norra Sytertoppen,score_gate,score_4.8_below_5.0
+SE,SE331,Västerbottens län,mountain,,3,3,Q10689013,Södra Sytertoppen,photo_gate,imgs_1
+SE,SE331,Västerbottens län,mountain,,3,3,Q31511285,Rerrogaise,photo_gate,imgs_0
+XK,XK004,Prizren,mountain,,3,3,Q263429,Pashtrik,score_gate,score_4.1_below_5.0
+XK,XK004,Prizren,mountain,,3,3,Q8082758,Ksulja e Priftit,photo_gate,imgs_0
+XK,XK004,Prizren,mountain,,3,3,Q1140631,Maja e zezë,photo_gate,imgs_2
+GB,TLD14,Westmorland and Furness,mountain,,4,3,Q1141169,Cross Fell,score_gate,score_4.6_below_5.0
+GB,TLD14,Westmorland and Furness,mountain,,4,3,Q1617866,High Street (Lake District),photo_gate,imgs_0
+GB,TLD14,Westmorland and Furness,mountain,,4,3,Q4925984,Blencathra,score_gate,score_4.0_below_5.0
+GB,TLE22,North Yorkshire,mountain,,3,3,Q1241723,Pen-y-ghent,score_gate,score_4.3_below_5.0
+GB,TLE22,North Yorkshire,mountain,,3,3,Q8519110,Roseberry Topping,score_gate,score_4.0_below_5.0
+GB,TLE22,North Yorkshire,mountain,,3,3,Q7901111,Urra Moor,score_gate,score_3.4_below_5.0
+GB,TLL42,South West Wales,mountain,,3,3,Q7191256,Picws Du,score_gate,score_3.9_below_5.0
+GB,TLL42,South West Wales,mountain,,3,3,Q478193,Foel Cwmcerwyn,score_gate,score_2.5_below_5.0
+GB,TLL42,South West Wales,mountain,,3,3,Q20589403,Carnllundain,score_gate,score_2.5_below_5.0
+GB,TLM03,Angus and Dundee City,mountain,,3,3,Q17293983,Cairn of Claise,score_gate,score_3.6_below_5.0
+GB,TLM03,Angus and Dundee City,mountain,,3,3,Q20590115,Cat Law,score_gate,score_3.5_below_5.0
+GB,TLM03,Angus and Dundee City,mountain,,3,3,Q3397722,Glas Maol,score_gate,score_3.4_below_5.0
+GB,TLM92,Dumfries and Galloway,mountain,,3,3,Q5017736,Cairnsmore of Fleet,score_gate,score_4.4_below_5.0
+GB,TLM92,Dumfries and Galloway,mountain,,3,3,Q5017732,Cairnsmore of Carsphairn,score_gate,score_3.9_below_5.0
+GB,TLM92,Dumfries and Galloway,mountain,,3,3,Q6480761,Lamachan Hill,score_gate,score_3.8_below_5.0
+UA,UA-74538382B22557738225705,Rakhiv,mountain,,5,3,Q627508,Hoverla,photo_gate,imgs_6
+UA,UA-74538382B22557738225705,Rakhiv,mountain,,5,3,Q627508,Hoverla,photo_gate,imgs_6
+UA,UA-74538382B22557738225705,Rakhiv,mountain,,5,3,Q4372154,Pip Ivan (Maramureș),score_gate,score_3.9_below_5.0
+UA,UA-74538382B83702656309397,Khust,mountain,,3,3,Q13667714,Menchul,photo_gate,imgs_0
+UA,UA-74538382B83702656309397,Khust,mountain,,3,3,Ruzha,Ruzha,photo_gate,imgs_0
+UA,UA-74538382B83702656309397,Khust,mountain,,3,3,Q106473000,Hropa,photo_gate,imgs_0
+UA,UA-74538382B51879903679765,Perechyn,mountain,,3,3,Q4275894,Makovytsia,photo_gate,imgs_0
+UA,UA-74538382B51879903679765,Perechyn,mountain,,3,3,Q31519553,Velykyi Vyzhen,photo_gate,imgs_0
+UA,UA-74538382B51879903679765,Perechyn,mountain,,3,3,Shyrokyi Munchel,Shyrokyi Munchel,photo_gate,imgs_0
+UA,UA-74538382B20988283989287,Dolyna,mountain,,3,3,Q4150372,Grofa,photo_gate,imgs_5
+UA,UA-74538382B20988283989287,Dolyna,mountain,,3,3,Q4300538,Moloda,photo_gate,imgs_3
+UA,UA-74538382B20988283989287,Dolyna,mountain,,3,3,Q4345079,Parenkye,photo_gate,imgs_0
+AD,AD-AD-02,Canillo,mountain,,3,3,Q21329826,Alt de Juclar,score_gate,score_4.3_below_5.0
+AD,AD-AD-02,Canillo,mountain,,3,3,Q18005600,Pic d'Escobes,score_gate,score_4.1_below_5.0
+AD,AD-AD-02,Canillo,mountain,,3,3,Q21330512,Cap de la Tosa d'Entor,photo_gate,imgs_2
+AD,AD-AD-08,Escaldes-Engordany,mountain,,3,3,Q11952788,Tossal de la Truita,photo_gate,imgs_3
+AD,AD-AD-08,Escaldes-Engordany,mountain,,3,3,Q11941529,Pic de la Colilla,photo_gate,imgs_3
+AD,AD-AD-08,Escaldes-Engordany,mountain,,3,3,Q21332125,Pic de Setut,photo_gate,imgs_4
+AL,AL012,Durrës,mountain,,2,2,Q22009675,Mali i Krujës,score_gate,score_2.2_below_5.0
+AL,AL032,Fier,mountain,,2,2,,,,
+AL,AL034,Korcë,mountain,,2,2,Q6737378,Morava Highlands,photo_gate,imgs_3
+AL,AL034,Korcë,mountain,,2,2,Q1285400,Gramos,score_gate,score_3.4_below_5.0
+AL,AL034,Korcë,mountain,,2,2,Q7205046,Pllaja e Pusit,photo_gate,imgs_1
+AL,AL014,Lezhë,mountain,,2,2,Q22007588,Mali i Velës,photo_gate,imgs_5
+AL,AL014,Lezhë,mountain,,2,2,Q42302393,Munella,score_gate,score_1.9_below_5.0
+AL,AL014,Lezhë,mountain,,2,2,Q13045265,Rëra e Hedhur,photo_gate,imgs_3
+AL,AL021,Elbasan,mountain,,2,2,Q7909224,Valamara,score_gate,score_3.7_below_5.0
+AL,AL021,Elbasan,mountain,,2,2,Q568256,Jablanica (mountain),score_gate,score_3.4_below_5.0
+AL,AL021,Elbasan,mountain,,2,2,Q7492257,Shebenik,score_gate,score_2.6_below_5.0
+AT,AT123,Sankt Pölten,mountain,,2,2,Q315479,Schöpfl,score_gate,score_4.3_below_5.0
+AT,AT124,Waldviertel,mountain,,2,2,,,,
+AT,AT112,Nordburgenland,mountain,,2,2,Q909565,Brenntenriegel,photo_gate,imgs_2
+AT,AT224,Oststeiermark,mountain,,2,2,,,,
+AT,AT225,West- und Südsteiermark,mountain,,2,2,Q1185772,Demmerkogel,photo_gate,imgs_6
+AT,AT226,Westliche Obersteiermark,mountain,,5,2,Q580229,Eisenhut (mountain),score_gate,score_4.9_below_5.0
+AT,AT226,Westliche Obersteiermark,mountain,,5,2,Q671614,Großer Bösenstein,score_gate,score_4.8_below_5.0
+AT,AT226,Westliche Obersteiermark,mountain,,5,2,Q876513,Rettlkirchspitze,photo_gate,imgs_0
+AT,AT311,Innviertel,mountain,,2,2,,,,
+AT,AT221,Graz,mountain,,2,2,,,,
+AT,AT223,Östliche Obersteiermark,mountain,,3,2,Q1559996,Gößeck,score_gate,score_4.7_below_5.0
+AT,AT223,Östliche Obersteiermark,mountain,,3,2,Q683574,Hohe Veitsch,score_gate,score_4.5_below_5.0
+AT,AT223,Östliche Obersteiermark,mountain,,3,2,Q668536,Stuhleck,score_gate,score_4.4_below_5.0
+AT,AT321,Lungau,mountain,,2,2,Q1552520,Gstoder,score_gate,score_4.7_below_5.0
+AT,AT322,Pinzgau-Pongau,mountain,,5,2,Q671739,Großes Ochsenhorn,score_gate,score_4.9_below_5.0
+AT,AT322,Pinzgau-Pongau,mountain,,5,2,Q1621665,Hocharn,score_gate,score_4.8_below_5.0
+AT,AT322,Pinzgau-Pongau,mountain,,5,2,Q874863,Hundstein (Salzburg Slate Alps),score_gate,score_4.3_below_5.0
+AT,AT323,Salzburg und Umgebung,mountain,,3,2,Q874655,Gamsfeld,photo_gate,imgs_3
+AT,AT333,Osttirol,mountain,,5,2,Q698770,Weiße Spitze,photo_gate,imgs_2
+AT,AT333,Osttirol,mountain,,5,2,Q1631332,Lasörling,score_gate,score_4.2_below_5.0
+AT,AT333,Osttirol,mountain,,5,2,Q3388,Grossglockner,photo_gate,imgs_6
+AT,AT312,Linz-Wels,mountain,,2,2,,,,
+AT,AT314,Steyr-Kirchdorf,mountain,,3,2,Q449833,Großer Pyhrgas,score_gate,score_4.7_below_5.0
+AT,AT314,Steyr-Kirchdorf,mountain,,3,2,Q2549856,Warscheneck,score_gate,score_4.1_below_5.0
+BE,BE336,Bezirk Verviers — Deutschsprachige Gemeinschaft,mountain,,2,2,Q646452,Weißer Stein (Eifel),score_gate,score_4.0_below_5.0
+BE,BE336,Bezirk Verviers — Deutschsprachige Gemeinschaft,mountain,,2,2,Q2342048,Steling,score_gate,score_3.8_below_5.0
+BE,BE336,Bezirk Verviers — Deutschsprachige Gemeinschaft,mountain,,2,2,Q21765762,Meisenberg,photo_gate,imgs_0
+BG,BG312,Montana,mountain,,2,2,Q12296633,Todorini Kukli,photo_gate,imgs_0
+BG,BG312,Montana,mountain,,2,2,Q2452229,Tri Chuke,photo_gate,imgs_2
+BG,BG312,Montana,mountain,,2,2,Q2452229,Tri Chuke,photo_gate,imgs_2
+BG,BG313,Vratsa,mountain,,2,2,,,,
+BE,BE343,Arr. Marche-en-Famenne,mountain,,2,2,Q19947273,Col de Roche-à-Frêne,photo_gate,imgs_0
+BE,BE344,Arr. Neufchâteau,mountain,,2,2,,,,
+BG,BG331,Varna,mountain,,2,2,,,,
+BG,BG315,Lovech,mountain,,2,2,Q7924249,Vezhen Peak,score_gate,score_4.6_below_5.0
+BG,BG315,Lovech,mountain,,2,2,Q6535848,Levski Peak (Bulgaria),photo_gate,imgs_1
+BG,BG315,Lovech,mountain,,2,2,Q12296294,Тетевенска Баба,photo_gate,imgs_0
+BG,BG322,Gabrovo,mountain,,2,2,,,,
+BG,BG324,Razgrad,mountain,,2,2,,,,
+BG,BG342,Sliven,mountain,,2,2,Q12299263,Chumerna,photo_gate,imgs_1
+BG,BG342,Sliven,mountain,,2,2,Q2012598,Bratan,photo_gate,imgs_0
+BG,BG342,Sliven,mountain,,2,2,Q11833913,Razbojna,photo_gate,imgs_0
+BG,BG333,Shumen,mountain,,2,2,,,,
+BG,BG334,Targovishte,mountain,,2,2,,,,
+BG,BG341,Burgas,mountain,,2,2,,,,
+BG,BG423,Pazardzhik,mountain,,2,2,Q26144,Belmeken (peak),score_gate,score_3.9_below_5.0
+BG,BG423,Pazardzhik,mountain,,2,2,Q33137781,Chernovets,photo_gate,imgs_0
+BG,BG423,Pazardzhik,mountain,,2,2,Q12277138,Голяма Сюткя,photo_gate,imgs_0
+BG,BG425,Kardzhali,mountain,,2,2,,,,
+BG,BG414,Pernik,mountain,,2,2,Q202098,Ruy (mountain),score_gate,score_3.8_below_5.0
+BG,BG414,Pernik,mountain,,2,2,Q12279222,Dupevitsa,photo_gate,imgs_0
+BG,BG414,Pernik,mountain,,2,2,Q12275193,Vetrushka,photo_gate,imgs_0
+BG,BG415,Kyustendil,mountain,,2,2,Q46499,Ruen (mountain),photo_gate,imgs_4
+BG,BG415,Kyustendil,mountain,,2,2,Q12275221,Viden,photo_gate,imgs_1
+BG,BG415,Kyustendil,mountain,,2,2,Q12275677,Връшник,photo_gate,imgs_0
+BG,BG421,Plovdiv,mountain,,3,2,Q894703,Botev Peak,photo_gate,imgs_6
+BG,BG422,Haskovo,mountain,,2,2,Q12299321,Scheynovets,photo_gate,imgs_0
+BG,BG422,Haskovo,mountain,,2,2,Q9375421,Вишеград,photo_gate,imgs_0
+CH,CH023,Solothurn,mountain,,2,2,,,,
+CH,CH025,Jura,mountain,,2,2,Q15231,Mont Raimeux,score_gate,score_4.1_below_5.0
+CH,CH011,Vaud,mountain,,2,2,Q1750006,Le Tarent,score_gate,score_4.6_below_5.0
+CH,CH056,Graubünden / Grigioni / Grischun,mountain,,10,2,Q15132,Piz Bernina,photo_gate,imgs_6
+CH,CH056,Graubünden / Grigioni / Grischun,mountain,,10,2,Q668594,Piz Kesch,photo_gate,imgs_6
+CH,CH056,Graubünden / Grigioni / Grischun,mountain,,10,2,Q675543,Piz Linard,photo_gate,imgs_6
+CH,CH032,Basel-Landschaft,mountain,,2,2,,,,
+CH,CH033,Aargau,mountain,,2,2,,,,
+CH,CH040,Zürich,mountain,,2,2,,,,
+CH,CH051,Glarus,mountain,,2,2,,,,
+CZ,CZ020,Středočeský kraj,mountain,,4,2,Q10817953,Tok,score_gate,score_4.2_below_5.0
+CZ,CZ020,Středočeský kraj,mountain,,4,2,Q1926427,Mezivrata,photo_gate,imgs_2
+CZ,CZ020,Středočeský kraj,mountain,,4,2,Q1872363,Louštín,score_gate,score_3.5_below_5.0
+CZ,CZ031,Jihočeský kraj,mountain,,5,2,Q700271,Plechý / Plöckenstein,score_gate,score_4.9_below_5.0
+CZ,CZ031,Jihočeský kraj,mountain,,5,2,Q12033443,Libín,score_gate,score_4.8_below_5.0
+CZ,CZ031,Jihočeský kraj,mountain,,5,2,Q12029654,Knížecí stolec,score_gate,score_4.1_below_5.0
+CH,CH061,Luzern,mountain,,2,2,,,,
+CH,CH062,Uri,mountain,,2,2,Q15133,Dammastock,score_gate,score_4.7_below_5.0
+CH,CH063,Schwyz,mountain,,3,2,Q15141,Bös Fulen,score_gate,score_4.4_below_5.0
+CH,CH066,Zug,mountain,,2,2,,,,
+CZ,CZ052,Královéhradecký kraj,mountain,,6,2,Q617511,Sněžka,photo_gate,imgs_6
+CZ,CZ052,Královéhradecký kraj,mountain,,6,2,Q9213145,Dvorský les,photo_gate,imgs_2
+CZ,CZ052,Královéhradecký kraj,mountain,,6,2,Q11750078,Královecký Špičák,photo_gate,imgs_1
+CZ,CZ041,Karlovarský kraj,mountain,,4,2,Q1591405,Vladař,score_gate,score_4.8_below_5.0
+CZ,CZ041,Karlovarský kraj,mountain,,4,2,Q12033059,Lesný,photo_gate,imgs_3
+CZ,CZ041,Karlovarský kraj,mountain,,4,2,Q12020585,Hradiště,score_gate,score_3.2_below_5.0
+CZ,CZ051,Liberecký kraj,mountain,,6,2,Q938859,Kotel,score_gate,score_4.9_below_5.0
+CZ,CZ051,Liberecký kraj,mountain,,6,2,Q2529674,Vlhošť,score_gate,score_4.9_below_5.0
+CZ,CZ051,Liberecký kraj,mountain,,6,2,Q1752524,Smrk (Jizera Mountains),score_gate,score_4.8_below_5.0
+CZ,CZ064,Jihomoravský kraj,mountain,,3,2,Q1625881,Hradisko,score_gate,score_3.9_below_5.0
+DE,DE111,"Stuttgart, Stadtkreis",mountain,,2,2,,,,
+DE,DE113,Esslingen,mountain,,2,2,,,,
+DE,DE114,Göppingen,mountain,,2,2,,,,
+CZ,CZ072,Zlínský kraj,mountain,,4,2,Q3487012,Vysoká (Hostýn-Vsetín Mountains),photo_gate,imgs_3
+CZ,CZ072,Zlínský kraj,mountain,,4,2,Q12029576,Kláštov,photo_gate,imgs_3
+CZ,CZ072,Zlínský kraj,mountain,,4,2,Q1738421,Kelčský Javorník,score_gate,score_4.1_below_5.0
+DE,DE124,Rastatt,mountain,,2,2,,,,
+DE,DE127,Neckar-Odenwald-Kreis,mountain,,2,2,Q896713,Katzenbuckel,score_gate,score_4.8_below_5.0
+DE,DE116,Rems-Murr-Kreis,mountain,,2,2,,,,
+DE,DE119,Hohenlohekreis,mountain,,2,2,,,,
+DE,DE11D,Ostalbkreis,mountain,,2,2,,,,
+DE,DE133,Emmendingen,mountain,,2,2,Q314746,Kandel (mountain),score_gate,score_4.5_below_5.0
+DE,DE134,Ortenaukreis,mountain,,2,2,,,,
+DE,DE13A,Waldshut,mountain,,2,2,,,,
+DE,DE141,Reutlingen,mountain,,2,2,,,,
+DE,DE143,Zollernalbkreis,mountain,,2,2,,,,
+DE,DE145,Alb-Donau-Kreis,mountain,,2,2,,,,
+DE,DE135,Rottweil,mountain,,2,2,,,,
+DE,DE136,Schwarzwald-Baar-Kreis,mountain,,2,2,,,,
+DE,DE137,Tuttlingen,mountain,,2,2,Q186527,Lemberg (Swabian Jura),score_gate,score_4.0_below_5.0
+DE,DE12A,Calw,mountain,,2,2,,,,
+DE,DE12B,Enzkreis,mountain,,2,2,,,,
+DE,DE12C,Freudenstadt,mountain,,2,2,,,,
+DE,DEA28,Euskirchen,mountain,,2,2,,,,
+DE,DEB12,Ahrweiler,mountain,,2,2,,,,
+DE,DEB23,Eifelkreis Bitburg-Prüm,mountain,,2,2,,,,
+DE,DEB13,Altenkirchen (Westerwald),mountain,,2,2,,,,
+DE,DEB14,Bad Kreuznach,mountain,,2,2,Q1332043,Ellerspring,photo_gate,imgs_3
+DE,DE929,Region Hannover,mountain,,2,2,Q895582,Bröhn,photo_gate,imgs_1
+DE,DEB25,Trier-Saarburg,mountain,,2,2,,,,
+DE,DEB15,Birkenfeld,mountain,,2,2,,,,
+DE,DEB18,Neuwied,mountain,,2,2,,,,
+DE,DEB3C,Bad Dürkheim,mountain,,2,2,,,,
+DE,DEB1C,Cochem-Zell,mountain,,2,2,,,,
+DE,DEE0A,Mansfeld-Südharz,mountain,,2,2,,,,
+DE,DEB3H,Südliche Weinstraße,mountain,,2,2,Q1722544,Kalmit,score_gate,score_4.9_below_5.0
+DE,DEB3J,Mainz-Bingen,mountain,,2,2,,,,
+DE,DEA2D,Städteregion Aachen,mountain,,2,2,,,,
+DE,DED2C,Bautzen,mountain,,2,2,,,,
+DE,DED2D,Görlitz,mountain,,2,2,,,,
+DE,DE916,Goslar,mountain,,2,2,Q314735,Wurmberg (Harz),score_gate,score_3.6_below_5.0
+DE,DED2F,Sächsische Schweiz-Osterzgebirge,mountain,,2,2,,,,
+DE,DEA46,Minden-Lübbecke,mountain,,2,2,Q1593851,Heidbrink,score_gate,score_4.7_below_5.0
+DE,DED43,Mittelsachsen,mountain,,2,2,,,,
+DE,DEA56,Ennepe-Ruhr-Kreis,mountain,,2,2,,,,
+DE,DED44,Vogtlandkreis,mountain,,2,2,,,,
+DE,DEA58,Märkischer Kreis,mountain,,2,2,Q1998043,Nordhelle (Ebbe Mountains),score_gate,score_3.6_below_5.0
+DE,DE926,Holzminden,mountain,,2,2,Q1279779,Ebersnacken,score_gate,score_4.0_below_5.0
+DE,DEA5B,Soest,mountain,,2,2,,,,
+DE,DE733,Hersfeld-Rotenburg,mountain,,2,2,Q1312649,Eisenberg (Knüll),score_gate,score_4.4_below_5.0
+DE,DE735,Schwalm-Eder-Kreis,mountain,,2,2,Q127627,Wüstegarten,score_gate,score_4.5_below_5.0
+DE,DE736,Waldeck-Frankenberg,mountain,,2,2,,,,
+DE,DE228,"Passau, Landkreis",mountain,,2,2,,,,
+DE,DE229,Regen,mountain,,3,2,Q260073,Großer Arber,photo_gate,imgs_6
+DE,DE229,Regen,mountain,,3,2,Q260073,Großer Arber,photo_gate,imgs_6
+DE,DE22B,Straubing-Bogen,mountain,,2,2,Q1402730,Hirschenstein (Bavarian Forest),score_gate,score_4.5_below_5.0
+DE,DE147,Bodenseekreis,mountain,,2,2,,,,
+DE,DE259,Nürnberger Land,mountain,,2,2,Q1948151,Moritzberg (Franconian Jura),score_gate,score_3.8_below_5.0
+DE,DE148,Ravensburg,mountain,,2,2,Q882913,Schwarzer Grat,score_gate,score_3.2_below_5.0
+DE,DE149,Sigmaringen,mountain,,2,2,,,,
+DE,DE264,"Aschaffenburg, Landkreis",mountain,,2,2,,,,
+DE,DE265,Bad Kissingen,mountain,,2,2,Q1158648,Dammersfeldkuppe,score_gate,score_4.1_below_5.0
+DE,DE239,Schwandorf,mountain,,2,2,,,,
+DE,DE266,Rhön-Grabfeld,mountain,,2,2,Q464488,Kreuzberg (Rhön),score_gate,score_4.4_below_5.0
+DE,DE245,"Bamberg, Landkreis",mountain,,2,2,,,,
+DE,DE715,Bergstraße,mountain,,2,2,Q880765,Neunkircher Höhe,score_gate,score_3.8_below_5.0
+DE,DE246,"Bayreuth, Landkreis",mountain,,2,2,,,,
+DE,DE718,Hochtaunuskreis,mountain,,3,2,Q677873,Großer Feldberg,photo_gate,imgs_5
+DE,DE718,Hochtaunuskreis,mountain,,3,2,Q677873,Großer Feldberg,photo_gate,imgs_5
+DE,DE718,Hochtaunuskreis,mountain,,3,2,Q677873,Großer Feldberg,photo_gate,imgs_5
+DE,DE71B,Odenwaldkreis,mountain,,2,2,,,,
+DE,DE71D,Rheingau-Taunus-Kreis,mountain,,2,2,Q603680,Hohe Wurzel (Taunus),score_gate,score_4.5_below_5.0
+DE,DE249,"Hof, Landkreis",mountain,,2,2,Q883084,Döbraberg,score_gate,score_4.2_below_5.0
+DE,DE24A,Kronach,mountain,,2,2,,,,
+DE,DE24B,Kulmbach,mountain,,2,2,,,,
+DE,DE722,Lahn-Dill-Kreis,mountain,,2,2,,,,
+DE,DE723,Limburg-Weilburg,mountain,,2,2,,,,
+DE,DE21M,Traunstein,mountain,,3,2,Q244657,Zwiesel (mountain),photo_gate,imgs_5
+DE,DE21N,Weilheim-Schongau,mountain,,2,2,,,,
+DE,DE732,Fulda,mountain,,3,2,Q2297969,Soisberg,score_gate,score_3.6_below_5.0
+DE,DE27A,Lindau (Bodensee),mountain,,2,2,,,,
+DE,DE256,"Ansbach, Landkreis",mountain,,2,2,,,,
+ES,ES423,Cuenca,mountain,,2,2,,,,
+GR,EL643,Evrytania,mountain,,2,2,Q391510,Tymfristos,score_gate,score_4.1_below_5.0
+GR,EL643,Evrytania,mountain,,2,2,Q12878662,Kaliakouda,score_gate,score_3.0_below_5.0
+ES,ES424,Guadalajara,mountain,,2,2,,,,
+GR,EL645,Fokida,mountain,,2,2,Q730750,Mount Giona,photo_gate,imgs_4
+GR,EL645,Fokida,mountain,,2,2,Q1244234,Vardousia,photo_gate,imgs_4
+ES,ES414,Palencia,mountain,,2,2,,,,
+ES,ES415,Salamanca,mountain,,2,2,Q2438981,Peña de Francia,score_gate,score_3.3_below_5.0
+ES,ES412,Burgos,mountain,,2,2,Q48781639,Pico San Millán,score_gate,score_3.5_below_5.0
+GR,EL652,Korinthia,mountain,,2,2,Q1232572,Mount Kyllini,photo_gate,imgs_5
+GR,EL652,Korinthia,mountain,,2,2,Q7086865,Oligyrtos,photo_gate,imgs_0
+ES,ES416,Segovia,mountain,,2,2,Q5964846,La Pinareja,score_gate,score_3.9_below_5.0
+ES,ES416,Segovia,mountain,,2,2,Q8537996,Peña Cebollera,score_gate,score_3.9_below_5.0
+ES,ES425,Toledo,mountain,,2,2,,,,
+ES,ES130,Cantabria,mountain,,3,2,Q6024395,Morra de Lechugales,photo_gate,imgs_1
+ES,ES130,Cantabria,mountain,,3,2,Q5847260,Pico Jano,score_gate,score_3.7_below_5.0
+ES,ES130,Cantabria,mountain,,3,2,Q5657857,Peña Prieta,score_gate,score_3.0_below_5.0
+GR,EL653,"Lakonia, Messinia",mountain,,3,2,Q21874612,Profitis Ilias,photo_gate,imgs_2
+GR,EL653,"Lakonia, Messinia",mountain,,3,2,Q602538,Ithome,score_gate,score_4.8_below_5.0
+ES,ES417,Soria,mountain,,2,2,,,,
+ES,ES213,Bizkaia,mountain,,5,2,Q557130,Ganekogorta,score_gate,score_4.9_below_5.0
+ES,ES213,Bizkaia,mountain,,5,2,Q557367,Oiz,score_gate,score_4.6_below_5.0
+ES,ES213,Bizkaia,mountain,,5,2,Q557452,Sollube,photo_gate,imgs_3
+ES,ES111,A Coruña,mountain,,2,2,Q35644,Mount Pindo,score_gate,score_4.3_below_5.0
+GR,EL623,"Ithaki, Kefallinia",mountain,,2,2,Q1343616,Mount Ainos,score_gate,score_4.9_below_5.0
+ES,ES112,Lugo,mountain,,2,2,,,,
+GR,EL624,Lefkada,mountain,,2,2,Q5353601,Elati (mountain),photo_gate,imgs_4
+ES,ES419,Zamora,mountain,,2,2,Q3328243,Trevinca,score_gate,score_3.4_below_5.0
+GR,EL631,Aitoloakarnania,mountain,,2,2,Q3561875,Varasova,score_gate,score_2.9_below_5.0
+GR,EL631,Aitoloakarnania,mountain,,2,2,Q12879148,Klokova,photo_gate,imgs_3
+GR,EL631,Aitoloakarnania,mountain,,2,2,Q1227803,Panaitoliko (mountain range),photo_gate,imgs_4
+ES,ES421,Albacete,mountain,,2,2,Q6074964,Pico Almenara,photo_gate,imgs_2
+GR,EL632,Achaia,mountain,,2,2,Q1363703,Mount Erymanthos,score_gate,score_3.8_below_5.0
+GR,EL632,Achaia,mountain,,2,2,Q655702,Panachaiko,score_gate,score_2.5_below_5.0
+GR,EL633,Ileia,mountain,,2,2,Q6488235,Mount Lapithas,photo_gate,imgs_2
+ES,ES114,Pontevedra,mountain,,2,2,,,,
+GR,EL641,Voiotia,mountain,,2,2,Q215516,Mount Helicon,photo_gate,imgs_5
+ES,ES422,Ciudad Real,mountain,,2,2,Q2602926,Sierra Madrona,score_gate,score_3.2_below_5.0
+DE,DEG0G,Weimarer Land,mountain,,2,2,,,,
+GR,EL531,"Grevena, Kozani",mountain,,2,2,Q3554874,Vourinos,photo_gate,imgs_5
+GR,EL531,"Grevena, Kozani",mountain,,2,2,Q3555791,Lyngos,photo_gate,imgs_0
+GR,EL531,"Grevena, Kozani",mountain,,2,2,Q3565330,Cambunian mountains,photo_gate,imgs_0
+DE,DEG0K,Saale-Orla-Kreis,mountain,,2,2,,,,
+GR,EL532,Kastoria,mountain,,2,2,Q3556849,Voio,photo_gate,imgs_0
+GR,EL411,"Lesvos, Limnos",mountain,,2,2,,,,
+DE,DEG0Q,Schmalkalden-Meiningen,mountain,,2,2,,,,
+GR,EL541,"Arta, Preveza",mountain,,2,2,Q754695,Athamanika,photo_gate,imgs_0
+GR,EL541,"Arta, Preveza",mountain,,2,2,Q3555829,Xerovouni,photo_gate,imgs_0
+GR,EL413,Chios,mountain,,2,2,,,,
+DE,DEG0T,Ilm-Kreis,mountain,,2,2,,,,
+DE,DEG0U,Saalfeld-Rudolstadt,mountain,,2,2,Q1791513,Kulm (Saalfeld),score_gate,score_3.4_below_5.0
+GR,EL542,Thesprotia,mountain,,2,2,Q258996,Murgana,photo_gate,imgs_3
+GR,EL542,Thesprotia,mountain,,2,2,Q258996,Murgana,photo_gate,imgs_3
+DE,DEG0V,Sonneberg,mountain,,2,2,,,,
+GR,EL431,Irakleio,mountain,,2,2,Q3321879,Mount Juktas,photo_gate,imgs_3
+GR,EL432,Lasithi,mountain,,2,2,Q1851640,Spathi,photo_gate,imgs_2
+GR,EL432,Lasithi,mountain,,2,2,Q7798619,Thrypti,photo_gate,imgs_4
+GR,EL433,Rethymni,mountain,,3,2,Q3559973,Mount Kedros,photo_gate,imgs_5
+GR,EL433,Rethymni,mountain,,3,2,Q25164285,Timios Stavros,score_gate,score_4.5_below_5.0
+GR,EL433,Rethymni,mountain,,3,2,Q67511728,Mount Agathias,photo_gate,imgs_1
+GR,EL511,Evros,mountain,,2,2,Q2223986,Fengari,photo_gate,imgs_1
+GR,EL512,Xanthi,mountain,,2,2,Q20500600,Gyftokastro,photo_gate,imgs_0
+GR,EL512,Xanthi,mountain,,2,2,Q20500600,Gyftokastro,photo_gate,imgs_0
+GR,EL513,Rodopi,mountain,,2,2,Q12883200,Papikio,photo_gate,imgs_2
+GR,EL521,Imathia,mountain,,2,2,,,,
+GR,EL522,Thessaloniki,mountain,,2,2,Q1076591,Mount Chortiatis,photo_gate,imgs_4
+DE,DEG06,Eichsfeld,mountain,,2,2,,,,
+DE,DEG09,Unstrut-Hainich-Kreis,mountain,,2,2,,,,
+GR,EL523,Kilkis,mountain,,2,2,,,,
+GR,EL524,Pella,mountain,,2,2,Q3394352,Mount Paiko,score_gate,score_2.6_below_5.0
+GR,EL524,Pella,mountain,,2,2,Q16328923,Pinovo,photo_gate,imgs_1
+GR,EL524,Pella,mountain,,2,2,Q16328923,Pinovo,photo_gate,imgs_1
+GR,EL301,Voreios Tomeas Athinon,mountain,,2,2,,,,
+DE,DEG0A,Kyffhäuserkreis,mountain,,2,2,Q1448454,Kulpenberg,score_gate,score_4.0_below_5.0
+DE,DEG0C,Gotha,mountain,,2,2,,,,
+GR,EL525,Pieria,mountain,,2,2,,,,
+GR,EL526,Serres,mountain,,2,2,Q2742554,Slavyanka (mountain),photo_gate,imgs_4
+GR,EL526,Serres,mountain,,2,2,Q2458111,Tumba Peak (Belasica),photo_gate,imgs_3
+GR,EL526,Serres,mountain,,2,2,Q3555954,Vrontous,photo_gate,imgs_0
+GR,EL306,Dytiki Attiki,mountain,,2,2,,,,
+DE,DEG0E,Hildburghausen,mountain,,2,2,,,,
+FR,FRC12,Nièvre,mountain,,2,2,,,,
+FR,FRC21,Doubs,mountain,,2,2,Q960584,Mont d'Or (Jura Mountains),score_gate,score_3.5_below_5.0
+FR,FRC22,Jura,mountain,,2,2,,,,
+FR,FRC13,Saône-et-Loire,mountain,,2,2,Q2200332,Haut-Folin,photo_gate,imgs_6
+FR,FRF11,Bas-Rhin,mountain,,2,2,Q1399583,Grand Wintersberg,photo_gate,imgs_6
+FR,FRF11,Bas-Rhin,mountain,,2,2,Q1242068,Mont Donon,score_gate,score_4.9_below_5.0
+FR,FRF11,Bas-Rhin,mountain,,2,2,Q1399583,Grand Wintersberg,score_gate,score_4.0_below_5.0
+FI,FI1D8,Kainuu,mountain,,2,2,Q18682027,Kivesvaara,photo_gate,imgs_2
+FI,FI1D8,Kainuu,mountain,,2,2,Q11886501,Paljakka,photo_gate,imgs_0
+FI,FI1D8,Kainuu,mountain,,2,2,Q18682317,Naulavaara,photo_gate,imgs_0
+FR,FRC11,Côte-d’Or,mountain,,2,2,,,,
+ES,ES533,Menorca,mountain,,2,2,Q474901,El Toro,score_gate,score_4.3_below_5.0
+ES,ES612,Cádiz,mountain,,2,2,,,,
+ES,ES613,Córdoba,mountain,,2,2,,,,
+ES,ES614,Granada,mountain,,4,2,Q209528,Mulhacén,photo_gate,imgs_6
+ES,ES614,Granada,mountain,,4,2,Q8538308,Sierra de La Sagra,score_gate,score_4.3_below_5.0
+ES,ES614,Granada,mountain,,4,2,Q1540798,La Maroma,score_gate,score_3.9_below_5.0
+ES,ES431,Badajoz,mountain,,2,2,,,,
+ES,ES615,Huelva,mountain,,2,2,,,,
+ES,ES618,Sevilla,mountain,,2,2,,,,
+ES,ES620,Murcia,mountain,,2,2,Q2472707,Sierra del Carche,photo_gate,imgs_1
+ES,ES703,El Hierro,mountain,,2,2,Q6075080,Pico de Malpaso,score_gate,score_4.4_below_5.0
+ES,ES704,Fuerteventura,mountain,,2,2,,,,
+ES,ES706,La Gomera,mountain,,3,2,Q1568788,Roque de Agando,score_gate,score_3.2_below_5.0
+ES,ES708,Lanzarote,mountain,,3,2,Q739109,Monte Corona,score_gate,score_4.2_below_5.0
+ES,ES709,Tenerife,mountain,,3,2,Q2092383,Pico Viejo,score_gate,score_4.8_below_5.0
+ES,ES709,Tenerife,mountain,,3,2,Q5494685,Mount Guajara,score_gate,score_4.5_below_5.0
+ES,ES709,Tenerife,mountain,,3,2,Q2013047,Teide Observatory,score_gate,score_4.1_below_5.0
+ES,ES522,Castellón/Castelló,mountain,,2,2,Q3571460,Penyagolosa,score_gate,score_3.9_below_5.0
+ES,ES523,Valencia/València,mountain,,2,2,,,,
+FR,FRY10,Guadeloupe,mountain,,2,2,,,,
+HR,HR031,Primorsko-goranska županija,mountain,,4,2,Q48830819,Kamenjak,photo_gate,imgs_3
+HR,HR031,Primorsko-goranska županija,mountain,,4,2,Q137884685,Televrina,photo_gate,imgs_3
+HR,HR031,Primorsko-goranska županija,mountain,,4,2,Q48877097,Gorice,photo_gate,imgs_1
+HR,HR034,Šibensko-kninska županija,mountain,,3,2,Q3511054,Promina (mountain),photo_gate,imgs_0
+HR,HR034,Šibensko-kninska županija,mountain,,3,2,Q3443025,Veliki Kozjak,photo_gate,imgs_2
+HR,HR034,Šibensko-kninska županija,mountain,,3,2,Q14537105,Moseć,photo_gate,imgs_0
+FR,FRK25,Loire,mountain,,2,2,,,,
+FR,FRK26,Rhône,mountain,,2,2,,,,
+HR,HR036,Istarska županija,mountain,,2,2,Q9368358,Veliki Planik,photo_gate,imgs_1
+HR,HR036,Istarska županija,mountain,,2,2,Q9368358,Veliki Planik,photo_gate,imgs_1
+FR,FRY20,Martinique ,mountain,,2,2,,,,
+FR,FRK13,Haute-Loire,mountain,,2,2,,,,
+FR,FRL01,Alpes-de-Haute-Provence,mountain,,3,2,Q2827877,Aiguille de Chambeyron,photo_gate,imgs_2
+FR,FRL01,Alpes-de-Haute-Provence,mountain,,3,2,Q1403062,Brec de Chambeyron,score_gate,score_4.7_below_5.0
+FR,FRL01,Alpes-de-Haute-Provence,mountain,,3,2,Q1758304,Mont Pelat,score_gate,score_4.5_below_5.0
+FR,FRY40,La Réunion,mountain,,2,2,,,,
+HR,HR064,Krapinsko-zagorska županija,mountain,,2,2,Q2447461,Ivanščica,photo_gate,imgs_3
+HR,HR064,Krapinsko-zagorska županija,mountain,,2,2,Q10681491,Strahinjčica,photo_gate,imgs_0
+FR,FRL04,Bouches-du-Rhône,mountain,,2,2,,,,
+HR,HR065,Zagrebačka županija,mountain,,2,2,Q16110441,Japetić,photo_gate,imgs_0
+HR,HR065,Zagrebačka županija,mountain,,2,2,Q1903511,Martin Breg,photo_gate,imgs_1
+HR,HR023,Požeško-slavonska županija,mountain,,2,2,Q1269402,Psunj,photo_gate,imgs_3
+HR,HR023,Požeško-slavonska županija,mountain,,2,2,Q3437056,Ravna Gora (mountain),photo_gate,imgs_0
+HR,HR023,Požeško-slavonska županija,mountain,,2,2,Q3514528,Požeška gora,photo_gate,imgs_0
+FR,FRL05,Var,mountain,,2,2,,,,
+HR,HR024,Brodsko-posavska županija,mountain,,2,2,,,,
+FR,FRK22,Ardèche,mountain,,2,2,Q1267547,Mont Mézenc,score_gate,score_4.9_below_5.0
+HR,HR025,Osječko-baranjska županija,mountain,,2,2,Q1559425,Dilj,photo_gate,imgs_0
+FR,FRK23,Drôme,mountain,,2,2,,,,
+FR,FRJ25,Lot,mountain,,2,2,,,,
+FR,FRI23,Haute-Vienne,mountain,,2,2,,,,
+FR,FRJ27,Tarn,mountain,,2,2,,,,
+FR,FRF34,Vosges,mountain,,2,2,,,,
+FR,FRK11,Allier,mountain,,2,2,,,,
+FR,FRF21,Ardennes,mountain,,2,2,,,,
+FR,FRJ13,Hérault,mountain,,2,2,,,,
+FR,FRI11,Dordogne,mountain,,2,2,,,,
+FR,FRF24,Haute-Marne,mountain,,2,2,,,,
+FR,FRJ22,Aveyron,mountain,,2,2,,,,
+FR,FRI15,Pyrénées-Atlantiques,mountain,,4,2,Q2030914,Pic d'Anie,photo_gate,imgs_6
+FR,FRI15,Pyrénées-Atlantiques,mountain,,4,2,Q2030404,Pic d'Orhy,score_gate,score_4.7_below_5.0
+FR,FRI15,Pyrénées-Atlantiques,mountain,,4,2,Q2865978,Artzamendi,photo_gate,imgs_6
+FR,FRI21,Corrèze,mountain,,2,2,,,,
+FR,FRI22,Creuse,mountain,,2,2,,,,
+IT,ITH54,Modena,mountain,,3,2,Q1945818,Monte Cimone,photo_gate,imgs_6
+IT,ITH55,Bologna,mountain,,2,2,Q3693769,Corno alle Scale,score_gate,score_4.8_below_5.0
+IT,ITI22,Terni,mountain,,2,2,,,,
+IT,ITG2D,Sassari,mountain,,2,2,,,,
+IT,ITG2E,Nuoro,mountain,,2,2,Q385753,Punta La Marmora,photo_gate,imgs_3
+IT,ITI44,Latina,mountain,,2,2,Q3861840,Monte Petrella,photo_gate,imgs_0
+IT,ITI45,Frosinone,mountain,,2,2,Q3861274,Monte Cairo,photo_gate,imgs_0
+IT,ITI31,Pesaro e Urbino,mountain,,3,2,Q378558,Monte Carpegna,score_gate,score_4.5_below_5.0
+IT,ITI31,Pesaro e Urbino,mountain,,3,2,Q378558,Monte Carpegna,photo_gate,imgs_6
+IT,ITI32,Ancona,mountain,,2,2,,,,
+IT,ITG2G,Oristano,mountain,,2,2,,,,
+IT,ITI33,Macerata,mountain,,2,2,,,,
+IT,ITI35,Fermo,mountain,,2,2,,,,
+IT,ITG2H,Sud Sardegna,mountain,,2,2,,,,
+IT,ITI41,Viterbo,mountain,,2,2,Q3861452,Monte Cimino,score_gate,score_4.7_below_5.0
+MK,MK004,Jugoistočen,mountain,,2,2,Q2381742,Ograzhden (mountain),photo_gate,imgs_6
+MK,MK004,Jugoistočen,mountain,,2,2,Q12290742,Plavuš,photo_gate,imgs_3
+MK,MK004,Jugoistočen,mountain,,2,2,Q2381742,Ograzhden (mountain),photo_gate,imgs_6
+IT,ITI42,Rieti,mountain,,2,2,Q953994,Monte Terminillo,score_gate,score_4.4_below_5.0
+IT,ITI43,Roma,mountain,,2,2,Q3862004,Monte Semprevisa,score_gate,score_4.2_below_5.0
+MK,MK001,Vardarski,mountain,,3,2,Q2733631,Kožuf,score_gate,score_3.2_below_5.0
+MK,MK001,Vardarski,mountain,,3,2,Q12294161,Solunska Glava,score_gate,score_4.1_below_5.0
+MK,MK001,Vardarski,mountain,,3,2,Q12908705,Мокра Планина,photo_gate,imgs_0
+MK,MK002,Istočen,mountain,,2,2,Q2593389,Vlahina,score_gate,score_2.7_below_5.0
+MK,MK002,Istočen,mountain,,2,2,Q3043915,Plačkovica,score_gate,score_3.0_below_5.0
+MK,MK002,Istočen,mountain,,2,2,Q3072662,Голак,photo_gate,imgs_0
+IT,ITF65,Reggio Calabria,mountain,,2,2,Q3861112,Montalto (Aspromonte),photo_gate,imgs_2
+IT,ITG11,Trapani,mountain,,2,2,,,,
+IT,ITG12,Palermo,mountain,,3,2,Q965689,Pizzo Carbonara,photo_gate,imgs_3
+IT,ITG12,Palermo,mountain,,3,2,Q1772490,Rocca Busambra,score_gate,score_4.3_below_5.0
+IT,ITH34,Treviso,mountain,,2,2,,,,
+IT,ITH58,Forlì-Cesena,mountain,,2,2,,,,
+IT,ITH59,Rimini,mountain,,2,2,,,,
+IT,ITI11,Massa-Carrara,mountain,,2,2,,,,
+IT,ITI13,Pistoia,mountain,,2,2,,,,
+IT,ITG14,Agrigento,mountain,,2,2,,,,
+IT,ITI14,Firenze,mountain,,2,2,,,,
+IT,ITI15,Prato,mountain,,2,2,,,,
+IT,ITG15,Caltanissetta,mountain,,2,2,,,,
+IT,ITG16,Enna,mountain,,2,2,,,,
+IT,ITH41,Pordenone,mountain,,2,2,Q936906,Cima dei Preti,score_gate,score_4.7_below_5.0
+IT,ITI17,Pisa,mountain,,2,2,Q3862127,Monte Vitalba,photo_gate,imgs_0
+IT,ITG17,Catania,mountain,,3,2,Q1059942,Monte Lauro,photo_gate,imgs_2
+IT,ITI19,Siena,mountain,,2,2,,,,
+IT,ITG18,Ragusa,mountain,,2,2,,,,
+IT,ITG19,Siracusa,mountain,,2,2,,,,
+IT,ITH44,Trieste,mountain,,2,2,,,,
+IT,ITH51,Piacenza,mountain,,2,2,,,,
+IT,ITI1A,Grosseto,mountain,,3,2,Q3693658,Le Cornate,photo_gate,imgs_2
+IT,ITH52,Parma,mountain,,2,2,,,,
+IT,ITI21,Perugia,mountain,,2,2,,,,
+IT,ITC31,Imperia,mountain,,2,2,,,,
+IT,ITC46,Bergamo,mountain,,3,2,Q2009944,Pizzo Coca,photo_gate,imgs_6
+IT,ITC46,Bergamo,mountain,,3,2,Q3905978,Pizzo Arera,score_gate,score_3.6_below_5.0
+IT,ITF47,Bari,mountain,,2,2,,,,
+IT,ITF48,Barletta-Andria-Trani,mountain,,2,2,,,,
+IT,ITC33,Genova,mountain,,2,2,Q1515769,Monte Maggiorasca,score_gate,score_4.8_below_5.0
+IT,ITC47,Brescia,mountain,,3,2,Q3685972,Concarena,score_gate,score_4.3_below_5.0
+IT,ITC34,La Spezia,mountain,,2,2,,,,
+IT,ITC48,Pavia,mountain,,2,2,,,,
+IT,ITF52,Matera,mountain,,2,2,,,,
+IT,ITC43,Lecco,mountain,,3,2,Q573856,Monte Legnone,score_gate,score_4.6_below_5.0
+IT,ITF63,Catanzaro,mountain,,2,2,,,,
+IT,ITF64,Vibo Valentia,mountain,,2,2,,,,
+IT,ITF61,Cosenza,mountain,,3,2,Q3957956,Serra Dolcedorme,photo_gate,imgs_2
+IT,ITF62,Crotone,mountain,,2,2,,,,
+HU,HU311,Borsod-Abaúj-Zemplén,mountain,,2,2,Q535684,Avas,score_gate,score_3.8_below_5.0
+HU,HU311,Borsod-Abaúj-Zemplén,mountain,,2,2,Q1118658,"Kopasz Hill, Tokaj",score_gate,score_3.8_below_5.0
+HU,HU311,Borsod-Abaúj-Zemplén,mountain,,2,2,Q871818,Cserehát,photo_gate,imgs_6
+IT,ITF11,L’Aquila,mountain,,3,2,Q2631149,Monte Velino,score_gate,score_4.5_below_5.0
+IT,ITF11,L’Aquila,mountain,,3,2,Q3862123,Monte Viglio,score_gate,score_4.0_below_5.0
+IT,ITF11,L’Aquila,mountain,,3,2,Q31619759,Monte Magnola,photo_gate,imgs_4
+IT,ITF12,Teramo,mountain,,2,2,Q636540,Corno Grande,photo_gate,imgs_6
+IT,ITF12,Teramo,mountain,,2,2,Q3861600,Monte Gorzano,photo_gate,imgs_2
+IT,ITF12,Teramo,mountain,,2,2,Q636540,Corno Grande,photo_gate,imgs_6
+IT,ITF13,Pescara,mountain,,2,2,,,,
+IT,ITF14,Chieti,mountain,,2,2,,,,
+IT,ITF21,Isernia,mountain,,2,2,,,,
+IT,ITF22,Campobasso,mountain,,2,2,,,,
+IT,ITF31,Caserta,mountain,,2,2,Q3861747,Monte Miletto,photo_gate,imgs_3
+IT,ITF32,Benevento,mountain,,2,2,,,,
+IT,ITC12,Vercelli,mountain,,2,2,Q3676718,Cima Altemberg,score_gate,score_3.6_below_5.0
+IT,ITC12,Vercelli,mountain,,2,2,Q30418,Parrotspitze,score_gate,score_3.2_below_5.0
+IT,ITC13,Biella,mountain,,2,2,Q2281815,Monte Bo,photo_gate,imgs_3
+IT,ITC15,Novara,mountain,,2,2,,,,
+IT,ITF34,Avellino,mountain,,2,2,Q3861439,Cervialto,photo_gate,imgs_0
+IT,ITF35,Salerno,mountain,,2,2,Q1139820,Cervati,photo_gate,imgs_0
+IT,ITC17,Asti,mountain,,2,2,,,,
+IT,ITF43,Taranto,mountain,,2,2,,,,
+IT,ITF44,Brindisi,mountain,,2,2,,,,
+IT,ITC18,Alessandria,mountain,,2,2,Q1945959,Monte delle Figne,score_gate,score_4.2_below_5.0
+NO,NO092,Agder,mountain,,2,2,Q4560175,Urdalsknuten,photo_gate,imgs_0
+NO,NO092,Agder,mountain,,2,2,Q20565386,Hovdefjell,photo_gate,imgs_0
+NO,NO092,Agder,mountain,,2,2,Q3439147,Kaldafjellet,photo_gate,imgs_0
+NO,NO094,Telemark,mountain,,3,2,Q17750776,Borgsjåbrotet,photo_gate,imgs_0
+NO,NO094,Telemark,mountain,,3,2,Q11982611,Kvannfjølli,photo_gate,imgs_0
+NO,NO094,Telemark,mountain,,3,2,Q3197524,Kistenuten,photo_gate,imgs_1
+PL,PL214,Krakowski,mountain,,2,2,Q9163728,Babica,photo_gate,imgs_3
+PL,PL218,Nowosądecki,mountain,,2,2,Q11784602,Mogielica,score_gate,score_4.4_below_5.0
+PL,PL218,Nowosądecki,mountain,,2,2,Q9302749,Radziejowa,score_gate,score_3.7_below_5.0
+NO,NO084,Akershus,mountain,,2,2,Q1769858,Fjellsjøkampen,photo_gate,imgs_1
+NO,NO084,Akershus,mountain,,2,2,Q4861188,Barlindåsen,photo_gate,imgs_1
+NO,NO084,Akershus,mountain,,2,2,Q1770011,Slavasshøgda,photo_gate,imgs_0
+NO,NO085,Buskerud,mountain,,2,2,Q1435305,Folarskardnuten,photo_gate,imgs_0
+NO,NO085,Buskerud,mountain,,2,2,Q17779147,Gråfjell,photo_gate,imgs_0
+NO,NO085,Buskerud,mountain,,2,2,Q17750936,Brennåsen,photo_gate,imgs_0
+NO,NO060,Trøndelag/Trööndelage,mountain,,3,2,Q4578891,Forbordsfjellet,photo_gate,imgs_3
+NO,NO060,Trøndelag/Trööndelage,mountain,,3,2,Q6189107,Jetnamsklumpen,photo_gate,imgs_1
+NO,NO060,Trøndelag/Trööndelage,mountain,,3,2,Q4732955,Allmannberget,photo_gate,imgs_3
+MK,MK007,Severoistočen,mountain,,2,2,Q20940603,Plavica,photo_gate,imgs_0
+MK,MK007,Severoistočen,mountain,,2,2,Q3400817,Zebrnjak,score_gate,score_3.1_below_5.0
+MK,MK007,Severoistočen,mountain,,2,2,Q2729058,Kozjak (mountain near Pčinja),score_gate,score_3.0_below_5.0
+RO,RO111,Bihor,mountain,,2,2,Q19709850,Cucurbăta Mare,photo_gate,imgs_3
+RS,RS212,Kolubarska oblast,mountain,,2,2,Q3029399,Povlen,score_gate,score_3.7_below_5.0
+RS,RS212,Kolubarska oblast,mountain,,2,2,Q3499768,Jablanik,score_gate,score_3.1_below_5.0
+RS,RS212,Kolubarska oblast,mountain,,2,2,Q3029465,Medvednik,photo_gate,imgs_2
+RO,RO313,Dâmboviţa,mountain,,2,2,Q31471835,Găvanele,photo_gate,imgs_0
+RO,RO112,Bistriţa-Năsăud,mountain,,2,2,Q18544549,"Vârful Omu, Munții Suhard",photo_gate,imgs_0
+RO,RO112,Bistriţa-Năsăud,mountain,,2,2,Q31489479,Roșu,photo_gate,imgs_1
+RS,RS215,Pomoravska oblast,mountain,,2,2,Q4837251,Baba (Serbia),score_gate,score_2.9_below_5.0
+RS,RS215,Pomoravska oblast,mountain,,2,2,Q1263329,Crni Vrh (Jagodina),photo_gate,imgs_0
+RO,RO113,Cluj,mountain,,2,2,Q15715565,Vârful Vlădeasa,photo_gate,imgs_0
+RO,RO113,Cluj,mountain,,2,2,Q536306,Vlădeasa Mountains,photo_gate,imgs_6
+RO,RO412,Gorj,mountain,,2,2,Q31485325,Gruiu,photo_gate,imgs_2
+RS,RS218,Šumadijska oblast,mountain,,2,2,Q1258696,Bukulja,photo_gate,imgs_2
+RS,RS218,Šumadijska oblast,mountain,,2,2,Q4865007,Venčac,photo_gate,imgs_0
+RS,RS218,Šumadijska oblast,mountain,,2,2,Q2026996,Oplenac,score_gate,score_2.3_below_5.0
+RS,RS221,Borska oblast,mountain,,2,2,Q3316169,Miroč,photo_gate,imgs_1
+RS,RS221,Borska oblast,mountain,,2,2,Q7918976,Veliki Krš,score_gate,score_3.1_below_5.0
+RS,RS221,Borska oblast,mountain,,2,2,Q1561378,Deli Jovan,score_gate,score_2.8_below_5.0
+RO,RO114,Maramureş,mountain,,2,2,Q153170,Pietrosul Rodnei,photo_gate,imgs_6
+RO,RO114,Maramureş,mountain,,2,2,Q153170,Pietrosul Peak,score_gate,score_4.2_below_5.0
+RO,RO114,Maramureş,mountain,,2,2,Q9264807,Farcău,score_gate,score_3.5_below_5.0
+RO,RO413,Mehedinţi,mountain,,2,2,,,,
+RS,RS216,Rasinska oblast,mountain,,2,2,Q3108650,Gledić Mountains,photo_gate,imgs_3
+RS,RS216,Rasinska oblast,mountain,,2,2,Q27340581,Vojetin,photo_gate,imgs_0
+RO,RO414,Olt,mountain,,2,2,,,,
+RS,RS217,Raška oblast,mountain,,2,2,Q3028631,Goč,score_gate,score_3.9_below_5.0
+RS,RS217,Raška oblast,mountain,,2,2,Q2136085,Željin,photo_gate,imgs_4
+RS,RS217,Raška oblast,mountain,,2,2,Q3028628,Čemerno,photo_gate,imgs_0
+RO,RO116,Sălaj,mountain,,2,2,,,,
+RO,RO415,Vâlcea,mountain,,2,2,Q49752834,Mogoşu,photo_gate,imgs_2
+RO,RO415,Vâlcea,mountain,,2,2,Q874546,"Vârful Ciortea, Munții Făgăraș",photo_gate,imgs_2
+RO,RO415,Vâlcea,mountain,,2,2,Q49752952,Netedu,photo_gate,imgs_0
+RO,RO213,Iaşi,mountain,,2,2,,,,
+PT,PT1B0,Península de Setúbal,mountain,,2,2,Q3479904,Arrábida Mountain,score_gate,score_3.8_below_5.0
+PT,PT1B0,Península de Setúbal,mountain,,2,2,Q31249659,Formosinho,score_gate,score_1.1_below_5.0
+PT,PT1B0,Península de Setúbal,mountain,,2,2,Q32127838,Alto do Monte Abraão,photo_gate,imgs_0
+RO,RO121,Alba,mountain,,2,2,Q18547247,"Vârfu lui Pătru, Munții Șureanu",photo_gate,imgs_0
+RO,RO121,Alba,mountain,,2,2,Q1302349,Piatra Secuiului,score_gate,score_3.7_below_5.0
+RO,RO121,Alba,mountain,,2,2,Q1029107,Munții Gilăului,photo_gate,imgs_0
+RO,RO216,Vaslui,mountain,,2,2,,,,
+PT,PT1C2,Baixo Alentejo,mountain,,2,2,Q31797194,Cerro da Madeira,photo_gate,imgs_0
+RO,RO123,Covasna,mountain,,2,2,Q832975,Bodoc Mountains,photo_gate,imgs_0
+RO,RO123,Covasna,mountain,,2,2,Q1213934,Murgul Mare,photo_gate,imgs_3
+RO,RO123,Covasna,mountain,,2,2,Q1126584,Kő möge,photo_gate,imgs_1
+PT,PT1C3,Alto Alentejo,mountain,,2,2,Q31249654,Alto dos Forninhos,score_gate,score_1.0_below_5.0
+PT,PT1C3,Alto Alentejo,mountain,,2,2,Cabeço do Cão,Cabeço do Cão,photo_gate,imgs_2
+PT,PT1C3,Alto Alentejo,mountain,,2,2,Q31249409,Cabeço do Mouro,photo_gate,imgs_0
+RO,RO222,Buzău,mountain,,2,2,,,,
+PT,PT1C4,Alentejo Central,mountain,,2,2,Q31249933,Arraiolos,score_gate,score_0.9_below_5.0
+RO,RO125,Mureş,mountain,,2,2,,,,
+PT,PT1D1,Oeste,mountain,,2,2,Q10376498,Monte de São Bartolomeu,score_gate,score_2.7_below_5.0
+PT,PT1D1,Oeste,mountain,,2,2,Q31493265,Picoto da Teixugueira,photo_gate,imgs_0
+PT,PT1D2,Médio Tejo,mountain,,2,2,,,,
+RS,RS122,Južnobanatska oblast,mountain,,2,2,Q2708467,Гудурички врх,photo_gate,imgs_0
+RO,RO211,Bacău,mountain,,2,2,Q612533,Nemira Mountains,photo_gate,imgs_6
+RO,RO212,Botoşani,mountain,,2,2,,,,
+RO,RO226,Vrancea,mountain,,2,2,,,,
+PT,PT11E,Terras de Trás-os-Montes,mountain,,2,2,Q3307610,Sierra de la Culebra,score_gate,score_2.4_below_5.0
+PT,PT11E,Terras de Trás-os-Montes,mountain,,2,2,Q3327221,Rock of the Three Kingdoms,photo_gate,imgs_1
+PT,PT11E,Terras de Trás-os-Montes,mountain,,2,2,Q3479913,Serra de Montesinho,score_gate,score_1.7_below_5.0
+PL,PL821,Krośnieński,mountain,,3,2,Q577655,Tarnica,score_gate,score_4.9_below_5.0
+PL,PL821,Krośnieński,mountain,,3,2,Q11734446,Kamień,score_gate,score_3.5_below_5.0
+PL,PL821,Krośnieński,mountain,,3,2,Q6976284,Tokarnia (mountain),photo_gate,imgs_3
+PL,PL518,Wrocławski,mountain,,3,2,Q387148,Ślęża,photo_gate,imgs_6
+PT,PT192,Região de Coimbra,mountain,,2,2,Q10370500,Serra do Rabaçal,photo_gate,imgs_0
+PT,PT192,Região de Coimbra,mountain,,2,2,Q10370508,Serra do Vidual,photo_gate,imgs_2
+PT,PT192,Região de Coimbra,mountain,,2,2,Q34811050,São Pedro do Açor,photo_gate,imgs_0
+PT,PT195,Beira Baixa,mountain,,2,2,Q34905258,Serra dos Covões,photo_gate,imgs_0
+PT,PT195,Beira Baixa,mountain,,2,2,Q31796895,Serra da Rasca,photo_gate,imgs_0
+PT,PT195,Beira Baixa,mountain,,2,2,Q35731766,Cabeço da Lousa,photo_gate,imgs_0
+PT,PT193,Região de Leiria,mountain,,2,2,Q31798012,Safra,photo_gate,imgs_0
+PT,PT193,Região de Leiria,mountain,,2,2,Q31796695,Vale Grande,photo_gate,imgs_2
+PT,PT193,Região de Leiria,mountain,,2,2,Q34836771,Cabeço Gordo,photo_gate,imgs_2
+PT,PT194,Viseu Dão Lafões,mountain,,2,2,Q31797822,Monte Sobrado,photo_gate,imgs_0
+PT,PT194,Viseu Dão Lafões,mountain,,2,2,Q31798248,Serra da Gravia,photo_gate,imgs_0
+PT,PT194,Viseu Dão Lafões,mountain,,2,2,Q34905206,Serra do Lafão,photo_gate,imgs_0
+PL,PL721,Kielecki,mountain,,2,2,Q384267,Łysa Góra,score_gate,score_3.7_below_5.0
+PL,PL721,Kielecki,mountain,,2,2,Q9356452,Telegraf,score_gate,score_2.9_below_5.0
+PT,PT111,Alto Minho,mountain,,2,2,Q31798772,Serra Amarela,score_gate,score_1.7_below_5.0
+PT,PT111,Alto Minho,mountain,,2,2,Q31205595,Alto das Bezerreiras,photo_gate,imgs_1
+PT,PT111,Alto Minho,mountain,,2,2,Perre,Perre,photo_gate,imgs_0
+PT,PT112,Cávado,mountain,,2,2,Q5069843,Chamor Hill,photo_gate,imgs_2
+PT,PT112,Cávado,mountain,,2,2,Carris,Carris,photo_gate,imgs_2
+PT,PT112,Cávado,mountain,,2,2,Q35732130,Cabeço de Palheiros,photo_gate,imgs_0
+PT,PT119,Ave,mountain,,2,2,Q10332057,Monte da Penha,score_gate,score_4.8_below_5.0
+PT,PT119,Ave,mountain,,2,2,Q10332012,Monte Farinha,score_gate,score_3.2_below_5.0
+PT,PT119,Ave,mountain,,2,2,Q31798014,Alto do Sabugueiro,photo_gate,imgs_0
+PT,PT11A,Área Metropolitana do Porto,mountain,,2,2,Q10370497,Serra do Pilar,photo_gate,imgs_6
+PT,PT11A,Área Metropolitana do Porto,mountain,,2,2,Q7665476,São Félix Hill,score_gate,score_2.2_below_5.0
+PT,PT11A,Área Metropolitana do Porto,mountain,,2,2,Q5124379,Cividade Hill,photo_gate,imgs_1
+PT,PT11B,Alto Tâmega e Barroso,mountain,,2,2,Q3111438,Gerês Mountains,score_gate,score_3.3_below_5.0
+PT,PT11B,Alto Tâmega e Barroso,mountain,,2,2,Q31797998,Serra de Santa Isabel,photo_gate,imgs_0
+PT,PT11B,Alto Tâmega e Barroso,mountain,,2,2,Q31798368,Fraga da Espinheira,photo_gate,imgs_1
+PT,PT11C,Tâmega e Sousa,mountain,,2,2,Q31797811,Alto do Talefe,photo_gate,imgs_2
+PT,PT11C,Tâmega e Sousa,mountain,,2,2,Q31800013,Alto das Veias,photo_gate,imgs_0
+PT,PT11C,Tâmega e Sousa,mountain,,2,2,Q31798054,Serra do Poio,photo_gate,imgs_0
+TR,TR522,Karaman,mountain,,2,2,,,,
+TR,TRC22,Diyarbakır,mountain,,2,2,,,,
+TR,TR721,Kayseri,mountain,,2,2,,,,
+TR,TR222,Çanakkale,mountain,,2,2,,,,
+TR,TR832,Tokat,mountain,,2,2,,,,
+TR,TRC31,Mardin,mountain,,2,2,,,,
+TR,TRC32,Batman,mountain,,2,2,,,,
+TR,TR722,Sivas,mountain,,2,2,,,,
+TR,TR833,Çorum,mountain,,2,2,,,,
+TR,TR834,Amasya,mountain,,2,2,,,,
+TR,TRC33,Şırnak,mountain,,2,2,,,,
+TR,TRC34,Siirt,mountain,,2,2,,,,
+TR,TR723,Yozgat,mountain,,2,2,,,,
+TR,TR811,Zonguldak,mountain,,2,2,,,,
+TR,TR310,İzmir,mountain,,2,2,,,,
+TR,TR901,Trabzon,mountain,,2,2,,,,
+TR,TR902,Ordu,mountain,,2,2,,,,
+TR,TR812,Karabük,mountain,,2,2,,,,
+TR,TR813,Bartın,mountain,,2,2,,,,
+TR,TR321,Aydın,mountain,,2,2,,,,
+TR,TR903,Giresun,mountain,,2,2,,,,
+TR,TR904,Rize,mountain,,2,2,,,,
+TR,TR821,Kastamonu,mountain,,2,2,,,,
+TR,TR822,Çankırı,mountain,,2,2,,,,
+TR,TR322,Denizli,mountain,,2,2,,,,
+TR,TR905,Artvin,mountain,,2,2,,,,
+TR,TR906,Gümüşhane,mountain,,2,2,,,,
+TR,TR823,Sinop,mountain,,2,2,,,,
+TR,TR831,Samsun,mountain,,2,2,,,,
+TR,TRA11,Erzurum,mountain,,2,2,,,,
+TR,TRA12,Erzincan,mountain,,2,2,,,,
+TR,TR323,Muğla,mountain,,2,2,,,,
+TR,TR331,Manisa,mountain,,2,2,,,,
+TR,TRA21,Ağrı,mountain,,2,2,,,,
+TR,TRA22,Kars,mountain,,2,2,,,,
+TR,TR611,Antalya,mountain,,2,2,,,,
+TR,TR612,Isparta,mountain,,2,2,,,,
+TR,TR332,Afyonkarahisar,mountain,,2,2,,,,
+TR,TR333,Kütahya,mountain,,2,2,,,,
+TR,TRA23,Iğdır,mountain,,2,2,,,,
+TR,TRA24,Ardahan,mountain,,2,2,,,,
+TR,TR613,Burdur,mountain,,2,2,,,,
+TR,TR334,Uşak,mountain,,2,2,,,,
+TR,TR411,Bursa,mountain,,2,2,,,,
+TR,TRB11,Malatya,mountain,,2,2,,,,
+TR,TRB12,Elazığ,mountain,,2,2,,,,
+TR,TR621,Adana,mountain,,2,2,,,,
+TR,TR412,Eskişehir,mountain,,2,2,,,,
+TR,TR413,Bilecik,mountain,,2,2,,,,
+TR,TRB13,Bingöl,mountain,,2,2,,,,
+TR,TRB14,Tunceli,mountain,,2,2,,,,
+TR,TR622,Mersin,mountain,,2,2,,,,
+TR,TR213,Kırklareli,mountain,,2,2,Q1402638,Mahya Dağı,photo_gate,imgs_2
+TR,TR421,Kocaeli,mountain,,2,2,,,,
+TR,TR422,Sakarya,mountain,,2,2,,,,
+TR,TRB21,Van,mountain,,2,2,,,,
+TR,TRB22,Muş,mountain,,2,2,,,,
+TR,TR631,Hatay,mountain,,2,2,,,,
+TR,TR632,Kahramanmaraş,mountain,,2,2,,,,
+TR,TR423,Düzce,mountain,,2,2,,,,
+TR,TR424,Bolu,mountain,,2,2,,,,
+TR,TRB23,Bitlis,mountain,,2,2,,,,
+TR,TRB24,Hakkari,mountain,,2,2,,,,
+TR,TR633,Osmaniye,mountain,,2,2,,,,
+TR,TR711,Kırıkkale,mountain,,2,2,,,,
+TR,TR712,Aksaray,mountain,,2,2,,,,
+TR,TR221,Balıkesir,mountain,,2,2,,,,
+TR,TRC11,Gaziantep,mountain,,2,2,,,,
+TR,TRC12,Adıyaman,mountain,,2,2,,,,
+TR,TRC13,Kilis,mountain,,2,2,,,,
+TR,TR713,Niğde,mountain,,2,2,,,,
+TR,TR714,Nevşehir,mountain,,2,2,,,,
+TR,TR510,Ankara,mountain,,2,2,,,,
+TR,TR521,Konya,mountain,,2,2,,,,
+TR,TRC21,Şanlıurfa,mountain,,2,2,,,,
+TR,TR715,Kırşehir,mountain,,2,2,,,,
+SE,SE312,Dalarnas län,mountain,,2,2,Q1174161,Hundfjället,photo_gate,imgs_5
+SE,SE312,Dalarnas län,mountain,,2,2,Q1477151,Storvätteshågna,photo_gate,imgs_2
+SE,SE312,Dalarnas län,mountain,,2,2,Q10504566,Gesunda Mountain,score_gate,score_2.5_below_5.0
+SK,SK022,Trenčiansky kraj,mountain,,3,2,Q1277020,Velký Lopeník,score_gate,score_4.3_below_5.0
+SK,SK022,Trenčiansky kraj,mountain,,3,2,Q3488890,Strážov (Slovakia),photo_gate,imgs_3
+SK,SK022,Trenčiansky kraj,mountain,,3,2,Q1277020,Velký Lopeník,score_gate,score_4.5_below_5.0
+SK,SK023,Nitriansky kraj,mountain,,2,2,Q11892307,Veľký Tribeč,photo_gate,imgs_2
+SK,SK023,Nitriansky kraj,mountain,,2,2,Q13538057,Panská Javorina,photo_gate,imgs_1
+SK,SK023,Nitriansky kraj,mountain,,2,2,Q11892216,Veľký Inovec,photo_gate,imgs_3
+SE,SE313,Gävleborgs län,mountain,,2,2,Q1494424,Garpkölen,photo_gate,imgs_0
+SE,SE313,Gävleborgs län,mountain,,2,2,Q10631709,Pilkalampinoppi,photo_gate,imgs_0
+SE,SE313,Gävleborgs län,mountain,,2,2,Q122964716,"Digerberget, Bollnäs kommun",photo_gate,imgs_1
+RS,RS222,Braničevska oblast,mountain,,2,2,Q2580686,Blagojev Kamen,photo_gate,imgs_0
+RS,RS222,Braničevska oblast,mountain,,2,2,Q2894533,Beljanica,score_gate,score_2.8_below_5.0
+RS,RS224,Jablanička oblast,mountain,,2,2,Q2272601,Kukavica,score_gate,score_3.4_below_5.0
+RS,RS224,Jablanička oblast,mountain,,2,2,Q3113529,Radan (mountain),photo_gate,imgs_4
+RS,RS224,Jablanička oblast,mountain,,2,2,Q2133217,Gollak,photo_gate,imgs_2
+RS,RS225,Nišavska oblast,mountain,,2,2,Q2451288,Trem,score_gate,score_2.6_below_5.0
+RS,RS225,Nišavska oblast,mountain,,2,2,Q31496450,Leskovik,photo_gate,imgs_0
+RS,RS225,Nišavska oblast,mountain,,2,2,Q3034566,Ozren (Sokobanja),score_gate,score_2.4_below_5.0
+SE,SE123,Östergötlands län,mountain,,2,2,Q1779560,Kolmården,photo_gate,imgs_6
+SE,SE123,Östergötlands län,mountain,,2,2,Q2342640,Stenabohöjden,photo_gate,imgs_0
+SE,SE123,Östergötlands län,mountain,,2,2,Q10609536,Omberg,score_gate,score_1.7_below_5.0
+RS,RS228,Pčinjska oblast,mountain,,2,2,Q12273217,Било (връх),photo_gate,imgs_0
+RS,RS228,Pčinjska oblast,mountain,,2,2,Q6851658,Milevska planina,photo_gate,imgs_0
+RS,RS228,Pčinjska oblast,mountain,,2,2,Q12289422,Острика,photo_gate,imgs_0
+RS,RS229,Toplička oblast,mountain,,2,2,Q3032057,Vidojevica,photo_gate,imgs_2
+RS,RS229,Toplička oblast,mountain,,2,2,Пилатовица / Pilatovica,Пилатовица / Pilatovica,photo_gate,imgs_0
+RS,RS229,Toplička oblast,mountain,,2,2,Кучавица / Kučavica,Кучавица / Kučavica,photo_gate,imgs_0
+SI,SI032,Podravska,mountain,,2,2,,,,
+SE,SE211,Jönköpings län,mountain,,2,2,Q2060821,Tomtabacken,photo_gate,imgs_2
+SE,SE211,Jönköpings län,mountain,,2,2,Q6977351,Skuruhatt,photo_gate,imgs_1
+SE,SE211,Jönköpings län,mountain,,2,2,Q2386476,Taberg,score_gate,score_1.8_below_5.0
+SI,SI033,Koroška,mountain,,2,2,Q341650,Black Peak (Pohorje),photo_gate,imgs_2
+SI,SI033,Koroška,mountain,,2,2,Q21873103,Hühnerkogel,photo_gate,imgs_5
+SI,SI033,Koroška,mountain,,2,2,Q1400190,Mount St. Ursula,score_gate,score_2.5_below_5.0
+SI,SI034,Savinjska,mountain,,2,2,Q8530057,Mount Hum (Laško),score_gate,score_2.9_below_5.0
+SI,SI034,Savinjska,mountain,,2,2,Q3327271,Cold Mountain (Slovenia),score_gate,score_2.9_below_5.0
+SI,SI034,Savinjska,mountain,,2,2,Q15666990,Mount Saint Donatus,score_gate,score_2.9_below_5.0
+SI,SI037,Jugovzhodna Slovenija,mountain,,2,2,,,,
+SI,SI044,Obalno-kraška,mountain,,2,2,,,,
+SE,SE232,Västra Götalands län,mountain,,2,2,Q862885,Billingen,score_gate,score_4.8_below_5.0
+SE,SE232,Västra Götalands län,mountain,,2,2,Q10593703,Mösseberg,score_gate,score_3.5_below_5.0
+SE,SE232,Västra Götalands län,mountain,,2,2,Q879776,Björnerödspiggen,photo_gate,imgs_1
+SE,SE311,Värmlands län,mountain,,2,2,Q1249023,Granberget,photo_gate,imgs_1
+XK,XK001,Prishtinë,mountain,,2,2,Q5580545,Golesh,photo_gate,imgs_2
+XK,XK001,Prishtinë,mountain,,2,2,Q3658768,Koznica,photo_gate,imgs_0
+XK,XK001,Prishtinë,mountain,,2,2,Q27344298,Predsednik,photo_gate,imgs_0
+XK,XK006,Gjilan,mountain,,2,2,Q27341978,Kitka (Kosovo),photo_gate,imgs_0
+XK,XK006,Gjilan,mountain,,2,2,Q27340567,"Velika Planina (berg i Kosovo, lat 42,62, long 21,45)",score_gate,score_1.7_below_5.0
+XK,XK006,Gjilan,mountain,,2,2,Q27340507,Planica,photo_gate,imgs_0
+GB,TLC42,Northumberland,mountain,,2,2,Q8519896,The Cheviot,score_gate,score_3.7_below_5.0
+GB,TLD44,Lancaster and Wyre,mountain,,2,2,Q2549111,Ward's Stone,score_gate,score_3.7_below_5.0
+GB,TLD46,East Lancashire,mountain,,2,2,,,,
+GB,TLF13,South and West Derbyshire,mountain,,2,2,Q1741750,Kinder Scout,score_gate,score_4.1_below_5.0
+GB,TLG21,Telford and Wrekin,mountain,,2,2,Q2914585,The Wrekin,score_gate,score_4.3_below_5.0
+GB,TLG22,Shropshire,mountain,,2,2,Q4976096,Brown Clee Hill,score_gate,score_4.0_below_5.0
+GB,TLG22,Shropshire,mountain,,2,2,Q3877159,Stiperstones,score_gate,score_3.7_below_5.0
+GB,TLJ27,West Sussex (South West),mountain,,2,2,Q8521328,"Blackdown, West Sussex",score_gate,score_3.2_below_5.0
+GB,TLK30,Cornwall and Isles of Scilly,mountain,,2,2,Q335390,Brown Willy,score_gate,score_3.6_below_5.0
+GB,TLK73,Gloucestershire CC,mountain,,2,2,Q4117384,"Cleeve Hill, Gloucestershire",score_gate,score_3.8_below_5.0
+GB,TLL33,Conwy and Denbighshire,mountain,,3,2,Q3405438,Tryfan,score_gate,score_4.9_below_5.0
+GB,TLL33,Conwy and Denbighshire,mountain,,3,2,Q6890110,Moel Siabod,score_gate,score_4.0_below_5.0
+GB,TLL33,Conwy and Denbighshire,mountain,,3,2,Q3395318,Great Orme,score_gate,score_3.1_below_5.0
+GB,TLL41,Mid Wales,mountain,,3,2,Q1628695,Rhos Fawr,score_gate,score_4.6_below_5.0
+GB,TLL41,Mid Wales,mountain,,3,2,Q3401745,Cadair Berwyn,score_gate,score_4.1_below_5.0
+GB,TLL41,Mid Wales,mountain,,3,2,Q3397568,Fan Brycheiniog,score_gate,score_4.0_below_5.0
+GB,TLL44,Neath Port Talbot,mountain,,2,2,Q3397966,Craig y Llyn,score_gate,score_2.9_below_5.0
+GB,TLL51,Central Valleys and Bridgend,mountain,,2,2,,,,
+GB,TLL53,Gwent Valleys,mountain,,2,2,,,,
+GB,TLM91,Scottish Borders,mountain,,2,2,Q4971895,Broad Law,score_gate,score_4.0_below_5.0
+GB,TLN08,"Newry, Mourne and Down",mountain,,3,2,Q2485376,Slieve Croob,score_gate,score_4.0_below_5.0
+GB,TLN08,"Newry, Mourne and Down",mountain,,3,2,Q3259766,Slieve Binnian,score_gate,score_3.7_below_5.0
+GB,TLN08,"Newry, Mourne and Down",mountain,,3,2,Q548760,Slieve Muck,score_gate,score_3.7_below_5.0
+GB,TLN0A,Derry City and Strabane,mountain,,2,2,Q3776414,Sawel Mountain,score_gate,score_3.2_below_5.0
+GB,TLN0C,Causeway Coast and Glens,mountain,,2,2,Q3776754,Benbradagh,score_gate,score_4.0_below_5.0
+GB,TLN0C,Causeway Coast and Glens,mountain,,2,2,Q3999762,Trostan,score_gate,score_3.9_below_5.0
+UA,UA-74538382B84610439401970,Bakhchysarai,mountain,,2,2,Q12154696,Sotyra Mount,photo_gate,imgs_0
+UA,UA-74538382B84040377374615,Simferopol,mountain,,2,2,Q12159749,Gora Tay-Koba,photo_gate,imgs_0
+UA,UA-74538382B85800934600856,Kirovske,mountain,,2,2,,,,
+UA,UA-74538382B83226976460707,Antratsyt,mountain,,2,2,Q4299085,Mohyla Mechetna,photo_gate,imgs_4
+UA,UA-74538382B84300639272242,Zastavna,mountain,,2,2,Q4084051,Berda,photo_gate,imgs_1
+UA,UA-74538382B32943992723151,Kitsman,mountain,,2,2,,,,
+UA,UA-74538382B46813680897661,Vyzhnytsia,mountain,,2,2,,,,
+UA,UA-74538382B95854535176158,Putyla,mountain,,2,2,Q4538703,Yarovytsia,photo_gate,imgs_0
+UA,UA-74538382B95854535176158,Putyla,mountain,,2,2,Q12161893,Tomnatyk,photo_gate,imgs_0
+UA,UA-74538382B95854535176158,Putyla,mountain,,2,2,Погар,Погар,photo_gate,imgs_0
+UA,UA-74538382B19184608500024,Verkhovyna,mountain,,2,2,Q23972,Mount Hnatasya,photo_gate,imgs_0
+UA,UA-74538382B19184608500024,Verkhovyna,mountain,,2,2,Q23970,Palenica58,photo_gate,imgs_0
+UA,UA-74538382B19184608500024,Verkhovyna,mountain,,2,2,Q23972,Hnatasia,photo_gate,imgs_3
+UA,UA-74538382B28282753236246,Tiachiv,mountain,,2,2,Q4095906,Bratkivs'ka,photo_gate,imgs_1
+UA,UA-74538382B28282753236246,Tiachiv,mountain,,2,2,Q7277068,Durnia,photo_gate,imgs_0
+UA,UA-74538382B28282753236246,Tiachiv,mountain,,2,2,Q4100699,Bushtul,photo_gate,imgs_0
+UA,UA-74538382B3065549299103,Irshava,mountain,,2,2,Q4141050,Tupyi,photo_gate,imgs_3
+UA,UA-74538382B62918888567345,Volovets,mountain,,2,2,Q4362640,Pikui,score_gate,score_4.5_below_5.0
+UA,UA-74538382B32054609841265,Svaliava,mountain,,3,2,Q4098320,Buzhora,photo_gate,imgs_0
+UA,UA-74538382B32054609841265,Svaliava,mountain,,3,2,Q1986372,Stoj,photo_gate,imgs_0
+UA,UA-74538382B32054609841265,Svaliava,mountain,,3,2,Q4135140,Gymba,photo_gate,imgs_0
+UA,UA-74538382B46145703776809,Mukachevo	,mountain,,2,2,Q166143,Dunavka,photo_gate,imgs_0
+UA,UA-74538382B77535249747568,Uzhhorod,mountain,,2,2,Q3566284,Antalovetska Polyana,photo_gate,imgs_0
+UA,UA-74538382B65631972109498,Bohorodchany,mountain,,2,2,Kateryna,Kateryna,photo_gate,imgs_0
+UA,UA-74538382B65631972109498,Bohorodchany,mountain,,2,2,Stanymyr,Stanymyr,photo_gate,imgs_0
+UA,UA-74538382B65631972109498,Bohorodchany,mountain,,2,2,Klyvka,Klyvka,photo_gate,imgs_0
+UA,UA-74538382B89403854124425,Rozhniativ,mountain,,3,2,Q4418523,Syvulia,photo_gate,imgs_5
+UA,UA-74538382B89403854124425,Rozhniativ,mountain,,3,2,Q4418523,Syvulia,photo_gate,imgs_6
+UA,UA-74538382B89403854124425,Rozhniativ,mountain,,3,2,Q4197726,Ihrovets,photo_gate,imgs_2
+UA,UA-74538382B50426750850815,Skole,mountain,,2,2,Q4345039,Mount Parashka,score_gate,score_4.1_below_5.0
+UA,UA-74538382B50426750850815,Skole,mountain,,2,2,Q4274211,Mahura,photo_gate,imgs_0
+UA,UA-74538382B48347776111848,Turka,mountain,,2,2,Q31521112,Magura-Limnianska,photo_gate,imgs_0
+UA,UA-74538382B88125912704040,Drohobych,mountain,,2,2,,,,
+UA,UA-74538382B3276437105714,Nakhimovskyi,mountain,,2,2,,,,
+UA,UA-74538382B52948461958272,Balakavaskyi,mountain,,2,2,Q2092607,Roman-Kosh,photo_gate,imgs_4
+UA,UA-74538382B52948461958272,Balakavaskyi,mountain,,2,2,Q112222397,Tez-Bair,photo_gate,imgs_0
+MD,MD-MD-HI,Hincesti,mountain,,2,2,Movila Sfatului,Movila Sfatului,photo_gate,imgs_0
+MD,MD-MD-HI,Hincesti,mountain,,2,2,Dealul Morilor,Dealul Morilor,photo_gate,imgs_0
+MD,MD-MD-HI,Hincesti,mountain,,2,2,Dealul Hățașu,Dealul Hățașu,photo_gate,imgs_0
+MD,MD-MD-CU,Chisinau,mountain,,2,2,Q12724362,Măzărache Hill,photo_gate,imgs_3
+MD,MD-MD-CU,Chisinau,mountain,,2,2,Movila Momâia,Movila Momâia,photo_gate,imgs_0
+MD,MD-MD-CU,Chisinau,mountain,,2,2,Dealul Chicera,Dealul Chicera,photo_gate,imgs_0
+MD,MD-MD-UN,Ungheni,mountain,,2,2,Q27558186,Măgura,photo_gate,imgs_2
+MD,MD-MD-UN,Ungheni,mountain,,2,2,Dealul Veverița,Dealul Veverița,photo_gate,imgs_0
+MD,MD-MD-UN,Ungheni,mountain,,2,2,Dealul Mănăstirii,Dealul Mănăstirii,photo_gate,imgs_0
+AD,AD-AD-06,Sant Julia de Loria,mountain,,2,2,Q17481918,Bony de la Pica,score_gate,score_4.6_below_5.0
+AD,AD-AD-06,Sant Julia de Loria,mountain,,2,2,Q17483010,Pic Negre d'Urgell,photo_gate,imgs_3
+AD,AD-AD-06,Sant Julia de Loria,mountain,,2,2,Q11914541,Coll de Vista,photo_gate,imgs_2
+AD,AD-AD-03,Encamp,mountain,,3,2,Q21329884,Tossal de la Llosada,photo_gate,imgs_0
+AD,AD-AD-03,Encamp,mountain,,3,2,Q21329776,Alt del Griu,photo_gate,imgs_3
+AD,AD-AD-03,Encamp,mountain,,3,2,Q2717368,Montmalús,score_gate,score_4.2_below_5.0
+AD,AD-AD-07,Andorra la Vella,mountain,,2,2,Q109517079,Pic d'Enclar,photo_gate,imgs_2
+AD,AD-AD-07,Andorra la Vella,mountain,,2,2,Q21329430,Roc dels Corbs,photo_gate,imgs_0
+AD,AD-AD-07,Andorra la Vella,mountain,,2,2,Pic de la Peguera,Pic de la Peguera,photo_gate,imgs_2
+AL,AL011,Dibër,mountain,,3,1,Q7205201,Plloçë,photo_gate,imgs_0
+AL,AL011,Dibër,mountain,,3,1,Q20576564,Balgjaj,photo_gate,imgs_0
+AL,AL011,Dibër,mountain,,3,1,Q73515,Deshat,score_gate,score_2.9_below_5.0
+AL,AL013,Kukës,mountain,,5,1,Q1032440,Jezercë,photo_gate,imgs_4
+AL,AL013,Kukës,mountain,,5,1,Q2720697,Zla Kolata,score_gate,score_4.8_below_5.0
+AL,AL013,Kukës,mountain,,5,1,Q7369089,Maja e Rosit,photo_gate,imgs_2
+AL,AL031,Berat,mountain,,2,1,Q13045864,Shpirag,score_gate,score_2.2_below_5.0
+AL,AL031,Berat,mountain,,2,1,Q8077794,Çuka Partizani,photo_gate,imgs_2
+AL,AL031,Berat,mountain,,2,1,Q16867986,Mali i Kulmakut,photo_gate,imgs_0
+AL,AL015,Shkodër,mountain,,2,1,Q2393853,Tarabosh,score_gate,score_4.6_below_5.0
+AL,AL015,Shkodër,mountain,,2,1,Q98930006,Maja e Alisë,photo_gate,imgs_1
+AL,AL015,Shkodër,mountain,,2,1,Q6737365,Maja e Elbunit,photo_gate,imgs_0
+AL,AL022,Tiranë,mountain,,2,1,Q15847720,Skanderbeg Mountains,photo_gate,imgs_0
+AL,AL022,Tiranë,mountain,,2,1,Q22005113,Mali me Gropa,score_gate,score_2.3_below_5.0
+AL,AL022,Tiranë,mountain,,2,1,Q13042452,Priska,photo_gate,imgs_1
+AT,AT113,Südburgenland,mountain,,3,1,Q465430,Austrian-Slovenian-Hungarian tripoint,photo_gate,imgs_4
+AT,AT121,Mostviertel-Eisenwurzen,mountain,,2,1,,,,
+AT,AT122,Niederösterreich-Süd,mountain,,2,1,,,,
+AT,AT212,Oberkärnten,mountain,,4,1,Q951181,Reißkofel,score_gate,score_4.9_below_5.0
+AT,AT212,Oberkärnten,mountain,,4,1,Q871838,Mölltaler Polinik,photo_gate,imgs_5
+AT,AT212,Oberkärnten,mountain,,4,1,Q2934857,Trogkofel,score_gate,score_3.9_below_5.0
+AT,AT213,Unterkärnten,mountain,,3,1,Q177047,Peca,photo_gate,imgs_6
+AT,AT213,Unterkärnten,mountain,,3,1,Q1549009,Grosser Speikkogel,photo_gate,imgs_6
+AT,AT222,Liezen,mountain,,3,1,Q3786091,Hochstadl,score_gate,score_4.6_below_5.0
+AT,AT315,Traunviertel,mountain,,2,1,,,,
+AT,AT334,Tiroler Oberland,mountain,,6,1,Q134703466,Gaislachkogl Bridge,photo_gate,imgs_1
+AT,AT334,Tiroler Oberland,mountain,,6,1,Q427549,Hintere Schwärze,score_gate,score_4.3_below_5.0
+AT,AT334,Tiroler Oberland,mountain,,6,1,Q477177,Watzespitze,score_gate,score_4.3_below_5.0
+AT,AT331,Außerfern,mountain,,6,1,Q504504,Biberkopf,score_gate,score_4.5_below_5.0
+AT,AT331,Außerfern,mountain,,6,1,Q315335,Hochfrottspitze,score_gate,score_4.5_below_5.0
+AT,AT331,Außerfern,mountain,,6,1,Q870423,Kellenspitze,score_gate,score_4.4_below_5.0
+AT,AT332,Innsbruck,mountain,,3,1,Q1548141,Große Arnspitze,score_gate,score_4.0_below_5.0
+AT,AT332,Innsbruck,mountain,,3,1,Q1548141,Große Arnspitze,photo_gate,imgs_3
+AT,AT332,Innsbruck,mountain,,3,1,Q180378,Wilder Freiger,score_gate,score_4.2_below_5.0
+BE,BE342,Arr. Bastogne,mountain,,2,1,Q16545595,Côte de Saint-Roch,photo_gate,imgs_0
+BE,BE342,Arr. Bastogne,mountain,,2,1,Q21765845,Moldenberg,photo_gate,imgs_0
+BE,BE342,Arr. Bastogne,mountain,,2,1,Q21767734,Heckenberg,photo_gate,imgs_0
+BG,BG311,Vidin,mountain,,2,1,Q19306849,Haydushki kamak,photo_gate,imgs_0
+BG,BG311,Vidin,mountain,,2,1,Q19306849,Haydushki kamak,photo_gate,imgs_0
+BE,BE351,Arr. Dinant,mountain,,2,1,Q2528758,Croix Scaille,photo_gate,imgs_3
+BE,BE351,Arr. Dinant,mountain,,2,1,Q21767346,La Belle Vue,photo_gate,imgs_0
+BE,BE351,Arr. Dinant,mountain,,2,1,Q21770372,Bois de Wérimont,photo_gate,imgs_0
+BE,BE335,Arr. Verviers — communes francophones,mountain,,3,1,Q16545600,Côte de la Haute-Levée,photo_gate,imgs_3
+BE,BE335,Arr. Verviers — communes francophones,mountain,,3,1,Q16545614,Côte du Maquisard,score_gate,score_2.9_below_5.0
+BE,BE335,Arr. Verviers — communes francophones,mountain,,3,1,Q3010664,Côte de Stockeu,photo_gate,imgs_1
+BG,BG411,Sofia (stolitsa),mountain,,2,1,Q11786693,Murgash,photo_gate,imgs_0
+BG,BG411,Sofia (stolitsa),mountain,,2,1,Q12285797,Manastirishte,photo_gate,imgs_0
+BG,BG411,Sofia (stolitsa),mountain,,2,1,Q6356657,Kamen Del,score_gate,score_2.7_below_5.0
+BG,BG412,Sofia,mountain,,3,1,Q210004,Malyovitsa,score_gate,score_4.7_below_5.0
+BG,BG412,Sofia,mountain,,3,1,Q275680,Damga,photo_gate,imgs_1
+BG,BG412,Sofia,mountain,,3,1,Q846340,Kom Peak,score_gate,score_4.1_below_5.0
+CH,CH022,Fribourg / Freiburg,mountain,,2,1,,,,
+CH,CH024,Neuchâtel,mountain,,2,1,,,,
+CH,CH055,St. Gallen,mountain,,3,1,Q60916,Spitzmeilen,score_gate,score_3.6_below_5.0
+CH,CH054,Appenzell Innerrhoden,mountain,,2,1,,,,
+CH,CH070,Ticino,mountain,,5,1,Q16522,Basòdino,score_gate,score_4.6_below_5.0
+CH,CH070,Ticino,mountain,,5,1,Q15263,Pizzo Campo Tencia,score_gate,score_4.3_below_5.0
+CH,CH070,Ticino,mountain,,5,1,Q15285,Monte Tamaro,photo_gate,imgs_6
+CH,CH064,Obwalden,mountain,,2,1,,,,
+CH,CH065,Nidwalden,mountain,,3,1,Q15267,Tomlishorn,score_gate,score_3.9_below_5.0
+CH,CH065,Nidwalden,mountain,,3,1,Q2410351,Ruchstock,score_gate,score_3.4_below_5.0
+CZ,CZ053,Pardubický kraj,mountain,,2,1,Q12021294,Hůrka,photo_gate,imgs_4
+CZ,CZ032,Plzeňský kraj,mountain,,3,1,Q12048525,Radeč,score_gate,score_4.2_below_5.0
+CZ,CZ032,Plzeňský kraj,mountain,,3,1,Q338747,Čerchov,photo_gate,imgs_6
+CZ,CZ042,Ústecký kraj,mountain,,6,1,Q1916719,Medvědí skála,photo_gate,imgs_2
+CZ,CZ042,Ústecký kraj,mountain,,6,1,Q23811879,Sedlo,score_gate,score_4.7_below_5.0
+CZ,CZ042,Ústecký kraj,mountain,,6,1,Q2529747,Vlčí hora,score_gate,score_4.0_below_5.0
+CZ,CZ080,Moravskoslezský kraj,mountain,,6,1,Q674016,Praděd,photo_gate,imgs_6
+CZ,CZ080,Moravskoslezský kraj,mountain,,6,1,Q3507306,Velký Polom,photo_gate,imgs_3
+CZ,CZ080,Moravskoslezský kraj,mountain,,6,1,Q11175988,Červená hora (Nízký Jeseník),score_gate,score_4.4_below_5.0
+CZ,CZ063,Kraj Vysočina,mountain,,3,1,Q1797638,Křemešník,score_gate,score_4.0_below_5.0
+CZ,CZ063,Kraj Vysočina,mountain,,3,1,Q11885575,Vestec,score_gate,score_3.7_below_5.0
+DE,DE125,"Heidelberg, Stadtkreis",mountain,,2,1,,,,
+DE,DE139,Lörrach,mountain,,2,1,,,,
+DE,DE132,Breisgau-Hochschwarzwald,mountain,,3,1,Q464537,Totenkopf (hill),score_gate,score_4.1_below_5.0
+DE,DEB17,Mayen-Koblenz,mountain,,2,1,,,,
+DE,DEE09,Harz,mountain,,2,1,,,,
+DE,DEB1A,Rhein-Lahn-Kreis,mountain,,2,1,,,,
+DE,DEB3D,Donnersbergkreis,mountain,,2,1,,,,
+DE,DEB1B,Westerwaldkreis,mountain,,2,1,,,,
+DE,DEB22,Bernkastel-Wittlich,mountain,,2,1,,,,
+DE,DEA2C,Rhein-Sieg-Kreis,mountain,,2,1,,,,
+DE,DED42,Erzgebirgskreis,mountain,,2,1,,,,
+DE,DEA57,Hochsauerlandkreis,mountain,,2,1,,,,
+DE,DE21F,Miesbach,mountain,,3,1,,,,
+DE,DE21K,"Rosenheim, Landkreis",mountain,,2,1,,,,
+DE,DE725,Vogelsbergkreis,mountain,,2,1,,,,
+DE,DE27B,Ostallgäu,mountain,,2,1,,,,
+DE,DE225,Freyung-Grafenau,mountain,,2,1,,,,
+ES,ES120,Asturias,mountain,,3,1,,,,
+ES,ES243,Zaragoza,mountain,,2,1,,,,
+GR,EL644,Fthiotida,mountain,,2,1,Q775676,Mount Othrys,photo_gate,imgs_5
+GR,EL644,Fthiotida,mountain,,2,1,Q132378,Mount Oeta,photo_gate,imgs_4
+GR,EL644,Fthiotida,mountain,,2,1,Q1227795,Kallidromo,photo_gate,imgs_3
+GR,EL651,"Argolida, Arkadia",mountain,,2,1,Q2703145,Mainalo,score_gate,score_4.4_below_5.0
+GR,EL651,"Argolida, Arkadia",mountain,,2,1,Q1878690,Mount Lykaion,photo_gate,imgs_3
+GR,EL651,"Argolida, Arkadia",mountain,,2,1,Q17521327,Arachnaion,photo_gate,imgs_0
+GR,EL611,"Karditsa, Trikala",mountain,,2,1,Q574974,Antichasia,photo_gate,imgs_0
+GR,EL611,"Karditsa, Trikala",mountain,,2,1,Q7985194,Tringia,photo_gate,imgs_0
+GR,EL611,"Karditsa, Trikala",mountain,,2,1,Q16327256,Koziakas,photo_gate,imgs_4
+GR,EL612,Larisa,mountain,,3,1,,,,
+GR,EL613,"Magnisia, Sporades",mountain,,2,1,,,,
+GR,EL622,Kerkyra,mountain,,2,1,Q38186305,"Imerovigli, Othoni",photo_gate,imgs_0
+ES,ES230,La Rioja,mountain,,2,1,,,,
+ES,ES113,Ourense,mountain,,2,1,Q10349484,Nevosa,photo_gate,imgs_2
+ES,ES113,Ourense,mountain,,2,1,Q31798881,Pisco,photo_gate,imgs_0
+ES,ES113,Ourense,mountain,,2,1,Q31205166,Monte da Igrejinha,photo_gate,imgs_0
+ES,ES241,Huesca,mountain,,9,1,Q208081,Aneto,photo_gate,imgs_4
+ES,ES241,Huesca,mountain,,9,1,Q2746833,Perdiguero,photo_gate,imgs_6
+ES,ES241,Huesca,mountain,,9,1,Q3178760,Aspe peak,score_gate,score_4.9_below_5.0
+GR,EL527,Chalkidiki,mountain,,2,1,Q1075970,Mount Cholomon,score_gate,score_3.7_below_5.0
+GR,EL421,"Kalymnos, Karpathos, Kasos, Kos, Rodos",mountain,,2,1,Q757912,Attavyros,photo_gate,imgs_4
+GR,EL412,"Ikaria, Samos",mountain,,2,1,Q755470,Atheras,photo_gate,imgs_0
+GR,EL412,"Ikaria, Samos",mountain,,2,1,Q12878777,Karvounis,photo_gate,imgs_0
+DE,DEG0S,"Suhl, Kreisfreie Stadt",mountain,,2,1,,,,
+GR,EL422,"Andros, Thira, Kea - Kythnos, Milos, Mykonos, Naxos, Paros,  Syros, Tinos",mountain,,2,1,Q26831020,Mount Zas,score_gate,score_4.2_below_5.0
+GR,EL422,"Andros, Thira, Kea - Kythnos, Milos, Mykonos, Naxos, Paros,  Syros, Tinos",mountain,,2,1,Q1547142,Nea Kameni,score_gate,score_3.8_below_5.0
+GR,EL422,"Andros, Thira, Kea - Kythnos, Milos, Mykonos, Naxos, Paros,  Syros, Tinos",mountain,,2,1,Q1419053,Palea Kameni,score_gate,score_3.7_below_5.0
+GR,EL434,Chania,mountain,,2,1,Q2527686,Pachnes,score_gate,score_4.9_below_5.0
+EE,EE008,Lõuna-Eesti,mountain,,2,1,Q25517741,Otepää Linnamägi,photo_gate,imgs_6
+EE,EE008,Lõuna-Eesti,mountain,,2,1,Q12377144,Toomemägi,photo_gate,imgs_6
+EE,EE008,Lõuna-Eesti,mountain,,2,1,Q11055987,Kuutsemägi,photo_gate,imgs_1
+GR,EL514,Drama,mountain,,2,1,Q6980127,Stargach,photo_gate,imgs_2
+GR,EL514,Drama,mountain,,2,1,Q6980127,Stargach,photo_gate,imgs_2
+GR,EL515,"Thasos, Kavala",mountain,,2,1,Q1448901,Pangaion Hills,score_gate,score_4.9_below_5.0
+GR,EL515,"Thasos, Kavala",mountain,,2,1,Q1409519,Ypsario,score_gate,score_4.6_below_5.0
+GR,EL305,Anatoliki Attiki,mountain,,2,1,Q1125206,Mount Pentelicus,photo_gate,imgs_4
+FR,FRF12,Haut-Rhin,mountain,,2,1,Q1624140,Hohneck (Vosges),score_gate,score_4.0_below_5.0
+ES,ES532,Mallorca,mountain,,3,1,Q1502386,Puig de Randa,score_gate,score_4.4_below_5.0
+ES,ES532,Mallorca,mountain,,3,1,Q1164350,Puig Tomir,score_gate,score_4.2_below_5.0
+ES,ES432,Cáceres,mountain,,2,1,Q5957272,Jálama,score_gate,score_4.6_below_5.0
+ES,ES432,Cáceres,mountain,,2,1,Q6075060,La Villuerca,score_gate,score_3.8_below_5.0
+ES,ES707,La Palma,mountain,,3,1,Caldera de Taburiente,Caldera de Taburiente,photo_gate,imgs_3
+ES,ES521,Alicante/Alacant,mountain,,2,1,,,,
+ES,ES531,Eivissa y Formentera,mountain,,2,1,,,,
+HU,HU231,Baranya,mountain,,2,1,Q26231579,Misina,photo_gate,imgs_1
+HU,HU231,Baranya,mountain,,2,1,Q515919,Jakab-hegy,score_gate,score_4.5_below_5.0
+HU,HU231,Baranya,mountain,,2,1,Q189543,Zengő,score_gate,score_4.4_below_5.0
+FR,FRK12,Cantal,mountain,,2,1,Q582883,Lanobre,score_gate,score_4.0_below_5.0
+HR,HR050,Grad Zagreb,mountain,,2,1,,,,
+HR,HR062,Varaždinska županija,mountain,,2,1,Q2608471,Kalnik (mountain),score_gate,score_4.7_below_5.0
+FR,FRK14,Puy-de-Dôme,mountain,,3,1,Q2427038,Pierre-sur-Haute,score_gate,score_3.3_below_5.0
+FR,FRL02,Hautes-Alpes ,mountain,,6,1,Q2330728,Grande Ruine,photo_gate,imgs_3
+FR,FRL02,Hautes-Alpes ,mountain,,6,1,Q3382358,Pic de Bure,score_gate,score_4.9_below_5.0
+FR,FRL02,Hautes-Alpes ,mountain,,6,1,Q1137837,Céüse,score_gate,score_4.9_below_5.0
+HR,HR022,Virovitičko-podravska županija,mountain,,2,1,,,,
+FR,FRK21,Ain,mountain,,3,1,Q1142554,Crêt de la Neige,photo_gate,imgs_6
+FR,FRL06,Vaucluse,mountain,,2,1,Q1648147,Mourre Nègre,score_gate,score_4.4_below_5.0
+FR,FRM01,Corse-du-Sud,mountain,,2,1,Q1107323,Col de Bavella,score_gate,score_4.6_below_5.0
+FR,FRM01,Corse-du-Sud,mountain,,2,1,Q1412839,Monte Incudine,score_gate,score_4.5_below_5.0
+HU,HU120,Pest,mountain,,3,1,Q263482,Pilis,score_gate,score_4.8_below_5.0
+HU,HU120,Pest,mountain,,3,1,Q611282,Nagy-Kopasz,score_gate,score_4.1_below_5.0
+HU,HU120,Pest,mountain,,3,1,Q26232090,Kutya Hill,photo_gate,imgs_2
+FR,FRM02,Haute-Corse,mountain,,2,1,Q2972397,Cima di e Follicie,photo_gate,imgs_5
+FR,FRM02,Haute-Corse,mountain,,2,1,Q641239,Monte Rotondo,score_gate,score_4.8_below_5.0
+FR,FRM02,Haute-Corse,mountain,,2,1,Q3322576,Monte San Petrone,score_gate,score_4.7_below_5.0
+HU,HU212,Komárom-Esztergom,mountain,,2,1,Q26231302,Prédikálószék,score_gate,score_3.9_below_5.0
+HU,HU212,Komárom-Esztergom,mountain,,2,1,Q25459832,Nagy-Gete,photo_gate,imgs_5
+HU,HU212,Komárom-Esztergom,mountain,,2,1,Q1472254,Öreg-kő,photo_gate,imgs_4
+FR,FRJ11,Aude,mountain,,2,1,Q73420,Pic de Bugarach,score_gate,score_4.5_below_5.0
+FR,FRJ11,Aude,mountain,,2,1,Q1568041,Pic de Nore,score_gate,score_4.2_below_5.0
+FR,FRJ12,Gard,mountain,,2,1,,,,
+FR,FRJ14,Lozère,mountain,,2,1,Q605382,Mont Lozère,score_gate,score_4.4_below_5.0
+IT,ITI34,Ascoli Piceno,mountain,,2,1,,,,
+MK,MK003,Jugozapaden,mountain,,2,1,Q4921915,Black Stone (Jabllanica),photo_gate,imgs_2
+MK,MK003,Jugozapaden,mountain,,2,1,Q22008109,Mali i Thate,photo_gate,imgs_3
+MK,MK003,Jugozapaden,mountain,,2,1,Q12719165,Čeloica,photo_gate,imgs_0
+IT,ITH31,Verona,mountain,,3,1,,,,
+IT,ITH32,Vicenza,mountain,,2,1,,,,
+IT,ITH33,Belluno,mountain,,7,1,Q1107329,Col Nudo,photo_gate,imgs_3
+IT,ITH33,Belluno,mountain,,7,1,Q3506451,Hohe Gaisl,score_gate,score_4.7_below_5.0
+IT,ITH33,Belluno,mountain,,7,1,Q3940595,Sass de Mura,score_gate,score_4.6_below_5.0
+IT,ITG13,Messina,mountain,,3,1,Q3862034,Monte Soro,score_gate,score_4.4_below_5.0
+IT,ITG13,Messina,mountain,,3,1,Q3322534,Monte Fossa delle Felci,score_gate,score_3.9_below_5.0
+IT,ITI16,Livorno,mountain,,2,1,,,,
+IT,ITC20,Valle d’Aosta/Vallée d’Aoste,mountain,,8,1,Q3775581,Grande Rochère,photo_gate,imgs_6
+IT,ITC20,Valle d’Aosta/Vallée d’Aoste,mountain,,8,1,Q30453,Grandes Jorasses,score_gate,score_4.9_below_5.0
+IT,ITC20,Valle d’Aosta/Vallée d’Aoste,mountain,,8,1,Q1705506,Aiguille des Glaciers,score_gate,score_4.8_below_5.0
+IE,IE041,Border,mountain,,5,1,Q3544420,Cuilcagh,score_gate,score_4.2_below_5.0
+IE,IE041,Border,mountain,,5,1,Q2974585,Slieve Rushen,photo_gate,imgs_1
+IE,IE041,Border,mountain,,5,1,Q3544420,Cuilcagh,score_gate,score_4.9_below_5.0
+HU,HU313,Nógrád,mountain,,2,1,Q617538,Salgó Castle,photo_gate,imgs_6
+HU,HU313,Nógrád,mountain,,2,1,Q1298391,Szilvás-kő,photo_gate,imgs_0
+IS,IS001,Höfuðborgarsvæði,mountain,,2,1,Q776480,Krýsuvík,photo_gate,imgs_6
+IS,IS001,Höfuðborgarsvæði,mountain,,2,1,Esja,Esja,score_gate,score_4.4_below_5.0
+IS,IS001,Höfuðborgarsvæði,mountain,,2,1,Q1267895,Vífilsfell,score_gate,score_3.5_below_5.0
+NO,NO0B1,Jan Mayen,mountain,,2,1,,,,
+PL,PL22B,Sosnowiecki,mountain,,2,1,Q9283422,Góra Janowskiego,score_gate,score_4.9_below_5.0
+NO,NO0A3,Møre og Romsdal,mountain,,4,1,Q3442971,Dronningkrona,photo_gate,imgs_1
+NO,NO0A3,Møre og Romsdal,mountain,,4,1,Q4590421,Puttegga,photo_gate,imgs_1
+NO,NO0A3,Møre og Romsdal,mountain,,4,1,Q11243769,Breitinden,photo_gate,imgs_4
+NO,NO072,Troms/Romsa/Tromssa,mountain,,5,1,Q10658379,Ráisduottarháldi,photo_gate,imgs_0
+NO,NO072,Troms/Romsa/Tromssa,mountain,,5,1,Q3358573,Hamperokken,photo_gate,imgs_3
+NO,NO072,Troms/Romsa/Tromssa,mountain,,5,1,Q1142366,Njunis,photo_gate,imgs_0
+NO,NO073,Finnmark/Finnmárku/Finmarkku,mountain,,2,1,Q31694059,Rajapää,photo_gate,imgs_0
+NO,NO073,Finnmark/Finnmárku/Finmarkku,mountain,,2,1,Q24339680,Máđároaivi,photo_gate,imgs_0
+NO,NO073,Finnmark/Finnmárku/Finmarkku,mountain,,2,1,Q5003318,Haldde,photo_gate,imgs_2
+MK,MK005,Pelagoniski,mountain,,2,1,Q2008252,Pelister,photo_gate,imgs_6
+MK,MK005,Pelagoniski,mountain,,2,1,Q12274055,Buševa Mountain,score_gate,score_4.2_below_5.0
+MK,MK005,Pelagoniski,mountain,,2,1,Q12906583,Zlatovrv,score_gate,score_3.4_below_5.0
+MK,MK008,Skopski,mountain,,2,1,Q20569622,Мумџица,photo_gate,imgs_0
+MK,MK008,Skopski,mountain,,2,1,Q2346964,Skopska Crna Gora,score_gate,score_3.3_below_5.0
+MK,MK008,Skopski,mountain,,2,1,Q115965429,Kitka,photo_gate,imgs_2
+RS,RS211,Zlatiborska oblast,mountain,,2,1,Q31229048,Tornik,photo_gate,imgs_2
+RS,RS211,Zlatiborska oblast,mountain,,2,1,Q3048671,Maljen,score_gate,score_4.5_below_5.0
+RS,RS211,Zlatiborska oblast,mountain,,2,1,Q15233187,Kamena Gora (mountain),score_gate,score_3.4_below_5.0
+RS,RS213,Mačvanska oblast,mountain,,2,1,Q859564,Cer (mountain),score_gate,score_4.3_below_5.0
+RS,RS213,Mačvanska oblast,mountain,,2,1,Q1502845,Gučevo,score_gate,score_3.3_below_5.0
+RS,RS213,Mačvanska oblast,mountain,,2,1,Q19427495,Bobija,score_gate,score_3.2_below_5.0
+RS,RS214,Moravička oblast,mountain,,2,1,Q2734930,Golija (Serbia),score_gate,score_4.5_below_5.0
+RS,RS214,Moravička oblast,mountain,,2,1,Q3358983,Ovčar,photo_gate,imgs_2
+RS,RS214,Moravička oblast,mountain,,2,1,Q1488228,Ravna Gora (highland),score_gate,score_4.1_below_5.0
+PT,PT196,Beiras e Serra da Estrela,mountain,,2,1,Q10263012,Cântaro Magro,score_gate,score_4.1_below_5.0
+PT,PT196,Beiras e Serra da Estrela,mountain,,2,1,Q3028369,Gardunha,score_gate,score_3.5_below_5.0
+PT,PT196,Beiras e Serra da Estrela,mountain,,2,1,Q31798696,Serra da Azinha,photo_gate,imgs_0
+PT,PT1A0,Grande Lisboa,mountain,,2,1,Q10331819,Monfirre,photo_gate,imgs_0
+PT,PT1A0,Grande Lisboa,mountain,,2,1,Q31796979,Pena,photo_gate,imgs_0
+PT,PT1A0,Grande Lisboa,mountain,,2,1,Q31797084,Monge,photo_gate,imgs_1
+RO,RO215,Suceava,mountain,,2,1,Q12736037,Rarău Massif,score_gate,score_4.4_below_5.0
+RO,RO215,Suceava,mountain,,2,1,Q517345,Pietrosu Peak (Călimani),photo_gate,imgs_3
+RO,RO215,Suceava,mountain,,2,1,Q49031567,Giumalău,score_gate,score_2.2_below_5.0
+RO,RO422,Caraş-Severin,mountain,,2,1,Q3327950,Muntele Mic,score_gate,score_4.9_below_5.0
+RO,RO422,Caraş-Severin,mountain,,2,1,Q12743765,"Vârful Gugu, Munții Godeanu",photo_gate,imgs_0
+RO,RO422,Caraş-Severin,mountain,,2,1,Q18539539,"Vârful Căleanu, Munții Țarcu",photo_gate,imgs_0
+RO,RO124,Harghita,mountain,,2,1,Q874092,Ciomadul,photo_gate,imgs_4
+RO,RO124,Harghita,mountain,,2,1,Q776023,Harghita Mădăraș,score_gate,score_4.4_below_5.0
+RO,RO124,Harghita,mountain,,2,1,Q1213899,Ciomadul Mare,photo_gate,imgs_0
+RO,RO126,Sibiu,mountain,,2,1,Q1090036,Negoiu Peak,score_gate,score_4.6_below_5.0
+RO,RO126,Sibiu,mountain,,2,1,Q18545153,Paltinu,score_gate,score_4.1_below_5.0
+RO,RO126,Sibiu,mountain,,2,1,Q716193,Vânătarea lui Buteanu,photo_gate,imgs_0
+RS,RS123,Južnobačka oblast,mountain,,2,1,Q1102197,Crveni Čot,photo_gate,imgs_0
+RS,RS123,Južnobačka oblast,mountain,,2,1,Q301901,Titelski Breg,photo_gate,imgs_3
+PT,PT200,Região Autónoma dos Açores,mountain,,5,1,Q928681,Mount Pico,photo_gate,imgs_6
+PT,PT200,Região Autónoma dos Açores,mountain,,5,1,Q8525835,Morro Alto,photo_gate,imgs_1
+PT,PT200,Região Autónoma dos Açores,mountain,,5,1,Q517929,Cabeço Gordo,photo_gate,imgs_5
+PT,PT150,Algarve,mountain,,2,1,Q22811867,Alto do Malhão,photo_gate,imgs_2
+PT,PT150,Algarve,mountain,,2,1,Q31796960,Picota,score_gate,score_1.5_below_5.0
+PT,PT150,Algarve,mountain,,2,1,Q34811042,São Miguel,photo_gate,imgs_2
+PL,PL524,Opolski,mountain,,2,1,,,,
+PT,PT11D,Douro,mountain,,2,1,Q976135,Marão,photo_gate,imgs_4
+PT,PT11D,Douro,mountain,,2,1,Q31797866,Alto da Serra,photo_gate,imgs_2
+PT,PT11D,Douro,mountain,,2,1,Q31797584,Alto de Vila Lobos,photo_gate,imgs_0
+PL,PL515,Jeleniogórski,mountain,,4,1,Q9394964,Łysocina,photo_gate,imgs_1
+PL,PL515,Jeleniogórski,mountain,,4,1,Q9394964,Łysocina,photo_gate,imgs_0
+PL,PL515,Jeleniogórski,mountain,,4,1,Q972255,Śląskie Kamienie,score_gate,score_3.6_below_5.0
+SK,SK042,Košický kraj,mountain,,3,1,Q897554,Nagy-Milic,score_gate,score_4.3_below_5.0
+SK,SK042,Košický kraj,mountain,,3,1,Q897554,Nagy-Milic,score_gate,score_4.7_below_5.0
+SK,SK042,Košický kraj,mountain,,3,1,Q12778798,Skalisko,score_gate,score_3.8_below_5.0
+SK,SK021,Trnavský kraj,mountain,,2,1,Q246976,Záruby,score_gate,score_4.6_below_5.0
+RS,RS226,Pirotska oblast,mountain,,3,1,Q12275237,Vidlič,photo_gate,imgs_1
+RS,RS226,Pirotska oblast,mountain,,3,1,Q5601525,Greben (mountain),photo_gate,imgs_5
+RS,RS226,Pirotska oblast,mountain,,3,1,Q30119487,Kopren,photo_gate,imgs_3
+SI,SI035,Zasavska,mountain,,2,1,Q3817347,Kum (mountain),score_gate,score_4.5_below_5.0
+SI,SI038,Primorsko-notranjska,mountain,,2,1,Q19281597,Veliki Snežnik,photo_gate,imgs_5
+SE,SE321,Västernorrlands län,mountain,,2,1,Q173920,Paradiskullen,photo_gate,imgs_6
+SE,SE321,Västernorrlands län,mountain,,2,1,Q1426401,Myckelmyrberget,photo_gate,imgs_0
+SE,SE321,Västernorrlands län,mountain,,2,1,Q10504587,Getberget (Medelpad),photo_gate,imgs_2
+SK,SK010,Bratislavský kraj,mountain,,2,1,Q2031115,Vysoká (Little Carpathians),score_gate,score_4.4_below_5.0
+XK,XK002,Mitrovicë,mountain,,2,1,Q30590555,Суво рудиште,photo_gate,imgs_0
+XK,XK002,Mitrovicë,mountain,,2,1,Q4891822,Berim,photo_gate,imgs_0
+XK,XK002,Mitrovicë,mountain,,2,1,Q3113553,Čičavica,photo_gate,imgs_3
+XK,XK007,Gjakovë,mountain,,2,1,Q7845364,Trekufiri,score_gate,score_4.2_below_5.0
+XK,XK007,Gjakovë,mountain,,2,1,Q3656402,Junik Mountains,photo_gate,imgs_6
+XK,XK007,Gjakovë,mountain,,2,1,Q6737299,Bogiçaj,photo_gate,imgs_0
+GB,TLD13,Cumberland,mountain,,4,1,Q2292191,Skiddaw,score_gate,score_4.7_below_5.0
+GB,TLD13,Cumberland,mountain,,4,1,Q5051616,Cat Bells,score_gate,score_4.5_below_5.0
+GB,TLD13,Cumberland,mountain,,4,1,Q599892,Bowfell,score_gate,score_4.4_below_5.0
+GB,TLG12,Worcestershire CC,mountain,,2,1,Q8034243,Worcestershire Beacon,score_gate,score_3.8_below_5.0
+GB,TLK43,Devon CC,mountain,,2,1,Q5757442,High Willhays,score_gate,score_4.5_below_5.0
+GB,TLK62,Somerset,mountain,,2,1,Q5315367,Dunkery Hill,score_gate,score_4.4_below_5.0
+GB,TLK62,Somerset,mountain,,2,1,Q8022478,Wills Neck,score_gate,score_2.8_below_5.0
+GB,TLL32,Gwynedd,mountain,,4,1,Q4789023,Arenig Fawr,score_gate,score_4.7_below_5.0
+GB,TLL32,Gwynedd,mountain,,4,1,Q3109361,Glyder Fawr,score_gate,score_4.6_below_5.0
+GB,TLL32,Gwynedd,mountain,,4,1,Q1320739,Moel Hebog,score_gate,score_4.5_below_5.0
+GB,TLM01,Clackmannanshire and Fife,mountain,,2,1,Q4885437,Ben Cleuch,score_gate,score_4.6_below_5.0
+UA,UA-74538382B63824501838973,Nadvirna,mountain,,2,1,Q4163961,Dovbushanka,score_gate,score_4.7_below_5.0
+UA,UA-74538382B63824501838973,Nadvirna,mountain,,2,1,Q4105815,Vedmezhyk,photo_gate,imgs_0
+UA,UA-74538382B63824501838973,Nadvirna,mountain,,2,1,Q4226564,Kozii Gorgan,photo_gate,imgs_1
+MD,MD-MD-NI,Nisporeni,mountain,,2,1,Nisporeni,Nisporeni,photo_gate,imgs_3
+MD,MD-MD-NI,Nisporeni,mountain,,2,1,Dealul Răcătău,Dealul Răcătău,photo_gate,imgs_0
+MD,MD-MD-NI,Nisporeni,mountain,,2,1,Dealul Haițu,Dealul Haițu,photo_gate,imgs_0
+AD,AD-AD-04,La Massana,mountain,,3,1,Q1864334,Pic dels Aspres,photo_gate,imgs_3
+AD,AD-AD-04,La Massana,mountain,,3,1,Q21329274,Bony de Carroi,photo_gate,imgs_4
+AD,AD-AD-04,La Massana,mountain,,3,1,Q3773263,Roca Entravessada,score_gate,score_4.1_below_5.0
+FO,FO-FRO,Faroe Islands,mountain,,6,1,Sornfelli,Sornfelli,photo_gate,imgs_1
+FO,FO-FRO,Faroe Islands,mountain,,6,1,Q1028361,Gráfelli,photo_gate,imgs_2
+FO,FO-FRO,Faroe Islands,mountain,,6,1,Q903556,Villingadalsfjall,photo_gate,imgs_1

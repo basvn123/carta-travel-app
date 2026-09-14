@@ -1,0 +1,268 @@
+{
+  "iso2": "CH",
+  "country": "Switzerland",
+  "checked_at": "2026-08-17",
+  "beaches": {
+    "wrong": [
+      {
+        "name": "Strandbad Oehningen",
+        "class": "wrong_country",
+        "why": "Tier 1 #3 for Switzerland. Oehningen is a Gemeinde in the Landkreis Konstanz, Baden-Wuerttemberg, GERMANY, on the German shore of the Untersee. The wire coordinate 47.65503, 8.8902 is on the German side of the border. It belongs in DE.json.",
+        "source_url": "https://www.wikidata.org/wiki/Q62044"
+      },
+      {
+        "name": "Lido Di Brusimpiano",
+        "class": "wrong_country",
+        "why": "Tier 1 #6 for Switzerland. Brusimpiano is a comune of the province of Varese in Lombardy, ITALY, on the Italian shore of Lake Lugano. The coordinate 45.94726, 8.89231 is in Italy. Two of Switzerland's six tier-1 beaches are therefore not in Switzerland.",
+        "source_url": "https://www.wikidata.org/wiki/Q40553"
+      },
+      {
+        "name": "Riva Paradiso 28 Beach",
+        "class": "other",
+        "why": "Tier 2 #8. 'Riva Paradiso 28' is a street address in Lugano-Paradiso, not a beach name. The row is an address string with the word Beach appended and cannot be rendered as a card title.",
+        "source_url": "https://www.openstreetmap.org/#map=18/45.99707/8.94161"
+      },
+      {
+        "name": "Boedeli lido",
+        "class": "other",
+        "why": "Tier 2 #13. 'Boedeli' is the regional name for the alluvial plain between lakes Thun and Brienz on which Interlaken sits, not the name of a bathing site; the row is a lowercase generic label with no confirmable referent. The real Interlaken-area beaches are the Strandbad at Boenigen and the Neuhaus lakeshore.",
+        "source_url": "https://www.openstreetmap.org/#map=17/46.69054/7.85820"
+      },
+      {
+        "name": "Au bord du lac a Burier",
+        "class": "other",
+        "why": "Tier 2 #12. The name is the French phrase 'by the lakeside at Burier', a descriptive OSM label rather than a beach name, on the Montreux/La Tour-de-Peilz shore.",
+        "source_url": "https://www.openstreetmap.org/#map=17/46.44793/6.87367"
+      }
+    ],
+    "missing": [
+      {
+        "name": "Lido di Lugano",
+        "qid": null,
+        "lat": null,
+        "lon": null,
+        "why": "Lugano's principal lakefront lido, a sandy lake beach with pools, promoted by both Lugano Region and Ticino Turismo as the city's main bathing site. The file has an address string and an Italian beach for the Lugano area but not the Lido itself. I found no Wikidata item or Wikipedia article for it, so it is unverified.",
+        "source_url": "https://www.luganoregion.com/en/commons/details/Lido-di-Lugano/1501.html",
+        "verified": false
+      },
+      {
+        "name": "Lido Ascona",
+        "qid": null,
+        "lat": null,
+        "lon": null,
+        "why": "Ascona-Locarno Turismo describes it as 40,000 m2 of parkland and 'one of the largest beaches in Switzerland'. The file lists Badewiese Minusio and the Locarno Lanca public bath but not the Lido Ascona. No Wikidata item found, so unverified.",
+        "source_url": "https://www.ascona-locarno.com/en/what-s-on/seasons/summer/lidos-and-beaches",
+        "verified": false
+      },
+      {
+        "name": "Lido Locarno",
+        "qid": null,
+        "lat": null,
+        "lon": null,
+        "why": "Switzerland Tourism's own listed Lago Maggiore lido at Locarno, with lake access, Olympic and thermal pools. The file's Locarno row is the smaller Lanca public bath. No Wikidata item found, so unverified.",
+        "source_url": "https://www.myswitzerland.com/en-ae/experiences/lido-locarno/",
+        "verified": false
+      },
+      {
+        "name": "Bains des Paquis",
+        "qid": "Q2879960",
+        "lat": 46.21036,
+        "lon": 6.15419,
+        "why": "Geneva's landmark public lake baths on the Paquis mole in the rade, the second half of the Geneva lake-bathing story alongside Geneve-Plage (#1). Caveat for the filter design: this is a bath installation rather than a sand beach, so it should only be added if the tab is defined to include lake baths.",
+        "source_url": "https://www.wikidata.org/wiki/Q2879960",
+        "verified": true
+      },
+      {
+        "name": "Caumasee (Lag da Cauma)",
+        "qid": "Q692270",
+        "lat": 46.82028,
+        "lon": 9.29583,
+        "why": "The turquoise forest bathing lake at Flims with its own funicular, Switzerland's best-known swimming lake and a stronger 'beach' card than any of the current tier-2 rows. Notably the file already reaches Flims for mountains (Crap Sogn Gion, Fil de Cassons) but has no water feature there.",
+        "source_url": "https://www.wikidata.org/wiki/Q692270",
+        "verified": true
+      },
+      {
+        "name": "Lake Thun, Lake Brienz, Walensee, Lac de Neuchatel and Lake Lucerne shore beaches",
+        "qid": null,
+        "lat": null,
+        "lon": null,
+        "why": "Coverage gap rather than one named feature: the file's 15 beaches touch only Geneva, the Untersee, Ticino, Zurich, Lucerne, Lavaux and Interlaken. Boenigen, Iseltwald, Spiez, Walenstadt, Vitznau, Weggis and the whole Lac de Neuchatel and Bielersee shore are unrepresented, which is why the beaches file is a third the size it should be.",
+        "source_url": "https://www.myswitzerland.com/en-ch/experiences/summer-autumn/swimming/",
+        "verified": false
+      }
+    ],
+    "order": [
+      "Geneve-Plage at #1 is defensible: it is the largest and best-known dedicated lake beach in a major Swiss city (fr:Geneve-Plage).",
+      "Badi Mammern at #2 is not: a small Thurgau community bath on the Untersee ranked above Strandbad Mythenquai (Q24041062, Zurich, tier 2 #10), Lido Strandbad Luzern (#7) and Ufschoetti (#9), which are the actual mass-use Swiss lake beaches.",
+      "Strandbad Mythenquai and Strandbad Tiefenbrunnen are the only two rows in this file with real Wikidata items besides Geneve-Plage, and both sit in tier 2. They should be tier 1.",
+      "After removing the German and Italian rows, tier 1 has four Swiss entries, three of which are minor. The tab currently under-represents Zurich and Lucerne and over-represents the Untersee."
+    ]
+  },
+  "mountains": {
+    "wrong": [
+      {
+        "name": "View to Aletschgletscher",
+        "class": "viewpoint_not_summit",
+        "why": "Tier 1 #4, i.e. Switzerland's fourth mountain. The name is an OSM viewpoint label ('View to ...') and the linked article is Q204658, the Aletsch Glacier, which is a glacier and not a mountain at all. Two errors in one row: a viewpoint name and a non-mountain referent.",
+        "source_url": "https://www.wikidata.org/wiki/Q204658"
+      },
+      {
+        "name": "Crap Sogn Gion",
+        "class": "viewpoint_not_summit",
+        "why": "Tier 1 #12. English Wikipedia states it is 'a mountain and cable car station located near Flims' and that 'regarding the definition used in the Alps by the Swiss Alpine Club it cannot be called a mountain but only a location'. It is the Laax lift station, occupying a national tier-1 slot.",
+        "source_url": "https://www.wikidata.org/wiki/Q382514"
+      },
+      {
+        "name": "Silberhorn",
+        "class": "duplicate_of:Jungfrau",
+        "why": "Tier 1 #10. Q82662 describes it as a pyramid-shaped mountain 'to the northwest of the Jungfrau of which it is a satellite peak'. It is a shoulder of the tier-1 #3 entry, 1.5 km away, and it takes a slot from the Dufourspitze.",
+        "source_url": "https://www.wikidata.org/wiki/Q82662"
+      },
+      {
+        "name": "Wengen Jungfrau",
+        "class": "duplicate_of:Jungfrau",
+        "why": "Tier 2 #30, and only 321 m from the Jungfrau row. Q7982855 is a subsidiary summit of the Jungfrau chain. Same massif, same view, third row for the same mountain after Jungfrau and Silberhorn.",
+        "source_url": "https://www.wikidata.org/wiki/Q7982855"
+      },
+      {
+        "name": "Breithorn Occidentale / Westgipfel",
+        "class": "duplicate_of:Breithorn",
+        "why": "Tier 2 #33, 36 m from the tier-1 #7 'Breithorn' row. The name is a half-Italian, half-German OSM string for the west summit of the same mountain.",
+        "source_url": "https://www.wikidata.org/wiki/Q16540"
+      },
+      {
+        "name": "Mountain Studios",
+        "class": "other",
+        "why": "Tier 2 #41 in the MOUNTAINS list. Q834164 is a commercial recording studio inside the Montreux Casino, founded 1975 and later owned by Queen. It is a building with the word 'Mountain' in its name and no landform behind it. This is a name-substring failure, the same family as the hospitality rows.",
+        "source_url": "https://www.wikidata.org/wiki/Q834164"
+      },
+      {
+        "name": "Monte Rosa Hut",
+        "class": "hospitality",
+        "why": "Tier 2 #72. Q672412 is an SAC mountain hut at 2883 m above the Grenzgletscher, i.e. accommodation. It is also the only 'Monte Rosa' row in the file, so the Monte Rosa massif is represented by its hut rather than by the Dufourspitze.",
+        "source_url": "https://www.wikidata.org/wiki/Q672412"
+      },
+      {
+        "name": "Monte Martica",
+        "class": "wrong_country",
+        "why": "Tier 2 #74. Q3861731 is a 1032 m mountain of the Prealpi Varesine in the comuni of Brinzio, Induno Olona, Valganna and Varese, province of Varese, ITALY.",
+        "source_url": "https://www.wikidata.org/wiki/Q3861731"
+      },
+      {
+        "name": "Schwarzsee",
+        "class": "other",
+        "why": "Tier 2 #107 in the mountains list. Q668432 is a small LAKE below the Matterhorn near Zermatt (and the name of the cable-car station beside it). A lake in the Mountains tab.",
+        "source_url": "https://www.wikidata.org/wiki/Q668432"
+      },
+      {
+        "name": "Trockener Steg",
+        "class": "other",
+        "why": "Tier 2 #125. A cable-car station and glacier-ski ridge above Zermatt (Q675425 calls it a 'Bergruecken' at 2900-3000 m). It is also published simultaneously in IT.json at rank 81 with the identical coordinate, so it is double-counted across two countries. Felskinn (#162) is the same failure mode.",
+        "source_url": "https://www.wikidata.org/wiki/Q675425"
+      }
+    ],
+    "missing": [
+      {
+        "name": "Dufourspitze (Monte Rosa)",
+        "qid": "Q3403",
+        "lat": 45.93683,
+        "lon": 7.86706,
+        "why": "4634 m, the highest point in Switzerland and the second-highest mountain in the Alps. Entirely absent while the Monte Rosa Hut below it is present. It is 13.0 km from Zermatt, i.e. outside the roughly 10 km proximity cap this snapshot enforces (max near.km in CH.json is 9.9).",
+        "source_url": "https://www.wikidata.org/wiki/Q3403",
+        "verified": true
+      },
+      {
+        "name": "Piz Bernina",
+        "qid": "Q15132",
+        "lat": 46.38222,
+        "lon": 9.90806,
+        "why": "4048 m, the highest mountain of the Eastern Alps and the emblem of the Engadin. The file reaches St. Moritz (Muottas Muragl #29, Piz Nair #44, Piz Julier, Piz Ot, Piz Rosatsch) but not the Bernina.",
+        "source_url": "https://www.wikidata.org/wiki/Q15132",
+        "verified": true
+      },
+      {
+        "name": "Rigi",
+        "qid": "Q15291",
+        "lat": 47.05667,
+        "lon": 8.48556,
+        "why": "The 'Queen of the Mountains', the classic Lake Lucerne excursion and the site of Europe's first mountain railway. The file contains only 'Rigi Hochflue' (#159), a different and much less visited summit of the same massif. Pilatus is present at #6 and Rigi is not, which no Lucerne visitor would accept.",
+        "source_url": "https://www.wikidata.org/wiki/Q15291",
+        "verified": true
+      },
+      {
+        "name": "Saentis",
+        "qid": "Q15224",
+        "lat": 47.24937,
+        "lon": 9.34331,
+        "why": "2502 m, the culminating point of the Appenzell Alps and the landmark of north-east Switzerland, cable-car served and visible from four countries. The file covers the Alpstein with Hoher Kasten, Ebenalp, Schaefler, Altenalp Tuerm and Oehrli but omits the Saentis itself.",
+        "source_url": "https://www.wikidata.org/wiki/Q15224",
+        "verified": true
+      },
+      {
+        "name": "Finsteraarhorn",
+        "qid": "Q15127",
+        "lat": 46.53747,
+        "lon": 8.12603,
+        "why": "4274 m, the highest mountain of the Bernese Alps and the most prominent peak in Switzerland. Absent while at least eight minor Aletsch-area peaks (Grosses Fiescherhorn, Hinter Fiescherhorn, Grosses Wannenhorn, Dreieckhorn, Fiescher Gabelhorn, Geisshorn, Sattelhorn, Klein Fiescherhorn) sit in the top 25.",
+        "source_url": "https://www.wikidata.org/wiki/Q15127",
+        "verified": true
+      },
+      {
+        "name": "Weisshorn",
+        "qid": "Q15122",
+        "lat": 46.10167,
+        "lon": 7.71611,
+        "why": "4505 m, one of the great Valais four-thousanders between the Anniviers and Zermatt valleys.",
+        "source_url": "https://www.wikidata.org/wiki/Q15122",
+        "verified": true
+      },
+      {
+        "name": "Klein Matterhorn (Matterhorn Glacier Paradise)",
+        "qid": "Q675446",
+        "lat": 45.93833,
+        "lon": 7.72972,
+        "why": "3883 m, the highest point in Europe reachable by aerial tramway and the single most-visited high-alpine viewpoint in Zermatt. The file has Trockener Steg and Felskinn, the stations below it, but not the summit station itself.",
+        "source_url": "https://www.wikidata.org/wiki/Q675446",
+        "verified": true
+      },
+      {
+        "name": "Niesen",
+        "qid": "Q16693",
+        "lat": 46.64611,
+        "lon": 7.6525,
+        "why": "2362 m, the pyramid over Lake Thun with the world's longest stairway funicular; the defining Bernese Oberland foreground peak and absent from a file that carries 203 Swiss mountains.",
+        "source_url": "https://www.wikidata.org/wiki/Q16693",
+        "verified": true
+      },
+      {
+        "name": "Stanserhorn",
+        "qid": "Q16613",
+        "lat": 46.92972,
+        "lon": 8.34028,
+        "why": "1898 m, the CabriO open-top cable car mountain above Lake Lucerne, one of central Switzerland's three headline excursion mountains alongside Pilatus and Rigi.",
+        "source_url": "https://www.wikidata.org/wiki/Q16613",
+        "verified": true
+      },
+      {
+        "name": "Brienzer Rothorn",
+        "qid": "Q15226",
+        "lat": 46.78694,
+        "lon": 8.04694,
+        "why": "2350 m, the steam-rack-railway mountain above Lake Brienz. Named here because the file's Interlaken-area coverage is otherwise dense (Harderkulm, Schynige Platte, Maennlichen, Faulhorn, Augstmatthorn) and this one obvious member is missing.",
+        "source_url": "https://www.wikidata.org/wiki/Q15226",
+        "verified": true
+      }
+    ],
+    "order": [
+      "The top three (Eiger, Matterhorn, Jungfrau) are correct and I would not touch them.",
+      "Uetliberg (870 m, Q16524) at tier 1 #9 is plainly too high: it is Zurich's house hill, above every Swiss four-thousander except three, in a shelf of twelve, while the country's highest mountain is not in the file at all.",
+      "Aletschhorn at #8 and Silberhorn at #10 are too high: both rank above Titlis (#25), Schilthorn (#32), Gornergrat (#35) and Monte San Salvatore (#17), which are the mountains Swiss tourism actually sells.",
+      "The ranking is visibly rewarding UNESCO polygon membership rather than visitability: ten of the top 25 are glacier peaks of the Jungfrau-Aletsch inscription that no ordinary traveller can stand on. A designation bonus should not outweigh reachability.",
+      "Matterhorn at #2 is anchored to Breuil-Cervinia (Italy, 5.6 km) rather than to Zermatt, and the identical row also appears in IT.json at rank 4. Border peaks need a deterministic single-country assignment.",
+      "Crap Mats (#15) and Fil de Cassons (#14) are obscure Glarus Alps ridge points sitting above Monte San Salvatore, Monte Bre and Titlis purely because they fall inside the Sardona/Rhine Gorge designation polygon."
+    ]
+  },
+  "counts_verdict": "Mountains: 203 candidates is the right order of magnitude for Switzerland, but the shape is wrong. The 12-slot tier 1 wastes three slots on a viewpoint label, a lift station and a satellite peak, and omits the Dufourspitze, Piz Bernina, Saentis and Rigi. Beaches: 15 is far too few. Switzerland has a large, well-organised lake-bathing culture across Zurich, Lucerne, Geneva, Thun, Brienz, Neuchatel, Walensee and above all Ticino, and the file misses Lugano, Ascona and Locarno's main lidos while spending two of six tier-1 slots on German and Italian sites. 40 to 50 beach rows would be defensible.",
+  "top_pick_verdict": "top_mountain = 'Eiger'. Defensible, but I would swap it for the Matterhorn: the Matterhorn is Switzerland's global signifier and it is already #2 in this same file. The Eiger reads as a Bernese Oberland card rather than a national one. top_beach = 'Geneve-Plage': acceptable and it is at least genuinely Swiss, but a Lido Ascona or Lido di Lugano card would sell a Swiss beach far better than a city lake beach in Geneva.",
+  "notes": "Systemic causes seen in CH.json. (1) Proximity cap of roughly 10 km (max near.km 9.9) removes the Dufourspitze (13.0 km from Zermatt) and, by the same mechanism in other countries, the Grossglockner and the Zugspitze. (2) Designation weighting: 'unesco' in the designations array is clearly a large positive in the score, which is what floods the top 25 with unvisitable Aletsch glacier peaks and promotes Crap Sogn Gion and Crap Mats. (3) Name-string matching with no landform check: 'Mountain Studios' (a recording studio), 'View to Aletschgletscher' (an OSM viewpoint label), 'Riva Paradiso 28 Beach' (a street address) and 'Boedeli lido' all survive. (4) Border double-publishing: Matterhorn, Trockener Steg and Furggen each appear in both CH.json and IT.json with identical coordinates. (5) Coordinate collision: 'Rigi Hochflue' (#159) and 'Urmiberg' (#182) carry coordinates 4 m apart although they are different mountains, so at least one is mislocated. (6) Diacritic damage in the wire: 'Moench' (#5) and 'Monte Bre' (#19) have lost their umlaut and accent."
+}

@@ -1,0 +1,185 @@
+{
+  "iso2": "SK",
+  "country": "Slovakia",
+  "checked_at": "2026-08-17",
+  "beaches": {
+    "wrong": [],
+    "missing": [
+      {
+        "name": "Zlaté piesky (Bratislava)",
+        "qid": "Q207224",
+        "lat": 48.18472,
+        "lon": 17.18944,
+        "why": "Slovakia is landlocked, so an empty sea-beach list is correct. If lake bathing is in scope for the Beaches tab, Zlaté piesky is Bratislava's summer swimming lake and there is no row for it. Flagged as a scope question, not a confirmed defect.",
+        "source_url": "https://www.wikidata.org/wiki/Q207224",
+        "verified": false
+      },
+      {
+        "name": "Liptovská Mara",
+        "qid": "Q1130334",
+        "lat": 49.09861,
+        "lon": 19.48889,
+        "why": "The large Liptov reservoir under the Tatras, used for summer swimming and watersports. Same scope caveat as above.",
+        "source_url": "https://www.wikidata.org/wiki/Q1130334",
+        "verified": false
+      }
+    ],
+    "order": [
+      "No ranking to judge: the beach list is empty."
+    ]
+  },
+  "mountains": {
+    "wrong": [
+      {
+        "name": "Trzy Korony",
+        "class": "wrong_country",
+        "why": "The Three Crowns of Pieniny National Park are in POLAND. Wikidata Q7849064 gives P17 = Poland, and the coordinate reverse-geocodes to Sokola Perć, Krościenko nad Dunajcem, powiat nowotarski, województwo małopolskie, Polska. It is ranked 5th in Slovakia, and it is simultaneously absent from the Polish file.",
+        "source_url": "https://www.wikidata.org/wiki/Q7849064"
+      },
+      {
+        "name": "Okrąglica (Trzy Korony)",
+        "class": "duplicate_of:Trzy Korony",
+        "why": "Okrąglica is the main summit of the Trzy Korony massif, 600 m from the row above, so the same Polish feature occupies two of Slovakia's twelve tier-1 slots. Also wrong_country.",
+        "source_url": "https://www.wikidata.org/wiki/Q7849064"
+      },
+      {
+        "name": "Kozi Wierch",
+        "class": "wrong_country",
+        "why": "A 2291 m peak on the Orla Perć ridge in the Polish High Tatras. Wikidata Q1765870 gives P17 = Poland, and the coordinate reverse-geocodes to Orla Perć, gmina Bukowina Tatrzańska, powiat tatrzański, Polska. Ranked 10th in Slovakia.",
+        "source_url": "https://www.wikidata.org/wiki/Q1765870"
+      },
+      {
+        "name": "Vtáčnik",
+        "class": "park_or_area",
+        "why": "Two faults at once. The row links to the Wikipedia article for the Vtáčnik Mountains, a range rather than a summit, and its coordinate (48.4478, 18.8827) reverse-geocodes to the 'Banská Štiavnica, Klinger' bus stop, roughly 27 km from the actual Vtáčnik peak (Wikidata Q643840, 48.625, 18.63333). Ranked 12th nationally on a coordinate that is not the mountain.",
+        "source_url": "https://www.wikidata.org/wiki/Q643840"
+      },
+      {
+        "name": "Kasprov vrch / Kasprowy Wierch",
+        "class": "other",
+        "why": "A machine-merged bilingual string that no Slovak or Pole would write, presented as a name. The summit itself is on the Poland/Slovakia border, but its entire visitor identity (cable car, ski area) is Polish and Zakopane-side, so ranking it 4th among Slovak mountains is doubly odd. Same string is ranked 1st in the Polish file.",
+        "source_url": "https://en.wikipedia.org/wiki/Kasprowy_Wierch"
+      },
+      {
+        "name": "Świnica",
+        "class": "other",
+        "why": "A border summit shipped under its Polish spelling in the Slovak list; the Slovak name is Svinica. Localisation defect rather than a wrong feature. Ranked 6th.",
+        "source_url": "https://en.wikipedia.org/wiki/Świnica"
+      },
+      {
+        "name": "Štiavnický stratovulkán",
+        "class": "park_or_area",
+        "why": "An eroded stratovolcano structure, that is a geological region several kilometres across (Wikidata Q12781801, instance of 'stratovolcano', two sitelinks), not a summit a walker can stand on. Tier 2 rank 15.",
+        "source_url": "https://www.wikidata.org/wiki/Q12781801"
+      },
+      {
+        "name": "Mnich",
+        "class": "wrong_country",
+        "why": "The Mnich rock tower above Morskie Oko is in Poland; the coordinate reverse-geocodes to Brzegi, gmina Bukowina Tatrzańska, województwo małopolskie, Polska. Tier 2 rank 22.",
+        "source_url": "https://www.openstreetmap.org/#map=16/49.1927/20.0549"
+      },
+      {
+        "name": "Gerlachovská veža",
+        "class": "duplicate_of:Gerlachovský štít",
+        "why": "A subsidiary tower of the Gerlach massif, roughly 100 m from the Gerlachovský štít row. Tier 2 rank 34.",
+        "source_url": "https://www.wikidata.org/wiki/Q81213"
+      },
+      {
+        "name": "Suchá Hora transmitter",
+        "class": "other",
+        "why": "A telecommunications mast near Kremnica, listed as a mountain; the name itself says transmitter. Tier 2 rank 33.",
+        "source_url": "https://www.openstreetmap.org/#map=16/48.7383/18.9964"
+      },
+      {
+        "name": "Spišský hradný vrch",
+        "class": "other",
+        "why": "The castle hill that Spiš Castle stands on. It is a UNESCO monument site, not a mountain destination. Tier 2 rank 35.",
+        "source_url": "https://en.wikipedia.org/wiki/Spiš_Castle"
+      }
+    ],
+    "missing": [
+      {
+        "name": "Lomnický štít",
+        "qid": "Q1072105",
+        "lat": 49.2,
+        "lon": 20.21278,
+        "why": "2634 m, the second highest peak of Slovakia and by a wide margin the most visited High Tatras summit, because a cable car from Tatranská Lomnica goes to the top. It is absent from the Slovak file at every tier. For most visitors this is the mountain of Slovakia.",
+        "source_url": "https://www.wikidata.org/wiki/Q1072105",
+        "verified": true
+      },
+      {
+        "name": "Veľký Rozsutec",
+        "qid": "Q2298346",
+        "lat": 49.23139,
+        "lon": 19.09861,
+        "why": "1610 m, the emblem of Malá Fatra and one of the most photographed mountains in Slovakia. The file lists ten minor Malá Fatra ridge points (Hromové, Sokolie, Kraviarske, Meškalka, Mojský grúň, Žitné and more) and not Rozsutec.",
+        "source_url": "https://www.wikidata.org/wiki/Q2298346",
+        "verified": true
+      },
+      {
+        "name": "Ďumbier",
+        "qid": "Q341905",
+        "lat": 48.93661,
+        "lon": 19.64017,
+        "why": "2046 m, the highest peak of the Low Tatras and of Slovakia outside the High Tatras. Absent at every tier; the entire Low Tatras range appears only as Dereše at tier 2 rank 32.",
+        "source_url": "https://www.wikidata.org/wiki/Q341905",
+        "verified": true
+      },
+      {
+        "name": "Chopok",
+        "qid": "Q1076258",
+        "lat": 48.94306,
+        "lon": 19.59306,
+        "why": "2024 m, the summit of the Jasná ski resort and the busiest mountain in central Slovakia in both winter and summer. Absent at every tier.",
+        "source_url": "https://www.wikidata.org/wiki/Q1076258",
+        "verified": true
+      },
+      {
+        "name": "Kráľova hoľa",
+        "qid": "Q686513",
+        "lat": 48.88296,
+        "lon": 20.13911,
+        "why": "1946 m, the eastern anchor of the Low Tatras and a mountain embedded in Slovak folk song. Absent at every tier.",
+        "source_url": "https://www.wikidata.org/wiki/Q686513",
+        "verified": true
+      },
+      {
+        "name": "Baranec",
+        "qid": "Q3509342",
+        "lat": 49.17361,
+        "lon": 19.74139,
+        "why": "2184 m, one of the main summits of the Western Tatras (Roháče). The Western Tatras contribute nothing to either tier.",
+        "source_url": "https://www.wikidata.org/wiki/Q3509342",
+        "verified": true
+      },
+      {
+        "name": "Sitno",
+        "qid": "Q1621423",
+        "lat": 48.40306,
+        "lon": 18.8775,
+        "why": "1009 m, the landmark peak above Banská Štiavnica with its castle ruin and legend. The file carries four minor hills around Banská Štiavnica (Paradajs, Tanád, the stratovolcano polygon and the mislocated Vtáčnik row) and not Sitno.",
+        "source_url": "https://www.wikidata.org/wiki/Q1621423",
+        "verified": true
+      },
+      {
+        "name": "Veľký Choč",
+        "qid": "Q3506100",
+        "lat": 49.15139,
+        "lon": 19.34278,
+        "why": "1611 m, a free-standing limestone summit above Liptov with one of the best panoramas in the country. Absent at every tier.",
+        "source_url": "https://www.wikidata.org/wiki/Q3506100",
+        "verified": true
+      }
+    ],
+    "order": [
+      "Rysy at rank 1 over Gerlachovský štít at rank 2 is the wrong way round for Slovakia. Gerlach is the highest peak of Slovakia and of the entire Carpathian range; Rysy's fame is mostly Polish, since it is Poland's highest point and the classic climb from the Polish side.",
+      "Ranks 5 and 7 are the same Polish mountain, Trzy Korony, listed twice, and rank 10 is another Polish peak. A quarter of Slovakia's tier 1 is Poland.",
+      "Rank 12 is a range article pinned to a bus stop 27 km from the summit it claims to be.",
+      "Slavkovský štít (2452 m) sits at tier 2 rank 21 and Ľadový štít (2627 m, the fourth highest in the country) at tier 2 rank 20, both below Poludňový grúň, a grassy hump on the Malá Fatra ridge, at tier 1 rank 11.",
+      "Ten Malá Fatra ridge points are listed while Veľký Rozsutec, the range's icon, is not in the file at all."
+    ]
+  },
+  "counts_verdict": "Zero beaches is right for a landlocked country, with the same caveat as Czechia: the Slovak file has no bathing_year and no EEA join, so if lake bathing is ever in scope the layer is simply absent rather than deliberately empty. 119 mountains is the largest count in this group and far more than the country needs at this quality, because the volume comes from ridge-point padding rather than coverage. Twelve tier-1 slots is the right size but four of them are Polish rows and one is a mislocated range, leaving seven real Slovak mountains in the country's top twelve. Meanwhile the Low Tatras, the Western Tatras and the Štiavnica hills are each represented by their minor points and not by their main summits.",
+  "top_pick_verdict": "No. 'Rysy' as Slovakia's top_mountain is defensible geographically, since the summit is on the border, but it is the wrong choice for a Slovak country card: Rysy is the mountain Poles climb and Poland's highest point. Slovakia's card should carry Gerlachovský štít, the highest peak of Slovakia and of the Carpathians, or Lomnický štít if the card wants the image most travellers recognise. Both are already in or missing from the file in ways this review flags: Gerlach is present at rank 2 (and wrongly duplicated into the Polish list), Lomnický štít is absent entirely.",
+  "notes": "Slovakia and Poland share the Tatras, and the pipeline resolves that by putting each border peak in both files and several purely Polish peaks in the Slovak one. Trzy Korony is the sharpest case: it is in Poland, it appears twice in Slovakia's tier 1, and it is missing from Poland's file completely, so the one feature is both a wrong entry and a missing entry depending on which tab you open. A country-of-coordinate check would fix all four wrong_country rows here at once. Separately, the ranking signal clearly rewards dense ridge coverage in OSM: Malá Fatra and Banská Štiavnica are over-represented by minor points precisely where OSM has many named ridge nodes, while famous summits reachable by cable car (Lomnický štít, Chopok) are missing. Every country claim was checked by reverse-geocoding the coordinate shipped in the wire."
+}

@@ -1,0 +1,16 @@
+rank,curation_rank,title,ref,network,distance_km,popularity,pageviews_day,sitelinks,anchors,quality_score,portal_agreement,status,family_members,trip_id,osm_relation
+1,83.3,European long distance path E11 - Netherlands,E11,iwn,346.5,0.723,10,10,"Nieuwe Kerk (Madurodam) (2530/day, 309 m); Mauritshuis, the Royal Dutch Shell wing (2530/day, 120 m); Mauritshuis, the Royal Dutch Shell wing (2530/day, 120 m)",96,,needs_review,1,115586,1982909
+2,83.01,Ronde van Nederland deel 4 - Krijtlandpad,RvN,iwn,68.8,0.722,0,0,"Schneeberg (1044/day, 1377 m); Helpoort (561/day, 288 m); Sint-Matthiaskerk (561/day, 595 m)",95,,needs_review,12,93970,9431307
+3,82.29,RvN Pieterpad deel 2 - 26 - Variant voor Ronde van Nederland,LAW 9-2,iwn,11.7,0.701,0,0,"Helpoort (561/day, 482 m); Sint-Matthiaskerk (561/day, 595 m); Maastricht (561/day, 978 m)",95,,needs_review,16,135401,9432331
+4,81.02,GR12 Amsterdam-Paris NL,GR12,iwn,260.8,0.709,0,0,"Amsterdam (3234/day, 13 m); ""Amsterdam"" (3234/day, 1077 m); El Al Flight 1862 (503/day, 1183 m)",88.8,,needs_review,1,156502,13630746
+5,77.87,Pelgrimspad 2 - 13b Aanlooproute Maastricht,LAW 7-2,nwn,7.2,0.718,0,0,"Maastricht (561/day, 1894 m); Helpoort (561/day, 288 m); Sint-Matthiaskerk (561/day, 319 m)",95,,needs_review,18,158612,16248686
+6,75.97,Maarten van Rossumpad - 06,LAW4,nwn,16.6,0.663,15,3,,95,,needs_review,39,134172,8436557
+7,75.81,Pieterpad deel 1 - Pieterburen-Vorden,LAW 9-1,nwn,239.3,0.659,95,12,"Groningen (375/day, 283 m); Grote Markt 39 (375/day, 321 m); Groningen (375/day, 348 m)",95,,needs_review,14,113543,312993
+8,75.65,Het Groene Woud Pad - 06- Eindhoven-Noord - Eindhoven Centraal,GWP,rwn,14.9,0.797,0,0,"Operation Market Garden (1901/day, 943 m); Eindhoven (567/day, 1171 m); Dommelstraat 9, Eindhoven (567/day, 470 m)",100,,needs_review,19,117722,2820061
+9,75.07,Ons Kloosterpad - 09,OKP,rwn,28.9,0.781,0,0,"Operation Market Garden (1901/day, 692 m); Witte Dame (567/day, 695 m); Dommelstraat 9, Eindhoven (567/day, 146 m)",100,,needs_review,16,156327,13333123
+10,75.01,Westerborkpad - 00,LAW15,nwn,6.5,0.6,4,4,"""Amsterdam"" (3234/day, 548 m); Amsterdam (3234/day, 434 m); Rijksmuseum Amsterdam (386/day, 746 m)",100,,needs_review,32,134276,8469243
+11,74.96,"Noordzee Kustpad, Nederland",NKP,iwn,693.0,0.581,0,0,"Mauritshuis, the Royal Dutch Shell wing (2530/day, 120 m); Mauritshuis (Madurodam) (2530/day, 288 m); Huis ten Bosch (Madurodam) (2530/day, 326 m)",82.5,,needs_review,1,83020,1955979
+12,74.91,61-63,61-63,rwn,4.9,0.95,0,0,"Utrecht (12832/day, 1960 m); Vredenburg (12832/day, 1520 m); Dom tower (76/day, 1953 m)",82.5,,needs_review,36,144790,11558065
+13,74.66,RvN Krijtlandpad - 01 - Maastricht-Mariadorp,,iwn,13.2,0.483,0,0,"Helpoort (561/day, 288 m); Sint-Matthiaskerk (561/day, 595 m); Maastricht (561/day, 978 m)",95,,needs_review,1,93997,9443314
+14,74.46,Noaberpad - 1,LAW10,nwn,89.2,0.585,3,4,"Bourtange (38/day, 9 m); Bourtange (38/day, 6 m)",100,,needs_review,23,129203,7164878
+15,74.26,Trekvogelpad - 02,LAW 2,nwn,21.2,0.615,7,3,"Alkmaar (219/day, 116 m); AFAS Stadion (88/day, 440 m); Het Hof van Alkmaar (84/day, 11 m)",95,,needs_review,55,134154,8431398

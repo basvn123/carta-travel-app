@@ -1,0 +1,293 @@
+{
+  "id": "md-city-chisinau-tiraspol-comrat",
+  "sourceId": "moldova-chisinau-tiraspol-comrat-city",
+  "slug": "md-city-chisinau-tiraspol-comrat",
+  "title": "Three Capitals in One Country: Chișinău, Tiraspol and Comrat",
+  "country": "Moldova",
+  "countryCode": "MD",
+  "countries": [
+    {
+      "name": "Moldova",
+      "code": "MD"
+    }
+  ],
+  "isMultiCountry": false,
+  "region": "Eastern & Southeastern Europe",
+  "regionKey": "eastern-southeastern",
+  "subRegion": "Chișinău, Transnistria (de facto), and the Gagauz autonomy",
+  "tripType": "City Trips",
+  "tripTypeId": 3,
+  "tripTypeSlug": "city",
+  "durationDays": 7,
+  "bestPeriod": {
+    "months": [
+      5,
+      6,
+      9
+    ],
+    "monthNames": [
+      "May",
+      "June",
+      "September"
+    ],
+    "window": "early September — warm, the wine harvest starting, and Chișinău's National Wine Day in the first weekend of October just beyond it",
+    "note": null,
+    "avoid": "July–August (35 °C in a city of concrete), and January–February (grey, −10 °C, nothing outdoors works)",
+    "raw": null
+  },
+  "budgetTier": "€",
+  "budgetTierRange": [
+    1,
+    1
+  ],
+  "budgetTierRaw": "€",
+  "budget": {
+    "currency": "EUR",
+    "totalEur": {
+      "low": 405,
+      "high": 740
+    },
+    "totalNote": "€405–€740",
+    "breakdown": {
+      "accommodation": {
+        "lowEur": 180,
+        "highEur": 350,
+        "note": "€180–€350 (€26–€50/night, central Chișinău doubles)"
+      },
+      "food": {
+        "lowEur": 110,
+        "highEur": 180,
+        "note": "€110–€180 (€16–€26/day — Moldova is genuinely cheap)"
+      },
+      "transport": {
+        "lowEur": 35,
+        "highEur": 70,
+        "note": "€35–€70 (city trolleybuses, three intercity rutieră returns, airport transfers)"
+      },
+      "activities": {
+        "lowEur": 80,
+        "highEur": 140,
+        "note": "€80–€140 (museums, opera, Kvint, winery tastings)"
+      }
+    },
+    "perDayEur": {
+      "low": 58,
+      "high": 106
+    }
+  },
+  "profile": {
+    "difficulty": 1,
+    "difficultyLabel": "Easy",
+    "difficultyNote": "Easy",
+    "fitnessLevel": "Easy",
+    "crowdLevel": null,
+    "familyFriendly": null,
+    "carRequired": null
+  },
+  "basecamps": [
+    "Chișinău"
+  ],
+  "gatewayAirport": "Chișinău International (KIV), 13 km and 20–30 minutes from the centre. **No published airport taxi tariff and meters are unreliable** — order a **Bolt** or **Yandex Go** and take the fixed quote (roughly 160 MDL / ~€8). **Trolleybus 30** runs into town for **7 MDL** (~€0.35).",
+  "gatewayAirportCode": "KIV",
+  "languages": [
+    "Romanian",
+    "Russian",
+    "Gagauz"
+  ],
+  "currency": "Moldovan leu (MDL); Transnistria uses the unrecognised Transnistrian rouble (PRB)",
+  "emergencyNumber": "112",
+  "coordinates": {
+    "lat": 47.009,
+    "lon": 28.8594,
+    "precision": "city",
+    "matchedPlace": "Chisinau",
+    "source": "geonames (geonamescache, cities > 15k)"
+  },
+  "tags": [
+    "city-break",
+    "soviet-modernism",
+    "wine",
+    "transnistria",
+    "gagauzia",
+    "budget",
+    "museums"
+  ],
+  "summary": "Chișinău is a low green city of chestnut trees and heavy Soviet concrete where the wine bars are better than the buildings and dinner for two costs €20. From it you can reach two other capitals in under two hours:…",
+  "summaryGenerated": false,
+  "hook": "Chișinău is a low green city of chestnut trees and heavy Soviet concrete where the wine bars are better than the buildings and dinner for two costs €20. From it you can reach two other capitals in under two hours: Tiraspol, seat of an internationally unrecognised de facto entity with its own money, and Comrat, capital of a Turkic-speaking Orthodox autonomy inside Moldova. One week, three self-images of the same small country.",
+  "snapshot": {
+    "Country": "Moldova",
+    "Trip type": "City Trips",
+    "Duration": "7 days",
+    "Best period": "May–June and September",
+    "Budget tier": "€",
+    "Difficulty": "Easy",
+    "Start / End": "Chișinău → Chișinău (single base, three day trips)",
+    "Getting there": "Chișinău International (KIV), 13 km and 20–30 minutes from the centre. **No published airport taxi tariff and meters are unreliable** — order a **Bolt** or **Yandex Go** and take the fixed quote (roughly 160 MDL / ~€8). **Trolleybus 30** runs into town for **7 MDL** (~€0.35)."
+  },
+  "itinerary": [
+    {
+      "day": 1,
+      "title": "The boulevard",
+      "morning": "Land at KIV, drop bags, and start at **Grădina Publică Ștefan cel Mare și Sfânt** — the 1818 park with the **Aleea Clasicilor**, a double row of busts of Romanian and Moldovan writers under lime trees.",
+      "afternoon": "Walk **Bulevardul Ștefan cel Mare** east: the **Nativity Cathedral** and its detached bell tower, the **Triumphal Arch**, the Government building, and the Presidency. It is one straight kilometre and it contains most of what the city puts on postcards.",
+      "evening": "**Carpe Diem** on Strada Bulgară for the first orientation in Moldovan wine — Fetească Neagră, Rara Neagră, Fetească Albă — with a knowledgeable list and by-the-glass flights.",
+      "dayStats": null,
+      "sleep": null
+    },
+    {
+      "day": 2,
+      "title": "Museums and the concrete city",
+      "morning": "The **National Museum of Ethnography and Natural History** on Strada Mihail Kogălniceanu, for the **Deinotherium** skeleton — a near-complete giant prehistoric proboscidean excavated in southern Moldova, the museum's and the country's single most famous object [VERIFY: current ethnography museum entry fee].",
+      "afternoon": "The **Pushkin Museum** in the small house where the exiled poet lodged in 1820–23, then north to Râșcani for the **State Circus** and the **Romanița tower** — the two buildings that explain late-Soviet Chișinău better than any museum.",
+      "evening": "**Valea Morilor** lake and park at sunset, then back to **Invino** on Strada Vlaicu Pârcălab, the city's most serious wine list.",
+      "dayStats": null,
+      "sleep": null
+    },
+    {
+      "day": 3,
+      "title": "Tiraspol and Transnistria",
+      "morning": "Rutieră from **Gara Centrală**. Transnistria — officially the Pridnestrovian Moldavian Republic — is an **internationally unrecognised de facto entity**: no state recognises it, Moldova claims it, and it has functioned with its own administration since 1992. At the crossing you fill in a **free migration slip** giving your name, passport number and where you are going; keep it, you surrender it on the way out. Slips are commonly issued for **up to 24 hours**; a longer stay must be registered at the migration office. **Do not photograph the checkpoint, the peacekeeping posts or any military site.**",
+      "afternoon": "In **Tiraspol**: the **House of Soviets** with its Lenin bust on 25 October Street, the war memorial and tank, and the **Kvint** distillery — brandy since 1897, the entity's best-known export, with tours and a shop. The **Sheriff Sports Complex** on the edge of town — stadium, academy and hypermarket — is the other half of the local economy [VERIFY: current Kvint tour times and price].",
+      "evening": "Twenty minutes back west, **Bendery (Tighina) fortress** on the Dniester, an Ottoman rebuild of the 1530s, is the best actual monument on this side of the river [VERIFY: current Bendery fortress hours and entry fee]. Return to Chișinău the same evening — the last rutiere run into the early evening, so check the return time before you settle in for lunch.",
+      "dayStats": null,
+      "sleep": null
+    },
+    {
+      "day": 4,
+      "title": "Comrat and Gagauzia",
+      "morning": "Rutieră from **Gara de Sud** south across open steppe to **Comrat**, capital of **Găgăuzia**, an autonomous territorial unit within Moldova whose people are **Turkic-speaking Orthodox Christians** — a combination that exists almost nowhere else.",
+      "afternoon": "The **Gagauz National History and Ethnography Museum**, the **Cathedral of St John the Baptist**, the Assembly building and Comrat State University, where Gagauz is taught alongside Russian and Romanian.",
+      "evening": "Eat before you leave: **gözleme**, **kıvırma** (a coiled layered pie), **sarma**, lamb *kaurma*, and the heavy red house wine that every Gagauz household makes. Back in Chișinău by nine.",
+      "dayStats": null,
+      "sleep": null
+    },
+    {
+      "day": 5,
+      "title": "Market day and the underground cellars",
+      "morning": "**Piața Centrală**, the central market: whole aisles of tomatoes, brânză sheep's cheese, dried fruit, sunflower seeds, walnuts, and a flower market that runs all year. Go before 10:00 and bring small notes.",
+      "afternoon": "**Cricova**, 15 km north — 120 km of limestone galleries entered **by vehicle**, driven through streets named after wines. Reservation is mandatory; the entry-level **Matinal** tour is 250 MDL and the tasting tours run from 400 MDL to 3,100 MDL per person.",
+      "evening": "**Vinăria Nouă** back in town for small-producer Moldovan bottles you will not find outside the country.",
+      "dayStats": null,
+      "sleep": null
+    },
+    {
+      "day": 6,
+      "title": "The green city",
+      "morning": "The **Ciuflea Monastery** (Sfântul Teodor Tiron), the city's main working monastery, then the **Mazarache church** in the old lower town — the oldest surviving church in Chișinău, on the hill above the Bâc.",
+      "afternoon": "The **National Museum of History of Moldova** on Strada 31 August 1989, with the she-wolf statue outside, then the **National Art Museum** in the Herța house.",
+      "evening": "Dinner on **Strada 31 August 1989** — *zeamă* chicken broth, *plăcinte* pastries with cheese or pumpkin, *mămăligă* with brânză and sour cream, *sarmale*.",
+      "dayStats": null,
+      "sleep": null
+    },
+    {
+      "day": 7,
+      "title": "Mileștii Mici, or the parks",
+      "morning": "**Mileștii Mici**, 20 minutes south: the largest wine cellar collection in the world by bottle count, again toured **by vehicle**, again reservation-only. The Excursie tour is 350 MDL on a weekday, more at evenings and weekends.",
+      "afternoon": "Or, if you have had enough underground: **Valea Trandafirilor** park, the Botanical Garden, and the Ethnographic Museum's outdoor section.",
+      "evening": "Last dinner, then Bolt to KIV — allow 40 minutes for the 13 km, more at rush hour.",
+      "dayStats": null,
+      "sleep": null
+    }
+  ],
+  "accommodationStrategy": [
+    {
+      "rank": 1,
+      "name": "Central boulevard hotels",
+      "style": "mid-range city hotel",
+      "location": "Chișinău, Strada 31 August 1989",
+      "description": "everything in this itinerary except the day trips is within a 20-minute walk, and both bus stations are a short trolleybus ride. Ask for a rear-facing room — the boulevard is loud until midnight.",
+      "booking": "3–4 weeks ahead, longer for the first weekend of October (National Wine Day).",
+      "priceNote": null
+    },
+    {
+      "rank": 2,
+      "name": "Apartment rentals",
+      "style": "serviced apartment",
+      "location": "Chișinău, Centru / Râșcani",
+      "description": "Moldova's best-value beds. A central one-bedroom runs well under a hotel double, with a kitchen for market produce and a washing machine. Confirm the floor and whether the lift works — many blocks are 1970s.",
+      "booking": "1–2 weeks ahead; supply is good outside festival dates.",
+      "priceNote": null
+    },
+    {
+      "rank": 3,
+      "name": "Guesthouses in Butuceni / Trebujeni",
+      "style": "rural guesthouse, optional overnight",
+      "location": "Orheiul Vechi",
+      "description": "if you want one night out of the city, this is the one — limestone cliffs, a cave monastery, and home cooking, an hour north. Reserve entry is 20 MDL adult, 10 MDL reduced.",
+      "booking": "2–4 weeks ahead; the village has only a few dozen beds.",
+      "priceNote": null
+    }
+  ],
+  "logistics": {
+    "connectivity": "Moldova is **not** in EU roaming — buy a local SIM (Orange or Moldcell) at the airport, or check your operator's Moldova rate first. City wifi is widespread and fast. **Transnistrian mobile networks are separate**; your Moldovan SIM may roam expensively or not at all across the river.",
+    "emergency": "**112** works throughout Moldova. In Transnistria the local services answer their own numbers; **your consulate has no consular access there** — most foreign ministries state plainly that they cannot provide assistance in the de facto entity. Note this before you cross, not after.",
+    "weather": "Continental extremes. Summer highs above 35 °C with no sea to moderate them; winters to −15 °C with ice on the pavements. Spring and autumn are short, mild and the reason to come then.",
+    "bookingWindows": "Cellar tours several days to a week (they are genuinely reservation-only). Opera and Organ Hall, 2–3 days midweek. Nothing else needs advance booking.",
+    "money": "The **Moldovan leu (MDL)**; roughly 19–20 MDL to the euro. Cards work well in Chișinău. **In Transnistria the currency is the unrecognised Transnistrian rouble, foreign cards do not work, and there is no international ATM** — the economy there is cash-only for a visitor. Change a modest amount of MDL into roubles at a Tiraspol exchange booth, spend it, and change back before you leave: the rouble is worthless outside the territory. Euro and dollar notes are also exchangeable there.",
+    "transportRules": "Rutiere are hailed at marked stops, paid in cash, and do not run to a printed timetable so much as to a fill rate. Confirm the last return departure from Tiraspol and Comrat before you commit to the day.",
+    "permits": "Entering Transnistria requires the **free migration slip** issued at the crossing; overstaying it, or losing it, causes trouble on exit. **No photography of checkpoints, peacekeepers or military installations.** Moldova asks you to enter and leave the country through territory it controls — do not plan to exit from Transnistria into Ukraine on this itinerary.",
+    "health": null,
+    "gettingThere": null,
+    "other": []
+  },
+  "proTips": [
+    "**Go to Tiraspol early and come back the same day.** A day slip is simple, an overnight adds a registration step, and a same-day return removes every complication that makes people nervous about the trip.",
+    "**Carry small Moldovan notes.** Rutiere, market stalls and trolleybus conductors do not break a 500 MDL note, and the ATM will hand you nothing else.",
+    "**Language reality: Romanian is the state language, Russian is the second working language of daily life.** Older people and almost everyone in Tiraspol and Comrat answer more comfortably in Russian; younger Chișinău answers in Romanian and often English. *Bună ziua* and *mulțumesc* go a long way; *здравствуйте* and *спасибо* go equally far in the other two cities.",
+    "**Book the cellars, don't turn up.** Cricova and Mileștii Mici both take you through the tunnels **in a vehicle**, both require advance reservation, and walk-ins are routinely turned away.",
+    "**On safety, be accurate rather than dramatic.** Chișinău's ordinary crime risk is low and comparable with other European capitals; the real annoyances are unmetered taxis, poor street lighting and broken pavements. Transnistria is calm for visitors, and the issue is legal and consular ambiguity, not danger.",
+    "**Do Comrat on a weekday.** The museum and university are open, the market is running, and the rutiere are frequent; on Sunday the town is closed and you will have made a two-hour trip for a cathedral.",
+    "**Time your visit to the first weekend of October** if you can. National Wine Day fills Piața Marii Adunări Naționale with every producer in the country pouring at market prices — but book a bed a month out."
+  ],
+  "typeSpecific": {
+    "raw": {
+      "Walkable blocks by name": "**Bulevardul Ștefan cel Mare și Sfânt** is the spine — Ștefan cel Mare park to the Government building, 1.5 km, everything on it. **Strada 31 August 1989** runs parallel one block north with the Organ Hall and the quieter cafés. **Strada Bulgară** and **Strada Vlaicu Pârcălab** hold the wine bars. **Strada Alexandru cel Bun** and the streets down to **Piața Centrală** are the market quarter. **Valea Morilor** park is a 20-minute walk south-west from the boulevard and swallows an afternoon.",
+      "Transit fares": "There is **no tourist travel card** and no need for one. **Trolleybus 7 MDL** (~€0.35), **municipal bus 6 MDL**, paid to a conductor or at the validator; a contactless bank card works on most trolleybuses. City **rutiere** (privately run minibuses) cost a little more and are hailed and paid in cash to the driver [VERIFY: current Chișinău city rutieră fare and e-ticket rollout].",
+      "Intercity rutieră": "**Chișinău → Tiraspol**: from **Gara Centrală** (the central bus station beside Piața Centrală), roughly hourly, 70 km, **1 h 30 – 2 h** including the crossing, around 50 MDL. **Chișinău → Comrat**: from **Gara de Sud**, every 30–60 minutes, 100 km, **1 h 45 – 2 h**, around 80 MDL. Both are cash, both are minibuses, neither takes reservations [VERIFY: current Tiraspol and Comrat rutieră fares].",
+      "Cultural booking timelines": "The **National Opera and Ballet Theatre \"Maria Bieșu\"** and the **Organ Hall (Sala cu Orgă)** sell online and at the box office; a mid-week seat is usually available two or three days ahead, a Friday or Saturday premiere wants two weeks. **Cricova** and **Mileștii Mici** cellar tours are **reservation-only** and are not reliable as walk-ins — book several days out. Museums need no advance ticket [VERIFY: current Opera and Organ Hall ticket bands].",
+      "Architectural focal points": "The **Nativity Cathedral** (Catedrala Nașterea Domnului, 1830s, Russian neoclassical, architect **Avraam Melnikov**) with its **detached bell tower** — the original was demolished in 1962 and rebuilt in 1997. The **Triumphal Arch** (1840, architect **Luca Zaușkevici**), facing it across the square. The **Organ Hall** (1911, the former City Bank, architect **Mihail Cekerul-Cuș**), Beaux-Arts. The **State Circus** (1981), the city's great **Soviet-modernist** set piece — a ribbed concrete crown on a hill in Râșcani, long derelict and under intermittent restoration; the exterior is the point [VERIFY: current circus restoration status and whether the site can be approached].",
+      "Romanița tower": "The 1986 **Turnul Romanița** on Strada Mihail Sadoveanu, a 22-storey cylindrical residential high-rise by **Oleg Vronski**, is late-Soviet Chișinău's signature object: a concrete stem with cantilevered flats, half brutalist, half chamomile flower. Residential, so admire from the street."
+    },
+    "surface": null,
+    "distanceKm": null,
+    "elevationM": null,
+    "verticalM": null,
+    "technicalRating": null,
+    "transitPass": "**Bulevardul Ștefan cel Mare și Sfânt** is the spine — Ștefan cel Mare park to the Government building, 1.5 km, everything on it. **Strada 31 August 1989** runs parallel one block north with the Organ Hall and the quieter cafés. **Strada Bulgară** and **Strada Vlaicu Pârcălab** hold the wine bars. **Strada Alexandru cel Bun** and the streets down to **Piața Centrală** are the market quarter. **Valea Morilor** park is a 20-minute walk south-west from the boulevard and swallows an afternoon.",
+    "hutBooking": null,
+    "liftNetwork": null,
+    "snowReliability": null,
+    "windConditions": null,
+    "gpxReady": null,
+    "bookingTimeline": "The **National Opera and Ballet Theatre \"Maria Bieșu\"** and the **Organ Hall (Sala cu Orgă)** sell online and at the box office; a mid-week seat is usually available two or three days ahead, a Friday or Saturday premiere wants two weeks. **Cricova** and **Mileștii Mici** cellar tours are **reservation-only** and are not reliable as walk-ins — book several days out. Museums need no advance ticket [VERIFY: current Opera and Organ Hall ticket bands].",
+    "audience": null
+  },
+  "packingNotes": [],
+  "whatCouldGoWrong": [],
+  "sources": {
+    "verified": null,
+    "confidenceNotes": "- Verified: Chișinău airport 13 km / 20–30 min with no published taxi tariff, Bolt or Yandex Go recommended, ~160 MDL (~€8), trolleybus 30 at 7 MDL; Cricova and Mileștii Mici toured by vehicle and reservation-only, with Cricova Matinal 250 MDL and tasting tours 400–3,100 MDL, and Mileștii Mici Excursie 350 MDL weekday / 450 MDL evening-weekend; Orheiul Vechi entry 20 MDL adult / 10 MDL reduced; emergency 112; Transnistria as an internationally unrecognised de facto entity using the Transnistrian rouble, with a free migration slip at entry and no working foreign cards. - `[VERIFY]` items in this file: 7 (see inline markers above) - Last reviewed: 2026-09-02"
+  },
+  "verifyFlags": [
+    "current Chișinău city rutieră fare and e-ticket rollout",
+    "current Tiraspol and Comrat rutieră fares",
+    "current Opera and Organ Hall ticket bands",
+    "current circus restoration status and whether the site can be approached",
+    "current ethnography museum entry fee",
+    "current Kvint tour times and price",
+    "current Bendery fortress hours and entry fee"
+  ],
+  "verifyFlagCount": 7,
+  "volatilePricing": true,
+  "wordCount": 2406,
+  "dataVintage": 2026,
+  "provenance": {
+    "batch": "eastern-southeastern",
+    "sourceFile": "cartaeasterneuropetrips/trips/moldova-chisinau-tiraspol-comrat-city.md",
+    "sourceFormat": "md+nested-yaml-frontmatter (one file per trip)",
+    "sourceId": "moldova-chisinau-tiraspol-comrat-city",
+    "ingestedAt": "2026-09-02",
+    "synthesized": false
+  }
+}

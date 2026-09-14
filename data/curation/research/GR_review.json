@@ -1,0 +1,284 @@
+{
+  "iso2": "GR",
+  "country": "Greece",
+  "checked_at": "2026-08-17",
+  "beaches": {
+    "wrong": [
+      {
+        "name": "Paralia Apo Chrysoskalitissa Mechri Akrotirio Krios",
+        "class": "other",
+        "why": "Not a beach name. This is the official bathing-water zone descriptor 'Beach from Chrysoskalitissa to Cape Krios' lifted verbatim from the Greek EEA bathing-water register. It is an administrative coastal stretch, not a place a traveller can be told to go to, and the row's own illustration is the Chrysoskalitissa Monastery rather than a beach. The stretch it describes is the Elafonisi and Kedrodasos coast, which the file already carries separately as 'Elafonisi Beach' at tier 2 rank 47. Sitting at tier 1 rank 11 it consumes a top-12 slot with a database string.",
+        "source_url": "https://www.wikidata.org/wiki/Q53630572"
+      },
+      {
+        "name": "Patitiri town beach",
+        "class": "not_notable",
+        "why": "Patitiri is the ferry port and administrative village of Alonissos; the strip beside the harbour is a short pebble town beach used by residents, not a nationally notable beach. It has no Wikipedia article and nothing but an 'Excellent' bathing-water class behind it. It is holding tier 1 rank 12 while Navagio, Balos, Myrtos, Porto Katsiki and Sarakiniko are all absent from tier 1.",
+        "source_url": "https://en.wikipedia.org/wiki/Alonnisos"
+      },
+      {
+        "name": "Kiveri Beach",
+        "class": "not_notable",
+        "why": "Kiveri is a roadside village on the Argolic Gulf whose claim to fame is the Anavalos submarine karst spring, not its shoreline; the wire's own image for this row is a photograph of the submarine spring, not of a beach. It is a local swimming spot for Nafplio, not a Greek top-12 beach.",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Submarine_Karst-spring-Kiveri_Peloponnese_Greece.jpg"
+      },
+      {
+        "name": "Kalamaki Crystal Beach",
+        "class": "duplicate_of:Kalamaki Beach",
+        "why": "Tier 2 rank 15, 60 m from 'Kalamaki Beach' at rank 14. Same beach in Laganas Bay, Zakynthos, under a beach-bar style variant of the name.",
+        "source_url": "https://www.openstreetmap.org/#map=16/37.7371/20.9075"
+      },
+      {
+        "name": "Kalamaki , Zakynthos , Greece",
+        "class": "duplicate_of:Kalamaki Beach",
+        "why": "Tier 2 rank 16, 10 m from rank 14. The name is a comma-separated geocoder breadcrumb, not a beach name. This is the Bulgarian Nesebar failure mode repeated: one Zakynthos beach occupies four consecutive tier-2 slots (ranks 14, 15, 16, 17).",
+        "source_url": "https://www.openstreetmap.org/#map=16/37.7372/20.9082"
+      },
+      {
+        "name": "Παραλία Καλαμακίου (Kalamaki Beach)",
+        "class": "duplicate_of:Kalamaki Beach",
+        "why": "Tier 2 rank 17, the Greek-script twin of rank 14, 160 m away. Fourth copy of the same Laganas Bay beach.",
+        "source_url": "https://www.openstreetmap.org/#map=16/37.7353/20.8965"
+      },
+      {
+        "name": "Balos, Crete",
+        "class": "duplicate_of:Balos Lagoon",
+        "why": "Coordinates 35.5166, 24.0177 place this row in the centre of Chania town. The real Balos Lagoon is at 35.5824, 23.5885 on the Gramvousa peninsula, 47 km west. A whole family of Crete beaches has been snapped to the Chania town centroid: 'Balos, Crete' (r159), 'Balos Lagoon' (r160), 'Elafonisi Beach, Crete' (r209), 'Elafonissi Beach Lagoon, Crete, Greece' (r212), 'Elafonissi Kreta' (r213) and 'Falasarna Beach' (r221) all fall within 1.1 km of 35.5138, 24.0180. The consequence is that Balos is not present anywhere in the file at its true position.",
+        "source_url": "https://www.wikidata.org/wiki/Q805498"
+      },
+      {
+        "name": "Elafonisi Beach, Crete",
+        "class": "duplicate_of:Elafonisi Beach",
+        "why": "Same Chania-centroid fault. Coordinates 35.5171, 24.0172 are in Chania town; the correctly placed Elafonisi Beach (Q53630572, 35.2715, 23.5408) is already in the file at tier 2 rank 47, 66 km south-west. Three further rows ('El Afonisi Beach', 'Elafonisi Lagoon', 'Elafonissi') make five names for one beach.",
+        "source_url": "https://www.wikidata.org/wiki/Q53630572"
+      },
+      {
+        "name": "Falasarna Beach",
+        "class": "duplicate_of:Falassarna Beach - Kissamos",
+        "why": "Tier 2 rank 221 at 35.5122, 24.0156, again the Chania centroid. The correctly placed Falassarna rows are at ranks 222 to 224 near 35.495, 23.580. Falassarna alone therefore carries four names, one of them 40 km out of position.",
+        "source_url": "https://www.openstreetmap.org/#map=14/35.4950/23.5803"
+      }
+    ],
+    "missing": [
+      {
+        "name": "Navagio (Shipwreck Beach), Zakynthos",
+        "qid": "Q2460851",
+        "lat": 37.8596,
+        "lon": 20.6245,
+        "why": "The single most photographed beach in Greece and the image most people picture when they think of a Greek beach. It is absent from the file entirely, not merely from tier 1: the nearest beach row of any tier is 27 km away. A Greek Beaches tab without Navagio is the Portugal-without-Praia-da-Marinha failure.",
+        "source_url": "https://en.wikipedia.org/wiki/Navagio",
+        "verified": true
+      },
+      {
+        "name": "Balos Lagoon, Crete",
+        "qid": "Q805498",
+        "lat": 35.582404,
+        "lon": 23.58853,
+        "why": "Crete's signature turquoise lagoon on the Gramvousa peninsula and one of the top three beach images used by the Greek tourism board. The only rows carrying the Balos name sit on the Chania town centroid 47 km away, so no usable Balos feature exists. Nearest correctly placed beach row is 7.9 km off.",
+        "source_url": "https://www.wikidata.org/wiki/Q805498",
+        "verified": true
+      },
+      {
+        "name": "Myrtos Beach, Kefalonia",
+        "qid": "Q1259677",
+        "lat": 38.3429,
+        "lon": 20.5362,
+        "why": "The defining Ionian beach, the white-shingle cove under the Pylaros cliffs, on every Greek island shortlist. Absent from the file entirely; the nearest beach row is 12.4 km away, and Kefalonia is represented instead by Lepeda Beach at tier 2 rank 22.",
+        "source_url": "https://en.wikipedia.org/wiki/Myrtos_Beach",
+        "verified": true
+      },
+      {
+        "name": "Porto Katsiki, Lefkada",
+        "qid": "Q1132269",
+        "lat": 38.6025,
+        "lon": 20.54944,
+        "why": "Lefkada's flagship beach and a fixture of national top-10 lists. Absent entirely, which is the more damning because the app's own catalogue already carries a destination called 'Lefkada (Porto Katsiki)' that the Beaches tab cannot populate. Nearest beach row is Egremni, 18 km away at tier 2 rank 207.",
+        "source_url": "https://www.wikidata.org/wiki/Q1132269",
+        "verified": true
+      },
+      {
+        "name": "Sarakiniko Beach, Milos",
+        "qid": "Q7423010",
+        "lat": 36.7427,
+        "lon": 24.45828,
+        "why": "The white volcanic moonscape that is Milos's entire visual identity. Absent entirely; Milos is instead represented by Firopotamos (tier 2 rank 20), 2.4 km away, and Plathiena.",
+        "source_url": "https://www.wikidata.org/wiki/Q7423010",
+        "verified": true
+      },
+      {
+        "name": "Elafonisi Beach, Crete",
+        "qid": "Q53630572",
+        "lat": 35.27148,
+        "lon": 23.54083,
+        "why": "Present at correct coordinates but stranded at tier 2 rank 47, while its own administrative bathing-water zone string occupies tier 1 rank 11. The pink-sand lagoon is a top-three Greek beach by any measure and belongs in tier 1 under this name.",
+        "source_url": "https://www.wikidata.org/wiki/Q53630572",
+        "verified": true
+      },
+      {
+        "name": "Koukounaries, Skiathos",
+        "qid": "Q53632903",
+        "lat": 39.14849,
+        "lon": 23.40186,
+        "why": "The best known beach of the Sporades and a long-standing fixture of Greek beach rankings. The file carries Skiathos only via Asselinos and 'Diamond Beach' at tier 2 ranks 151 and 197.",
+        "source_url": "https://www.wikidata.org/wiki/Q53632903",
+        "verified": true
+      }
+    ],
+    "order": [
+      "Red Beach, Santorini (tier 2 rank 13) is arguably the most recognisable beach on the most visited Greek island and is the only tier-2 beach in the top 25 with an English Wikipedia article. It sits one place below the tier cut while Kiveri Beach and Patitiri town beach hold tier 1. Promote.",
+      "Elafonisi Beach (tier 2 rank 47) is ranked 36 places below the bathing-water zone string that describes the same coast. Straight inversion.",
+      "Voidokilia at rank 1 is defensible and I would keep it: real, protected, unmistakable, and it carries a Wikipedia article and Excellent water.",
+      "Ios takes two of the twelve tier-1 slots (Agia Theodoti r5, Mylopotas r10) and Pelion takes two more (Agios Ioannis r6, Damouchari r8). Four of twelve tier-1 beaches come from two small areas while five of the country's best known beaches are absent. The ranker is clearly rewarding EEA 'Excellent' water density rather than fame: eleven of the twelve tier-1 beaches carry water = Excellent and only four carry a Wikipedia article.",
+      "Score ties are doing real damage: ranks 5 to 12 all score exactly 0.97 and ranks 14 to 18 all score 0.949, so the top-12 cut is being decided by tie-break noise rather than by merit.",
+      "Xigia Beach (tier 2 rank 18) is placed at 37.7435, 20.8985 inside Laganas Bay next to the Kalamaki cluster and carries the Laganas national_park designation, whereas the Xigia of the sulphur springs is on the north coast of Zakynthos. Suspected mislocation, not independently confirmed."
+    ]
+  },
+  "mountains": {
+    "wrong": [
+      {
+        "name": "Pnyx",
+        "class": "other",
+        "why": "The country's number one mountain is an archaeological site: the rock-cut assembly terrace on a 100-odd metre hill in central Athens where the ekklesia met from about 507 BC. It is a monument, not a summit, and it is the single worst entry in either Greek list. Same family as the other Athens park hills the ranker has picked up.",
+        "source_url": "https://en.wikipedia.org/wiki/Pnyx"
+      },
+      {
+        "name": "Philopappos Hill",
+        "class": "viewpoint_not_summit",
+        "why": "A low landscaped hill in central Athens visited for the view back to the Acropolis and for the Roman Philopappos tomb on top. The row's own Wikipedia link is 'en:Philopappos Monument', that is, it resolves to a funerary monument rather than to any landform, which is a machine-detectable tell.",
+        "source_url": "https://en.wikipedia.org/wiki/Philopappos_Monument"
+      },
+      {
+        "name": "Aspronisi",
+        "class": "island",
+        "why": "An uninhabited pumice islet inside the Santorini caldera. Wikipedia's first sentence classifies it as an island. Same failure family as the United Kingdom's Bass Rock.",
+        "source_url": "https://en.wikipedia.org/wiki/Aspronisi"
+      },
+      {
+        "name": "Patroklos, Attica",
+        "class": "island",
+        "why": "A small private island in the Saronic Gulf off Cape Sounion, also known as Gaidouronisi. Not a mountain. The row's illustration is a photograph of the temple at Cape Sounion on the mainland.",
+        "source_url": "https://en.wikipedia.org/wiki/Patroklos_(Attica)"
+      },
+      {
+        "name": "Nimos",
+        "class": "island",
+        "why": "An uninhabited 4.6 km2 island in the municipality of Symi, separated from Symi by a shallow channel. Wikipedia classifies it as an island.",
+        "source_url": "https://en.wikipedia.org/wiki/Nimos"
+      },
+      {
+        "name": "Ypsilotera",
+        "class": "other",
+        "why": "A Meteora conglomerate pinnacle carrying the ruined Ypsilotera (Kalligrafon) Monastery, completed in 1347. It is a monastery rock and a climbing tower, not a mountain, and it heads an entire Meteora crag family in the list: Hagio Pneuma (r13), Sourloti (r18), Devil's tower (r19), Beta Wall (r22), Delta Wall (r23), Gamma Wall (r24), Mikro Agio Pneuma (r25), Modi (r26). Nine of the top 26 Greek mountain rows are Meteora rock towers within 700 m of each other.",
+        "source_url": "https://en.wikipedia.org/wiki/Ypsilotera_Monastery"
+      },
+      {
+        "name": "Beta Wall",
+        "class": "other",
+        "why": "Tier 2 rank 22. Not a landform name at all: this is a climbing sector label from the Meteora crag guides, alongside 'Delta Wall' (r23) and 'Gamma Wall' (r24) at 100 to 200 m spacing. A user tapping a 'mountain' called Beta Wall gets nothing.",
+        "source_url": "https://climbgreece.com/meteora/"
+      },
+      {
+        "name": "Delta Wall",
+        "class": "other",
+        "why": "Tier 2 rank 23. Meteora climbing sector label, same family as Beta Wall and Gamma Wall.",
+        "source_url": "https://climbgreece.com/meteora/"
+      },
+      {
+        "name": "Gamma Wall",
+        "class": "other",
+        "why": "Tier 2 rank 24. Meteora climbing sector label, same family as Beta Wall and Delta Wall.",
+        "source_url": "https://climbgreece.com/meteora/"
+      },
+      {
+        "name": "Strefi Hill",
+        "class": "viewpoint_not_summit",
+        "why": "Tier 2 rank 14. A small park hill above Exarcheia in Athens with a viewing terrace. Third Athens city hill in the top 14, after Pnyx and Philopappos, with Lycabettus at rank 17 making four.",
+        "source_url": "https://en.wikipedia.org/wiki/Strefi_Hill"
+      },
+      {
+        "name": "Petsofas",
+        "class": "not_notable",
+        "why": "A modest hill above Palaikastro in eastern Crete, notable to archaeologists for its Minoan peak sanctuary and to nobody else; the row's own image is of the sanctuary excavation. Holding tier 1 rank 11 while Psiloritis, the highest mountain on Crete, is absent from the file entirely.",
+        "source_url": "https://en.wikipedia.org/wiki/Petsofas"
+      },
+      {
+        "name": "Friends of Santorini Cultural Association",
+        "class": "hospitality",
+        "why": "Tier 2 rank 79. An organisation's premises filed as a mountain. Belongs to the same venue-name family as the 52 hospitality rows already known about.",
+        "source_url": "https://www.openstreetmap.org/#map=16/36.4175/25.4325"
+      },
+      {
+        "name": "Highest Point",
+        "class": "other",
+        "why": "Tier 2 rank 80, on Paxos. A generic map label, not a name. No user-facing string can be built from it.",
+        "source_url": "https://www.openstreetmap.org/#map=15/39.2045/20.1625"
+      }
+    ],
+    "missing": [
+      {
+        "name": "Mount Olympus (Mytikas)",
+        "qid": "Q80344",
+        "lat": 40.08556,
+        "lon": 22.35861,
+        "why": "The highest mountain in Greece at 2,917 m, a national park, a UNESCO biosphere reserve and the most famous mountain in Europe by name recognition. It is in the file but at tier 2 rank 28, below four Athens city hills, nine Meteora climbing rocks and three islands. Mytikas, its summit, is a separate row at rank 29. This is the Austria Grossglockner failure in a more extreme form.",
+        "source_url": "https://en.wikipedia.org/wiki/Mount_Olympus",
+        "verified": true
+      },
+      {
+        "name": "Mount Parnassus",
+        "qid": "Q105261",
+        "lat": 38.536,
+        "lon": 22.624,
+        "why": "2,457 m, the mountain of Delphi and Greece's main ski area. Absent from the file entirely: the nearest mountain row is Mount Cirphis, 13.6 km away. The app already carries Delphi as a destination and cannot show the mountain it sits on.",
+        "source_url": "https://en.wikipedia.org/wiki/Mount_Parnassus",
+        "verified": true
+      },
+      {
+        "name": "Mount Ida (Psiloritis)",
+        "qid": "Q83659",
+        "lat": 35.22667,
+        "lon": 24.7725,
+        "why": "2,456 m, the highest mountain on Crete, a UNESCO Global Geopark and the mythological birthplace of Zeus. Absent entirely; the nearest mountain row is Vrysinas, 26.6 km away. Crete is instead represented by Petsofas at tier 1 rank 11.",
+        "source_url": "https://en.wikipedia.org/wiki/Mount_Ida_(Crete)",
+        "verified": true
+      },
+      {
+        "name": "Smolikas",
+        "qid": "Q139362",
+        "lat": 40.08972,
+        "lon": 20.92611,
+        "why": "2,631 m, the second highest mountain in Greece and the highest of the Pindus. Absent entirely; nearest mountain row is Tymfi, 14 km away.",
+        "source_url": "https://en.wikipedia.org/wiki/Smolikas",
+        "verified": true
+      },
+      {
+        "name": "Mount Athos",
+        "qid": "Q130321",
+        "lat": 40.15833,
+        "lon": 24.32722,
+        "why": "2,033 m, a UNESCO World Heritage Site and one of the most recognisable mountains in the Orthodox world. Absent entirely, even though Halkidiki is represented in the list by Itamos and Dragoudeli.",
+        "source_url": "https://en.wikipedia.org/wiki/Mount_Athos",
+        "verified": true
+      },
+      {
+        "name": "Taygetus",
+        "qid": "Q515809",
+        "lat": 36.95354,
+        "lon": 22.34996,
+        "why": "2,404 m, the range that dominates Sparta and the Mani and the highest ground in the Peloponnese. Absent entirely; the Peloponnese contributes no mountain row above tier 2 rank 65.",
+        "source_url": "https://en.wikipedia.org/wiki/Taygetus",
+        "verified": true
+      }
+    ],
+    "order": [
+      "Mount Olympus at tier 2 rank 28 is the headline defect of this country. Greece's highest and most famous mountain is ranked below Pnyx, Philopappos Hill, Strefi Hill, Aspronisi, Nimos, Patroklos and eight Meteora climbing rocks. It should be rank 1.",
+      "Pachnes at tier 2 ranks 30 and 33 (duplicated as 'Pachnes' and 'Pakhnes', 40 m apart) is the summit of the Lefka Ori, the White Mountains of Crete, 2,453 m. Far too low, and the duplicate should be collapsed.",
+      "Tymfi (r34) and Astraka (r31) are the Vikos gorge massif, the best known trekking destination in northern Greece. Both are buried behind Meteora crag names.",
+      "Pelion at rank 2 is defensible. Fengari on Samothrace (r8) and Mitsikeli above Ioannina (r10) are real mountains and would rise substantially once the islands, city hills and Meteora crags are filtered out.",
+      "The Meteora cluster is over-weighted by its UNESCO designation flag: every one of those nine rows carries designations ['unesco'] and that appears to be the sole reason a climbing sector called 'Gamma Wall' outranks Mount Olympus. The designation bonus should not apply to sub-features inside a designated area."
+    ]
+  },
+  "counts_verdict": "12 and 12, which is the tier-1 cap observed across the whole snapshot, so the tier-1 numbers themselves are as expected for a country of Greece's size. The candidate pools behind them are not. 225 beach candidates is plausible. 80 mountain candidates is not: Switzerland has 203, Spain 279, the United Kingdom 223, Bosnia 64. Greece is one of the most mountainous countries in Europe and the harvest has found fewer summits there than in Czechia. That thin pool is the direct cause of Parnassos, Psiloritis, Smolikas, Athos and Taygetos being absent from the country altogether, and of Athens park hills and Meteora climbing crags filling the top of the list. The mountain harvest for GR needs re-running before any of the ranking work is worth doing.",
+  "top_pick_verdict": "top_beach 'Voidokilia beach' is a good country card: instantly recognisable, protected, Excellent water, correctly placed. Keep it. top_mountain 'Pnyx' is indefensible. It is an ancient assembly terrace on a low hill in Athens and putting it on a Greece country card next to a photo of a stone bema would read as a bug to any user. It must be Mount Olympus (Q80344, 40.08556, 22.35861).",
+  "notes": "Two systematic data faults sit underneath the individual findings. First, a geocoding fault snaps Crete beach names to the Chania town centroid: six rows named Balos, Elafonisi and Falasarna all land within 1.1 km of 35.5138, 24.0180, which is why Balos does not exist anywhere in the file at its true position. Any row whose name matches a known feature but whose coordinates fall within about 1 km of a settlement centroid should be dropped or re-geocoded. Second, the mountain ranker is rewarding UNESCO designation and Wikipedia presence without checking that the feature is a landform: islands with articles (Aspronisi, Nimos, Patroklos), archaeological hills with articles (Pnyx, Philopappos, Petsofas, Exomvourgo) and UNESCO-flagged climbing crags (the nine Meteora rows) fill eleven of the top twelve slots. A prominence or elevation threshold plus an exclusion on OSM place=island, historic=* and climbing crag tags would clear almost all of it. Duplicate density is also high on the beach side: 25 clusters of rows within 200 m of each other, 55 rows in total, with Kalamaki on Zakynthos taking four consecutive tier-2 slots exactly as Nesebar does in Bulgaria."
+}

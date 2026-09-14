@@ -73,9 +73,13 @@ export const TIERS = {
   free: {
     id: 'free',
     priceCents: 0,
-    aiPlans: 3,
+    // Two, once, for the life of the account. Not two a month: three a month
+    // was thirty-six a year, more planning than most trips need, so the free
+    // tier was the product rather than a look at it. Sized to the job now.
+    // Enforced by migration 021, which pins the free period to a fixed epoch.
+    aiPlans: 2,
     grounded: 0,
-    periodDays: null, // calendar month
+    periodDays: null, // never refills; see migration 021_free_tier_once.sql
     labelKey: 'pass.freeName',
     blurbKey: 'pass.freeBlurb',
   },

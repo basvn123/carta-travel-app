@@ -1,0 +1,16 @@
+rank,curation_rank,title,ref,network,distance_km,popularity,pageviews_day,sitelinks,anchors,quality_score,portal_agreement,status,family_members,trip_id,osm_relation
+1,55.22,Sammiana I6,,nwn,133.5,0.071,0,0,,95,,needs_review,1,63449,19916820
+2,55.22,Sammiana I3,,nwn,130.5,0.071,0,0,,95,,needs_review,1,63435,17546332
+3,55.22,Sammiana I2,,nwn,195.6,0.071,0,0,,95,,needs_review,1,63439,18467159
+4,55.22,Sammiana I4,,nwn,204.2,0.071,0,0,,95,,needs_review,1,63441,18588744
+5,55.22,Sammiana I5,,nwn,142.8,0.071,0,0,,95,,needs_review,1,63442,18780370
+6,55.22,Sammiana I7,,nwn,183.8,0.071,0,0,,95,,needs_review,1,63450,19978706
+7,55.22,Sammiana Z2,,nwn,195.8,0.071,0,0,,95,,needs_review,1,62473,20674737
+8,54.48,Sammiana -Македонска Бесконечна Трансверзала,,nwn,1153.0,0.13,0,1,,83.8,,needs_review,1,63440,18549754
+9,52.42,Sammiana I1,,nwn,162.5,0.071,0,0,,83.8,,needs_review,1,63438,18420431
+10,50.85,High Scardus Trail,HST,iwn,147.6,0.071,0,0,,57.5,,draft,1,62456,16214640
+11,50.22,Galicica H-6,H-6,rwn,5.7,0.071,0,0,,100,,needs_review,1,63420,3443573
+12,46.19,Словенска патека,,lwn,19.0,0.331,0,0,"Matka Canyon (53/day, 1160 m); Matka Monastery (53/day, 234 m); St. Nicholas Church (53/day, 1719 m)",72.5,,needs_review,1,63426,7330397
+13,46.17,Strezimir-Golem Korab,,rwn,10.3,0.071,0,0,,83.8,,needs_review,1,63424,4616558
+14,42.72,MK6,,lwn,6.7,0.071,0,0,,95,,needs_review,1,63430,10039587
+15,42.72,Popova Shapka - Titov vrv (Tito's peak ),,lwn,10.7,0.071,0,0,,95,,needs_review,1,63434,16642115
