@@ -1,0 +1,3016 @@
+{
+ "generated_at": "2026-09-15T07:36:43.875Z",
+ "model": "trip_heroes_audit_v1",
+ "checked": {
+  "trip": 3949,
+  "journey": 253
+ },
+ "flagged": 192,
+ "unknown": 7,
+ "replaceable": 173,
+ "by_reason": {
+  "bad_aspect": 181,
+  "too_small": 5,
+  "map": 2,
+  "collage": 2,
+  "historical": 1,
+  "emblem": 1
+ },
+ "items": [
+  {
+   "layer": "trip",
+   "id": "ad-andorra-la-vella-barcelona-girona-chain-10d",
+   "title": "Andorra la Vella to Pont du Gard",
+   "cc": "AD",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/42/Pont_du_Gard_BLS.jpg/960px-Pont_du_Gard_BLS.jpg",
+   "reason": "bad_aspect",
+   "detail": "12648x4882, aspect 2.59 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5d/Aerial_view_of_Barcelona%2C_Spain_%2851227309370%29_edited.jpg/1280px-Aerial_view_of_Barcelona%2C_Spain_%2851227309370%29_edited.jpg",
+    "credit": "Barcelona",
+    "page": "https://en.wikipedia.org/wiki/Barcelona",
+    "city": "Barcelona",
+    "score": 1.089
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "ad-andorra-la-vella-barcelona-girona-chain-12d",
+   "title": "Andorra la Vella to Pont du Gard",
+   "cc": "AD",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/42/Pont_du_Gard_BLS.jpg/960px-Pont_du_Gard_BLS.jpg",
+   "reason": "bad_aspect",
+   "detail": "12648x4882, aspect 2.59 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5d/Aerial_view_of_Barcelona%2C_Spain_%2851227309370%29_edited.jpg/1280px-Aerial_view_of_Barcelona%2C_Spain_%2851227309370%29_edited.jpg",
+    "credit": "Barcelona",
+    "page": "https://en.wikipedia.org/wiki/Barcelona",
+    "city": "Barcelona",
+    "score": 1.089
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "ad-andorra-la-vella-barcelona-tarragona-chain-12d-packed",
+   "title": "Andorra la Vella to Pont du Gard",
+   "cc": "AD",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/42/Pont_du_Gard_BLS.jpg/960px-Pont_du_Gard_BLS.jpg",
+   "reason": "bad_aspect",
+   "detail": "12648x4882, aspect 2.59 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5d/Aerial_view_of_Barcelona%2C_Spain_%2851227309370%29_edited.jpg/1280px-Aerial_view_of_Barcelona%2C_Spain_%2851227309370%29_edited.jpg",
+    "credit": "Barcelona",
+    "page": "https://en.wikipedia.org/wiki/Barcelona",
+    "city": "Barcelona",
+    "score": 1.089
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "ad-andorra-la-vella-barcelona-tarragona-chain-14d",
+   "title": "Andorra la Vella to Pont du Gard",
+   "cc": "AD",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/42/Pont_du_Gard_BLS.jpg/960px-Pont_du_Gard_BLS.jpg",
+   "reason": "bad_aspect",
+   "detail": "12648x4882, aspect 2.59 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5d/Aerial_view_of_Barcelona%2C_Spain_%2851227309370%29_edited.jpg/1280px-Aerial_view_of_Barcelona%2C_Spain_%2851227309370%29_edited.jpg",
+    "credit": "Barcelona",
+    "page": "https://en.wikipedia.org/wiki/Barcelona",
+    "city": "Barcelona",
+    "score": 1.089
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "ad-soldeu-barcelona-chain-5d",
+   "title": "Soldeu and Barcelona",
+   "cc": "AD",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/AndorraSoldeuView.JPG/960px-AndorraSoldeuView.JPG",
+   "reason": "bad_aspect",
+   "detail": "2174x1943, aspect 1.12 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5d/Aerial_view_of_Barcelona%2C_Spain_%2851227309370%29_edited.jpg/1280px-Aerial_view_of_Barcelona%2C_Spain_%2851227309370%29_edited.jpg",
+    "credit": "Barcelona",
+    "page": "https://en.wikipedia.org/wiki/Barcelona",
+    "city": "Barcelona",
+    "score": 1.089
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "ad-soldeu-barcelona-chain-6d",
+   "title": "Soldeu and Barcelona",
+   "cc": "AD",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/AndorraSoldeuView.JPG/960px-AndorraSoldeuView.JPG",
+   "reason": "bad_aspect",
+   "detail": "2174x1943, aspect 1.12 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5d/Aerial_view_of_Barcelona%2C_Spain_%2851227309370%29_edited.jpg/1280px-Aerial_view_of_Barcelona%2C_Spain_%2851227309370%29_edited.jpg",
+    "credit": "Barcelona",
+    "page": "https://en.wikipedia.org/wiki/Barcelona",
+    "city": "Barcelona",
+    "score": 1.089
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "ad-soldeu-barcelona-chain-7d",
+   "title": "Soldeu and Barcelona",
+   "cc": "AD",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/AndorraSoldeuView.JPG/960px-AndorraSoldeuView.JPG",
+   "reason": "bad_aspect",
+   "detail": "2174x1943, aspect 1.12 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5d/Aerial_view_of_Barcelona%2C_Spain_%2851227309370%29_edited.jpg/1280px-Aerial_view_of_Barcelona%2C_Spain_%2851227309370%29_edited.jpg",
+    "credit": "Barcelona",
+    "page": "https://en.wikipedia.org/wiki/Barcelona",
+    "city": "Barcelona",
+    "score": 1.089
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "ad-soldeu-barcelona-chain-8d",
+   "title": "Soldeu and Barcelona",
+   "cc": "AD",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/AndorraSoldeuView.JPG/960px-AndorraSoldeuView.JPG",
+   "reason": "bad_aspect",
+   "detail": "2174x1943, aspect 1.12 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5d/Aerial_view_of_Barcelona%2C_Spain_%2851227309370%29_edited.jpg/1280px-Aerial_view_of_Barcelona%2C_Spain_%2851227309370%29_edited.jpg",
+    "credit": "Barcelona",
+    "page": "https://en.wikipedia.org/wiki/Barcelona",
+    "city": "Barcelona",
+    "score": 1.089
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "ad-soldeu-barcelona-tarragona-loop-7d-packed",
+   "title": "Soldeu, Barcelona and Tarragona loop",
+   "cc": "AD",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/AndorraSoldeuView.JPG/960px-AndorraSoldeuView.JPG",
+   "reason": "bad_aspect",
+   "detail": "2174x1943, aspect 1.12 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5d/Aerial_view_of_Barcelona%2C_Spain_%2851227309370%29_edited.jpg/1280px-Aerial_view_of_Barcelona%2C_Spain_%2851227309370%29_edited.jpg",
+    "credit": "Barcelona",
+    "page": "https://en.wikipedia.org/wiki/Barcelona",
+    "city": "Barcelona",
+    "score": 1.089
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "ad-soldeu-barcelona-tarragona-loop-8d",
+   "title": "Soldeu, Barcelona and Tarragona loop",
+   "cc": "AD",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/AndorraSoldeuView.JPG/960px-AndorraSoldeuView.JPG",
+   "reason": "bad_aspect",
+   "detail": "2174x1943, aspect 1.12 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5d/Aerial_view_of_Barcelona%2C_Spain_%2851227309370%29_edited.jpg/1280px-Aerial_view_of_Barcelona%2C_Spain_%2851227309370%29_edited.jpg",
+    "credit": "Barcelona",
+    "page": "https://en.wikipedia.org/wiki/Barcelona",
+    "city": "Barcelona",
+    "score": 1.089
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "ad-soldeu-base-2d-packed",
+   "title": "Soldeu and Barcelona",
+   "cc": "AD",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/AndorraSoldeuView.JPG/960px-AndorraSoldeuView.JPG",
+   "reason": "bad_aspect",
+   "detail": "2174x1943, aspect 1.12 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5d/Aerial_view_of_Barcelona%2C_Spain_%2851227309370%29_edited.jpg/1280px-Aerial_view_of_Barcelona%2C_Spain_%2851227309370%29_edited.jpg",
+    "credit": "Barcelona",
+    "page": null,
+    "city": "Barcelona",
+    "score": 1.089
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "ad-soldeu-base-2d",
+   "title": "Soldeu",
+   "cc": "AD",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/AndorraSoldeuView.JPG/960px-AndorraSoldeuView.JPG",
+   "reason": "bad_aspect",
+   "detail": "2174x1943, aspect 1.12 outside 1.2-2.4",
+   "replacement": null
+  },
+  {
+   "layer": "trip",
+   "id": "ad-soldeu-base-3d-packed",
+   "title": "Soldeu and Barcelona and Aiguestortes National Park",
+   "cc": "AD",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/AndorraSoldeuView.JPG/960px-AndorraSoldeuView.JPG",
+   "reason": "bad_aspect",
+   "detail": "2174x1943, aspect 1.12 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5d/Aerial_view_of_Barcelona%2C_Spain_%2851227309370%29_edited.jpg/1280px-Aerial_view_of_Barcelona%2C_Spain_%2851227309370%29_edited.jpg",
+    "credit": "Barcelona",
+    "page": null,
+    "city": "Barcelona",
+    "score": 1.089
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "ad-soldeu-base-3d",
+   "title": "Soldeu and Barcelona",
+   "cc": "AD",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/AndorraSoldeuView.JPG/960px-AndorraSoldeuView.JPG",
+   "reason": "bad_aspect",
+   "detail": "2174x1943, aspect 1.12 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5d/Aerial_view_of_Barcelona%2C_Spain_%2851227309370%29_edited.jpg/1280px-Aerial_view_of_Barcelona%2C_Spain_%2851227309370%29_edited.jpg",
+    "credit": "Barcelona",
+    "page": null,
+    "city": "Barcelona",
+    "score": 1.089
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "ad-soldeu-base-4d-packed",
+   "title": "Soldeu and Barcelona and Aiguestortes National Park",
+   "cc": "AD",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/AndorraSoldeuView.JPG/960px-AndorraSoldeuView.JPG",
+   "reason": "bad_aspect",
+   "detail": "2174x1943, aspect 1.12 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5d/Aerial_view_of_Barcelona%2C_Spain_%2851227309370%29_edited.jpg/1280px-Aerial_view_of_Barcelona%2C_Spain_%2851227309370%29_edited.jpg",
+    "credit": "Barcelona",
+    "page": null,
+    "city": "Barcelona",
+    "score": 1.089
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "ad-soldeu-base-4d",
+   "title": "Soldeu and Barcelona and Aiguestortes National Park",
+   "cc": "AD",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/AndorraSoldeuView.JPG/960px-AndorraSoldeuView.JPG",
+   "reason": "bad_aspect",
+   "detail": "2174x1943, aspect 1.12 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5d/Aerial_view_of_Barcelona%2C_Spain_%2851227309370%29_edited.jpg/1280px-Aerial_view_of_Barcelona%2C_Spain_%2851227309370%29_edited.jpg",
+    "credit": "Barcelona",
+    "page": null,
+    "city": "Barcelona",
+    "score": 1.089
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "at-kitzbuhel-base-5d-hidden",
+   "title": "Kitzbühel and Salzburg and Innsbruck",
+   "cc": "AT",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/06/Kitzbuehel03.JPG/960px-Kitzbuehel03.JPG",
+   "reason": "bad_aspect",
+   "detail": "1316x1858, aspect 0.71 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Salzburg_%2848489551981%29.jpg/1280px-Salzburg_%2848489551981%29.jpg",
+    "credit": "Salzburg",
+    "page": null,
+    "city": "Salzburg",
+    "score": 0.65
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "at-kitzbuhel-base-5d-relaxed-hidden",
+   "title": "Kitzbühel and Salzburg and Innsbruck",
+   "cc": "AT",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/06/Kitzbuehel03.JPG/960px-Kitzbuehel03.JPG",
+   "reason": "bad_aspect",
+   "detail": "1316x1858, aspect 0.71 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Salzburg_%2848489551981%29.jpg/1280px-Salzburg_%2848489551981%29.jpg",
+    "credit": "Salzburg",
+    "page": null,
+    "city": "Salzburg",
+    "score": 0.65
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "ba-mostar-base-2d-relaxed",
+   "title": "Mostar",
+   "cc": "BA",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/Stari_Most_viewed_from_North.jpg/960px-Stari_Most_viewed_from_North.jpg",
+   "reason": "bad_aspect",
+   "detail": "7676x2777, aspect 2.76 outside 1.2-2.4",
+   "replacement": null
+  },
+  {
+   "layer": "trip",
+   "id": "ba-mostar-base-2d",
+   "title": "Mostar and Dubrovnik",
+   "cc": "BA",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/Stari_Most_viewed_from_North.jpg/960px-Stari_Most_viewed_from_North.jpg",
+   "reason": "bad_aspect",
+   "detail": "7676x2777, aspect 2.76 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/67/The_walls_of_the_fortress_and_View_of_the_old_city._panorama.jpg/1280px-The_walls_of_the_fortress_and_View_of_the_old_city._panorama.jpg",
+    "credit": "Dubrovnik",
+    "page": null,
+    "city": "Dubrovnik",
+    "score": 0.841
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "ba-mostar-base-3d",
+   "title": "Mostar and Dubrovnik and Split",
+   "cc": "BA",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/Stari_Most_viewed_from_North.jpg/960px-Stari_Most_viewed_from_North.jpg",
+   "reason": "bad_aspect",
+   "detail": "7676x2777, aspect 2.76 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/67/The_walls_of_the_fortress_and_View_of_the_old_city._panorama.jpg/1280px-The_walls_of_the_fortress_and_View_of_the_old_city._panorama.jpg",
+    "credit": "Dubrovnik",
+    "page": null,
+    "city": "Dubrovnik",
+    "score": 0.841
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "ba-mostar-base-4d-relaxed",
+   "title": "Mostar and Dubrovnik",
+   "cc": "BA",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/Stari_Most_viewed_from_North.jpg/960px-Stari_Most_viewed_from_North.jpg",
+   "reason": "bad_aspect",
+   "detail": "7676x2777, aspect 2.76 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/67/The_walls_of_the_fortress_and_View_of_the_old_city._panorama.jpg/1280px-The_walls_of_the_fortress_and_View_of_the_old_city._panorama.jpg",
+    "credit": "Dubrovnik",
+    "page": null,
+    "city": "Dubrovnik",
+    "score": 0.841
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "ba-mostar-base-4d",
+   "title": "Mostar and Dubrovnik and Split",
+   "cc": "BA",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/Stari_Most_viewed_from_North.jpg/960px-Stari_Most_viewed_from_North.jpg",
+   "reason": "bad_aspect",
+   "detail": "7676x2777, aspect 2.76 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/67/The_walls_of_the_fortress_and_View_of_the_old_city._panorama.jpg/1280px-The_walls_of_the_fortress_and_View_of_the_old_city._panorama.jpg",
+    "credit": "Dubrovnik",
+    "page": null,
+    "city": "Dubrovnik",
+    "score": 0.841
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "ba-mostar-base-5d-relaxed",
+   "title": "Mostar and Dubrovnik and Split",
+   "cc": "BA",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/Stari_Most_viewed_from_North.jpg/960px-Stari_Most_viewed_from_North.jpg",
+   "reason": "bad_aspect",
+   "detail": "7676x2777, aspect 2.76 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/67/The_walls_of_the_fortress_and_View_of_the_old_city._panorama.jpg/1280px-The_walls_of_the_fortress_and_View_of_the_old_city._panorama.jpg",
+    "credit": "Dubrovnik",
+    "page": null,
+    "city": "Dubrovnik",
+    "score": 0.841
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "ba-mostar-base-5d",
+   "title": "Mostar and Dubrovnik and Split",
+   "cc": "BA",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/Stari_Most_viewed_from_North.jpg/960px-Stari_Most_viewed_from_North.jpg",
+   "reason": "bad_aspect",
+   "detail": "7676x2777, aspect 2.76 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e3/Sarajevo_City_Panorama.JPG/1280px-Sarajevo_City_Panorama.JPG",
+    "credit": "Sarajevo",
+    "page": null,
+    "city": "Sarajevo",
+    "score": 0.864
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "ba-mostar-dubrovnik-chain-5d",
+   "title": "Mostar and Dubrovnik",
+   "cc": "BA",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/Stari_Most_viewed_from_North.jpg/960px-Stari_Most_viewed_from_North.jpg",
+   "reason": "bad_aspect",
+   "detail": "7676x2777, aspect 2.76 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/67/The_walls_of_the_fortress_and_View_of_the_old_city._panorama.jpg/1280px-The_walls_of_the_fortress_and_View_of_the_old_city._panorama.jpg",
+    "credit": "Dubrovnik",
+    "page": "https://en.wikipedia.org/wiki/Dubrovnik",
+    "city": "Dubrovnik",
+    "score": 0.841
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "ba-mostar-dubrovnik-chain-7d",
+   "title": "Mostar and Dubrovnik",
+   "cc": "BA",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/Stari_Most_viewed_from_North.jpg/960px-Stari_Most_viewed_from_North.jpg",
+   "reason": "bad_aspect",
+   "detail": "7676x2777, aspect 2.76 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/67/The_walls_of_the_fortress_and_View_of_the_old_city._panorama.jpg/1280px-The_walls_of_the_fortress_and_View_of_the_old_city._panorama.jpg",
+    "credit": "Dubrovnik",
+    "page": "https://en.wikipedia.org/wiki/Dubrovnik",
+    "city": "Dubrovnik",
+    "score": 0.841
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "ba-mostar-dubrovnik-sarajevo-chain-12d-packed",
+   "title": "Mostar to Zadar",
+   "cc": "BA",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/Stari_Most_viewed_from_North.jpg/960px-Stari_Most_viewed_from_North.jpg",
+   "reason": "bad_aspect",
+   "detail": "7676x2777, aspect 2.76 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e3/Sarajevo_City_Panorama.JPG/1280px-Sarajevo_City_Panorama.JPG",
+    "credit": "Sarajevo",
+    "page": "https://en.wikipedia.org/wiki/Sarajevo",
+    "city": "Sarajevo",
+    "score": 0.864
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "ba-mostar-dubrovnik-sarajevo-loop-14d-relaxed",
+   "title": "Mostar, Dubrovnik and Split loop",
+   "cc": "BA",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/Stari_Most_viewed_from_North.jpg/960px-Stari_Most_viewed_from_North.jpg",
+   "reason": "bad_aspect",
+   "detail": "7676x2777, aspect 2.76 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e3/Sarajevo_City_Panorama.JPG/1280px-Sarajevo_City_Panorama.JPG",
+    "credit": "Sarajevo",
+    "page": "https://en.wikipedia.org/wiki/Sarajevo",
+    "city": "Sarajevo",
+    "score": 0.864
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "ba-mostar-dubrovnik-split-chain-10d",
+   "title": "Mostar to Split",
+   "cc": "BA",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/Stari_Most_viewed_from_North.jpg/960px-Stari_Most_viewed_from_North.jpg",
+   "reason": "bad_aspect",
+   "detail": "7676x2777, aspect 2.76 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/67/The_walls_of_the_fortress_and_View_of_the_old_city._panorama.jpg/1280px-The_walls_of_the_fortress_and_View_of_the_old_city._panorama.jpg",
+    "credit": "Dubrovnik",
+    "page": "https://en.wikipedia.org/wiki/Dubrovnik",
+    "city": "Dubrovnik",
+    "score": 0.841
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "ba-mostar-dubrovnik-split-chain-7d-packed",
+   "title": "Mostar to Split",
+   "cc": "BA",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/Stari_Most_viewed_from_North.jpg/960px-Stari_Most_viewed_from_North.jpg",
+   "reason": "bad_aspect",
+   "detail": "7676x2777, aspect 2.76 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/67/The_walls_of_the_fortress_and_View_of_the_old_city._panorama.jpg/1280px-The_walls_of_the_fortress_and_View_of_the_old_city._panorama.jpg",
+    "credit": "Dubrovnik",
+    "page": "https://en.wikipedia.org/wiki/Dubrovnik",
+    "city": "Dubrovnik",
+    "score": 0.841
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "ba-mostar-dubrovnik-split-chain-8d",
+   "title": "Mostar to Split",
+   "cc": "BA",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/Stari_Most_viewed_from_North.jpg/960px-Stari_Most_viewed_from_North.jpg",
+   "reason": "bad_aspect",
+   "detail": "7676x2777, aspect 2.76 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/67/The_walls_of_the_fortress_and_View_of_the_old_city._panorama.jpg/1280px-The_walls_of_the_fortress_and_View_of_the_old_city._panorama.jpg",
+    "credit": "Dubrovnik",
+    "page": "https://en.wikipedia.org/wiki/Dubrovnik",
+    "city": "Dubrovnik",
+    "score": 0.841
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "ba-mostar-dubrovnik-split-loop-10d",
+   "title": "Mostar, Dubrovnik and Split loop",
+   "cc": "BA",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/Stari_Most_viewed_from_North.jpg/960px-Stari_Most_viewed_from_North.jpg",
+   "reason": "bad_aspect",
+   "detail": "7676x2777, aspect 2.76 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/67/The_walls_of_the_fortress_and_View_of_the_old_city._panorama.jpg/1280px-The_walls_of_the_fortress_and_View_of_the_old_city._panorama.jpg",
+    "credit": "Dubrovnik",
+    "page": "https://en.wikipedia.org/wiki/Dubrovnik",
+    "city": "Dubrovnik",
+    "score": 0.841
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "ba-mostar-dubrovnik-split-loop-12d-relaxed",
+   "title": "Mostar, Dubrovnik and Split loop",
+   "cc": "BA",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/Stari_Most_viewed_from_North.jpg/960px-Stari_Most_viewed_from_North.jpg",
+   "reason": "bad_aspect",
+   "detail": "7676x2777, aspect 2.76 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/67/The_walls_of_the_fortress_and_View_of_the_old_city._panorama.jpg/1280px-The_walls_of_the_fortress_and_View_of_the_old_city._panorama.jpg",
+    "credit": "Dubrovnik",
+    "page": "https://en.wikipedia.org/wiki/Dubrovnik",
+    "city": "Dubrovnik",
+    "score": 0.841
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "ba-mostar-dubrovnik-split-loop-7d-packed",
+   "title": "Mostar, Dubrovnik and Split loop",
+   "cc": "BA",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/Stari_Most_viewed_from_North.jpg/960px-Stari_Most_viewed_from_North.jpg",
+   "reason": "bad_aspect",
+   "detail": "7676x2777, aspect 2.76 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/67/The_walls_of_the_fortress_and_View_of_the_old_city._panorama.jpg/1280px-The_walls_of_the_fortress_and_View_of_the_old_city._panorama.jpg",
+    "credit": "Dubrovnik",
+    "page": "https://en.wikipedia.org/wiki/Dubrovnik",
+    "city": "Dubrovnik",
+    "score": 0.841
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "ba-mostar-dubrovnik-split-loop-8d",
+   "title": "Mostar, Dubrovnik and Split loop",
+   "cc": "BA",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/Stari_Most_viewed_from_North.jpg/960px-Stari_Most_viewed_from_North.jpg",
+   "reason": "bad_aspect",
+   "detail": "7676x2777, aspect 2.76 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/67/The_walls_of_the_fortress_and_View_of_the_old_city._panorama.jpg/1280px-The_walls_of_the_fortress_and_View_of_the_old_city._panorama.jpg",
+    "credit": "Dubrovnik",
+    "page": "https://en.wikipedia.org/wiki/Dubrovnik",
+    "city": "Dubrovnik",
+    "score": 0.841
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "ba-mostar-sarajevo-chain-5d",
+   "title": "Mostar and Sarajevo",
+   "cc": "BA",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/Stari_Most_viewed_from_North.jpg/960px-Stari_Most_viewed_from_North.jpg",
+   "reason": "bad_aspect",
+   "detail": "7676x2777, aspect 2.76 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e3/Sarajevo_City_Panorama.JPG/1280px-Sarajevo_City_Panorama.JPG",
+    "credit": "Sarajevo",
+    "page": "https://en.wikipedia.org/wiki/Sarajevo",
+    "city": "Sarajevo",
+    "score": 0.864
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "ba-mostar-sarajevo-chain-6d",
+   "title": "Mostar and Sarajevo",
+   "cc": "BA",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/Stari_Most_viewed_from_North.jpg/960px-Stari_Most_viewed_from_North.jpg",
+   "reason": "bad_aspect",
+   "detail": "7676x2777, aspect 2.76 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e3/Sarajevo_City_Panorama.JPG/1280px-Sarajevo_City_Panorama.JPG",
+    "credit": "Sarajevo",
+    "page": "https://en.wikipedia.org/wiki/Sarajevo",
+    "city": "Sarajevo",
+    "score": 0.864
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "ba-mostar-sarajevo-chain-7d",
+   "title": "Mostar and Sarajevo",
+   "cc": "BA",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/Stari_Most_viewed_from_North.jpg/960px-Stari_Most_viewed_from_North.jpg",
+   "reason": "bad_aspect",
+   "detail": "7676x2777, aspect 2.76 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e3/Sarajevo_City_Panorama.JPG/1280px-Sarajevo_City_Panorama.JPG",
+    "credit": "Sarajevo",
+    "page": "https://en.wikipedia.org/wiki/Sarajevo",
+    "city": "Sarajevo",
+    "score": 0.864
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "ba-mostar-sarajevo-chain-8d-relaxed",
+   "title": "Mostar and Sarajevo",
+   "cc": "BA",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/Stari_Most_viewed_from_North.jpg/960px-Stari_Most_viewed_from_North.jpg",
+   "reason": "bad_aspect",
+   "detail": "7676x2777, aspect 2.76 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e3/Sarajevo_City_Panorama.JPG/1280px-Sarajevo_City_Panorama.JPG",
+    "credit": "Sarajevo",
+    "page": "https://en.wikipedia.org/wiki/Sarajevo",
+    "city": "Sarajevo",
+    "score": 0.864
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "ba-mostar-sarajevo-dubrovnik-chain-14d",
+   "title": "Mostar to Split",
+   "cc": "BA",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/Stari_Most_viewed_from_North.jpg/960px-Stari_Most_viewed_from_North.jpg",
+   "reason": "bad_aspect",
+   "detail": "7676x2777, aspect 2.76 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e3/Sarajevo_City_Panorama.JPG/1280px-Sarajevo_City_Panorama.JPG",
+    "credit": "Sarajevo",
+    "page": "https://en.wikipedia.org/wiki/Sarajevo",
+    "city": "Sarajevo",
+    "score": 0.864
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "ba-mostar-sarajevo-dubrovnik-loop-14d-packed",
+   "title": "Mostar, Sarajevo and Jajce loop",
+   "cc": "BA",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/Stari_Most_viewed_from_North.jpg/960px-Stari_Most_viewed_from_North.jpg",
+   "reason": "bad_aspect",
+   "detail": "7676x2777, aspect 2.76 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e3/Sarajevo_City_Panorama.JPG/1280px-Sarajevo_City_Panorama.JPG",
+    "credit": "Sarajevo",
+    "page": "https://en.wikipedia.org/wiki/Sarajevo",
+    "city": "Sarajevo",
+    "score": 0.864
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "ba-mostar-sarajevo-split-chain-10d-relaxed",
+   "title": "Mostar to Split",
+   "cc": "BA",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/Stari_Most_viewed_from_North.jpg/960px-Stari_Most_viewed_from_North.jpg",
+   "reason": "bad_aspect",
+   "detail": "7676x2777, aspect 2.76 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e3/Sarajevo_City_Panorama.JPG/1280px-Sarajevo_City_Panorama.JPG",
+    "credit": "Sarajevo",
+    "page": "https://en.wikipedia.org/wiki/Sarajevo",
+    "city": "Sarajevo",
+    "score": 0.864
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "ba-mostar-split-chain-6d",
+   "title": "Mostar and Split",
+   "cc": "BA",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/Stari_Most_viewed_from_North.jpg/960px-Stari_Most_viewed_from_North.jpg",
+   "reason": "bad_aspect",
+   "detail": "7676x2777, aspect 2.76 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Split_080620-133710-IMG_0968x.jpg/1280px-Split_080620-133710-IMG_0968x.jpg",
+    "credit": "Split, Croatia",
+    "page": "https://en.wikipedia.org/wiki/Split,_Croatia",
+    "city": "Split",
+    "score": 0.65
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "ba-trebinje-durmitor-mostar-chain-10d-hidden",
+   "title": "Trebinje to Split",
+   "cc": "BA",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/Stari_Most_viewed_from_North.jpg/960px-Stari_Most_viewed_from_North.jpg",
+   "reason": "bad_aspect",
+   "detail": "7676x2777, aspect 2.76 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Split_080620-133710-IMG_0968x.jpg/1280px-Split_080620-133710-IMG_0968x.jpg",
+    "credit": "Split, Croatia",
+    "page": "https://en.wikipedia.org/wiki/Split,_Croatia",
+    "city": "Split",
+    "score": 0.65
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "ba-trebinje-durmitor-mostar-chain-12d-packed-hidden",
+   "title": "Trebinje to Zadar",
+   "cc": "BA",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/Stari_Most_viewed_from_North.jpg/960px-Stari_Most_viewed_from_North.jpg",
+   "reason": "bad_aspect",
+   "detail": "7676x2777, aspect 2.76 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b3/Roman_Forum_in_Zadar%2C_Croatia_%2848607823862%29.jpg/1280px-Roman_Forum_in_Zadar%2C_Croatia_%2848607823862%29.jpg",
+    "credit": "Zadar",
+    "page": "https://en.wikipedia.org/wiki/Zadar",
+    "city": "Zadar",
+    "score": 0.65
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "ba-trebinje-mostar-chain-5d-hidden",
+   "title": "Trebinje and Mostar",
+   "cc": "BA",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/Stari_Most_viewed_from_North.jpg/960px-Stari_Most_viewed_from_North.jpg",
+   "reason": "bad_aspect",
+   "detail": "7676x2777, aspect 2.76 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/5/56/Trebinje_Altstadt.jpg",
+    "credit": "Trebinje",
+    "page": "https://en.wikipedia.org/wiki/Trebinje",
+    "city": "Trebinje",
+    "score": 0.531
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "ba-trebinje-mostar-chain-6d-hidden",
+   "title": "Trebinje and Mostar",
+   "cc": "BA",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/Stari_Most_viewed_from_North.jpg/960px-Stari_Most_viewed_from_North.jpg",
+   "reason": "bad_aspect",
+   "detail": "7676x2777, aspect 2.76 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/5/56/Trebinje_Altstadt.jpg",
+    "credit": "Trebinje",
+    "page": "https://en.wikipedia.org/wiki/Trebinje",
+    "city": "Trebinje",
+    "score": 0.531
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "ba-trebinje-mostar-split-chain-12d-hidden",
+   "title": "Trebinje to Zadar",
+   "cc": "BA",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/Stari_Most_viewed_from_North.jpg/960px-Stari_Most_viewed_from_North.jpg",
+   "reason": "bad_aspect",
+   "detail": "7676x2777, aspect 2.76 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b3/Roman_Forum_in_Zadar%2C_Croatia_%2848607823862%29.jpg/1280px-Roman_Forum_in_Zadar%2C_Croatia_%2848607823862%29.jpg",
+    "credit": "Zadar",
+    "page": "https://en.wikipedia.org/wiki/Zadar",
+    "city": "Zadar",
+    "score": 0.65
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "ba-trebinje-mostar-split-chain-14d-hidden",
+   "title": "Trebinje to Škocjan Caves",
+   "cc": "BA",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/Stari_Most_viewed_from_North.jpg/960px-Stari_Most_viewed_from_North.jpg",
+   "reason": "bad_aspect",
+   "detail": "7676x2777, aspect 2.76 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/70/SkocjanskeJame_2013jpg.jpg/1280px-SkocjanskeJame_2013jpg.jpg",
+    "credit": "Škocjan Caves",
+    "page": "https://en.wikipedia.org/wiki/%C5%A0kocjan_Caves",
+    "city": "Škocjan Caves",
+    "score": 0.789
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "ba-trebinje-mostar-split-chain-7d-packed-hidden",
+   "title": "Trebinje to Split",
+   "cc": "BA",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/Stari_Most_viewed_from_North.jpg/960px-Stari_Most_viewed_from_North.jpg",
+   "reason": "bad_aspect",
+   "detail": "7676x2777, aspect 2.76 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Split_080620-133710-IMG_0968x.jpg/1280px-Split_080620-133710-IMG_0968x.jpg",
+    "credit": "Split, Croatia",
+    "page": "https://en.wikipedia.org/wiki/Split,_Croatia",
+    "city": "Split",
+    "score": 0.65
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "ba-trebinje-mostar-split-chain-8d-hidden",
+   "title": "Trebinje to Split",
+   "cc": "BA",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/Stari_Most_viewed_from_North.jpg/960px-Stari_Most_viewed_from_North.jpg",
+   "reason": "bad_aspect",
+   "detail": "7676x2777, aspect 2.76 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Split_080620-133710-IMG_0968x.jpg/1280px-Split_080620-133710-IMG_0968x.jpg",
+    "credit": "Split, Croatia",
+    "page": "https://en.wikipedia.org/wiki/Split,_Croatia",
+    "city": "Split",
+    "score": 0.65
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "ba-trebinje-mostar-split-loop-12d-relaxed-hidden",
+   "title": "Trebinje, Mostar and Split loop",
+   "cc": "BA",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/Stari_Most_viewed_from_North.jpg/960px-Stari_Most_viewed_from_North.jpg",
+   "reason": "bad_aspect",
+   "detail": "7676x2777, aspect 2.76 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Split_080620-133710-IMG_0968x.jpg/1280px-Split_080620-133710-IMG_0968x.jpg",
+    "credit": "Split, Croatia",
+    "page": "https://en.wikipedia.org/wiki/Split,_Croatia",
+    "city": "Split",
+    "score": 0.65
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "ba-trebinje-mostar-split-loop-14d-relaxed-hidden",
+   "title": "Trebinje, Mostar and Jajce loop",
+   "cc": "BA",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/Stari_Most_viewed_from_North.jpg/960px-Stari_Most_viewed_from_North.jpg",
+   "reason": "bad_aspect",
+   "detail": "7676x2777, aspect 2.76 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Split_080620-133710-IMG_0968x.jpg/1280px-Split_080620-133710-IMG_0968x.jpg",
+    "credit": "Split, Croatia",
+    "page": "https://en.wikipedia.org/wiki/Split,_Croatia",
+    "city": "Split",
+    "score": 0.65
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "ba-trebinje-mostar-split-loop-7d-packed-hidden",
+   "title": "Trebinje, Mostar and Split loop",
+   "cc": "BA",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/Stari_Most_viewed_from_North.jpg/960px-Stari_Most_viewed_from_North.jpg",
+   "reason": "bad_aspect",
+   "detail": "7676x2777, aspect 2.76 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Split_080620-133710-IMG_0968x.jpg/1280px-Split_080620-133710-IMG_0968x.jpg",
+    "credit": "Split, Croatia",
+    "page": "https://en.wikipedia.org/wiki/Split,_Croatia",
+    "city": "Split",
+    "score": 0.65
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "ba-trebinje-mostar-split-loop-8d-hidden",
+   "title": "Trebinje, Mostar and Split loop",
+   "cc": "BA",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/Stari_Most_viewed_from_North.jpg/960px-Stari_Most_viewed_from_North.jpg",
+   "reason": "bad_aspect",
+   "detail": "7676x2777, aspect 2.76 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Split_080620-133710-IMG_0968x.jpg/1280px-Split_080620-133710-IMG_0968x.jpg",
+    "credit": "Split, Croatia",
+    "page": "https://en.wikipedia.org/wiki/Split,_Croatia",
+    "city": "Split",
+    "score": 0.65
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "ba-trebinje-split-mostar-loop-10d-hidden",
+   "title": "Trebinje, Split and Durmitor loop",
+   "cc": "BA",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/Stari_Most_viewed_from_North.jpg/960px-Stari_Most_viewed_from_North.jpg",
+   "reason": "bad_aspect",
+   "detail": "7676x2777, aspect 2.76 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Split_080620-133710-IMG_0968x.jpg/1280px-Split_080620-133710-IMG_0968x.jpg",
+    "credit": "Split, Croatia",
+    "page": "https://en.wikipedia.org/wiki/Split,_Croatia",
+    "city": "Split",
+    "score": 0.65
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "ba-trebinje-split-mostar-loop-12d-hidden",
+   "title": "Trebinje, Split and Durmitor loop",
+   "cc": "BA",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/Stari_Most_viewed_from_North.jpg/960px-Stari_Most_viewed_from_North.jpg",
+   "reason": "bad_aspect",
+   "detail": "7676x2777, aspect 2.76 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Split_080620-133710-IMG_0968x.jpg/1280px-Split_080620-133710-IMG_0968x.jpg",
+    "credit": "Split, Croatia",
+    "page": "https://en.wikipedia.org/wiki/Split,_Croatia",
+    "city": "Split",
+    "score": 0.65
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "ba-trebinje-split-mostar-loop-12d-packed-hidden",
+   "title": "Trebinje, Split and Peja & Rugova Canyon loop",
+   "cc": "BA",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/Stari_Most_viewed_from_North.jpg/960px-Stari_Most_viewed_from_North.jpg",
+   "reason": "bad_aspect",
+   "detail": "7676x2777, aspect 2.76 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/33/Rugova_Canyon.jpg/1280px-Rugova_Canyon.jpg",
+    "credit": "Rugova Canyon",
+    "page": "https://en.wikipedia.org/wiki/Rugova_Canyon",
+    "city": "Peja & Rugova Canyon",
+    "score": 0.777
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "ba-trebinje-split-mostar-loop-14d-hidden",
+   "title": "Trebinje, Split and Peja & Rugova Canyon loop",
+   "cc": "BA",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/Stari_Most_viewed_from_North.jpg/960px-Stari_Most_viewed_from_North.jpg",
+   "reason": "bad_aspect",
+   "detail": "7676x2777, aspect 2.76 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/33/Rugova_Canyon.jpg/1280px-Rugova_Canyon.jpg",
+    "credit": "Rugova Canyon",
+    "page": "https://en.wikipedia.org/wiki/Rugova_Canyon",
+    "city": "Peja & Rugova Canyon",
+    "score": 0.777
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "ba-trebinje-split-mostar-loop-14d-packed-hidden",
+   "title": "Trebinje, Split and Peja & Rugova Canyon loop",
+   "cc": "BA",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/Stari_Most_viewed_from_North.jpg/960px-Stari_Most_viewed_from_North.jpg",
+   "reason": "bad_aspect",
+   "detail": "7676x2777, aspect 2.76 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/33/Rugova_Canyon.jpg/1280px-Rugova_Canyon.jpg",
+    "credit": "Rugova Canyon",
+    "page": "https://en.wikipedia.org/wiki/Rugova_Canyon",
+    "city": "Peja & Rugova Canyon",
+    "score": 0.777
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "ch-zermatt-base-2d-hidden",
+   "title": "Zermatt",
+   "cc": "CH",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a0/1_zermatt_evening_2022.jpg/960px-1_zermatt_evening_2022.jpg",
+   "reason": "bad_aspect",
+   "detail": "9746x9200, aspect 1.06 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/60/Matterhorn_from_Domh%C3%BCtte_-_2.jpg/1280px-Matterhorn_from_Domh%C3%BCtte_-_2.jpg",
+    "credit": "Matterhorn",
+    "page": "https://en.wikipedia.org/wiki/Matterhorn",
+    "city": "Zermatt",
+    "score": 0.617
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "ch-zermatt-base-2d-packed-hidden",
+   "title": "Zermatt and Kandersteg",
+   "cc": "CH",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a0/1_zermatt_evening_2022.jpg/960px-1_zermatt_evening_2022.jpg",
+   "reason": "bad_aspect",
+   "detail": "9746x9200, aspect 1.06 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2b/Kandersteg_Church.jpg/1280px-Kandersteg_Church.jpg",
+    "credit": "Kandersteg",
+    "page": null,
+    "city": "Kandersteg",
+    "score": 0.8
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "ch-zermatt-base-3d-hidden",
+   "title": "Zermatt and Kandersteg",
+   "cc": "CH",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a0/1_zermatt_evening_2022.jpg/960px-1_zermatt_evening_2022.jpg",
+   "reason": "bad_aspect",
+   "detail": "9746x9200, aspect 1.06 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2b/Kandersteg_Church.jpg/1280px-Kandersteg_Church.jpg",
+    "credit": "Kandersteg",
+    "page": null,
+    "city": "Kandersteg",
+    "score": 0.8
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "ch-zermatt-base-3d-packed-hidden",
+   "title": "Zermatt and Kandersteg and Lago Maggiore",
+   "cc": "CH",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a0/1_zermatt_evening_2022.jpg/960px-1_zermatt_evening_2022.jpg",
+   "reason": "bad_aspect",
+   "detail": "9746x9200, aspect 1.06 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2b/Kandersteg_Church.jpg/1280px-Kandersteg_Church.jpg",
+    "credit": "Kandersteg",
+    "page": null,
+    "city": "Kandersteg",
+    "score": 0.8
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "ch-zermatt-base-4d-packed-hidden",
+   "title": "Zermatt and Kandersteg and Lago Maggiore",
+   "cc": "CH",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a0/1_zermatt_evening_2022.jpg/960px-1_zermatt_evening_2022.jpg",
+   "reason": "bad_aspect",
+   "detail": "9746x9200, aspect 1.06 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2b/Kandersteg_Church.jpg/1280px-Kandersteg_Church.jpg",
+    "credit": "Kandersteg",
+    "page": null,
+    "city": "Kandersteg",
+    "score": 0.8
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "ch-zermatt-lake-como-chain-5d-hidden",
+   "title": "Zermatt and Lake Como",
+   "cc": "CH",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a0/1_zermatt_evening_2022.jpg/960px-1_zermatt_evening_2022.jpg",
+   "reason": "bad_aspect",
+   "detail": "9746x9200, aspect 1.06 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cc/Sentiero_del_Viandante_DSC_6340_%2814020554463%29.jpg/1280px-Sentiero_del_Viandante_DSC_6340_%2814020554463%29.jpg",
+    "credit": "Lake Como",
+    "page": "https://en.wikipedia.org/wiki/Lake_Como",
+    "city": "Lake Como",
+    "score": 0.687
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "ch-zermatt-lake-como-chain-6d-hidden",
+   "title": "Zermatt and Lake Como",
+   "cc": "CH",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a0/1_zermatt_evening_2022.jpg/960px-1_zermatt_evening_2022.jpg",
+   "reason": "bad_aspect",
+   "detail": "9746x9200, aspect 1.06 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cc/Sentiero_del_Viandante_DSC_6340_%2814020554463%29.jpg/1280px-Sentiero_del_Viandante_DSC_6340_%2814020554463%29.jpg",
+    "credit": "Lake Como",
+    "page": "https://en.wikipedia.org/wiki/Lake_Como",
+    "city": "Lake Como",
+    "score": 0.687
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "ch-zermatt-lauterbrunnen-chain-5d-hidden",
+   "title": "Zermatt and Lauterbrunnen",
+   "cc": "CH",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a0/1_zermatt_evening_2022.jpg/960px-1_zermatt_evening_2022.jpg",
+   "reason": "bad_aspect",
+   "detail": "9746x9200, aspect 1.06 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/1_lauterbrunnen_valley_wengen_2022.jpg/1280px-1_lauterbrunnen_valley_wengen_2022.jpg",
+    "credit": "Lauterbrunnen",
+    "page": "https://en.wikipedia.org/wiki/Lauterbrunnen",
+    "city": "Lauterbrunnen",
+    "score": 0.645
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "ch-zermatt-st-moritz-lake-como-chain-10d-hidden",
+   "title": "Zermatt to Venice",
+   "cc": "CH",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a0/1_zermatt_evening_2022.jpg/960px-1_zermatt_evening_2022.jpg",
+   "reason": "bad_aspect",
+   "detail": "9746x9200, aspect 1.06 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cc/Sentiero_del_Viandante_DSC_6340_%2814020554463%29.jpg/1280px-Sentiero_del_Viandante_DSC_6340_%2814020554463%29.jpg",
+    "credit": "Lake Como",
+    "page": "https://en.wikipedia.org/wiki/Lake_Como",
+    "city": "Lake Como",
+    "score": 0.687
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "ch-zermatt-st-moritz-lake-como-chain-12d-hidden",
+   "title": "Zermatt to Venice",
+   "cc": "CH",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a0/1_zermatt_evening_2022.jpg/960px-1_zermatt_evening_2022.jpg",
+   "reason": "bad_aspect",
+   "detail": "9746x9200, aspect 1.06 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cc/Sentiero_del_Viandante_DSC_6340_%2814020554463%29.jpg/1280px-Sentiero_del_Viandante_DSC_6340_%2814020554463%29.jpg",
+    "credit": "Lake Como",
+    "page": "https://en.wikipedia.org/wiki/Lake_Como",
+    "city": "Lake Como",
+    "score": 0.687
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "ch-zermatt-st-moritz-lake-como-chain-7d-packed-hidden",
+   "title": "Zermatt to Lake Como",
+   "cc": "CH",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a0/1_zermatt_evening_2022.jpg/960px-1_zermatt_evening_2022.jpg",
+   "reason": "bad_aspect",
+   "detail": "9746x9200, aspect 1.06 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cc/Sentiero_del_Viandante_DSC_6340_%2814020554463%29.jpg/1280px-Sentiero_del_Viandante_DSC_6340_%2814020554463%29.jpg",
+    "credit": "Lake Como",
+    "page": "https://en.wikipedia.org/wiki/Lake_Como",
+    "city": "Lake Como",
+    "score": 0.687
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "ch-zermatt-st-moritz-lake-como-chain-8d-hidden",
+   "title": "Zermatt to Lake Como",
+   "cc": "CH",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a0/1_zermatt_evening_2022.jpg/960px-1_zermatt_evening_2022.jpg",
+   "reason": "bad_aspect",
+   "detail": "9746x9200, aspect 1.06 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cc/Sentiero_del_Viandante_DSC_6340_%2814020554463%29.jpg/1280px-Sentiero_del_Viandante_DSC_6340_%2814020554463%29.jpg",
+    "credit": "Lake Como",
+    "page": "https://en.wikipedia.org/wiki/Lake_Como",
+    "city": "Lake Como",
+    "score": 0.687
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "cz-ceske-budejovice-base-2d-packed",
+   "title": "České Budějovice and Prague",
+   "cc": "CZ",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0b/Ceske_Budejovice_kolaz.png/960px-Ceske_Budejovice_kolaz.png",
+   "reason": "bad_aspect",
+   "detail": "2025x3093, aspect 0.65 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3d/Z%C3%A1mek_hlubok%C3%A1.jpg/1280px-Z%C3%A1mek_hlubok%C3%A1.jpg",
+    "credit": "Hluboká Castle",
+    "page": "https://en.wikipedia.org/wiki/Hlubok%C3%A1_Castle",
+    "city": "České Budějovice",
+    "score": 0.871
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "cz-ceske-budejovice-base-6d-packed",
+   "title": "České Budějovice and Prague and Český Krumlov",
+   "cc": "CZ",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0b/Ceske_Budejovice_kolaz.png/960px-Ceske_Budejovice_kolaz.png",
+   "reason": "bad_aspect",
+   "detail": "2025x3093, aspect 0.65 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3d/Z%C3%A1mek_hlubok%C3%A1.jpg/1280px-Z%C3%A1mek_hlubok%C3%A1.jpg",
+    "credit": "Hluboká Castle",
+    "page": "https://en.wikipedia.org/wiki/Hlubok%C3%A1_Castle",
+    "city": "České Budějovice",
+    "score": 0.871
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "cz-lednice-valtice-base-2d-hidden",
+   "title": "Lednice-Valtice",
+   "cc": "CZ",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/Castle_Nov%C3%BD_dv%C5%AFr_01.jpg/960px-Castle_Nov%C3%BD_dv%C5%AFr_01.jpg",
+   "reason": "bad_aspect",
+   "detail": "4884x2024, aspect 2.41 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Rybni%C4%8Dn%C3%AD_z%C3%A1me%C4%8Dek_%282%29.jpg/1280px-Rybni%C4%8Dn%C3%AD_z%C3%A1me%C4%8Dek_%282%29.jpg",
+    "credit": "Rybniční zámeček",
+    "page": "https://cs.wikipedia.org/wiki/Rybni%C4%8Dn%C3%AD_z%C3%A1me%C4%8Dek",
+    "city": "Lednice-Valtice",
+    "score": 0.679
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "cz-lednice-valtice-base-2d-packed-hidden",
+   "title": "Lednice-Valtice and Vienna",
+   "cc": "CZ",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/Castle_Nov%C3%BD_dv%C5%AFr_01.jpg/960px-Castle_Nov%C3%BD_dv%C5%AFr_01.jpg",
+   "reason": "bad_aspect",
+   "detail": "4884x2024, aspect 2.41 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5b/Schoenbrunn_philharmoniker_2012.jpg/1280px-Schoenbrunn_philharmoniker_2012.jpg",
+    "credit": "Vienna",
+    "page": null,
+    "city": "Vienna",
+    "score": 0.915
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "cz-lednice-valtice-base-3d-hidden",
+   "title": "Lednice-Valtice and Vienna",
+   "cc": "CZ",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/Castle_Nov%C3%BD_dv%C5%AFr_01.jpg/960px-Castle_Nov%C3%BD_dv%C5%AFr_01.jpg",
+   "reason": "bad_aspect",
+   "detail": "4884x2024, aspect 2.41 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5b/Schoenbrunn_philharmoniker_2012.jpg/1280px-Schoenbrunn_philharmoniker_2012.jpg",
+    "credit": "Vienna",
+    "page": null,
+    "city": "Vienna",
+    "score": 0.915
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "cz-lednice-valtice-base-3d-packed-hidden",
+   "title": "Lednice-Valtice and Vienna and Kromeriz",
+   "cc": "CZ",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/Castle_Nov%C3%BD_dv%C5%AFr_01.jpg/960px-Castle_Nov%C3%BD_dv%C5%AFr_01.jpg",
+   "reason": "bad_aspect",
+   "detail": "4884x2024, aspect 2.41 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5b/Schoenbrunn_philharmoniker_2012.jpg/1280px-Schoenbrunn_philharmoniker_2012.jpg",
+    "credit": "Vienna",
+    "page": null,
+    "city": "Vienna",
+    "score": 0.915
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "cz-lednice-valtice-base-4d-hidden",
+   "title": "Lednice-Valtice and Vienna and Kromeriz",
+   "cc": "CZ",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/Castle_Nov%C3%BD_dv%C5%AFr_01.jpg/960px-Castle_Nov%C3%BD_dv%C5%AFr_01.jpg",
+   "reason": "bad_aspect",
+   "detail": "4884x2024, aspect 2.41 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5b/Schoenbrunn_philharmoniker_2012.jpg/1280px-Schoenbrunn_philharmoniker_2012.jpg",
+    "credit": "Vienna",
+    "page": null,
+    "city": "Vienna",
+    "score": 0.915
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "cz-lednice-valtice-base-4d-packed-hidden",
+   "title": "Lednice-Valtice and Vienna and Kromeriz",
+   "cc": "CZ",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/Castle_Nov%C3%BD_dv%C5%AFr_01.jpg/960px-Castle_Nov%C3%BD_dv%C5%AFr_01.jpg",
+   "reason": "bad_aspect",
+   "detail": "4884x2024, aspect 2.41 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5b/Schoenbrunn_philharmoniker_2012.jpg/1280px-Schoenbrunn_philharmoniker_2012.jpg",
+    "credit": "Vienna",
+    "page": null,
+    "city": "Vienna",
+    "score": 0.915
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "de-burg-eltz-base-2d-relaxed-hidden",
+   "title": "Burg Eltz",
+   "cc": "DE",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Le_ch%C3%A2teau_d%27Eltz_%28Burg_Eltz%29_en_allemagne_%28cropped%29.jpg/960px-Le_ch%C3%A2teau_d%27Eltz_%28Burg_Eltz%29_en_allemagne_%28cropped%29.jpg",
+   "reason": "bad_aspect",
+   "detail": "3183x4474, aspect 0.71 outside 1.2-2.4",
+   "replacement": null
+  },
+  {
+   "layer": "trip",
+   "id": "es-montserrat-base-2d-packed-hidden",
+   "title": "Montserrat and Barcelona",
+   "cc": "ES",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/Panorama---Montserrat.jpg/960px-Panorama---Montserrat.jpg",
+   "reason": "bad_aspect",
+   "detail": "10490x4199, aspect 2.50 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5d/Aerial_view_of_Barcelona%2C_Spain_%2851227309370%29_edited.jpg/1280px-Aerial_view_of_Barcelona%2C_Spain_%2851227309370%29_edited.jpg",
+    "credit": "Barcelona",
+    "page": null,
+    "city": "Barcelona",
+    "score": 1.089
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "es-montserrat-base-3d-packed-hidden",
+   "title": "Montserrat and Barcelona and Tarragona",
+   "cc": "ES",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/Panorama---Montserrat.jpg/960px-Panorama---Montserrat.jpg",
+   "reason": "bad_aspect",
+   "detail": "10490x4199, aspect 2.50 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5d/Aerial_view_of_Barcelona%2C_Spain_%2851227309370%29_edited.jpg/1280px-Aerial_view_of_Barcelona%2C_Spain_%2851227309370%29_edited.jpg",
+    "credit": "Barcelona",
+    "page": null,
+    "city": "Barcelona",
+    "score": 1.089
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "es-montserrat-base-4d-hidden",
+   "title": "Montserrat and Barcelona and Tarragona",
+   "cc": "ES",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/Panorama---Montserrat.jpg/960px-Panorama---Montserrat.jpg",
+   "reason": "bad_aspect",
+   "detail": "10490x4199, aspect 2.50 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5d/Aerial_view_of_Barcelona%2C_Spain_%2851227309370%29_edited.jpg/1280px-Aerial_view_of_Barcelona%2C_Spain_%2851227309370%29_edited.jpg",
+    "credit": "Barcelona",
+    "page": null,
+    "city": "Barcelona",
+    "score": 1.089
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "es-montserrat-base-4d-packed-hidden",
+   "title": "Montserrat and Barcelona and Tarragona",
+   "cc": "ES",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/Panorama---Montserrat.jpg/960px-Panorama---Montserrat.jpg",
+   "reason": "bad_aspect",
+   "detail": "10490x4199, aspect 2.50 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5d/Aerial_view_of_Barcelona%2C_Spain_%2851227309370%29_edited.jpg/1280px-Aerial_view_of_Barcelona%2C_Spain_%2851227309370%29_edited.jpg",
+    "credit": "Barcelona",
+    "page": null,
+    "city": "Barcelona",
+    "score": 1.089
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "fr-les-baux-de-provence-base-4d-hidden",
+   "title": "Les Baux-de-Provence and Pont du Gard and Arles",
+   "cc": "FR",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/25/Baux_de_Provence.jpg/960px-Baux_de_Provence.jpg",
+   "reason": "bad_aspect",
+   "detail": "6679x2213, aspect 3.02 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/1_arles_france_2016.jpg/1280px-1_arles_france_2016.jpg",
+    "credit": "Arles",
+    "page": null,
+    "city": "Arles",
+    "score": 0.855
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "fr-les-baux-de-provence-base-4d-packed-hidden",
+   "title": "Les Baux-de-Provence and Pont du Gard and Arles",
+   "cc": "FR",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/25/Baux_de_Provence.jpg/960px-Baux_de_Provence.jpg",
+   "reason": "bad_aspect",
+   "detail": "6679x2213, aspect 3.02 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/1_arles_france_2016.jpg/1280px-1_arles_france_2016.jpg",
+    "credit": "Arles",
+    "page": null,
+    "city": "Arles",
+    "score": 0.855
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "fr-luberon-base-2d-relaxed-hidden",
+   "title": "Luberon",
+   "cc": "FR",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/61/Luberon_topographic_map-fr.png/500px-Luberon_topographic_map-fr.png",
+   "reason": "map",
+   "detail": "file name reads as map: luberon topographic map-fr",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/db/Menerbes_Plaine_du_Luberon.JPG/1280px-Menerbes_Plaine_du_Luberon.JPG",
+    "credit": "Menerbes Plaine du Luberon",
+    "page": "https://commons.wikimedia.org/wiki/File:Menerbes_Plaine_du_Luberon.JPG",
+    "city": "Luberon",
+    "score": 0.589
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "fr-luberon-base-4d-relaxed-hidden",
+   "title": "Luberon and Arles",
+   "cc": "FR",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/61/Luberon_topographic_map-fr.png/500px-Luberon_topographic_map-fr.png",
+   "reason": "map",
+   "detail": "file name reads as map: luberon topographic map-fr",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/1_arles_france_2016.jpg/1280px-1_arles_france_2016.jpg",
+    "credit": "Arles",
+    "page": null,
+    "city": "Arles",
+    "score": 0.855
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "fr-pont-du-gard-base-2d-relaxed-hidden",
+   "title": "Pont du Gard",
+   "cc": "FR",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/42/Pont_du_Gard_BLS.jpg/960px-Pont_du_Gard_BLS.jpg",
+   "reason": "bad_aspect",
+   "detail": "12648x4882, aspect 2.59 outside 1.2-2.4",
+   "replacement": null
+  },
+  {
+   "layer": "trip",
+   "id": "gb-bath-base-2d-packed",
+   "title": "Bath and Jurassic Coast",
+   "cc": "GB",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/08/Roman_Baths_in_Bath_Spa%2C_England_-_July_2006.jpg/960px-Roman_Baths_in_Bath_Spa%2C_England_-_July_2006.jpg",
+   "reason": "bad_aspect",
+   "detail": "2638x2296, aspect 1.15 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/31/Royal.crescent.aerial.bath.arp.jpg/1280px-Royal.crescent.aerial.bath.arp.jpg",
+    "credit": "Royal Crescent",
+    "page": "https://en.wikipedia.org/wiki/Royal_Crescent",
+    "city": "Bath",
+    "score": 0.725
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "gb-bath-base-2d",
+   "title": "Bath",
+   "cc": "GB",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/08/Roman_Baths_in_Bath_Spa%2C_England_-_July_2006.jpg/960px-Roman_Baths_in_Bath_Spa%2C_England_-_July_2006.jpg",
+   "reason": "bad_aspect",
+   "detail": "2638x2296, aspect 1.15 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/31/Royal.crescent.aerial.bath.arp.jpg/1280px-Royal.crescent.aerial.bath.arp.jpg",
+    "credit": "Royal Crescent",
+    "page": "https://en.wikipedia.org/wiki/Royal_Crescent",
+    "city": "Bath",
+    "score": 0.725
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "gb-bath-base-3d-packed",
+   "title": "Bath and Jurassic Coast and Brecon Beacons",
+   "cc": "GB",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/08/Roman_Baths_in_Bath_Spa%2C_England_-_July_2006.jpg/960px-Roman_Baths_in_Bath_Spa%2C_England_-_July_2006.jpg",
+   "reason": "bad_aspect",
+   "detail": "2638x2296, aspect 1.15 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/03/View_from_Cribyn_to_Pen_Y_Fan_-_geograph.org.uk_-_3447271_%28cropped%29.jpg/1280px-View_from_Cribyn_to_Pen_Y_Fan_-_geograph.org.uk_-_3447271_%28cropped%29.jpg",
+    "credit": "Brecon Beacons",
+    "page": null,
+    "city": "Brecon Beacons",
+    "score": 0.849
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "gb-bath-base-3d",
+   "title": "Bath and Jurassic Coast",
+   "cc": "GB",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/08/Roman_Baths_in_Bath_Spa%2C_England_-_July_2006.jpg/960px-Roman_Baths_in_Bath_Spa%2C_England_-_July_2006.jpg",
+   "reason": "bad_aspect",
+   "detail": "2638x2296, aspect 1.15 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/31/Royal.crescent.aerial.bath.arp.jpg/1280px-Royal.crescent.aerial.bath.arp.jpg",
+    "credit": "Royal Crescent",
+    "page": "https://en.wikipedia.org/wiki/Royal_Crescent",
+    "city": "Bath",
+    "score": 0.725
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "gb-bath-base-4d-packed",
+   "title": "Bath and Jurassic Coast and Brecon Beacons",
+   "cc": "GB",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/08/Roman_Baths_in_Bath_Spa%2C_England_-_July_2006.jpg/960px-Roman_Baths_in_Bath_Spa%2C_England_-_July_2006.jpg",
+   "reason": "bad_aspect",
+   "detail": "2638x2296, aspect 1.15 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/03/View_from_Cribyn_to_Pen_Y_Fan_-_geograph.org.uk_-_3447271_%28cropped%29.jpg/1280px-View_from_Cribyn_to_Pen_Y_Fan_-_geograph.org.uk_-_3447271_%28cropped%29.jpg",
+    "credit": "Brecon Beacons",
+    "page": null,
+    "city": "Brecon Beacons",
+    "score": 0.849
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "gb-bath-base-4d-relaxed",
+   "title": "Bath",
+   "cc": "GB",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/08/Roman_Baths_in_Bath_Spa%2C_England_-_July_2006.jpg/960px-Roman_Baths_in_Bath_Spa%2C_England_-_July_2006.jpg",
+   "reason": "bad_aspect",
+   "detail": "2638x2296, aspect 1.15 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/31/Royal.crescent.aerial.bath.arp.jpg/1280px-Royal.crescent.aerial.bath.arp.jpg",
+    "credit": "Royal Crescent",
+    "page": "https://en.wikipedia.org/wiki/Royal_Crescent",
+    "city": "Bath",
+    "score": 0.725
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "gb-bath-base-4d",
+   "title": "Bath and Jurassic Coast and Brecon Beacons",
+   "cc": "GB",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/08/Roman_Baths_in_Bath_Spa%2C_England_-_July_2006.jpg/960px-Roman_Baths_in_Bath_Spa%2C_England_-_July_2006.jpg",
+   "reason": "bad_aspect",
+   "detail": "2638x2296, aspect 1.15 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/03/View_from_Cribyn_to_Pen_Y_Fan_-_geograph.org.uk_-_3447271_%28cropped%29.jpg/1280px-View_from_Cribyn_to_Pen_Y_Fan_-_geograph.org.uk_-_3447271_%28cropped%29.jpg",
+    "credit": "Brecon Beacons",
+    "page": null,
+    "city": "Brecon Beacons",
+    "score": 0.849
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "gb-bath-base-5d-packed",
+   "title": "Bath and Jurassic Coast and Brecon Beacons",
+   "cc": "GB",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/08/Roman_Baths_in_Bath_Spa%2C_England_-_July_2006.jpg/960px-Roman_Baths_in_Bath_Spa%2C_England_-_July_2006.jpg",
+   "reason": "bad_aspect",
+   "detail": "2638x2296, aspect 1.15 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/03/View_from_Cribyn_to_Pen_Y_Fan_-_geograph.org.uk_-_3447271_%28cropped%29.jpg/1280px-View_from_Cribyn_to_Pen_Y_Fan_-_geograph.org.uk_-_3447271_%28cropped%29.jpg",
+    "credit": "Brecon Beacons",
+    "page": null,
+    "city": "Brecon Beacons",
+    "score": 0.849
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "gb-bath-base-5d-relaxed",
+   "title": "Bath and Jurassic Coast",
+   "cc": "GB",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/08/Roman_Baths_in_Bath_Spa%2C_England_-_July_2006.jpg/960px-Roman_Baths_in_Bath_Spa%2C_England_-_July_2006.jpg",
+   "reason": "bad_aspect",
+   "detail": "2638x2296, aspect 1.15 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/31/Royal.crescent.aerial.bath.arp.jpg/1280px-Royal.crescent.aerial.bath.arp.jpg",
+    "credit": "Royal Crescent",
+    "page": "https://en.wikipedia.org/wiki/Royal_Crescent",
+    "city": "Bath",
+    "score": 0.725
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "gb-bath-base-5d",
+   "title": "Bath and Jurassic Coast and Brecon Beacons",
+   "cc": "GB",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/08/Roman_Baths_in_Bath_Spa%2C_England_-_July_2006.jpg/960px-Roman_Baths_in_Bath_Spa%2C_England_-_July_2006.jpg",
+   "reason": "bad_aspect",
+   "detail": "2638x2296, aspect 1.15 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/03/View_from_Cribyn_to_Pen_Y_Fan_-_geograph.org.uk_-_3447271_%28cropped%29.jpg/1280px-View_from_Cribyn_to_Pen_Y_Fan_-_geograph.org.uk_-_3447271_%28cropped%29.jpg",
+    "credit": "Brecon Beacons",
+    "page": null,
+    "city": "Brecon Beacons",
+    "score": 0.849
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "gb-bath-base-6d-packed",
+   "title": "Bath and Jurassic Coast and Brecon Beacons",
+   "cc": "GB",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/08/Roman_Baths_in_Bath_Spa%2C_England_-_July_2006.jpg/960px-Roman_Baths_in_Bath_Spa%2C_England_-_July_2006.jpg",
+   "reason": "bad_aspect",
+   "detail": "2638x2296, aspect 1.15 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/19/Clifton_Suspension_Bridge_and_the_Observatory_in_Bristol%2C_England.jpg/1280px-Clifton_Suspension_Bridge_and_the_Observatory_in_Bristol%2C_England.jpg",
+    "credit": "Bristol",
+    "page": null,
+    "city": "Bristol",
+    "score": 0.902
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "gb-bath-base-6d-relaxed",
+   "title": "Bath and Jurassic Coast and Brecon Beacons",
+   "cc": "GB",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/08/Roman_Baths_in_Bath_Spa%2C_England_-_July_2006.jpg/960px-Roman_Baths_in_Bath_Spa%2C_England_-_July_2006.jpg",
+   "reason": "bad_aspect",
+   "detail": "2638x2296, aspect 1.15 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/03/View_from_Cribyn_to_Pen_Y_Fan_-_geograph.org.uk_-_3447271_%28cropped%29.jpg/1280px-View_from_Cribyn_to_Pen_Y_Fan_-_geograph.org.uk_-_3447271_%28cropped%29.jpg",
+    "credit": "Brecon Beacons",
+    "page": null,
+    "city": "Brecon Beacons",
+    "score": 0.849
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "gb-bath-base-6d",
+   "title": "Bath and Jurassic Coast and Brecon Beacons",
+   "cc": "GB",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/08/Roman_Baths_in_Bath_Spa%2C_England_-_July_2006.jpg/960px-Roman_Baths_in_Bath_Spa%2C_England_-_July_2006.jpg",
+   "reason": "bad_aspect",
+   "detail": "2638x2296, aspect 1.15 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/03/View_from_Cribyn_to_Pen_Y_Fan_-_geograph.org.uk_-_3447271_%28cropped%29.jpg/1280px-View_from_Cribyn_to_Pen_Y_Fan_-_geograph.org.uk_-_3447271_%28cropped%29.jpg",
+    "credit": "Brecon Beacons",
+    "page": null,
+    "city": "Brecon Beacons",
+    "score": 0.849
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "gb-cotswolds-bath-chain-7d-hidden",
+   "title": "Cotswolds and Bath",
+   "cc": "GB",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/08/Roman_Baths_in_Bath_Spa%2C_England_-_July_2006.jpg/960px-Roman_Baths_in_Bath_Spa%2C_England_-_July_2006.jpg",
+   "reason": "bad_aspect",
+   "detail": "2638x2296, aspect 1.15 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Castle_combe_cotswolds.jpg/1280px-Castle_combe_cotswolds.jpg",
+    "credit": "Cotswolds",
+    "page": "https://en.wikipedia.org/wiki/Cotswolds",
+    "city": "Cotswolds",
+    "score": 0.763
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "gb-cotswolds-bath-jurassic-coast-chain-10d-hidden",
+   "title": "Cotswolds to Jurassic Coast",
+   "cc": "GB",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/08/Roman_Baths_in_Bath_Spa%2C_England_-_July_2006.jpg/960px-Roman_Baths_in_Bath_Spa%2C_England_-_July_2006.jpg",
+   "reason": "bad_aspect",
+   "detail": "2638x2296, aspect 1.15 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Castle_combe_cotswolds.jpg/1280px-Castle_combe_cotswolds.jpg",
+    "credit": "Cotswolds",
+    "page": "https://en.wikipedia.org/wiki/Cotswolds",
+    "city": "Cotswolds",
+    "score": 0.763
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "gb-cotswolds-bath-jurassic-coast-chain-7d-packed-hidden",
+   "title": "Cotswolds to Jurassic Coast",
+   "cc": "GB",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/08/Roman_Baths_in_Bath_Spa%2C_England_-_July_2006.jpg/960px-Roman_Baths_in_Bath_Spa%2C_England_-_July_2006.jpg",
+   "reason": "bad_aspect",
+   "detail": "2638x2296, aspect 1.15 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Castle_combe_cotswolds.jpg/1280px-Castle_combe_cotswolds.jpg",
+    "credit": "Cotswolds",
+    "page": "https://en.wikipedia.org/wiki/Cotswolds",
+    "city": "Cotswolds",
+    "score": 0.763
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "gb-cotswolds-bath-jurassic-coast-loop-10d-hidden",
+   "title": "Cotswolds, Bath and Jurassic Coast loop",
+   "cc": "GB",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/08/Roman_Baths_in_Bath_Spa%2C_England_-_July_2006.jpg/960px-Roman_Baths_in_Bath_Spa%2C_England_-_July_2006.jpg",
+   "reason": "bad_aspect",
+   "detail": "2638x2296, aspect 1.15 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Castle_combe_cotswolds.jpg/1280px-Castle_combe_cotswolds.jpg",
+    "credit": "Cotswolds",
+    "page": "https://en.wikipedia.org/wiki/Cotswolds",
+    "city": "Cotswolds",
+    "score": 0.763
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "gb-cotswolds-bath-jurassic-coast-loop-7d-packed-hidden",
+   "title": "Cotswolds, Bath and Jurassic Coast loop",
+   "cc": "GB",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/08/Roman_Baths_in_Bath_Spa%2C_England_-_July_2006.jpg/960px-Roman_Baths_in_Bath_Spa%2C_England_-_July_2006.jpg",
+   "reason": "bad_aspect",
+   "detail": "2638x2296, aspect 1.15 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Castle_combe_cotswolds.jpg/1280px-Castle_combe_cotswolds.jpg",
+    "credit": "Cotswolds",
+    "page": "https://en.wikipedia.org/wiki/Cotswolds",
+    "city": "Cotswolds",
+    "score": 0.763
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "gb-windsor-base-5d-packed-hidden",
+   "title": "Windsor and Bath and London",
+   "cc": "GB",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/08/Roman_Baths_in_Bath_Spa%2C_England_-_July_2006.jpg/960px-Roman_Baths_in_Bath_Spa%2C_England_-_July_2006.jpg",
+   "reason": "bad_aspect",
+   "detail": "2638x2296, aspect 1.15 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/67/London_Skyline_%28125508655%29.jpeg/1280px-London_Skyline_%28125508655%29.jpeg",
+    "credit": "London",
+    "page": null,
+    "city": "London",
+    "score": 0.902
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "hu-esztergom-banska-stiavnica-chain-7d-hidden",
+   "title": "Esztergom and Banská Štiavnica",
+   "cc": "HU",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/EsztergomMontage2.JPG/960px-EsztergomMontage2.JPG",
+   "reason": "bad_aspect",
+   "detail": "1386x1854, aspect 0.75 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/Bansk%C3%A1_%C5%A0tiavnica_zhora.jpg/1280px-Bansk%C3%A1_%C5%A0tiavnica_zhora.jpg",
+    "credit": "Banská Štiavnica zhora",
+    "page": "https://commons.wikimedia.org/wiki/File:Bansk%C3%A1_%C5%A0tiavnica_zhora.jpg",
+    "city": "Banská Štiavnica",
+    "score": 0.752
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "hu-esztergom-banska-stiavnica-lednice-valtice-loop-10d-hidden",
+   "title": "Esztergom, Banská Štiavnica and Kromeriz loop",
+   "cc": "HU",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/EsztergomMontage2.JPG/960px-EsztergomMontage2.JPG",
+   "reason": "bad_aspect",
+   "detail": "1386x1854, aspect 0.75 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/Bansk%C3%A1_%C5%A0tiavnica_zhora.jpg/1280px-Bansk%C3%A1_%C5%A0tiavnica_zhora.jpg",
+    "credit": "Banská Štiavnica zhora",
+    "page": "https://commons.wikimedia.org/wiki/File:Bansk%C3%A1_%C5%A0tiavnica_zhora.jpg",
+    "city": "Banská Štiavnica",
+    "score": 0.752
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "hu-esztergom-banska-stiavnica-lednice-valtice-loop-12d-hidden",
+   "title": "Esztergom, Banská Štiavnica and Kromeriz loop",
+   "cc": "HU",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/EsztergomMontage2.JPG/960px-EsztergomMontage2.JPG",
+   "reason": "bad_aspect",
+   "detail": "1386x1854, aspect 0.75 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/Bansk%C3%A1_%C5%A0tiavnica_zhora.jpg/1280px-Bansk%C3%A1_%C5%A0tiavnica_zhora.jpg",
+    "credit": "Banská Štiavnica zhora",
+    "page": "https://commons.wikimedia.org/wiki/File:Bansk%C3%A1_%C5%A0tiavnica_zhora.jpg",
+    "city": "Banská Štiavnica",
+    "score": 0.752
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "hu-esztergom-banska-stiavnica-lednice-valtice-loop-7d-packed-hidden",
+   "title": "Esztergom, Banská Štiavnica and Lednice-Valtice loop",
+   "cc": "HU",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/EsztergomMontage2.JPG/960px-EsztergomMontage2.JPG",
+   "reason": "bad_aspect",
+   "detail": "1386x1854, aspect 0.75 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/Bansk%C3%A1_%C5%A0tiavnica_zhora.jpg/1280px-Bansk%C3%A1_%C5%A0tiavnica_zhora.jpg",
+    "credit": "Banská Štiavnica zhora",
+    "page": "https://commons.wikimedia.org/wiki/File:Bansk%C3%A1_%C5%A0tiavnica_zhora.jpg",
+    "city": "Banská Štiavnica",
+    "score": 0.752
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "hu-esztergom-banska-stiavnica-lednice-valtice-loop-8d-hidden",
+   "title": "Esztergom, Banská Štiavnica and Lednice-Valtice loop",
+   "cc": "HU",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/EsztergomMontage2.JPG/960px-EsztergomMontage2.JPG",
+   "reason": "bad_aspect",
+   "detail": "1386x1854, aspect 0.75 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/Bansk%C3%A1_%C5%A0tiavnica_zhora.jpg/1280px-Bansk%C3%A1_%C5%A0tiavnica_zhora.jpg",
+    "credit": "Banská Štiavnica zhora",
+    "page": "https://commons.wikimedia.org/wiki/File:Bansk%C3%A1_%C5%A0tiavnica_zhora.jpg",
+    "city": "Banská Štiavnica",
+    "score": 0.752
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "hu-esztergom-banska-stiavnica-morskie-oko-chain-10d-hidden",
+   "title": "Esztergom to Aggtelek",
+   "cc": "HU",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/EsztergomMontage2.JPG/960px-EsztergomMontage2.JPG",
+   "reason": "bad_aspect",
+   "detail": "1386x1854, aspect 0.75 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/Bansk%C3%A1_%C5%A0tiavnica_zhora.jpg/1280px-Bansk%C3%A1_%C5%A0tiavnica_zhora.jpg",
+    "credit": "Banská Štiavnica zhora",
+    "page": "https://commons.wikimedia.org/wiki/File:Bansk%C3%A1_%C5%A0tiavnica_zhora.jpg",
+    "city": "Banská Štiavnica",
+    "score": 0.752
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "hu-esztergom-banska-stiavnica-morskie-oko-chain-12d-hidden",
+   "title": "Esztergom to Aggtelek",
+   "cc": "HU",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/EsztergomMontage2.JPG/960px-EsztergomMontage2.JPG",
+   "reason": "bad_aspect",
+   "detail": "1386x1854, aspect 0.75 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/Bansk%C3%A1_%C5%A0tiavnica_zhora.jpg/1280px-Bansk%C3%A1_%C5%A0tiavnica_zhora.jpg",
+    "credit": "Banská Štiavnica zhora",
+    "page": "https://commons.wikimedia.org/wiki/File:Bansk%C3%A1_%C5%A0tiavnica_zhora.jpg",
+    "city": "Banská Štiavnica",
+    "score": 0.752
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "hu-esztergom-banska-stiavnica-morskie-oko-chain-7d-packed-hidden",
+   "title": "Esztergom to Morskie Oko",
+   "cc": "HU",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/EsztergomMontage2.JPG/960px-EsztergomMontage2.JPG",
+   "reason": "bad_aspect",
+   "detail": "1386x1854, aspect 0.75 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/Bansk%C3%A1_%C5%A0tiavnica_zhora.jpg/1280px-Bansk%C3%A1_%C5%A0tiavnica_zhora.jpg",
+    "credit": "Banská Štiavnica zhora",
+    "page": "https://commons.wikimedia.org/wiki/File:Bansk%C3%A1_%C5%A0tiavnica_zhora.jpg",
+    "city": "Banská Štiavnica",
+    "score": 0.752
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "hu-esztergom-banska-stiavnica-morskie-oko-chain-8d-hidden",
+   "title": "Esztergom to Morskie Oko",
+   "cc": "HU",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/EsztergomMontage2.JPG/960px-EsztergomMontage2.JPG",
+   "reason": "bad_aspect",
+   "detail": "1386x1854, aspect 0.75 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/Bansk%C3%A1_%C5%A0tiavnica_zhora.jpg/1280px-Bansk%C3%A1_%C5%A0tiavnica_zhora.jpg",
+    "credit": "Banská Štiavnica zhora",
+    "page": "https://commons.wikimedia.org/wiki/File:Bansk%C3%A1_%C5%A0tiavnica_zhora.jpg",
+    "city": "Banská Štiavnica",
+    "score": 0.752
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "hu-esztergom-base-2d-hidden",
+   "title": "Esztergom and Budapest",
+   "cc": "HU",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/EsztergomMontage2.JPG/960px-EsztergomMontage2.JPG",
+   "reason": "bad_aspect",
+   "detail": "1386x1854, aspect 0.75 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/View_from_Gell%C3%A9rt_Hill_to_the_Danube%2C_Hungary_-_Budapest_%2828493220635%29.jpg/1280px-View_from_Gell%C3%A9rt_Hill_to_the_Danube%2C_Hungary_-_Budapest_%2828493220635%29.jpg",
+    "credit": "Budapest",
+    "page": null,
+    "city": "Budapest",
+    "score": 0.959
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "hu-esztergom-base-2d-relaxed-hidden",
+   "title": "Esztergom",
+   "cc": "HU",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/EsztergomMontage2.JPG/960px-EsztergomMontage2.JPG",
+   "reason": "bad_aspect",
+   "detail": "1386x1854, aspect 0.75 outside 1.2-2.4",
+   "replacement": null
+  },
+  {
+   "layer": "trip",
+   "id": "hu-esztergom-base-3d-hidden",
+   "title": "Esztergom and Budapest and Banská Štiavnica",
+   "cc": "HU",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/EsztergomMontage2.JPG/960px-EsztergomMontage2.JPG",
+   "reason": "bad_aspect",
+   "detail": "1386x1854, aspect 0.75 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/View_from_Gell%C3%A9rt_Hill_to_the_Danube%2C_Hungary_-_Budapest_%2828493220635%29.jpg/1280px-View_from_Gell%C3%A9rt_Hill_to_the_Danube%2C_Hungary_-_Budapest_%2828493220635%29.jpg",
+    "credit": "Budapest",
+    "page": null,
+    "city": "Budapest",
+    "score": 0.959
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "hu-esztergom-base-4d-hidden",
+   "title": "Esztergom and Budapest and Banská Štiavnica",
+   "cc": "HU",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/EsztergomMontage2.JPG/960px-EsztergomMontage2.JPG",
+   "reason": "bad_aspect",
+   "detail": "1386x1854, aspect 0.75 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/View_from_Gell%C3%A9rt_Hill_to_the_Danube%2C_Hungary_-_Budapest_%2828493220635%29.jpg/1280px-View_from_Gell%C3%A9rt_Hill_to_the_Danube%2C_Hungary_-_Budapest_%2828493220635%29.jpg",
+    "credit": "Budapest",
+    "page": null,
+    "city": "Budapest",
+    "score": 0.959
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "hu-esztergom-base-4d-relaxed-hidden",
+   "title": "Esztergom and Budapest",
+   "cc": "HU",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/EsztergomMontage2.JPG/960px-EsztergomMontage2.JPG",
+   "reason": "bad_aspect",
+   "detail": "1386x1854, aspect 0.75 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/View_from_Gell%C3%A9rt_Hill_to_the_Danube%2C_Hungary_-_Budapest_%2828493220635%29.jpg/1280px-View_from_Gell%C3%A9rt_Hill_to_the_Danube%2C_Hungary_-_Budapest_%2828493220635%29.jpg",
+    "credit": "Budapest",
+    "page": null,
+    "city": "Budapest",
+    "score": 0.959
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "hu-esztergom-base-5d-hidden",
+   "title": "Esztergom and Budapest and Banská Štiavnica",
+   "cc": "HU",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/EsztergomMontage2.JPG/960px-EsztergomMontage2.JPG",
+   "reason": "bad_aspect",
+   "detail": "1386x1854, aspect 0.75 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/View_from_Gell%C3%A9rt_Hill_to_the_Danube%2C_Hungary_-_Budapest_%2828493220635%29.jpg/1280px-View_from_Gell%C3%A9rt_Hill_to_the_Danube%2C_Hungary_-_Budapest_%2828493220635%29.jpg",
+    "credit": "Budapest",
+    "page": null,
+    "city": "Budapest",
+    "score": 0.959
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "hu-esztergom-base-5d-relaxed-hidden",
+   "title": "Esztergom and Budapest and Banská Štiavnica",
+   "cc": "HU",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/EsztergomMontage2.JPG/960px-EsztergomMontage2.JPG",
+   "reason": "bad_aspect",
+   "detail": "1386x1854, aspect 0.75 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/View_from_Gell%C3%A9rt_Hill_to_the_Danube%2C_Hungary_-_Budapest_%2828493220635%29.jpg/1280px-View_from_Gell%C3%A9rt_Hill_to_the_Danube%2C_Hungary_-_Budapest_%2828493220635%29.jpg",
+    "credit": "Budapest",
+    "page": null,
+    "city": "Budapest",
+    "score": 0.959
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "hu-esztergom-lednice-valtice-chain-5d-hidden",
+   "title": "Esztergom and Lednice-Valtice",
+   "cc": "HU",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/EsztergomMontage2.JPG/960px-EsztergomMontage2.JPG",
+   "reason": "bad_aspect",
+   "detail": "1386x1854, aspect 0.75 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Rybni%C4%8Dn%C3%AD_z%C3%A1me%C4%8Dek_%282%29.jpg/1280px-Rybni%C4%8Dn%C3%AD_z%C3%A1me%C4%8Dek_%282%29.jpg",
+    "credit": "Rybniční zámeček",
+    "page": "https://cs.wikipedia.org/wiki/Rybni%C4%8Dn%C3%AD_z%C3%A1me%C4%8Dek",
+    "city": "Lednice-Valtice",
+    "score": 0.679
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "hu-esztergom-lednice-valtice-chain-6d-hidden",
+   "title": "Esztergom and Lednice-Valtice",
+   "cc": "HU",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/EsztergomMontage2.JPG/960px-EsztergomMontage2.JPG",
+   "reason": "bad_aspect",
+   "detail": "1386x1854, aspect 0.75 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Rybni%C4%8Dn%C3%AD_z%C3%A1me%C4%8Dek_%282%29.jpg/1280px-Rybni%C4%8Dn%C3%AD_z%C3%A1me%C4%8Dek_%282%29.jpg",
+    "credit": "Rybniční zámeček",
+    "page": "https://cs.wikipedia.org/wiki/Rybni%C4%8Dn%C3%AD_z%C3%A1me%C4%8Dek",
+    "city": "Lednice-Valtice",
+    "score": 0.679
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "ie-cobh-base-5d-hidden",
+   "title": "Cobh and Killarney and Dingle",
+   "cc": "IE",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/Cobhgallery.jpg/960px-Cobhgallery.jpg",
+   "reason": "bad_aspect",
+   "detail": "1280x1192, aspect 1.07 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Kinsale_%284693044621%29.jpg/1280px-Kinsale_%284693044621%29.jpg",
+    "credit": "Kinsale",
+    "page": null,
+    "city": "Kinsale",
+    "score": 0.757
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "ie-cobh-base-5d-relaxed-hidden",
+   "title": "Cobh and Killarney and Dingle",
+   "cc": "IE",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/Cobhgallery.jpg/960px-Cobhgallery.jpg",
+   "reason": "bad_aspect",
+   "detail": "1280x1192, aspect 1.07 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Killarney_Cathedral%2C_2021-06-21%2C_02.jpg/1280px-Killarney_Cathedral%2C_2021-06-21%2C_02.jpg",
+    "credit": "Killarney",
+    "page": null,
+    "city": "Killarney",
+    "score": 0.739
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "ie-cobh-killarney-chain-7d-hidden",
+   "title": "Cobh and Killarney",
+   "cc": "IE",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/Cobhgallery.jpg/960px-Cobhgallery.jpg",
+   "reason": "bad_aspect",
+   "detail": "1280x1192, aspect 1.07 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Killarney_Cathedral%2C_2021-06-21%2C_02.jpg/1280px-Killarney_Cathedral%2C_2021-06-21%2C_02.jpg",
+    "credit": "Killarney",
+    "page": "https://en.wikipedia.org/wiki/Killarney",
+    "city": "Killarney",
+    "score": 0.739
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "ie-galway-cliffs-of-moher-cobh-chain-7d-relaxed",
+   "title": "Galway & Cliffs of Moher and Cobh",
+   "cc": "IE",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/Cobhgallery.jpg/960px-Cobhgallery.jpg",
+   "reason": "bad_aspect",
+   "detail": "1280x1192, aspect 1.07 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d1/Cliffs-Of-Moher-OBriens-From-South.JPG/1280px-Cliffs-Of-Moher-OBriens-From-South.JPG",
+    "credit": "Cliffs of Moher",
+    "page": "https://en.wikipedia.org/wiki/Cliffs_of_Moher",
+    "city": "Galway & Cliffs of Moher",
+    "score": 0.589
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "ie-galway-cliffs-of-moher-cobh-killarney-chain-10d-relaxed",
+   "title": "Galway & Cliffs of Moher to Killarney",
+   "cc": "IE",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/Cobhgallery.jpg/960px-Cobhgallery.jpg",
+   "reason": "bad_aspect",
+   "detail": "1280x1192, aspect 1.07 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Killarney_Cathedral%2C_2021-06-21%2C_02.jpg/1280px-Killarney_Cathedral%2C_2021-06-21%2C_02.jpg",
+    "credit": "Killarney",
+    "page": "https://en.wikipedia.org/wiki/Killarney",
+    "city": "Killarney",
+    "score": 0.739
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "lu-echternach-mullerthal-base-2d-hidden",
+   "title": "Echternach & Mullerthal and Trier",
+   "cc": "LU",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/Mullerthal.jpg/960px-Mullerthal.jpg",
+   "reason": "bad_aspect",
+   "detail": "1712x2288, aspect 0.75 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b1/Trier-Blick-vom_Weishaus.JPG/1280px-Trier-Blick-vom_Weishaus.JPG",
+    "credit": "Trier",
+    "page": null,
+    "city": "Trier",
+    "score": 0.652
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "lu-echternach-mullerthal-base-2d-relaxed-hidden",
+   "title": "Echternach & Mullerthal",
+   "cc": "LU",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/Mullerthal.jpg/960px-Mullerthal.jpg",
+   "reason": "bad_aspect",
+   "detail": "1712x2288, aspect 0.75 outside 1.2-2.4",
+   "replacement": null
+  },
+  {
+   "layer": "trip",
+   "id": "lu-echternach-mullerthal-base-3d-hidden",
+   "title": "Echternach & Mullerthal and Trier and Luxembourg",
+   "cc": "LU",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/Mullerthal.jpg/960px-Mullerthal.jpg",
+   "reason": "bad_aspect",
+   "detail": "1712x2288, aspect 0.75 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/86/Ville-Haute_vue_du_Fort_Verlorenkost_%28cropped%29.jpg/1280px-Ville-Haute_vue_du_Fort_Verlorenkost_%28cropped%29.jpg",
+    "credit": "Luxembourg",
+    "page": null,
+    "city": "Luxembourg",
+    "score": 0.913
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "lu-echternach-mullerthal-base-4d-hidden",
+   "title": "Echternach & Mullerthal and Trier and Luxembourg",
+   "cc": "LU",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/Mullerthal.jpg/960px-Mullerthal.jpg",
+   "reason": "bad_aspect",
+   "detail": "1712x2288, aspect 0.75 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/86/Ville-Haute_vue_du_Fort_Verlorenkost_%28cropped%29.jpg/1280px-Ville-Haute_vue_du_Fort_Verlorenkost_%28cropped%29.jpg",
+    "credit": "Luxembourg",
+    "page": null,
+    "city": "Luxembourg",
+    "score": 0.913
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "lu-echternach-mullerthal-base-4d-relaxed-hidden",
+   "title": "Echternach & Mullerthal and Trier",
+   "cc": "LU",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/Mullerthal.jpg/960px-Mullerthal.jpg",
+   "reason": "bad_aspect",
+   "detail": "1712x2288, aspect 0.75 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b1/Trier-Blick-vom_Weishaus.JPG/1280px-Trier-Blick-vom_Weishaus.JPG",
+    "credit": "Trier",
+    "page": null,
+    "city": "Trier",
+    "score": 0.652
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "me-durmitor-dubrovnik-split-loop-12d-hidden",
+   "title": "Durmitor, Dubrovnik and Mostar loop",
+   "cc": "ME",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/Stari_Most_viewed_from_North.jpg/960px-Stari_Most_viewed_from_North.jpg",
+   "reason": "bad_aspect",
+   "detail": "7676x2777, aspect 2.76 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/67/The_walls_of_the_fortress_and_View_of_the_old_city._panorama.jpg/1280px-The_walls_of_the_fortress_and_View_of_the_old_city._panorama.jpg",
+    "credit": "Dubrovnik",
+    "page": "https://en.wikipedia.org/wiki/Dubrovnik",
+    "city": "Dubrovnik",
+    "score": 0.841
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "me-durmitor-dubrovnik-split-loop-12d-packed-hidden",
+   "title": "Durmitor, Dubrovnik and Kotor loop",
+   "cc": "ME",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/Stari_Most_viewed_from_North.jpg/960px-Stari_Most_viewed_from_North.jpg",
+   "reason": "bad_aspect",
+   "detail": "7676x2777, aspect 2.76 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/67/The_walls_of_the_fortress_and_View_of_the_old_city._panorama.jpg/1280px-The_walls_of_the_fortress_and_View_of_the_old_city._panorama.jpg",
+    "credit": "Dubrovnik",
+    "page": "https://en.wikipedia.org/wiki/Dubrovnik",
+    "city": "Dubrovnik",
+    "score": 0.841
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "me-durmitor-dubrovnik-split-loop-14d-hidden",
+   "title": "Durmitor, Dubrovnik and Kotor loop",
+   "cc": "ME",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/Stari_Most_viewed_from_North.jpg/960px-Stari_Most_viewed_from_North.jpg",
+   "reason": "bad_aspect",
+   "detail": "7676x2777, aspect 2.76 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/67/The_walls_of_the_fortress_and_View_of_the_old_city._panorama.jpg/1280px-The_walls_of_the_fortress_and_View_of_the_old_city._panorama.jpg",
+    "credit": "Dubrovnik",
+    "page": "https://en.wikipedia.org/wiki/Dubrovnik",
+    "city": "Dubrovnik",
+    "score": 0.841
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "me-durmitor-dubrovnik-split-loop-14d-packed-hidden",
+   "title": "Durmitor, Dubrovnik and Peja & Rugova Canyon loop",
+   "cc": "ME",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/Stari_Most_viewed_from_North.jpg/960px-Stari_Most_viewed_from_North.jpg",
+   "reason": "bad_aspect",
+   "detail": "7676x2777, aspect 2.76 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/67/The_walls_of_the_fortress_and_View_of_the_old_city._panorama.jpg/1280px-The_walls_of_the_fortress_and_View_of_the_old_city._panorama.jpg",
+    "credit": "Dubrovnik",
+    "page": "https://en.wikipedia.org/wiki/Dubrovnik",
+    "city": "Dubrovnik",
+    "score": 0.841
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "me-durmitor-kotor-dubrovnik-chain-12d-packed-hidden",
+   "title": "Durmitor to Split",
+   "cc": "ME",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/Stari_Most_viewed_from_North.jpg/960px-Stari_Most_viewed_from_North.jpg",
+   "reason": "bad_aspect",
+   "detail": "7676x2777, aspect 2.76 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/67/The_walls_of_the_fortress_and_View_of_the_old_city._panorama.jpg/1280px-The_walls_of_the_fortress_and_View_of_the_old_city._panorama.jpg",
+    "credit": "Dubrovnik",
+    "page": "https://en.wikipedia.org/wiki/Dubrovnik",
+    "city": "Dubrovnik",
+    "score": 0.841
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "me-durmitor-kotor-dubrovnik-chain-14d-hidden",
+   "title": "Durmitor to Split",
+   "cc": "ME",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/Stari_Most_viewed_from_North.jpg/960px-Stari_Most_viewed_from_North.jpg",
+   "reason": "bad_aspect",
+   "detail": "7676x2777, aspect 2.76 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/67/The_walls_of_the_fortress_and_View_of_the_old_city._panorama.jpg/1280px-The_walls_of_the_fortress_and_View_of_the_old_city._panorama.jpg",
+    "credit": "Dubrovnik",
+    "page": "https://en.wikipedia.org/wiki/Dubrovnik",
+    "city": "Dubrovnik",
+    "score": 0.841
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "me-lovcen-dubrovnik-mostar-chain-10d-hidden",
+   "title": "Lovćen to Mostar",
+   "cc": "ME",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/Stari_Most_viewed_from_North.jpg/960px-Stari_Most_viewed_from_North.jpg",
+   "reason": "bad_aspect",
+   "detail": "7676x2777, aspect 2.76 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/67/The_walls_of_the_fortress_and_View_of_the_old_city._panorama.jpg/1280px-The_walls_of_the_fortress_and_View_of_the_old_city._panorama.jpg",
+    "credit": "Dubrovnik",
+    "page": "https://en.wikipedia.org/wiki/Dubrovnik",
+    "city": "Dubrovnik",
+    "score": 0.841
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "me-lovcen-dubrovnik-mostar-chain-7d-packed-hidden",
+   "title": "Lovćen to Mostar",
+   "cc": "ME",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/Stari_Most_viewed_from_North.jpg/960px-Stari_Most_viewed_from_North.jpg",
+   "reason": "bad_aspect",
+   "detail": "7676x2777, aspect 2.76 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/67/The_walls_of_the_fortress_and_View_of_the_old_city._panorama.jpg/1280px-The_walls_of_the_fortress_and_View_of_the_old_city._panorama.jpg",
+    "credit": "Dubrovnik",
+    "page": "https://en.wikipedia.org/wiki/Dubrovnik",
+    "city": "Dubrovnik",
+    "score": 0.841
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "me-lovcen-dubrovnik-mostar-chain-8d-hidden",
+   "title": "Lovćen to Mostar",
+   "cc": "ME",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/Stari_Most_viewed_from_North.jpg/960px-Stari_Most_viewed_from_North.jpg",
+   "reason": "bad_aspect",
+   "detail": "7676x2777, aspect 2.76 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/67/The_walls_of_the_fortress_and_View_of_the_old_city._panorama.jpg/1280px-The_walls_of_the_fortress_and_View_of_the_old_city._panorama.jpg",
+    "credit": "Dubrovnik",
+    "page": "https://en.wikipedia.org/wiki/Dubrovnik",
+    "city": "Dubrovnik",
+    "score": 0.841
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "me-lovcen-dubrovnik-mostar-loop-7d-packed-hidden",
+   "title": "Lovćen, Dubrovnik and Mostar loop",
+   "cc": "ME",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/Stari_Most_viewed_from_North.jpg/960px-Stari_Most_viewed_from_North.jpg",
+   "reason": "bad_aspect",
+   "detail": "7676x2777, aspect 2.76 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/67/The_walls_of_the_fortress_and_View_of_the_old_city._panorama.jpg/1280px-The_walls_of_the_fortress_and_View_of_the_old_city._panorama.jpg",
+    "credit": "Dubrovnik",
+    "page": "https://en.wikipedia.org/wiki/Dubrovnik",
+    "city": "Dubrovnik",
+    "score": 0.841
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "me-lovcen-dubrovnik-mostar-loop-8d-hidden",
+   "title": "Lovćen, Dubrovnik and Mostar loop",
+   "cc": "ME",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/Stari_Most_viewed_from_North.jpg/960px-Stari_Most_viewed_from_North.jpg",
+   "reason": "bad_aspect",
+   "detail": "7676x2777, aspect 2.76 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/67/The_walls_of_the_fortress_and_View_of_the_old_city._panorama.jpg/1280px-The_walls_of_the_fortress_and_View_of_the_old_city._panorama.jpg",
+    "credit": "Dubrovnik",
+    "page": "https://en.wikipedia.org/wiki/Dubrovnik",
+    "city": "Dubrovnik",
+    "score": 0.841
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "me-lovcen-dubrovnik-split-loop-10d-hidden",
+   "title": "Lovćen, Dubrovnik and Mostar loop",
+   "cc": "ME",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/Stari_Most_viewed_from_North.jpg/960px-Stari_Most_viewed_from_North.jpg",
+   "reason": "bad_aspect",
+   "detail": "7676x2777, aspect 2.76 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/67/The_walls_of_the_fortress_and_View_of_the_old_city._panorama.jpg/1280px-The_walls_of_the_fortress_and_View_of_the_old_city._panorama.jpg",
+    "credit": "Dubrovnik",
+    "page": "https://en.wikipedia.org/wiki/Dubrovnik",
+    "city": "Dubrovnik",
+    "score": 0.841
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "me-lovcen-dubrovnik-split-loop-14d-relaxed-hidden",
+   "title": "Lovćen, Dubrovnik and Mostar loop",
+   "cc": "ME",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/Stari_Most_viewed_from_North.jpg/960px-Stari_Most_viewed_from_North.jpg",
+   "reason": "bad_aspect",
+   "detail": "7676x2777, aspect 2.76 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/67/The_walls_of_the_fortress_and_View_of_the_old_city._panorama.jpg/1280px-The_walls_of_the_fortress_and_View_of_the_old_city._panorama.jpg",
+    "credit": "Dubrovnik",
+    "page": "https://en.wikipedia.org/wiki/Dubrovnik",
+    "city": "Dubrovnik",
+    "score": 0.841
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "mk-pelister-national-park-base-2d-relaxed",
+   "title": "Pelister National Park",
+   "cc": "MK",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5b/Pelister_01.jpg/500px-Pelister_01.jpg",
+   "reason": "bad_aspect",
+   "detail": "1920x2560, aspect 0.75 outside 1.2-2.4",
+   "replacement": null
+  },
+  {
+   "layer": "trip",
+   "id": "mk-skopje-base-2d-packed",
+   "title": "Skopje and Ohrid",
+   "cc": "MK",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/73/Skopje_view_from_Kale_3.jpg/960px-Skopje_view_from_Kale_3.jpg",
+   "reason": "bad_aspect",
+   "detail": "8075x3000, aspect 2.69 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/82/03760-Ohrid_%2816064511578%29.jpg/1280px-03760-Ohrid_%2816064511578%29.jpg",
+    "credit": "Ohrid",
+    "page": null,
+    "city": "Ohrid",
+    "score": 0.648
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "mk-skopje-base-3d-packed",
+   "title": "Skopje and Ohrid and Peja & Rugova Canyon",
+   "cc": "MK",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/73/Skopje_view_from_Kale_3.jpg/960px-Skopje_view_from_Kale_3.jpg",
+   "reason": "bad_aspect",
+   "detail": "8075x3000, aspect 2.69 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/33/Rugova_Canyon.jpg/1280px-Rugova_Canyon.jpg",
+    "credit": "Peja & Rugova Canyon",
+    "page": null,
+    "city": "Peja & Rugova Canyon",
+    "score": 0.777
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "mk-skopje-base-4d-packed",
+   "title": "Skopje and Ohrid and Peja & Rugova Canyon",
+   "cc": "MK",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/73/Skopje_view_from_Kale_3.jpg/960px-Skopje_view_from_Kale_3.jpg",
+   "reason": "bad_aspect",
+   "detail": "8075x3000, aspect 2.69 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/33/Rugova_Canyon.jpg/1280px-Rugova_Canyon.jpg",
+    "credit": "Peja & Rugova Canyon",
+    "page": null,
+    "city": "Peja & Rugova Canyon",
+    "score": 0.777
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "mk-skopje-base-5d-packed",
+   "title": "Skopje and Ohrid and Peja & Rugova Canyon",
+   "cc": "MK",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/73/Skopje_view_from_Kale_3.jpg/960px-Skopje_view_from_Kale_3.jpg",
+   "reason": "bad_aspect",
+   "detail": "8075x3000, aspect 2.69 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/33/Rugova_Canyon.jpg/1280px-Rugova_Canyon.jpg",
+    "credit": "Peja & Rugova Canyon",
+    "page": null,
+    "city": "Peja & Rugova Canyon",
+    "score": 0.777
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "mk-skopje-base-5d-relaxed",
+   "title": "Skopje and Ohrid",
+   "cc": "MK",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/73/Skopje_view_from_Kale_3.jpg/960px-Skopje_view_from_Kale_3.jpg",
+   "reason": "bad_aspect",
+   "detail": "8075x3000, aspect 2.69 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/82/03760-Ohrid_%2816064511578%29.jpg/1280px-03760-Ohrid_%2816064511578%29.jpg",
+    "credit": "Ohrid",
+    "page": null,
+    "city": "Ohrid",
+    "score": 0.648
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "mk-skopje-base-5d",
+   "title": "Skopje and Ohrid and Peja & Rugova Canyon",
+   "cc": "MK",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/73/Skopje_view_from_Kale_3.jpg/960px-Skopje_view_from_Kale_3.jpg",
+   "reason": "bad_aspect",
+   "detail": "8075x3000, aspect 2.69 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/33/Rugova_Canyon.jpg/1280px-Rugova_Canyon.jpg",
+    "credit": "Peja & Rugova Canyon",
+    "page": null,
+    "city": "Peja & Rugova Canyon",
+    "score": 0.777
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "mk-skopje-base-6d-packed",
+   "title": "Skopje and Ohrid and Peja & Rugova Canyon",
+   "cc": "MK",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/73/Skopje_view_from_Kale_3.jpg/960px-Skopje_view_from_Kale_3.jpg",
+   "reason": "bad_aspect",
+   "detail": "8075x3000, aspect 2.69 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/33/Rugova_Canyon.jpg/1280px-Rugova_Canyon.jpg",
+    "credit": "Peja & Rugova Canyon",
+    "page": null,
+    "city": "Peja & Rugova Canyon",
+    "score": 0.777
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "mk-skopje-base-6d-relaxed",
+   "title": "Skopje and Ohrid and Peja & Rugova Canyon",
+   "cc": "MK",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/73/Skopje_view_from_Kale_3.jpg/960px-Skopje_view_from_Kale_3.jpg",
+   "reason": "bad_aspect",
+   "detail": "8075x3000, aspect 2.69 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/33/Rugova_Canyon.jpg/1280px-Rugova_Canyon.jpg",
+    "credit": "Peja & Rugova Canyon",
+    "page": null,
+    "city": "Peja & Rugova Canyon",
+    "score": 0.777
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "mk-skopje-base-6d",
+   "title": "Skopje and Ohrid and Peja & Rugova Canyon",
+   "cc": "MK",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/73/Skopje_view_from_Kale_3.jpg/960px-Skopje_view_from_Kale_3.jpg",
+   "reason": "bad_aspect",
+   "detail": "8075x3000, aspect 2.69 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/33/Rugova_Canyon.jpg/1280px-Rugova_Canyon.jpg",
+    "credit": "Peja & Rugova Canyon",
+    "page": null,
+    "city": "Peja & Rugova Canyon",
+    "score": 0.777
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "mk-skopje-ohrid-chain-6d",
+   "title": "Skopje and Ohrid",
+   "cc": "MK",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/73/Skopje_view_from_Kale_3.jpg/960px-Skopje_view_from_Kale_3.jpg",
+   "reason": "bad_aspect",
+   "detail": "8075x3000, aspect 2.69 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/82/03760-Ohrid_%2816064511578%29.jpg/1280px-03760-Ohrid_%2816064511578%29.jpg",
+    "credit": "Ohrid",
+    "page": "https://en.wikipedia.org/wiki/Ohrid",
+    "city": "Ohrid",
+    "score": 0.648
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "nl-middelburg-base-5d-hidden",
+   "title": "Middelburg and Bruges and Amsterdam",
+   "cc": "NL",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/03/Middelburg_Stadhuis_01.JPG/960px-Middelburg_Stadhuis_01.JPG",
+   "reason": "bad_aspect",
+   "detail": "2496x2996, aspect 0.83 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ae/Grand_Place_Bruselas_2.jpg/1280px-Grand_Place_Bruselas_2.jpg",
+    "credit": "Brussels",
+    "page": null,
+    "city": "Brussels",
+    "score": 0.711
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "nl-middelburg-base-5d-packed-hidden",
+   "title": "Middelburg and Bruges and Amsterdam",
+   "cc": "NL",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/03/Middelburg_Stadhuis_01.JPG/960px-Middelburg_Stadhuis_01.JPG",
+   "reason": "bad_aspect",
+   "detail": "2496x2996, aspect 0.83 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/ce/Den_Haag_Skyline_1.jpg/1280px-Den_Haag_Skyline_1.jpg",
+    "credit": "The Hague",
+    "page": null,
+    "city": "The Hague",
+    "score": 0.83
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "no-kristiansand-base-3d-packed",
+   "title": "Kristiansand and Preikestolen and Risør",
+   "cc": "NO",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/a/a5/Kvadraturen-01.jpg",
+   "reason": "bad_aspect",
+   "detail": "838x838, aspect 1.00 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/85/Lyse_Fjord_et_Preikestolen.jpg/1280px-Lyse_Fjord_et_Preikestolen.jpg",
+    "credit": "Preikestolen",
+    "page": null,
+    "city": "Preikestolen",
+    "score": 0.779
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "no-kristiansand-base-4d",
+   "title": "Kristiansand and Preikestolen and Risør",
+   "cc": "NO",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/a/a5/Kvadraturen-01.jpg",
+   "reason": "bad_aspect",
+   "detail": "838x838, aspect 1.00 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/85/Lyse_Fjord_et_Preikestolen.jpg/1280px-Lyse_Fjord_et_Preikestolen.jpg",
+    "credit": "Preikestolen",
+    "page": null,
+    "city": "Preikestolen",
+    "score": 0.779
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "no-kristiansand-base-6d-relaxed",
+   "title": "Kristiansand and Preikestolen and Risør",
+   "cc": "NO",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/a/a5/Kvadraturen-01.jpg",
+   "reason": "bad_aspect",
+   "detail": "838x838, aspect 1.00 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/85/Lyse_Fjord_et_Preikestolen.jpg/1280px-Lyse_Fjord_et_Preikestolen.jpg",
+    "credit": "Preikestolen",
+    "page": null,
+    "city": "Preikestolen",
+    "score": 0.779
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "no-kristiansand-fredrikstad-chain-7d-relaxed",
+   "title": "Kristiansand and Fredrikstad",
+   "cc": "NO",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/a/a5/Kvadraturen-01.jpg",
+   "reason": "bad_aspect",
+   "detail": "838x838, aspect 1.00 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/ce/Fredrikstad_bridge_-_view_from_the_the_old_town%27s_port.jpg/1280px-Fredrikstad_bridge_-_view_from_the_the_old_town%27s_port.jpg",
+    "credit": "Fredrikstad",
+    "page": "https://en.wikipedia.org/wiki/Fredrikstad",
+    "city": "Fredrikstad",
+    "score": 0.8
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "no-kristiansand-fredrikstad-chain-8d-relaxed",
+   "title": "Kristiansand and Fredrikstad",
+   "cc": "NO",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/a/a5/Kvadraturen-01.jpg",
+   "reason": "bad_aspect",
+   "detail": "838x838, aspect 1.00 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/ce/Fredrikstad_bridge_-_view_from_the_the_old_town%27s_port.jpg/1280px-Fredrikstad_bridge_-_view_from_the_the_old_town%27s_port.jpg",
+    "credit": "Fredrikstad",
+    "page": "https://en.wikipedia.org/wiki/Fredrikstad",
+    "city": "Fredrikstad",
+    "score": 0.8
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "no-kristiansand-gothenburg-chain-7d-relaxed",
+   "title": "Kristiansand and Gothenburg",
+   "cc": "NO",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/a/a5/Kvadraturen-01.jpg",
+   "reason": "bad_aspect",
+   "detail": "838x838, aspect 1.00 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/97/G%C3%B6teborg_2503_stitch_%2828573994096%29.jpg/1280px-G%C3%B6teborg_2503_stitch_%2828573994096%29.jpg",
+    "credit": "Gothenburg",
+    "page": "https://en.wikipedia.org/wiki/Gothenburg",
+    "city": "Gothenburg",
+    "score": 0.848
+   }
+  },
+  {
+   "layer": "trip",
+   "id": "no-kristiansand-gothenburg-chain-8d-relaxed",
+   "title": "Kristiansand and Gothenburg",
+   "cc": "NO",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/a/a5/Kvadraturen-01.jpg",
+   "reason": "bad_aspect",
+   "detail": "838x838, aspect 1.00 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/97/G%C3%B6teborg_2503_stitch_%2828573994096%29.jpg/1280px-G%C3%B6teborg_2503_stitch_%2828573994096%29.jpg",
+    "credit": "Gothenburg",
+    "page": "https://en.wikipedia.org/wiki/Gothenburg",
+    "city": "Gothenburg",
+    "score": 0.848
+   }
+  },
+  {
+   "layer": "journey",
+   "id": "ad-winter-sports-grandvalira",
+   "title": "Grandvalira & Pal-Arinsal: Andorra's Six-Sector Week",
+   "cc": "AD",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/AndorraSoldeuView.JPG/1280px-AndorraSoldeuView.JPG",
+   "reason": "bad_aspect",
+   "detail": "2174x1943, aspect 1.12 outside 1.2-2.4",
+   "replacement": null
+  },
+  {
+   "layer": "journey",
+   "id": "be-cycling-flemish-ardennes-bergs",
+   "title": "Kasseien and Bergs, A Week in the Flemish Ardennes",
+   "cc": "BE",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/7/74/Oudenaarde_DI-677.jpg",
+   "reason": "bad_aspect",
+   "detail": "1000x995, aspect 1.01 outside 1.2-2.4",
+   "replacement": null
+  },
+  {
+   "layer": "journey",
+   "id": "ch-hiking-walkers-haute-route-valais",
+   "title": "Walker's Haute Route Finale, Val d'Hérens to Zermatt",
+   "cc": "CH",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/5/50/Valais_Alps.jpg",
+   "reason": "too_small",
+   "detail": "660x433, long edge under 800px",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/e/ed/Val_d%27H%C3%A9rens.jpg",
+    "credit": "Val d'Hérens",
+    "page": "https://en.wikipedia.org/wiki/Val_d%27H%C3%A9rens",
+    "city": "Val d'Hérens",
+    "score": 0.771
+   }
+  },
+  {
+   "layer": "journey",
+   "id": "ch-winter-sports-engelberg-titlis-freeride",
+   "title": "Engelberg-Titlis: The Laub, Steinberg and Galtiberg Descents",
+   "cc": "CH",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/55/Engelberg.jpg/1280px-Engelberg.jpg",
+   "reason": "bad_aspect",
+   "detail": "2448x2339, aspect 1.05 outside 1.2-2.4",
+   "replacement": null
+  },
+  {
+   "layer": "journey",
+   "id": "de-culinary-baden-black-forest",
+   "title": "Baden Wine and the Black Forest Table",
+   "cc": "DE",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Freiburg_im_Breisgau_M%C3%BCnster.jpg/1280px-Freiburg_im_Breisgau_M%C3%BCnster.jpg",
+   "reason": "bad_aspect",
+   "detail": "4562x3976, aspect 1.15 outside 1.2-2.4",
+   "replacement": null
+  },
+  {
+   "layer": "journey",
+   "id": "dk-cozy-towns-south-funen-archipelago-aeroe-faaborg-svendborg",
+   "title": "South Funen Archipelago: Ærø, Faaborg & Svendborg",
+   "cc": "DK",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/1/13/%C3%98havskort_-_Jernbanekort-1890.jpg",
+   "reason": "historical",
+   "detail": "a painting or a photograph of another century",
+   "replacement": null
+  },
+  {
+   "layer": "journey",
+   "id": "es-cozy-towns-pueblos-blancos",
+   "title": "Pueblos Blancos: Grazalema, Setenil & the Road Down to Vejer",
+   "cc": "ES",
+   "hero": "https://upload.wikimedia.org/wikipedia/en/1/15/Vejer_gen_view.jpg",
+   "reason": "too_small",
+   "detail": "640x480, long edge under 800px",
+   "replacement": null
+  },
+  {
+   "layer": "journey",
+   "id": "es-culinary-jerez-sherry-cadiz",
+   "title": "The Sherry Triangle: Solera, Tabanco & the Bajo de Guía",
+   "cc": "ES",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/%28Jerez_de_la_Frontera%29_DSC_0560_%286271831479%29_%28cropped%29.jpg/1280px-%28Jerez_de_la_Frontera%29_DSC_0560_%286271831479%29_%28cropped%29.jpg",
+   "reason": "bad_aspect",
+   "detail": "3072x1118, aspect 2.75 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/4/4a/Vista_barrio_alto_sanl%C3%BAcar_barrameda_%28no_crane%29.jpg",
+    "credit": "Sanlúcar de Barrameda",
+    "page": "https://en.wikipedia.org/wiki/Sanl%C3%BAcar_de_Barrameda",
+    "city": "Sanlúcar de Barrameda",
+    "score": 0.843
+   }
+  },
+  {
+   "layer": "journey",
+   "id": "es-water-sports-tarifa-costa-luz",
+   "title": "Two Winds, One Town: Kiting Tarifa and the Costa de la Luz",
+   "cc": "ES",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e8/STS059-238-074_Strait_of_Gibraltar.jpg/1280px-STS059-238-074_Strait_of_Gibraltar.jpg",
+   "reason": "bad_aspect",
+   "detail": "1280x1267, aspect 1.01 outside 1.2-2.4",
+   "replacement": null
+  },
+  {
+   "layer": "journey",
+   "id": "fr-water-sports-landes-hossegor-surf",
+   "title": "A Surf Week in Hossegor, Seignosse and Capbreton",
+   "cc": "FR",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/7/77/Hossegor_June_2006.jpg",
+   "reason": "too_small",
+   "detail": "640x480, long edge under 800px",
+   "replacement": null
+  },
+  {
+   "layer": "journey",
+   "id": "hr-culinary-istria-truffles",
+   "title": "Istria in Truffle Season: Motovun Forest, Malvazija & the World's Best Oil",
+   "cc": "HR",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/10/Pazin_Burg_-_Wappen.jpg/1280px-Pazin_Burg_-_Wappen.jpg",
+   "reason": "emblem",
+   "detail": "file name reads as emblem: pazin burg - wappen",
+   "replacement": null
+  },
+  {
+   "layer": "journey",
+   "id": "hr-nature-escape-velebit-lika",
+   "title": "Velebit Stone and Lika Forest: A Karst Cabin Week",
+   "cc": "HR",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d6/Lika_i_Li%C4%8Dko_primorje.jpg/1280px-Lika_i_Li%C4%8Dko_primorje.jpg",
+   "reason": "bad_aspect",
+   "detail": "1280x1251, aspect 1.02 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/41/Canyon_of_Paklenica.jpg/1280px-Canyon_of_Paklenica.jpg",
+    "credit": "Paklenica",
+    "page": "https://en.wikipedia.org/wiki/Paklenica",
+    "city": "Paklenica",
+    "score": 0.801
+   }
+  },
+  {
+   "layer": "journey",
+   "id": "hr-trail-running-velebit-premuzic",
+   "title": "Velebit Dry-Stone: Running the Premužić Trail",
+   "cc": "HR",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d6/Lika_i_Li%C4%8Dko_primorje.jpg/1280px-Lika_i_Li%C4%8Dko_primorje.jpg",
+   "reason": "bad_aspect",
+   "detail": "1280x1251, aspect 1.02 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/41/Canyon_of_Paklenica.jpg/1280px-Canyon_of_Paklenica.jpg",
+    "credit": "Paklenica",
+    "page": "https://en.wikipedia.org/wiki/Paklenica",
+    "city": "Paklenica",
+    "score": 0.801
+   }
+  },
+  {
+   "layer": "journey",
+   "id": "hr-water-sports-dalmatia-sailing-kayak",
+   "title": "Maestral Country: Sailing and Sea-Kayaking Central Dalmatia",
+   "cc": "HR",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/1/1c/Golden_Cape.jpg",
+   "reason": "bad_aspect",
+   "detail": "867x768, aspect 1.13 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/27/View_of_Hvar_02.jpg/1280px-View_of_Hvar_02.jpg",
+    "credit": "Hvar",
+    "page": "https://en.wikipedia.org/wiki/Hvar",
+    "city": "Hvar",
+    "score": 0.97
+   }
+  },
+  {
+   "layer": "journey",
+   "id": "hu-culinary-tokaj-eger",
+   "title": "Bull's Blood and Noble Rot: Seven Days Between Eger and Tokaj",
+   "cc": "HU",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/22/Eger_montage.JPG/1280px-Eger_montage.JPG",
+   "reason": "collage",
+   "detail": "file name reads as collage: eger montage",
+   "replacement": null
+  },
+  {
+   "layer": "journey",
+   "id": "hu-road-trip-western-arc",
+   "title": "The Western Arc: Seven Days from the Danube Bend to the Őrség",
+   "cc": "HU",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/d/d7/Badacsonytomaj.jpg",
+   "reason": "too_small",
+   "detail": "698x494, long edge under 800px",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/Balaton_Hungary_Landscape.jpg/1280px-Balaton_Hungary_Landscape.jpg",
+    "credit": "Transdanubia",
+    "page": "https://en.wikipedia.org/wiki/Transdanubia",
+    "city": "Transdanubia",
+    "score": 0.825
+   }
+  },
+  {
+   "layer": "journey",
+   "id": "hu-trail-running-bukk-matra",
+   "title": "Blue Blazes and Dry Karst: A Trail-Running Week in the Bükk and the Mátra",
+   "cc": "HU",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/22/Eger_montage.JPG/1280px-Eger_montage.JPG",
+   "reason": "collage",
+   "detail": "file name reads as collage: eger montage",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/Zadar_%28HR%29%2C_Krupa-Canyon_--_2022_--_0003.jpg/1280px-Zadar_%28HR%29%2C_Krupa-Canyon_--_2022_--_0003.jpg",
+    "credit": "karst",
+    "page": "https://en.wikipedia.org/wiki/Karst",
+    "city": "karst",
+    "score": 0.787
+   }
+  },
+  {
+   "layer": "journey",
+   "id": "ie-culinary-west-cork-larder-ballymaloe-skibbereen",
+   "title": "West Cork Larder: Ballymaloe to Skibbereen",
+   "cc": "IE",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/8/80/Shanagarry_Castle%2C_Shanagarry%2C_Cork_-_geograph.org.uk_-_1936916.jpg",
+   "reason": "too_small",
+   "detail": "640x480, long edge under 800px",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/2/2a/Kinsale_%284693044621%29.jpg",
+    "credit": "Kinsale",
+    "page": "https://en.wikipedia.org/wiki/Kinsale",
+    "city": "Kinsale",
+    "score": 0.97
+   }
+  },
+  {
+   "layer": "journey",
+   "id": "it-road-trip-sicily-circuit",
+   "title": "Sicily Grand Circuit: Palermo, Etna & the Val di Noto",
+   "cc": "IT",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/c/c7/Sicilia_Palermo5_tango7174.jpg",
+   "reason": "bad_aspect",
+   "detail": "734x800, aspect 0.92 outside 1.2-2.4",
+   "replacement": null
+  },
+  {
+   "layer": "journey",
+   "id": "mk-cozy-towns-ohrid-bitola",
+   "title": "Ohrid, Bitola & Kruševo: Lake Light and Balkan Corso",
+   "cc": "MK",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/Pelagonija.jpg/1280px-Pelagonija.jpg",
+   "reason": "bad_aspect",
+   "detail": "1280x532, aspect 2.41 outside 1.2-2.4",
+   "replacement": null
+  },
+  {
+   "layer": "journey",
+   "id": "pl-water-sports-masuria-hel",
+   "title": "Flat Water and Side-Shore: Masurian Sailing and a Kite Week on the Hel Peninsula",
+   "cc": "PL",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/03/SM_Gi%C5%BCycko_Zamek_2017_%283%29_ID_645478.jpg/1280px-SM_Gi%C5%BCycko_Zamek_2017_%283%29_ID_645478.jpg",
+   "reason": "bad_aspect",
+   "detail": "1280x1280, aspect 1.00 outside 1.2-2.4",
+   "replacement": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/W%C4%99gorzewo%2C_Poland_-_panoramio.jpg/1280px-W%C4%99gorzewo%2C_Poland_-_panoramio.jpg",
+    "credit": "Węgorzewo",
+    "page": "https://en.wikipedia.org/wiki/W%C4%99gorzewo",
+    "city": "Węgorzewo",
+    "score": 0.787
+   }
+  }
+ ],
+ "unknown_items": [
+  {
+   "layer": "trip",
+   "id": "gb-cotswolds-base-2d-relaxed-hidden",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/03/Entrance_to_Birdland%2C_Bourton-on-the-Water_-_geograph.org.uk_-_233879.jpg/500px-Entrance_to_Birdland%2C_Bourton-on-the-Water_-_geograph.org.uk_-_233879.jpg"
+  },
+  {
+   "layer": "trip",
+   "id": "ie-galway-cliffs-of-moher-base-2d",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/78/Spanihs_Arch.jpg/500px-Spanihs_Arch.jpg"
+  },
+  {
+   "layer": "trip",
+   "id": "ie-galway-cliffs-of-moher-base-4d-relaxed",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/78/Spanihs_Arch.jpg/500px-Spanihs_Arch.jpg"
+  },
+  {
+   "layer": "trip",
+   "id": "it-siena-val-d-orcia-base-2d-relaxed",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/96/552SienaPalPubblico.JPG/500px-552SienaPalPubblico.JPG"
+  },
+  {
+   "layer": "trip",
+   "id": "pl-auschwitz-wieliczka-base-2d-relaxed-hidden",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/35/Auschwitz_I_%2822_May_2010%29_b.jpg/500px-Auschwitz_I_%2822_May_2010%29_b.jpg"
+  },
+  {
+   "layer": "trip",
+   "id": "se-dalarna-base-2d-hidden",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/db/Falu_koppargruva_July_2017_01.jpg/500px-Falu_koppargruva_July_2017_01.jpg"
+  },
+  {
+   "layer": "trip",
+   "id": "se-dalarna-base-4d-relaxed-hidden",
+   "hero": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/db/Falu_koppargruva_July_2017_01.jpg/500px-Falu_koppargruva_July_2017_01.jpg"
+  }
+ ]
+}

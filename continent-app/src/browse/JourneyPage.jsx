@@ -5,9 +5,12 @@ import { srcSetFor } from '../lib/heroImage.js';
 import { trailheadDirectionsUrl } from '../lib/trailExport.js';
 import { safeUrl } from '../lib/format.js';
 import { CountryFlag } from '../components/CountryFlag.jsx';
+import { Fold } from './Fold.jsx';
+import { useFolds } from './useFolds.js';
 import {
   ArrowLeftIcon, MapPinIcon, ChevronRightIcon, CameraIcon, AlertIcon,
-  LinkIcon,
+  LinkIcon, ChevronDownIcon, CalendarIcon, ReceiptIcon, BedIcon,
+  InfoIcon, BulbIcon, BackpackIcon, CompassIcon,
 } from '../components/Icons.jsx';
 
 /**
@@ -23,12 +26,22 @@ import {
  * descriptions follow: it follows the data, not the UI language. Only the
  * chrome translates.
  *
+ * Every section folds (P2.2, the shared <Fold>). Nothing is removed: the week
+ * at a glance, the budget and the day-by-day open because they are what you
+ * travel with, and the written blocks (why, the data sheet, good to know, the
+ * tips, the packing list, the advisories) are one tap away with every authored
+ * word intact. A day is its title and its measured line, with the three parts
+ * of the prose behind one disclosure.
+ *
  * The coordinate row renders ONLY when the schema says the pin is real
  * (precision source/city). A capital-city fallback pin is a map pin rather
  * than a location, and printing it under a heading would present it as one.
  */
 
 const fmtCoord = (n) => (Number.isFinite(n) ? n.toFixed(4) : '');
+
+/** What opens on arrival: the sections you travel with. */
+const OPEN_BY_DEFAULT = ['facts', 'budget', 'itin', 'sleep'];
 
 /** Authored prose with its **bold** markers honoured, never as HTML. */
 function Prose({ text, className = 'bpage-prose' }) {
@@ -61,22 +74,25 @@ function HeroCredit({ hero, t }) {
   );
 }
 
-/** One itinerary day: the title, three parts of the day, the measured line. */
+/**
+ * One itinerary day: the title and the facts you plan around, with the three
+ * parts of the written day behind "More about this day".
+ *
+ * The measured line (dayStats: the distance, the ascent, the realistic hours)
+ * and where you sleep stay in front, because those are what a reader compares
+ * between days. The prose is folded rather than shortened: it is authored
+ * copy and every word of it is still on the page, one tap down.
+ */
 function Day({ day, t }) {
+  const [more, setMore] = React.useState(false);
+  const parts = [['morning', day.morning], ['afternoon', day.afternoon], ['evening', day.evening]]
+    .filter(([, text]) => text);
   return (
     <article className="jpage-day">
       <header className="jpage-day-head">
         <span className="jpage-day-n mono">{t('journey.dayN', { n: day.day })}</span>
         <h3>{day.title}</h3>
       </header>
-      {[['morning', day.morning], ['afternoon', day.afternoon], ['evening', day.evening]]
-        .filter(([, text]) => text)
-        .map(([part, text]) => (
-          <div key={part} className="jpage-day-part">
-            <span className="jpage-day-when">{t(`journey.${part}`)}</span>
-            <Prose text={text} className="jpage-day-text" />
-          </div>
-        ))}
       {day.dayStats && <p className="jpage-day-stats mono">{day.dayStats}</p>}
       {day.sleep && (
         <p className="jpage-day-sleep">
@@ -84,6 +100,29 @@ function Day({ day, t }) {
           {' '}
           {day.sleep}
         </p>
+      )}
+      {parts.length > 0 && (
+        <>
+          <button
+            type="button"
+            className="tday-more"
+            onClick={() => setMore((v) => !v)}
+            aria-expanded={more}
+          >
+            <ChevronDownIcon size={13} className={more ? 'tday-more-chev is-open' : 'tday-more-chev'} />
+            <span>{t('journey.moreAboutDay')}</span>
+          </button>
+          {more && (
+            <div className="tday-prose">
+              {parts.map(([part, text]) => (
+                <div key={part} className="jpage-day-part">
+                  <span className="jpage-day-when">{t(`journey.${part}`)}</span>
+                  <Prose text={text} className="jpage-day-text" />
+                </div>
+              ))}
+            </div>
+          )}
+        </>
       )}
     </article>
   );
@@ -127,6 +166,7 @@ const BUDGET_ROWS = [
 export function JourneyPage({ id, gatewayDest, onClose, onSelectDest }) {
   const { t, lang } = useI18n();
   const [trip, setTrip] = useState(undefined);   // undefined = loading
+  const { isOpen, toggle } = useFolds(OPEN_BY_DEFAULT, id);
   const scrollEl = useRef(null);
   const titleEl = useRef(null);
   const [titleGone, setTitleGone] = useState(false);
@@ -330,8 +370,13 @@ export function JourneyPage({ id, gatewayDest, onClose, onSelectDest }) {
             </figure>
           )}
 
-          <section className="bpage-why">
-            <h2>{t('journey.whyHead')}</h2>
+          <Fold
+            id="sec-why"
+            icon={BulbIcon}
+            title={t('journey.whyHead')}
+            open={isOpen('why')}
+            onToggle={() => toggle('why')}
+          >
             {trip.hook && <Prose text={trip.hook} className="bpage-lede" />}
             {trip.summary && !trip.summaryGenerated && (
               <Prose text={trip.summary} />
@@ -343,11 +388,16 @@ export function JourneyPage({ id, gatewayDest, onClose, onSelectDest }) {
                 ))}
               </ul>
             )}
-          </section>
+          </Fold>
 
           {facts.length > 0 && (
-            <section className="bpage-facts">
-              <h2>{t('journey.factsHead')}</h2>
+            <Fold
+              id="sec-facts"
+              icon={InfoIcon}
+              title={t('journey.factsHead')}
+              open={isOpen('facts')}
+              onToggle={() => toggle('facts')}
+            >
               <dl>
                 {facts.map((fact) => (
                   <div key={fact.key} className="bpage-fact">
@@ -360,12 +410,18 @@ export function JourneyPage({ id, gatewayDest, onClose, onSelectDest }) {
                 ))}
               </dl>
               {trip.bestPeriod?.note && <p className="bpage-note">{trip.bestPeriod.note}</p>}
-            </section>
+            </Fold>
           )}
 
           {budget.breakdown && (
-            <section className="jpage-budget">
-              <h2>{t('journey.budgetHead')}</h2>
+            <Fold
+              id="sec-budget"
+              icon={ReceiptIcon}
+              title={t('journey.budgetHead')}
+              open={isOpen('budget')}
+              onToggle={() => toggle('budget')}
+              className="jpage-budget"
+            >
               <ul className="jpage-budget-rows">
                 {BUDGET_ROWS.map(([slot, key]) => {
                   const row = budget.breakdown[slot];
@@ -394,12 +450,18 @@ export function JourneyPage({ id, gatewayDest, onClose, onSelectDest }) {
               <p className="bpage-note">
                 {budget.totalNote || t('journey.fBudgetNote')}
               </p>
-            </section>
+            </Fold>
           )}
 
           {specRows.length > 0 && (
-            <section className="bpage-facts jpage-spec">
-              <h2>{t('journey.specHead')}</h2>
+            <Fold
+              id="sec-spec"
+              icon={CompassIcon}
+              title={t('journey.specHead')}
+              open={isOpen('spec')}
+              onToggle={() => toggle('spec')}
+              className="jpage-spec"
+            >
               <dl>
                 {specRows.map((row) => (
                   <div key={row.slot} className="bpage-fact">
@@ -408,19 +470,32 @@ export function JourneyPage({ id, gatewayDest, onClose, onSelectDest }) {
                   </div>
                 ))}
               </dl>
-            </section>
+            </Fold>
           )}
 
           {trip.itinerary?.length > 0 && (
-            <section className="jpage-itin">
-              <h2>{t('journey.itinHead')}</h2>
+            <Fold
+              id="sec-itin"
+              icon={CalendarIcon}
+              title={t('journey.itinHead')}
+              summary={t('journey.itinSummary', { n: trip.itinerary.length })}
+              open={isOpen('itin')}
+              onToggle={() => toggle('itin')}
+              className="jpage-itin"
+            >
               {trip.itinerary.map((day) => <Day key={day.day} day={day} t={t} />)}
-            </section>
+            </Fold>
           )}
 
           {trip.accommodationStrategy?.length > 0 && (
-            <section className="jpage-sleep">
-              <h2>{t('journey.sleepHead')}</h2>
+            <Fold
+              id="sec-sleep"
+              icon={BedIcon}
+              title={t('journey.sleepHead')}
+              open={isOpen('sleep')}
+              onToggle={() => toggle('sleep')}
+              className="jpage-sleep"
+            >
               {trip.accommodationStrategy.map((stay) => (
                 <article key={`${stay.rank}-${stay.name}`} className="jpage-stay">
                   <header>
@@ -445,12 +520,18 @@ export function JourneyPage({ id, gatewayDest, onClose, onSelectDest }) {
                   )}
                 </article>
               ))}
-            </section>
+            </Fold>
           )}
 
           {logRows.length > 0 && (
-            <section className="jpage-log">
-              <h2>{t('journey.logHead')}</h2>
+            <Fold
+              id="sec-log"
+              icon={InfoIcon}
+              title={t('journey.logHead')}
+              open={isOpen('log')}
+              onToggle={() => toggle('log')}
+              className="jpage-log"
+            >
               <dl>
                 {logRows.map((row) => (
                   <div key={row.slot} className="bpage-fact jpage-log-row">
@@ -459,31 +540,46 @@ export function JourneyPage({ id, gatewayDest, onClose, onSelectDest }) {
                   </div>
                 ))}
               </dl>
-            </section>
+            </Fold>
           )}
 
           {trip.proTips?.length > 0 && (
-            <section className="jpage-tips">
-              <h2>{t('journey.tipsHead')}</h2>
+            <Fold
+              id="sec-tips"
+              icon={BulbIcon}
+              title={t('journey.tipsHead')}
+              open={isOpen('tips')}
+              onToggle={() => toggle('tips')}
+              className="jpage-tips"
+            >
               <ul>
                 {trip.proTips.map((tip, i) => (
                   <li key={i}><Prose text={tip} className="jpage-tip-text" /></li>
                 ))}
               </ul>
-            </section>
+            </Fold>
           )}
 
           {trip.packingNotes?.length > 0 && (
-            <section className="jpage-tips">
-              <h2>{t('journey.packHead')}</h2>
+            <Fold
+              id="sec-pack"
+              icon={BackpackIcon}
+              title={t('journey.packHead')}
+              open={isOpen('pack')}
+              onToggle={() => toggle('pack')}
+              className="jpage-tips"
+            >
               <ul>
                 {trip.packingNotes.map((note, i) => (
                   <li key={i}><Prose text={note} className="jpage-tip-text" /></li>
                 ))}
               </ul>
-            </section>
+            </Fold>
           )}
 
+          {/* Deliberately NOT folded. Everything else on this page may be one
+              tap away; a safety advisory that a reader has to discover is a
+              safety advisory that does not work. */}
           {trip.whatCouldGoWrong?.length > 0 && (
             <section className="lpage-hazards">
               <h2>

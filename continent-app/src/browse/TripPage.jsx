@@ -3,7 +3,8 @@ import {
   ArrowLeftIcon, ShareIcon, RouteIcon, LoopIcon, BedIcon, TrainIcon,
   CarIcon, BusIcon, CalendarIcon, MapPinIcon, AlertIcon, CheckIcon,
   ClockIcon, ReceiptIcon, LinkIcon, MountainIcon, LakeIcon, BeachIcon,
-  BootIcon, SunIcon, PlusIcon,
+  BootIcon, SunIcon, PlusIcon, ChevronDownIcon, CompassIcon, CameraIcon,
+  BulbIcon,
 } from '../components/Icons.jsx';
 import { CountryFlag } from '../components/CountryFlag.jsx';
 import { srcSetFor, fallbackSrc } from '../lib/heroImage.js';
@@ -12,6 +13,11 @@ import { useI18n } from '../i18n/index.jsx';
 import { eur } from '../lib/format.js';
 import { loadTrip, tripShareUrl } from '../lib/trips.js';
 import { creditFor } from '../lib/imageCredit.js';
+import { Fold } from './Fold.jsx';
+import { useFolds } from './useFolds.js';
+import { TripPractical } from './TripPractical.jsx';
+import { TripDayPhotos } from './TripDayPhotos.jsx';
+import { dayShots } from './dayShots.js';
 import {
   tripHeadline, transportLabel, seasonLabel, tripWhy, tripWarnings,
   dayTitle, legLine, themeLabel, cardThumb, countryNames,
@@ -37,8 +43,16 @@ import {
  * pipeline/trips/validate_trips.py; a trip that fails a hard check is not in
  * the wire at all, and a soft warning ships on the trip and prints here.
  *
- * The map is lazy for the same reason the trail page's is: maplibre is a
- * large dependency and nobody pays for it until they open a trip.
+ * Every section folds (the shared <Fold>, same grammar as the destination
+ * page). Nothing was deleted to shorten this page: the practical sections open
+ * because they are what you travel with, and the narrative ones are one tap
+ * away with their prose intact. A day is a one-line header plus chips for the
+ * facts, and its paragraph moves behind "More about this day" rather than
+ * being cut.
+ *
+ * The map is lazy twice over: maplibre is a large dependency, and the fold's
+ * body does not mount while closed, so opening a trip costs no WebGL context
+ * until somebody opens the route.
  */
 
 const TripMap = lazy(() => import('../map/TripMap.jsx').then((m) => ({ default: m.TripMap })));
@@ -46,6 +60,15 @@ const TripMap = lazy(() => import('../map/TripMap.jsx').then((m) => ({ default: 
 const MODE_ICON = { rail: TrainIcon, car: CarIcon, mixed: BusIcon, train: TrainIcon, bus: BusIcon };
 const AROUND_ICON = { mountain: MountainIcon, lake: LakeIcon, beach: BeachIcon, trail: BootIcon };
 const SHAPE_ICON = { base: BedIcon, chain: RouteIcon, loop: LoopIcon };
+
+/**
+ * What opens on arrival: the sections you travel WITH. The route answers
+ * "where does it go", practical answers "what do I have to arrange", the
+ * day-by-day is the plan itself and the cost is the decision. The narrative
+ * blocks (why this trip, the checks, the gallery) are one tap away with every
+ * word still in them.
+ */
+const OPEN_BY_DEFAULT = ['route', 'practical', 'days', 'cost'];
 
 /** One measured fact. `word` moves it out of the mono column: "By train" and
  *  "Best May to Sep" are prose, and the mono face is for figures only. */
@@ -135,12 +158,119 @@ function Sight({ poi, t }) {
   );
 }
 
+/**
+ * One day: a header you can read in a glance, the concrete facts as chips, the
+ * photographs of where it goes, and the prose folded underneath.
+ *
+ * The header is the day number, the town and a headline of at most eight
+ * words. The chips carry what a reader actually plans around: how far and how
+ * long the move is, how many nights they are staying, what the day's main
+ * sight is. Everything the page said before is still here; the paragraph is
+ * behind one disclosure instead of in front of it.
+ */
+function DayCard({ day, detail, t }) {
+  const [more, setMore] = React.useState(false);
+  const stop = detail.stops[day.stop];
+  const out = day.daytrip
+    ? (detail.daytrips || []).find((x) => x.dest === day.daytrip) : null;
+  const pool = out ? out.highlights : (stop?.highlights || []);
+  const items = (day.items || [])
+    .map((n) => pool.find((h) => h.name === n))
+    .filter(Boolean);
+  const leg = day.kind === 'travel' ? detail.legs[day.stop - 1] : null;
+  const shots = dayShots(day, detail);
+
+  // The chips. Each one is a measured fact or it is not rendered: no chip on
+  // this row is composed, rounded up or guessed.
+  const chips = [];
+  if (leg) {
+    const h = Math.floor(leg.minutes / 60);
+    const m = leg.minutes % 60;
+    const time = h ? t('trip.legHm', { h, m: String(m).padStart(2, '0') }) : t('trip.legM', { m });
+    const key = leg.mode === 'car' ? 'trip.dayChipDrive' : 'trip.dayChipTrain';
+    chips.push({ k: 'time', icon: ClockIcon, text: t(key, { time }) });
+    if (Number.isFinite(leg.km)) {
+      chips.push({ k: 'km', icon: RouteIcon, text: t('trip.dayChipKm', { km: Math.round(leg.km) }) });
+    }
+  }
+  if (out && Number.isFinite(out.minutes)) {
+    chips.push({ k: 'out', icon: ClockIcon, text: t('trip.outTime', { min: out.minutes, km: out.km }) });
+  }
+  if (items.length > 0) {
+    chips.push({ k: 'sight', icon: MapPinIcon, text: items[0].name });
+  }
+  if (day.kind !== 'travel' && day.kind !== 'depart' && stop?.nights) {
+    chips.push({
+      k: 'nights',
+      icon: BedIcon,
+      text: t(stop.nights === 1 ? 'trip.nightCountOne' : 'trip.nightCountMany', { n: stop.nights }),
+    });
+  }
+
+  const prose = items.length > 0 || (items.length === 0 && day.kind === 'depart');
+
+  return (
+    <li className={`itin-day tday is-${day.kind}`}>
+      <div className="tday-head">
+        <span className="itin-day-no">{day.d}</span>
+        <span className="tday-title">{dayTitle(day, detail, t)}</span>
+      </div>
+
+      {chips.length > 0 && (
+        <ul className="tday-chips">
+          {chips.map((c) => (
+            <li key={c.k} className="tday-chip">
+              <c.icon size={12} />
+              <span>{c.text}</span>
+            </li>
+          ))}
+        </ul>
+      )}
+
+      <TripDayPhotos shots={shots} />
+
+      {prose && (
+        <>
+          <button
+            type="button"
+            className="tday-more"
+            onClick={() => setMore((v) => !v)}
+            aria-expanded={more}
+          >
+            <ChevronDownIcon size={13} className={more ? 'tday-more-chev is-open' : 'tday-more-chev'} />
+            <span>{t('trip.moreAboutDay')}</span>
+          </button>
+          {more && (
+            <div className="tday-prose">
+              {leg && (
+                <p className="itin-day-leg">
+                  <ClockIcon size={12} />
+                  {legLine(leg, t)}
+                </p>
+              )}
+              {items.length > 0 && (
+                <ul className="itin-sights">
+                  {items.map((p) => <Sight key={p.name} poi={p} t={t} />)}
+                </ul>
+              )}
+              {items.length === 0 && day.kind === 'depart' && (
+                <p className="itin-day-note">{t('trip.departNote', { city: stop.city })}</p>
+              )}
+            </div>
+          )}
+        </>
+      )}
+    </li>
+  );
+}
+
 export function TripPage({ trip: card, data, onClose, onOpenInPlanner, onSelectDest }) {
   const { t } = useI18n();
   const [detail, setDetail] = useState(null);
   const [failed, setFailed] = useState(false);
   const [selected, setSelected] = useState(null);
   const [copied, setCopied] = useState(false);
+  const { isOpen, toggle } = useFolds(OPEN_BY_DEFAULT, card.id);
 
   useEffect(() => {
     let live = true;
@@ -199,6 +329,12 @@ export function TripPage({ trip: card, data, onClose, onOpenInPlanner, onSelectD
   // The card already carries the chosen photograph, so it paints
   // immediately and the detail does not change it.
   const hero = detail?.hero || card.img || null;
+  // A closed section still answers its own question: the route reads out as
+  // the towns it strings together, which is the one thing a reader wants from
+  // it before they open anything.
+  const routeSummary = detail
+    ? detail.stops.map((s) => s.city).join(' - ')
+    : null;
 
   return (
     <div className="tpage itin-page" role="dialog" aria-modal="true">
@@ -299,29 +435,18 @@ export function TripPage({ trip: card, data, onClose, onOpenInPlanner, onSelectD
           )}
           {copied && <p className="itin-copied">{t('trip.linkCopied')}</p>}
 
-          {why.length > 0 && (
-            <section className="tpage-sec">
-              <h2 className="tpage-sec-title">{t('trip.whyTitle')}</h2>
-              <ul className="itin-why">
-                {why.map((w) => <li key={w.k}>{w.line}</li>)}
-              </ul>
-              {detail?.follows && (
-                <p className="itin-follows">
-                  <LinkIcon size={12} />
-                  <a href={detail.follows.url} target="_blank" rel="noopener noreferrer">
-                    {detail.follows.title}
-                  </a>
-                </p>
-              )}
-            </section>
-          )}
-
           {/* The route: every stop with its nights, every leg with its mode,
               its hours and its fare. A trip that cannot show this is a list
               of cities, not an itinerary. */}
           {detail && (
-            <section className="tpage-sec">
-              <h2 className="tpage-sec-title">{t('trip.routeTitle')}</h2>
+            <Fold
+              id="sec-route"
+              icon={RouteIcon}
+              title={t('trip.secRoute')}
+              summary={routeSummary}
+              open={isOpen('route')}
+              onToggle={() => toggle('route')}
+            >
               <div className="itin-map">
                 <Suspense fallback={<div className="itin-map-wait" />}>
                   <TripMap
@@ -398,15 +523,54 @@ export function TripPage({ trip: card, data, onClose, onOpenInPlanner, onSelectD
                   </React.Fragment>
                 ))}
               </ol>
-            </section>
+            </Fold>
+          )}
+
+          {/* What has to be arranged, from data we already hold: where to
+              park, what the drives are, what a bed costs, how to arrive
+              without a car. Above the day-by-day because it is what decides
+              whether the plan below is even possible. */}
+          {detail && (
+            <Fold
+              id="sec-practical"
+              icon={CompassIcon}
+              title={t('trip.secPractical')}
+              open={isOpen('practical')}
+              onToggle={() => toggle('practical')}
+            >
+              <TripPractical detail={detail} t={t} />
+            </Fold>
+          )}
+
+          {/* Day by day. Each day is a line and a row of chips; its prose and
+              its sights fold away underneath rather than being cut. */}
+          {detail && (
+            <Fold
+              id="sec-days"
+              icon={CalendarIcon}
+              title={t('trip.secDays')}
+              summary={t('trip.nDays', { n: detail.days })}
+              open={isOpen('days')}
+              onToggle={() => toggle('days')}
+            >
+              <ol className="itin-days">
+                {detail.plan.map((day) => (
+                  <DayCard key={day.d} day={day} detail={detail} t={t} />
+                ))}
+              </ol>
+            </Fold>
           )}
 
           {/* Days out, for a trip that keeps one bed. */}
           {detail && detail.daytrips.length > 0 && (
-            <section className="tpage-sec">
-              <h2 className="tpage-sec-title">
-                {t('trip.outsTitle', { city: detail.stops[0].city })}
-              </h2>
+            <Fold
+              id="sec-outs"
+              icon={LoopIcon}
+              title={t('trip.outsTitle', { city: detail.stops[0].city })}
+              summary={String(detail.daytrips.length)}
+              open={isOpen('outs')}
+              onToggle={() => toggle('outs')}
+            >
               <div className="itin-outs">
                 {detail.daytrips.map((d) => {
                   const Icon = MODE_ICON[d.mode] || TrainIcon;
@@ -436,54 +600,19 @@ export function TripPage({ trip: card, data, onClose, onOpenInPlanner, onSelectD
                   );
                 })}
               </div>
-            </section>
-          )}
-
-          {/* Day by day. Every named sight carries its own photograph, which
-              is the difference between a plan and a paragraph. */}
-          {detail && (
-            <section className="tpage-sec">
-              <h2 className="tpage-sec-title">{t('trip.daysTitle')}</h2>
-              <ol className="itin-days">
-                {detail.plan.map((day) => {
-                  const stop = detail.stops[day.stop];
-                  const out = day.daytrip
-                    ? detail.daytrips.find((x) => x.dest === day.daytrip) : null;
-                  const pool = out ? out.highlights : stop.highlights;
-                  const items = day.items
-                    .map((n) => pool.find((h) => h.name === n))
-                    .filter(Boolean);
-                  return (
-                    <li key={day.d} className={`itin-day is-${day.kind}`}>
-                      <div className="itin-day-head">
-                        <span className="itin-day-no">{day.d}</span>
-                        <span className="itin-day-title">{dayTitle(day, detail, t)}</span>
-                      </div>
-                      {day.kind === 'travel' && detail.legs[day.stop - 1] && (
-                        <p className="itin-day-leg">
-                          <ClockIcon size={12} />
-                          {legLine(detail.legs[day.stop - 1], t)}
-                        </p>
-                      )}
-                      {items.length > 0 && (
-                        <ul className="itin-sights">
-                          {items.map((p) => <Sight key={p.name} poi={p} t={t} />)}
-                        </ul>
-                      )}
-                      {items.length === 0 && day.kind === 'depart' && (
-                        <p className="itin-day-note">{t('trip.departNote', { city: stop.city })}</p>
-                      )}
-                    </li>
-                  );
-                })}
-              </ol>
-            </section>
+            </Fold>
           )}
 
           {/* What it costs, and for whom. */}
           {detail && (
-            <section className="tpage-sec">
-              <h2 className="tpage-sec-title">{t('trip.costTitle')}</h2>
+            <Fold
+              id="sec-cost"
+              icon={ReceiptIcon}
+              title={t('trip.secCost')}
+              summary={eur(detail.cost.per_day_eur)}
+              open={isOpen('cost')}
+              onToggle={() => toggle('cost')}
+            >
               <ul className="itin-cost">
                 <li>
                   <span>{t('trip.costStay', { n: detail.nights })}</span>
@@ -499,13 +628,43 @@ export function TripPage({ trip: card, data, onClose, onOpenInPlanner, onSelectD
                 </li>
               </ul>
               <p className="tpage-credit">{t('trip.costNote')}</p>
-            </section>
+            </Fold>
+          )}
+
+          {why.length > 0 && (
+            <Fold
+              id="sec-why"
+              icon={BulbIcon}
+              title={t('trip.secWhy')}
+              summary={why[0]?.line}
+              open={isOpen('why')}
+              onToggle={() => toggle('why')}
+            >
+              <ul className="itin-why">
+                {why.map((w) => <li key={w.k}>{w.line}</li>)}
+              </ul>
+              {detail?.follows && (
+                <p className="itin-follows">
+                  <LinkIcon size={12} />
+                  <a href={detail.follows.url} target="_blank" rel="noopener noreferrer">
+                    {detail.follows.title}
+                  </a>
+                </p>
+              )}
+            </Fold>
           )}
 
           {/* What we checked. The block that makes the rest believable. */}
           {detail && (
-            <section className="tpage-sec itin-checks">
-              <h2 className="tpage-sec-title">{t('trip.checksTitle')}</h2>
+            <Fold
+              id="sec-checks"
+              icon={CheckIcon}
+              title={t('trip.secChecks')}
+              summary={t('trip.checksPassed', { n: (detail.checks?.passed || []).length })}
+              open={isOpen('checks')}
+              onToggle={() => toggle('checks')}
+              className="itin-checks"
+            >
               <p className="itin-check-pass">
                 <CheckIcon size={13} />
                 {t('trip.checksPassed', { n: (detail.checks?.passed || []).length })}
@@ -520,12 +679,18 @@ export function TripPage({ trip: card, data, onClose, onOpenInPlanner, onSelectD
                 <p className="itin-check-clean">{t('trip.checksClean')}</p>
               )}
               <p className="tpage-credit">{t('trip.checksCredit')}</p>
-            </section>
+            </Fold>
           )}
 
           {detail?.gallery?.length > 0 && (
-            <section className="tpage-sec">
-              <h2 className="tpage-sec-title">{t('trip.galleryTitle')}</h2>
+            <Fold
+              id="sec-gallery"
+              icon={CameraIcon}
+              title={t('trip.secGallery')}
+              summary={String(detail.gallery.length)}
+              open={isOpen('gallery')}
+              onToggle={() => toggle('gallery')}
+            >
               <div className="itin-gallery">
                 {detail.gallery.map((g) => (
                   <figure key={g.url} className="itin-shot">
@@ -535,7 +700,7 @@ export function TripPage({ trip: card, data, onClose, onOpenInPlanner, onSelectD
                 ))}
               </div>
               <p className="tpage-credit">{t('trip.galleryCredit')}</p>
-            </section>
+            </Fold>
           )}
         </div>
       </div>

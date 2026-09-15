@@ -14,6 +14,7 @@ import { useForecast } from '../lib/weather.js';
 import { packingList, packMonth } from '../lib/packing.js';
 import { cheapestStayMonths } from '../lib/costIndex.js';
 import { useI18n } from '../i18n/index.jsx';
+import { Fold } from './Fold.jsx';
 import { RatingBreakdown } from './RatingBreakdown.jsx';
 import { Neighbourhoods } from './Neighbourhoods.jsx';
 import { GettingThere } from './GettingThere.jsx';
@@ -33,7 +34,7 @@ import {
   RainIcon, DrizzleIcon, SnowIcon, StormIcon, ClockIcon, CompassIcon,
   ShoeIcon, SwimIcon, BootIcon, PlugIcon, BottleIcon, JacketIcon,
   BackpackIcon, ReceiptIcon, CheckIcon, BedIcon, InfoIcon, StarIcon,
-  ChevronDownIcon, ChevronRightIcon, MusicIcon, SparkIcon, LinkIcon,
+  ChevronRightIcon, MusicIcon, SparkIcon, LinkIcon,
   DownloadIcon, ShareIcon, BulbIcon, MedalIcon, RouteIcon,
 } from '../components/Icons.jsx';
 import { PlaneIcon } from '../components/TransportIcons.jsx';
@@ -89,26 +90,6 @@ const fmtKm = (km) => (km < 0.95 ? `${Math.round((km * 1000) / 10) * 10} m` : `$
 /** Highlight photographs ship at 960px; the tiles want 500. Same file, one
  *  path segment, and Commons serves both. */
 const thumb500 = (url) => (url ? url.replace(/\/960px-/, '/500px-') : url);
-
-/** One folding section. The header is the summary when closed and the title
- *  when open; the body mounts only while open, which is also what keeps a
- *  closed map from costing a WebGL context. */
-function Fold({ id, icon: Icon, title, summary, open, onToggle, children, aside, className = '' }) {
-  return (
-    <section className={`dsec ${open ? 'is-open' : ''} ${className}`} id={id}>
-      <div className="dsec-head">
-        <button type="button" className="dsec-toggle" onClick={onToggle} aria-expanded={open} aria-controls={`${id}-body`}>
-          {Icon && <Icon size={14} className="dsec-icon" />}
-          <span className="dsec-title">{title}</span>
-          {!open && summary && <span className="dsec-summary">{summary}</span>}
-          <ChevronDownIcon size={14} className="dsec-chev" />
-        </button>
-        {open && aside && <div className="dsec-aside">{aside}</div>}
-      </div>
-      {open && <div className="dsec-body" id={`${id}-body`}>{children}</div>}
-    </section>
-  );
-}
 
 /** One tip sentence from its rule code + args, through t() so all six
  *  languages carry it. Month arguments arrive as 1-12 and leave as names. */
@@ -1127,7 +1108,6 @@ export function DestinationPage({
                   )}
                 </ul>
                 <a className="xp-further-btn dpark-search" href={parkSearch} target="_blank" rel="noreferrer noopener"><ParkingIcon size={14} /><span>{t('dest.parkSearch')}</span></a>
-                <p className="xp-source">{t('dest.parkSource')}</p>
               </Fold>
             )}
 
@@ -1183,22 +1163,15 @@ export function DestinationPage({
                   <a className="xp-further-btn" href={links.airbnb} target="_blank" rel="noreferrer noopener"><BedIcon size={15} /><span>{t('dest.linkAirbnb')}</span></a>
                 )}
               </div>
-              <p className="xp-source">{t('explore.furtherNote')}</p>
             </Fold>
 
-            {/* Where every fact came from. The PDF prints the long form. */}
-            {credits.length > 0 && (
-              <p className="destp-credits">
-                {t('dest.creditsLine')}{' '}
-                {credits.map((c, i) => (
-                  <React.Fragment key={c.key}>
-                    {i > 0 && ', '}
-                    <a href={safeUrl(c.url)} target="_blank" rel="noreferrer">{c.name}</a>
-                  </React.Fragment>
-                ))}
-                .
-              </p>
-            )}
+            {/* The per-source credit list used to print here as a long grey
+                paragraph under every destination. It has moved to the PDF
+                export (which still prints the full form) and to the map's own
+                attribution control, so the page ends on content rather than on
+                bookkeeping. NOTE: OpenStreetMap (ODbL) and Wikimedia Commons
+                (CC BY-SA) require attribution to remain reachable somewhere in
+                the product - do not remove it from those two places as well. */}
           </div>
         </div>
       </div>
