@@ -82,16 +82,27 @@ function Card({ card, listed, t, onOpen }) {
 export function RegionPage({ id, onClose, onOpenFeature, onOpenRegion }) {
   const { t } = useI18n();
   const [data, setData] = useState(undefined);
+  const [failed, setFailed] = useState(false);
+  const [tries, setTries] = useState(0);
   const [copied, setCopied] = useState(false);
 
   // One fetch. Neighbours arrive named inside the region file, so opening
   // a page never pulls the whole region index for six button labels.
+  //
+  // Three outcomes, not two: loadRegion resolves the region, resolves null
+  // when the id is not in the catalogue, and rejects when the request itself
+  // failed. Folding the third into the second told the traveller their link
+  // was stale when the truth was that the network dropped.
   useEffect(() => {
     let on = true;
     setData(undefined);
-    loadRegion(id).then((d) => { if (on) setData(d); });
+    setFailed(false);
+    loadRegion(id).then(
+      (d) => { if (on) setData(d); },
+      () => { if (on) setFailed(true); },
+    );
     return () => { on = false; };
-  }, [id]);
+  }, [id, tries]);
 
   useEffect(() => {
     const onKey = (e) => {
@@ -121,6 +132,22 @@ export function RegionPage({ id, onClose, onOpenFeature, onOpenRegion }) {
       setTimeout(() => setCopied(false), 1800);
     } catch { /* clipboard refused; the button just stays */ }
   };
+
+  if (failed) {
+    return (
+      <div className="rgnp" role="dialog" aria-modal="true">
+        <div className="rgnp-inner">
+          <button className="rgnp-back" onClick={onClose} aria-label="close">
+            {'←'}
+          </button>
+          <p className="rgnp-card-sub">{t('layer.loadFailed')}</p>
+          <button className="rgnp-share" onClick={() => setTries((n) => n + 1)}>
+            {t('layer.retry')}
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   if (data === undefined) {
     // Still fetching. Without this the page rendered its container with a
