@@ -95,6 +95,28 @@ def load_hero_flags():
     return bad
 
 
+def load_hero_overrides():
+    """Heroes the trip-hero audit replaced, keyed by trip id.
+
+    continent-app/scripts/audit-trip-heroes.mjs walks every published trip and
+    journey and flags the ones whose picture is not a usable view of somewhere
+    the trip goes: a locator map, a coat of arms, a montage, or a shape that
+    cannot survive the card crop. Where it found a better photograph among the
+    ones this trip already carries, it writes the swap here.
+
+    An override is a photograph of a place this trip SLEEPS in, chosen from the
+    same band ordering hero_of uses, so applying it cannot move the picture to
+    a day trip or to another town. An id the file does not mention keeps the
+    hero hero_of picks, which is every trip but 146 of 3,949.
+    """
+    raw = load_json(ROOT / "data" / "reports" / "trip_hero_patch.json") or {}
+    out = {}
+    for tid, row in (raw.get("heroes") or {}).items():
+        if row.get("layer") == "trip" and (row.get("hero") or {}).get("url"):
+            out[tid] = row["hero"]
+    return out
+
+
 def hero_candidates(trip, flags):
     """Every photograph this trip could lead with, best first.
 
@@ -228,7 +250,7 @@ def _sight_of_the_same_town(cands):
     return [best] + [c for c in cands if c is not best]
 
 
-def hero_of(trip, flags=frozenset(), used=None):
+def hero_of(trip, flags=frozenset(), used=None, overrides=None):
     """The photograph this trip leads with, avoiding ones already on the page.
 
     The trip card is a 30/11 strip, wider than the 12/5 the same photograph
@@ -237,6 +259,14 @@ def hero_of(trip, flags=frozenset(), used=None):
     the route order, and never across bands, a picture that survives that crop
     is preferred: the opening town still leads, it just leads with the frame
     that fits."""
+    # An audited replacement wins outright: it was chosen from this trip's own
+    # candidates, against the same bands, and checked for shape and subject.
+    override = (overrides or {}).get(trip.get("id"))
+    if override:
+        if used is not None:
+            used.add(override["url"])
+        return dict(override, band="audit")
+
     cands = hero_candidates(trip, flags)
     if not cands:
         return None
@@ -340,7 +370,7 @@ def rg_of(lat, lon):
         return None
 
 
-def to_card(trip, flags=frozenset(), used=None):
+def to_card(trip, flags=frozenset(), used=None, overrides=None):
     """What a grid of trips needs, and nothing that only the page needs."""
     lat, lon = centre_of(trip)
     rg = rg_of(lat, lon)
@@ -367,7 +397,7 @@ def to_card(trip, flags=frozenset(), used=None):
                    for s in trip["stops"]],
         "outs": [{"city": t["city"], "cc": t["iso2"], "min": t["minutes"],
                   "mode": t["mode"]} for t in trip["daytrips"]],
-        "img": hero_of(trip, flags, used),
+        "img": hero_of(trip, flags, used, overrides),
         "sights": headline_sights(trip),
         "why": trip["why"][:4],
         "warned": trip["checks"]["warned"],
@@ -377,11 +407,11 @@ def to_card(trip, flags=frozenset(), used=None):
     }
 
 
-def to_detail(trip, flags=frozenset()):
+def to_detail(trip, flags=frozenset(), overrides=None):
     """The full trip, as the page reads it."""
     out = dict(trip)
     out["gallery"] = gallery_of(trip)
-    out["hero"] = hero_of(trip, flags)
+    out["hero"] = hero_of(trip, flags, None, overrides)
     lat, lon = centre_of(trip)
     out["lat"], out["lon"] = lat, lon
     out["model"] = MODEL_VERSION
@@ -392,6 +422,7 @@ def to_detail(trip, flags=frozenset()):
 
 def export(trips, dropped, stats, *, dry_run=False, only=None):
     flags = load_hero_flags()
+    overrides = load_hero_overrides()
     now = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
     by_cc = defaultdict(list)
     for t in trips:
@@ -416,7 +447,7 @@ def export(trips, dropped, stats, *, dry_run=False, only=None):
         # `used` is per country file, so one page never leads with the same
         # photograph twice even when a dozen trips open in the same city.
         used = set()
-        cards = [to_card(t, flags, used) for t in rows]
+        cards = [to_card(t, flags, used, overrides) for t in rows]
         cover = next((c["img"] for c in cards if c["img"]), None)
         countries.append({
             "cc": cc,
@@ -436,7 +467,7 @@ def export(trips, dropped, stats, *, dry_run=False, only=None):
     if not dry_run:
         for t in trips:
             write_json(WIRE_DIR / "trip" / ("%s.json" % t["id"]),
-                       to_detail(t, flags), compact=True)
+                       to_detail(t, flags, overrides), compact=True)
 
     # The Europe wide opening page, capped per country.
     # Capped per country AND per pace and scale within it. Ranked on score
@@ -458,7 +489,7 @@ def export(trips, dropped, stats, *, dry_run=False, only=None):
         per_cc[cc] += 1
         per_kind[(cc, t.get("pace"))] += 1
         per_kind[(cc, t.get("scale"))] += 1
-        top.append(to_card(t, flags, top_used))
+        top.append(to_card(t, flags, top_used, overrides))
         if len(top) >= TOP_TOTAL:
             break
 

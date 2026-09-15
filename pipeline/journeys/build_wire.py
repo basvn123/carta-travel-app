@@ -277,6 +277,33 @@ def strip_utm(img):
     return {**img, "url": img["url"].split("?")[0]}
 
 
+def load_hero_overrides():
+    """Heroes the trip-hero audit replaced, keyed by journey id.
+
+    continent-app/scripts/audit-trip-heroes.mjs flags journeys whose lead image
+    is not a usable view: an 1890 railway map, a coat of arms, a town montage,
+    or a shape that cannot survive the card crop. pick_hero below judges a
+    candidate on its file NAME alone, which is why those got through; the audit
+    reads the Commons categories and dimensions as well.
+
+    An override is checked to be in the journey's own country, so applying it
+    cannot move the picture to another nation. An id this file does not mention
+    keeps whatever pick_hero chooses.
+    """
+    path = ROOT / "data" / "reports" / "trip_hero_patch.json"
+    if not path.exists():
+        return {}
+    try:
+        raw = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return {}
+    out = {}
+    for tid, row in (raw.get("heroes") or {}).items():
+        if row.get("layer") == "journey" and (row.get("hero") or {}).get("url"):
+            out[tid] = row["hero"]
+    return out
+
+
 def pick_hero(candidates, images):
     for name in candidates:
         if usable(images.get(name)):
@@ -359,6 +386,16 @@ def main():
         if not heroes.get(t["id"]):
             heroes[t["id"]] = search_hero(t, cache, allow)
     save_cache(cache)
+    # The audit's replacements win over pick_hero: it saw the categories and
+    # the pixel size, and pick_hero only ever saw the file name.
+    overrides = load_hero_overrides()
+    n_over = 0
+    for tid, hero in overrides.items():
+        if tid in heroes:
+            heroes[tid] = hero
+            n_over += 1
+    if n_over:
+        print(f"{n_over} hero(es) replaced from the audit patch")
     n_img = sum(1 for h in heroes.values() if h)
     print(f"{n_img}/{len(trips)} trips have a hero photograph")
 

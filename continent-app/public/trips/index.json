@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-08-26T15:58:04Z",
+ "generated_at": "2026-09-15T08:33:11Z",
  "model": "trips_v1",
  "n_trips": 3984,
  "n_dropped": 19,
@@ -116,11 +116,11 @@
    "n": 124,
    "best": 9.2,
    "cover": {
-    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/Stari_Most_viewed_from_North.jpg/960px-Stari_Most_viewed_from_North.jpg",
-    "credit": "Mostar",
-    "page": "https://en.wikipedia.org/wiki/Mostar",
-    "city": "Mostar",
-    "band": "stop"
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/67/The_walls_of_the_fortress_and_View_of_the_old_city._panorama.jpg/1280px-The_walls_of_the_fortress_and_View_of_the_old_city._panorama.jpg",
+    "credit": "Dubrovnik",
+    "page": "https://en.wikipedia.org/wiki/Dubrovnik",
+    "city": "Dubrovnik",
+    "band": "audit"
    },
    "days": [
     2,

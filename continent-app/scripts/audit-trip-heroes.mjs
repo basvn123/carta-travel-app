@@ -59,10 +59,16 @@ const PATCH = path.join(ROOT, 'data', 'reports', 'trip_hero_patch.json');
 // from a 500px POI thumbnail must be restated at the hero width, or the fix
 // ships a smaller picture than the one it replaced.
 const HERO_PX = 1280;
-const THUMB_RE = /\/(\d+)px-/;
+// Anchored to the LAST path segment, which is the only place the rendered
+// width lives. An unanchored /(\d+)px-/ rewrites the file NAME too, and
+// Commons really does host files called "1280px-Soldeu.jpg": that produced
+// ".../1280px-Soldeu.jpg/960px-800px-Soldeu.jpg", a 404 that looked like a
+// resize. Mirrors THUMB_RE in src/lib/heroImage.js, which is anchored the
+// same way for the same reason.
+const THUMB_RE = /\/(\d+)px-([^/]*)$/;
 const atHeroWidth = (url) => (
   typeof url === 'string' && url.includes('/thumb/') && THUMB_RE.test(url)
-    ? url.replace(THUMB_RE, `/${HERO_PX}px-`)
+    ? url.replace(THUMB_RE, `/${HERO_PX}px-$2`)
     : url
 );
 
@@ -157,6 +163,26 @@ function fileKey(text) {
   name = name.replace(/^\d+px-/, '').replace(/^File:/i, '');
   try { name = decodeURIComponent(name); } catch { /* already literal */ }
   return name.replace(/_/g, ' ').trim().toLowerCase();
+}
+
+/**
+ * The dossier FILENAME for a destination id, mirroring dossierFileBase in
+ * src/lib/dossier.js. Two shapes the raw id gets wrong: "gem:mostar-ba" is
+ * filed as "gem-mostar-ba", and ids colliding with Windows device names (PRN,
+ * COM1, ...) carry a trailing underscore. 324 of the 419 stop ids in the wire
+ * need this, so skipping it silently emptied the deepest candidate pool.
+ */
+const RESERVED = new Set([
+  'CON', 'PRN', 'AUX', 'NUL',
+  ...Array.from({ length: 10 }, (_, i) => `COM${i}`),
+  ...Array.from({ length: 10 }, (_, i) => `LPT${i}`),
+]);
+
+function dossierFileBase(destId) {
+  const id = String(destId || '');
+  if (id.startsWith('gem:')) return `gem-${id.slice(4)}`;
+  const code = id.toUpperCase();
+  return RESERVED.has(code) ? `${code}_` : code;
 }
 
 function readJson(file, fallback = null) {
@@ -272,25 +298,51 @@ function score(url, meta, vocab, frameAr) {
   return fit + wide + big;
 }
 
-/** Every image already attached to this trip's stops and their dossiers. */
+/**
+ * Every image already attached to this trip, in BANDS.
+ *
+ * The band is the whole point, and leaving it out is how the first run of this
+ * script proposed fronting 27 Mostar trips with a photograph of Dubrovnik.
+ * Dubrovnik is a day trip FROM Mostar, its picture is wider, and a scorer that
+ * ranks on shape alone will take it every time. export_trips.hero_of has
+ * always ordered candidates this way and never crosses bands for shape; this
+ * mirrors that rule rather than inventing a second one.
+ *
+ *   stop     a town this trip sleeps in. The opening town leads, because it
+ *            is the one a reader is deciding whether to fly to.
+ *   sight    something IN one of those towns. Still answers "where does this
+ *            trip go" with the same answer.
+ *   daytrip  a place the trip visits for an afternoon. A true photograph of
+ *            somewhere the trip goes, and the wrong answer to what the trip
+ *            IS, so it never outranks the two above.
+ *
+ * Only a better candidate from the SAME band replaces a flagged hero, and the
+ * replacement must name a place the trip actually sleeps in.
+ */
 function tripCandidates(trip, dossierFor) {
   const out = [];
-  const push = (url, credit, page, city) => {
-    if (url && !out.some((c) => c.url === url)) out.push({ url, credit, page, city });
+  const push = (url, credit, page, city, band) => {
+    if (url && !out.some((c) => c.url === url)) out.push({ url, credit, page, city, band });
   };
   for (const s of trip.stops || []) {
-    push(s.img, s.img_credit, s.img_page, s.city);
+    push(s.img, s.img_credit, s.img_page, s.city, 'stop');
   }
-  for (const d of trip.daytrips || []) push(d.img, d.img_credit || d.city, null, d.city);
   // The dossier gallery carries several photographs per place, which is the
-  // deepest pool available without a network call.
+  // deepest pool available without a network call. They are pictures OF the
+  // stop, so they sit with it rather than below the sights.
   for (const s of trip.stops || []) {
-    for (const g of dossierFor(s.dest)) push(g.url, g.caption || s.city, g.page, s.city);
+    for (const g of dossierFor(s.dest)) push(g.url, g.caption || s.city, g.page, s.city, 'stop');
   }
   for (const s of trip.stops || []) {
-    for (const h of s.highlights || []) push(h.img, h.name, h.wiki, s.city);
+    for (const h of s.highlights || []) push(h.img, h.name, h.wiki, s.city, 'sight');
   }
-  for (const g of trip.gallery || []) push(g.url, g.credit || g.name || g.city, g.page, g.city);
+  for (const g of trip.gallery || []) {
+    // A trip gallery mixes stops and day trips; only the rows naming a stop
+    // city can stand for the trip.
+    const isStop = (trip.stops || []).some((s) => s.city === g.city);
+    push(g.url, g.credit || g.name || g.city, g.page, g.city, isStop ? 'stop' : 'daytrip');
+  }
+  for (const d of trip.daytrips || []) push(d.img, d.img_credit || d.city, null, d.city, 'daytrip');
   return out;
 }
 
@@ -315,7 +367,11 @@ function journeyCandidates(trip, jcache) {
   for (const part of String(trip.subRegion || '').split(/[:;,/→>&+]|\bto\b|\band\b/)) {
     if (part.trim().split(/\s+/).length <= 4) add(part);
   }
-  for (const tag of trip.tags || []) add(String(tag).replace(/-/g, ' '));
+  // Tags are NOT a source of places. They are themes ("karst", "truffles",
+  // "gravel"), and a theme resolves to whatever article happens to carry
+  // that title: "karst" fetched Krupa Canyon in Croatia and offered it to a
+  // Hungarian running week in the Bukk. Only fields that name a location may
+  // nominate a photograph.
   for (const n of names) {
     if (jcache[n]) push(jcache[n], n);
     // The cache is keyed by article title, which is usually Title Case.
@@ -323,6 +379,36 @@ function journeyCandidates(trip, jcache) {
     if (jcache[title]) push(jcache[title], n);
   }
   return out;
+}
+
+/**
+ * Does this candidate sit in the journey's own country?
+ *
+ * Journeys carry no stop list, so the trip-side "must name a town this trip
+ * sleeps in" guard has nothing to bite on. The country is the coarsest honest
+ * substitute: a photograph filed under Croatia cannot front a week in Hungary,
+ * whatever its shape. Commons categories carry the country name for most
+ * files; when nothing says either way the candidate is allowed through,
+ * because silence is not evidence of being in the wrong place.
+ */
+const COUNTRY_WORDS = [
+  'albania', 'andorra', 'austria', 'belgium', 'bosnia', 'bulgaria', 'croatia',
+  'cyprus', 'czech', 'denmark', 'estonia', 'finland', 'france', 'germany',
+  'greece', 'hungary', 'iceland', 'ireland', 'italy', 'kosovo', 'latvia',
+  'liechtenstein', 'lithuania', 'luxembourg', 'malta', 'moldova', 'monaco',
+  'montenegro', 'netherlands', 'norway', 'poland', 'portugal', 'romania',
+  'serbia', 'slovakia', 'slovenia', 'spain', 'sweden', 'switzerland',
+  'turkey', 'ukraine', 'england', 'scotland', 'wales',
+];
+
+function plausibleCountry(cand, trip, meta) {
+  const own = String(trip.country || '').trim().toLowerCase();
+  if (!own) return true;
+  const m = meta.get(fileKey(cand.url));
+  const hay = `${fileKey(cand.url)} ${m?.cats || ''} ${m?.name || ''}`.toLowerCase();
+  const named = COUNTRY_WORDS.filter((c) => hay.includes(c));
+  if (!named.length) return true;                       // says nothing either way
+  return named.some((c) => own.includes(c) || c.includes(own));
 }
 
 // ── the walk ────────────────────────────────────────────────────────────────
@@ -341,7 +427,7 @@ function main() {
   const dossierFor = (destId) => {
     if (!destId) return [];
     if (!dossierCache.has(destId)) {
-      const doc = readJson(path.join(DOSSIER_DIR, `${destId}.json`));
+      const doc = readJson(path.join(DOSSIER_DIR, `${dossierFileBase(destId)}.json`));
       dossierCache.set(destId, doc?.gallery || []);
     }
     return dossierCache.get(destId);
@@ -364,6 +450,7 @@ function main() {
       hero: hero.url || null,
       verdict: judge(hero.url, meta.get(fileKey(hero.url)), vocab),
       candidates: () => tripCandidates(trip, dossierFor),
+      stopCities: new Set((trip.stops || []).map((x) => String(x.city || '').toLowerCase())),
       frameAr: 30 / 11,
     });
   }
@@ -384,6 +471,7 @@ function main() {
       hero: hero.url || null,
       verdict: judge(hero.url, meta.get(fileKey(hero.url)), vocab),
       candidates: () => journeyCandidates(trip, jcache),
+      journey: trip,
       frameAr: 25 / 12,
     });
   }
@@ -416,15 +504,35 @@ function main() {
   const patch = {};
   let replaced = 0;
 
+  // Bands in the order export_trips.hero_of ranks them. The search takes the
+  // best candidate in the FIRST band that offers one, and never compares
+  // across bands: that is what stops a wide picture of a day trip beating a
+  // squarish picture of the town the trip is about.
+  const BANDS = ['stop', 'sight', 'daytrip'];
+
   for (const r of flagged) {
     let best = null;
     let bestScore = 0;
-    for (const cand of r.candidates()) {
-      if (cand.url === r.hero) continue;
-      const m = meta.get(fileKey(cand.url));
-      if (judge(cand.url, m, vocab)) continue;
-      const s = score(cand.url, m, vocab, r.frameAr);
-      if (s > bestScore) { best = cand; bestScore = s; }
+    const cands = r.candidates();
+    // A trip must keep leading with a place it sleeps in. Without this the
+    // run proposed Dubrovnik for 27 Mostar trips, Barcelona for 11 Andorran
+    // ones and Banska Stiavnica for 9 Hungarian ones: every one of them a
+    // real photograph of somewhere the trip passes, and none of them an
+    // answer to "what does this trip look like".
+    const homes = r.stopCities || null;
+    for (const band of BANDS) {
+      for (const cand of cands) {
+        if (cand.url === r.hero) continue;
+        if (cand.band && cand.band !== band) continue;
+        if (homes && homes.size && cand.city
+            && !homes.has(String(cand.city).toLowerCase())) continue;
+        if (r.journey && !plausibleCountry(cand, r.journey, meta)) continue;
+        const m = meta.get(fileKey(cand.url));
+        if (judge(cand.url, m, vocab)) continue;
+        const sc = score(cand.url, m, vocab, r.frameAr);
+        if (sc > bestScore) { best = cand; bestScore = sc; }
+      }
+      if (best) break;
     }
     if (best) {
       replaced += 1;
