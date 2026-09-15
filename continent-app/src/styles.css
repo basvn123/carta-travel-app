@@ -20573,6 +20573,12 @@ button.ai-sched-main:focus-visible {
 .places-empty-cta:hover { border-color: var(--accent-soft); }
 .places-empty-cta:disabled { color: var(--ink-mute); cursor: default; }
 
+/* A layer that failed to LOAD, which is not the same as a layer with nothing
+   published. The empty state makes a claim about the catalogue; this one only
+   reports what happened to the request, and carries the way back. */
+.places-loaderr { display: block; }
+.places-loaderr-msg { margin: 0; }
+
 .places-nearhead {
   display: flex;
   align-items: baseline;
@@ -30283,7 +30289,19 @@ button.ai-sched-main:focus-visible {
 .xchip-x { font-weight: 700; opacity: 0.6; }
 .xchip-clear { background: transparent; border-color: var(--rule-soft); color: var(--ink-mute); }
 
-/* --- the phone fold: same rail, no modal --------------------------------- */
+/* --- the phone Filters door ---------------------------------------------- */
+/* Was a <details> fold; it is now the same .places-filter-btn Destinations
+   uses, opening the shared sheet. The .explore-fold rules below are kept so a
+   revert is one JSX swap. */
+.explore-filterbar {
+  display: flex;
+  margin: 0 0 10px;
+}
+.explore-filterbar .places-filter-btn { flex: 1 1 auto; justify-content: center; }
+@media (min-width: 769px) {
+  .explore-filterbar { display: none; }
+}
+
 .explore-fold {
   margin: 0 0 10px;
   background: var(--bg-card);
@@ -30759,9 +30777,8 @@ button.ai-sched-main:focus-visible {
   justify-content: space-between;
   flex-wrap: wrap;
   gap: 12px 18px;
-  margin: 4px 0 16px;
-  padding: 0 0 14px;
-  border-bottom: 1px solid var(--rule-soft);
+  margin: 4px 0 14px;
+  padding: 0;
 }
 .xbar-lead { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
 .xbar-title {

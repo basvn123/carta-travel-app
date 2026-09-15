@@ -1340,6 +1340,8 @@ export const nl = {
   "region.kind.nuts2": "Regio",
   "region.notFound": "Die regio staat niet in de catalogus",
   "region.loading": "Regio wordt geopend",
+  "layer.loadFailed": "Deze lijst is niet geladen. Controleer je verbinding en probeer opnieuw.",
+  "layer.retry": "Opnieuw proberen",
   "region.notFoundHint": "De link is misschien oud, of de regio heeft nog geen gepubliceerde plekken.",
   "region.share": "Link kopiëren",
   "region.shareDone": "Link gekopieerd",

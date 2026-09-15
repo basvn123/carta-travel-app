@@ -13,34 +13,22 @@
  * handful of facts, so the country file carries everything the page needs and
  * opening one costs no second request.
  *
- * Repo gotcha this file exists to contain, same as trails.js: under public/ a
- * missing JSON is served as the SPA index with status 200, so `r.ok` is true
- * and `r.json()` throws on "<!doctype". Every fetch checks the content type
- * first and resolves null instead, which is also how a country with nothing
- * published reads: null, never an error.
+ * Repo gotcha this file exists to contain, and the one publishedJson.js now
+ * owns for every layer: under public/ a missing JSON is served as the SPA
+ * index with status 200, so `r.ok` is true and `r.json()` throws on
+ * "<!doctype". fetchPublished() checks the content type first and resolves
+ * null instead, which is also how a country with nothing published reads. A
+ * DROPPED CONNECTION is no longer folded into that null: it rejects with a
+ * LayerFetchError, so the tab can say the request failed rather than claiming
+ * the catalogue is empty.
  */
 import { useEffect, useState } from 'react';
+import { makeCache } from './publishedJson.js';
 import { applyOverrides, overridesReady } from './overrides.js';
 
 const COUNTRY_RE = /^[A-Z]{2}$/;
 
-function isJson(res) {
-  return res.ok && (res.headers.get('content-type') || '').includes('json');
-}
-
-function loadJson(url) {
-  return fetch(url)
-    .then((r) => (isJson(r) ? r.json() : null))
-    .catch(() => null);
-}
-
-// Cached per URL: these files never change inside a session.
-const cache = new Map();
-
-function cached(url) {
-  if (!cache.has(url)) cache.set(url, loadJson(url));
-  return cache.get(url);
-}
+const cached = makeCache();
 
 /**
  * Which countries have beaches, best first.

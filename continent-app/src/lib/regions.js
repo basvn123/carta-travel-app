@@ -22,9 +22,11 @@
  * traveller thinks in (nearby, a day trip, a weekend, worth the journey)
  * and the list header is composed from the scope that actually answered.
  *
- * Same repo gotcha as every loader here: under public/ a missing JSON is
- * served as the SPA index with status 200, so every fetch checks the
- * content type first and resolves null instead.
+ * Same repo gotcha as every loader here, owned by publishedJson.js: under
+ * public/ a missing JSON is served as the SPA index with status 200, so
+ * fetchPublished() checks the content type first and resolves null instead.
+ * A dropped connection rejects with a LayerFetchError rather than passing
+ * for an unpublished region.
  */
 
 const RESERVED = new Set([
@@ -33,23 +35,10 @@ const RESERVED = new Set([
   'lpt1', 'lpt2', 'lpt3', 'lpt4', 'lpt5', 'lpt6', 'lpt7', 'lpt8', 'lpt9',
 ]);
 
-function isJson(res) {
-  return res.ok && (res.headers.get('content-type') || '').includes('json');
-}
 
-function loadJson(url) {
-  return fetch(url)
-    .then((r) => (isJson(r) ? r.json() : null))
-    .catch(() => null);
-}
+import { makeCache } from './publishedJson.js';
 
-// Cached per URL: these files never change inside a session.
-const cache = new Map();
-
-function cached(url) {
-  if (!cache.has(url)) cache.set(url, loadJson(url));
-  return cache.get(url);
-}
+const cached = makeCache();
 
 export function fileForRegion(id) {
   let base = String(id || '').replace(/:/g, '_');

@@ -1340,6 +1340,8 @@ export const it = {
   "region.kind.nuts2": "Regione",
   "region.notFound": "Quella regione non è nel catalogo",
   "region.loading": "Apertura della regione",
+  "layer.loadFailed": "Questo elenco non si è caricato. Controlla la connessione e riprova.",
+  "layer.retry": "Riprova",
   "region.notFoundHint": "Il link potrebbe essere vecchio, o la regione non ha ancora luoghi pubblicati.",
   "region.share": "Copia link",
   "region.shareDone": "Link copiato",

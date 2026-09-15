@@ -1340,6 +1340,8 @@ export const fr = {
   "region.kind.nuts2": "Région",
   "region.notFound": "Cette région ne figure pas au catalogue",
   "region.loading": "Ouverture de la région",
+  "layer.loadFailed": "Cette liste ne s'est pas chargée. Vérifiez votre connexion et réessayez.",
+  "layer.retry": "Réessayer",
   "region.notFoundHint": "Le lien est peut-être ancien, ou la région n'a pas encore de lieux publiés.",
   "region.share": "Copier le lien",
   "region.shareDone": "Lien copié",

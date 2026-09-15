@@ -1808,6 +1808,8 @@ export const en = {
   "region.kind.nuts2": "Region",
   "region.notFound": "That region is not in the catalogue",
   "region.loading": "Opening the region",
+  "layer.loadFailed": "This list did not load. Check your connection and try again.",
+  "layer.retry": "Try again",
   "region.notFoundHint": "The link may be old, or the region has no published places yet.",
   "region.share": "Copy link",
   "region.shareDone": "Link copied",

@@ -1,4 +1,4 @@
-import React, { lazy, Suspense, useEffect, useMemo, useRef, useState } from 'react';
+import React, { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useIsDesktop } from '../hooks/useIsDesktop.js';
 import { RatingBadge } from '../components/RatingBadge.jsx';
 import { CountryFlag } from '../components/CountryFlag.jsx';
@@ -1045,6 +1045,25 @@ const ItinCard = React.memo(function ItinCard({ tr, km, onOpen, t }) {
   );
 });
 
+/**
+ * A layer that could not be LOADED, as opposed to one with nothing published.
+ *
+ * The distinction is the whole point: "nothing here matches" is a claim about
+ * the catalogue and it was being made on the strength of a dropped request.
+ * This says what actually happened and offers the way back, in the tone the
+ * geolocation failure already uses: no blame, one button.
+ */
+function LayerError({ onRetry, t }) {
+  return (
+    <div className="places-empty places-loaderr" role="status">
+      <p className="places-loaderr-msg">{t('layer.loadFailed')}</p>
+      <button type="button" className="places-empty-cta" onClick={onRetry}>
+        {t('layer.retry')}
+      </button>
+    </div>
+  );
+}
+
 export function DestinationsTab({
   data, pricedAll, priceMode = 'total', availableCountries = [], onSelectDest,
   stayTier = 'home', lifestyle, onOpenLifestyle,
@@ -1131,6 +1150,32 @@ export function DestinationsTab({
   const [countryTrips, setCountryTrips] = useState(null);
   const [trailsLoading, setTrailsLoading] = useState(false);
 
+  // Which layers failed to LOAD, as opposed to having nothing published.
+  // Every loader used to swallow a network error into null and every consumer
+  // coerced that to [], so a dropped connection rendered "nothing here
+  // matches" - a claim about the catalogue - and the re-fetch guards read
+  // `if (rows) return;` where [] is truthy, so the tab never tried again for
+  // the life of the session. A layer in here has an error state and a retry
+  // button instead, in the tone the geolocation failure beside countryOptions
+  // already uses: say what happened, offer the way back.
+  const [layerError, setLayerError] = useState({});   // layer -> true
+  const [retryTick, setRetryTick] = useState(0);
+  const failLayer = useCallback((layer) => (e) => {
+    // Only a LayerFetchError is a failure. Anything else is a bug in our own
+    // then-chain and should not be dressed up as a network problem.
+    if (e?.name !== 'LayerFetchError') throw e;
+    setLayerError((cur) => (cur[layer] ? cur : { ...cur, [layer]: true }));
+  }, []);
+  const retryLayer = useCallback((layer) => {
+    setLayerError((cur) => {
+      if (!cur[layer]) return cur;
+      const next = { ...cur };
+      delete next[layer];
+      return next;
+    });
+    setRetryTick((n) => n + 1);
+  }, []);
+
   // Beaches: the capped Europe wide ranking the tab opens on, the index that
   // says which countries have any, and whichever country files a search or a
   // location has pulled in on top of them.
@@ -1195,10 +1240,12 @@ export function DestinationsTab({
   const filterBtnRef = useRef(null);
 
   useEffect(() => {
+    if (layerError.trails) return undefined;
     let live = true;
-    loadTrailsIndex().then((idx) => { if (live) setTrailsIndex(idx); });
+    loadTrailsIndex().then((idx) => { if (live) setTrailsIndex(idx); })
+      .catch((e) => { if (live) failLayer('trails')(e); });
     return () => { live = false; };
-  }, []);
+  }, [layerError.trails, retryTick, failLayer]);
 
   // A shared link names one trip in one country: browse that country's trails
   // so the card exists, then open its page (below, once the file has landed).
@@ -1253,6 +1300,7 @@ export function DestinationsTab({
   const trailsCountry = nearPlace ? nearPlace.iso2 : country;
   useEffect(() => {
     if (!isTripCat || !trailsCountry) { setCountryTrips(null); return undefined; }
+    if (layerError.trails) return undefined;
     let live = true;
     setTrailsLoading(true);
     // Rated and listed in one go, concatenated in that order. A listed row
@@ -1263,9 +1311,13 @@ export function DestinationsTab({
         if (!live) return;
         setCountryTrips([...(trips || []), ...(listed || [])]);
         setTrailsLoading(false);
+      }).catch((e) => {
+        if (!live) return;
+        setTrailsLoading(false);
+        failLayer('trails')(e);
       });
     return () => { live = false; };
-  }, [isTripCat, trailsCountry]);
+  }, [isTripCat, trailsCountry, layerError.trails, retryTick, failLayer]);
 
   // ISO2 -> display name, from the catalogue first (it matches the rows on
   // screen), the browser's region names for any code the catalogue lacks.
@@ -1749,25 +1801,27 @@ export function DestinationsTab({
   const isItinCat = isComposedTrips && itinDays !== 1;
 
   useEffect(() => {
-    if (!isItinCat || itinIndex !== undefined) return undefined;
+    if (!isItinCat || itinIndex !== undefined || layerError.trips) return undefined;
     let live = true;
     Promise.all([loadTripIndex(), loadTopTrips()]).then(([ix, top]) => {
       if (!live) return;
       setItinIndex(ix);
       setItinTop(top || []);
-    });
+    }).catch((e) => { if (live) failLayer('trips')(e); });
     return () => { live = false; };
-  }, [isItinCat, itinIndex]);
+  }, [isItinCat, itinIndex, layerError.trips, retryTick, failLayer]);
 
   const itinCountry = nearPlace ? nearPlace.iso2 : country;
 
   useEffect(() => {
     if (!isItinCat || !itinCountry) { setItinCountryRows(null); return undefined; }
+    if (layerError.trips) return undefined;
     let live = true;
     setItinCountryRows(null);
-    loadTrips(itinCountry).then((rows) => { if (live) setItinCountryRows(rows || []); });
+    loadTrips(itinCountry).then((rows) => { if (live) setItinCountryRows(rows || []); })
+      .catch((e) => { if (live) failLayer('trips')(e); });
     return () => { live = false; };
-  }, [isItinCat, itinCountry]);
+  }, [isItinCat, itinCountry, layerError.trips, retryTick, failLayer]);
 
   // A shared #itin= link: open it once its detail is reachable. The card is
   // only a hint here, because TripPage loads the full trip by id anyway.
@@ -1829,7 +1883,7 @@ export function DestinationsTab({
   // already returned early: the list would sit on its loading dots forever.
   // `topBeaches` is the only thing that says the work is done.
   useEffect(() => {
-    if (!isBeachCat || topBeaches) return undefined;
+    if (!isBeachCat || topBeaches || layerError.beaches) return undefined;
     let live = true;
     setBeachesLoading(true);
     Promise.all([loadBeachIndex(), loadTopBeaches()]).then(([idx, top]) => {
@@ -1837,9 +1891,13 @@ export function DestinationsTab({
       setBeachIndex(idx);
       setTopBeaches(top || []);
       setBeachesLoading(false);
+    }).catch((e) => {
+      if (!live) return;
+      setBeachesLoading(false);
+      failLayer('beaches')(e);
     });
     return () => { live = false; };
-  }, [isBeachCat, topBeaches]);
+  }, [isBeachCat, topBeaches, layerError.beaches, retryTick, failLayer]);
 
   // Which countries have beaches at all. The tab never offers one that does
   // not: the export gate decides, so Andorra cannot appear here by having a
@@ -1868,7 +1926,8 @@ export function DestinationsTab({
     || (nearPlace && beachCountries.has(nearPlace.iso2) ? nearPlace.iso2 : null);
 
   useEffect(() => {
-    if (!isBeachCat || !wantBeachCountry || countryBeaches[wantBeachCountry]) return undefined;
+    if (!isBeachCat || !wantBeachCountry || countryBeaches[wantBeachCountry]
+      || layerError.beaches) return undefined;
     let live = true;
     Promise.all([
       loadBeaches(wantBeachCountry),
@@ -1877,9 +1936,9 @@ export function DestinationsTab({
       if (!live) return;
       setCountryBeaches((cur) => ({ ...cur, [wantBeachCountry]: rows || [] }));
       setListedBeaches((cur) => ({ ...cur, [wantBeachCountry]: listed || [] }));
-    });
+    }).catch((e) => { if (live) failLayer('beaches')(e); });
     return () => { live = false; };
-  }, [isBeachCat, wantBeachCountry, countryBeaches]);
+  }, [isBeachCat, wantBeachCountry, countryBeaches, layerError.beaches, retryTick, failLayer]);
 
   const beachRows = useMemo(() => {
     if (!isBeachCat || !topBeaches) return null;
@@ -1927,9 +1986,9 @@ export function DestinationsTab({
       const hit = (rows || []).find((b) => b.id === openBeach.id);
       if (hit) setPageBeach(hit);
       setCountryBeaches((cur) => ({ ...cur, [openBeach.cc]: rows || [] }));
-    });
+    }).catch(failLayer('beaches'));
     onOpenBeachConsumed?.();
-  }, [openBeach, onOpenBeachConsumed]);
+  }, [openBeach, onOpenBeachConsumed, failLayer]);
 
   // ── Lakes: the published lake layer ──────────────────────────────────
   //
@@ -1938,7 +1997,7 @@ export function DestinationsTab({
   // flag, because putting the flag in the dependency list makes the effect
   // re-run on its own state change and throw away its own reply.
   useEffect(() => {
-    if (!isLakeCat || topLakes) return undefined;
+    if (!isLakeCat || topLakes || layerError.lakes) return undefined;
     let live = true;
     setLakesLoading(true);
     Promise.all([loadLakeIndex(), loadTopLakes()]).then(([idx, top]) => {
@@ -1946,9 +2005,13 @@ export function DestinationsTab({
       setLakeIndex(idx);
       setTopLakes(top || []);
       setLakesLoading(false);
+    }).catch((e) => {
+      if (!live) return;
+      setLakesLoading(false);
+      failLayer('lakes')(e);
     });
     return () => { live = false; };
-  }, [isLakeCat, topLakes]);
+  }, [isLakeCat, topLakes, layerError.lakes, retryTick, failLayer]);
 
   const lakeCountries = useMemo(
     () => new Set((lakeIndex?.countries || []).map((c) => c.cc)),
@@ -1968,7 +2031,8 @@ export function DestinationsTab({
     || (nearPlace && lakeCountries.has(nearPlace.iso2) ? nearPlace.iso2 : null);
 
   useEffect(() => {
-    if (!isLakeCat || !wantLakeCountry || countryLakes[wantLakeCountry]) return undefined;
+    if (!isLakeCat || !wantLakeCountry || countryLakes[wantLakeCountry]
+      || layerError.lakes) return undefined;
     let live = true;
     Promise.all([
       loadLakes(wantLakeCountry),
@@ -1977,9 +2041,9 @@ export function DestinationsTab({
       if (!live) return;
       setCountryLakes((cur) => ({ ...cur, [wantLakeCountry]: rows || [] }));
       setListedLakes((cur) => ({ ...cur, [wantLakeCountry]: listed || [] }));
-    });
+    }).catch((e) => { if (live) failLayer('lakes')(e); });
     return () => { live = false; };
-  }, [isLakeCat, wantLakeCountry, countryLakes]);
+  }, [isLakeCat, wantLakeCountry, countryLakes, layerError.lakes, retryTick, failLayer]);
 
   const lakeRows = useMemo(() => {
     if (!isLakeCat || !topLakes) return null;
@@ -2038,16 +2102,16 @@ export function DestinationsTab({
       const hit = (rows || []).find((l) => l.id === openLake.id);
       if (hit) setPageLake(hit);
       setCountryLakes((cur) => ({ ...cur, [openLake.cc]: rows || [] }));
-    });
+    }).catch(failLayer('lakes'));
     onOpenLakeConsumed?.();
-  }, [openLake, onOpenLakeConsumed]);
+  }, [openLake, onOpenLakeConsumed, failLayer]);
 
   // ── Mountains: the published mountain layer ──────────────────────────
   //
   // Third layer, third time this shape, and the same trap avoided the same
   // way: `topMountains` is what says the work is done, never the loading flag.
   useEffect(() => {
-    if (!isMountainCat || topMountains) return undefined;
+    if (!isMountainCat || topMountains || layerError.mountains) return undefined;
     let live = true;
     setMountainsLoading(true);
     Promise.all([loadMountainIndex(), loadTopMountains()]).then(([idx, top]) => {
@@ -2055,9 +2119,13 @@ export function DestinationsTab({
       setMountainIndex(idx);
       setTopMountains(top || []);
       setMountainsLoading(false);
+    }).catch((e) => {
+      if (!live) return;
+      setMountainsLoading(false);
+      failLayer('mountains')(e);
     });
     return () => { live = false; };
-  }, [isMountainCat, topMountains]);
+  }, [isMountainCat, topMountains, layerError.mountains, retryTick, failLayer]);
 
   const mountainCountries = useMemo(
     () => new Set((mountainIndex?.countries || []).map((c) => c.cc)),
@@ -2078,7 +2146,7 @@ export function DestinationsTab({
 
   useEffect(() => {
     if (!isMountainCat || !wantMountainCountry
-      || countryMountains[wantMountainCountry]) return undefined;
+      || countryMountains[wantMountainCountry] || layerError.mountains) return undefined;
     let live = true;
     Promise.all([
       loadMountains(wantMountainCountry),
@@ -2087,9 +2155,10 @@ export function DestinationsTab({
       if (!live) return;
       setCountryMountains((cur) => ({ ...cur, [wantMountainCountry]: rows || [] }));
       setListedMountains((cur) => ({ ...cur, [wantMountainCountry]: listed || [] }));
-    });
+    }).catch((e) => { if (live) failLayer('mountains')(e); });
     return () => { live = false; };
-  }, [isMountainCat, wantMountainCountry, countryMountains]);
+  }, [isMountainCat, wantMountainCountry, countryMountains, layerError.mountains,
+    retryTick, failLayer]);
 
   const mountainRows = useMemo(() => {
     if (!isMountainCat || !topMountains) return null;
@@ -2154,26 +2223,32 @@ export function DestinationsTab({
     || null;
 
   useEffect(() => {
-    if (!isCycleCat || cycleIndex) return undefined;
+    if (!isCycleCat || cycleIndex || layerError.cycling) return undefined;
     let live = true;
-    loadCyclingIndex().then((idx) => { if (live) setCycleIndex(idx); });
+    loadCyclingIndex().then((idx) => { if (live) setCycleIndex(idx); })
+      .catch((e) => { if (live) failLayer('cycling')(e); });
     return () => { live = false; };
-  }, [isCycleCat, cycleIndex]);
+  }, [isCycleCat, cycleIndex, layerError.cycling, retryTick, failLayer]);
 
   useEffect(() => {
-    if (!isCycleCat || wantCycleCountry || cycleTop) return undefined;
+    if (!isCycleCat || wantCycleCountry || cycleTop || layerError.cycling) return undefined;
     let live = true;
     setCyclingLoading(true);
     loadTopCycling().then((top) => {
       if (!live) return;
       setCycleTop(top || { routes: [], listed: [], tours: [] });
       setCyclingLoading(false);
+    }).catch((e) => {
+      if (!live) return;
+      setCyclingLoading(false);
+      failLayer('cycling')(e);
     });
     return () => { live = false; };
-  }, [isCycleCat, wantCycleCountry, cycleTop]);
+  }, [isCycleCat, wantCycleCountry, cycleTop, layerError.cycling, retryTick, failLayer]);
 
   useEffect(() => {
-    if (!isCycleCat || !wantCycleCountry || countryCycling[wantCycleCountry]) {
+    if (!isCycleCat || !wantCycleCountry || countryCycling[wantCycleCountry]
+      || layerError.cycling) {
       return undefined;
     }
     let live = true;
@@ -2182,9 +2257,13 @@ export function DestinationsTab({
       if (!live) return;
       setCountryCycling((cur) => ({ ...cur, [wantCycleCountry]: bundle || null }));
       setCyclingLoading(false);
+    }).catch((e) => {
+      if (!live) return;
+      setCyclingLoading(false);
+      failLayer('cycling')(e);
     });
     return () => { live = false; };
-  }, [isCycleCat, wantCycleCountry, countryCycling]);
+  }, [isCycleCat, wantCycleCountry, countryCycling, layerError.cycling, retryTick, failLayer]);
 
   const cycleBundle = !isCycleCat ? null
     : wantCycleCountry ? countryCycling[wantCycleCountry] : cycleTop;
@@ -2266,9 +2345,9 @@ export function DestinationsTab({
       const hit = (rows || []).find((m) => m.id === openMountain.id);
       if (hit) setPageMountain(hit);
       setCountryMountains((cur) => ({ ...cur, [openMountain.cc]: rows || [] }));
-    });
+    }).catch(failLayer('mountains'));
     onOpenMountainConsumed?.();
-  }, [openMountain, onOpenMountainConsumed]);
+  }, [openMountain, onOpenMountainConsumed, failLayer]);
 
   // A shared #cycle= / #tour= link, or a cycling card on a region page.
   // Simpler than the others: CyclePage loads the route or tour by id itself,
@@ -3139,6 +3218,10 @@ export function DestinationsTab({
             country's full list. */}
         {isBeachCat && (
           <div className="places-list">
+            {layerError.beaches && (
+              <LayerError onRetry={() => retryLayer('beaches')} t={t} />
+            )}
+
             {beachesLoading && <p className="places-empty">{'…'}</p>}
 
             {!beachesLoading && beachRows && (
@@ -3218,7 +3301,7 @@ export function DestinationsTab({
                 )
             )}
 
-            {!beachesLoading && !beachRows && (
+            {!beachesLoading && !beachRows && !layerError.beaches && (
               <p className="places-empty">{t('beach.notPublished')}</p>
             )}
 
@@ -3236,6 +3319,10 @@ export function DestinationsTab({
             European ranking for that country's full list. */}
         {isLakeCat && (
           <div className="places-list">
+            {layerError.lakes && (
+              <LayerError onRetry={() => retryLayer('lakes')} t={t} />
+            )}
+
             {lakesLoading && <p className="places-empty">{'…'}</p>}
 
             {!lakesLoading && lakeRows && (
@@ -3315,7 +3402,7 @@ export function DestinationsTab({
                 )
             )}
 
-            {!lakesLoading && !lakeRows && (
+            {!lakesLoading && !lakeRows && !layerError.lakes && (
               <p className="places-empty">{t('lake.notPublished')}</p>
             )}
 
@@ -3333,6 +3420,10 @@ export function DestinationsTab({
             swaps the capped European ranking for that country's full list. */}
         {isMountainCat && (
           <div className="places-list">
+            {layerError.mountains && (
+              <LayerError onRetry={() => retryLayer('mountains')} t={t} />
+            )}
+
             {mountainsLoading && <p className="places-empty">{'…'}</p>}
 
             {!mountainsLoading && mountainRows && (
@@ -3428,7 +3519,7 @@ export function DestinationsTab({
                 )
             )}
 
-            {!mountainsLoading && !mountainRows && (
+            {!mountainsLoading && !mountainRows && !layerError.mountains && (
               <p className="places-empty">{t('mtn.notPublished')}</p>
             )}
 
@@ -3446,6 +3537,10 @@ export function DestinationsTab({
             what makes the coverage honest rather than merely large. */}
         {isCycleCat && (
           <div className="places-list" data-testid="cycle-list">
+            {layerError.cycling && (
+              <LayerError onRetry={() => retryLayer('cycling')} t={t} />
+            )}
+
             {cyclingLoading && <p className="places-empty">{'…'}</p>}
 
             {/* EuroVelo families. In OSM a EuroVelo is one relation PER
@@ -3564,7 +3659,7 @@ export function DestinationsTab({
               </>
             )}
 
-            {!cyclingLoading && !cycleRows && (
+            {!cyclingLoading && !cycleRows && !layerError.cycling && (
               <p className="places-empty">{t('cycle.emptyCountry')}</p>
             )}
 
@@ -3609,7 +3704,14 @@ export function DestinationsTab({
 
         {isItinCat && (
           <div className="places-list">
-            {itinRows === null && <p className="places-empty">{'\u2026'}</p>}
+            {layerError.trips && (
+              <LayerError onRetry={() => retryLayer('trips')} t={t} />
+            )}
+
+            {/* itinRows === null is this list's loading state, which is also
+                exactly where a failed fetch leaves it: without the guard the
+                dots spun forever on a dropped connection. */}
+            {itinRows === null && !layerError.trips && <p className="places-empty">{'\u2026'}</p>}
 
             {itinRows && itinRows.length > 0 && (
               <>
@@ -3664,7 +3766,11 @@ export function DestinationsTab({
               </>
             )}
 
-            {!showCountryIndex && trailsLoading && <p className="places-empty">{'…'}</p>}
+            {!showCountryIndex && layerError.trails && (
+              <LayerError onRetry={() => retryLayer('trails')} t={t} />
+            )}
+
+            {!showCountryIndex && trailsLoading && !layerError.trails && <p className="places-empty">{'…'}</p>}
 
             {!showCountryIndex && !trailsLoading && tripRows && (
               tripRows.length > 0
@@ -3685,7 +3791,8 @@ export function DestinationsTab({
                 )
             )}
 
-            {!showCountryIndex && !trailsLoading && !tripRows && nearNoCountry && (
+            {!showCountryIndex && !trailsLoading && !tripRows && nearNoCountry
+              && !layerError.trails && (
               <p className="places-empty">{t('places.noneNear', { city: nearPlace.name })}</p>
             )}
 
