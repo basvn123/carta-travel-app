@@ -6,6 +6,22 @@ import { hasLngLat, declutterPins } from './coords.js';
 // Same clean, key-less Carto Voyager basemap the main map uses.
 const MAP_STYLE = 'https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json';
 
+/**
+ * Basemaps, by what the map is FOR.
+ *
+ * 'voyager' is the planner's map: you are working out where places are in
+ * relation to roads and towns you have not visited, so the labels earn their
+ * ink. 'record' is Positron without labels, for a map whose only job is to
+ * show a pattern of dots - the places you have been. There, every label is
+ * about somewhere you did NOT go, and the pins are what you came to read.
+ *
+ * Both are key-less Carto styles on a host the CSP already allows.
+ */
+const MAP_STYLES = {
+  voyager: MAP_STYLE,
+  record: 'https://basemaps.cartocdn.com/gl/positron-nolabels-gl-style/style.json',
+};
+
 // Country outlines for the `countryFills` layer, fetched once per session and
 // shared by every map that asks for them. The basemap's vector tiles carry
 // boundary LINES but no admin polygons, so a country cannot be painted from
@@ -128,7 +144,7 @@ function routeArrowImage(px = 26) {
  * `cooperativeGestures` makes the wheel scroll the page unless ctrl is held,
  * which is what an embedded map inside a scrolling panel wants.
  */
-export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedIndex = null, routeGeometry = null, routeSegments = null, showRoute = true, focus = null, flyTo = null, pois = null, onPoiClick = null, onViewChange = null, fitMaxZoom = 7.5, fitPadding = null, scrollZoom = true, easeToSelected = true, countryFills = null, photoZoom = null, zoomControls = false, cooperativeGestures = false, mapLocale = null }) {
+export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedIndex = null, routeGeometry = null, routeSegments = null, showRoute = true, focus = null, flyTo = null, pois = null, onPoiClick = null, onViewChange = null, fitMaxZoom = 7.5, fitPadding = null, scrollZoom = true, easeToSelected = true, countryFills = null, photoZoom = null, zoomControls = false, cooperativeGestures = false, mapLocale = null, basemap = 'voyager' }) {
   const containerRef = useRef(null);
   const mapRef = useRef(null);
   const markersRef = useRef([]);
@@ -222,7 +238,7 @@ export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedInd
     if (mapRef.current) return;
     const map = new maplibregl.Map({
       container: containerRef.current,
-      style: MAP_STYLE,
+      style: MAP_STYLES[basemap] || MAP_STYLE,
       center: [10, 48],
       zoom: 3.6,
       attributionControl: { compact: true },
@@ -418,8 +434,9 @@ export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedInd
       mapRef.current = null;
       readyRef.current = false;
     };
-    // Deliberately once: scrollZoom is a construction-time option, and
-    // rebuilding the map to change it would throw the viewport away.
+    // Deliberately once: scrollZoom and the basemap are construction-time
+    // options, and rebuilding the map to change one would throw the viewport
+    // away. Every caller picks its basemap at the mount, never mid-life.
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Redraw pins + route whenever the stop list (or the sheet height) changes.

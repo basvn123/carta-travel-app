@@ -20,6 +20,7 @@ import {
 } from '../lib/trailExport.js';
 import { eur } from '../lib/format.js';
 import { useI18n } from '../i18n/index.jsx';
+import { FavStar } from '../components/FavStar.jsx';
 import { NearbyOutdoors } from './NearbyOutdoors.jsx';
 import { usePaywall } from '../hooks/usePaywall.jsx';
 import {
@@ -233,7 +234,7 @@ function Fact({ label, value, word = false, title }) {
   );
 }
 
-export function TrailPage({ card, onClose, onSelectDest, onOpenNeighbour, dests }) {
+export function TrailPage({ card, onClose, onSelectDest, onOpenNeighbour, dests, fav = false, onFav = null }) {
   const { t } = useI18n();
   const paywall = usePaywall();
   const { tr, assoc, kindKey, price } = card;
@@ -535,6 +536,7 @@ export function TrailPage({ card, onClose, onSelectDest, onOpenNeighbour, dests 
           <span>{t('trails.back')}</span>
         </button>
         <span className={`tpage-bar-title ${titleGone || follow ? 'on' : ''}`}>{tr.name}</span>
+        <FavStar on={fav} onToggle={onFav} />
         <button type="button" className="tpage-bar-act" onClick={onShare} aria-label={t('trails.shareLink')}>
           <ShareIcon size={15} />
         </button>

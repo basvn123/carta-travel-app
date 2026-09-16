@@ -10,6 +10,7 @@ import { CountryFlag } from '../components/CountryFlag.jsx';
 import { srcSetFor, fallbackSrc } from '../lib/heroImage.js';
 import { RatingBadge } from '../components/RatingBadge.jsx';
 import { useI18n } from '../i18n/index.jsx';
+import { FavStar } from '../components/FavStar.jsx';
 import { eur } from '../lib/format.js';
 import { loadTrip, tripShareUrl } from '../lib/trips.js';
 import { creditFor } from '../lib/imageCredit.js';
@@ -264,7 +265,7 @@ function DayCard({ day, detail, t }) {
   );
 }
 
-export function TripPage({ trip: card, data, onClose, onOpenInPlanner, onSelectDest }) {
+export function TripPage({ trip: card, data, onClose, onOpenInPlanner, onSelectDest, fav = false, onFav = null }) {
   const { t } = useI18n();
   const [detail, setDetail] = useState(null);
   const [failed, setFailed] = useState(false);
@@ -346,6 +347,7 @@ export function TripPage({ trip: card, data, onClose, onOpenInPlanner, onSelectD
         <span className="tpage-bar-title on">
           {ready ? tripHeadline(trip, t) : t('trip.loading')}
         </span>
+        <FavStar on={fav} onToggle={onFav} />
         <button type="button" className="tpage-bar-act" onClick={onShare}
           aria-label={t('trip.shareLink')}>
           <ShareIcon size={15} />

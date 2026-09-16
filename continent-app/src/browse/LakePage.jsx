@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useI18n } from '../i18n/index.jsx';
+import { FavStar } from '../components/FavStar.jsx';
 import { NearbyOutdoors } from './NearbyOutdoors.jsx';
 import {
   lakeHeadline, lakeWhy, lakeTags, lakeSwim, lakeSeason, lakeHazards,
@@ -14,6 +15,7 @@ import {
   ArrowLeftIcon, ShareIcon, MapPinIcon, LinkIcon, ChevronRightIcon,
   CameraIcon, BootIcon, AlertIcon,
 } from '../components/Icons.jsx';
+import { srcSetFor, fallbackSrc } from '../lib/heroImage.js';
 
 /**
  * The lake page: one published water body, and the argument for going there.
@@ -103,7 +105,7 @@ function SeasonStrip({ temps, warmC, t }) {
   );
 }
 
-export function LakePage({ lake, countryName, onClose, onSelectDest, warmC = 18, onOpenNeighbour }) {
+export function LakePage({ lake, countryName, onClose, onSelectDest, warmC = 18, onOpenNeighbour, fav = false, onFav = null }) {
   const { t, lang } = useI18n();
   const [shot, setShot] = useState(0);
   const [toast, setToast] = useState(null);
@@ -217,6 +219,7 @@ export function LakePage({ lake, countryName, onClose, onSelectDest, warmC = 18,
           <span>{t('lake.back')}</span>
         </button>
         <span className={`tpage-bar-title ${titleGone ? 'on' : ''}`}>{lake.name}</span>
+        <FavStar on={fav} onToggle={onFav} />
         <button type="button" className="tpage-bar-act" onClick={onShare} aria-label={t('trails.shareLink')}>
           <ShareIcon size={15} />
         </button>
@@ -259,7 +262,17 @@ export function LakePage({ lake, countryName, onClose, onSelectDest, warmC = 18,
 
           {main && (
             <figure className="bpage-gallery">
-              <img className="bpage-shot" src={main.big || main.u} alt={lake.name} />
+              <img
+                className="bpage-shot"
+                src={fallbackSrc(main.big || main.u, 960)}
+                srcSet={srcSetFor(main.big || main.u, 1920)}
+                sizes="(min-width: 769px) 860px, 100vw"
+                alt={lake.name}
+                width={16}
+                height={10}
+                loading="eager"
+                decoding="async"
+              />
               {images.length > 1 && (
                 <div className="bpage-strip" role="tablist" aria-label={t('lake.photos')}>
                   {images.map((img, i) => (

@@ -4,6 +4,7 @@ import { RatingBadge } from '../components/RatingBadge.jsx';
 import { CountryFlag } from '../components/CountryFlag.jsx';
 import { CountryPicker } from '../components/CountryPicker.jsx';
 import { count, eur } from '../lib/format.js';
+import { needsCountry } from '../lib/favorites.js';
 import { fareProv, estPrefix } from '../components/FareProvenance.jsx';
 import { HeroImage } from '../components/HeroImage.jsx';
 import { PlacesFilterSheet } from './PlacesFilterSheet.jsx';
@@ -1073,6 +1074,10 @@ export function DestinationsTab({
   openMountain = null, onOpenMountainConsumed,
   openCycle = null, onOpenCycleConsumed,
   openTrip = null, onOpenTripConsumed, onOpenTripInPlanner,
+  // The shortlist, as the pair-aware pair App keeps: isFavorite(id, kind)
+  // and onToggleFav(id, kind). Every full-screen feature page below wears the
+  // same star from them, so a trail is kept exactly the way a city is.
+  isFavorite = null, onToggleFav = null,
 }) {
   const { t, lang } = useI18n();
   const scrollRef = useRef(null);
@@ -1635,6 +1640,26 @@ export function DestinationsTab({
   // A neighbour card on any layer page opens that layer's own page (brief
   // 08's cross-layer blocks). One page at a time: opening a neighbour closes
   // the page it was found on, so Escape and the back cross keep one meaning.
+  /**
+   * The star props for one feature page: {fav, onFav}.
+   *
+   * Every page below is opened from a row that already knows its own id, so
+   * the only thing this adds is the KIND, which is what turns a bare id into
+   * a shortlist key (see lib/favorites.js). Returns empty props when the host
+   * passed no shortlist, which is how FavStar knows to render nothing rather
+   * than an inert control.
+   */
+  const favProps = (kind, id, cc = '') => {
+    if (!isFavorite || !onToggleFav || id == null || id === '') return {};
+    // A country-kind with no country cannot be written down at all (favKey
+    // refuses it), so the star stays absent rather than inert-but-present.
+    if (needsCountry(kind) && !/^[A-Za-z]{2}$/.test(String(cc || ''))) return {};
+    return {
+      fav: isFavorite(String(id), kind, cc),
+      onFav: () => onToggleFav(String(id), kind, cc),
+    };
+  };
+
   const openNeighbour = (layer, row) => {
     setPageCard(null); setPageBeach(null); setPageLake(null);
     setPageMountain(null); setPageCycle(null);
@@ -3809,6 +3834,7 @@ export function DestinationsTab({
         <Suspense fallback={null}>
           <TrailPage
             card={pageCard}
+            {...favProps('trail', pageCard.tr?.id, pageCard.tr?.cc || pageCard.tr?.country)}
             dests={data?.destinations}
             onOpenNeighbour={openNeighbour}
             onClose={() => setPageCard(null)}
@@ -3837,6 +3863,7 @@ export function DestinationsTab({
         <Suspense fallback={null}>
           <TripPage
             trip={pageItin}
+            {...favProps('trip', pageItin.id)}
             data={data}
             onClose={() => setPageItin(null)}
             onOpenInPlanner={onOpenTripInPlanner}
@@ -3849,6 +3876,7 @@ export function DestinationsTab({
         <Suspense fallback={null}>
           <BeachPage
             beach={pageBeach}
+            {...favProps('beach', pageBeach.id, pageBeach.cc)}
             onOpenNeighbour={openNeighbour}
             countryName={countryName(pageBeach.cc)}
             model={beachIndex?.model || null}
@@ -3862,6 +3890,7 @@ export function DestinationsTab({
         <Suspense fallback={null}>
           <LakePage
             lake={pageLake}
+            {...favProps('lake', pageLake.id, pageLake.cc)}
             onOpenNeighbour={openNeighbour}
             countryName={countryName(pageLake.cc)}
             warmC={lakeIndex?.model?.warm_c ?? 18}
@@ -3885,6 +3914,7 @@ export function DestinationsTab({
         <Suspense fallback={null}>
           <CyclePage
             routeId={pageCycle.routeId}
+            {...favProps('cycle', pageCycle.routeId ?? pageCycle.tourSlug, pageCycle.country)}
             onOpenNeighbour={openNeighbour}
             tourSlug={pageCycle.tourSlug}
             country={pageCycle.country}
@@ -3898,6 +3928,7 @@ export function DestinationsTab({
         <Suspense fallback={null}>
           <MountainPage
             mountain={pageMountain}
+            {...favProps('mountain', pageMountain.id, pageMountain.cc)}
             onOpenNeighbour={openNeighbour}
             countryName={countryName(pageMountain.cc)}
             onClose={() => setPageMountain(null)}

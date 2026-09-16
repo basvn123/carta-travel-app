@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useI18n } from '../i18n/index.jsx';
+import { FavStar } from '../components/FavStar.jsx';
 import { NearbyOutdoors } from './NearbyOutdoors.jsx';
 import {
   mountainHeadline, mountainWhy, mountainTags, mountainHazards, mountainSeason,
@@ -15,6 +16,7 @@ import {
   ArrowLeftIcon, ShareIcon, MapPinIcon, LinkIcon, ChevronRightIcon,
   CameraIcon, AlertIcon, MountainIcon,
 } from '../components/Icons.jsx';
+import { srcSetFor, fallbackSrc } from '../lib/heroImage.js';
 
 /**
  * The mountain page: one published summit, and the argument for going there.
@@ -131,7 +133,7 @@ function WayUp({ mountain, t }) {
   );
 }
 
-export function MountainPage({ mountain, countryName, onClose, onSelectDest, onOpenNeighbour }) {
+export function MountainPage({ mountain, countryName, onClose, onSelectDest, onOpenNeighbour, fav = false, onFav = null }) {
   const { t, lang } = useI18n();
   const [shot, setShot] = useState(0);
   const [toast, setToast] = useState(null);
@@ -256,6 +258,7 @@ export function MountainPage({ mountain, countryName, onClose, onSelectDest, onO
           <span>{t('mtn.back')}</span>
         </button>
         <span className={`tpage-bar-title ${titleGone ? 'on' : ''}`}>{mountain.name}</span>
+        <FavStar on={fav} onToggle={onFav} />
         <button type="button" className="tpage-bar-act" onClick={onShare} aria-label={t('trails.shareLink')}>
           <ShareIcon size={15} />
         </button>
@@ -298,7 +301,17 @@ export function MountainPage({ mountain, countryName, onClose, onSelectDest, onO
 
           {main && (
             <figure className="bpage-gallery">
-              <img className="bpage-shot" src={main.big || main.u} alt={mountain.name} />
+              <img
+                className="bpage-shot"
+                src={fallbackSrc(main.big || main.u, 960)}
+                srcSet={srcSetFor(main.big || main.u, 1920)}
+                sizes="(min-width: 769px) 860px, 100vw"
+                alt={mountain.name}
+                width={16}
+                height={10}
+                loading="eager"
+                decoding="async"
+              />
               {images.length > 1 && (
                 <div className="bpage-strip" role="tablist" aria-label={t('mtn.photos')}>
                   {images.map((img, i) => (

@@ -42,6 +42,7 @@ import {
   buildDaySchedule, fmtClockLoose, GAP_SUGGEST_MIN,
 } from './daySchedule.js';
 import { searchFold } from '../lib/textSearch.js';
+import { useShortlistPoints } from '../hooks/useFavoriteItems.js';
 import { PoiThumb } from './DayActivityRows.jsx';
 import { DayPlanPanel } from './DayPlanPanel.jsx';
 import { DayAddPanel } from './DayAddPanel.jsx';
@@ -95,6 +96,13 @@ const MAP_RATINGS = [
 // clear of the 40 km ceiling the chat profile allows a keen hiker to ask for.
 const AI_MAX_TRUSTED_WALK_KM = 45;
 
+// How close a shortlisted place and a harvested POI have to be before they
+// are treated as the same thing. 1.2 km is generous enough to survive the two
+// sources disagreeing about where a long beach or a lake "is" (one may pin
+// the car park, the other the water), and tight enough that it cannot snap
+// onto a different landmark in a dense old town.
+const SHORTLIST_SNAP_KM = 1.2;
+
 /** A place's own description, trimmed to a timeline-sized sentence or two on a
  *  word boundary (never mid-word, never mid-sentence if a full stop is near
  *  the limit), so every stop can carry context without the card ballooning. */
@@ -139,7 +147,7 @@ function buildStandalonePlan(sp) {
 }
 
 
-export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPlanConsumed }) {
+export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPlanConsumed, favorites = null }) {
   const { t, lang } = useI18n();
   // Towns the traveller asked Carta to research (discoveredStore.js). They are
   // real destinations from here on: pins, POI lists, search hits and plan
@@ -750,6 +758,55 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
       : []),
     [activities, stop],
   );
+
+  /**
+   * The shortlist, as things you can put into today.
+   *
+   * What the shortlist holds is PLACES - a beach, a lake, a mountain, a walk -
+   * each with its own coordinates, and what a day is built out of is this
+   * city's harvested POI list, addressed by array index. So the two are
+   * joined by COORDINATE, not by name: a shortlisted beach matches the POI
+   * within `SHORTLIST_SNAP_KM` of it, which is the same beach under whatever
+   * name the POI harvest happened to use. Name matching would miss every
+   * place whose two sources disagree about spelling, which is most of them.
+   *
+   * Destinations are not offered: a shortlisted city is somewhere you go, not
+   * something you add to a day in a different city. Trips are not either.
+   *
+   * Only what is actually in reach is shown. A shortlisted lake 300 km away
+   * is a real wish and a useless suggestion for today, so it is left out
+   * rather than listed with an apologetic distance.
+   */
+  // The shortlist's map points (resolved from the published layer files).
+  const shortlistPoints = useShortlistPoints(favorites);
+
+  const shortlistDeck = useMemo(() => {
+    if (!favorites || !favorites.size || !stop?.dest || !shortlistPoints.length) return [];
+    const out = [];
+    const taken = new Set();
+    for (const pt of shortlistPoints) {
+      let best = null;
+      activities.items.forEach((item, idx) => {
+        if (taken.has(idx) || activities.suppressed.has(idx)) return;
+        if (item.lat == null || item.lon == null) return;
+        const km = haversineKm(pt.lat, pt.lon, item.lat, item.lon);
+        if (km == null || km > SHORTLIST_SNAP_KM) return;
+        if (!best || km < best.km) best = { item, idx, km };
+      });
+      if (!best) continue;
+      taken.add(best.idx);
+      // The note says what the traveller starred, which is the point: the POI
+      // harvest often knows this place under a different name, and without
+      // this the row looks like an ordinary suggestion that wandered in.
+      // Never repeat the heading above it, which already says "Your shortlist".
+      out.push({
+        item: best.item,
+        idx: best.idx,
+        note: pt.name && pt.name !== best.item.name ? t('fav.snapped', { name: pt.name }) : null,
+      });
+    }
+    return out.slice(0, 6);
+  }, [favorites, shortlistPoints, activities, stop, t]);
 
   // Name/kind search over the full catalogue, strongest matches first, with
   // an honest distance note on anything beyond walking range. Diacritic-folded
@@ -3626,6 +3683,7 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
               onMode={setAddMode}
               pick={addPick}
               onPick={setAddPick}
+              shortlist={shortlistDeck}
             />
           )}
 

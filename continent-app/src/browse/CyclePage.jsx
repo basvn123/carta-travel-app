@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { useI18n } from '../i18n/index.jsx';
+import { FavStar } from '../components/FavStar.jsx';
 import { count } from '../lib/format.js';
 import { NearbyOutdoors } from './NearbyOutdoors.jsx';
 import { loadCycling } from '../lib/cycling.js';
@@ -435,7 +436,7 @@ export function CycleFamilyPage({ familyRef, onClose, onOpenRoute }) {
 
 
 export function CyclePage({ routeId, tourSlug, country, countryName,
-                            onClose, onOpenNeighbour }) {
+                            onClose, onOpenNeighbour, fav = false, onFav = null }) {
   const { t } = useI18n();
   const [route, setRoute] = useState(null);
   const [tour, setTour] = useState(null);
@@ -523,6 +524,7 @@ export function CyclePage({ routeId, tourSlug, country, countryName,
               <RatingBadge rating={rating} size="lg" showGem={false} />
             </span>
           )}
+          <FavStar on={fav} onToggle={onFav} className="cycle-fav" />
         </header>
 
         {loading && <p className="places-empty">{'…'}</p>}

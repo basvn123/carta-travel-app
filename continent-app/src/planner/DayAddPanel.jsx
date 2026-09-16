@@ -145,6 +145,10 @@ export function DayAddPanel({
   routes, citytrip, onUseCitytrip, onUseRoute, onAskCarta,
   suggestions = [], limited = false,
   mode, onMode, pick, onPick,
+  // Places from the traveller's own shortlist that are in reach of this
+  // city, already resolved into the same {item, idx, km} deck shape as
+  // everything else here (see DayPlannerTab's shortlistDeck).
+  shortlist = [],
 }) {
   const { t } = useI18n();
   // mode (ready / custom) and pick live in the parent: switching to the plan
@@ -282,6 +286,30 @@ export function DayAddPanel({
                   >{t(labelKey)}</button>
                 ))}
               </div>
+
+              {/* ── Your shortlist: the things you already starred that are
+                  close enough to walk to from here. Above the app's own
+                  suggestions, because your own wishes outrank them. ── */}
+              {shortlist.length > 0 && (
+                <div className="daya-sugg daya-shortlist">
+                  <div className="daya-sugg-title">
+                    <StarIcon size={11} /> {t('fav.shortlistTitle')}
+                  </div>
+                  {shortlist.map(({ item, idx, note }) => (
+                    <PlaceCard
+                      key={`sl${idx}`}
+                      item={item}
+                      idx={idx}
+                      note={note}
+                      added={assignedIdx.includes(idx)}
+                      focused={focusedIdx === idx}
+                      onToggle={onToggle}
+                      onFocus={onFocus}
+                      t={t}
+                    />
+                  ))}
+                </div>
+              )}
 
               {suggShown && (
                 <div className="daya-sugg">

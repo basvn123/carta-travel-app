@@ -7,6 +7,7 @@
  */
 
 import { isFullRatingRange, clampRatingRange, rangeFromMinTier } from './rating.js';
+import { readFavList, writeFavList } from './favorites.js';
 
 const LS_ORDER = [
   'dinners_per_week', 'lunches_per_week', 'fastfood_per_week', 'drinks_per_week',
@@ -68,7 +69,11 @@ export function encodeState({
   }
   // Note: the open destination (selectedId) is deliberately NOT persisted, so
   // the app always opens on the full map with nothing pre-selected.
-  if (favorites && favorites.size) q.set('fav', [...favorites].join('.'));
+  // The shortlist, as `kind:id` keys joined by '.'. Destination ids carry no
+  // dots (they are IATA codes or `gem:<slug>`), so the joiner stays safe and
+  // the ':' is free to name the layer. See lib/favorites.js for the legacy
+  // bare-id reading on the way back in.
+  if (favorites && favorites.size) q.set('fav', writeFavList(favorites).join('.'));
   // App default is 'beauty' (App.jsx), so a price sort must be stored too.
   if (sortKey && sortKey !== 'beauty') q.set('sort', sortKey);
   if (showFavOnly) q.set('favonly', '1');
@@ -123,7 +128,10 @@ export function decodeState(search) {
     if (!Number.isNaN(lo) && !Number.isNaN(hi)) out.priceRange = [lo, hi];
   }
   // 'sel' is intentionally ignored on load (see encodeState), open the full map.
-  if (has('fav')) out.favorites = q.get('fav').split('.').filter(Boolean);
+  // Keys now, bare destination ids in older links: readFavList migrates the
+  // second onto the first, so a link shared before the shortlist grew past
+  // destinations still opens with its places starred.
+  if (has('fav')) out.favorites = [...readFavList(q.get('fav').split('.').filter(Boolean))];
   if (has('sort')) out.sortKey = q.get('sort');
   if (has('favonly')) out.showFavOnly = q.get('favonly') === '1';
   // Rating band ("rr", tenths). Older links carried a minimum-tier ('mt', 1-3)

@@ -3,6 +3,7 @@ import { Dropdown } from '../components/Dropdown.jsx';
 import { DateField } from '../components/DateField.jsx';
 import { OriginPicker } from '../components/OriginPicker.jsx';
 import { ScoreChip } from '../components/RatingBadge.jsx';
+import { favDestIds } from '../lib/favorites.js';
 import { CountryIntel } from '../components/CountryIntel.jsx';
 import { TripMap } from '../map/TripMap.jsx';
 import { TripItinerary, TransferModePicker } from './TripItinerary.jsx';
@@ -235,7 +236,54 @@ function Suggestions({ suggestions, onPick }) {
   );
 }
 
-export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, openPlanId, onOpenPlanConsumed, origin, onChangeOrigin, onPlanDay, openSharedTrip, onSharedTripConsumed, stayTier = 'home', lifestyle = null, onOpenLifestyle = null }) {
+/**
+ * The stops you already said you wanted.
+ *
+ * The shortlist existed and the planner never read it: you starred a city on
+ * the map and then typed its name again here. This closes that. It sits
+ * above the recommendations deliberately - your own wishes outrank the app's
+ * suggestions - and it is drawn in the same card shape, because "somewhere I
+ * might add" is one idea and should not look like two.
+ *
+ * Only DESTINATIONS appear: a trip stop is a place you sleep in, and a
+ * shortlisted beach or walk is not one. They are reachable from the day
+ * planner instead, which is where a beach belongs.
+ *
+ * A city already in the trip is dropped from the strip rather than shown
+ * disabled: it is no longer somewhere you could add.
+ */
+function ShortlistStops({ rows, onPick }) {
+  const { t } = useI18n();
+  if (!rows.length) return null;
+  return (
+    <div className="trip-block">
+      <div className="trip-block-title">{t('fav.addFromShortlist')}</div>
+      <div className="trip-suggest-row">
+        {rows.map((s) => (
+          <button
+            key={s.id}
+            className="trip-suggest-card"
+            onClick={() => onPick(s)}
+            title={t('trip.add')}
+          >
+            <div className="trip-suggest-thumb" style={s.image ? { backgroundImage: `url(${s.image})` } : undefined}>
+              {!s.image && <span className="trip-suggest-fallback">{(s.city || '?').slice(0, 1)}</span>}
+            </div>
+            <div className="trip-suggest-meta">
+              <span className="trip-suggest-city">{s.city}</span>
+              <span className="trip-suggest-sub">
+                {s.country}
+                {s.rating?.score != null && <ScoreChip rating={s.rating} size="xs" />}
+              </span>
+            </div>
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, openPlanId, onOpenPlanConsumed, origin, onChangeOrigin, onPlanDay, openSharedTrip, onSharedTripConsumed, stayTier = 'home', lifestyle = null, onOpenLifestyle = null, favorites = null }) {
   const { t } = useI18n();
   const paywall = usePaywall();
   const countryInsights = useCountryInsights();
@@ -497,6 +545,26 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, open
     tp.addStop(pendingDestId);
     setPendingDestId('');
   };
+
+  /**
+   * The shortlist as stops you could add.
+   *
+   * Destinations only (a shortlisted beach is not somewhere you sleep), and
+   * anything already in the trip is dropped rather than shown disabled: it
+   * is no longer somewhere you could add.
+   */
+  const shortlistStops = useMemo(() => {
+    if (!favorites || !favorites.size) return [];
+    const already = new Set(tp.stopDetails.map((st) => st.destinationId));
+    const out = [];
+    for (const id of favDestIds(favorites)) {
+      if (already.has(id)) continue;
+      const d = destinations[id];
+      if (!d) continue;
+      out.push({ id, city: d.city, country: d.country, image: d.image?.url || null, rating: d.rating });
+    }
+    return out;
+  }, [favorites, destinations, tp.stopDetails]);
 
   const handlePendingCountry = (c) => {
     setPendingCountry(c);
@@ -902,6 +970,9 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, open
                     ))}
                 </div>
               )}
+
+              {/* Your own wishes first, then the app's recommendations. */}
+              <ShortlistStops rows={shortlistStops} onPick={(s) => tp.addStop(s.id)} />
 
               {/* Recommendations */}
               <Suggestions suggestions={tp.nextStopSuggestions} onPick={(s) => tp.addStop(s.id)} />
