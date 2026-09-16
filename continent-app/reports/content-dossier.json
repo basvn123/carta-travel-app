@@ -1,0 +1,203 @@
+{
+  "layer": "dossier",
+  "generated_at": "2026-09-16T17:13:37.519Z",
+  "wikidata_checked": false,
+  "items": 3868,
+  "items_flagged": 22,
+  "findings_total": 31,
+  "failure_modes": {
+    "highlight_too_far": 23,
+    "no_image": 8
+  },
+  "severity": {
+    "medium": 31
+  },
+  "findings": [
+    {
+      "id": "gem-alle",
+      "check": "highlight_too_far",
+      "severity": "medium",
+      "message": "Highlight \"Canal des Ardennes\" is 80 km from Alle"
+    },
+    {
+      "id": "gem-berat",
+      "check": "highlight_too_far",
+      "severity": "medium",
+      "message": "Highlight \"Historic Centres of Berat and Gjirokastër\" is 72 km from Berat"
+    },
+    {
+      "id": "gem-blue-eye-saranda",
+      "check": "highlight_too_far",
+      "severity": "medium",
+      "message": "Highlight \"Historic Centres of Berat and Gjirokastër\" is 90 km from Blue Eye (Sarandë)"
+    },
+    {
+      "id": "gem-borsh",
+      "check": "highlight_too_far",
+      "severity": "medium",
+      "message": "Highlight \"Historic Centres of Berat and Gjirokastër\" is 72 km from Borsh"
+    },
+    {
+      "id": "gem-clermont-ferrand",
+      "check": "highlight_too_far",
+      "severity": "medium",
+      "message": "Highlight \"Massif Central\" is 87 km from Clermont-Ferrand"
+    },
+    {
+      "id": "gem-dortmund",
+      "check": "highlight_too_far",
+      "severity": "medium",
+      "message": "Highlight \"Dortmund-Ems Canal\" is 85 km from Dortmund"
+    },
+    {
+      "id": "gem-gunzenhausen",
+      "check": "highlight_too_far",
+      "severity": "medium",
+      "message": "Highlight \"Franconian Jura\" is 63 km from Gunzenhausen"
+    },
+    {
+      "id": "gem-josselin",
+      "check": "highlight_too_far",
+      "severity": "medium",
+      "message": "Highlight \"Nantes-Brest canal\" is 135 km from Josselin"
+    },
+    {
+      "id": "gem-manasija",
+      "check": "highlight_too_far",
+      "severity": "medium",
+      "message": "Highlight \"Krupaj spring\" is 108 km from Manasija Monastery"
+    },
+    {
+      "id": "gem-market-rasen",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Dossier has an empty gallery"
+    },
+    {
+      "id": "gem-market-rasen",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "gem-puy-de-dome",
+      "check": "highlight_too_far",
+      "severity": "medium",
+      "message": "Highlight \"Massif Central\" is 86 km from Puy de Dôme"
+    },
+    {
+      "id": "gem-rupite",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Dossier has an empty gallery"
+    },
+    {
+      "id": "gem-rupite",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "gem-sadali",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Dossier has an empty gallery"
+    },
+    {
+      "id": "gem-sadali",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "gem-saint-nectaire",
+      "check": "highlight_too_far",
+      "severity": "medium",
+      "message": "Highlight \"Massif Central\" is 65 km from Saint-Nectaire"
+    },
+    {
+      "id": "gem-sedan",
+      "check": "highlight_too_far",
+      "severity": "medium",
+      "message": "Highlight \"Canal des Ardennes\" is 71 km from Sedan"
+    },
+    {
+      "id": "gem-seillans",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Dossier has an empty gallery"
+    },
+    {
+      "id": "gem-seillans",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "gem-siano",
+      "check": "highlight_too_far",
+      "severity": "medium",
+      "message": "Highlight \"Appennino Calabrese\" is 103 km from Siano"
+    },
+    {
+      "id": "gem-st-anton",
+      "check": "highlight_too_far",
+      "severity": "medium",
+      "message": "Highlight \"Lech\" is 186 km from St. Anton am Arlberg"
+    },
+    {
+      "id": "gem-ston",
+      "check": "highlight_too_far",
+      "severity": "medium",
+      "message": "Highlight \"Glušac\" is 189 km from Ston"
+    },
+    {
+      "id": "gem-treuchtlingen",
+      "check": "highlight_too_far",
+      "severity": "medium",
+      "message": "Highlight \"Franconian Jura\" is 61 km from Treuchtlingen"
+    },
+    {
+      "id": "gem-westfjords",
+      "check": "highlight_too_far",
+      "severity": "medium",
+      "message": "Highlight \"Latrabjarg\" is 110 km from Westfjords (Ísafjörður)"
+    },
+    {
+      "id": "gem-westfjords",
+      "check": "highlight_too_far",
+      "severity": "medium",
+      "message": "Highlight \"Bolungarvik\" is 67 km from Westfjords (Ísafjörður)"
+    },
+    {
+      "id": "gem-westfjords",
+      "check": "highlight_too_far",
+      "severity": "medium",
+      "message": "Highlight \"Hornstrandir\" is 77 km from Westfjords (Ísafjörður)"
+    },
+    {
+      "id": "gem-westfjords",
+      "check": "highlight_too_far",
+      "severity": "medium",
+      "message": "Highlight \"Sudureyri\" is 76 km from Westfjords (Ísafjörður)"
+    },
+    {
+      "id": "gem-westfjords",
+      "check": "highlight_too_far",
+      "severity": "medium",
+      "message": "Highlight \"Patreksfjordur\" is 85 km from Westfjords (Ísafjörður)"
+    },
+    {
+      "id": "gem-westfjords",
+      "check": "highlight_too_far",
+      "severity": "medium",
+      "message": "Highlight \"Raudisandur\" is 91 km from Westfjords (Ísafjörður)"
+    },
+    {
+      "id": "gem-zlatibor",
+      "check": "highlight_too_far",
+      "severity": "medium",
+      "message": "Highlight \"Zubač\" is 194 km from Zlatibor"
+    }
+  ]
+}

@@ -29,6 +29,7 @@ import { roleOf } from '../lib/taxonomy.js';
 import { KindGlyph } from '../components/KindGlyph.jsx';
 import { usePaywall } from '../hooks/usePaywall.jsx';
 import { fetchDestPois } from '../lib/appData.js';
+import { useFocusTrap } from '../hooks/useFocusTrap.js';
 import {
   TreeIcon, PersonIcon, CalendarIcon, MapPinIcon,
   ParkingIcon, SunIcon, PartSunIcon, CloudIcon, FogIcon,
@@ -295,18 +296,17 @@ export function DestinationPage({
     if (scrollRef.current) scrollRef.current.scrollTop = 0;
   }, [destination?.id]);
 
-  // Escape closes it, capture phase, so the app-level stack never double-fires.
-  React.useEffect(() => {
-    if (!destination) return undefined;
-    const onKey = (e) => {
-      if (e.key !== 'Escape') return;
-      if (pageRef.current?.querySelector('.dropdown-menu')) return;
-      e.stopPropagation();
-      onClose?.();
-    };
-    document.addEventListener('keydown', onKey, true);
-    return () => document.removeEventListener('keydown', onKey, true);
-  }, [destination, onClose]);
+  // Escape closes it, capture phase, so the app-level stack never double-fires,
+  // and the same hook gives the dialog the focus management its aria-modal
+  // has always promised. An open dropdown keeps its own Escape.
+  const backRef = React.useRef(null);
+  const skipEscape = React.useCallback(
+    () => !!pageRef.current?.querySelector('.dropdown-menu'), []);
+  useFocusTrap(pageRef, onClose, {
+    initialFocusRef: backRef,
+    skipEscapeWhen: skipEscape,
+    enabled: !!destination,
+  });
 
   const lat = destination?.city_lat ?? destination?.lat;
   const lon = destination?.city_lon ?? destination?.lon;
@@ -475,7 +475,7 @@ export function DestinationPage({
       aria-label={city}
     >
       <div className={`destp-bar ${stuck ? 'is-stuck' : ''}`}>
-        <button className="destp-back" onClick={onClose} aria-label={t('detail.close')}>
+        <button className="destp-back" onClick={onClose} aria-label={t('detail.close')} ref={backRef}>
           <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M19 12H5m6-7l-7 7 7 7" /></svg>
         </button>
         <span className="destp-bar-name">{city}</span>

@@ -5,7 +5,6 @@ import { CountryFlag } from '../components/CountryFlag.jsx';
 import { CountryPicker } from '../components/CountryPicker.jsx';
 import { count, eur } from '../lib/format.js';
 import { needsCountry } from '../lib/favorites.js';
-import { fareProv, estPrefix } from '../components/FareProvenance.jsx';
 import { HeroImage } from '../components/HeroImage.jsx';
 import { PlacesFilterSheet } from './PlacesFilterSheet.jsx';
 import { trailPath } from '../lib/trailShape.js';
@@ -33,7 +32,7 @@ import {
 } from '../lib/trips.js';
 import { loadCyclingIndex, loadCycling, loadTopCycling } from '../lib/cycling.js';
 import {
-  countryPhrase, listedLine, paceLine, surfaceLine, whyLines,
+  countryPhrase, whyLines,
 } from '../lib/cycleStory.js';
 import {
   cycleRating, routeTitle, paceLine as cyclePaceLine, bikeLine as cycleBikeLine,
@@ -53,7 +52,7 @@ import {
   DISTANCE_BANDS, tripBand, trailRating,
   ASCENT_BANDS, tripClimbBand, GRADES, tripGrade, gradeIsDerived,
   ROUTE_TYPES, tripRouteType, HIGHLIGHTS, tripHighlights,
-  SUITABILITY, tripSuitability, suitabilityIsDerived, isListed,
+  SUITABILITY, tripSuitability, isListed,
 } from '../lib/trailCards.js';
 import { useI18n } from '../i18n/index.jsx';
 import { geocodeAddress, reverseGeocode } from '../lib/geocode.js';
@@ -271,32 +270,6 @@ function TripLengthSlider({ days, setDays, n, t }) {
   );
 }
 
-/**
- * The shape a country card crops to, and the three numbers that decide when a
- * better-shaped photograph is worth a lower-rated place.
- *
- * fitsBox() is the fraction of a photograph that survives object-fit: cover in
- * a given box: 1 when the two shapes agree, 0.38 for a 3:2 photograph in a 4:1
- * strip. COVER_FIT_OK is the point above which a cover is left alone whatever
- * else is available. COVER_FIT_GAIN is how much better a challenger has to be
- * before it is worth swapping (below it the swap costs rating and buys
- * nothing anyone would notice), and COVER_RATING_GIVE is how much rating the
- * swap may cost. That last one is deliberately mean: at 0.8 the rule handed
- * Italy to Mount Etna and Portugal to Sintra, which are better photographs of
- * places nobody thinks of first when they think of the country. A cover is an
- * identity before it is a picture.
- */
-const COUNTRY_CARD_BOX = 2.6;
-const COVER_FIT_OK = 0.62;
-const COVER_FIT_GAIN = 0.12;
-const COVER_RATING_GIVE = 0.35;
-/* A cover under this keeps less than half its frame, which is not a crop any
-   more, it is a fragment: Albania opened on a church with the top of its own
-   tower cut off. At that point the rule stops defending the rating and starts
-   defending the picture, so it may reach three times as far down the list. */
-const COVER_FIT_BAD = 0.55;
-const COVER_RATING_GIVE_BAD = 1.2;
-const fitsBox = (ratio, box) => (ratio > box ? box / ratio : ratio / box);
 
 /* 'general' - the priced city catalogue - used to lead this rail. It was the
  * same browse surface Explore already is, one tab away, so the two disagreed
@@ -314,23 +287,6 @@ const CATS = [
   { key: 'cycling', Icon: BikeIcon, labelKey: 'places.catCycling' },
 ];
 
-/**
- * Place classes, in rising order of size (dest.place.class, written by
- * place_layer.py). The rail exists to answer the question the rating cannot:
- * a traveller looking at 1,570 priced places needs to know which ones are a
- * base and which ones are an afternoon, and "Bruges 8.8" does not say.
- *
- * `metro` is folded into `city` here. Five sizes is a taxonomy; four chips is
- * a decision, and nobody browsing has ever needed to separate a 300,000-person
- * city from a 90,000-person one before choosing where to sleep.
- */
-const CLASSES = [
-  { key: 'city', Icon: CityIcon, labelKey: 'places.classCity', match: ['city', 'metro'] },
-  { key: 'town', Icon: TownIcon, labelKey: 'places.classTown', match: ['town'] },
-  { key: 'village', Icon: VillageIcon, labelKey: 'places.classVillage', match: ['village'] },
-  { key: 'area', Icon: AreaIcon, labelKey: 'places.classArea', match: ['area'] },
-];
-const CLASS_OF = new Map(CLASSES.flatMap((c) => c.match.map((m) => [m, c.key])));
 
 /**
  * Chip filters for the three published layers, and the one shape all of them
@@ -345,7 +301,6 @@ const CLASS_OF = new Map(CLASSES.flatMap((c) => c.match.map((m) => [m, c.key])))
  * walk up" is the question people actually ask; "a volcano or anything you
  * can walk up" is not one.
  */
-const hasTag = (m, k) => (m.tags || []).includes(k);
 
 // Mountains have their own model, in lib/mountainStory.js: brief 05 asks for
 // seven filters rather than one row of chips, and the tests belong next to
@@ -365,30 +320,6 @@ const hasTag = (m, k) => (m.tags || []).includes(k);
 // for nine groups in place of the three chips that shipped, two of which read
 // zero in every scope, and for the rule those two chips broke: a chip whose
 // count is zero here is not rendered at all.
-
-/** Rows that satisfy every selected chip. */
-function applyChips(rows, chips, on) {
-  if (!on.length) return rows;
-  const tests = on.map((k) => chips.find((c) => c.key === k)?.test).filter(Boolean);
-  return rows.filter((row) => tests.every((fn) => fn(row)));
-}
-
-/**
- * How many rows each chip would leave, counted inside the pool the OTHER
- * selected chips already narrowed. That is what lets a chip carry its own
- * number and grey itself out instead of leading to an empty list, and what
- * keeps the number on a selected chip still while it is tapped.
- */
-function chipCounts(pool, chips, on) {
-  const out = new Map();
-  if (!pool) return out;
-  for (const c of chips) {
-    const others = on.filter((k) => k !== c.key);
-    const base = others.length ? applyChips(pool, chips, others) : pool;
-    out.set(c.key, base.filter(c.test).length);
-  }
-  return out;
-}
 
 const SORTS = [
   { key: 'rating', labelKey: 'places.sortRating', defaultDir: -1 },
@@ -416,56 +347,6 @@ const CYCLE_SORTS = [
   { key: 'az', labelKey: 'places.sortAZ', defaultDir: 1 },
 ];
 
-/** One catalogue place as a photo card: hero image, name, rating, from-price.
- *  The size glyph rides in the corner so the distinction the rail filters on
- *  is still readable once you have stopped filtering and started scrolling. */
-function DestCard({ p, km, priceMode, onSelect, t }) {
-  const prov = fareProv(p.prov || p);
-  const cls = CLASSES.find((c) => c.key === CLASS_OF.get(p.place?.class));
-  return (
-    <button className="places-dcard" onClick={() => onSelect(p.id)}>
-      {/* One column on a phone, two above 640px, ~360 css px wide and ~150
-          tall. Asking for the wire's 960px rendering on every card downloaded
-          several times the pixels it drew, which is what the srcset is for.
-          lib/heroImage.js owns the width list, because Wikimedia answers 400
-          for anything off it. */}
-      <HeroImage
-        url={p.image}
-        city={p.city}
-        iso2={p.iso2}
-        className="places-card-img"
-        maxWidth={960}
-        sizes="(max-width: 639px) 96vw, (max-width: 1180px) 48vw, 560px"
-        ratio={[12, 5]}
-      />
-      <span className="places-card-scrim" aria-hidden="true" />
-      {km != null && (
-        <span className="places-card-km">{bandChip(km, t)}</span>
-      )}
-      {cls && (
-        <span className="places-card-class" role="img" aria-label={t(cls.labelKey)}>
-          <cls.Icon size={14} />
-        </span>
-      )}
-      <span className="places-card-overlay">
-        <span className="places-card-main">
-          <span className="places-card-name">{p.city}</span>
-          <span className="places-card-sub">
-            <span>{p.country}</span>
-            <RatingBadge rating={p.rating} size="xs" showGem={false} />
-          </span>
-        </span>
-        <span className="places-card-right">
-          <span className="places-card-price">
-            {`${estPrefix(prov)}${eur(priceMode === 'pp' ? p.pp : p.total)}`}
-            {priceMode === 'pp' && <small>/pp</small>}
-          </span>
-          <ChevronRightIcon size={15} className="places-card-chev" />
-        </span>
-      </span>
-    </button>
-  );
-}
 
 /**
  * One published trip as a photo card: the name, the measured facts, the kind.
@@ -565,7 +446,7 @@ const GRADE_KEY = {
 const HIGHLIGHT_KEY = Object.fromEntries(
   HIGHLIGHTS.map(({ key, labelKey }) => [key, labelKey]));
 
-function TripCard({ card, km, onOpen, t }) {
+const TripCard = React.memo(function TripCard({ card, km, onOpen, t }) {
   const { tr, assoc, kindKey, price } = card;
   const isCityDay = tr.category === 'citytrip';
   const grade = tripGrade(tr);
@@ -647,7 +528,7 @@ function TripCard({ card, km, onOpen, t }) {
       </span>
     </button>
   );
-}
+});
 
 /**
  * One published beach as a photo card.
@@ -668,7 +549,7 @@ function TripCard({ card, km, onOpen, t }) {
  * route page explains in full. A listed row has no score, and says so in
  * the badge slot rather than leaving a gap.
  */
-function CycleCard({ r, countryName, onOpen, t }) {
+const CycleCard = React.memo(function CycleCard({ r, countryName, onOpen, t }) {
   const rating = r.score != null ? cycleRating(r, t) : null;
   const evidence = (whyLines(r.why, t, 2) || []).map((line) => line.text).join(', ');
   return (
@@ -708,11 +589,11 @@ function CycleCard({ r, countryName, onOpen, t }) {
       </span>
     </button>
   );
-}
+});
 
 /** A composed tour: days and length in the chip, pace and bike as the
  *  evidence line, the overnight towns as where it is. */
-function CycleTourCard({ tr, countryName, onOpen, t }) {
+const CycleTourCard = React.memo(function CycleTourCard({ tr, countryName, onOpen, t }) {
   const towns = (tr.towns || []).slice(0, 3).join(', ');
   return (
     <button
@@ -747,9 +628,9 @@ function CycleTourCard({ tr, countryName, onOpen, t }) {
       </span>
     </button>
   );
-}
+});
 
-function BeachCard({ beach, km, countryName, onOpen, t }) {
+const BeachCard = React.memo(function BeachCard({ beach, km, countryName, onOpen, t }) {
   const shot = beach.images?.[0];
   const tags = beachTags(beach, t, km == null ? 3 : 2);
   const place = [beach.region, countryName].filter(Boolean).join(', ');
@@ -782,7 +663,7 @@ function BeachCard({ beach, km, countryName, onOpen, t }) {
       </span>
     </button>
   );
-}
+});
 
 /**
  * One published lake as a photo card.
@@ -794,7 +675,7 @@ function BeachCard({ beach, km, countryName, onOpen, t }) {
  * failure mode this whole layer was built to avoid. "yes" is the common case
  * and stays quiet; anything else earns the chip.
  */
-function LakeCard({ lake, km, countryName, onOpen, t }) {
+const LakeCard = React.memo(function LakeCard({ lake, km, countryName, onOpen, t }) {
   const shot = lake.images?.[0];
   const tags = lakeTags(lake, t, km == null ? 3 : 2);
   const place = [lake.region, countryName].filter(Boolean).join(', ');
@@ -832,7 +713,7 @@ function LakeCard({ lake, km, countryName, onOpen, t }) {
       </span>
     </button>
   );
-}
+});
 
 /**
  * One published mountain as a photo card.
@@ -844,7 +725,7 @@ function LakeCard({ lake, km, countryName, onOpen, t }) {
  * puts its swimming verdict, because "can I get up it without walking" is the
  * question that decides whether this is a morning out or an expedition.
  */
-function MountainCard({ mountain, km, countryName, onOpen, t, lang }) {
+const MountainCard = React.memo(function MountainCard({ mountain, km, countryName, onOpen, t, lang }) {
   const shot = mountain.images?.[0];
   const tags = mountainTags(mountain, t, km == null ? 3 : 2);
   const place = [mountain.range, countryName].filter(Boolean).join(', ');
@@ -895,11 +776,11 @@ function MountainCard({ mountain, km, countryName, onOpen, t, lang }) {
       </span>
     </button>
   );
-}
+});
 
 /** One country as a photo card: its best-rated place as the cover, the flag
  *  small beside the name. Real photography, never a stretched flag. */
-function CountryCard({ cc, name, sub = null, img, onPick, onAskCover = null }) {
+const CountryCard = React.memo(function CountryCard({ cc, name, sub = null, img, onPick, onAskCover = null }) {
   useEffect(() => {
     if (!img && onAskCover) onAskCover(cc);
   }, [img, onAskCover, cc]);
@@ -934,7 +815,7 @@ function CountryCard({ cc, name, sub = null, img, onPick, onAskCover = null }) {
       </span>
     </button>
   );
-}
+});
 
 /**
  * One composed itinerary as a card.
@@ -1066,7 +947,7 @@ function LayerError({ onRetry, t }) {
 }
 
 export function DestinationsTab({
-  data, pricedAll, priceMode = 'total', availableCountries = [], onSelectDest,
+  data, pricedAll, availableCountries = [], onSelectDest,
   stayTier = 'home', lifestyle, onOpenLifestyle,
   openTrail = null, onOpenTrailConsumed,
   openBeach = null, onOpenBeachConsumed,
@@ -1084,7 +965,6 @@ export function DestinationsTab({
   const sentinelRef = useRef(null);
 
   const [cat, setCat] = useState('trips');           // CATS key
-  const [classes, setClasses] = useState([]);        // CLASSES keys, [] = all sizes
   const [query, setQuery] = useState('');
   const [debouncedQuery, setDebouncedQuery] = useState('');
   const [country, setCountry] = useState('');        // ISO2 or '' for all
@@ -1353,13 +1233,6 @@ export function DestinationsTab({
   // Where each destination actually is, city centre first. Some rows are
   // anchored on their airport, and measuring "how far is this from my street"
   // against a runway 40 km out of town orders the nearest list wrong.
-  const centreById = useMemo(() => {
-    const m = new Map();
-    for (const [id, d] of Object.entries(data.destinations)) {
-      m.set(id, [d.city_lat ?? d.lat, d.city_lon ?? d.lon]);
-    }
-    return m;
-  }, [data]);
 
   const priceById = useMemo(() => {
     const m = new Map();
@@ -1390,48 +1263,6 @@ export function DestinationsTab({
    * and no fare from this origin, so it was absent from `pricedAll` and the
    * cover lookup came back empty.
    */
-  const countryCover = useMemo(() => {
-    const byCc = new Map();
-    // Only the (now removed) General country index ever read this, and building
-    // it sorted 40+ arrays over the whole catalogue on mount.
-    if (cat !== 'general') return byCc;
-    for (const p of Object.values(data.destinations || {})) {
-      // The catalogue carries the hero as an object, the priced rows carry it
-      // as a bare URL (useExploreCatalog flattens it), and HeroImage wants the
-      // URL.
-      const url = p.image?.url || (typeof p.image === 'string' ? p.image : null);
-      if (!url) continue;
-      const w = p.image?.w;
-      const h = p.image?.h;
-      const row = {
-        img: url,
-        score: p.rating?.score ?? 0,
-        // How much of the frame the strip keeps. Unknown shapes are scored as
-        // the commonest one, 3:2, so a missing measurement neither wins nor
-        // loses the card on its own.
-        fit: fitsBox(w && h ? w / h : 1.5, COUNTRY_CARD_BOX),
-      };
-      const list = byCc.get(p.iso2);
-      if (list) list.push(row); else byCc.set(p.iso2, [row]);
-    }
-    const out = new Map();
-    for (const [cc, rows] of byCc) {
-      // Rating first, then the crop: two places rated the same are ranked by
-      // which of them survives the strip, which is how Cyprus stopped opening
-      // on snowy trees when a harbour with the same 6.9 was sitting behind it.
-      rows.sort((a, b) => (b.score - a.score) || (b.fit - a.fit));
-      const top = rows[0];
-      let pick = top;
-      if (top.fit < COVER_FIT_OK) {
-        const give = top.fit < COVER_FIT_BAD ? COVER_RATING_GIVE_BAD : COVER_RATING_GIVE;
-        const better = rows.filter((r) => r.score >= top.score - give
-          && r.fit >= top.fit + COVER_FIT_GAIN);
-        if (better.length) pick = better[0];   // already rating-sorted
-      }
-      out.set(cc, pick);
-    }
-    return out;
-  }, [data, cat]);
 
   // Turkey and Ukraine publish walks and have no catalogue destination at all,
   // so no photograph of them exists anywhere in `data`. Their cover comes from
@@ -1439,14 +1270,18 @@ export function DestinationsTab({
   // cards that would otherwise be grey, and at most a handful at a time.
   const [wireCovers, setWireCovers] = useState({});
   const coverAsked = useRef(new Set());
-  const askCover = (cc) => {
+  // Stable: CountryCard is memoized and runs an effect keyed on this prop, so
+  // a fresh arrow here would tear down and re-run that effect on 40+ cards on
+  // every keystroke. It only touches a ref and a state setter, so it never
+  // needs to be rebuilt.
+  const askCover = React.useCallback((cc) => {
     if (!cc || coverAsked.current.has(cc)) return;
     coverAsked.current.add(cc);
     loadTrails(cc).then((rows) => {
       const hit = (rows || []).find((r) => r.img?.u);
       if (hit) setWireCovers((cur) => ({ ...cur, [cc]: hit.img.u }));
     }).catch(() => { /* a country with no file simply keeps its placeholder */ });
-  };
+  }, []);
 
   const q = useMemo(() => norm(debouncedQuery), [debouncedQuery]);
 
@@ -1552,74 +1387,11 @@ export function DestinationsTab({
 
   // ── General: the priced catalogue ─────────────────────────────────────
 
-  const destRows = useMemo(() => {
-    if (cat !== 'general') return [];
-    const wantClass = classes.length ? new Set(classes) : null;
-    const filtered = pricedAll.filter((p) => {
-      if (country && p.iso2 !== country) return false;
-      if (q && !(norm(p.city).includes(q) || norm(p.country).includes(q))) return false;
-      // A destination with no place block predates the class layer, so it is
-      // shown under every size rather than hidden by a filter it never saw.
-      if (wantClass && p.place?.class && !wantClass.has(CLASS_OF.get(p.place.class))) return false;
-      return true;
-    });
-    if (nearPlace) {
-      return filtered
-        .map((p) => {
-          const c = centreById.get(p.id);
-          return { p, km: haversineKm(nearPlace.lat, nearPlace.lon, c?.[0] ?? p.lat, c?.[1] ?? p.lon) };
-        })
-        .sort((a, b) => a.km - b.km)
-        .slice(0, NEAR_MAX_ROWS);
-    }
-    const rows = filtered.map((p) => ({ p, km: null }));
-    const dir = sort.dir;
-    if (sort.key === 'rating') {
-      rows.sort((a, b) => dir * ((a.p.rating?.score ?? -1) - (b.p.rating?.score ?? -1)));
-    } else if (sort.key === 'price') {
-      const v = (p) => (priceMode === 'pp' ? p.pp : p.total) ?? Infinity;
-      rows.sort((a, b) => dir * (v(a.p) - v(b.p)));
-    } else {
-      rows.sort((a, b) => dir * a.p.city.localeCompare(b.p.city));
-    }
-    return rows;
-  }, [cat, pricedAll, country, q, nearPlace, centreById, sort, priceMode, classes]);
 
   // How many places each size holds under the country/search filter, so a chip
   // can say "42" and can grey itself out rather than leading to an empty list.
-  const classCounts = useMemo(() => {
-    if (cat !== 'general') return null;
-    const counts = new Map(CLASSES.map((c) => [c.key, 0]));
-    for (const p of pricedAll) {
-      if (country && p.iso2 !== country) continue;
-      if (q && !(norm(p.city).includes(q) || norm(p.country).includes(q))) continue;
-      const key = CLASS_OF.get(p.place?.class);
-      if (key) counts.set(key, counts.get(key) + 1);
-    }
-    // Inert until the place layer is in the wire: a catalogue with no classes
-    // yet would otherwise show a rail of four disabled zeros. Same rule the
-    // reach filter follows (see components/ReachFilter.jsx).
-    let any = false;
-    for (const n of counts.values()) if (n > 0) any = true;
-    return any ? counts : null;
-  }, [cat, pricedAll, country, q]);
 
   // The country index for General: every priced country as a flag card.
-  const generalCountries = useMemo(() => {
-    if (cat !== 'general') return [];
-    const agg = new Map();
-    for (const p of pricedAll) {
-      const a = agg.get(p.iso2) || { n: 0, min: Infinity };
-      a.n += 1;
-      const v = priceMode === 'pp' ? p.pp : p.total;
-      if (v != null && v < a.min) a.min = v;
-      agg.set(p.iso2, a);
-    }
-    return availableCountries
-      .map(([cc, name]) => ({ cc, name, ...agg.get(cc) }))
-      .filter((c) => c.n > 0)
-      .sort((a, b) => a.name.localeCompare(b.name));
-  }, [cat, pricedAll, availableCountries, priceMode]);
 
   // ── Trip categories: the published wire, joined to the catalogue ──────
 
@@ -2247,6 +2019,16 @@ export function DestinationsTab({
     // route under a picker that said "All countries".
     || null;
 
+  // Stable per-card handler. CycleCard already hands its own row back to
+  // onOpen, so the inline arrow each card used to get bought nothing and
+  // defeated the memo on every keystroke.
+  const openCycleRoute = React.useCallback((r) => {
+    setPageCycle({ routeId: r.id, country: r.cc || wantCycleCountry });
+  }, [wantCycleCountry]);
+  const openCycleTour = React.useCallback((tr) => {
+    setPageCycle({ tourSlug: tr.slug, country: tr.cc || wantCycleCountry });
+  }, [wantCycleCountry]);
+
   useEffect(() => {
     if (!isCycleCat || cycleIndex || layerError.cycling) return undefined;
     let live = true;
@@ -2398,8 +2180,7 @@ export function DestinationsTab({
   // forever while its sentinel scrolled by loading nothing; and the filter
   // sheet renders its apply button from the same number, so Cycling said
   // "show no results" over hundreds of routes.
-  const rowCount = cat === 'general' ? destRows.length
-    : isBeachCat ? (beachRows?.length ?? 0)
+  const rowCount = isBeachCat ? (beachRows?.length ?? 0)
       : isLakeCat ? (lakeRows?.length ?? 0)
         : isMountainCat ? (mountainRows?.length ?? 0)
           : isCycleCat ? cycleTotal
@@ -2412,7 +2193,7 @@ export function DestinationsTab({
   useEffect(() => {
     setVisible(PAGE);
     scrollRef.current?.scrollTo?.(0, 0);
-  }, [cat, country, q, nearPlace, sort, classes, trailSort, bands, loopsOnly,
+  }, [cat, country, q, nearPlace, sort, trailSort, bands, loopsOnly,
     mtnFacets, lakeFacets, beachFacets, journeyView,
     grades, climbs, shapes, hls, suits,
     itinDays, itinPace, itinScale,
@@ -2443,7 +2224,6 @@ export function DestinationsTab({
     if (next === cat) return;
     setCat(next);
     setQuery('');
-    setClasses([]);
     setJourneyView(null);
     // The country deliberately survives the switch: "I am looking at Albania,
     // now show me its trails" is the whole point of a shared filter. It is
@@ -2454,12 +2234,6 @@ export function DestinationsTab({
 
   const toggleChip = (setter) => (key) => setter(
     (cur) => (cur.includes(key) ? cur.filter((k) => k !== key) : [...cur, key]));
-
-  const toggleClass = (key) => {
-    setClasses((cur) => (cur.includes(key)
-      ? cur.filter((k) => k !== key)
-      : [...cur, key]));
-  };
 
   const toggleSort = (key) => {
     setSort((s) => (s.key === key
@@ -2547,29 +2321,7 @@ export function DestinationsTab({
   // in the toolbar and as the full set inside the Filters sheet. Built here
   // rather than in either of them so the two cannot drift apart.
   const facetGroups = useMemo(() => {
-    const fromDefs = (key, label, defs, on, counts, onToggle) => ({
-      key,
-      label,
-      onToggle,
-      options: defs.map((c) => {
-        const n = counts.get(c.key) ?? 0;
-        const isOn = on.includes(c.key);
-        return { key: c.key, label: t(c.labelKey), n, on: isOn, disabled: !n && !isOn };
-      }),
-    });
     const out = [];
-    if (cat === 'general' && !showCountryIndex && classCounts) {
-      out.push({
-        key: 'size',
-        label: t('places.classLabel'),
-        onToggle: toggleClass,
-        options: CLASSES.map(({ key, Icon, labelKey }) => {
-          const n = classCounts.get(key) || 0;
-          const isOn = classes.includes(key);
-          return { key, Icon, label: t(labelKey), n, on: isOn, disabled: !n && !isOn };
-        }),
-      });
-    }
     if (isItinCat) {
       out.push({
         key: 'pace',
@@ -2764,7 +2516,7 @@ export function DestinationsTab({
       }
     }
     return out;
-  }, [isCycleCat, cycleRows, cycleScope, cycleCounts, cycleFacets, cat, t, showCountryIndex, classCounts, classes, isItinCat, itinFacets,
+  }, [isCycleCat, cycleRows, cycleScope, cycleCounts, cycleFacets, cat, t, showCountryIndex, isItinCat, itinFacets,
     itinPace, itinScale, trailFacets, bands, loopsOnly,
     grades, climbs, shapes, hls, suits, isBeachCat, beachRows,
     beachFacets, beachCounts, isLakeCat, lakeRows, lakeFacets, lakeCounts,
@@ -2774,7 +2526,7 @@ export function DestinationsTab({
   // one of them: it is the filter every tab now carries.
   const activeFilters = (country ? 1 : 0)
     + Object.values(cycleFacets).reduce((n, list) => n + (list?.length || 0), 0)
-    + classes.length + bands.length + (loopsOnly ? 1 : 0)
+    + bands.length + (loopsOnly ? 1 : 0)
     + grades.length + climbs.length + shapes.length + hls.length + suits.length
     + Object.values(beachFacets).reduce((n, list) => n + (list?.length || 0), 0)
     + Object.values(lakeFacets).reduce((n, list) => n + (list?.length || 0), 0)
@@ -2783,7 +2535,6 @@ export function DestinationsTab({
 
   const resetAll = () => {
     setCountry('');
-    setClasses([]);
     setBands([]);
     setLoopsOnly(false);
     setGrades([]);
@@ -3162,7 +2913,7 @@ export function DestinationsTab({
               : cat === 'mountains' ? mountainRows
                 : cat === 'trails' ? tripRows
                   : cat === 'trips' ? itinRows
-                    : destRows) || [];
+                    : null) || [];
           const scope = scopeForRows(kmRows.map((x) => ({
             km: x.km,
             region: (x.b || x.p || x.tr || (x.c && x.c.tr) || {}).region || null,
@@ -3185,56 +2936,6 @@ export function DestinationsTab({
           );
         })()}
 
-        {cat === 'general' && (
-          <div className="places-list">
-            {showCountryIndex
-              ? generalCountries.map((c) => (
-                <CountryCard
-                  key={c.cc}
-                  cc={c.cc}
-                  name={c.name}
-                  img={countryCover.get(c.cc)?.img || null}
-                  onPick={(cc) => setCountry(cc)}
-                />
-              ))
-              : (
-                <>
-                  {destRows.slice(0, visible).map(({ p, km }, i) => (
-                    <React.Fragment key={p.id}>
-                      {bandBreak(destRows, i) && (
-                        <p className="places-bandhead">{t(bandBreak(destRows, i))}</p>
-                      )}
-                      <DestCard p={p} km={km} priceMode={priceMode} onSelect={onSelectDest} t={t} />
-                    </React.Fragment>
-                  ))}
-                  {/* Nothing matched the text, which is exactly the case where
-                      the typed thing is a location rather than a destination:
-                      offer the map search instead of a dead end. Not while the
-                      suggestion list is open, which carries the same offer a
-                      few pixels higher. */}
-                  {destRows.length === 0 && (
-                    <div className="places-empty">
-                      <p>{t('places.emptyDest')}</p>
-                      {canGeo && !geoHits && !suggOpen && (
-                        <button
-                          type="button"
-                          className="places-empty-cta"
-                          onClick={runGeoSearch}
-                          disabled={geoBusy}
-                        >
-                          <MapPinIcon size={14} />
-                          {geoBusy ? t('places.searchingAny') : t('places.searchAny', { q: term })}
-                        </button>
-                      )}
-                    </div>
-                  )}
-                </>
-              )}
-            {visible < destRows.length && (
-              <div ref={sentinelRef} className="places-sentinel" aria-hidden="true" style={{ height: 1 }} />
-            )}
-          </div>
-        )}
 
         {/* Beaches. No country index in front of the list: the tab opens on
             the beaches themselves, ranked across Europe, because "show me a
@@ -3615,9 +3316,7 @@ export function DestinationsTab({
                         tr={tr}
                         t={t}
                         countryName={countryName(tr.cc || wantCycleCountry)}
-                        onOpen={() => setPageCycle({
-                          tourSlug: tr.slug, country: tr.cc || wantCycleCountry,
-                        })}
+                        onOpen={openCycleTour}
                       />
                     ))}
                   </>
@@ -3632,9 +3331,7 @@ export function DestinationsTab({
                         r={r}
                         t={t}
                         countryName={countryName(r.cc || wantCycleCountry)}
-                        onOpen={() => setPageCycle({
-                          routeId: r.id, country: r.cc || wantCycleCountry,
-                        })}
+                        onOpen={openCycleRoute}
                       />
                     ))}
                   </>
@@ -3652,9 +3349,7 @@ export function DestinationsTab({
                         r={r}
                         t={t}
                         countryName={countryName(r.cc || wantCycleCountry)}
-                        onOpen={() => setPageCycle({
-                          routeId: r.id, country: r.cc || wantCycleCountry,
-                        })}
+                        onOpen={openCycleRoute}
                       />
                     ))}
                   </>
@@ -3780,9 +3475,9 @@ export function DestinationsTab({
                     key={c.cc}
                     cc={c.cc}
                     name={c.name}
-                    img={countryCover.get(c.cc)?.img || wireCovers[c.cc] || null}
-                    onAskCover={countryCover.get(c.cc) ? null : askCover}
-                    onPick={(cc) => setCountry(cc)}
+                    img={wireCovers[c.cc] || null}
+                    onAskCover={askCover}
+                    onPick={setCountry}
                   />
                 ))}
                 {trailsIndex && tripCountries.length === 0 && (

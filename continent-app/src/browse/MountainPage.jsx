@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useI18n } from '../i18n/index.jsx';
+import { useFocusTrap } from '../hooks/useFocusTrap.js';
 import { FavStar } from '../components/FavStar.jsx';
 import { NearbyOutdoors } from './NearbyOutdoors.jsx';
 import {
@@ -138,14 +139,14 @@ export function MountainPage({ mountain, countryName, onClose, onSelectDest, onO
   const [shot, setShot] = useState(0);
   const [toast, setToast] = useState(null);
   const scrollEl = useRef(null);
+  const pageRef = useRef(null);
+  const backRef = useRef(null);
   const titleEl = useRef(null);
   const [titleGone, setTitleGone] = useState(false);
 
-  useEffect(() => {
-    const onKey = (e) => { if (e.key === 'Escape') onClose(); };
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
-  }, [onClose]);
+  // Focus management for the dialog: initial focus, a Tab cycle and focus
+  // restoration, not just Escape. See hooks/useFocusTrap.js.
+  useFocusTrap(pageRef, onClose, { initialFocusRef: backRef });
 
   useEffect(() => { setShot(0); scrollEl.current?.scrollTo?.(0, 0); }, [mountain?.id]);
 
@@ -203,7 +204,8 @@ export function MountainPage({ mountain, countryName, onClose, onSelectDest, onO
         + `${Math.round(mountain.prom).toLocaleString(lang)} m`,
       note: mountain.promSrc === 'dem_min' ? t('mtn.factProminenceDemMin')
         : mountain.promSrc === 'dem' ? t('mtn.factProminenceDem')
-          : t('mtn.factProminenceNote'),
+          : mountain.promSrc === 'insular' ? t('mtn.factProminenceInsular')
+            : t('mtn.factProminenceNote'),
       mono: true,
     },
     mountain.diff && {
@@ -251,9 +253,9 @@ export function MountainPage({ mountain, countryName, onClose, onSelectDest, onO
   ].filter(Boolean);
 
   return (
-    <div className="tpage bpage lpage mpage" role="dialog" aria-modal="true" aria-label={mountain.name}>
+    <div className="tpage bpage lpage mpage" role="dialog" aria-modal="true" aria-label={mountain.name} ref={pageRef}>
       <div className="tpage-bar">
-        <button type="button" className="tpage-back" onClick={onClose}>
+        <button type="button" className="tpage-back" onClick={onClose} ref={backRef}>
           <ArrowLeftIcon size={15} />
           <span>{t('mtn.back')}</span>
         </button>

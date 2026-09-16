@@ -153,11 +153,6 @@ export function JourneysSection({
   if (!view) {
     return (
       <div className="places-list jsec">
-        {index && (
-          <p className="jsec-lede">
-            {t('journey.homeLede', { n: index.n_trips })}
-          </p>
-        )}
         {types.map((tp) => (
           <StyleCard key={tp.slug} type={tp} n={tp.n} onPick={onView} t={t} />
         ))}

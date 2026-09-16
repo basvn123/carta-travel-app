@@ -1461,7 +1461,8 @@ def resync_seeds(cc):
         # harvest fix (a label that came back as a bare Wikidata id, say)
         # would otherwise never reach a cache that already has its
         # photographs.
-        for key in ("pre", "src", "highpoint_of", "name", "name_local"):
+        for key in ("pre", "src", "highpoint_of", "highpoint_insular",
+                    "name", "name_local"):
             if key in pin and pin[key]:
                 peak[key] = pin[key]
         kept.append(peak)

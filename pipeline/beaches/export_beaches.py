@@ -69,6 +69,9 @@ if sys.platform == "win32":
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 
+sys.path.insert(0, str(HERE.parents[1] / "pipeline"))
+
+from pipeline_io import in_europe  # noqa: E402
 from sources import haversine_km, load_cache  # noqa: E402
 from harvest_beaches import COUNTRIES, name_tokens  # noqa: E402
 import beauty_index as bi  # noqa: E402
@@ -1058,6 +1061,13 @@ def main():
         for beach, comps, score10 in sorted(scored, key=lambda t: -t[2]):
             if not named(beach):
                 continue                      # hard, both tiers
+            # Harvesting by ISO2 drags in what a country owns worldwide: FR
+            # brought 13 Guadeloupe and Reunion beaches, NL brought one on
+            # Aruba, GB one in Bermuda. Hard, both tiers, same as the name
+            # test. The window keeps the Canaries, Madeira, the Azores and
+            # Svalbard; see pipeline_io.EUROPE_WINDOW for why.
+            if not in_europe(beach.get("lat"), beach.get("lon")):
+                continue
             if score10 < args.min_score or not photo_gate(beach):
                 spare.append((beach, comps, score10))
                 continue

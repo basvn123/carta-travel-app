@@ -12,7 +12,10 @@
     "preview": "vite preview",
     "smoke": "node scripts/smoke-nav.mjs",
     "lint": "eslint src",
-    "format": "prettier --write \"src/**/*.{js,jsx}\""
+    "format": "prettier --write \"src/**/*.{js,jsx}\"",
+    "test": "node --test tests/",
+    "verify": "node scripts/verify-affiliate.mjs && node scripts/verify-omio.mjs && node scripts/verify_paywall.mjs",
+    "ci": "npm run lint && npm run test && npm run verify && npm run build"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.110.2",

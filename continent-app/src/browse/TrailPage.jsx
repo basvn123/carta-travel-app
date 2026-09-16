@@ -20,6 +20,7 @@ import {
 } from '../lib/trailExport.js';
 import { eur } from '../lib/format.js';
 import { useI18n } from '../i18n/index.jsx';
+import { useFocusTrap } from '../hooks/useFocusTrap.js';
 import { FavStar } from '../components/FavStar.jsx';
 import { NearbyOutdoors } from './NearbyOutdoors.jsx';
 import { usePaywall } from '../hooks/usePaywall.jsx';
@@ -249,6 +250,8 @@ export function TrailPage({ card, onClose, onSelectDest, onOpenNeighbour, dests,
   const mapEl = useRef(null);
   const mapRef = useRef(null);
   const scrollEl = useRef(null);
+  const pageRef = useRef(null);
+  const backRef = useRef(null);
   const titleEl = useRef(null);
 
   useEffect(() => {
@@ -257,15 +260,14 @@ export function TrailPage({ card, onClose, onSelectDest, onOpenNeighbour, dests,
     return () => { live = false; };
   }, [tr.id]);
 
-  useEffect(() => {
-    const onKey = (e) => {
-      if (e.key !== 'Escape') return;
-      if (follow) setFollow(false);
-      else onClose();
-    };
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
-  }, [onClose, follow]);
+  // Focus management for the dialog, plus this page's own Escape rule:
+  // following the walk on GPS is a mode inside the page, so the first
+  // Escape leaves the mode and only the second closes the page.
+  const escapeClose = React.useCallback(() => {
+    if (follow) setFollow(false);
+    else onClose();
+  }, [follow, onClose]);
+  useFocusTrap(pageRef, escapeClose, { initialFocusRef: backRef });
 
   useEffect(() => {
     if (!toast) return undefined;
@@ -529,9 +531,9 @@ export function TrailPage({ card, onClose, onSelectDest, onOpenNeighbour, dests,
   const dirUrl = start ? trailheadDirectionsUrl(start.lat, start.lon) : '';
 
   return (
-    <div className={`tpage ${follow ? 'following' : ''}`} role="dialog" aria-modal="true" aria-label={tr.name}>
+    <div className={`tpage ${follow ? 'following' : ''}`} role="dialog" aria-modal="true" aria-label={tr.name} ref={pageRef}>
       <div className="tpage-bar">
-        <button type="button" className="tpage-back" onClick={onClose}>
+        <button type="button" className="tpage-back" onClick={onClose} ref={backRef}>
           <ArrowLeftIcon size={15} />
           <span>{t('trails.back')}</span>
         </button>

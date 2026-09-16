@@ -3,7 +3,7 @@
 
    Strategy (same-origin GET only; cross-origin requests pass straight through):
      • navigations      → network-first, fall back to the cached app shell
-     • /app_data.json   → network-first (fresh fares win), fall back to cache
+     • /app_data.json   → stale-while-revalidate (instant repeat opens; see below)
      • /{layer}/*.json  → network-first: these list per-item files by id, and a
                           stale list names ids the last export deleted
      • /assets/* hashed → cache-first (Vite fingerprints these; safe forever)
@@ -19,7 +19,7 @@
 // evicts the cycling wires cached under v4: EuroVelo manifests whose every
 // section was still called "EV1", and country files from before the export
 // carried evidence on listed rows.
-const CACHE_VERSION = 'carta-v5';
+const CACHE_VERSION = 'carta-v6';
 
 // The card half of every published layer. Deliberately NOT the per-item detail
 // files (/trips/trip/*.json and friends): those are immutable for as long as
@@ -53,7 +53,6 @@ self.addEventListener('activate', (event) => {
       // waiting behind the old one until every tab closed, which is why a
       // version bump used to need a hard reload to be seen; main.jsx reloads
       // once when control changes hands.
-      .then(() => self.clients.claim())
       .then(() => self.clients.claim())
   );
 });
@@ -103,7 +102,15 @@ self.addEventListener('fetch', (event) => {
     event.respondWith(networkFirst(request).catch(() => caches.match('/index.html')));
     return;
   }
-  if (url.pathname === '/app_data.json' || url.pathname === '/activities_full.json'
+  // activities_full.json is ~33 MB. Cached alongside app_data.json (~13 MB)
+  // and the fares slices, one visitor who opens the day planner pushes ~50 MB
+  // into Cache Storage. iOS Safari evicts an origin's storage all at once, so
+  // that takes the app SHELL with it and offline silently stops working - to
+  // save a file the day planner re-fetches anyway. Network-only; the browser
+  // HTTP cache still covers repeat visits.
+  if (url.pathname === '/activities_full.json') return;
+
+  if (url.pathname === '/app_data.json'
       || url.pathname === '/country_insights.json' || url.pathname.startsWith('/fares/')) {
     // Stale-while-revalidate: repeat visits render instantly from cache while
     // a fresh copy downloads in the background (network-first made every

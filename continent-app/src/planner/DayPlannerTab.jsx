@@ -8,7 +8,7 @@ import { cityInsight } from '../lib/tripGuide.js';
 import { tripDaysBetween, haversineKm, cityCoords, withCityCoords } from '../lib/runtime_pricing.js';
 import { legTransportOptions } from '../lib/transport.js';
 import { eur, safeUrl } from '../lib/format.js';
-import { fetchActivitiesFull } from '../lib/appData.js';
+import { fetchDestPoiMap } from '../lib/appData.js';
 import { fetchTripPlans, fetchTripPlanWithStops } from '../auth/tripPlanStorage.js';
 import { fetchWalkingRoute, fetchDrivingRoute, googleMapsDirUrl } from '../lib/routing.js';
 import { useI18n } from '../i18n/index.jsx';
@@ -147,7 +147,7 @@ function buildStandalonePlan(sp) {
 }
 
 
-export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPlanConsumed, favorites = null }) {
+export const DayPlannerTab = React.memo(function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPlanConsumed, favorites = null }) {
   const { t, lang } = useI18n();
   // Towns the traveller asked Carta to research (discoveredStore.js). They are
   // real destinations from here on: pins, POI lists, search hits and plan
@@ -526,14 +526,43 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
     [stops, stopIdx],
   );
 
-  // Full POI lists (with coordinates, for map pins) live in a separate lazily
-  // fetched file so the boot-time dataset stays small.
+  // Full POI lists (with coordinates, for map pins) live in per-destination
+  // shards so the boot-time dataset stays small. This map fills in as towns
+  // are needed rather than all at once: mounting the tab used to download all
+  // 33 MB of them, a 4-8 second main-thread freeze on a phone, whether or not
+  // a plan was even open.
   const [actFull, setActFull] = useState(null); // { destId: items_full } | null
-  useEffect(() => {
-    let alive = true;
-    fetchActivitiesFull().then((m) => { if (alive) setActFull(m); });
-    return () => { alive = false; };
+  // Ids already requested, so a re-render never re-asks for the same town.
+  // A ref, not state: it must be up to date within the same turn that a
+  // loader starts, and it is never rendered.
+  const poiAskedRef = useRef(new Set());
+  // The latest map, readable synchronously from ensurePois without making it
+  // depend on (and be recreated by) every actFull change.
+  const actFullRef = useRef(null);
+
+  /**
+   * Make sure `ids` are in `actFull`, and hand back a map that contains them.
+   *
+   * Returns the merged map rather than relying on the state update, because
+   * every caller reads the POIs in the same turn it asks for them (the
+   * drafters below are `async` and use the return value directly).
+   */
+  const ensurePois = React.useCallback(async (ids) => {
+    const want = [...new Set((ids || []).filter(Boolean))];
+    const missing = want.filter((id) => !poiAskedRef.current.has(id));
+    if (!missing.length) return actFullRef.current || {};
+    missing.forEach((id) => poiAskedRef.current.add(id));
+    const fetched = await fetchDestPoiMap(missing);
+    const merged = { ...(actFullRef.current || {}), ...fetched };
+    actFullRef.current = merged;
+    setActFull(merged);
+    return merged;
   }, []);
+
+  // The town being planned, loaded as soon as it is known.
+  useEffect(() => {
+    if (stop?.destination_id) ensurePois([stop.destination_id]);
+  }, [stop?.destination_id, ensurePois]);
 
   // The traveller's own places for a destination (typed into the search, or
   // taken from an imported document), stored per plan in prefs.customPois so
@@ -843,8 +872,7 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
   // days stay put and are never duplicated); scope 'stay' drafts every day
   // of the current city.
   const applyDraft = async (p) => {
-    const fullMap = actFull ?? await fetchActivitiesFull();
-    if (!actFull && fullMap) setActFull(fullMap);
+    const fullMap = await ensurePois([stop?.destination_id]);
     const interests = new Set(p.interests || []);
     // The feasibility answers (how long out, how much walking) bound every
     // draft so nothing unrealistic gets scheduled.
@@ -915,8 +943,7 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
   // catalogue POI no longer resolves are skipped, never invented.
   const applyCitytrip = async () => {
     if (!citytrip || !stop?.dest) return;
-    const fullMap = actFull ?? await fetchActivitiesFull();
-    if (!actFull && fullMap) setActFull(fullMap);
+    const fullMap = await ensurePois([stop?.destination_id]);
     const detail = await loadTrail(citytrip.id);
     if (!detail) return;
     const { items } = itemsForStop(stop, fullMap);
@@ -961,8 +988,7 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
     // the built-in draft does. Asking the bot in the first seconds after a plan
     // opens used to read the placeholder list and answer "not enough
     // catalogued places here", which is a wrong sentence about a full city.
-    const fullMap = actFull ?? await fetchActivitiesFull();
-    if (!actFull && fullMap) setActFull(fullMap);
+    const fullMap = await ensurePois([stop?.destination_id]);
     const { items, walkable } = itemsForStop(stop, fullMap);
     // The AI only ever sequences OUR researched candidates: same quality bar
     // as the map's pins, minus what the city's other days already claimed.
@@ -2106,6 +2132,15 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
     return best && best.km <= STAY_TOWN_KM ? best.id : null;
   }, [exploreTowns]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  // The explore map draws POIs for every town in day-trip reach of the stay,
+  // so those shards have to be in hand before the memo below can place a pin.
+  // Up to 34 requests of ~8.6 KB, which HTTP/2 multiplexes; the memo re-runs
+  // when they land because `actFull` is one of its dependencies.
+  useEffect(() => {
+    if (!exploreTowns.length) return;
+    ensurePois(exploreTowns.map((t) => t.id));
+  }, [exploreTowns, ensurePois]);
+
   const explorePois = useMemo(() => {
     if (!newStayPoint || newStayPoint.lat == null) return [];
     const out = [];
@@ -2439,8 +2474,7 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
   const chatDest = async (destId) => {
     const dest = destinations[destId];
     if (!dest) return null;
-    const fullMap = actFull ?? await fetchActivitiesFull();
-    if (!actFull && fullMap) setActFull(fullMap);
+    const fullMap = await ensurePois([destId]);
     const items = (dest.activities?.items_full?.length
       ? dest.activities.items_full
       : fullMap?.[destId]) || [];
@@ -3733,4 +3767,4 @@ export function DayPlannerTab({ data, user, authConfigured, openPlanId, onOpenPl
       </div>
     </div>
   );
-}
+});

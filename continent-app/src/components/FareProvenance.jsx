@@ -1,5 +1,6 @@
 import React from 'react';
 import { useI18n } from '../i18n/index.jsx';
+import { E2E_SEAMS } from '../lib/e2eSeams.js';
 
 /**
  * FareProvenance: honest metasearch labeling for every price surface.
@@ -37,6 +38,7 @@ let mockBag; // undefined = not parsed yet, null = off
 function provMock() {
   if (mockBag !== undefined) return mockBag;
   mockBag = null;
+  if (!E2E_SEAMS) return mockBag;
   try {
     const q = new URLSearchParams(window.location.search).get('provmock');
     if (q) {

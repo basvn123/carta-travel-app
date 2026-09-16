@@ -13,6 +13,22 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
     <meta name="apple-mobile-web-app-title" content="Carta" />
     <meta name="description" content="Carta - find affordable European getaways by total trip cost." />
+    <link rel="canonical" href="https://www.carta-europetravel.com/" />
+    <!-- Social / link-preview cards. Static for the shell; scripts/prerender.mjs
+         overwrites these per page once the static HTML emitter lands, and
+         src/lib/head.js keeps them in step with client-side navigation.
+         og:image should be replaced by a real 1200x630 card. -->
+    <meta property="og:site_name" content="Carta" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://www.carta-europetravel.com/" />
+    <meta property="og:title" content="Carta · Europe Travel" />
+    <meta property="og:description" content="Find affordable European getaways priced by total trip cost — flights, stay and what you actually spend on the ground." />
+    <meta property="og:image" content="https://www.carta-europetravel.com/icon-512.png" />
+    <meta property="og:locale" content="en" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Carta · Europe Travel" />
+    <meta name="twitter:description" content="Find affordable European getaways priced by total trip cost — flights, stay and what you actually spend on the ground." />
+    <meta name="twitter:image" content="https://www.carta-europetravel.com/icon-512.png" />
     <!-- The dataset gates first render; preloading lets its (multi-MB) download
          start with the HTML instead of waiting for the JS bundle to boot. -->
     <link rel="preload" href="/app_data.json" as="fetch" crossorigin="anonymous" />

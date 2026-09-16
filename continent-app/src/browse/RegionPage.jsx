@@ -19,9 +19,10 @@
  * escape-stack lesson: this page can sit over other overlays and the
  * topmost layer must eat the key.
  */
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { loadRegion, regionShareUrl } from '../lib/regions.js';
 import { useI18n } from '../i18n/index.jsx';
+import { useFocusTrap } from '../hooks/useFocusTrap.js';
 
 const KIND_KEY = {
   coast: 'region.kind.coast',
@@ -104,16 +105,11 @@ export function RegionPage({ id, onClose, onOpenFeature, onOpenRegion }) {
     return () => { on = false; };
   }, [id, tries]);
 
-  useEffect(() => {
-    const onKey = (e) => {
-      if (e.key === 'Escape') {
-        e.stopPropagation();
-        onClose();
-      }
-    };
-    window.addEventListener('keydown', onKey, true);
-    return () => window.removeEventListener('keydown', onKey, true);
-  }, [onClose]);
+  // Escape (capture phase, per the escape-stack rule) plus the focus
+  // management this dialog's aria-modal has always promised.
+  const pageRef = useRef(null);
+  const backRef = useRef(null);
+  useFocusTrap(pageRef, onClose, { initialFocusRef: backRef });
 
   const open = (card) => {
     const feature = LAYER_TO_FEATURE[card.layer];
@@ -135,9 +131,11 @@ export function RegionPage({ id, onClose, onOpenFeature, onOpenRegion }) {
 
   if (failed) {
     return (
-      <div className="rgnp" role="dialog" aria-modal="true">
+      <div className="rgnp" role="dialog" aria-modal="true"
+        aria-label={t('region.kind.nuts2')} ref={pageRef}>
         <div className="rgnp-inner">
-          <button className="rgnp-back" onClick={onClose} aria-label="close">
+          <button className="rgnp-back" onClick={onClose}
+            aria-label={t('detail.close')} ref={backRef}>
             {'←'}
           </button>
           <p className="rgnp-card-sub">{t('layer.loadFailed')}</p>
@@ -154,9 +152,11 @@ export function RegionPage({ id, onClose, onOpenFeature, onOpenRegion }) {
     // back button and nothing else, which reads as a page that broke rather
     // than one that has not arrived.
     return (
-      <div className="rgnp" role="dialog" aria-modal="true">
+      <div className="rgnp" role="dialog" aria-modal="true"
+        aria-label={t('region.kind.nuts2')} ref={pageRef}>
         <div className="rgnp-inner">
-          <button className="rgnp-back" onClick={onClose} aria-label="close">
+          <button className="rgnp-back" onClick={onClose}
+            aria-label={t('detail.close')} ref={backRef}>
             {'←'}
           </button>
           <p className="rgnp-card-sub">{t('region.loading')}</p>
@@ -170,9 +170,11 @@ export function RegionPage({ id, onClose, onOpenFeature, onOpenRegion }) {
     // that left the spine. Say which, rather than showing an empty shell
     // that reads as a broken page.
     return (
-      <div className="rgnp" role="dialog" aria-modal="true">
+      <div className="rgnp" role="dialog" aria-modal="true"
+        aria-label={t('region.kind.nuts2')} ref={pageRef}>
         <div className="rgnp-inner">
-          <button className="rgnp-back" onClick={onClose} aria-label="close">
+          <button className="rgnp-back" onClick={onClose}
+            aria-label={t('detail.close')} ref={backRef}>
             {'←'}
           </button>
           <h1>{t('region.notFound')}</h1>
@@ -184,9 +186,11 @@ export function RegionPage({ id, onClose, onOpenFeature, onOpenRegion }) {
 
   const region = data?.region;
   return (
-    <div className="rgnp" role="dialog" aria-modal="true">
+    <div className="rgnp" role="dialog" aria-modal="true"
+      aria-label={t('region.kind.nuts2')} ref={pageRef}>
       <div className="rgnp-inner">
-        <button className="rgnp-back" onClick={onClose} aria-label="close">
+        <button className="rgnp-back" onClick={onClose}
+          aria-label={t('detail.close')} ref={backRef}>
           {'←'}
         </button>
         {region && (

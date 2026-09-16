@@ -100,16 +100,24 @@ export function useAppData(init, setChoices, departDate, setDepartDate, returnDa
   // routes, i.e. the fare window reachable from the chosen origin.
   const dateBounds = useMemo(() => {
     if (!data) return null;
-    let minOut = null;
-    let maxRet = null;
-    for (const d of Object.values(data.destinations)) {
-      const routes = d.routes || {};
-      for (const r of Object.values(routes)) {
-        for (const x of Object.keys(r.outbound_fare || {})) {
-          if (minOut == null || x < minOut) minOut = x;
-        }
-        for (const x of Object.keys(r.return_fare || {})) {
-          if (maxRet == null || x > maxRet) maxRet = x;
+    // sync-data.mjs precomputes this per origin (`__window` on the fare
+    // slice), because deriving it here meant walking every destination x
+    // every route x every fare date key - ~300K string comparisons on the
+    // main thread, the moment the data parsed and before first paint. The
+    // walk below remains for legacy datasets whose slices predate the field.
+    const pre = faresSlices[effectiveOrigin]?.__window;
+    let minOut = pre?.min_out ?? null;
+    let maxRet = pre?.max_ret ?? null;
+    if (!pre) {
+      for (const d of Object.values(data.destinations)) {
+        const routes = d.routes || {};
+        for (const r of Object.values(routes)) {
+          for (const x of Object.keys(r.outbound_fare || {})) {
+            if (minOut == null || x < minOut) minOut = x;
+          }
+          for (const x of Object.keys(r.return_fare || {})) {
+            if (maxRet == null || x > maxRet) maxRet = x;
+          }
         }
       }
     }
@@ -121,7 +129,7 @@ export function useAppData(init, setChoices, departDate, setDepartDate, returnDa
     const today = todayISO();
     const min = minOut > today ? minOut : (today <= maxRet ? today : maxRet);
     return { min, max: maxRet };
-  }, [data]);
+  }, [data, faresSlices, effectiveOrigin]);
 
   const defaultNights = data?.meta?.defaults?.trip_length_days ?? 7;
 
@@ -131,10 +139,22 @@ export function useAppData(init, setChoices, departDate, setDepartDate, returnDa
   // depart date that actually resolves the most round trips instead.
   // Only consider today-or-later depart dates, so the default never lands in
   // the past even when the fare data still holds earlier days.
-  const defaultWindow = useMemo(
-    () => (data ? bestFareWindow(data.destinations, defaultNights, dateBounds?.min) : null),
-    [data, defaultNights, dateBounds],
-  );
+  const defaultWindow = useMemo(() => {
+    if (!data) return null;
+    // Precomputed per origin at build time for the default trip length (see
+    // sync-data.mjs). The client walk below stays for any other length and
+    // for legacy slices without the field.
+    const pre = faresSlices[effectiveOrigin]?.__window?.best_start_by_nights?.[defaultNights];
+    if (pre) {
+      const [start, count] = pre;
+      // The stored best start can predate today on an ageing dataset; the
+      // walk's `minStart` guard is what kept that off the screen.
+      if (!dateBounds?.min || start >= dateBounds.min) {
+        return { start, end: addDays(start, defaultNights), count };
+      }
+    }
+    return bestFareWindow(data.destinations, defaultNights, dateBounds?.min);
+  }, [data, defaultNights, dateBounds, faresSlices, effectiveOrigin]);
 
   // Default depart/return when data first loads. A restored URL/stored date
   // wins - unless it is now in the past (before dateBounds.min, which is

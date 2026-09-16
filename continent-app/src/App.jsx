@@ -554,6 +554,20 @@ function TravelApp() {
     home: originHome(data, code) ?? prev.home,
   })), [data]);
 
+  // Stable callback props for the two planner tabs. Both are memoized and both
+  // stay mounted behind display:none, so a fresh arrow here re-rendered two
+  // 3,000-line components (and up to four live MapLibre contexts) on every
+  // lifestyle slider tick and every search keystroke.
+  const openLifestyle = useCallback(() => setLifestyleOpen(true), []);
+  const requestAuth = useCallback(() => setAuthModalOpen(true), []);
+  const clearPendingTripPlan = useCallback(() => setPendingTripPlanId(null), []);
+  const clearPendingSharedTrip = useCallback(() => setPendingSharedTrip(null), []);
+  const clearPendingDayPlan = useCallback(() => setPendingDayPlanId(null), []);
+  const planDay = useCallback((target) => {
+    setPendingDayPlanId(target); // { planId|null, stopIndex, dayIndex }
+    goToTab('day');
+  }, [goToTab]);
+
   // The town a road trip sets off from ({ name, lat, lon } from the geocoder,
   // or null to ask again). Without it the engine cannot cost a drive at all,
   // so this is the one answer that empties the map on purpose.
@@ -871,7 +885,7 @@ function TravelApp() {
               onSelect={openDetail}
               indices={exploreIndices}
               choices={choices}
-              onOpenLifestyle={() => setLifestyleOpen(true)}
+              onOpenLifestyle={openLifestyle}
               onOpenGuides={openGuides}
               isMock={!!data.meta?.is_mock}
             />
@@ -909,12 +923,11 @@ function TravelApp() {
           <DestinationsTab
             data={data}
             pricedAll={pricedAll}
-            priceMode={priceMode}
             availableCountries={availableCountries}
             onSelectDest={openDetail}
             stayTier={choices.stay_tier || 'home'}
             lifestyle={choices.lifestyle}
-            onOpenLifestyle={() => setLifestyleOpen(true)}
+            onOpenLifestyle={openLifestyle}
             origin={choices.origin}
             onChangeOrigin={setOrigin}
             transportMode={choices.transport_mode || 'plane'}
@@ -949,21 +962,18 @@ function TravelApp() {
               data={data}
               user={user}
               authConfigured={authConfigured}
-              onRequestAuth={() => setAuthModalOpen(true)}
+              onRequestAuth={requestAuth}
               openPlanId={pendingTripPlanId}
-              onOpenPlanConsumed={() => setPendingTripPlanId(null)}
+              onOpenPlanConsumed={clearPendingTripPlan}
               openSharedTrip={pendingSharedTrip}
-              onSharedTripConsumed={() => setPendingSharedTrip(null)}
+              onSharedTripConsumed={clearPendingSharedTrip}
               origin={choices.origin}
               onChangeOrigin={setOrigin}
               lifestyle={choices.lifestyle}
-              onOpenLifestyle={() => setLifestyleOpen(true)}
+              onOpenLifestyle={openLifestyle}
               stayTier={choices.stay_tier || 'home'}
               favorites={favorites}
-              onPlanDay={(target) => {
-                setPendingDayPlanId(target); // { planId|null, stopIndex, dayIndex }
-                goToTab('day');
-              }}
+              onPlanDay={planDay}
             />
           </Suspense>
         </div>
@@ -976,7 +986,7 @@ function TravelApp() {
               user={user}
               authConfigured={authConfigured}
               openPlanId={pendingDayPlanId}
-              onOpenPlanConsumed={() => setPendingDayPlanId(null)}
+              onOpenPlanConsumed={clearPendingDayPlan}
               favorites={favorites}
             />
           </Suspense>
@@ -1009,7 +1019,7 @@ function TravelApp() {
             data={data}
             indices={exploreIndices}
             choices={choices}
-            onOpenLifestyle={() => setLifestyleOpen(true)}
+            onOpenLifestyle={openLifestyle}
             onClose={() => setSelectedId(null)}
             onSelect={openDetail}
             isFavorite={selectedId ? isFavorite(selectedId, 'dest') : false}

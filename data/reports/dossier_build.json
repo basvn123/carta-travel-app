@@ -1,31 +1,17 @@
 {
- "generated_at": "2026-09-16T07:17:10Z",
+ "generated_at": "2026-09-16T16:23:13Z",
  "built": 3868,
- "written": 2017,
- "avg_gallery": 7.15,
- "avg_gallery_print": 4.99,
+ "written": 939,
+ "avg_gallery": 6.86,
+ "avg_gallery_print": 6.86,
  "avg_highlights": 11.87,
- "merged_duplicates": 12612,
+ "merged_duplicates": 12609,
  "avg_do": 3.79,
- "n_with_licence_refusals": 2867,
+ "n_with_licence_refusals": 1630,
  "refusals_sample": {
-  "CRL": [
-   {
-    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8f/Lacs_de_l%27Eau_d%27Heure_002.jpg/960px-Lacs_de_l%27Eau_d%27Heure_002.jpg",
-    "why": "licence"
-   }
-  ],
   "ALC": [
    {
     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/17/Tossal-plantagral.jpg/500px-Tossal-plantagral.jpg",
-    "why": "licence"
-   },
-   {
-    "url": "https://upload.wikimedia.org/wikipedia/commons/d/d7/Alicante.museoasegurada.jpg",
-    "why": "licence"
-   },
-   {
-    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/17/Tossal-plantagral.jpg/960px-Tossal-plantagral.jpg",
     "why": "licence"
    },
    {
@@ -37,19 +23,11 @@
    {
     "url": "https://upload.wikimedia.org/wikipedia/commons/c/cb/Fort_Marlborough.jpg?utm_source=ca.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
     "why": "licence"
-   },
-   {
-    "url": "https://upload.wikimedia.org/wikipedia/commons/c/cb/Fort_Marlborough.jpg",
-    "why": "not_a_photograph"
    }
   ],
   "REU": [
    {
     "url": "https://upload.wikimedia.org/wikipedia/en/thumb/b/b3/Huracancondor.jpg/500px-Huracancondor.jpg",
-    "why": "licence"
-   },
-   {
-    "url": "https://upload.wikimedia.org/wikipedia/en/thumb/b/b3/Huracancondor.jpg/960px-Huracancondor.jpg",
     "why": "licence"
    }
   ],
@@ -60,10 +38,6 @@
    }
   ],
   "MJV": [
-   {
-    "url": "https://upload.wikimedia.org/wikipedia/commons/c/ce/Museo_Arqueologico_de_Murcia.jpg",
-    "why": "licence"
-   },
    {
     "url": "https://upload.wikimedia.org/wikipedia/commons/c/ce/Museo_Arqueologico_de_Murcia.jpg",
     "why": "licence"
@@ -79,36 +53,12 @@
    {
     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f9/Lanzarote_Jardin_de_Cactus_Kaktusgarten.jpg/960px-Lanzarote_Jardin_de_Cactus_Kaktusgarten.jpg",
     "why": "licence"
-   },
-   {
-    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f9/Lanzarote_Jardin_de_Cactus_Kaktusgarten.jpg/960px-Lanzarote_Jardin_de_Cactus_Kaktusgarten.jpg",
-    "why": "licence"
    }
   ],
   "FUE": [
    {
     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/Faro_de_La_Entallada_Tuineje_Fuerteventura.jpg/960px-Faro_de_La_Entallada_Tuineje_Fuerteventura.jpg",
     "why": "not_a_photograph"
-   },
-   {
-    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/01/Costa_Calma_D81_6928_%2838902689940%29.jpg/960px-Costa_Calma_D81_6928_%2838902689940%29.jpg",
-    "why": "licence"
-   },
-   {
-    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/40/Top-down_areal_of_the_famous_surfing_spot_Playa_del_Viejo_Reyes_in_la_Pared_on_Fuerteventura_%2851123372646%29.jpg/960px-Top-down_areal_of_the_famous_surfing_spot_Playa_del_Viejo_Reyes_in_la_Pared_on_Fuerteventura_%2851123372646%29.jpg",
-    "why": "licence"
-   },
-   {
-    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dc/Sea_View_-_Las_Playitas.jpg/960px-Sea_View_-_Las_Playitas.jpg",
-    "why": "licence"
-   },
-   {
-    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Gran_Tarajal_%28from_the_west%29.jpg/960px-Gran_Tarajal_%28from_the_west%29.jpg",
-    "why": "licence"
-   },
-   {
-    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/50/Tuineje_Ginigin%C3%A1mar_-_Calle_Palmeras_-_Playa_03_ies.jpg/960px-Tuineje_Ginigin%C3%A1mar_-_Calle_Palmeras_-_Playa_03_ies.jpg",
-    "why": "licence"
    }
   ],
   "TFN": [
@@ -121,45 +71,11 @@
    {
     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/77/Roque_de_los_Muchachos_view1.jpg/960px-Roque_de_los_Muchachos_view1.jpg",
     "why": "licence"
-   },
-   {
-    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/77/Roque_de_los_Muchachos_view1.jpg/960px-Roque_de_los_Muchachos_view1.jpg",
-    "why": "licence"
-   }
-  ],
-  "XRY": [
-   {
-    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/33/Playa_de_Santa_Catalina_IMG_20250607_113021.jpg/960px-Playa_de_Santa_Catalina_IMG_20250607_113021.jpg",
-    "why": "licence"
-   }
-  ],
-  "TPS": [
-   {
-    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/Monte_Cofano_da_Cornino.jpg/960px-Monte_Cofano_da_Cornino.jpg",
-    "why": "licence"
    }
   ],
   "CAG": [
    {
     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/67/Cagliari_burg_elefantenturm.jpg/500px-Cagliari_burg_elefantenturm.jpg",
-    "why": "licence"
-   },
-   {
-    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/67/Cagliari_burg_elefantenturm.jpg/960px-Cagliari_burg_elefantenturm.jpg",
-    "why": "licence"
-   }
-  ],
-  "OLB": [
-   {
-    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/Olbia%2C_spiaggia_delle_Saline_%2802%29.jpg/960px-Olbia%2C_spiaggia_delle_Saline_%2802%29.jpg",
-    "why": "licence"
-   },
-   {
-    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/14/Loiri-Porto_San_Paolo%2C_stagno_di_Porto_Taverna_%2802%29.jpg/960px-Loiri-Porto_San_Paolo%2C_stagno_di_Porto_Taverna_%2802%29.jpg",
-    "why": "licence"
-   },
-   {
-    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/56/Olbia%2C_isola_Piana_%2806%29.jpg/960px-Olbia%2C_isola_Piana_%2806%29.jpg",
     "why": "licence"
    }
   ],
@@ -181,32 +97,8 @@
     "why": "licence"
    },
    {
-    "url": "https://upload.wikimedia.org/wikipedia/commons/8/81/Reggio_Calabria_Teatro_Cilea_facciata.jpg",
-    "why": "not_a_photograph"
-   },
-   {
-    "url": "https://upload.wikimedia.org/wikipedia/commons/9/9a/Reggio_calabria_santuario_di_sant%27antonio.jpg",
-    "why": "not_a_photograph"
-   },
-   {
-    "url": "https://upload.wikimedia.org/wikipedia/commons/f/f4/Palazzo_Campanella.jpg",
-    "why": "not_a_photograph"
-   },
-   {
-    "url": "https://upload.wikimedia.org/wikipedia/commons/b/bc/Reggio_Calabria_Palazzo_Zani_Lungomare.jpg",
-    "why": "not_a_photograph"
-   },
-   {
     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0f/Reggio_Calabria_cartolina_Duomo_900.jpg/960px-Reggio_Calabria_cartolina_Duomo_900.jpg",
     "why": "not_a_photograph"
-   },
-   {
-    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/07/Ganzirri_%28Messina%29_01.jpg/960px-Ganzirri_%28Messina%29_01.jpg",
-    "why": "licence"
-   },
-   {
-    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b1/Ganzirri_%28Messina%29_02.jpg/960px-Ganzirri_%28Messina%29_02.jpg",
-    "why": "licence"
    }
   ],
   "LMP": [
@@ -218,10 +110,6 @@
   "PSR": [
    {
     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Scorcio_Basilica_dei_sette_dolori_pescara.jpg/500px-Scorcio_Basilica_dei_sette_dolori_pescara.jpg?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
-    "why": "licence"
-   },
-   {
-    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Scorcio_Basilica_dei_sette_dolori_pescara.jpg/960px-Scorcio_Basilica_dei_sette_dolori_pescara.jpg",
     "why": "licence"
    }
   ],
@@ -235,6 +123,62 @@
    {
     "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d2/Genoa_conference_1922.jpg/960px-Genoa_conference_1922.jpg",
     "why": "licence"
+   }
+  ],
+  "LMZ": [
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/c/ce/LameziaBastioneDiMalta.jpg?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "why": "licence"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/1/1f/Dracma_Terina_fronte.jpg?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "why": "licence"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/b/b2/PanoramaLamezia.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "why": "not_a_photograph"
+   }
+  ],
+  "OPO": [
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/8/8d/Oporto-S-Francisco-IPPAR1.jpg",
+    "why": "licence"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/ba/Igreja_da_Serra_do_Pilar_por_Rodrigo_Tetsuo_Argenton_%2802%29.jpg/500px-Igreja_da_Serra_do_Pilar_por_Rodrigo_Tetsuo_Argenton_%2802%29.jpg",
+    "why": "licence"
+   }
+  ],
+  "FAO": [
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/EstadioAlgarve.JPG/960px-EstadioAlgarve.JPG",
+    "why": "licence"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/GovernoCivilFaro.JPG/500px-GovernoCivilFaro.JPG",
+    "why": "licence"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/EstadioAlgarve.JPG/960px-EstadioAlgarve.JPG",
+    "why": "licence"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/20/Ilha_da_Culatra_1.JPG/960px-Ilha_da_Culatra_1.JPG",
+    "why": "not_a_photograph"
+   }
+  ],
+  "PDL": [
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f4/Lagoa_do_Fogo.jpg/960px-Lagoa_do_Fogo.jpg",
+    "why": "licence"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f4/Lagoa_do_Fogo.jpg/960px-Lagoa_do_Fogo.jpg",
+    "why": "licence"
+   },
+   {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/31/Seven_Cities_Lake_-_Azores_%28220320067%29.jpg/960px-Seven_Cities_Lake_-_Azores_%28220320067%29.jpg",
+    "why": "not_a_photograph"
    }
   ]
  }

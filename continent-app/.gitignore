@@ -32,3 +32,6 @@ public/reach/
 
 shots/
 scripts/ai/shots/
+
+# Local API cache for scripts/audit-content.mjs, not a deliverable.
+reports/.wikidata-cache.json

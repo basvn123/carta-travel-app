@@ -1,0 +1,617 @@
+{
+  "layer": "cycling",
+  "generated_at": "2026-09-16T17:13:32.436Z",
+  "wikidata_checked": false,
+  "items": 17200,
+  "items_flagged": 33,
+  "findings_total": 100,
+  "failure_modes": {
+    "no_name": 66,
+    "no_licence": 34
+  },
+  "severity": {
+    "high": 100
+  },
+  "findings": [
+    {
+      "id": "undefined",
+      "check": "no_name",
+      "severity": "high",
+      "message": "Route has neither a name nor a ref, so no title can be composed"
+    },
+    {
+      "id": "undefined",
+      "check": "no_licence",
+      "severity": "high",
+      "message": "Route carries neither licence nor source"
+    },
+    {
+      "id": "undefined",
+      "check": "no_name",
+      "severity": "high",
+      "message": "Route has neither a name nor a ref, so no title can be composed"
+    },
+    {
+      "id": "undefined",
+      "check": "no_licence",
+      "severity": "high",
+      "message": "Route carries neither licence nor source"
+    },
+    {
+      "id": "5933",
+      "check": "no_name",
+      "severity": "high",
+      "message": "Route has neither a name nor a ref, so no title can be composed"
+    },
+    {
+      "id": "16248",
+      "check": "no_name",
+      "severity": "high",
+      "message": "Route has neither a name nor a ref, so no title can be composed"
+    },
+    {
+      "id": "21506",
+      "check": "no_name",
+      "severity": "high",
+      "message": "Route has neither a name nor a ref, so no title can be composed"
+    },
+    {
+      "id": "19251",
+      "check": "no_name",
+      "severity": "high",
+      "message": "Route has neither a name nor a ref, so no title can be composed"
+    },
+    {
+      "id": "17280",
+      "check": "no_name",
+      "severity": "high",
+      "message": "Route has neither a name nor a ref, so no title can be composed"
+    },
+    {
+      "id": "undefined",
+      "check": "no_name",
+      "severity": "high",
+      "message": "Route has neither a name nor a ref, so no title can be composed"
+    },
+    {
+      "id": "undefined",
+      "check": "no_licence",
+      "severity": "high",
+      "message": "Route carries neither licence nor source"
+    },
+    {
+      "id": "undefined",
+      "check": "no_name",
+      "severity": "high",
+      "message": "Route has neither a name nor a ref, so no title can be composed"
+    },
+    {
+      "id": "undefined",
+      "check": "no_licence",
+      "severity": "high",
+      "message": "Route carries neither licence nor source"
+    },
+    {
+      "id": "undefined",
+      "check": "no_name",
+      "severity": "high",
+      "message": "Route has neither a name nor a ref, so no title can be composed"
+    },
+    {
+      "id": "undefined",
+      "check": "no_licence",
+      "severity": "high",
+      "message": "Route carries neither licence nor source"
+    },
+    {
+      "id": "undefined",
+      "check": "no_name",
+      "severity": "high",
+      "message": "Route has neither a name nor a ref, so no title can be composed"
+    },
+    {
+      "id": "undefined",
+      "check": "no_licence",
+      "severity": "high",
+      "message": "Route carries neither licence nor source"
+    },
+    {
+      "id": "undefined",
+      "check": "no_name",
+      "severity": "high",
+      "message": "Route has neither a name nor a ref, so no title can be composed"
+    },
+    {
+      "id": "undefined",
+      "check": "no_licence",
+      "severity": "high",
+      "message": "Route carries neither licence nor source"
+    },
+    {
+      "id": "undefined",
+      "check": "no_name",
+      "severity": "high",
+      "message": "Route has neither a name nor a ref, so no title can be composed"
+    },
+    {
+      "id": "undefined",
+      "check": "no_licence",
+      "severity": "high",
+      "message": "Route carries neither licence nor source"
+    },
+    {
+      "id": "undefined",
+      "check": "no_name",
+      "severity": "high",
+      "message": "Route has neither a name nor a ref, so no title can be composed"
+    },
+    {
+      "id": "undefined",
+      "check": "no_licence",
+      "severity": "high",
+      "message": "Route carries neither licence nor source"
+    },
+    {
+      "id": "undefined",
+      "check": "no_name",
+      "severity": "high",
+      "message": "Route has neither a name nor a ref, so no title can be composed"
+    },
+    {
+      "id": "undefined",
+      "check": "no_licence",
+      "severity": "high",
+      "message": "Route carries neither licence nor source"
+    },
+    {
+      "id": "undefined",
+      "check": "no_name",
+      "severity": "high",
+      "message": "Route has neither a name nor a ref, so no title can be composed"
+    },
+    {
+      "id": "undefined",
+      "check": "no_licence",
+      "severity": "high",
+      "message": "Route carries neither licence nor source"
+    },
+    {
+      "id": "undefined",
+      "check": "no_name",
+      "severity": "high",
+      "message": "Route has neither a name nor a ref, so no title can be composed"
+    },
+    {
+      "id": "undefined",
+      "check": "no_licence",
+      "severity": "high",
+      "message": "Route carries neither licence nor source"
+    },
+    {
+      "id": "undefined",
+      "check": "no_name",
+      "severity": "high",
+      "message": "Route has neither a name nor a ref, so no title can be composed"
+    },
+    {
+      "id": "undefined",
+      "check": "no_licence",
+      "severity": "high",
+      "message": "Route carries neither licence nor source"
+    },
+    {
+      "id": "undefined",
+      "check": "no_name",
+      "severity": "high",
+      "message": "Route has neither a name nor a ref, so no title can be composed"
+    },
+    {
+      "id": "undefined",
+      "check": "no_licence",
+      "severity": "high",
+      "message": "Route carries neither licence nor source"
+    },
+    {
+      "id": "48893",
+      "check": "no_name",
+      "severity": "high",
+      "message": "Route has neither a name nor a ref, so no title can be composed"
+    },
+    {
+      "id": "49019",
+      "check": "no_name",
+      "severity": "high",
+      "message": "Route has neither a name nor a ref, so no title can be composed"
+    },
+    {
+      "id": "49020",
+      "check": "no_name",
+      "severity": "high",
+      "message": "Route has neither a name nor a ref, so no title can be composed"
+    },
+    {
+      "id": "48068",
+      "check": "no_name",
+      "severity": "high",
+      "message": "Route has neither a name nor a ref, so no title can be composed"
+    },
+    {
+      "id": "49035",
+      "check": "no_name",
+      "severity": "high",
+      "message": "Route has neither a name nor a ref, so no title can be composed"
+    },
+    {
+      "id": "undefined",
+      "check": "no_name",
+      "severity": "high",
+      "message": "Route has neither a name nor a ref, so no title can be composed"
+    },
+    {
+      "id": "undefined",
+      "check": "no_licence",
+      "severity": "high",
+      "message": "Route carries neither licence nor source"
+    },
+    {
+      "id": "undefined",
+      "check": "no_name",
+      "severity": "high",
+      "message": "Route has neither a name nor a ref, so no title can be composed"
+    },
+    {
+      "id": "undefined",
+      "check": "no_licence",
+      "severity": "high",
+      "message": "Route carries neither licence nor source"
+    },
+    {
+      "id": "undefined",
+      "check": "no_name",
+      "severity": "high",
+      "message": "Route has neither a name nor a ref, so no title can be composed"
+    },
+    {
+      "id": "undefined",
+      "check": "no_licence",
+      "severity": "high",
+      "message": "Route carries neither licence nor source"
+    },
+    {
+      "id": "57760",
+      "check": "no_name",
+      "severity": "high",
+      "message": "Route has neither a name nor a ref, so no title can be composed"
+    },
+    {
+      "id": "57759",
+      "check": "no_name",
+      "severity": "high",
+      "message": "Route has neither a name nor a ref, so no title can be composed"
+    },
+    {
+      "id": "57756",
+      "check": "no_name",
+      "severity": "high",
+      "message": "Route has neither a name nor a ref, so no title can be composed"
+    },
+    {
+      "id": "57755",
+      "check": "no_name",
+      "severity": "high",
+      "message": "Route has neither a name nor a ref, so no title can be composed"
+    },
+    {
+      "id": "54877",
+      "check": "no_name",
+      "severity": "high",
+      "message": "Route has neither a name nor a ref, so no title can be composed"
+    },
+    {
+      "id": "61669",
+      "check": "no_name",
+      "severity": "high",
+      "message": "Route has neither a name nor a ref, so no title can be composed"
+    },
+    {
+      "id": "61665",
+      "check": "no_name",
+      "severity": "high",
+      "message": "Route has neither a name nor a ref, so no title can be composed"
+    },
+    {
+      "id": "61666",
+      "check": "no_name",
+      "severity": "high",
+      "message": "Route has neither a name nor a ref, so no title can be composed"
+    },
+    {
+      "id": "61661",
+      "check": "no_name",
+      "severity": "high",
+      "message": "Route has neither a name nor a ref, so no title can be composed"
+    },
+    {
+      "id": "61667",
+      "check": "no_name",
+      "severity": "high",
+      "message": "Route has neither a name nor a ref, so no title can be composed"
+    },
+    {
+      "id": "61660",
+      "check": "no_name",
+      "severity": "high",
+      "message": "Route has neither a name nor a ref, so no title can be composed"
+    },
+    {
+      "id": "61662",
+      "check": "no_name",
+      "severity": "high",
+      "message": "Route has neither a name nor a ref, so no title can be composed"
+    },
+    {
+      "id": "61670",
+      "check": "no_name",
+      "severity": "high",
+      "message": "Route has neither a name nor a ref, so no title can be composed"
+    },
+    {
+      "id": "61663",
+      "check": "no_name",
+      "severity": "high",
+      "message": "Route has neither a name nor a ref, so no title can be composed"
+    },
+    {
+      "id": "61872",
+      "check": "no_name",
+      "severity": "high",
+      "message": "Route has neither a name nor a ref, so no title can be composed"
+    },
+    {
+      "id": "61664",
+      "check": "no_name",
+      "severity": "high",
+      "message": "Route has neither a name nor a ref, so no title can be composed"
+    },
+    {
+      "id": "61672",
+      "check": "no_name",
+      "severity": "high",
+      "message": "Route has neither a name nor a ref, so no title can be composed"
+    },
+    {
+      "id": "61673",
+      "check": "no_name",
+      "severity": "high",
+      "message": "Route has neither a name nor a ref, so no title can be composed"
+    },
+    {
+      "id": "4168",
+      "check": "no_name",
+      "severity": "high",
+      "message": "Route has neither a name nor a ref, so no title can be composed"
+    },
+    {
+      "id": "4173",
+      "check": "no_name",
+      "severity": "high",
+      "message": "Route has neither a name nor a ref, so no title can be composed"
+    },
+    {
+      "id": "4172",
+      "check": "no_name",
+      "severity": "high",
+      "message": "Route has neither a name nor a ref, so no title can be composed"
+    },
+    {
+      "id": "63583",
+      "check": "no_name",
+      "severity": "high",
+      "message": "Route has neither a name nor a ref, so no title can be composed"
+    },
+    {
+      "id": "undefined",
+      "check": "no_name",
+      "severity": "high",
+      "message": "Route has neither a name nor a ref, so no title can be composed"
+    },
+    {
+      "id": "undefined",
+      "check": "no_licence",
+      "severity": "high",
+      "message": "Route carries neither licence nor source"
+    },
+    {
+      "id": "undefined",
+      "check": "no_name",
+      "severity": "high",
+      "message": "Route has neither a name nor a ref, so no title can be composed"
+    },
+    {
+      "id": "undefined",
+      "check": "no_licence",
+      "severity": "high",
+      "message": "Route carries neither licence nor source"
+    },
+    {
+      "id": "undefined",
+      "check": "no_name",
+      "severity": "high",
+      "message": "Route has neither a name nor a ref, so no title can be composed"
+    },
+    {
+      "id": "undefined",
+      "check": "no_licence",
+      "severity": "high",
+      "message": "Route carries neither licence nor source"
+    },
+    {
+      "id": "undefined",
+      "check": "no_name",
+      "severity": "high",
+      "message": "Route has neither a name nor a ref, so no title can be composed"
+    },
+    {
+      "id": "undefined",
+      "check": "no_licence",
+      "severity": "high",
+      "message": "Route carries neither licence nor source"
+    },
+    {
+      "id": "undefined",
+      "check": "no_name",
+      "severity": "high",
+      "message": "Route has neither a name nor a ref, so no title can be composed"
+    },
+    {
+      "id": "undefined",
+      "check": "no_licence",
+      "severity": "high",
+      "message": "Route carries neither licence nor source"
+    },
+    {
+      "id": "undefined",
+      "check": "no_name",
+      "severity": "high",
+      "message": "Route has neither a name nor a ref, so no title can be composed"
+    },
+    {
+      "id": "undefined",
+      "check": "no_licence",
+      "severity": "high",
+      "message": "Route carries neither licence nor source"
+    },
+    {
+      "id": "undefined",
+      "check": "no_name",
+      "severity": "high",
+      "message": "Route has neither a name nor a ref, so no title can be composed"
+    },
+    {
+      "id": "undefined",
+      "check": "no_licence",
+      "severity": "high",
+      "message": "Route carries neither licence nor source"
+    },
+    {
+      "id": "undefined",
+      "check": "no_name",
+      "severity": "high",
+      "message": "Route has neither a name nor a ref, so no title can be composed"
+    },
+    {
+      "id": "undefined",
+      "check": "no_licence",
+      "severity": "high",
+      "message": "Route carries neither licence nor source"
+    },
+    {
+      "id": "undefined",
+      "check": "no_name",
+      "severity": "high",
+      "message": "Route has neither a name nor a ref, so no title can be composed"
+    },
+    {
+      "id": "undefined",
+      "check": "no_licence",
+      "severity": "high",
+      "message": "Route carries neither licence nor source"
+    },
+    {
+      "id": "undefined",
+      "check": "no_name",
+      "severity": "high",
+      "message": "Route has neither a name nor a ref, so no title can be composed"
+    },
+    {
+      "id": "undefined",
+      "check": "no_licence",
+      "severity": "high",
+      "message": "Route carries neither licence nor source"
+    },
+    {
+      "id": "undefined",
+      "check": "no_name",
+      "severity": "high",
+      "message": "Route has neither a name nor a ref, so no title can be composed"
+    },
+    {
+      "id": "undefined",
+      "check": "no_licence",
+      "severity": "high",
+      "message": "Route carries neither licence nor source"
+    },
+    {
+      "id": "undefined",
+      "check": "no_name",
+      "severity": "high",
+      "message": "Route has neither a name nor a ref, so no title can be composed"
+    },
+    {
+      "id": "undefined",
+      "check": "no_licence",
+      "severity": "high",
+      "message": "Route carries neither licence nor source"
+    },
+    {
+      "id": "undefined",
+      "check": "no_name",
+      "severity": "high",
+      "message": "Route has neither a name nor a ref, so no title can be composed"
+    },
+    {
+      "id": "undefined",
+      "check": "no_licence",
+      "severity": "high",
+      "message": "Route carries neither licence nor source"
+    },
+    {
+      "id": "undefined",
+      "check": "no_name",
+      "severity": "high",
+      "message": "Route has neither a name nor a ref, so no title can be composed"
+    },
+    {
+      "id": "undefined",
+      "check": "no_licence",
+      "severity": "high",
+      "message": "Route carries neither licence nor source"
+    },
+    {
+      "id": "undefined",
+      "check": "no_name",
+      "severity": "high",
+      "message": "Route has neither a name nor a ref, so no title can be composed"
+    },
+    {
+      "id": "undefined",
+      "check": "no_licence",
+      "severity": "high",
+      "message": "Route carries neither licence nor source"
+    },
+    {
+      "id": "undefined",
+      "check": "no_name",
+      "severity": "high",
+      "message": "Route has neither a name nor a ref, so no title can be composed"
+    },
+    {
+      "id": "undefined",
+      "check": "no_licence",
+      "severity": "high",
+      "message": "Route carries neither licence nor source"
+    },
+    {
+      "id": "undefined",
+      "check": "no_name",
+      "severity": "high",
+      "message": "Route has neither a name nor a ref, so no title can be composed"
+    },
+    {
+      "id": "undefined",
+      "check": "no_licence",
+      "severity": "high",
+      "message": "Route carries neither licence nor source"
+    }
+  ]
+}

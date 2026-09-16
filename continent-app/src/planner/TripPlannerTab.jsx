@@ -283,7 +283,7 @@ function ShortlistStops({ rows, onPick }) {
   );
 }
 
-export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, openPlanId, onOpenPlanConsumed, origin, onChangeOrigin, onPlanDay, openSharedTrip, onSharedTripConsumed, stayTier = 'home', lifestyle = null, onOpenLifestyle = null, favorites = null }) {
+export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, authConfigured, onRequestAuth, openPlanId, onOpenPlanConsumed, origin, onChangeOrigin, onPlanDay, openSharedTrip, onSharedTripConsumed, stayTier = 'home', lifestyle = null, onOpenLifestyle = null, favorites = null }) {
   const { t } = useI18n();
   const paywall = usePaywall();
   const countryInsights = useCountryInsights();
@@ -1232,4 +1232,4 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, open
       )}
     </div>
   );
-}
+});

@@ -3266,6 +3266,7 @@ export const nl = {
   'mtn.factViewNote': 'zichtbaar land binnen 30 km, gemeten op het Copernicus hoogtemodel',
   'mtn.factDifficulty': 'Makkelijkste weg omhoog',
   'mtn.factProminenceDem': 'berekend op het Copernicus hoogtemodel',
+  'mtn.factProminenceInsular': 'afgeleid: het hoogste punt van een eiland rijst recht uit zee op',
   'mtn.factProminenceDemMin': 'minstens zoveel, berekend op het Copernicus hoogtemodel',
   'mtn.seasonHead': 'Wanneer te gaan',
   'mtn.seasonEstNote': 'Uit een maandelijks klimaatgemiddelde op de hoogte van deze top, niet uit een weersverwachting of een liftkalender.',

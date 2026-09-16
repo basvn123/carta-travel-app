@@ -3266,6 +3266,7 @@ export const de = {
   'mtn.factViewNote': 'sichtbares Land im Umkreis von 30 km, gemessen am Copernicus Höhenmodell',
   'mtn.factDifficulty': 'Leichtester Anstieg',
   'mtn.factProminenceDem': 'aus dem Copernicus Höhenmodell berechnet',
+  'mtn.factProminenceInsular': 'abgeleitet: der hoechste Punkt einer Insel steigt direkt aus dem Meer auf',
   'mtn.factProminenceDemMin': 'mindestens so viel, aus dem Copernicus Höhenmodell berechnet',
   'mtn.seasonHead': 'Wann hin',
   'mtn.seasonEstNote': 'Aus einem monatlichen Klimamittel auf der Höhe dieses Gipfels, nicht aus einer Vorhersage und nicht aus einem Bahnfahrplan.',

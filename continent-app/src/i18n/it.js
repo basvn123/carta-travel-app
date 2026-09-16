@@ -3266,6 +3266,7 @@ export const it = {
   'mtn.factViewNote': 'territorio visibile entro 30 km, misurato sul modello di elevazione Copernicus',
   'mtn.factDifficulty': 'Via più facile',
   'mtn.factProminenceDem': 'calcolato sul modello di elevazione Copernicus',
+  'mtn.factProminenceInsular': "derivato: il punto piu alto di un'isola si eleva direttamente dal mare",
   'mtn.factProminenceDemMin': 'almeno questo, calcolato sul modello di elevazione Copernicus',
   'mtn.seasonHead': 'Quando andare',
   'mtn.seasonEstNote': 'Da una normale climatica mensile alla quota della cima, non da una previsione né dal calendario di un impianto.',

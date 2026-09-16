@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { useFocusTrap } from '../hooks/useFocusTrap.js';
 import { useI18n } from '../i18n/index.jsx';
 import { FavStar } from '../components/FavStar.jsx';
 import { NearbyOutdoors } from './NearbyOutdoors.jsx';
@@ -87,14 +88,14 @@ export function BeachPage({ beach, countryName, onClose, onSelectDest, model, on
   const [showParts, setShowParts] = useState(false);
   const [toast, setToast] = useState(null);
   const scrollEl = useRef(null);
+  const pageRef = useRef(null);
+  const backRef = useRef(null);
   const titleEl = useRef(null);
   const [titleGone, setTitleGone] = useState(false);
 
-  useEffect(() => {
-    const onKey = (e) => { if (e.key === 'Escape') onClose(); };
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
-  }, [onClose]);
+  // Focus management for the dialog: initial focus, a Tab cycle and focus
+  // restoration, not just Escape. See hooks/useFocusTrap.js.
+  useFocusTrap(pageRef, onClose, { initialFocusRef: backRef });
 
   useEffect(() => { setShot(0); scrollEl.current?.scrollTo?.(0, 0); }, [beach?.id]);
 
@@ -211,9 +212,9 @@ export function BeachPage({ beach, countryName, onClose, onSelectDest, model, on
   ].filter(Boolean);
 
   return (
-    <div className="tpage bpage" role="dialog" aria-modal="true" aria-label={beach.name}>
+    <div className="tpage bpage" role="dialog" aria-modal="true" aria-label={beach.name} ref={pageRef}>
       <div className="tpage-bar">
-        <button type="button" className="tpage-back" onClick={onClose}>
+        <button type="button" className="tpage-back" onClick={onClose} ref={backRef}>
           <ArrowLeftIcon size={15} />
           <span>{t('beach.back')}</span>
         </button>

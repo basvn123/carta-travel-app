@@ -186,6 +186,12 @@ CARD_KEEP = (
     # own credit lives on the trail detail file, which is where the
     # existing trails list sends a reader too.)
     "attribution_text", "license", "source",
+    # And the cycling layer credits differently again: its cards carry the
+    # licence and the source as the short keys `lic` and `src` (route_card in
+    # pipeline/cycling/export_cycling.py), not `license`/`source`. Without
+    # these two the cycling rows were the only cards on a region page with no
+    # licence behind them, on every region that publishes one.
+    "lic", "src",
 )
 IMAGE_KEEP = ("u", "by", "lic", "licUrl", "page", "ev")
 

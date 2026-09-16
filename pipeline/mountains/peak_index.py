@@ -564,10 +564,47 @@ def prominence_of(peak):
     # The Faroes rule from v1: a summit cannot rise further above its own col
     # than it rises above the sea, so a prominence over its elevation is a
     # broken record rather than a measurement.
-    if src_prom is not None and (ele is None or src_prom <= ele + 50):
+    #
+    # The rule used to allow 50 m of slack for survey noise, and that slack was
+    # the whole bug: it admitted five impossible rows that all sat just inside
+    # it. Etna is the clearest. Wikidata carries five competing elevations for
+    # it (3357, 3345, 3290, 3274, 3403) because the summit height changes with
+    # each eruption, and no prominence at all; the 3403 leaked into the
+    # prominence field and landed 46 m above the published 3357 m elevation,
+    # inside the tolerance. Sa Talaiassa, Rytterknaegten and Amerongse Berg
+    # failed the same way by 10, 10 and 7 m.
+    #
+    # Prominence can equal elevation (an island high point rises from the sea)
+    # but can never exceed it, so the comparison is exact. Measured on the
+    # current wire this drops the prominence from 6 rows of 2,170 and changes
+    # nothing else.
+    if src_prom is not None and (ele is None or src_prom <= ele):
         return float(src_prom), "src"
+    # The computed value gets the same physical test as the published one. The
+    # DEM search is windowed, so it can be wrong in both directions: too low
+    # when the window closes before the real col (Etna, whose 3,357 m cone
+    # came back as 83 m of prominence), too high where the window edge or a
+    # void reads as a deeper saddle than exists (Rytterknaegten, Amerongse
+    # Berg and Mali i Veles all came back above their own summits).
+    #
+    # A prominence above the elevation is impossible whatever computed it, so
+    # it is dropped rather than published. Clamping to the elevation instead
+    # would turn every one of these into a silent claim that the peak is an
+    # island high point, which is a worse error than saying nothing.
+    # An island or archipelago high point falls to the sea on every side, so
+    # its prominence IS its elevation. Wikidata says which high points are
+    # insular (P610 on something that is an island or archipelago), harvested
+    # as `highpoint_insular`, so this is read rather than hand listed.
+    #
+    # It matters because the DEM search is windowed and can close before it
+    # reaches the real col: Etna, the 3,357 m high point of Sicily, came back
+    # with 83 m of prominence. A figure that wrong is worse than the derived
+    # one, and here the derivation is exact rather than an estimate.
+    if peak.get("highpoint_insular") and ele is not None:
+        return float(ele), "insular"
+
     dem = terrain_of(peak).get("prom_dem")
-    if dem is not None:
+    if dem is not None and (ele is None or dem <= ele):
         return float(dem), ("dem_min" if terrain_of(peak).get("prom_capped")
                             else "dem")
     return None, ""

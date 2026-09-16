@@ -152,6 +152,75 @@ def landmarks_as_items(landmarks):
     return out
 
 
+def base_slug(dest):
+    """country/city, the address a reader and a search engine see."""
+    return (slugify(dest.get("country", "")) + "/"
+            + slugify(dest.get("city", "")))
+
+
+def resolve_slugs(dests):
+    """dest id -> a slug unique across the whole catalogue.
+
+    country/city is not unique and eleven slugs collided, which is both a
+    correctness bug (two files answering to one URL, so one of them is
+    unreachable) and the thing blocking real path routing.
+
+    Four of the eleven are genuinely different places that share a name:
+    two Rothwells (Leeds and Northamptonshire), two Montreals (Yonne and
+    Gers), two Charroux (Vienne and Allier) and Castel del Monte (the
+    Abruzzo village and the Apulian castle). Deleting either member of
+    those pairs would drop a real destination, so the slug has to carry
+    the difference instead.
+
+    The rule, in this order, so it is stable across runs:
+      1. the better dossier keeps the clean slug (higher score, then more
+         gallery images, then the lexically smaller id, all deterministic)
+      2. every other claimant gets a suffix from its own id
+
+    A slug that does not collide is never touched, so every URL that
+    already works keeps working.
+    """
+    by_slug = {}
+    for did, d in dests.items():
+        by_slug.setdefault(base_slug(d), []).append(did)
+
+    out = {}
+    for slug, ids in by_slug.items():
+        if len(ids) == 1:
+            out[ids[0]] = slug
+            continue
+
+        def rank(did):
+            d = dests[did]
+            return (-(d.get("score") or 0),
+                    -len(d.get("images") or ()),
+                    did)
+
+        ordered = sorted(ids, key=rank)
+        out[ordered[0]] = slug
+        for did in ordered[1:]:
+            # The id already carries the distinguishing token the catalogue
+            # gave it ("gem:rothwell-gb" against "gem:rothwell"), so the
+            # suffix is derived rather than invented.
+            tail = slugify(did.split(":")[-1])
+            head = slugify(dests[did].get("city", ""))
+            if tail.startswith(head):
+                # "gem:rothwell-gb" over the city "rothwell" leaves "gb";
+                # "gem:lampedusa" over "lampedusa" leaves nothing, and
+                # repeating the name ("lampedusa-lampedusa") is worse than
+                # numbering it.
+                suffix = tail[len(head):].strip("-")
+            else:
+                suffix = tail
+            out[did] = f"{slug}-{suffix}" if suffix else f"{slug}-2"
+    return out
+
+
+# The far bound on a highlight. See the gate in resolve_highlights for why it
+# is this loose: regional features legitimately sit far from the town.
+HIGHLIGHT_MAX_KM = 200
+
+
 def resolve_highlights(dest, items, poi_wd, cap=12, listed=()):
     """Dedupe, retype, rank. Returns (highlights, n_merged).
 
@@ -173,6 +242,22 @@ def resolve_highlights(dest, items, poi_wd, cap=12, listed=()):
                 it.get("lon"), (int, float)):
             continue  # gate: an item with no coordinate cannot be mapped
         if is_self_reference(it.get("name") or "", self_name):
+            continue
+        # A highlight of a town has to BE near the town. Distance was computed
+        # and published as dist_km but never bounded, so a name that resolved
+        # to the wrong place stayed on the page wearing its own error: Gouwsluis
+        # shipped the Temple of Taffeh 3,970 km away (the temple stands in
+        # Leiden, but the record keeps its original Egyptian coordinates) and
+        # Levoca shipped a "Prielom Hornadu" 1,274 km away in Ukraine.
+        #
+        # The bound is generous on purpose. A genuine highlight can sit well
+        # outside the 20 km `around` radius when it is a range or a canal that
+        # the town sits on (the Massif Central, 87 km from Clermont-Ferrand, is
+        # correct), so this cuts only the resolutions that are wrong by an
+        # order of magnitude rather than trimming the legitimate long tail.
+        if haversine_km(dest.get("city_lat", dest["lat"]),
+                        dest.get("city_lon", dest["lon"]),
+                        it["lat"], it["lon"]) > HIGHLIGHT_MAX_KM:
             continue
         rows.append(it)
     norms = [norm_name(it.get("name", "")) for it in rows]
@@ -386,6 +471,20 @@ def compose_gallery(dest, highlights, nearby, tasl, refusals, target=8,
         if c.get("caption"):
             img["caption"] = c["caption"]
         attach_tasl(img, tasl, refusals)
+        # And ACT on that verdict. attach_tasl has always computed ok_print and
+        # recorded a refusal, but nothing ever dropped the image, so a file with
+        # no licence at all, or an attribution-required licence naming nobody,
+        # still reached the gallery: 16,194 of the former and about 900 of the
+        # latter on the 2026-09-16 wire. Neither the page nor the PDF reads
+        # ok_print, so the flag protected nothing.
+        #
+        # This is the rule the photo and cycling layers already gate on
+        # (photos/credit.owes_credit, and the same framing): a missing credit
+        # should cost US a picture, never a reader a false notice. A dossier
+        # that loses photographs here still publishes; compose_gallery is
+        # already allowed to return fewer than `target`.
+        if not img.get("ok_print"):
+            continue
         # Commons answers 400 to a thumbnail wider than the original, so the
         # address is settled only once TASL has told us how wide that is.
         img["url"] = direct_commons_url(c["url"], 960, img.get("w"))
@@ -1444,8 +1543,14 @@ def build_one(dest, ctx, refusal_log):
     for h in highlights:
         if h.get("image"):
             attach_tasl(h["image"], ctx["tasl"], refusals)
-            if not image_ok(h["image"]["url"], h["image"].get("w"),
-                            h["image"].get("h")):
+            # The same licence gate the gallery now applies. A highlight that
+            # loses its picture keeps its name, coordinates and fact, so it
+            # still earns its place on the page; an uncredited photograph on it
+            # would be the false notice the rule exists to prevent.
+            if not h["image"].get("ok_print"):
+                h.pop("image")
+            elif not image_ok(h["image"]["url"], h["image"].get("w"),
+                              h["image"].get("h")):
                 h.pop("image")
             else:
                 h["image"]["url"] = direct_commons_url(
@@ -1596,7 +1701,7 @@ def build_one(dest, ctx, refusal_log):
 
     body = {
         "id": did,
-        "slug": slugify(dest.get("country", "")) + "/" + slugify(dest.get("city", "")),
+        "slug": (ctx.get("slugs") or {}).get(did) or base_slug(dest),
         "schema": SCHEMA,
         "place": {
             "name": dest.get("city"), "country": dest.get("country"),
@@ -1639,6 +1744,7 @@ def main():
 
     ctx = load_context()
     dests = ctx["dests"]
+    ctx["slugs"] = resolve_slugs(dests)
     todo = []
     for did, d in dests.items():
         if args.only and did != args.only:
