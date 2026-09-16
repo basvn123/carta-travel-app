@@ -20464,6 +20464,14 @@ button.ai-sched-main:focus-visible {
   align-items: flex-end;
   gap: 10px;
   padding: 10px 12px;
+  /* The overlay is absolutely positioned, so nothing was ever stopping it
+     growing past the top of its own card: a trail card is 109px at phone
+     width and the overlay reached 177px, which is how the name ended up
+     sitting above the picture it belongs to. Bounding it to the card makes
+     the card the authority on its own height, and what will not fit is
+     clipped at the top, away from the name on the bottom row. */
+  max-height: 100%;
+  overflow: hidden;
 }
 .places-card-main { flex: 1; min-width: 0; }
 .places-card-name {
@@ -20486,16 +20494,22 @@ button.ai-sched-main:focus-visible {
   font-size: 11.5px;
   color: rgba(255, 255, 255, 0.88);
 }
+/* One row of measured figures, never two. "16.4 km 7.8 h +985 m" wrapping to
+   a second line was the other half of the overflow, and a ragged second line
+   of numbers reads as a different card. Mono and tabular because these are
+   measurements, per the mono rule. */
 .places-card-facts {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   gap: 4px 10px;
   margin-top: 3px;
   font-family: var(--mono);
   font-size: 11px;
   color: rgba(255, 255, 255, 0.92);
   font-variant-numeric: tabular-nums;
+  overflow: hidden;
 }
+.places-card-facts > * { flex: none; }
 .places-card-kind {
   display: inline-block;
   margin-top: 6px;
@@ -21683,9 +21697,20 @@ button.ai-sched-main:focus-visible {
 /* The measured facts as one bordered instrument. A 1px grid gap over a hairline
    ground draws the dividers, so cells stay even however many facts a route has
    and no nth-child arithmetic decides where a border goes. */
+/* A route with seven facts, which is the ordinary case on a hike (distance,
+   time, ascent, descent, high point, difficulty, shape), ended on a row of
+   one with two empty cells beside it. Those dead cells read as missing data
+   on a page whose whole job is measured fact, and auto-fit does not fix it:
+   auto-fit collapses EMPTY TRACKS, and a short last row has no empty track,
+   only unfilled cells in a full one.
+   Flex does what is actually wanted. Every cell has the same basis and grows
+   to share the slack, so a last row of one or two stretches across the width
+   instead of leaving holes, at every count and every viewport. The 1px gap
+   over a hairline ground still draws the dividers, so no nth-child
+   arithmetic decides where a border goes. */
 .tpage-facts {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  display: flex;
+  flex-wrap: wrap;
   gap: 1px;
   margin-top: 14px;
   border: 1px solid var(--rule);
@@ -21693,8 +21718,9 @@ button.ai-sched-main:focus-visible {
   background: var(--rule-soft);
   overflow: hidden;
 }
-@media (min-width: 560px) {
-  .tpage-facts { grid-template-columns: repeat(auto-fit, minmax(96px, 1fr)); }
+.tpage-facts > * {
+  flex: 1 1 92px;
+  min-width: 0;
 }
 .tpage-fact {
   padding: 9px 12px 10px;
@@ -21998,12 +22024,33 @@ button.ai-sched-main:focus-visible {
 .places-loopchip { margin-left: 4px; }
 
 /* Kind chips on a trip card sit on one line, so "Day hike" and "Loop"
-   read as one statement about the walk rather than as a stack. */
+   read as one statement about the walk rather than as a stack.
+   `wrap` was the lie in that sentence: with a kind, a loop and two
+   highlights the row wrapped to three, four and five lines inside a 109px
+   card, pushed the name up out of its own box and clipped it mid-word. The
+   overlay measured 121 to 177px in a 109px card at 375px wide, which is the
+   collision. One line, and what does not fit is dropped rather than stacked:
+   a chip nobody can read is not information, and the page behind the card
+   carries the full list. */
 .places-card-kinds {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   align-items: center;
   gap: 5px;
+  overflow: hidden;
+  /* Chips are ordered kind, loop, highlights, so what falls off the end is
+     always the least load-bearing. flex: none stops the first chip being
+     squeezed to a sliver to make room for one that will be clipped anyway.
+     A chip is clipped at its own edge rather than mid-word: a lone "L" or
+     "S" hanging off the end reads as a rendering fault, where a row that
+     simply stops reads as a row that ran out of space. mask does the
+     clipping so the last visible chip fades instead of being guillotined. */
+}
+.places-card-kinds > * { flex: none; }
+@supports (mask-image: linear-gradient(to right, #000, transparent)) {
+  .places-card-kinds {
+    mask-image: linear-gradient(to right, #000 calc(100% - 18px), transparent 100%);
+  }
 }
 .places-card-loop {
   display: inline-flex;

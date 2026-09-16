@@ -51,6 +51,7 @@ import sys
 from collections import Counter, defaultdict
 from datetime import datetime, timezone
 from pathlib import Path
+from urllib.parse import unquote, urlsplit
 
 from psycopg.types.json import Jsonb
 
@@ -77,13 +78,74 @@ else:
 
 TRAIL_CARD_AR = 9 / 4
 
+# Photographs the card must never lead with, from the audit in
+# continent-app/scripts/audit-trail-photos.mjs. Every one is a real photograph
+# taken at the trail of something that is not the trail: a trailhead sign, a
+# waymark on a post, the car park, a locomotive passing the route, or a
+# stitched panorama that arrives in a 9/4 card as a sliver of its middle.
+#
+# Keyed on the COMMONS FILE, not the trail id the audit also records. The same
+# signboard is filed against several stages of the same long route, so an
+# id-keyed drop would take it off one card and leave it on the next; a file
+# that is not a view of a walk is not a view of any walk.
+#
+# Read at export time rather than applied to the wire by hand, because the
+# wire is generated and a hand edit there is erased by the next export. A
+# missing patch is not an error: the file is a refinement, and an export on a
+# machine that has not run the audit should still produce a wire.
+PHOTO_PATCH = ROOT / "data" / "reports" / "trail_photo_patch.json"
+
+
+def _rejected_files():
+    """Commons file names the audit rejected, unquoted for comparison."""
+    try:
+        with open(PHOTO_PATCH, encoding="utf-8") as fh:
+            patch = json.load(fh)
+    except FileNotFoundError:
+        return set()
+    except (OSError, ValueError) as err:
+        print(f"  ! trail photo patch unreadable, keeping every photo: {err}")
+        return set()
+    return {unquote(row["file"]) for row in patch.get("drop", []) if row.get("file")}
+
+
+REJECTED_PHOTOS = _rejected_files()
+
+
+def _file_of(url):
+    """The Commons file a URL points at, thumb or original alike.
+
+    Thumb URLs repeat the name twice (.../thumb/5/56/N.jpg/960px-N.jpg); the
+    stable identity is the segment before the px- variant. Mirrors
+    file_title() in pipeline/images/checks.py and fileTitle() in the audit."""
+    parts = [p for p in urlsplit(str(url or "")).path.split("/") if p]
+    if not parts:
+        return ""
+    if "thumb" in parts:
+        i = parts.index("thumb")
+        if len(parts) >= i + 4:
+            return unquote(parts[i + 3])
+    return unquote(parts[-1])
+
 
 def card_images(trip):
     """The trip's ranked photographs, with a card-shaped one leading.
 
     Rank order is preserved for everything else, and no picture is dropped:
-    this only decides which of them the card crops."""
-    return lake_images.lead_by_fit(list(trip.get("images") or []),
+    this only decides which of them the card crops.
+
+    Rejected files are held back from the LEAD only. They stay in the gallery
+    on the detail page, where a photograph of the waymark is a useful thing to
+    have seen before you go looking for it, and where nothing is cropped. If
+    every ranked photograph is rejected the trip leads with none, and
+    TrailPicture in DestinationsTab.jsx draws the route's own geometry
+    instead: a drawn line tells a walker the shape of the walk, which a
+    picture of a signpost does not."""
+    rows = list(trip.get("images") or [])
+    if REJECTED_PHOTOS:
+        keep = [i for i in rows if _file_of(i.get("u")) not in REJECTED_PHOTOS]
+        rows = keep
+    return lake_images.lead_by_fit(rows,
                                    lambda i: (i.get("w"), i.get("h")),
                                    frame_ar=TRAIL_CARD_AR)
 
