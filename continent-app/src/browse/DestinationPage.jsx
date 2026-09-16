@@ -1108,6 +1108,7 @@ export function DestinationPage({
                   )}
                 </ul>
                 <a className="xp-further-btn dpark-search" href={parkSearch} target="_blank" rel="noreferrer noopener"><ParkingIcon size={14} /><span>{t('dest.parkSearch')}</span></a>
+                <p className="xp-source">{t('dest.parkSource')}</p>
               </Fold>
             )}
 

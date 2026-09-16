@@ -1,13 +1,13 @@
 {
- "generated_at": "2026-09-14T11:07:50Z",
+ "generated_at": "2026-09-16T07:17:10Z",
  "built": 3868,
- "written": 1470,
- "avg_gallery": 7.14,
- "avg_gallery_print": 4.98,
+ "written": 2017,
+ "avg_gallery": 7.15,
+ "avg_gallery_print": 4.99,
  "avg_highlights": 11.87,
  "merged_duplicates": 12612,
  "avg_do": 3.79,
- "n_with_licence_refusals": 2865,
+ "n_with_licence_refusals": 2867,
  "refusals_sample": {
   "CRL": [
    {
