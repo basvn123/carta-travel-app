@@ -14,14 +14,25 @@ export function tierClass(rating) {
   return `rt-${rating?.tier ?? 0}`;
 }
 
+/**
+ * The score, as a rating rather than a dot. The chip carries the tier's own
+ * mark (the same filled/outline/pale vocabulary the legend teaches, and the
+ * gem's teal where one is awarded) beside the number, so the tier is legible
+ * at card size without reading the seal on the photo.
+ */
 export function ScoreChip({ rating, size = 'sm' }) {
   if (!rating || rating.score == null) return null;
   const label = rating.label
     ? `${rating.score}/10 - ${rating.label}`
     : `Rated ${rating.score}/10`;
+  const tier = rating.tier ?? 0;
+  const mark = rating.hidden_gem ? 'gem' : tier;
   return (
     <span className={`score-chip ${tierClass(rating)} ${size}`} title={label} aria-label={label}>
-      {rating.score.toFixed(1)}
+      {(tier > 0 || rating.hidden_gem) && (
+        <span className={`score-chip-mark tl-${mark}`} aria-hidden="true" />
+      )}
+      <span className="score-chip-n">{rating.score.toFixed(1)}</span>
     </span>
   );
 }

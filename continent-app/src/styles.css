@@ -68,6 +68,21 @@
   --gem-ink:      #2c6e63;
   --gem-bg:       #d9eae5;
 
+  /* Spacing scale (P4.3). The stylesheet grew with hand-tuned px literals and
+     no rhythm, which is why the phone wastes a screen before the first card.
+     New and touched rules take these; nothing is rewritten wholesale. */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 22px;
+  --space-6: 30px;
+  --space-7: 40px;
+  --space-8: 56px;
+  /* The floor a finger needs. Icon-only controls get this as a minimum box
+     even where the glyph inside is 15px (WCAG 2.5.5). */
+  --tap: 44px;
+
   /* Type */
   --display:      'Fraunces', 'Iowan Old Style', Georgia, serif;
   --ui:           'Plus Jakarta Sans', 'Inter Tight', system-ui, -apple-system, sans-serif;
@@ -13249,13 +13264,34 @@ input, select {
 }
 /* Heavier top padding optically centres the digits: JetBrains Mono sits high
    in a line-height:1 box, which otherwise leaves a gap under the number. */
-.score-chip.xs { font-size: 9.5px; padding: 3px 4px 2px; }
-.score-chip.sm { font-size: 11px; padding: 4px 5px 3px; }
-.score-chip.lg { font-size: 15px; padding: 6px 8px 4px; border-radius: 6px; }
+.score-chip.xs { font-size: 9.5px; padding: 3px 5px 2px; gap: 3px; border-radius: 999px; }
+.score-chip.sm { font-size: 11.5px; padding: 4px 7px 3px; gap: 4px; border-radius: 999px; }
+.score-chip.lg { font-size: 15px; padding: 6px 10px 4px; gap: 5px; border-radius: 999px; }
 .score-chip.rt-3 { background: var(--rate); color: var(--paper); }
 .score-chip.rt-2 { background: var(--rate-bg); color: var(--rate); }
 .score-chip.rt-1 { background: var(--paper-dim); color: var(--ink-soft); border: 1px solid var(--rule); }
 .score-chip.rt-0 { background: transparent; color: var(--ink-mute); border: 1px solid var(--rule); }
+.score-chip-n { display: inline-block; }
+/* The tier's own mark, the same one the legend teaches: filled for the top
+   tier, ringed for a detour, pale for a visit, teal for a gem. Inside a
+   filled chip it inverts to the chip's paper, since ochre on ochre is a
+   hole rather than a mark. */
+.score-chip-mark {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  flex: none;
+  background: currentColor;
+}
+.score-chip.lg .score-chip-mark { width: 6px; height: 6px; }
+.score-chip .score-chip-mark.tl-2 { background: var(--rate); }
+.score-chip .score-chip-mark.tl-1 { background: var(--rate-soft); }
+.score-chip .score-chip-mark.tl-gem { background: var(--gem-ink); }
+.score-chip.rt-3 .score-chip-mark { background: var(--paper); }
+.score-chip.rt-3 .score-chip-mark.tl-gem {
+  background: var(--gem-bg);
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.55);
+}
 .rating-label {
   font-size: 10.5px;
   text-transform: uppercase;
@@ -32145,3 +32181,304 @@ button.ai-sched-main:focus-visible {
   font-size: 0.84rem;
   color: var(--ink-soft);
 }
+
+/* ========================================================================
+   P4: Explore and the destination page
+   ======================================================================== */
+
+/* --- P4.1 the card label -------------------------------------------------
+   Three faults the grid showed: the label strip stood a different height on
+   every card (a wrapped country line, a water badge), so the rows were
+   ragged; the white label took a third of a small card; and the score read
+   as a plain block. The strip is now a fixed two-line box, each line clamped
+   to one line, and the photo takes the height the label gives back. */
+.explore-grid--mosaic .xcard-body {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--space-1);
+  padding: 0 var(--space-3);
+  height: 62px;
+  box-sizing: border-box;
+}
+.xcard-head { flex: none; }
+/* min-width:0 lets the flex children actually shrink; without it the line
+   overflows its box and the country is clipped away rather than ellipsed. */
+.xcard-meta { flex: none; flex-wrap: nowrap; min-width: 0; }
+/* One line each, cut with an ellipsis rather than pushing the row taller. */
+.xcard-head .xcard-name {
+  font-size: 17px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.explore-grid--mosaic .xcard--metro .xcard-name,
+.explore-grid--mosaic .xcard--area .xcard-name { font-size: 18.5px; }
+/* This is the rule that made the rows ragged: the place line was allowed to
+   wrap onto a second line on a narrow card. It stays on one line now. */
+.xcard-place { flex-wrap: nowrap; white-space: nowrap; }
+/* The place line takes what it needs and the country ellipses inside it.
+   flex-basis:auto (not 0) is what stops it collapsing to nothing beside a
+   flex:none cost figure, which is how the country came to vanish. */
+.xcard-meta > .xcard-place { min-width: 0; flex: 1 1 auto; overflow: hidden; }
+.explore-grid--mosaic .xcard-country {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+/* The badge is a fact, not a fourth thing the line has to fit. */
+.xcard-meta .water-badge { flex: none; }
+/* The euros-a-day figure takes only its own width. It was flex:none with
+   margin-left:auto, which on a narrow card claimed the whole line and left
+   the place nothing, so the country read as missing rather than truncated. */
+.explore-grid--mosaic .xcard-meta .xcard-cost { flex: 0 0 auto; width: auto; margin-left: auto; }
+
+/* The photo takes clearly more of the card. A 16:9.6 frame under a 76px
+   label gave the label a third of a square card; 4:3 under a 62px strip
+   puts the picture back in charge at every span. */
+.explore-grid--mosaic .xcard-media { aspect-ratio: 4 / 3; }
+.explore-grid--mosaic .xcard--metro .xcard-media,
+.explore-grid--mosaic .xcard--city .xcard-media { aspect-ratio: 16 / 10; }
+.explore-grid--mosaic .xcard--area .xcard-media { aspect-ratio: 21 / 9; }
+
+/* "Best trips from here" on the destination page: the same three fixes, on
+   the card that page draws itself. */
+.dtrip-body {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--space-1);
+  height: 62px;
+  padding: 0 var(--space-3);
+  box-sizing: border-box;
+}
+.dtrip-name,
+.dtrip-sub {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.dtrip-photo { aspect-ratio: 4 / 3; }
+
+/* --- P4.2 the rail title and the score explainer -------------------------
+   A rail called "The 41" told the reader nothing. Every rail now says what
+   the list is and, under it, how it was chosen. */
+.xrails-head { flex-wrap: wrap; }
+.xrails-headings { display: flex; flex-direction: column; gap: 2px; min-width: 0; flex: 1 1 auto; }
+.xrails-sub {
+  margin: 0;
+  font-size: 12.5px;
+  line-height: 1.35;
+  color: var(--ink-mute);
+  max-width: 62ch;
+}
+.xrails-head .xrails-all { flex: none; align-self: center; }
+
+/* The "?" is a real icon button on the legend row's baseline, and the method
+   opens in the app's sheet rather than reflowing the legend under it. */
+.tierlegend-why {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1);
+  min-height: 32px;
+  padding: 0 var(--space-2);
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: var(--bg-card);
+  color: var(--ink-soft);
+  font-size: 11.5px;
+  font-weight: 600;
+}
+.tierlegend-why:hover { border-color: var(--ink-mute); color: var(--ink); text-decoration: none; }
+.tierlegend-why:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.tierlegend-why-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background: var(--rate);
+  color: var(--paper);
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1;
+  flex: none;
+}
+.tierlegend-x {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 32px;
+  min-height: 32px;
+  padding: 0;
+  border-radius: 50%;
+}
+.tierlegend-x:hover { background: var(--paper-dim); color: var(--ink); }
+.tierlegend-pip { width: 32px; height: 32px; font-size: 13px; }
+
+/* The method, in the sheet the rest of the app uses. */
+.tiersheet { max-width: 520px; }
+.tiersheet-body { padding: var(--space-4); }
+.tiersheet-method { margin: 0 0 var(--space-4); font-size: 13.5px; line-height: 1.55; color: var(--ink-soft); }
+.tiersheet-rows { display: flex; flex-direction: column; gap: var(--space-2); }
+.tiersheet-row { display: flex; align-items: baseline; gap: var(--space-2); font-size: 13px; }
+.tiersheet-row .tierlegend-mark { align-self: center; }
+.tiersheet-name { font-weight: 600; color: var(--ink); }
+.tiersheet-cut { margin-left: auto; font-family: var(--mono); font-size: 11.5px; font-variant-numeric: tabular-nums; color: var(--ink-mute); }
+
+/* --- P4.3 rhythm and touch targets ---------------------------------------
+   At 375px the first screen was mostly gaps. These are the rules the audit
+   actually touched, on the new scale rather than more hand-tuned pixels. */
+@media (max-width: 768px) {
+  .xrails { gap: var(--space-5); margin: 0 0 var(--space-5); }
+  .xrails-head { margin: 0 0 var(--space-2); }
+  .xrails-title { font-size: 18px; }
+  .xrails-sub { font-size: 12px; }
+  .tierlegend-rows { gap: var(--space-2) var(--space-3); }
+  /* At 375px the first photograph sat 567px down an 812px screen: a search
+     field, a lifestyle line, a Filters button, a sort, and a four-row key
+     to a grid the reader had not reached yet. The key is a legend, so on a
+     phone it folds to its "?" until asked for, and the stack tightens. */
+  .tierlegend { margin: 0 0 var(--space-2); }
+  .tierlegend-rows { display: none; }
+  .tierlegend-actions { margin-left: 0; }
+  .tierlegend .tierlegend-x { display: none; }
+  .explore-grid { margin-top: var(--space-2); }
+  .explore-grid--mosaic .xcard-body { height: 58px; padding: 0 var(--space-2); }
+  /* Two cards to a row at 390px: one ratio for every kind, or cards that
+     sit side by side stand at different heights and the row reads as a
+     mistake. The mosaic's per-kind framing is a desktop device, where a
+     card's SPAN is what varies. */
+  .explore-grid--mosaic .xcard-media,
+  .explore-grid--mosaic .xcard--metro .xcard-media,
+  .explore-grid--mosaic .xcard--city .xcard-media,
+  .explore-grid--mosaic .xcard--area .xcard-media { aspect-ratio: 4 / 3; }
+  /* The kind word does not fit beside the country on a half-width card,
+     and the filter rail already names the kinds. */
+  .explore-grid--mosaic .xcard-kindword { display: none; }
+  /* A half-width card has room for the country OR the swim badge, not
+     both: keeping both truncated France to "Fra" and Spain to "S", which
+     says less than the flag beside it already does. The badge is the rarer
+     fact and the one the flag cannot stand in for, so where a card carries
+     one, the country name gives up its place and the flag speaks for it. */
+  .explore-grid--mosaic .xcard-place:has(.water-badge) .xcard-country { display: none; }
+  /* The euros hold their width; the country takes what is left. */
+  .explore-grid--mosaic .xcard-meta .xcard-cost { flex: none; }
+  /* "a day" repeated on every card in a grid of per-day prices is 30px of
+     the line spent saying what the grid already says once. The figure
+     keeps its aria-label, so nothing is lost to a screen reader. */
+  .explore-grid--mosaic .xcard-meta .xcard-cost-unit { display: none; }
+}
+
+/* The destination page's own controls: shortlist, share, open in Maps and
+   the PDF export stood 26px high on 5px of padding, under the 44px a
+   finger needs (WCAG 2.5.5). The glyphs and labels keep their size; the
+   box around them grows, and the row wraps rather than overflowing once
+   they do. */
+.destp-head-actions { flex-wrap: wrap; gap: var(--space-2); }
+.destp-head-actions .panel-fav,
+.destp-head-actions .destp-pdf,
+.destp-bar-actions .panel-fav {
+  min-height: var(--tap);
+  padding: var(--space-2) var(--space-4);
+  font-size: 12.5px;
+}
+/* Icon-only buttons need the width too, not just the height. */
+.destp-head-actions .panel-fav:not(:has(span)),
+.destp-bar-actions .panel-fav:not(:has(span)) { min-width: var(--tap); justify-content: center; }
+
+/* "Highlights and map" ran on three gutters at once: the strip sat 12px
+   under the map, its columns were 10px apart and its rows 12px, so nothing
+   in the section lined up with anything else. One token for all three, and
+   the map spans the strip's full width so both share their two edges. */
+.dhl-wrap { display: grid; gap: var(--space-3); }
+.dhl-wrap .dmap { width: 100%; margin: 0; }
+.dhl-strip { gap: var(--space-3); margin-top: 0; }
+
+/* --- P4.5 the map card ---------------------------------------------------
+   Zoomed in, a pin opens as a small card: the photo, the place, the rating
+   and one line of what it is known for. */
+.xmap-card { width: 216px; font-size: 12.5px; line-height: 1.35; }
+.xmap-card-img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
+  background: var(--paper-dim);
+}
+.xmap-card-body { padding: var(--space-2) 10px 10px; }
+.xmap-card-head { display: flex; align-items: center; justify-content: space-between; gap: var(--space-2); }
+.xmap-card-name {
+  font-family: var(--display);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--ink);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.xmap-card-sub { margin: 2px 0 0; font-size: 11.5px; color: var(--ink-mute); }
+.xmap-card-lead {
+  margin: var(--space-1) 0 0;
+  font-size: 11.5px;
+  line-height: 1.4;
+  color: var(--ink-soft);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.xmap-card-score {
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 11.5px;
+  font-weight: 600;
+  padding: 3px 7px;
+  border-radius: 999px;
+  flex: none;
+  background: var(--paper-dim);
+  color: var(--ink-soft);
+}
+.xmap-card-score.rt-3 { background: var(--rate); color: var(--paper); }
+.xmap-card-score.rt-2 { background: var(--rate-bg); color: var(--rate); }
+/* The popup IS the card: maplibre own padding would box it twice. */
+.xmap .maplibregl-popup-content { padding: 0; border-radius: 8px; overflow: hidden; box-shadow: var(--shadow-2); }
+.xmap .maplibregl-popup-close-button { display: none; }
+.xmap-card-hit {
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: none;
+  text-align: left;
+  cursor: pointer;
+  font: inherit;
+}
+
+/* The thumbnail on "Best things to do" (P4.4). The card becomes a photo
+   beside its text; where the shard has no photograph of the place, the
+   frame holds the type glyph rather than a hole. */
+.ddo {
+  display: grid;
+  grid-template-columns: 58px minmax(0, 1fr);
+  grid-template-rows: auto;
+  align-items: start;
+  column-gap: 10px;
+}
+.ddo-photo {
+  grid-row: 1 / span 5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 58px;
+  aspect-ratio: 1;
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--paper-dim);
+  color: var(--ink-mute);
+}
+.ddo-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.ddo-type, .ddo-name, .ddo-detail, .ddo-foot { grid-column: 2; }

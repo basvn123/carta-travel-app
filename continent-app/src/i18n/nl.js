@@ -3466,14 +3466,23 @@ export const nl = {
   "explore.countLine": "{n} bestemmingen",
 
   // Explore rails (PLAN.md C5)
-  "rail.top": "De {n}",
+  "rail.top": "De {n} hoogst beoordeelde plekken van Europa",
+  "rail.topSub": "Alles wat het beoordelingsmodel de reis waard vindt, de hoogste categorie",
+  "rail.topShort": "Hoogst beoordeeld",
   "rail.gems": "Verborgen parels",
+  "rail.gemsSub": "Hoog beoordeeld, maar veel minder bekend dan dat cijfer doet vermoeden",
   "rail.bestOf": "Het beste van elk land",
+  "rail.bestOfSub": "De hoogst beoordeelde bestemming per land, één per land",
   "rail.villages": "Dorpen die de rit waard zijn",
+  "rail.villagesSub": "Dorpen die het model een bezoek of meer waard vindt",
   "rail.now": "Nu op zijn best",
+  "rail.nowSub": "Plekken waarvan de beste maanden {month} omvatten",
   "rail.nocar": "Zonder auto",
+  "rail.nocarSub": "Bereikbaar en beloopbaar zonder huurauto",
   "rail.cheap": "Onder 70 € per dag",
+  "rail.cheapSub": "Bed, eten en lokaal vervoer samen onder 70 € per dag",
   "rail.quiet": "Rustig in het hoogseizoen",
+  "rail.quietSub": "Beoordeelde plekken die rustig blijven als de rest volloopt",
   "rail.seeAll": "Alle {n} bekijken",
   "filter.bestOf": "Het beste van zijn land",
 
@@ -3481,6 +3490,8 @@ export const nl = {
   "legend.aria": "Wat de scores betekenen",
   "legend.dismiss": "Legenda verbergen",
   "legend.how": "Zo ontstaat de score",
+  "legend.closeMethod": "Sluiten",
+  "legend.cutCount": "{cut}+, {n} plekken",
 
   // Explore map view (PLAN.md C7)
   "explore.viewGrid": "Raster",
@@ -3554,6 +3565,7 @@ export const nl = {
   "explore.sideKinds": "Reisstijl",
   "explore.sideRefine": "Verfijnen",
   "explore.moreRails": "Meer ingangen",
+  "explore.moreRailsSummary": "Nog {n} lijsten",
   "explore.viewList": "Lijst",
   "explore.railPrev": "Terug scrollen",
   "explore.railNext": "Verder scrollen",

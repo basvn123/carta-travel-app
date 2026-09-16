@@ -3466,14 +3466,23 @@ export const it = {
   "explore.countLine": "{n} destinazioni",
 
   // Explore rails (PLAN.md C5)
-  "rail.top": "I {n}",
+  "rail.top": "I {n} luoghi più votati d'Europa",
+  "rail.topSub": "Tutto ciò che il modello giudica degno del viaggio, la categoria più alta",
+  "rail.topShort": "Più votati",
   "rail.gems": "Perle nascoste",
+  "rail.gemsSub": "Molto votati, assai meno noti di quanto il voto suggerisca",
   "rail.bestOf": "Il meglio di ogni paese",
+  "rail.bestOfSub": "La destinazione più votata di ogni paese, una per paese",
   "rail.villages": "Borghi che valgono il viaggio",
+  "rail.villagesSub": "Borghi che il modello giudica degni di una visita o più",
   "rail.now": "Perfetto adesso",
+  "rail.nowSub": "Luoghi i cui mesi migliori comprendono {month}",
   "rail.nocar": "Senza auto",
+  "rail.nocarSub": "Raggiungibili e percorribili a piedi, senza noleggiare un'auto",
   "rail.cheap": "Meno di 70 € al giorno",
+  "rail.cheapSub": "Letto, cibo e trasporti locali sotto i 70 € al giorno",
   "rail.quiet": "Tranquillo in alta stagione",
+  "rail.quietSub": "Luoghi votati che restano tranquilli quando tutto il resto si riempie",
   "rail.seeAll": "Vedi tutti i {n}",
   "filter.bestOf": "Il meglio del suo paese",
 
@@ -3481,6 +3490,8 @@ export const it = {
   "legend.aria": "Cosa significano i voti",
   "legend.dismiss": "Nascondi la legenda",
   "legend.how": "Come nasce il voto",
+  "legend.closeMethod": "Chiudi",
+  "legend.cutCount": "{cut}+, {n} luoghi",
 
   // Explore map view (PLAN.md C7)
   "explore.viewGrid": "Griglia",
@@ -3554,6 +3565,7 @@ export const it = {
   "explore.sideKinds": "Stile di viaggio",
   "explore.sideRefine": "Affina",
   "explore.moreRails": "Altri percorsi",
+  "explore.moreRailsSummary": "Altre {n} liste",
   "explore.viewList": "Elenco",
   "explore.railPrev": "Indietro",
   "explore.railNext": "Avanti",

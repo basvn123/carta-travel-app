@@ -9,6 +9,7 @@
  */
 
 import { faresUrl } from './fareFile.js';
+import { shardName } from './poiShard.js';
 
 function fetchJson(path) {
   return fetch(path).then((r) => {
@@ -45,6 +46,26 @@ export function fetchActivitiesFull() {
     activitiesFullPromise = fetchJson('/activities_full.json').catch(() => ({}));
   }
   return activitiesFullPromise;
+}
+
+const poiShardPromises = new Map();
+/**
+ * The POI list for ONE destination, from public/poi/<id>.json.
+ *
+ * fetchActivitiesFull downloads 32 MB to answer a question about one place,
+ * which is the right shape for the day planner (it walks many towns) and
+ * the wrong one for a destination page. Resolves to [] on failure, so a
+ * caller can render without it.
+ */
+export function fetchDestPois(destId) {
+  const name = shardName(destId);
+  if (!name) return Promise.resolve([]);
+  if (!poiShardPromises.has(name)) {
+    poiShardPromises.set(name, fetchJson(`/poi/${name}.json`)
+      .then((j) => (Array.isArray(j) ? j : []))
+      .catch(() => []));
+  }
+  return poiShardPromises.get(name);
 }
 
 let countryInsightsPromise = null;

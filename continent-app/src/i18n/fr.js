@@ -3466,14 +3466,23 @@ export const fr = {
   "explore.countLine": "{n} destinations",
 
   // Explore rails (PLAN.md C5)
-  "rail.top": "Les {n}",
+  "rail.top": "Les {n} lieux les mieux notés d'Europe",
+  "rail.topSub": "Tout ce que le modèle juge digne du voyage, sa catégorie la plus haute",
+  "rail.topShort": "Les mieux notés",
   "rail.gems": "Perles cachées",
+  "rail.gemsSub": "Très bien notés, bien moins connus que la note le laisse croire",
   "rail.bestOf": "Le meilleur de chaque pays",
+  "rail.bestOfSub": "La destination la mieux notée de chaque pays, une par pays",
   "rail.villages": "Villages qui valent la route",
+  "rail.villagesSub": "Villages que le modèle juge dignes d'une visite ou mieux",
   "rail.now": "Parfait en ce moment",
+  "rail.nowSub": "Lieux dont les meilleurs mois incluent {month}",
   "rail.nocar": "Sans voiture",
+  "rail.nocarSub": "Accessibles et praticables à pied, sans location de voiture",
   "rail.cheap": "Moins de 70 € par jour",
+  "rail.cheapSub": "Lit, repas et transports locaux sous les 70 € par jour",
   "rail.quiet": "Calme en haute saison",
+  "rail.quietSub": "Lieux notés qui restent calmes quand tout se remplit ailleurs",
   "rail.seeAll": "Voir les {n}",
   "filter.bestOf": "Le meilleur de son pays",
 
@@ -3481,6 +3490,8 @@ export const fr = {
   "legend.aria": "Ce que signifient les notes",
   "legend.dismiss": "Masquer la légende",
   "legend.how": "Comment la note est faite",
+  "legend.closeMethod": "Fermer",
+  "legend.cutCount": "{cut}+, {n} lieux",
 
   // Explore map view (PLAN.md C7)
   "explore.viewGrid": "Grille",
@@ -3554,6 +3565,7 @@ export const fr = {
   "explore.sideKinds": "Style de voyage",
   "explore.sideRefine": "Affiner",
   "explore.moreRails": "D'autres entrées",
+  "explore.moreRailsSummary": "{n} autres listes",
   "explore.viewList": "Liste",
   "explore.railPrev": "Reculer",
   "explore.railNext": "Avancer",

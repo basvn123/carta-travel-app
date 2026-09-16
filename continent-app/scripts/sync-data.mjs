@@ -24,6 +24,7 @@ import { dirname, resolve } from 'node:path';
 import { existsSync, readFileSync, writeFileSync, rmSync, mkdirSync } from 'node:fs';
 import { stripDashes } from '../src/lib/format.js';
 import { fareFileBase } from '../src/lib/fareFile.js';
+import { shardName } from '../src/lib/poiShard.js';
 
 const scriptDir = dirname(fileURLToPath(import.meta.url));   // continent-app/scripts
 const repoRoot = resolve(scriptDir, '..', '..');             // repo root
@@ -235,6 +236,25 @@ writeFileSync(resolve(publicDir, 'activities_full.json'), acts);
 const n = Object.keys(data.destinations || {}).length;
 console.log(`[sync-data] core dataset -> public/app_data.json (${n} destinations, is_mock=${data.meta?.is_mock}, ${kb(core)})`);
 console.log(`[sync-data] full POI lists -> public/activities_full.json (${Object.keys(activitiesFull).length} destinations, ${kb(acts)})`);
+
+// The same lists, one file per destination, so a page that wants the POIs
+// for ONE place does not download 32 MB to read 9 KB of it. The day planner
+// still reads the whole file; the destination page reads a shard.
+{
+  const poiDir = resolve(publicDir, 'poi');
+  rmSync(poiDir, { recursive: true, force: true });
+  mkdirSync(poiDir, { recursive: true });
+  let shards = 0;
+  let skipped = 0;
+  for (const [id, items] of Object.entries(activitiesFull)) {
+    const name = shardName(id);
+    if (!name) { skipped += 1; continue; }
+    writeFileSync(resolve(poiDir, `${name}.json`), JSON.stringify(items ?? []));
+    shards += 1;
+  }
+  console.log(`[sync-data] per-destination POI shards -> public/poi/ (${shards} files`
+    + `${skipped ? `, ${skipped} ids not filename-safe` : ''})`);
+}
 
 if (existsSync(insightsSrc)) {
   const ins = JSON.parse(readFileSync(insightsSrc, 'utf-8'));

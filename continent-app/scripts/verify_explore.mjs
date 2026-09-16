@@ -133,8 +133,22 @@ try {
   check('the first two folds open, the rest closed',
     await page.locator('.explore-side details.xrail-group[open]').count() === 2);
   check('at most three collections lead the page', await page.locator('.xrails-rail').count() <= 3);
+  // Every rail says what its list IS and how it was chosen: "The 41" named
+  // a number with no referent (P4.2).
+  const railTitle = await page.locator('.xrails-title').first().innerText();
+  check('the first rail title explains itself', railTitle.trim().length > 12 && !/^The \d+$/.test(railTitle.trim()), railTitle);
+  check('every rail carries a subtitle',
+    await page.locator('.xrails-sub').count() === await page.locator('.xrails-rail').count());
+  // The doors fold now (P4.4), so they are behind their own summary.
+  const doorFold = page.locator('#sec-morerails');
+  check('the other collections fold behind one summary', await doorFold.count() === 1
+    && !(await doorFold.evaluate((el) => el.classList.contains('is-open'))));
+  await doorFold.locator('.dsec-toggle').click();
+  await page.waitForTimeout(500);
   check('the other collections are one row of doors',
     await page.locator('.xrails-more .xrails-more-chip').count() >= 3);
+  await doorFold.locator('.dsec-toggle').click();
+  await page.waitForTimeout(400);
   const bodyFacts = await page.locator('.xcard').first().locator('.xcard-name, .score-chip, .xcard-country, .xcard-kindword, .xcard-cost').count();
   check('the card body carries its four facts', bodyFacts === 5, `${bodyFacts} parts`);
   check('the season pill left the photo', await page.locator('.xcard-best').count() === 0);
@@ -174,17 +188,28 @@ try {
   await page.waitForTimeout(2500);
   const panel = page.locator('.destp');
   check('destination page opens', await panel.isVisible());
+  // P4.4: the page arrives folded, so a reader steers it instead of
+  // scrolling a wall. Only the first section opens itself.
+  check('the page arrives folded', await panel.locator('.dsec.is-open').count() === 1,
+    `${await panel.locator('.dsec.is-open').count()} open`);
+  check('the section that opens is the first one',
+    await panel.locator('.dsec').first().evaluate((el) => el.classList.contains('is-open')));
+  // The titles are readable while everything is shut: a fold a reader
+  // cannot judge from its head is a fold they have to open to skip.
+  const foldedText = await panel.innerText();
+  check('page has when-to-go', /when to go/i.test(foldedText));
+  check('page has explore-further', /explore .* further/i.test(foldedText));
+  await page.waitForTimeout(2500);
+  check('page pins the place on a real map', await panel.locator('.dmap canvas').count() >= 1);
+  // Open the costs fold for the receipt checks below.
+  await panel.locator('#sec-cost .dsec-toggle').click();
+  await page.waitForTimeout(1200);
   check('page shows the cost receipt', await panel.locator('.cost-receipt').count() === 1);
   // The receipt has to say what it assumed. A price a reader cannot trace
   // back to a setting is a price they must take on faith.
   const assumes = await panel.locator('.cost-assumes').innerText().catch(() => '');
   check('receipt names the lifestyle it priced for', /priced for/i.test(assumes), assumes.slice(0, 60));
   check('receipt totals a day in euros', /€\d/.test(await panel.locator('.cost-total-eur').innerText()));
-  const panelText = await panel.innerText();
-  check('page has when-to-go', /when to go/i.test(panelText));
-  check('page has explore-further', /explore .* further/i.test(panelText));
-  await page.waitForTimeout(2500);
-  check('page pins the place on a real map', await panel.locator('.dmap canvas').count() >= 1);
   await page.screenshot({ path: 'shots/explore-panel-desktop.png' });
   await page.keyboard.press('Escape');
   await page.waitForTimeout(400);

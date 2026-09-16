@@ -3466,14 +3466,23 @@ export const es = {
   "explore.countLine": "{n} destinos",
 
   // Explore rails (PLAN.md C5)
-  "rail.top": "Los {n}",
+  "rail.top": "Los {n} lugares mejor valorados de Europa",
+  "rail.topSub": "Todo lo que el modelo considera digno del viaje, su categoría más alta",
+  "rail.topShort": "Mejor valorados",
   "rail.gems": "Joyas ocultas",
+  "rail.gemsSub": "Muy bien valorados, mucho menos conocidos de lo que indica la nota",
   "rail.bestOf": "Lo mejor de cada país",
+  "rail.bestOfSub": "El destino mejor valorado de cada país, uno por país",
   "rail.villages": "Pueblos que valen el viaje",
+  "rail.villagesSub": "Pueblos que el modelo considera dignos de una visita o más",
   "rail.now": "Perfecto ahora mismo",
+  "rail.nowSub": "Lugares cuyos mejores meses incluyen {month}",
   "rail.nocar": "Sin coche",
+  "rail.nocarSub": "Accesibles y caminables sin alquilar coche",
   "rail.cheap": "Menos de 70 € al día",
+  "rail.cheapSub": "Cama, comida y transporte local por debajo de 70 € al día",
   "rail.quiet": "Tranquilo en temporada alta",
+  "rail.quietSub": "Lugares valorados que siguen tranquilos cuando todo se llena",
   "rail.seeAll": "Ver los {n}",
   "filter.bestOf": "Lo mejor de su país",
 
@@ -3481,6 +3490,8 @@ export const es = {
   "legend.aria": "Qué significan las notas",
   "legend.dismiss": "Ocultar la leyenda",
   "legend.how": "Cómo se calcula la nota",
+  "legend.closeMethod": "Cerrar",
+  "legend.cutCount": "{cut}+, {n} lugares",
 
   // Explore map view (PLAN.md C7)
   "explore.viewGrid": "Cuadrícula",
@@ -3554,6 +3565,7 @@ export const es = {
   "explore.sideKinds": "Estilo de viaje",
   "explore.sideRefine": "Afinar",
   "explore.moreRails": "Más puertas de entrada",
+  "explore.moreRailsSummary": "{n} listas más",
   "explore.viewList": "Lista",
   "explore.railPrev": "Retroceder",
   "explore.railNext": "Avanzar",

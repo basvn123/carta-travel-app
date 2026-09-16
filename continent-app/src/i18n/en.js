@@ -4219,15 +4219,25 @@ export const en = {
   "filter.removeChip": "Remove {name}",
   "explore.countLine": "{n} destinations",
 
-  // Explore rails (PLAN.md C5)
-  "rail.top": "The {n}",
+  // Explore rails (PLAN.md C5). Every title says what the list IS, and the
+  // subtitle says how it was chosen: "The 41" told a reader nothing (P4.2).
+  "rail.top": "The {n} highest-rated places in Europe",
+  "rail.topSub": "Everything the rating model scores as worth the journey, its top tier",
+  "rail.topShort": "Highest rated",
   "rail.gems": "Hidden gems",
+  "rail.gemsSub": "Rated highly, but far less famous than the score suggests",
   "rail.bestOf": "The best of every country",
+  "rail.bestOfSub": "The single highest-rated destination in each country, one each",
   "rail.villages": "Villages worth the drive",
+  "rail.villagesSub": "Villages the model rates worth a visit or better",
   "rail.now": "Great right now",
+  "rail.nowSub": "Places whose best months include {month}",
   "rail.nocar": "Go without a car",
+  "rail.nocarSub": "Reachable and walkable without hiring a car",
   "rail.cheap": "Under €70 a day",
+  "rail.cheapSub": "Bed, food and local transport come in under €70 a day",
   "rail.quiet": "Quiet in high season",
+  "rail.quietSub": "Rated places that stay uncrowded when everywhere else fills up",
   "rail.seeAll": "See all {n}",
   "filter.bestOf": "Best of its country",
 
@@ -4235,6 +4245,8 @@ export const en = {
   "legend.aria": "What the ratings mean",
   "legend.dismiss": "Hide the legend",
   "legend.how": "How the score works",
+  "legend.closeMethod": "Close",
+  "legend.cutCount": "{cut}+, {n} places",
 
   // Explore map view (PLAN.md C7)
   "explore.viewGrid": "Grid",
@@ -4308,6 +4320,7 @@ export const en = {
   "explore.sideKinds": "Trip style",
   "explore.sideRefine": "Refine",
   "explore.moreRails": "More ways in",
+  "explore.moreRailsSummary": "{n} more lists",
   "explore.viewList": "List",
   "explore.railPrev": "Scroll back",
   "explore.railNext": "Scroll forward",

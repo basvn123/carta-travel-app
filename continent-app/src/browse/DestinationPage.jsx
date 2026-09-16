@@ -28,6 +28,7 @@ import { visitLength } from '../lib/nearby.js';
 import { roleOf } from '../lib/taxonomy.js';
 import { KindGlyph } from '../components/KindGlyph.jsx';
 import { usePaywall } from '../hooks/usePaywall.jsx';
+import { fetchDestPois } from '../lib/appData.js';
 import {
   TreeIcon, PersonIcon, CalendarIcon, MapPinIcon,
   ParkingIcon, SunIcon, PartSunIcon, CloudIcon, FogIcon,
@@ -83,13 +84,73 @@ const DO_TYPE_ICON = {
   swim: SwimIcon, experience: SparkIcon,
 };
 
-const OPEN_BY_DEFAULT = new Set(['highlights', 'do', 'around', 'trips', 'cost', 'tips']);
+/**
+ * Only the first section opens itself (P4.4). Six open folds made the page a
+ * wall a reader had to scroll past rather than a page they could steer: the
+ * verdict and the map answer "is this place for me", and every other section
+ * is there for the reader who has decided it might be.
+ */
+const OPEN_BY_DEFAULT = new Set(['highlights']);
 
 const baseCity = (name) => (name || '').replace(/\s*\([^)]*\)\s*$/, '').trim();
 const fmtKm = (km) => (km < 0.95 ? `${Math.round((km * 1000) / 10) * 10} m` : `${Math.round(km)} km`);
 /** Highlight photographs ship at 960px; the tiles want 500. Same file, one
  *  path segment, and Commons serves both. */
 const thumb500 = (url) => (url ? url.replace(/\/960px-/, '/500px-') : url);
+
+/**
+ * A photograph for each "best thing to do" (P4.4).
+ *
+ * The `do` items are editorial phrases, not place names: "Colosseum, Forum
+ * and Palatine Hill circuit", "Eat through Trastevere on an evening food
+ * crawl". The POI shard for the same destination holds real places with
+ * photographs. So the join is containment, not equality: a POI matches an
+ * item when its folded name appears in the item's folded text, and the
+ * LONGEST such name wins, so "Sistine Chapel" beats "Chapel" for the
+ * Vatican line.
+ *
+ * Only names of three characters or more, and only whole words, so "Rome"
+ * inside "Romantic" cannot claim a photograph it has nothing to do with.
+ *
+ * Crests and logos are dropped. A museum's coat of arms is a picture of its
+ * BRANDING, not of the place, and the page's claim is that the photograph
+ * shows what you would see, so the type glyph is the more honest fallback.
+ */
+function useDoPhotos(destId) {
+  const [pois, setPois] = React.useState(null);
+  React.useEffect(() => {
+    if (!destId) { setPois(null); return undefined; }
+    let live = true;
+    fetchDestPois(destId).then((items) => { if (live) setPois(items); });
+    return () => { live = false; };
+  }, [destId]);
+
+  return React.useMemo(() => {
+    const named = (pois || [])
+      .filter((p) => p?.img && p.name && !NOT_A_VIEW.test(p.img) && foldName(p.name).length >= 3)
+      .map((p) => ({ key: foldName(p.name), img: p.img }))
+      .sort((a, b) => b.key.length - a.key.length);
+    return (text) => {
+      const hay = ` ${foldName(text)} `;
+      const hit = named.find((p) => hay.includes(` ${p.key} `));
+      return hit?.img || null;
+    };
+  }, [pois]);
+}
+
+/** Case, accents and a trailing "(...)" removed, so "Sagrada Família" and
+ *  "Sagrada Familia (Basilica)" fold together. NFKD leaves some letters
+ *  whole, so the handful that matter are folded by hand. */
+/** Commons files that are a mark rather than a view: an SVG rendering is
+ *  almost always a crest, a logo or a map, never a photograph. */
+const NOT_A_VIEW = /\.svg\.png|logo|coat[_%20-]*of[_%20-]*arms|crest|emblem|wappen|escudo|stemma|blason/i;
+
+const FOLD_PAIRS = [['ø', 'o'], ['æ', 'ae'], ['ł', 'l'], ['ð', 'd'], ['þ', 'th'], ['ß', 'ss']];
+function foldName(s) {
+  let out = String(s || '').toLowerCase().replace(/\s*\([^)]*\)\s*$/, '');
+  for (const [from, to] of FOLD_PAIRS) out = out.split(from).join(to);
+  return out.normalize('NFKD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]+/g, ' ').trim();
+}
 
 /** One tip sentence from its rule code + args, through t() so all six
  *  languages carry it. Month arguments arrive as 1-12 and leave as names. */
@@ -250,6 +311,9 @@ export function DestinationPage({
   const lat = destination?.city_lat ?? destination?.lat;
   const lon = destination?.city_lon ?? destination?.lon;
   const forecast = useForecast(lat, lon, !!destination);
+  // Photographs for "Best things to do". Must sit above the early return:
+  // hooks cannot run conditionally.
+  const doPhotos = useDoPhotos(destination?.id);
 
   if (!destination) return null;
 
@@ -658,8 +722,18 @@ export function DestinationPage({
                             ? (ev.method === 'open' ? Math.min(100, ev.n_sources * 25) : Math.round((ev.n_sources / Math.max(ev.of || 1, 1)) * 100))
                             : null;
                           const href = item.link && safeUrl(item.link) ? activityLink(safeUrl(item.link), 'dest-do') : null;
+                          // The POI behind this item, where the shard has a
+                          // photograph of it. Where it does not, the type
+                          // glyph fills the frame: a missing thumbnail
+                          // leaves a hole, which reads as a broken page.
+                          const photo = doPhotos(item.name);
                           const body = (
                             <>
+                              <span className={`ddo-photo ${photo ? '' : 'is-blank'}`} aria-hidden="true">
+                                {photo
+                                  ? <img src={thumb500(photo)} alt="" loading="lazy" />
+                                  : <TypeIcon size={17} />}
+                              </span>
                               <span className={`ddo-type is-${item.type}`}><TypeIcon size={11} />{t(DO_TYPE_KEYS[item.type] || 'dest.doType.activity')}</span>
                               <span className="ddo-name">{item.name}</span>
                               {item.detail && <span className="ddo-detail">{item.detail}</span>}
