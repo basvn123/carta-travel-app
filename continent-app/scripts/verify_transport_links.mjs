@@ -9,6 +9,7 @@
 
 import {
   skyscannerLink, trainlineLink, rome2rioLink, googleMapsLink, legLinks, citySlug,
+  googleFlightsLink, googleFlightsExploreLink,
 } from '../src/lib/transportLinks.js';
 
 const checks = [];
@@ -36,6 +37,44 @@ check('a one way is a one way', /rtn=0/.test(oneWay) || !/inboundDate/.test(oneW
 check('a bad date yields no link', skyscannerLink({ originIata: 'BRU', destIata: 'SZG', date: '25-08-2026' }) === null);
 check('a missing airport yields no link', skyscannerLink({ originIata: null, destIata: 'SZG', date: '2026-08-25' }) === null);
 
+// ── Google Flights ───────────────────────────────────────────────────────
+// The q sentence is the whole contract here: Google parses it, so the wording
+// is checked literally rather than loosely. That it is parsed AT ALL can only
+// be checked in a real browser: scripts/verify_google_flights.mjs does that,
+// by hand, and is what caught the party-size clause losing the whole route.
+const qOf = (url) => decodeURIComponent(new URL(url).searchParams.get('q') || '');
+
+const gfRet = googleFlightsLink({ fromIata: 'BRU', toIata: 'SZG', date: '2026-08-25', returnDate: '2026-09-01', adults: 2, lang: 'nl' });
+check('a dated return is a sentence google parses',
+  qOf(gfRet) === 'Flights from BRU to SZG on 2026-08-25 through 2026-09-01', qOf(gfRet));
+// Verified in a real browser: the party-size clause loses the whole route on
+// some pairs, so it is never said. See the note in transportLinks.js.
+check('the party size is never said out loud',
+  !/adults/.test(qOf(gfRet)) && !/adults/.test(qOf(googleFlightsLink({
+    fromIata: 'AMS', toIata: 'FCO', date: '2026-11-12', adults: 4,
+  }))), qOf(gfRet));
+check('it prices in euros and speaks the ui language',
+  /[?&]curr=EUR/.test(gfRet) && /[?&]hl=nl/.test(gfRet), gfRet);
+const gfOne = googleFlightsLink({ fromIata: 'BRU', toIata: 'SZG', date: '2026-08-25' });
+check('a one way says no return', !/through/.test(qOf(gfOne)), qOf(gfOne));
+const gfUndated = googleFlightsLink({ fromIata: 'BRU', toIata: 'SZG' });
+check('an undated route still links', qOf(gfUndated) === 'Flights from BRU to SZG', qOf(gfUndated));
+check('a town stands in for a missing airport',
+  qOf(googleFlightsLink({ fromIata: 'BRU', toCity: 'Salzburg' })) === 'Flights from BRU to Salzburg');
+check('an unmapped language costs an english page, not a link',
+  /[?&]hl=/.test(googleFlightsLink({ fromIata: 'BRU', toIata: 'SZG', lang: 'pl' })));
+check('no origin airport yields no link', googleFlightsLink({ toIata: 'SZG' }) === null);
+check('nowhere to land yields no link', googleFlightsLink({ fromIata: 'BRU' }) === null);
+check('a route to itself yields no flight', googleFlightsLink({ fromIata: 'BRU', toIata: 'BRU' }) === null);
+
+const explore = googleFlightsExploreLink({ fromIata: 'BRU', lang: 'fr' });
+check('explore leaves from one airport', qOf(explore) === 'Flights from BRU', explore);
+check('explore is the explore page and carries curr and hl',
+  explore.startsWith('https://www.google.com/travel/explore?') && /curr=EUR/.test(explore) && /hl=fr/.test(explore), explore);
+check('explore carries the month when one is known',
+  qOf(googleFlightsExploreLink({ fromIata: 'BRU', month: '2026-08' })) === 'Flights from BRU in 2026-08');
+check('explore needs somewhere to leave from', googleFlightsExploreLink({}) === null);
+
 // ── Trainline ────────────────────────────────────────────────────────────
 check('a rail route page is built', trainlineLink({ fromCity: 'Paris', toCity: 'Lyon' })
   === 'https://www.thetrainline.com/train-times/paris-to-lyon');
@@ -59,7 +98,14 @@ check('an unanswered leg never offers a flight search',
   !unsure.some((l) => l.key === 'skyscanner'), unsure.map((l) => l.key).join(','));
 
 const flying = legLinks({ from: BRU, to: SZG, mode: 'fly', date: '2026-08-25', returnDate: '2026-09-01' });
-check('a flight leg leads with skyscanner', flying[0]?.key === 'skyscanner', flying.map((l) => l.key).join(','));
+check('a flight leg leads with google flights', flying[0]?.key === 'google', flying.map((l) => l.key).join(','));
+// The affiliate links are revenue. Google is an extra door, never a swap.
+// Aviasales needs a marker in the environment and drops out without one, so
+// only Skyscanner (which falls back to a public URL) can be asserted here.
+check('a flight leg keeps its skyscanner link',
+  flying.some((l) => l.key === 'skyscanner'), flying.map((l) => l.key).join(','));
+check('an unanswered leg offers no google flights search',
+  !unsure.some((l) => l.key === 'google'), unsure.map((l) => l.key).join(','));
 
 const training = legLinks({ from: SZG, to: KRK, mode: 'train', date: '2026-08-27' });
 check('a train leg offers trainline first', training[0]?.key === 'trainline', training.map((l) => l.key).join(','));
@@ -90,6 +136,8 @@ if (process.argv.includes('--live')) {
   for (const [label, url] of [
     ['trainline route page', trainlineLink({ fromCity: 'Paris', toCity: 'Lyon' })],
     ['skyscanner day view', oneWay],
+    ['google flights search', gfRet],
+    ['google flights explore', explore],
   ]) {
     const status = await probe(url);
     // 403 is a bot wall, not a broken URL, so it passes: only a 404 is a

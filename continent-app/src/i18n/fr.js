@@ -1076,6 +1076,8 @@ export const fr = {
   "shell.retry": "Réessayer",
 
   // 2026-07: car-first flow, stay filters, chronological receipt, multi-carrier
+  "wizard.exploreTitle": "Vous ne savez pas encore où aller ?",
+  "wizard.exploreCta": "Voyez où voler pas cher depuis {airport}, avec Google Flights Explore",
   "wizard.carFromLabel": "D'où partez-vous en voiture ?",
   "wizard.carFromPlaceholder": "Votre ville ou adresse, ex. Gand",
   "wizard.carFromPicked": "Carburant, péages et durées sont calculés depuis ici",
@@ -3723,4 +3725,26 @@ export const fr = {
   "match.rail": "Trains assurés par {operator}",
   "match.quiet": "{pct}% reste tranquille",
   "match.mildHeat": "Autour de {c}C, pas chaud",
+
+  // ---- T8: the trip planner's flow polish, favourites and hand-offs ----
+  "wizard.stepsTitle": "Tes étapes",
+  "wizard.editStep": "Modifier",
+  "wizard.nextTo": "Suite : {step}",
+  "wizard.recapEdit": "Retour à {step}",
+  "wizard.fromYourShortlist": "Parmi tes favoris",
+  "wizard.estWhatsIn": "Que contient cette estimation pour l'instant ?",
+  "wizard.estSoFar": "Estimation à ce stade",
+  "wizard.estHide": "Masquer",
+  "wizard.estDetails": "Détails",
+  "wizard.estTotalSoFar": "Total à ce stade",
+  "ready.starred": "Dans tes favoris",
+  "trip.tripNeedsDates": "{trip} a ses étapes et ses nuits. Dis quand tu pars et Carta calcule comment y aller.",
+  "trip.thisTrip": "Ce voyage",
+  "trip.onToGettingThere": "Passer à l'aller-retour",
+  "trip.planYourDays": "Planifie tes journées",
+  "wizard.estStays": "Nuits, {nights} dans {cities}",
+  "wizard.estStaysSub": "groupe entier, d'après de vrais prix du marché",
+  "wizard.estDailySub": "repas, boissons et courses au niveau de prix de chaque ville",
+  "wizard.cityOne": "ville",
+  "wizard.cityMany": "villes",
 };

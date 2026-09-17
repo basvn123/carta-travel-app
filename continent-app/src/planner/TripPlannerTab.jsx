@@ -319,6 +319,10 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
   const [saveNotice, setSaveNotice] = useState('');
   const [sheetH, setSheetH] = useState(340);
   const [selectedStop, setSelectedStop] = useState(null);
+  // A published trip opened from Destinations arrives with stops but no dates,
+  // so the editor opens on the window with a line saying why it is asking and
+  // what happens once it has an answer. Cleared the moment a window exists.
+  const [awaitingDates, setAwaitingDates] = useState(false);
   const [dragIdx, setDragIdx] = useState(null);
   const [wizardOpen, setWizardOpen] = useState(false);
   // Mobile only: the planner opens from a clean "Plan your trip" launcher rather
@@ -468,7 +472,14 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
       // The sender's trip name wins here (loadFromWizard treats its label as a
       // fallback so wizard runs never clobber a typed name; a share must).
       tp.setPlanLabel(d.label || '');
-      tp.setPlanned(true);
+      // A published itinerary carries stops and nights but no dates, and the
+      // planned view is a dated thing: opening it on a trip with no window
+      // showed a route whose every stop said nothing about when. So a trip that
+      // arrives without dates lands in the editor, which opens on the travel
+      // window and gates the rest of itself on having one. A shared trip that
+      // DOES carry dates is a finished plan and opens planned, as before.
+      tp.setPlanned(!!d.tripStart);
+      setAwaitingDates(!d.tripStart);
       setSelectedStop(null);
       setSheetOpen(true);
     }
@@ -620,6 +631,17 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
   // one primary Save/Update, then the plainly-labelled secondary actions.
   const plannedActionButtons = (
     <>
+      {/* Arranging the trip settles the cities, the nights and the legs, and
+          leaves the days empty. That next step had no door here: the traveller
+          had to find the Day planner tab and pick their own trip out of it. */}
+      {onPlanDay && tp.stopDetails.length > 0 && (
+        <button
+          className="trip-planday-btn"
+          onClick={() => onPlanDay({ planId: tp.planId, stopIndex: 0, dayIndex: 0 })}
+        >
+          <SparkIcon size={14} /> {t('trip.planYourDays')}
+        </button>
+      )}
       <button className="trip-save-planned-btn" onClick={handleSave} disabled={tp.saveState === 'saving'}>
         {tp.saveState === 'saving' ? t('trip.saving') : tp.saveState === 'saved' ? t('trip.savedTick') : tp.planId ? t('trip.updateTrip') : t('trip.saveTrip')}
       </button>
@@ -808,6 +830,21 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
           {/* Step 1 - travel window */}
           <div className="trip-block">
             <div className="trip-block-title">{t('trip.whenTitle')}</div>
+            {awaitingDates && !hasDates && (
+              <p className="trip-awaiting-dates">{t('trip.tripNeedsDates', { trip: tp.planLabel || t('trip.thisTrip') })}</p>
+            )}
+            {/* The window is answered, so the only thing left on a published
+                trip is how they reach it. One button, straight to the overview
+                where the legs are, instead of scrolling past every stop to
+                find out the editor has no way out. */}
+            {awaitingDates && hasDates && (
+              <button
+                className="trip-to-legs-btn"
+                onClick={() => { setAwaitingDates(false); tp.setPlanned(true); setSelectedStop(null); }}
+              >
+                {t('trip.onToGettingThere')} <span aria-hidden="true">&rarr;</span>
+              </button>
+            )}
             <div className="trip-dates-row">
               <label className="trip-field">
                 <span className="trip-field-label">{t('trip.start')}</span>

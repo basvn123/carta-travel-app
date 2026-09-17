@@ -24,7 +24,7 @@ const TripPage = lazy(() => import('../browse/TripPage.jsx').then((m) => ({ defa
 import { TravelLegsSection, TravelLegsSummary, travelTotal } from './TravelLegsSection.jsx';
 import { prefillMode, openJaw, publishedLeg } from '../lib/gettingThere.js';
 import { loadDossier } from '../lib/dossier.js';
-import { TRAVEL_MODES, TRAVEL_MODE_LABEL } from '../lib/transportLinks.js';
+import { TRAVEL_MODES, TRAVEL_MODE_LABEL, googleFlightsExploreLink } from '../lib/transportLinks.js';
 import { buildCountryBriefs } from '../lib/countryBrief.js';
 import { matchCountries, SPEND_CHOICES } from '../lib/countryMatch.js';
 import { loadTrailsIndex } from '../lib/trails.js';
@@ -50,6 +50,8 @@ import { favDestIds } from '../lib/favorites.js';
 import { fmtDate, addDays, laterISO, useToday, monthName } from '../lib/dates.js';
 import { geocodeAddress } from '../lib/geocode.js';
 import { useCountryInsights } from '../hooks/useCountryInsights.js';
+import { useIsDesktop } from '../hooks/useIsDesktop.js';
+import { SheetShell } from '../browse/SheetShell.jsx';
 import {
   SparkIcon, CheckIcon, AlertIcon, TrainIcon, BusIcon, CarIcon, FerryIcon, InfoIcon,
   LeafIcon, ScaleIcon, BoltIcon, StarIcon, RouteIcon, BedIcon, MapPinIcon,
@@ -154,6 +156,34 @@ const BADGE_LABELS = {
  * fare dates. The parent gets { startDate, groupSize, transport, pace, label,
  * anchorId, stops:[{destinationId, nights, activities}] }.
  */
+/**
+ * "Not sure where to go yet?", the one question Carta's own catalogue answers
+ * from the wrong end.
+ *
+ * Carta ranks places by what they cost to BE in; Google Flights Explore ranks
+ * them by what they cost to REACH. Somebody holding an airport and no
+ * destination wants the second one, so the card hands them over rather than
+ * pretending the catalogue answers it. It needs a departure airport and
+ * nothing else, which is why it can stand on the From step before a single
+ * country has been chosen.
+ */
+function ExploreFlightsCard({ airport, month = '', lang = 'en', t }) {
+  const url = googleFlightsExploreLink({
+    fromIata: airport?.iata, fromCity: airport?.city, month, lang,
+  });
+  if (!url) return null;
+  return (
+    <a className="guide-explore-card" href={url} target="_blank" rel="noopener noreferrer">
+      <span className="guide-explore-icon"><PlaneIcon size={16} /></span>
+      <span className="guide-explore-text">
+        <b>{t('wizard.exploreTitle')}</b>
+        <small>{t('wizard.exploreCta', { airport: airport.iata })}</small>
+      </span>
+      <span className="ext-arrow" aria-hidden="true">&#8599;</span>
+    </a>
+  );
+}
+
 // `inline` drops the modal shell: the wizard becomes the trip planner's own
 // page, sitting under the app header instead of covering it. There is nothing
 // behind it to go back to, so it loses the backdrop, the close button and the
@@ -218,9 +248,14 @@ export function GuidedTripWizard({
   // Which way the last move went, so the incoming screen slides in from the
   // side it came from. Steps should read as travel through one form.
   const [stepDir, setStepDir] = useState('fwd');
+  // The phone's rail is one line plus a sheet (see the header). This is the
+  // sheet, and every move through the form closes it.
+  const [stepsOpen, setStepsOpen] = useState(false);
+  const isDesktop = useIsDesktop();
   const goStep = (n) => {
     setStepDir(n < step ? 'back' : 'fwd');
     setStep(n);
+    setStepsOpen(false);
   };
 
   const [countries, setCountries] = useState(() => new Set(savedDraft.countries || []));
@@ -443,6 +478,16 @@ export function GuidedTripWizard({
     });
     return rows;
   }, [allCountries, favByCountry]);
+
+  // The same shortlist, as its own row above the grid: only the countries that
+  // actually hold starred places, most-starred first.
+  const shortlistCountries = useMemo(
+    () => allCountries
+      .filter((c) => (favByCountry.get(c.country) || 0) > 0)
+      .sort((a, b) => (favByCountry.get(b.country) || 0) - (favByCountry.get(a.country) || 0)
+        || a.country.localeCompare(b.country)),
+    [allCountries, favByCountry],
+  );
 
   // Every Ryanair route into the chosen countries for the chosen period,
   // cheapest first. The pick anchors the whole trip, so this must stay
@@ -817,6 +862,13 @@ export function GuidedTripWizard({
   }, [whereTab, stepName]);
 
   // The month the trip actually falls in, which the When step already asked.
+  // The same answer as tripMonth, written the way a calendar writes it, for
+  // the handful of places (Google Flights Explore) that want a real month.
+  const tripYearMonth = useMemo(() => {
+    const iso = startDate || (flexMonth ? `${flexMonth}-05` : '');
+    const m = /^(\d{4}-\d{2})/.exec(iso);
+    return m ? m[1] : '';
+  }, [startDate, flexMonth]);
   const tripMonth = useMemo(() => {
     const iso = startDate || (flexMonth ? `${flexMonth}-05` : '');
     const m = /^\d{4}-(\d{2})/.exec(iso);
@@ -1331,7 +1383,7 @@ export function GuidedTripWizard({
           key: 'daily',
           label: t('wizard.estDaily'),
           eur: Math.round(daily * gs),
-          sub: 'meals, drinks and groceries from each city\u2019s own price level',
+          sub: t('wizard.estDailySub'),
         });
       }
     }
@@ -1561,10 +1613,19 @@ export function GuidedTripWizard({
   }, [booked.travel, arrivalDest?.country]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // ---- The "planning around" recap: every earlier answer, always visible ----
+  // Every chip is an answer, and an answer is somewhere you can go back to, so
+  // each one carries the step it was given on. A chip whose step is behind the
+  // traveller is a button that returns them to it; one for a step they have not
+  // reached (or for a fact no single step owns, like the party size, which is a
+  // stepper on Finish) stays a plain label rather than a dead-looking button.
+  const stepNo = (name) => {
+    const i = steps.indexOf(name);
+    return i >= 0 && i + 1 < step ? i + 1 : null;
+  };
   const recapChips = [];
   if (step > 1) {
     if (originPlace) {
-      recapChips.push({ Icon: MapPinIcon, text: t('wizard.fromPlaceRecap', { place: originPlace.name }) });
+      recapChips.push({ Icon: MapPinIcon, text: t('wizard.fromPlaceRecap', { place: originPlace.name }), to: stepNo('From') });
     }
     recapChips.push({
       Icon: PersonIcon,
@@ -1575,15 +1636,16 @@ export function GuidedTripWizard({
         Icon: MapPinIcon,
         text: selectedCountries.map((c) => c.country).slice(0, 3).join(', ')
           + (selectedCountries.length > 3 ? ` +${selectedCountries.length - 3}` : ''),
+        to: stepNo('Where'),
       });
     }
     if (booked.travel && arrivalDest) {
-      recapChips.push({ Icon: PlaneIcon, text: t('wizard.arrivingIn', { city: cityLabel(arrivalDest.city) }) });
+      recapChips.push({ Icon: PlaneIcon, text: t('wizard.arrivingIn', { city: cityLabel(arrivalDest.city) }), to: stepNo('From') });
     }
     if (dateMode === 'exact' && startDate && endDate) {
-      recapChips.push({ Icon: CalendarIcon, text: `${fmtDate(startDate, true)} → ${fmtDate(endDate, true)}${flexPad ? `, ${t('wizard.plusMinusDays')}` : ''}` });
+      recapChips.push({ Icon: CalendarIcon, text: `${fmtDate(startDate, true)} → ${fmtDate(endDate, true)}${flexPad ? `, ${t('wizard.plusMinusDays')}` : ''}`, to: stepNo('When') });
     } else if (dateMode === 'flex') {
-      recapChips.push({ Icon: CalendarIcon, text: `${flexNights} ${t('wizard.nights')}, ${flexMonth ? months.find((m) => m.key === flexMonth)?.label || flexMonth : t('wizard.cheapestMonth')}` });
+      recapChips.push({ Icon: CalendarIcon, text: `${flexNights} ${t('wizard.nights')}, ${flexMonth ? months.find((m) => m.key === flexMonth)?.label || flexMonth : t('wizard.cheapestMonth')}`, to: stepNo('When') });
     }
     // How they get there is their own answer now, so the recap repeats it back
     // rather than naming an airport Carta chose.
@@ -1591,13 +1653,18 @@ export function GuidedTripWizard({
       recapChips.push({
         Icon: travelValues.out.mode === 'car' ? CarIcon : RouteIcon,
         text: t(TRAVEL_MODE_LABEL[travelValues.out.mode]),
+        to: stepNo('Getting'),
       });
     }
     if ((stepName === 'Stay' || stepName === 'Finish') && stayStyle === 'single') {
-      recapChips.push({ Icon: BedIcon, text: t('wizard.oneHomeBaseChip') });
+      recapChips.push({ Icon: BedIcon, text: t('wizard.oneHomeBaseChip'), to: stepNo('Stay') });
     }
     if (includedIds.length && stepName === 'Finish') {
-      recapChips.push({ Icon: RouteIcon, text: `${includedIds.length} ${includedIds.length === 1 ? t('wizard.stayOne') : t('wizard.stays')}, ${totalNights} ${t('wizard.nights')}` });
+      recapChips.push({
+        Icon: RouteIcon,
+        text: `${includedIds.length} ${includedIds.length === 1 ? t('wizard.stayOne') : t('wizard.stays')}, ${totalNights} ${t('wizard.nights')}`,
+        to: stepNo('Stay') || stepNo('Stays') || stepNo('Trips'),
+      });
     }
   }
 
@@ -1752,6 +1819,13 @@ export function GuidedTripWizard({
     return 'form';
   })();
 
+  // Prices belong to the second half of the form. On the three opening
+  // questions and on Where there is nothing priced yet worth a band across the
+  // screen: a figure that reads "0" or holds only the flight someone typed is
+  // an anchor set before the trip exists. It appears from the third step on,
+  // which on every path is Trips, Stay or Stays.
+  const showEstimate = stepName !== 'Where' && !BASICS_STEPS.includes(stepName);
+
   // ---------------------------------------------------------------- render --
   // The step rail is the wizard's orientation, and there is no opening
   // screen without one any more, so it is always on.
@@ -1774,15 +1848,50 @@ export function GuidedTripWizard({
           <div className="guide-head-inner">
             {steps.length > 0 ? (
               <>
+                {/* The phone's rail already says "Step 4 of 6 - Where" on its
+                    own line, so the header there is the step name alone; the
+                    desktop rail names every step but numbers none, so the
+                    header keeps the count. */}
                 <div className="shape-head-title">
                   {steps[step - 1] ? t(STEP_LABEL_KEYS[steps[step - 1]]) : t('wizard.planYourTrip')}
-                  {steps.length > 1 && <span className="shape-head-step">{t('wizard.stepOf', { x: step, n: steps.length })}</span>}
+                  {steps.length > 1 && isDesktop && (
+                    <span className="shape-head-step">{t('wizard.stepOf', { x: step, n: steps.length })}</span>
+                  )}
                 </div>
                 {/* Named steps, not anonymous hairlines: a bare segment bar
                     tells you how far along you are but never what is still
                     coming, which is exactly what makes a six-step form feel
-                    open-ended. Done steps are tappable to go back. */}
-                {steps.length > 1 && (
+                    open-ended. Done steps are tappable to go back.
+
+                    On a phone seven of those overflow their own row: at 375px
+                    each step gets 49px, which is a numbered circle and no name
+                    at all, and the row scrolls sideways to hide the rest. So
+                    below 769px the rail collapses to the step that is actually
+                    happening, a progress bar, and a button that opens the whole
+                    list as a sheet. */}
+                {steps.length > 1 && !isDesktop && (
+                  <button
+                    type="button"
+                    className="wiz-mini"
+                    onClick={() => setStepsOpen(true)}
+                    aria-haspopup="dialog"
+                    aria-expanded={stepsOpen}
+                  >
+                    <span className="wiz-mini-line">
+                      {/* The step's NAME is the header title one line above,
+                          so this line carries the count and the way into the
+                          list, and does not say "Booked" a second time. */}
+                      <span className="wiz-mini-now">
+                        {t('wizard.stepOf', { x: step, n: steps.length })}
+                      </span>
+                      <ChevronRightIcon size={13} />
+                    </span>
+                    <span className="wiz-mini-bar" aria-hidden="true">
+                      <span style={{ width: `${Math.round((step / steps.length) * 100)}%` }} />
+                    </span>
+                  </button>
+                )}
+                {steps.length > 1 && isDesktop && (
                   <ol className="wiz-steps">
                     {steps.map((label, i) => {
                       const n = i + 1;
@@ -1817,18 +1926,18 @@ export function GuidedTripWizard({
             rather than a chip in a corner. What the last answer cost lands as
             a delta chip and a bump on the figure; tapping the band opens the
             line-by-line breakdown in place. */}
-        {runningEstimate && (
+        {runningEstimate && showEstimate && (
           <div className={`guide-estimate-band ${estimateOpen ? 'open' : ''}`}>
             <span className="guide-estimate-flash" key={`flash-${estBump}`} aria-hidden="true" />
             <button
               className="guide-estimate-main"
               onClick={() => setEstimateOpen((v) => !v)}
               aria-expanded={estimateOpen}
-              title="What's in this estimate so far?"
+              title={t('wizard.estWhatsIn')}
             >
               <span className="guide-estimate-heading">
-                Estimate so far
-                <small>{runningEstimate.gs} {runningEstimate.gs === 1 ? 'traveller' : 'travellers'}</small>
+                {t('wizard.estSoFar')}
+                <small>{runningEstimate.gs} {t(runningEstimate.gs === 1 ? 'wizard.travellerOne' : 'wizard.travellerMany')}</small>
               </span>
               <span className="guide-estimate-figure">
                 <b key={`total-${estBump}`}>{eur(runningEstimate.total)}</b>
@@ -1845,10 +1954,10 @@ export function GuidedTripWizard({
                   </span>
                 ))}
               </span>
-              <span className="guide-estimate-toggle">{estimateOpen ? 'Hide' : 'Details'}</span>
+              <span className="guide-estimate-toggle">{estimateOpen ? t('wizard.estHide') : t('wizard.estDetails')}</span>
             </button>
             {estimateOpen && (
-              <div className="guide-estimate-detail" role="region" aria-label="Estimate so far">
+              <div className="guide-estimate-detail" role="region" aria-label={t('wizard.estSoFar')}>
                 {runningEstimate.lines.map((l) => (
                   <div key={l.key} className="guide-estimate-line">
                     <span className="guide-estimate-label">
@@ -1859,7 +1968,7 @@ export function GuidedTripWizard({
                   </div>
                 ))}
                 <div className="guide-estimate-line guide-estimate-total">
-                  <span className="guide-estimate-label">Total so far</span>
+                  <span className="guide-estimate-label">{t('wizard.estTotalSoFar')}</span>
                   <b>{eur(runningEstimate.total)}</b>
                 </div>
               </div>
@@ -1872,9 +1981,19 @@ export function GuidedTripWizard({
           <div className="guide-recap">
             <div className="guide-recap-inner">
               <span className="guide-recap-label"><CheckIcon size={10} /> {t('wizard.planningAround')}</span>
-              {recapChips.map((c, i) => (
+              {recapChips.map((c, i) => (c.to ? (
+                <button
+                  type="button"
+                  className="guide-recap-chip is-link"
+                  key={i}
+                  onClick={() => goStep(c.to)}
+                  title={t('wizard.recapEdit', { step: t(STEP_LABEL_KEYS[steps[c.to - 1]]) })}
+                >
+                  <c.Icon size={10} /> {c.text}
+                </button>
+              ) : (
                 <span className="guide-recap-chip" key={i}><c.Icon size={10} /> {c.text}</span>
-              ))}
+              )))}
             </div>
           </div>
         )}
@@ -1955,6 +2074,13 @@ export function GuidedTripWizard({
                       {quiz.types?.length > 0 && countryMatches.length === 0 && (
                         <p className="guide-empty">{t('quiz.noMatches')}</p>
                       )}
+
+                      {/* Carta has just said where it thinks they should go.
+                          The honest companion to that is the other ranking:
+                          wherever happens to be cheap out of their own airport
+                          that month. By now the dates are answered, so this one
+                          carries the month. */}
+                      <ExploreFlightsCard airport={nearAirports[0]} month={tripYearMonth} lang={lang} t={t} />
                     </div>
                   ) : (
                     <div role="tabpanel" id="wpanel-hand" aria-labelledby="wtab-hand">
@@ -1962,6 +2088,34 @@ export function GuidedTripWizard({
                         <button className={whereView === 'list' ? 'on' : ''} onClick={() => setWhereView('list')}>{t('wizard.grid')}</button>
                         <button className={whereView === 'map' ? 'on' : ''} onClick={() => setWhereView('map')}>{t('wizard.map')}</button>
                       </div>
+
+                      {/* The countries the traveller has already starred
+                          places in, pulled out above the grid. They are in the
+                          grid too (sorted first), but 43 cards is three screens
+                          on a phone and their own earlier decisions should not
+                          need scrolling to. One tap adds the country. */}
+                      {whereView === 'list' && shortlistCountries.length > 0 && (
+                        <div className="guide-shortrow">
+                          <span className="guide-shortrow-label">
+                            <StarIcon size={11} /> {t('wizard.fromYourShortlist')}
+                          </span>
+                          <div className="guide-shortrow-chips">
+                            {shortlistCountries.map((c) => (
+                              <button
+                                key={c.country}
+                                type="button"
+                                className={`guide-shortrow-chip ${countries.has(c.country) ? 'on' : ''}`}
+                                onClick={() => toggleCountry(c.country)}
+                                aria-pressed={countries.has(c.country)}
+                              >
+                                <Flag iso2={c.iso2} className="guide-flag-img-sm" />
+                                {c.country}
+                                <span className="guide-shortrow-n">{favByCountry.get(c.country)}</span>
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                      )}
 
                       {whereView === 'list' ? (
                         <div className="guide-cgrid">
@@ -2058,6 +2212,8 @@ export function GuidedTripWizard({
                     origin={originCode}
                     tripMonth={tripMonth}
                     nights={windowNights || flexNights}
+                    startDate={dateMode === 'exact' ? startDate : ''}
+                    endDate={dateMode === 'exact' ? endDate : ''}
                     quizTypes={quiz.types}
                     favorites={favorites}
                     onOpenDest={onOpenDest}
@@ -2301,6 +2457,10 @@ export function GuidedTripWizard({
                         </span>
                       ))}
                     </div>
+                    {/* The airports are listed, and the obvious next thought
+                        is "so where do they actually go". Undated here: on
+                        this step the traveller has not answered When yet. */}
+                    <ExploreFlightsCard airport={nearAirports[0]} lang={lang} t={t} />
                   </div>
                 )}
               </div>
@@ -3193,8 +3353,13 @@ export function GuidedTripWizard({
                 <button className="guide-back" onClick={() => goStep(step - 1)}>{t('wizard.back')}</button>
               )}
               {step < steps.length ? (
+                // "Next" says a step happens; it never says which. Naming the
+                // destination is the difference between a form that could go
+                // anywhere and one whose end is in sight.
                 <button className="guide-next" onClick={() => goStep(step + 1)} disabled={!canNext}>
-                  {t('wizard.next')}
+                  {/* The step name as written, not lowercased: German capitalises
+                      its nouns and "Weiter: reisen" is a spelling mistake. */}
+                  {t('wizard.nextTo', { step: t(STEP_LABEL_KEYS[steps[step]] || 'wizard.stepFinish') })}
                 </button>
               ) : (
                 // The Finish step's call to action sits in the sticky nav slot
@@ -3208,6 +3373,39 @@ export function GuidedTripWizard({
           </div>
         </div>
       </div>
+
+      {/* The phone's step list, opened from the one-line rail. Done steps are
+          tappable; the one still to come are named but inert, which is the
+          whole reason the list exists: it says what is still coming. */}
+      {stepsOpen && (
+        <SheetShell
+          title={t('wizard.stepsTitle')}
+          onClose={() => setStepsOpen(false)}
+          className="wiz-steps-sheet"
+          labelId="wiz-steps-title"
+        >
+          <ol className="wiz-sheet-list">
+            {steps.map((label, i) => {
+              const n = i + 1;
+              const state = n < step ? 'done' : n === step ? 'now' : 'todo';
+              return (
+                <li key={label} className={`wiz-sheet-step ${state}`}>
+                  <button
+                    type="button"
+                    disabled={state !== 'done'}
+                    onClick={() => goStep(n)}
+                    aria-current={state === 'now' ? 'step' : undefined}
+                  >
+                    <span className="wiz-step-mark">{state === 'done' ? <CheckIcon size={11} /> : n}</span>
+                    <span className="wiz-sheet-name">{t(STEP_LABEL_KEYS[label])}</span>
+                    {state === 'done' && <span className="wiz-sheet-edit">{t('wizard.editStep')}</span>}
+                  </button>
+                </li>
+              );
+            })}
+          </ol>
+        </SheetShell>
+      )}
 
       {/* "What's there", answered by the page that answers it everywhere else.
           It is position:fixed at z-index 240, so it covers the wizard rather

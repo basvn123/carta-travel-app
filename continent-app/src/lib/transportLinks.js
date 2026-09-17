@@ -93,33 +93,94 @@ export function skyscannerLink({
     + `?adultsv2=${Math.max(1, Math.min(8, adults | 0))}&cabinclass=economy&rtn=${back ? 1 : 0}`;
 }
 
+/* ── Google Flights ───────────────────────────────────────────────────────
+   Google publishes no deep-link parameters for flight search: the itinerary
+   URLs it produces carry an opaque protobuf blob that nothing outside Google
+   can build. What it does parse is its own query box, so both builders below
+   type a sentence into `q` exactly as a person would, and Google reads the
+   airports and the dates back out of it. The wording is therefore load
+   bearing: "Flights from AMS to FCO on 2026-05-12 through 2026-05-19" is
+   understood, and paraphrases of it are not reliably understood.
+
+   The sentence is English whatever the UI language, because it is Google's
+   parser reading it and not the traveller; `hl` is what makes the PAGE come
+   back in their language, and `curr` is what makes the prices read in euros
+   like every other price in Carta.
+
+   Both are deliberately searches and not prices. Carta holds no live fares
+   for these routes, so it hands the question to somewhere that does rather
+   than printing a number of its own (see the note at the top of
+   lib/countryBrief.js). ──────────────────────────────────────────────────── */
+
 /**
- * Google Flights, as a search rather than an itinerary.
+ * Google Flights for one route, dated when the days are known.
  *
- * Google has no documented deep-link parameters, so what it does take is the
- * query box: `flights from AMS to FCO on 2026-05-12 through 2026-05-19`, typed
- * into the search string it already parses. That is deliberately a SEARCH and
- * not a price. Carta does not hold live fares for these routes, so the link
- * hands the question to somewhere that does rather than printing a number of
- * its own (see the note at the top of lib/countryBrief.js).
- *
- * @param originIata  three letter code they leave from
- * @param destIata    three letter code they land at
+ * @param fromIata    three letter code they leave from
+ * @param toIata      three letter code they land at
+ * @param toCity      a written town, used when there is no arrival IATA
  * @param date        outbound day, YYYY-MM-DD, optional
  * @param returnDate  return day, YYYY-MM-DD, optional
- * @returns a URL, or null without both airports
+ * @param lang        UI language code, for `hl`
+ * @returns a URL, or null without an origin airport and somewhere to land
  */
-export function googleFlightsLink({ originIata, destIata, date = '', returnDate = '' }) {
-  if (!IATA.test(originIata || '') || !IATA.test(destIata || '')) return null;
-  const from = originIata.toUpperCase();
-  const to = destIata.toUpperCase();
-  if (from === to) return null;
-  let q = `flights from ${from} to ${to}`;
+export function googleFlightsLink({
+  fromIata, toIata, toCity = '', date = '', returnDate = '', lang = 'en',
+}) {
+  const from = String(fromIata || '').toUpperCase();
+  if (!IATA.test(from)) return null;
+  // An airport code is what Google resolves unambiguously; a city name is the
+  // fallback for the places Carta prices but no airport serves directly, and
+  // it is good enough because the search box does the same disambiguation a
+  // person typing would get.
+  const to = IATA.test(toIata || '') ? String(toIata).toUpperCase() : String(toCity || '').trim();
+  if (!to || to === from) return null;
+
+  let q = `Flights from ${from} to ${to}`;
   if (ISO_DATE.test(date || '')) {
     q += ` on ${date}`;
     if (ISO_DATE.test(returnDate || '')) q += ` through ${returnDate}`;
   }
-  return `https://www.google.com/travel/flights?q=${encodeURIComponent(q)}`;
+  // The party size is deliberately NOT said. " for 3 adults" is parsed on some
+  // routes and silently rejected on others (AMS to FCO is a reproducible
+  // rejection, BRU to SZG is not), and when Google rejects the clause it
+  // throws away the WHOLE sentence: the traveller lands on a blank search
+  // form with the route gone. Checked in a real browser, both ways, on one
+  // route in one run. Trading a prefilled route for a party size that
+  // defaults to one and is a single click to change is a bad trade.
+  return `https://www.google.com/travel/flights?q=${encodeURIComponent(q)}${googleTail(lang)}`;
+}
+
+/**
+ * Google Flights Explore: everywhere you can fly from one airport, by price.
+ *
+ * This is the link for a traveller who has not chosen a destination yet, which
+ * is a question Carta's own catalogue answers from the other end (what a place
+ * costs to stay in) and Google answers from this one (what it costs to reach).
+ * They are complementary, so this sits BESIDE the catalogue rather than in
+ * place of it.
+ *
+ * The q parameter is undocumented, so both the origin and the month were
+ * checked in a real browser: "Flights from BRU in 2026-11" comes back as
+ * "Brussels to anywhere" with the date range already set to that month.
+ * A caller with nothing but the airport still gets a working Explore page.
+ */
+export function googleFlightsExploreLink({ fromIata, fromCity = '', month = '', lang = 'en' }) {
+  const from = String(fromIata || '').toUpperCase();
+  const origin = IATA.test(from) ? from : String(fromCity || '').trim();
+  if (!origin) return null;
+  let q = `Flights from ${origin}`;
+  // A month prefix, YYYY-MM, when the traveller has said roughly when.
+  if (/^\d{4}-\d{2}$/.test(month || '')) q += ` in ${month}`;
+  return `https://www.google.com/travel/explore?q=${encodeURIComponent(q)}${googleTail(lang)}`;
+}
+
+/** The two parameters every Google travel URL takes: prices in the currency
+ *  the whole app is written in, and the page in the language the traveller
+ *  chose. Google ignores an unknown hl rather than erroring, so an unmapped
+ *  language costs an English page, not a broken link. */
+function googleTail(lang) {
+  const code = /^[a-z]{2}$/i.test(lang || '') ? String(lang).toLowerCase() : 'en';
+  return `&curr=EUR&hl=${code}`;
 }
 
 /** The Trainline route page for a rail (or coach) leg, or null. Carries the
@@ -170,10 +231,11 @@ const NO_RAIL = new Set(['IS', 'MT', 'CY', 'AD', 'LI', 'MC', 'SM', 'FO']);
  * @param mode  'fly' | 'train' | 'bus' | 'car' | 'ferry' | '' (unsure)
  * @param date        the day of this leg, YYYY-MM-DD
  * @param returnDate  only for a there-and-back flight
+ * @param lang        UI language code, for the links that can be localised
  * @returns [{ key, label, url }]
  */
 export function legLinks({
-  from, to, mode = '', date = '', returnDate = '', adults = 1, subId = 'wizard',
+  from, to, mode = '', date = '', returnDate = '', adults = 1, subId = 'wizard', lang = '',
 }) {
   const out = [];
   const push = (key, label, url) => { if (url) out.push({ key, label, url }); };
@@ -182,6 +244,13 @@ export function legLinks({
   const railOk = !NO_RAIL.has(from?.iso2 || '') && !NO_RAIL.has(to?.iso2 || '');
 
   if (mode === 'fly') {
+    // Google Flights leads, because it is where the price graph and the
+    // nearby-airport search are, which is what somebody still comparing a
+    // route actually needs. The two affiliate links keep their place right
+    // after it: this adds a door, it does not close one.
+    push('google', 'Google Flights', googleFlightsLink({
+      fromIata, toIata, toCity: to?.city, date, returnDate, lang,
+    }));
     push('skyscanner', 'Skyscanner', skyscannerLink({
       originIata: fromIata, destIata: toIata, date, returnDate, adults, subId,
     }));

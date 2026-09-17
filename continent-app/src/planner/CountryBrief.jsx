@@ -440,7 +440,7 @@ function EventsRow({ events, tripMonth, lang, t }) {
 
 /* ── 7. Getting there ───────────────────────────────────────────────────── */
 
-function GettingThere({ brief, meta, origin, open, t }) {
+function GettingThere({ brief, meta, origin, open, startDate = '', endDate = '', lang = 'en', t }) {
   const top = brief.visit.find((v) => v.lat != null && v.lon != null) || null;
   const airports = React.useMemo(
     () => (top ? nearbyAirports(meta, top.lat, top.lon, { limit: 3 }) : []),
@@ -467,7 +467,19 @@ function GettingThere({ brief, meta, origin, open, t }) {
     return () => { live = false; };
   }, [open, top?.id]);
 
-  const flights = airports[0] ? googleFlightsLink({ originIata: origin, destIata: airports[0].iata }) : null;
+  // Google Flights from the traveller's own airport to the country's main one,
+  // carrying the dates when the wizard has them. Undated it is still the right
+  // link: the price graph is what someone reading a country brief wants.
+  const flights = airports[0]
+    ? googleFlightsLink({
+      fromIata: origin,
+      toIata: airports[0].iata,
+      toCity: brief.country,
+      date: startDate,
+      returnDate: endDate,
+      lang,
+    })
+    : null;
 
   if (!airports.length && !transfer) return <p className="cbrief-note">{t('brief.noAirports')}</p>;
   return (
@@ -487,6 +499,7 @@ function GettingThere({ brief, meta, origin, open, t }) {
       {flights && (
         <a className="cbrief-link" href={flights} target="_blank" rel="noopener noreferrer">
           {t('brief.checkFlights', { from: origin, to: airports[0].iata })}
+          <span className="ext-arrow" aria-hidden="true">&#8599;</span>
         </a>
       )}
     </div>
@@ -496,7 +509,7 @@ function GettingThere({ brief, meta, origin, open, t }) {
 /* ── The brief itself ───────────────────────────────────────────────────── */
 
 function BriefBody({
-  brief, destinations, meta, origin, tripMonth, nights, quizTypes,
+  brief, destinations, meta, origin, tripMonth, nights, startDate, endDate, quizTypes,
   favorites, onOpenDest, onSeeAll, onOpenTrip, onPlanTrip,
 }) {
   const { t, lang } = useI18n();
@@ -607,7 +620,10 @@ function BriefBody({
         id="cb-there" icon={TicketIcon} title={t('brief.gettingThere')}
         open={isOpen('there')} onToggle={() => toggle('there')}
       >
-        <GettingThere brief={brief} meta={meta} origin={origin} open={isOpen('there')} t={t} />
+        <GettingThere
+          brief={brief} meta={meta} origin={origin} open={isOpen('there')}
+          startDate={startDate} endDate={endDate} lang={lang} t={t}
+        />
       </Fold>
 
       {(brief.tips.length > 0 || drivingBits.length > 0) && (
@@ -697,6 +713,7 @@ function AddButton({ brief, picked, onToggle, t }) {
 export function CountryBrief({
   brief, picked, onToggle, onClose, destinations = null, meta = null, origin = '',
   tripMonth = null, nights = null, quizTypes = null, favorites = null,
+  startDate = '', endDate = '',
   onOpenDest = null, onSeeAll = null, onOpenTrip = null, onPlanTrip = null,
   anchorRef = null,
 }) {
@@ -712,6 +729,8 @@ export function CountryBrief({
       origin={origin}
       tripMonth={tripMonth}
       nights={nights}
+      startDate={startDate}
+      endDate={endDate}
       quizTypes={quizTypes}
       favorites={favorites}
       onOpenDest={onOpenDest}

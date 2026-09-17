@@ -6,7 +6,7 @@ import { NON_PHOTO_IMG } from '../lib/countryCovers.js';
 import { isFav } from '../lib/favorites.js';
 import { useI18n } from '../i18n/index.jsx';
 import { cityLabel, cityKeyName } from '../lib/placeName.js';
-import { RouteIcon, CheckIcon, SparkIcon } from '../components/Icons.jsx';
+import { RouteIcon, CheckIcon, SparkIcon, StarIcon } from '../components/Icons.jsx';
 
 /**
  * The ready-made half of the planner: published itineraries that were composed
@@ -135,7 +135,7 @@ function tripPhotos(trips, destinations) {
  * one swaps which trip the card IS, so the buttons below always act on what
  * the card is currently showing.
  */
-function TripCard({ trip, photo, chosen, onPick, onOpen, t }) {
+function TripCard({ trip, photo, chosen, starred, onPick, onOpen, t }) {
   // Which variant the card is showing. It starts on the one groupTripVariants
   // preselected (nearest the window) and only moves when the traveller says so.
   const [shownId, setShownId] = useState(trip.id);
@@ -154,6 +154,11 @@ function TripCard({ trip, photo, chosen, onPick, onOpen, t }) {
           <b>{shown.days}</b> {t(shown.days === 1 ? 'trip.dayWord' : 'trip.daysWord')}
         </span>
         {chosen && <span className="wtrip-check"><CheckIcon size={12} /></span>}
+        {/* The list already puts starred trips first; without a mark on the
+            card that ordering is invisible and reads as an arbitrary shuffle. */}
+        {starred && !chosen && (
+          <span className="wtrip-star" title={t('ready.starred')}><StarIcon size={12} /></span>
+        )}
       </div>
       <div className="wtrip-body">
         <p className="wtrip-route">
@@ -310,6 +315,7 @@ export function ReadyTripsStep({
                 trip={trip}
                 photo={photos.get(trip.id)}
                 chosen={(trip.variants || [trip]).some((v) => v.id === selectedId)}
+                starred={(trip.variants || [trip]).some((v) => isFav(favorites, 'trip', v.id))}
                 onPick={onPick}
                 onOpen={onOpenTrip}
                 t={t}

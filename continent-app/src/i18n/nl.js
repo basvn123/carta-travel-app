@@ -1076,6 +1076,8 @@ export const nl = {
   "shell.retry": "Opnieuw proberen",
 
   // 2026-07: car-first flow, stay filters, chronological receipt, multi-carrier
+  "wizard.exploreTitle": "Nog niet zeker waarheen?",
+  "wizard.exploreCta": "Kijk waar je goedkoop naartoe vliegt vanaf {airport}, met Google Flights Explore",
   "wizard.carFromLabel": "Vanwaar vertrek je met de auto?",
   "wizard.carFromPlaceholder": "Je woonplaats of adres, bv. Gent",
   "wizard.carFromPicked": "Brandstof, tol en rijtijden worden vanaf hier berekend",
@@ -3723,4 +3725,26 @@ export const nl = {
   "match.rail": "Treinen van {operator}",
   "match.quiet": "{pct}% ervan blijft rustig",
   "match.mildHeat": "Rond {c}C, niet heet",
+
+  // ---- T8: the trip planner's flow polish, favourites and hand-offs ----
+  "wizard.stepsTitle": "Je stappen",
+  "wizard.editStep": "Wijzig",
+  "wizard.nextTo": "Volgende: {step}",
+  "wizard.recapEdit": "Terug naar {step}",
+  "wizard.fromYourShortlist": "Uit je favorieten",
+  "wizard.estWhatsIn": "Wat zit er tot nu toe in deze schatting?",
+  "wizard.estSoFar": "Schatting tot nu toe",
+  "wizard.estHide": "Verbergen",
+  "wizard.estDetails": "Details",
+  "wizard.estTotalSoFar": "Totaal tot nu toe",
+  "ready.starred": "Bij je favorieten",
+  "trip.tripNeedsDates": "{trip} heeft zijn stops en nachten. Zeg wanneer je reist, dan rekent Carta uit hoe je er komt.",
+  "trip.thisTrip": "Deze reis",
+  "trip.onToGettingThere": "Door naar heen en terug",
+  "trip.planYourDays": "Plan je dagen",
+  "wizard.estStays": "Overnachtingen, {nights} in {cities}",
+  "wizard.estStaysSub": "hele groep, op basis van echte marktprijzen",
+  "wizard.estDailySub": "eten, drinken en boodschappen op het prijsniveau van elke stad",
+  "wizard.cityOne": "stad",
+  "wizard.cityMany": "steden",
 };

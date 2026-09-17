@@ -1,7 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import {
-  legLinks, googleFlightsLink, TRAVEL_MODES, TRAVEL_MODE_LABEL,
-} from '../lib/transportLinks.js';
+import { legLinks, TRAVEL_MODES, TRAVEL_MODE_LABEL } from '../lib/transportLinks.js';
 import { fmtDate, addDays } from '../lib/dates.js';
 import { eur } from '../lib/format.js';
 import { useI18n } from '../i18n/index.jsx';
@@ -79,30 +77,21 @@ function publishedLine(pub, t) {
  * the trip total still wants it.
  */
 function LegBody({ leg, value, onChange, adults, t }) {
+  const { lang } = useI18n();
   const mode = value?.mode || '';
   const [payOpen, setPayOpen] = useState(() => Boolean(value?.eur || value?.service));
-  const links = useMemo(() => {
-    const base = legLinks({
-      from: leg.from,
-      to: leg.to,
-      mode,
-      date: leg.date,
-      returnDate: leg.returnDate || '',
-      adults,
-      subId: `wiz_${leg.kind}`,
-    });
-    if (mode !== 'fly') return base;
-    // Google Flights first on a flight leg (T7): it is where the price graph
-    // and the nearby-airport search are, which is what somebody comparing an
-    // open jaw actually needs.
-    const gf = googleFlightsLink({
-      originIata: leg.from?.iata || leg.from?.anchorIata,
-      destIata: leg.to?.iata || leg.to?.anchorIata,
-      date: leg.date,
-      returnDate: leg.returnDate || '',
-    });
-    return gf ? [{ key: 'gflights', label: 'Google Flights', url: gf }, ...base] : base;
-  }, [leg, mode, adults]);
+  // legLinks already leads a flight leg with Google Flights (T7) and keeps the
+  // affiliate links right behind it, so there is nothing to splice in here.
+  const links = useMemo(() => legLinks({
+    from: leg.from,
+    to: leg.to,
+    mode,
+    date: leg.date,
+    returnDate: leg.returnDate || '',
+    adults,
+    subId: `wiz_${leg.kind}`,
+    lang,
+  }), [leg, mode, adults, lang]);
 
   if (leg.booked) {
     return (

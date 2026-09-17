@@ -11422,6 +11422,13 @@ input, select {
      full row on phones instead of squeezing into a tall skinny pill. */
   .guide-foot-actions { flex: 1 1 100%; }
   .guide-foot-actions .guide-next { flex: 1; }
+  /* T8.2: 10px of padding around 13.5px type is a 39px button, and the whole
+     way forward through a seven-step form runs through it. */
+  .guide-foot-actions .guide-next,
+  .guide-foot-actions .guide-back {
+    display: inline-flex; align-items: center; justify-content: center;
+    min-height: var(--tap);
+  }
   /* Step 5 on phones: map on top, the tappable list under it, each stacked. */
   .shape-modal.shape-modal-wide { max-width: 100%; }
   .shape-pick { grid-template-columns: 1fr; gap: 12px; }
@@ -13391,6 +13398,10 @@ input, select {
 /* Phones: keep the footer clear of the home indicator now that the wizard
    runs to the bottom edge. */
 .trip-wizard-modal .guide-foot { padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px)); }
+/* Inline, the wizard runs inside .trip-planner-screen, which already stops at
+   var(--bottom-nav-h), and the bottom nav already carries the home-indicator
+   inset. Paying the inset twice left a band of empty paper under the footer. */
+.trip-wizard-modal.wiz-inline .guide-foot { padding-bottom: 12px; }
 
 /* ── Wizard design system ────────────────────────────────────────────────
    Controls live on white cards floating over the beige paper, so a group of
@@ -13762,6 +13773,32 @@ input, select {
 }
 .guide-airport-chip b { font-family: var(--mono); font-size: 11px; }
 .guide-airport-chip small { font-family: var(--mono); font-size: 10px; color: var(--ink-mute); }
+
+/* "Not sure where to go yet?": the hand-off to Google Flights Explore, on the
+   From step under the airports and on the Where step under the matches. It is
+   a link, not a button, because it leaves the app, and it is deliberately
+   quieter than the country cards beside it: it is the alternative to choosing
+   here, not the thing to do first. */
+.guide-explore-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 12px;
+  padding: 10px 12px;
+  min-height: var(--tap);
+  border: 1px solid var(--rule-soft);
+  border-radius: 10px;
+  background: var(--paper);
+  color: inherit;
+  text-decoration: none;
+}
+.guide-explore-card:hover { border-color: var(--rule); }
+.guide-explore-icon { display: inline-flex; color: var(--ink-mute); flex: none; }
+.guide-explore-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.guide-explore-text b { font-size: 13px; font-weight: 600; }
+.guide-explore-text small { font-size: 12px; color: var(--ink-soft); }
+/* The outbound arrow, wherever a link leaves Carta. */
+.ext-arrow { margin-left: 4px; color: var(--ink-mute); flex: none; }
 
 .guide-style-head {
   display: flex;
@@ -14435,10 +14472,193 @@ input, select {
 .wiz-step.now .wiz-step-name { color: var(--ink); font-weight: 600; }
 .wiz-step.done .wiz-step-name { color: var(--ink-soft); }
 .wiz-step.done .wiz-step-btn:hover .wiz-step-name { color: var(--accent); }
-/* Phones: the rail keeps the marks and drops the names it has no room for. */
+/* Phones: the rail keeps the marks and drops the names it has no room for.
+   Kept for the DAY planner's rail, which has four steps and fits. The trip
+   wizard has seven and renders .wiz-mini instead (below). */
 @media (max-width: 700px) {
   .wiz-step-name { display: none; }
   .wiz-step-btn { justify-content: center; padding-left: 0; padding-right: 0; }
+}
+
+/* ── T8.1 The phone's step rail: one line and a sheet ────────────────────
+   Seven steps at 375px is 49px each, which is a circle and no name, in a row
+   that scrolls sideways to hide the rest. So the phone gets the step it is on,
+   how far that is, and a tap for the whole list. */
+.wiz-mini {
+  display: block;
+  width: 100%;
+  margin-top: 8px;
+  padding: 0;
+  border: none;
+  background: none;
+  text-align: left;
+  cursor: pointer;
+}
+.wiz-mini-line {
+  display: flex; align-items: center; gap: 6px;
+  min-height: 24px;
+  font-family: var(--mono);
+  font-size: 11.5px;
+  color: var(--ink-soft);
+}
+.wiz-mini-line svg { flex: none; color: var(--ink-mute); }
+.wiz-mini-now { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.wiz-mini-bar {
+  display: block;
+  height: 3px;
+  margin-top: 6px;
+  border-radius: 2px;
+  background: var(--rule);
+  overflow: hidden;
+}
+.wiz-mini-bar > span {
+  display: block;
+  height: 100%;
+  border-radius: 2px;
+  background: var(--accent);
+  transition: width .2s ease;
+}
+
+/* The list behind that line, in a SheetShell. Every row is a full tap target;
+   the ones still to come are named but inert. */
+.wiz-sheet-list { list-style: none; margin: 0; padding: 0; }
+.wiz-sheet-step + .wiz-sheet-step { border-top: 1px solid var(--rule); }
+.wiz-sheet-step > button {
+  display: flex; align-items: center; gap: 10px;
+  width: 100%;
+  min-height: var(--tap);
+  padding: 10px 2px;
+  border: none;
+  background: none;
+  text-align: left;
+  cursor: default;
+  font-size: 14px;
+  color: var(--ink-mute);
+}
+.wiz-sheet-step.done > button { cursor: pointer; color: var(--ink-soft); }
+.wiz-sheet-step.now > button { color: var(--ink); font-weight: 600; }
+.wiz-sheet-name { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.wiz-sheet-edit {
+  margin-left: auto;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  color: var(--accent);
+}
+
+/* ── T8.7 Recap chips that go back to the step that set them ───────────── */
+.guide-recap-chip.is-link {
+  border: none;
+  cursor: pointer;
+  font: inherit;
+  min-height: 26px;
+}
+.guide-recap-chip.is-link:hover { color: var(--accent); border-color: var(--accent); }
+.guide-recap-chip.is-link:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+/* On a phone every chip is also a tap target, so it gets the room to be one. */
+@media (max-width: 768px) {
+  .guide-recap-chip.is-link { min-height: var(--tap); padding-block: 0; }
+}
+
+/* ── T8.4 "From your shortlist", above the country grid ─────────────────── */
+.guide-shortrow {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0 0 var(--space-4);
+  padding: var(--space-3);
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  background: var(--accent-bg);
+}
+.guide-shortrow-label {
+  display: flex; align-items: center; gap: 6px;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--ink-soft);
+}
+.guide-shortrow-label svg { color: var(--rate); }
+.guide-shortrow-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.guide-shortrow-chip {
+  display: inline-flex; align-items: center; gap: 7px;
+  min-height: var(--tap);
+  padding: 0 12px;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: var(--paper);
+  color: var(--ink);
+  font-size: 13px;
+  cursor: pointer;
+}
+.guide-shortrow-chip.on { border-color: var(--accent); background: var(--accent); color: #fff; }
+.guide-shortrow-chip.on .guide-shortrow-n { background: rgba(255, 255, 255, 0.24); color: #fff; }
+.guide-shortrow-n {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 18px; height: 18px;
+  padding: 0 5px;
+  border-radius: 9px;
+  background: var(--paper-dim);
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--ink-mute);
+}
+
+/* ── T8.4 The star on a favourited ready-made trip ─────────────────────── */
+.wtrip-star {
+  position: absolute;
+  top: 8px; right: 8px;
+  display: flex; align-items: center; justify-content: center;
+  width: 24px; height: 24px;
+  border-radius: 50%;
+  background: rgba(26, 26, 26, 0.55);
+  color: var(--rate);
+}
+
+/* ── T8.5/T8.6 The two hand-offs out of the trip planner ───────────────── */
+.trip-awaiting-dates {
+  margin: 0 0 10px;
+  font-size: 12.5px;
+  line-height: 1.45;
+  color: var(--ink-soft);
+}
+.trip-to-legs-btn {
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  width: 100%;
+  min-height: var(--tap);
+  margin-top: 12px;
+  border: 1px solid var(--accent);
+  border-radius: 10px;
+  background: var(--accent);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.trip-planday-btn {
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  width: 100%;
+  min-height: var(--tap);
+  margin-bottom: 8px;
+  border: 1px solid var(--accent);
+  border-radius: 10px;
+  background: var(--accent);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.trip-planday-btn svg { flex: none; }
+/* Two solid accent buttons stacked read as two primaries. Planning the days is
+   the step forward; saving is the step that keeps what is already there, so it
+   drops to an outline beneath it. */
+.trip-planday-btn + .trip-save-planned-btn {
+  background: var(--paper);
+  border: 1px solid var(--rule);
+  color: var(--ink-soft);
+}
+.trip-planday-btn + .trip-save-planned-btn:hover:not(:disabled) {
+  border-color: var(--accent);
+  color: var(--accent);
+  opacity: 1;
 }
 
 /* The gate on the Stay step, stated in the footer beside Next. */

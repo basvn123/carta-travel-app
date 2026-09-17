@@ -449,10 +449,23 @@ function TravelApp() {
       .map((st) => ({ destinationId: st.dest, nights: st.nights, activities: [] }))
       .filter((st) => st.destinationId && st.nights);
     if (!stops.length) return;
+    // The published trip already says how each hop is made: bus here, train
+    // there, a ferry where there is water. That was thrown away at this door,
+    // so a traveller who had just read "bus to Barcelona" arrived in the
+    // planner and was asked how they were getting to Barcelona. The legs keep
+    // their modes, keyed by leg index the way the planner keys them.
+    const legModes = {};
+    (trip.legs || []).forEach((leg, i) => {
+      if (leg?.mode) legModes[i] = leg.mode === 'drive' ? 'car' : leg.mode;
+    });
     setPendingSharedTrip({
       stops,
       label: trip.name || '',
       transportPref: trip.transport === 'car' ? 'owncar' : 'public',
+      legModes,
+      // Nobody has said when. The planner asks for the window itself rather
+      // than inventing dates a published trip never carried.
+      tripStart: '',
     });
     goToTab('trip');
   }, [goToTab]);

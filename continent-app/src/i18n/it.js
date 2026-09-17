@@ -1076,6 +1076,8 @@ export const it = {
   "shell.retry": "Riprova",
 
   // 2026-07: car-first flow, stay filters, chronological receipt, multi-carrier
+  "wizard.exploreTitle": "Non sai ancora dove andare?",
+  "wizard.exploreCta": "Guarda dove voli a poco da {airport}, su Google Flights Explore",
   "wizard.carFromLabel": "Da dove parti in auto?",
   "wizard.carFromPlaceholder": "La tua città o indirizzo, es. Gand",
   "wizard.carFromPicked": "Carburante, pedaggi e ore sono calcolati da qui",
@@ -3723,4 +3725,26 @@ export const it = {
   "match.rail": "Treni di {operator}",
   "match.quiet": "Il {pct}% resta tranquillo",
   "match.mildHeat": "Intorno ai {c}C, non caldo",
+
+  // ---- T8: the trip planner's flow polish, favourites and hand-offs ----
+  "wizard.stepsTitle": "I tuoi passi",
+  "wizard.editStep": "Modifica",
+  "wizard.nextTo": "Avanti: {step}",
+  "wizard.recapEdit": "Torna a {step}",
+  "wizard.fromYourShortlist": "Dai tuoi preferiti",
+  "wizard.estWhatsIn": "Cosa c'è finora in questa stima?",
+  "wizard.estSoFar": "Stima finora",
+  "wizard.estHide": "Nascondi",
+  "wizard.estDetails": "Dettagli",
+  "wizard.estTotalSoFar": "Totale finora",
+  "ready.starred": "Nei tuoi preferiti",
+  "trip.tripNeedsDates": "{trip} ha le sue tappe e le sue notti. Dicci quando parti e Carta calcola come arrivarci.",
+  "trip.thisTrip": "Questo viaggio",
+  "trip.onToGettingThere": "Avanti con andata e ritorno",
+  "trip.planYourDays": "Pianifica le tue giornate",
+  "wizard.estStays": "Pernottamenti, {nights} in {cities}",
+  "wizard.estStaysSub": "gruppo intero, su prezzi reali di mercato",
+  "wizard.estDailySub": "pasti, bevande e spesa al livello di prezzi di ogni città",
+  "wizard.cityOne": "città",
+  "wizard.cityMany": "città",
 };
