@@ -71,6 +71,7 @@ import sys
 import time
 import unicodedata
 import urllib.parse
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -88,6 +89,10 @@ OSM_FAME_CACHE = ROOT / "cache" / "trails_osm_fame.json"
 WD_CACHE = ROOT / "cache" / "trails_wikidata_famous.json"
 PV_CACHE = ROOT / "cache" / "trail_pageviews.json"
 PORTAL_DIR = ROOT / "data" / "reports" / "trails_portals"
+
+# Same knobs popularity.py uses against the same pageviews API.
+PV_WORKERS = 8
+PV_DELAY_S = 0.05
 
 # Wikidata classes that a famous walk is an instance of. Deliberately wider
 # than "hiking trail": Cirque de Gavarnie is a cirque, Trolltunga a rock
@@ -762,19 +767,39 @@ def pageviews_for(wiki_tags, offline=False, verbose=False):
         return cache
     todo = [t for t in sorted(set(wiki_tags))
             if t and t not in cache and ":" in t]
-    for i, tag in enumerate(todo):
+    if not todo:
+        return cache
+
+    # Threaded, like popularity.py against the same cache and the same API.
+    # A full sweep asks for ~69,000 articles; serially that is about three
+    # hours of a monthly task doing nothing but waiting on a socket.
+    def work(tag):
         lang, title = tag.split(":", 1)
         url = f"https://{lang}.wikipedia.org/wiki/{urllib.parse.quote(title)}"
-        got = ea.pageviews_avg(url)
-        if got is not None:
-            cache[tag] = got
-        if i % 50 == 49:
-            write_json(PV_CACHE, cache)
-            if verbose:
-                print(f"    pageviews {i + 1}/{len(todo)}")
-        time.sleep(0.05)
-    if todo:
-        write_json(PV_CACHE, cache)
+        time.sleep(PV_DELAY_S)
+        return tag, ea.pageviews_avg(url)
+
+    done = fails = 0
+    print(f"        {len(todo):,} article(s) to look up")
+    with ThreadPoolExecutor(max_workers=PV_WORKERS) as ex:
+        futs = [ex.submit(work, t) for t in todo]
+        for f in as_completed(futs):
+            try:
+                tag, views = f.result()
+            except Exception:
+                fails += 1
+                done += 1
+                continue
+            if views is None:
+                fails += 1          # hard failure: not cached, retried later
+            else:
+                cache[tag] = views
+            done += 1
+            if done % 500 == 0:
+                write_json(PV_CACHE, cache)
+                print(f"        pageviews {done:,}/{len(todo):,} "
+                      f"({fails} failure(s))", flush=True)
+    write_json(PV_CACHE, cache)
     return cache
 
 
