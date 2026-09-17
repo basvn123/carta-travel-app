@@ -446,24 +446,12 @@ input, select {
   /* The desktop section tabs collapse; BottomNav (which includes Home) is
      the switch on mobile. */
   .header-nav { display: none; }
-}
-
-/* ───────── Guidance tip: a compact, collapsible pill for first-time visitors.
+}/* ───────── Guidance tip: a compact, collapsible pill for first-time visitors.
    It floats at the bottom-right of the header (position: absolute inside
    .top-bar), so - unlike the old full-width strip - its height is NOT folded
    into --filter-h: the map fills the space right under the header and the
    expanded text overlays the map instead of shifting everything down. ─────── */
 
-.map-guide {
-  position: absolute;
-  top: 100%;
-  right: 16px;
-  margin-top: 8px;
-  z-index: 24;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-}
 .map-guide-toggle {
   display: inline-flex;
   align-items: center;
@@ -518,11 +506,10 @@ input, select {
 }
 .map-guide-dismiss:hover { opacity: 0.85; }
 
-@media (max-width: 768px) {
-  /* The From pill moved to the map's control strip on the LEFT (.map-toolrow),
+@media (max-width: 768px) {/* The From pill moved to the map's control strip on the LEFT (.map-toolrow),
      so the guide tip has the right corner back and no longer needs the 46px
      drop that kept the two from overlapping. */
-  .map-guide { right: 10px; }
+
 
   /* When the destinations list is open it becomes a full-width overlay (see
      .results-list below), so the guide pill would float on top of the list.
@@ -1830,42 +1817,8 @@ input, select {
 .daytrip-mode-btn span svg:last-child:not(:first-child) { color: var(--accent); }
 .daytrip-mode-btn:hover { border-color: var(--accent); }
 .daytrip-mode-btn.on { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
-.daytrip-pick-note { font-family: var(--mono); font-size: 9.5px; color: var(--ink-mute); }
+.daytrip-pick-note { font-family: var(--mono); font-size: 9.5px; color: var(--ink-mute); }/* "Fly to a nearby airport instead" alternatives (no direct fare). */
 
-/* "Fly to a nearby airport instead" alternatives (no direct fare). */
-.via-airport { margin-top: 10px; }
-.via-airport-title {
-  display: flex; align-items: center; gap: 6px;
-  font-family: var(--mono);
-  font-size: 10px;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: var(--ink-mute);
-  margin-bottom: 7px;
-}
-.via-airport-row {
-  display: flex; align-items: center; gap: 10px;
-  padding: 8px 10px;
-  border: 1px solid var(--rule);
-  border-radius: 10px;
-  margin-bottom: 6px;
-}
-.via-airport-main { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
-.via-airport-main b { font-size: 12.5px; color: var(--ink); }
-.via-airport-main small { font-size: 10.5px; color: var(--ink-soft); line-height: 1.4; }
-.via-airport-est { font-family: var(--mono); font-size: 12px; color: var(--ink); white-space: nowrap; }
-.via-airport-open {
-  padding: 4px 10px;
-  border: 1px solid var(--rule);
-  border-radius: 999px;
-  background: none;
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--ink-soft);
-  cursor: pointer;
-}
-.via-airport-open:hover { border-color: var(--accent); color: var(--accent); }
-.via-airport-note { font-size: 10.5px; color: var(--ink-mute); font-style: italic; margin-top: 2px; }
 
 /* First-visit "Ryanair fares only" notice. */
 .fare-notice { max-width: 420px; padding: 26px 26px 22px; }
@@ -1916,17 +1869,9 @@ input, select {
 .booking-note { font-size: 10.5px; color: var(--ink-mute); font-style: italic; margin: 4px 0 0; }
 /* Inside a flex link row the note takes its own full-width line. */
 .cost-group-links .booking-note { flex: 1 0 100%; margin: 0; }
-.trip-leg-links .booking-note { flex: 1 0 100%; margin: 0; }
+.trip-leg-links .booking-note { flex: 1 0 100%; margin: 0; }/* The hover card's freshness line (built in plain DOM by MapView). */
 
-/* The hover card's freshness line (built in plain DOM by MapView). */
-.tip-fresh { margin-top: 4px; font-size: 10px; color: var(--ink-mute); }
 .tip-price .prov-from { margin-right: 2px; font-size: 9px; align-self: baseline; }
-.tip-price .tip-est {
-  font-size: 8.5px;
-  font-weight: 600;
-  opacity: 0.85;
-  margin-left: 1px;
-}
 
 /* "Open this shared trip?" dialog (a trip arriving via a share link). */
 .share-trip-modal { max-width: 420px; padding: 26px 26px 22px; }
@@ -3890,42 +3835,17 @@ input, select {
   min-width: 0;
   align-self: stretch;
   padding: 0;
-}
-/* Each row is a set of labelled category cards packed from the left with a
+}/* Each row is a set of labelled category cards packed from the left with a
    consistent gap; `stretch` keeps every card in a row the same height. */
-.filter-row {
-  display: flex;
-  align-items: stretch;
-  justify-content: flex-start;
-  gap: 10px 12px;
-  flex-wrap: wrap;
-  min-width: 0;
-}
-
 /* A category card: a small caption over a row of its member filters, wrapped
    in a subtle panel so each cluster reads as one unit instead of loose
    controls drifting in whitespace. On mobile this collapses (`display:
    contents`, see the mobile block) so the fields drop straight into the
    2-column grid and the card chrome disappears. */
-.filter-group {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  min-width: 0;
-  padding: 6px 13px 7px;
-  background: rgba(255, 255, 255, 0.45);
-  border: 1px solid rgba(196, 190, 169, 0.55);
-  border-radius: 11px;
-}
 /* Stretch (not flex-end) so every filter's grey caption sits on the SAME top
    line regardless of how tall its control is (the price slider's value row
    used to push "Show" / "Travel by" out of line with "Price per person"). */
-.group-fields {
-  display: flex;
-  align-items: stretch;
-  gap: 18px;
-  min-width: 0;
-}
+
 
 /* ─── Two-tier filters: one always-visible row + a refine tray ───────────────
    The bar itself carries only what DEFINES the trip (when, who, how it's
@@ -3935,17 +3855,8 @@ input, select {
    On mobile all of this collapses (see the mobile sheet block further down)
    and the fields fall straight into the existing 2-column grid. */
 
-.filter-row-primary { align-items: stretch; }
+.filter-row-primary { align-items: stretch; }/* Trigger + reset, pushed to the trailing edge of the primary row. */
 
-/* Trigger + reset, pushed to the trailing edge of the primary row. */
-.filter-actions {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-left: auto;
-  align-self: center;
-  flex: none;
-}
 
 .filter-tray-btn {
   display: inline-flex;
@@ -3989,7 +3900,6 @@ input, select {
   letter-spacing: 0;
   font-variant-numeric: tabular-nums;
 }
-.filter-tray-caret { transition: transform .18s ease; }
 .filter-tray-btn.open .filter-tray-caret { transform: rotate(180deg); }
 
 /* Closed by default at every width; the desktop rule below opens it, the
@@ -4021,20 +3931,12 @@ input, select {
     border-top: none;
     box-shadow: 0 16px 34px rgba(26, 26, 26, 0.16);
     animation: filter-tray-in .18s cubic-bezier(0.2, 0.9, 0.3, 1);
-  }
-  .filter-tray-inner { padding: 16px 20px 12px; }
-
-  /* Three labelled groups on a fixed grid (Budget | Quality over Where), not a
+  }/* Three labelled groups on a fixed grid (Budget | Quality over Where), not a
      flex wrap that re-orders itself at every window width. The panel is the
      surface, so the group cards drop their own chrome and lean on captions
      plus gutter hairlines instead. Trip style used to hold the fourth cell;
      the category rail owns that question now. */
-  .filter-row-refine {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-    gap: 0;
-    align-items: start;
-  }
+
   .filter-tray .filter-group {
     background: none;
     border: 0;
@@ -4060,7 +3962,6 @@ input, select {
 /* Narrow desktop windows: one column, so a quadrant never squeezes a slider
    down to a stub. The hairlines become simple row rules. */
 @media (min-width: 769px) and (max-width: 1120px) {
-  .filter-row-refine { grid-template-columns: minmax(0, 1fr); }
   .filter-tray .group-quality { border-left: none; padding-left: 0; }
   .filter-tray .group-quality,
   .filter-tray .group-place {
@@ -4072,49 +3973,8 @@ input, select {
 @keyframes filter-tray-in {
   from { opacity: 0; transform: translateY(-6px); }
   to   { opacity: 1; transform: translateY(0); }
-}
+}/* Section heading over each cluster of tray fields. */
 
-/* Section heading over each cluster of tray fields. */
-.group-caption {
-  font-family: var(--mono);
-  font-size: 9px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.16em;
-  color: var(--ink);
-  opacity: 0.55;
-  margin-bottom: 9px;
-}
-
-.filter-tray-foot {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 14px;
-  margin-top: 13px;
-  padding-top: 11px;
-  border-top: 1px solid var(--rule);
-}
-.filter-tray-note {
-  font-family: var(--mono);
-  font-size: 10px;
-  letter-spacing: 0.06em;
-  color: var(--ink-mute);
-}
-.filter-tray-done {
-  padding: 7px 20px;
-  border: 1px solid var(--ink);
-  border-radius: 999px;
-  background: var(--ink);
-  color: var(--paper);
-  font-family: var(--mono);
-  font-size: 10.5px;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  cursor: pointer;
-  transition: opacity .15s;
-}
-.filter-tray-done:hover { opacity: 0.85; }
 
 .filter {
   display: flex;
@@ -4122,13 +3982,9 @@ input, select {
   justify-content: flex-start;
   gap: 3px;
   min-width: 0;
-}
-
-/* Rules between categories are obsolete now the group cards carry their own
+}/* Rules between categories are obsolete now the group cards carry their own
    borders; the elements stay in the markup for the mobile grid's sake. */
-.filter-divider {
-  display: none;
-}
+
 
 .filter-label {
   font-family: var(--mono);
@@ -4235,23 +4091,11 @@ input, select {
   font-family: var(--mono) !important;
   font-size: 9px !important;
   background: rgba(245, 241, 232, 0.7) !important;
-}
-
-/* Custom price marker
+}/* Custom price marker
    Structure: <marker-root> contains <price-pill> + <pin-dot>
    marker-root is positioned by MapLibre (anchor: bottom);
    we keep it width:auto so children determine size. */
 
-.marker-root {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 1px;
-  cursor: pointer;
-  /* don't let MapLibre's transform stretch us */
-  width: max-content;
-  pointer-events: auto;
-}
 
 .price-pill {
   display: inline-block;
@@ -4367,9 +4211,7 @@ input, select {
 /* Account & Saved trips slide-overs open over whatever tab is showing, so
    they layer above the tab bodies while staying under the auth overlays
    (z 60). The destination detail panel keeps the base z-index. */
-.account-panel { z-index: 56; }
-
-/* ── The destination panel's identity bar ────────────────────────────────
+.account-panel { z-index: 56; }/* ── The destination panel's identity bar ────────────────────────────────
    Eyebrow, score, name and the one badge that is a warning rather than a
    qualifier, above the hero and pinned. Everything below it scrolls, so the
    answer to "which place am I reading about" is never more than a glance
@@ -4378,21 +4220,7 @@ input, select {
    becomes a real bar with the place's name in it. Two states, one element, so
    the cross is in the same place at every scroll position: a full screen
    surface whose only exit scrolls away is a trap. */
-.dsheet-bar {
-  position: absolute;
-  top: 0; left: 0; right: 0;
-  z-index: 6;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  min-height: 56px;
-  padding: 10px 14px 10px 18px;
-  padding-top: calc(10px + env(safe-area-inset-top, 0px));
-  background: transparent;
-  border-bottom: 1px solid transparent;
-  pointer-events: none;   /* the photograph underneath stays draggable */
-  transition: background .18s ease, border-color .18s ease;
-}
+
 .dsheet-bar.is-stuck {
   background: var(--paper);
   border-bottom-color: var(--rule);
@@ -4468,25 +4296,12 @@ input, select {
   letter-spacing: -0.02em;
   color: var(--ink);
 }
-.panel-country {
-  font-family: var(--ui);
-  font-size: 13px;
-  color: var(--ink-soft);
-  margin-top: 4px;
-}
 
 .panel-section {
   padding: 22px 28px;
   border-bottom: 1px solid var(--rule);
 }
 .panel-section:last-child { border-bottom: none; }
-
-.panel-fare-coverage {
-  margin-top: 10px;
-  font-size: 12.5px;
-  line-height: 1.6;
-  color: var(--ink-soft);
-}
 
 .section-title {
   font-family: var(--mono);
@@ -4699,14 +4514,12 @@ input, select {
 @keyframes pulse-line {
   0%, 100% { width: 8px; opacity: 0.4; }
   50%      { width: 64px; opacity: 1; }
-}
-
-/* ─── Mobile helpers (inert on desktop) ───
+}/* ─── Mobile helpers (inert on desktop) ───
    The header wrapper collapses out of the layout on desktop via `display:
    contents`, so the brand stays a direct flex child of .filter-bar exactly as
    before; the account/calendar/filter icon triggers and bottom nav are
    hidden until the mobile query switches them on. */
-.filter-mobile-header { display: contents; }
+
 /* Scoped to .filter-bar so these win over later, equal-specificity rules and
    stay hidden on desktop. */
 .filter-bar .mobile-account-btn,
@@ -4821,30 +4634,14 @@ input, select {
   height: 24px;
   font-size: 12px;
   color: var(--ink-mute);
-}
-
-/* ─── Band sliders: rating (0-10) and price, each a dual-handle rail with a
+}/* ─── Band sliders: rating (0-10) and price, each a dual-handle rail with a
    bordered box echoing the chosen range (or "Any" when untouched). Shared
    layout/box classes keep the two filters visually consistent. ─── */
-.band-control {
-  display: flex;
-  flex-direction: row;
-  align-items: center;   /* band box (+ gem toggle, for rating) vertically center against the slider */
-  gap: 10px;
-}
 /* The rating slider carries a 0/5/10 axis under its rail that the price slider
    doesn't, making it taller than the pill/box controls beside it. Centering
    against that extra height drops "Hidden gems only" below the top-aligned
    UNESCO / Top beaches pills next door, so top-align this row instead. */
-.filter-beauty .band-control {
-  align-items: flex-start;
-}
-.band-slider {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 6px;
-}
+
 /* Tier-cutoff guide ticks drawn on the slider rail. */
 .dual-range-mark {
   position: absolute;
@@ -4857,35 +4654,11 @@ input, select {
   transform: translate(-50%, -50%);
   pointer-events: none;
 }
-.range-band-box {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  flex: none;
-  min-width: 88px;
-  height: 24px;
-  padding: 0 11px;
-  border: 1px solid var(--rule);
-  border-radius: 999px;
-  background: var(--paper-dim);
-  font-size: 12px;
-  line-height: 1;
-  color: var(--ink-mute);
-  white-space: nowrap;
-  transition: border-color .15s, background .15s, color .15s;
-}
 .range-band-box.is-narrowed {
   border-color: var(--accent);
   background: var(--accent-bg);
   color: var(--ink);
 }
-.range-band-nums {
-  font-family: var(--mono);
-  font-variant-numeric: tabular-nums;
-  letter-spacing: 0.02em;
-}
-.range-band-dash { margin: 0 4px; opacity: 0.7; }
-.range-band-any { font-style: italic; opacity: 0.85; }
 
 .reset-filters-btn {
   display: inline-flex;
@@ -5458,22 +5231,9 @@ input, select {
 .mobile-seg-btn:hover,
 .mobile-seg-btn.open { background: var(--paper-dim); color: var(--ink); }
 .mobile-seg-btn.has-active { color: var(--accent); }
-.mobile-seg-btn svg { flex-shrink: 0; }
-/* The chosen dates are a measured fact, so they read in mono. Ellipsis is the
+.mobile-seg-btn svg { flex-shrink: 0; }/* The chosen dates are a measured fact, so they read in mono. Ellipsis is the
    safety valve for the widest locales on the narrowest phones. */
-.mobile-seg-value {
-  font-family: var(--mono);
-  font-size: 11.5px;
-  font-weight: 500;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.mobile-seg-label {
-  font-size: 13px;
-  font-weight: 500;
-  white-space: nowrap;
-}
+
 .mobile-seg-count {
   min-width: 17px;
   height: 17px;
@@ -5487,30 +5247,6 @@ input, select {
   line-height: 17px;
   text-align: center;
   flex-shrink: 0;
-}
-.mobile-seg-rule {
-  width: 1px;
-  align-self: stretch;
-  margin: 9px 0;
-  background: var(--rule);
-  flex: none;
-}
-
-.mobile-dates-anchor { position: relative; }
-.mobile-dates-pop {
-  position: absolute;
-  top: calc(100% + 8px);
-  left: 0;
-  z-index: 40;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  min-width: 220px;
-  padding: 14px;
-  background: var(--paper);
-  border: 1px solid var(--rule);
-  border-radius: 12px;
-  box-shadow: var(--shadow-2);
 }
 
 /* ═══════════════════════════════════════════════════════════════════════
@@ -5683,17 +5419,8 @@ input, select {
   letter-spacing: 0;
   text-transform: none;
   color: var(--ink-mute);
-}
+}/* Label left, control right, one line: the counts do not deserve two rows. */
 
-/* Label left, control right, one line: the counts do not deserve two rows. */
-.fsheet-inline {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  min-height: 44px;
-}
-.fsheet-inline-text { min-width: 0; }
 
 /* ── Chips: every option visible, one tap to switch, wrapping across the
       horizontal axis instead of stacking dropdowns down the vertical one.
@@ -5847,25 +5574,8 @@ input, select {
   font-family: var(--ui);
   font-size: 12px;
   color: var(--ink-soft);
-}
+}/* Secondary, full-width action inside a section (lifestyle). */
 
-/* Secondary, full-width action inside a section (lifestyle). */
-.fsheet-link-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  min-height: 44px;
-  padding: 0 16px;
-  border: 1px solid var(--rule);
-  border-radius: 12px;
-  background: var(--bg-card);
-  color: var(--ink);
-  font-size: 14px;
-  font-weight: 500;
-  transition: border-color .15s, background .15s;
-}
-.fsheet-link-btn:hover { border-color: var(--ink-mute); background: var(--paper-dim); }
 
 .fsheet-note {
   padding: 12px 16px;
@@ -5939,12 +5649,6 @@ input, select {
   font-family: var(--mono);
   font-variant-numeric: tabular-nums;
   font-weight: 600;
-}
-.fsheet-apply-sub {
-  font-family: var(--mono);
-  font-size: 11px;
-  font-weight: 400;
-  opacity: 0.85;
 }
 /* Nothing matches: the primary action is no longer "show me", it is "undo
    what you just did", so the button steps back and Clear all takes the lead. */
@@ -7224,13 +6928,6 @@ input, select {
   align-items: center;
   gap: 4px;
 }
-
-.pill-ico {
-  display: inline-flex;
-  align-items: center;
-  opacity: 0.75;
-  flex: none;
-}
 .price-pill.is-deal .pill-ico,
 .price-pill.selected .pill-ico { opacity: 0.95; }
 
@@ -7444,36 +7141,15 @@ input, select {
   from { opacity: 0; transform: translateY(3px); }
   to   { opacity: 1; transform: translateY(0); }
 }
-
-.tip-media {
-  position: relative;
-  height: 116px;
-  background: var(--paper-dim);
-}
 .tip-img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   display: block;
-}
-/* Legibility floor for the price chip over a bright photo. */
-.tip-media::after {
-  content: '';
-  position: absolute;
-  inset: auto 0 0 0;
-  height: 46%;
-  background: linear-gradient(to top, rgba(26, 26, 26, 0.45), transparent);
-  pointer-events: none;
-}
+}/* Legibility floor for the price chip over a bright photo. */
+
 
 .tip-body { padding: 9px 12px 11px; }
-
-.tip-head {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 8px;
-}
 .tip-city {
   font-family: var(--display);
   font-size: 15.5px;
@@ -7481,29 +7157,8 @@ input, select {
   line-height: 1.15;
   color: var(--ink);
   min-width: 0;
-}
-.tip-country {
-  margin-top: 1px;
-  font-size: 10px;
-  text-transform: uppercase;
-  letter-spacing: 0.09em;
-  font-weight: 600;
-  color: var(--ink-mute);
-}
+}/* Price: an overlay chip on the photo, or an inline chip when there's no image. */
 
-/* Price: an overlay chip on the photo, or an inline chip when there's no image. */
-.tip-price {
-  display: inline-flex;
-  align-items: baseline;
-  gap: 2px;
-  font-family: var(--mono);
-  font-variant-numeric: tabular-nums;
-  font-weight: 600;
-  color: var(--paper);
-  background: var(--accent);
-  border-radius: 6px;
-  white-space: nowrap;
-}
 .tip-price.is-overlay {
   position: absolute;
   right: 8px;
@@ -7517,73 +7172,13 @@ input, select {
   font-size: 12.5px;
   padding: 2px 6px;
 }
-.tip-price-note {
-  font-size: 8.5px;
-  font-weight: 600;
-  opacity: 0.85;
-}
-
-.tip-meta {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 5px 7px;
-  margin-top: 7px;
-}
-.tip-score {
-  font-family: var(--mono);
-  font-variant-numeric: tabular-nums;
-  font-weight: 600;
-  font-size: 10.5px;
-  line-height: 1;
-  padding: 3px 5px;
-  border-radius: 4px;
-  flex: none;
-}
 .tip-score.rt-3 { background: var(--rate); color: var(--paper); }
 .tip-score.rt-2 { background: var(--rate-bg); color: var(--rate); }
 .tip-score.rt-1 { background: var(--paper-dim); color: var(--ink-soft); border: 1px solid var(--rule); }
 .tip-score.rt-0 { background: transparent; color: var(--ink-mute); border: 1px solid var(--rule); }
-.tip-rlabel {
-  font-size: 10px;
-  text-transform: uppercase;
-  letter-spacing: 0.07em;
-  font-weight: 600;
-  white-space: nowrap;
-}
 .tip-rlabel.rt-3 { color: var(--rate); }
 .tip-rlabel.rt-2 { color: var(--rate-soft); }
 .tip-rlabel.rt-1, .tip-rlabel.rt-0 { color: var(--ink-mute); }
-.tip-gem {
-  display: inline-flex;
-  align-items: center;
-  gap: 3px;
-  font-family: var(--mono);
-  font-size: 8.5px;
-  text-transform: uppercase;
-  letter-spacing: 0.07em;
-  color: var(--green);
-  border: 1px solid color-mix(in srgb, var(--green) 45%, transparent);
-  border-radius: 3px;
-  padding: 1px 5px;
-  white-space: nowrap;
-}
-.tip-gem svg { flex: none; }
-
-.tip-transport {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  margin-top: 6px;
-  font-size: 11px;
-  line-height: 1.3;
-  color: var(--ink-soft);
-}
-.tip-transport .tip-tico {
-  display: inline-flex;
-  flex: none;
-  color: var(--ink-mute);
-}
 
 /* --- Plane/Car comparison toggle (detail panel) --- */
 .mode-toggle {
@@ -7618,28 +7213,8 @@ input, select {
   text-transform: uppercase;
   letter-spacing: 0.12em;
 }
-.mode-pill-val { font-size: 15px; font-weight: 600; }
+.mode-pill-val { font-size: 15px; font-weight: 600; }/* --- "Is a car needed here?" advisory --- */
 
-/* --- "Is a car needed here?" advisory --- */
-.car-advisory {
-  display: flex;
-  align-items: flex-start;
-  gap: 8px;
-  margin-top: 10px;
-  padding: 8px 10px;
-  border-radius: 8px;
-  background: var(--paper-dim);
-  font-size: 12px;
-  line-height: 1.45;
-  color: var(--ink-soft);
-}
-.car-advisory-dot {
-  flex: none;
-  width: 8px;
-  height: 8px;
-  border-radius: 999px;
-  margin-top: 4px;
-}
 
 /* ═══════════════════════════════════════════════════════════════════════
    Results list (left gutter) - ranked, sortable, shortlist-able
@@ -7662,16 +7237,6 @@ input, select {
   padding: 16px 20px 12px;
   border-bottom: 1px solid var(--rule);
   background: var(--paper);
-}
-.results-title {
-  font-family: var(--display);
-  font-size: 20px;
-  font-weight: 500;
-  letter-spacing: -0.01em;
-  color: var(--ink);
-  display: flex;
-  align-items: baseline;
-  gap: 10px;
 }
 .results-count {
   font-family: var(--mono);
@@ -7728,36 +7293,7 @@ input, select {
   transition: background .15s ease;
 }
 .results-search-clear:hover { background: var(--ink-mute); color: var(--paper); }
-
-.results-controls {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  margin-top: 12px;
-}
-.results-sort {
-  display: inline-flex;
-  border: 1px solid var(--rule);
-  border-radius: 999px;
-  overflow: hidden;
-  background: var(--paper-dim);
-}
-.results-sort button {
-  padding: 4px 12px;
-  font-size: 11px;
-  color: var(--ink-soft);
-  background: transparent;
-  letter-spacing: 0.02em;
-  transition: background .15s, color .15s;
-}
-.results-sort button:hover { color: var(--ink); }
 .results-sort button.on { background: var(--ink-fill); color: var(--paper); }
-.results-sort .sort-arrow {
-  margin-left: 3px;
-  font-size: 10px;
-  opacity: 0.85;
-}
 
 .fav-filter {
   display: inline-flex;
@@ -7779,13 +7315,6 @@ input, select {
   border-color: var(--accent);
   color: var(--accent);
 }
-
-.results-actions {
-  display: flex;
-  gap: 8px;
-  padding: 10px 20px;
-  border-bottom: 1px solid var(--rule);
-}
 .results-compare, .results-share {
   flex: 1;
   padding: 8px 10px;
@@ -7796,22 +7325,12 @@ input, select {
   letter-spacing: 0.12em;
   transition: all .15s;
 }
-.results-compare {
-  background: var(--ink);
-  color: var(--paper);
-}
-.results-compare:hover { background: var(--accent); }
 .results-share {
   background: var(--paper);
   color: var(--ink-soft);
   border: 1px solid var(--rule);
 }
 .results-share:hover { border-color: var(--ink); color: var(--ink); }
-
-.results-scroll {
-  flex: 1;
-  overflow-y: auto;
-}
 .results-empty {
   padding: 28px 24px;
   font-size: 13px;
@@ -7834,30 +7353,6 @@ input, select {
   background: var(--paper-dim);
   box-shadow: inset 3px 0 0 var(--accent);
 }
-.result-rank {
-  font-family: var(--mono);
-  font-size: 10px;
-  color: var(--ink-mute);
-  width: 22px;
-  flex-shrink: 0;
-  font-variant-numeric: tabular-nums;
-}
-.result-main {
-  flex: 1;
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 1px;
-}
-.result-city {
-  font-size: 14px;
-  color: var(--ink);
-  font-weight: 500;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  min-width: 0;
-}
 /* Only the name truncates; the hidden-gem tag stays fully visible (below). */
 .result-city-name {
   min-width: 0;
@@ -7875,12 +7370,6 @@ input, select {
   border-radius: 3px;
   padding: 0 4px;
   font-style: normal;
-}
-.result-sub {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  min-width: 0;
 }
 /* Breathing room between the country name and the rating chip */
 .result-sub .rating-badge { margin-left: 6px; }
@@ -7908,10 +7397,6 @@ input, select {
   from { opacity: 0; transform: translateX(-50%) translateY(6px); }
   to { opacity: 1; transform: translateX(-50%) translateY(0); }
 }
-.result-country {
-  font-size: 11.5px;
-  color: var(--ink-mute);
-}
 .result-price {
   font-family: var(--mono);
   font-size: 13px;
@@ -7922,76 +7407,22 @@ input, select {
 }
 .result-price small { font-size: 9px; color: var(--ink-mute); margin-left: 1px; }
 .result-price.is-deal { color: var(--accent); font-weight: 600; }
-
-.result-star {
-  flex-shrink: 0;
-  width: 28px; height: 28px;
-  display: flex; align-items: center; justify-content: center;
-  border-radius: 50%;
-  color: var(--ink-mute);
-  transition: color .15s, background .15s;
-}
-.result-star:hover { background: var(--paper); color: var(--ink); }
-.result-star.on { color: var(--accent); }
-
-/* ─── Unreachable-via-Ryanair section ───
+.result-star.on { color: var(--accent); }/* ─── Unreachable-via-Ryanair section ───
    A clearly separated, quieter block beneath the priced list. */
-.results-unreachable {
-  margin-top: 10px;
-  border-top: 1px solid var(--rule);
-  background: var(--paper-dim);
-}
-.results-subhead {
-  display: flex;
-  align-items: baseline;
-  gap: 8px;
-  padding: 16px 20px 4px;
-  font-family: var(--mono);
-  font-size: 10px;
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.16em;
-  color: var(--ink-soft);
-}
+
 .results-subhead .results-count {
   font-size: 10px;
   letter-spacing: 0;
-}
-.results-subnote {
-  padding: 0 20px 14px;
-  font-size: 11.5px;
-  line-height: 1.45;
-  color: var(--ink-mute);
 }
 .result-row.is-unreachable {
   background: transparent;
   border-bottom-style: solid;
 }
 .result-row.is-unreachable .result-city { color: var(--ink-soft); font-weight: 400; }
-.result-row.is-unreachable:hover { background: var(--paper); }
-.result-noroute {
-  flex-shrink: 0;
-  font-family: var(--mono);
-  font-size: 9px;
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
-  color: var(--ink-mute);
-  border: 1px solid var(--rule);
-  border-radius: 999px;
-  padding: 2px 8px;
-  white-space: nowrap;
-}
-
-/* Favorite / save-trip toggles in the detail panel header. In normal flow
+.result-row.is-unreachable:hover { background: var(--paper); }/* Favorite / save-trip toggles in the detail panel header. In normal flow
    (not absolute) so the pills can never overlap each other, the close button
    or the city name - they wrap onto their own line instead. */
-.panel-action-row {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin: 2px 0 8px;
-}
+
 .panel-fav {
   display: inline-flex;
   align-items: center;
@@ -8012,132 +7443,11 @@ input, select {
   background: var(--accent-bg);
   border-color: var(--accent);
   color: var(--accent);
-}
-
-/* ═══════════════════════════════════════════════════════════════════════
+}/* ═══════════════════════════════════════════════════════════════════════
    Compare modal
    ═══════════════════════════════════════════════════════════════════════ */
 
-.compare-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 55;
-  background: rgba(26, 26, 26, 0.32);
-  backdrop-filter: blur(2px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 40px;
-}
-.compare-modal {
-  background: var(--paper);
-  border: 1px solid var(--rule);
-  border-radius: 10px;
-  box-shadow: var(--shadow-2);
-  width: 100%;
-  max-width: 920px;
-  max-height: 86vh;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-}
-.compare-head {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  padding: 22px 28px 18px;
-  border-bottom: 1px solid var(--rule);
-  position: relative;
-}
-.compare-title {
-  font-family: var(--display);
-  font-size: 26px;
-  font-weight: 500;
-  letter-spacing: -0.02em;
-  margin-top: 4px;
-}
-.compare-sub {
-  font-family: var(--mono);
-  font-size: 11px;
-  color: var(--ink-mute);
-  margin-top: 6px;
-}
-.compare-scroll { overflow: auto; padding: 8px 0 16px; }
-
-.compare-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 13px;
-}
-.compare-table th, .compare-table td {
-  padding: 12px 16px;
-  text-align: right;
-  border-bottom: 1px dotted var(--rule);
-  font-variant-numeric: tabular-nums;
-  font-family: var(--mono);
-  white-space: nowrap;
-}
-.compare-table thead th {
-  text-align: right;
-  vertical-align: bottom;
-  border-bottom: 1px solid var(--rule);
-}
-.compare-rowlabel {
-  text-align: left !important;
-  font-family: var(--ui) !important;
-  color: var(--ink-soft);
-  position: sticky;
-  left: 0;
-  background: var(--paper);
-}
-.compare-city {
-  display: block;
-  font-family: var(--display);
-  font-size: 17px;
-  font-weight: 500;
-  color: var(--ink);
-  text-align: right;
-  width: 100%;
-  letter-spacing: -0.01em;
-}
-.compare-city:hover { color: var(--accent); }
-.compare-ccountry {
-  display: block;
-  font-family: var(--ui);
-  font-size: 11px;
-  color: var(--ink-mute);
-  margin-top: 2px;
-}
-.compare-badge {
-  display: inline-block;
-  margin-top: 6px;
-  font-family: var(--mono);
-  font-size: 8.5px;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: var(--accent);
-  border: 1px solid var(--accent);
-  border-radius: 3px;
-  padding: 1px 5px;
-}
 .compare-table .is-cheapest { background: var(--accent-bg); }
-.compare-table tr.compare-total td {
-  border-top: 2px solid var(--ink);
-  border-bottom: none;
-  font-size: 16px;
-  font-weight: 600;
-  color: var(--ink);
-  padding-top: 14px;
-}
-.compare-remove {
-  font-family: var(--mono);
-  font-size: 9px;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: var(--ink-mute);
-  padding: 4px 8px;
-}
-.compare-remove:hover { color: var(--accent); }
 
 .results-footnote {
   padding: 16px 20px 22px;
@@ -8179,20 +7489,9 @@ input, select {
     min-height: 0;
     height: auto;
   }
-  .filter-mobile-header {
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;   /* calendar + filter triggers pinned to the left */
-    gap: 10px;
-    padding: 0 12px;
-    height: 56px;
-    min-height: 56px;
-    position: relative;
-  }
   /* Brand and account access now live in the always-visible AppHeader above
      this bar; only the calendar/filter icon triggers remain here. */
   .filter-bar .mobile-header-actions { display: inline-flex; }
-  .mobile-header-actions { align-items: center; gap: 8px; flex: 1; min-width: 0; }
   /* The Filters segment keeps its label; when width runs out it is the dates
      value that ellipsizes. */
   .mobile-seg > .mobile-seg-btn { flex-shrink: 0; }
@@ -8259,65 +7558,19 @@ input, select {
   /* The detail panel uses translateX for its open/close transition; keep that
      working at full width. */
   .panel { transform: translateX(100%); }
-  .panel.open { transform: translateX(0); }
+  .panel.open { transform: translateX(0); }/* ── Compare modal → full screen ── */
 
-  /* ── Compare modal → full screen ── */
-  .compare-overlay { padding: 0; }
-  .compare-modal {
-    max-width: 100%;
-    width: 100%;
-    max-height: 100dvh;
-    height: 100dvh;
-    border-radius: 0;
-  }
 }
 
 /* Very small / landscape phones: trim the oversized display type so headers
    don't overflow. */
 @media (max-width: 420px) {
   .panel-city { font-size: 30px; }
-  .filter-row { gap: 14px 16px; }
-}
-
-/* ─────────────────────────────────────────────────────────────────────────
+}/* ─────────────────────────────────────────────────────────────────────────
    Destination imagery + "things to do" + best-trips-from-here
    ───────────────────────────────────────────────────────────────────────── */
-
 /* Hero: the most impressive image of the region, atop the detail panel. */
-.panel-hero {
-  position: relative;
-  height: 200px;
-  background-size: cover;
-  background-position: center;
-  background-color: var(--paper-dim);
-}
-.panel-hero-shade {
-  position: absolute;
-  inset: 0;
-  /* fade into the paper so the city name below reads as one composition */
-  background: linear-gradient(
-    to bottom,
-    rgba(26, 26, 26, 0.18) 0%,
-    rgba(26, 26, 26, 0) 40%,
-    rgba(245, 241, 232, 0) 70%,
-    var(--paper) 100%
-  );
-}
-.panel-hero-credit {
-  position: absolute;
-  bottom: 8px; right: 10px;
-  font-family: var(--mono);
-  font-size: 8.5px;
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
-  color: #fff;
-  background: rgba(26, 26, 26, 0.42);
-  padding: 3px 7px;
-  border-radius: 999px;
-  text-decoration: none;
-  backdrop-filter: blur(2px);
-}
-.panel-hero-credit:hover { background: rgba(26, 26, 26, 0.62); }
+
 /* ── The identity card ────────────────────────────────────────────────────
    One object: the photograph, the verdict over it, and under it the name, the
    country, what the place is known for and the two things you can do with it.
@@ -8492,118 +7745,13 @@ input, select {
   border-radius: 14px;
   background: var(--paper);
   box-shadow: var(--shadow-1);
-}
-
-/* The price card: the number the whole panel exists to justify, and the one
+}/* The price card: the number the whole panel exists to justify, and the one
    primary action on the surface. */
-.dsheet-price {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 14px;
-  background: var(--paper-dim);
-  border-color: transparent;
-}
-.dsheet-price-main { min-width: 0; }
-.dsheet-price-cap {
-  display: block;
-  font-family: var(--ui);
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--ink);
-}
-.dsheet-price-cap small {
-  font-family: var(--mono);
-  font-size: 11px;
-  font-weight: 400;
-  color: var(--ink-soft);
-  margin-left: 6px;
-}
-.dsheet-price-val {
-  display: block;
-  margin-top: 2px;
-  font-family: var(--mono);
-  font-size: 34px;
-  font-weight: 700;
-  font-variant-numeric: tabular-nums;
-  letter-spacing: -0.02em;
-  line-height: 1.1;
-  color: var(--ink);
-}
-.dsheet-price-note {
-  display: block;
-  margin-top: 2px;
-  font-size: 12.5px;
-  color: var(--ink-soft);
-}
-.dsheet-book {
-  flex: none;
-  min-height: 44px;
-  padding: 11px 18px;
-  border-radius: 10px;
-  background: var(--accent);
-  color: var(--paper);
-  font-family: var(--ui);
-  font-size: 14.5px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background .15s, transform .1s;
-}
-.dsheet-book:hover { background: #cf4f3c; }
-.dsheet-book:active { transform: scale(0.97); }
-
 /* Two doors into the Explore tab at the foot of the receipt. Each says what
    is behind it, so neither is a mystery link. */
-.dsheet-links {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  gap: 10px;
-  margin-top: 14px;
-}
-.dsheet-link {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 11px 12px;
-  border: 1px solid var(--rule);
-  border-radius: 12px;
-  background: var(--paper);
-  text-align: left;
-  cursor: pointer;
-  transition: border-color .15s, background .15s;
-}
-.dsheet-link:hover { border-color: var(--ink-mute); background: var(--paper-dim); }
-.dsheet-link-icon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex: none;
-  width: 32px; height: 32px;
-  border-radius: 10px;
-  background: var(--accent-bg);
-  color: var(--accent);
-}
-.dsheet-link-text { min-width: 0; }
-.dsheet-link-text b {
-  display: block;
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--ink);
-  line-height: 1.25;
-  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-}
-.dsheet-link-text small {
-  display: block;
-  margin-top: 2px;
-  font-size: 11.5px;
-  color: var(--ink-mute);
-  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-}
-
 /* The Explore tab: cards, not a wall of prose. */
-.dsheet-explore { padding: 16px 0 20px; }
+
 .dsheet-explore .dsheet-card { margin-bottom: 12px; }
-.dsheet-explore .panel-about-fact:first-of-type { margin-top: 8px; }
 .dsheet-explore .trails-nearby { padding: 0 14px; border-bottom: none; }
 
 /* Things-to-do list */
@@ -11095,154 +10243,15 @@ input, select {
   width: 100%;
   text-align: center;
   justify-content: center;
-}
-
-/* ─── Best time to go (period comparison for the selected destination) ─── */
-
-.panel-tabs {
-  padding: 18px 28px 0;
-}
-
-.bt-length-chips {
-  margin-bottom: 16px;
-}
-
-.bt-headline {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 14px;
-  padding-bottom: 18px;
-  margin-bottom: 18px;
-  border-bottom: 1px solid var(--rule);
-}
-.bt-label {
-  font-family: var(--mono);
-  font-size: 10px;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: var(--ink-mute);
-  margin-bottom: 6px;
-}
-.bt-value {
-  font-family: var(--display);
-  font-size: 30px;
-  font-weight: 600;
-  letter-spacing: -0.01em;
-  line-height: 1.1;
-}
-.bt-dates {
-  font-size: 12.5px;
-  color: var(--ink-soft);
-  margin-top: 4px;
-}
-.bt-headline-actions {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 9px;
-}
-.bt-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 11.5px;
-  font-weight: 600;
-  padding: 6px 12px;
-  border-radius: 100px;
-  background: #e8f3e6;
-  color: #2c6a1f;
-  white-space: nowrap;
-}
-.bt-badge-check {
-  width: 11px;
-  height: 11px;
-  flex-shrink: 0;
-}
-.bt-cta {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 12.5px;
-  font-weight: 700;
-  color: var(--paper);
-  background: var(--accent);
-  border: none;
-  padding: 9px 16px;
-  border-radius: 9px;
-  white-space: nowrap;
-  transition: background .15s;
-}
-.bt-cta:hover { background: var(--accent-soft); }
-
+}/* ─── Best time to go (period comparison for the selected destination) ─── */
 /* Cheapest trip total by month (BestTimePanel MonthBars): rounded bars,
    taller = pricier, green = cheapest month, ink dot = the user's month.
    Same visual language as the weekday and climate strips below. */
-.month-chart {
-  display: flex;
-  align-items: flex-end;
-  gap: 5px;
-  height: 118px;
-  margin-top: 4px;
-}
-.mo-col {
-  position: relative;
-  flex: 1;
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 4px;
-  height: 100%;
-  justify-content: flex-end;
-  padding: 0;
-  background: none;
-  border: none;
-  cursor: pointer;
-}
-.mo-val {
-  min-height: 14px;
-  font-family: var(--mono);
-  font-size: 10px;
-  font-weight: 700;
-  color: var(--ink);
-  white-space: nowrap;
-}
+
 .mo-col.is-cheap .mo-val { color: #2c6a1f; }
-.mo-bar-track {
-  width: 100%;
-  display: flex;
-  align-items: flex-end;
-  flex: 1;
-}
-.mo-bar {
-  width: 100%;
-  border-radius: 4px 4px 2px 2px;
-  background: var(--accent-soft);
-  transition: filter .12s;
-}
-.mo-col:hover .mo-bar { filter: brightness(1.08); }
 .mo-col.is-cheap .mo-bar { background: #2c6a1f; }
-.mo-name {
-  display: flex;
-  align-items: center;
-  gap: 3px;
-  font-family: var(--mono);
-  font-size: 9.5px;
-  color: var(--ink-mute);
-  white-space: nowrap;
-}
 .mo-col.is-cheap .mo-name,
 .mo-col.is-you .mo-name { color: var(--ink); font-weight: 700; }
-.mo-you-dot {
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background: var(--ink);
-  flex-shrink: 0;
-}
-.mo-tip { bottom: calc(100% + 2px); }
 
 .bt-legend {
   display: flex;
@@ -11262,47 +10271,8 @@ input, select {
 }
 .bt-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; display: inline-block; }
 .bt-dot-accent { background: var(--accent); }
-.bt-dot-green { background: #2c6a1f; }
-.bt-dot-ink { background: var(--ink); }
-
-.dow-chart {
-  display: flex;
-  align-items: flex-end;
-  gap: 8px;
-  height: 96px;
-}
-.dow-col {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 6px;
-  height: 100%;
-  justify-content: flex-end;
-}
-.dow-bar-track {
-  width: 100%;
-  display: flex;
-  align-items: flex-end;
-  flex: 1;
-}
-.dow-bar {
-  width: 100%;
-  border-radius: 4px 4px 2px 2px;
-  background: var(--accent-soft);
-}
 .dow-bar.min { background: #2c6a1f; }
 .dow-bar.max { background: var(--accent); }
-.dow-name {
-  font-family: var(--mono);
-  font-size: 10px;
-  color: var(--ink-mute);
-}
-.dow-val {
-  font-size: 10.5px;
-  font-weight: 700;
-  color: var(--ink-soft);
-}
 .dow-val.min { color: #2c6a1f; }
 .nearby-sub .gem { color: var(--accent); }
 
@@ -11683,12 +10653,6 @@ input, select {
   gap: 7px;
 }
 .section-title-iconed svg { flex: none; color: var(--accent); }
-.tab-iconed {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-}
-.tab-iconed svg { flex: none; }
 .tab-iconed.active svg { color: var(--accent); }
 
 /* ─── Detail panel: grouped cost breakdown ───
@@ -11713,43 +10677,9 @@ input, select {
   background: var(--paper);
   cursor: pointer;
 }
-.cost-group-head:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
-.cost-group-icon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 40px; height: 40px;
-  flex-shrink: 0;
-  border-radius: 12px;
-  background: var(--accent-bg);
-  color: var(--accent);
-}
-.cost-group-title {
-  flex: 1;
-  min-width: 0;
-  font-weight: 600;
-  font-size: 15px;
-  color: var(--ink);
-  line-height: 1.25;
-}
-/* Prose, so it is set in the UI face: the mono is reserved for the figures
+.cost-group-head:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }/* Prose, so it is set in the UI face: the mono is reserved for the figures
    in the column to its right. */
-.cost-group-title small {
-  display: block;
-  font-family: var(--ui);
-  font-size: 12.5px;
-  font-weight: 400;
-  color: var(--ink-mute);
-  margin-top: 2px;
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-}
-.cost-group-money {
-  flex: none;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 1px;
-}
+
 .cost-group-val {
   font-family: var(--mono);
   font-size: 15px;
@@ -11757,23 +10687,6 @@ input, select {
   font-variant-numeric: tabular-nums;
   color: var(--ink);
   white-space: nowrap;
-}
-.cost-group-valsub {
-  font-family: var(--mono);
-  font-size: 10px;
-  font-variant-numeric: tabular-nums;
-  letter-spacing: 0.04em;
-  color: var(--ink-mute);
-  white-space: nowrap;
-}
-.cost-group-caret {
-  flex: none;
-  width: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--ink-mute);
-  transition: transform .22s cubic-bezier(0.4, 0, 0.2, 1);
 }
 .cost-group-head[aria-expanded="true"] .cost-group-caret { transform: rotate(180deg); }
 .cost-group-body { padding: 4px 14px 12px; border-top: 1px solid var(--rule); }
@@ -11844,7 +10757,6 @@ input, select {
 }
 .cost-action:active { transform: translateY(1px); }
 .cost-action svg { flex: none; }
-.cost-action-out { font-size: 11px; opacity: 0.75; }
 
 .cost-action.is-primary {
   background: var(--accent);
@@ -11889,19 +10801,6 @@ input, select {
   margin-top: 1px;
   color: #b3690f;
 }
-.cost-info-btn {
-  flex: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 20px; height: 20px;
-  padding: 0;
-  border: 0;
-  border-radius: 999px;
-  background: none;
-  color: var(--ink-mute);
-  cursor: pointer;
-}
 .cost-info-btn:hover, .cost-info-btn.open { color: var(--accent); background: var(--accent-bg); }
 .cost-info-pop {
   margin: 0;
@@ -11936,9 +10835,7 @@ input, select {
   font-size: 10px;
   line-height: 1.7;
   color: var(--ink-mute);
-}
-
-/* The grand total pins to the foot of the panel while the groups above are
+}/* The grand total pins to the foot of the panel while the groups above are
    being read, so the figure the whole breakdown is explaining is never
    scrolled off. It settles into place naturally at the end of the section.
    The wrapper (not the card) is what sticks: its paper background is the
@@ -11948,11 +10845,7 @@ input, select {
    the price card at the top of the panel carries that number now, and pinning
    this cost the receipt its second and third rows on a phone: one line and a
    total, with the rest hidden behind it. */
-.cost-total-sticky {
-  margin-top: 14px;
-  padding-bottom: 10px;
-  background: var(--paper);
-}
+
 
 /* The sum that closes the receipt. The emphatic figure moved to the price card
    at the top of the panel, so this is the arithmetic line the rows add up to:
@@ -11966,12 +10859,6 @@ input, select {
   background: var(--paper);
   padding: 12px 4px 6px;
 }
-.cost-total-main {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 14px;
-}
 .cost-total-label {
   font-family: var(--ui);
   font-size: 15px;
@@ -11984,40 +10871,6 @@ input, select {
   letter-spacing: 0.02em;
   color: var(--ink-mute);
   margin-left: 7px;
-}
-.cost-total-val {
-  font-family: var(--mono);
-  font-size: 18px;
-  font-weight: 700;
-  font-variant-numeric: tabular-nums;
-  color: var(--ink);
-  white-space: nowrap;
-  letter-spacing: -0.01em;
-}
-.cost-total-sub {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  margin-top: 10px;
-  padding-top: 9px;
-  border-top: 1px solid var(--rule);
-  font-size: 12px;
-  color: var(--ink-soft);
-}
-.cost-total-sub span:last-child {
-  font-family: var(--mono);
-  font-size: 13px;
-  font-variant-numeric: tabular-nums;
-  color: var(--ink-soft);
-  font-weight: 600;
-}
-
-/* ─── Best-time tab: mobile-safe headline ─── */
-@media (max-width: 768px) {
-  .bt-headline { flex-direction: column; align-items: stretch; gap: 12px; }
-  .bt-headline-actions { flex-direction: column; align-items: stretch; gap: 8px; }
-  .bt-badge { justify-content: center; }
-  .bt-cta { width: 100%; }
 }
 
 /* ─── Lifestyle: filter-bar entry point + unit rates ─── */
@@ -12614,81 +11467,20 @@ input, select {
     z-index: 90;
     box-shadow: 0 18px 48px rgba(26, 26, 26, 0.28);
   }
-}
-
-/* ═══════════════════════════════════════════════════════════════════════
+}/* ═══════════════════════════════════════════════════════════════════════
    2026-07 UX pass: known-for lines, structured info facts, lifestyle panel
    simplification, day-planner start flow, PDF/save actions, design quiz
    ═══════════════════════════════════════════════════════════════════════ */
-
 /* What the destination is known for, under the country line in the detail
    panel. Replaces the generic category chips. */
-.panel-knownfor {
-  font-size: 13px;
-  line-height: 1.5;
-  color: var(--ink-soft);
-  margin: 6px 0 10px;
-  font-style: italic;
-}
-
 /* "About this place": population + nearest protected area + a short guide lead,
    built from the geonames / nature / guide data slices. A `.panel-section`
    like every other block in the panel (same side inset + divider) rather than
    its own inset card, so it doesn't sit flush against the panel edge on
    narrow screens. */
-.panel-about-fact {
-  display: flex;
-  align-items: center;
-  gap: 9px;
-  font-size: 12.5px;
-  line-height: 1.45;
-  color: var(--ink-soft);
-}
-.panel-about-fact + .panel-about-fact { margin-top: 8px; }
-.panel-about-fact svg { flex: none; color: var(--ink-mute); }
-.panel-about-guide {
-  margin: 14px 0 0;
-  font-size: 12.5px;
-  line-height: 1.6;
-  color: var(--ink-soft);
-}
-.panel-about-fact + .panel-about-guide { padding-top: 14px; border-top: 1px solid var(--rule); }
-.panel-about-guide-link {
-  color: var(--accent);
-  font-weight: 600;
-  white-space: nowrap;
-  text-decoration: none;
-}
-.panel-about-guide-link:hover { text-decoration: underline; }
-
 /* Structured label/value rows inside the ⓘ popovers (stay, on the ground,
    local rates). One fact per line, label column fixed, easy to scan. */
-.cost-info-facts {
-  margin: 8px 0 10px;
-  border: 1px solid var(--rule);
-  border-radius: 8px;
-  background: var(--paper-dim);
-  padding: 4px 0;
-}
-.cost-info-fact {
-  display: flex;
-  gap: 12px;
-  padding: 5px 12px;
-  font-size: 12px;
-  line-height: 1.45;
-}
-.cost-info-fact + .cost-info-fact { border-top: 1px dashed var(--rule); }
-.cost-info-fact-label {
-  flex: none;
-  width: 92px;
-  font-family: var(--mono);
-  font-size: 9px;
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
-  color: var(--ink-mute);
-  padding-top: 2px;
-}
-.cost-info-fact-value { flex: 1; min-width: 0; color: var(--ink-soft); }
+
 
 /* Lifestyle panel: one merged Eating & drinking section with the cadence
    toggle in its header row; consistent section rhythm. */
@@ -13369,16 +12161,9 @@ input, select {
 .crowd-badge.cr-quiet    { --cr-ink: #2e9e5b; }    /* calm green - avoid the crowds */
 .crowd-badge.cr-moderate { --cr-ink: #6b7280; }    /* neutral grey */
 .crowd-badge.cr-busy     { --cr-ink: #c68a12; }    /* amber */
-.crowd-badge.cr-crowded  { --cr-ink: #d06a2a; }    /* warning orange */
-
+.crowd-badge.cr-crowded  { --cr-ink: #d06a2a; }/* warning orange */
 /* Detail panel: the rating hero row under the city name */
-.panel-rating-row {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin: 6px 0 2px;
-  flex-wrap: wrap;
-}
+
 
 /* Map: three-diamond destinations get a ring so the continent's icons pop
    even at low zoom; hidden gems keep the dashed-green treatment previously
@@ -22226,12 +21011,6 @@ button.ai-sched-main:focus-visible {
   flex-direction: column;
   overflow: hidden;
 }
-.dest-panel-scroll {
-  flex: 1 1 auto;
-  min-height: 0;
-  overflow-y: auto;
-  overscroll-behavior: contain;
-}
 
 /* ── Fold: the animated collapse behind the cost groups and the about
       accordion. The body stays mounted; grid-rows animates the height and
@@ -22287,11 +21066,9 @@ button.ai-sched-main:focus-visible {
   transition: transform .22s cubic-bezier(0.4, 0, 0.2, 1);
 }
 .panel-acc.open .panel-acc-chev { transform: rotate(180deg); }
-.panel-acc-body { padding: 0 22px 16px; }
-
-/* ── Header compaction: same content, less air, so price and dates arrive
+.panel-acc-body { padding: 0 22px 16px; }/* ── Header compaction: same content, less air, so price and dates arrive
       a full screen earlier. Scoped to the destination panel only. ── */
-.dest-panel .panel-hero { height: 210px; }
+
 /* Three tabs in a 440px panel: tight enough that none of them wraps onto a
    second line, at every width. A tab label broken in half reads as a fault. */
 .dest-panel .panel-tabs .tab {
@@ -22303,8 +21080,6 @@ button.ai-sched-main:focus-visible {
   letter-spacing: 0.06em;
 }
 .dest-panel .panel-city { font-size: 33px; }
-.dest-panel .panel-knownfor { margin: 5px 0 8px; }
-.dest-panel .panel-action-row { margin: 2px 0 2px; }
 .dest-panel .panel-section { padding: 16px 22px; }
 
 /* ── Micro-interactions: press states on everything tappable in the panel.
@@ -22344,27 +21119,13 @@ button.ai-sched-main:focus-visible {
     transition: transform .3s cubic-bezier(0.2, 0.9, 0.3, 1);
   }
   .panel.dest-panel.open { transform: translateY(0); }
-
-  .dest-panel-scroll {
-    /* The bar floats over the top of the scroller, so the page has to start
-       under it and end above the phone's own home indicator. */
-    padding-bottom: calc(18px + env(safe-area-inset-bottom, 0px));
-  }
-  .dest-panel .panel-hero { height: 232px; }
   .xp-hero-card { margin: 0 12px 12px; }
   .dsheet-card { margin-left: 12px; margin-right: 12px; }
   /* Clear of the floating bar: the hero starts at the top of the page, so the
      first card carries the inset instead of the scroller. */
-  .dest-panel-scroll > .xp-hero-card:first-child { margin-top: 0; }
-  /* Three tabs on a 390px screen: they scroll rather than wrap into a
+  .dest-panel-scroll > .xp-hero-card:first-child { margin-top: 0; }/* Three tabs on a 390px screen: they scroll rather than wrap into a
      three-line block that pushes the receipt off the sheet. */
-  .dest-panel .panel-tabs {
-    display: flex;
-    flex-wrap: nowrap;
-    overflow-x: auto;
-    scrollbar-width: none;
-  }
-  .dest-panel .panel-tabs::-webkit-scrollbar { display: none; }
+
 
   /* Charts turn into swipeable strips instead of squeezing 12 columns into
      a phone width: each month keeps a readable column and the row scrolls. */
@@ -22376,7 +21137,6 @@ button.ai-sched-main:focus-visible {
     scrollbar-width: thin;
   }
   .dest-panel .climate-col { flex: 0 0 40px; scroll-snap-align: start; }
-  .dest-panel .dow-col { flex: 0 0 48px; scroll-snap-align: start; }
 
   /* Chip rows swipe sideways rather than stacking three rows tall. */
   .dest-panel .bt-length-chips,
@@ -22392,14 +21152,6 @@ button.ai-sched-main:focus-visible {
      of an 844px screen); the slim tab bar sticks instead, so switching
      between the breakdown and best-time stays one tap from anywhere. */
   .dest-panel .panel-header { position: static; }
-  .dest-panel .panel-tabs {
-    position: sticky;
-    top: 0;
-    z-index: 2;
-    background: var(--paper);
-    margin-bottom: 0;
-    padding-bottom: 2px;
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {
