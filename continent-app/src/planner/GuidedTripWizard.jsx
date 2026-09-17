@@ -21,7 +21,9 @@ import { ReadyTripsStep } from './ReadyTripsStep.jsx';
 // pulls a map with it, and nobody reaching the Trips step has asked for one
 // until they tap "What's there".
 const TripPage = lazy(() => import('../browse/TripPage.jsx').then((m) => ({ default: m.TripPage })));
-import { TravelLegsSection, travelTotal } from './TravelLegsSection.jsx';
+import { TravelLegsSection, TravelLegsSummary, travelTotal } from './TravelLegsSection.jsx';
+import { prefillMode, openJaw, publishedLeg } from '../lib/gettingThere.js';
+import { loadDossier } from '../lib/dossier.js';
 import { TRAVEL_MODES, TRAVEL_MODE_LABEL } from '../lib/transportLinks.js';
 import { buildCountryBriefs } from '../lib/countryBrief.js';
 import { matchCountries, SPEND_CHOICES } from '../lib/countryMatch.js';
@@ -393,14 +395,18 @@ export function GuidedTripWizard({
     // home. That used to hang off the bottom of the Trips step, roughly three
     // thousand pixels below the card that opened it; it is its own step now,
     // and only on the path that has a route to get to.
-    const rest = third === 'Trips' ? ['Getting', 'Finish'] : ['Finish'];
+    // Getting there is a step on every path, not only the ready-made one: its
+    // legs are built from the stops and the dates, which every path has by the
+    // time it reaches here. Only a traveller who says their travel AND their
+    // beds are booked skips it, because then there is nothing left to arrange.
+    const rest = booked.travel && booked.stays ? ['Finish'] : ['Getting', 'Finish'];
     // Someone who has already booked their beds has chosen their cities, so
     // the country picker has nothing left to ask them.
     // The four opening questions are four steps, not one scrolling screen.
     return booked.stays
       ? [...BASICS_STEPS, third, ...rest]
       : [...BASICS_STEPS, 'Where', third, ...rest];
-  }, [booked.stays, buildMode]);
+  }, [booked.stays, booked.travel, buildMode]);
 
   // A draft saved before the Who step was removed restores a step number one
   // past the end, which rendered Finish under a "6 of 5" rail. Clamp on
@@ -639,6 +645,96 @@ export function GuidedTripWizard({
     }
     return legs;
   }, [stopDates, homePoint, tripStartDate, totalNights, destinations]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // ---- Getting there: what the step knows before anyone answers ----------
+  // The airports that actually fly somewhere near the two ends of the trip,
+  // and, where the dossier has it, how long the ride from the runway into town
+  // takes. Only the two ends: the hops in between are not flown.
+  const endIds = useMemo(() => {
+    if (!stopDates.length) return { first: null, last: null };
+    return { first: stopDates[0].id, last: stopDates[stopDates.length - 1].id };
+  }, [stopDates]);
+  const [endTransfers, setEndTransfers] = useState({});
+  useEffect(() => {
+    let live = true;
+    const ids = [endIds.first, endIds.last].filter(Boolean);
+    if (!ids.length) { setEndTransfers({}); return undefined; }
+    Promise.all(ids.map((id) => loadDossier(id).then((d) => [id, d?.practical?.getting_there || null])))
+      .then((rows) => { if (live) setEndTransfers(Object.fromEntries(rows)); });
+    return () => { live = false; };
+  }, [endIds.first, endIds.last]);
+
+  /** The airports near one stop, each carrying the dossier's transfer time
+   *  when that airport is the one the dossier names as the anchor. */
+  const airportsFor = (id) => {
+    const d = destinations[id];
+    if (!d) return [];
+    const got = endTransfers[id] || null;
+    return nearbyAirports(data?.meta, d.city_lat ?? d.lat, d.city_lon ?? d.lon, { limit: 3 })
+      .map((a) => (got && got.airport === a.iata
+        ? { ...a, transferMin: got.transfer_min ?? null, transferMode: got.transfer_mode || 'train' }
+        : a));
+  };
+
+  // The legs, with everything the step guesses on them: which airports serve
+  // each end, what the trip's own composer measured for a hop, and the mode
+  // that follows from both. A leg the traveller has already answered keeps
+  // their answer; nothing here overwrites a choice.
+  const gettingLegs = useMemo(() => {
+    if (!travelLegs.length) return [];
+    const inAir = endIds.first ? airportsFor(endIds.first) : [];
+    const outAir = endIds.last ? airportsFor(endIds.last) : [];
+    return travelLegs.map((leg) => {
+      const isOut = leg.kind === 'out';
+      const isBack = leg.kind === 'back';
+      const pub = leg.kind === 'inter'
+        ? publishedLeg(tripDetail, stopDates[leg.index]?.id, stopDates[leg.index + 1]?.id)
+        : null;
+      return {
+        ...leg,
+        airports: isOut ? inAir : isBack ? outAir : [],
+        published: pub,
+        // Travel they told us is already booked is not a question. Only the
+        // legs that touch home were ever booked in that answer: the hops
+        // between stops are the part this step is for.
+        booked: booked.travel && (isOut || isBack),
+      };
+    });
+  }, [travelLegs, tripDetail, stopDates, endIds, endTransfers, booked.travel, destinations, data]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // "Fly into BCN, home from GRO", when the far end of the trip has a
+  // meaningfully closer airport than the one it started at.
+  const jawHint = useMemo(() => {
+    if (!booked.travel && gettingLegs.length > 1) {
+      const jaw = openJaw(gettingLegs[0]?.airports, gettingLegs[gettingLegs.length - 1]?.airports);
+      if (jaw) return t('travel.openJaw', { into: jaw.into.iata, home: jaw.home.iata });
+    }
+    return '';
+  }, [gettingLegs, booked.travel]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Every leg opens already answered. The guess is written into the same state
+  // the traveller edits, once per leg, so it flows into finish() unchanged and
+  // an answer already given is never overwritten.
+  useEffect(() => {
+    if (!gettingLegs.length) return;
+    setTravelValues((prev) => {
+      let next = prev;
+      for (const leg of gettingLegs) {
+        if (prev[leg.key]?.mode) continue;
+        const mode = prefillMode(leg, {
+          quiz,
+          published: leg.published?.mode || '',
+          // drivingThere, not the ownCarChosen alias below: that is declared
+          // further down the component and this effect runs before it.
+          drivingOwnCar: drivingThere,
+        });
+        if (!mode) continue;
+        if (next === prev) next = { ...prev };
+        next[leg.key] = { ...next[leg.key], mode };
+      }
+      return next;
+    });
+  }, [gettingLegs]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const setTravelLeg = (key, patch) => {
     setTravelValues((prev) => ({ ...prev, [key]: { ...prev[key], ...patch } }));
@@ -890,9 +986,9 @@ export function GuidedTripWizard({
       : Boolean(startDate && endDate && windowNights > 0)))
     || (stepName === 'Where' && countries.size > 0)
     || (stepName === 'Trips' && Boolean(tripPick))
-    // The legs are drawn from the trip's own stops, so this step cannot be
-    // left until that file has landed.
-    || (stepName === 'Getting' && Boolean(tripPick && tripDetail))
+    // Informational: it hands the traveller links and takes what they paid,
+    // and none of that is something the trip needs before it can be arranged.
+    || stepName === 'Getting'
     || (stepName === 'Stay' && includedIds.length > 0)
     || (stepName === 'Stays' && includedIds.length > 0)
     || stepName === 'Finish'
@@ -1649,8 +1745,10 @@ export function GuidedTripWizard({
     // Two columns of trip cards need the room as much as a map does.
     if (stepName === 'Where' || stepName === 'Stay' || stepName === 'Trips') return 'wide';
     // A summary, and a list of stops with their dates and nights, both read
-    // better in one readable column than across a whole screen.
-    if (stepName === 'Finish' || stepName === 'Stays') return 'mid';
+    // better in one readable column than across a whole screen. Getting there
+    // is the same shape: a journey on one line and three blocks of legs, which
+    // the narrow form column squeezed into a stack of wrapped rows.
+    if (stepName === 'Finish' || stepName === 'Stays' || stepName === 'Getting') return 'mid';
     return 'form';
   })();
 
@@ -2055,7 +2153,7 @@ export function GuidedTripWizard({
                         <p className="guide-empty">{t('ready.stopsMissing', { n: tripMissing })}</p>
                       )}
                       <TravelLegsSection
-                        legs={travelLegs}
+                        legs={gettingLegs}
                         values={travelValues}
                         onChange={setTravelLeg}
                         adults={adults}
@@ -2063,6 +2161,7 @@ export function GuidedTripWizard({
                         onSetStart={(d) => { setStartDate(d); setDateMode('exact'); if (totalNights) setEndDate(addDays(d, totalNights)); }}
                         dateMin={dateMin}
                         dateMax={dateMax}
+                        openJawHint={jawHint}
                       />
                     </>
                   )}
@@ -2903,19 +3002,18 @@ export function GuidedTripWizard({
               <p className="guide-sub">{t('wizard.finishSubFull')}</p>
 
               {/* Every trip has to get to the first stop and home from the
-                  last, whoever chose the stops. A ready-made trip has already
-                  answered this under the trip it picked; the answers are the
-                  same ones, so they show here filled in. */}
-              {travelLegs.length > 0 && (
-                <TravelLegsSection
-                  legs={travelLegs}
+                  last. The full section used to render again here, so the last
+                  screen re-asked every question the step before it had just
+                  answered. This reports instead, and its one control goes back
+                  to the step that owns them. */}
+              {gettingLegs.length > 0 && (
+                <TravelLegsSummary
+                  legs={gettingLegs}
                   values={travelValues}
-                  onChange={setTravelLeg}
-                  adults={adults}
-                  startDate={tripStartDate}
-                  onSetStart={(d) => { setStartDate(d); setDateMode('exact'); if (totalNights) setEndDate(addDays(d, totalNights)); }}
-                  dateMin={dateMin}
-                  dateMax={dateMax}
+                  onEdit={() => {
+                    const i = steps.indexOf('Getting');
+                    if (i >= 0) goStep(i + 1);
+                  }}
                 />
               )}
 

@@ -1,4 +1,4 @@
-// The Trips step, as one clean list (prompt T5).
+// The Trips step as one clean list (T5), and the Getting there step (T6).
 //
 //   npm run build && npm run preview     (or npm run dev)
 //   node scripts/verify_ready_trips.mjs [url]
@@ -17,6 +17,10 @@
 //   mobile     no horizontal scroll at 375, and every control at least 44px
 //   page       "What's there" opens the real TripPage, whose big button reads
 //              "Choose this trip" and lands on the Getting there step
+//   T6         that step: the journey strip, three blocks (out, between, home),
+//              one leg open at a time with its mode already chosen, Google
+//              Flights first on a flight leg, the cost fields folded away, and
+//              Finish reporting the legs instead of re-asking them
 //
 // Screenshots go to shots/ready-trips-<width>.png so the step can be looked at
 // as well as asserted on.
@@ -244,7 +248,108 @@ async function run(width, height) {
     await page.locator('.wpicked-stops').count() === 1
     && await page.locator('.wpicked').count() === 1);
 
+  await gettingThere(page, label, width);
+
   await ctx.close();
+}
+
+/** T6: the Getting there step, once the wizard is standing on it. */
+async function gettingThere(page, label, width) {
+  await page.waitForSelector('.tlegs .tleg', { timeout: 20000 });
+
+  // ---- the shape of the step --------------------------------------------
+  check(`${label}: the journey strip is there`, await page.locator('.tstrip-node').count() >= 3,
+    `${await page.locator('.tstrip-node').count()} nodes`);
+  const secs = await page.locator('.tlegs-sec .guide-section-title').allTextContents();
+  check(`${label}: out, between and home are three blocks`, secs.length === 3,
+    secs.map((x) => x.trim()).join(' / '));
+  check(`${label}: the long "Carta sells no tickets" paragraph is gone`,
+    await page.locator('.tlegs-sub').count() === 0);
+  check(`${label}: the trip still moves a day at a time`,
+    await page.locator('.tlegs-shift-btn').count() === 2);
+
+  // ---- one leg open, already answered ------------------------------------
+  const legs = await page.locator('.tleg').count();
+  check(`${label}: one leg open at a time`, await page.locator('.tleg.open').count() === 1,
+    `${legs} legs`);
+  const tags = await page.locator('.tleg-tag:not(.is-paid)').allTextContents();
+  check(`${label}: every leg opens with a mode already chosen`,
+    tags.length === legs && tags.every((x) => x.trim().length > 0),
+    `${tags.length} of ${legs}: ${tags.map((x) => x.trim()).join(', ')}`);
+  check(`${label}: the cost fields are folded away`,
+    await page.locator('.tleg.open .tleg-addpaid').count() === 1
+    && await page.locator('.tleg.open .tleg-paid').count() === 0);
+  await page.locator('.tleg.open .tleg-addpaid').click();
+  await page.waitForTimeout(300);
+  check(`${label}: "Add what you paid" opens them`,
+    await page.locator('.tleg.open .tleg-paid').count() === 1);
+
+  // ---- the published hop carries its own measurement ----------------------
+  const measured = await page.locator('.tleg-measured').allTextContents();
+  check(`${label}: the hops between stops show time and distance`,
+    measured.length > 0 && measured.every((m) => /\d/.test(m)),
+    measured.map((m) => m.trim()).slice(0, 2).join(' | ') || 'none');
+
+  // ---- Google Flights leads a flight leg ----------------------------------
+  const outLeg = page.locator('.tleg').first();
+  if (!(await outLeg.evaluate((el) => el.classList.contains('open')))) {
+    await outLeg.locator('.tleg-head').click();
+    await page.waitForTimeout(400);
+  }
+  // Only click when it is not ALREADY the flight: the outbound leg prefills to
+  // fly, and clicking the chosen mode toggles it off, which is what the first
+  // run of this check actually measured.
+  const flyBtn = outLeg.locator('.tleg-mode', { hasText: /^Flight$/i }).first();
+  if (!(await flyBtn.evaluate((el) => el.classList.contains('on')))) {
+    await flyBtn.click();
+    await page.waitForTimeout(500);
+  }
+  const links = await outLeg.locator('.tleg-link').allTextContents();
+  check(`${label}: Google Flights leads a flight leg`,
+    /google flights/i.test(links[0] || ''), links.map((l) => l.trim()).join(', '));
+  check(`${label}: the arrival airports are suggested`,
+    await outLeg.locator('.tleg-airport').count() > 0,
+    (await outLeg.locator('.tleg-airport').allTextContents()).join(' ').slice(0, 60));
+  // From the top, so the shot shows the strip and the first block, which is
+  // what the step opens on.
+  await page.locator('.tstrip').scrollIntoViewIfNeeded().catch(() => {});
+  await page.waitForTimeout(500);
+  await page.screenshot({ path: `shots/getting-there-${width}.png` });
+
+  // ---- the strip jumps ----------------------------------------------------
+  const lastNode = page.locator('.tstrip-node').last();
+  await lastNode.click();
+  await page.waitForTimeout(600);
+  check(`${label}: a strip node opens its leg`,
+    await page.locator('.tleg').last().evaluate((el) => el.classList.contains('open')));
+
+  // ---- mobile -------------------------------------------------------------
+  if (width <= 400) {
+    const over = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
+    check(`${label}: Getting there does not scroll sideways`, over <= 1, `${over}px over`);
+    const small = await page.locator('.tleg-head, .tstrip-node, .tleg-mode, .tleg-addpaid')
+      .evaluateAll((els) => els
+        .map((el) => ({ c: el.className, h: Math.round(el.getBoundingClientRect().height) }))
+        .filter((x) => x.h > 0 && x.h < 32));
+    check(`${label}: its tap targets`, small.length === 0,
+      small.map((x) => `${x.c}=${x.h}`).join(' '));
+  }
+
+  // ---- Finish reports, it does not re-ask ---------------------------------
+  await page.locator('.guide-next:visible').first().click();
+  await page.waitForTimeout(1800);
+  check(`${label}: Finish shows a read-only leg summary`,
+    await page.locator('.tsum-row').count() > 0,
+    `${await page.locator('.tsum-row').count()} rows`);
+  check(`${label}: Finish no longer re-asks the legs`,
+    await page.locator('.tleg-modes').count() === 0);
+  await page.screenshot({ path: `shots/getting-finish-${width}.png` });
+  // The Edit link goes back to the step that owns them.
+  await page.locator('.tsum .guide-answered-edit').first().click();
+  await page.waitForTimeout(1200);
+  const back = (await page.locator('.guide-title').first().textContent() || '').trim();
+  check(`${label}: Edit goes back to Getting there`, /how do you get there/i.test(back),
+    back.slice(0, 50));
 }
 
 await run(375, 812);

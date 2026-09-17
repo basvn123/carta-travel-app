@@ -25001,21 +25001,92 @@ button.ai-sched-main:focus-visible {
 .wroute-apply:hover { background: var(--accent); color: #fff; }
 
 /* ── Getting there, and back ──────────────────────────────────────────── */
-.tlegs {
-  margin-top: 16px;
-  padding-top: 14px;
-  border-top: 1px solid var(--rule);
-}
-.tlegs-title {
+/* ── Getting there, as a step (T6) ─────────────────────────────────────── */
+/* No top rule and no title of its own any more: it IS the step, and its three
+   blocks are PlannerSections like every other captioned block in the wizard. */
+.tlegs { margin-top: var(--space-2); }
+.tlegs-sec { min-width: 0; }
+.tlegs-sec .guide-section-title { font-size: 15px; display: flex; align-items: center; gap: 7px; }
+.tlegs-sec .guide-section-title svg { color: var(--accent); }
+
+/* The whole journey on one line, and the way into any part of it. */
+.tstrip {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 7px;
-  font-family: var(--display);
-  font-size: 16px;
-  font-weight: 600;
+  gap: 4px;
+  margin-bottom: var(--space-4);
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--rule-soft);
+  border-radius: 12px;
+  background: var(--paper);
 }
-.tlegs-title svg { color: var(--accent); }
-.tlegs-sub { margin-top: 3px; font-size: 12.5px; line-height: 1.5; color: var(--ink-soft); }
+.tstrip-node {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  min-height: var(--tap);
+  padding: 4px 8px;
+  border-radius: 8px;
+  background: none;
+  text-align: left;
+}
+.tstrip-node b { font-size: 12.5px; font-weight: 600; }
+.tstrip-node small {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--ink-mute);
+  font-variant-numeric: tabular-nums;
+}
+/* hover only where there IS one: on a touch screen :hover sticks after a tap,
+   so the node a traveller jumped from stays highlighted as if it were the
+   selection, which it is not. */
+@media (hover: hover) {
+  .tstrip-node:hover { background: var(--accent-bg); }
+}
+.tstrip-node:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+.tstrip-arrow { color: var(--ink-mute); flex: none; }
+
+@media (max-width: 768px) {
+  /* One line that scrolls, not a wrapped block. Wrapped, the arrows landed at
+     the end of a line pointing at nothing, and the journey stopped reading as
+     a journey. Scrolling keeps the shape and keeps the whole strip reachable. */
+  .tstrip {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+    /* Bleed to the screen edges so the last node does not look cut off by the
+       card, and pad it back so nothing sits under the gutter. */
+    padding-inline: var(--space-3);
+    scroll-padding-inline: var(--space-3);
+  }
+  .tstrip::-webkit-scrollbar { display: none; }
+  .tstrip-node { flex: none; }
+  .tstrip-node b { white-space: nowrap; }
+  /* A scrolling row with no scrollbar has to say it scrolls, or the node cut
+     off at the right edge reads as a rendering fault. The mask fades the last
+     few pixels instead of slicing them. */
+  /* Standard property only: Lightning CSS emits the -webkit- twin, and a
+     hand-written one makes it prune to the prefix alone. */
+  .tstrip {
+    mask-image: linear-gradient(to right, #000 calc(100% - 22px), transparent 100%);
+  }
+}
+
+/* "Fly into BCN, home from GRO": worth a line only when the saving is real. */
+.tlegs-jaw {
+  display: flex;
+  align-items: flex-start;
+  gap: 7px;
+  margin-bottom: var(--space-3);
+  padding: var(--space-2) var(--space-3);
+  border-radius: 10px;
+  background: var(--accent-bg);
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--ink-soft);
+}
+.tlegs-jaw svg { flex: none; margin-top: 2px; color: var(--accent); }
 
 /* One anchor date for the whole trip: this is the control the relative-time
    model exists for. */
@@ -25059,7 +25130,98 @@ button.ai-sched-main:focus-visible {
   background: var(--paper);
 }
 .tleg.answered { border-color: var(--rule); }
-.tleg-head { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+/* The header is the control that opens the leg, so it is a full-width button
+   with a tap target, not a row of text with a caret beside it. */
+.tleg-head {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+  width: 100%;
+  min-height: var(--tap);
+  background: none;
+  text-align: left;
+}
+.tleg-head:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.tleg-head-meta {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+  margin-left: auto;
+}
+.tleg-chev { color: var(--ink-mute); transition: transform .15s; flex: none; }
+.tleg.open .tleg-chev { transform: rotate(180deg); }
+.tleg-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 2px 8px;
+  border: 1px solid var(--rule-soft);
+  border-radius: 999px;
+  font-size: 11px;
+  color: var(--ink-soft);
+  white-space: nowrap;
+}
+.tleg-tag svg { color: var(--ink-mute); }
+.tleg-tag.is-booked { border-color: var(--accent); color: var(--accent); }
+.tleg-tag.is-booked svg { color: var(--accent); }
+.tleg-tag.is-paid { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+/* What the trip's own composer measured for this hop. */
+.tleg-measured {
+  margin-top: 4px;
+  font-size: 11.5px;
+  color: var(--ink-mute);
+}
+.tleg-body { margin-top: var(--space-2); }
+.tleg-booked {
+  display: flex;
+  align-items: flex-start;
+  gap: 7px;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--ink-soft);
+}
+.tleg-booked svg { flex: none; margin-top: 2px; color: var(--accent); }
+
+/* Which airports actually fly somewhere near this end of the trip. */
+.tleg-airports {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  margin-top: var(--space-2);
+}
+.tleg-airports-label { font-size: 11.5px; color: var(--ink-mute); }
+.tleg-airport {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+  padding: 3px 9px;
+  border: 1px solid var(--rule-soft);
+  border-radius: 999px;
+}
+.tleg-airport b { font-family: var(--mono); font-size: 12px; }
+.tleg-airport small { font-size: 10.5px; color: var(--ink-mute); }
+
+/* What it cost, folded away until somebody has something to put in it. */
+.tleg-addpaid {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: var(--tap);
+  margin-top: var(--space-2);
+  padding: 0 12px;
+  border: 1px dashed var(--rule);
+  border-radius: 10px;
+  background: var(--paper);
+  font-size: 12.5px;
+  color: var(--ink-soft);
+}
+.tleg-addpaid:hover { border-color: var(--accent); color: var(--accent); }
+.tleg-addpaid svg { color: var(--ink-mute); }
+.tleg-addpaid:hover svg { color: var(--accent); }
+
 .tleg-route { display: inline-flex; align-items: baseline; gap: 7px; flex-wrap: wrap; font-size: 14px; }
 .tleg-arrow { color: var(--ink-mute); }
 .tleg-date {
@@ -25150,6 +25312,33 @@ button.ai-sched-main:focus-visible {
 }
 .tlegs-total-label { display: inline-flex; align-items: center; gap: 6px; font-size: 12.5px; color: var(--ink-soft); }
 .tlegs-total { font-family: var(--mono); font-size: 18px; font-variant-numeric: tabular-nums; }
+
+/* The same legs on Finish, reporting rather than asking. */
+.tsum-list { display: grid; gap: 6px; }
+.tsum-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+  padding: 7px 0;
+  border-bottom: 1px solid var(--rule-soft);
+  font-size: 13px;
+}
+.tsum-row:last-child { border-bottom: 0; }
+.tsum-route { display: inline-flex; align-items: baseline; gap: 6px; flex-wrap: wrap; min-width: 0; }
+.tsum-mode {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11.5px;
+  color: var(--ink-mute);
+}
+.tsum-eur {
+  margin-left: auto;
+  font-family: var(--mono);
+  font-size: 12.5px;
+  font-variant-numeric: tabular-nums;
+}
 
 /* ── Narrow ───────────────────────────────────────────────────────────── */
 @media (max-width: 900px) {
