@@ -1738,6 +1738,28 @@ TASKS = [
                  "curation_rank row per trip for the review queue's ordering."),
     },
     {
+        "key": "trails_registry",
+        "title": "Trails: famous-trail registry + coverage report "
+                 "(data/trails/famous_registry.json)",
+        "cadence": "monthly",
+        "writes_app_data": False,
+        "soft": True,
+        "cmds": [[PY, "pipeline/trails/famous_registry.py", "--all"],
+                 [PY, "pipeline/trails/coverage_report.py", "--all"]],
+        "note": ("what SHOULD be published per region, from Wikidata, "
+                 "pageviews, OSM fame tags on WAYS as well as relations, and "
+                 "the national portals, scored and matched against the "
+                 "published wire. The answer to 'did we get the famous ones', "
+                 "which curate.FAMOUS could not give: a per-country needle "
+                 "list matches only rows already in the pool, so it cannot "
+                 "see what was never ingested. NO trailslab guard on purpose, "
+                 "both steps read the extracts and the wire, so the report "
+                 "still runs when the lab is down. Monthly because fame is a "
+                 "rolling average. Not strict here: the report is committed "
+                 "and read, and the build-failing form is "
+                 "coverage_report.py --strict, run deliberately."),
+    },
+    {
         "key": "trails_splice",
         "title": "Trails: bridge the short breaks in otherwise whole relations",
         "cadence": "monthly",

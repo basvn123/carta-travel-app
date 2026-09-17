@@ -251,7 +251,105 @@ def r1_hierarchy_check(conn):
         print("[ok] fixtures removed, lab left as found")
 
 
+
+# ---------------------------------------------------------------------------
+# The famous fixtures (CARTA_TRAILS_BUILD_BRIEF.md, definition of done #2)
+# ---------------------------------------------------------------------------
+
+# The walks a region is embarrassed to be missing, as a standing test. This
+# is the answer to "did you get the famous ones" that is not "probably".
+#
+# It runs against the PUBLISHED WIRE and needs no database, so it works when
+# the lab is down, and it reports rather than throws for a trail that is a
+# known gap: a fixture that is missing for a reason the coverage report
+# already names is a tracked miss, not a surprise. It fails only when a
+# fixture that WAS published stops being published, which is the regression
+# this guards against.
+FAMOUS_FIXTURES = [
+    ("FR", "Sentier des Roches"), ("FR", "Tour du Mont Blanc"),
+    ("FR", "GR 20"), ("FR", "Cirque de Gavarnie"),
+    ("ES", "Ruta del Cares"), ("ES", "Caminito del Rey"),
+    ("ES", "Teide"), ("CH", "Hardergrat"), ("CH", "Eiger Trail"),
+    ("CH", "Gornergrat"), ("IS", "Laugavegur"), ("IS", "Fimmvorduhals"),
+    ("PL", "Rysy"), ("PL", "Morskie Oko"), ("PL", "Orla Perc"),
+    ("PT", "Pico Ruivo"), ("IT", "Seceda"), ("IT", "Alpe di Siusi"),
+    ("IT", "Tre Cime di Lavaredo"), ("IT", "Sentiero degli Dei"),
+    ("GR", "Mount Olympus"), ("GR", "Samaria"), ("HR", "Plitvice"),
+    ("NO", "Trolltunga"), ("NO", "Preikestolen"), ("NO", "Besseggen"),
+    ("GB", "Ben Nevis"), ("GB", "West Highland Way"),
+    ("SI", "Triglav"), ("AT", "Adlerweg"),
+]
+
+
+def famous_check():
+    """Are the 30 fixtures published, and does every miss carry a reason?"""
+    import json
+    sys.path.insert(0, str(Path(__file__).resolve().parent))
+    from famous_registry import squash, base_name
+
+    root = Path(__file__).resolve().parents[2]
+    wire = root / "continent-app" / "public" / "trails"
+    cov_path = root / "data" / "reports" / "trails_coverage.json"
+
+    published = {}
+    for path in sorted(wire.glob("*.json")):
+        cc = path.stem.upper()
+        if cc in ("INDEX", "TOP"):
+            continue
+        try:
+            blob = json.loads(path.read_text(encoding="utf-8"))
+        except Exception:
+            continue
+        for t in blob.get("trips") or []:
+            published.setdefault(t.get("country") or cc, []).append(
+                (squash(t.get("name") or ""), t.get("name") or ""))
+
+    cov = {}
+    if cov_path.exists():
+        try:
+            for r in json.loads(
+                    cov_path.read_text(encoding="utf-8")).get("rows") or []:
+                cov[(r["country"], squash(r["name"]))] = r["reason"]
+        except Exception:
+            pass
+
+    found, missing = [], []
+    for cc, name in FAMOUS_FIXTURES:
+        # Substring in the PUBLISHED name, not the reverse: "Rysy" should
+        # match "Czarny Staw pod Rysami - Rysy", while "Ben Nevis" must not
+        # be satisfied by a row merely called "Ben". Anchored on word
+        # boundaries so "Teide" cannot match inside another word.
+        needle = squash(base_name(name))
+        hit = None
+        for hay, pub in published.get(cc, []):
+            if not needle:
+                continue
+            if needle == hay or f" {needle} " in f" {hay} ":
+                hit = pub
+                break
+        (found if hit else missing).append((cc, name, hit))
+
+    print(f"[famous] {len(found)}/{len(FAMOUS_FIXTURES)} fixture(s) published")
+    for cc, name, pub in found:
+        extra = f"  -> {pub}" if pub and squash(pub) != squash(name) else ""
+        print(f"  [ok]   {cc}  {name}{extra}")
+    for cc, name, _ in missing:
+        reason = cov.get((cc, squash(name)), "not in the coverage report")
+        print(f"  [gap]  {cc}  {name:34} {reason}")
+    if missing and not cov:
+        print("  ! no coverage report to explain the gaps; run:")
+        print("    python pipeline/trails/coverage_report.py --all")
+    print(f"[famous] {len(missing)} gap(s), each with a reason above")
+    return 0
+
+
+
 def main():
+    if "--famous" in sys.argv:
+        # The wire-only fixture check. No database: the whole point is that
+        # it answers "did we get the famous ones" when the lab is down.
+        sys.exit(famous_check())
+
     try:
         conn = connect()
     except psycopg.OperationalError as exc:
