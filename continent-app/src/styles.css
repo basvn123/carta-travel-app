@@ -2362,6 +2362,9 @@ input, select {
 }
 .guide-startover {
   margin-right: 10px;
+  /* Two words on one line: at 375 the footer summary beside it was squeezing
+     "Start over" onto two, under a control only 12px tall. */
+  white-space: nowrap;
   font-size: 12px;
   color: var(--ink-mute);
   text-decoration: underline;
@@ -24667,46 +24670,21 @@ button.ai-sched-main:focus-visible {
 }
 
 
-/* ── Ready-made or built: the fork, as one control ─────────────────────── */
-.wmode {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
-  margin-bottom: 14px;
-}
-.wmode-btn {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 11px 13px;
-  border: 1px solid var(--rule);
-  border-radius: 12px;
-  background: var(--paper);
-  text-align: left;
-  transition: border-color .15s, box-shadow .15s;
-}
-.wmode-btn svg { flex: none; color: var(--ink-mute); }
-.wmode-btn:hover { border-color: var(--rule); box-shadow: var(--shadow-1); }
-.wmode-btn.on { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
-.wmode-btn.on svg { color: var(--accent); }
-.wmode-text { min-width: 0; }
-.wmode-text b { display: block; font-size: 14px; font-weight: 600; }
-.wmode-text small { display: block; font-size: 11.5px; color: var(--ink-mute); line-height: 1.4; }
-
-/* ── The two columns of ready-made trips ──────────────────────────────── */
-.wready-tools {
+/* ── One list of ready-made trips (T5) ─────────────────────── */
+/* The two columns, the map/list toggle and the toolbar row they sat in are
+   gone: one ranked list, with the shortlist still editable above it. */
+.wready-chips {
   display: flex;
   flex-wrap: wrap;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 12px;
+  gap: 6px;
+  margin-bottom: var(--space-4);
 }
-.wready-chips { display: flex; flex-wrap: wrap; gap: 6px; flex: 1; min-width: 0; }
 .wready-chip {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 5px 8px 5px 6px;
+  min-height: var(--tap);
+  padding: 5px 12px 5px 10px;
   border: 1px solid var(--rule);
   border-radius: 999px;
   background: var(--paper);
@@ -24715,35 +24693,28 @@ button.ai-sched-main:focus-visible {
 }
 .wready-chip.on { border-color: var(--accent); background: var(--accent-bg); }
 .wready-chip:hover { background: var(--accent); color: #fff; }
-.wready-chip-x { font-size: 14px; line-height: 1; opacity: .7; }
-.wready-view { width: min(100%, 220px); margin-bottom: 0; flex: none; }
-.wready-map { margin-bottom: 14px; }
-.wready-map .cpm { height: min(42vh, 420px); margin-bottom: 0; }
+.wready-chip-x { font-size: 15px; line-height: 1; opacity: .7; }
 
-.wready-split {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 20px;
-  align-items: start;
+.wready-title {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  margin: 0 0 var(--space-3);
+  font-family: var(--display);
+  font-size: 17px;
+  font-weight: 600;
 }
-/* Both columns are PlannerSections now, so the caption, the gloss and the
-   count come from the shared shape. What stays here is only what makes this
-   column a column: the icon's accent, and the fact that two side-by-side grid
-   cells are not a stack, so the shared "section follows section" margin must
-   not fire between them. */
-.wready-col { min-width: 0; }
-.wready-split > .guide-section + .guide-section { margin-top: 0; }
-.wready-col .guide-section-head { gap: var(--space-2); justify-content: flex-start; }
-.wready-col .guide-section-title { font-size: 16px; display: flex; align-items: center; gap: 7px; }
-.wready-col .guide-section-title svg { color: var(--accent); }
-.wready-col .guide-section-aside { margin-right: auto; }
 .wready-col-n {
   font-family: var(--mono);
   font-size: 11.5px;
   color: var(--ink-mute);
   font-variant-numeric: tabular-nums;
 }
-.wready-grid { display: grid; gap: 10px; }
+/* One column on a phone, two once the step has room, three on a wide desktop.
+   The card's photo `sizes` is written to match: 92vw, 45vw, 380px. */
+.wready-grid { display: grid; gap: var(--space-3); grid-template-columns: minmax(0, 1fr); }
+@media (min-width: 769px) { .wready-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (min-width: 1200px) { .wready-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 
 .wready-more {
   width: 100%;
@@ -24786,11 +24757,14 @@ button.ai-sched-main:focus-visible {
 .wready-empty p { font-size: 13.5px; color: var(--ink-soft); }
 .wready-empty-actions { display: flex; justify-content: center; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
 
-/* One published trip, as a card: photograph, then the facts under it. */
+/* One published trip, as a card: a photograph, where it goes, and two ways on.
+   It is a DIV now, not one big button, because it holds three controls of its
+   own (the length chips, Choose, What's there) and a button cannot nest them.
+   The transport, shape, tag, sight, price and season chips are gone; they are
+   on the trip's own page, which "What's there" opens. */
 .wtrip {
-  display: block;
-  width: 100%;
-  text-align: left;
+  display: flex;
+  flex-direction: column;
   border: 1px solid var(--rule-soft);
   border-radius: 14px;
   background: var(--paper);
@@ -24798,10 +24772,17 @@ button.ai-sched-main:focus-visible {
   transition: border-color .15s, box-shadow .15s;
 }
 .wtrip:hover { border-color: var(--rule); box-shadow: var(--shadow-1); }
-.wtrip:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .wtrip.on { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
-.wtrip-media { position: relative; display: block; height: 128px; }
-.wtrip-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+/* aspect-ratio, not a fixed 128px: the old box letterboxed a landscape
+   photograph on every screen it was drawn at. */
+.wtrip-media { position: relative; aspect-ratio: 16 / 10; }
+.wtrip-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
 .wtrip-noimg {
   display: flex;
   align-items: center;
@@ -24812,7 +24793,7 @@ button.ai-sched-main:focus-visible {
 .wtrip-scrim {
   position: absolute;
   inset: 0;
-  background: linear-gradient(to top, rgba(15, 23, 42, 0.78) 0%, rgba(15, 23, 42, 0.12) 62%, rgba(15, 23, 42, 0) 100%);
+  background: linear-gradient(to top, rgba(15, 23, 42, 0.45) 0%, rgba(15, 23, 42, 0) 46%);
 }
 .wtrip-days {
   position: absolute;
@@ -24835,59 +24816,89 @@ button.ai-sched-main:focus-visible {
   background: var(--accent);
   color: #fff;
 }
-.wtrip-name {
-  position: absolute;
-  left: 10px; right: 10px; bottom: 9px;
-  font-family: var(--display);
-  font-size: 15px;
-  font-weight: 600;
-  line-height: 1.25;
-  color: #fff;
+.wtrip-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  flex: 1;
+  padding: var(--space-3);
 }
-.wtrip-body { display: block; padding: 9px 11px 11px; }
-.wtrip-route { display: flex; flex-wrap: wrap; align-items: center; gap: 5px; }
+.wtrip-route {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 5px;
+  margin: 0;
+}
 .wtrip-city {
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  font-size: 12.5px;
+  font-size: 13px;
   font-weight: 600;
 }
-.wtrip-n {
-  font-family: var(--mono);
-  font-size: 10px;
-  color: var(--ink-mute);
-  font-variant-numeric: tabular-nums;
-}
 .wtrip-arrow { color: var(--ink-mute); }
-.wtrip-meta { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 7px; }
-.wtrip-chip {
-  padding: 3px 7px;
+
+/* The lengths this same route was also composed at. Choosing one swaps which
+   trip the card IS, so the buttons below always act on what is on screen. */
+.wtrip-lens { display: flex; flex-wrap: wrap; gap: 6px; }
+.wtrip-len {
+  min-height: 32px;
+  padding: 4px 10px;
   border: 1px solid var(--rule-soft);
   border-radius: 999px;
-  font-size: 11px;
-  color: var(--ink-soft);
-}
-.wtrip-chip.on { border-color: var(--accent); color: var(--accent); }
-.wtrip-sights {
-  display: block;
-  margin-top: 7px;
+  background: var(--paper);
+  font-family: var(--mono);
   font-size: 11.5px;
-  line-height: 1.45;
-  color: var(--ink-mute);
+  color: var(--ink-soft);
+  font-variant-numeric: tabular-nums;
 }
-.wtrip-foot {
+.wtrip-len.on { border-color: var(--accent); background: var(--accent-bg); color: var(--accent); }
+
+.wtrip-acts { display: flex; gap: var(--space-2); margin-top: auto; padding-top: var(--space-1); }
+.wtrip-choose, .wtrip-what {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  flex: 1;
+  min-height: var(--tap);
+  padding: 0 12px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 600;
+}
+.wtrip-choose { border: 1px solid var(--accent); background: var(--accent); color: #fff; }
+.wtrip.on .wtrip-choose { background: var(--accent-bg); color: var(--accent); }
+.wtrip-what { border: 1px solid var(--rule); background: var(--paper); color: var(--ink-soft); }
+.wtrip-what:hover { border-color: var(--accent); color: var(--accent); }
+.wtrip-choose:focus-visible, .wtrip-what:focus-visible, .wtrip-len:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
+
+/* The end of the list: the other way out of it, quiet enough not to compete
+   with the cards above it. It used to be a two-button switch at the TOP of the
+   step, where nobody had the question yet. */
+.wready-own-card {
   display: flex;
   align-items: center;
-  gap: 10px;
-  flex-wrap: wrap;
-  margin-top: 8px;
-  padding-top: 8px;
-  border-top: 1px solid var(--rule-soft);
-  font-size: 11.5px;
-  color: var(--ink-mute);
+  gap: var(--space-2);
+  width: 100%;
+  min-height: var(--tap);
+  margin-top: var(--space-4);
+  padding: var(--space-3);
+  border: 1px dashed var(--rule);
+  border-radius: 14px;
+  background: var(--paper);
+  text-align: left;
+  font-size: 13px;
+  color: var(--ink-soft);
 }
-.wtrip-cost { font-family: var(--mono); color: var(--ink); font-variant-numeric: tabular-nums; }
+.wready-own-card svg { flex: none; color: var(--ink-mute); }
+.wready-own-card b { margin-left: auto; color: var(--accent); white-space: nowrap; }
+.wready-own-card:hover { border-color: var(--accent); }
+.wready-back { display: inline-block; margin-bottom: var(--space-3); }
 
 /* The trip once it is chosen, with the way there under it. */
 .wpicked {
@@ -25146,19 +25157,16 @@ button.ai-sched-main:focus-visible {
      bottom sheet over the page, not a column in the grid, so there is nothing
      to reflow: it used to render ABOVE the grid with order:-1 and push the
      whole step down the moment a card was tapped. */
-  .wready-split { grid-template-columns: minmax(0, 1fr); gap: 22px; }
-  .wmode { grid-template-columns: 1fr; }
+
 }
 @media (max-width: 719px) {
   .cbrief-figs { grid-template-columns: 1fr; }
-  .wready-view { width: 100%; }
-  .wready-map .cpm { height: 46vh; }
   .tleg-field-wide { min-width: 120px; }
   .tlegs-shift { gap: 8px; }
   .tlegs-shift-note { min-width: 100%; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .wtrip, .wmode-btn, .tleg-mode, .guide-ccard-info { transition: none; }
+  .wtrip, .tleg-mode, .guide-ccard-info { transition: none; }
 }
 
 /* ── Step one: what is already booked ──────────────────────────────────

@@ -1,33 +1,37 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { loadTripsFor, rankTrips, tripSights } from '../lib/trips.js';
-import { tripHeadline, shapeLabel, transportLabel, seasonLabel, tripTags, cardThumb } from '../lib/tripStory.js';
+import { loadTripsFor, rankTrips, groupTripVariants } from '../lib/trips.js';
 import { CountryFlag } from '../components/CountryFlag.jsx';
-import { CountryPickerMap } from '../map/CountryPickerMap.jsx';
-import { eur } from '../lib/format.js';
+import { srcSetFor, fallbackSrc } from '../lib/heroImage.js';
+import { NON_PHOTO_IMG } from '../lib/countryCovers.js';
+import { isFav } from '../lib/favorites.js';
 import { useI18n } from '../i18n/index.jsx';
-import { PlannerSection } from './PlannerSection.jsx';
-import { cityLabel } from '../lib/placeName.js';
-import {
-  RouteIcon, CheckIcon, SparkIcon, BedIcon, LoopIcon,
-} from '../components/Icons.jsx';
+import { cityLabel, cityKeyName } from '../lib/placeName.js';
+import { RouteIcon, CheckIcon, SparkIcon } from '../components/Icons.jsx';
 
 /**
- * The ready-made half of the planner: 2,258 itineraries that were composed and
- * checked by pipeline/trips, filtered down to the countries this traveller
+ * The ready-made half of the planner: published itineraries that were composed
+ * and checked by pipeline/trips, filtered down to the countries this traveller
  * ticked and the days they actually have.
  *
- * The screen is split because the choice is: one country in depth, or several
- * strung together. Those are different holidays and neither is a filter of the
- * other, so they get a column each rather than one list with a chip on it.
+ * ONE list. It used to be two columns, "Across your countries" and "Inside one
+ * country", each with a sentence explaining itself, above a map/list toggle and
+ * cards carrying transport, shape, tags, sights, a price per day and a season.
+ * Six facts is a comparison table, and nobody compares forty of anything: the
+ * card now answers "where does it go, for how long" and the rest of the trip is
+ * one tap away on its own page, which is the page Destinations already shows.
  *
- * Ticking a country off the row above rebuilds both columns. That is the whole
+ * Near-duplicates collapse. The same route is composed at every length it works
+ * at, so "Bruges and Paris" arrived three times with one photograph between
+ * them; groupTripVariants folds those into one card with length chips, and the
+ * chip nearest the traveller's window is the one already on.
+ *
+ * Ticking a country off the row above rebuilds the list. That is the whole
  * point of the step: the country picker was a shortlist of maybes, and this is
  * where the maybes turn into a route, so undoing one has to be one tap and has
  * to show its consequence immediately.
  *
  * Nothing here is invented. Every card is a published trip: real stops, real
- * nights, legs the transport engine agreed exist, and the checks it passed
- * printed on the card.
+ * nights, legs the transport engine agreed exist.
  */
 
 /** How many of the traveller's own countries a trip actually visits. */
@@ -35,68 +39,175 @@ function coverage(trip, picked) {
   return (trip.countries || []).filter((cc) => picked.has(cc)).length;
 }
 
-function TripCard({ trip, picked, chosen, onPick, t }) {
-  const tags = tripTags(trip, t, 2);
-  const season = seasonLabel(trip, t);
-  const covers = coverage(trip, picked);
-  const sights = tripSights(trip);
+/**
+ * The card's photograph, at the widths Wikimedia will actually render.
+ *
+ * .wtrip-media was a fixed 128px box fed a single 500px rendering with no
+ * srcSet, so a route photograph was cropped to a letterbox on every screen and
+ * a phone paid for pixels it drew at a third the size. This is the CardPhoto
+ * pattern from the Destinations grid: 500 as the fallback, a srcSet up to 960,
+ * and width/height as the ASPECT so the box is reserved before the bytes land.
+ */
+const TRIP_SIZES = '(max-width: 768px) 92vw, (max-width: 1200px) 45vw, 380px';
+
+function TripPhoto({ url }) {
+  if (!url) {
+    return (
+      <span className="wtrip-img wtrip-noimg" aria-hidden="true"><RouteIcon size={22} /></span>
+    );
+  }
   return (
-    <button
-      className={`wtrip ${chosen ? 'on' : ''}`}
-      onClick={() => onPick(trip)}
-      aria-pressed={chosen}
-    >
-      <span className="wtrip-media">
-        {trip.img
-          ? <img className="wtrip-img" src={cardThumb(trip.img.url)} alt="" loading="lazy" />
-          : <span className="wtrip-img wtrip-noimg" aria-hidden="true"><RouteIcon size={22} /></span>}
+    <img
+      className="wtrip-img"
+      src={fallbackSrc(url, 500)}
+      srcSet={srcSetFor(url, 960)}
+      sizes={TRIP_SIZES}
+      alt=""
+      width={25}
+      height={12}
+      loading="lazy"
+      decoding="async"
+    />
+  );
+}
+
+/**
+ * The identity of a photograph, for the "no two cards alike" test.
+ *
+ * A published trip carries its cover as a Wikimedia THUMB url, and the export
+ * picks the width per trip, so the same photograph arrives as both
+ * ".../960px-Refuge_perafita_andorra.jpg" and ".../500px-Refuge_perafita_
+ * andorra.jpg". Those are one picture to anybody looking at the grid, so the
+ * width is dropped before they are compared.
+ */
+function photoKey(url) {
+  return String(url || '').replace(/\/\d+px-/, '/');
+}
+
+/**
+ * The photograph each card gets, decided across the whole list rather than per
+ * card, because the two things that can go wrong are both about the list:
+ * a trip whose own image is a coat of arms or a locator map, and two cards
+ * side by side wearing the same picture.
+ *
+ * The fallback is the first stop's own destination photograph. A trip CARD
+ * names its stops by city, not by catalogue id (only the detail file carries
+ * `dest`), so the stops are looked up through a city index built once for the
+ * whole list rather than by scanning 3.8k destinations per card.
+ */
+function tripPhotos(trips, destinations) {
+  const byCity = new Map();
+  for (const d of Object.values(destinations || {})) {
+    if (!d?.city || !d.image?.url) continue;
+    const key = `${cityKeyName(d.city).toLowerCase()}|${d.iso2 || ''}`;
+    if (!byCity.has(key)) byCity.set(key, d.image.url);
+  }
+  const stopPhoto = (c) => byCity.get(`${cityKeyName(c.city || '').toLowerCase()}|${c.cc || ''}`) || '';
+
+  const used = new Set();
+  const out = new Map();
+  for (const trip of trips) {
+    const own = trip.img?.url || '';
+    // The trip's own photograph first, unless it is a crest, a flag or a
+    // locator map. Then each stop in turn: two trips through the same country
+    // often share a cover, but they rarely share their whole route, so walking
+    // the stops finds a different file rather than settling for a repeat.
+    const candidates = [
+      own && !NON_PHOTO_IMG.test(own) ? own : '',
+      ...(trip.cities || trip.stops || [])
+        .map(stopPhoto)
+        .filter((u) => u && !NON_PHOTO_IMG.test(u)),
+    ].filter(Boolean);
+    // A repeat still beats the no-image placeholder, so the first candidate is
+    // the fallback when every one of them is already on another card.
+    const url = candidates.find((u) => !used.has(photoKey(u))) || candidates[0] || '';
+    if (url) used.add(photoKey(url));
+    out.set(trip.id, url);
+  }
+  return out;
+}
+
+/**
+ * One trip, as a card.
+ *
+ * Photograph, how long it takes, where it goes, and two ways on. The lengths
+ * this route was also composed at sit under the route as chips, and choosing
+ * one swaps which trip the card IS, so the buttons below always act on what
+ * the card is currently showing.
+ */
+function TripCard({ trip, photo, chosen, onPick, onOpen, t }) {
+  // Which variant the card is showing. It starts on the one groupTripVariants
+  // preselected (nearest the window) and only moves when the traveller says so.
+  const [shownId, setShownId] = useState(trip.id);
+  const variants = trip.variants || [trip];
+  const shown = variants.find((v) => v.id === shownId) || trip;
+  // The group is rebuilt whenever the countries or the window change, so the
+  // preselection can move under a card that is still mounted.
+  useEffect(() => { setShownId(trip.id); }, [trip.id]);
+
+  return (
+    <div className={`wtrip ${chosen ? 'on' : ''}`}>
+      <div className="wtrip-media">
+        <TripPhoto url={photo} />
         <span className="wtrip-scrim" aria-hidden="true" />
-        <span className="wtrip-days"><b>{trip.days}</b> {t(trip.days === 1 ? 'trip.dayWord' : 'trip.daysWord')}</span>
+        <span className="wtrip-days">
+          <b>{shown.days}</b> {t(shown.days === 1 ? 'trip.dayWord' : 'trip.daysWord')}
+        </span>
         {chosen && <span className="wtrip-check"><CheckIcon size={12} /></span>}
-        <span className="wtrip-name">{tripHeadline(trip, t)}</span>
-      </span>
-      <span className="wtrip-body">
-        <span className="wtrip-route">
-          {trip.cities.map((c, i) => (
+      </div>
+      <div className="wtrip-body">
+        <p className="wtrip-route">
+          {(shown.cities || []).map((c, i) => (
             <React.Fragment key={`${c.city}-${i}`}>
-              {i > 0 && <span className="wtrip-arrow" aria-hidden="true">&rsaquo;</span>}
+              {i > 0 && <span className="wtrip-arrow" aria-hidden="true">&rarr;</span>}
               <span className="wtrip-city">
                 <CountryFlag country={c.cc} size={10} />
                 {cityLabel(c.city)}
-                <span className="wtrip-n">{c.n}</span>
               </span>
             </React.Fragment>
           ))}
-        </span>
-        <span className="wtrip-meta">
-          <span className="wtrip-chip">{transportLabel(trip, t)}</span>
-          <span className="wtrip-chip">{shapeLabel(trip, t)}</span>
-          {tags.map((tag) => <span key={tag.code} className="wtrip-chip on">{tag.label}</span>)}
-          {covers > 1 && <span className="wtrip-chip">{t('ready.covers', { n: covers })}</span>}
-        </span>
-        {sights.length > 0 && <span className="wtrip-sights">{sights.slice(0, 3).join(', ')}</span>}
-        <span className="wtrip-foot">
-          <span className="wtrip-cost">{t('trip.perDay', { eur: eur(trip.cost.per_day_eur) })}</span>
-          {season && <span className="wtrip-season">{season}</span>}
-        </span>
-      </span>
-    </button>
+        </p>
+
+        {variants.length > 1 && (
+          <div className="wtrip-lens" role="group" aria-label={t('ready.lengthsLabel')}>
+            {variants.map((v) => (
+              <button
+                key={v.id}
+                type="button"
+                className={`wtrip-len ${v.id === shown.id ? 'on' : ''}`}
+                onClick={() => setShownId(v.id)}
+                aria-pressed={v.id === shown.id}
+              >
+                {v.id === shown.id ? t('ready.lenDays', { n: v.days }) : v.days}
+              </button>
+            ))}
+          </div>
+        )}
+
+        <div className="wtrip-acts">
+          <button type="button" className="wtrip-choose" onClick={() => onPick(shown)}>
+            {chosen ? <><CheckIcon size={13} /> {t('ready.chosen')}</> : t('ready.choose')}
+          </button>
+          <button type="button" className="wtrip-what" onClick={() => onOpen(shown)}>
+            {t('ready.whatsThere')}
+          </button>
+        </div>
+      </div>
+    </div>
   );
 }
 
 export function ReadyTripsStep({
   countries, allCountries, windowNights, selectedId, onPick, onToggleCountry, onBuildOwn,
-  onRestorePick,
+  onRestorePick, onOpenTrip, destinations = null, favorites = null,
 }) {
   const { t } = useI18n();
   const [rows, setRows] = useState(null);   // null = loading
-  const [view, setView] = useState('list'); // 'list' | 'map'
   const [anyLength, setAnyLength] = useState(false);
-  // How many cards each column is showing. A country pair can offer hundreds
-  // of trips and nobody scrolls that; the count in the header is always the
-  // real one, and the button says how many are still behind it, so the list is
-  // short without the shortening being a secret.
-  const [shown, setShown] = useState({ multi: 12, single: 12 });
+  // How many cards the list is showing. A country pair can offer hundreds of
+  // trips and nobody scrolls that; the button says how many are still behind
+  // it, so the list is short without the shortening being a secret.
+  const [shown, setShown] = useState(12);
 
   const picked = useMemo(() => {
     const set = new Set();
@@ -109,7 +220,7 @@ export function ReadyTripsStep({
     let live = true;
     setRows(null);
     if (!picked.size) { setRows([]); return undefined; }
-    setShown({ multi: 12, single: 12 });
+    setShown(12);
     loadTripsFor([...picked]).then((list) => { if (live) setRows(list || []); });
     return () => { live = false; };
   }, [ccKey]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -119,14 +230,24 @@ export function ReadyTripsStep({
   // seven day trip is a perfectly good eight day trip with a slow morning in
   // it; "any length" opens that up when the window is unusual.
   const days = windowNights > 0 ? windowNights + 1 : null;
-  const { multi, single, hidden } = useMemo(() => {
+  const { list, hidden } = useMemo(() => {
     const all = (rows || []).filter((trip) => coverage(trip, picked) > 0);
     const fitted = rankTrips(all, { days: anyLength ? null : days });
-    const m = fitted.filter((x) => (x.countries || []).length > 1)
-      .sort((a, b) => coverage(b, picked) - coverage(a, picked) || b.score - a.score);
-    const s = fitted.filter((x) => (x.countries || []).length === 1);
-    return { multi: m, single: s, hidden: all.length - fitted.length };
-  }, [rows, picked, days, anyLength]);
+    // Favourited first, then the trips that answer more of the shortlist, then
+    // the score. A starred trip is the traveller's own earlier decision and
+    // outranks anything the ranking has to say about it.
+    const grouped = groupTripVariants(fitted, anyLength ? null : days);
+    const starred = (trip) => ((trip.variants || [trip])
+      .some((v) => isFav(favorites, 'trip', v.id)) ? 1 : 0);
+    grouped.sort((a, b) => starred(b) - starred(a)
+      || coverage(b, picked) - coverage(a, picked)
+      || b.score - a.score
+      || a.id.localeCompare(b.id));
+    return { list: grouped, hidden: all.length - fitted.length };
+  }, [rows, picked, days, anyLength, favorites]);
+
+  // One photograph per card, chosen across the list so no two cards match.
+  const photos = useMemo(() => tripPhotos(list, destinations), [list, destinations]);
 
   // A restored draft carries the chosen trip's id, not the card: the card
   // lives in the published country file this step has just fetched. Hand the
@@ -138,37 +259,28 @@ export function ReadyTripsStep({
     if (card) onRestorePick(card);
   }, [rows, selectedId]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const empty = rows != null && multi.length === 0 && single.length === 0;
+  const empty = rows != null && list.length === 0;
+  // The countries this list is for, named in the title rather than in a
+  // sentence under it.
+  const pickedNames = allCountries.filter((c) => countries.has(c.country)).map((c) => c.country);
 
   return (
     <div className="wready">
       {/* The shortlist, still editable, with its consequence one row below. */}
-      <div className="wready-tools">
-        <div className="wready-chips">
-          {allCountries.filter((c) => countries.has(c.country)).map((c) => (
-            <button
-              key={c.country}
-              className="wready-chip on"
-              onClick={() => onToggleCountry(c.country)}
-              title={t('ready.dropCountry', { country: c.country })}
-            >
-              <CountryFlag country={c.iso2} size={12} />
-              {c.country}
-              <span className="wready-chip-x" aria-hidden="true">×</span>
-            </button>
-          ))}
-        </div>
-        <div className="guide-datemode guide-stay-view wready-view">
-          <button className={view === 'map' ? 'on' : ''} onClick={() => setView('map')}>{t('wizard.map')}</button>
-          <button className={view === 'list' ? 'on' : ''} onClick={() => setView('list')}>{t('wizard.list')}</button>
-        </div>
+      <div className="wready-chips">
+        {allCountries.filter((c) => countries.has(c.country)).map((c) => (
+          <button
+            key={c.country}
+            className="wready-chip on"
+            onClick={() => onToggleCountry(c.country)}
+            title={t('ready.dropCountry', { country: c.country })}
+          >
+            <CountryFlag country={c.iso2} size={12} />
+            {c.country}
+            <span className="wready-chip-x" aria-hidden="true">&times;</span>
+          </button>
+        ))}
       </div>
-
-      {view === 'map' && (
-        <div className="wready-map">
-          <CountryPickerMap countries={allCountries} selected={countries} onToggle={onToggleCountry} />
-        </div>
-      )}
 
       {rows == null && <p className="guide-empty">{t('ready.loading')}</p>}
 
@@ -179,66 +291,42 @@ export function ReadyTripsStep({
             {!anyLength && days && (
               <button className="guide-back" onClick={() => setAnyLength(true)}>{t('ready.showAnyLength')}</button>
             )}
-            <button className="guide-back" onClick={onBuildOwn}>{t('ready.buildOwn')}</button>
+            <button className="guide-back" onClick={() => onBuildOwn('custom')}>{t('ready.buildOwn')}</button>
           </div>
         </div>
       )}
 
       {!empty && rows != null && (
-        <div className="wready-split">
-          <PlannerSection
-            className="wready-col"
-            title={<><RouteIcon size={13} /> {t('ready.multiTitle')}</>}
-            sub={t('ready.multiSub')}
-            aside={<span className="wready-col-n">{multi.length}</span>}
-          >
-            <div className="wready-grid">
-              {multi.slice(0, shown.multi).map((trip) => (
-                <TripCard key={trip.id} trip={trip} picked={picked} chosen={trip.id === selectedId} onPick={onPick} t={t} />
-              ))}
-              {multi.length === 0 && (
-                <p className="guide-empty">{t('ready.noMulti')}</p>
-              )}
-            </div>
-            {multi.length > shown.multi && (
-              <button
-                className="wready-more"
-                onClick={() => setShown((p) => ({ ...p, multi: p.multi + 12 }))}
-              >
-                {t('ready.showMore', { n: multi.length - shown.multi })}
-              </button>
-            )}
-          </PlannerSection>
+        <>
+          <h3 className="wready-title">
+            <span>{t('ready.listTitle', { countries: pickedNames.join(', ') })}</span>
+            <span className="wready-col-n">{list.length}</span>
+          </h3>
 
-          <PlannerSection
-            className="wready-col"
-            title={<><BedIcon size={13} /> {t('ready.singleTitle')}</>}
-            sub={t('ready.singleSub')}
-            aside={<span className="wready-col-n">{single.length}</span>}
-          >
-            <div className="wready-grid">
-              {single.slice(0, shown.single).map((trip) => (
-                <TripCard key={trip.id} trip={trip} picked={picked} chosen={trip.id === selectedId} onPick={onPick} t={t} />
-              ))}
-              {single.length === 0 && (
-                <p className="guide-empty">{t('ready.noSingle')}</p>
-              )}
-            </div>
-            {single.length > shown.single && (
-              <button
-                className="wready-more"
-                onClick={() => setShown((p) => ({ ...p, single: p.single + 12 }))}
-              >
-                {t('ready.showMore', { n: single.length - shown.single })}
-              </button>
-            )}
-          </PlannerSection>
-        </div>
+          <div className="wready-grid">
+            {list.slice(0, shown).map((trip) => (
+              <TripCard
+                key={trip.id}
+                trip={trip}
+                photo={photos.get(trip.id)}
+                chosen={(trip.variants || [trip]).some((v) => v.id === selectedId)}
+                onPick={onPick}
+                onOpen={onOpenTrip}
+                t={t}
+              />
+            ))}
+          </div>
+
+          {list.length > shown && (
+            <button className="wready-more" onClick={() => setShown((n) => n + 12)}>
+              {t('ready.showMore', { n: list.length - shown })}
+            </button>
+          )}
+        </>
       )}
 
       {!empty && rows != null && (hidden > 0 || anyLength) && (
         <p className="wready-note">
-          <LoopIcon size={11} />
           {anyLength
             ? t('ready.anyLengthOn', { days: days || windowNights })
             : t('ready.hiddenByLength', { n: hidden, days })}
@@ -248,12 +336,13 @@ export function ReadyTripsStep({
         </p>
       )}
 
-      {!empty && rows != null && (
-        <p className="wready-note wready-own">
-          <SparkIcon size={11} />
-          {t('ready.orBuildOwn')}
-          <button className="wready-link" onClick={onBuildOwn}>{t('ready.buildOwn')}</button>
-        </p>
+      {/* The end of the list, and the other way out of it. */}
+      {rows != null && !empty && (
+        <button className="wready-own-card" onClick={() => onBuildOwn('custom')}>
+          <SparkIcon size={15} />
+          <span>{t('ready.orBuildOwn')}</span>
+          <b>{t('ready.buildOwnGo')}</b>
+        </button>
       )}
     </div>
   );

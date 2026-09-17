@@ -266,7 +266,15 @@ function DayCard({ day, detail, t }) {
   );
 }
 
-export function TripPage({ trip: card, data, onClose, onOpenInPlanner, onSelectDest, fav = false, onFav = null }) {
+export function TripPage({
+  trip: card, data, onClose, onOpenInPlanner, onSelectDest, fav = false, onFav = null,
+  // What the big button under the facts does, when the caller wants it to do
+  // something other than "open in planner". The trip planner passes
+  // {label, onClick} so its own copy reads "Choose this trip" and choosing
+  // closes the page and moves the wizard on, rather than handing the trip to a
+  // planner the traveller is already standing in.
+  primaryAction = null,
+}) {
   const { t } = useI18n();
   // This page had no focus management and no Escape at all, while still
   // telling a screen reader it was modal. See hooks/useFocusTrap.js.
@@ -436,7 +444,13 @@ export function TripPage({ trip: card, data, onClose, onOpenInPlanner, onSelectD
           </div>
           )}
 
-          {onOpenInPlanner && detail && (
+          {primaryAction && detail && (
+            <button type="button" className="itin-use" onClick={() => primaryAction.onClick(detail || card)}>
+              <CheckIcon size={15} />
+              <span>{primaryAction.label}</span>
+            </button>
+          )}
+          {!primaryAction && onOpenInPlanner && detail && (
             <button type="button" className="itin-use" onClick={() => onOpenInPlanner(detail || card)}>
               <PlusIcon size={15} />
               <span>{t('trip.openInPlanner')}</span>

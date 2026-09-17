@@ -205,6 +205,65 @@ export function rankTrips(trips, {
     : t));
 }
 
+/**
+ * Collapse the same route at different lengths into one card.
+ *
+ * The published set composes a route at every day count it works at, so
+ * "Bruges and Paris" comes back at five, six and seven days: three cards, one
+ * photograph, one ordered list of cities. To anybody reading the step they are
+ * one trip with a dial on it, so they become one card whose length chips say
+ * which dials exist.
+ *
+ * rankTrips already does a version of this, but only when NO length is asked
+ * for, and it keys on shape, pace and scale as well, so a five and a six day
+ * run of the same cities stay apart. This one keys on the ordered city
+ * sequence alone, which is what the card actually prints, and runs after the
+ * ranking so the best-scoring variant leads.
+ *
+ * `days` is the traveller's own window. The variant nearest it is the one
+ * preselected, because a person with six days who is shown a "5 - 6 - 7" card
+ * should be looking at the six day version before they touch anything. Ties go
+ * to the longer trip: with five days asked for and four and six on offer, six
+ * is the one that fits by having a slow morning in it.
+ *
+ * Returns cards, each carrying:
+ *   variants  every trip of this route, ascending by days
+ *   days      the preselected length (and the card IS that trip)
+ * A route published at one length only comes back with a single variant, which
+ * the card reads as "no chips".
+ */
+export function groupTripVariants(trips, days = null) {
+  const groups = new Map();
+  for (const t of trips || []) {
+    if (!t || !Array.isArray(t.cities)) continue;
+    const key = t.cities.map((c) => cityKeyName(c.city)).join('>');
+    const g = groups.get(key);
+    if (g) g.push(t);
+    else groups.set(key, [t]);
+  }
+  return [...groups.values()].map((rows) => {
+    // One variant per day count. The same cities are also composed at several
+    // paces and shapes, so a route can arrive twice at seven days; two chips
+    // both reading "7 days" is a choice with no difference in it, so the
+    // best-scoring of each length stands for that length. `rows` is already in
+    // ranked order, so the first of each is the one to keep.
+    const byDays = new Map();
+    for (const t of rows) if (!byDays.has(t.days)) byDays.set(t.days, t);
+    const variants = [...byDays.values()].sort((a, b) => a.days - b.days);
+    if (variants.length === 1) return { ...variants[0], variants };
+    const best = days
+      ? variants.reduce((a, b) => {
+        const da = Math.abs((a.days || 0) - days);
+        const db = Math.abs((b.days || 0) - days);
+        // Equally far away: the longer one wins.
+        return db < da || (db === da && (b.days || 0) > (a.days || 0)) ? b : a;
+      })
+      // No window to aim at, so the ranking's own winner stands.
+      : rows[0];
+    return { ...best, variants };
+  });
+}
+
 /** Which day counts this set of trips can actually answer. */
 export function availableDays(trips) {
   return [...new Set((trips || []).map((t) => t.days))].sort((a, b) => a - b);

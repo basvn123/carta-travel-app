@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { lazy, Suspense, useEffect, useMemo, useRef, useState } from 'react';
 import { DateField } from '../components/DateField.jsx';
 import { ScoreChip, HiddenGemTag } from '../components/RatingBadge.jsx';
 import { HeroImage } from '../components/HeroImage.jsx';
@@ -17,6 +17,10 @@ import {
 import { plannerStore } from './plannerStore.js';
 import { CountryBrief } from './CountryBrief.jsx';
 import { ReadyTripsStep } from './ReadyTripsStep.jsx';
+// The trip's own page, the one the Destinations tab opens. Lazy because it
+// pulls a map with it, and nobody reaching the Trips step has asked for one
+// until they tap "What's there".
+const TripPage = lazy(() => import('../browse/TripPage.jsx').then((m) => ({ default: m.TripPage })));
 import { TravelLegsSection, travelTotal } from './TravelLegsSection.jsx';
 import { TRAVEL_MODES, TRAVEL_MODE_LABEL } from '../lib/transportLinks.js';
 import { buildCountryBriefs } from '../lib/countryBrief.js';
@@ -48,7 +52,6 @@ import {
   SparkIcon, CheckIcon, AlertIcon, TrainIcon, BusIcon, CarIcon, FerryIcon, InfoIcon,
   LeafIcon, ScaleIcon, BoltIcon, StarIcon, RouteIcon, BedIcon, MapPinIcon,
   CalendarIcon, PersonIcon, DiamondIcon, DotIcon, LuggageIcon, ChevronRightIcon,
-  SuitcaseIcon,
 } from '../components/Icons.jsx';
 import { PlaneIcon } from '../components/TransportIcons.jsx';
 import { useI18n } from '../i18n/index.jsx';
@@ -57,43 +60,6 @@ import { suggestedNights, Flag, CityThumb, StayRow } from './GuidedTripWizardPar
 const ROUTES_PREVIEW = 14;
 const CITIES_PREVIEW = 8;
 const NEARBY_KM = 140;
-
-/**
- * The fork in the full path, as one control: take a trip somebody already
- * composed and checked, or pick the cities and let the algorithm route them.
- *
- * It sits at the top of the step rather than being a step of its own, because
- * it is not a question with consequences: both answers lead to the same
- * summary, and changing your mind costs one tap and loses nothing.
- */
-function BuildModeSwitch({ mode, onMode, t }) {
-  return (
-    <div className="wmode" role="group" aria-label={t('wizard.buildModeLabel')}>
-      <button
-        className={`wmode-btn ${mode === 'ready' ? 'on' : ''}`}
-        onClick={() => onMode('ready')}
-        aria-pressed={mode === 'ready'}
-      >
-        <SuitcaseIcon size={15} />
-        <span className="wmode-text">
-          <b>{t('wizard.modeReady')}</b>
-          <small>{t('wizard.modeReadySub')}</small>
-        </span>
-      </button>
-      <button
-        className={`wmode-btn ${mode === 'custom' ? 'on' : ''}`}
-        onClick={() => onMode('custom')}
-        aria-pressed={mode === 'custom'}
-      >
-        <SparkIcon size={15} />
-        <span className="wmode-text">
-          <b>{t('wizard.modeCustom')}</b>
-          <small>{t('wizard.modeCustomSub')}</small>
-        </span>
-      </button>
-    </div>
-  );
-}
 
 // What can already be booked when someone opens the planner. This used to be
 // three separate wizards behind a chooser screen, which meant the traveller
@@ -137,6 +103,7 @@ const STEP_LABEL_KEYS = {
   'When': 'wizard.stepWhen',
   'Where': 'wizard.stepWhere',
   'Trips': 'wizard.stepTrips',
+  'Getting': 'wizard.stepGetting',
   'Stay': 'wizard.stepStay',
   'Stays': 'wizard.stepStays',
   'Finish': 'wizard.stepFinish',
@@ -280,6 +247,10 @@ export function GuidedTripWizard({
   // names. Cleared as soon as a card arrives, or the moment the traveller
   // picks anything themselves, so a restore can never overwrite a fresh choice.
   const [pendingTripPickId, setPendingTripPickId] = useState(() => savedDraft.tripPickId || null);
+  // Which trip's full page is open over the step. The page is the one the
+  // Destinations tab shows, mounted here so "What's there" answers the
+  // question in the place that already answers it properly.
+  const [tripPageId, setTripPageId] = useState('');
   const [tripDetail, setTripDetail] = useState(null); // its stops, once loaded
   const [tripLoading, setTripLoading] = useState(false);
   const [tripMissing, setTripMissing] = useState(0);  // stops not in the catalogue
@@ -417,12 +388,18 @@ export function GuidedTripWizard({
   // so the rail below the header never renumbers under anyone's hand.
   const steps = useMemo(() => {
     const third = booked.stays ? STEP3.stays : (STEP3[buildMode] || 'Trips');
+    // Choosing a published trip settles where you sleep and in what order, so
+    // the only thing left to arrange is how you reach it and how you come
+    // home. That used to hang off the bottom of the Trips step, roughly three
+    // thousand pixels below the card that opened it; it is its own step now,
+    // and only on the path that has a route to get to.
+    const rest = third === 'Trips' ? ['Getting', 'Finish'] : ['Finish'];
     // Someone who has already booked their beds has chosen their cities, so
     // the country picker has nothing left to ask them.
     // The four opening questions are four steps, not one scrolling screen.
     return booked.stays
-      ? [...BASICS_STEPS, third, 'Finish']
-      : [...BASICS_STEPS, 'Where', third, 'Finish'];
+      ? [...BASICS_STEPS, third, ...rest]
+      : [...BASICS_STEPS, 'Where', third, ...rest];
   }, [booked.stays, buildMode]);
 
   // A draft saved before the Who step was removed restores a step number one
@@ -912,7 +889,10 @@ export function GuidedTripWizard({
       ? flexNights >= 1
       : Boolean(startDate && endDate && windowNights > 0)))
     || (stepName === 'Where' && countries.size > 0)
-    || (stepName === 'Trips' && Boolean(tripPick && tripDetail))
+    || (stepName === 'Trips' && Boolean(tripPick))
+    // The legs are drawn from the trip's own stops, so this step cannot be
+    // left until that file has landed.
+    || (stepName === 'Getting' && Boolean(tripPick && tripDetail))
     || (stepName === 'Stay' && includedIds.length > 0)
     || (stepName === 'Stays' && includedIds.length > 0)
     || stepName === 'Finish'
@@ -1606,11 +1586,33 @@ export function GuidedTripWizard({
   useEffect(() => {
     if (stepName === 'Stay' && focusedId) scrollPanelIntoView(citySideRef.current);
   }, [focusedId, stepName]);
-  // Picking a trip drops a whole section in under the grid; on a phone that is
-  // entirely below the fold, so it reads as nothing having happened.
+  // On the Getting there step the trip's stops and legs arrive under the
+  // header, which on a phone is below the fold.
   useEffect(() => {
-    if (stepName === 'Trips' && tripPick) scrollPanelIntoView(tripPickRef.current);
+    if (stepName === 'Getting' && tripPick) scrollPanelIntoView(tripPickRef.current);
   }, [tripPick?.id, stepName]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  /**
+   * Choosing a trip from the list, or from its own page.
+   *
+   * Tapping the card that is already chosen un-chooses it, which is how every
+   * other selection in this wizard behaves. Anything else replaces the pick and
+   * leaves the traveller on the list, where the footer now says what they hold
+   * and the Next button says where it goes. The page's own button is the one
+   * that advances, because somebody who has read the whole trip has decided.
+   */
+  const pickReadyTrip = (trip, { advance = false } = {}) => {
+    setPendingTripPickId(null);
+    // Tapping the chosen card again un-chooses it. Deciding from the trip's own
+    // page never does: somebody who read the whole thing and pressed the button
+    // at the bottom of it meant yes, even if that trip was already the pick.
+    const same = trip.id === tripPick?.id;
+    setTripPick(same && !advance ? null : trip);
+    if (!advance) return;
+    setTripPageId('');
+    const i = steps.indexOf('Getting');
+    if (i >= 0) goStep(i + 1);
+  };
 
   // ---- The finish summary: the trip in four facts and a photo ------------
   const summaryHero = anchorDest || destinations[includedIds[0]] || null;
@@ -1982,37 +1984,54 @@ export function GuidedTripWizard({
           )}
 
           {/* ---- FULL PATH: Trips, the ready-made half ----
-              Two columns because it is two different holidays: several
-              countries strung together, or one country in depth. Under the
-              chosen trip, how you actually get there, and what it cost. */}
+              One list of published itineraries, the same ones the Destinations
+              tab shows. What is in a trip is a page, not a paragraph on a
+              card, so "What's there" opens that page rather than unfolding
+              anything here; and how you get there is the step after this one,
+              not three thousand pixels below the card that chose it. */}
           {stepName === 'Trips' && (
             <>
               <h2 className="guide-title">{t('wizard.tripsTitle')}</h2>
-              <BuildModeSwitch mode={buildMode} onMode={setBuildMode} t={t} />
 
               <ReadyTripsStep
                 countries={countries}
                 allCountries={allCountries}
                 windowNights={windowNights}
+                destinations={destinations}
+                favorites={favorites}
                 selectedId={tripPick?.id || pendingTripPickId}
-                onPick={(trip) => {
-                  setPendingTripPickId(null);
-                  setTripPick(trip.id === tripPick?.id ? null : trip);
-                }}
+                onPick={pickReadyTrip}
                 onRestorePick={(card) => {
                   setPendingTripPickId(null);
                   setTripPick((cur) => cur || card);
                 }}
                 onToggleCountry={toggleCountry}
-                onBuildOwn={() => setBuildMode('custom')}
+                onOpenTrip={(trip) => setTripPageId(trip.id)}
+                onBuildOwn={setBuildMode}
               />
+            </>
+          )}
+
+          {/* ---- FULL PATH: Getting there ----
+              The trip is chosen, so the stops and the nights are settled. What
+              is left is the way in, the way home, and the moving about in
+              between: one question per leg, priced by the traveller because
+              Carta does not sell any of it. */}
+          {stepName === 'Getting' && (
+            <>
+              <h2 className="guide-title">{t('wizard.gettingTitle')}</h2>
+
+              {!tripPick && <p className="guide-empty">{t('ready.noTripYet')}</p>}
 
               {tripPick && (
                 <div className="wpicked" ref={tripPickRef}>
                   <div className="wpicked-head">
                     <span className="wpicked-label"><CheckIcon size={12} /> {t('ready.yourTrip')}</span>
                     <b className="wpicked-name">{tripHeadline(tripPick, t)}</b>
-                    <button className="guide-answered-edit" onClick={() => setTripPick(null)}>
+                    <button
+                      className="guide-answered-edit"
+                      onClick={() => { setTripPick(null); goStep(step - 1); }}
+                    >
                       {t('ready.pickAnother')}
                     </button>
                   </div>
@@ -2460,7 +2479,15 @@ export function GuidedTripWizard({
           {stepName === 'Stay' && (
             <>
               <h2 className="guide-title">{t('wizard.stayTitle')}</h2>
-              <BuildModeSwitch mode={buildMode} onMode={setBuildMode} t={t} />
+              {/* Building your own is reached from the bottom of the trips
+                  list, so the only thing this step owes it is one quiet way
+                  back. The two-button mode switch that used to sit here was a
+                  question nobody had at the top of a step they had chosen. */}
+              {!booked.stays && (
+                <button className="wready-link wready-back" onClick={() => setBuildMode('ready')}>
+                  &larr; {t('ready.backToReady')}
+                </button>
+              )}
               <p className="guide-sub">
                 {anchorDest
                   ? t(ownCarChosen ? 'wizard.stayIntroArrive' : 'wizard.stayIntroLand', { city: cityLabel(anchorDest.city) })
@@ -3039,7 +3066,19 @@ export function GuidedTripWizard({
                 </button>
               )}
               {/* The gate on this step, stated where the decision is made. */}
-              {stepName === 'Stay' && windowNights > 0 ? (
+              {stepName === 'Trips' && tripPick ? (
+                // The chosen trip, in the footer that is already on screen,
+                // instead of a panel that used to open three thousand pixels
+                // below the card that opened it.
+                <span className="guide-nights-budget done">
+                  <CheckIcon size={11} />
+                  {t('ready.footPicked', {
+                    route: (tripPick.cities || tripPick.stops || [])
+                      .map((c) => cityLabel(c.city)).join(' → '),
+                    days: tripPick.days,
+                  })}
+                </span>
+              ) : stepName === 'Stay' && windowNights > 0 ? (
                 <span className={`guide-nights-budget ${totalNights > windowNights ? 'over' : ''} ${totalNights === windowNights ? 'done' : ''}`}>
                   {totalNights === windowNights && <CheckIcon size={11} />}
                   {t('wizard.nightsPlanned', { n: totalNights, of: windowNights })}
@@ -3071,6 +3110,25 @@ export function GuidedTripWizard({
           </div>
         </div>
       </div>
+
+      {/* "What's there", answered by the page that answers it everywhere else.
+          It is position:fixed at z-index 240, so it covers the wizard rather
+          than being injected into a step. Its big button is the decision:
+          choose this trip, close the page, go to Getting there. */}
+      {tripPageId && (
+        <Suspense fallback={null}>
+          <TripPage
+            trip={{ id: tripPageId }}
+            data={data}
+            onClose={() => setTripPageId('')}
+            onSelectDest={onOpenDest}
+            primaryAction={{
+              label: t('ready.chooseThis'),
+              onClick: (trip) => pickReadyTrip(trip, { advance: true }),
+            }}
+          />
+        </Suspense>
+      )}
     </div>
   );
 }
