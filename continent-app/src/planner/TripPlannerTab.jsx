@@ -25,6 +25,7 @@ import { flightReasonLabel } from '../lib/trip_planner_pricing.js';
 import { geocodeAddress } from '../lib/geocode.js';
 import { carrierName } from '../lib/carriers.js';
 import { fareProv, flightProv, estPrefix, FareTag } from '../components/FareProvenance.jsx';
+import { cityLabel } from '../lib/placeName.js';
 
 const SHEET_H_KEY = 'carta.tripSheetH.v1';
 
@@ -216,14 +217,14 @@ function Suggestions({ suggestions, onPick }) {
             key={s.id}
             className="trip-suggest-card"
             onClick={() => onPick(s)}
-            title={t('trip.suggestFrom', { city: s.city, country: s.country, km: s.km, from: s.shared_origin || t('trip.overland') })}
+            title={t('trip.suggestFrom', { city: cityLabel(s.city), country: s.country, km: s.km, from: s.shared_origin || t('trip.overland') })}
           >
             <div className="trip-suggest-thumb" style={s.image ? { backgroundImage: `url(${s.image})` } : undefined}>
-              {!s.image && <span className="trip-suggest-fallback">{s.city.slice(0, 1)}</span>}
+              {!s.image && <span className="trip-suggest-fallback">{cityLabel(s.city).slice(0, 1)}</span>}
               {s.reason && <span className="trip-suggest-chip">{s.reason}</span>}
             </div>
             <div className="trip-suggest-meta">
-              <span className="trip-suggest-city">{s.city}</span>
+              <span className="trip-suggest-city">{cityLabel(s.city)}</span>
               <span className="trip-suggest-sub">
                 {s.km} km
                 {s.rating?.score != null && <ScoreChip rating={s.rating} size="xs" />}
@@ -267,10 +268,10 @@ function ShortlistStops({ rows, onPick }) {
             title={t('trip.add')}
           >
             <div className="trip-suggest-thumb" style={s.image ? { backgroundImage: `url(${s.image})` } : undefined}>
-              {!s.image && <span className="trip-suggest-fallback">{(s.city || '?').slice(0, 1)}</span>}
+              {!s.image && <span className="trip-suggest-fallback">{cityLabel(s.city).slice(0, 1) || '?'}</span>}
             </div>
             <div className="trip-suggest-meta">
-              <span className="trip-suggest-city">{s.city}</span>
+              <span className="trip-suggest-city">{cityLabel(s.city)}</span>
               <span className="trip-suggest-sub">
                 {s.country}
                 {s.rating?.score != null && <ScoreChip rating={s.rating} size="xs" />}
@@ -510,7 +511,7 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
     () => (pendingCountry
       ? Object.entries(destinations)
           .filter(([, d]) => d.country === pendingCountry)
-          .map(([id, d]) => ({ value: id, label: d.city }))
+          .map(([id, d]) => ({ value: id, label: cityLabel(d.city) }))
           .sort((a, b) => a.label.localeCompare(b.label))
       : []),
     [destinations, pendingCountry],
@@ -522,7 +523,7 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
   const hasTrip = tp.stopDetails.length > 0;
   const mapStops = tp.stopDetails
     .filter((s) => s.dest && s.dest.lat != null && s.dest.lon != null)
-    .map((s) => ({ lat: s.dest.lat, lon: s.dest.lon, city: s.dest.city }));
+    .map((s) => ({ lat: s.dest.lat, lon: s.dest.lon, city: cityLabel(s.dest.city) }));
 
   // Draw the real road route through the stops whenever there are two or more
   // (keyless OSRM, same as the day planner's walking route), while editing
@@ -561,7 +562,7 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
       if (already.has(id)) continue;
       const d = destinations[id];
       if (!d) continue;
-      out.push({ id, city: d.city, country: d.country, image: d.image?.url || null, rating: d.rating });
+      out.push({ id, city: cityLabel(d.city), country: d.country, image: d.image?.url || null, rating: d.rating });
     }
     return out;
   }, [favorites, destinations, tp.stopDetails]);
@@ -864,13 +865,13 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
                           >{i + 1}</div>
                           <div className="trip-stop-body">
                             <div className="trip-stop-city">
-                              {s.dest ? s.dest.city : t('trip.unknown')}
+                              {s.dest ? cityLabel(s.dest.city) : t('trip.unknown')}
                               {s.dest && (
                                 <button
                                   className={`guide-city-info-btn ${stopInfoIdx === i ? 'open' : ''}`}
                                   onClick={(e) => { e.stopPropagation(); setStopInfoIdx(stopInfoIdx === i ? null : i); }}
                                   aria-expanded={stopInfoIdx === i}
-                                  title={t('trip.aboutCity', { city: s.dest.city })}
+                                  title={t('trip.aboutCity', { city: cityLabel(s.dest.city) })}
                                 ><InfoIcon size={12} /></button>
                               )}
                             </div>
@@ -1091,7 +1092,7 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
                       {tp.driveLegs?.out && (
                         <div className="trip-total-row">
                           <span className="lbl">
-                            <CarIcon size={11} /> {t('trip.driveOut', { city: tp.stopDetails[0]?.dest?.city || '' })}
+                            <CarIcon size={11} /> {t('trip.driveOut', { city: cityLabel(tp.stopDetails[0]?.dest?.city) })}
                             <small>{t('trip.driveSub', { km: tp.driveLegs.out.road_km, hours: fmtHours(tp.driveLegs.out.hours) })}</small>
                           </span>
                           <span className="val">{eur(tp.driveLegs.out.ground_total)}</span>
@@ -1100,7 +1101,7 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
                       {tp.driveLegs?.home && (
                         <div className="trip-total-row">
                           <span className="lbl">
-                            <CarIcon size={11} /> {t('trip.driveHome', { city: tp.stopDetails[tp.stopDetails.length - 1]?.dest?.city || '' })}
+                            <CarIcon size={11} /> {t('trip.driveHome', { city: cityLabel(tp.stopDetails[tp.stopDetails.length - 1]?.dest?.city) })}
                             <small>{t('trip.driveSub', { km: tp.driveLegs.home.road_km, hours: fmtHours(tp.driveLegs.home.hours) })}</small>
                           </span>
                           <span className="val">{eur(tp.driveLegs.home.ground_total)}</span>
@@ -1115,13 +1116,13 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
 
                   <AnchorLegRow
                     leg={tp.anchorLegs?.in}
-                    from={tp.anchorLegs?.inCity || tp.anchorLegs?.anchor?.city}
-                    to={tp.stopDetails[0]?.dest?.city}
+                    from={tp.anchorLegs?.inCity || cityLabel(tp.anchorLegs?.anchor?.city)}
+                    to={cityLabel(tp.stopDetails[0]?.dest?.city)}
                   />
                   <AnchorLegRow
                     leg={tp.anchorLegs?.out}
-                    from={tp.stopDetails[tp.stopDetails.length - 1]?.dest?.city}
-                    to={tp.anchorLegs?.outCity || tp.anchorLegs?.anchor?.city}
+                    from={cityLabel(tp.stopDetails[tp.stopDetails.length - 1]?.dest?.city)}
+                    to={tp.anchorLegs?.outCity || cityLabel(tp.anchorLegs?.anchor?.city)}
                   />
                   <TransferModePicker
                     flightTransfer={tp.flightTransfer}
@@ -1154,11 +1155,11 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
                   {tp.stopDetails.map((s, i) => tp.stayCosts[i] && (
                     <React.Fragment key={i}>
                       <div className="trip-total-row">
-                        <span className="lbl"><BedIcon size={11} /> {s.dest?.city} <small>{s.nights === 1 ? t('trip.accomOne', { n: s.nights }) : t('trip.accomMany', { n: s.nights })}</small></span>
+                        <span className="lbl"><BedIcon size={11} /> {cityLabel(s.dest?.city)} <small>{s.nights === 1 ? t('trip.accomOne', { n: s.nights }) : t('trip.accomMany', { n: s.nights })}</small></span>
                         <span className="val">{eur(tp.stayCosts[i].accomTotal)}</span>
                       </div>
                       <div className="trip-total-row">
-                        <span className="lbl"><ReceiptIcon size={11} /> {s.dest?.city} <small>{t('trip.onGroundSub')}</small></span>
+                        <span className="lbl"><ReceiptIcon size={11} /> {cityLabel(s.dest?.city)} <small>{t('trip.onGroundSub')}</small></span>
                         <span className="val">{eur(tp.stayCosts[i].groundTotal)}</span>
                       </div>
                     </React.Fragment>

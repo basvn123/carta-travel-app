@@ -7,6 +7,7 @@ import {
   TrainIcon, BusIcon, CarIcon, FerryIcon, CalendarIcon, RouteIcon, InfoIcon,
 } from '../components/Icons.jsx';
 import { PlaneIcon } from '../components/TransportIcons.jsx';
+import { cityLabel } from '../lib/placeName.js';
 
 /**
  * How you get there, how you get between the stops, and how you get home.
@@ -52,9 +53,9 @@ function LegRow({ leg, value, onChange, adults, t }) {
     <div className={`tleg ${mode ? 'answered' : ''}`}>
       <div className="tleg-head">
         <span className="tleg-route">
-          <b>{leg.from.city || leg.from.name}</b>
+          <b>{cityLabel(leg.from.city) || leg.from.name}</b>
           <span className="tleg-arrow" aria-hidden="true">&rarr;</span>
-          <b>{leg.to.city || leg.to.name}</b>
+          <b>{cityLabel(leg.to.city) || leg.to.name}</b>
         </span>
         {leg.date && (
           <span className="tleg-date"><CalendarIcon size={10} /> {fmtDate(leg.date)}</span>

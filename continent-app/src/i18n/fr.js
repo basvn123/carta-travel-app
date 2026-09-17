@@ -3585,4 +3585,7 @@ export const fr = {
   "explore.viewList": "Liste",
   "explore.railPrev": "Reculer",
   "explore.railNext": "Avancer",
+
+  // Planner (A1)
+  "wizard.planYourTrip": "Planifiez votre voyage",
 };

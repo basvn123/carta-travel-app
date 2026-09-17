@@ -1415,7 +1415,7 @@ export const en = {
   "wizard.pickMyCities": "Pick my cities",
   "wizard.pickVibeHint": "Pick a vacation type above and Carta will suggest countries.",
   "wizard.planningAround": "Planning around:",
-  "wizard.planYourTrip": "|| 'Plan your trip",
+  "wizard.planYourTrip": "Plan your trip",
   "wizard.plusMinusDays": ", ±2 days",
   "wizard.remove": "Remove",
   "wizard.returnDate": "Return date",

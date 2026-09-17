@@ -35,6 +35,7 @@
  */
 import { useEffect, useState } from 'react';
 import { makeCache } from './publishedJson.js';
+import { cityKeyName } from './placeName.js';
 
 const COUNTRY_RE = /^[A-Z]{2}$/;
 const ID_RE = /^[a-z0-9-]{3,90}$/;
@@ -126,6 +127,35 @@ export function daysFit(trip, days) {
   if (gap === 0) return 2;
   if (gap === 1) return 1;
   return 0;
+}
+
+/**
+ * The sights worth naming on a trip card, minus the ones that only repeat a
+ * stop. The published sight list is drawn from the destinations on the route,
+ * so a city sometimes appears as its own landmark: the Bruges-and-Paris card
+ * read "Madonna of Bruges, Paris, Groeningemuseum", where "Paris" tells a
+ * traveller nothing the route line above it did not already say.
+ *
+ * Matching is on a folded name (case, accents and the airport qualifier
+ * dropped), so "Paris (CDG)" as a stop still silences a "Paris" sight.
+ */
+export function tripSights(trip) {
+  const stops = new Set(
+    (trip?.cities || [])
+      .map((c) => foldPlace(c.city))
+      .filter(Boolean),
+  );
+  return (trip?.sights || []).filter((s) => !stops.has(foldPlace(s)));
+}
+
+/** Lowercased, accent-folded, airport-qualifier-free form used to compare a
+ *  sight name against a stop name. */
+function foldPlace(name) {
+  return cityKeyName(name)
+    .normalize('NFD')
+    .replace(/[̀-ͯ]/g, '')
+    .toLowerCase()
+    .trim();
 }
 
 export const ARCHETYPES = ['base', 'chain', 'loop'];

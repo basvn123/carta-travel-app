@@ -8,6 +8,7 @@ import { cityInsight } from '../lib/tripGuide.js';
 import { tripDaysBetween, haversineKm, cityCoords, withCityCoords } from '../lib/runtime_pricing.js';
 import { legTransportOptions } from '../lib/transport.js';
 import { eur, safeUrl } from '../lib/format.js';
+import { cityLabel, cityKeyName } from '../lib/placeName.js';
 import { fetchDestPoiMap } from '../lib/appData.js';
 import { fetchTripPlans, fetchTripPlanWithStops } from '../auth/tripPlanStorage.js';
 import { fetchWalkingRoute, fetchDrivingRoute, googleMapsDirUrl } from '../lib/routing.js';
@@ -2038,8 +2039,8 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({ data, user, aut
     // the chip carries the bare city name.
     const byCity = new Map();
     for (const r of (big.length >= 6 ? big : rows)) {
-      const name = (r.dest.city || '').replace(/\s*\(.*\)\s*$/, '').trim();
-      const key = `${name}|${r.dest.country}`;
+      const name = cityLabel(r.dest.city);
+      const key = `${cityKeyName(r.dest.city)}|${r.dest.country}`;
       const cur = byCity.get(key);
       if (!cur || r.score > cur.score) byCity.set(key, { ...r, name });
     }
@@ -2109,7 +2110,7 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({ data, user, aut
     // never stacks three identical Milans.
     const byBaseCity = new Map();
     for (const t of all) {
-      const key = `${(t.dest.city || '').replace(/\s*\(.*\)\s*$/, '')}|${t.dest.country}`;
+      const key = `${cityKeyName(t.dest.city)}|${t.dest.country}`;
       const cur = byBaseCity.get(key);
       if (!cur || t.km < cur.km) byBaseCity.set(key, t);
     }
@@ -2190,7 +2191,7 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({ data, user, aut
         ms.push({
         id: `t:${t.id}`,
         // The airport suffix is flight-speak; the day map talks about towns.
-        label: (t.dest.city || '').replace(/\s*\(.*\)\s*$/, ''),
+        label: cityLabel(t.dest.city),
         lat: t.lat,
         lon: t.lon,
         cat: 'town',

@@ -3585,4 +3585,7 @@ export const de = {
   "explore.viewList": "Liste",
   "explore.railPrev": "Zurück blättern",
   "explore.railNext": "Weiter blättern",
+
+  // Planner (A1)
+  "wizard.planYourTrip": "Plane deine Reise",
 };

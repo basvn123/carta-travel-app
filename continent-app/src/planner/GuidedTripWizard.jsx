@@ -3,13 +3,12 @@ import { DateField } from '../components/DateField.jsx';
 import { ScoreChip, HiddenGemTag } from '../components/RatingBadge.jsx';
 import { CountryPickerMap } from '../map/CountryPickerMap.jsx';
 import { CityPickerMap } from '../map/CityPickerMap.jsx';
-import { FlightPickerMap } from '../map/FlightPickerMap.jsx';
 import {
   countriesFromData, cityInsight,
   cityTier, cityCompanions, designStays,
 } from '../lib/tripGuide.js';
 import { knownForFacts } from '../lib/knownFor.js';
-import { gemScore, BAGGAGE_OPTIONS } from '../lib/trip_planner_pricing.js';
+import { gemScore } from '../lib/trip_planner_pricing.js';
 import { monthOptions } from '../lib/wizardFlights.js';
 import {
   TRAVEL_STYLES, STYLE_BY_KEY, styleLifestyle, nearbyAirports,
@@ -28,6 +27,7 @@ import {
 } from '../lib/transport.js';
 import { haversineKm, tripDaysBetween, accommodationPerPerson, groundSpendPerPerson } from '../lib/runtime_pricing.js';
 import { eur } from '../lib/format.js';
+import { cityLabel } from '../lib/placeName.js';
 import { fmtDate, addDays, laterISO, useToday } from '../lib/dates.js';
 import { geocodeAddress } from '../lib/geocode.js';
 import { useCountryInsights } from '../hooks/useCountryInsights.js';
@@ -40,7 +40,6 @@ import {
   SuitcaseIcon,
 } from '../components/Icons.jsx';
 import { PlaneIcon } from '../components/TransportIcons.jsx';
-import { OriginPicker } from '../components/OriginPicker.jsx';
 import { useI18n } from '../i18n/index.jsx';
 import { suggestedNights, Flag, CityThumb, StayRow } from './GuidedTripWizardParts.jsx';
 
@@ -241,7 +240,13 @@ export function GuidedTripWizard({
   // Picking "nothing yet" is not a third flag, it is the other two turned off.
   const clearBooked = () => setBooked({ travel: false, stays: false });
   const bookedNothing = !booked.travel && !booked.stays;
-  const [step, setStep] = useState(1);
+  // The saved draft, read once. plannerStore has already applied the v1->v2
+  // migration and the staleness rules, so whatever it hands back here is
+  // safe to reopen on.
+  const savedDraft = useRef(plannerStore.getState().wizard || {}).current;
+  // The dates were already written to the store; nothing ever read them back.
+  const savedDates = useRef(plannerStore.getState().travelDates || {}).current;
+  const [step, setStep] = useState(() => savedDraft.step || 1);
   // Which way the last move went, so the incoming screen slides in from the
   // side it came from. Steps should read as travel through one form.
   const [stepDir, setStepDir] = useState('fwd');
@@ -250,7 +255,7 @@ export function GuidedTripWizard({
     setStep(n);
   };
 
-  const [countries, setCountries] = useState(() => new Set());
+  const [countries, setCountries] = useState(() => new Set(savedDraft.countries || []));
   const [countryQuery, setCountryQuery] = useState('');
   const [countryQuizOpen, setCountryQuizOpen] = useState(false);
   const [vibes, setVibes] = useState(() => new Set());
@@ -260,8 +265,12 @@ export function GuidedTripWizard({
   const [briefCountry, setBriefCountry] = useState('');
   // 'ready' takes a published itinerary off the shelf; 'custom' picks cities
   // and lets the Carta algorithm route them.
-  const [buildMode, setBuildMode] = useState('ready');
+  const [buildMode, setBuildMode] = useState(() => savedDraft.buildMode || 'ready');
   const [tripPick, setTripPick] = useState(null);     // the chosen trip card
+  // The id from the draft, held until the Trips step has loaded the card it
+  // names. Cleared as soon as a card arrives, or the moment the traveller
+  // picks anything themselves, so a restore can never overwrite a fresh choice.
+  const [pendingTripPickId, setPendingTripPickId] = useState(() => savedDraft.tripPickId || null);
   const [tripDetail, setTripDetail] = useState(null); // its stops, once loaded
   const [tripLoading, setTripLoading] = useState(false);
   const [tripMissing, setTripMissing] = useState(0);  // stops not in the catalogue
@@ -275,16 +284,16 @@ export function GuidedTripWizard({
   // how the whole trip is planned and priced, so it is read back out of the
   // answers rather than asked for twice.
   const drivingThere = travelValues.out?.mode === 'car';
-  const [dateMode, setDateMode] = useState('exact'); // 'exact' | 'flex'
+  const [dateMode, setDateMode] = useState(() => savedDraft.dateMode || 'exact'); // 'exact' | 'flex'
   // Whether the two-month calendar is on screen. It closes itself the moment
   // a whole span is picked, which is what makes the rest of step one visible
   // without scrolling past an answered question.
-  const [calOpen, setCalOpen] = useState(true);
+  const [calOpen, setCalOpen] = useState(() => !(savedDates.startDate && savedDates.endDate));
   const [flexPad, setFlexPad] = useState(false);     // exact dates, +-2 days wiggle
-  const [startDate, setStartDate] = useState('');
-  const [endDate, setEndDate] = useState('');
-  const [flexNights, setFlexNights] = useState(7);
-  const [flexMonth, setFlexMonth] = useState(''); // '' = any month
+  const [startDate, setStartDate] = useState(() => savedDates.startDate || '');
+  const [endDate, setEndDate] = useState(() => savedDates.endDate || '');
+  const [flexNights, setFlexNights] = useState(() => savedDraft.flexNights || 7);
+  const [flexMonth, setFlexMonth] = useState(() => savedDraft.flexMonth || ''); // '' = any month
   // How the Where step shows the catalogue. Photo cards first: a country reads
   // faster from a picture of it than from its outline on a basemap.
   const [whereView, setWhereView] = useState('list'); // 'list' | 'map'
@@ -573,7 +582,7 @@ export function GuidedTripWizard({
     const d = destinations[id];
     if (!d) return null;
     return {
-      city: String(d.city || '').replace(/\s*\([^)]*\)\s*$/, ''),
+      city: cityLabel(d.city),
       country: d.country,
       iso2: d.iso2,
       lat: d.city_lat ?? d.lat,
@@ -724,7 +733,7 @@ export function GuidedTripWizard({
           n: fits.length,
           score: fits.slice(0, 6).reduce((sum, x) => sum + x.s, 0),
           reason: top
-            ? t(fits.length === 1 ? 'wizard.greatMatchOne' : 'wizard.greatMatches', { n: fits.length, city: top.city })
+            ? t(fits.length === 1 ? 'wizard.greatMatchOne' : 'wizard.greatMatches', { n: fits.length, city: cityLabel(top.city) })
             : '',
         };
       })
@@ -916,6 +925,7 @@ export function GuidedTripWizard({
     setFlexMonth('');
     setBuildMode('ready');
     setTripPick(null);
+    setPendingTripPickId(null);
     setTripDetail(null);
     setTravelValues({});
     setBriefCountry('');
@@ -1133,7 +1143,7 @@ export function GuidedTripWizard({
     // Stop-to-stop legs carry their index, so the running estimate can drop
     // the ones the traveller has already told us the real price of.
     if (flying && anchorDest && anchorId && anchorId !== stops[0].id) {
-      transfer(anchorDest, stops[0].dest, t('wizard.legFromAirport', { from: anchorDest.city, city: stops[0].dest.city }));
+      transfer(anchorDest, stops[0].dest, t('wizard.legFromAirport', { from: cityLabel(anchorDest.city), city: cityLabel(stops[0].dest.city) }));
     }
 
     // Stay to stay.
@@ -1298,7 +1308,7 @@ export function GuidedTripWizard({
         if (!passesStayFilters(id, dest)) continue;
         out.push({
           id,
-          city: dest.city,
+          city: cityLabel(dest.city),
           lat: dest.lat,
           lon: dest.lon,
           tierKey: cityTier(dest).key,
@@ -1315,7 +1325,7 @@ export function GuidedTripWizard({
       const dest = destinations[id];
       if (!dest || dest.lat == null) continue;
       out.push({
-        id, city: dest.city, lat: dest.lat, lon: dest.lon,
+        id, city: cityLabel(dest.city), lat: dest.lat, lon: dest.lon,
         tierKey: cityTier(dest).key, score: dest.rating?.score ?? null,
         selected: true, nights: nights[id] || 0,
         isAnchor: id === anchorId, focused: id === focusedId,
@@ -1456,7 +1466,7 @@ export function GuidedTripWizard({
       });
     }
     if (booked.travel && arrivalDest) {
-      recapChips.push({ Icon: PlaneIcon, text: t('wizard.arrivingIn', { city: arrivalDest.city }) });
+      recapChips.push({ Icon: PlaneIcon, text: t('wizard.arrivingIn', { city: cityLabel(arrivalDest.city) }) });
     }
     if (dateMode === 'exact' && startDate && endDate) {
       recapChips.push({ Icon: CalendarIcon, text: `${fmtDate(startDate, true)} → ${fmtDate(endDate, true)}${flexPad ? `, ${t('wizard.plusMinusDays')}` : ''}` });
@@ -1496,6 +1506,16 @@ export function GuidedTripWizard({
         flexibleMonths: flexMonth ? [flexMonth] : [],
       },
       travelers: { adults, children: kids, lifestyle: travelStyle },
+      wizard: {
+        step,
+        countries: [...countries],
+        buildMode,
+        tripPickId: tripPick?.id || null,
+        dateMode,
+        flexMonth,
+        flexNights,
+        quiz: {},
+      },
       selectedDestination: [...countries][0] || null,
       // How they told us they are getting there, and what they said it cost.
       // Carta no longer shops for a fare, so there is no cheapest or fastest
@@ -1513,7 +1533,7 @@ export function GuidedTripWizard({
         const nightly = d ? nightlyFor(id, d) : null;
         return {
           cityId: id,
-          cityName: d?.city || id,
+          cityName: cityLabel(d?.city) || id,
           nights: nights[id] || 0,
           // Whole-group nightly from the same anchors the receipt uses.
           estimatedNightlyRateEur: nightly ?? 0,
@@ -1524,7 +1544,7 @@ export function GuidedTripWizard({
     if (stayStyle === 'single') plannerStore.setItineraryType('single');
   }, [originPlace, nearAirports, dateMode, startDate, endDate, windowNights, flexNights,
     flexMonth, adults, kids, travelStyle, countries, travelValues, includedIds, nights,
-    stayStyle]); // eslint-disable-line react-hooks/exhaustive-deps
+    stayStyle, step, buildMode, tripPick?.id]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // A new step starts at its own top. Without this the body keeps the previous
   // step's scroll offset, so a long screen can open halfway down its own
@@ -1938,8 +1958,15 @@ export function GuidedTripWizard({
                 countries={countries}
                 allCountries={allCountries}
                 windowNights={windowNights}
-                selectedId={tripPick?.id || null}
-                onPick={(trip) => setTripPick(trip.id === tripPick?.id ? null : trip)}
+                selectedId={tripPick?.id || pendingTripPickId}
+                onPick={(trip) => {
+                  setPendingTripPickId(null);
+                  setTripPick(trip.id === tripPick?.id ? null : trip);
+                }}
+                onRestorePick={(card) => {
+                  setPendingTripPickId(null);
+                  setTripPick((cur) => cur || card);
+                }}
                 onToggleCountry={toggleCountry}
                 onBuildOwn={() => setBuildMode('custom')}
               />
@@ -1962,7 +1989,7 @@ export function GuidedTripWizard({
                         {stopDates.map((s, i) => destinations[s.id] && (
                           <div className="guide-final-stop" key={s.id}>
                             <span className="wpicked-i">{i + 1}</span>
-                            <b>{destinations[s.id].city}</b>
+                            <b>{cityLabel(destinations[s.id].city)}</b>
                             <Flag iso2={destinations[s.id].iso2} className="guide-flag-img-sm" />
                             <span>{s.nights} {s.nights === 1 ? t('wizard.night') : t('wizard.nights')}</span>
                             {s.arrive && <small className="wpicked-date">{fmtDate(s.arrive)}</small>}
@@ -2136,7 +2163,7 @@ export function GuidedTripWizard({
                       <CityThumb dest={arrivalDest} className="guide-city-thumb" />
                       <div className="guide-city-info">
                         <div className="guide-city-name">
-                          {arrivalDest.city}
+                          {cityLabel(arrivalDest.city)}
                           <Flag iso2={arrivalDest.iso2} className="guide-flag-img-sm" />
                           {arrivalDest.rating?.score != null && <ScoreChip rating={arrivalDest.rating} size="xs" />}
                         </div>
@@ -2163,7 +2190,7 @@ export function GuidedTripWizard({
                               <CityThumb dest={dest} className="guide-city-thumb" />
                               <div className="guide-city-info">
                                 <div className="guide-city-name">
-                                  {dest.city}
+                                  {cityLabel(dest.city)}
                                   <Flag iso2={dest.iso2} className="guide-flag-img-sm" />
                                   {dest.rating?.score != null && <ScoreChip rating={dest.rating} size="xs" />}
                                 </div>
@@ -2386,7 +2413,7 @@ export function GuidedTripWizard({
                           <span className="booked-stop-index">{i + 1}</span>
                           <CityThumb dest={dest} className="booked-stop-thumb" />
                           <div className="booked-stop-info">
-                            <div className="booked-stop-city">{dest.city} <Flag iso2={dest.iso2} className="guide-flag-img-sm" /></div>
+                            <div className="booked-stop-city">{cityLabel(dest.city)} <Flag iso2={dest.iso2} className="guide-flag-img-sm" /></div>
                             <div className="booked-stop-sub">
                               {dest.country}
                               {row.arrive && <span className="booked-stop-date">{fmtDate(row.arrive)}</span>}
@@ -2402,8 +2429,8 @@ export function GuidedTripWizard({
                           <button
                             className="trip-stop-remove"
                             onClick={() => setCityNights(row.id, 0)}
-                            aria-label={t('wizard.removeStop', { city: dest.city })}
-                            title={t('wizard.removeStop', { city: dest.city })}
+                            aria-label={t('wizard.removeStop', { city: cityLabel(dest.city) })}
+                            title={t('wizard.removeStop', { city: cityLabel(dest.city) })}
                           >×</button>
                         </div>
                       </li>
@@ -2433,7 +2460,7 @@ export function GuidedTripWizard({
                         <CityThumb dest={dest} className="guide-city-thumb" />
                         <div className="guide-city-info">
                           <div className="guide-city-name">
-                            {dest.city}
+                            {cityLabel(dest.city)}
                             <Flag iso2={dest.iso2} className="guide-flag-img-sm" />
                             {dest.rating?.score != null && <ScoreChip rating={dest.rating} size="xs" />}
                           </div>
@@ -2457,7 +2484,7 @@ export function GuidedTripWizard({
               <BuildModeSwitch mode={buildMode} onMode={setBuildMode} t={t} />
               <p className="guide-sub">
                 {anchorDest
-                  ? t(ownCarChosen ? 'wizard.stayIntroArrive' : 'wizard.stayIntroLand', { city: anchorDest.city })
+                  ? t(ownCarChosen ? 'wizard.stayIntroArrive' : 'wizard.stayIntroLand', { city: cityLabel(anchorDest.city) })
                   : t('wizard.stayIntroFree')}
               </p>
 
@@ -2479,7 +2506,7 @@ export function GuidedTripWizard({
                       <React.Fragment key={id}>
                         {i > 0 && <span className="wroute-arrow" aria-hidden="true">&rsaquo;</span>}
                         <span className="wroute-stop">
-                          {destinations[id].city}
+                          {cityLabel(destinations[id].city)}
                           <b>{cartaPlan.nights[id]}</b>
                         </span>
                       </React.Fragment>
@@ -2553,7 +2580,7 @@ export function GuidedTripWizard({
                           {tpl.picks.map((x, i) => (
                             <span key={x.id} className="guide-template-stop">
                               {i > 0 && <span className="guide-template-arrow">→</span>}
-                              {destinations[x.id]?.city || x.id} <small>{x.nights}{t('wizard.nightShort')}</small>
+                              {cityLabel(destinations[x.id]?.city) || x.id} <small>{x.nights}{t('wizard.nightShort')}</small>
                             </span>
                           ))}
                         </span>
@@ -2608,7 +2635,7 @@ export function GuidedTripWizard({
                             key={id}
                             className={`guide-chip ${quizMust.has(id) ? 'on' : ''}`}
                             onClick={() => toggleQuizMust(id)}
-                          >{dest.city}</button>
+                          >{cityLabel(dest.city)}</button>
                         ))}
                       </div>
                     </div>
@@ -2703,7 +2730,7 @@ export function GuidedTripWizard({
                                     <CityThumb dest={dest} className="guide-nearby-thumb" />
                                     <span className="guide-side-idle-text">
                                       <b>
-                                        {dest.city}
+                                        {cityLabel(dest.city)}
                                         {/* Which country each pick sits in, once the trip spans more
                                             than one: without it a mixed list reads as one region. */}
                                         {selectedCountries.length > 1 && (
@@ -2723,7 +2750,7 @@ export function GuidedTripWizard({
                         <>
                           <CityThumb dest={focusedDest} className="guide-city-side-photo" />
                           <div className="guide-city-side-title">
-                            <b>{focusedDest.city}</b>
+                            <b>{cityLabel(focusedDest.city)}</b>
                             <Flag iso2={focusedDest.iso2} className="guide-flag-img-sm" />
                             {focusedDest.rating?.score != null && <ScoreChip rating={focusedDest.rating} size="xs" />}
                             {focusedDest.rating?.hidden_gem && <HiddenGemTag />}
@@ -2946,7 +2973,7 @@ export function GuidedTripWizard({
                     {includedIds.map((id) => destinations[id] && (
                       <div className="guide-final-stop" key={id}>
                         <BedIcon size={11} />
-                        <b>{destinations[id].city}</b>
+                        <b>{cityLabel(destinations[id].city)}</b>
                         <Flag iso2={destinations[id].iso2} className="guide-flag-img-sm" />
                         <span>{nights[id]} {nights[id] === 1 ? t('wizard.night') : t('wizard.nights')}</span>
                       </div>

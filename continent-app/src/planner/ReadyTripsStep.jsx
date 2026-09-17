@@ -1,10 +1,11 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { loadTripsFor, rankTrips } from '../lib/trips.js';
+import { loadTripsFor, rankTrips, tripSights } from '../lib/trips.js';
 import { tripHeadline, shapeLabel, transportLabel, seasonLabel, tripTags, cardThumb } from '../lib/tripStory.js';
 import { CountryFlag } from '../components/CountryFlag.jsx';
 import { CountryPickerMap } from '../map/CountryPickerMap.jsx';
 import { eur } from '../lib/format.js';
 import { useI18n } from '../i18n/index.jsx';
+import { cityLabel } from '../lib/placeName.js';
 import {
   RouteIcon, CheckIcon, SparkIcon, BedIcon, LoopIcon,
 } from '../components/Icons.jsx';
@@ -37,6 +38,7 @@ function TripCard({ trip, picked, chosen, onPick, t }) {
   const tags = tripTags(trip, t, 2);
   const season = seasonLabel(trip, t);
   const covers = coverage(trip, picked);
+  const sights = tripSights(trip);
   return (
     <button
       className={`wtrip ${chosen ? 'on' : ''}`}
@@ -59,7 +61,7 @@ function TripCard({ trip, picked, chosen, onPick, t }) {
               {i > 0 && <span className="wtrip-arrow" aria-hidden="true">&rsaquo;</span>}
               <span className="wtrip-city">
                 <CountryFlag country={c.cc} size={10} />
-                {c.city}
+                {cityLabel(c.city)}
                 <span className="wtrip-n">{c.n}</span>
               </span>
             </React.Fragment>
@@ -71,7 +73,7 @@ function TripCard({ trip, picked, chosen, onPick, t }) {
           {tags.map((tag) => <span key={tag.code} className="wtrip-chip on">{tag.label}</span>)}
           {covers > 1 && <span className="wtrip-chip">{t('ready.covers', { n: covers })}</span>}
         </span>
-        {trip.sights?.length > 0 && <span className="wtrip-sights">{trip.sights.slice(0, 3).join(', ')}</span>}
+        {sights.length > 0 && <span className="wtrip-sights">{sights.slice(0, 3).join(', ')}</span>}
         <span className="wtrip-foot">
           <span className="wtrip-cost">{t('trip.perDay', { eur: eur(trip.cost.per_day_eur) })}</span>
           {season && <span className="wtrip-season">{season}</span>}
@@ -83,6 +85,7 @@ function TripCard({ trip, picked, chosen, onPick, t }) {
 
 export function ReadyTripsStep({
   countries, allCountries, windowNights, selectedId, onPick, onToggleCountry, onBuildOwn,
+  onRestorePick,
 }) {
   const { t } = useI18n();
   const [rows, setRows] = useState(null);   // null = loading
@@ -123,6 +126,16 @@ export function ReadyTripsStep({
     const s = fitted.filter((x) => (x.countries || []).length === 1);
     return { multi: m, single: s, hidden: all.length - fitted.length };
   }, [rows, picked, days, anyLength]);
+
+  // A restored draft carries the chosen trip's id, not the card: the card
+  // lives in the published country file this step has just fetched. Hand the
+  // full card back up the first time the id is seen, so the wizard can render
+  // its name and load its stops.
+  useEffect(() => {
+    if (!onRestorePick || !selectedId || !rows) return;
+    const card = rows.find((x) => x.id === selectedId);
+    if (card) onRestorePick(card);
+  }, [rows, selectedId]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const empty = rows != null && multi.length === 0 && single.length === 0;
 
