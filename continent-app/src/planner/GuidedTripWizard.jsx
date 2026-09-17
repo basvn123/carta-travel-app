@@ -19,6 +19,7 @@ import { ReadyTripsStep } from './ReadyTripsStep.jsx';
 import { TravelLegsSection, travelTotal } from './TravelLegsSection.jsx';
 import { TRAVEL_MODES, TRAVEL_MODE_LABEL } from '../lib/transportLinks.js';
 import { buildCountryBriefs } from '../lib/countryBrief.js';
+import { BAND_KEY } from '../lib/costIndex.js';
 import { matchCountries, SPEND_CHOICES } from '../lib/countryMatch.js';
 import { loadTrailsIndex } from '../lib/trails.js';
 import { loadBeachIndex } from '../lib/beaches.js';
@@ -1896,6 +1897,21 @@ export function GuidedTripWizard({
                                     </span>
                                     <span className="guide-ccard-n">
                                       {t('brief.cardPlaces', { n: b?.nPlaces ?? c.cities.length })}
+                                      {/* What a day costs, as the band rather
+                                          than the figure. Dropping the old
+                                          "EUR 47 a day" line took the cost
+                                          signal off this grid entirely, and
+                                          how expensive a country is, is one of
+                                          the two things people sort countries
+                                          by. The band is the same measurement
+                                          the brief prints, said without a
+                                          price, which is what this step asks
+                                          for. */}
+                                      {b?.dayBand != null && (
+                                        <em className={`guide-ccard-band b${b.dayBand}`}>
+                                          {t(BAND_KEY[b.dayBand])}
+                                        </em>
+                                      )}
                                     </span>
                                   </span>
                                 </button>

@@ -383,3 +383,85 @@ test("deduping keeps the best-rated row of a city", () => {
   // The kept Rome is the 9.8 one, which is the row carrying the good photo.
   assert.ok(out[0].topPlaces.includes("b") || !out[0].topPlaces.includes("a"));
 });
+
+// ---- the thumbnails are evidence for the type ----------------------------
+
+test("a setting type prefers the place the setting dominates", { skip: !haveData }, () => {
+  // Barcelona carries `beach` and `coast`, and rates higher than any Spanish
+  // island, so ranking these on rating alone led a Spanish BEACH card with a
+  // metropolis. What makes a place beach evidence is that the beach is most of
+  // what it is.
+  const out = matchCountries({
+    destinations: appData.destinations,
+    insights,
+    layerIndexes: realIndexes,
+    answers: { types: ["beach"] },
+    month: 9,
+  });
+  const spain = out.find((x) => x.iso2 === "ES");
+  assert.ok(spain, "expected Spain on a September beach list");
+  const cities = spain.topPlaces.map((id) => appData.destinations[id].city);
+  assert.ok(!cities.some((c) => /^Barcelona/.test(c)),
+    `a beach card led with ${cities.join(", ")}`);
+});
+
+test("a city break leads with the cities people have heard of", { skip: !haveData }, () => {
+  // The mirror of the rule above, and the reason it is not applied to every
+  // type: for a city break, a long tag list is depth, not dilution. Scoring on
+  // share of tags ranked Salamanca (city, unesco, university) above Madrid and
+  // Barcelona, which carry more tags because there is more there.
+  const out = matchCountries({
+    destinations: appData.destinations,
+    insights,
+    layerIndexes: realIndexes,
+    answers: { types: ["city"] },
+    month: 9,
+  });
+  const spain = out.find((x) => x.iso2 === "ES");
+  assert.ok(spain, "expected Spain on a city-break list");
+  const cities = spain.topPlaces.map((id) => appData.destinations[id].city);
+  assert.ok(cities.some((c) => /^(Madrid|Barcelona)/.test(c)),
+    `a Spanish city break led with ${cities.join(", ")}`);
+});
+
+test("a topPlace is never a poorly rated place", { skip: !haveData }, () => {
+  // Weighting "how much of this place is the type" too heavily filled the
+  // French beach card with Corsican port towns rated 5.7 to 6.4, because a
+  // place tagged exactly island/coast/beach scores a perfect 1.0 on dominance
+  // however ordinary it is. Three thumbnails is a small shop window.
+  for (const key of ["beach", "islands", "hiking", "city", "food"]) {
+    const out = matchCountries({
+      destinations: appData.destinations,
+      insights,
+      layerIndexes: realIndexes,
+      answers: { types: [key] },
+      month: key === "beach" || key === "islands" ? 8 : 9,
+    });
+    for (const row of out.slice(0, 10)) {
+      for (const id of row.topPlaces) {
+        const d = appData.destinations[id];
+        assert.ok((d.rating?.score || 0) >= 7,
+          `${key}: ${row.country} showed ${d.city} at ${d.rating?.score}`);
+      }
+    }
+  }
+});
+
+test("every topPlace carries a photo and matches the type", { skip: !haveData }, () => {
+  for (const key of ["beach", "hiking", "city", "islands"]) {
+    const out = matchCountries({
+      destinations: appData.destinations,
+      insights,
+      layerIndexes: realIndexes,
+      answers: { types: [key] },
+      month: 8,
+    });
+    for (const row of out.slice(0, 6)) {
+      assert.ok(row.topPlaces.length > 0, `${row.country} (${key}) showed no places`);
+      for (const id of row.topPlaces) {
+        const d = appData.destinations[id];
+        assert.ok(d?.image?.url, `${key}: ${id} has no photo`);
+      }
+    }
+  }
+});

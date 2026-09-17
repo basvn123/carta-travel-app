@@ -140,6 +140,16 @@ export const TRIP_TYPES = [
 
 export const TRIP_TYPE_BY_KEY = new Map(TRIP_TYPES.map((x) => [x.key, x]));
 
+/** Below this the catalogue does not think much of a place, so it cannot be
+ *  the evidence a recommendation rests on. Three thumbnails is a small enough
+ *  shop window that a mediocre one costs the whole card. */
+const MIN_PLACE_SCORE = 7;
+
+/** Types whose tags describe what a place IS rather than what you do there.
+ *  Only for these does "how much of this place is the type" mean anything.
+ *  See the topPlaces ranking in matchCountries. */
+const SETTING_TYPES = new Set(['beach', 'islands', 'lakes', 'hiking', 'trailrun', 'ski', 'water', 'hidden', 'wellness']);
+
 /** The four group headings, in the order the quiz shows them. */
 export const TRIP_GROUPS = ['unwind', 'explore', 'active', 'who'];
 
@@ -601,14 +611,61 @@ export function matchCountries({
     if (answers.pace === 'moving' && g.rows.length < 8) score -= 0.3;
     if (answers.pace === 'base' && g.rows.length >= 12) score += 0.15;
 
-    // The places behind the recommendation: the best-rated destinations that
-    // actually carry one of the chosen types, so the thumbnails are evidence
-    // rather than decoration.
+    // The places behind the recommendation: three destinations that are
+    // evidence FOR the trip type, not merely places that happen to match it.
+    //
+    // Rating alone put Barcelona at the head of a Spanish beach card and
+    // Augsburg at the head of a German city break. Neither is wrong data
+    // (Barcelona really does carry `beach` and `coast`), but a beach card led
+    // by a metropolis, and a city card led by a town the traveller has not
+    // heard of, both fail the job the thumbnails do: to show what the
+    // recommendation MEANS.
+    //
+    // The first repair overcorrected. Scoring on what SHARE of a place's tags
+    // match the type reads breadth as dilution, and a city break is exactly
+    // where breadth is the point: it ranked Salamanca (city, unesco,
+    // university, so two thirds on topic) above Madrid and Barcelona, which
+    // carry more tags because there is more there. So share is used only where
+    // it means something.
+    //
+    //   dominance   for a type whose tags describe a SETTING, a place is
+    //               evidence when the setting is most of what it is. Menorca
+    //               is beach, coast, island and quiet; Barcelona is those two
+    //               plus city, art, unesco and nightlife.
+    //   rating      how good the place is.
+    //   fame        how likely the traveller is to recognise it, which is what
+    //               separates Berlin from Augsburg when both are equally urban,
+    //               and Madrid from Salamanca.
     const tagUnion = new Set(types.flatMap((x) => x.tags || []));
+    // A setting type is one a place can BE (a beach, an island, a mountain).
+    // A city break, a food trip or a night out happen IN a place without being
+    // the whole of it, so for those, share of tags says nothing.
+    const settingType = types.some((x) => SETTING_TYPES.has(x.key));
+    const scorePlace = (d) => {
+      const cats = d.categories || [];
+      const hits = cats.filter((c) => tagUnion.has(c)).length;
+      const matched = hits > 0 || types.some((x) => x.match?.(d));
+      if (!matched) return -1;
+      const score = d.rating?.score || 0;
+      // Quality comes first and is never traded away. Letting dominance
+      // outweigh it filled the French beach card with Corsican port towns
+      // rated 5.7 to 6.4, because a place tagged exactly island/coast/beach
+      // scores a perfect 1.0 on dominance however ordinary it is. A place the
+      // catalogue does not rate well is not evidence for anything.
+      if (score < MIN_PLACE_SCORE) return -1;
+      const rating = score / 10;
+      // log, because fame spans 0 to 4,500 and a linear term would make it the
+      // only thing that mattered.
+      const fame = Math.min(1, Math.log10(1 + (d.rating?.fame || 0)) / 3.6);
+      const dominance = settingType && cats.length ? hits / Math.max(3, cats.length) : 0;
+      // Dominance TIPS the ranking between places that are already good; it
+      // does not promote a weak one. Hence the weight below rating's span.
+      return rating * 1.5 + fame * 0.4 + dominance * 0.8;
+    };
     const topPlaces = g.ids
-      .map((id, i) => ({ id, d: g.rows[i] }))
-      .filter(({ d }) => d.image?.url && (d.categories || []).some((c) => tagUnion.has(c)))
-      .sort((a, b) => (b.d.rating?.score || 0) - (a.d.rating?.score || 0))
+      .map((id, i) => ({ id, d: g.rows[i], rank: scorePlace(g.rows[i]) }))
+      .filter((x) => x.d.image?.url && x.rank >= 0)
+      .sort((a, b) => b.rank - a.rank)
       .slice(0, 3)
       .map((x) => x.id);
 

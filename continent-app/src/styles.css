@@ -13848,23 +13848,6 @@ input, select {
   .guide-split-side .cpm { height: 340px; margin-bottom: 16px; }
 }
 
-/* The list head: filter, live count, clear - so 43 countries stay workable. */
-.guide-picklist-head {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  flex-wrap: wrap;
-  margin: 4px 0 12px;
-}
-.guide-picklist-head .guide-search { flex: 1 1 200px; margin-bottom: 0; }
-.guide-picklist-count {
-  font-family: var(--mono);
-  font-size: 10.5px;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--ink-mute);
-}
-
 /* Picked countries pop with a solid accent ring and a check, not a tint that
    half the screen already shares. */
 .guide-country { position: relative; }
@@ -14501,21 +14484,6 @@ input, select {
 }
 .guide-answered-edit:hover { color: var(--accent); border-color: var(--accent); }
 
-/* Step 1 tools: one number and one escape hatch on a single line. A full card
-   for a single stepper, under a saturated orange bar, made the shortcut look
-   like the task and the task look like a footnote. */
-.guide-where-tools {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  flex-wrap: wrap;
-  margin-bottom: 12px;
-}
-/* The CTA's own bottom margin stacked on top of the row's and the search
-   row's, which put a hand's width of dead paper between two controls that
-   belong together. */
-.guide-where-tools .guide-design-btn { margin-bottom: 0; }
-.guide-where-col .guide-picklist-head { margin-top: 0; }
 .guide-inline-field { display: flex; align-items: center; gap: 10px; flex: none; }
 .guide-inline-field .trip-field-label { margin: 0; white-space: nowrap; }
 /* The quiet variant of the "let Carta decide" CTA: an offer, not the headline. */
@@ -14722,6 +14690,10 @@ input, select {
 @media (max-height: 840px) {
   .trip-wizard-modal.wiz-when .guide-body { padding-top: 16px; padding-bottom: 20px; }
   .trip-wizard-modal.wiz-when .guide-title { font-size: 19px; }
+  /* The shared rhythm gives the title var(--space-5). On a short window that is
+     the single tallest gap on the step, so it comes down with everything else,
+     by the same proportion as the padding above it. */
+  .trip-wizard-modal.wiz-when .guide-canvas > .guide-title { margin-bottom: var(--space-3); }
   .trip-wizard-modal.wiz-when .guide-sub { margin-bottom: 10px; font-size: 13px; }
   .guide-when-card { padding: 14px 18px; margin-bottom: 0; }
   .guide-when-card .guide-card-row { margin-top: 9px; padding-top: 9px; }
@@ -14737,6 +14709,7 @@ input, select {
 @media (max-height: 700px) {
   .trip-wizard-modal.wiz-when .guide-body { padding-top: 10px; padding-bottom: 12px; }
   .trip-wizard-modal.wiz-when .guide-title { font-size: 17px; }
+  .trip-wizard-modal.wiz-when .guide-canvas > .guide-title { margin-bottom: var(--space-2); }
   .trip-wizard-modal.wiz-when .guide-sub { margin-bottom: 5px; font-size: 12.5px; }
   .guide-when-card { padding: 11px 16px; }
   .guide-when-card .guide-card-row { margin-top: 6px; padding-top: 6px; }
@@ -15827,7 +15800,7 @@ button.ai-sched-main:focus-visible {
   .day-flow-top { margin-bottom: 14px; }
   .day-flow-split { padding-bottom: 14px; }
   .day-flow-split .day-flow-panel { padding: 20px 26px 18px; gap: 11px; }
-  .day-flow-q { font-size: 25px; }
+  .day-flow-q { font-size: 25px; margin-bottom: var(--space-3); }
   .day-flow-date { padding-top: 0; }
   .day-flow-date .date-field-inline { max-width: 340px; }
   .day-flow-next { padding: 12px 24px; }
@@ -16262,7 +16235,7 @@ button.ai-sched-main:focus-visible {
 
 @media (max-width: 768px) {
   .day-flow { padding: 14px 14px 30px; }
-  .day-flow-q { font-size: 23px; }
+  .day-flow-q { font-size: 23px; margin-bottom: var(--space-4); }
   .day-flow-cards { grid-template-columns: 1fr; }
   /* The shared rail drops its names on a phone because the trip planner has
      seven of them. The day planner has three, and "Stay", "When" and "How"
@@ -24400,24 +24373,23 @@ button.ai-sched-main:focus-visible {
   gap: 20px;
   align-items: start;
 }
+/* Both columns are PlannerSections now, so the caption, the gloss and the
+   count come from the shared shape. What stays here is only what makes this
+   column a column: the icon's accent, and the fact that two side-by-side grid
+   cells are not a stack, so the shared "section follows section" margin must
+   not fire between them. */
 .wready-col { min-width: 0; }
-.wready-col-head { display: flex; align-items: center; gap: 8px; }
-.wready-col-title {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  font-family: var(--display);
-  font-size: 16px;
-  font-weight: 600;
-}
-.wready-col-title svg { color: var(--accent); }
+.wready-split > .guide-section + .guide-section { margin-top: 0; }
+.wready-col .guide-section-head { gap: var(--space-2); justify-content: flex-start; }
+.wready-col .guide-section-title { font-size: 16px; display: flex; align-items: center; gap: 7px; }
+.wready-col .guide-section-title svg { color: var(--accent); }
+.wready-col .guide-section-aside { margin-right: auto; }
 .wready-col-n {
   font-family: var(--mono);
   font-size: 11.5px;
   color: var(--ink-mute);
   font-variant-numeric: tabular-nums;
 }
-.wready-col-sub { margin: 2px 0 10px; font-size: 12px; color: var(--ink-mute); line-height: 1.45; }
 .wready-grid { display: grid; gap: 10px; }
 
 .wready-more {
@@ -31389,7 +31361,31 @@ button.ai-sched-main:focus-visible {
   font-size: 13px;
   color: var(--ink-mute);
 }
-.guide-canvas > .guide-title + .guide-sub { margin-bottom: var(--space-5); }
+
+/* The step heading and the block under it. Most steps (Booked, From, When,
+   Trips) render no .guide-sub at all, so the sub's margin was the only thing
+   holding the title off its content and those four steps had none: the title
+   touched the card. The margin belongs to the title, and the sub, when a step
+   has one, pulls itself up into that space rather than adding to it. */
+.guide-canvas > .guide-title { margin-bottom: var(--space-5); }
+.guide-canvas > .guide-title + .guide-sub {
+  margin-top: calc(-1 * var(--space-3));
+  margin-bottom: var(--space-5);
+}
+/* A label directly inside a planner surface, not one nested in a card that
+   already sets its own. */
+.guide-canvas > .trip-field-label,
+.guide-section > .trip-field-label { display: block; margin-bottom: var(--space-2); }
+
+@media (max-width: 768px) {
+  .guide-section + .guide-section { margin-top: var(--space-6); }
+}
+
+/* The same rhythm on the day planner. Its question is the .day-flow-q, and the
+   panel under it is a flex column, so the gap there is the panel's to set. */
+.day-flow-q { margin-bottom: var(--space-5); }
+.day-flow-panel { gap: var(--space-4); }
+.day-flow-panel > .day-flow-q + * { margin-top: 0; }
 
 /* ---- The two tabs ------------------------------------------------------- */
 .guide-wtabs { width: min(100%, 420px); margin-bottom: var(--space-5); }
@@ -31726,6 +31722,24 @@ button.ai-sched-main:focus-visible {
   line-height: 1;
   color: var(--ink-mute);
   cursor: pointer;
+}
+
+/* What a day costs there, on the country card. The same band the brief
+   prints, but this one sits on a photograph, so it is a translucent chip on
+   the scrim rather than the brief's paper-coloured pill. No figure: this step
+   carries no prices, and the band is the part that survives without one. */
+.guide-ccard-band {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 1px 7px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, .18);
+  border: 1px solid rgba(255, 255, 255, .34);
+  font-style: normal;
+  font-size: 10px;
+  font-weight: 600;
+  color: #fff;
+  white-space: nowrap;
 }
 
 /* The shortlist badge on a hand-picked country card. */
