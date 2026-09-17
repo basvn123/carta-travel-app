@@ -309,6 +309,14 @@ assumed:
    first, so a row that COULD have been derived is never filed under a code
    that excuses it.
 
+### The strict gate refuses to pass vacuously
+
+`coverage_report.py --strict` exits 2, not 0, when there are no registry
+rows, no published rows, or no row carrying a region. "Every region's top
+three is matched" is vacuously true over zero regions, so a half-built
+registry or a country filter that matched nothing would otherwise report
+success and hide the entire problem the gate exists to catch.
+
 ### Two gotchas worth keeping
 
 - **QLever and WDQS do not answer the same query.** The `p:P625`/`psv:P625`

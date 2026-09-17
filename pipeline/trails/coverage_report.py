@@ -550,11 +550,31 @@ def main():
     print(f"  -> {OUT_JSON}")
     print(f"  -> {OUT_MD}")
 
-    if args.strict and failing:
-        print()
-        print(f"! STRICT: {len(failing)} region(s) do not publish their top "
-              "three, for reasons that are ours to fix")
-        return 1
+    if args.strict:
+        # A gate that passes when it measured nothing is not a gate. "Every
+        # region's top three is matched" is vacuously true over zero regions,
+        # so an empty or half-built registry, or a country filter that
+        # matched nothing, would report success and hide the whole problem.
+        if not reg_rows:
+            print()
+            print("! STRICT: no registry rows to check. Run "
+                  "famous_registry.py first, or widen --countries.")
+            return 2
+        if not pub:
+            print()
+            print(f"! STRICT: no published rows read from {WIRE}. "
+                  "Nothing to match against.")
+            return 2
+        if not regions:
+            print()
+            print("! STRICT: no registry row carries a region, so no region "
+                  "can be held to anything. Check the regions spine.")
+            return 2
+        if failing:
+            print()
+            print(f"! STRICT: {len(failing)} region(s) do not publish their "
+                  "top three, for reasons that are ours to fix")
+            return 1
     return 0
 
 
