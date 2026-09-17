@@ -2628,7 +2628,6 @@ export const nl = {
   "wizard.stepBooked": "Geboekt",
   "wizard.stepFrom": "Vertrek",
   "wizard.stepWhen": "Wanneer",
-  "wizard.stepWho": "Wie",
   "wizard.whenLabel": "Wanneer ga je?",
   "wizard.bookedTravel": "De heenreis",
   "wizard.bookedTravelSub": "Vluchten, trein of de auto waarin je rijdt",
@@ -2653,6 +2652,7 @@ export const nl = {
   "wizard.estGroundOne": "Tussen je stops, 1 etappe",
   "wizard.estGroundMany": "Tussen je stops, {n} etappes",
   "wizard.estGroundSub": "Schatting van Carta voor de etappes waar je nog geen bedrag invulde",
+  "wizard.estDaily": "Eten & uitgaan",
 
   /* ---- Day workspace (map + plan / add / files) ---- */
   "dayws.tabPlan": "Plan van vandaag",

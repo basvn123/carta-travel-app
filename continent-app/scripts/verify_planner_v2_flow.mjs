@@ -78,15 +78,15 @@ const pickWindow = async (page, from = 2, to = 8) => {
   return true;
 };
 
-/** The four opening questions (Booked, From, When, Who) through to Where.
+/** The three opening questions (Booked, From, When) through to Where.
  *  Only one of them needs an answer: a window of dates, so the day filter on
- *  the country cards has a number to work with. */
+ *  the country cards has a number to work with. Party size used to be a
+ *  fourth step here; it is a stepper on the Finish summary now. */
 async function toWhereStep(page) {
   await nextStep(page);   // Booked: nothing held is a valid answer
   await nextStep(page);   // From: the app's own airport will do
   await pickWindow(page);  // six nights
   await nextStep(page);   // When
-  await nextStep(page);   // Who: two adults, standard, unchanged
 }
 
 // ── Desktop ───────────────────────────────────────────────────────────────
@@ -342,8 +342,7 @@ try {
 
   await nextStep(page);   // From -> When
   await pickWindow(page);
-  await nextStep(page);   // When -> Who
-  await nextStep(page);   // Who -> Where
+  await nextStep(page);   // When -> Where
   await page.waitForTimeout(1200);
   const chips = (await page.locator('.guide-picked-chip').allInnerTexts()).join(', ');
   check('the country you land in is already ticked', /austria/i.test(chips), chips);

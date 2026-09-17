@@ -342,7 +342,7 @@ function ItinDriveRow({ leg, labelKey, city, from }) {
 }
 
 export function TripItinerary({
-  dayPlan, stopDetails, grandTotal, groupSize, flight, label = '',
+  dayPlan, stopDetails, grandTotal, groupSize, onSetGroupSize = null, flight, label = '',
   legs = [], setLegMode = null, anchorLegs = null, flightTransfer = null,
   driveLegs = null, stayCosts = [], carRental = null, vignettes = null,
   tripHasCar = false,
@@ -804,6 +804,19 @@ export function TripItinerary({
                 </div>
                 {groupSize > 1 && (
                   <div className="itin-bd-pp">{t('itin.perPersonLine', { price: eur(grandTotal / groupSize) })}</div>
+                )}
+                {/* Party size sits under the figure it multiplies. The wizard
+                    asks it once on its summary card; changing it afterwards
+                    belongs here, where the total moves as you press. */}
+                {onSetGroupSize && (
+                  <div className="itin-bd-party">
+                    <span className="itin-bd-party-lbl">{t('wizard.summaryTravellers')}</span>
+                    <div className="guide-people">
+                      <button type="button" onClick={() => onSetGroupSize(groupSize - 1)} disabled={groupSize <= 1} aria-label={t('trip.fewer')}>-</button>
+                      <span>{groupSize}</span>
+                      <button type="button" onClick={() => onSetGroupSize(groupSize + 1)} disabled={groupSize >= 20} aria-label={t('trip.more')}>+</button>
+                    </div>
+                  </div>
                 )}
                 {flight?.driving && (
                   <p className="itin-bd-foot-note">{t('trip.ownCarNote')}</p>

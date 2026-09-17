@@ -36,7 +36,7 @@ import {
   TreeIcon, DiningIcon, MoonIcon,
   CameraIcon, CastleIcon, BeachIcon,
   LeafIcon, ScaleIcon, BoltIcon, StarIcon, RouteIcon, BedIcon, MapPinIcon,
-  CalendarIcon, PersonIcon, DiamondIcon, DotIcon, LuggageIcon, ChevronRightIcon, LifestyleIcon,
+  CalendarIcon, PersonIcon, DiamondIcon, DotIcon, LuggageIcon, ChevronRightIcon,
   SuitcaseIcon,
 } from '../components/Icons.jsx';
 import { PlaneIcon } from '../components/TransportIcons.jsx';
@@ -115,11 +115,11 @@ const BOOKED_BITS = [
 // flag, because "nothing" and "something" cannot both be true.
 const BOOKED_NONE = { key: 'none', Icon: SparkIcon, labelKey: 'wizard.bookedNone', subKey: 'wizard.bookedNoneSub' };
 
-// The four opening questions, one per step: what is already booked, where the
-// trip leaves from, when, and who is coming. They were one screen with four
-// stacked cards, which put the Next button below the fold and told the rail
-// nothing about what the wizard was actually going to ask.
-const BASICS_STEPS = ['Booked', 'From', 'When', 'Who'];
+// The three opening questions, one per step: what is already booked, where the
+// trip leaves from, and when. Who travels used to be a fourth step; it is a
+// stepper on the Finish summary now, because party size is an adjustment
+// people make while reading a price, not a gate to get past before seeing one.
+const BASICS_STEPS = ['Booked', 'From', 'When'];
 
 // The step after those, whose real name is what the rail shows and what the
 // render switches on: your own stays, a published trip, or the city picker.
@@ -128,7 +128,6 @@ const STEP_LABEL_KEYS = {
   'Booked': 'wizard.stepBooked',
   'From': 'wizard.stepFrom',
   'When': 'wizard.stepWhen',
-  'Who': 'wizard.stepWho',
   'Where': 'wizard.stepWhere',
   'Trips': 'wizard.stepTrips',
   'Stay': 'wizard.stepStay',
@@ -193,7 +192,7 @@ const BADGE_LABELS = {
 // does not take it and does not change it.
 export function GuidedTripWizard({
   data, onCancel, onComplete, stayTier = 'home', inline = false,
-  lifestyle = null, onOpenLifestyle = null,
+  lifestyle = null,
 }) {
   const { t } = useI18n();
   const destinations = data?.destinations || {};
@@ -320,10 +319,19 @@ export function GuidedTripWizard({
   // so where it asks. Everything downstream prices from the combined size.
   const [adults, setAdults] = useState(() => plannerStore.getState().travelers.adults || 2);
   const [kids, setKids] = useState(() => plannerStore.getState().travelers.children || 0);
+  // The children stepper stays folded until asked for: most trips have none,
+  // and a zero counter on the summary card is a question nobody answered.
+  const [kidsOpen, setKidsOpen] = useState(false);
   const groupSize = adults + kids;
   // Travel style: one answer that sets what a bed and a day cost everywhere
-  // (stay tier + eating-out cadence, see wizardTransit.TRAVEL_STYLES).
-  const [travelStyle, setTravelStyle] = useState(() => plannerStore.getState().travelers.lifestyle || 'standard');
+  // (stay tier + eating-out cadence, see wizardTransit.TRAVEL_STYLES). The
+  // wizard no longer asks for it as a step of its own; it follows the app's
+  // own lifestyle panel until the Where quiz starts setting it.
+  const [travelStyle, setTravelStyle] = useState(() => (
+    plannerStore.getState().travelers.lifestyle
+    || TRAVEL_STYLES.find((st) => st.stayTier === stayTier)?.key
+    || 'standard'
+  ));
   const [pace, setPace] = useState('balanced');
 
   // ---- Travel already booked: where does the trip start on the ground? ----
@@ -407,8 +415,15 @@ export function GuidedTripWizard({
       : [...BASICS_STEPS, 'Where', third, 'Finish'];
   }, [booked.stays, buildMode]);
 
+  // A draft saved before the Who step was removed restores a step number one
+  // past the end, which rendered Finish under a "6 of 5" rail. Clamp on
+  // restore so an old draft lands on the last real step instead.
+  useEffect(() => {
+    if (step > steps.length) setStep(steps.length);
+  }, [step, steps.length]);
+
   // Which step is which (so the render below reads by NAME).
-  const stepName = steps[step - 1] || 'Finish';
+  const stepName = steps[Math.min(step, steps.length) - 1] || 'Finish';
 
   // Typing narrows the (43-country) grid; countries already picked always stay
   // on screen, so a filter can never hide what you chose a moment ago.
@@ -870,7 +885,6 @@ export function GuidedTripWizard({
     // Nothing booked is a valid answer, and so is no home address: those two
     // steps never block.
     stepName === 'Booked'
-    || stepName === 'Who'
     // Saying the travel is booked means saying where it puts you down.
     || (stepName === 'From' && (!booked.travel || Boolean(arrivalId)))
     || (stepName === 'When' && (dateMode === 'flex'
@@ -945,7 +959,8 @@ export function GuidedTripWizard({
     setQuizMust(new Set());
     setAdults(2);
     setKids(0);
-    setTravelStyle('standard');
+    setKidsOpen(false);
+    setTravelStyle(TRAVEL_STYLES.find((st) => st.stayTier === stayTier)?.key || 'standard');
     setOriginQuery('');
     setOriginResults([]);
     setOriginPlace(null);
@@ -1217,7 +1232,7 @@ export function GuidedTripWizard({
       if (dailyOk) {
         lines.push({
           key: 'daily',
-          label: `Food & fun, ${travelStyle} style`,
+          label: t('wizard.estDaily'),
           eur: Math.round(daily * gs),
           sub: 'meals, drinks and groceries from each city\u2019s own price level',
         });
@@ -1456,7 +1471,7 @@ export function GuidedTripWizard({
     }
     recapChips.push({
       Icon: PersonIcon,
-      text: `${groupSize} ${groupSize === 1 ? t('wizard.travellerOne') : t('wizard.travellerMany')}, ${t(STYLE_BY_KEY[travelStyle]?.labelKey || 'wizard.styleStandard')}`,
+      text: `${groupSize} ${groupSize === 1 ? t('wizard.travellerOne') : t('wizard.travellerMany')}`,
     });
     if (selectedCountries.length) {
       recapChips.push({
@@ -2339,63 +2354,6 @@ export function GuidedTripWizard({
             </>
           )}
 
-          {stepName === 'Who' && (
-            <>
-              <h2 className="guide-title">{t('wizard.partyLabel')}</h2>
-
-              {/* Who travels, and in what style. One card: the two answers
-                  price every bed and every day downstream. */}
-              <div className="guide-card guide-party-card">
-                <div className="guide-party-row">
-                  <div className="guide-inline-field">
-                    <span className="trip-field-label">{t('wizard.adults')}</span>
-                    <div className="guide-people">
-                      <button type="button" onClick={() => setAdults(Math.max(1, adults - 1))} disabled={adults <= 1} aria-label={t('trip.fewer')}>-</button>
-                      <span>{adults}</span>
-                      <button type="button" onClick={() => setAdults(Math.min(20, adults + 1))} disabled={adults >= 20} aria-label={t('trip.more')}>+</button>
-                    </div>
-                  </div>
-                  <div className="guide-inline-field">
-                    <span className="trip-field-label">{t('wizard.children')}</span>
-                    <div className="guide-people">
-                      <button type="button" onClick={() => setKids(Math.max(0, kids - 1))} disabled={kids <= 0} aria-label={t('trip.fewer')}>-</button>
-                      <span>{kids}</span>
-                      <button type="button" onClick={() => setKids(Math.min(10, kids + 1))} disabled={kids >= 10} aria-label={t('trip.more')}>+</button>
-                    </div>
-                  </div>
-                </div>
-                {kids > 0 && <p className="guide-note">{t('wizard.childrenNote')}</p>}
-                <div className="guide-card-row">
-                  <div className="guide-style-head">
-                    <span className="trip-field-label">{t('wizard.styleLabel')}</span>
-                    {/* The presets are shorthand for the lifestyle panel's own
-                        sliders. Anyone who wants the real thing gets it here,
-                        and the Standard style prices from whatever they set. */}
-                    {onOpenLifestyle && (
-                      <button className="guide-lifestyle-link" onClick={onOpenLifestyle} title={t('filter.setLifestyleTitle')}>
-                        <LifestyleIcon size={13} /> {t('filter.setLifestyle')}
-                      </button>
-                    )}
-                  </div>
-                  <div className="guide-style-cards">
-                    {TRAVEL_STYLES.map((st) => (
-                      <button
-                        key={st.key}
-                        className={`guide-style-card ${travelStyle === st.key ? 'on' : ''}`}
-                        onClick={() => setTravelStyle(st.key)}
-                        aria-pressed={travelStyle === st.key}
-                      >
-                        {travelStyle === st.key && <span className="guide-mode-check"><CheckIcon size={11} /></span>}
-                        <b>{t(st.labelKey)}</b>
-                        <small>{t(st.subKey)}</small>
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </>
-          )}
-
           {/* ---- Step 3, first shape: the cities you already hold ---- */}
           {stepName === 'Stays' && (
             <>
@@ -2951,9 +2909,32 @@ export function GuidedTripWizard({
                   </div>
 
                   <div className="guide-summary-facts">
-                    <div className="guide-summary-fact">
+                    {/* The one fact on this card that is also a control.
+                        Party size multiplies every figure below it, so it is
+                        adjusted here, against a visible price, rather than
+                        guessed at four steps earlier. */}
+                    <div className="guide-summary-fact guide-summary-party">
                       <span className="guide-summary-fact-label"><PersonIcon size={10} /> {t('wizard.summaryTravellers')}</span>
-                      <b>{groupSize}</b>
+                      <div className="guide-people">
+                        <button type="button" onClick={() => setAdults(Math.max(1, adults - 1))} disabled={adults <= 1} aria-label={t('trip.fewer')}>-</button>
+                        <span>{adults}</span>
+                        <button type="button" onClick={() => setAdults(Math.min(20, adults + 1))} disabled={adults >= 20} aria-label={t('trip.more')}>+</button>
+                      </div>
+                      {kidsOpen || kids > 0 ? (
+                        <div className="guide-summary-kids">
+                          <span className="trip-field-label">{t('wizard.children')}</span>
+                          <div className="guide-people">
+                            <button type="button" onClick={() => setKids(Math.max(0, kids - 1))} disabled={kids <= 0} aria-label={t('trip.fewer')}>-</button>
+                            <span>{kids}</span>
+                            <button type="button" onClick={() => setKids(Math.min(10, kids + 1))} disabled={kids >= 10} aria-label={t('trip.more')}>+</button>
+                          </div>
+                        </div>
+                      ) : (
+                        <button type="button" className="guide-kids-add" onClick={() => setKidsOpen(true)}>
+                          + {t('wizard.children')}
+                        </button>
+                      )}
+                      {kids > 0 && <p className="guide-note guide-kids-note">{t('wizard.childrenNote')}</p>}
                     </div>
                     <div className="guide-summary-fact">
                       <span className="guide-summary-fact-label"><CalendarIcon size={10} /> {t('wizard.summaryDates')}</span>

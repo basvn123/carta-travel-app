@@ -53,7 +53,7 @@ await page.waitForTimeout(2000);
 // No chooser any more: the planner opens on step one.
 await page.waitForTimeout(600);
 
-// The opening questions are one per step now (Booked, From, When, Who), so
+// The opening questions are one per step now (Booked, From, When), so
 // this walk advances between the cards it used to scroll past. Every check
 // below is the same check, taken on the step that now owns the card.
 const nextStep = async () => {
@@ -63,7 +63,7 @@ const nextStep = async () => {
 
 // ── Step 1: Booked ──
 check('step 1 asks what is booked', /booked already/i.test(await page.locator('.guide-title').first().innerText().catch(() => '')));
-check('the rail names every step', (await page.locator('.wiz-step-name').allInnerTexts()).length >= 6,
+check('the rail names every step', (await page.locator('.wiz-step-name').allInnerTexts()).length >= 5,
   (await page.locator('.wiz-step-name').allInnerTexts()).join(' | '));
 await nextStep();
 
@@ -93,41 +93,15 @@ await page.waitForTimeout(300);
 check('next unlocks with dates set', await page.locator('.guide-next').isEnabled());
 await nextStep();
 
-// ── Step 4: Who. 2 adults + 1 child, budget style. ──
-check('step 4 asks who travels', /who travels/i.test(await page.locator('.guide-title').first().innerText().catch(() => '')));
-await page.locator('.guide-party-card .guide-people').nth(1).locator('button').nth(1).click(); // +1 child
-await page.waitForTimeout(200);
-check('children note is honest', /full travellers/i.test(await page.locator('.guide-party-card').innerText()));
-await page.locator('.guide-style-card', { hasText: /budget/i }).click();
-await page.waitForTimeout(200);
-
-// The two counters line up: same right edge, whatever their labels read.
-const stepperBoxes = await page.locator('.guide-party-row .guide-people').evaluateAll(
-  (els) => els.map((e) => { const r = e.getBoundingClientRect(); return { right: Math.round(r.right), top: Math.round(r.top) }; }),
-);
-const sameRow = stepperBoxes.every((b) => b.top === stepperBoxes[0].top);
-const sameEdge = new Set(stepperBoxes.map((b) => b.right)).size === stepperBoxes.length
-  ? sameRow // side by side: distinct right edges are fine when tops match
-  : true;   // stacked: they share one right edge
-check('party counters align', stepperBoxes.length === 2 && sameEdge, JSON.stringify(stepperBoxes));
-
-// The lifestyle panel is reachable from the style presets.
-const lsLink = page.locator('.guide-lifestyle-link');
-check('lifestyle panel link offered', await lsLink.isVisible());
-await lsLink.click();
-await page.waitForTimeout(900);
-// By a control the panel actually owns: [class*="lifestyle"] also matches the
-// Explore tab's own hidden button, which is what this used to catch instead.
-check('link opens the lifestyle panel', await page.locator('.lifestyle-panel .ls-tiles').first().isVisible().catch(() => false));
-await page.keyboard.press('Escape');
-await page.waitForTimeout(700);
-const closeLs = page.locator('.panel-close, .lifestyle-close').first();
-if (await closeLs.isVisible().catch(() => false)) { await closeLs.click(); await page.waitForTimeout(500); }
+// Party size and travel style are no longer asked here: the travellers
+// stepper lives on the Finish summary card (checked at the end of this run),
+// and the style follows the app's lifestyle panel until the Where quiz sets
+// it. Where is step 4 now.
+check('no Who step in the rail', !(await page.locator('.wiz-step-name').allInnerTexts()).some((x) => /^who$/i.test(x.trim())),
+  (await page.locator('.wiz-step-name').allInnerTexts()).join(' | '));
 await page.screenshot({ path: 'shots/planner-v2-basics.png' });
-await page.locator('.guide-next').click();
-await page.waitForTimeout(1800);
 
-// ── Step 5: Where ──
+// ── Step 4: Where ──
 check('the next step is Where', /where are we going/i.test(await page.locator('.guide-title').first().innerText().catch(() => '')));
 await page.waitForTimeout(1200);
 const estCount = await page.locator('.guide-ccard-n').count();
@@ -144,18 +118,20 @@ const gap = await page.evaluate(() => {
   return Math.round(search.getBoundingClientRect().top - cta.getBoundingClientRect().bottom);
 });
 check('CTA and search sit close', gap != null && gap <= 16, `${gap}px`);
-check('recap carries origin + party', /ghent/i.test(await page.locator('.guide-recap').innerText().catch(() => '')) && /3 travellers/i.test(await page.locator('.guide-recap').innerText().catch(() => '')));
+const recapTxt = await page.locator('.guide-recap').innerText().catch(() => '');
+check('recap carries origin + party', /ghent/i.test(recapTxt) && /2 travellers/i.test(recapTxt), recapTxt.replace(/\s+/g, ' ').slice(0, 90));
+check('recap no longer names a travel style', !/budget|standard|comfort/i.test(recapTxt), recapTxt.replace(/\s+/g, ' ').slice(0, 90));
 await page.screenshot({ path: 'shots/planner-v2-where.png' });
 await page.locator('.guide-ccard', { hasText: 'France' }).first().locator('.guide-ccard-pick').click();
 await page.waitForTimeout(400);
 await page.locator('.guide-next').click();
 await page.waitForTimeout(2500);
 
-// ── Step 3: build your own, where the curated templates live ──
+// ── Step 5: build your own, where the curated templates live ──
 await page.locator('.wmode-btn').nth(1).click();
 await page.waitForTimeout(2000);
 
-check('step 3 becomes Stay', /sleep|stay/i.test(await page.locator('.guide-title').first().innerText().catch(() => '')));
+check('step 5 becomes Stay', /sleep|stay/i.test(await page.locator('.guide-title').first().innerText().catch(() => '')));
 const tpl = page.locator('.guide-template');
 const tplCount = await tpl.count();
 check('curated templates offered', tplCount >= 1, String(tplCount));
@@ -169,11 +145,31 @@ if (tplCount > 0) {
 }
 check('estimate includes daily spending', /food & fun/i.test(await page.locator('.guide-estimate-band').innerText().catch(() => '')));
 
-// ── Step 4: Finish, and the planned overview ──
+// ── Step 6: Finish, and the planned overview ──
 await page.locator('.guide-next').click();
 await page.waitForTimeout(2000);
 check('reaches the Finish step', /last touches/i.test(await page.locator('.guide-title').first().innerText().catch(() => '')));
 check('the finish step asks how you get there', await page.locator('.tlegs').isVisible().catch(() => false));
+
+// T1: party size is asked here now, on the card that shows the price it
+// multiplies, and the children stepper stays folded until asked for.
+const party = page.locator('.guide-summary-party');
+check('the summary card carries the travellers stepper', await party.isVisible().catch(() => false));
+check('children stay folded until asked for', await page.locator('.guide-kids-add').isVisible().catch(() => false));
+const readEst = async () => {
+  const m = (await page.locator('.guide-estimate-band').innerText().catch(() => '')).match(/([\d.,]+)/g);
+  return m ? m[m.length - 1] : '';
+};
+const estBefore = await readEst();
+await party.locator('.guide-people button').nth(1).click();   // 2 -> 3 adults
+await page.waitForTimeout(900);
+check('adding a traveller moves the estimate', (await readEst()) !== estBefore, `${estBefore} -> ${await readEst()}`);
+await page.locator('.guide-kids-add').click();
+await page.waitForTimeout(400);
+check('the children stepper unfolds', await page.locator('.guide-summary-kids').isVisible().catch(() => false));
+await page.locator('.guide-summary-kids .guide-people button').nth(1).click();  // +1 child
+await page.waitForTimeout(500);
+check('the children note is honest', /full travellers/i.test(await party.innerText()));
 await page.screenshot({ path: 'shots/planner-v2-finish.png' });
 const arrange = page.locator('.guide-next', { hasText: /arrange/i }).last();
 if (await arrange.isVisible().catch(() => false)) {
@@ -187,7 +183,8 @@ if (await arrange.isVisible().catch(() => false)) {
 const draft = await page.evaluate(() => JSON.parse(localStorage.getItem('carta.plannerDraft.v1') || 'null'));
 check('store: origin is Ghent', draft?.origin?.name?.toLowerCase().includes('ghent'), draft?.origin?.name);
 check('store: nearby airports saved', (draft?.nearbyAirports?.length || 0) >= 3, String(draft?.nearbyAirports?.length));
-check('store: travelers + style saved', draft?.travelers?.adults === 2 && draft?.travelers?.children === 1 && draft?.travelers?.lifestyle === 'budget', JSON.stringify(draft?.travelers));
+check('store: travelers saved from the Finish stepper', draft?.travelers?.adults === 3 && draft?.travelers?.children === 1, JSON.stringify(draft?.travelers));
+check('store: style follows the app, unasked', Boolean(draft?.travelers?.lifestyle), JSON.stringify(draft?.travelers?.lifestyle));
 check('store: dates saved', draft?.travelDates?.durationNights === 7, JSON.stringify(draft?.travelDates));
 // Nothing has been said about transport yet, and Carta invents none.
 check('store: transit stays empty until the traveller says', draft?.selectedTransit == null, JSON.stringify(draft?.selectedTransit));

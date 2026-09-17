@@ -970,7 +970,6 @@ function TravelApp() {
               origin={choices.origin}
               onChangeOrigin={setOrigin}
               lifestyle={choices.lifestyle}
-              onOpenLifestyle={openLifestyle}
               stayTier={choices.stay_tier || 'home'}
               favorites={favorites}
               onPlanDay={planDay}

@@ -2628,7 +2628,6 @@ export const de = {
   "wizard.stepBooked": "Gebucht",
   "wizard.stepFrom": "Start",
   "wizard.stepWhen": "Wann",
-  "wizard.stepWho": "Wer",
   "wizard.whenLabel": "Wann geht es los?",
   "wizard.bookedTravel": "Die Hinreise",
   "wizard.bookedTravelSub": "Flüge, Bahn oder das Auto, mit dem du fährst",
@@ -2653,6 +2652,7 @@ export const de = {
   "wizard.estGroundOne": "Zwischen den Stopps, 1 Etappe",
   "wizard.estGroundMany": "Zwischen den Stopps, {n} Etappen",
   "wizard.estGroundSub": "Cartas Schätzung für die Etappen ohne eigenen Betrag",
+  "wizard.estDaily": "Essen & Freizeit",
 
   /* ---- Day workspace (map + plan / add / files) ---- */
   "dayws.tabPlan": "Heutiger Plan",

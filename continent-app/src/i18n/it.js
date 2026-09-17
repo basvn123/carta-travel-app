@@ -2628,7 +2628,6 @@ export const it = {
   "wizard.stepBooked": "Prenotato",
   "wizard.stepFrom": "Partenza",
   "wizard.stepWhen": "Quando",
-  "wizard.stepWho": "Chi",
   "wizard.whenLabel": "Quando parti?",
   "wizard.bookedTravel": "L'andata",
   "wizard.bookedTravelSub": "Voli, treno o l'auto con cui parti",
@@ -2653,6 +2652,7 @@ export const it = {
   "wizard.estGroundOne": "Tra le tappe, 1 tratta",
   "wizard.estGroundMany": "Tra le tappe, {n} tratte",
   "wizard.estGroundSub": "Stima di Carta per le tratte senza un importo tuo",
+  "wizard.estDaily": "Cibo e svaghi",
 
   /* ---- Day workspace (map + plan / add / files) ---- */
   "dayws.tabPlan": "Il piano di oggi",

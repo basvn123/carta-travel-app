@@ -1442,11 +1442,9 @@ export const en = {
   "wizard.originLabel": "Where does your trip start?",
   "wizard.originPlaceholder": "City, town or address, e.g. Ghent",
   "wizard.airportsNear": "Airports within reach",
-  "wizard.partyLabel": "Who travels, and in what style?",
   "wizard.adults": "Adults",
   "wizard.children": "Children",
   "wizard.childrenNote": "Children are priced as full travellers: the fare and bed data carry no child rates, and a made-up discount would be a lie.",
-  "wizard.styleLabel": "Travel style",
   "wizard.styleBudget": "Budget",
   "wizard.styleBudgetSub": "Hostels and budget stays, cheap eats",
   "wizard.styleStandard": "Standard",
@@ -3375,7 +3373,6 @@ export const en = {
   "wizard.stepBooked": "Booked",
   "wizard.stepFrom": "From",
   "wizard.stepWhen": "When",
-  "wizard.stepWho": "Who",
   "wizard.whenLabel": "When are you going?",
   "wizard.bookedTravel": "Travel there",
   "wizard.bookedTravelSub": "Flights, train or the car you are driving",
@@ -3400,6 +3397,7 @@ export const en = {
   "wizard.estGroundOne": "Between your stops, 1 leg",
   "wizard.estGroundMany": "Between your stops, {n} legs",
   "wizard.estGroundSub": "Carta's estimate for the legs you have not priced yet",
+  "wizard.estDaily": "Food & fun",
 
   /* ---- Day workspace (map + plan / add / files) ---- */
   "dayws.tabPlan": "Today's plan",

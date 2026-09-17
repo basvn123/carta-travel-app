@@ -284,7 +284,7 @@ function ShortlistStops({ rows, onPick }) {
   );
 }
 
-export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, authConfigured, onRequestAuth, openPlanId, onOpenPlanConsumed, origin, onChangeOrigin, onPlanDay, openSharedTrip, onSharedTripConsumed, stayTier = 'home', lifestyle = null, onOpenLifestyle = null, favorites = null }) {
+export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, authConfigured, onRequestAuth, openPlanId, onOpenPlanConsumed, origin, onChangeOrigin, onPlanDay, openSharedTrip, onSharedTripConsumed, stayTier = 'home', lifestyle = null, favorites = null }) {
   const { t } = useI18n();
   const paywall = usePaywall();
   const countryInsights = useCountryInsights();
@@ -653,7 +653,6 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
           data={data}
           stayTier={tp.stayTier}
           lifestyle={lifestyle}
-          onOpenLifestyle={onOpenLifestyle}
           onCancel={() => setWizardOpen(false)}
           onComplete={handleWizardComplete}
         />
@@ -755,6 +754,7 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
               stopDetails={tp.stopDetails}
               grandTotal={tp.grandTotal}
               groupSize={tp.groupSize}
+              onSetGroupSize={(n) => tp.setGroupSize(Math.max(1, Math.min(20, n)))}
               flight={tp.flight}
               legs={tp.legs}
               setLegMode={tp.setLegMode}
@@ -1229,7 +1229,7 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
       )}
 
       {wizardOpen && (
-        <GuidedTripWizard data={data} stayTier={tp.stayTier} lifestyle={lifestyle} onOpenLifestyle={onOpenLifestyle} onCancel={() => setWizardOpen(false)} onComplete={handleWizardComplete} />
+        <GuidedTripWizard data={data} stayTier={tp.stayTier} lifestyle={lifestyle} onCancel={() => setWizardOpen(false)} onComplete={handleWizardComplete} />
       )}
     </div>
   );
