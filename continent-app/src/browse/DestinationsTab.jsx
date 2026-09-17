@@ -55,7 +55,7 @@ import {
   SUITABILITY, tripSuitability, isListed,
 } from '../lib/trailCards.js';
 import { useI18n } from '../i18n/index.jsx';
-import { geocodeAddress, reverseGeocode } from '../lib/geocode.js';
+import { geocodeAddress, reverseGeocode, geoLines } from '../lib/geocode.js';
 import { bandChip, bandBreak, scopeForRows } from '../lib/regions.js';
 import {
   SearchIcon, ChevronRightIcon, RouteIcon, SkylineIcon, SuitcaseIcon, BootIcon,
@@ -146,36 +146,6 @@ const hoursText = (min) => {
   const h = min / 60;
   return h >= 10 ? String(Math.round(h)) : h.toFixed(1);
 };
-
-/**
- * How a geocoded hit reads on two lines: the place itself, then the rest of
- * the address that says which one it is.
- *
- * Nominatim names a town in `name` and leaves it empty for a street address,
- * where the label instead opens with a bare house number ("12, Kerkstraat,
- * Knesselare, Aalter, ..."). A title of "12" is no use to anyone, so a numeric
- * first part pulls the street and the town in with it.
- */
-function geoLines(r) {
-  const parts = String(r.label || '').split(',').map((s) => s.trim()).filter(Boolean);
-  // Bilingual country tails ("Belgie / Belgique / Belgien") are noise on a row
-  // this narrow; the parsed country name says the same thing once.
-  if (parts.length && r.country) parts[parts.length - 1] = r.country;
-  const first = parts[0] || '';
-  // The house rule runs first: for a street address the geocoder backfills the
-  // empty name with that same bare number, so testing the name would hide it.
-  if (/^\d/.test(first) && parts.length > 2) {
-    return { title: parts.slice(0, 3).join(', '), rest: parts.slice(3).join(', ') };
-  }
-  const named = (r.name || '').trim();
-  if (named && first.toLowerCase() === named.toLowerCase()) {
-    return { title: named, rest: parts.slice(1).join(', ') };
-  }
-  return {
-    title: parts.slice(0, 2).join(', ') || named || r.shortLabel || '',
-    rest: parts.slice(2).join(', '),
-  };
-}
 
 // How long the trip is, which is the first thing a traveller knows and the
 // last thing the catalogue could answer. 1 is the drawn one-day city walk from

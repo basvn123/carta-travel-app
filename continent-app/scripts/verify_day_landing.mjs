@@ -1,8 +1,12 @@
 // Headless check of the day planner's landing flow after the visual-review
 // pass: the progress rail is on screen from the FIRST question, saved work
-// sits close under the question card, the locator map is gone (the popular
-// city chips carry the choice), the date grid has thumb-sized targets, and
-// the fork shows one filled action rather than two.
+// sits close under the question card, the locator map is gone, the date grid
+// has thumb-sized targets, and the fork shows one filled action rather than
+// two.
+//
+// Step 1 is answered the way a traveller answers it: type the address of the
+// place the day starts from and pick the hit. Nominatim is intercepted, so
+// the run is deterministic and costs the geocoder nothing.
 //
 // It also drives the chat to its build state (with the catalogue fetch held
 // open) so the route-building animation can be measured instead of guessed at.
@@ -44,12 +48,35 @@ const SIZES = [
 
 // The gates every day-planner screenshot needs: guest mode, and every
 // onboarding overlay already dismissed, or the map never gets a canvas.
-const seed = (page) => page.addInitScript(() => {
-  localStorage.setItem('continent.guestMode.v1', '1');
-  localStorage.setItem('carta.fareNoticeSeen', '1');
-  localStorage.setItem('carta.welcomeSeen', '1');
-  localStorage.setItem('continent.onboardingSeen.v1', '1');
-});
+const seed = async (page) => {
+  await page.addInitScript(() => {
+    localStorage.setItem('continent.guestMode.v1', '1');
+    localStorage.setItem('carta.fareNoticeSeen', '1');
+    localStorage.setItem('carta.welcomeSeen', '1');
+    localStorage.setItem('continent.onboardingSeen.v1', '1');
+  });
+  // Rome, because the rest of this run picks Tivoli as a day trip from it.
+  await page.route('**/nominatim.openstreetmap.org/**', (r) => r.fulfill({
+    status: 200,
+    contentType: 'application/json',
+    body: JSON.stringify([{
+      display_name: 'Hotel Artemide, Via Nazionale, Rome, Lazio, Italy',
+      name: 'Hotel Artemide',
+      lat: '41.8996', lon: '12.4939',
+      category: 'tourism', type: 'hotel',
+      address: { country: 'Italy', country_code: 'it' },
+    }]),
+  }));
+};
+
+// Step 1, answered the only way it can be answered now: type, find, pick.
+const answerStay = async (page) => {
+  await page.locator('.day-flow-search input').fill('Hotel Artemide Rome');
+  await page.locator('.day-flow-search .trip-add-btn').click();
+  await page.locator('.day-stay-result').first().waitFor({ timeout: 30000 });
+  await page.locator('.day-stay-result').first().click();
+  await page.locator('.day-flow-chosen').waitFor({ timeout: 30000 });
+};
 
 try {
   await waitForServer();
@@ -119,8 +146,8 @@ try {
       else ok(`saved work ${gap}px under the ${gapInfo.stacked ? 'map' : 'card'}, same column`);
     }
 
-    // 3. The locator map is gone: the popular-city chips carry the choice,
-    //    and the question column is one centered reading width.
+    // 3. The locator map is gone, and the question column is one centered
+    //    reading width.
     const column = await page.evaluate(() => {
       const split = document.querySelector('.day-flow-split');
       const flow = document.querySelector('.day-flow');
@@ -142,11 +169,68 @@ try {
     }
     await page.screenshot({ path: `${SHOTS}/day-landing-${size.name}.png`, fullPage: size.name === 'phone' });
 
+    // 3b. Step 1 asks where the DAY starts, not where you are staying, and
+    //     says so in a sub-line: the planner has to work for somebody at home
+    //     as well as somebody in a hotel. No popular-city chips: a city is not
+    //     a starting point, and the six of them were the whole screen.
+    const stayStep = await page.evaluate(() => {
+      const q = document.querySelector('.day-flow-q');
+      const sub = document.querySelector('.day-flow-qsub');
+      const input = document.querySelector('.day-flow-search .day-stay-input');
+      return {
+        q: (q?.textContent || '').trim(),
+        sub: (sub?.textContent || '').trim(),
+        placeholder: input?.getAttribute('placeholder') || '',
+        inputH: input ? Math.round(input.getBoundingClientRect().height) : 0,
+        // Every quick start is a real tap target.
+        shortChips: [...document.querySelectorAll('.day-flow-quickchip')]
+          .filter((c) => c.getBoundingClientRect().height < 43).length,
+        combobox: input?.getAttribute('role') === 'combobox',
+      };
+    });
+    if (!/where does your day start/i.test(stayStep.q)) fail(`${size.name}: step 1 asks "${stayStep.q}"`);
+    if (!/home address/i.test(stayStep.sub)) fail(`${size.name}: no sub-line naming a home address, got "${stayStep.sub}"`);
+    if (!/hotel/i.test(stayStep.placeholder)) fail(`${size.name}: placeholder is "${stayStep.placeholder}"`);
+    if (stayStep.shortChips) fail(`${size.name}: ${stayStep.shortChips} quick-start chip(s) under 44px`);
+    if (!stayStep.combobox) fail(`${size.name}: the search box is not a combobox`);
+    // The phone gets a 48px field; the desktop keeps its own sizing.
+    if (size.name === 'phone' && stayStep.inputH < 48) fail(`${size.name}: search field is ${stayStep.inputH}px, under 48`);
+    else ok(`step 1: "${stayStep.q}" / "${stayStep.sub}", field ${stayStep.inputH}px`);
+
+    // 3c. The results list: one icon and two lines per hit, and the arrow
+    //     keys walk it. A step every single day plan passes through cannot be
+    //     mouse-only.
+    await page.locator('.day-flow-search input').fill('Hotel Artemide Rome');
+    await page.locator('.day-flow-search .trip-add-btn').click();
+    await page.locator('.day-stay-result').first().waitFor({ timeout: 30000 });
+    const hit = await page.evaluate(() => {
+      const r = document.querySelector('.day-stay-hit');
+      return {
+        ico: !!r?.querySelector('.day-stay-hit-ico svg'),
+        title: (r?.querySelector('.day-stay-hit-text b')?.textContent || '').trim(),
+        rest: (r?.querySelector('.day-stay-hit-text small')?.textContent || '').trim(),
+        listbox: document.querySelector('.day-flow-results')?.getAttribute('role') === 'listbox',
+      };
+    });
+    if (!hit.ico) fail(`${size.name}: a result carries no type icon`);
+    if (!hit.title) fail(`${size.name}: a result has no name line`);
+    if (!/rome|italy/i.test(hit.rest)) fail(`${size.name}: a result's second line is "${hit.rest}", no town or country`);
+    if (!hit.listbox) fail(`${size.name}: the results list is not a listbox`);
+    else ok(`result: "${hit.title}" / "${hit.rest}", with icon`);
+
+    await page.locator('.day-flow-search input').press('ArrowDown');
+    await page.waitForTimeout(200);
+    const onFirst = await page.evaluate(() =>
+      document.activeElement?.classList.contains('day-stay-hit')
+      && document.activeElement.getAttribute('aria-selected') === 'true');
+    if (!onFirst) fail(`${size.name}: ArrowDown does not move onto the first result`);
+    await page.keyboard.press('Enter');
+    await page.locator('.day-flow-chosen').waitFor({ timeout: 30000 });
+    const chipCity = (await page.locator('.day-flow-chosen .day-stay-chosen-label').innerText()).trim();
+    ok(`arrow keys + Enter chose "${chipCity}"`);
+
     // 4. Step 2: the date grid's touch targets, and the chosen-destination
     //    banner standing in for the removed locator map.
-    const chip = page.locator('.day-flow-chip').first();
-    const chipCity = (await chip.innerText()).replace(/[\d.]+/g, '').trim();
-    await chip.click();
     await page.locator('.day-flow-next').click();
     await page.locator('.day-flow-date').waitFor({ timeout: 30000 });
     await page.waitForTimeout(400);
@@ -244,8 +328,8 @@ try {
     await route.continue();
   });
   await page.goto(`${BASE}/?tab=day&o=CRL`);
-  await page.locator('.day-flow-chip').first().waitFor({ timeout: 120000 });
-  await page.locator('.day-flow-chip').first().click();
+  await page.locator('.day-flow-search input').waitFor({ timeout: 120000 });
+  await answerStay(page);
   await page.locator('.day-flow-next').click();
   await page.locator('.day-flow-next').click();
   await page.locator('.day-flow-card.primary').click();

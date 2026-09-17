@@ -15956,8 +15956,9 @@ button.ai-sched-main:focus-visible {
   text-align: center;
 }
 
-/* Quick-fill chips: popular cities on the stay step, common dates on the
-   date step. Same shape both times so "one tap shortcut" reads the same. */
+/* Quick-fill chips: the ways a day already has a starting point on the stay
+   step, common dates on the date step. Same shape both times so "one tap
+   shortcut" reads the same. */
 .day-flow-suggest { display: flex; flex-direction: column; gap: 9px; }
 /* The mono overline is the app's section-label device, kept here, but 9.5px of
    --ink-mute is under AA: same shape, readable weight and ink. */
@@ -15984,6 +15985,66 @@ button.ai-sched-main:focus-visible {
 .day-flow-chip.on { border-color: var(--accent); background: var(--accent-bg); color: var(--accent); font-weight: 600; }
 .day-flow-chip small { font-size: 11px; color: var(--ink-mute); }
 .day-flow-chip.on small { color: var(--accent); }
+
+/* The question's own sub-line. Quieter than the question and closer to it
+   than to the field, so it reads as part of what is being asked rather than
+   as the first piece of the answer. */
+.day-flow-qsub {
+  margin: -4px 0 0;
+  font-size: 13.5px;
+  line-height: 1.45;
+  color: var(--ink-soft);
+  text-align: center;
+}
+
+/* ---- Quick starts: location, the trip you are on, where you started last --
+   Three labelled groups rather than one undifferentiated pile of chips: a
+   chip only helps if you can tell at a glance which question it answers. */
+.day-flow-quick { display: flex; flex-direction: column; gap: 14px; }
+.day-flow-quickgroup { display: flex; flex-direction: column; gap: 8px; align-items: center; }
+/* Every quick start is a real tap target on a phone held one-handed at a
+   station, which is exactly where this step gets used. */
+.day-flow-quickchip { min-height: var(--tap); padding-inline: 16px; }
+.day-flow-quickchip:disabled { opacity: 0.55; cursor: default; }
+.day-flow-quickchip small { color: var(--ink-mute); }
+/* The location failure sits under its own chip, not under the whole group:
+   it is about that one button, and nothing else on the step has failed. */
+.day-flow-quickerr { margin: 0; text-align: center; max-width: 34em; }
+
+/* ---- Results: what the place is, then which one it is ------------------- */
+.day-stay-hit {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  min-height: var(--tap);
+  padding: 10px 13px;
+}
+.day-stay-hit-ico {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px; height: 28px;
+  border-radius: 8px;
+  background: var(--paper-dim);
+  color: var(--ink-soft);
+}
+.day-stay-hit-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; text-align: left; }
+.day-stay-hit-text b { font-size: 13.5px; font-weight: 600; color: var(--ink); line-height: 1.3; }
+/* The town-and-country line is what tells three Gents apart, so it stays on
+   one line and truncates rather than wrapping the row to three deep. */
+.day-stay-hit-text small {
+  font-size: 11.5px;
+  color: var(--ink-mute);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+/* Arrow-key focus and hover look the same on purpose: one highlight, whether
+   it arrived by mouse or by keyboard. */
+.day-stay-hit.on,
+.day-stay-hit:focus-visible { background: var(--paper-dim); outline: none; }
+.day-stay-hit.on .day-stay-hit-ico { background: var(--accent-bg); color: var(--accent); }
 
 .day-flow-search { display: flex; gap: 8px; }
 .day-flow-search .day-stay-input {
@@ -16480,12 +16541,6 @@ button.ai-sched-main:focus-visible {
      numbers would say nothing about what the flow is going to ask. */
   .day-flow-top .wiz-step-name { display: block; font-size: 11px; }
   .day-flow-top .wiz-step-btn { justify-content: flex-start; padding-left: 4px; }
-  /* The six popular cities stacked one-per-row pushed the map a full screen
-     down, so "tap a city on the map" pointed at something below the fold. Two
-     columns halves that stack and brings the map back up; the map already
-     carries the same cities as pins, so nothing is lost. */
-  .day-flow-suggest .day-flow-chips { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-  .day-flow-suggest .day-flow-chip { width: 100%; }
   .day-flow-next { width: 100%; }
   /* On a phone the card would be a border tight against the screen edge, so
      it drops its chrome and the step just uses the full width. */
@@ -16550,6 +16605,33 @@ button.ai-sched-main:focus-visible {
 
 @media (max-width: 768px) {
   .day-flow-step > *, .day-flow-step > .day-flow-q, .day-flow-step > .day-flow-cards { max-width: none; }
+}
+
+/* ---- Step 1 on a phone -------------------------------------------------- */
+@media (max-width: 700px) {
+  /* 48px of field: the thumb target for the one control this step exists for.
+     (The wrapper carries the height so the button beside it matches it.) */
+  .day-flow-search .day-stay-input { min-height: 48px; padding: 0 16px; }
+  .day-flow-search .trip-add-btn { min-height: 48px; }
+  /* The list runs the full width of the panel and loses its own box: on a
+     phone a bordered card inside a bordered card is two frames saying the
+     same thing. */
+  .day-flow-results {
+    margin-inline: -16px;
+    border-inline: none;
+    border-radius: 0;
+    max-height: none;
+  }
+  .day-stay-hit { padding-inline: 16px; }
+  /* Continue docks to the bottom of the scroll rather than sitting below a
+     list that can run past the fold: the answer is chosen at the top of the
+     screen and confirmed at the bottom of the thumb's reach. */
+  .day-flow-panel > .day-flow-next {
+    position: sticky;
+    bottom: 10px;
+    z-index: 3;
+    box-shadow: 0 6px 22px rgba(26, 26, 26, 0.26);
+  }
 }
 
 /* The refine row must clear the sticky import bar. */

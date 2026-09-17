@@ -14,7 +14,7 @@ import { fetchTripPlans, fetchTripPlanWithStops } from '../auth/tripPlanStorage.
 import { fetchWalkingRoute, fetchDrivingRoute, googleMapsDirUrl } from '../lib/routing.js';
 import { useI18n } from '../i18n/index.jsx';
 import { localIntelFor } from '../lib/localIntel.js';
-import { geocodeAddress } from '../lib/geocode.js';
+import { geocodeAddress, reverseGeocode, geoLines } from '../lib/geocode.js';
 import { scenicWalksFor } from '../lib/scenicWalks.js';
 import { findCitytrip, resolveCitytripStops, loadTrail } from '../lib/citytrips.js';
 import { useCountryInsights } from '../hooks/useCountryInsights.js';
@@ -67,7 +67,7 @@ import {
   BedIcon, BookmarkIcon, DownloadIcon, RouteIcon,
   PencilIcon, SearchIcon, HomeIcon, CheckIcon, CalendarIcon,
   ClockIcon, CoffeeIcon, FilterIcon, ChevronDownIcon, ChevronRightIcon,
-  UploadIcon,
+  UploadIcon, CrosshairIcon, TownIcon,
 } from '../components/Icons.jsx';
 import { MagicImportZone } from './MagicImportZone.jsx';
 import { toInboxItems } from './bookingImport.js';
@@ -2013,54 +2013,171 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({ data, user, aut
     return { ok: true, id: res.dest.id, label: `${res.dest.city}, ${res.dest.country}` };
   };
 
-  // Quick-fill starting points for the stay step, so the first screen is never
-  // a bare search box. Population keeps these to cities people actually stay
-  // in; without it, the top of a rating sort is the best-rated hamlet in
-  // Europe, which nobody is looking for.
-  const POPULAR_STAY_MIN_POP = 150000;
-  const popularStays = useMemo(() => {
-    const rows = [];
-    for (const [id, d] of Object.entries(destinations)) {
-      const c = cityCoords(d);
-      if (c.lat == null) continue;
-      rows.push({
-        id,
-        dest: d,
-        lat: c.lat,
-        lon: c.lon,
-        pop: d.geonames?.population ?? 0,
-        score: d.rating?.score ?? 0,
-      });
-    }
-    const big = rows.filter((r) => r.pop >= POPULAR_STAY_MIN_POP);
-    // Multi-airport cities repeat the same centre ("Milan (Malpensa)" and
-    // "(Linate)"): one chip per real city. The airport suffix is a catalogue
-    // detail, never what a traveller calls the place they are staying in, so
-    // the chip carries the bare city name.
-    const byCity = new Map();
-    for (const r of (big.length >= 6 ? big : rows)) {
-      const name = cityLabel(r.dest.city);
-      const key = `${cityKeyName(r.dest.city)}|${r.dest.country}`;
-      const cur = byCity.get(key);
-      if (!cur || r.score > cur.score) byCity.set(key, { ...r, name });
-    }
-    return [...byCity.values()].sort((a, b) => b.score - a.score).slice(0, 6);
-  }, [destinations]);
+  /* ---- Quick starts: the three ways a day already has a starting point ----
+   * A day planned on holiday starts at the hotel; a day planned at home
+   * starts at the front door; a day planned again starts where the last one
+   * did. None of those are a search, so none of them should have to be typed.
+   * They sit under the box as chips, and every one of them answers step 1 in
+   * a single tap. */
 
-  const pickPopularStay = (row) => {
+  // The device's own position. Kept as a coordinate first and a name second:
+  // the plan only ever measures from the coordinate, so a reverse lookup that
+  // fails still leaves a perfectly good starting point.
+  const canLocate = typeof navigator !== 'undefined' && 'geolocation' in navigator;
+  const [locBusy, setLocBusy] = useState(false);
+  const [locErr, setLocErr] = useState('');
+
+  const useMyLocation = () => {
+    if (!canLocate || locBusy) return;
+    setLocErr('');
+    setLocBusy(true);
+    navigator.geolocation.getCurrentPosition(
+      async (pos) => {
+        const lat = pos?.coords?.latitude;
+        const lon = pos?.coords?.longitude;
+        if (!Number.isFinite(lat) || !Number.isFinite(lon)) {
+          setLocBusy(false);
+          setLocErr(t('places.locateFailed'));
+          return;
+        }
+        const hit = await reverseGeocode(lat, lon);
+        const lines = hit ? geoLines(hit) : null;
+        setLocBusy(false);
+        setStayQuery('');
+        setStayResults(null);
+        setNewStayPoint({
+          lat,
+          lon,
+          label: hit?.label || t('day.currentLocation'),
+          shortLabel: lines?.title || t('day.currentLocation'),
+        });
+      },
+      (err) => {
+        setLocBusy(false);
+        // Code 1 is a refusal, which is a setting to change rather than a
+        // failure to retry; everything else is "it did not come through".
+        setLocErr(err?.code === 1 ? t('places.locateDenied') : t('places.locateFailed'));
+      },
+      { enableHighAccuracy: false, timeout: 12000, maximumAge: 5 * 60 * 1000 },
+    );
+  };
+
+  // Where a signed-in traveller is actually sleeping in the fortnight ahead:
+  // every stop of every saved trip whose window covers today or one of the
+  // next 14 days. Somebody opening the day planner mid-trip is overwhelmingly
+  // planning a day IN that trip, so the stop they are in is the first answer
+  // offered, and picking it presets the date too (step 2 opens answered).
+  const UPCOMING_STAY_DAYS = 14;
+  const upcomingStays = useMemo(() => {
+    if (!user || !authConfigured) return [];
+    const today = todayISO();
+    const horizon = addDays(today, UPCOMING_STAY_DAYS);
+    const out = [];
+    const seen = new Set();
+    for (const p of savedPlans) {
+      for (const st of (p.stops || [])) {
+        const from = st.arrive_date;
+        const to = st.depart_date || st.arrive_date;
+        // Overlap, not containment: a stop that started last week and runs
+        // through next Tuesday is exactly the one being planned right now.
+        if (!from || from > horizon || to < today) continue;
+        const dest = destinations[st.destination_id];
+        const c = dest ? cityCoords(dest) : { lat: null, lon: null };
+        if (c.lat == null) continue;
+        const name = cityLabel(dest.city);
+        const key = `${cityKeyName(dest.city)}|${dest.country}|${from}`;
+        if (seen.has(key)) continue;
+        seen.add(key);
+        out.push({
+          key,
+          name,
+          country: dest.country || st.country || '',
+          lat: c.lat,
+          lon: c.lon,
+          // The day the stop begins, which is also the date step 2 opens on.
+          // Already inside the stop? Today is the day being planned.
+          from,
+          date: from <= today ? today : from,
+        });
+      }
+    }
+    return out.sort((a, b) => a.date.localeCompare(b.date)).slice(0, 4);
+  }, [user, authConfigured, savedPlans, destinations]);
+
+  const pickUpcomingStay = (row) => {
     setStayQuery('');
     setStayResults(null);
     setNewStayPoint({
       lat: row.lat,
       lon: row.lon,
-      label: `${row.name}, ${row.dest.country}`,
+      label: row.country ? `${row.name}, ${row.country}` : row.name,
       shortLabel: row.name,
     });
+    // The trip already says which day this is, so step 2 opens answered
+    // rather than asking a question its own answer is sitting next to.
+    setNewStartDate(row.date);
   };
 
-  // The same popular cities as explore-map pins, so the first step can be
-  // answered on the map instead of only in the form beside it. Once a stay is
-  // chosen they clear out: the map's job then is to show that one place.
+  // Where the last few standalone plans started. Dedupe by label: planning
+  // three days from the same hotel is the normal case, and three identical
+  // chips would say nothing the first one did not.
+  const recentStays = useMemo(() => {
+    const out = [];
+    const seen = new Set();
+    for (const sp of standalonePlans) {
+      const pt = sp.stayPoint;
+      if (!pt || pt.lat == null || pt.lon == null) continue;
+      const label = pt.shortLabel || pt.label || '';
+      const key = label.toLowerCase().trim();
+      if (!key || seen.has(key)) continue;
+      seen.add(key);
+      out.push({ key, label, point: pt });
+      if (out.length === 3) break;
+    }
+    return out;
+  }, [standalonePlans]);
+
+  const pickRecentStay = (row) => {
+    setStayQuery('');
+    setStayResults(null);
+    setNewStayPoint(row.point);
+  };
+
+  // Keyboard navigation over the results list: the arrow keys move a
+  // highlight, Enter takes it. Without it the only way past the geocoder is a
+  // mouse, which for a step every single day plan has to pass through is the
+  // difference between the planner being usable from the keyboard and not.
+  const [stayCursor, setStayCursor] = useState(-1);
+  const stayResultRefs = useRef([]);
+  useEffect(() => { setStayCursor(-1); }, [stayResults]);
+
+  const onStayKeyDown = (e) => {
+    const n = stayResults?.length || 0;
+    if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+      if (!n) return;
+      e.preventDefault();
+      const next = e.key === 'ArrowDown'
+        ? (stayCursor + 1) % n
+        : (stayCursor <= 0 ? n - 1 : stayCursor - 1);
+      setStayCursor(next);
+      stayResultRefs.current[next]?.focus();
+      return;
+    }
+    if (e.key === 'Enter') {
+      // Enter inside the box searches; Enter on a highlighted row takes it.
+      if (stayCursor >= 0 && stayResults?.[stayCursor]) {
+        e.preventDefault();
+        setNewStayPoint(stayResults[stayCursor]);
+        return;
+      }
+      searchStay();
+      return;
+    }
+    if (e.key === 'Escape' && stayResults) {
+      setStayCursor(-1);
+      e.currentTarget.closest('.day-flow-step')?.querySelector('.day-stay-input')?.focus();
+    }
+  };
 
   // The three dates almost every day trip actually falls on, so the date step
   // is one tap rather than a calendar hunt. "This weekend" is the coming
@@ -2721,12 +2838,9 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({ data, user, aut
             </div>
           )}
 
-          {/* The three landing questions share one canvas: the form column on
-              the left, a live map on the right that follows the answer. The
-              questions used to float alone on an empty page, which gave a
-              spatial decision (where are you staying?) no spatial context at
-              all. The map is mounted ONCE around all three steps so moving
-              between them pans it rather than tearing it down and rebuilding. */}
+          {/* The three landing questions share one canvas, one question to a
+              card, so the flow reads as a single surface being filled in
+              rather than three pages that happen to follow one another. */}
           {(landingStep === 'stay' || landingStep === 'when' || landingStep === 'how') && (
           <div className={`day-flow-split${landingStep === 'how' ? ' day-flow-split-wide' : ''}`}>
           <div className="day-flow-forms">
@@ -2762,6 +2876,12 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({ data, user, aut
             <div className="day-flow-step">
               <div className="day-flow-panel">
                 <h2 className="day-flow-q">{t('day.whereStaying')}</h2>
+                {/* The question is short enough to be ambiguous on its own:
+                    "where does your day start" could mean the town. The
+                    sub-line says it means the door you walk out of, which is
+                    also what makes the planner work at home and not only on
+                    holiday. */}
+                {!newStayPoint && <p className="day-flow-qsub">{t('day.staySub')}</p>}
                 {/* Once a place is chosen it BECOMES the field. Leaving the
                     search box filled with the old query above a chosen-city
                     badge showed the same answer twice, in two different
@@ -2783,9 +2903,13 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({ data, user, aut
                     type="text"
                     value={stayQuery}
                     onChange={(e) => setStayQuery(e.target.value)}
-                    onKeyDown={(e) => { if (e.key === 'Enter') searchStay(); }}
+                    onKeyDown={onStayKeyDown}
                     placeholder={t('day.stayPlaceholder')}
                     aria-label={t('day.stayAria')}
+                    role="combobox"
+                    aria-expanded={Boolean(stayResults?.length)}
+                    aria-controls="day-stay-results"
+                    aria-autocomplete="list"
                     autoFocus
                   />
                   <button className="trip-add-btn" onClick={searchStay} disabled={staySearching || stayQuery.trim().length < 3}>
@@ -2795,31 +2919,80 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({ data, user, aut
                 )}
                 {newStayPoint ? null : stayResults ? (
                   stayResults.length ? (
-                    <div className="day-stay-results day-flow-results">
-                      {stayResults.map((r, i) => (
-                        <button key={i} className="day-stay-result" onClick={() => setNewStayPoint(r)}>
-                          {r.label}
-                        </button>
-                      ))}
+                    /* Each hit says what KIND of thing it is before it says
+                       where: three near-identical address lines are told
+                       apart by the icon and the town beneath them, not by
+                       reading four commas deep into the same string. */
+                    <div className="day-stay-results day-flow-results" id="day-stay-results" role="listbox">
+                      {stayResults.map((r, i) => {
+                        const lines = geoLines(r);
+                        const KindIcon = r.kind === 'hotel' ? BedIcon : r.kind === 'town' ? TownIcon : HomeIcon;
+                        return (
+                          <button
+                            key={i}
+                            ref={(el) => { stayResultRefs.current[i] = el; }}
+                            className={`day-stay-result day-stay-hit${stayCursor === i ? ' on' : ''}`}
+                            role="option"
+                            aria-selected={stayCursor === i}
+                            onFocus={() => setStayCursor(i)}
+                            onKeyDown={onStayKeyDown}
+                            onClick={() => setNewStayPoint(r)}
+                          >
+                            <span className="day-stay-hit-ico" aria-hidden="true"><KindIcon size={15} /></span>
+                            <span className="day-stay-hit-text">
+                              <b>{lines.title || r.shortLabel || r.label}</b>
+                              {lines.rest && <small>{lines.rest}</small>}
+                            </span>
+                          </button>
+                        );
+                      })}
                     </div>
                   ) : (
                     <p className="trip-note">{t('day.noAddressMatchTown')}</p>
                   )
-                ) : popularStays.length > 0 && (
-                  // Nothing typed yet: the popular cities double as the
-                  // "what does an answer look like?" example and a one-tap
-                  // way past the empty box.
-                  <div className="day-flow-suggest">
-                    <span className="day-flow-suggest-label">{t('day.popularStays')}</span>
-                    <div className="day-flow-chips">
-                      {popularStays.map((r) => (
-                        <button key={r.id} className="day-flow-chip" onClick={() => pickPopularStay(r)}>
-                          <MapPinIcon size={13} />
-                          <span>{r.name}</span>
-                          {r.dest.rating?.score != null && <ScoreChip rating={r.dest.rating} size="xs" />}
+                ) : (
+                  /* Nothing typed yet. Rather than an example of what an
+                     answer looks like, these ARE the answer for most days:
+                     the phone knows where you are standing, the saved trip
+                     knows where you are sleeping, and the last plan knows
+                     where you started yesterday. */
+                  <div className="day-flow-quick">
+                    {canLocate && (
+                      <div className="day-flow-quickgroup">
+                        <button className="day-flow-chip day-flow-quickchip" onClick={useMyLocation} disabled={locBusy}>
+                          <CrosshairIcon size={14} />
+                          <span>{locBusy ? t('day.locating') : t('day.useMyLocation')}</span>
                         </button>
-                      ))}
-                    </div>
+                        {locErr && <p className="trip-note day-flow-quickerr">{locErr}</p>}
+                      </div>
+                    )}
+                    {upcomingStays.length > 0 && (
+                      <div className="day-flow-quickgroup">
+                        <span className="day-flow-suggest-label">{t('day.fromYourTrip')}</span>
+                        <div className="day-flow-chips">
+                          {upcomingStays.map((r) => (
+                            <button key={r.key} className="day-flow-chip day-flow-quickchip" onClick={() => pickUpcomingStay(r)}>
+                              <RouteIcon size={14} />
+                              <span>{r.name}</span>
+                              <small>{t('day.tripFrom', { date: fmtDate(r.from) })}</small>
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                    {recentStays.length > 0 && (
+                      <div className="day-flow-quickgroup">
+                        <span className="day-flow-suggest-label">{t('day.recentStarts')}</span>
+                        <div className="day-flow-chips">
+                          {recentStays.map((r) => (
+                            <button key={r.key} className="day-flow-chip day-flow-quickchip" onClick={() => pickRecentStay(r)}>
+                              <ClockIcon size={14} />
+                              <span>{r.label}</span>
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 )}
                 {newStayPoint && (

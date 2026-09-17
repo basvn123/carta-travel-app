@@ -13,6 +13,58 @@
  * AbortSignal, for callers that supersede their own in-flight search).
  */
 
+/**
+ * What KIND of thing a geocoder hit is, in the only three flavours a traveller
+ * starting a day cares about: the hotel they are sleeping in, a street address
+ * (a holiday rental, a friend's spare room, home) or a town. Nominatim answers
+ * with its own taxonomy of ~100 `category`/`type` pairs, so this collapses
+ * them: anything that sleeps people is a hotel, anything with a house number
+ * or a road is an address, any populated place is a town. Everything else
+ * (a museum, a station, a mountain) answers "address", because on a results
+ * row the icon is a hint about the shape of the line, not a claim about what
+ * the place does.
+ */
+function placeKind(x) {
+  const cat = x?.category || x?.class || '';
+  const type = x?.type || '';
+  if (cat === 'tourism' && /^(hotel|hostel|guest_house|motel|apartment|chalet|alpine_hut|camp_site|caravan_site)$/.test(type)) return 'hotel';
+  if (cat === 'building' && /^(hotel|dormitory)$/.test(type)) return 'hotel';
+  if (cat === 'place' && /^(city|town|village|hamlet|municipality|suburb|borough|quarter|neighbourhood|locality)$/.test(type)) return 'town';
+  if (x?.address?.house_number || cat === 'highway' || (cat === 'place' && type === 'house')) return 'address';
+  return 'address';
+}
+
+/**
+ * A geocoder hit as two lines: what the place is called, and where on earth it
+ * is. Without the split, one long comma chain is unreadable on a narrow row and
+ * buries the one part that tells the several Gents of this world apart.
+ *
+ * Nominatim's display_name leads with the place's own name for a named feature,
+ * but with a bare house number for a street address ("12, Kerkstraat,
+ * Knesselare, Aalter, ..."). A title of "12" is no use to anyone, so a numeric
+ * first part pulls the street and the town in with it.
+ */
+export function geoLines(r) {
+  const parts = String(r?.label || '').split(',').map((s) => s.trim()).filter(Boolean);
+  // Bilingual country tails ("Belgie / Belgique / Belgien") are noise on a row
+  // this narrow; the parsed country name says the same thing once.
+  if (parts.length && r?.country) parts[parts.length - 1] = r.country;
+  const first = parts[0] || '';
+  // The house rule runs first: for a street address the geocoder backfills the
+  // empty name with that same bare number, so testing the name would hide it.
+  if (/^\d/.test(first) && parts.length > 2) {
+    return { title: parts.slice(0, 3).join(', '), rest: parts.slice(3).join(', ') };
+  }
+  const named = (r?.name || '').trim();
+  if (named && first.toLowerCase() === named.toLowerCase()) {
+    return { title: named, rest: parts.slice(1).join(', ') };
+  }
+  return {
+    title: parts.slice(0, 2).join(', ') || named || r?.shortLabel || '',
+    rest: parts.slice(2).join(', '),
+  };
+}
+
 export async function geocodeAddress(query, opts = {}) {
   const q = (query || '').trim();
   if (q.length < 3) return [];
@@ -44,6 +96,9 @@ export async function geocodeAddress(query, opts = {}) {
           // rows carry iso2). Null for the odd hit with no country, an ocean
           // or a border way.
           iso2: (x.address?.country_code || '').toUpperCase() || null,
+          // hotel | address | town, so a results row can wear an icon that
+          // says what it is before the words are read.
+          kind: placeKind(x),
           lat: Number(x.lat),
           lon: Number(x.lon),
         };
@@ -85,6 +140,7 @@ export async function reverseGeocode(lat, lon, opts = {}) {
       name: x.name || parts[0].trim(),
       country: (x.address?.country || '').split(' / ')[0],
       iso2: (x.address?.country_code || '').toUpperCase() || null,
+      kind: placeKind(x),
       lat,
       lon,
     };
