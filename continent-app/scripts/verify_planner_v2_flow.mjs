@@ -97,11 +97,15 @@ try {
   const title = await page.locator('.guide-title').first().innerText();
   check('lands on the country step', /where/i.test(title) || (await page.locator('.guide-cgrid').count()) > 0, title);
 
+  // The country grid moved behind the "Choose by hand" tab (prompt T2).
+  await page.locator('.guide-wtabs [role="tab"]').nth(1).click();
+  await page.waitForTimeout(700);
+
   // The two things that had to go.
   check('no flight fare badge on a country card', await page.locator('.guide-ccard-badge').count() === 0);
   const allIn = await page.locator('.guide-ccard-n').first().innerText().catch(() => '');
   check('no "all in from" line on a country card', !/all in/i.test(allIn), allIn);
-  check('the card says what a day costs there', /€|places/i.test(allIn), allIn);
+  check('the card says what the country holds', /places/i.test(allIn), allIn);
 
   // The thing that arrived.
   const infoBtn = page.locator('.guide-ccard-info').first();
@@ -125,17 +129,13 @@ try {
   await page.locator('.cbrief-close').click();
   await page.waitForTimeout(200);
 
-  const search = page.locator('.guide-search').first();
+  // The search box is gone: 43 countries is a screen, not a corpus, and the
+  // grid now leads with the countries holding shortlisted places. Cards are
+  // found by name in the full grid instead of by filtering it.
   for (const name of ['Austria', 'Czechia']) {
-    await search.fill(name);
-    await page.waitForTimeout(600);
-    // By NAME: the grid always keeps already-picked countries on screen, so
-    // "the first card" after a search is not the card you searched for.
     const card = page.locator('.guide-ccard').filter({ hasText: name }).first().locator('.guide-ccard-pick');
-    if (await card.count()) { await card.click(); await page.waitForTimeout(400); }
+    if (await card.count()) { await card.scrollIntoViewIfNeeded(); await card.click(); await page.waitForTimeout(400); }
   }
-  await search.fill('');
-  await page.waitForTimeout(300);
   const picked = await page.locator('.guide-picked-chip').count();
   check('picked countries show as chips', picked >= 2, `${picked} chips`);
 

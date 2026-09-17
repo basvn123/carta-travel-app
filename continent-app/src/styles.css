@@ -2029,29 +2029,6 @@ input, select {
   border: 1px solid var(--rule);
   margin-bottom: 16px;
 }
-.cpm-pin {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  padding: 3px 8px 3px 3px;
-  background: rgba(245, 241, 232, 0.95);
-  border: 1px solid var(--rule);
-  border-radius: 999px;
-  box-shadow: 0 1px 5px rgba(26, 26, 26, 0.18);
-  cursor: pointer;
-  transition: border-color .12s, background .12s, transform .12s;
-}
-.cpm-pin:hover { border-color: var(--ink-soft); transform: translateY(-1px); }
-.cpm-pin.on { background: var(--accent); border-color: var(--accent); }
-.cpm-flag {
-  width: 20px; height: 15px;
-  object-fit: cover;
-  border-radius: 2px;
-  display: block;
-  flex-shrink: 0;
-}
-.cpm-name { font-size: 11px; font-weight: 500; color: var(--ink); white-space: nowrap; }
-.cpm-pin.on .cpm-name { color: #fff; }
 .guide-country-name { font-family: var(--display); font-size: 14.5px; color: var(--ink); }
 .guide-country-n { font-family: var(--mono); font-size: 10px; color: var(--ink-mute); }
 
@@ -14582,12 +14559,6 @@ input, select {
    Zoomed out, name pills collide with each other and with the basemap's own
    labels. Each map drops the widest part of its pin below a zoom threshold
    and brings it back on hover, on selection, and as you zoom in. */
-.cpm-dense .cpm-pin { padding: 3px; }
-.cpm-dense .cpm-pin .cpm-name { display: none; }
-.cpm-dense .cpm-pin:hover .cpm-name,
-.cpm-dense .cpm-pin.on .cpm-name { display: inline; }
-.cpm-dense .cpm-pin:hover, .cpm-dense .cpm-pin.on { padding: 3px 8px 3px 3px; }
-.cpm-pin:hover, .cpm-pin.on { z-index: 4; }
 .fpm-pin:hover { z-index: 4; }
 
 /* Collision demotion (declutterPins): a crowded pill first drops its city
@@ -31382,3 +31353,403 @@ button.ai-sched-main:focus-visible {
   cursor: pointer;
 }
 .slist-drop:hover { background: var(--paper-dim); }
+
+
+/* ==========================================================================
+   The Where step, rebuilt (prompt T2)
+   Two tabs over one selection: a quiz that recommends countries from the
+   catalogue, and the map or grid you pick them on yourself. Nothing here
+   prints a price: what a country costs is on its brief, and a fare is not a
+   fact about a country.
+   ========================================================================== */
+
+/* ---- Planner rhythm -----------------------------------------------------
+   The global `* { margin: 0 }` reset left every captioned block to invent its
+   own spacing, so titles sat on their content. One section shape, one set of
+   margins, used by PlannerSection.jsx. */
+.guide-section + .guide-section { margin-top: var(--space-7); }
+.guide-section-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-bottom: var(--space-3);
+}
+.guide-section-title {
+  font-family: var(--display);
+  font-size: 18px;
+  line-height: 1.25;
+  font-weight: 600;
+  color: var(--ink);
+}
+.guide-section-aside { flex: none; }
+.guide-section-sub {
+  margin-top: calc(-1 * var(--space-2));
+  margin-bottom: var(--space-3);
+  font-size: 13px;
+  color: var(--ink-mute);
+}
+.guide-canvas > .guide-title + .guide-sub { margin-bottom: var(--space-5); }
+
+/* ---- The two tabs ------------------------------------------------------- */
+.guide-wtabs { width: min(100%, 420px); margin-bottom: var(--space-5); }
+.guide-wtabs button { min-height: var(--tap); }
+
+/* ---- The quiz ----------------------------------------------------------- */
+.wq { display: block; }
+.wq-q { scroll-margin-top: 12px; }
+/* A collapsed answer is a sibling of the next question, not a section, so the
+   `.guide-section + .guide-section` rule never fires between them and the next
+   heading landed on the answer above it. */
+.wq-done + .guide-section,
+.guide-section + .wq-done { margin-top: var(--space-5); }
+
+.wq-group + .wq-group { margin-top: var(--space-4); }
+.wq-group-label {
+  display: block;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+  margin-bottom: var(--space-2);
+}
+
+.wq-chips { display: grid; gap: var(--space-2); }
+.wq-cols-1 { grid-template-columns: 1fr; }
+.wq-cols-2 { grid-template-columns: repeat(auto-fill, minmax(168px, 1fr)); }
+
+.wq-chip {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: var(--tap);
+  padding: 9px 12px;
+  text-align: left;
+  background: var(--paper);
+  border: 1px solid var(--rule);
+  border-radius: 11px;
+  cursor: pointer;
+  color: var(--ink);
+  transition: border-color .12s, background .12s;
+}
+.wq-chip:hover:not(:disabled) { border-color: var(--ink-soft); }
+.wq-chip:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.wq-chip.on { border-color: var(--accent); background: var(--accent-bg); }
+.wq-chip:disabled { opacity: .45; cursor: default; }
+.wq-chip-icon { flex: none; display: flex; color: var(--ink-soft); }
+.wq-chip.on .wq-chip-icon { color: var(--accent); }
+.wq-chip-text { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+.wq-chip-text b { font-size: 13.5px; font-weight: 550; }
+.wq-chip-text small { font-size: 11.5px; color: var(--ink-mute); }
+.wq-chip-check { margin-left: auto; flex: none; display: flex; color: var(--accent); }
+
+/* An answered question, collapsed to its answer. It stays a button, so
+   changing your mind is one tap rather than a walk back through the quiz. */
+.wq-done {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  width: 100%;
+  min-height: var(--tap);
+  padding: 8px 12px;
+  margin-top: var(--space-3);
+  text-align: left;
+  background: none;
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  cursor: pointer;
+  color: var(--ink);
+}
+.wq-done:hover { border-color: var(--ink-soft); background: var(--paper-dim); }
+.wq-done:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.wq-done-check { flex: none; display: flex; color: var(--accent); }
+.wq-done-text { display: flex; flex-direction: column; gap: 1px; min-width: 0; flex: 1; }
+.wq-done-text small {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+}
+.wq-done-text b { font-size: 13.5px; font-weight: 550; }
+.wq-done-edit { flex: none; display: flex; color: var(--ink-mute); }
+
+.wq-next {
+  margin-top: var(--space-3);
+  min-height: var(--tap);
+  padding: 0 18px;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 999px;
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.wq-month {
+  margin-top: var(--space-4);
+  font-size: 12.5px;
+  color: var(--ink-mute);
+}
+
+.wq-results { margin-top: var(--space-7); }
+
+/* ---- The recommendation cards ------------------------------------------- */
+.mcards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
+  gap: var(--space-4);
+}
+.mcard {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--rule);
+  border-radius: 14px;
+  overflow: hidden;
+  background: var(--paper);
+}
+.mcard.on { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent); }
+/* The button owns the shape and the image fills it absolutely, the same way
+   the Destinations cards do it. Letting the <img> carry the ratio does not
+   work: HeroImage sets width/height ATTRIBUTES to the ratio (3 and 2), and a
+   2px-tall image is what you get, with the country name stranded outside it. */
+.mcard-pick {
+  position: relative;
+  display: block;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+  width: 100%;
+  aspect-ratio: 3 / 2;
+  overflow: hidden;
+  background: var(--paper-dim);
+}
+.mcard-img {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 42%;
+}
+.mcard-scrim {
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 58%;
+  background: linear-gradient(to top, rgba(0, 0, 0, .58), rgba(0, 0, 0, 0));
+  pointer-events: none;
+}
+.mcard-head {
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: #fff;
+  font-family: var(--display);
+  font-size: 17px;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, .45);
+}
+.mcard-check {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  display: flex;
+  padding: 5px;
+  border-radius: 999px;
+  background: var(--accent);
+  color: #fff;
+}
+
+.mcard-body { display: flex; flex-direction: column; gap: var(--space-2); padding: var(--space-3); }
+.mcard-match {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--accent);
+}
+.mcard-month { font-weight: 400; color: var(--ink-mute); }
+
+.mcard-why { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 3px; }
+.mcard-why li {
+  font-size: 12.5px;
+  color: var(--ink-soft);
+  padding-left: 13px;
+  position: relative;
+}
+.mcard-why li::before {
+  content: "";
+  position: absolute;
+  left: 3px;
+  top: 7px;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--rule);
+}
+
+.mcard-places { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-2); }
+.mcard-place { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.mcard-place { position: relative; }
+.mcard-place-img {
+  display: block;
+  width: 100%;
+  height: 58px;
+  object-fit: cover;
+  border-radius: 8px;
+  background: var(--paper-dim);
+}
+.mcard-place-name {
+  font-size: 11px;
+  color: var(--ink-soft);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mcard-acts { display: flex; gap: var(--space-2); margin-top: auto; }
+.mcard-add,
+.mcard-info {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  min-height: var(--tap);
+  padding: 0 14px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.mcard-add {
+  flex: 1;
+  border: 1px solid var(--accent);
+  background: var(--accent);
+  color: #fff;
+}
+.mcard-add.on { background: var(--accent-bg); color: var(--accent); }
+.mcard-info {
+  flex: none;
+  border: 1px solid var(--rule);
+  background: none;
+  color: var(--ink-soft);
+  font-weight: 500;
+}
+.mcard-info:hover { border-color: var(--ink-soft); }
+
+.mcards-more {
+  display: block;
+  margin: var(--space-4) auto 0;
+  min-height: var(--tap);
+  padding: 0 18px;
+  background: none;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  color: var(--ink-soft);
+  font-size: 13px;
+  cursor: pointer;
+}
+.mcards-more:hover { border-color: var(--ink-soft); }
+
+/* ---- The country map, now polygons -------------------------------------- */
+/* The map is taller than it is wide on a phone and wider than it is tall on a
+   desktop, and Europe is roughly square, so the height is capped rather than
+   let run to the full column: a very tall box fits Europe by WIDTH and fills
+   the spare height with Greenland and the Atlantic. */
+.cpm-wrap { position: relative; }
+.cpm { height: min(58vh, 520px); min-height: 380px; margin-bottom: 0; }
+.guide-where-map .cpm { height: min(58vh, 520px); margin-bottom: 0; }
+
+.cpm-legend {
+  position: absolute;
+  left: 10px;
+  bottom: 10px;
+  display: flex;
+  gap: 12px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, .92);
+  border: 1px solid var(--rule);
+  font-size: 11px;
+  color: var(--ink-soft);
+  pointer-events: none;
+}
+.cpm-legend-item { display: inline-flex; align-items: center; gap: 5px; }
+.cpm-legend i { width: 11px; height: 11px; border-radius: 3px; display: block; }
+.cpm-key-sel { background: var(--accent-bg); border: 1.5px solid var(--accent); }
+.cpm-key-rec { border: 1.5px dashed var(--accent); }
+
+/* Touch: a tap opens this instead of a hover tooltip nobody can reach. */
+.cpm-card {
+  position: absolute;
+  left: 10px;
+  right: 10px;
+  bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 8px;
+  border-radius: 12px;
+  background: var(--paper);
+  border: 1px solid var(--rule);
+  box-shadow: 0 8px 24px rgba(15, 23, 42, .16);
+}
+.cpm-card-img { width: 56px; height: 56px; border-radius: 9px; object-fit: cover; flex: none; }
+.cpm-card-text { display: flex; flex-direction: column; gap: 6px; min-width: 0; flex: 1; }
+.cpm-card-text b { font-family: var(--display); font-size: 15px; }
+.cpm-card-acts { display: flex; gap: var(--space-2); }
+.cpm-card-add,
+.cpm-card-info {
+  min-height: 36px;
+  padding: 0 12px;
+  border-radius: 999px;
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.cpm-card-add { border: 1px solid var(--accent); background: var(--accent); color: #fff; }
+.cpm-card-add.on { background: var(--accent-bg); color: var(--accent); }
+.cpm-card-info { border: 1px solid var(--rule); background: none; color: var(--ink-soft); font-weight: 500; }
+.cpm-card-close {
+  flex: none;
+  align-self: flex-start;
+  width: 28px;
+  height: 28px;
+  border: none;
+  background: none;
+  font-size: 18px;
+  line-height: 1;
+  color: var(--ink-mute);
+  cursor: pointer;
+}
+
+/* The shortlist badge on a hand-picked country card. */
+.guide-ccard-fav {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, .94);
+  font-size: 10.5px;
+  font-weight: 600;
+  color: var(--accent);
+}
+
+@media (max-width: 768px) {
+  .guide-section + .guide-section { margin-top: var(--space-6); }
+  .wq-cols-2 { grid-template-columns: repeat(2, 1fr); }
+  .wq-chip { padding: 8px 10px; }
+  .wq-chip-text b { font-size: 12.5px; }
+  .mcards { grid-template-columns: 1fr; }
+  .cpm, .guide-where-map .cpm { height: 62vh; min-height: 380px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wq-chip { transition: none; }
+}

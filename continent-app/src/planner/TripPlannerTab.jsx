@@ -653,6 +653,7 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
           data={data}
           stayTier={tp.stayTier}
           lifestyle={lifestyle}
+          favorites={favorites}
           onCancel={() => setWizardOpen(false)}
           onComplete={handleWizardComplete}
         />
@@ -1229,7 +1230,7 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
       )}
 
       {wizardOpen && (
-        <GuidedTripWizard data={data} stayTier={tp.stayTier} lifestyle={lifestyle} onCancel={() => setWizardOpen(false)} onComplete={handleWizardComplete} />
+        <GuidedTripWizard data={data} stayTier={tp.stayTier} lifestyle={lifestyle} favorites={favorites} onCancel={() => setWizardOpen(false)} onComplete={handleWizardComplete} />
       )}
     </div>
   );

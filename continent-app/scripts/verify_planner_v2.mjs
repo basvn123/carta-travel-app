@@ -104,20 +104,18 @@ await page.screenshot({ path: 'shots/planner-v2-basics.png' });
 // ── Step 4: Where ──
 check('the next step is Where', /where are we going/i.test(await page.locator('.guide-title').first().innerText().catch(() => '')));
 await page.waitForTimeout(1200);
+// The step opens on the quiz now (prompt T2). The country grid lives behind
+// the second tab, so everything below has to ask for it.
+check('the Where step opens on the quiz', await page.locator('.wq').isVisible());
+await page.locator('.guide-wtabs [role="tab"]').nth(1).click();
+await page.waitForTimeout(700);
 const estCount = await page.locator('.guide-ccard-n').count();
-check('country cards carry a cost line', estCount >= 10, String(estCount));
+check('country cards carry a places line', estCount >= 10, String(estCount));
 const cardLine = await page.locator('.guide-ccard-n').first().innerText();
-check('the line is what a day costs there', /a day|places/i.test(cardLine.trim()), cardLine);
+check('the line is what the country holds', /places/i.test(cardLine.trim()), cardLine);
 check('no transit badge survives on a card', await page.locator('.guide-ccard-badges').count() === 0);
 check('no city count on the cards', !/\d+ cities/i.test(await page.locator('.guide-cgrid').innerText()));
-// The picking CTA and the search field belong together.
-const gap = await page.evaluate(() => {
-  const cta = document.querySelector('.guide-where-tools');
-  const search = document.querySelector('.guide-picklist-head');
-  if (!cta || !search) return null;
-  return Math.round(search.getBoundingClientRect().top - cta.getBoundingClientRect().bottom);
-});
-check('CTA and search sit close', gap != null && gap <= 16, `${gap}px`);
+check('the country search box is gone', await page.locator('.guide-where-col input.guide-search').count() === 0);
 const recapTxt = await page.locator('.guide-recap').innerText().catch(() => '');
 check('recap carries origin + party', /ghent/i.test(recapTxt) && /2 travellers/i.test(recapTxt), recapTxt.replace(/\s+/g, ' ').slice(0, 90));
 check('recap no longer names a travel style', !/budget|standard|comfort/i.test(recapTxt), recapTxt.replace(/\s+/g, ' ').slice(0, 90));

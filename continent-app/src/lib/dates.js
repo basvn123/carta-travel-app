@@ -36,6 +36,26 @@ export function fmtDate(iso, withWeekday = false) {
   return `${wd} ${base}`;
 }
 
+/**
+ * The name of a month, 1..12, in the language the app is showing.
+ *
+ * The rest of this file prints English abbreviations from a fixed table, which
+ * is fine for a compact date stamp ("04 Sep 2026" reads the same everywhere)
+ * but not for a sentence: "Best in September" has to be a German September in
+ * German. Intl has the names for all six locales already, so nothing is added
+ * to the six locale files for this.
+ */
+export function monthName(m, lang = 'en', long = true) {
+  const n = Number(m);
+  if (!n || n < 1 || n > 12) return '';
+  try {
+    return new Intl.DateTimeFormat(lang || 'en', { month: long ? 'long' : 'short' })
+      .format(new Date(Date.UTC(2021, n - 1, 15)));
+  } catch {
+    return MONTHS[n - 1];
+  }
+}
+
 /** Today's local date as ISO 'YYYY-MM-DD'. */
 export function todayISO() {
   const t = new Date();

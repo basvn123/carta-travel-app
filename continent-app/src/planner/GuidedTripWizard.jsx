@@ -19,6 +19,15 @@ import { ReadyTripsStep } from './ReadyTripsStep.jsx';
 import { TravelLegsSection, travelTotal } from './TravelLegsSection.jsx';
 import { TRAVEL_MODES, TRAVEL_MODE_LABEL } from '../lib/transportLinks.js';
 import { buildCountryBriefs } from '../lib/countryBrief.js';
+import { matchCountries, SPEND_CHOICES } from '../lib/countryMatch.js';
+import { loadTrailsIndex } from '../lib/trails.js';
+import { loadBeachIndex } from '../lib/beaches.js';
+import { loadLakeIndex } from '../lib/lakes.js';
+import { loadMountainIndex } from '../lib/mountains.js';
+import { loadCyclingIndex } from '../lib/cycling.js';
+import { WhereQuiz } from './WhereQuiz.jsx';
+import { CountryMatchCards } from './CountryMatchCards.jsx';
+import { PlannerSection } from './PlannerSection.jsx';
 import { planRoute, routeOrder } from '../lib/cartaRoute.js';
 import { loadTrip } from '../lib/trips.js';
 import { tripHeadline } from '../lib/tripStory.js';
@@ -28,13 +37,12 @@ import {
 import { haversineKm, tripDaysBetween, accommodationPerPerson, groundSpendPerPerson } from '../lib/runtime_pricing.js';
 import { eur } from '../lib/format.js';
 import { cityLabel } from '../lib/placeName.js';
-import { fmtDate, addDays, laterISO, useToday } from '../lib/dates.js';
+import { favDestIds } from '../lib/favorites.js';
+import { fmtDate, addDays, laterISO, useToday, monthName } from '../lib/dates.js';
 import { geocodeAddress } from '../lib/geocode.js';
 import { useCountryInsights } from '../hooks/useCountryInsights.js';
 import {
   SparkIcon, CheckIcon, AlertIcon, TrainIcon, BusIcon, CarIcon, FerryIcon, InfoIcon,
-  TreeIcon, DiningIcon, MoonIcon,
-  CameraIcon, CastleIcon, BeachIcon,
   LeafIcon, ScaleIcon, BoltIcon, StarIcon, RouteIcon, BedIcon, MapPinIcon,
   CalendarIcon, PersonIcon, DiamondIcon, DotIcon, LuggageIcon, ChevronRightIcon,
   SuitcaseIcon,
@@ -135,22 +143,17 @@ const STEP_LABEL_KEYS = {
   'Finish': 'wizard.stepFinish',
 };
 
-// "What kind of vacation?" tiles for the let-Carta-pick-countries quiz.
-const VIBES = [
-  { key: 'beaches', labelKey: 'wizard.vibeBeaches', Icon: BeachIcon },
-  { key: 'nature', labelKey: 'wizard.vibeNature', Icon: TreeIcon },
-  { key: 'cities', labelKey: 'wizard.vibeCities', Icon: CastleIcon },
-  { key: 'food', labelKey: 'wizard.vibeFood', Icon: DiningIcon },
-  { key: 'nightlife', labelKey: 'wizard.vibeNightlife', Icon: MoonIcon },
-  { key: 'hidden', labelKey: 'wizard.vibeHidden', Icon: CameraIcon },
-];
-
 // "How full should your days feel?"
 const PACE_CHOICES = [
   { key: 'relaxed', Icon: LeafIcon, labelKey: 'wizard.paceRelaxed', subKey: 'wizard.paceRelaxedSub' },
   { key: 'balanced', Icon: ScaleIcon, labelKey: 'wizard.paceBalanced', subKey: 'wizard.paceBalancedSub' },
   { key: 'packed', Icon: BoltIcon, labelKey: 'wizard.pacePacked', subKey: 'wizard.pacePackedSub' },
 ];
+
+// The two ways to answer "where", as a real tablist: the segmented control
+// is keyboard-navigable with the arrow keys, which two adjacent buttons are
+// not, and screen readers announce it as one control with two states.
+const WHERE_TABS = ['help', 'hand'];
 
 const BADGE_LABELS = {
   pick: { labelKey: 'wizard.badgePick', cls: 'pick' },
@@ -192,9 +195,9 @@ const BADGE_LABELS = {
 // does not take it and does not change it.
 export function GuidedTripWizard({
   data, onCancel, onComplete, stayTier = 'home', inline = false,
-  lifestyle = null,
+  lifestyle = null, favorites = null,
 }) {
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
   const destinations = data?.destinations || {};
   // Never offer a date that has already happened: the catalogue's fare window
   // opens on the day the fares were harvested, which is behind us by the time
@@ -255,9 +258,19 @@ export function GuidedTripWizard({
   };
 
   const [countries, setCountries] = useState(() => new Set(savedDraft.countries || []));
-  const [countryQuery, setCountryQuery] = useState('');
-  const [countryQuizOpen, setCountryQuizOpen] = useState(false);
-  const [vibes, setVibes] = useState(() => new Set());
+  // The Where step is two tabs over one selection: a quiz that recommends
+  // countries, and the map/grid you pick them on yourself. It opens on the
+  // quiz for a traveller who has chosen nothing, and on the picker for one who
+  // already has, because arriving back at a quiz you have answered is a step
+  // backwards.
+  const [whereTab, setWhereTab] = useState(() => (
+    (savedDraft.countries || []).length ? 'hand' : 'help'
+  ));
+  // The quiz answers, restored from the draft so a reload does not re-ask.
+  const [quiz, setQuiz] = useState(() => ({
+    types: [], typesDone: false, spend: '', around: '', distance: '', pace: '', avoid: [], editing: '',
+    ...(savedDraft.quiz || {}),
+  }));
   // Which country's brief is open beside the grid. One at a time: this is a
   // reading panel, and two of them would be a comparison table nobody asked
   // for.
@@ -425,13 +438,31 @@ export function GuidedTripWizard({
   // Which step is which (so the render below reads by NAME).
   const stepName = steps[Math.min(step, steps.length) - 1] || 'Finish';
 
-  // Typing narrows the (43-country) grid; countries already picked always stay
-  // on screen, so a filter can never hide what you chose a moment ago.
-  const shownCountries = useMemo(() => {
-    const q = countryQuery.trim().toLowerCase();
-    if (!q) return allCountries;
-    return allCountries.filter((c) => c.country.toLowerCase().includes(q) || countries.has(c.country));
-  }, [allCountries, countryQuery, countries]);
+  // How many shortlisted places each country holds, so the grid can lead with
+  // the countries the traveller has already been starring. The search box that
+  // used to filter this grid is gone: 43 countries is a screen, not a corpus,
+  // and the thing worth surfacing is the shortlist, not a substring.
+  const favByCountry = useMemo(() => {
+    const out = new Map();
+    if (!favorites || !favorites.size) return out;
+    for (const id of favDestIds(favorites)) {
+      const d = destinations[id];
+      if (d?.country) out.set(d.country, (out.get(d.country) || 0) + 1);
+    }
+    return out;
+  }, [favorites, destinations]);
+
+  // Alphabetical, but a country holding shortlisted places comes first: that
+  // is the country the traveller has already told us they are interested in.
+  const handCountries = useMemo(() => {
+    const rows = allCountries.slice();
+    rows.sort((a, b) => {
+      const fa = favByCountry.get(a.country) || 0;
+      const fb = favByCountry.get(b.country) || 0;
+      return fb - fa || a.country.localeCompare(b.country);
+    });
+    return rows;
+  }, [allCountries, favByCountry]);
 
   // Every Ryanair route into the chosen countries for the chosen period,
   // cheapest first. The pick anchors the whole trip, so this must stay
@@ -683,79 +714,72 @@ export function GuidedTripWizard({
     });
   };
 
-  const toggleVibe = (key) => {
-    setVibes((prev) => {
-      const next = new Set(prev);
-      next.has(key) ? next.delete(key) : next.add(key);
-      return next;
-    });
+  /** Merge one answer into the quiz. The whole object is stored, so the draft
+   *  restores the walk exactly where it was left. */
+  const answerQuiz = (patch) => setQuiz((prev) => ({ ...prev, ...patch }));
+
+  /** Left/right moves between the two Where tabs, as a tablist must. */
+  const onWhereTabKey = (e) => {
+    if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
+    e.preventDefault();
+    const i = WHERE_TABS.indexOf(whereTab);
+    const next = WHERE_TABS[(i + (e.key === 'ArrowRight' ? 1 : WHERE_TABS.length - 1)) % WHERE_TABS.length];
+    setWhereTab(next);
+    document.getElementById(`wtab-${next}`)?.focus();
   };
 
-  // ---- "Carta picks the countries": rank countries for the chosen vibes ----
-  // Data-driven: each country is scored on how many genuinely strong matches
-  // it holds for the selected vacation types (curated ratings + tags).
-  const countrySuggestions = useMemo(() => {
-    if (!countryQuizOpen || vibes.size === 0) return [];
-    // Each vacation type reads the real catalogue signals, the `categories`
-    // tags a city carries plus its beauty-component intensities, so beaches,
-    // food and nightlife genuinely count. (The old code scored those three off
-    // an activity-kind fit that only knew museums/churches, so they were always
-    // zero and any beach/food/nightlife pick returned nothing.)
-    const has = (cats, ...keys) => keys.some((k) => cats.has(k));
-    const vibeFit = (dest) => {
-      const cats = new Set(dest.categories || []);
-      const comp = dest.beauty?.components || {};
-      const score = dest.rating?.score ?? dest.beauty?.score ?? 0;
-      let s = 0;
-      if (vibes.has('beaches')) {
-        s += (cats.has('beach') ? 1 : 0)
-           + (has(cats, 'coast', 'island') ? 0.5 : 0)
-           + (has(cats, 'surf', 'diving', 'sailing') ? 0.3 : 0)
-           + (comp.beach || 0)
-           + (dest.beauty?.top_beach ? 0.4 : 0);
-      }
-      if (vibes.has('nature')) {
-        s += (has(cats, 'nature', 'mountains', 'national-park', 'wilderness') ? 1 : 0)
-           + (has(cats, 'alps', 'hiking', 'lake', 'lakes', 'fjord', 'fjords', 'valley', 'volcanic', 'countryside', 'arctic', 'carpathians') ? 0.5 : 0)
-           + (comp.nature || 0) * 1.2;
-      }
-      if (vibes.has('cities')) {
-        s += (cats.has('city') ? 0.8 : 0)
-           + (has(cats, 'historic', 'unesco', 'art', 'iconic', 'medieval', 'baroque', 'renaissance', 'gothic', 'roman', 'cathedral', 'architecture') ? 0.6 : 0)
-           + (comp.iconic || 0) * 0.5 + (comp.heritage || 0) * 0.5;
-      }
-      if (vibes.has('food')) {
-        s += (cats.has('food') ? 1.2 : 0) + (cats.has('wine') ? 0.9 : 0) + (cats.has('beer') ? 0.5 : 0);
-      }
-      if (vibes.has('nightlife')) {
-        s += (cats.has('nightlife') ? 1.2 : 0) + (cats.has('party') ? 0.8 : 0) + (cats.has('music') ? 0.4 : 0);
-      }
-      if (vibes.has('hidden')) {
-        s += (dest.rating?.hidden_gem ? 1 : 0) + (has(cats, 'quiet', 'remote', 'village') ? 0.6 : 0);
-      }
-      return s * (0.6 + score / 14); // a strong match in a strong place counts for more
-    };
-    return allCountries
-      .map((c) => {
-        const fits = c.cities
-          .map(({ dest }) => ({ dest, s: vibeFit(dest) }))
-          .filter((x) => x.s > 0.6)
-          .sort((a, b) => b.s - a.s);
-        const top = fits[0]?.dest;
-        return {
-          country: c.country,
-          iso2: c.iso2,
-          n: fits.length,
-          score: fits.slice(0, 6).reduce((sum, x) => sum + x.s, 0),
-          reason: top
-            ? t(fits.length === 1 ? 'wizard.greatMatchOne' : 'wizard.greatMatches', { n: fits.length, city: cityLabel(top.city) })
-            : '',
-        };
-      })
-      .filter((c) => c.n >= 1 && c.score > 0.9)
-      .sort((a, b) => b.score - a.score)
-      .slice(0, 6);
-  }, [countryQuizOpen, vibes, allCountries, t]);
+  // ---- "Help me choose": the quiz, answered from the catalogue ------------
+  // The five published layer indexes, loaded once, so a recommendation can say
+  // "1,276 rated trails" rather than "great for hiking". They resolve null
+  // until they arrive and matchCountries simply scores without them, so the
+  // recommendations appear immediately and sharpen a moment later.
+  const [layerIndexes, setLayerIndexes] = useState({});
+  useEffect(() => {
+    if (whereTab !== 'help' || stepName !== 'Where') return;
+    let alive = true;
+    Promise.all([
+      loadTrailsIndex(), loadBeachIndex(), loadLakeIndex(),
+      loadMountainIndex(), loadCyclingIndex(),
+    ]).then(([trails, beaches, lakes, mountains, cycling]) => {
+      if (alive) setLayerIndexes({ trails, beaches, lakes, mountains, cycling });
+    }).catch(() => { /* a missing layer just means one less reason */ });
+    return () => { alive = false; };
+  }, [whereTab, stepName]);
+
+  // The month the trip actually falls in, which the When step already asked.
+  const tripMonth = useMemo(() => {
+    const iso = startDate || (flexMonth ? `${flexMonth}-05` : '');
+    const m = /^\d{4}-(\d{2})/.exec(iso);
+    return m ? Number(m[1]) : null;
+  }, [startDate, flexMonth]);
+
+  const countryMatches = useMemo(() => {
+    if (!quiz.types?.length) return [];
+    const rows = matchCountries({
+      destinations,
+      insights: countryInsights,
+      layerIndexes,
+      answers: quiz,
+      month: tripMonth,
+      origin: originPoint ? { lat: originPoint.lat, lon: originPoint.lon } : null,
+    });
+    // The card wants a photograph and three real places; the scorer returns
+    // ids, because it stays node-runnable and knows nothing about images.
+    return rows.map((r) => ({
+      ...r,
+      cover: countryCovers.get(r.country) || countryBriefs.get(r.country)?.cover || null,
+      places: (r.topPlaces || [])
+        .map((id) => ({ id, dest: destinations[id] }))
+        .filter((x) => x.dest),
+    }));
+  }, [quiz, destinations, countryInsights, layerIndexes, tripMonth, originPoint,
+    countryCovers, countryBriefs]);
+
+  /** The names the quiz recommended, for the map's dotted outline. */
+  const recommendedNames = useMemo(
+    () => new Set(countryMatches.slice(0, 6).map((m) => m.country)),
+    [countryMatches],
+  );
 
   // Stops whose nights Carta is allowed to keep rebalancing (added by a map
   // tap and never touched by hand). A stepper touch makes a stop "manual".
@@ -928,8 +952,8 @@ export function GuidedTripWizard({
     setStep(1);
     setBooked({ travel: false, stays: false });
     setCountries(new Set());
-    setCountryQuizOpen(false);
-    setVibes(new Set());
+    setWhereTab('help');
+    setQuiz({ types: [], typesDone: false, spend: '', around: '', distance: '', pace: '', avoid: [], editing: '' });
     setDateMode('exact');
     setFlexPad(false);
     setStartDate('');
@@ -1529,7 +1553,7 @@ export function GuidedTripWizard({
         dateMode,
         flexMonth,
         flexNights,
-        quiz: {},
+        quiz,
       },
       selectedDestination: [...countries][0] || null,
       // How they told us they are getting there, and what they said it cost.
@@ -1559,7 +1583,7 @@ export function GuidedTripWizard({
     if (stayStyle === 'single') plannerStore.setItineraryType('single');
   }, [originPlace, nearAirports, dateMode, startDate, endDate, windowNights, flexNights,
     flexMonth, adults, kids, travelStyle, countries, travelValues, includedIds, nights,
-    stayStyle, step, buildMode, tripPick?.id]); // eslint-disable-line react-hooks/exhaustive-deps
+    stayStyle, step, buildMode, tripPick?.id, quiz]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // A new step starts at its own top. Without this the body keeps the previous
   // step's scroll offset, so a long screen can open halfway down its own
@@ -1766,188 +1790,144 @@ export function GuidedTripWizard({
           {stepName === 'Where' && (
             <>
               <h2 className="guide-title">{t('wizard.whereTitle')}</h2>
+              <p className="guide-sub">{t('wizard.whereSub')}</p>
 
-              {/* One screen, two ways to read it: photo cards or the map of
-                  Europe, switched by the toggle below. Side by side, each half
-                  got half a screen and the cards were too small to carry a
-                  photograph; as views they each get the whole width. Opening a
-                  country's brief is the one thing that splits the width, and
-                  only for as long as it is open. */}
+              {/* The shortlist lives above the tabs, because it belongs to neither
+                  of them: a country added by the quiz and one added on the map are
+                  the same country, and the traveller has to be able to see
+                  everything they have chosen without first picking a tab. */}
+              {countries.size > 0 && (
+                <div className="guide-picked-row">
+                  {allCountries.filter((c) => countries.has(c.country)).map((c) => (
+                    <button
+                      key={c.country}
+                      className="guide-picked-chip"
+                      onClick={() => toggleCountry(c.country)}
+                      title={t('ready.dropCountry', { country: c.country })}
+                    >
+                      <Flag iso2={c.iso2} className="guide-flag-img-sm" />
+                      {c.country}
+                      <span className="guide-picked-x" aria-hidden="true">&times;</span>
+                    </button>
+                  ))}
+                  <button className="guide-stay-filter-clear" onClick={() => setCountries(new Set())}>
+                    {t('wizard.stayFilterClear')}
+                  </button>
+                </div>
+              )}
+
+              <div className="guide-datemode guide-wtabs" role="tablist" aria-label={t('wizard.whereTitle')}>
+                {WHERE_TABS.map((tab) => (
+                  <button
+                    key={tab}
+                    role="tab"
+                    id={`wtab-${tab}`}
+                    aria-selected={whereTab === tab}
+                    aria-controls={`wpanel-${tab}`}
+                    tabIndex={whereTab === tab ? 0 : -1}
+                    className={whereTab === tab ? 'on' : ''}
+                    onClick={() => setWhereTab(tab)}
+                    onKeyDown={onWhereTabKey}
+                  >
+                    {t(tab === 'help' ? 'wizard.tabHelp' : 'wizard.tabHand')}
+                  </button>
+                ))}
+              </div>
+
               <div className={`guide-where ${openBrief ? 'has-brief' : ''}`}>
                 <div className="guide-where-col">
-                  {/* One number does not need a card of its own. People sits
-                      on one line beside the "not sure?" escape hatch, and the
-                      escape hatch is quiet: picking countries is the job of
-                      this screen, so the shortcut must not outshout it. */}
-                  <div className="guide-where-tools">
-                    <button
-                      className={`guide-design-btn guide-design-btn-quiet ${countryQuizOpen ? 'on' : ''}`}
-                      onClick={() => setCountryQuizOpen((v) => !v)}
-                      aria-expanded={countryQuizOpen}
-                    >
-                      <span className="guide-design-spark"><SparkIcon size={13} /></span>
-                      <span className="guide-design-text">
-                        {t('wizard.pickCountriesBtn')}
-                        <small>{t('wizard.pickCountriesSub')}</small>
-                      </span>
-                    </button>
-                  </div>
-
-                  {countryQuizOpen && (
-                    <div className="guide-design-quiz">
-                      <span className="trip-field-label">{t('wizard.vibeQuestion')}</span>
-                      <div className="guide-interest-grid guide-vibe-grid">
-                        {VIBES.map((v) => (
-                          <button
-                            key={v.key}
-                            className={`guide-interest ${vibes.has(v.key) ? 'on' : ''}`}
-                            onClick={() => toggleVibe(v.key)}
-                            aria-pressed={vibes.has(v.key)}
-                          >
-                            {vibes.has(v.key) && <span className="guide-interest-check"><CheckIcon size={11} /></span>}
-                            <span className="guide-interest-icon"><v.Icon size={18} /></span>
-                            <span className="guide-interest-label">{t(v.labelKey)}</span>
-                          </button>
-                        ))}
-                      </div>
-                      {countrySuggestions.length > 0 && (
-                        <>
-                          <span className="trip-field-label">{t('wizard.cartaRecommends')}</span>
-                          <div className="guide-country-suggest-list">
-                            {countrySuggestions.map((c) => (
-                              <button
-                                key={c.country}
-                                className={`guide-country-suggest ${countries.has(c.country) ? 'on' : ''}`}
-                                onClick={() => toggleCountry(c.country)}
-                              >
-                                <Flag iso2={c.iso2} className="guide-flag-img-sm" />
-                                <span className="guide-country-suggest-text">
-                                  <b>{c.country}</b>
-                                  <small>{c.reason}</small>
-                                </span>
-                                {countries.has(c.country) && <CheckIcon size={13} />}
-                              </button>
-                            ))}
-                          </div>
-                        </>
-                      )}
-                      {vibes.size === 0 && (
-                        <p className="guide-empty">{t('wizard.pickVibeHint')}</p>
-                      )}
-                      {vibes.size > 0 && countrySuggestions.length === 0 && (
-                        <p className="guide-empty">{t('wizard.noVibeMatches')}</p>
-                      )}
-                    </div>
-                  )}
-
-                  <div className="guide-picklist-head">
-                    {/* The search filters the card grid, so it only appears
-                        with the card grid: left up in map view it looked like
-                        a control that had stopped working. */}
-                    {whereView === 'list' && (
-                      <input
-                        className="guide-search"
-                        type="search"
-                        value={countryQuery}
-                        onChange={(e) => setCountryQuery(e.target.value)}
-                        placeholder={t('wizard.countrySearchPlaceholder')}
-                        aria-label={t('wizard.countrySearchPlaceholder')}
+                  {whereTab === 'help' ? (
+                    <div role="tabpanel" id="wpanel-help" aria-labelledby="wtab-help">
+                      <WhereQuiz
+                        answers={quiz}
+                        onAnswer={answerQuiz}
+                        monthLabel={tripMonth ? monthName(tripMonth, lang) : ''}
                       />
-                    )}
-                    <span className="guide-picklist-count">
-                      {countries.size > 0
-                        ? t('wizard.countriesPicked', { n: countries.size })
-                        : t('wizard.countriesNonePicked')}
-                    </span>
-                    {countries.size > 0 && (
-                      <button className="guide-stay-filter-clear" onClick={() => setCountries(new Set())}>
-                        {t('wizard.stayFilterClear')}
-                      </button>
-                    )}
-                  </div>
 
-                  {/* The shortlist itself, in both views. Nothing on this
-                      screen is a commitment, so what has been ticked has to
-                      stay visible and one tap from being unticked. */}
-                  {countries.size > 0 && (
-                    <div className="guide-picked-row">
-                      {allCountries.filter((c) => countries.has(c.country)).map((c) => (
-                        <button
-                          key={c.country}
-                          className="guide-picked-chip"
-                          onClick={() => toggleCountry(c.country)}
-                          title={t('ready.dropCountry', { country: c.country })}
-                        >
-                          <Flag iso2={c.iso2} className="guide-flag-img-sm" />
-                          {c.country}
-                          <span className="guide-picked-x" aria-hidden="true">×</span>
-                        </button>
-                      ))}
-                    </div>
-                  )}
+                      {countryMatches.length > 0 && (
+                        <PlannerSection title={t('quiz.recommended')} className="wq-results">
+                          <CountryMatchCards
+                            matches={countryMatches}
+                            picked={countries}
+                            onToggle={toggleCountry}
+                            onBrief={(name) => setBriefCountry(briefCountry === name ? '' : name)}
+                          />
+                        </PlannerSection>
+                      )}
 
-                  <div className="guide-datemode guide-stay-view guide-where-view">
-                    <button className={whereView === 'map' ? 'on' : ''} onClick={() => setWhereView('map')}>{t('wizard.map')}</button>
-                    <button className={whereView === 'list' ? 'on' : ''} onClick={() => setWhereView('list')}>{t('wizard.list')}</button>
-                  </div>
-
-                  {whereView === 'list' ? (
-                    <div className="guide-cgrid">
-                      {shownCountries.map((c) => {
-                        const on = countries.has(c.country);
-                        const img = countryCovers.get(c.country);
-                        const b = countryBriefs.get(c.country);
-                        // Two real buttons rather than one nested in another:
-                        // the card picks the country, the corner button opens
-                        // what is in it.
-                        return (
-                          <div key={c.country} className={`guide-ccard ${on ? 'on' : ''} ${briefCountry === c.country ? 'reading' : ''}`}>
-                            <button
-                              className="guide-ccard-pick"
-                              onClick={() => toggleCountry(c.country)}
-                              aria-pressed={on}
-                              aria-label={c.country}
-                            >
-                              {img
-                                ? <img className="guide-ccard-img" src={img} alt="" loading="lazy" />
-                                : <span className="guide-ccard-img guide-ccard-noimg" aria-hidden="true" />}
-                              <span className="guide-ccard-scrim" aria-hidden="true" />
-                              {on && <span className="guide-ccard-check"><CheckIcon size={12} /></span>}
-                              <span className="guide-ccard-overlay">
-                                <span className="guide-ccard-name">
-                                  <Flag iso2={c.iso2} className="guide-flag-img-sm" />
-                                  {c.country}
-                                </span>
-                                <span className="guide-ccard-n">
-                                  {b?.dayEur != null
-                                    ? t('brief.cardDay', { price: eur(Math.round(b.dayEur)), n: b.nPlaces })
-                                    : t('brief.cardPlaces', { n: c.cities.length })}
-                                </span>
-                              </span>
-                            </button>
-                            <button
-                              className="guide-ccard-info"
-                              onClick={() => setBriefCountry(briefCountry === c.country ? '' : c.country)}
-                              aria-expanded={briefCountry === c.country}
-                            >
-                              <InfoIcon size={11} /> {t('brief.whatsThere')}
-                            </button>
-                          </div>
-                        );
-                      })}
-                      {shownCountries.length === 0 && (
-                        <p className="guide-empty">{t('wizard.noCountryMatches', { q: countryQuery })}</p>
+                      {quiz.types?.length > 0 && countryMatches.length === 0 && (
+                        <p className="guide-empty">{t('quiz.noMatches')}</p>
                       )}
                     </div>
                   ) : (
-                    <div className="guide-where-map">
-                      <CountryPickerMap countries={allCountries} selected={countries} onToggle={toggleCountry} />
+                    <div role="tabpanel" id="wpanel-hand" aria-labelledby="wtab-hand">
+                      <div className="guide-datemode guide-stay-view guide-where-view">
+                        <button className={whereView === 'list' ? 'on' : ''} onClick={() => setWhereView('list')}>{t('wizard.grid')}</button>
+                        <button className={whereView === 'map' ? 'on' : ''} onClick={() => setWhereView('map')}>{t('wizard.map')}</button>
+                      </div>
+
+                      {whereView === 'list' ? (
+                        <div className="guide-cgrid">
+                          {handCountries.map((c) => {
+                            const on = countries.has(c.country);
+                            const img = countryCovers.get(c.country);
+                            const b = countryBriefs.get(c.country);
+                            const favN = favByCountry.get(c.country) || 0;
+                            return (
+                              <div key={c.country} className={`guide-ccard ${on ? 'on' : ''} ${briefCountry === c.country ? 'reading' : ''}`}>
+                                <button
+                                  className="guide-ccard-pick"
+                                  onClick={() => toggleCountry(c.country)}
+                                  aria-pressed={on}
+                                  aria-label={c.country}
+                                >
+                                  {img
+                                    ? <img className="guide-ccard-img" src={img} alt="" loading="lazy" />
+                                    : <span className="guide-ccard-img guide-ccard-noimg" aria-hidden="true" />}
+                                  <span className="guide-ccard-scrim" aria-hidden="true" />
+                                  {on && <span className="guide-ccard-check"><CheckIcon size={12} /></span>}
+                                  {favN > 0 && (
+                                    <span className="guide-ccard-fav">{t('wizard.onShortlist', { n: favN })}</span>
+                                  )}
+                                  <span className="guide-ccard-overlay">
+                                    <span className="guide-ccard-name">
+                                      <Flag iso2={c.iso2} className="guide-flag-img-sm" />
+                                      {c.country}
+                                    </span>
+                                    <span className="guide-ccard-n">
+                                      {t('brief.cardPlaces', { n: b?.nPlaces ?? c.cities.length })}
+                                    </span>
+                                  </span>
+                                </button>
+                                <button
+                                  className="guide-ccard-info"
+                                  onClick={() => setBriefCountry(briefCountry === c.country ? '' : c.country)}
+                                  aria-expanded={briefCountry === c.country}
+                                >
+                                  <InfoIcon size={11} /> {t('brief.whatsThere')}
+                                </button>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      ) : (
+                        <div className="guide-where-map">
+                          <CountryPickerMap
+                            countries={allCountries}
+                            selected={countries}
+                            onToggle={toggleCountry}
+                            recommended={recommendedNames}
+                            covers={countryCovers}
+                            onBrief={(name) => setBriefCountry(briefCountry === name ? '' : name)}
+                          />
+                        </div>
+                      )}
                     </div>
                   )}
                 </div>
 
-                {/* The country, opened: what to visit, what to do, what a day
-                    costs. Inline beside the grid, never a floating layer. */}
+                {/* The country, opened: what to visit, what to do, what a day costs.
+                    Inline beside the grid, never a floating layer. */}
                 {openBrief && (
                   <CountryBrief
                     brief={openBrief}
