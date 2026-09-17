@@ -5,6 +5,7 @@ import { CountryFlag } from '../components/CountryFlag.jsx';
 import { CountryPickerMap } from '../map/CountryPickerMap.jsx';
 import { eur } from '../lib/format.js';
 import { useI18n } from '../i18n/index.jsx';
+import { PlannerSection } from './PlannerSection.jsx';
 import { cityLabel } from '../lib/placeName.js';
 import {
   RouteIcon, CheckIcon, SparkIcon, BedIcon, LoopIcon,
@@ -185,12 +186,12 @@ export function ReadyTripsStep({
 
       {!empty && rows != null && (
         <div className="wready-split">
-          <section className="wready-col">
-            <div className="wready-col-head">
-              <h3 className="wready-col-title"><RouteIcon size={13} /> {t('ready.multiTitle')}</h3>
-              <span className="wready-col-n">{multi.length}</span>
-            </div>
-            <p className="wready-col-sub">{t('ready.multiSub')}</p>
+          <PlannerSection
+            className="wready-col"
+            title={<><RouteIcon size={13} /> {t('ready.multiTitle')}</>}
+            sub={t('ready.multiSub')}
+            aside={<span className="wready-col-n">{multi.length}</span>}
+          >
             <div className="wready-grid">
               {multi.slice(0, shown.multi).map((trip) => (
                 <TripCard key={trip.id} trip={trip} picked={picked} chosen={trip.id === selectedId} onPick={onPick} t={t} />
@@ -207,14 +208,14 @@ export function ReadyTripsStep({
                 {t('ready.showMore', { n: multi.length - shown.multi })}
               </button>
             )}
-          </section>
+          </PlannerSection>
 
-          <section className="wready-col">
-            <div className="wready-col-head">
-              <h3 className="wready-col-title"><BedIcon size={13} /> {t('ready.singleTitle')}</h3>
-              <span className="wready-col-n">{single.length}</span>
-            </div>
-            <p className="wready-col-sub">{t('ready.singleSub')}</p>
+          <PlannerSection
+            className="wready-col"
+            title={<><BedIcon size={13} /> {t('ready.singleTitle')}</>}
+            sub={t('ready.singleSub')}
+            aside={<span className="wready-col-n">{single.length}</span>}
+          >
             <div className="wready-grid">
               {single.slice(0, shown.single).map((trip) => (
                 <TripCard key={trip.id} trip={trip} picked={picked} chosen={trip.id === selectedId} onPick={onPick} t={t} />
@@ -231,7 +232,7 @@ export function ReadyTripsStep({
                 {t('ready.showMore', { n: single.length - shown.single })}
               </button>
             )}
-          </section>
+          </PlannerSection>
         </div>
       )}
 

@@ -15800,7 +15800,7 @@ button.ai-sched-main:focus-visible {
   .day-flow-top { margin-bottom: 14px; }
   .day-flow-split { padding-bottom: 14px; }
   .day-flow-split .day-flow-panel { padding: 20px 26px 18px; gap: 11px; }
-  .day-flow-q { font-size: 25px; margin-bottom: var(--space-3); }
+  .day-flow-q { font-size: 25px; }
   .day-flow-date { padding-top: 0; }
   .day-flow-date .date-field-inline { max-width: 340px; }
   .day-flow-next { padding: 12px 24px; }
@@ -16235,7 +16235,7 @@ button.ai-sched-main:focus-visible {
 
 @media (max-width: 768px) {
   .day-flow { padding: 14px 14px 30px; }
-  .day-flow-q { font-size: 23px; margin-bottom: var(--space-4); }
+  .day-flow-q { font-size: 23px; }
   .day-flow-cards { grid-template-columns: 1fr; }
   /* The shared rail drops its names on a phone because the trip planner has
      seven of them. The day planner has three, and "Stay", "When" and "How"
@@ -31381,11 +31381,13 @@ button.ai-sched-main:focus-visible {
   .guide-section + .guide-section { margin-top: var(--space-6); }
 }
 
-/* The same rhythm on the day planner. Its question is the .day-flow-q, and the
-   panel under it is a flex column, so the gap there is the panel's to set. */
+/* The same rhythm on the day planner, but its question lives inside a flex
+   column, so the space under it is a gap, not a margin. Setting both is how
+   you get 38px where you asked for 22: the panel's own gap carries the
+   question's rhythm, and the margin applies only outside a gapped panel. */
 .day-flow-q { margin-bottom: var(--space-5); }
-.day-flow-panel { gap: var(--space-4); }
-.day-flow-panel > .day-flow-q + * { margin-top: 0; }
+.day-flow-panel { gap: var(--space-5); }
+.day-flow-panel > .day-flow-q { margin-bottom: 0; }
 
 /* ---- The two tabs ------------------------------------------------------- */
 .guide-wtabs { width: min(100%, 420px); margin-bottom: var(--space-5); }
