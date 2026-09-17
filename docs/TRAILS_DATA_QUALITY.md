@@ -278,11 +278,22 @@ assumed:
   named `[secteur 1..8]`, and is absent from all 17,619 published rows. The
   registry now carries it, in region FRF12, with 18 named ways and no
   relation.
-- **Corrected.** The audit says there is "no route relation anywhere" for it.
-  There are four relations named "Sentier des Roches" in the extract. So the
-  chainer is not the only question for Phase 2; why an existing relation did
-  not publish matters too, and the coverage report's reason code is what
-  should decide that, rather than either document's assumption.
+- **Confirmed, after a false alarm.** A name search finds four relations
+  called "Sentier des Roches" in the France extract, which looked at first
+  like a contradiction of the audit's "no route relation anywhere". It is
+  not. Two are `type=associatedStreet` (street addressing, not routes), and
+  the two real `route=hiking` relations are operated by Cote d'Or Tourisme
+  in Burgundy, about 400 km from the Vosges: different paths that share a
+  common French name. The Vosges walk at 48.0497N 7.0309E genuinely has no
+  relation, and the registry row correctly carries `relation_id: null` with
+  18 named ways.
+
+  The lesson is for Phase 2, not for the audit: **a French trail name is not
+  unique**. "Sentier des Roches", "Sentier des Douaniers" and their like
+  recur across the country, so the way chainer must not fold ways together
+  on a normalised name alone. Chain on the shared `wikipedia`/`wikidata` tag
+  first (rule 1 of section 4), and require physical endpoint proximity for
+  every name-based chain, or Burgundy and Alsace end up in one route.
 
 ### Decisions taken during the build, with their reasons
 
