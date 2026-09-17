@@ -383,7 +383,27 @@ const CYCLE_SORTS = [
  * width/height are the ASPECT, not pixels: CSS sizes the element, and the pair
  * is what reserves the box before the bytes arrive.
  */
-const CARD_SIZES = '(min-width: 769px) 720px, 100vw';
+/*
+ * What a card's photograph is ACTUALLY drawn at, measured rather than guessed.
+ *
+ * .places-list is 1 column below 640, 2 up to 1039, and 3 above it, and on a
+ * desktop the list sits beside the left panel rather than filling the window.
+ * Measured against the built app, the photo comes out at:
+ *
+ *      375 -> 159    640 -> 292    1040 -> 230    1440 -> 363
+ *      480 -> 212    768 -> 356    1280 -> 310    1920 -> 369
+ *
+ * so it is a hair under 46vw while the grid is 2-up, about 25vw once it is
+ * 3-up, and never wider than ~370 css px. The previous value claimed 96vw on a
+ * phone and 560px on a desktop, both roughly three times the truth, which is
+ * how a 310px card ended up downloading the 960px rendering: `sizes` is a
+ * promise the browser believes, and over-promising costs the bytes the srcset
+ * was added to save.
+ *
+ * Stated as vw rather than px so it stays true inside the panel layout, and
+ * capped at 370px so a very wide window does not climb a rung for nothing.
+ */
+const CARD_SIZES = '(max-width: 1039px) 47vw, min(26vw, 370px)';
 
 function CardPhoto({ url, className = 'places-card-img' }) {
   if (!url) return null;
@@ -786,15 +806,15 @@ const CountryCard = React.memo(function CountryCard({ cc, name, sub = null, img,
   }, [img, onAskCover, cc]);
   return (
     <button className="places-ccard" onClick={() => onPick(cc)}>
-      {/* A 2.6:1 strip, ~360 css px wide and ~138 tall, so a retina screen
-          wants 720 across. The ladder runs to 960 and the browser picks. */}
+      {/* A 2.6:1 strip. CARD_SIZES carries the widths it is really drawn at;
+          the ladder runs to 960 so a retina screen can still climb. */}
       <HeroImage
         url={img}
         city={name}
         iso2={cc}
         className="places-card-img"
         maxWidth={960}
-        sizes="(max-width: 639px) 96vw, (max-width: 1180px) 48vw, 560px"
+        sizes={CARD_SIZES}
         ratio={[26, 10]}
       />
       <span className="places-card-scrim" aria-hidden="true" />
@@ -848,14 +868,14 @@ const ItinCard = React.memo(function ItinCard({ tr, km, onOpen, t }) {
       <span className="itin-card-media">
         {/* cardThumb alone pins this to the 500px rendering, which was right
             for a 132px strip and is soft in a 3:2 frame. The srcset lets a
-            retina card take the 960 and leaves everything else on the 500. */}
+            retina card climb and leaves everything else lower. */}
         {tr.img
           ? (
             <img
               className="places-card-img"
               src={cardThumb(tr.img.url)}
               srcSet={srcSetFor(tr.img.url, 960)}
-              sizes="(max-width: 639px) 96vw, (max-width: 1180px) 48vw, 560px"
+              sizes={CARD_SIZES}
               alt=""
               loading="lazy"
             />
@@ -955,6 +975,10 @@ export function DestinationsTab({
   openMountain = null, onOpenMountainConsumed,
   openCycle = null, onOpenCycleConsumed,
   openTrip = null, onOpenTripConsumed, onOpenTripInPlanner,
+  // One country, asked for from somewhere else in the app (the planner's
+  // country brief). Just the filter, in whatever category is showing: no
+  // layer to wait for and nothing to open once it lands.
+  openCountry = null, onOpenCountryConsumed,
   // The shortlist, as the pair-aware pair App keeps: isFavorite(id, kind)
   // and onToggleFav(id, kind). Every full-screen feature page below wears the
   // same star from them, so a trail is kept exactly the way a city is.
@@ -1143,6 +1167,14 @@ export function DestinationsTab({
     setWantedTrail(openTrail);
     onOpenTrailConsumed?.();
   }, [openTrail, onOpenTrailConsumed]);
+
+  useEffect(() => {
+    if (!openCountry) return;
+    setQuery('');
+    setNearPlace(null);
+    setCountry(openCountry);
+    onOpenCountryConsumed?.();
+  }, [openCountry, onOpenCountryConsumed]);
 
   // Debounce only the 24.8k-row filter, never the input itself.
   useEffect(() => {

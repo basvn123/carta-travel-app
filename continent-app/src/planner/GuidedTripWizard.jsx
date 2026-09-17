@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { DateField } from '../components/DateField.jsx';
 import { ScoreChip, HiddenGemTag } from '../components/RatingBadge.jsx';
+import { HeroImage } from '../components/HeroImage.jsx';
 import { CountryPickerMap } from '../map/CountryPickerMap.jsx';
 import { CityPickerMap } from '../map/CityPickerMap.jsx';
 import {
@@ -19,7 +20,6 @@ import { ReadyTripsStep } from './ReadyTripsStep.jsx';
 import { TravelLegsSection, travelTotal } from './TravelLegsSection.jsx';
 import { TRAVEL_MODES, TRAVEL_MODE_LABEL } from '../lib/transportLinks.js';
 import { buildCountryBriefs } from '../lib/countryBrief.js';
-import { BAND_KEY } from '../lib/costIndex.js';
 import { matchCountries, SPEND_CHOICES } from '../lib/countryMatch.js';
 import { loadTrailsIndex } from '../lib/trails.js';
 import { loadBeachIndex } from '../lib/beaches.js';
@@ -38,6 +38,8 @@ import {
 import { haversineKm, tripDaysBetween, accommodationPerPerson, groundSpendPerPerson } from '../lib/runtime_pricing.js';
 import { eur } from '../lib/format.js';
 import { cityLabel } from '../lib/placeName.js';
+import { duplicateHeroes } from '../lib/heroImage.js';
+import { pickWithDupes } from '../lib/countryCovers.js';
 import { favDestIds } from '../lib/favorites.js';
 import { fmtDate, addDays, laterISO, useToday, monthName } from '../lib/dates.js';
 import { geocodeAddress } from '../lib/geocode.js';
@@ -55,10 +57,6 @@ import { suggestedNights, Flag, CityThumb, StayRow } from './GuidedTripWizardPar
 const ROUTES_PREVIEW = 14;
 const CITIES_PREVIEW = 8;
 const NEARBY_KM = 140;
-
-// Lead images that are not photographs: heraldry, locator maps, flags, and
-// anything rendered from an SVG (which on Commons is nearly always a diagram).
-const NON_PHOTO_IMG = /coat[_-]of[_-]arms|wappen|blason|escudo|flag|[_-]map[._]|position[_-]of|locator|karte|seal|emblem|logo|\.svg/i;
 
 /**
  * The fork in the full path, as one control: take a trip somebody already
@@ -197,6 +195,10 @@ const BADGE_LABELS = {
 export function GuidedTripWizard({
   data, onCancel, onComplete, stayTier = 'home', inline = false,
   lifestyle = null, favorites = null,
+  // Hand-offs out of the wizard, all three from App: open one destination's
+  // page, browse one country in the Destinations tab, open one published
+  // trip's page. Null in the modal mount, where there is nothing to hand to.
+  onOpenDest = null, onOpenCountry = null, onOpenTrip = null,
 }) {
   const { t, lang } = useI18n();
   const destinations = data?.destinations || {};
@@ -212,26 +214,20 @@ export function GuidedTripWizard({
   const originRec = data?.meta?.origins?.[originCode] || null;
   const originCity = originRec?.city || t('wizard.yourAirport');
   const allCountries = useMemo(() => countriesFromData(destinations), [destinations]);
-  // Cover photo per country: its best-RATED place supplies the picture (fame
-  // only breaks ties), the same rule the Destinations tab uses, so the two
-  // indexes show a country the same way. Ranking by fame instead handed every
-  // country its capital's least flattering municipal building; ranking by
-  // rating gives Santorini, Lauterbrunnen, Barcelona.
-  const countryCovers = useMemo(() => {
-    const m = new Map();
-    for (const c of allCountries) {
-      const ranked = c.cities
-        .filter((x) => x.dest?.image?.url)
-        .sort((a, b) => (b.dest.rating?.score || 0) - (a.dest.rating?.score || 0)
-          || (b.dest.rating?.fame || 0) - (a.dest.rating?.fame || 0));
-      // Wikipedia's lead image is sometimes a coat of arms, a locator map or a
-      // rendered logo rather than a photograph. Those read as clip art in a
-      // grid of photos, so step down to the next city instead.
-      const pick = ranked.find((x) => !NON_PHOTO_IMG.test(x.dest.image.url)) || ranked[0];
-      if (pick) m.set(c.country, pick.dest.image.url);
-    }
-    return m;
-  }, [allCountries]);
+  // Cover photo per country. The rules, and why each one is there, live in
+  // lib/countryCovers.js so they can be tested against the real catalogue.
+  //
+  // dupeHeroes is keyed off data?.destinations, not the `|| {}` alias above:
+  // that expression is a fresh object on every render, and this walks the
+  // whole 3.8k catalogue.
+  const dupeHeroes = useMemo(
+    () => duplicateHeroes(data?.destinations || {}),
+    [data?.destinations],
+  );
+  const countryCovers = useMemo(
+    () => pickWithDupes(allCountries, dupeHeroes),
+    [allCountries, dupeHeroes],
+  );
   const countryInsights = useCountryInsights();
 
   // ---- Wizard flow state ----
@@ -1872,7 +1868,6 @@ export function GuidedTripWizard({
                           {handCountries.map((c) => {
                             const on = countries.has(c.country);
                             const img = countryCovers.get(c.country);
-                            const b = countryBriefs.get(c.country);
                             const favN = favByCountry.get(c.country) || 0;
                             return (
                               <div key={c.country} className={`guide-ccard ${on ? 'on' : ''} ${briefCountry === c.country ? 'reading' : ''}`}>
@@ -1882,45 +1877,51 @@ export function GuidedTripWizard({
                                   aria-pressed={on}
                                   aria-label={c.country}
                                 >
-                                  {img
-                                    ? <img className="guide-ccard-img" src={img} alt="" loading="lazy" />
-                                    : <span className="guide-ccard-img guide-ccard-noimg" aria-hidden="true" />}
+                                  {/* A card is ~170 css px on a phone and ~240 on
+                                      a desktop grid, so it asks for the 330 or
+                                      500 rendering, never the wire's 960. */}
+                                  <HeroImage
+                                    url={img}
+                                    city={c.country}
+                                    iso2={c.iso2}
+                                    className="guide-ccard-img"
+                                    maxWidth={960}
+                                    ratio={[4, 3]}
+                                    sizes="(max-width: 480px) 46vw, (max-width: 768px) 30vw, 240px"
+                                  />
                                   <span className="guide-ccard-scrim" aria-hidden="true" />
                                   {on && <span className="guide-ccard-check"><CheckIcon size={12} /></span>}
                                   {favN > 0 && (
                                     <span className="guide-ccard-fav">{t('wizard.onShortlist', { n: favN })}</span>
                                   )}
+                                  {/* Flag and name, and nothing else on the
+                                      photograph. The place count was a number
+                                      nobody choosing a country was reading,
+                                      and what a day costs is a figure the
+                                      brief prints properly, one tap away. */}
                                   <span className="guide-ccard-overlay">
                                     <span className="guide-ccard-name">
                                       <Flag iso2={c.iso2} className="guide-flag-img-sm" />
                                       {c.country}
                                     </span>
-                                    <span className="guide-ccard-n">
-                                      {t('brief.cardPlaces', { n: b?.nPlaces ?? c.cities.length })}
-                                      {/* What a day costs, as the band rather
-                                          than the figure. Dropping the old
-                                          "EUR 47 a day" line took the cost
-                                          signal off this grid entirely, and
-                                          how expensive a country is, is one of
-                                          the two things people sort countries
-                                          by. The band is the same measurement
-                                          the brief prints, said without a
-                                          price, which is what this step asks
-                                          for. */}
-                                      {b?.dayBand != null && (
-                                        <em className={`guide-ccard-band b${b.dayBand}`}>
-                                          {t(BAND_KEY[b.dayBand])}
-                                        </em>
-                                      )}
-                                    </span>
                                   </span>
                                 </button>
+                                {/* The second action on a card that is
+                                    otherwise one big selection target: a round
+                                    "i" in the corner, out of the way of the
+                                    flag and the name, with a 44px hit area of
+                                    its own. stopPropagation, or reading about
+                                    a country would also add it. */}
                                 <button
                                   className="guide-ccard-info"
-                                  onClick={() => setBriefCountry(briefCountry === c.country ? '' : c.country)}
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setBriefCountry(briefCountry === c.country ? '' : c.country);
+                                  }}
                                   aria-expanded={briefCountry === c.country}
+                                  aria-label={t('brief.whatsThereIn', { country: c.country })}
                                 >
-                                  <InfoIcon size={11} /> {t('brief.whatsThere')}
+                                  <InfoIcon size={15} />
                                 </button>
                               </div>
                             );
@@ -1942,14 +1943,38 @@ export function GuidedTripWizard({
                   )}
                 </div>
 
-                {/* The country, opened: what to visit, what to do, what a day costs.
-                    Inline beside the grid, never a floating layer. */}
+                {/* The country, opened. A right-hand drawer on a desktop,
+                    where the grid reflows to make room; a bottom sheet on
+                    anything narrower. Never injected into the grid flow,
+                    which used to push the whole step down the page. */}
                 {openBrief && (
                   <CountryBrief
                     brief={openBrief}
                     picked={countries.has(openBrief.country)}
                     onToggle={toggleCountry}
                     onClose={() => setBriefCountry('')}
+                    destinations={destinations}
+                    meta={data?.meta}
+                    origin={originCode}
+                    tripMonth={tripMonth}
+                    nights={windowNights || flexNights}
+                    quizTypes={quiz.types}
+                    favorites={favorites}
+                    onOpenDest={onOpenDest}
+                    onSeeAll={onOpenCountry ? () => onOpenCountry(openBrief.iso2) : null}
+                    onOpenTrip={onOpenTrip ? (trip) => onOpenTrip(trip.id) : null}
+                    onPlanTrip={(trip) => {
+                      // Straight to the Trips step with this trip preselected:
+                      // the brief's whole job is to end in a decision. The card
+                      // itself goes into the pick, which is what the step reads.
+                      if (!countries.has(openBrief.country)) toggleCountry(openBrief.country);
+                      setBriefCountry('');
+                      setBuildMode('ready');
+                      setPendingTripPickId(null);
+                      setTripPick(trip);
+                      const i = steps.indexOf('Trips');
+                      if (i >= 0) goStep(i + 1);
+                    }}
                   />
                 )}
               </div>

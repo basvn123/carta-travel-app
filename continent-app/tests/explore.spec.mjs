@@ -100,7 +100,12 @@ try {
   await shoot(page, 'explore-filtered');
 
   // Map view on top of the same filter.
-  await page.locator('.xview-toggle button', { hasText: /^Map$/ }).click();
+  //
+  // :visible is load-bearing. The view toggle is rendered TWICE, once in the
+  // desktop bar and once as a phone FAB, and both are in the DOM at every
+  // width: which one you get is decided by CSS, not by mounting. Without it
+  // this is a strict-mode violation rather than a click.
+  await page.locator('.xview-toggle:visible button', { hasText: /^Map$/ }).click();
   await page.waitForTimeout(4500);
   check('map: canvas renders', await page.locator('.xmap canvas').count() === 1);
   check('map: chips survive the toggle', await page.locator('.xchip', { hasText: /Village/ }).count() === 1);

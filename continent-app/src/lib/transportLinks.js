@@ -93,6 +93,35 @@ export function skyscannerLink({
     + `?adultsv2=${Math.max(1, Math.min(8, adults | 0))}&cabinclass=economy&rtn=${back ? 1 : 0}`;
 }
 
+/**
+ * Google Flights, as a search rather than an itinerary.
+ *
+ * Google has no documented deep-link parameters, so what it does take is the
+ * query box: `flights from AMS to FCO on 2026-05-12 through 2026-05-19`, typed
+ * into the search string it already parses. That is deliberately a SEARCH and
+ * not a price. Carta does not hold live fares for these routes, so the link
+ * hands the question to somewhere that does rather than printing a number of
+ * its own (see the note at the top of lib/countryBrief.js).
+ *
+ * @param originIata  three letter code they leave from
+ * @param destIata    three letter code they land at
+ * @param date        outbound day, YYYY-MM-DD, optional
+ * @param returnDate  return day, YYYY-MM-DD, optional
+ * @returns a URL, or null without both airports
+ */
+export function googleFlightsLink({ originIata, destIata, date = '', returnDate = '' }) {
+  if (!IATA.test(originIata || '') || !IATA.test(destIata || '')) return null;
+  const from = originIata.toUpperCase();
+  const to = destIata.toUpperCase();
+  if (from === to) return null;
+  let q = `flights from ${from} to ${to}`;
+  if (ISO_DATE.test(date || '')) {
+    q += ` on ${date}`;
+    if (ISO_DATE.test(returnDate || '')) q += ` through ${returnDate}`;
+  }
+  return `https://www.google.com/travel/flights?q=${encodeURIComponent(q)}`;
+}
+
 /** The Trainline route page for a rail (or coach) leg, or null. Carries the
  *  route, not the date: Trainline's dated results need station URNs. */
 export function trainlineLink({ fromCity, toCity, mode = 'train' }) {

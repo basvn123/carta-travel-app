@@ -1,6 +1,19 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { CountryFlag } from '../components/CountryFlag.jsx';
-import { srcSetFor } from '../lib/heroImage.js';
+import { srcSetFor, fallbackSrc } from '../lib/heroImage.js';
+
+/*
+ * What these cards are really drawn at. They sit in .places-list, the same
+ * grid the Destinations cards use (1 column below 640, 2 up to 1039, 3 above),
+ * and on a desktop that list shares the window with the left panel, so the
+ * photo comes out at 159px on a 375 phone and never wider than ~370.
+ *
+ * The old value promised 96vw on a phone and 560px on a desktop, both about
+ * three times the truth, and `sizes` is a promise the browser believes: a
+ * 310px card was taking the 960px rendering. Kept identical to
+ * DestinationsTab's CARD_SIZES because it is literally the same grid.
+ */
+const CARD_SIZES = '(max-width: 1039px) 47vw, min(26vw, 370px)';
 import {
   loadJourneyIndex, loadJourneyType, typeLabel, diffLabel, monthsShort,
 } from '../lib/journeys.js';
@@ -41,9 +54,9 @@ function StyleCard({ type, n, onPick, t }) {
         ? (
           <img
             className="places-card-img"
-            src={hero.url}
+            src={fallbackSrc(hero.url, 500)}
             srcSet={srcSetFor(hero.url, 1280)}
-            sizes="(max-width: 639px) 96vw, (max-width: 1180px) 48vw, 560px"
+            sizes={CARD_SIZES}
             alt=""
             loading="lazy"
           />
@@ -76,9 +89,9 @@ function JourneyCard({ card, onOpen, t, lang }) {
         ? (
           <img
             className="places-card-img"
-            src={card.hero.url}
+            src={fallbackSrc(card.hero.url, 500)}
             srcSet={srcSetFor(card.hero.url, 1280)}
-            sizes="(max-width: 639px) 96vw, (max-width: 1180px) 48vw, 560px"
+            sizes={CARD_SIZES}
             alt=""
             loading="lazy"
           />

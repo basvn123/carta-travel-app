@@ -36,9 +36,9 @@ function MatchCard({ match, picked, onToggle, onBrief, t, lang }) {
           city={match.country}
           iso2={match.iso2}
           className="mcard-img"
-          maxWidth={500}
-          sizes="(max-width: 768px) 100vw, 360px"
-          ratio={[3, 2]}
+          maxWidth={960}
+          sizes="(max-width: 768px) 92vw, 380px"
+          ratio={[16, 10]}
         />
         <span className="mcard-scrim" aria-hidden="true" />
         {picked && <span className="mcard-check"><CheckIcon size={13} /></span>}

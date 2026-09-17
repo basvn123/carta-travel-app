@@ -13614,7 +13614,11 @@ input, select {
    too small to carry a picture and the map too small to read Europe. They are
    two views of one question now, switched by the toggle, each with the whole
    column. */
-.guide-where-col { min-width: 0; }
+/* A flow root, so the toggle's own 4px top margin never collapses out
+   through the column. It collapsed while the step was one plain block and
+   stopped the moment the brief turned .guide-where into a grid container,
+   which moved the whole picker down 4px as the drawer opened. */
+.guide-where-col { min-width: 0; display: flow-root; }
 /* The toggle is a control, not a banner: it sizes to a thumb, sitting under
    the search row it belongs to. */
 .guide-where-view { width: min(100%, 340px); margin-top: 4px; }
@@ -13624,7 +13628,7 @@ input, select {
 
 .guide-cgrid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
   gap: 14px;
 }
 /* A country card is its best-rated place, photographed. Name and city count
@@ -13639,20 +13643,28 @@ input, select {
   text-align: left;
   transition: box-shadow .16s, border-color .16s, transform .12s;
 }
+/* The crop sits above centre for the same reason the Destinations cards do:
+   what a country is recognised by (a skyline, a ridge, a spire) is in the top
+   half of the frame, and a centred 4:3 crop of a 3:2 photograph trades it for
+   foreground. See the --card-focus note on .places-card-img. */
 .guide-ccard-img {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: 50% var(--card-focus, 38%);
   display: block;
   transition: transform .3s ease;
 }
+/* HeroImage's no-photo placeholder wears the same class, so it is already
+   placed and sized by the rule above; only the initials need scaling down to
+   a 170px card. */
+.hero-blank.guide-ccard-img .hero-blank-mark { font-size: 18px; }
 .guide-ccard:hover { border-color: var(--rule); box-shadow: 0 8px 22px rgba(15, 23, 42, 0.12); }
 .guide-ccard:hover .guide-ccard-img { transform: scale(1.04); }
 .guide-ccard:active { transform: scale(0.99); }
 .guide-ccard:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-.guide-ccard-noimg { background: var(--paper-dim); }
 /* Photographs are unpredictable: the scrim is what keeps a country's name
    readable over a bright sky as reliably as over a dark harbour. */
 .guide-ccard-scrim {
@@ -13669,21 +13681,20 @@ input, select {
   gap: 3px;
   padding: 10px 12px 11px;
 }
+/* A long name (Bosnia and Herzegovina, North Macedonia) has to wrap rather
+   than run off the photograph, and the flag stays on the first line with it. */
 .guide-ccard-name {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 7px;
   font-family: var(--display);
   font-size: 15px;
   font-weight: 600;
   line-height: 1.2;
   color: #fff;
+  overflow-wrap: anywhere;
 }
-.guide-ccard-n {
-  font-family: var(--mono);
-  font-size: 10.5px;
-  color: rgba(255, 255, 255, 0.84);
-}
+.guide-ccard-name .guide-flag-img-sm { flex: none; margin-top: 2px; }
 /* Picked: a terracotta ring around the whole card and a tick in the corner,
    readable at a glance across a grid of 43. */
 .guide-ccard.on { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent); }
@@ -13704,8 +13715,13 @@ input, select {
 .guide-where-map { max-width: 1180px; }
 .guide-where-map .cpm { height: min(52vh, 520px); margin-bottom: 0; }
 
+/* Two columns on a phone, not "as many as fit": three 120px cards in a row
+   render a country's photograph at postage-stamp size, and the point of the
+   card is the photograph. */
+@media (max-width: 768px) {
+  .guide-cgrid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+}
 @media (max-width: 719px) {
-  .guide-cgrid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 11px; }
   .guide-ccard-name { font-size: 14px; }
   .guide-where-map .cpm { height: 56vh; }
 }
@@ -13794,8 +13810,6 @@ input, select {
 .guide-style-card b { font-size: 14px; }
 .guide-style-card small { font-size: 11.5px; color: var(--ink-soft); line-height: 1.4; }
 .guide-style-card .guide-mode-check { position: absolute; top: 8px; right: 8px; }
-
-.guide-ccard-n { white-space: nowrap; }
 
 /* ── Stay: curated route templates ─────────────────────────────────────
    Each card IS a designed route (cities, nights, road km), one tap to take. */
@@ -24065,20 +24079,30 @@ button.ai-sched-main:focus-visible {
    the corner, and only as loud as it needs to be to be found. */
 .guide-ccard-info {
   position: absolute;
-  left: 7px;
-  top: 7px;
+  right: 7px;
+  bottom: 7px;
   z-index: 2;
+  width: 36px;
+  height: 36px;
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  padding: 4px 8px;
-  border-radius: 999px;
-  background: rgba(15, 23, 42, 0.42);
-  color: rgba(255, 255, 255, 0.92);
-  font-size: 10.5px;
-  font-weight: 600;
+  justify-content: center;
+  border-radius: 50%;
+  background: rgba(15, 23, 42, 0.52);
+  color: rgba(255, 255, 255, 0.95);
   line-height: 1;
   transition: background .15s, color .15s;
+}
+/* 36px is the drawn size; the tap target is the 44px the rest of the app
+   uses. A pseudo-element rather than padding, so the circle stays a circle. */
+.guide-ccard-info::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: var(--tap);
+  height: var(--tap);
+  transform: translate(-50%, -50%);
 }
 .guide-ccard-info:hover, .guide-ccard-pick:hover ~ .guide-ccard-info {
   background: rgba(15, 23, 42, 0.86);
@@ -24110,12 +24134,16 @@ button.ai-sched-main:focus-visible {
 .guide-picked-chip:hover { background: var(--accent); color: #fff; }
 .guide-picked-x { font-size: 14px; line-height: 1; opacity: .7; }
 
-/* Opening a brief splits the width; closing it gives the grid the room back. */
-.guide-where.has-brief {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 372px;
-  gap: 20px;
-  align-items: start;
+/* Opening a brief splits the width; closing it gives the grid the room back.
+   Only from 1024px up: below that the brief is a sheet (CountryBrief.jsx
+   DRAWER_MIN) and there is no second column to make. */
+@media (min-width: 1024px) {
+  .guide-where.has-brief {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 420px;
+    gap: 20px;
+    align-items: start;
+  }
 }
 
 /* ── The country brief ─────────────────────────────────────────────────── */
@@ -24124,7 +24152,7 @@ button.ai-sched-main:focus-visible {
   top: 0;
   display: flex;
   flex-direction: column;
-  max-height: min(78vh, 760px);
+  max-height: min(86vh, 900px);
   border: 1px solid var(--rule);
   border-radius: 14px;
   background: var(--paper);
@@ -24139,7 +24167,13 @@ button.ai-sched-main:focus-visible {
   border-bottom: 1px solid var(--rule-soft);
   background: var(--paper-dim);
 }
-.cbrief-flag { width: 22px; height: 15px; object-fit: cover; border-radius: 2px; flex: none; }
+.cbrief-flag {
+  width: 22px; height: 15px;
+  object-fit: cover;
+  border-radius: 2px;
+  flex: none;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, .5);
+}
 .cbrief-title {
   flex: 1;
   min-width: 0;
@@ -24148,15 +24182,36 @@ button.ai-sched-main:focus-visible {
   font-weight: 600;
   line-height: 1.2;
 }
+/* The drawer's close, floating over the photo strip rather than sitting in a
+   title bar of its own. Dark plate, because it lands on a photograph. */
+.cbrief-hero-wrap { position: relative; }
 .cbrief-close {
-  width: 26px; height: 26px;
+  position: absolute;
+  top: 9px;
+  right: 9px;
+  z-index: 2;
+  width: 32px; height: 32px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   border-radius: 50%;
-  font-size: 18px;
+  background: rgba(15, 23, 42, 0.52);
+  font-size: 19px;
   line-height: 1;
-  color: var(--ink-mute);
+  color: #fff;
 }
-.cbrief-close:hover { background: var(--paper); color: var(--ink); }
-.cbrief-body { overflow-y: auto; padding: 4px 14px 10px; }
+.cbrief-close::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: var(--tap);
+  height: var(--tap);
+  transform: translate(-50%, -50%);
+}
+.cbrief-close:hover { background: rgba(15, 23, 42, 0.82); }
+.cbrief-close:focus-visible { outline: 2px solid #fff; outline-offset: 1px; }
+.cbrief-body { overflow-y: auto; overscroll-behavior: contain; }
 .cbrief-sect { padding: 12px 0; border-bottom: 1px solid var(--rule-soft); }
 .cbrief-sect:last-child { border-bottom: none; }
 .cbrief-h {
@@ -24313,6 +24368,304 @@ button.ai-sched-main:focus-visible {
 }
 .cbrief-add:hover { background: var(--accent-soft); }
 .cbrief-add.on { background: var(--paper); color: var(--ink-soft); border: 1px solid var(--rule); }
+
+/* ── The brief, reworked (T4) ────────────────────────────────────────
+   One component in two positions: a 420px drawer in the grid's second column
+   from 1024px up, and a SheetShell bottom sheet below that. Everything from
+   .cbrief-hero down is shared by both, so the two never drift apart. */
+
+/* The phone/tablet sheet. SheetShell owns the scrim, the trap and the swipe;
+   this is only the height and the room for the sticky footer. */
+.fsheet.cbrief-sheet { max-height: 88dvh; }
+.fsheet.cbrief-sheet .fsheet-body {
+  padding: 0;
+  overscroll-behavior: contain;
+}
+
+/* The photo strip both positions open on. */
+.cbrief-hero { position: relative; display: block; }
+.cbrief-hero-img { display: block; width: 100%; height: auto; object-fit: cover; }
+.cbrief-hero-scrim {
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 62%;
+  background: linear-gradient(to top, rgba(15, 23, 42, .74), rgba(15, 23, 42, 0));
+  pointer-events: none;
+}
+.cbrief-hero-name {
+  position: absolute;
+  left: 14px;
+  right: 14px;
+  bottom: 11px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #fff;
+  font-family: var(--display);
+  font-size: 19px;
+  font-weight: 600;
+  line-height: 1.15;
+  text-shadow: 0 1px 3px rgba(15, 23, 42, .5);
+}
+
+/* The folds. The .dsec grammar, with the brief's own padding so a 420px
+   drawer does not read as a page. */
+.cbrief-folds { padding: 2px 0 6px; }
+.cbrief-folds .dsec { padding-left: 14px; padding-right: 14px; }
+.cbrief-folds .dsec-body { padding-bottom: 12px; }
+
+/* At a glance. */
+.cbrief-months {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 2px;
+  margin-bottom: 9px;
+}
+.cbrief-mo {
+  padding: 5px 0;
+  border-radius: 5px;
+  background: var(--paper-dim);
+  color: var(--ink-mute);
+  font-size: 9.5px;
+  font-weight: 600;
+  line-height: 1;
+  text-align: center;
+  overflow: hidden;
+}
+.cbrief-mo.good { background: var(--accent-bg); color: var(--ink); }
+.cbrief-mo.mine { box-shadow: inset 0 0 0 1.5px var(--ink); color: var(--ink); }
+.cbrief-verdict { font-size: 12.5px; line-height: 1.5; margin-bottom: 6px; }
+.cbrief-verdict.v-good { color: var(--green); }
+.cbrief-verdict.v-off { color: var(--rate-soft); }
+
+.cbrief-facts { display: grid; gap: 7px; margin-top: 10px; }
+.cbrief-fact { display: grid; grid-template-columns: 104px minmax(0, 1fr); gap: 8px; }
+.cbrief-fact dt { font-size: 11.5px; color: var(--ink-mute); }
+.cbrief-fact dd { font-size: 12.5px; line-height: 1.45; }
+
+/* The horizontal photo rails. Scroll-snap, and the only thing on the page
+   allowed to overflow sideways. */
+.cbrief-rail {
+  display: flex;
+  gap: 9px;
+  overflow-x: auto;
+  scroll-snap-type: x proximity;
+  padding-bottom: 4px;
+  margin: 0 -14px;
+  padding-left: 14px;
+  padding-right: 14px;
+  -webkit-overflow-scrolling: touch;
+}
+.cbrief-rail-card {
+  flex: none;
+  width: 152px;
+  scroll-snap-align: start;
+  display: block;
+  text-align: left;
+  border: 1px solid var(--rule);
+  border-radius: 11px;
+  background: var(--paper);
+  padding: 0 0 8px;
+  overflow: hidden;
+  transition: border-color .15s, box-shadow .15s;
+}
+.cbrief-rail-card:not(.is-static):not([disabled]):hover {
+  border-color: var(--ink-mute);
+  box-shadow: var(--shadow-1);
+}
+.cbrief-rail-card:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.cbrief-rail-card.is-skeleton {
+  height: 168px;
+  border-style: dashed;
+  background: var(--paper-dim);
+}
+.cbrief-rail-img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  background: var(--paper-dim);
+}
+.cbrief-rail-img.is-blank {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 0 8px;
+  color: var(--ink-mute);
+  text-align: center;
+}
+.cbrief-rail-img.is-blank small {
+  font-size: 10px;
+  line-height: 1.25;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
+}
+.cbrief-rail-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  padding: 7px 9px 0;
+}
+.cbrief-rail-head b {
+  min-width: 0;
+  font-size: 12.5px;
+  font-weight: 600;
+  line-height: 1.25;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.cbrief-rail-why {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  padding: 3px 9px 0;
+  font-size: 11px;
+  line-height: 1.4;
+  color: var(--ink-mute);
+}
+
+.cbrief-more,
+.cbrief-retry button {
+  margin-top: 9px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--accent);
+  text-decoration: underline;
+  min-height: var(--tap);
+}
+.cbrief-retry { font-size: 11.5px; color: var(--ink-mute); display: flex; align-items: center; gap: 8px; }
+.cbrief-retry button { margin-top: 0; }
+
+/* Best trips. */
+.cbrief-trips { list-style: none; display: grid; gap: 8px; }
+.cbrief-trip {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-align: left;
+  border: 1px solid var(--rule);
+  border-radius: 11px;
+  background: var(--paper);
+  padding: 7px;
+  min-height: var(--tap);
+}
+.cbrief-trip:not([disabled]):hover { border-color: var(--ink-mute); }
+.cbrief-trip-img {
+  flex: none;
+  width: 76px;
+  aspect-ratio: 4 / 3;
+  border-radius: 8px;
+  object-fit: cover;
+  background: var(--paper-dim);
+}
+.cbrief-trip-text { min-width: 0; }
+.cbrief-trip-text b {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.3;
+}
+.cbrief-trip-text small { font-size: 11.5px; color: var(--ink-mute); }
+.cbrief-trip-plan {
+  margin: 4px 0 2px 86px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--accent);
+  text-decoration: underline;
+  min-height: var(--tap);
+}
+
+/* Things to do: one sub-rail per group. */
+.cbrief-group + .cbrief-group { margin-top: 14px; }
+.cbrief-group-h {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 7px;
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: .03em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+}
+.cbrief-group-h .mono { margin-left: auto; font-size: 11px; }
+.cbrief-events { list-style: none; display: grid; gap: 6px; }
+.cbrief-events li {
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--ink-soft);
+  padding-left: 10px;
+  border-left: 2px solid var(--rule);
+}
+.cbrief-events li.is-mine { border-left-color: var(--accent); color: var(--ink); font-weight: 600; }
+
+/* Your shortlist here. */
+.cbrief-favs { list-style: none; display: grid; gap: 7px; }
+.cbrief-favs li { display: flex; align-items: center; gap: 9px; }
+.cbrief-fav-img {
+  flex: none;
+  width: 44px;
+  height: 44px;
+  border-radius: 8px;
+  object-fit: cover;
+  background: var(--paper-dim);
+}
+.cbrief-fav-text { min-width: 0; }
+.cbrief-fav-text b { display: block; font-size: 12.5px; font-weight: 600; }
+.cbrief-fav-text small { font-size: 11px; color: var(--ink-mute); }
+
+/* Getting there. */
+.cbrief-airports { list-style: none; display: grid; gap: 7px; margin-bottom: 8px; }
+.cbrief-airports li { display: flex; align-items: baseline; gap: 8px; font-size: 12.5px; }
+.cbrief-airports b { font-size: 12.5px; }
+.cbrief-airports span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cbrief-airports small { margin-left: auto; flex: none; font-size: 11px; color: var(--ink-mute); }
+.cbrief-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--tap);
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--accent);
+  text-decoration: underline;
+}
+
+/* Worth knowing: the driving rules read as their own list under the tips. */
+.cbrief-driving { margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--rule-soft); }
+
+/* Eat and drink: the guide's own lines, so a chip is a sentence and wraps. */
+.cbrief-chip { white-space: normal; text-align: left; line-height: 1.35; }
+
+/* The footer in the sheet sits above the home indicator and never covers
+   the last fold, which the body's own padding leaves room for. */
+.cbrief-foot.is-sticky {
+  position: sticky;
+  bottom: 0;
+  z-index: 2;
+  padding: 10px 14px calc(10px + env(safe-area-inset-bottom));
+  border-top: 1px solid var(--rule);
+  background: var(--paper);
+}
+
+@media (max-width: 768px) {
+  .cbrief-hero-name { font-size: 17px; }
+  .cbrief-fact { grid-template-columns: 92px minmax(0, 1fr); }
+  .cbrief-rail-card { width: 144px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cbrief-rail-card, .cbrief-trip { transition: none; }
+}
+
 
 /* ── Ready-made or built: the fork, as one control ─────────────────────── */
 .wmode {
@@ -24789,11 +25142,10 @@ button.ai-sched-main:focus-visible {
 
 /* ── Narrow ───────────────────────────────────────────────────────────── */
 @media (max-width: 900px) {
-  .guide-where.has-brief { grid-template-columns: minmax(0, 1fr); }
-  /* On one column the brief goes ABOVE the grid: it opened because a card was
-     tapped, and an answer that lands below a 43-card grid is an answer nobody
-     sees. */
-  .guide-where.has-brief .cbrief { order: -1; position: static; max-height: none; }
+  /* No .guide-where.has-brief rule here any more. Below 1024px the brief is a
+     bottom sheet over the page, not a column in the grid, so there is nothing
+     to reflow: it used to render ABOVE the grid with order:-1 and push the
+     whole step down the moment a card was tapped. */
   .wready-split { grid-template-columns: minmax(0, 1fr); gap: 22px; }
   .wmode { grid-template-columns: 1fr; }
 }
@@ -31521,7 +31873,7 @@ button.ai-sched-main:focus-visible {
   background: none;
   cursor: pointer;
   width: 100%;
-  aspect-ratio: 3 / 2;
+  aspect-ratio: 16 / 10;
   overflow: hidden;
   background: var(--paper-dim);
 }
@@ -31532,7 +31884,7 @@ button.ai-sched-main:focus-visible {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: 50% 42%;
+  object-position: 50% var(--card-focus, 38%);
 }
 .mcard-scrim {
   position: absolute;
@@ -31726,23 +32078,6 @@ button.ai-sched-main:focus-visible {
   cursor: pointer;
 }
 
-/* What a day costs there, on the country card. The same band the brief
-   prints, but this one sits on a photograph, so it is a translucent chip on
-   the scrim rather than the brief's paper-coloured pill. No figure: this step
-   carries no prices, and the band is the part that survives without one. */
-.guide-ccard-band {
-  display: inline-block;
-  margin-left: 6px;
-  padding: 1px 7px;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, .18);
-  border: 1px solid rgba(255, 255, 255, .34);
-  font-style: normal;
-  font-size: 10px;
-  font-weight: 600;
-  color: #fff;
-  white-space: nowrap;
-}
 
 /* The shortlist badge on a hand-picked country card. */
 .guide-ccard-fav {

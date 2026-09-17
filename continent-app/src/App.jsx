@@ -435,6 +435,8 @@ function TravelApp() {
   // opening someone else's itinerary leaves the recipient's own dates, origin
   // and lifestyle where they were.
   const [pendingTrip, setPendingTrip] = useState(() => readTripFromUrl());
+  // One country, handed to the Destinations tab from the planner's brief.
+  const [pendingCountry, setPendingCountry] = useState(null);
   useEffect(() => {
     if (pendingTrip) setActiveTab('places');
   }, [pendingTrip]);
@@ -453,6 +455,23 @@ function TravelApp() {
       transportPref: trip.transport === 'car' ? 'owncar' : 'public',
     });
     goToTab('trip');
+  }, [goToTab]);
+
+  /** Open one published trip's page from the planner. Stable, like every
+   *  other callback handed to the two planner tabs: they stay mounted behind
+   *  display:none, so a fresh arrow here re-renders 3,000 lines of component
+   *  on every unrelated keystroke. */
+  const openTripPage = useCallback((id) => {
+    if (!id) return;
+    setPendingTrip({ id: String(id) });
+    goToTab('places');
+  }, [goToTab]);
+
+  /** Browse one country's places, from the planner's country brief. */
+  const openCountryInPlaces = useCallback((iso2) => {
+    if (!iso2) return;
+    setPendingCountry(String(iso2).toUpperCase());
+    goToTab('places');
   }, [goToTab]);
 
   /**
@@ -946,6 +965,8 @@ function TravelApp() {
             openTrip={pendingTrip}
             onOpenTripConsumed={() => setPendingTrip(null)}
             onOpenTripInPlanner={openTripInPlanner}
+            openCountry={pendingCountry}
+            onOpenCountryConsumed={() => setPendingCountry(null)}
             isFavorite={isFavorite}
             onToggleFav={toggleFav}
           />
@@ -973,6 +994,9 @@ function TravelApp() {
               stayTier={choices.stay_tier || 'home'}
               favorites={favorites}
               onPlanDay={planDay}
+              onOpenDest={openDetail}
+              onOpenCountry={openCountryInPlaces}
+              onOpenTrip={openTripPage}
             />
           </Suspense>
         </div>

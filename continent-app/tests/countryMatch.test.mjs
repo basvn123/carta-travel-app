@@ -1,4 +1,4 @@
-// The Where quiz scoring (prompt T2). Run: node --test continent-app/tests/
+// The Where quiz scoring (prompt T2). Run: npm test  (from continent-app/)
 //
 // Two kinds of check here. The first group uses small hand-built fixtures, so
 // a rule can be stated and shown to hold. The second runs the real published

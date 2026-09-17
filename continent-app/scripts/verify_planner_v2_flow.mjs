@@ -101,25 +101,30 @@ try {
   await page.locator('.guide-wtabs [role="tab"]').nth(1).click();
   await page.waitForTimeout(700);
 
-  // The two things that had to go.
+  // The things that had to go. The flight fare went first; T3 then took the
+  // place count and the cost band off the photograph too, so the card carries
+  // a flag and a name and nothing else.
   check('no flight fare badge on a country card', await page.locator('.guide-ccard-badge').count() === 0);
-  const allIn = await page.locator('.guide-ccard-n').first().innerText().catch(() => '');
-  check('no "all in from" line on a country card', !/all in/i.test(allIn), allIn);
-  check('the card says what the country holds', /places/i.test(allIn), allIn);
+  check('no count or cost line on a country card', await page.locator('.guide-ccard-n').count() === 0);
+  const cardText = (await page.locator('.guide-ccard').first().innerText()).replace(/\s+/g, ' ');
+  check('no "all in from" line on a country card', !/all in/i.test(cardText), cardText.slice(0, 60));
 
-  // The thing that arrived.
+  // The thing that arrived. Since T4 the brief is a page of folds, opened by
+  // a round "i" on the card, and the money lives in a closed fold at the
+  // bottom rather than across the top. verify_country_brief.mjs is the full
+  // check; this only confirms the flow reaches a working brief.
   const infoBtn = page.locator('.guide-ccard-info').first();
   check('every card has a "what\'s there" button', await page.locator('.guide-ccard-info').count() > 20);
   await infoBtn.click();
-  await page.waitForTimeout(600);
-  check('the brief opens', await page.locator('.cbrief').isVisible());
-  const briefText = await page.locator('.cbrief').innerText();
-  check('the brief carries a day cost', /a day per person/i.test(briefText), briefText.slice(0, 60).replace(/\n/g, ' '));
-  check('the brief carries bed and eating out', /bed/i.test(briefText) && /eating out/i.test(briefText));
-  check('the brief says what to visit', /what to visit/i.test(briefText));
-  check('the brief says what to do', /what to do/i.test(briefText));
-  check('the brief lists real places', await page.locator('.cbrief-place').count() >= 3,
-    String(await page.locator('.cbrief-place').count()));
+  await page.waitForTimeout(1200);
+  const brief = page.locator('.cbrief, .fsheet.cbrief-sheet').first();
+  check('the brief opens', await brief.isVisible());
+  const briefText = (await brief.innerText()).replace(/\s+/g, ' ');
+  check('the brief opens on At a glance', /at a glance/i.test(briefText), briefText.slice(0, 70));
+  check('the brief names top places', /top places/i.test(briefText));
+  check('the brief offers costs, folded', await page.locator('#cb-cost').count() === 1);
+  check('the brief lists real places', await page.locator('#cb-places-body .cbrief-rail-card').count() >= 3,
+    String(await page.locator('#cb-places-body .cbrief-rail-card').count()));
   await page.screenshot({ path: 'shots/planner2-brief.png' });
 
   // Add two neighbouring countries that have multi-country trips between them.
