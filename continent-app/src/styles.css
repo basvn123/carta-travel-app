@@ -32336,14 +32336,17 @@ button.ai-sched-main:focus-visible {
 .explore-grid--mosaic .xcard--area .xcard-media { aspect-ratio: 21 / 9; }
 
 /* "Best trips from here" on the destination page: the same three fixes, on
-   the card that page draws itself. */
+   the card that page draws itself. This card carries more than a name and a
+   travel line, so the body is sized by its content. A fixed 62px height cut
+   the blurb and the "Open the page" link in half, because the card clips. */
 .dtrip-body {
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
   gap: var(--space-1);
-  height: 62px;
-  padding: 0 var(--space-3);
+  flex: 1 1 auto;
+  min-height: 0;
+  padding: var(--space-2) var(--space-3) var(--space-3);
   box-sizing: border-box;
 }
 .dtrip-name,
@@ -32352,7 +32355,16 @@ button.ai-sched-main:focus-visible {
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.dtrip-photo { aspect-ratio: 4 / 3; }
+/* The travel line is one row of chips that must not wrap into the blurb. */
+.dtrip-sub { flex: none; flex-wrap: nowrap; }
+.dtrip-sub .mono { overflow: hidden; text-overflow: ellipsis; }
+/* The link sits at the foot of every card, so a short blurb and a long one
+   still line up across the row. */
+.dtrip-go { margin-top: auto; padding-top: var(--space-1); }
+/* Equal-height cards: the grid row stretches, the body takes the slack. */
+.dtrips { align-items: stretch; }
+.dtrip { height: 100%; }
+.dtrip-photo { aspect-ratio: 4 / 3; flex: none; }
 
 /* --- P4.2 the rail title and the score explainer -------------------------
    A rail called "The 41" told the reader nothing. Every rail now says what
