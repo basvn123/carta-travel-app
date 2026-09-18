@@ -268,6 +268,39 @@ Phase 1 is an INSTRUMENT. It changes no published row, gates nothing by
 default, and is expected to report a large gap. That is the point: the gap
 was always there, and until now nothing measured it.
 
+### What the first full sweep measured (2026-09-18)
+
+`famous_registry.py --all` then `coverage_report.py --all`, 44 countries:
+
+| Measure | Value |
+|---|---|
+| Candidates harvested | 179,243 (171,776 placed in a NUTS3) |
+| Walk candidates (`kind: trail`) | 15,943 |
+| Walks published | 1,630 (10.2%) |
+| **Walks missing for reasons that are ours** | **12,411** |
+| `way_only_not_derived` (Phase 2) | 8,893 |
+| `failed_continuity` (Phase 3) | 3,518 |
+| Regions with a walk candidate | 1,151 |
+| Regions failing the top-three gate | 1,067 |
+| Famous fixtures published | 14 of 30 |
+
+Worst miss in Europe is Orla Perc (0.735, `way_only_not_derived`).
+Fuerstensteig, Ruta del Cares and Laugavegur are all in the list. Every one
+of the 16 fixture gaps now carries a reason code.
+
+The `kind` split is what makes those numbers readable: 156,905 of the raw
+misses are `no_osm_data` on `kind: place` rows, a named summit or lake with
+an article and no path. Gating on those would bury 12,411 real problems
+under 160,000 non-problems.
+
+**File sizes.** The raw registry and report are 113 MB and 46 MB. The
+largest report already committed in this repo is 6 MB, and `trails_registry`
+runs monthly, so committing them raw would add a nine-figure line count to
+the repo every month and defeat the point of committing them at all. The
+committed files carry every walk candidate and all the rollups (12.3 MB and
+5.9 MB); the place candidates go to `famous_registry_full.json` and
+`trails_coverage_full.json` behind `--full` / `--full-rows`, both gitignored.
+
 ### What the build confirmed, and what it corrected
 
 Measured against the France extract and the published wire rather than
