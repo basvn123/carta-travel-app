@@ -2636,6 +2636,7 @@ export const nl = {
   "brief.themeBeach": "badplaatsen",
   "brief.themeMountains": "bergplaatsen",
   "brief.themeHiking": "wandelbases",
+  "brief.themeHikingRun": "wandelen & trailrunning",
   "brief.themeNature": "natuurplekken",
   "brief.themeHeritage": "erfgoedplaatsen",
   "brief.themeArt": "kunststeden",
@@ -2881,6 +2882,7 @@ export const nl = {
   "dayws.saveTitle": "Bewaar dit dagplan bij je bewaarde reizen",
   "dayws.autoSavedTitle": "Elke wijziging aan dit dagplan wordt automatisch op dit apparaat bewaard",
   "dayws.backToPlans": "Terug naar alle dagplannen",
+  "dayws.backToTrip": "Terug naar de reis",
   "dayws.savedTitle": "In je bewaarde reizen",
   "dayws.savedBody": "Dit dagplan staat bij je bewaarde reizen. Open het wanneer je wilt, elke wijziging hier wordt automatisch bewaard.",
   "dayws.savedKeep": "Hier verder plannen",
@@ -2979,6 +2981,9 @@ export const nl = {
   /* DEST-PAGE-KEYS: the full-screen destination page and its PDF export.
      Rendered from the dossier contract (public/dossier). */
   "dest.share": "Delen",
+  "dest.planTrip": "Plan hier een reis",
+  "dest.planDay": "Plan hier een dag",
+  "feat.addToDay": "Aan een dagplan toevoegen",
   "dest.linkCopied": "Link gekopieerd",
   "dest.pdf": "Download de PDF-gids",
   "dest.pdfBuilding": "PDF wordt gemaakt",

@@ -84,6 +84,21 @@ function normalise(kind, row, id, cc) {
   };
 }
 
+/**
+ * One feature row by kind, country and id, in the same normalised shape the
+ * shortlist rows come back in. For the day planner's ?feat= hand-off link,
+ * which carries only those three and needs a name and a point.
+ */
+export async function resolveFeatureRow(kind, cc, id) {
+  const load = COUNTRY_LOADERS[kind];
+  if (!load || !cc || id == null) return null;
+  try {
+    const rows = await load(String(cc).toUpperCase());
+    const row = (rows || []).find((r) => String(r.id) === String(id));
+    return normalise(kind, row, id, cc);
+  } catch { return null; }
+}
+
 export function useFavoriteItems(favorites, destinations) {
   const groups = useMemo(() => groupFavs(favorites), [favorites]);
 

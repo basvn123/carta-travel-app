@@ -953,6 +953,8 @@ export function DestinationsTab({
   // and onToggleFav(id, kind). Every full-screen feature page below wears the
   // same star from them, so a trail is kept exactly the way a city is.
   isFavorite = null, onToggleFav = null,
+  // "Add to a day plan" on the four feature pages: (kind, { id, cc, name, lat, lon }).
+  onAddToDay = null,
 }) {
   const { t, lang } = useI18n();
   const scrollRef = useRef(null);
@@ -3532,6 +3534,7 @@ export function DestinationsTab({
           <TrailPage
             card={pageCard}
             {...favProps('trail', pageCard.tr?.id, pageCard.tr?.cc || pageCard.tr?.country)}
+            onAddToDay={onAddToDay ? (f) => onAddToDay('trail', f) : null}
             dests={data?.destinations}
             onOpenNeighbour={openNeighbour}
             onClose={() => setPageCard(null)}
@@ -3574,6 +3577,7 @@ export function DestinationsTab({
           <BeachPage
             beach={pageBeach}
             {...favProps('beach', pageBeach.id, pageBeach.cc)}
+            onAddToDay={onAddToDay ? (f) => onAddToDay('beach', f) : null}
             onOpenNeighbour={openNeighbour}
             countryName={countryName(pageBeach.cc)}
             model={beachIndex?.model || null}
@@ -3588,6 +3592,7 @@ export function DestinationsTab({
           <LakePage
             lake={pageLake}
             {...favProps('lake', pageLake.id, pageLake.cc)}
+            onAddToDay={onAddToDay ? (f) => onAddToDay('lake', f) : null}
             onOpenNeighbour={openNeighbour}
             countryName={countryName(pageLake.cc)}
             warmC={lakeIndex?.model?.warm_c ?? 18}
@@ -3626,6 +3631,7 @@ export function DestinationsTab({
           <MountainPage
             mountain={pageMountain}
             {...favProps('mountain', pageMountain.id, pageMountain.cc)}
+            onAddToDay={onAddToDay ? (f) => onAddToDay('mountain', f) : null}
             onOpenNeighbour={openNeighbour}
             countryName={countryName(pageMountain.cc)}
             onClose={() => setPageMountain(null)}

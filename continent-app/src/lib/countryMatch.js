@@ -549,10 +549,17 @@ export function matchCountries({
       // The strongest layer this type has that has not already been quoted,
       // so a second trails-based type contributes its mountains instead of
       // repeating the trails.
+      // Every layer the type rests on gets its number: a trail runner asked
+      // for trails AND mountains, and a card that quoted the trails alone
+      // never said how many rated peaks there were. The cap still holds.
       const bits = (ts.layerBits || []).slice().sort((a, b) => b.n - a.n);
-      const fresh = bits.find((b) => !said.has(`match.layer.${b.name}`));
-      if (fresh) say(`match.layer.${fresh.name}`, { n: fresh.n });
-      else if (ts.cat?.n) say(`match.type.${ts.key}`, { n: ts.cat.n });
+      let quoted = false;
+      for (const b of bits) {
+        if (said.has(`match.layer.${b.name}`) || !(b.n > 0)) continue;
+        say(`match.layer.${b.name}`, { n: b.n });
+        quoted = true;
+      }
+      if (!quoted && ts.cat?.n) say(`match.type.${ts.key}`, { n: ts.cat.n });
     }
 
     // ---- the soft signals: month, spend and the avoid list. Each one moves

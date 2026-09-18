@@ -237,6 +237,8 @@ function GalleryStrip({ gallery, city, iso2, fallbackUrl }) {
 export function DestinationPage({
   destination, data, indices, choices, onOpenLifestyle, onClose, onSelect,
   isFavorite, onToggleFavorite, onOpenFeature, onOpenItin,
+  // The two doors into the planners (App.openTripForCountry / openDayForDest).
+  onPlanTrip = null, onPlanDay = null,
 }) {
   const { t, lang } = useI18n();
   const paywall = usePaywall();
@@ -556,6 +558,21 @@ export function DestinationPage({
             )}
           </div>
           <div className="destp-head-actions">
+            {/* Into the planners. A page about a place is where the wish to
+                go there forms, so the trip wizard (this country picked) and
+                the day flow (staying in this city) open from here. */}
+            {onPlanTrip && (
+              <button type="button" className="panel-fav destp-plan-btn" onClick={onPlanTrip}>
+                <RouteIcon size={15} />
+                <span>{t('dest.planTrip')}</span>
+              </button>
+            )}
+            {onPlanDay && (
+              <button type="button" className="panel-fav destp-plan-btn" onClick={onPlanDay}>
+                <SunIcon size={15} />
+                <span>{t('dest.planDay')}</span>
+              </button>
+            )}
             <button type="button" className="destp-pdf" onClick={exportPdf} disabled={pdfBusy || loading || !d}>
               <DownloadIcon size={15} />
               <span>{pdfBusy ? t('dest.pdfBuilding') : t('dest.pdf')}</span>

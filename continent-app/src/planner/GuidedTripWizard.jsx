@@ -47,7 +47,7 @@ import { cityLabel } from '../lib/placeName.js';
 import { duplicateHeroes } from '../lib/heroImage.js';
 import { pickWithDupes } from '../lib/countryCovers.js';
 import { favDestIds } from '../lib/favorites.js';
-import { fmtDate, addDays, laterISO, useToday, monthName } from '../lib/dates.js';
+import { fmtDate, addDays, laterISO, useToday, monthName, planningHorizon } from '../lib/dates.js';
 import { geocodeAddress } from '../lib/geocode.js';
 import { useCountryInsights } from '../hooks/useCountryInsights.js';
 import { useIsDesktop } from '../hooks/useIsDesktop.js';
@@ -198,6 +198,10 @@ export function GuidedTripWizard({
   // page, browse one country in the Destinations tab, open one published
   // trip's page. Null in the modal mount, where there is nothing to hand to.
   onOpenDest = null, onOpenCountry = null, onOpenTrip = null,
+  // A hand-off in: { iso2 } from "Plan a trip here" on a destination page
+  // (App.openTripForCountry) or a ?tab=trip&cc= link. Applied once the
+  // catalogue can name the country, then reported consumed.
+  seed = null, onSeedConsumed = null,
 }) {
   const { t, lang } = useI18n();
   const destinations = data?.destinations || {};
@@ -206,7 +210,9 @@ export function GuidedTripWizard({
   // anyone opens the app. `today` is live, so this stays right tomorrow too.
   const today = useToday();
   const dateMin = laterISO(data?.meta?.start_date, today);
-  const dateMax = data?.meta?.end_date;
+  // Not the fare window's end: a trip for next May must be plannable in
+  // September (see planningHorizon).
+  const dateMax = planningHorizon(data?.meta?.end_date, today);
   // The departure airport the fares are currently priced from (set globally in
   // the header); its city names the getting-there step so the copy follows it.
   const originCode = data?.meta?.selected_origin;
@@ -258,6 +264,7 @@ export function GuidedTripWizard({
     setStepsOpen(false);
   };
 
+
   const [countries, setCountries] = useState(() => new Set(savedDraft.countries || []));
   // The Where step is two tabs over one selection: a quiz that recommends
   // countries, and the map/grid you pick them on yourself. It opens on the
@@ -284,6 +291,26 @@ export function GuidedTripWizard({
   // names. Cleared as soon as a card arrives, or the moment the traveller
   // picks anything themselves, so a restore can never overwrite a fresh choice.
   const [pendingTripPickId, setPendingTripPickId] = useState(() => savedDraft.tripPickId || null);
+
+  // The seed lands on Where with its one country picked by hand. It replaces
+  // the draft's countries rather than adding to them: "plan a trip here" is a
+  // fresh intent, and a stale Portugal draft under a fresh Belgium pick would
+  // make a trip nobody asked for. Booked stays are switched off because that
+  // path has no Where step to land on. Waits for the catalogue, which is what
+  // turns the iso2 into the name the picks are keyed by.
+  useEffect(() => {
+    if (!seed?.iso2 || !allCountries.length) return;
+    const hit = allCountries.find((c) => c.iso2 === seed.iso2);
+    if (hit) {
+      setBooked({ travel: false, stays: false });
+      setCountries(new Set([hit.country]));
+      setWhereTab('hand');
+      setTripPick(null);
+      // BASICS_STEPS then Where: the index is fixed once stays are unbooked.
+      goStep(BASICS_STEPS.length + 1);
+    }
+    onSeedConsumed && onSeedConsumed();
+  }, [seed, allCountries.length]); // eslint-disable-line react-hooks/exhaustive-deps
   // Which trip's full page is open over the step. The page is the one the
   // Destinations tab shows, mounted here so "What's there" answers the
   // question in the place that already answers it properly.
@@ -831,7 +858,18 @@ export function GuidedTripWizard({
 
   /** Merge one answer into the quiz. The whole object is stored, so the draft
    *  restores the walk exactly where it was left. */
-  const answerQuiz = (patch) => setQuiz((prev) => ({ ...prev, ...patch }));
+  const answerQuiz = (patch) => {
+    setQuiz((prev) => ({ ...prev, ...patch }));
+    // The spend answer IS the travel style. It used to stop at the ranking
+    // weight: "Shoestring" nudged the countries and then Finish priced the
+    // standard apartment tier anyway, and "Hotels & comfort" never reached
+    // hotel4. SPEND_CHOICES carries the mapping (budget -> private rooms and
+    // hostels, luxury -> hotel4, see wizardTransit.TRAVEL_STYLES).
+    if (patch.spend) {
+      const style = SPEND_CHOICES.find((x) => x.key === patch.spend)?.style;
+      if (style) setTravelStyle(style);
+    }
+  };
 
   /** Left/right moves between the two Where tabs, as a tablist must. */
   const onWhereTabKey = (e) => {

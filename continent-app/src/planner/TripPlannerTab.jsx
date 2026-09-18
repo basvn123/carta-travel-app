@@ -10,7 +10,7 @@ import { TripItinerary, TransferModePicker } from './TripItinerary.jsx';
 import { GuidedTripWizard } from './GuidedTripWizard.jsx';
 import { CheapTipsSection } from './CheapTipsSection.jsx';
 import { eur, fmtHours, flightTimes } from '../lib/format.js';
-import { fmtDate, laterISO, useToday } from '../lib/dates.js';
+import { fmtDate, laterISO, useToday, planningHorizon } from '../lib/dates.js';
 import { fetchDrivingRoute } from '../lib/routing.js';
 import { useTripPlanner } from '../hooks/useTripPlanner.js';
 import { useCountryInsights } from '../hooks/useCountryInsights.js';
@@ -284,7 +284,7 @@ function ShortlistStops({ rows, onPick }) {
   );
 }
 
-export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, authConfigured, onRequestAuth, openPlanId, onOpenPlanConsumed, origin, onChangeOrigin, onPlanDay, openSharedTrip, onSharedTripConsumed, stayTier = 'home', lifestyle = null, favorites = null, onOpenDest = null, onOpenCountry = null, onOpenTrip = null }) {
+export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, authConfigured, onRequestAuth, openPlanId, onOpenPlanConsumed, origin, onChangeOrigin, onPlanDay, openSharedTrip, onSharedTripConsumed, tripSeed = null, onTripSeedConsumed = null, stayTier = 'home', lifestyle = null, favorites = null, onOpenDest = null, onOpenCountry = null, onOpenTrip = null }) {
   const { t } = useI18n();
   const paywall = usePaywall();
   const countryInsights = useCountryInsights();
@@ -309,7 +309,7 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
   // harvest date (see useToday).
   const today = useToday();
   const dateMin = laterISO(data?.meta?.start_date, today);
-  const dateMax = data?.meta?.end_date;
+  const dateMax = planningHorizon(data?.meta?.end_date, today);
 
   const [pendingCountry, setPendingCountry] = useState('');
   const [pendingDestId, setPendingDestId] = useState('');
@@ -485,6 +485,14 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
     }
     onSharedTripConsumed && onSharedTripConsumed();
   }, [openSharedTrip]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // A country seed ("Plan a trip here") with a trip already on the map: the
+  // wizard is not on screen, so open it as the modal and let it take the
+  // seed from there. On an empty planner the inline wizard already holds it.
+  useEffect(() => {
+    if (!tripSeed) return;
+    if (tp.planned || tp.stopDetails.length > 0) setWizardOpen(true);
+  }, [tripSeed]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Selecting a stop (via pin or card) scrolls its card into view.
   useEffect(() => {
@@ -681,6 +689,8 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
           onOpenTrip={onOpenTrip}
           onCancel={() => setWizardOpen(false)}
           onComplete={handleWizardComplete}
+          seed={tripSeed}
+          onSeedConsumed={onTripSeedConsumed}
         />
       </div>
     );
@@ -1274,7 +1284,7 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
       )}
 
       {wizardOpen && (
-        <GuidedTripWizard data={data} stayTier={tp.stayTier} lifestyle={lifestyle} favorites={favorites} onOpenDest={onOpenDest} onOpenCountry={onOpenCountry} onOpenTrip={onOpenTrip} onCancel={() => setWizardOpen(false)} onComplete={handleWizardComplete} />
+        <GuidedTripWizard data={data} stayTier={tp.stayTier} lifestyle={lifestyle} favorites={favorites} onOpenDest={onOpenDest} onOpenCountry={onOpenCountry} onOpenTrip={onOpenTrip} onCancel={() => setWizardOpen(false)} onComplete={handleWizardComplete} seed={tripSeed} onSeedConsumed={onTripSeedConsumed} />
       )}
     </div>
   );

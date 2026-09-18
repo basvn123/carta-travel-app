@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useI18n } from '../i18n/index.jsx';
+import { E2E_SEAMS } from '../lib/e2eSeams.js';
 import {
   SparkIcon, CastleIcon, MuseumIcon, TreeIcon, DiningIcon, CameraIcon,
   MapPinIcon, CheckIcon, BeachIcon, HomeIcon, TicketIcon,
@@ -75,6 +76,13 @@ const STEP_OPTIONS = [
 ];
 
 const MAX_MOODS = 3;
+
+// ?paymock stands in for an entitled, signed-in traveller on every client
+// gate (see usePaywall); the bot's own sign-in gate honours it too, so the
+// build-state harness can still drive a run without credentials. Compiled
+// out of production builds with the rest of the seams.
+const BOT_MOCK = E2E_SEAMS && typeof window !== 'undefined'
+  && new URLSearchParams(window.location.search).has('paymock');
 
 const MOOD_OPTIONS = [
   { key: 'sights', labelKey: 'chat.moodSights', Icon: CastleIcon },
@@ -208,6 +216,13 @@ export function CartaChatPlanner({
   stayPoint, cityOptions, onSuggestCity, resolveNearest, onResearchCity,
   presetTownId = null, defaultTownId = null, ideas = [], townCandidateCount = null,
   townMustSeeCount = null, weatherNote = null, hasEvents = false,
+  // What the trip wizard already knows about this traveller (party size,
+  // travel style, pace), as answers the questions open on. Each question is
+  // still asked; the likely option is simply already lit.
+  initialAnswers = null,
+  // A guest who reaches the last question is sent to sign in rather than to
+  // a request that can only fail: the bot is account-gated.
+  onSignIn = null,
 }) {
   const { t, lang } = useI18n();
   const [step, setStep] = useState(0);
@@ -224,6 +239,11 @@ export function CartaChatPlanner({
     diet: [],
     events: false,
     avoidCrowds: false,
+    ...(initialAnswers || {}),
+    // Moods named by the ideas AND by the wizard, both, within the cap.
+    ...(initialAnswers?.moods
+      ? { moods: [...new Set([...impliedMoods, ...initialAnswers.moods])].slice(0, MAX_MOODS) }
+      : {}),
     ...(presetTownId ? { town: presetTownId } : {}),
   }));
   // Festivals that match the date default the toggle on: the traveller is
@@ -384,8 +404,13 @@ export function CartaChatPlanner({
   const advance = (key, value, extra) => {
     const next = { ...answers, [key]: value, ...(extra || {}) };
     setAnswers(next);
-    if (stepSafe + 1 >= visible.length) generate(next, '');
-    else setStep(stepSafe + 1);
+    if (stepSafe + 1 >= visible.length) {
+      // No request for a guest: plan-day answers 401 and the traveller had
+      // just spent seven taps to be told so. The same bubble, with the door
+      // that actually opens.
+      if (!signedIn && onSignIn && !BOT_MOCK) { setFailCode('auth'); setPhase('fail'); return; }
+      generate(next, '');
+    } else setStep(stepSafe + 1);
   };
 
   /** Flip one toggle answer (avoid hills, transit, crowds, events). */
@@ -589,10 +614,17 @@ export function CartaChatPlanner({
                     const sub = current.stepBudget
                       ? t('chat.aboutSteps', { n: formatSteps(o.steps, lang) })
                       : o.sub;
+                    // A single-choice question can open with its likely
+                    // answer lit (the wizard's presets, see initialAnswers);
+                    // tapping any option, lit or not, is still the answer.
+                    const on = current.stepBudget
+                      ? answers[current.key] === o.steps
+                      : answers[current.key] === o.key;
                     return (
                       <button
                         key={o.key}
-                        className="chat-opt"
+                        className={`chat-opt ${on ? 'on' : ''}`}
+                        aria-pressed={on}
                         onClick={() => advance(
                           current.key,
                           current.stepBudget ? o.steps : o.key,
@@ -727,7 +759,9 @@ export function CartaChatPlanner({
           <div className="chat-turn">
             <div className="chat-bubble bot chat-bubble-warn">{t(`ai.${failCode === 'user_cap' ? 'quotaUser' : failCode === 'global_cap' ? 'quotaGlobal' : failCode === 'auth' ? 'signIn' : 'error'}`)}</div>
             <div className="chat-opts">
-              <button className="chat-opt" onClick={() => generate(answers, '')}>{t('ai.retry')}</button>
+              {failCode === 'auth' && onSignIn
+                ? <button className="chat-opt" onClick={onSignIn}>{t('auth.signIn')}</button>
+                : <button className="chat-opt" onClick={() => generate(answers, '')}>{t('ai.retry')}</button>}
               <button className="chat-opt" onClick={onManual}>{t('chat.planManually')}</button>
             </div>
           </div>

@@ -29,6 +29,7 @@ import {
   ClockIcon, MountainIcon, MapPinIcon, CheckIcon, ListDayIcon, CloseIcon,
   ChevronRightIcon, LinkIcon, EyeIcon, SwimIcon, BeachIcon, CastleIcon,
   BedIcon, BottleIcon, LoopIcon, StarIcon, CameraIcon,
+  SunIcon,
 } from '../components/Icons.jsx';
 import { RatingBadge } from '../components/RatingBadge.jsx';
 import { isNum } from '../map/coords.js';
@@ -235,7 +236,7 @@ function Fact({ label, value, word = false, title }) {
   );
 }
 
-export function TrailPage({ card, onClose, onSelectDest, onOpenNeighbour, dests, fav = false, onFav = null }) {
+export function TrailPage({ card, onClose, onSelectDest, onOpenNeighbour, dests, fav = false, onFav = null, onAddToDay = null }) {
   const { t } = useI18n();
   const paywall = usePaywall();
   const { tr, assoc, kindKey, price } = card;
@@ -610,6 +611,14 @@ export function TrailPage({ card, onClose, onSelectDest, onOpenNeighbour, dests,
                 </span>
               )}
             </div>
+            {/* The trailhead is where the day's idea sits; the bbox centre
+                stands in until the geometry has loaded. */}
+            {onAddToDay && (
+              <button type="button" className="feat-dayplan" onClick={() => onAddToDay({ id: tr.id, cc: tr.country || tr.cc, name: tr.name, lat: start ? start.lat : (tr.bbox ? (tr.bbox[1] + tr.bbox[3]) / 2 : tr.lat), lon: start ? start.lon : (tr.bbox ? (tr.bbox[0] + tr.bbox[2]) / 2 : tr.lon) })}>
+                <SunIcon size={14} />
+                <span>{t('feat.addToDay')}</span>
+              </button>
+            )}
           </div>
 
           <div className="tpage-facts">

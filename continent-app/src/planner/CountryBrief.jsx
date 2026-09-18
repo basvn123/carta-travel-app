@@ -518,10 +518,20 @@ function BriefBody({
   // Groups the traveller asked for first, then the rest. What they told the
   // quiz is the only ordering signal the brief has, and ignoring it puts
   // "beach towns" above "walking bases" for somebody who asked to walk.
+  //
+  // Ordered by the traveller's picks IN THE ORDER THEY PICKED THEM, not by a
+  // yes/no match: a trail runner who also said "road trip" was getting the
+  // lakes rail first because it happened to be bigger and matched too.
   const groups = React.useMemo(() => {
-    const wanted = new Set(quizTypes || []);
-    const score = (g) => (g.quizTypes || []).some((k) => wanted.has(k));
-    return brief.themes.slice().sort((a, b) => (score(b) ? 1 : 0) - (score(a) ? 1 : 0));
+    const picks = quizTypes || [];
+    const rank = (g) => {
+      const hits = (g.quizTypes || []).map((k) => picks.indexOf(k)).filter((i) => i >= 0);
+      return hits.length ? Math.min(...hits) : Infinity;
+    };
+    return brief.themes
+      .map((g) => (g.key === 'hiking' && picks.includes('trailrun')
+        ? { ...g, labelKey: 'brief.themeHikingRun' } : g))
+      .sort((a, b) => rank(a) - rank(b));
   }, [brief.themes, quizTypes]);
 
   // The shortlist, resolved through the same door the Favorites tab uses, so

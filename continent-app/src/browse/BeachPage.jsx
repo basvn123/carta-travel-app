@@ -14,6 +14,7 @@ import { CountryFlag } from '../components/CountryFlag.jsx';
 import {
   ArrowLeftIcon, ShareIcon, MapPinIcon, LinkIcon, ChevronRightIcon,
   CameraIcon,
+  SunIcon,
 } from '../components/Icons.jsx';
 import { srcSetFor, fallbackSrc } from '../lib/heroImage.js';
 
@@ -77,7 +78,7 @@ function ImageCredit({ image, t }) {
   );
 }
 
-export function BeachPage({ beach, countryName, onClose, onSelectDest, model, onOpenNeighbour, fav = false, onFav = null }) {
+export function BeachPage({ beach, countryName, onClose, onSelectDest, model, onOpenNeighbour, fav = false, onFav = null, onAddToDay = null }) {
   const { t, lang } = useI18n();
   const [shot, setShot] = useState(0);
   // The score badge opens the breakdown. Closed by default: most readers
@@ -246,6 +247,12 @@ export function BeachPage({ beach, countryName, onClose, onSelectDest, model, on
               {beach.name}
             </h1>
             {beach.nameLocal && <p className="bpage-local">{beach.nameLocal}</p>}
+            {onAddToDay && (
+              <button type="button" className="feat-dayplan" onClick={() => onAddToDay({ id: beach.id, cc: beach.cc, name: beach.name, lat: beach.lat, lon: beach.lon })}>
+                <SunIcon size={14} />
+                <span>{t('feat.addToDay')}</span>
+              </button>
+            )}
             <div className="bpage-scorerow">
               {/* The badge is the door to the breakdown. The weights are
                   already in the wire's model block and the components are

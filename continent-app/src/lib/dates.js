@@ -67,6 +67,22 @@ export function fmtMonths(nums) {
   return (nums || []).map((n) => MONTHS[n - 1]).filter(Boolean).join(', ');
 }
 
+/** How far ahead a trip may be dated: the later of the fare window's end
+ *  and fifteen months from today.
+ *
+ *  Both planners used to cap their calendars at meta.end_date, the day the
+ *  harvested fares run out, which in September puts May of next year out of
+ *  reach. The planners stopped pricing fares themselves (transport is booked
+ *  outside Carta), so the fare window no longer bounds what can be PLANNED;
+ *  it only bounds the fare hints, which already say nothing past it. */
+export function planningHorizon(fareEndIso, todayIso) {
+  const base = todayIso || todayISO();
+  const [y, m, d] = base.split('-').map(Number);
+  const dt = new Date(Date.UTC(y, m - 1 + 15, Math.min(d, 28)));
+  const far = `${dt.getUTCFullYear()}-${String(dt.getUTCMonth() + 1).padStart(2, '0')}-${String(dt.getUTCDate()).padStart(2, '0')}`;
+  return laterISO(fareEndIso, far);
+}
+
 /** The later of two ISO dates, ignoring blanks. ISO sorts lexically, so a
  *  string compare is the whole job. */
 export function laterISO(a, b) {

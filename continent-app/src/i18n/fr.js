@@ -2636,6 +2636,7 @@ export const fr = {
   "brief.themeBeach": "stations balnéaires",
   "brief.themeMountains": "bases en montagne",
   "brief.themeHiking": "bases de randonnée",
+  "brief.themeHikingRun": "randonnée & trail",
   "brief.themeNature": "sites naturels",
   "brief.themeHeritage": "lieux de patrimoine",
   "brief.themeArt": "villes d'art",
@@ -2881,6 +2882,7 @@ export const fr = {
   "dayws.saveTitle": "Garder ce plan dans vos voyages enregistrés",
   "dayws.autoSavedTitle": "Chaque modification est enregistrée automatiquement sur cet appareil",
   "dayws.backToPlans": "Retour à tous les plans",
+  "dayws.backToTrip": "Retour au voyage",
   "dayws.savedTitle": "Dans vos voyages enregistrés",
   "dayws.savedBody": "Ce plan est dans vos voyages enregistrés. Rouvrez-le quand vous voulez, chaque modification est conservée.",
   "dayws.savedKeep": "Continuer ici",
@@ -2979,6 +2981,9 @@ export const fr = {
   /* DEST-PAGE-KEYS: the full-screen destination page and its PDF export.
      Rendered from the dossier contract (public/dossier). */
   "dest.share": "Partager",
+  "dest.planTrip": "Planifier un voyage ici",
+  "dest.planDay": "Planifier une journée ici",
+  "feat.addToDay": "Ajouter à un plan de journée",
   "dest.linkCopied": "Lien copié",
   "dest.pdf": "Télécharger le guide PDF",
   "dest.pdfBuilding": "Préparation du PDF",

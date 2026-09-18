@@ -2636,6 +2636,7 @@ export const es = {
   "brief.themeBeach": "pueblos de playa",
   "brief.themeMountains": "bases de montaña",
   "brief.themeHiking": "bases de senderismo",
+  "brief.themeHikingRun": "senderismo y trail running",
   "brief.themeNature": "parajes naturales",
   "brief.themeHeritage": "lugares con patrimonio",
   "brief.themeArt": "ciudades de arte",
@@ -2881,6 +2882,7 @@ export const es = {
   "dayws.saveTitle": "Guarda este plan en tus viajes guardados",
   "dayws.autoSavedTitle": "Cada cambio se guarda automáticamente en este dispositivo",
   "dayws.backToPlans": "Volver a todos los planes",
+  "dayws.backToTrip": "Volver al viaje",
   "dayws.savedTitle": "En tus viajes guardados",
   "dayws.savedBody": "Este plan está en tus viajes guardados. Ábrelo cuando quieras, cada cambio se conserva.",
   "dayws.savedKeep": "Seguir planificando aquí",
@@ -2979,6 +2981,9 @@ export const es = {
   /* DEST-PAGE-KEYS: the full-screen destination page and its PDF export.
      Rendered from the dossier contract (public/dossier). */
   "dest.share": "Compartir",
+  "dest.planTrip": "Planear un viaje aquí",
+  "dest.planDay": "Planear un día aquí",
+  "feat.addToDay": "Añadir a un plan de día",
   "dest.linkCopied": "Enlace copiado",
   "dest.pdf": "Descargar la guía PDF",
   "dest.pdfBuilding": "Preparando el PDF",

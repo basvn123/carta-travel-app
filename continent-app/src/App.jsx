@@ -365,6 +365,21 @@ function TravelApp() {
   const [sharedTripRaw] = useState(() => readTripShareFromUrl());
   const [sharedTrip, setSharedTrip] = useState(null);
   const [pendingSharedTrip, setPendingSharedTrip] = useState(null);
+
+  // The hand-offs INTO the planners from a destination or feature page, and
+  // their shareable forms (`?tab=trip&cc=BE`, `?tab=day&dest=BRU`,
+  // `?tab=day&feat=trail:AT:63478`, see lib/urlState.js). Each is consumed by
+  // the planner it names and cleared again, the same pattern as
+  // pendingSharedTrip: the tab reads it once, does its thing, and calls back.
+  //   tripSeed: { iso2 }
+  //   daySeed:  { destId } | { feature: { kind, cc, id, name?, lat?, lon? } }
+  const [pendingTripSeed, setPendingTripSeed] = useState(() => (
+    init.tripSeedCc ? { iso2: init.tripSeedCc } : null
+  ));
+  const [pendingDaySeed, setPendingDaySeed] = useState(() => (
+    init.daySeedDest ? { destId: init.daySeedDest }
+      : init.daySeedFeat ? { feature: init.daySeedFeat } : null
+  ));
   useEffect(() => {
     if (!sharedTripRaw) return undefined;
     let live = true;
@@ -487,6 +502,48 @@ function TravelApp() {
     goToTab('places');
   }, [goToTab]);
 
+  /** "Plan a trip here" on a destination page: the trip wizard's Where step
+   *  with that destination's country already picked. The wizard maps the
+   *  iso2 onto the country name it keys its picks by. */
+  const openTripForCountry = useCallback((iso2) => {
+    if (!iso2 || !/^[A-Za-z]{2}$/.test(String(iso2))) return;
+    setPendingTripSeed({ iso2: String(iso2).toUpperCase() });
+    goToTab('trip');
+  }, [goToTab]);
+
+  /** "Plan a day here" on a destination page: the day flow, staying in that
+   *  city, opened on the When question. */
+  const openDayForDest = useCallback((id) => {
+    if (!id) return;
+    setPendingDaySeed({ destId: String(id) });
+    goToTab('day');
+  }, [goToTab]);
+
+  /** "Add to a day plan" on a trail, beach, lake or mountain page: the day
+   *  flow with that place as the first idea, staying in the nearest town.
+   *  The page passes what it knows (name, point); a share link passes only
+   *  kind, country and id, and the day tab resolves the rest. */
+  const openDayForFeature = useCallback((kind, ref) => {
+    if (!kind || !ref || ref.id == null) return;
+    const k = kind === 'trails' ? 'trail' : kind === 'beaches' ? 'beach'
+      : kind === 'lakes' ? 'lake' : kind === 'mountains' ? 'mountain' : kind;
+    setPendingDaySeed({
+      feature: {
+        kind: k, cc: ref.cc || ref.country || '', id: String(ref.id),
+        name: ref.name || '', lat: ref.lat, lon: ref.lon,
+      },
+    });
+    goToTab('day');
+  }, [goToTab]);
+
+  /** "Back to trip" on a day plan that came out of a saved trip: reopen that
+   *  trip in the planner. A null id means the still-unsaved draft, which the
+   *  planner is already holding. */
+  const openTripFromDay = useCallback((planId) => {
+    if (planId) setPendingTripPlanId(planId);
+    goToTab('trip');
+  }, [goToTab]);
+
   /**
    * Open one feature layer's full-screen page, from anywhere.
    *
@@ -595,6 +652,8 @@ function TravelApp() {
   const clearPendingTripPlan = useCallback(() => setPendingTripPlanId(null), []);
   const clearPendingSharedTrip = useCallback(() => setPendingSharedTrip(null), []);
   const clearPendingDayPlan = useCallback(() => setPendingDayPlanId(null), []);
+  const clearPendingTripSeed = useCallback(() => setPendingTripSeed(null), []);
+  const clearPendingDaySeed = useCallback(() => setPendingDaySeed(null), []);
   const planDay = useCallback((target) => {
     setPendingDayPlanId(target); // { planId|null, stopIndex, dayIndex }
     goToTab('day');
@@ -982,6 +1041,7 @@ function TravelApp() {
             onOpenCountryConsumed={() => setPendingCountry(null)}
             isFavorite={isFavorite}
             onToggleFav={toggleFav}
+            onAddToDay={openDayForFeature}
           />
         </div>
       )}
@@ -1001,6 +1061,8 @@ function TravelApp() {
               onOpenPlanConsumed={clearPendingTripPlan}
               openSharedTrip={pendingSharedTrip}
               onSharedTripConsumed={clearPendingSharedTrip}
+              tripSeed={pendingTripSeed}
+              onTripSeedConsumed={clearPendingTripSeed}
               origin={choices.origin}
               onChangeOrigin={setOrigin}
               lifestyle={choices.lifestyle}
@@ -1028,6 +1090,9 @@ function TravelApp() {
               onPlanTrip={() => goToTab('trip')}
               onOpenDest={(id) => setSelectedId(id)}
               onOpenFeature={openFeature}
+              daySeed={pendingDaySeed}
+              onDaySeedConsumed={clearPendingDaySeed}
+              onOpenTrip={openTripFromDay}
             />
           </Suspense>
         </div>
@@ -1070,6 +1135,8 @@ function TravelApp() {
               setPendingTrip({ id });
               goToTab('places');
             }}
+            onPlanTrip={selectedDest.iso2 ? () => { setSelectedId(null); openTripForCountry(selectedDest.iso2); } : undefined}
+            onPlanDay={selectedId ? () => { setSelectedId(null); openDayForDest(selectedId); } : undefined}
           />
         </div>
       )}

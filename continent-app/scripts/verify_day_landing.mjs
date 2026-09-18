@@ -408,7 +408,9 @@ try {
     await new Promise((r) => setTimeout(r, 8000));
     await route.continue();
   });
-  await page.goto(`${BASE}/?tab=day&o=CRL`);
+  // ?paymock: a guest is sent to sign in before the request now (I2), and
+  // this run needs the request to leave so the build state can be measured.
+  await page.goto(`${BASE}/?tab=day&o=CRL&paymock`);
   await page.locator('.day-flow-search input').waitFor({ timeout: 120000 });
   await answerStay(page);
   await page.locator('.day-flow-next').click();

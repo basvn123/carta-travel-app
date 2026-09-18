@@ -15,6 +15,7 @@ import { CountryFlag } from '../components/CountryFlag.jsx';
 import {
   ArrowLeftIcon, ShareIcon, MapPinIcon, LinkIcon, ChevronRightIcon,
   CameraIcon, BootIcon, AlertIcon,
+  SunIcon,
 } from '../components/Icons.jsx';
 import { srcSetFor, fallbackSrc } from '../lib/heroImage.js';
 
@@ -106,7 +107,7 @@ function SeasonStrip({ temps, warmC, t }) {
   );
 }
 
-export function LakePage({ lake, countryName, onClose, onSelectDest, warmC = 18, onOpenNeighbour, fav = false, onFav = null }) {
+export function LakePage({ lake, countryName, onClose, onSelectDest, warmC = 18, onOpenNeighbour, fav = false, onFav = null, onAddToDay = null }) {
   const { t, lang } = useI18n();
   const [shot, setShot] = useState(0);
   const [toast, setToast] = useState(null);
@@ -245,6 +246,12 @@ export function LakePage({ lake, countryName, onClose, onSelectDest, warmC = 18,
               {lake.name}
             </h1>
             {lake.nameLocal && <p className="bpage-local">{lake.nameLocal}</p>}
+            {onAddToDay && (
+              <button type="button" className="feat-dayplan" onClick={() => onAddToDay({ id: lake.id, cc: lake.cc, name: lake.name, lat: lake.lat, lon: lake.lon })}>
+                <SunIcon size={14} />
+                <span>{t('feat.addToDay')}</span>
+              </button>
+            )}
             <div className="bpage-scorerow">
               <ScoreChip rating={rating} size="lg" />
               <span className="bpage-band">{t(`lake.band${rating.tier}`)}</span>

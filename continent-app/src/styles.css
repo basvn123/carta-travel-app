@@ -25007,6 +25007,9 @@ button.ai-sched-main:focus-visible {
 .cbrief-trip-img {
   flex: none;
   width: 76px;
+  /* HeroImage writes width="4" height="3" for the ratio; without this the
+     3px attribute height wins and the thumbnail is a hairline. */
+  height: auto;
   aspect-ratio: 4 / 3;
   border-radius: 8px;
   object-fit: cover;
@@ -33067,3 +33070,41 @@ button.ai-sched-main:focus-visible {
   }
   .dayex { padding-bottom: 20px; }
 }
+
+/* ---- Hand-offs into the planners (I1) ------------------------------------
+   Two doors on a destination page (trip wizard, day flow), one on a trail,
+   beach, lake or mountain page, and the way back from a day to its trip. */
+.destp-plan-btn { color: var(--ink); border-color: var(--ink); }
+.destp-plan-btn:hover { background: var(--ink); color: var(--paper); }
+.feat-dayplan {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+  height: 38px;
+  padding: 0 14px;
+  border: 1px solid var(--ink);
+  border-radius: 8px;
+  background: var(--paper);
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background .15s, color .15s;
+}
+.feat-dayplan:hover { background: var(--ink); color: var(--paper); }
+.feat-dayplan:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.day-topcard-trip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 6px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--accent);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.day-topcard-trip:hover { text-decoration: underline; }

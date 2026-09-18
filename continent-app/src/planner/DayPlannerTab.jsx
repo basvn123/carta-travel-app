@@ -45,7 +45,7 @@ import { formatSteps, kmToSteps, stepsToKm } from '../lib/steps.js';
 import { fetchForecast, weatherKind } from '../lib/weather.js';
 import { loadDossier } from '../lib/dossier.js';
 import { searchFold } from '../lib/textSearch.js';
-import { useShortlistPoints } from '../hooks/useFavoriteItems.js';
+import { useShortlistPoints, resolveFeatureRow } from '../hooks/useFavoriteItems.js';
 import { PoiThumb } from './DayActivityRows.jsx';
 import { DayIdeasStep } from './DayIdeasStep.jsx';
 import { DayPlanPanel } from './DayPlanPanel.jsx';
@@ -61,6 +61,7 @@ import {
   subscribeDayPlanStore, TRIP_DRAFT_PLAN_ID,
 } from './dayPlanStore.js';
 import { loadTripDraft } from './tripDraftStore.js';
+import { plannerStore } from './plannerStore.js';
 import {
   loadDiscovered, saveDiscovered, removeDiscovered, subscribeDiscovered, isStale,
 } from './discoveredStore.js';
@@ -71,6 +72,7 @@ import {
   PencilIcon, SearchIcon, HomeIcon, CheckIcon, CalendarIcon,
   ClockIcon, CoffeeIcon, FilterIcon, ChevronDownIcon, ChevronRightIcon,
   UploadIcon, CrosshairIcon, TownIcon,
+  ArrowLeftIcon,
 } from '../components/Icons.jsx';
 import {
   ContinueTripCards, DayPlanCards, hasImminentTrip,
@@ -205,6 +207,14 @@ const FORM_STEPS = new Set(['stay', 'when', 'ideas', 'how']);
 export const DayPlannerTab = React.memo(function DayPlannerTab({
   data, user, authConfigured, openPlanId, onOpenPlanConsumed, favorites = null,
   onRequestAuth, onPlanTrip, onOpenDest, onOpenFeature,
+  // A hand-off in from a destination or feature page (App.openDayForDest /
+  // openDayForFeature, or a ?tab=day&dest= / &feat= link):
+  //   { destId } | { feature: { kind, cc, id, name?, lat?, lon? } }
+  // Consumed once and reported back through onDaySeedConsumed.
+  daySeed = null, onDaySeedConsumed = null,
+  // "Back to trip" on a plan that came out of a saved trip: App reopens
+  // that trip in the planner. Null id means the unsaved draft.
+  onOpenTrip = null,
 }) {
   const { t, lang } = useI18n();
   // Towns the traveller asked Carta to research (discoveredStore.js). They are
@@ -481,6 +491,94 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
       onOpenPlanConsumed && onOpenPlanConsumed();
     })();
   }, [openPlanId]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // A seed lands the flow on the When question with the stay answered: the
+  // destination's city, or for a trail / beach / lake / mountain the nearest
+  // catalogue town (the feature itself when no town is within reach), with
+  // the feature already down as the day's first idea. Any open plan gives
+  // way: the traveller has just asked for a new day somewhere else.
+  useEffect(() => {
+    if (!daySeed) return undefined;
+    let live = true;
+    (async () => {
+      let stay = null;
+      let ideaList = [];
+      if (daySeed.destId) {
+        const d = destinations[daySeed.destId];
+        const c = d ? cityCoords(d) : null;
+        if (c && c.lat != null) {
+          const name = cityLabel(d.city);
+          stay = { lat: c.lat, lon: c.lon, label: d.country ? `${name}, ${d.country}` : name, shortLabel: name };
+        }
+      } else if (daySeed.feature) {
+        let f = daySeed.feature;
+        if (!Number.isFinite(f.lat) || !Number.isFinite(f.lon) || !f.name) {
+          const row = await resolveFeatureRow(f.kind, f.cc, f.id);
+          if (row && !row.missing) f = { ...f, name: row.name || f.name, lat: row.lat, lon: row.lon };
+        }
+        if (Number.isFinite(f.lat) && Number.isFinite(f.lon)) {
+          const town = resolveNearestTown(f.lat, f.lon);
+          if (town && town.km <= 60) {
+            const c = cityCoords(town.dest);
+            const name = cityLabel(town.dest.city);
+            stay = { lat: c.lat, lon: c.lon, label: town.label, shortLabel: name };
+          } else {
+            stay = { lat: f.lat, lon: f.lon, label: f.name, shortLabel: f.name };
+          }
+          ideaList = [{
+            key: `f:${f.kind}:${f.id}`, name: f.name, lat: f.lat, lon: f.lon,
+            destId: null, poiIdx: null, kind: f.kind, cat: f.kind, img: null, timeOfDay: 'any',
+          }];
+        }
+      }
+      if (!live) return;
+      if (stay) {
+        setPlan(null);
+        setEditingPlanId(null);
+        setStayQuery('');
+        setStayResults(null);
+        setNewStayWindow(null);
+        setNewStayPoint(stay);
+        setIdeas(ideaList);
+        setLandingStep('when');
+      }
+      onDaySeedConsumed && onDaySeedConsumed();
+    })();
+    return () => { live = false; };
+  }, [daySeed]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  /**
+   * The chat's opening answers, read off the trip wizard's draft: a couple
+   * who told the wizard "Hotels & comfort" should not have to tell the day
+   * planner again that they are two, start late, walk little and sit down
+   * for lunch. Only a draft that has actually been started counts (a chosen
+   * country or stops); the store's own defaults say nothing about anybody.
+   * Read at the moment the chat opens, so an edited draft is seen.
+   */
+  const chatPresets = useMemo(() => {
+    if (landingStep !== 'chat') return null;
+    const st = plannerStore.getState() || {};
+    const started = (st.wizard?.countries || []).length > 0 || (st.stops || []).length > 0;
+    if (!started) return null;
+    const tr = st.travelers || {};
+    const quiz = st.wizard?.quiz || {};
+    const out = {};
+    const adults = Number(tr.adults) || 0;
+    const kids = Number(tr.children) || 0;
+    if (kids > 0) out.companions = 'family';
+    else if (adults === 1) out.companions = 'solo';
+    else if (adults === 2) out.companions = 'partner';
+    else if (adults > 2) out.companions = 'group';
+    if (tr.lifestyle === 'luxury') { out.start = 'late'; out.steps = 5000; out.food = 'sit'; }
+    else if (tr.lifestyle === 'budget') { out.food = 'quick'; out.diet = ['cheap']; }
+    const types = quiz.types || [];
+    const moods = [];
+    if (types.some((k) => /hiking|trailrun|cycling|ski|water/.test(k))) moods.push('active');
+    if (types.some((k) => /beach|islands|lakes/.test(k))) moods.push('beach');
+    if (moods.length) out.moods = moods;
+    if (quiz.pace === 'moving') out.steps = 20000;
+    return Object.keys(out).length ? out : null;
+  }, [landingStep]);
 
   const addLandingCity = (id) => {
     if (!id || newStops.some((s) => s.destinationId === id)) return;
@@ -3523,6 +3621,8 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
           {/* The chat planner: questions, a proposed route, then import. */}
           {landingStep === 'chat' && (
             <CartaChatPlanner
+              initialAnswers={chatPresets}
+              onSignIn={onRequestAuth}
               towns={exploreTowns}
               dateISO={newStartDate}
               groupSize={prefs?.aiGroupSize || 2}
@@ -3814,6 +3914,20 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
                 {stop?.dest?.city || t('dayws.noStops')}
                 {days[dayIdx] ? `, ${fmtDate(days[dayIdx])}` : ''}
               </div>
+              {/* A day cut out of a trip keeps its way back to that trip: the
+                  cities and nights it was cut from live in the Trip tab, and
+                  the traveller who arrived from "Plan your days" is one tap
+                  from where they were. Standalone plans have no trip. */}
+              {!plan.standalone && (onOpenTrip || onPlanTrip) && (
+                <button
+                  type="button"
+                  className="day-topcard-trip"
+                  onClick={() => (plan.tripDraft || !onOpenTrip ? onPlanTrip?.() : onOpenTrip(plan.id))}
+                >
+                  <ArrowLeftIcon size={12} />
+                  <span>{t('dayws.backToTrip')}</span>
+                </button>
+              )}
             </div>
             {/* Always-visible save state: standalone plans (and their picks)
                 persist on this device automatically; trip-based plans get an

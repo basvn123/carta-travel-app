@@ -3350,6 +3350,7 @@ export const en = {
   "brief.themeBeach": "beach towns",
   "brief.themeMountains": "mountain bases",
   "brief.themeHiking": "walking bases",
+  "brief.themeHikingRun": "hiking & trail running",
   "brief.themeNature": "nature spots",
   "brief.themeHeritage": "heritage places",
   "brief.themeArt": "art cities",
@@ -3595,6 +3596,7 @@ export const en = {
   "dayws.saveTitle": "Keep this day plan in your Saved trips",
   "dayws.autoSavedTitle": "Every change to this day plan is saved on this device automatically",
   "dayws.backToPlans": "Back to all day plans",
+  "dayws.backToTrip": "Back to trip",
   "dayws.savedTitle": "In your Saved trips",
   "dayws.savedBody": "This day plan is stored in your Saved trips. Reopen it any time, and every change you make here is kept automatically.",
   "dayws.savedKeep": "Keep planning here",
@@ -3693,6 +3695,9 @@ export const en = {
   /* DEST-PAGE-KEYS: the full-screen destination page and its PDF export.
      Rendered from the dossier contract (public/dossier). */
   "dest.share": "Share",
+  "dest.planTrip": "Plan a trip here",
+  "dest.planDay": "Plan a day here",
+  "feat.addToDay": "Add to a day plan",
   "dest.linkCopied": "Link copied",
   "dest.pdf": "Download PDF guide",
   "dest.pdfBuilding": "Preparing the PDF",
