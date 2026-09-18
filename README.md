@@ -60,6 +60,8 @@ see [SCHEMA.md](docs/SCHEMA.md)).
 ├── cache/                  Harvest caches (LFS-tracked; secrets gitignored)
 ├── docs/                   Product + engineering docs (1.CARTA.md overview,
 │                           2.SIGNIFICANCE.md, SCHEMA.md, ESTIMATION.md,
+│                           TRAILS.md + TRAILS_DATA_QUALITY.md (the trails
+│                           quality contract),
 │                           PRICEMAP_CHUNKS.md, plans, ToS/license ledger)
 ├── logs/                   Pipeline logs + run state (gitignored)
 └── supabase/               SQL schema + migrations (RLS on every table)
@@ -91,6 +93,16 @@ The same orchestrator drives the trails content lab (`trails_ingest`,
 the local PostGIS lab rather than the master and so never blocks the ship. Its
 validation task also demotes published trips whose quality regressed, back to
 `needs_review` and never further - see [tools/trailslab/README.md](tools/trailslab/README.md).
+
+**Trails data quality is governed by a standing contract:
+[docs/TRAILS_DATA_QUALITY.md](docs/TRAILS_DATA_QUALITY.md).** Read it before
+changing anything under `pipeline/trails/`. In one line: a region counts as
+covered only when its best-known walks are published under the names people
+search for, with a photo of the place and numbers that match the ground - so
+the famous-trail registry, the per-region coverage gate, way-chain derivation,
+parent pages for stage families and the per-row publish gates are requirements,
+not nice-to-haves. `docs/TRAILS.md` remains the reference for how the layer
+works.
 
 On top of the fare refresh sits an automated estimation layer (weekly
 snapshot history -> quantile GBDT fare model -> PSI/KS drift-gated

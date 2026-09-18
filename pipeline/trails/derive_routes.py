@@ -191,6 +191,11 @@ MIN_M_STRONG = 600.0
 # the same walk under another name. Metres, and the share of its length.
 DUPLICATE_BUFFER_M = 40.0
 DUPLICATE_SHARE = 0.5
+# ... and how much of the RELATION the derived route has to cover before the
+# two count as one walk. Without this half of the test, every named trail
+# short enough to lie inside a long-distance route was rejected as its
+# duplicate. 0.5 both ways means "these two lines are each mostly the other".
+DUPLICATE_SHARE_BACK = 0.5
 
 # --- Phase 2: chaining across a gap -----------------------------------------
 # The brief's rule: two ways may chain when their ENDS are within 50 m, not
@@ -878,6 +883,19 @@ INSERT_SQL = """
 # A derived route that runs alongside an existing relation is the same walk.
 # The relation wins: somebody published it as a route, which is a stronger
 # claim than one we assembled.
+#
+# But "alongside" has to be MUTUAL, and this is where the rule was wrong. It
+# asked only whether the derived route lay inside the relation, which is
+# trivially true for any short trail that runs along a longer one. The
+# Fuerstensteig, Liechtenstein's best-known walk, built correctly at 2.01 km
+# and was then rejected four times over: it is 100% inside the Via Alpina
+# stage, the Panoramaweg and two others, while covering 13 to 21% of each of
+# them. It is a named segment WITHIN those routes, not a duplicate of any,
+# and a traveller searching for it was offered "Gaflei - Planken".
+#
+# So a derived route is a duplicate only when the relation is also mostly
+# covered by IT. Two lines that are each mostly the other are one walk; a
+# short line inside a long one is a walk with its own name.
 DUPLICATE_SQL = """
     SELECT d.id
     FROM trips d
@@ -892,6 +910,11 @@ DUPLICATE_SQL = """
                     ST_Transform(d.geom, 3035),
                     ST_Buffer(ST_Transform(r.geom, 3035), %(buf)s)))
               >= %(share)s * ST_Length(ST_Transform(d.geom, 3035))
+          AND ST_Length(
+                ST_Intersection(
+                    ST_Transform(r.geom, 3035),
+                    ST_Buffer(ST_Transform(d.geom, 3035), %(buf)s)))
+              >= %(back)s * ST_Length(ST_Transform(r.geom, 3035))
       )
 """
 
@@ -900,7 +923,8 @@ def drop_duplicates(conn, cc, verbose=False):
     with conn.cursor() as cur:
         cur.execute(DUPLICATE_SQL, {"cc": cc, "source": SOURCE,
                                     "buf": DUPLICATE_BUFFER_M,
-                                    "share": DUPLICATE_SHARE})
+                                    "share": DUPLICATE_SHARE,
+                                    "back": DUPLICATE_SHARE_BACK})
         ids = [r[0] for r in cur.fetchall()]
         if ids:
             cur.execute("UPDATE trips SET status = 'rejected'::trip_status, "
