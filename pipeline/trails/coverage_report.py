@@ -49,6 +49,25 @@ Reason codes for everything unmatched, one each:
                        Alsace) whose point landed over the line. Reported,
                        not gating, because the fault is in the point rather
                        than in the catalogue.
+  not_a_walk           OSM has named ways for it and the registry classifies
+                       it as a PLACE: a street, a bridge, a square, a lake.
+                       Reported and counted, never gating. See the honesty
+                       note below, because this code could be a hiding place
+                       and is deliberately built not to be.
+
+The not_a_walk code, and why it is not a way to make a number go away:
+
+  Phase 1 reported 8,893 way_only_not_derived misses and only 29 of them were
+  trails by Wikidata class or by a human seed. The rest were Via Roma,
+  Bahnhofsplatz, the Millennium Bridge and Ketelmeer, which reached the
+  registry as famous TRAILS because any fame tag on a walkable way made a row
+  a trail. Phase 2 fixed that classifier, and a fix that simply moved 8,800
+  rows out of the gate would be indistinguishable from a cover-up.
+
+  So the reclassified rows keep a code of their own, the md prints the count
+  per country with a sample somebody can read, and the json keeps every id.
+  A real trail sitting in that list is then visible rather than silent, which
+  is the whole difference between this and deleting the rows.
 
 Build-failing rule (--strict): the run fails when any region's TOP THREE
 registry rows by fame_score are unmatched with a code in
@@ -102,6 +121,13 @@ DEG_KM = 111.32
 # Codes the gate refuses to let ship. The other codes describe the world;
 # these three describe this pipeline.
 OUR_BUGS = {"way_only_not_derived", "failed_continuity", "below_quota"}
+
+# What way_only_not_derived measured at the end of Phase 1, before the
+# classifier fix and before way-chain derivation ran for every country. It is
+# the denominator of the leak check in --strict: not_a_walk may only account
+# for rows this number actually lost. Update it deliberately, with a note,
+# never to make a run pass.
+WAY_ONLY_BASELINE = 8893
 
 
 def load_json(path, default=None):
@@ -304,6 +330,30 @@ def match_registry(reg_rows, pub_rows, verbose=False):
     return reg_rows
 
 
+def not_a_walk_summary(reg_rows):
+    """Per country: how many rows were reclassified, and ten of their names.
+
+    This exists to be READ. Phase 2 moved roughly 8,700 rows out of
+    way_only_not_derived by fixing a classifier that called any fame-tagged
+    walkable way a trail, and a reclassification nobody can inspect is
+    indistinguishable from deleting the inconvenient rows. So the count is
+    per country, the sample is real names, and every id stays in rows[].
+
+    A real trail in this list means the classifier is wrong, which is a
+    finding, not an embarrassment: that is what the list is for."""
+    rows = [r for r in reg_rows if r.get("reason") == "not_a_walk"]
+    by_cc = defaultdict(list)
+    for r in rows:
+        by_cc[r.get("country") or "??"].append(r)
+    out = []
+    for cc, got in sorted(by_cc.items(), key=lambda kv: -len(kv[1])):
+        got.sort(key=lambda r: -r.get("fame_score", 0))
+        out.append((cc, {"n": len(got),
+                         "sample": [r["name"] for r in got[:10]],
+                         "ids": [r["id"] for r in got]}))
+    return {"total": len(rows), "by_country": out}
+
+
 def reason_for(r):
     """Exactly one code for an unmatched row, from its own evidence.
 
@@ -314,6 +364,12 @@ def reason_for(r):
     if r.get("unresolved"):
         return "unresolved_seed"
     osm = r.get("evidence", {}).get("osm") or {}
+    if r.get("kind") != "trail" and (osm.get("named_ways") or 0):
+        # OSM has named ways and the registry says this is a place people
+        # walk TO, not a walk: a street, a bridge, a square, a lake. Chaining
+        # cannot publish it, so filing it under a code that means "we failed
+        # to chain this" would be a to-do list item nobody can ever close.
+        return "not_a_walk"
     if not r.get("nuts3"):
         # No region. Two very different situations share this symptom and
         # calling both out_of_scope was wrong: the German Jakobswege that
@@ -436,6 +492,24 @@ def render_md(payload):
         "to its top three WALKS rather than to every row. The number that "
         "sizes the work is the bolded one above.")
     add("")
+    not_walks = payload.get("not_a_walk") or {}
+    if not_walks.get("total"):
+        add("## Reclassified as places, not walks")
+        add("")
+        add(f"{not_walks['total']:,} row(s) have named ways in OSM and are "
+            f"not walks: a street, a bridge, a square, a lake. They are "
+            f"reported here rather than counted as chaining failures, "
+            f"because chaining cannot publish a street.")
+        add("")
+        add("**Read this list.** It is the one place a classifier mistake "
+            "can hide: a real trail filed here leaves the coverage gate "
+            "silently. Every id is in the json.")
+        add("")
+        add("| Country | Rows | A sample of ten |")
+        add("|---|---|---|")
+        for cc, info in not_walks["by_country"][:25]:
+            add(f"| {cc} | {info['n']} | " + ", ".join(info["sample"]) + " |")
+        add("")
     add("## Worst 20 misses by fame score")
     add("")
     add("| Trail | Country | Region | Fame | Reason |")
@@ -545,6 +619,7 @@ def main():
                    "reason": r["reason"]} for r in worst],
         "failing_regions": failing,
         "regions": regions,
+        "not_a_walk": not_a_walk_summary(reg_rows),
     }
 
     def row_out(r):
@@ -562,14 +637,18 @@ def main():
     # the repo every run, which defeats the point of committing it to see
     # regressions in a diff.
     payload["rows"] = [row_out(r) for r in reg_rows
-                       if r.get("kind") == "trail" or r["status"] == "matched"]
+                       if r.get("kind") == "trail" or r["status"] == "matched"
+                       or r["reason"] == "not_a_walk"]
     payload["counts"]["rows_in_file"] = len(payload["rows"])
     payload["counts"]["rows_omitted"] = len(reg_rows) - len(payload["rows"])
     payload["note"] = (
-        "rows[] holds every kind:trail row and every matched row. Unmatched "
-        "kind:place rows are counted in counts/reasons but not listed; "
-        "re-run with --full-rows for the complete list, written beside this "
-        "file as trails_coverage_full.json and not committed.")
+        "rows[] holds every kind:trail row, every matched row, and every "
+        "row coded not_a_walk, which is the reclassified population Phase 2 "
+        "moved out of way_only_not_derived and which has to stay readable "
+        "for that move to be auditable. Other unmatched kind:place rows are "
+        "counted in counts/reasons but not listed; re-run with --full-rows "
+        "for the complete list, written beside this file as "
+        "trails_coverage_full.json and not committed.")
 
     OUT_JSON.parent.mkdir(parents=True, exist_ok=True)
     OUT_JSON.write_text(json.dumps(payload, ensure_ascii=False, indent=1),
@@ -621,6 +700,22 @@ def main():
             print("! STRICT: no registry row carries a region, so no region "
                   "can be held to anything. Check the regions spine.")
             return 2
+        # not_a_walk drains way_only_not_derived, and a code that drains
+        # another must never grow faster than it shrinks: that would be a
+        # leak, the classifier quietly reclassifying real trails to make the
+        # gate pass. The baseline is the Phase 1 measurement, committed in
+        # this repo, so the comparison survives a fresh checkout.
+        drained = WAY_ONLY_BASELINE - (payload["reasons"]
+                                       .get("way_only_not_derived", 0))
+        moved = (payload.get("not_a_walk") or {}).get("total", 0)
+        if moved > max(0, drained):
+            print()
+            print(f"! STRICT: {moved:,} row(s) coded not_a_walk but "
+                  f"way_only_not_derived only fell by {drained:,}. A code "
+                  f"that drains another cannot grow faster than it shrinks; "
+                  f"the classifier is reclassifying rows that were never "
+                  f"way_only_not_derived. Read the not_a_walk list.")
+            return 1
         if failing:
             print()
             print(f"! STRICT: {len(failing)} region(s) do not publish their "

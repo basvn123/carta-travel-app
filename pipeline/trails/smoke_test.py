@@ -367,7 +367,100 @@ def famous_check():
 
 
 
+def region_snapshot():
+    """{nuts3: {"n": count, "ids": [...]}} from the published wire.
+
+    The wire rather than the staging DB, because the wire is what a traveller
+    actually gets and it is what the coverage report already reads."""
+    import json
+    root = Path(__file__).resolve().parents[2]
+    wire = root / "continent-app" / "public" / "trails"
+    out = {}
+    for path in sorted(wire.glob("*.json")):
+        if path.stem.upper() in ("INDEX", "TOP"):
+            continue
+        try:
+            blob = json.loads(path.read_text(encoding="utf-8"))
+        except Exception:
+            continue
+        for t in blob.get("trips") or []:
+            # The wire nests the region: rg.n3, not a flat nuts3 field.
+            rg = t.get("rg") or {}
+            n3 = (rg.get("n3") if isinstance(rg, dict) else rg) or "??"
+            rec = out.setdefault(n3, {"n": 0, "ids": []})
+            rec["n"] += 1
+            if t.get("id") is not None:
+                rec["ids"].append(t["id"])
+    return out
+
+
+def regression_published(snapshot_path):
+    """The brief's "derivation only adds", checked rather than assumed.
+
+    Two findings, and they are not the same finding:
+
+      a count that fell     a region publishes fewer walks than it did. A bug.
+      a count that held     but whose MEMBERSHIP changed: a relation-sourced
+                            row was displaced by a derived one. A raw count
+                            diff cannot see this, and it is the thing the
+                            brief is really guarding against, because
+                            curate.py re-runs a FIXED per-region quota and a
+                            new candidate can push an incumbent out.
+
+    Usage:
+        python pipeline/trails/smoke_test.py --snapshot before.json
+        ... run the sweep, curate, export ...
+        python pipeline/trails/smoke_test.py --regression-published before.json
+    """
+    import json
+    before = json.loads(Path(snapshot_path).read_text(encoding="utf-8"))
+    after = region_snapshot()
+    if not after:
+        print("[regression] no published wire to read; nothing checked")
+        return 2
+
+    dropped, churned = [], []
+    for n3, was in sorted(before.items()):
+        now = after.get(n3) or {"n": 0, "ids": []}
+        if now["n"] < was["n"]:
+            dropped.append((n3, was["n"], now["n"]))
+            continue
+        gone = set(was["ids"]) - set(now["ids"])
+        if gone:
+            churned.append((n3, len(gone), was["n"], now["n"]))
+
+    print(f"[regression] {len(before):,} region(s) in the snapshot, "
+          f"{len(after):,} now")
+    for n3, was_n, now_n in dropped[:25]:
+        print(f"  ! {n3} published {was_n} -> {now_n}")
+    if dropped:
+        print(f"[regression] {len(dropped)} region(s) publish FEWER walks "
+              f"than before. Derivation is supposed to only add.")
+    for n3, n_gone, was_n, now_n in churned[:15]:
+        print(f"  ~ {n3} same or higher count ({was_n} -> {now_n}) but "
+              f"{n_gone} previously published walk(s) are gone")
+    if churned:
+        print(f"[regression] {len(churned)} region(s) kept their count and "
+              f"swapped members; check curate.py is not letting a derived "
+              f"route displace a relation-sourced one.")
+    if not dropped and not churned:
+        print("[regression] no region lost a walk, and none swapped one out")
+    return 1 if dropped else 0
+
+
 def main():
+    if "--snapshot" in sys.argv:
+        import json
+        dest = sys.argv[sys.argv.index("--snapshot") + 1]
+        Path(dest).write_text(json.dumps(region_snapshot(), indent=1),
+                              encoding="utf-8")
+        print(f"[snapshot] per-region published counts -> {dest}")
+        sys.exit(0)
+
+    if "--regression-published" in sys.argv:
+        where = sys.argv[sys.argv.index("--regression-published") + 1]
+        sys.exit(regression_published(where))
+
     if "--famous" in sys.argv:
         # The wire-only fixture check. No database: the whole point is that
         # it answers "did we get the famous ones" when the lab is down.

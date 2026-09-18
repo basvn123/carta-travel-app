@@ -201,16 +201,25 @@ def pairs_for(conn, table, activity, ids):
 
 
 def row_facts(conn, table, ids):
-    """network tier, length and name per row, for choosing heads and naming
-    groups in the report."""
+    """network tier, length, name and provenance per row, for choosing heads
+    and naming groups in the report.
+
+    `derived_route` exists on trips and not on cycle_routes, so it is
+    selected as a literal there rather than as a column: cycling has no
+    derived routes to lose to, and a bare column reference would break that
+    layer's dedupe outright."""
     if not ids:
         return {}
     name = NAME_COL[table]
+    derived = ("COALESCE(derived_route, false)" if table == "trips"
+               else "false")
     with conn.cursor() as cur:
         cur.execute(f"SELECT id, lower(network), distance_m, {name}, status::text, "
-                    f"country FROM {table} WHERE id = ANY(%s)", (list(ids),))
+                    f"country, {derived} FROM {table} WHERE id = ANY(%s)",
+                    (list(ids),))
         return {r[0]: {"tier": TIER.get(r[1] or "", 0), "len": r[2] or 0,
-                       "name": r[3], "status": r[4], "country": r[5]}
+                       "name": r[3], "status": r[4], "country": r[5],
+                       "derived": bool(r[6])}
                 for r in cur.fetchall()}
 
 
@@ -240,7 +249,16 @@ class Groups:
 
 
 def head_of(members, facts):
-    return max(members, key=lambda i: (facts[i]["tier"], facts[i]["len"], -i))
+    """The row that speaks for a co-located group.
+
+    A relation-sourced route ALWAYS beats a derived one, which is why that
+    term sorts ahead of the network tier rather than after it: a derived
+    route inherits its `network` from whichever member way carried the tag,
+    so an assembled chain could arrive claiming `iwn` and outrank the
+    relation a mapper actually published. Somebody publishing a route is a
+    stronger claim than us assembling one, at any tier."""
+    return max(members, key=lambda i: (not facts[i]["derived"],
+                                       facts[i]["tier"], facts[i]["len"], -i))
 
 
 def write_groups(conn, table, groups, facts, touched):

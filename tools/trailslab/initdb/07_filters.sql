@@ -162,3 +162,14 @@ VALUES
      '(c) Crown copyright and database right',
      'quarterly')
 ON CONFLICT (name) DO NOTHING;
+
+-- ---------------------------------------------------------------------------
+-- Phase 2 of the trails brief: the ways a derived route was assembled from
+-- ---------------------------------------------------------------------------
+-- member_way_ids was already a first-class field on the wire, computed from
+-- route_relations.members, which means it was NULL on every derived route:
+-- a derived route has no relation, so the one kind of route whose membership
+-- we chose ourselves was the one kind that could not show its working. The
+-- column carries it for those rows; relation-sourced rows keep resolving
+-- theirs through route_relations as before.
+ALTER TABLE trips ADD COLUMN IF NOT EXISTS member_way_ids bigint[];

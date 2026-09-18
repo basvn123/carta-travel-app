@@ -69,7 +69,6 @@ import math
 import re
 import sys
 import time
-import unicodedata
 import urllib.parse
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime, timezone
@@ -150,6 +149,83 @@ TRAIL_CLASSES = {"Q2143825", "Q17008256", "Q1826691"}
 ROUTE_VALUES = {"hiking", "foot", "walking"}
 WALK_HIGHWAYS = {"path", "footway", "track", "steps", "bridleway"}
 
+# The highway values that are a WALK rather than a way somebody walks along.
+# A footway is the odd one out and it is the whole problem: a named footway is
+# usually a pavement carrying a street name, or the deck of a bridge, or the
+# edge of a square. derive_routes has always refused to SEED a cluster on one
+# for exactly this reason; this registry admitted them as famous trails.
+TRAIL_HIGHWAYS = {"path", "track", "bridleway", "steps"}
+
+# Tags that say "somebody maps this as a trail" rather than "this way has a
+# name". Measured on Luxembourg: of the 48 fame-tagged walkable ways this scan
+# admitted, 45 carried none of these, and those 45 were streets, squares,
+# bridges and a statue. On France the same test cuts 557 fame groups to 28
+# and keeps the Sentier des Roches (15 of its 18 ways are graded).
+TRAIL_SIGNAL_KEYS = ("sac_scale", "trail_visibility", "osmc:symbol",
+                     "network", "marked_trail:hiking", "marked_trail:foot")
+
+# A way carrying any of these is a named FEATURE that a path runs over,
+# through or beside, not a walk: a bridge, a tunnel, a lake, a square, a
+# monument. The first three were already here for the Spiersbachbruecke; the
+# rest were added in Phase 2 when the 8,893 way_only_not_derived misses turned
+# out to be mostly Via Roma, Bahnhofsplatz, Millennium Bridge and Ketelmeer.
+NON_WALK_KEYS = ("man_made", "bridge:name", "tunnel:name",
+                 "natural", "water", "place", "landuse", "historic")
+
+
+def kind_of(osm):
+    """"trail" or "place" for one OSM fame group.
+
+    This used to be the single line `row["kind"] = "trail"`, on the reasoning
+    that OSM tagging a named walkable way is direct evidence of a path and
+    outranks whatever class Wikidata filed the feature under. The first half
+    of that is right and the second half was the bug: a fame tag on a walkable
+    way is usually evidence that the way TOUCHES something famous, not that
+    the way IS a famous walk. Via Roma, Bahnhofsplatz, Gustav Adolfs Torg,
+    the Millennium Bridge, Solkanski most, Ketelmeer (a lake) and Karl XII:s
+    staty (a statue) all reached the registry as famous TRAILS, and then
+    reached the coverage report as 8,864 of its 8,893 `way_only_not_derived`
+    misses: a to-do list of work that could never be done, hiding the 29
+    entries that were real.
+
+    A group is a walk when OSM says so in one of four ways:
+
+      a relation      somebody published it as a walking route.
+      a grade         sac_scale is not a thing anybody puts on a boulevard.
+      a trail highway path, track, bridleway or steps. Footway is excluded
+                      on its own for the same reason derive_routes refuses to
+                      SEED on one: a named footway is usually a pavement.
+      several ways    a footway split into two or more named pieces might be
+                      a promenade walk, so the net stays generous here; the
+                      registry's job is to over-name rather than under-name.
+
+    A Wikidata trail class or a human seed still forces "trail" downstream,
+    which is deliberate: this function reads OSM evidence only, and a walk
+    that Wikidata calls a hiking trail is a walk whatever its ways look like.
+    """
+    if osm.get("relation_id") or osm.get("sac_scale"):
+        return "trail"
+    # Way-only evidence has to clear TWO tests, not either one. A trail
+    # highway alone is not enough: the Schiessentuempel (a waterfall) and the
+    # Pont Grande-Duchesse Charlotte (a bridge) are both tagged
+    # highway=path in Luxembourg, and both reached the trail gate when this
+    # function accepted a bare highway value. A trail signal alone is not
+    # enough either, because network= sits on plenty of street furniture.
+    # Together they are the test measured in Phase 2: France 557 fame groups
+    # to 28, Luxembourg 48 admitted ways to 3, with the Sentier des Roches
+    # and the Fuerstensteig both kept.
+    walkish = (osm.get("highway") in TRAIL_HIGHWAYS
+               and osm.get("trail_signal"))
+    if walkish:
+        return "trail"
+    # Several named ways under one name is a corridor rather than a feature,
+    # so it stays in scope even without a signal: a promenade split into six
+    # named pieces might be a walk, and the registry over-names on purpose.
+    # A bridge mapped as two path ways is why this needs the signal too.
+    if (osm.get("named_ways") or 0) >= 3 and osm.get("trail_signal"):
+        return "trail"
+    return "place"
+
 # The fame-score weights. Documented here because a score nobody can explain
 # is a score nobody can argue with, and this one decides which three rows a
 # region is HELD TO in the coverage gate.
@@ -166,51 +242,14 @@ WALK_HIGHWAYS = {"path", "footway", "track", "steps", "bridleway"}
 WEIGHTS = {"pageviews": 0.35, "sitelinks": 0.25, "osm": 0.20,
            "portal": 0.10, "seed": 0.10}
 
-# Section markers stripped before a name is compared. Same list the chainer
-# will need in Phase 2; kept here because the registry has to fold
-# "Sentier des Roches [secteur 4]" onto "Sentier des Roches" to count its
-# named ways as ONE trail rather than eight.
-SECTION_RE = re.compile(
-    r"\s*(?:\[|\(|-|,)?\s*"
-    r"(?:secteur|section|etappe|etape|étape|abschnitt|tappa|deel|teil|"
-    r"odcinek|szakasz|stage|leg|dio|etapa|etapp|osa|dalis|posms)"
-    r"\s*\.?\s*\d+[a-z]?\s*(?:\]|\))?\s*$",
-    re.IGNORECASE)
-COUNTER_RE = re.compile(r"\s*\(\s*\d+\s*/\s*\d+\s*\)\s*$")
-
-
-def squash(text):
-    """Accent-folded, punctuation-free lowercase, for name equality.
-
-    NFKD does not decompose o-slash, l-stroke or ae, so those are folded by
-    hand; this repo has been bitten by that before (see the l-stroke note in
-    the POI dedupe work). Without the table, 'Malzalaka' and 'Malzalaka' with
-    a stroked l are two different trails."""
-    s = unicodedata.normalize("NFKD", str(text or "").casefold())
-    s = "".join(c for c in s if not unicodedata.combining(c))
-    for a, b in (("ø", "o"), ("ł", "l"), ("æ", "ae"),
-                 ("ß", "ss"), ("đ", "d"), ("þ", "th"),
-                 ("ð", "d")):
-        s = s.replace(a, b)
-    return re.sub(r"[^a-z0-9]+", " ", s).strip()
-
-
-def base_name(text):
-    """The trail's name with a stage marker stripped, once.
-
-    'Sentier des Roches [secteur 4]' -> 'Sentier des Roches'. Applied before
-    the named-way count, so the 15 tagged secteur ways register as one
-    candidate carrying 15 ways, not as 8 candidates nobody can match."""
-    s = COUNTER_RE.sub("", str(text or "").strip())
-    prev = None
-    while prev != s:
-        prev = s
-        s = SECTION_RE.sub("", s).strip(" -,[](){}")
-    return s or str(text or "").strip()
-
-
-def slugify(text):
-    return re.sub(r"[^a-z0-9]+", "-", squash(text)).strip("-") or "unnamed"
+# The name folding moved to names.py in Phase 2, because derive_routes needs
+# the same section markers to chain "[secteur 4]" onto "[secteur 5]" and a
+# second copy of this list would let the chainer and this report disagree
+# about what one trail is. Re-exported here: coverage_report.py has imported
+# squash and base_name from this module since Phase 1.
+from names import (  # noqa: E402,F401
+    COUNTER_RE, SECTION_RE, base_name, slugify, squash,
+)
 
 
 # ---------------------------------------------------------------------------
@@ -420,8 +459,7 @@ def scan_osm_fame(cc, slug, verbose=False):
             # over is a bridge, not a walk. Without this, Liechtenstein's
             # only way_only_not_derived row was the Spiersbachbruecke, which
             # is noise in the one code that is supposed to mean work to do.
-            if tags.get("man_made") or tags.get("bridge:name") or \
-                    tags.get("tunnel:name"):
+            if any(tags.get(k) for k in NON_WALK_KEYS):
                 continue
         if not name:
             continue
@@ -432,6 +470,12 @@ def scan_osm_fame(cc, slug, verbose=False):
             "name": base_name(name), "aliases": set(), "relation_id": None,
             "named_ways": 0, "wikidata": None, "wikipedia": None,
             "sac_scale": None, "network": None, "first_node": None,
+            # What kind of walkable way carried the fame tag, and whether
+            # anything about it says "trail" rather than "street with an
+            # article". Recorded rather than discarded because kind_of()
+            # needs it: this scan was seeing the evidence and throwing it
+            # away, which is why a boulevard could become a famous trail.
+            "highway": None, "trail_signal": False,
         })
         if name != g["name"]:
             g["aliases"].add(name)
@@ -439,6 +483,15 @@ def scan_osm_fame(cc, slug, verbose=False):
         g["wikipedia"] = g["wikipedia"] or tags.get("wikipedia")
         g["sac_scale"] = g["sac_scale"] or tags.get("sac_scale")
         g["network"] = g["network"] or tags.get("network")
+        if not is_rel:
+            # Prefer a genuine trail highway value when the group has ways
+            # of several kinds: a trail that crosses a village is a path
+            # that becomes a footway for 80 m, and the path is the truer
+            # claim about what the walk is.
+            if g["highway"] is None or tags.get("highway") in TRAIL_HIGHWAYS:
+                g["highway"] = tags.get("highway")
+            if any(tags.get(k) for k in TRAIL_SIGNAL_KEYS):
+                g["trail_signal"] = True
         if is_rel:
             g["relation_id"] = g["relation_id"] or obj.id
             # A relation carries no coordinate of its own. Without this, every
@@ -497,6 +550,7 @@ def scan_osm_fame(cc, slug, verbose=False):
             "relation_id": g["relation_id"], "named_ways": g["named_ways"],
             "wikidata": g["wikidata"], "wikipedia": g["wikipedia"],
             "sac_scale": g["sac_scale"], "network": g["network"],
+            "highway": g["highway"], "trail_signal": g["trail_signal"],
             "lat": lat, "lon": lon,
         }
     if verbose:
@@ -988,13 +1042,12 @@ def build_country(cc, osm_rows, wd_rows, portals, verbose=False):
             "wikipedia_tag": o.get("wikipedia"),
             "sac_scale": o.get("sac_scale"),
             "network": o.get("network"),
+            "highway": o.get("highway"),
+            "trail_signal": bool(o.get("trail_signal")),
         }
         row["evidence"]["wikidata"] = (row["evidence"]["wikidata"]
                                        or o.get("wikidata"))
-        # OSM tagged this as a named hiking way or a walking route relation.
-        # That is direct evidence of a PATH, and it outranks whatever class
-        # Wikidata filed the feature under.
-        row["kind"] = "trail"
+        row["kind"] = kind_of(o)
         if o.get("wikipedia") and ":" in (o["wikipedia"] or ""):
             lang, title = o["wikipedia"].split(":", 1)
             row["evidence"]["wikipedia"] = {"lang": lang, "title": title,
