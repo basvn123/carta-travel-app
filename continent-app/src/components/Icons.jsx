@@ -288,6 +288,29 @@ export function FriendsIcon({ size = 15, className = '' }) {
   );
 }
 
+/** An adult and a child: the "family with kids" answer in the day planner. */
+export function FamilyIcon({ size = 15, className = '' }) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.9"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+      aria-hidden="true"
+    >
+      <circle cx="8" cy="6.6" r="3.1" />
+      <path d="M2.8 19.6c.9-3.3 2.7-5.1 5.2-5.1s4.3 1.8 5.2 5.1" />
+      <circle cx="17.4" cy="12.4" r="2.3" />
+      <path d="M13.8 19.6c.5-2.2 1.7-3.4 3.6-3.4s3.1 1.2 3.6 3.4" />
+    </svg>
+  );
+}
+
 export function GlobeIcon({ size = 20, className = '' }) {
   return (
     <svg

@@ -83,8 +83,14 @@ async function run(label, viewport) {
     // The chat must forward its structured profile, not just free text.
     if (calls === 1 && label === 'desktop') {
       check('chat sends the answer profile', !!body.profile && body.profile.maxWalkKm > 0);
-      check('chat sends interests', Array.isArray(body.profile?.interests) && body.profile.interests.length > 0);
-      check('chat sends terrain + day length', !!body.profile?.terrain && !!body.profile?.dayLength);
+      // The walk answer is a step budget now, and it must arrive BOTH ways:
+      // steps for the prompt to quote back, km for the schedule to enforce.
+      check('chat sends a step budget', Number(body.profile?.steps) >= 1000);
+      check('chat converts steps to km', Math.abs(body.profile.steps / 1350 - body.profile.maxWalkKm) < 1);
+      check('chat sends moods', Array.isArray(body.profile?.moods) && body.profile.moods.length > 0);
+      check('chat sends who is coming and when it starts',
+        !!body.profile?.companions && /^\d{2}:\d{2}$/.test(String(body.profile?.startTime)));
+      check('chat sends the window', !!body.profile?.window);
     }
     await new Promise((r) => setTimeout(r, 700));
     await route.fulfill({
@@ -117,10 +123,24 @@ async function run(label, viewport) {
 
   await page.goto(URL, { waitUntil: 'domcontentloaded', timeout: 45000 });
   await page.waitForTimeout(2500);
+  // Desktop has a "Day planner" tab in the top bar. Phones do not: the
+  // planners live behind the bottom bar's plus button, which opens a chooser.
+  // Looking only for the desktop label meant the mobile run never left the
+  // Trips tab and every later check failed for the wrong reason.
+  let opened = false;
   for (const btn of await page.getByRole('button').all()) {
     const t = (await btn.innerText().catch(() => '')).trim();
-    if (/day planner/i.test(t) && (await btn.isVisible().catch(() => false))) { await btn.click(); break; }
+    if (/day planner/i.test(t) && (await btn.isVisible().catch(() => false))) {
+      await btn.click(); opened = true; break;
+    }
   }
+  if (!opened && await page.locator('.bottom-nav-plus').count()) {
+    await page.locator('.bottom-nav-plus').click();
+    await page.waitForTimeout(400);
+    await page.locator('.plan-chooser-item').nth(1).click();
+    opened = true;
+  }
+  check(`${label}: the day planner is reachable`, opened);
   await page.waitForTimeout(1500);
 
   // ---- step 1: stay ----
@@ -160,20 +180,36 @@ async function run(label, viewport) {
   await nextBtn.click();
   await page.waitForTimeout(600);
 
-  // ---- step 3: how ----
-  check(`${label}: step 3 offers exactly two ways`, (await page.locator('.day-flow-card').count()) === 2);
+  // ---- step 3: ideas (D4) ----
+  // This run is about the bot's questions, not the ideas step, so it takes
+  // the answer that adds no must-includes and leaves the town open.
+  await page.locator('.day-ideas-choice').waitFor({ timeout: 30000 });
+  check(`${label}: step 3 asks for ideas`, (await page.locator('.day-ideas-choice').count()) === 1);
+  await page.screenshot({ path: `${SHOTS}/g3b-${label}-ideas.png` });
+  await page.getByRole('button', { name: /surprise me/i }).click();
+  await page.waitForTimeout(600);
+
+  // ---- step 4: how ----
+  check(`${label}: step 4 offers exactly two ways`, (await page.locator('.day-flow-card').count()) === 2);
   await page.screenshot({ path: `${SHOTS}/g4-${label}-how.png` });
   await page.locator('.day-flow-card.primary').click();
   await page.waitForTimeout(700);
 
   // ---- chat ----
   check(`${label}: chat opens with one question`, (await page.locator('.chat-bubble-live').count()) === 1);
-  check(`${label}: nearby towns offered`, (await page.locator('.chat-opt').count()) >= 1);
-  // Every option must actually name its town: the name lives on the nested
-  // destination record, so a shape change here silently empties the labels.
-  const townLabels = await page.locator('.chat-opt .chat-opt-text b').allInnerTexts();
-  check(`${label}: town options are named`,
-    townLabels.length > 0 && townLabels.every((s) => s.trim().length > 1));
+  // The flow now opens on "who's coming", the hard constraint that decides
+  // what the day can be, not on a preference.
+  check(`${label}: opens on the companions question`,
+    /who.s coming/i.test(await page.locator('.chat-bubble-live').innerText()));
+  check(`${label}: answers offered`, (await page.locator('.chat-opt').count()) >= 1);
+  // Progress is a count the traveller can read, not a bare fraction.
+  check(`${label}: progress is shown as a count`,
+    /\d+ of \d+/i.test(await page.locator('.chat-progress').innerText()));
+  // Every option must actually be labelled: the labels come through i18n and
+  // a nested record, so a shape change here silently empties them.
+  const optLabels = await page.locator('.chat-opt .chat-opt-text b').allInnerTexts();
+  check(`${label}: options are named`,
+    optLabels.length > 0 && optLabels.every((s) => s.trim().length > 1));
   await page.screenshot({ path: `${SHOTS}/g5-${label}-chat-q1.png` });
 
   // Walk the whole question set: single-selects advance on tap, the

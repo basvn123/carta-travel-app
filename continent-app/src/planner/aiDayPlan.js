@@ -22,11 +22,33 @@ import {
  * ORIGINAL index into the city's items array, stringified, which is exactly
  * what the planner's assignments speak.
  */
-export function buildAiCandidates({ items, walkable, excludeIdx, interests, limit = 22 }) {
+export function buildAiCandidates({ items, walkable, excludeIdx, interests, limit = 22, forceIdx = null }) {
   const eligible = excludeIdx && excludeIdx.size
     ? new Set([...(walkable || [])].filter((i) => !excludeIdx.has(i)))
     : walkable;
-  return pickerDeck(items, interests || [], limit, eligible).map(({ item, idx }) => ({
+  const deck = pickerDeck(items, interests || [], limit, eligible);
+  // Places the traveller named themselves (the ideas step) must be ON the
+  // deck whatever the ranking thought of them: a day built around the
+  // Alhambra cannot offer the model a list the Alhambra is missing from.
+  // They are prepended, not appended, so a full deck drops its weakest
+  // entries rather than the ones that were asked for by name.
+  const forced = [];
+  if (forceIdx && forceIdx.size) {
+    const have = new Set(deck.map((d) => d.idx));
+    for (const idx of forceIdx) {
+      if (have.has(idx)) continue;
+      const item = items?.[idx];
+      // Walkability is not a veto here. The traveller asked for it; a stop
+      // they named being out of easy reach is the router's problem to solve,
+      // not a reason to pretend it does not exist.
+      if (item && item.name) forced.push({ item, idx });
+    }
+  }
+  // A forced place must also survive the SLICE. Prepending puts it at the
+  // front, but a deck already at `limit` would then push the last entries
+  // off the end, so the cap grows to hold everything that was asked for.
+  const out = forced.length ? [...forced, ...deck].slice(0, Math.max(limit, forced.length)) : deck;
+  return out.map(({ item, idx }) => ({
     id: String(idx),
     name: item.name,
     kind: poiKind(item) || item.kind || '',
@@ -34,7 +56,10 @@ export function buildAiCandidates({ items, walkable, excludeIdx, interests, limi
     lat: item.lat,
     lon: item.lon,
     rating: poiRating(item).score,
-    mustSee: isMustSee(item),
+    // A place the traveller named IS a must-see for this day, whatever the
+    // catalogue's own fame ranking thinks of it: they told us it is the
+    // point of the trip, which is stronger evidence than a rating tier.
+    mustSee: isMustSee(item) || Boolean(forceIdx && forceIdx.has(idx)),
     dwellMin: dwellMinutes(poiKind(item) || item.kind),
     desc: (item.desc || '').slice(0, 150),
   }));

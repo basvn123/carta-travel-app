@@ -5,6 +5,7 @@ import { isMustSee, poiKind, dwellMinutes } from './dayDraft.js';
 import { fmtDur } from './dayFormat.js';
 import { cityInsight } from '../lib/tripGuide.js';
 import { useI18n } from '../i18n/index.jsx';
+import { distanceAway } from '../lib/steps.js';
 
 // "Let Carta guide you" questionnaire options (labelKey -> t()).
 const GUIDE_MOODS = [
@@ -194,7 +195,7 @@ export function CartaGuidePanel({ towns, pois, stayTownId, pickedTownIds, picked
                             {item.heritage && <span className="day-guide-badge heritage">{t('day.heritage')}</span>}
                           </span>
                           <span className="day-guide-rec-meta">
-                            {poiKind(item) ? `${poiKind(item)}, ` : ''}{t('day.kmAwayVisit', { km: p.km, dur: fmtDur(dwellMinutes(poiKind(item))) })}
+                            {poiKind(item) ? `${poiKind(item)}, ` : ''}{t('day.awayVisit', { away: distanceAway(p.km, t), dur: fmtDur(dwellMinutes(poiKind(item))) })}
                           </span>
                           {item.desc && <span className="day-guide-rec-desc">{item.desc}</span>}
                         </span>

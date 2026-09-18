@@ -83,6 +83,12 @@ const RESPONSE_SCHEMA = {
   required: ['summary', 'stops'],
 };
 
+/** "08:00" to minutes past midnight, or null when there was no answer. */
+function startMinFrom(hhmm: unknown): number | null {
+  const m = /^([01]\d|2[0-3]):([0-5]\d)$/.exec(String(hhmm ?? ''));
+  return m ? Number(m[1]) * 60 + Number(m[2]) : null;
+}
+
 const PACE_STOPS: Record<string, string> = {
   relaxed: '3 or 4 stops with generous time at each',
   balanced: '5 or 6 stops at a comfortable rhythm',
@@ -95,6 +101,7 @@ function buildPrompt(p: {
   hasStay: boolean; candidates: ReturnType<typeof sanitizeCandidates>;
   wantEvents: boolean; refine: string; prevStops: string[];
   profile: Record<string, unknown> | null;
+  mustInclude: { name: string; id: string | null; lat: number | null; lon: number | null; timeOfDay: string | null }[];
 }) {
   const langName = LANG_NAMES[p.lang] || 'English';
   const summer = p.month >= 6 && p.month <= 8;
@@ -109,8 +116,11 @@ function buildPrompt(p: {
     }))),
     '',
     'RULES:',
-    `- Build ${PACE_STOPS[p.pace] || PACE_STOPS.balanced}. Start at 09:30, be finished by 18:00.`,
-    '- At least 80 percent of the stops MUST come from the candidate list, referenced by their exact id with inCatalog=true. Never invent an id.',
+    `- Build ${PACE_STOPS[p.pace] || PACE_STOPS.balanced}. Start at ${(p.profile?.startTime as string) || '09:30'}, be finished by 18:00.`,
+    // The named stops are exempt, or two rules would contradict each other:
+    // a traveller who named three places we do not hold would otherwise be
+    // asking for a day the 80 percent rule forbids.
+    '- At least 80 percent of the stops, NOT counting any the traveller named below, MUST come from the candidate list, referenced by their exact id with inCatalog=true. Never invent an id.',
     '- Sequence to minimise backtracking: neighbouring stops belong next to each other. Alternate heavy visits (museums, castles) with light ones (squares, views).',
     `- Group of ${p.groupSize}. ${p.groupSize >= 5 ? 'Large group: walking is about 20 percent slower, spontaneous restaurant tables are unrealistic, prefer roomy venues and note where booking ahead matters.' : ''}`,
     summer ? '- Peak-summer heat: place indoor or shaded stops between 13:00 and 16:00, outdoor highlights in the morning or late afternoon.' : '',
@@ -119,22 +129,47 @@ function buildPrompt(p: {
     // The chat planner's answer profile. Each line only appears when the
     // traveller actually answered it, so the prompt never argues with itself.
     ...(p.profile ? [
-      p.profile.maxWalkKm ? `- Total walking must stay near ${p.profile.maxWalkKm} km for the whole day. Prefer stops that keep it under that; never plan a day that clearly exceeds it.` : '',
-      p.profile.terrain === 'flat' ? '- Flat ground only: avoid hills, steps and steep streets, and say so where it matters.' : '',
-      p.profile.terrain === 'hike' ? '- They want a proper walk: real distance and some climb are welcome, and a viewpoint or trail is a bonus.' : '',
+      // Walking is asked for in the traveller's own unit and in the one the
+      // schedule enforces: they answered in steps, the router thinks in km.
+      p.profile.steps
+        ? `- Total walking must stay under about ${p.profile.steps} steps for the whole day, which is roughly ${p.profile.maxWalkKm || Math.round(Number(p.profile.steps) / 1350)} km. Never plan a day that clearly exceeds it.`
+        : (p.profile.maxWalkKm ? `- Total walking must stay near ${p.profile.maxWalkKm} km for the whole day. Prefer stops that keep it under that; never plan a day that clearly exceeds it.` : ''),
+      p.profile.avoidHills ? '- Flat ground: avoid hills, steps and steep streets, and say so where it matters.' : '',
+      p.profile.transitOk ? '- A bus, tram or metro for the longer hops is welcome: one such leg may connect two clusters that are too far apart to walk between, and the why line should say which line or stop to use.' : '',
+      p.profile.companions === 'family' ? '- Travelling with children: stops must hold a child\'s attention, keep single stretches short, and favour places with somewhere to sit, eat and use a toilet. Say in the why line what a child gets out of each stop.' : '',
+      p.profile.companions === 'solo' ? '- Travelling alone: solo-friendly places, counter seating over a formal table, and nothing that only works for a group.' : '',
+      p.profile.companions === 'partner' ? '- A couple: one or two calm, memorable places matter more than volume.' : '',
+      p.profile.companions === 'group' ? '- A larger group: prefer roomy venues, note where booking ahead matters, and avoid anything with a tight queue or a small room.' : '',
       p.profile.known === 'first' ? '- First visit: the famous, unmissable places belong in this day.' : '',
       p.profile.known === 'again' ? '- They have been here before: lean away from the obvious headline sights and toward lesser known, local-feeling places.' : '',
-      p.profile.focus === 'nature' ? '- Weight the day toward parks, water, viewpoints and green space rather than indoor city sights.' : '',
-      p.profile.focus === 'city' ? '- Weight the day toward the built city: streets, squares, architecture and museums.' : '',
-      p.profile.dayLength === 'half' ? '- Half a day only: finish by about 13:30.' : '',
-      p.profile.dayLength === 'evening' ? '- A long day: keep going into the evening, and end somewhere good after dark.' : '',
+      p.profile.window === 'morning' ? '- A morning only: finish by about 13:00.' : '',
+      p.profile.window === 'afternoon' ? '- An afternoon only: start after lunch and finish by about 18:30.' : '',
+      p.profile.window === 'evening' ? '- A long day: keep going into the evening, and end somewhere good after dark.' : '',
       p.profile.food === 'sit' ? '- Include one proper sit-down meal at a realistic hour and treat it as a stop.' : '',
       p.profile.food === 'quick' ? '- Keep eating quick and casual: a market, bakery or street food stop rather than a long lunch.' : '',
+      p.profile.food === 'picnic' ? '- A picnic: include a bakery, deli or market stop to buy from, and a good outdoor place to eat it, in that order.' : '',
       p.profile.food === 'none' ? '- No food stops: they will sort meals out themselves.' : '',
-      Array.isArray(p.profile.interests) && p.profile.interests.length
-        ? `- What they care about most: ${(p.profile.interests as string[]).join(', ')}. Let this drive which candidates make the cut.`
+      Array.isArray(p.profile.diet) && (p.profile.diet as string[]).length
+        ? `- Food must suit: ${(p.profile.diet as string[]).join(', ')}. Only pick eating stops that genuinely work for that, and say so in the why line.`
+        : '',
+      p.profile.avoidCrowds ? '- They want to avoid crowds: prefer the quieter hour for each busy place, and where a famous stop has a calmer alternative nearby, take it.' : '',
+      (p.profile.weather as { rain?: boolean } | null)?.rain
+        ? '- Rain is likely: weight the day toward indoor stops, and keep the outdoor ones short and close together.' : '',
+      (p.profile.weather as { hot?: boolean } | null)?.hot
+        ? '- It will be very hot: indoor or shaded stops between 13:00 and 17:00, and outdoor highlights early or late.' : '',
+      Array.isArray(p.profile.moods) && p.profile.moods.length
+        ? `- What they are in the mood for: ${(p.profile.moods as string[]).join(', ')}. Let this drive which candidates make the cut.`
         : '',
     ] : []),
+    // Places the traveller named by hand. This is the one instruction the
+    // model may not trade away for a tidier route: dropping a stop somebody
+    // asked for by name is the single failure that makes a plan worthless.
+    p.mustInclude.length
+      ? `- These stops were named by the traveller and MUST all appear in the day: ${p.mustInclude.map((m) => {
+        const when = m.timeOfDay ? ` in the ${m.timeOfDay}` : '';
+        return m.id ? `${m.name} (candidate id ${m.id})${when}` : `${m.name}${when}`;
+      }).join('; ')}. Where one carries a candidate id, use that id with inCatalog=true. Where it does not, add it with inCatalog=false and its real coordinates. Honour any stated time of day. Build the rest of the day around these, and if the walking budget is tight, drop other stops rather than these.`
+      : '',
     p.freeText
       ? `- The traveller's own wish, treat as a hard requirement if feasible: "${p.freeText}". If it needs a real place that is NOT in the candidate list, add it with inCatalog=false, its real name and its real coordinates near ${p.city}; never fake a candidate id for it.`
       : '- Add no stops beyond the candidate list unless a rule below allows it.',
@@ -216,19 +251,58 @@ Deno.serve(async (req) => {
   const rawProfile = (body.profile || null) as Record<string, unknown> | null;
   const oneOf = (v: unknown, allowed: string[]) => (allowed.includes(String(v)) ? String(v) : null);
   const profile = rawProfile ? {
-    focus: oneOf(rawProfile.focus, ['city', 'nature', 'mix']),
+    companions: oneOf(rawProfile.companions, ['solo', 'partner', 'friends', 'family', 'group']),
+    // "08:00", and nothing else: this string is printed into the prompt.
+    startTime: /^([01]\d|2[0-3]):[0-5]\d$/.test(String(rawProfile.startTime ?? ''))
+      ? String(rawProfile.startTime) : null,
+    steps: Number.isFinite(Number(rawProfile.steps))
+      ? Math.max(1000, Math.min(40000, Math.round(Number(rawProfile.steps)))) : null,
     known: oneOf(rawProfile.known, ['first', 'again']),
-    interests: Array.isArray(rawProfile.interests)
-      ? (rawProfile.interests as unknown[]).slice(0, 8)
-        .map((i) => oneOf(i, ['landmarks', 'museums', 'food', 'nature', 'beach', 'active', 'photo', 'local']))
+    moods: Array.isArray(rawProfile.moods)
+      ? (rawProfile.moods as unknown[]).slice(0, 3)
+        .map((i) => oneOf(i, ['sights', 'museums', 'nature', 'beach', 'active', 'food', 'local', 'views', 'shopping', 'nightlife']))
         .filter(Boolean)
       : [],
     maxWalkKm: Number.isFinite(Number(rawProfile.maxWalkKm))
       ? Math.max(1, Math.min(40, Math.round(Number(rawProfile.maxWalkKm)))) : null,
-    terrain: oneOf(rawProfile.terrain, ['flat', 'some', 'hike']),
-    dayLength: oneOf(rawProfile.dayLength, ['half', 'full', 'evening']),
-    food: oneOf(rawProfile.food, ['sit', 'quick', 'none']),
+    avoidHills: !!rawProfile.avoidHills,
+    transitOk: !!rawProfile.transitOk,
+    window: oneOf(rawProfile.window, ['morning', 'afternoon', 'full', 'evening']),
+    food: oneOf(rawProfile.food, ['sit', 'quick', 'picnic', 'none']),
+    diet: Array.isArray(rawProfile.diet)
+      ? (rawProfile.diet as unknown[]).slice(0, 5)
+        .map((i) => oneOf(i, ['veg', 'vegan', 'gf', 'cheap', 'treat']))
+        .filter(Boolean)
+      : [],
+    avoidCrowds: !!rawProfile.avoidCrowds,
+    weather: rawProfile.weather && typeof rawProfile.weather === 'object'
+      ? {
+        rain: !!(rawProfile.weather as Record<string, unknown>).rain,
+        hot: !!(rawProfile.weather as Record<string, unknown>).hot,
+      }
+      : null,
   } : null;
+  // Places the traveller named by hand. Names and coordinates only, and any
+  // id must match a real candidate: an unchecked id here would let a payload
+  // name a stop the deck never offered.
+  const candIds = new Set(candidates.map((c) => c.id));
+  const mustInclude = Array.isArray(body.mustInclude)
+    ? (body.mustInclude as unknown[]).slice(0, 8).map((raw) => {
+      const m = (raw || {}) as Record<string, unknown>;
+      const name = cleanText(String(m.name ?? ''), 90);
+      if (!name) return null;
+      const id = candIds.has(String(m.id)) ? String(m.id) : null;
+      const lat = Number(m.lat);
+      const lon = Number(m.lon);
+      return {
+        name,
+        id,
+        lat: Number.isFinite(lat) ? lat : null,
+        lon: Number.isFinite(lon) ? lon : null,
+        timeOfDay: oneOf(m.timeOfDay, ['morning', 'afternoon', 'evening']),
+      };
+    }).filter(Boolean) as { name: string; id: string | null; lat: number | null; lon: number | null; timeOfDay: string | null }[]
+    : [];
   if (!destId || !city || !Number.isFinite(centreLat) || !Number.isFinite(centreLon)) {
     return json(400, { code: 'bad_dest' });
   }
@@ -272,7 +346,7 @@ Deno.serve(async (req) => {
   const hash = await sha256Hex(cacheKeyInput({
     model: CHAIN.join(','), destId, month, dateISO, groupSize, pace, vibe, avoidHills,
     freeText, lang, candidates, refine, prevStopIds: prevStops, wantEvents,
-    profile,
+    profile, mustInclude,
   }));
   const { data: cached } = await service
     .from('ai_plan_cache')
@@ -299,7 +373,7 @@ Deno.serve(async (req) => {
   // ---- the one AI call: plain generateContent, no tools, low temperature ----
   const prompt = buildPrompt({
     city, country, dateISO, month, groupSize, pace, vibe, avoidHills, freeText, lang,
-    hasStay: !!stay, candidates, wantEvents, refine, prevStops, profile,
+    hasStay: !!stay, candidates, wantEvents, refine, prevStops, profile, mustInclude,
   });
   // Google Search grounding is the paid feature, and the only one here that
   // reliably costs money: on Gemini 3 it bills per individual search query the
@@ -389,6 +463,10 @@ Deno.serve(async (req) => {
   // the model above: the prompt line is a request, this is the guarantee.
   const sched = scheduleDay(safeStops, {
     stay, groupSize, maxWalkKm: profile?.maxWalkKm ?? undefined,
+    // The traveller's chosen start is enforced here too: asking the model to
+    // begin at 11:00 and then re-timing the day from 09:30 would hand back a
+    // schedule that contradicts the answer they gave.
+    dayStartMin: startMinFrom(profile?.startTime) ?? undefined,
   });
   // Nothing here forms a walkable cluster (a deck whose good places are
   // scattered across the whole 20 km radius). That is not a malformed AI

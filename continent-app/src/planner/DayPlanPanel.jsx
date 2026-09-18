@@ -6,6 +6,7 @@ import {
   PlusIcon, ShareIcon, MapPinIcon, DownloadIcon, RouteIcon, CalendarIcon,
   SparkIcon, StarIcon, MountainIcon, CheckIcon,
 } from '../components/Icons.jsx';
+import { formatSteps, kmToSteps } from '../lib/steps.js';
 
 /** Close a popover on outside click and on Escape. */
 export function useDismiss(open, close) {
@@ -88,7 +89,7 @@ export function DayPlanPanel({
   gmapsUrl, onShare, shareState, onPdf, onKml, onIcs,
   citytrip, onUseCitytrip, walksBlock, discoveries = [], aiSummary = '',
 }) {
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
   const [addOpen, setAddOpen] = useState(false);
   const [shareOpen, setShareOpen] = useState(false);
   const addRef = useDismiss(addOpen, () => setAddOpen(false));
@@ -114,9 +115,9 @@ export function DayPlanPanel({
               <span className="dayp-ready-ico"><RouteIcon size={16} /></span>
               <span className="dayp-ready-text">
                 <b>{t('day.readyMade', { city: city || '' })}</b>
-                <small>{t('day.readyMadeSub', {
+                <small>{t('day.readyMadeSubSteps', {
                   n: citytrip.n_stops,
-                  km: (citytrip.distance_m / 1000).toFixed(1),
+                  steps: formatSteps(kmToSteps(citytrip.distance_m / 1000), lang),
                 })}</small>
               </span>
             </button>

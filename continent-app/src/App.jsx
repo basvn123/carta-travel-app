@@ -1024,6 +1024,8 @@ function TravelApp() {
               openPlanId={pendingDayPlanId}
               onOpenPlanConsumed={clearPendingDayPlan}
               favorites={favorites}
+              onRequestAuth={requestAuth}
+              onPlanTrip={() => goToTab('trip')}
             />
           </Suspense>
         </div>

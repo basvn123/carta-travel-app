@@ -80,6 +80,36 @@ chose, in the model's own order, and reports the rest as `meta.farDropped`:
 | Total walking | 12 km | `profile.maxWalkKm` when the traveller answered the chat, else `DEFAULT_MAX_WALK_KM` |
 | One leg | 6.5 km | `MAX_LEG_KM`, or half the day's budget when that is larger |
 | Walking from the stay | 2.5 km | `STAY_WALK_MAX_KM`, mirroring the app, which draws a longer hop as a ride |
+| Day start | 09:30 | `profile.startTime` when the traveller chose one, else `dayStartMin`'s default |
+
+## The chat profile
+
+The chat planner asks in the traveller's units and the function reasons in
+its own. Walking is answered as a STEP BUDGET (5k, 10k, 15k, 20k), because a
+step count is a number most people already have a calibrated sense of, and
+the client converts it to `profile.maxWalkKm` at about 1,350 steps per km.
+Both travel: the prompt quotes the steps back, `scheduleDay` enforces the km.
+
+Every profile field is whitelisted value by value before it reaches the
+prompt, because these strings are printed into it:
+
+| Field | Values |
+| --- | --- |
+| `companions` | solo, partner, friends, family, group |
+| `startTime` | `HH:MM`, 24 hour |
+| `steps` / `maxWalkKm` | 1,000 to 40,000 / 1 to 40 |
+| `window` | morning, afternoon, full, evening |
+| `moods` | up to 3 of sights, museums, nature, beach, active, food, local, views, shopping, nightlife |
+| `food` / `diet` | sit, quick, picnic, none / veg, vegan, gf, cheap, treat |
+| `known` | first, again |
+| `avoidHills`, `transitOk`, `avoidCrowds` | booleans |
+| `weather` | `{ rain, hot }`, read from the forecast rather than asked |
+
+`mustInclude` is a separate top-level field: the places the traveller named
+by hand in the ideas step, with a candidate id where one matched. Any id that
+is not in the candidate deck is dropped, so a tampered payload cannot name a
+stop the deck never offered. The prompt treats these as the one instruction
+it may not trade away for a tidier route.
 
 A `meta.farDropped` that stays high in the logs means the deck is offering the
 model places no walking day can reach. If nothing forms a walkable cluster the

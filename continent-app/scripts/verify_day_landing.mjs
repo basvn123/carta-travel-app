@@ -109,10 +109,15 @@ try {
         visible: on ? on.getBoundingClientRect().top >= 0 : false,
       };
     });
-    if (rail.dots !== 3) fail(`${size.name}: expected 3 steps in the rail, got ${rail.dots}`);
+    // The flow is four questions since the ideas step (D4): stay, when,
+    // ideas, how. Asserted against the counter the rail itself prints rather
+    // than a number frozen here, so adding a fifth question fails ONE place.
+    const railTotal = Number((rail.count.match(/of\s+(\d+)/i) || [])[1] || 0);
+    if (rail.dots !== 4) fail(`${size.name}: expected 4 steps in the rail, got ${rail.dots}`);
+    if (railTotal !== rail.dots) fail(`${size.name}: the rail draws ${rail.dots} steps but its counter says ${railTotal}`);
     if (!rail.named) fail(`${size.name}: a step in the rail has no name`);
     if (!rail.onIsFirst) fail(`${size.name}: step 1 is not the active step on the landing screen`);
-    if (!/1/.test(rail.count)) fail(`${size.name}: no "step 1 of 3" counter, got "${rail.count}"`);
+    if (!/step\s*1\s+of/i.test(rail.count)) fail(`${size.name}: the landing does not open on step 1, got "${rail.count}"`);
     if (!rail.visible) fail(`${size.name}: the rail is off screen on step 1`);
     else ok(`rail on screen at step 1, counter "${rail.count}"`);
 
@@ -262,14 +267,18 @@ try {
     }
     await page.screenshot({ path: `${SHOTS}/day-when-${size.name}.png` });
 
-    // 5. Step 3: one filled action, a badge you can read, and the banner now
-    //    carries the picked date too.
+    // 5. Step 4: one filled action, a badge you can read, and the banner now
+    //    carries the picked date too. Step 3 (ideas, D4) sits between them;
+    //    "no" is the answer that leaves the rest of this run unchanged, and
+    //    it is also the one most days give.
     await page.locator('.day-flow-next').click();
+    await page.locator('.day-ideas-choice').waitFor({ timeout: 30000 });
+    await page.getByRole('button', { name: /surprise me/i }).click();
     await page.locator('.day-flow-cards').waitFor({ timeout: 30000 });
     await page.waitForTimeout(300);
     if (await page.locator('.day-flow-dest .day-flow-dest-date').count() !== 1) {
-      fail(`${size.name}: the banner does not show the picked date on step 3`);
-    } else ok('banner carries the picked date on step 3');
+      fail(`${size.name}: the banner does not show the picked date on the last step`);
+    } else ok('banner carries the picked date on the last step');
     const fork = await page.evaluate(() => {
       const solid = (el) => {
         const bg = getComputedStyle(el).backgroundColor;
@@ -309,7 +318,7 @@ try {
       stranded: !!document.querySelector('.day-build') && !document.querySelector('.day-explore'),
     }));
     if (back.stranded) fail(`${size.name}: back from a plan lands on the stayless build screen`);
-    else if (!back.count.endsWith('1 of 3') || !back.question) fail(`${size.name}: back from a plan lands on "${back.count}", no stay question`);
+    else if (!/step\s*1\s+of/i.test(back.count) || !back.question) fail(`${size.name}: back from a plan lands on "${back.count}", no stay question`);
     else ok(`back from a plan: ${back.count}, ${back.saved} saved plan(s) listed`);
 
     await ctx.close();
@@ -332,6 +341,10 @@ try {
   await answerStay(page);
   await page.locator('.day-flow-next').click();
   await page.locator('.day-flow-next').click();
+  // Step 3 (ideas, D4): this run is about the bot's own build animation, so
+  // it takes the answer that changes nothing about what the bot is asked.
+  await page.locator('.day-ideas-choice').waitFor({ timeout: 30000 });
+  await page.getByRole('button', { name: /surprise me/i }).click();
   await page.locator('.day-flow-card.primary').click();
   await page.locator('.chat-opt').first().waitFor({ timeout: 30000 });
 

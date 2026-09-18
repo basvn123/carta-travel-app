@@ -210,14 +210,23 @@ async function reachTownStep(page) {
   }
   await nextBtn.click();
   await page.waitForTimeout(600);
+  // Step 3 (ideas, D4): no named places, so the town stays an open question.
+  await page.locator('.day-ideas-choice').waitFor({ timeout: 30000 });
+  await page.getByRole('button', { name: /surprise me/i }).click();
+  await page.waitForTimeout(600);
   await page.locator('.day-flow-card.primary').click();
   await page.waitForTimeout(700);
 
-  await page.locator('.chat-opt').first().click();          // focus
-  await page.waitForTimeout(350);
-  await page.locator('.chat-opts-multi .chat-opt').first().click();
+  // Walk the constraint questions (companions, window, walking) to reach the
+  // mood question, then the town picker this harness is actually about.
+  for (let i = 0; i < 3; i += 1) {
+    await page.locator('.chat-opt').first().click();
+    await page.waitForTimeout(300);
+  }
+  // An outdoors mood is what keeps the town question in the flow after D5.
+  await page.locator('.chat-opts-multi .chat-opt').filter({ hasText: /beach|water/i }).first().click();
   await page.waitForTimeout(150);
-  await page.locator('.chat-send-multi').click();           // interests
+  await page.locator('.chat-send-multi').click();           // mood
   await page.waitForTimeout(400);
 }
 
@@ -242,16 +251,32 @@ async function run(label, viewport) {
 
   // ---- the card names the town that was ASKED for ----
   const card = page.locator('.chat-town-resolve');
+  // The card sits at the bottom of a scroller, so its lower half is out of
+  // view and innerText returns only what is rendered. Scroll it in first, or
+  // the fallback line below the fold reads as missing.
+  await card.scrollIntoViewIfNeeded();
+  await page.waitForTimeout(250);
   const cardText = await card.innerText();
+  // "Picking it" must not move the day on its own: the town question is
+  // still the live one until the traveller confirms.
   check(`${label}: picking it does not silently relocate the day`,
-    (await page.getByText(/have you been here before\?/i).count()) === 0);
+    (await page.locator('.chat-town-picker').count()) === 1);
   check(`${label}: the card names Lokeren, not the nearest catalogue city`,
     /lokeren/i.test(cardText));
   check(`${label}: research leads the card`,
     (await card.locator('.chat-opt-lead').count()) === 1
     && /research lokeren/i.test(await card.locator('.chat-opt-lead').innerText()));
+  // Read the fallback button itself. The card is a scroller, so its own
+  // innerText is clipped to what happens to be rendered, which made this
+  // read as missing even when the button was there.
+  const fallbackText = (await card.locator('.chat-opt').allInnerTexts()).join(' | ');
+  // Not "Ghent": the nearest catalogue town to Lokeren is Aalst, 19 km away.
+  // Naming the stay's own city here was an assumption, not a measurement.
+  // Distances to another TOWN stay in km by design (only walking became
+  // steps), so this is also the gate on that rule.
   check(`${label}: the nearest catalogue town is still offered as the fallback`,
-    /ghent/i.test(cardText) && /km away/i.test(cardText));
+    /use \w+/i.test(fallbackText) && /closest town/i.test(fallbackText)
+    && /\d+ km away/i.test(fallbackText), fallbackText);
   await page.screenshot({ path: `${SHOTS}/cr1-${label}-unknown-town.png` });
 
   // ---- research it ----
@@ -266,8 +291,12 @@ async function run(label, viewport) {
   await page.screenshot({ path: `${SHOTS}/cr2-${label}-researching.png` });
   await page.waitForTimeout(3000);
 
+  // What follows the town is no longer a fixed question: D5 drops "been here
+  // before" where the town has too few headline sights for it to matter. So
+  // the assertion is that the picker is done and a new question is live.
   check(`${label}: researching the town advances the wizard`,
-    (await page.getByText(/have you been here before\?/i).count()) >= 1);
+    (await page.locator('.chat-town-picker').count()) === 0
+    && (await page.locator('.chat-bubble-live').count()) === 1);
   const said = await page.locator('.chat-bubble.me').last().innerText();
   check(`${label}: the day is set in Lokeren, not Ghent`, /lokeren/i.test(said) && !/ghent/i.test(said), said);
   await page.screenshot({ path: `${SHOTS}/cr3-${label}-researched.png` });
@@ -317,11 +346,19 @@ async function run(label, viewport) {
   }
   await next2.click();
   await page.waitForTimeout(600);
+  // Step 3 (ideas, D4): no named places, so the town stays an open question.
+  await page.locator('.day-ideas-choice').waitFor({ timeout: 30000 });
+  await page.getByRole('button', { name: /surprise me/i }).click();
+  await page.waitForTimeout(600);
   await page.locator('.day-flow-card.primary').click();
   await page.waitForTimeout(700);
-  await page.locator('.chat-opt').first().click();
-  await page.waitForTimeout(350);
-  await page.locator('.chat-opts-multi .chat-opt').first().click();
+  // Three constraint questions, then the capped mood multi-select, and the
+  // town picker is the next screen.
+  for (let i = 0; i < 3; i += 1) {
+    await page.locator('.chat-opt').first().click();
+    await page.waitForTimeout(300);
+  }
+  await page.locator('.chat-opts-multi .chat-opt').filter({ hasText: /beach|water/i }).first().click();
   await page.waitForTimeout(150);
   await page.locator('.chat-send-multi').click();
   await page.waitForTimeout(400);

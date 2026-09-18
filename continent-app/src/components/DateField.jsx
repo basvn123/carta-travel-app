@@ -127,6 +127,85 @@ export function DateField({
 
   const isDisabled = (iso) => (min && iso < min) || (max && iso > max);
 
+  // Roving focus over the grid. A month is 35-42 cells, so one tab stop per
+  // day would mean forty presses of Tab to get past a calendar; the grid takes
+  // ONE tab stop and the arrow keys walk it, which is the pattern every date
+  // picker a traveller has used before follows. Days outside the bounds are
+  // skipped rather than focused-and-refused: arrowing into a disabled day and
+  // finding Enter does nothing is a dead end the keyboard user cannot see.
+  const gridRef = useRef(null);
+  const [focusISO, setFocusISO] = useState(null);
+
+  // The one day the grid hands its tab stop to: the selection, else the range
+  // start, else today, else the first day that can actually be picked. Always
+  // a day inside the visible pane, so tabbing in never scrolls focus away.
+  const tabStopISO = useMemo(() => {
+    const first = panesData[0];
+    if (!first) return null;
+    const own = first.cells.filter((c) => !c.outside).map((c) => toISO(c.y, c.m, c.d));
+    const pick = (iso) => (iso && own.includes(iso) && !isDisabled(iso) ? iso : null);
+    return pick(focusISO)
+      || pick(value)
+      || pick(rangeStart)
+      || pick(todayISO)
+      || own.find((iso) => !isDisabled(iso))
+      || null;
+  }, [panesData, focusISO, value, rangeStart, todayISO, min, max]);
+
+  // Move focus to a day, paging the view when the step leaves the months on
+  // show. The DOM node may not exist until after that re-render, so the move
+  // is queued rather than done inline.
+  const [pendingFocus, setPendingFocus] = useState(null);
+  useEffect(() => {
+    if (!pendingFocus) return;
+    // Not just `[data-iso=…]`: the 6-week grid pads with the neighbouring
+    // months, so 1 October exists as a padding cell in the September pane AND
+    // as a real one in October's. Focus belongs on the day in its own month.
+    const el = gridRef.current?.querySelector(`.cal-day:not(.outside)[data-iso="${pendingFocus}"]`);
+    if (el) { el.focus(); setPendingFocus(null); }
+  }, [pendingFocus, panesData]);
+
+  const moveFocus = (fromISO, deltaDays) => {
+    const cur = parseISO(fromISO);
+    if (!cur) return;
+    // Walk in the given direction until a pickable day turns up, so a run of
+    // past days at the top of a month is stepped over in one press instead of
+    // trapping the cursor. A year of bounded steps is a generous ceiling.
+    let iso = fromISO;
+    for (let i = 0; i < 400; i++) {
+      const d = new Date(cur.y, cur.m, cur.d + deltaDays * (i + 1));
+      iso = toISO(d.getFullYear(), d.getMonth(), d.getDate());
+      if ((min && iso < min) || (max && iso > max)) {
+        // Past the bound in the direction of travel: nothing further to find.
+        if ((deltaDays < 0 && min && iso < min) || (deltaDays > 0 && max && iso > max)) return;
+        continue;
+      }
+      break;
+    }
+    const target = parseISO(iso);
+    setFocusISO(iso);
+    setView((v) => (v.y === target.y && v.m === target.m ? v : { y: target.y, m: target.m }));
+    setPendingFocus(iso);
+  };
+
+  const onGridKeyDown = (e) => {
+    const iso = e.target?.dataset?.iso;
+    if (!iso) return;
+    const steps = { ArrowLeft: -1, ArrowRight: 1, ArrowUp: -7, ArrowDown: 7 };
+    if (steps[e.key] != null) { e.preventDefault(); moveFocus(iso, steps[e.key]); return; }
+    if (e.key === 'PageUp' || e.key === 'PageDown') {
+      e.preventDefault();
+      const cur = parseISO(iso);
+      const d = new Date(cur.y, cur.m + (e.key === 'PageUp' ? -1 : 1), cur.d);
+      const to = toISO(d.getFullYear(), d.getMonth(), d.getDate());
+      const clamped = (min && to < min) ? min : (max && to > max) ? max : to;
+      const p = parseISO(clamped);
+      setFocusISO(clamped);
+      setView({ y: p.y, m: p.m });
+      setPendingFocus(clamped);
+    }
+  };
+
   const label = sel
     ? `${String(sel.d).padStart(2, '0')} ${MONTHS[sel.m].slice(0, 3)} ${sel.y}`
     : placeholder;
@@ -192,7 +271,7 @@ export function DateField({
         </button>
       </div>
 
-      <div className="cal-panes">
+      <div className="cal-panes" ref={gridRef} onKeyDown={onGridKeyDown}>
         {panesData.map((pane) => (
           <div className="cal-pane" key={`${pane.y}-${pane.m}`}>
             {paneCount > 1 && <div className="cal-pane-title">{MONTHS[pane.m]} {pane.y}</div>}
@@ -231,9 +310,19 @@ export function DateField({
                     key={i}
                     type="button"
                     className={cls}
+                    data-iso={iso}
                     onClick={() => pick(cell)}
-                    disabled={disabled}
-                    tabIndex={cell.outside ? -1 : 0}
+                    onFocus={() => { if (!cell.outside && !disabled) setFocusISO(iso); }}
+                    // `disabled` would take the day out of the accessibility
+                    // tree entirely, so a screen reader walking the grid meets
+                    // a silent gap where "3 September, unavailable" belongs.
+                    // The button stays enabled and announces WHY it is inert;
+                    // pick() already refuses out-of-bounds days.
+                    aria-disabled={disabled || undefined}
+                    aria-label={`${cell.d} ${MONTHS[cell.m]} ${cell.y}`}
+                    aria-current={!cell.outside && iso === todayISO ? 'date' : undefined}
+                    aria-pressed={selected ? true : undefined}
+                    tabIndex={!cell.outside && iso === tabStopISO ? 0 : -1}
                   >
                     {cell.d}
                   </button>

@@ -1109,11 +1109,15 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
                       <div className="trip-ownflight-fields">
                         <label className="trip-ownflight-date">
                           <span>{t('wizard.ownFlightOutLabel')}</span>
+                          {/* A flight already booked is still a flight in the
+                              future: the outbound cannot predate today, and
+                              the return cannot predate the outbound. */}
                           <input
                             className="trip-ownflight-input"
                             type="date"
+                            min={today}
                             value={tp.ownFlight?.outDate || ''}
-                            onChange={(e) => tp.setOwnFlight({ ...tp.ownFlight, outDate: e.target.value || null })}
+                            onChange={(e) => tp.setOwnFlight({ ...tp.ownFlight, outDate: e.target.value ? laterISO(e.target.value, today) : null })}
                           />
                         </label>
                         <label className="trip-ownflight-date">
@@ -1121,9 +1125,9 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
                           <input
                             className="trip-ownflight-input"
                             type="date"
-                            min={tp.ownFlight?.outDate || undefined}
+                            min={laterISO(tp.ownFlight?.outDate, today)}
                             value={tp.ownFlight?.retDate || ''}
-                            onChange={(e) => tp.setOwnFlight({ ...tp.ownFlight, retDate: e.target.value || null })}
+                            onChange={(e) => tp.setOwnFlight({ ...tp.ownFlight, retDate: e.target.value ? laterISO(e.target.value, laterISO(tp.ownFlight?.outDate, today)) : null })}
                           />
                         </label>
                       </div>

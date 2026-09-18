@@ -230,6 +230,34 @@ check('cache key: without events the month is enough',
   cacheKeyInput({ ...base, dateISO: '2026-08-04' }) === cacheKeyInput({ ...base, dateISO: '2026-08-05' }));
 check('cache key: asking for events changes the key',
   cacheKeyInput({ ...base, wantEvents: true }) !== cacheKeyInput(base));
+// A day built around a place the traveller named is not the day held for
+// someone who named nothing, even when every other answer is identical. The
+// must-include list was originally passed to the function and silently
+// ignored here, which would have served the wrong plan back.
+const alhambra = [{ id: '7', name: 'Alhambra', timeOfDay: 'morning' }];
+check('cache key: a named must-include changes the key',
+  cacheKeyInput({ ...base, mustInclude: alhambra }) !== cacheKeyInput(base));
+check('cache key: the same must-include is cacheable',
+  cacheKeyInput({ ...base, mustInclude: alhambra })
+  === cacheKeyInput({ ...base, mustInclude: [{ id: '7', name: 'alhambra', timeOfDay: 'morning' }] }));
+check('cache key: a different time of day for the same place differs',
+  cacheKeyInput({ ...base, mustInclude: alhambra })
+  !== cacheKeyInput({ ...base, mustInclude: [{ id: '7', name: 'Alhambra', timeOfDay: 'evening' }] }));
+// The profile changed shape with the reworked questions: a different step
+// budget, or different company, must not collide.
+const prof = {
+  companions: 'partner', startTime: '09:30', steps: 10000, maxWalkKm: 7,
+  window: 'full', moods: ['sights'], food: 'sit', diet: [],
+};
+check('cache key: a different step budget differs',
+  cacheKeyInput({ ...base, profile: prof })
+  !== cacheKeyInput({ ...base, profile: { ...prof, steps: 20000, maxWalkKm: 15 } }));
+check('cache key: different company differs',
+  cacheKeyInput({ ...base, profile: prof })
+  !== cacheKeyInput({ ...base, profile: { ...prof, companions: 'family' } }));
+check('cache key: a different start time differs',
+  cacheKeyInput({ ...base, profile: prof })
+  !== cacheKeyInput({ ...base, profile: { ...prof, startTime: '11:00' } }));
 
 /* ---- events survive validation as flagged discoveries ---- */
 const withEvent = sanitizeAiStops([

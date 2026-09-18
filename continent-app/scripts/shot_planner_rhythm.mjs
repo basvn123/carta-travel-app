@@ -197,6 +197,11 @@ async function dayFlow(page, width) {
   const dchip = page.locator('.day-flow-chips-center .day-flow-chip').first();
   if (await dchip.isVisible().catch(() => false)) { await dchip.click(); await page.waitForTimeout(600); }
   if (await nextBtn.isEnabled().catch(() => false)) { await nextBtn.click(); await page.waitForTimeout(1000); }
+  // Step 3, ideas (D4). Worth its own frame, then answered with the "no"
+  // that most days give so the fork is still the last shot of the run.
+  await shoot(page, 'day-ideas', width);
+  const noIdeas = page.getByRole('button', { name: /surprise me/i });
+  if (await noIdeas.isVisible().catch(() => false)) { await noIdeas.click(); await page.waitForTimeout(1000); }
   await shoot(page, 'day-how', width);
 }
 
