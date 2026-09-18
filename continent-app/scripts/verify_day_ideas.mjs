@@ -294,7 +294,7 @@ try {
       await page.locator('.day-ideas-body .day-flow-next').click();
       await page.locator('.day-flow-cards').waitFor({ timeout: 30000 });
       await page.getByRole('button', { name: /plan it myself|build it myself/i }).click();
-      await page.locator('.day-build').waitFor({ timeout: 60000 });
+      await page.locator('.dayex').waitFor({ timeout: 60000 });
       await page.waitForTimeout(1500);
       // The tray is the proof: the idea has to be a pick already made, not a
       // thing the traveller has to find on the map all over again.
@@ -327,7 +327,7 @@ try {
     await openIdeasStep(page);
     await page.getByRole('button', { name: /surprise me/i }).click();
     await page.locator('.day-flow-cards').waitFor({ timeout: 30000 });
-    await page.getByRole('button', { name: /ask the carta bot|use the chatbot/i }).click();
+    await page.getByRole('button', { name: /let carta plan it|ask the carta bot|use the chatbot/i }).click();
     await page.locator('.chat-flow').waitFor({ timeout: 30000 });
     await page.waitForTimeout(600);
     const noIdeas = await page.evaluate(() => ({
@@ -348,7 +348,7 @@ try {
       await page.locator('.day-ideas-chip').waitFor({ timeout: 30000 });
       await page.locator('.day-ideas-body .day-flow-next').click();
       await page.locator('.day-flow-cards').waitFor({ timeout: 30000 });
-      await page.getByRole('button', { name: /ask the carta bot|use the chatbot/i }).click();
+      await page.getByRole('button', { name: /let carta plan it|ask the carta bot|use the chatbot/i }).click();
       await page.locator('.chat-flow').waitFor({ timeout: 30000 });
       await page.waitForTimeout(600);
       const withIdeas = Number((((await page.locator('.chat-progress').innerText()).match(/\d+/g)) || [0, 0]).pop());

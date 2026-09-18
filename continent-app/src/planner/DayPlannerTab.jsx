@@ -4,7 +4,6 @@ import { DayExploreMap } from '../map/DayExploreMap.jsx';
 import { Dropdown } from '../components/Dropdown.jsx';
 import { DateField } from '../components/DateField.jsx';
 import { ScoreChip, HiddenGemTag } from '../components/RatingBadge.jsx';
-import { cityInsight } from '../lib/tripGuide.js';
 import { tripDaysBetween, haversineKm, cityCoords, withCityCoords } from '../lib/runtime_pricing.js';
 import { legTransportOptions } from '../lib/transport.js';
 import { eur, safeUrl } from '../lib/format.js';
@@ -37,12 +36,12 @@ import { openDayPlanPdf } from './dayPlanPdf.js';
 import { openDayPlanKml } from './dayPlanKml.js';
 import { openDayPlanIcs } from './dayPlanIcs.js';
 import { DayTripTransport } from './DayTripTransport.jsx';
-import { CartaGuidePanel } from './CartaGuidePanel.jsx';
+import { DayExploreBuilder } from './DayExploreBuilder.jsx';
 import { estimateWalkMinutes, fmtDur } from './dayFormat.js';
 import {
   buildDaySchedule, fmtClockLoose, GAP_SUGGEST_MIN, DAY_START_MIN,
 } from './daySchedule.js';
-import { formatSteps, kmToSteps, stepsToKm, distanceAway } from '../lib/steps.js';
+import { formatSteps, kmToSteps, stepsToKm } from '../lib/steps.js';
 import { fetchForecast, weatherKind } from '../lib/weather.js';
 import { loadDossier } from '../lib/dossier.js';
 import { searchFold } from '../lib/textSearch.js';
@@ -155,6 +154,49 @@ function buildStandalonePlan(sp) {
 }
 
 
+// The two previews on the fork step (D7). The point of them is that the
+// difference between the routes is VISIBLE before you read either card: one
+// answer is a line through the day, the other is the places themselves.
+// Both are decoration and carry aria-hidden on their wrapper.
+
+/** A day as Carta draws it: a walking line that calls at four stops. */
+function RoutePreview() {
+  return (
+    <svg viewBox="0 0 200 64" preserveAspectRatio="none" role="presentation">
+      <path
+        d="M14 46 C 44 46, 44 18, 74 18 S 118 46, 140 34 S 176 16, 190 20"
+        fill="none" stroke="var(--accent)" strokeWidth="2.4"
+        strokeLinecap="round" strokeDasharray="1 6"
+      />
+      {[[14, 46], [74, 18], [140, 34], [190, 20]].map(([cx, cy], i) => (
+        <circle
+          key={i} cx={cx} cy={cy} r={i === 0 ? 5 : 3.6}
+          fill={i === 0 ? 'var(--accent)' : 'var(--paper)'}
+          stroke="var(--accent)" strokeWidth="2"
+        />
+      ))}
+    </svg>
+  );
+}
+
+/** Three real places near the stay. Real photos, because the claim the card
+ *  makes is "these are the places you would be browsing". With fewer than
+ *  three photos in hand the empty cells stay as plain paper rather than
+ *  showing a stretched duplicate. */
+function ThumbsPreview({ photos = [] }) {
+  return (
+    <span className="day-flow-card-thumbs">
+      {[0, 1, 2].map((i) => (
+        <span
+          key={i}
+          className="day-flow-card-thumb"
+          style={photos[i] ? { backgroundImage: `url(${photos[i]})` } : undefined}
+        />
+      ))}
+    </span>
+  );
+}
+
 // The landing questions that share the one form canvas. 'chat' and 'manual'
 // are not questions, they are where the flow hands over, so they render on
 // their own and are deliberately absent here.
@@ -162,7 +204,7 @@ const FORM_STEPS = new Set(['stay', 'when', 'ideas', 'how']);
 
 export const DayPlannerTab = React.memo(function DayPlannerTab({
   data, user, authConfigured, openPlanId, onOpenPlanConsumed, favorites = null,
-  onRequestAuth, onPlanTrip,
+  onRequestAuth, onPlanTrip, onOpenDest, onOpenFeature,
 }) {
   const { t, lang } = useI18n();
   // Towns the traveller asked Carta to research (discoveredStore.js). They are
@@ -347,29 +389,10 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
   // Landing explore map: which pin categories are shown (towns by default so
   // the map never opens overloaded), which pin is briefed in the side panel,
   // and which sights/beaches are picked alongside the towns in `newStops`.
-  const [exploreCats, setExploreCats] = useState(() => new Set(['town']));
-  const [exploreFocus, setExploreFocus] = useState('');
-  // On phones the explore map fills the screen, so the briefing a pin tap
-  // populates sits below it, nudge it into view on selection (mobile only).
-  const exploreSideRef = useRef(null);
-  useEffect(() => {
-    if (!exploreFocus || !exploreSideRef.current || typeof window === 'undefined') return;
-    if (!window.matchMedia?.('(max-width: 700px)').matches) return;
-    requestAnimationFrame(() => exploreSideRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' }));
-  }, [exploreFocus]);
   const [selPois, setSelPois] = useState([]); // [{ key, destId, idx }]
   // When set, the explore/build screen is EDITING this existing plan (reached
   // via "Change places on the map") rather than composing a brand-new one.
   const [editingPlanId, setEditingPlanId] = useState(null);
-  // Free-text search over everything on the explore map (towns, sights,
-  // beaches, activities); picking a result briefs it and glides the map there.
-  const [exploreQuery, setExploreQuery] = useState('');
-  const [exploreFly, setExploreFly] = useState(null); // { lat, lon, k } - map glide target
-  // Whether the "Let Carta guide you" question -> recommendations panel is
-  // open. Closed by default: the map is the standard view, and the guide only
-  // opens when its button on the side rail is tapped.
-  const [guideOpen, setGuideOpen] = useState(false);
-
   const searchStay = async () => {
     if (staySearching || stayQuery.trim().length < 3) return;
     setStaySearching(true);
@@ -462,11 +485,6 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
   const addLandingCity = (id) => {
     if (!id || newStops.some((s) => s.destinationId === id)) return;
     setNewStops((prev) => [...prev, { destinationId: id, days: 1 }]);
-  };
-  const setLandingDays = (id, days) => {
-    setNewStops((prev) => prev.map((s) => (
-      s.destinationId === id ? { ...s, days: Math.max(1, Math.min(30, days)) } : s
-    )));
   };
   const removeLandingCity = (id) => {
     setNewStops((prev) => prev.filter((s) => s.destinationId !== id));
@@ -2359,6 +2377,16 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
     return best && best.km <= STAY_TOWN_KM ? best.id : null;
   }, [exploreTowns]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  // What the fork step's second card is offering, named and pictured (D7).
+  // The town is the one the stay sits in when there is one, otherwise the
+  // nearest in reach; the photos are the three strongest places around it.
+  const howTownName = useMemo(() => {
+    const stayTown = stayTownId ? destinations[stayTownId] : null;
+    if (stayTown?.city) return cityLabel(stayTown.city);
+    if (exploreTowns[0]?.dest?.city) return cityLabel(exploreTowns[0].dest.city);
+    return newStayPoint?.shortLabel || '';
+  }, [stayTownId, destinations, exploreTowns, newStayPoint]);
+
   // The explore map draws POIs for every town in day-trip reach of the stay,
   // so those shards have to be in hand before the memo below can place a pin.
   // Up to 34 requests of ~8.6 KB, which HTTP/2 multiplexes; the memo re-runs
@@ -2409,83 +2437,19 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
     return [...byCat.beach, ...byCat.sight, ...byCat.active];
   }, [newStayPoint, exploreTowns, actFull]);
 
-  const exploreMarkers = useMemo(() => {
-    const ms = [];
-    if (exploreCats.has('town')) {
-      exploreTowns.forEach((t) => {
-        if (t.id === stayTownId) return; // folded into the red stay pin
-        ms.push({
-        id: `t:${t.id}`,
-        // The airport suffix is flight-speak; the day map talks about towns.
-        label: cityLabel(t.dest.city),
-        lat: t.lat,
-        lon: t.lon,
-        cat: 'town',
-        score: t.dest.rating?.score ?? null,
-        tier: t.dest.rating?.tier ?? null,
-        selected: newStops.some((s) => s.destinationId === t.id),
-        focused: exploreFocus === `t:${t.id}`,
-        });
-      });
+  const howPreviewPhotos = useMemo(() => {
+    const out = [];
+    for (const p of explorePois) {
+      if (p.item?.img && !out.includes(p.item.img)) out.push(p.item.img);
+      if (out.length === 3) return out;
     }
-    explorePois.forEach((p) => {
-      if (!exploreCats.has(p.cat)) return;
-      ms.push({
-        id: p.key,
-        label: p.item.name,
-        lat: p.lat,
-        lon: p.lon,
-        cat: p.cat,
-        must: isMustSee(p.item),
-        selected: selPois.some((x) => x.key === p.key),
-        focused: exploreFocus === p.key,
-      });
-    });
-    return ms;
-  }, [exploreCats, exploreTowns, explorePois, newStops, selPois, exploreFocus, stayTownId]);
-
-  // How many places each filter chip is holding back, shown on the chip so
-  // an off category never reads as "there's nothing here".
-  const exploreCounts = useMemo(() => {
-    const c = { town: exploreTowns.filter((t) => t.id !== stayTownId).length, beach: 0, sight: 0, active: 0 };
-    explorePois.forEach((p) => { c[p.cat] += 1; });
-    return c;
-  }, [exploreTowns, explorePois, stayTownId]);
-
-  const toggleExploreCat = (cat) => {
-    setExploreCats((prev) => {
-      const next = new Set(prev);
-      next.has(cat) ? next.delete(cat) : next.add(cat);
-      return next;
-    });
-  };
-
-  // What the side panel is briefing: a town or a specific place.
-  const focusedExplore = useMemo(() => {
-    if (!exploreFocus) return null;
-    if (exploreFocus.startsWith('t:')) {
-      const t = exploreTowns.find((x) => `t:${x.id}` === exploreFocus);
-      return t ? { type: 'town', ...t } : null;
+    for (const tn of exploreTowns) {
+      const url = tn.dest?.image?.url;
+      if (url && !out.includes(url)) out.push(url);
+      if (out.length === 3) break;
     }
-    const p = explorePois.find((x) => x.key === exploreFocus);
-    return p ? { type: 'poi', ...p } : null;
-  }, [exploreFocus, exploreTowns, explorePois]);
-
-  // A focused town's three strongest sights, a taste of what "going in depth
-  // later" will offer, right in the briefing panel.
-  const focusedTownSights = useMemo(() => {
-    if (focusedExplore?.type !== 'town') return [];
-    const t = focusedExplore;
-    const items = (t.dest.activities?.items_full?.length
-      ? t.dest.activities.items_full
-      : actFull?.[t.id]) || [];
-    const suppressed = duplicatePoiIndices(items);
-    return items
-      .map((item, idx) => ({ item, idx }))
-      .filter(({ item, idx }) => !suppressed.has(idx) && item.name && !isTransportInfraPoi(item))
-      .sort((a, b) => poiScore(b.item) - poiScore(a.item))
-      .slice(0, 3);
-  }, [focusedExplore, actFull]);
+    return out;
+  }, [explorePois, exploreTowns]);
 
   const togglePoiPick = (p) => {
     setSelPois((prev) => (prev.some((x) => x.key === p.key)
@@ -2493,77 +2457,67 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
       : [...prev, { key: p.key, destId: p.destId, idx: p.idx }]));
   };
 
+  /** Reorder the tray by hand. The order matters because it is the order the
+   *  day is built in, and the traveller's own sense of what comes first beats
+   *  a nearest-neighbour walk often enough to be worth two arrows. */
+  const movePick = (key, dir) => {
+    setSelPois((prev) => {
+      const i = prev.findIndex((x) => x.key === key);
+      const j = i + dir;
+      if (i < 0 || j < 0 || j >= prev.length) return prev;
+      const next = [...prev];
+      [next[i], next[j]] = [next[j], next[i]];
+      return next;
+    });
+  };
+
+  /**
+   * "Let Carta plan the rest": hand the builder's tray to the chat planner.
+   *
+   * Everything picked so far becomes a must-include, so the generated day
+   * keeps every one of them rather than proposing its own shortlist over the
+   * top. The questions the tray already answers are skipped: the town is the
+   * one the picks are in, so asking "which town" after somebody has chosen
+   * four places in it is asking them to repeat themselves.
+   *
+   * With an empty tray this is simply the bot with no preset, which is why
+   * the button is offered at zero picks too.
+   */
+  const letCartaFinish = (rows = []) => {
+    const fromTray = rows
+      .filter((r) => r.add && r.add.destId != null)
+      .map((r) => ({
+        key: r.key,
+        destId: r.add.destId,
+        poiIdx: r.add.idx,
+        name: r.name,
+        label: r.name,
+        lat: r.lat,
+        lon: r.lon,
+        // The bot pre-ticks its mood questions off `cat`/`kind`, so a tray of
+        // four beaches has to arrive saying "beach". Without these the handoff
+        // would carry the places over and lose the taste behind them.
+        cat: r.kind,
+        kind: r.sub || r.kind,
+      }));
+    if (fromTray.length) {
+      // Merge rather than replace: an idea given in step 3 that was never
+      // added to the tray is still something the traveller asked for.
+      setIdeas((prev) => {
+        const have = new Set(prev.map((i) => i.key).filter(Boolean));
+        const add = fromTray.filter((i) => !have.has(i.key));
+        return add.length ? [...prev, ...add] : prev;
+      });
+    }
+    setLandingStep('chat');
+  };
+
   // Search across EVERYTHING on the explore map at once, towns, sights,
   // beaches & nature and activities, regardless of which filter chips are on,
   // so a place is findable by name even when its category is hidden. Strongest
-  // matches first (towns get a small nudge so a searched town leads its sights).
-  const exploreSearch = useMemo(() => {
-    const query = searchFold(exploreQuery);
-    if (query.length < 2) return [];
-    const t2 = t; // the town loop below shadows `t`
-    const out = [];
-    for (const t of exploreTowns) {
-      if (t.id === stayTownId) continue; // that town is the red stay pin itself
-      if (searchFold(t.dest.city).includes(query)) {
-        out.push({
-          id: `t:${t.id}`, cat: 'town', label: t.dest.city,
-          sub: `${t2(EXPLORE_CAT_KEY.town)}, ${t2('day.kmFromStay', { km: t.km })}`,
-          rating: t.dest.rating || null,
-          lat: t.lat, lon: t.lon,
-          score: (t.dest.rating?.score || 0) + 6,
-        });
-      }
-    }
-    for (const p of explorePois) {
-      if (searchFold(`${p.item.name || ''} ${p.item.kind || ''}`).includes(query)) {
-        const flag = isMustSee(p.item) ? t2('day.mustSeeTag')
-          : (p.item.rate ?? 0) >= 2 ? t2('day.topRated')
-          : p.item.heritage ? t2('day.heritageTag') : '';
-        out.push({
-          id: p.key, cat: p.cat, label: p.item.name,
-          sub: `${p.item.kind || t2(EXPLORE_CAT_KEY[p.cat])}, ${distanceAway(p.km, t2)}${flag ? `, ${flag}` : ''}`,
-          lat: p.lat, lon: p.lon,
-          score: poiScore(p.item),
-        });
-      }
-    }
-    return out.sort((a, b) => b.score - a.score).slice(0, 8);
-  }, [exploreQuery, exploreTowns, explorePois, stayTownId, t]);
-
-  // Selecting a search hit: reveal its category (so the pin is drawn), brief it
-  // in the side panel, and glide the map to it.
-  const pickExploreSearch = (r) => {
-    setExploreCats((prev) => (prev.has(r.cat) ? prev : new Set([...prev, r.cat])));
-    setExploreFocus(r.id);
-    setExploreFly((prev) => ({ lat: r.lat, lon: r.lon, k: (prev?.k || 0) + 1 }));
-    setExploreQuery('');
-  };
-
-  // Bring one of Carta's recommendations onto the map: reveal its category,
-  // brief it in the side panel, and glide the map to it (without adding it).
-  const previewExplore = (cat, lat, lon, focusId) => {
-    setExploreCats((prev) => (prev.has(cat) ? prev : new Set([...prev, cat])));
-    setExploreFocus(focusId);
-    setExploreFly((prev) => ({ lat, lon, k: (prev?.k || 0) + 1 }));
-  };
-
-  // Reopen an existing plan on the explore/build map to change its towns and
-  // picks. Its stay and towns are pre-loaded so the map opens on the same
-  // place; hitting the button again updates that plan in place (see below).
-  // A fresh (or cleared) stay resets the explore search and closes the guide
-  // panel so nothing stale carries over from the last place explored.
-  const guideAfterEditRef = useRef(false);
-  useEffect(() => {
-    setExploreQuery('');
-    // "Let Carta guide you" from the day view: land on the edit map with the
-    // guide panel already open, instead of making the traveller find it again.
-    if (guideAfterEditRef.current) {
-      guideAfterEditRef.current = false;
-      setGuideOpen(true);
-    } else {
-      setGuideOpen(false);
-    }
-  }, [newStayPoint]); // eslint-disable-line react-hooks/exhaustive-deps
+  // Reopen an existing plan on the builder to change its towns and picks. Its
+  // stay and towns are pre-loaded so the screen opens on the same place;
+  // hitting the button again updates that plan in place (see below).
 
   // Every landing step after the first is built around the chosen stay: the
   // date question names it, the explore map is centred on it, the chat plans
@@ -2587,7 +2541,6 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
     setNewStayPoint(null);
     setNewStayWindow(null);
     setSelPois([]);
-    setExploreFocus('');
     const sp = standalonePlans.find((p) => p.id === id);
     if (sp) openStandalone(sp);
   };
@@ -2697,7 +2650,6 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
       setNewStayPoint(null);
       setNewStayWindow(null);
       setSelPois([]);
-      setExploreFocus('');
       openStandalone(updated);
       return;
     }
@@ -2737,7 +2689,6 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
     setNewStayPoint(null);
     setNewStayWindow(null);
     setSelPois([]);
-    setExploreFocus('');
     openStandalone(sp);
   };
 
@@ -3132,7 +3083,6 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
     setNewStayPoint(null);
     setNewStayWindow(null);
     setSelPois([]);
-    setExploreFocus('');
     setLandingStep('stay');
     openStandalone(sp);
   };
@@ -3178,9 +3128,12 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
     );
     return (
       <div className="trip-planner-screen day-flow-screen">
+        {/* The fork step is the one question that is a comparison, so its
+            canvas is wider than the 880px the single-answer questions use:
+            two cards at ~440px each, rather than two tiles at ~279px. */}
         <div className={`day-flow${landingStep === 'manual' ? ' day-flow-manual' : ''}${
           FORM_STEPS.has(landingStep) ? ' day-flow-split-host' : ''
-        }`}>
+        }${landingStep === 'how' ? ' day-flow-wide' : ''}`}>
           {editingPlanId && (
             <div className="day-edit-banner">
               <span><PencilIcon size={13} /> {t('day.editBanner')}</span>
@@ -3304,7 +3257,7 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
                     <span className="day-stay-chosen-label">{newStayPoint.shortLabel || newStayPoint.label}</span>
                     <button
                       className="day-flow-chosen-change"
-                      onClick={() => { setNewStayPoint(null); setNewStayWindow(null); setStayResults(null); setStayQuery(''); setExploreFocus(''); }}
+                      onClick={() => { setNewStayPoint(null); setNewStayWindow(null); setStayResults(null); setStayQuery(''); }}
                       aria-label={t('day.clearAddress')}
                     >{t('day.change')}</button>
                   </div>
@@ -3481,14 +3434,17 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
             <div className="day-flow-step">
               <div className="day-flow-panel day-flow-panel-wide">
                 <h2 className="day-flow-q">{t('day.howToPlan')}</h2>
-                {/* Both cards end in the action they perform. The recommended
-                    one used to be the only one that looked pressable, which
-                    left "plan it myself" reading as an explanatory panel that
-                    happened to sit beside a button. */}
+                {/* Both cards end in the action they perform, and both open
+                    with a picture of the shape of that answer: a route line
+                    for the bot, the places themselves for the builder. */}
                 <div className="day-flow-cards">
                   <button className="day-flow-card primary" onClick={() => setLandingStep('chat')}>
+                    {/* A route is a line that visits places; that is the whole
+                        difference between this card and the other one, so each
+                        one draws its own answer above the words for it. */}
+                    <span className="day-flow-card-prev" aria-hidden="true"><RoutePreview /></span>
                     <span className="day-flow-card-top">
-                      <span className="day-flow-card-ico"><SparkIcon size={22} /></span>
+                      <span className="day-flow-card-ico"><SparkIcon size={26} /></span>
                       <span className="day-flow-card-tag">{t('day.recommendedTag')}</span>
                     </span>
                     <b>{t('day.useChatbot')}</b>
@@ -3497,17 +3453,32 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
                       <li><CheckIcon size={12} /> {t('day.chatPoint1')}</li>
                       <li><CheckIcon size={12} /> {t('day.chatPoint2')}</li>
                       <li><CheckIcon size={12} /> {t('day.chatPoint3')}</li>
+                      {/* The ideas step is upstream of this one, so the
+                          recommended card can promise what it will keep. */}
+                      {ideas.length > 0 && (
+                        <li className="day-flow-card-ideas">
+                          <CheckIcon size={12} />{' '}
+                          {t(ideas.length === 1 ? 'day.cardIncludesIdeas' : 'day.cardIncludesIdeasPl', { n: ideas.length })}
+                        </li>
+                      )}
                     </ul>
                     <span className="day-flow-card-go">
                       {t('day.cardGoBot')}<ChevronRightIcon size={14} />
                     </span>
                   </button>
                   <button className="day-flow-card" onClick={goManualWithIdeas}>
+                    <span className="day-flow-card-prev" aria-hidden="true">
+                      <ThumbsPreview photos={howPreviewPhotos} />
+                    </span>
                     <span className="day-flow-card-top">
-                      <span className="day-flow-card-ico"><MapPinIcon size={22} /></span>
+                      <span className="day-flow-card-ico"><MapPinIcon size={26} /></span>
                     </span>
                     <b>{t('day.planManually')}</b>
-                    <small>{t('day.planManuallySub')}</small>
+                    <small>
+                      {howTownName
+                        ? t('day.planManuallySub', { town: howTownName })
+                        : t('day.planManuallySubHere')}
+                    </small>
                     <ul className="day-flow-card-points">
                       <li><CheckIcon size={12} /> {t('day.manualPoint1')}</li>
                       <li><CheckIcon size={12} /> {t('day.manualPoint2')}</li>
@@ -3575,280 +3546,35 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
             />
           )}
 
-          {landingStep === 'manual' && (
-          <div className="day-build">
-
-            {/* 2. Explore what's around the stay: a zoomed-in map with filter
-                  chips (towns by default so it never opens overloaded), a
-                  briefing panel for whatever gets tapped, and multi-select. */}
-            {newStayPoint && (
-              <div className="day-explore">
-                <span className="trip-field-label day-explore-steplabel">
-                  <span className="day-step-num">2</span> {t('day.pickPlaces')}
-                </span>
-                {/* The map is the standard view: search it by name or filter
-                    its pins; "Let Carta guide you" lives on the side rail and
-                    only opens when tapped. The toolbar shares a column with
-                    the map, so the search + chips end where the map ends. */}
-                <div className="day-explore-wrap">
-                <div className="day-explore-main">
-                <div className="day-explore-tools">
-                  <div className="day-explore-search">
-                    <SearchIcon size={14} className="day-explore-search-ico" />
-                    <input
-                      className="day-explore-search-input"
-                      type="text"
-                      value={exploreQuery}
-                      onChange={(e) => setExploreQuery(e.target.value)}
-                      placeholder={t('day.exploreSearchPlaceholder')}
-                      aria-label={t('day.exploreSearchAria')}
-                    />
-                    {exploreQuery.trim().length > 0 && (
-                      <button className="day-explore-search-clear" onClick={() => setExploreQuery('')} aria-label={t('day.clearSearch')} title={t('day.clear')}>×</button>
-                    )}
-                    {exploreQuery.trim().length >= 2 && (
-                      <div className="day-explore-search-results">
-                        {exploreSearch.length ? exploreSearch.map((r) => (
-                          <button key={r.id} className="day-explore-search-result" onClick={() => pickExploreSearch(r)}>
-                            <span className={`day-explore-search-dot cat-${r.cat}`} />
-                            <span className="day-explore-search-text">
-                              <b>{r.label}{r.rating?.score != null && <ScoreChip rating={r.rating} size="xs" />}</b>
-                              <small>{r.sub}</small>
-                            </span>
-                          </button>
-                        )) : (
-                          <div className="day-explore-search-empty">{t('day.exploreSearchEmpty')}</div>
-                        )}
-                      </div>
-                    )}
-                  </div>
-                  <div className="day-explore-filters">
-                    {[
-                      ['town', t('day.moodTowns')],
-                      ['beach', t('day.moodBeaches')],
-                      ['sight', t('day.chipSights')],
-                      ['active', t('day.chipActivities')],
-                    ].map(([cat, label]) => (
-                      <button
-                        key={cat}
-                        className={`guide-chip dem-chip-${cat} ${exploreCats.has(cat) ? 'on' : ''}`}
-                        onClick={() => toggleExploreCat(cat)}
-                        aria-pressed={exploreCats.has(cat)}
-                      >{label}{exploreCounts[cat] > 0 && <span className="dem-chip-count">{exploreCounts[cat]}</span>}</button>
-                    ))}
-                  </div>
-                </div>
-                  <DayExploreMap
-                    stay={{ lat: newStayPoint.lat, lon: newStayPoint.lon, label: newStayPoint.shortLabel || t('day.yourStay') }}
-                    markers={exploreMarkers}
-                    flyTo={exploreFly}
-                    onFocus={(id) => setExploreFocus((cur) => (cur === id ? '' : id))}
-                    onStayClick={stayTownId ? () => setExploreFocus((cur) => (cur === `t:${stayTownId}` ? '' : `t:${stayTownId}`)) : null}
-                    stayFocused={!!stayTownId && exploreFocus === `t:${stayTownId}`}
-                  />
-                </div>
-                  <div className="day-explore-side" ref={exploreSideRef}>
-                    {!guideOpen && (
-                      <button
-                        className="day-guide-btn"
-                        onClick={() => setGuideOpen(true)}
-                        aria-expanded={guideOpen}
-                        title={t('day.guideBtnTitle')}
-                      >
-                        <SparkIcon size={13} /> {t('day.guideBtn')}
-                      </button>
-                    )}
-                    {/* The guide stays MOUNTED (its answers survive) but steps
-                        aside whenever a pin is tapped: the tapped place's
-                        briefing takes the panel, with a way back. */}
-                    {guideOpen && (
-                      <div className="day-explore-side-guide" style={{ display: focusedExplore ? 'none' : 'contents' }}>
-                        <CartaGuidePanel
-                          towns={exploreTowns}
-                          pois={explorePois}
-                          stayTownId={stayTownId}
-                          pickedTownIds={new Set(newStops.map((s) => s.destinationId))}
-                          pickedPoiKeys={new Set(selPois.map((s) => s.key))}
-                          onToggleTown={(t) => (newStops.some((s) => s.destinationId === t.id)
-                            ? removeLandingCity(t.id) : addLandingCity(t.id))}
-                          onTogglePoi={togglePoiPick}
-                          onPreview={previewExplore}
-                          onClose={() => setGuideOpen(false)}
-                        />
-                      </div>
-                    )}
-                    {(!guideOpen || focusedExplore) && (
-                    <div className="guide-city-side">
-                    {guideOpen && focusedExplore && (
-                      <button className="day-guide-back day-explore-back" onClick={() => setExploreFocus('')}>
-                        {t('day.backToSuggestions')}
-                      </button>
-                    )}
-                    {!focusedExplore ? (
-                      <div className="guide-flight-side-empty">
-                        <MapPinIcon size={16} />
-                        <p>{t('day.exploreEmptyHint')}</p>
-                      </div>
-                    ) : focusedExplore.type === 'town' ? (
-                      <>
-                        {focusedExplore.dest.image?.url ? (
-                          <div className="guide-city-side-photo" style={{ backgroundImage: `url(${focusedExplore.dest.image.url})` }} />
-                        ) : (
-                          <div className="guide-city-side-photo guide-city-side-photo-empty" aria-hidden="true">
-                            <HomeIcon size={22} />
-                          </div>
-                        )}
-                        <div className="guide-city-side-title">
-                          <b>{focusedExplore.dest.city}</b>
-                          {focusedExplore.dest.rating?.score != null && <ScoreChip rating={focusedExplore.dest.rating} size="xs" />}
-                          {focusedExplore.dest.rating?.hidden_gem && <HiddenGemTag />}
-                        </div>
-                        <span className="day-explore-type-tag type-town"><HomeIcon size={10} /> {t('day.wholeTown')}</span>
-                        <p className="guide-city-side-insight">
-                          {t('day.kmFromStayDot', { km: focusedExplore.km })} {cityInsight(focusedExplore.dest)}
-                        </p>
-                        {focusedTownSights.length > 0 && (
-                          <div className="day-explore-topsights">
-                            <span className="day-explore-topsights-title">{t('day.strongestSights')}</span>
-                            {focusedTownSights.map(({ item, idx }) => (
-                              <span className="day-explore-topsight" key={idx}>
-                                {isMustSee(item) && <StarIcon size={9} />}
-                                {item.name}
-                              </span>
-                            ))}
-                          </div>
-                        )}
-                        <p className="day-explore-depth-note">
-                          <InfoIcon size={11} /> {t('day.townDepthNote')}
-                        </p>
-                        {newStops.some((s) => s.destinationId === focusedExplore.id) ? (
-                          <div className="guide-city-side-actions">
-                            <div className="trip-people day-days-stepper">
-                              <button type="button" onClick={() => setLandingDays(focusedExplore.id, (newStops.find((s) => s.destinationId === focusedExplore.id)?.days || 1) - 1)} aria-label={t('day.fewerDays')}>-</button>
-                              <span>{newStops.find((s) => s.destinationId === focusedExplore.id)?.days || 1} {(newStops.find((s) => s.destinationId === focusedExplore.id)?.days || 1) === 1 ? t('day.dayWord') : t('day.daysWord')}</span>
-                              <button type="button" onClick={() => setLandingDays(focusedExplore.id, (newStops.find((s) => s.destinationId === focusedExplore.id)?.days || 1) + 1)} aria-label={t('day.moreDays')}>+</button>
-                            </div>
-                            <button className="guide-back" onClick={() => removeLandingCity(focusedExplore.id)}>{t('day.remove')}</button>
-                          </div>
-                        ) : (
-                          <button className="guide-next guide-city-side-add" onClick={() => addLandingCity(focusedExplore.id)}>
-                            {t('day.addToMyDays')}
-                          </button>
-                        )}
-                      </>
-                    ) : (
-                      <>
-                        {focusedExplore.item.img ? (
-                          <div className="guide-city-side-photo" style={{ backgroundImage: `url(${focusedExplore.item.img})` }} />
-                        ) : (
-                          <div className="guide-city-side-photo guide-city-side-photo-empty" aria-hidden="true">
-                            <MapPinIcon size={22} />
-                          </div>
-                        )}
-                        <div className="guide-city-side-title">
-                          <b>{focusedExplore.item.name}</b>
-                          {isMustSee(focusedExplore.item) && <span className="day-guide-badge must"><StarIcon size={9} /> {t('day.mustSee')}</span>}
-                          {!isMustSee(focusedExplore.item) && (focusedExplore.item.rate ?? 0) >= 2 && <span className="day-guide-badge rated">{t('day.highlyRated')}</span>}
-                          {focusedExplore.item.heritage && <span className="day-guide-badge heritage">{t('day.heritage')}</span>}
-                        </div>
-                        <span className={`day-explore-type-tag type-${focusedExplore.cat}`}>
-                          <MapPinIcon size={10} /> {EXPLORE_CAT_KEY[focusedExplore.cat] ? t(EXPLORE_CAT_KEY[focusedExplore.cat]) : t('day.place')}
-                        </span>
-                        <p className="guide-city-side-insight">
-                          {poiKind(focusedExplore.item) ? `${poiKind(focusedExplore.item)}, ` : ''}
-                          {t('day.kmFromStayNear', { km: focusedExplore.km, city: destinations[focusedExplore.destId]?.city })}
-                          {' '}{focusedExplore.item.desc || ''}
-                        </p>
-                        <p className="day-explore-depth-note">
-                          <InfoIcon size={11} /> {t('day.poiDepthNote')}
-                        </p>
-                        {selPois.some((x) => x.key === focusedExplore.key) ? (
-                          <button className="guide-back guide-city-side-add" onClick={() => togglePoiPick(focusedExplore)}>{t('day.removeFromMyDays')}</button>
-                        ) : (
-                          <button className="guide-next guide-city-side-add" onClick={() => togglePoiPick(focusedExplore)}>
-                            {t('day.addToMyDays')}
-                          </button>
-                        )}
-                      </>
-                    )}
-                    </div>
-                    )}
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* 3. Everything picked so far. */}
-            {(newStops.length > 0 || selPois.length > 0) && (
-              <div className="day-build-cities">
-                <span className="trip-field-label day-explore-steplabel day-picks-steplabel">
-                  <span className="day-step-num">3</span> {t('day.yourPicks')}
-                  {/* What is actually planned so far, stated once. */}
-                  <span className="day-picks-status">
-                    {t('day.picksStatus', {
-                      days: newStops.reduce((n, s) => n + (s.days || 1), 0),
-                      towns: newStops.length,
-                      pois: selPois.length,
-                    })}
-                  </span>
-                </span>
-                {newStops.map((s) => {
-                  const d = destinations[s.destinationId];
-                  return (
-                    <div className="day-build-city" key={s.destinationId}>
-                      <span className="day-build-city-name">
-                        {d?.city || t('day.unknown')}
-                        <small>{d?.country}</small>
-                      </span>
-                      {/* Days are set in the briefing panel, where the town is
-                          actually being judged. A second identical stepper
-                          here meant two controls for one number on one screen;
-                          this row states the answer and leaves editing to the
-                          one place that has the context for it. */}
-                      <span className="day-build-city-days">
-                        {s.days} {s.days === 1 ? t('day.dayWord') : t('day.daysWord')}
-                      </span>
-                      <button
-                        className="trip-stop-remove"
-                        onClick={() => removeLandingCity(s.destinationId)}
-                        aria-label={t('day.removeX', { name: d?.city || 'city' })}
-                        title={t('day.remove')}
-                      >×</button>
-                    </div>
-                  );
-                })}
-                {selPois.map((p) => {
-                  const item = explorePois.find((x) => x.key === p.key)?.item;
-                  if (!item) return null;
-                  return (
-                    <div className="day-build-city" key={p.key}>
-                      <span className="day-build-city-name">
-                        {item.name}
-                        <small>{poiKind(item)}, {t('day.nearCity', { city: destinations[p.destId]?.city })}</small>
-                      </span>
-                      <button
-                        className="trip-stop-remove"
-                        onClick={() => setSelPois((prev) => prev.filter((x) => x.key !== p.key))}
-                        aria-label={t('day.removeX', { name: item.name })}
-                        title={t('day.remove')}
-                      >×</button>
-                    </div>
-                  );
-                })}
-              </div>
-            )}
-
-            <button
-              className="trip-save-btn day-build-btn"
-              onClick={startExplorePlanning}
-              disabled={newStops.length === 0 && selPois.length === 0}
-            >
-              {editingPlanId ? t('day.updatePlan') : t('day.startPlanning')}
-            </button>
-            {selPois.length > 0 && newStops.length === 0 && (
-              <p className="trip-note">{t('day.picksSpecificNote')}</p>
-            )}
-          </div>
+          {/* "Build it myself" (D6): the guided builder. What stood here was
+              map-first, a search box and four chips over a 68vh map, which
+              made the traveller name what they wanted before the screen would
+              show them anything. The builder leads with the places instead:
+              rails of real cards around the stay, a tray that keeps count, and
+              Carta one button away at any point, including from an empty tray. */}
+          {landingStep === 'manual' && newStayPoint && (
+            <DayExploreBuilder
+              stay={newStayPoint}
+              dateISO={newStartDate}
+              explorePois={explorePois}
+              exploreTowns={exploreTowns}
+              destinations={destinations}
+              stayTownId={stayTownId}
+              ideas={ideas}
+              shortlistPoints={shortlistPoints}
+              picks={selPois}
+              townPicks={newStops}
+              onTogglePick={togglePoiPick}
+              onMovePick={movePick}
+              onToggleTown={(id) => (newStops.some((s) => s.destinationId === id)
+                ? removeLandingCity(id) : addLandingCity(id))}
+              onStartPlanning={startExplorePlanning}
+              onLetCartaPlan={letCartaFinish}
+              onChangeStay={() => setLandingStep('stay')}
+              onOpenDest={onOpenDest}
+              onOpenFeature={onOpenFeature}
+              editing={!!editingPlanId}
+            />
           )}
 
         </div>

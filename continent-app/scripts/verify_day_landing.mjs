@@ -293,6 +293,31 @@ try {
         tagSize: tag ? parseFloat(getComputedStyle(tag).fontSize) : 0,
       };
     });
+    // D7: the fork is a comparison, so the two cards have to be big enough
+    // to read. 640px gave each ~279px; the wide split gives each ~440px.
+    const forkSize = await page.evaluate(() => {
+      const split = document.querySelector('.day-flow-split-wide');
+      const cards = [...document.querySelectorAll('.day-flow-card')];
+      const c = cards[0];
+      return {
+        splitW: split ? Math.round(split.getBoundingClientRect().width) : 0,
+        cardW: c ? Math.round(c.getBoundingClientRect().width) : 0,
+        cardH: c ? Math.round(c.getBoundingClientRect().height) : 0,
+        titlePx: c ? parseFloat(getComputedStyle(c.querySelector('b')).fontSize) : 0,
+        icoPx: c ? Math.round(c.querySelector('.day-flow-card-ico').getBoundingClientRect().width) : 0,
+        previews: document.querySelectorAll('.day-flow-card-prev').length,
+      };
+    });
+    const wide = size.name === 'laptop';
+    if (wide && forkSize.splitW < 860) fail(`${size.name}: fork split only ${forkSize.splitW}px, .day-flow-split-wide has no effect`);
+    else if (wide) ok(`fork split ${forkSize.splitW}px, cards ${forkSize.cardW}px`);
+    const minH = size.name === 'phone' ? 150 : 220;
+    if (forkSize.cardH < minH) fail(`${size.name}: fork card ${forkSize.cardH}px tall, wanted >= ${minH}px`);
+    else ok(`fork card ${forkSize.cardH}px tall, title ${forkSize.titlePx}px, icon ${forkSize.icoPx}px`);
+    if (forkSize.titlePx < 17) fail(`${size.name}: fork title only ${forkSize.titlePx}px`);
+    if (forkSize.previews !== 2) fail(`${size.name}: ${forkSize.previews} card previews, expected 2`);
+    else ok('both fork cards carry a preview');
+
     if (fork.gos !== 2) fail(`${size.name}: expected 2 fork actions, got ${fork.gos}`);
     if (fork.filled !== 1) fail(`${size.name}: ${fork.filled} filled fork actions, expected exactly 1`);
     if (fork.tagSize < 10.5) fail(`${size.name}: "Recommended" badge at ${fork.tagSize}px`);
@@ -305,19 +330,66 @@ try {
     //     also lists saved day plans). Parked on "how" it rendered an empty
     //     page holding one dead "Start planning" button.
     await page.locator('.day-flow-card').nth(1).click();
-    await page.locator('.day-explore-search-input').waitFor({ timeout: 30000 });
-    await page.locator('.day-explore-search-input').fill('Tivoli');
-    await page.locator('.day-explore-search-result').first().click({ timeout: 15000 });
-    await page.locator('.guide-city-side-add').first().click({ timeout: 15000 });
-    await page.locator('.day-build-btn').click();
+    // D6: the builder leads with cards, so a place is picked off a rail
+    // rather than searched for on a map. The round [+] is the one control
+    // that puts something in the tray.
+    await page.locator('.dayex-card').first().waitFor({ timeout: 30000 });
+    await page.locator('.dayex-add').first().click({ timeout: 15000 });
+    const tray = await page.evaluate(() => {
+      const bar = document.querySelector('.dayex-tray-summary');
+      const carta = document.querySelector('.dayex-tray-carta');
+      const open = document.querySelector('.dayex-tray-open');
+      return {
+        summary: bar?.textContent.trim() || '',
+        carta: carta?.textContent.trim() || '',
+        openDisabled: open ? open.disabled : null,
+      };
+    });
+    if (!/\d/.test(tray.summary)) fail(`${size.name}: tray does not count the pick: "${tray.summary}"`);
+    else if (!/step/i.test(tray.summary)) fail(`${size.name}: tray states no step estimate: "${tray.summary}"`);
+    else ok(`tray: "${tray.summary}"`);
+    // The step count is half of what the tray label says, so it may not be
+    // the half that gets elided on a narrow screen.
+    const trayFit = await page.evaluate(() => {
+      const el = document.querySelector('.dayex-tray-summary');
+      if (!el) return null;
+      return { clipped: el.scrollWidth > el.clientWidth + 1, text: el.textContent.trim() };
+    });
+    if (trayFit?.clipped) fail(`${size.name}: tray label is cut off: "${trayFit.text}"`);
+    else ok('tray label fits');
+    if (!tray.carta) fail(`${size.name}: no "Let Carta plan the rest" button in the tray`);
+    else ok(`tray offers Carta: "${tray.carta}"`);
+    if (tray.openDisabled !== false) fail(`${size.name}: "Open my day" still disabled with a pick in the tray`);
+    // The map beside the list has to actually draw. A MapLibre canvas built
+    // inside a display:none column comes up 0x0 and never recovers, which is
+    // exactly the trap the desktop two-column layout sets.
+    if (size.name === 'laptop') {
+      await page.waitForTimeout(2500);
+      const map = await page.evaluate(() => {
+        const box = document.querySelector('.dayex-mapcol .dem-map');
+        const cv = document.querySelector('.dayex-mapcol canvas');
+        return {
+          boxW: box ? Math.round(box.getBoundingClientRect().width) : 0,
+          boxH: box ? Math.round(box.getBoundingClientRect().height) : 0,
+          canvasW: cv ? cv.clientWidth : 0,
+          pins: document.querySelectorAll('.dayex-mapcol .dem-pin, .dayex-mapcol .maplibregl-marker').length,
+        };
+      });
+      if (map.boxW < 200 || map.boxH < 200) fail(`${size.name}: builder map box is ${map.boxW}x${map.boxH}`);
+      else if (map.canvasW < 200) fail(`${size.name}: builder map canvas is ${map.canvasW}px wide`);
+      else if (map.pins < 2) fail(`${size.name}: builder map drew ${map.pins} pin(s), expected the stay plus places`);
+      else ok(`builder map ${map.boxW}x${map.boxH}, ${map.pins} pins`);
+    }
+    await page.screenshot({ path: `${SHOTS}/day-builder-${size.name}.png` });
+    await page.locator('.dayex-tray-open').click();
     await page.locator('.trip-newtrip-btn').first().click({ timeout: 30000 });
     const back = await page.evaluate(() => ({
       count: document.querySelector('.day-flow-top .shape-head-step')?.textContent.trim() || '',
       question: !!document.querySelector('.day-flow-search'),
       saved: document.querySelectorAll('.day-flow-saved .trip-saved-item').length,
-      stranded: !!document.querySelector('.day-build') && !document.querySelector('.day-explore'),
+      stranded: !!document.querySelector('.dayex') && !document.querySelector('.dayex-head'),
     }));
-    if (back.stranded) fail(`${size.name}: back from a plan lands on the stayless build screen`);
+    if (back.stranded) fail(`${size.name}: back from a plan lands on the stayless builder`);
     else if (!/step\s*1\s+of/i.test(back.count) || !back.question) fail(`${size.name}: back from a plan lands on "${back.count}", no stay question`);
     else ok(`back from a plan: ${back.count}, ${back.saved} saved plan(s) listed`);
 

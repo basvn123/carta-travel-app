@@ -1026,6 +1026,8 @@ function TravelApp() {
               favorites={favorites}
               onRequestAuth={requestAuth}
               onPlanTrip={() => goToTab('trip')}
+              onOpenDest={(id) => setSelectedId(id)}
+              onOpenFeature={openFeature}
             />
           </Suspense>
         </div>
