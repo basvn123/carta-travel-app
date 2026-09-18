@@ -89,6 +89,9 @@ from famous_registry import REGISTRY, base_name, squash  # noqa: E402
 WIRE = ROOT / "continent-app" / "public" / "trails"
 OUT_JSON = ROOT / "data" / "reports" / "trails_coverage.json"
 OUT_MD = ROOT / "data" / "reports" / "trails_coverage.md"
+# The full row dump, for local analysis. Deliberately NOT committed: it is
+# ~46 MB, most of it unmatched summits and lakes nobody will act on.
+OUT_FULL = ROOT / "data" / "reports" / "trails_coverage_full.json"
 
 # The brief's numbers, not invented here.
 MATCH_M = 250.0          # how near the line must pass the registry point
@@ -404,9 +407,14 @@ def render_md(payload):
     add("")
     add("| Measure | Value |")
     add("|---|---|")
-    add(f"| Registry rows | {c['registry_rows']:,} |")
+    add(f"| Walk candidates checked (`kind: trail`) | "
+        f"{c['registry_rows']:,} |")
+    add(f"| places a walk goes to (evidence, not gated) | "
+        f"{c['place_rows']:,} |")
     add(f"| Matched | {c['matched']:,} ({c['matched_pct']}%) |")
     add(f"| Missing | {c['missing']:,} |")
+    add(f"| **Walks missing for reasons that are ours** | "
+        f"**{c['our_bug_trail_misses']:,}** |")
     add(f"| Published rows read | {c['published_rows']:,} |")
     add(f"| Regions with a registry row | {c['regions']:,} |")
     add(f"| Regions failing the top-three gate | {c['regions_failing']:,} |")
@@ -422,6 +430,11 @@ def render_md(payload):
     add("`way_only_not_derived`, `failed_continuity` and `below_quota` are "
         "the codes the strict gate refuses. They mean the data exists and "
         "this pipeline did not carry it through.")
+    add("")
+    add("Most `no_osm_data` rows are `kind: place` (a named summit or lake "
+        "with an article and no path), which is why the gate holds a region "
+        "to its top three WALKS rather than to every row. The number that "
+        "sizes the work is the bolded one above.")
     add("")
     add("## Worst 20 misses by fame score")
     add("")
@@ -457,6 +470,9 @@ def main():
     ap.add_argument("--strict", action="store_true",
                     help="exit 1 when a region's top three carry our own "
                          "reason codes")
+    ap.add_argument("--full-rows", action="store_true",
+                    help="also write trails_coverage_full.json with every "
+                         "row, including unmatched places (not committed)")
     ap.add_argument("--verbose", action="store_true")
     args = ap.parse_args()
 
@@ -503,7 +519,10 @@ def main():
         "counts": {
             "registry_rows": len(reg_rows),
             "trail_rows": sum(1 for r in reg_rows if r.get("kind") == "trail"),
-            "place_rows": sum(1 for r in reg_rows if r.get("kind") != "trail"),
+            # From the registry's own counts, not from the rows in hand: the
+            # committed registry holds only the walks, so counting place rows
+            # here would report 0 and hide how wide the evidence net was.
+            "place_rows": (reg.get("counts") or {}).get("place_rows", 0),
             "matched": len(matched),
             "matched_pct": (round(100.0 * len(matched) / len(reg_rows), 1)
                             if reg_rows else 0.0),
@@ -511,6 +530,12 @@ def main():
             "published_rows": len(pub),
             "regions": len(regions),
             "regions_failing": len(failing),
+            # The number that actually sizes the work: walks (not summits and
+            # lakes) missing for a reason this pipeline owns.
+            "our_bug_trail_misses": sum(
+                1 for r in reg_rows
+                if r.get("kind") == "trail" and r["status"] != "matched"
+                and r["reason"] in OUR_BUGS),
         },
         "reasons": dict(reasons.most_common()),
         "our_bugs": sorted(OUR_BUGS),
@@ -520,17 +545,43 @@ def main():
                    "reason": r["reason"]} for r in worst],
         "failing_regions": failing,
         "regions": regions,
-        "rows": [{"id": r["id"], "name": r["name"], "country": r["country"],
-                  "nuts3": r.get("nuts3"), "range": r.get("range"),
-                  "kind": r.get("kind"),
-                  "fame_score": r["fame_score"], "status": r["status"],
-                  "reason": r["reason"], "match": r.get("match")}
-                 for r in reg_rows],
     }
+
+    def row_out(r):
+        return {"id": r["id"], "name": r["name"], "country": r["country"],
+                "nuts3": r.get("nuts3"), "range": r.get("range"),
+                "kind": r.get("kind"), "fame_score": r["fame_score"],
+                "status": r["status"], "reason": r["reason"],
+                "match": r.get("match")}
+
+    # The COMMITTED report carries the rollups and the rows somebody will act
+    # on: every walk, and every place that actually matched. It leaves out the
+    # ~160,000 unmatched `place` rows (a named summit or lake with an article
+    # and no path), which are 37 MB of the 46 and are not work anybody will
+    # do. Without this the monthly task would add a nine-figure line count to
+    # the repo every run, which defeats the point of committing it to see
+    # regressions in a diff.
+    payload["rows"] = [row_out(r) for r in reg_rows
+                       if r.get("kind") == "trail" or r["status"] == "matched"]
+    payload["counts"]["rows_in_file"] = len(payload["rows"])
+    payload["counts"]["rows_omitted"] = len(reg_rows) - len(payload["rows"])
+    payload["note"] = (
+        "rows[] holds every kind:trail row and every matched row. Unmatched "
+        "kind:place rows are counted in counts/reasons but not listed; "
+        "re-run with --full-rows for the complete list, written beside this "
+        "file as trails_coverage_full.json and not committed.")
+
     OUT_JSON.parent.mkdir(parents=True, exist_ok=True)
     OUT_JSON.write_text(json.dumps(payload, ensure_ascii=False, indent=1),
                         encoding="utf-8")
     OUT_MD.write_text(render_md(payload), encoding="utf-8")
+    if args.full_rows:
+        full = dict(payload)
+        full["rows"] = [row_out(r) for r in reg_rows]
+        full.pop("note", None)
+        OUT_FULL.write_text(json.dumps(full, ensure_ascii=False),
+                            encoding="utf-8")
+        print(f"  -> {OUT_FULL} (full rows, not committed)")
 
     print()
     print(f"  matched            {len(matched):,} "

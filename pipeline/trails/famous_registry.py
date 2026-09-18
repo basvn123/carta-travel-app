@@ -85,6 +85,13 @@ import harvest_activities as ha  # noqa: E402  (sitelink_counts, WDQS cache)
 from ingest_osm_routes import COUNTRIES, cached_extract  # noqa: E402
 
 REGISTRY = ROOT / "data" / "trails" / "famous_registry.json"
+# The full evidence dump, including the ~163,000 `place` candidates (a named
+# summit or lake with an article and no path). Local only: at 87 MB compact
+# it would add a nine-figure line count to the repo on every monthly run,
+# which defeats the point of committing the registry to see regressions in a
+# diff. The committed file carries every `trail` row, which is what the
+# coverage gate acts on.
+REGISTRY_FULL = ROOT / "data" / "trails" / "famous_registry_full.json"
 OSM_FAME_CACHE = ROOT / "cache" / "trails_osm_fame.json"
 WD_CACHE = ROOT / "cache" / "trails_wikidata_famous.json"
 PV_CACHE = ROOT / "cache" / "trail_pageviews.json"
@@ -1046,6 +1053,9 @@ def main():
                     help="re-scan OSM extracts and re-query Wikidata")
     ap.add_argument("--offline", action="store_true",
                     help="caches only, no network")
+    ap.add_argument("--full", action="store_true",
+                    help="also write famous_registry_full.json with the "
+                         "place candidates too (not committed)")
     ap.add_argument("--verbose", action="store_true")
     args = ap.parse_args()
 
@@ -1110,6 +1120,20 @@ def main():
         },
         "rows": all_rows,
     }
+    trail_rows = [r for r in all_rows if r.get("kind") == "trail"]
+    payload["counts"]["trail_rows"] = len(trail_rows)
+    payload["counts"]["place_rows"] = len(all_rows) - len(trail_rows)
+
+    if args.full:
+        write_json(REGISTRY_FULL, payload)
+        print(f"  -> {REGISTRY_FULL} (every row, not committed)")
+
+    payload["rows"] = trail_rows
+    payload["note"] = (
+        "rows[] holds the kind:trail candidates, which is what the coverage "
+        "gate holds a region to. The kind:place candidates (a named summit "
+        "or lake with an article and no path) are counted above and written "
+        "to famous_registry_full.json by --full, which is not committed.")
     write_json(REGISTRY, payload)
 
     print()
@@ -1117,6 +1141,8 @@ def main():
     print(f"  with a NUTS3 region {len(all_rows) - len(no_region):,}")
     print(f"  with OSM evidence   {payload['counts']['with_osm']:,}")
     print(f"  with a wikidata id  {payload['counts']['with_wikidata']:,}")
+    print(f"  walks (kind trail)  {len(trail_rows):,}")
+    print(f"  places              {len(all_rows) - len(trail_rows):,}")
     print(f"  unresolved seeds    {len(unresolved):,}")
     for r in unresolved[:20]:
         print(f"      {r['country']}  {r['name']}")

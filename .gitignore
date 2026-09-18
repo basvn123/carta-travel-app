@@ -201,3 +201,8 @@ data/derived/place_candidates.json
 
 # Personal Claude Code overrides (the shared skills in .claude/skills/ stay tracked)
 .claude/settings.local.json
+
+# Trails Phase 1: full evidence dumps, local analysis only (87-113 MB).
+# The committed registry and report carry the walks and the rollups.
+data/trails/famous_registry_full.json
+data/reports/trails_coverage_full.json

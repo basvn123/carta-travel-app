@@ -304,14 +304,37 @@ def famous_check():
             published.setdefault(t.get("country") or cc, []).append(
                 (squash(t.get("name") or ""), t.get("name") or ""))
 
-    cov = {}
+    # The reason lookup keys on the registry name AND on every alias, then
+    # falls back to a word-level search. A registry row often carries the
+    # LOCAL name ("Olympos" in Greek script folds to "olympos", not "mount
+    # olympus"), so exact equality against an English fixture name reports
+    # "not in the coverage report" for a row that is sitting right there.
+    cov, cov_rows = {}, []
     if cov_path.exists():
         try:
-            for r in json.loads(
-                    cov_path.read_text(encoding="utf-8")).get("rows") or []:
+            cov_rows = json.loads(
+                cov_path.read_text(encoding="utf-8")).get("rows") or []
+            for r in cov_rows:
                 cov[(r["country"], squash(r["name"]))] = r["reason"]
         except Exception:
             pass
+
+    def reason_for_fixture(cc, name):
+        key = squash(name)
+        got = cov.get((cc, key)) or cov.get((cc, squash(base_name(name))))
+        if got:
+            return got
+        words = [w for w in key.split() if len(w) > 3]
+        best = None
+        for r in cov_rows:
+            if r["country"] != cc:
+                continue
+            hay = squash(r["name"])
+            if key and (key in hay or hay in key):
+                return r["reason"]
+            if words and all(w in hay for w in words):
+                best = best or r["reason"]
+        return best or "not in the coverage report"
 
     found, missing = [], []
     for cc, name in FAMOUS_FIXTURES:
@@ -334,7 +357,7 @@ def famous_check():
         extra = f"  -> {pub}" if pub and squash(pub) != squash(name) else ""
         print(f"  [ok]   {cc}  {name}{extra}")
     for cc, name, _ in missing:
-        reason = cov.get((cc, squash(name)), "not in the coverage report")
+        reason = reason_for_fixture(cc, name)
         print(f"  [gap]  {cc}  {name:34} {reason}")
     if missing and not cov:
         print("  ! no coverage report to explain the gaps; run:")
