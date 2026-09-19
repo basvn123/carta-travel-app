@@ -129,8 +129,19 @@ export function DayExploreMap({ stay, markers = [], onFocus, onStayClick, stayFo
     // worth tapping sits outside the map. Top padding leaves room for the
     // pin labels; maxZoom keeps a tight cluster from zooming in to street level.
     const fitAll = () => {
-      const pts = finitePts(markers).map((m) => [m.lon, m.lat]);
-      if (hasLngLat(stay)) pts.push([stay.lon, stay.lat]);
+      let pts = finitePts(markers).map((m) => [m.lon, m.lat]);
+      if (hasLngLat(stay)) {
+        // The first frame is "what is around me", not "everything on the
+        // list": the nearest thirty pins to the stay. Towns an hour out are
+        // still on the map, one pinch away, rather than shrinking the
+        // walkable ones to dots.
+        const d2 = ([lon, lat]) => {
+          const kx = Math.cos((stay.lat * Math.PI) / 180);
+          return ((lon - stay.lon) * kx) ** 2 + (lat - stay.lat) ** 2;
+        };
+        pts = pts.sort((a, b) => d2(a) - d2(b)).slice(0, 30);
+        pts.push([stay.lon, stay.lat]);
+      }
       if (pts.length < 2) return;
       const bounds = pts.reduce(
         (b, p) => b.extend(p),

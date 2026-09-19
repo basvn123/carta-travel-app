@@ -11,6 +11,7 @@
     "build": "vite build",
     "preview": "vite preview",
     "smoke": "node scripts/smoke-nav.mjs",
+    "shoot:planners": "node scripts/shoot-planners.mjs",
     "lint": "eslint src",
     "format": "prettier --write \"src/**/*.{js,jsx}\"",
     "test": "node --test --test-concurrency=1 \"tests/*.mjs\"",

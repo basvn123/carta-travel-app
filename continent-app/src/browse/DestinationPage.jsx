@@ -200,7 +200,7 @@ function GalleryStrip({ gallery, city, iso2, fallbackUrl }) {
               src={g.url}
               alt={g.caption || ''}
               loading={i === 0 ? 'eager' : 'lazy'}
-              fetchPriority={i === 0 ? 'high' : undefined}
+              fetchpriority={i === 0 ? 'high' : undefined}
               onError={() => setFailed((s) => new Set([...s, g.url]))}
             />
             {g.caption && <figcaption className="destp-slide-cap">{g.caption}</figcaption>}

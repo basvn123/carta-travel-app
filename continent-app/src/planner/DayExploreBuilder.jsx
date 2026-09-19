@@ -7,6 +7,7 @@ import { PlannerSection } from './PlannerSection.jsx';
 import { DayExploreMap } from '../map/DayExploreMap.jsx';
 import { haversineKm } from '../lib/runtime_pricing.js';
 import { cityLabel } from '../lib/placeName.js';
+import { fmtDate } from '../lib/dates.js';
 import { formatSteps, kmToSteps } from '../lib/steps.js';
 import { loadBeaches } from '../lib/beaches.js';
 import { loadLakes } from '../lib/lakes.js';
@@ -500,7 +501,7 @@ export function DayExploreBuilder({
         </span>
         <span className="dayex-head-text">
           <b>{homeTown?.dest?.city ? cityLabel(homeTown.dest.city) : (stay?.shortLabel || stay?.label || '')}</b>
-          <small>{dateISO ? t('dayex.headDate', { date: dateISO }) : t('dayex.headNoDate')}</small>
+          <small>{dateISO ? t('dayex.headDate', { date: fmtDate(dateISO, true) }) : t('dayex.headNoDate')}</small>
         </span>
         <span className="dayex-head-acts">
           <button

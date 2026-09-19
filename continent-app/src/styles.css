@@ -1766,8 +1766,8 @@ input, select {
 .trip-save-planned-btn { width: 100%; padding: 12px 16px; background: var(--accent); color: #fff; }
 .trip-save-planned-btn:hover:not(:disabled) { opacity: 0.9; }
 .trip-save-planned-btn:disabled { opacity: 0.6; cursor: default; }
-.trip-edit-btn { background: var(--ink); color: var(--paper); }
-.trip-edit-btn:hover { opacity: 0.88; }
+.trip-edit-btn { background: var(--paper); border: 1px solid var(--rule); color: var(--ink); }
+.trip-edit-btn:hover { border-color: var(--ink-soft); }
 .trip-plan-again-btn, .trip-startover-btn { background: var(--paper); border: 1px solid var(--rule); color: var(--ink-soft); }
 .trip-plan-again-btn:hover { border-color: var(--accent); color: var(--accent); }
 .trip-planned-secondary {
@@ -16602,6 +16602,7 @@ button.ai-sched-main:focus-visible {
 .chat-bubble-edit-text { text-align: left; }
 .chat-bubble-edit-hint {
   flex: 0 0 auto;
+  margin-left: 8px;
   font-size: 11px;
   opacity: 0.72;
   text-decoration: underline;
@@ -24825,6 +24826,7 @@ button.ai-sched-main:focus-visible {
 .fsheet.cbrief-sheet .fsheet-body {
   padding: 0;
   overscroll-behavior: contain;
+  scroll-padding-bottom: 76px;
 }
 
 /* The photo strip both positions open on. */
@@ -33108,3 +33110,103 @@ button.ai-sched-main:focus-visible {
   cursor: pointer;
 }
 .day-topcard-trip:hover { text-decoration: underline; }
+
+/* ── Q1 phone audit (2026-09-19): every control a thumb meets is 44px ────
+   scripts/shoot-planners.mjs walks both planners at 375px and lists every
+   button, link and field under 44x44. This block is the answer to that list,
+   grouped by surface. Widths stay as they were; only the tap box grows. */
+@media (max-width: 768px) {
+  /* app chrome */
+  .header-pricing-btn { height: var(--tap); min-width: var(--tap); }
+
+  /* trip wizard */
+  .wiz-mini { min-height: var(--tap); padding: 5px 0 6px; margin-top: 2px; }
+  .guide-search { min-height: var(--tap); }
+  .guide-back { min-height: var(--tap); }
+  .guide-startover { display: inline-flex; align-items: center; min-height: var(--tap); }
+  .guide-chip { min-height: var(--tap); }
+  .guide-people-lg button { width: var(--tap); height: var(--tap); }
+  .guide-recap-inner { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
+  .guide-recap-inner::-webkit-scrollbar { display: none; }
+  .guide-recap-chip, .guide-recap-label { flex: none; white-space: nowrap; }
+  .dsec-toggle { min-height: var(--tap); }
+  .cbrief-add { min-height: var(--tap); }
+
+  /* day planner rail and questions */
+  .wiz-step-btn { min-height: var(--tap); }
+  .day-flow-help { width: var(--tap); height: var(--tap); }
+  .day-flow-chip { min-height: var(--tap); }
+  .day-flow-dest-change { min-height: var(--tap); padding-block: 0; }
+  .cal-nav { width: var(--tap); height: var(--tap); }
+  /* 7 cells of 44px need 308px plus gaps; the card gutter gives it back. */
+  .day-flow-date .date-field-inline { max-width: none; margin-inline: -6px; width: auto; }
+  .day-flow-date .cal-inline .cal-day { min-height: var(--tap); }
+  .day-ideas-when { padding: 0; }
+  .day-ideas-when-btn { min-height: var(--tap); }
+  .day-ideas-chip-x { width: var(--tap); height: var(--tap); }
+
+  /* the bot */
+  .chat-back { width: var(--tap); height: var(--tap); }
+  .chat-bubble.chat-bubble-edit { min-height: var(--tap); display: flex; align-items: center; }
+  .carta-plan-chip { min-height: var(--tap); }
+  .ai-refine-input { min-height: var(--tap); }
+  .ai-refine-row .trip-add-btn { min-height: var(--tap); }
+
+  /* the builder */
+  .dayex-search-btn, .dayex-change { height: var(--tap); }
+  .dayex-search-btn { width: var(--tap); }
+  .dayex-more { min-height: var(--tap); padding: 0 6px; }
+  .dayex-view button { min-height: var(--tap); }
+  /* The chip strip slides under the List/Map switch; fade it out rather than
+     cut a chip in half. */
+  .dayex-chips { mask-image: linear-gradient(to right, #000 calc(100% - 28px), transparent); padding-right: 28px; }
+  .dayex-tray-summary { min-height: var(--tap); display: flex; align-items: center; }
+  .dayex-tray-carta, .dayex-tray-open { height: var(--tap); }
+  .dayex-tray-moves button { width: var(--tap); height: var(--tap); }
+  /* Map pins keep their size (a 44px dot would hide the map) and grow an
+     invisible tap box around them instead; the audit measures that box. */
+  /* No position on .dem-pin itself: it IS the MapLibre marker element, and
+     MapLibre owns its position and transform (see maplibre-marker gotcha). */
+  .dem-pin::before { content: ''; position: absolute; inset: -12px; }
+  .dem-pin.is-dot::before { inset: -13px; }
+  .maplibregl-ctrl-group button { width: var(--tap); height: var(--tap); }
+}
+
+/* Q1 phone audit, second pass: the Where grid, the Trips step, the trip page,
+   Getting there, Finish and the planned view. */
+@media (max-width: 768px) {
+  .app-header-account .header-pricing-btn { height: var(--tap); min-width: var(--tap); }
+  .guide-chip { min-width: var(--tap); }
+  .guide-datemode button { min-height: var(--tap); }
+  .guide-ccard-info { width: var(--tap); height: var(--tap); }
+  .wtrip-len { min-height: var(--tap); min-width: var(--tap); }
+  .wready-more { min-height: var(--tap); }
+  .wready-link, .tday-more, .itin-stop-open, .guide-answered-edit, .tleg-link {
+    display: inline-flex; align-items: center; min-height: var(--tap);
+  }
+  .tpage-back { min-height: var(--tap); }
+  .tpage-bar-act { width: var(--tap); height: var(--tap); }
+  .tlegs-shift-btn { width: var(--tap); height: var(--tap); }
+  .tleg-mode { min-height: var(--tap); }
+  .guide-people button,
+  .guide-summary-party .guide-people button,
+  .itin-bd-party .guide-people button { width: var(--tap); height: var(--tap); }
+  .extras-check-row { min-height: var(--tap); padding-block: 0; }
+  .extras-row-head { min-height: var(--tap); }
+  .tprac-row.is-link > a { min-height: var(--tap); align-items: center; }
+  .itin-drive-row { min-height: var(--tap); }
+  .itin-tab, .itin-day-row-main, .itin-day-plan-btn,
+  .itin-overview-total, .itin-export-toggle,
+  .extras-add-btn, .extras-input, .exp-sharer-chip,
+  .trip-topcard-name, .trip-save-planned-btn, .trip-edit-btn, .trip-startover-btn { min-height: var(--tap); }
+  .trip-topcard-close { width: var(--tap); height: var(--tap); }
+  /* MapLibre's own stylesheet loads after this one; the extra class wins. */
+  .dem-map .maplibregl-ctrl-group button.maplibregl-ctrl-zoom-in,
+  .dem-map .maplibregl-ctrl-group button.maplibregl-ctrl-zoom-out { width: var(--tap); height: var(--tap); }
+  /* "Next: Getting there" does not fit beside Back and Start over at 375px;
+     the actions drop to their own line only when the label needs it, rather
+     than breaking the button in two. */
+  .guide-foot-inner { flex-wrap: wrap; }
+  .guide-foot-actions { flex: 1 1 auto; justify-content: flex-end; }
+  .guide-next { white-space: nowrap; }
+}

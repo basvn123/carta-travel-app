@@ -40,7 +40,7 @@ export function HeroImage({
       height={ratio[1]}
       loading={eager ? 'eager' : 'lazy'}
       decoding="async"
-      fetchPriority={eager ? 'high' : undefined}
+      fetchpriority={eager ? 'high' : undefined}
     />
   );
 }

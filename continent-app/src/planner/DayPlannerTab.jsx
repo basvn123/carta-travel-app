@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { E2E_SEAMS } from '../lib/e2eSeams.js';
 import { TripMap } from '../map/TripMap.jsx';
 import { DayExploreMap } from '../map/DayExploreMap.jsx';
 import { Dropdown } from '../components/Dropdown.jsx';
@@ -203,6 +204,28 @@ function ThumbsPreview({ photos = [] }) {
 // are not questions, they are where the flow hands over, so they render on
 // their own and are deliberately absent here.
 const FORM_STEPS = new Set(['stay', 'when', 'ideas', 'how']);
+
+// ?savedmock verify seam, same precedent as the trips panel: one fixture trip
+// stands in for the trip_plans table so the Continue-a-trip cards and the
+// which-day sheet render in headless checks without a signed-in session.
+// Compiled out of production builds with the rest of the seams.
+const SAVED_MOCK = E2E_SEAMS && typeof window !== 'undefined'
+  && new URLSearchParams(window.location.search).has('savedmock');
+function mockTripPlans() {
+  const iso = (days) => {
+    const d = new Date();
+    d.setDate(d.getDate() + days);
+    return d.toISOString().slice(0, 10);
+  };
+  const stops = [
+    { trip_plan_id: 'mp1', position: 0, destination_id: 'LIS', city: 'Lisbon', country: 'Portugal', arrive_date: iso(5), depart_date: iso(8) },
+    { trip_plan_id: 'mp1', position: 1, destination_id: 'OPO', city: 'Porto', country: 'Portugal', arrive_date: iso(8), depart_date: iso(10) },
+  ];
+  return [{
+    id: 'mp1', user_id: 'mock', label: null, cities: ['Lisbon', 'Porto'], countries: ['Portugal'],
+    start_date: iso(5), end_date: iso(10), destination_ids: ['LIS', 'OPO'], stops, created_at: iso(-3),
+  }];
+}
 
 export const DayPlannerTab = React.memo(function DayPlannerTab({
   data, user, authConfigured, openPlanId, onOpenPlanConsumed, favorites = null,
@@ -412,6 +435,7 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
   };
 
   useEffect(() => {
+    if (SAVED_MOCK) { setSavedPlans(mockTripPlans()); return; }
     if (!user) { setSavedPlans([]); return; }
     setPlansLoading(true);
     // A rejected fetch (offline, or a session whose token no longer verifies)
@@ -2629,6 +2653,15 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
     if (!newStayPoint && landingStep !== 'stay') setLandingStep('stay');
   }, [newStayPoint, landingStep]);
 
+  // Continue sits at the foot of a question, so the screen is scrolled down
+  // when the next one renders, with its title under the app header. Each
+  // question starts at the top, the way a new page would.
+  useEffect(() => {
+    const screen = document.querySelector('.day-flow-screen');
+    if (screen) screen.scrollTop = 0;
+    window.scrollTo(0, 0);
+  }, [landingStep]);
+
   const cancelEditOnMap = () => {
     const id = editingPlanId;
     setEditingPlanId(null);
@@ -3217,8 +3250,8 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
         plans={savedPlans}
         destinations={destinations}
         loading={plansLoading}
-        signedIn={Boolean(user)}
-        authConfigured={authConfigured}
+        signedIn={Boolean(user) || SAVED_MOCK}
+        authConfigured={authConfigured || SAVED_MOCK}
         onOpenDay={openDayFromTrip}
         onRequestAuth={onRequestAuth}
         onPlanTrip={onPlanTrip}
