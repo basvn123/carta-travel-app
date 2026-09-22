@@ -105,9 +105,12 @@ It needs a local PostgreSQL that you can reach. Set `PGHOST`, `PGPORT` and
 `PGUSER` if yours is not `localhost:5432` as `postgres`.
 
 The restore prints errors and that is expected. On a bare local Postgres they
-are all the same one: every RLS policy calls `auth.uid()`, and there is no
-`auth` schema outside Supabase, so all 38 policies fail to create. The measured
-run produced 55 such errors and nothing else.
+are all the same one: the RLS policies call `auth.uid()`, and there is no
+`auth` schema outside Supabase, so every policy fails to create. A measured run
+produced several dozen such errors and nothing else. The exact count tracks the
+number of policies in the database and so moves with every migration; what
+matters is that they are all that one cause. An error mentioning anything other
+than the missing `auth` schema is worth reading.
 
 This matters for what a local restore is and is not. The policies are in the
 dump and restore correctly into a real Supabase project, which has the `auth`

@@ -123,9 +123,9 @@ can read tables the temporary role does not own. The direct host
 | Tested restore procedure | none | verified end to end, twice | new |
 | Repeatable backup command | none | one script | new |
 | Database passwords needed | unknown, assumed 1 | 0 | none |
-| Live dump size | n/a | 51,130 bytes encrypted | new |
-| Live rows recovered | n/a | 100 across 21 tables | 100% |
-| Live objects in the archive | n/a | 42 tables, 38 policies, 59 functions, 23 FKs, 19 indexes, 6 triggers | complete |
+| Kept dump size | n/a | 51,132 bytes encrypted | new |
+| Rows recovered from the kept dump | n/a | 101 across 21 tables | 100% |
+| Objects recovered | n/a | 21 tables, 41 indexes, 58 functions, 6 triggers, 5 FKs | complete |
 | Synthetic rows recovered | n/a | 3,500 of 3,500 | 100% |
 
 Two measurements, because they prove different things. The synthetic test
@@ -135,16 +135,23 @@ trigger, 1 function, 4 indexes, 3000 intact JSONB payloads, and 3000 rows
 showing the trigger had fired. That establishes the chain is lossless, which a
 live dump alone cannot show without a known-good comparison.
 
-The live dump then proved it works against the real project: 51,130 encrypted
-bytes, restoring to 100 rows across 21 tables, among them 8 profiles, 8 day
-plans, 3 trip plans and the entitlements row carrying the owner year pass. The
-encrypted file was confirmed as GPG AES256 data with no plaintext row values
-recoverable by grep.
+The kept dump then proved it against the real project: 51,132 encrypted bytes,
+restoring to 101 rows across 21 tables, among them 8 profiles, 8 day plans, 3
+trip plans and the entitlements row carrying the owner year pass, with 41
+indexes, 58 functions and 6 triggers. The encrypted file was confirmed as GPG
+AES256 data with no plaintext row values recoverable by grep.
+
+The figures above are from the dump that was kept, not from an earlier
+verification dump taken an hour before and then destroyed. That one held 100
+rows; the difference is a row written by the live application in between, which
+is the expected sign that a backup captures current state rather than a stale
+snapshot. Anyone comparing this report against a future dump should expect the
+counts to have moved again.
 
 The catalogue data is not in here and does not need to be. Destinations,
 trails, beaches and the rest are built by the pipeline into
 `continent-app/public/` and are reproducible. What this dump protects is the
-100 rows that are not: what users saved.
+101 rows that are not: what users saved.
 
 ## What broke and how it was fixed
 
