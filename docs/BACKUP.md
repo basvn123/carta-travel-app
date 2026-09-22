@@ -34,19 +34,27 @@ passphrase in a password manager survives the laptop.
 
 ## What you need
 
-Two secrets, neither of which is in the repository or in any `.env` file:
+You do not need the database password. This is worth stating plainly, because
+looking for it is a dead end: Supabase shows that password exactly once, at
+project creation, and stores only a hash. It cannot be read back from the
+dashboard. The only thing the dashboard offers is a reset, which would break
+anything still holding the old one.
 
-`SUPABASE_DB_PASSWORD` is the database password, at Supabase dashboard ->
-Project Settings -> Database. This is not the anon key in
-`continent-app/.env`; the anon key is a client credential and cannot dump.
+Instead the script asks the Supabase CLI for a temporary login role. The CLI
+mints a fresh one on every run, authorised by the access token that
+`supabase login` stored in `~/.supabase/access-token`. The credential is
+different each time and is dead by the time anyone could read it out of a log.
+So you need to be logged in (`supabase login`) and linked, which this
+repository already is via `supabase/.temp/project-ref`.
 
-`CARTA_BACKUP_PASSPHRASE` is whatever you choose to encrypt with. Store it in a
+That leaves one secret, which is yours to choose:
+
+`CARTA_BACKUP_PASSPHRASE` is what the dump is encrypted with. Store it in a
 password manager. Storing it alongside the dumps defeats the entire exercise.
 
 ## Taking a backup
 
 ```
-export SUPABASE_DB_PASSWORD='...'
 export CARTA_BACKUP_PASSPHRASE='...'
 ops/backup_supabase.sh
 ```
@@ -85,10 +93,19 @@ ctrl-c.
 It needs a local PostgreSQL that you can reach. Set `PGHOST`, `PGPORT` and
 `PGUSER` if yours is not `localhost:5432` as `postgres`.
 
-The restore prints some errors and that is expected. A Supabase dump refers to
-roles (`anon`, `authenticated`, `service_role`) and extension schemas that a
-plain local Postgres does not have. Judge the restore by the row counts at the
-end, not by a silent log.
+The restore prints errors and that is expected. On a bare local Postgres they
+are all the same one: every RLS policy calls `auth.uid()`, and there is no
+`auth` schema outside Supabase, so all 38 policies fail to create. The measured
+run produced 55 such errors and nothing else.
+
+This matters for what a local restore is and is not. The policies are in the
+dump and restore correctly into a real Supabase project, which has the `auth`
+schema. A local restore gives you the tables, the data, the constraints, the
+indexes, the triggers and the functions, but the tables land with RLS unenforced.
+Treat the local copy as a place to read data, never as somewhere to point an
+app.
+
+Judge the restore by the row counts at the end, not by a silent log.
 
 Deliberately, this script will not restore to the live project. Restoring over
 a live database mid-incident turns one bad migration into two. Restore locally,
@@ -112,11 +129,15 @@ the meantime.
 
 ## What is not covered
 
-These scripts dump the `public` and `storage` schemas. They do not back up
-`auth.users`, which Supabase manages and which a project-level dump on this
-plan does not expose. If accounts themselves were ever lost, users would
-re-authenticate through Google and the profile rows keyed by their user id
-would need re-linking by hand.
+These scripts dump the `public` schema only. The temporary login role has no
+rights on `storage` or `auth`, so neither can be included; asking for them
+fails the dump outright with "permission denied for schema storage". The app
+does not use Supabase Storage, so nothing is lost there today. If that changes,
+buckets will need a separate backup path.
+
+`auth.users` is not in the dump either. If accounts themselves were ever lost,
+users would re-authenticate through Google and the profile rows keyed by their
+user id would need re-linking by hand.
 
 Edge Functions are in `supabase/functions/` in git and are not part of the
 dump. Secrets set on the project (the Gemini key) are not in the dump either.
