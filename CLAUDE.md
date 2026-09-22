@@ -45,6 +45,10 @@ Commit the task's work to that branch, write the report, and then merge or hand 
 
 If a task has no code changes (e.g., a pure research or audit task), the commit is the report itself.
 
+## Production baseline and tagging
+
+The production baseline for this work is tagged `prod-2026-09` at commit `8b53babed` (Dossier merge). All work proceeds from this point. If any task requires rollback to production, use `git reset --hard prod-2026-09`.
+
 ## How to run a task
 
 1. Read the prompt completely. Know what files it names and what the done condition is.
@@ -81,3 +85,4 @@ Report these clearly so the next task does not spend time rediscovering them:
 ---
 
 **Last updated:** 2026-09-22
+**Production tag:** prod-2026-09 (commit 8b53babed)
