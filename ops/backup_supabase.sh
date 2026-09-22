@@ -22,8 +22,14 @@
 # via supabase/.temp/project-ref).
 #
 # Usage:
-#   CARTA_BACKUP_PASSPHRASE=... ops/backup_supabase.sh
+#   read -rs CARTA_BACKUP_PASSPHRASE   # paste at the blank line, nothing echoes
+#   export CARTA_BACKUP_PASSPHRASE
+#   ops/backup_supabase.sh
 #   ops/backup_supabase.sh --out /d/carta-backups      # write elsewhere
+#
+# Read it in rather than writing it inline: a passphrase containing a single
+# quote breaks VAR='...' by closing the string early, and $ or a backtick gets
+# mangled inside double quotes.
 #
 # Output: <outdir>/carta-<utc timestamp>.dump.gpg plus a .sha256 sidecar.
 

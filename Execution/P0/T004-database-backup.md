@@ -168,7 +168,8 @@ should rest. Taking the keeper is a one-line job for whoever holds the
 passphrase:
 
 ```
-export CARTA_BACKUP_PASSPHRASE='<new, into a password manager>'
+read -rs CARTA_BACKUP_PASSPHRASE
+export CARTA_BACKUP_PASSPHRASE
 ops/backup_supabase.sh
 ```
 

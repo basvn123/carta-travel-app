@@ -54,10 +54,20 @@ password manager. Storing it alongside the dumps defeats the entire exercise.
 
 ## Taking a backup
 
+Read the passphrase in at a prompt rather than putting it on the command line:
+
 ```
-export CARTA_BACKUP_PASSPHRASE='...'
+read -rs CARTA_BACKUP_PASSPHRASE
+export CARTA_BACKUP_PASSPHRASE
 ops/backup_supabase.sh
 ```
+
+Paste the passphrase at the blank line and press enter. Nothing echoes, nothing
+lands in shell history, and no quoting is involved, which matters: a passphrase
+containing a single quote breaks `export VAR='...'` by closing the string early,
+and one containing `$` or a backtick gets mangled by double quotes instead.
+Generating passphrases as letters and digits only sidesteps the whole problem
+and costs no strength, since nobody types this by hand.
 
 Output goes to `~/carta-backups/carta-<UTC timestamp>.dump.gpg` with a
 `.sha256` sidecar next to it. Override the directory with `--out /d/somewhere`
@@ -81,7 +91,8 @@ so a corruption you notice late still has a clean predecessor behind it.
 ## Testing a restore
 
 ```
-export CARTA_BACKUP_PASSPHRASE='...'
+read -rs CARTA_BACKUP_PASSPHRASE
+export CARTA_BACKUP_PASSPHRASE
 ops/restore_supabase.sh ~/carta-backups/carta-20260922T150000Z.dump.gpg
 ```
 

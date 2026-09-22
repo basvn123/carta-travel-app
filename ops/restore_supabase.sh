@@ -7,7 +7,9 @@
 # decide by hand what to copy back.
 #
 # Usage:
-#   CARTA_BACKUP_PASSPHRASE=... ops/restore_supabase.sh <file.dump.gpg> [dbname]
+#   read -rs CARTA_BACKUP_PASSPHRASE   # paste at the blank line, nothing echoes
+#   export CARTA_BACKUP_PASSPHRASE
+#   ops/restore_supabase.sh <file.dump.gpg> [dbname]
 #
 # dbname defaults to carta_restore_test. It is DROPPED and recreated.
 
