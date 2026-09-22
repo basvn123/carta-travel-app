@@ -206,3 +206,8 @@ data/derived/place_candidates.json
 # The committed registry and report carry the walks and the rollups.
 data/trails/famous_registry_full.json
 data/reports/trails_coverage_full.json
+
+# Encrypted database dumps: never in the repo, even encrypted (T004).
+carta-backups/
+*.dump.gpg
+*.dump.gpg.sha256
