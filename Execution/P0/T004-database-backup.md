@@ -37,8 +37,9 @@ whole dump over a live database during an incident reverts every migration
 since the dump and destroys rows written in the meantime. The documented path
 is to restore locally, confirm, and then move only what is needed.
 
-The done condition is met. A real encrypted dump of the live project was taken
-and restored successfully. It needed no database password, which is the part
+The done condition is met. A real encrypted dump of the live project was taken,
+copied to a USB drive, and restored from that copy using the passphrase as
+stored in the password manager. It needed no database password, which is the part
 worth remembering: Supabase shows that password once at project creation and
 keeps only a hash, so it cannot be recovered from the dashboard at all. The
 scripts instead ask the Supabase CLI for a temporary login role, minted fresh
@@ -117,7 +118,8 @@ can read tables the temporary role does not own. The direct host
 
 | Metric | Before | After | Delta |
 |---|---|---|---|
-| Encrypted dumps of the live project | 0 | 1, verified | +1 |
+| Encrypted dumps of the live project | 0 | 1, kept off-machine | +1 |
+| Off-machine copies | 0 | 1 on USB, hash-matched | +1 |
 | Tested restore procedure | none | verified end to end, twice | new |
 | Repeatable backup command | none | one script | new |
 | Database passwords needed | unknown, assumed 1 | 0 | none |
@@ -156,28 +158,31 @@ trails, beaches and the rest are built by the pipeline into
 | Local Postgres 18 needs a password | Host cluster is not trust-auth | Created a throwaway trust-auth cluster on port 5440 in the scratch directory rather than touching host configuration |
 | Docker unavailable for a test database | Docker Desktop daemon not running | Same throwaway cluster; starting Docker was out of scope |
 | pg_ctl -w start never returned | Known Git Bash behaviour with the wait flag | Confirmed the server was up from its log and a probe; the call was harmless |
+| Passphrase with shell metacharacters | `export VAR='...'` ends the string early on a single quote; the user's passphrase contained one | Switched the documented path to `read -rs`, which involves no quoting, keeps the value out of shell history and echoes nothing. Also noted that generating passphrases as letters and digits only avoids the trap at no cost in strength |
+| `export` not recognised | The user was in PowerShell; `export` is a bash builtin, and the instructions had assumed bash | Gave the PowerShell equivalent (`Read-Host -AsSecureString` into `$env:`), invoking the scripts through Git Bash at `C:\Program Files\Gitinash.exe`. Note `bash` on PATH in PowerShell resolves to WSL, which is a different environment |
 | Restore logs one error | CREATE SCHEMA public when public already exists | Expected and harmless. Documented so the next reader does not treat it as a failure. Restores are judged on the row counts, not a silent log |
 | Live restore logged 55 errors | Every RLS policy calls `auth.uid()`, and a bare local Postgres has no `auth` schema | Expected, and all 55 are that one cause. The policies are in the archive and restore into a real Supabase project. A local restore is for reading data, not for pointing an app at. Written up in docs/BACKUP.md |
 
 ## What is still open
 
-The scripts work and the chain is proven, but no dump is being kept yet. The
-verified one was deliberately destroyed: it was encrypted under a throwaway
-passphrase and sat in a scratch directory, which is not a place real user data
-should rest. Taking the keeper is a one-line job for whoever holds the
-passphrase:
+The done condition is met and nothing from this task is outstanding. A dump
+taken by the project owner now sits on a USB drive at `D:\carta-backups\`,
+byte-identical to the copy in `~/carta-backups/`, and it was restored from the
+USB copy using the passphrase read out of the password manager rather than from
+memory. That last detail is what makes it a real test: it proves the stored
+passphrase is the one the file was encrypted with, which is the failure mode
+that would otherwise surface during an incident.
 
-```
-read -rs CARTA_BACKUP_PASSPHRASE
-export CARTA_BACKUP_PASSPHRASE
-ops/backup_supabase.sh
-```
+The restore produced 21 tables and 101 rows, including 8 profiles, 3 trip
+plans, 8 day plans and the entitlements row carrying the owner year pass, plus
+41 indexes, 58 functions and 6 triggers. The row count had moved by one since
+the earlier verification dump an hour before, which is the expected sign that
+backups capture current state.
 
-Then copy the `.dump.gpg` and its `.sha256` off the laptop. The script prints a
-reminder but cannot do it; it does not know where the off-machine storage is.
-Until that copy exists, the dump is a second file on the disk whose failure it
-is meant to survive. This is the one genuinely manual step and no script can
-close it.
+What remains is a standing habit rather than open work: take a fresh dump and
+copy it across before each P2 and P4 migration, and keep the older ones. A
+README on the USB drive states what the files are and that the passphrase is
+the only way into them.
 
 Storage is out of scope and currently empty of consequence. The temporary login
 role cannot read the `storage` schema, and the app makes no Storage calls, so
