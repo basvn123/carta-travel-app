@@ -10,28 +10,52 @@ T025
 
 ## What changed
 
-Nothing. The verification failed at the dependency check, and the honest outcome is that the untrack cannot proceed safely until another task removes the blocker. The work left the repository clean, with no accidental commits.
+Nothing in the tree. The task's own precondition, that Vercel builds and sync-data.mjs must not rely on the tracked copies of `continent-app/public`, does not hold, so the untrack was not run. This report records the evidence, the measurements the untrack would move, the exact commands to run when the precondition is met, and one production defect the verification uncovered on the way.
 
-The decision to stop was made before running any git operations that would change the tree. The verification followed the sequence in the task specification: first check what sync-data.mjs does when sources are absent, then determine whether a Vercel build would still pass, then decide whether to proceed or block.
+The short version of why it is blocked. The app's boot payload is `continent-app/public/app_data.json`, written by `scripts/sync-data.mjs` from the pipeline master `app_data/app_data.json` at the repository root. The master is gitignored, deliberately, because it is about 50 MB and rewritten whole on every pipeline run. Vercel builds from a fresh checkout of the GitHub repository, so it has no master. When the master is absent, sync-data prints one warning and exits zero, leaving whatever is already in `public/` in place. Today that is the tracked copy, and that is the only reason production has a catalogue at all. Untrack `public/` and the next Vercel build ships a shell with no data behind it.
+
+Production proves the same thing from the outside. The tracked `app_data.json` is served from carta-europetravel.com at 12.5 MB. The per-destination POI shards under `public/poi/`, which are written by the same script but are not tracked at the root, return 404 from the same host. The tracked files are the deploy.
 
 ## Files touched
 
 **Modified:**
-- None. The root .gitignore was not edited, and nothing was untracked.
+- None.
 
 **Created:**
-- `Execution/P1/T025-untrack-build-artifacts.md` — this report
+- `Execution/P1/T025-untrack-build-artifacts.md`, this report.
 
 **Deleted:**
 - None.
 
-## How the verification works
+## How the two repositories relate
 
-The Vercel build runs two steps. The prebuild hook runs `npm run build` in `continent-app/`, which includes the `prebuild` npm script. That script is `node scripts/sync-data.mjs`. The sync-data script reads the master dataset from `app_data/app_data.json` (at the repository root) and transforms it into public-facing JSON shards (poi/, fares/, etc.) under `continent-app/public/`.
+There are two nested git repositories, and the untrack only concerns one of them. The root repository (remote github.com/basvn123/carta-travel-app, 3.2 GB of `.git`) tracks the whole of `continent-app/` as ordinary files, including 48,222 files under `continent-app/public`. The inner repository at `continent-app/.git` (39 MB, no remote) tracks 458 files and only 15 under `public/`: favicons, fonts, the web manifest, robots.txt, the service worker, and the two Cloudflare files from T024. The inner `.gitignore` already lists every generated subdirectory.
 
-The master dataset is gitignored in the root .gitignore (line 56: `app_data/app_data.json`). This is intentional: it is roughly 50 MB and rewritten whole on every pipeline run, and committing it would spend the Git LFS quota faster than the project's utility.
+The root repository honours that inner `.gitignore` too, because git reads ignore files in every directory of the tree. That is why `public/poi/` and `public/activities_full.json` are not tracked at the root: they were created after the ignore rules were written. The 48,222 files that are tracked predate those rules, and an ignore rule never removes a file that is already in the index. So the root index is a snapshot of which layers existed on the day each rule was added, not a decision about what belongs in git.
 
-The sync-data script has a fallback for when the master is missing (lines 76-78):
+The tracked set, by top-level entry under `continent-app/public`:
+
+| Entry | Tracked files |
+|---|---|
+| trails/ | 17,716 |
+| cycling/ | 17,048 |
+| region/ | 4,849 |
+| trips/ | 3,994 |
+| dossier/ | 3,867 |
+| fares/ | 286 |
+| journeys/ | 264 |
+| mountains/ | 46 |
+| lakes/ | 45 |
+| destinfo/ | 44 |
+| beaches/ | 41 |
+| fonts/ | 4 |
+| root files (app_data.json, coverage.json, search_index.json, joins.json and the rest) | 18 |
+
+Not tracked at the root, because the inner ignore rules predate them: `poi/` (3,865 files locally), `activities_full.json`, `reach/`.
+
+## How the build depends on the tracked copies
+
+`continent-app/package.json` runs `scripts/sync-data.mjs` as the `prebuild` hook, so `npm run build` on Vercel runs it before Vite. The script resolves the master at `../app_data/app_data.json`, and its first real statement is a guard:
 
 ```javascript
 if (!existsSync(src)) {
@@ -40,115 +64,99 @@ if (!existsSync(src)) {
 }
 ```
 
-When the master is absent, sync-data exits early without creating any output. It does not regenerate the JSON shards. It does not fail the build; it exits cleanly and leaves whatever is already in `public/` in place. The comment above the function says so explicitly: "if a fresh clone without the pipeline output builds" — a fresh clone has no generated files, yet the build succeeds because sync-data skips.
+The guard exists so a fresh clone without pipeline output still builds. It is correct for a developer machine. On Vercel it means the build never regenerates anything: every byte of data the deploy serves is a byte that was committed. The root `.gitignore` says this in its own words, in the comment above the `app_data/app_data.json` rule: the app runs from the committed `continent-app/public/*.json` payload, and sync-data falls back to that when the master is absent. The T024 report reached the same conclusion for the future Cloudflare Pages build, which has the same shape.
 
-This fallback is correct for a developer clone and for a deployment that has already cached the output. But it has a precondition: the output must already exist. Either the master is present, or the output is already on disk.
+The layer directories (trails, cycling, region, trips, dossier, beaches, lakes, mountains, journeys, fares, destinfo) are not written by sync-data at all. Each has its own export script under `pipeline/` that writes straight into `continent-app/public/`. None of those scripts run on the host either, so those directories depend on tracked copies in exactly the same way.
 
-Vercel does not have the master (it is gitignored) and does not have a cache (it builds from a fresh checkout). If the generated JSON shards are also not in git, then sync-data will skip, and the prebuild will complete with an empty or partial wire under `continent-app/public/`. The build artifacts will then reference JSON that does not exist, and the application will fail at runtime or serve a broken catalogue.
+The verification therefore fails on both counts named in the task. Vercel builds do rely on tracked copies, and sync-data.mjs does not regenerate them where the deploy happens.
 
-The root .gitignore currently tracks the generated shards (48,224 files under `continent-app/public/`), which is why Vercel's builds pass today. The inner repository's .gitignore (continent-app/.gitignore) already excludes these same files (lines 9-31), so the inner repo stays at 15 tracked files (the static assets: favicons, fonts, manifest, robots.txt, etc.). The asymmetry between the two repos is the thing this task exists to fix.
+## Commands run
 
-## Verification result: BLOCKED
+Measurement only. Nothing that changed the tree.
 
-The untrack cannot proceed because it would break Vercel deployments. The dependency is documented in the task prompt:
+```bash
+git ls-files continent-app/public | wc -l
+git ls-files -s continent-app/public | awk '{print $2}' | git cat-file --batch-check='%(objectsize)' | awk '{s+=$1} END {print s/1048576 " MB"}'
+git ls-files continent-app/public | sed 's#continent-app/public/##' | cut -d/ -f1 | sort | uniq -c | sort -rn
+du -sh .git continent-app/.git
+time git status --short          # three runs, median reported
+curl -s -o /dev/null -w "%{http_code} %{size_download}\n" https://www.carta-europetravel.com/app_data.json
+curl -s -o /dev/null -w "%{http_code}\n" https://www.carta-europetravel.com/poi/AMS.json
+```
 
-"VERIFY FIRST that Vercel builds and sync-data.mjs do not rely on tracked copies. If it would, the verification FAILS and you must NOT run git rm --cached. In that case the honest outcome is: the untrack is blocked until T054 (wire shards to R2) or another change makes the deploy independent of tracked copies."
+## Config and secrets set
 
-Vercel does rely on tracked copies. Therefore, the untrack is blocked.
-
-## The precondition to succeed
-
-The untrack will become safe when one of these conditions holds:
-
-1. The deployment moves the data shards to R2 (or another CDN) and the prebuild fetches them from there instead of relying on disk copies. This is T054: "Wire shards to R2". See the architecture document (CARTA_CLOUD_ARCHITECTURE.md, §8 migration steps 4-6) for the sequence.
-
-2. The deployment embeds the shards as build-time constants in the JavaScript bundle, so they are part of the source rather than sidecar files. This would require changes to the Vite configuration and the sync-data logic to hydrate the bundle at build time rather than writing files to disk.
-
-3. The master dataset is committed to git. This is intentionally not done because it is large, rewritten frequently, and would exhaust the LFS quota. Reverting to this would undo the rationale for the cleanup.
-
-Of the three, option 1 (T054) is the current plan and the one documented in the architecture.
+None.
 
 ## Before/after measurements
 
-The task did not make any changes, so there are no after measurements. The before measurements establish what would be gained by the untrack and guide the decision about when it becomes safe.
+No change was made, so the after column is empty by design. The before column is the baseline the eventual untrack will be measured against.
 
 | Metric | Before | After | Delta |
 |---|---|---|---|
-| Tracked files in continent-app/public (root repo) | 48,224 | — | — |
-| Git blob size for public/ | 2.1 MB | — | — |
-| .git directory size | 3.2 GB | — | — |
-| git status --short time (median of 3 runs) | 0.509 s | — | — |
-| Lines in git status output | 9 | — | — |
+| Tracked files under continent-app/public (root repo) | 48,222 | not changed | 0 |
+| Uncompressed size of those tracked blobs | 1,073 MB | not changed | 0 |
+| Root .git size | 3.2 GB | not changed | 0 |
+| git status --short wall time, median of 3 | 0.5 s | not changed | 0 |
+| Lines printed by git status --short | 9 | not changed | 0 |
 
-Untracking the 48,224 generated files would eliminate a sizable class of checked-in artifacts and marginally reduce git overhead. The speed gain from `git status` would only be realized after T054 removes the dependency on tracked copies for deployments. The measured time (0.5 seconds) is reasonable for a repo with 48,000+ tracked files under `continent-app/public/`; the real pain is not in the measurement but in the principle that build artifacts should not be in version control.
+One thing the baseline says that the task did not expect: git status is already fast, at half a second, because the index is warm and Windows' file cache holds the tree. The cost of the tracked artifacts is not status latency. It is the 1 GB of blobs, the noise in every diff and log, and the fact that the tracked set is an accident of ignore-rule timing rather than a decision.
 
 ## What broke and how it was fixed
 
-No issues. The verification was theoretical: it traced the code paths that would execute on a Vercel build without the master dataset, read the sync-data fallback logic, and concluded that the build would fail if the shards were untracked.
+No issues in this task. One pre-existing production defect was found and is recorded below rather than fixed, because it belongs to another task.
+
+| What | Cause | Fix |
+|---|---|---|
+| Production returns 404 for every `/poi/<id>.json` shard | `public/poi/` is ignored by the inner `.gitignore`, so it was never tracked at the root and Vercel never has it | Not fixed here. See What is still open. |
 
 ## What is still open
 
-1. **Blocked on T054** (`Execution/P3/T054-wire-shards-to-r2.md`). The untrack is safe only after T054 moves the wire shards to R2 and makes the deployment independent of tracked copies. T054 has not run yet, and `Execution/P3/` is empty.
+The untrack itself. It becomes safe when the deploy no longer reads data from the checkout, which is what T054 (`Execution/P3/T054-wire-shards-to-r2.md`) does by moving the shards to R2 and having the app fetch them from `data.carta-europetravel.com`. Until then, untracking `public/` would take production down on the next deploy. When T054 has landed, run this from the root repository on the branch `p1-untrack-build-artifacts`:
 
-   When T054 completes, return to this task with the report. Run `git rm -r --cached continent-app/public` (the exact command is in the commands section below), add the gitignore rule, rebuild to verify the build still passes, and write a new report documenting the after-state. Then the cleanup is complete.
+```bash
+git rm -r --cached continent-app/public -q
+```
 
-2. **Commands to run when T054 is done**: From the root repository, in order:
+Then add the generated paths to the root `.gitignore` next to the `continent-app/dist/` rule. The list is the same one the inner `.gitignore` already carries, prefixed with `continent-app/`:
 
-   ```bash
-   git checkout p1-untrack-build-artifacts
-   git rm -r --cached continent-app/public -q
-   ```
+```
+continent-app/public/app_data.json
+continent-app/public/activities_full.json
+continent-app/public/poi/
+continent-app/public/poi_credits.json
+continent-app/public/coverage.json
+continent-app/public/country_insights.json
+continent-app/public/country_shapes.json
+continent-app/public/search_index.json
+continent-app/public/joins.json
+continent-app/public/fares/
+continent-app/public/dossier/
+continent-app/public/destinfo/
+continent-app/public/beaches/
+continent-app/public/lakes/
+continent-app/public/mountains/
+continent-app/public/trails/
+continent-app/public/cycling/
+continent-app/public/trips/
+continent-app/public/journeys/
+continent-app/public/region/
+continent-app/public/reach/
+```
 
-   Then edit `.gitignore` to add this rule near the existing `continent-app/dist/` block:
+Re-add the static assets the inner repository keeps (fonts, favicons, manifest, robots.txt, sw.js, sitemap.xml, `_headers`, `_redirects`) with `git add -f`, run `npm run build` in `continent-app/` and confirm it succeeds, then take the same five measurements again and write a follow-up report that references this one.
 
-   ```
-   # Generated public/ subdirectories are written by pipeline export scripts and
-   # sync-data.mjs, and are not source. The app fetches them from R2, so they do
-   # not belong in git. The few static assets (favicons, fonts, robots.txt, _headers,
-   # _redirects, service worker) are still source; they are tracked by the inner repo
-   # and live in continent-app/.gitignore as negations.
-   continent-app/public/app_data.json
-   continent-app/public/activities_full.json
-   continent-app/public/poi/
-   continent-app/public/poi_credits.json
-   continent-app/public/coverage.json
-   continent-app/public/country_insights.json
-   continent-app/public/country_shapes.json
-   continent-app/public/search_index.json
-   continent-app/public/joins.json
-   continent-app/public/fares/
-   continent-app/public/dossier/
-   continent-app/public/destinfo/
-   continent-app/public/beaches/
-   continent-app/public/lakes/
-   continent-app/public/mountains/
-   continent-app/public/trails/
-   continent-app/public/cycling/
-   continent-app/public/trips/
-   continent-app/public/journeys/
-   continent-app/public/region/
-   continent-app/public/reach/
-   ```
+The production POI shards. Every `/poi/<id>.json` fetch on carta-europetravel.com returns 404 today. The app does not crash, because `fetchDestPois` in `src/lib/appData.js` resolves to an empty list on failure, but it means the day planner and the destination page in production have no per-town POI list to draw from. The fix is not to track the shards, which would add 3,865 more generated files to the root. The fix is T054, or as a stopgap a build step on the host that produces them. Someone should confirm what production users actually see in the day planner before deciding how urgent the stopgap is. This was found on 2026-09-23 and is not fixed by this task.
 
-   Then verify:
-
-   ```bash
-   cd continent-app
-   npm run build
-   ```
-
-   Watch the build output. It should succeed and print build timing. If sync-data.mjs runs (because R2 has been wired), you will see its output lines about wire diet, origins, per-destination shards, and country insights. If it skips (because the master is still missing), you will see one warning line. Either is correct; the gate is that the build succeeds.
-
-   Then commit and write a follow-up report documenting the new measurements.
+T026, the history rewrite, is planned after this task. Its payoff depends on this untrack having happened first, because a purge of history that leaves the same files in the index will regrow the same blobs on the next commit.
 
 ## Rollback procedure
 
-Nothing was committed or changed, so there is no rollback necessary. The repository is in the same state it was when the task started. The p1-untrack-build-artifacts branch can be deleted:
+Nothing to roll back. The tree, the index and the ignore rules are as they were. If the branch should not exist:
 
 ```bash
-git checkout main   # or whichever branch was current before this task
+git checkout p1-cloudflare-pages
 git branch -D p1-untrack-build-artifacts
 ```
 
-If the branch has been merged and the commits need to be reverted (which should not happen, given the verification failure), reverting is safe: the only file that could have been committed is the report itself, and deleting the report file has no side effects on the deployed system.
-
+If the untrack is later run by the commands above and has to be undone, `git checkout HEAD~1 -- .gitignore` restores the rules and `git add continent-app/public` restores the index. Nothing on disk changes in either direction, which is the property the task was chosen for.
