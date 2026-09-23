@@ -234,6 +234,26 @@ export const ATTRIBUTIONS = [
     credit: 'Public transport travel times via Transitous',
   },
   {
+    source: 'SNCB / NMBS',
+    license: 'Open data terms (transportdata.be)',
+    credit: 'Belgian rail timetable data from SNCB / NMBS',
+  },
+  {
+    source: 'De Lijn',
+    license: 'CC BY 4.0',
+    credit: 'Flemish timetable data from De Lijn (data.delijn.be)',
+  },
+  {
+    source: 'STIB / MIVB',
+    license: 'Brussels open data licence',
+    credit: 'Brussels timetable data from STIB / MIVB',
+  },
+  {
+    source: 'TEC',
+    license: 'Walloon open data terms',
+    credit: 'Walloon region timetable data from TEC',
+  },
+  {
     source: 'GTFS.de / DELFI',
     license: 'CC BY-SA 4.0',
     credit: 'German timetable data from gtfs.de, DELFI',
