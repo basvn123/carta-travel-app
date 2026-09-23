@@ -44,13 +44,21 @@ app_data.backup.json (31 MB, 2026-07-18 15:00)
 
 ───────────────
 
-Next steps (T014):
-  After R2 data repository exists with versioned snapshots, these five files can be deleted
-  to reclaim ~400 MB from app_data/. Until then, keep all five as insurance against needing
-  to re-run weeks of pipeline work.
+T014 update (2026-09-23):
+  app_data.pre_transit_copy.json, app_data.wave2.json, app_data.pre_accom_v16.json and
+  app_data.backup.json were deleted from app_data/ on the development machine. R2 does
+  not exist yet, so the archival copy is D:\carta-backups\app_data_masters\ (USB drive,
+  labelled EMTEC C410) instead: all five files plus SHA256SUMS.txt and this manifest,
+  checksum-verified against the app_data/ originals immediately before deletion. Only
+  app_data.json (the production master) remains locally.
 
 Restore procedure (if needed):
-  1. Verify SHA256 checksum of the file before use.
-  2. Replace app_data/app_data.json with the chosen snapshot.
-  3. Restart the pipeline orchestrator or the app dev server to pick up the new data.
-  4. Verify the app renders correctly at the expected destination count.
+  1. Plug in the D: USB drive (EMTEC C410) and locate D:\carta-backups\app_data_masters\.
+  2. Verify SHA256 checksum of the file before use (SHA256SUMS.txt in that folder).
+  3. Copy the chosen snapshot back into app_data/, replacing app_data.json if it is the
+     one being restored.
+  4. Restart the pipeline orchestrator or the app dev server to pick up the new data.
+  5. Verify the app renders correctly at the expected destination count.
+
+Next steps: once R2 exists with versioned snapshots (§6.3 of CARTA_CLOUD_ARCHITECTURE.md),
+  push these four files there with a 30-90 day lifecycle rule and the USB copy can retire.
