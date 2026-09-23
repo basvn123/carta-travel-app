@@ -503,6 +503,7 @@ export const nl = {
   "account.sessionTitle": "Sessie",
   "account.privacyTitle": "Privacy",
   "account.privacyPolicy": "Privacybeleid",
+  "account.imprint": "Rechtspersoon",
   "account.deleteHint": "Je account verwijderen wist je opgeslagen reizen, dagplannen en instellingen van de servers van Carta. Dit kan niet ongedaan worden gemaakt.",
   "account.deleteBtn": "Verwijder mijn account",
   "account.deleteKeep": "Account behouden",

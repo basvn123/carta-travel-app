@@ -503,6 +503,7 @@ export const fr = {
   "account.sessionTitle": "Session",
   "account.privacyTitle": "Confidentialité",
   "account.privacyPolicy": "Politique de confidentialité",
+  "account.imprint": "Mentions légales",
   "account.deleteHint": "Supprimer votre compte efface vos voyages, plans de journée et réglages des serveurs de Carta. C'est irréversible.",
   "account.deleteBtn": "Supprimer mon compte",
   "account.deleteKeep": "Garder mon compte",

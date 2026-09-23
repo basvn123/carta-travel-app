@@ -503,6 +503,7 @@ export const de = {
   "account.sessionTitle": "Sitzung",
   "account.privacyTitle": "Datenschutz",
   "account.privacyPolicy": "Datenschutzerklärung",
+  "account.imprint": "Impressum",
   "account.deleteHint": "Beim Löschen des Kontos verschwinden deine gespeicherten Reisen, Tagespläne und Einstellungen von den Servern von Carta. Das lässt sich nicht rückgängig machen.",
   "account.deleteBtn": "Mein Konto löschen",
   "account.deleteKeep": "Konto behalten",

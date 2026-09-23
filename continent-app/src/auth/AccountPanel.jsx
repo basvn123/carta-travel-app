@@ -7,6 +7,7 @@ import {
   TrashIcon,
 } from '../components/Icons.jsx';
 import { PrivacyPolicy } from '../components/PrivacyPolicy.jsx';
+import { Imprint } from '../components/Imprint.jsx';
 import { ATTRIBUTIONS } from '../data/attribution.js';
 import { CountryFlag } from '../components/CountryFlag.jsx';
 import { usePaywall } from '../hooks/usePaywall.jsx';
@@ -280,6 +281,7 @@ export function AccountPanel({
   const panelRef = useRef(null);
   const [view, setView] = useState(initialView); // 'home' | 'profile' | 'friends' | 'faq' | 'feedback' | 'data'
   const [privacyOpen, setPrivacyOpen] = useState(false);
+  const [imprintOpen, setImprintOpen] = useState(false);
 
   const storedName = user?.user_metadata?.full_name?.trim() || '';
   const storedEmail = user?.email || '';
@@ -668,6 +670,7 @@ export function AccountPanel({
     { key: 'feedback', group: 'help', view: 'feedback', Icon: FeedbackIcon, label: t('account.menuFeedback'), go: () => setView('feedback') },
     { key: 'faq', group: 'help', view: 'faq', Icon: QuestionIcon, label: t('account.menuFaq'), go: () => setView('faq') },
     { key: 'privacy', group: 'help', Icon: ShieldIcon, label: t('account.privacyPolicy'), go: () => setPrivacyOpen(true) },
+    { key: 'imprint', group: 'help', Icon: InfoIcon, label: t('account.imprint'), go: () => setImprintOpen(true) },
     { key: 'data', group: 'help', view: 'data', Icon: InfoIcon, label: t('account.menuData'), go: () => setView('data') },
   ].filter(Boolean);
 
@@ -1325,6 +1328,7 @@ export function AccountPanel({
       )}
 
       {privacyOpen && <PrivacyPolicy onClose={() => setPrivacyOpen(false)} />}
+      {imprintOpen && <Imprint onClose={() => setImprintOpen(false)} />}
     </div>
     </div>
   );

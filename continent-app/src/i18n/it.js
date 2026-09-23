@@ -503,6 +503,7 @@ export const it = {
   "account.sessionTitle": "Sessione",
   "account.privacyTitle": "Privacy",
   "account.privacyPolicy": "Informativa sulla privacy",
+  "account.imprint": "Note legali",
   "account.deleteHint": "Eliminare l'account cancella viaggi, piani giornalieri e impostazioni dai server di Carta. Non si torna indietro.",
   "account.deleteBtn": "Elimina il mio account",
   "account.deleteKeep": "Tieni il mio account",

@@ -503,6 +503,7 @@ export const es = {
   "account.sessionTitle": "Sesión",
   "account.privacyTitle": "Privacidad",
   "account.privacyPolicy": "Política de privacidad",
+  "account.imprint": "Aviso legal",
   "account.deleteHint": "Eliminar tu cuenta borra tus viajes, planes de día y ajustes de los servidores de Carta. No se puede deshacer.",
   "account.deleteBtn": "Eliminar mi cuenta",
   "account.deleteKeep": "Conservar mi cuenta",

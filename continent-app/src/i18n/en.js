@@ -517,6 +517,7 @@ export const en = {
   "account.signInPrompt": "Sign in to save trips and sync your settings across devices.",
   "account.signOut": "Sign out",
   "account.privacyPolicy": "Privacy policy",
+  "account.imprint": "Imprint",
   "account.deleteHint": "Deleting your account removes your saved trips, day plans and settings from Carta's servers. This cannot be undone.",
   "account.deleteBtn": "Delete my account",
   "account.deleteKeep": "Keep my account",
