@@ -8064,6 +8064,10 @@ input, select {
 .privacy-body h3 { font-size: 12px; letter-spacing: 0.05em; text-transform: uppercase; color: var(--ink); margin: 14px 0 4px; }
 .privacy-body p { margin: 0 0 8px; }
 .privacy-body a { color: var(--accent); }
+.privacy-table { font-size: 12px; margin: 8px 0; }
+.privacy-table th, .privacy-table td { text-align: left; padding: 6px 0.5rem; color: var(--ink-soft); }
+.privacy-table th { font-weight: 600; color: var(--ink); border-bottom: 1px solid var(--stroke); }
+.privacy-table td { border-bottom: 1px solid var(--stroke-soft); }
 
 /* ── "Travel cheaper" tailored tips ── */
 .cheap-tip-group { margin-bottom: 10px; }
