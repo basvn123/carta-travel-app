@@ -107,41 +107,15 @@ Last, the CSS rules for fsheet-band, fsheet-note, fsheet-nums, fsheet-readout, a
 
 ## Rollback procedure
 
-Revert both commits and restore the files.
+Revert the two deletion commits, one per repository. A revert keeps the branch history intact and restores the six files from the commit that removed them, so no path or base commit has to be named by hand.
 
 ```bash
-git checkout p1-git-history-rewrite
-git branch -D p1-orphaned-components
+git revert --no-edit f81c80f9d          # root repo, on p1-orphaned-components
 cd continent-app
-git checkout p1-cloudflare-pages
-git branch -D p1-orphaned-components
-cd ..
-git checkout HEAD~2 -- \
-  continent-app/src/map/FlightPickerMap.jsx \
-  continent-app/src/components/TrailsNearby.jsx \
-  continent-app/src/map/MapLegend.jsx \
-  continent-app/src/components/PlaceSizeToggle.jsx \
-  continent-app/src/browse/ExploreFilterSheet.jsx \
-  continent-app/src/components/ReachFilter.jsx
-cd continent-app
-git checkout HEAD~1 -- \
-  src/map/FlightPickerMap.jsx \
-  src/components/TrailsNearby.jsx \
-  src/map/MapLegend.jsx \
-  src/components/PlaceSizeToggle.jsx \
-  src/browse/ExploreFilterSheet.jsx \
-  src/components/ReachFilter.jsx
-git add .
-git commit -m "Restore six components"
-cd ..
-rm Execution/P1/T027-orphaned-components.md
+git revert --no-edit 46a1e43            # inner repo, on its p1-orphaned-components
 ```
 
-Then delete the branch.
-
-```bash
-git branch -D p1-orphaned-components
-```
+If the branches have not been merged and should simply disappear, delete them instead: check out p1-git-history-rewrite at the root and p1-cloudflare-pages in continent-app, then delete p1-orphaned-components in each with git branch -D. The six files reappear in the working tree with the checkout, nothing else is needed.
 
 ## Appendix: How the rh parameter works
 
