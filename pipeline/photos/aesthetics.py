@@ -1,5 +1,7 @@
 """One CLIP embedding per image, cached forever, and the heads that read it.
 
+Tier: Library
+
 The cost model of the whole engine hangs on one fact: relevance (zero-shot
 veto), aesthetics (LAION head) and dedupe (cosine clusters) all read the
 SAME ViT-L/14 embedding. So the embedding is computed once, stored next to

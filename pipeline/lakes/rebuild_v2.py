@@ -1,5 +1,7 @@
 """Drive the v2 rebuild: wait for each country's OSM sweep, fold it, enrich it.
 
+Tier: Manual
+
 The v2 chain has one slow offline stage (osm_water.py filtering 30 GB of
 Geofabrik extracts) and one slow network stage (Commons photographs, about
 fifteen paced requests a lake). Running them strictly in series wastes the

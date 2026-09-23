@@ -1,5 +1,7 @@
 """Check every composed trip before it is allowed anywhere near the app.
 
+Tier: Library
+
 A generated itinerary is only worth shipping if it is true. The failure mode
 of every AI trip planner on the market is the plausible one: a route that
 reads beautifully and cannot be taken, a train that does not run, a day trip

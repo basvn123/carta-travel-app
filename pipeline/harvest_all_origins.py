@@ -1,4 +1,7 @@
 """
+
+Tier: Scheduled (run_pipeline task fares)
+
 harvest_all_origins.py - harvest REAL Ryanair per-day fares from EVERY European
 Ryanair origin airport to every anchor airport in the catalogue, and write them
 into a deduplicated top-level `fares` table.

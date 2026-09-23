@@ -1,5 +1,7 @@
 """Prioritised curation queue (A7) - where a hand-scored appeal pays most.
 
+Tier: Manual
+
 A4's calibration and A6's badges are compensations; the real fix for the
 1,468-place appeal gap is closing it. This ranks every uncurated destination
 by expected impact and emits the top of the list, so curation effort goes

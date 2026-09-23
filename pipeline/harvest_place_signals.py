@@ -1,5 +1,7 @@
 """harvest_place_signals.py - resolve the place registers, and measure fame.
 
+Tier: Scheduled (run_pipeline task coverage)
+
 Two network phases against Wikidata (CC0; WDQS allows 60s of processing per
 60s and 5 parallel queries per IP, so this stays serial and caches everything):
 

@@ -1,4 +1,7 @@
 """
+
+Tier: One-shot, done, kept for provenance (pipeline/oneoff)
+
 add_gems_from_json.py - add new gem destinations from a researched JSON list,
 reusing the exact recipe of add_famous_small_gems.py (which it imports):
 Wikipedia coordinate snap, routes/costs/accommodation copied from the anchor

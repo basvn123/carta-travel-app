@@ -1,4 +1,7 @@
 """Stage 2 of the lake layer: turn a name and a coordinate into a lake we can
+
+Tier: Library
+
 rank, photograph, describe and answer "can I swim here" about.
 
 Stage 1 found the water bodies. Most of them will never be published, so the

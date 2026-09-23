@@ -1,5 +1,7 @@
 """The labelled set every threshold in this package answers to.
 
+Tier: Manual
+
 The lake layer threw away three pixel measurements because they were
 tuned by eyeballing a handful of files and died on the next dozen. The
 rule since: no threshold ships tuned without a labelled set to measure it

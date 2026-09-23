@@ -1,5 +1,7 @@
 """Add the schema-v8 car layer to an existing app_data.json in place.
 
+Tier: Manual
+
 Adds:
   - meta.car_model                 (driving + rental parameters; see car_layer.py)
   - dest.local_transport           (car_needed / transit_quality / reason / rental

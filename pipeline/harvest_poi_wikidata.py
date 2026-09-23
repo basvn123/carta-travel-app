@@ -1,5 +1,7 @@
 """harvest_poi_wikidata.py - Wikidata significance signals for POIs.
 
+Tier: Scheduled (run_pipeline task poi_significance)
+
 The catalogue's ~34k wiki-linked POIs carry no Wikidata identity, so the
 scorer has only pageviews (attention) and the OTM heritage flag. Sitelink
 count is the standard language-neutral notability proxy (how many Wikipedias

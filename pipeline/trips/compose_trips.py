@@ -1,5 +1,7 @@
 """Compose the trips: one base, a chain of bases, or a loop by car.
 
+Tier: Library
+
 The question this layer answers is the one a traveller actually asks. Not
 "where should I go" but "I have five days and I am thinking of Austria, what
 is the best thing to do with them", which is a different question with a

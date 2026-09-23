@@ -1,5 +1,7 @@
 """Apply rich Inside Airbnb anchors to app_data.json - measured cities only.
 
+Tier: Scheduled (run_pipeline task lodging)
+
 Reads cache/accommodation_city_anchors.json (harvest_accommodation.py v2, a list
 of rich per-city/island anchor records) and overwrites the accommodation block of
 every destination that sits ON a covered city (within NEAR_KM of its centre,

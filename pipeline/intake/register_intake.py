@@ -1,5 +1,7 @@
 """Register-driven intake (B3, 2026-09): which members do we NOT have?
 
+Tier: Scheduled (run_pipeline task register_intake)
+
 Sirmione is missing because nothing in the pipeline was responsible for
 asking the question. This module is that responsibility: for every
 place-level register in place_registries.PLACE_REGISTRIES that Wikidata

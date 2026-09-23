@@ -1,5 +1,7 @@
 """Per-country toll & vignette engine - replaces the flat 2.2 EUR/100 km guess.
 
+Tier: Library
+
 Europe charges cars three different ways, and the differences are huge:
 
   distance   France ~8.5-11 EUR/100 motorway km (peage), Italy ~7, Portugal ~7.5,

@@ -1,5 +1,7 @@
 """dedupe_pois.py - master-level POI dedupe, index-stable.
 
+Tier: Scheduled (run_pipeline task poi_significance)
+
 The day planner already collapses near-duplicate POIs at runtime
 (canonicalPoiIndices in continent-app/src/planner/dayDraft.js) by SUPPRESSING
 indices, never reindexing, because saved plans reference items_full by stable

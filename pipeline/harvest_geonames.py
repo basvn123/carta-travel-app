@@ -1,5 +1,7 @@
 """harvest_geonames.py - real settlement size per destination (GeoNames).
 
+Tier: Scheduled (run_pipeline task geonames)
+
 A population / settlement-class layer independent of the fame signals the app
 already carries (pageviews, curated appeal, crowding). GeoNames is the largest
 open gazetteer - 25M+ names, CC BY 4.0 - and its populated-place records give

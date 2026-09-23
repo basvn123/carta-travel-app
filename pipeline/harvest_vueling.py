@@ -1,4 +1,7 @@
 """harvest_vueling.py - harvest REAL Vueling per-day fares from every Vueling
+
+Tier: Scheduled (run_pipeline task vueling_fares)
+
 origin to every catalogue anchor and MERGE them (cheapest-wins) into the shared
 top-level `fares` table, tagging the days Vueling wins as "VY".
 

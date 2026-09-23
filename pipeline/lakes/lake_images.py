@@ -1,5 +1,7 @@
 """Is this photograph OF this lake, and is it the one to lead with?
 
+Tier: Library
+
 Two different questions, and the first build answered neither strictly enough.
 Nine per cent of published lead photographs did not carry their own lake's
 name, and among them were a memorial plaque in Hungary, a monument to the

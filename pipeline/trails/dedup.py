@@ -1,5 +1,7 @@
 """Co-located routes: the same path carried by several relations.
 
+Tier: Scheduled (run_pipeline task trails_hierarchy)
+
 ROUTES.md R3c. A European E-path, a national GR, a regional network route
 and a local themed walk frequently share one trail on the ground, and OSM
 carries each as its own relation. curate.py folds families by NAME (title,

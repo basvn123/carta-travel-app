@@ -1,5 +1,7 @@
 """The region layer's polite clients.
 
+Tier: Library
+
 The region spine is different from the other layers' sources in one useful
 way: almost everything here is a static file that changes once a year, not an
 API that answers questions. GISCO publishes NUTS as plain files on a file

@@ -1,5 +1,7 @@
 """City descriptions for the 260 airport-tier destinations.
 
+Tier: Scheduled (run_pipeline task dossier)
+
 An airport record carries the AIRPORT's article, so the dossier for CDG opened
 with "Paris Charles de Gaulle Airport is the main hub of ..." on a page whose
 whole job is to tell you what Paris is like. The same is true of every gateway

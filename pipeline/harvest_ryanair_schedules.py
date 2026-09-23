@@ -1,4 +1,7 @@
 """harvest_ryanair_schedules.py - attach Ryanair's published TIMETABLE to the
+
+Tier: Manual
+
 fares table: which flights actually depart on each day, and at what time.
 
 Why this exists:

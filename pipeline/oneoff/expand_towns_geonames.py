@@ -1,5 +1,7 @@
 """expand_towns_geonames.py - mass-generate destination records from GeoNames.
 
+Tier: One-shot, done, kept for provenance (pipeline/oneoff)
+
 The catalogue is grown from the cities500 gazetteer already cached at
 cache/geonames_cities500.txt: every populated place at or above a population
 floor, in one of the app's 43 countries, that is not already a destination,

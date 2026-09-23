@@ -1,5 +1,7 @@
 """Per region opportunity measures: how much of each thing is actually there.
 
+Tier: Library
+
 The quota model (quotas.py) sizes each region's publication target from an
 opportunity measure rather than a flat number, so 120 beaches stop being
 Spain's share and Belgium's share alike. This module computes those inputs

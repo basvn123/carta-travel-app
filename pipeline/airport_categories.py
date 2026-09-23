@@ -1,5 +1,7 @@
 """Trip-type categories for airport-tier destinations.
 
+Tier: Library
+
 The gems carry hand-written category tags (see destinations_master.py); the
 airport-tier destinations historically shipped with an empty `categories[]`,
 which made the trip-type filter hide every major city the moment a chip was

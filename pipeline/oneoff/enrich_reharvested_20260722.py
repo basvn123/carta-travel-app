@@ -1,5 +1,7 @@
 """One-off: Wikipedia-enrich ONLY the dests re-harvested on 2026-07-22.
 
+Tier: One-shot, done, kept for provenance (pipeline/oneoff)
+
 The 791 OTM-saturated dests were invalidated and re-fetched with the paged +
 sitelink-ranked otm_items (dead-zone fix: Brussels' Atomium et al). A plain
 `harvest_activities.py enrich` would also re-try every historical lookup

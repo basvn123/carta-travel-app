@@ -1,4 +1,7 @@
 """What the ground itself says: prominence, isolation, the elevation check,
+
+Tier: Scheduled (run_pipeline task mountains)
+
 the view, and the easiest way up, all measured against Copernicus GLO-30.
 
 Everything in here is computed rather than read off a source, and that is the

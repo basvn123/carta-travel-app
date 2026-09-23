@@ -1,5 +1,7 @@
 """A credit reading "CC BY-SA 3.0" with nobody named is not a credit.
 
+Tier: Manual
+
 The published layers carry a hundred photographs with a licence and no
 author (13 beaches, 38 lakes, 49 mountains at the 2026-08-29 count). The
 Artist field was empty when they were harvested, and Artist is not the

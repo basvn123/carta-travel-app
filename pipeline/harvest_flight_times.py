@@ -1,4 +1,7 @@
 """
+
+Tier: Scheduled (run_pipeline task flight_times)
+
 harvest_flight_times.py - add departure/arrival TIMES to the fares table.
 
 The fare harvesters (reharvest_flights.py, harvest_all_origins.py) call Ryanair's

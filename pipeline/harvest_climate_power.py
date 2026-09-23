@@ -1,5 +1,7 @@
 """Climate normals from NASA POWER climatology - replaces WorldClim 2.1.
 
+Tier: Scheduled (run_pipeline task climate)
+
 Why the switch (dossier spec, section 11): WorldClim 2.1 is licensed for
 non-commercial use only, and Carta ships affiliate links and now a
 redistributable PDF that prints monthly values. NASA POWER is US-government

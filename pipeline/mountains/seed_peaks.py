@@ -1,5 +1,7 @@
 """The curated seed: the mountains a European traveller has actually heard of.
 
+Tier: Scheduled (run_pipeline task mountains)
+
 Everything else in this layer is machine found. This file is the one place a
 human decides, and it exists for four reasons the open data cannot cover on
 its own.

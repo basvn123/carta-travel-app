@@ -1,5 +1,7 @@
 """The famous-trail registry: what a region is embarrassed to be missing.
 
+Tier: Scheduled (run_pipeline task trails_registry)
+
 CARTA_TRAILS_BUILD_BRIEF.md Phase 1, and the centre of
 docs/TRAILS_DATA_QUALITY.md. This module answers one question the catalogue
 could not answer before: for every region Carta covers, WHICH walks should be

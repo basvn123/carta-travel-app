@@ -1,5 +1,7 @@
 """Write a contact sheet's verdicts into the evaluation set.
 
+Tier: Manual
+
 The sheet is read by eye; this is how the reading gets recorded. It
 takes the numbers off the sheet and writes them into
 evalset/manifest.json, carrying three things the sweep needs:

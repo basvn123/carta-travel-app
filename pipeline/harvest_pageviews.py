@@ -1,5 +1,7 @@
 """Harvest Wikipedia pageviews as a fame signal - network only, no data writes.
 
+Tier: Scheduled (run_pipeline task poi_significance)
+
 Two targets, both cached, both resumable:
 
   A. Destination fame  - every destination's own Wikipedia article

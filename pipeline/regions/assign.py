@@ -1,5 +1,7 @@
 """Point and line to region ids. The one lookup every layer's enrich calls.
 
+Tier: Library
+
     from assign import assign_point
     rg = assign_point(51.35, 3.27)
     rg.nuts3      -> 'BE251'         (or an ITL code for GB, geoBoundaries

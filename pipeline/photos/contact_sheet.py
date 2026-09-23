@@ -1,5 +1,7 @@
 """Contact sheets, so a reviewer judges sixteen photographs in one look.
 
+Tier: Manual
+
 Labelling is the bottleneck in front of every threshold in this package,
 and labelling one URL at a time is the slowest possible way to do it. A
 picture editor does not open files one by one, they lay a contact sheet

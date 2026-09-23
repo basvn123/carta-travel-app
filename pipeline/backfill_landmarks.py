@@ -1,5 +1,7 @@
 """backfill_landmarks.py - add MISSING famous sights from Wikidata sitelinks.
 
+Tier: Manual
+
 Why: the OpenTripMap harvest keeps the ~60 nearest notable POIs, so in dense
 centres (Brussels: 35 Grand Place guildhalls) a world-famous landmark a few km
 out never makes the cut - the Atomium is absent from the entire catalogue.

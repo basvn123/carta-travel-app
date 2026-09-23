@@ -1,5 +1,7 @@
 """Re-rank every cached gallery by beauty, without re-harvesting anything.
 
+Tier: Manual
+
 The full photograph pass is hours of Wikimedia's bandwidth per layer. The
 four bad heroes on the current grid (an apartment block for Laguna Beach,
 a beach-bar facade for Langevelderslag, a litter bin for Fuussefeld, fog

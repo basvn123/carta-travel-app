@@ -1,5 +1,7 @@
 """Everything a harvested cycle route has to know before it can be rated.
 
+Tier: Scheduled (run_pipeline task cycling_enrich)
+
 Six steps, each independently re-runnable, each writing its own column so a
 partial pass is legible rather than half a row:
 

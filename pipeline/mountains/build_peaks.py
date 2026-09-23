@@ -1,5 +1,7 @@
 """Build the whole mountain layer, from nothing to shipped wire, in one command.
 
+Tier: Scheduled (run_pipeline task mountains)
+
     python pipeline/mountains/build_peaks.py
 
 That is the reproducible path. Three stages run in order, each idempotent and

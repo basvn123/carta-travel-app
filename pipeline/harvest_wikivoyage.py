@@ -1,5 +1,7 @@
 """harvest_wikivoyage.py - narrative travel-guide blurbs from Wikivoyage.
 
+Tier: Scheduled (run_pipeline task guide)
+
 Wikivoyage is the human-curated open travel guide (CC BY-SA). Its lead section
 is a warm, tourist-facing "why go here" paragraph that the app's Wikipedia /
 OSM-derived text does not have. This harvester pulls the intro extract for every

@@ -1,5 +1,7 @@
 """Remove references to Commons files that no longer exist.
 
+Tier: Manual
+
 Files get deleted from Commons after we have stored them: a licence review
 concludes, a duplicate is merged, an uploader withdraws. What is left behind
 is a URL that answers 404, which in the app is a blank card, and nothing

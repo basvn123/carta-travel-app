@@ -1,5 +1,7 @@
 """The takedown path, exercised end to end, against a copy of the wire.
 
+Tier: Manual
+
 A takedown is the one operation that has to work the first time it is
 ever run for real, under time pressure, on somebody's angry email. So it
 gets a test rather than a docstring promise, and the test runs against a

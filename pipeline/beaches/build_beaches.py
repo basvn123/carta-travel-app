@@ -1,5 +1,7 @@
 """Build the whole beach layer, from nothing to shipped wire, in one command.
 
+Tier: Scheduled (run_pipeline task beaches)
+
     python pipeline/beaches/build_beaches.py
 
 That is the reproducible path. Three stages run in order, each idempotent and

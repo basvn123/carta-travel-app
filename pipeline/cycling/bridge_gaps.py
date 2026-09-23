@@ -1,5 +1,7 @@
 """Bridge the real breaks in a cycle route by ROUTING across them, with BRouter.
 
+Tier: Scheduled (run_pipeline task cycling_bridge)
+
 splice_cycling.py joins breaks up to 300 m with a straight connector, which
 is right for the mapper's dropped ten-metre way and wrong for anything else.
 The Scottish tour candidates fail continuity on breaks of 1.4 to 165 km:

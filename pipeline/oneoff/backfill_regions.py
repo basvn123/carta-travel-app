@@ -1,5 +1,7 @@
 """One off: stamp region ids onto every existing cached layer row.
 
+Tier: One-shot, done, kept for provenance (pipeline/oneoff)
+
 Usage, from the repo root:
 
     python pipeline/oneoff/backfill_regions.py

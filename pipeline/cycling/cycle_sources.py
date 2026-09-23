@@ -1,5 +1,7 @@
 """Every upstream the cycling layer reads, cache first, network second.
 
+Tier: Scheduled (run_pipeline task cycling_enrich)
+
 The cache is the snapshot (invariant 1): a warm rebuild never touches the
 network and produces byte-identical wire apart from generated_at. So every
 function here answers from cache/cycling/ or data/raw/ when it can, and only

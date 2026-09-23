@@ -1,4 +1,7 @@
 """The mountain layer's polite clients, which are the beach layer's polite
+
+Tier: Library
+
 clients.
 
 pipeline/beaches/sources.py holds everything a fourth open-data layer needs:

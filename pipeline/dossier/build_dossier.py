@@ -1,4 +1,7 @@
 """
+
+Tier: Scheduled (run_pipeline task dossier)
+
 Build the per-destination dossier contract: continent-app/public/dossier/{base}.json.
 
 One file per destination, rendered by BOTH the full-screen destination page and

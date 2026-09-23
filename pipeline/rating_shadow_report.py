@@ -1,5 +1,7 @@
 """Shadow-score consistency check for the curated appeal file.
 
+Tier: Manual
+
 70% of every rating is one hand-scored number (curated_appeal.json). This
 pass computes a SHADOW score for each destination purely from independent
 data the pipeline already ships - beauty index, Wikivoyage guide depth,

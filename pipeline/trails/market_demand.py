@@ -1,5 +1,7 @@
 """Market demand harvester: official visitor-night statistics per city.
 
+Tier: Manual
+
 City selection for the citytrip composer must rest on actual market demand,
 so this script fills the market_demand staging table with nights spent in
 tourist accommodation per city, from official statistics only:

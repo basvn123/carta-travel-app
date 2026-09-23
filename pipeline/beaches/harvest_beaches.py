@@ -1,5 +1,7 @@
 """Stage 1 of the beach layer: find every named beach in Europe.
 
+Tier: Library
+
 Two catalogues, merged into one row per real beach:
 
   Wikidata   anything typed as a beach (P31/P279* Q40080) with coordinates in

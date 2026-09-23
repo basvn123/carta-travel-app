@@ -1,5 +1,7 @@
 """Add the schema-v17 traveller rating to an existing app_data.json in place.
 
+Tier: Scheduled (run_pipeline task poi_significance)
+
 Adds:
   - meta.rating_model   (weights, tier cutoffs/labels, display curve, sources)
   - dest.rating         (score 0-10 / tier 0-3 / label / hidden_gem / fame /

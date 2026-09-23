@@ -1,4 +1,7 @@
 """The lake index: what "one of the best lakes in Europe" means here, written
+
+Tier: Library
+
 down so it can be argued with.
 
 The research this layer was built from makes one methodological point above

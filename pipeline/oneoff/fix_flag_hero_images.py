@@ -1,5 +1,7 @@
 """Repair destination hero images that are flags (and Wells's wrong article).
 
+Tier: One-shot, done, kept for provenance (pipeline/oneoff)
+
 The Wikipedia lead-image harvest takes an article's FIRST image, which for
 country/territory articles (Monaco, San Marino, Malta, Isle of Man, the
 Channel Islands...) and some municipality articles (Appenzell, Sigulda) is

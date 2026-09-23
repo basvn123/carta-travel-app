@@ -1,4 +1,7 @@
 """Car layer (schema v8) - shared by gen_mock_data.py (mock) and
+
+Tier: Library
+
 apply_car_layer.py (real app_data).
 
 Two independent things live here:

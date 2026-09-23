@@ -1,4 +1,7 @@
 """Bathing water quality for Great Britain, which the EEA register stopped
+
+Tier: Library
+
 covering after Brexit.
 
 The EEA WISE register is EU-27 plus Albania and Switzerland. Great Britain

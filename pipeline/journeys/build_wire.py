@@ -1,4 +1,7 @@
 """
+
+Tier: Manual
+
 build_wire.py - the curated trip library ("journeys") as a browsable wire.
 
 Reads the unified 253-trip dataset (Trips/carta-unified, schema v2.0: ten

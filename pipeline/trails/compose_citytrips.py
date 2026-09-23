@@ -1,5 +1,7 @@
 """City trip composer: curated one-day sightseeing days for in-demand cities.
 
+Tier: Manual
+
 City selection rests on actual market demand, never on the app's internal
 fame signals alone: market_demand.py must have run first, and the top cities
 per pilot country by official visitor nights are composed in that order.

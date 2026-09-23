@@ -1,5 +1,7 @@
 """Real Inside Airbnb anchors for accommodation - maximal specificity (schema v16).
 
+Tier: Scheduled (run_pipeline task lodging)
+
 Why: the previous pass measured ~11 cities and hand-typed the rest, so most
 "city-level" rates were actually a neighbour's number copied over, and EVERY
 destination shared one global July x1.35 seasonality curve. This rebuilds the

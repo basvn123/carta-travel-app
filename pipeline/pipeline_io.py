@@ -1,5 +1,7 @@
 """Shared, crash-safe IO for the offline data pipeline.
 
+Tier: Library
+
 Every script that rewrites the multi-megabyte master (app_data/app_data.json)
 should write through ``atomic_write_json`` so an interrupted write - a Ctrl-C,
 a crash, or a full disk - can never leave a truncated, unparseable file behind.

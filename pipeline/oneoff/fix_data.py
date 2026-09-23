@@ -1,5 +1,7 @@
 """Data repair pass for app_data.json - addresses the fact-check findings.
 
+Tier: One-shot, done, kept for provenance (pipeline/oneoff)
+
 Run once on the real dataset:  python fix_data.py
 A backup (app_data.backup.json) was taken before the first run.
 

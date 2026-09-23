@@ -1,5 +1,7 @@
 """Harvest the free routing evidence a multi city trip needs: Wikivoyage.
 
+Tier: Library
+
 The catalogue already knows what every place is worth on its own. What it has
 never known is which places BELONG TOGETHER, and that is exactly the question
 a multi day itinerary asks. Guessing it from distance alone produces routes

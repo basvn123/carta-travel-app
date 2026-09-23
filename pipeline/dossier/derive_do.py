@@ -1,5 +1,7 @@
 """Derive "best things to do" for EVERY destination from open data alone.
 
+Tier: Library
+
 The web sweep (research_do.py) produces the strongest evidence there is, but
 it needs a search credential and a human-scale budget, so it will always lead
 the famous places and trail the long tail. This module is the floor under it:

@@ -1,4 +1,7 @@
 """resolve_dest_articles.py - find the Wikipedia article for a destination that
+
+Tier: Scheduled (run_pipeline task fame)
+
 has no photograph.
 
 harvest_pageviews reads its article URL from `dest.image.page`, which the image

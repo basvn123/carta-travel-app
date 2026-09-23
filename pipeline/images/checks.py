@@ -1,5 +1,7 @@
 """Shared per-image checks for the cross-layer image audit.
 
+Tier: Library
+
 Every published surface crops its pictures into a known frame, and Wikimedia
 only renders a fixed list of thumbnail widths, so most of what makes an image
 "valid and nice" is checkable offline from the wire alone: the URL shape, the

@@ -1,5 +1,7 @@
 """apply_new_gems.py - insert promoted gem specs into the master, at scale.
 
+Tier: Manual
+
 pipeline/oneoff/add_gems_from_json.py is the proven inserter and this reuses
 its record builder verbatim (`build_record`), so every new destination has the
 exact shape of the gems already shipping. What it does NOT reuse is that

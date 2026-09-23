@@ -1,5 +1,7 @@
 """Geographic gap scan (B4, 2026-09): the misses no register can name.
 
+Tier: Manual
+
 Mougins is in no register (the 2026-08 research measured this), so B3's
 register diff can never surface it. But Mougins sits 5 km from Cannes with
 a Wikipedia article in 58 languages - "half a micro-region present" is the

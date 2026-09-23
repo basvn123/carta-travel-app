@@ -1,5 +1,7 @@
 """Rewrite Special:FilePath image URLs into real upload.wikimedia thumbs.
 
+Tier: Scheduled (run_pipeline task image_audit)
+
 A commons.wikimedia.org/wiki/Special:FilePath/... URL is broken three ways in
 this app at once: the served CSP only allows images from upload.wikimedia.org
 so the card renders BLANK in production, lib/heroImage.js cannot splice a

@@ -1,5 +1,7 @@
 """Region publication quotas and floors. The change that raises coverage.
 
+Tier: Library
+
 This replaces the country caps (PUBLISH_MAX=120 gave Spain and Belgium the
 same beach budget) with a per region target computed from an opportunity
 measure: how much of the thing there actually is. Two distinct numbers,

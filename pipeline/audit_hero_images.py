@@ -1,4 +1,7 @@
 """
+
+Tier: Scheduled (run_pipeline task hero_audit)
+
 audit_hero_images.py - the hero image gate.
 
 Every destination panel opens on one photo, and the panel's whole job is to

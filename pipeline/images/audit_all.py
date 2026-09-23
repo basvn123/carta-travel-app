@@ -1,5 +1,7 @@
 """Audit every image the app ships, across every layer at once.
 
+Tier: Scheduled (run_pipeline task image_audit)
+
 Each vertical already polices itself at export time (beaches will not publish
 without evidenced photographs, trails carry their licence CHECK constraint in
 the database), but nothing ever looked across the whole shop window: the same

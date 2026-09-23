@@ -1,5 +1,7 @@
 """Write dest.place (schema v16) into app_data.json, in place.
 
+Tier: Scheduled (run_pipeline task fame)
+
 Adds:
   - meta.place_model   (classes, thresholds, field meanings)
   - dest.place         (class / base / visit_h / depth) - see place_layer.py

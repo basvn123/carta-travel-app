@@ -1,5 +1,7 @@
 """The second spine: every NAMED landform OpenStreetMap knows about.
 
+Tier: Scheduled (run_pipeline task mountains)
+
 Wikidata is the first spine and its mountain coverage is uneven in exactly the
 places this layer is thinnest. Luxembourg has 15 mountains in the Wikidata
 spine and 165 named summits in OSM; Lithuania has 52 and Latvia 72, which is

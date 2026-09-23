@@ -1,4 +1,7 @@
 """The bulk OpenStreetMap pass, moved off Overpass and onto the Geofabrik
+
+Tier: Library
+
 extracts this repository already keeps.
 
 Overpass stays in the chain for what it is good at: targeted re-asks and the

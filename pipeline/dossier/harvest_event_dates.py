@@ -1,5 +1,7 @@
 """Put a month on the festivals.
 
+Tier: Scheduled (run_pipeline task dossier)
+
 cache/events_wikidata.json ships 975 events and only 109 of them carry a
 month, so the dossier's festival list mostly said "there is a film festival"
 without answering the one question a traveller has: when. Every event already

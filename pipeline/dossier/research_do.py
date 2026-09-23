@@ -1,4 +1,7 @@
 """
+
+Tier: Scheduled (run_pipeline task dossier)
+
 S4, the "best things to do" research sweep: validator and coverage report.
 
 The sweep itself is the 40-source web pass described in the dossier spec: for

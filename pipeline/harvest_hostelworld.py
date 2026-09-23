@@ -1,5 +1,7 @@
 """Hostelworld hostel-price anchors, the dorm + private-room stay tiers.
 
+Tier: Scheduled (run_pipeline task staytiers)
+
 Why: accommodation is Airbnb-entire-home only, so the map quietly prices every
 traveller as a whole-apartment renter. A backpacker pays a third of that. This
 harvest measures, per city, what a dorm bed and a cheap private room actually

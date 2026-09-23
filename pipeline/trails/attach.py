@@ -1,5 +1,7 @@
 """Which routes are near a destination, measured to the line, named as paths.
 
+Tier: Scheduled (run_pipeline task routes_attach)
+
 ROUTES.md R6, and the reason the whole routes layer exists. The Rome page
 showed "Romea Strata in Italia - Tappa RSIT47", "Via Francigena - Variante
 Anello di Cam..." and a stage of the Cammino Naturale dei Parchi: three

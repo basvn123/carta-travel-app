@@ -1,5 +1,7 @@
 """Four photographs should be four views, not four crops of one file.
 
+Tier: Library
+
 Two passes, cheapest first:
 
   pHash    catches the same file re-hosted, resized, recompressed or

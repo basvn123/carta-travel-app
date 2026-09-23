@@ -1,5 +1,7 @@
 """Country outlines for the Visited map, one small file the browser can hold.
 
+Tier: One-shot, done, kept for provenance (pipeline/oneoff)
+
 The saved-trips map paints every country the traveller has finished a trip in.
 The basemap is raster-free vector tiles with no admin polygons in them, so the
 shapes have to ship with the app. Natural Earth 1:50m admin-0 is the source

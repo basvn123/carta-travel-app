@@ -1,5 +1,7 @@
 """score_place_candidates.py - rank what the catalogue is missing, and why.
 
+Tier: Scheduled (run_pipeline task coverage)
+
 build_place_candidates.py enumerates every plausible European destination and
 measures it. This turns those measurements into two answers:
 

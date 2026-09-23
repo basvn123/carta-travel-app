@@ -1,5 +1,7 @@
 """The best place to leave a car, per destination, from OpenStreetMap.
 
+Tier: Scheduled (run_pipeline task parking)
+
 The Explore page promises a parking answer for every destination: where to
 park, whether it is free, and how far from the centre that is. OSM's
 amenity=parking coverage in Europe is dense enough to answer honestly, and it

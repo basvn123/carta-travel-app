@@ -1,5 +1,7 @@
 """More community-picked bests than P18 alone, for the same cost.
 
+Tier: Library
+
 Wikidata carries view properties beyond P18, each a single file a person
 chose for one aspect of the subject. They are the same quality of signal
 as P18 (a human said "this file shows it") and they arrive from the same

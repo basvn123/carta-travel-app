@@ -1,5 +1,7 @@
 """Smoke test for the trailslab PostGIS staging DB.
 
+Tier: Manual
+
 Proves the acceptance criteria of the content-lab foundation:
   1. the container schema applied (extensions, tables, enums exist),
   2. a trip with 3D geometry round-trips intact (Z survives insert and read),

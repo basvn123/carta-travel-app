@@ -1,5 +1,7 @@
 """Hiking route ingestion: Geofabrik extracts -> trailslab trips staging table.
 
+Tier: Scheduled (run_pipeline task trails_ingest)
+
 Downloads per-country Geofabrik .osm.pbf extracts into the data/raw/geofabrik/
 raw store (manifest.jsonl per day, same conventions as the src/ingestion
 collectors) and ingests OSM route relations into the trips table of the local

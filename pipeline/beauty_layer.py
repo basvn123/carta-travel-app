@@ -1,4 +1,7 @@
 """
+
+Tier: Library
+
 beauty_layer.py - the "Beauty Index" data layer (schema v9).
 
 Mirrors car_layer.py: a self-contained module that, given a destination record,

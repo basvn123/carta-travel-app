@@ -1,5 +1,7 @@
 """harvest_protected_areas_osm.py - a nearby-nature layer from OpenStreetMap.
 
+Tier: Scheduled (run_pipeline task nature)
+
 Same goal as harvest_protected_areas.py (national parks, nature reserves and
 other protected areas near each destination) but sourced from the OSM Overpass
 API instead of Wikidata's query service - because WDQS is currently in a hard

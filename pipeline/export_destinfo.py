@@ -1,5 +1,7 @@
 """Ship the per-destination info layer: cache -> public/destinfo/{CC}.json.
 
+Tier: Scheduled (run_pipeline task events)
+
 One file per country, fetched lazily the first time a destination of that
 country is opened on the Explore page (the same shape as public/reach and
 public/trails: a wire the app reads, never the caches themselves).

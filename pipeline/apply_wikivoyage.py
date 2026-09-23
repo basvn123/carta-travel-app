@@ -1,4 +1,7 @@
 """Fold the Wikivoyage guide blurbs harvested by harvest_wikivoyage.py into
+
+Tier: Scheduled (run_pipeline task guide)
+
 app_data.json.
 
 Adds, for every destination with a cached hit:

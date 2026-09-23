@@ -1,5 +1,7 @@
 """Write the region wire: continent-app/public/region/{ID}.json + index.
 
+Tier: Scheduled (run_pipeline task regions)
+
 Usage, from the repo root:
 
     python pipeline/regions/export_regions.py --all

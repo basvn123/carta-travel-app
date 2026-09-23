@@ -1,5 +1,7 @@
 """What the ground under a route is actually tagged as, member way by member way.
 
+Tier: Scheduled (run_pipeline task trails_way_tags)
+
 Everything the six filters need that a route RELATION does not carry. A
 relation says "Eigertrail, nwn, 6 km". It does not say that 400 m of it is
 graded T4, that a third of it is asphalt, that dogs are banned on the top

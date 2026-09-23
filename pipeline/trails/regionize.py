@@ -1,5 +1,7 @@
 """Stamp region ids onto every staged route, so the quota can be spatial.
 
+Tier: Scheduled (run_pipeline task trails_regionize)
+
 The country cap was the ceiling this layer could not get past. Twelve
 countries sat at exactly 158 published rows and twenty-nine at exactly 150
 hikes, which is a constant deciding the tail rather than the data. Replacing

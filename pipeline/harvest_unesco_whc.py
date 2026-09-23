@@ -1,5 +1,7 @@
 """Harvest cache/unesco_whc.json from the UNESCO World Heritage Centre list.
 
+Tier: Scheduled (run_pipeline task unesco)
+
 Provenance repair. The licence ledger (docs/tos/data_licenses.md, follow-up
 item 6) flags that no script in the tree writes cache/unesco_whc.json: its
 1,247 rows were asserted by field shape only, while the dossier and the

@@ -1,5 +1,7 @@
 """One-off, 2026-07-23: repair runway-anchored city centres from geonames.
 
+Tier: One-shot, done, kept for provenance (pipeline/oneoff)
+
 The data audit's open item "~30 runway city-centres" turned out to be 79:
 IATA city/town dests whose city_lat/city_lon sit at/near the airport instead
 of downtown (Vienna's was 22 km out, so the POI harvest around it collected

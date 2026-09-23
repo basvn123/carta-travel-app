@@ -1,5 +1,7 @@
 """Validation engine: score staged trailslab trips and route them by status.
 
+Tier: Scheduled (run_pipeline task trails_validate)
+
 Runs five checks per staged trip, writes one validation_runs row per check
 (append-only, same convention as crosscheck_portals.py: consumers take the
 newest row per subject and check), and computes quality_score 0-100 as the

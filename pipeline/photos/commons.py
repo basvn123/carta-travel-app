@@ -1,5 +1,7 @@
 """Pull MORE from Commons, not the same amount: the funnel, widened.
 
+Tier: Library
+
 Three widenings, each with the cap that makes it safe:
 
   category recursion, depth 2   Category:Loch Maree often holds few files

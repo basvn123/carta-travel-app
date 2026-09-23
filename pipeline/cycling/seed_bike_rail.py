@@ -1,5 +1,7 @@
 """Bike on trains: a curated table, because there is no feed to read.
 
+Tier: Scheduled (run_pipeline task cycling_publish)
+
 There is no open, machine-readable dataset of which trains carry how many
 bicycles. EU Regulation 2021/782 sets a floor (new and renewed rolling stock
 must provide at least four bicycle spaces where practicable, and carriers

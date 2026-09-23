@@ -1,5 +1,7 @@
 """The landmarks a place is actually known for, from Wikidata.
 
+Tier: Scheduled (run_pipeline task dossier)
+
 Two faults in the shipped POI layer that no amount of ranking could fix:
 
   Paris ships 52 items and the Eiffel Tower is not among them. What is there

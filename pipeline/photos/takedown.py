@@ -1,5 +1,7 @@
 """Pull one photograph out of everything we publish, in minutes, forever.
 
+Tier: Library
+
 A CC licence does not oblige a photographer to like where their picture
 ended up, and an attribution complaint answered in minutes is a non-event
 while one answered next quarter is a reputation. Two halves:

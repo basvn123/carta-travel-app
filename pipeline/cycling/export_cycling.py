@@ -1,5 +1,7 @@
 """The gate and the wire. Nothing reaches the app except through this file.
 
+Tier: Scheduled (run_pipeline task cycling_publish)
+
 Four artifacts, and the split between the first two is a licence decision,
 not a file-size one:
 

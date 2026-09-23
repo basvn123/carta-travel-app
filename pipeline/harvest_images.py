@@ -1,4 +1,7 @@
 """
+
+Tier: Scheduled (run_pipeline task images)
+
 harvest_images.py - the destination image layer (schema v10).
 
 For every destination, fetch the canonical Wikipedia lead image (the postcard

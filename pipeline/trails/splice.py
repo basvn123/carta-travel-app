@@ -1,5 +1,7 @@
 """Bridge the short breaks that OSM route relations leave in otherwise whole trails.
 
+Tier: Scheduled (run_pipeline task trails_elevation)
+
 curate.py refuses any route whose geometry is not one continuous line, because
 a multi-part GPX draws a walk that teleports and no hiking app can follow it.
 That gate is right, and it is also blunt: it threw away the Walker's Haute

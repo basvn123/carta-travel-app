@@ -1,5 +1,7 @@
 """Popularity signals + curation ranking for staged trails.
 
+Tier: Scheduled (run_pipeline task trails_popularity)
+
 Ranks the OSM-derived trips in the trailslab staging DB so a human curator
 can start from a credible per-country shortlist instead of 20k+ rows.
 Reuses the pipeline's existing fame infrastructure:

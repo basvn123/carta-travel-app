@@ -1,4 +1,7 @@
 """
+
+Tier: Manual
+
 apply_image_dims.py - the shape of every hero photograph, into the master.
 
 Why this exists

@@ -1,5 +1,7 @@
 """The 40-source web sweep as a batch job: whole catalogue, one API key.
 
+Tier: Scheduled (run_pipeline task dossier)
+
 This is the same S4 pass the research agents run by hand, written so it can
 run unattended over all 3,038 destinations. It needs a search API key, and
 that is the ONLY thing it needs: extraction is constrained matching against a

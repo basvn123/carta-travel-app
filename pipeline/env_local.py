@@ -1,5 +1,7 @@
 """Load the repo-root .env into os.environ for pipeline scripts.
 
+Tier: Library
+
 Why: harvester credentials (LITEAPI_KEY, HW_CONSUMER_KEY, ...) are read from
 the environment, but on a dev machine nobody wants to export them per shell.
 A `.env` at the REPO ROOT (gitignored, see .env.example) is the one sanctioned

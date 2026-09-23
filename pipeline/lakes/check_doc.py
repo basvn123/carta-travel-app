@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 """Check that every pointer LAKES.md gives a reader actually resolves.
 
+Tier: Library
+
 The doc names files, modules, symbols and wire fields. Each is a promise that
 a reader can go and look, and each was true when it was written, which is
 precisely why nobody re-reads them.

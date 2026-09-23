@@ -1,5 +1,7 @@
 """Curation: choose which staged routes deserve to be published, per region.
 
+Tier: Scheduled (run_pipeline task trails_curate)
+
 The ingest leaves ~236,000 OSM route relations sitting in needs_review. The
 first wave that reached the app took the top rows by quality_score, which is a
 measure of how well FORMED a relation is, not of whether the walk is any good.

@@ -1,5 +1,7 @@
 """audit_quality.py - data-quality audit of the destination/POI master.
 
+Tier: Scheduled (run_pipeline task audit)
+
 Read-only scorecard over app_data/app_data.json covering the classic quality
 dimensions: validity (coordinates), uniqueness (in-city duplicate POIs),
 completeness (signal coverage per country), consistency (rate distribution,

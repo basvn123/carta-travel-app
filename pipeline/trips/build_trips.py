@@ -1,5 +1,7 @@
 """Build the whole trip layer, from nothing to shipped wire, in one command.
 
+Tier: Scheduled (run_pipeline task trips)
+
     python pipeline/trips/build_trips.py
 
 That is the reproducible path. Three stages run in order, each idempotent and

@@ -1,5 +1,7 @@
 """Strip tracking query strings off every stored Commons image URL.
 
+Tier: Scheduled (run_pipeline task image_audit)
+
 The Commons imageinfo API hands back thumbnails with ?utm_source=... stapled
 on. Harmless in a browser, poison anywhere the URL is treated as a path: the
 srcset builder splices widths into these strings and the query rides along

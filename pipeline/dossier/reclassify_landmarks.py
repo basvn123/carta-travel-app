@@ -1,5 +1,7 @@
 """Re-derive every cached landmark's kind from its real Wikidata types.
 
+Tier: Scheduled (run_pipeline task dossier)
+
 harvest_landmarks.py classified each item as it arrived and kept only the
 kind, so a bug in the classifier could not be corrected without re-running
 3,000 geo queries. One did: matching ALLOW fragments with `in` rather than on

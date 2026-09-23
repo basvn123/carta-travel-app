@@ -1,5 +1,7 @@
 """Elevation layer: Copernicus GLO-30 sampling for staged trailslab trips.
 
+Tier: Scheduled (run_pipeline task trails_elevation)
+
 Samples the Copernicus GLO-30 DSM (30 m, global, free with credit) along
 every staged trip geometry and fills distance_m, ascent_m, descent_m and
 duration_min, writes per-vertex Z back into the 3D geometry, and stores a

@@ -1,5 +1,7 @@
 """The fix for fog and bare trees: prefer the season the category sells.
 
+Tier: Library
+
 Burfelt's card was fog. Fuussefeld's was bare winter woodland. Naaktstrand
 Texel's was a grey beach under what looks like snow. All three are correct
 photographs of the right place, and all three are wrong for a card, and no

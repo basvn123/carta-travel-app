@@ -1,5 +1,7 @@
 """One definition of what two trail names being "the same name" means.
 
+Tier: Library
+
 Four modules need this and three of them had grown their own copy:
 famous_registry.py folds "Sentier des Roches [secteur 4]" onto "Sentier des
 Roches" so 18 tagged ways register as one candidate; coverage_report.py folds
