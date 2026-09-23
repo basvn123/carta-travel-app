@@ -512,6 +512,14 @@ export const nl = {
   "account.deleteConfirmEmail": "Typ {email} om te bevestigen",
   "account.errDeleteEmail": "Dat komt niet overeen met het adres van dit account.",
   "account.deleteConfirmPassword": "Bevestig met je wachtwoord",
+  // data export (GDPR Article 20)
+  "account.dataTitle": "Jouw gegevens",
+  "account.exportHint": "Download alles wat Carta van je bewaart als JSON-bestand: je reizen, de stops en data, en welke pasaanbiedingen je te zien kreeg.",
+  "account.exportBtn": "Mijn gegevens downloaden",
+  "account.exportConfirmHint": "Bevestig dat jij het bent, dan wordt het bestand gedownload. Het bevat je hele account, dus bewaar het ergens privé.",
+  "account.exportCancel": "Annuleren",
+  "account.exportConfirm": "Downloaden",
+  "account.exportDone": "Je bestand is gedownload. Kijk in je downloadmap.",
   "account.passAdds": "Wat een {name} toevoegt",
   // account hub: profielkaart, uitnodiging, menu, FAQ, feedback
   "account.profileDetails": "Profielgegevens",

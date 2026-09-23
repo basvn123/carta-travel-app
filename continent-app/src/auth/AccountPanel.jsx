@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useAuth } from './AuthContext.jsx';
 import {
-  ArrowLeftIcon, CheckIcon, ChevronDownIcon, ChevronRightIcon, CloseIcon, EyeIcon,
+  ArrowLeftIcon, CheckIcon, ChevronDownIcon, ChevronRightIcon, CloseIcon, DownloadIcon, EyeIcon,
   EyeOffIcon, FeedbackIcon, FriendsIcon, HomeIcon, InfoIcon, LockIcon, PencilIcon,
   PersonIcon, QuestionIcon, PiggyIcon, ShareIcon, ShieldIcon, SignOutIcon, SparkIcon,
   TrashIcon,
@@ -270,7 +270,7 @@ export function AccountPanel({
 }) {
   const {
     user, hasPassword, signOut, signOutOtherDevices, updatePassword, reauthenticate,
-    updateProfile, sendPasswordReset, deleteAccount, configured,
+    updateProfile, sendPasswordReset, deleteAccount, exportUserData, configured,
   } = useAuth();
   const { t, lang, setLang, languages } = useI18n();
   // One ai_status read for the whole app, owned by PaywallProvider, so the
@@ -338,6 +338,19 @@ export function AccountPanel({
   const [deleteEmail, setDeleteEmail] = useState('');
   const [deleteBusy, setDeleteBusy] = useState(false);
   const [deleteError, setDeleteError] = useState('');
+
+  // The data export carries the same arm-then-confirm shape as deletion, and
+  // the same re-auth, because the file it produces is the whole account in
+  // one place: a session left open on an unlocked phone should not be enough
+  // to walk off with it. It is not in the danger zone, though, because
+  // downloading your own data is not dangerous and filing it under a red
+  // heading would make a right look like a threat.
+  const [exportArmed, setExportArmed] = useState(false);
+  const [exportPassword, setExportPassword] = useState('');
+  const [exportEmail, setExportEmail] = useState('');
+  const [exportBusy, setExportBusy] = useState(false);
+  const [exportError, setExportError] = useState('');
+  const [exportDone, setExportDone] = useState(false);
 
   // The open question is keyed by its i18n key, not its index: with the
   // answers grouped, an index is only unique within one group.
@@ -553,6 +566,70 @@ export function AccountPanel({
     } finally {
       setPwLoading(false);
     }
+  };
+
+  /**
+   * GDPR Article 20: hand the traveller their own data as a JSON file.
+   *
+   * The gate is deliberately the same one deletion uses, down to the
+   * Google-only fallback of typing the address, so there is one story about
+   * proving who you are in this panel rather than two.
+   *
+   * The download is a Blob and an object URL rather than a data: URI, because
+   * a large trip archive would overflow what a URI can carry, and the object
+   * URL is revoked as soon as the click has been dispatched so the file does
+   * not sit in memory for the life of the tab.
+   */
+  const handleExportData = async () => {
+    setExportError('');
+    setExportDone(false);
+    if (hasPassword && !exportPassword) { setExportError(t('account.errCurrentPasswordMissing')); return; }
+    if (!hasPassword && exportEmail.trim().toLowerCase() !== storedEmail.toLowerCase()) {
+      setExportError(t('account.errDeleteEmail'));
+      return;
+    }
+    setExportBusy(true);
+    try {
+      if (hasPassword) {
+        try {
+          await reauthenticate(exportPassword);
+        } catch {
+          setExportError(t('account.errCurrentPassword'));
+          setExportBusy(false);
+          return;
+        }
+      }
+      const data = await exportUserData();
+      // Indented, because a person exercising a data right should be able to
+      // open the file and read it. Minifying it would save bytes nobody is
+      // counting and cost the one thing the file is for.
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `carta-data-${new Date().toISOString().slice(0, 10)}.json`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+      setExportDone(true);
+      setExportPassword('');
+      setExportEmail('');
+      setExportArmed(false);
+    } catch (err) {
+      // Most likely export_user_data() is not installed yet. Say so rather
+      // than failing silently on a compliance path.
+      setExportError(err.message || t('account.errGeneric'));
+    } finally {
+      setExportBusy(false);
+    }
+  };
+
+  const disarmExport = () => {
+    setExportArmed(false);
+    setExportPassword('');
+    setExportEmail('');
+    setExportError('');
   };
 
   const handleDeleteAccount = async () => {
@@ -1156,6 +1233,78 @@ export function AccountPanel({
             <button className="book-btn secondary account-signout account-wide-btn" onClick={signOut}>
               {t('account.signOut')}
             </button>
+          </div>
+
+          {/* Your data sits above the danger zone, not inside it. Taking a
+              copy of your own trips is an ordinary thing to want, and the two
+              halves of the same right read better adjacent than merged: this
+              one is a plain secondary button, deletion below is the red one. */}
+          <div className="panel-section">
+            <div className="section-title section-title-iconed"><DownloadIcon size={12} /> {t('account.dataTitle')}</div>
+            {!exportArmed ? (
+              <>
+                <p className="account-section-hint">{t('account.exportHint')}</p>
+                <button
+                  className="book-btn secondary account-wide-btn"
+                  onClick={() => { setExportArmed(true); setExportDone(false); }}
+                >
+                  {t('account.exportBtn')}
+                </button>
+                {/* Same dismissible banner the password form uses, and for
+                    the same reason: a confirmation that cannot be closed is
+                    furniture by the next visit to the panel. */}
+                {exportDone && (
+                  <div className="auth-banner" role="status">
+                    <CheckIcon size={14} />
+                    <span className="auth-banner-text">{t('account.exportDone')}</span>
+                    <button
+                      type="button"
+                      className="auth-banner-x"
+                      onClick={() => setExportDone(false)}
+                      aria-label={t('account.dismissNotice')}
+                    >
+                      <CloseIcon size={13} />
+                    </button>
+                  </div>
+                )}
+              </>
+            ) : (
+              <>
+                <p className="account-section-hint">{t('account.exportConfirmHint')}</p>
+                {hasPassword ? (
+                  <PasswordField
+                    id="acct-export-pw"
+                    label={t('account.deleteConfirmPassword')}
+                    value={exportPassword}
+                    onChange={setExportPassword}
+                    autoComplete="current-password"
+                    placeholder={t('account.currentPasswordPlaceholder')}
+                  />
+                ) : (
+                  <div className="auth-field">
+                    <label className="auth-label" htmlFor="acct-export-email">
+                      {t('account.deleteConfirmEmail', { email: storedEmail })}
+                    </label>
+                    <input
+                      id="acct-export-email"
+                      type="text"
+                      autoComplete="off"
+                      value={exportEmail}
+                      onChange={(e) => setExportEmail(e.target.value)}
+                    />
+                  </div>
+                )}
+                {exportError && <div className="auth-error">{exportError}</div>}
+                <div className="account-delete-actions">
+                  <button className="book-btn secondary" onClick={disarmExport}>
+                    {t('account.exportCancel')}
+                  </button>
+                  <button className="book-btn" onClick={handleExportData} disabled={exportBusy}>
+                    {exportBusy ? t('account.pleaseWait') : t('account.exportConfirm')}
+                  </button>
+                </div>
+              </>
+            )}
           </div>
 
           <div className="panel-section">

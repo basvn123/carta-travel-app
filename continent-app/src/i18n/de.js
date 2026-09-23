@@ -512,6 +512,14 @@ export const de = {
   "account.deleteConfirmEmail": "Tippe {email}, um zu bestätigen",
   "account.errDeleteEmail": "Das stimmt nicht mit der Adresse des Kontos überein.",
   "account.deleteConfirmPassword": "Mit deinem Passwort bestätigen",
+  // data export (GDPR Article 20)
+  "account.dataTitle": "Deine Daten",
+  "account.exportHint": "Lade alles herunter, was Carta über dich speichert, als JSON-Datei: deine Reisen, ihre Stationen und Daten, und welche Pass-Angebote dir gezeigt wurden.",
+  "account.exportBtn": "Meine Daten herunterladen",
+  "account.exportConfirmHint": "Bestätige, dass du es bist, dann wird die Datei heruntergeladen. Sie enthält dein ganzes Konto, bewahre sie also privat auf.",
+  "account.exportCancel": "Abbrechen",
+  "account.exportConfirm": "Herunterladen",
+  "account.exportDone": "Deine Datei wurde heruntergeladen. Schau in deinem Download-Ordner nach.",
   "account.passAdds": "Was ein {name} zusätzlich bringt",
   // account hub: Profilkarte, Einladung, Menü, FAQ, Feedback
   "account.profileDetails": "Profildaten",

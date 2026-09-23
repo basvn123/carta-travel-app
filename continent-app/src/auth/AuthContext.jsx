@@ -190,6 +190,37 @@ export function AuthProvider({ children }) {
     await supabase.auth.signOut();
   }, []);
 
+  /**
+   * GDPR Article 20 data portability: the same right as deletion, read
+   * instead of written.
+   *
+   * `export_user_data()` (supabase/migrations/024_export_user_data.sql) is a
+   * SECURITY DEFINER function that takes no argument and returns the calling
+   * user's trip plans, stops, paywall events and content overrides as one
+   * jsonb object. It deliberately has no user id parameter, so there is no
+   * version of this call that can fetch somebody else's account.
+   *
+   * The account's own identity fields are added here rather than in SQL. They
+   * live in auth.users, which the signed-in client can already read, so the
+   * definer function never needs reach into the auth schema to produce a
+   * complete file.
+   */
+  const exportUserData = useCallback(async () => {
+    const { data, error } = await supabase.rpc('export_user_data');
+    if (error) throw error;
+    if (data?.error) throw new Error(data.error);
+    const u = session?.user || null;
+    return {
+      ...data,
+      account: {
+        email: u?.email || null,
+        name: u?.user_metadata?.full_name || null,
+        createdAt: u?.created_at || null,
+        signInMethods: (u?.identities || []).map((i) => i.provider),
+      },
+    };
+  }, [session]);
+
   const value = {
     configured: authConfigured,
     session,
@@ -210,6 +241,7 @@ export function AuthProvider({ children }) {
     reauthenticate,
     updateProfile,
     deleteAccount,
+    exportUserData,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
