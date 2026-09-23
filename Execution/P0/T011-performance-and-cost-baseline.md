@@ -22,7 +22,7 @@ The first is the file count. Section 5.1 says the Cloudflare Pages 20,000-file c
 
 The second is the per-destination wire cost. Section 5.1 extrapolates the core wire to "~30 MB" at 25,000 destinations. The current wire carries 3,230 bytes per destination, which puts the same extrapolation at 77 MB raw. The conclusion the section draws is unchanged and if anything strengthened, but the figure it carries is roughly half of what the current schema actually costs.
 
-The spend half of this task is not complete, and that is recorded plainly rather than estimated. See "What is still open".
+The spend half is complete and every line of it is zero. The whole system runs inside free tiers and has no users yet, which means no part of this migration can be justified by cutting an existing bill, because there is no bill. The cost arguments in the architecture document are all arguments about costs that would arrive later, at traffic the project does not yet have. What justifies the work today is the performance half of this report and the file-count ceiling, not the money.
 
 ## How the performance numbers were produced
 
@@ -134,11 +134,27 @@ The brotli column is mildly optimistic because compression ratios improve with i
 
 ## Measured: spend
 
-Not measured. See "What is still open".
+Every line is zero. Reported by the project owner on 2026-09-23.
 
-What the repository does establish, as a frame for the figures when they arrive: there is one production domain, `carta-europetravel.com`; one Supabase project, `ntssxktaduxzpsmejwyv`; and the Google Cloud spend is Gemini, reached through three Supabase Edge Functions, `plan-day`, `suggest-city` and `parse-booking`. Every Gemini model named in those functions is a Flash or Flash-Lite tier model, which is the cheapest rung, so the expected order of magnitude is small but it has not been confirmed against a bill.
+| Line | Monthly | Note |
+|---|---:|---|
+| Vercel | €0 | Hobby tier |
+| Supabase | €0 | Free tier, project `ntssxktaduxzpsmejwyv` |
+| Google Cloud (Gemini) | €0 | Free tier; three Edge Functions, all Flash-class models |
+| Domains | €0 | `carta-europetravel.com`, no cost incurred this period |
+| **Total** | **€0** | |
+| Supabase MAU | 0 | Pre-launch, no real users |
+| Gemini spend | €0 | |
 
-Migration 007 created `public.ai_usage`, which counts AI calls per user per period and is the right source for call volume. It was not queried, because it lives on the live database and this task had no mandate to touch it.
+A zero baseline is a real measurement rather than a missing one, and it is worth being precise about what it does and does not tell us.
+
+What it establishes is that the entire current system runs inside free tiers, so nothing in this migration can be justified by cutting an existing bill. There is no bill. Every cost argument in the architecture document is therefore an argument about a cost that would be incurred later, at traffic the project does not yet have, and should be read that way. Section 7's Tier 0 figure of about €9.50 a month is not a saving against today, it is an increase from zero, bought in exchange for leaving free tiers whose limits the project is already pressing against in at least one dimension.
+
+That dimension is the one this task measured. The Cloudflare Pages file ceiling is 20,000 and the build is 52,134 files, so the move described in step 6 is gated on the wire split regardless of cost. Similarly, Supabase Free pauses on inactivity and caps at a level that 0 MAU obviously clears, so the Tier 1 upgrade in section 7 is a launch concern rather than a current one.
+
+The honest reading of a zero baseline is that the performance figures in this report, not the cost figures, are what justify the work. The cost model becomes checkable only after launch, and the value of recording zero now is that the first non-zero month has something to be compared against.
+
+One caveat on the zero for Gemini. It is a spend figure, not a usage figure: Flash-tier models have a free allowance, so zero spend is consistent with a non-zero number of calls. `public.ai_usage`, created by migration 007, counts calls per user per period and is the right source if the call volume itself is ever wanted. It was not queried, because it lives on the live database and this task had no mandate to touch it.
 
 ## Files touched
 
@@ -193,12 +209,13 @@ This task is the "before" column. There is no "after" until P3 closes.
 | INP, phone price map | 160 ms | pending P3 | |
 | INP, phone destination page | 56 ms | pending P3 | |
 | CLS, phone destination page | 0.309 | pending P3 | |
-| Vercel monthly spend | not measured | | |
-| Supabase monthly spend | not measured | | |
-| Google Cloud monthly spend | not measured | | |
-| Domain monthly cost | not measured | | |
-| Supabase MAU | not measured | | |
-| Gemini monthly spend | not measured | | |
+| Vercel monthly spend | €0 | pending launch | |
+| Supabase monthly spend | €0 | pending launch | |
+| Google Cloud monthly spend | €0 | pending launch | |
+| Domain monthly cost | €0 | pending launch | |
+| Total monthly spend | €0 | pending launch | |
+| Supabase MAU | 0 | pending launch | |
+| Gemini monthly spend | €0 | pending launch | |
 
 Two figures in the architecture document are corrected by this task rather than measured by it:
 
@@ -219,11 +236,9 @@ Two figures in the architecture document are corrected by this task rather than 
 
 ## What is still open
 
-The spend half of this task is not done. Six figures are missing and none of them can be read from the repository: current monthly spend on Vercel, on Supabase, on Google Cloud and on domains; current Supabase monthly active users; and current Gemini spend. They were left blank rather than estimated, because a baseline whose "before" column is a guess cannot support the comparison the whole exercise exists to make.
+The cost model in section 7 cannot be checked yet, and that is a consequence of the baseline rather than a gap in it. Every spend line is zero, so there is no current bill for the target architecture's roughly €9.50 a month to be compared against. That comparison becomes possible at the first month with real traffic, and the value of this report is that the first non-zero month has a recorded zero to be measured from.
 
-Getting them is a matter of reading four billing pages and one Supabase dashboard. When they arrive they belong in the "Measured: spend" section above, and the section 7 cost model becomes checkable: Tier 0 predicts about €9.50 a month for the target architecture, and the honest question this baseline is meant to answer is what is being paid now against that.
-
-The Gemini call volume has a better source than a bill, which is `public.ai_usage` on the live database. A read-only sum over `n` grouped by `kind` and `period_start` gives the call count per function per period. That query was not run here because the task had no mandate to touch live data.
+Gemini call volume, as distinct from Gemini spend, is still unknown. Zero spend on a Flash-tier model is consistent with a non-zero number of calls inside the free allowance, so if the volume is ever wanted, a read-only sum over `n` in `public.ai_usage` grouped by `kind` and `period_start` gives it per function per period. That query was not run here because the task had no mandate to touch live data.
 
 INP on the trip page is not measured, on either device. The generic click sweep the harness performs there produces no qualifying interaction, so that cell has no baseline and the P3 comparison will have nothing to compare against for that one page. The fix is to give the trip page a real scripted interaction in `PAGES`, the way the price map and destination page already have; it is a few lines and it should be done before P3 closes rather than after, because a baseline measured later is not a baseline.
 
