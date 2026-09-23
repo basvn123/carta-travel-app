@@ -24,7 +24,7 @@ whole `pipeline/` tree (11 subpackages plus the root). 47 does not match any
 natural cut of this tree exactly, but the closest candidate is the top-level
 scripts that are neither imported by anything else nor wired into
 `run_pipeline.py` before this task, i.e. root-level scripts a reader would
-have called "loose" — that count, by my inventory, is closer to 41 (34
+have called "loose", that count, by my inventory, is closer to 41 (34
 unwired top-level scripts I found by diffing against `run_pipeline.py`'s
 references, plus later corrections). I could not reconstruct exactly 47
 from any grouping I tried, and I did not force the numbers to match; the
@@ -56,15 +56,15 @@ inventory table below, tier `Scheduled`, `Manual`, or `Library`. See
 procedure" for how to undo all 253 in one step.
 
 **Modified (existing docs):**
-- `archive/README.md` — two rows added, in the table's existing voice.
+- `archive/README.md`, two rows added, in the table's existing voice.
 
 **Created:**
-- `pipeline/README.md` — the tier index: how to tell the tiers apart, how a
+- `pipeline/README.md`, the tier index: how to tell the tiers apart, how a
   new script gets one, a Scheduled table grouped by `run_pipeline.py` task
   key, a Manual table with the exact command/reads/writes/human-action for
   each tool, a short One-shot section, and pointers to `docs/TRAILS.md` and
   `docs/PHOTOS.md` for the Manual tools those docs already cover in depth.
-- `pipeline/intake/README.md` — the three B3/B4 intake tools, since no file
+- `pipeline/intake/README.md`, the three B3/B4 intake tools, since no file
   under `docs/` covers them.
 - `Execution/P1/T028-classify-pipeline-scripts.md` (this report).
 
