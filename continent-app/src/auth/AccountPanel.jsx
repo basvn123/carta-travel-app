@@ -8,6 +8,7 @@ import {
 } from '../components/Icons.jsx';
 import { PrivacyPolicy } from '../components/PrivacyPolicy.jsx';
 import { Imprint } from '../components/Imprint.jsx';
+import { TermsOfService } from '../components/TermsOfService.jsx';
 import { ATTRIBUTIONS } from '../data/attribution.js';
 import { CountryFlag } from '../components/CountryFlag.jsx';
 import { usePaywall } from '../hooks/usePaywall.jsx';
@@ -282,6 +283,7 @@ export function AccountPanel({
   const [view, setView] = useState(initialView); // 'home' | 'profile' | 'friends' | 'faq' | 'feedback' | 'data'
   const [privacyOpen, setPrivacyOpen] = useState(false);
   const [imprintOpen, setImprintOpen] = useState(false);
+  const [termsOpen, setTermsOpen] = useState(false);
 
   const storedName = user?.user_metadata?.full_name?.trim() || '';
   const storedEmail = user?.email || '';
@@ -670,6 +672,7 @@ export function AccountPanel({
     { key: 'feedback', group: 'help', view: 'feedback', Icon: FeedbackIcon, label: t('account.menuFeedback'), go: () => setView('feedback') },
     { key: 'faq', group: 'help', view: 'faq', Icon: QuestionIcon, label: t('account.menuFaq'), go: () => setView('faq') },
     { key: 'privacy', group: 'help', Icon: ShieldIcon, label: t('account.privacyPolicy'), go: () => setPrivacyOpen(true) },
+    { key: 'terms', group: 'help', Icon: ShieldIcon, label: t('account.terms'), go: () => setTermsOpen(true) },
     { key: 'imprint', group: 'help', Icon: InfoIcon, label: t('account.imprint'), go: () => setImprintOpen(true) },
     { key: 'data', group: 'help', view: 'data', Icon: InfoIcon, label: t('account.menuData'), go: () => setView('data') },
   ].filter(Boolean);
@@ -869,6 +872,7 @@ export function AccountPanel({
               <MenuRow icon={<FeedbackIcon size={17} />} label={t('account.menuFeedback')} onClick={() => setView('feedback')} />
               <MenuRow icon={<QuestionIcon size={17} />} label={t('account.menuFaq')} onClick={() => setView('faq')} />
               <MenuRow icon={<ShieldIcon size={17} />} label={t('account.privacyPolicy')} onClick={() => setPrivacyOpen(true)} />
+              <MenuRow icon={<ShieldIcon size={17} />} label={t('account.terms')} onClick={() => setTermsOpen(true)} />
               <MenuRow icon={<InfoIcon size={17} />} label={t('account.menuData')} onClick={() => setView('data')} />
             </div>
           </div>
@@ -1329,6 +1333,7 @@ export function AccountPanel({
 
       {privacyOpen && <PrivacyPolicy onClose={() => setPrivacyOpen(false)} />}
       {imprintOpen && <Imprint onClose={() => setImprintOpen(false)} />}
+      {termsOpen && <TermsOfService onClose={() => setTermsOpen(false)} />}
     </div>
     </div>
   );

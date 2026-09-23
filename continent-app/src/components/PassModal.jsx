@@ -5,6 +5,7 @@ import {
 } from '../lib/pricing.js';
 import { startCheckout } from '../lib/checkout.js';
 import { SparkIcon, CheckIcon } from './Icons.jsx';
+import { TermsOfService } from './TermsOfService.jsx';
 
 /**
  * What the modal leads with, per reason code. Naming the moment beats a cold
@@ -50,6 +51,7 @@ export function PassModal({ entitlement, reason = '', onClose, onSignIn, signedI
   const { t, lang } = useI18n();
   const [busy, setBusy] = useState('');
   const [failCode, setFailCode] = useState('');
+  const [termsOpen, setTermsOpen] = useState(false);
 
   const locale = (LANGUAGES.find((l) => l.code === lang) || LANGUAGES[0]).bcp47;
   const current = entitlement?.tier || 'free';
@@ -146,7 +148,19 @@ export function PassModal({ entitlement, reason = '', onClose, onSignIn, signedI
         )}
         <p className="ai-plan-note">{t('pass.vatNote')}</p>
         <p className="ai-plan-note">{t('pass.noSubNote')}</p>
+        {/* The contract line. The withdrawal waiver itself is the checkbox on
+            Stripe's checkout page (consent_collection in the checkout Edge
+            Function); this tells the traveller it is coming and lets them read
+            the terms before they leave for Stripe. */}
+        <p className="ai-plan-note">
+          {t('pass.legalNote')}
+          {' '}
+          <button type="button" className="auth-link pass-terms-link" onClick={() => setTermsOpen(true)}>
+            {t('pass.legalLink')}
+          </button>
+        </p>
       </div>
+      {termsOpen && <TermsOfService onClose={() => setTermsOpen(false)} />}
     </div>
   );
 }

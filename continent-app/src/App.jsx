@@ -82,6 +82,7 @@ import { ResetPasswordScreen } from './auth/ResetPasswordScreen.jsx';
 import { AccountPanel } from './auth/AccountPanel.jsx';
 import { SavedTripsPanel } from './auth/SavedTripsPanel.jsx';
 import { PaywallProvider } from './hooks/usePaywall.jsx';
+import { LegalFromUrl } from './components/LegalFromUrl.jsx';
 import { originHome } from './lib/origins.js';
 import { useAppData } from './hooks/useAppData.js';
 import { useDestinationSearch } from './hooks/useDestinationSearch.js';
@@ -1249,6 +1250,9 @@ function TravelApp() {
         </div>
       )}
     </div>
+    {/* ?legal=terms|privacy|imprint opens the matching text on load; the
+        address Stripe Checkout and store forms point at. */}
+    <LegalFromUrl />
     </PaywallProvider>
   );
 }
