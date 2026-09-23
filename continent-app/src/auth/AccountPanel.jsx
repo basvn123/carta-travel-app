@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { useAuth } from './AuthContext.jsx';
 import {
   ArrowLeftIcon, CheckIcon, ChevronDownIcon, ChevronRightIcon, CloseIcon, EyeIcon,
@@ -873,6 +874,7 @@ export function AccountPanel({
               <MenuRow icon={<QuestionIcon size={17} />} label={t('account.menuFaq')} onClick={() => setView('faq')} />
               <MenuRow icon={<ShieldIcon size={17} />} label={t('account.privacyPolicy')} onClick={() => setPrivacyOpen(true)} />
               <MenuRow icon={<ShieldIcon size={17} />} label={t('account.terms')} onClick={() => setTermsOpen(true)} />
+              <MenuRow icon={<InfoIcon size={17} />} label={t('account.imprint')} onClick={() => setImprintOpen(true)} />
               <MenuRow icon={<InfoIcon size={17} />} label={t('account.menuData')} onClick={() => setView('data')} />
             </div>
           </div>
@@ -1331,9 +1333,18 @@ export function AccountPanel({
         </div>
       )}
 
-      {privacyOpen && <PrivacyPolicy onClose={() => setPrivacyOpen(false)} />}
-      {imprintOpen && <Imprint onClose={() => setImprintOpen(false)} />}
-      {termsOpen && <TermsOfService onClose={() => setTermsOpen(false)} />}
+      {/* The legal texts render at document.body, not inside the panel. Two
+          reasons, both about the panel's own CSS reaching them: the panel is
+          a slide-in (.panel.open carries a transform), which makes it the
+          containing block for position:fixed, so an overlay rendered in here
+          is pinned to the panel's scroll box instead of the screen; and
+          `.account-panel .panel-close { display: none }` hides every cross in
+          the panel, the legal modals' included. Outside the panel's DOM both
+          rules stop applying and the modals behave like the ones the auth gate
+          and the pass modal open. */}
+      {privacyOpen && createPortal(<PrivacyPolicy onClose={() => setPrivacyOpen(false)} />, document.body)}
+      {imprintOpen && createPortal(<Imprint onClose={() => setImprintOpen(false)} />, document.body)}
+      {termsOpen && createPortal(<TermsOfService onClose={() => setTermsOpen(false)} />, document.body)}
     </div>
     </div>
   );

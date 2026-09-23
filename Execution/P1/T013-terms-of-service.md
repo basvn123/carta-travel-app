@@ -98,6 +98,18 @@ The phone help list in the Account panel shows Privacy policy, Terms of service 
 
 The terms point at the Imprint for the provider's identity, so they are only as complete as T015 makes that page.
 
+## Addendum, same day, before merge
+
+The user asked for the two Account panel items above to be fixed inside this task rather than filed, so the branch carries a second commit and this section, written before the branch was handed over.
+
+The legal modals opened from the Account panel are now rendered through createPortal at document.body instead of inside the panel. That one change closes both symptoms, because both were the panel's CSS reaching descendants it was never written for. The panel is a slide-in: `.panel.open` carries a transform, and a transformed element is the containing block for every position:fixed descendant, so an overlay rendered inside it was pinned to the panel's scroll box and scrolled away with it, which is why the phone showed it clipped at the top. And `.account-panel .panel-close { display: none }`, written so the Account page has no cross of its own, matched the legal modals' close buttons too, because they carry panel-close for their styling. Outside the panel's DOM neither rule applies. SavedTripsPanel.jsx already used the same portal for its full-screen map for the same containing-block reason. No CSS was changed.
+
+The phone help list now carries the Imprint row that T012 added only to the desktop rail menu.
+
+The harness was rerun with the checks reversed: the cross must be visible and clickable on the terms opened from the Account panel, the modal must sit inside the viewport, the privacy policy must behave the same, and the phone list must carry Imprint. 15 checks on desktop and 18 on the phone pass. The "what is still open" entries for these two items are therefore closed; the Stripe configuration, the lawyer question and T015 remain.
+
+Disk, while at it: the npm cache (550 MB), nine Windows App Installer extraction folders in Temp (about 770 MB) and the Remote Desktop trace folder were removed, taking free space from 3.2 to 4.3 GB. Excel holds some of its diagnostic logs open, so that folder only partly went. The remaining large items are decisions rather than junk and are listed in the hand-over message: the 20 GB Docker data disk for the trails lab, the 1.2 GB Downloads folder, the 417 MB master snapshot another session left in Temp, and the retired worldclim cache.
+
 ## Rollback procedure
 
-Everything is additive and nothing touches data. In continent-app, `git checkout p1-imprint` (or revert the T013 commit) removes the two new components, the three lines in App.jsx, the wiring in AccountPanel.jsx and PassModal.jsx, and the three keys in each locale. In the root repo, revert the T013 commit to restore checkout/index.ts, then redeploy the checkout function. If only the Stripe checkbox needs to go away, unset CHECKOUT_TERMS_URL and redeploy; the code path is inert without it. The deleted Temp cache is the Visual Studio installer's download cache and the installer re-downloads what it needs.
+Everything is additive and nothing touches data. The addendum commit is a pure revert: the three modals go back to rendering inline and the Imprint row leaves the phone list, which restores the two bugs. In continent-app, `git checkout p1-imprint` (or revert the T013 commit) removes the two new components, the three lines in App.jsx, the wiring in AccountPanel.jsx and PassModal.jsx, and the three keys in each locale. In the root repo, revert the T013 commit to restore checkout/index.ts, then redeploy the checkout function. If only the Stripe checkbox needs to go away, unset CHECKOUT_TERMS_URL and redeploy; the code path is inert without it. The deleted Temp cache is the Visual Studio installer's download cache and the installer re-downloads what it needs.
