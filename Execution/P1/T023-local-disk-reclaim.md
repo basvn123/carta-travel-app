@@ -1,8 +1,8 @@
-# T014 — Reclaim tens of GB locally, for free
+# T023 — Reclaim tens of GB locally, for free
 
 ## Task ID
 
-T014
+T023
 
 ## Date
 
@@ -19,7 +19,7 @@ The fifth item in the task, compacting the Docker Desktop WSL2 vhdx, is the one 
 ## Files touched
 
 **Modified:**
-- app_data/MASTERS_MANIFEST.txt (recorded the T014 deletion, the USB backup location, and an updated restore procedure)
+- app_data/MASTERS_MANIFEST.txt (recorded the T023 deletion, the USB backup location, and an updated restore procedure)
 
 **Deleted:**
 - continent-app/dist/ (build output, regenerates with `npm run build`)

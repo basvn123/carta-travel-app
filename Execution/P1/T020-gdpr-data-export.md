@@ -1,8 +1,8 @@
-# T021: GDPR Article 20 data export
+# T020: GDPR Article 20 data export
 
 ## Task ID
 
-T021
+T020
 
 ## Date
 
@@ -29,7 +29,7 @@ The gate is the same re-authentication deletion uses: type your password, or for
 **Created:**
 - `supabase/migrations/024_export_user_data.sql`
 - `continent-app/scripts/verify_data_export.mjs`
-- `Execution/P1/T021-gdpr-data-export.md`
+- `Execution/P1/T020-gdpr-data-export.md`
 
 **Modified:**
 - `continent-app/src/auth/AuthContext.jsx` (adds `exportUserData`, alongside `deleteAccount`)

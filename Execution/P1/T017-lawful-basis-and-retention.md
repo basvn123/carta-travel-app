@@ -1,4 +1,4 @@
-# T018: Add the lawful-basis table and retention periods to the privacy policy
+# T017: Add the lawful-basis table and retention periods to the privacy policy
 
 ## Date
 
@@ -21,7 +21,7 @@ The policy was last updated on 22 July 2026 and now reads 23 September 2026. Bot
 ```
 git checkout -b p1-lawful-basis-and-retention
 git add continent-app/src/components/PrivacyPolicy.jsx continent-app/src/styles.css
-git commit -m "T018: add lawful basis table and retention periods to privacy policy"
+git commit -m "T017: add lawful basis table and retention periods to privacy policy"
 ```
 
 ## Config and secrets set

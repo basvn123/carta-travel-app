@@ -1,4 +1,4 @@
-# T023: EUIPO search and the Article 30 record
+# T022: EUIPO search and the Article 30 record
 
 ## Date
 
@@ -15,7 +15,7 @@ The Article 30 record documents Carta's data processing activities, lawful bases
 ## Files touched
 
 **Created:**
-- Execution/P1/T023-trademark-and-article-30.md
+- Execution/P1/T022-trademark-and-article-30.md
 
 **Potentially modified (pending EUIPO results):**
 - additional docs/Carta/Plan/Legal/Legal.md (if registration recommendation changes the record)
@@ -93,7 +93,7 @@ Users can exercise the following rights under GDPR Arts. 15–22:
 - **Access (Art. 15):** Users can request all personal data Carta holds. Implemented: no in-app tool exists yet; users request via email to bas.vannieuwenhuyse123@gmail.com and receive JSON export within 30 days.
 - **Correction (Art. 16):** Users can edit their email and name in the Account panel.
 - **Deletion (Art. 17):** Users can delete their account and all associated data immediately from the Account panel ("Delete my account"). This triggers a Postgres cascade delete of all rows keyed to auth.uid.
-- **Portability (Art. 20):** Users can request their personal data in machine-readable format. Not yet implemented; will be added as part of T004 (GDPR export).
+- **Portability (Art. 20):** Users can request their personal data in machine-readable format. Implemented in T020 (GDPR Article 20 data export).
 - **Objection (Art. 21):** Users can object to processing for legitimate interest (analytics). Currently, users must delete their account; no per-analytics opt-out exists in-app. This is acceptable for a v1 app; a future data-minimization task may add granular preferences.
 - **Automated decision-making (Art. 22):** Not applicable. No profile-based decisions are made by Carta.
 

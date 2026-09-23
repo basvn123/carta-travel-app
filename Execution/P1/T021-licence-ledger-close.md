@@ -1,4 +1,4 @@
-# T022: Close the remaining licence ledger rows
+# T021: Close the remaining licence ledger rows
 
 ## Date
 
@@ -19,7 +19,7 @@ After verification: the Belgian operators all publish their data under open term
 - continent-app/src/data/attribution.js (four new entries)
 
 **Created:**
-- Execution/P1/T022-licence-ledger-close.md
+- Execution/P1/T021-licence-ledger-close.md
 
 ## Commands run
 
@@ -28,8 +28,8 @@ cd 'C:\Users\Gebruiker\Documents\Portfolio\Travel App'
 git checkout -b p1-licence-ledger-close
 git add docs/tos/data_licenses.md
 git add continent-app/src/data/attribution.js
-git add Execution/P1/T022-licence-ledger-close.md
-git commit -m "T022: verify Belgian operators, close ledger rows"
+git add Execution/P1/T021-licence-ledger-close.md
+git commit -m "T021: verify Belgian operators, close ledger rows"
 ```
 
 ## Config and secrets set

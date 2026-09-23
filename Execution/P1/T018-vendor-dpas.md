@@ -1,4 +1,4 @@
-# T019: Confirm vendor DPAs, especially Gemini
+# T018: Confirm vendor DPAs, especially Gemini
 
 ## Date
 
@@ -23,7 +23,7 @@ Supabase and Stripe were both clean. Supabase's DPA is Version 1, 1 August 2026,
 ## Files touched
 
 **Created:**
-- Execution/P1/T019-vendor-dpas.md
+- Execution/P1/T018-vendor-dpas.md
 
 No application, pipeline or configuration files were modified.
 
@@ -31,8 +31,8 @@ No application, pipeline or configuration files were modified.
 
 ```
 git checkout -b p1-vendor-dpas
-git add Execution/P1/T019-vendor-dpas.md
-git commit -m "T019: confirm vendor DPAs, record URLs and dates"
+git add Execution/P1/T018-vendor-dpas.md
+git commit -m "T018: confirm vendor DPAs, record URLs and dates"
 ```
 
 Verification that Cloudflare is absent from the codebase:
@@ -86,7 +86,7 @@ The privacy policy does not say that Gemini processing happens outside the EU. T
 
 The Article 30 record in Legal.md item 10 now has its processor table ready to be lifted from the register above, with the caveat that Stripe is a joint controller for fraud and compliance purposes and must not be listed as a plain processor.
 
-T028 should confirm that the Gemini billing account is attached and stays attached. This task establishes why that matters beyond the EEA use restriction: billing is what makes Paid Services status hold on its own terms, independent of any argument about where Carta is established.
+T035 should confirm that the Gemini billing account is attached and stays attached. This task establishes why that matters beyond the EEA use restriction: billing is what makes Paid Services status hold on its own terms, independent of any argument about where Carta is established.
 
 One caveat carried over from Legal.md. This is a documentation exercise, not legal advice. The Vercel plan gap is the item worth putting in front of a Belgian lawyer alongside the Imprint and the Terms of Service, because it is the one where the contract that should exist currently does not.
 
