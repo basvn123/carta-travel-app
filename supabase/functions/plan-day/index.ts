@@ -43,8 +43,8 @@
  */
 import { createClient } from 'npm:@supabase/supabase-js@2';
 import {
-  cleanText, sanitizeCandidates, sanitizeAiStops, scheduleDay, cacheKeyInput,
-  modelChain, shouldFallOver, CACHE_KEY_VERSION,
+  cleanText, sanitizeCandidates, selectCandidates, dayCentroid, sanitizeAiStops,
+  scheduleDay, cacheKeyInput, modelChain, shouldFallOver, CACHE_KEY_VERSION,
 } from './logic.mjs';
 import { consume, refund } from '../_shared/passes.mjs';
 
@@ -317,6 +317,30 @@ Deno.serve(async (req) => {
   }
   if (candidates.length < 3) return json(400, { code: 'too_few' });
 
+  // ---- prompt trim (unit economics Lever 3) ----
+  // Send Gemini the top 30 candidates by rating and proximity to the day's
+  // centroid instead of the full deck, and strip desc from everything that
+  // is not guaranteed a place. The model sequences a shortlist out of the
+  // full deck either way (the RESPONSE_SCHEMA still limits a day to about 10
+  // stops), so this changes token cost, not the plan a traveller receives.
+  // mustSee candidates and every place the traveller named by hand
+  // (mustInclude) are exempt from the cut: selectCandidates keeps them
+  // whole regardless of rank, so a named place can never be trimmed away.
+  //
+  // PROMPT_TRIM=false is the shadow-mode escape hatch for a live A/B: it
+  // restores the untrimmed candidate list so a side-by-side of trimmed vs
+  // full-deck plans can be run on real traffic once this is deployed. See
+  // the report for the exact procedure; this session could not run that
+  // A/B itself (no deploy rights, no live traffic).
+  const promptTrimEnabled = (Deno.env.get('PROMPT_TRIM') || '').toLowerCase() !== 'false';
+  const centroid = dayCentroid(candidates, stay);
+  const promptCandidates = promptTrimEnabled
+    ? selectCandidates(candidates, centroid, {
+      limit: 30,
+      keepIds: mustInclude.map((m) => m.id).filter((id): id is string => !!id),
+    })
+    : candidates;
+
   const service = createClient(SUPABASE_URL, SERVICE_KEY);
 
   // ---- quota gate (atomic, tier-aware) ----
@@ -352,9 +376,25 @@ Deno.serve(async (req) => {
   // Keyed on the CHAIN, not on whichever model happened to answer: the same
   // question must hit the same cache row whether the primary served it or a
   // fallback did, or a busy day would generate the identical plan twice.
+  //
+  // Keyed on promptCandidates (the TRIMMED deck), not the full candidates
+  // list. This is a deliberate choice, not an oversight, and it only holds
+  // because selectCandidates is deterministic: the same full deck, the same
+  // centroid and the same mustInclude ids always trim to the same 30 (or
+  // fewer) ids in the same order-independent set, so two requests that would
+  // send Gemini an identical trimmed deck are in fact asking the identical
+  // question and must share a cache row. Keying on the full deck instead
+  // would fork the cache on candidates the model never even saw: two
+  // travellers whose top-30 trims are identical but whose untrimmed decks
+  // differ (a different-sized city, a different exclusion set upstream)
+  // would needlessly pay for two generations of the same plan. Keying on the
+  // trim is only correct because the trim is provably lossless in exactly
+  // the way T039's cache-key normalisation already establishes the rule for:
+  // a distinction may leave the key only when nothing downstream can see it,
+  // and nothing downstream of this point ever sees the untrimmed deck again.
   const hash = await sha256Hex(cacheKeyInput({
     model: CHAIN.join(','), destId, month, dateISO, groupSize, pace, vibe, avoidHills,
-    freeText, lang, candidates, refine, prevStopIds: prevStops, wantEvents,
+    freeText, lang, candidates: promptCandidates, refine, prevStopIds: prevStops, wantEvents,
     profile, mustInclude,
   }));
   const { data: cached } = await service
@@ -403,7 +443,7 @@ Deno.serve(async (req) => {
   // ---- the one AI call: plain generateContent, no tools, low temperature ----
   const prompt = buildPrompt({
     city, country, dateISO, month, groupSize, pace, vibe, avoidHills, freeText, lang,
-    hasStay: !!stay, candidates, wantEvents, refine, prevStops, profile, mustInclude,
+    hasStay: !!stay, candidates: promptCandidates, wantEvents, refine, prevStops, profile, mustInclude,
   });
   // Google Search grounding is the paid feature, and the only one here that
   // reliably costs money: on Gemini 3 it bills per individual search query the
@@ -486,8 +526,13 @@ Deno.serve(async (req) => {
   try { parsed = JSON.parse(aiText); } catch { return await failed(502, { code: 'ai_bad_output' }); }
 
   // ---- server-side truth pass: validate stops, then re-time the day ----
+  // Validated against promptCandidates, the deck the model actually saw, not
+  // the full candidates list: an id that is real but was trimmed away before
+  // the prompt was built is exactly as unearned as a hallucinated one, and
+  // must be dropped the same way rather than silently let through because it
+  // happens to exist somewhere in the untrimmed deck.
   const centre = { lat: centreLat, lon: centreLon };
-  const { stops: safeStops, dropped } = sanitizeAiStops(parsed.stops, candidates, centre);
+  const { stops: safeStops, dropped } = sanitizeAiStops(parsed.stops, promptCandidates, centre);
   if (safeStops.length < 2) return await failed(502, { code: 'ai_bad_output' });
   // The traveller's own walking answer is ENFORCED here, not merely asked of
   // the model above: the prompt line is a request, this is the guarantee.

@@ -71,6 +71,87 @@ export function sanitizeCandidates(raw) {
 }
 
 /**
+ * The day's centroid, for scoring candidates by proximity. The stay or anchor
+ * point is the honest answer when one exists: it is where the day actually
+ * starts, so "close to the centroid" means "close to where the traveller
+ * begins". Lacking that, the mean of the candidate coordinates stands in,
+ * which is stable for a fixed candidate list regardless of list order.
+ */
+export function dayCentroid(candidates, stay) {
+  if (stay && Number.isFinite(stay.lat) && Number.isFinite(stay.lon)) {
+    return { lat: stay.lat, lon: stay.lon };
+  }
+  const pts = candidates.filter((c) => Number.isFinite(c.lat) && Number.isFinite(c.lon));
+  if (!pts.length) return null;
+  const lat = pts.reduce((s, c) => s + c.lat, 0) / pts.length;
+  const lon = pts.reduce((s, c) => s + c.lon, 0) / pts.length;
+  return { lat, lon };
+}
+
+/**
+ * Trim the candidate list Gemini has to read, without changing the plan a
+ * traveller receives. Lever 3 of the unit-economics plan: the ~6k input
+ * tokens per generation are dominated by the serialised candidate list, and
+ * the model sequences a shortlist out of it either way, so sending everything
+ * buys nothing. Two cuts, both reversible by construction:
+ *
+ *   - Keep at most `limit` candidates, ranked by a blend of rating (what the
+ *     catalogue thinks of a place) and proximity to the day's centroid (what
+ *     a walking day can actually reach). `keepIds` (must-see and
+ *     must-include candidates) are NEVER subject to the ranking: every one of
+ *     them is kept whatever its score, and only the remaining room in `limit`
+ *     is filled by rank. In the ordinary case (a handful of mustSee places
+ *     against dozens of candidates) the total still comes out at `limit`; it
+ *     only exceeds `limit` on the rare day where the mustSee and keepIds
+ *     count alone is larger, which is correct: a place the traveller named by
+ *     hand can never be trimmed away by a ranking that
+ *     has no idea it was asked for.
+ *   - Strip `desc` from every candidate that is not mustSee and not in
+ *     `keepIds`. The prompt only prints a place's description to help the
+ *     model choose a headline stop; a place with no chance of being a
+ *     headline does not need one to be sequenced correctly.
+ *
+ * Deterministic: the same candidates, centroid and keepIds always produce the
+ * same order and the same cut, because the only inputs are numbers already on
+ * each candidate (rating, lat, lon) and a fixed tie-break on id. That
+ * determinism is what makes trimming safe to fold into the cache key (see the
+ * comment on `cands` in cacheKeyInput): two requests that would ask for an
+ * identical trimmed deck must produce an identical deck, not one that depends
+ * on iteration order or a source of randomness.
+ *
+ * The score itself is deliberately simple and untuned: rating out of 10,
+ * minus a distance penalty that only starts to bite past a normal walking
+ * radius (5 km), scaled so it cannot swamp the rating at plausible distances.
+ * It exists to choose which 30 to keep, not to rank the day; the model and
+ * the server-side scheduler still do all of the actual sequencing.
+ */
+export function selectCandidates(candidates, centre, { limit = 30, keepIds = [] } = {}) {
+  const keep = new Set(keepIds.map((id) => String(id)));
+  const kept = candidates.filter((c) => c.mustSee || keep.has(c.id));
+  const rest = candidates.filter((c) => !c.mustSee && !keep.has(c.id));
+
+  const score = (c) => {
+    const km = centre ? (haversineKm(centre.lat, centre.lon, c.lat, c.lon) ?? 0) : 0;
+    const distPenalty = Math.max(0, km - 5) * 0.15;
+    return c.rating - distPenalty;
+  };
+  const ranked = rest
+    .map((c) => ({ c, s: score(c) }))
+    .sort((a, b) => (b.s - a.s) || (a.c.id < b.c.id ? -1 : a.c.id > b.c.id ? 1 : 0))
+    .map((x) => x.c);
+
+  const room = Math.max(0, limit - kept.length);
+  const selected = [...kept, ...ranked.slice(0, room)];
+
+  // Strip desc from everything that did not earn a guaranteed place: only a
+  // mustSee or explicitly-named candidate is worth the extra tokens a
+  // description costs.
+  return selected.map((c) => (
+    (c.mustSee || keep.has(c.id)) ? c : { ...c, desc: '' }
+  ));
+}
+
+/**
  * Validate what the model returned against what we actually offered it.
  * Catalogue stops must reference a real candidate id (their coordinates and
  * name come from OUR data, never the model's memory); external discoveries
