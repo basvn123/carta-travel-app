@@ -46,7 +46,7 @@ import {
   cleanText, sanitizeCandidates, selectCandidates, dayCentroid, sanitizeAiStops,
   scheduleDay, cacheKeyInput, modelChain, shouldFallOver, CACHE_KEY_VERSION,
 } from './logic.mjs';
-import { consume, refund } from '../_shared/passes.mjs';
+import { consume, logCapRejection, refund } from '../_shared/passes.mjs';
 
 const CORS = {
   'Access-Control-Allow-Origin': '*',
@@ -364,6 +364,11 @@ Deno.serve(async (req) => {
   const quota = await consume(service, user.id, 'plan', GLOBAL_CAP);
   if (quota.status === 'quota_check') return json(503, { code: 'quota_check' });
   if (!quota.ok) {
+    // Count the refusal before answering it. Nothing else records that this
+    // request happened: the ledger only ever grows on a grant, so without
+    // this row a day where fifty people were turned away is indistinguishable
+    // from a quiet day. Not awaited, see logCapRejection.
+    logCapRejection(service, quota.status, 'plan', quota.tier);
     return json(429, {
       code: quota.status, // 'user_cap' | 'global_cap'
       tier: quota.tier,
@@ -464,7 +469,16 @@ Deno.serve(async (req) => {
     } else {
       const g = await consume(service, user.id, 'ground', GLOBAL_CAP);
       if (g.ok) { useGrounding = true; spent.push('ground'); }
-      else groundingSkipped = g.tier === 'free' ? 'tier' : 'cap';
+      else {
+        groundingSkipped = g.tier === 'free' ? 'tier' : 'cap';
+        // A free tier has a zero grounded allowance by design, so that is not
+        // a refusal worth counting; it is the tier working. A paid tier out of
+        // grounded units is, because grounded is the surface that costs money
+        // and running out of it is the signal the allowance is priced wrong.
+        if (groundingSkipped === 'cap') {
+          logCapRejection(service, g.status, 'ground', g.tier);
+        }
+      }
     }
   }
   let aiText = '';

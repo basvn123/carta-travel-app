@@ -33,7 +33,7 @@
 import { createClient } from 'npm:@supabase/supabase-js@2';
 import { cleanText, modelChain, shouldFallOver } from '../plan-day/logic.mjs';
 import { sanitizeTownCandidates, sanitizeSuggestions, cacheKeyInput } from './logic.mjs';
-import { consume, refund, resolveTier } from '../_shared/passes.mjs';
+import { consume, logCapRejection, refund, resolveTier } from '../_shared/passes.mjs';
 
 const CORS = {
   'Access-Control-Allow-Origin': '*',
@@ -205,12 +205,18 @@ Deno.serve(async (req) => {
     // real, though: no 'ground' unit was spent, so this request must not run
     // grounded search either, and a later failure must refund the 'plan'
     // unit it actually consumed (refunding 'ground' would mint paid quota).
+    logCapRejection(service, quota.status, 'ground', quota.tier);
     quota = await consume(service, user.id, 'plan', GLOBAL_CAP);
     useGrounding = false;
     groundingSkipped = 'cap';
   }
   if (quota.status === 'quota_check') return json(503, { code: 'quota_check' });
   if (!quota.ok) {
+    // useGrounding, not kind. The degrade above rewrites quota with a 'plan'
+    // consume, so after it the refusal being reported is a plan refusal even
+    // though kind still says ground. Logging kind here would record a second
+    // ground refusal for a call that only ever asked for a plan unit.
+    logCapRejection(service, quota.status, useGrounding ? 'ground' : 'plan', quota.tier);
     return json(429, {
       code: quota.status, tier: quota.tier, cap: quota.cap ?? 0, used: quota.used ?? 0,
     });

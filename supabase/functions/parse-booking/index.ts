@@ -38,7 +38,7 @@ import {
   sanitizeFiles, sanitizeTripContext, sanitizeParsed, cacheKeyInput,
   safeFetchUrl, htmlToText,
 } from './logic.mjs';
-import { consume, refund } from '../_shared/passes.mjs';
+import { consume, logCapRejection, refund } from '../_shared/passes.mjs';
 
 const CORS = {
   'Access-Control-Allow-Origin': '*',
@@ -230,6 +230,7 @@ Deno.serve(async (req) => {
   const quota = await consume(service, user.id, 'plan', GLOBAL_CAP);
   if (quota.status === 'quota_check') return json(503, { code: 'quota_check' });
   if (!quota.ok) {
+    logCapRejection(service, quota.status, 'plan', quota.tier);
     return json(429, {
       code: quota.status, // 'user_cap' | 'global_cap'
       tier: quota.tier,

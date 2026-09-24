@@ -102,3 +102,29 @@ export async function resolveTier(service, userId) {
   if (error || !data || data.error) return null;
   return data;
 }
+
+/**
+ * Record a quota refusal, so the admin panel can count them.
+ *
+ * A refusal writes nothing anywhere on its own: ai_consume returns the status,
+ * the caller turns it into a 429 and the fact is gone. That makes the two
+ * counts unrecoverable after the fact, because ai_usage sitting exactly at a
+ * cap looks identical whether nobody asked again or a hundred people did. The
+ * two mean opposite things. user_cap refusals are demand for a pass. global_cap
+ * refusals are the shared daily ceiling set too low, and whoever hit one got an
+ * error for a generation they had already paid for.
+ *
+ * Best-effort and never awaited by the caller's happy path: telemetry must not
+ * be able to fail or slow a traveller's request. Table is public.ai_cap_events,
+ * migration 030. No user id, deliberately; who is at their cap is already
+ * readable from the ledger, and this table only has to answer how often and to
+ * whom by tier.
+ */
+export function logCapRejection(service, reason, kind, tier) {
+  if (reason !== 'user_cap' && reason !== 'global_cap') return;
+  try {
+    service.from('ai_cap_events')
+      .insert({ reason, kind, tier: tier || null })
+      .then(() => {}, () => {});
+  } catch { /* telemetry never fails a request */ }
+}
