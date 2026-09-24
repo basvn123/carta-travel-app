@@ -44,4 +44,9 @@ for the Gemini billing posture (T035 to T038) in `P2/_OPEN-gemini-billing.md`.
 | T037-d | T037 | Part C of test_ai_quota.mjs is a source pattern check, not an execution test; it proves a branch is present in the text, never that it runs. Real coverage needs the Edge Functions exercised under Deno with a stub Supabase client, which no harness does today | next task | open | |
 | T038-a | T038 | Paste migration 028_model_fallback_events.sql into the Supabase SQL editor and apply it to the live project | user | open | 10 |
 | T038-b | T038 | Redeploy plan-day to ntssxktaduxzpsmejwyv after migration 028 is applied, so logging begins on the live function | user | open | 11 |
+| T039-a | T039 | Paste migration 029_cache_hit_instrumentation.sql into the Supabase SQL editor and apply it; nothing records a cache lookup until it exists | user | open | 12 |
+| T039-b | T039 | Redeploy plan-day to ntssxktaduxzpsmejwyv after 029 is applied, so the v5 key and the hit-rate logging both go live | user | open | 13 |
+| T039-c | T039 | Read the live hit rate off the admin panel a week after the redeploy and record it; the offline replay (48 keys to 18) is a simulation, and the first week is depressed by the v5 cache starting cold | user | open | 14 |
+| T039-d | T039 | The SQL in 029 was never executed; the local 5432 server rejects every credential (see T036-c), so it was checked by reading only and a syntax error would surface at paste time | user | open | 12 |
+| T039-e | T039 | No live v4 baseline exists, because the old key was never instrumented; if a real before-and-after matters more than a week of the saving, apply 029 and redeploy holding the key at v4 first, then ship v5 | user | open | |
 | P2-merge | T034 | Merge the p2 branches in stack order (T030, T031, T032, T033, T034) in both repos; continent-app holds unrelated uncommitted work first | user | open | 5 |
