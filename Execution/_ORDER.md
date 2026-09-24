@@ -36,6 +36,7 @@ One task, one Claude Code session, one report. Tick a line when its report exist
 | T024 | Move off Vercel Hobby to Cloudflare Pages | P1 | Opus 5 | 6 h | `Execution/P1/T024-cloudflare-pages-migration.md` |
 | T025 | Untrack generated build artifacts from git | P1 | Haiku 4.5 | 2 h | `Execution/P1/T025-untrack-build-artifacts.md` |
 | T026 | Reclaim 3.1 GB of .git via history rewrite — GATED | P1 | Opus 5 | 4 h | `Execution/P1/T026-git-history-rewrite.md` |
+| T252 | Reclaim about 900 MB of .git with gc and LFS prune, no history rewrite, after a verified mirror backup (decided 2026-09-24 from the T026 measurements) | P1 | Sonnet 5 | 1 h | `Execution/P1/T252-git-gc-and-lfs-prune.md` |
 | T027 | Delete orphaned frontend components, keep the URL logic | P1 | Haiku 4.5 | 3 h | `Execution/P1/T027-orphaned-components.md` |
 | T028 | Classify 47 pipeline scripts into three tiers | P1 | Sonnet 5 | 4 h | `Execution/P1/T028-classify-pipeline-scripts.md` |
 | T029 | Audit run_pipeline.py and expand the CI gates | P1 | Opus 5 | 8 h | `Execution/P1/T029-pipeline-audit-and-ci.md` |
