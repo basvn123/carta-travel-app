@@ -16,7 +16,11 @@
  *   supabase functions deploy stripe-webhook --no-verify-jwt
  * The Stripe signature is what authenticates the caller instead.
  *
- * Secrets: STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET.
+ * Secrets: STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET, CHECKOUT_TERMS_URL.
+ * CHECKOUT_TERMS_URL is read here only to record WHICH terms the buyer
+ * accepted, so it must hold the same value the checkout function was deployed
+ * with. Unset, passes are still granted and the consent columns stay NULL.
+ * Needs migration 025_withdrawal_waiver.sql for those columns.
  */
 import Stripe from 'npm:stripe@17';
 import { createClient } from 'npm:@supabase/supabase-js@2';
@@ -67,12 +71,40 @@ Deno.serve(async (req) => {
     return new Response(JSON.stringify({ received: true, error: 'missing user or tier' }), { status: 200 });
   }
 
+  // THE WITHDRAWAL WAIVER (T032). A pass starts the moment payment lands, so
+  // the 14-day right of withdrawal under Article 16(m) of the Consumer Rights
+  // Directive only ends if the buyer expressly asked for immediate supply and
+  // acknowledged the loss. Stripe collects that as the required checkbox set
+  // up in the checkout function, and reports the answer here as
+  // consent.terms_of_service = 'accepted'. Consent that is collected and not
+  // stored is consent we cannot produce, and a sale we cannot produce it for
+  // is refundable for 14 days, so it is recorded against the grant.
+  //
+  // The Session object carried on checkout.session.completed includes
+  // `consent` inline, so no retrieve is needed in the normal case. The
+  // fallback exists because the field is only present when
+  // consent_collection was configured on the session, and because a future
+  // API version could expand it differently. A failed retrieve is swallowed:
+  // a missing consent record must never stop a paid customer being granted
+  // what they bought.
+  let consentTos = session.consent?.terms_of_service || '';
+  if (!consentTos && session.consent_collection?.terms_of_service === 'required') {
+    try {
+      const full = await stripe.checkout.sessions.retrieve(session.id);
+      consentTos = full.consent?.terms_of_service || '';
+    } catch { /* grant anyway, with no consent on file */ }
+  }
+
   const service = createClient(env('SUPABASE_URL'), env('SUPABASE_SERVICE_ROLE_KEY'));
   const { data, error } = await service.rpc('grant_pass', {
     p_user: userId,
     p_tier: tier,
     p_session_id: session.id,
     p_customer_id: typeof session.customer === 'string' ? session.customer : null,
+    p_consent_tos: consentTos || null,
+    // The address the checkbox linked, so the stored consent names the text
+    // it was given to. Read from the same secret the checkout function used.
+    p_consent_terms_url: env('CHECKOUT_TERMS_URL') || null,
   });
 
   if (error) {
