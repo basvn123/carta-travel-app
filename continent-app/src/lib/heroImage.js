@@ -122,6 +122,31 @@ export function duplicateHeroes(destinations) {
   return drop;
 }
 
+/**
+ * How much of a photograph survives the box a card pours it into, 0..1.
+ *
+ * Both are aspect ratios, and the crop throws away whichever axis is longer
+ * relative to the box: a 3:2 photograph in a 4:3 card keeps 89 per cent, the
+ * same photograph in a 4:1 strip keeps 37, and a PORTRAIT photograph in a 4:3
+ * card keeps 50. That last case is the one this exists for. 150 of the
+ * catalogue's 3,841 heroes are portrait or square, and centred in a landscape
+ * card they show a doorway, a statue's midriff or somebody's balcony, which is
+ * why a country's cover should prefer a landscape frame even when a portrait
+ * one is better rated.
+ *
+ * Needs image.w and image.h, which pipeline/apply_image_dims.py puts on the
+ * wire. A hero with no measurements returns null: unknown is not the same as
+ * bad, and a caller should rank it below a measured good frame but above a
+ * measured bad one rather than discarding it.
+ */
+export function frameKept(image, boxRatio) {
+  const w = image?.w;
+  const h = image?.h;
+  if (!w || !h || !boxRatio) return null;
+  const ar = w / h;
+  return Math.min(ar, boxRatio) / Math.max(ar, boxRatio);
+}
+
 /** The two letters the placeholder shows when there is no usable photo. */
 export function initials(city) {
   const words = String(city || '').replace(/\s*\([^)]*\)\s*$/, '').trim().split(/[\s'-]+/);

@@ -1,5 +1,6 @@
 import React from 'react';
 import { useI18n } from '../i18n/index.jsx';
+import { SheetShell } from './SheetShell.jsx';
 
 /**
  * The system, explained on the page itself (PLAN.md C8).
@@ -30,6 +31,7 @@ export function TierLegend({ data }) {
     try { return localStorage.getItem(SEEN_KEY) === '1'; } catch { return false; }
   });
   const [why, setWhy] = React.useState(false);
+  const whyRef = React.useRef(null);
 
   const model = data?.meta?.rating_model || {};
   const cuts = model.tier_cutoffs || {};
@@ -75,15 +77,51 @@ export function TierLegend({ data }) {
           <span className="tierlegend-count mono"><span>{counts.gem}</span></span>
         </span>
         <span className="tierlegend-actions">
-          <button className="tierlegend-why" onClick={() => setWhy((v) => !v)}
-            aria-expanded={why}>
+          {/* The explainer is a real button on the row's baseline, and it
+              opens the method in the app's sheet. Inline, it reflowed the
+              legend under itself and pushed the grid down a paragraph. */}
+          <button className="tierlegend-why" onClick={() => setWhy(true)}
+            ref={whyRef} aria-haspopup="dialog" aria-expanded={why}>
+            <span className="tierlegend-why-mark" aria-hidden="true">?</span>
             {t('legend.how')}
           </button>
           <button className="tierlegend-x" onClick={() => set(true)}
             aria-label={t('legend.dismiss')} title={t('legend.dismiss')}>×</button>
         </span>
       </div>
-      {why && <p className="tierlegend-method">{t('rating.method')}</p>}
+      {why && (
+        <SheetShell
+          title={t('legend.how')}
+          onClose={() => setWhy(false)}
+          anchorRef={whyRef}
+          width={460}
+          className="tiersheet"
+          labelId="tiersheet-title"
+          closeLabel={t('legend.closeMethod')}
+        >
+          <div className="tiersheet-body">
+            <p className="tiersheet-method">{t('rating.method')}</p>
+            <div className="tiersheet-rows">
+              {[3, 2, 1].map((tier) => (
+                <span key={tier} className="tiersheet-row">
+                  <span className={`tierlegend-mark tl-${tier}`} aria-hidden="true" />
+                  <span className="tiersheet-name">{t(`rating.tier${tier}`)}</span>
+                  <span className="tiersheet-cut">
+                    {cuts[String(tier)]
+                      ? t('legend.cutCount', { cut: Number(cuts[String(tier)]).toFixed(1), n: counts[tier] })
+                      : counts[tier]}
+                  </span>
+                </span>
+              ))}
+              <span className="tiersheet-row">
+                <span className="tierlegend-mark tl-gem" aria-hidden="true" />
+                <span className="tiersheet-name">{t('legend.gem')}</span>
+                <span className="tiersheet-cut">{counts.gem}</span>
+              </span>
+            </div>
+          </div>
+        </SheetShell>
+      )}
     </aside>
   );
 }

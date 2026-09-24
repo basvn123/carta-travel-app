@@ -3,6 +3,7 @@ import { HeroImage } from '../components/HeroImage.jsx';
 import { ScoreChip, tierClass } from '../components/RatingBadge.jsx';
 import { CountryFlag } from '../components/CountryFlag.jsx';
 import { ChevronRightIcon } from '../components/Icons.jsx';
+import { Fold } from './Fold.jsx';
 
 /**
  * Editorial rails (PLAN.md C5): the first screen stops being a rating sort.
@@ -84,7 +85,10 @@ function Rail({ r, onSelect, t }) {
   return (
     <section className="xrails-rail" aria-label={r.title}>
       <div className="xrails-head">
-        <h3 className="xrails-title">{r.title}</h3>
+        <div className="xrails-headings">
+          <h3 className="xrails-title">{r.title}</h3>
+          {r.sub && <p className="xrails-sub">{r.sub}</p>}
+        </div>
         <button type="button" className="xrails-all" onClick={r.seeAll}>
           {t('rail.seeAll', { n: r.rows.length })}
         </button>
@@ -110,22 +114,36 @@ function Rail({ r, onSelect, t }) {
 
 export function ExploreRails({ rails, onSelect, t, lead = LEAD }) {
   const visible = rails.filter((r) => r.rows.length >= 4);
-  if (!visible.length) return null;
   const strips = visible.slice(0, lead);
   const doors = visible.slice(lead);
+  // P4.4: the doors fold like every other section in the app, same
+  // component, same chevron, same animation.
+  const [openDoors, setOpenDoors] = React.useState(false);
+  if (!visible.length) return null;
   return (
     <div className="xrails">
       {strips.map((r) => <Rail key={r.key} r={r} onSelect={onSelect} t={t} />)}
       {doors.length > 0 && (
-        <div className="xrails-more" role="group" aria-label={t('explore.moreRails')}>
-          <span className="xrails-more-label">{t('explore.moreRails')}</span>
-          {doors.map((r) => (
-            <button key={r.key} type="button" className="xrails-more-chip" onClick={r.seeAll}>
-              <span>{r.title}</span>
-              <span className="xrails-more-n">{r.rows.length}</span>
-            </button>
-          ))}
-        </div>
+        <Fold
+          id="sec-morerails"
+          title={t('explore.moreRails')}
+          summary={t('explore.moreRailsSummary', { n: doors.length })}
+          open={openDoors}
+          onToggle={() => setOpenDoors((v) => !v)}
+          className="xrails-more-fold"
+        >
+          <div className="xrails-more" role="group" aria-label={t('explore.moreRails')}>
+            {/* A door is a chip: it takes the rail's short label, never the
+                full self-explaining title, which is a sentence. */}
+            {doors.map((r) => (
+              <button key={r.key} type="button" className="xrails-more-chip" onClick={r.seeAll}
+                title={r.sub || undefined}>
+                <span>{r.short || r.title}</span>
+                <span className="xrails-more-n">{r.rows.length}</span>
+              </button>
+            ))}
+          </div>
+        </Fold>
       )}
     </div>
   );

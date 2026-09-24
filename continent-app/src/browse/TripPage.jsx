@@ -1,4 +1,4 @@
-import React, { lazy, Suspense, useEffect, useMemo, useState } from 'react';
+import React, { lazy, Suspense, useEffect, useMemo, useRef, useState } from 'react';
 import {
   ArrowLeftIcon, ShareIcon, RouteIcon, LoopIcon, BedIcon, TrainIcon,
   CarIcon, BusIcon, CalendarIcon, MapPinIcon, AlertIcon, CheckIcon,
@@ -10,6 +10,8 @@ import { CountryFlag } from '../components/CountryFlag.jsx';
 import { srcSetFor, fallbackSrc } from '../lib/heroImage.js';
 import { RatingBadge } from '../components/RatingBadge.jsx';
 import { useI18n } from '../i18n/index.jsx';
+import { useFocusTrap } from '../hooks/useFocusTrap.js';
+import { FavStar } from '../components/FavStar.jsx';
 import { eur } from '../lib/format.js';
 import { loadTrip, tripShareUrl } from '../lib/trips.js';
 import { creditFor } from '../lib/imageCredit.js';
@@ -264,8 +266,21 @@ function DayCard({ day, detail, t }) {
   );
 }
 
-export function TripPage({ trip: card, data, onClose, onOpenInPlanner, onSelectDest }) {
+export function TripPage({
+  trip: card, data, onClose, onOpenInPlanner, onSelectDest, fav = false, onFav = null,
+  // What the big button under the facts does, when the caller wants it to do
+  // something other than "open in planner". The trip planner passes
+  // {label, onClick} so its own copy reads "Choose this trip" and choosing
+  // closes the page and moves the wizard on, rather than handing the trip to a
+  // planner the traveller is already standing in.
+  primaryAction = null,
+}) {
   const { t } = useI18n();
+  // This page had no focus management and no Escape at all, while still
+  // telling a screen reader it was modal. See hooks/useFocusTrap.js.
+  const pageRef = useRef(null);
+  const backRef = useRef(null);
+  useFocusTrap(pageRef, onClose, { initialFocusRef: backRef });
   const [detail, setDetail] = useState(null);
   const [failed, setFailed] = useState(false);
   const [selected, setSelected] = useState(null);
@@ -337,15 +352,17 @@ export function TripPage({ trip: card, data, onClose, onOpenInPlanner, onSelectD
     : null;
 
   return (
-    <div className="tpage itin-page" role="dialog" aria-modal="true">
+    <div className="tpage itin-page" role="dialog" aria-modal="true"
+      aria-label={ready ? tripHeadline(trip, t) : t('trip.loading')} ref={pageRef}>
       <div className="tpage-bar">
-        <button type="button" className="tpage-back" onClick={onClose}>
+        <button type="button" className="tpage-back" onClick={onClose} ref={backRef}>
           <ArrowLeftIcon size={15} />
           <span>{t('trip.back')}</span>
         </button>
         <span className="tpage-bar-title on">
           {ready ? tripHeadline(trip, t) : t('trip.loading')}
         </span>
+        <FavStar on={fav} onToggle={onFav} />
         <button type="button" className="tpage-bar-act" onClick={onShare}
           aria-label={t('trip.shareLink')}>
           <ShareIcon size={15} />
@@ -427,7 +444,13 @@ export function TripPage({ trip: card, data, onClose, onOpenInPlanner, onSelectD
           </div>
           )}
 
-          {onOpenInPlanner && detail && (
+          {primaryAction && detail && (
+            <button type="button" className="itin-use" onClick={() => primaryAction.onClick(detail || card)}>
+              <CheckIcon size={15} />
+              <span>{primaryAction.label}</span>
+            </button>
+          )}
+          {!primaryAction && onOpenInPlanner && detail && (
             <button type="button" className="itin-use" onClick={() => onOpenInPlanner(detail || card)}>
               <PlusIcon size={15} />
               <span>{t('trip.openInPlanner')}</span>

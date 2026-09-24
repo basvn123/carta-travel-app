@@ -1,0 +1,1829 @@
+{
+  "layer": "mountains",
+  "generated_at": "2026-09-16T17:13:32.068Z",
+  "wikidata_checked": true,
+  "items": 2359,
+  "items_flagged": 298,
+  "findings_total": 301,
+  "failure_modes": {
+    "no_image": 294,
+    "coords_low_precision": 6,
+    "wikidata_class_unverified": 1
+  },
+  "severity": {
+    "medium": 300,
+    "low": 1
+  },
+  "findings": [
+    {
+      "id": "al-mount-trojan-Q6737351",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "al-mesi-mountain-Q6743331",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "al-bogicevica-Q3299979",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "al-dambenska-planina-Q106157200",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "al-mali-i-lopes-Q6743329",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "al-kendrevica-Q8536495",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "al-mali-i-miles-Q22002833",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "al-grebeni-Q6737366",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "al-mali-i-kulmakut-Q16867986",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "al-maja-e-frasherit-Q22005040",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "at-rettlkirchspitze-Q876513",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "ba-ujilica-Q7878202",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "ba-bjelasnica-bileca-Q4101345",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "ba-rujiste-Q7378831",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "ba-mrakovica-Q12755774",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "ba-jadovnik-lisina-Q12747545",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "ba-velika-jastrebica-Q446069",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "ba-glusac-Q390872",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "ba-zimomor-Q21715415",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "ba-mala-ljubisnja-Q21744311",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "be-schwirzbierg-Q21771824",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "be-col-de-roche-a-frene-Q19947273",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "bg-milevska-planina-Q6851658",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "bg-vrashka-chuka-Q3396191",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "bg-scheynovets-Q12299321",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "bg-gyftokastro-Q20500600",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "bg-golyam-persenk-Q3110295",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "bg-gotsev-vrah-peak-Q12277264",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "bg-manastirishte-Q12285797",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "bg-popov-dyal-Q21779379",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "bg-bratan-Q2012598",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "bg-razbojna-Q11833913",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "bg-ogreyak-Q6547737",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "cy-mount-selvili-Q6578056",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "cy-kavallaropetra-Q22986973",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "cy-kefales-Q22986893",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "es-zalama-Q9097437",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "es-amariedo-Q11905264",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "es-las-empanadas-Q5970399",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "fi-koli-finland-Q13360737",
+      "check": "coords_low_precision",
+      "severity": "medium",
+      "message": "Coordinates 63.1,29.8 are rounded to a tenth of a degree, about 11 km of slop"
+    },
+    {
+      "id": "fi-rajapaa-Q31694059",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "fi-mallatunturit-Q11880696",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "fo-trollkonufingur-Q2457211",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "fr-pic-de-serrere-Q11941547",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "fr-pic-schrader-Q2092038",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "gr-mount-ossa-greece-Q1471677",
+      "check": "coords_low_precision",
+      "severity": "medium",
+      "message": "Coordinates 39.8,22.7 are rounded to a tenth of a degree, about 11 km of slop"
+    },
+    {
+      "id": "gr-xerovouni-Q3555829",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "gr-voio-Q3556849",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "gr-gyftokastro-Q20500600",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "gr-antichasia-Q574974",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "gr-arachnaion-Q17521327",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "gr-oligyrtos-Q7086865",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "gr-vrontous-Q3555954",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "gr-atheras-Q755470",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "gr-karava-Q24921337",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "gr-cambunian-mountains-Q3565330",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "gr-karvounis-Q12878777",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "hr-dilj-Q1559425",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "hr-strahinjcica-Q10681491",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "hr-promina-mountain-Q3511054",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "hr-mosec-Q14537105",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "hr-ozeblin-Q3359206",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "hr-pozeska-gora-Q3514528",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "hr-japetic-Q16110441",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "hr-bat-Q112671934",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "hr-krndija-Q136911",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "hr-ravna-gora-mountain-Q3437056",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "hr-seliski-vrh-Q3478139",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "ie-knockalongy-Q6422817",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "is-hafratindur-Q27014397",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "is-klofningsfjall-Q16430485",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "is-grjotskalarhnjukur-osmn4359326367",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "is-bjarnarfjall-Q27008775",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "is-stalfjall-Q16427639",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "is-langadalsfjall-Q16419903",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "is-straumnesfjall-Q16427561",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "it-cervialto-Q3861439",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "it-cervati-Q1139820",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "it-monte-petrella-Q3861840",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "md-movila-sfatului-osmn12996381391",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "me-ilijina-glava-Q22012025",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "me-bandera-krivi-smet-Q9368927",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "me-greben-Q27559641",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "me-kapa-moracka-Q11735019",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "me-suvi-vrh-Q27568077",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "me-kula-Q27559343",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "me-dernjacista-Q11693963",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "me-jelin-vrh-Q27559282",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "me-vojnik-Q3562540",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "me-babin-vrh-Q9163789",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "me-surdup-Q3505191",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "me-njegos-mountain-Q6589578",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "me-ravna-vlaka-Q27558629",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "mk-ogreyak-Q6547737",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "mk-slepcaren-Q20943157",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "mk-peren-Q118396449",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "mk-selechka-mountain-Q12758760",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "mk-goljak-Q20932108",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "mt-ta-dbiegi-Q20922960",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "no-ristacohkka-Q11250682",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "no-knutshoa-Q11249180",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "no-elgspiggen-Q950103",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "no-beahcegealhaldi-Q17750016",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "no-kvigtinden-Q12716355",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "no-graho-lesja-Q1773136",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "no-heimdalshoe-Q3442860",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "no-dyrtjornhoe-Q3442098",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "no-rohkunborri-Q11250505",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "no-raisduottarhaldi-Q10658379",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "no-folarskardnuten-Q1435305",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "no-flakavassnutane-Q11251098",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "no-geittinden-Q11971767",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "no-russetinden-Q12716546",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "no-berdalseken-Q11234901",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "no-raudbergsnuten-Q11234825",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "no-blatinden-Q5042627",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "no-nordmannviktinden-Q11991878",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "no-keipen-Q65276661",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "no-nordre-langsua-Q31529531",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "no-rivenoskulen-Q3442955",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "no-suliskongen-Q3445227",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "no-elgahogna-Q17769457",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "no-viglen-Q19403260",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "no-grafjell-Q17779147",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "no-halkavarri-Q3445004",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "no-cuderassa-Q31707455",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "no-hornflagan-Q3441782",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "no-blakollen-Q22117079",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "no-biergnatjahkka-Q11249082",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "no-solvagtinden-Q19389625",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "no-hartkjolen-Q1616061",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "no-saukampen-nord-fron-Q3442074",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "no-kyrkjenuten-Q11236641",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "no-hustveitsata-Q19374992",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "no-skala-Q19389162",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "no-hogafjellet-Q5964751",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "no-vennisfjellet-Q3442572",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "no-blafjellet-Q11961675",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "no-tjeldviktinden-Q19392608",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "no-dyrstolan-Q19372607",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "no-snokolla-Q4572028",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "no-storkjolhaugen-Q11981046",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "no-brannheiklumpen-Q17750843",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "no-fresvikbreen-Q4568138",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "no-sordalsnuten-Q21686017",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "no-melkfjellet-Q19381326",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "no-vuaksantjanke-Q11237731",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "no-skogeroytoppen-Q7536124",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "no-storskarven-Q11246080",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "no-nordtoven-Q31630233",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "no-snofjelltinden-Q19389479",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "no-borgsjabrotet-Q17750776",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "no-huvhpie-Q19388948",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "no-loysmundhatten-Q11987356",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "no-kjerringklumpen-Q11980954",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "no-lammanuten-Q11983028",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "no-store-skykula-Q20555661",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "no-lysingen-Q20107463",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "no-nystolsvarden-Q4575588",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "no-ofjellet-Q19399258",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "no-botnafjellet-osmn26862608",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "no-kvannfjolli-Q11982611",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "no-saebyggjenuten-Q4585395",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "no-sorbolfjellet-Q7666515",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "no-gyranfisen-Q10958076",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "no-tverrfjellet-Q12007989",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "no-urdalsknuten-Q4560175",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "no-myrehogget-Q11990340",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "no-gronkleppen-Q21686011",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "no-midtiklumpen-Q1932059",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "no-vuorji-Q19398396",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "no-ostrehogna-Q12011928",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "no-folgefonni-osmn26862880",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "no-hoglikka-Q31791267",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "no-store-tromsfjellet-Q12003407",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "no-beingardsheia-Q21473994",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "no-jorpetjahke-Q24288079",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "no-fuglstadfjellet-Q20871212",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "no-napuren-Q11990862",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "no-befjell-Q24452544",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "no-reinsjofjellet-Q11997492",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "no-olsskavlen-Q31470661",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "no-bergeheii-Q3438768",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "no-ornemyrfjellet-Q21614189",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "no-gitvola-Q21683600",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "no-joronnatten-Q20112395",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "no-sveinsheii-Q20570966",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "no-forheinutane-Q31670233",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "no-holshaugen-Q31386361",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "pt-arrabida-mountain-Q3479904",
+      "check": "coords_low_precision",
+      "severity": "medium",
+      "message": "Coordinates 38.5,-9 are rounded to a tenth of a degree, about 11 km of slop"
+    },
+    {
+      "id": "pt-pisco-Q31798881",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "pt-monte-sobrado-Q31797822",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "pt-cerro-da-madeira-Q31797194",
+      "check": "coords_low_precision",
+      "severity": "medium",
+      "message": "Coordinates 37.4,-8.2 are rounded to a tenth of a degree, about 11 km of slop"
+    },
+    {
+      "id": "pt-cerro-da-madeira-Q31797194",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "pt-alto-do-picoto-Q31249313",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "pt-serra-dos-covoes-Q34905258",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "pt-flor-da-rosa-Q31798351",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "pt-cabeco-do-souto-Q34836521",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "pt-serra-do-rabacal-Q10370500",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "pt-picoto-da-teixugueira-Q31493265",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "pt-cabeco-do-mouro-Q31249409",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "ro-mount-hnatasya-Q23972",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "ro-bodoc-mountains-Q832975",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "ro-varful-vladeasa-Q15715565",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "ro-muntii-gilaului-Q1029107",
+      "check": "coords_low_precision",
+      "severity": "medium",
+      "message": "Coordinates 46.5,23.3 are rounded to a tenth of a degree, about 11 km of slop"
+    },
+    {
+      "id": "ro-muntii-gilaului-Q1029107",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "ro-izvorul-calimanului-Q1106112",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "ro-varfu-lui-patru-muntii-sureanu-Q18547247",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "ro-varful-omu-muntii-suhard-Q18544549",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "ro-neniska-velyka-Q975402",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "ro-hora-stih-Q2358215",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "ro-varful-cindrel-muntii-cindrel-Q12743747",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "ro-varful-caleanu-muntii-tarcu-Q18539539",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "ro-varful-gugu-muntii-godeanu-Q12743765",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "ro-palenica58-Q23970",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "ro-poiana-teslei-Q29408446",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "rs-zljeb-Q3623943",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "rs-zvijezda-mountain-near-drina-Q3576325",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "rs-crni-vrh-jagodina-Q1263329",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "rs-kalafat-mountain-Q3192075",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "rs-vrashka-chuka-Q3396191",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "rs-blagojev-kamen-Q2580686",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "se-moskkoggaisi-Q23839384",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "se-ostrehogna-Q12011928",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "se-ryfjallet-Q19387117",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "se-gurdustjakke-Q31521161",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "se-somlinghagna-Q23846099",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "se-fjatervalen-Q10496125",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "se-hundshogen-Q10527186",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "se-fierras-Q17770914",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "se-tsaktso-Q23846547",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "se-geudelstjakko-Q31522232",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "se-atoklimpen-Q10421695",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "se-sipmektinden-Q11256141",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "se-brattriet-Q31524350",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "se-rodfjallet-Q31511010",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "se-gieltantjakke-Q31522145",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "se-rerrogaise-Q31511285",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "se-stora-alke-Q31507495",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "se-salmmecohkat-Q19399610",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "se-nasfjallet-Q3880003",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "se-strajdastjahkka-Q21795325",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "se-kabrek-Q31519260",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "se-jenjenjetjem-Q31519787",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "se-gruoneke-Q31521342",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "sk-skorusina-Q1391985",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "sk-flochova-Q3498552",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "sk-eliasovka-Q2026062",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "sk-smilniansky-vrch-Q9338659",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "sm-monte-cucco-osmn7133770701",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "sm-monte-carlo-Q3498210",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "sm-montelupo-osmn7179902894",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "fi-koli-finland-Q13360737",
+      "check": "coords_low_precision",
+      "severity": "medium",
+      "message": "Coordinates 63.1,29.8 are rounded to a tenth of a degree, about 11 km of slop"
+    },
+    {
+      "id": "ua-menchul-Q13667714",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "ua-dunavka-Q166143",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "ua-makovytsia-Q4275894",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "ua-antalovetska-polyana-Q3566284",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "ua-stinska-Q108887444",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "ua-koman-Q23981",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "ua-tomnatyk-Q12161893",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "ua-kateryna-osmn1803871765",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "ua-magura-limnianska-Q31521112",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "ua-sotyra-mount-Q12154696",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "ua-gora-tay-koba-Q12159749",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "ua-tez-bair-Q112222397",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "ua-apetska-Q4067993",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "ua-opresha-osmn1762222956",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "ua-buzhora-Q4098320",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "ua-plishka-osmn4326918890",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "ua-syhlanski-Q20092971",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "ua-skupova-Q4422731",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "ua-roztitska-Q4398569",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "ua-bila-kobyla-Q4081618",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "ua-khorde-Q4499890",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "ua-mahura-Q4274211",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "ua-chyvchyn-Q4515640",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "ua-mica-mare-Q975402",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "ua-stogu-Q2358215",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "ua-baba-liudova-Q4074111",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "ua-pohrebyna-Q24418",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "ua-yarovytsia-Q4538703",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "ua-velykyi-vyzhen-Q31519553",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "ua-zadnia-Q16618465",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "ua-chornyi-hrun-Q114205",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "ua-dvorelets-verkhnii-osmn1844170930",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "ua-diel-osmn615537931",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "xk-krkina-cuka-osmn5337584795",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "xk-vojetin-Q27340581",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "xk-beleg-mountain-peak-Q4882150",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "xk-goles-Q27344005",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "xk-kitka-kosovo-Q27341978",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "xk-biljak-Q31501283",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "xk-buzovik-Q27343506",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "xk-koznica-Q3658768",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "xk-planica-Q27340507",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "xk-lipovica-peak-in-kosovo-Q16894159",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "xk-cukara-berg-i-kosovo-lat-43-03-long-20-Q27343409",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "xk-ledinci-osmn8895146822",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "xk-serendija-Q27343631",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "xk-branista-Q27343201",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "dk-flintebjerg-Q129853884",
+      "check": "wikidata_class_unverified",
+      "severity": "low",
+      "message": "Wikidata Q129853884 instance-of Q10460934 is not on the accepted list for mountains; needs a subclass walk to confirm",
+      "qid": "Q129853884",
+      "p31": [
+        "Q10460934"
+      ]
+    }
+  ]
+}

@@ -635,7 +635,6 @@ export async function downloadDestinationPdf({
       rule();
       y += 1.2;
     }
-    para(T('dest.parkSource'), { size: 8, color: C.mute });
   }
 
   // ------------------------------------------------------------ before you go
@@ -675,7 +674,6 @@ export async function downloadDestinationPdf({
       linkText(url, url, M + 34, y + 0.4, 7.5);
       y += lh(9) + 1.4;
     }
-    para(T('explore.furtherNote'), { size: 8, color: C.mute });
   }
 
   // ------------------------------------------------------------ credits

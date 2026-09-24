@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Placeholder. Today the app is a single client-rendered URL, so this is the
+     only page a crawler can reach. scripts/prerender.mjs (see the optimization
+     report) replaces this with a sitemap index over the per-destination,
+     per-region and per-layer static pages once path routing lands. -->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://www.carta-europetravel.com/</loc>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+  </url>
+</urlset>

@@ -62,6 +62,25 @@ const URL = RAW_URL + (RAW_URL.includes('?') ? '&' : '?') + 'paymock';
 // the bug this layer removed.
 const CC = (process.argv[3] || 'SI').toUpperCase();
 
+// The country filter is no longer a <select>. It is a button that opens a
+// search-and-listbox popover (src/components/CountryPicker.jsx), so
+// selectOption() throws "Element is not a <select> element" and took the
+// whole run down before the first check. The popover lists countries by
+// NAME, so the code this harness is parameterised by is resolved through
+// Intl rather than a hand-kept table that would rot the next time a country
+// is added.
+const COUNTRY_NAME = new Intl.DisplayNames(['en'], { type: 'region' });
+async function pickCountry(scope, cc) {
+  const name = COUNTRY_NAME.of(cc);
+  await scope.locator('.places-country:visible').first().click();
+  await scope.waitForTimeout(400);
+  const pop = scope.locator('.country-picker-pop:visible');
+  await pop.locator('.origin-search').fill(name);
+  await scope.waitForTimeout(400);
+  await pop.locator('.origin-opt', { hasText: new RegExp(`^${name}$`, 'i') }).first().click();
+  await scope.waitForTimeout(1800);
+}
+
 const browser = await chromium.launch();
 const checks = [];
 const check = (label, ok, note = '') => { checks.push({ label, ok, note }); };
@@ -105,7 +124,7 @@ await page.locator(CAT, { hasText: /trails/i }).click();
 await page.waitForTimeout(1000);
 check('trails category opens', await page.locator('.places-tab').isVisible());
 
-await page.locator('.places-country:visible').selectOption(CC);
+await pickCountry(page, CC);
 await page.waitForTimeout(2500);
 
 const cards = page.locator('.places-tcard');
@@ -289,7 +308,7 @@ await phone.locator('.bottom-nav-item', { hasText: /destinations/i }).first().cl
 await phone.waitForTimeout(1200);
 await phone.locator(CAT, { hasText: /trails/i }).click();
 await phone.waitForTimeout(900);
-await phone.locator('.places-country:visible').selectOption(CC);
+await pickCountry(phone, CC);
 await phone.waitForTimeout(2500);
 check('phone: trail cards render', await phone.locator('.places-tcard').count() > 5);
 check('phone: the filter rail is there',

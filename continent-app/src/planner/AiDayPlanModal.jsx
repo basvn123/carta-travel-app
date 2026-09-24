@@ -3,10 +3,12 @@ import { useI18n } from '../i18n/index.jsx';
 import { DAY_STYLES } from './dayDraft.js';
 import { stopPhaseLabels } from './daySchedule.js';
 import { AiPlanRoute } from './AiPlanRoute.jsx';
+import { useToday, addDays, laterISO } from '../lib/dates.js';
 import {
   SparkIcon, CastleIcon, MuseumIcon, TreeIcon, DiningIcon, CameraIcon,
   CheckIcon, CalendarIcon, PersonIcon, TicketIcon,
 } from '../components/Icons.jsx';
+import { formatSteps, kmToSteps } from '../lib/steps.js';
 
 const STYLE_ICONS = {
   classic: CastleIcon, culture: MuseumIcon, active: TreeIcon,
@@ -38,7 +40,7 @@ const UPSELL_CODES = new Set(['user_cap']);
 // text box the traveller has to think of something to write in.
 const NUDGES = [
   { key: 'more', textKey: 'ai.nudgeMore' },
-  { key: 'less', textKey: 'ai.nudgeLess' },
+  { key: 'less', textKey: 'ai.nudgeFewerSteps' },
   { key: 'food', textKey: 'ai.nudgeFood' },
   { key: 'indoor', textKey: 'ai.nudgeIndoor' },
 ];
@@ -60,12 +62,22 @@ export function AiDayPlanModal({
   city, dayNumber, dateISO, groupSize, signedIn, onRun, onApply, onFallback, onClose,
   entitlement, onOpenPass, preset = null,
 }) {
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
   const [vibe, setVibe] = useState(preset?.vibe || 'mix');
   const [pace, setPace] = useState(preset?.pace || 'balanced');
   const [hills, setHills] = useState(false);
   const [freeText, setFreeText] = useState(preset?.freeText || '');
+  // The plan is for a day that has not happened yet: an AI asked to plan
+  // yesterday burns a generation on a day nobody can go. Live, so a dialog
+  // left open across midnight tightens with the clock rather than staying on
+  // the bound it was born with.
+  const today = useToday();
+  const dateMax = addDays(today, 365);
   const [date, setDate] = useState(dateISO || '');
+  // A prefilled date from a plan made weeks ago arrives already past.
+  useEffect(() => {
+    if (date && date < today) setDate(laterISO(date, today));
+  }, [date, today]);
   const [people, setPeople] = useState(Math.max(1, Math.min(20, groupSize || 2)));
   const [wantEvents, setWantEvents] = useState(false);
   const [phase, setPhase] = useState('form'); // form | busy | done | fail
@@ -164,8 +176,14 @@ export function AiDayPlanModal({
                 <input
                   type="date"
                   className="ai-plan-date"
+                  min={today}
+                  max={dateMax}
                   value={date}
-                  onChange={(e) => setDate(e.target.value)}
+                  // `min` stops the picker offering a past day, but a typed
+                  // date walks straight past it, so the value is clamped here
+                  // too. An empty box stays empty: clearing it is a step on
+                  // the way to typing a new one, not a choice of yesterday.
+                  onChange={(e) => setDate(e.target.value ? laterISO(e.target.value, today) : '')}
                 />
               </label>
               <label className="ai-plan-fact">
@@ -286,7 +304,11 @@ export function AiDayPlanModal({
                 walk or three?" is not a question a list can answer. */}
             <AiPlanRoute stops={result.stops} phases={stopPhases} />
             <p className="ai-plan-note">
-              {t('ai.totals', { km: result.totals?.walkKm ?? 0, t: result.totals?.endTime ?? '' })}
+              {t('ai.totalsSteps', {
+                n: result.stops?.length ?? 0,
+                steps: formatSteps(kmToSteps(result.totals?.walkKm ?? 0), lang),
+                t: result.totals?.endTime ?? '',
+              })}
               {' '}
               {result.meta?.optimized ? t('ai.optimizedNote') : t('ai.routeCheckedNote')}
             </p>

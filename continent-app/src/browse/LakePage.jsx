@@ -1,5 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useI18n } from '../i18n/index.jsx';
+import { useFocusTrap } from '../hooks/useFocusTrap.js';
+import { FavStar } from '../components/FavStar.jsx';
 import { NearbyOutdoors } from './NearbyOutdoors.jsx';
 import {
   lakeHeadline, lakeWhy, lakeTags, lakeSwim, lakeSeason, lakeHazards,
@@ -13,7 +15,9 @@ import { CountryFlag } from '../components/CountryFlag.jsx';
 import {
   ArrowLeftIcon, ShareIcon, MapPinIcon, LinkIcon, ChevronRightIcon,
   CameraIcon, BootIcon, AlertIcon,
+  SunIcon,
 } from '../components/Icons.jsx';
+import { srcSetFor, fallbackSrc } from '../lib/heroImage.js';
 
 /**
  * The lake page: one published water body, and the argument for going there.
@@ -103,19 +107,19 @@ function SeasonStrip({ temps, warmC, t }) {
   );
 }
 
-export function LakePage({ lake, countryName, onClose, onSelectDest, warmC = 18, onOpenNeighbour }) {
+export function LakePage({ lake, countryName, onClose, onSelectDest, warmC = 18, onOpenNeighbour, fav = false, onFav = null, onAddToDay = null }) {
   const { t, lang } = useI18n();
   const [shot, setShot] = useState(0);
   const [toast, setToast] = useState(null);
   const scrollEl = useRef(null);
+  const pageRef = useRef(null);
+  const backRef = useRef(null);
   const titleEl = useRef(null);
   const [titleGone, setTitleGone] = useState(false);
 
-  useEffect(() => {
-    const onKey = (e) => { if (e.key === 'Escape') onClose(); };
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
-  }, [onClose]);
+  // Focus management for the dialog: initial focus, a Tab cycle and focus
+  // restoration, not just Escape. See hooks/useFocusTrap.js.
+  useFocusTrap(pageRef, onClose, { initialFocusRef: backRef });
 
   useEffect(() => { setShot(0); scrollEl.current?.scrollTo?.(0, 0); }, [lake?.id]);
 
@@ -210,13 +214,14 @@ export function LakePage({ lake, countryName, onClose, onSelectDest, warmC = 18,
   ].filter(Boolean);
 
   return (
-    <div className="tpage bpage lpage" role="dialog" aria-modal="true" aria-label={lake.name}>
+    <div className="tpage bpage lpage" role="dialog" aria-modal="true" aria-label={lake.name} ref={pageRef}>
       <div className="tpage-bar">
-        <button type="button" className="tpage-back" onClick={onClose}>
+        <button type="button" className="tpage-back" onClick={onClose} ref={backRef}>
           <ArrowLeftIcon size={15} />
           <span>{t('lake.back')}</span>
         </button>
         <span className={`tpage-bar-title ${titleGone ? 'on' : ''}`}>{lake.name}</span>
+        <FavStar on={fav} onToggle={onFav} />
         <button type="button" className="tpage-bar-act" onClick={onShare} aria-label={t('trails.shareLink')}>
           <ShareIcon size={15} />
         </button>
@@ -241,6 +246,12 @@ export function LakePage({ lake, countryName, onClose, onSelectDest, warmC = 18,
               {lake.name}
             </h1>
             {lake.nameLocal && <p className="bpage-local">{lake.nameLocal}</p>}
+            {onAddToDay && (
+              <button type="button" className="feat-dayplan" onClick={() => onAddToDay({ id: lake.id, cc: lake.cc, name: lake.name, lat: lake.lat, lon: lake.lon })}>
+                <SunIcon size={14} />
+                <span>{t('feat.addToDay')}</span>
+              </button>
+            )}
             <div className="bpage-scorerow">
               <ScoreChip rating={rating} size="lg" />
               <span className="bpage-band">{t(`lake.band${rating.tier}`)}</span>
@@ -259,7 +270,17 @@ export function LakePage({ lake, countryName, onClose, onSelectDest, warmC = 18,
 
           {main && (
             <figure className="bpage-gallery">
-              <img className="bpage-shot" src={main.big || main.u} alt={lake.name} />
+              <img
+                className="bpage-shot"
+                src={fallbackSrc(main.big || main.u, 960)}
+                srcSet={srcSetFor(main.big || main.u, 1920)}
+                sizes="(min-width: 769px) 860px, 100vw"
+                alt={lake.name}
+                width={16}
+                height={10}
+                loading="eager"
+                decoding="async"
+              />
               {images.length > 1 && (
                 <div className="bpage-strip" role="tablist" aria-label={t('lake.photos')}>
                   {images.map((img, i) => (

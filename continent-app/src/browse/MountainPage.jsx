@@ -1,5 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useI18n } from '../i18n/index.jsx';
+import { useFocusTrap } from '../hooks/useFocusTrap.js';
+import { FavStar } from '../components/FavStar.jsx';
 import { NearbyOutdoors } from './NearbyOutdoors.jsx';
 import {
   mountainHeadline, mountainWhy, mountainTags, mountainHazards, mountainSeason,
@@ -14,7 +16,9 @@ import { CountryFlag } from '../components/CountryFlag.jsx';
 import {
   ArrowLeftIcon, ShareIcon, MapPinIcon, LinkIcon, ChevronRightIcon,
   CameraIcon, AlertIcon, MountainIcon,
+  SunIcon,
 } from '../components/Icons.jsx';
+import { srcSetFor, fallbackSrc } from '../lib/heroImage.js';
 
 /**
  * The mountain page: one published summit, and the argument for going there.
@@ -131,19 +135,19 @@ function WayUp({ mountain, t }) {
   );
 }
 
-export function MountainPage({ mountain, countryName, onClose, onSelectDest, onOpenNeighbour }) {
+export function MountainPage({ mountain, countryName, onClose, onSelectDest, onOpenNeighbour, fav = false, onFav = null, onAddToDay = null }) {
   const { t, lang } = useI18n();
   const [shot, setShot] = useState(0);
   const [toast, setToast] = useState(null);
   const scrollEl = useRef(null);
+  const pageRef = useRef(null);
+  const backRef = useRef(null);
   const titleEl = useRef(null);
   const [titleGone, setTitleGone] = useState(false);
 
-  useEffect(() => {
-    const onKey = (e) => { if (e.key === 'Escape') onClose(); };
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
-  }, [onClose]);
+  // Focus management for the dialog: initial focus, a Tab cycle and focus
+  // restoration, not just Escape. See hooks/useFocusTrap.js.
+  useFocusTrap(pageRef, onClose, { initialFocusRef: backRef });
 
   useEffect(() => { setShot(0); scrollEl.current?.scrollTo?.(0, 0); }, [mountain?.id]);
 
@@ -201,7 +205,8 @@ export function MountainPage({ mountain, countryName, onClose, onSelectDest, onO
         + `${Math.round(mountain.prom).toLocaleString(lang)} m`,
       note: mountain.promSrc === 'dem_min' ? t('mtn.factProminenceDemMin')
         : mountain.promSrc === 'dem' ? t('mtn.factProminenceDem')
-          : t('mtn.factProminenceNote'),
+          : mountain.promSrc === 'insular' ? t('mtn.factProminenceInsular')
+            : t('mtn.factProminenceNote'),
       mono: true,
     },
     mountain.diff && {
@@ -249,13 +254,14 @@ export function MountainPage({ mountain, countryName, onClose, onSelectDest, onO
   ].filter(Boolean);
 
   return (
-    <div className="tpage bpage lpage mpage" role="dialog" aria-modal="true" aria-label={mountain.name}>
+    <div className="tpage bpage lpage mpage" role="dialog" aria-modal="true" aria-label={mountain.name} ref={pageRef}>
       <div className="tpage-bar">
-        <button type="button" className="tpage-back" onClick={onClose}>
+        <button type="button" className="tpage-back" onClick={onClose} ref={backRef}>
           <ArrowLeftIcon size={15} />
           <span>{t('mtn.back')}</span>
         </button>
         <span className={`tpage-bar-title ${titleGone ? 'on' : ''}`}>{mountain.name}</span>
+        <FavStar on={fav} onToggle={onFav} />
         <button type="button" className="tpage-bar-act" onClick={onShare} aria-label={t('trails.shareLink')}>
           <ShareIcon size={15} />
         </button>
@@ -280,6 +286,12 @@ export function MountainPage({ mountain, countryName, onClose, onSelectDest, onO
               {mountain.name}
             </h1>
             {mountain.nameLocal && <p className="bpage-local">{mountain.nameLocal}</p>}
+            {onAddToDay && (
+              <button type="button" className="feat-dayplan" onClick={() => onAddToDay({ id: mountain.id, cc: mountain.cc, name: mountain.name, lat: mountain.lat, lon: mountain.lon })}>
+                <SunIcon size={14} />
+                <span>{t('feat.addToDay')}</span>
+              </button>
+            )}
             <div className="bpage-scorerow">
               <ScoreChip rating={rating} size="lg" />
               <span className="bpage-band">{t(`mtn.band${rating.tier}`)}</span>
@@ -298,7 +310,17 @@ export function MountainPage({ mountain, countryName, onClose, onSelectDest, onO
 
           {main && (
             <figure className="bpage-gallery">
-              <img className="bpage-shot" src={main.big || main.u} alt={mountain.name} />
+              <img
+                className="bpage-shot"
+                src={fallbackSrc(main.big || main.u, 960)}
+                srcSet={srcSetFor(main.big || main.u, 1920)}
+                sizes="(min-width: 769px) 860px, 100vw"
+                alt={mountain.name}
+                width={16}
+                height={10}
+                loading="eager"
+                decoding="async"
+              />
               {images.length > 1 && (
                 <div className="bpage-strip" role="tablist" aria-label={t('mtn.photos')}>
                   {images.map((img, i) => (

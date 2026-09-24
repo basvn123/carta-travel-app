@@ -22,6 +22,10 @@ import { fetchFriendLinks, listFriendTrips } from './friends.js';
 import { kindsForDest } from '../lib/trip_kinds.js';
 import { eur } from '../lib/format.js';
 import { useI18n } from '../i18n/index.jsx';
+import { useFavoriteItems } from '../hooks/useFavoriteItems.js';
+import { FAV_KIND_LABEL, parseFavKey } from '../lib/favorites.js';
+import { srcSetFor, fallbackSrc } from '../lib/heroImage.js';
+import { E2E_SEAMS } from '../lib/e2eSeams.js';
 
 // The mini map at the top of Planned trips rides on the same code-split chunk
 // as the big map: opening the panel before the map tab must not stall on
@@ -55,7 +59,7 @@ function addDaysIso(offset) {
 // fixture favorites and trip plans stand in for the Supabase tables so the
 // account-only card shapes render in headless checks. Display only, never on
 // for real users unless they type the flag themselves.
-const SAVED_MOCK = typeof window !== 'undefined'
+const SAVED_MOCK = E2E_SEAMS && typeof window !== 'undefined'
   && new URLSearchParams(window.location.search).has('savedmock');
 const MOCK_FAVS = [
   { id: 'mf1', destination_id: 'LIS', city: 'Lisbon', country: 'Portugal', depart_date: addDaysIso(34), return_date: addDaysIso(38), created_at: addDaysIso(-12) },
@@ -253,12 +257,8 @@ function FavCard({ trip, img, dates, kind, savedOn, onOpen, openTitle, onDelete,
   return (
     <div className="fav-card">
       <button className="fav-card-open" onClick={onOpen} title={openTitle}>
-        <span
-          className={`fav-card-photo${img ? '' : ' is-fallback'}`}
-          style={img ? { backgroundImage: `url(${img})` } : undefined}
-          aria-hidden="true"
-        >
-          {!img && <MapPinIcon size={22} />}
+        <span className={`fav-card-photo${img ? '' : ' is-fallback'}`} aria-hidden="true">
+          {img ? <ShotPhoto url={img} className="fav-card-img" /> : <MapPinIcon size={22} />}
         </span>
         <span className="fav-card-shade" aria-hidden="true" />
         {hasFlag && (
@@ -299,6 +299,84 @@ function FavCard({ trip, img, dates, kind, savedOn, onOpen, openTitle, onDelete,
           </div>
         </div>
       )}
+    </div>
+  );
+}
+
+/**
+ * ShotPhoto, the one way an image is drawn in this panel.
+ *
+ * Every picture here used to be a background-image on a span, which means the
+ * browser cannot pick a size, cannot lazy-load it and cannot reserve the box:
+ * each card downloaded one arbitrary width and reflowed when it landed. This
+ * is the CardPhoto pattern from the Destinations tab instead - a real <img>
+ * with a srcSet, a sizes hint and intrinsic dimensions as the ASPECT (CSS
+ * sizes the element; the pair only reserves the space).
+ *
+ * One aspect for everything, so the record reads as a record rather than a
+ * pile of differently-shaped photographs.
+ */
+const SHOT_SIZES = '(min-width: 769px) 360px, 50vw';
+
+function ShotPhoto({ url, className, alt = '' }) {
+  if (!url) return null;
+  return (
+    <img
+      className={className}
+      src={fallbackSrc(url, 500)}
+      srcSet={srcSetFor(url, 960)}
+      sizes={SHOT_SIZES}
+      alt={alt}
+      width={3}
+      height={2}
+      loading="lazy"
+      decoding="async"
+    />
+  );
+}
+
+/**
+ * One shortlisted thing, whatever kind it is.
+ *
+ * Deliberately smaller and quieter than FavCard: the shortlist is a list of
+ * wishes and can run long, where the account's saved destinations are a
+ * handful of considered saves. Same star as the page it came from, so
+ * un-starring here and un-starring there are visibly the same act.
+ */
+function ShortlistRow({ row, onOpen, onRemove, removeLabel, missingLabel }) {
+  return (
+    <div className={`slist-row${row.missing ? ' is-missing' : ''}`}>
+      <button
+        type="button"
+        className="slist-open"
+        onClick={row.missing ? undefined : onOpen}
+        disabled={row.missing}
+      >
+        <span className="slist-shot">
+          {row.img
+            ? <ShotPhoto url={row.img} className="slist-img" />
+            : <span className="slist-img is-fallback" aria-hidden="true"><MapPinIcon size={16} /></span>}
+        </span>
+        <span className="slist-text">
+          <span className="slist-name">
+            {row.missing ? missingLabel : (row.name || (row.pending ? '…' : row.id))}
+          </span>
+          {row.sub && !row.missing && <span className="slist-sub">{row.sub}</span>}
+        </span>
+        {row.cc && <span className="slist-flag" aria-hidden="true"><CountryFlag country={row.cc} size={13} /></span>}
+      </button>
+      <button
+        type="button"
+        className="slist-drop"
+        onClick={onRemove}
+        aria-label={removeLabel}
+        title={removeLabel}
+      >
+        <svg width="13" height="13" viewBox="0 0 24 24" aria-hidden="true"
+          fill="currentColor" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round">
+          <polygon points="12 2 15.1 8.6 22 9.3 16.8 14 18.3 21 12 17.3 5.7 21 7.2 14 2 9.3 8.9 8.6" />
+        </svg>
+      </button>
     </div>
   );
 }
@@ -436,12 +514,8 @@ function JourneyCard({ title, sub, img, whenChip, countries = [], dateLabel, dat
     <div className={`uptrip-card${visited ? ' is-visited' : ''}${foreign ? ' is-foreign' : ''}`}>
       <div className="uptrip-visual">
         <button className="uptrip-open" onClick={onOpen} title={openTitle}>
-          <span
-            className={`uptrip-photo${img ? '' : ' is-fallback'}`}
-            style={img ? { backgroundImage: `url(${img})` } : undefined}
-            aria-hidden="true"
-          >
-            {!img && <RouteIcon size={26} />}
+          <span className={`uptrip-photo${img ? '' : ' is-fallback'}`} aria-hidden="true">
+            {img ? <ShotPhoto url={img} className="uptrip-img" /> : <RouteIcon size={26} />}
           </span>
           <span className="uptrip-shade" aria-hidden="true" />
           {whenChip && <span className="uptrip-when">{whenChip}</span>}
@@ -607,10 +681,20 @@ function TravelLedger({ visitedCountries, visitedCities }) {
 // from the map, Planned is the calendar of upcoming routes and day plans, and
 // Visited is the record that finished trips file themselves into, with the
 // country and city ledger on top.
-export function SavedTripsPanel({ data, onClose, onLoadTrip, onLoadTripPlan, onOpenAuth, onOpenDayPlan, onGoToTab }) {
+export function SavedTripsPanel({
+  data, onClose, onLoadTrip, onLoadTripPlan, onOpenAuth, onOpenDayPlan, onGoToTab,
+  // The shortlist: the star anyone can tap on any page, guest or not. It is a
+  // different store from `saved_trips` below, which is the account's own
+  // destination saves, so the Favorites tab shows both and says which is
+  // which rather than pretending one list exists.
+  favorites = null, onToggleFav = null, onOpenFeature = null, onOpenDest = null,
+}) {
   const { user, configured } = useAuth();
   const { t, lang } = useI18n();
-  const destinations = data?.destinations || {};
+  // Memoised because the `|| {}` fallback would otherwise mint a new object
+  // on every render, which defeats every memo downstream of it (the shortlist
+  // resolver in particular re-derives its whole section tree on that dep).
+  const destinations = useMemo(() => data?.destinations || {}, [data]);
   const todayIso = localToday();
 
   const [tab, setTab] = useState(() => {
@@ -1012,6 +1096,10 @@ export function SavedTripsPanel({ data, onClose, onLoadTrip, onLoadTripPlan, onO
   const visitedMapProps = {
     stops: visitedItems,
     countryFills: visitedIso,
+    // A record is read as a pattern of dots, so the basemap gets out of the
+    // way: Positron without labels, where every name would be somewhere you
+    // did NOT go. The planner's maps keep Voyager (see map/TripMap.jsx).
+    basemap: 'record',
     showRoute: false,
     scrollZoom: true,
     zoomControls: true,
@@ -1196,8 +1284,28 @@ export function SavedTripsPanel({ data, onClose, onLoadTrip, onLoadTripPlan, onO
   // Destinations and Explore are built the same way, and for the same reason:
   // two arrangements of one control cannot drift apart if the source only
   // holds one of them.
+  // The shortlist, resolved back into names and photographs (the stored keys
+  // are only kind/country/id, see hooks/useFavoriteItems.js).
+  const shortlist = useFavoriteItems(favorites, destinations);
+
+  // Whether the account section below is ALSO going to draw an empty state,
+  // which is what decides how loudly the shortlist states its own emptiness.
+  const accountFavsEmpty = !authed || (!loading && !error && trips.length === 0);
+
+  // Open one shortlisted row, whatever kind it is. Destinations go to the
+  // destination page, everything else to its own layer page, which is the
+  // same door the Destinations tab uses.
+  const openShortlisted = (row) => {
+    if (row.kind === 'dest') { onOpenDest?.(row.id); return; }
+    onOpenFeature?.(row.kind, { id: row.id, cc: row.cc });
+  };
+  const dropShortlisted = (row) => {
+    const parsed = parseFavKey(row.key);
+    if (parsed) onToggleFav?.(parsed.id, parsed.kind, parsed.cc);
+  };
+
   const TABS = [
-    { key: 'favorites', Icon: BookmarkIcon, labelKey: 'saved.tabFavorites', n: authed && !loading ? trips.length : 0 },
+    { key: 'favorites', Icon: BookmarkIcon, labelKey: 'saved.tabFavorites', n: (authed && !loading ? trips.length : 0) + shortlist.count },
     { key: 'planned', Icon: CalendarIcon, labelKey: 'saved.tabPlanned', n: plannedCount },
     { key: 'visited', Icon: CheckIcon, labelKey: 'saved.tabVisited', n: pastCount },
   ];
@@ -1246,8 +1354,55 @@ export function SavedTripsPanel({ data, onClose, onLoadTrip, onLoadTripPlan, onO
       </div>
 
       {tab === 'favorites' && (
+        /* ── The shortlist: everything starred anywhere in the app, grouped
+            by what it is. It comes FIRST and it works signed out, because
+            the star is the one keeping gesture a guest has. The account's
+            own saved destinations follow underneath, labelled as such, so
+            the two stores are visibly two stores rather than one list that
+            mysteriously half-empties on sign-out. ── */
+        <SavedSection title={t('fav.shortlistTitle')} count={shortlist.count} big>
+          {shortlist.count === 0 ? (
+            /* One invitation per tab. On a fresh device the account section
+               below is also empty and already says "sign in to save trips";
+               two stacked empty states in one tab is a tab that has failed to
+               decide what it is asking for. So the shortlist only pleads its
+               own case when the account section is not already pleading
+               one, and otherwise says its piece in a single quiet line. */
+            accountFavsEmpty ? (
+              <p className="footnote">{t('fav.shortlistEmpty')}</p>
+            ) : (
+              <SavedEmpty
+                Icon={MapPinIcon}
+                text={t('fav.shortlistEmpty')}
+                cta={t('saved.browseMap')}
+                onCta={() => onGoToTab && onGoToTab('places')}
+              />
+            )
+          ) : (
+            shortlist.sections.map(({ kind, rows }) => (
+              <div className="slist-group" key={kind}>
+                <div className="slist-group-title">{t(FAV_KIND_LABEL[kind])}</div>
+                <div className="slist-rows">
+                  {rows.map((row) => (
+                    <ShortlistRow
+                      key={row.key}
+                      row={row}
+                      onOpen={() => openShortlisted(row)}
+                      onRemove={() => dropShortlisted(row)}
+                      removeLabel={t('fav.remove')}
+                      missingLabel={t('fav.missing')}
+                    />
+                  ))}
+                </div>
+              </div>
+            ))
+          )}
+        </SavedSection>
+      )}
+
+      {tab === 'favorites' && (
         /* ── Favorites: places saved from the map, photo first. ── */
-        <SavedSection title={t('saved.favsTitle')} big>
+        <SavedSection title={t('fav.savedPlaces')}>
           {!authed ? (
             <SavedEmpty
               Icon={MapPinIcon}
@@ -1417,7 +1572,9 @@ export function SavedTripsPanel({ data, onClose, onLoadTrip, onLoadTripPlan, onO
                     cities: dayPlanCities(sp),
                     countries: dayPlanCountries(sp),
                   });
-                  const photo = url ? <span className="saved-card-photo" style={{ backgroundImage: `url(${url})` }} aria-hidden="true" /> : null;
+                  const photo = url
+                    ? <span className="saved-card-photo" aria-hidden="true"><ShotPhoto url={url} className="saved-card-img" /></span>
+                    : null;
                   return (
                     <SavedCard
                       key={sp.id}

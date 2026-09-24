@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useI18n } from '../i18n/index.jsx';
+import { useFocusTrap } from '../hooks/useFocusTrap.js';
 import { loadJourney, typeLabel, diffLabel, eurRange, boldSegments } from '../lib/journeys.js';
 import { srcSetFor } from '../lib/heroImage.js';
 import { trailheadDirectionsUrl } from '../lib/trailExport.js';
@@ -168,6 +169,8 @@ export function JourneyPage({ id, gatewayDest, onClose, onSelectDest }) {
   const [trip, setTrip] = useState(undefined);   // undefined = loading
   const { isOpen, toggle } = useFolds(OPEN_BY_DEFAULT, id);
   const scrollEl = useRef(null);
+  const pageRef = useRef(null);
+  const backRef = useRef(null);
   const titleEl = useRef(null);
   const [titleGone, setTitleGone] = useState(false);
 
@@ -178,11 +181,9 @@ export function JourneyPage({ id, gatewayDest, onClose, onSelectDest }) {
     return () => { live = false; };
   }, [id]);
 
-  useEffect(() => {
-    const onKey = (e) => { if (e.key === 'Escape') onClose(); };
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
-  }, [onClose]);
+  // Focus management for the dialog: initial focus, a Tab cycle and focus
+  // restoration, not just Escape. See hooks/useFocusTrap.js.
+  useFocusTrap(pageRef, onClose, { initialFocusRef: backRef });
 
   useEffect(() => { scrollEl.current?.scrollTo?.(0, 0); }, [id]);
 
@@ -265,9 +266,10 @@ export function JourneyPage({ id, gatewayDest, onClose, onSelectDest }) {
 
   if (trip === undefined) {
     return (
-      <div className="tpage bpage jpage" role="dialog" aria-modal="true">
+      <div className="tpage bpage jpage" role="dialog" aria-modal="true"
+        aria-label={t('journey.backStyles')} ref={pageRef}>
         <div className="tpage-bar">
-          <button type="button" className="tpage-back" onClick={onClose}>
+          <button type="button" className="tpage-back" onClick={onClose} ref={backRef}>
             <ArrowLeftIcon size={15} />
             <span>{t('journey.backStyles')}</span>
           </button>
@@ -278,9 +280,10 @@ export function JourneyPage({ id, gatewayDest, onClose, onSelectDest }) {
   }
   if (!trip) {
     return (
-      <div className="tpage bpage jpage" role="dialog" aria-modal="true">
+      <div className="tpage bpage jpage" role="dialog" aria-modal="true"
+        aria-label={t('journey.backStyles')} ref={pageRef}>
         <div className="tpage-bar">
-          <button type="button" className="tpage-back" onClick={onClose}>
+          <button type="button" className="tpage-back" onClick={onClose} ref={backRef}>
             <ArrowLeftIcon size={15} />
             <span>{t('journey.backStyles')}</span>
           </button>
@@ -306,9 +309,9 @@ export function JourneyPage({ id, gatewayDest, onClose, onSelectDest }) {
       .map((row, i) => ({ slot: `other-${i}`, label: row.label || '', text: row.text })));
 
   return (
-    <div className="tpage bpage jpage" role="dialog" aria-modal="true" aria-label={trip.title}>
+    <div className="tpage bpage jpage" role="dialog" aria-modal="true" aria-label={trip.title} ref={pageRef}>
       <div className="tpage-bar">
-        <button type="button" className="tpage-back" onClick={onClose}>
+        <button type="button" className="tpage-back" onClick={onClose} ref={backRef}>
           <ArrowLeftIcon size={15} />
           <span>{typeLabel(trip.tripTypeSlug, t, trip.tripType)}</span>
         </button>

@@ -19,8 +19,24 @@
  * launch sits. Leaving automatic tax on from day one costs 0.5% per
  * transaction and means the threshold being crossed is not an incident.
  *
+ * WITHDRAWAL WAIVER (T013). A pass is digital content that starts the moment
+ * payment lands, so under the Consumer Rights Directive (Art 16(m), Belgian
+ * Code of Economic Law Book VI) the 14-day right of withdrawal only ends if
+ * the buyer expressly asks for immediate supply and acknowledges the loss.
+ * Without that acknowledgement every pass is refundable for 14 days. Stripe
+ * Checkout collects it as a required checkbox (consent_collection), and the
+ * checkbox text is ours (custom_text.terms_of_service_acceptance), so the
+ * traveller ticks the waiver itself and not a generic "I agree".
+ *
+ * Stripe renders that checkbox only when a Terms of Service URL is set in the
+ * Dashboard (Settings > Business > Public details), and REJECTS the session
+ * otherwise. CHECKOUT_TERMS_URL gates the whole block for that reason: a
+ * redeploy before the Dashboard is configured must not break checkout. Set
+ * it to the same address as the Dashboard field (the app serves the terms at
+ * /?legal=terms) once that field is filled in, and checkout starts asking.
+ *
  * Secrets: STRIPE_SECRET_KEY, STRIPE_PRICE_TRIP, STRIPE_PRICE_YEAR,
- * CHECKOUT_SUCCESS_URL, CHECKOUT_CANCEL_URL.
+ * CHECKOUT_SUCCESS_URL, CHECKOUT_CANCEL_URL, CHECKOUT_TERMS_URL.
  */
 import Stripe from 'npm:stripe@17';
 import { createClient } from 'npm:@supabase/supabase-js@2';
@@ -64,6 +80,20 @@ Deno.serve(async (req) => {
 
   const stripe = new Stripe(SECRET, { apiVersion: '2025-10-29.clover' });
 
+  // The waiver checkbox. Off until the Terms URL is configured, see the header.
+  const termsUrl = env('CHECKOUT_TERMS_URL');
+  const consent = termsUrl ? {
+    consent_collection: { terms_of_service: 'required' as const },
+    custom_text: {
+      terms_of_service_acceptance: {
+        message: 'I ask Carta to start my pass as soon as this payment completes, '
+          + 'and I understand that I then lose my 14-day right of withdrawal under '
+          + `EU consumer law. Carta's [terms of service](${termsUrl}) say what a `
+          + 'pass buys and how refunds work.',
+      },
+    },
+  } : {};
+
   try {
     const session = await stripe.checkout.sessions.create({
       mode: 'payment',
@@ -83,6 +113,7 @@ Deno.serve(async (req) => {
       cancel_url: env('CHECKOUT_CANCEL_URL') || `${new URL(req.url).origin}/?pass=cancel`,
       // A dead session should not hold a price quote open forever.
       expires_at: Math.floor(Date.now() / 1000) + 30 * 60,
+      ...consent,
     });
     return json(200, { url: session.url, id: session.id });
   } catch (err) {

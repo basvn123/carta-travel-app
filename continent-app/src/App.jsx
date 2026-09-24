@@ -53,6 +53,7 @@ function TabFallback() {
 import { tripDaysBetween, DEFAULT_LIFESTYLE } from './lib/runtime_pricing.js';
 import { computeCosts } from './lib/costIndex.js';
 import { loadInitialState } from './lib/urlState.js';
+import { readFavList, isFav, favDestIds, toggleFav as toggleFavKey } from './lib/favorites.js';
 import { readTripShareFromUrl, decodeTripShare } from './lib/shareLink.js';
 import { readShareTokenFromUrl, stripShareTokenFromUrl } from './auth/tripShares.js';
 import { readFriendHandleFromUrl, stripFriendHandleFromUrl } from './auth/friends.js';
@@ -81,6 +82,7 @@ import { ResetPasswordScreen } from './auth/ResetPasswordScreen.jsx';
 import { AccountPanel } from './auth/AccountPanel.jsx';
 import { SavedTripsPanel } from './auth/SavedTripsPanel.jsx';
 import { PaywallProvider } from './hooks/usePaywall.jsx';
+import { LegalFromUrl } from './components/LegalFromUrl.jsx';
 import { originHome } from './lib/origins.js';
 import { useAppData } from './hooks/useAppData.js';
 import { useDestinationSearch } from './hooks/useDestinationSearch.js';
@@ -140,9 +142,16 @@ function TravelApp() {
 
   // Whether this visitor has already dismissed the entry gate as a guest.
   // Signing in overrides it automatically since `user` then takes priority.
-  const [guestMode, setGuestMode] = useState(
+  // Whether this visitor has said "continue without an account" before. Since
+  // the gate stopped fronting the app this no longer suppresses anything on
+  // load; it is kept because signing out clears it, which is how the gate
+  // knows a returning stranger from someone who just left an account.
+  const [, setGuestMode] = useState(
     () => typeof window !== 'undefined' && localStorage.getItem(GUEST_KEY) === '1'
   );
+  // Whether the entry gate has been asked for (see showGate below). False on
+  // every cold start: browsing is the default.
+  const [gateRequested, setGateRequested] = useState(false);
   // Which spoke the account panel opens on. The header's Friends button is
   // its own door into the same panel, so it says where to land. The nonce
   // remounts the panel on every such open: initialView only seeds state, so
@@ -235,10 +244,21 @@ function TravelApp() {
     setLifestyleOpen(false);
     setSavedTripsOpen((v) => !v);
   };
-  // Shown before any data/route decisions: sign in, create an account, or
-  // continue as a guest. Skipped entirely when accounts aren't configured,
-  // once already signed in, or once guest mode has been chosen before.
-  const showGate = authConfigured && !authLoading && !user && !recoveryMode && !guestMode;
+  // The entry gate is NOT a front door any more.
+  //
+  // It used to be the first thing every visitor saw: a full-screen sign-in
+  // takeover in front of an app whose whole proposition is browsing real
+  // places. That asked strangers to commit before they had seen anything,
+  // and it is also what a crawler sees, so the catalogue read as login-walled
+  // content. A first visit now lands straight on Destinations; signing in is
+  // one press on the header's account button, and the surfaces that genuinely
+  // need an account (saving, sharing, exporting) already ask for one at the
+  // moment they are used, through PaywallProvider / AuthModal.
+  //
+  // The gate survives for the one case it was actually good at: a deliberate
+  // sign-out, where the likely intent is to switch accounts rather than to
+  // start browsing anonymously.
+  const showGate = authConfigured && !authLoading && !user && !recoveryMode && gateRequested;
 
   // Day plans shadow to the account whenever someone is signed in (and fall
   // back to local-only for guests). Keyed on the id, not the user object,
@@ -246,14 +266,16 @@ function TravelApp() {
   const dayPlanUserId = authConfigured && user ? user.id : null;
   useEffect(() => { bindDayPlanCloud(dayPlanUserId); }, [dayPlanUserId]);
 
-  // A deliberate sign-out should bring the gate back (they may want to switch
-  // accounts) rather than silently falling through to the guest bypass they
-  // chose before they ever had an account.
+  // A deliberate sign-out brings the gate up, because the likely next move is
+  // signing into a different account rather than browsing anonymously. It is
+  // the only thing that raises it; "continue without an account" lowers it and
+  // the app carries on where it was.
   const prevUserRef = useRef(null);
   useEffect(() => {
     if (prevUserRef.current && !user) {
       localStorage.removeItem(GUEST_KEY);
       setGuestMode(false);
+      setGateRequested(true);
     }
     prevUserRef.current = user;
   }, [user]);
@@ -301,7 +323,12 @@ function TravelApp() {
   });
 
   // Shortlist (favorites) + list controls, also persisted in the URL.
-  const [favorites, setFavorites] = useState(() => new Set(init.favorites || []));
+  //
+  // A Set of `kind:id` KEYS, not bare ids: anything the app opens a page for
+  // can be shortlisted, not only a priced destination. readFavList migrates
+  // the old bare-id form (see lib/favorites.js), so a stored state or a link
+  // written before this change still restores its places.
+  const [favorites, setFavorites] = useState(() => readFavList(init.favorites || []));
 
   // Planner tabs mount on first visit and then stay alive (hidden) so a quick
   // look at another tab never wipes an in-progress plan.
@@ -339,6 +366,21 @@ function TravelApp() {
   const [sharedTripRaw] = useState(() => readTripShareFromUrl());
   const [sharedTrip, setSharedTrip] = useState(null);
   const [pendingSharedTrip, setPendingSharedTrip] = useState(null);
+
+  // The hand-offs INTO the planners from a destination or feature page, and
+  // their shareable forms (`?tab=trip&cc=BE`, `?tab=day&dest=BRU`,
+  // `?tab=day&feat=trail:AT:63478`, see lib/urlState.js). Each is consumed by
+  // the planner it names and cleared again, the same pattern as
+  // pendingSharedTrip: the tab reads it once, does its thing, and calls back.
+  //   tripSeed: { iso2 }
+  //   daySeed:  { destId } | { feature: { kind, cc, id, name?, lat?, lon? } }
+  const [pendingTripSeed, setPendingTripSeed] = useState(() => (
+    init.tripSeedCc ? { iso2: init.tripSeedCc } : null
+  ));
+  const [pendingDaySeed, setPendingDaySeed] = useState(() => (
+    init.daySeedDest ? { destId: init.daySeedDest }
+      : init.daySeedFeat ? { feature: init.daySeedFeat } : null
+  ));
   useEffect(() => {
     if (!sharedTripRaw) return undefined;
     let live = true;
@@ -409,6 +451,8 @@ function TravelApp() {
   // opening someone else's itinerary leaves the recipient's own dates, origin
   // and lifestyle where they were.
   const [pendingTrip, setPendingTrip] = useState(() => readTripFromUrl());
+  // One country, handed to the Destinations tab from the planner's brief.
+  const [pendingCountry, setPendingCountry] = useState(null);
   useEffect(() => {
     if (pendingTrip) setActiveTab('places');
   }, [pendingTrip]);
@@ -421,21 +465,126 @@ function TravelApp() {
       .map((st) => ({ destinationId: st.dest, nights: st.nights, activities: [] }))
       .filter((st) => st.destinationId && st.nights);
     if (!stops.length) return;
+    // The published trip already says how each hop is made: bus here, train
+    // there, a ferry where there is water. That was thrown away at this door,
+    // so a traveller who had just read "bus to Barcelona" arrived in the
+    // planner and was asked how they were getting to Barcelona. The legs keep
+    // their modes, keyed by leg index the way the planner keys them.
+    const legModes = {};
+    (trip.legs || []).forEach((leg, i) => {
+      if (leg?.mode) legModes[i] = leg.mode === 'drive' ? 'car' : leg.mode;
+    });
     setPendingSharedTrip({
       stops,
       label: trip.name || '',
       transportPref: trip.transport === 'car' ? 'owncar' : 'public',
+      legModes,
+      // Nobody has said when. The planner asks for the window itself rather
+      // than inventing dates a published trip never carried.
+      tripStart: '',
     });
     goToTab('trip');
   }, [goToTab]);
 
+  /** Open one published trip's page from the planner. Stable, like every
+   *  other callback handed to the two planner tabs: they stay mounted behind
+   *  display:none, so a fresh arrow here re-renders 3,000 lines of component
+   *  on every unrelated keystroke. */
+  const openTripPage = useCallback((id) => {
+    if (!id) return;
+    setPendingTrip({ id: String(id) });
+    goToTab('places');
+  }, [goToTab]);
+
+  /** Browse one country's places, from the planner's country brief. */
+  const openCountryInPlaces = useCallback((iso2) => {
+    if (!iso2) return;
+    setPendingCountry(String(iso2).toUpperCase());
+    goToTab('places');
+  }, [goToTab]);
+
+  /** "Plan a trip here" on a destination page: the trip wizard's Where step
+   *  with that destination's country already picked. The wizard maps the
+   *  iso2 onto the country name it keys its picks by. */
+  const openTripForCountry = useCallback((iso2) => {
+    if (!iso2 || !/^[A-Za-z]{2}$/.test(String(iso2))) return;
+    setPendingTripSeed({ iso2: String(iso2).toUpperCase() });
+    goToTab('trip');
+  }, [goToTab]);
+
+  /** "Plan a day here" on a destination page: the day flow, staying in that
+   *  city, opened on the When question. */
+  const openDayForDest = useCallback((id) => {
+    if (!id) return;
+    setPendingDaySeed({ destId: String(id) });
+    goToTab('day');
+  }, [goToTab]);
+
+  /** "Add to a day plan" on a trail, beach, lake or mountain page: the day
+   *  flow with that place as the first idea, staying in the nearest town.
+   *  The page passes what it knows (name, point); a share link passes only
+   *  kind, country and id, and the day tab resolves the rest. */
+  const openDayForFeature = useCallback((kind, ref) => {
+    if (!kind || !ref || ref.id == null) return;
+    const k = kind === 'trails' ? 'trail' : kind === 'beaches' ? 'beach'
+      : kind === 'lakes' ? 'lake' : kind === 'mountains' ? 'mountain' : kind;
+    setPendingDaySeed({
+      feature: {
+        kind: k, cc: ref.cc || ref.country || '', id: String(ref.id),
+        name: ref.name || '', lat: ref.lat, lon: ref.lon,
+      },
+    });
+    goToTab('day');
+  }, [goToTab]);
+
+  /** "Back to trip" on a day plan that came out of a saved trip: reopen that
+   *  trip in the planner. A null id means the still-unsaved draft, which the
+   *  planner is already holding. */
+  const openTripFromDay = useCallback((planId) => {
+    if (planId) setPendingTripPlanId(planId);
+    goToTab('trip');
+  }, [goToTab]);
+
+  /**
+   * Open one feature layer's full-screen page, from anywhere.
+   *
+   * Three callers now hand the same {layer, ref} pair around - the region
+   * page, the destination page and the shortlist - and each was spelling out
+   * the same five-way branch. One function, so a new layer is added in one
+   * place and the three can never disagree about what `cc` means.
+   */
+  const openFeature = useCallback((layer, ref) => {
+    if (!ref || ref.id == null) return;
+    if (layer === 'trails' || layer === 'trail') setPendingTrail({ id: Number(ref.id), country: ref.cc });
+    else if (layer === 'beaches' || layer === 'beach') setPendingBeach({ id: String(ref.id), cc: ref.cc });
+    else if (layer === 'lakes' || layer === 'lake') setPendingLake({ id: String(ref.id), cc: ref.cc });
+    else if (layer === 'mountains' || layer === 'mountain') setPendingMountain({ id: String(ref.id), cc: ref.cc });
+    else if (layer === 'cycling' || layer === 'cycle') setPendingCycle({ kind: 'route', id: Number(ref.id), country: ref.cc });
+    else if (layer === 'trips' || layer === 'trip') setPendingTrip({ id: String(ref.id) });
+    else return;
+    goToTab('places');
+  }, [goToTab]);
+
   // Stable identity: this lands on every Explore card, so a fresh function
   // per render would defeat the card's React.memo.
-  const toggleFav = useCallback((id) => setFavorites((prev) => {
-    const next = new Set(prev);
-    if (next.has(id)) next.delete(id); else next.add(id);
-    return next;
-  }), []);
+  //
+  // The kind defaults to 'dest' because the priced catalogue is where the
+  // star started and where most of the call sites still are; a trail or a
+  // beach page passes its own. One function, so there is one place that
+  // knows how a wish is written down.
+  // `cc` is required for the layers published one file per country (a trail,
+  // a beach, a lake, a mountain, a cycle route); without it favKey refuses to
+  // write a key it could never resolve again, and the star would do nothing.
+  const toggleFav = useCallback(
+    (id, kind = 'dest', cc = '') => setFavorites((prev) => toggleFavKey(prev, kind, id, cc)),
+    [],
+  );
+
+  // The shortlist as the rest of the app asks about it: a membership test
+  // that takes the pair, and the destination-only view the Explore surfaces
+  // (cards, list rows, the compare panel) still filter by.
+  const isFavorite = useCallback((id, kind = 'dest', cc = '') => isFav(favorites, kind, id, cc), [favorites]);
+  const favDests = useMemo(() => new Set(favDestIds(favorites)), [favorites]);
 
   // Sync trip_days into choices whenever the dates change
   useEffect(() => {
@@ -494,6 +643,22 @@ function TravelApp() {
     origin: code,
     home: originHome(data, code) ?? prev.home,
   })), [data]);
+
+  // Stable callback props for the two planner tabs. Both are memoized and both
+  // stay mounted behind display:none, so a fresh arrow here re-rendered two
+  // 3,000-line components (and up to four live MapLibre contexts) on every
+  // lifestyle slider tick and every search keystroke.
+  const openLifestyle = useCallback(() => setLifestyleOpen(true), []);
+  const requestAuth = useCallback(() => setAuthModalOpen(true), []);
+  const clearPendingTripPlan = useCallback(() => setPendingTripPlanId(null), []);
+  const clearPendingSharedTrip = useCallback(() => setPendingSharedTrip(null), []);
+  const clearPendingDayPlan = useCallback(() => setPendingDayPlanId(null), []);
+  const clearPendingTripSeed = useCallback(() => setPendingTripSeed(null), []);
+  const clearPendingDaySeed = useCallback(() => setPendingDaySeed(null), []);
+  const planDay = useCallback((target) => {
+    setPendingDayPlanId(target); // { planId|null, stopIndex, dayIndex }
+    goToTab('day');
+  }, [goToTab]);
 
   // The town a road trip sets off from ({ name, lat, lon } from the geocoder,
   // or null to ask again). Without it the engine cannot cost a drive at all,
@@ -616,6 +781,7 @@ function TravelApp() {
     unescoOnly, setUnescoOnly,
     topBeachOnly, setTopBeachOnly,
     sortKey, setSortKey,
+    favorites, setFavorites,
     selectedId, setSelectedId,
     departDate, setDepartDate,
     returnDate, setReturnDate,
@@ -676,6 +842,7 @@ function TravelApp() {
           onGuest={() => {
             localStorage.setItem(GUEST_KEY, '1');
             setGuestMode(true);
+            setGateRequested(false);
           }}
         />
         {authModalOpen && (
@@ -804,13 +971,13 @@ function TravelApp() {
               setSortKey={setSortKey}
               showFavOnly={showFavOnly}
               setShowFavOnly={setShowFavOnly}
-              favorites={favorites}
+              favorites={favDests}
               onToggleFav={toggleFav}
               selectedId={selectedId}
               onSelect={openDetail}
               indices={exploreIndices}
               choices={choices}
-              onOpenLifestyle={() => setLifestyleOpen(true)}
+              onOpenLifestyle={openLifestyle}
               onOpenGuides={openGuides}
               isMock={!!data.meta?.is_mock}
             />
@@ -848,12 +1015,11 @@ function TravelApp() {
           <DestinationsTab
             data={data}
             pricedAll={pricedAll}
-            priceMode={priceMode}
             availableCountries={availableCountries}
             onSelectDest={openDetail}
             stayTier={choices.stay_tier || 'home'}
             lifestyle={choices.lifestyle}
-            onOpenLifestyle={() => setLifestyleOpen(true)}
+            onOpenLifestyle={openLifestyle}
             origin={choices.origin}
             onChangeOrigin={setOrigin}
             transportMode={choices.transport_mode || 'plane'}
@@ -872,6 +1038,11 @@ function TravelApp() {
             openTrip={pendingTrip}
             onOpenTripConsumed={() => setPendingTrip(null)}
             onOpenTripInPlanner={openTripInPlanner}
+            openCountry={pendingCountry}
+            onOpenCountryConsumed={() => setPendingCountry(null)}
+            isFavorite={isFavorite}
+            onToggleFav={toggleFav}
+            onAddToDay={openDayForFeature}
           />
         </div>
       )}
@@ -886,20 +1057,22 @@ function TravelApp() {
               data={data}
               user={user}
               authConfigured={authConfigured}
-              onRequestAuth={() => setAuthModalOpen(true)}
+              onRequestAuth={requestAuth}
               openPlanId={pendingTripPlanId}
-              onOpenPlanConsumed={() => setPendingTripPlanId(null)}
+              onOpenPlanConsumed={clearPendingTripPlan}
               openSharedTrip={pendingSharedTrip}
-              onSharedTripConsumed={() => setPendingSharedTrip(null)}
+              onSharedTripConsumed={clearPendingSharedTrip}
+              tripSeed={pendingTripSeed}
+              onTripSeedConsumed={clearPendingTripSeed}
               origin={choices.origin}
               onChangeOrigin={setOrigin}
               lifestyle={choices.lifestyle}
-              onOpenLifestyle={() => setLifestyleOpen(true)}
               stayTier={choices.stay_tier || 'home'}
-              onPlanDay={(target) => {
-                setPendingDayPlanId(target); // { planId|null, stopIndex, dayIndex }
-                goToTab('day');
-              }}
+              favorites={favorites}
+              onPlanDay={planDay}
+              onOpenDest={openDetail}
+              onOpenCountry={openCountryInPlaces}
+              onOpenTrip={openTripPage}
             />
           </Suspense>
         </div>
@@ -912,7 +1085,15 @@ function TravelApp() {
               user={user}
               authConfigured={authConfigured}
               openPlanId={pendingDayPlanId}
-              onOpenPlanConsumed={() => setPendingDayPlanId(null)}
+              onOpenPlanConsumed={clearPendingDayPlan}
+              favorites={favorites}
+              onRequestAuth={requestAuth}
+              onPlanTrip={() => goToTab('trip')}
+              onOpenDest={(id) => setSelectedId(id)}
+              onOpenFeature={openFeature}
+              daySeed={pendingDaySeed}
+              onDaySeedConsumed={clearPendingDaySeed}
+              onOpenTrip={openTripFromDay}
             />
           </Suspense>
         </div>
@@ -928,17 +1109,7 @@ function TravelApp() {
               id={pendingRegion.id}
               onClose={() => setPendingRegion(null)}
               onOpenRegion={(rid) => setPendingRegion({ id: rid })}
-              onOpenFeature={(layer, ref) => {
-                setPendingRegion(null);
-                if (layer === 'trails') setPendingTrail({ id: Number(ref.id), country: ref.cc });
-                else if (layer === 'beaches') setPendingBeach({ id: String(ref.id), cc: ref.cc });
-                else if (layer === 'lakes') setPendingLake({ id: String(ref.id), cc: ref.cc });
-                else if (layer === 'mountains') setPendingMountain({ id: String(ref.id), cc: ref.cc });
-                else if (layer === 'cycling') {
-                  setPendingCycle({ kind: 'route', id: Number(ref.id), country: ref.cc });
-                }
-                goToTab('places');
-              }}
+              onOpenFeature={(layer, ref) => { setPendingRegion(null); openFeature(layer, ref); }}
             />
           </Suspense>
         </div>
@@ -954,27 +1125,19 @@ function TravelApp() {
             data={data}
             indices={exploreIndices}
             choices={choices}
-            onOpenLifestyle={() => setLifestyleOpen(true)}
+            onOpenLifestyle={openLifestyle}
             onClose={() => setSelectedId(null)}
             onSelect={openDetail}
-            isFavorite={selectedId ? favorites.has(selectedId) : false}
-            onToggleFavorite={selectedId ? () => toggleFav(selectedId) : undefined}
-            onOpenFeature={(layer, ref) => {
-              setSelectedId(null);
-              if (layer === 'trails') setPendingTrail({ id: Number(ref.id), country: ref.cc });
-              else if (layer === 'beaches') setPendingBeach({ id: String(ref.id), cc: ref.cc });
-              else if (layer === 'lakes') setPendingLake({ id: String(ref.id), cc: ref.cc });
-              else if (layer === 'mountains') setPendingMountain({ id: String(ref.id), cc: ref.cc });
-              else if (layer === 'cycling') {
-                setPendingCycle({ kind: 'route', id: Number(ref.id), country: ref.cc });
-              }
-              goToTab('places');
-            }}
+            isFavorite={selectedId ? isFavorite(selectedId, 'dest') : false}
+            onToggleFavorite={selectedId ? () => toggleFav(selectedId, 'dest') : undefined}
+            onOpenFeature={(layer, ref) => { setSelectedId(null); openFeature(layer, ref); }}
             onOpenItin={(id) => {
               setSelectedId(null);
               setPendingTrip({ id });
               goToTab('places');
             }}
+            onPlanTrip={selectedDest.iso2 ? () => { setSelectedId(null); openTripForCountry(selectedDest.iso2); } : undefined}
+            onPlanDay={selectedId ? () => { setSelectedId(null); openDayForDest(selectedId); } : undefined}
           />
         </div>
       )}
@@ -1014,6 +1177,14 @@ function TravelApp() {
               setPendingTripPlanId(id);
               goToTab('trip');
             }}
+            /* The shortlist, which the Favorites tab now shows alongside the
+               account's own saved destinations. Opening a row is the same
+               door every other surface uses, so a starred trail lands on the
+               trail page rather than a second, lesser version of it. */
+            favorites={favorites}
+            onToggleFav={toggleFav}
+            onOpenFeature={(layer, ref) => { setSavedTripsOpen(false); openFeature(layer, ref); }}
+            onOpenDest={(id) => { setSavedTripsOpen(false); openDetail(id); }}
           />
         </div>
       )}
@@ -1079,6 +1250,9 @@ function TravelApp() {
         </div>
       )}
     </div>
+    {/* ?legal=terms|privacy|imprint opens the matching text on load; the
+        address Stripe Checkout and store forms point at. */}
+    <LegalFromUrl />
     </PaywallProvider>
   );
 }

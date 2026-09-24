@@ -1,0 +1,223 @@
+{
+  "generated_at": "2026-09-16T17:13:37.519Z",
+  "wikidata_checked": true,
+  "layers": [
+    {
+      "layer": "trips",
+      "items": 5866,
+      "items_flagged": 0,
+      "findings": 0,
+      "top_modes": []
+    },
+    {
+      "layer": "journeys",
+      "items": 253,
+      "items_flagged": 196,
+      "findings": 609,
+      "top_modes": [
+        [
+          "prose_superlative",
+          233
+        ],
+        [
+          "prose_price",
+          181
+        ],
+        [
+          "volatile_pricing",
+          83
+        ],
+        [
+          "self_declared_verify_flag",
+          53
+        ],
+        [
+          "prose_generated",
+          30
+        ]
+      ]
+    },
+    {
+      "layer": "trails",
+      "items": 17670,
+      "items_flagged": 14116,
+      "findings": 14230,
+      "top_modes": [
+        [
+          "no_image",
+          14116
+        ],
+        [
+          "no_name",
+          114
+        ]
+      ]
+    },
+    {
+      "layer": "beaches",
+      "items": 6859,
+      "items_flagged": 1795,
+      "findings": 1795,
+      "top_modes": [
+        [
+          "no_image",
+          1795
+        ]
+      ]
+    },
+    {
+      "layer": "lakes",
+      "items": 2971,
+      "items_flagged": 452,
+      "findings": 470,
+      "top_modes": [
+        [
+          "no_image",
+          378
+        ],
+        [
+          "wikidata_class_unverified",
+          72
+        ],
+        [
+          "coords_low_precision",
+          11
+        ],
+        [
+          "wikidata_coord_mismatch",
+          8
+        ],
+        [
+          "wikidata_class_conflict",
+          1
+        ]
+      ]
+    },
+    {
+      "layer": "mountains",
+      "items": 2359,
+      "items_flagged": 298,
+      "findings": 301,
+      "top_modes": [
+        [
+          "no_image",
+          294
+        ],
+        [
+          "coords_low_precision",
+          6
+        ],
+        [
+          "wikidata_class_unverified",
+          1
+        ]
+      ]
+    },
+    {
+      "layer": "cycling",
+      "items": 17200,
+      "items_flagged": 33,
+      "findings": 100,
+      "top_modes": [
+        [
+          "no_name",
+          66
+        ],
+        [
+          "no_licence",
+          34
+        ]
+      ]
+    },
+    {
+      "layer": "region",
+      "items": 4849,
+      "items_flagged": 1,
+      "findings": 1,
+      "top_modes": [
+        [
+          "no_name",
+          1
+        ]
+      ]
+    },
+    {
+      "layer": "dossier",
+      "items": 3868,
+      "items_flagged": 22,
+      "findings": 31,
+      "top_modes": [
+        [
+          "highlight_too_far",
+          23
+        ],
+        [
+          "no_image",
+          8
+        ]
+      ]
+    }
+  ],
+  "top_failure_modes": [
+    [
+      "no_image",
+      16591
+    ],
+    [
+      "prose_superlative",
+      233
+    ],
+    [
+      "prose_price",
+      181
+    ],
+    [
+      "no_name",
+      181
+    ],
+    [
+      "volatile_pricing",
+      83
+    ],
+    [
+      "wikidata_class_unverified",
+      73
+    ],
+    [
+      "self_declared_verify_flag",
+      53
+    ],
+    [
+      "no_licence",
+      34
+    ],
+    [
+      "prose_generated",
+      30
+    ],
+    [
+      "prose_opening_time",
+      25
+    ],
+    [
+      "highlight_too_far",
+      23
+    ],
+    [
+      "coords_low_precision",
+      17
+    ],
+    [
+      "wikidata_coord_mismatch",
+      8
+    ],
+    [
+      "prose_phone_or_booking",
+      4
+    ],
+    [
+      "wikidata_class_conflict",
+      1
+    ]
+  ]
+}

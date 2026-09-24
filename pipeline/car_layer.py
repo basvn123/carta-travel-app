@@ -178,10 +178,16 @@ for _base, _aliases in {
     for _alias in _aliases:
         CAR_OVERRIDES[_alias] = CAR_OVERRIDES[_base]
 
-CITY_NO_CAR = "Compact and well served by public transport - skip the car."
-TOWN_NO_CAR = "Walkable centre with rail links - a car is not needed."
+# These reason strings are APPENDED to the transit verdict the app already
+# prints ("Poor public transport.", "Excellent public transport."), so they
+# must not restate it. They used to: the rural line rendered as "Poor public
+# transport. Sights are spread out with limited public transport - rent a
+# car." - the same fact twice, with a hyphen standing in for a dash. Each one
+# now adds only what the verdict does not carry.
+CITY_NO_CAR = "Compact enough to cross on foot. Skip the car."
+TOWN_NO_CAR = "Walkable centre with rail links. A car is not needed."
 ISLAND_CAR = "Island with dispersed villages and beaches; buses are sparse."
-RURAL_CAR = "Sights are spread out with limited public transport - rent a car."
+RURAL_CAR = "Sights are spread out. A car saves a lot of time."
 COAST_CAR = "Beaches and coves are spread out; a car helps a lot."
 
 

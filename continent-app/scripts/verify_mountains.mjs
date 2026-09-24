@@ -192,10 +192,13 @@ try {
           withView += 1;
           if (!(m.vb >= 1 && m.vb <= 5)) badFacet.push(`${m.id}: vb ${m.vb}`);
         }
-        if (m.promSrc && !['dem', 'dem_min'].includes(m.promSrc)) {
+        // insular: derived, not computed. An island high point rises from
+        // the sea, so its prominence is its elevation.
+        if (m.promSrc && !['dem', 'dem_min', 'insular'].includes(m.promSrc)) {
           badFacet.push(`${m.id}: promSrc ${m.promSrc}`);
         }
-        if (m.promSrc) promDem += 1;
+        // Counts the COMPUTED ones, so a derived value does not inflate it.
+        if (m.promSrc === 'dem' || m.promSrc === 'dem_min') promDem += 1;
         if (m.season) {
           withSeason += 1;
           if (!m.season.est) badFacet.push(`${m.id}: season not marked estimated`);

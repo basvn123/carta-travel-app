@@ -36,6 +36,26 @@ export function fmtDate(iso, withWeekday = false) {
   return `${wd} ${base}`;
 }
 
+/**
+ * The name of a month, 1..12, in the language the app is showing.
+ *
+ * The rest of this file prints English abbreviations from a fixed table, which
+ * is fine for a compact date stamp ("04 Sep 2026" reads the same everywhere)
+ * but not for a sentence: "Best in September" has to be a German September in
+ * German. Intl has the names for all six locales already, so nothing is added
+ * to the six locale files for this.
+ */
+export function monthName(m, lang = 'en', long = true) {
+  const n = Number(m);
+  if (!n || n < 1 || n > 12) return '';
+  try {
+    return new Intl.DateTimeFormat(lang || 'en', { month: long ? 'long' : 'short' })
+      .format(new Date(Date.UTC(2021, n - 1, 15)));
+  } catch {
+    return MONTHS[n - 1];
+  }
+}
+
 /** Today's local date as ISO 'YYYY-MM-DD'. */
 export function todayISO() {
   const t = new Date();
@@ -45,6 +65,22 @@ export function todayISO() {
 /** [5,6,9] -> 'May, Jun, Sep'. */
 export function fmtMonths(nums) {
   return (nums || []).map((n) => MONTHS[n - 1]).filter(Boolean).join(', ');
+}
+
+/** How far ahead a trip may be dated: the later of the fare window's end
+ *  and fifteen months from today.
+ *
+ *  Both planners used to cap their calendars at meta.end_date, the day the
+ *  harvested fares run out, which in September puts May of next year out of
+ *  reach. The planners stopped pricing fares themselves (transport is booked
+ *  outside Carta), so the fare window no longer bounds what can be PLANNED;
+ *  it only bounds the fare hints, which already say nothing past it. */
+export function planningHorizon(fareEndIso, todayIso) {
+  const base = todayIso || todayISO();
+  const [y, m, d] = base.split('-').map(Number);
+  const dt = new Date(Date.UTC(y, m - 1 + 15, Math.min(d, 28)));
+  const far = `${dt.getUTCFullYear()}-${String(dt.getUTCMonth() + 1).padStart(2, '0')}-${String(dt.getUTCDate()).padStart(2, '0')}`;
+  return laterISO(fareEndIso, far);
 }
 
 /** The later of two ISO dates, ignoring blanks. ISO sorts lexically, so a

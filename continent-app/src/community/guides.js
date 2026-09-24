@@ -21,13 +21,14 @@
  * no exact dates, no crew, no spend.
  */
 import { supabase } from '../lib/supabaseClient.js';
+import { E2E_SEAMS } from '../lib/e2eSeams.js';
 
 /* ---- the verify seam ------------------------------------------------------
  * Same precedent as ?savedmock, ?sharemock and ?badgemock: a fixture stands
  * in for the RPCs so the gallery can be checked headlessly and so the surface
  * can be looked at before migration 019 is applied. Display only, never on
  * unless typed. */
-const MOCK = typeof window !== 'undefined'
+const MOCK = E2E_SEAMS && typeof window !== 'undefined'
   && new URLSearchParams(window.location.search).get('guidesmock');
 
 const MOCK_GUIDES = [

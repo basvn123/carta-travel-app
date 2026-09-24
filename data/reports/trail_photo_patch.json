@@ -1,0 +1,793 @@
+{
+  "generated_at": "2026-09-16T08:09:39.601Z",
+  "note": "Trail ids whose photograph is not a view of the walk. pipeline/trails/export_wire.py drops img for these, and the card falls back to the drawn route geometry.",
+  "drop": [
+    {
+      "id": 20047,
+      "country": "AT",
+      "file": "R4411_in_Bad_Ischl_Frachtenbf._%2816323534638%29.jpg",
+      "flags": [
+        "cat:off_subject"
+      ]
+    },
+    {
+      "id": 15667,
+      "country": "AT",
+      "file": "Handh%C3%B6hkreuz_Ri_Freil%C3%A4nderalm_Blochriegel.jpg",
+      "flags": [
+        "cat:signage"
+      ]
+    },
+    {
+      "id": 11390,
+      "country": "AT",
+      "file": "Breithorn%2C_Riemannhaus_2015-07.jpg",
+      "flags": [
+        "strip:3.61"
+      ]
+    },
+    {
+      "id": 10076,
+      "country": "AT",
+      "file": "Thal_Schwarzenegger-Wanderweg_02.jpg",
+      "flags": [
+        "cat:signage"
+      ]
+    },
+    {
+      "id": 11488,
+      "country": "AT",
+      "file": "WW-Gro%C3%9Farl-097.JPG",
+      "flags": [
+        "cat:signage"
+      ]
+    },
+    {
+      "id": 99006,
+      "country": "BE",
+      "file": "12-05-2016_-_NMBS_945_-_S5_3583_-_Beersel.jpg",
+      "flags": [
+        "cat:off_subject"
+      ]
+    },
+    {
+      "id": 97314,
+      "country": "BE",
+      "file": "12-05-2016_-_NMBS_945_-_S5_3583_-_Beersel.jpg",
+      "flags": [
+        "cat:off_subject"
+      ]
+    },
+    {
+      "id": 75512,
+      "country": "BG",
+      "file": "%D0%A0%D0%B8%D0%BB%D1%81%D0%BA%D0%B8_%D1%82%D0%B5%D0%BC%D0%B5%D0%BD%D1%83%D0%B6%D0%BA%D0%B8.jpg",
+      "flags": [
+        "cat:off_subject"
+      ]
+    },
+    {
+      "id": 1215,
+      "country": "CH",
+      "file": "Spl%C3%BCgenpass-WW.jpg",
+      "flags": [
+        "cat:signage"
+      ]
+    },
+    {
+      "id": 8237,
+      "country": "CH",
+      "file": "Fernsicht_von_der_Hasenmatt.jpg",
+      "flags": [
+        "strip:5.59"
+      ]
+    },
+    {
+      "id": 7468,
+      "country": "CH",
+      "file": "Fingerpost_Tour_Minaude_2021-10-12.jpg",
+      "flags": [
+        "name:signage",
+        "cat:signage"
+      ]
+    },
+    {
+      "id": 8523,
+      "country": "CH",
+      "file": "Bus_stop_Torgon_douane.jpg",
+      "flags": [
+        "name:parking"
+      ]
+    },
+    {
+      "id": 7335,
+      "country": "CH",
+      "file": "Wanderwegweiser_La_Neuveville_441.jpg",
+      "flags": [
+        "cat:signage"
+      ]
+    },
+    {
+      "id": 9145,
+      "country": "CH",
+      "file": "Badeanstalt_am_Davosersee_im_Winter.jpg",
+      "flags": [
+        "cat:off_subject"
+      ]
+    },
+    {
+      "id": 2535,
+      "country": "CH",
+      "file": "Wanderwegweiser_Valegia_937.jpg",
+      "flags": [
+        "cat:signage"
+      ]
+    },
+    {
+      "id": 2801,
+      "country": "CH",
+      "file": "Schwarzenberg_-_panoramio_%281%29.jpg",
+      "flags": [
+        "strip:3.83"
+      ]
+    },
+    {
+      "id": 4297,
+      "country": "CH",
+      "file": "Gr%C3%A8ve_de_la_Motte_Panorama.jpg",
+      "flags": [
+        "strip:4.20"
+      ]
+    },
+    {
+      "id": 7093,
+      "country": "CH",
+      "file": "Traubensteinbrech.jpg",
+      "flags": [
+        "cat:off_subject"
+      ]
+    },
+    {
+      "id": 7703,
+      "country": "CH",
+      "file": "2009-04-10_Rhein_beim_Dschungel.jpg",
+      "flags": [
+        "strip:4.24"
+      ]
+    },
+    {
+      "id": 8347,
+      "country": "CH",
+      "file": "Grimmialp%2C_Switzerland%2C_panorama.jpg",
+      "flags": [
+        "strip:5.16"
+      ]
+    },
+    {
+      "id": 105300,
+      "country": "CZ",
+      "file": "Svatopetrsk%C3%A1_stezka_%2812%29.jpg",
+      "flags": [
+        "cat:signage"
+      ]
+    },
+    {
+      "id": 105376,
+      "country": "CZ",
+      "file": "Sri_Chinmoy_Street%2C_Cerhovice_2018.jpg",
+      "flags": [
+        "cat:signage"
+      ]
+    },
+    {
+      "id": 207555,
+      "country": "DE",
+      "file": "Panorama_Ettringer_Bellerberg.jpg",
+      "flags": [
+        "strip:6.84"
+      ]
+    },
+    {
+      "id": 104279,
+      "country": "DE",
+      "file": "Bushaltestelle_Muehlleithen%2C_Kammweg%2C_Richtung_Klingenthal.jpg",
+      "flags": [
+        "cat:parking"
+      ]
+    },
+    {
+      "id": 238822,
+      "country": "DE",
+      "file": "Borkum%2C_Blick_von_der_Aussichtsd%C3%BCne_%22Sternklipp%22_--_2020_--_2765.jpg",
+      "flags": [
+        "cat:off_subject"
+      ]
+    },
+    {
+      "id": 255833,
+      "country": "DE",
+      "file": "Infotafel_Windradl_-_Wanderweg_Wiesenfelden_Station_4.jpg",
+      "flags": [
+        "name:signage"
+      ]
+    },
+    {
+      "id": 225777,
+      "country": "DE",
+      "file": "Schwede-Bure-Tour.jpg",
+      "flags": [
+        "cat:signage"
+      ]
+    },
+    {
+      "id": 219503,
+      "country": "DE",
+      "file": "PANO_20211120_105913.jpg",
+      "flags": [
+        "strip:3.63"
+      ]
+    },
+    {
+      "id": 63687,
+      "country": "EE",
+      "file": "Butterfly_on_a_leaf_-_Flickr_-_Lauri_P._Photography.jpg",
+      "flags": [
+        "name:off_subject"
+      ]
+    },
+    {
+      "id": 63781,
+      "country": "EE",
+      "file": "Raikk%C3%BCla_Pakam%C3%A4gi.jpg",
+      "flags": [
+        "strip:3.88"
+      ]
+    },
+    {
+      "id": 80218,
+      "country": "ES",
+      "file": "Vista_del_Guadiana_a_su_paso_por_el_Puente_Real_y_torre_de_Caja_Badajoz.JPG",
+      "flags": [
+        "strip:3.87"
+      ]
+    },
+    {
+      "id": 178353,
+      "country": "ES",
+      "file": "Minas_de_Riotinto_03_mina_by-dpc.jpg",
+      "flags": [
+        "strip:7.90"
+      ]
+    },
+    {
+      "id": 27539,
+      "country": "FR",
+      "file": "GR5_hiking_route_at_Lac_Ste_Anne.jpg",
+      "flags": [
+        "strip:4.44"
+      ]
+    },
+    {
+      "id": 30749,
+      "country": "FR",
+      "file": "Stade_de_l%27Ill%2C_Mulhouse_%2814405013344%29.jpg",
+      "flags": [
+        "strip:4.90"
+      ]
+    },
+    {
+      "id": 185750,
+      "country": "GB",
+      "file": "Cotswold_way_near_Haresfield_topograph_-_geograph.org.uk_-_1823646.jpg",
+      "flags": [
+        "name:map"
+      ]
+    },
+    {
+      "id": 189278,
+      "country": "GB",
+      "file": "Rugby_Class_57_Diesel_geograph-3985377-by-Ben-Brooksbank.jpg",
+      "flags": [
+        "cat:off_subject"
+      ]
+    },
+    {
+      "id": 66412,
+      "country": "HR",
+      "file": "Beli%2C_Cres%2C_page_banner.jpg",
+      "flags": [
+        "strip:6.99"
+      ]
+    },
+    {
+      "id": 70795,
+      "country": "HU",
+      "file": "Lehrpfad_der_Remete-Schlucht%2C_Schneegl%C3%B6ckchen%2C_2026_Remetesz%C5%91l%C5%91s.jpg",
+      "flags": [
+        "cat:off_subject"
+      ]
+    },
+    {
+      "id": 73197,
+      "country": "HU",
+      "file": "Holl%C3%B3k%C5%91-panorama.jpg",
+      "flags": [
+        "strip:6.07"
+      ]
+    },
+    {
+      "id": 71253,
+      "country": "HU",
+      "file": "Cseraljastrasse%2C_K%C5%91ris-hegy%2C_Bakonyerd%C5%91_Tafeln%2C_2024_Bakonyb%C3%A9l.jpg",
+      "flags": [
+        "cat:signage"
+      ]
+    },
+    {
+      "id": 71244,
+      "country": "HU",
+      "file": "98-as_vas%C3%BAtvonal_2.jpg",
+      "flags": [
+        "cat:off_subject"
+      ]
+    },
+    {
+      "id": 70786,
+      "country": "HU",
+      "file": "Panorama_in_Therme_Zalakaros_-_panoramio_%282%29.jpg",
+      "flags": [
+        "strip:6.92"
+      ]
+    },
+    {
+      "id": 80257,
+      "country": "IE",
+      "file": "Dublin_Mountains_Way_Waymarker.jpg",
+      "flags": [
+        "name:waymark",
+        "cat:waymark"
+      ]
+    },
+    {
+      "id": 80290,
+      "country": "IE",
+      "file": "Stonechat_on_Briar_at_Maghery_Lough_Donegal_2021.jpg",
+      "flags": [
+        "cat:off_subject"
+      ]
+    },
+    {
+      "id": 191358,
+      "country": "IT",
+      "file": "MIR_E.652.014_a_Genova_Acquasanta.jpg",
+      "flags": [
+        "cat:off_subject"
+      ]
+    },
+    {
+      "id": 204334,
+      "country": "IT",
+      "file": "20220205-malga_lunga_563-065.jpg",
+      "flags": [
+        "cat:signage"
+      ]
+    },
+    {
+      "id": 202840,
+      "country": "IT",
+      "file": "It-pr-ldpFx22.jpg",
+      "flags": [
+        "cat:signage"
+      ]
+    },
+    {
+      "id": 203171,
+      "country": "IT",
+      "file": "20200504-maresana_rosciano_fileasy_filonci-15.jpg",
+      "flags": [
+        "cat:signage"
+      ]
+    },
+    {
+      "id": 194712,
+      "country": "IT",
+      "file": "La_Spezia%2C_Biassa%2C_sentiero_504_per_Sant%27Antonio_1.jpg",
+      "flags": [
+        "cat:waymark"
+      ]
+    },
+    {
+      "id": 195230,
+      "country": "IT",
+      "file": "CAI_917_%28Alpe_3%29.jpg",
+      "flags": [
+        "cat:signage"
+      ]
+    },
+    {
+      "id": 190780,
+      "country": "IT",
+      "file": "Montestrutto%2C_Settimo_Vittone%2C_Provinz_Turin%2C_Italien.jpg",
+      "flags": [
+        "strip:4.01"
+      ]
+    },
+    {
+      "id": 204438,
+      "country": "IT",
+      "file": "CAI_107_Le_Croci_Segnavia.jpg",
+      "flags": [
+        "name:waymark",
+        "cat:signage"
+      ]
+    },
+    {
+      "id": 198197,
+      "country": "IT",
+      "file": "Segnavia_La_Berta_Olmatello_San_Cristoforo.jpg",
+      "flags": [
+        "name:waymark",
+        "cat:signage",
+        "cat:waymark"
+      ]
+    },
+    {
+      "id": 202217,
+      "country": "IT",
+      "file": "20230608-serina_cornalba_giro_redo-225.jpg",
+      "flags": [
+        "cat:signage"
+      ]
+    },
+    {
+      "id": 64529,
+      "country": "LT",
+      "file": "Pal%C5%AB%C5%A1%C4%97%2C_Lithuania_-_panoramio_%2821%29.jpg",
+      "flags": [
+        "strip:5.38"
+      ]
+    },
+    {
+      "id": 64522,
+      "country": "LT",
+      "file": "Kulautuva%2C_sveikatingumo_takas.jpg",
+      "flags": [
+        "cat:signage"
+      ]
+    },
+    {
+      "id": 64571,
+      "country": "LT",
+      "file": "Kazl%C5%B3_R%C5%ABda%2C_ur%C4%97dija.jpg",
+      "flags": [
+        "cat:signage"
+      ]
+    },
+    {
+      "id": 62992,
+      "country": "LU",
+      "file": "Berdorf_%28LU%29%2C_Werschrummschloeff_--_2015_--_6300.jpg",
+      "flags": [
+        "cat:off_subject"
+      ]
+    },
+    {
+      "id": 63407,
+      "country": "LU",
+      "file": "Luxembourg%2C_Schieren_PN27a_%28101%29.jpg",
+      "flags": [
+        "cat:off_subject"
+      ]
+    },
+    {
+      "id": 63293,
+      "country": "LU",
+      "file": "Larochette%2C_Rue_de_Mersch_%28nom_de_rue%29.jpg",
+      "flags": [
+        "cat:signage"
+      ]
+    },
+    {
+      "id": 63229,
+      "country": "LU",
+      "file": "Stroossesch%C3%ABld_Ale_Wee%2C_Noumer-101.jpg",
+      "flags": [
+        "cat:signage"
+      ]
+    },
+    {
+      "id": 63106,
+      "country": "LU",
+      "file": "Neihaischen_Schweespad.jpg",
+      "flags": [
+        "cat:signage"
+      ]
+    },
+    {
+      "id": 64333,
+      "country": "LV",
+      "file": "Infoboard_Prieku%C4%BCu_vesel%C4%ABbas_takas.jpg",
+      "flags": [
+        "cat:signage"
+      ]
+    },
+    {
+      "id": 62607,
+      "country": "ME",
+      "file": "Ka_Kapetanovom_Jezeru_-_panoramio.jpg",
+      "flags": [
+        "cat:off_subject"
+      ]
+    },
+    {
+      "id": 62383,
+      "country": "MT",
+      "file": "Hillside_Panorama_2_%286956312689%29.jpg",
+      "flags": [
+        "strip:3.61"
+      ]
+    },
+    {
+      "id": 161443,
+      "country": "NL",
+      "file": "Rheden_NSR_ICM-3_4081-ICM-3_4057_IC_3634_Zwolle_%2852972571515%29.jpg",
+      "flags": [
+        "cat:off_subject"
+      ]
+    },
+    {
+      "id": 114879,
+      "country": "NL",
+      "file": "Gulpen-Wittem_Gulperberg_informatiepaneel_%281%29.jpg",
+      "flags": [
+        "cat:signage"
+      ]
+    },
+    {
+      "id": 159061,
+      "country": "NL",
+      "file": "Barneveld_Mat64_904_RRReis_in_de_sneeuw_%2855022141767%29.jpg",
+      "flags": [
+        "cat:off_subject"
+      ]
+    },
+    {
+      "id": 24612,
+      "country": "NO",
+      "file": "2018-06-05_11-46-58_Norwegen_Laukvik_Vatnfjord_11.0-Pano.jpg",
+      "flags": [
+        "strip:8.48"
+      ]
+    },
+    {
+      "id": 21863,
+      "country": "NO",
+      "file": "Panorama_of_Lustrafjord.jpg",
+      "flags": [
+        "strip:4.56"
+      ]
+    },
+    {
+      "id": 21856,
+      "country": "NO",
+      "file": "Haukeliseter_Fjellstue%2C_panorama_-_panoramio.jpg",
+      "flags": [
+        "strip:6.18"
+      ]
+    },
+    {
+      "id": 21612,
+      "country": "NO",
+      "file": "Lunderamsa%2C_panorama.jpg",
+      "flags": [
+        "strip:6.84"
+      ]
+    },
+    {
+      "id": 24523,
+      "country": "NO",
+      "file": "20180714_071417_Rygge_to_tog.jpg",
+      "flags": [
+        "cat:off_subject"
+      ]
+    },
+    {
+      "id": 182634,
+      "country": "PL",
+      "file": "Dziewi%C4%99%C4%87si%C5%82_bez%C5%82odygowy_w_Tatrach%2C_20210906_1248_2411.jpg",
+      "flags": [
+        "cat:off_subject"
+      ]
+    },
+    {
+      "id": 185271,
+      "country": "PL",
+      "file": "Przemy%C5%9Bl%2C_panorama_Winna_G%C3%B3ra.jpg",
+      "flags": [
+        "strip:5.18"
+      ]
+    },
+    {
+      "id": 183032,
+      "country": "PL",
+      "file": "Obrotnica_w%C4%85skotorowa%281%29.jpg",
+      "flags": [
+        "cat:off_subject"
+      ]
+    },
+    {
+      "id": 76991,
+      "country": "RO",
+      "file": "Tg._Mures_from_Platoul_Cornesti_-_panoramio.jpg",
+      "flags": [
+        "strip:4.10"
+      ]
+    },
+    {
+      "id": 67508,
+      "country": "RO",
+      "file": "Guidepost_Crucea_lui_Sfantul_Petru_-_blue_bar.jpg",
+      "flags": [
+        "name:signage",
+        "cat:signage"
+      ]
+    },
+    {
+      "id": 75875,
+      "country": "RO",
+      "file": "Guidepost_red_point_to_Racovat-Boldovin.jpg",
+      "flags": [
+        "name:signage"
+      ]
+    },
+    {
+      "id": 76229,
+      "country": "RO",
+      "file": "Gara_Noua_1905.jpg",
+      "flags": [
+        "~historical",
+        "cat:off_subject"
+      ]
+    },
+    {
+      "id": 77139,
+      "country": "RO",
+      "file": "RO_BN_Colibita_lake_2.jpg",
+      "flags": [
+        "strip:6.84"
+      ]
+    },
+    {
+      "id": 67815,
+      "country": "RS",
+      "file": "Fingerpost_to_kiosk_near_Siljak.jpg",
+      "flags": [
+        "name:signage",
+        "cat:signage"
+      ]
+    },
+    {
+      "id": 67542,
+      "country": "RS",
+      "file": "Fingerpost_to_Muzinac_6%2C5_km.jpg",
+      "flags": [
+        "name:signage",
+        "cat:signage"
+      ]
+    },
+    {
+      "id": 67850,
+      "country": "RS",
+      "file": "Guidepost_TV_repetitor_Deli_Jovan_6%2C48_km.jpg",
+      "flags": [
+        "name:signage",
+        "cat:signage"
+      ]
+    },
+    {
+      "id": 67482,
+      "country": "RS",
+      "file": "Sunrise_at_Vlasina_lake_01.jpg",
+      "flags": [
+        "strip:4.08"
+      ]
+    },
+    {
+      "id": 67859,
+      "country": "RS",
+      "file": "Guidepost_Smedovacke_pivnice_1%2C95_km.jpg",
+      "flags": [
+        "name:signage",
+        "cat:signage"
+      ]
+    },
+    {
+      "id": 111770,
+      "country": "SE",
+      "file": "SAT_%C3%85l%C3%B6_2025_maj_banner.jpg",
+      "flags": [
+        "strip:6.99"
+      ]
+    },
+    {
+      "id": 110116,
+      "country": "SE",
+      "file": "SAT_%C3%85l%C3%B6_2025_maj_banner.jpg",
+      "flags": [
+        "strip:6.99"
+      ]
+    },
+    {
+      "id": 111126,
+      "country": "SE",
+      "file": "Muskan_3.jpg",
+      "flags": [
+        "strip:4.52"
+      ]
+    },
+    {
+      "id": 65997,
+      "country": "SI",
+      "file": "Triglav_%2836253147176%29.jpg",
+      "flags": [
+        "strip:4.54"
+      ]
+    },
+    {
+      "id": 68150,
+      "country": "SK",
+      "file": "Mal%C3%A9_Karpaty%2C_12_%E2%80%93_Z%C3%A1ruby%2C_2021_%2833%29.jpg",
+      "flags": [
+        "cat:signage"
+      ]
+    },
+    {
+      "id": 69241,
+      "country": "SK",
+      "file": "Pohlad_z_Lysej_%28panorama%29_-_panoramio.jpg",
+      "flags": [
+        "strip:7.19"
+      ]
+    },
+    {
+      "id": 68243,
+      "country": "SK",
+      "file": "Mal%C3%A9_Karpaty%2C_12_%E2%80%93_Z%C3%A1ruby%2C_2021_%2833%29.jpg",
+      "flags": [
+        "cat:signage"
+      ]
+    },
+    {
+      "id": 68199,
+      "country": "SK",
+      "file": "Dobr%C3%A1_Voda_R%C3%A1zcestie.jpg",
+      "flags": [
+        "cat:signage"
+      ]
+    },
+    {
+      "id": 69946,
+      "country": "SK",
+      "file": "N%C3%A1mestie_oslobodenia_in_Senica_03.jpg",
+      "flags": [
+        "cat:signage"
+      ]
+    },
+    {
+      "id": 69691,
+      "country": "SK",
+      "file": "Papradno_WV_banner.jpg",
+      "flags": [
+        "strip:6.99"
+      ]
+    },
+    {
+      "id": 68428,
+      "country": "SK",
+      "file": "Mohyla_M.R.%C5%A0tef%C3%A1nika_-_panorama_-_panoramio.jpg",
+      "flags": [
+        "strip:4.40"
+      ]
+    }
+  ]
+}

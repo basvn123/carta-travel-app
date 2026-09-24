@@ -1,0 +1,64 @@
+Master Data Snapshots — Preservation Manifest
+===============================================
+Date preserved: 2026-09-22
+Location: $TEMP/carta-master-snapshot/
+Total size: 419 MB
+
+File inventory:
+───────────────
+
+app_data.json (115 MB, 2026-09-17 15:03)
+  The current production master. Most recent full-catalogue data after September update.
+  Contains: 1,570 destinations, all pricing layers, POI enrichment, travel times, environment badges.
+  Reason to keep: Production working state. Used by the live app when no per-origin refresh is pending.
+
+app_data.pre_transit_copy.json (115 MB, 2026-09-14 19:42)
+  Snapshot taken before transport layer v19 landed (rail profiles + own-car mode).
+  Contains: catalogue as it was with the old transport mode set.
+  Reason to keep: Rollback point if v19 transport changes prove incorrect or introduce regressions.
+  Risk if deleted: No way to revert transport mode logic without a full pipeline re-run.
+
+app_data.wave2.json (111 MB, 2026-09-04 23:22)
+  Snapshot taken after Wave 2 intake of 708 register villages landed.
+  Contains: expanded catalogue pre-dating accommodation specificity work (July 24 restructure).
+  Reason to keep: Checkpoint before major schema change. Documents what the intake looked like before
+                 Inside Airbnb anchors + per-city seasonality was wired.
+  Risk if deleted: Cannot revert accommodation work without re-running the entire Wave 2 intake
+                   pipeline from source.
+
+app_data.pre_accom_v16.json (47 MB, 2026-07-19 19:08)
+  Snapshot taken just before accommodation layer v16 (Inside Airbnb cities + city-only filtering).
+  Contains: old accommodation tier logic.
+  Reason to keep: Rollback state for accommodation model. Allows comparison of pricing deltas after
+                 the change.
+  Risk if deleted: No direct way to measure the impact of accommodation specificity changes on
+                   prices and filtering.
+
+app_data.backup.json (31 MB, 2026-07-18 15:00)
+  Older backup from mid-July, before climate layer (WorldClim) and accommodation changes cascaded.
+  Contains: stable state from the earlier phase of the project.
+  Reason to keep: Historical reference point. Demonstrates what the catalogue looked like before
+                 climate and accommodation specificity work.
+  Risk if deleted: Loses a reference point for debugging long-running issues or understanding
+                   the state before multiple concurrent changes.
+
+───────────────
+
+T014 update (2026-09-23):
+  app_data.pre_transit_copy.json, app_data.wave2.json, app_data.pre_accom_v16.json and
+  app_data.backup.json were deleted from app_data/ on the development machine. R2 does
+  not exist yet, so the archival copy is D:\carta-backups\app_data_masters\ (USB drive,
+  labelled EMTEC C410) instead: all five files plus SHA256SUMS.txt and this manifest,
+  checksum-verified against the app_data/ originals immediately before deletion. Only
+  app_data.json (the production master) remains locally.
+
+Restore procedure (if needed):
+  1. Plug in the D: USB drive (EMTEC C410) and locate D:\carta-backups\app_data_masters\.
+  2. Verify SHA256 checksum of the file before use (SHA256SUMS.txt in that folder).
+  3. Copy the chosen snapshot back into app_data/, replacing app_data.json if it is the
+     one being restored.
+  4. Restart the pipeline orchestrator or the app dev server to pick up the new data.
+  5. Verify the app renders correctly at the expected destination count.
+
+Next steps: once R2 exists with versioned snapshots (§6.3 of CARTA_CLOUD_ARCHITECTURE.md),
+  push these four files there with a 30-90 day lifecycle rule and the USB copy can retire.

@@ -1,0 +1,2133 @@
+{
+  "generated_at": "2026-09-16T08:09:39.600Z",
+  "trails": 17670,
+  "with_photo": 3554,
+  "flagged": 131,
+  "drops": 97,
+  "by_flag": {
+    "~historical": 35,
+    "cat:off_subject": 21,
+    "cat:signage": 34,
+    "strip": 34,
+    "name:signage": 8,
+    "name:parking": 1,
+    "cat:parking": 1,
+    "name:off_subject": 1,
+    "name:map": 1,
+    "name:waymark": 3,
+    "cat:waymark": 3
+  },
+  "by_basis": {
+    "categories": 93,
+    "name-only": 4
+  },
+  "rows": [
+    {
+      "id": 25575,
+      "name": "HRP Étape 32",
+      "country": "AD",
+      "category": "hike",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/1975_Capri_3000_Ghia_in_Andorra.jpg/1280px-1975_Capri_3000_Ghia_in_Andorra.jpg",
+      "file": "1975_Capri_3000_Ghia_in_Andorra.jpg",
+      "w": 1280,
+      "h": 720,
+      "flags": [
+        "~historical"
+      ],
+      "drop": false,
+      "basis": "categories",
+      "hasGeometry": true
+    },
+    {
+      "id": 20047,
+      "name": "BergeSeen Trail 12: Bad Ischl - Bad Goisern",
+      "country": "AT",
+      "category": "hike",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/R4411_in_Bad_Ischl_Frachtenbf._%2816323534638%29.jpg/1280px-R4411_in_Bad_Ischl_Frachtenbf._%2816323534638%29.jpg",
+      "file": "R4411_in_Bad_Ischl_Frachtenbf._%2816323534638%29.jpg",
+      "w": 1280,
+      "h": 853,
+      "flags": [
+        "cat:off_subject"
+      ],
+      "drop": true,
+      "basis": "categories",
+      "hasGeometry": true
+    },
+    {
+      "id": 15667,
+      "name": "Wanderweg 18",
+      "country": "AT",
+      "category": "hike",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8d/Handh%C3%B6hkreuz_Ri_Freil%C3%A4nderalm_Blochriegel.jpg/1280px-Handh%C3%B6hkreuz_Ri_Freil%C3%A4nderalm_Blochriegel.jpg",
+      "file": "Handh%C3%B6hkreuz_Ri_Freil%C3%A4nderalm_Blochriegel.jpg",
+      "w": 1280,
+      "h": 859,
+      "flags": [
+        "cat:signage"
+      ],
+      "drop": true,
+      "basis": "categories",
+      "hasGeometry": true
+    },
+    {
+      "id": 11390,
+      "name": "Nordalpenweg 401A",
+      "country": "AT",
+      "category": "hike",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9f/Breithorn%2C_Riemannhaus_2015-07.jpg/1280px-Breithorn%2C_Riemannhaus_2015-07.jpg",
+      "file": "Breithorn%2C_Riemannhaus_2015-07.jpg",
+      "w": 1280,
+      "h": 355,
+      "flags": [
+        "strip:3.61"
+      ],
+      "drop": true,
+      "basis": "categories",
+      "hasGeometry": true
+    },
+    {
+      "id": 10076,
+      "name": "Arnold Schwarzenegger Wanderweg",
+      "country": "AT",
+      "category": "hike",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/Thal_Schwarzenegger-Wanderweg_02.jpg/1280px-Thal_Schwarzenegger-Wanderweg_02.jpg",
+      "file": "Thal_Schwarzenegger-Wanderweg_02.jpg",
+      "w": 1280,
+      "h": 853,
+      "flags": [
+        "cat:signage"
+      ],
+      "drop": true,
+      "basis": "categories",
+      "hasGeometry": true
+    },
+    {
+      "id": 11488,
+      "name": "Wanderweg 70",
+      "country": "AT",
+      "category": "hike",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f8/WW-Gro%C3%9Farl-097.JPG/1280px-WW-Gro%C3%9Farl-097.JPG",
+      "file": "WW-Gro%C3%9Farl-097.JPG",
+      "w": 1280,
+      "h": 960,
+      "flags": [
+        "cat:signage"
+      ],
+      "drop": true,
+      "basis": "categories",
+      "hasGeometry": true
+    },
+    {
+      "id": 99006,
+      "name": "GR 12 Vlaanderen, Bruxelles - Braine-le-Château",
+      "country": "BE",
+      "category": "hike",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/95/12-05-2016_-_NMBS_945_-_S5_3583_-_Beersel.jpg/1280px-12-05-2016_-_NMBS_945_-_S5_3583_-_Beersel.jpg",
+      "file": "12-05-2016_-_NMBS_945_-_S5_3583_-_Beersel.jpg",
+      "w": 1280,
+      "h": 678,
+      "flags": [
+        "cat:off_subject"
+      ],
+      "drop": true,
+      "basis": "categories",
+      "hasGeometry": true
+    },
+    {
+      "id": 97314,
+      "name": "Zennewandeling",
+      "country": "BE",
+      "category": "hike",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/95/12-05-2016_-_NMBS_945_-_S5_3583_-_Beersel.jpg/1280px-12-05-2016_-_NMBS_945_-_S5_3583_-_Beersel.jpg",
+      "file": "12-05-2016_-_NMBS_945_-_S5_3583_-_Beersel.jpg",
+      "w": 1280,
+      "h": 678,
+      "flags": [
+        "cat:off_subject"
+      ],
+      "drop": true,
+      "basis": "categories",
+      "hasGeometry": true
+    },
+    {
+      "id": 75512,
+      "name": "х. Зелен Преслап - вр. Кабул",
+      "country": "BG",
+      "category": "hike",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/%D0%A0%D0%B8%D0%BB%D1%81%D0%BA%D0%B8_%D1%82%D0%B5%D0%BC%D0%B5%D0%BD%D1%83%D0%B6%D0%BA%D0%B8.jpg/1280px-%D0%A0%D0%B8%D0%BB%D1%81%D0%BA%D0%B8_%D1%82%D0%B5%D0%BC%D0%B5%D0%BD%D1%83%D0%B6%D0%BA%D0%B8.jpg",
+      "file": "%D0%A0%D0%B8%D0%BB%D1%81%D0%BA%D0%B8_%D1%82%D0%B5%D0%BC%D0%B5%D0%BD%D1%83%D0%B6%D0%BA%D0%B8.jpg",
+      "w": 1280,
+      "h": 1280,
+      "flags": [
+        "cat:off_subject"
+      ],
+      "drop": true,
+      "basis": "categories",
+      "hasGeometry": true
+    },
+    {
+      "id": 75532,
+      "name": "х. Осогово - вр. Човека - м. Превала - Каракашка махала",
+      "country": "BG",
+      "category": "hike",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7c/%D0%92%D1%80%D1%8A%D1%85_%D0%9A%D1%8E%D0%BD%D0%B5%D0%BA_1923_%D0%BC_%D0%B2_%D0%9E%D1%81%D0%BE%D0%B3%D0%BE%D0%B2%D1%81%D0%BA%D0%B0_%D0%BF%D0%BB%D0%B0%D0%BD%D0%B8%D0%BD%D0%B0_%28%D0%BD%D0%B0_%D0%B7%D0%B0%D0%B4%D0%B5%D0%BD_%D0%BF%D0%BB%D0%B0%D0%BD_%E2%80%93_%D0%B2%D1%80%D1%8A%D1%85_%D0%A0%D1%83%D0%B5%D0%BD_%D0%B8_%D0%A7%D0%BE%D0%B2%D0%B5%D0%BA%D0%B0%29.jpg/1280px-%D0%92%D1%80%D1%8A%D1%85_%D0%9A%D1%8E%D0%BD%D0%B5%D0%BA_1923_%D0%BC_%D0%B2_%D0%9E%D1%81%D0%BE%D0%B3%D0%BE%D0%B2%D1%81%D0%BA%D0%B0_%D0%BF%D0%BB%D0%B0%D0%BD%D0%B8%D0%BD%D0%B0_%28%D0%BD%D0%B0_%D0%B7%D0%B0%D0%B4%D0%B5%D0%BD_%D0%BF%D0%BB%D0%B0%D0%BD_%E2%80%93_%D0%B2%D1%80%D1%8A%D1%85_%D0%A0%D1%83%D0%B5%D0%BD_%D0%B8_%D0%A7%D0%BE%D0%B2%D0%B5%D0%BA%D0%B0%29.jpg",
+      "file": "%D0%92%D1%80%D1%8A%D1%85_%D0%9A%D1%8E%D0%BD%D0%B5%D0%BA_1923_%D0%BC_%D0%B2_%D0%9E%D1%81%D0%BE%D0%B3%D0%BE%D0%B2%D1%81%D0%BA%D0%B0_%D0%BF%D0%BB%D0%B0%D0%BD%D0%B8%D0%BD%D0%B0_%28%D0%BD%D0%B0_%D0%B7%D0%B0%D0%B4%D0%B5%D0%BD_%D0%BF%D0%BB%D0%B0%D0%BD_%E2%80%93_%D0%B2%D1%80%D1%8A%D1%85_%D0%A0%D1%83%D0%B5%D0%BD_%D0%B8_%D0%A7%D0%BE%D0%B2%D0%B5%D0%BA%D0%B0%29.jpg",
+      "w": 1280,
+      "h": 853,
+      "flags": [
+        "~historical"
+      ],
+      "drop": false,
+      "basis": "categories",
+      "hasGeometry": true
+    },
+    {
+      "id": 75223,
+      "name": "х. Беговица - х. Пирин",
+      "country": "BG",
+      "category": "hike",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/Unnamed2_-_panoramio_%281874%29.jpg/1280px-Unnamed2_-_panoramio_%281874%29.jpg",
+      "file": "Unnamed2_-_panoramio_%281874%29.jpg",
+      "w": 1280,
+      "h": 721,
+      "flags": [
+        "~historical"
+      ],
+      "drop": false,
+      "basis": "categories",
+      "hasGeometry": true
+    },
+    {
+      "id": 75431,
+      "name": "х. Плевен - пещера Водните дупки",
+      "country": "BG",
+      "category": "hike",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/85/%D0%92%D1%80.%D0%9C%D0%B0%D1%80%D0%B0%D0%B3%D0%B8%D0%B4%D0%B8%D0%BA%2C%22Rusalka%22_peak_-_1889_m_-_panoramio.jpg/1280px-%D0%92%D1%80.%D0%9C%D0%B0%D1%80%D0%B0%D0%B3%D0%B8%D0%B4%D0%B8%D0%BA%2C%22Rusalka%22_peak_-_1889_m_-_panoramio.jpg",
+      "file": "%D0%92%D1%80.%D0%9C%D0%B0%D1%80%D0%B0%D0%B3%D0%B8%D0%B4%D0%B8%D0%BA%2C%22Rusalka%22_peak_-_1889_m_-_panoramio.jpg",
+      "w": 1280,
+      "h": 721,
+      "flags": [
+        "~historical"
+      ],
+      "drop": false,
+      "basis": "categories",
+      "hasGeometry": true
+    },
+    {
+      "id": 5134,
+      "name": "Mythenweg",
+      "country": "CH",
+      "category": "hike",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a0/1893-Mythen-SW.jpg/1280px-1893-Mythen-SW.jpg",
+      "file": "1893-Mythen-SW.jpg",
+      "w": 1280,
+      "h": 720,
+      "flags": [
+        "~historical"
+      ],
+      "drop": false,
+      "basis": "categories",
+      "hasGeometry": true
+    },
+    {
+      "id": 1215,
+      "name": "Via Spluga",
+      "country": "CH",
+      "category": "hike",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Spl%C3%BCgenpass-WW.jpg/1280px-Spl%C3%BCgenpass-WW.jpg",
+      "file": "Spl%C3%BCgenpass-WW.jpg",
+      "w": 1280,
+      "h": 844,
+      "flags": [
+        "cat:signage"
+      ],
+      "drop": true,
+      "basis": "categories",
+      "hasGeometry": true
+    },
+    {
+      "id": 8237,
+      "name": "Jura-Höhenweg",
+      "country": "CH",
+      "category": "hike",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Fernsicht_von_der_Hasenmatt.jpg/1280px-Fernsicht_von_der_Hasenmatt.jpg",
+      "file": "Fernsicht_von_der_Hasenmatt.jpg",
+      "w": 1280,
+      "h": 229,
+      "flags": [
+        "strip:5.59"
+      ],
+      "drop": true,
+      "basis": "categories",
+      "hasGeometry": true
+    },
+    {
+      "id": 7468,
+      "name": "Tour Tête de la Minaude",
+      "country": "CH",
+      "category": "hike",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Fingerpost_Tour_Minaude_2021-10-12.jpg/1280px-Fingerpost_Tour_Minaude_2021-10-12.jpg",
+      "file": "Fingerpost_Tour_Minaude_2021-10-12.jpg",
+      "w": 1280,
+      "h": 960,
+      "flags": [
+        "name:signage",
+        "cat:signage"
+      ],
+      "drop": true,
+      "basis": "categories",
+      "hasGeometry": true
+    },
+    {
+      "id": 8523,
+      "name": "Sentier des alpages de Vionnaz",
+      "country": "CH",
+      "category": "hike",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/78/Bus_stop_Torgon_douane.jpg/1280px-Bus_stop_Torgon_douane.jpg",
+      "file": "Bus_stop_Torgon_douane.jpg",
+      "w": 1280,
+      "h": 959,
+      "flags": [
+        "name:parking"
+      ],
+      "drop": true,
+      "basis": "name-only",
+      "hasGeometry": true
+    },
+    {
+      "id": 7708,
+      "name": "Senda Segantini - Etappe 3",
+      "country": "CH",
+      "category": "hike",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/2020-08-23_13-02-10_Schweiz_Fex_Isola_1879.7.jpg/1280px-2020-08-23_13-02-10_Schweiz_Fex_Isola_1879.7.jpg",
+      "file": "2020-08-23_13-02-10_Schweiz_Fex_Isola_1879.7.jpg",
+      "w": 1280,
+      "h": 853,
+      "flags": [
+        "~historical"
+      ],
+      "drop": false,
+      "basis": "categories",
+      "hasGeometry": true
+    },
+    {
+      "id": 7335,
+      "name": "Balade de la Sorcière",
+      "country": "CH",
+      "category": "hike",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c6/Wanderwegweiser_La_Neuveville_441.jpg/1280px-Wanderwegweiser_La_Neuveville_441.jpg",
+      "file": "Wanderwegweiser_La_Neuveville_441.jpg",
+      "w": 1280,
+      "h": 728,
+      "flags": [
+        "cat:signage"
+      ],
+      "drop": true,
+      "basis": "categories",
+      "hasGeometry": true
+    },
+    {
+      "id": 9145,
+      "name": "Davosersee Rundweg",
+      "country": "CH",
+      "category": "hike",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6d/Badeanstalt_am_Davosersee_im_Winter.jpg/1280px-Badeanstalt_am_Davosersee_im_Winter.jpg",
+      "file": "Badeanstalt_am_Davosersee_im_Winter.jpg",
+      "w": 1280,
+      "h": 720,
+      "flags": [
+        "cat:off_subject"
+      ],
+      "drop": true,
+      "basis": "categories",
+      "hasGeometry": true
+    },
+    {
+      "id": 2535,
+      "name": "Strada Bassa",
+      "country": "CH",
+      "category": "hike",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e5/Wanderwegweiser_Valegia_937.jpg/1280px-Wanderwegweiser_Valegia_937.jpg",
+      "file": "Wanderwegweiser_Valegia_937.jpg",
+      "w": 1280,
+      "h": 758,
+      "flags": [
+        "cat:signage"
+      ],
+      "drop": true,
+      "basis": "categories",
+      "hasGeometry": true
+    },
+    {
+      "id": 2801,
+      "name": "Grosse Welt",
+      "country": "CH",
+      "category": "hike",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/38/Schwarzenberg_-_panoramio_%281%29.jpg/1280px-Schwarzenberg_-_panoramio_%281%29.jpg",
+      "file": "Schwarzenberg_-_panoramio_%281%29.jpg",
+      "w": 1280,
+      "h": 334,
+      "flags": [
+        "strip:3.83"
+      ],
+      "drop": true,
+      "basis": "name-only",
+      "hasGeometry": true
+    },
+    {
+      "id": 4297,
+      "name": "Sentier Nature",
+      "country": "CH",
+      "category": "hike",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9f/Gr%C3%A8ve_de_la_Motte_Panorama.jpg/1280px-Gr%C3%A8ve_de_la_Motte_Panorama.jpg",
+      "file": "Gr%C3%A8ve_de_la_Motte_Panorama.jpg",
+      "w": 1280,
+      "h": 305,
+      "flags": [
+        "strip:4.20"
+      ],
+      "drop": true,
+      "basis": "categories",
+      "hasGeometry": true
+    },
+    {
+      "id": 7093,
+      "name": "Holzflue-Rundweg",
+      "country": "CH",
+      "category": "hike",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a0/Traubensteinbrech.jpg/1280px-Traubensteinbrech.jpg",
+      "file": "Traubensteinbrech.jpg",
+      "w": 1280,
+      "h": 960,
+      "flags": [
+        "cat:off_subject"
+      ],
+      "drop": true,
+      "basis": "categories",
+      "hasGeometry": true
+    },
+    {
+      "id": 7703,
+      "name": "Hegauer Kegelspiel: Grenzgänger",
+      "country": "CH",
+      "category": "hike",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/99/2009-04-10_Rhein_beim_Dschungel.jpg/1280px-2009-04-10_Rhein_beim_Dschungel.jpg",
+      "file": "2009-04-10_Rhein_beim_Dschungel.jpg",
+      "w": 1280,
+      "h": 302,
+      "flags": [
+        "strip:4.24"
+      ],
+      "drop": true,
+      "basis": "categories",
+      "hasGeometry": true
+    },
+    {
+      "id": 8347,
+      "name": "Diemtigtaler Talwanderweg",
+      "country": "CH",
+      "category": "hike",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/16/Grimmialp%2C_Switzerland%2C_panorama.jpg/1280px-Grimmialp%2C_Switzerland%2C_panorama.jpg",
+      "file": "Grimmialp%2C_Switzerland%2C_panorama.jpg",
+      "w": 1280,
+      "h": 248,
+      "flags": [
+        "strip:5.16"
+      ],
+      "drop": true,
+      "basis": "categories",
+      "hasGeometry": true
+    },
+    {
+      "id": 103675,
+      "name": "Okruh Dušana Jurkoviče",
+      "country": "CZ",
+      "category": "hike",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b7/Luha%C4%8Dovice_-_Pozlovice_-_Luha%C4%8Dovick%C3%A1_p%C5%99ehrada_1912-30_-_View_WNW.jpg/1280px-Luha%C4%8Dovice_-_Pozlovice_-_Luha%C4%8Dovick%C3%A1_p%C5%99ehrada_1912-30_-_View_WNW.jpg",
+      "file": "Luha%C4%8Dovice_-_Pozlovice_-_Luha%C4%8Dovick%C3%A1_p%C5%99ehrada_1912-30_-_View_WNW.jpg",
+      "w": 1280,
+      "h": 853,
+      "flags": [
+        "~historical"
+      ],
+      "drop": false,
+      "basis": "categories",
+      "hasGeometry": true
+    },
+    {
+      "id": 103787,
+      "name": "[M] Tálský mlýn - Vápenice",
+      "country": "CZ",
+      "category": "hike",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/9/98/Talsky_Mlyn_Pilsky_Mlyn_1895.png",
+      "file": "Talsky_Mlyn_Pilsky_Mlyn_1895.png",
+      "w": 1280,
+      "h": 842,
+      "flags": [
+        "~historical"
+      ],
+      "drop": false,
+      "basis": "categories",
+      "hasGeometry": true
+    },
+    {
+      "id": 105300,
+      "name": "Vyhlídková stezka kolem Prachatic",
+      "country": "CZ",
+      "category": "hike",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3d/Svatopetrsk%C3%A1_stezka_%2812%29.jpg/1280px-Svatopetrsk%C3%A1_stezka_%2812%29.jpg",
+      "file": "Svatopetrsk%C3%A1_stezka_%2812%29.jpg",
+      "w": 1280,
+      "h": 853,
+      "flags": [
+        "cat:signage"
+      ],
+      "drop": true,
+      "basis": "categories",
+      "hasGeometry": true
+    },
+    {
+      "id": 105376,
+      "name": "[Z] Cerhovice okružní trasa",
+      "country": "CZ",
+      "category": "hike",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d7/Sri_Chinmoy_Street%2C_Cerhovice_2018.jpg/1280px-Sri_Chinmoy_Street%2C_Cerhovice_2018.jpg",
+      "file": "Sri_Chinmoy_Street%2C_Cerhovice_2018.jpg",
+      "w": 1280,
+      "h": 851,
+      "flags": [
+        "cat:signage"
+      ],
+      "drop": true,
+      "basis": "categories",
+      "hasGeometry": true
+    },
+    {
+      "id": 207555,
+      "name": "Traumpfad Vulkanpfad",
+      "country": "DE",
+      "category": "hike",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/37/Panorama_Ettringer_Bellerberg.jpg/1280px-Panorama_Ettringer_Bellerberg.jpg",
+      "file": "Panorama_Ettringer_Bellerberg.jpg",
+      "w": 1280,
+      "h": 187,
+      "flags": [
+        "strip:6.84"
+      ],
+      "drop": true,
+      "basis": "categories",
+      "hasGeometry": true
+    },
+    {
+      "id": 104279,
+      "name": "Kammweg Erzgebirge-Vogtland",
+      "country": "DE",
+      "category": "hike",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2e/Bushaltestelle_Muehlleithen%2C_Kammweg%2C_Richtung_Klingenthal.jpg/1280px-Bushaltestelle_Muehlleithen%2C_Kammweg%2C_Richtung_Klingenthal.jpg",
+      "file": "Bushaltestelle_Muehlleithen%2C_Kammweg%2C_Richtung_Klingenthal.jpg",
+      "w": 1280,
+      "h": 720,
+      "flags": [
+        "cat:parking"
+      ],
+      "drop": true,
+      "basis": "categories",
+      "hasGeometry": true
+    },
+    {
+      "id": 246566,
+      "name": "Rundweg Calbitz - Collm",
+      "country": "DE",
+      "category": "hike",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/06/22652-Collmberg-1924-Blick_zum_Collmberg-Br%C3%BCck_%26_Sohn_Kunstverlag.jpg/1280px-22652-Collmberg-1924-Blick_zum_Collmberg-Br%C3%BCck_%26_Sohn_Kunstverlag.jpg",
+      "file": "22652-Collmberg-1924-Blick_zum_Collmberg-Br%C3%BCck_%26_Sohn_Kunstverlag.jpg",
+      "w": 1280,
+      "h": 845,
+      "flags": [
+        "~historical"
+      ],
+      "drop": false,
+      "basis": "name-only",
+      "hasGeometry": true
+    },
+    {
+      "id": 238156,
+      "name": "Genießerpfad - Durbacher Weitblick",
+      "country": "DE",
+      "category": "hike",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/07/LGL-BW_-_DOP_-_426000_5370000_%281968%29.png/1280px-LGL-BW_-_DOP_-_426000_5370000_%281968%29.png",
+      "file": "LGL-BW_-_DOP_-_426000_5370000_%281968%29.png",
+      "w": 1280,
+      "h": 1280,
+      "flags": [
+        "~historical"
+      ],
+      "drop": false,
+      "basis": "name-only",
+      "hasGeometry": true
+    },
+    {
+      "id": 104156,
+      "name": "Goldsteig Verbindungsweg Unterer Goldener Steig",
+      "country": "DE",
+      "category": "hike",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/Fuersteneck_1706-1091.jpg/1280px-Fuersteneck_1706-1091.jpg",
+      "file": "Fuersteneck_1706-1091.jpg",
+      "w": 1280,
+      "h": 854,
+      "flags": [
+        "~historical"
+      ],
+      "drop": false,
+      "basis": "categories",
+      "hasGeometry": true
+    },
+    {
+      "id": 238822,
+      "name": "WaddenWandelen - Borkum (D)",
+      "country": "DE",
+      "category": "hike",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5d/Borkum%2C_Blick_von_der_Aussichtsd%C3%BCne_%22Sternklipp%22_--_2020_--_2765.jpg/1280px-Borkum%2C_Blick_von_der_Aussichtsd%C3%BCne_%22Sternklipp%22_--_2020_--_2765.jpg",
+      "file": "Borkum%2C_Blick_von_der_Aussichtsd%C3%BCne_%22Sternklipp%22_--_2020_--_2765.jpg",
+      "w": 1280,
+      "h": 720,
+      "flags": [
+        "cat:off_subject"
+      ],
+      "drop": true,
+      "basis": "categories",
+      "hasGeometry": true
+    },
+    {
+      "id": 255833,
+      "name": "Windradl - Rundwanderweg",
+      "country": "DE",
+      "category": "hike",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/af/Infotafel_Windradl_-_Wanderweg_Wiesenfelden_Station_4.jpg/1280px-Infotafel_Windradl_-_Wanderweg_Wiesenfelden_Station_4.jpg",
+      "file": "Infotafel_Windradl_-_Wanderweg_Wiesenfelden_Station_4.jpg",
+      "w": 1280,
+      "h": 957,
+      "flags": [
+        "name:signage"
+      ],
+      "drop": true,
+      "basis": "name-only",
+      "hasGeometry": true
+    },
+    {
+      "id": 206938,
+      "name": "Sigwardsweg",
+      "country": "DE",
+      "category": "hike",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b7/GrosserWeserbogen_von_Wittekindsberg_225_20220724_1703.jpg/1280px-GrosserWeserbogen_von_Wittekindsberg_225_20220724_1703.jpg",
+      "file": "GrosserWeserbogen_von_Wittekindsberg_225_20220724_1703.jpg",
+      "w": 1280,
+      "h": 720,
+      "flags": [
+        "~historical"
+      ],
+      "drop": false,
+      "basis": "name-only",
+      "hasGeometry": true
+    },
+    {
+      "id": 225777,
+      "name": "Traumschleife Schwede-Bure",
+      "country": "DE",
+      "category": "hike",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/20/Schwede-Bure-Tour.jpg/1280px-Schwede-Bure-Tour.jpg",
+      "file": "Schwede-Bure-Tour.jpg",
+      "w": 1280,
+      "h": 720,
+      "flags": [
+        "cat:signage"
+      ],
+      "drop": true,
+      "basis": "categories",
+      "hasGeometry": true
+    },
+    {
+      "id": 219503,
+      "name": "Traumschleife Baybachklamm",
+      "country": "DE",
+      "category": "hike",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/34/PANO_20211120_105913.jpg/1280px-PANO_20211120_105913.jpg",
+      "file": "PANO_20211120_105913.jpg",
+      "w": 1280,
+      "h": 353,
+      "flags": [
+        "strip:3.63"
+      ],
+      "drop": true,
+      "basis": "categories",
+      "hasGeometry": true
+    },
+    {
+      "id": 63562,
+      "name": "Peraküla-Aegviidu-Ähijärve haru. I lõik: Peraküla-Vihterpalu",
+      "country": "EE",
+      "category": "hike",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bb/Vihterpalu_m%C3%B5is_%28Vippal_herrg%C3%A5rd%29_SLS_443_18_-_1934.jpg/1280px-Vihterpalu_m%C3%B5is_%28Vippal_herrg%C3%A5rd%29_SLS_443_18_-_1934.jpg",
+      "file": "Vihterpalu_m%C3%B5is_%28Vippal_herrg%C3%A5rd%29_SLS_443_18_-_1934.jpg",
+      "w": 1280,
+      "h": 882,
+      "flags": [
+        "~historical"
+      ],
+      "drop": false,
+      "basis": "categories",
+      "hasGeometry": true
+    },
+    {
+      "id": 63687,
+      "name": "Ilmatsalu-Kärevere linnutee matkarada",
+      "country": "EE",
+      "category": "hike",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2b/Butterfly_on_a_leaf_-_Flickr_-_Lauri_P._Photography.jpg/1280px-Butterfly_on_a_leaf_-_Flickr_-_Lauri_P._Photography.jpg",
+      "file": "Butterfly_on_a_leaf_-_Flickr_-_Lauri_P._Photography.jpg",
+      "w": 1280,
+      "h": 853,
+      "flags": [
+        "name:off_subject"
+      ],
+      "drop": true,
+      "basis": "categories",
+      "hasGeometry": true
+    },
+    {
+      "id": 63781,
+      "name": "Raikküla rada",
+      "country": "EE",
+      "category": "hike",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8a/Raikk%C3%BCla_Pakam%C3%A4gi.jpg/1280px-Raikk%C3%BCla_Pakam%C3%A4gi.jpg",
+      "file": "Raikk%C3%BCla_Pakam%C3%A4gi.jpg",
+      "w": 1280,
+      "h": 330,
+      "flags": [
+        "strip:3.88"
+      ],
+      "drop": true,
+      "basis": "categories",
+      "hasGeometry": true
+    },
+    {
+      "id": 80218,
+      "name": "Etapa 36: Badajoz - San Francisco de Olivenza",
+      "country": "ES",
+      "category": "hike",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/50/Vista_del_Guadiana_a_su_paso_por_el_Puente_Real_y_torre_de_Caja_Badajoz.JPG/1280px-Vista_del_Guadiana_a_su_paso_por_el_Puente_Real_y_torre_de_Caja_Badajoz.JPG",
+      "file": "Vista_del_Guadiana_a_su_paso_por_el_Puente_Real_y_torre_de_Caja_Badajoz.JPG",
+      "w": 1280,
+      "h": 331,
+      "flags": [
+        "strip:3.87"
+      ],
+      "drop": true,
+      "basis": "categories",
+      "hasGeometry": true
+    },
+    {
+      "id": 178353,
+      "name": "Camino de Santiago del Sur",
+      "country": "ES",
+      "category": "hike",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/Minas_de_Riotinto_03_mina_by-dpc.jpg/1280px-Minas_de_Riotinto_03_mina_by-dpc.jpg",
+      "file": "Minas_de_Riotinto_03_mina_by-dpc.jpg",
+      "w": 1280,
+      "h": 162,
+      "flags": [
+        "strip:7.90"
+      ],
+      "drop": true,
+      "basis": "categories",
+      "hasGeometry": true
+    },
+    {
+      "id": 112595,
+      "name": "Mariehamn Runt",
+      "country": "FI",
+      "category": "hike",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/Panorama_of_Mariehamn_in_1944.jpg/1280px-Panorama_of_Mariehamn_in_1944.jpg",
+      "file": "Panorama_of_Mariehamn_in_1944.jpg",
+      "w": 1280,
+      "h": 480,
+      "flags": [
+        "~historical"
+      ],
+      "drop": false,
+      "basis": "categories",
+      "hasGeometry": true
+    },
+    {
+      "id": 36247,
+      "name": "Corniches du Larzac",
+      "country": "FR",
+      "category": "hike",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9d/Creissels_-_Place_du_19_Mars_1962_-_bo%C3%AEte_%C3%A0_livres.jpg/1280px-Creissels_-_Place_du_19_Mars_1962_-_bo%C3%AEte_%C3%A0_livres.jpg",
+      "file": "Creissels_-_Place_du_19_Mars_1962_-_bo%C3%AEte_%C3%A0_livres.jpg",
+      "w": 1280,
+      "h": 720,
+      "flags": [
+        "~historical"
+      ],
+      "drop": false,
+      "basis": "categories",
+      "hasGeometry": true
+    },
+    {
+      "id": 27539,
+      "name": "Tour de la Font Sancte",
+      "country": "FR",
+      "category": "hike",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/GR5_hiking_route_at_Lac_Ste_Anne.jpg/1280px-GR5_hiking_route_at_Lac_Ste_Anne.jpg",
+      "file": "GR5_hiking_route_at_Lac_Ste_Anne.jpg",
+      "w": 1280,
+      "h": 288,
+      "flags": [
+        "strip:4.44"
+      ],
+      "drop": true,
+      "basis": "categories",
+      "hasGeometry": true
+    },
+    {
+      "id": 30749,
+      "name": "Mulhouse - Galfingue - Jonction GR531",
+      "country": "FR",
+      "category": "hike",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/Stade_de_l%27Ill%2C_Mulhouse_%2814405013344%29.jpg/1280px-Stade_de_l%27Ill%2C_Mulhouse_%2814405013344%29.jpg",
+      "file": "Stade_de_l%27Ill%2C_Mulhouse_%2814405013344%29.jpg",
+      "w": 1280,
+      "h": 261,
+      "flags": [
+        "strip:4.90"
+      ],
+      "drop": true,
+      "basis": "categories",
+      "hasGeometry": true
+    },
+    {
+      "id": 185750,
+      "name": "Cotswold Way",
+      "country": "GB",
+      "category": "hike",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/03/Cotswold_way_near_Haresfield_topograph_-_geograph.org.uk_-_1823646.jpg/1280px-Cotswold_way_near_Haresfield_topograph_-_geograph.org.uk_-_1823646.jpg",
+      "file": "Cotswold_way_near_Haresfield_topograph_-_geograph.org.uk_-_1823646.jpg",
+      "w": 1280,
+      "h": 853,
+      "flags": [
+        "name:map"
+      ],
+      "drop": true,
+      "basis": "categories",
+      "hasGeometry": true
+    },
+    {
+      "id": 186689,
+      "name": "Sheffield Round Walk",
+      "country": "GB",
+      "category": "hike",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Photography_by_Victor_Albert_Grigas_%281919-2017%29_2_Loughborough_to_Sheffield_UK_circa_1970_00568_%2848353464011%29.jpg/1280px-Photography_by_Victor_Albert_Grigas_%281919-2017%29_2_Loughborough_to_Sheffield_UK_circa_1970_00568_%2848353464011%29.jpg",
+      "file": "Photography_by_Victor_Albert_Grigas_%281919-2017%29_2_Loughborough_to_Sheffield_UK_circa_1970_00568_%2848353464011%29.jpg",
+      "w": 1280,
+      "h": 861,
+      "flags": [
+        "~historical"
+      ],
+      "drop": false,
+      "basis": "categories",
+      "hasGeometry": true
+    },
+    {
+      "id": 189278,
+      "name": "Rail Trail: The Avon Valley from Rugby Circular",
+      "country": "GB",
+      "category": "hike",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/74/Rugby_Class_57_Diesel_geograph-3985377-by-Ben-Brooksbank.jpg/1280px-Rugby_Class_57_Diesel_geograph-3985377-by-Ben-Brooksbank.jpg",
+      "file": "Rugby_Class_57_Diesel_geograph-3985377-by-Ben-Brooksbank.jpg",
+      "w": 1280,
+      "h": 874,
+      "flags": [
+        "cat:off_subject"
+      ],
+      "drop": true,
+      "basis": "categories",
+      "hasGeometry": true
+    },
+    {
+      "id": 66946,
+      "name": "Nacionalni park Paklenica",
+      "country": "HR",
+      "category": "hike",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b8/Babin_vrh_and_P.1724_20250915_HDR.jpg/1280px-Babin_vrh_and_P.1724_20250915_HDR.jpg",
+      "file": "Babin_vrh_and_P.1724_20250915_HDR.jpg",
+      "w": 1280,
+      "h": 720,
+      "flags": [
+        "~historical"
+      ],
+      "drop": false,
+      "basis": "categories",
+      "hasGeometry": true
+    },
+    {
+      "id": 66412,
+      "name": "302 Pepijeva staza",
+      "country": "HR",
+      "category": "hike",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/99/Beli%2C_Cres%2C_page_banner.jpg/1280px-Beli%2C_Cres%2C_page_banner.jpg",
+      "file": "Beli%2C_Cres%2C_page_banner.jpg",
+      "w": 1280,
+      "h": 183,
+      "flags": [
+        "strip:6.99"
+      ],
+      "drop": true,
+      "basis": "categories",
+      "hasGeometry": true
+    },
+    {
+      "id": 67249,
+      "name": "Via Apsyrtides #9: Ćunski => Mali Lošinj",
+      "country": "HR",
+      "category": "hike",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4f/Ponte_in_Mali_Lo%C5%A1inj_%28Lussinpiccolo%29_Jan_1944.jpg/1280px-Ponte_in_Mali_Lo%C5%A1inj_%28Lussinpiccolo%29_Jan_1944.jpg",
+      "file": "Ponte_in_Mali_Lo%C5%A1inj_%28Lussinpiccolo%29_Jan_1944.jpg",
+      "w": 1280,
+      "h": 829,
+      "flags": [
+        "~historical"
+      ],
+      "drop": false,
+      "basis": "categories",
+      "hasGeometry": true
+    },
+    {
+      "id": 70795,
+      "name": "Mária-út, M01-19 (Zsámbék – Telki – Máriaremete)",
+      "country": "HU",
+      "category": "hike",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/Lehrpfad_der_Remete-Schlucht%2C_Schneegl%C3%B6ckchen%2C_2026_Remetesz%C5%91l%C5%91s.jpg/1280px-Lehrpfad_der_Remete-Schlucht%2C_Schneegl%C3%B6ckchen%2C_2026_Remetesz%C5%91l%C5%91s.jpg",
+      "file": "Lehrpfad_der_Remete-Schlucht%2C_Schneegl%C3%B6ckchen%2C_2026_Remetesz%C5%91l%C5%91s.jpg",
+      "w": 1280,
+      "h": 960,
+      "flags": [
+        "cat:off_subject"
+      ],
+      "drop": true,
+      "basis": "categories",
+      "hasGeometry": true
+    },
+    {
+      "id": 73197,
+      "name": "Z02",
+      "country": "HU",
+      "category": "hike",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bb/Holl%C3%B3k%C5%91-panorama.jpg/1280px-Holl%C3%B3k%C5%91-panorama.jpg",
+      "file": "Holl%C3%B3k%C5%91-panorama.jpg",
+      "w": 1280,
+      "h": 211,
+      "flags": [
+        "strip:6.07"
+      ],
+      "drop": true,
+      "basis": "categories",
+      "hasGeometry": true
+    },
+    {
+      "id": 71253,
+      "name": "Z+ (Bakonybé)l",
+      "country": "HU",
+      "category": "hike",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8d/Cseraljastrasse%2C_K%C5%91ris-hegy%2C_Bakonyerd%C5%91_Tafeln%2C_2024_Bakonyb%C3%A9l.jpg/1280px-Cseraljastrasse%2C_K%C5%91ris-hegy%2C_Bakonyerd%C5%91_Tafeln%2C_2024_Bakonyb%C3%A9l.jpg",
+      "file": "Cseraljastrasse%2C_K%C5%91ris-hegy%2C_Bakonyerd%C5%91_Tafeln%2C_2024_Bakonyb%C3%A9l.jpg",
+      "w": 1280,
+      "h": 960,
+      "flags": [
+        "cat:signage"
+      ],
+      "drop": true,
+      "basis": "categories",
+      "hasGeometry": true
+    },
+    {
+      "id": 71244,
+      "name": "Mária-út, M01-32 (Hernádkércs – Mád)",
+      "country": "HU",
+      "category": "hike",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a1/98-as_vas%C3%BAtvonal_2.jpg/1280px-98-as_vas%C3%BAtvonal_2.jpg",
+      "file": "98-as_vas%C3%BAtvonal_2.jpg",
+      "w": 1280,
+      "h": 959,
+      "flags": [
+        "cat:off_subject"
+      ],
+      "drop": true,
+      "basis": "categories",
+      "hasGeometry": true
+    },
+    {
+      "id": 70786,
+      "name": "P↺, Bögre-hegyi körtúra",
+      "country": "HU",
+      "category": "hike",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/Panorama_in_Therme_Zalakaros_-_panoramio_%282%29.jpg/1280px-Panorama_in_Therme_Zalakaros_-_panoramio_%282%29.jpg",
+      "file": "Panorama_in_Therme_Zalakaros_-_panoramio_%282%29.jpg",
+      "w": 1280,
+      "h": 185,
+      "flags": [
+        "strip:6.92"
+      ],
+      "drop": true,
+      "basis": "categories",
+      "hasGeometry": true
+    },
+    {
+      "id": 80257,
+      "name": "Dublin Mountains Way",
+      "country": "IE",
+      "category": "hike",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f6/Dublin_Mountains_Way_Waymarker.jpg/1280px-Dublin_Mountains_Way_Waymarker.jpg",
+      "file": "Dublin_Mountains_Way_Waymarker.jpg",
+      "w": 1280,
+      "h": 720,
+      "flags": [
+        "name:waymark",
+        "cat:waymark"
+      ],
+      "drop": true,
+      "basis": "categories",
+      "hasGeometry": true
+    },
+    {
+      "id": 80290,
+      "name": "Slí Na Rosann - Sli Dhun na nGall",
+      "country": "IE",
+      "category": "hike",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Stonechat_on_Briar_at_Maghery_Lough_Donegal_2021.jpg/1280px-Stonechat_on_Briar_at_Maghery_Lough_Donegal_2021.jpg",
+      "file": "Stonechat_on_Briar_at_Maghery_Lough_Donegal_2021.jpg",
+      "w": 1280,
+      "h": 853,
+      "flags": [
+        "cat:off_subject"
+      ],
+      "drop": true,
+      "basis": "categories",
+      "hasGeometry": true
+    },
+    {
+      "id": 81056,
+      "name": "The Tinahely Loop",
+      "country": "IE",
+      "category": "hike",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/d/d0/Murphy%27s_Hotel%2C_Tinahely%2C_Ireland._In_1960_-_geograph.org.uk_-_3926136.jpg",
+      "file": "Murphy%27s_Hotel%2C_Tinahely%2C_Ireland._In_1960_-_geograph.org.uk_-_3926136.jpg",
+      "w": 1280,
+      "h": 851,
+      "flags": [
+        "~historical"
+      ],
+      "drop": false,
+      "basis": "categories",
+      "hasGeometry": true
+    },
+    {
+      "id": 80760,
+      "name": "Eyeries - Coastguard Station Loop",
+      "country": "IE",
+      "category": "hike",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Multicoloured_Houses_of_Eyeries_-_June_1994_-_geograph.org.uk_-_6749089.jpg/1280px-Multicoloured_Houses_of_Eyeries_-_June_1994_-_geograph.org.uk_-_6749089.jpg",
+      "file": "Multicoloured_Houses_of_Eyeries_-_June_1994_-_geograph.org.uk_-_6749089.jpg",
+      "w": 1280,
+      "h": 858,
+      "flags": [
+        "~historical"
+      ],
+      "drop": false,
+      "basis": "categories",
+      "hasGeometry": true
+    },
+    {
+      "id": 80759,
+      "name": "Eyeries - Creha Quay Loop",
+      "country": "IE",
+      "category": "hike",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Multicoloured_Houses_of_Eyeries_-_June_1994_-_geograph.org.uk_-_6749089.jpg/1280px-Multicoloured_Houses_of_Eyeries_-_June_1994_-_geograph.org.uk_-_6749089.jpg",
+      "file": "Multicoloured_Houses_of_Eyeries_-_June_1994_-_geograph.org.uk_-_6749089.jpg",
+      "w": 1280,
+      "h": 858,
+      "flags": [
+        "~historical"
+      ],
+      "drop": false,
+      "basis": "categories",
+      "hasGeometry": true
+    },
+    {
+      "id": 62974,
+      "name": "Valahnúkur hike",
+      "country": "IS",
+      "category": "hike",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/41/20190622_Valahnukur_1661_%2848460273712%29.jpg/1280px-20190622_Valahnukur_1661_%2848460273712%29.jpg",
+      "file": "20190622_Valahnukur_1661_%2848460273712%29.jpg",
+      "w": 1280,
+      "h": 364,
+      "flags": [
+        "~historical"
+      ],
+      "drop": false,
+      "basis": "categories",
+      "hasGeometry": true
+    },
+    {
+      "id": 191358,
+      "name": "Sentiero Frassati",
+      "country": "IT",
+      "category": "hike",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/MIR_E.652.014_a_Genova_Acquasanta.jpg/1280px-MIR_E.652.014_a_Genova_Acquasanta.jpg",
+      "file": "MIR_E.652.014_a_Genova_Acquasanta.jpg",
+      "w": 1280,
+      "h": 853,
+      "flags": [
+        "cat:off_subject"
+      ],
+      "drop": true,
+      "basis": "categories",
+      "hasGeometry": true
+    },
+    {
+      "id": 204334,
+      "name": "Cammino dei tre laghi - Tappa 6",
+      "country": "IT",
+      "category": "hike",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/10/20220205-malga_lunga_563-065.jpg/1280px-20220205-malga_lunga_563-065.jpg",
+      "file": "20220205-malga_lunga_563-065.jpg",
+      "w": 1280,
+      "h": 960,
+      "flags": [
+        "cat:signage"
+      ],
+      "drop": true,
+      "basis": "categories",
+      "hasGeometry": true
+    },
+    {
+      "id": 202840,
+      "name": "Anello del Monte Lama",
+      "country": "IT",
+      "category": "hike",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e8/It-pr-ldpFx22.jpg/1280px-It-pr-ldpFx22.jpg",
+      "file": "It-pr-ldpFx22.jpg",
+      "w": 1280,
+      "h": 2276,
+      "flags": [
+        "cat:signage"
+      ],
+      "drop": true,
+      "basis": "categories",
+      "hasGeometry": true
+    },
+    {
+      "id": 203171,
+      "name": "Alta Via delle Grazie - Tappa 1",
+      "country": "IT",
+      "category": "hike",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/20200504-maresana_rosciano_fileasy_filonci-15.jpg/1280px-20200504-maresana_rosciano_fileasy_filonci-15.jpg",
+      "file": "20200504-maresana_rosciano_fileasy_filonci-15.jpg",
+      "w": 1280,
+      "h": 960,
+      "flags": [
+        "cat:signage"
+      ],
+      "drop": true,
+      "basis": "categories",
+      "hasGeometry": true
+    },
+    {
+      "id": 194712,
+      "name": "Alta Via delle 5 Terre: Portovenere - Monte Soviore - Foce di Dosso",
+      "country": "IT",
+      "category": "hike",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/92/La_Spezia%2C_Biassa%2C_sentiero_504_per_Sant%27Antonio_1.jpg/1280px-La_Spezia%2C_Biassa%2C_sentiero_504_per_Sant%27Antonio_1.jpg",
+      "file": "La_Spezia%2C_Biassa%2C_sentiero_504_per_Sant%27Antonio_1.jpg",
+      "w": 1280,
+      "h": 960,
+      "flags": [
+        "cat:waymark"
+      ],
+      "drop": true,
+      "basis": "categories",
+      "hasGeometry": true
+    },
+    {
+      "id": 195230,
+      "name": "Trail Tre Cime",
+      "country": "IT",
+      "category": "hike",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e9/CAI_917_%28Alpe_3%29.jpg/1280px-CAI_917_%28Alpe_3%29.jpg",
+      "file": "CAI_917_%28Alpe_3%29.jpg",
+      "w": 1280,
+      "h": 960,
+      "flags": [
+        "cat:signage"
+      ],
+      "drop": true,
+      "basis": "categories",
+      "hasGeometry": true
+    },
+    {
+      "id": 190780,
+      "name": "Via Francigena - 02 Piemonte",
+      "country": "IT",
+      "category": "hike",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/92/Montestrutto%2C_Settimo_Vittone%2C_Provinz_Turin%2C_Italien.jpg/1280px-Montestrutto%2C_Settimo_Vittone%2C_Provinz_Turin%2C_Italien.jpg",
+      "file": "Montestrutto%2C_Settimo_Vittone%2C_Provinz_Turin%2C_Italien.jpg",
+      "w": 1280,
+      "h": 319,
+      "flags": [
+        "strip:4.01"
+      ],
+      "drop": true,
+      "basis": "categories",
+      "hasGeometry": true
+    },
+    {
+      "id": 204438,
+      "name": "Le antiche via di Capugnano",
+      "country": "IT",
+      "category": "hike",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/5/5a/CAI_107_Le_Croci_Segnavia.jpg",
+      "file": "CAI_107_Le_Croci_Segnavia.jpg",
+      "w": 1280,
+      "h": 960,
+      "flags": [
+        "name:waymark",
+        "cat:signage"
+      ],
+      "drop": true,
+      "basis": "categories",
+      "hasGeometry": true
+    },
+    {
+      "id": 198197,
+      "name": "Percorso Olmatello",
+      "country": "IT",
+      "category": "hike",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/40/Segnavia_La_Berta_Olmatello_San_Cristoforo.jpg/1280px-Segnavia_La_Berta_Olmatello_San_Cristoforo.jpg",
+      "file": "Segnavia_La_Berta_Olmatello_San_Cristoforo.jpg",
+      "w": 1280,
+      "h": 1707,
+      "flags": [
+        "name:waymark",
+        "cat:signage",
+        "cat:waymark"
+      ],
+      "drop": true,
+      "basis": "categories",
+      "hasGeometry": true
+    },
+    {
+      "id": 202217,
+      "name": "Sentiero Azzurro",
+      "country": "IT",
+      "category": "hike",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/ff/20230608-serina_cornalba_giro_redo-225.jpg/1280px-20230608-serina_cornalba_giro_redo-225.jpg",
+      "file": "20230608-serina_cornalba_giro_redo-225.jpg",
+      "w": 1280,
+      "h": 960,
+      "flags": [
+        "cat:signage"
+      ],
+      "drop": true,
+      "basis": "categories",
+      "hasGeometry": true
+    },
+    {
+      "id": 64529,
+      "name": "Meironų geltonasis pažintinis takas",
+      "country": "LT",
+      "category": "hike",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8b/Pal%C5%AB%C5%A1%C4%97%2C_Lithuania_-_panoramio_%2821%29.jpg/1280px-Pal%C5%AB%C5%A1%C4%97%2C_Lithuania_-_panoramio_%2821%29.jpg",
+      "file": "Pal%C5%AB%C5%A1%C4%97%2C_Lithuania_-_panoramio_%2821%29.jpg",
+      "w": 1280,
+      "h": 238,
+      "flags": [
+        "strip:5.38"
+      ],
+      "drop": true,
+      "basis": "categories",
+      "hasGeometry": true
+    },
+    {
+      "id": 64597,
+      "name": "Talkšos ekologinis takas",
+      "country": "LT",
+      "category": "hike",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f7/1973_06_12Salduv%C4%9718.jpg/1280px-1973_06_12Salduv%C4%9718.jpg",
+      "file": "1973_06_12Salduv%C4%9718.jpg",
+      "w": 1280,
+      "h": 666,
+      "flags": [
+        "~historical"
+      ],
+      "drop": false,
+      "basis": "categories",
+      "hasGeometry": true
+    },
+    {
+      "id": 64712,
+      "name": "Camino Lituano Žemaitija 9 etapai: Šiauliai - Sereikiai (Rusliai)",
+      "country": "LT",
+      "category": "hike",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/82/1991_01_13%C5%A0iauliai12.jpg/1280px-1991_01_13%C5%A0iauliai12.jpg",
+      "file": "1991_01_13%C5%A0iauliai12.jpg",
+      "w": 1280,
+      "h": 865,
+      "flags": [
+        "~historical"
+      ],
+      "drop": false,
+      "basis": "categories",
+      "hasGeometry": true
+    },
+    {
+      "id": 64522,
+      "name": "Kulautuvos pėsčiųjų-sveikatingumo takas I",
+      "country": "LT",
+      "category": "hike",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Kulautuva%2C_sveikatingumo_takas.jpg/1280px-Kulautuva%2C_sveikatingumo_takas.jpg",
+      "file": "Kulautuva%2C_sveikatingumo_takas.jpg",
+      "w": 1280,
+      "h": 960,
+      "flags": [
+        "cat:signage"
+      ],
+      "drop": true,
+      "basis": "categories",
+      "hasGeometry": true
+    },
+    {
+      "id": 64571,
+      "name": "Pažintinis miško takas",
+      "country": "LT",
+      "category": "hike",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/68/Kazl%C5%B3_R%C5%ABda%2C_ur%C4%97dija.jpg/1280px-Kazl%C5%B3_R%C5%ABda%2C_ur%C4%97dija.jpg",
+      "file": "Kazl%C5%B3_R%C5%ABda%2C_ur%C4%97dija.jpg",
+      "w": 1280,
+      "h": 960,
+      "flags": [
+        "cat:signage"
+      ],
+      "drop": true,
+      "basis": "categories",
+      "hasGeometry": true
+    },
+    {
+      "id": 62992,
+      "name": "W3 Hiking Tour",
+      "country": "LU",
+      "category": "hike",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2d/Berdorf_%28LU%29%2C_Werschrummschloeff_--_2015_--_6300.jpg/1280px-Berdorf_%28LU%29%2C_Werschrummschloeff_--_2015_--_6300.jpg",
+      "file": "Berdorf_%28LU%29%2C_Werschrummschloeff_--_2015_--_6300.jpg",
+      "w": 1280,
+      "h": 853,
+      "flags": [
+        "cat:off_subject"
+      ],
+      "drop": true,
+      "basis": "categories",
+      "hasGeometry": true
+    },
+    {
+      "id": 63407,
+      "name": "Schieren 1",
+      "country": "LU",
+      "category": "hike",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/52/Luxembourg%2C_Schieren_PN27a_%28101%29.jpg/1280px-Luxembourg%2C_Schieren_PN27a_%28101%29.jpg",
+      "file": "Luxembourg%2C_Schieren_PN27a_%28101%29.jpg",
+      "w": 1280,
+      "h": 960,
+      "flags": [
+        "cat:off_subject"
+      ],
+      "drop": true,
+      "basis": "categories",
+      "hasGeometry": true
+    },
+    {
+      "id": 63293,
+      "name": "L5 - Larochette",
+      "country": "LU",
+      "category": "hike",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/35/Larochette%2C_Rue_de_Mersch_%28nom_de_rue%29.jpg/1280px-Larochette%2C_Rue_de_Mersch_%28nom_de_rue%29.jpg",
+      "file": "Larochette%2C_Rue_de_Mersch_%28nom_de_rue%29.jpg",
+      "w": 1280,
+      "h": 720,
+      "flags": [
+        "cat:signage"
+      ],
+      "drop": true,
+      "basis": "categories",
+      "hasGeometry": true
+    },
+    {
+      "id": 63229,
+      "name": "Circuit pédestre Nommern 2",
+      "country": "LU",
+      "category": "hike",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/06/Stroossesch%C3%ABld_Ale_Wee%2C_Noumer-101.jpg/1280px-Stroossesch%C3%ABld_Ale_Wee%2C_Noumer-101.jpg",
+      "file": "Stroossesch%C3%ABld_Ale_Wee%2C_Noumer-101.jpg",
+      "w": 1280,
+      "h": 854,
+      "flags": [
+        "cat:signage"
+      ],
+      "drop": true,
+      "basis": "categories",
+      "hasGeometry": true
+    },
+    {
+      "id": 63106,
+      "name": "Mühlenrundweg",
+      "country": "LU",
+      "category": "hike",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7d/Neihaischen_Schweespad.jpg/1280px-Neihaischen_Schweespad.jpg",
+      "file": "Neihaischen_Schweespad.jpg",
+      "w": 1280,
+      "h": 770,
+      "flags": [
+        "cat:signage"
+      ],
+      "drop": true,
+      "basis": "categories",
+      "hasGeometry": true
+    },
+    {
+      "id": 64333,
+      "name": "Saules kalna taka",
+      "country": "LV",
+      "category": "hike",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/55/Infoboard_Prieku%C4%BCu_vesel%C4%ABbas_takas.jpg/1280px-Infoboard_Prieku%C4%BCu_vesel%C4%ABbas_takas.jpg",
+      "file": "Infoboard_Prieku%C4%BCu_vesel%C4%ABbas_takas.jpg",
+      "w": 1280,
+      "h": 1004,
+      "flags": [
+        "cat:signage"
+      ],
+      "drop": true,
+      "basis": "categories",
+      "hasGeometry": true
+    },
+    {
+      "id": 62607,
+      "name": "Velje Duboko – Kapetanovo Jezero (suggested trail, no trailmarks)",
+      "country": "ME",
+      "category": "hike",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/38/Ka_Kapetanovom_Jezeru_-_panoramio.jpg/1280px-Ka_Kapetanovom_Jezeru_-_panoramio.jpg",
+      "file": "Ka_Kapetanovom_Jezeru_-_panoramio.jpg",
+      "w": 1280,
+      "h": 960,
+      "flags": [
+        "cat:off_subject"
+      ],
+      "drop": true,
+      "basis": "categories",
+      "hasGeometry": true
+    },
+    {
+      "id": 62383,
+      "name": "MMV Tour 4",
+      "country": "MT",
+      "category": "hike",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/Hillside_Panorama_2_%286956312689%29.jpg/1280px-Hillside_Panorama_2_%286956312689%29.jpg",
+      "file": "Hillside_Panorama_2_%286956312689%29.jpg",
+      "w": 1280,
+      "h": 355,
+      "flags": [
+        "strip:3.61"
+      ],
+      "drop": true,
+      "basis": "categories",
+      "hasGeometry": true
+    },
+    {
+      "id": 161443,
+      "name": "WNW Veluwe - Rheden-Station - gele route",
+      "country": "NL",
+      "category": "hike",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7c/Rheden_NSR_ICM-3_4081-ICM-3_4057_IC_3634_Zwolle_%2852972571515%29.jpg/1280px-Rheden_NSR_ICM-3_4081-ICM-3_4057_IC_3634_Zwolle_%2852972571515%29.jpg",
+      "file": "Rheden_NSR_ICM-3_4081-ICM-3_4057_IC_3634_Zwolle_%2852972571515%29.jpg",
+      "w": 1280,
+      "h": 720,
+      "flags": [
+        "cat:off_subject"
+      ],
+      "drop": true,
+      "basis": "categories",
+      "hasGeometry": true
+    },
+    {
+      "id": 114879,
+      "name": "Jakobs-Pilgerweg Aachen-Maastricht",
+      "country": "NL",
+      "category": "hike",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0b/Gulpen-Wittem_Gulperberg_informatiepaneel_%281%29.jpg/1280px-Gulpen-Wittem_Gulperberg_informatiepaneel_%281%29.jpg",
+      "file": "Gulpen-Wittem_Gulperberg_informatiepaneel_%281%29.jpg",
+      "w": 1280,
+      "h": 718,
+      "flags": [
+        "cat:signage"
+      ],
+      "drop": true,
+      "basis": "categories",
+      "hasGeometry": true
+    },
+    {
+      "id": 166423,
+      "name": "Zuidschermerroute",
+      "country": "NL",
+      "category": "hike",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9d/De_LELY_uit_1938_onderweg_op_het_Noordhollandsch_Kanaal%2C_onderweg_naar_de_re%C3%BCnie_2014_van_de_LVBHB_in_Den_Helder_%2803%29.JPG/1280px-De_LELY_uit_1938_onderweg_op_het_Noordhollandsch_Kanaal%2C_onderweg_naar_de_re%C3%BCnie_2014_van_de_LVBHB_in_Den_Helder_%2803%29.JPG",
+      "file": "De_LELY_uit_1938_onderweg_op_het_Noordhollandsch_Kanaal%2C_onderweg_naar_de_re%C3%BCnie_2014_van_de_LVBHB_in_Den_Helder_%2803%29.JPG",
+      "w": 1280,
+      "h": 853,
+      "flags": [
+        "~historical"
+      ],
+      "drop": false,
+      "basis": "categories",
+      "hasGeometry": true
+    },
+    {
+      "id": 159061,
+      "name": "WNW Veluwe - Barneveld/Barneveld-Zuid - rode route",
+      "country": "NL",
+      "category": "hike",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/Barneveld_Mat64_904_RRReis_in_de_sneeuw_%2855022141767%29.jpg/1280px-Barneveld_Mat64_904_RRReis_in_de_sneeuw_%2855022141767%29.jpg",
+      "file": "Barneveld_Mat64_904_RRReis_in_de_sneeuw_%2855022141767%29.jpg",
+      "w": 1280,
+      "h": 720,
+      "flags": [
+        "cat:off_subject"
+      ],
+      "drop": true,
+      "basis": "categories",
+      "hasGeometry": true
+    },
+    {
+      "id": 23462,
+      "name": "FEM30",
+      "country": "NO",
+      "category": "hike",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/Norwegen_1998_%28734%29_R%C3%B8ros_kirke_%2850444334271%29.jpg/1280px-Norwegen_1998_%28734%29_R%C3%B8ros_kirke_%2850444334271%29.jpg",
+      "file": "Norwegen_1998_%28734%29_R%C3%B8ros_kirke_%2850444334271%29.jpg",
+      "w": 1280,
+      "h": 844,
+      "flags": [
+        "~historical"
+      ],
+      "drop": false,
+      "basis": "categories",
+      "hasGeometry": true
+    },
+    {
+      "id": 24612,
+      "name": "LLC - Stage 1",
+      "country": "NO",
+      "category": "hike",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/af/2018-06-05_11-46-58_Norwegen_Laukvik_Vatnfjord_11.0-Pano.jpg/1280px-2018-06-05_11-46-58_Norwegen_Laukvik_Vatnfjord_11.0-Pano.jpg",
+      "file": "2018-06-05_11-46-58_Norwegen_Laukvik_Vatnfjord_11.0-Pano.jpg",
+      "w": 1280,
+      "h": 151,
+      "flags": [
+        "strip:8.48"
+      ],
+      "drop": true,
+      "basis": "categories",
+      "hasGeometry": true
+    },
+    {
+      "id": 22403,
+      "name": "EIK17",
+      "country": "NO",
+      "category": "hike",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/Norwegen_1998_%28368%29_Trollstigen_%2848996655028%29.jpg/1280px-Norwegen_1998_%28368%29_Trollstigen_%2848996655028%29.jpg",
+      "file": "Norwegen_1998_%28368%29_Trollstigen_%2848996655028%29.jpg",
+      "w": 1280,
+      "h": 843,
+      "flags": [
+        "~historical"
+      ],
+      "drop": false,
+      "basis": "categories",
+      "hasGeometry": true
+    },
+    {
+      "id": 24412,
+      "name": "Kløvstien",
+      "country": "NO",
+      "category": "hike",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/Norwegen_1998_%28368%29_Trollstigen_%2848996655028%29.jpg/1280px-Norwegen_1998_%28368%29_Trollstigen_%2848996655028%29.jpg",
+      "file": "Norwegen_1998_%28368%29_Trollstigen_%2848996655028%29.jpg",
+      "w": 1280,
+      "h": 843,
+      "flags": [
+        "~historical"
+      ],
+      "drop": false,
+      "basis": "categories",
+      "hasGeometry": true
+    },
+    {
+      "id": 21863,
+      "name": "Krossen-Molden",
+      "country": "NO",
+      "category": "hike",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Panorama_of_Lustrafjord.jpg/1280px-Panorama_of_Lustrafjord.jpg",
+      "file": "Panorama_of_Lustrafjord.jpg",
+      "w": 1280,
+      "h": 281,
+      "flags": [
+        "strip:4.56"
+      ],
+      "drop": true,
+      "basis": "categories",
+      "hasGeometry": true
+    },
+    {
+      "id": 21856,
+      "name": "Haukeliseter - Bjåen",
+      "country": "NO",
+      "category": "hike",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1e/Haukeliseter_Fjellstue%2C_panorama_-_panoramio.jpg/1280px-Haukeliseter_Fjellstue%2C_panorama_-_panoramio.jpg",
+      "file": "Haukeliseter_Fjellstue%2C_panorama_-_panoramio.jpg",
+      "w": 1280,
+      "h": 207,
+      "flags": [
+        "strip:6.18"
+      ],
+      "drop": true,
+      "basis": "categories",
+      "hasGeometry": true
+    },
+    {
+      "id": 21612,
+      "name": "Kråkerøyløypa",
+      "country": "NO",
+      "category": "hike",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/39/Lunderamsa%2C_panorama.jpg/1280px-Lunderamsa%2C_panorama.jpg",
+      "file": "Lunderamsa%2C_panorama.jpg",
+      "w": 1280,
+      "h": 187,
+      "flags": [
+        "strip:6.84"
+      ],
+      "drop": true,
+      "basis": "categories",
+      "hasGeometry": true
+    },
+    {
+      "id": 24277,
+      "name": "Randheimsrunden",
+      "country": "NO",
+      "category": "hike",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/46/Ranheim_Nedre_%281982%29_%2814930795719%29.jpg/1280px-Ranheim_Nedre_%281982%29_%2814930795719%29.jpg",
+      "file": "Ranheim_Nedre_%281982%29_%2814930795719%29.jpg",
+      "w": 1280,
+      "h": 778,
+      "flags": [
+        "~historical"
+      ],
+      "drop": false,
+      "basis": "categories",
+      "hasGeometry": true
+    },
+    {
+      "id": 21810,
+      "name": "Bogstad natursti",
+      "country": "NO",
+      "category": "hike",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b9/Bogstad_Skuggen_s%C3%B6ndre_rk_167238_IMG_1897.JPG/1280px-Bogstad_Skuggen_s%C3%B6ndre_rk_167238_IMG_1897.JPG",
+      "file": "Bogstad_Skuggen_s%C3%B6ndre_rk_167238_IMG_1897.JPG",
+      "w": 1280,
+      "h": 892,
+      "flags": [
+        "~historical"
+      ],
+      "drop": false,
+      "basis": "categories",
+      "hasGeometry": true
+    },
+    {
+      "id": 24523,
+      "name": "Halmstadrunden",
+      "country": "NO",
+      "category": "hike",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/90/20180714_071417_Rygge_to_tog.jpg/1280px-20180714_071417_Rygge_to_tog.jpg",
+      "file": "20180714_071417_Rygge_to_tog.jpg",
+      "w": 1280,
+      "h": 720,
+      "flags": [
+        "cat:off_subject"
+      ],
+      "drop": true,
+      "basis": "categories",
+      "hasGeometry": true
+    },
+    {
+      "id": 182634,
+      "name": "Ścieżka nad Reglami",
+      "country": "PL",
+      "category": "hike",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/02/Dziewi%C4%99%C4%87si%C5%82_bez%C5%82odygowy_w_Tatrach%2C_20210906_1248_2411.jpg/1280px-Dziewi%C4%99%C4%87si%C5%82_bez%C5%82odygowy_w_Tatrach%2C_20210906_1248_2411.jpg",
+      "file": "Dziewi%C4%99%C4%87si%C5%82_bez%C5%82odygowy_w_Tatrach%2C_20210906_1248_2411.jpg",
+      "w": 1280,
+      "h": 855,
+      "flags": [
+        "cat:off_subject"
+      ],
+      "drop": true,
+      "basis": "categories",
+      "hasGeometry": true
+    },
+    {
+      "id": 185271,
+      "name": "Zasański Szlak Spacerowy",
+      "country": "PL",
+      "category": "hike",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/78/Przemy%C5%9Bl%2C_panorama_Winna_G%C3%B3ra.jpg/1280px-Przemy%C5%9Bl%2C_panorama_Winna_G%C3%B3ra.jpg",
+      "file": "Przemy%C5%9Bl%2C_panorama_Winna_G%C3%B3ra.jpg",
+      "w": 1280,
+      "h": 247,
+      "flags": [
+        "strip:5.18"
+      ],
+      "drop": true,
+      "basis": "categories",
+      "hasGeometry": true
+    },
+    {
+      "id": 68650,
+      "name": "Tarnów - Wielki Rogacz",
+      "country": "PL",
+      "category": "hike",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/Tarnow_-_Kapliczka_sw._Walentego_z_1798_r._1930_%2871430499%29.jpg/1280px-Tarnow_-_Kapliczka_sw._Walentego_z_1798_r._1930_%2871430499%29.jpg",
+      "file": "Tarnow_-_Kapliczka_sw._Walentego_z_1798_r._1930_%2871430499%29.jpg",
+      "w": 1280,
+      "h": 828,
+      "flags": [
+        "~historical"
+      ],
+      "drop": false,
+      "basis": "name-only",
+      "hasGeometry": true
+    },
+    {
+      "id": 183032,
+      "name": "Szlak Piastowski",
+      "country": "PL",
+      "category": "hike",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f9/Obrotnica_w%C4%85skotorowa%281%29.jpg/1280px-Obrotnica_w%C4%85skotorowa%281%29.jpg",
+      "file": "Obrotnica_w%C4%85skotorowa%281%29.jpg",
+      "w": 1280,
+      "h": 741,
+      "flags": [
+        "cat:off_subject"
+      ],
+      "drop": true,
+      "basis": "categories",
+      "hasGeometry": true
+    },
+    {
+      "id": 76991,
+      "name": "Via Mariae M01-52A (Târgu Mureș)",
+      "country": "RO",
+      "category": "hike",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/Tg._Mures_from_Platoul_Cornesti_-_panoramio.jpg/1280px-Tg._Mures_from_Platoul_Cornesti_-_panoramio.jpg",
+      "file": "Tg._Mures_from_Platoul_Cornesti_-_panoramio.jpg",
+      "w": 1280,
+      "h": 312,
+      "flags": [
+        "strip:4.10"
+      ],
+      "drop": true,
+      "basis": "categories",
+      "hasGeometry": true
+    },
+    {
+      "id": 67508,
+      "name": "Traseul ecoturistic Crucea lui Sfântul Petru",
+      "country": "RO",
+      "category": "hike",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a8/Guidepost_Crucea_lui_Sfantul_Petru_-_blue_bar.jpg/1280px-Guidepost_Crucea_lui_Sfantul_Petru_-_blue_bar.jpg",
+      "file": "Guidepost_Crucea_lui_Sfantul_Petru_-_blue_bar.jpg",
+      "w": 1280,
+      "h": 960,
+      "flags": [
+        "name:signage",
+        "cat:signage"
+      ],
+      "drop": true,
+      "basis": "categories",
+      "hasGeometry": true
+    },
+    {
+      "id": 75875,
+      "name": "Traseul ecoturistic Racovăț-Boldovin (red dot)",
+      "country": "RO",
+      "category": "hike",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/03/Guidepost_red_point_to_Racovat-Boldovin.jpg/1280px-Guidepost_red_point_to_Racovat-Boldovin.jpg",
+      "file": "Guidepost_red_point_to_Racovat-Boldovin.jpg",
+      "w": 1280,
+      "h": 960,
+      "flags": [
+        "name:signage"
+      ],
+      "drop": true,
+      "basis": "name-only",
+      "hasGeometry": true
+    },
+    {
+      "id": 76229,
+      "name": "Brașov (cartier Noua) - Piscul Lung - Culmea Crucuru",
+      "country": "RO",
+      "category": "hike",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/Gara_Noua_1905.jpg/1280px-Gara_Noua_1905.jpg",
+      "file": "Gara_Noua_1905.jpg",
+      "w": 1280,
+      "h": 819,
+      "flags": [
+        "~historical",
+        "cat:off_subject"
+      ],
+      "drop": true,
+      "basis": "categories",
+      "hasGeometry": true
+    },
+    {
+      "id": 77139,
+      "name": "DJ172D Colibița - Piciorul Borii - Pripoare - Șaua Tomnatec - Poiana Andreichii - DJ 172D Colibița",
+      "country": "RO",
+      "category": "hike",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/14/RO_BN_Colibita_lake_2.jpg/1280px-RO_BN_Colibita_lake_2.jpg",
+      "file": "RO_BN_Colibita_lake_2.jpg",
+      "w": 1280,
+      "h": 187,
+      "flags": [
+        "strip:6.84"
+      ],
+      "drop": true,
+      "basis": "categories",
+      "hasGeometry": true
+    },
+    {
+      "id": 67714,
+      "name": "Нишка Бања - Коритник - Раутово - Нишка Бања",
+      "country": "RS",
+      "category": "hike",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/Du%C5%A1an_Cvetkovi%C4%87_%C4%8Dika_Duce.IMG_1785.jpg/1280px-Du%C5%A1an_Cvetkovi%C4%87_%C4%8Dika_Duce.IMG_1785.jpg",
+      "file": "Du%C5%A1an_Cvetkovi%C4%87_%C4%8Dika_Duce.IMG_1785.jpg",
+      "w": 1280,
+      "h": 960,
+      "flags": [
+        "~historical"
+      ],
+      "drop": false,
+      "basis": "categories",
+      "hasGeometry": true
+    },
+    {
+      "id": 67815,
+      "name": "Гребеном Ртња",
+      "country": "RS",
+      "category": "hike",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/88/Fingerpost_to_kiosk_near_Siljak.jpg/1280px-Fingerpost_to_kiosk_near_Siljak.jpg",
+      "file": "Fingerpost_to_kiosk_near_Siljak.jpg",
+      "w": 1280,
+      "h": 720,
+      "flags": [
+        "name:signage",
+        "cat:signage"
+      ],
+      "drop": true,
+      "basis": "categories",
+      "hasGeometry": true
+    },
+    {
+      "id": 67542,
+      "name": "Томићева колиба - Шиљак",
+      "country": "RS",
+      "category": "hike",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e5/Fingerpost_to_Muzinac_6%2C5_km.jpg/1280px-Fingerpost_to_Muzinac_6%2C5_km.jpg",
+      "file": "Fingerpost_to_Muzinac_6%2C5_km.jpg",
+      "w": 1280,
+      "h": 720,
+      "flags": [
+        "name:signage",
+        "cat:signage"
+      ],
+      "drop": true,
+      "basis": "categories",
+      "hasGeometry": true
+    },
+    {
+      "id": 67850,
+      "name": "Stevanske livade – Mali Deli Jovan – Veliki Deli Jovan – TV repetitor",
+      "country": "RS",
+      "category": "hike",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fe/Guidepost_TV_repetitor_Deli_Jovan_6%2C48_km.jpg/1280px-Guidepost_TV_repetitor_Deli_Jovan_6%2C48_km.jpg",
+      "file": "Guidepost_TV_repetitor_Deli_Jovan_6%2C48_km.jpg",
+      "w": 1280,
+      "h": 720,
+      "flags": [
+        "name:signage",
+        "cat:signage"
+      ],
+      "drop": true,
+      "basis": "categories",
+      "hasGeometry": true
+    },
+    {
+      "id": 67482,
+      "name": "Власина Рид",
+      "country": "RS",
+      "category": "hike",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/03/Sunrise_at_Vlasina_lake_01.jpg/1280px-Sunrise_at_Vlasina_lake_01.jpg",
+      "file": "Sunrise_at_Vlasina_lake_01.jpg",
+      "w": 1280,
+      "h": 314,
+      "flags": [
+        "strip:4.08"
+      ],
+      "drop": true,
+      "basis": "categories",
+      "hasGeometry": true
+    },
+    {
+      "id": 67859,
+      "name": "Rogljevske pivnice - Rajačke pivnice",
+      "country": "RS",
+      "category": "hike",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/Guidepost_Smedovacke_pivnice_1%2C95_km.jpg/1280px-Guidepost_Smedovacke_pivnice_1%2C95_km.jpg",
+      "file": "Guidepost_Smedovacke_pivnice_1%2C95_km.jpg",
+      "w": 1280,
+      "h": 720,
+      "flags": [
+        "name:signage",
+        "cat:signage"
+      ],
+      "drop": true,
+      "basis": "categories",
+      "hasGeometry": true
+    },
+    {
+      "id": 111770,
+      "name": "SAT Etapp Ålö",
+      "country": "SE",
+      "category": "hike",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/08/SAT_%C3%85l%C3%B6_2025_maj_banner.jpg/1280px-SAT_%C3%85l%C3%B6_2025_maj_banner.jpg",
+      "file": "SAT_%C3%85l%C3%B6_2025_maj_banner.jpg",
+      "w": 1280,
+      "h": 183,
+      "flags": [
+        "strip:6.99"
+      ],
+      "drop": true,
+      "basis": "categories",
+      "hasGeometry": true
+    },
+    {
+      "id": 110116,
+      "name": "Ålö runt",
+      "country": "SE",
+      "category": "hike",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/08/SAT_%C3%85l%C3%B6_2025_maj_banner.jpg/1280px-SAT_%C3%85l%C3%B6_2025_maj_banner.jpg",
+      "file": "SAT_%C3%85l%C3%B6_2025_maj_banner.jpg",
+      "w": 1280,
+      "h": 183,
+      "flags": [
+        "strip:6.99"
+      ],
+      "drop": true,
+      "basis": "categories",
+      "hasGeometry": true
+    },
+    {
+      "id": 111126,
+      "name": "Muskan Runt",
+      "country": "SE",
+      "category": "hike",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e8/Muskan_3.jpg/1280px-Muskan_3.jpg",
+      "file": "Muskan_3.jpg",
+      "w": 1280,
+      "h": 283,
+      "flags": [
+        "strip:4.52"
+      ],
+      "drop": true,
+      "basis": "categories",
+      "hasGeometry": true
+    },
+    {
+      "id": 65997,
+      "name": "Aljažev dom - Kredarica - Triglav",
+      "country": "SI",
+      "category": "hike",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/76/Triglav_%2836253147176%29.jpg/1280px-Triglav_%2836253147176%29.jpg",
+      "file": "Triglav_%2836253147176%29.jpg",
+      "w": 1280,
+      "h": 282,
+      "flags": [
+        "strip:4.54"
+      ],
+      "drop": true,
+      "basis": "categories",
+      "hasGeometry": true
+    },
+    {
+      "id": 65035,
+      "name": "Videmska planinska pot",
+      "country": "SI",
+      "category": "hike",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7c/Postcard_of_Videm_pri_Ptuju_1917.jpg/1280px-Postcard_of_Videm_pri_Ptuju_1917.jpg",
+      "file": "Postcard_of_Videm_pri_Ptuju_1917.jpg",
+      "w": 1280,
+      "h": 839,
+      "flags": [
+        "~historical"
+      ],
+      "drop": false,
+      "basis": "name-only",
+      "hasGeometry": true
+    },
+    {
+      "id": 68701,
+      "name": "Pieninská cesta",
+      "country": "SK",
+      "category": "hike",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/Widok_na_Tatry_z_Prze%C5%82%C4%99czy_pod_Klasztorn%C4%85_G%C3%B3r%C4%85%2C_w_s%C5%82owackich_Pieninach%2C_20210807_1242_1688.jpg/1280px-Widok_na_Tatry_z_Prze%C5%82%C4%99czy_pod_Klasztorn%C4%85_G%C3%B3r%C4%85%2C_w_s%C5%82owackich_Pieninach%2C_20210807_1242_1688.jpg",
+      "file": "Widok_na_Tatry_z_Prze%C5%82%C4%99czy_pod_Klasztorn%C4%85_G%C3%B3r%C4%85%2C_w_s%C5%82owackich_Pieninach%2C_20210807_1242_1688.jpg",
+      "w": 1280,
+      "h": 854,
+      "flags": [
+        "~historical"
+      ],
+      "drop": false,
+      "basis": "categories",
+      "hasGeometry": true
+    },
+    {
+      "id": 68150,
+      "name": "Štefánikova magistrála",
+      "country": "SK",
+      "category": "hike",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/25/Mal%C3%A9_Karpaty%2C_12_%E2%80%93_Z%C3%A1ruby%2C_2021_%2833%29.jpg/1280px-Mal%C3%A9_Karpaty%2C_12_%E2%80%93_Z%C3%A1ruby%2C_2021_%2833%29.jpg",
+      "file": "Mal%C3%A9_Karpaty%2C_12_%E2%80%93_Z%C3%A1ruby%2C_2021_%2833%29.jpg",
+      "w": 1280,
+      "h": 853,
+      "flags": [
+        "cat:signage"
+      ],
+      "drop": true,
+      "basis": "categories",
+      "hasGeometry": true
+    },
+    {
+      "id": 69241,
+      "name": "Baranie",
+      "country": "SK",
+      "category": "hike",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/Pohlad_z_Lysej_%28panorama%29_-_panoramio.jpg/1280px-Pohlad_z_Lysej_%28panorama%29_-_panoramio.jpg",
+      "file": "Pohlad_z_Lysej_%28panorama%29_-_panoramio.jpg",
+      "w": 1280,
+      "h": 178,
+      "flags": [
+        "strip:7.19"
+      ],
+      "drop": true,
+      "basis": "categories",
+      "hasGeometry": true
+    },
+    {
+      "id": 68243,
+      "name": "5108",
+      "country": "SK",
+      "category": "hike",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/25/Mal%C3%A9_Karpaty%2C_12_%E2%80%93_Z%C3%A1ruby%2C_2021_%2833%29.jpg/1280px-Mal%C3%A9_Karpaty%2C_12_%E2%80%93_Z%C3%A1ruby%2C_2021_%2833%29.jpg",
+      "file": "Mal%C3%A9_Karpaty%2C_12_%E2%80%93_Z%C3%A1ruby%2C_2021_%2833%29.jpg",
+      "w": 1280,
+      "h": 853,
+      "flags": [
+        "cat:signage"
+      ],
+      "drop": true,
+      "basis": "categories",
+      "hasGeometry": true
+    },
+    {
+      "id": 68199,
+      "name": "8124",
+      "country": "SK",
+      "category": "hike",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/21/Dobr%C3%A1_Voda_R%C3%A1zcestie.jpg/1280px-Dobr%C3%A1_Voda_R%C3%A1zcestie.jpg",
+      "file": "Dobr%C3%A1_Voda_R%C3%A1zcestie.jpg",
+      "w": 1280,
+      "h": 1707,
+      "flags": [
+        "cat:signage"
+      ],
+      "drop": true,
+      "basis": "categories",
+      "hasGeometry": true
+    },
+    {
+      "id": 69946,
+      "name": "Chodník J. M. Hurbana",
+      "country": "SK",
+      "category": "hike",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/da/N%C3%A1mestie_oslobodenia_in_Senica_03.jpg/1280px-N%C3%A1mestie_oslobodenia_in_Senica_03.jpg",
+      "file": "N%C3%A1mestie_oslobodenia_in_Senica_03.jpg",
+      "w": 1280,
+      "h": 850,
+      "flags": [
+        "cat:signage"
+      ],
+      "drop": true,
+      "basis": "categories",
+      "hasGeometry": true
+    },
+    {
+      "id": 69691,
+      "name": "Náučný chodník \"Obec Papradno\"",
+      "country": "SK",
+      "category": "hike",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8b/Papradno_WV_banner.jpg/1280px-Papradno_WV_banner.jpg",
+      "file": "Papradno_WV_banner.jpg",
+      "w": 1280,
+      "h": 183,
+      "flags": [
+        "strip:6.99"
+      ],
+      "drop": true,
+      "basis": "categories",
+      "hasGeometry": true
+    },
+    {
+      "id": 68428,
+      "name": "5109",
+      "country": "SK",
+      "category": "hike",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/Mohyla_M.R.%C5%A0tef%C3%A1nika_-_panorama_-_panoramio.jpg/1280px-Mohyla_M.R.%C5%A0tef%C3%A1nika_-_panorama_-_panoramio.jpg",
+      "file": "Mohyla_M.R.%C5%A0tef%C3%A1nika_-_panorama_-_panoramio.jpg",
+      "w": 1280,
+      "h": 291,
+      "flags": [
+        "strip:4.40"
+      ],
+      "drop": true,
+      "basis": "categories",
+      "hasGeometry": true
+    }
+  ]
+}

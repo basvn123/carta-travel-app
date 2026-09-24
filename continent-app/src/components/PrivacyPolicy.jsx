@@ -9,7 +9,7 @@ import React from 'react';
  * Content is deliberately plain English and factual about what the app
  * actually does; update it whenever a new data flow ships.
  */
-const UPDATED = '22 July 2026';
+const UPDATED = '23 September 2026';
 const CONTACT = 'bas.vannieuwenhuyse123@gmail.com';
 
 export function PrivacyPolicy({ onClose }) {
@@ -69,6 +69,47 @@ export function PrivacyPolicy({ onClose }) {
             data on your device is removed by clearing the site data in your
             browser. You can also revoke consent or request deletion by mail:
             {' '}<a href={`mailto:${CONTACT}`}>{CONTACT}</a>.
+          </p>
+
+          <h3>Legal basis for processing</h3>
+          <p>
+            Carta processes your personal data under the following legal grounds
+            under Article 6 of the GDPR:
+          </p>
+          <table className="privacy-table">
+            <thead>
+              <tr>
+                <th>Data category</th>
+                <th>Purpose</th>
+                <th>Legal basis</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Email, name, saved trips and plans</td>
+                <td>Account management and syncing your data across devices</td>
+                <td>Contract (Article 6(1)(b))</td>
+              </tr>
+              <tr>
+                <td>User signups, engagement, top destinations</td>
+                <td>Understanding how the app is used to improve it</td>
+                <td>Legitimate interest (Article 6(1)(f))</td>
+              </tr>
+              <tr>
+                <td>Your location</td>
+                <td>Address geocoding when you request it</td>
+                <td>Consent (Article 6(1)(a))</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h3>Retention of analytics events</h3>
+          <p>
+            The analytics events that the admin panel reads — including daily
+            signup counts, user engagement metrics (daily, weekly, monthly
+            active users), top destinations and countries, and paywall funnel
+            data — are retained for 90 days. Events older than 90 days are
+            automatically deleted.
           </p>
 
           <h3>Your rights</h3>

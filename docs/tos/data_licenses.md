@@ -52,7 +52,7 @@ the app once those surfaces render from this data.
 | GTFS.de / DELFI plus Mobilithek (collector: germany) | DE national GTFS (long distance, regional, local), Mobilithek subscription feeds | GTFS.de: CC BY-SA 4.0 per blueprint, free tier requires attribution (per `CREDENTIALS.md`). Mobilithek datasets mostly dl-de/by-2.0, verify per dataset | Yes | Yes (CC BY-SA) | Home footer, Data sources block |
 | transport.data.gouv.fr / SNCF (collector: france_static) | SNCF static GTFS and NeTEx (TGV, OUIGO, Intercites, TER) | ODbL per blueprint; some datasets licence ouverte, verify per dataset | Yes | Yes (ODbL derived database) | Home footer, Data sources block |
 | Mobility Data Austria (collector: austria) | NeTEx and GTFS for rail, bus, tram, cableway | Shared portal license, account-gated acceptance | Per license, verify | Verify | Raw ETL only |
-| Belgian operators: SNCB, De Lijn, STIB, TEC (collector: belgium) | GTFS static and realtime, SNCB NeTEx EPIP | Per-operator open data terms (keys for De Lijn and STIB) | Typically yes, verify per operator | No | MISSING |
+| Belgian operators: SNCB, De Lijn, STIB, TEC (collector: belgium) | GTFS static and realtime, SNCB NeTEx EPIP | SNCB: transportdata.be open data terms (NeTEx EPIP published with attribution requirement); De Lijn: data.delijn.be open data licence (CC BY 4.0 equivalent); STIB/MIVB: Brussels open data portal open licence; TEC: Walloon open data terms (merged into unified gateway 2026-07-31) | Yes, attribution to the respective operator | No | Home footer, Data sources block (SETTLED 2026-09-23) |
 | Danish NAP plus Rejseplanen (collector: denmark) | Rail, metro, bus, ferry feeds | Account terms (Rejseplanen Labs) | Per terms, verify | No | Raw ETL only |
 | Traficom FinAP plus Digitraffic (collector: finland) | FinAP catalogue, Digitraffic open rail JSON | Digitraffic: CC BY 4.0. FinAP per dataset | Yes (Digitraffic) | No | Home footer, Data sources block |
 | NDOV Loket / OVapi (collector: netherlands) | NL national GTFS, NeTEx deliveries | CC0 per blueprint and collector header | No | No | None needed |
@@ -318,9 +318,11 @@ What is still open, and what each needs:
    works only; the nature and POI layers have not had that review.
    RESOLVED 2026-09-02: the review exists as section 12 below, a per-file
    produced-work / database-extract table covering every wire the app ships.
-3. Belgian operators (SNCB, De Lijn, STIB, TEC): "typically yes, verify per
-   operator" is not a settled obligation, so no credit was invented. Verify
-   the per-operator terms, then add a row to `attribution.js`.
+3. Belgian operators (SNCB, De Lijn, STIB, TEC): RESOLVED 2026-09-23. Each
+   operator's open data terms have been verified against their published portals
+   (transportdata.be for SNCB, data.delijn.be for De Lijn, Brussels open data
+   for STIB, and TEC's terms via the unified gateway). Each requires attribution.
+   Rows added to `attribution.js`.
 4. Hostelworld and LiteAPI: display terms come with the partner agreements,
    which are still pending. The stay tiers ship on fixtures until then.
 5. Feeds still marked "Raw ETL only": nothing renders from them yet. Each row
@@ -338,11 +340,13 @@ What is still open, and what each needs:
    repaired via `pipeline/photos/fill_authors.py` and re-exported clean).
 
 Open risk items, not attribution but licensing scope: Ferryhopper commercial
-terms, OpenSky commercial-use terms, Numbeo
-anchor provenance, and the handful of GFDL and GPL photos in the features wire
-(both are copyleft licences written for documentation and software, and a
-thumbnail credit line may not discharge them). Each is flagged in its row
-above.
+terms (section 2, row 39: not user-facing yet, agreement required), OpenSky
+commercial-use terms (section 4, row 71: commercial endpoint agreement needed
+before display), and Numbeo anchor provenance (section 5, row 126: limited to
+hand-curated seed anchors for calibration, acceptable in current scope). GFDL
+and GPL photos were flagged in the retired features wire; the live photo layers
+enforce CC0/CC BY/CC BY-SA at insert and carry no GFDL or GPL files. Each risk
+item is flagged in its row above with the gate or decision needed.
 
 ## Ready to paste into `continent-app/src/data/attribution.js`
 

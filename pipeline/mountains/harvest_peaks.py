@@ -59,6 +59,10 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 
+sys.path.insert(0, str(HERE.parents[1] / "pipeline"))
+
+from pipeline_io import EUROPE_WINDOW  # noqa: E402
+from pipeline_io import in_europe as _in_europe  # noqa: E402
 from peak_sources import (SourceError, cell, get_json,  # noqa: E402
                           haversine_km, load_cache, save_cache, sparql)
 import seed_peaks  # noqa: E402
@@ -159,19 +163,18 @@ SHORTLIST = 500
 # Deliberately generous: the pass is cheap exactly where the country is small.
 THIN_POOL = 900
 
-# The window the rest of the catalogue calls Europe: west of the Azores, east
-# of the Urals' foot, south of the Canaries, north of Nordkapp. It exists
-# because "the highest point of the Netherlands" is Mount Scenery on Saba, an
+# The window the rest of the catalogue calls Europe. This layer wrote the rule
+# first (the highest point of the Netherlands is Mount Scenery on Saba, an
 # 870 m volcano in the Caribbean, and a Dutch traveller looking at the
-# Mountains tab does not mean that. Same for the French and Portuguese
-# overseas territories. Madeira, the Azores and the Canaries are INSIDE the
-# window on purpose: the app prices them.
-WINDOW = (-32.0, 26.0, 46.0, 72.0)          # W, S, E, N
+# Mountains tab does not mean that) and the beaches and lakes layers now need
+# the same test, so the window itself moved to pipeline_io and this is a thin
+# adapter over it. The north edge went 72 -> 81 in that move to keep Svalbard,
+# which changes nothing here: the catalogue holds no summit above 72N.
+WINDOW = EUROPE_WINDOW                      # W, S, E, N
 
 
 def in_europe(row):
-    w, s, e, n = WINDOW
-    return w <= row["lon"] <= e and s <= row["lat"] <= n
+    return _in_europe(row["lat"], row["lon"])
 
 
 # ---------------------------------------------------------------------------
@@ -358,14 +361,33 @@ def as_row(raw, cc):
 # the 50,000 P610 statements in the whole database instead, and the same
 # question answers in ten seconds. The measurements come afterwards, from
 # entities_for(), which is an id lookup.
+# ?insular says whether the thing this peak is the high point OF is an island
+# (Q23442) or an archipelago (Q33837). That single bit is worth carrying: an
+# island high point falls to the sea on every side, so its prominence IS its
+# elevation, and that is a fact the DEM search can be checked against rather
+# than trusted. Asked here, from Wikidata, so no hand kept list of islands has
+# to be maintained anywhere in the pipeline.
+# The label is taken only from an ?of that has coordinates, which is a fix in
+# its own right: P610 ("highest point") is also stated by things that are not
+# places, so the old query labelled Monte Solaro the high point of the "Monte
+# Solaro chairlift". A thing with no location cannot be a place a summit is
+# the high point OF.
 HIGHPOINT_QUERY = """
-SELECT ?item ?ofLabel WHERE {
+SELECT ?item (SAMPLE(?lbl) AS ?ofLabel) (MAX(?isle) AS ?insular) WHERE {
   hint:Query hint:optimizer "None".
   { ?of wdt:P610 ?item . ?of wdt:P17 wd:%(country)s . }
   UNION
   { wd:%(country)s wdt:P610 ?item . BIND(wd:%(country)s AS ?of) }
-  SERVICE wikibase:label { bd:serviceParam wikibase:language "%(labels)s". }
+  OPTIONAL {
+    ?of wdt:P31 ?ofCls .
+    BIND(IF(?ofCls IN (wd:Q23442, wd:Q33837), 1, 0) AS ?isle)
+  }
+  OPTIONAL {
+    ?of wdt:P625 ?ofLoc .
+    ?of rdfs:label ?lbl FILTER(LANG(?lbl) = "en")
+  }
 }
+GROUP BY ?item
 LIMIT 400
 """
 
@@ -413,16 +435,20 @@ def highpoint_rows(cc):
     except (SourceError, ValueError, KeyError) as exc:
         print(f"    high point pass declined ({str(exc)[:90]})")
         return []
-    of_label = {}
+    of_label, of_insular = {}, {}
     for row in rows:
         qid = qid_of(cell(row, "item"))
         if qid and qid.startswith("Q"):
             of_label.setdefault(qid, cell(row, "ofLabel") or "")
+            if str(cell(row, "insular") or "0") == "1":
+                of_insular[qid] = True
     out = []
     qids = list(of_label)
     for i in range(0, len(qids), 70):
         for row in entities_for(qids[i:i + 70], cc):
             row["highpoint_of"] = of_label.get(row["wd"], "")
+            if of_insular.get(row["wd"]):
+                row["highpoint_insular"] = True
             row["src"] = "highpoint"
             out.append(row)
     return out
@@ -915,6 +941,9 @@ def harvest_country(cc, refresh=False, shortlist_n=SHORTLIST, use_spine=True,
             for existing in rows:
                 if existing["wd"] == row["wd"]:
                     existing["highpoint_of"] = row.get("highpoint_of") or ""
+                    # The insular bit rides with the label it qualifies.
+                    if row.get("highpoint_insular"):
+                        existing["highpoint_insular"] = True
                     break
         else:
             rows.append(row)

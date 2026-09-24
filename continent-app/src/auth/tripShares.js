@@ -19,6 +19,7 @@
  * trip has something to share, and only an account has saved trips.
  */
 import { supabase } from './../lib/supabaseClient.js';
+import { E2E_SEAMS } from '../lib/e2eSeams.js';
 
 /** Where and when, or the whole memory: story, rating, photographs, and what
  *  the owner says the trip cost them. Never the group's expense ledger. */
@@ -135,7 +136,7 @@ export async function revokeTripShare(token) {
 // reader's screen can be checked headlessly without live credentials.
 // ?sharemock=gone stands in for a withdrawn link. Display only, and never on
 // for a real visitor unless they type the flag themselves.
-const SHARE_MOCK = typeof window !== 'undefined'
+const SHARE_MOCK = E2E_SEAMS && typeof window !== 'undefined'
   && new URLSearchParams(window.location.search).get('sharemock');
 
 const MOCK_TRIP = {

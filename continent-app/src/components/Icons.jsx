@@ -16,8 +16,7 @@ export function CalendarIcon({ size = 18, className = '' }) {
       strokeLinecap="round"
       strokeLinejoin="round"
       className={className}
-      role="img"
-      aria-label="Dates"
+      aria-hidden="true"
     >
       <rect x="3.5" y="5" width="17" height="16" rx="2.2" />
       <path d="M8 3v4M16 3v4M3.5 10h17" />
@@ -37,7 +36,6 @@ export function ChevronDownIcon({ size = 18, className = '' }) {
       strokeLinecap="round"
       strokeLinejoin="round"
       className={className}
-      role="img"
       aria-hidden="true"
     >
       <path d="M6 9.5l6 6 6-6" />
@@ -57,7 +55,6 @@ export function ChevronRightIcon({ size = 18, className = '' }) {
       strokeLinecap="round"
       strokeLinejoin="round"
       className={className}
-      role="img"
       aria-hidden="true"
     >
       <path d="M9 6l6 6-6 6" />
@@ -76,7 +73,6 @@ export function CloseIcon({ size = 16, className = '' }) {
       strokeWidth="1.8"
       strokeLinecap="round"
       className={className}
-      role="img"
       aria-hidden="true"
     >
       <path d="M6 6l12 12M18 6L6 18" />
@@ -96,8 +92,7 @@ export function FilterIcon({ size = 18, className = '' }) {
       strokeLinecap="round"
       strokeLinejoin="round"
       className={className}
-      role="img"
-      aria-label="Filters"
+      aria-hidden="true"
     >
       <path d="M4 6h16M4 12h16M4 18h16" />
       <circle cx="9" cy="6" r="2" fill="currentColor" stroke="none" />
@@ -119,8 +114,7 @@ export function MapPinIcon({ size = 20, className = '' }) {
       strokeLinecap="round"
       strokeLinejoin="round"
       className={className}
-      role="img"
-      aria-label="Map"
+      aria-hidden="true"
     >
       <path d="M12 21s-7-6.4-7-11.5a7 7 0 0 1 14 0C19 14.6 12 21 12 21Z" />
       <circle cx="12" cy="9.5" r="2.5" />
@@ -140,8 +134,7 @@ export function RouteIcon({ size = 20, className = '' }) {
       strokeLinecap="round"
       strokeLinejoin="round"
       className={className}
-      role="img"
-      aria-label="Trip planner"
+      aria-hidden="true"
     >
       <circle cx="5" cy="6" r="2.2" />
       <circle cx="19" cy="18" r="2.2" />
@@ -162,8 +155,7 @@ export function ListDayIcon({ size = 20, className = '' }) {
       strokeLinecap="round"
       strokeLinejoin="round"
       className={className}
-      role="img"
-      aria-label="Day planner"
+      aria-hidden="true"
     >
       <rect x="3.5" y="5" width="17" height="16" rx="2.2" />
       <path d="M8 3v4M16 3v4M3.5 10h17" />
@@ -184,8 +176,7 @@ export function CompassIcon({ size = 20, className = '' }) {
       strokeLinecap="round"
       strokeLinejoin="round"
       className={className}
-      role="img"
-      aria-label="Explore"
+      aria-hidden="true"
     >
       <circle cx="12" cy="12" r="9" />
       <path d="M15.5 8.5 13.6 13.6 8.5 15.5l1.9-5.1 5.1-1.9Z" />
@@ -205,8 +196,7 @@ export function PlusIcon({ size = 20, className = '' }) {
       strokeLinecap="round"
       strokeLinejoin="round"
       className={className}
-      role="img"
-      aria-label="Plan"
+      aria-hidden="true"
     >
       <path d="M12 5v14M5 12h14" />
     </svg>
@@ -225,8 +215,7 @@ export function BookmarkIcon({ size = 20, className = '' }) {
       strokeLinecap="round"
       strokeLinejoin="round"
       className={className}
-      role="img"
-      aria-label="Saved trips"
+      aria-hidden="true"
     >
       <path d="M6.5 3.5h11a1 1 0 0 1 1 1V21l-6.5-4.4L5.5 21V4.5a1 1 0 0 1 1-1Z" />
     </svg>
@@ -245,8 +234,7 @@ export function HomeIcon({ size = 16, className = '' }) {
       strokeLinecap="round"
       strokeLinejoin="round"
       className={className}
-      role="img"
-      aria-label="Home"
+      aria-hidden="true"
     >
       <path d="M3.5 10.5 12 3.5l8.5 7" />
       <path d="M5.5 9v10.5a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1V9" />
@@ -267,8 +255,7 @@ export function PersonIcon({ size = 14, className = '' }) {
       strokeLinecap="round"
       strokeLinejoin="round"
       className={className}
-      role="img"
-      aria-label="Guest"
+      aria-hidden="true"
     >
       <circle cx="12" cy="8" r="4" />
       <path d="M4.5 20c1.4-4 4-6 7.5-6s6.1 2 7.5 6" />
@@ -291,13 +278,35 @@ export function FriendsIcon({ size = 15, className = '' }) {
       strokeLinecap="round"
       strokeLinejoin="round"
       className={className}
-      role="img"
       aria-hidden="true"
     >
       <circle cx="9" cy="8.5" r="3.4" />
       <path d="M2.6 19.4c1.1-3.2 3.3-4.9 6.4-4.9s5.3 1.7 6.4 4.9" />
       <path d="M16.2 5.6a3.4 3.4 0 0 1 0 6.6" />
       <path d="M17.6 15.1c2.1.6 3.5 2.1 4 4.3" />
+    </svg>
+  );
+}
+
+/** An adult and a child: the "family with kids" answer in the day planner. */
+export function FamilyIcon({ size = 15, className = '' }) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.9"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+      aria-hidden="true"
+    >
+      <circle cx="8" cy="6.6" r="3.1" />
+      <path d="M2.8 19.6c.9-3.3 2.7-5.1 5.2-5.1s4.3 1.8 5.2 5.1" />
+      <circle cx="17.4" cy="12.4" r="2.3" />
+      <path d="M13.8 19.6c.5-2.2 1.7-3.4 3.6-3.4s3.1 1.2 3.6 3.4" />
     </svg>
   );
 }
@@ -314,8 +323,7 @@ export function GlobeIcon({ size = 20, className = '' }) {
       strokeLinecap="round"
       strokeLinejoin="round"
       className={className}
-      role="img"
-      aria-label="Destinations"
+      aria-hidden="true"
     >
       <circle cx="12" cy="12" r="9" />
       <path d="M3 12h18" />
@@ -796,7 +804,7 @@ export function PencilIcon({ size = 15, className = '' }) {
    competing buttons, so the card's own tap target stays the loud thing. */
 export function MoreIcon({ size = 15, className = '' }) {
   return (
-    <svg width={size} height={size} viewBox="0 0 24 24" className={className} role="img" aria-label="More">
+    <svg width={size} height={size} viewBox="0 0 24 24" className={className} aria-hidden="true">
       <circle cx="5.5" cy="12" r="1.7" fill="currentColor" />
       <circle cx="12" cy="12" r="1.7" fill="currentColor" />
       <circle cx="18.5" cy="12" r="1.7" fill="currentColor" />
@@ -852,7 +860,7 @@ export function PiggyIcon({ size = 15, className = '' }) {
    as glyphs rather than a colour code. */
 export function DiamondIcon({ size = 9, className = '' }) {
   return (
-    <svg width={size} height={size} viewBox="0 0 24 24" className={className} role="img" aria-label="Great stop">
+    <svg width={size} height={size} viewBox="0 0 24 24" className={className} aria-hidden="true">
       <path d="M12 2.5 21.5 12 12 21.5 2.5 12Z" fill="currentColor" />
     </svg>
   );
@@ -860,7 +868,7 @@ export function DiamondIcon({ size = 9, className = '' }) {
 
 export function DotIcon({ size = 8, className = '' }) {
   return (
-    <svg width={size} height={size} viewBox="0 0 24 24" className={className} role="img" aria-label="Worth a look">
+    <svg width={size} height={size} viewBox="0 0 24 24" className={className} aria-hidden="true">
       <circle cx="12" cy="12" r="6.5" fill="currentColor" />
     </svg>
   );

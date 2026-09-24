@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef } from 'react';
 import { saveTrip, fetchUserSettings, saveUserSettings } from '../auth/tripStorage.js';
 import { clampRatingRange, rangeFromMinTier } from '../lib/rating.js';
+import { readFavList, writeFavList } from '../lib/favorites.js';
 
 /** Keeps a signed-in user's filter/lifestyle preferences synced with their
  *  account: pulls saved settings once right after login (never when a shared
@@ -20,6 +21,7 @@ export function useAccountSync({
   unescoOnly, setUnescoOnly,
   topBeachOnly, setTopBeachOnly,
   sortKey, setSortKey,
+  favorites, setFavorites,
   selectedId, setSelectedId,
   departDate, setDepartDate,
   returnDate, setReturnDate,
@@ -86,6 +88,16 @@ export function useAccountSync({
       if (settings.unescoOnly != null) setUnescoOnly(settings.unescoOnly);
       if (settings.topBeachOnly != null) setTopBeachOnly(settings.topBeachOnly);
       if (settings.sortKey) setSortKey(settings.sortKey);
+      // The shortlist MERGES rather than replaces. Every other setting here
+      // is a single current value, so the account's copy can simply win; a
+      // shortlist is an accumulating list, and letting the account's copy win
+      // would silently drop anything starred on this device before signing
+      // in. Union keeps both, and readFavList migrates an account saved
+      // before the shortlist grew past destinations.
+      if (Array.isArray(settings.favorites) && setFavorites) {
+        const incoming = readFavList(settings.favorites);
+        if (incoming.size) setFavorites((prev) => new Set([...prev, ...incoming]));
+      }
     }).catch(() => {}).finally(() => { hydratedRef.current = true; });
   }, [user, cameFromUrl, hasLocalOrigin]);
 
@@ -97,10 +109,22 @@ export function useAccountSync({
     const t = setTimeout(() => {
       saveUserSettings(user.id, {
         choices, priceMode, countryFilter, tripKinds, ratingRange, gemOnly, unescoOnly, topBeachOnly, sortKey,
+        // The shortlist rides in the same settings blob rather than a table
+        // of its own: it is small, it is per-user, and user_settings already
+        // syncs on this debounce, so this needs no migration (several are
+        // still unapplied) and no new RLS surface.
+        //
+        // The push is a straight overwrite of THIS device's shortlist, while
+        // the pull unions. That asymmetry is deliberate but not free: a star
+        // removed on one device while a second device is open can be revived
+        // by the second device's next push. The alternative, letting the
+        // account replace the local list, loses stars that were never
+        // anywhere else, which is the worse of the two.
+        favorites: writeFavList(favorites),
       }).catch(() => {});
     }, 1200);
     return () => clearTimeout(t);
-  }, [user, choices, priceMode, countryFilter, tripKinds, ratingRange, gemOnly, unescoOnly, topBeachOnly, sortKey]);
+  }, [user, choices, priceMode, countryFilter, tripKinds, ratingRange, gemOnly, unescoOnly, topBeachOnly, sortKey, favorites]);
 
   const handleSaveTrip = useCallback(async (destination) => {
     if (!user) { setAuthModalOpen(true); throw new Error('Sign in to save trips'); }

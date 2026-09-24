@@ -31,6 +31,7 @@ import { useAuth } from '../auth/AuthContext.jsx';
 import { authConfigured } from '../lib/supabaseClient.js';
 import { PassModal } from '../components/PassModal.jsx';
 import { trackPaywall } from '../lib/paywallEvents.js';
+import { E2E_SEAMS } from '../lib/e2eSeams.js';
 
 /**
  * Every reason the pass modal can open, and how insistent each one is.
@@ -103,7 +104,7 @@ const PaywallContext = createContext(null);
 // build that never sets it. The server enforces the metered surfaces
 // regardless of what this returns, which is why a client-side seam is safe
 // here at all.
-const PAY_MOCK = typeof window !== 'undefined'
+const PAY_MOCK = E2E_SEAMS && typeof window !== 'undefined'
   && new URLSearchParams(window.location.search).has('paymock');
 
 

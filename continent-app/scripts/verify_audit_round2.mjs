@@ -144,6 +144,10 @@ try {
 
   console.log('\n4. Both planning routes look pressable');
   await page.locator('.day-flow-next').click();
+  // Step 3 (ideas, D4) sits between the date and the fork; "no" is the
+  // answer that leaves the fork exactly as this check expects it.
+  await page.locator('.day-ideas-choice').waitFor({ timeout: 20000 });
+  await page.getByRole('button', { name: /surprise me/i }).click();
   await page.locator('.day-flow-cards').waitFor({ timeout: 20000 });
   const gos = await page.$$eval('.day-flow-card', (els) => els.map((e) => ({
     title: e.querySelector('b')?.textContent,

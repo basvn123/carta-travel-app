@@ -1,0 +1,3251 @@
+{
+  "layer": "lakes",
+  "generated_at": "2026-09-16T17:13:31.329Z",
+  "wikidata_checked": true,
+  "items": 2971,
+  "items_flagged": 452,
+  "findings_total": 470,
+  "failure_modes": {
+    "no_image": 378,
+    "wikidata_class_unverified": 72,
+    "coords_low_precision": 11,
+    "wikidata_coord_mismatch": 8,
+    "wikidata_class_conflict": 1
+  },
+  "severity": {
+    "medium": 397,
+    "low": 72,
+    "high": 1
+  },
+  "findings": [
+    {
+      "id": "ad-etang-de-soulanet-w24406326",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "al-lake-ohrid-Q156258",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "al-ujembledhesi-i-sadovices-Q22007658",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "al-liqeni-i-vermices-Q120832534",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "al-liqeni-i-tropojes-Q7353079",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "at-vydricka-plaz-w365846676",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "at-dreieckslacke-r1606853",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "at-pflegersee-Q2084210",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "at-knaus-campingpark-lackenhauser-w176018560",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "at-placki-vrh-Q19935922",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "at-borsodi-dulo-w122207120",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "at-lago-del-pramollo-stausee-lat-di-pra-Q109377043",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "at-anjelska-plaz-w723376365",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "at-novy-rybnik-Q12041437",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "at-herlaki-to-w3868937",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "ba-selo-w411767035",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "ba-blato-w704090650",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "ba-suncana-dolina-w119401846",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "ba-nuga-lake-Q7068726",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "ba-kvrkulja-lake-Q6449822",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "be-meer-van-bambois-Q660847",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "be-ven-onder-de-berg-Q67604479",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "be-zwem-com-w451763556",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "be-la-plage-w1426241002",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "be-papschot-r1176550",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "be-natuurkampeerterrein-de-ottermeerhoe-w26400254",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "be-le-canal-de-furnes-w229282019",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "be-la-sure-r1871136",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "be-zwartven-Q2933818",
+      "check": "coords_low_precision",
+      "severity": "medium",
+      "message": "Coordinates 51.3,5.5 are rounded to a tenth of a degree, about 11 km of slop"
+    },
+    {
+      "id": "be-zwartven-Q2933818",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "be-canisvlietsche-kreek-w45051029",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "be-etang-de-la-lobiette-w95525829",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "be-auwer-stausee-r4435248",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "be-camping-cottesserhoeve-w75720874",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "be-semoy-r2246491",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "be-l-eau-vive-w125105650",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "be-pferdeweiher-w122108445",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "be-etang-de-la-galoperie-w95509916",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "be-camping-natura-les-pres-du-sart-w71326267",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "be-athena-ossendrecht-w71359016",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "be-camping-domaine-des-poteries-w835871743",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "bg-begendik-plaj-w235740001",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "bg-plaja-maglavit-w1532951236",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "bg-plaja-celei-w1201693865",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "bg-kids-swiming-pool-w627501655",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "bg-sky-pool-bar-w497938600",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "bg-olt-r13030220",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "bg-malko-sharkovo-reservoir-Q12285754",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "bg-yastrebino-reservoir-Q12299810",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "bg-beli-lom-Q12273102",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "bg-balta-mare-w973340729",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "bg-canalul-dorobantu-r2849143",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "bg-bazinul-veriga-w23491558",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "bg-hamzabeyli-t-r-park-w820385685",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "ch-lake-lugano-Q14418",
+      "check": "coords_low_precision",
+      "severity": "medium",
+      "message": "Coordinates 46,9 are rounded to a tenth of a degree, about 11 km of slop"
+    },
+    {
+      "id": "ch-freibad-grenzach-w100975021",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "ch-piscine-municipale-w107470473",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "ch-laghi-del-boden-r1478741",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "cz-kapielisko-miejskie-w238833348",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "cz-badestrand-thaya-w275051059",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "cz-cerny-rybnik-Q96180869",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "cz-odelteich-w29117515",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "cz-volksbad-an-der-weissbach-w1204848812",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "cz-talsperre-carlsfeld-weiterswiese-Q2390735",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "cz-taubenteich-Q32750651",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "cz-aquapark-wodny-swiat-w144172888",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "cz-wodny-swiat-w709269565",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "cz-bleicheteiche-w24482987",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "cz-kleines-bad-w30247428",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "de-geierswalder-see-Q145455",
+      "check": "coords_low_precision",
+      "severity": "medium",
+      "message": "Coordinates 51.5,14.1 are rounded to a tenth of a degree, about 11 km of slop"
+    },
+    {
+      "id": "de-badesee-w24614746",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "de-camping-kollersee-w386849546",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "de-grotzinger-baggersee-w309275585",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "de-silbersee-w4453360",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "de-effelder-waldsee-Q65415191",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "de-klostersee-w28301454",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "de-munsterfeldweiher-6-w14677736",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "de-rhybadi-rodenbrunnen-w282199536",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "de-schultheis-weiher-Q1314760",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "de-arheilger-muhlchen-Q19834787",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "de-campingplatz-offenbach-burgel-w19595758",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "de-feldmarksee-r1061620",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "de-mossandlweiher-w25429089",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "de-breitenbacher-see-r2324518",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "de-grosser-weserbogen-w148241268",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "de-schontalweiher-Q798074",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "de-waldbad-w317708108",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "de-wellier-kolk-Q1733900",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "de-baischweiher-w29147412",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "de-kahnsee-w24722918",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "de-stausee-altheim-r2252393",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "de-aichstruter-stausee-Q1471249",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "de-burgsee-w34562406",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "de-campingplatz-seeblick-w142972872",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "de-huttensee-Q108739376",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "de-nichtschwimmerbecken-w50495655",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "de-parkplatz-pfordter-see-w151354810",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "de-strandbad-seifersdorf-w136060823",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "de-50m-becken-w159744213",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "de-badestelle-w519876165",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "de-grafenrheinfelder-naturbadesee-w24722931",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "de-grosser-kramersee-w4754024",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "de-kristyna-Q1517739",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "de-altwasser-w110562968",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "de-gulper-see-Q1389185",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "de-ostrovsky-rybnik-Q96158311",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "de-pfuhler-badesee-w1302733661",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "de-strandbad-wissmarer-see-w293558366",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "de-ternscher-see-Q1350038",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "de-badesee-wilsumer-berge-w33758792",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "de-blindheimer-badesee-w1164896444",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "de-campingplatz-gulser-moselbogen-w31666316",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "de-centre-nautique-sarreguemines-conflu-w759100962",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "de-dushorner-see-Q18620635",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "de-happinger-ausee-r17924797",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "de-idasee-Q1656640",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "de-kamernscher-see-w101926332",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "de-konigsecke-w89689967",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "de-lossnitzbad-w4243118",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "de-obere-oberauer-schleife-w34019151",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "de-riedlinger-seen-w145565737",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "de-stadtplatz-w25239717",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "de-badeweiher-binzwangen-r19775644",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "de-europarcs-maasduinen-w1192914956",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "de-feilenmoos-r6880036",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "de-klein-westerland-w1546004777",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "de-aussenbecken-w105874835",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "de-campdeulo-w165724067",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "de-camping-im-eichenwald-w223616648",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "de-campingplatz-walsheim-w49753804",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "de-komm-beach-club-w439452891",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "de-kipp-w225625880",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "de-leitnerweiher-w23052423",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "de-badesee-gretlmuhle-r2906280",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "de-campingplatz-nordseeblick-w168818103",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "de-gambachsweiher-w96931708",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "de-grenzaa-w87940796",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "de-blauer-see-Q882708",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "de-oelemars-r9347443",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "de-bielener-kiesgewasser-w138125042",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "de-degenbachsee-w24293193",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "de-freizeitsee-triolago-w120521720",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "de-toteiskessel-waldweiher-nw-von-wiese-Q58451723",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "de-groninger-see-r2468208",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "de-torfkahnhafen-w276182870",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "de-am-freibad-w799354451",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "de-ausee-r6573233",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "de-aussenbecken-w616139895",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "de-besucher-w416432108",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "de-ebsermare-w28403509",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "de-overnachtingshaven-tuindorp-w1460038112",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "de-adventure-world-albtal-arena-w113499142",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "de-aquaria-hallen-und-freibad-w47615767",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "de-bademehr-familienbad-w148242085",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "de-badestelle-grosser-see-w496911897",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "de-familienbad-vogelsang-w135779992",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "de-freibad-oberkappel-w139296857",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "de-hallenbad-kirchhellen-w563712780",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "de-roto-parkplatz-w27691034",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "de-sport-und-freizeitbad-altenglan-w123277790",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "de-talsperre-seebach-Q2390940",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "de-am-schwimmbad-w596826434",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "de-bierumer-strand-w93123925",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "de-graftwiesen-w176442430",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "de-naturbad-troase-w179162890",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "de-vakantiepark-de-byvanck-w949709097",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "de-schanzlesee-Q130282056",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "de-strandbad-maalbek-w111838314",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "de-saltvandss-en-Q138339870",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "dk-pyrits-en-Q56240145",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "es-ria-de-ares-Q11703401",
+      "check": "coords_low_precision",
+      "severity": "medium",
+      "message": "Coordinates 43.4,-8.2 are rounded to a tenth of a degree, about 11 km of slop"
+    },
+    {
+      "id": "es-estanys-de-la-coma-de-l-infern-Q56401387",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "es-albufeira-de-miranda-Q43562577",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "es-albufeira-de-fratel-r2643879",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "es-albufeira-do-abrilongo-w157028312",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "es-esteiro-da-leziria-Q32751286",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "es-estany-de-montmalus-Q21329992",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "es-camping-verte-rive-w1085397901",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "fi-vuohijarvi-Q2535480",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "fi-msf-gasthamn-w1327316310",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "fi-ellenvatnet-ealjejavri-ellijarvi-Q3358642",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "fi-koltajarvi-Q11872280",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "fi-galggojavri-Q11973485",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "fi-spallojavri-Q101186615",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "fr-parking-base-de-mer-w267447347",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "fr-lac-de-parisot-r4572727",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "fr-lac-pignedore-w104160014",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "fr-lac-de-rabodanges-Q1438932",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "fr-balinea-therme-w806758025",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "fr-base-nautique-de-longueil-sainte-mar-w610534723",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "fr-lac-des-deux-amants-r1407882",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "fr-etang-de-gue-de-selle-w42254268",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "fr-etang-de-la-balastiere-r6579864",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "fr-drie-vijvers-w74873655",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "fr-leie-r2393380",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "fr-aqualys-w279829826",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "fr-embalse-de-respomuso-Q3427764",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "fr-hafenbecken-1-w24002880",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "fr-muhlenwaldweiher-Q72697442",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "fr-stagnone-della-capraia-Q3968034",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "fr-estany-del-port-Q67329681",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "fr-semois-r1707511",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "fr-laghi-di-bellacomba-r1688941",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "fr-hondarribiko-hondartza-w25298830",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "gb-sandpiper-lake-r1377651",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "gb-the-maqam-centre-w464588722",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "gb-dimensions-w60872990",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "gr-nevropoli-lake-Q25166874",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "gr-lake-ismarida-Q12878198",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "gr-pournari-lake-Q2106785",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "gr-camping-w220206801",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "gr-lake-polyfytos-Q12880045",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "gr-lake-asomaton-Q15057364",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "gr-lake-dalyan-Q49301350",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "gr-plovdivtsi-dam-Q21786711",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "hr-fkk-w935874027",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "hr-petrinjsko-kupaliste-w95996549",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "hr-tikvara-r11580379",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "hr-banja-r10156058",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "hr-oreg-kavicsbanya-to-w114036835",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "hr-nagyforgo-w174003792",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "hr-boki-duna-w540665870",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "hr-karapancsai-halasto-w174011670",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "hr-o-drava-r3044241",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "hr-belovic-r11696336",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "hr-duna-r186278",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "hr-sava-r12650207",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "hu-szalkai-viztarozo-w228350623",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "hu-parkplatz-hotel-sonnenpark-w82211778",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "hu-stara-drava-w38426212",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "hu-velika-cambina-w33263897",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "hu-virtske-jazero-w53584095",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "hu-budakovacka-bara-w88364816",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "hu-mura-r1704442",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "hu-vodna-nadrz-petrovec-w4429483",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "hu-ferma-de-crap-w33236055",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "it-lake-lugano-Q14418",
+      "check": "coords_low_precision",
+      "severity": "medium",
+      "message": "Coordinates 46,9 are rounded to a tenth of a degree, about 11 km of slop"
+    },
+    {
+      "id": "it-lake-fogliano-Q3825948",
+      "check": "coords_low_precision",
+      "severity": "medium",
+      "message": "Coordinates 41.4,12.9 are rounded to a tenth of a degree, about 11 km of slop"
+    },
+    {
+      "id": "it-bacino-sacchetta-w65667281",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "it-bagni-arcobaleno-w1480376284",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "it-mare-vostrum-w23340541",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "it-parking-kompas-shop-w736792218",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "it-ex-ippodromo-del-mirabello-Q3801695",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "it-lago-di-castel-san-vincenzo-w83604798",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "it-accidia-village-w295335166",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "it-bacino-di-finenso-w47421731",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "it-lanca-della-cascinetta-w452475023",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "it-parcheggio-piazzale-ercole-w545553221",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "it-centro-vacanze-san-marino-w131960371",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "it-gailitz-w1527673172",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "lt-klykoliu-tv-vadakstes-udenskratuve-Q16456656",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "lt-druksiai-Q597311",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "lt-galadusys-Q9266482",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "lt-dumblis-Q15218491",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "lt-ingiel-ez-ingelis-Q61386721",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "lt-ezeres-dzirnavu-dikis-r15531440",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "lu-opa-schuler-w313992974",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "lu-piscine-scolaire-w87298501",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "lv-laizuvos-tv-Q61385817",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "lv-salna-Q11238139",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "lv-ez-dumblinis-Q16449982",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "md-nistru-r13353141",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "md-lacul-de-acumulare-costesti-stanca-Q12731885",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "md-maiac-w24465235",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "md-baza-de-odihna-casuta-pescarului-w1537196479",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "md-delia-r11576346",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "md-lacul-orasenesc-w150017004",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "md-platina-r18102918",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "md-marea-nordului-w1124613425",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "md-swimming-pool-delfin-w919324546",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "md-lacul-liman-Q30247652",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "md-tarakliyskoye-vodokhranilishche-Q30247654",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "md-lacul-romanesti-w70582396",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "md-davydove-lake-w488185524",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "md-iazu-nr-1-w40865914",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "md-iazul-visniovca-w25466526",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "md-lacul-de-acumulare-verejeni-w93799425",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "md-lake-hagilar-w28180627",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "md-sarata-noua-w41685621",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "md-tabara-de-odihna-pentru-copii-w51075576",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "md-cuzub-w116336887",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "md-iazul-trifesti-w183364981",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "md-iazul-lui-iepure-w1165450389",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "md-lacul-gorban-w970948917",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "md-lacul-pochina-w88371044",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "md-iazul-patrat-w304490949",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "md-lake-dragan-w289160216",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "md-novyi-w306555769",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "md-raut-r15479513",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "me-marina-skver-w1468765290",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "me-zalo-w160048778",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "mk-otosnica-lake-Q22253462",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "mk-axios-r2913208",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "mk-konjushka-s-lake-Q16361834",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "mk-city-swimming-pool-w365527240",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "nl-veluwemeer-Q543460",
+      "check": "coords_low_precision",
+      "severity": "medium",
+      "message": "Coordinates 52.4,5.7 are rounded to a tenth of a degree, about 11 km of slop"
+    },
+    {
+      "id": "nl-tsjukemar-Q2227582",
+      "check": "coords_low_precision",
+      "severity": "medium",
+      "message": "Coordinates 52.9,5.8 are rounded to a tenth of a degree, about 11 km of slop"
+    },
+    {
+      "id": "nl-lammetjes-wiel-r21167020",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "nl-jagersplas-Q2693934",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "nl-effelder-waldsee-Q65415191",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "nl-grote-kil-Q59202325",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "nl-kiesgrube-wielen-w575279814",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "nl-ruige-heide-w393284170",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "nl-camping-du-vieux-moulin-w75720862",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "nl-camping-fort-bedmar-w1432021069",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "nl-hallenbad-haaren-w50670922",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "no-rostojavri-Q732672",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "no-litlumvatnet-Q4589591",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "no-helgesj-en-Q11222356",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "no-vurrusj-en-Q4590319",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "no-kaamusjarvi-w42972370",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "no-rautujarvi-ravdojavri-Q106592558",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "no-kvarnbergsvattnet-Q2130944",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "no-fiskevatn-Q1773264",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "pl-lake-tarnobrzeg-Q6477976",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "pl-kristyna-Q1517739",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "pl-outdoor-swimming-pool-w927124475",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "pl-furstenberger-innensee-w203542929",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "pl-homolka-i-Q96148176",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "pt-playa-de-cheles-w428217104",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "ro-lake-erdap-Q1313598",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "ro-olt-r2435464",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "ro-lake-razelm-Q2349738",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "ro-lacul-de-acumulare-costesti-stanca-Q12731885",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "ro-remeti-hydroelectric-power-station-Q7311762",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "ro-lac-agrement-w1383934358",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "ro-plaja-maglavit-w1532951236",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "ro-plaja-olt-w183124153",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "ro-kamp-bela-crkva-w501601770",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "ro-marea-nordului-w1124613425",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "ro-plaja-doaga-w352574261",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "ro-sip-beach-w1430785693",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "ro-paradisul-acvatic-w272866468",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "ro-dionisus-aqualand-suceava-open-pool-w1534036666",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "ro-lake-varsolt-Q6478343",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "ro-lake-cugurlui-Q2392979",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "ro-lacul-de-acumulare-costesti-stinca-Q3272045",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "ro-acumularea-miriesti-w88372958",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "ro-paradicsomi-horgasz-egyesulet-w631410476",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "ro-kisbanya-w198345906",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "ro-mizhkolhospnyi-canal-r11533873",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "ro-90-km-backwater-r14309106",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "ro-iazul-beresti-w1324655702",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "ro-maros-r6036819",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "rs-lake-erdap-Q1313598",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "rs-silver-lake-Q1938900",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "rs-garasko-lake-Q853607",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "rs-strand-w653942171",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "rs-bazen-zitor-a-w287510939",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "rs-plivaliste-vukovar-w816565487",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "rs-boki-duna-w540665870",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "rs-karapancsai-halasto-w174011670",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "rs-semenca-w308316404",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "rs-gyalai-holt-tisza-r1483931",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "rs-mirni-dunav-r9149421",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "rs-duna-r186278",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "rs-valmiste-Q12749558",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "se-vattern-Q188195",
+      "check": "coords_low_precision",
+      "severity": "medium",
+      "message": "Coordinates 58.4,14.6 are rounded to a tenth of a degree, about 11 km of slop"
+    },
+    {
+      "id": "se-boksjon-Q10958525",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "se-holdern-Q2412793",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "se-h-lvannet-Q11976517",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "se-unna-guovdelisjavri-Q4590078",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "se-tullin-ranta-w43373546",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "se-koltajarvi-Q11872280",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "se-rengen-Q1772778",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "se-skadjoaijavri-r5580515",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "se-innsvatnet-Q1773546",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "se-hallsj-en-hallsjon-lihpiejaevrie-Q11239180",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "si-marina-di-san-bartolomeo-w831369109",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "si-winter-swimming-pool-w322425649",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "si-harsas-to-Q26233522",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "si-perimetrale-w942257685",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "si-mali-balaton-w111873715",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "si-carp-dream-lake-horgaszto-w124029904",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "si-mur-w32793594",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "sk-hainburger-schotterbank-w27761186",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "sk-varosi-uszoda-w949614034",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "sk-kajak-kenu-pont-komarom-w1310885335",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "sk-kemence-onkorrmanyzati-nagyvolgy-str-w512974829",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "sk-hufeisen-r3254861",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "sk-baza-namiotowa-gluchaczki-Q11687594",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "sk-javorec-w50949913",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "sk-mulowy-stawek-Q11787417",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "sm-centro-vacanze-san-marino-w131960371",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "sm-piscina-olimpica-di-serravalle-w59965586",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "ch-lake-lugano-Q14418",
+      "check": "coords_low_precision",
+      "severity": "medium",
+      "message": "Coordinates 46,9 are rounded to a tenth of a degree, about 11 km of slop"
+    },
+    {
+      "id": "nl-veluwemeer-Q543460",
+      "check": "coords_low_precision",
+      "severity": "medium",
+      "message": "Coordinates 52.4,5.7 are rounded to a tenth of a degree, about 11 km of slop"
+    },
+    {
+      "id": "xk-prilepnica-lake-Q7242993",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "xk-zuti-kamen-lake-Q7353092",
+      "check": "no_image",
+      "severity": "medium",
+      "message": "Item has no image"
+    },
+    {
+      "id": "ad-lake-engolasters-Q3215332",
+      "check": "wikidata_class_unverified",
+      "severity": "low",
+      "message": "Wikidata Q3215332 instance-of Q211302 is not on the accepted list for lakes; needs a subclass walk to confirm",
+      "qid": "Q3215332",
+      "p31": [
+        "Q211302"
+      ]
+    },
+    {
+      "id": "ad-estanys-de-tristaina-Q9019969",
+      "check": "wikidata_class_unverified",
+      "severity": "low",
+      "message": "Wikidata Q9019969 instance-of Q5926864 is not on the accepted list for lakes; needs a subclass walk to confirm",
+      "qid": "Q9019969",
+      "p31": [
+        "Q5926864"
+      ]
+    },
+    {
+      "id": "ad-estany-de-font-negra-Q21328903",
+      "check": "wikidata_class_unverified",
+      "severity": "low",
+      "message": "Wikidata Q21328903 instance-of Q211302 is not on the accepted list for lakes; needs a subclass walk to confirm",
+      "qid": "Q21328903",
+      "p31": [
+        "Q211302"
+      ]
+    },
+    {
+      "id": "al-fierza-reservoir-Q15062919",
+      "check": "wikidata_coord_mismatch",
+      "severity": "medium",
+      "message": "Published coordinates are 7.5 km from Wikidata Q15062919",
+      "qid": "Q15062919",
+      "km": 7.48,
+      "published": [
+        42.181111,
+        20.264167
+      ],
+      "wikidata": [
+        42.12,
+        20.302
+      ]
+    },
+    {
+      "id": "al-port-of-sarande-Q7231260",
+      "check": "wikidata_class_unverified",
+      "severity": "low",
+      "message": "Wikidata Q7231260 instance-of Q15310171 is not on the accepted list for lakes; needs a subclass walk to confirm",
+      "qid": "Q7231260",
+      "p31": [
+        "Q15310171"
+      ]
+    },
+    {
+      "id": "al-shengjin-beach-Q13044275",
+      "check": "wikidata_class_unverified",
+      "severity": "low",
+      "message": "Wikidata Q13044275 instance-of Q40080 is not on the accepted list for lakes; needs a subclass walk to confirm",
+      "qid": "Q13044275",
+      "p31": [
+        "Q40080"
+      ]
+    },
+    {
+      "id": "al-dragostunja-lakes-Q120801093",
+      "check": "wikidata_class_unverified",
+      "severity": "low",
+      "message": "Wikidata Q120801093 instance-of Q211302 is not on the accepted list for lakes; needs a subclass walk to confirm",
+      "qid": "Q120801093",
+      "p31": [
+        "Q211302"
+      ]
+    },
+    {
+      "id": "at-lake-constance-Q4127",
+      "check": "wikidata_class_unverified",
+      "severity": "low",
+      "message": "Wikidata Q4127 instance-of Q14811181, Q3267675, Q3488975, Q11726979, Q3293106, Q1267889 is not on the accepted list for lakes; needs a subclass walk to confirm",
+      "qid": "Q4127",
+      "p31": [
+        "Q14811181",
+        "Q3267675",
+        "Q3488975",
+        "Q11726979",
+        "Q3293106",
+        "Q1267889"
+      ]
+    },
+    {
+      "id": "at-offensee-Q876732",
+      "check": "wikidata_class_unverified",
+      "severity": "low",
+      "message": "Wikidata Q876732 instance-of Q11253318 is not on the accepted list for lakes; needs a subclass walk to confirm",
+      "qid": "Q876732",
+      "p31": [
+        "Q11253318"
+      ]
+    },
+    {
+      "id": "at-strandbad-angelibad-Q2353391",
+      "check": "wikidata_class_unverified",
+      "severity": "low",
+      "message": "Wikidata Q2353391 instance-of Q1757063, Q13586493 is not on the accepted list for lakes; needs a subclass walk to confirm",
+      "qid": "Q2353391",
+      "p31": [
+        "Q1757063",
+        "Q13586493"
+      ]
+    },
+    {
+      "id": "at-butzensee-Q1018240",
+      "check": "wikidata_class_unverified",
+      "severity": "low",
+      "message": "Wikidata Q1018240 instance-of Q1851937, Q1734500 is not on the accepted list for lakes; needs a subclass walk to confirm",
+      "qid": "Q1018240",
+      "p31": [
+        "Q1851937",
+        "Q1734500"
+      ]
+    },
+    {
+      "id": "at-alatsee-Q2637108",
+      "check": "wikidata_class_unverified",
+      "severity": "low",
+      "message": "Wikidata Q2637108 instance-of Q1165822, Q137690958 is not on the accepted list for lakes; needs a subclass walk to confirm",
+      "qid": "Q2637108",
+      "p31": [
+        "Q1165822",
+        "Q137690958"
+      ]
+    },
+    {
+      "id": "at-seealpsee-Q1330363",
+      "check": "wikidata_class_unverified",
+      "severity": "low",
+      "message": "Wikidata Q1330363 instance-of Q1851937 is not on the accepted list for lakes; needs a subclass walk to confirm",
+      "qid": "Q1330363",
+      "p31": [
+        "Q1851937"
+      ]
+    },
+    {
+      "id": "at-placki-vrh-Q19935922",
+      "check": "wikidata_class_conflict",
+      "severity": "high",
+      "message": "Wikidata Q19935922 is instance of Q8502, incompatible with the lakes layer",
+      "qid": "Q19935922",
+      "p31": [
+        "Q8502"
+      ]
+    },
+    {
+      "id": "at-lago-del-pramollo-stausee-lat-di-pra-Q109377043",
+      "check": "wikidata_class_unverified",
+      "severity": "low",
+      "message": "Wikidata Q109377043 instance-of Q4735538, Q3215290 is not on the accepted list for lakes; needs a subclass walk to confirm",
+      "qid": "Q109377043",
+      "p31": [
+        "Q4735538",
+        "Q3215290"
+      ]
+    },
+    {
+      "id": "at-novy-rybnik-Q12041437",
+      "check": "wikidata_class_unverified",
+      "severity": "low",
+      "message": "Wikidata Q12041437 instance-of Q1265665 is not on the accepted list for lakes; needs a subclass walk to confirm",
+      "qid": "Q12041437",
+      "p31": [
+        "Q1265665"
+      ]
+    },
+    {
+      "id": "ba-zvornik-lake-Q231499",
+      "check": "wikidata_coord_mismatch",
+      "severity": "medium",
+      "message": "Published coordinates are 6.1 km from Wikidata Q231499",
+      "qid": "Q231499",
+      "km": 6.14,
+      "published": [
+        44.363889,
+        19.118889
+      ],
+      "wikidata": [
+        44.31068333,
+        19.13938333
+      ]
+    },
+    {
+      "id": "be-blaarmeersen-Q2905240",
+      "check": "wikidata_class_unverified",
+      "severity": "low",
+      "message": "Wikidata Q2905240 instance-of Q338112 is not on the accepted list for lakes; needs a subclass walk to confirm",
+      "qid": "Q2905240",
+      "p31": [
+        "Q338112"
+      ]
+    },
+    {
+      "id": "be-aqualibi-Q2170137",
+      "check": "wikidata_class_unverified",
+      "severity": "low",
+      "message": "Wikidata Q2170137 instance-of Q740326 is not on the accepted list for lakes; needs a subclass walk to confirm",
+      "qid": "Q2170137",
+      "p31": [
+        "Q740326"
+      ]
+    },
+    {
+      "id": "be-hazewinkel-Q1993163",
+      "check": "wikidata_class_unverified",
+      "severity": "low",
+      "message": "Wikidata Q1993163 instance-of Q3215290, Q2137251 is not on the accepted list for lakes; needs a subclass walk to confirm",
+      "qid": "Q1993163",
+      "p31": [
+        "Q3215290",
+        "Q2137251"
+      ]
+    },
+    {
+      "id": "be-grote-geul-Q59202326",
+      "check": "wikidata_class_unverified",
+      "severity": "low",
+      "message": "Wikidata Q59202326 instance-of Q2043393 is not on the accepted list for lakes; needs a subclass walk to confirm",
+      "qid": "Q59202326",
+      "p31": [
+        "Q2043393"
+      ]
+    },
+    {
+      "id": "be-saunadorf-roetgen-therme-Q115792813",
+      "check": "wikidata_class_unverified",
+      "severity": "low",
+      "message": "Wikidata Q115792813 instance-of Q57036 is not on the accepted list for lakes; needs a subclass walk to confirm",
+      "qid": "Q115792813",
+      "p31": [
+        "Q57036"
+      ]
+    },
+    {
+      "id": "be-zwartven-Q2933818",
+      "check": "wikidata_coord_mismatch",
+      "severity": "medium",
+      "message": "Published coordinates are 26.8 km from Wikidata Q2933818",
+      "qid": "Q2933818",
+      "km": 26.81,
+      "published": [
+        51.3,
+        5.5
+      ],
+      "wikidata": [
+        51.061144444444,
+        5.5520388888889
+      ]
+    },
+    {
+      "id": "be-bassin-de-biestebroeck-biestebroekdo-Q107362270",
+      "check": "wikidata_class_unverified",
+      "severity": "low",
+      "message": "Wikidata Q107362270 instance-of Q124282 is not on the accepted list for lakes; needs a subclass walk to confirm",
+      "qid": "Q107362270",
+      "p31": [
+        "Q124282"
+      ]
+    },
+    {
+      "id": "bg-seven-rila-lakes-Q1661327",
+      "check": "wikidata_class_unverified",
+      "severity": "low",
+      "message": "Wikidata Q1661327 instance-of Q5926864 is not on the accepted list for lakes; needs a subclass walk to confirm",
+      "qid": "Q1661327",
+      "p31": [
+        "Q5926864"
+      ]
+    },
+    {
+      "id": "bg-bezbozhko-lake-Q12273061",
+      "check": "wikidata_class_unverified",
+      "severity": "low",
+      "message": "Wikidata Q12273061 instance-of Q211302 is not on the accepted list for lakes; needs a subclass walk to confirm",
+      "qid": "Q12273061",
+      "p31": [
+        "Q211302"
+      ]
+    },
+    {
+      "id": "ch-lake-constance-Q4127",
+      "check": "wikidata_class_unverified",
+      "severity": "low",
+      "message": "Wikidata Q4127 instance-of Q14811181, Q3267675, Q3488975, Q11726979, Q3293106, Q1267889 is not on the accepted list for lakes; needs a subclass walk to confirm",
+      "qid": "Q4127",
+      "p31": [
+        "Q14811181",
+        "Q3267675",
+        "Q3488975",
+        "Q11726979",
+        "Q3293106",
+        "Q1267889"
+      ]
+    },
+    {
+      "id": "ch-lake-geneva-Q6403",
+      "check": "wikidata_class_unverified",
+      "severity": "low",
+      "message": "Wikidata Q6403 instance-of Q211302 is not on the accepted list for lakes; needs a subclass walk to confirm",
+      "qid": "Q6403",
+      "p31": [
+        "Q211302"
+      ]
+    },
+    {
+      "id": "ch-aare-Q1675",
+      "check": "wikidata_class_unverified",
+      "severity": "low",
+      "message": "Wikidata Q1675 instance-of Q4022, Q159675 is not on the accepted list for lakes; needs a subclass walk to confirm",
+      "qid": "Q1675",
+      "p31": [
+        "Q4022",
+        "Q159675"
+      ]
+    },
+    {
+      "id": "cy-fig-tree-bay-Q15217662",
+      "check": "wikidata_class_unverified",
+      "severity": "low",
+      "message": "Wikidata Q15217662 instance-of Q40080 is not on the accepted list for lakes; needs a subclass walk to confirm",
+      "qid": "Q15217662",
+      "p31": [
+        "Q40080"
+      ]
+    },
+    {
+      "id": "cy-nissi-beach-Q7041122",
+      "check": "wikidata_class_unverified",
+      "severity": "low",
+      "message": "Wikidata Q7041122 instance-of Q40080 is not on the accepted list for lakes; needs a subclass walk to confirm",
+      "qid": "Q7041122",
+      "p31": [
+        "Q40080"
+      ]
+    },
+    {
+      "id": "cy-governor-s-beach-Q22991922",
+      "check": "wikidata_class_unverified",
+      "severity": "low",
+      "message": "Wikidata Q22991922 instance-of Q40080 is not on the accepted list for lakes; needs a subclass walk to confirm",
+      "qid": "Q22991922",
+      "p31": [
+        "Q40080"
+      ]
+    },
+    {
+      "id": "cy-kourion-beach-Q126883080",
+      "check": "wikidata_class_unverified",
+      "severity": "low",
+      "message": "Wikidata Q126883080 instance-of Q40080 is not on the accepted list for lakes; needs a subclass walk to confirm",
+      "qid": "Q126883080",
+      "p31": [
+        "Q40080"
+      ]
+    },
+    {
+      "id": "cy-coral-bay-Q5169445",
+      "check": "wikidata_class_unverified",
+      "severity": "low",
+      "message": "Wikidata Q5169445 instance-of Q39594 is not on the accepted list for lakes; needs a subclass walk to confirm",
+      "qid": "Q5169445",
+      "p31": [
+        "Q39594"
+      ]
+    },
+    {
+      "id": "cy-larnaca-salt-lake-Q2915622",
+      "check": "wikidata_class_unverified",
+      "severity": "low",
+      "message": "Wikidata Q2915622 instance-of Q5926864 is not on the accepted list for lakes; needs a subclass walk to confirm",
+      "qid": "Q2915622",
+      "p31": [
+        "Q5926864"
+      ]
+    },
+    {
+      "id": "cz-opatak-Q56459108",
+      "check": "wikidata_class_unverified",
+      "severity": "low",
+      "message": "Wikidata Q56459108 instance-of Q358976 is not on the accepted list for lakes; needs a subclass walk to confirm",
+      "qid": "Q56459108",
+      "p31": [
+        "Q358976"
+      ]
+    },
+    {
+      "id": "cz-podebrady-Q96161277",
+      "check": "wikidata_class_unverified",
+      "severity": "low",
+      "message": "Wikidata Q96161277 instance-of Q358976 is not on the accepted list for lakes; needs a subclass walk to confirm",
+      "qid": "Q96161277",
+      "p31": [
+        "Q358976"
+      ]
+    },
+    {
+      "id": "cz-most-lake-Q12038749",
+      "check": "wikidata_class_unverified",
+      "severity": "low",
+      "message": "Wikidata Q12038749 instance-of Q3215290 is not on the accepted list for lakes; needs a subclass walk to confirm",
+      "qid": "Q12038749",
+      "p31": [
+        "Q3215290"
+      ]
+    },
+    {
+      "id": "cz-podebrady-lake-Q12024628",
+      "check": "wikidata_class_unverified",
+      "severity": "low",
+      "message": "Wikidata Q12024628 instance-of Q358976 is not on the accepted list for lakes; needs a subclass walk to confirm",
+      "qid": "Q12024628",
+      "p31": [
+        "Q358976"
+      ]
+    },
+    {
+      "id": "cz-velky-bolevecky-rybnik-Q11878975",
+      "check": "wikidata_class_unverified",
+      "severity": "low",
+      "message": "Wikidata Q11878975 instance-of Q1265665 is not on the accepted list for lakes; needs a subclass walk to confirm",
+      "qid": "Q11878975",
+      "p31": [
+        "Q1265665"
+      ]
+    },
+    {
+      "id": "cz-velke-darko-Q2512478",
+      "check": "wikidata_class_unverified",
+      "severity": "low",
+      "message": "Wikidata Q2512478 instance-of Q1265665 is not on the accepted list for lakes; needs a subclass walk to confirm",
+      "qid": "Q2512478",
+      "p31": [
+        "Q1265665"
+      ]
+    },
+    {
+      "id": "cz-vodni-nadrz-slezska-harta-Q3562214",
+      "check": "wikidata_coord_mismatch",
+      "severity": "medium",
+      "message": "Published coordinates are 6.7 km from Wikidata Q3562214",
+      "qid": "Q3562214",
+      "km": 6.71,
+      "published": [
+        49.921643,
+        17.50137
+      ],
+      "wikidata": [
+        49.89027778,
+        17.58138889
+      ]
+    },
+    {
+      "id": "cz-vodni-nadrz-slezska-harta-Q3562214",
+      "check": "wikidata_class_unverified",
+      "severity": "low",
+      "message": "Wikidata Q3562214 instance-of Q12323 is not on the accepted list for lakes; needs a subclass walk to confirm",
+      "qid": "Q3562214",
+      "p31": [
+        "Q12323"
+      ]
+    },
+    {
+      "id": "cz-sterkoviste-Q91016434",
+      "check": "wikidata_class_unverified",
+      "severity": "low",
+      "message": "Wikidata Q91016434 instance-of Q358976 is not on the accepted list for lakes; needs a subclass walk to confirm",
+      "qid": "Q91016434",
+      "p31": [
+        "Q358976"
+      ]
+    },
+    {
+      "id": "cz-pisnik-dubina-Q56856779",
+      "check": "wikidata_class_unverified",
+      "severity": "low",
+      "message": "Wikidata Q56856779 instance-of Q358976 is not on the accepted list for lakes; needs a subclass walk to confirm",
+      "qid": "Q56856779",
+      "p31": [
+        "Q358976"
+      ]
+    },
+    {
+      "id": "cz-darkovske-more-Q96279768",
+      "check": "wikidata_class_unverified",
+      "severity": "low",
+      "message": "Wikidata Q96279768 instance-of Q3215290 is not on the accepted list for lakes; needs a subclass walk to confirm",
+      "qid": "Q96279768",
+      "p31": [
+        "Q3215290"
+      ]
+    },
+    {
+      "id": "cz-slatina-Q68949271",
+      "check": "wikidata_class_unverified",
+      "severity": "low",
+      "message": "Wikidata Q68949271 instance-of Q1265665, Q1413117 is not on the accepted list for lakes; needs a subclass walk to confirm",
+      "qid": "Q68949271",
+      "p31": [
+        "Q1265665",
+        "Q1413117"
+      ]
+    },
+    {
+      "id": "cz-maly-staw-Q3508724",
+      "check": "wikidata_class_unverified",
+      "severity": "low",
+      "message": "Wikidata Q3508724 instance-of Q1851937 is not on the accepted list for lakes; needs a subclass walk to confirm",
+      "qid": "Q3508724",
+      "p31": [
+        "Q1851937"
+      ]
+    },
+    {
+      "id": "de-lake-constance-Q4127",
+      "check": "wikidata_class_unverified",
+      "severity": "low",
+      "message": "Wikidata Q4127 instance-of Q14811181, Q3267675, Q3488975, Q11726979, Q3293106, Q1267889 is not on the accepted list for lakes; needs a subclass walk to confirm",
+      "qid": "Q4127",
+      "p31": [
+        "Q14811181",
+        "Q3267675",
+        "Q3488975",
+        "Q11726979",
+        "Q3293106",
+        "Q1267889"
+      ]
+    },
+    {
+      "id": "de-ratzeburger-see-Q454646",
+      "check": "wikidata_class_unverified",
+      "severity": "low",
+      "message": "Wikidata Q454646 instance-of Q211302 is not on the accepted list for lakes; needs a subclass walk to confirm",
+      "qid": "Q454646",
+      "p31": [
+        "Q211302"
+      ]
+    },
+    {
+      "id": "de-wittensee-Q897089",
+      "check": "wikidata_class_unverified",
+      "severity": "low",
+      "message": "Wikidata Q897089 instance-of Q2430594 is not on the accepted list for lakes; needs a subclass walk to confirm",
+      "qid": "Q897089",
+      "p31": [
+        "Q2430594"
+      ]
+    },
+    {
+      "id": "de-oberschleissheim-regatta-course-Q872352",
+      "check": "wikidata_class_unverified",
+      "severity": "low",
+      "message": "Wikidata Q872352 instance-of Q3215290, Q2137251 is not on the accepted list for lakes; needs a subclass walk to confirm",
+      "qid": "Q872352",
+      "p31": [
+        "Q3215290",
+        "Q2137251"
+      ]
+    },
+    {
+      "id": "de-straberg-nievenheimer-see-Q1356655",
+      "check": "wikidata_class_unverified",
+      "severity": "low",
+      "message": "Wikidata Q1356655 instance-of Q358976, Q444677 is not on the accepted list for lakes; needs a subclass walk to confirm",
+      "qid": "Q1356655",
+      "p31": [
+        "Q358976",
+        "Q444677"
+      ]
+    },
+    {
+      "id": "de-masurensee-Q116770307",
+      "check": "wikidata_class_unverified",
+      "severity": "low",
+      "message": "Wikidata Q116770307 instance-of Q337567 is not on the accepted list for lakes; needs a subclass walk to confirm",
+      "qid": "Q116770307",
+      "p31": [
+        "Q337567"
+      ]
+    },
+    {
+      "id": "de-bleilochtalsperre-Q883654",
+      "check": "wikidata_coord_mismatch",
+      "severity": "medium",
+      "message": "Published coordinates are 6.0 km from Wikidata Q883654",
+      "qid": "Q883654",
+      "km": 6.02,
+      "published": [
+        50.471021,
+        11.701824
+      ],
+      "wikidata": [
+        50.524557,
+        11.714297
+      ]
+    },
+    {
+      "id": "de-bleilochtalsperre-Q883654",
+      "check": "wikidata_class_unverified",
+      "severity": "low",
+      "message": "Wikidata Q883654 instance-of Q12323 is not on the accepted list for lakes; needs a subclass walk to confirm",
+      "qid": "Q883654",
+      "p31": [
+        "Q12323"
+      ]
+    },
+    {
+      "id": "de-szczecin-lagoon-Q50620166",
+      "check": "wikidata_class_unverified",
+      "severity": "low",
+      "message": "Wikidata Q50620166 instance-of Q3705882 is not on the accepted list for lakes; needs a subclass walk to confirm",
+      "qid": "Q50620166",
+      "p31": [
+        "Q3705882"
+      ]
+    },
+    {
+      "id": "de-bergfeldsee-Q21041915",
+      "check": "wikidata_class_unverified",
+      "severity": "low",
+      "message": "Wikidata Q21041915 instance-of Q358976, Q338112 is not on the accepted list for lakes; needs a subclass walk to confirm",
+      "qid": "Q21041915",
+      "p31": [
+        "Q358976",
+        "Q338112"
+      ]
+    },
+    {
+      "id": "de-heinz-schleusser-marina-Q1599953",
+      "check": "wikidata_class_unverified",
+      "severity": "low",
+      "message": "Wikidata Q1599953 instance-of Q721207 is not on the accepted list for lakes; needs a subclass walk to confirm",
+      "qid": "Q1599953",
+      "p31": [
+        "Q721207"
+      ]
+    },
+    {
+      "id": "de-museumshafen-flensburg-Q1954825",
+      "check": "wikidata_class_unverified",
+      "severity": "low",
+      "message": "Wikidata Q1954825 instance-of Q1602776 is not on the accepted list for lakes; needs a subclass walk to confirm",
+      "qid": "Q1954825",
+      "p31": [
+        "Q1602776"
+      ]
+    },
+    {
+      "id": "de-szczecin-lagoon-Q161385",
+      "check": "wikidata_class_unverified",
+      "severity": "low",
+      "message": "Wikidata Q161385 instance-of Q3705882 is not on the accepted list for lakes; needs a subclass walk to confirm",
+      "qid": "Q161385",
+      "p31": [
+        "Q3705882"
+      ]
+    },
+    {
+      "id": "de-inn-Q14369",
+      "check": "wikidata_class_unverified",
+      "severity": "low",
+      "message": "Wikidata Q14369 instance-of Q4022 is not on the accepted list for lakes; needs a subclass walk to confirm",
+      "qid": "Q14369",
+      "p31": [
+        "Q4022"
+      ]
+    },
+    {
+      "id": "de-cottbuser-ostsee-Q1136698",
+      "check": "wikidata_class_unverified",
+      "severity": "low",
+      "message": "Wikidata Q1136698 instance-of Q358976 is not on the accepted list for lakes; needs a subclass walk to confirm",
+      "qid": "Q1136698",
+      "p31": [
+        "Q358976"
+      ]
+    },
+    {
+      "id": "de-schwimmoper-Q2257668",
+      "check": "wikidata_class_unverified",
+      "severity": "low",
+      "message": "Wikidata Q2257668 instance-of Q200023 is not on the accepted list for lakes; needs a subclass walk to confirm",
+      "qid": "Q2257668",
+      "p31": [
+        "Q200023"
+      ]
+    },
+    {
+      "id": "de-grosse-dhunntalsperre-Q1548167",
+      "check": "wikidata_class_unverified",
+      "severity": "low",
+      "message": "Wikidata Q1548167 instance-of Q12323 is not on the accepted list for lakes; needs a subclass walk to confirm",
+      "qid": "Q1548167",
+      "p31": [
+        "Q12323"
+      ]
+    },
+    {
+      "id": "de-laacher-see-Q549267",
+      "check": "wikidata_class_unverified",
+      "severity": "low",
+      "message": "Wikidata Q549267 instance-of Q204324 is not on the accepted list for lakes; needs a subclass walk to confirm",
+      "qid": "Q549267",
+      "p31": [
+        "Q204324"
+      ]
+    },
+    {
+      "id": "de-osterseen-Q895525",
+      "check": "wikidata_class_unverified",
+      "severity": "low",
+      "message": "Wikidata Q895525 instance-of Q372363, Q5926864, Q663753, Q2379791, Q332784, Q828581, Q514050, Q58236328 is not on the accepted list for lakes; needs a subclass walk to confirm",
+      "qid": "Q895525",
+      "p31": [
+        "Q372363",
+        "Q5926864",
+        "Q663753",
+        "Q2379791",
+        "Q332784",
+        "Q828581",
+        "Q514050",
+        "Q58236328"
+      ]
+    },
+    {
+      "id": "fr-lake-geneva-Q6403",
+      "check": "wikidata_class_unverified",
+      "severity": "low",
+      "message": "Wikidata Q6403 instance-of Q211302 is not on the accepted list for lakes; needs a subclass walk to confirm",
+      "qid": "Q6403",
+      "p31": [
+        "Q211302"
+      ]
+    },
+    {
+      "id": "pl-szczecin-lagoon-Q50620166",
+      "check": "wikidata_class_unverified",
+      "severity": "low",
+      "message": "Wikidata Q50620166 instance-of Q3705882 is not on the accepted list for lakes; needs a subclass walk to confirm",
+      "qid": "Q50620166",
+      "p31": [
+        "Q3705882"
+      ]
+    },
+    {
+      "id": "pl-szczecin-lagoon-Q161385",
+      "check": "wikidata_class_unverified",
+      "severity": "low",
+      "message": "Wikidata Q161385 instance-of Q3705882 is not on the accepted list for lakes; needs a subclass walk to confirm",
+      "qid": "Q161385",
+      "p31": [
+        "Q3705882"
+      ]
+    },
+    {
+      "id": "rs-zvornik-lake-Q231499",
+      "check": "wikidata_coord_mismatch",
+      "severity": "medium",
+      "message": "Published coordinates are 6.1 km from Wikidata Q231499",
+      "qid": "Q231499",
+      "km": 6.14,
+      "published": [
+        44.363889,
+        19.118889
+      ],
+      "wikidata": [
+        44.31068333,
+        19.13938333
+      ]
+    },
+    {
+      "id": "ch-lake-constance-Q4127",
+      "check": "wikidata_class_unverified",
+      "severity": "low",
+      "message": "Wikidata Q4127 instance-of Q14811181, Q3267675, Q3488975, Q11726979, Q3293106, Q1267889 is not on the accepted list for lakes; needs a subclass walk to confirm",
+      "qid": "Q4127",
+      "p31": [
+        "Q14811181",
+        "Q3267675",
+        "Q3488975",
+        "Q11726979",
+        "Q3293106",
+        "Q1267889"
+      ]
+    },
+    {
+      "id": "ch-lake-geneva-Q6403",
+      "check": "wikidata_class_unverified",
+      "severity": "low",
+      "message": "Wikidata Q6403 instance-of Q211302 is not on the accepted list for lakes; needs a subclass walk to confirm",
+      "qid": "Q6403",
+      "p31": [
+        "Q211302"
+      ]
+    },
+    {
+      "id": "be-blaarmeersen-Q2905240",
+      "check": "wikidata_class_unverified",
+      "severity": "low",
+      "message": "Wikidata Q2905240 instance-of Q338112 is not on the accepted list for lakes; needs a subclass walk to confirm",
+      "qid": "Q2905240",
+      "p31": [
+        "Q338112"
+      ]
+    },
+    {
+      "id": "cz-opatak-Q56459108",
+      "check": "wikidata_class_unverified",
+      "severity": "low",
+      "message": "Wikidata Q56459108 instance-of Q358976 is not on the accepted list for lakes; needs a subclass walk to confirm",
+      "qid": "Q56459108",
+      "p31": [
+        "Q358976"
+      ]
+    },
+    {
+      "id": "cy-fig-tree-bay-Q15217662",
+      "check": "wikidata_class_unverified",
+      "severity": "low",
+      "message": "Wikidata Q15217662 instance-of Q40080 is not on the accepted list for lakes; needs a subclass walk to confirm",
+      "qid": "Q15217662",
+      "p31": [
+        "Q40080"
+      ]
+    },
+    {
+      "id": "cy-nissi-beach-Q7041122",
+      "check": "wikidata_class_unverified",
+      "severity": "low",
+      "message": "Wikidata Q7041122 instance-of Q40080 is not on the accepted list for lakes; needs a subclass walk to confirm",
+      "qid": "Q7041122",
+      "p31": [
+        "Q40080"
+      ]
+    },
+    {
+      "id": "ba-zvornik-lake-Q231499",
+      "check": "wikidata_coord_mismatch",
+      "severity": "medium",
+      "message": "Published coordinates are 6.1 km from Wikidata Q231499",
+      "qid": "Q231499",
+      "km": 6.14,
+      "published": [
+        44.363889,
+        19.118889
+      ],
+      "wikidata": [
+        44.31068333,
+        19.13938333
+      ]
+    },
+    {
+      "id": "cy-governor-s-beach-Q22991922",
+      "check": "wikidata_class_unverified",
+      "severity": "low",
+      "message": "Wikidata Q22991922 instance-of Q40080 is not on the accepted list for lakes; needs a subclass walk to confirm",
+      "qid": "Q22991922",
+      "p31": [
+        "Q40080"
+      ]
+    },
+    {
+      "id": "cy-kourion-beach-Q126883080",
+      "check": "wikidata_class_unverified",
+      "severity": "low",
+      "message": "Wikidata Q126883080 instance-of Q40080 is not on the accepted list for lakes; needs a subclass walk to confirm",
+      "qid": "Q126883080",
+      "p31": [
+        "Q40080"
+      ]
+    },
+    {
+      "id": "xk-fierza-reservoir-Q15062919",
+      "check": "wikidata_coord_mismatch",
+      "severity": "medium",
+      "message": "Published coordinates are 7.5 km from Wikidata Q15062919",
+      "qid": "Q15062919",
+      "km": 7.48,
+      "published": [
+        42.181111,
+        20.264167
+      ],
+      "wikidata": [
+        42.12,
+        20.302
+      ]
+    }
+  ]
+}

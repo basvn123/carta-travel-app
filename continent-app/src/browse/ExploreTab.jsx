@@ -7,9 +7,9 @@ import { CountryFlag } from '../components/CountryFlag.jsx';
 import { fmtMonthRanges } from './ClimateStrip.jsx';
 import { useExploreCatalog } from '../hooks/useExploreCatalog.js';
 import { ExploreFilterRail } from './ExploreFilterRail.jsx';
+import { PlacesFilterSheet } from './PlacesFilterSheet.jsx';
 import { ExploreRails, interleaveByCountry } from './ExploreRails.jsx';
 import { TierLegend } from './TierLegend.jsx';
-import { ExploreMap } from './ExploreMap.jsx';
 import { CountryPage } from './CountryPage.jsx';
 import { FilterChips } from './FilterChips.jsx';
 import { CategoryRail } from './CategoryRail.jsx';
@@ -24,6 +24,17 @@ import {
 } from '../components/Icons.jsx';
 import { LifestyleButton } from './LifestyleButton.jsx';
 import { HeroImage } from '../components/HeroImage.jsx';
+
+// The map is the ONE thing in this tab that pulls maplibre-gl (~930 KB raw),
+// and the tab opens on the grid. Imported statically it was hoisted into the
+// entry chunk, so every visitor paid for a library most never render - which
+// also silently defeated the lazy() wrappers on TrailPage / CyclePage /
+// DestMap / the planner tabs, since maplibre was already in the main bundle
+// by the time they loaded. Loading it here on the first switch to map view
+// takes it (and maplibre-gl.css) off the critical path.
+const ExploreMap = React.lazy(
+  () => import('./ExploreMap.jsx').then((m) => ({ default: m.ExploreMap })),
+);
 import { CostLine, CostReceipt } from '../components/CostSummary.jsx';
 import { visitLength } from '../lib/nearby.js';
 import { placeSights } from '../lib/placeStory.js';
@@ -337,7 +348,7 @@ export function ExploreTab({
   isMock = false,
   choices, onOpenLifestyle, onOpenGuides,
 }) {
-  const { t, lang } = useI18n();
+  const { t } = useI18n();
   const [visible, setVisible] = React.useState(PAGE);
   // C6: the taxonomy filters live here and in the URL, nowhere else. One
   // object, so a chip row, the rail and the query string cannot drift.
@@ -396,6 +407,15 @@ export function ExploreTab({
     reachHours, reachMinutes, sortKey, showFavOnly, favorites,
     indices, searchHits,
   });
+
+  // The whole catalogue, stable for as long as the data is. The map
+  // serialises THIS once and expresses the filters as a maplibre filter
+  // over it, rather than re-parsing the filtered set on every keystroke
+  // (P4.5).
+  const allRows = React.useMemo(
+    () => Object.values(data?.destinations || {}),
+    [data],
+  );
 
   // C1's role needs the neighbour count; built once per catalogue.
   const nearby = React.useMemo(
@@ -498,6 +518,14 @@ export function ExploreTab({
   React.useEffect(() => { setVisible(PAGE); }, [bbox, view]);
 
   const gridTotal = view === 'map' ? shownRows.length : taxRows.length;
+  // The phone's Filters door. It used to be a bare <details> fold here while
+  // Destinations opened a proper sheet from a Filters button, so the same
+  // control looked and behaved differently on two tabs of the same app. The
+  // rail itself is unchanged - it rides inside the shared sheet as `extra` -
+  // and the sheet's own Apply button carries the live result count, which is
+  // what the fold was protecting by staying inline.
+  const [sheetOpen, setSheetOpen] = React.useState(false);
+  const filterBtnRef = React.useRef(null);
   React.useEffect(() => {
     const el = sentinelRef.current;
     if (!el) return undefined;
@@ -613,22 +641,25 @@ export function ExploreTab({
       cheap: interleaveByCountry(rows.filter(cheapOk)),
       quiet: interleaveByCountry(rows.filter(quietOk)),
     };
+    // Each rail carries a title that names the list and a subtitle that says
+    // how it was chosen: "The 41" was a number with no referent (P4.2).
     return [
-      { key: 'the43', title: t('rail.top', { n: q.the43.length }), rows: q.the43,
+      { key: 'the43', title: t('rail.top', { n: q.the43.length }), sub: t('rail.topSub'),
+        short: t('rail.topShort'), rows: q.the43,
         seeAll: () => patchXf({ verdicts: ['3'] }) },
-      { key: 'gems', title: t('rail.gems'), rows: q.gems,
+      { key: 'gems', title: t('rail.gems'), sub: t('rail.gemsSub'), rows: q.gems,
         seeAll: () => setGemOnly(true) },
-      { key: 'now', title: t('rail.now'), rows: q.now,
+      { key: 'now', title: t('rail.now'), sub: t('rail.nowSub', { month: fmtMonthRanges([month]) }), rows: q.now,
         seeAll: () => patchXf({ month }) },
-      { key: 'bestOf', title: t('rail.bestOf'), rows: q.bestOf,
+      { key: 'bestOf', title: t('rail.bestOf'), sub: t('rail.bestOfSub'), rows: q.bestOf,
         seeAll: () => patchXf({ badged: true }) },
-      { key: 'villages', title: t('rail.villages'), rows: q.villages,
+      { key: 'villages', title: t('rail.villages'), sub: t('rail.villagesSub'), rows: q.villages,
         seeAll: () => patchXf({ kinds: ['village'], verdicts: ['1', '2', '3'] }) },
-      { key: 'nocar', title: t('rail.nocar'), rows: q.nocar,
+      { key: 'nocar', title: t('rail.nocar'), sub: t('rail.nocarSub'), rows: q.nocar,
         seeAll: () => patchXf({ nocar: true }) },
-      { key: 'cheap', title: t('rail.cheap'), rows: q.cheap,
+      { key: 'cheap', title: t('rail.cheap'), sub: t('rail.cheapSub'), rows: q.cheap,
         seeAll: () => patchXf({ cheap: true }) },
-      { key: 'quiet', title: t('rail.quiet'), rows: q.quiet,
+      { key: 'quiet', title: t('rail.quiet'), sub: t('rail.quietSub'), rows: q.quiet,
         seeAll: () => patchXf({ quiet: true }) },
     ];
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -636,8 +667,6 @@ export function ExploreTab({
 
   // The control bar's three instruments. The count is a measured figure,
   // so it is grouped the way the reader's locale groups thousands.
-  const fmtCount = React.useMemo(() => new Intl.NumberFormat(lang || 'en'), [lang]);
-  const countLine = t('explore.countLine', { n: fmtCount.format(shownRows.length) });
 
   const sortSelect = (
     <label className="xgrid-sort">
@@ -757,17 +786,22 @@ export function ExploreTab({
           </div>
         </div>
 
-        {/* Phone only (CSS hides it from 769px): the same rail inside a
-            plain disclosure fold - not a modal, so every filter stays
-            reachable and the count stays on screen while knobs turn. */}
-        <details className="explore-fold">
-          <summary>
+        {/* Phone only (CSS hides it from 769px): the same Filters button
+            Destinations uses, opening the same sheet shell. */}
+        <div className="explore-filterbar">
+          <button
+            type="button"
+            ref={filterBtnRef}
+            className={`places-filter-btn ${anyActive ? 'has-active' : ''}`}
+            onClick={() => setSheetOpen(true)}
+            aria-haspopup="dialog"
+            aria-expanded={sheetOpen}
+          >
             <FilterIcon size={14} />
             <span>{t('filter.filters')}</span>
-            <span className="xrail-count-inline">{countLine}</span>
-          </summary>
-          {filterRail}
-        </details>
+            {chips.length > 0 && <span className="filter-tray-badge">{chips.length}</span>}
+          </button>
+        </div>
 
         {/* The control bar: what this page is, how many places it holds
             right now, and the two ways to rearrange them. One row, over the
@@ -776,7 +810,6 @@ export function ExploreTab({
         <div className="xbar">
           <div className="xbar-lead">
             <h1 className="xbar-title">{t('explore.title')}</h1>
-            <span className="xgrid-count">{countLine}</span>
             {isMock && <span className="explore-mock">Mock data</span>}
           </div>
           <div className="xbar-tools">
@@ -872,7 +905,10 @@ export function ExploreTab({
 
           {view === 'map' && (
             <div className="xcontent-map">
-              <ExploreMap rows={taxRows} onSelect={openWithMember} onViewport={setBbox} t={t} />
+              <React.Suspense fallback={<div className="loading-screen"><div className="pulse" /></div>}>
+                <ExploreMap rows={taxRows} all={allRows} onSelect={openWithMember}
+                  onViewport={setBbox} t={t} />
+              </React.Suspense>
             </div>
           )}
         </div>
@@ -887,6 +923,24 @@ export function ExploreTab({
           rows={rows}
           onClose={() => setCountryPage(null)}
           onSelect={(id) => { onSelect(id); }}
+        />
+      )}
+
+      {/* The same sheet shell Destinations opens, with this tab's own rail as
+          its body. `groups` and `countryOptions` stay empty on purpose: the
+          rail already owns both, and the sheet rendering its own country
+          dropdown on top of the rail's would be the duplicate control this
+          change exists to remove. */}
+      {sheetOpen && (
+        <PlacesFilterSheet
+          onClose={() => setSheetOpen(false)}
+          anchorRef={filterBtnRef}
+          groups={[]}
+          countryOptions={[]}
+          extra={filterRail}
+          activeFilters={chips.length}
+          resetAll={resetAll}
+          resultCount={gridTotal}
         />
       )}
     </div>

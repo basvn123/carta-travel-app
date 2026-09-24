@@ -82,9 +82,15 @@ export function CostReceipt({ cost, t, lifestyleLabel, onOpenLifestyle, compact 
   // ship without a listing count (Rome is one), and the old wording read that
   // missing count as "nothing has been measured in this town", which was
   // exactly backwards.
+  // Only the MEASURED lines earn a sentence. The national-fallback wording
+  // ("Bed price is the national figure, not yet measured in this town." /
+  // "Food prices are the national basket.") told the reader nothing they could
+  // act on and rode along on the majority of places, so the receipt read as a
+  // disclaimer instead of a price. Silence is the honest default: the figures
+  // above still stand, and where a real measurement exists it still says so.
   const provenance = () => {
     const stay = cost.stayLevel === 'region' ? t('cost.stayRepaired')
-      : cost.stayLevel !== 'city' ? t('cost.stayNational')
+      : cost.stayLevel !== 'city' ? ''
       : cost.listings
         ? t('cost.stayMeasuredN', {
           n: cost.listings.toLocaleString('en-GB'),
@@ -92,8 +98,8 @@ export function CostReceipt({ cost, t, lifestyleLabel, onOpenLifestyle, compact 
           when: cost.captured ? cost.captured.slice(0, 7) : '',
         })
         : t('cost.stayMeasured');
-    const food = cost.foodLevel === 'city' ? t('cost.foodMeasured') : t('cost.foodNational');
-    return `${stay} ${food}`;
+    const food = cost.foodLevel === 'city' ? t('cost.foodMeasured') : '';
+    return `${stay} ${food}`.trim();
   };
 
   return (

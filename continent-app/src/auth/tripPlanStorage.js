@@ -63,6 +63,18 @@ export async function fetchTripPlans(userId) {
       // Destination ids in stop order, so overview cards can borrow the first
       // stop's catalogue photo and coordinates without a second fetch.
       destination_ids: ss.map((s) => s.destination_id).filter(Boolean),
+      // The stops themselves, each with its own window. `start_date` and
+      // `end_date` above flatten the trip to one span, which is enough to
+      // list it but not to answer "where am I staying next Tuesday": the Day
+      // planner offers the stop you are actually in as a starting point, and
+      // that needs the per-stop dates.
+      stops: ss.map((s) => ({
+        destination_id: s.destination_id || null,
+        city: s.city || '',
+        country: s.country || '',
+        arrive_date: s.arrive_date || null,
+        depart_date: s.depart_date || null,
+      })),
     };
   });
 }

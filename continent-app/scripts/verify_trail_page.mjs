@@ -20,6 +20,21 @@ const CAT = '.places-cat:visible, .side-cat:visible';
 // Sorts are twinned too, and again under different classes.
 const SORT = '.places-sort:visible, .side-sort:visible';
 
+// The country filter is no longer a <select>. It is a button that opens a
+// search-and-listbox popover (src/components/CountryPicker.jsx), so
+// selectOption() throws "Element is not a <select> element" and took the
+// whole run down before the first check. Driving it the way a person does
+// also exercises the popover, which the old selectOption never did.
+async function pickCountry(page, name) {
+  await page.locator('.places-country:visible').first().click();
+  await page.waitForTimeout(400);
+  const pop = page.locator('.country-picker-pop:visible');
+  await pop.locator('.origin-search').fill(name);
+  await page.waitForTimeout(400);
+  await pop.locator('.origin-opt', { hasText: new RegExp(`^${name}$`, 'i') }).first().click();
+  await page.waitForTimeout(1800);
+}
+
 const RAW_URL = process.argv[2] || 'http://localhost:4173/';
 // ?paymock: the GPX and KML exports are entitlement gated, and a headless run
 // cannot sign in or hold an entitlement, so without the seam the export button
@@ -83,7 +98,7 @@ await page.waitForTimeout(1200);
 // ── Trails: the price chrome is gone ──────────────────────────────────────
 await page.locator(CAT, { hasText: /trails/i }).click();
 await page.waitForTimeout(800);
-await page.locator('.places-country:visible').selectOption('AL');
+await pickCountry(page, 'Albania');
 await page.waitForTimeout(1800);
 
 const cards = await page.locator('.places-tcard').count();
@@ -224,7 +239,7 @@ await page.waitForTimeout(1500);
 // The Trips category opens on its country index, exactly as Trails does, so a
 // card only exists once a country is chosen. Clicking straight through was
 // only ever right while the tab opened on a flat list.
-await page.locator('.places-country:visible').selectOption('AL').catch(() => {});
+await pickCountry(page, 'Albania').catch(() => {});
 await page.waitForTimeout(1200);
 // A drawn city walk is the ONE DAY end of the Trips category, which is
 // otherwise the composed-itinerary surface. Without moving the length slider

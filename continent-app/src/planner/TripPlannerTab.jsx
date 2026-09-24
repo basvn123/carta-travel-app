@@ -3,13 +3,14 @@ import { Dropdown } from '../components/Dropdown.jsx';
 import { DateField } from '../components/DateField.jsx';
 import { OriginPicker } from '../components/OriginPicker.jsx';
 import { ScoreChip } from '../components/RatingBadge.jsx';
+import { favDestIds } from '../lib/favorites.js';
 import { CountryIntel } from '../components/CountryIntel.jsx';
 import { TripMap } from '../map/TripMap.jsx';
 import { TripItinerary, TransferModePicker } from './TripItinerary.jsx';
 import { GuidedTripWizard } from './GuidedTripWizard.jsx';
 import { CheapTipsSection } from './CheapTipsSection.jsx';
 import { eur, fmtHours, flightTimes } from '../lib/format.js';
-import { fmtDate, laterISO, useToday } from '../lib/dates.js';
+import { fmtDate, laterISO, useToday, planningHorizon } from '../lib/dates.js';
 import { fetchDrivingRoute } from '../lib/routing.js';
 import { useTripPlanner } from '../hooks/useTripPlanner.js';
 import { useCountryInsights } from '../hooks/useCountryInsights.js';
@@ -24,6 +25,7 @@ import { flightReasonLabel } from '../lib/trip_planner_pricing.js';
 import { geocodeAddress } from '../lib/geocode.js';
 import { carrierName } from '../lib/carriers.js';
 import { fareProv, flightProv, estPrefix, FareTag } from '../components/FareProvenance.jsx';
+import { cityLabel } from '../lib/placeName.js';
 
 const SHEET_H_KEY = 'carta.tripSheetH.v1';
 
@@ -215,14 +217,14 @@ function Suggestions({ suggestions, onPick }) {
             key={s.id}
             className="trip-suggest-card"
             onClick={() => onPick(s)}
-            title={t('trip.suggestFrom', { city: s.city, country: s.country, km: s.km, from: s.shared_origin || t('trip.overland') })}
+            title={t('trip.suggestFrom', { city: cityLabel(s.city), country: s.country, km: s.km, from: s.shared_origin || t('trip.overland') })}
           >
             <div className="trip-suggest-thumb" style={s.image ? { backgroundImage: `url(${s.image})` } : undefined}>
-              {!s.image && <span className="trip-suggest-fallback">{s.city.slice(0, 1)}</span>}
+              {!s.image && <span className="trip-suggest-fallback">{cityLabel(s.city).slice(0, 1)}</span>}
               {s.reason && <span className="trip-suggest-chip">{s.reason}</span>}
             </div>
             <div className="trip-suggest-meta">
-              <span className="trip-suggest-city">{s.city}</span>
+              <span className="trip-suggest-city">{cityLabel(s.city)}</span>
               <span className="trip-suggest-sub">
                 {s.km} km
                 {s.rating?.score != null && <ScoreChip rating={s.rating} size="xs" />}
@@ -235,7 +237,54 @@ function Suggestions({ suggestions, onPick }) {
   );
 }
 
-export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, openPlanId, onOpenPlanConsumed, origin, onChangeOrigin, onPlanDay, openSharedTrip, onSharedTripConsumed, stayTier = 'home', lifestyle = null, onOpenLifestyle = null }) {
+/**
+ * The stops you already said you wanted.
+ *
+ * The shortlist existed and the planner never read it: you starred a city on
+ * the map and then typed its name again here. This closes that. It sits
+ * above the recommendations deliberately - your own wishes outrank the app's
+ * suggestions - and it is drawn in the same card shape, because "somewhere I
+ * might add" is one idea and should not look like two.
+ *
+ * Only DESTINATIONS appear: a trip stop is a place you sleep in, and a
+ * shortlisted beach or walk is not one. They are reachable from the day
+ * planner instead, which is where a beach belongs.
+ *
+ * A city already in the trip is dropped from the strip rather than shown
+ * disabled: it is no longer somewhere you could add.
+ */
+function ShortlistStops({ rows, onPick }) {
+  const { t } = useI18n();
+  if (!rows.length) return null;
+  return (
+    <div className="trip-block">
+      <div className="trip-block-title">{t('fav.addFromShortlist')}</div>
+      <div className="trip-suggest-row">
+        {rows.map((s) => (
+          <button
+            key={s.id}
+            className="trip-suggest-card"
+            onClick={() => onPick(s)}
+            title={t('trip.add')}
+          >
+            <div className="trip-suggest-thumb" style={s.image ? { backgroundImage: `url(${s.image})` } : undefined}>
+              {!s.image && <span className="trip-suggest-fallback">{cityLabel(s.city).slice(0, 1) || '?'}</span>}
+            </div>
+            <div className="trip-suggest-meta">
+              <span className="trip-suggest-city">{cityLabel(s.city)}</span>
+              <span className="trip-suggest-sub">
+                {s.country}
+                {s.rating?.score != null && <ScoreChip rating={s.rating} size="xs" />}
+              </span>
+            </div>
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, authConfigured, onRequestAuth, openPlanId, onOpenPlanConsumed, origin, onChangeOrigin, onPlanDay, openSharedTrip, onSharedTripConsumed, tripSeed = null, onTripSeedConsumed = null, stayTier = 'home', lifestyle = null, favorites = null, onOpenDest = null, onOpenCountry = null, onOpenTrip = null }) {
   const { t } = useI18n();
   const paywall = usePaywall();
   const countryInsights = useCountryInsights();
@@ -260,7 +309,7 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, open
   // harvest date (see useToday).
   const today = useToday();
   const dateMin = laterISO(data?.meta?.start_date, today);
-  const dateMax = data?.meta?.end_date;
+  const dateMax = planningHorizon(data?.meta?.end_date, today);
 
   const [pendingCountry, setPendingCountry] = useState('');
   const [pendingDestId, setPendingDestId] = useState('');
@@ -270,6 +319,10 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, open
   const [saveNotice, setSaveNotice] = useState('');
   const [sheetH, setSheetH] = useState(340);
   const [selectedStop, setSelectedStop] = useState(null);
+  // A published trip opened from Destinations arrives with stops but no dates,
+  // so the editor opens on the window with a line saying why it is asking and
+  // what happens once it has an answer. Cleared the moment a window exists.
+  const [awaitingDates, setAwaitingDates] = useState(false);
   const [dragIdx, setDragIdx] = useState(null);
   const [wizardOpen, setWizardOpen] = useState(false);
   // Mobile only: the planner opens from a clean "Plan your trip" launcher rather
@@ -419,12 +472,27 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, open
       // The sender's trip name wins here (loadFromWizard treats its label as a
       // fallback so wizard runs never clobber a typed name; a share must).
       tp.setPlanLabel(d.label || '');
-      tp.setPlanned(true);
+      // A published itinerary carries stops and nights but no dates, and the
+      // planned view is a dated thing: opening it on a trip with no window
+      // showed a route whose every stop said nothing about when. So a trip that
+      // arrives without dates lands in the editor, which opens on the travel
+      // window and gates the rest of itself on having one. A shared trip that
+      // DOES carry dates is a finished plan and opens planned, as before.
+      tp.setPlanned(!!d.tripStart);
+      setAwaitingDates(!d.tripStart);
       setSelectedStop(null);
       setSheetOpen(true);
     }
     onSharedTripConsumed && onSharedTripConsumed();
   }, [openSharedTrip]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // A country seed ("Plan a trip here") with a trip already on the map: the
+  // wizard is not on screen, so open it as the modal and let it take the
+  // seed from there. On an empty planner the inline wizard already holds it.
+  useEffect(() => {
+    if (!tripSeed) return;
+    if (tp.planned || tp.stopDetails.length > 0) setWizardOpen(true);
+  }, [tripSeed]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Selecting a stop (via pin or card) scrolls its card into view.
   useEffect(() => {
@@ -462,7 +530,7 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, open
     () => (pendingCountry
       ? Object.entries(destinations)
           .filter(([, d]) => d.country === pendingCountry)
-          .map(([id, d]) => ({ value: id, label: d.city }))
+          .map(([id, d]) => ({ value: id, label: cityLabel(d.city) }))
           .sort((a, b) => a.label.localeCompare(b.label))
       : []),
     [destinations, pendingCountry],
@@ -474,7 +542,7 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, open
   const hasTrip = tp.stopDetails.length > 0;
   const mapStops = tp.stopDetails
     .filter((s) => s.dest && s.dest.lat != null && s.dest.lon != null)
-    .map((s) => ({ lat: s.dest.lat, lon: s.dest.lon, city: s.dest.city }));
+    .map((s) => ({ lat: s.dest.lat, lon: s.dest.lon, city: cityLabel(s.dest.city) }));
 
   // Draw the real road route through the stops whenever there are two or more
   // (keyless OSRM, same as the day planner's walking route), while editing
@@ -497,6 +565,26 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, open
     tp.addStop(pendingDestId);
     setPendingDestId('');
   };
+
+  /**
+   * The shortlist as stops you could add.
+   *
+   * Destinations only (a shortlisted beach is not somewhere you sleep), and
+   * anything already in the trip is dropped rather than shown disabled: it
+   * is no longer somewhere you could add.
+   */
+  const shortlistStops = useMemo(() => {
+    if (!favorites || !favorites.size) return [];
+    const already = new Set(tp.stopDetails.map((st) => st.destinationId));
+    const out = [];
+    for (const id of favDestIds(favorites)) {
+      if (already.has(id)) continue;
+      const d = destinations[id];
+      if (!d) continue;
+      out.push({ id, city: cityLabel(d.city), country: d.country, image: d.image?.url || null, rating: d.rating });
+    }
+    return out;
+  }, [favorites, destinations, tp.stopDetails]);
 
   const handlePendingCountry = (c) => {
     setPendingCountry(c);
@@ -551,6 +639,17 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, open
   // one primary Save/Update, then the plainly-labelled secondary actions.
   const plannedActionButtons = (
     <>
+      {/* Arranging the trip settles the cities, the nights and the legs, and
+          leaves the days empty. That next step had no door here: the traveller
+          had to find the Day planner tab and pick their own trip out of it. */}
+      {onPlanDay && tp.stopDetails.length > 0 && (
+        <button
+          className="trip-planday-btn"
+          onClick={() => onPlanDay({ planId: tp.planId, stopIndex: 0, dayIndex: 0 })}
+        >
+          <SparkIcon size={14} /> {t('trip.planYourDays')}
+        </button>
+      )}
       <button className="trip-save-planned-btn" onClick={handleSave} disabled={tp.saveState === 'saving'}>
         {tp.saveState === 'saving' ? t('trip.saving') : tp.saveState === 'saved' ? t('trip.savedTick') : tp.planId ? t('trip.updateTrip') : t('trip.saveTrip')}
       </button>
@@ -584,9 +683,14 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, open
           data={data}
           stayTier={tp.stayTier}
           lifestyle={lifestyle}
-          onOpenLifestyle={onOpenLifestyle}
+          favorites={favorites}
+          onOpenDest={onOpenDest}
+          onOpenCountry={onOpenCountry}
+          onOpenTrip={onOpenTrip}
           onCancel={() => setWizardOpen(false)}
           onComplete={handleWizardComplete}
+          seed={tripSeed}
+          onSeedConsumed={onTripSeedConsumed}
         />
       </div>
     );
@@ -686,6 +790,7 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, open
               stopDetails={tp.stopDetails}
               grandTotal={tp.grandTotal}
               groupSize={tp.groupSize}
+              onSetGroupSize={(n) => tp.setGroupSize(Math.max(1, Math.min(20, n)))}
               flight={tp.flight}
               legs={tp.legs}
               setLegMode={tp.setLegMode}
@@ -735,6 +840,21 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, open
           {/* Step 1 - travel window */}
           <div className="trip-block">
             <div className="trip-block-title">{t('trip.whenTitle')}</div>
+            {awaitingDates && !hasDates && (
+              <p className="trip-awaiting-dates">{t('trip.tripNeedsDates', { trip: tp.planLabel || t('trip.thisTrip') })}</p>
+            )}
+            {/* The window is answered, so the only thing left on a published
+                trip is how they reach it. One button, straight to the overview
+                where the legs are, instead of scrolling past every stop to
+                find out the editor has no way out. */}
+            {awaitingDates && hasDates && (
+              <button
+                className="trip-to-legs-btn"
+                onClick={() => { setAwaitingDates(false); tp.setPlanned(true); setSelectedStop(null); }}
+              >
+                {t('trip.onToGettingThere')} <span aria-hidden="true">&rarr;</span>
+              </button>
+            )}
             <div className="trip-dates-row">
               <label className="trip-field">
                 <span className="trip-field-label">{t('trip.start')}</span>
@@ -796,13 +916,13 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, open
                           >{i + 1}</div>
                           <div className="trip-stop-body">
                             <div className="trip-stop-city">
-                              {s.dest ? s.dest.city : t('trip.unknown')}
+                              {s.dest ? cityLabel(s.dest.city) : t('trip.unknown')}
                               {s.dest && (
                                 <button
                                   className={`guide-city-info-btn ${stopInfoIdx === i ? 'open' : ''}`}
                                   onClick={(e) => { e.stopPropagation(); setStopInfoIdx(stopInfoIdx === i ? null : i); }}
                                   aria-expanded={stopInfoIdx === i}
-                                  title={t('trip.aboutCity', { city: s.dest.city })}
+                                  title={t('trip.aboutCity', { city: cityLabel(s.dest.city) })}
                                 ><InfoIcon size={12} /></button>
                               )}
                             </div>
@@ -903,6 +1023,9 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, open
                 </div>
               )}
 
+              {/* Your own wishes first, then the app's recommendations. */}
+              <ShortlistStops rows={shortlistStops} onPick={(s) => tp.addStop(s.id)} />
+
               {/* Recommendations */}
               <Suggestions suggestions={tp.nextStopSuggestions} onPick={(s) => tp.addStop(s.id)} />
 
@@ -996,11 +1119,15 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, open
                       <div className="trip-ownflight-fields">
                         <label className="trip-ownflight-date">
                           <span>{t('wizard.ownFlightOutLabel')}</span>
+                          {/* A flight already booked is still a flight in the
+                              future: the outbound cannot predate today, and
+                              the return cannot predate the outbound. */}
                           <input
                             className="trip-ownflight-input"
                             type="date"
+                            min={today}
                             value={tp.ownFlight?.outDate || ''}
-                            onChange={(e) => tp.setOwnFlight({ ...tp.ownFlight, outDate: e.target.value || null })}
+                            onChange={(e) => tp.setOwnFlight({ ...tp.ownFlight, outDate: e.target.value ? laterISO(e.target.value, today) : null })}
                           />
                         </label>
                         <label className="trip-ownflight-date">
@@ -1008,9 +1135,9 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, open
                           <input
                             className="trip-ownflight-input"
                             type="date"
-                            min={tp.ownFlight?.outDate || undefined}
+                            min={laterISO(tp.ownFlight?.outDate, today)}
                             value={tp.ownFlight?.retDate || ''}
-                            onChange={(e) => tp.setOwnFlight({ ...tp.ownFlight, retDate: e.target.value || null })}
+                            onChange={(e) => tp.setOwnFlight({ ...tp.ownFlight, retDate: e.target.value ? laterISO(e.target.value, laterISO(tp.ownFlight?.outDate, today)) : null })}
                           />
                         </label>
                       </div>
@@ -1020,7 +1147,7 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, open
                       {tp.driveLegs?.out && (
                         <div className="trip-total-row">
                           <span className="lbl">
-                            <CarIcon size={11} /> {t('trip.driveOut', { city: tp.stopDetails[0]?.dest?.city || '' })}
+                            <CarIcon size={11} /> {t('trip.driveOut', { city: cityLabel(tp.stopDetails[0]?.dest?.city) })}
                             <small>{t('trip.driveSub', { km: tp.driveLegs.out.road_km, hours: fmtHours(tp.driveLegs.out.hours) })}</small>
                           </span>
                           <span className="val">{eur(tp.driveLegs.out.ground_total)}</span>
@@ -1029,7 +1156,7 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, open
                       {tp.driveLegs?.home && (
                         <div className="trip-total-row">
                           <span className="lbl">
-                            <CarIcon size={11} /> {t('trip.driveHome', { city: tp.stopDetails[tp.stopDetails.length - 1]?.dest?.city || '' })}
+                            <CarIcon size={11} /> {t('trip.driveHome', { city: cityLabel(tp.stopDetails[tp.stopDetails.length - 1]?.dest?.city) })}
                             <small>{t('trip.driveSub', { km: tp.driveLegs.home.road_km, hours: fmtHours(tp.driveLegs.home.hours) })}</small>
                           </span>
                           <span className="val">{eur(tp.driveLegs.home.ground_total)}</span>
@@ -1044,13 +1171,13 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, open
 
                   <AnchorLegRow
                     leg={tp.anchorLegs?.in}
-                    from={tp.anchorLegs?.inCity || tp.anchorLegs?.anchor?.city}
-                    to={tp.stopDetails[0]?.dest?.city}
+                    from={tp.anchorLegs?.inCity || cityLabel(tp.anchorLegs?.anchor?.city)}
+                    to={cityLabel(tp.stopDetails[0]?.dest?.city)}
                   />
                   <AnchorLegRow
                     leg={tp.anchorLegs?.out}
-                    from={tp.stopDetails[tp.stopDetails.length - 1]?.dest?.city}
-                    to={tp.anchorLegs?.outCity || tp.anchorLegs?.anchor?.city}
+                    from={cityLabel(tp.stopDetails[tp.stopDetails.length - 1]?.dest?.city)}
+                    to={tp.anchorLegs?.outCity || cityLabel(tp.anchorLegs?.anchor?.city)}
                   />
                   <TransferModePicker
                     flightTransfer={tp.flightTransfer}
@@ -1083,11 +1210,11 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, open
                   {tp.stopDetails.map((s, i) => tp.stayCosts[i] && (
                     <React.Fragment key={i}>
                       <div className="trip-total-row">
-                        <span className="lbl"><BedIcon size={11} /> {s.dest?.city} <small>{s.nights === 1 ? t('trip.accomOne', { n: s.nights }) : t('trip.accomMany', { n: s.nights })}</small></span>
+                        <span className="lbl"><BedIcon size={11} /> {cityLabel(s.dest?.city)} <small>{s.nights === 1 ? t('trip.accomOne', { n: s.nights }) : t('trip.accomMany', { n: s.nights })}</small></span>
                         <span className="val">{eur(tp.stayCosts[i].accomTotal)}</span>
                       </div>
                       <div className="trip-total-row">
-                        <span className="lbl"><ReceiptIcon size={11} /> {s.dest?.city} <small>{t('trip.onGroundSub')}</small></span>
+                        <span className="lbl"><ReceiptIcon size={11} /> {cityLabel(s.dest?.city)} <small>{t('trip.onGroundSub')}</small></span>
                         <span className="val">{eur(tp.stayCosts[i].groundTotal)}</span>
                       </div>
                     </React.Fragment>
@@ -1157,8 +1284,8 @@ export function TripPlannerTab({ data, user, authConfigured, onRequestAuth, open
       )}
 
       {wizardOpen && (
-        <GuidedTripWizard data={data} stayTier={tp.stayTier} lifestyle={lifestyle} onOpenLifestyle={onOpenLifestyle} onCancel={() => setWizardOpen(false)} onComplete={handleWizardComplete} />
+        <GuidedTripWizard data={data} stayTier={tp.stayTier} lifestyle={lifestyle} favorites={favorites} onOpenDest={onOpenDest} onOpenCountry={onOpenCountry} onOpenTrip={onOpenTrip} onCancel={() => setWizardOpen(false)} onComplete={handleWizardComplete} seed={tripSeed} onSeedConsumed={onTripSeedConsumed} />
       )}
     </div>
   );
-}
+});

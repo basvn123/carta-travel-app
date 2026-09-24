@@ -1,0 +1,11 @@
+# Carta — Europe travel
+# Content lives at real paths (see sitemap). The filter/state query strings
+# are infinite permutations of the same page: keep them out of the crawl.
+
+User-agent: *
+Allow: /
+Disallow: /*?
+Disallow: /admin
+Disallow: /*&
+
+Sitemap: https://www.carta-europetravel.com/sitemap.xml

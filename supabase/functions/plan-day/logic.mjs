@@ -451,14 +451,16 @@ export function shouldFallOver(status) {
 
 export function cacheKeyInput({
   model, destId, month, dateISO, groupSize, pace, vibe, avoidHills, freeText,
-  lang, candidates, refine, prevStopIds, wantEvents, profile,
+  lang, candidates, refine, prevStopIds, wantEvents, profile, mustInclude,
 }) {
   const groupBand = groupSize >= 7 ? '7+' : groupSize >= 5 ? '5-6' : groupSize >= 3 ? '3-4' : String(groupSize);
   return JSON.stringify({
     // v3: the scheduler now enforces a walking budget and no longer wraps the
     // clock at midnight. Cached v2 payloads carry the old impossible totals
     // ("89.4 km on foot, done around 11:32"), so they must not be served.
-    v: 3,
+    // v4: the chat profile changed shape (steps, companions, moods, start
+    // time) and gained mustInclude. A v3 row answered a different question.
+    v: 4,
     model,
     destId,
     when: wantEvents ? (dateISO || '') : month,
@@ -471,9 +473,19 @@ export function cacheKeyInput({
     // Two travellers who answered the chat differently must never share a
     // cached day, so the whole profile is part of the identity.
     profile: profile
-      ? [profile.focus, profile.known, (profile.interests || []).join('+'),
-        profile.maxWalkKm, profile.terrain, profile.dayLength, profile.food].join('|')
+      ? [profile.companions, profile.startTime, profile.steps, profile.maxWalkKm,
+        profile.window, (profile.moods || []).join('+'), profile.known,
+        profile.food, (profile.diet || []).join('+'),
+        profile.avoidHills ? 'h' : '', profile.transitOk ? 't' : '',
+        profile.avoidCrowds ? 'c' : '',
+        profile.weather ? `${profile.weather.rain ? 'r' : ''}${profile.weather.hot ? 'x' : ''}` : '',
+      ].join('|')
       : '',
+    // A day built around the Alhambra is not the day the cache holds for
+    // someone who named nothing, even when every other answer matches.
+    must: Array.isArray(mustInclude)
+      ? mustInclude.map((m) => `${m.id || ''}:${String(m.name || '').toLowerCase()}:${m.timeOfDay || ''}`).sort()
+      : [],
     refine: cleanText(refine, 280).toLowerCase(),
     prev: Array.isArray(prevStopIds) ? prevStopIds.map((s) => String(s)) : [],
     lang,

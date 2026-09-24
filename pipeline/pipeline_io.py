@@ -77,3 +77,34 @@ def load_json(path, default=None):
             return json.load(f)
     except Exception:
         return {} if default is None else default
+
+
+# ---------------------------------------------------------------------------
+# What the catalogue means by Europe
+# ---------------------------------------------------------------------------
+
+# One window, shared, because harvesting by ISO2 country code quietly drags in
+# whatever that country owns worldwide. FR brings Reunion, Guadeloupe, Mayotte,
+# Martinique, St Martin and French Guiana; NL brings Aruba; GB brings Bermuda.
+# A traveller planning a European trip does not mean any of them, and the
+# mountains layer hit this first: the highest point of the Netherlands is Mount
+# Scenery on Saba, an 870 m volcano in the Caribbean.
+#
+# INSIDE on purpose: the Canaries, Madeira and the Azores, because the app
+# prices them, and Svalbard, which is Norwegian, sits on the European
+# continental shelf and has scheduled flights from Oslo. Svalbard is the reason
+# the north edge is 81 rather than the 72 the mountains layer used: everything
+# the catalogue holds between 72N and 81N is Svalbard and nothing else.
+EUROPE_WINDOW = (-32.0, 26.0, 46.0, 81.0)          # W, S, E, N
+
+
+def in_europe(lat, lon):
+    """Is this coordinate inside the window the catalogue calls Europe?
+
+    Accepts a row's lat/lon. A row with no usable coordinate is NOT in Europe:
+    an unplaceable row cannot be shown on a map, so admitting it helps nobody.
+    """
+    if not isinstance(lat, (int, float)) or not isinstance(lon, (int, float)):
+        return False
+    w, s, e, n = EUROPE_WINDOW
+    return w <= lon <= e and s <= lat <= n

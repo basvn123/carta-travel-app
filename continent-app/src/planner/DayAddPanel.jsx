@@ -7,6 +7,7 @@ import {
   SearchIcon, PlusIcon, CheckIcon, StarIcon, SparkIcon, RouteIcon,
   MapPinIcon, MountainIcon, InfoIcon,
 } from '../components/Icons.jsx';
+import { formatSteps, kmToSteps } from '../lib/steps.js';
 
 // The picks the traveller actually thinks in. Deliberately five: a sixth chip
 // (food) turned the row into a scroller and buried "top rated", which is the
@@ -104,7 +105,7 @@ function PlaceCard({ item, idx, added, focused, note, onToggle, onFocus, t }) {
 /** One ready-made day: what it is built around, how long it runs, and the
  *  first places it visits, so the choice is made on evidence and not on a
  *  title. Applying it replaces nothing quietly: the caller confirms. */
-function ReadyCard({ route, highlight, onUse, t }) {
+function ReadyCard({ route, highlight, onUse, t, lang }) {
   const names = route.stops.slice(0, 4).map((s) => s.item.name);
   return (
     <div className={`daya-ready${highlight ? ' rec' : ''}`}>
@@ -116,7 +117,7 @@ function ReadyCard({ route, highlight, onUse, t }) {
       <div className="daya-ready-stats">
         <span>{t('dayws.stopsN', { n: route.stops.length })}</span>
         <span className="daya-sep" aria-hidden="true" />
-        <span>{t('dayws.readyKm', { km: route.km.toFixed(1) })}</span>
+        <span>{t('dayws.readySteps', { n: formatSteps(kmToSteps(route.km), lang) })}</span>
         <span className="daya-sep" aria-hidden="true" />
         <span>{t('dayws.readyHours', { h: (route.totalMin / 60).toFixed(1) })}</span>
       </div>
@@ -145,8 +146,12 @@ export function DayAddPanel({
   routes, citytrip, onUseCitytrip, onUseRoute, onAskCarta,
   suggestions = [], limited = false,
   mode, onMode, pick, onPick,
+  // Places from the traveller's own shortlist that are in reach of this
+  // city, already resolved into the same {item, idx, km} deck shape as
+  // everything else here (see DayPlannerTab's shortlistDeck).
+  shortlist = [],
 }) {
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
   // mode (ready / custom) and pick live in the parent: switching to the plan
   // and back must not drop a traveller who was three filters deep in the
   // catalogue back onto the ready-made list.
@@ -201,7 +206,7 @@ export function DayAddPanel({
               <div className="daya-ready-stats">
                 <span>{t('dayws.stopsN', { n: citytrip.n_stops })}</span>
                 <span className="daya-sep" aria-hidden="true" />
-                <span>{t('dayws.readyKm', { km: (citytrip.distance_m / 1000).toFixed(1) })}</span>
+                <span>{t('dayws.readySteps', { n: formatSteps(kmToSteps(citytrip.distance_m / 1000), lang) })}</span>
               </div>
               <button className="daya-ready-use" onClick={onUseCitytrip}>
                 <RouteIcon size={13} /> {t('dayws.readyUse')}
@@ -210,6 +215,7 @@ export function DayAddPanel({
           )}
           {routes.map((r, i) => (
             <ReadyCard
+              lang={lang}
               key={r.key}
               route={r}
               highlight={!citytrip && i === 0}
@@ -282,6 +288,30 @@ export function DayAddPanel({
                   >{t(labelKey)}</button>
                 ))}
               </div>
+
+              {/* ── Your shortlist: the things you already starred that are
+                  close enough to walk to from here. Above the app's own
+                  suggestions, because your own wishes outrank them. ── */}
+              {shortlist.length > 0 && (
+                <div className="daya-sugg daya-shortlist">
+                  <div className="daya-sugg-title">
+                    <StarIcon size={11} /> {t('fav.shortlistTitle')}
+                  </div>
+                  {shortlist.map(({ item, idx, note }) => (
+                    <PlaceCard
+                      key={`sl${idx}`}
+                      item={item}
+                      idx={idx}
+                      note={note}
+                      added={assignedIdx.includes(idx)}
+                      focused={focusedIdx === idx}
+                      onToggle={onToggle}
+                      onFocus={onFocus}
+                      t={t}
+                    />
+                  ))}
+                </div>
+              )}
 
               {suggShown && (
                 <div className="daya-sugg">

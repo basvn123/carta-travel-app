@@ -657,10 +657,14 @@ def wire_peak(peak, comps, score10, tier, reasons, expected, view_band=None,
     prom, prom_src = pi.prominence_of(peak)
     if prom is not None:
         row["prom"] = int(round(prom))
-        if prom_src.startswith("dem"):
+        if prom_src.startswith("dem") or prom_src == "insular":
             # dem: computed from GLO-30. dem_min: computed, and the search
             # window could only bound it from below, so it is a floor rather
             # than a figure. Filter 2 bands both; the page labels the second.
+            # insular: DERIVED, not measured. An island high point falls to
+            # the sea on every side, so its prominence is its elevation. It
+            # carries a source for the same reason the dem values do: a
+            # reader is entitled to know which figures were measured.
             row["promSrc"] = prom_src
     iso, iso_src = pi.isolation_of(peak)
     if iso is not None:

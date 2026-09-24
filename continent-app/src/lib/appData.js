@@ -3,12 +3,13 @@
  *
  * The main dataset download starts the moment the bundle is evaluated (module
  * scope), so it runs in parallel with React booting instead of waiting for the
- * first component effect. The two heavier, rarely-needed files are lazy:
- *   - /activities_full.json   full POI lists with coordinates (Day planner)
+ * first component effect. The heavier, rarely-needed data is lazy:
+ *   - /poi/{destId}.json      full POI list for one town (Day planner, detail)
  *   - /country_insights.json  per-country travel intel (planners + detail)
  */
 
 import { faresUrl } from './fareFile.js';
+import { shardName } from './poiShard.js';
 
 function fetchJson(path) {
   return fetch(path).then((r) => {
@@ -37,14 +38,26 @@ export function fetchFares(origin) {
   return faresPromises.get(origin);
 }
 
-let activitiesFullPromise = null;
-/** Full per-destination POI lists (id -> items_full). Cached after first call;
- *  resolves to {} on failure so callers can fall back to the short lists. */
-export function fetchActivitiesFull() {
-  if (!activitiesFullPromise) {
-    activitiesFullPromise = fetchJson('/activities_full.json').catch(() => ({}));
+const poiShardPromises = new Map();
+/**
+ * The POI list for ONE destination, from public/poi/<id>.json.
+ *
+ * There used to be a single 33 MB activities_full.json holding every town's
+ * list, fetched whole the moment the day planner mounted. A traveller
+ * planning one day in one city downloaded 157,775 items to read 47 of them,
+ * and parsing it froze the main thread for 4-8 seconds on a phone. The
+ * shards are written by sync-data.mjs and average 8.6 KB. Resolves to [] on
+ * failure, so a caller can render without it.
+ */
+export function fetchDestPois(destId) {
+  const name = shardName(destId);
+  if (!name) return Promise.resolve([]);
+  if (!poiShardPromises.has(name)) {
+    poiShardPromises.set(name, fetchJson(`/poi/${name}.json`)
+      .then((j) => (Array.isArray(j) ? j : []))
+      .catch(() => []));
   }
-  return activitiesFullPromise;
+  return poiShardPromises.get(name);
 }
 
 let countryInsightsPromise = null;
@@ -54,4 +67,22 @@ export function fetchCountryInsights() {
     countryInsightsPromise = fetchJson('/country_insights.json').catch(() => ({}));
   }
   return countryInsightsPromise;
+}
+
+/**
+ * POI lists for MANY destinations, as the `{ destId: items }` map the day
+ * planner reads. Backed by the same per-destination shards and the same
+ * cache as fetchDestPois, so a town fetched for the picker is not fetched
+ * again for the explore map.
+ *
+ * Every shard is already-resolved-or-in-flight in `poiShardPromises`, so
+ * repeat calls with overlapping id sets cost nothing. HTTP/2 multiplexes the
+ * handful of parallel requests a plan actually needs (1 for a single-city
+ * day, up to ~35 for the landing explore map).
+ */
+export function fetchDestPoiMap(ids) {
+  const want = [...new Set((ids || []).filter(Boolean))];
+  if (!want.length) return Promise.resolve({});
+  return Promise.all(want.map((id) => fetchDestPois(id).then((items) => [id, items])))
+    .then((pairs) => Object.fromEntries(pairs));
 }

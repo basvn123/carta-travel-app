@@ -1,5 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { useFocusTrap } from '../hooks/useFocusTrap.js';
 import { useI18n } from '../i18n/index.jsx';
+import { FavStar } from '../components/FavStar.jsx';
 import { NearbyOutdoors } from './NearbyOutdoors.jsx';
 import {
   beachHeadline, beachWhy, beachTags, bestForLabel, componentLabel,
@@ -12,7 +14,9 @@ import { CountryFlag } from '../components/CountryFlag.jsx';
 import {
   ArrowLeftIcon, ShareIcon, MapPinIcon, LinkIcon, ChevronRightIcon,
   CameraIcon,
+  SunIcon,
 } from '../components/Icons.jsx';
+import { srcSetFor, fallbackSrc } from '../lib/heroImage.js';
 
 /**
  * The beach page: one published beach, and the argument for going there.
@@ -74,7 +78,7 @@ function ImageCredit({ image, t }) {
   );
 }
 
-export function BeachPage({ beach, countryName, onClose, onSelectDest, model, onOpenNeighbour }) {
+export function BeachPage({ beach, countryName, onClose, onSelectDest, model, onOpenNeighbour, fav = false, onFav = null, onAddToDay = null }) {
   const { t, lang } = useI18n();
   const [shot, setShot] = useState(0);
   // The score badge opens the breakdown. Closed by default: most readers
@@ -85,14 +89,14 @@ export function BeachPage({ beach, countryName, onClose, onSelectDest, model, on
   const [showParts, setShowParts] = useState(false);
   const [toast, setToast] = useState(null);
   const scrollEl = useRef(null);
+  const pageRef = useRef(null);
+  const backRef = useRef(null);
   const titleEl = useRef(null);
   const [titleGone, setTitleGone] = useState(false);
 
-  useEffect(() => {
-    const onKey = (e) => { if (e.key === 'Escape') onClose(); };
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
-  }, [onClose]);
+  // Focus management for the dialog: initial focus, a Tab cycle and focus
+  // restoration, not just Escape. See hooks/useFocusTrap.js.
+  useFocusTrap(pageRef, onClose, { initialFocusRef: backRef });
 
   useEffect(() => { setShot(0); scrollEl.current?.scrollTo?.(0, 0); }, [beach?.id]);
 
@@ -209,13 +213,14 @@ export function BeachPage({ beach, countryName, onClose, onSelectDest, model, on
   ].filter(Boolean);
 
   return (
-    <div className="tpage bpage" role="dialog" aria-modal="true" aria-label={beach.name}>
+    <div className="tpage bpage" role="dialog" aria-modal="true" aria-label={beach.name} ref={pageRef}>
       <div className="tpage-bar">
-        <button type="button" className="tpage-back" onClick={onClose}>
+        <button type="button" className="tpage-back" onClick={onClose} ref={backRef}>
           <ArrowLeftIcon size={15} />
           <span>{t('beach.back')}</span>
         </button>
         <span className={`tpage-bar-title ${titleGone ? 'on' : ''}`}>{beach.name}</span>
+        <FavStar on={fav} onToggle={onFav} />
         <button type="button" className="tpage-bar-act" onClick={onShare} aria-label={t('trails.shareLink')}>
           <ShareIcon size={15} />
         </button>
@@ -242,6 +247,12 @@ export function BeachPage({ beach, countryName, onClose, onSelectDest, model, on
               {beach.name}
             </h1>
             {beach.nameLocal && <p className="bpage-local">{beach.nameLocal}</p>}
+            {onAddToDay && (
+              <button type="button" className="feat-dayplan" onClick={() => onAddToDay({ id: beach.id, cc: beach.cc, name: beach.name, lat: beach.lat, lon: beach.lon })}>
+                <SunIcon size={14} />
+                <span>{t('feat.addToDay')}</span>
+              </button>
+            )}
             <div className="bpage-scorerow">
               {/* The badge is the door to the breakdown. The weights are
                   already in the wire's model block and the components are
@@ -292,7 +303,17 @@ export function BeachPage({ beach, countryName, onClose, onSelectDest, model, on
 
           {main && (
             <figure className="bpage-gallery">
-              <img className="bpage-shot" src={main.big || main.u} alt={beach.name} />
+              <img
+                className="bpage-shot"
+                src={fallbackSrc(main.big || main.u, 960)}
+                srcSet={srcSetFor(main.big || main.u, 1920)}
+                sizes="(min-width: 769px) 860px, 100vw"
+                alt={beach.name}
+                width={16}
+                height={10}
+                loading="eager"
+                decoding="async"
+              />
               {images.length > 1 && (
                 <div className="bpage-strip" role="tablist" aria-label={t('beach.photos')}>
                   {images.map((img, i) => (

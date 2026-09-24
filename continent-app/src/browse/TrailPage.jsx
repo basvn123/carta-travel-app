@@ -20,6 +20,8 @@ import {
 } from '../lib/trailExport.js';
 import { eur } from '../lib/format.js';
 import { useI18n } from '../i18n/index.jsx';
+import { useFocusTrap } from '../hooks/useFocusTrap.js';
+import { FavStar } from '../components/FavStar.jsx';
 import { NearbyOutdoors } from './NearbyOutdoors.jsx';
 import { usePaywall } from '../hooks/usePaywall.jsx';
 import {
@@ -27,6 +29,7 @@ import {
   ClockIcon, MountainIcon, MapPinIcon, CheckIcon, ListDayIcon, CloseIcon,
   ChevronRightIcon, LinkIcon, EyeIcon, SwimIcon, BeachIcon, CastleIcon,
   BedIcon, BottleIcon, LoopIcon, StarIcon, CameraIcon,
+  SunIcon,
 } from '../components/Icons.jsx';
 import { RatingBadge } from '../components/RatingBadge.jsx';
 import { isNum } from '../map/coords.js';
@@ -233,7 +236,7 @@ function Fact({ label, value, word = false, title }) {
   );
 }
 
-export function TrailPage({ card, onClose, onSelectDest, onOpenNeighbour, dests }) {
+export function TrailPage({ card, onClose, onSelectDest, onOpenNeighbour, dests, fav = false, onFav = null, onAddToDay = null }) {
   const { t } = useI18n();
   const paywall = usePaywall();
   const { tr, assoc, kindKey, price } = card;
@@ -248,6 +251,8 @@ export function TrailPage({ card, onClose, onSelectDest, onOpenNeighbour, dests 
   const mapEl = useRef(null);
   const mapRef = useRef(null);
   const scrollEl = useRef(null);
+  const pageRef = useRef(null);
+  const backRef = useRef(null);
   const titleEl = useRef(null);
 
   useEffect(() => {
@@ -256,15 +261,14 @@ export function TrailPage({ card, onClose, onSelectDest, onOpenNeighbour, dests 
     return () => { live = false; };
   }, [tr.id]);
 
-  useEffect(() => {
-    const onKey = (e) => {
-      if (e.key !== 'Escape') return;
-      if (follow) setFollow(false);
-      else onClose();
-    };
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
-  }, [onClose, follow]);
+  // Focus management for the dialog, plus this page's own Escape rule:
+  // following the walk on GPS is a mode inside the page, so the first
+  // Escape leaves the mode and only the second closes the page.
+  const escapeClose = React.useCallback(() => {
+    if (follow) setFollow(false);
+    else onClose();
+  }, [follow, onClose]);
+  useFocusTrap(pageRef, escapeClose, { initialFocusRef: backRef });
 
   useEffect(() => {
     if (!toast) return undefined;
@@ -528,13 +532,14 @@ export function TrailPage({ card, onClose, onSelectDest, onOpenNeighbour, dests 
   const dirUrl = start ? trailheadDirectionsUrl(start.lat, start.lon) : '';
 
   return (
-    <div className={`tpage ${follow ? 'following' : ''}`} role="dialog" aria-modal="true" aria-label={tr.name}>
+    <div className={`tpage ${follow ? 'following' : ''}`} role="dialog" aria-modal="true" aria-label={tr.name} ref={pageRef}>
       <div className="tpage-bar">
-        <button type="button" className="tpage-back" onClick={onClose}>
+        <button type="button" className="tpage-back" onClick={onClose} ref={backRef}>
           <ArrowLeftIcon size={15} />
           <span>{t('trails.back')}</span>
         </button>
         <span className={`tpage-bar-title ${titleGone || follow ? 'on' : ''}`}>{tr.name}</span>
+        <FavStar on={fav} onToggle={onFav} />
         <button type="button" className="tpage-bar-act" onClick={onShare} aria-label={t('trails.shareLink')}>
           <ShareIcon size={15} />
         </button>
@@ -606,6 +611,14 @@ export function TrailPage({ card, onClose, onSelectDest, onOpenNeighbour, dests 
                 </span>
               )}
             </div>
+            {/* The trailhead is where the day's idea sits; the bbox centre
+                stands in until the geometry has loaded. */}
+            {onAddToDay && (
+              <button type="button" className="feat-dayplan" onClick={() => onAddToDay({ id: tr.id, cc: tr.country || tr.cc, name: tr.name, lat: start ? start.lat : (tr.bbox ? (tr.bbox[1] + tr.bbox[3]) / 2 : tr.lat), lon: start ? start.lon : (tr.bbox ? (tr.bbox[0] + tr.bbox[2]) / 2 : tr.lon) })}>
+                <SunIcon size={14} />
+                <span>{t('feat.addToDay')}</span>
+              </button>
+            )}
           </div>
 
           <div className="tpage-facts">

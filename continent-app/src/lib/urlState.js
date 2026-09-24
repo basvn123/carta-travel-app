@@ -7,6 +7,7 @@
  */
 
 import { isFullRatingRange, clampRatingRange, rangeFromMinTier } from './rating.js';
+import { readFavList, writeFavList } from './favorites.js';
 
 const LS_ORDER = [
   'dinners_per_week', 'lunches_per_week', 'fastfood_per_week', 'drinks_per_week',
@@ -68,7 +69,11 @@ export function encodeState({
   }
   // Note: the open destination (selectedId) is deliberately NOT persisted, so
   // the app always opens on the full map with nothing pre-selected.
-  if (favorites && favorites.size) q.set('fav', [...favorites].join('.'));
+  // The shortlist, as `kind:id` keys joined by '.'. Destination ids carry no
+  // dots (they are IATA codes or `gem:<slug>`), so the joiner stays safe and
+  // the ':' is free to name the layer. See lib/favorites.js for the legacy
+  // bare-id reading on the way back in.
+  if (favorites && favorites.size) q.set('fav', writeFavList(favorites).join('.'));
   // App default is 'beauty' (App.jsx), so a price sort must be stored too.
   if (sortKey && sortKey !== 'beauty') q.set('sort', sortKey);
   if (showFavOnly) q.set('favonly', '1');
@@ -123,7 +128,10 @@ export function decodeState(search) {
     if (!Number.isNaN(lo) && !Number.isNaN(hi)) out.priceRange = [lo, hi];
   }
   // 'sel' is intentionally ignored on load (see encodeState), open the full map.
-  if (has('fav')) out.favorites = q.get('fav').split('.').filter(Boolean);
+  // Keys now, bare destination ids in older links: readFavList migrates the
+  // second onto the first, so a link shared before the shortlist grew past
+  // destinations still opens with its places starred.
+  if (has('fav')) out.favorites = [...readFavList(q.get('fav').split('.').filter(Boolean))];
   if (has('sort')) out.sortKey = q.get('sort');
   if (has('favonly')) out.showFavOnly = q.get('favonly') === '1';
   // Rating band ("rr", tenths). Older links carried a minimum-tier ('mt', 1-3)
@@ -153,7 +161,30 @@ export function decodeState(search) {
   }
   const ls = unpackLifestyle(q.get('ls'));
   if (ls) out.lifestyle = ls;
+  // Planner seeds, the shareable form of the hand-offs out of a destination
+  // or feature page (App.openTripForCountry / openDayForDest / openDayForFeature).
+  //   tab=trip&cc=BE           the trip wizard's Where step with Belgium picked
+  //   tab=day&dest=BRU         the day flow's When step, staying in that city
+  //   tab=day&feat=trail:AT:63478   the same, with that feature as the idea
+  // Read once at load and consumed by the planner they name; persistState then
+  // drops them (they are OWN keys the encoder never writes back), so a reload
+  // after the hand-off does not re-seed over whatever the traveller did next.
+  if (has('cc') && /^[A-Za-z]{2}$/.test(q.get('cc'))) out.tripSeedCc = q.get('cc').toUpperCase();
+  if (has('dest') && /^[A-Za-z0-9_:.-]{1,80}$/.test(q.get('dest'))) out.daySeedDest = q.get('dest');
+  if (has('feat')) {
+    const m = /^(trail|beach|lake|mountain):([A-Za-z]{2}):([A-Za-z0-9_.-]{1,60})$/.exec(q.get('feat'));
+    if (m) out.daySeedFeat = { kind: m[1], cc: m[2].toUpperCase(), id: m[3] };
+  }
   return out;
+}
+
+/** The query string a hand-off link carries, for share buttons. */
+export function seedQuery(seed) {
+  const q = new URLSearchParams();
+  if (seed?.cc) { q.set('tab', 'trip'); q.set('cc', seed.cc); }
+  else if (seed?.dest) { q.set('tab', 'day'); q.set('dest', seed.dest); }
+  else if (seed?.feat) { q.set('tab', 'day'); q.set('feat', `${seed.feat.kind}:${seed.feat.cc}:${seed.feat.id}`); }
+  return q.toString();
 }
 
 /** Best-effort: read URL first, then fall back to the localStorage mirror. */
@@ -170,7 +201,7 @@ export function loadInitialState() {
 
 
 // Every key encodeState can write; persistState replaces exactly these.
-const OWN_KEYS = ['b', 'big', 'cf', 'd', 'dh', 'fav', 'favonly', 'g', 'gem', 'ls', 'o', 'pm', 'pr', 'r', 'rh', 'rr', 'sort', 'st', 't', 'tab', 'tb', 'tk', 'top', 'un'];
+const OWN_KEYS = ['b', 'big', 'cc', 'cf', 'd', 'dest', 'dh', 'fav', 'favonly', 'feat', 'g', 'gem', 'ls', 'o', 'pm', 'pr', 'r', 'rh', 'rr', 'sort', 'st', 't', 'tab', 'tb', 'tk', 'top', 'un'];
 
 /** Push the encoded state into the URL (replaceState) and the localStorage mirror.
  *

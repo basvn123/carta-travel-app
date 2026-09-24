@@ -25,12 +25,13 @@
  * kept apart on purpose.
  */
 import { supabase } from '../lib/supabaseClient.js';
+import { E2E_SEAMS } from '../lib/e2eSeams.js';
 
 /* The verify seam, same precedent as ?savedmock, ?sharemock, ?badgemock and
  * ?guidesmock: fixtures stand in for the RPCs so the flow can be checked
  * headlessly and so the surface can be looked at before migration 020 is
  * applied. Display only, never on unless typed. */
-const MOCK = typeof window !== 'undefined'
+const MOCK = E2E_SEAMS && typeof window !== 'undefined'
   && new URLSearchParams(window.location.search).get('coplanmock');
 
 const MOCK_INVITES = [{

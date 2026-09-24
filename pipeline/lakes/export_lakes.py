@@ -80,6 +80,9 @@ if sys.platform == "win32":
             pass
 
 
+sys.path.insert(0, str(HERE.parents[1] / "pipeline"))
+
+from pipeline_io import in_europe  # noqa: E402
 from water_sources import haversine_km, load_cache  # noqa: E402
 from harvest_lakes import COUNTRIES, fold, name_tokens  # noqa: E402
 import lake_index as li  # noqa: E402
@@ -1088,6 +1091,13 @@ def main():
         rows, spare, unrated_pool = [], [], []
         for lake, comps, score10 in sorted(scored, key=lambda t: (-t[2],
                                                                   t[0]["name"])):
+            # Harvesting by ISO2 drags in what a country owns worldwide: FR
+            # brought 8 lakes in Mayotte, Martinique, St Martin, Guadeloupe,
+            # Reunion and French Guiana. Before BOTH tiers, so an out of scope
+            # row cannot fall through to the region floor as a listed
+            # candidate either. See pipeline_io.EUROPE_WINDOW.
+            if not in_europe(lake.get("lat"), lake.get("lon")):
+                continue
             # The photo gate no longer deletes the pool before the floor can
             # reach it (the mountain floor lesson): a named lake that fails
             # it falls through to the region floor as a listed candidate.

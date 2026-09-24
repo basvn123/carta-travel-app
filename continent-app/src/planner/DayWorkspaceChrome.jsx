@@ -7,6 +7,7 @@ import {
   BedIcon, BulbIcon, SearchIcon, SparkIcon, RouteIcon, ListDayIcon,
   TicketIcon, PlusIcon, StarIcon, MountainIcon, InfoIcon, CloseIcon,
 } from '../components/Icons.jsx';
+import { formatSteps, kmToSteps } from '../lib/steps.js';
 
 /**
  * The predefined things a traveller asks Carta about a day. A blank chat box
@@ -104,7 +105,7 @@ export function DayStayBar({
 export function DayTipsPanel({
   city, country, countryRec, intel, walks, dayWalks, assignedIdx, onToggleIntel, onToggleWalk,
 }) {
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
   const [open, setOpen] = useState(false);
   const ref = useDismiss(open, () => setOpen(false));
   const count = (intel ? intel.areas.length : 0) + walks.length + (countryRec ? 1 : 0);
@@ -173,7 +174,7 @@ export function DayTipsPanel({
                     <div className={`dayws-tip-row${added ? ' added' : ''}`} key={w.name}>
                       <span className="dayws-tip-body">
                         <span className="dayws-tip-name">{w.name}</span>
-                        <span className="dayws-tip-note">{t('dayws.walkKm', { km: w.km })} {w.note}</span>
+                        <span className="dayws-tip-note">{t('dayws.walkSteps', { n: formatSteps(kmToSteps(w.km), lang) })} {w.note}</span>
                       </span>
                       <button
                         className={`dayws-tip-add${added ? ' on' : ''}`}

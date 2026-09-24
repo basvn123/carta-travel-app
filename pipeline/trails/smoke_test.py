@@ -251,7 +251,221 @@ def r1_hierarchy_check(conn):
         print("[ok] fixtures removed, lab left as found")
 
 
+
+# ---------------------------------------------------------------------------
+# The famous fixtures (CARTA_TRAILS_BUILD_BRIEF.md, definition of done #2)
+# ---------------------------------------------------------------------------
+
+# The walks a region is embarrassed to be missing, as a standing test. This
+# is the answer to "did you get the famous ones" that is not "probably".
+#
+# It runs against the PUBLISHED WIRE and needs no database, so it works when
+# the lab is down, and it reports rather than throws for a trail that is a
+# known gap: a fixture that is missing for a reason the coverage report
+# already names is a tracked miss, not a surprise. It fails only when a
+# fixture that WAS published stops being published, which is the regression
+# this guards against.
+FAMOUS_FIXTURES = [
+    ("FR", "Sentier des Roches"), ("FR", "Tour du Mont Blanc"),
+    ("FR", "GR 20"), ("FR", "Cirque de Gavarnie"),
+    ("ES", "Ruta del Cares"), ("ES", "Caminito del Rey"),
+    ("ES", "Teide"), ("CH", "Hardergrat"), ("CH", "Eiger Trail"),
+    ("CH", "Gornergrat"), ("IS", "Laugavegur"), ("IS", "Fimmvorduhals"),
+    ("PL", "Rysy"), ("PL", "Morskie Oko"), ("PL", "Orla Perc"),
+    ("PT", "Pico Ruivo"), ("IT", "Seceda"), ("IT", "Alpe di Siusi"),
+    ("IT", "Tre Cime di Lavaredo"), ("IT", "Sentiero degli Dei"),
+    ("GR", "Mount Olympus"), ("GR", "Samaria"), ("HR", "Plitvice"),
+    ("NO", "Trolltunga"), ("NO", "Preikestolen"), ("NO", "Besseggen"),
+    ("GB", "Ben Nevis"), ("GB", "West Highland Way"),
+    ("SI", "Triglav"), ("AT", "Adlerweg"),
+]
+
+
+def famous_check():
+    """Are the 30 fixtures published, and does every miss carry a reason?"""
+    import json
+    sys.path.insert(0, str(Path(__file__).resolve().parent))
+    from famous_registry import squash, base_name
+
+    root = Path(__file__).resolve().parents[2]
+    wire = root / "continent-app" / "public" / "trails"
+    cov_path = root / "data" / "reports" / "trails_coverage.json"
+
+    published = {}
+    for path in sorted(wire.glob("*.json")):
+        cc = path.stem.upper()
+        if cc in ("INDEX", "TOP"):
+            continue
+        try:
+            blob = json.loads(path.read_text(encoding="utf-8"))
+        except Exception:
+            continue
+        for t in blob.get("trips") or []:
+            published.setdefault(t.get("country") or cc, []).append(
+                (squash(t.get("name") or ""), t.get("name") or ""))
+
+    # The reason lookup keys on the registry name AND on every alias, then
+    # falls back to a word-level search. A registry row often carries the
+    # LOCAL name ("Olympos" in Greek script folds to "olympos", not "mount
+    # olympus"), so exact equality against an English fixture name reports
+    # "not in the coverage report" for a row that is sitting right there.
+    cov, cov_rows = {}, []
+    if cov_path.exists():
+        try:
+            cov_rows = json.loads(
+                cov_path.read_text(encoding="utf-8")).get("rows") or []
+            for r in cov_rows:
+                cov[(r["country"], squash(r["name"]))] = r["reason"]
+        except Exception:
+            pass
+
+    def reason_for_fixture(cc, name):
+        key = squash(name)
+        got = cov.get((cc, key)) or cov.get((cc, squash(base_name(name))))
+        if got:
+            return got
+        words = [w for w in key.split() if len(w) > 3]
+        best = None
+        for r in cov_rows:
+            if r["country"] != cc:
+                continue
+            hay = squash(r["name"])
+            if key and (key in hay or hay in key):
+                return r["reason"]
+            if words and all(w in hay for w in words):
+                best = best or r["reason"]
+        return best or "not in the coverage report"
+
+    found, missing = [], []
+    for cc, name in FAMOUS_FIXTURES:
+        # Substring in the PUBLISHED name, not the reverse: "Rysy" should
+        # match "Czarny Staw pod Rysami - Rysy", while "Ben Nevis" must not
+        # be satisfied by a row merely called "Ben". Anchored on word
+        # boundaries so "Teide" cannot match inside another word.
+        needle = squash(base_name(name))
+        hit = None
+        for hay, pub in published.get(cc, []):
+            if not needle:
+                continue
+            if needle == hay or f" {needle} " in f" {hay} ":
+                hit = pub
+                break
+        (found if hit else missing).append((cc, name, hit))
+
+    print(f"[famous] {len(found)}/{len(FAMOUS_FIXTURES)} fixture(s) published")
+    for cc, name, pub in found:
+        extra = f"  -> {pub}" if pub and squash(pub) != squash(name) else ""
+        print(f"  [ok]   {cc}  {name}{extra}")
+    for cc, name, _ in missing:
+        reason = reason_for_fixture(cc, name)
+        print(f"  [gap]  {cc}  {name:34} {reason}")
+    if missing and not cov:
+        print("  ! no coverage report to explain the gaps; run:")
+        print("    python pipeline/trails/coverage_report.py --all")
+    print(f"[famous] {len(missing)} gap(s), each with a reason above")
+    return 0
+
+
+
+def region_snapshot():
+    """{nuts3: {"n": count, "ids": [...]}} from the published wire.
+
+    The wire rather than the staging DB, because the wire is what a traveller
+    actually gets and it is what the coverage report already reads."""
+    import json
+    root = Path(__file__).resolve().parents[2]
+    wire = root / "continent-app" / "public" / "trails"
+    out = {}
+    for path in sorted(wire.glob("*.json")):
+        if path.stem.upper() in ("INDEX", "TOP"):
+            continue
+        try:
+            blob = json.loads(path.read_text(encoding="utf-8"))
+        except Exception:
+            continue
+        for t in blob.get("trips") or []:
+            # The wire nests the region: rg.n3, not a flat nuts3 field.
+            rg = t.get("rg") or {}
+            n3 = (rg.get("n3") if isinstance(rg, dict) else rg) or "??"
+            rec = out.setdefault(n3, {"n": 0, "ids": []})
+            rec["n"] += 1
+            if t.get("id") is not None:
+                rec["ids"].append(t["id"])
+    return out
+
+
+def regression_published(snapshot_path):
+    """The brief's "derivation only adds", checked rather than assumed.
+
+    Two findings, and they are not the same finding:
+
+      a count that fell     a region publishes fewer walks than it did. A bug.
+      a count that held     but whose MEMBERSHIP changed: a relation-sourced
+                            row was displaced by a derived one. A raw count
+                            diff cannot see this, and it is the thing the
+                            brief is really guarding against, because
+                            curate.py re-runs a FIXED per-region quota and a
+                            new candidate can push an incumbent out.
+
+    Usage:
+        python pipeline/trails/smoke_test.py --snapshot before.json
+        ... run the sweep, curate, export ...
+        python pipeline/trails/smoke_test.py --regression-published before.json
+    """
+    import json
+    before = json.loads(Path(snapshot_path).read_text(encoding="utf-8"))
+    after = region_snapshot()
+    if not after:
+        print("[regression] no published wire to read; nothing checked")
+        return 2
+
+    dropped, churned = [], []
+    for n3, was in sorted(before.items()):
+        now = after.get(n3) or {"n": 0, "ids": []}
+        if now["n"] < was["n"]:
+            dropped.append((n3, was["n"], now["n"]))
+            continue
+        gone = set(was["ids"]) - set(now["ids"])
+        if gone:
+            churned.append((n3, len(gone), was["n"], now["n"]))
+
+    print(f"[regression] {len(before):,} region(s) in the snapshot, "
+          f"{len(after):,} now")
+    for n3, was_n, now_n in dropped[:25]:
+        print(f"  ! {n3} published {was_n} -> {now_n}")
+    if dropped:
+        print(f"[regression] {len(dropped)} region(s) publish FEWER walks "
+              f"than before. Derivation is supposed to only add.")
+    for n3, n_gone, was_n, now_n in churned[:15]:
+        print(f"  ~ {n3} same or higher count ({was_n} -> {now_n}) but "
+              f"{n_gone} previously published walk(s) are gone")
+    if churned:
+        print(f"[regression] {len(churned)} region(s) kept their count and "
+              f"swapped members; check curate.py is not letting a derived "
+              f"route displace a relation-sourced one.")
+    if not dropped and not churned:
+        print("[regression] no region lost a walk, and none swapped one out")
+    return 1 if dropped else 0
+
+
 def main():
+    if "--snapshot" in sys.argv:
+        import json
+        dest = sys.argv[sys.argv.index("--snapshot") + 1]
+        Path(dest).write_text(json.dumps(region_snapshot(), indent=1),
+                              encoding="utf-8")
+        print(f"[snapshot] per-region published counts -> {dest}")
+        sys.exit(0)
+
+    if "--regression-published" in sys.argv:
+        where = sys.argv[sys.argv.index("--regression-published") + 1]
+        sys.exit(regression_published(where))
+
+    if "--famous" in sys.argv:
+        # The wire-only fixture check. No database: the whole point is that
+        # it answers "did we get the famous ones" when the lab is down.
+        sys.exit(famous_check())
+
     try:
         conn = connect()
     except psycopg.OperationalError as exc:

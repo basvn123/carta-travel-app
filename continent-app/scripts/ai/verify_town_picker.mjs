@@ -119,23 +119,48 @@ async function reachTownStep(page) {
   await nextBtn.click();
   await page.waitForTimeout(600);
 
+  // Step 3 (ideas, D4). This harness is about the town question, so it takes
+  // the answer that names no places and leaves the town open.
+  await page.locator('.day-ideas-choice').waitFor({ timeout: 30000 });
+  await page.getByRole('button', { name: /surprise me/i }).click();
+  await page.waitForTimeout(600);
+
   await page.locator('.day-flow-card.primary').click();
   await page.waitForTimeout(700);
 
-  // Q1: focus (single-select, advances on tap).
-  check('wizard order: first question is focus', (await page.getByText(/city or nature\?/i).count()) >= 1);
+  // The hard constraints come first: who is coming, then how much of the
+  // day, then how much walking. Preferences only rank inside those limits,
+  // so an order change here is a change of meaning, not of taste.
+  // Q1: companions (single-select, advances on tap).
+  check('wizard order: first question is who is coming', (await page.getByText(/who.s coming\?/i).count()) >= 1);
   await page.locator('.chat-opt').first().click();
   await page.waitForTimeout(350);
 
-  // Q2: interests (multi-select).
-  check('wizard order: second question is interests', (await page.getByText(/what do you most want to see\?/i).count()) >= 1);
-  await page.locator('.chat-opts-multi .chat-opt').first().click();
+  // Q2: how much of the day, with the start chips on the same screen.
+  check('wizard order: second question is the day window', (await page.getByText(/how much of the day\?/i).count()) >= 1);
+  check('the window question carries start chips', (await page.locator('.chat-opts-start .carta-plan-chip').count()) === 3);
+  await page.locator('.chat-opt').first().click();
+  await page.waitForTimeout(350);
+
+  // Q3: walking, asked in steps rather than kilometres.
+  check('wizard order: third question is walking', (await page.getByText(/how much walking\?/i).count()) >= 1);
+  check('walking is offered in steps, not km',
+    /steps/i.test(await page.locator('.chat-opt .chat-opt-text small').first().innerText()));
+  await page.locator('.chat-opt').first().click();
+  await page.waitForTimeout(350);
+
+  // Q4: mood (multi-select, capped). Taking an OUTDOORS mood is what keeps
+  // the town question in the flow: D5 drops it when the town the day would
+  // land in can already fill a day on its own, and only asks when the coast
+  // or the hills nearby might do better.
+  check('wizard order: fourth question is mood', (await page.getByText(/what are you in the mood for\?/i).count()) >= 1);
+  await page.locator('.chat-opts-multi .chat-opt').filter({ hasText: /beach|water/i }).first().click();
   await page.waitForTimeout(150);
   await page.locator('.chat-send-multi').click();
   await page.waitForTimeout(350);
 
-  // Q3: town.
-  check('wizard order: third question is town', (await page.getByText(/where do you want to spend the day\?/i).count()) >= 1);
+  // Q5: town, which an outdoors mood has just earned.
+  check('wizard order: fifth question is town', (await page.getByText(/where do you want to spend the day\?/i).count()) >= 1);
 }
 
 async function runTabs(label, viewport) {
@@ -192,8 +217,13 @@ async function runTabs(label, viewport) {
   await page.waitForTimeout(300);
   await page.locator('.chat-town-search .chat-opts .chat-opt').first().click();
   await page.waitForTimeout(400);
-  check(`${label}: picking a town advances to "have you been here before?"`,
-    (await page.getByText(/have you been here before\?/i).count()) >= 1);
+  // What follows the town is no longer fixed: D5 drops "been here before"
+  // in towns with too few headline sights for the answer to change anything.
+  // So the assertion is that the wizard ADVANCED past the picker, which is
+  // what this harness is actually about.
+  check(`${label}: picking a town advances past the picker`,
+    (await page.locator('.chat-town-picker').count()) === 0
+    && (await page.locator('.chat-bubble-live').count()) === 1);
   check(`${label}: transcript shows the picked town, not a raw id`,
     /ghent/i.test(await page.locator('.chat-bubble.me').last().innerText()));
 
@@ -223,12 +253,13 @@ async function runAnywhereResolve(label, viewport) {
   check(`${label}: the nearest real destination is offered as the fallback`,
     /km away/i.test(await resolve.innerText()));
   check(`${label}: wizard has NOT advanced before confirming`,
-    (await page.getByText(/have you been here before\?/i).count()) === 0);
+    (await page.locator('.chat-town-picker').count()) === 1);
   await page.screenshot({ path: `${SHOTS}/tp5-${label}-anywhere-resolve-confirm.png` });
   await resolve.locator('.chat-opt').filter({ hasText: /^Use / }).click();
   await page.waitForTimeout(400);
   check(`${label}: taking the fallback advances the wizard`,
-    (await page.getByText(/have you been here before\?/i).count()) >= 1);
+    (await page.locator('.chat-town-picker').count()) === 0
+    && (await page.locator('.chat-bubble-live').count()) === 1);
   await page.screenshot({ path: `${SHOTS}/tp5-${label}-anywhere-resolved.png` });
 
   await page.close();

@@ -13,6 +13,7 @@
  * shown plan, first opened link, first arrival you caused.
  */
 import { supabase } from '../lib/supabaseClient.js';
+import { E2E_SEAMS } from '../lib/e2eSeams.js';
 
 /** Ids match the CHECK constraint in migration 013. `target` marks the one
  *  counted badge; its progress is drawn from the friend list the spoke has
@@ -29,7 +30,7 @@ export const BADGES = [
 // fixture stands in for the ledger so the badge row can be checked headlessly.
 // 'none' is all locked, 'all' is everything earned, anything else is a
 // realistic middle. Display only, never on unless typed.
-const BADGE_MOCK = typeof window !== 'undefined'
+const BADGE_MOCK = E2E_SEAMS && typeof window !== 'undefined'
   && new URLSearchParams(window.location.search).get('badgemock');
 
 const MOCK_EARNED = {

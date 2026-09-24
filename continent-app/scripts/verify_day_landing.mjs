@@ -1,8 +1,12 @@
 // Headless check of the day planner's landing flow after the visual-review
 // pass: the progress rail is on screen from the FIRST question, saved work
-// sits close under the question card, the locator map is gone (the popular
-// city chips carry the choice), the date grid has thumb-sized targets, and
-// the fork shows one filled action rather than two.
+// sits close under the question card, the locator map is gone, the date grid
+// has thumb-sized targets, and the fork shows one filled action rather than
+// two.
+//
+// Step 1 is answered the way a traveller answers it: type the address of the
+// place the day starts from and pick the hit. Nominatim is intercepted, so
+// the run is deterministic and costs the geocoder nothing.
 //
 // It also drives the chat to its build state (with the catalogue fetch held
 // open) so the route-building animation can be measured instead of guessed at.
@@ -44,12 +48,35 @@ const SIZES = [
 
 // The gates every day-planner screenshot needs: guest mode, and every
 // onboarding overlay already dismissed, or the map never gets a canvas.
-const seed = (page) => page.addInitScript(() => {
-  localStorage.setItem('continent.guestMode.v1', '1');
-  localStorage.setItem('carta.fareNoticeSeen', '1');
-  localStorage.setItem('carta.welcomeSeen', '1');
-  localStorage.setItem('continent.onboardingSeen.v1', '1');
-});
+const seed = async (page) => {
+  await page.addInitScript(() => {
+    localStorage.setItem('continent.guestMode.v1', '1');
+    localStorage.setItem('carta.fareNoticeSeen', '1');
+    localStorage.setItem('carta.welcomeSeen', '1');
+    localStorage.setItem('continent.onboardingSeen.v1', '1');
+  });
+  // Rome, because the rest of this run picks Tivoli as a day trip from it.
+  await page.route('**/nominatim.openstreetmap.org/**', (r) => r.fulfill({
+    status: 200,
+    contentType: 'application/json',
+    body: JSON.stringify([{
+      display_name: 'Hotel Artemide, Via Nazionale, Rome, Lazio, Italy',
+      name: 'Hotel Artemide',
+      lat: '41.8996', lon: '12.4939',
+      category: 'tourism', type: 'hotel',
+      address: { country: 'Italy', country_code: 'it' },
+    }]),
+  }));
+};
+
+// Step 1, answered the only way it can be answered now: type, find, pick.
+const answerStay = async (page) => {
+  await page.locator('.day-flow-search input').fill('Hotel Artemide Rome');
+  await page.locator('.day-flow-search .trip-add-btn').click();
+  await page.locator('.day-stay-result').first().waitFor({ timeout: 30000 });
+  await page.locator('.day-stay-result').first().click();
+  await page.locator('.day-flow-chosen').waitFor({ timeout: 30000 });
+};
 
 try {
   await waitForServer();
@@ -82,10 +109,15 @@ try {
         visible: on ? on.getBoundingClientRect().top >= 0 : false,
       };
     });
-    if (rail.dots !== 3) fail(`${size.name}: expected 3 steps in the rail, got ${rail.dots}`);
+    // The flow is four questions since the ideas step (D4): stay, when,
+    // ideas, how. Asserted against the counter the rail itself prints rather
+    // than a number frozen here, so adding a fifth question fails ONE place.
+    const railTotal = Number((rail.count.match(/of\s+(\d+)/i) || [])[1] || 0);
+    if (rail.dots !== 4) fail(`${size.name}: expected 4 steps in the rail, got ${rail.dots}`);
+    if (railTotal !== rail.dots) fail(`${size.name}: the rail draws ${rail.dots} steps but its counter says ${railTotal}`);
     if (!rail.named) fail(`${size.name}: a step in the rail has no name`);
     if (!rail.onIsFirst) fail(`${size.name}: step 1 is not the active step on the landing screen`);
-    if (!/1/.test(rail.count)) fail(`${size.name}: no "step 1 of 3" counter, got "${rail.count}"`);
+    if (!/step\s*1\s+of/i.test(rail.count)) fail(`${size.name}: the landing does not open on step 1, got "${rail.count}"`);
     if (!rail.visible) fail(`${size.name}: the rail is off screen on step 1`);
     else ok(`rail on screen at step 1, counter "${rail.count}"`);
 
@@ -119,8 +151,8 @@ try {
       else ok(`saved work ${gap}px under the ${gapInfo.stacked ? 'map' : 'card'}, same column`);
     }
 
-    // 3. The locator map is gone: the popular-city chips carry the choice,
-    //    and the question column is one centered reading width.
+    // 3. The locator map is gone, and the question column is one centered
+    //    reading width.
     const column = await page.evaluate(() => {
       const split = document.querySelector('.day-flow-split');
       const flow = document.querySelector('.day-flow');
@@ -142,11 +174,68 @@ try {
     }
     await page.screenshot({ path: `${SHOTS}/day-landing-${size.name}.png`, fullPage: size.name === 'phone' });
 
+    // 3b. Step 1 asks where the DAY starts, not where you are staying, and
+    //     says so in a sub-line: the planner has to work for somebody at home
+    //     as well as somebody in a hotel. No popular-city chips: a city is not
+    //     a starting point, and the six of them were the whole screen.
+    const stayStep = await page.evaluate(() => {
+      const q = document.querySelector('.day-flow-q');
+      const sub = document.querySelector('.day-flow-qsub');
+      const input = document.querySelector('.day-flow-search .day-stay-input');
+      return {
+        q: (q?.textContent || '').trim(),
+        sub: (sub?.textContent || '').trim(),
+        placeholder: input?.getAttribute('placeholder') || '',
+        inputH: input ? Math.round(input.getBoundingClientRect().height) : 0,
+        // Every quick start is a real tap target.
+        shortChips: [...document.querySelectorAll('.day-flow-quickchip')]
+          .filter((c) => c.getBoundingClientRect().height < 43).length,
+        combobox: input?.getAttribute('role') === 'combobox',
+      };
+    });
+    if (!/where does your day start/i.test(stayStep.q)) fail(`${size.name}: step 1 asks "${stayStep.q}"`);
+    if (!/home address/i.test(stayStep.sub)) fail(`${size.name}: no sub-line naming a home address, got "${stayStep.sub}"`);
+    if (!/hotel/i.test(stayStep.placeholder)) fail(`${size.name}: placeholder is "${stayStep.placeholder}"`);
+    if (stayStep.shortChips) fail(`${size.name}: ${stayStep.shortChips} quick-start chip(s) under 44px`);
+    if (!stayStep.combobox) fail(`${size.name}: the search box is not a combobox`);
+    // The phone gets a 48px field; the desktop keeps its own sizing.
+    if (size.name === 'phone' && stayStep.inputH < 48) fail(`${size.name}: search field is ${stayStep.inputH}px, under 48`);
+    else ok(`step 1: "${stayStep.q}" / "${stayStep.sub}", field ${stayStep.inputH}px`);
+
+    // 3c. The results list: one icon and two lines per hit, and the arrow
+    //     keys walk it. A step every single day plan passes through cannot be
+    //     mouse-only.
+    await page.locator('.day-flow-search input').fill('Hotel Artemide Rome');
+    await page.locator('.day-flow-search .trip-add-btn').click();
+    await page.locator('.day-stay-result').first().waitFor({ timeout: 30000 });
+    const hit = await page.evaluate(() => {
+      const r = document.querySelector('.day-stay-hit');
+      return {
+        ico: !!r?.querySelector('.day-stay-hit-ico svg'),
+        title: (r?.querySelector('.day-stay-hit-text b')?.textContent || '').trim(),
+        rest: (r?.querySelector('.day-stay-hit-text small')?.textContent || '').trim(),
+        listbox: document.querySelector('.day-flow-results')?.getAttribute('role') === 'listbox',
+      };
+    });
+    if (!hit.ico) fail(`${size.name}: a result carries no type icon`);
+    if (!hit.title) fail(`${size.name}: a result has no name line`);
+    if (!/rome|italy/i.test(hit.rest)) fail(`${size.name}: a result's second line is "${hit.rest}", no town or country`);
+    if (!hit.listbox) fail(`${size.name}: the results list is not a listbox`);
+    else ok(`result: "${hit.title}" / "${hit.rest}", with icon`);
+
+    await page.locator('.day-flow-search input').press('ArrowDown');
+    await page.waitForTimeout(200);
+    const onFirst = await page.evaluate(() =>
+      document.activeElement?.classList.contains('day-stay-hit')
+      && document.activeElement.getAttribute('aria-selected') === 'true');
+    if (!onFirst) fail(`${size.name}: ArrowDown does not move onto the first result`);
+    await page.keyboard.press('Enter');
+    await page.locator('.day-flow-chosen').waitFor({ timeout: 30000 });
+    const chipCity = (await page.locator('.day-flow-chosen .day-stay-chosen-label').innerText()).trim();
+    ok(`arrow keys + Enter chose "${chipCity}"`);
+
     // 4. Step 2: the date grid's touch targets, and the chosen-destination
     //    banner standing in for the removed locator map.
-    const chip = page.locator('.day-flow-chip').first();
-    const chipCity = (await chip.innerText()).replace(/[\d.]+/g, '').trim();
-    await chip.click();
     await page.locator('.day-flow-next').click();
     await page.locator('.day-flow-date').waitFor({ timeout: 30000 });
     await page.waitForTimeout(400);
@@ -178,14 +267,18 @@ try {
     }
     await page.screenshot({ path: `${SHOTS}/day-when-${size.name}.png` });
 
-    // 5. Step 3: one filled action, a badge you can read, and the banner now
-    //    carries the picked date too.
+    // 5. Step 4: one filled action, a badge you can read, and the banner now
+    //    carries the picked date too. Step 3 (ideas, D4) sits between them;
+    //    "no" is the answer that leaves the rest of this run unchanged, and
+    //    it is also the one most days give.
     await page.locator('.day-flow-next').click();
+    await page.locator('.day-ideas-choice').waitFor({ timeout: 30000 });
+    await page.getByRole('button', { name: /surprise me/i }).click();
     await page.locator('.day-flow-cards').waitFor({ timeout: 30000 });
     await page.waitForTimeout(300);
     if (await page.locator('.day-flow-dest .day-flow-dest-date').count() !== 1) {
-      fail(`${size.name}: the banner does not show the picked date on step 3`);
-    } else ok('banner carries the picked date on step 3');
+      fail(`${size.name}: the banner does not show the picked date on the last step`);
+    } else ok('banner carries the picked date on the last step');
     const fork = await page.evaluate(() => {
       const solid = (el) => {
         const bg = getComputedStyle(el).backgroundColor;
@@ -200,6 +293,31 @@ try {
         tagSize: tag ? parseFloat(getComputedStyle(tag).fontSize) : 0,
       };
     });
+    // D7: the fork is a comparison, so the two cards have to be big enough
+    // to read. 640px gave each ~279px; the wide split gives each ~440px.
+    const forkSize = await page.evaluate(() => {
+      const split = document.querySelector('.day-flow-split-wide');
+      const cards = [...document.querySelectorAll('.day-flow-card')];
+      const c = cards[0];
+      return {
+        splitW: split ? Math.round(split.getBoundingClientRect().width) : 0,
+        cardW: c ? Math.round(c.getBoundingClientRect().width) : 0,
+        cardH: c ? Math.round(c.getBoundingClientRect().height) : 0,
+        titlePx: c ? parseFloat(getComputedStyle(c.querySelector('b')).fontSize) : 0,
+        icoPx: c ? Math.round(c.querySelector('.day-flow-card-ico').getBoundingClientRect().width) : 0,
+        previews: document.querySelectorAll('.day-flow-card-prev').length,
+      };
+    });
+    const wide = size.name === 'laptop';
+    if (wide && forkSize.splitW < 860) fail(`${size.name}: fork split only ${forkSize.splitW}px, .day-flow-split-wide has no effect`);
+    else if (wide) ok(`fork split ${forkSize.splitW}px, cards ${forkSize.cardW}px`);
+    const minH = size.name === 'phone' ? 150 : 220;
+    if (forkSize.cardH < minH) fail(`${size.name}: fork card ${forkSize.cardH}px tall, wanted >= ${minH}px`);
+    else ok(`fork card ${forkSize.cardH}px tall, title ${forkSize.titlePx}px, icon ${forkSize.icoPx}px`);
+    if (forkSize.titlePx < 17) fail(`${size.name}: fork title only ${forkSize.titlePx}px`);
+    if (forkSize.previews !== 2) fail(`${size.name}: ${forkSize.previews} card previews, expected 2`);
+    else ok('both fork cards carry a preview');
+
     if (fork.gos !== 2) fail(`${size.name}: expected 2 fork actions, got ${fork.gos}`);
     if (fork.filled !== 1) fail(`${size.name}: ${fork.filled} filled fork actions, expected exactly 1`);
     if (fork.tagSize < 10.5) fail(`${size.name}: "Recommended" badge at ${fork.tagSize}px`);
@@ -212,20 +330,67 @@ try {
     //     also lists saved day plans). Parked on "how" it rendered an empty
     //     page holding one dead "Start planning" button.
     await page.locator('.day-flow-card').nth(1).click();
-    await page.locator('.day-explore-search-input').waitFor({ timeout: 30000 });
-    await page.locator('.day-explore-search-input').fill('Tivoli');
-    await page.locator('.day-explore-search-result').first().click({ timeout: 15000 });
-    await page.locator('.guide-city-side-add').first().click({ timeout: 15000 });
-    await page.locator('.day-build-btn').click();
+    // D6: the builder leads with cards, so a place is picked off a rail
+    // rather than searched for on a map. The round [+] is the one control
+    // that puts something in the tray.
+    await page.locator('.dayex-card').first().waitFor({ timeout: 30000 });
+    await page.locator('.dayex-add').first().click({ timeout: 15000 });
+    const tray = await page.evaluate(() => {
+      const bar = document.querySelector('.dayex-tray-summary');
+      const carta = document.querySelector('.dayex-tray-carta');
+      const open = document.querySelector('.dayex-tray-open');
+      return {
+        summary: bar?.textContent.trim() || '',
+        carta: carta?.textContent.trim() || '',
+        openDisabled: open ? open.disabled : null,
+      };
+    });
+    if (!/\d/.test(tray.summary)) fail(`${size.name}: tray does not count the pick: "${tray.summary}"`);
+    else if (!/step/i.test(tray.summary)) fail(`${size.name}: tray states no step estimate: "${tray.summary}"`);
+    else ok(`tray: "${tray.summary}"`);
+    // The step count is half of what the tray label says, so it may not be
+    // the half that gets elided on a narrow screen.
+    const trayFit = await page.evaluate(() => {
+      const el = document.querySelector('.dayex-tray-summary');
+      if (!el) return null;
+      return { clipped: el.scrollWidth > el.clientWidth + 1, text: el.textContent.trim() };
+    });
+    if (trayFit?.clipped) fail(`${size.name}: tray label is cut off: "${trayFit.text}"`);
+    else ok('tray label fits');
+    if (!tray.carta) fail(`${size.name}: no "Let Carta plan the rest" button in the tray`);
+    else ok(`tray offers Carta: "${tray.carta}"`);
+    if (tray.openDisabled !== false) fail(`${size.name}: "Open my day" still disabled with a pick in the tray`);
+    // The map beside the list has to actually draw. A MapLibre canvas built
+    // inside a display:none column comes up 0x0 and never recovers, which is
+    // exactly the trap the desktop two-column layout sets.
+    if (size.name === 'laptop') {
+      await page.waitForTimeout(2500);
+      const map = await page.evaluate(() => {
+        const box = document.querySelector('.dayex-mapcol .dem-map');
+        const cv = document.querySelector('.dayex-mapcol canvas');
+        return {
+          boxW: box ? Math.round(box.getBoundingClientRect().width) : 0,
+          boxH: box ? Math.round(box.getBoundingClientRect().height) : 0,
+          canvasW: cv ? cv.clientWidth : 0,
+          pins: document.querySelectorAll('.dayex-mapcol .dem-pin, .dayex-mapcol .maplibregl-marker').length,
+        };
+      });
+      if (map.boxW < 200 || map.boxH < 200) fail(`${size.name}: builder map box is ${map.boxW}x${map.boxH}`);
+      else if (map.canvasW < 200) fail(`${size.name}: builder map canvas is ${map.canvasW}px wide`);
+      else if (map.pins < 2) fail(`${size.name}: builder map drew ${map.pins} pin(s), expected the stay plus places`);
+      else ok(`builder map ${map.boxW}x${map.boxH}, ${map.pins} pins`);
+    }
+    await page.screenshot({ path: `${SHOTS}/day-builder-${size.name}.png` });
+    await page.locator('.dayex-tray-open').click();
     await page.locator('.trip-newtrip-btn').first().click({ timeout: 30000 });
     const back = await page.evaluate(() => ({
       count: document.querySelector('.day-flow-top .shape-head-step')?.textContent.trim() || '',
       question: !!document.querySelector('.day-flow-search'),
       saved: document.querySelectorAll('.day-flow-saved .trip-saved-item').length,
-      stranded: !!document.querySelector('.day-build') && !document.querySelector('.day-explore'),
+      stranded: !!document.querySelector('.dayex') && !document.querySelector('.dayex-head'),
     }));
-    if (back.stranded) fail(`${size.name}: back from a plan lands on the stayless build screen`);
-    else if (!back.count.endsWith('1 of 3') || !back.question) fail(`${size.name}: back from a plan lands on "${back.count}", no stay question`);
+    if (back.stranded) fail(`${size.name}: back from a plan lands on the stayless builder`);
+    else if (!/step\s*1\s+of/i.test(back.count) || !back.question) fail(`${size.name}: back from a plan lands on "${back.count}", no stay question`);
     else ok(`back from a plan: ${back.count}, ${back.saved} saved plan(s) listed`);
 
     await ctx.close();
@@ -243,11 +408,17 @@ try {
     await new Promise((r) => setTimeout(r, 8000));
     await route.continue();
   });
-  await page.goto(`${BASE}/?tab=day&o=CRL`);
-  await page.locator('.day-flow-chip').first().waitFor({ timeout: 120000 });
-  await page.locator('.day-flow-chip').first().click();
+  // ?paymock: a guest is sent to sign in before the request now (I2), and
+  // this run needs the request to leave so the build state can be measured.
+  await page.goto(`${BASE}/?tab=day&o=CRL&paymock`);
+  await page.locator('.day-flow-search input').waitFor({ timeout: 120000 });
+  await answerStay(page);
   await page.locator('.day-flow-next').click();
   await page.locator('.day-flow-next').click();
+  // Step 3 (ideas, D4): this run is about the bot's own build animation, so
+  // it takes the answer that changes nothing about what the bot is asked.
+  await page.locator('.day-ideas-choice').waitFor({ timeout: 30000 });
+  await page.getByRole('button', { name: /surprise me/i }).click();
   await page.locator('.day-flow-card.primary').click();
   await page.locator('.chat-opt').first().waitFor({ timeout: 30000 });
 

@@ -363,6 +363,12 @@ def detail_from_row(row, relation=None, activity="hiking", resolve_parent=None,
     ids into route ids where the child is itself published."""
     summary = summary_from_row(row, activity, resolve_parent)
     stages = variants = member_ways = tags_raw = None
+    # A derived route has no relation, so its membership cannot be resolved
+    # through route_relations; derive_routes stores it on the row instead.
+    # Without this the one kind of route whose members WE chose was the one
+    # kind that could not show its working.
+    if row.get("member_way_ids"):
+        member_ways = [int(w) for w in row["member_way_ids"]]
     if relation:
         members = relation.get("members") or []
         member_ways = [int(ref) for mtype, ref, _role in members if mtype == "w"]
