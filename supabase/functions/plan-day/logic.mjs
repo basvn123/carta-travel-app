@@ -391,15 +391,6 @@ export function scheduleDay(stops, {
 
 /* ---- cache key ---- */
 
-/**
- * Stable string over everything that changes the answer; hash it server-side.
- *
- * A refinement ("more museums, less walking") is part of the identity: the
- * same refinement over the same previous plan is deterministic and may be
- * served from cache, while a different one always earns a fresh generation.
- * The exact DATE matters for events, so events-mode requests key on the day
- * rather than only its month.
- */
 /* ---- model fallback chain ---- */
 
 // Every model on the free tier carries its OWN daily request budget, so a
@@ -449,46 +440,156 @@ export function shouldFallOver(status) {
   return status === 429 || status === 404 || status >= 500;
 }
 
+/**
+ * The cache key version, carried in the key itself and logged beside every
+ * lookup so a hit rate can be attributed to the key that produced it. Bump it
+ * whenever the key or the payload shape changes; see the comment on `v` in
+ * cacheKeyInput for what each bump meant.
+ */
+export const CACHE_KEY_VERSION = 5;
+
+/**
+ * The free-text channels are where the same intent forks the cache most
+ * easily: "more museums", "More museums.", "more  museums" are one request
+ * typed three ways. Case-folding alone left the punctuation and the spacing
+ * as forks, so normalise those too, then drop the field entirely when nothing
+ * survives. An empty string and an absent field must produce the same key, or
+ * the traveller who cleared the box gets billed for a generation the cache
+ * already holds.
+ */
+function normText(s, max) {
+  const t = cleanText(s, max)
+    .toLowerCase()
+    .replace(/[.,;:!?'"()]+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+  return t || null;
+}
+
+/** Drop every key whose value is null, '' or an empty array. */
+function compact(obj) {
+  const out = {};
+  for (const k of Object.keys(obj).sort()) {
+    const v = obj[k];
+    if (v == null) continue;
+    if (v === '') continue;
+    if (Array.isArray(v) && v.length === 0) continue;
+    out[k] = v;
+  }
+  return out;
+}
+
+/**
+ * Stable string over everything that changes the answer; hash it server-side.
+ *
+ * Everything here is a NORMALISATION, never a loss: a distinction is only
+ * collapsed when the prompt and the scheduler downstream cannot see it either.
+ * The point is the hit rate on ai_plan_cache. Two travellers asking the same
+ * question in different words, in different list order, or with a group of 5
+ * against a group of 8, were each paying for their own generation of an
+ * identical day. Each fork removed here is a generation not bought.
+ *
+ * What is deliberately still in the key:
+ *
+ * A refinement ("more museums, less walking") is part of the identity: the
+ * same refinement over the same previous plan is deterministic and may be
+ * served from cache, while a different one always earns a fresh generation.
+ * The exact DATE matters for events, so events-mode requests key on the day
+ * rather than only its month; everything else keys on the month bucket, which
+ * is the only part of a date a non-events plan can actually see.
+ *
+ * What was collapsed in v5, and why each one is safe:
+ *
+ * The group band is 1 / 2 / 3-4 / 5+. The old band split 5-6 from 7+, but
+ * nothing downstream reads that split: buildPrompt branches on groupSize >= 5
+ * for the large-group note and scheduleDay branches on groupSize >= 5 for
+ * walking speed. A group of 6 and a group of 9 were being told exactly the
+ * same thing and scheduled at exactly the same pace, then charged for two
+ * generations of it.
+ *
+ * Empty free text, an empty must-include list, an empty refinement, an empty
+ * previous-stop list and an absent profile are DROPPED rather than serialised
+ * as '' or []. Serialising them was harmless for correctness and useless for
+ * hits, but it meant a request could never be key-identical to a request that
+ * simply omitted the field. Dropping them makes absence and emptiness the
+ * same thing, which is what they are.
+ *
+ * The profile carries both `steps` and `maxWalkKm`, and the client derives
+ * the second from the first (stepsToKm in src/lib/steps.js). Keying on both
+ * made a rounding difference between clients into a cache fork. Only the
+ * kilometre figure, which is what the scheduler enforces, is kept, rounded to
+ * the whole kilometre it is already clamped and used at.
+ *
+ * Candidate ids are sorted, as they were, so deck order never forks the key.
+ * Must-include names go through the same text normalisation as free text.
+ */
 export function cacheKeyInput({
   model, destId, month, dateISO, groupSize, pace, vibe, avoidHills, freeText,
   lang, candidates, refine, prevStopIds, wantEvents, profile, mustInclude,
 }) {
-  const groupBand = groupSize >= 7 ? '7+' : groupSize >= 5 ? '5-6' : groupSize >= 3 ? '3-4' : String(groupSize);
-  return JSON.stringify({
+  const n = Number(groupSize);
+  const size = Number.isFinite(n) ? n : 2;
+  const groupBand = size >= 5 ? '5+' : size >= 3 ? '3-4' : String(Math.max(1, Math.round(size)));
+
+  // The walking budget the scheduler actually enforces, to the kilometre.
+  // profile.steps is the same number the client already converted.
+  const walkKm = profile
+    ? (Number.isFinite(Number(profile.maxWalkKm)) ? Math.round(Number(profile.maxWalkKm))
+      : (Number.isFinite(Number(profile.steps)) ? Math.round(Number(profile.steps) / 1350) : null))
+    : null;
+
+  const must = Array.isArray(mustInclude)
+    ? mustInclude
+      .map((m) => [String(m.id || ''), normText(m.name, 90) || '', String(m.timeOfDay || '')].join(':'))
+      .filter((s) => s !== '::')
+      .sort()
+    : [];
+
+  return JSON.stringify(compact({
     // v3: the scheduler now enforces a walking budget and no longer wraps the
     // clock at midnight. Cached v2 payloads carry the old impossible totals
     // ("89.4 km on foot, done around 11:32"), so they must not be served.
     // v4: the chat profile changed shape (steps, companions, moods, start
     // time) and gained mustInclude. A v3 row answered a different question.
-    v: 4,
+    // v5: normalisation only, no change to the answer. The version still has
+    // to move, because a v4 row sits under a hash nothing computes any more;
+    // leaving it at 4 would not serve a wrong plan, it would just leave the
+    // whole existing cache unreachable under a different name. Bumping says
+    // so honestly. The v4 rows age out on the seven-day freshness window.
+    v: CACHE_KEY_VERSION,
     model,
     destId,
-    when: wantEvents ? (dateISO || '') : month,
+    when: wantEvents ? (dateISO || null) : month,
     groupBand,
     pace,
     vibe,
-    hills: !!avoidHills,
-    free: cleanText(freeText, 280).toLowerCase(),
-    events: !!wantEvents,
+    hills: avoidHills ? 1 : null,
+    free: normText(freeText, 280),
+    events: wantEvents ? 1 : null,
     // Two travellers who answered the chat differently must never share a
-    // cached day, so the whole profile is part of the identity.
+    // cached day, so the whole profile is part of the identity. Absent
+    // answers drop out of the string rather than becoming empty slots.
     profile: profile
-      ? [profile.companions, profile.startTime, profile.steps, profile.maxWalkKm,
-        profile.window, (profile.moods || []).join('+'), profile.known,
-        profile.food, (profile.diet || []).join('+'),
-        profile.avoidHills ? 'h' : '', profile.transitOk ? 't' : '',
-        profile.avoidCrowds ? 'c' : '',
-        profile.weather ? `${profile.weather.rain ? 'r' : ''}${profile.weather.hot ? 'x' : ''}` : '',
-      ].join('|')
-      : '',
+      ? compact({
+        companions: profile.companions || null,
+        start: profile.startTime || null,
+        walkKm,
+        window: profile.window || null,
+        moods: [...(profile.moods || [])].sort(),
+        known: profile.known || null,
+        food: profile.food || null,
+        diet: [...(profile.diet || [])].sort(),
+        flags: [profile.avoidHills ? 'h' : '', profile.transitOk ? 't' : '',
+          profile.avoidCrowds ? 'c' : '',
+          profile.weather?.rain ? 'r' : '', profile.weather?.hot ? 'x' : ''].join('') || null,
+      })
+      : null,
     // A day built around the Alhambra is not the day the cache holds for
     // someone who named nothing, even when every other answer matches.
-    must: Array.isArray(mustInclude)
-      ? mustInclude.map((m) => `${m.id || ''}:${String(m.name || '').toLowerCase()}:${m.timeOfDay || ''}`).sort()
-      : [],
-    refine: cleanText(refine, 280).toLowerCase(),
+    must,
+    refine: normText(refine, 280),
     prev: Array.isArray(prevStopIds) ? prevStopIds.map((s) => String(s)) : [],
     lang,
     cands: candidates.map((c) => c.id).sort(),
-  });
+  }));
 }

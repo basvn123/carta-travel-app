@@ -44,7 +44,7 @@
 import { createClient } from 'npm:@supabase/supabase-js@2';
 import {
   cleanText, sanitizeCandidates, sanitizeAiStops, scheduleDay, cacheKeyInput,
-  modelChain, shouldFallOver,
+  modelChain, shouldFallOver, CACHE_KEY_VERSION,
 } from './logic.mjs';
 import { consume, refund } from '../_shared/passes.mjs';
 
@@ -362,7 +362,28 @@ Deno.serve(async (req) => {
     .select('payload, created_at')
     .eq('hash', hash)
     .maybeSingle();
-  if (cached?.payload && Date.now() - Date.parse(cached.created_at) < 7 * 86400_000) {
+  const isHit = !!cached?.payload
+    && Date.now() - Date.parse(cached.created_at) < 7 * 86400_000;
+
+  // Record the lookup either way. A hit rate needs both numbers, and a miss
+  // has no cache row to count against, so the event is written here rather
+  // than as a counter on ai_plan_cache. Best-effort: a failed insert must
+  // never fail the traveller's request, and the rate is telemetry, not a
+  // product rule. A stale row that fell outside the freshness window counts
+  // as a MISS, because that is what it cost us.
+  //
+  // The key version rides along so the effect of a key change can be read
+  // straight off admin_ai_cache_report's byVersion without anyone having to
+  // remember when the function was redeployed.
+  //
+  // No await: the response should not wait on telemetry.
+  service.from('ai_cache_events').insert({
+    hit: isHit,
+    dest_id: destId,
+    key_version: CACHE_KEY_VERSION,
+  }).then(() => {}, () => {});
+
+  if (isHit) {
     return json(200, {
       ...cached.payload,
       meta: { ...cached.payload.meta, cached: true },
