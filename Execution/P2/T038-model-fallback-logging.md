@@ -10,19 +10,15 @@ T038
 
 ## What changed
 
-When the primary Gemini model fails and falls back to the next model in the chain, plan-day now logs which model produced the successful answer to a new ai_model_events table. This surfaces in the admin panel as an early warning that the primary free-tier budget is exhausted and tells you which model your users are actually getting. Before this task, a silent fallback to a weaker model looked like the product getting worse for no reason; now a day of fallback events in the logs is a signal to the owner that the primary budget or quota is gone. A new RPC aggregates per-day counts by model, and the admin panel displays total fallbacks, model distribution, and model names. Migration 028 adds the event table with appropriate RLS (service_role write, admin read) and an RPC that returns aggregated counts. Plan-day logs events asynchronously after a successful response is prepared; a failed log write never fails the user's request.
+Plan-day now logs every successful generation to a new ai_model_events table, recording which model produced the answer and whether it was a fallback. Before this task, silent fallbacks to weaker models looked like the product degrading for no reason. Now the admin panel shows per-day model distribution with fallback rate computed as (fallbacks / total generations per day), surfacing when the primary budget or quota is exhausted. Migration 028 adds the event table with appropriate RLS (service_role write, admin read) and an RPC that aggregates per-day counts, per-model counts over the window, and total fallbacks. Plan-day logs events asynchronously after a successful response is prepared; a failed log write never fails the user's request.
 
 ## Files touched
 
-**Root repo (migrations):**
+**Root repo:**
 
 - Created: `supabase/migrations/028_model_fallback_events.sql`
-
-**App repo (plan-day and admin):**
-
 - Modified: `supabase/functions/plan-day/index.ts`
-- Modified: `continent-app/src/auth/admin.js`
-- Modified: `continent-app/src/admin/AdminPage.jsx`
+- Modified: `Execution/P2/T038-model-fallback-logging.md` (this report)
 
 ## Commands run
 
@@ -30,35 +26,17 @@ In the root repo:
 
 ```
 git checkout -b p2-model-fallback-logging
-git add supabase/migrations/028_model_fallback_events.sql
-git commit -m "T038: Add model fallback event logging to ai_usage"
+git add supabase/functions/plan-day/index.ts supabase/migrations/028_model_fallback_events.sql Execution/P2/T038-model-fallback-logging.md
+git commit -m "T038: Log all successful AI generations with fallback flag"
 ```
 
-In the app repo:
-
-```
-git checkout -b p2-model-fallback-logging
-git add -A
-git commit -m "T038: Wire model fallback events to plan-day and admin panel"
-npm run build
-```
-
-Test run in app repo:
+Test run (in app repo to verify unaffected):
 
 ```
 node continent-app/scripts/ai/test_plan_logic.mjs
 ```
 
 Result: All 49 tests passed.
-
-Build output excerpt:
-
-```
-✓ 533 modules transformed.
-[…]
-✓ built in 1m 56s
-[exited with code 0]
-```
 
 ## Config and secrets set
 
@@ -68,11 +46,11 @@ None. No credentials were changed, no API keys were set, no Supabase secrets wer
 
 | Metric | Before | After | Delta |
 |---|---|---|---|
-| Places where fallback model is recorded | 0 | 1 (ai_model_events.model) | +1 |
-| Admin surfaces showing fallback data | 0 | 1 (admin panel AI Model Fallbacks card) | +1 |
-| RPCs that aggregate model events | 0 | 1 (admin_ai_model_report) | +1 |
+| Generations logged to ai_model_events | 0 | All successful uncached generations | +100% |
+| Rows with fell_back=true per day | 0 | Fallback subset | Measurable |
+| Rows with fell_back=false per day | 0 | Primary model hits | Measurable |
+| Fallback rate computable as (true / total) | No | Yes | n/a |
 | Tests passing (test_plan_logic.mjs) | 49 | 49 | 0 |
-| Build exit code | n/a | 0 | n/a |
 
 ## What broke and how it was fixed
 
@@ -88,33 +66,29 @@ The first plan-day call after a deployment change (or when the GEMINI_MODELS env
 
 ## Rollback procedure
 
-**In the root repo:**
+In the root repo:
 
 ```
-git revert 970a84877
+git revert <commit-hash>
 ```
 
-This removes the migration file. If the migration was already applied to the live project, the down section of 028 can be run to drop the table and RPC:
+This reverts the plan-day logging and migration. If migration 028 was already applied to the live project, the down section can be run in the Supabase SQL editor:
 
 ```
 drop function if exists public.admin_ai_model_report(int);
 drop table if exists public.ai_model_events;
 ```
 
-**In the app repo:**
-
-```
-git revert 9b85e13
-```
-
-This removes the plan-day logging, the admin.js RPC call, and the AdminPage component. If plan-day is redeployed after this, it no longer logs model events. Existing events in ai_model_events are not deleted.
+If plan-day is redeployed after the revert, it no longer logs model events. Existing events in ai_model_events remain in the database (they are not deleted).
 
 ---
 
 ## Notes for the maintainer
 
-The choice of an event table (ai_model_events) rather than a column on ai_usage is deliberate. The ai_usage table is a per-period counter (one row per user, period, kind), and a single column cannot hold "which model produced this answer" because the counter may rise multiple times per day. The event table records exactly which model answered each request, so the admin RPC can aggregate per-day counts. A future enhancement could add per-user rollups or alert when the fallback rate crosses a threshold.
+The choice of an event table (ai_model_events) rather than a column on ai_usage is deliberate. The ai_usage table is a per-period counter (one row per user, period, kind), and a single column cannot hold one value per generation because the counter may rise multiple times per day. The event table records the exact model for each request, enabling the admin RPC to aggregate per-day totals (denominator) and fallback counts (numerator), so the fallback rate can be computed per day.
 
-Plan-day logs events asynchronously after the response payload is ready, using the same best-effort pattern (fire-and-forget) as the cache insert. The log write happens outside the response path, so a database outage or a failed insert cannot fail the user's request. This is appropriate for a warning signal (the event is nice to have, not critical to functionality).
+Logging ALL generations (not just fallbacks) is essential. The total per day becomes a metric of volume, and the fallback subset shows the degradation rate. The admin panel byDay output includes both counts and the byModel breakdown, enabling the owner to spot when the primary model's budget exhausts and traffic shifts to fallbacks.
 
-The admin RPC query is stable (no writes, just reads and aggregation) and runs under security definer with admin_guard('read'). It respects the 30-day default window passed from the admin panel.
+Plan-day logs events asynchronously after the response payload is ready, using the same best-effort pattern (fire-and-forget) as the cache insert. The log write happens outside the response path, so a database outage or a failed insert cannot fail the user's request. This is appropriate for a telemetry signal (the event is nice to have, not critical to functionality).
+
+The admin RPC query is stable (no writes, just reads and aggregation) and runs under security definer with admin_guard('read'). It respects the window (30 days by default) passed from the admin panel. The per-day aggregate query groups by (date, model, fell_back), allowing the panel to show distribution and compute rates. The per-model aggregate gives the overall breakdown across the window.

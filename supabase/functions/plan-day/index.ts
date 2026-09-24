@@ -523,6 +523,21 @@ Deno.serve(async (req) => {
   // Cache best-effort: a failed insert must never fail the response.
   try { await service.from('ai_plan_cache').upsert({ hash, payload, model: usedModel }); } catch { /* ignore */ }
 
+  // Log model event for every successful generation: best-effort, never fails
+  // the response. This records which model produced the answer, enabling the
+  // admin panel to show the model distribution per day and compute the
+  // fallback rate as (fallbacks / total) per day.
+  const kindUsed = useGrounding ? 'ground' : 'plan';
+  const fellBack = usedModel !== CHAIN[0];
+  try {
+    await service.from('ai_model_events').insert({
+      user_id: user.id,
+      model: usedModel,
+      kind: kindUsed,
+      fell_back: fellBack,
+    });
+  } catch { /* ignore */ }
+
   // Entitlement facts ride OUTSIDE payload so they never reach the cache: the
   // cached row is shared between users, and one traveller's remaining balance
   // must not be served to the next.
