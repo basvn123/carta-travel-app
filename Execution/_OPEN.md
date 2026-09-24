@@ -4,7 +4,8 @@ One row per open item, appended when a task writes its report. The rule is in
 CLAUDE.md under "Every open item also goes into the register". The row is a
 pointer; the reasoning stays in the task's report. Rows are never deleted, only
 marked closed. `Order` is filled only when sequence matters; the ordered
-procedure for the Stripe launch is in `P2/_OPEN-stripe-launch.md`.
+procedure for the Stripe launch is in `P2/_OPEN-stripe-launch.md`, and the one
+for the Gemini billing posture (T035 to T038) in `P2/_OPEN-gemini-billing.md`.
 
 | ID | Raised by | Item | Owner | Status | Order |
 |---|---|---|---|---|---|
@@ -41,6 +42,6 @@ procedure for the Stripe launch is in `P2/_OPEN-stripe-launch.md`.
 | T037-b | T037 | The live refund path has never been checked against the deployed functions; force a plan-day failure after quota is spent on a test account and confirm ai_usage returns to its prior value. Pairs with T036-b, which covers the live 429 | user | open | 9 |
 | T037-c | T037 | ai_refund decrements ai_daily_total for current_date unconditionally, so a spend before midnight refunded after it takes a unit from the next day's shared ceiling; needs a day column on the spend or a refund that names the day | next task | open | |
 | T037-d | T037 | Part C of test_ai_quota.mjs is a source pattern check, not an execution test; it proves a branch is present in the text, never that it runs. Real coverage needs the Edge Functions exercised under Deno with a stub Supabase client, which no harness does today | next task | open | |
-| T038-a | T038 | Paste migration 028_model_fallback_events.sql into the Supabase SQL editor and apply it to the live project | user | open | |
-| T038-b | T038 | Redeploy plan-day to ntssxktaduxzpsmejwyv after migration 028 is applied, so logging begins on the live function | user | open | |
+| T038-a | T038 | Paste migration 028_model_fallback_events.sql into the Supabase SQL editor and apply it to the live project | user | open | 10 |
+| T038-b | T038 | Redeploy plan-day to ntssxktaduxzpsmejwyv after migration 028 is applied, so logging begins on the live function | user | open | 11 |
 | P2-merge | T034 | Merge the p2 branches in stack order (T030, T031, T032, T033, T034) in both repos; continent-app holds unrelated uncommitted work first | user | open | 5 |
