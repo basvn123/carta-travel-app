@@ -12,8 +12,16 @@
 --
 -- Carta's users are European by definition, so the key MUST sit on a project
 -- with an active Cloud Billing account. "Paid Services" is defined by the
--- billing account existing, not by money actually being charged, so attaching
--- billing is what makes us compliant; it does not by itself create a bill.
+-- billing account existing, not by money actually being charged: the same
+-- terms state that Gemini API access counts as a Paid Service when it is
+-- reached through a Cloud Project with an active Cloud Billing account. So
+-- attaching billing is what makes us compliant; it does not by itself create
+-- a bill. Prove it with `gcloud billing projects describe PROJECT_ID` on the
+-- project behind GEMINI_API_KEY, or in the console under Billing, Account
+-- management, where the project appears under the linked account.
+--
+-- Migration 006's header still says that project must never have a billing
+-- account. That is superseded here and left in place only as history.
 --
 -- The caps therefore change meaning. They are no longer a billing guarantee
 -- (the account can now be charged), they are a COST CEILING and an abuse

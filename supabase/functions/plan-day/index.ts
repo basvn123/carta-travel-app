@@ -18,8 +18,17 @@
  *
  * Carta's travellers are European, so the old unbilled-key posture is not
  * available to us. "Paid Services" is defined by the billing account existing
- * rather than by money being charged, so attaching billing is the compliance
- * step, not a decision to start spending. What protects the wallet now:
+ * rather than by money being charged: the terms say Gemini API access is a
+ * Paid Service when it is reached through a Cloud Project with an active
+ * Cloud Billing account. Attaching billing is therefore the compliance step,
+ * not a decision to start spending. Verify with
+ * `gcloud billing projects describe PROJECT_ID` on the project that issued
+ * GEMINI_API_KEY and expect `billingEnabled: true`; re-verify after any key
+ * rotation, since a new key may come from a different project.
+ *
+ * Because the account can now be charged, the caps below are a COST CEILING
+ * rather than a billing impossibility. They have to actually hold. What
+ * protects the wallet now:
  *   - Tiered fair-use caps enforced by the ai_consume RPC (migration 007),
  *     counted per entitlement period rather than per day.
  *   - Grounded search, the one surface Google meters per query, is paid-tier

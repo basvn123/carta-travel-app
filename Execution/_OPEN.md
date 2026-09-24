@@ -31,4 +31,7 @@ procedure for the Stripe launch is in `P2/_OPEN-stripe-launch.md`.
 | T034-a | T034 | Paste migrations 022 then 027; 022 was never applied and the funnel cannot run live without it | user | open | 3 |
 | T034-b | T034 | The expiring gate has copy and locale keys but no call site; wire it or remove it, verify_paywall_funnel.mjs fails until then | next task | open | |
 | T034-c | T034 | Funnel attribution is a one-hour nearest-checkout estimate, not a join key; hard-navigation dismissals not observed | next task | open | |
+| T035-a | T035 | Attach an active Cloud Billing account to the Google Cloud project that issued GEMINI_API_KEY, then prove it with `gcloud billing projects describe PROJECT_ID` showing billingEnabled true, or a console screenshot of Billing, Account management with the project under the linked account; required by the Gemini API Additional Terms of 2026-03-23 for EEA, CH and UK users | user | open | 7 |
+| T035-b | T035 | With billing attached the quota caps are a cost ceiling, not a billing impossibility; nothing tests that they hold, which is what makes T036 mandatory | next task | open | 8 |
+| T035-c | T035 | Migration 006's header still says the Gemini project must never have a billing account; superseded in 007 and passes.mjs but not corrected in place | next task | open | |
 | P2-merge | T034 | Merge the p2 branches in stack order (T030, T031, T032, T033, T034) in both repos; continent-app holds unrelated uncommitted work first | user | open | 5 |

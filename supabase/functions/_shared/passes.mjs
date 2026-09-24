@@ -16,8 +16,11 @@
  * Carta serves European travellers, so GEMINI_API_KEY must belong to a Google
  * Cloud project WITH an active billing account. Note what "Paid Services"
  * means: the terms define it by the billing account existing, not by money
- * changing hands, so attaching billing is the compliance step and does not by
- * itself produce a bill. Two consequences follow:
+ * changing hands. The same page makes the test explicit, that Gemini API
+ * access counts as a Paid Service only when it is reached through a Cloud
+ * Project with an active Cloud Billing account. So attaching billing IS the
+ * compliance step, and it does not by itself produce a bill. Two consequences
+ * follow:
  *
  *   1. Quota caps are now a COST CEILING, not a billing impossibility. An
  *      over-quota call can be charged, so the caps have to actually hold.
@@ -30,6 +33,21 @@
  * There is one piece of good news in the same terms: developers established in
  * the EEA get the paid data-use protections extended to unpaid quota, so
  * traveller prompts are not used to train Google's models either way.
+ *
+ * HOW TO PROVE IT. The posture is a claim about a Google Cloud project, not
+ * about this repository, so nothing here can assert it. Check it against the
+ * project that issued GEMINI_API_KEY:
+ *
+ *   gcloud billing projects describe PROJECT_ID
+ *
+ * and read `billingEnabled: true` plus a `billingAccountName`. The console
+ * equivalent is Billing, then Account management, with the project listed
+ * under the linked account. Re-check after any key rotation, because a new key
+ * can come from a different project.
+ *
+ * Migration 006's header still says the project must NEVER have billing
+ * attached. That sentence is superseded by this one and by the 007 header; it
+ * is left in place because an applied migration is a historical record.
  */
 
 /** Tier ids, lowest to highest. Mirrors public.plan_tiers. */
