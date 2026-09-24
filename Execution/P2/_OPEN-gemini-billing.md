@@ -121,3 +121,33 @@ billing account; correct it in place.
 | 9 | T037-b | Supabase | Force a failure after a spend, ai_usage returns, restore |
 | 10 | T038-a | Supabase | Paste migration 028 |
 | 11 | T038-b | Supabase | Redeploy plan-day |
+
+## 5. The telemetry migrations, 029 and 030
+
+Added by T042. T039, T040 and T041 put rows in the register without extending
+this file, so the whole run from 028 to 030 is written out once here.
+
+Three migrations feed the admin panel's AI sections and each needs a paste
+followed by a redeploy. The order within a pair is not interchangeable: paste
+first, redeploy second. Redeploying first means the function writes into a table
+that does not exist, and because all three telemetry writes are best-effort and
+swallow their own failures, nothing will tell you it happened. You will simply
+have a section full of zeroes over a week of real traffic.
+
+| Order | Row | Where | What |
+|---|---|---|---|
+| 10 | T038-a | Supabase | Paste migration 028_model_fallback_events.sql |
+| 11 | T038-b | Supabase | Redeploy plan-day |
+| 12 | T039-a | Supabase | Paste migration 029_cache_hit_instrumentation.sql |
+| 12 | T041-b | Supabase | Before anything schedules against 030, enable pg_cron and pg_net and create the vault secrets refresh_facts_url and refresh_facts_key |
+| 13 | T039-b | Supabase | Redeploy plan-day again, so the v5 cache key and the hit-rate logging both go live |
+| 14 | T039-c | Admin panel | A week later, read the live hit rate and record it |
+| 15 | T040-a, T040-b | Supabase, local | The prompt trim A/B and the 20-plan quality read |
+| 16 | T042-a | Supabase | Paste migration 030_ai_usage_rollup.sql |
+| 17 | T042-b | Supabase | Redeploy plan-day, parse-booking AND suggest-city; 030 is the first migration all three write to |
+| 17 | T042-c | Supabase | Only if AI_GLOBAL_DAILY_CAP is not 200: set the site_config key ai_global_daily_cap to the real number, or every percentage in the AI usage section is computed against the wrong ceiling |
+| 18 | T042-e | Admin panel | A week after 17, read the cap refusal counts alongside the hit rate from 14 |
+
+Steps 12 and 13 can be folded into 16 and 17 if none of it has been applied
+yet: paste 029 and 030 in that order, then redeploy all three functions once.
+The pairs are written separately because 029 was ready first.
