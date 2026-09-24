@@ -29,6 +29,14 @@ When a design question arises and another source (a layout sketch, a browser scr
 
 Before shipping any visual change, answer the seven questions at the end of the carta-design brief.
 
+## Never use the Claude API
+
+The Claude (Anthropic) API is not available to this project. All Claude work happens through Claude Code or Claude Cowork sessions, never through a paid API call.
+
+Do not add the `anthropic` or `@anthropic-ai/*` SDKs, do not introduce an `ANTHROPIC_API_KEY` or any Anthropic secret, and do not call `api.anthropic.com` from a pipeline script, a Supabase Edge Function, or the app.
+
+Runtime AI features stay on the existing non-Anthropic route: the Gemini-backed `plan-day` and `parse-booking` Edge Functions. If a task appears to require the Claude API, stop and say so in "What is still open" and propose a non-API route instead of wiring one up.
+
 ## No task touches files outside its declared scope
 
 The prompt names the files to touch. Do not edit, create or delete files the task does not name, and do not move code across file boundaries to avoid touching the named files.

@@ -1,0 +1,78 @@
+{
+  "meta": {
+    "generated_at": "2026-06-07T13:21:17.357184+00:00",
+    "schema_version": 17,
+    "currency": "EUR",
+    "start_date": "2026-07-22",
+    "end_date": "2026-12-19",
+    "defaults": {
+      "group_size": 7,
+      "trip_length_days": 7,
+      "baggage": "priority_10kg",
+      "lifestyle": {
+        "dinners_per_week": 5,
+        "lunches_per_week": 4,
+        "fastfood_per_week": 2,
+        "drinks_per_week": 7,
+        "club_nights_per_week": 1,
+        "coffees_per_day": 1,
+        "self_catered_days_per_week": 2
+      }
+    },
+    "baggage_options": {
+      "small": {
+        "label": "Small cabin (free)",
+        "per_direction_eur": 0
+      },
+      "priority_10kg": {
+        "label": "10 kg priority",
+        "per_direction_eur": 25
+      },
+      "checked_20kg": {
+        "label": "20 kg checked",
+        "per_direction_eur": 42
+      }
+    },
+    "n_destinations": 2,
+    "is_mock": true
+  },
+  "destinations": {
+    "BRU": {
+      "id": "BRU",
+      "tier": "airport",
+      "iata": "BRU",
+      "city": "Brussels",
+      "country": "Belgium",
+      "iso2": "BE",
+      "lat": 50.9014,
+      "lon": 4.4844,
+      "city_lat": 50.84664,
+      "city_lon": 4.35262,
+      "categories": [
+        "city",
+        "historic",
+        "art",
+        "food",
+        "unesco"
+      ],
+      "anchor_airport": "BRU"
+    },
+    "gem:bruges": {
+      "id": "gem:bruges",
+      "tier": "gem",
+      "iata": null,
+      "city": "Bruges",
+      "country": "Belgium",
+      "iso2": "BE",
+      "lat": 51.2093,
+      "lon": 3.2247,
+      "city_lat": 51.2093,
+      "city_lon": 3.2247,
+      "categories": [
+        "city",
+        "medieval"
+      ],
+      "anchor_airport": "BRU"
+    }
+  }
+}

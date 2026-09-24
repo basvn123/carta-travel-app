@@ -14,9 +14,14 @@
     "shoot:planners": "node scripts/shoot-planners.mjs",
     "lint": "eslint src",
     "format": "prettier --write \"src/**/*.{js,jsx}\"",
-    "test": "node --test --test-concurrency=1 \"tests/*.mjs\"",
+    "test": "node --test --test-concurrency=1 \"tests/*.test.mjs\"",
+    "test:browser": "node --test --test-concurrency=1 \"tests/*.spec.mjs\"",
     "verify": "node scripts/verify-affiliate.mjs && node scripts/verify-omio.mjs && node scripts/verify_paywall.mjs",
-    "ci": "npm run lint && npm run test && npm run verify && npm run build"
+    "check:pages": "node scripts/check-pages-limits.mjs dist",
+    "ci:routes": "node scripts/ci/check-routes.mjs",
+    "ci:contract": "node scripts/ci/check-contract.mjs",
+    "ci:smoke": "node scripts/ci/smoke.mjs",
+    "ci": "npm run lint && npm run test && npm run verify && npm run ci:routes && npm run ci:contract && npm run build && npm run ci:smoke"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.110.2",
