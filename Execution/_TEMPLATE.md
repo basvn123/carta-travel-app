@@ -56,7 +56,7 @@ Bugs discovered during implementation or testing. One row per bug: what failed, 
 
 ## What is still open
 
-Incomplete work that belongs to this task but was blocked or deferred. Link to the next task that depends on it. If nothing is open, write "None."
+Incomplete work that belongs to this task but was blocked or deferred. Link to the next task that depends on it. If nothing is open, write "None." Every item named here also becomes one row in `Execution/_OPEN.md` (see CLAUDE.md, "Every open item also goes into the register"); the row is the pointer, this section is the argument.
 
 ## Rollback procedure
 

@@ -1,0 +1,34 @@
+# Open items register
+
+One row per open item, appended when a task writes its report. The rule is in
+CLAUDE.md under "Every open item also goes into the register". The row is a
+pointer; the reasoning stays in the task's report. Rows are never deleted, only
+marked closed. `Order` is filled only when sequence matters; the ordered
+procedure for the Stripe launch is in `P2/_OPEN-stripe-launch.md`.
+
+| ID | Raised by | Item | Owner | Status | Order |
+|---|---|---|---|---|---|
+| T030-a | T030 | Verify or create the two Stripe Prices: 699 and 1499 EUR, one_time, eur, note the ids and the mode; attach Dashboard screenshots | user | open | 1 |
+| T030-b | T030 | Set STRIPE_SECRET_KEY, STRIPE_PRICE_TRIP, STRIPE_PRICE_YEAR as Supabase secrets, then deploy checkout and stripe-webhook (webhook with --no-verify-jwt) | user | open | 4 |
+| T030-c | T030 | The 007 header claims the pricing UI reads plan_tiers; it does not, PassModal renders TIERS from pricing.js. Fetch the table or drop the claim and add a drift check | next task | open | |
+| T030-d | T030 | Re-running the 007 insert as written resets the free tier to 3 plans and undoes 021; fix the free row before any re-run | next task | open | |
+| T031-a | T031 | Make the real test purchases per supabase/functions/checkout/test_purchase_e2e.md on fresh accounts, never the owner account | user | open | 6 |
+| T031-b | T031 | grant_pass sets tier unconditionally, so a Year holder buying a Trip Pass is downgraded; three candidate fixes in the report, needs a migration | next task | open | |
+| T031-c | T031 | entitlements.expires_at can be extended without limit by repeated purchases; grant_pass caps nothing | next task | open | |
+| T031-d | T031 | Migration 018 line 93 regex bound {5,600} exceeds the Postgres cap of 255 and breaks supabase start locally; use {5,255} | next task | open | |
+| T032-a | T032 | Fill the Stripe Dashboard Terms of service URL, then set CHECKOUT_TERMS_URL; the secret before the field makes every checkout 502 | user | open | 2 |
+| T032-b | T032 | Paste migration 025 into the SQL editor | user | open | 3 |
+| T032-c | T032 | Confirm on a real purchase that the Stripe page shows Carta's waiver wording and pass_grants reads consent accepted | user | open | 6 |
+| T032-d | T032 | Nothing shows the refund-exposure count from pass_grants_no_consent_idx; an admin row would make it visible | next task | open | |
+| T032-e | T032 | The Article 16(m) classification (digital content, not service) in the terms is unreviewed by anyone qualified | user | open | |
+| T033-a | T033 | Confirm tax_behavior is inclusive on both Prices; exclusive makes section 3.1 of the unit economics wrong by 1.21 a sale | user | open | 1 |
+| T033-b | T033 | Dashboard Tax: Belgian origin address, Belgium-only registration, threshold monitoring on with a read email | user | open | 2 |
+| T033-c | T033 | Paste migration 026 before redeploying the webhook | user | open | 3 |
+| T033-d | T033 | Confirm tax resolves in test mode: German and Belgian address both show the Belgian rate, amount_tax 121 on 699 | user | open | 6 |
+| T033-e | T033 | No UI shows the OSS figure; adminOssThreshold is bound in admin.js, a tile fits the AdminPage band | next task | open | |
+| T033-f | T033 | Nothing checks the OSS figure on a schedule; Stripe's email is the cheap route, a weekly job at 70 percent the alternative | next task | open | |
+| T033-g | T033 | T015, the accountant's VAT answer, does not exist as a file; the Belgian registration must match it | user | open | |
+| T034-a | T034 | Paste migrations 022 then 027; 022 was never applied and the funnel cannot run live without it | user | open | 3 |
+| T034-b | T034 | The expiring gate has copy and locale keys but no call site; wire it or remove it, verify_paywall_funnel.mjs fails until then | next task | open | |
+| T034-c | T034 | Funnel attribution is a one-hour nearest-checkout estimate, not a join key; hard-navigation dismissals not observed | next task | open | |
+| P2-merge | T034 | Merge the p2 branches in stack order (T030, T031, T032, T033, T034) in both repos; continent-app holds unrelated uncommitted work first | user | open | 5 |

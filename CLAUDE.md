@@ -21,6 +21,20 @@ The report is written at the end of the task, before the branch is merged and be
 
 A report is never updated after the task is closed. If a bug is discovered later, a new task investigates and fixes it, which may mean a new report that references the original.
 
+## Every open item also goes into the register
+
+The "What is still open" section of a report is prose, and prose across many reports is where open work gets lost. So every open item is also written as one row in `Execution/_OPEN.md`, the structured register, at the same moment the report is written.
+
+One row per item. Columns: `ID` (the task number plus a letter, `T031-a`), `Raised by` (the task), `Item` (one sentence, what is open and why), `Owner` (`user` for anything only the owner can do such as a Dashboard step, a secret, a migration paste or a product decision; otherwise `next task`), `Status` (`open`, or `closed by T{n}`), `Order` (a number only when the item must happen before or after another; blank otherwise).
+
+Rules for the register:
+
+- Append at report time, before the commit that carries the report. A task that raises nothing writes nothing.
+- A task that resolves an earlier item does not delete the row. It changes `Status` to `closed by T{n}` in its own commit, so the register carries history the same way reports do.
+- The row is a pointer, not the argument. The reasoning, the candidate fixes and the evidence stay in the report; the row says what and who.
+- When a batch of tasks produces an ordered procedure for the user (as T030 to T034 did for the Stripe launch), the procedure lives in a sibling file named `Execution/P{n}/_OPEN-{slug}.md` and the register rows link to it, so the order is written once.
+- Before starting a task, read the `open` rows owned by `next task` and take the ones the prompt covers. A row left open with no task claiming it is a gap in `_ORDER.md`, not something to do quietly.
+
 ## Carta-design wins over every other design source
 
 The [carta-design skill](https://github.com/anthropics/claude-code/skills/carta-design) documents Carta's visual language: the colour palette, typography, layout, components, copy rules, and the ten things never to do.
@@ -65,8 +79,9 @@ The production baseline for this work is tagged `prod-2026-09` at commit `8b53ba
 4. Do the work.
 5. Test the changes the way the prompt specifies (e.g., "run the app and verify").
 6. Write the report in `Execution/P{n}/T{n:03d}-{slug}.md`.
-7. Commit the report.
-8. Hand the branch back to the user or mark it ready for merge.
+7. Add one row per open item to `Execution/_OPEN.md`, and mark any earlier row this task closed.
+8. Commit the report and the register together.
+9. Hand the branch back to the user or mark it ready for merge.
 
 ## Measurements
 
@@ -92,5 +107,5 @@ Report these clearly so the next task does not spend time rediscovering them:
 
 ---
 
-**Last updated:** 2026-09-22
+**Last updated:** 2026-09-24
 **Production tag:** prod-2026-09 (commit 8b53babed)
