@@ -1,5 +1,7 @@
 """What the two scores are made of, what they came out at, and what published.
 
+Tier: Manual
+
 ROUTES.md R5. The trails layer carries two numbers and they answer different
 questions, which is why neither replaces the other:
 

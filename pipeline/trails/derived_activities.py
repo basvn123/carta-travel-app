@@ -1,5 +1,7 @@
 """Trail running and gravel: two activities OSM does not tag, derived here.
 
+Tier: Scheduled (run_pipeline task routes_attach)
+
 ROUTES.md R8. Six of its activities are native OSM tags and reach the graph
 through hierarchy.py's scan. Three are not tagged at all, and this module
 holds the two that can be answered honestly from what we already measure.

@@ -1,5 +1,7 @@
 """Cut the EEA coastline into named coastal stretches.
 
+Tier: Library
+
 Nobody plans a trip around a NUTS3 code, and nobody says "the coast of
 postcode ES618" either. They say the Costa de la Luz, the Cote d'Azur, the
 Zeeland delta. This module builds that unit: contiguous stretches of 40 to

@@ -1,5 +1,7 @@
 """Fold the climate normals harvested by harvest_climate.py into app_data.json.
 
+Tier: Scheduled (run_pipeline task climate)
+
 Adds:
   - dest.climate              12-month normal + summary (only for dests present
                               in cache/climate.json; others are left untouched)

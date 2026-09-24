@@ -1,5 +1,7 @@
 """harvest_image_licenses.py - per-file TASL metadata for POI thumbnails.
 
+Tier: Manual
+
 The POI image sweeps stored only a thumbnail URL; reuse compliance needs the
 file's Title-Author-Source-Licence chain, and NC/ND-licensed files (plus the
 rare "Wikimedia only" grants) are not acceptable in the catalogue at all.

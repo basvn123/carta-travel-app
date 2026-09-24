@@ -1,5 +1,7 @@
 """The hand named coastal stretches, and how a name lands on a cut.
 
+Tier: Library
+
 This is the one human decided file of the coast layer, in the same spirit as
 seed_peaks.py and seed_lakes.py: coasts.py cuts the shoreline into honest 40
 to 120 km stretches on its own, and this table puts the names travellers

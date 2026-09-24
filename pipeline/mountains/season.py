@@ -1,5 +1,7 @@
 """When to go: a monthly climatology per summit, and the months it points at.
 
+Tier: Scheduled (run_pipeline task mountains)
+
 Brief 05 asks for two things under "conditions" and is emphatic that they are
 different products. This module is the first one only:
 

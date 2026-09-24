@@ -1,5 +1,7 @@
 """The hero review queue: a person, a contact sheet, one click.
 
+Tier: Manual
+
 Same pattern as the trails review app (tools/trailslab/review): binds
 127.0.0.1 only, every decision appends to a ledger with an actor, and
 nothing here publishes; the caches change and the next export ships them.

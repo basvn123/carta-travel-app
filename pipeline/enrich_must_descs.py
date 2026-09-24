@@ -1,4 +1,7 @@
 """
+
+Tier: Scheduled (run_pipeline task must_descs)
+
 enrich_must_descs.py - upgrade the description (and fill missing images) of
 every POI the app SHOWS as a top pick: the "Must see" tier, plus the far
 "Worth the detour" sights (20-90 km, score >= 3.4).

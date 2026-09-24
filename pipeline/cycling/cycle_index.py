@@ -1,5 +1,7 @@
 """The published cycle-route rating, 0 to 10, and the reasons behind it.
 
+Tier: Scheduled (run_pipeline task cycling_publish)
+
 Nothing here is anybody's opinion, for the same reason nothing in the trail
 rating is: Komoot, Strava, Ride with GPS and AllTrails all forbid reuse of
 their ratings, and inventing one would be worse than having none. So the

@@ -1,5 +1,7 @@
 """merge_curation.py - fill the last POI-sparse destinations.
 
+Tier: Manual
+
 Two sources, merged into cache/activities.json (then patch via harvest_activities):
   1. Hand-curated agent JSON files (scratchpad/curation_*.json): real named POIs
      with verified coordinates for wetlands / remote islands / sparse villages.

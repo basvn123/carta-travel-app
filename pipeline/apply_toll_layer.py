@@ -1,5 +1,7 @@
 """Add per-country toll & vignette estimates to app_data.json in place.
 
+Tier: Manual
+
 Adds:
   - meta.car_model.toll_model  ("per_country_v1" + the full rate tables)
   - dest.driving_toll          (round-trip tolls PER CAR: per-km tolls by

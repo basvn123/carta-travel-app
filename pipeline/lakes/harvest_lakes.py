@@ -1,5 +1,7 @@
 """Stage 1 of the lake layer: find the water bodies worth ranking.
 
+Tier: Library
+
 Two spines and a seed, merged into one pool.
 
   Wikidata, in two bounded passes.  Every water body typed as a lake, a

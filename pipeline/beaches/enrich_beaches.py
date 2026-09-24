@@ -1,4 +1,7 @@
 """Stage 2 of the beach layer: turn a name and a coordinate into a beach we
+
+Tier: Library
+
 can actually rank, photograph and describe.
 
 Stage 1 found every named beach in Europe. Most of them we will never publish,

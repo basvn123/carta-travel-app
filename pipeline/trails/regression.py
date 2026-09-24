@@ -1,5 +1,7 @@
 """Regression gate for published trailslab content.
 
+Tier: Scheduled (run_pipeline task trails_validate)
+
 validate.py routes DRAFTS only: it refreshes quality_score for everything but
 moves nobody a human has already decided on, which is exactly what keeps
 `approved` a human-only status. That leaves one gap. A published trip is

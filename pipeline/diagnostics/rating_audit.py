@@ -1,5 +1,7 @@
 """Rating model audit - measure the model before (and after) changing it.
 
+Tier: Manual
+
 Reads the published ratings out of app_data.json and reports, per component:
 min, p10, median, p90, max, standard deviation, the share of destinations
 sitting at the modal value, and the component's realised contribution to the

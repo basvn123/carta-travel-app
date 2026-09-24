@@ -1,5 +1,7 @@
 """Scenic features along the curated routes: the evidence behind a rating.
 
+Tier: Scheduled (run_pipeline task trails_scenic)
+
 A trail's rating cannot come from reviews. AllTrails, Komoot, Outdooractive
 and Strava all forbid bulk reuse of their ratings, and Instagram has offered
 no location search since 2020, so there is no legal way to buy an opinion.

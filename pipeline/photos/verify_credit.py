@@ -1,5 +1,7 @@
 """The credit rule, pinned, because another layer's gate depends on it.
 
+Tier: Manual
+
 `credit.owes_credit()` is no longer only the photo engine's business:
 pipeline/cycling/export_cycling.py imports it and DELETED its own
 licence heuristic in favour of it, so a careless change here removes

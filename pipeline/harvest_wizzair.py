@@ -1,4 +1,7 @@
 """harvest_wizzair.py - harvest REAL Wizz Air per-day fares from every Wizz
+
+Tier: Scheduled (run_pipeline task wizz_fares)
+
 origin to every catalogue anchor, convert them to EUR, and MERGE them into the
 same top-level `fares` table Ryanair fills (cheapest-wins), tagging the days
 Wizz actually won so the app can later show the operating carrier.

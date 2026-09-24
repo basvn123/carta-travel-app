@@ -1,5 +1,7 @@
 """Export approved trailslab content into the app as produced works.
 
+Tier: Scheduled (run_pipeline task trails_rate)
+
 The lab (tools/trailslab, port 5433) is the content store; the app ships
 static JSON like every other layer. This is the bridge, and the last gate in
 the chain: a human approves in the review UI, the export promotes approved to

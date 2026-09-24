@@ -1,5 +1,7 @@
 """Cycle route ingestion: Geofabrik extracts -> trailslab cycle_routes.
 
+Tier: Scheduled (run_pipeline task cycling_harvest)
+
 The sibling of pipeline/trails/ingest_osm_routes.py, and deliberately the same
 shape: three memory-safe passes over the per-country .osm.pbf that the trails
 layer already downloaded, relation members stitched into ordered geometry,

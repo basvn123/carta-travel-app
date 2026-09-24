@@ -1,5 +1,7 @@
 """Point the 260 gateway records at their CITY's Wikivoyage listings.
 
+Tier: Scheduled (run_pipeline task dossier)
+
 cache/wikivoyage_listings.json is keyed by destination id and resolved through
 cache/wikivoyage.json, which for an airport record is the airport's article.
 So CDG's "things a visitor should see in Paris" was sixteen airline lounges,

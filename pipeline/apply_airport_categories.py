@@ -1,5 +1,7 @@
 """Give airport-tier destinations trip-type categories, in place.
 
+Tier: Manual
+
 Airport-tier destinations shipped with an empty `categories[]`, which made the
 trip-type filter (City / Beach / Island / ...) hide every major city the moment
 a chip was clicked - because matchesAnyKind() returns false for an empty list.

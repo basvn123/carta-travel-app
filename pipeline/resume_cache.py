@@ -1,5 +1,7 @@
 """Resumable anchor cache for the long stay-tier harvests.
 
+Tier: Library
+
 A full sweep is ~665 cities and roughly 15 hours of API calls. Building the
 whole list in memory and writing once at the end meant a drop at hour 14 lost
 everything, so both harvesters now checkpoint through here: each city is

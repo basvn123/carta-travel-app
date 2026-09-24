@@ -1,4 +1,7 @@
 """
+
+Tier: Scheduled (run_pipeline task dossier)
+
 Resolve TASL for dossier images that none of the existing licence caches know.
 
 Scans every built dossier under continent-app/public/dossier/ for images that

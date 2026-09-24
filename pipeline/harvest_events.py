@@ -1,5 +1,7 @@
 """Recurring events, festivals and concert series per destination, from Wikidata.
 
+Tier: Scheduled (run_pipeline task events)
+
 The Explore page answers "what is happening in this place" without a paid
 events API: Wikidata knows Europe's recurring cultural calendar (music
 festivals, carnivals, film weeks, Christmas markets) with coordinates,

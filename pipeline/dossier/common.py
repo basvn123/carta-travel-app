@@ -1,4 +1,7 @@
 """
+
+Tier: Library
+
 Shared plumbing for the destination dossier pipeline.
 
 The dossier layer builds one contract file per destination at

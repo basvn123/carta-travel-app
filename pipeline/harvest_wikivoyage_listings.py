@@ -1,5 +1,7 @@
 """harvest_wikivoyage_listings.py - See/Do listings as a POI significance signal.
 
+Tier: Scheduled (run_pipeline task poi_significance)
+
 Wikivoyage's See and Do sections are hand-curated shortlists: a human editor
 decided these specific sights are what a visitor should know about, and put
 the most important ones first. That is exactly the expert corroboration the

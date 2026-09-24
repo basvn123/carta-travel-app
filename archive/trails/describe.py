@@ -1,4 +1,6 @@
-"""Grounded trip descriptions: the Claude API used strictly as a rewriter.
+"""Tier: Superseded, see archive/README.md
+
+Grounded trip descriptions: the Claude API used strictly as a rewriter.
 
 The model never researches anything. Per staged trip we assemble a FACTS block
 from data we already hold (title and OSM tags, computed distance/ascent/

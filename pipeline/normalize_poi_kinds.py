@@ -1,5 +1,7 @@
 """Normalize POI kinds and demote commercial noise, in place.
 
+Tier: Scheduled (run_pipeline task poi_significance)
+
 The three POI sources speak three taxonomies: OpenTripMap says "Ancient site"
 and "Opera", Overture/Wikidata say "Archaeological site" and "Opera house",
 and Overture's broad `landmark`/`attraction` categories drag in outright

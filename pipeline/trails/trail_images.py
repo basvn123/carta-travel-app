@@ -1,5 +1,7 @@
 """Photographs of the walk itself, from Wikimedia Commons.
 
+Tier: Scheduled (run_pipeline task trails_images)
+
 Until now a trail card borrowed the hero image of the nearest catalogue town,
 which is why Bulgaria's hiking list showed a red townhouse in Septemvri and a
 beach at Sozopol on routes that pass neither. A photograph of a town 30 km

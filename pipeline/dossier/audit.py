@@ -1,5 +1,7 @@
 """Audit every built dossier against the contract, and say what is wrong.
 
+Tier: Scheduled (run_pipeline task dossier)
+
 This is the acceptance-test set from the build spec, written as assertions
 over the shipped files rather than as prose in a document. Each check
 corresponds to a specific way the destination page or the exported PDF fails

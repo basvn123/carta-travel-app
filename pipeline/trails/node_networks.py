@@ -1,5 +1,7 @@
 """Node-network cycling: a mesh is not a route, so it is not published as one.
 
+Tier: Scheduled (run_pipeline task routes_attach)
+
 ROUTES.md R8. In the Netherlands and Belgium you do not ride a route, you
 ride a number: junctions carry `rcn_ref`, you note a sequence of them, and
 the signs between them are the navigation. There are 50,600 km of it in

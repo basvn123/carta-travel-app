@@ -1,5 +1,7 @@
 """Generate recorded-shape stay-tier fixtures for dev without API credentials.
 
+Tier: One-shot, done, kept for provenance (pipeline/oneoff)
+
 Writes cache/fixtures/hostelworld_fixture.json and liteapi_fixture.json in the
 probe shapes harvest_hostelworld.py / harvest_hotels_liteapi.py consume, so the
 whole chain (harvest --fixtures -> apply_stay_tiers --allow-fixtures -> runtime

@@ -1,4 +1,7 @@
 """Protected status, with the polygons rather than the centroids, and
+
+Tier: Library
+
 including the countries outside the EU.
 
 Two things were wrong with the protection signal before this.

@@ -1,5 +1,7 @@
 """Who to name under a photograph, decided in one place.
 
+Tier: Library
+
 Every layer asked Commons for `Artist` and nothing else, and stored
 whatever came back. Artist is empty on a large minority of older
 uploads, which is how a hundred published photographs came to carry a

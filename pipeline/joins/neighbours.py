@@ -1,5 +1,7 @@
 """Cross-layer neighbours: one spatial pass that lets six wires speak.
 
+Tier: Scheduled (run_pipeline task joins)
+
 Brief 08's lead 01. BeachPage, LakePage, MountainPage, TrailPage, CyclePage
 and TripPage each read their own wire and no other layer's: a mountain does
 not list the trails that climb it, a beach does not mention the published

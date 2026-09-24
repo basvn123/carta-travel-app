@@ -1,5 +1,7 @@
 """Country context (A6, 2026-09): where a place stands in ITS country.
 
+Tier: Scheduled (run_pipeline task country_context)
+
 The absolute 0-10 score stays absolute - that is the product's spine, and it
 must never become "good for Latvia". But a browsing user is going SOMEWHERE,
 and inside that somewhere the absolute scale goes quiet: fourteen countries

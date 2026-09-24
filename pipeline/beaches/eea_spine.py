@@ -1,4 +1,7 @@
 """The EEA WISE bathing water register, read as a SPINE rather than as an
+
+Tier: Library
+
 enrichment.
 
 The layer already read this file. It read the CLASS: for each beach we had

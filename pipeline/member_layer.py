@@ -1,5 +1,7 @@
 """Cluster members (B1, 2026-09): the villages inside the area entries.
 
+Tier: Manual
+
 Amalfi Coast, Cinque Terre, Lake Como and the other `area` destinations are
 containers, and they swallow their members: searching Positano, Vernazza or
 Bellagio returned nothing, because those places live INSIDE an entry and

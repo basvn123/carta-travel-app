@@ -1,5 +1,7 @@
 """Photographs of the RIDE, anchored on the route line.
 
+Tier: Scheduled (run_pipeline task cycling_photos)
+
 This is pipeline/trails/trail_images.py pointed at cycle_routes, and it
 imports that module rather than restating it: the candidate search, the
 category fetch, the junk regexes, the view-evidence test, the scoring and the

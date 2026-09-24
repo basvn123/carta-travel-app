@@ -1,5 +1,7 @@
 """The photo engine: relevance gates what enters, beauty ranks what stays.
 
+Tier: Library
+
 Every shoreline layer already answers "is this photograph OF this place"
 with the evidence-tier machinery in pipeline/lakes/lake_images.py, and that
 gate is the best thing in the pipeline. What no layer answered was "which

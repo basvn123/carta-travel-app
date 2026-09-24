@@ -1,5 +1,7 @@
 """Coverage report - where the catalogue is thin, stated before a user finds it.
 
+Tier: Manual
+
 Per country: destinations held, density per 10,000 km2 and per million
 residents, appeal (curation) coverage, held register members per register
 kind, and coverage of the partial layers (designations, nature, crowding,

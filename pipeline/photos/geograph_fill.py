@@ -1,5 +1,7 @@
 """Fill the listed-tier photo gap in GB and IE from Geograph.
 
+Tier: Manual
+
 The gap this closes is not the scored rows: those are at 100 per cent
 already. It is the `listed` tier, the rows verified to exist and named but
 never scored, which ship as map cards carrying

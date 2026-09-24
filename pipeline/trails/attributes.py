@@ -1,5 +1,7 @@
 """The published filters: how hard, what shape, what it passes, who it suits.
 
+Tier: Scheduled (run_pipeline task trails_attributes)
+
 Six questions a walker narrows a list by, derived once here and stored on the
 route so the wire ships codes and the app ships chips:
 

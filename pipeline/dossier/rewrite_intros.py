@@ -1,5 +1,7 @@
 """Short custom intros for every destination, written by a model as a REWRITER.
 
+Tier: Manual
+
 The page's "what this place is" used to be the Wikivoyage lead verbatim, and
 build_dossier.compose_short now composes a fallback from our own facts (one
 distilled opening line plus sights, time needed and best months). This script

@@ -1,5 +1,7 @@
 """Ship the credit for every POI thumbnail the app shows.
 
+Tier: Manual
+
 The layer galleries (beaches, lakes, mountains, trails, the dossier
 slides) all carry author and licence per image and render them. The POI
 grid does not: items_full[].img is a bare URL, and the ledger row for

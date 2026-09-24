@@ -1,5 +1,7 @@
 """Railway stations, from the extracts, so "car-free start" is a fact.
 
+Tier: Scheduled (run_pipeline task routes_attach)
+
 ROUTES.md R6 needs one question answered per access point: can you get here
 without a car. The cycling layer already answers it inside its own service
 towns (cycle_services.station_n), but that is a count per TOWN on a cycle

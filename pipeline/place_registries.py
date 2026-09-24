@@ -1,5 +1,7 @@
 """place_registries.py - the authoritative registers that say "this place".
 
+Tier: Library
+
 Europe is full of juries that have already done the work of deciding which
 small places are worth going to, and almost none of that ever reached Carta's
 catalogue. Les Plus Beaux Villages de France has picked 155 villages since

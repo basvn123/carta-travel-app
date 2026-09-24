@@ -1,4 +1,7 @@
 """
+
+Tier: Scheduled (run_pipeline task poi_images)
+
 enrich_images_web.py - second-pass POI image fill for items the Commons
 geosearch (enrich_images_commons.py) could not match.
 

@@ -1,5 +1,7 @@
 """Traveller rating engine - schema v17 `dest.rating` (rating_v4).
 
+Tier: Library
+
 v4 (2026-09, PLAN.md phase A): the same four components, honestly measured.
 Highlights reads an absolute per-POI significance instead of the town-
 relative rate that had collapsed it into a constant (A2); beauty gains an

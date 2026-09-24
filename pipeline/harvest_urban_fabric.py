@@ -1,5 +1,7 @@
 """harvest_urban_fabric.py - measure the built beauty of a town from OSM.
 
+Tier: Manual
+
 The Beauty Index (A3, 2026-09) gains an urban-fabric component, because none
 of its four inputs can see a beautiful built city: heritage counts UNESCO
 sites, nature counts fjord/alps/lake tags, beach counts Blue Flags, iconic is

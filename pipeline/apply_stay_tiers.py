@@ -1,5 +1,7 @@
 """Apply hostel + hotel city anchors as stay tiers on app_data.json.
 
+Tier: Scheduled (run_pipeline task staytiers)
+
 Reads cache/hostel_city_anchors.json (harvest_hostelworld.py) and
 cache/hotel_city_anchors.json (harvest_hotels_liteapi.py) and writes an
 `accommodation.tiers` block onto every destination that sits ON a measured city

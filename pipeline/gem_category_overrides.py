@@ -1,5 +1,7 @@
 """Fact-checked trip-type corrections for GEM-tier destinations (2026-06-08).
 
+Tier: Library
+
 The gems carry hand-written tag strings in `destinations_master.py`, but a full
 audit of all 447 destinations found many gems missing obvious, filter-relevant
 tags (UNESCO sites not tagged `unesco`, the Lofoten Islands not tagged `island`,

@@ -1,5 +1,7 @@
 """Patch fact-checked GEM trip-type categories into app_data.json, in place.
 
+Tier: Manual
+
 Companion to `apply_airport_categories.py` (which handles the airport tier). This
 applies the curated overrides in `gem_category_overrides.py` to gem-tier
 destinations only. Idempotent: re-running just refreshes the values. Also unions

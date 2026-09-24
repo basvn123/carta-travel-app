@@ -1,5 +1,7 @@
 """European destinations master list.
 
+Tier: One-shot, done, kept for provenance (pipeline/oneoff)
+
 ~400 destinations across 4 tiers:
   Tier A — Ryanair-served airports from BRU/CRL (real fare calendars)
   Tier B — Other Ryanair airports (real Ryanair fares, may need connection)

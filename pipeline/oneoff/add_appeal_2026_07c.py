@@ -1,4 +1,7 @@
 """Merge curated_appeal entries for the 2026-07c gem batch (43 new dests).
+
+Tier: One-shot, done, kept for provenance (pipeline/oneoff)
+
 Idempotent: overwrites the keys it owns, leaves the rest untouched.
 appeal 0-10 editorial traveller-appeal; gem=True only for under-the-radar spots
 (nudges the hidden_gem badge, never the score)."""

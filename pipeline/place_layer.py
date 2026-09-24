@@ -1,5 +1,7 @@
 """place_layer.py - what KIND of place this is, and what you do with it.
 
+Tier: Library
+
 Carta had one number for a destination: how good it is. That number was being
 asked to answer a question it cannot answer - "should I sleep here or just go
 for the afternoon?" - and the answer was leaking into the rating, badly. The

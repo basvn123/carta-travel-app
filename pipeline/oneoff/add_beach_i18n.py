@@ -1,5 +1,7 @@
 """One off: add the beach layer's copy to the six i18n catalogs.
 
+Tier: One-shot, done, kept for provenance (pipeline/oneoff)
+
 Every sentence on a beach card or a beach page is composed in the app from the
 pipeline's reason codes (continent-app/src/lib/beachStory.js), so all of it is
 a t() key and all of it has to exist in six languages. Written here rather than

@@ -1,5 +1,7 @@
 """The scenic score's missing input: what kind of country a route rides through.
 
+Tier: Library
+
 THE HOLE THIS FILLS. Brief 07 specifies the scenic composite with a
 "forest/water fraction from ESA WorldCover (CC BY 4.0, 10 m) or Corine", and
 the layer shipped without it because WorldCover at 10 m is roughly 100 GB for

@@ -1,5 +1,7 @@
 """Registry versus published: which famous walks are missing, and why.
 
+Tier: Scheduled (run_pipeline task trails_registry)
+
 CARTA_TRAILS_BUILD_BRIEF.md Phase 1, second half. famous_registry.py says
 what SHOULD be published in a region. This says what IS, matches the two,
 and gives every miss exactly one reason code. It is the instrument the rest

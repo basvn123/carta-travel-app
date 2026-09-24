@@ -1,5 +1,7 @@
 """Attach dest.designations to app_data.json: who has already judged this place.
 
+Tier: Scheduled (run_pipeline task fame)
+
 The coverage engine uses the place registers to find what is missing. The same
 registers are worth just as much pointed at what is already in the catalogue,
 because they answer the question the rating could not: is this small place

@@ -1,5 +1,7 @@
 """The relation graph: every route relation, every tag, every member, kept.
 
+Tier: Scheduled (run_pipeline task trails_hierarchy)
+
 ROUTES.md R2 (this file's --scan) and R3 (--classify, later). The ingest
 reads route relations from the Geofabrik extracts and keeps 21 tags and a
 flattened way list per relation; the member list, the roles, and which

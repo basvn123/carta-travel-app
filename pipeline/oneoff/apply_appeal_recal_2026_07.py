@@ -1,5 +1,7 @@
 """Merge the 2026-07 appeal recalibration overlay into curated_appeal.json.
 
+Tier: One-shot, done, kept for provenance (pipeline/oneoff)
+
 The July (07d) scoring batch compressed the ceiling: its 842 destinations
 max out at appeal 8.5, which after the blend's ~-0.3 drag means none can
 reach tier 3 "Worth the journey" - including Pompeii. The overlay

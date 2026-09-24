@@ -1,5 +1,7 @@
 """Long-tail within-country granularity for accommodation (schema v16).
 
+Tier: Scheduled (run_pipeline task lodging)
+
 The problem this addresses: ~1,250 destinations still carry their COUNTRY's
 single accommodation rate (either a real Inside Airbnb country median or, for
 markets with no Inside Airbnb coverage at all - Poland, Croatia, the Nordics,

@@ -1,5 +1,7 @@
 """promote_place_candidates.py - turn ranked coverage gaps into gem specs.
 
+Tier: Manual
+
 The last step of the coverage loop, and the only one that can change what the
 app ships, so it is deliberately the most cautious. It does NOT write the
 catalogue. It writes a spec file in the exact shape

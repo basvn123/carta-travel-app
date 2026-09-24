@@ -1,5 +1,7 @@
 """harvest_bathing_water.py - real bathing-water quality per destination.
 
+Tier: Scheduled (run_pipeline task bathing_water)
+
 A new open data layer on top of the beach/coast catalogue, independent of
 Wikipedia/OSM: the European Environment Agency's WISE Bathing Water Quality
 database (Bathing Water Directive 2006/7/EC). It classifies ~22,000 official

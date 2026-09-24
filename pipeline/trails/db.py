@@ -1,5 +1,7 @@
 """Connection helper for the trails content-lab PostGIS DB (tools/trailslab).
 
+Tier: Scheduled (run_pipeline task trails_validate)
+
 Local-only: the lab runs in Docker on port 5433 and never touches the live
 Supabase project. Settings come from the repo-root .env (loaded through
 pipeline/env_local.py, real environment variables win) with defaults that

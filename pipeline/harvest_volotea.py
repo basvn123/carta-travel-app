@@ -1,4 +1,7 @@
 """harvest_volotea.py - harvest REAL Volotea cheapest fares from every Volotea
+
+Tier: Scheduled (run_pipeline task volotea_fares)
+
 origin to every catalogue anchor and MERGE them (cheapest-wins) into the shared
 top-level `fares` table, tagging the days Volotea wins as "V7".
 

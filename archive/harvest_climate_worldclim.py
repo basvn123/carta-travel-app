@@ -1,4 +1,6 @@
-"""Bulk climate normals from WorldClim 2.1 rasters - no API, no rate limits.
+"""Tier: Superseded, see archive/README.md
+
+Bulk climate normals from WorldClim 2.1 rasters - no API, no rate limits.
 
 Replaces the per-point Open-Meteo harvest (which the free tier throttled to
 ~15 dests/hour, i.e. days for the full catalogue). WorldClim 2.1 ships global

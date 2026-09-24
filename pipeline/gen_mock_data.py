@@ -1,4 +1,7 @@
 """Generate a flights-only mock app_data.json so the app is testable without
+
+Tier: Manual
+
 running the full Ryanair pipeline. Schema matches SCHEMA.md (v6)."""
 
 import json

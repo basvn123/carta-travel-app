@@ -1,5 +1,7 @@
 """Routes built from way-level paths, for the countries with no relation culture.
 
+Tier: Scheduled (run_pipeline task trails_derive_routes)
+
 Moldova publishes 3 walks, Kosovo 14, North Macedonia 16, Malta 30, Albania
 34. None of those is a quota problem and raising a ceiling will not touch
 them: the countries have paths on the ground and in OpenStreetMap, and almost

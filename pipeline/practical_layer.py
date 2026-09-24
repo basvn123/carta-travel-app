@@ -1,5 +1,7 @@
 """Practical layer (D4, 2026-09): the fields travellers ask for.
 
+Tier: Manual
+
 Ordered by how often they decide a trip, all derivable without a new
 commercial source, each absent where its data is:
 

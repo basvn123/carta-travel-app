@@ -1,4 +1,7 @@
-"""Audit app_data.json for missing pieces across all destinations."""
+"""Audit app_data.json for missing pieces across all destinations.
+
+Tier: Manual
+"""
 import json, collections
 
 DATA = "app_data/app_data.json"

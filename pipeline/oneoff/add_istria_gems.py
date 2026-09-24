@@ -1,4 +1,7 @@
 """One-off: add Motovun and Groznjan (Istria hill towns) as new gem destinations
+
+Tier: One-shot, done, kept for provenance (pipeline/oneoff)
+
 to the existing app_data.json (both targets), matching the same shape/pipeline
 every other gem went through:
 

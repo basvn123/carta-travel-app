@@ -1,5 +1,7 @@
 """Add schema-v13 city-centre coordinates to app_data.json in place.
 
+Tier: One-shot, done, kept for provenance (pipeline/oneoff)
+
 Airport-tier destinations store their AIRPORT lat/lon - that's where Ryanair
 lands. For "how far is my stay from the city" UX (the Day planner's
 door-to-door advice especially) measuring from the airport is wrong: a stay in

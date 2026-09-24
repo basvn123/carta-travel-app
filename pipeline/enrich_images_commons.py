@@ -1,4 +1,7 @@
 """
+
+Tier: Scheduled (run_pipeline task poi_images)
+
 enrich_images_commons.py - fill missing POI images from Wikimedia Commons
 GEOTAGGED photos (not Wikipedia articles), so places without an article can
 still get a real photo. Hotlinkable, CC-licensed thumbnails.

@@ -1,5 +1,7 @@
 """Fact-check "where to park" against the web, one destination at a time.
 
+Tier: Manual
+
 The parking section is ranked from cache/parking_osm.json: what OpenStreetMap
 contributors tagged, which is sometimes a car park that closed in 2019, a fee
 that changed, or a park-and-ride nobody uses. This script asks a model WITH

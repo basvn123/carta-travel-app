@@ -1,5 +1,7 @@
 """Batch-approve the staged shortlist content through the review API.
 
+Tier: One-shot, done, kept for provenance (pipeline/oneoff)
+
 2026-08-13, owner-directed: "use gemini for describe, and approve everything".
 Approval is deliberately human-gated (the API is the only path to approved),
 so this script exists as the owner's recorded batch action rather than a DB

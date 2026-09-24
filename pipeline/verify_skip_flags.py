@@ -1,5 +1,7 @@
 """A skip flag controls the network, never the data.
 
+Tier: Manual
+
 Every layer's enrich and harvest can be told to skip a source (--no-images,
 --no-context, --seed-only, --no-spine, --skip-articles, ...). The invariant
 this harness pins down is that such a run may fetch nothing, but it must

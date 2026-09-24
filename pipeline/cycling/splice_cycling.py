@@ -1,5 +1,7 @@
 """Bridge the short breaks OSM cycle relations leave in otherwise whole routes.
 
+Tier: Scheduled (run_pipeline task cycling_harvest)
+
 This is pipeline/trails/splice.py applied to cycle_routes, and it deliberately
 imports that module's thresholds rather than restating them:
 

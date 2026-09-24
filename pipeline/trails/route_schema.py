@@ -1,5 +1,7 @@
 """The two route record shapes, as a MAPPING onto fields the lab already has.
 
+Tier: Library
+
 ROUTES.md R1. RouteSummary is what a country file row and a destination
 attach row carry; RouteDetail is the trip/{id}.json file. Neither is a new
 store: the trailslab lab (tools/trailslab) stays the store of record and

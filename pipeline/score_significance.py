@@ -1,5 +1,7 @@
 """score_significance.py - composite POI significance -> recalibrated rate.
 
+Tier: Scheduled (run_pipeline task poi_significance)
+
 Replaces blind trust in the harvest-time `rate` (OpenTripMap's generous 0-3,
 Overture's cap-2, sitelink backfills) with a composite score built from
 independent open signals, per the 2026-08 open-data playbook:

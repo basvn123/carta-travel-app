@@ -1,5 +1,7 @@
 """Build the region spine: fetch, normalise, index -> cache/regions/regions.gpkg.
 
+Tier: Scheduled (run_pipeline task regions)
+
 Usage, from the repo root:
 
     python pipeline/regions/build_regions.py                 # everything

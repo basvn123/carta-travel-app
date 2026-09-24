@@ -1,5 +1,7 @@
 """Monthly air temperature normals for the lake season model, from CHELSA.
 
+Tier: Library
+
 This file exists to close a licence risk, and the risk was real. The swimming
 season on every lake page was modelled from WorldClim 2.1, and WorldClim 2.1
 is licensed for NON-COMMERCIAL use only. Carta carries affiliate links and

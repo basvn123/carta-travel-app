@@ -1,4 +1,7 @@
 """The mountain index: what "one of the best mountains in Europe" means here,
+
+Tier: Library
+
 written down so it can be argued with.
 
 The research this layer was built from makes one point louder than the rest:

@@ -1,5 +1,7 @@
 """appeal_scale.py - let the best of any kind of place reach the same height.
 
+Tier: Library
+
 `app_data/curated_appeal.json` holds one hand-scored 0-10 number per
 destination, and it is 70% of every rating. It was scored against a fixed
 anchor set running "Rome 10 ... Charleroi 2.5", and those anchors are cities.

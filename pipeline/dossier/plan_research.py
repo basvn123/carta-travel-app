@@ -1,5 +1,7 @@
 """Plan the remaining S4 research sweep: who still needs it, batched to hand out.
 
+Tier: Scheduled (run_pipeline task dossier)
+
 The sweep itself (see research_do.py) is a web pass with no API credential in
 this repo, so it runs through research agents a batch at a time. This script
 is the bookkeeping around that: it reads the catalogue, subtracts what

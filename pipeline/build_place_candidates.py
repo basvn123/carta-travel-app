@@ -1,5 +1,7 @@
 """build_place_candidates.py - the candidate universe for catalogue coverage.
 
+Tier: Scheduled (run_pipeline task coverage)
+
 Carta's catalogue grew by hand: agents proposed gems, a human waved them
 through. That works until it doesn't, and it didn't: Mougins (19,782 people,
 a perched village above Cannes with 58 Wikipedia languages and a Picasso

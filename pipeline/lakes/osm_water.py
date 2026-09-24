@@ -1,5 +1,7 @@
 """The second spine: every named water body in OpenStreetMap, from the extracts.
 
+Tier: Library
+
 Stage 1 of the lake layer used to have one spine. Wikidata, in two bounded
 passes per country: the 700 most written about water bodies and the 250
 largest. That is the right population for Italy and Switzerland and it is the

@@ -1,5 +1,7 @@
 """The trip model: what makes a good base, a reachable day out, a sane hop.
 
+Tier: Library
+
 Everything the composer decides runs through this file, so the reasoning is in
 one place and a number can be argued with rather than hunted for.
 

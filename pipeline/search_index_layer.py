@@ -1,5 +1,7 @@
 """Fold-and-alias search index (B2, 2026-09): typed names must find places.
 
+Tier: Manual
+
 454 destination names carry diacritics or hyphens, and the search box did a
 plain substring match over them: "cesky krumlov" found nothing, "eze" found
 nothing, Positano lived invisibly inside Amalfi Coast. This layer emits

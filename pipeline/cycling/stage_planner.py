@@ -1,5 +1,7 @@
 """Compose multi-day cycling tours over published routes. The differentiator.
 
+Tier: Scheduled (run_pipeline task cycling_publish)
+
 No incumbent auto-splits a route into days. Komoot's multi-day planner is
 explicitly manual: you pick the number of days and drag the endpoints, and
 "add accommodation" is what sets a boundary. Ride with GPS is the same. This

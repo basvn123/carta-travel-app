@@ -1,5 +1,7 @@
 """Cheap hard rejects, run first, so nothing expensive looks at junk.
 
+Tier: Library
+
 Order matters for cost: these checks are metadata reads and one small
 thumbnail, so they run before a CLIP embedding is ever computed. What they
 reject is not "bad photographs" in any aesthetic sense, it is files that

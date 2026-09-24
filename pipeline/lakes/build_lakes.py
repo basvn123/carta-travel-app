@@ -1,5 +1,7 @@
 """Build the whole lake layer, from nothing to shipped wire, in one command.
 
+Tier: Scheduled (run_pipeline task lakes)
+
     python pipeline/lakes/build_lakes.py
 
 That is the reproducible path. Five stages run in order, each idempotent and

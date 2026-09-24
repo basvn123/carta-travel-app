@@ -1,5 +1,7 @@
 """Tourist-hotspot price premium layer (schema v14).
 
+Tier: Scheduled (run_pipeline task lodging)
+
 Problem: 476 of 524 destinations carry their COUNTRY's average basket, so
 Santorini was priced like mainland Greece, the Amalfi Coast like average
 Italy, and Zermatt like average Switzerland. On-the-ground research puts the

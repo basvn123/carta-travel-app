@@ -1,5 +1,7 @@
 """Turn reviewed intake candidates into new-gem specs (2026-09).
 
+Tier: Manual
+
 The bridge between B3's review queue and the proven ingestion path
 (apply_new_gems.py -> build_record): reads reports/intake_candidates.csv,
 keeps the SETTLEMENT-register auto_admit misses, enriches each QID from

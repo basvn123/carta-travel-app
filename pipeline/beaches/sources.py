@@ -1,5 +1,7 @@
 """Shared, polite clients for the beach layer's four open sources.
 
+Tier: Library
+
 Every source here is free, citable and licence clean, which is the whole point
 of the layer: the beaches Carta publishes are built from open data plus our own
 scoring and our own prose, never from a places API whose terms forbid keeping

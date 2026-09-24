@@ -1,5 +1,7 @@
 """The validation table the elevation layer never had (ROUTES.md R4).
 
+Tier: Manual
+
 elevation.py samples Copernicus GLO-30 at 30 m, smooths over three samples
 and commits a climb only past 5 m of hysteresis. Those constants were
 chosen in 2026-08 by sweeping combinations against the OSM ascent tags of

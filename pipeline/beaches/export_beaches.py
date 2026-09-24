@@ -1,5 +1,7 @@
 """Stage 3: score the enriched beaches and publish the ones worth showing.
 
+Tier: Library
+
 This is the gate. Everything upstream collects; this decides what a traveller
 sees, and it is deliberately strict, because the promise on the tab is "the
 most beautiful beaches in Europe" and a list padded with municipal strands

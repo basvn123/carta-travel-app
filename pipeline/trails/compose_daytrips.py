@@ -1,5 +1,7 @@
 """Daytrip composer: turn catalogue POIs plus a staged hike into a timed day.
 
+Tier: Library
+
 Input is an anchor destination id from the continent-app catalogue
 (app_data/app_data.json), for example gem:interlaken, gem:chamonix or BGO.
 The composer shortlists that destination's best POIs with the SAME ranking

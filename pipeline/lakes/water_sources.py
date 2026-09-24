@@ -1,5 +1,7 @@
 """The lake layer's polite clients, which are the beach layer's polite clients.
 
+Tier: Library
+
 pipeline/beaches/sources.py already holds everything a second open-data layer
 needs: one shared user agent, a per host minimum interval claimed under a lock,
 exponential backoff on the statuses that clear on their own, the Overpass mirror

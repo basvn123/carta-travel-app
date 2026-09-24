@@ -1,5 +1,7 @@
 """Stage 1 of the mountain layer: find the summits worth ranking.
 
+Tier: Library
+
 Europe has a lot of mountains. Wikidata alone types 247,164 of them inside the
 43 countries this app prices, and Norway is 171,183 of that on its own, almost
 all of them an unnamed 600 m bump above a fjord. Sweeping any of that live

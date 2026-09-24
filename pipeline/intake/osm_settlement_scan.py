@@ -1,5 +1,7 @@
 """OSM settlement scan (B4's grid variant, 2026-09): misses beyond the boxes.
 
+Tier: Manual
+
 The WDQS landmark boxes only see ~9 km around existing destinations, so
 Sirmione - 20 km across Lake Garda from its box's centre - stays invisible
 to gap_scan.py. This pass walks the Geofabrik country extracts (the same

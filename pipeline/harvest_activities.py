@@ -1,4 +1,7 @@
 """
+
+Tier: Scheduled (run_pipeline task activities)
+
 harvest_activities.py - the "things to do" layer (schema v10).
 
 For every destination, fetch a short list of real, named attractions (sights /

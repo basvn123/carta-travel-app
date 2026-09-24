@@ -1,5 +1,7 @@
 """The classifier for the miss the heuristics documented and could not fix.
 
+Tier: Library
+
 The known case: an information board beside a lake, whose categories,
 title and description all name the lake, and whose printed map reads as
 water to the pixel probe. Every metadata gate passes it honestly, because

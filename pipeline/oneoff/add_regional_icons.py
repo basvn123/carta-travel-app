@@ -1,4 +1,7 @@
 """
+
+Tier: One-shot, done, kept for provenance (pipeline/oneoff)
+
 add_regional_icons.py - seed world-class excursion sights into items_full.
 
 The activity harvest is city-local, so famous landmarks that sit OUTSIDE a

@@ -1,4 +1,7 @@
 """Merge curated_appeal entries for the 2026-07d Europe-wide research batch
+
+Tier: One-shot, done, kept for provenance (pipeline/oneoff)
+
 (842 new dests researched by region agents; appeal 0-10 editorial traveller-appeal,
 gem=True only for under-the-radar spots).
 Reads app_data/appeal_2026_07d.json: { "gem:slug": [appeal, gem, why], ... }

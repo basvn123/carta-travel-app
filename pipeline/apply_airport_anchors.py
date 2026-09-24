@@ -1,4 +1,7 @@
 """Make near-but-unserved destinations reachable by anchoring them to the nearest
+
+Tier: Manual
+
 Ryanair-served airport + a ground (bus/shuttle) transfer (schema v8).
 
 Many catalogue places have no Ryanair route of their own and are too far to drive

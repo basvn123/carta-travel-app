@@ -1,5 +1,7 @@
 """Add 65 new gem destinations to complete the thin countries (2026-07-12).
 
+Tier: One-shot, done, kept for provenance (pipeline/oneoff)
+
 Follows the exact recipe of add_istria_gems.py (the shape every gem goes
 through), generalized:
 

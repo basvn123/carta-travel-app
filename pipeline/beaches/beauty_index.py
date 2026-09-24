@@ -1,4 +1,7 @@
 """The beach beauty index: what "one of the most beautiful beaches" means
+
+Tier: Library
+
 here, written down so it can be argued with.
 
 The problem this model exists to avoid is the one every published beach

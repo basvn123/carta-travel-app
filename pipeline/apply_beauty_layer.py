@@ -1,5 +1,7 @@
 """Add the schema-v9 beauty layer to an existing app_data.json in place.
 
+Tier: Scheduled (run_pipeline task fame)
+
 Adds:
   - meta.beauty_model              (weights + component definitions + sources;
                                      see beauty_layer.BEAUTY_MODEL)

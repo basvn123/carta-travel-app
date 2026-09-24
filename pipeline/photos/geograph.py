@@ -1,5 +1,7 @@
 """Geograph Britain and Ireland: the single biggest win available.
 
+Tier: Library
+
 A twenty-year project to photograph every OS grid square of GB and
 Ireland, CC BY-SA, storable, which is exactly invariant 8's bar. This is
 the corpus that fixes lakes GB 8 / IE 9, mountains GB 21, and the thin

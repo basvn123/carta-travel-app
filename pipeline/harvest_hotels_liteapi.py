@@ -1,5 +1,7 @@
 """LiteAPI (Nuitee) hotel-price anchors, the 3-star and 4/5-star stay tiers.
 
+Tier: Scheduled (run_pipeline task staytiers)
+
 Why: with hostels (harvest_hostelworld.py) covering the cheap end, this covers
 the comfortable end: what a 3-star and a 4/5-star double room cost per city,
 so the stay-tier picker spans backpacker to boutique.

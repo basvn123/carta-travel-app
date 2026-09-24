@@ -1,4 +1,7 @@
 """
+
+Tier: Manual
+
 enrich_activities.py - fill img/desc/wiki gaps in destinations[*].activities
 .items_full and add `pop` (avg daily Wikipedia pageviews, last 12 months) to
 every item with a resolved article.

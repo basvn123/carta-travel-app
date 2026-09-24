@@ -1,5 +1,7 @@
 """Gap repair: bridge breaks in staged hike geometries via local Valhalla.
 
+Tier: Manual
+
 The ingest step (ingest_osm_routes.py) stores each OSM route relation as a
 MultiLineString whose parts are in relation order, with gap bookkeeping in
 trips.gap_info. This script runs the continuity check over those geometries

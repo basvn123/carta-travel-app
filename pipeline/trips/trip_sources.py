@@ -1,5 +1,7 @@
 """Shared ground for the trip layer: paths, the catalogue view, attribution.
 
+Tier: Library
+
 The trip layer composes multi day itineraries out of things this repo already
 knows, plus one new free harvest (Wikivoyage routes). Nothing here queries a
 paid API and nothing here stores a byte we are not licensed to store, which is

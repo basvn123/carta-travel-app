@@ -1,5 +1,7 @@
 """Named forests as AREAS, from the extracts, because Overpass is the wrong door.
 
+Tier: Scheduled (run_pipeline task trails_forests)
+
 The tenth highlight code. Nine of the ten (`summit`, `lake`, `castle`,
 `viewpoint`, `gorge`, `hut`, `coast`, `waterfall`, and `village` when the next
 sweep lands) are points, and points come from scenic.py's per-cell Overpass

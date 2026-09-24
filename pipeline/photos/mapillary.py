@@ -1,5 +1,7 @@
 """Mapillary: existence proof only, and marked so it can never lead.
 
+Tier: Library
+
 CC BY-SA and storable, so it passes invariant 8, and that is where its
 virtues end for a card: it is dashcam and action-cam capture, and its
 quality_score measures focus and exposure, not beauty. The rule, enforced

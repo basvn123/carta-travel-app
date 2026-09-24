@@ -1,3 +1,4 @@
+# Tier: Manual
 import sys, os
 sys.path.insert(0, os.path.abspath('pipeline/cycling'))
 import cycle_sources as S

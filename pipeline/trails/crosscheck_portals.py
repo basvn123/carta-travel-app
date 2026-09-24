@@ -1,5 +1,7 @@
 """National portal cross-check: official trail geometries vs staged OSM trips.
 
+Tier: Manual
+
 Loads five official datasets into the portal_trails staging table of the
 trailslab PostGIS DB (tools/trailslab, port 5433), then scores every staged
 OSM trip against the official geometry and writes a portal_agreement check

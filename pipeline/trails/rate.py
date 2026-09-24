@@ -1,5 +1,7 @@
 """The published trail rating, 0 to 10, and the reasons behind it.
 
+Tier: Scheduled (run_pipeline task trails_rate)
+
 Nothing in this file is anybody's opinion, because no opinion is available to
 us: AllTrails and Komoot have no public API and forbid reuse of their reviews,
 Strava's heatmap is licensed for improving OpenStreetMap and nothing else, and

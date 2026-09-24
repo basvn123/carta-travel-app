@@ -1,5 +1,7 @@
 """Which way a beach faces, and whether the sun sets over its water.
 
+Tier: Library
+
 "Watch the sunset from the sand" is a real reason to choose one beach over
 the next one along the same coast, it is the kind of thing a person plans an
 evening around, and no competitor offers it as a filter. It is also entirely

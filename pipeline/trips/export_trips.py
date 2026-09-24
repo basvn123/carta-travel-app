@@ -1,5 +1,7 @@
 """Publish the validated trips to continent-app/public/trips/.
 
+Tier: Library
+
 Four artifacts, and the split between them is the whole performance story:
 
     /trips/index.json        which countries have trips, how many, which day

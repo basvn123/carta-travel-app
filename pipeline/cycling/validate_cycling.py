@@ -1,5 +1,7 @@
 """Ten hard checks, and a tour that fails one does not publish.
 
+Tier: Scheduled (run_pipeline task cycling_publish)
+
 Mirrors pipeline/trips/validate_trips.py, and it is deliberately boring for
 the same reason. A generated itinerary is only worth shipping if it is true,
 and the failure mode of every planner on the market is the plausible one: a

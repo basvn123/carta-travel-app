@@ -1,5 +1,7 @@
 """The coverage audit: status per region per layer, and the backlog.
 
+Tier: Scheduled (run_pipeline task regions)
+
 Runs after every layer build and as its own command:
 
     python pipeline/regions/coverage.py

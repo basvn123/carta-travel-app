@@ -1,5 +1,7 @@
 """harvest_pois_overture.py - maximal sightseeing POIs from Overture Maps.
 
+Tier: Scheduled (run_pipeline task overture)
+
 For "all POIs possible" across the WHOLE catalogue (now ~24k destinations),
 per-destination Overpass queries do not scale - that is 24k+ requests and a
 ban from the public endpoints. Overture Maps Places (75M+ POIs, GERS-stable,

@@ -1,5 +1,7 @@
 """Build the whole cycling layer, from nothing to shipped wire, in one command.
 
+Tier: Manual
+
     python pipeline/cycling/build_cycling.py
 
 Nine stages, in order, each idempotent and each keeping its own answer, so

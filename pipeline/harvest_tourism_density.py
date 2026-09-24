@@ -1,5 +1,7 @@
 """harvest_tourism_density.py - a crowding / tourism-density layer.
 
+Tier: Scheduled (run_pipeline task crowding)
+
 Implements the JRC European Tourism Dashboard's Tourism Density indicator
 (TD = nights spent / land area) at NUTS 3 (province) level, from two official
 Eurostat open sources - independent of the fame/rating signals the app already

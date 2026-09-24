@@ -1,4 +1,7 @@
 """One-off driver, 2026-07-22 evening: finish the landmark/description/image
+
+Tier: One-shot, done, kept for provenance (pipeline/oneoff)
+
 campaign without fighting the fare + activities harvests another session has
 running.
 

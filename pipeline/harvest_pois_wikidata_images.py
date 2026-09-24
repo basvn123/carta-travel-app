@@ -1,5 +1,7 @@
 """harvest_pois_wikidata_images.py - bulk POI images from Wikidata (P18).
 
+Tier: Scheduled (run_pipeline task poi_images_wikidata)
+
 The per-POI Commons/Wikipedia geosearch (enrich_images_commons/web) is
 throttled to a crawl by Wikimedia when run over the full ~87k image-less POI
 set. Wikidata's Query Service (WDQS) is a different endpoint and lets us pull

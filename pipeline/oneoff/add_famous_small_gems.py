@@ -1,4 +1,7 @@
 """Add 12 famous small destinations that were missing from the catalogue
+
+Tier: One-shot, done, kept for provenance (pipeline/oneoff)
+
 (2026-07-13): Makarska, Sibenik, Lago Maggiore (Stresa) and friends.
 
 Follows the exact recipe of add_thin_country_gems.py:

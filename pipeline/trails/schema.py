@@ -1,5 +1,7 @@
 """Apply a lab migration only when it would actually change something.
 
+Tier: Library
+
 Every module in this folder starts by running its migration file, which is
 right: a lab that predates a column must grow it without a rebuild, and every
 statement in those files is IF NOT EXISTS or ON CONFLICT.

@@ -1,5 +1,7 @@
 """After relevance: rank for beauty, then compose the hero and the gallery.
 
+Tier: Library
+
 The score, weights versioned as photo_rank_v1 and shipped in every layer's
 index.json model block (invariant 2):
 

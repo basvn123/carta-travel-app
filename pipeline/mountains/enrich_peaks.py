@@ -1,4 +1,7 @@
 """Stage 2 of the mountain layer: everything the shortlist needs to be ranked
+
+Tier: Library
+
 and shown.
 
 The harvest knows where a mountain is and roughly how big. That is not enough
