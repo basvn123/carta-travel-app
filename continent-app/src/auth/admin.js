@@ -77,6 +77,29 @@ export const adminAnalytics = () => call('admin_analytics');
 export const adminPaywallFunnel = (days = 30) =>
   call('admin_paywall_funnel', { p_days: days });
 
+/**
+ * The VAT threshold monitor (migration 026). Cumulative cross-border EU B2C
+ * sales per calendar year against the EUR 10,000 Article 59c limit, above
+ * which the place of supply moves from Belgium to each buyer's member state
+ * and a One Stop Shop registration is required.
+ *
+ * Stripe Tax does its own threshold monitoring in the Dashboard and that
+ * remains the authoritative source, because it sees each transaction's tax
+ * treatment and not just its amount. This is the backstop: the same figure
+ * computed from our own pass_grants ledger, so nobody has to log into Stripe
+ * to know how close the line is. If the two disagree, Stripe is right and
+ * this is the thing that said to go and look.
+ *
+ * Returns thresholdCents, a years array (each with cents, sales, countries,
+ * pct and breached), the current year's figure, and two integrity counts:
+ * unknownCountry and unknownAmount. Those two matter, because a total built
+ * from a ledger with holes in it is a floor and not the answer.
+ *
+ * No UI reads this yet. It is called from the SQL editor or from a later
+ * admin task; the query is documented in Execution/P2/T033-stripe-tax-and-oss.md.
+ */
+export const adminOssThreshold = () => call('admin_oss_threshold');
+
 export const adminListFeedback = (status, limit = 50, offset = 0) =>
   call('admin_list_feedback', { p_status: status || null, p_limit: limit, p_offset: offset });
 

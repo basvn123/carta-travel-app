@@ -21,6 +21,19 @@
  * accepted, so it must hold the same value the checkout function was deployed
  * with. Unset, passes are still granted and the consent columns stay NULL.
  * Needs migration 025_withdrawal_waiver.sql for those columns.
+ *
+ * Needs migration 026_oss_threshold.sql for the buyer_country, amount_cents
+ * and currency columns (T033). Those three are the VAT record: where the
+ * buyer was, what they actually paid, and in what currency. They exist so the
+ * cumulative cross-border B2C figure can be counted against the EUR 10,000
+ * Article 59c threshold without anyone opening the Stripe Dashboard.
+ *
+ * DEPLOY ORDER: migration 026 FIRST, then this function. The RPC is called
+ * with NAMED arguments, so a call carrying p_buyer_country against a database
+ * that still has only the six-argument grant_pass does not silently fall back,
+ * it fails to find the function and the grant errors. The 500 that follows
+ * makes Stripe retry, so nothing is lost once the migration lands, but a
+ * customer holds no pass until it does.
  */
 import Stripe from 'npm:stripe@17';
 import { createClient } from 'npm:@supabase/supabase-js@2';
@@ -95,6 +108,34 @@ Deno.serve(async (req) => {
     } catch { /* grant anyway, with no consent on file */ }
   }
 
+  // WHERE THE BUYER WAS (T033). Place of supply for an electronically
+  // supplied service to a consumer is the customer's member state, so the
+  // country on the billing address is a tax fact and not analytics. It is
+  // recorded against the sale because the EUR 10,000 Article 59c threshold is
+  // a running total of cross-border B2C sales and can only be computed from a
+  // ledger that remembers each one.
+  //
+  // customer_details.address is present because the checkout function sets
+  // billing_address_collection: 'required'. It is read defensively anyway: a
+  // session created some other way, or an API version that stops expanding
+  // the object, must not cost somebody the pass they paid for. NULL travels
+  // down to grant_pass, which stores it as "unknown" and lets
+  // admin_oss_threshold count it as a hole in the figure.
+  const buyerCountry = session.customer_details?.address?.country || null;
+
+  // What was actually charged, rather than what plan_tiers says the price is.
+  // T030 established that plan_tiers.price_cents is decorative and read by no
+  // code path, so it records intent. amount_total is the only number that
+  // knows about a discount, a coupon or a price that changed between the sale
+  // and the report, and a VAT figure has to be built from real amounts.
+  //
+  // It is VAT inclusive when the Stripe Price tax_behavior is inclusive, which
+  // is the intended setting; total_details.amount_tax is the split. Only the
+  // gross is stored here, because the threshold is counted on the supply and
+  // the tax component is Stripe Tax's own record to keep.
+  const amountCents = typeof session.amount_total === 'number' ? session.amount_total : null;
+  const currency = session.currency || null;
+
   const service = createClient(env('SUPABASE_URL'), env('SUPABASE_SERVICE_ROLE_KEY'));
   const { data, error } = await service.rpc('grant_pass', {
     p_user: userId,
@@ -105,6 +146,9 @@ Deno.serve(async (req) => {
     // The address the checkbox linked, so the stored consent names the text
     // it was given to. Read from the same secret the checkout function used.
     p_consent_terms_url: env('CHECKOUT_TERMS_URL') || null,
+    p_buyer_country: buyerCountry,
+    p_amount_cents: amountCents,
+    p_currency: currency,
   });
 
   if (error) {
