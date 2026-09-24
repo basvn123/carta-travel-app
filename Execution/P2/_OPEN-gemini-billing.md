@@ -151,3 +151,26 @@ have a section full of zeroes over a week of real traffic.
 Steps 12 and 13 can be folded into 16 and 17 if none of it has been applied
 yet: paste 029 and 030 in that order, then redeploy all three functions once.
 The pairs are written separately because 029 was ready first.
+
+## 6. The margin dashboard, 031
+
+Added by T043. Migration 031 is the odd one out in this run and the reason is
+worth stating once: it needs no redeploy. Every telemetry migration from 028 to
+030 added a table that an Edge Function writes to, so each one had to be pasted
+before the function that writes to it was redeployed. 031 adds a read over
+ledgers that already exist plus one owner-writable table, and nothing in the
+request path touches either. So the paste is the whole deployment and it can
+land at any point after 026, which is where the sales columns it reads come
+from.
+
+The two steps after it are not code. The dashboard's infrastructure line is
+seeded with the figures CARTA_UNIT_ECONOMICS.md models rather than bills anybody
+has read, and it reports the month as not reconciled while that is true. Making
+it true is T016, the bookkeeping task, and reading the reconciliation line
+afterwards is the only thing that closes T043's done condition.
+
+| Order | Row | Where | What |
+|---|---|---|---|
+| 19 | T043-a | Supabase | Paste migration 031_margin_dashboard.sql. No redeploy follows it |
+| 20 | T043-b | Bookkeeping | T016: enter one closed month of real infrastructure invoices through admin_set_infra_cost with source actual, one call per line item |
+| 21 | T043-c | Admin panel | Read the reconciliation line on that month and record the ledger figure, the dashboard figure and the difference |
