@@ -24,6 +24,23 @@ What this asserts, in the order it matters:
   it is fast                       the whole scrub is timed and reported,
                                    because "under five minutes" is part of
                                    the promise
+  R2, the edge and the manifest    (T050) checked in dry-run form only: no
+                                   R2, rclone or Cloudflare credential
+                                   exists on this laptop (see the T044 to
+                                   T049 reports), so a real delete and a
+                                   real purge cannot be exercised here.
+                                   What this proves instead: r2_delete and
+                                   edge_purge resolve the same target's
+                                   canonical title to the right five keys
+                                   and cdn_url()s and print rclone/curl
+                                   commands rather than raising, and
+                                   manifest_purge, against a throwaway
+                                   local manifest (never R2), actually
+                                   drops the title, re-hashes and leaves
+                                   every other entry alone. The live path
+                                   (a real rclone purge, a real Cloudflare
+                                   call, a real manifest re-upload) is an
+                                   owner step once a credential exists.
 
     python pipeline/photos/verify_takedown.py
 
@@ -42,6 +59,7 @@ ROOT = HERE.parents[1]
 sys.path.insert(0, str(HERE))
 
 import takedown  # noqa: E402
+import derive  # noqa: E402
 
 # Enough of the wire to be a real test: two layers, several countries.
 SAMPLE = [("beaches", ("ES", "GR", "HR", "IT")),
@@ -168,6 +186,61 @@ def main():
 
     print(f"  scrub touched {len(touched)} files in {took:.1f} s, "
           f"removed {removed} image records")
+
+    # T050: the R2/edge/manifest half, dry-run only (no credential on this
+    # laptop). canonical_title must resolve the same target the scrub just
+    # removed, r2_delete and edge_purge must print a command and not raise,
+    # and manifest_purge must actually rewrite a throwaway local manifest
+    # that carries the title, never touching R2.
+    canon = derive.canonical_title(f"File:{target}")
+    if not canon:
+        failures.append("derive.canonical_title did not resolve the scrub "
+                        "target; T050's R2/edge/manifest path has nothing "
+                        "to address")
+    else:
+        r2_status, r2_canon = takedown.r2_delete(canon, dry_run=True)
+        if r2_status != "dry-run" or r2_canon != canon:
+            failures.append(f"r2_delete dry-run: {r2_status}")
+        edge_status, urls = takedown.edge_purge(canon, dry_run=True)
+        expected_urls = [derive.cdn_url(canon, w, fmt)
+                         for fmt, w in derive.LADDER]
+        if edge_status != "dry-run" or urls != expected_urls:
+            failures.append(f"edge_purge dry-run: {edge_status}")
+
+        work = tmp / "manifest_work"
+        mdir = work / derive.IMG_PREFIX / derive.MANIFEST_DIR
+        mdir.mkdir(parents=True, exist_ok=True)
+        fake = {"schema": derive.MANIFEST_SCHEMA, "layer": "beaches",
+                "ladder": derive.LADDER_V, "base": "x", "path": "x",
+                "rungs": {}, "encoder": {}, "page": {}, "generated_at": "x",
+                "run": "x",
+                "files": {canon: {"h": derive.sha1_of(canon),
+                                  "d": [[1, 1], [1, 1], [1, 1]], "c": 0},
+                         "File:Unrelated other file.jpg":
+                             {"h": "0" * 40, "d": [[1, 1], [1, 1], [1, 1]],
+                              "c": 0}},
+                "credits": [["CC0", ""]]}
+        fake["count"] = len(fake["files"])
+        fake["inputs_hash"] = takedown._rehash_manifest(fake)
+        before_hash = fake["inputs_hash"]
+        (mdir / "beaches.json").write_text(json.dumps(fake),
+                                           encoding="utf-8")
+        m_result = takedown.manifest_purge(canon, dry_run=False,
+                                           work_dir=str(work))
+        after = json.loads((mdir / "beaches.json").read_text(
+            encoding="utf-8"))
+        if canon in after.get("files", {}):
+            failures.append("manifest_purge left the taken-down title in "
+                            "the manifest")
+        if "File:Unrelated other file.jpg" not in after.get("files", {}):
+            failures.append("manifest_purge removed an unrelated entry")
+        if after.get("inputs_hash") == before_hash:
+            failures.append("manifest_purge did not rehash after the edit")
+        if m_result.get("beaches", "").startswith("failed"):
+            failures.append(f"manifest_purge reported {m_result['beaches']}")
+        print(f"  R2 dry-run: {r2_status}; edge dry-run: {edge_status}; "
+              f"manifest_purge: {m_result.get('beaches')}")
+
     shutil.rmtree(tmp, ignore_errors=True)
     if failures:
         for line in failures:

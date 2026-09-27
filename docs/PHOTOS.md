@@ -71,8 +71,10 @@ pipeline/photos/
   wikidata_views.py  P4640 panoramic, P8592 aerial, P5252 winter
                    (mountains only), P3451 nighttime (deprioritised),
                    all entering at tier p18.
-  takedown.py      ledger + wire scrub: one image out of everything we
-                   publish, in minutes, permanently.
+  takedown.py      ledger + wire scrub + R2 delete + Cloudflare edge
+                   purge + manifest rewrite (T050): one image out of
+                   everything we publish, self-hosted or not, in
+                   minutes, permanently.
   review.py        the human queue on 127.0.0.1:8012 (FastAPI, inline
                    page, append-only ledger with an actor). Decisions
                    reorder the caches AND label the eval set.
@@ -119,7 +121,9 @@ python pipeline/photos/fill_authors.py               # attribution repair
 python pipeline/photos/review.py                     # the queue, :8012
 python pipeline/photos/evalset.py build              # refresh the set
 python pipeline/photos/evalset.py stats              # margin sweep
-python pipeline/photos/takedown.py add "<file>" --reason "..."
+python pipeline/photos/takedown.py add "<file>" --reason "..."   # wire + R2 + edge + manifest
+python pipeline/photos/takedown.py add "<file>" --dry-run        # print every command, change nothing
+python pipeline/photos/takedown.py reach "<file>"                # retry R2/edge/manifest alone
 python pipeline/photos/geograph.py ingest gridimage_base.tsv.gz gridimage_geo.tsv.gz
 node continent-app/scripts/verify_photo_contract.mjs # the gate
 python pipeline/verify_skip_flags.py                 # task zero, forever

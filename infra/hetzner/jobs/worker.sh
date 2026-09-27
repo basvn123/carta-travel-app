@@ -9,7 +9,7 @@
 # In order, each phase timed and each reported to R2 as it starts:
 #   setup    the software the job's needs column asks for: docker.io, a Python
 #            3.12 venv with requirements.txt + constraints.txt, the CPU torch
-#            and OpenCLIP stack
+#            and OpenCLIP stack, libvips with the AV1 encoder and pyvips
 #   inputs   rclone copy of the job's inputs prefix, filtered by its include
 #            patterns, into /srv/carta/in (the local mirror the job reads)
 #   job      infra/hetzner/jobs/<job>.sh under `timeout`, with every core
@@ -129,6 +129,16 @@ setup() {
       -r "$HERE/requirements-torch-cpu.txt" || return 1
     run "$VENV/bin/python" -m pip install -q --only-binary=:all: \
       -r "$HERE/requirements-photos.txt" -c "$CARTA_REPO/constraints.txt" || return 1
+  fi
+  if job_needs vips; then
+    # The image ladder (T049). pyvips ships only as an sdist that binds the
+    # system libvips through cffi (T006), so libvips comes from apt first.
+    # Ubuntu 24.04 packages libheif's AV1 encoder separately: without
+    # libheif-plugin-aomenc, libvips 8.15 decodes AVIF but cannot write it.
+    # derive.py selfcheck, the job's first step, proves both formats.
+    run env DEBIAN_FRONTEND=noninteractive apt-get install -y -q \
+      libvips-dev libheif-plugin-aomenc || return 1
+    run "$VENV/bin/python" -m pip install -q "pyvips==3.2.0" || return 1
   fi
   return 0
 }

@@ -138,13 +138,20 @@ outputs, the hard ceiling and the planning estimate per job.
 | valhalla_tiles | archive/inputs/geofabrik | archive/built/valhalla | 6 h | 1 h | real |
 | clip_sweep | archive/caches (layer, embeddings, models) | archive/caches | 12 h | 3 h | real |
 | planetiler | archive/inputs/geofabrik | tiles/basemap | 8 h | 2 h | stub, exit 3 |
-| image_transcode | none yet | img | 8 h | 6 h | stub, exit 3 |
+| image_transcode | archive/caches (layer) | img directly; archive/built/derive (report) | 8 h | 7.5 h | real (T049); beaches needs several runs |
 
-The two stubs have nothing to wrap. No Planetiler profile or consumer exists
-in the repository, and section 5.4 of the architecture document says to leave
-the basemap alone. `pipeline/photos/derive.py`, the libvips stage, is step 4
-of the migration and is not written. Each stub's header holds the command it
-will run.
+The planetiler stub has nothing to wrap. No Planetiler profile or consumer
+exists in the repository, and section 5.4 of the architecture document says to
+leave the basemap alone. Its header holds the command it will run.
+
+`image_transcode` runs `pipeline/photos/derive.py` (T049): 3 AVIF + 2 WebP per
+photograph, content-addressed under `img/{ab}/{cd}/{sha1}/`, and a manifest per
+layer at `img/manifest/<layer>.json`. It is the one job that writes a live
+prefix from the worker, deliberately: a content-addressed object is either
+absent or right, nothing points at it until the manifest does, and the manifest
+is written last. The job script's header gives the whole argument. Only its
+report, journals and a manifest copy go through staging, to
+`archive/built/derive/`.
 
 Why it is shaped like this. The status object in R2 is the only interface
 between the two machines, so neither needs to reach the other: no SSH from the
@@ -222,6 +229,11 @@ means a job that starts the lab in Docker on the CAX41 (the imresamu image
 T006 named), restores T045's trailslab dump, runs the tasks and dumps it back:
 a task of its own.
 
-The derive stage (`pipeline/photos/derive.py`, migration step 4) replaces the
-`image_transcode` stub. It needs libvips from apt before pyvips (T006), which
-is a new need in the jobs table and a branch in `jobs/worker.sh`.
+The derive stage (`pipeline/photos/derive.py`, migration step 4) replaced the
+`image_transcode` stub in T049. Its `vips` need installs `libvips-dev` and
+`libheif-plugin-aomenc` from apt (Ubuntu 24.04 ships libheif's AV1 encoder as
+a separate package; without it libvips reads AVIF but cannot write it) and
+then pyvips 3.2.0, an sdist that binds the system library (T006). The job's
+first step is `derive.py selfcheck`, which fails the run with exit 6 when
+either format cannot be written. Owner steps: Execution/P3/_OPEN-hetzner.md
+step 22 onward.

@@ -13,8 +13,8 @@
 #      script parses
 #   4. spawn.sh --dry-run prints create, wait, promote, delete and the sweep,
 #      in that order, for every job
-#   5. every job script's dry run, and worker.sh's, exits as designed (the two
-#      stubs exit 3)
+#   5. every job script's dry run, and worker.sh's, exits as designed (the
+#      planetiler stub exits 3; image_transcode, T049, runs derive.py)
 #   6. the delete happens on every failure path, with fake hcloud and rclone
 #      binaries first in PATH: a wait whose API calls fail, SIGTERM mid-wait,
 #      the ceiling, a failed create, a delete that is never confirmed, the
@@ -89,7 +89,7 @@ grep -q $'\r' "$JOBS/jobs.tsv" && fail "jobs.tsv has CR bytes" || pass "jobs.tsv
 args_for() {
   case "$1" in
     valhalla_tiles|planetiler) echo switzerland ;;
-    clip_sweep) echo beaches ;;
+    clip_sweep|image_transcode) echo beaches ;;
     *) echo "" ;;
   esac
 }
@@ -201,7 +201,7 @@ bash "$HERE/spawn.sh" --dry-run valhalla_tiles 'x;rm' > "$T/dry-bad.txt" 2>&1
 
 echo "== 5. job scripts and worker.sh, dry"
 for j in $(job_names); do
-  want=0; case "$j" in planetiler|image_transcode) want=3 ;; esac
+  want=0; case "$j" in planetiler) want=3 ;; esac
   # shellcheck disable=SC2046
   CARTA_JOB_DRY_RUN=1 CARTA_IN="$T/in" CARTA_OUT="$T/out" CARTA_WORK="$T/work" CARTA_REPO="$REPO" \
     bash "$JOBS/$j.sh" $(args_for "$j") > "$T/job-$j.txt" 2>&1
@@ -226,6 +226,26 @@ if [ "$rc" -eq 0 ] && grep -q '"state": "ok"' "$T/worker.txt" && grep -q 'requir
   pass "worker.sh dry run: setup, inputs by include, job, push to the run prefix, status ok"
 else
   fail "worker.sh dry run (exit $rc)"; tail -n 5 "$T/worker.txt" | sed 's/^/      /'
+fi
+# image_transcode (T049): derive.py's selfcheck, the read-only look at img/,
+# then derive.py straight to R2; the hold refuses it like clip_sweep.
+grep -q 'derive.py selfcheck' "$T/job-image_transcode.txt" \
+  && grep -q 'derive.py run beaches --upload r2' "$T/job-image_transcode.txt" \
+  && grep -q 'rclone lsf -R --files-only --fast-list r2:carta/img' "$T/job-image_transcode.txt" \
+  && grep -q 'sparse-checkout add cache/photos' "$T/job-image_transcode.txt" \
+  && pass "image_transcode: selfcheck, takedown ledger, held listing, derive.py to r2" \
+  || { fail "image_transcode commands"; tail -n 5 "$T/job-image_transcode.txt" | sed 's/^/      /'; }
+CARTA_IN="$T/holdin" CARTA_OUT="$T/holdout" CARTA_WORK="$T/work" CARTA_REPO="$T/holdrepo" CARTA_PY=false \
+  bash "$JOBS/image_transcode.sh" beaches > "$T/job-hold2.txt" 2>&1
+[ $? -eq 5 ] && pass "image_transcode refuses a layer whose tarball carries .rescore_hold (exit 5)" || { fail "image_transcode ignored the hold"; tail -n 3 "$T/job-hold2.txt"; }
+CARTA_DRY_RUN=1 CARTA_WORKER_ROOT="$T/w" bash "$JOBS/worker.sh" image_transcode 20260101t000000z-test beaches > "$T/worker4.txt" 2>&1
+rc=$?
+if [ "$rc" -eq 0 ] && grep -q '"state": "ok"' "$T/worker4.txt" && grep -q 'libheif-plugin-aomenc' "$T/worker4.txt" \
+   && grep -q 'pyvips==3.2.0' "$T/worker4.txt" && grep -q -- '--include beaches-cache.tar.gz' "$T/worker4.txt" \
+   && ! grep -q 'requirements-torch-cpu.txt' "$T/worker4.txt"; then
+  pass "worker.sh dry run of image_transcode: libvips with the AV1 encoder, pyvips, no torch, status ok"
+else
+  fail "worker.sh image_transcode dry run (exit $rc)"; tail -n 5 "$T/worker4.txt" | sed 's/^/      /'
 fi
 CARTA_DRY_RUN=1 CARTA_WORKER_ROOT="$T/w" bash "$JOBS/worker.sh" planetiler 20260101t000000z-test switzerland > "$T/worker3.txt" 2>&1
 rc=$?

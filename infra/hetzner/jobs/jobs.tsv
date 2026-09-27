@@ -13,11 +13,12 @@
 # expected_h       planning estimate, used for the planned cost only
 # needs            setup worker.sh does before the job: python (venv from
 #                  requirements.txt + constraints.txt), photos (CPU torch and
-#                  OpenCLIP), docker (docker.io from Ubuntu)
+#                  OpenCLIP), docker (docker.io from Ubuntu), vips (libvips-dev
+#                  and the libheif AV1 encoder plugin from Ubuntu, pyvips)
 # wraps            the local command the job runs, for the reader
 job	inputs_prefix	inputs_include	outputs_prefix	ceiling_h	expected_h	needs	wraps
 selftest	-	-	archive/built/selftest	1	0.25	-	uname, nproc, free, df and an R2 round trip; proves spawn, status, push and delete
 valhalla_tiles	archive/inputs/geofabrik	*/{arg}-latest.osm.pbf	archive/built/valhalla	6	1	docker	docker run ghcr.io/valhalla/valhalla-scripted with serve_tiles=False, as tools/trailslab/valhalla/docker-compose.yml configures it
 planetiler	archive/inputs/geofabrik	*/{arg}-latest.osm.pbf	tiles/basemap	8	2	docker	STUB, exits 3: no Planetiler profile or consumer exists in the repo (architecture section 5.4)
 clip_sweep	archive/caches	{arg}-cache.tar.gz,photo-embeddings.tar.gz,photo-support.tar.gz	archive/caches	12	3	python,photos	python pipeline/photos/rescore.py <layer>, then pipeline/archive/pack.py for the layer and the embeddings
-image_transcode	-	-	img	8	6	python	STUB, exits 3: pipeline/photos/derive.py (architecture section 8 step 4) is not written
+image_transcode	archive/caches	{arg}-cache.tar.gz	archive/built/derive	8	7.5	python,vips	python pipeline/photos/derive.py run <layer> --upload r2: 3 AVIF + 2 WebP per source straight to img/{ab}/{cd}/{sha1}/ (immutable), manifest to img/manifest/<layer>.json; out/ (report, journals, manifest copy) promoted to archive/built/derive
