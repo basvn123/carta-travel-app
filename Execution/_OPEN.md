@@ -6,6 +6,8 @@ pointer; the reasoning stays in the task's report. Rows are never deleted, only
 marked closed. `Order` is filled only when sequence matters; the ordered
 procedure for the Stripe launch is in `P2/_OPEN-stripe-launch.md`, and the one
 for the Gemini billing posture (T035 to T038) in `P2/_OPEN-gemini-billing.md`.
+The owner steps for the Hetzner build boxes (T046 onward) are in
+`P3/_OPEN-hetzner.md`.
 
 | ID | Raised by | Item | Owner | Status | Order |
 |---|---|---|---|---|---|
@@ -81,3 +83,14 @@ for the Gemini billing posture (T035 to T038) in `P2/_OPEN-gemini-billing.md`.
 | T045-e | T045 | Laptop clean-out with the T045 report's rm command, only after T045-c and T045-d pass their checks; then the trailslab volume and the Docker vhdx last. This is T045's done condition | user | open | 29 |
 | T045-f | T045 | continent-app/scripts/r2/provision.sh calls `wrangler r2 object put` without --remote, so its prefix markers and test objects go to local Miniflare storage and T044-c's verify.mjs will fail; fix before T044-a is run | next task | open | |
 | T045-g | T045 | Nothing calls pack.py or push.py: wire the pull at run start, the pack and push at run end, and a weekly database dump into run_pipeline.py or the build box run script; with a 30-day expiry, a month without a dump leaves none | next task | open | |
+| T046-a | T046 | Decide IPv4 for the orchestrator: IPv6-only (the default) cannot reach GitHub or the Wizz Air, Vueling, Volotea, Ryanair schedules and Travelpayouts hosts; recommended IPV4=1 at about EUR 0.60 a month; see P3/_OPEN-hetzner.md step 1 | user | open | 30 |
+| T046-b | T046 | Make infra/hetzner/ clonable: origin main is still at 8b53babed; push p3-cax11-orchestrator and set CARTA_REPO_BRANCH, or merge the stack and push main; P3/_OPEN-hetzner.md step 2 | user | open | 31 |
+| T046-c | T046 | Create the Hetzner Cloud project and a Read & Write API token, install hcloud on the laptop, export HCLOUD_TOKEN in the provisioning shell only; P3/_OPEN-hetzner.md step 3 | user | open | 32 |
+| T046-d | T046 | Run infra/hetzner/cax11/provision.sh, wait for cloud-init, confirm /var/log/carta-bootstrap.log ends "finished, all steps ok" (else sudo carta-bootstrap); P3/_OPEN-hetzner.md steps 4 and 5 | user | open | 33 |
+| T046-e | T046 | Fill /home/carta/.config/carta/env on the box from env.example (mode 600); the RCLONE_CONFIG_R2_* lines wait on T045-a; P3/_OPEN-hetzner.md step 6 | user | open | 34 |
+| T046-f | T046 | Run infra/hetzner/cax11/verify.sh against the box and get ALL CHECKS PASSED including the "cron fired" line; closes the first two parts of T046's done condition; P3/_OPEN-hetzner.md step 7 | user | open | 35 |
+| T046-g | T046 | First full pipeline run on the box; the weekly job is a placeholder, so T046's done condition cannot be met before T048 ports run_pipeline.bat into weekly.sh | next task | open | 36 |
+| T046-h | T046 | requirements.txt has floor pins only, so the box resolves pandas 3.0.6, numpy 2.5.3, scikit-learn 1.9.1 against the laptop's 2.2.3, 1.26.4, 1.6.1; pin the laptop's versions in a constraints file before T048's first real run | next task | open | 36 |
+| T046-i | T046 | requirements.txt still lists anthropic and omits pyyaml; carta-bootstrap works around both at install time; fix the file at the source together with T041-g | next task | open | |
+| T046-j | T046 | Every fresh clone pulls about 613 MB of Git LFS objects from GitHub, against the account's LFS bandwidth quota; T048 decides whether the box skips the LFS smudge and pulls those caches from R2 | next task | open | |
+| T046-k | T046 | The box installs security updates but never reboots itself, and the timer's boot-time run will start a real pipeline run after every reboot once T048 lands; T048 picks a reboot window and decides whether OnBootSec stays | next task | open | |
