@@ -1007,6 +1007,20 @@ def dedupe(rows):
     return kept
 
 
+def wire_ladder():
+    """pipeline/photos/wire_ladder.py, loaded by path like every cross-layer
+    module (T052): joins the image ladder's ih, d and hero placeholder into
+    the wire when --img-manifest is given, and does nothing otherwise."""
+    if "carta_wire_ladder" not in sys.modules:
+        spec = importlib.util.spec_from_file_location(
+            "carta_wire_ladder",
+            Path(__file__).resolve().parents[1] / "photos" / "wire_ladder.py")
+        mod = importlib.util.module_from_spec(spec)
+        sys.modules["carta_wire_ladder"] = mod
+        spec.loader.exec_module(mod)
+    return sys.modules["carta_wire_ladder"]
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     parser.add_argument("--countries", default="")
@@ -1019,6 +1033,7 @@ def main():
     parser.add_argument("--min-score", type=float, default=MIN_SCORE)
     parser.add_argument("--max-per-country", type=int, default=PUBLISH_MAX)
     parser.add_argument("--floor", type=int, default=COUNTRY_FLOOR)
+    wire_ladder().add_arguments(parser)
     args = parser.parse_args()
 
     wanted = [c.strip().upper() for c in args.countries.split(",") if c.strip()]
@@ -1320,6 +1335,11 @@ def main():
         "attribution": sorted(credits),
         "sources": provenance(countries),
     }
+    # The image ladder (T052): ih, d and the hero placeholder, joined
+    # into the records about to be written. No --img-manifest, no change.
+    wire_ladder().join_rows("lakes", args,
+                            list(by_country.values())
+                            + list(listed_by_country.values()))
     if args.dry_run:
         print(f"[lakes] {total} publishable across {len(index)} countries")
         return
