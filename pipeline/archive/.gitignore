@@ -1,0 +1,5 @@
+# pack.py writes tarballs and its state file here by default. They are build
+# artefacts for push.py, never repository content.
+output/
+pack_state.json
+__pycache__/

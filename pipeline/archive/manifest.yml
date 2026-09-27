@@ -1,0 +1,369 @@
+# Carta cold archive manifest.
+#
+# This file is the single source of truth for pack.py and push.py (push.py also
+# carries the pull mode and the lifecycle commands). Neither script hardcodes a
+# path, an R2 key or a lifecycle day count; they read this file. Change a class
+# here and both scripts pick it up on their next run.
+#
+# Reference: additional docs/Carta/Plan/Architecture/CARTA_CLOUD_ARCHITECTURE.md,
+# section 6.3 ("The 80 GB") and section 7b ("Object count, not byte count").
+# Task report: Execution/P3/T045-archive-to-r2.md. Depends on the bucket "carta"
+# existing, which T044 could not create for real (no Cloudflare credentials on
+# this machine); see Execution/_OPEN.md rows T044-a through T044-d.
+#
+# Everything this file describes lives under archive/ inside the one bucket T044
+# provisions. img/, data/ and tiles/ belong to other tasks and are not touched.
+bucket: carta
+root_prefix: archive/
+
+# rclone remote name for the S3-compatible R2 endpoint. push.py moves objects
+# with rclone, not `wrangler r2 object put`, because wrangler refuses any file
+# over 300 MiB (MAX_UPLOAD_SIZE_BYTES in wrangler 4.142.0's cli.js) and 23
+# OSM extracts, 6 raw mirrors and several cache tarballs are larger than that.
+# The remote is configured from environment variables only (see push.py), so no
+# rclone.conf with a secret in it ever exists on disk. Point this at an sftp
+# remote to send the pipeline-only classes to a Hetzner Storage Box instead.
+rclone_remote: r2
+
+# One tarball format for the whole archive, so a key never depends on which
+# machine packed it. zstd is faster and smaller, but no `zstd` binary exists on
+# the development laptop (checked 2026-09-27) and Python 3.11's tarfile cannot
+# write it, so gzip it is. Switching to zstd later means changing this line,
+# repacking every layer and re-pushing; pull reads the extension off the key.
+tar_compression: gzip
+gzip_level: 6
+
+# Sizes and counts were measured on the development laptop on 2026-09-27 with
+# `du -sm <path>` and `find <path> -type f | wc -l`, one path per call. They go
+# stale the moment a pipeline run adds a region or a layer; re-measure then.
+# local_object_count is what the class would cost in R2 objects if uploaded
+# loose; remote_object_count is what it costs with the treatment below.
+
+classes:
+  # --- 1. Reproducible inputs -------------------------------------------------
+  # Public downloads. Losing the R2 copy costs a re-download, never data. Kept
+  # as individual files, not tarred: they are already compressed, there are few
+  # of them (about 1,300 objects across all three, a rounding error against the
+  # 1M free Class A writes a month), and a build box usually needs one region,
+  # not all of them. No lifecycle rule: they do not accumulate.
+  - name: osm-extracts
+    kind: reproducible-input
+    local_path: data/raw/geofabrik
+    r2_key_pattern: "archive/inputs/geofabrik/{relpath}"
+    treatment: files
+    lifecycle_days: null
+    local_size_mb: 29814
+    local_object_count: 47
+    remote_object_count: 47
+    over_300mib: 23
+    notes: >
+      Geofabrik .pbf extracts in dated folders (2026-08-06, 2026-08-07,
+      2026-08-13). Re-downloading is free, so this class is the first
+      candidate for a Hetzner Storage Box or for no archive at all; archived
+      only to save harvest wall-clock on a rebuild (section 7b).
+
+  - name: dem-tiles
+    kind: reproducible-input
+    local_path: data/raw/dem
+    r2_key_pattern: "archive/inputs/dem/{relpath}"
+    treatment: files
+    lifecycle_days: null
+    local_size_mb: 24290
+    local_object_count: 996
+    remote_object_count: 996
+    over_300mib: 0
+    notes: >
+      Copernicus GLO-30 tiles for the trails elevation layer, in dated
+      folders. Same reasoning as osm-extracts.
+
+  - name: raw-mirrors
+    kind: reproducible-input
+    local_path: data/raw
+    local_path_excludes:
+      - geofabrik
+      - dem
+    r2_key_pattern: "archive/inputs/raw/{relpath}"
+    treatment: files
+    lifecycle_days: null
+    local_size_mb: 5324
+    local_object_count: 289
+    remote_object_count: 289
+    over_300mib: 6
+    notes: >
+      Everything else under data/raw: the src/ingestion collector mirrors
+      (sweden, norway, ign_bdtopo, swisstopo, renfe_kaggle,
+      opensky_scientific and 21 smaller ones). Not in the architecture
+      doc's table but gitignored, so a laptop clean-out would lose it.
+      Most of it re-downloads for free; renfe_kaggle needs a Kaggle login
+      and opensky_scientific needs approved research access, which is why
+      it is archived rather than left to re-download.
+
+  # --- 2. Expensive derived caches, tarred per layer --------------------------
+  # The class the task exists for. Each entry becomes exactly one tarball,
+  # never a folder of loose objects (section 7b). Paths inside the tarball are
+  # relative to the repo root, so pull extracts at the repo root and every
+  # file lands where it came from.
+  - name: photo-embeddings
+    kind: derived-cache
+    local_path: cache/photos/emb
+    r2_key_pattern: "archive/caches/photo-embeddings.tar.gz"
+    treatment: tar-per-layer
+    lifecycle_days: null
+    local_size_mb: 101
+    local_object_count: 23262
+    remote_object_count: 1
+    notes: >
+      OpenCLIP embeddings, one .npy per photograph, content-addressed. The
+      exact case section 7b warns about: 23,262 loose objects today, more
+      on every harvest, one object tarred. Hours of CPU per layer to rebuild.
+
+  - name: photo-support
+    kind: derived-cache
+    local_path: cache/photos
+    local_path_globs:
+      - dumps
+      - models
+      - sheets
+    r2_key_pattern: "archive/caches/photo-support.tar.gz"
+    treatment: tar-per-layer
+    lifecycle_days: null
+    local_size_mb: 1984
+    local_object_count: 13
+    remote_object_count: 1
+    notes: >
+      dumps (344 MB), models (1,635 MB, the OpenCLIP ViT-L/14 weights and
+      the LAION aesthetic head) and sheets (5 MB, contact sheets). Separate
+      from photo-embeddings because the weights almost never change while
+      emb changes every harvest. takedowns.json and review_ledger.jsonl in
+      the same folder are tracked in git and deliberately not included.
+      The 13th object is a Hugging Face snapshots/ symlink to the weights
+      blob; pack.py stores it as a link, not a second 1.7 GB copy.
+
+  - name: geograph-index
+    kind: derived-cache
+    local_path: cache/photos/geograph.sqlite
+    r2_key_pattern: "archive/caches/geograph-index.tar.gz"
+    treatment: tar-per-layer
+    lifecycle_days: null
+    local_size_mb: 941
+    local_object_count: 1
+    remote_object_count: 1
+    notes: >
+      The Geograph ingest's SQLite index over 8.36M photographs. Missed by
+      the first draft of this manifest. Rebuildable from the public Geograph
+      dumps, but slowly; its own layer because it changes only on a
+      Geograph re-ingest.
+
+  - name: beaches-cache
+    kind: derived-cache
+    local_path: cache/beaches
+    r2_key_pattern: "archive/caches/beaches-cache.tar.gz"
+    treatment: tar-per-layer
+    lifecycle_days: null
+    local_size_mb: 332
+    local_object_count: 519
+    remote_object_count: 1
+    notes: EEA bathing-water register and Overpass harvest caches, pipeline/beaches.
+
+  - name: cycling-cache
+    kind: derived-cache
+    local_path: cache/cycling
+    r2_key_pattern: "archive/caches/cycling-cache.tar.gz"
+    treatment: tar-per-layer
+    lifecycle_days: null
+    local_size_mb: 521
+    local_object_count: 6
+    remote_object_count: 1
+    notes: National cycling-portal and protected-area downloads, pipeline/cycling.
+
+  - name: lakes-cache
+    kind: derived-cache
+    local_path: cache/lakes
+    r2_key_pattern: "archive/caches/lakes-cache.tar.gz"
+    treatment: tar-per-layer
+    lifecycle_days: null
+    local_size_mb: 4689
+    local_object_count: 186
+    remote_object_count: 1
+    notes: Lakes v2 OSM spine, Geofabrik-derived extracts and CHELSA climate, pipeline/lakes. The largest cache.
+
+  - name: iab-cache
+    kind: derived-cache
+    local_path: cache/iab
+    r2_key_pattern: "archive/caches/iab-cache.tar.gz"
+    treatment: tar-per-layer
+    lifecycle_days: null
+    local_size_mb: 1342
+    local_object_count: 119
+    remote_object_count: 1
+    notes: Inside Airbnb raw downloads for the accommodation anchors.
+
+  - name: regions-cache
+    kind: derived-cache
+    local_path: cache/regions
+    r2_key_pattern: "archive/caches/regions-cache.tar.gz"
+    treatment: tar-per-layer
+    lifecycle_days: null
+    local_size_mb: 514
+    local_object_count: 25
+    remote_object_count: 1
+    notes: NUTS, LAU, ITL, GMBA and EEA boundary sources plus the built GeoPackage, pipeline/regions.
+
+  - name: trails-cache
+    kind: derived-cache
+    local_path: cache/trails
+    r2_key_pattern: "archive/caches/trails-cache.tar.gz"
+    treatment: tar-per-layer
+    lifecycle_days: null
+    local_size_mb: 187
+    local_object_count: 5029
+    remote_object_count: 1
+    notes: Per-trip photo and geometry snapshots, pipeline/trails. Second largest file count after emb.
+
+  - name: mountains-cache
+    kind: derived-cache
+    local_path: cache/mountains
+    r2_key_pattern: "archive/caches/mountains-cache.tar.gz"
+    treatment: tar-per-layer
+    lifecycle_days: null
+    local_size_mb: 129
+    local_object_count: 137
+    remote_object_count: 1
+    notes: Per-country raw and rich peak snapshots, pipeline/mountains.
+
+  - name: trips-cache
+    kind: derived-cache
+    local_path: cache/trips
+    r2_key_pattern: "archive/caches/trips-cache.tar.gz"
+    treatment: tar-per-layer
+    lifecycle_days: null
+    local_size_mb: 54
+    local_object_count: 4
+    remote_object_count: 1
+    notes: Wikivoyage route harvest and composed candidate set, pipeline/trips.
+
+  - name: fare-estimation-history
+    kind: derived-cache
+    local_path: data
+    local_path_globs:
+      - history
+      - models
+    r2_key_pattern: "archive/caches/fare-estimation-history.tar.gz"
+    treatment: tar-per-layer
+    lifecycle_days: null
+    local_size_mb: 7
+    local_object_count: 5
+    remote_object_count: 1
+    notes: >
+      data/history (weekly fare snapshot history) and data/models (the
+      quantile GBDT and its metrics), src/estimation. Tiny, but the history
+      half cannot be re-fetched: a past week's fares are gone once the week
+      is. Gitignored, so without this entry a clean-out would lose it.
+
+  # --- 3. Master snapshots -----------------------------------------------------
+  # Dated backups the pipeline orchestrator writes before risky stages. One
+  # object per file, keyed by the file's own name, which already carries its
+  # timestamp; re-pushing is a no-op for files already there. Not tarred:
+  # each is restored on its own and there are 11 of them.
+  - name: master-snapshots
+    kind: snapshot
+    local_path: app_data/backups
+    r2_key_pattern: "archive/snapshots/{relpath}"
+    treatment: files
+    lifecycle_days: 60
+    local_size_mb: 924
+    local_object_count: 11
+    remote_object_count: 11
+    notes: >
+      app_data.*.json, 52 to 112 MB each. 60 days is the middle of section
+      6.3's 30 to 90 day range: long enough to diagnose a bad run noticed a
+      few weeks later, short enough that history stays bounded. The rule
+      counts from upload, so the first push starts every file's clock at
+      the same day.
+
+  # The live master. Gitignored and 115 MB, so the laptop is its only home
+  # today. One fixed key, overwritten on every push, and no lifecycle rule:
+  # if pushes stopped for 60 days a rule would delete the only remote copy.
+  # History comes from master-snapshots, not from this key.
+  - name: master-current
+    kind: snapshot
+    local_path: app_data/app_data.json
+    r2_key_pattern: "archive/master/app_data.json"
+    treatment: files
+    lifecycle_days: null
+    local_size_mb: 115
+    local_object_count: 1
+    remote_object_count: 1
+    notes: Pulled first on a fresh box; the pipeline reads and writes it every run.
+
+  # --- 4. Encrypted database dumps ---------------------------------------------
+  # Dumped by the commands in the task report, encrypted with gpg to the
+  # owner's public key, then pushed from dump_dir. The dump is never written
+  # to R2 unencrypted and never lands inside the repo.
+  - name: trailslab-dump
+    kind: db-dump
+    local_path: null
+    dump_glob: "trailslab-*.dump.gpg"
+    r2_key_pattern: "archive/db/trailslab/{filename}"
+    treatment: db-dump
+    lifecycle_days: 30
+    local_size_mb: null
+    local_object_count: 0
+    remote_object_count: 1
+    notes: >
+      The trailslab PostGIS lab (Docker, 127.0.0.1:5433, database and user
+      trailslab). Section 6.4 calls it build-time and disposable, and most of
+      it is, but trip_reviews is the human review ledger and the publish
+      gate's audit trail, and it exists only inside Docker's vhdx on this
+      laptop. This dump is what stops the laptop being its system of record.
+
+  - name: supabase-dump
+    kind: db-dump
+    local_path: null
+    dump_glob: "supabase-*.dump.gpg"
+    r2_key_pattern: "archive/db/supabase/{filename}"
+    treatment: db-dump
+    lifecycle_days: 30
+    local_size_mb: null
+    local_object_count: 0
+    remote_object_count: 1
+    notes: >
+      pg_dump -Fc of the live project ntssxktaduxzpsmejwyv, the dump section
+      6.3 names. Auth, saved trips, entitlements. Encrypted because it holds
+      user rows; R2's own at-rest encryption does not stop anyone holding an
+      R2 token from reading it. Until now these went to a USB stick
+      (T023 found them under D:\carta-backups).
+
+# Gitignored paths deliberately left out, so the next reader knows they were
+# considered rather than forgotten. Each is rebuilt or re-fetched on the box.
+not_archived:
+  - path: tools/trailslab/valhalla/data
+    size_mb: 1769
+    reason: Valhalla routing tiles, rebuilt from the OSM extracts above.
+  - path: tools/brouter/segments
+    size_mb: 464
+    reason: Re-downloaded from brouter.de in minutes and republished weekly.
+  - path: data/trails/famous_registry_full.json
+    size_mb: 114
+    reason: Derived from the wire by the famous-registry script.
+  - path: continent-app/public/poi
+    size_mb: 41
+    reason: Build output of the app's POI shard step.
+  - path: data/derived/tp_fares.json
+    size_mb: 29
+    reason: Regenerated by every weekly Travelpayouts collector run.
+  - path: logs, pipeline/logs, tools/reachability/cache
+    size_mb: 6
+    reason: Run logs and a two-file cache; nothing a rebuild needs.
+  - path: app_data/enrich_cache.json, web_img_cache.json, commons_img_cache.json, must_desc_cache.json
+    size_mb: 45
+    reason: >
+      Tracked in git (and cache/*.json likewise), so the git remote is
+      already their off-machine copy. The first draft of this manifest
+      tarred them; that would have been a second copy of versioned files.
+  - path: cache/dossier
+    size_mb: 18
+    reason: >
+      All 244 files are tracked in git, including the parking_check.py
+      grounded-facts cache T041-f names. The first draft tarred it as
+      dossier-cache and recorded 8 files; both were wrong.
