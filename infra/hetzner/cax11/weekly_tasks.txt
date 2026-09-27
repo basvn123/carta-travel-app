@@ -1,0 +1,74 @@
+# The weekly cadence, in the order verify_tasks.sh verifies it on the CAX11.
+# Task report: Execution/P3/T048-pipeline-cron-migration.md.
+#
+# One step per line: <step> <task key> [extra run_pipeline.py arguments].
+# verify_tasks.sh runs `run_pipeline.py --only <key> --ship none <args>`, first
+# with --dry-run and then for real, and refuses a step until the one above it
+# has passed. `ship` is not a task key: it is the wire build
+# (npm run build in continent-app), verified last, on its own.
+#
+# The rule for the order is cheapest and least destructive first, so the first
+# thing that breaks on arm64 costs seconds and touches nothing that matters:
+# report-only tasks before master writers, short writers before long ones, and
+# the fare refresh that rolls the window last of the tasks.
+#
+# Before step 1 the box needs app_data/app_data.json and data/history, which
+# are gitignored: run_pipeline.sh --pull-only fetches them from R2, or copy
+# them from the laptop with scp (Execution/P3/_OPEN-hetzner.md, step 9).
+
+# Report only, soft, a few API cache reads. Proves src.ingestion imports, the
+# secrets file is read and the box reaches api.travelpayouts.com (no IPv6
+# address: fails on an IPv6-only box). Without TRAVELPAYOUTS_TOKEN it skips
+# cleanly and still passes.
+tp_stage        tp_stage
+
+# Report only, soft, about 6 s on the laptop. Reads the shipped fare wire and
+# appends to data/history: proves pandas at the pinned version on arm64 and
+# that the history pulled from R2 is where the estimation code looks.
+fare_history    fare_history
+
+# First master writer, and a cheap one: reads rating.score only and refuses to
+# write if any absolute score moved. Exercises the writer path on Linux (the
+# pre-write backup, logs/pipeline.lock, the narrowed other-python guard)
+# before anything expensive depends on it.
+country_context country_context
+
+# Master writer, about 2 min on the laptop. The one task that is CPU and
+# library bound: scikit-learn's quantile GBDT on arm64 with the pinned
+# numpy/scipy/scikit-learn. Compare data/models/fare_model_metrics.json with
+# the laptop's; a large MAPE jump means a numeric difference, not a port bug.
+fare_model      fare_model
+
+# Report only plus an idempotent URL wash, sampled HTTP probe (20 URLs).
+image_audit     image_audit
+
+# Master writer, about 1 min: the smallest carrier harvest and merge. First
+# live fare API from the box (api.volotea.com, IPv4 only).
+volotea_fares   volotea_fares
+
+# Master writer, about 35 min: Vueling (IPv4 only).
+vueling_fares   vueling_fares
+
+# Report only but long and disk-hungry: the raw open-data mirror writes
+# data/raw (5.3 GB on the laptop against the box's 40 GB disk). Watch df -h.
+ingestion       ingestion
+
+# The Ryanair path on a budget: --max-origins 5 invalidates only the five
+# stalest-highest-priority origins, re-fetches their legs and patches. Proves
+# the staleness-priority refresh on arm64 in minutes instead of a day, and
+# does not roll the fare window.
+fares_targeted  fares --max-origins 5
+
+# Master writer, about 4.7 h: Wizz Air (IPv4 only).
+wizz_fares      wizz_fares
+
+# Master writer, about 24.5 h on the laptop: the full Ryanair refresh. Rolls
+# the fare window, so it runs last. After it, the carrier merges above have to
+# run again before the fares table is whole; the first full scheduled run
+# (register row T048-c) does that in the right order.
+fares           fares
+
+# The wire build: npm run build in continent-app (sync-data.mjs, then vite).
+# Also writes the wire shape summary that compare_wire.py compares against the
+# laptop's build.
+ship            ship

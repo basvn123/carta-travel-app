@@ -1,0 +1,9 @@
+# Reboot the orchestrator for pending security updates, but never during a
+# pipeline run (T048, register row T046-k). The script decides; this unit only
+# runs it as root.
+[Unit]
+Description=Carta reboot window: reboot if updates need it and no run is active
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/sbin/carta-reboot-if-needed

@@ -1,0 +1,19 @@
+# /etc/logrotate.d/carta, installed by infra/hetzner/cron/install.sh (T048).
+#
+# The two logs with fixed names. weekly.log gets a few lines a week; the run
+# log gets everything every pipeline run prints, which for a full fare chain is
+# tens of megabytes. copytruncate because the run log is held open by tee for
+# the whole of a 30-hour run, and a rename would leave tee writing into the
+# rotated file. The dated per-day logs run_pipeline.py writes
+# (logs/pipeline_<date>.log) are compressed after 7 days and deleted after 90
+# by run_pipeline.sh itself, since a rotation rule fits fixed names only.
+/home/carta/logs/weekly.log /home/carta/carta/logs/pipeline_run.log {
+    su carta carta
+    weekly
+    rotate 12
+    compress
+    delaycompress
+    missingok
+    notifempty
+    copytruncate
+}

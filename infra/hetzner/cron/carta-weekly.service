@@ -1,0 +1,32 @@
+# Carta weekly pipeline run on the orchestrator (T048). Replaces the T046
+# placeholder unit of the same name that cloud-init.yaml writes at first boot;
+# infra/hetzner/cron/install.sh copies this over it.
+# Task report: Execution/P3/T048-pipeline-cron-migration.md.
+[Unit]
+Description=Carta weekly pipeline run (run_pipeline.py weekly cadence, T048)
+Documentation=file:///home/carta/carta/docs/PIPELINE.md
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=oneshot
+User=carta
+Group=carta
+WorkingDirectory=/home/carta/carta
+# weekly.sh runs the pipeline only when this is set; the T046 unit did not set
+# it, which is what keeps a freshly provisioned box from starting a harvest.
+Environment=CARTA_PIPELINE_ENABLED=1
+Environment=LANG=C.UTF-8
+ExecStart=/bin/bash /home/carta/carta/infra/hetzner/cax11/weekly.sh
+# The laptop's last complete fare chain took 29.8 h (fares 24.5 h, wizz_fares
+# 4.7 h, vueling_fares 35 min, volotea_fares 1 min; docs/PIPELINE.md). A oneshot
+# service is killed when its start exceeds TimeoutStartSec, and the default is
+# 90 s. 48 h leaves 60 percent headroom for a slower arm64 core and an unlucky
+# week of rate limits, and still ends days before the next Monday.
+TimeoutStartSec=48h
+# On stop or timeout every process in the unit gets SIGTERM; run_pipeline.py
+# turns that into a clean exit that releases logs/pipeline.lock.
+TimeoutStopSec=5min
+Nice=5
+IOSchedulingClass=best-effort
+IOSchedulingPriority=6

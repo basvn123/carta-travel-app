@@ -320,6 +320,58 @@ The eleven backfill tasks must stay off the schedule. They never come due, so
 merely porting the cron line is safe; the risk is somebody "fixing" their
 cadence. Several of them are the null-risk patch writers.
 
+## The Linux host (T048)
+
+The weekly cadence has a second home: the Hetzner CAX11 orchestrator of
+`infra/hetzner/cax11` (T046), Ubuntu 24.04 on arm64. The port is T048's, and
+its report, `Execution/P3/T048-pipeline-cron-migration.md`, is the record.
+Until the owner has verified it on the box and disabled the Windows task, the
+laptop stays the live schedule; the owner steps are in
+`Execution/P3/_OPEN-hetzner.md`, steps 9 onward.
+
+The chain on the box is systemd timer, `weekly.sh`, `run_pipeline.sh`,
+`run_pipeline.py`. `carta-weekly.timer` (`infra/hetzner/cron/`) fires Monday
+09:00 Europe/Brussels, the Windows task's slot, with `Persistent=true` and no
+boot-time firing. `carta-weekly.service` gives the run a 48 hour start timeout,
+because the laptop's last complete fare chain took 29.8 hours and a oneshot
+service is otherwise killed after 90 seconds. `weekly.sh` writes the "cron
+fired" line T046's `verify.sh` counts and runs the pipeline only when the
+service sets `CARTA_PIPELINE_ENABLED=1`, which the T046 units cloud-init
+installs do not; that gate is what stops a freshly provisioned box starting a
+harvest ten minutes after boot. `run_pipeline.sh` is the successor of
+`run_pipeline.bat`: it takes `logs/carta-run.lock`, loads the secrets file,
+re-syncs the venv to `constraints.txt` when the requirements change, pulls the
+master and the fare history from R2 when the box lacks them, runs
+`run_pipeline.py --max-cadence weekly` (`CARTA_MAX_CADENCE` changes the
+ceiling), makes the weekly encrypted database dumps, and packs and pushes what
+the run changed. It tees everything to `logs/pipeline_run.log` as the .bat did.
+
+Three behaviours of `run_pipeline.py` differ on Linux, each behind an
+`os.name` check so Windows runs exactly as before. The concurrency guard counts
+only python processes that run one of this repo's pipeline scripts (a script
+under `pipeline/` or `src/`, a `-m src.` module, or `run_pipeline.py`),
+resolved against each process's working directory from `/proc`, instead of any
+process with "python" in its command line. A lock file whose PID is no longer a
+running `run_pipeline.py` is removed as stale, because nobody is at the box to
+delete it by hand. SIGTERM, which systemd sends on stop and on timeout, becomes
+a normal exit, so the `finally` releases the lock. Node is looked up on PATH
+first as before, with `/usr/local/bin` and `/opt/node/bin` as the Linux
+fallbacks. `--max-origins N` needed nothing: the freshness report, the
+priority ranking and the cache invalidation are plain JSON and `pathlib`.
+
+The box runs the weekly tier only. The monthly and quarterly tasks have not
+been verified on arm64, and the heavy ones belong on the on-demand CAX41
+(T047), so until a task raises `CARTA_MAX_CADENCE` they run nowhere once the
+Windows task is disabled.
+
+`infra/hetzner/cax11/verify_tasks.sh` verifies the weekly tasks one at a time
+in the order of `weekly_tasks.txt` (cheapest and least destructive first,
+the day-long `fares` refresh last, the wire build after it) and records exit
+code, wall time, peak memory and the state-file change of each in
+`logs/arm64_verify/`. `infra/hetzner/cax11/compare_wire.py` compares two wire
+builds, or two shape summaries of them, by file set, keys, schema version and
+counts.
+
 ## The 65 tasks
 
 Wall times are the maximum observed in `logs/*.log` where one was recorded.

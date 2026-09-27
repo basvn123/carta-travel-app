@@ -2,8 +2,10 @@
 
 Wraps the pipeline/harvest_* / enrich_* / apply_* scripts in a single safe,
 resumable, cadence-aware driver so the data can be refreshed on a schedule
-(e.g. a weekly Windows Scheduled Task) without hand-running a dozen commands
-and without the known footguns firing.
+(a weekly Windows Scheduled Task via run_pipeline.bat, or on the Linux
+orchestrator the systemd timer that runs infra/hetzner/cax11/run_pipeline.sh,
+T048) without hand-running a dozen commands and without the known footguns
+firing.
 
 WHY A DRIVER (not just a .bat chain)
 ------------------------------------
@@ -11,7 +13,8 @@ Almost every harvester does a full read-modify-write of the ~50 MB
 app_data/app_data.json master. That creates three hazards this driver guards:
   1. Concurrency: two writers at once clobber each other (the repo's
      "concurrent-session gotcha"). We refuse to start a writer step while any
-     OTHER python is running, and hold a lockfile so two pipeline runs can't
+     OTHER python is running (on Linux: any other python running one of this
+     repo's pipeline scripts), and hold a lockfile so two pipeline runs can't
      overlap.
   2. patch()-nulls-coverage: harvest_activities/harvest_images `patch`, and
      apply_wikivoyage, WIPE the field for every destination absent from their
@@ -166,15 +169,23 @@ def _resolve(names, common):
     return names[0]
 
 
-_NODE_DIRS = [r"C:\Program Files\nodejs", r"C:\Program Files (x86)\nodejs"]
+if os.name == "nt":
+    _NODE_DIRS = [r"C:\Program Files\nodejs", r"C:\Program Files (x86)\nodejs"]
+    _NODE_BIN, _NPM_BIN = "node.exe", "npm.cmd"
+else:
+    # The Linux orchestrator (infra/hetzner/cax11, T048): carta-bootstrap
+    # unpacks Node into /opt/node and links it into /usr/local/bin, which is on
+    # systemd's default PATH. These are fallbacks for a PATH that lacks both.
+    _NODE_DIRS = ["/usr/local/bin", "/opt/node/bin"]
+    _NODE_BIN, _NPM_BIN = "node", "npm"
 
 
 def node_exe():
-    return _resolve(["node"], [Path(d) / "node.exe" for d in _NODE_DIRS])
+    return _resolve(["node"], [Path(d) / _NODE_BIN for d in _NODE_DIRS])
 
 
 def npm_exe():
-    return _resolve(["npm", "npm.cmd"], [Path(d) / "npm.cmd" for d in _NODE_DIRS])
+    return _resolve(["npm", "npm.cmd"], [Path(d) / _NPM_BIN for d in _NODE_DIRS])
 
 CADENCE_DAYS = {"weekly": 7, "monthly": 30, "quarterly": 90}
 # "after" has no interval: the task is due when a task it declares in `after`
@@ -279,11 +290,116 @@ def other_python_running():
                     pids.append(int(parts[1]))
             return [p for p in pids if p != me]
         else:
-            out = subprocess.run(["pgrep", "-f", "python"], capture_output=True, text=True).stdout
-            return [int(p) for p in out.split() if p.isdigit() and int(p) != me]
+            return _posix_repo_python_pids(me)
     except Exception as e:
         log(f"  (could not check for other python processes: {e})")
         return []
+
+
+# A python process counts as a possible master writer on POSIX only when it is
+# running one of this repo's pipeline entry points. The script argument, or the
+# module after -m, has to match one of these, relative to ROOT.
+_REPO_SCRIPT_PREFIXES = ("pipeline/", "src/", "src.", "run_pipeline.py")
+
+
+def _posix_repo_python_pids(me):
+    """POSIX half of the concurrency guard (T048, the Linux orchestrator).
+
+    The old branch was `pgrep -f python`, which matches every process with
+    "python" anywhere in its command line. On the CAX11 that would abort every
+    writer run whenever anything else in Python is alive, including the
+    on-demand box driver (T047) and unattended-upgrades. So this only counts a
+    python process that runs a repo pipeline script: its script (or -m module)
+    is under pipeline/ or src/, or is run_pipeline.py, given either relative
+    to the process's working directory or as an absolute path inside ROOT.
+    `ps` gives the command lines; the working directory comes from /proc when
+    there is one (Linux), and without /proc only absolute paths are
+    recognised."""
+    root = str(ROOT.resolve())
+    out = subprocess.run(["ps", "-eo", "pid=,args="], capture_output=True,
+                         text=True, timeout=20).stdout
+    pids = []
+    for row in out.splitlines():
+        parts = row.strip().split(None, 1)
+        if len(parts) < 2 or not parts[0].isdigit():
+            continue
+        pid, argv = int(parts[0]), parts[1].split()
+        if pid == me or not argv:
+            continue
+        exe = os.path.basename(argv[0])
+        if not (exe == "python" or exe.startswith("python3")):
+            continue
+        try:
+            cwd = os.readlink(f"/proc/{pid}/cwd")
+        except OSError:
+            cwd = None
+        in_repo_cwd = bool(cwd) and (cwd == root or cwd.startswith(root + os.sep))
+        rest = argv[1:]
+        # The first non-option argument is the script; after -m it is a module.
+        target, module = None, False
+        for i, a in enumerate(rest):
+            if a == "-m" and i + 1 < len(rest):
+                target, module = rest[i + 1], True
+                break
+            if a == "-c":
+                break
+            if not a.startswith("-"):
+                target = a
+                break
+        if not target:
+            continue
+        if module:
+            # `python -m src.ingestion.run_all` resolves against its cwd.
+            if not in_repo_cwd:
+                continue
+            rel = target
+        else:
+            full = target if target.startswith("/") else (
+                os.path.normpath(os.path.join(cwd, target)) if cwd else None)
+            if not full or not full.startswith(root + os.sep):
+                continue
+            rel = full[len(root) + 1:]
+        if rel.startswith(_REPO_SCRIPT_PREFIXES):
+            pids.append(pid)
+    return pids
+
+
+def _clear_stale_lock_posix():
+    """Unattended Linux runs only (T048). A run killed hard (SIGKILL after the
+    systemd timeout, an OOM kill, a power cut) never reaches the `finally` that
+    deletes logs/pipeline.lock, and on a box nobody logs into, a stale lock
+    would silently abort every Monday after it. The lock records its PID, so
+    it is removed when that PID is gone or is no longer a run_pipeline.py.
+    Windows keeps the old behaviour: a human deletes it."""
+    try:
+        pid = int(LOCK.read_text(encoding="utf-8").split()[0])
+    except (OSError, ValueError, IndexError):
+        return
+    try:
+        cmd = Path(f"/proc/{pid}/cmdline").read_bytes().replace(b"\0", b" ")
+        alive = b"run_pipeline.py" in cmd
+    except OSError:
+        alive = False
+    if not alive:
+        log(f"  removing stale {LOCK.relative_to(ROOT)}: PID {pid} is not a running "
+            "run_pipeline.py")
+        try:
+            LOCK.unlink()
+        except OSError:
+            pass
+
+
+def _exit_on_sigterm():
+    """POSIX only (T048): turn SIGTERM into SystemExit so the `finally` in
+    main() releases the lock when systemd stops the service or its timeout
+    fires. Windows never receives SIGTERM from Task Scheduler, so it is left
+    alone there."""
+    import signal
+
+    def _handler(signum, frame):
+        raise SystemExit(128 + signum)
+
+    signal.signal(signal.SIGTERM, _handler)
 
 
 def dest_count():
@@ -2495,6 +2611,8 @@ def main():
     args = ap.parse_args()
     if args.max_origins is not None and args.max_origins < 1:
         ap.error("--max-origins must be >= 1")
+    if os.name != "nt":
+        _exit_on_sigterm()
 
     LOGS.mkdir(parents=True, exist_ok=True)
     global _LOG_FH
@@ -2554,6 +2672,8 @@ def main():
             log("clobber app_data.json. Wait for it to finish, or re-run with --force if")
             log("you are certain it is not writing the master.")
             return 2
+        if os.name != "nt" and LOCK.exists() and not args.force:
+            _clear_stale_lock_posix()
         if LOCK.exists() and not args.force:
             log(f"\nABORT: {LOCK.relative_to(ROOT)} exists - another pipeline run may be active.")
             log("Delete it if that run is dead, or use --force.")

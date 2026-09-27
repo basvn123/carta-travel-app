@@ -1,0 +1,23 @@
+# The reboot window: Sunday 04:00 Brussels time (T048, register row T046-k).
+#
+# Unattended upgrades install security updates daily and never reboot on their
+# own (cloud-init.yaml, 52carta-unattended), so a kernel update waits for this
+# window. Sunday 04:00 is the point of the week furthest from the pipeline:
+# the Monday 09:00 run takes about 30 hours, so it is over by Tuesday
+# afternoon, and a slow week still has four days of slack. An update therefore
+# waits at most seven days for its reboot. The script skips the reboot if a
+# run is active anyway.
+#
+# Persistent is off on purpose: a window missed while the box was off must not
+# fire at the next boot, which is when a caught-up Monday run may be starting.
+[Unit]
+Description=Carta reboot window (Sunday 04:00 Europe/Brussels)
+
+[Timer]
+OnCalendar=Sun *-*-* 04:00:00 Europe/Brussels
+Persistent=false
+AccuracySec=5min
+Unit=carta-reboot.service
+
+[Install]
+WantedBy=timers.target

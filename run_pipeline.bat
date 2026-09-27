@@ -9,6 +9,14 @@ REM   TravelAppFareRefresh, Mon 09:00, Task To Run -> this file.
 REM   (It previously ran the deleted legacy refresh_fares_scheduled.bat.)
 REM
 REM Manual one-off from a normal shell:  run_pipeline.bat
+REM
+REM Successor (T048): infra/hetzner/cax11/run_pipeline.sh on the Linux
+REM orchestrator, run by carta-weekly.timer (infra/hetzner/cron/) in the same
+REM Monday 09:00 slot. This file and the Windows task stay the live schedule
+REM until the owner disables TravelAppFareRefresh, which happens only after the
+REM box's wire has passed compare_wire.py against a laptop build
+REM (Execution/P3/_OPEN-hetzner.md). Re-enable it with:
+REM   schtasks /Change /TN TravelAppFareRefresh /ENABLE
 cd /d "%~dp0"
 if not exist "logs" mkdir "logs"
 set "LOG=%~dp0logs\pipeline_run.log"

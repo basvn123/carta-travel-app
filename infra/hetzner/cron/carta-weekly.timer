@@ -1,0 +1,21 @@
+# Monday 09:00 Brussels time, the slot of the laptop's Windows Scheduled Task
+# TravelAppFareRefresh (T048). Replaces the T046 timer of the same name.
+#
+# What changed from T046, and why: OnBootSec=10min is gone. T046 used it to
+# prove the timer fires without waiting for a Monday, when the job was a
+# one-line placeholder. With the real pipeline behind it, every reboot would
+# start a run of up to 30 hours (register row T046-k). Persistent=true stays:
+# a Monday missed while the box was off still runs once, at the next boot.
+# The time zone is written out so a change of the box's zone cannot move the
+# slot.
+[Unit]
+Description=Carta weekly pipeline timer (Monday 09:00 Europe/Brussels)
+
+[Timer]
+OnCalendar=Mon *-*-* 09:00:00 Europe/Brussels
+Persistent=true
+AccuracySec=1min
+Unit=carta-weekly.service
+
+[Install]
+WantedBy=timers.target

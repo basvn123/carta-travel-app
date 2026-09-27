@@ -1,0 +1,5 @@
+# The box reads these as LF; a CRLF unit file or logrotate rule is misread
+# (T048). *.sh is already pinned by the repo-root .gitattributes.
+*.service      text eol=lf
+*.timer        text eol=lf
+carta-logrotate text eol=lf
