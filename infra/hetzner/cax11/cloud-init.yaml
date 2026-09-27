@@ -1,0 +1,282 @@
+#cloud-config
+#
+# Carta orchestrator: Hetzner CAX11 (Ampere arm64, 2 vCPU, 4 GB, 40 GB NVMe),
+# Ubuntu 24.04. The always-on box of CARTA_CLOUD_ARCHITECTURE.md section 6.2:
+# cron, run_pipeline.py orchestration, the collectors, the fare harvests and
+# publishing to R2. Task report: Execution/P3/T046-cax11-orchestrator.md.
+#
+# Do not pass this file to Hetzner by hand. provision.sh renders the three
+# @@...@@ placeholders below (SSH public key, repo URL, branch) into a temp
+# copy and passes that as user-data. The raw file stays valid YAML and valid
+# cloud-config with the placeholders in it, so it can be schema-checked as is.
+#
+# What happens on first boot, in order:
+#   1. users, packages, write_files (cloud-init's own modules)
+#   2. runcmd: sshd picks up the hardening drop-in, ufw is enabled with SSH
+#      only, then /usr/local/sbin/carta-bootstrap runs
+#   3. carta-bootstrap installs the pinned hcloud, rclone and node releases
+#      (each checksum-verified), clones the repo, builds the venv, creates the
+#      env file and enables the weekly timer. It is idempotent: when a step
+#      fails (typically the GitHub clone on an IPv6-only box, see README.md),
+#      fix the cause and run `sudo carta-bootstrap` again.
+#
+# The weekly job is a placeholder until T048 ports run_pipeline's cadence.
+
+timezone: Europe/Brussels
+disable_root: true
+ssh_pwauth: false
+
+users:
+  - name: carta
+    gecos: Carta orchestrator
+    groups: [sudo]
+    shell: /bin/bash
+    # The account has no password (lock_passwd), so sudo cannot prompt for one.
+    # SSH key login is the only way in, which is what makes NOPASSWD safe here.
+    sudo: "ALL=(ALL) NOPASSWD:ALL"
+    lock_passwd: true
+    ssh_authorized_keys:
+      - "@@CARTA_SSH_PUBKEY@@"
+
+package_update: true
+package_upgrade: true
+packages:
+  - git
+  - git-lfs
+  - python3.12
+  - python3.12-venv
+  - python3-pip
+  - curl
+  - ca-certificates
+  - unzip
+  - xz-utils
+  - jq
+  - cron
+  - ufw
+  - unattended-upgrades
+
+write_files:
+  # sshd reads drop-ins in lexical order and keeps the first value it sees,
+  # so 10- wins over the 50-cloud-init.conf that Ubuntu writes.
+  - path: /etc/ssh/sshd_config.d/10-carta-hardening.conf
+    owner: root:root
+    permissions: "0644"
+    content: |
+      PermitRootLogin no
+      PasswordAuthentication no
+      KbdInteractiveAuthentication no
+      PubkeyAuthentication yes
+      AuthenticationMethods publickey
+      AllowUsers carta
+      X11Forwarding no
+      MaxAuthTries 3
+
+  - path: /etc/apt/apt.conf.d/20auto-upgrades
+    owner: root:root
+    permissions: "0644"
+    content: |
+      APT::Periodic::Update-Package-Lists "1";
+      APT::Periodic::Unattended-Upgrade "1";
+      APT::Periodic::AutocleanInterval "7";
+
+  # Security updates install daily; the box never reboots itself, because a
+  # reboot in the middle of a multi-hour fare harvest leaves a rolled window
+  # with partial fares (the hazard run_pipeline.py's header describes).
+  # verify.sh reports when a reboot is pending. T048 decides the reboot window.
+  - path: /etc/apt/apt.conf.d/52carta-unattended
+    owner: root:root
+    permissions: "0644"
+    content: |
+      Unattended-Upgrade::Automatic-Reboot "false";
+      Unattended-Upgrade::Remove-Unused-Dependencies "true";
+
+  - path: /etc/carta/bootstrap.conf
+    owner: root:root
+    permissions: "0644"
+    content: |
+      # Read by /usr/local/sbin/carta-bootstrap. Change a pin here, then run
+      # `sudo carta-bootstrap` again; each tool is reinstalled only when its
+      # installed version differs from the pin.
+      CARTA_REPO_URL="@@CARTA_REPO_URL@@"
+      CARTA_REPO_BRANCH="@@CARTA_REPO_BRANCH@@"
+      # https://github.com/hetznercloud/cli/releases/download/v1.69.0/checksums.txt
+      HCLOUD_VERSION="1.69.0"
+      HCLOUD_SHA256="3afa68ac6c7dfb62f41d4a740376aaf88d3772e95f94a8816f41050c4bf1077e"
+      # https://downloads.rclone.org/v1.75.1/SHA256SUMS
+      RCLONE_VERSION="1.75.1"
+      RCLONE_SHA256="03f2504174034b6d004152ed7369251c9a9ec1f7e0836eda420f5c7a5ec0dff9"
+      # Node 24 is the active LTS line (Krypton); the laptop runs 24.14.
+      # https://nodejs.org/dist/v24.21.0/SHASUMS256.txt
+      NODE_VERSION="24.21.0"
+      NODE_SHA256="6ad1325edbdb5649c379b75a237147a666c95d4f9ae8d340fef2d1575d289ad2"
+
+  - path: /usr/local/sbin/carta-bootstrap
+    owner: root:root
+    permissions: "0755"
+    content: |
+      #!/usr/bin/env bash
+      # Idempotent installer for the Carta orchestrator. Runs once from
+      # cloud-init; safe to run again by hand with `sudo carta-bootstrap`.
+      # Every step checks its own state first, so a re-run only does what is
+      # missing. Exits non-zero if any step failed, after trying all of them.
+      set -uo pipefail
+      exec > >(tee -a /var/log/carta-bootstrap.log) 2>&1
+      . /etc/carta/bootstrap.conf
+
+      CARTA_HOME=/home/carta
+      REPO="$CARTA_HOME/carta"
+      VENV="$CARTA_HOME/venv"
+      ENV_DIR="$CARTA_HOME/.config/carta"
+      ENV_FILE="$ENV_DIR/env"
+      FAILED=()
+
+      say()  { printf '%s carta-bootstrap: %s\n' "$(date -Is)" "$*"; }
+      step() { say "== $1"; if "$2"; then say "ok: $1"; else say "FAILED: $1"; FAILED+=("$1"); fi; }
+      as_carta() { sudo -H -u carta "$@"; }
+
+      fetch_verified() {  # url sha256 dest
+        local url="$1" sum="$2" dest="$3"
+        curl -fsSL --retry 3 --connect-timeout 20 -o "$dest" "$url" || { say "download failed: $url"; return 1; }
+        echo "$sum  $dest" | sha256sum -c - || { say "checksum mismatch: $url"; rm -f "$dest"; return 1; }
+      }
+
+      install_hcloud() {
+        if command -v hcloud >/dev/null && hcloud version 2>/dev/null | grep -q "$HCLOUD_VERSION"; then return 0; fi
+        local t; t=$(mktemp -d)
+        fetch_verified "https://github.com/hetznercloud/cli/releases/download/v${HCLOUD_VERSION}/hcloud-linux-arm64.tar.gz" \
+          "$HCLOUD_SHA256" "$t/hcloud.tar.gz" || { rm -rf "$t"; return 1; }
+        tar -xzf "$t/hcloud.tar.gz" -C "$t" hcloud && install -m 0755 "$t/hcloud" /usr/local/bin/hcloud
+        local rc=$?; rm -rf "$t"; return $rc
+      }
+
+      install_rclone() {
+        if command -v rclone >/dev/null && rclone version 2>/dev/null | head -1 | grep -q "v${RCLONE_VERSION}\$"; then return 0; fi
+        local t; t=$(mktemp -d)
+        fetch_verified "https://downloads.rclone.org/v${RCLONE_VERSION}/rclone-v${RCLONE_VERSION}-linux-arm64.zip" \
+          "$RCLONE_SHA256" "$t/rclone.zip" || { rm -rf "$t"; return 1; }
+        unzip -q "$t/rclone.zip" -d "$t" && install -m 0755 "$t/rclone-v${RCLONE_VERSION}-linux-arm64/rclone" /usr/local/bin/rclone
+        local rc=$?; rm -rf "$t"; return $rc
+      }
+
+      install_node() {
+        if command -v node >/dev/null && [ "$(node --version 2>/dev/null)" = "v${NODE_VERSION}" ]; then return 0; fi
+        local t; t=$(mktemp -d)
+        fetch_verified "https://nodejs.org/dist/v${NODE_VERSION}/node-v${NODE_VERSION}-linux-arm64.tar.xz" \
+          "$NODE_SHA256" "$t/node.tar.xz" || { rm -rf "$t"; return 1; }
+        rm -rf /opt/node && mkdir -p /opt/node && tar -xJf "$t/node.tar.xz" -C /opt/node --strip-components=1 || { rm -rf "$t"; return 1; }
+        rm -rf "$t"
+        for b in node npm npx corepack; do ln -sf "/opt/node/bin/$b" "/usr/local/bin/$b"; done
+      }
+
+      clone_repo() {
+        if [ -d "$REPO/.git" ]; then say "repo already present at $REPO, not touched"; return 0; fi
+        # Shallow, one branch: the tracked tree is about 1.25 GB and the full
+        # history 3.2 GB; the box needs the tree, not the history. 71 harvest
+        # caches under app_data/ and cache/ (about 613 MB) are Git LFS objects
+        # (.gitattributes); without git-lfs the pipeline would read pointer files.
+        as_carta git lfs install --skip-repo || return 1
+        as_carta env GIT_TERMINAL_PROMPT=0 git clone --depth 1 --single-branch \
+          --branch "$CARTA_REPO_BRANCH" "$CARTA_REPO_URL" "$REPO" \
+          || { say "clone failed. github.com has no IPv6 address: an IPv6-only box cannot reach it (see infra/hetzner/README.md)"; return 1; }
+      }
+
+      build_venv() {
+        [ -f "$REPO/requirements.txt" ] || { say "no $REPO/requirements.txt (clone first)"; return 1; }
+        [ -x "$VENV/bin/python" ] || as_carta python3.12 -m venv "$VENV" || return 1
+        # requirements.txt at the repo root is the only requirements file in
+        # the repository. Two edits on the way in: the anthropic SDK is
+        # dropped, because CLAUDE.md forbids the Claude API and nothing on this
+        # box may call it; PyYAML is added, because pipeline/archive/pack.py
+        # and push.py import it and requirements.txt does not list it.
+        local req="$CARTA_HOME/.cache/carta-requirements.txt"
+        as_carta mkdir -p "$CARTA_HOME/.cache"
+        grep -vE '^[[:space:]]*anthropic' "$REPO/requirements.txt" | as_carta tee "$req" >/dev/null
+        echo "pyyaml>=6.0" | as_carta tee -a "$req" >/dev/null
+        as_carta "$VENV/bin/python" -m pip install --upgrade pip >/dev/null &&
+        as_carta "$VENV/bin/python" -m pip install --only-binary=:all: -r "$req"
+      }
+
+      make_env_file() {
+        as_carta mkdir -p "$ENV_DIR" && chmod 700 "$ENV_DIR"
+        if [ ! -e "$ENV_FILE" ]; then
+          if [ -f "$REPO/infra/hetzner/cax11/env.example" ]; then
+            as_carta cp "$REPO/infra/hetzner/cax11/env.example" "$ENV_FILE"
+          else
+            printf '# Fill from infra/hetzner/cax11/env.example in the repo.\n' | as_carta tee "$ENV_FILE" >/dev/null
+          fi
+        fi
+        chown carta:carta "$ENV_FILE" && chmod 600 "$ENV_FILE"
+      }
+
+      make_dirs() { as_carta mkdir -p "$CARTA_HOME/logs"; }
+
+      enable_timer() {
+        systemctl daemon-reload && systemctl enable --now carta-weekly.timer
+      }
+
+      step "hcloud ${HCLOUD_VERSION}" install_hcloud
+      step "rclone ${RCLONE_VERSION}" install_rclone
+      step "node ${NODE_VERSION}" install_node
+      step "log directory" make_dirs
+      step "clone ${CARTA_REPO_URL}@${CARTA_REPO_BRANCH}" clone_repo
+      step "python venv and requirements" build_venv
+      step "env file ${ENV_FILE}" make_env_file
+      step "weekly timer" enable_timer
+
+      if [ ${#FAILED[@]} -gt 0 ]; then
+        say "finished with ${#FAILED[@]} failed step(s): ${FAILED[*]}"
+        say "fix the cause and run: sudo carta-bootstrap"
+        exit 1
+      fi
+      say "finished, all steps ok"
+
+  # Placeholder weekly job. T048 replaces the script it runs with the ported
+  # run_pipeline cadence; the unit and the timer stay.
+  - path: /etc/systemd/system/carta-weekly.service
+    owner: root:root
+    permissions: "0644"
+    content: |
+      [Unit]
+      Description=Carta weekly pipeline job (placeholder until T048)
+      Wants=network-online.target
+      After=network-online.target
+
+      [Service]
+      Type=oneshot
+      User=carta
+      Group=carta
+      WorkingDirectory=/home/carta
+      ExecStart=/bin/bash /home/carta/carta/infra/hetzner/cax11/weekly.sh
+      Nice=5
+
+  # Monday 09:00 Brussels time, the slot the Windows Scheduled Task
+  # TravelAppFareRefresh uses today. OnBootSec fires it once ten minutes
+  # after every boot, which is how verify.sh can prove the timer works
+  # without waiting for a Monday. Persistent catches up a Monday missed
+  # while the box was off. run_pipeline.py only runs what is due, so a boot
+  # run is cheap; T048 may still drop OnBootSec.
+  - path: /etc/systemd/system/carta-weekly.timer
+    owner: root:root
+    permissions: "0644"
+    content: |
+      [Unit]
+      Description=Carta weekly pipeline timer
+
+      [Timer]
+      OnCalendar=Mon *-*-* 09:00:00
+      OnBootSec=10min
+      Persistent=true
+      Unit=carta-weekly.service
+
+      [Install]
+      WantedBy=timers.target
+
+runcmd:
+  - [systemctl, restart, ssh]
+  - [ufw, default, deny, incoming]
+  - [ufw, default, allow, outgoing]
+  - [ufw, allow, OpenSSH]
+  - [ufw, --force, enable]
+  - [/usr/local/sbin/carta-bootstrap]
+
+final_message: "Carta orchestrator cloud-init finished after $UPTIME seconds; see /var/log/carta-bootstrap.log"

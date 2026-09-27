@@ -1,0 +1,5 @@
+# The box reads these files as LF. A CRLF cloud-init.yaml would give the
+# server a carta-bootstrap script bash cannot run (provision.sh also strips CR).
+*.yaml      text eol=lf
+*.sh        text eol=lf
+env.example text eol=lf
