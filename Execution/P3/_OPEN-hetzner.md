@@ -555,3 +555,51 @@ the domain does not resolve yet. Run this once the first real beaches run
 | Order | Row | Where | What |
 |---|---|---|---|
 | 54 | T051-a | Box or laptop with credentials | Live manifest read back from R2 passes verify_attribution_cdn.py --manifest --head 5 |
+
+## 29. Turn the picture flag on and measure LCP in production (T052-a, order 56)
+
+T052 switched the beach, lake and mountain pages to `<picture>` with AVIF and
+WebP sources from the image ladder, behind a per-layer flag that is off in
+every build today. It measured the gain against a local static server
+standing in for cdn.carta-europetravel.com, because the domain does not
+resolve and there is no R2 credential on the laptop. The production number
+is this step. Run it after step 24 (T049-c) has put real beaches objects in
+R2, and after the CDN host is in the CSP img-src in `continent-app/vercel.json`
+(row T052-b, the T053 CSP task). Without that line every CDN photograph is
+blocked in production, so the flag must stay off until it lands.
+
+1. Read the live manifest back:
+   `rclone copyto r2:carta/img/manifest/beaches.json cache/img_manifest/beaches.json`
+   (any local path works; the file is about 180 bytes per derived source).
+2. From the repo root:
+   `python pipeline/beaches/export_beaches.py --img-manifest cache/img_manifest/beaches.json`.
+   It must print `[beaches] image ladder joined into N of M image records`
+   with N above zero. Heroes get no placeholder on this path unless a local
+   img/ tree is passed with `--img-root`, or derive.py writes `p` into the
+   manifest (row T052-c). A hero without one shows the plain panel ground,
+   exactly as today.
+3. Commit the rewritten `continent-app/public/beaches/*.json` in the app repo,
+   push, and let Vercel build a Preview. Leave `VITE_PICTURE_LAYERS` unset:
+   the Preview then serves the old markup by default and the new one with
+   `?pic=beaches`.
+4. On the Preview, measure one beach page whose hero is derived, five times
+   each way, cold cache, with Lighthouse's mobile preset:
+   `npx lighthouse "<preview>/?pic=off#beach=<id>&bc=<CC>" --only-categories=performance --output=json --output-path=off-1.json`
+   and the same with `?pic=beaches`. Record the median largest contentful
+   paint of each set, the hero's transfer size and CLS in a follow-up report.
+   Look at the page as well: the hero must be a `<picture>` whose currentSrc
+   is on cdn.carta-europetravel.com, and the credit line under it must name
+   the same author as before.
+5. If the median improved and nothing broke, set `VITE_PICTURE_LAYERS=beaches`
+   in the Vercel Production environment, redeploy and promote (a push only
+   makes a Preview). Lakes and mountains follow the same steps after their
+   own derive runs, each added to the comma list.
+6. To roll one layer back, remove it from `VITE_PICTURE_LAYERS` and redeploy.
+   The wire fields can stay: with the flag off the app ignores them.
+
+## Summary of the order, continued (T052)
+
+| Order | Row | Where | What |
+|---|---|---|---|
+| 55 | T052-b | Next task (T053) | cdn.carta-europetravel.com in the CSP img-src before any layer's flag goes on in production |
+| 56 | T052-a | Laptop with credentials, Vercel | Live manifest joined into the beaches wire, Preview measured ?pic=off against ?pic=beaches, then the flag on in Production |
