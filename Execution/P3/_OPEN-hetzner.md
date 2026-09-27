@@ -525,3 +525,33 @@ credential and at least one derived layer in place:
 | Order | Row | Where | What |
 |---|---|---|---|
 | 53 | T050-a | Cloudflare, box or laptop with credentials | First real takedown: R2 delete, edge purge and manifest rewrite all confirmed live |
+
+## 28. Prove the credit travels with the live copy (T051-a, order 54)
+
+T051 proved offline that no image enters the derive manifest without the
+credit `credit.owes_credit` demands, and that the app turns a CDN URL plus
+the manifest into author, licence and page
+(`pipeline/photos/verify_attribution_cdn.py`). What it could not do is read
+the manifest back from R2 or fetch a single object from
+cdn.carta-europetravel.com, because no credential exists on the laptop and
+the domain does not resolve yet. Run this once the first real beaches run
+(step 24, T049-c) has finished:
+
+1. From the repo root, on the box or a laptop with `RCLONE_CONFIG_R2_*`
+   exported: `rclone cat r2:carta/img/manifest/beaches.json > beaches-live.json`.
+2. `python pipeline/photos/verify_attribution_cdn.py --manifest beaches-live.json --head 5`.
+   It needs node on PATH (the app's resolver runs in it). It must exit 0: every
+   entry of the live manifest carries a complete credit, every CC BY-SA entry
+   resolves in the app to the right author, licence and page, and the five
+   CDN URLs of the first five CC BY-SA entries answer 200 with
+   `image/avif` or `image/webp` and an immutable Cache-Control.
+3. Open one of those 640.avif URLs in a browser, then its manifest entry's
+   Commons or Geograph page, and confirm by eye that the photograph is the
+   one the page names.
+4. Record the printed `measurements:` line in a follow-up report; close this row.
+
+## Summary of the order, continued (T051)
+
+| Order | Row | Where | What |
+|---|---|---|---|
+| 54 | T051-a | Box or laptop with credentials | Live manifest read back from R2 passes verify_attribution_cdn.py --manifest --head 5 |
