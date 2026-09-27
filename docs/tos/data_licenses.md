@@ -584,3 +584,31 @@ rather than accidental:
   publish it. An empty `UA.json` shell is the deliberate state for a layer
   with staged-but-unpublished data: the file exists so nothing 404s into SPA
   HTML, and its zero counts say "nothing published" honestly.
+
+## 14. Self-hosted image copies (R2, cdn.carta-europetravel.com), 2026-09-27
+
+From T049 on, a photograph can reach a reader as our own copy rather than
+as a hotlink: `pipeline/photos/derive.py` resizes the Commons or Geograph
+original into three AVIF and two WebP rungs, stores them in the R2 bucket
+under `img/{ab}/{cd}/{sha1}/`, and serves them from
+cdn.carta-europetravel.com. T010's verdict is what makes this allowed and
+what it costs. A hotlink leaves the copy with Wikimedia; a stored copy is
+redistribution, so Carta is the publisher of that file and must discharge
+its licence itself, at the point of redistribution. For CC BY and CC BY-SA
+that means the author, the licence (with its link) and the source page
+travel with every copy. Resizing and a format change are technical
+modifications (CC 4.0 section 2(a)(4)), not an adaptation, so share-alike
+attaches to the file as it is and to nothing around it, and the copy keeps
+exactly the licence the original carries. NC, ND, unlicensed and
+non-free files may be hotlinked by nobody here and stored by nobody here.
+
+| Source | What we take | License | Attribution required | Share-alike | Where attributed today |
+|---|---|---|---|---|---|
+| Carta image copies on R2 (`pipeline/photos/derive.py`, served from `cdn.carta-europetravel.com/img/`; manifest `img/manifest/<layer>.json`) | Resized copies (AVIF 320/640/1280, WebP 320/640) of the Commons and Geograph files already ledgered in sections 5, 7 and 11. No new source: the originals' rows still govern | Per file, unchanged from the original: CC BY-SA, CC BY, CC0, public domain, GFDL; NC, ND and unlicensed files are refused before storage (`derive.storable`) | Yes, per file, exactly as the original | Per file (the copy only) | The gate: `credit.owes_credit` refuses a file owing a name it lacks before any object is written, and the manifest carries `[licence, author]` per entry plus the Commons and Geograph page templates, so the credit travels with the pixels and is never looked up from Wikimedia at render time. `src/lib/imageCredit.js` `creditFromManifest` turns a CDN URL plus the manifest into author, licence, licence link and page. Proven offline by `pipeline/photos/verify_attribution_cdn.py`; live check pending (Execution/P3/_OPEN-hetzner.md step 28). Account > Data sources carries a "Carta image copies" row. Not live until T052 serves the ladder |
+
+Two consequences for anyone touching the image path. First, a file that
+leaves a layer or is taken down must also leave R2 (`takedown.py`, T050):
+a stored copy we can no longer credit correctly is a copy we should not
+hold. Second, the manifest is the only door. Any surface that renders a
+CDN URL without the manifest entry behind it prints a photograph with no
+author, which on our own copy is our breach, not Wikimedia's.

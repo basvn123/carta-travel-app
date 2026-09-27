@@ -8,7 +8,8 @@ licence heuristic in favour of it, so a careless change here removes
 photographs from that layer's cards or, far worse, lets uncredited ones
 onto them. A shared rule with no test is a rule that drifts.
 
-These are the twelve cases that rule was agreed on, half of them written
+These are the twelve cases that rule was agreed on (plus two added by
+T051), half of them written
 by the cycling layer (brief 07) and three of them cases neither of us
 could express until the other asked. Two matter more than they look:
 
@@ -62,6 +63,10 @@ CASES = [
     ({"license": "CC BY 2.0", "author": "",
       "no_attribution_required": True}, True,
      "harvest stamped Commons' own answer: nothing owed"),
+    ({"license": "CC BY-SA 4.0", "author": " , "}, False,
+     "punctuation is not a name (T051: the manifest would store it empty)"),
+    ({"lic": "CC BY-SA 3.0", "by": "<span></span>"}, False,
+     "an empty HTML wrapper is not a name either"),
 ]
 
 

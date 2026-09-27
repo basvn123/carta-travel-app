@@ -99,6 +99,11 @@ def owes_credit(img):
     remember, which repairing the data cannot do.
 
     Accepts a cache record (license/author) or a wire record (lic/by).
+
+    The author is tested through clean(), not strip(): an Artist field of
+    "," or "<span></span>" is not a name. strip() let it through, and the
+    image manifest (derive.py, which strips " ,;" from the author) would
+    then store a CC BY-SA copy crediting nobody (T051).
     """
     lic = (img.get("license") or img.get("lic") or "").strip()
     if not lic:
@@ -107,7 +112,7 @@ def owes_credit(img):
         return False                      # Commons says none is owed
     if NO_CREDIT_LIC.search(lic):
         return False
-    return not (img.get("author") or img.get("by") or "").strip()
+    return not clean(img.get("author") or img.get("by") or "")
 
 
 def stamp(img, meta):
