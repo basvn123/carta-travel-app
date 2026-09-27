@@ -492,3 +492,36 @@ forgets the header. Add it in the Cloudflare dashboard, Caching, Cache Rules.
 | 51 | T049-c | Box | First real run: ok, headers checked with curl, report and cost recorded |
 | 52 | T049-d | Box | Repeat until left is 0: T049's done condition; then lakes, mountains |
 | - | T049-e | Cloudflare | Optional Cache Rule under /img/ |
+
+## 27. Prove a real takedown reaches R2 and the edge (T050-a, order 53)
+
+T050 wrote the code (`pipeline/photos/takedown.py`, `add` now calls R2, the
+Cloudflare edge purge and the manifest rewrite after the wire scrub) and
+proved it in dry-run form and against throwaway local manifests, because no
+R2, rclone or Cloudflare credential exists on this laptop. The first real
+takedown is the owner's to run, once T049-a to T049-d have put a real
+credential and at least one derived layer in place:
+
+1. Set `RCLONE_CONFIG_R2_*` (already on the box from T045-a; on a laptop,
+   export the same four variables), `CLOUDFLARE_API_TOKEN` (a token scoped to
+   Zone > Cache Purge for carta-europetravel.com) and `CLOUDFLARE_ZONE_ID`
+   (Cloudflare dashboard, the zone's Overview page, right rail).
+2. Pick a title already derived and served (one `derive.py plan` or a
+   manifest listed it). Do NOT use a title anyone still wants published;
+   this is a real, permanent takedown.
+3. `python pipeline/photos/takedown.py add "<title>" --dry-run` first, read
+   every printed command.
+4. `python pipeline/photos/takedown.py add "<title>" --reason "T050-a proof"`.
+   Confirm the command prints `r2: ok`, `edge: ok` and `manifest[<layer>]: ok`
+   for every layer that carried the title, and exits 0.
+5. `curl -I` all five `cdn_url()`s (`derive.py key "<title>"` prints them) and
+   confirm each is 404 or otherwise no longer the old bytes, not a cached 200.
+6. `rclone cat r2:carta/img/manifest/<layer>.json` and confirm the title is
+   gone from `files` and `inputs_hash` changed.
+7. Record the outcome in a follow-up report; close this row.
+
+## Summary of the order, continued (T050)
+
+| Order | Row | Where | What |
+|---|---|---|---|
+| 53 | T050-a | Cloudflare, box or laptop with credentials | First real takedown: R2 delete, edge purge and manifest rewrite all confirmed live |
