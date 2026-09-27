@@ -306,3 +306,104 @@ script skips it unless `TRAILSLAB_HOST` resolves and answers.
 | 42 | T048-j | Decision | How the box's output reaches production |
 | 43 | T048-f | Laptop | Disable TravelAppFareRefresh, the same day as 41 |
 | - | T048-g | Box | pg_dump 17, backup key, SUPABASE_DB_URL: weekly dumps |
+
+## 17. Set up the on-demand worker on the orchestrator (T047-a, order 44)
+
+Appended at the close of T047. The code is `infra/hetzner/cax41/` and
+`infra/hetzner/jobs/` on branch `p3-on-demand-cax41`; the report is
+`Execution/P3/T047-on-demand-cax41.md`. Everything here runs on the CAX11 as
+`carta`, after steps 7 and 9, with the R2 lines of the secrets file filled
+(T045-a). The worker clones the branch the orchestrator itself was
+provisioned from (`CARTA_REPO_BRANCH` in `/etc/carta/bootstrap.conf`), so that
+branch must be pushed and must contain `infra/hetzner/cax41/`.
+
+Create a second Hetzner API token, Read & Write, named for the orchestrator,
+and put it in `~/.config/carta/env` as `HCLOUD_TOKEN`. Optionally (T047-f)
+create a separate R2 token for workers and add `CARTA_WORKER_R2_ACCESS_KEY_ID`
+and `CARTA_WORKER_R2_SECRET_ACCESS_KEY`, so the credentials a worker carries
+can be revoked without touching the orchestrator's. Then:
+
+```
+cd ~/carta && git pull
+bash infra/hetzner/cax41/verify.sh                 # ends "0 failed"
+bash infra/hetzner/cax41/spawn.sh --list
+bash infra/hetzner/cax41/spawn.sh --dry-run selftest
+sudo install -m 0644 infra/hetzner/cax41/carta-worker-sweep.service infra/hetzner/cax41/carta-worker-sweep.timer /etc/systemd/system/
+sudo systemctl daemon-reload && sudo systemctl enable --now carta-worker-sweep.timer
+systemctl list-timers carta-worker-sweep.timer     # next run at :17
+```
+
+## 18. The first real spawn: selftest (T047-b, order 45)
+
+The cheapest job: it boots, clones, writes a report of the box to R2 and
+powers off. About ten minutes of a CAX41, EUR 0.06 if Hetzner bills the started
+hour. In one terminal:
+
+```
+bash infra/hetzner/cax41/spawn.sh selftest
+```
+
+and in a second, while it runs, watch the worker appear and then disappear:
+
+```
+watch -n 30 'hcloud server list --selector role=worker'
+```
+
+It passes when spawn.sh ends with "outcome ok, exit 0", the list is empty
+again, `rclone cat r2:carta/archive/built/selftest/selftest.txt` shows
+aarch64, 16 cores and about 31 GB, and `bash infra/hetzner/cax41/spawn.sh
+--cost` shows one run. Write the wall hours and both cost figures from the
+ledger line (`tail -n 1 ~/carta/logs/cax41_runs.tsv`) into the register row
+when closing it. If it fails, the run's logs are in
+`~/carta/logs/cax41/<run id>/` and the status object names the phase.
+
+## 19. Prove the delete on an interrupted run (T047-c, order 46)
+
+Start `bash infra/hetzner/cax41/spawn.sh selftest` again and press Ctrl-C
+after the "+ hcloud server create" line has printed and the first "worker:"
+line has appeared. spawn.sh must print "deleting carta-worker-selftest-..."
+and `hcloud server list --selector role=worker` must be empty a minute later.
+This is the live twin of the failure-path checks in verify.sh.
+
+## 20. The first real heavy job (T047-d, order 47)
+
+This is T047's done condition. Valhalla for one country is the heavy job
+that is ready: its inputs are T045's Geofabrik extracts in R2 (T045-c must
+have pushed `archive/inputs/geofabrik/`), and its output lands in
+`archive/built/valhalla/<country>/`.
+
+```
+bash infra/hetzner/cax41/spawn.sh valhalla_tiles switzerland
+```
+
+It passes when the run ends ok, the worker is gone, and
+`rclone ls r2:carta/archive/built/valhalla/switzerland/` lists
+`valhalla_tiles.tar`, `valhalla.json` and `SOURCE.txt`. Record the wall
+hours and the cost from the ledger. SOURCE.txt names the image digest the
+build used; pin that digest as `VALHALLA_IMAGE` in `jobs/valhalla_tiles.sh`
+(T047-j). A clip_sweep is the other real heavy job, but not first: see
+T047-g.
+
+## 21. Reconcile the cost with the invoice (T047-e, order 48)
+
+After the month of these runs closes, read the CAX41 lines on the Hetzner
+invoice and compare them with that month's ledger total,
+`python3 infra/hetzner/cax41/cost.py mtd --month YYYY-MM`. The ledger carries two figures per run, at wall-clock hours and at
+whole started hours; the invoice says which one Hetzner bills, and cost.py's
+docstring should then say so. Enter the invoice amount in T043's ledger as
+the `hetzner_cax41` line with source `actual`:
+
+```
+select public.admin_set_infra_cost('YYYY-MM-01', 'hetzner_cax41', <cents>, 'actual', 'Hetzner invoice');
+```
+
+## Summary of the order, continued (T047)
+
+| Order | Row | Where | What |
+|---|---|---|---|
+| 44 | T047-a | Box | HCLOUD_TOKEN, verify.sh, dry run, sweep timer installed |
+| - | T047-f | Cloudflare, box | Optional: a separate R2 token for workers, before 45 |
+| 45 | T047-b | Box | spawn.sh selftest: ok, deleted, cost recorded |
+| 46 | T047-c | Box | Ctrl-C a live selftest; the worker is deleted |
+| 47 | T047-d | Box | spawn.sh valhalla_tiles switzerland: T047's done condition |
+| 48 | T047-e | Invoice, admin panel | Wall or started hours; hetzner_cax41 entered as actual |
