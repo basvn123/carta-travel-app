@@ -127,3 +127,182 @@ condition ("one full pipeline run has completed on it") closes only then.
 | 34 | T046-e | Box | Fill ~/.config/carta/env |
 | 35 | T046-f | Laptop | verify.sh prints ALL CHECKS PASSED |
 | 36 | T046-g | T048 | First full pipeline run on the box |
+
+# T048: moving the weekly schedule onto the box
+
+Appended 2026-09-27 at the close of T048
+(`Execution/P3/T048-pipeline-cron-migration.md`). The code is on branch
+`p3-pipeline-cron-migration`, stacked on `p3-cax11-orchestrator`, so it
+carries everything T046 wrote as well. Nothing below has been done: there is no
+box yet. Steps 1 to 7 come first, with one change to step 2: push
+`p3-pipeline-cron-migration` and provision from it
+(`CARTA_REPO_BRANCH=p3-pipeline-cron-migration`), so the box has the T048
+scripts from its first boot. That is safe. The T046 units cloud-init installs
+still fire the weekly job ten minutes after boot, but `weekly.sh` now only
+writes its "cron fired" line until step 13 sets `CARTA_PIPELINE_ENABLED`, so
+step 7 still passes and nothing is harvested early.
+
+If the box was already provisioned from the older branch, fetch this one into
+the shallow clone:
+
+```
+git -C ~/carta fetch --depth 1 origin p3-pipeline-cron-migration
+git -C ~/carta checkout -B p3-pipeline-cron-migration FETCH_HEAD
+```
+
+The Windows Scheduled Task TravelAppFareRefresh stays the live schedule through
+every step until step 15. Do not run a real step on the box while a laptop run
+is in progress: the two machines would each write their own master.
+
+## 9. Prepare the box (T048-a, order 37)
+
+```
+ssh -i ~/.ssh/carta_orchestrator_ed25519 carta@<address>
+sudo apt-get install -y time          # GNU time, for peak memory; verify_tasks.sh needs it
+bash ~/carta/infra/hetzner/cax11/run_pipeline.sh --pull-only
+```
+
+`--pull-only` re-syncs the venv to the laptop's pinned versions in
+`constraints.txt` (carta-bootstrap installed the newest releases: pandas 3
+against the laptop's 2.2.3) and, if the R2 lines of the secrets file are
+filled and T045-c has pushed them, pulls the master `app_data/app_data.json`
+and the fare history (`data/history`, `data/models`). Both are gitignored, so
+the clone has neither. Without R2, copy them from the laptop instead, from the
+repo root in Git Bash:
+
+```
+scp -i ~/.ssh/carta_orchestrator_ed25519 app_data/app_data.json carta@<address>:carta/app_data/
+tar -czf - data/history data/models | ssh -i ~/.ssh/carta_orchestrator_ed25519 carta@<address> 'tar -xzf - -C ~/carta'
+```
+
+Then run `--pull-only` again; it must end without the "no
+app_data/app_data.json" warning.
+
+## 10. Verify the weekly tasks one at a time (T048-b, order 38)
+
+```
+bash ~/carta/infra/hetzner/cax11/verify_tasks.sh --next      # prints the next step
+bash ~/carta/infra/hetzner/cax11/verify_tasks.sh <step>
+bash ~/carta/infra/hetzner/cax11/verify_tasks.sh --status
+```
+
+Twelve steps, in the order of `infra/hetzner/cax11/weekly_tasks.txt`, which
+gives the reason for each position: tp_stage, fare_history, country_context,
+fare_model, image_audit, volotea_fares, vueling_fares, ingestion,
+fares_targeted (`fares --max-origins 5`), wizz_fares, fares, ship. Each runs a
+dry run and then the real run, and passes only when both exit 0 and the task's
+`last_success` moved. The harness refuses a step until the one before it has
+passed. Run the long ones (wizz_fares about 5 hours, fares about a day) behind
+nohup or in tmux:
+
+```
+nohup bash ~/carta/infra/hetzner/cax11/verify_tasks.sh fares > ~/verify_fares.out 2>&1 &
+```
+
+If a step fails, stop there. Its record is
+`~/carta/logs/arm64_verify/<step>.json` and its full output `<step>.log`; the
+fix is a new task, not an edit on the box. Keep the whole `logs/arm64_verify`
+directory for the task that closes this row.
+
+## 11. The first full weekly run (T048-c, order 39)
+
+After step 10 every weekly task has just succeeded, so none is due and a plain
+run would do nothing. Force the whole weekly tier, in the pipeline's own order,
+through the same path the timer will use (one line):
+
+```
+CARTA_PIPELINE_ENABLED=1 nohup bash ~/carta/infra/hetzner/cax11/weekly.sh -- --only tp_stage,fares,wizz_fares,vueling_fares,volotea_fares,fare_history,fare_model,ingestion,country_context,image_audit > ~/first_run.out 2>&1 &
+```
+
+About 30 hours on the laptop. It must end with exit 0 in `~/logs/weekly.log`
+(exit 3 means the pipeline was fine and an R2 step failed). This closes T046-g
+as well.
+
+## 12. Compare the wire with a laptop build (T048-d, order 40)
+
+On the box, after step 11:
+
+```
+~/venv/bin/python ~/carta/infra/hetzner/cax11/compare_wire.py summarize ~/carta/continent-app/dist -o ~/box_wire.json
+```
+
+On the laptop, from the repo root, build and summarise, then compare:
+
+```
+(cd continent-app && npm run build)
+python infra/hetzner/cax11/compare_wire.py summarize continent-app/dist -o laptop_wire.json
+scp -i ~/.ssh/carta_orchestrator_ed25519 carta@<address>:box_wire.json .
+python infra/hetzner/cax11/compare_wire.py compare laptop_wire.json box_wire.json
+```
+
+It must print SAME SHAPE. A file-set difference under `fares/` can be real (an
+origin priced on one machine and not the other that week); read which origin
+and why before accepting it. Any key, type or schema-version difference is a
+port bug.
+
+## 13. Install the schedule on the box (T048-e, order 41)
+
+```
+sudo bash ~/carta/infra/hetzner/cron/install.sh --dry-run
+sudo bash ~/carta/infra/hetzner/cron/install.sh
+```
+
+Replaces T046's placeholder units with the real ones (Monday 09:00 Brussels,
+48 hour timeout, no boot-time run), adds the Sunday 04:00 reboot window and the
+logrotate rule, and prints the next firing. Do step 15 the same day, or both
+machines harvest on Monday.
+
+## 14. Decide how the box's output reaches production (T048-j, order 42)
+
+The box builds `continent-app/dist` and rewrites tracked files under
+`continent-app/public/`, but nothing commits, pushes or deploys them; on the
+laptop that was a hand step. Choose before step 15: commit and push from the
+box with a deploy key, or publish the data to R2 (T054). Until one exists,
+disabling the laptop task means production fares stop moving.
+
+## 15. Disable the Windows task (T048-f, order 43)
+
+Only after step 12 printed SAME SHAPE and step 14 is decided. On the laptop:
+
+```
+schtasks /Change /TN TravelAppFareRefresh /DISABLE
+schtasks /Query /TN TravelAppFareRefresh /V /FO LIST | findstr /C:"Scheduled Task State"
+```
+
+From then on the box's master is the newest one. Before running any master
+writer on the laptop again, pull it first:
+`python pipeline/archive/push.py --pull --only master-current`.
+
+To go back: `schtasks /Change /TN TravelAppFareRefresh /ENABLE` on the laptop
+and `sudo bash ~/carta/infra/hetzner/cron/install.sh --disable` on the box.
+
+## 16. Weekly database dumps from the box (T048-g, after T045-d)
+
+`run_pipeline.sh` dumps Supabase on every run once three things exist on the
+box: a pg_dump of version 17 or newer (Ubuntu 24.04 ships 16, which refuses a
+Postgres 17 server), the backup public key, and two lines in the secrets file.
+
+```
+sudo install -d /usr/share/postgresql-common/pgdg
+sudo curl -fsSL -o /usr/share/postgresql-common/pgdg/apt.postgresql.org.asc https://www.postgresql.org/media/keys/ACCC4CF8.asc
+echo "deb [signed-by=/usr/share/postgresql-common/pgdg/apt.postgresql.org.asc] https://apt.postgresql.org/pub/repos/apt noble-pgdg main" | sudo tee /etc/apt/sources.list.d/pgdg.list
+sudo apt-get update && sudo apt-get install -y postgresql-client-17
+gpg --import carta-backups.pub.asc        # the public half from T045-d, copied over with scp
+nano ~/.config/carta/env                  # SUPABASE_DB_URL and CARTA_BACKUP_KEY
+```
+
+The trailslab dump stays on the laptop: the lab is not on the box, and the
+script skips it unless `TRAILSLAB_HOST` resolves and answers.
+
+## Summary of the order, continued
+
+| Order | Row | Where | What |
+|---|---|---|---|
+| 37 | T048-a | Box | GNU time; run_pipeline.sh --pull-only; master and fare history present |
+| 38 | T048-b | Box | verify_tasks.sh, twelve steps in weekly_tasks.txt order, all passed |
+| 39 | T048-c | Box | First full weekly run through weekly.sh, exit 0 (closes T046-g) |
+| 40 | T048-d | Box, laptop | compare_wire.py prints SAME SHAPE |
+| 41 | T048-e | Box | cron/install.sh: real timer, reboot window, logrotate |
+| 42 | T048-j | Decision | How the box's output reaches production |
+| 43 | T048-f | Laptop | Disable TravelAppFareRefresh, the same day as 41 |
+| - | T048-g | Box | pg_dump 17, backup key, SUPABASE_DB_URL: weekly dumps |
