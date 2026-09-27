@@ -23,9 +23,9 @@ does can publish.
 
 `provision.sh` creates the server without a public IPv4 unless `IPV4=1` is set.
 On 2026-09-27 github.com and the GitHub release downloads had no IPv6
-address, and neither did the API hosts of Wizz Air, Vueling, Volotea, Ryanair's
-schedules and Travelpayouts. An IPv6-only box cannot clone the repository, and
-its fare harvest would keep only Ryanair. The
+address, and neither did the API hosts of Wizz Air, Vueling and Volotea (the
+Ryanair fare endpoint on www.ryanair.com does). An IPv6-only box cannot clone
+the repository, and its fare harvest would keep only Ryanair. The
 recommendation is `IPV4=1`, at about EUR 0.60 a month on top of EUR 5.99. If
 you keep IPv6-only, the clone and the hcloud install fail in step 5 and the
 reason is in `/var/log/carta-bootstrap.log`. Your laptop also needs working

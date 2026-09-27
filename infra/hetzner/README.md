@@ -81,10 +81,11 @@ that publish an IPv6 address, and on 2026-09-27 several that this box must
 reach did not. github.com has no AAAA record, and neither do the GitHub release
 downloads, so the repository clone and the hcloud download fail. On the data
 side, the main Ryanair fare endpoint on `www.ryanair.com` answers on IPv6, but
-the hosts the other carrier harvesters call do not: `services-api.ryanair.com`
-(schedules), `be.wizzair.com`, `apiw.vueling.com` and `api.volotea.com`. Nor
-do `api.travelpayouts.com`, `api.liteapi.travel`, `opensky-network.org`,
-`api.opentripmap.com` or `www.kaggle.com`. PyPI, nodejs.org,
+the hosts the other three carrier harvesters call do not: `be.wizzair.com`,
+`apiw.vueling.com` and `api.volotea.com`. Nor do `api.liteapi.travel`,
+`opensky-network.org`, `api.opentripmap.com` or `www.kaggle.com`. (The Ryanair
+schedules host and Travelpayouts also lack IPv6, but neither is part of the
+scheduled pipeline.) PyPI, nodejs.org,
 downloads.rclone.org, the Ubuntu ports mirror, the Hetzner API, Wikidata,
 Wikimedia Commons, Overpass, Geofabrik and the Gemini API are all reachable
 over IPv6. So an IPv6-only box can install most of itself and read the open

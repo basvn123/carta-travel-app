@@ -98,9 +98,8 @@ fi
 if [ "$IPV4" -eq 0 ]; then
   say ""
   say "# WARNING: IPv6-only (the default). github.com, be.wizzair.com,"
-  say "# apiw.vueling.com, api.volotea.com, services-api.ryanair.com,"
-  say "# api.travelpayouts.com and other hosts the pipeline needs publish no IPv6"
-  say "# address (checked 2026-09-27). The repo clone and the hcloud download in"
+  say "# apiw.vueling.com, api.volotea.com and other hosts the pipeline needs"
+  say "# publish no IPv6 address (checked 2026-09-27). The repo clone and the hcloud download in"
   say "# carta-bootstrap will fail on this box, and three of the four carriers"
   say "# would drop out of the fare harvest. Re-run with IPV4=1 unless that has"
   say "# been solved another way. See infra/hetzner/README.md."
