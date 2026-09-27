@@ -407,3 +407,88 @@ select public.admin_set_infra_cost('YYYY-MM-01', 'hetzner_cax41', <cents>, 'actu
 | 46 | T047-c | Box | Ctrl-C a live selftest; the worker is deleted |
 | 47 | T047-d | Box | spawn.sh valhalla_tiles switzerland: T047's done condition |
 | 48 | T047-e | Invoice, admin panel | Wall or started hours; hetzner_cax41 entered as actual |
+
+## 22. Put what the image ladder reads in place (T049-a, order 49)
+
+The image_transcode job (T049) reads one thing from R2 and writes to two
+prefixes, so it needs the bucket, the domain and the layer cache first. Check,
+in this order, that each is done: the bucket `carta` and the custom domain
+`cdn.carta-europetravel.com` exist and `node continent-app/scripts/r2/verify.mjs`
+passes (T044-a to T044-c, with T045-f fixed first); the orchestrator's secrets
+file carries the `RCLONE_CONFIG_R2_*` lines (T045-a); the worker round trip has
+been proven with `spawn.sh selftest` (T047-a, T047-b). Then push the beaches
+cache from the machine that owns it, with no `cache/beaches/.rescore_hold` on
+it (there is none on the laptop today):
+
+```
+python pipeline/archive/pack.py --only beaches-cache --out <dir with 1 GB free>
+python pipeline/archive/push.py --only beaches-cache --out <the same dir>
+rclone ls r2:carta/archive/caches/beaches-cache.tar.gz
+```
+
+The worker clones the branch named by `CARTA_REPO_BRANCH`, so the branch that
+carries `pipeline/photos/derive.py` (p3-image-derivative-ladder, or main once
+the stack is merged) must be pushed (T046-b).
+
+## 23. Dry run on the orchestrator (T049-b, order 50)
+
+```
+bash infra/hetzner/cax41/verify.sh
+bash infra/hetzner/cax41/spawn.sh --dry-run image_transcode beaches
+```
+
+verify.sh must end with 0 failed; the dry run must print the create, the
+wait, the promote to `archive/built/derive`, the delete and the sweep.
+
+## 24. The first real beaches run (T049-c, order 51)
+
+```
+bash infra/hetzner/cax41/spawn.sh image_transcode beaches
+```
+
+It passes when the run ends "outcome ok" (a run that used its whole time
+budget still ends ok: it writes the manifest for what exists and says how many
+sources are left). Then check what the CDN serves, taking a key from the
+manifest:
+
+```
+rclone copyto r2:carta/img/manifest/beaches.json /tmp/beaches.json
+python3 -c "import json;m=json.load(open('/tmp/beaches.json'));f=next(iter(m['files'].values()));h=f['h'];print(m['count'],'files');print(f'https://cdn.carta-europetravel.com/img/{h[:2]}/{h[2:4]}/{h}/640.avif')"
+curl -sI <that URL> | grep -iE '^(HTTP|cache-control|content-type)'
+```
+
+Expect HTTP 200, `cache-control: public, max-age=31536000, immutable` and
+`content-type: image/avif`; the same with `320.webp` gives `image/webp`. The
+run report is in `archive/built/derive/report/`; write its `derived`,
+`dead_n`, `failed_n`, `left` and `elapsed_s` into the register row, and the
+cost from `tail -n 1 ~/carta/logs/cax41_runs.tsv`.
+
+## 25. Repeat until beaches is complete (T049-d, order 52)
+
+Measured on the laptop, one source takes about 5 s of wall clock at the
+harvest's politeness, so one 8 h run derives roughly 4,700 of the 37,858
+gated beach sources. Run step 24 again until a run reports `left` 0 (only
+dead files remain). Each run is about EUR 0.45 and skips everything already
+held. If the CAX41's link to Wikimedia is faster than the laptop's, fewer
+runs are needed; the first report's `ms_each.fetch` says so. When a run ends
+with nothing left, T049's done condition is met: beaches fully derived and
+served from cdn.carta-europetravel.com. Only then start lakes and mountains
+(`spawn.sh image_transcode lakes`, then mountains).
+
+## 26. Optional: a Cache Rule under img/ (T049-e)
+
+Every object derive.py writes carries its own Cache-Control, and the manifest
+carries `public, max-age=300`. The Cache Rule `provision.sh` already recommends
+(hostname eq cdn.carta-europetravel.com and path starts with /img/, respect
+origin headers, edge TTL floor) is insurance against a future upload path that
+forgets the header. Add it in the Cloudflare dashboard, Caching, Cache Rules.
+
+## Summary of the order, continued (T049)
+
+| Order | Row | Where | What |
+|---|---|---|---|
+| 49 | T049-a | Cloudflare, laptop, box | Bucket, domain, rclone lines, selftest proven; beaches cache pushed; branch pushed |
+| 50 | T049-b | Box | verify.sh 0 failed; spawn.sh --dry-run image_transcode beaches |
+| 51 | T049-c | Box | First real run: ok, headers checked with curl, report and cost recorded |
+| 52 | T049-d | Box | Repeat until left is 0: T049's done condition; then lakes, mountains |
+| - | T049-e | Cloudflare | Optional Cache Rule under /img/ |
