@@ -168,6 +168,44 @@ thumbnail fetch only for pictures that are new. Bump
 moves and the next pass rescores everything instead of trusting numbers
 the old model produced.
 
+**On the CAX41 the hold is a correctness guard, not a memory guard**
+(T047). The sweep can now run on an on-demand Hetzner CAX41, 16 cores
+and 31 GB, created for the one job and deleted after it
+(`infra/hetzner/cax41/spawn.sh clip_sweep <layer>`). Of the two reasons
+above, the second does not apply there: nothing else runs on that box,
+and 2.5 GB of CLIP is a twelfth of it. Nothing in the code ever arbitrated
+memory (no script checks free RAM before loading CLIP; the stand-down was
+sessions agreeing with each other), so nothing had to be removed, and the
+"Being asked to give up memory" section below is about the laptop only.
+The first reason is unchanged by the hardware, so the hold stays, and it
+now works in both directions:
+
+- A rebuild holds the layer. `run_pipeline.py` writes
+  `cache/<layer>/.rescore_hold` itself for the length of a beaches, lakes
+  or mountains task and removes it afterwards; a hold someone wrote by
+  hand is left alone, `released:` line and all. `rescore.py` refuses a
+  held layer as before. `spawn.sh` refuses to create a CAX41 for a layer
+  held on the orchestrator, and the job on the CAX41 refuses a layer whose
+  tarball from R2 carries a hold, because that copy was packed
+  mid-rebuild. It refuses the whole layer even when the hold releases
+  some countries: a partial release is a handover between two sessions on
+  one machine, and the worker is neither.
+- A rescore marks the layer. `rescore.py` writes
+  `cache/<layer>/.rescore_running` (host, pid, start time) while it runs,
+  and `spawn.sh` writes one on the orchestrator for the length of a CAX41
+  sweep. `run_pipeline.py`'s layer tasks refuse to start while the marker
+  names a live process on this machine, or while one from another machine
+  is less than 48 hours old; an older or dead one is reported and ignored.
+
+The worker never writes the live caches in R2. It pushes its tarballs to
+`archive/runs/<run>/out/`, and `spawn.sh` promotes them to
+`archive/caches/` only after an ok status and only if no hold appeared on
+the orchestrator while it ran. After a promotion, the machine that owns
+the layer's cache pulls it (`python pipeline/archive/push.py --pull --only
+<layer>-cache`, and `--only photo-embeddings`) before its next rebuild.
+Direct runs of `build_lakes.py` and friends bypass `run_pipeline.py` and
+so bypass both files; the scheduled path does not.
+
 ## Costs and politeness
 
 One CLIP embedding per image, cached by file title, reused by the

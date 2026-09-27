@@ -1209,6 +1209,113 @@ def guard_mountains(ctx=None):
                        "the national high points alone")
     return True, "mountain stages present, Wikidata spine cached"
 
+
+# --- The photo engine's rescore hold, both directions (docs/PHOTOS.md, T047) --
+# "Rescore runs AFTER a layer rebuild, never beside one." A rebuild regenerates
+# the rows a rescore annotates, and both write cache/<layer>/rich_*.json, so
+# whichever writes a country last silently drops the other's fields. Two files
+# carry the rule, one per direction:
+#   cache/<layer>/.rescore_hold     a rebuild is running. rescore.py refuses the
+#                                   layer, and so does infra/hetzner/cax41/
+#                                   spawn.sh before it creates a CAX41.
+#   cache/<layer>/.rescore_running  a rescore is running: rescore.py on this
+#                                   machine, or a clip_sweep on a CAX41 that
+#                                   spawn.sh is driving. The layer task refuses.
+# Before T047 the hold was only ever written by hand, so a scheduled rebuild
+# ran unguarded, and nothing at all stopped a rebuild starting beside a sweep.
+# The hold is a correctness guard only; memory is not what it arbitrates.
+RESCORE_LAYERS = {"beaches": "beaches", "lakes": "lakes", "mountains": "mountains"}
+# A marker written on another machine cannot be checked by PID. Older than
+# this, it is taken as the leftover of a run that died there, and reported.
+RESCORE_MARKER_MAX_AGE_S = 48 * 3600
+
+
+def _pid_alive(pid):
+    """True when a process with this PID exists on this machine."""
+    if os.name == "nt":
+        # os.kill(pid, 0) is not a probe on Windows: it terminates the target.
+        try:
+            out = subprocess.run(
+                ["tasklist", "/FI", f"PID eq {pid}", "/FO", "CSV", "/NH"],
+                capture_output=True, text=True, timeout=30).stdout
+        except (OSError, subprocess.SubprocessError):
+            return True   # cannot tell: assume alive, the safe side
+        return f'"{pid}"' in out
+    try:
+        os.kill(pid, 0)
+    except ProcessLookupError:
+        return False
+    except PermissionError:
+        return True
+    return True
+
+
+def rescore_running(cache_dir):
+    """Why a rescore of this layer blocks a rebuild right now, or None.
+
+    The marker is `key: value` lines (host, pid, started as epoch seconds)
+    after a first line saying who. Written on this machine, it counts while
+    its PID lives. Written elsewhere (a tarball pulled from R2 can carry
+    one), it counts for RESCORE_MARKER_MAX_AGE_S after it started."""
+    path = CACHE / cache_dir / ".rescore_running"
+    if not path.exists():
+        return None
+    try:
+        text = path.read_text(encoding="utf-8").strip()
+    except OSError:
+        return f"{path.relative_to(ROOT)} exists and cannot be read"
+    fields = {}
+    for line in text.splitlines()[1:]:
+        k, sep, v = line.partition(":")
+        if sep:
+            fields[k.strip().lower()] = v.strip()
+    who = text.splitlines()[0] if text else "no reason given"
+    host = fields.get("host", "")
+    try:
+        pid = int(fields.get("pid", ""))
+    except ValueError:
+        pid = None
+    try:
+        started = int(fields.get("started", ""))
+    except ValueError:
+        started = None
+    if host == socket.gethostname() and pid:
+        if _pid_alive(pid):
+            return f"{who} (pid {pid})"
+        log(f"  note: stale {path.relative_to(ROOT)} (pid {pid} is gone); ignored")
+        return None
+    if started and time.time() - started > RESCORE_MARKER_MAX_AGE_S:
+        log(f"  note: {path.relative_to(ROOT)} from {host or 'another host'} is "
+            f"older than {RESCORE_MARKER_MAX_AGE_S // 3600} h; ignored")
+        return None
+    return f"{who} (host {host or 'unknown'})"
+
+
+def take_rescore_hold(task_key):
+    """Write the layer's hold for the length of its task; the path, or None
+    when a hold already exists (a rebuild someone started by hand owns it,
+    and its `released:` handover must survive untouched)."""
+    path = CACHE / RESCORE_LAYERS[task_key] / ".rescore_hold"
+    if path.exists():
+        log(f"  {path.relative_to(ROOT)} already exists; left as it is")
+        return None
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(
+        f"run_pipeline.py task {task_key} is rebuilding this cache; written "
+        f"for the length of the task and removed when it ends (T047)\n"
+        f"host: {socket.gethostname()}\npid: {os.getpid()}\n"
+        f"started: {int(time.time())}\n", encoding="utf-8")
+    return path
+
+
+def release_rescore_hold(path):
+    if path is None:
+        return
+    try:
+        path.unlink()
+    except OSError:
+        pass
+
 def guard_trips(ctx=None):
     """The trip layer needs its own scripts and the catalogue master.
 
@@ -2684,6 +2791,7 @@ def main():
            "max_origins": args.max_origins}
     backed_up = False
     ran, skipped, failed, soft_failed = [], [], [], []
+    held_by_run = []   # rescore holds this run wrote; released however it ends
     heartbeat("/start")
     try:
         for t in plan:
@@ -2697,6 +2805,17 @@ def main():
                 if not ok:
                     skipped.append(t["key"])
                     continue
+
+            hold = None
+            if t["key"] in RESCORE_LAYERS:
+                busy = rescore_running(RESCORE_LAYERS[t["key"]])
+                if busy:
+                    log(f"  refused: a rescore of this layer is running: {busy}")
+                    skipped.append(t["key"])
+                    continue
+                hold = take_rescore_hold(t["key"])
+                if hold:
+                    held_by_run.append(hold)
 
             if t.get("writes_app_data") and not args.no_backup and not backed_up:
                 backup_master()
@@ -2723,6 +2842,7 @@ def main():
                     if not ok:
                         break
             dt = int(time.time() - t0)
+            release_rescore_hold(hold)
 
             if ok:
                 log(f"  OK ({dt}s)")
@@ -2744,6 +2864,8 @@ def main():
                 failed.append(t["key"])
                 break
     finally:
+        for h in held_by_run:
+            release_rescore_hold(h)
         if LOCK.exists():
             try:
                 LOCK.unlink()

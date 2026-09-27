@@ -1,0 +1,5 @@
+# The worker reads these files as LF. A CR in jobs.tsv would end up inside an
+# R2 prefix, and a CRLF requirements line breaks the version pin.
+*.tsv text eol=lf
+*.txt text eol=lf
+*.sh  text eol=lf

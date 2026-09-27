@@ -1,0 +1,11 @@
+# CPU-only torch for the CAX41 photo jobs (T047). Installed by worker.sh before
+# requirements-photos.txt, in its own pip call, because this file switches the
+# index. PyPI's Linux torch wheels, aarch64 included, depend on the CUDA 13
+# runtime (nvidia-cudnn-cu13, nvidia-nccl-cu13 and more, several GB) with a
+# plain platform_system == "Linux" marker; checked on pypi.org 2026-09-27. The
+# CAX41 has no GPU, so those gigabytes would be downloaded on every run for
+# nothing. The +cpu builds below exist for cp312 manylinux_2_28_aarch64 on the
+# PyTorch index (checked the same day). Versions match the laptop.
+--index-url https://download.pytorch.org/whl/cpu
+torch==2.13.0+cpu
+torchvision==0.28.0+cpu

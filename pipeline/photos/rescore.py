@@ -346,7 +346,10 @@ def held(cache_dir):
 
     Delete the file when the rebuild is done. This is advisory and one
     way (it only stops the photo engine), which is the honest scope: the
-    other writers are separate scripts owned by separate sessions."""
+    other writers are separate scripts owned by separate sessions. The
+    other direction is mark_running() below (T047), which run_pipeline.py's
+    layer tasks honour; and run_pipeline.py writes this hold itself for the
+    length of a beaches, lakes or mountains task."""
     path = ROOT / "cache" / cache_dir / ".rescore_hold"
     if not path.exists():
         return None, set()
@@ -361,6 +364,32 @@ def held(cache_dir):
                          for c in line.split(":", 1)[1].split(",")
                          if c.strip()}
     return (text or "no reason given"), released
+
+
+def mark_running(cache_dir, layer, countries):
+    """Write cache/<layer>/.rescore_running for the length of this pass.
+
+    The other direction of the hold (T047). The hold stops a rescore while a
+    rebuild runs; this marker stops a rebuild while a rescore runs:
+    run_pipeline.py's beaches, lakes and mountains tasks refuse to start
+    while it names a live process. Host, pid and start time let a reader
+    tell a live pass from one that died. An existing marker is left alone
+    and not removed afterwards: it belongs to another pass (spawn.sh writes
+    one on the orchestrator while a CAX41 sweeps the layer). Returns the
+    path this pass must remove, or None."""
+    import os
+    import socket
+    path = ROOT / "cache" / cache_dir / ".rescore_running"
+    if path.exists():
+        return None
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(
+        f"rescore running: pipeline/photos/rescore.py {layer} "
+        f"({len(countries)} countries)\n"
+        f"host: {socket.gethostname()}\npid: {os.getpid()}\n"
+        f"started: {int(time.time())}\n"
+        f"run: {os.environ.get('CARTA_RUN_ID') or '-'}\n", encoding="utf-8")
+    return path
 
 
 def main():
@@ -402,10 +431,18 @@ def main():
         print(f"  running the {len(wanted)} country/ies the hold "
               f"releases: {','.join(wanted)}")
 
+    marker = None if args.dry_run else mark_running(cache_dir, args.layer, wanted)
     t0 = time.time()
-    for cc in wanted:
-        rescore_country(args.layer, cc, dry_run=args.dry_run,
-                        force=args.force)
+    try:
+        for cc in wanted:
+            rescore_country(args.layer, cc, dry_run=args.dry_run,
+                            force=args.force)
+    finally:
+        if marker is not None:
+            try:
+                marker.unlink()
+            except OSError:
+                pass
     print(f"done in {(time.time() - t0) / 60:.1f} min")
 
 

@@ -1,0 +1,5 @@
+# The orchestrator reads these as LF (T047). *.sh and *.yaml are pinned by
+# infra/hetzner/.gitattributes.
+*.service text eol=lf
+*.timer   text eol=lf
+*.py      text eol=lf

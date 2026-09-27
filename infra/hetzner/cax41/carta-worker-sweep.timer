@@ -1,0 +1,16 @@
+# Every hour at :17, and five minutes after boot, so a reboot of the
+# orchestrator mid-run cannot leave a worker billing unseen for long. A worker
+# is only ever deleted once past its deadline or once it has powered itself
+# off, so the sweep never cuts a run short. Persistent: a missed hour runs at
+# the next boot.
+[Unit]
+Description=Carta stray-worker sweep timer (T047)
+
+[Timer]
+OnCalendar=*-*-* *:17:00
+OnBootSec=5min
+Persistent=true
+Unit=carta-worker-sweep.service
+
+[Install]
+WantedBy=timers.target

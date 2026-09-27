@@ -1,0 +1,18 @@
+# Hourly safety net for the on-demand CAX41 (T047): delete every role=worker
+# server past its deadline, or powered off with no live spawn.sh owning it.
+# spawn.sh already deletes its own worker on every exit path and sweeps after
+# each run; this timer covers what spawn.sh cannot, such as the orchestrator
+# rebooting (the Sunday window, T048) or spawn.sh being killed with SIGKILL.
+# Installed by hand, see Execution/P3/_OPEN-hetzner.md step 17.
+[Unit]
+Description=Carta: delete stray CAX41 workers (T047)
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=oneshot
+User=carta
+Group=carta
+WorkingDirectory=/home/carta/carta
+ExecStart=/bin/bash /home/carta/carta/infra/hetzner/cax41/spawn.sh --sweep
+TimeoutStartSec=15min

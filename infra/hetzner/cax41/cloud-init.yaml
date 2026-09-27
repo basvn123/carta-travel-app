@@ -1,0 +1,179 @@
+#cloud-config
+#
+# Carta on-demand worker: Hetzner CAX41 (Ampere arm64, 16 vCPU, 31 GB,
+# 320 GB NVMe), Ubuntu 24.04, alive for one job and then deleted.
+# CARTA_CLOUD_ARCHITECTURE.md section 6.2. Task report:
+# Execution/P3/T047-on-demand-cax41.md.
+#
+# Do not pass this file to Hetzner by hand. spawn.sh renders the @@...@@
+# placeholders (run id, job, arguments, repo, deadline, the R2 credentials and,
+# only when asked, a Hetzner token) into a mode-600 temp copy and passes that
+# as user data; the raw file stays valid YAML and valid cloud-config with the
+# placeholders in it, so it can be schema-checked as is. Hetzner caps user
+# data at 32 KiB; verify.sh checks the rendered size.
+#
+# What happens on first boot:
+#   1. cloud-init installs git and Python (no package upgrade: the box lives
+#      for hours and is never exposed beyond SSH, and an upgrade costs minutes
+#      of a 16-core box on every run)
+#   2. runcmd starts /usr/local/sbin/carta-worker-boot under nohup, so
+#      cloud-init itself finishes and the job is not a child of it
+#   3. carta-worker-boot installs the pinned rclone, reports "started" to R2,
+#      makes a sparse clone without Git LFS, runs
+#      infra/hetzner/jobs/worker.sh (setup, inputs, job, push, final status),
+#      ships its logs to R2 and powers the box off
+#
+# Powering off does not stop the bill: Hetzner charges a stopped server like a
+# running one. The delete is the orchestrator's job (spawn.sh and its hourly
+# sweep). Poweroff is here so that a finished box does nothing and so that
+# spawn.sh sees "off" and deletes at its next poll instead of waiting for the
+# ceiling. Only when spawn.sh is run with CARTA_WORKER_SELF_DELETE=1 does the
+# box also hold a Hetzner token and delete itself; README.md has the tradeoff.
+#
+# Git LFS (register row T048-l). The worker never downloads an LFS object.
+# The clone is shallow, blob-filtered and sparse (pipeline/, infra/,
+# tools/trailslab/valhalla/ and the root files, about 5 MB), git-lfs is not
+# installed and GIT_LFS_SKIP_SMUDGE=1 is set anyway. None of the jobs reads a
+# tracked LFS cache: their inputs come from R2 by prefix. So a run costs
+# GitHub a few megabytes, not the 613 MB of LFS objects a full clone pulls.
+#
+# Runs as root. The box has one job, no other users, key-only SSH behind the
+# orchestrator's firewall, and is deleted within its ceiling; docker needs root
+# anyway. Timestamps are UTC so they compare with the orchestrator's ledger.
+
+timezone: Etc/UTC
+ssh_pwauth: false
+
+package_update: true
+package_upgrade: false
+packages:
+  - git
+  - python3.12
+  - python3.12-venv
+  - python3-pip
+  - curl
+  - ca-certificates
+  - unzip
+
+write_files:
+  # Everything the run needs to know, including secrets, so mode 600. It lives
+  # only as long as the server; the same text is in the server's user data,
+  # which Hetzner deletes with the server.
+  - path: /etc/carta/worker.conf
+    owner: root:root
+    permissions: "0600"
+    content: |
+      CARTA_RUN_ID='@@CARTA_RUN_ID@@'
+      CARTA_JOB='@@CARTA_JOB@@'
+      CARTA_JOB_ARGS='@@CARTA_JOB_ARGS@@'
+      CARTA_REPO_URL='@@CARTA_REPO_URL@@'
+      CARTA_REPO_BRANCH='@@CARTA_REPO_BRANCH@@'
+      CARTA_JOB_DEADLINE='@@CARTA_JOB_DEADLINE@@'
+      CARTA_R2_BUCKET='@@CARTA_R2_BUCKET@@'
+      RCLONE_CONFIG_R2_TYPE='s3'
+      RCLONE_CONFIG_R2_PROVIDER='Cloudflare'
+      RCLONE_CONFIG_R2_ENDPOINT='@@R2_ENDPOINT@@'
+      RCLONE_CONFIG_R2_ACCESS_KEY_ID='@@R2_ACCESS_KEY_ID@@'
+      RCLONE_CONFIG_R2_SECRET_ACCESS_KEY='@@R2_SECRET_ACCESS_KEY@@'
+      # Empty unless spawn.sh ran with CARTA_WORKER_SELF_DELETE=1.
+      CARTA_WORKER_HCLOUD_TOKEN='@@CARTA_WORKER_HCLOUD_TOKEN@@'
+      # Same pin and checksum as the orchestrator (cax11/cloud-init.yaml);
+      # change both together.
+      # https://downloads.rclone.org/v1.75.1/SHA256SUMS
+      RCLONE_VERSION='1.75.1'
+      RCLONE_SHA256='03f2504174034b6d004152ed7369251c9a9ec1f7e0836eda420f5c7a5ec0dff9'
+
+  - path: /usr/local/sbin/carta-worker-boot
+    owner: root:root
+    permissions: "0755"
+    content: |
+      #!/usr/bin/env bash
+      # One run of one job, then power off. Started once by cloud-init.
+      set -uo pipefail
+      set -a
+      . /etc/carta/worker.conf
+      set +a
+      LOG=/var/log/carta-worker.log
+      ROOT=/srv/carta
+      REPO="$ROOT/repo"
+      RUN_PREFIX="archive/runs/$CARTA_RUN_ID"
+      R2="r2:$CARTA_R2_BUCKET/$RUN_PREFIX"
+      read -r up _ < /proc/uptime
+      CARTA_T0=$(( $(date +%s) - ${up%.*} ))
+      export CARTA_T0
+      say() { printf '%s carta-worker-boot: %s\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)" "$*"; }
+
+      # Used only until worker.sh exists; worker.sh writes every later status.
+      early_status() {  # state phase exit_code
+        command -v rclone >/dev/null || return 0
+        printf '{"run": "%s", "job": "%s", "state": "%s", "phase": "%s", "exit_code": %s, "updated_at": "%s", "durations": {"total_s": %s}, "host": "%s"}\n' \
+          "$CARTA_RUN_ID" "$CARTA_JOB" "$1" "$2" "$3" "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+          "$(( $(date +%s) - CARTA_T0 ))" "$(hostname)" \
+          | rclone rcat "$R2/status.json" || say "could not write the status object"
+      }
+
+      the_end() {
+        local rc=$?
+        say "exit $rc; shipping logs"
+        if command -v rclone >/dev/null; then
+          rclone copyto "$LOG" "$R2/logs/carta-worker.log" || true
+          rclone copyto /var/log/cloud-init-output.log "$R2/logs/cloud-init-output.log" || true
+        fi
+        if [ -n "${CARTA_WORKER_HCLOUD_TOKEN:-}" ]; then
+          # Second safety net, only when the orchestrator chose to hand over a
+          # token. The orchestrator still deletes; a 404 there is harmless.
+          id="$(curl -fsS -m 10 http://169.254.169.254/hetzner/v1/metadata/instance-id || true)"
+          if [ -n "$id" ]; then
+            say "deleting server $id through the API"
+            curl -fsS -m 30 -X DELETE -H "Authorization: Bearer $CARTA_WORKER_HCLOUD_TOKEN" \
+              "https://api.hetzner.cloud/v1/servers/$id" >/dev/null || say "self-delete failed"
+          fi
+        fi
+        sync
+        say "powering off"
+        systemctl poweroff || shutdown -h now
+      }
+      trap the_end EXIT
+
+      # Whatever else happens, the box stops at the deadline plus ten minutes.
+      mins=$(( (CARTA_JOB_DEADLINE - $(date +%s)) / 60 + 10 ))
+      [ "$mins" -lt 1 ] && mins=1
+      shutdown -h "+$mins" "carta worker deadline" || true
+
+      install_rclone() {
+        local t; t=$(mktemp -d)
+        curl -fsSL --retry 3 --connect-timeout 20 -o "$t/rclone.zip" \
+          "https://downloads.rclone.org/v${RCLONE_VERSION}/rclone-v${RCLONE_VERSION}-linux-arm64.zip" || return 1
+        echo "$RCLONE_SHA256  $t/rclone.zip" | sha256sum -c - || return 1
+        unzip -q "$t/rclone.zip" -d "$t" &&
+          install -m 0755 "$t/rclone-v${RCLONE_VERSION}-linux-arm64/rclone" /usr/local/bin/rclone
+        local rc=$?; rm -rf "$t"; return $rc
+      }
+      # Without rclone there is no way to report. The box powers off, and the
+      # orchestrator deletes it when no status appears within its boot window.
+      install_rclone || { say "rclone install failed"; exit 94; }
+
+      say "run $CARTA_RUN_ID job $CARTA_JOB args '$CARTA_JOB_ARGS'"
+      early_status started boot null
+
+      t=$(date +%s)
+      export CARTA_BOOT_S=$(( t - CARTA_T0 ))
+      mkdir -p "$ROOT"
+      if ! GIT_LFS_SKIP_SMUDGE=1 GIT_TERMINAL_PROMPT=0 git clone --depth 1 --filter=blob:none \
+             --sparse --single-branch --branch "$CARTA_REPO_BRANCH" "$CARTA_REPO_URL" "$REPO" ||
+         ! git -C "$REPO" sparse-checkout set pipeline infra tools/trailslab/valhalla; then
+        say "clone of $CARTA_REPO_URL@$CARTA_REPO_BRANCH failed"
+        early_status failed clone 93
+        exit 93
+      fi
+      export CARTA_CLONE_S=$(( $(date +%s) - t ))
+      say "cloned $(git -C "$REPO" rev-parse --short HEAD) in ${CARTA_CLONE_S}s"
+
+      read -r -a args <<< "$CARTA_JOB_ARGS"
+      export CARTA_WORKER_ROOT="$ROOT" CARTA_REPO="$REPO"
+      bash "$REPO/infra/hetzner/jobs/worker.sh" "$CARTA_JOB" "$CARTA_RUN_ID" ${args[@]+"${args[@]}"}
+
+runcmd:
+  - [sh, -c, "nohup /usr/local/sbin/carta-worker-boot >>/var/log/carta-worker.log 2>&1 &"]
+
+final_message: "Carta worker cloud-init finished after $UPTIME seconds; the job runs under nohup, see /var/log/carta-worker.log"

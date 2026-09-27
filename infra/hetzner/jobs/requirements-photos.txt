@@ -1,0 +1,15 @@
+# The photo engine's model stack for the CAX41 clip_sweep job (T047), on top of
+# requirements.txt + constraints.txt and requirements-torch-cpu.txt. None of it
+# is in requirements.txt, because the always-on CAX11 never loads CLIP. Pinned
+# to the laptop's installed versions on 2026-09-27, the same rule constraints.txt
+# follows, so an arm64 sweep scores with the code and weights the laptop used.
+# Every package here has a Linux aarch64 cp312 wheel or is pure Python.
+open_clip_torch==3.3.0
+timm==1.0.29
+huggingface_hub==1.29.0
+safetensors==0.8.0
+ftfy==6.3.1
+regex==2024.9.11
+ImageHash==4.3.2
+PyWavelets==1.9.0
+pillow==10.4.0

@@ -4,10 +4,12 @@ This directory holds the code that stands up Carta's build machines on Hetzner
 Cloud. It implements section 6.2 of
 `additional docs/Carta/Plan/Architecture/CARTA_CLOUD_ARCHITECTURE.md`: one small
 arm64 box that is always on and does the scheduling, the network-bound
-harvesting and the publishing, and, later, a large arm64 box that exists only
-for the hours a heavy build needs it. Only the always-on box exists as code so
-far. It was written in T046 (`Execution/P3/T046-cax11-orchestrator.md`), and
-the owner's steps to bring it up are in `Execution/P3/_OPEN-hetzner.md`.
+harvesting and the publishing, and a large arm64 box that exists only for the
+hours a heavy build needs it. Both exist as code; neither has been created
+yet. The always-on box was written in T046
+(`Execution/P3/T046-cax11-orchestrator.md`) and its schedule in T048, the
+on-demand box in T047 (`Execution/P3/T047-on-demand-cax41.md`). The owner's
+steps to bring them up are in `Execution/P3/_OPEN-hetzner.md`.
 
 ## The always-on orchestrator, cax11/
 
@@ -104,24 +106,121 @@ harvest to save sixty cents a month.
 |---|---|
 | CAX11, always on | EUR 5.99 |
 | Primary IPv4, only with IPV4=1 | about EUR 0.60 |
+| CAX41 workers, on demand (T047) | EUR 0.056 an hour of existence; see cax41/cost.py |
 | Traffic, up to 20 TB | included |
 | Hetzner backups | not enabled |
 
 Backups are off because the box holds nothing that is not either in git or
 pushed to R2; rebuilding it is `provision.sh` plus filling the secrets file.
 
+## The on-demand worker, cax41/ and jobs/
+
+A CAX41 is Ampere arm64 with 16 vCPU, 31 GB of RAM and 320 GB of NVMe, at
+about EUR 0.056 an hour. It exists for one job and is then deleted: the
+Valhalla tile builds, the photo engine's CLIP sweep, and later Planetiler and
+the libvips image ladder. `infra/hetzner/cax41/spawn.sh <job> [args]` does the
+whole round trip from the orchestrator. It creates the server next to the
+orchestrator (same location, same SSH key, same SSH-only firewall, labels
+role=worker, job, run, created, deadline and keep), with user data rendered
+from `cax41/cloud-init.yaml`. The worker installs rclone, reports "started" to
+R2, makes a sparse clone, and runs `jobs/worker.sh`, which installs what the
+job needs, mirrors the job's inputs from R2, runs `jobs/<job>.sh` with every
+core, pushes `out/` to `archive/runs/<run>/out/`, writes its final status and
+powers off. spawn.sh polls `archive/runs/<run>/status.json`, promotes the
+outputs to the job's prefix on success, deletes the server, and appends one
+line to the cost ledger. `jobs/jobs.tsv` is the table both sides read: inputs,
+outputs, the hard ceiling and the planning estimate per job.
+
+| Job | Inputs from R2 | Outputs to | Ceiling | Planned | State |
+|---|---|---|---|---|---|
+| selftest | none | archive/built/selftest | 1 h | 0.25 h | real; proves the round trip |
+| valhalla_tiles | archive/inputs/geofabrik | archive/built/valhalla | 6 h | 1 h | real |
+| clip_sweep | archive/caches (layer, embeddings, models) | archive/caches | 12 h | 3 h | real |
+| planetiler | archive/inputs/geofabrik | tiles/basemap | 8 h | 2 h | stub, exit 3 |
+| image_transcode | none yet | img | 8 h | 6 h | stub, exit 3 |
+
+The two stubs have nothing to wrap. No Planetiler profile or consumer exists
+in the repository, and section 5.4 of the architecture document says to leave
+the basemap alone. `pipeline/photos/derive.py`, the libvips stage, is step 4
+of the migration and is not written. Each stub's header holds the command it
+will run.
+
+Why it is shaped like this. The status object in R2 is the only interface
+between the two machines, so neither needs to reach the other: no SSH from the
+orchestrator into the worker, no inbound port on the worker. The worker writes
+to a staging prefix and the orchestrator promotes, so a failed, timed-out or
+half-finished run can never replace a good artifact in R2. And the delete
+belongs to the orchestrator, unconditionally. A trap on EXIT, INT and TERM
+deletes the worker on every way out of spawn.sh, including a failed create
+(which may have made the server anyway) and a wait whose API calls fail; the
+delete is confirmed by the API answering "not found" and retried three times;
+after every run spawn.sh sweeps every role=worker server past its deadline or
+powered off with no live owner; and `carta-worker-sweep.timer` runs that sweep
+hourly, for the cases spawn.sh cannot cover, such as the orchestrator
+rebooting or spawn.sh being killed outright. A powered-off Hetzner server is
+billed like a running one, so the worker's own poweroff saves nothing; it only
+tells spawn.sh at its next poll that the run is over.
+
+Should the worker hold a Hetzner token so it can delete itself? By default it
+does not. A Hetzner token is scoped to the whole project, not to one server:
+the worker runs pip packages, docker images and downloads from the internet,
+and anything on it can read its user data from the metadata service. A token
+there could delete the orchestrator, read every server's user data, or run up
+a bill. The worker already holds R2 credentials, which it cannot work without,
+and a separate R2 token for workers (T047-f) limits that exposure; there is
+no equivalent narrowing for Hetzner. What self-delete would add is one more
+net for the case where the orchestrator is down for longer than the job, and
+the hourly sweep and the ceiling already bound that case to hours of
+EUR 0.056. `CARTA_WORKER_SELF_DELETE=1` exists for the owner who weighs it
+differently; with it, the worker calls the API as its last act.
+
+Git LFS on the worker (register row T048-l). The clone is shallow,
+blob-filtered and sparse (`pipeline/`, `infra/`, `tools/trailslab/valhalla/`
+and the root files, about 5 MB), git-lfs is not installed and
+`GIT_LFS_SKIP_SMUDGE=1` is set. No job reads a tracked LFS cache; the inputs
+come from R2 by prefix. So a run costs GitHub a few megabytes, where a full
+clone would pull the 613 MB of LFS objects every time.
+
+The rescore hold stays, as a correctness guard. docs/PHOTOS.md has the rule
+and T047's change to it: a layer rebuild writes `cache/<layer>/.rescore_hold`,
+a rescore writes `cache/<layer>/.rescore_running`, and each refuses while the
+other's file is live. spawn.sh refuses a held layer before creating anything,
+the worker refuses a tarball packed mid-rebuild, and a hold that appears while
+the worker runs stops the promotion.
+
+What it costs. `cax41/cost.py` holds the rates (EUR 0.056 an hour, and the
+EUR 0.60 a month IPv4 pro-rated over 730 hours) and prices every ledger row
+two ways, at wall-clock hours and at whole started hours, until the first
+invoice shows which one Hetzner bills. `spawn.sh --cost` prints the month so
+far. The ledger is `logs/cax41_runs.tsv` on the orchestrator, copied to
+`archive/logs/cax41_runs.tsv` in R2 after every run. It does not write to
+T043's `public.infra_ledger`: that table is keyed by month and line item, is
+written by the owner through `admin_set_infra_cost`, and should carry the
+Hetzner invoice as `actual`. `cost.py mtd` prints the month's total as the
+`hetzner_cax41` line in that shape, marked `model`, for the owner to enter
+until the invoice replaces it.
+
+IPv4 is on for workers by default, unlike the orchestrator's T046 default,
+because github.com has no IPv6 address and the worker must clone. It costs
+about EUR 0.0008 an hour. `--no-ipv4` turns it off, with a warning.
+
+`cax41/verify.sh` runs on the laptop with no account: it renders and
+schema-checks the user data for every job, dry-runs every job, and drives
+spawn.sh with fake hcloud and rclone binaries through every failure path to
+prove the delete is always issued.
+
 ## What comes next
 
-T047 adds the on-demand heavy box: a CAX41 at about EUR 0.056 an hour, created
-by `hcloud` from this orchestrator, given its own cloud-init that pulls the repo
-and the inputs from R2, run, made to push its artifacts to R2, and deleted. It
-needs a second Hetzner token in the orchestrator's secrets file (`HCLOUD_TOKEN`
-is already listed in `cax11/env.example`) and will live next to this directory
-as `cax41/`.
+T048 left the monthly and quarterly tiers unscheduled once the Windows task is
+disabled (T048-h), and T047 does not change that. None of the 28 monthly and
+quarterly tasks is one of the worker's jobs. Most are network-bound and belong
+on the orchestrator once verified on arm64; the heavy ones (trails_ingest,
+trails_splice, trails_derive_routes, cycling_harvest) read and write the
+trailslab PostGIS lab, which lives on neither box. Moving them to the worker
+means a job that starts the lab in Docker on the CAX41 (the imresamu image
+T006 named), restores T045's trailslab dump, runs the tasks and dumps it back:
+a task of its own.
 
-T048 ports the schedule. It replaces the body of `weekly.sh` with what
-`run_pipeline.bat` does today, fixes the Windows assumptions T006 listed in
-`run_pipeline.py` and the cycling scripts, wires `pipeline/archive/push.py
---pull` at the start of a run and `pack.py` plus `push.py` at the end (T045-g),
-and decides whether the boot-time firing and the no-reboot policy stay. The
-first full pipeline run on this box is T048's to make, not T046's.
+The derive stage (`pipeline/photos/derive.py`, migration step 4) replaces the
+`image_transcode` stub. It needs libvips from apt before pyvips (T006), which
+is a new need in the jobs table and a branch in `jobs/worker.sh`.
