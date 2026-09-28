@@ -18243,6 +18243,17 @@ button.ai-sched-main:focus-visible {
   font-variant-numeric: tabular-nums;
 }
 .adminpage-table .num { text-align: right; }
+/* The unpublish form opened under a guide row (T069). Cells do not wrap, so
+   its prose would run off in one line; and on a phone the table scrolls
+   inside its frame, so the form is held to the visible width and stays in
+   view while the columns scroll. 58px is the phone body padding, the frame
+   border and the cell padding. */
+.adminpage-table .adminpage-armed {
+  white-space: normal;
+  position: sticky;
+  left: 14px;
+  max-width: calc(100vw - 58px);
+}
 /* A table whose rows are figures, not doors. The user list opens a detail
    panel on a row click and carries a pointer cursor and a hover fill to say
    so; the AI usage rollup only reports, so it must not offer either. */

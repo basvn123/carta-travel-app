@@ -1,6 +1,7 @@
 import { useI18n } from '../../i18n/index.jsx';
 import { fmtDateTime } from './format.js';
 import { buildGuideUrl } from '../../community/guides.js';
+import { UnpublishGuide } from './UnpublishGuide.jsx';
 
 // The Reports tab: the DSA notice-and-action queue. Every report a visitor
 // filed against a public guide through report_guide (migration 037), newest
@@ -14,14 +15,18 @@ import { buildGuideUrl } from '../../community/guides.js';
 // list would make a moderator triage legal notices between bug reports. The
 // feedback view keeps its own file, now named FeedbackInbox.
 //
-// It is a queue to read, not yet to act on: there is no unpublish or dismiss
-// button. The takedown RPC is T069 and the decision with its statement of
-// reasons is T070; until then a row stays 'new'. The owner hand-off and the
-// guide link are here so a moderator can read what was reported now.
+// A report on a guide that is still public has an Unpublish button (T069,
+// admin_unpublish_guide in migration 038), the same form as on the Guides
+// tab. Taking the guide down moves every new report on it to actioned, so
+// they leave the New filter together. There is no dismiss button and no
+// statement of reasons yet: that decision is T070, and a report on a guide
+// that is not public (the owner took it down, or deleted it) stays new
+// until then. The owner hand-off and the guide link are here so a
+// moderator can read what was reported first.
 //
 // Three states, as the Guides tab: rows, a real empty queue, and a failure,
 // which draws no list.
-export function ContentReports({ queue, onOpenUser }) {
+export function ContentReports({ queue, onOpenUser, unpublish }) {
   const { t } = useI18n();
   const { reports, filter, choose, busy, error, reload } = queue;
   const rows = reports?.rows || [];
@@ -34,6 +39,7 @@ export function ContentReports({ queue, onOpenUser }) {
         </button>
       </div>
       <p className="adminpage-muted">{t('admin.reportsHint')}</p>
+      {unpublish.notice && <p className="adminpage-ok" role="status">{unpublish.notice}</p>}
       <div className="adminpage-segment" role="radiogroup" aria-label={t('admin.nav.reports')}>
         {['new', 'all'].map((s) => (
           <button
@@ -121,7 +127,23 @@ export function ContentReports({ queue, onOpenUser }) {
                       {t('admin.reportsOpenOwner')}
                     </button>
                   )}
+                  {r.stillPublic && unpublish.armed !== `report:${r.id}` && (
+                    <UnpublishGuide
+                      unpublish={unpublish}
+                      formKey={`report:${r.id}`}
+                      planId={r.planId}
+                      label={r.currentLabel || r.planLabel || t('admin.guidesUntitled')}
+                    />
+                  )}
                 </div>
+                {r.stillPublic && unpublish.armed === `report:${r.id}` && (
+                  <UnpublishGuide
+                    unpublish={unpublish}
+                    formKey={`report:${r.id}`}
+                    planId={r.planId}
+                    label={r.currentLabel || r.planLabel || t('admin.guidesUntitled')}
+                  />
+                )}
               </article>
             );
           })}

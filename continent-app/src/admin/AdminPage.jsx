@@ -23,6 +23,7 @@ import { useUsersList } from '../components/admin/useUsersList.js';
 import { useUserDetail } from '../components/admin/useUserDetail.js';
 import { usePublicGuides } from '../components/admin/usePublicGuides.js';
 import { useContentReports } from '../components/admin/useContentReports.js';
+import { useUnpublishGuide } from '../components/admin/useUnpublishGuide.js';
 
 // The back office, as a page rather than a drawer.
 //
@@ -61,7 +62,9 @@ import { useContentReports } from '../components/admin/useContentReports.js';
 // sequence above is unchanged and the unbounded list of public guides is
 // only fetched by somebody who opened the tab. REPORTS (T068), the DSA notice
 // queue, loads the same way. It is its own tab rather than part of the
-// feedback inbox; ContentReports.jsx says why.
+// feedback inbox; ContentReports.jsx says why. The takedown (T069) is one
+// hook shared by both tabs, so only one Unpublish form is open at a time and
+// a takedown from either tab reloads whichever of the two lists is loaded.
 
 const SECTIONS = ['overview', 'users', 'content', 'guides', 'reports', 'feedback', 'site', 'audit'];
 
@@ -92,6 +95,7 @@ export function AdminPage({ onClose }) {
   const { detail, setDetail } = account;
   const guidesIndex = usePublicGuides(unlocked && section === 'guides', errText);
   const reports = useContentReports(unlocked && section === 'reports', errText);
+  const unpublish = useUnpublishGuide({ errText, guidesIndex, reports, loadAudit });
 
   // ---- the lock -----------------------------------------------------------
   if (!unlocked) {
@@ -148,6 +152,7 @@ export function AdminPage({ onClose }) {
               <PublicGuides
                 guidesIndex={guidesIndex}
                 onOpenUser={(id) => { setSection('users'); account.openUser(id); }}
+                unpublish={unpublish}
               />
             )}
 
@@ -155,6 +160,7 @@ export function AdminPage({ onClose }) {
               <ContentReports
                 queue={reports}
                 onOpenUser={(id) => { setSection('users'); account.openUser(id); }}
+                unpublish={unpublish}
               />
             )}
 

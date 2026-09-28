@@ -1,21 +1,25 @@
+import { Fragment } from 'react';
 import { useI18n } from '../../i18n/index.jsx';
 import { fmtDate, initial, rowName } from './format.js';
+import { UnpublishGuide } from './UnpublishGuide.jsx';
 
 // The Guides tab: every trip a traveller has made public, newest first,
 // with its author and its views. Pure render over usePublicGuides. The
 // author cell opens the account through onOpenUser, the same hand-off the
 // feedback inbox uses, so a moderator can go from a guide to its owner.
 //
-// It is a list to read, not yet a queue to act on: there is no unpublish
-// button here. That is the takedown RPC (admin_unpublish_guide) of the
-// plan's Phase 2, which logs a reason to the audit trail, and it belongs to
-// the task that builds it.
+// Each row has an Unpublish button (T069, admin_unpublish_guide in
+// migration 038). It opens a form under the row that asks for the reason
+// for the audit log; the guide then goes private and leaves this list. The
+// trip stays in its owner's account and nothing is deleted. The form and
+// its state are shared with the Reports tab (UnpublishGuide,
+// useUnpublishGuide).
 //
 // Three states, told apart as the Users tab does: rows, a real empty list,
 // and a failure. A failure draws no table, because a header over nothing
 // reads as "nobody published anything" when it means "the query did not
 // run".
-export function PublicGuides({ guidesIndex, onOpenUser }) {
+export function PublicGuides({ guidesIndex, onOpenUser, unpublish }) {
   const { t } = useI18n();
   const { guides, busy, error, load } = guidesIndex;
   const rows = guides?.rows || [];
@@ -31,6 +35,7 @@ export function PublicGuides({ guidesIndex, onOpenUser }) {
       {guides && guides.viewsCounted === false && (
         <p className="adminpage-muted">{t('admin.guidesViewsNotCounted')}</p>
       )}
+      {unpublish.notice && <p className="adminpage-ok" role="status">{unpublish.notice}</p>}
 
       {error && (
         <p className="adminpage-err">
@@ -55,11 +60,13 @@ export function PublicGuides({ guidesIndex, onOpenUser }) {
                 <th>{t('admin.colPublished')}</th>
                 <th className="num">{t('admin.colViews')}</th>
                 <th>{t('admin.colStatus')}</th>
+                <th>{t('admin.colAction')}</th>
               </tr>
             </thead>
             <tbody>
               {rows.map((g) => (
-                <tr key={g.id}>
+                <Fragment key={g.id}>
+                <tr>
                   <td><b>{g.label || t('admin.guidesUntitled')}</b></td>
                   <td>{(g.cities || []).join(', ')}</td>
                   <td>
@@ -87,7 +94,32 @@ export function PublicGuides({ guidesIndex, onOpenUser }) {
                       </span>
                     )}
                   </td>
+                  <td>
+                    {unpublish.armed !== `guide:${g.id}` && (
+                      <UnpublishGuide
+                        unpublish={unpublish}
+                        formKey={`guide:${g.id}`}
+                        planId={g.id}
+                        label={g.label || t('admin.guidesUntitled')}
+                      />
+                    )}
+                  </td>
                 </tr>
+                {/* The open form gets a full-width row of its own; a table
+                    cell is too narrow for a reason field. */}
+                {unpublish.armed === `guide:${g.id}` && (
+                  <tr>
+                    <td colSpan={8}>
+                      <UnpublishGuide
+                        unpublish={unpublish}
+                        formKey={`guide:${g.id}`}
+                        planId={g.id}
+                        label={g.label || t('admin.guidesUntitled')}
+                      />
+                    </td>
+                  </tr>
+                )}
+                </Fragment>
               ))}
             </tbody>
           </table>

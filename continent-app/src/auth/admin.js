@@ -220,6 +220,19 @@ export const adminListPublicGuides = () => call('admin_list_public_guides');
 export const adminListContentReports = (status, limit = 50, offset = 0) =>
   call('admin_list_content_reports', { p_status: status || null, p_limit: limit, p_offset: offset });
 
+/**
+ * The takedown (migration 038): the guide goes private, nothing is deleted,
+ * and the reason lands in the audit log. The owner keeps the trip. Every
+ * report on the guide still marked new moves to actioned.
+ *
+ * Returns { ok, changed, visibility, reportsActioned }. changed is false when
+ * the plan was already not public; nothing is written then. Refusals:
+ * forbidden, slow_down, bad_reason (blank or over 2000 characters),
+ * not_found.
+ */
+export const adminUnpublishGuide = (planId, reason) =>
+  call('admin_unpublish_guide', { p_plan_id: planId, p_reason: reason });
+
 // Catalogue corrections over the static wire layers (beaches, lakes,
 // mountains, trails, destinations). An empty patch clears the override and
 // restores whatever the pipeline says.
