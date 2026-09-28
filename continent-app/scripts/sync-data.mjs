@@ -7,6 +7,15 @@
  *     │                                 rarely-needed-at-boot parts removed:
  *     │                                   - activities.items_full  (~40 POIs/dest)
  *     │                                   - image.hires            (never read)
+ *     │                                 The app no longer fetches this file:
+ *     │                                 it is the input of the contract
+ *     │                                 check and the harnesses, and it is
+ *     │                                 split into the two below (T054)
+ *     ├─> public/boot.json              boot index: meta plus id, lat, lon,
+ *     │                                 country, flags, rating band per
+ *     │                                 destination (src/lib/bootIndex.js)
+ *     ├─> public/dest/{cc}.json         the rest of each record, one file per
+ *     │                                 country, served from the data host
  *     └─> public/poi/{destId}.json      one town's items_full - lazy-fetched
  *                                       by the Day planner and the destination
  *                                       page, one town at a time
@@ -27,6 +36,8 @@ import { stripDashes } from '../src/lib/format.js';
 import { fareFileBase } from '../src/lib/fareFile.js';
 import { shardName } from '../src/lib/poiShard.js';
 import { destAnchor } from '../src/lib/origins.js';
+import { splitCatalogue, mergeCatalogue } from '../src/lib/bootIndex.js';
+import { createHash } from 'node:crypto';
 
 const scriptDir = dirname(fileURLToPath(import.meta.url));   // continent-app/scripts
 const repoRoot = resolve(scriptDir, '..', '..');             // repo root
@@ -172,6 +183,22 @@ if (data.fares && Object.keys(data.fares).length) {
     // outbound fares stored.
     coverage[origin] = Object.values(slice)
       .filter((rec) => rec?.out && Object.keys(rec.out).length > 0).length;
+
+    // Strip per-day provenance metadata that was only needed during pipeline
+    // merging (merge_tp_staging, harvest_all_origins TP step). The app reads
+    // only the record-level s/o for contract-A provenance; per-day out_o/ret_o
+    // (which day's TP price was observed) and out_x/ret_x (expiry) are not
+    // read at runtime and add ~10% to the wire payload. Keep out_c/ret_c
+    // (which day's source won the cheapest-wins merge) as that feeds the UI.
+    for (const rec of Object.values(slice)) {
+      if (rec) {
+        delete rec.out_o;
+        delete rec.ret_o;
+        delete rec.out_x;
+        delete rec.ret_x;
+      }
+    }
+
     // Origin codes are harvested IATA (A-Z only), but never trust that for a
     // file path. fareFileBase() also escapes the codes Windows reserves as
     // device names (PRN), which git will not index, see lib/fareFile.js.
@@ -346,6 +373,55 @@ writeFileSync(resolve(publicDir, 'app_data.json'), core);
 
 const n = Object.keys(data.destinations || {}).length;
 console.log(`[sync-data] core dataset -> public/app_data.json (${n} destinations, is_mock=${data.meta?.is_mock}, ${kb(core)})`);
+
+// The boot index and the per-country records (CARTA_CLOUD_ARCHITECTURE.md
+// 5.2, Execution/P3/T054-wire-shards-to-r2.md). The core above grows by
+// ~3.2 KB per destination, ~80 MB at the 25,000 the price map targets, and
+// the app used to download all of it as one file before its first paint.
+// The boot index keeps only what places a destination on the map; the rest
+// goes to one file per country on the data host, so a weekly refresh that
+// touches one country re-downloads one file, and no single file carries the
+// whole catalogue. Each country file is named in the index with a content
+// hash, which the app sends as ?v= so an edge or browser cache can never
+// pair a new index with an old record.
+{
+  const destDir = resolve(publicDir, 'dest');
+  rmSync(destDir, { recursive: true, force: true });
+  mkdirSync(destDir, { recursive: true });
+  const { boot, chunks } = splitCatalogue(JSON.parse(core));
+  let destBytes = 0;
+  for (const cc of Object.keys(chunks).sort()) {
+    const body = JSON.stringify(chunks[cc]);
+    boot.chunks[cc] = createHash('sha256').update(body).digest('hex').slice(0, 12);
+    writeFileSync(resolve(destDir, `${cc}.json`), body);
+    destBytes += body.length;
+  }
+  const bootBody = JSON.stringify(boot);
+  writeFileSync(resolve(publicDir, 'boot.json'), bootBody);
+
+  // Prove the split is lossless before anything ships: merge it back the way
+  // the browser will and compare with the core, record by record, including
+  // destination order. A mismatch fails the build rather than the traveller.
+  const { core: merged, missing } = mergeCatalogue(JSON.parse(bootBody), chunks);
+  const want = JSON.parse(core);
+  // Same key set, and every value equal in the master's own key order.
+  const keySet = (o) => Object.keys(o).sort().join(',');
+  const wantIds = Object.keys(want.destinations || {});
+  const gotIds = Object.keys(merged.destinations);
+  let bad = missing + (wantIds.join(',') === gotIds.join(',') ? 0 : 1);
+  for (const id of wantIds) {
+    const a = want.destinations[id];
+    const b = merged.destinations[id];
+    if (!b || keySet(a) !== keySet(b) || JSON.stringify(a) !== JSON.stringify({ ...a, ...b })) bad += 1;
+  }
+  if (JSON.stringify(want.meta) !== JSON.stringify(merged.meta)) bad += 1;
+  if (bad) {
+    console.error(`[sync-data] boot index round trip FAILED on ${bad} records; not shipping a lossy split`);
+    process.exit(1);
+  }
+  console.log(`[sync-data] boot index -> public/boot.json (${n} destinations, ${kb(bootBody)}); `
+    + `detail -> public/dest/ (${Object.keys(chunks).length} country files, ${Math.round(destBytes / 1024)} KB); round trip exact`);
+}
 
 // One file per destination, so a page that wants the POIs for ONE place does
 // not download 33 MB to read 9 KB of it. There used to be a combined
