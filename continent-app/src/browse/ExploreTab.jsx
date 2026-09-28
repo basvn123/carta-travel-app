@@ -39,6 +39,13 @@ import { CostLine, CostReceipt } from '../components/CostSummary.jsx';
 import { visitLength } from '../lib/nearby.js';
 import { placeSights } from '../lib/placeStory.js';
 import { knownFor } from '../lib/knownFor.js';
+import { catalogue, CATALOGUE_MODE, loadFullCatalogue } from '../lib/appData.js';
+import { decodeBootIndex } from '../lib/bootIndex.js';
+
+// 'viewport' catalogue mode (T059): the zoom from which the map fetches the
+// countries on screen. Below it the map draws clusters, which the boot pins
+// already count truly, so panning a continental view costs nothing.
+const DETAIL_FROM = 6;
 
 /**
  * The Explore page, after the map: the whole catalogue as a photo-forward
@@ -371,8 +378,35 @@ export function ExploreTab({
   // C7: grid or map. The bbox narrows the count only WHILE the map is the
   // view - an invisible filter surviving the switch back would make the
   // grid quietly lie about what it holds.
-  const [view, setView] = React.useState('grid');
+  // The view rides the URL too (xw=map), so a map link opens on the map;
+  // in the 'viewport' catalogue mode that is also what lets a map session
+  // start without the grid's full download.
+  const [view, setView] = React.useState(() => (
+    typeof window !== 'undefined'
+      && new URLSearchParams(window.location.search).get('xw') === 'map' ? 'map' : 'grid'));
   const [bbox, setBbox] = React.useState(null);
+  // 'viewport' catalogue mode (T059, lib/catalogue.js). The grid ranks the
+  // whole of Europe, so it asks for every country. The map draws every pin
+  // from the boot index and fetches the countries it has on screen once the
+  // reader zooms in past the clusters; the list beside it counts what the
+  // viewport holds, which is exactly what has been fetched.
+  const viewportMode = CATALOGUE_MODE === 'viewport';
+  const [pins, setPins] = React.useState(null);
+  React.useEffect(() => {
+    if (!viewportMode || !isActive) return;
+    if (view === 'map') {
+      if (!pins) catalogue.boot().then((b) => setPins(decodeBootIndex(b))).catch(() => {});
+    } else {
+      loadFullCatalogue().catch(() => {});
+    }
+  }, [viewportMode, isActive, view, pins]);
+  const onMapViewport = React.useCallback((b, zoom) => {
+    setBbox(b);
+    if (viewportMode && zoom >= DETAIL_FROM) catalogue.ensureViewport(b).catch(() => {});
+  }, [viewportMode]);
+  const onMapNeedDetail = React.useCallback((id) => {
+    catalogue.ensureIds([id]).catch(() => {});
+  }, []);
   // C9: a country is a page, not just a filter.
   const [countryPage, setCountryPage] = React.useState(null);
   // B2: the fold-and-alias index answers the search box. Loaded on the
@@ -490,10 +524,11 @@ export function ExploreTab({
     setOrDrop('xu', unescoOnly ? '1' : '');
     setOrDrop('xc', countryFilter.join(','));
     setOrDrop('xs', sortKey !== 'beauty' ? sortKey : '');
+    setOrDrop('xw', view === 'map' ? 'map' : '');
     const qs = q.toString();
     window.history.replaceState(null, '',
       `${window.location.pathname}${qs ? '?' + qs : ''}${window.location.hash}`);
-  }, [xf, gemOnly, unescoOnly, countryFilter, sortKey, isActive]);
+  }, [xf, gemOnly, unescoOnly, countryFilter, sortKey, view, isActive]);
 
   // ...and hydrates the App-owned filters once on arrival.
   const hydrated = React.useRef(false);
@@ -906,8 +941,9 @@ export function ExploreTab({
           {view === 'map' && (
             <div className="xcontent-map">
               <React.Suspense fallback={<div className="loading-screen"><div className="pulse" /></div>}>
-                <ExploreMap rows={taxRows} all={allRows} onSelect={openWithMember}
-                  onViewport={setBbox} t={t} />
+                <ExploreMap rows={taxRows} all={allRows} pins={viewportMode ? pins : null}
+                  onSelect={openWithMember} onViewport={onMapViewport}
+                  onNeedDetail={onMapNeedDetail} t={t} />
               </React.Suspense>
             </div>
           )}

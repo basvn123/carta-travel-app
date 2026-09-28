@@ -85,6 +85,7 @@ import { PaywallProvider } from './hooks/usePaywall.jsx';
 import { LegalFromUrl } from './components/LegalFromUrl.jsx';
 import { originHome } from './lib/origins.js';
 import { useAppData } from './hooks/useAppData.js';
+import { catalogue, CATALOGUE_MODE, loadFullCatalogue } from './lib/appData.js';
 import { useDestinationSearch } from './hooks/useDestinationSearch.js';
 import { useAccountSync } from './hooks/useAccountSync.js';
 import { useUrlSync } from './hooks/useUrlSync.js';
@@ -633,6 +634,23 @@ function TravelApp() {
   // Fetch app_data.json, apply its defaults into `choices`, and derive the
   // fare-date bounds used to default/clamp the depart & return pickers.
   const { data, error, dateBounds } = useAppData(init, setChoices, departDate, setDepartDate, returnDate, setReturnDate, choices.origin);
+
+  // 'viewport' catalogue mode (T059, lib/catalogue.js): only the Explore
+  // tab can work from the countries it has on screen, because its map lists
+  // what the viewport holds. Every other tab ranks or searches the whole of
+  // Europe, and a shared link can name a place anywhere, so either one asks
+  // for the full catalogue. A place opened by id needs only its own country.
+  // The deep-link states are read once at load, so this is decided once.
+  const deepLinked = !!(pendingFriend || pendingGuide || shareToken || sharedTripRaw
+    || pendingTrail || pendingDest || pendingBeach || pendingLake || pendingMountain
+    || pendingCycle || pendingRegion || pendingTrip);
+  useEffect(() => {
+    if (CATALOGUE_MODE !== 'viewport') return;
+    if (activeTab !== 'map' || deepLinked) loadFullCatalogue().catch(() => {});
+  }, [activeTab, deepLinked]);
+  useEffect(() => {
+    if (CATALOGUE_MODE === 'viewport' && selectedId) catalogue.ensureIds([selectedId]).catch(() => {});
+  }, [selectedId]);
 
   // Change the departure airport, reprices the whole app from the new origin,
   // and moves the drive-comparison's home to that airport so plane and car both

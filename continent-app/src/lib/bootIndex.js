@@ -11,7 +11,7 @@
  * The boot index, /boot.json:
  *
  *   { v: 1, meta, top, cols: [...], d: [[id, lat, lon, cc, f, r], ...],
- *     chunks: { "<cc>": "<content hash>" } }
+ *     chunks: { "<shard key>": "<content hash>" }, tiles: { "<cc>": deg } }
  *
  *   id    destination id, the key in data.destinations
  *   lat   latitude, lon longitude, as the master has them
@@ -23,11 +23,21 @@
  * repeated key costs ~100 KB. Row order is the master's order, which the
  * merge preserves, because several screens break ties on iteration order.
  *
- * Each country file, /dest/<cc>.json, is { "<id>": record } where record is
- * the destination exactly as the core wire had it, minus the fields the boot
- * row already carries (id, lat, lon, iso2). A field is only moved into the
- * row when it has its canonical shape (a finite number, a two-letter code);
+ * Each shard, /dest/<key>.json, is { "<id>": record } where record is the
+ * destination exactly as the core wire had it, minus the fields the boot row
+ * already carries (id, lat, lon, iso2). A field is only moved into the row
+ * when it has its canonical shape (a finite number, a two-letter code);
  * anything irregular stays in the record, so the merge is exact either way.
+ *
+ * A shard is a region (T059). A country whose records fit in SHARD_BYTES is
+ * one shard, keyed by its code ("BE"). A bigger one is cut into square grid
+ * tiles of `tiles[cc]` degrees, the largest of 8, 4, 2 or 1 that brings
+ * every tile under the budget, keyed "<cc>_<deg>_<row>_<col>" with row and
+ * col the floor of lat/deg and lon/deg ("IT_2_22_6"). A row with no position
+ * stays in the country's own shard. So a map looking at Naples fetches the
+ * tile around Naples, not all of Italy, and the shard size stays bounded as
+ * the catalogue grows instead of growing with the country. shardKey() is
+ * the one rule, used by the split, the merge and catalogue.js.
  */
 
 export const BOOT_VERSION = 1;
@@ -42,6 +52,10 @@ export const FLAG = Object.freeze({
 
 /** Country-file key for a record with no usable iso2. ZZ is user-assigned. */
 export const NO_COUNTRY = 'ZZ';
+
+/** A country above this many bytes of records is cut into grid tiles. */
+export const SHARD_BYTES = 256 * 1024;
+const TILE_DEGREES = [8, 4, 2, 1];
 
 const CC_RE = /^[A-Z]{2}$/;
 const isCoord = (v) => typeof v === 'number' && Number.isFinite(v);
@@ -60,14 +74,27 @@ function bandOf(rec) {
 }
 
 /**
+ * The shard a boot row's record lives in, given the index's `tiles` table.
+ * An index without tiles (T054's) keys every shard by country.
+ */
+export function shardKey(row, tiles) {
+  const [, lat, lon, cc] = row;
+  const key = cc || NO_COUNTRY;
+  const deg = tiles?.[key];
+  if (!deg || !isCoord(lat) || !isCoord(lon)) return key;
+  return `${key}_${deg}_${Math.floor(lat / deg)}_${Math.floor(lon / deg)}`;
+}
+
+/**
  * Split a core wire ({ meta, destinations, ...rest }) into the boot index
  * (without chunk hashes, which the caller adds once it has serialised each
- * country file) and the per-country record maps.
+ * shard) and the per-shard record maps. `shardBytes` is for tests.
  */
-export function splitCatalogue(core) {
+export function splitCatalogue(core, { shardBytes = SHARD_BYTES } = {}) {
   const { meta, destinations, ...top } = core || {};
   const d = [];
-  const chunks = {};
+  const byCountry = {};
+  const sizes = new Map();   // id -> serialised bytes of its record
   for (const [id, src] of Object.entries(destinations || {})) {
     const rec = { ...src };
     // The key is the id; drop the field only when it says the same thing.
@@ -78,23 +105,46 @@ export function splitCatalogue(core) {
     if (lat != null) delete rec.lat;
     if (lon != null) delete rec.lon;
     if (cc != null) delete rec.iso2;
-    d.push([id, lat, lon, cc, flagsOf(src), bandOf(src)]);
-    (chunks[cc || NO_COUNTRY] ||= {})[id] = rec;
+    const row = [id, lat, lon, cc, flagsOf(src), bandOf(src)];
+    d.push(row);
+    (byCountry[cc || NO_COUNTRY] ||= []).push([row, rec]);
+    sizes.set(id, JSON.stringify(rec).length + id.length + 4);
   }
-  const boot = { v: BOOT_VERSION, meta: meta ?? null, top, cols: [...BOOT_COLS], d, chunks: {} };
+
+  // The coarsest grid that brings every tile of an oversized country under
+  // the budget; 1 degree when none does (a dense city can outgrow any grid).
+  const tiles = {};
+  for (const [key, entries] of Object.entries(byCountry)) {
+    const total = entries.reduce((a, [row]) => a + sizes.get(row[0]), 0);
+    if (total <= shardBytes) continue;
+    tiles[key] = TILE_DEGREES.find((deg) => {
+      const per = new Map();
+      for (const [row] of entries) {
+        const k = shardKey(row, { [key]: deg });
+        per.set(k, (per.get(k) || 0) + sizes.get(row[0]));
+      }
+      return Math.max(...per.values()) <= shardBytes;
+    }) || TILE_DEGREES[TILE_DEGREES.length - 1];
+  }
+
+  const chunks = {};
+  for (const entries of Object.values(byCountry)) {
+    for (const [row, rec] of entries) (chunks[shardKey(row, tiles)] ||= {})[row[0]] = rec;
+  }
+  const boot = { v: BOOT_VERSION, meta: meta ?? null, top, cols: [...BOOT_COLS], d, chunks: {}, tiles };
   return { boot, chunks };
 }
 
-/** The country files a boot index needs, as [key, hash] pairs. */
+/** The shards a boot index needs, as [key, hash] pairs. */
 export function chunkList(boot) {
   return Object.entries(boot?.chunks || {});
 }
 
 /**
- * Rebuild the core wire from a boot index and its country files
- * ({ "<cc>": { id: record } }). Returns { meta, destinations, ...top } in
+ * Rebuild the core wire from a boot index and its shards
+ * ({ "<shard key>": { id: record } }, see shardKey). Returns { meta, destinations, ...top } in
  * the master's destination order. A row whose record is missing (a boot
- * index and a country file from two different builds, briefly, at the edge)
+ * index and a shard from two different builds, briefly, at the edge)
  * is skipped and counted in `missing`, not thrown: one absent town is a
  * smaller failure than no map.
  */
@@ -104,8 +154,9 @@ export function mergeCatalogue(boot, chunkMap) {
   }
   const destinations = {};
   let missing = 0;
-  for (const [id, lat, lon, cc] of boot.d) {
-    const rest = chunkMap?.[cc || NO_COUNTRY]?.[id];
+  for (const row of boot.d) {
+    const [id, lat, lon, cc] = row;
+    const rest = chunkMap?.[shardKey(row, boot.tiles)]?.[id];
     if (!rest) { missing += 1; continue; }
     const rec = { id, ...rest };
     if (lat != null) rec.lat = lat;

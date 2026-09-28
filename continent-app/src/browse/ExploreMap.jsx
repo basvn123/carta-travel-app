@@ -31,6 +31,15 @@ const MAP_STYLE = 'https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json'
  * has. And zoomed in past the clusters, a pin is worth more than a name: at
  * zoom >= 8 the popup becomes a small card with the photograph, the rating
  * and a line of what the place is known for.
+ *
+ * In the 'viewport' catalogue mode (T059, lib/catalogue.js) the caller also
+ * passes `pins`, the whole of Europe from the boot index (id, position,
+ * rating band, gem flag), and `all` holds only the countries loaded so far.
+ * Every pin draws from the start, so the clusters count the real catalogue;
+ * a pin whose record has not arrived (`ld` 0) draws at the default size,
+ * ignores the filters it cannot be judged on yet, and asks for its country
+ * through onNeedDetail when hovered. onViewport(bounds, zoom) is how the
+ * caller learns what to fetch next.
  */
 
 const KIND_RADIUS = { metro: 9, city: 7, area: 7, town: 5.5, village: 4.5 };
@@ -49,7 +58,7 @@ const CLUSTER_TO = 6;
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => (
   { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
-export function ExploreMap({ rows, all, onSelect, onViewport, t }) {
+export function ExploreMap({ rows, all, pins = null, onSelect, onViewport, onNeedDetail, t }) {
   const containerRef = useRef(null);
   const mapRef = useRef(null);
   const readyRef = useRef(false);
@@ -58,31 +67,50 @@ export function ExploreMap({ rows, all, onSelect, onViewport, t }) {
   onSelectRef.current = onSelect;
   const onViewportRef = useRef(onViewport);
   onViewportRef.current = onViewport;
+  const onNeedDetailRef = useRef(onNeedDetail);
+  onNeedDetailRef.current = onNeedDetail;
 
   // The whole catalogue, serialised once. `all` is the unfiltered set; when
   // a caller does not pass one, the current rows stand in and the map
   // behaves exactly as it did before.
   const source = all || rows;
-  const geojson = React.useMemo(() => ({
-    type: 'FeatureCollection',
-    features: source
-      .filter((p) => Number.isFinite(p.lat) && Number.isFinite(p.lon))
-      .map((p) => ({
-        type: 'Feature',
-        geometry: { type: 'Point', coordinates: [p.city_lon ?? p.lon, p.city_lat ?? p.lat] },
-        properties: {
-          id: p.id,
-          city: p.city,
-          country: p.country,
-          tier: p.rating?.tier ?? 0,
-          score: p.rating?.score ?? null,
-          gem: p.rating?.hidden_gem ? 1 : 0,
-          r: KIND_RADIUS[kindOf(p)] || 5.5,
-          img: p.image?.url || p.image || '',
-          lead: knownFor(p) || '',
-        },
-      })),
-  }), [source]);
+  const geojson = React.useMemo(() => {
+    const loaded = (p) => ({
+      type: 'Feature',
+      geometry: { type: 'Point', coordinates: [p.city_lon ?? p.lon, p.city_lat ?? p.lat] },
+      properties: {
+        id: p.id,
+        city: p.city,
+        country: p.country,
+        tier: p.rating?.tier ?? 0,
+        score: p.rating?.score ?? null,
+        gem: p.rating?.hidden_gem ? 1 : 0,
+        r: KIND_RADIUS[kindOf(p)] || 5.5,
+        img: p.image?.url || p.image || '',
+        lead: knownFor(p) || '',
+        ld: 1,
+      },
+    });
+    const drawable = (p) => Number.isFinite(p.lat) && Number.isFinite(p.lon);
+    if (!pins) return { type: 'FeatureCollection', features: source.filter(drawable).map(loaded) };
+    // Boot pins, upgraded to the full feature wherever the record is in.
+    const byId = new Map(source.map((p) => [p.id, p]));
+    return {
+      type: 'FeatureCollection',
+      features: pins.filter(drawable).map((b) => {
+        const p = byId.get(b.id);
+        if (p) return drawable(p) ? loaded(p) : loaded({ ...p, lat: b.lat, lon: b.lon });
+        return {
+          type: 'Feature',
+          geometry: { type: 'Point', coordinates: [b.lon, b.lat] },
+          properties: {
+            id: b.id, city: '', country: '', tier: b.band, score: null,
+            gem: b.hiddenGem ? 1 : 0, r: 5.5, img: '', lead: '', ld: 0,
+          },
+        };
+      }),
+    };
+  }, [source, pins]);
 
   // What survives the filters, as an expression rather than a new payload.
   // `null` means "everything", which is also what an absent `all` means.
@@ -116,7 +144,9 @@ export function ExploreMap({ rows, all, onSelect, onViewport, t }) {
       return popupRef.current.addTo(map);
     };
     const showTip = (map, f) => {
-      const { city, country, score, tier } = f.properties;
+      const { city, country, score, tier, ld } = f.properties;
+      // No record yet: ask for its country; the tip shows once it lands.
+      if (ld === 0) { onNeedDetailRef.current?.(f.properties.id); return; }
       const html = `<div class="xmap-pop"><strong>${esc(city)}</strong>`
         + (score != null ? `<span class="xmap-pop-score rt-${tier}">${Number(score).toFixed(1)}</span>` : '')
         + `<br><span class="xmap-pop-sub">${esc(country)}</span></div>`;
@@ -210,7 +240,7 @@ export function ExploreMap({ rows, all, onSelect, onViewport, t }) {
         const f = e.features?.[0];
         if (!f) return;
         const id = f.properties.id;
-        if (map.getZoom() >= CARD_FROM && cardRef.current !== id) { showCard(map, f); return; }
+        if (map.getZoom() >= CARD_FROM && f.properties.ld !== 0 && cardRef.current !== id) { showCard(map, f); return; }
         onSelectRef.current?.(id);
       });
       map.on('mouseenter', 'dest-dots', () => { map.getCanvas().style.cursor = 'pointer'; });
@@ -224,7 +254,7 @@ export function ExploreMap({ rows, all, onSelect, onViewport, t }) {
       map.on('mousemove', 'dest-dots', (e) => {
         const f = e.features?.[0];
         if (!f) return;
-        if (map.getZoom() >= CARD_FROM) {
+        if (map.getZoom() >= CARD_FROM && f.properties.ld !== 0) {
           if (cardRef.current !== f.properties.id) showCard(map, f);
         } else {
           showTip(map, f);
@@ -239,7 +269,7 @@ export function ExploreMap({ rows, all, onSelect, onViewport, t }) {
       });
       map.on('moveend', () => {
         const b = map.getBounds();
-        onViewportRef.current?.([b.getWest(), b.getSouth(), b.getEast(), b.getNorth()]);
+        onViewportRef.current?.([b.getWest(), b.getSouth(), b.getEast(), b.getNorth()], map.getZoom());
       });
       readyRef.current = true;
     });
@@ -278,8 +308,11 @@ export function ExploreMap({ rows, all, onSelect, onViewport, t }) {
     const map = mapRef.current;
     if (!readyRef.current || !map || !map.getLayer('dest-dots')) return;
     const notCluster = ['!', ['has', 'point_count']];
+    // A boot pin without its record cannot be judged by a filter yet, so it
+    // stays until its country arrives and the real answer replaces it.
+    const kept = ['in', ['get', 'id'], ['literal', keepIds || []]];
     map.setFilter('dest-dots', keepIds
-      ? ['all', notCluster, ['in', ['get', 'id'], ['literal', keepIds]]]
+      ? ['all', notCluster, pins ? ['any', ['==', ['get', 'ld'], 0], kept] : kept]
       : notCluster);
 
     if (map.getZoom() >= CLUSTER_TO) {
@@ -288,10 +321,10 @@ export function ExploreMap({ rows, all, onSelect, onViewport, t }) {
     }
     const keep = keepIds && new Set(keepIds);
     map.getSource('dests')?.setData(keep
-      ? { type: 'FeatureCollection', features: geojson.features.filter((f) => keep.has(f.properties.id)) }
+      ? { type: 'FeatureCollection', features: geojson.features.filter((f) => f.properties.ld === 0 || keep.has(f.properties.id)) }
       : geojson);
     clusterDirtyRef.current = false;
-  }, [keepIds, geojson]);
+  }, [keepIds, geojson, pins]);
 
   applyFilterRef.current = applyFilter;
   useEffect(() => { applyFilter(); }, [applyFilter]);

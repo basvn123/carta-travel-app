@@ -1,8 +1,13 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { appDataPromise, fetchFares } from '../lib/appData.js';
+import { appDataPromise, catalogue, CATALOGUE_MODE, fetchFares } from '../lib/appData.js';
 import { hydrateForOrigin, defaultOrigin, originHome } from '../lib/origins.js';
 import { bestFareWindow, countBookableRoundTrips } from '../lib/runtime_pricing.js';
 import { addDays, todayISO } from '../lib/dates.js';
+
+// 'viewport' mode: the radius around the origin airport whose countries the
+// first paint waits for. 300 km is the origin's own country and, near a
+// border, its neighbours: Charleroi gets BE, NL, FR, DE and LU.
+const FIRST_PAINT_KM = 300;
 
 
 
@@ -23,9 +28,24 @@ export function useAppData(init, setChoices, departDate, setDepartDate, returnDa
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    // The download itself starts at module-eval time (see lib/appData.js);
-    // here we only consume the shared promise.
-    appDataPromise
+    // 'all' mode: the download itself starts at module-eval time (see
+    // lib/appData.js); here we only consume the shared promise.
+    // 'viewport' mode (T059): the first paint waits for the countries around
+    // the origin (and a place opened from a link) only; every later arrival,
+    // from the Explore map's viewport or a screen asking for the rest,
+    // replaces `raw` with the larger snapshot.
+    let unsubscribe = null;
+    const firstPaint = CATALOGUE_MODE === 'all' ? appDataPromise : catalogue.boot().then((boot) => {
+      const code = init.origin ?? defaultOrigin(boot);
+      const home = originHome(boot, code);
+      const first = [catalogue.ensureIds(init.selectedId ? [init.selectedId] : [])];
+      first.push(home ? catalogue.ensureNear(home.lat, home.lon, FIRST_PAINT_KM) : catalogue.ensureAll());
+      return Promise.all(first).then(() => {
+        unsubscribe = catalogue.subscribe(() => setRaw(catalogue.snapshot()));
+        return catalogue.snapshot();
+      });
+    });
+    firstPaint
       .then((j) => {
         setRaw(j);
         const def = j.meta?.defaults;
@@ -59,6 +79,7 @@ export function useAppData(init, setChoices, departDate, setDepartDate, returnDa
         });
       })
       .catch((e) => setError(e.message));
+    return () => unsubscribe?.();
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   // The effective origin: the user's choice once known, else the data's default.
