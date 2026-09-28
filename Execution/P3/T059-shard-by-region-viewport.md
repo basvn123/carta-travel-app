@@ -160,6 +160,8 @@ The full-load path now makes 238 requests instead of 43, and the shards compress
 
 `public/sw.js` still describes its `/dest/` rule as "one cached copy per country" (T059-e). The rule keys on the path, so it keeps one copy per shard and behaves correctly. Only the comment and the T054 report's wording are out of date. Fix it whenever `sw.js` is next touched.
 
+T059 was launched twice (T059-f). Two copies of `Execution/_queue/run_queue.ps1` were running at once, started at 08:55 and 08:59 on 2026-09-28 (snapshots `run_queue.20260928_085549.ps1` and `run_queue.20260928_085904.ps1`, PowerShell PIDs 22284 and 30708). Each started its own T059 session, six minutes apart, in the same working tree. The second session saw the first one editing, stayed out of the tree, waited for it to exit, and made no code changes. The work above and its commits come from the first session alone. The two runners will keep racing on every later task, and two sessions editing one checkout can corrupt each other's commits. By 10:06 the 08:59 runner had already started T060. Stopping one runner is the owner's call and was not done here.
+
 ## Rollback procedure
 
 In production nothing changes until a deploy includes this branch. Even then, the default build loads the full catalogue as before, and the shard layout is internal to the app and the upload.
