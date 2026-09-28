@@ -964,6 +964,32 @@ try {
   if (await page.locator('#ov-image').inputValue() !== 'https://upload.wikimedia.org/better.jpg') {
     fail('the editor does not reopen with the saved correction');
   }
+
+  // T076: the diff viewer reads the stored patch against the pipeline's own
+  // object, not the live editing form, so it must show the ORIGINAL name
+  // beside the corrected one even while the form itself already holds the
+  // corrected value.
+  await page.locator('.diffviewer').waitFor({ timeout: 10000 });
+  const diffRows = await page.locator('.diffviewer .diffrow').allInnerTexts();
+  const nameRow = diffRows.find((r) => /^Name/.test(r));
+  if (!nameRow || !/A corrected name/.test(nameRow)) {
+    fail(`the diff viewer does not show the corrected name: ${JSON.stringify(diffRows)}`);
+  }
+  if (nameRow.includes(firstName) === false) {
+    // firstName is the original beach name read from the wire file earlier;
+    // the diff's before column must still carry it.
+    fail(`the diff viewer lost the original name (${firstName}): ${nameRow}`);
+  }
+  const imageRow = diffRows.find((r) => /^Photo/.test(r));
+  if (!imageRow || !/upload\.wikimedia\.org\/better\.jpg/.test(imageRow)) {
+    fail(`the diff viewer does not show the new photo URL: ${JSON.stringify(imageRow)}`);
+  }
+  if (await page.locator('.diffviewer .diffcell-image img').count() !== 2) {
+    fail('the diff viewer does not render both photographs');
+  }
+  ok('the diff viewer shows the pipeline object beside the stored patch, name and photo both changed');
+  await page.screenshot({ path: `${SHOTS}/admin-content-diff.png` });
+
   await page.locator('.adminpage-btn', { hasText: 'Revert to the pipeline' }).click();
   await page.waitForTimeout(1000);
   const rev = state.ovSetCalls[state.ovSetCalls.length - 1];
@@ -1126,11 +1152,17 @@ try {
   await page4.locator('.adminpage-reviewrow').first().click();
   await page4.locator('.adminpage-reviewset').waitFor({ timeout: 10000 });
   await page4.waitForTimeout(400);
+  // T076: the diff viewer is inside .adminpage-editorbox, so the spill scan
+  // below already covers it, but it must actually be there to be covered.
+  if (!(await page4.locator('.diffviewer').count())) {
+    fail('the diff viewer does not render for an override opened at 380px');
+  }
   const spill3 = await page4.evaluate(() => [...document.querySelectorAll('.adminpage-editorbox *')]
     .filter((el) => el.getBoundingClientRect().right > window.innerWidth + 1)
     .map((el) => `${el.tagName.toLowerCase()}.${el.className}`.slice(0, 50)).slice(0, 5));
   if (spill3.length) fail(`the override editor spills at 380px: ${spill3.join(' | ')}`);
-  ok('380px: the override editor, with status, review date and reason, fits');
+  ok('380px: the override editor, with the diff viewer, status, review date and reason, fits');
+  await page4.locator('.diffviewer').screenshot({ path: `${SHOTS}/admin-content-diff-380.png` });
   await page4.locator('.adminpage-reviewset').screenshot({ path: `${SHOTS}/admin-content-editor-380.png` });
   await ctx4.close();
 

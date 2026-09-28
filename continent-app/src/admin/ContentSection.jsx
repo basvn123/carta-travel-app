@@ -8,6 +8,7 @@ import {
   reviewProblem, reviewState, rowsNeedingReview, toDateInput, daysOverdue, fetchValidItemIds, orphanOverrides,
 } from '../lib/overrides.js';
 import { fmtDate } from '../components/admin/format.js';
+import { OverrideDiffViewer } from '../components/admin/OverrideDiffViewer.jsx';
 
 // Reviewing the catalogue, and correcting it.
 //
@@ -48,6 +49,18 @@ function leadImage(item, imageKey) {
   if (imageKey === 'img') return typeof item.img === 'string' ? item.img : '';
   const first = Array.isArray(item.images) ? item.images[0] : null;
   return (first && (first.u || first.big)) || '';
+}
+
+/** The pipeline's own object, reshaped to the plain { name, blurb, image }
+ *  shape OverrideDiffViewer compares against a patch. This is the one place
+ *  that resolves the per-layer image shape for the diff, so the viewer
+ *  itself never needs to know a trail keeps `img` while everything else
+ *  keeps `images[0]`. Returns null when there is no item to diff against,
+ *  which happens for an override opened from the review list whose item was
+ *  not loaded into the current grid (T074-e; unchanged by this task). */
+function baseObjectForDiff(item, imageKey) {
+  if (!item) return null;
+  return { name: item.name || '', blurb: item.blurb || '', image: leadImage(item, imageKey) };
 }
 
 // The lifecycle error words from admin_set_override (043), and the same
@@ -405,6 +418,16 @@ export function ContentSection({ overrides, onOverridesChanged, errText }) {
               {editing.name}
               <code>{String(editing.id)}</code>
             </p>
+
+            {editRow && (
+              <>
+                <h4 className="adminpage-lock-label">{t('admin.diffTitle')}</h4>
+                <OverrideDiffViewer
+                  base={baseObjectForDiff(editing, editLayer.imageKey)}
+                  patch={editRow.patch}
+                />
+              </>
+            )}
 
             <div className="adminpage-editorpreview">
               <figure>
