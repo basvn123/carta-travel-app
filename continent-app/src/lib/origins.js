@@ -57,8 +57,8 @@ function routesForOrigin(faresForOrigin, d, origin) {
       // Contract A provenance: s = source that created the record's base fares
       // ('FR'|'W6'|'VY'|'V7'|'TP'), o = epoch DAY the record's prices were
       // last confirmed by a harvest. Absent on legacy slices (read side stays
-      // tolerant). Per-day refinements (Travelpayouts cache quotes) carry their
-      // own observed/expires on individual prices via outbound_expires, not here.
+      // tolerant). Per-day observed/expiry epoch days are no longer shipped at
+      // all: expiry is a merge-time gate, so nothing downstream can read one.
       ...(rec.s != null ? { s: rec.s } : {}),
       ...(rec.o != null ? { o: rec.o } : {}),
       // Estimate fallback bands ({YYYY-MM: eur}, model p50 month medians).
