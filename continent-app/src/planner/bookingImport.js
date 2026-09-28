@@ -56,12 +56,73 @@ const fileToB64 = (file) => new Promise((resolve, reject) => {
 });
 
 /**
+ * Log a parse-booking failure with structural metadata.
+ * Never raised, fire and forget, like reportEdgeFailure.
+ */
+function logParseFailure(inputKind, inputSizeB, mimeType, checkFailed, appVersion = '') {
+  try {
+    supabase.rpc('log_parse_failure', {
+      p_input_kind: inputKind,
+      p_input_size_b: inputSizeB,
+      p_mime_type: mimeType,
+      p_check_failed: checkFailed,
+      p_app_version: appVersion,
+    });
+  } catch {
+    // Fire and forget: telemetry failures never affect the traveller.
+  }
+}
+
+/**
+ * Determine input kind and size from the payload.
+ * Returns { kind, mimeType, sizeB } where kind is 'url' | 'pdf' | 'image' | 'text'.
+ */
+function analyzePayload(payload) {
+  let kind = 'text';
+  let mimeType = '';
+  let sizeB = 0;
+
+  if (payload.url) {
+    kind = 'url';
+    sizeB = (payload.url.length || 0) + (payload.text?.length || 0);
+  } else if (Array.isArray(payload.files) && payload.files.length > 0) {
+    // Multiple files or single file determines the kind.
+    if (payload.files.length === 1) {
+      const file = payload.files[0];
+      mimeType = file.mime || '';
+      if (mimeType.startsWith('image/')) {
+        kind = 'image';
+      } else if (mimeType === 'application/pdf') {
+        kind = 'pdf';
+      } else if (mimeType === 'text/plain') {
+        kind = 'text';
+      }
+    }
+    // Sum the base64 sizes.
+    for (const f of payload.files) {
+      if (typeof f.data === 'string') {
+        // Estimate the binary size: base64 is 4/3 the binary size.
+        sizeB += Math.ceil((f.data.length * 3) / 4);
+      }
+    }
+    sizeB += (payload.text?.length || 0);
+  } else if (payload.text) {
+    kind = 'text';
+    sizeB = payload.text.length || 0;
+  }
+
+  return { kind, mimeType, sizeB: Math.max(1, sizeB) };
+}
+
+/**
  * Call the Edge Function. Resolves to { ok: true, result } or
  * { ok: false, code } with the same code vocabulary as requestAiDayPlan,
  * plus 'nothing_found' / 'nothing_to_parse' from this endpoint.
  */
 export async function requestBookingImport(payload) {
   if (!supabase) return { ok: false, code: 'no_auth_config' };
+  const { kind, mimeType, sizeB } = analyzePayload(payload);
+
   try {
     const { data, error } = await supabase.functions.invoke('parse-booking', { body: payload });
     if (error) {
@@ -82,10 +143,19 @@ export async function requestBookingImport(payload) {
       reportEdgeFailure('parse-booking', code, { http: error.context?.status, upstream });
       return { ok: false, code };
     }
-    if (data?.code === 'nothing_found') return { ok: false, code: 'nothing_found' };
+    if (data?.code === 'nothing_found') {
+      logParseFailure(kind, sizeB, mimeType, 'empty_result', (window?.__CARTA_VERSION || ''));
+      return { ok: false, code: 'nothing_found' };
+    }
     if (!data || (!Array.isArray(data.bookings) && !Array.isArray(data.activities))) {
+      logParseFailure(kind, sizeB, mimeType, 'wrong_shape', (window?.__CARTA_VERSION || ''));
       reportEdgeFailure('parse-booking', 'ai_bad_output', { origin: 'client' });
       return { ok: false, code: 'ai_bad_output' };
+    }
+    // Success path: the function returned a valid parse, possibly with reason set.
+    // If reason is set (structural failure), log it.
+    if (data.reason && ['json_parse', 'missing_key', 'wrong_shape', 'empty_result'].includes(data.reason)) {
+      logParseFailure(kind, sizeB, mimeType, data.reason, (window?.__CARTA_VERSION || ''));
     }
     return { ok: true, result: data };
   } catch {

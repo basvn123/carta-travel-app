@@ -101,8 +101,20 @@ export function safeLink(v) {
  * The model's parse, reduced to exactly what the client may see. Bookings
  * without a title are noise; activities without a name are noise. Codes keep
  * their inner spaces (airlines print "ABC 123") but lose everything weird.
+ *
+ * Returns { bookings, activities, summary, reason } where reason is set to
+ * one of 'missing_key', 'wrong_shape', or null (no error). This lets callers
+ * distinguish structural failures for the parse_failures queue.
  */
 export function sanitizeParsed(parsed, { totalDays = 60 } = {}) {
+  // Check for required keys first.
+  if (!parsed || typeof parsed !== 'object') {
+    return { bookings: [], activities: [], summary: '', reason: 'missing_key' };
+  }
+  if (!('bookings' in parsed) || !('activities' in parsed) || !('summary' in parsed)) {
+    return { bookings: [], activities: [], summary: '', reason: 'missing_key' };
+  }
+
   const bookings = [];
   for (const b of (Array.isArray(parsed?.bookings) ? parsed.bookings : []).slice(0, 12)) {
     if (!b || typeof b !== 'object') continue;
@@ -140,6 +152,7 @@ export function sanitizeParsed(parsed, { totalDays = 60 } = {}) {
     bookings,
     activities,
     summary: cleanText(String(parsed?.summary ?? ''), 300),
+    reason: null,
   };
 }
 

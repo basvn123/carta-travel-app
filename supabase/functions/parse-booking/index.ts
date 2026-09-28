@@ -324,14 +324,18 @@ Deno.serve(async (req) => {
   }
 
   let parsed: unknown;
-  try { parsed = JSON.parse(aiText); } catch { return await failed(502, { code: 'ai_bad_output' }); }
+  try { parsed = JSON.parse(aiText); } catch { return await failed(502, { code: 'ai_bad_output', reason: 'json_parse' }); }
 
   // ---- server-side truth pass ----
   const safe = sanitizeParsed(parsed, { totalDays: context.totalDays || 60 });
+  if (safe.reason) {
+    // JSON was valid but had missing required keys or wrong shape.
+    return await failed(502, { code: 'ai_bad_output', reason: safe.reason });
+  }
   if (!safe.bookings.length && !safe.activities.length) {
     // The model read the documents and found no trip facts in them. That is
     // an answer, not an error; the client says "nothing recognisable".
-    return await failed(200, { code: 'nothing_found', summary: safe.summary });
+    return await failed(200, { code: 'nothing_found', reason: 'empty_result', summary: safe.summary });
   }
 
   const payload = {
