@@ -278,3 +278,23 @@ export const adminSetOverride = (layer, itemId, patch, note = null) =>
 
 export const adminListOverrides = (layer = null) =>
   call('admin_list_overrides', { p_layer: layer });
+
+/**
+ * The pipeline's own health, from migration 041: when run_pipeline.py last
+ * finished, which task keys ran / were skipped / failed / soft-failed, a row
+ * count per natural-feature layer (beaches, lakes, mountains, trails,
+ * cycling, regions), and the fare model's drift-gate verdict.
+ *
+ * The pipeline writes one row to pipeline_runs at the end of every run,
+ * through a direct PostgREST insert with the service role key, from
+ * wherever it happens to run (a laptop today; see Execution/P4/
+ * T072-pipeline-health-metrics.md for why this does not assume Hetzner).
+ * This RPC only reads the most recent row.
+ *
+ * Returns { hasRun: false } when no run has ever reported (a project where
+ * 041 is applied but CARTA_SUPABASE_URL/CARTA_SUPABASE_SERVICE_KEY were
+ * never set on the machine running the pipeline, or no run has happened
+ * since). driftGate is null when the fare model has not trained yet or did
+ * not run in the reported run, not a fabricated "ok".
+ */
+export const adminPipelineHealth = () => call('admin_pipeline_health');

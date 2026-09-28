@@ -5,6 +5,8 @@ import { Margin } from './Margin.jsx';
 import { AiUsage } from './AiUsage.jsx';
 import { CacheHitRate } from './CacheHitRate.jsx';
 import { AiModelFallbacks } from './AiModelFallbacks.jsx';
+import { PipelineHealth } from './PipelineHealth.jsx';
+import { EdgeErrors } from './EdgeErrors.jsx';
 import { RecentAudit } from './AuditLog.jsx';
 
 // The Overview tab: how is it going. Pure render. Every figure here was
@@ -12,7 +14,10 @@ import { RecentAudit } from './AuditLog.jsx';
 // shell so that leaving the tab and coming back does not refetch.
 export function Overview({ overview, marginDash, audit }) {
   const { t } = useI18n();
-  const { stats, analytics, funnel, modelReport, cacheReport, aiUsage } = overview;
+  const {
+    stats, analytics, funnel, modelReport, cacheReport, aiUsage,
+    pipelineHealth, edgeErrors,
+  } = overview;
   const { margin, marginBack, setMarginBack } = marginDash;
   return (
     <>
@@ -32,6 +37,8 @@ export function Overview({ overview, marginDash, audit }) {
       ) : (
         <p className="adminpage-err">{t('admin.statsFailed')}</p>
       )}
+
+      {pipelineHealth && <PipelineHealth health={pipelineHealth} />}
 
       {analytics && (
         <>
@@ -129,6 +136,8 @@ export function Overview({ overview, marginDash, audit }) {
       {cacheReport && !cacheReport.error && <CacheHitRate report={cacheReport} />}
 
       {modelReport && !modelReport.error && <AiModelFallbacks modelReport={modelReport} />}
+
+      {edgeErrors && !edgeErrors.error && <EdgeErrors report={edgeErrors} />}
 
       <RecentAudit audit={audit} />
     </>

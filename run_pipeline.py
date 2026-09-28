@@ -152,6 +152,10 @@ LOGS = ROOT / "logs"
 BACKUPS = ROOT / "app_data" / "backups"
 STATE = LOGS / "pipeline_state.json"
 LOCK = LOGS / "pipeline.lock"
+# Mirrors src/estimation/common.py's DRIFT_REPORT; defined again here rather
+# than imported so this driver never depends on the estimation package
+# importing cleanly just to read one path.
+DRIFT_REPORT = LOGS / "drift_report.json"
 CONTINENT = ROOT / "continent-app"
 PY = sys.executable or "python"
 
@@ -269,6 +273,104 @@ def heartbeat(suffix=""):
         urllib.request.urlopen(url, timeout=10).read()
     except Exception as e:
         log(f"(heartbeat {suffix or '/'} failed: {type(e).__name__})")
+
+
+# Layer key -> where its published row count lives. Most layers write an
+# index.json with a count field already in it (the wire build step computes
+# that count anyway, so this reads it rather than re-deriving it). regions
+# has no index.json, so its count is the number of published region files.
+_LAYER_INDEX_FIELDS = {
+    "beaches": ("beaches/index.json", "n_beaches"),
+    "lakes": ("lakes/index.json", "n_lakes"),
+    "mountains": ("mountains/index.json", "n_mountains"),
+    "trails": ("trails/index.json", "n_trips"),
+    "cycling": ("cycling/index.json", "n_routes"),
+}
+
+
+def layer_row_counts():
+    """Row counts per published layer, read from continent-app/public. Never
+    raises: a layer whose wire is missing or malformed is left out rather than
+    aborting the whole report, because the count is diagnostic, not a gate."""
+    out = {}
+    public = CONTINENT / "public"
+    for layer, (rel, field) in _LAYER_INDEX_FIELDS.items():
+        try:
+            idx = json.loads((public / rel).read_text(encoding="utf-8"))
+            n = idx.get(field)
+            if isinstance(n, int):
+                out[layer] = n
+        except Exception:
+            pass
+    try:
+        region_dir = public / "region"
+        if region_dir.is_dir():
+            out["regions"] = sum(1 for _ in region_dir.glob("*.json"))
+    except Exception:
+        pass
+    return out
+
+
+def read_drift_gate():
+    """The fare model's drift verdict, mirrored from logs/drift_report.json
+    (written by src/estimation/drift.py). None when the report does not exist
+    yet (no model/snapshot trained, drift.py exit 2) or cannot be parsed; the
+    admin reader must tell that apart from a clean 'ok' gate, not show it as
+    one, which is why this returns None rather than a fabricated dict."""
+    try:
+        report = json.loads(DRIFT_REPORT.read_text(encoding="utf-8"))
+    except Exception:
+        return None
+    keys = ("checked_at", "verdict", "action", "max_psi", "worst_feature",
+            "mape", "ks")
+    return {k: report[k] for k in keys if k in report}
+
+
+def report_pipeline_run(ran, skipped, failed, soft_failed, dests):
+    """Write one row to public.pipeline_runs so the admin panel can show when
+    the catalogue was last built, how big each layer is, and whether the fare
+    model's drift gate is clean, from wherever this run happened to execute
+    (a laptop today, a Hetzner box once P3 finishes moving it there: see
+    Execution/P3, T046 to T048, which shipped the infra code but did not move
+    the run itself). Same shape as heartbeat(): no env vars, no-op; a failure
+    to reach Supabase is logged and never breaks or fails the pipeline run,
+    because telemetry about a run must never be the reason the run reports
+    itself as failed.
+
+    CARTA_SUPABASE_URL and CARTA_SUPABASE_SERVICE_KEY are deliberately not
+    the app's VITE_SUPABASE_* pair: the service role key bypasses RLS and
+    must never sit in continent-app/.env, which ships to the browser. It is
+    set only in the environment that runs the pipeline."""
+    url = os.environ.get("CARTA_SUPABASE_URL", "").rstrip("/")
+    key = os.environ.get("CARTA_SUPABASE_SERVICE_KEY", "")
+    if not url or not key:
+        log("(pipeline_runs: CARTA_SUPABASE_URL / CARTA_SUPABASE_SERVICE_KEY not set, skipping)")
+        return
+    import urllib.error
+    import urllib.request
+    body = json.dumps({
+        "ran": ran, "skipped": skipped, "failed": failed, "soft_failed": soft_failed,
+        "layer_counts": layer_row_counts(),
+        "drift_gate": read_drift_gate(),
+        "dest_count": dests,
+    }).encode("utf-8")
+    req = urllib.request.Request(
+        url + "/rest/v1/pipeline_runs",
+        data=body, method="POST",
+        headers={
+            "apikey": key,
+            "Authorization": f"Bearer {key}",
+            "Content-Type": "application/json",
+            "Prefer": "return=minimal",
+        },
+    )
+    try:
+        urllib.request.urlopen(req, timeout=20).read()
+        log("  pipeline_runs: reported this run to admin_health")
+    except urllib.error.HTTPError as e:
+        log(f"(pipeline_runs: HTTP {e.code} - {e.read()[:300]})")
+    except Exception as e:
+        log(f"(pipeline_runs: failed to report - {type(e).__name__}: {e})")
 
 
 # --------------------------------------------------------------------------- #
@@ -2901,6 +3003,12 @@ def main():
         print_freshness_summary(build_freshness_report(state))
     except Exception as e:
         log(f"(freshness report failed: {type(e).__name__}: {e})")
+
+    # Report the run to admin_health, whether it succeeded or not: a run that
+    # failed is exactly the case the admin panel most needs to show as stale,
+    # not a run to hide because it went badly. Only a plan with nothing due
+    # (handled earlier, before `ran`/`skipped` exist) reports nothing.
+    report_pipeline_run(ran, skipped, failed, soft_failed, ctx.get("dest_count"))
 
     log("\n" + "=" * 70)
     log(f"done. ran={ran or '-'}  skipped={skipped or '-'}  failed={failed or '-'}"

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import {
   adminAiCacheReport, adminAiModelReport, adminAiUsage, adminAnalytics,
-  adminHealth, adminPaywallFunnel, adminStats,
+  adminEdgeErrors, adminHealth, adminPaywallFunnel, adminPipelineHealth, adminStats,
 } from '../../auth/admin.js';
 
 // Everything the Overview tab shows except the margin, which has its own
@@ -14,6 +14,8 @@ export function useOverview(unlocked) {
   const [modelReport, setModelReport] = useState(null);
   const [cacheReport, setCacheReport] = useState(null);
   const [aiUsage, setAiUsage] = useState(null);
+  const [pipelineHealth, setPipelineHealth] = useState(null);
+  const [edgeErrors, setEdgeErrors] = useState(null);
 
   useEffect(() => {
     if (!unlocked) return;
@@ -24,6 +26,8 @@ export function useOverview(unlocked) {
     adminAiModelReport(30).then(setModelReport).catch(() => setModelReport(null));
     adminAiCacheReport(30).then(setCacheReport).catch(() => setCacheReport(null));
     adminAiUsage(30).then(setAiUsage).catch(() => setAiUsage(null));
+    adminPipelineHealth().then(setPipelineHealth).catch(() => setPipelineHealth(null));
+    adminEdgeErrors(30).then(setEdgeErrors).catch(() => setEdgeErrors(null));
   }, [unlocked]);
 
   // Refreshes after an action elsewhere. A failure keeps the old figure,
@@ -33,6 +37,7 @@ export function useOverview(unlocked) {
 
   return {
     stats, health, analytics, funnel, modelReport, cacheReport, aiUsage,
+    pipelineHealth, edgeErrors,
     refreshStats, refreshAnalytics,
   };
 }
