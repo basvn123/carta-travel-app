@@ -8,6 +8,7 @@ import {
   listGuides, getGuide, reportGuideOpened, fmtMonths, fmtRoute, buildGuideUrl,
 } from './guides.js';
 import { foreignMemory, foreignTripPoints } from '../auth/foreignTrip.js';
+import { ReportGuide } from './ReportGuide.jsx';
 
 const ForeignTripMap = lazy(() => import('../map/TripMap.jsx').then((m) => ({ default: m.TripMap })));
 
@@ -214,6 +215,12 @@ function GuideView({ planId, destinations, onBack, t, lang }) {
 
       <div className="panel-section">
         <p className="gld-note">{t('guides.privacyNote')}</p>
+      </div>
+
+      {/* The notice-and-action door (DSA Article 16, migration 037): on
+          every guide, for every reader, signed in or not. */}
+      <div className="panel-section">
+        <ReportGuide key={planId} planId={planId} />
       </div>
     </>
   );

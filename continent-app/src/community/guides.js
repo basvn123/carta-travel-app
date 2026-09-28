@@ -146,6 +146,46 @@ export function reportGuideOpened(planId) {
     });
 }
 
+/* ---- reporting one ------------------------------------------------------- */
+
+/** How many reports the ?guidesmock seam has taken, so the sixth can answer
+ *  too_many the way the database does. Display seam only. */
+let mockReports = 0;
+
+/**
+ * File a notice that a public guide is illegal (DSA Article 16), through
+ * report_guide (migration 037). Works signed out: the RPC is granted to
+ * anon, and the Supabase client sends the anon key when there is no
+ * session, so nothing here needs to know whether anybody is signed in.
+ *
+ * Resolves on success, throws an Error with `code` set on refusal, like
+ * sendFeedback: bad_reason, bad_email, too_many (five an hour from one
+ * address or account), not_public (the guide was unpublished, or never was).
+ * A transport failure throws the Supabase error as it came.
+ */
+export async function reportGuide(planId, reason, contactEmail = null) {
+  const refuse = (code) => {
+    const err = new Error(code);
+    err.code = code;
+    return err;
+  };
+  if (MOCK) {
+    await new Promise((r) => { setTimeout(r, 250); });
+    mockReports += 1;
+    if (mockReports > 5) throw refuse('too_many');
+    return { ok: true };
+  }
+  if (!supabase) throw refuse('auth_not_configured');
+  const { data, error } = await supabase.rpc('report_guide', {
+    p_plan_id: planId,
+    p_reason: reason,
+    p_contact_email: contactEmail || null,
+  });
+  if (error) throw error;
+  if (data && data.error) throw refuse(data.error);
+  return data;
+}
+
 /* ---- describing one ------------------------------------------------------ */
 
 /** Months as a phrase the reader can act on: "September", "April to May", or

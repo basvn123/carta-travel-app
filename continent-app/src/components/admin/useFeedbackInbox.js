@@ -4,7 +4,7 @@ import { adminListFeedback, adminSetFeedbackStatus } from '../../auth/admin.js';
 // The feedback inbox's state: the rows, the status filter, and the triage
 // action. Marking a row also refreshes the overview's analytics, as it did
 // before the split, so refreshAnalytics is passed in from useOverview.
-export function useModerationQueue(unlocked, refreshAnalytics) {
+export function useFeedbackInbox(unlocked, refreshAnalytics) {
   const [feedback, setFeedback] = useState(null);
   const [fbFilter, setFbFilter] = useState('new');
   const [fbBusy, setFbBusy] = useState(false);

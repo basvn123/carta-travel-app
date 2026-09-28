@@ -2,11 +2,12 @@ import { useI18n } from '../../i18n/index.jsx';
 import { fmtDateTime } from './format.js';
 
 // The Feedback tab: the inbox of messages travellers send, triaged by
-// status. It is the only moderation queue the product has today; the DSA
-// notice-and-action work (T068 onward) is expected to grow it. Pure render
-// over useModerationQueue. onOpenUser switches to Users and opens the
-// sender's account, which is the shell's business, not this view's.
-export function ModerationQueue({ queue, onOpenUser }) {
+// status. Pure render over useFeedbackInbox. onOpenUser switches to Users
+// and opens the sender's account, which is the shell's business, not this
+// view's. It was called ModerationQueue until T068, after the plan's name
+// for it; the DSA notice queue is a separate tab (ContentReports.jsx), see
+// that file for why.
+export function FeedbackInbox({ queue, onOpenUser }) {
   const { t } = useI18n();
   const { feedback, fbFilter, setFbFilter, fbBusy, loadFeedback, setFeedbackStatus } = queue;
   return (

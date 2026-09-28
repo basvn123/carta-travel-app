@@ -206,6 +206,20 @@ export const adminSetFeedbackStatus = (id, status) =>
  */
 export const adminListPublicGuides = () => call('admin_list_public_guides');
 
+/**
+ * The DSA notice queue: reports visitors filed against public guides through
+ * report_guide (migration 037), newest first. The table itself is private;
+ * this definer RPC is the only read. status is 'new', 'actioned',
+ * 'dismissed' or null for all.
+ *
+ * Returns { total, new, rows }; each row carries the reason, the reporter's
+ * contact email when they gave one, the guide's title as reported and now,
+ * whether it is still public, its owner, and how many reports share the
+ * reporter's source and the guide.
+ */
+export const adminListContentReports = (status, limit = 50, offset = 0) =>
+  call('admin_list_content_reports', { p_status: status || null, p_limit: limit, p_offset: offset });
+
 // Catalogue corrections over the static wire layers (beaches, lakes,
 // mountains, trails, destinations). An empty patch clears the override and
 // restores whatever the pipeline says.

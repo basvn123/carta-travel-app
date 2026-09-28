@@ -7,20 +7,22 @@ import { MissingTables } from '../components/admin/MissingTables.jsx';
 import { Overview } from '../components/admin/Overview.jsx';
 import { UsersList } from '../components/admin/UsersList.jsx';
 import { UserDetail } from '../components/admin/UserDetail.jsx';
-import { ModerationQueue } from '../components/admin/ModerationQueue.jsx';
+import { FeedbackInbox } from '../components/admin/FeedbackInbox.jsx';
 import { PublicGuides } from '../components/admin/PublicGuides.jsx';
+import { ContentReports } from '../components/admin/ContentReports.jsx';
 import { ConfigManager } from '../components/admin/ConfigManager.jsx';
 import { AuditLog } from '../components/admin/AuditLog.jsx';
 import { useErrText } from '../components/admin/useErrText.js';
 import { useMargin } from '../components/admin/useMargin.js';
 import { useOverview } from '../components/admin/useOverview.js';
 import { useAuditLog } from '../components/admin/useAuditLog.js';
-import { useModerationQueue } from '../components/admin/useModerationQueue.js';
+import { useFeedbackInbox } from '../components/admin/useFeedbackInbox.js';
 import { useContentOverrides } from '../components/admin/useContentOverrides.js';
 import { useConfigManager } from '../components/admin/useConfigManager.js';
 import { useUsersList } from '../components/admin/useUsersList.js';
 import { useUserDetail } from '../components/admin/useUserDetail.js';
 import { usePublicGuides } from '../components/admin/usePublicGuides.js';
+import { useContentReports } from '../components/admin/useContentReports.js';
 
 // The back office, as a page rather than a drawer.
 //
@@ -28,10 +30,11 @@ import { usePublicGuides } from '../components/admin/usePublicGuides.js';
 // the moment it had to show a table: 440px of slide-over is a place to change
 // your own name, not a place to read every account you have. So this takes
 // the whole viewport, keeps the app's own typography (Fraunces on headings,
-// mono on every measured fact) and lays the work out in seven sections that
+// mono on every measured fact) and lays the work out in eight sections that
 // each answer one question: how is it going, who are they, what does the
-// catalogue say, what have travellers published, what are they telling us,
-// what is the site saying, and what has been done.
+// catalogue say, what have travellers published, what has been reported as
+// illegal, what are they telling us, what is the site saying, and what has
+// been done.
 //
 // SECURITY, because this file will be read by somebody wondering. Nothing
 // here is a permission. Every call goes through an RPC that re-checks
@@ -56,9 +59,11 @@ import { usePublicGuides } from '../components/admin/usePublicGuides.js';
 // GUIDES (T067) is the one hook that does not load at unlock: it loads the
 // first time its tab is shown and keeps the list after that, so the unlock
 // sequence above is unchanged and the unbounded list of public guides is
-// only fetched by somebody who opened the tab.
+// only fetched by somebody who opened the tab. REPORTS (T068), the DSA notice
+// queue, loads the same way. It is its own tab rather than part of the
+// feedback inbox; ContentReports.jsx says why.
 
-const SECTIONS = ['overview', 'users', 'content', 'guides', 'feedback', 'site', 'audit'];
+const SECTIONS = ['overview', 'users', 'content', 'guides', 'reports', 'feedback', 'site', 'audit'];
 
 export function AdminPage({ onClose }) {
   const { t } = useI18n();
@@ -77,7 +82,7 @@ export function AdminPage({ onClose }) {
   const marginDash = useMargin(unlocked);
   const overview = useOverview(unlocked);
   const { audit, auditBusy, loadAudit } = useAuditLog(unlocked);
-  const queue = useModerationQueue(unlocked, overview.refreshAnalytics);
+  const queue = useFeedbackInbox(unlocked, overview.refreshAnalytics);
   const content = useContentOverrides(unlocked);
   const config = useConfigManager(unlocked, errText, loadAudit);
   const list = useUsersList(unlocked, errText);
@@ -86,6 +91,7 @@ export function AdminPage({ onClose }) {
   });
   const { detail, setDetail } = account;
   const guidesIndex = usePublicGuides(unlocked && section === 'guides', errText);
+  const reports = useContentReports(unlocked && section === 'reports', errText);
 
   // ---- the lock -----------------------------------------------------------
   if (!unlocked) {
@@ -145,8 +151,15 @@ export function AdminPage({ onClose }) {
               />
             )}
 
+            {section === 'reports' && (
+              <ContentReports
+                queue={reports}
+                onOpenUser={(id) => { setSection('users'); account.openUser(id); }}
+              />
+            )}
+
             {section === 'feedback' && (
-              <ModerationQueue
+              <FeedbackInbox
                 queue={queue}
                 onOpenUser={(id) => { setSection('users'); account.openUser(id); }}
               />
