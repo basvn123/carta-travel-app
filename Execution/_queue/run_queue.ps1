@@ -49,13 +49,26 @@ function Log([string]$msg) {
     Add-Content -Path $LogFile -Value $line -Encoding UTF8
 }
 
+# Single instance. On 2026-09-28 the queue was launched three times within
+# six minutes; two drivers then ran every task twice on the same working
+# tree, each agent editing under the other. Refuse to start if another copy
+# is alive (the snapshot name differs per launch, so match on the stem).
+$others = Get-CimInstance Win32_Process | Where-Object {
+    $_.ProcessId -ne $PID -and $_.CommandLine -match "run_queue\.\d{8}_\d{6}\.ps1|run_queue\.ps1"
+}
+if ($others) {
+    Log ("refusing to start: run_queue already running as pid " + (($others | ForEach-Object { $_.ProcessId }) -join ", "))
+    exit 2
+}
+
 # Keep the machine awake while the queue runs. Modern standby suspended a
 # detached run for twelve hours on 2026-09-13; this asks Windows not to.
 try {
     Add-Type -Name Power -Namespace Carta -MemberDefinition @'
 [DllImport("kernel32.dll")] public static extern uint SetThreadExecutionState(uint esFlags);
 '@
-    [Carta.Power]::SetThreadExecutionState(0x80000000 -bor 0x00000001) | Out-Null  # ES_CONTINUOUS | ES_SYSTEM_REQUIRED
+    # Literal 0x80000001 is a negative Int32 in PowerShell and fails the UInt32 bind; cast first.
+    [Carta.Power]::SetThreadExecutionState([uint32]2147483649) | Out-Null  # ES_CONTINUOUS | ES_SYSTEM_REQUIRED
     Log "power: system-required flag set for the life of this process"
 } catch { Log "power: could not set execution state ($($_.Exception.Message)); consider powercfg -change -standby-timeout-ac 0" }
 
@@ -85,7 +98,7 @@ $Tasks = @(
 )
 $GateReport = "Execution/P3/T055-post-migration-measurement.md"
 
-$SystemNote = "You are running unattended from Execution/_queue/run_queue.ps1. Nobody can answer a question or approve anything, so never stop to ask; make the conservative call, record it under What is still open, and finish. The task is only counted as done when its report file exists in Execution/P3 and is committed together with the Execution/_OPEN.md rows, so always reach that step. Do not merge the branch. Do not touch files outside the task's scope."
+$SystemNote = "You are running unattended from Execution/_queue/run_queue.ps1. Nobody can answer a question or approve anything, so never stop to ask; make the conservative call, record it under What is still open, and finish. The task is only counted as done when its report file exists in Execution/P3 and is committed together with the Execution/_OPEN.md rows, so always reach that step. Do not merge the branch. Do not touch files outside the task's scope. Other sessions may leave modified or untracked files in the working tree: never use git add -A, git add ., or git commit -a; stage only the files this task changed, by name, and leave the rest alone."
 
 function Committed([string]$relPath) {
     $h = git -C $Repo log --all -1 --format=%H -- $relPath 2>$null
@@ -116,10 +129,39 @@ function Invoke-Claude([string]$taskId, [string]$model, [string]$promptFile, [st
     $flags = "-p --model `"$model`" --output-format json --permission-mode $PermissionMode --append-system-prompt-file `"$sysFile`""
     if ($resumeId) { $flags += " --resume `"$resumeId`"" }
     # cmd /c so the redirects write UTF-8 bytes, not PowerShell 5.1's UTF-16.
-    $cmdline = "type `"$promptFile`" | `"$Claude`" $flags > `"$outJson`" 2> `"$errLog`""
+    # Start-Process -Wait, not `& cmd`, because `&` waits for the child's
+    # stdout pipe to close, and on 2026-09-28 a `vite preview` the T060 agent
+    # left running inherited that pipe and held the driver for hours after
+    # claude had exited. -Wait waits on the process handle only.
+    $cmdline = "/c type `"$promptFile`" | `"$Claude`" $flags > `"$outJson`" 2> `"$errLog`""
     Log "$taskId run: model=$model resume=$(if($resumeId){$resumeId}else{'-'}) log=$outJson"
-    & cmd /c $cmdline
-    $rc = $LASTEXITCODE
+    # Servers the agent leaves running (dev, preview) must die before the next
+    # task, but a bare command-line match would also kill a preview the owner
+    # started by hand in another terminal. So only this agent's own descendants
+    # are eligible: snapshot the tree while the child is alive (once -Wait
+    # returns, its children are reparented and the walk finds nothing), then
+    # intersect that set with the server pattern after it exits.
+    $proc = Start-Process cmd -ArgumentList $cmdline -WorkingDirectory $Repo -WindowStyle Hidden -PassThru
+    $ours = @{}
+    if ($proc) { $ours[[int]$proc.Id] = $true }
+    while (-not $proc.HasExited) {
+        $snap = Get-CimInstance Win32_Process | Select-Object ProcessId, ParentProcessId, Name, CommandLine
+        # Walk down repeatedly: a grandchild can appear before its parent is seen.
+        for ($pass = 0; $pass -lt 6; $pass++) {
+            foreach ($row in $snap) {
+                if ($ours[[int]$row.ParentProcessId] -and -not $ours[[int]$row.ProcessId]) {
+                    $ours[[int]$row.ProcessId] = $true
+                }
+            }
+        }
+        Start-Sleep -Seconds 5
+    }
+    $rc = $proc.ExitCode
+    $live = Get-CimInstance Win32_Process | Select-Object ProcessId, ParentProcessId, Name, CommandLine
+    $orphans = $live | Where-Object {
+        $ours[[int]$_.ProcessId] -and $_.CommandLine -match "vite (preview|dev)|npm run (dev|preview)"
+    }
+    foreach ($o in $orphans) { Log "$taskId cleanup: killing leftover $($o.Name) pid $($o.ProcessId)"; Stop-Process -Id $o.ProcessId -Force -ErrorAction SilentlyContinue }
 
     $text = ""; $sid = ""; $isErr = $false
     if (Test-Path $outJson) {
