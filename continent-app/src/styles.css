@@ -18996,6 +18996,8 @@ button.ai-sched-main:focus-visible {
 .adminpage-reviewdate.overdue { color: var(--danger); }
 .adminpage-chip.status-verified { border-color: var(--green); color: var(--green); }
 .adminpage-chip.status-stale { border-color: var(--ink-soft); color: var(--ink); }
+.adminpage-orphans { background: rgba(220, 38, 38, 0.04); }
+.adminpage-reviewrow.orphan { border-left-color: var(--danger); }
 .adminpage-count.overdue { color: var(--danger); }
 .adminpage-card2.overdue { border-color: var(--danger); }
 .adminpage-editedflag.overdue { background: var(--danger); }

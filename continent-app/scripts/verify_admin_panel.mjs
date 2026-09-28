@@ -906,8 +906,9 @@ try {
   ok('a correction saves the image, the name, the reason, the status and the review date against the real id');
 
   // 8e. The seeded lake override is overdue and named above the grid,
-  // although the grid is on beaches.
-  const reviewRows = page.locator('.adminpage-reviewrow');
+  // although the grid is on beaches. Select from the due review section
+  // specifically, not the orphan section.
+  const reviewRows = page.locator('.adminpage-review:not(.adminpage-orphans) .adminpage-reviewrow');
   if (await reviewRows.count() !== 1) fail(`the review list shows ${await reviewRows.count()} rows, expected the one overdue lake`);
   const lakeRow = reviewRows.first();
   if (!/Lac du Test/.test(await lakeRow.innerText())) fail('the overdue lake override is not named in the review list');
@@ -946,7 +947,9 @@ try {
   if ((await overdueCard.locator('.adminpage-editedflag').innerText()).trim().toLowerCase() !== 'overdue') {
     fail('the overdue card flag does not say overdue');
   }
-  if (!/A corrected name/.test(await page.locator('.adminpage-reviewlist').innerText())) {
+  // The review list is now specific; find the due reviews list (not the orphans).
+  const reviewLists = page.locator('.adminpage-review:not(.adminpage-orphans) .adminpage-reviewlist');
+  if (!/A corrected name/.test(await reviewLists.innerText())) {
     fail('the beach override did not move into the review list');
   }
   ok('a card whose override passed its date is bordered and flagged overdue, and listed');

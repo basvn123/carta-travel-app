@@ -226,3 +226,74 @@ export function __setOverridesForTest(rows) {
   }
   readyPromise = Promise.resolve(table);
 }
+
+/*
+ * Orphan patch detection (T075).
+ *
+ * The pipeline can drop items (a beach closed, a lake drained, a mountain
+ * removed from the catalogue). An override targeting a dropped ID is orphaned:
+ * it targets nothing in the current catalogue and is dead weight. These
+ * helpers detect and report orphans to the admin so the table stays honest.
+ */
+
+/** Build a Set of all valid item IDs across all layers and countries from
+ *  the live catalogue files. Fetches index.json for each layer, which lists
+ *  the countries; then fetches one file per country and layer, extracting
+ *  all IDs from the array. Returns { layer -> Set(ids) }. On any fetch
+ *  failure, returns empty for that layer. Does not block the page. */
+export async function fetchValidItemIds() {
+  const layers = ['beach', 'lake', 'mountain', 'trail'];
+  const dirs = {
+    beach: 'beaches',
+    lake: 'lakes',
+    mountain: 'mountains',
+    trail: 'trails',
+  };
+
+  const result = {};
+  for (const layer of layers) {
+    result[layer] = new Set();
+    const dir = dirs[layer];
+    const arrayKey = layer === 'trail' ? 'trips' : `${layer}s`;
+    try {
+      // Fetch index to find all countries.
+      const indexRes = await fetch(`/${dir}/index.json`);
+      if (!indexRes.ok) continue;
+      const index = await indexRes.json();
+      const countries = (index.countries || [])
+        .filter((c) => c && c.cc)
+        .map((c) => c.cc);
+
+      // Fetch each country file and extract IDs.
+      for (const cc of countries) {
+        try {
+          const res = await fetch(`/${dir}/${cc}.json`);
+          if (!res.ok) continue;
+          const data = await res.json();
+          const items = Array.isArray(data[arrayKey]) ? data[arrayKey] : [];
+          for (const item of items) {
+            if (item && item.id) {
+              result[layer].add(String(item.id));
+            }
+          }
+        } catch {
+          // Skip this country file on error; continue with others.
+        }
+      }
+    } catch {
+      // Skip this layer on error; continue with others.
+    }
+  }
+  return result;
+}
+
+/** Filter a list of overrides to keep only orphans: those whose item_id does
+ *  not appear in the validIds map for their layer. validIds is the result of
+ *  fetchValidItemIds(). Returns a filtered list. */
+export function orphanOverrides(rows, validIds) {
+  if (!rows || !validIds) return [];
+  return rows.filter((row) => {
+    const layerIds = validIds[row.layer];
+    return !layerIds || !layerIds.has(String(row.itemId));
+  });
+}

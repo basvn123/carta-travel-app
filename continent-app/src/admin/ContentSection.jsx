@@ -5,7 +5,7 @@ import { SearchIcon } from '../components/Icons.jsx';
 import { dataUrl } from '../lib/dataHost.js';
 import {
   OVERRIDE_STATUSES, MIN_REASON_CHARS, BACKFILL_REASON, defaultReviewDate, fromDateInput, reviewDateBounds,
-  reviewProblem, reviewState, rowsNeedingReview, toDateInput, daysOverdue,
+  reviewProblem, reviewState, rowsNeedingReview, toDateInput, daysOverdue, fetchValidItemIds, orphanOverrides,
 } from '../lib/overrides.js';
 import { fmtDate } from '../components/admin/format.js';
 
@@ -80,6 +80,20 @@ export function ContentSection({ overrides, onOverridesChanged, errText }) {
   const [saveBusy, setSaveBusy] = useState(false);
   const [saveErr, setSaveErr] = useState('');
 
+  // Orphan patch detection: fetch valid item IDs from the catalogue once,
+  // then keep them to filter orphans from overrides.
+  const [validIds, setValidIds] = useState(null);
+  useEffect(() => {
+    let live = true;
+    fetchValidItemIds().then((ids) => {
+      if (live) setValidIds(ids);
+    }).catch(() => {
+      // Silently fail: orphan detection is best-effort, never blocking.
+      if (live) setValidIds({});
+    });
+    return () => { live = false; };
+  }, []);
+
   const layer = LAYERS.find((l) => l.key === layerKey) || LAYERS[0];
 
   // The per-layer index says which countries have anything published, which
@@ -120,6 +134,7 @@ export function ContentSection({ overrides, onOverridesChanged, errText }) {
   // Read the clock once per list change, so every row in one render agrees.
   const now = useMemo(() => Date.now(), [overrides]); // eslint-disable-line react-hooks/exhaustive-deps
   const dueRows = useMemo(() => rowsNeedingReview(overrides, now), [overrides, now]);
+  const orphanRows = useMemo(() => orphanOverrides(overrides, validIds), [overrides, validIds]);
   const overdueCount = dueRows.filter((r) => reviewState(r, now) === 'overdue').length;
   const bounds = useMemo(() => reviewDateBounds(now), [now]);
 
@@ -258,6 +273,37 @@ export function ContentSection({ overrides, onOverridesChanged, errText }) {
           </ul>
         )}
       </section>
+
+      {orphanRows.length > 0 && (
+        <section className="adminpage-review adminpage-orphans" aria-labelledby="ov-orphan-title">
+          <h2 id="ov-orphan-title" className="adminpage-h2">
+            {orphanRows.length === 1 && t('admin.orphanTitleOne')}
+            {orphanRows.length > 1 && t('admin.orphanTitle', { n: orphanRows.length })}
+          </h2>
+          <p className="adminpage-muted">{t('admin.orphanHint')}</p>
+          <ul className="adminpage-reviewlist">
+            {orphanRows.map((r) => (
+              <li key={`${r.layer}:${r.itemId}`}>
+                <button
+                  type="button"
+                  className="adminpage-reviewrow orphan"
+                  onClick={() => openFromReview(r)}
+                >
+                  <span className="adminpage-reviewwhat">
+                    <b>{r.patch?.name || r.itemId}</b>
+                    <span className="adminpage-reviewnote">{r.authorNote}</span>
+                  </span>
+                  <span className="adminpage-reviewfacts">
+                    <span className="adminpage-chip">orphan</span>
+                    <span className="adminpage-reviewlayer">{t(`admin.layer.${r.layer}`)}</span>
+                    <code>{r.itemId}</code>
+                  </span>
+                </button>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
 
       <div className="adminpage-segment" role="radiogroup" aria-label={t('admin.nav.content')}>
         {LAYERS.map((l) => (
