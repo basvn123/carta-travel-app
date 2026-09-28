@@ -26,6 +26,10 @@
 //      the server's own error, and goes through with the right one.
 //   8d. Content: the layer loads from the real wire file, an http image is
 //      refused a preview, a correction saves, and reverting clears it.
+//   8e. Review lifecycle (T074): an overdue override from another layer is
+//      named above the grid, a save carries status, review date and reason,
+//      a too-short reason is refused before any call, and a card whose
+//      override has passed its date is marked overdue.
 //   8b3. Margin: money renders as euros, the tiers stay apart, the gap
 //      against the EUR 6.85 assumption is stated, the reconciliation line
 //      says the ledger is still modelled, and the month selector refetches.
@@ -371,7 +375,7 @@ async function stubSupabase(page, state, opts = {}) {
   await page.route('**/rest/v1/rpc/admin_list_overrides*', (route) => {
     state.ovListCalls.push(JSON.parse(route.request().postData() || '{}'));
     return json(route, {
-      rows: state.overrides,
+      rows: state.overrides.map((o) => ({ ...o, overdue: new Date(o.reviewBy).getTime() < Date.now() })),
       counts: state.overrides.reduce((a, o) => ({ ...a, [o.layer]: (a[o.layer] || 0) + 1 }), {}),
     });
   });
@@ -383,7 +387,14 @@ async function stubSupabase(page, state, opts = {}) {
       if (i >= 0) state.overrides.splice(i, 1);
       return json(route, { ok: true, cleared: true });
     }
-    const row = { layer: body.p_layer, itemId: body.p_item, patch: body.p_patch, note: body.p_note, updatedAt: '2026-08-20T12:00:00Z', by: 'owner' };
+    // Migration 043: the reason is kept when none is sent, as the server does.
+    const prev = i >= 0 ? state.overrides[i] : null;
+    const reason = body.p_note || prev?.authorNote || null;
+    const row = {
+      layer: body.p_layer, itemId: body.p_item, patch: body.p_patch, note: reason,
+      status: body.p_status, reviewBy: body.p_review_by, authorNote: reason,
+      updatedAt: '2026-08-20T12:00:00Z', by: 'owner',
+    };
     if (i >= 0) state.overrides[i] = row; else state.overrides.push(row);
     return json(route, { ok: true });
   });
@@ -442,7 +453,15 @@ try {
     deleted: new Set(), tiers: new Map(), banned: new Map(),
     history: [], missing: ['day_plans'], listFails: false,
     fbCalls: [], fbStatusCalls: [], submitCalls: [],
-    ovListCalls: [], ovSetCalls: [], overrides: [],
+    ovListCalls: [], ovSetCalls: [],
+    // One override already past its review date, in a layer the grid does
+    // not open on, so the review list is the only place it can surface.
+    overrides: [{
+      layer: 'lake', itemId: 'lac-overdue-t074', patch: { name: 'Lac du Test' },
+      note: 'pipeline swapped two lake names', status: 'temporary',
+      reviewBy: '2026-01-01T12:00:00Z', authorNote: 'pipeline swapped two lake names',
+      updatedAt: '2025-12-01T12:00:00Z', by: 'owner',
+    }],
     feedback: [
       {
         id: 2, kind: 'bug', status: 'new', message: 'The Porto bus fare looked too low for August.',
@@ -853,6 +872,22 @@ try {
   ok('the editor previews an https replacement and refuses to preview http');
 
   await page.locator('#ov-name').fill('A corrected name');
+  // 8e. A reason under ten characters is refused on the page, no call sent.
+  await page.locator('#ov-note').fill('car park');
+  await page.locator('.adminpage-btn', { hasText: 'Save correction' }).click();
+  await page.waitForTimeout(400);
+  if (state.ovSetCalls.length) fail('a nine-character reason still reached the server');
+  if (!/at least 10 characters/.test(await page.locator('.adminpage-editorbox .adminpage-err').innerText().catch(() => ''))) {
+    fail('a too-short reason shows no sentence saying why');
+  }
+  ok('a reason under ten characters is refused before any call, with a sentence');
+  if (await page.locator('.adminpage-reviewset .adminpage-seg.on').innerText() !== 'Temporary') {
+    fail('a new override does not default to Temporary');
+  }
+  const defDate = await page.locator('#ov-review').inputValue();
+  const defDays = Math.round((new Date(`${defDate}T12:00:00`) - Date.now()) / 86400000);
+  if (defDays < 29 || defDays > 31) fail(`the default review date is ${defDate}, ${defDays} days out, not 30`);
+  ok(`a new override defaults to Temporary, review by ${defDate}`);
   await page.locator('#ov-note').fill('old photo showed the car park');
   await page.locator('.adminpage-btn', { hasText: 'Save correction' }).click();
   await page.waitForTimeout(1000);
@@ -864,7 +899,58 @@ try {
     fail(`the patch is wrong: ${JSON.stringify(ov?.p_patch)}`);
   }
   if (!/car park/.test(ov.p_note || '')) fail('the note never reached the server');
-  ok('a correction saves the image, the name and the note against the real id');
+  if (ov.p_status !== 'temporary') fail(`the status sent was ${ov.p_status}`);
+  if (!ov.p_review_by || Math.abs(new Date(ov.p_review_by) - Date.now() - 30 * 86400000) > 2 * 86400000) {
+    fail(`the review date sent was ${ov.p_review_by}`);
+  }
+  ok('a correction saves the image, the name, the reason, the status and the review date against the real id');
+
+  // 8e. The seeded lake override is overdue and named above the grid,
+  // although the grid is on beaches.
+  const reviewRows = page.locator('.adminpage-reviewrow');
+  if (await reviewRows.count() !== 1) fail(`the review list shows ${await reviewRows.count()} rows, expected the one overdue lake`);
+  const lakeRow = reviewRows.first();
+  if (!/Lac du Test/.test(await lakeRow.innerText())) fail('the overdue lake override is not named in the review list');
+  if (!(await lakeRow.locator('.adminpage-reviewdate.overdue').count())) fail('the overdue date is not highlighted');
+  if (!/was due/.test(await lakeRow.innerText())) fail('the overdue row does not say when it was due');
+  if (!/1 overdue in all layers/.test(await page.locator('.adminpage-contentbar').innerText())) {
+    fail('the content bar does not count the overdue override');
+  }
+  if (!/1 override needs review/.test(await page.locator('#ov-review-title').innerText())) fail('the review heading does not count it');
+  ok('an overdue override in another layer is named above the grid, dated in red, and counted');
+
+  // Make the fresh beach override overdue on the stub, then confirm the lake
+  // one from the list: the save reloads the list, which is when the grid
+  // learns about the beach row's date.
+  const beachRow = state.overrides.find((o) => o.layer === 'beach');
+  beachRow.reviewBy = '2026-02-01T12:00:00Z';
+  await lakeRow.click();
+  await page.locator('.adminpage-editorbox').waitFor({ timeout: 10000 });
+  if (await page.locator('#ov-name').inputValue() !== 'Lac du Test') fail('the review list opens the editor without the stored patch');
+  if (await page.locator('#ov-note').inputValue() !== 'pipeline swapped two lake names') fail('the stored reason is not prefilled');
+  if (!(await page.locator('.adminpage-reviewwas').count())) fail('the editor does not say the override was overdue');
+  if (!(await page.locator('#ov-review').inputValue())) fail('the editor offers no fresh review date');
+  await page.locator('.adminpage-reviewset .adminpage-seg', { hasText: 'Verified' }).click();
+  await page.locator('.adminpage-btn', { hasText: 'Save correction' }).click();
+  await page.waitForTimeout(1000);
+  const conf = state.ovSetCalls[state.ovSetCalls.length - 1];
+  if (conf.p_layer !== 'lake' || conf.p_item !== 'lac-overdue-t074' || conf.p_status !== 'verified') {
+    fail(`confirming from the list sent ${JSON.stringify(conf)}`);
+  }
+  if (!(new Date(conf.p_review_by) > Date.now())) fail('confirming did not send a future review date');
+  ok('an override opened from the list saves to its own layer with a new status and date');
+
+  await page.waitForTimeout(400);
+  const overdueCard = page.locator('.adminpage-card2.overdue');
+  if (await overdueCard.count() !== 1) fail(`${await overdueCard.count()} cards are marked overdue, expected the beach just made overdue`);
+  if ((await overdueCard.locator('.adminpage-editedflag').innerText()).trim().toLowerCase() !== 'overdue') {
+    fail('the overdue card flag does not say overdue');
+  }
+  if (!/A corrected name/.test(await page.locator('.adminpage-reviewlist').innerText())) {
+    fail('the beach override did not move into the review list');
+  }
+  ok('a card whose override passed its date is bordered and flagged overdue, and listed');
+  await page.screenshot({ path: `${SHOTS}/admin-content-review.png`, fullPage: true });
 
   await page.waitForTimeout(500);
   if (!(await page.locator('.adminpage-card2.edited').count())) {
@@ -881,7 +967,8 @@ try {
   if (!rev || Object.keys(rev.p_patch || {}).length !== 0) {
     fail(`revert did not send an empty patch: ${JSON.stringify(rev)}`);
   }
-  if (state.overrides.length !== 0) fail('the override survived the revert');
+  if (state.overrides.some((o) => o.layer === 'beach')) fail('the override survived the revert');
+  if (rev.p_status !== null || rev.p_review_by !== null) fail(`a revert sent lifecycle fields: ${JSON.stringify(rev)}`);
   ok('reverting sends the empty patch that clears the override');
   await page.screenshot({ path: `${SHOTS}/admin-content.png`, fullPage: true });
 
@@ -991,6 +1078,9 @@ try {
 
   // ---- The floor: 380px.
   console.log('13. quality floor');
+  // Every override still in the stub is made overdue again, so the 380px
+  // content check below measures a real review row rather than an empty list.
+  state.overrides.forEach((o) => { o.reviewBy = '2026-01-01T12:00:00Z'; });
   const ctx4 = await browser.newContext({ viewport: { width: 380, height: 820 }, isMobile: true, hasTouch: true });
   await ctx4.addInitScript(seedSession(PROJECT_REF, ADMIN));
   const page4 = await ctx4.newPage();
@@ -1017,6 +1107,28 @@ try {
   if (spill.scrolls) fail(`the admin page scrolls sideways at 380px: ${spill.wide.join(' | ')}`);
   ok('380px: no horizontal scroll on the admin page');
   await page4.screenshot({ path: `${SHOTS}/admin-380.png`, fullPage: true });
+  // 8e at 380px: the review list with its one row must not push sideways.
+  await page4.locator('.adminpage-navbtn:visible', { hasText: 'Content' }).first().click();
+  await page4.locator('.adminpage-reviewrow').first().waitFor({ timeout: 10000 });
+  await page4.waitForTimeout(800);
+  const spill2 = await page4.evaluate(() => ({
+    scrolls: document.documentElement.scrollWidth > window.innerWidth + 1,
+    wide: [...document.querySelectorAll('.adminpage-review *')]
+      .filter((el) => el.getBoundingClientRect().right > window.innerWidth + 1)
+      .map((el) => `${el.tagName.toLowerCase()}.${el.className}`.slice(0, 50)).slice(0, 5),
+  }));
+  if (spill2.scrolls || spill2.wide.length) fail(`the content review list spills at 380px: ${spill2.wide.join(' | ')}`);
+  ok('380px: the content review list fits');
+  await page4.screenshot({ path: `${SHOTS}/admin-content-380.png`, fullPage: true });
+  await page4.locator('.adminpage-reviewrow').first().click();
+  await page4.locator('.adminpage-reviewset').waitFor({ timeout: 10000 });
+  await page4.waitForTimeout(400);
+  const spill3 = await page4.evaluate(() => [...document.querySelectorAll('.adminpage-editorbox *')]
+    .filter((el) => el.getBoundingClientRect().right > window.innerWidth + 1)
+    .map((el) => `${el.tagName.toLowerCase()}.${el.className}`.slice(0, 50)).slice(0, 5));
+  if (spill3.length) fail(`the override editor spills at 380px: ${spill3.join(' | ')}`);
+  ok('380px: the override editor, with status, review date and reason, fits');
+  await page4.locator('.adminpage-reviewset').screenshot({ path: `${SHOTS}/admin-content-editor-380.png` });
   await ctx4.close();
 
   await browser.close();

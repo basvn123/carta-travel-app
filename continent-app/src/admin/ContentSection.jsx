@@ -3,6 +3,11 @@ import { adminSetOverride } from '../auth/admin.js';
 import { useI18n } from '../i18n/index.jsx';
 import { SearchIcon } from '../components/Icons.jsx';
 import { dataUrl } from '../lib/dataHost.js';
+import {
+  OVERRIDE_STATUSES, MIN_REASON_CHARS, BACKFILL_REASON, defaultReviewDate, fromDateInput, reviewDateBounds,
+  reviewProblem, reviewState, rowsNeedingReview, toDateInput, daysOverdue,
+} from '../lib/overrides.js';
+import { fmtDate } from '../components/admin/format.js';
 
 // Reviewing the catalogue, and correcting it.
 //
@@ -16,6 +21,13 @@ import { dataUrl } from '../lib/dataHost.js';
 // The layers differ in two small ways that are handled here so the rest of
 // the screen can stay uniform: where the array lives in the file, and whether
 // the photograph is an `images` array or a single `img` string.
+//
+// Every override also carries a status, a review date and a reason (migration
+// 043). A patch is usually a symptom of a pipeline bug, and without a date on
+// it nobody remembers to fix the cause. So the editor will not save without
+// all three, the grid marks a card whose override is overdue or stale, and a
+// list above the grid names every such override in every layer and country,
+// because the grid only ever shows one country of one layer at a time.
 const LAYERS = [
   { key: 'beach', dir: 'beaches', arr: 'beaches', imageKey: 'images' },
   { key: 'lake', dir: 'lakes', arr: 'lakes', imageKey: 'images' },
@@ -38,6 +50,15 @@ function leadImage(item, imageKey) {
   return (first && (first.u || first.big)) || '';
 }
 
+// The lifecycle error words from admin_set_override (043), and the same
+// words from reviewProblem() before the round trip. Worded here rather than
+// in the shared useErrText because only this screen can produce them.
+const REVIEW_ERR = {
+  bad_status: 'admin.errReviewStatus',
+  bad_review_by: 'admin.errReviewBy',
+  note_required: 'admin.errOverrideReason',
+};
+
 export function ContentSection({ overrides, onOverridesChanged, errText }) {
   const { t } = useI18n();
   const [layerKey, setLayerKey] = useState('beach');
@@ -47,8 +68,15 @@ export function ContentSection({ overrides, onOverridesChanged, errText }) {
   const [busy, setBusy] = useState(false);
   const [search, setSearch] = useState('');
 
+  // The item being edited, and the layer it belongs to. The layer is kept
+  // with it because the review list opens overrides from any layer without
+  // switching the grid.
   const [editing, setEditing] = useState(null);
-  const [form, setForm] = useState({ name: '', image: '', blurb: '', hidden: false, featured: false, note: '' });
+  const [editLayerKey, setEditLayerKey] = useState('beach');
+  const [form, setForm] = useState({
+    name: '', image: '', blurb: '', hidden: false, featured: false,
+    note: '', status: 'temporary', reviewBy: '',
+  });
   const [saveBusy, setSaveBusy] = useState(false);
   const [saveErr, setSaveErr] = useState('');
 
@@ -84,10 +112,16 @@ export function ContentSection({ overrides, onOverridesChanged, errText }) {
     return () => { live = false; };
   }, [layer.dir, layer.arr, country]);
 
-  const patchFor = useCallback(
-    (id) => (overrides || []).find((o) => o.layer === layerKey && o.itemId === String(id))?.patch || null,
-    [overrides, layerKey],
+  const rowFor = useCallback(
+    (lk, id) => (overrides || []).find((o) => o.layer === lk && o.itemId === String(id)) || null,
+    [overrides],
   );
+
+  // Read the clock once per list change, so every row in one render agrees.
+  const now = useMemo(() => Date.now(), [overrides]); // eslint-disable-line react-hooks/exhaustive-deps
+  const dueRows = useMemo(() => rowsNeedingReview(overrides, now), [overrides, now]);
+  const overdueCount = dueRows.filter((r) => reviewState(r, now) === 'overdue').length;
+  const bounds = useMemo(() => reviewDateBounds(now), [now]);
 
   const shown = useMemo(() => {
     const q = search.trim().toLowerCase();
@@ -96,9 +130,14 @@ export function ContentSection({ overrides, onOverridesChanged, errText }) {
       || String(it.id).toLowerCase().includes(q));
   }, [items, search]);
 
-  const openEditor = (item) => {
-    const p = patchFor(item.id) || {};
+  // The editor opens prefilled with the stored patch AND the stored
+  // lifecycle, so confirming an overdue override is "change the date, save",
+  // and the reason carries over unless the admin rewrites it.
+  const openEditor = (item, lk = layerKey) => {
+    const row = rowFor(lk, item.id);
+    const p = row?.patch || {};
     setEditing(item);
+    setEditLayerKey(lk);
     setSaveErr('');
     setForm({
       name: p.name || '',
@@ -106,30 +145,67 @@ export function ContentSection({ overrides, onOverridesChanged, errText }) {
       blurb: p.blurb || '',
       hidden: p.hidden === true,
       featured: p.featured === true,
-      note: '',
+      note: row?.authorNote && row.authorNote !== BACKFILL_REASON ? row.authorNote : '',
+      status: OVERRIDE_STATUSES.includes(row?.status) ? row.status : 'temporary',
+      // An overdue date is not offered back: the date input refuses it and
+      // the server would too, so the admin must choose a new one.
+      reviewBy: row?.reviewBy && reviewState(row) !== 'overdue'
+        ? toDateInput(row.reviewBy)
+        : defaultReviewDate(),
     });
+  };
+
+  // An override from the review list: the grid may be on another layer or
+  // country, so the item is rebuilt from the override row. Its pipeline
+  // photograph is not loaded; the editor says "no photo" for the original.
+  const openFromReview = (row) => {
+    openEditor({ id: row.itemId, name: row.patch?.name || row.itemId }, row.layer);
+  };
+
+  const editRow = editing ? rowFor(editLayerKey, editing.id) : null;
+  const editLayer = LAYERS.find((l) => l.key === editLayerKey) || layer;
+
+  const wordErr = (e) => {
+    const key = REVIEW_ERR[e?.code];
+    if (key) return t(key, { n: MIN_REASON_CHARS });
+    return errText ? errText(e) : String(e?.message || e);
   };
 
   const save = async (clear = false) => {
     if (!editing) return;
-    setSaveBusy(true); setSaveErr('');
+    setSaveErr('');
+    // Only fields the person actually filled in travel to the server. An
+    // empty patch is the documented way to clear the override, so "revert"
+    // and "save nothing" are deliberately the same call, and a clear needs
+    // no status, date or reason.
+    const patch = {};
+    if (!clear) {
+      if (form.name.trim()) patch.name = form.name.trim();
+      if (form.image.trim()) patch.image = form.image.trim();
+      if (form.blurb.trim()) patch.blurb = form.blurb.trim();
+      if (form.hidden) patch.hidden = true;
+      if (form.featured) patch.featured = true;
+    }
+    const empty = Object.keys(patch).length === 0;
+    const reviewBy = fromDateInput(form.reviewBy);
+    if (!empty) {
+      const problem = reviewProblem({
+        status: form.status, reviewBy, reason: form.note, stored: editRow?.authorNote,
+      });
+      if (problem) { setSaveErr(wordErr({ code: problem })); return; }
+    }
+    setSaveBusy(true);
     try {
-      // Only fields the person actually filled in travel to the server. An
-      // empty patch is the documented way to clear the override, so "revert"
-      // and "save nothing" are deliberately the same call.
-      const patch = {};
-      if (!clear) {
-        if (form.name.trim()) patch.name = form.name.trim();
-        if (form.image.trim()) patch.image = form.image.trim();
-        if (form.blurb.trim()) patch.blurb = form.blurb.trim();
-        if (form.hidden) patch.hidden = true;
-        if (form.featured) patch.featured = true;
-      }
-      await adminSetOverride(layerKey, editing.id, patch, form.note.trim() || null);
+      await adminSetOverride(
+        editLayerKey, editing.id, patch,
+        empty ? null : (form.note.trim() || null),
+        empty ? null : form.status,
+        empty ? null : reviewBy,
+      );
       await onOverridesChanged?.();
       setEditing(null);
     } catch (e) {
-      setSaveErr(errText ? errText(e) : String(e?.message || e));
+      setSaveErr(wordErr(e));
     }
     setSaveBusy(false);
   };
@@ -140,6 +216,48 @@ export function ContentSection({ overrides, onOverridesChanged, errText }) {
     <>
       <h1 className="adminpage-h1">{t('admin.nav.content')}</h1>
       <p className="adminpage-muted">{t('admin.contentHint')}</p>
+
+      <section className="adminpage-review" aria-labelledby="ov-review-title">
+        <h2 id="ov-review-title" className="adminpage-h2">
+          {dueRows.length === 0 && t('admin.reviewTitleNone')}
+          {dueRows.length === 1 && t('admin.reviewTitleOne')}
+          {dueRows.length > 1 && t('admin.reviewTitle', { n: dueRows.length })}
+        </h2>
+        <p className="adminpage-muted">{t('admin.reviewHint')}</p>
+        {dueRows.length > 0 && (
+          <ul className="adminpage-reviewlist">
+            {dueRows.map((r) => {
+              const state = reviewState(r, now);
+              const late = daysOverdue(r, now);
+              return (
+                <li key={`${r.layer}:${r.itemId}`}>
+                  <button
+                    type="button"
+                    className={`adminpage-reviewrow ${state}`}
+                    onClick={() => openFromReview(r)}
+                  >
+                    <span className="adminpage-reviewwhat">
+                      <b>{r.patch?.name || r.itemId}</b>
+                      <span className="adminpage-reviewnote">{r.authorNote}</span>
+                    </span>
+                    <span className="adminpage-reviewfacts">
+                      <span className={`adminpage-chip status-${r.status}`}>{t(`admin.status.${r.status}`)}</span>
+                      <span className="adminpage-reviewlayer">{t(`admin.layer.${r.layer}`)}</span>
+                      <code>{r.itemId}</code>
+                      <span className={`adminpage-reviewdate ${state}`}>
+                        {state !== 'overdue' && t('admin.reviewDue', { date: fmtDate(r.reviewBy) })}
+                        {state === 'overdue' && late === 0 && t('admin.reviewLateToday', { date: fmtDate(r.reviewBy) })}
+                        {state === 'overdue' && late === 1 && t('admin.reviewLateOne', { date: fmtDate(r.reviewBy) })}
+                        {state === 'overdue' && late > 1 && t('admin.reviewLate', { date: fmtDate(r.reviewBy), n: late })}
+                      </span>
+                    </span>
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
+        )}
+      </section>
 
       <div className="adminpage-segment" role="radiogroup" aria-label={t('admin.nav.content')}>
         {LAYERS.map((l) => (
@@ -182,6 +300,11 @@ export function ContentSection({ overrides, onOverridesChanged, errText }) {
         <span className="adminpage-count">
           {t('admin.contentEdited', { n: editedCount })}
         </span>
+        {overdueCount > 0 && (
+          <span className="adminpage-count overdue">
+            {t('admin.reviewOverdueCount', { n: overdueCount })}
+          </span>
+        )}
       </div>
 
       {busy && <p className="adminpage-muted">{t('account.pleaseWait')}</p>}
@@ -189,21 +312,28 @@ export function ContentSection({ overrides, onOverridesChanged, errText }) {
 
       <div className="adminpage-grid">
         {shown.slice(0, 120).map((item) => {
-          const p = patchFor(item.id);
+          const row = rowFor(layerKey, item.id);
+          const p = row?.patch || null;
+          const state = reviewState(row, now);
+          const due = state === 'overdue' || state === 'stale';
           const img = (p && p.image) || leadImage(item, layer.imageKey);
           const name = (p && p.name) || item.name;
           return (
             <button
               key={item.id}
               type="button"
-              className={`adminpage-card2 ${p ? 'edited' : ''} ${p && p.hidden ? 'hiddenitem' : ''}`}
+              className={`adminpage-card2 ${p ? 'edited' : ''} ${due ? 'overdue' : ''} ${p && p.hidden ? 'hiddenitem' : ''}`}
               onClick={() => openEditor(item)}
             >
               <span className="adminpage-thumb">
                 {img
                   ? <img src={img} alt="" loading="lazy" />
                   : <span className="adminpage-nothumb">{t('admin.noImage')}</span>}
-                {p && <span className="adminpage-editedflag">{t('admin.edited')}</span>}
+                {p && (
+                  <span className={`adminpage-editedflag ${due ? 'overdue' : ''}`}>
+                    {due ? t(`admin.flag.${state}`) : t('admin.edited')}
+                  </span>
+                )}
               </span>
               <span className="adminpage-cardname">{name}</span>
               <span className="adminpage-cardmeta">
@@ -233,8 +363,8 @@ export function ContentSection({ overrides, onOverridesChanged, errText }) {
             <div className="adminpage-editorpreview">
               <figure>
                 <figcaption>{t('admin.imageNow')}</figcaption>
-                {leadImage(editing, layer.imageKey)
-                  ? <img src={leadImage(editing, layer.imageKey)} alt="" />
+                {leadImage(editing, editLayer.imageKey)
+                  ? <img src={leadImage(editing, editLayer.imageKey)} alt="" />
                   : <span className="adminpage-nothumb">{t('admin.noImage')}</span>}
               </figure>
               <figure>
@@ -291,15 +421,52 @@ export function ContentSection({ overrides, onOverridesChanged, errText }) {
               <span>{t('admin.overrideHidden')}</span>
             </label>
 
-            <label className="adminpage-lock-label" htmlFor="ov-note">{t('admin.overrideNote')}</label>
-            <input
-              id="ov-note"
-              className="adminpage-lock-input"
-              value={form.note}
-              maxLength={500}
-              placeholder={t('admin.overrideNotePlaceholder')}
-              onChange={(e) => setForm((f) => ({ ...f, note: e.target.value }))}
-            />
+            <fieldset className="adminpage-reviewset">
+              <legend className="adminpage-lock-label">{t('admin.statusLabel')}</legend>
+              {editRow && reviewState(editRow, now) === 'overdue' && (
+                <p className="adminpage-reviewwas">
+                  {t('admin.reviewWasDue', { date: fmtDate(editRow.reviewBy) })}
+                </p>
+              )}
+              <div className="adminpage-segment" role="radiogroup" aria-label={t('admin.statusLabel')}>
+                {OVERRIDE_STATUSES.map((st) => (
+                  <button
+                    key={st}
+                    type="button"
+                    role="radio"
+                    aria-checked={form.status === st}
+                    className={`adminpage-seg ${form.status === st ? 'on' : ''}`}
+                    onClick={() => setForm((f) => ({ ...f, status: st }))}
+                  >
+                    {t(`admin.status.${st}`)}
+                  </button>
+                ))}
+              </div>
+              <p className="adminpage-muted adminpage-fine">{t(`admin.statusHint.${form.status}`)}</p>
+
+              <label className="adminpage-lock-label" htmlFor="ov-review">{t('admin.reviewBy')}</label>
+              <input
+                id="ov-review"
+                type="date"
+                className="adminpage-lock-input mono"
+                value={form.reviewBy}
+                min={bounds.min}
+                max={bounds.max}
+                onChange={(e) => setForm((f) => ({ ...f, reviewBy: e.target.value }))}
+              />
+              <p className="adminpage-muted adminpage-fine">{t('admin.reviewByHint')}</p>
+
+              <label className="adminpage-lock-label" htmlFor="ov-note">{t('admin.overrideNote')}</label>
+              <textarea
+                id="ov-note"
+                className="adminpage-textarea"
+                rows={2}
+                value={form.note}
+                maxLength={500}
+                placeholder={t('admin.overrideNotePlaceholder')}
+                onChange={(e) => setForm((f) => ({ ...f, note: e.target.value }))}
+              />
+            </fieldset>
 
             {saveErr && <p className="adminpage-err">{saveErr}</p>}
 
@@ -307,7 +474,7 @@ export function ContentSection({ overrides, onOverridesChanged, errText }) {
               <button type="button" className="adminpage-btn" onClick={() => setEditing(null)}>
                 {t('admin.editCancel')}
               </button>
-              {patchFor(editing.id) && (
+              {editRow && (
                 <button type="button" className="adminpage-btn danger" disabled={saveBusy} onClick={() => save(true)}>
                   {t('admin.editRevert')}
                 </button>

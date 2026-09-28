@@ -108,6 +108,115 @@ export function applyOverrides(layer, list, opts) {
   return [...featured, ...kept.filter((it) => !it.featured)];
 }
 
+/*
+ * The review lifecycle (migration 043).
+ *
+ * Every override carries a status, a review date and the admin's reason. They
+ * live in the table beside the patch but travellers never see them: 043
+ * grants the public read on layer, item_id and patch only, which is exactly
+ * what overridesReady() selects. A stale or overdue patch still applies to
+ * travellers until someone reverts it; the lifecycle nags the admin, it never
+ * silently changes what the site shows.
+ *
+ * The helpers below are the admin page's single reading of those fields, so
+ * the grid, the review list and the editor cannot disagree about what counts
+ * as overdue. They mirror the rules admin_set_override enforces; the server
+ * stays the authority, these only let the page say no before a round trip.
+ */
+
+/** Order matters: the editor offers them in this order. */
+export const OVERRIDE_STATUSES = ['temporary', 'verified', 'stale'];
+
+/** A new override is due back in 30 days unless the admin picks otherwise. */
+export const DEFAULT_REVIEW_DAYS = 30;
+
+/** 043 refuses a review date more than 366 days out; the page offers 365. */
+export const MAX_REVIEW_DAYS = 365;
+
+/** 043 refuses a reason shorter than this. */
+export const MIN_REASON_CHARS = 10;
+
+/** The sentence 043 backfilled into rows that had no note. It is not a
+ *  reason, so the editor does not prefill it and neither end accepts it. */
+export const BACKFILL_REASON = 'Made before review dates existed; no reason was recorded. Write the real one.';
+
+const DAY_MS = 86400000;
+
+/** 'YYYY-MM-DD' for a date input, in the admin's own time zone. */
+export function toDateInput(value) {
+  const d = value instanceof Date ? value : new Date(value);
+  if (Number.isNaN(d.getTime())) return '';
+  const pad = (n) => String(n).padStart(2, '0');
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+}
+
+/** A date input's value as the ISO instant sent to the server: the END of
+ *  that local day, so picking today still lands after now(). */
+export function fromDateInput(ymd) {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(ymd || '')) return null;
+  const d = new Date(`${ymd}T23:59:00`);
+  return Number.isNaN(d.getTime()) ? null : d.toISOString();
+}
+
+/** The earliest and latest review date the editor offers, as input values. */
+export function reviewDateBounds(now = Date.now()) {
+  return {
+    min: toDateInput(new Date(now)),
+    max: toDateInput(new Date(now + MAX_REVIEW_DAYS * DAY_MS)),
+  };
+}
+
+/** Default review date for a new override, as an input value. */
+export function defaultReviewDate(now = Date.now()) {
+  return toDateInput(new Date(now + DEFAULT_REVIEW_DAYS * DAY_MS));
+}
+
+/** True when the row is past its review date. Derived from the clock, never
+ *  stored, the same way admin_list_overrides derives it. */
+export function isOverdue(row, now = Date.now()) {
+  if (!row || !row.reviewBy) return false;
+  const t = new Date(row.reviewBy).getTime();
+  return Number.isFinite(t) && t < now;
+}
+
+/** Whole days since the review date passed (0 on the day itself). */
+export function daysOverdue(row, now = Date.now()) {
+  if (!isOverdue(row, now)) return 0;
+  return Math.floor((now - new Date(row.reviewBy).getTime()) / DAY_MS);
+}
+
+/** 'overdue' | 'stale' | 'ok' | null (no row). Overdue wins over stale: a
+ *  date that has passed is the more urgent fact. */
+export function reviewState(row, now = Date.now()) {
+  if (!row) return null;
+  if (isOverdue(row, now)) return 'overdue';
+  if (row.status === 'stale') return 'stale';
+  return 'ok';
+}
+
+/** The rows that need a person: overdue or stale, most overdue first. */
+export function rowsNeedingReview(rows, now = Date.now()) {
+  return (rows || [])
+    .filter((r) => reviewState(r, now) !== 'ok')
+    .sort((a, b) => new Date(a.reviewBy).getTime() - new Date(b.reviewBy).getTime());
+}
+
+/**
+ * The same checks admin_set_override makes on a save, in the same order
+ * after the patch, answering the server's own error word or null. `stored`
+ * is the reason already on the row, which the server keeps when none is
+ * given.
+ */
+export function reviewProblem({ status, reviewBy, reason, stored }, now = Date.now()) {
+  if (!OVERRIDE_STATUSES.includes(status)) return 'bad_status';
+  const t = reviewBy ? new Date(reviewBy).getTime() : NaN;
+  if (!Number.isFinite(t) || t <= now || t > now + 366 * DAY_MS) return 'bad_review_by';
+  const kept = (stored || '').trim() === BACKFILL_REASON ? '' : (stored || '').trim();
+  const text = (reason || '').trim() || kept;
+  if (text.length < MIN_REASON_CHARS || text.length > 500) return 'note_required';
+  return null;
+}
+
 /** Test seam: lets the harness install a table without a network round trip. */
 export function __setOverridesForTest(rows) {
   table = emptyTable();

@@ -271,9 +271,18 @@ export const adminListModerationComplaints = (status = 'open', limit = 50, offse
 // Catalogue corrections over the static wire layers (beaches, lakes,
 // mountains, trails, destinations). An empty patch clears the override and
 // restores whatever the pipeline says.
-export const adminSetOverride = (layer, itemId, patch, note = null) =>
+// Migration 043: a non-empty patch also needs a status (verified, temporary
+// or stale), a review date (ISO, within a year) and a reason of at least ten
+// characters, or the stored one. All six arguments are always sent, even for
+// a clear, so the call can never match a stray four-argument overload.
+export const adminSetOverride = (layer, itemId, patch, note = null, status = null, reviewBy = null) =>
   call('admin_set_override', {
-    p_layer: layer, p_item: String(itemId), p_patch: patch, p_note: note,
+    p_layer: layer,
+    p_item: String(itemId),
+    p_patch: patch,
+    p_note: note,
+    p_status: status,
+    p_review_by: reviewBy,
   });
 
 export const adminListOverrides = (layer = null) =>
