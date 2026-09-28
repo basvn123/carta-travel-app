@@ -1,0 +1,101 @@
+{
+  "measured_at": "2026-09-28T09:34:31.477Z",
+  "runs": 7,
+  "cpu_throttle_phone": 4,
+  "viewport": "390x844",
+  "note": "Network is not throttled and the server is on loopback, matching T011. FCP and tile counts here isolate payload/render cost and Carto request volume, not real-world RTT to basemaps.cartocdn.com.",
+  "fcp_ms_median": 912,
+  "grid_ready_ms_median": 8246,
+  "tiles_initial_view_median": 2,
+  "tiles_session_total_median": 17,
+  "tiles_from_pan_zoom_median": 15,
+  "style_requests_median": 1,
+  "sprite_requests_median": 2,
+  "glyph_requests_median": 10,
+  "samples": [
+    {
+      "run": 0,
+      "fcp_ms": 504,
+      "grid_ready_ms": 4953,
+      "map_opened": true,
+      "tiles_initial_view": 2,
+      "tiles_session_total": 17,
+      "tiles_from_pan_zoom": 15,
+      "style_requests": 1,
+      "sprite_requests": 2,
+      "glyph_requests": 10
+    },
+    {
+      "run": 1,
+      "fcp_ms": 972,
+      "grid_ready_ms": 7337,
+      "map_opened": true,
+      "tiles_initial_view": 2,
+      "tiles_session_total": 17,
+      "tiles_from_pan_zoom": 15,
+      "style_requests": 1,
+      "sprite_requests": 2,
+      "glyph_requests": 10
+    },
+    {
+      "run": 2,
+      "fcp_ms": 488,
+      "grid_ready_ms": 7131,
+      "map_opened": true,
+      "tiles_initial_view": 2,
+      "tiles_session_total": 17,
+      "tiles_from_pan_zoom": 15,
+      "style_requests": 1,
+      "sprite_requests": 2,
+      "glyph_requests": 10
+    },
+    {
+      "run": 3,
+      "fcp_ms": 740,
+      "grid_ready_ms": 8246,
+      "map_opened": true,
+      "tiles_initial_view": 2,
+      "tiles_session_total": 17,
+      "tiles_from_pan_zoom": 15,
+      "style_requests": 1,
+      "sprite_requests": 2,
+      "glyph_requests": 10
+    },
+    {
+      "run": 4,
+      "fcp_ms": 912,
+      "grid_ready_ms": 9331,
+      "map_opened": true,
+      "tiles_initial_view": 2,
+      "tiles_session_total": 17,
+      "tiles_from_pan_zoom": 15,
+      "style_requests": 1,
+      "sprite_requests": 2,
+      "glyph_requests": 10
+    },
+    {
+      "run": 5,
+      "fcp_ms": 1076,
+      "grid_ready_ms": 12042,
+      "map_opened": true,
+      "tiles_initial_view": 2,
+      "tiles_session_total": 17,
+      "tiles_from_pan_zoom": 15,
+      "style_requests": 1,
+      "sprite_requests": 2,
+      "glyph_requests": 10
+    },
+    {
+      "run": 6,
+      "fcp_ms": 1152,
+      "grid_ready_ms": 11227,
+      "map_opened": true,
+      "tiles_initial_view": 2,
+      "tiles_session_total": 17,
+      "tiles_from_pan_zoom": 15,
+      "style_requests": 1,
+      "sprite_requests": 2,
+      "glyph_requests": 10
+    }
+  ]
+}

@@ -1,4 +1,4 @@
-# Open items register
+﻿# Open items register
 
 One row per open item, appended when a task writes its report. The rule is in
 CLAUDE.md under "Every open item also goes into the register". The row is a
@@ -176,3 +176,6 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T059-f | T059 | Two run_queue.ps1 instances (PIDs 22284 and 30708, started 08:55 and 08:59 on 2026-09-28) run the same queue in one checkout, so every task launches twice and the sessions can overwrite each other; stop one runner before the queue continues | user | closed by T062 (PID 30708 exited on its own; 22284 still runs, and the single-instance guard now refuses a second start) |  |
 | T062-a | T062 | Commit 4b2d8e19f carries T011 to T056's work under a T057 message (84 files, all genuinely absent from main), so reverting T057 would revert eight tasks' app code; decide before merging P3 whether to leave it recorded as a known attribution defect or fold it into T026's planned history rewrite, which already lists these paths | user | open |  |
 | T062-b | T062 | Nothing catches a task that commits the root repo but leaves its real work in continent-app's own tree: T057, T017 and T021 each did this, and T058-d and T060 reasoned against code that was not in history. Add a queue gate that fails a task whose report names continent-app/ files while git -C continent-app status --porcelain is dirty | next task | open |  |
+| T061-a | T061 | First paint and tile counts were measured with Chromium's 4x CPU throttle on loopback, the same stand-in T011 uses, not on a real mid-range phone or a throttled network; a field measurement (real device, or RUM after launch) is the more honest number | user | open |  |
+| T061-b | T061 | The 17-tiles-per-session figure is for the default catalogue mode and one representative session (open, zoom continent-to-city, pan once); it has not been measured against T059-a's viewport catalogue mode or a close-and-reopen session that MapLibre's own cache may serve for free | next task | open |  |
+| T061-c | T061 | Re-measure FCP and tiles-per-session at launch with `continent-app/scripts/perf/tiles_and_paint_T061.mjs`, unchanged, so the before/after comparison this task set up is a real one | next task | open |  |
