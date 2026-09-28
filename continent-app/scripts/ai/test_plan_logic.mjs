@@ -17,6 +17,7 @@ const logicPath = resolve(here, '../../../supabase/functions/plan-day/logic.mjs'
 const {
   cleanText, haversineKm, sanitizeCandidates, sanitizeAiStops, twoOptOrder,
   scheduleDay, cacheKeyInput, modelChain, shouldFallOver, DEFAULT_MODEL_CHAIN,
+  CACHE_KEY_VERSION, selectCandidates, dayCentroid,
 } = await import(pathToFileURL(logicPath).href);
 
 let failures = 0;
@@ -201,14 +202,134 @@ check('stay: a stay round the corner still starts the walk', nearStay.fromStay =
 check('stay: walking from it costs more than starting at stop 1',
   nearStay.totalKm > untouched.totalKm);
 
+/* ---- selectCandidates / dayCentroid: the prompt trim (Lever 3) ---- */
+
+// A deck bigger than the trim limit, with a known rating order and all
+// clustered close together so distance never dominates the score by itself.
+const bigDeck = Array.from({ length: 45 }, (_, i) => ({
+  id: String(i),
+  name: `Place ${i}`,
+  kind: 'Sight',
+  cat: 'sight',
+  lat: 50.85 + (i % 9) * 0.001,
+  lon: 4.35 + (i % 9) * 0.001,
+  rating: 10 - (i % 10), // ratings cycle 10..1, so id order is not rating order
+  mustSee: false,
+  dwellMin: 30,
+  desc: `Description for place ${i}`,
+}));
+const centre45 = dayCentroid(bigDeck, null);
+check('centroid: falls back to the mean of the candidates when there is no stay',
+  centre45 && Math.abs(centre45.lat - 50.854) < 0.01);
+const stayPoint = { lat: 50.9, lon: 4.9 };
+check('centroid: prefers the stay when one is given',
+  dayCentroid(bigDeck, stayPoint).lat === stayPoint.lat
+  && dayCentroid(bigDeck, stayPoint).lon === stayPoint.lon);
+
+const trimmed = selectCandidates(bigDeck, centre45, { limit: 30 });
+check('trim: caps at the limit', trimmed.length === 30, `got ${trimmed.length}`);
+check('trim: keeps the best-rated places over the worst',
+  trimmed.some((c) => c.rating === 10) && !trimmed.every((c) => c.rating === 1));
+check('trim: drops the lowest-rated place from this evenly-spaced deck',
+  !trimmed.some((c) => c.id === bigDeck.find((c) => c.rating === 1 && c.id !== bigDeck[0].id)?.id)
+  || trimmed.filter((c) => c.rating === 1).length < bigDeck.filter((c) => c.rating === 1).length);
+
+check('trim: deterministic, same input twice gives the identical id set',
+  JSON.stringify(selectCandidates(bigDeck, centre45, { limit: 30 }).map((c) => c.id).sort())
+  === JSON.stringify(trimmed.map((c) => c.id).sort()));
+check('trim: deterministic even when the input list order changes',
+  JSON.stringify([...selectCandidates(bigDeck, centre45, { limit: 30 })].map((c) => c.id).sort())
+  === JSON.stringify(selectCandidates([...bigDeck].reverse(), centre45, { limit: 30 }).map((c) => c.id).sort()));
+
+// mustSee candidates must survive the cut even when their rating is terrible
+// and they sit outside the limit's ordinary fill.
+const withMustSee = [
+  ...bigDeck,
+  { id: 'ms1', name: 'The one they asked for', kind: 'Sight', cat: 'sight', lat: 50.85, lon: 4.35, rating: 0.1, mustSee: true, dwellMin: 30, desc: 'must see' },
+];
+const trimmedMustSee = selectCandidates(withMustSee, centre45, { limit: 30 });
+check('trim: a mustSee candidate is never dropped, however low its rating',
+  trimmedMustSee.some((c) => c.id === 'ms1'));
+check('trim: a mustSee candidate does not shrink the ranked fill below the limit',
+  trimmedMustSee.length === 30, `got ${trimmedMustSee.length}`);
+check('trim: the ranked fill still finds 29 ordinary seats alongside the one mustSee',
+  trimmedMustSee.filter((c) => c.id !== 'ms1').length === 29);
+
+// A named place (mustInclude, via keepIds) must survive the same way, even
+// though nothing on the candidate itself marks it as mustSee.
+const namedId = bigDeck.find((c) => c.rating === 1).id;
+const trimmedNamed = selectCandidates(bigDeck, centre45, { limit: 30, keepIds: [namedId] });
+check('trim: a keepIds candidate is never dropped, however low its rating',
+  trimmedNamed.some((c) => c.id === namedId));
+
+// desc is stripped from everything that was not guaranteed a place; a
+// mustSee or keepIds candidate keeps its own desc untouched.
+check('trim: desc stripped from an ordinary ranked candidate',
+  trimmed.filter((c) => c.desc !== '').length < trimmed.length || trimmed.every((c) => c.desc === ''));
+check('trim: desc survives on a mustSee candidate',
+  trimmedMustSee.find((c) => c.id === 'ms1').desc === 'must see');
+check('trim: desc survives on a keepIds candidate',
+  trimmedNamed.find((c) => c.id === namedId).desc === bigDeck.find((c) => c.id === namedId).desc);
+check('trim: desc is gone from a non-guaranteed candidate even if it had one',
+  trimmed.find((c) => c.rating === 10 && c.id !== 'ms1')?.desc === '');
+
+// A deck already under the limit is returned whole and untouched.
+const small = bigDeck.slice(0, 10);
+const notTrimmed = selectCandidates(small, dayCentroid(small, null), { limit: 30 });
+check('trim: a deck under the limit is not cut', notTrimmed.length === small.length);
+
 /* ---- cacheKeyInput ---- */
 const base = {
   model: 'm', destId: 'd', month: 8, groupSize: 7, pace: 'balanced', vibe: 'mix',
   avoidHills: false, freeText: 'Paella', lang: 'en', candidates: cands,
 };
 check('cache key: stable', cacheKeyInput(base) === cacheKeyInput({ ...base }));
+// The version is exported so index.ts can log it beside every lookup. If the
+// two drift, the admin panel's per-version hit rate attributes a key change
+// to the wrong key, which is worse than not reporting one at all.
+check('cache key: the exported version is the one in the key',
+  JSON.parse(cacheKeyInput(base)).v === CACHE_KEY_VERSION, String(CACHE_KEY_VERSION));
 check('cache key: free text case-folded', cacheKeyInput(base) === cacheKeyInput({ ...base, freeText: 'paella' }));
-check('cache key: group band 5-6 vs 7+ differ', cacheKeyInput({ ...base, groupSize: 6 }) !== cacheKeyInput(base));
+// The band is 1 / 2 / 3-4 / 5+. Nothing downstream can see a finer split:
+// buildPrompt and scheduleDay both branch on groupSize >= 5, so a group of 6
+// and a group of 9 were being asked the identical question and charged twice.
+check('cache key: 6 and 7 share the 5+ band', cacheKeyInput({ ...base, groupSize: 6 }) === cacheKeyInput(base));
+check('cache key: 5 and 20 share the 5+ band',
+  cacheKeyInput({ ...base, groupSize: 5 }) === cacheKeyInput({ ...base, groupSize: 20 }));
+check('cache key: 4 and 5 still differ',
+  cacheKeyInput({ ...base, groupSize: 4 }) !== cacheKeyInput({ ...base, groupSize: 5 }));
+check('cache key: 3 and 4 share a band',
+  cacheKeyInput({ ...base, groupSize: 3 }) === cacheKeyInput({ ...base, groupSize: 4 }));
+check('cache key: a solo traveller is not a couple',
+  cacheKeyInput({ ...base, groupSize: 1 }) !== cacheKeyInput({ ...base, groupSize: 2 }));
+
+// Emptiness and absence are the same request and must hash the same, or the
+// traveller who cleared the box pays for a plan the cache already holds.
+const bare = { ...base, freeText: '' };
+check('cache key: empty free text equals absent free text',
+  cacheKeyInput(bare) === cacheKeyInput({ ...base, freeText: undefined }));
+check('cache key: whitespace-only free text is empty too',
+  cacheKeyInput(bare) === cacheKeyInput({ ...base, freeText: '   ' }));
+check('cache key: an empty must-include equals no must-include',
+  cacheKeyInput({ ...bare, mustInclude: [] }) === cacheKeyInput(bare));
+check('cache key: a blank must-include row equals no must-include',
+  cacheKeyInput({ ...bare, mustInclude: [{ id: '', name: '', timeOfDay: '' }] }) === cacheKeyInput(bare));
+check('cache key: an empty refinement equals no refinement',
+  cacheKeyInput({ ...bare, refine: '  ' }) === cacheKeyInput(bare));
+check('cache key: an empty previous plan equals no previous plan',
+  cacheKeyInput({ ...bare, prevStopIds: [] }) === cacheKeyInput(bare));
+
+// Punctuation and spacing are how one intent forks into several keys.
+check('cache key: punctuation in free text does not fork',
+  cacheKeyInput({ ...base, freeText: 'Paella!' }) === cacheKeyInput(base));
+check('cache key: doubled spaces in free text do not fork',
+  cacheKeyInput({ ...base, freeText: 'sea  food' }) === cacheKeyInput({ ...base, freeText: 'Sea food' }));
+check('cache key: free text still matters when it says something else',
+  cacheKeyInput({ ...base, freeText: 'tapas' }) !== cacheKeyInput(base));
+
+// Deck order is not part of the question.
+check('cache key: candidate order does not fork the key',
+  cacheKeyInput(base) === cacheKeyInput({ ...base, candidates: [...cands].reverse() }));
 check('cache key: month matters', cacheKeyInput({ ...base, month: 12 }) !== cacheKeyInput(base));
 // A refinement must never be served the un-refined plan from cache, and two
 // different refinements must never collide with each other.
@@ -258,6 +379,17 @@ check('cache key: different company differs',
 check('cache key: a different start time differs',
   cacheKeyInput({ ...base, profile: prof })
   !== cacheKeyInput({ ...base, profile: { ...prof, startTime: '11:00' } }));
+// steps and maxWalkKm are the same answer twice over (the client derives the
+// second from the first), so only the kilometre figure the scheduler enforces
+// is keyed. A client that rounded differently must not fork the cache.
+check('cache key: the same walking budget from a different steps figure does not fork',
+  cacheKeyInput({ ...base, profile: prof })
+  === cacheKeyInput({ ...base, profile: { ...prof, steps: 9450 } }));
+check('cache key: mood order does not fork the key',
+  cacheKeyInput({ ...base, profile: { ...prof, moods: ['sights', 'food'] } })
+  === cacheKeyInput({ ...base, profile: { ...prof, moods: ['food', 'sights'] } }));
+check('cache key: an absent profile is not an empty profile fork',
+  cacheKeyInput({ ...base, profile: null }) === cacheKeyInput({ ...base, profile: undefined }));
 
 /* ---- events survive validation as flagged discoveries ---- */
 const withEvent = sanitizeAiStops([

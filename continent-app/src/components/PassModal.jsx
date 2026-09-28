@@ -89,6 +89,25 @@ export function PassModal({ entitlement, reason = '', onClose, onSignIn, signedI
           <p className="pass-current">{t('pass.current', { name: t(TIERS[current].labelKey), days: left })}</p>
         )}
 
+        {/* The withdrawal waiver, stated BEFORE the buy buttons.
+            A pass starts the moment payment lands, so under Article 16(m) of
+            the Consumer Rights Directive the 14-day right of withdrawal only
+            ends if the buyer asked for immediate access and acknowledged
+            losing it. The explicit consent itself is the required checkbox on
+            Stripe's own page (consent_collection in the checkout Edge
+            Function), and the webhook records the answer against the grant
+            (migration 025). This line is here so nobody meets that checkbox
+            for the first time with their card details already typed, and so
+            the terms can be read before leaving for Stripe. A second checkbox
+            on this side would be duplicate friction, not a second consent. */}
+        <p className="pass-waiver">
+          {t('pass.waiverNote')}
+          {' '}
+          <button type="button" className="auth-link pass-terms-link" onClick={() => setTermsOpen(true)}>
+            {t('pass.legalLink')}
+          </button>
+        </p>
+
         <div className="pass-grid">
           {TIER_ORDER.map((id) => {
             const tier = TIERS[id];
@@ -148,17 +167,11 @@ export function PassModal({ entitlement, reason = '', onClose, onSignIn, signedI
         )}
         <p className="ai-plan-note">{t('pass.vatNote')}</p>
         <p className="ai-plan-note">{t('pass.noSubNote')}</p>
-        {/* The contract line. The withdrawal waiver itself is the checkbox on
-            Stripe's checkout page (consent_collection in the checkout Edge
-            Function); this tells the traveller it is coming and lets them read
-            the terms before they leave for Stripe. */}
-        <p className="ai-plan-note">
-          {t('pass.legalNote')}
-          {' '}
-          <button type="button" className="auth-link pass-terms-link" onClick={() => setTermsOpen(true)}>
-            {t('pass.legalLink')}
-          </button>
-        </p>
+        {/* The contract line. The waiver and the link to the terms now sit
+            above the buy buttons (see pass-waiver), where they are read before
+            a price is chosen; this keeps the plain statement that buying is
+            agreeing, without a second copy of the same link. */}
+        <p className="ai-plan-note">{t('pass.legalNote')}</p>
       </div>
       {termsOpen && <TermsOfService onClose={() => setTermsOpen(false)} />}
     </div>

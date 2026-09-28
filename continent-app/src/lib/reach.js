@@ -9,6 +9,7 @@
  */
 import { useEffect, useState } from 'react';
 import { fareFileBase } from './fareFile.js';
+import { dataUrl } from './dataHost.js';
 
 /** Served path for an origin's reach artifact (same reserved-name escaping
  *  as the fare slices: reach/PRN.json would be the printer on Windows). */
@@ -27,7 +28,7 @@ export function loadReach(origin) {
   if (!origin || !/^[A-Z0-9]{3,4}$/.test(origin)) return Promise.resolve(null);
   const key = fareFileBase(origin);
   if (!reachPromises.has(key)) {
-    const p = fetch(reachUrl(origin))
+    const p = fetch(dataUrl(reachUrl(origin)))
       .then((r) => (r.ok ? r.json() : null))
       .then((raw) => {
         if (!raw || typeof raw.minutes !== 'object' || raw.minutes == null) return null;

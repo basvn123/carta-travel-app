@@ -74,7 +74,14 @@ for (const f of files) {
 }
 
 // --- 4. Every key the modal can render, in all six locales -------------------
-const wanted = new Set(['pass.heading', 'pass.lead']);
+// pass.waiverNote and pass.legalLink are the withdrawal waiver line above the
+// buy buttons (T032). They are checked here, not merely rendered, because a
+// locale that loses either one shows a buyer no waiver at all, and a sale made
+// without a visible waiver stays refundable for 14 days under the Consumer
+// Rights Directive. That is a revenue failure no other check would catch.
+const wanted = new Set([
+  'pass.heading', 'pass.lead', 'pass.waiverNote', 'pass.legalNote', 'pass.legalLink',
+]);
 for (const { heading, sub } of copy.values()) {
   wanted.add(heading);
   if (sub) wanted.add(sub);
@@ -88,6 +95,31 @@ for (const lang of LOCALES) {
     else if (new RegExp(`"${key.replace('.', '\\.')}":\\s*""`).test(src)) {
       note(`i18n/${lang}.js has "${key}" set to an empty string.`);
     }
+  }
+}
+
+// --- 4b. The waiver actually says 14 ----------------------------------------
+// A present-but-vague waiver line is the failure mode here: the consent has to
+// name the right being given up, so the number is the load-bearing word. Every
+// locale's translation of the withdrawal period keeps the digits, so "14" is a
+// language-independent check.
+for (const lang of LOCALES) {
+  const src = read(`i18n/${lang}.js`);
+  const m = src.match(/"pass\.waiverNote":\s*"((?:[^"\\]|\\.)*)"/);
+  if (m && !m[1].includes('14')) {
+    note(`i18n/${lang}.js: "pass.waiverNote" does not name the 14-day withdrawal period.`);
+  }
+}
+
+// The modal must render the waiver BEFORE the pass grid. Reading order is the
+// whole point: the buyer should not meet the waiver for the first time on
+// Stripe's page with their card details already typed.
+{
+  const waiverAt = modalSrc.indexOf("t('pass.waiverNote')");
+  const gridAt = modalSrc.indexOf('className="pass-grid"');
+  if (waiverAt === -1) note('PassModal.jsx: the waiver line (pass.waiverNote) is gone.');
+  else if (gridAt !== -1 && waiverAt > gridAt) {
+    note('PassModal.jsx: the waiver line renders after the pass grid, so it sits below the buy buttons.');
   }
 }
 

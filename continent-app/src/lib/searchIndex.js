@@ -13,6 +13,8 @@
  * than none.
  */
 
+import { dataUrl } from './dataHost.js';
+
 const FOLD_TABLE = {
   'ł': 'l', 'Ł': 'l', 'ø': 'o', 'Ø': 'o', 'æ': 'ae', 'Æ': 'ae',
   'œ': 'oe', 'Œ': 'oe', 'ß': 'ss', 'đ': 'd', 'Đ': 'd',
@@ -30,7 +32,7 @@ let indexPromise = null;
 
 export function loadSearchIndex() {
   if (!indexPromise) {
-    indexPromise = fetch(`${import.meta.env.BASE_URL || '/'}search_index.json`)
+    indexPromise = fetch(dataUrl('/search_index.json'))
       .then((r) => (r.ok ? r.json() : null))
       .catch(() => null);
   }

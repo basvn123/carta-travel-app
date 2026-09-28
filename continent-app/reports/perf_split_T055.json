@@ -1,0 +1,327 @@
+{
+  "measured_at": "2026-09-28T00:39:59.721Z",
+  "runs_per_cell": 3,
+  "cpu_throttle_phone": 4,
+  "shape": "split build (VITE_DATA_BASE stand-in), two-origin loopback: app 4390, data 4391",
+  "note": "Same method as scripts/perf/baseline_vitals.mjs (see T011), run against the two-origin stand-in from scripts/verify_data_host.mjs instead of the single-origin dist/ server. Network is not throttled and both origins are loopback, so this isolates the split itself (payload shape, request count, CORS overhead) from real R2/Cloudflare latency.",
+  "rows": [
+    {
+      "device": "desktop",
+      "page": "price-map",
+      "url": "/?tab=map",
+      "runs": 3,
+      "ok": true,
+      "lcp_ms": 708,
+      "inp_ms": 40,
+      "cls": 0.0285,
+      "settled_ms": 3083,
+      "lcp_element": "IMG.railcard-img",
+      "interactions": 12,
+      "app_shard_hits": 0,
+      "data_host_hits": 46,
+      "samples": [
+        {
+          "ok": true,
+          "lcp": 1212,
+          "lcpEl": "IMG.railcard-img",
+          "settled": 3594,
+          "cls": 0.0041,
+          "inp": 40,
+          "interactions": 12,
+          "failures": [],
+          "appShardHits": 0,
+          "dataHostHits": 46
+        },
+        {
+          "ok": true,
+          "lcp": 708,
+          "lcpEl": "IMG.railcard-img",
+          "settled": 3083,
+          "cls": 0.0285,
+          "inp": 56,
+          "interactions": 12,
+          "failures": [],
+          "appShardHits": 0,
+          "dataHostHits": 46
+        },
+        {
+          "ok": true,
+          "lcp": 680,
+          "lcpEl": "IMG.railcard-img",
+          "settled": 3056,
+          "cls": 0.0285,
+          "inp": 40,
+          "interactions": 10,
+          "failures": [],
+          "appShardHits": 0,
+          "dataHostHits": 46
+        }
+      ]
+    },
+    {
+      "device": "desktop",
+      "page": "destination-page",
+      "url": "/#dest=gem:valbona",
+      "runs": 3,
+      "ok": true,
+      "lcp_ms": 800,
+      "inp_ms": 24,
+      "cls": 0.0905,
+      "settled_ms": 3650,
+      "lcp_element": "IMG",
+      "interactions": 6,
+      "app_shard_hits": 0,
+      "data_host_hits": 49,
+      "samples": [
+        {
+          "ok": true,
+          "lcp": 696,
+          "lcpEl": "IMG",
+          "settled": 3550,
+          "cls": 0.0892,
+          "inp": 32,
+          "interactions": 6,
+          "failures": [],
+          "appShardHits": 0,
+          "dataHostHits": 49
+        },
+        {
+          "ok": true,
+          "lcp": 856,
+          "lcpEl": "IMG",
+          "settled": 3694,
+          "cls": 0.0905,
+          "inp": 24,
+          "interactions": 6,
+          "failures": [],
+          "appShardHits": 0,
+          "dataHostHits": 49
+        },
+        {
+          "ok": true,
+          "lcp": 800,
+          "lcpEl": "IMG",
+          "settled": 3650,
+          "cls": 0.0905,
+          "inp": 24,
+          "interactions": 6,
+          "failures": [],
+          "appShardHits": 0,
+          "dataHostHits": 49
+        }
+      ]
+    },
+    {
+      "device": "desktop",
+      "page": "trip-page",
+      "url": "/#itin=at-salzburg-vienna-chain-6d",
+      "runs": 3,
+      "ok": true,
+      "lcp_ms": 1580,
+      "inp_ms": null,
+      "cls": 0.0047,
+      "settled_ms": 6176,
+      "lcp_element": "IMG.itin-photohero-img",
+      "interactions": 0,
+      "app_shard_hits": 0,
+      "data_host_hits": 52,
+      "samples": [
+        {
+          "ok": true,
+          "lcp": 1744,
+          "lcpEl": "IMG.itin-photohero-img",
+          "settled": 6183,
+          "cls": 0.0047,
+          "inp": null,
+          "interactions": 0,
+          "failures": [],
+          "appShardHits": 0,
+          "dataHostHits": 52
+        },
+        {
+          "ok": true,
+          "lcp": 1564,
+          "lcpEl": "IMG.itin-photohero-img",
+          "settled": 6153,
+          "cls": 0.0047,
+          "inp": null,
+          "interactions": 0,
+          "failures": [],
+          "appShardHits": 0,
+          "dataHostHits": 52
+        },
+        {
+          "ok": true,
+          "lcp": 1580,
+          "lcpEl": "IMG.itin-photohero-img",
+          "settled": 6176,
+          "cls": 0.0047,
+          "inp": null,
+          "interactions": 0,
+          "failures": [],
+          "appShardHits": 0,
+          "dataHostHits": 52
+        }
+      ]
+    },
+    {
+      "device": "phone",
+      "page": "price-map",
+      "url": "/?tab=map",
+      "runs": 3,
+      "ok": true,
+      "lcp_ms": 2532,
+      "inp_ms": 312,
+      "cls": 0.0075,
+      "settled_ms": 4765,
+      "lcp_element": "IMG.railcard-img",
+      "interactions": 12,
+      "app_shard_hits": 0,
+      "data_host_hits": 46,
+      "samples": [
+        {
+          "ok": true,
+          "lcp": 3360,
+          "lcpEl": "IMG.railcard-img",
+          "settled": 6069,
+          "cls": 0.0075,
+          "inp": 312,
+          "interactions": 12,
+          "failures": [],
+          "appShardHits": 0,
+          "dataHostHits": 46
+        },
+        {
+          "ok": true,
+          "lcp": 2532,
+          "lcpEl": "IMG.railcard-img",
+          "settled": 4729,
+          "cls": 0.0075,
+          "inp": 168,
+          "interactions": 12,
+          "failures": [],
+          "appShardHits": 0,
+          "dataHostHits": 46
+        },
+        {
+          "ok": true,
+          "lcp": 2352,
+          "lcpEl": "IMG.railcard-img",
+          "settled": 4765,
+          "cls": 0.1443,
+          "inp": 584,
+          "interactions": 10,
+          "failures": [],
+          "appShardHits": 0,
+          "dataHostHits": 46
+        }
+      ]
+    },
+    {
+      "device": "phone",
+      "page": "destination-page",
+      "url": "/#dest=gem:valbona",
+      "runs": 3,
+      "ok": true,
+      "lcp_ms": 2496,
+      "inp_ms": 64,
+      "cls": 0.3085,
+      "settled_ms": 5205,
+      "lcp_element": "IMG",
+      "interactions": 3,
+      "app_shard_hits": 0,
+      "data_host_hits": 49,
+      "samples": [
+        {
+          "ok": true,
+          "lcp": 2496,
+          "lcpEl": "IMG",
+          "settled": 5205,
+          "cls": 0.3085,
+          "inp": 64,
+          "interactions": 3,
+          "failures": [],
+          "appShardHits": 0,
+          "dataHostHits": 49
+        },
+        {
+          "ok": true,
+          "lcp": 2296,
+          "lcpEl": "IMG",
+          "settled": 5058,
+          "cls": 0.3086,
+          "inp": 64,
+          "interactions": 3,
+          "failures": [],
+          "appShardHits": 0,
+          "dataHostHits": 49
+        },
+        {
+          "ok": true,
+          "lcp": 3196,
+          "lcpEl": "IMG",
+          "settled": 5822,
+          "cls": 0.3085,
+          "inp": 128,
+          "interactions": 3,
+          "failures": [],
+          "appShardHits": 0,
+          "dataHostHits": 49
+        }
+      ]
+    },
+    {
+      "device": "phone",
+      "page": "trip-page",
+      "url": "/#itin=at-salzburg-vienna-chain-6d",
+      "runs": 3,
+      "ok": true,
+      "lcp_ms": 3860,
+      "inp_ms": null,
+      "cls": 0.0084,
+      "settled_ms": 6290,
+      "lcp_element": "IMG.itin-photohero-img",
+      "interactions": 0,
+      "app_shard_hits": 0,
+      "data_host_hits": 52,
+      "samples": [
+        {
+          "ok": true,
+          "lcp": 3860,
+          "lcpEl": "IMG.itin-photohero-img",
+          "settled": 6290,
+          "cls": 0.0085,
+          "inp": null,
+          "interactions": 0,
+          "failures": [],
+          "appShardHits": 0,
+          "dataHostHits": 52
+        },
+        {
+          "ok": true,
+          "lcp": 3684,
+          "lcpEl": "IMG.itin-photohero-img",
+          "settled": 6289,
+          "cls": 0.0084,
+          "inp": null,
+          "interactions": 0,
+          "failures": [],
+          "appShardHits": 0,
+          "dataHostHits": 52
+        },
+        {
+          "ok": true,
+          "lcp": 5252,
+          "lcpEl": "IMG.itin-photohero-img",
+          "settled": 6556,
+          "cls": 0.0084,
+          "inp": null,
+          "interactions": 0,
+          "failures": [],
+          "appShardHits": 0,
+          "dataHostHits": 52
+        }
+      ]
+    }
+  ]
+}

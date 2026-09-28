@@ -1,0 +1,278 @@
+{
+  "measured_at": "2026-09-28T00:26:05.696Z",
+  "runs_per_cell": 3,
+  "cpu_throttle_phone": 4,
+  "note": "Local dist over a static server on loopback. Network is not throttled, so these LCP figures are a floor: they isolate payload and CPU cost, not RTT.",
+  "rows": [
+    {
+      "device": "desktop",
+      "page": "price-map",
+      "url": "/?tab=map",
+      "runs": 3,
+      "ok": true,
+      "lcp_ms": 668,
+      "inp_ms": 40,
+      "cls": 0.0285,
+      "settled_ms": 3043,
+      "lcp_element": "IMG.railcard-img",
+      "interactions": 10,
+      "samples": [
+        {
+          "ok": true,
+          "lcp": 900,
+          "lcpEl": "IMG.railcard-img",
+          "settled": 3177,
+          "cls": 0.0268,
+          "inp": 48,
+          "interactions": 10,
+          "failures": []
+        },
+        {
+          "ok": true,
+          "lcp": 648,
+          "lcpEl": "IMG.railcard-img",
+          "settled": 3031,
+          "cls": 0.0285,
+          "inp": 40,
+          "interactions": 10,
+          "failures": []
+        },
+        {
+          "ok": true,
+          "lcp": 668,
+          "lcpEl": "IMG.railcard-img",
+          "settled": 3043,
+          "cls": 0.0285,
+          "inp": 40,
+          "interactions": 13,
+          "failures": []
+        }
+      ]
+    },
+    {
+      "device": "desktop",
+      "page": "destination-page",
+      "url": "/#dest=gem:valbona",
+      "runs": 3,
+      "ok": true,
+      "lcp_ms": 648,
+      "inp_ms": 16,
+      "cls": 0.0905,
+      "settled_ms": 3487,
+      "lcp_element": "IMG",
+      "interactions": 3,
+      "samples": [
+        {
+          "ok": true,
+          "lcp": 952,
+          "lcpEl": "IMG",
+          "settled": 3487,
+          "cls": 0.1481,
+          "inp": 16,
+          "interactions": 3,
+          "failures": []
+        },
+        {
+          "ok": true,
+          "lcp": 628,
+          "lcpEl": "IMG",
+          "settled": 3481,
+          "cls": 0.0892,
+          "inp": 16,
+          "interactions": 6,
+          "failures": []
+        },
+        {
+          "ok": true,
+          "lcp": 648,
+          "lcpEl": "IMG",
+          "settled": 3499,
+          "cls": 0.0905,
+          "inp": 16,
+          "interactions": 3,
+          "failures": []
+        }
+      ]
+    },
+    {
+      "device": "desktop",
+      "page": "trip-page",
+      "url": "/#itin=at-salzburg-vienna-chain-6d",
+      "runs": 3,
+      "ok": true,
+      "lcp_ms": 1452,
+      "inp_ms": null,
+      "cls": 0.0047,
+      "settled_ms": 6131,
+      "lcp_element": "IMG.itin-photohero-img",
+      "interactions": 0,
+      "samples": [
+        {
+          "ok": true,
+          "lcp": 1452,
+          "lcpEl": "IMG.itin-photohero-img",
+          "settled": 6145,
+          "cls": 0.0047,
+          "inp": null,
+          "interactions": 0,
+          "failures": []
+        },
+        {
+          "ok": true,
+          "lcp": 1500,
+          "lcpEl": "IMG.itin-photohero-img",
+          "settled": 6131,
+          "cls": 0.0047,
+          "inp": null,
+          "interactions": 0,
+          "failures": []
+        },
+        {
+          "ok": true,
+          "lcp": 1380,
+          "lcpEl": "IMG.itin-photohero-img",
+          "settled": 6117,
+          "cls": 0.0047,
+          "inp": null,
+          "interactions": 0,
+          "failures": []
+        }
+      ]
+    },
+    {
+      "device": "phone",
+      "page": "price-map",
+      "url": "/?tab=map",
+      "runs": 3,
+      "ok": true,
+      "lcp_ms": 2120,
+      "inp_ms": 144,
+      "cls": 0.0075,
+      "settled_ms": 4352,
+      "lcp_element": "IMG.railcard-img",
+      "interactions": 10,
+      "samples": [
+        {
+          "ok": true,
+          "lcp": 2132,
+          "lcpEl": "IMG.railcard-img",
+          "settled": 4352,
+          "cls": 0.0075,
+          "inp": 144,
+          "interactions": 9,
+          "failures": []
+        },
+        {
+          "ok": true,
+          "lcp": 2088,
+          "lcpEl": "IMG.railcard-img",
+          "settled": 4273,
+          "cls": 0.0076,
+          "inp": 128,
+          "interactions": 10,
+          "failures": []
+        },
+        {
+          "ok": true,
+          "lcp": 2120,
+          "lcpEl": "IMG.railcard-img",
+          "settled": 4353,
+          "cls": 0.0075,
+          "inp": 144,
+          "interactions": 12,
+          "failures": []
+        }
+      ]
+    },
+    {
+      "device": "phone",
+      "page": "destination-page",
+      "url": "/#dest=gem:valbona",
+      "runs": 3,
+      "ok": true,
+      "lcp_ms": 2180,
+      "inp_ms": 48,
+      "cls": 0.3085,
+      "settled_ms": 4970,
+      "lcp_element": "IMG",
+      "interactions": 3,
+      "samples": [
+        {
+          "ok": true,
+          "lcp": 2180,
+          "lcpEl": "IMG",
+          "settled": 4970,
+          "cls": 0.3085,
+          "inp": 48,
+          "interactions": 3,
+          "failures": []
+        },
+        {
+          "ok": true,
+          "lcp": 2224,
+          "lcpEl": "IMG",
+          "settled": 4974,
+          "cls": 0.3084,
+          "inp": 48,
+          "interactions": 3,
+          "failures": []
+        },
+        {
+          "ok": true,
+          "lcp": 2056,
+          "lcpEl": "IMG",
+          "settled": 4801,
+          "cls": 0.3085,
+          "inp": 56,
+          "interactions": 3,
+          "failures": []
+        }
+      ]
+    },
+    {
+      "device": "phone",
+      "page": "trip-page",
+      "url": "/#itin=at-salzburg-vienna-chain-6d",
+      "runs": 3,
+      "ok": true,
+      "lcp_ms": 2780,
+      "inp_ms": null,
+      "cls": 0.0084,
+      "settled_ms": 6454,
+      "lcp_element": "IMG.itin-photohero-img",
+      "interactions": 0,
+      "samples": [
+        {
+          "ok": true,
+          "lcp": 2756,
+          "lcpEl": "IMG.itin-photohero-img",
+          "settled": 6476,
+          "cls": 0.0085,
+          "inp": null,
+          "interactions": 0,
+          "failures": []
+        },
+        {
+          "ok": true,
+          "lcp": 2880,
+          "lcpEl": "IMG.itin-photohero-img",
+          "settled": 6454,
+          "cls": 0.0084,
+          "inp": null,
+          "interactions": 0,
+          "failures": []
+        },
+        {
+          "ok": true,
+          "lcp": 2780,
+          "lcpEl": "IMG.itin-photohero-img",
+          "settled": 6281,
+          "cls": 0.0084,
+          "inp": null,
+          "interactions": 0,
+          "failures": []
+        }
+      ]
+    }
+  ]
+}

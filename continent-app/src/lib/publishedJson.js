@@ -26,6 +26,8 @@
  * of distinguishing them is that retrying is worth something.
  */
 
+import { dataUrl } from './dataHost.js';
+
 export class LayerFetchError extends Error {
   constructor(url, cause) {
     super(`could not load ${url}`);
@@ -46,7 +48,9 @@ function isJson(res) {
  * itself failed.
  */
 export function fetchPublished(url) {
-  return fetch(url).then(
+  // Every layer path is an app path ("/trails/AT.json"); dataHost decides
+  // whether it is served same-origin or from the data host (T054).
+  return fetch(dataUrl(url)).then(
     (r) => {
       // 5xx is the server falling over, not a missing file: a layer that is
       // genuinely unpublished answers 200-with-index or 404, never 503.

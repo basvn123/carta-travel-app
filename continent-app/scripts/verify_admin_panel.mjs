@@ -26,6 +26,9 @@
 //      the server's own error, and goes through with the right one.
 //   8d. Content: the layer loads from the real wire file, an http image is
 //      refused a preview, a correction saves, and reverting clears it.
+//   8b3. Margin: money renders as euros, the tiers stay apart, the gap
+//      against the EUR 6.85 assumption is stated, the reconciliation line
+//      says the ledger is still modelled, and the month selector refetches.
 //   9. Site: maintenance, the notice and the flags publish what the app reads.
 //  10. Audit: the full table renders.
 //  11. A non-admin account never sees the row.
@@ -249,6 +252,101 @@ async function stubSupabase(page, state, opts = {}) {
     topCountries: [{ country: 'Portugal', n: 14 }, { country: 'Italy', n: 9 }],
     feedback: { new: 1, total: 2 },
   }));
+  // The AI usage rollup (migration 030). Stubbed with a shape that exercises
+  // every branch of the section at once: a day that reached the cap, ground
+  // spend well under plan spend, refusals of both kinds and across two tiers,
+  // and a heaviest-account list ranked on ground rather than on plan.
+  //
+  // The daily series is exactly 28 rows on purpose. The analytics check above
+  // counts .adminpage-sparkbar across the whole overview, so a second chart
+  // with a different length would break a check that has nothing to do with
+  // this section.
+  await page.route('**/rest/v1/rpc/admin_ai_usage*', (route) => json(route, {
+    days: 30,
+    globalCap: 200,
+    today: 143,
+    daysAtCap: 1,
+    peakDay: { day: '2026-08-19', n: 200 },
+    daily: Array.from({ length: 28 }, (_, i) => ({
+      day: `2026-08-${String((i % 28) + 1).padStart(2, '0')}`,
+      n: i === 18 ? 200 : 40 + (i % 7) * 9,
+      pct: 0,
+    })),
+    plan: { units: 412, users: 31 },
+    ground: { units: 57, users: 6 },
+    cache: { lookups: 300, hits: 111, rate: 37.0 },
+    rejections: {
+      userCap: 24, globalCap: 3,
+      userCapPlan: 21, userCapGround: 3,
+      globalCapPlan: 2, globalCapGround: 1,
+    },
+    rejectionsByTier: [
+      { tier: 'free', userCap: 21, globalCap: 0 },
+      { tier: 'year', userCap: 3, globalCap: 3 },
+    ],
+    topUsers: [
+      { userId: 'u-1', email: 'heavy@example.com', tier: 'year', plan: 41, ground: 27 },
+      { userId: 'u-2', email: 'mid@example.com', tier: 'trip', plan: 90, ground: 4 },
+    ],
+  }));
+  // The margin dashboard (migration 031). The figures are the ones the real
+  // RPC returned on the seeded test container in T043, so a change to the
+  // arithmetic in 031 that this harness does not follow shows up as a failing
+  // string rather than as a plausible wrong number.
+  //
+  // The month offset is honoured, because the selector is the part of this
+  // section most likely to break: a picker that always shows the same month
+  // is indistinguishable from a working one unless the stub answers
+  // differently.
+  await page.route('**/rest/v1/rpc/admin_margin*', (route) => {
+    const body = JSON.parse(route.request().postData() || '{}');
+    const back = body.p_months_back == null ? 1 : body.p_months_back;
+    return json(route, {
+      month: back >= 2 ? '2026-07' : (back === 1 ? '2026-08' : '2026-09'),
+      monthsBack: back,
+      closed: back > 0,
+      currency: 'eur',
+      assumedContributionCents: 685,
+      sales: {
+        count: 10,
+        grossCents: 9390,
+        byTier: [
+          { tier: 'trip', count: 7, grossCents: 4893 },
+          { tier: 'year', count: 3, grossCents: 4497 },
+        ],
+        excludedNoAmount: 1,
+        excludedCurrency: 1,
+        unknownCountry: 0,
+        nonEu: 1,
+      },
+      vat: { cents: 1630, basis: 'belgium_21', ossBreached: false, inclusive: true },
+      stripe: {
+        cents: 438, basis: 'modelled',
+        rateEea: '1.5% + EUR 0.25', rateOther: '2.9% + EUR 0.25', tax: '0.5%',
+      },
+      netReceiptsCents: 7323,
+      ai: {
+        planUnits: 116, groundUnits: 71,
+        planCents: 116, groundCents: 355, cents: 471,
+        planPrice: 1.0, groundPrice: 5.0,
+        basis: 'units observed, price modelled',
+        dailyTotalUnits: 333,
+      },
+      infra: {
+        cents: 879, actualRows: 0, modelledRows: 7,
+        reconciled: false, perPurchaseCents: 87.9,
+        items: [
+          { item: 'hetzner_cax11', cents: 599, source: 'model', note: 'Always-on pipeline box' },
+          { item: 'r2_storage', cents: 180, source: 'model', note: 'Cloudflare R2 at Tier 0' },
+          { item: 'domain', cents: 100, source: 'model', note: 'One domain' },
+        ],
+      },
+      contribution: {
+        perPurchaseCents: 597.25, totalCents: 5973,
+        assumedCents: 685, deltaCents: -87.75, deltaPct: -12.8,
+      },
+    });
+  });
   await page.route('**/rest/v1/rpc/admin_list_feedback*', (route) => {
     const body = JSON.parse(route.request().postData() || '{}');
     state.fbCalls.push(body);
@@ -575,21 +673,121 @@ try {
   // ---- 8b. Analytics on the overview.
   console.log('8b. analytics');
   await gotoSection(page, 'Overview');
-  await page.locator('.adminpage-spark').waitFor({ timeout: 10000 });
-  const bars = await page.locator('.adminpage-sparkbar').count();
+  // Scoped to the Signups card. The overview grew a second chart when the AI
+  // usage rollup landed, and an unscoped .adminpage-spark now matches both, so
+  // these counts have to name the card they belong to or they silently start
+  // measuring the wrong section.
+  const signupsCard = page.locator('.adminpage-card', { hasText: 'Signups' }).first();
+  await signupsCard.locator('.adminpage-spark').waitFor({ timeout: 10000 });
+  const bars = await signupsCard.locator('.adminpage-sparkbar').count();
   if (bars !== 28) fail(`the signups chart has ${bars} bars, expected 28`);
-  const provs = await page.locator('.adminpage-bars li').allInnerTexts();
+  const provs = await page.locator('.adminpage-card', { hasText: 'How they sign in' })
+    .first().locator('.adminpage-bars li').allInnerTexts();
   if (!provs.some((s) => /google/.test(s)) || !provs.some((s) => /email/.test(s))) {
     fail(`the provider split is missing a row: ${JSON.stringify(provs)}`);
   }
   const ranks = await page.locator('.adminpage-rank').first().innerText();
   if (!/Lisbon/.test(ranks)) fail('the most-planned destinations list is empty');
   // The chart must never be the only way to read the number.
-  if (!/28 days/.test(await page.locator('.adminpage-card', { hasText: 'Signups' }).innerText())) {
+  if (!/28 days/.test(await signupsCard.innerText())) {
     fail('the signups chart states no total in words');
   }
   ok(`${bars} days of signups, the provider split, and the destination ranking`);
   await page.screenshot({ path: `${SHOTS}/admin-analytics.png`, fullPage: true });
+
+  // ---- 8b2. The AI usage rollup.
+  // The point of the section is that plan and ground are never added
+  // together and that a refusal by a user cap is never added to a refusal by
+  // the shared one. So the checks are about separation, not about totals: if
+  // any of these four figures ever merged into one, the section would have
+  // stopped answering the question it exists for.
+  console.log('8b2. AI usage rollup');
+  const aiCard = page.locator('.adminpage-card', { hasText: 'AI usage (30 days)' }).first();
+  await aiCard.waitFor({ timeout: 10000 });
+  const aiText = await aiCard.innerText();
+  // innerText collapses the tile's number and its label onto separate lines,
+  // so the check is on the pair appearing together rather than on exact
+  // whitespace. A tile that lost its number would still fail.
+  const aiFlat = aiText.replace(/\s+/g, ' ');
+  for (const [label, want] of [
+    ['plan units', '412 Plan units, 31 accounts'],
+    ['ground units', '57 Ground units, 6 accounts'],
+    ['own-cap refusals', '24 Refused by their own cap'],
+    ['shared-cap refusals', '3 Refused by the shared cap'],
+    ['days at cap', '1 Days that reached the cap'],
+  ]) {
+    if (!aiFlat.includes(want)) {
+      fail(`the AI usage section does not separate ${label}: ${aiFlat.slice(0, 400)}`);
+    }
+  }
+  // The cap the percentages were computed against has to be on screen, because
+  // the real one lives in the Edge Function environment where SQL cannot see it.
+  if (!aiFlat.includes('143 Units today of 200 assumed cap')) {
+    fail('the daily figure does not name the ceiling it is measured against');
+  }
+  // Heaviest accounts are ranked on ground, so the account with fewer plans
+  // but more grounded searches must come first.
+  const aiRows = await aiCard.locator('.adminpage-table-static tbody tr').allInnerTexts();
+  if (aiRows.length !== 2) fail(`the heaviest-accounts table has ${aiRows.length} rows, expected 2`);
+  if (!/heavy@example\.com/.test(aiRows[0])) {
+    fail(`the heaviest-accounts table is not ranked on ground: ${JSON.stringify(aiRows)}`);
+  }
+  ok('AI usage: plan and ground stay apart, both refusal kinds counted, ground ranks the table');
+  await page.screenshot({ path: `${SHOTS}/admin-ai-usage.png`, fullPage: true });
+
+  // ---- 8b3. The margin dashboard.
+  // The point of the section is the comparison against the EUR 6.85 the unit
+  // economics document assumes, and the reconciliation line that says whether
+  // the infrastructure figure came off an invoice or out of the model. So the
+  // checks are: the money reaches the screen as euros and not as raw cents,
+  // the two tiers stay apart, the reconciliation says not invoiced while the
+  // ledger is modelled, and the month selector actually moves the month.
+  console.log('8b3. margin dashboard');
+  const mgCard = page.locator('.adminpage-card', { hasText: 'Margin, 2026-08' }).first();
+  await mgCard.waitFor({ timeout: 10000 });
+  const mgFlat = (await mgCard.innerText()).replace(/\s+/g, ' ');
+  for (const [label, want] of [
+    ['the pass count', '10 Passes sold'],
+    ['net receipts', '73.23 Net receipts'],
+    ['contribution per purchase', '5.97 Contribution per purchase'],
+    ['the assumption it is measured against', '6.85 The model assumes'],
+    ['plan units and their cost', '116 Plan units'],
+    ['ground units and their cost', '71 Ground units'],
+  ]) {
+    if (!mgFlat.includes(want)) {
+      fail(`the margin section is missing ${label}: ${mgFlat.slice(0, 500)}`);
+    }
+  }
+  // Money must never reach the screen as a bare cent count.
+  if (!/€\s?73\.23|EUR\s?73\.23/.test(mgFlat)) {
+    fail('net receipts are not formatted as a currency');
+  }
+  // The difference against the model has to be on screen in both units, or
+  // the section is a set of figures rather than a verdict.
+  if (!/-12\.8 percent/.test(mgFlat)) {
+    fail(`the margin section does not state the gap in percent: ${mgFlat.slice(0, 500)}`);
+  }
+  // The reconciliation line, which is the done condition for T043. While the
+  // ledger is modelled it must say so rather than show a zero difference.
+  if (!/not invoiced/.test(mgFlat)) {
+    fail('the reconciliation line does not say the ledger is still modelled');
+  }
+  const mgTiers = await mgCard.locator('.adminpage-table-static').first()
+    .locator('tbody tr').allInnerTexts();
+  if (mgTiers.length !== 2) fail(`the tier table has ${mgTiers.length} rows, expected 2`);
+  if (!/trip/.test(mgTiers[0]) || !/year/.test(mgTiers[1])) {
+    fail(`the tier table lost its split: ${JSON.stringify(mgTiers)}`);
+  }
+  // The month selector has to refetch, not just relabel.
+  await mgCard.locator('button', { hasText: 'Earlier month' }).click();
+  await page.locator('.adminpage-card', { hasText: 'Margin, 2026-07' })
+    .first().waitFor({ timeout: 10000 });
+  await page.locator('.adminpage-card', { hasText: 'Margin, 2026-07' })
+    .first().locator('button', { hasText: 'Later month' }).click();
+  await page.locator('.adminpage-card', { hasText: 'Margin, 2026-08' })
+    .first().waitFor({ timeout: 10000 });
+  ok('margin: euros not cents, tiers apart, gap against 6.85 stated, ledger not invoiced, month selector refetches');
+  await page.screenshot({ path: `${SHOTS}/admin-margin.png`, fullPage: true });
 
   // ---- 8c. The feedback inbox.
   console.log('8c. feedback inbox');

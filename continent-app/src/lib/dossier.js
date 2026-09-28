@@ -14,6 +14,7 @@
  */
 
 import { useEffect, useState } from 'react';
+import { dataUrl } from './dataHost.js';
 
 const RESERVED = new Set([
   'CON', 'PRN', 'AUX', 'NUL',
@@ -42,7 +43,7 @@ const cache = new Map();
 export function loadDossier(destId) {
   if (!destId) return Promise.resolve(null);
   if (!cache.has(destId)) {
-    cache.set(destId, fetch(dossierUrl(destId))
+    cache.set(destId, fetch(dataUrl(dossierUrl(destId)))
       .then((res) => (isJson(res) ? res.json() : null))
       .catch(() => null));
   }

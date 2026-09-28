@@ -1,0 +1,23 @@
+# Cloudflare Pages redirect rules.
+#
+# One job: keep the apex on www, which is what the canonical link and og:url in
+# index.html both declare and what Vercel answers today with a 308. Losing this
+# would split the site across two hostnames and duplicate every crawled URL.
+#
+# On Vercel this was a dashboard domain setting rather than a line in
+# vercel.json, which is exactly why it is easy to drop in a migration. It is
+# written down here so it cannot be.
+#
+# Pages honours the same 308 (permanent, method-preserving) that Vercel used.
+# The :splat carries the rest of the path through unchanged.
+https://carta-europetravel.com/* https://www.carta-europetravel.com/:splat 308
+
+# There is deliberately no SPA catch-all (`/* /index.html 200`) here.
+#
+# The app is one client-rendered URL: every route lives in the hash or the query
+# string, and src only ever reads window.location.pathname and writes it back
+# unchanged. Nothing needs a rewrite. Adding one would make every missing data
+# shard answer 200 with the HTML shell instead of a clean 404, so a stale or
+# mistyped shard path would parse as HTML rather than fail loudly. If real path
+# routing ever lands (scripts/prerender.mjs, per the optimization report), add
+# the fallback then and scope it to the prerendered paths, never to /*.

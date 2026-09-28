@@ -17,6 +17,7 @@ import {
   SunIcon,
 } from '../components/Icons.jsx';
 import { srcSetFor, fallbackSrc } from '../lib/heroImage.js';
+import { LayerPhoto, HERO_SIZES, THUMB_SIZES } from '../components/LayerPhoto.jsx';
 
 /**
  * The beach page: one published beach, and the argument for going there.
@@ -303,11 +304,14 @@ export function BeachPage({ beach, countryName, onClose, onSelectDest, model, on
 
           {main && (
             <figure className="bpage-gallery">
-              <img
+              <LayerPhoto
+                layer="beaches"
+                image={main}
+                hero
                 className="bpage-shot"
                 src={fallbackSrc(main.big || main.u, 960)}
                 srcSet={srcSetFor(main.big || main.u, 1920)}
-                sizes="(min-width: 769px) 860px, 100vw"
+                sizes={HERO_SIZES}
                 alt={beach.name}
                 width={16}
                 height={10}
@@ -325,7 +329,7 @@ export function BeachPage({ beach, countryName, onClose, onSelectDest, model, on
                       className={`bpage-thumb ${i === shot ? 'on' : ''}`}
                       onClick={() => setShot(i)}
                     >
-                      <img src={img.u} alt="" loading="lazy" />
+                      <LayerPhoto layer="beaches" image={img} src={img.u} sizes={THUMB_SIZES} alt="" loading="lazy" />
                     </button>
                   ))}
                 </div>

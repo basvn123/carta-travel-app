@@ -16805,6 +16805,23 @@ button.ai-sched-main:focus-visible {
   margin-bottom: 12px;
 }
 
+/* The withdrawal waiver line, above the buy buttons. Same shape as
+   .pass-current, one step up in size because unlike the VAT and
+   no-subscription notes at the foot of the modal this one has to actually be
+   read: it is the statement that ends a legal right. Left on the wash ground
+   rather than given a warning colour, because it is a term of the sale and not
+   an error. */
+.pass-waiver {
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--ink-soft);
+  background: var(--wash, #f6f3ee);
+  border-radius: 8px;
+  padding: 9px 11px;
+  margin-bottom: 12px;
+}
+.pass-waiver .pass-terms-link { font-size: inherit; }
+
 .pass-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -18226,6 +18243,26 @@ button.ai-sched-main:focus-visible {
   font-variant-numeric: tabular-nums;
 }
 .adminpage-table .num { text-align: right; }
+/* A table whose rows are figures, not doors. The user list opens a detail
+   panel on a row click and carries a pointer cursor and a hover fill to say
+   so; the AI usage rollup only reports, so it must not offer either. */
+.adminpage-table-static tbody tr { cursor: default; }
+.adminpage-table-static tbody tr:hover { background: transparent; }
+/* The margin section's month selector. Two buttons and the month between
+   them, wrapping on a narrow window rather than scrolling sideways. The month
+   itself is mono because it is a measured field value, not prose. */
+.adminpage-monthpick {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin: 0 0 12px;
+}
+.adminpage-monthpick .mono {
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 14px;
+}
 .adminpage-detailcell {
   font-family: var(--mono);
   font-size: 11.5px;
@@ -18661,6 +18698,23 @@ button.ai-sched-main:focus-visible {
   color: var(--ink);
   font-variant-numeric: tabular-nums;
 }
+
+/* Hard versus soft, on the paywall funnel's per-gate rank (T034). A plain
+   text tag rather than a coloured pill: the two tiles above it already carry
+   the numbers, this only needs to say which group a gate is in. */
+.adminpage-tiles-kind { margin-top: 10px; }
+.adminpage-kindtag {
+  display: inline-block;
+  margin-left: 7px;
+  padding: 1px 6px;
+  border: 1px solid var(--rule-soft);
+  border-radius: 4px;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--ink-mute);
+}
+.adminpage-kindtag-hard { color: var(--ink-soft); border-color: var(--ink-soft); }
 
 /* The feedback inbox. One card per message, because a message is a thing
    somebody wrote and reading it is the point. */
@@ -20065,6 +20119,11 @@ button.ai-sched-main:focus-visible {
 .bpage-shot {
   display: block;
   width: 100%;
+  /* The img's width and height attributes map to CSS width and height, and
+     without this the height attribute wins over aspect-ratio: the hero drew
+     10 px tall from 2026-09-14 (width 16, height 10) until T052. With it the
+     attributes only tell the browser the shape to reserve. */
+  height: auto;
   aspect-ratio: 3 / 2;
   object-fit: cover;
   border-radius: 12px;

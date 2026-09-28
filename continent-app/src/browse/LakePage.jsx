@@ -18,6 +18,7 @@ import {
   SunIcon,
 } from '../components/Icons.jsx';
 import { srcSetFor, fallbackSrc } from '../lib/heroImage.js';
+import { LayerPhoto, HERO_SIZES, THUMB_SIZES } from '../components/LayerPhoto.jsx';
 
 /**
  * The lake page: one published water body, and the argument for going there.
@@ -270,11 +271,14 @@ export function LakePage({ lake, countryName, onClose, onSelectDest, warmC = 18,
 
           {main && (
             <figure className="bpage-gallery">
-              <img
+              <LayerPhoto
+                layer="lakes"
+                image={main}
+                hero
                 className="bpage-shot"
                 src={fallbackSrc(main.big || main.u, 960)}
                 srcSet={srcSetFor(main.big || main.u, 1920)}
-                sizes="(min-width: 769px) 860px, 100vw"
+                sizes={HERO_SIZES}
                 alt={lake.name}
                 width={16}
                 height={10}
@@ -292,7 +296,7 @@ export function LakePage({ lake, countryName, onClose, onSelectDest, warmC = 18,
                       className={`bpage-thumb ${i === shot ? 'on' : ''}`}
                       onClick={() => setShot(i)}
                     >
-                      <img src={img.u} alt="" loading="lazy" />
+                      <LayerPhoto layer="lakes" image={img} src={img.u} sizes={THUMB_SIZES} alt="" loading="lazy" />
                     </button>
                   ))}
                 </div>

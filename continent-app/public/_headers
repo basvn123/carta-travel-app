@@ -1,0 +1,150 @@
+# Cloudflare Pages header rules. Translated from vercel.json, rule for rule.
+#
+# Why this file exists: Carta carries Travelpayouts and Omio affiliate links,
+# which is commercial use, and Vercel's Hobby plan does not permit commercial
+# use. Cloudflare Pages allows it, costs nothing, and puts the app on the same
+# edge as R2 and the images. See CARTA_CLOUD_ARCHITECTURE.md section 5.5 and
+# Execution/P1/T024-cloudflare-pages-migration.md.
+#
+# Two things about the syntax differ from vercel.json and both matter:
+#
+# 1. Pages matches a path with a trailing :splat wildcard, not a regex. So
+#    vercel's "/poi/(.*)" becomes "/poi/*". There is no alternation, which is
+#    why the two grouped vercel rules (the six root JSON files, and the ten
+#    layer directories) are expanded into one stanza per path below. The
+#    expansion is mechanical and the resulting cache policy is identical.
+#
+# 2. Pages applies EVERY matching rule cumulatively, and where two matching
+#    rules set the SAME header name the two values are joined with a comma
+#    rather than the more specific one winning. Vercel, by contrast, applied
+#    the first matching rule per header. That difference is a live trap, and
+#    the layout below is built to avoid it rather than to rely on it: the "/*"
+#    stanza sets only the six security headers and deliberately sets NO
+#    Cache-Control, so it can never collide with the per-path Cache-Control
+#    rules above. If you ever add a Cache-Control to "/*", every path in this
+#    file starts emitting two comma-joined caching policies and the result is
+#    whatever the CDN makes of it. Put a default in each path instead.
+#
+#    Current usage against the Pages limits: 26 rules of 100, longest line
+#    1,024 characters of 2,000 (the CSP). Both have room, but the CSP is the
+#    one to watch as hosts are added in P3.
+#
+# Deliberately NOT here: a catch-all SPA rewrite. The app is a single
+# client-rendered URL and keeps all of its routing in the hash and the query
+# string, so nothing needs one, and adding one would make a missing data shard
+# answer 200 with HTML instead of 404 with nothing. That failure mode has
+# already cost this project a debugging session once. Keep it impossible.
+
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/fonts/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# The boot index the map starts from (T054; it replaced /app_data.json).
+/boot.json
+  Cache-Control: public, max-age=600, stale-while-revalidate=86400
+
+/poi/*
+  Cache-Control: public, max-age=3600, stale-while-revalidate=86400
+
+# One destination file per country, requested as /dest/<cc>.json?v=<hash>.
+/dest/*
+  Cache-Control: public, max-age=3600, stale-while-revalidate=86400
+
+# The six root JSON documents the map boots from. One vercel alternation rule,
+# expanded.
+/search_index.json
+  Cache-Control: public, max-age=3600, stale-while-revalidate=86400
+
+/coverage.json
+  Cache-Control: public, max-age=3600, stale-while-revalidate=86400
+
+/country_insights.json
+  Cache-Control: public, max-age=3600, stale-while-revalidate=86400
+
+/country_shapes.json
+  Cache-Control: public, max-age=3600, stale-while-revalidate=86400
+
+/poi_credits.json
+  Cache-Control: public, max-age=3600, stale-while-revalidate=86400
+
+/joins.json
+  Cache-Control: public, max-age=3600, stale-while-revalidate=86400
+
+# Per-origin fare slices and reachability, refreshed on the pipeline's cadence.
+/fares/*
+  Cache-Control: public, max-age=3600, stale-while-revalidate=86400
+
+/reach/*
+  Cache-Control: public, max-age=3600, stale-while-revalidate=86400
+
+# The ten layer directories. Content changes on a weekly pipeline run at most,
+# so these carry a week of stale-while-revalidate. One vercel alternation rule,
+# expanded.
+/dossier/*
+  Cache-Control: public, max-age=3600, stale-while-revalidate=604800
+
+/destinfo/*
+  Cache-Control: public, max-age=3600, stale-while-revalidate=604800
+
+/region/*
+  Cache-Control: public, max-age=3600, stale-while-revalidate=604800
+
+/beaches/*
+  Cache-Control: public, max-age=3600, stale-while-revalidate=604800
+
+/lakes/*
+  Cache-Control: public, max-age=3600, stale-while-revalidate=604800
+
+/mountains/*
+  Cache-Control: public, max-age=3600, stale-while-revalidate=604800
+
+/trails/*
+  Cache-Control: public, max-age=3600, stale-while-revalidate=604800
+
+/cycling/*
+  Cache-Control: public, max-age=3600, stale-while-revalidate=604800
+
+/trips/*
+  Cache-Control: public, max-age=3600, stale-while-revalidate=604800
+
+/journeys/*
+  Cache-Control: public, max-age=3600, stale-while-revalidate=604800
+
+# The service worker must never be served stale, or a client can pin itself to
+# an old build indefinitely.
+/sw.js
+  Cache-Control: public, max-age=0, must-revalidate
+
+/sitemap.xml
+  Cache-Control: public, max-age=3600
+
+# Security headers, site-wide.
+#
+# The CSP amendments are scheduled as follows:
+#
+#   - cdn.carta-europetravel.com added to img-src (T053, done).
+#   - https://data.carta-europetravel.com will be added to connect-src once
+#     the domain resolves (register row T053-b). T054 built the split; its
+#     scripts/r2/stage-data.mjs refuses a build that points the app at the
+#     data host while this line lacks it.
+#
+# The data-host stanzas above (poi, dest, fares, reach, the layer directories
+# and the three catalogue-sized root files) are also read by
+# scripts/r2/cachePolicy.mjs, which uploads each R2 object with the same
+# Cache-Control. Change the policy here and both hosts follow.
+#   - Only THEN remove upload.wikimedia.org, thumb.wikimedia.org,
+#     commons.wikimedia.org and the four geograph.org.uk hosts from img-src,
+#     once the image ladder is live and nothing still hotlinks them directly
+#     (tracked in Execution/_OPEN.md row T052-f).
+#
+# Removing the Wikimedia and Geograph hosts before the ladder ships would blank
+# every photograph in the app. The order is: add, migrate, verify, then remove.
+/*
+  Content-Security-Policy: default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self'; script-src 'self' 'sha256-X2EKZ8Fy6+4YrR9ibDxyMwvkQEKFMxZEI1ZTK0zUIz0=' https://emrldtp.com; worker-src 'self' blob:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https://*.cartocdn.com https://cdn.carta-europetravel.com https://upload.wikimedia.org https://thumb.wikimedia.org https://commons.wikimedia.org https://s0.geograph.org.uk https://s1.geograph.org.uk https://s2.geograph.org.uk https://s3.geograph.org.uk https://tile.openstreetmap.org https://flagcdn.com https://emrldtp.com; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://*.cartocdn.com https://routing.openstreetmap.de https://nominatim.openstreetmap.org https://overpass-api.de https://overpass.kumi.systems https://*.wikipedia.org https://emrldtp.com https://www.travelpayouts.com https://sentry.avs.io; manifest-src 'self'; upgrade-insecure-requests
+  X-Frame-Options: DENY
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: geolocation=(), camera=(), microphone=(), payment=(), usb=(), interest-cohort=()
+  Strict-Transport-Security: max-age=63072000; includeSubDomains; preload

@@ -9,6 +9,7 @@ import { HeroImage } from '../components/HeroImage.jsx';
 import { PlacesFilterSheet } from './PlacesFilterSheet.jsx';
 import { trailPath } from '../lib/trailShape.js';
 import { srcSetFor, fallbackSrc } from '../lib/heroImage.js';
+import { HeroPreload } from '../components/LayerPhoto.jsx';
 import { loadTrails, loadListedTrails, loadTrailsIndex } from '../lib/trails.js';
 import {
   loadBeachIndex, loadBeaches, loadListedBeaches, loadTopBeaches,
@@ -3573,33 +3574,43 @@ export function DestinationsTab({
       )}
 
       {pageBeach && (
-        <Suspense fallback={null}>
-          <BeachPage
-            beach={pageBeach}
-            {...favProps('beach', pageBeach.id, pageBeach.cc)}
-            onAddToDay={onAddToDay ? (f) => onAddToDay('beach', f) : null}
-            onOpenNeighbour={openNeighbour}
-            countryName={countryName(pageBeach.cc)}
-            model={beachIndex?.model || null}
-            onClose={() => setPageBeach(null)}
-            onSelectDest={(id) => { setPageBeach(null); onSelectDest(id); }}
-          />
-        </Suspense>
+        <>
+          {/* Starts the hero's download while the page chunk is still in
+              flight (T052); renders nothing when the layer's flag is off. */}
+          <HeroPreload layer="beaches" image={pageBeach.images?.[0]} />
+          <Suspense fallback={null}>
+            <BeachPage
+              beach={pageBeach}
+              {...favProps('beach', pageBeach.id, pageBeach.cc)}
+              onAddToDay={onAddToDay ? (f) => onAddToDay('beach', f) : null}
+              onOpenNeighbour={openNeighbour}
+              countryName={countryName(pageBeach.cc)}
+              model={beachIndex?.model || null}
+              onClose={() => setPageBeach(null)}
+              onSelectDest={(id) => { setPageBeach(null); onSelectDest(id); }}
+            />
+          </Suspense>
+        </>
       )}
 
       {pageLake && (
-        <Suspense fallback={null}>
-          <LakePage
-            lake={pageLake}
-            {...favProps('lake', pageLake.id, pageLake.cc)}
-            onAddToDay={onAddToDay ? (f) => onAddToDay('lake', f) : null}
-            onOpenNeighbour={openNeighbour}
-            countryName={countryName(pageLake.cc)}
-            warmC={lakeIndex?.model?.warm_c ?? 18}
-            onClose={() => setPageLake(null)}
-            onSelectDest={(id) => { setPageLake(null); onSelectDest(id); }}
-          />
-        </Suspense>
+        <>
+          {/* Starts the hero's download while the page chunk is still in
+              flight (T052); renders nothing when the layer's flag is off. */}
+          <HeroPreload layer="lakes" image={pageLake.images?.[0]} />
+          <Suspense fallback={null}>
+            <LakePage
+              lake={pageLake}
+              {...favProps('lake', pageLake.id, pageLake.cc)}
+              onAddToDay={onAddToDay ? (f) => onAddToDay('lake', f) : null}
+              onOpenNeighbour={openNeighbour}
+              countryName={countryName(pageLake.cc)}
+              warmC={lakeIndex?.model?.warm_c ?? 18}
+              onClose={() => setPageLake(null)}
+              onSelectDest={(id) => { setPageLake(null); onSelectDest(id); }}
+            />
+          </Suspense>
+        </>
       )}
 
       {pageCycle && pageCycle.familyRef && (
@@ -3627,17 +3638,22 @@ export function DestinationsTab({
       )}
 
       {pageMountain && (
-        <Suspense fallback={null}>
-          <MountainPage
-            mountain={pageMountain}
-            {...favProps('mountain', pageMountain.id, pageMountain.cc)}
-            onAddToDay={onAddToDay ? (f) => onAddToDay('mountain', f) : null}
-            onOpenNeighbour={openNeighbour}
-            countryName={countryName(pageMountain.cc)}
-            onClose={() => setPageMountain(null)}
-            onSelectDest={(id) => { setPageMountain(null); onSelectDest(id); }}
-          />
-        </Suspense>
+        <>
+          {/* Starts the hero's download while the page chunk is still in
+              flight (T052); renders nothing when the layer's flag is off. */}
+          <HeroPreload layer="mountains" image={pageMountain.images?.[0]} />
+          <Suspense fallback={null}>
+            <MountainPage
+              mountain={pageMountain}
+              {...favProps('mountain', pageMountain.id, pageMountain.cc)}
+              onAddToDay={onAddToDay ? (f) => onAddToDay('mountain', f) : null}
+              onOpenNeighbour={openNeighbour}
+              countryName={countryName(pageMountain.cc)}
+              onClose={() => setPageMountain(null)}
+              onSelectDest={(id) => { setPageMountain(null); onSelectDest(id); }}
+            />
+          </Suspense>
+        </>
       )}
 
       {/* The one Filters door, holding the country and the same facet groups

@@ -57,6 +57,16 @@ export const ATTRIBUTIONS = [
       + '(geograph.org.uk), credited per image',
   },
   {
+    // Not a new source: our own stored copies of the two above (T051,
+    // data_licenses.md section 14). Listed so the Data sources screen says
+    // plainly that the files are copies we serve, under each file's licence.
+    source: 'Carta image copies',
+    license: 'Per-file, as the original',
+    credit: 'Photographs served from cdn.carta-europetravel.com are resized '
+      + 'copies of Wikimedia Commons and Geograph files, each credited to '
+      + 'its author under its own licence',
+  },
+  {
     source: 'Mapillary',
     license: 'CC BY-SA 4.0',
     credit: 'Street-level imagery from Mapillary, credited per image',

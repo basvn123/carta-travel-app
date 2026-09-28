@@ -1,0 +1,35 @@
+# Cloudflare Pages project configuration for the Carta app shell.
+#
+# Pages needs very little from this file: the project name, the directory to
+# upload, and the compatibility date. The routing and caching rules live in
+# public/_headers and public/_redirects, which Vite copies into dist/ verbatim
+# on every build, so they ship with the deploy rather than living in a dashboard
+# where they cannot be reviewed or reverted.
+#
+# There are no bindings here on purpose. The app talks to Supabase over HTTPS
+# from the browser and, once T054 lands, will read data shards from R2 over a
+# public custom domain (data.carta-europetravel.com). Neither needs a Pages
+# binding, and adding one would put a Worker in a request path that is currently
+# pure static serving.
+#
+# See Execution/P1/T024-cloudflare-pages-migration.md for the cut-over runbook,
+# including the DNS steps, which cannot be done from this file.
+
+name = "carta-app"
+compatibility_date = "2026-09-23"
+pages_build_output_dir = "dist"
+
+# Build settings, for reference when configuring the Pages project. Pages runs
+# these from its own dashboard or from `wrangler pages deploy`; they are recorded
+# here so the values are in version control.
+#
+#   Build command:        npm run build
+#   Build output:         dist
+#   Root directory:       continent-app
+#   Node version:         set NODE_VERSION to match .nvmrc / local node
+#
+# `npm run build` runs `prebuild`, which is scripts/sync-data.mjs. That script
+# reads from app_data/ at the REPO ROOT, one level above this directory. A Pages
+# build with its root set to continent-app therefore has to have the repo root
+# checked out too, which it does for a normal git integration. Worth knowing
+# before debugging an empty wire on the first build.

@@ -13,6 +13,7 @@
  * differently from "this town has no mapped parking".
  */
 import { useEffect, useState } from 'react';
+import { dataUrl } from './dataHost.js';
 
 const COUNTRY_RE = /^[A-Z]{2}$/;
 
@@ -26,7 +27,7 @@ export function loadDestInfo(cc) {
   const code = String(cc || '').toUpperCase();
   if (!COUNTRY_RE.test(code)) return Promise.resolve(null);
   if (!cache.has(code)) {
-    cache.set(code, fetch(`/destinfo/${code}.json`)
+    cache.set(code, fetch(dataUrl(`/destinfo/${code}.json`))
       .then((r) => (isJson(r) ? r.json() : null))
       .catch(() => null));
   }

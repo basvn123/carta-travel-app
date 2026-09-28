@@ -54,18 +54,13 @@ function routesForOrigin(faresForOrigin, d, origin) {
       ground_transport_minutes: leg.minutes,
       outbound_fare: rec.out,
       return_fare: rec.ret || {},
-      // Contract A provenance, absent on legacy slices (read side stays
-      // tolerant): s = source that created the record's base fares
+      // Contract A provenance: s = source that created the record's base fares
       // ('FR'|'W6'|'VY'|'V7'|'TP'), o = epoch DAY the record's prices were
-      // last confirmed by a harvest. Per-day refinements (Travelpayouts cache
-      // quotes) ride beside the carrier maps below: the observed/expires
-      // epoch day of date D is outbound_seen[D] ?? o / outbound_expires[D].
+      // last confirmed by a harvest. Absent on legacy slices (read side stays
+      // tolerant). Per-day refinements (Travelpayouts cache quotes) carry their
+      // own observed/expires on individual prices via outbound_expires, not here.
       ...(rec.s != null ? { s: rec.s } : {}),
       ...(rec.o != null ? { o: rec.o } : {}),
-      ...(rec.out_o ? { outbound_seen: rec.out_o } : {}),
-      ...(rec.ret_o ? { return_seen: rec.ret_o } : {}),
-      ...(rec.out_x ? { outbound_expires: rec.out_x } : {}),
-      ...(rec.ret_x ? { return_expires: rec.ret_x } : {}),
       // Estimate fallback bands ({YYYY-MM: eur}, model p50 month medians).
       // Read ONLY when no stored day matches the chosen dates; rendered as
       // "~EUR X est." (source EST), never as a bookable fare.
@@ -80,7 +75,6 @@ function routesForOrigin(faresForOrigin, d, origin) {
       // the Travelpayouts staging merge). Untagged days are Ryanair fares.
       outbound_carrier: rec.out_c || {},
       return_carrier: rec.ret_c || {},
-      fare_model: 'ryanair_all_origins',
     },
   };
 }

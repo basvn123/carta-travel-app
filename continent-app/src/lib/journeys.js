@@ -14,6 +14,8 @@
  * type and resolves null instead of throwing on "<!doctype".
  */
 
+import { dataUrl } from './dataHost.js';
+
 const SLUG_RE = /^[a-z-]{3,30}$/;
 const ID_RE = /^[a-z]{2}-[a-z0-9-]{3,90}$/;
 
@@ -22,7 +24,7 @@ function isJson(res) {
 }
 
 function loadJson(url) {
-  return fetch(url)
+  return fetch(dataUrl(url))
     .then((r) => (isJson(r) ? r.json() : null))
     .catch(() => null);
 }

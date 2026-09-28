@@ -19,6 +19,7 @@ import {
   SunIcon,
 } from '../components/Icons.jsx';
 import { srcSetFor, fallbackSrc } from '../lib/heroImage.js';
+import { LayerPhoto, HERO_SIZES, THUMB_SIZES } from '../components/LayerPhoto.jsx';
 
 /**
  * The mountain page: one published summit, and the argument for going there.
@@ -310,11 +311,14 @@ export function MountainPage({ mountain, countryName, onClose, onSelectDest, onO
 
           {main && (
             <figure className="bpage-gallery">
-              <img
+              <LayerPhoto
+                layer="mountains"
+                image={main}
+                hero
                 className="bpage-shot"
                 src={fallbackSrc(main.big || main.u, 960)}
                 srcSet={srcSetFor(main.big || main.u, 1920)}
-                sizes="(min-width: 769px) 860px, 100vw"
+                sizes={HERO_SIZES}
                 alt={mountain.name}
                 width={16}
                 height={10}
@@ -332,7 +336,7 @@ export function MountainPage({ mountain, countryName, onClose, onSelectDest, onO
                       className={`bpage-thumb ${i === shot ? 'on' : ''}`}
                       onClick={() => setShot(i)}
                     >
-                      <img src={img.u} alt="" loading="lazy" />
+                      <LayerPhoto layer="mountains" image={img} src={img.u} sizes={THUMB_SIZES} alt="" loading="lazy" />
                     </button>
                   ))}
                 </div>

@@ -1,6 +1,8 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
-  adminAddNote, adminAnalytics, adminBanUser, adminDeleteUser, adminGetAudit,
+  adminAddNote, adminAnalytics, adminAiCacheReport, adminAiModelReport, adminAiUsage,
+  adminBanUser, adminMargin,
+  adminDeleteUser, adminGetAudit,
   adminPaywallFunnel,
   adminGetUser, adminHealth, adminListFeedback, adminListUsers, adminMark,
   adminListOverrides, adminResetQuota, adminSetConfig, adminSetFeedbackStatus,
@@ -10,6 +12,9 @@ import { supabase } from '../lib/supabaseClient.js';
 import { useAuth } from '../auth/AuthContext.jsx';
 import { useI18n } from '../i18n/index.jsx';
 import { TIERS } from '../lib/pricing.js';
+// GATES only for its hard/soft kind, as a fallback when the RPC still answers
+// the pre-027 shape (no `kind` on each reason). See PaywallFunnel's kindOf.
+import { GATES } from '../hooks/usePaywall.jsx';
 import {
   AlertIcon, ArrowLeftIcon, DownloadIcon, LockIcon, SearchIcon,
 } from '../components/Icons.jsx';
@@ -92,12 +97,613 @@ function Sparkbars({ series }) {
  * cannot be followed to a purchase, so a conversion rate that quietly includes
  * them in the denominator understates every gate.
  */
+/**
+ * The ai_plan_cache hit rate, from migration 029.
+ *
+ * This is the cheapest lever the AI side has: a hit costs nothing at Google
+ * and answers the traveller immediately, so the rate is read here as money
+ * and as latency at once. It is shown three ways because one number cannot
+ * answer the question on its own. The headline rate says where we are. The
+ * per-version split says whether the last change to the cache key helped,
+ * which matters because the key is normalised deliberately (T039 collapsed
+ * the group bands, the free-text spelling and the empty fields into v5) and
+ * a normalisation that does not move the rate is a normalisation that was
+ * wrong about what forks it. The miss list says where to look next: a
+ * destination that misses constantly is either genuinely rare traffic or is
+ * still forking its key on something nobody has noticed.
+ *
+ * Deliberately not i18n'd: this panel is owner-only and the section beside it
+ * is written the same way. Adding six locale files for one reader would be
+ * work with no reader.
+ */
+function CacheHitRate({ report }) {
+  const lookups = report.lookups || 0;
+  const hits = report.hits || 0;
+  const pct = (a, b) => (b > 0 ? `${((a / b) * 100).toFixed(1)}%` : '-');
+  const byVersion = report.byVersion || [];
+  const misses = report.topMisses || [];
+
+  return (
+    <section className="adminpage-card">
+      <h2 className="adminpage-h2">Plan cache hit rate ({report.days || 30} days)</h2>
+      {lookups === 0 ? (
+        <p className="adminpage-muted">
+          No plan-day lookups recorded yet. Logging starts when the function is redeployed.
+        </p>
+      ) : (
+        <>
+          <div className="adminpage-tiles">
+            <div className="adminpage-tile"><b>{pct(hits, lookups)}</b><span>Served from cache</span></div>
+            <div className="adminpage-tile"><b>{hits}</b><span>Cache hits</span></div>
+            <div className="adminpage-tile"><b>{lookups - hits}</b><span>Generations bought</span></div>
+            <div className="adminpage-tile"><b>{report.freshRows || 0}</b><span>Rows still fresh</span></div>
+          </div>
+          <p className="adminpage-muted">
+            Every hit is a Gemini generation not bought, and a plan the traveller gets
+            without waiting. The cache serves a row for seven days, so rows past that
+            age count as misses.
+          </p>
+
+          {byVersion.length > 0 && (
+            <div className="adminpage-cols">
+              <section className="adminpage-card">
+                <h3 className="adminpage-h3">By cache key version</h3>
+                <ol className="adminpage-rank">
+                  {byVersion.map((v) => (
+                    <li key={v.v}>
+                      <span className="adminpage-rankname">v{v.v}</span>
+                      <span className="adminpage-ranknum">
+                        {pct(v.hits || 0, v.lookups || 0)} of {v.lookups || 0}
+                      </span>
+                    </li>
+                  ))}
+                </ol>
+              </section>
+
+              {misses.length > 0 && (
+                <section className="adminpage-card">
+                  <h3 className="adminpage-h3">Where the misses are</h3>
+                  <ol className="adminpage-rank">
+                    {misses.map((m) => (
+                      <li key={m.destId}>
+                        <span className="adminpage-rankname">{m.destId}</span>
+                        <span className="adminpage-ranknum">{m.misses}</span>
+                      </li>
+                    ))}
+                  </ol>
+                </section>
+              )}
+            </div>
+          )}
+        </>
+      )}
+    </section>
+  );
+}
+
+/**
+ * The AI usage rollup, from migration 030.
+ *
+ * Four questions in one section, in the order an owner actually asks them.
+ * How close is the shared daily ceiling to biting. How much of the traffic
+ * the cache absorbed. How many people were turned away, and by which cap.
+ * Who is spending the most.
+ *
+ * Plan and ground are kept apart in every one of those, and that separation
+ * is the point of the section rather than a detail of it. A plan unit is
+ * tokens on Gemini Flash and is effectively free. A ground unit is a billed
+ * Google Search query, and on Gemini 3 one grounded generation can run
+ * several. A single blended "AI calls" figure would hide the only line item
+ * that costs money behind the one that does not, which is exactly the blind
+ * spot this section exists to close.
+ *
+ * The daily percentage is against an assumed ceiling and says so. The real
+ * cap is AI_GLOBAL_DAILY_CAP in the Edge Function environment, which SQL
+ * cannot read; the RPC reads a site_config mirror if one has been set and
+ * otherwise assumes the function default of 200. A percentage against the
+ * wrong ceiling is worse than no percentage, so the ceiling it was computed
+ * against is printed next to it.
+ *
+ * Deliberately not i18n'd, the same as CacheHitRate above and for the same
+ * reason: this panel has one reader.
+ *
+ * Kept self-contained so T062 can lift it into its own module unchanged.
+ */
+function AiUsage({ report }) {
+  const cap = report.globalCap || 200;
+  const daily = report.daily || [];
+  const plan = report.plan || {};
+  const ground = report.ground || {};
+  const cache = report.cache || {};
+  const rej = report.rejections || {};
+  const byTier = report.rejectionsByTier || [];
+  const users = report.topUsers || [];
+  const peak = report.peakDay;
+  const today = report.today || 0;
+  const rate = cache.rate == null ? '-' : `${cache.rate}%`;
+
+  return (
+    <section className="adminpage-card">
+      <h2 className="adminpage-h2">AI usage ({report.days || 30} days)</h2>
+
+      <div className="adminpage-tiles">
+        <div className="adminpage-tile">
+          <b>{today}</b><span>Units today of {cap} assumed cap</span>
+        </div>
+        <div className="adminpage-tile">
+          <b>{peak ? peak.n : 0}</b>
+          <span>{peak ? `Busiest day, ${peak.day}` : 'No traffic recorded'}</span>
+        </div>
+        <div className="adminpage-tile">
+          <b>{report.daysAtCap || 0}</b><span>Days that reached the cap</span>
+        </div>
+        <div className="adminpage-tile">
+          <b>{rate}</b><span>Served from cache</span>
+        </div>
+      </div>
+      <p className="adminpage-muted">
+        The shared daily ceiling lives in the Edge Function environment as
+        AI_GLOBAL_DAILY_CAP, where SQL cannot read it, so {cap} is what this
+        assumes. Set a site_config key named ai_global_daily_cap to the real
+        number if the two ever drift apart.
+      </p>
+
+      <div className="adminpage-tiles">
+        <div className="adminpage-tile">
+          <b>{plan.units || 0}</b><span>Plan units, {plan.users || 0} accounts</span>
+        </div>
+        <div className="adminpage-tile">
+          <b>{ground.units || 0}</b><span>Ground units, {ground.users || 0} accounts</span>
+        </div>
+        <div className="adminpage-tile">
+          <b>{rej.userCap || 0}</b><span>Refused by their own cap</span>
+        </div>
+        <div className="adminpage-tile">
+          <b>{rej.globalCap || 0}</b><span>Refused by the shared cap</span>
+        </div>
+      </div>
+      <p className="adminpage-muted">
+        Plan units are tokens on Flash and cost close to nothing. Ground units
+        are billed Google Search queries and are the line that moves the bill,
+        so the two are never added together. A refusal by a user cap is somebody
+        who wanted more than their tier gives. A refusal by the shared cap is
+        somebody who was turned away from a generation they had already paid for.
+      </p>
+
+      <div className="adminpage-cols">
+        <section className="adminpage-card">
+          <h3 className="adminpage-h3">Daily consumption</h3>
+          {daily.length === 0 ? (
+            <p className="adminpage-muted">
+              Nothing recorded yet. The daily total ticks on the first AI call.
+            </p>
+          ) : (
+            <>
+              <Sparkbars series={daily.map((d) => ({ day: d.day, n: d.n }))} />
+              <ul className="adminpage-bars">
+                {daily.slice(0, 7).map((d) => (
+                  <li key={d.day}>
+                    <span className="adminpage-barlabel">{d.day}</span>
+                    <span className="adminpage-bartrack">
+                      <span className="adminpage-barfill"
+                        style={{ width: `${Math.min((d.n / cap) * 100, 100)}%` }} />
+                    </span>
+                    <span className="adminpage-barnum">{d.n}</span>
+                  </li>
+                ))}
+              </ul>
+              <p className="adminpage-muted">
+                Bars are scaled to the assumed cap, so a full bar is a day that
+                ran out. The list shows the last seven days.
+              </p>
+            </>
+          )}
+        </section>
+
+        <section className="adminpage-card">
+          <h3 className="adminpage-h3">Refusals by tier</h3>
+          {byTier.length === 0 ? (
+            <p className="adminpage-muted">
+              No refusals recorded. Logging starts when the functions are redeployed.
+            </p>
+          ) : (
+            <ol className="adminpage-rank">
+              {byTier.map((r) => (
+                <li key={r.tier}>
+                  <span className="adminpage-rankname">{r.tier}</span>
+                  <span className="adminpage-ranknum">
+                    {r.userCap || 0} own, {r.globalCap || 0} shared
+                  </span>
+                </li>
+              ))}
+            </ol>
+          )}
+          <p className="adminpage-muted">
+            Free accounts at their own wall is the offer working. Paid accounts
+            at it is an allowance priced wrong.
+          </p>
+        </section>
+      </div>
+
+      <h3 className="adminpage-h3">Heaviest accounts</h3>
+      {users.length === 0 ? (
+        <p className="adminpage-muted">No AI usage recorded in this window.</p>
+      ) : (
+        <div className="adminpage-tablewrap">
+          <table className="adminpage-table adminpage-table-static">
+            <thead>
+              <tr>
+                <th>Account</th>
+                <th>Tier</th>
+                <th className="num">Plan</th>
+                <th className="num">Ground</th>
+              </tr>
+            </thead>
+            <tbody>
+              {users.map((u) => (
+                <tr key={u.userId}>
+                  <td>{u.email || u.userId}</td>
+                  <td className="mono">{u.tier || 'free'}</td>
+                  <td className="num mono">{u.plan || 0}</td>
+                  <td className="num mono">{u.ground || 0}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+      <p className="adminpage-muted">
+        Ranked on ground first. An account with a thousand cached plans is not
+        the one eating the margin; an account with thirty grounded searches is.
+      </p>
+    </section>
+  );
+}
+
+/** Integer cents to a euro string. Every money figure in the margin section
+ *  goes through this, so nothing is ever a raw float on screen. */
+function eur(cents) {
+  if (cents == null) return '-';
+  try {
+    return new Intl.NumberFormat('en-IE', {
+      style: 'currency', currency: 'EUR', minimumFractionDigits: 2,
+    }).format(cents / 100);
+  } catch { return `EUR ${(cents / 100).toFixed(2)}`; }
+}
+
+/**
+ * The margin dashboard, from migration 031.
+ *
+ * CARTA_UNIT_ECONOMICS.md is a model. It asserts EUR 6.85 of contribution per
+ * purchase and hangs everything on it: the EUR 0.17 a visitor is worth, the
+ * conclusion that paid acquisition cannot work, the order of the seven levers
+ * in section 4. This section is the instrument that says whether the model is
+ * right, which is why the comparison against 6.85 is the largest thing on it
+ * and every other figure is a line leading to that one.
+ *
+ * It reads top to bottom as the sheet in section 3.1 reads: gross, less VAT,
+ * less Stripe, to net receipts; then less AI, less the infrastructure share,
+ * to contribution. Keeping the two orders identical is deliberate. Somebody
+ * checking this against the document should be able to put them side by side
+ * and read down both at once, and a rearranged order would cost that for
+ * nothing.
+ *
+ * Three of the five lines are modelled rather than observed and each says so
+ * on screen, in the line itself rather than in a footnote. A modelled VAT
+ * figure presented like a measured one is worse than no figure, because it
+ * invites somebody to file it. The rule the whole section follows: a number
+ * you cannot source is a number that has to carry its source.
+ *
+ * The reconciliation is a real three-column table because it is genuinely
+ * tabular data, ledger against dashboard against difference, and because the
+ * done condition for this task is that line existing rather than the tiles
+ * above it. It reads "not reconciled" until every infrastructure row for the
+ * month came off an invoice, which is T016 and is not something this panel
+ * can do for itself.
+ *
+ * Deliberately not i18n'd, the same as AiUsage and CacheHitRate above and for
+ * the same reason: this panel has one reader.
+ *
+ * Kept self-contained so T062 can lift it into its own module unchanged.
+ */
+function Margin({ report, monthsBack, onMonth }) {
+  const sales = report.sales || {};
+  const vat = report.vat || {};
+  const stripe = report.stripe || {};
+  const ai = report.ai || {};
+  const infra = report.infra || {};
+  const con = report.contribution || {};
+  const tiers = sales.byTier || [];
+  const items = infra.items || [];
+  const n = sales.count || 0;
+
+  // The contribution figures come back as cents with two decimals, because a
+  // per-purchase share of one month's infrastructure is not a whole cent.
+  // Rounded to whole cents for display and kept exact in the delta beneath.
+  const per = con.perPurchaseCents;
+  const holes = (sales.excludedNoAmount || 0) + (sales.excludedCurrency || 0);
+
+  return (
+    <section className="adminpage-card">
+      <h2 className="adminpage-h2">Margin, {report.month || 'no month'}</h2>
+
+      <div className="adminpage-monthpick">
+        <button type="button" className="adminpage-btn"
+          onClick={() => onMonth(monthsBack + 1)}>
+          Earlier month
+        </button>
+        <span className="mono">{report.month}</span>
+        <button type="button" className="adminpage-btn"
+          disabled={monthsBack <= 0}
+          onClick={() => onMonth(Math.max(0, monthsBack - 1))}>
+          Later month
+        </button>
+      </div>
+      {!report.closed && (
+        <p className="adminpage-muted">
+          This month is still running, so a part month of sales is being read
+          against a whole month of infrastructure. Step back one month for a
+          figure that means something.
+        </p>
+      )}
+
+      <div className="adminpage-tiles">
+        <div className="adminpage-tile">
+          <b>{n}</b><span>Passes sold</span>
+        </div>
+        <div className="adminpage-tile">
+          <b>{eur(report.netReceiptsCents)}</b><span>Net receipts</span>
+        </div>
+        <div className="adminpage-tile">
+          <b>{per == null ? '-' : eur(Math.round(per))}</b>
+          <span>Contribution per purchase</span>
+        </div>
+        <div className="adminpage-tile">
+          <b>{eur(con.assumedCents)}</b><span>The model assumes</span>
+        </div>
+      </div>
+
+      {per == null ? (
+        <p className="adminpage-muted">
+          No valued sales in this month, so there is no contribution to compare.
+          The assumption stands untested until a pass is bought.
+        </p>
+      ) : (
+        <p className="adminpage-muted">
+          Measured contribution is {eur(Math.round(per))} against the{' '}
+          {eur(con.assumedCents)} in CARTA_UNIT_ECONOMICS.md section 5, a
+          difference of {eur(Math.round(con.deltaCents))} or {con.deltaPct}{' '}
+          percent. The assumption is a blended 70/30 Trip and Year mix at
+          typical AI use, so a month with a different mix or heavier use will
+          differ for reasons that are not a fault in the model.
+        </p>
+      )}
+
+      <h3 className="adminpage-h3">Passes sold by tier</h3>
+      {tiers.length === 0 ? (
+        <p className="adminpage-muted">No passes sold in this month.</p>
+      ) : (
+        <div className="adminpage-tablewrap">
+          <table className="adminpage-table adminpage-table-static">
+            <thead>
+              <tr>
+                <th>Tier</th>
+                <th className="num">Sold</th>
+                <th className="num">Gross</th>
+              </tr>
+            </thead>
+            <tbody>
+              {tiers.map((r) => (
+                <tr key={r.tier}>
+                  <td className="mono">{r.tier}</td>
+                  <td className="num mono">{r.count}</td>
+                  <td className="num mono">{eur(r.grossCents)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+      {holes > 0 && (
+        <p className="adminpage-muted">
+          {holes} sales are missing from every figure here: {sales.excludedNoAmount || 0}{' '}
+          with no recorded amount and {sales.excludedCurrency || 0} charged in
+          another currency. A sum across currencies would be nonsense, so they
+          are counted rather than converted, and every total on this page is a
+          floor while they exist.
+        </p>
+      )}
+
+      <h3 className="adminpage-h3">From gross to contribution</h3>
+      <div className="adminpage-tablewrap">
+        <table className="adminpage-table adminpage-table-static">
+          <thead>
+            <tr>
+              <th>Line</th>
+              <th className="num">Month</th>
+              <th className="num">Per purchase</th>
+              <th>Source</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Gross charged</td>
+              <td className="num mono">{eur(sales.grossCents)}</td>
+              <td className="num mono">{n ? eur(Math.round((sales.grossCents || 0) / n)) : '-'}</td>
+              <td>Observed, from the sales ledger</td>
+            </tr>
+            <tr>
+              <td>VAT</td>
+              <td className="num mono">{eur(-(vat.cents || 0))}</td>
+              <td className="num mono">{n ? eur(-Math.round((vat.cents || 0) / n)) : '-'}</td>
+              <td>
+                Modelled, {vat.basis === 'buyer_country'
+                  ? 'at each buyer state rate, the threshold is breached'
+                  : 'at 21 percent Belgian, place of supply is still Belgium'}
+              </td>
+            </tr>
+            <tr>
+              <td>Stripe</td>
+              <td className="num mono">{eur(-(stripe.cents || 0))}</td>
+              <td className="num mono">{n ? eur(-Math.round((stripe.cents || 0) / n)) : '-'}</td>
+              <td>Modelled, {stripe.rateEea} in the EEA, plus {stripe.tax} tax</td>
+            </tr>
+            <tr>
+              <td><b>Net receipts</b></td>
+              <td className="num mono"><b>{eur(report.netReceiptsCents)}</b></td>
+              <td className="num mono">
+                <b>{n ? eur(Math.round((report.netReceiptsCents || 0) / n)) : '-'}</b>
+              </td>
+              <td>Gross less the two lines above</td>
+            </tr>
+            <tr>
+              <td>AI</td>
+              <td className="num mono">{eur(-(ai.cents || 0))}</td>
+              <td className="num mono">{n ? eur(-Math.round((ai.cents || 0) / n)) : '-'}</td>
+              <td>
+                Units observed, priced at {ai.planPrice}c a plan and{' '}
+                {ai.groundPrice}c a grounded search
+              </td>
+            </tr>
+            <tr>
+              <td>Infrastructure</td>
+              <td className="num mono">{eur(-(infra.cents || 0))}</td>
+              <td className="num mono">
+                {infra.perPurchaseCents == null
+                  ? '-' : eur(-Math.round(infra.perPurchaseCents))}
+              </td>
+              <td>
+                Ledger, {infra.actualRows || 0} invoiced and{' '}
+                {infra.modelledRows || 0} modelled, split per purchase
+              </td>
+            </tr>
+            <tr>
+              <td><b>Contribution</b></td>
+              <td className="num mono"><b>{eur(con.totalCents)}</b></td>
+              <td className="num mono">
+                <b>{per == null ? '-' : eur(Math.round(per))}</b>
+              </td>
+              <td>Net receipts less AI less the infrastructure share</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p className="adminpage-muted">
+        VAT is backed out of the gross rather than added to it, because the
+        prices are VAT inclusive. Stripe reports the real fee on the balance
+        transaction behind each charge and nothing in this schema stores it, so
+        the documented rate is applied per sale, which keeps the fixed 25 cents
+        diluting a Year Pass twice as far as a Trip Pass. Infrastructure is
+        split by purchase count, the same method section 3.1 uses, so the figure
+        beside it is comparable by construction.
+      </p>
+
+      <h3 className="adminpage-h3">AI units this month</h3>
+      <div className="adminpage-tiles">
+        <div className="adminpage-tile">
+          <b>{ai.planUnits || 0}</b><span>Plan units, {eur(ai.planCents)}</span>
+        </div>
+        <div className="adminpage-tile">
+          <b>{ai.groundUnits || 0}</b><span>Ground units, {eur(ai.groundCents)}</span>
+        </div>
+        <div className="adminpage-tile">
+          <b>{ai.dailyTotalUnits || 0}</b><span>Units on the daily counter</span>
+        </div>
+        <div className="adminpage-tile">
+          <b>{n ? eur(Math.round((ai.cents || 0) / n)) : '-'}</b>
+          <span>AI per purchase</span>
+        </div>
+      </div>
+      <p className="adminpage-muted">
+        The first two are units on entitlement periods that opened in this
+        month. The daily counter is the honest per-day figure but does not
+        separate plan from ground, so it cannot be priced and is here only to
+        show how far the period keying moves the answer. A grounded search is
+        five times a plan and is the only line that reliably costs money, so
+        the two are never added together.
+      </p>
+
+      <h3 className="adminpage-h3">Reconciliation to the ledger</h3>
+      <div className="adminpage-tablewrap">
+        <table className="adminpage-table adminpage-table-static">
+          <thead>
+            <tr>
+              <th>Line</th>
+              <th className="num">Ledger</th>
+              <th className="num">Dashboard</th>
+              <th className="num">Difference</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Infrastructure spend</td>
+              <td className="num mono">
+                {infra.reconciled ? eur(infra.cents) : 'not invoiced'}
+              </td>
+              <td className="num mono">{eur(infra.cents)}</td>
+              <td className="num mono">{infra.reconciled ? eur(0) : '-'}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      {infra.reconciled ? (
+        <p className="adminpage-muted">
+          Every infrastructure line for this month came off an invoice, so this
+          month reconciles.
+        </p>
+      ) : (
+        <p className="adminpage-muted">
+          {infra.modelledRows || 0} of the {items.length} infrastructure lines
+          below are still the figures CARTA_UNIT_ECONOMICS.md section 2.1
+          models, not bills anybody has read. Reconciling this month against
+          them would prove only that the model equals itself, which is why this
+          row says not invoiced rather than zero. Replace each line with the
+          real amount as T016 sets up the bookkeeping, and this row closes by
+          itself.
+        </p>
+      )}
+      {items.length > 0 && (
+        <div className="adminpage-tablewrap">
+          <table className="adminpage-table adminpage-table-static">
+            <thead>
+              <tr>
+                <th>Item</th>
+                <th className="num">Amount</th>
+                <th>Source</th>
+                <th>Note</th>
+              </tr>
+            </thead>
+            <tbody>
+              {items.map((r) => (
+                <tr key={r.item}>
+                  <td className="mono">{r.item}</td>
+                  <td className="num mono">{eur(r.cents)}</td>
+                  <td className="mono">{r.source}</td>
+                  <td>{r.note || ''}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </section>
+  );
+}
+
 function PaywallFunnel({ funnel, t }) {
   const shown = funnel.shown || 0;
   const checkout = funnel.checkout || 0;
   const bought = funnel.purchased || 0;
   const pct = (a, b) => (b > 0 ? `${((a / b) * 100).toFixed(1)}%` : '-');
   const reasons = funnel.byReason || [];
+  const kinds = funnel.byKind || [];
+  // byKind and the conversionRate per reason are only on the RPC from
+  // migration 027. An admin panel talking to a project still on 022 (or one
+  // where 027 has not been pasted into the SQL editor yet) gets the older
+  // shape back, and reading r.kind off it would be undefined for every row.
+  // Falling back to the client-side GATES kind keeps the badge correct either
+  // way instead of showing a blank.
+  const kindOf = (reason) => (GATES[reason]?.kind === 'soft' ? 'soft' : 'hard');
 
   return (
     <>
@@ -117,6 +723,18 @@ function PaywallFunnel({ funnel, t }) {
         </p>
       )}
 
+      {kinds.length > 0 && (
+        <div className="adminpage-tiles adminpage-tiles-kind">
+          {kinds.map((k) => (
+            <div className="adminpage-tile" key={k.kind}>
+              <b>{k.conversionRate != null ? `${k.conversionRate}%` : pct(k.bought || 0, k.shown || 0)}</b>
+              <span>{t(k.kind === 'soft' ? 'admin.funnelKindSoft' : 'admin.funnelKindHard', { n: k.shown || 0 })}</span>
+            </div>
+          ))}
+        </div>
+      )}
+      <p className="adminpage-muted">{t('admin.funnelKindHint')}</p>
+
       <div className="adminpage-cols">
         <section className="adminpage-card">
           <h3 className="adminpage-h3">{t('admin.funnelByGate')}</h3>
@@ -124,17 +742,24 @@ function PaywallFunnel({ funnel, t }) {
             <p className="adminpage-muted">{t('admin.funnelEmpty')}</p>
           ) : (
             <ol className="adminpage-rank">
-              {reasons.map((r) => (
-                <li key={r.reason}>
-                  <span className="adminpage-rankname">
-                    {r.reason}
-                    <em>{pct(r.checkout || 0, r.shown || 0)}</em>
-                  </span>
-                  <span className="adminpage-ranknum">
-                    {r.shown} / {r.checkout}
-                  </span>
-                </li>
-              ))}
+              {reasons.map((r) => {
+                const kind = r.kind || kindOf(r.reason);
+                const rate = r.conversionRate != null ? `${r.conversionRate}%` : pct(r.bought || 0, r.shown || 0);
+                return (
+                  <li key={r.reason}>
+                    <span className="adminpage-rankname">
+                      {r.reason}
+                      <span className={`adminpage-kindtag adminpage-kindtag-${kind}`}>
+                        {t(kind === 'soft' ? 'admin.funnelKindTagSoft' : 'admin.funnelKindTagHard')}
+                      </span>
+                      <em>{rate} {t('admin.funnelRateGate')}</em>
+                    </span>
+                    <span className="adminpage-ranknum">
+                      {r.shown} / {r.checkout}
+                    </span>
+                  </li>
+                );
+              })}
             </ol>
           )}
           <p className="adminpage-muted">{t('admin.funnelByGateHint')}</p>
@@ -164,6 +789,15 @@ export function AdminPage({ onClose }) {
   const [health, setHealth] = useState(null);
   const [analytics, setAnalytics] = useState(null);
   const [funnel, setFunnel] = useState(null);
+  const [modelReport, setModelReport] = useState(null);
+  const [cacheReport, setCacheReport] = useState(null);
+  const [aiUsage, setAiUsage] = useState(null);
+  // The margin dashboard opens on the last CLOSED month, not on the month in
+  // progress: a part month of sales against a whole month of infrastructure is
+  // not a figure anybody should read. The selector moves this offset and the
+  // effect below refetches, so the RPC is asked once per month looked at.
+  const [marginBack, setMarginBack] = useState(1);
+  const [margin, setMargin] = useState(null);
   const [audit, setAudit] = useState(null);
   const [auditBusy, setAuditBusy] = useState(false);
 
@@ -269,6 +903,13 @@ export function AdminPage({ onClose }) {
     setAuditBusy(false);
   }, []);
 
+  // Its own effect, because it has its own argument. Folding it into the big
+  // overview effect would refetch every other section on every month change.
+  useEffect(() => {
+    if (!unlocked) return;
+    adminMargin(marginBack).then(setMargin).catch(() => setMargin(null));
+  }, [unlocked, marginBack]);
+
   const loadOverrides = useCallback(async () => {
     try {
       const res = await adminListOverrides(null);
@@ -288,6 +929,9 @@ export function AdminPage({ onClose }) {
     adminHealth().then(setHealth).catch(() => setHealth(null));
     adminAnalytics().then(setAnalytics).catch(() => setAnalytics(null));
     adminPaywallFunnel(30).then(setFunnel).catch(() => setFunnel(null));
+    adminAiModelReport(30).then(setModelReport).catch(() => setModelReport(null));
+    adminAiCacheReport(30).then(setCacheReport).catch(() => setCacheReport(null));
+    adminAiUsage(30).then(setAiUsage).catch(() => setAiUsage(null));
     loadAudit(25);
     loadFeedback('new');
     loadOverrides();
@@ -937,6 +1581,48 @@ export function AdminPage({ onClose }) {
                 )}
 
                 {funnel && !funnel.error && <PaywallFunnel funnel={funnel} t={t} />}
+
+                {margin && !margin.error && (
+                  <Margin report={margin} monthsBack={marginBack} onMonth={setMarginBack} />
+                )}
+
+                {aiUsage && !aiUsage.error && <AiUsage report={aiUsage} />}
+
+                {cacheReport && !cacheReport.error && <CacheHitRate report={cacheReport} />}
+
+                {modelReport && !modelReport.error && (
+                  <section className="adminpage-card">
+                    <h2 className="adminpage-h2">AI Model Fallbacks (30 days)</h2>
+                    {modelReport.totalFallbacks > 0 ? (
+                      <>
+                        <p className="adminpage-muted">
+                          Total fallbacks: <b>{modelReport.totalFallbacks}</b>
+                        </p>
+                        <div className="adminpage-cols">
+                          <section className="adminpage-card">
+                            <h3 className="adminpage-h3">By Model</h3>
+                            <ul className="adminpage-bars">
+                              {Object.entries(modelReport.byModel || {}).map(([model, count]) => {
+                                const total = Object.values(modelReport.byModel || {}).reduce((a, b) => a + b, 0);
+                                return (
+                                  <li key={model}>
+                                    <span className="adminpage-barlabel">{model}</span>
+                                    <span className="adminpage-bartrack">
+                                      <span className="adminpage-barfill" style={{ width: `${(count / total) * 100}%` }} />
+                                    </span>
+                                    <span className="adminpage-barnum">{count}</span>
+                                  </li>
+                                );
+                              })}
+                            </ul>
+                          </section>
+                        </div>
+                      </>
+                    ) : (
+                      <p className="adminpage-muted">No fallbacks recorded in the last 30 days.</p>
+                    )}
+                  </section>
+                )}
 
                 <h2 className="adminpage-h2">{t('admin.recentTitle')}</h2>
                 {(audit?.rows || []).length === 0 ? (

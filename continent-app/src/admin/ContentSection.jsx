@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { adminSetOverride } from '../auth/admin.js';
 import { useI18n } from '../i18n/index.jsx';
 import { SearchIcon } from '../components/Icons.jsx';
+import { dataUrl } from '../lib/dataHost.js';
 
 // Reviewing the catalogue, and correcting it.
 //
@@ -27,7 +28,7 @@ function isJson(res) {
 }
 
 function fetchJson(url) {
-  return fetch(url).then((r) => (isJson(r) ? r.json() : null)).catch(() => null);
+  return fetch(dataUrl(url)).then((r) => (isJson(r) ? r.json() : null)).catch(() => null);
 }
 
 /** The lead photograph, whichever shape this layer stores it in. */

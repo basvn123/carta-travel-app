@@ -3,23 +3,67 @@
  *
  * The main dataset download starts the moment the bundle is evaluated (module
  * scope), so it runs in parallel with React booting instead of waiting for the
- * first component effect. The heavier, rarely-needed data is lazy:
+ * first component effect. It comes in two steps (T054, see bootIndex.js):
+ *   - /boot.json              the boot index, from the app host
+ *   - /dest/{cc}.json         one file per country, all in parallel, from the
+ *                             data host (dataHost.js), merged back into the
+ *                             same { meta, destinations } the app always had
+ * The heavier, rarely-needed data is lazy:
  *   - /poi/{destId}.json      full POI list for one town (Day planner, detail)
  *   - /country_insights.json  per-country travel intel (planners + detail)
  */
 
 import { faresUrl } from './fareFile.js';
 import { shardName } from './poiShard.js';
+import { DATA_BASE, dataUrl } from './dataHost.js';
+import { chunkList, mergeCatalogue } from './bootIndex.js';
 
 function fetchJson(path) {
-  return fetch(path).then((r) => {
+  return fetch(dataUrl(path)).then((r) => {
     if (!r.ok) throw new Error(`HTTP ${r.status}`);
     return r.json();
   });
 }
 
-/** Started at module-eval time; every consumer shares the same promise. */
-export const appDataPromise = fetchJson('/app_data.json');
+// When the shards live on another host, open the connection to it while the
+// boot index is still downloading, so the country files do not pay for a
+// fresh DNS lookup and TLS handshake after it arrives.
+if (DATA_BASE && typeof document !== 'undefined') {
+  try {
+    const link = document.createElement('link');
+    link.rel = 'preconnect';
+    link.href = new URL(DATA_BASE).origin;
+    link.crossOrigin = 'anonymous';
+    document.head.appendChild(link);
+  } catch { /* a hint only */ }
+}
+
+/** The boot index, started at module-eval time (index.html preloads it). */
+export const bootIndexPromise = fetchJson('/boot.json');
+bootIndexPromise.catch(() => {});
+
+// One country file, retried once: forty-odd parallel requests make a single
+// dropped one likely enough on a phone that it should not cost the whole map.
+function fetchCountry(cc, hash) {
+  const path = `/dest/${encodeURIComponent(cc)}.json?v=${encodeURIComponent(hash || '')}`;
+  return fetchJson(path).catch(() => fetchJson(path));
+}
+
+/**
+ * The full dataset, { meta, destinations }, exactly as app_data.json used to
+ * deliver it. Started at module-eval time; every consumer shares the same
+ * promise.
+ */
+export const appDataPromise = bootIndexPromise.then((boot) => {
+  const list = chunkList(boot);
+  return Promise.all(list.map(([cc, hash]) => fetchCountry(cc, hash))).then((files) => {
+    const chunkMap = {};
+    list.forEach(([cc], i) => { chunkMap[cc] = files[i]; });
+    const { core, missing } = mergeCatalogue(boot, chunkMap);
+    if (missing) console.warn(`[appData] ${missing} destinations in the boot index had no record`);
+    return core;
+  });
+});
 // Swallow the module-scope rejection so it never surfaces as an unhandled
 // rejection before useAppData attaches its own catch. Consumers still get
 // the real error from their own .then/.catch chains.
