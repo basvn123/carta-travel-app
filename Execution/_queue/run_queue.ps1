@@ -100,9 +100,16 @@ $GateReport = "Execution/P3/T055-post-migration-measurement.md"
 
 $SystemNote = "You are running unattended from Execution/_queue/run_queue.ps1. Nobody can answer a question or approve anything, so never stop to ask; make the conservative call, record it under What is still open, and finish. The task is only counted as done when its report file exists in Execution/P3 and is committed together with the Execution/_OPEN.md rows, so always reach that step. Do not merge the branch. Do not touch files outside the task's scope. Other sessions may leave modified or untracked files in the working tree: never use git add -A, git add ., or git commit -a; stage only the files this task changed, by name, and leave the rest alone."
 
+# Done means "the report exists in a commit on some branch", read from git, not
+# from the working tree: on 2026-09-28 T061 finished in a separate worktree
+# after another session switched the main tree's branch, and a Test-Path in
+# the main tree said "not done" about a committed report, which would have
+# re-run the finished task.
 function Committed([string]$relPath) {
     $h = git -C $Repo log --all -1 --format=%H -- $relPath 2>$null
-    return [bool]$h
+    if (-not $h) { return $false }
+    git -C $Repo cat-file -e "${h}:${relPath}" 2>$null
+    return ($LASTEXITCODE -eq 0)
 }
 
 function Wait-ForGate {
@@ -193,7 +200,7 @@ function Run-Task($t) {
     $promptFile = Join-Path $QueueDir ("{0}.prompt.md" -f $t.Id)
     $fullReport = Join-Path $Repo $report
 
-    if ((Test-Path $fullReport) -and (Committed $report)) { Log "$($t.Id): report already committed, skipping"; return $true }
+    if (Committed $report) { Log "$($t.Id): report already committed, skipping"; return $true }
 
     while (-not (Test-Path $promptFile)) {
         Log "$($t.Id): prompt file missing ($promptFile), holding until it appears"
@@ -229,7 +236,7 @@ function Run-Task($t) {
         }
         $limitStart = $null
 
-        if ((Test-Path $fullReport) -and (Committed $report)) { Log "$($t.Id): done, report committed"; return $true }
+        if (Committed $report) { Log "$($t.Id): done, report committed"; return $true }
 
         if ($r.Kind -eq "error") { Log "$($t.Id): claude exited with an error: $($r.Text -replace '\s+',' ')" }
         else { Log "$($t.Id): claude finished but the report is not committed" }
