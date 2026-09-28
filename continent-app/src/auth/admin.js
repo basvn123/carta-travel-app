@@ -193,6 +193,19 @@ export const adminListFeedback = (status, limit = 50, offset = 0) =>
 export const adminSetFeedbackStatus = (id, status) =>
   call('admin_set_feedback_status', { p_id: id, p_status: status });
 
+/**
+ * Every published guide (trip_plans.visibility = 'public'), newest first,
+ * with the author's email from auth.users and the view count (migration
+ * 036). The email is read inside the SECURITY DEFINER function; the client
+ * never touches auth.users.
+ *
+ * Returns { total, viewsCounted, rows }. viewsCounted is false because no
+ * view counter exists in the schema yet, so every row's views is 0; the tab
+ * says so rather than presenting 0 as a measurement. No arguments and no
+ * limit: the plan asks for all of them (register row T067-b for paging).
+ */
+export const adminListPublicGuides = () => call('admin_list_public_guides');
+
 // Catalogue corrections over the static wire layers (beaches, lakes,
 // mountains, trails, destinations). An empty patch clears the override and
 // restores whatever the pipeline says.

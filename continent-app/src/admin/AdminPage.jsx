@@ -8,6 +8,7 @@ import { Overview } from '../components/admin/Overview.jsx';
 import { UsersList } from '../components/admin/UsersList.jsx';
 import { UserDetail } from '../components/admin/UserDetail.jsx';
 import { ModerationQueue } from '../components/admin/ModerationQueue.jsx';
+import { PublicGuides } from '../components/admin/PublicGuides.jsx';
 import { ConfigManager } from '../components/admin/ConfigManager.jsx';
 import { AuditLog } from '../components/admin/AuditLog.jsx';
 import { useErrText } from '../components/admin/useErrText.js';
@@ -19,6 +20,7 @@ import { useContentOverrides } from '../components/admin/useContentOverrides.js'
 import { useConfigManager } from '../components/admin/useConfigManager.js';
 import { useUsersList } from '../components/admin/useUsersList.js';
 import { useUserDetail } from '../components/admin/useUserDetail.js';
+import { usePublicGuides } from '../components/admin/usePublicGuides.js';
 
 // The back office, as a page rather than a drawer.
 //
@@ -26,9 +28,10 @@ import { useUserDetail } from '../components/admin/useUserDetail.js';
 // the moment it had to show a table: 440px of slide-over is a place to change
 // your own name, not a place to read every account you have. So this takes
 // the whole viewport, keeps the app's own typography (Fraunces on headings,
-// mono on every measured fact) and lays the work out in four sections that
-// each answer one question: how is it going, who are they, what is the site
-// saying, and what has been done.
+// mono on every measured fact) and lays the work out in seven sections that
+// each answer one question: how is it going, who are they, what does the
+// catalogue say, what have travellers published, what are they telling us,
+// what is the site saying, and what has been done.
 //
 // SECURITY, because this file will be read by somebody wondering. Nothing
 // here is a permission. Every call goes through an RPC that re-checks
@@ -49,8 +52,13 @@ import { useUserDetail } from '../components/admin/useUserDetail.js';
 // list, the stats and the audit trail; a feedback row opens an account. The
 // hooks are called in the order the one big unlock effect used to fire its
 // RPCs, so the network sequence at unlock is the same as before the split.
+//
+// GUIDES (T067) is the one hook that does not load at unlock: it loads the
+// first time its tab is shown and keeps the list after that, so the unlock
+// sequence above is unchanged and the unbounded list of public guides is
+// only fetched by somebody who opened the tab.
 
-const SECTIONS = ['overview', 'users', 'content', 'feedback', 'site', 'audit'];
+const SECTIONS = ['overview', 'users', 'content', 'guides', 'feedback', 'site', 'audit'];
 
 export function AdminPage({ onClose }) {
   const { t } = useI18n();
@@ -77,6 +85,7 @@ export function AdminPage({ onClose }) {
     errText, reloadList: list.reloadList, refreshStats: overview.refreshStats, loadAudit,
   });
   const { detail, setDetail } = account;
+  const guidesIndex = usePublicGuides(unlocked && section === 'guides', errText);
 
   // ---- the lock -----------------------------------------------------------
   if (!unlocked) {
@@ -126,6 +135,13 @@ export function AdminPage({ onClose }) {
                 overrides={content.overrides}
                 onOverridesChanged={async () => { await content.loadOverrides(); loadAudit(25); }}
                 errText={errText}
+              />
+            )}
+
+            {section === 'guides' && (
+              <PublicGuides
+                guidesIndex={guidesIndex}
+                onOpenUser={(id) => { setSection('users'); account.openUser(id); }}
               />
             )}
 
