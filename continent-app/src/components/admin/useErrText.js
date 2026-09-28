@@ -1,0 +1,24 @@
+import { useCallback } from 'react';
+import { useI18n } from '../../i18n/index.jsx';
+
+// RPC error codes to a sentence on screen. One callback for the whole
+// admin page: the user list effect depends on its identity, so it is made
+// once in the shell and handed down rather than rebuilt per view.
+export function useErrText() {
+  const { t } = useI18n();
+  const errText = useCallback((e) => {
+    const code = e?.code || '';
+    if (code === 'forbidden') return t('admin.errForbidden');
+    if (code === 'slow_down') return t('admin.errSlow');
+    if (code === 'confirm_mismatch') return t('admin.errConfirm');
+    if (code === 'target_is_admin') return t('admin.errTargetAdmin');
+    if (code === 'own_account') return t('admin.errOwn');
+    if (code === 'bad_note') return t('admin.errNote');
+    // A Postgres error carries its own message, and on this screen the person
+    // reading it is the person who can fix it, so it is shown rather than
+    // flattened into "something went wrong".
+    if (e?.message) return e.message;
+    return t('admin.errGeneric');
+  }, [t]);
+  return errText;
+}
