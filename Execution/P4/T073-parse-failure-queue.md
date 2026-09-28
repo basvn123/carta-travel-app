@@ -23,7 +23,10 @@ All paths from the repo root.
 **Modified:**
 - `supabase/functions/parse-booking/index.ts` (added reason field to responses)
 - `supabase/functions/parse-booking/logic.mjs` (sanitizeParsed detects structural failures)
-- `continent-app/src/planner/bookingImport.js` (logParseFailure function, analyzePayload, RPC calls)
+- `continent-app/src/planner/bookingImport.js` (logParseFailure function, analyzePayload, RPC calls;
+  the call that logs json_parse/missing_key/wrong_shape was fixed to read from the error branch,
+  see "What broke and how it was fixed")
+- `continent-app/scripts/admin/test_parse_failures.mjs` (fixed to actually run; see below)
 
 ## Commands run
 
@@ -37,15 +40,24 @@ git -C continent-app checkout -b p4-parse-failure-queue
 # - Updated parse-booking function to detect and return reason codes
 # - Added client-side capture in bookingImport.js
 
-# Testing (see "What is still open"):
-# - Test harness created but not run due to auth schema setup complexity
-# - npx eslint verified syntax: no issues
+# throwaway cluster (Git Bash); $S is the session scratchpad
+"/c/Program Files/PostgreSQL/18/bin/pg_ctl.exe" -D "$S/pg73" -o "-p 55434" -l "$S/pg73.log" -w start
+PGPORT=55434 PSQL="/c/Program Files/PostgreSQL/18/bin/psql.exe" node continent-app/scripts/admin/test_parse_failures.mjs
+# fixed the harness (auth stub, 018 patch, claims encoding, SET/CRLF stripping,
+# drop-database-from-itself, SKIPPED preflight); re-ran until green:
+# 22 checks, 0 failures
+"/c/Program Files/PostgreSQL/18/bin/pg_ctl.exe" -D "$S/pg73" -w stop
+
+cd continent-app
+npx eslint src/planner/bookingImport.js scripts/admin/test_parse_failures.mjs
+npm test          # 92 pass, 0 fail
+npm run build      # clean, ~2m
 
 # Commits (see below):
-git -C continent-app add -A
-git -C continent-app commit -m "T073: ..."
-git add continent-app supabase/functions
-git commit -m "T073: ..."
+git -C continent-app add src/planner/bookingImport.js scripts/admin/test_parse_failures.mjs
+git -C continent-app commit -m "T073: Fix parse-failure logging path and run the test harness"
+git add continent-app supabase/migrations/042_parse_failures.sql
+git commit -m "T073: Add migration 042 (parse_failures) and the app-side fix"
 ```
 
 ## Config and secrets set
@@ -63,20 +75,51 @@ None. The RPC log_parse_failure is fire-and-forget; failures never raise and nev
 | Global rate limit failures/day | n/a | 5000 | - |
 | Table columns with document/URL data | n/a | 0 | - |
 | NPX eslint checks | n/a | 0 errors | - |
+| test_parse_failures.mjs checks | 0 written, 0 run | 22 written, 22 passing against a throwaway PostgreSQL cluster | +22 |
+| npm test (continent-app) | n/a | 92 pass, 0 fail | - |
+| npm run build | n/a | clean, ~2m | - |
 
 ## What broke and how it was fixed
 
+The parse-booking function returns `reason` inside the error body for a 502
+(`ai_bad_output`), never in a successful `data` response: `json_parse` comes
+from the JSON.parse catch, `missing_key`/`wrong_shape` from
+`sanitizeParsed`'s new `reason` field. supabase-js surfaces a non-2xx
+response as `error`, never `data`. An earlier pass of this task wrote the
+logging call into the success branch of `requestBookingImport`, checking
+`data.reason` after a call that only fails, never succeeds, when reason is
+set. `data.reason` never exists, so `json_parse`, `missing_key` and
+`wrong_shape` never got logged; the queue would have quietly recorded
+nothing for those three reasons even after the Edge Function is redeployed.
+Moved the check into the `error` branch, reading `reason` from the same
+parsed error body that already yields `code` and `upstream`. `empty_result`
+(the 200 `nothing_found` response) and the client's own `wrong_shape` check
+(an unusable `data` shape) were already correct and unchanged: they do not
+go through `error` at all.
+
 | What | Cause | Fix |
 |---|---|---|
-| Test harness could not find psql | Path escaping on Windows, forward slashes vs back slashes | Rewrote path detection to use forward slashes and try-catch, but full test skipped due to auth schema not available in throwaway database |
-| Logic.mjs sanitizeParsed signature changed | Adding reason detection field | Return value includes reason field; callers must check it before treating empty results as success; index.ts updated to handle all three cases (reason set, reason null + empty results, reason null + good parse) |
-| None in deployed code path | - | - |
+| json_parse/missing_key/wrong_shape never logged | logParseFailure was called from the success path, checking `data.reason`, but the function only sets `reason` in a 502 error body | Moved the call into the `error` branch of `requestBookingImport`, reading `reason` from `error.context.json()` alongside `code` and `upstream` |
+| logic.mjs sanitizeParsed signature changed | Adding reason detection field | Return value includes reason field; callers must check it before treating empty results as success; index.ts updated to handle all three cases (reason set, reason null + empty results, reason null + good parse) |
+| test_parse_failures.mjs failed on migration 002 with "schema auth does not exist" | The harness applied migrations straight into a bare PostgreSQL cluster with no auth schema; test_edge_errors.mjs and test_pipeline_health.mjs create one (auth.users, auth.uid(), the anon/authenticated/service_role roles) before applying anything, and this file never did | Added the same STUBS block (copied from test_edge_errors.mjs) before the migration loop, seeded auth.users for every uid the test uses, and added an admin_users row so the reader tests can run as an actual admin |
+| migration 018 failed with "invalid regular expression: invalid repetition count(s)" | Known issue (T071): 018 as committed carries a `{5,600}` regex bound this PostgreSQL build refuses | Added the same patch-and-retry fallback test_edge_errors.mjs uses: on that specific error, apply a copy with `{5,600}` replaced by `{5,255}`, for this test only |
+| Every `sqlAsAuth` call raised "invalid input syntax for type json" | The harness base64-encoded `request.jwt.claims`; every migration's `auth.uid()`/`auth.jwt()` parses that setting as raw JSON with `::jsonb`, never base64 | Set the claims as plain (SQL-escaped) JSON text instead |
+| Every count/reader check compared against the wrong row, or against `'SET'` | psql's `-tc` runs the whole batch as one command; `set role` and `select set_config(...)` each print their own line ahead of the real query's rows, and on Windows every line carries a trailing `\r` that broke exact string comparisons | `sqlAs` now drops a leading `SET` line, `sqlAsAuth` drops the extra `set_config` row, and `psqlRun` strips `\r` and trims every line before returning it |
+| `drop database` failed with "cannot drop the currently open database" on both setup and teardown, silently swallowed by a try/catch | Every psqlRun connected with `-d carta_t073_test`, including the call meant to drop that same database | Added `dropTestDb()`, which always connects to the `postgres` database to issue the drop; setup and teardown both use it |
+| A server that cannot be reached crashed with an uncaught exception (exit 1) instead of skipping | `setup()` called `execFileSync` directly for `create database`, with no SKIPPED detection ahead of it | Added a preflight `select 1` against the `postgres` database before touching anything; on failure the script logs `SKIPPED: ...` and exits 0 |
+
+Once these were fixed the harness matched what its own docstring already
+claimed to prove; checks were added for the pieces the previous pass wrote
+into the docstring but never into the test body: direct table access denied
+for a signed-in user, the nine-column check, the per-user and global caps,
+the 30-day prune keeping a 29-day row, account deletion nulling user_id, and
+pasting 042 twice being safe.
 
 ## What is still open
 
-The parse_failures table is built and ready to write from the client, but migration 042 has never been applied to a real database: the test harness (test_parse_failures.mjs) was created but not run because a throwaway PostgreSQL database lacks the auth schema that the migrations require. The harness pattern is solid (copied from T071); it just needs a PostgreSQL setup with full Supabase extensions and auth.users. Without it, the self-check in 042 cannot verify; without the migration applied, the RPC calls from bookingImport.js answer "could not find the function", logged and ignored, so nothing breaks but nothing is recorded.
+The parse_failures table is built and tested against a throwaway PostgreSQL cluster (22 checks pass), but migration 042 has never been applied to the real database. Paste it into the Supabase SQL editor for ntssxktaduxzpsmejwyv and look for "parse failures self-check passed" (T073-a). Until then, the RPC calls from bookingImport.js answer "could not find the function", logged and ignored, so nothing breaks but nothing is recorded.
 
-The parse-booking Edge Function returns reason codes but was never deployed (never redeploy live functions without explicit approval; the app imports logic.mjs in Node and runs tests, but Deno tests were not written because the test harness setup complexity exceeded this task's scope). So the client-side RPC calls for structural failures (json_parse, missing_key, wrong_shape) never actually fire until the function is redeployed. The empty_result case does fire today, because bookingImport.js still treats "nothing_found" as success-but-empty and can log it without the function changing. The client's own shape check (wrong_shape on line 87 of bookingImport.js) also fires without the function changing.
+The parse-booking Edge Function returns reason codes but was never deployed (never redeploy live functions without explicit approval; the app imports logic.mjs in Node and runs tests, but Deno tests were not written because the test harness setup complexity exceeded this task's scope). So the client-side RPC calls that read `reason` from the function's error body (json_parse, missing_key, wrong_shape via the 502 path, bookingImport.js lines 139-151) never actually fire until the function is redeployed, because the live function still answers the old way. The empty_result case does fire today, because bookingImport.js still treats "nothing_found" as an answer worth logging (line 157) without the function changing. The client's own shape check (wrong_shape on line 161 of bookingImport.js, an unusable `data` body) also fires without the function changing.
 
 The reader function admin_parse_failures(days) is ready and the admin_health update names parse_failures as a table to check, but no admin screen yet displays the data (T073-c). An admin reads it with `select public.admin_parse_failures(7)` in the SQL editor while signed in.
 
@@ -132,8 +175,12 @@ The RPC log_parse_failure is fire-and-forget, decorated with the same pattern as
 
 **continent-app repo:**
 - `9b06ca0` T073: Add parse-failure queue infrastructure on the client
+- `3137893` T073: Fix parse-failure logging path and run the test harness
 
 **root repo:**
 - `cf35a33b8` T073: Add parse-failure queue infrastructure
+- `b538942be` T073: Report and register rows for parse-failure queue
+- `185ce5c71` T073: Add migration 042 (parse_failures) and the app-side fix
+- (this commit) T073: Correct the report and close T073-d in the register
 
-Both commits are on branch `p4-parse-failure-queue`.
+All on branch `p4-parse-failure-queue`.
