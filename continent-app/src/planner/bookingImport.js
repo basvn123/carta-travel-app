@@ -127,6 +127,7 @@ export async function requestBookingImport(payload) {
     const { data, error } = await supabase.functions.invoke('parse-booking', { body: payload });
     if (error) {
       let code = 'ai_error';
+      let reason = null;
       let upstream = null;
       try {
         const body = await error.context?.json?.();
@@ -135,10 +136,19 @@ export async function requestBookingImport(payload) {
         // used to fall through as a retryable "hiccup". A function that is
         // not deployed is the same traveller-facing fact as one switched off.
         if (typeof body?.code === 'string') code = body.code;
+        // The structural reason (json_parse, missing_key, wrong_shape) rides
+        // in the same error body: a 502 from ai_bad_output is what
+        // supabase-js surfaces as `error`, never `data`, so this is the only
+        // place those three reasons can be read and queued.
+        if (typeof body?.reason === 'string') reason = body.reason;
         // url_unreachable carries the booking site's status; a number, never the URL.
         if (typeof body?.status === 'number') upstream = body.status;
       } catch { /* non-JSON error body */ }
       if (code === 'NOT_FOUND' || error.context?.status === 404) code = 'no_ai';
+      if (code === 'ai_bad_output'
+        && ['json_parse', 'missing_key', 'wrong_shape', 'empty_result'].includes(reason)) {
+        logParseFailure(kind, sizeB, mimeType, reason, (window?.__CARTA_VERSION || ''));
+      }
       // Recorded before the caller sees the result, so before any message.
       reportEdgeFailure('parse-booking', code, { http: error.context?.status, upstream });
       return { ok: false, code };
@@ -151,11 +161,6 @@ export async function requestBookingImport(payload) {
       logParseFailure(kind, sizeB, mimeType, 'wrong_shape', (window?.__CARTA_VERSION || ''));
       reportEdgeFailure('parse-booking', 'ai_bad_output', { origin: 'client' });
       return { ok: false, code: 'ai_bad_output' };
-    }
-    // Success path: the function returned a valid parse, possibly with reason set.
-    // If reason is set (structural failure), log it.
-    if (data.reason && ['json_parse', 'missing_key', 'wrong_shape', 'empty_result'].includes(data.reason)) {
-      logParseFailure(kind, sizeB, mimeType, data.reason, (window?.__CARTA_VERSION || ''));
     }
     return { ok: true, result: data };
   } catch {
