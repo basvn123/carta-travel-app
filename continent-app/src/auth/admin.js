@@ -233,6 +233,32 @@ export const adminListContentReports = (status, limit = 50, offset = 0) =>
 export const adminUnpublishGuide = (planId, reason) =>
   call('admin_unpublish_guide', { p_plan_id: planId, p_reason: reason });
 
+/**
+ * The decisions around a takedown (migration 039). Since 039 the takedown
+ * above also writes a statement of reasons the owner reads in My trips and
+ * returns its statementId.
+ *
+ * Dismiss: a report nobody acts on goes from new to dismissed with who,
+ * when and why. { ok, changed, status }; changed false when the report was
+ * already decided. Refusals: forbidden, slow_down, bad_reason, not_found.
+ *
+ * Decide: the answer to an owner's complaint, 'upheld' or 'reversed', with
+ * a reason the owner reads. { ok, changed, outcome, reinstated }; reversing
+ * republishes only when the owner changed nothing a reader would see and
+ * left the plan private. Refusals: forbidden, slow_down, bad_outcome,
+ * bad_reason, not_found, no_complaint.
+ *
+ * List: the complaints queue, { total, open, rows }.
+ */
+export const adminDismissContentReport = (reportId, reason) =>
+  call('admin_dismiss_content_report', { p_report_id: reportId, p_reason: reason });
+
+export const adminDecideComplaint = (statementId, outcome, reason) =>
+  call('admin_decide_complaint', { p_statement_id: statementId, p_outcome: outcome, p_reason: reason });
+
+export const adminListModerationComplaints = (status = 'open', limit = 50, offset = 0) =>
+  call('admin_list_moderation_complaints', { p_status: status || null, p_limit: limit, p_offset: offset });
+
 // Catalogue corrections over the static wire layers (beaches, lakes,
 // mountains, trails, destinations). An empty patch clears the override and
 // restores whatever the pipeline says.

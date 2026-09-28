@@ -17,6 +17,8 @@ import {
 import { CountryFlag, CountryFlagStack, COUNTRY_ISO2 } from '../components/CountryFlag.jsx';
 import { crewLabel, crewInitials, namedCrew, newCrewMember, readCrew, writeCrew, MAX_CREW } from './tripCrew.js';
 import { TripSharePanel } from './TripSharePanel.jsx';
+import { ModerationNotice } from './ModerationNotice.jsx';
+import { fetchMyStatements, contestStatement, latestByPlan } from './moderation.js';
 import { FriendTripPanel } from './FriendTripPanel.jsx';
 import { fetchFriendLinks, listFriendTrips } from './friends.js';
 import { kindsForDest } from '../lib/trip_kinds.js';
@@ -72,6 +74,12 @@ const MOCK_FRIEND_TRIPS = [
   { ownerId: 'u-sofie', ownerHandle: 'sofie_v', ownerName: 'Sofie Vermeulen', tripPlanId: 'ft1', label: 'Two weeks in Portugal', startDate: addDaysIso(-90), endDate: addDaysIso(-80), cities: ['Lisbon', 'Porto'], countries: ['Portugal'], destinationIds: ['LIS', 'OPO'] },
   { ownerId: 'u-sofie', ownerHandle: 'sofie_v', ownerName: 'Sofie Vermeulen', tripPlanId: 'ft2', label: 'Alpine summer', startDate: addDaysIso(-200), endDate: addDaysIso(-193), cities: ['Innsbruck'], countries: ['Austria'], destinationIds: ['INN'] },
   { ownerId: 'u-jonas', ownerHandle: 'jonas', ownerName: 'Jonas Peeters', tripPlanId: 'ft3', label: 'A week in Rome', startDate: addDaysIso(-150), endDate: addDaysIso(-143), cities: ['Rome'], countries: ['Italy'], destinationIds: ['FCO'] },
+];
+
+// One statement of reasons (migration 039) against the first mock plan, so
+// the ?savedmock seam renders the owner's notice and its complaint form.
+const MOCK_STATEMENTS = [
+  { id: 1, plan_id: 'mp1', plan_label: 'Lisbon and Porto', source: 'notice', notice_count: 2, facts: 'The guide copies a chapter of a published travel book word for word.', automated: false, created_at: addDaysIso(-3), contest_until: addDaysIso(180), complaint_status: 'none', complaint_note: null, reinstated: false },
 ];
 
 const MOCK_PLANS = [
@@ -721,6 +729,10 @@ export function SavedTripsPanel({
   // Planned and Visited went quietly empty for every account, and nothing
   // on screen or in the console said so. Same lesson as 012.
   const [tripPlansError, setTripPlansError] = useState('');
+  // Statements of reasons for this account's plans (migration 039), read
+  // through RLS. A failure here hides the notices and nothing else: the
+  // trips themselves must still show.
+  const [statements, setStatements] = useState(SAVED_MOCK ? MOCK_STATEMENTS : []);
   // Day plans, local-first; account sync can rewrite them underneath this
   // panel (a pull from another device), so refresh on those changes.
   const [dayPlans, setDayPlans] = useState(() => loadStandalonePlans());
@@ -750,10 +762,17 @@ export function SavedTripsPanel({
       .finally(() => setTripPlansLoading(false));
   };
 
+  const loadStatements = () => {
+    fetchMyStatements()
+      .then(setStatements)
+      .catch((e) => console.error('statements of reasons failed to load', e));
+  };
+
   useEffect(() => {
     if (!user || SAVED_MOCK) { setLoading(false); setTripPlansLoading(false); return; }
     loadTrips();
     loadTripPlans();
+    loadStatements();
   }, [user?.id]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleDelete = async (id) => {
@@ -1207,6 +1226,19 @@ export function SavedTripsPanel({
     onClick: () => setOpenShare((cur) => (cur === planId ? '' : planId)),
   } : null);
 
+  // The statement of reasons against a plan a moderator took off the public
+  // guides, under its card. The newest statement per plan.
+  const statementByPlan = useMemo(() => latestByPlan(statements), [statements]);
+  const statementFor = (planId) => (statementByPlan[planId]
+    ? (
+      <ModerationNotice
+        statement={statementByPlan[planId]}
+        contest={SAVED_MOCK ? async () => ({ ok: true, status: 'open' }) : contestStatement}
+        onContested={SAVED_MOCK ? undefined : loadStatements}
+      />
+    )
+    : null);
+
   const sharePanelFor = (planId) => (openShare === planId && user
     ? (
       <TripSharePanel
@@ -1504,6 +1536,7 @@ export function SavedTripsPanel({
                         onClick: () => onOpenDayPlan && onOpenDayPlan({ planId: p.id, stopIndex: 0, dayIndex: 0 }),
                       }}
                     />
+                    {statementFor(p.id)}
                     {sharePanelFor(p.id)}
                     </div>
                   );
@@ -1762,6 +1795,7 @@ export function SavedTripsPanel({
                         {showing && mem && (
                           <TripMemoryView memory={mem} onEdit={() => openPastForm(editableFromPlan(p, mem))} />
                         )}
+                        {statementFor(p.id)}
                         {sharePanelFor(p.id)}
                       </div>
                     );

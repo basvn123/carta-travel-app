@@ -2,6 +2,13 @@ import { useI18n } from '../../i18n/index.jsx';
 import { fmtDateTime } from './format.js';
 import { buildGuideUrl } from '../../community/guides.js';
 import { UnpublishGuide } from './UnpublishGuide.jsx';
+import { DecisionForm } from './DecisionForm.jsx';
+import { ModerationComplaints } from './ModerationComplaints.jsx';
+
+const DISMISS = {
+  arm: 'admin.dismissArm', hint: 'admin.dismissHint', label: 'admin.dismissReasonLabel',
+  placeholder: 'admin.dismissPlaceholder', go: 'admin.dismissGo',
+};
 
 // The Reports tab: the DSA notice-and-action queue. Every report a visitor
 // filed against a public guide through report_guide (migration 037), newest
@@ -18,15 +25,19 @@ import { UnpublishGuide } from './UnpublishGuide.jsx';
 // A report on a guide that is still public has an Unpublish button (T069,
 // admin_unpublish_guide in migration 038), the same form as on the Guides
 // tab. Taking the guide down moves every new report on it to actioned, so
-// they leave the New filter together. There is no dismiss button and no
-// statement of reasons yet: that decision is T070, and a report on a guide
-// that is not public (the owner took it down, or deleted it) stays new
-// until then. The owner hand-off and the guide link are here so a
-// moderator can read what was reported first.
+// they leave the New filter together, and writes the statement of reasons
+// the owner reads in My trips (T070, migration 039). A report the
+// moderator decides not to act on, including one on a guide that is no
+// longer public, has Dismiss, which asks for the reason. Every decided
+// card says who decided, when and why. The owner hand-off and the guide
+// link are here so a moderator can read what was reported first.
+//
+// Owners' complaints against takedowns sit above the notices, in
+// ModerationComplaints; that file says why they share this tab.
 //
 // Three states, as the Guides tab: rows, a real empty queue, and a failure,
 // which draws no list.
-export function ContentReports({ queue, onOpenUser, unpublish }) {
+export function ContentReports({ queue, onOpenUser, unpublish, complaints, decision }) {
   const { t } = useI18n();
   const { reports, filter, choose, busy, error, reload } = queue;
   const rows = reports?.rows || [];
@@ -40,6 +51,9 @@ export function ContentReports({ queue, onOpenUser, unpublish }) {
       </div>
       <p className="adminpage-muted">{t('admin.reportsHint')}</p>
       {unpublish.notice && <p className="adminpage-ok" role="status">{unpublish.notice}</p>}
+      {decision.notice && <p className="adminpage-ok" role="status">{decision.notice}</p>}
+      <ModerationComplaints list={complaints} decision={decision} onOpenUser={onOpenUser} />
+      <h2 className="adminpage-h2">{t('admin.reportsNoticesTitle')}</h2>
       <div className="adminpage-segment" role="radiogroup" aria-label={t('admin.nav.reports')}>
         {['new', 'all'].map((s) => (
           <button
@@ -108,6 +122,15 @@ export function ContentReports({ queue, onOpenUser, unpublish }) {
                 {retitled && (
                   <p className="adminpage-muted">{t('admin.reportsRetitled', { label: r.currentLabel || '' })}</p>
                 )}
+                {r.decidedAt && (
+                  <p className="adminpage-muted">
+                    {t('admin.reportsDecided', {
+                      who: r.decidedByHandle ? `@${r.decidedByHandle}` : t('admin.reportsUnknown'),
+                    })}{' '}
+                    <span className="adminpage-when">{fmtDateTime(r.decidedAt)}</span>
+                    {r.decisionNote && <>{': '}{r.decisionNote}</>}
+                  </p>
+                )}
                 <div className="adminpage-row">
                   {url && r.stillPublic && (
                     <a className="adminpage-btn" href={url} target="_blank" rel="noopener noreferrer">
@@ -135,7 +158,19 @@ export function ContentReports({ queue, onOpenUser, unpublish }) {
                       label={r.currentLabel || r.planLabel || t('admin.guidesUntitled')}
                     />
                   )}
+                  {r.status === 'new' && decision.armed !== `dismiss:${r.id}` && (
+                    <DecisionForm
+                      decision={decision}
+                      kind="dismiss"
+                      id={r.id}
+                      copy={DISMISS}
+                      ariaLabel={t('admin.dismissArmFor', { label: r.planLabel || t('admin.guidesUntitled') })}
+                    />
+                  )}
                 </div>
+                {r.status === 'new' && decision.armed === `dismiss:${r.id}` && (
+                  <DecisionForm decision={decision} kind="dismiss" id={r.id} copy={DISMISS} />
+                )}
                 {r.stillPublic && unpublish.armed === `report:${r.id}` && (
                   <UnpublishGuide
                     unpublish={unpublish}

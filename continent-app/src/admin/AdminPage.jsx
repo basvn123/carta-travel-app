@@ -24,6 +24,8 @@ import { useUserDetail } from '../components/admin/useUserDetail.js';
 import { usePublicGuides } from '../components/admin/usePublicGuides.js';
 import { useContentReports } from '../components/admin/useContentReports.js';
 import { useUnpublishGuide } from '../components/admin/useUnpublishGuide.js';
+import { useModerationComplaints } from '../components/admin/useModerationComplaints.js';
+import { useModerationDecision } from '../components/admin/useModerationDecision.js';
 
 // The back office, as a page rather than a drawer.
 //
@@ -65,6 +67,9 @@ import { useUnpublishGuide } from '../components/admin/useUnpublishGuide.js';
 // feedback inbox; ContentReports.jsx says why. The takedown (T069) is one
 // hook shared by both tabs, so only one Unpublish form is open at a time and
 // a takedown from either tab reloads whichever of the two lists is loaded.
+// T070 added the owners' complaints queue to the Reports tab (loaded with
+// it) and one decision hook for dismiss, uphold and reverse. Arming either
+// kind of form closes the other, so one moderation form is open at a time.
 
 const SECTIONS = ['overview', 'users', 'content', 'guides', 'reports', 'feedback', 'site', 'audit'];
 
@@ -95,7 +100,11 @@ export function AdminPage({ onClose }) {
   const { detail, setDetail } = account;
   const guidesIndex = usePublicGuides(unlocked && section === 'guides', errText);
   const reports = useContentReports(unlocked && section === 'reports', errText);
-  const unpublish = useUnpublishGuide({ errText, guidesIndex, reports, loadAudit });
+  const unpublishHook = useUnpublishGuide({ errText, guidesIndex, reports, loadAudit });
+  const complaints = useModerationComplaints(unlocked && section === 'reports', errText);
+  const decisionHook = useModerationDecision({ errText, reports, complaints, loadAudit });
+  const unpublish = { ...unpublishHook, arm: (k) => { decisionHook.cancel(); unpublishHook.arm(k); } };
+  const decision = { ...decisionHook, arm: (k) => { unpublishHook.cancel(); decisionHook.arm(k); } };
 
   // ---- the lock -----------------------------------------------------------
   if (!unlocked) {
@@ -161,6 +170,8 @@ export function AdminPage({ onClose }) {
                 queue={reports}
                 onOpenUser={(id) => { setSection('users'); account.openUser(id); }}
                 unpublish={unpublish}
+                complaints={complaints}
+                decision={decision}
               />
             )}
 

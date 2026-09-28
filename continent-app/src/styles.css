@@ -21702,6 +21702,47 @@ button.ai-sched-main:focus-visible {
   line-height: 1.45;
   color: var(--ink-mute);
 }
+
+/* ── Statement of reasons under a plan card (migration 039) ─────────────── */
+/* Attached under the card like the share panel. The statement is a run of
+   related facts, so hairlines divide them rather than boxes. */
+.modnote {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  margin: -6px 0 2px;
+  padding: 14px;
+  border: 1px solid var(--rule);
+  border-top: none;
+  border-radius: 0 0 14px 14px;
+  background: var(--bg-card);
+}
+.modnote-head { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; color: var(--ink-soft); }
+.modnote-title { margin: 0; font-family: var(--ui); font-size: 14px; font-weight: 600; color: var(--ink); }
+.modnote-date { font-family: var(--mono); font-size: 12px; color: var(--ink-mute); font-variant-numeric: tabular-nums; }
+.modnote-line { margin: 0; font-size: 13px; line-height: 1.5; color: var(--ink-soft); }
+.modnote-toggle { min-height: 44px; }
+.modnote-body { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; width: 100%; }
+.modnote-facts { margin: 0; width: 100%; }
+.modnote-facts > div { padding: 9px 0; border-top: 1px solid var(--rule-soft); }
+.modnote-facts dt { font-size: 12px; font-weight: 600; color: var(--ink-soft); }
+.modnote-facts dd { margin: 2px 0 0; font-size: 13.5px; line-height: 1.5; color: var(--ink); overflow-wrap: anywhere; }
+.modnote-quote { white-space: pre-line; }
+.modnote-form { display: flex; flex-direction: column; gap: 12px; width: 100%; }
+.modnote-form .auth-field { margin: 0; }
+.modnote-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+.modnote-actions .auth-submit { min-height: 44px; margin-top: 0; }
+.modnote-actions .gld-copy { min-height: 44px; }
+.modnote button:focus-visible,
+.modnote textarea:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .modnote .auth-submit,
+  .modnote .account-feedback-input { transition: none; }
+}
 .tshare-make {
   display: inline-flex;
   align-items: center;
