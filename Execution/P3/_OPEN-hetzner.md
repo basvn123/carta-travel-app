@@ -603,3 +603,82 @@ blocked in production, so the flag must stay off until it lands.
 |---|---|---|---|
 | 55 | T052-b | Next task (T053) | cdn.carta-europetravel.com in the CSP img-src before any layer's flag goes on in production |
 | 56 | T052-a | Laptop with credentials, Vercel | Live manifest joined into the beaches wire, Preview measured ?pic=off against ?pic=beaches, then the flag on in Production |
+
+## 30. Let the app's origins read the data host (T054-a, order 58)
+
+The app fetches its shards from another origin once the data host is on, so
+the bucket needs a CORS rule or the browser discards every response. The rule
+is `continent-app/scripts/r2/data-cors.json`: GET and HEAD from the www and
+apex production origins, `carta-app.pages.dev` and the two local Vite ports.
+Needs the bucket (T044-a). From `continent-app/`, with `CLOUDFLARE_API_TOKEN`
+and `CLOUDFLARE_ACCOUNT_ID` exported:
+
+1. `node scripts/r2/push-data.mjs --cors` prints the two wrangler commands.
+2. `node scripts/r2/push-data.mjs --cors --live` runs them. The listing it
+   ends with must show the five origins and methods GET, HEAD.
+
+Vercel and Pages preview URLs are not in the list. A preview built with
+`VITE_DATA_BASE` set will fail CORS; test previews without it, or add the one
+preview origin you need.
+
+## 31. Stage and upload the data tree (T054-b, order 59)
+
+Needs step 30, the data domain (T044-b, T044-c) and the rclone variables
+(T045-a). From `continent-app/`:
+
+1. `VITE_DATA_BASE=https://data.carta-europetravel.com/data CARTA_SKIP_CSP_CHECK=1 npm run build`
+   The build ends with `[stage-data] moved 17 entries ...` and leaves the
+   upload tree in `dist-data/`. The CSP skip is right here and only here:
+   this build is for the upload, not for a deploy.
+2. `node scripts/r2/push-data.mjs --rclone-dry-run`, read what rclone says
+   it would copy (about 52,000 objects, 1.1 GB the first time).
+3. `node scripts/r2/push-data.mjs --live`. Phase 1 only: it adds and
+   replaces objects and deletes nothing.
+4. `node scripts/r2/verify-data.mjs` must end `PASS`. Then once
+   `node scripts/r2/verify-data.mjs --all`, which checks every object byte
+   for byte, its Cache-Control and its CORS header.
+
+## 32. Put the data host in connect-src (T053-b, order 60)
+
+Only after step 31's verify passes, so the CSP never names a host that serves
+nothing. Add `https://data.carta-europetravel.com` to connect-src in both
+`continent-app/vercel.json` and `continent-app/public/_headers`. This is a
+one-line edit in each file and belongs to a small next task. Until it lands,
+`scripts/r2/stage-data.mjs` refuses every split build that is not marked
+with `CARTA_SKIP_CSP_CHECK=1`, so the order cannot be skipped by accident.
+
+## 33. Cut the app over to the data host (T054-c, order 61)
+
+1. Set `VITE_DATA_BASE=https://data.carta-europetravel.com/data` in the
+   Production environment of whichever host serves the app (Vercel today,
+   Pages after T024), with no `CARTA_SKIP_CSP_CHECK`.
+2. Rebuild from the same master that step 31 uploaded. The build must print
+   the stage line; a refusal means the CSP (step 32) or the variable is wrong.
+3. Deploy and, on Vercel, promote (a push only makes a Preview). Load the
+   map, a destination page (`#dest=BRU`) and a trail link, and confirm in the
+   network panel that `dest/`, `poi/`, `dossier/` and `trails/` come from
+   data.carta-europetravel.com with status 200 and there is no CORS error.
+4. Only then run `node scripts/r2/push-data.mjs --live --prune`, which deletes
+   the objects the new build no longer has.
+5. Every weekly refresh after this repeats step 31.1 to 31.3, then the
+   deploy, then 33.4. Upload first, deploy second, prune last.
+
+Rollback: remove `VITE_DATA_BASE` from the environment and redeploy. The build
+then keeps every data file in dist/ and fetches it same-origin, exactly as
+before T054. The R2 objects can stay; nothing reads them.
+
+## 34. The Pages move becomes possible (T024, order 62)
+
+With step 33 live, `npm run check:pages` passes on the split dist (61 files
+against the 20,000 ceiling, measured in T054). T024's cut-over runbook can
+then run as written.
+
+## Summary of the order, continued (T054)
+
+| Order | Row | Where | What |
+|---|---|---|---|
+| 58 | T054-a | Laptop with Cloudflare credentials | CORS rule on the bucket for the app's origins |
+| 59 | T054-b | Laptop or box with rclone credentials | Split build, phase 1 upload, verify-data PASS and --all |
+| 60 | T053-b | Next task | data.carta-europetravel.com into connect-src in vercel.json and _headers |
+| 61 | T054-c | Host environment | VITE_DATA_BASE in Production, deploy, check, then prune |
+| 62 | T024 | Cloudflare account | Pages cut-over per T024's runbook |
