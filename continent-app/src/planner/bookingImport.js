@@ -13,6 +13,7 @@
  * argue with people.
  */
 import { supabase } from '../lib/supabaseClient.js';
+import { reportEdgeFailure } from './edgeFailure.js';
 import { importMime, MAX_IMPORT_FILES, MAX_IMPORT_BYTES, MAX_IMPORT_TOTAL_BYTES } from './bookingImportLogic.js';
 
 export {
@@ -65,6 +66,7 @@ export async function requestBookingImport(payload) {
     const { data, error } = await supabase.functions.invoke('parse-booking', { body: payload });
     if (error) {
       let code = 'ai_error';
+      let upstream = null;
       try {
         const body = await error.context?.json?.();
         // Only our own string codes: the gateway answers a missing function
@@ -72,12 +74,17 @@ export async function requestBookingImport(payload) {
         // used to fall through as a retryable "hiccup". A function that is
         // not deployed is the same traveller-facing fact as one switched off.
         if (typeof body?.code === 'string') code = body.code;
+        // url_unreachable carries the booking site's status; a number, never the URL.
+        if (typeof body?.status === 'number') upstream = body.status;
       } catch { /* non-JSON error body */ }
       if (code === 'NOT_FOUND' || error.context?.status === 404) code = 'no_ai';
+      // Recorded before the caller sees the result, so before any message.
+      reportEdgeFailure('parse-booking', code, { http: error.context?.status, upstream });
       return { ok: false, code };
     }
     if (data?.code === 'nothing_found') return { ok: false, code: 'nothing_found' };
     if (!data || (!Array.isArray(data.bookings) && !Array.isArray(data.activities))) {
+      reportEdgeFailure('parse-booking', 'ai_bad_output', { origin: 'client' });
       return { ok: false, code: 'ai_bad_output' };
     }
     return { ok: true, result: data };

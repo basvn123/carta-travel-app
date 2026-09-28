@@ -10,6 +10,7 @@
  * such so the caller can snap them to the nearest destination it has data for.
  */
 import { supabase } from '../lib/supabaseClient.js';
+import { reportEdgeFailure } from './edgeFailure.js';
 
 /**
  * The whitelist of towns the AI may rank or reference: real destinations
@@ -48,16 +49,21 @@ export async function requestCitySuggestion(payload) {
     const { data, error } = await supabase.functions.invoke('suggest-city', { body: payload });
     if (error) {
       let code = 'ai_error';
+      let upstream = null;
       try {
         const body = await error.context?.json?.();
         // Only our own string codes: the gateway's {code:"NOT_FOUND"} for an
         // undeployed function must map to "not switched on", not "hiccup".
         if (typeof body?.code === 'string') code = body.code;
+        if (typeof body?.status === 'number') upstream = body.status;
       } catch { /* non-JSON error body */ }
       if (code === 'NOT_FOUND' || error.context?.status === 404) code = 'no_ai';
+      // Recorded before the caller sees the result, so before any message.
+      reportEdgeFailure('suggest-city', code, { http: error.context?.status, upstream });
       return { ok: false, code };
     }
     if (!data || !Array.isArray(data.suggestions)) {
+      reportEdgeFailure('suggest-city', 'ai_bad_output', { origin: 'client' });
       return { ok: false, code: 'ai_bad_output' };
     }
     return { ok: true, suggestions: data.suggestions };

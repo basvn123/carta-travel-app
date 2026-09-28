@@ -12,6 +12,7 @@
  * turns into the deterministic built-in planner as a fallback.
  */
 import { supabase } from '../lib/supabaseClient.js';
+import { reportEdgeFailure } from './edgeFailure.js';
 import {
   pickerDeck, dwellMinutes, poiRating, poiCategory, isMustSee, poiKind, poiMapCat,
 } from './dayDraft.js';
@@ -81,16 +82,21 @@ export async function requestAiDayPlan(payload) {
     const { data, error } = await supabase.functions.invoke('plan-day', { body: payload });
     if (error) {
       let code = 'ai_error';
+      let upstream = null;
       try {
         const body = await error.context?.json?.();
         // Only our own string codes: the gateway's {code:"NOT_FOUND"} for an
         // undeployed function must map to "not switched on", not "hiccup".
         if (typeof body?.code === 'string') code = body.code;
+        if (typeof body?.status === 'number') upstream = body.status;
       } catch { /* non-JSON error body */ }
       if (code === 'NOT_FOUND' || error.context?.status === 404) code = 'no_ai';
+      // Recorded before the caller sees the result, so before any message.
+      reportEdgeFailure('plan-day', code, { http: error.context?.status, upstream });
       return { ok: false, code };
     }
     if (!data || !Array.isArray(data.stops) || !data.stops.length) {
+      reportEdgeFailure('plan-day', 'ai_bad_output', { origin: 'client' });
       return { ok: false, code: 'ai_bad_output' };
     }
     return { ok: true, plan: data };

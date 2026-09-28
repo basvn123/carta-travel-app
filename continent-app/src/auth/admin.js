@@ -81,6 +81,15 @@ export const adminAiModelReport = (days = 30) =>
   call('admin_ai_model_report', { p_days: days });
 
 /**
+ * AI failures recorded by the planner and import wrappers (migration 040):
+ * ai_timeout, ai_bad_output, url_unreachable and ai_error, per code, per
+ * function, per upstream status and per day. Counts only; no RPC returns a
+ * single failure. The window is capped at the 90-day retention.
+ */
+export const adminEdgeErrors = (days = 30) =>
+  call('admin_edge_errors', { p_days: days });
+
+/**
  * The ai_plan_cache hit rate (migration 029). One row per plan-day lookup,
  * hit or miss, so the rate is a division rather than a guess.
  *
