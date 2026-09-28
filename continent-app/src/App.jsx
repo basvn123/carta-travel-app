@@ -760,7 +760,11 @@ function TravelApp() {
   // The current origin's travel-time table (public/reach/{IATA}.json), or null
   // when that origin has none. Null keeps the reach filter inert AND tells the
   // filter bar to show its quiet "no data yet" state instead of dead chips.
-  const reachMinutes = useReach(choices.origin);
+  // Its only reader is Explore's filter rail (reachAvailable/reachHours live
+  // there), so it stays unfetched on every other tab; a shared link with an
+  // `rh` value still fetches straight away, wherever it lands.
+  const wantReach = activeTab === 'map' || reachHours != null;
+  const reachMinutes = useReach(wantReach ? choices.origin : null);
 
   // Price every destination for the current dates/choices. The Explore tab
   // no longer reads fares at all; this keeps running for the Destinations
