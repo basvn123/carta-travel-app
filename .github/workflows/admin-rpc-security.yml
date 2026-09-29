@@ -1,0 +1,86 @@
+name: admin-rpc-security
+
+# The admin surface stays closed to a normal signed-in user.
+#
+# This is the gate that catches a FUTURE migration, not a present bug. The
+# failure mode it exists for: someone adds admin_list_widgets in a new
+# migration, copies the grant line from a neighbour, and forgets the
+# admin_guard() call. Every signed-in traveller can then read that table, and
+# without this job nothing in the repo would notice.
+#
+# The test does not carry a hardcoded list of admin functions, because such a
+# list would not contain the new function and so would pass. It discovers them
+# from pg_proc after applying the migrations, and asserts on whatever it finds.
+# That is why this job must apply the whole admin migration stack rather than
+# just the one a pull request touches.
+#
+# Paths: any migration can change the surface (a new function, a changed grant,
+# a dropped guard), and the test script and this workflow are obviously in
+# scope. The app is not: the guard is a database property.
+on:
+  push:
+    branches: [main]
+    paths:
+      - "supabase/migrations/**"
+      - "continent-app/scripts/admin/test_admin_rpc_security.mjs"
+      - ".github/workflows/admin-rpc-security.yml"
+  pull_request:
+    paths:
+      - "supabase/migrations/**"
+      - "continent-app/scripts/admin/test_admin_rpc_security.mjs"
+      - ".github/workflows/admin-rpc-security.yml"
+
+jobs:
+  rpc-security:
+    runs-on: ubuntu-latest
+
+    # PostgreSQL 18 matches the version the harness was developed against.
+    # trust auth, so the script connects with no password, exactly as it does
+    # against a local throwaway cluster.
+    services:
+      postgres:
+        image: postgres:18
+        env:
+          POSTGRES_HOST_AUTH_METHOD: trust
+          POSTGRES_USER: postgres
+        ports:
+          - 55435:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 20
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      # The service container ships the server but not the client. The script
+      # shells out to psql, so the client package has to be present.
+      - name: Install the PostgreSQL client
+        run: sudo apt-get update && sudo apt-get install -y postgresql-client
+
+      # The script SKIPS and exits 0 when it cannot reach a database, which is
+      # right for a developer laptop and wrong for CI: a silent skip here would
+      # read as a passing security gate. So the connection is proven first and
+      # the run is failed on the word SKIPPED.
+      - name: Prove the database is reachable before trusting the result
+        env:
+          PGPASSWORD: ""
+        run: psql -h 127.0.0.1 -p 55435 -U postgres -d postgres -w -At -c 'select version()'
+
+      - name: The admin RPC surface refuses a normal signed-in user
+        env:
+          PGHOST: 127.0.0.1
+          PGPORT: "55435"
+          PGUSER: postgres
+        run: |
+          set -o pipefail
+          node continent-app/scripts/admin/test_admin_rpc_security.mjs 2>&1 | tee rpc-security.log
+          if grep -q 'SKIPPED' rpc-security.log; then
+            echo "::error::The suite skipped instead of running. A skip is not a pass for a security gate."
+            exit 1
+          fi
