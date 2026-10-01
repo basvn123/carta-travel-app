@@ -93,6 +93,12 @@ MANUAL_PLACES = {
 def strip_dashes(s):
     """lib/format.js stripDashes, in Python, so shipped copy obeys the house
     rule at build time rather than at render time."""
+    # A price range keeps its meaning as "from X to Y". Plain digit ranges
+    # (days, years) take a hyphen, but a range whose right end carries a
+    # currency sign (a dash between two euro figures) would fall through to
+    # the spaced-dash rule below and become "€1,200, €1,850", which reads as
+    # two prices (spec A1), so it becomes "to".
+    s = re.sub(r"(\d)\s*[—–]\s*([€$£]\s?\d)", r"\1 to \2", s)
     s = re.sub(r"(\d)\s*[—–]\s*(\d)", r"\1-\2", s)
     s = re.sub(r"(\w)[—–](\w)", r"\1-\2", s)
     s = re.sub(r"\s*[—–]\s*", ", ", s)
@@ -357,9 +363,14 @@ def to_card(trip, hero):
 
 def main():
     ap = argparse.ArgumentParser()
+    ap.add_argument("--out", default=None,
+                    help="write the wire here instead of continent-app/public/journeys")
     ap.add_argument("--no-fetch", action="store_true",
                     help="cache only; never touch the network")
     args = ap.parse_args()
+    global OUT
+    if args.out:
+        OUT = Path(args.out)
 
     master = json.loads(SRC.read_text(encoding="utf-8"))
     trips = [clean_text(t) for t in master["trips"]]
