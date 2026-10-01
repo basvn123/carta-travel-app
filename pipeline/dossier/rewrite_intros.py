@@ -23,12 +23,10 @@ Output: cache/dossier/intros_llm.json, {id: {text, model, at, src}}, written
 atomically after every batch so a stopped run keeps what it had.
 build_dossier.py reads it and prefers it over the composed fallback.
 
-Providers, chosen with --provider (default: whichever key is present):
-  claude  the anthropic SDK, ANTHROPIC_API_KEY (repo-root .env or env). Ten
-          destinations per call; Sonnet by default because this is a
-          constrained rewrite, not research (--model to change).
-  gemini  the AI Studio REST API, GEMINI_API_KEY, same batch shape, with the
-          model chain and rate floor pipeline/trails/describe.py uses.
+Provider: Gemini through the AI Studio REST API, GEMINI_API_KEY (repo-root
+.env or env), ten destinations per call, with the model chain and rate floor
+pipeline/trails/describe.py uses (--model to pin one). The Claude provider
+was removed in T264: CLAUDE.md forbids the Claude API in this project.
 
 Usage, from the repo root:
     python pipeline/dossier/rewrite_intros.py --dry-run --limit 5
@@ -174,29 +172,6 @@ def guard(text, dest, dossier, extract):
     return out, None
 
 
-class Claude:
-    name = "claude"
-
-    def __init__(self, model):
-        import anthropic
-        self.anthropic = anthropic
-        self.client = anthropic.Anthropic()
-        self.model = model or "claude-sonnet-5"
-        self.tokens_in = self.tokens_out = 0
-
-    def complete(self, user):
-        resp = self.client.messages.create(
-            model=self.model, max_tokens=4000, system=SYSTEM,
-            messages=[{"role": "user", "content": user}],
-            output_config={"effort": "low"},
-        )
-        self.tokens_in += resp.usage.input_tokens or 0
-        self.tokens_out += resp.usage.output_tokens or 0
-        if resp.stop_reason == "refusal":
-            raise RuntimeError("model refused")
-        return "".join(b.text for b in resp.content if b.type == "text")
-
-
 class Gemini:
     name = "gemini"
     API = "https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent"
@@ -262,7 +237,9 @@ def parse(text):
 def main():
     load_env()
     ap = argparse.ArgumentParser()
-    ap.add_argument("--provider", choices=("auto", "claude", "gemini"), default="auto")
+    # Gemini is the only provider: CLAUDE.md forbids the Claude API (T264).
+    # The flag stays so existing `--provider gemini` commands keep working.
+    ap.add_argument("--provider", choices=("gemini",), default="gemini")
     ap.add_argument("--model")
     ap.add_argument("--tier", type=int, help="rating tier at or above")
     ap.add_argument("--cc")
@@ -310,10 +287,7 @@ def main():
         print(user_block(todo[:2]))
         return
 
-    provider = args.provider
-    if provider == "auto":
-        provider = "claude" if os.environ.get("ANTHROPIC_API_KEY") else "gemini"
-    client = Claude(args.model) if provider == "claude" else Gemini(args.model)
+    client = Gemini(args.model)
     print(f"provider {client.name}, model {client.model}")
 
     stats = {"ok": 0, "guard": 0, "missing": 0}

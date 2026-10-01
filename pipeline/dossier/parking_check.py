@@ -24,11 +24,10 @@ spots whose name the city also uses as "confirmed". Nothing here replaces a
 coordinate: the OSM rows keep their navigation links, the web block tells the
 reader what is true.
 
-Providers:
-  claude  the anthropic SDK with the server-side web_search tool
-          (ANTHROPIC_API_KEY). About one to three searches per place.
-  gemini  the AI Studio REST API with google_search grounding
-          (GEMINI_API_KEY), free tier permitting.
+Provider: Gemini through the AI Studio REST API with google_search
+grounding (GEMINI_API_KEY). Grounded requests are billed separately from
+tokens once the monthly free allowance is spent (register row T041-c). The
+Claude provider was removed in T264: CLAUDE.md forbids the Claude API.
 
 Cost is per place, so run the famous ones first (--tier 2), then widen.
 
@@ -88,50 +87,6 @@ def prompt_for(dest):
             f"{dest.get('city_lat', dest.get('lat')):.4f}, "
             f"{dest.get('city_lon', dest.get('lon')):.4f}. "
             f"Find official parking information for visitors arriving by car.")
-
-
-class Claude:
-    name = "claude"
-
-    def __init__(self, model):
-        import anthropic
-        self.anthropic = anthropic
-        self.client = anthropic.Anthropic()
-        self.model = model or "claude-sonnet-5"
-        self.tokens_in = self.tokens_out = 0
-        self.searches = 0
-
-    def ask(self, dest):
-        resp = self.client.messages.create(
-            model=self.model, max_tokens=4000, system=SYSTEM,
-            tools=[{"type": "web_search_20260209", "name": "web_search", "max_uses": 4}],
-            messages=[{"role": "user", "content": prompt_for(dest)}],
-            output_config={"effort": "low"},
-        )
-        self.tokens_in += resp.usage.input_tokens or 0
-        self.tokens_out += resp.usage.output_tokens or 0
-        srv = getattr(resp.usage, "server_tool_use", None)
-        if srv is not None:
-            self.searches += getattr(srv, "web_search_requests", 0) or 0
-        if resp.stop_reason == "refusal":
-            raise RuntimeError("model refused")
-        text = ""
-        sources = []
-        for block in resp.content:
-            if block.type == "text":
-                text += block.text
-                for c in getattr(block, "citations", None) or []:
-                    url = getattr(c, "url", None)
-                    if url:
-                        sources.append(url)
-            elif block.type == "web_search_tool_result":
-                content = block.content
-                if isinstance(content, list):
-                    for r in content:
-                        url = getattr(r, "url", None)
-                        if url:
-                            sources.append(url)
-        return text, sources
 
 
 class Gemini:
@@ -241,7 +196,9 @@ def clean_record(data, sources):
 def main():
     load_env()
     ap = argparse.ArgumentParser()
-    ap.add_argument("--provider", choices=("auto", "claude", "gemini"), default="auto")
+    # Gemini is the only provider: CLAUDE.md forbids the Claude API (T264).
+    # The flag stays so existing `--provider gemini` commands keep working.
+    ap.add_argument("--provider", choices=("gemini",), default="gemini")
     ap.add_argument("--model")
     ap.add_argument("--tier", type=int)
     ap.add_argument("--cc")
@@ -297,10 +254,7 @@ def main():
             print(prompt_for(d))
         return
 
-    provider = args.provider
-    if provider == "auto":
-        provider = "claude" if os.environ.get("ANTHROPIC_API_KEY") else "gemini"
-    client = Claude(args.model) if provider == "claude" else Gemini(args.model)
+    client = Gemini(args.model)
     print(f"provider {client.name}, model {client.model}")
 
     ok = fail = 0
