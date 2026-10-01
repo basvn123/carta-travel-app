@@ -18495,6 +18495,14 @@ button.ai-sched-main:focus-visible {
   border-radius: 10px;
   background: var(--paper);
 }
+/* The MFA step-up inside an armed ban or delete (T254). A hairline, not a
+   second card: it is one step of the action it sits in. */
+.adminpage-mfa { margin: 4px 0 14px; padding-top: 12px; border-top: 1px solid var(--rule-soft); }
+.adminpage-mfa .adminpage-err { margin-bottom: 0; }
+.adminpage-mfa-enrol { margin-bottom: 12px; }
+.adminpage-mfa-qr { display: block; width: 168px; height: 168px; margin: 0 0 10px; background: var(--paper); border: 1px solid var(--rule-soft); border-radius: 6px; }
+.adminpage-mfa-secret { display: block; font-family: var(--mono); font-size: 13px; color: var(--ink); word-break: break-all; user-select: all; }
+.adminpage-row .adminpage-lock-input.adminpage-mfa-code { flex: 0 1 140px; min-width: 120px; letter-spacing: 0.12em; font-variant-numeric: tabular-nums; }
 
 .adminpage-textarea {
   width: 100%;
