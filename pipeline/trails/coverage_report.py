@@ -14,7 +14,10 @@ The rule it exists to enforce, from docs/TRAILS_DATA_QUALITY.md:
     best-known walks finds them here, under the names they searched for.
 
 Matching, per the brief. A registry row is matched when a published trail
-satisfies EITHER test, because either one alone is wrong:
+carries the same OSM relation id (identity, added in T113; the registry
+knows the relation from the OSM fame scan or from Waymarked Trails), or
+failing that satisfies EITHER of the brief's two tests, because either one
+alone is wrong:
 
   geometric  the published line passes within 250 m of the registry
              coordinate, its length is within +-40% where expected_km is
@@ -71,9 +74,10 @@ The not_a_walk code, and why it is not a way to make a number go away:
   A real trail sitting in that list is then visible rather than silent, which
   is the whole difference between this and deleting the rows.
 
-Build-failing rule (--strict): the run fails when any region's TOP THREE
-registry rows by fame_score are unmatched with a code in
-{way_only_not_derived, failed_continuity, below_quota}. Those three are our
+Build-failing rule (--strict): the run fails when any region's or any GMBA
+range's TOP THREE registry rows by fame_score are unmatched with a code in
+{way_only_not_derived, failed_continuity, below_quota}. (Ranges since T113:
+spec 6.1 asks for every NUTS3 region and every GMBA range.) Those three are our
 bugs. no_osm_data and out_of_scope are the world's, and are allowed through
 with a note, which is the difference between a gate and a wish.
 
@@ -170,6 +174,9 @@ def load_published(countries):
                 "bbox": t.get("bbox"),
                 "geometry": t.get("geometry"),
                 "t": t.get("t"),
+                # The OSM relation id, on every row ingested from a relation
+                # (source osm); None on derived and composed rows.
+                "osm": t.get("osm") if isinstance(t.get("osm"), int) else None,
             })
     return rows
 
@@ -272,16 +279,38 @@ def match_registry(reg_rows, pub_rows, verbose=False):
     """Attach a status and, when unmatched, a reason code to every row."""
     by_name = defaultdict(list)
     by_country = defaultdict(list)
+    by_rel = {}
     for p in pub_rows:
         by_country[p["country"]].append(p)
         for k in name_keys(p):
             by_name[k].append(p)
+        if p.get("osm"):
+            by_rel.setdefault(p["osm"], p)
 
     for r in reg_rows:
         keys = {squash(r["name"]), squash(base_name(r["name"]))}
         for a in r.get("aliases") or []:
             keys |= {squash(a), squash(base_name(a))}
         keys = {k for k in keys if k}
+
+        # Identity first. When the registry knows the OSM relation (from the
+        # fame scan or from Waymarked) and the wire publishes that relation,
+        # it is the same walk whatever either side calls it, and in any
+        # country: a cross-border route published under its neighbour is
+        # still published. Before T113 this test did not exist, so a
+        # published relation whose wire name differed from the registry
+        # label (a Wikidata label against an OSM name) read as missing
+        # unless the 250 m geometric test happened to catch it.
+        e = r.get("evidence") or {}
+        rel = ((e.get("osm") or {}).get("relation_id")
+               or (e.get("waymarked") or {}).get("relation_id"))
+        if rel and int(rel) in by_rel:
+            hit = by_rel[int(rel)]
+            r["status"] = "matched"
+            r["reason"] = "matched"
+            r["match"] = {"id": hit["id"], "name": hit["name"],
+                          "how": "relation", "nuts3": hit["nuts3"]}
+            continue
 
         nominal = None
         for k in keys:
@@ -453,6 +482,112 @@ def by_region(reg_rows, pub_rows):
     return out
 
 
+GPKG = DATA_ROOT / "cache" / "regions" / "regions.gpkg"
+
+
+def spine_ranges():
+    """{GMBA id: name} from the regions spine, or {} when it is absent.
+
+    Only for printing names; nothing in the gate depends on it."""
+    try:
+        import geopandas as gpd
+        frame = gpd.read_file(GPKG, layer="range", ignore_geometry=True)
+        return dict(zip(frame["id"], frame["name"]))
+    except Exception:
+        return {}
+
+
+def by_range(reg_rows, pub_rows):
+    """Per GMBA range: the same top-three rule by_region applies per NUTS3.
+
+    Spec 6.1 asks for candidates for every NUTS3 region AND every GMBA
+    range, and until T113 the report only rolled up the first. A range is
+    the unit a walker thinks in ("the best walks in the Julian Alps") and it
+    cuts across NUTS3 lines and borders, so a range can fail where every one
+    of its regions passes: its three best-known walks sit in three different
+    regions, each of which is held to its own better-known walks first.
+
+    The range on a registry row and on a published trail is the deepest GMBA
+    range that contains the point (regionize's own rule), so a walk in the
+    Bernese Alps counts for the Bernese Alps and not again for the Alps."""
+    pub_count = Counter(p["range"] for p in pub_rows if p.get("range"))
+    ranges = defaultdict(list)
+    for r in reg_rows:
+        if r.get("range"):
+            ranges[r["range"]].append(r)
+    out = {}
+    for ra, rows in ranges.items():
+        rows.sort(key=lambda r: -(r.get("fame_score") or 0))
+        top = [r for r in rows if r.get("kind") == "trail"][:TOP_N]
+        blockers = [r for r in top
+                    if r["status"] != "matched" and r["reason"] in OUR_BUGS]
+        out[ra] = {
+            "countries": sorted({r["country"] for r in rows}),
+            "published": pub_count.get(ra, 0),
+            "registry_rows": len(rows),
+            "matched": sum(1 for r in rows if r["status"] == "matched"),
+            "top3": [{"id": r["id"], "name": r["name"],
+                      "country": r["country"],
+                      "fame_score": r["fame_score"],
+                      "status": r["status"], "reason": r["reason"]}
+                     for r in top],
+            "blockers": [r["id"] for r in blockers],
+        }
+    return out
+
+
+def registry_gap(reg_rows, pub_rows, names):
+    """Where the registry itself is blind: ranges and regions the catalogue
+    publishes walks in and the registry holds no walk for.
+
+    The top-three gate can only hold a place to rows the registry has, so a
+    range with 40 published walks and no registry row passes the gate by
+    having nothing to fail. This is the vacuous-gate trap one level up, and
+    the list below is what keeps it visible."""
+    reg_ranges = {r["range"] for r in reg_rows
+                  if r.get("range") and r.get("kind") == "trail"}
+    reg_n3 = {r["nuts3"] for r in reg_rows
+              if r.get("nuts3") and r.get("kind") == "trail"}
+    pub_ranges = Counter(p["range"] for p in pub_rows if p.get("range"))
+    pub_n3 = Counter(p["nuts3"] for p in pub_rows if p.get("nuts3"))
+    blind_ranges = sorted(((ra, n) for ra, n in pub_ranges.items()
+                           if ra not in reg_ranges), key=lambda kv: -kv[1])
+    blind_n3 = sorted(((n3, n) for n3, n in pub_n3.items()
+                       if n3 not in reg_n3), key=lambda kv: -kv[1])
+    return {
+        "ranges_with_registry_walk": len(reg_ranges),
+        "ranges_with_published_walk": len(pub_ranges),
+        "ranges_published_without_registry": len(blind_ranges),
+        "nuts3_with_registry_walk": len(reg_n3),
+        "nuts3_with_published_walk": len(pub_n3),
+        "nuts3_published_without_registry": len(blind_n3),
+        "blind_ranges": [{"range": ra, "name": names.get(ra),
+                          "published": n} for ra, n in blind_ranges],
+        "blind_nuts3": [{"nuts3": n3, "published": n}
+                        for n3, n in blind_n3],
+    }
+
+
+def waymarked_diff(reg_rows):
+    """Per country: Waymarked's national and international routes against
+    the registry and the wire. The rows come from famous_registry.py's fifth
+    evidence source; this only counts what happened to them."""
+    out = defaultdict(lambda: {"waymarked": 0, "new_to_registry": 0,
+                               "published": 0, "missing": 0})
+    for r in reg_rows:
+        if not (r.get("evidence") or {}).get("waymarked"):
+            continue
+        row = out[r["country"]]
+        row["waymarked"] += 1
+        if r.get("origin") == "waymarked":
+            row["new_to_registry"] += 1
+        if r["status"] == "matched":
+            row["published"] += 1
+        else:
+            row["missing"] += 1
+    return dict(sorted(out.items()))
+
+
 def render_md(payload):
     c = payload["counts"]
     lines = []
@@ -482,6 +617,9 @@ def render_md(payload):
     add(f"| Published rows read | {c['published_rows']:,} |")
     add(f"| Regions with a registry row | {c['regions']:,} |")
     add(f"| Regions failing the top-three gate | {c['regions_failing']:,} |")
+    add(f"| GMBA ranges with a registry row | {c.get('ranges', 0):,} |")
+    add(f"| GMBA ranges failing the top-three gate | "
+        f"{c.get('ranges_failing', 0):,} |")
     add("")
     add("## Why the misses are missing")
     add("")
@@ -541,6 +679,73 @@ def render_md(payload):
                 f"{row['quota'] if row['quota'] is not None else 'n/a'} | "
                 f"{names} |")
     add("")
+    rnames = payload.get("range_names") or {}
+    add("## GMBA ranges failing the top-three gate")
+    add("")
+    add("The same rule as the regions, applied per mountain range: a range's "
+        "three best-known walks are published, or each miss has a code that "
+        "is the world's rather than ours.")
+    add("")
+    failing_ranges = payload.get("failing_ranges") or []
+    if not failing_ranges:
+        add("None.")
+    else:
+        add("| Range | Countries | Published | Blocking rows |")
+        add("|---|---|---|---|")
+        for ra, row in failing_ranges[:60]:
+            names = ", ".join(t["name"] for t in row["top3"]
+                              if t["status"] != "matched"
+                              and t["reason"] in OUR_BUGS)
+            add(f"| {rnames.get(ra) or ra} | {', '.join(row['countries'])} | "
+                f"{row['published']} | {names} |")
+    add("")
+    gap = payload.get("registry_gap") or {}
+    if gap:
+        add("## Where the registry itself is blind")
+        add("")
+        add("A place the catalogue publishes walks in and the registry holds "
+            "no walk for passes the gate by having nothing to fail. These are "
+            "the places the gate cannot see.")
+        add("")
+        add("| Measure | Value |")
+        add("|---|---|")
+        add(f"| GMBA ranges with a published walk | "
+            f"{gap['ranges_with_published_walk']:,} |")
+        add(f"| GMBA ranges with a registry walk | "
+            f"{gap['ranges_with_registry_walk']:,} |")
+        add(f"| GMBA ranges published, no registry walk | "
+            f"{gap['ranges_published_without_registry']:,} |")
+        add(f"| NUTS3 regions with a published walk | "
+            f"{gap['nuts3_with_published_walk']:,} |")
+        add(f"| NUTS3 regions with a registry walk | "
+            f"{gap['nuts3_with_registry_walk']:,} |")
+        add(f"| NUTS3 regions published, no registry walk | "
+            f"{gap['nuts3_published_without_registry']:,} |")
+        add("")
+        if gap["blind_ranges"]:
+            add("The 25 blind ranges with the most published walks:")
+            add("")
+            add("| Range | Published walks |")
+            add("|---|---|")
+            for b in gap["blind_ranges"][:25]:
+                add(f"| {b['name'] or b['range']} | {b['published']} |")
+            add("")
+    wm = payload.get("waymarked") or {}
+    if wm:
+        add("## Waymarked Trails: national and international routes")
+        add("")
+        add("Every INT and NAT hiking route Waymarked Trails lists, placed in "
+            "each country it crosses (pipeline/trails/waymarked.py) and "
+            "merged into the registry as its fifth evidence source. "
+            "New to the registry means no fame source had named it.")
+        add("")
+        add("| Country | Routes | New to the registry | Published | "
+            "Missing |")
+        add("|---|---|---|---|---|")
+        for cc, row in wm.items():
+            add(f"| {cc} | {row['waymarked']} | {row['new_to_registry']} | "
+                f"{row['published']} | {row['missing']} |")
+        add("")
     return "\n".join(lines)
 
 
@@ -580,6 +785,8 @@ def main():
 
     match_registry(reg_rows, pub, verbose=args.verbose)
     regions = by_region(reg_rows, pub)
+    ranges = by_range(reg_rows, pub)
+    range_names = spine_ranges()
 
     matched = [r for r in reg_rows if r["status"] == "matched"]
     missing = [r for r in reg_rows if r["status"] != "matched"]
@@ -587,6 +794,10 @@ def main():
     failing = sorted(((n3, row) for n3, row in regions.items()
                       if row["blockers"]),
                      key=lambda kv: -len(kv[1]["blockers"]))
+    failing_ranges = sorted(((ra, row) for ra, row in ranges.items()
+                             if row["blockers"]),
+                            key=lambda kv: (-len(kv[1]["blockers"]),
+                                            -kv[1]["published"]))
     worst = sorted(missing,
                    key=lambda r: (r.get("kind") != "trail",
                                   -(r.get("fame_score") or 0)))[:20]
@@ -612,6 +823,10 @@ def main():
             "published_rows": len(pub),
             "regions": len(regions),
             "regions_failing": len(failing),
+            "ranges": len(ranges),
+            "ranges_failing": len(failing_ranges),
+            "matched_by": dict(Counter((r.get("match") or {}).get("how")
+                                       for r in matched)),
             # The number that actually sizes the work: walks (not summits and
             # lakes) missing for a reason this pipeline owns.
             "our_bug_trail_misses": sum(
@@ -628,6 +843,11 @@ def main():
         "failing_regions": failing,
         "regions": regions,
         "not_a_walk": not_a_walk_summary(reg_rows),
+        "failing_ranges": failing_ranges,
+        "ranges": ranges,
+        "range_names": {ra: range_names.get(ra) for ra in ranges},
+        "registry_gap": registry_gap(reg_rows, pub, range_names),
+        "waymarked": waymarked_diff(reg_rows),
     }
 
     def row_out(r):
@@ -679,6 +899,16 @@ def main():
         print(f"      {code:22} {n:,}{flag}")
     print(f"  regions            {len(regions):,}")
     print(f"  failing top-three  {len(failing):,}")
+    print(f"  GMBA ranges        {len(ranges):,}")
+    print(f"  ranges failing     {len(failing_ranges):,}")
+    gap = payload["registry_gap"]
+    print(f"  ranges published, no registry walk  "
+          f"{gap['ranges_published_without_registry']:,} of "
+          f"{gap['ranges_with_published_walk']:,}")
+    print(f"  NUTS3 published, no registry walk   "
+          f"{gap['nuts3_published_without_registry']:,} of "
+          f"{gap['nuts3_with_published_walk']:,}")
+    print(f"  matched by         {payload['counts']['matched_by']}")
     print()
     print("  worst misses by fame score:")
     for r in worst[:12]:
@@ -724,9 +954,10 @@ def main():
                   f"the classifier is reclassifying rows that were never "
                   f"way_only_not_derived. Read the not_a_walk list.")
             return 1
-        if failing:
+        if failing or failing_ranges:
             print()
-            print(f"! STRICT: {len(failing)} region(s) do not publish their "
+            print(f"! STRICT: {len(failing)} region(s) and "
+                  f"{len(failing_ranges)} GMBA range(s) do not publish their "
                   "top three, for reasons that are ours to fix")
             return 1
     return 0
