@@ -75,7 +75,7 @@ TMP_MARKER="$(mktemp)"
 printf 'Carta R2 prefix marker. Prefixes have no real existence in R2; this object exists only so the prefix shows up before real content is uploaded. Safe to delete.\n' > "$TMP_MARKER"
 
 for prefix in img data tiles archive; do
-  run npx wrangler r2 object put "${BUCKET}/${prefix}/.keep" \
+  run npx wrangler r2 object put "${BUCKET}/${prefix}/.keep" --remote \
     --file "$TMP_MARKER" \
     --content-type "text/plain" \
     --cache-control "no-store"
@@ -91,14 +91,14 @@ echo "== Step 3: upload one test object per cached prefix, with the real Cache-C
 # real shards, and change the value below rather than assuming this default.
 TEST_IMG="$(mktemp --suffix=.txt)"
 printf 'Carta R2 test object for img/. Uploaded by scripts/r2/provision.sh to verify Cache-Control.\n' > "$TEST_IMG"
-run npx wrangler r2 object put "${BUCKET}/img/_test/hello.txt" \
+run npx wrangler r2 object put "${BUCKET}/img/_test/hello.txt" --remote \
   --file "$TEST_IMG" \
   --content-type "text/plain" \
   --cache-control "public, max-age=31536000, immutable"
 
 TEST_DATA="$(mktemp --suffix=.json)"
 printf '{"ok":true,"note":"Carta R2 test object for data/. Uploaded by scripts/r2/provision.sh."}\n' > "$TEST_DATA"
-run npx wrangler r2 object put "${BUCKET}/data/_test/hello.json" \
+run npx wrangler r2 object put "${BUCKET}/data/_test/hello.json" --remote \
   --file "$TEST_DATA" \
   --content-type "application/json" \
   --cache-control "public, max-age=300, must-revalidate"
