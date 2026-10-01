@@ -301,3 +301,8 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T108-e | T108 | rate.py chooses bigClimb and dayOut from stored ascent and distance alone; read the uphill climb and apply the comfort gate at the source | next task | open | |
 | T108-f | T108 | export_wire.py ships validate.py's difficulty beside f.g (11,596 rows disagree) and AroundHere/destinationPdf read it; drop it or set it to the grade where a grade exists | next task | open | |
 | T108-g | T108 | The pipeline half (uphill grading, trailhead rg.s3/sc, display_bugs counts) reaches the wire only after regionize.py --refresh, attributes.py, export and wire build on trailslab | next task | open | after T107-a |
+| T111-a | T111 | Spec 0.4 says 47 countries but its own 0.1 table, every layer harvest and COUNTRIES in coverage.py hold 45; name the two missing countries or amend the spec to 45 | user | open | |
+| T111-b | T111 | coverage.json carries the country contract and a code on every non ok region, but no screen prints spec 4.6's inline coverage sentence or spec 1.6's not_applicable empty state; a carta-design task | next task | open | |
+| T111-c | T111 | Three contract proxies to confirm: trail fame threshold 0.4 (no named threshold exists in pipeline/trails), lake anchor "article in two or more languages" read as Wikidata sitelinks >= 2, "regional highpoint" read as any highpoint_of value | user | open | |
+| T111-d | T111 | docs/REGIONS.md describes coverage.json without the per region code field or the contract block | next task | open | |
+| T111-e | T111 | coverage.py --strict exits 1 on a blank contract cell but nothing runs it on a build; spec 0.4 wants CI to check the contract every build | next task | open | |
