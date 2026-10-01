@@ -19,6 +19,13 @@ functional domain of the blueprint has a concrete counterpart here:
 
 ## The weekly loop
 
+Status since T255 (2026-10-01): no fare source is live. The seven fare tasks
+(`tp_stage`, `fares`, `wizz_fares`, `vueling_fares`, `volotea_fares`,
+`fare_history`, `fare_model`) have cadence `manual`, so the loop below describes
+how it ran until then and how it runs again once a source returns (set the
+cadence back to `weekly`). Only `ingestion` and `demand_events` still run on
+the schedule.
+
 Every Monday 09:00 the Scheduled Task runs `run_pipeline.bat`, and the
 orchestrator executes whatever is due:
 
@@ -177,6 +184,10 @@ python run_pipeline.py --list                  what the automation will do, when
   plus features later.
 
 ## Serving the estimates: e_out/e_ret fallback bands (added 2026-08-12)
+
+The per-trip rule for when a band is read (two ends only, the four-step
+resolution order, the harvested-family rule) is in SCHEMA.md, "Flight-cost
+input", with the decision in `Execution/P3/T058-flight-cost-input-decision.md`.
 
 The weekly export (data/models/fare_estimates.json.gz, route-month p50/p10/p90
 bands) is now CONSUMED by the fare pipeline: `harvest_all_origins.py` attaches

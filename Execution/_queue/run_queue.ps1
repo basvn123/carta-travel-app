@@ -112,6 +112,27 @@ function Committed([string]$relPath) {
     return ($LASTEXITCODE -eq 0)
 }
 
+# The nested-repo trap (T062-b). continent-app/ is its own git tree, so a task
+# can commit the root repo, report and all, and leave its real work uncommitted
+# inside continent-app/. T057, T017 and T021 each did this. A task counts as
+# done only if, when its committed report names continent-app/ files, the app
+# tree has no changes the task itself left behind. "Left behind" is measured
+# against a snapshot of `git status --porcelain` taken when the task started,
+# so work another session already had in flight never fails this task.
+function App-Status {
+    $app = Join-Path $Repo "continent-app"
+    if (-not (Test-Path (Join-Path $app ".git"))) { return @() }
+    return @(git -C $app status --porcelain 2>$null | Where-Object { $_ })
+}
+
+function Stranded-AppWork([string]$relReport, [string[]]$before) {
+    $h = git -C $Repo log --all -1 --format=%H -- $relReport 2>$null
+    if (-not $h) { return @() }
+    $text = (git -C $Repo show "${h}:${relReport}" 2>$null) -join "`n"
+    if ($text -notmatch "continent-app/") { return @() }
+    return @(App-Status | Where-Object { $before -notcontains $_ })
+}
+
 function Wait-ForGate {
     if ($SkipGate) { Log "gate: skipped by flag"; return }
     Log "gate: waiting for $GateReport to exist and be committed"
@@ -200,7 +221,11 @@ function Run-Task($t) {
     $promptFile = Join-Path $QueueDir ("{0}.prompt.md" -f $t.Id)
     $fullReport = Join-Path $Repo $report
 
-    if (Committed $report) { Log "$($t.Id): report already committed, skipping"; return $true }
+    if (Committed $report) {
+        $dirtyApp = App-Status
+        if ($dirtyApp.Count -gt 0 -and (Stranded-AppWork $report @()).Count -gt 0) { Log "$($t.Id): NOTE report committed and continent-app/ is dirty; the task may have stranded app work, check git -C continent-app status" }
+        Log "$($t.Id): report already committed, skipping"; return $true
+    }
 
     while (-not (Test-Path $promptFile)) {
         Log "$($t.Id): prompt file missing ($promptFile), holding until it appears"
@@ -211,6 +236,8 @@ function Run-Task($t) {
     $dirty = git -C $Repo status --porcelain | Where-Object { $_ -match "^ ?M" }
     if ($dirty) { Log "$($t.Id): WARNING working tree has modified tracked files from another session; the task will branch on top of them" }
 
+    $appBefore = App-Status
+    $stranded = @()
     $sid = ""
     $resumes = 0
     $limitStart = $null
@@ -220,7 +247,11 @@ function Run-Task($t) {
         $stamp = Get-Date -Format "yyyyMMdd_HHmmss"
         $useFile = $promptFile
         if ($sid) {
-            Set-Content -Path $contFile -Encoding UTF8 -Value ("Continue task {0}. The report {1} is not yet written and committed together with the Execution/_OPEN.md rows. Finish the work, write the report following Execution/_TEMPLATE.md, add the register rows, and commit them on the task branch." -f $t.Id, $report)
+            if ($stranded.Count -gt 0) {
+                Set-Content -Path $contFile -Encoding UTF8 -Value ("Continue task {0}. The report {1} is committed but continent-app/ is its own git repository and still has changes this task left uncommitted: {2}. Commit them inside continent-app/ on the task's app branch (name the files, never git add -A), run git show --stat there, and make sure the report lists that commit." -f $t.Id, $report, (($stranded | Select-Object -First 12) -join "; "))
+            } else {
+                Set-Content -Path $contFile -Encoding UTF8 -Value ("Continue task {0}. The report {1} is not yet written and committed together with the Execution/_OPEN.md rows. Finish the work, write the report following Execution/_TEMPLATE.md, add the register rows, and commit them on the task branch." -f $t.Id, $report)
+            }
             $useFile = $contFile
         }
         $r = Invoke-Claude $t.Id $t.Model $useFile $sid $stamp
@@ -236,10 +267,14 @@ function Run-Task($t) {
         }
         $limitStart = $null
 
-        if (Committed $report) { Log "$($t.Id): done, report committed"; return $true }
+        if (Committed $report) {
+            $stranded = Stranded-AppWork $report $appBefore
+            if ($stranded.Count -eq 0) { Log "$($t.Id): done, report committed"; return $true }
+            Log "$($t.Id): report committed but continent-app/ holds $($stranded.Count) uncommitted change(s) the task left behind: $(($stranded | Select-Object -First 5) -join '; ')"
+        }
 
         if ($r.Kind -eq "error") { Log "$($t.Id): claude exited with an error: $($r.Text -replace '\s+',' ')" }
-        else { Log "$($t.Id): claude finished but the report is not committed" }
+        elseif ($stranded.Count -eq 0) { Log "$($t.Id): claude finished but the report is not committed" }
 
         if ($resumes -ge $MaxResumes -or -not $sid) { Log "$($t.Id): FAILED after $resumes resume(s); queue stops here"; return $false }
         $resumes++
