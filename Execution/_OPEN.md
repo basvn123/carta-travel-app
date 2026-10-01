@@ -306,3 +306,7 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T111-c | T111 | Three contract proxies to confirm: trail fame threshold 0.4 (no named threshold exists in pipeline/trails), lake anchor "article in two or more languages" read as Wikidata sitelinks >= 2, "regional highpoint" read as any highpoint_of value | user | open | |
 | T111-d | T111 | docs/REGIONS.md describes coverage.json without the per region code field or the contract block | next task | open | |
 | T111-e | T111 | coverage.py --strict exits 1 on a blank contract cell but nothing runs it on a build; spec 0.4 wants CI to check the contract every build | next task | open | |
+| T192-a | T192 | The last exhaustive-deps warning, i18n/index.jsx:125 (`loaded` called unnecessary), is deliberate and needs a disable comment carrying the reason; T192 was barred from touching i18n | next task | open | |
+| T192-b | T192 | Promote react-hooks/exhaustive-deps from warn to error in continent-app/eslint.config.js so a regression fails lint; out of T192's scope | next task | open | after T192-a |
+| T192-c | T192 | browse/CategoryRail.jsx:41 carries an unused exhaustive-deps disable directive; outside the planners T192 covered | next task | open | |
+| T192-d | T192 | 76 exhaustive-deps disable comments remain in src and hide hand-picked dependency lists (one hid a stale stay-price bug); audit them, GuidedTripWizard and DayPlannerTab first, with useTripPlanner's per-bump suggestNextStops and cheapestStartDates cost | next task | open | |
