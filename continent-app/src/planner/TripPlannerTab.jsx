@@ -1012,7 +1012,7 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
                     .map((c) => (
                       <div className="trip-saving-row" key={c.start}>
                         <span>
-                          {t('trip.cheaperStart')} <b>{fmtDate(c.start, true)}</b>{t('trip.cheaperFlights', { price: eur(c.total) })}
+                          {t('trip.cheaperStart')} <b>{fmtDate(c.start, true)}</b>{t('trip.cheaperFlights', { price: `~${eur(c.total)}` })}
                           {c.saving_vs_current != null && c.saving_vs_current > 0 && (
                             <em className="trip-saving-amount"> - {t('trip.cheaperBy', { amount: eur(c.saving_vs_current) })}</em>
                           )}
@@ -1222,7 +1222,7 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
 
                   <div className="trip-total-row grand">
                     <span className="lbl">{t('trip.total')} <small>{tp.groupSize} {tp.groupSize === 1 ? t('trip.personOne') : t('trip.personMany')}</small></span>
-                    <span className="val">{eur(tp.grandTotal)}</span>
+                    <span className="val">{`${tp.flight?.combinable ? '~' : ''}${eur(tp.grandTotal)}`}</span>
                   </div>
 
                   <div className="trip-save-row">
