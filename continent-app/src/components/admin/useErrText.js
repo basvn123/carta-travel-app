@@ -8,6 +8,9 @@ export function useErrText() {
   const { t } = useI18n();
   const errText = useCallback((e) => {
     const code = e?.code || '';
+    // 032 raises 42501 for a session below aal2. 42501 is every permission
+    // error, so the hint is the word to branch on.
+    if (e?.hint === 'mfa_required') return t('admin.errMfa');
     if (code === 'forbidden') return t('admin.errForbidden');
     if (code === 'slow_down') return t('admin.errSlow');
     if (code === 'confirm_mismatch') return t('admin.errConfirm');

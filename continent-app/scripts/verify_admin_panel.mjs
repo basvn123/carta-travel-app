@@ -22,6 +22,10 @@
 //   7. Support: the reset mail rides the public recover endpoint AND lands
 //      in the trail via admin_mark; suspension arms, takes days, shows the
 //      chip, lifts again; a note saves and appears in the history.
+//   7b. MFA (T254): ban and delete stay disabled on an aal1 session; the
+//      step-up enrols a TOTP factor, refuses a wrong code, and the aal2
+//      token it gets is the one the ban and delete RPCs see (their stubs
+//      refuse anything below aal2, the way migration 032 does).
 //   8. Deletion is armed, retype-gated, refuses a wrong confirmation with
 //      the server's own error, and goes through with the right one.
 //   8d. Content: the layer loads from the real wire file, an http image is
@@ -109,6 +113,20 @@ const json = (route, body) => route.fulfill({
   status: 200, contentType: 'application/json', body: JSON.stringify(body),
 });
 
+// A token supabase-js can decode. The signature is never checked client side.
+const b64url = (o) => Buffer.from(JSON.stringify(o)).toString('base64url');
+const fakeJwt = (claims) => `${b64url({ alg: 'HS256', typ: 'JWT' })}.${b64url(claims)}.sig`;
+const GOOD_CODE = '123456';
+const tokenAal = (route) => {
+  const tok = (route.request().headers().authorization || '').replace(/^Bearer /, '');
+  try { return JSON.parse(Buffer.from(tok.split('.')[1], 'base64url').toString()).aal || null; } catch { return null; }
+};
+// What migration 032 raises for a session below aal2.
+const mfaRefusal = (route) => route.fulfill({
+  status: 403, contentType: 'application/json',
+  body: JSON.stringify({ code: '42501', message: 'MFA required for this action', hint: 'mfa_required', details: null }),
+});
+
 async function stubSupabase(page, state, opts = {}) {
   const admin = opts.isAdmin !== false;
 
@@ -127,6 +145,51 @@ async function stubSupabase(page, state, opts = {}) {
       expires_at: Math.floor(Date.now() / 1000) + 3600,
       refresh_token: 'stub-refresh', user: ADMIN,
     });
+  });
+  // MFA: the user carries its factors; enrol, challenge and verify behave
+  // like GoTrue, and a verified code returns an aal2 session.
+  await page.route('**/auth/v1/user*', (route) => json(route, { ...ADMIN, factors: state.mfa.factors }));
+  await page.route(/\/auth\/v1\/factors/, (route) => {
+    const req = route.request();
+    const path = new URL(req.url()).pathname;
+    const body = JSON.parse(req.postData() || '{}');
+    if (req.method() === 'DELETE') {
+      state.mfa.factors = state.mfa.factors.filter((f) => !path.endsWith(f.id));
+      return json(route, {});
+    }
+    if (/\/factors$/.test(path)) {
+      const id = `factor-${state.mfa.enrolCalls.length + 1}`;
+      state.mfa.enrolCalls.push(body);
+      state.mfa.factors.push({ id, factor_type: 'totp', status: 'unverified', friendly_name: body.friendly_name });
+      return json(route, {
+        id, type: 'totp', friendly_name: body.friendly_name,
+        totp: {
+          qr_code: '<svg xmlns="http://www.w3.org/2000/svg" width="168" height="168"><rect width="168" height="168" fill="#000"/></svg>',
+          secret: 'JBSWY3DPEHPK3PXP', uri: 'otpauth://totp/Carta:owner@example.com?secret=JBSWY3DPEHPK3PXP',
+        },
+      });
+    }
+    if (/\/challenge$/.test(path)) {
+      return json(route, { id: 'challenge-1', type: 'totp', expires_at: Math.floor(Date.now() / 1000) + 300 });
+    }
+    if (/\/verify$/.test(path)) {
+      state.mfa.verifyCalls.push(body);
+      if (body.code !== GOOD_CODE) {
+        return route.fulfill({
+          status: 422, contentType: 'application/json',
+          body: JSON.stringify({ code: 'mfa_verification_failed', msg: 'Invalid TOTP code entered' }),
+        });
+      }
+      const fid = path.split('/').slice(-2)[0];
+      state.mfa.factors = state.mfa.factors.map((f) => (f.id === fid ? { ...f, status: 'verified' } : f));
+      const exp = Math.floor(Date.now() / 1000) + 3600;
+      return json(route, {
+        access_token: fakeJwt({ sub: ADMIN.id, role: 'authenticated', aal: 'aal2', exp }),
+        token_type: 'bearer', expires_in: 3600, expires_at: exp,
+        refresh_token: 'stub-refresh-aal2', user: { ...ADMIN, factors: state.mfa.factors },
+      });
+    }
+    return route.continue();
   });
   await page.route('**/auth/v1/recover*', (route) => {
     state.recoverCalls.push(JSON.parse(route.request().postData() || '{}'));
@@ -202,6 +265,7 @@ async function stubSupabase(page, state, opts = {}) {
     return json(route, { ok: true });
   });
   await page.route('**/rest/v1/rpc/admin_ban_user*', (route) => {
+    if (tokenAal(route) !== 'aal2') { state.mfa.refused.push('ban'); return mfaRefusal(route); }
     const body = JSON.parse(route.request().postData() || '{}');
     state.banCalls.push(body);
     state.banned.set(body.p_user, '2099-01-01T00:00:00Z');
@@ -228,6 +292,7 @@ async function stubSupabase(page, state, opts = {}) {
     return json(route, { ok: true });
   });
   await page.route('**/rest/v1/rpc/admin_delete_user*', (route) => {
+    if (tokenAal(route) !== 'aal2') { state.mfa.refused.push('delete'); return mfaRefusal(route); }
     const body = JSON.parse(route.request().postData() || '{}');
     state.deleteCalls.push(body);
     const u = USERS.find((x) => x.id === body.p_user);
@@ -451,6 +516,7 @@ try {
     listCalls: [], tierCalls: [], quotaCalls: [], deleteCalls: [], configCalls: [],
     banCalls: [], unbanCalls: [], noteCalls: [], markCalls: [],
     deleted: new Set(), tiers: new Map(), banned: new Map(),
+    mfa: { factors: [], enrolCalls: [], verifyCalls: [], refused: [] },
     history: [], missing: ['day_plans'], listFails: false,
     fbCalls: [], fbStatusCalls: [], submitCalls: [],
     ovListCalls: [], ovSetCalls: [],
@@ -635,10 +701,40 @@ try {
 
   await page.locator('.adminpage-btn', { hasText: 'Suspend sign-in' }).click();
   if (state.banCalls.length) fail('suspension fired without the confirm step');
+
+  // ---- 7b. The MFA step-up in front of ban (T254).
+  console.log('7b. MFA step-up');
+  const suspendBtn = page.locator('.adminpage-btn', { hasText: /^Suspend$/ });
+  const enrolBtn = page.locator('.adminpage-mfa .adminpage-btn', { hasText: 'Set up an authenticator app' });
+  await enrolBtn.waitFor({ timeout: 5000 });
+  if (await suspendBtn.isEnabled()) fail('Suspend is live on an aal1 session');
+  await enrolBtn.click();
+  const qr = page.locator('.adminpage-mfa-qr');
+  await qr.waitFor({ timeout: 5000 });
+  if (state.mfa.enrolCalls.length !== 1) fail(`expected one enrol call, got ${state.mfa.enrolCalls.length}`);
+  if (!(await qr.evaluate((img) => img.complete && img.naturalWidth > 0))) fail('the QR code image does not decode');
+  if (!/JBSWY3DPEHPK3PXP/.test(await page.locator('.adminpage-mfa-secret').innerText())) {
+    fail('the TOTP secret is not shown for manual entry');
+  }
+  const codeField = page.locator('#admin-ban-mfa-code');
+  await codeField.fill('12a3');
+  if ((await codeField.inputValue()) !== '123') fail('the code field kept a non-digit');
+  await codeField.fill('000000');
+  await page.locator('.adminpage-mfa .adminpage-btn', { hasText: 'Verify code' }).click();
+  await page.locator('.adminpage-mfa .adminpage-err', { hasText: 'That code did not work' }).waitFor({ timeout: 5000 });
+  if (await suspendBtn.isEnabled()) fail('a wrong code enabled Suspend');
+  await page.screenshot({ path: `${SHOTS}/admin-mfa-enrol.png` });
+  await codeField.fill(GOOD_CODE);
+  await page.locator('.adminpage-mfa .adminpage-btn', { hasText: 'Verify code' }).click();
+  await page.locator('.adminpage-mfa').waitFor({ state: 'detached', timeout: 5000 });
+  if (!(await suspendBtn.isEnabled())) fail('Suspend stayed disabled after a good code');
+  if (!state.mfa.factors.some((f) => f.status === 'verified')) fail('the factor was never verified');
+  ok('ban waits for MFA: enrol, a wrong code refused, a right code steps the session up');
   await page.locator('#admin-ban-days').fill('7');
   await page.locator('.adminpage-btn', { hasText: /^Suspend$/ }).click();
   await page.waitForTimeout(900);
   if (state.banCalls[0]?.p_days !== 7) fail(`admin_ban_user got ${JSON.stringify(state.banCalls[0])}`);
+  if (state.mfa.refused.length) fail(`the ban RPC saw a token below aal2: ${state.mfa.refused.join(', ')}`);
   if (!(await page.locator('.adminpage-detail-chips .adminpage-chip.banned').count())) {
     fail('a suspended account carries no chip');
   }
@@ -668,6 +764,7 @@ try {
   const confirmField = page.locator('#admin-del-confirm');
   await confirmField.waitFor({ timeout: 5000 });
   const delBtn = page.locator('.adminpage-btn', { hasText: 'Delete forever' });
+  if (await page.locator('.adminpage-mfa').count()) fail('delete asks for MFA again on an aal2 session');
   if (await delBtn.isEnabled()) fail('deletion is live with an empty confirmation');
   await confirmField.fill('wrong@example.com');
   await delBtn.click();
@@ -681,6 +778,7 @@ try {
   // proves the row is gone rather than merely filtered out.
   await page.locator('.adminpage-search input').waitFor({ timeout: 10000 });
   if (!state.deleted.has(USERS[0].id)) fail('the right confirmation never deleted');
+  if (state.mfa.refused.length) fail(`an RPC saw a token below aal2: ${state.mfa.refused.join(', ')}`);
   if (!(await page.locator('.adminpage-muted', { hasText: 'No accounts match' }).count())) {
     fail('the deleted account still matches its own search');
   }

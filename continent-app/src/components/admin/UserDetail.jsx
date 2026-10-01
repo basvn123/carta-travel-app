@@ -2,11 +2,15 @@ import { TIERS } from '../../lib/pricing.js';
 import { useI18n } from '../../i18n/index.jsx';
 import { ArrowLeftIcon } from '../Icons.jsx';
 import { fmtDate, fmtDateTime, initial, rowName } from './format.js';
+import { MfaStepUp } from './MfaStepUp.jsx';
+import { useMfa } from './useMfa.js';
 
 // One account in full: facts, history, pass, support actions, notes, and
-// deletion. Pure render over useUserDetail.
+// deletion. A render over useUserDetail, plus the MFA step-up that ban and
+// delete need (migration 032 refuses both below aal2).
 export function UserDetail({ account }) {
   const { t } = useI18n();
+  const mfa = useMfa();
   const {
     detail, setDetail, detailBusy,
     tierPick, setTierPick, tierDays, setTierDays, tierBusy, applyTier,
@@ -154,11 +158,12 @@ export function UserDetail({ account }) {
                       onChange={(e) => setBanDays(e.target.value.replace(/[^0-9]/g, ''))}
                     />
                   </div>
+                  <MfaStepUp mfa={mfa} idPrefix="admin-ban" />
                   <div className="adminpage-row">
                     <button type="button" className="adminpage-btn" onClick={() => { setBanArmed(false); setBanDays(''); }}>
                       {t('admin.banCancel')}
                     </button>
-                    <button type="button" className="adminpage-btn danger" disabled={banBusy} onClick={doBan}>
+                    <button type="button" className="adminpage-btn danger" disabled={banBusy || !mfa.stepped} onClick={doBan}>
                       {banBusy ? t('account.pleaseWait') : t('admin.banGo')}
                     </button>
                   </div>
@@ -208,6 +213,7 @@ export function UserDetail({ account }) {
                 placeholder={detail.email || detail.handle || ''}
                 autoComplete="off"
               />
+              <MfaStepUp mfa={mfa} idPrefix="admin-del" />
               <div className="adminpage-row">
                 <button
                   type="button"
@@ -219,7 +225,7 @@ export function UserDetail({ account }) {
                 <button
                   type="button"
                   className="adminpage-btn danger solid"
-                  disabled={deleteBusy || !deleteConfirm.trim()}
+                  disabled={deleteBusy || !deleteConfirm.trim() || !mfa.stepped}
                   onClick={doDelete}
                 >
                   {deleteBusy ? t('account.pleaseWait') : t('admin.deleteGo')}
