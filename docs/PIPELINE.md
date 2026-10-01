@@ -354,10 +354,14 @@ installs do not; that gate is what stops a freshly provisioned box starting a
 harvest ten minutes after boot. `run_pipeline.sh` is the successor of
 `run_pipeline.bat`: it takes `logs/carta-run.lock`, loads the secrets file,
 re-syncs the venv to `constraints.txt` when the requirements change, pulls the
-master and the fare history from R2 when the box lacks them, runs
-`run_pipeline.py --max-cadence weekly` (`CARTA_MAX_CADENCE` changes the
+master, the fare history and the state file from R2 when the box lacks them,
+runs `run_pipeline.py --max-cadence weekly` (`CARTA_MAX_CADENCE` changes the
 ceiling), makes the weekly encrypted database dumps, and packs and pushes what
-the run changed. It tees everything to `logs/pipeline_run.log` as the .bat did.
+the run changed (the master and the state file only after a good run). Once
+`VITE_DATA_BASE` is set on the box, a good run whose build was split also
+uploads the staged data to R2 with `push-data.mjs --live`, which is how the
+box's output reaches production (T262). It tees everything to
+`logs/pipeline_run.log` as the .bat did.
 
 Three behaviours of `run_pipeline.py` differ on Linux, each behind an
 `os.name` check so Windows runs exactly as before. The concurrency guard counts

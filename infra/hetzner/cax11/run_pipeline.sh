@@ -16,15 +16,25 @@
 #   4. installs continent-app's node_modules if they are missing, because the
 #      ship step runs `npm run build` and cloud-init never ran `npm ci`;
 #   5. pulls from R2 whatever the weekly cadence needs and the box does not
-#      have yet: the master (app_data/app_data.json, gitignored) and the fare
-#      history and model (data/history, data/models). Only when missing: once
-#      the box is running, its copy is the newest one, and a pull would
-#      overwrite it with last week's if a push had failed;
+#      have yet: the master (app_data/app_data.json, gitignored), the fare
+#      history and model (data/history, data/models) and the orchestrator's
+#      state (logs/pipeline_state.json, T048-k: without it a rebuilt box runs
+#      every task as if it had never run). Only when missing: once the box is
+#      running, its copy is the newest one, and a pull would overwrite it with
+#      last week's if a push had failed;
 #   6. runs run_pipeline.py with the cadence ceiling in CARTA_MAX_CADENCE;
 #   7. makes the weekly database dumps (Supabase; trailslab only when the lab
 #      is reachable, which on this box it is not);
 #   8. packs and pushes what the run changed: the fare history layer, the
-#      master, its pre-write snapshots and the new raw ingestion files.
+#      master and the state file (together, and only after a good run), the
+#      master's pre-write snapshots and the new raw ingestion files;
+#   9. publishes the app data (T054-e): after a good run whose build was split
+#      for the data host (VITE_DATA_BASE set), uploads the staged tree with
+#      `push-data.mjs --live`, phase 1, which adds and replaces and deletes
+#      nothing. That is how the box's output reaches production without a
+#      deploy key (T048-j). The boot index and the app shell stay as the last
+#      app deploy left them, and phase 2 (--prune) waits for that deploy, so
+#      neither runs here.
 #
 # Steps 5, 7 and 8 are the archive wiring of register row T045-g. They live
 # here and not as run_pipeline.py tasks because they are not data tasks: they
@@ -39,7 +49,7 @@
 #   bash infra/hetzner/cax11/run_pipeline.sh                 the scheduled run
 #   bash infra/hetzner/cax11/run_pipeline.sh --dry-run       plan only; archive commands printed
 #   bash infra/hetzner/cax11/run_pipeline.sh --pull-only     steps 1 to 5, then stop
-#   bash infra/hetzner/cax11/run_pipeline.sh --no-archive    skip steps 5, 7 and 8
+#   bash infra/hetzner/cax11/run_pipeline.sh --no-archive    skip steps 5, 7, 8 and 9
 #   bash infra/hetzner/cax11/run_pipeline.sh -- --only fares --max-origins 5
 #                                                            anything after -- goes to run_pipeline.py
 #
@@ -50,9 +60,14 @@
 #   CARTA_VENV         default /home/carta/venv ($HOME/venv)
 #   CARTA_ARCHIVE_OUT  pack.py's tarball and dump directory, default $HOME/archive-out
 #   CARTA_SHIP         build (default), data or none; passed as --ship
+#   VITE_DATA_BASE     the data host, https://data.carta-europetravel.com/data.
+#                      Unset (the default), the build is same-origin and stays
+#                      on the box. Set it only after the production cutover
+#                      (T054-c): the split build refuses to run until the data
+#                      host is in the CSP (T053-b), which fails the ship.
 #
 # Exit codes: the pipeline's own (0 ok, 1 a task failed, 2 refused to start),
-# 3 the pipeline succeeded but an archive step failed, 4 the venv could not be
+# 3 the pipeline succeeded but an archive or publish step failed, 4 the venv could not be
 # synced, 5 the environment is broken (no venv, no repo), 75 another run holds
 # the lock.
 set -uo pipefail
@@ -67,9 +82,9 @@ RUN_LOG="$LOG_DIR/pipeline_run.log"
 # when missing) and writes (pushed after the run). Deliberately a short list:
 # pack.py would otherwise tar whatever part of another layer happens to exist
 # on this box, and push.py would overwrite the laptop's full tarball with it.
-PULL_CLASSES=(master-current fare-estimation-history)
+PULL_CLASSES=(master-current pipeline-state fare-estimation-history)
 PACK_CLASSES=(fare-estimation-history)
-PUSH_CLASSES=(master-snapshots master-current fare-estimation-history raw-mirrors)
+PUSH_CLASSES=(master-snapshots master-current pipeline-state fare-estimation-history raw-mirrors)
 
 DRY_RUN=0
 PULL_ONLY=0
@@ -179,6 +194,7 @@ ARCHIVE_DRY=()
 local_present() {  # class -> 0 when the box already holds it
   case "$1" in
     master-current) [ -f app_data/app_data.json ] ;;
+    pipeline-state) [ -f logs/pipeline_state.json ] ;;
     fare-estimation-history) [ -d data/history ] || [ -d data/models ] ;;
     *) return 1 ;;
   esac
@@ -218,13 +234,15 @@ esac
 ARGS+=("${PASS[@]}")
 
 say "python run_pipeline.py ${ARGS[*]}"
+RUN_MARK="$LOG_DIR/.carta-run-start"
+touch "$RUN_MARK"
 t0=$(date +%s)
 "$PY" run_pipeline.py "${ARGS[@]}"
 rc=$?
 say "run_pipeline.py exited $rc after $(( $(date +%s) - t0 )) s"
 
 if [ $ARCHIVE -eq 0 ]; then
-  say "--no-archive: dumps, pack and push skipped"
+  say "--no-archive: dumps, pack, push and publish skipped"
   exit $rc
 fi
 
@@ -292,8 +310,10 @@ if r2_configured || [ $DRY_RUN -eq 1 ]; then
   else
     # A failed run may have left the master half-refreshed. Push only the
     # snapshots (the pre-write backups run_pipeline.py took) so the last good
-    # state is off the box, and keep R2's master at the last good run.
-    say "pipeline failed (exit $rc): pushing master-snapshots only, not the master or the fare history"
+    # state is off the box, and keep R2's master at the last good run. The
+    # state file stays with it: pushing it alone would tell a rebuilt box that
+    # tasks ran whose output the R2 master does not hold.
+    say "pipeline failed (exit $rc): pushing master-snapshots only, not the master, the state file or the fare history"
     classes=(master-snapshots)
   fi
   for c in "${classes[@]}"; do
@@ -311,12 +331,47 @@ else
   [ ${#DUMPS_MADE[@]} -gt 0 ] && say "the dumps stay in $DUMP_DIR until R2 is configured"
 fi
 
+# --- publish the app data (T054-e) ----------------------------------------------------
+# After the archive, so the master is safe in R2 before anything goes live.
+# Only a split build made by THIS run is uploaded: dist-data/ survives between
+# runs, and a week in which nothing was due ships nothing, so an older staged
+# tree must never be sent again as if it were new.
+STAGE="continent-app/dist-data/_stage.json"
+PUBLISH_FAILED=0
+if [ -z "${VITE_DATA_BASE:-}" ]; then
+  say "publish skipped: VITE_DATA_BASE not set, so the build is same-origin and reaches production only through an app deploy"
+elif [ "$SHIP" != "build" ]; then
+  say "publish skipped: CARTA_SHIP=$SHIP makes no split build"
+elif [ $rc -ne 0 ]; then
+  say "publish skipped: the pipeline failed, production keeps last week's data"
+elif [ $DRY_RUN -eq 1 ]; then
+  say "publish: a real run would upload a new $STAGE tree with: (cd continent-app && node scripts/r2/push-data.mjs --live)"
+elif [ ! -f "$STAGE" ] || [ ! "$STAGE" -nt "$RUN_MARK" ]; then
+  say "publish skipped: this run made no new split build (nothing shipped, or the build was not split)"
+elif ! r2_configured; then
+  say "publish skipped: R2 not configured; the staged tree stays in continent-app/dist-data"
+else
+  staged_base="$("$PY" -c 'import json,sys; print(json.load(open(sys.argv[1]))["data_base"])' "$STAGE" 2>/dev/null || true)"
+  if [ "$staged_base" != "$VITE_DATA_BASE" ]; then
+    say "PUBLISH FAILED: $STAGE was staged for '${staged_base:-?}', not VITE_DATA_BASE '$VITE_DATA_BASE'; not uploading"
+    PUBLISH_FAILED=1
+  else
+    say "publish: phase 1 upload of the staged data to R2 (adds and replaces, deletes nothing)"
+    if (cd continent-app && node scripts/r2/push-data.mjs --live); then
+      say "publish: done. The boot index and app shell change with the next app deploy; run push-data.mjs --live --prune after it"
+    else
+      say "PUBLISH FAILED: push-data.mjs exited non-zero; production may hold part of this week's data"
+      PUBLISH_FAILED=1
+    fi
+  fi
+fi
+
 if [ $rc -ne 0 ]; then
   say "pipeline FAILED (exit $rc); see the log above"
   exit $rc
 fi
-if [ $ARCHIVE_FAILED -ne 0 ]; then
-  say "pipeline ok, but an archive step failed (exit 3)"
+if [ $ARCHIVE_FAILED -ne 0 ] || [ $PUBLISH_FAILED -ne 0 ]; then
+  say "pipeline ok, but an archive or publish step failed (exit 3)"
   exit 3
 fi
 say "done"

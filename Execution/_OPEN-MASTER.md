@@ -353,7 +353,8 @@ node scripts/r2/verify.mjs              # both PASS with the expected Cache-Cont
 python pipeline/archive/push.py --lifecycle
 ```
 
-   It must list archive/snapshots/ at 60 days and archive/db/ at 30 days.
+   It must list archive/snapshots/ at 60 days, archive/db/ at 30 days and
+   archive/runs/ at 14 days (T262).
 3. Pack and push, onto a disk with about 11 GB free outside the repo, then
    every rclone check in the T045 report (T045-c):
 
@@ -482,7 +483,10 @@ nano ~/.config/carta/env
 A copy of `env.example`, mode 600. Copy the values from the laptop's repo-root
 `.env`, the five `RCLONE_CONFIG_R2_*` lines from stage 5, and
 `CARTA_SUPABASE_URL` and `CARTA_SUPABASE_SERVICE_KEY` from stage 2.
-`HCLOUD_TOKEN` stays blank until stage 8.
+`HCLOUD_TOKEN` stays blank until stage 8. Set
+`VITE_DATA_BASE=https://data.carta-europetravel.com/data` only once the
+stage 5 cutover is live: from then on every good weekly run uploads its data
+to R2 by itself (T262). Leave it blank before, or the build fails on the CSP.
 
 ## 7.4 Verify the box (T046-f)
 

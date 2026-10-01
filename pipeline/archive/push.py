@@ -124,6 +124,9 @@ def push_entry(entry: dict, manifest: dict, out_dir: Path, dump_dir: Path, dry_r
     print(f"- {name} ({kind}, {entry['treatment']}, lifecycle "
           f"{entry['lifecycle_days'] or 'none'})")
 
+    if kind == "run-staging":
+        print("  written in R2 by the workers, nothing to push; listed for its lifecycle rule")
+        return
     if kind == "derived-cache":
         tarball = out_dir / Path(pattern).name
         if not tarball.exists():
@@ -185,6 +188,9 @@ def pull_entry(entry: dict, manifest: dict, out_dir: Path, dry_run: bool) -> Non
     pattern = entry["r2_key_pattern"]
     if kind == "db-dump" or (kind == "snapshot" and entry.get("lifecycle_days")):
         print(f"- {name}: not pulled automatically; restoring it is deliberate, see the report")
+        return
+    if kind == "run-staging":
+        print(f"- {name}: worker staging, read by spawn.sh only; not pulled")
         return
     print(f"- {name}")
 
