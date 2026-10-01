@@ -5,7 +5,8 @@ code. It exists so the person porting the pipeline to cron (T048) and the
 person who next changes the data contract can read the behaviour instead of
 inferring it from 2,672 lines.
 
-`run_pipeline.py` is one entry point for 65 tasks. Each task declares how often
+`run_pipeline.py` is one entry point for 64 tasks (65 at T029; T261 turned
+`poi_enrich` into an alias). Each task declares how often
 it wants to run, and the driver runs the ones that are due. You schedule one
 job, weekly, and every layer self-selects its own frequency underneath it. The
 whole design exists because almost every harvester does a full read, modify,
@@ -31,9 +32,12 @@ chain tier: `trails_ingest` leads to `trails_elevation` leads to
 
 `backfill` is the tier that never comes due. `CADENCE_DAYS.get("backfill")`
 returns `None` and `is_due` returns `False` (line 2399). The only way one runs
-is `--only <key>`. Eleven tasks carry it, and this is the single most important
-fact in this document for a cron port. T028 listed ten; `poi_enrich` is the
-eleventh it missed.
+is `--only <key>`. Ten tasks carry it, and this is the single most important
+fact in this document for a cron port. (Eleven at T029: `poi_enrich`, which
+T028 missed, is now an alias for `poi_images` then `must_descs`.) Since T261
+`--only` refuses a backfill task, or an alias that names one, unless stdin is
+a terminal, the run is `--dry-run`, or `--allow-backfill` is passed, so a
+timer, a script or an agent cannot reach these writers by accident either.
 
 `manual` appears in `CADENCE_RANK` but no task currently uses it. It behaves
 exactly like `backfill`.
@@ -145,12 +149,12 @@ newly-due ones to the list it is currently iterating. Appending to a list while
 iterating over it is intentional here: Python picks the new entries up on the
 next loop.
 
-Cross-task reads that are not encoded anywhere: `beaches` and `lakes` both need
-`cache/eea_bathing_water.json`, which the `bathing_water` task writes. Their
-guards refuse to run without it and name the task to run first, which is the
-right behaviour, but there is no ordering rule that would ever satisfy the
-guard automatically on a fresh machine, because `bathing_water` sits later in
-the `TASKS` list than both of them.
+Cross-task reads that are encoded only by list order: `beaches` and `lakes`
+both need `cache/eea_bathing_water.json`, which the `bathing_water` task
+writes. Their guards refuse to run without it and name the task to run first.
+Until T261 `bathing_water` sat later in the `TASKS` list than both, so a fresh
+machine skipped both layers on its first quarterly run; it now sits directly
+before `beaches`, with a comment saying why.
 
 ## Guards
 
@@ -186,9 +190,10 @@ cache, the CHELSA climate crop and at least 20 Geofabrik extracts, because
 without them a lake ships with no swimming verdict, no season and no national
 list, and nothing errors.
 
-A guard is called with `ctx` and is not wrapped in a try. A zero-argument guard
-raises `TypeError` and takes the whole run down, which is why they all declare
-`ctx=None`. The code comment says so at line 1190.
+A guard is called with `ctx`. A zero-argument guard raises `TypeError`, which
+is why they all declare `ctx=None`; the code comment says so above `TASKS`.
+Until T261 that exception took the whole run down. It now fails the task like
+any other exception (see "Failure behaviour").
 
 There is one more guard that is not in the guard slot at all. `fame_step`
 (line 931) measures how many destinations have a resolvable Wikipedia article
@@ -205,23 +210,30 @@ A task that fails has two possible outcomes, decided by its `soft` flag.
 A hard failure (`soft` absent or false) appends the key to `failed`, logs
 "stopping before ship to avoid shipping half data", and `break`s out of the
 loop (line 2623). Every later task in the plan is abandoned. The ship is
-skipped, the freshness report still runs, and the process exits 1. Twenty-one
+skipped, the freshness report still runs, and the process exits 1. Twenty
 tasks are hard: the four carrier fare tasks, `fame`, `flight_times`,
-`crowding`, `bathing_water`, `lodging`, `staytiers`, and all eleven backfill
-tasks. Only those first ten can ever stop a scheduled run, since the backfill
-eleven are unreachable without `--only`.
+`crowding`, `bathing_water`, `lodging`, `staytiers`, and all ten backfill
+tasks. The carrier fare tasks are on the manual cadence since T255 and the
+backfill ten are unreachable without `--only`, so only the other six can stop a
+scheduled run.
 
 A soft failure logs "SOFT-FAIL", appends to `soft_failed`, and the run
 continues. Nothing is stamped, so the task is due again next run. Soft is for
 the estimation and ingestion layer and for every layer that is not on the fare
-critical path: 44 of the 65 tasks are soft.
+critical path: 44 of the 64 tasks are soft.
 
-A task that raises, as opposed to returning false, is not caught. `t["run"](ctx)`
-and `run_cmd` are both outside any try except the `finally` that releases the
-lock. An exception propagates out of `main`, the lock is released, and the
-process dies with a traceback. No state is written, no ship happens, and the
-freshness report at the end never runs. Guard exceptions behave the same way.
-This is the one path where the driver's careful accounting does not apply.
+A task that raises, as opposed to returning false, is a failed task (T261).
+The guard, the rescore hold, the master backup and the task's `run(ctx)` or
+`cmds` sit in one try per task; an exception logs `RAISED` with its traceback
+and then takes the same soft or hard path as a false return, so the state
+write, the ship decision, the freshness report, the `pipeline_runs` row and
+the heartbeat `/fail` all still happen. Until T261 an exception escaped `main`
+and skipped all of them, on exactly the runs nobody watches.
+
+A run stopped from outside, by SIGTERM from systemd (a stop, or the 48 hour
+start timeout) or by Ctrl-C, is not a task failure. Nothing ships, but before
+the process exits the run reports itself: a `pipeline_runs` row with
+`interrupted` among the failed keys, and the heartbeat `/fail`.
 
 Inside a `cmds` list, any non-zero exit fails the task and stops the remaining
 commands in that list. There is a `retries` mechanism (line 2591) that sleeps
@@ -316,9 +328,10 @@ The twenty lab-dependent tasks skip cleanly on a box with no Docker, so a cron
 port can simply not run them, but then the trails and cycling wires go stale
 with no signal except the freshness report.
 
-The eleven backfill tasks must stay off the schedule. They never come due, so
+The ten backfill tasks must stay off the schedule. They never come due, so
 merely porting the cron line is safe; the risk is somebody "fixing" their
-cadence. Several of them are the null-risk patch writers.
+cadence, or a script reaching them through `--only`, which T261 refuses
+without a terminal. Several of them are the null-risk patch writers.
 
 ## The Linux host (T048)
 
@@ -362,7 +375,9 @@ priority ranking and the cache invalidation are plain JSON and `pathlib`.
 The box runs the weekly tier only. The monthly and quarterly tasks have not
 been verified on arm64, and the heavy ones belong on the on-demand CAX41
 (T047), so until a task raises `CARTA_MAX_CADENCE` they run nowhere once the
-Windows task is disabled.
+Windows task is disabled. Since T261 every run under a ceiling says so: a
+`HELD BACK by --max-cadence` line names each due task the ceiling keeps out,
+so the gap is in every box log rather than only in this paragraph (T048-h).
 
 `infra/hetzner/cax11/verify_tasks.sh` verifies the weekly tasks one at a time
 in the order of `weekly_tasks.txt` (cheapest and least destructive first,
@@ -372,7 +387,7 @@ code, wall time, peak memory and the state-file change of each in
 builds, or two shape summaries of them, by file set, keys, schema version and
 counts.
 
-## The 65 tasks
+## The tasks (65 at T029)
 
 Wall times are the maximum observed in `logs/*.log` where one was recorded.
 Fifty-four tasks have no recorded time because they have never completed on
@@ -445,13 +460,13 @@ not stop the run.
 | `must_descs` | backfill | enrich_must_descs.py | master | - | no | 42 min | NO, backfill: never auto-due, several null-risk |
 | `poi_images_wikidata` | backfill | harvest_pois_wikidata_images.py | master | - | no | 1.7 h | NO, backfill: never auto-due, several null-risk |
 | `poi_images` | backfill | enrich_images_commons.py, enrich_images_web.py | master | - | no | 62.3 h | NO, backfill: never auto-due, several null-risk |
-| `poi_enrich` | backfill | enrich_images_commons.py, enrich_images_web.py, enrich_must_descs.py | master | - | no | not recorded | NO, backfill: never auto-due, several null-risk |
+| `poi_enrich` | alias since T261 | `poi_images`, then `must_descs` | master | - | no | not recorded | NO, the backfill tasks it names |
 | `dossier` | monthly | dossier/harvest_landmarks.py, dossier/reclassify_landmarks.py, dossier/harvest_city_intros.py, dossier/fix_airport_listings.py, dossier/harvest_event_dates.py, export_destinfo.py, dossier/web_sweep.py, dossier/plan_research.py, dossier/research_do.py, dossier/build_dossier.py, dossier/fill_licences.py, dossier/audit.py | wire | dossier | yes | not recorded | yes, guarded; first run is about 3 h |
 
 ## Bugs and rough edges found
 
-Recorded here and in the T029 report, not fixed; fixing them is a separate
-task.
+Recorded here and in the T029 report. T261 fixed three of the four; each
+paragraph says what changed.
 
 `poi_enrich` (line 2301) duplicates `poi_images` and `must_descs`: it runs
 `enrich_images_commons.py`, `enrich_images_web.py` and `enrich_must_descs.py`,
@@ -460,7 +475,9 @@ backfill, so nothing runs twice on a schedule, but `--only poi_enrich` and
 `--only poi_images,must_descs` are the same work under two names. They are not
 equivalent, though: `poi_images` sets `retries: 12` and `poi_enrich` sets none,
 so the same two commands retry twelve times under one key and not at all under
-the other.
+the other. Fixed in T261: `poi_enrich` is no longer a task but an entry in
+`TASK_ALIASES`, so `--only poi_enrich` runs `poi_images` (with its retries)
+then `must_descs`.
 
 `chain_followups` (called at line 2615) appends to the plan list while the
 runner iterates it at line 2571. It works, and the comment says it is
@@ -470,9 +487,11 @@ that executes.
 A task that raises rather than returning false bypasses the entire failure
 accounting: no state write, no ship decision, no freshness report, no heartbeat
 `/fail`. The heartbeat's whole purpose is noticing runs that did not happen, and
-this is the one failure mode it cannot report.
+this is the one failure mode it cannot report. Fixed in T261, see "Failure
+behaviour".
 
 `guard_beaches` and `guard_lakes` both require a cache that the `bathing_water`
 task produces, but `bathing_water` sits after them in the `TASKS` list, so on a
 fresh machine the first run skips both layers and the second run, 90 days
-later, is the first that can build them.
+later, is the first that can build them. Fixed in T261: `bathing_water` now
+sits directly before `beaches`.

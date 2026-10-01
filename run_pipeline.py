@@ -136,6 +136,7 @@ import socket
 import subprocess
 import sys
 import time
+import traceback
 from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 
@@ -1242,7 +1243,7 @@ def guard_beaches(ctx=None):
         return False, f"pipeline/beaches is missing {', '.join(missing)}"
     if not (CACHE / "eea_bathing_water.json").exists():
         return False, ("cache/eea_bathing_water.json is missing; run the "
-                       "`bathing` task first, water quality is 16% of the score")
+                       "`bathing_water` task first, water quality is 16% of the score")
     return True, "beach stages present, EEA bathing water cached"
 
 
@@ -1272,7 +1273,7 @@ def guard_lakes(ctx=None):
         return False, f"pipeline/lakes is missing {', '.join(missing)}"
     if not (CACHE / "eea_bathing_water.json").exists():
         return False, ("cache/eea_bathing_water.json is missing; run the "
-                       "`bathing` task first, it decides the swimming verdict")
+                       "`bathing_water` task first, it decides the swimming verdict")
     if not (CACHE / "lakes" / "chelsa" / "tas_07_europe.tif").exists():
         return False, ("cache/lakes/chelsa is missing; run "
                        "`python pipeline/lakes/lake_climate.py --fetch` "
@@ -1725,6 +1726,20 @@ TASKS = [
     # layers that replaced it and nothing under continent-app/src ever read
     # it, while it carried live attribution obligations (data_licenses.md S8).
     # Code is preserved under archive/pipeline_features.
+    #
+    # bathing_water sits BEFORE beaches and lakes (T261): both guards
+    # refuse to run without cache/eea_bathing_water.json, which this task
+    # writes, and the plan runs in list order. When it sat after them, a fresh
+    # box skipped both layers on its first quarterly run and built them only
+    # on the next one, 90 days later.
+    {
+        "key": "bathing_water",
+        "title": "Bathing-water quality (EEA WISE)",
+        "cadence": "quarterly",
+        "writes_app_data": True,
+        "cmds": [[PY, "pipeline/harvest_bathing_water.py"]],
+        "note": "YEAR is pinned in the script (2025). Bump it + --refresh for a new season.",
+    },
     {
         "key": "beaches",
         "title": "Beaches: named coves + the beauty index -> public/beaches",
@@ -1741,7 +1756,7 @@ TASKS = [
                  "build is a few hours, nearly all of it waiting politely on "
                  "Overpass: one country query each, then one context query "
                  "per 30 shortlisted beaches. Quarterly because coastlines "
-                 "and coves move slowly; run it by hand after the `bathing` "
+                 "and coves move slowly; run it by hand after the `bathing_water` "
                  "task lands a new EEA season, since water quality is 16 per "
                  "cent of the score. The export validates before it writes "
                  "anything, so a failure leaves the previous wire standing. "
@@ -1770,7 +1785,7 @@ TASKS = [
                  "thirteen and four that the two Wikidata rankings could "
                  "reach. A cold build is a day, most of it the extract filter "
                  "(CPU, offline) and Wikimedia photographs (network, paced). "
-                 "Quarterly, and by hand after the `bathing` task lands a new "
+                 "Quarterly, and by hand after the `bathing_water` task lands a new "
                  "EEA season or after pipeline/lakes/seed_lakes.py changes, "
                  "since the seed carries the swimming rules that override "
                  "every machine signal. The export validates before it writes "
@@ -1948,14 +1963,6 @@ TASKS = [
         "writes_app_data": True,
         "cmds": [[PY, "pipeline/harvest_tourism_density.py"]],
         "note": "Eurostat updates ~annually; pass --refresh in the script to re-download.",
-    },
-    {
-        "key": "bathing_water",
-        "title": "Bathing-water quality (EEA WISE)",
-        "cadence": "quarterly",
-        "writes_app_data": True,
-        "cmds": [[PY, "pipeline/harvest_bathing_water.py"]],
-        "note": "YEAR is pinned in the script (2025). Bump it + --refresh for a new season.",
     },
     {
         "key": "lodging",
@@ -2629,18 +2636,10 @@ TASKS = [
                  "multi-hour and Wikimedia-rate-limited - run when no other session "
                  "hits Wikipedia/Commons. Additive (never nulls)."),
     },
-    {
-        "key": "poi_enrich",
-        "title": "POI images + rich descriptions (additive)",
-        "cadence": "backfill",
-        "writes_app_data": True,
-        "cmds": [
-            [PY, "pipeline/enrich_images_commons.py"],
-            [PY, "pipeline/enrich_images_web.py"],
-            [PY, "pipeline/enrich_must_descs.py"],
-        ],
-        "note": "all additive (never null); heavy Wikipedia sweeps - run after activities.",
-    },
+    # `poi_enrich` used to be a task of its own whose three commands were
+    # exactly poi_images' two plus must_descs' one, without poi_images'
+    # retries (T029). It is now a name in TASK_ALIASES below, so
+    # `--only poi_enrich` runs those two tasks, retries included (T261).
     {
         "key": "dossier",
         "title": "Destination dossiers: the per-destination contract for panel + PDF",
@@ -2702,6 +2701,13 @@ TASKS = [
 ]
 TASK_BY_KEY = {t["key"]: t for t in TASKS}
 
+# Names --only accepts that expand to several tasks, in this order. Not tasks:
+# they have no cadence, no state entry and no line in --list.
+TASK_ALIASES = {
+    # POI images + rich descriptions, all additive; run after activities.
+    "poi_enrich": ["poi_images", "must_descs"],
+}
+
 
 # --------------------------------------------------------------------------- #
 # Planner + runner
@@ -2755,17 +2761,60 @@ def chain_followups(plan, state, args, done_keys):
     return added
 
 
+def stdin_is_terminal():
+    """True when a person could be typing into this process. On Windows
+    isatty() is also true for NUL, which is what a scheduled task's stdin
+    usually is, so there the console itself is asked."""
+    try:
+        if not sys.stdin or not sys.stdin.isatty():
+            return False
+        if os.name != "nt":
+            return True
+        import ctypes
+        import msvcrt
+        mode = ctypes.c_ulong()
+        handle = msvcrt.get_osfhandle(sys.stdin.fileno())
+        return bool(ctypes.windll.kernel32.GetConsoleMode(handle, ctypes.byref(mode)))
+    except Exception:
+        return False
+
+
 def select_tasks(args, state):
     if args.only:
-        keys = [k.strip() for k in args.only.split(",") if k.strip()]
+        keys = []
+        for k in (k.strip() for k in args.only.split(",")):
+            for key in TASK_ALIASES.get(k, [k] if k else []):
+                if key not in keys:
+                    keys.append(key)
         unknown = [k for k in keys if k not in TASK_BY_KEY]
         if unknown:
             sys.exit(f"unknown task key(s): {', '.join(unknown)}\n"
-                     f"known: {', '.join(TASK_BY_KEY)}")
+                     f"known: {', '.join([*TASK_BY_KEY, *TASK_ALIASES])}")
+        # Backfill tasks exist to need a human (several are null-risk patch
+        # writers), so they never come due; this keeps a timer or a script
+        # from reaching them through --only either (T261). A terminal counts
+        # as the human; anything else must say --allow-backfill.
+        backfill = [k for k in keys if TASK_BY_KEY[k]["cadence"] == "backfill"]
+        if (backfill and not args.dry_run and not args.allow_backfill
+                and not stdin_is_terminal()):
+            sys.exit(f"refusing backfill task(s) {', '.join(backfill)} without a "
+                     "terminal: they are manual by design. Run them by hand, or "
+                     "pass --allow-backfill if a person really started this.")
         return [TASK_BY_KEY[k] for k in keys]
     ceiling = CADENCE_RANK.get(args.max_cadence, 3) if args.max_cadence else 3
     return [t for t in TASKS
             if CADENCE_RANK[t["cadence"]] <= ceiling and is_due(t, state)]
+
+
+def held_back(args, state):
+    """Due tasks a --max-cadence ceiling keeps out of this run. The CAX11 runs
+    the weekly tier only (T048-h), so without this line every monthly and
+    quarterly task would quietly run nowhere once the laptop stops."""
+    if args.only or not args.max_cadence:
+        return []
+    ceiling = CADENCE_RANK[args.max_cadence]
+    return [t["key"] for t in TASKS
+            if ceiling < CADENCE_RANK[t["cadence"]] <= 3 and is_due(t, state)]
 
 
 def cmd_list(args):
@@ -2822,6 +2871,9 @@ def main():
     ap.add_argument("--list", action="store_true", help="list tasks + last-run + due, then exit")
     ap.add_argument("--force", action="store_true", help="bypass the other-python concurrency guard")
     ap.add_argument("--no-backup", action="store_true", help="skip the pre-write master backup")
+    ap.add_argument("--allow-backfill", action="store_true",
+                    help="let --only run backfill tasks without a terminal (a person "
+                         "started this from a script)")
     ap.add_argument("--ship", choices=["build", "data", "none"], default="build",
                     help="after writers: full vite build (default), sync-only, or nothing")
     args = ap.parse_args()
@@ -2845,6 +2897,10 @@ def main():
     log(f"Carta pipeline  {now_utc().isoformat(timespec='seconds')}  "
         f"({dest_count()} dests)")
     log("=" * 70)
+    held = held_back(args, state)
+    if held:
+        log(f"HELD BACK by --max-cadence {args.max_cadence}: {len(held)} due task(s) "
+            f"will not run here: {', '.join(held)}")
     if not plan:
         log("nothing due. (`--list` to see cadences, `--only <key>` to force one.)")
         return 0
@@ -2907,51 +2963,63 @@ def main():
             log("\n" + "-" * 70)
             log(f"TASK {t['key']}  ({t['cadence']})  {t['title']}")
 
-            guard = t.get("guard")
-            if guard:
-                ok, reason = guard(ctx)
-                log(f"  guard: {reason}")
-                if not ok:
-                    skipped.append(t["key"])
-                    continue
-
+            # A task that raises is a task that failed (T261). Before, an
+            # exception from a guard, a run() or the backup escaped this loop:
+            # no state write, no ship decision, no freshness report and no
+            # heartbeat /fail, on exactly the runs nobody is watching.
             hold = None
-            if t["key"] in RESCORE_LAYERS:
-                busy = rescore_running(RESCORE_LAYERS[t["key"]])
-                if busy:
-                    log(f"  refused: a rescore of this layer is running: {busy}")
-                    skipped.append(t["key"])
-                    continue
-                hold = take_rescore_hold(t["key"])
-                if hold:
-                    held_by_run.append(hold)
-
-            if t.get("writes_app_data") and not args.no_backup and not backed_up:
-                backup_master()
-                backed_up = True
-
             t0 = time.time()
-            if t.get("run"):
-                ok = bool(t["run"](ctx))
-            else:
-                # Each cmd may retry: resumable harvesters pick up from their cache,
-                # so a transient failure (rate-limit, a flaky file write) just resumes.
-                retries = t.get("retries", 0)
-                ok = True
-                for c in t["cmds"]:
-                    attempt = 0
-                    while (rc := run_cmd(c)) != 0:
-                        attempt += 1
-                        if attempt > retries:
-                            ok = False
-                            break
-                        log(f"  cmd failed (rc={rc}); retry {attempt}/{retries} "
-                            f"in 30s (resumes from cache)")
-                        time.sleep(30)
+            try:
+                guard = t.get("guard")
+                if guard:
+                    ok, reason = guard(ctx)
+                    log(f"  guard: {reason}")
                     if not ok:
-                        break
+                        skipped.append(t["key"])
+                        continue
+
+                if t["key"] in RESCORE_LAYERS:
+                    busy = rescore_running(RESCORE_LAYERS[t["key"]])
+                    if busy:
+                        log(f"  refused: a rescore of this layer is running: {busy}")
+                        skipped.append(t["key"])
+                        continue
+                    hold = take_rescore_hold(t["key"])
+                    if hold:
+                        held_by_run.append(hold)
+
+                if t.get("writes_app_data") and not args.no_backup and not backed_up:
+                    backup_master()
+                    backed_up = True
+
+                t0 = time.time()
+                if t.get("run"):
+                    ok = bool(t["run"](ctx))
+                else:
+                    # Each cmd may retry: resumable harvesters pick up from their cache,
+                    # so a transient failure (rate-limit, a flaky file write) just resumes.
+                    retries = t.get("retries", 0)
+                    ok = True
+                    for c in t["cmds"]:
+                        attempt = 0
+                        while (rc := run_cmd(c)) != 0:
+                            attempt += 1
+                            if attempt > retries:
+                                ok = False
+                                break
+                            log(f"  cmd failed (rc={rc}); retry {attempt}/{retries} "
+                                f"in 30s (resumes from cache)")
+                            time.sleep(30)
+                        if not ok:
+                            break
+            except Exception as e:
+                ok = False
+                log(f"  RAISED {type(e).__name__}: {e}")
+                for line in traceback.format_exc().rstrip().splitlines():
+                    log(f"    {line}")
+            finally:
+                release_rescore_hold(hold)
             dt = int(time.time() - t0)
-            release_rescore_hold(hold)
 
             if ok:
                 log(f"  OK ({dt}s)")
@@ -2972,6 +3040,17 @@ def main():
                 log(f"  FAILED ({dt}s) - stopping before ship to avoid shipping half data.")
                 failed.append(t["key"])
                 break
+    except BaseException as e:
+        # Stopped from outside: SIGTERM from systemd's stop or its 48 h timeout
+        # (SystemExit, _exit_on_sigterm) or Ctrl-C. Nothing ships, but the run
+        # is still reported as failed before the process goes.
+        log(f"\nINTERRUPTED ({type(e).__name__}) during the task loop; not shipping.")
+        try:
+            report_pipeline_run(ran, skipped, failed + ["interrupted"], soft_failed,
+                                ctx.get("dest_count"))
+        finally:
+            heartbeat("/fail")
+        raise
     finally:
         for h in held_by_run:
             release_rescore_hold(h)
