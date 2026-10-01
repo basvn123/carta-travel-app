@@ -933,7 +933,8 @@ def _contract_lake(cc, pidx, vidx, measures, cells_over):
                                               lake.get("name"))})
     over = cells_over.get(cc) or []
     detail = (f"{published} published, floor {floor}; {len(misses)} of "
-              f"{len(must)} lakes clearing a hard anchor unpublished; "
+              f"{len(must)} lakes clearing a hard anchor unpublished (pool "
+              f"bounded by the {len(pool)} harvested, not the world); "
               f"{len(over)} cells over {LAKE_CELL_MAX} per {LAKE_CELL_KM} km")
     return _cell(published, floor, len(must), matched, misses, "below_quota",
                  detail, extra={"cells_over_cap": over[:50]})
@@ -986,7 +987,8 @@ def _contract_mountain(cc, pidx, vidx, measures, range_misses):
     rm = range_misses.get(cc) or []
     detail = (f"{published} published, floor {floor}; {len(misses)} of "
               f"{len(must)} ultras, highpoints and lift-served summits "
-              f"unpublished; {len(rm)} GMBA range top-3 misses")
+              f"unpublished (pool bounded by the {len(pool)} harvested, not "
+              f"the world); {len(rm)} GMBA range top-3 misses")
     return _cell(published, floor, len(must), matched, misses, "below_quota",
                  detail, extra={"range_misses": rm[:100],
                                 "ranges_failing": len({m["range"] for m in rm})})
@@ -1074,9 +1076,15 @@ def _coastal_region_misses(ctx, countries_of):
     return out
 
 
-def region_code(layer, entry, rid, rejected, trails_cov):
+def region_code(layer, entry, rid, rejected, trails_cov, has_examiner,
+                country_has_rows):
     """The reason code one NUTS3 region prints beside a thin or empty
-    status, from the same evidence the backlog CSV carries."""
+    status, from the same evidence the backlog CSV carries. Trails carry
+    the trails report's own verdicts. A replayed layer (beach, lake,
+    mountain) is below_quota where the gate rejected candidates in the
+    region and no_open_data where it saw none. Cycling has no replay, so
+    the only honest split is by country: below_quota where the ingest
+    reached the country at all, no_open_data where it never did."""
     status = entry.get("status")
     if status == "na":
         return "not_applicable"
@@ -1087,6 +1095,8 @@ def region_code(layer, entry, rid, rejected, trails_cov):
         codes = [TRAIL_REASON.get(t.get("reason"), "below_quota")
                  for t in top3 if t.get("status") == "missing"]
         return _dominant(codes)
+    if not has_examiner:
+        return "below_quota" if country_has_rows else "no_open_data"
     return "below_quota" if rejected.get(rid) else "no_open_data"
 
 
@@ -1152,11 +1162,15 @@ def build_contract(regions, ctx, layers):
             cells[cc][layer] = cell
 
         # The per region code, beside the status the wire already carries.
+        has_examiner = bool(ctx["verdicts"].get(layer))
+        countries_with_rows = {cc for cc, got in pidx.items() if got["n"]}
         for rid, by_layer in regions.items():
             entry = by_layer.get(layer)
             if not entry:
                 continue
-            code = region_code(layer, entry, rid, rejected, trails_cov)
+            code = region_code(layer, entry, rid, rejected, trails_cov,
+                               has_examiner,
+                               countries_of.get(rid) in countries_with_rows)
             if code:
                 entry["code"] = code
 
