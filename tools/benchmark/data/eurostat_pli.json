@@ -1,0 +1,323 @@
+{
+ "categories": {
+  "food_nonalc": {
+   "by_iso2": {
+    "AL": {
+     "value": 100.1,
+     "year": 2024
+    },
+    "AT": {
+     "value": 110.5,
+     "year": 2024
+    },
+    "BA": {
+     "value": 83.2,
+     "year": 2024
+    },
+    "BE": {
+     "value": 105.3,
+     "year": 2024
+    },
+    "BG": {
+     "value": 88.8,
+     "year": 2024
+    },
+    "CH": {
+     "value": 158.5,
+     "year": 2024
+    },
+    "CY": {
+     "value": 104.7,
+     "year": 2024
+    },
+    "CZ": {
+     "value": 89.0,
+     "year": 2024
+    },
+    "DE": {
+     "value": 102.7,
+     "year": 2024
+    },
+    "DK": {
+     "value": 120.2,
+     "year": 2024
+    },
+    "EE": {
+     "value": 106.2,
+     "year": 2024
+    },
+    "ES": {
+     "value": 95.2,
+     "year": 2024
+    },
+    "FI": {
+     "value": 109.8,
+     "year": 2024
+    },
+    "FR": {
+     "value": 110.1,
+     "year": 2024
+    },
+    "GB": {
+     "value": 92.3,
+     "year": 2020
+    },
+    "GR": {
+     "value": 105.8,
+     "year": 2024
+    },
+    "HR": {
+     "value": 103.7,
+     "year": 2024
+    },
+    "HU": {
+     "value": 94.8,
+     "year": 2024
+    },
+    "IE": {
+     "value": 114.5,
+     "year": 2024
+    },
+    "IS": {
+     "value": 143.9,
+     "year": 2024
+    },
+    "IT": {
+     "value": 101.7,
+     "year": 2024
+    },
+    "LT": {
+     "value": 101.2,
+     "year": 2024
+    },
+    "LU": {
+     "value": 124.8,
+     "year": 2024
+    },
+    "LV": {
+     "value": 105.4,
+     "year": 2024
+    },
+    "ME": {
+     "value": 84.4,
+     "year": 2024
+    },
+    "MK": {
+     "value": 73.4,
+     "year": 2024
+    },
+    "MT": {
+     "value": 112.2,
+     "year": 2024
+    },
+    "NL": {
+     "value": 98.9,
+     "year": 2024
+    },
+    "NO": {
+     "value": 131.2,
+     "year": 2024
+    },
+    "PL": {
+     "value": 86.8,
+     "year": 2024
+    },
+    "PT": {
+     "value": 101.5,
+     "year": 2024
+    },
+    "RO": {
+     "value": 75.5,
+     "year": 2024
+    },
+    "RS": {
+     "value": 96.4,
+     "year": 2024
+    },
+    "SE": {
+     "value": 106.4,
+     "year": 2024
+    },
+    "SI": {
+     "value": 100.0,
+     "year": 2024
+    },
+    "SK": {
+     "value": 83.4,
+     "year": 2024
+    },
+    "TR": {
+     "value": 76.7,
+     "year": 2024
+    },
+    "XK": {
+     "value": 83.7,
+     "year": 2022
+    }
+   },
+   "code": "A0101",
+   "updated": "2025-07-10T11:00:00+0200"
+  },
+  "rest_hotels": {
+   "by_iso2": {
+    "AL": {
+     "value": 52.3,
+     "year": 2024
+    },
+    "AT": {
+     "value": 110.0,
+     "year": 2024
+    },
+    "BA": {
+     "value": 74.6,
+     "year": 2024
+    },
+    "BE": {
+     "value": 124.2,
+     "year": 2024
+    },
+    "BG": {
+     "value": 53.2,
+     "year": 2024
+    },
+    "CH": {
+     "value": 170.8,
+     "year": 2024
+    },
+    "CY": {
+     "value": 89.0,
+     "year": 2024
+    },
+    "CZ": {
+     "value": 74.1,
+     "year": 2024
+    },
+    "DE": {
+     "value": 112.1,
+     "year": 2024
+    },
+    "DK": {
+     "value": 147.6,
+     "year": 2024
+    },
+    "EE": {
+     "value": 98.3,
+     "year": 2024
+    },
+    "ES": {
+     "value": 83.9,
+     "year": 2024
+    },
+    "FI": {
+     "value": 126.8,
+     "year": 2024
+    },
+    "FR": {
+     "value": 110.0,
+     "year": 2024
+    },
+    "GB": {
+     "value": 104.1,
+     "year": 2020
+    },
+    "GR": {
+     "value": 86.4,
+     "year": 2024
+    },
+    "HR": {
+     "value": 95.4,
+     "year": 2024
+    },
+    "HU": {
+     "value": 71.8,
+     "year": 2024
+    },
+    "IE": {
+     "value": 129.3,
+     "year": 2024
+    },
+    "IS": {
+     "value": 167.3,
+     "year": 2024
+    },
+    "IT": {
+     "value": 106.9,
+     "year": 2024
+    },
+    "LT": {
+     "value": 86.1,
+     "year": 2024
+    },
+    "LU": {
+     "value": 123.6,
+     "year": 2024
+    },
+    "LV": {
+     "value": 90.9,
+     "year": 2024
+    },
+    "ME": {
+     "value": 65.5,
+     "year": 2024
+    },
+    "MK": {
+     "value": 49.5,
+     "year": 2024
+    },
+    "MT": {
+     "value": 88.7,
+     "year": 2024
+    },
+    "NL": {
+     "value": 124.6,
+     "year": 2024
+    },
+    "NO": {
+     "value": 140.0,
+     "year": 2024
+    },
+    "PL": {
+     "value": 91.7,
+     "year": 2024
+    },
+    "PT": {
+     "value": 75.5,
+     "year": 2024
+    },
+    "RO": {
+     "value": 68.5,
+     "year": 2024
+    },
+    "RS": {
+     "value": 68.2,
+     "year": 2024
+    },
+    "SE": {
+     "value": 116.7,
+     "year": 2024
+    },
+    "SI": {
+     "value": 90.1,
+     "year": 2024
+    },
+    "SK": {
+     "value": 91.3,
+     "year": 2024
+    },
+    "TR": {
+     "value": 68.9,
+     "year": 2024
+    },
+    "XK": {
+     "value": 51.1,
+     "year": 2022
+    }
+   },
+   "code": "A0111",
+   "updated": "2025-07-10T11:00:00+0200"
+  }
+ },
+ "fetched": "2026-10-01",
+ "licence": "Eurostat reuse policy, CC BY 4.0 compatible; (c) European Union",
+ "source": "Eurostat prc_ppp_ind, PLI_EU27_2020 (EU27 = 100)"
+}
