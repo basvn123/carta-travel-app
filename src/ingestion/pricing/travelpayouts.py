@@ -67,9 +67,10 @@ EVIDENCE_PATH = config.ROOT / "data" / "derived" / "tp_service_evidence.json"
 # fly). Only quotes from OTHER airlines therefore prove that a route flies
 # on days/months the direct harvest cannot see, which is what the estimate
 # bands' service gate needs.
-HARVESTED_FAMILY = {"FR", "RK", "RR",   # Ryanair group (incl. Ryanair UK)
-                    "W6", "W4", "W9",   # Wizz Air group (Malta, UK)
-                    "VY", "V7"}         # Vueling, Volotea
+# Empty since T255 (2026-10-01): every direct harvest is retired, so no stored
+# calendar is complete. The families were Ryanair FR/RK/RR, Wizz Air
+# W6/W4/W9, Vueling VY and Volotea V7; put one back when its harvest returns.
+HARVESTED_FAMILY = set()
 
 DAY_SECONDS = 86400
 # Three letter DOS device names that collide with IATA codes; their fare
