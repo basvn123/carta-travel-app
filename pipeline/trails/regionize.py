@@ -11,7 +11,8 @@ is in BEFORE the gate runs, not at export time when the selection is over.
 
 So this runs before curate.py and writes four columns:
 
-    rg               the compact wire block, exactly assign.wire_rg()'s shape
+    rg               the compact wire block, assign.wire_rg()'s shape plus
+                     the trailhead's region (s3, sc) where it differs
     nuts3            the owning level 3 region, lifted out for GROUP BY
     region_crosses   every level 3 region and range the line passes through
     regionized_at    when, so a re-run only touches what moved
@@ -20,6 +21,17 @@ Owning region: the point at half the route's LENGTH, per the assignment
 contract for lines. Not the bbox centre, which for a horseshoe route can sit
 in a valley the walk never enters, and not the start, which would hand every
 cross-border route to whichever country the mapper began in.
+
+The TRAILHEAD is placed as well, and it is what a page names (spec 6.8). The
+Korab (9/1) route starts in Radomire, Albania and climbs to a summit on the
+border; the page said North Macedonia because it named the nearest
+catalogue town, which is across the ridge. The midpoint still owns the route
+for the quota, region pages and verify(); the trailhead only answers "where
+do I start", so the two never compete. The trailhead is the start of the
+line, or its END when the line is stored downhill (attributes.uphill()'s
+rule: a walker starts at the bottom). Written into rg as s3 (level 3) and sc
+(ISO2) only where they differ from the owner and from the row's country, so
+the wire grows by a few bytes on the rows that need it and none elsewhere.
 
 Batched, not per row. assign.assign_line() is the reference implementation
 and is right; called 236,000 times it is also an afternoon. This asks
@@ -101,7 +113,8 @@ def apply_schema(conn):
 # spelled out three times rather than shared, because a helper that drifts
 # would leave the three of them disagreeing silently.
 EFF_GEOM = """
-    SELECT t.id, t.country, COALESCE(r.geom, t.geom) AS geom
+    SELECT t.id, t.country, t.ascent_m, t.descent_m,
+           COALESCE(r.geom, t.geom) AS geom
     FROM trips t
     LEFT JOIN trip_repairs r
            ON r.trip_id = t.id AND r.repaired
@@ -115,13 +128,17 @@ MIDPOINTS_SQL = """
 WITH eff AS (
 """ + EFF_GEOM + """
 ), merged AS (
-    SELECT id, country,
+    SELECT id, country, ascent_m, descent_m,
            ST_LineMerge(ST_Force2D(geom)) AS line
     FROM eff
 )
-SELECT id, country,
+SELECT id, country, ascent_m, descent_m,
        ST_X(pt) AS lon, ST_Y(pt) AS lat,
-       ST_Length(line::geography) AS len_m
+       ST_Length(line::geography) AS len_m,
+       ST_X(ST_StartPoint(ST_GeometryN(line, 1))) AS start_lon,
+       ST_Y(ST_StartPoint(ST_GeometryN(line, 1))) AS start_lat,
+       ST_X(ST_EndPoint(ST_GeometryN(line, ST_NumGeometries(line)))) AS end_lon,
+       ST_Y(ST_EndPoint(ST_GeometryN(line, ST_NumGeometries(line)))) AS end_lat
 FROM merged,
      LATERAL (
         SELECT CASE
@@ -284,11 +301,40 @@ def _join_nearest(spine, pts, frame, value_col, max_km):
     return out
 
 
-def assign_midpoints(spine, rows, verbose=False):
-    """rg per row, in row order. One sjoin per spine layer."""
-    import h3
-    pts = _points_frame(spine, rows)
+# The same rule as attributes.uphill(), spelled out here rather than
+# imported, because attributes.py pulls in psycopg's Jsonb and the way-tag
+# tables for a decision that is two numbers. Keep the two in step.
+DOWNHILL_MIN_M = 300.0
+DOWNHILL_RATIO = 2.0
 
+
+def trailhead(row):
+    """(lon, lat) where a walker starts: the line's start, or its end when
+    the line is stored downhill. None when the read carried no endpoints."""
+    asc = float(row.get("ascent_m") or 0)
+    desc = float(row.get("descent_m") or 0)
+    downhill = desc - asc >= DOWNHILL_MIN_M and desc >= DOWNHILL_RATIO * asc
+    key = "end" if downhill else "start"
+    lon, lat = row.get(f"{key}_lon"), row.get(f"{key}_lat")
+    if lon is None or lat is None:
+        return None
+    return float(lon), float(lat)
+
+
+def trailhead_block(row, owner_n3, head_n3, head_country):
+    """The keys the trailhead adds to rg: s3 where its level 3 region is not
+    the owner's, sc where its country is not the row's. Empty when the
+    trailhead sits where the rest of the row already says it does."""
+    out = {}
+    if head_n3 and head_n3 != owner_n3:
+        out["s3"] = head_n3
+    if head_country and head_country != (row.get("country") or "").upper():
+        out["sc"] = head_country
+    return out
+
+
+def _within_snapped(spine, pts, verbose=False, what="midpoints"):
+    """Level 3 region per point, with the sea snap for a point over water."""
     n3 = _join_within(spine, pts, spine.a3, "id")
     # The sea snap, for a route whose midpoint sits over water (a coastal
     # path drawn seaward of the admin polygon, an island crossing).
@@ -301,7 +347,27 @@ def assign_midpoints(spine, rows, verbose=False):
             n3[i] = snapped[k]
         if verbose:
             got = sum(1 for i in missing if n3[i])
-            print(f"    sea snap: {got}/{len(missing)} midpoints recovered")
+            print(f"    sea snap: {got}/{len(missing)} {what} recovered")
+    return n3
+
+
+def assign_midpoints(spine, rows, verbose=False):
+    """rg per row, in row order. One sjoin per spine layer."""
+    import h3
+    pts = _points_frame(spine, rows)
+
+    n3 = _within_snapped(spine, pts, verbose)
+
+    # The trailhead, one more join over the same admin layer.
+    heads = [trailhead(r) for r in rows]
+    have = [i for i, h in enumerate(heads) if h]
+    head_n3 = [None] * len(rows)
+    if have:
+        hpts = _points_frame(spine, [{"lon": heads[i][0], "lat": heads[i][1]}
+                                     for i in have])
+        got = _within_snapped(spine, hpts, verbose, what="trailheads")
+        for k, i in enumerate(have):
+            head_n3[i] = got[k]
 
     coast = _join_nearest(spine, pts, spine.layers.get("coast"), "id", COAST_KM)
     rng = _join_within(spine, pts, spine.layers.get("range"), "id",
@@ -334,6 +400,9 @@ def assign_midpoints(spine, rows, verbose=False):
         if biogeo[i] and biogeo[i] != "OUT":
             rg["bg"] = biogeo[i]
         rg["h4"] = h3.latlng_to_cell(row["lat"], row["lon"], 4)
+        rg.update(trailhead_block(row, n3[i], head_n3[i],
+                                  spine.country_of.get(head_n3[i])
+                                  if head_n3[i] else None))
         out.append((rg, n3[i]))
     return out
 

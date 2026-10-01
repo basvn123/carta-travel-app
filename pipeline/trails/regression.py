@@ -32,6 +32,12 @@ Only trips re-validated inside --since-hours are judged, so a stale score can
 never demote anything; published trips nobody has re-validated in that window
 are counted as stale in the report instead.
 
+It also counts the five user-visible data bugs of spec 6.8 on the same rows
+(display_bugs below). That half never demotes anything: each bug is a fact
+about how a published row will READ, fixed in the pass that writes the field,
+and the count is how the next run proves the fix is holding on new rows
+rather than only on the ones that were looked at.
+
 Output: data/derived/trails_freshness.json, which run_pipeline.py folds into
 data/derived/freshness_report.json under "trails".
 
@@ -44,6 +50,7 @@ Usage, from the repo root (DB up: cd tools/trailslab && docker compose up -d):
 import argparse
 import json
 import sys
+import unicodedata
 from collections import Counter, defaultdict
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
@@ -125,6 +132,87 @@ def review_scores(conn, ids):
             ORDER BY trip_id, created_at DESC, id DESC""", (ids,))
         return {tid: {"quality": float(q), "action": action, "at": at}
                 for tid, q, action, at in cur.fetchall()}
+
+
+# ---------------------------------------------------------------------------
+# The five visible bugs (spec 6.8), counted, never acted on
+# ---------------------------------------------------------------------------
+
+# The same uphill rule as attributes.uphill() and regionize.trailhead().
+DOWNHILL_MIN_M = 300.0
+DOWNHILL_RATIO = 2.0
+# The climb above which a day is not "comfortable", whatever its length:
+# rate.py's own BIG_CLIMB_M, the line where it starts calling a climb serious.
+COMFORT_MAX_CLIMB_M = 800.0
+
+DISPLAY_SQL = """
+    SELECT t.id, t.country, t.ascent_m, t.descent_m, t.difficulty, t.grade,
+           t.grade_parts, t.rg, t.highlights, t.rating_parts
+    FROM trips t
+    WHERE t.status::text = ANY(%s) AND t.category = 'hike'
+"""
+
+
+def _latin(text):
+    letters = [c for c in str(text or "") if c.isalpha()]
+    return not letters or all(
+        unicodedata.name(c, "").startswith("LATIN") for c in letters)
+
+
+def display_bugs(row):
+    """The spec 6.8 bug codes this row would show a reader, [] when none.
+
+      graded_downhill   a one-way line stored summit to valley that was
+                        graded on its stored ascent (attributes.py has not
+                        re-read it uphill)
+      two_grades        `difficulty` and `grade` both set and different; the
+                        app prints the grade, so the other one is a trap
+      trailhead_abroad  the trailhead is in another country than the row
+                        (informational: the page must name the trailhead's)
+      non_latin_name    a highlight is named in a non-Latin script
+      comfortable_climb a "day out" reason on a row whose climb, read
+                        uphill, is beyond what that word promises
+    """
+    out = []
+    asc = float(row.get("ascent_m") or 0)
+    desc = float(row.get("descent_m") or 0)
+    downhill = desc - asc >= DOWNHILL_MIN_M and desc >= DOWNHILL_RATIO * asc
+    parts = row.get("grade_parts") or {}
+    if downhill and not parts.get("stored_downhill"):
+        out.append("graded_downhill")
+    if row.get("difficulty") and row.get("grade") \
+            and row["difficulty"] != row["grade"]:
+        out.append("two_grades")
+    if (row.get("rg") or {}).get("sc"):
+        out.append("trailhead_abroad")
+    feats = (row.get("highlights") or {}).get("features") or []
+    if any(f.get("name") and not _latin(f["name"]) for f in feats):
+        out.append("non_latin_name")
+    reasons = (row.get("rating_parts") or {}).get("reasons") or []
+    if any(r.get("code") == "dayOut" for r in reasons) \
+            and max(asc, desc) > COMFORT_MAX_CLIMB_M:
+        out.append("comfortable_climb")
+    return out
+
+
+def display_rollup(conn, statuses, countries, sample=5):
+    """{code: {"n": .., "ids": [first few]}} over the policed rows."""
+    sql, params = DISPLAY_SQL, [list(statuses)]
+    if countries:
+        sql += " AND t.country = ANY(%s)"
+        params.append(list(countries))
+    with conn.cursor() as cur:
+        cur.execute(sql + " ORDER BY t.id", params)
+        cols = [d.name for d in cur.description]
+        rows = [dict(zip(cols, r)) for r in cur.fetchall()]
+    out = {}
+    for r in rows:
+        for code in display_bugs(r):
+            e = out.setdefault(code, {"n": 0, "ids": []})
+            e["n"] += 1
+            if len(e["ids"]) < sample:
+                e["ids"].append(r["id"])
+    return dict(sorted(out.items()))
 
 
 # ---------------------------------------------------------------------------
@@ -335,6 +423,8 @@ def main():
     moved = 0
     if regressed and not args.dry_run:
         moved = demote(conn, regressed, args.floor)
+    bugs = display_rollup(conn, statuses, countries)
+    conn.commit()
     conn.close()
 
     regressed_ids = {t["id"] for t in regressed}
@@ -362,6 +452,7 @@ def main():
         "countries": country_rollup(trips, now, regressed_ids, watch_ids),
         "regressions": [entry(t, args.floor) for t in regressed],
         "watch": [entry(t, args.floor) for t in watch],
+        "display_bugs": bugs,
     }
     write_report(report)
 
@@ -378,6 +469,9 @@ def main():
     if watch:
         print(f"{len(watch)} watch entries (down more than {args.max_drop:g} "
               "points since review, still published)")
+    if bugs:
+        print("display bugs (spec 6.8, counted only): " + ", ".join(
+            f"{code} {e['n']}" for code, e in bugs.items()))
     print(f"report -> {REPORT.relative_to(ROOT)}")
 
 

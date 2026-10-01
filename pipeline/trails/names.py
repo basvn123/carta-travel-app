@@ -214,12 +214,36 @@ def split_code(name):
     return s.strip(_TRAIL_PUNCT), code
 
 
-def source_name(tags, fallback=None):
-    """Rung 2: name:en, then a Latin-script name, then any name at all.
+# The languages a place is locally named in, for the countries where the
+# plain `name` tag is often in a script most readers of the app cannot read,
+# or where two local languages share the ground. Used only to choose between
+# Latin-script names: "Maja e Korabit" (name:sq) beats any other Latin
+# spelling of a peak on the Albanian side, because it is what the signpost
+# at the trailhead says. Every other country falls through to the first
+# Latin name the tags carry, which is what the title ladder always did.
+LOCAL_LANGS = {
+    "AL": ("sq",), "XK": ("sq", "sr-Latn", "sr"), "MK": ("sq", "mk"),
+    "ME": ("sr-Latn", "sq", "sr"), "RS": ("sr-Latn", "sr"),
+    "BA": ("bs", "hr", "sr-Latn"), "BG": ("bg",), "GR": ("el",),
+    "CY": ("el", "tr"), "UA": ("uk",), "MD": ("ro",), "TR": ("tr",),
+}
 
-    Reads the relation's own tags; `fallback` is the stored title for a row
-    whose tags carry no name (a derived route, whose title was composed from
-    its member ways and is the only name it has)."""
+# Keys that start with name: and are still never a display name.
+_NOT_A_NAME = ("name:etymology", "name:pronunciation", "name:signed")
+
+
+def display_name(tags, country=None):
+    """The name a reader should see, from an OSM tag dict (spec 6.8).
+
+    name:en first; then the plain `name` when it is Latin script; then the
+    local language's name when that is Latin (LOCAL_LANGS); then int_name and
+    any other Latin-script name:*; and only then whatever `name` holds, in any
+    script, because a Cyrillic name is still better than no name. A lake on
+    Mount Korab tagged with name (Macedonian Cyrillic), name:en and name:sq
+    reads in English, never in a script the walker cannot match against the
+    signpost.
+
+    Pure; None when the tags carry no name at all."""
     tags = tags or {}
     en = str(tags.get("name:en") or "").strip()
     if en:
@@ -227,13 +251,41 @@ def source_name(tags, fallback=None):
     plain = str(tags.get("name") or "").strip()
     if plain and is_latin(plain):
         return plain
+    for lang in LOCAL_LANGS.get(str(country or "").upper(), ()):
+        val = str(tags.get(f"name:{lang}") or "").strip()
+        if val and is_latin(val):
+            return val
+    val = str(tags.get("int_name") or "").strip()
+    if val and is_latin(val):
+        return val
     for key, val in tags.items():
-        if key.startswith("name:") and key != "name:etymology" \
+        if key.startswith("name:") and key not in _NOT_A_NAME \
                 and val and is_latin(val):
             return str(val).strip()
-    if plain:
-        return plain
-    return str(fallback or "").strip() or None
+    return plain or None
+
+
+def source_name(tags, fallback=None, country=None):
+    """Rung 2: name:en, then a Latin-script name, then any name at all.
+
+    The relation's own tags through display_name(), the same order a
+    highlight's name follows; `fallback` is the stored title for a row whose
+    tags carry no name (a derived route, whose title was composed from its
+    member ways and is the only name it has)."""
+    return display_name(tags, country) or str(fallback or "").strip() or None
+
+
+def feature_name(feature, country=None):
+    """A highlight's display name: display_name() over the feature's tags when
+    the harvest kept them, the stored `name` otherwise. scenic.py stores the
+    plain name tag only, so until it keeps the name:* keys this returns what
+    it always did; the order is decided here either way."""
+    f = feature or {}
+    tags = f.get("tags")
+    if isinstance(tags, dict) and tags:
+        return display_name(tags, country)
+    name = str(f.get("name") or "").strip()
+    return name or None
 
 
 def from_to_title(tags):
@@ -261,7 +313,7 @@ def landmark_title(features, route_type=None):
     for f in features or []:
         # A bilingual "Veliki Mojan / Maja e Mojanit" takes its first name,
         # and a code in brackets goes the same way it does for a title.
-        name = str(f.get("name") or "").split(" / ")[0].strip()
+        name = str(feature_name(f) or "").split(" / ")[0].strip()
         name, _code = split_code(name)
         if not name or is_code(name) or f.get("kind") not in LANDMARK_ORDER:
             continue

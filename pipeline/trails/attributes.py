@@ -220,9 +220,55 @@ def effort_grade(row):
     return "moderate"
 
 
+# ---------------------------------------------------------------------------
+# Which way is up (spec 6.8)
+# ---------------------------------------------------------------------------
+
+# A one-way route is stored in whatever direction its mapper drew it. Mount
+# Korab (9) runs summit to village, so its ascent_m is 7 m and its descent
+# 1,423 m, and every term below that read ascent_m graded it a stroll: effort
+# "easy", a "beginner" chip, 1 m of climb per km. Nobody walks it that way.
+#
+# The stored geometry is not reversed here. Reversing it would move every
+# along_m (highlights, photos, water points), break the md5 that ties a
+# trip_repairs row to its source line, and turn elevation's start and end
+# round, all for a fact this pass can state without touching any of them. So
+# the route is READ uphill: every grade and suitability term below sees the
+# climb a walker starting from the bottom would face, and grade_parts says
+# so (climb_m, stored_downhill) for the page to show both numbers.
+#
+# A net drop this large cannot be a loop or an out and back, which finish
+# where they started, so no route type is needed to decide it. The ratio
+# keeps a long undulating traverse that happens to lose height overall
+# (2,000 m up, 2,300 m down) reading in its own direction.
+DOWNHILL_MIN_M = 300.0
+DOWNHILL_RATIO = 2.0
+
+
+def uphill(row):
+    """{"climb_m", "drop_m", "stored_downhill"}: the route as walked uphill."""
+    asc = float(row.get("ascent_m") or 0)
+    desc = float(row.get("descent_m") or 0)
+    if desc - asc >= DOWNHILL_MIN_M and desc >= DOWNHILL_RATIO * asc:
+        return {"climb_m": desc, "drop_m": asc, "stored_downhill": True}
+    return {"climb_m": asc, "drop_m": desc, "stored_downhill": False}
+
+
+def oriented(row):
+    """The row with ascent and descent read uphill, for every term that
+    judges effort. The stored row is never changed."""
+    walk = uphill(row)
+    if not walk["stored_downhill"]:
+        return row
+    return {**row, "ascent_m": walk["climb_m"], "descent_m": walk["drop_m"]}
+
+
 def grade_of(row):
     """(grade, source, parts). source is 'tagged' when a mapper's grade
-    decided the terrain and 'derived' when the DEM did."""
+    decided the terrain and 'derived' when the DEM did.
+
+    Pass the oriented() row: a summit-to-village line graded on its stored
+    ascent is a stroll on paper and a 1,400 m climb on the ground."""
     wt = row.get("way_tags")
     from_tags, tag_parts = tagged_grade(wt)
     from_dem, dem_parts = dem_grade(row)
@@ -588,7 +634,7 @@ def title_of(row, route_type, passes):
 
 FETCH_SQL = """
     SELECT t.id, t.country, t.title, t.network, t.distance_m, t.ascent_m,
-           t.sac_scale, t.raw_tags, t.elevation, t.highlights, t.way_tags,
+           t.descent_m, t.sac_scale, t.raw_tags, t.elevation, t.highlights, t.way_tags,
            t.status::text AS status,
            ST_Y(ST_PointOnSurface(ST_Envelope(t.geom))) AS lat,
            port.passed AS portal_passed,
@@ -648,7 +694,16 @@ UPDATE_SQL = """
 # ---------------------------------------------------------------------------
 
 def derive(row, shape):
-    grade, grade_src, grade_parts = grade_of(row)
+    walk = uphill(row)
+    up = oriented(row)
+    grade, grade_src, grade_parts = grade_of(up)
+    if walk["stored_downhill"]:
+        # The page shows both numbers from these, and the regression watch
+        # (regression.py display_bugs) reads them to know this row was
+        # graded the right way up.
+        grade_parts["stored_downhill"] = True
+        grade_parts["climb_m"] = int(round(walk["climb_m"]))
+        grade_parts["drop_m"] = int(round(walk["drop_m"]))
     season = season_of(row)
     if shape:
         route_type, route_type_src, route_type_parts = route_type_of(shape)
@@ -674,7 +729,7 @@ def derive(row, shape):
         "route_type_src": route_type_src,
         "route_type_parts": Jsonb(route_type_parts) if route_type_parts else None,
         "highlight_kinds": highlight_codes(row) or None,
-        "suitability": Jsonb(suitability_of(row, grade, season)),
+        "suitability": Jsonb(suitability_of(up, grade, season)),
         "surface": Jsonb(surface_of(row)),
         "season": Jsonb(season) if season else None,
         "waymark_ref": ref or waymark_ref_of(row),
@@ -733,6 +788,8 @@ def main():
                     suits[f"{code} (derived)"] += 1
                 totals["tagged_grade" if rec["grade_src"] == "tagged"
                        else "derived_grade"] += 1
+                if rec["grade_parts"].obj.get("stored_downhill"):
+                    totals["read_uphill"] += 1
                 rungs[rec["title_rung"]] += 1
                 if rec["title"] != (row.get("title") or ""):
                     totals["retitled"] += 1
@@ -754,7 +811,8 @@ def main():
     print(f"{totals['rows']:,} route(s) in {(time.time() - t0) / 60:.1f} min")
     print(f"grade: {dict(grades)}")
     print(f"  {totals['tagged_grade']:,} from member way tags, "
-          f"{totals['derived_grade']:,} derived from the DEM")
+          f"{totals['derived_grade']:,} derived from the DEM, "
+          f"{totals['read_uphill']:,} stored downhill and graded uphill")
     print(f"route type: {dict(shapes)}")
     print(f"highlights: {dict(codes.most_common())}")
     print(f"suitability: {dict(suits.most_common())}")
