@@ -105,9 +105,12 @@ sys.path.insert(0, str(ROOT / "pipeline"))
 sys.path.insert(0, str(ROOT / "pipeline" / "regions"))
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-from famous_registry import REGISTRY, base_name, squash  # noqa: E402
+from famous_registry import (  # noqa: E402
+    DATA_ROOT, REGISTRY, base_name, squash)
 
-WIRE = ROOT / "continent-app" / "public" / "trails"
+# The wire is read from CARTA_DATA_ROOT when it is set (a sparse worktree has
+# no continent-app); the reports are written beside this code either way.
+WIRE = DATA_ROOT / "continent-app" / "public" / "trails"
 OUT_JSON = ROOT / "data" / "reports" / "trails_coverage.json"
 OUT_MD = ROOT / "data" / "reports" / "trails_coverage.md"
 # The full row dump, for local analysis. Deliberately NOT committed: it is
@@ -410,6 +413,9 @@ def by_region(reg_rows, pub_rows):
 
     try:
         import quotas
+        if DATA_ROOT != ROOT:
+            quotas.OPPORTUNITY = (DATA_ROOT / "cache" / "regions"
+                                  / "opportunity.json")
         have_quota = quotas.has_data()
     except Exception:
         quotas, have_quota = None, False

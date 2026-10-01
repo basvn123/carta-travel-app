@@ -68,6 +68,7 @@ ASCII clean, no em dashes, per project convention.
 import argparse
 import json
 import math
+import os
 import re
 import sys
 import time
@@ -85,7 +86,19 @@ import enrich_activities as ea  # noqa: E402  (pageviews_avg, PV window)
 import harvest_activities as ha  # noqa: E402  (sitelink_counts, WDQS cache)
 from ingest_osm_routes import COUNTRIES, cached_extract  # noqa: E402
 
+# Where the caches and inputs live. Defaults to the checkout this file sits
+# in, so run_pipeline.py sees no change. A sparse worktree holds the code and
+# none of the data; there CARTA_DATA_ROOT points the READS at the main
+# checkout while the registry is still written beside this code, the same
+# split coverage.py uses (T111). Run --offline with it set: a networked run
+# would write the caches, and those belong to the checkout they live in.
+DATA_ROOT = Path(os.environ.get("CARTA_DATA_ROOT") or ROOT).resolve()
+
 REGISTRY = ROOT / "data" / "trails" / "famous_registry.json"
+# The Waymarked Trails harvest (waymarked.py). Committed beside the registry:
+# it is the fifth evidence source, the pan-European list of what each
+# country's national and international hiking network says should exist.
+WAYMARKED = ROOT / "data" / "trails" / "waymarked_routes.json"
 # The full evidence dump, including the ~163,000 `place` candidates (a named
 # summit or lake with an article and no path). Local only: at 87 MB compact
 # it would add a nine-figure line count to the repo on every monthly run,
@@ -93,10 +106,10 @@ REGISTRY = ROOT / "data" / "trails" / "famous_registry.json"
 # diff. The committed file carries every `trail` row, which is what the
 # coverage gate acts on.
 REGISTRY_FULL = ROOT / "data" / "trails" / "famous_registry_full.json"
-OSM_FAME_CACHE = ROOT / "cache" / "trails_osm_fame.json"
-WD_CACHE = ROOT / "cache" / "trails_wikidata_famous.json"
-PV_CACHE = ROOT / "cache" / "trail_pageviews.json"
-PORTAL_DIR = ROOT / "data" / "reports" / "trails_portals"
+OSM_FAME_CACHE = DATA_ROOT / "cache" / "trails_osm_fame.json"
+WD_CACHE = DATA_ROOT / "cache" / "trails_wikidata_famous.json"
+PV_CACHE = DATA_ROOT / "cache" / "trail_pageviews.json"
+PORTAL_DIR = DATA_ROOT / "data" / "reports" / "trails_portals"
 
 # Same knobs popularity.py uses against the same pageviews API.
 PV_WORKERS = 8
@@ -915,6 +928,8 @@ def assign_regions(rows, verbose=False):
     if not rows:
         return
     import regionize as RZ
+    if DATA_ROOT != ROOT:
+        RZ.GPKG = DATA_ROOT / "cache" / "regions" / "regions.gpkg"
     try:
         spine = RZ.Spine()
     except FileNotFoundError as exc:
