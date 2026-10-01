@@ -20,9 +20,9 @@ report disagree, the report wins. Row ids in brackets join each step back to
 | 2 | You | 45 min | Admin panel, MFA, moderation, telemetry and the GDPR export live |
 | 3 | You | 45 min | Gemini compliant, AI cost caps proven, AI telemetry live |
 | 4 | Claude session B | one session | The pipeline safe to run unattended, R2 scripts ready |
-| 5 | You | an evening | R2 bucket, backups off the laptop, app data served from R2 |
+| 5 | You | an evening | R2 bucket, everything copied off the laptop, app data served from R2 |
 | 6 | You, then Claude session C | an hour | Off Vercel onto Cloudflare Pages, build artifacts untracked |
-| 7 | You | about 2 days, mostly waiting | The weekly pipeline on a Hetzner box, the laptop free |
+| 7 | You | about 2 days, mostly waiting | The weekly pipeline on a Hetzner box, about 70 GB freed on the laptop |
 | 8 | You | short sessions over 2 weeks | Self-hosted images, takedowns and credits proven live |
 | 9 | Claude session D and onward | whenever | All remaining code work, no manual steps |
 | 10 | You | 2 hours | Stripe, last, once the eenmanszaak exists |
@@ -46,8 +46,8 @@ Done 2026-10-01. C: has 16.8 GB free, the Visual Studio installer cache
 
 Docker is deliberately left alone. Its disk holds the trailslab, valhalla and
 brouter volumes, and Clean / Purge data would delete them, so T023's vhdx
-reclaim is dropped. Docker's disk only shrinks in stage 5.4, after those
-volumes are safely in R2.
+reclaim is dropped. Stage 7.11 says when it is safe to shrink, and it stays
+optional.
 
 ---
 
@@ -407,14 +407,6 @@ node scripts/r2/push-data.mjs --live --prune
    Rollback: remove `VITE_DATA_BASE` and redeploy; the app serves everything
    same-origin again.
 
-## 5.4 Clear the laptop
-
-Only after 5.2 and 5.3 pass their checks, and only after the 5.2 step 4
-trailslab dump has restored cleanly: the laptop clean-out with the T045
-report's rm command, then the trailslab volume and the Docker vhdx last
-(T045-e). This is about 11 GB more. Never use Docker's Clean / Purge data
-before then; it deletes every volume.
-
 ---
 
 # Stage 6. You, an hour, then Claude session C: off Vercel
@@ -597,6 +589,43 @@ sudo apt-get update && sudo apt-get install -y postgresql-client-17
 gpg --import carta-backups.pub.asc        # the public half from stage 5.2, copied over with scp
 nano ~/.config/carta/env                  # add SUPABASE_DB_URL and CARTA_BACKUP_KEY
 ```
+
+## 7.11 Clear the laptop, about 70 GB (T045-e)
+
+Only now, when the box runs the weekly pipeline and the laptop is no longer
+the system of record. Doing it earlier would leave the laptop's own weekly
+task with no inputs.
+
+First every check from the T045 report must print "0 differences found":
+
+```
+rclone check data/raw/geofabrik r2:carta/archive/inputs/geofabrik --one-way
+rclone check data/raw/dem       r2:carta/archive/inputs/dem       --one-way
+rclone check data/raw           r2:carta/archive/inputs/raw       --one-way --exclude "/geofabrik/**" --exclude "/dem/**"
+rclone check app_data/backups   r2:carta/archive/snapshots        --one-way
+rclone check "$CARTA_ARCHIVE_OUT" r2:carta/archive/caches         --one-way --include "*.tar.gz"
+rclone check app_data r2:carta/archive/master --one-way --include "/app_data.json"
+rclone ls r2:carta/archive/db/                                       # both dumps listed
+```
+
+Then, from the repo root:
+
+```
+rm -rf data/raw data/history data/models        cache/photos/emb cache/photos/dumps cache/photos/models cache/photos/sheets cache/photos/geograph.sqlite        cache/beaches cache/cycling cache/lakes cache/iab cache/regions cache/trails cache/mountains cache/trips        app_data/backups app_data/app_data.json        tools/trailslab/valhalla/data tools/brouter/segments data/trails/famous_registry_full.json        data/derived/tp_fares.json tools/reachability/cache logs pipeline/logs "$CARTA_ARCHIVE_OUT"
+git status --short        # must show no deletions: every path above is gitignored
+```
+
+Measured 2026-10-01: `data/raw` is 58 GB (Geofabrik 29 GB, elevation 24 GB),
+the caches about 10 GB, `app_data` 1 GB and the tool data about 2 GB. Any of
+it can be pulled back from R2 with `python pipeline/archive/push.py --pull`.
+
+Docker's disk (`docker_data.vhdx`, 28.5 GB measured 2026-10-01) is separate
+and optional. It holds the trailslab, valhalla and brouter volumes, which you
+still use. Only if you decide to stop running the trails lab locally: after
+the trailslab dump from stage 5.2 has restored once into a scratch database,
+`docker compose -f tools/trailslab/docker-compose.yml down -v`, then reclaim
+the vhdx in Docker Desktop. Never use Clean / Purge data while you want those
+volumes.
 
 ---
 
