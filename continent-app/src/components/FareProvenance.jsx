@@ -81,9 +81,14 @@ export function flightBreakdownProv(breakdown, routeRec = null) {
 
 /** Provenance for one direction of a round-trip fare pair ('into' or
  *  'out_of', the trip planner's flight object), falling back to flat fields
- *  when no per-direction bag is attached. */
+ *  when no per-direction bag is attached.
+ *
+ *  Always an estimate (T256, 2026-10-01): no fare source is live, so every
+ *  stored fare is a weeks-old observation and none of them is a quote any
+ *  more. The age line still shows when the record carries one. */
 export function flightProv(flight, dir) {
-  return fareProv(flight?.[`${dir}_prov`] || flight);
+  const prov = fareProv(flight?.[`${dir}_prov`] || flight);
+  return { o: null, x: null, s: null, ...prov, est: true };
 }
 
 /** "~" for an estimated figure, "" otherwise. Prepend to the formatted price

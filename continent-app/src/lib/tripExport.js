@@ -103,7 +103,7 @@ function tripPrintHtml({ label, stopDetails, dayPlan = [], flight, legs = [], an
 
   // 1. Getting there.
   if (flight?.combinable) {
-    rows.push(`<tr><td>Flight out: ${esc(flight.origin)} &rarr; ${esc(flight.into_anchor)}</td><td>${esc(eur(flight.into_fare_eur * groupSize))}</td></tr>`);
+    rows.push(`<tr><td>Flight out: ${esc(flight.origin)} &rarr; ${esc(flight.into_anchor)}</td><td>~${esc(eur(flight.into_fare_eur * groupSize))}</td></tr>`);
   } else if (flight?.own) {
     const when = flight.out_date ? `, ${esc(fmtLong(flight.out_date))}${flight.ret_date ? ` &rarr; ${esc(fmtLong(flight.ret_date))}` : ''}` : '';
     rows.push(`<tr><td>${esc(ownTravelWord(flight))}: booked yourself${when}</td><td>${flight.cost_total ? esc(eur(flight.cost_total)) : '&mdash;'}</td></tr>`);
@@ -139,7 +139,7 @@ function tripPrintHtml({ label, stopDetails, dayPlan = [], flight, legs = [], an
     rows.push(`<tr><td>Drive home from ${esc(last?.dest?.city)} (${driveLegs.home.road_km} km)</td><td>${esc(eur(driveLegs.home.ground_total))}</td></tr>`);
   }
   if (flight?.combinable) {
-    rows.push(`<tr><td>Flight home: ${esc(flight.out_anchor)} &rarr; ${esc(flight.origin)}</td><td>${esc(eur(flight.out_of_fare_eur * groupSize))}</td></tr>`);
+    rows.push(`<tr><td>Flight home: ${esc(flight.out_anchor)} &rarr; ${esc(flight.origin)}</td><td>~${esc(eur(flight.out_of_fare_eur * groupSize))}</td></tr>`);
   }
   // 4. Round-trip items for the whole journey.
   if (flight?.combinable && flight.bag_total > 0) rows.push(`<tr><td>Baggage: ${esc(baggageLabel(flight.baggage))} (out + home, ${groupSize} ${groupSize === 1 ? 'person' : 'people'})</td><td>${esc(eur(flight.bag_total))}</td></tr>`);
@@ -241,7 +241,7 @@ function tripPrintHtml({ label, stopDetails, dayPlan = [], flight, legs = [], an
 
   ${packHtml}
 
-  <p class="foot">Planned with Carta. Flight prices are stored budget-airline fares (Ryanair, Wizz Air, Vueling, Volotea); ground and stay costs are estimates.</p>
+  <p class="foot">Planned with Carta. Flight prices are estimates from budget-airline fares seen weeks ago, not live quotes, so check the airline before you book. Ground and stay costs are estimates too.</p>
 </body></html>`;
 }
 

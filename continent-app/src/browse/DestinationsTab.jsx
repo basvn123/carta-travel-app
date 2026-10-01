@@ -4,6 +4,7 @@ import { RatingBadge } from '../components/RatingBadge.jsx';
 import { CountryFlag } from '../components/CountryFlag.jsx';
 import { CountryPicker } from '../components/CountryPicker.jsx';
 import { count, eur } from '../lib/format.js';
+import { estPrefix, fareProv } from '../components/FareProvenance.jsx';
 import { needsCountry } from '../lib/favorites.js';
 import { HeroImage } from '../components/HeroImage.jsx';
 import { PlacesFilterSheet } from './PlacesFilterSheet.jsx';
@@ -509,8 +510,11 @@ const TripCard = React.memo(function TripCard({ card, km, onOpen, t }) {
             </span>
           )}
           {isCityDay && price && (
-            <span className="places-card-price">
-              {eur(price.pp)}
+            <span
+              className="places-card-price"
+              title={fareProv(price.prov)?.est ? t('prov.estTitle') : undefined}
+            >
+              {`${estPrefix(fareProv(price.prov))}${eur(price.pp)}`}
               <small>/pp</small>
             </span>
           )}
