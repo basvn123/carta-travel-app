@@ -94,7 +94,10 @@ EST_EVIDENCE = ROOT / "data" / "derived" / "tp_service_evidence.json"
 # service calendars the direct harvest already holds COMPLETELY. Only a quote
 # from an airline outside this set proves a route-month flies beyond what the
 # stored days show, which is what licenses an estimate band there.
-HARVESTED_FAMILY = {"FR", "RK", "RR", "W6", "W4", "W9", "VY", "V7"}
+# Empty since T255 (2026-10-01): no carrier is harvested any more, so no stored
+# calendar is complete and any carrier's quote is evidence. Put a family back
+# here when its harvest is switched back on.
+HARVESTED_FAMILY = set()
 
 CURRENCY = "EUR"
 SOURCE = "FR"                        # contract A source code for this harvester

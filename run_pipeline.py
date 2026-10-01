@@ -32,10 +32,11 @@ Each task declares its own refresh interval; the driver runs a task only when
 that interval has elapsed since its last success (state in logs/pipeline_state.json).
 So you schedule ONE weekly job and each layer self-selects how often it fires:
 
-  weekly    Travelpayouts cache staging (cheap API cache reads, feeds the merge)
-  weekly    fares (live Ryanair re-fetch, rolling window) + ship
-  weekly    fare snapshot archive -> drift check -> model retrain -> estimates
-  weekly    raw open-data mirror (src/ingestion: schedules, realtime, ADS-B)
+  weekly    raw open-data mirror (src/ingestion: schedules, realtime, ADS-B) + ship
+  manual    every fare task: Travelpayouts staging, the Ryanair, Wizz Air,
+            Vueling and Volotea harvests, the fare snapshot archive and the
+            fare model. No fare source is live (owner, 2026-10-01; T255), so
+            none of them is scheduled. Each still runs with --only <key>.
   monthly   fame (pageviews) -> designations -> beauty -> place -> rating;
             flight times for covered origins
   monthly   holiday calendars (demand catalysts for the estimation model)
@@ -1516,11 +1517,17 @@ def guard_dossier(ctx=None):
 #   dry_run(ctx)    optional read-only probe executed under --dry-run
 #   soft            failures are logged and retried next run, never block the ship
 #   note            printed reminder (e.g. "bump the YEAR first")
+# The fare tasks below are on the manual cadence (T255, 2026-10-01). There is no
+# live fare source: Wizz Air, Vueling, Volotea and Travelpayouts were retired on
+# 2026-09-27 and Ryanair followed. The shipped fares are frozen, so rebuilding
+# the history or retraining the model would only redo the same frozen data each
+# week. The code stays; `--only <key>` still runs any of them, and switching a
+# source back on is setting its cadence to "weekly" again.
 TASKS = [
     {
         "key": "tp_stage",
         "title": "Travelpayouts cache staging -> data/derived/tp_fares.json",
-        "cadence": "weekly",
+        "cadence": "manual",   # retired from the schedule, T255
         "writes_app_data": False,
         "soft": True,
         "cmds": [[PY, "-m", "src.ingestion.run_all", "--only", "travelpayouts"]],
@@ -1533,7 +1540,7 @@ TASKS = [
     {
         "key": "fares",
         "title": "Live Ryanair fares (rolling window) -> public/fares",
-        "cadence": "weekly",
+        "cadence": "manual",   # retired from the schedule, T255
         "writes_app_data": True,
         "run": fares_step,
         "note": "the LIVE fare system (harvest_all_origins); resumes an interrupted refresh.",
@@ -1541,7 +1548,7 @@ TASKS = [
     {
         "key": "wizz_fares",
         "title": "Live Wizz Air fares -> merged cheapest-wins into public/fares",
-        "cadence": "weekly",
+        "cadence": "manual",   # retired from the schedule, T255
         "writes_app_data": True,
         "run": wizz_step,
         "note": ("adds Wizz-only routes + undercuts Ryanair on shared ones; MUST run "
@@ -1551,7 +1558,7 @@ TASKS = [
     {
         "key": "vueling_fares",
         "title": "Live Vueling fares -> merged cheapest-wins into public/fares",
-        "cadence": "weekly",
+        "cadence": "manual",   # retired from the schedule, T255
         "writes_app_data": True,
         "run": vueling_step,
         "note": ("adds Vueling-only routes + undercuts Ryanair/Wizz; native EUR, a "
@@ -1561,7 +1568,7 @@ TASKS = [
     {
         "key": "volotea_fares",
         "title": "Live Volotea fares -> merged cheapest-wins into public/fares",
-        "cadence": "weekly",
+        "cadence": "manual",   # retired from the schedule, T255
         "writes_app_data": True,
         "run": volotea_step,
         "note": ("adds Volotea-only regional routes; native EUR via getminprice. "
@@ -1573,7 +1580,7 @@ TASKS = [
     {
         "key": "fare_history",
         "title": "Schema-gate + archive fare snapshot -> data/history",
-        "cadence": "weekly",
+        "cadence": "manual",   # retired from the schedule, T255
         "writes_app_data": False,
         "soft": True,
         "run": fare_history_step,
@@ -1584,7 +1591,7 @@ TASKS = [
     {
         "key": "fare_model",
         "title": "Fare estimation model: drift check -> retrain -> estimates",
-        "cadence": "weekly",
+        "cadence": "manual",   # retired from the schedule, T255
         "writes_app_data": True,
         "soft": True,
         "run": fare_model_step,
