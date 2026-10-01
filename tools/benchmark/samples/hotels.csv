@@ -1,0 +1,8 @@
+# Hand-sampled real hotel listings, one booking per row. Lines starting with # are ignored.
+# dest_id: the catalogue id (BRU, gem:vevey, ...). checkin: YYYY-MM-DD. nights: whole number.
+# occupancy: people the room price covers (2 for a double). total_eur: the all-in price
+# for the stay as the booking site showed it, taxes included. stars: 2, 3, 4 or 5.
+# source: the site and the date you looked (never paste a URL with a tracking token).
+# The suite scores a row against the engine's entire-place nightly for the same month;
+# T095 is the task that fills this file.
+dest_id,sampled_on,checkin,nights,occupancy,stars,property,total_eur,source
