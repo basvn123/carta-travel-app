@@ -36,38 +36,60 @@ login in sshd, turns on ufw with SSH only and turns on daily unattended
 security upgrades without automatic reboots. It then installs
 `/usr/local/sbin/carta-bootstrap` and runs it. That script is where the real
 work is, and it is kept on the box so it can be re-run: it installs pinned,
-checksum-verified releases of hcloud, rclone and Node 24, makes a shallow clone
-of the repository into `/home/carta/carta`, builds a Python 3.12 venv in
-`/home/carta/venv` from the repo-root `requirements.txt`, creates the secrets
-file `/home/carta/.config/carta/env` with mode 600, and enables the weekly
-timer. Each step checks its own state first, and a failed step does not stop
-the others, so after fixing a cause (a network problem, a missing branch) the
-fix is `sudo carta-bootstrap` rather than rebuilding the server.
+checksum-verified releases of hcloud, rclone and Node 24 and the PostgreSQL 17
+client from the PGDG repository (its signing key checked against the
+published fingerprint; Ubuntu 24.04's own pg_dump is 16, which refuses
+Supabase's Postgres 17), makes a shallow clone of the repository into
+`/home/carta/carta`, builds a Python 3.12 venv in `/home/carta/venv`, runs
+`npm ci` in `continent-app` for the weekly build, creates the secrets file
+`/home/carta/.config/carta/env` with mode 600, and enables the weekly timer.
+GNU `time` (for `verify_tasks.sh`) and `gnupg` (for the encrypted dumps) come
+from the package list. Each step checks its own state first, and a failed step
+does not stop the others, so after fixing a cause (a network problem, a
+missing branch) the fix is `sudo carta-bootstrap` rather than rebuilding the
+server. The script lives in `cloud-init.yaml`, so a box keeps the version it
+was provisioned with: a box made before T263 lacks the PGDG client and
+`npm ci`, and `Execution/_OPEN-MASTER.md` 7.10 has the hand commands.
 
-Two edits are made to `requirements.txt` on the way into the venv. The
-`anthropic` package is dropped, because CLAUDE.md forbids the Claude API and
-nothing on this box may call it. `pyyaml` is added, because
-`pipeline/archive/pack.py` and `push.py` import it and the requirements file
-does not list it. Wheels only (`--only-binary=:all:`): T046 resolved the whole
-set against Linux aarch64 wheels for CPython 3.12 and every package has one or
-is pure Python, so nothing compiles on the box.
+The venv is installed from the repo-root `requirements.txt` with `-c
+constraints.txt`, the laptop's pinned versions, and stamped with the hash
+`run_pipeline.sh` compares, so the first run does not re-sync it. The
+`anthropic` package is filtered out on the way in, because CLAUDE.md forbids
+the Claude API; `requirements.txt` no longer lists it, so the filter is a
+belt. Wheels only (`--only-binary=:all:`): T046 resolved the whole set against
+Linux aarch64 wheels for CPython 3.12 and every package has one or is pure
+Python, so nothing compiles on the box.
 
-`weekly.sh` is the job the timer runs, and today it is a placeholder. The
-systemd timer `carta-weekly.timer` fires every Monday at 09:00 Brussels time,
-the same slot the laptop's Windows Scheduled Task uses, and ten minutes after
-every boot so that the schedule can be proven without waiting for a Monday.
-The placeholder loads the secrets file through `load-env.sh` and writes one
-"cron fired" line to `/home/carta/logs/weekly.log`. `load-env.sh` exists
-because an exported empty string is not the same as a missing variable to
-Python; it exports the file and then unsets every blank, so an unfilled line
-means "not configured", as it does on the laptop.
+`weekly.sh` is the job the timer runs. It loads the secrets file through
+`load-env.sh`, writes one "cron fired" line to `/home/carta/logs/weekly.log`
+and, only when its service sets `CARTA_PIPELINE_ENABLED=1`, runs
+`run_pipeline.sh`: the venv re-sync, the R2 pull of the master, the fare
+history and the state file when missing, `run_pipeline.py` at the
+`CARTA_MAX_CADENCE` ceiling (weekly by default, T048-h), the encrypted dumps,
+the pushes, and, once `VITE_DATA_BASE` is set, the upload of the week's data to
+R2 (T262). `load-env.sh` exists because an exported empty string is not the
+same as a missing variable to Python; it exports the file and then unsets
+every blank, so an unfilled line means "not configured", as it does on the
+laptop.
+
+The units cloud-init writes are T046's, kept on purpose: `carta-weekly.timer`
+fires every Monday at 09:00 Brussels time and ten minutes after every boot, so
+the schedule can be proven without waiting for a Monday, but the service does
+not set `CARTA_PIPELINE_ENABLED`, so a fresh box only logs. The real units come
+from `cron/install.sh`, the last owner step: the service sets the variable and
+a 48 hour timeout, the timer drops the boot firing, and `carta-reboot.timer`
+adds a Sunday 04:00 reboot window for security updates. The window skips while
+the weekly service runs, while `logs/carta-run.lock` is held, while any
+`run_pipeline.py` lives, and while a CAX41 spawn is live (T047-l).
 
 `verify.sh` runs on the laptop after provisioning. It logs in as `carta` and
 prints PASS or FAIL for the architecture, the OS, cloud-init, Python and the
-venv (including that the anthropic SDK is absent), Node, hcloud, rclone, the
-clone, the timer, at least one "cron fired" line, the secrets file's mode, the
-sshd and ufw hardening, unattended upgrades and available memory. It exits 1 if
-anything failed.
+venv (including that the anthropic SDK is absent), Node, the app's
+node_modules, GNU time, a pg_dump of 17 or newer, hcloud, rclone, the clone,
+the timer, at least one "cron fired" line, the secrets file's mode, the sshd
+and ufw hardening, unattended upgrades and available memory, and says whether
+the venv is stamped for the current `constraints.txt`. It exits 1 if anything
+failed.
 
 ## IPv6-only, and why it probably cannot stay that way
 

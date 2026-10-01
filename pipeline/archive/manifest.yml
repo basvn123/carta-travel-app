@@ -296,6 +296,26 @@ classes:
     remote_object_count: 1
     notes: Pulled first on a fresh box; the pipeline reads and writes it every run.
 
+  # The orchestrator's memory: last_success per task key, plus the fare
+  # refresh ledger. Without it a rebuilt box treats every task as never run and
+  # starts them all at once (T048-k). One fixed key and no lifecycle rule, for
+  # the master's reason. It travels WITH the master: the box pushes it only
+  # after a run that succeeded, so R2 never holds a state that claims work the
+  # R2 master does not contain.
+  - name: pipeline-state
+    kind: snapshot
+    local_path: logs/pipeline_state.json
+    r2_key_pattern: "archive/state/pipeline_state.json"
+    treatment: files
+    lifecycle_days: null
+    local_size_mb: 0
+    local_object_count: 1
+    remote_object_count: 1
+    notes: >
+      Pulled only when the box has none. A full push from the laptop
+      uploads the laptop's copy, which is what a first box wants and what a
+      running box must not get, exactly as with master-current.
+
   # --- 4. Encrypted database dumps ---------------------------------------------
   # Dumped by the commands in the task report, encrypted with gpg to the
   # owner's public key, then pushed from dump_dir. The dump is never written
@@ -333,6 +353,25 @@ classes:
       user rows; R2's own at-rest encryption does not stop anyone holding an
       R2 token from reading it. Until now these went to a USB stick
       (T023 found them under D:\carta-backups).
+
+  # --- 5. Worker run staging ------------------------------------------------------
+  # Written in R2 by the on-demand CAX41 workers, never by pack.py or push.py:
+  # each run of infra/hetzner/cax41/spawn.sh leaves its status, logs and staged
+  # outputs under archive/runs/<run id>/ (a clip_sweep stages up to about
+  # 5 GB). spawn.sh promotes good outputs to their live prefix, after which the
+  # staging copy is dead weight. The entry exists for its lifecycle rule
+  # (T047-k); push and pull skip it. 14 days leaves two weeks to promote a run
+  # spawn.sh held back by hand (outcome ok-held-not-promoted) and to read a
+  # failed run's logs, which spawn.sh also fetches into logs/cax41/<run>.
+  - name: worker-runs
+    kind: run-staging
+    local_path: null
+    r2_key_pattern: "archive/runs/{run_id}"
+    treatment: remote-only
+    lifecycle_days: 14
+    local_size_mb: null
+    local_object_count: 0
+    remote_object_count: null
 
 # Gitignored paths deliberately left out, so the next reader knows they were
 # considered rather than forgotten. Each is rebuilt or re-fetched on the box.

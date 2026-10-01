@@ -353,7 +353,8 @@ node scripts/r2/verify.mjs              # both PASS with the expected Cache-Cont
 python pipeline/archive/push.py --lifecycle
 ```
 
-   It must list archive/snapshots/ at 60 days and archive/db/ at 30 days.
+   It must list archive/snapshots/ at 60 days, archive/db/ at 30 days and
+   archive/runs/ at 14 days (T262).
 3. Pack and push, onto a disk with about 11 GB free outside the repo, then
    every rclone check in the T045 report (T045-c):
 
@@ -482,7 +483,10 @@ nano ~/.config/carta/env
 A copy of `env.example`, mode 600. Copy the values from the laptop's repo-root
 `.env`, the five `RCLONE_CONFIG_R2_*` lines from stage 5, and
 `CARTA_SUPABASE_URL` and `CARTA_SUPABASE_SERVICE_KEY` from stage 2.
-`HCLOUD_TOKEN` stays blank until stage 8.
+`HCLOUD_TOKEN` stays blank until stage 8. Set
+`VITE_DATA_BASE=https://data.carta-europetravel.com/data` only once the
+stage 5 cutover is live: from then on every good weekly run uploads its data
+to R2 by itself (T262). Leave it blank before, or the build fails on the CSP.
 
 ## 7.4 Verify the box (T046-f)
 
@@ -497,9 +501,12 @@ It must print ALL CHECKS PASSED, including "placeholder job fired N time(s)".
 ## 7.5 Prepare the box (T048-a)
 
 ```
-sudo apt-get install -y time
 bash ~/carta/infra/hetzner/cax11/run_pipeline.sh --pull-only
 ```
+
+GNU time, the PostgreSQL 17 client and the app's node_modules come with the
+box since T263; `verify.sh` in 7.4 checks all three. Only a box provisioned
+before T263 needs `sudo apt-get install -y time` here.
 
 This pins the Python packages to the laptop's versions and pulls the master
 from R2. Run it twice; the second run must not warn "no
@@ -582,12 +589,18 @@ To go back: `/ENABLE` on the laptop and `install.sh --disable` on the box.
 ## 7.10 Weekly database dumps from the box (T048-g)
 
 ```
+pg_dump --version                         # 17 or newer; carta-bootstrap installs it (T263)
+gpg --import carta-backups.pub.asc        # the public half from stage 5.2, copied over with scp
+nano ~/.config/carta/env                  # add SUPABASE_DB_URL and CARTA_BACKUP_KEY
+```
+
+Only on a box provisioned before T263, install the client by hand first:
+
+```
 sudo install -d /usr/share/postgresql-common/pgdg
 sudo curl -fsSL -o /usr/share/postgresql-common/pgdg/apt.postgresql.org.asc https://www.postgresql.org/media/keys/ACCC4CF8.asc
 echo "deb [signed-by=/usr/share/postgresql-common/pgdg/apt.postgresql.org.asc] https://apt.postgresql.org/pub/repos/apt noble-pgdg main" | sudo tee /etc/apt/sources.list.d/pgdg.list
 sudo apt-get update && sudo apt-get install -y postgresql-client-17
-gpg --import carta-backups.pub.asc        # the public half from stage 5.2, copied over with scp
-nano ~/.config/carta/env                  # add SUPABASE_DB_URL and CARTA_BACKUP_KEY
 ```
 
 ## 7.11 Clear the laptop, about 70 GB (T045-e)

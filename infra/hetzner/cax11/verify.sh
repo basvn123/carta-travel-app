@@ -67,6 +67,20 @@ fi
 nv="$(node --version 2>/dev/null)"
 case "$nv" in v24.*) pass "node $nv (npm $(npm --version 2>/dev/null))" ;; *) fail "node missing or not v24 (${nv:-none})" ;; esac
 
+check "continent-app node_modules installed (npm ci)" test -d "$HOME/carta/continent-app/node_modules"
+if [ -x "$HOME/venv/bin/python" ] && [ -f "$HOME/carta/constraints.txt" ]; then
+  want="$(cd "$HOME/carta" && cat requirements.txt constraints.txt | sha256sum | cut -c1-16)"
+  [ "$want" = "$(cat "$HOME/venv/.carta-requirements" 2>/dev/null)" ] \
+    && pass "venv pinned to constraints.txt" \
+    || info "venv not stamped for the current constraints.txt; the next run_pipeline.sh re-syncs it"
+fi
+check "GNU time at /usr/bin/time (verify_tasks.sh peak memory)" test -x /usr/bin/time
+pgv="$(pg_dump --version 2>/dev/null)"
+case "$pgv" in
+  *" 1"[7-9].*|*" "[2-9][0-9].*) pass "$pgv (Supabase's Postgres 17 needs 17 or newer)" ;;
+  *) fail "pg_dump missing or older than 17 (${pgv:-none}); the weekly Supabase dump is skipped (run: sudo carta-bootstrap)" ;;
+esac
+
 hv="$(hcloud version 2>/dev/null)"
 [ -n "$hv" ] && pass "$hv" || fail "hcloud not installed"
 rv="$(rclone version 2>/dev/null | head -1)"
@@ -120,7 +134,7 @@ else fail "memory: only ${avail_mb} MB available of ${total_mb} MB (expected at 
 info "disk: $(df -h --output=avail,size / | tail -1 | awk '{print $1" free of "$2}') on /"
 
 if curl -4 -s -o /dev/null -m 10 https://github.com; then info "IPv4 egress: yes"; else info "IPv4 egress: no (IPv6-only; GitHub and several fare APIs unreachable)"; fi
-[ -f /var/run/reboot-required ] && info "a reboot is pending for security updates (the box never reboots itself)"
+[ -f /var/run/reboot-required ] && info "a reboot is pending for security updates (only the Sunday 04:00 window of cron/install.sh reboots the box)"
 
 echo
 if [ "$fails" -eq 0 ]; then echo "ALL CHECKS PASSED"; else echo "$fails CHECK(S) FAILED"; fi

@@ -1,10 +1,16 @@
 # Brief for Claude Cowork: run the intro rewrite and the parking web check
 
 You are finishing a piece of pipeline work in the Carta travel app repo.
-Two Python scripts are written and tested. They need an Anthropic API key
-with credit, they spend real money, and someone has to run them, judge the
-output, and merge the result. That someone is you. Bas, the owner, will be
-in the conversation and decides on every spend.
+Two Python scripts are written and tested. They call the Gemini API with the
+project's `GEMINI_API_KEY`, they spend real money, and someone has to run
+them, judge the output, and merge the result. That someone is you. Bas, the
+owner, will be in the conversation and decides on every spend.
+
+Since T264 Gemini is the scripts' only provider. Their Claude provider was
+removed because CLAUDE.md forbids the Claude API in this project, so no
+Anthropic key or package is needed or allowed. The euro figures in earlier
+versions of this brief were Claude prices; the steps below give none, and the
+scripts print real token and search counts as they go.
 
 Read this whole file before doing anything.
 
@@ -13,9 +19,9 @@ Read this whole file before doing anything.
 The destination page shows a short "what this place is" paragraph and a
 "where to park" section. Today the paragraph is composed by a template from
 our own data, and the parking rows come from OpenStreetMap volunteers, who
-are sometimes wrong. Script one asks Claude to rewrite every paragraph from
-the facts we hold (3,868 places). Script two asks Claude, with web search,
-what each city itself publishes about parking. Both write a cache file; a
+are sometimes wrong. Script one asks Gemini to rewrite every paragraph from
+the facts we hold (3,868 places). Script two asks Gemini, grounded on Google
+Search, what each city itself publishes about parking. Both write a cache file; a
 third script (already written) merges those caches into the files the app
 reads. You run a cheap pilot of each, show Bas the output, get his go-ahead,
 run the rest, merge, check, and report.
@@ -45,13 +51,12 @@ Run these and tell Bas the result before anything else:
 
 ```
 python --version
-pip show anthropic
 ```
 
-Expected: Python 3.11 and the `anthropic` package (0.121 or newer). The
-machine this was built on has both. If `python` is missing or the package
-is not installed, stop; this work needs the developer machine, and Bas will
-run the commands from the "If you cannot run things" section himself.
+Expected: Python 3.11. The scripts call Gemini over plain HTTPS and need no
+SDK. If `python` is missing, stop; this work needs the developer machine,
+and Bas will run the commands from the "If you cannot run things" section
+himself.
 
 Also check nothing else is writing to the same files: no other Python
 process should be running from this repo (on Windows, `Get-Process python`
@@ -62,7 +67,7 @@ in PowerShell lists them). Two writers on one cache file clobber each other.
 The key goes into the file `.env` in the repo root, on its own line:
 
 ```
-ANTHROPIC_API_KEY=sk-ant-...
+GEMINI_API_KEY=<the project's Gemini key>
 ```
 
 Rules:
@@ -78,7 +83,7 @@ Rules:
 
 The scripts read `.env` on their own through `pipeline/env_local.py`.
 
-## Step 2: intro pilot (about 20 cents)
+## Step 2: intro pilot
 
 ```
 python pipeline/dossier/rewrite_intros.py --tier 3 --limit 20
@@ -108,22 +113,24 @@ own.
 
 Wait for Bas to say the pilot is good before Step 3.
 
-## Step 3: intros, everything (roughly 15 to 25 euros)
+## Step 3: intros, everything
 
 ```
 python pipeline/dossier/rewrite_intros.py --all
 ```
 
-About 390 calls, 20 to 40 minutes. It prints progress every ten places
+About 390 calls, at least 6.5 seconds apart (the scripts' rate floor), so
+roughly 45 minutes or more. It prints progress every ten places
 with running token counts. Leave it running; do not start anything else
 that writes to `cache/`. If it stops halfway (network, rate limit, closed
 laptop), run the same command again: it skips places already done. Report
 the final `ok / guarded / missing` line to Bas.
 
-The default model is `claude-sonnet-5`. Only add `--model claude-opus-5` if
-Bas asks for it; it costs about two and a half times more.
+The scripts try `gemini-flash-latest`, then `gemini-3.5-flash`, then
+`gemini-3.5-flash-lite`, moving on when one fails. Only pin another with
+`--model` if Bas asks for it.
 
-## Step 4: parking pilot (about 1 euro)
+## Step 4: parking pilot
 
 ```
 python pipeline/dossier/parking_check.py --tier 2 --limit 15
@@ -148,7 +155,7 @@ fifteen, stop and tell Bas.
 
 Wait for Bas before Step 5.
 
-## Step 5: parking, wider (up to about 40 euros for everything)
+## Step 5: parking, wider
 
 Run in this order, one at a time, and stop wherever Bas says:
 
@@ -160,9 +167,10 @@ python pipeline/dossier/parking_check.py --all
 
 Tier 2 is the famous places (a few hundred), tier 1 the good ones, `--all`
 every city and town with parking data. Villages with no parking rows are
-skipped automatically. The script prints `searches` and tokens every five
-places; web search costs 10 US dollars per 1,000 searches on top of tokens,
-and each place uses one to four. Give Bas the running numbers when he asks.
+skipped automatically. The script prints `searches` (one per grounded
+request) and tokens every five places. Grounded requests are billed on top of
+tokens once the monthly free allowance is spent; register row T041-c has
+Google's published price. Give Bas the running numbers when he asks.
 Cities with two airport records (Rome has FCO and CIA) are checked once.
 
 ## Step 6: merge and check
@@ -221,7 +229,7 @@ decides when it goes in.
 
 ## If you cannot run things
 
-If Python or the package is missing in your environment, hand Bas this
+If Python is missing in your environment, hand Bas this
 block to run in a terminal from the repo root, in order, pausing after the
 two pilots to read the output:
 
