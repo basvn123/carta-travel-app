@@ -39,6 +39,28 @@ rejects anonymous callers anyway, but the gateway check is a free first wall.
 Per-user caps are rows in `public.plan_tiers` (migration 007), not env vars.
 The old `AI_USER_DAILY_CAP` secret is dead: no function reads it.
 
+## Tests: run them after touching the quota or pass layer
+
+Nothing runs these in CI (see CLAUDE.md), so a change to
+`_shared/passes.mjs`, to any Edge Function that imports `consume`, or to
+migrations 007, 021 or 044 is not covered until somebody runs, from
+`continent-app/`:
+
+```
+PGPASSWORD=<password> PGPORT=<port> npm run test:quota
+```
+
+That runs three scripts against a throwaway PostgreSQL database and then a
+source pattern check: `scripts/ai/test_global_cap.mjs` (the shared daily
+ceiling, T036), `scripts/ai/test_ai_quota.mjs` (grant only on ok, the refund
+that names its day, the plan and ground separation, the free epoch, T037 and
+T265) and `scripts/ai/test_passes.mjs` (grant_pass stacking and the horizon,
+the funnel join on the sale's reason, the margin fee basis, the OSS check,
+T265). Each one skips loudly and still exits 0 when no server is reachable,
+so an all-green run with "SKIPPED" in it proved nothing about the SQL. Any
+PostgreSQL 16 or later works; `initdb` into a scratch directory and
+`pg_ctl start -o "-p 55441"` is enough when Docker is not running.
+
 ## The model fallback chain
 
 Every model carries its OWN free daily request budget, so trying a second
