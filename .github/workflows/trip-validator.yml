@@ -1,0 +1,79 @@
+name: trip-validator
+
+# The mechanical trip validator (T084, trips enhancement spec K5) over the 253
+# journeys: the budget breakdown sums to the total, perDayEur is total over
+# days, itinerary places geocode inside the trip's country, every hero
+# resolves and is at least 1600px on the long edge, the accommodation strategy
+# is slept in, surface splits add to 100, and no "€x, €y" comma range
+# survives in the master or the shipped wire. It runs on every change that can
+# alter a trip: the dataset and its pipeline, the wire builder, the shipped
+# wire, and this file. ERRORs fail the job; warnings are reported only.
+#
+# The self-test step runs first and plants one defect per check in a copy of
+# a clean trip. If a check stops firing, that step fails, so a green
+# validation step can never mean "the check was broken".
+on:
+  push:
+    branches: [main]
+    paths:
+      - "Trips/carta-unified/carta-unified/**"
+      - "pipeline/journeys/**"
+      - "continent-app/public/journeys/**"
+      - ".github/workflows/trip-validator.yml"
+  pull_request:
+    paths:
+      - "Trips/carta-unified/carta-unified/**"
+      - "pipeline/journeys/**"
+      - "continent-app/public/journeys/**"
+      - ".github/workflows/trip-validator.yml"
+  workflow_dispatch:
+
+jobs:
+  validate-trips:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: Trips/carta-unified/carta-unified
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            Trips/carta-unified/carta-unified
+            continent-app/public/journeys
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      # The place check reads GeoNames cities500 (every place over 500
+      # people, CC BY 4.0), the same dump the catalogue pipeline caches
+      # locally. If the download fails the validator falls back to
+      # geonamescache (cities over 15k), which can only say where a name
+      # is not, and the place check is a warning either way.
+      - name: Gazetteer
+        continue-on-error: true
+        run: |
+          curl -fsSL --retry 3 https://download.geonames.org/export/dump/cities500.zip -o "$RUNNER_TEMP/cities500.zip"
+          unzip -o -q "$RUNNER_TEMP/cities500.zip" -d "$RUNNER_TEMP"
+      - run: pip install geonamescache
+      - name: Self-test (every check catches a seeded bad trip)
+        run: python pipeline/validate.py --self-test --check-urls --gazetteer "$RUNNER_TEMP/cities500.txt"
+      - name: Validate the 253 journeys
+        run: |
+          python pipeline/validate.py --check-urls \
+            --gazetteer "$RUNNER_TEMP/cities500.txt" \
+            --report "$RUNNER_TEMP/validation-report.md" \
+            --json "$RUNNER_TEMP/validation-issues.json"
+      - name: Summary
+        if: always()
+        run: |
+          if [ -f "$RUNNER_TEMP/validation-report.md" ]; then
+            sed -n '1,40p' "$RUNNER_TEMP/validation-report.md" >> "$GITHUB_STEP_SUMMARY"
+          fi
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: trip-validation-report
+          path: |
+            ${{ runner.temp }}/validation-report.md
+            ${{ runner.temp }}/validation-issues.json
+          if-no-files-found: ignore
