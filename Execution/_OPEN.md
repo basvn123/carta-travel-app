@@ -294,3 +294,10 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T107-a | T107 | The title ladder is code only; new titles reach the wire after attributes.py runs on trailslab, then export and wire build | next task | open | after run |
 | T107-b | T107 | Rung 1 (Wikidata label) never fires: no stored label column feeds title_ladder(wikidata_label=) | next task | open | |
 | T107-c | T107 | After-figures were measured on the wire without tags or anchors; re-read the rung mix from the "title rung" line of the first real attributes.py run | next task | open | after T107-a |
+| T108-a | T108 | TrailPage.jsx subtitle still prints the nearest catalogue town's country (1,308 rows name the wrong country); render it through trailStory.trailPlace(tr, detail, assoc.dest, countryName) | next task | open | |
+| T108-b | T108 | TrailPage.jsx calls trailReasons without the trip record, so the comfortable-day gate only fires where a bigClimb reason exists (about 477 rows still wrong); pass detail or tr as the fourth argument | next task | open | |
+| T108-c | T108 | scenic.py stores only the plain name tag, so 799 rows keep non-Latin highlight names; store names.display_name(tags, country) at harvest and re-run scenic | next task | open | |
+| T108-d | T108 | The card (DestinationsTab.jsx), the KML fact line, AroundHere.jsx and destinationPdf.js print a single stored ascent (+7 m on Korab 9); use trailStory.trailClimb().up or show both numbers | next task | open | |
+| T108-e | T108 | rate.py chooses bigClimb and dayOut from stored ascent and distance alone; read the uphill climb and apply the comfort gate at the source | next task | open | |
+| T108-f | T108 | export_wire.py ships validate.py's difficulty beside f.g (11,596 rows disagree) and AroundHere/destinationPdf read it; drop it or set it to the grade where a grade exists | next task | open | |
+| T108-g | T108 | The pipeline half (uphill grading, trailhead rg.s3/sc, display_bugs counts) reaches the wire only after regionize.py --refresh, attributes.py, export and wire build on trailslab | next task | open | after T107-a |
