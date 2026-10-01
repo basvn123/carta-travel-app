@@ -15,12 +15,20 @@
 #   2. runcmd: sshd picks up the hardening drop-in, ufw is enabled with SSH
 #      only, then /usr/local/sbin/carta-bootstrap runs
 #   3. carta-bootstrap installs the pinned hcloud, rclone and node releases
-#      (each checksum-verified), clones the repo, builds the venv, creates the
-#      env file and enables the weekly timer. It is idempotent: when a step
-#      fails (typically the GitHub clone on an IPv6-only box, see README.md),
-#      fix the cause and run `sudo carta-bootstrap` again.
+#      (each checksum-verified) and the PGDG PostgreSQL 17 client, clones the
+#      repo, builds the venv pinned to constraints.txt, installs the app's
+#      node_modules with npm ci, creates the env file and enables the weekly
+#      timer. It is idempotent: when a step fails (typically the GitHub clone
+#      on an IPv6-only box, see README.md), fix the cause and run
+#      `sudo carta-bootstrap` again.
 #
-# The weekly job is a placeholder until T048 ports run_pipeline's cadence.
+# The weekly units below are T046's, on purpose (T263). They fire weekly.sh,
+# which only logs "cron fired" because they do not set
+# CARTA_PIPELINE_ENABLED=1, so a new box never starts a pipeline run before
+# its secrets are filled and its tasks verified on arm64. The real units
+# (CARTA_PIPELINE_ENABLED=1, the 48 hour timeout, no boot run, the Sunday
+# reboot window) come from infra/hetzner/cron/install.sh, the last owner step
+# (Execution/_OPEN-MASTER.md 7.9).
 
 timezone: Europe/Brussels
 disable_root: true
@@ -54,6 +62,12 @@ packages:
   - cron
   - ufw
   - unattended-upgrades
+  # GNU time: verify_tasks.sh records each task's peak memory with
+  # /usr/bin/time -v, which bash's builtin cannot do (T048-a).
+  - time
+  # The dumps encrypt with gpg; present on Ubuntu's cloud image, listed so a
+  # minimal image cannot drop it silently.
+  - gnupg
 
 write_files:
   # sshd reads drop-ins in lexical order and keeps the first value it sees,
@@ -82,7 +96,8 @@ write_files:
   # Security updates install daily; the box never reboots itself, because a
   # reboot in the middle of a multi-hour fare harvest leaves a rolled window
   # with partial fares (the hazard run_pipeline.py's header describes).
-  # verify.sh reports when a reboot is pending. T048 decides the reboot window.
+  # verify.sh reports when a reboot is pending. The reboot window is
+  # carta-reboot.timer (Sunday 04:00), installed by infra/hetzner/cron/install.sh.
   - path: /etc/apt/apt.conf.d/52carta-unattended
     owner: root:root
     permissions: "0644"
@@ -109,6 +124,12 @@ write_files:
       # https://nodejs.org/dist/v24.21.0/SHASUMS256.txt
       NODE_VERSION="24.21.0"
       NODE_SHA256="6ad1325edbdb5649c379b75a237147a666c95d4f9ae8d340fef2d1575d289ad2"
+      # pg_dump must be 17 or newer for Supabase's Postgres 17, and Ubuntu
+      # 24.04 ships 16, so the client comes from the PGDG repository (T048-g).
+      # The signing key is checked against its published fingerprint.
+      # https://www.postgresql.org/download/linux/ubuntu/
+      PG_CLIENT_MAJOR="17"
+      PGDG_KEY_FPR="B97B0AFCAA1A47F044F244A07FCC7D46ACCC4CF8"
 
   - path: /usr/local/sbin/carta-bootstrap
     owner: root:root
@@ -158,6 +179,22 @@ write_files:
         local rc=$?; rm -rf "$t"; return $rc
       }
 
+      install_pg_client() {
+        if command -v pg_dump >/dev/null && pg_dump --version | grep -qE " ${PG_CLIENT_MAJOR}\."; then return 0; fi
+        local key=/usr/share/postgresql-common/pgdg/apt.postgresql.org.asc
+        install -d /usr/share/postgresql-common/pgdg
+        curl -fsSL --retry 3 --connect-timeout 20 -o "$key.new" https://www.postgresql.org/media/keys/ACCC4CF8.asc \
+          || { say "download failed: the PGDG signing key"; return 1; }
+        if ! gpg --show-keys --with-colons "$key.new" 2>/dev/null | grep -q "^fpr:::::::::${PGDG_KEY_FPR}:"; then
+          say "the PGDG signing key does not have fingerprint $PGDG_KEY_FPR; not trusting it"; rm -f "$key.new"; return 1
+        fi
+        mv "$key.new" "$key"
+        . /etc/os-release
+        echo "deb [signed-by=$key] https://apt.postgresql.org/pub/repos/apt ${VERSION_CODENAME}-pgdg main" \
+          > /etc/apt/sources.list.d/pgdg.list
+        apt-get update -qq && DEBIAN_FRONTEND=noninteractive apt-get install -y -qq "postgresql-client-${PG_CLIENT_MAJOR}"
+      }
+
       install_node() {
         if command -v node >/dev/null && [ "$(node --version 2>/dev/null)" = "v${NODE_VERSION}" ]; then return 0; fi
         local t; t=$(mktemp -d)
@@ -184,16 +221,27 @@ write_files:
         [ -f "$REPO/requirements.txt" ] || { say "no $REPO/requirements.txt (clone first)"; return 1; }
         [ -x "$VENV/bin/python" ] || as_carta python3.12 -m venv "$VENV" || return 1
         # requirements.txt at the repo root is the only requirements file in
-        # the repository. Two edits on the way in: the anthropic SDK is
-        # dropped, because CLAUDE.md forbids the Claude API and nothing on this
-        # box may call it; PyYAML is added, because pipeline/archive/pack.py
-        # and push.py import it and requirements.txt does not list it.
+        # the repository, and constraints.txt pins it to the laptop's versions
+        # (T046-h, T048-i). It lists PyYAML (pack.py and push.py) and no
+        # longer the anthropic SDK; the filter stays as a belt, because
+        # CLAUDE.md forbids the Claude API. The stamp is the one
+        # run_pipeline.sh compares, so the first run does not re-sync a venv
+        # that is already pinned.
         local req="$CARTA_HOME/.cache/carta-requirements.txt"
         as_carta mkdir -p "$CARTA_HOME/.cache"
         grep -vE '^[[:space:]]*anthropic' "$REPO/requirements.txt" | as_carta tee "$req" >/dev/null
-        echo "pyyaml>=6.0" | as_carta tee -a "$req" >/dev/null
         as_carta "$VENV/bin/python" -m pip install --upgrade pip >/dev/null &&
-        as_carta "$VENV/bin/python" -m pip install --only-binary=:all: -r "$req"
+        as_carta "$VENV/bin/python" -m pip install --only-binary=:all: -r "$req" -c "$REPO/constraints.txt" || return 1
+        (cd "$REPO" && cat requirements.txt constraints.txt | sha256sum | cut -c1-16) \
+          | as_carta tee "$VENV/.carta-requirements" >/dev/null
+      }
+
+      # The weekly ship step runs `npm run build` in continent-app; installing
+      # here means the first run does not spend its time on it (T048-i).
+      install_node_modules() {
+        [ -f "$REPO/continent-app/package-lock.json" ] || { say "no continent-app/package-lock.json (clone first)"; return 1; }
+        [ -d "$REPO/continent-app/node_modules" ] && return 0
+        as_carta bash -c "cd \"$REPO/continent-app\" && npm ci --no-audit --no-fund"
       }
 
       make_env_file() {
@@ -217,9 +265,11 @@ write_files:
       step "hcloud ${HCLOUD_VERSION}" install_hcloud
       step "rclone ${RCLONE_VERSION}" install_rclone
       step "node ${NODE_VERSION}" install_node
+      step "postgresql-client-${PG_CLIENT_MAJOR} (PGDG)" install_pg_client
       step "log directory" make_dirs
       step "clone ${CARTA_REPO_URL}@${CARTA_REPO_BRANCH}" clone_repo
-      step "python venv and requirements" build_venv
+      step "python venv pinned to constraints.txt" build_venv
+      step "continent-app node_modules (npm ci)" install_node_modules
       step "env file ${ENV_FILE}" make_env_file
       step "weekly timer" enable_timer
 
@@ -230,14 +280,14 @@ write_files:
       fi
       say "finished, all steps ok"
 
-  # Placeholder weekly job. T048 replaces the script it runs with the ported
-  # run_pipeline cadence; the unit and the timer stay.
+  # T046's weekly units, kept on purpose (see the header): weekly.sh only logs
+  # until infra/hetzner/cron/install.sh replaces both files.
   - path: /etc/systemd/system/carta-weekly.service
     owner: root:root
     permissions: "0644"
     content: |
       [Unit]
-      Description=Carta weekly pipeline job (placeholder until T048)
+      Description=Carta weekly pipeline job (logs only until cron/install.sh)
       Wants=network-online.target
       After=network-online.target
 
@@ -253,8 +303,8 @@ write_files:
   # TravelAppFareRefresh uses today. OnBootSec fires it once ten minutes
   # after every boot, which is how verify.sh can prove the timer works
   # without waiting for a Monday. Persistent catches up a Monday missed
-  # while the box was off. run_pipeline.py only runs what is due, so a boot
-  # run is cheap; T048 may still drop OnBootSec.
+  # while the box was off. These units never run the pipeline, so a boot
+  # firing costs nothing; install.sh's units drop OnBootSec.
   - path: /etc/systemd/system/carta-weekly.timer
     owner: root:root
     permissions: "0644"

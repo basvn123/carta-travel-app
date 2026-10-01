@@ -501,9 +501,12 @@ It must print ALL CHECKS PASSED, including "placeholder job fired N time(s)".
 ## 7.5 Prepare the box (T048-a)
 
 ```
-sudo apt-get install -y time
 bash ~/carta/infra/hetzner/cax11/run_pipeline.sh --pull-only
 ```
+
+GNU time, the PostgreSQL 17 client and the app's node_modules come with the
+box since T263; `verify.sh` in 7.4 checks all three. Only a box provisioned
+before T263 needs `sudo apt-get install -y time` here.
 
 This pins the Python packages to the laptop's versions and pulls the master
 from R2. Run it twice; the second run must not warn "no
@@ -586,12 +589,18 @@ To go back: `/ENABLE` on the laptop and `install.sh --disable` on the box.
 ## 7.10 Weekly database dumps from the box (T048-g)
 
 ```
+pg_dump --version                         # 17 or newer; carta-bootstrap installs it (T263)
+gpg --import carta-backups.pub.asc        # the public half from stage 5.2, copied over with scp
+nano ~/.config/carta/env                  # add SUPABASE_DB_URL and CARTA_BACKUP_KEY
+```
+
+Only on a box provisioned before T263, install the client by hand first:
+
+```
 sudo install -d /usr/share/postgresql-common/pgdg
 sudo curl -fsSL -o /usr/share/postgresql-common/pgdg/apt.postgresql.org.asc https://www.postgresql.org/media/keys/ACCC4CF8.asc
 echo "deb [signed-by=/usr/share/postgresql-common/pgdg/apt.postgresql.org.asc] https://apt.postgresql.org/pub/repos/apt noble-pgdg main" | sudo tee /etc/apt/sources.list.d/pgdg.list
 sudo apt-get update && sudo apt-get install -y postgresql-client-17
-gpg --import carta-backups.pub.asc        # the public half from stage 5.2, copied over with scp
-nano ~/.config/carta/env                  # add SUPABASE_DB_URL and CARTA_BACKUP_KEY
 ```
 
 ## 7.11 Clear the laptop, about 70 GB (T045-e)
