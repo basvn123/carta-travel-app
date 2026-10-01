@@ -6,10 +6,10 @@ This document establishes the conventions for executing the Carta Explore rebuil
 
 Tasks are numbered `T001`, `T002`, etc., scoped to phase folders `P0` through `P15`.
 
-- `P0` — Execution setup and foundational rules (this task)
-- `P1–P7` — Phase A: Rating model v4 (seven steps)
-- `P8–P12` — Phase B: Coverage and findability (five steps)
-- `P13–P15` — Phase C opening: Explore page (three of nine steps)
+- `P0`: Execution setup and foundational rules (this task)
+- `P1` to `P7`: Phase A: Rating model v4 (seven steps)
+- `P8` to `P12`: Phase B: Coverage and findability (five steps)
+- `P13` to `P15`: Phase C opening: Explore page (three of nine steps)
 
 Each task has its own branch, its own report, and a clear entry point in the prompt. The phase prefix lets reports be scanned by workstream, and the number makes each report revertible and findable.
 
@@ -35,11 +35,17 @@ Rules for the register:
 - When a batch of tasks produces an ordered procedure for the user (as T030 to T034 did for the Stripe launch), the procedure lives in a sibling file named `Execution/P{n}/_OPEN-{slug}.md` and the register rows link to it, so the order is written once.
 - Before starting a task, read the `open` rows owned by `next task` and take the ones the prompt covers. A row left open with no task claiming it is a gap in `_ORDER.md`, not something to do quietly.
 
+## Read PRODUCT.md and DESIGN.md first
+
+Two files at the repo root are the durable context every session reads before touching anything a traveller sees. `PRODUCT.md` states who Carta is for, what they are doing when they use it, the brand voice and the accessibility constraints. `DESIGN.md` records the locked design tokens, copied exactly from the `:root` of `continent-app/src/styles.css`, with the one job each token has. Read them at the start of any task that touches a screen, a string, a colour, a font or a spacing, so the design is executed from written values rather than guessed each session.
+
+`styles.css` is the source of truth for the tokens and `DESIGN.md` is its record. A task that changes a token in `:root` updates `DESIGN.md` in the same commit. A task that finds the two disagreeing fixes `DESIGN.md`, never the stylesheet, unless the prompt says otherwise.
+
 ## Carta-design wins over every other design source
 
 The [carta-design skill](https://github.com/anthropics/claude-code/skills/carta-design) documents Carta's visual language: the colour palette, typography, layout, components, copy rules, and the ten things never to do.
 
-When a design question arises and another source (a layout sketch, a browser screenshot, a wireframe) gives a different answer, carta-design wins. If carta-design does not explicitly cover a case, the question belongs in the next phase or a separate task — do not make a design call without a written rule.
+When a design question arises and another source (a layout sketch, a browser screenshot, a wireframe) gives a different answer, carta-design wins. If carta-design does not explicitly cover a case, the question belongs in the next phase or a separate task: do not make a design call without a written rule.
 
 Before shipping any visual change, answer the seven questions at the end of the carta-design brief.
 
@@ -87,7 +93,7 @@ The production baseline for this work is tagged `prod-2026-09` at commit `8b53ba
 
 Every prompt that implies a number must include a before/after measurement in the report. "Before" is the state at the start of the task. "After" is the state when the task finishes. Only include metrics the task promises to move.
 
-If a task is pure code cleanup or infrastructure, there may be no measurements — that is fine. Write "Not measured" and move on.
+If a task is pure code cleanup or infrastructure, there may be no measurements, and that is fine. Write "Not measured" and move on.
 
 ## Rollback is always possible
 
