@@ -1,0 +1,87 @@
+name: rls-policies
+
+# One traveller cannot read or change another traveller's rows.
+#
+# admin-rpc-security proves the admin_* functions refuse a normal user. This
+# job is the other half: the row level security on the tables the client
+# reads and writes directly through PostgREST (trip_plans, day_plans,
+# friendships and the rest). The script applies every migration in
+# supabase/migrations in numeric order, discovers the tables and policies
+# from the catalogue, and then, as a second signed-in user and as a signed-out
+# visitor, tries to read, change, delete and forge the first user's rows.
+#
+# A new table cannot slip past it: a table with policies and no fixture in the
+# script fails the run, and so does a table with row level security off or a
+# write policy that is plain `true`. That is why the job applies the whole
+# stack rather than the migration a pull request touches.
+#
+# Paths: any migration can change a policy, and the script and this workflow
+# are obviously in scope. The app is not: the policies are a database
+# property.
+on:
+  push:
+    branches: [main]
+    paths:
+      - "supabase/migrations/**"
+      - "continent-app/scripts/admin/test_rls_policies.mjs"
+      - ".github/workflows/rls-policies.yml"
+  pull_request:
+    paths:
+      - "supabase/migrations/**"
+      - "continent-app/scripts/admin/test_rls_policies.mjs"
+      - ".github/workflows/rls-policies.yml"
+
+jobs:
+  rls-policies:
+    runs-on: ubuntu-latest
+
+    # PostgreSQL 18, as in admin-rpc-security and the local runs. trust auth,
+    # so the script connects with no password, exactly as it does against a
+    # local throwaway cluster.
+    services:
+      postgres:
+        image: postgres:18
+        env:
+          POSTGRES_HOST_AUTH_METHOD: trust
+          POSTGRES_USER: postgres
+        ports:
+          - 55436:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 20
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      # The service container ships the server but not the client. The script
+      # shells out to psql, so the client package has to be present.
+      - name: Install the PostgreSQL client
+        run: sudo apt-get update && sudo apt-get install -y postgresql-client
+
+      # The script SKIPS and exits 0 when it cannot reach a database, which is
+      # right for a developer laptop and wrong for CI: a silent skip here would
+      # read as a passing security gate. So the connection is proven first and
+      # the run is failed on the word SKIPPED.
+      - name: Prove the database is reachable before trusting the result
+        env:
+          PGPASSWORD: ""
+        run: psql -h 127.0.0.1 -p 55436 -U postgres -d postgres -w -At -c 'select version()'
+
+      - name: The row policies keep one traveller out of another's rows
+        env:
+          PGHOST: 127.0.0.1
+          PGPORT: "55436"
+          PGUSER: postgres
+        run: |
+          set -o pipefail
+          node continent-app/scripts/admin/test_rls_policies.mjs 2>&1 | tee rls-policies.log
+          if grep -q 'SKIPPED' rls-policies.log; then
+            echo "::error::The suite skipped instead of running. A skip is not a pass for a security gate."
+            exit 1
+          fi
