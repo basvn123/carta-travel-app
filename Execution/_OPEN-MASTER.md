@@ -22,7 +22,7 @@ report disagree, the report wins. Row ids in brackets join each step back to
 | 4 | Claude session B | one session | The pipeline safe to run unattended, R2 scripts ready |
 | 5 | You | an evening | R2 bucket, backups off the laptop, app data served from R2 |
 | 6 | You, then Claude session C | an hour | Off Vercel onto Cloudflare Pages, build artifacts untracked |
-| 7 | You | about 3 days, mostly waiting | The pipeline on a Hetzner box, fares refreshing again |
+| 7 | You | about 2 days, mostly waiting | The weekly pipeline on a Hetzner box, the laptop free |
 | 8 | You | short sessions over 2 weeks | Self-hosted images, takedowns and credits proven live |
 | 9 | Claude session D and onward | whenever | All remaining code work, no manual steps |
 | 10 | You | 2 hours | Stripe, last, once the eenmanszaak exists |
@@ -61,22 +61,29 @@ You do nothing here except say yes to the push at the end.
 2. The admin page's MFA flow: TOTP enrolment and an aal2 step-up before
    delete and ban, and the `mfa_required` sentence in `useErrText.js`
    (T063-a). You need it in stage 2, before migration 032.
-3. Retire the four dead fare tasks. Ryanair is the only live fare source
-   since 2026-09-27, so remove `wizz_fares`, `vueling_fares`, `volotea_fares`
-   and `tp_stage` (Travelpayouts) from `run_pipeline.py` and from
-   `infra/hetzner/cax11/weekly_tasks.txt`, and shrink `HARVESTED_FAMILY` in
-   `pipeline/harvest_all_origins.py` to the Ryanair family (T046-l, T058-b).
-   The box verification in stage 7 drops from twelve steps to eight and
-   about five hours shorter.
-4. `continent-app/scripts/r2/provision.sh`: add `--remote` to
+3. Retire every fare harvest. There is no live fare source any more:
+   Ryanair goes the way of Wizz Air, Vueling, Volotea and Travelpayouts. Remove
+   `fares`, `fares_targeted`, `wizz_fares`, `vueling_fares`, `volotea_fares`
+   and `tp_stage` from the weekly schedule in `run_pipeline.py` and from
+   `infra/hetzner/cax11/weekly_tasks.txt`, and empty `HARVESTED_FAMILY` in
+   `pipeline/harvest_all_origins.py` and `src/ingestion/pricing/travelpayouts.py`
+   (T046-l, T058-b). `fare_history` and `fare_model` leave the weekly
+   schedule too: with no new fares they would re-append and retrain on the
+   same frozen data every week. The scripts and the fare model stay in the
+   repository, so a source can be switched back on later.
+4. The fares already in the app are frozen, and they are 46 to 54 days old
+   and getting older (T048-m). Show every flight price as an estimate, never
+   as a quote, using the estimate styling Explore already has (T058-e). This
+   is the one user-facing change in this session.
+5. `continent-app/scripts/r2/provision.sh`: add `--remote` to
    `wrangler r2 object put`, or its markers land in local Miniflare and the
    R2 verify in stage 5 fails (T045-f).
-5. `continent-app/src/i18n/en.js`: remove the duplicate `admin.colAction` key
+6. `continent-app/src/i18n/en.js`: remove the duplicate `admin.colAction` key
    that fails eslint (T074-f).
-6. Git housekeeping, T252: a mirror backup, then `git reflog expire
+7. Git housekeeping, T252: a mirror backup, then `git reflog expire
    --expire=now --all`, `git gc --prune=now --aggressive` and `git lfs
    prune`. About 901 MB back, no commit hash changes, no force-push.
-7. The merge. About sixty task branches (p0 to p4) are unmerged and
+8. The merge. About sixty task branches (p0 to p4) are unmerged and
    `origin/main` is still `8b53babed`. Merge them all into `main` in stack
    order, in both repositories (the root and `continent-app/` are separate
    git trees), and confirm `npm run build` passes. This one merge closes
@@ -85,7 +92,7 @@ You do nothing here except say yes to the push at the end.
    (T074-a). The Stripe code merges too; it does nothing until stage 10 gives
    it secrets. Commit `4b2d8e19f` carries eight tasks' work under a T057
    message; it stays as a recorded attribution defect (T062-a).
-8. Claude stops and asks before `git push`. Say yes.
+9. Claude stops and asks before `git push`. Say yes.
 
 Done when: `origin/main` contains `infra/hetzner/` and the T077 test file, and
 a Vercel Preview of `main` exists.
@@ -503,10 +510,10 @@ bash ~/carta/infra/hetzner/cax11/run_pipeline.sh --pull-only
 ```
 
 This pins the Python packages to the laptop's versions and pulls the master
-and fare history from R2. Run it twice; the second run must not warn "no
+from R2. Run it twice; the second run must not warn "no
 app_data/app_data.json".
 
-## 7.6 Verify the eight weekly steps, one at a time (T048-b)
+## 7.6 Verify the four weekly steps, one at a time (T048-b)
 
 ```
 bash ~/carta/infra/hetzner/cax11/verify_tasks.sh --next
@@ -514,13 +521,14 @@ bash ~/carta/infra/hetzner/cax11/verify_tasks.sh <step>
 bash ~/carta/infra/hetzner/cax11/verify_tasks.sh --status
 ```
 
-The eight steps, in order: `fare_history`, `country_context`, `fare_model`,
-`image_audit`, `ingestion`, `fares_targeted`, `fares`, `ship`. Each runs a dry
-run and then the real run. Run the long one, `fares` (about a day), in the
-background:
+With every fare task retired in stage 1, four steps remain, in order:
+`country_context`, `image_audit`, `ingestion`, `ship`. Each runs a dry run and
+then the real run. `ingestion` writes the raw open-data mirror (5.3 GB on the
+laptop against the box's 40 GB disk), so run it in the background and watch
+`df -h`:
 
 ```
-nohup bash ~/carta/infra/hetzner/cax11/verify_tasks.sh fares > ~/verify_fares.out 2>&1 &
+nohup bash ~/carta/infra/hetzner/cax11/verify_tasks.sh ingestion > ~/verify_ingestion.out 2>&1 &
 ```
 
 If a step fails, stop there and hand `~/carta/logs/arm64_verify/<step>.log` to
@@ -529,13 +537,13 @@ a Claude session. Do not edit on the box.
 ## 7.7 First full weekly run (T048-c, closes T046-g)
 
 ```
-CARTA_PIPELINE_ENABLED=1 nohup bash ~/carta/infra/hetzner/cax11/weekly.sh -- --only fares,fare_history,fare_model,ingestion,country_context,image_audit > ~/first_run.out 2>&1 &
+CARTA_PIPELINE_ENABLED=1 nohup bash ~/carta/infra/hetzner/cax11/weekly.sh -- --only ingestion,country_context,image_audit > ~/first_run.out 2>&1 &
 ```
 
-About 25 hours. It must end exit 0 in `~/logs/weekly.log` (exit 3 means the
-pipeline was fine and an R2 step failed). Fares have not refreshed since
-2026-07-23 and every shipped slice is 46 to 54 days old (T048-m); this run is
-what fixes that.
+A few hours now that the 25-hour fare refresh is gone. It must end exit 0 in
+`~/logs/weekly.log` (exit 3 means the pipeline was fine and an R2 step
+failed). Fares are not refreshed by this or any run; the app shows them as
+estimates from stage 1 on.
 
 ## 7.8 Compare with a laptop build (T048-d)
 
@@ -554,9 +562,9 @@ scp -i ~/.ssh/carta_orchestrator_ed25519 carta@<address>:box_wire.json .
 python infra/hetzner/cax11/compare_wire.py compare laptop_wire.json box_wire.json
 ```
 
-It must print SAME SHAPE. A difference in the file set under `fares/` can be
-real (one origin priced on one machine that week); any key, type or schema
-difference is a bug for Claude.
+It must print SAME SHAPE. With no fare harvest the `fares/` files are frozen,
+so they must match exactly; any key, type, file-set or schema difference is a
+bug for Claude.
 
 ## 7.9 Switch the schedule, same day (T048-e, T048-f)
 
@@ -782,7 +790,7 @@ audits: the 3,983 wire images with no cache behind them, non-image files kept
 out of the transcoder, and a few thousand names probed for 404s before big
 runs (T007, T008).
 
-**D6. Fares and the rest.**
+**D6. Frozen fares and the rest.**
 The planner's flight row uses the same three steps as Explore (T058-a), the
 flight-cost contract written into `docs/SCHEMA.md` (T058-c), the dead expiry
 slot (T058-d), unused fare exports removed (T056-c). The grounding design work
@@ -792,8 +800,10 @@ for P9 (T041-c, T041-d, T041-e, T041-f) and the prompt-size question (T040-c).
 contract gate checks the split wires (T029); the smoke test's five-second
 waits (T029). The queue gate that catches work left in `continent-app/`
 (T062-b), and `ContentSection.jsx` moved into `components/admin/` (T062-e).
-The T027 stale comments and unused CSS. `practical_layer.py` and
-`harvest_ryanair_schedules.py` have no consumer: wire or archive (T028).
+The T027 stale comments and unused CSS. `practical_layer.py` has no
+consumer: wire or archive it (T028). `harvest_ryanair_schedules.py` and the
+retired carrier harvesters move to the archive tier, since no fare source is
+live.
 
 ---
 
@@ -867,7 +877,6 @@ line to a Claude session.
 
 | Row | Question | Recommendation |
 |---|---|---|
-| T058-e | Show a fare day older than N days as a quote or as an estimate? | Estimate styling after 14 days; moot once stage 7 refreshes weekly |
 | T056-a | Keep the Travelpayouts Drive script in `index.html`? | Remove it; Travelpayouts is retired and it makes 8 vendor requests a page load |
 | T059-a | Build production with the viewport catalogue? | Not yet; carta-design has no rule for the partial-list state |
 | T041-a | Live-grounding allowance on the passes | 10 Trip, 30 Year, decided before stage 10 because the offer prints it |
