@@ -15,7 +15,7 @@ report disagree, the report wins. Row ids in brackets join each step back to
 
 | Stage | Who | Time | What it gets you |
 |---|---|---|---|
-| 0 | You | 15 min | About 20 GB back on C:, the master snapshot off the laptop |
+| 0 | You | done | 16.8 GB free on C:, the master snapshot off the laptop |
 | 1 | Claude session A | one session | The blockers fixed and all task branches merged into main |
 | 2 | You | 45 min | Admin panel, MFA, moderation, telemetry and the GDPR export live |
 | 3 | You | 45 min | Gemini compliant, AI cost caps proven, AI telemetry live |
@@ -40,21 +40,14 @@ Vercel Preview; promote it by hand.
 
 # Stage 0. You, 15 minutes, on the laptop
 
-C: has under 2 GB free, which already broke a production build (T020). All
-three steps are free and touch nothing in the repository.
+Done 2026-10-01. C: has 16.8 GB free, the Visual Studio installer cache
+(T020) was already gone, and the master snapshot is on `D:\carta-backups\`
+(T005).
 
-1. Open Docker Desktop, Settings, Troubleshoot, Clean / Purge data. Newer
-   versions put a disk-usage control under Settings, Resources instead.
-   `docker_data.vhdx` is 19.11 GB and the command-line route (diskpart) does
-   not work on this machine (T023).
-2. Look in `%TEMP%` for the Visual Studio installer cache (about 4.7 GB,
-   found in T020 as `%TEMP%\objaq3r4`). Delete it if it is still there and
-   nothing is installing.
-3. Copy `$TEMP/carta-master-snapshot/` (419 MB, five master files and a
-   manifest) to `D:\carta-backups\` and note the date. A folder in Temp on the
-   same disk is not a backup (T005).
-
-Done when: C: shows well over 10 GB free and the snapshot is on the USB.
+Docker is deliberately left alone. Its disk holds the trailslab, valhalla and
+brouter volumes, and Clean / Purge data would delete them, so T023's vhdx
+reclaim is dropped. Docker's disk only shrinks in stage 5.4, after those
+volumes are safely in R2.
 
 ---
 
@@ -409,9 +402,11 @@ node scripts/r2/push-data.mjs --live --prune
 
 ## 5.4 Clear the laptop
 
-Only after 5.2 and 5.3 pass their checks: the laptop clean-out with the T045
+Only after 5.2 and 5.3 pass their checks, and only after the 5.2 step 4
+trailslab dump has restored cleanly: the laptop clean-out with the T045
 report's rm command, then the trailslab volume and the Docker vhdx last
-(T045-e). This is about 11 GB more.
+(T045-e). This is about 11 GB more. Never use Docker's Clean / Purge data
+before then; it deletes every volume.
 
 ---
 
