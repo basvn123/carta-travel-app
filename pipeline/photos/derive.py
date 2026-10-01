@@ -59,15 +59,50 @@ manifest is written last, after every object it names is in R2. Staging
 would push the whole ladder twice (once to archive/runs/, once by server-side
 copy) and lose the per-object Content-Type and Cache-Control on the copy.
 
+What T269 added (stage 9 D5 of _OPEN-MASTER):
+
+  sources   `derive.py sources <layer>...` writes the published list of a
+            layer, hero first, to img/manifest/_sources/<layer>.json. The
+            worker has no wire; the job already copies img/manifest/ as
+            --prior, so a run that finds the file there derives the
+            published titles first (T049-f: 12,823 beach titles before the
+            cache's other 25,000).
+  wire      the other Tier A layers (WIRE_LAYERS: trails, cycling, region,
+  layers    dossier, poi, dest, trips, journeys) read their sources from the
+            wire or its sources file, and take a photograph's credit from
+            Commons' extmetadata at resolve time when the wire row does not
+            carry the photograph's own (T049-k, T007's wire orphans).
+  manifest  each entry may carry `n` (nothing owed, T051-c), `p` (the hero
+            placeholder, T052-c) and `s` (Commons' content sha1), and the
+            manifest records how many takedown rows its run saw.
+  re-upload --recheck asks Commons for the content sha1 of held files; a
+            changed file gets a new address (revision_key), never an
+            in-place rewrite (T049-i).
+  gc        `derive.py gc` deletes journals a later manifest has folded and
+            objects no manifest names, plus any object of a taken-down
+            title (T049-j, T050-c). Dry run unless --apply.
+  probe     `derive.py probe <layer>...` asks imageinfo for a sample of
+            names: the dead rate before a big run (T008).
+  ledger    a run refuses when the takedown ledger has fewer rows than an
+            earlier manifest saw (T050-c).
+
 Usage:
 
     python pipeline/photos/derive.py plan beaches [--published-only]
+        [--held FILE_OR_DIR] [--prior DIR] [--sources FILE]
     python pipeline/photos/derive.py run beaches --out DIR [--upload none|dry-run|r2]
-        [--held FILE_OR_DIR] [--prior DIR] [--work DIR] [--encoders N]
-        [--countries NL,BE] [--limit N] [--sample N --seed S] [--run-id ID]
-        [--budget-s SECONDS]
+        [--held FILE_OR_DIR] [--prior DIR] [--sources FILE] [--work DIR]
+        [--encoders N] [--countries NL,BE] [--limit N] [--sample N --seed S]
+        [--run-id ID] [--budget-s SECONDS] [--recheck]
+    python pipeline/photos/derive.py sources beaches trails --out DIR
+    python pipeline/photos/derive.py probe beaches lakes --sample 500 [--json F]
+    python pipeline/photos/derive.py gc --held LISTING --prior DIR --out DIR
+        [--grace-days 14] [--max-delete-frac 0.25] [--force] [--apply]
     python pipeline/photos/derive.py key "File:Some beach.jpg"
     python pipeline/photos/derive.py selfcheck
+
+CARTA_DATA_ROOT reads cache/ and continent-app/public/ from another
+checkout (a sparse worktree has neither); nothing is ever written there.
 
 On Windows, set CARTA_VIPS_BIN to libvips' bin directory (T008 unpacked
 8.15.3 to C:\\Users\\Gebruiker\\vips\\vips-dev-8.15\\bin); pyvips 3.x loads the
@@ -102,6 +137,10 @@ from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parents[1]
+# Where cache/ and continent-app/public/ are read from. The repo root by
+# default; CARTA_DATA_ROOT points a sparse worktree (or a test) at a full
+# checkout's data without copying it. Read only: derive never writes there.
+DATA_ROOT = Path(os.environ.get("CARTA_DATA_ROOT") or ROOT)
 sys.path.insert(0, str(HERE))
 sys.path.insert(0, str(ROOT / "pipeline"))
 
@@ -158,6 +197,31 @@ LAYERS = {
     "lakes": ("lakes", "lakes"),
     "mountains": ("mountains", "peaks"),
 }
+
+# The other Tier A layers (T049-k). None of them keeps a rich cache whose
+# image records carry the credit, the way the three above do: trails picks
+# its heroes at export, cycling and region have none behind 88 per cent of
+# what they publish (T007's 3,983 orphans), and the POI, hero, trip and
+# journey thumbnails are bare URLs. What they all have is the wire, which is
+# exactly what the app shows, so the wire is their source reader. Their
+# credit comes from Commons itself at resolve time (extmetadata, the same
+# fields the harvests ask for), never from the wire row: a cycling route's
+# `lic` is the route's ODbL, not the photograph's licence.
+#   layer -> paths under continent-app/public (directories or files)
+WIRE_LAYERS = {
+    "trails": ("trails",),
+    "cycling": ("cycling",),
+    "region": ("region",),
+    "dossier": ("dossier",),
+    "poi": ("poi",),
+    "dest": ("app_data.json", "boot.json", "dest"),
+    "trips": ("trips",),
+    "journeys": ("journeys",),
+}
+ALL_LAYERS = {**{k: "cache" for k in LAYERS},
+              **{k: "wire" for k in WIRE_LAYERS}}
+SOURCES_SCHEMA = "carta.img-sources.v1"
+SOURCES_DIR = "manifest/_sources"       # under img/; the job copies it as --prior
 
 STOP = threading.Event()
 # The time budget: past it no new fetch starts, the batch in hand finishes and
@@ -284,6 +348,33 @@ def sha1_of(title):
     return hashlib.sha1(title.encode("utf-8")).hexdigest()
 
 
+def revision_key(title, content_sha1):
+    """The address of a re-uploaded file (T049-i).
+
+    The address is the title, and the objects under it are served as
+    immutable for a year, so a Commons re-upload under the same title can
+    never be written over the old ladder: every edge and browser that holds
+    the old bytes would keep them, and the new ones would be served beside
+    them under one URL. A changed file therefore gets a NEW address, the
+    SHA-1 of "<title>#<Commons content sha1>". The manifest's `h` (and the
+    wire's `ih`) carry whichever address is current, so the app follows
+    without knowing; the old objects stop being named and `gc` removes them.
+    The first derivation of a title keeps the plain sha1_of(title)."""
+    return sha1_of(f"{title}#{content_sha1}")
+
+
+def address_ok(title, entry):
+    """Is a prior manifest or journal entry's `h` a legitimate address for
+    `title`: the plain one, or the revision of the content sha1 it records."""
+    h = (entry or {}).get("h")
+    if not h:
+        return False
+    if h == sha1_of(title):
+        return True
+    s = entry.get("s")
+    return bool(s) and h == revision_key(title, s)
+
+
 def base_key(title_or_sha1):
     """img/{ab}/{cd}/{sha1}, from a canonical title or a sha1 hex."""
     h = title_or_sha1 if re.fullmatch(r"[0-9a-f]{40}", title_or_sha1 or "") \
@@ -326,7 +417,8 @@ def rung_dims(src_w, src_h, width):
 def storable(img):
     """None when this file may be stored as a resized copy, else the reason.
     T010's storable-copy rule plus the export's credit gate."""
-    lic = (img.get("license") or img.get("lic") or "").strip()
+    lic = (img.get("license") or img.get("lic") or img.get("licence")
+           or "").strip()
     if not lic:
         return "licence-missing"
     if NOT_STORABLE.search(lic):
@@ -336,7 +428,11 @@ def storable(img):
     return None
 
 
-def _is_raster(title, img):
+def _is_raster(title, img=None):
+    """By extension, before anything is fetched. T007 found 4,280 Tier A
+    files that are not photographs (3,953 SVG flags and locator maps, 290
+    ogg and wav, 26 webm and ogv, 4 PDF); none of them may reach the
+    encoder. The resolve step checks Commons' mime type as well."""
     if title.startswith("geograph:"):
         return True
     ext = title.rsplit(".", 1)[-1].lower() if "." in title else ""
@@ -344,29 +440,38 @@ def _is_raster(title, img):
 
 
 class Source:
-    __slots__ = ("title", "sha1", "kind", "lic", "by", "rank_v", "fetch",
-                 "cc", "uses", "order")
+    __slots__ = ("title", "sha1", "kind", "lic", "by", "nao", "pending",
+                 "rank_v", "fetch", "cc", "uses", "order", "rank")
 
-    def __init__(self, title, img, cc, order):
+    def __init__(self, title, img, cc, order, pending=False):
         self.title = title
         self.sha1 = sha1_of(title)
         self.kind = "geograph" if title.startswith("geograph:") else "commons"
-        self.lic = (img.get("license") or img.get("lic") or "").strip()
+        self.lic = (img.get("license") or img.get("lic")
+                    or img.get("licence") or "").strip()
         self.by = (img.get("author") or img.get("by") or "").strip(" ,;")
+        # Commons said no credit is owed (credit.stamp). The manifest keeps
+        # it as `n` (T051-c), so an empty author on a CC BY file reads as
+        # complete from the manifest alone.
+        self.nao = bool(img.get("no_attribution_required"))
+        # True when nothing local carries this file's credit: it is read
+        # from Commons at resolve time and the gate runs then.
+        self.pending = pending
         self.rank_v = img.get("rank_v")
         # Geograph has no imageinfo API; the cached URL is its largest size.
-        self.fetch = (img.get("full") or img.get("url")) \
+        self.fetch = (img.get("full") or img.get("url") or img.get("f")) \
             if self.kind == "geograph" else None
         self.cc = cc
         self.uses = 1
         self.order = order
+        self.rank = None              # position in the published list
 
 
 def iter_layer(layer, countries=None):
     """(cc, row_index, image_index, record) for every image in the layer's
     rich cache, hero first: all image 0s, then all image 1s, and so on."""
     cache_dir, row_key = LAYERS[layer]
-    base = ROOT / "cache" / cache_dir
+    base = DATA_ROOT / "cache" / cache_dir
     grid = []
     for path in sorted(base.glob("rich_*.json")):
         cc = path.stem.split("_", 1)[1].upper()
@@ -382,11 +487,105 @@ def iter_layer(layer, countries=None):
         yield cc, ri, ii, img
 
 
+def _wire_base():
+    return DATA_ROOT / "continent-app" / "public"
+
+
+def _wire_files(paths):
+    base = _wire_base()
+    out = []
+    for rel in paths:
+        p = base / rel
+        if p.is_dir():
+            out.extend(sorted(p.rglob("*.json")))
+        elif p.is_file():
+            out.append(p)
+    return out
+
+
+# A wire record's credit is the photograph's own only when the record names
+# an author itself. A cycling or trail row carries `lic: ODbL 1.0` for its
+# geometry beside an `img` URL, and that licence is not the photograph's.
+WIRE_AUTHOR_KEYS = ("by", "author")
+
+
+def _wire_record(node):
+    """(title, credit dict or None, Geograph fetch URL or None) for one wire
+    dict that is, or carries, a Commons or Geograph photograph; else None."""
+    title = None
+    if any(isinstance(node.get(k), str) for k in ("u", "url", "big",
+                                                   "full", "page")):
+        title = canonical_title(node)
+    if not title:
+        for k in ("img", "thumb"):
+            v = node.get(k)
+            if isinstance(v, str):
+                title = canonical_title(v)
+                if title:
+                    break
+    if not title:
+        return None
+    cred = None
+    if any(k in node for k in WIRE_AUTHOR_KEYS):
+        cred = {"lic": (node.get("lic") or node.get("license")
+                        or node.get("licence") or ""),
+                "by": node.get("by") or node.get("author") or ""}
+        if node.get("no_attribution_required"):
+            cred["no_attribution_required"] = True
+    fetch_url = None
+    if title.startswith("geograph:"):
+        for k in ("full", "big", "url", "u", "img"):
+            v = node.get(k)
+            if isinstance(v, str) and _host(v).endswith("geograph.org.uk") \
+                    and "/photo/" not in v:
+                fetch_url = v
+                break
+    return title, cred, fetch_url
+
+
+def iter_wire(layer):
+    """(position, where, title, credit or None, fetch URL) for every photo
+    record the layer's wire publishes, hero first: a record's position is
+    its index in the nearest enclosing list (0 for a row's lead image or a
+    lone `img`), so all leads come before all second images."""
+    base = _wire_base()
+    grid = []
+    seq = 0
+    for f in _wire_files(WIRE_LAYERS[layer]):
+        try:
+            data = json.loads(f.read_text(encoding="utf-8"))
+        except (ValueError, OSError):
+            continue
+        where = f.relative_to(base).as_posix()
+        stack = [(data, 0)]
+        while stack:
+            node, pos = stack.pop()
+            if isinstance(node, list):
+                for i, x in enumerate(node):
+                    if isinstance(x, (list, dict)):
+                        stack.append((x, i))
+            elif isinstance(node, dict):
+                rec = _wire_record(node)
+                if rec:
+                    seq += 1
+                    grid.append((pos, where, seq) + rec)
+                for v in node.values():
+                    if isinstance(v, (list, dict)):
+                        stack.append((v, 0))
+    grid.sort(key=lambda t: (t[0], t[1], t[2]))
+    for pos, where, _seq, title, cred, fetch_url in grid:
+        yield pos, where, title, cred, fetch_url
+
+
 def published_titles(layer):
     """Canonical titles the layer's wire publishes (continent-app/public/
     <layer>/*.json), for --published-only and the plan's counts."""
+    if layer in WIRE_LAYERS:
+        if not _wire_files(WIRE_LAYERS[layer]):
+            return None
+        return {t for _p, _w, t, _c, _f in iter_wire(layer)}
     out = set()
-    base = ROOT / "continent-app" / "public" / layer
+    base = _wire_base() / layer
     if not base.exists():
         return None
 
@@ -410,45 +609,176 @@ def published_titles(layer):
     return out
 
 
-def collect(layer, countries=None, published=None):
-    """(sources in hero-first order, stats). One Source per canonical title;
-    a file used by several rows is one object in R2."""
+# ---------------------------------------------------------------------------
+# The sources file (T049-f, T049-k): what the app shows, for a worker that
+# has no wire
+# ---------------------------------------------------------------------------
+
+def _cache_layer_wire(layer):
+    """(title, credit, fetch) for the wire of a cache layer, hero first."""
+    grid = []
+    base = _wire_base() / layer
+    paths = sorted(base.glob("*.json")) if base.exists() else []
+    for path in paths:
+        try:
+            data = json.loads(path.read_text(encoding="utf-8"))
+        except ValueError:
+            continue
+        if not isinstance(data, dict):
+            continue
+        for key in (layer, "peaks", "listed"):
+            for ri, row in enumerate(data.get(key) or []):
+                if not isinstance(row, dict):
+                    continue
+                for ii, img in enumerate(row.get("images") or []):
+                    if isinstance(img, dict):
+                        rec = _wire_record(img)
+                        if rec:
+                            grid.append((ii, path.name, ri) + rec)
+    grid.sort(key=lambda t: (t[0], t[1], t[2]))
+    for _ii, _f, _ri, title, cred, fetch_url in grid:
+        yield title, cred, fetch_url
+
+
+def build_sources(layer):
+    """The published list of one layer, hero first, with what a worker needs
+    to derive a file its cache does not hold: the credit when the wire
+    carries the photograph's own, and Geograph's image URL.
+
+    Written on a box that has the wire (after an export) and pushed to
+    img/manifest/_sources/<layer>.json, which image_transcode.sh already
+    copies with the rest of img/manifest/ as --prior. A run that finds it
+    derives the published files first (the app's 12,823 beach titles before
+    the cache's other 25,000) and, for a wire layer, has a source list at
+    all."""
+    titles, records = [], {}
+    if layer in WIRE_LAYERS:
+        it = ((t, c, f) for _p, _w, t, c, f in iter_wire(layer))
+    else:
+        it = _cache_layer_wire(layer)
+    for title, cred, fetch_url in it:
+        if title in records:
+            continue
+        rec = {}
+        if cred:
+            rec.update({k: v for k, v in cred.items() if v})
+        if fetch_url:
+            rec["f"] = fetch_url
+        records[title] = rec
+        titles.append(title)
+    return {"schema": SOURCES_SCHEMA, "layer": layer,
+            "kind": ALL_LAYERS[layer], "generated_at": now_utc(),
+            "count": len(titles), "titles": titles, "records": records}
+
+
+def load_sources(path):
+    data = json.loads(Path(path).read_text(encoding="utf-8"))
+    if data.get("schema") != SOURCES_SCHEMA:
+        raise ValueError(f"{path}: not a {SOURCES_SCHEMA} file")
+    return data
+
+
+def find_sources(layer, explicit=None, prior=None):
+    """The sources file to use: --sources, else <prior>/_sources/<layer>.json
+    (the job's copy of img/manifest), else None."""
+    if explicit:
+        return load_sources(explicit)
+    if prior:
+        for cand in (Path(prior) / "_sources" / f"{layer}.json",
+                     Path(prior) / IMG_PREFIX / SOURCES_DIR / f"{layer}.json"):
+            if cand.exists():
+                return load_sources(cand)
+    return None
+
+
+def collect(layer, countries=None, published=None, sources_doc=None):
+    """(sources in derive order, stats). One Source per canonical title;
+    a file used by several rows is one object in R2.
+
+    Order: with a sources file, every published title first, in its
+    published hero-first order, then the rest of the cache hero-first;
+    without one, the cache's hero-first order (T049). A wire layer with no
+    sources file reads the local wire."""
     ledger = takedown.load_ledger()
-    stats = {"records": 0, "rejected": {}, "unique": 0}
+    stats = {"records": 0, "rejected": {}, "unique": 0, "pending_credit": 0}
     by_title = {}
+    seen = set()
     order = 0
 
     def reject(reason):
         stats["rejected"][reason] = stats["rejected"].get(reason, 0) + 1
 
-    for cc, _ri, _ii, img in iter_layer(layer, countries):
-        stats["records"] += 1
-        title = canonical_title(img)
-        if not title:
-            reject("no-title")
-            continue
+    def gate(title, img, cc, pending):
+        nonlocal order
+        if title in seen:
+            if title in by_title:
+                by_title[title].uses += 1
+                # Commons' "nothing owed" is a fact about the file: any row
+                # that recorded it speaks for every row (T051-c).
+                if img.get("no_attribution_required"):
+                    by_title[title].nao = True
+            return
+        seen.add(title)
         if not _is_raster(title, img):
             reject("not-raster")
-            continue
-        why = storable(img)
-        if why:
-            reject(why)
-            continue
+            return
+        if not pending:
+            why = storable(img)
+            if why:
+                reject(why)
+                return
         if ledger and (takedown.is_taken_down(title, ledger) or any(
                 takedown.is_taken_down(img.get(k), ledger)
-                for k in ("url", "full", "page", "u", "big"))):
+                for k in ("url", "full", "page", "u", "big", "f"))):
             reject("taken-down")
-            continue
+            return
         if published is not None and title not in published:
             reject("not-published")
-            continue
-        if title in by_title:
-            by_title[title].uses += 1
-            continue
-        by_title[title] = Source(title, img, cc, order)
+            return
+        by_title[title] = Source(title, img, cc, order, pending=pending)
+        stats["pending_credit"] += pending
         order += 1
-    stats["unique"] = len(by_title)
-    return list(by_title.values()), stats
+
+    if layer in LAYERS:
+        for cc, _ri, _ii, img in iter_layer(layer, countries):
+            stats["records"] += 1
+            title = canonical_title(img)
+            if not title:
+                reject("no-title")
+                continue
+            gate(title, img, cc, False)
+    doc_titles = (sources_doc or {}).get("titles") or []
+    doc_records = (sources_doc or {}).get("records") or {}
+    if sources_doc is not None:
+        # Published files the cache does not hold (T007's wire orphans), and
+        # for a wire layer every file. A title the cache already gated, in
+        # or out, is never re-admitted from the wire.
+        for title in doc_titles:
+            if layer in LAYERS and title in seen:
+                continue
+            stats["records"] += 1
+            rec = dict(doc_records.get(title) or {})
+            pending = title.startswith("File:") and not (
+                rec.get("lic") or rec.get("license"))
+            gate(title, rec, None, pending)
+    elif layer in WIRE_LAYERS:
+        for _p, _w, title, cred, fetch_url in iter_wire(layer):
+            stats["records"] += 1
+            rec = dict(cred or {})
+            if fetch_url:
+                rec["f"] = fetch_url
+            pending = title.startswith("File:") and not rec.get("lic")
+            gate(title, rec, None, pending)
+    srcs = list(by_title.values())
+    if doc_titles:
+        rank = {t: i for i, t in enumerate(doc_titles)}
+        for s in srcs:
+            s.rank = rank.get(s.title)
+        srcs.sort(key=lambda s: (s.rank is None,
+                                 s.rank if s.rank is not None else s.order))
+    stats["unique"] = len(srcs)
+    stats["published_first"] = sum(1 for s in srcs if s.rank is not None)
+    return srcs, stats
 
 
 # ---------------------------------------------------------------------------
@@ -491,9 +821,10 @@ def load_manifest(path):
 
 
 def load_prior(path, layer=None):
-    """title -> {h, d, src_sha1} from every manifest and journal under
-    `path` (any layer: a file shared by two layers is derived once), plus
-    the prior manifest of `layer` itself when there is one."""
+    """title -> {h, d, s, p, lic, by, n} from every manifest and journal
+    under `path` (any layer: a file shared by two layers is derived once),
+    plus the prior manifest of `layer` itself when there is one. A journal
+    is newer than any manifest built before it, so its entry wins."""
     known, own = {}, None
     if not path or not Path(path).exists():
         return known, own
@@ -505,9 +836,14 @@ def load_prior(path, layer=None):
         if data.get("schema") == MANIFEST_SCHEMA:
             if data.get("ladder") != LADDER_V:
                 continue
+            credits = data.get("credits") or []
             for title, e in (data.get("files") or {}).items():
+                pair = credits[e["c"]] if isinstance(e.get("c"), int) and \
+                    e["c"] < len(credits) else ["", ""]
                 known.setdefault(title, {"h": e["h"], "d": e["d"],
-                                         "s": e.get("s")})
+                                         "s": e.get("s"), "p": e.get("p"),
+                                         "lic": pair[0], "by": pair[1],
+                                         "n": e.get("n")})
             if layer and data.get("layer") == layer and (
                     own is None or str(data.get("generated_at", ""))
                     > str(own.get("generated_at", ""))):
@@ -517,8 +853,31 @@ def load_prior(path, layer=None):
                 continue
             for e in data.get("entries") or []:
                 known[e["title"]] = {"h": e["h"], "d": e["d"],
-                                     "s": e.get("s")}
+                                     "s": e.get("s"), "p": e.get("p"),
+                                     "lic": e.get("lic"), "by": e.get("by"),
+                                     "n": e.get("n")}
     return known, own
+
+
+def ledger_floor(path):
+    """The most takedown-ledger rows any prior manifest was built against.
+
+    T050-c: the backstop that keeps a taken-down file out of R2 is the
+    ledger, read by collect(). A ledger that was lost or reset would let a
+    re-run derive the file again. Every manifest records how many rows its
+    run saw, so a run that now sees fewer refuses to upload."""
+    floor = 0
+    if not path or not Path(path).exists():
+        return floor
+    for f in Path(path).rglob("*.json"):
+        try:
+            data = json.loads(f.read_text(encoding="utf-8"))
+        except ValueError:
+            continue
+        if data.get("schema") == MANIFEST_SCHEMA:
+            floor = max(floor, int((data.get("ledger") or {}).get("rows")
+                                   or 0))
+    return floor
 
 
 # ---------------------------------------------------------------------------
@@ -527,13 +886,20 @@ def load_prior(path, layer=None):
 
 def resolve_commons(batch):
     """imageinfo for up to 50 Sources: sets .fetch, returns
-    {title: (status, info)} with status ok / missing / not-raster / error."""
+    {title: (status, info)} with status ok / missing / not-raster / error.
+
+    extmetadata comes in the same request (no extra call): a source whose
+    credit nothing local carries (`pending`, the wire layers) takes its
+    licence, author and AttributionRequired from it, the same fields and the
+    same credit.author_of rule the harvests use."""
     out = {}
     titles = [s.title for s in batch]
     try:
         res = sources.mediawiki(commons.with_maxlag({
             "prop": "imageinfo", "titles": "|".join(titles),
-            "iiprop": "url|size|mime|sha1", "iiurlwidth": SOURCE_WIDTH,
+            "iiprop": "url|size|mime|sha1|extmetadata",
+            "iiextmetadatafilter": credit.EXTMETA_CREDIT,
+            "iiurlwidth": SOURCE_WIDTH,
         })) or {}
     except sources.SourceError as exc:
         return {t: ("error", str(exc)) for t in titles}
@@ -552,13 +918,31 @@ def resolve_commons(batch):
         if ii.get("mime") not in RASTER_MIME:
             out[src.title] = ("not-raster", ii.get("mime"))
             continue
-        src.fetch = ii.get("thumburl") or ii.get("url")
-        out[src.title] = ("ok", {"w": ii.get("width"), "h": ii.get("height"),
-                                 "sha1": ii.get("sha1"),
-                                 "bytes": ii.get("size")})
+        meta = ii.get("extmetadata") or {}
+        out[src.title] = ("ok", {
+            "w": ii.get("width"), "h": ii.get("height"),
+            "sha1": ii.get("sha1"), "bytes": ii.get("size"),
+            "url": ii.get("thumburl") or ii.get("url"),
+            "lic": credit.clean((meta.get("LicenseShortName") or {})
+                                .get("value", "")),
+            "by": credit.author_of(meta),
+            "nao": not credit.attribution_required(meta) if meta else False})
     for t in titles:
         out.setdefault(t, ("missing", None))
     return out
+
+
+def apply_credit(src, info):
+    """Fill a pending source's credit from Commons and gate it. Returns
+    None when it may be stored, else the reason (storable's)."""
+    src.lic = info.get("lic") or ""
+    src.by = (info.get("by") or "").strip(" ,;")
+    src.nao = bool(info.get("nao"))
+    src.pending = False
+    rec = {"license": src.lic, "author": src.by}
+    if src.nao:
+        rec["no_attribution_required"] = True
+    return storable(rec)
 
 
 def fetch(src, work, sem):
@@ -665,7 +1049,16 @@ def encode(src, path, stage):
             tmp.write_bytes(buf)
             os.replace(tmp, target)
             sizes[f"{width}.{fmt}"] = len(buf)
-    return dims, sizes, source_dims
+    return dims, sizes, source_dims, placeholder(out_dir / "320.webp")
+
+
+def placeholder(path):
+    """The hero placeholder (T052-c): wire_ladder's six flat colours, encoded
+    here while the pixels are on disk, so the manifest carries it as `p` and
+    the export box (which has no img/ tree) can join it without --img-root.
+    The same function the export used, so the 24 characters are identical."""
+    import wire_ladder  # noqa: PLC0415  (wire_ladder loads derive lazily)
+    return wire_ladder.encode_placeholder(path)
 
 
 def selfcheck():
@@ -790,21 +1183,32 @@ def _merge_tree(src, dst):
 # Manifest
 # ---------------------------------------------------------------------------
 
-def build_manifest(layer, sources_, entries, run_id):
+def build_manifest(layer, sources_, entries, run_id, ledger_rows=None):
     """The per-layer manifest (MANIFEST_SCHEMA). `files` maps the canonical
     source title to:
 
-        h   sha1 hex of the title; the objects are {base}/{h[0:2]}/{h[2:4]}/
-            {h}/{w}.{fmt} for every rung in `rungs`
+        h   the address: sha1 hex of the title, or of "<title>#<s>" for a
+            re-upload (revision_key); the objects are {base}/{h[0:2]}/
+            {h[2:4]}/{h}/{w}.{fmt} for every rung in `rungs`
         d   [[w, h], [w, h], [w, h]]: the real pixel size of the 320, 640
             and 1280 rungs (a source narrower than a rung is not upscaled,
             so "1280" can be 900 px wide; the WebP rungs share these sizes)
         c   index into `credits`, [licence, author]; the page to link is
             PAGE_URL by kind (commons: the title, geograph: the id)
+        n   1 when Commons says no credit is owed (AttributionRequired
+            false), so an empty author is complete, not a gap (T051-c).
+            Absent means a credit is owed, the safe reading
+        p   the 24 character hero placeholder (wire_ladder), when known
+            (T052-c)
+        s   Commons' content sha1 of the file derived, when known: the
+            baseline a later --recheck compares a re-upload against
+            (T049-i)
         r   rank_v of the record the source was taken from, when scored
 
     Sorted, compact, and hashed without the run fields, so a run that
-    changes nothing produces the same inputs_hash and uploads nothing."""
+    changes nothing produces the same inputs_hash and uploads nothing.
+    `ledger` (outside the hash) is how many takedown rows the run saw;
+    ledger_floor() reads it back (T050-c)."""
     credits, credit_ix, files = [], {}, {}
     rank = {}
     for src in sorted(sources_, key=lambda s: s.title):
@@ -817,6 +1221,12 @@ def build_manifest(layer, sources_, entries, run_id):
             credits.append(list(pair))
         row = {"h": e["h"], "d": [e["d"][str(w)] for w in WIDTHS],
                "c": credit_ix[pair]}
+        if src.nao or e.get("n"):
+            row["n"] = 1
+        if e.get("p"):
+            row["p"] = e["p"]
+        if e.get("s"):
+            row["s"] = e["s"]
         if src.rank_v:
             row["r"] = src.rank_v
         files[src.title] = row
@@ -840,6 +1250,8 @@ def build_manifest(layer, sources_, entries, run_id):
         "generated_at": now_utc(),
         "run": run_id,
         "inputs_hash": inputs_hash,
+        "ledger": {"rows": int(ledger_rows if ledger_rows is not None
+                               else len(takedown.load_ledger()))},
         "count": len(files),
         "rank_v": rank,
         "credits": credits,
@@ -856,26 +1268,62 @@ def _countries(arg):
         if arg else None
 
 
+def _published_for(args, sources_doc):
+    """The published set for --published-only: the sources file's titles
+    when there is one (the worker has no wire), else the local wire."""
+    if not args.published_only:
+        return None, None
+    if sources_doc is not None:
+        return set(sources_doc.get("titles") or []), None
+    published = published_titles(args.layer)
+    if published is None:
+        return None, (f"no wire under continent-app/public/ for "
+                      f"{args.layer} and no sources file")
+    return published, None
+
+
+def _entry_from_known(k):
+    e = {"h": k["h"], "d": _dims_dict(k["d"])}
+    for key in ("s", "p", "n"):
+        if k.get(key):
+            e[key] = k[key]
+    return e
+
+
 def cmd_plan(args):
-    published = published_titles(args.layer) if args.published_only else None
-    if args.published_only and published is None:
-        print(f"no wire under continent-app/public/{args.layer}")
+    sources_doc = find_sources(args.layer, args.sources, args.prior)
+    published, err = _published_for(args, sources_doc)
+    if err:
+        print(err)
         return 2
-    srcs, stats = collect(args.layer, _countries(args.countries), published)
+    srcs, stats = collect(args.layer, _countries(args.countries), published,
+                          sources_doc)
     held = load_held(args.held)
     known, own = load_prior(args.prior, args.layer)
-    n_held = sum(1 for s in srcs if is_held(held, s.sha1) and s.title in known)
-    wire = published_titles(args.layer)
-    print(f"layer {args.layer}: {stats['records']} image records, "
-          f"{stats['unique']} unique sources after the gates")
+    n_held = sum(1 for s in srcs if s.title in known
+                 and address_ok(s.title, known[s.title])
+                 and is_held(held, known[s.title]["h"]))
+    print(f"layer {args.layer} ({ALL_LAYERS[args.layer]}): "
+          f"{stats['records']} image records, {stats['unique']} unique "
+          f"sources after the gates")
     for k, v in sorted(stats["rejected"].items()):
         print(f"  rejected {k}: {v}")
-    if wire is not None:
-        in_wire = sum(1 for s in srcs if s.title in wire)
-        print(f"  wire publishes {len(wire)} unique titles; "
-              f"{in_wire} of the sources are among them")
+    if stats["pending_credit"]:
+        print(f"  credit read from Commons at resolve: "
+              f"{stats['pending_credit']} (gated then)")
+    if sources_doc is not None:
+        print(f"  sources file: {sources_doc.get('count')} published titles "
+              f"({sources_doc.get('generated_at')}); derived first: "
+              f"{stats['published_first']}")
+    else:
+        wire = published_titles(args.layer)
+        if wire is not None:
+            in_wire = sum(1 for s in srcs if s.title in wire)
+            print(f"  wire publishes {len(wire)} unique titles; "
+                  f"{in_wire} of the sources are among them")
     print(f"  held in R2 with known dims: {n_held}; to derive: "
-          f"{len(srcs) - n_held}; objects to write: {(len(srcs) - n_held) * len(LADDER)}")
+          f"{len(srcs) - n_held}; objects to write: "
+          f"{(len(srcs) - n_held) * len(LADDER)}")
     if own:
         print(f"  prior manifest: {own.get('count')} files, "
               f"inputs_hash {own.get('inputs_hash', '')[:12]}")
@@ -906,6 +1354,16 @@ def cmd_run(args):
         print("--upload r2 needs the RCLONE_CONFIG_R2_* remote in the "
               "environment (T045-a); nothing was done")
         return 2
+    # T050-c: a ledger with fewer rows than an earlier run saw has been lost
+    # or reset, and the gate that keeps taken-down files out would be open.
+    floor = ledger_floor(args.prior)
+    rows = len(takedown.load_ledger())
+    if rows < floor and not args.allow_ledger_shrink:
+        print(f"REFUSED: the takedown ledger has {rows} rows, an earlier "
+              f"manifest was built against {floor}. Restore "
+              f"cache/photos/takedowns.json from git before deriving "
+              f"(--allow-ledger-shrink only after a deliberate removal)")
+        return 2
 
     for sig in (signal.SIGINT, signal.SIGTERM):
         signal.signal(sig, lambda *_: (STOP.set(), print(
@@ -914,22 +1372,41 @@ def cmd_run(args):
     t0 = time.time()
     if args.budget_s:
         BUDGET["until"] = t0 + args.budget_s
-    published = published_titles(args.layer) if args.published_only else None
-    srcs, stats = collect(args.layer, _countries(args.countries), published)
+    sources_doc = find_sources(args.layer, args.sources, args.prior)
+    if args.layer in WIRE_LAYERS and sources_doc is None and \
+            published_titles(args.layer) is None:
+        print(f"{args.layer} is a wire layer: it needs its wire or a sources "
+              f"file (derive.py sources {args.layer}, pushed to "
+              f"img/{SOURCES_DIR}/{args.layer}.json)")
+        return 2
+    published, err = _published_for(args, sources_doc)
+    if err:
+        print(err)
+        return 2
+    srcs, stats = collect(args.layer, _countries(args.countries), published,
+                          sources_doc)
     if args.sample:
         rnd = random.Random(args.seed)
+        pos = {id(s): i for i, s in enumerate(srcs)}
         srcs = sorted(rnd.sample(srcs, min(args.sample, len(srcs))),
-                      key=lambda s: s.order)
+                      key=lambda s: pos[id(s)])
     if args.limit:
         srcs = srcs[:args.limit]
     held = load_held(args.held)
     known, own = load_prior(args.prior, args.layer)
 
-    entries, todo = {}, []
+    entries, todo, recheck = {}, [], []
     for s in srcs:
         k = known.get(s.title)
-        if k and k["h"] == s.sha1 and is_held(held, s.sha1):
-            entries[s.title] = {"h": k["h"], "d": _dims_dict(k["d"])}
+        if k and address_ok(s.title, k) and is_held(held, k["h"]) and (
+                not s.pending or k.get("lic")):
+            s.sha1 = k["h"]
+            if s.pending:
+                s.lic, s.by = k.get("lic") or "", k.get("by") or ""
+                s.nao, s.pending = bool(k.get("n")), False
+            entries[s.title] = _entry_from_known(k)
+            if args.recheck and s.kind == "commons" and k.get("s"):
+                recheck.append(s)
         else:
             todo.append(s)
     print(f"{args.layer}: {len(srcs)} sources, {len(entries)} held, "
@@ -940,26 +1417,57 @@ def cmd_run(args):
               "started_at": now_utc(), "gates": stats,
               "sources": len(srcs), "held": len(entries),
               "to_derive": len(todo), "derived": 0, "dead": [],
-              "not_raster": [], "failed": [], "bytes": {}, "src_dims": [],
-              "timings_s": {}}
+              "not_raster": [], "failed": [], "refused": [],
+              "reuploaded": [], "rechecked": len(recheck), "bytes": {},
+              "src_dims": [], "timings_s": {}}
 
-    # resolve: Commons imageinfo in batches of 50, through the 0.4 s pacer
+    # resolve: Commons imageinfo in batches of 50, through the 0.4 s pacer.
+    # --recheck sends the held Commons sources through it too (one request
+    # per 50, no download): a changed content sha1 is a re-upload, which
+    # gets a new address and is derived again (T049-i).
     t = time.time()
-    resolved, meta = [], {}
-    commons_todo = [s for s in todo if s.kind == "commons"]
+    meta = {}
+    commons_todo = [s for s in todo if s.kind == "commons"] + recheck
+    in_recheck = {id(s) for s in recheck}
     for i in range(0, len(commons_todo), commons.TITLES_PER_REQ):
         if STOP.is_set():
             break
         batch = commons_todo[i:i + commons.TITLES_PER_REQ]
+        by_title = {s.title: s for s in batch}
         for title, (status, info) in resolve_commons(batch).items():
-            if status == "ok":
-                meta[title] = info
-            elif status == "missing":
-                report["dead"].append(title)
-            elif status == "not-raster":
-                report["not_raster"].append([title, info])
-            else:
-                report["failed"].append([title, f"resolve: {info}"])
+            src = by_title[title]
+            rechecking = id(src) in in_recheck
+            if status != "ok":
+                if rechecking:
+                    continue          # a held copy stays; the next run asks again
+                if status == "missing":
+                    report["dead"].append(title)
+                elif status == "not-raster":
+                    report["not_raster"].append([title, info])
+                else:
+                    report["failed"].append([title, f"resolve: {info}"])
+                continue
+            k = known.get(title)
+            old_s = (k or {}).get("s")
+            changed = bool(old_s and info.get("sha1")
+                           and info["sha1"] != old_s)
+            if rechecking and not changed:
+                continue
+            if src.pending:
+                why = apply_credit(src, info)
+                if why:
+                    report["refused"].append([title, why])
+                    continue
+            if k and address_ok(title, k) and not changed:
+                src.sha1 = k["h"]             # same bytes, same address
+            elif changed:
+                src.sha1 = revision_key(title, info["sha1"])
+                report["reuploaded"].append([title, k["h"], src.sha1])
+                if rechecking:
+                    entries.pop(title, None)
+                    todo.append(src)
+            meta[title] = info
+            src.fetch = info.get("url")
     resolved = [s for s in todo if s.fetch]
     report["timings_s"]["resolve"] = round(time.time() - t, 1)
 
@@ -1008,13 +1516,18 @@ def cmd_run(args):
             if err:
                 report["failed"].append([src.title, err])
                 continue
-            dims, sizes, source_dims = result
+            dims, sizes, source_dims, ph = result
             entry = {"title": src.title, "h": src.sha1, "d": dims,
                      "s": meta.get(src.title, {}).get("sha1"),
                      "lic": src.lic, "by": src.by, "r": src.rank_v,
                      "bytes": sizes}
+            if ph:
+                entry["p"] = ph
+            if src.nao:
+                entry["n"] = 1
             batch_entries.append(entry)
-            entries[src.title] = {"h": src.sha1, "d": dims}
+            entries[src.title] = {k: entry[k] for k in ("h", "d", "s", "p",
+                                                         "n") if entry.get(k)}
             report["derived"] += 1
             report["src_dims"].append(source_dims)
             for k, v in sizes.items():
@@ -1062,6 +1575,7 @@ def cmd_run(args):
                          for k, v in TIMES.items()}
     report["dead_n"] = len(report["dead"])
     report["failed_n"] = len(report["failed"])
+    report["refused_n"] = len(report["refused"])
 
     # the manifest: last; not after a signal or a failed upload (the journals
     # carry that progress), but yes after the time budget, for what exists
@@ -1082,7 +1596,7 @@ def cmd_run(args):
                   f"run; the manifest lists the {len(entries)} that exist")
             report["partial"] = True
             report["left"] = left
-        manifest = build_manifest(args.layer, srcs, entries, run_id)
+        manifest = build_manifest(args.layer, srcs, entries, run_id, rows)
         report["manifest_count"] = manifest["count"]
         report["inputs_hash"] = manifest["inputs_hash"]
         local = out / IMG_PREFIX / MANIFEST_DIR / f"{args.layer}.json"
@@ -1102,7 +1616,8 @@ def cmd_run(args):
             except RuntimeError as exc:
                 print(f"manifest upload failed: {exc}")
                 rc = 4
-        attempted = report["to_derive"] - report["dead_n"] - len(report["not_raster"])
+        attempted = (report["to_derive"] - report["dead_n"]
+                     - len(report["not_raster"]) - report["refused_n"])
         if rc == 0 and attempted and report["failed_n"] / attempted > 0.05:
             print(f"{report['failed_n']} of {attempted} failed (over 5 per "
                   f"cent): exiting 1 so the run is looked at")
@@ -1113,8 +1628,9 @@ def cmd_run(args):
     (report_dir / f"{args.layer}-{run_id}.json").write_text(
         json.dumps(report, ensure_ascii=False, indent=1), encoding="utf-8")
     print(f"{args.layer}: derived {report['derived']}, held "
-          f"{report['held']}, dead {report['dead_n']}, failed "
-          f"{report['failed_n']}, {report['elapsed_s']}s, exit {rc}")
+          f"{report['held']}, dead {report['dead_n']}, refused "
+          f"{report['refused_n']}, re-uploaded {len(report['reuploaded'])}, "
+          f"failed {report['failed_n']}, {report['elapsed_s']}s, exit {rc}")
     return rc
 
 
@@ -1122,6 +1638,263 @@ def _dims_dict(d):
     if isinstance(d, dict):
         return d
     return {str(w): v for w, v in zip(WIDTHS, d)}
+
+
+# ---------------------------------------------------------------------------
+# sources: the published list for the worker (T049-f, T049-k)
+# ---------------------------------------------------------------------------
+
+def cmd_sources(args):
+    out = Path(args.out).resolve()
+    rc = 0
+    for layer in args.layers:
+        if layer not in ALL_LAYERS:
+            print(f"unknown layer {layer}")
+            return 2
+        doc = build_sources(layer)
+        if not doc["count"]:
+            print(f"{layer}: no wire under continent-app/public; nothing "
+                  f"written")
+            rc = 2
+            continue
+        rel = f"{SOURCES_DIR}/{layer}.json"
+        local = out / IMG_PREFIX / rel
+        local.parent.mkdir(parents=True, exist_ok=True)
+        text = json.dumps(doc, ensure_ascii=False, separators=(",", ":"))
+        local.write_text(text, encoding="utf-8")
+        credited = sum(1 for r in doc["records"].values() if r.get("lic"))
+        print(f"{layer}: {doc['count']} published titles, {credited} with "
+              f"the photograph's own credit on the wire, "
+              f"{len(text.encode('utf-8')) // 1024} KB -> {local}")
+        show(rclone_json_cmd(local, f"{IMG_PREFIX}/{rel}", MANIFEST_CACHE))
+    return rc
+
+
+# ---------------------------------------------------------------------------
+# probe: how many names are dead before a big run (T008)
+# ---------------------------------------------------------------------------
+
+def cmd_probe(args):
+    """imageinfo for a sample of a layer's Commons sources, nothing fetched
+    but the metadata: one request per 50 names at the harvest's pace. T008
+    met one 404 in 200 fetches and asked for a few thousand names to be
+    probed before the first transcode, because 900 dead references is a log
+    line and 9,000 is a data-quality problem."""
+    rnd = random.Random(args.seed)
+    totals = {"probed": 0, "ok": 0, "missing": 0, "not_raster": 0,
+              "error": 0, "would_refuse": 0}
+    per_layer, dead = {}, []
+    for layer in args.layers:
+        sources_doc = find_sources(layer, None, args.prior)
+        srcs, _stats_ = collect(layer, None, None, sources_doc)
+        commons_srcs = [s for s in srcs if s.kind == "commons"]
+        pick = rnd.sample(commons_srcs, min(args.sample, len(commons_srcs)))
+        counts = {"sources": len(srcs), "commons": len(commons_srcs),
+                  "probed": 0, "ok": 0, "missing": 0, "not_raster": 0,
+                  "error": 0, "would_refuse": 0}
+        for i in range(0, len(pick), commons.TITLES_PER_REQ):
+            batch = pick[i:i + commons.TITLES_PER_REQ]
+            for title, (status, info) in resolve_commons(batch).items():
+                counts["probed"] += 1
+                key = status.replace("-", "_")
+                counts[key] = counts.get(key, 0) + 1
+                if status == "missing":
+                    dead.append([layer, title])
+                elif status == "ok":
+                    src = next(s for s in batch if s.title == title)
+                    if src.pending and apply_credit(src, info):
+                        counts["would_refuse"] += 1
+        per_layer[layer] = counts
+        for k in totals:
+            totals[k] += counts.get(k, 0)
+        print(f"{layer}: probed {counts['probed']} of {counts['commons']} "
+              f"Commons sources; missing {counts['missing']}, not raster "
+              f"{counts['not_raster']}, errors {counts['error']}, credit "
+              f"refused {counts['would_refuse']}", flush=True)
+    rate = totals["missing"] / totals["probed"] if totals["probed"] else 0
+    print(f"all: {totals['missing']} of {totals['probed']} names dead "
+          f"({rate:.2%}), {totals['not_raster']} not raster, "
+          f"{totals['error']} errors")
+    if args.json:
+        Path(args.json).write_text(json.dumps(
+            {"at": now_utc(), "seed": args.seed, "totals": totals,
+             "dead_rate": rate, "layers": per_layer, "dead": dead},
+            ensure_ascii=False, indent=1), encoding="utf-8")
+    return 0
+
+
+# ---------------------------------------------------------------------------
+# gc: journals and objects no manifest names (T049-j, T050-c)
+# ---------------------------------------------------------------------------
+
+OBJECT_KEY = re.compile(r"^([0-9a-f]{2})/([0-9a-f]{2})/([0-9a-f]{40})/"
+                        r"(\d+)\.(avif|webp)$")
+
+
+class GcRefused(RuntimeError):
+    pass
+
+
+def _age_days(stamp, now):
+    try:
+        then = datetime.strptime(stamp, "%Y-%m-%dT%H:%M:%SZ").replace(
+            tzinfo=timezone.utc)
+    except (TypeError, ValueError):
+        return 0.0
+    return (now - then).total_seconds() / 86400
+
+
+def plan_gc(held, prior, ledger=None, now=None, grace_days=14):
+    """What a sweep would delete, and why, from a listing of img/ and a
+    full copy of img/manifest/ (manifests, journals, sources).
+
+    Kept: every address any layer's newest manifest names, and every address
+    a journal names while that journal is kept. A journal is kept until a
+    manifest of its layer was written after it AND it is older than the
+    grace period; only then is its progress folded and the journal goes.
+    So a run cut short by its ceiling (journals, no manifest yet) keeps its
+    objects until a later run's manifest takes them over, and an object is
+    deleted at the earliest one sweep after the journal that named it.
+
+    Deleted: any object no kept manifest or journal names (a source that
+    left its layer, a re-upload's old address), and any object of a title in
+    the takedown ledger, whatever names it: takedown.py purges those at the
+    time, and this is the backstop the T050 report said was missing.
+
+    Refused (GcRefused): no manifest at all. An empty keep set would
+    otherwise delete everything, and "every object is unnamed" is the
+    vacuous answer a missing copy of img/manifest/ gives."""
+    now = now or datetime.now(timezone.utc)
+    ledger = takedown.load_ledger() if ledger is None else ledger
+    prior = Path(prior) if prior else None
+    if not prior or not prior.exists():
+        raise GcRefused("no copy of img/manifest/ to read (--prior)")
+    manifests, journals = {}, []
+    for f in sorted(prior.rglob("*.json")):
+        try:
+            data = json.loads(f.read_text(encoding="utf-8"))
+        except ValueError:
+            continue
+        if data.get("schema") == MANIFEST_SCHEMA:
+            layer = data.get("layer")
+            cur = manifests.get(layer)
+            if cur is None or str(data.get("generated_at", "")) > str(
+                    cur.get("generated_at", "")):
+                manifests[layer] = data
+        elif data.get("schema") == MANIFEST_SCHEMA + ".journal":
+            journals.append((f.relative_to(prior).as_posix(), data))
+    if not manifests:
+        raise GcRefused("img/manifest/ holds no manifest: refusing to treat "
+                        "every object as unnamed")
+    keep = set()
+    for m in manifests.values():
+        keep.update(e.get("h") for e in (m.get("files") or {}).values())
+    drop_journals = []
+    for rel, j in journals:
+        m = manifests.get(j.get("layer"))
+        folded = m is not None and str(m.get("generated_at", "")) >= str(
+            j.get("at", ""))
+        if folded and _age_days(j.get("at"), now) > grace_days:
+            drop_journals.append(f"{MANIFEST_DIR}/{rel}")
+        else:
+            keep.update(e.get("h") for e in j.get("entries") or [])
+    taken = set()
+    taken_named = []
+    for row in ledger or []:
+        t = canonical_title(row.get("needle"))
+        if t:
+            taken.add(sha1_of(t))
+        taken.update(h for h in row.get("h") or [] if isinstance(h, str))
+    for layer, m in manifests.items():
+        for title, e in (m.get("files") or {}).items():
+            if e.get("h") in taken or (ledger and takedown.is_taken_down(
+                    title, ledger)):
+                taken.add(e.get("h"))
+                taken_named.append([layer, title])
+    objects, unnamed, taken_objs, foreign = [], 0, 0, 0
+    for key in sorted(held):
+        m = OBJECT_KEY.match(key)
+        if not m:
+            foreign += 1              # not ours to judge: left alone
+            continue
+        h = m.group(3)
+        if h in taken:
+            objects.append(key)
+            taken_objs += 1
+        elif h not in keep:
+            objects.append(key)
+            unnamed += 1
+    return {"manifests": {k: v.get("generated_at") for k, v in
+                          manifests.items()},
+            "journals": len(journals), "drop_journals": drop_journals,
+            "keep_addresses": len(keep - {None}),
+            "held_objects": len(held) - foreign, "foreign_keys": foreign,
+            "objects": objects, "unnamed_objects": unnamed,
+            "taken_down_objects": taken_objs, "taken_named": taken_named}
+
+
+def cmd_gc(args):
+    held = load_held(args.held)
+    try:
+        plan = plan_gc(held, args.prior, grace_days=args.grace_days)
+    except GcRefused as exc:
+        print(f"REFUSED: {exc}")
+        return 2
+    out = Path(args.out).resolve()
+    out.mkdir(parents=True, exist_ok=True)
+    objects_txt, journals_txt = out / "gc-objects.txt", out / "gc-journals.txt"
+    objects_txt.write_text("".join(k + "\n" for k in plan["objects"]),
+                           encoding="utf-8")
+    journals_txt.write_text("".join(k + "\n" for k in plan["drop_journals"]),
+                            encoding="utf-8")
+    summary = {k: v for k, v in plan.items() if k not in ("objects",)}
+    summary["objects_n"] = len(plan["objects"])
+    summary["drop_journals"] = len(plan["drop_journals"])
+    (out / "gc-plan.json").write_text(json.dumps(
+        summary, ensure_ascii=False, indent=1), encoding="utf-8")
+    held_n = plan["held_objects"]
+    frac = len(plan["objects"]) / held_n if held_n else 0.0
+    print(f"gc: {held_n} objects under img/, {plan['keep_addresses']} "
+          f"addresses named by {len(plan['manifests'])} manifests and the "
+          f"kept journals; delete {len(plan['objects'])} objects "
+          f"({plan['unnamed_objects']} unnamed, "
+          f"{plan['taken_down_objects']} taken down) and "
+          f"{len(plan['drop_journals'])} of {plan['journals']} journals")
+    for layer, title in plan["taken_named"]:
+        print(f"  WARNING: the {layer} manifest still names taken-down "
+              f"{title}; run takedown.py reach for it (edge purge too)")
+    if frac > args.max_delete_frac and not args.force:
+        print(f"REFUSED: that is {frac:.1%} of what R2 holds, over "
+              f"--max-delete-frac {args.max_delete_frac:.0%}. Read "
+              f"{objects_txt} and pass --force if it is right")
+        return 3
+    remote = f"{REMOTE}:{BUCKET}/{IMG_PREFIX}"
+    rclone = os.environ.get("CARTA_RCLONE", "rclone")
+    cmds = []
+    if plan["objects"]:
+        cmds.append([rclone, "delete", remote, "--files-from",
+                     str(objects_txt), "--s3-no-check-bucket",
+                     "--retries", "3"])
+    if plan["drop_journals"]:
+        cmds.append([rclone, "delete", remote, "--files-from",
+                     str(journals_txt), "--s3-no-check-bucket",
+                     "--retries", "3"])
+    for cmd in cmds:
+        show(cmd)
+    if not args.apply:
+        print("dry run: nothing deleted (--apply runs the commands above)")
+        return 0
+    if not os.environ.get("RCLONE_CONFIG_R2_ENDPOINT") \
+            and not os.environ.get("CARTA_RCLONE"):
+        print("--apply needs the RCLONE_CONFIG_R2_* remote in the "
+              "environment; nothing was deleted")
+        return 2
+    for cmd in cmds:
+        proc = subprocess.run(cmd, check=False)
+        if proc.returncode != 0:
+            print(f"rclone exited {proc.returncode}")
+            return 4
+    return 0
 
 
 def cmd_key(args):
@@ -1143,14 +1916,19 @@ def main(argv=None):
     sub = ap.add_subparsers(dest="cmd", required=True)
     for name in ("plan", "run"):
         p = sub.add_parser(name)
-        p.add_argument("layer", choices=sorted(LAYERS))
+        p.add_argument("layer", choices=sorted(ALL_LAYERS))
         p.add_argument("--countries", help="comma list, e.g. NL,BE")
         p.add_argument("--published-only", action="store_true",
-                       help="only titles the layer's wire publishes today")
+                       help="only titles the layer's wire (or sources file) "
+                            "publishes")
         p.add_argument("--held", help="rclone lsf -R listing of img/, or a "
                                       "local img/ tree")
         p.add_argument("--prior", help="directory of earlier manifests and "
-                                       "journals (img/manifest in R2)")
+                                       "journals (img/manifest in R2); its "
+                                       "_sources/<layer>.json is used when "
+                                       "present")
+        p.add_argument("--sources", help="a sources file (derive.py sources)"
+                                         "; default: the one under --prior")
     run = sub.choices["run"]
     run.add_argument("--out", required=True)
     run.add_argument("--work")
@@ -1164,6 +1942,32 @@ def main(argv=None):
     run.add_argument("--budget-s", type=int, default=0,
                      help="stop starting fetches after this many seconds, "
                           "finish, and write the manifest for what exists")
+    run.add_argument("--recheck", action="store_true",
+                     help="ask Commons for the content sha1 of held files "
+                          "too; a re-upload is derived at a new address")
+    run.add_argument("--allow-ledger-shrink", action="store_true",
+                     help="derive although the takedown ledger has fewer "
+                          "rows than an earlier manifest saw")
+    src = sub.add_parser("sources", help="write the published list of each "
+                                         "layer for img/manifest/_sources/")
+    src.add_argument("layers", nargs="+")
+    src.add_argument("--out", required=True)
+    probe = sub.add_parser("probe", help="imageinfo for a sample of names: "
+                                         "the dead rate before a big run")
+    probe.add_argument("layers", nargs="+", choices=sorted(ALL_LAYERS))
+    probe.add_argument("--sample", type=int, default=500)
+    probe.add_argument("--seed", type=int, default=8)
+    probe.add_argument("--prior")
+    probe.add_argument("--json")
+    gc = sub.add_parser("gc", help="delete journals and objects no manifest "
+                                   "names (dry run unless --apply)")
+    gc.add_argument("--held", required=True)
+    gc.add_argument("--prior", required=True)
+    gc.add_argument("--out", required=True)
+    gc.add_argument("--grace-days", type=float, default=14)
+    gc.add_argument("--max-delete-frac", type=float, default=0.25)
+    gc.add_argument("--force", action="store_true")
+    gc.add_argument("--apply", action="store_true")
     key = sub.add_parser("key")
     key.add_argument("source", help="title, page URL or image URL")
     sub.add_parser("selfcheck")
@@ -1172,6 +1976,12 @@ def main(argv=None):
         return cmd_plan(args)
     if args.cmd == "run":
         return cmd_run(args)
+    if args.cmd == "sources":
+        return cmd_sources(args)
+    if args.cmd == "probe":
+        return cmd_probe(args)
+    if args.cmd == "gc":
+        return cmd_gc(args)
     if args.cmd == "key":
         return cmd_key(args)
     return selfcheck()
