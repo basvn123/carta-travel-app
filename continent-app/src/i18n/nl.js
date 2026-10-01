@@ -1356,6 +1356,7 @@ export const nl = {
   "pass.errSignIn": "Log eerst in, dan kan de pass aan je account worden toegevoegd.",
   "pass.errUnavailable": "Passes staan nog niet aan op deze server.",
   "pass.errNetwork": "Kon de checkout niet bereiken. Controleer je verbinding en probeer het opnieuw.",
+  "pass.errMax": "Je pass loopt al zo ver vooruit als een pass kan lopen. Kom dichter bij de datum terug.",
   "pass.errGeneric": "Kon de checkout niet openen. Er is niets in rekening gebracht.",
 
   // Fare provenance: freshness and estimate labeling (FareProvenance.jsx).

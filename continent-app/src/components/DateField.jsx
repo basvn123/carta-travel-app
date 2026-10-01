@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useMemo } from 'react';
+import React, { useState, useRef, useEffect, useMemo, useCallback } from 'react';
 
 /**
  * Custom calendar date field, matches the editorial paper/ink/rust palette.
@@ -125,7 +125,7 @@ export function DateField({
     return { y: d.getFullYear(), m: d.getMonth(), cells: buildGrid(d.getFullYear(), d.getMonth(), paneCount === 1) };
   }), [view.y, view.m, paneCount]);
 
-  const isDisabled = (iso) => (min && iso < min) || (max && iso > max);
+  const isDisabled = useCallback((iso) => (min && iso < min) || (max && iso > max), [min, max]);
 
   // Roving focus over the grid. A month is 35-42 cells, so one tab stop per
   // day would mean forty presses of Tab to get past a calendar; the grid takes
@@ -150,7 +150,7 @@ export function DateField({
       || pick(todayISO)
       || own.find((iso) => !isDisabled(iso))
       || null;
-  }, [panesData, focusISO, value, rangeStart, todayISO, min, max]);
+  }, [panesData, focusISO, value, rangeStart, todayISO, isDisabled]);
 
   // Move focus to a day, paging the view when the step leaves the months on
   // show. The DOM node may not exist until after that re-render, so the move

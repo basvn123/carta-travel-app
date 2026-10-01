@@ -1356,6 +1356,7 @@ export const fr = {
   "pass.errSignIn": "Connectez-vous d'abord, afin que le pass soit ajouté à votre compte.",
   "pass.errUnavailable": "Les pass ne sont pas encore activés sur ce serveur.",
   "pass.errNetwork": "Impossible de joindre le paiement. Vérifiez votre connexion et réessayez.",
+  "pass.errMax": "Votre pass court déjà aussi loin qu'un pass peut courir. Revenez plus près de la date.",
   "pass.errGeneric": "Impossible d'ouvrir le paiement. Rien n'a été débité.",
 
   // Fare provenance: freshness and estimate labeling (FareProvenance.jsx).

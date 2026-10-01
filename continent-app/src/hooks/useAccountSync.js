@@ -99,7 +99,10 @@ export function useAccountSync({
         if (incoming.size) setFavorites((prev) => new Set([...prev, ...incoming]));
       }
     }).catch(() => {}).finally(() => { hydratedRef.current = true; });
-  }, [user, cameFromUrl, hasLocalOrigin]);
+    // The setters are App's useState setters, stable for the page's life, so
+    // listing them never re-runs the pull; appliedForRef guards it regardless.
+  }, [user, cameFromUrl, hasLocalOrigin, setChoices, setPriceMode, setCountryFilter, setTripKinds,
+    setRatingRange, setGemOnly, setUnescoOnly, setTopBeachOnly, setSortKey, setFavorites]);
 
   // Keep the signed-in user's settings synced (debounced) so they carry over
   // to their next visit/device. Gated on hydratedRef so it never runs before
@@ -134,7 +137,7 @@ export function useAccountSync({
       country: destination.country,
       departDate, returnDate, choices,
     });
-  }, [user, selectedId, departDate, returnDate, choices]);
+  }, [user, selectedId, departDate, returnDate, choices, setAuthModalOpen]);
 
   const handleLoadTrip = useCallback((trip) => {
     setSelectedId(trip.destination_id);
@@ -142,7 +145,7 @@ export function useAccountSync({
     if (trip.return_date) setReturnDate(trip.return_date);
     if (trip.choices) setChoices((prev) => ({ ...prev, ...trip.choices }));
     setAccountOpen(false);
-  }, []);
+  }, [setSelectedId, setDepartDate, setReturnDate, setChoices, setAccountOpen]);
 
   return { handleSaveTrip, handleLoadTrip };
 }

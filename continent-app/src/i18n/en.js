@@ -1790,6 +1790,7 @@ export const en = {
   "pass.errSignIn": "Please sign in first, so the pass can be added to your account.",
   "pass.errUnavailable": "Passes are not switched on for this server yet.",
   "pass.errNetwork": "Could not reach the checkout. Check your connection and try again.",
+  "pass.errMax": "Your pass already runs as far ahead as a pass can go. Come back nearer the time.",
   "pass.errGeneric": "Could not open the checkout. Nothing has been charged.",
 
   // Fare provenance: freshness and estimate labeling (FareProvenance.jsx).

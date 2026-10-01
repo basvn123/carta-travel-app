@@ -624,7 +624,7 @@ function TravelApp() {
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [sharedTrip, guidesOpen, accountOpen, savedTripsOpen, selectedId]);
+  }, [sharedTrip, guidesOpen, accountOpen, savedTripsOpen, selectedId, setAccountOpen, setSavedTripsOpen]);
 
   // Stable so every Explore card's memo survives parent re-renders.
   const openDetail = useCallback((id) => {
@@ -666,8 +666,11 @@ function TravelApp() {
   // stay mounted behind display:none, so a fresh arrow here re-rendered two
   // 3,000-line components (and up to four live MapLibre contexts) on every
   // lifestyle slider tick and every search keystroke.
-  const openLifestyle = useCallback(() => setLifestyleOpen(true), []);
-  const requestAuth = useCallback(() => setAuthModalOpen(true), []);
+  const openLifestyle = useCallback(() => setLifestyleOpen(true), [setLifestyleOpen]);
+  const requestAuth = useCallback(() => setAuthModalOpen(true), [setAuthModalOpen]);
+  // The day planner's two hand-offs, stable for the same reason (T192): as
+  // inline arrows they gave DayPlannerTab new props on every App render.
+  const planTripFromDay = useCallback(() => goToTab('trip'), [goToTab]);
   const clearPendingTripPlan = useCallback(() => setPendingTripPlanId(null), []);
   const clearPendingSharedTrip = useCallback(() => setPendingSharedTrip(null), []);
   const clearPendingDayPlan = useCallback(() => setPendingDayPlanId(null), []);
@@ -1110,8 +1113,8 @@ function TravelApp() {
               onOpenPlanConsumed={clearPendingDayPlan}
               favorites={favorites}
               onRequestAuth={requestAuth}
-              onPlanTrip={() => goToTab('trip')}
-              onOpenDest={(id) => setSelectedId(id)}
+              onPlanTrip={planTripFromDay}
+              onOpenDest={openDetail}
               onOpenFeature={openFeature}
               daySeed={pendingDaySeed}
               onDaySeedConsumed={clearPendingDaySeed}

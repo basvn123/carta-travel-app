@@ -35,6 +35,10 @@ const FAIL_KEY = {
   no_price: 'pass.errUnavailable',
   bad_tier: 'pass.errGeneric',
   stripe_error: 'pass.errGeneric',
+  // The pass already runs as far ahead as a pass can go (three years), so
+  // the checkout function refused before Stripe charged for nothing.
+  pass_max: 'pass.errMax',
+  quota_check: 'pass.errUnavailable',
   network: 'pass.errNetwork',
 };
 

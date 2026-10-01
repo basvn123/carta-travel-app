@@ -20,6 +20,7 @@
     "test": "node --test --test-concurrency=1 \"tests/*.test.mjs\"",
     "test:browser": "node --test --test-concurrency=1 \"tests/*.spec.mjs\"",
     "verify": "node scripts/verify-affiliate.mjs && node scripts/verify-omio.mjs && node scripts/verify_paywall.mjs",
+    "test:quota": "node scripts/verify_plan_tiers.mjs && node scripts/ai/test_global_cap.mjs && node scripts/ai/test_ai_quota.mjs && node scripts/ai/test_passes.mjs",
     "check:pages": "node scripts/check-pages-limits.mjs dist",
     "ci:routes": "node scripts/ci/check-routes.mjs",
     "ci:contract": "node scripts/ci/check-contract.mjs",

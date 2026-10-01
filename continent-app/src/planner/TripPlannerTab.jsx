@@ -28,6 +28,10 @@ import { fareProv, flightProv, estPrefix, FareTag } from '../components/FareProv
 import { cityLabel } from '../lib/placeName.js';
 
 const SHEET_H_KEY = 'carta.tripSheetH.v1';
+// One shared empty catalogue for the moments before data lands. A fresh `{}`
+// per render would hand every memo below a new dependency each time and
+// rebuild the country and city lists on every render (T192).
+const NO_DESTINATIONS = Object.freeze({});
 
 // Small circular progress ring for "planned vs available nights".
 function NightsRing({ planned, total }) {
@@ -304,7 +308,7 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
     }
     wasPlanned.current = nowPlanned;
   }, [tp.planned, tp.stopDetails.length, tp.planId, paywall]);
-  const destinations = data?.destinations || {};
+  const destinations = data?.destinations || NO_DESTINATIONS;
   // Trip dates start today at the earliest, never at the fare window's
   // harvest date (see useToday).
   const today = useToday();
@@ -540,9 +544,22 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
   // The inline builder is now only an editor for a trip that already exists,   // opened from Saved trips' "Edit", or "Edit stops" on a planned trip. A fresh
   // trip planner shows only the guide launcher; new trips are built by the wizard.
   const hasTrip = tp.stopDetails.length > 0;
-  const mapStops = tp.stopDetails
+  // The map's stops, held by value rather than rebuilt per render. TripMap
+  // clears its pins and refits the camera whenever `stops` changes identity,
+  // so a fresh array here replayed that whole redraw (and a 700 ms camera
+  // glide) on every nights bump, stop select or sheet drag, none of which
+  // moves a pin. stopDetails itself changes on every nights bump, so the
+  // array is keyed on what the map draws: the coordinates and the names.
+  const mapStopsKey = tp.stopDetails
     .filter((s) => s.dest && s.dest.lat != null && s.dest.lon != null)
-    .map((s) => ({ lat: s.dest.lat, lon: s.dest.lon, city: cityLabel(s.dest.city) }));
+    .map((s) => `${s.dest.lat},${s.dest.lon},${cityLabel(s.dest.city)}`)
+    .join('|');
+  const mapStops = useMemo(
+    () => tp.stopDetails
+      .filter((s) => s.dest && s.dest.lat != null && s.dest.lon != null)
+      .map((s) => ({ lat: s.dest.lat, lon: s.dest.lon, city: cityLabel(s.dest.city) })),
+    [mapStopsKey], // eslint-disable-line react-hooks/exhaustive-deps -- keyed by value on purpose, see above
+  );
 
   // Draw the real road route through the stops whenever there are two or more
   // (keyless OSRM, same as the day planner's walking route), while editing

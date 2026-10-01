@@ -1356,6 +1356,7 @@ export const de = {
   "pass.errSignIn": "Bitte melde dich zuerst an, damit der Pass deinem Konto zugeordnet werden kann.",
   "pass.errUnavailable": "Pässe sind auf diesem Server noch nicht aktiviert.",
   "pass.errNetwork": "Die Kasse war nicht erreichbar. Prüfe deine Verbindung und versuche es erneut.",
+  "pass.errMax": "Dein Pass läuft bereits so weit voraus, wie ein Pass laufen kann. Komm näher am Datum wieder.",
   "pass.errGeneric": "Die Kasse konnte nicht geöffnet werden. Es wurde nichts berechnet.",
 
   // Fare provenance: freshness and estimate labeling (FareProvenance.jsx).

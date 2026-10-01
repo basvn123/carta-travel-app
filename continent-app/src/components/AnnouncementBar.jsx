@@ -81,7 +81,10 @@ export function PassExpiryBanner() {
           days: left,
         })}
       </span>
-      <button type="button" className="site-banner-action" onClick={openPrices}>
+      {/* Opens the modal under the 'expiring' reason rather than 'browse', so
+          the heading names the moment and the funnel can tell an extension
+          from a price browse. The banner is still the only prompt. */}
+      <button type="button" className="site-banner-action" onClick={() => openPrices('expiring')}>
         {t('pass.extend')}
       </button>
       <button type="button" className="site-banner-close" onClick={dismiss} aria-label={t('a11y.dismiss')}>

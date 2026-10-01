@@ -184,7 +184,13 @@ export function Margin({ report, monthsBack, onMonth }) {
               <td>Stripe</td>
               <td className="num mono">{eur(-(stripe.cents || 0))}</td>
               <td className="num mono">{n ? eur(-Math.round((stripe.cents || 0) / n)) : '-'}</td>
-              <td>Modelled, {stripe.rateEea} in the EEA, plus {stripe.tax} tax</td>
+              <td>
+                {stripe.basis === 'charge'
+                  ? `Observed, Stripe's fee on each of the ${stripe.chargeRows} charges, plus ${stripe.tax} tax`
+                  : stripe.basis === 'mixed'
+                    ? `${stripe.chargeRows} observed from the charge, ${stripe.modelledRows} modelled at ${stripe.rateEea} in the EEA, all plus ${stripe.tax} tax`
+                    : `Modelled, ${stripe.rateEea} in the EEA, plus ${stripe.tax} tax`}
+              </td>
             </tr>
             <tr>
               <td><b>Net receipts</b></td>
@@ -228,10 +234,11 @@ export function Margin({ report, monthsBack, onMonth }) {
       </div>
       <p className="adminpage-muted">
         VAT is backed out of the gross rather than added to it, because the
-        prices are VAT inclusive. Stripe reports the real fee on the balance
-        transaction behind each charge and nothing in this schema stores it, so
-        the documented rate is applied per sale, which keeps the fixed 25 cents
-        diluting a Year Pass twice as far as a Trip Pass. Infrastructure is
+        prices are VAT inclusive. The Stripe line reads the real fee the
+        webhook stored off the balance transaction behind each charge, and
+        falls back to the documented rate per sale for a charge it could not
+        read, which keeps the fixed 25 cents diluting a Year Pass twice as far
+        as a Trip Pass. Infrastructure is
         split by purchase count, the same method section 3.1 uses, so the figure
         beside it is comparable by construction.
       </p>
@@ -253,12 +260,12 @@ export function Margin({ report, monthsBack, onMonth }) {
         </div>
       </div>
       <p className="adminpage-muted">
-        The first two are units on entitlement periods that opened in this
-        month. The daily counter is the honest per-day figure but does not
-        separate plan from ground, so it cannot be priced and is here only to
-        show how far the period keying moves the answer. A grounded search is
-        five times a plan and is the only line that reliably costs money, so
-        the two are never added together.
+        The first two are units spent on days inside this month, from the day
+        ledger migration 044 added. The daily counter is the shared ceiling
+        over the same days and should equal the two added together; a gap is a
+        unit spent or refunded before the day ledger existed. A grounded search
+        is five times a plan and is the only line that reliably costs money,
+        so the two are never added together.
       </p>
 
       <h3 className="adminpage-h3">Reconciliation to the ledger</h3>

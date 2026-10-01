@@ -65,7 +65,10 @@ export function CityPickerMap({ cities = [], onToggle, onFocus, anchor = null })
       fitRef.current ? { bounds: fitRef.current, padding: 46, maxZoom: 7 } : null
     ));
     mapRef.current = map;
-    return () => { unfit(); map.remove(); mapRef.current = null; readyRef.current = false; pinsRef.current.clear(); };
+    // The pin Map is created once and only ever mutated, so the cleanup can
+    // hold it directly.
+    const pins = pinsRef.current;
+    return () => { unfit(); map.remove(); mapRef.current = null; readyRef.current = false; pins.clear(); };
   }, []);
 
   // The set of cities only changes with the chosen countries, rebuild then.
@@ -157,7 +160,7 @@ export function CityPickerMap({ cities = [], onToggle, onFocus, anchor = null })
       }
     });
   };
-  useEffect(sync, [cities]); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(sync, [cities]);
 
   return <div className="cpm citypick-map" ref={containerRef} />;
 }

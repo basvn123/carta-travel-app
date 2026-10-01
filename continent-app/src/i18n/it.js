@@ -1356,6 +1356,7 @@ export const it = {
   "pass.errSignIn": "Accedi prima, così il pass viene aggiunto al tuo account.",
   "pass.errUnavailable": "I pass non sono ancora attivi su questo server.",
   "pass.errNetwork": "Non è stato possibile raggiungere il pagamento. Controlla la connessione e riprova.",
+  "pass.errMax": "Il tuo pass arriva già fin dove può arrivare un pass. Torna più vicino alla data.",
   "pass.errGeneric": "Non è stato possibile aprire il pagamento. Non è stato addebitato nulla.",
 
   // Fare provenance: freshness and estimate labeling (FareProvenance.jsx).

@@ -1,4 +1,4 @@
-import React, { lazy, Suspense, useEffect, useMemo, useRef, useState } from 'react';
+import React, { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { DateField } from '../components/DateField.jsx';
 import { ScoreChip, HiddenGemTag } from '../components/RatingBadge.jsx';
 import { HeroImage } from '../components/HeroImage.jsx';
@@ -62,6 +62,9 @@ import { useI18n } from '../i18n/index.jsx';
 import { suggestedNights, Flag, CityThumb, StayRow } from './GuidedTripWizardParts.jsx';
 
 const ROUTES_PREVIEW = 14;
+// Shared empty catalogue for before the data lands: a fresh `{}` per render
+// would invalidate the dozen memos below that read destinations (T192).
+const NO_DESTINATIONS = Object.freeze({});
 const CITIES_PREVIEW = 8;
 const NEARBY_KM = 140;
 
@@ -204,7 +207,7 @@ export function GuidedTripWizard({
   seed = null, onSeedConsumed = null,
 }) {
   const { t, lang } = useI18n();
-  const destinations = data?.destinations || {};
+  const destinations = data?.destinations || NO_DESTINATIONS;
   // Never offer a date that has already happened: the catalogue's fare window
   // opens on the day the fares were harvested, which is behind us by the time
   // anyone opens the app. `today` is live, so this stays right tomorrow too.
@@ -429,8 +432,14 @@ export function GuidedTripWizard({
   };
   // Where the trip really starts on the ground: the typed address, else the
   // chosen departure airport itself.
-  const originPoint = originPlace
-    || (originRec && originRec.lat != null ? { name: originCity, lat: originRec.lat, lon: originRec.lon } : null);
+  // Memoised: built inline it was a new object every render, which re-ran the
+  // country scorer (countryMatches) and the airport list on every keystroke
+  // and every nights bump (T192).
+  const originPoint = useMemo(
+    () => originPlace
+      || (originRec && originRec.lat != null ? { name: originCity, lat: originRec.lat, lon: originRec.lon } : null),
+    [originPlace, originRec, originCity],
+  );
   const nearAirports = useMemo(() => {
     if (!originPoint) return [];
     const list = nearbyAirports(data?.meta, originPoint.lat, originPoint.lon);
@@ -588,7 +597,7 @@ export function GuidedTripWizard({
     }
     return out;
   }, [stepName, stayStyle, includedIds.length, windowNights, flexNights,
-    destinations, countries, anchorDest, anchorId, drivingThere]); // eslint-disable-line react-hooks/exhaustive-deps
+    destinations, countries, anchorDest, anchorId, drivingThere]);
   const applyTemplate = (tpl) => {
     const nextNights = {};
     tpl.picks.forEach((x) => { nextNights[x.id] = x.nights; });
@@ -620,7 +629,7 @@ export function GuidedTripWizard({
       fixFirst: Boolean(anchorId && includedIds[0] === anchorId),
     });
   }, [readyTrip, booked.stays, includedIds, destinations, anchorDest, anchorId,
-    originPoint?.lat, originPoint?.lon]); // eslint-disable-line react-hooks/exhaustive-deps
+    originPoint]);
 
   // ---- A published trip, taken off the shelf ------------------------------
   // The card carries enough to choose by; the stops, their nights and their
@@ -1277,7 +1286,10 @@ export function GuidedTripWizard({
   // list can hold hundreds of rows, and the tier is in the key so switching it
   // does not serve stale prices.
   const nightlyCache = useRef(new Map());
-  const nightlyFor = (id, dest) => {
+  // Both are callbacks so the memos that call them can name them as
+  // dependencies; they change exactly when the inputs that move a price or
+  // a filter verdict do.
+  const nightlyFor = useCallback((id, dest) => {
     const key = `${id}|${groupSize}|${startDate || ''}|${effectiveStayTier}`;
     const cache = nightlyCache.current;
     if (cache.has(key)) return cache.get(key);
@@ -1285,15 +1297,15 @@ export function GuidedTripWizard({
     const v = a && a.total > 0 ? Math.round((a.total * groupSize) / 2) : null;
     cache.set(key, v);
     return v;
-  };
-  const passesStayFilters = (id, dest) => {
+  }, [groupSize, startDate, effectiveStayTier]);
+  const passesStayFilters = useCallback((id, dest) => {
     if (stayMinRating > 0 && (dest.rating?.score ?? 0) < stayMinRating) return false;
     if (stayMaxNightly > 0) {
       const n = nightlyFor(id, dest);
       if (n != null && n > stayMaxNightly) return false;
     }
     return true;
-  };
+  }, [stayMinRating, stayMaxNightly, nightlyFor]);
 
   // ---- Getting around on the ground -------------------------------------
   // The legs between the trip's own points: the airport to the first bed, each
@@ -1370,7 +1382,7 @@ export function GuidedTripWizard({
     const total = legs.reduce((s, l) => s + (l.eur || 0), 0);
     return { legs, total };
   }, [includedIds, orderedIncludedIds, destinations, anchorDest, anchorId,
-    ownCarChosen, groupSize, countryInsights, data]); // eslint-disable-line react-hooks/exhaustive-deps
+    ownCarChosen, groupSize, countryInsights, data, t]);
 
   // ---- Running price estimate, alive on every step ----------------------
   // Every choice that adds cost adds a line the moment it's made (flight,
@@ -1446,8 +1458,7 @@ export function GuidedTripWizard({
     const total = lines.reduce((s, l) => s + l.eur, 0);
     return { lines, total, gs };
   }, [travelSpend, travelValues, includedIds, nights, totalNights, destinations,
-    groupSize, groundLegs, travelStyle, data, effectiveStayTier,
-    lifestyle]); // eslint-disable-line react-hooks/exhaustive-deps
+    groupSize, groundLegs, travelStyle, data, lifestyle, nightlyFor, t]);
 
   // What the last answer did to the total. estBump is a counter used as a React
   // key on the figure: a new key remounts it, which restarts the CSS bump, so
@@ -1535,7 +1546,7 @@ export function GuidedTripWizard({
     }
     return out;
   }, [stepName, selectedCountries, nights, includedIds, anchorId, focusedId, destinations,
-    stayMinRating, stayMaxNightly, groupSize, startDate]); // eslint-disable-line react-hooks/exhaustive-deps
+    passesStayFilters]);
 
   // What the briefing panel shows before a pin is tapped: the best-rated
   // candidates in the chosen region, so an untouched panel still helps.
@@ -1761,7 +1772,7 @@ export function GuidedTripWizard({
     if (stayStyle === 'single') plannerStore.setItineraryType('single');
   }, [originPlace, nearAirports, dateMode, startDate, endDate, windowNights, flexNights,
     flexMonth, adults, kids, travelStyle, countries, travelValues, includedIds, nights,
-    stayStyle, step, buildMode, tripPick?.id, quiz]); // eslint-disable-line react-hooks/exhaustive-deps
+    stayStyle, step, buildMode, tripPick?.id, quiz, destinations, nightlyFor]);
 
   // A new step starts at its own top. Without this the body keeps the previous
   // step's scroll offset, so a long screen can open halfway down its own

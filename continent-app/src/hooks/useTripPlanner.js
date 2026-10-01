@@ -17,6 +17,9 @@ import { loadRestorableDraft, persistTripDraft, clearTripDraft } from '../planne
 
 
 const DEFAULT_STOP_NIGHTS = 2;
+// Shared empty catalogue for before the data lands: a fresh `{}` each render
+// would invalidate every memo below that reads destinations (T192).
+const NO_DESTINATIONS = Object.freeze({});
 
 // A hop the traveller paid for themselves. Flights and island ferries are the
 // two Carta cannot price at all, but the set is all five modes on purpose: the
@@ -42,7 +45,7 @@ function normalizeTransferMode(v) {
  *  estimated overland leg between consecutive stops (interCityGroundEstimate).
  */
 export function useTripPlanner(data, countryInsights = null, preferredStayTier = 'home') {
-  const destinations = data?.destinations || {};
+  const destinations = data?.destinations || NO_DESTINATIONS;
   const carModel = data?.meta?.car_model || null;
 
   // Restore an unsaved draft (if any) so switching to the Day planner and back
@@ -197,7 +200,7 @@ export function useTripPlanner(data, countryInsights = null, preferredStayTier =
     // the choices slid onto the wrong pair of cities, and a self-booked hop
     // took its fare with it.
     dropLegAt(index);
-  }, []);
+  }, [dropLegAt]);
 
   const setStopNights = useCallback((index, nights) => {
     setStops((prev) => prev.map((s, i) => (

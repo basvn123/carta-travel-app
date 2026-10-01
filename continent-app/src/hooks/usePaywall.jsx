@@ -189,10 +189,18 @@ export function PaywallProvider({ children, onSignIn }) {
     return true;
   }, [paid]);
 
-  /** Open the price table because somebody asked to see it. */
-  const openPrices = useCallback(() => {
+  /**
+   * Open the price table because somebody asked to see it.
+   *
+   * Takes an optional reason so a paying traveller can open the modal for a
+   * named moment: the expiry banner passes 'expiring', so the heading says
+   * the pass is nearly up and the funnel sees that gate (T265). require()
+   * cannot do this, because it returns true for anyone who already pays.
+   * Opened by a press, so it never earns a snooze.
+   */
+  const openPrices = useCallback((why = 'browse') => {
     openedHard.current = true;
-    setReason('browse');
+    setReason(typeof why === 'string' && GATES[why] ? why : 'browse');
   }, []);
 
   const handleClose = useCallback(() => {

@@ -1,13 +1,15 @@
 /**
  * checkout.js, the client half of buying a pass.
  *
- * Sends nothing but a tier id. The amount lives in Stripe and is resolved
- * server-side by the checkout Edge Function, so there is no price on the wire
- * for anyone to edit.
+ * Sends a tier id and the gate reason, nothing else. The amount lives in
+ * Stripe and is resolved server-side by the checkout Edge Function, so there
+ * is no price on the wire for anyone to edit. The reason is attribution: the
+ * function copies it into the Stripe session, the webhook writes it on the
+ * sale, and the funnel joins on it (T265).
  *
  * Resolves to { ok: true } after a redirect has been started, or
  * { ok: false, code } where code is one of: no_auth_config, auth, bad_tier,
- * no_stripe, no_price, stripe_error, network.
+ * no_stripe, no_price, pass_max, quota_check, stripe_error, network.
  */
 import { supabase } from './supabaseClient.js';
 import { PAID_TIERS } from './pricing.js';
@@ -29,7 +31,9 @@ export async function startCheckout(tier, reason = '') {
   // pass_grants and is never claimed by this client.
   trackPaywall('checkout', reason, tier);
   try {
-    const { data, error } = await supabase.functions.invoke('checkout', { body: { tier } });
+    const { data, error } = await supabase.functions.invoke('checkout', {
+      body: { tier, reason: reason || '' },
+    });
     if (error) {
       let code = 'stripe_error';
       try {

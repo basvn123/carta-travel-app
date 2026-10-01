@@ -62,10 +62,13 @@ export function DayExploreMap({ stay, markers = [], onFocus, onStayClick, stayFo
     ));
     declutterRef.current = stopDeclutter;
     mapRef.current = map;
+    // The pin Map is created once and only ever mutated, so the cleanup can
+    // hold it directly.
+    const pins = pinsRef.current;
     return () => {
       declutterRef.current = null;
       stopDeclutter();
-      map.remove(); mapRef.current = null; readyRef.current = false; pinsRef.current.clear();
+      map.remove(); mapRef.current = null; readyRef.current = false; pins.clear();
     };
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -210,7 +213,7 @@ export function DayExploreMap({ stay, markers = [], onFocus, onStayClick, stayFo
       p.el.classList.toggle('focused', !!m.focused);
     });
   };
-  useEffect(sync, [markers]); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(sync, [markers]);
 
   return <div className="cpm dem-map" ref={containerRef} />;
 }

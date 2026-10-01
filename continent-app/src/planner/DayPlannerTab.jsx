@@ -105,6 +105,9 @@ const MAP_RATINGS = [
 // came from a plan saved before the server enforced a walking budget. Well
 // clear of the 40 km ceiling the chat profile allows a keen hiker to ask for.
 const AI_MAX_TRUSTED_WALK_KM = 45;
+// The one empty day, shared, so a day with nothing assigned does not hand the
+// scenic and suggestion memos a new array on every render (T192).
+const NO_ASSIGNED = Object.freeze([]);
 
 // How close a shortlisted place and a harvested POI have to be before they
 // are treated as the same thing. 1.2 km is generous enough to survive the two
@@ -434,18 +437,21 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
     setStaySearching(false);
   };
 
+  // Keyed on the account id, not the user object: a refreshed session hands
+  // over a new object for the same person, which must not refetch the plans.
+  const userId = user?.id || null;
   useEffect(() => {
     if (SAVED_MOCK) { setSavedPlans(mockTripPlans()); return; }
-    if (!user) { setSavedPlans([]); return; }
+    if (!userId) { setSavedPlans([]); return; }
     setPlansLoading(true);
     // A rejected fetch (offline, or a session whose token no longer verifies)
     // must not escape as an unhandled rejection: the trip-based plans simply
     // stay absent, and standalone day plans carry on working from this device.
-    fetchTripPlans(user.id)
+    fetchTripPlans(userId)
       .then(setSavedPlans)
       .catch(() => setSavedPlans([]))
       .finally(() => setPlansLoading(false));
-  }, [user?.id]);
+  }, [userId]);
 
   // Shared open-plan bootstrap: restore assignments + shape-your-day answers,
   // and lead with the wizard when nothing is planned yet.
@@ -1307,7 +1313,7 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
   // and its own timeline totals, is unaffected.
   const aiTotalsTrustworthy = (aiPlan?.totals?.walkKm ?? 0) <= AI_MAX_TRUSTED_WALK_KM;
 
-  const dayAssignedIdx = assignments[stopIdx]?.[dayIdx] || [];
+  const dayAssignedIdx = assignments[stopIdx]?.[dayIdx] || NO_ASSIGNED;
   const assignedItems = dayAssignedIdx.map((i) => activities.items[i]).filter(Boolean);
 
   // Curated "where it's actually nicest" guide for this city (localIntel.js),
@@ -1941,11 +1947,14 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
   // Open-time ideas: the strongest unpicked walkable places whose visit still
   // fits in the leftover. One tap adds them; in auto mode the walking order
   // re-optimizes like any other add.
-  const gapIdeas = (schedule && schedule.freeMin >= GAP_SUGGEST_MIN)
+  // The schedule itself is rebuilt each render (it is cheap), so this keys on
+  // the one number it reads from it, the free minutes.
+  const freeMin = schedule ? schedule.freeMin : 0;
+  const gapIdeas = useMemo(() => (freeMin >= GAP_SUGGEST_MIN
     ? mapDeck
-      .filter(({ item }) => dwellMinutes(poiKind(item), visitFactor) + 15 <= schedule.freeMin)
+      .filter(({ item }) => dwellMinutes(poiKind(item), visitFactor) + 15 <= freeMin)
       .slice(0, 3)
-    : [];
+    : []), [freeMin, mapDeck, visitFactor]);
 
   // Photogenic near-zero detours along today's walk (viewpoints, bridges,
   // squares...), the walk itself should be beautiful, not just short.
@@ -2497,7 +2506,7 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
       if (t.km != null && (best == null || t.km < best.km)) best = t;
     }
     return best && best.km <= STAY_TOWN_KM ? best.id : null;
-  }, [exploreTowns]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [exploreTowns]);
 
   // What the fork step's second card is offering, named and pictured (D7).
   // The town is the one the stay sits in when there is one, otherwise the

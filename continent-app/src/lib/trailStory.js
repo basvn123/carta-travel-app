@@ -80,6 +80,87 @@ const REASON_ICON = {
  *  undefined m" out of the UI when a peak carries no ele tag. */
 const num = (v) => (typeof v === 'number' && Number.isFinite(v) ? v : null);
 
+/**
+ * Which way is up (spec 6.8). A one-way route is stored in the direction its
+ * mapper drew it, so Mount Korab (9), drawn summit to village, carries 7 m of
+ * ascent and 1,423 m of descent. The rule is pipeline/trails/attributes.py
+ * uphill(), kept in step by hand: a net drop of 300 m or more, at least twice
+ * the climb, means the line was drawn downhill, and a walker starting from
+ * the bottom faces the descent as the climb. A loop or an out and back
+ * finishes where it started and can never qualify.
+ *
+ * returns { up, down, storedDownhill }, up and down null when unknown.
+ */
+export const DOWNHILL_MIN_M = 300;
+export function trailClimb(src) {
+  const asc = num(src?.ascent_m);
+  const desc = num(src?.descent_m);
+  if (asc != null && desc != null && desc - asc >= DOWNHILL_MIN_M && desc >= 2 * asc) {
+    return { up: desc, down: asc, storedDownhill: true };
+  }
+  return { up: asc, down: desc, storedDownhill: false };
+}
+
+/** The published five-value grade (f.g) when attributes.py has reached the
+ *  route, validate.py's three-value `difficulty` otherwise. Never the second
+ *  when the first exists: the two disagree on rows like Korab (9/1)
+ *  (moderate against very_hard), and the facts strip prints f.g. */
+export function trailGrade(src) {
+  return src?.f?.g || src?.difficulty || null;
+}
+
+/**
+ * The country a walker starts in, as ISO2 (spec 6.8). regionize.py writes
+ * rg.sc only where the trailhead's country differs from the row's own, so the
+ * row's country is the answer everywhere else. Not the nearest catalogue
+ * town's country: Korab (9/1) starts in Radomire, Albania, and the nearest
+ * town in the catalogue is across the ridge in North Macedonia.
+ */
+export function trailheadCountry(tr, detail = null) {
+  return detail?.rg?.sc || tr?.rg?.sc || detail?.country || tr?.country || null;
+}
+
+/**
+ * The place a trail page names under its title: { city, country }.
+ *
+ * assocDest is the nearest catalogue destination (trailCards.associateTrip),
+ * countryName maps an ISO2 to the display name. The town is named only when
+ * it is in the trailhead's country; across a border the page names the
+ * trailhead's country alone, because "Mavrovo National Park, North
+ * Macedonia" over an Albanian trailhead tells the walker the wrong country.
+ */
+export function trailPlace(tr, detail, assocDest, countryName = () => null) {
+  const iso = trailheadCountry(tr, detail);
+  if (assocDest && (!iso || assocDest.iso2 === iso)) {
+    return { city: assocDest.city || null, country: assocDest.country || null };
+  }
+  const name = iso ? countryName(iso) : null;
+  return name ? { city: null, country: name } : null;
+}
+
+/**
+ * Whether "{km} km, a comfortable day out" is true of this walk. The reason
+ * code is chosen from the distance alone (rate.py: 6 to 22 km), and Korab
+ * (9/1) is 12.1 km with 1,568 m of climb and seven hours on its feet. The
+ * sentence reads the numbers it describes: the climb read uphill, which has
+ * to stay under rate.py's BIG_CLIMB_M, and the walking time, which has to
+ * stay inside the six hours the story calls a full day. When the trip record
+ * is not to hand, a bigClimb reason in the same list is the climb.
+ */
+export const COMFORT_MAX_CLIMB_M = 800;
+export const COMFORT_MAX_MIN = 360;
+export function isComfortableDay(trip, reasons = []) {
+  let climb = trip ? trailClimb(trip).up : null;
+  if (climb == null) {
+    const big = (Array.isArray(reasons) ? reasons : []).find((r) => (r.code || r.k) === 'bigClimb');
+    climb = big ? num(big.m) : null;
+  }
+  if (climb != null && climb > COMFORT_MAX_CLIMB_M) return false;
+  const mins = num(trip?.duration_min);
+  if (mins != null && mins > COMFORT_MAX_MIN) return false;
+  return true;
+}
+
 function reasonText(r, t) {
   // The trails wire spells a reason `code`; the other three layers spell it
   // `k`. A listed row's single reason arrives in the shared shape, so both
@@ -170,11 +251,14 @@ function reasonText(r, t) {
  * reasons comes from the detail file when it has arrived and from the card
  * otherwise, so the section is populated on the first frame and simply grows.
  */
-export function trailReasons(reasons, t, limit = 6) {
+export function trailReasons(reasons, t, limit = 6, trip = null) {
   const out = [];
   const seen = new Set();
-  for (const r of Array.isArray(reasons) ? reasons : []) {
+  const list = Array.isArray(reasons) ? reasons : [];
+  const comfortable = isComfortableDay(trip, list);
+  for (const r of list) {
     if (out.length >= limit) break;
+    if ((r.code || r.k) === 'dayOut' && !comfortable) continue;
     const text = reasonText(r, t);
     if (!text || seen.has(text)) continue;
     seen.add(text);
@@ -251,10 +335,16 @@ const SAC_KEY = {
   demanding_mountain_hiking: 'trails.sSacMountain',
 };
 
+// The sentence per grade. very_hard and alpine share the hard sentence
+// rather than going silent: a page that prints "Very hard" in the facts strip
+// and says nothing about it below is how the moderate sentence came to sit
+// under a very hard chip.
 const DIFF_KEY = {
   easy: 'trails.sEasy',
   moderate: 'trails.sModerate',
   hard: 'trails.sHard',
+  very_hard: 'trails.sHard',
+  alpine: 'trails.sHard',
 };
 
 /**
@@ -281,7 +371,7 @@ export function trailStory(tr, detail = null, { t, loop = null, nearby = null } 
     if (loop === true) add('shape', 'route', t('trails.sLoop'));
     else if (loop === false) add('shape', 'route', t('trails.sOneWay'));
 
-    const diffKey = DIFF_KEY[src.difficulty];
+    const diffKey = DIFF_KEY[trailGrade(src) || trailGrade(tr)];
     if (diffKey) add('difficulty', 'boot', t(diffKey));
 
     const mins = src.duration_min || 0;

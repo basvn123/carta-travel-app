@@ -27,10 +27,13 @@
  *
  * PART A runs real SQL against a throwaway PostgreSQL database, in the same
  * way test_global_cap.mjs (T036) does: it stubs schema auth, auth.users,
- * auth.uid() and the Supabase roles, applies migrations 006, 007 and 021 in
- * order, then drives the functions through psql. No later migration redefines
- * ai_consume, ai_refund, ai_usage, ai_daily_total or plan_tiers; 021 does
- * redefine ai_resolve_tier and ai_status, which is why it is in the chain.
+ * auth.uid(), the Supabase roles, site_config and admin_guard, applies
+ * migrations 006, 007, 021, 022, 025, 026, 027, 031 and 044 in order, then
+ * drives the functions through psql. 044 (T265) redefines ai_consume and
+ * ai_refund around the ai_usage_days ledger and needs the five before it,
+ * which is why the chain is this long; 021 redefines ai_resolve_tier and
+ * ai_status. The refund cross-day group below is the one 044 changed: it
+ * used to pin the T037-c bug and now proves the fix.
  *
  * PART A needs a reachable server and a password. Set PGPASSWORD (and
  * optionally PGHOST, PGPORT, PGUSER) before running. With no server reachable
@@ -60,7 +63,9 @@ import { existsSync, readFileSync, readdirSync, writeFileSync, mkdtempSync, rmSy
 import { tmpdir } from 'node:os';
 
 const here = dirname(fileURLToPath(import.meta.url));
-const repoRoot = resolve(here, '../../..');
+// The root checkout holds supabase/. In the main checkout it is the parent of
+// continent-app/; in a worktree pair the two are siblings, so it can be named.
+const repoRoot = process.env.CARTA_REPO_ROOT || resolve(here, '../../..');
 const migrations = resolve(repoRoot, 'supabase/migrations');
 const functionsDir = resolve(repoRoot, 'supabase/functions');
 
@@ -156,7 +161,31 @@ begin
   end if;
 end
 $do$;
+
+-- 022, 026, 027, 031 and 044 are guarded by admin_guard (015) and 031 reads
+-- site_config (014). Neither admin migration is in the chain, so the two are
+-- stubbed: the guard says forbidden unless the session sets carta.guard to
+-- ok, which is enough to prove both the refusal and the answer.
+create table if not exists public.site_config (
+  key        text primary key,
+  value      jsonb not null,
+  updated_at timestamptz not null default now(),
+  updated_by uuid
+);
+
+create or replace function public.admin_guard(p_kind text default 'read')
+returns text
+language sql
+stable
+as $fn$ select case when current_setting('carta.guard', true) = 'ok' then null else 'forbidden' end $fn$;
 `;
+
+/** The chain, in paste order. 044 refuses to apply without the ones before it. */
+const CHAIN = [
+  '006_ai_day_planner.sql', '007_passes.sql', '021_free_tier_once.sql',
+  '022_paywall_events.sql', '025_withdrawal_waiver.sql', '026_oss_threshold.sql',
+  '027_paywall_funnel_kinds.sql', '031_margin_dashboard.sql', '044_payments_quota.sql',
+];
 
 const U1 = '00000000-0000-0000-0000-0000000000a1'; // free tier, grant and cap
 const U2 = '00000000-0000-0000-0000-0000000000a2'; // refund arithmetic
@@ -176,7 +205,7 @@ function runPartA(bin) {
     writeFileSync(stubFile, STUBS, 'utf8');
     psql(bin, TEST_DB, ['-f', stubFile]);
 
-    for (const name of ['006_ai_day_planner.sql', '007_passes.sql', '021_free_tier_once.sql']) {
+    for (const name of CHAIN) {
       psql(bin, TEST_DB, ['-f', resolve(migrations, name)]);
       check(`migration applied: ${name}`, true);
     }
@@ -201,6 +230,12 @@ function runPartA(bin) {
       `select count(distinct period_start) from public.ai_usage where user_id = '${user}'::uuid`));
     const dailyTotal = () => Number(scalar(bin, TEST_DB,
       'select coalesce(n, 0) from public.ai_daily_total where day = current_date'));
+    const dailyTotalOn = (offset) => Number(scalar(bin, TEST_DB,
+      `select coalesce((select n from public.ai_daily_total where day = current_date + ${offset}), 0)`));
+    /** The 044 day ledger for a user and kind on a given day offset. */
+    const dayUnits = (user, kind, offset = 0) => Number(scalar(bin, TEST_DB,
+      `select coalesce((select n from public.ai_usage_days where user_id = '${user}'::uuid`
+      + ` and kind = '${kind}' and day = current_date + ${offset}), 0)`));
     const status = (user) => JSON.parse(
       scalar(bin, TEST_DB, `select public.ai_status('${user}'::uuid)`));
 
@@ -277,37 +312,56 @@ function runPartA(bin) {
     check('refund: a double refund never drives ai_daily_total below zero',
       afterDouble >= 0, `got ${afterDouble}`);
 
-    // KNOWN BUG, pinned rather than fixed. See _OPEN.md row T037-c.
+    // THE CROSS-DAY REFUND, fixed by 044 (this used to pin T037-c as a known
+    // bug). ai_consume now writes a (user, day, kind) row in ai_usage_days
+    // once the grant is final, and ai_refund takes the unit off the user's
+    // latest day row that still holds one, and off the shared counter for
+    // THAT day. So a unit spent before midnight and refunded after it comes
+    // out of yesterday's ceiling, where it was added, and today's is left
+    // alone.
     //
-    // ai_refund decrements ai_daily_total for current_date unconditionally.
-    // The spend it is reversing is NOT recorded with a day, so a unit spent
-    // before midnight and refunded after it takes its unit out of the NEXT
-    // day's shared ceiling, where it was never added. The user's own ledger is
-    // fine: ai_usage is keyed by entitlement period, not by day.
-    //
-    // Simulated by refunding against a day whose counter is at a known value
-    // with no matching spend behind it. The assertion below states what the
-    // code DOES, not what it should do. It is deliberately written so that
-    // fixing the bug (giving the refund a day, or recording the day of the
-    // spend) makes this assertion FAIL and sends the next maintainer here.
+    // Simulated by moving the spend's day row and its shared-counter unit to
+    // yesterday, then setting today's counter to a number the refund must
+    // not touch.
     const spendDay = consume(U2, 'plan');
     check('refund cross-day: a spend to reverse was granted', spendDay.status === 'ok');
+    check('refund cross-day: the spend wrote a day row for today',
+      dayUnits(U2, 'plan', 0) === 1, `got ${dayUnits(U2, 'plan', 0)}`);
     const dayBefore = dailyTotal();
-    // Stand in for "the day rolled over": the counter that the refund will
-    // reach is not the one the spend incremented.
+    psql(bin, TEST_DB, ['-c',
+      `update public.ai_usage_days set day = current_date - 1`
+      + ` where user_id = '${U2}'::uuid and kind = 'plan' and day = current_date`]);
+    psql(bin, TEST_DB, ['-c',
+      'insert into public.ai_daily_total (day, n) values (current_date - 1, 1)'
+      + ' on conflict (day) do update set n = public.ai_daily_total.n + 1']);
     psql(bin, TEST_DB, ['-c',
       'update public.ai_daily_total set n = 7 where day = current_date']);
     refund(U2, 'plan');
-    check('refund cross-day: KNOWN BUG T037-c, the refund debits today\'s total '
-      + 'with no regard for the day the unit was spent',
-      dailyTotal() === 6, `expected 6 (7 minus one), got ${dailyTotal()}`);
+    check('refund cross-day: the unit comes off the day it was spent on',
+      dailyTotalOn(-1) === 0, `expected yesterday at 0, got ${dailyTotalOn(-1)}`);
+    check('refund cross-day: the day row it was spent on is back at zero',
+      dayUnits(U2, 'plan', -1) === 0, `got ${dayUnits(U2, 'plan', -1)}`);
+    check('refund cross-day: today\'s shared counter is not touched',
+      dailyTotal() === 7, `expected 7, got ${dailyTotal()}`);
+    check('refund cross-day: the user ledger is unaffected by the day question',
+      used(U2, 'plan') === 0, `got ${used(U2, 'plan')}`);
+    // A refund with no day row anywhere returns the period unit only and
+    // leaves every shared counter alone, which is the honest move when the
+    // day is unknown (a spend from before 044).
+    psql(bin, TEST_DB, ['-c',
+      `insert into public.ai_usage (user_id, period_start, kind, n)`
+      + ` values ('${U2}'::uuid, public.ai_free_epoch(), 'plan', 1)`
+      + ` on conflict (user_id, period_start, kind) do update set n = 1`]);
+    refund(U2, 'plan');
+    check('refund cross-day: a spend with no day row refunds the period unit',
+      used(U2, 'plan') === 0, `got ${used(U2, 'plan')}`);
+    check('refund cross-day: and leaves the shared counter alone',
+      dailyTotal() === 7, `expected 7, got ${dailyTotal()}`);
     // Put the shared counter back so the later free-epoch checks are not read
     // against a number this simulation invented.
     psql(bin, TEST_DB, ['-c',
       `update public.ai_daily_total set n = ${dayBefore - 1} where day = current_date`]);
-    refund(U2, 'plan'); // and return the unit the simulated spend really took
-    check('refund cross-day: the user ledger is unaffected by the day question',
-      used(U2, 'plan') === 0, `got ${used(U2, 'plan')}`);
+    psql(bin, TEST_DB, ['-c', 'delete from public.ai_daily_total where day = current_date - 1']);
 
     // And the refunded unit is genuinely available again: the whole point.
     const reSpend1 = consume(U2, 'plan');
@@ -663,7 +717,8 @@ check("plan-day: the ordinary path consumes kind 'plan'",
 check('plan-day: grounding is only switched on when that consume() was ok',
   /if \(g\.ok\) \{ useGrounding = true; spent\.push\('ground'\); \}/.test(planDay));
 check('plan-day: a refused grounded unit degrades instead of being spent',
-  /else groundingSkipped = /.test(planDay));
+  // T042 wrapped the else in a block to log a paid cap refusal.
+  /else \{?\s*groundingSkipped = /.test(planDay));
 check('plan-day: google_search is gated on useGrounding',
   /useGrounding \? \{ tools: \[\{ google_search: \{\} \}\] \}/.test(planDay));
 check('plan-day: the refund loop walks the kinds actually spent',

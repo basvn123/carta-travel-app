@@ -439,6 +439,16 @@ export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedInd
     // away. Every caller picks its basemap at the mount, never mid-life.
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
+  // The framing reads the focus point and whether pois are given, by value:
+  // a caller that passes a fresh focus object with the same coordinates must
+  // not trigger a redraw, so the effect below depends on these, not on the
+  // objects themselves.
+  const focusLat = focus?.lat;
+  const focusLon = focus?.lon;
+  const focusZoom = focus?.zoom;
+  const focusKey = focus ? `${focusLat},${focusLon}` : null;
+  const hasPois = pois != null;
+
   // Redraw pins + route whenever the stop list (or the sheet height) changes.
   useEffect(() => {
     const map = mapRef.current;
@@ -561,8 +571,8 @@ export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedInd
       // In pickable-pin mode (pois given) frame only once per focus: while the
       // traveller taps pins to build the day, every add changes `stops`, and
       // re-fitting each time would yank the viewport out from under them.
-      const frameKey = focus ? `${focus.lat},${focus.lon}` : null;
-      if (pois != null && frameKey && lastFrameKeyRef.current === frameKey) return;
+      const frameKey = focusKey;
+      if (hasPois && frameKey && lastFrameKeyRef.current === frameKey) return;
       lastFrameKeyRef.current = frameKey;
       // A painted country belongs inside the frame: pins in one corner of
       // Germany must not leave the rest of it off the map.
@@ -587,10 +597,10 @@ export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedInd
         map.fitBounds(bounds, opts);
         return;
       }
-      if (pts.length === 0 && hasLngLat(focus)) {
+      if (pts.length === 0 && hasLngLat({ lat: focusLat, lon: focusLon })) {
         map.easeTo({
-          center: [focus.lon, focus.lat],
-          zoom: focus.zoom ?? 11,
+          center: [focusLon, focusLat],
+          zoom: focusZoom ?? 11,
           duration: 700,
           padding: { bottom: padBottom },
         });
@@ -619,7 +629,7 @@ export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedInd
     // Store so the load handler can invoke the latest closure once ready.
     map._drawTrip = draw;
     if (readyRef.current) draw();
-  }, [stops, padBottom, routeGeometry, routeSegments, showRoute, focus?.lat, focus?.lon, pois != null, fitMaxZoom, fitPadding]);
+  }, [stops, padBottom, routeGeometry, routeSegments, showRoute, focusKey, focusLat, focusLon, focusZoom, hasPois, fitMaxZoom, fitPadding]);
 
   // Glide to one place without reframing the route: "how far is this from
   // today's walk?" is answered by moving the camera, not by refitting the

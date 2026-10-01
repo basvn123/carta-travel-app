@@ -51,7 +51,9 @@ for (const m of (gatesBlock?.[1] ?? '').matchAll(/^\s*(\w+):\s*\{\s*kind:\s*'(ha
 if (gates.size === 0) note('usePaywall.jsx: GATES parsed as empty.');
 
 // --- 2. migration 027's t034_gate_kind, restated by hand -----------------
-const MIGRATION = join(ROOT, '..', 'supabase', 'migrations', '027_paywall_funnel_kinds.sql');
+// CARTA_REPO_ROOT names the root checkout when continent-app is a sibling
+// worktree rather than a child directory.
+const MIGRATION = join(process.env.CARTA_REPO_ROOT || join(ROOT, '..'), 'supabase', 'migrations', '027_paywall_funnel_kinds.sql');
 let sql = '';
 try {
   sql = readFileSync(MIGRATION, 'utf8');
@@ -106,11 +108,16 @@ for (const f of files) {
   for (const m of src.matchAll(/onOpenPass\('([^']+)'\)/g)) {
     called.add(m[1]);
   }
+  // openPrices(reason) opens the modal for somebody who already pays, which
+  // require() cannot do. The expiry banner uses it for 'expiring' (T265).
+  for (const m of src.matchAll(/openPrices\('([^']+)'\)/g)) {
+    called.add(m[1]);
+  }
 }
 for (const [reason] of gates) {
   if (reason === 'browse') continue; // opened structurally via openPrices(), not a literal reason string
   if (!called.has(reason)) {
-    note(`'${reason}' is a gate in GATES with no require()/nudge()/onOpenPass() call site anywhere in src/. It can never produce a 'shown' event and will never appear in the funnel.`);
+    note(`'${reason}' is a gate in GATES with no require()/nudge()/onOpenPass()/openPrices() call site anywhere in src/. It can never produce a 'shown' event and will never appear in the funnel.`);
   }
 }
 

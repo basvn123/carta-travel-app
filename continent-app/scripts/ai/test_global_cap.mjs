@@ -14,10 +14,11 @@
  * handed back when it does. It also proves a per-user cap still fires on its
  * own so the two failures stay distinguishable.
  *
- * No later migration redefines ai_consume, ai_usage, ai_daily_total or
- * plan_tiers. 021 does redefine ai_resolve_tier and ai_status, which is why it
- * is in the chain. 014 to 016 only read these objects from admin functions and
- * are out of scope here.
+ * 021 redefines ai_resolve_tier and ai_status, and 044 (T265) redefines
+ * ai_consume and ai_refund around the ai_usage_days day ledger, so both are
+ * in the chain. 044 refuses to apply without 022, 025, 026, 027 and 031, so
+ * those come too, over a stubbed admin_guard and site_config in place of the
+ * admin migrations 014 and 015, which only read these objects.
  *
  * PART A needs a reachable server and a password. Set PGPASSWORD (and
  * optionally PGHOST, PGPORT, PGUSER) before running. With no server reachable
@@ -44,7 +45,9 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
 const here = dirname(fileURLToPath(import.meta.url));
-const repoRoot = resolve(here, '../../..');
+// The root checkout holds supabase/. In the main checkout it is the parent of
+// continent-app/; in a worktree pair the two are siblings, so it can be named.
+const repoRoot = process.env.CARTA_REPO_ROOT || resolve(here, '../../..');
 const migrations = resolve(repoRoot, 'supabase/migrations');
 
 let failures = 0;
@@ -143,7 +146,28 @@ begin
   end if;
 end
 $do$;
+
+-- Stand-ins for the admin migrations the later files lean on (see the
+-- header). The guard refuses unless the session sets carta.guard to ok.
+create table if not exists public.site_config (
+  key        text primary key,
+  value      jsonb not null,
+  updated_at timestamptz not null default now(),
+  updated_by uuid
+);
+
+create or replace function public.admin_guard(p_kind text default 'read')
+returns text
+language sql
+stable
+as $fn$ select case when current_setting('carta.guard', true) = 'ok' then null else 'forbidden' end $fn$;
 `;
+
+const CHAIN = [
+  '006_ai_day_planner.sql', '007_passes.sql', '021_free_tier_once.sql',
+  '022_paywall_events.sql', '025_withdrawal_waiver.sql', '026_oss_threshold.sql',
+  '027_paywall_funnel_kinds.sql', '031_margin_dashboard.sql', '044_payments_quota.sql',
+];
 
 const U1 = '00000000-0000-0000-0000-00000000000a';
 const U2 = '00000000-0000-0000-0000-00000000000b';
@@ -161,7 +185,7 @@ function runPartA(bin) {
     writeFileSync(stubFile, STUBS, 'utf8');
     psql(bin, TEST_DB, ['-f', stubFile]);
 
-    for (const name of ['006_ai_day_planner.sql', '007_passes.sql', '021_free_tier_once.sql']) {
+    for (const name of CHAIN) {
       const path = resolve(migrations, name);
       // psql reads the file itself, so encoding and size are its problem.
       psql(bin, TEST_DB, ['-f', path]);
@@ -377,8 +401,10 @@ check('tiers: only trip and year are buyable', PAID_TIERS.join() === 'trip,year'
 const planDay = readFileSync(resolve(repoRoot, 'supabase/functions/plan-day/index.ts'), 'utf8');
 check('plan-day: still diverts quota_check to 503',
   /quota\.status === 'quota_check'\) return json\(503/.test(planDay));
+// T042 put a logCapRejection call between the branch and the return, so the
+// pattern allows a short gap rather than demanding adjacency.
 check('plan-day: still turns a non-ok quota into 429',
-  /if \(!quota\.ok\) \{\s*return json\(429, \{\s*code: quota\.status/.test(planDay));
+  /if \(!quota\.ok\) \{[\s\S]{0,600}?return json\(429, \{\s*code: quota\.status/.test(planDay));
 
 /* ===================================================================== */
 
