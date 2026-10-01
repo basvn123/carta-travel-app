@@ -1,0 +1,44 @@
+name: data-licences
+
+# The data licence ledger (T078). docs/tos/data_licenses.md is generated
+# from src/ingestion/core/registry.py, the single source of truth for what
+# runs and what it is licensed for. This job fails the build when a
+# collector or a pipeline/harvest_*.py script exists without its registry
+# row, when the committed ledger is stale, or when a cadence in the registry
+# disagrees with run_pipeline.py. Fix: add the row, then
+#   python -m src.ingestion.core.ledger --write
+# and commit the regenerated file with the change.
+on:
+  push:
+    branches: [main]
+    paths:
+      - "src/ingestion/**"
+      - "pipeline/harvest_*.py"
+      - "run_pipeline.py"
+      - "docs/tos/data_licenses.md"
+      - "tests/test_data_licences.py"
+      - ".github/workflows/data-licences.yml"
+  pull_request:
+    paths:
+      - "src/ingestion/**"
+      - "pipeline/harvest_*.py"
+      - "run_pipeline.py"
+      - "docs/tos/data_licenses.md"
+      - "tests/test_data_licences.py"
+      - ".github/workflows/data-licences.yml"
+
+jobs:
+  ledger:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      # Only what importing the collector modules needs; the full
+      # requirements.txt pulls geopandas and rasterio for nothing here.
+      - run: pip install requests beautifulsoup4 lxml python-dotenv pytest
+      - name: Registry validates and the ledger is current
+        run: python -m src.ingestion.core.ledger --check
+      - name: Ledger rules (a collector or harvester without a row fails)
+        run: pytest tests/test_data_licences.py -q

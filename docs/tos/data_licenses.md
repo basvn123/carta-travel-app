@@ -1,3 +1,7 @@
+<!-- GENERATED FILE. Do not edit: the source is src/ingestion/core/registry.py.
+     Regenerate with  python -m src.ingestion.core.ledger --write
+     CI runs           python -m src.ingestion.core.ledger --check  -->
+
 # Carta data license ledger
 
 Every external data source currently in use, its license, and where (or
@@ -8,7 +12,9 @@ browser, and the price-map blueprint's license notes.
 
 Rules of the ledger:
 
-- A new collector or harvester must add a row here before it ships.
+- A new collector or harvester must add a row before it ships: a `SOURCES`
+  row and a `RUNS` entry in `src/ingestion/core/registry.py`, which this
+  file is generated from. CI fails until both exist.
 - "Attribution required" is what the license or terms demand, not what we
   currently do. Gaps are marked MISSING in the last column and collected in
   the follow-up list at the bottom.
@@ -19,6 +25,90 @@ Rules of the ledger:
   general knowledge that has not been confirmed against the current terms
   text; confirm before relying on it.
 
+This file is generated from `src/ingestion/core/registry.py` (T078). The
+registry is the single source of truth for both what runs (cadence, task,
+failure mode) and what each source is licensed for; edit the row there and
+run `python -m src.ingestion.core.ledger --write`. The CI check fails when a
+collector or a `pipeline/harvest_*.py` script exists without its row, when
+this file is stale, or when a cadence here disagrees with `run_pipeline.py`.
+
+## 0. Execution roster
+
+Every collector in `src/ingestion` and every `pipeline/harvest_*.py`
+script, with how it runs and which ledger rows below govern it. The
+cadence vocabulary is `run_pipeline.py`'s (weekly, monthly, quarterly,
+backfill, after, manual); the task is the `run_pipeline.py` key; the
+failure mode is soft (the task logs and the run carries on), hard (the
+task fails and its chain stops) or manual (never scheduled, the operator
+sees it). A row key links to the source tables that follow.
+
+### Collectors (29)
+
+| Collector | Group | Description | Cadence | Task | Failure | Ledger rows | Note |
+|---|---|---|---|---|---|---|---|
+| `pan_europe` | naps | public-transport.earth aggregated GTFS + NeTEx archives | weekly | `ingestion` | soft | `public_transport_earth_index` |  |
+| `germany` | naps | GTFS.de national feeds (DB long distance, regional, local) + Mobilithek | weekly | `ingestion` | soft | `gtfs_de_delfi_plus` |  |
+| `france_static` | naps | SNCF static GTFS + NeTEx via transport.data.gouv.fr (TGV, OUIGO, Intercites, TER) | weekly | `ingestion` | soft | `transport_data_gouv_fr` |  |
+| `austria` | naps | Mobility Data Austria hub: NeTEx + GTFS (rail, bus, tram, cableway) | weekly | `ingestion` | soft | `mobility_data_austria` |  |
+| `belgium` | naps | Unified BE opendata gateway: GTFS static+realtime (De Lijn, SNCB, STIB, TEC) + SNCB NeTEx EPIP | weekly | `ingestion` | soft | `belgian_operators_sncb_de` |  |
+| `denmark` | naps | Danish NAP catalogue + Rejseplanen Labs feeds (rail, metro, bus, ferry) | weekly | `ingestion` | soft | `danish_nap_plus_rejseplanen` |  |
+| `finland` | naps | Traficom FinAP catalogue + Digitraffic open rail JSON (no key) | weekly | `ingestion` | soft | `traficom_finap_plus_digitraffic` |  |
+| `netherlands` | naps | NDOV Loket / OVapi: national GTFS (CC0) + NeTEx deliveries | weekly | `ingestion` | soft | `ndov_loket_ovapi` |  |
+| `norway` | naps | Entur: national GTFS + NeTEx archives, SIRI ET/SX/VM snapshots | weekly | `ingestion` | soft | `entur` |  |
+| `sweden` | naps | Trafiklab: GTFS Sweden 3, NeTEx Sweden, regional operator feeds | weekly | `ingestion` | soft | `trafiklab_samtrafiken` |  |
+| `switzerland` | naps | opentransportdata.swiss: DCAT catalog -> current GTFS/NeTEx/HRDF resources | weekly | `ingestion` | soft | `opentransportdata_swiss` |  |
+| `spain` | naps | Renfe GTFS (AVE/LD + Cercanias), data.renfe.com CKAN, NAP snapshot | weekly | `ingestion` | soft | `renfe_open_data` |  |
+| `sncf_realtime` | rail | SNCF GTFS-RT Trip Updates + SIRI SX Lite, 2 minute polling | weekly | `ingestion` | soft | `sncf_gtfs_rt_plus` | the one long runner, about 10 minutes of polling |
+| `france_crossborder` | rail | Eurostar / Trenitalia France / Renfe intl feeds via the French NAP | weekly | `ingestion` | soft | `french_nap_cross_border` |  |
+| `era` | rail | ERA registers: ERADIS, ERSAD / station accessibility, RINF | weekly | `ingestion` | soft | `era_registers` |  |
+| `opensky` | aviation | OpenSky ADS-B: Europe states snapshot + per airport arrivals/departures | weekly | `ingestion` | soft | `opensky_network` |  |
+| `opensky_scientific` | aviation | OpenSky bulk datasets: Trino flights table snapshot + aircraft metadata | weekly | `ingestion` | soft | `opensky_network` |  |
+| `eurocontrol_statfor` | aviation | STATFOR / EUROCONTROL public statistics pages + linked downloads | weekly | `ingestion` | soft | `eurocontrol_statfor` |  |
+| `eurocontrol_ddr` | aviation | DDR / ADRR staged file sweeper (restricted research data) | weekly | `ingestion` | soft | `eurocontrol_ddr_adrr` | sweeps data/staging/eurocontrol; nothing is downloaded |
+| `nordic_ferries` | maritime | Entur / Trafiklab per operator ferry feeds (Hurtigruten, archipelago) | weekly | `ingestion` | soft | `nordic_ferry_feeds_via` |  |
+| `greece_nap` | maritime | Greek NAP maritime catalogue (Aegean / Ionian access points) | weekly | `ingestion` | soft | `greek_nap` |  |
+| `ferryhopper` | maritime | Ferryhopper trip widget sampling: port pairs, schedules, base fares | weekly | `ingestion` | soft | `ferryhopper_trips_widget` |  |
+| `flixbus_gtfs` | bus | Flix EU GTFS feed -> direct dest pair coach graph (contract E) | weekly | `ingestion` | soft | `flix_eu_gtfs_feed` |  |
+| `renfe_kaggle` | pricing | Kaggle Renfe AVE dynamic pricing archives (yield curve labels) | weekly | `ingestion` | soft | `kaggle_renfe_archives` |  |
+| `ryanair_archive` | pricing | GitHub LCC price history archives (Ryanair, Wizz Air, easyJet scrapers) | weekly | `ingestion` | soft | `github_lcc_price_archives` |  |
+| `sncf_availability` | pricing | SNCF TGV MAX 30 day seat availability (occupancy proxy labels) | weekly | `ingestion` | soft | `sncf_tgv_max_availability` |  |
+| `travelpayouts` | pricing | Travelpayouts/Aviasales cached fares (backfill for carriers Carta cannot scrape) | manual | `tp_stage` | soft | `travelpayouts_aviasales` | retired from the schedule with the fare tasks (T255); still part of the weekly ingestion sweep, where a missing token SKIPs |
+| `holidays` | events | Nager.Date public holidays, catalogue countries, current + next year | monthly | `demand_events` | soft | `nager_date` | also part of the weekly ingestion sweep |
+| `school_holidays` | events | OpenHolidays school holidays for the countries it covers | monthly | `demand_events` | soft | `openholidays_api` | also part of the weekly ingestion sweep |
+
+### Harvesters (28)
+
+| Script | Cadence | Task | Failure | Ledger rows | Note |
+|---|---|---|---|---|---|
+| `pipeline/harvest_accommodation.py` | quarterly | `lodging` | hard | `inside_airbnb` |  |
+| `pipeline/harvest_activities.py` | backfill | `activities` | hard | `opentripmap` |  |
+| `pipeline/harvest_all_origins.py` | manual | `fares` | hard | `ryanair_farefinder_api` | every fare harvest is retired (T255, 2026-10-01) |
+| `pipeline/harvest_bathing_water.py` | quarterly | `bathing_water` | hard | `eea_wise_bathing_water`, `eea_wise_bathing_water_eea_spine`, `eea_wise_bathing_water_harvest_bathing_water` |  |
+| `pipeline/harvest_climate_power.py` | backfill | `climate` | hard | `nasa_power_climatology_api`, `nasa_power_2001_2020` |  |
+| `pipeline/harvest_events.py` | monthly | `events` | soft | `wikidata_recurring_events` |  |
+| `pipeline/harvest_flight_times.py` | monthly | `flight_times` | hard | `ryanair_farefinder_api` | reads the retired Ryanair endpoint; scheduled but produces nothing new until a fare source returns |
+| `pipeline/harvest_geonames.py` | backfill | `geonames` | hard | `geonames_cities500` |  |
+| `pipeline/harvest_hostelworld.py` | monthly | `staytiers` | hard | `hostelworld_partner_api` | SKIPs without partner credentials |
+| `pipeline/harvest_hotels_liteapi.py` | monthly | `staytiers` | hard | `liteapi_nuitee` | SKIPs without an API key |
+| `pipeline/harvest_image_licenses.py` | manual | none | manual | `wikimedia_commons_file_metadata` |  |
+| `pipeline/harvest_images.py` | backfill | `images` | hard | `wikipedia` |  |
+| `pipeline/harvest_pageviews.py` | monthly | `poi_significance` | soft | `wikipedia`, `wikipedia_enrich_wikidata` | the fame task imports it for the destination half |
+| `pipeline/harvest_parking.py` | quarterly | `parking` | soft | `openstreetmap_via_overpass_harvest_parking` |  |
+| `pipeline/harvest_place_signals.py` | quarterly | `coverage` | soft | `wikidata_place_registers_pageviews` |  |
+| `pipeline/harvest_poi_wikidata.py` | monthly | `poi_significance` | soft | `wikidata_sitelink_counts_live` |  |
+| `pipeline/harvest_pois_overture.py` | backfill | `overture` | hard | `overture_maps_places` |  |
+| `pipeline/harvest_pois_wikidata_images.py` | backfill | `poi_images_wikidata` | hard | `wikimedia_commons`, `wikidata_sitelink_counts_live` |  |
+| `pipeline/harvest_protected_areas_osm.py` | backfill | `nature` | hard | `openstreetmap_via_overpass`, `osm_protected_areas` |  |
+| `pipeline/harvest_ryanair_schedules.py` | manual | none | manual | `ryanair_timetable_api` | Ryanair half of the schedule layer; idle since T255 |
+| `pipeline/harvest_tourism_density.py` | quarterly | `crowding` | hard | `eurostat_tour_occ_nin3` |  |
+| `pipeline/harvest_unesco_whc.py` | quarterly | `unesco` | soft | `unesco_world_heritage_centre` |  |
+| `pipeline/harvest_urban_fabric.py` | manual | none | manual | `openstreetmap_via_geofabrik_country` |  |
+| `pipeline/harvest_volotea.py` | manual | `volotea_fares` | hard | `volotea_getminprice_api` | retired (T255) |
+| `pipeline/harvest_vueling.py` | manual | `vueling_fares` | hard | `vueling_apiw_endpoints` | retired (T255) |
+| `pipeline/harvest_wikivoyage.py` | backfill | `guide` | hard | `wikivoyage` |  |
+| `pipeline/harvest_wikivoyage_listings.py` | monthly | `poi_significance` | soft | `wikivoyage`, `wikivoyage_listings` |  |
+| `pipeline/harvest_wizzair.py` | manual | `wizz_fares` | hard | `wizz_air_timetable_api`, `exchangerate_api_open_endpoint` | retired (T255) |
+
 ## 1. Flight fares, direct carrier harvest (primary source)
 
 | Source | What we take | License | Attribution required | Share-alike | Where attributed today |
@@ -28,6 +118,7 @@ Rules of the ledger:
 | Vueling apiw endpoints (`pipeline/harvest_vueling.py`) | Route discovery plus full per-day fare calendar | Same: public endpoint, direct harvest | No | No | Carrier shown (provenance code VY) |
 | Volotea getminprice API (`pipeline/harvest_volotea.py`) | Cheapest fare per window per route | Same: public endpoint with a static site key, direct harvest | No | No | Carrier shown (provenance code V7) |
 | ExchangeRate-API open endpoint (open.er-api.com, used by `harvest_wizzair.py`) | Daily EUR conversion table (`cache/fx_rates_eur.json`) | Free open endpoint; terms require a credit link ("Rates by Exchange Rate API"), verify current wording | Yes | No | Home footer, Data sources block |
+| Ryanair timetable API, services-api.ryanair.com/timtbl (`pipeline/harvest_ryanair_schedules.py`) | Published departure and arrival times per directed leg per month; departure times are patched into the fares table as `out_f` / `ret_f`, flight numbers stay in the cache. Row added 2026-10-01 (T078): the script existed without one | Same as the farefinder row: public unauthenticated endpoint, direct harvest; a timetable is facts. Manual tier, idle since the fare harvests were retired (T255, 2026-10-01) | No | No | Carrier shown on fare surfaces (provenance code FR); nothing new to credit |
 
 ## 2. Fare caches and partner APIs
 
@@ -124,6 +215,8 @@ the app once those surfaces render from this data.
 | Open-Meteo forecast API (live, `continent-app/src/lib/weather.js`) | 7-day daily forecast fetched client-side when a destination panel is open | Free tier for non-commercial use, data CC BY 4.0; commercial use needs the paid API, verify Carta's affiliate status against their definition | Yes, link to Open-Meteo | No | Explore panel's weather section prints "Live forecast by Open-Meteo.com"; add to Data sources screen. RISK: commercial scope. This is now the LAST non-commercial source on a shipped surface, the WorldClim pair having been replaced on 2026-08-30; resolve with an API subscription if Carta monetises |
 | Eurostat tour_occ_nin3 plus GISCO NUTS 3 boundaries (`pipeline/harvest_tourism_density.py`) | Regional tourism density (crowding tiers) | Eurostat reuse: CC BY 4.0. GISCO boundaries carry the EuroGeographics notice | Yes, both | No | Crowding tooltip cites Eurostat with year; the EuroGeographics boundary notice is in the Account panel's Data sources screen |
 | Numbeo point anchors (`pipeline/gen_mock_data.py` country tables, oneoff calibrations) | Hand-read meal, drink and grocery price anchors used to seed lifestyle costs | Proprietary site, no open license; small hand-typed factual excerpts, not a bulk harvest | n/a | No | In-data source tags only. RISK: verify acceptable use, plan replacement with an open source over time |
+| Wikimedia Commons file metadata, imageinfo extmetadata (`pipeline/harvest_image_licenses.py`) | The Title, Author, Source and Licence chain (LicenseShortName, LicenseUrl, Artist, Credit, Restrictions) for every POI thumbnail hosted on upload.wikimedia.org, written to `cache/poi_image_licenses.json`; files whose licence fails the gate (NC, ND, permission-only, no licence metadata) are marked `ok: false`. Row added 2026-10-01 (T078): the script existed without one | The metadata is facts about a file and Commons publishes it as CC0 structured data; the photographs it describes keep their own per-file licence (the Wikimedia Commons rows) | No, for the metadata itself. It is what makes the per-file credit on the photographs possible | No | Not a displayed source. The TASL it harvests is what the POI thumbnail credit (follow-up item 1) renders once that surface exists |
+| Wikidata place registers plus Wikipedia pageviews (`pipeline/harvest_place_signals.py`) | Members of every place-level register in `pipeline/place_registries.py` (coordinates, population, sitelink count) matched onto the coverage candidates and written to `data/derived/place_registry.json`; sitelink counts and twelve-month pageviews per shortlisted place in `cache/place_signals.json`. Ranking signals for the coverage report only; nothing it writes ships to users. Row added 2026-10-01 (T078): the script existed without one | Wikidata CC0; Wikimedia pageview statistics CC0 | No | No | None needed. A designation that does reach the wire carries its own row (UNESCO, in the resolutions section) |
 
 ## 6. Runtime services called from the browser
 
@@ -422,7 +515,7 @@ Three of the open items above are now closed in code:
 | Source | What we take | License | Attribution required | Share-alike | Where attributed today |
 |---|---|---|---|---|---|
 | NASA POWER climatology API (`pipeline/harvest_climate_power.py`) | 12-month climate normals (T2M, T2M_RANGE, precipitation, solar) per destination, 2001-2020, lapse-corrected to destination elevation | US Government work: no use restriction; NASA asks for an acknowledgement | No (given anyway) | No | Account > Data sources; dossier `credits[]` and the PDF credits page wherever normals print |
-| NASA POWER climatology API (`pipeline/mountains/season.py`) | 12-month normals (T2M, PRECTOTCORR) per 0.5 degree cell, lapse-corrected to each summit's own elevation, turned into a snow probability and a best-months array | US Government work: no use restriction; NASA asks for an acknowledgement | No (given anyway) | LIVE: `credit[]` on every mountain row carrying a season, and Account > Data sources. ERA5-Land (Copernicus CDS) is the source brief 05 names and `--source era5` is written for it; it needs a CDS key, which this repo does not have, so POWER is the shipped default and `season.src` records which one answered |
+| NASA POWER climatology API (`pipeline/mountains/season.py`) | 12-month normals (T2M, PRECTOTCORR) per 0.5 degree cell, lapse-corrected to each summit's own elevation, turned into a snow probability and a best-months array | US Government work: no use restriction; NASA asks for an acknowledgement | No (given anyway) | LIVE: `credit[]` on every mountain row carrying a season, and Account > Data sources. ERA5-Land (Copernicus CDS) is the source brief 05 names and `--source era5` is written for it; it needs a CDS key, which this repo does not have, so POWER is the shipped default and `season.src` records which one answered | No |
 | Open-Meteo elevation API (Copernicus DEM GLO-90, same harvester) | One ground elevation per destination for the lapse correction | CC BY 4.0 (Copernicus DEM) | Covered by the existing Copernicus credit | No | Copernicus GLO row above |
 | UNESCO World Heritage Centre list XML (`pipeline/harvest_unesco_whc.py` -> `cache/unesco_whc.json`) | Site name, category, region, per-country coordinates for inscribed properties | UNESCO WHC terms of use (verify wording on the syndication page) | Yes | No | `attribution.js` entry added; dossier `credits[]` where a designation is shown |
 
