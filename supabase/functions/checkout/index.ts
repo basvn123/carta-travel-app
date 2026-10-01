@@ -35,8 +35,24 @@
  * it to the same address as the Dashboard field (the app serves the terms at
  * /?legal=terms) once that field is filled in, and checkout starts asking.
  *
+ * THE GATE REASON (T265, register row T034-c). The browser may also send
+ * `reason`, the paywall gate that opened the pass modal (GATES in
+ * hooks/usePaywall.jsx). It is letters only, at most 32, and it goes into
+ * the session metadata so the webhook can write it on pass_grants.reason,
+ * which gives admin_paywall_funnel a join key instead of a one-hour
+ * nearest-checkout estimate. It decides nothing about the sale.
+ *
+ * THE HORIZON (T265, register row T031-c). Before a session is opened,
+ * pass_can_buy (migration 044) is asked whether a grant would extend the
+ * pass at all. A pass already three years out gains nothing from another
+ * purchase, and charging for nothing is worse than refusing, so the answer
+ * is 409 pass_max and the modal says to come back nearer the time. The RPC
+ * runs on the service role; a database that lacks it answers 503 so the
+ * deploy order (paste 044 first) fails loudly rather than charging blind.
+ *
  * Secrets: STRIPE_SECRET_KEY, STRIPE_PRICE_TRIP, STRIPE_PRICE_YEAR,
- * CHECKOUT_SUCCESS_URL, CHECKOUT_CANCEL_URL, CHECKOUT_TERMS_URL.
+ * CHECKOUT_SUCCESS_URL, CHECKOUT_CANCEL_URL, CHECKOUT_TERMS_URL,
+ * SUPABASE_SERVICE_ROLE_KEY (set by the platform).
  */
 import Stripe from 'npm:stripe@17';
 import { createClient } from 'npm:@supabase/supabase-js@2';
@@ -77,6 +93,22 @@ Deno.serve(async (req) => {
   if (!PAID_TIERS.includes(tier)) return json(400, { code: 'bad_tier' });
   const price = stripePriceFor(tier, env);
   if (!price) return json(503, { code: 'no_price' });
+  // Attribution only. Anything that is not a plain gate word is dropped, not
+  // rejected: a malformed reason must never cost somebody a purchase.
+  const rawReason = typeof body.reason === 'string' ? body.reason : '';
+  const reason = /^[A-Za-z]{1,32}$/.test(rawReason) ? rawReason : '';
+
+  // Would a grant extend this pass at all? Asked on the service role, before
+  // Stripe is involved, so nobody pays for days the horizon takes away.
+  const service = createClient(env('SUPABASE_URL'), env('SUPABASE_SERVICE_ROLE_KEY'));
+  const { data: can, error: canErr } = await service.rpc('pass_can_buy', {
+    p_user: user.id, p_tier: tier,
+  });
+  if (canErr) return json(503, { code: 'quota_check', message: canErr.message });
+  if (can && can.reason === 'bad_tier') return json(400, { code: 'bad_tier' });
+  if (!can || can.ok !== true) {
+    return json(409, { code: 'pass_max', expiresAt: can?.expiresAt || null });
+  }
 
   const stripe = new Stripe(SECRET, { apiVersion: '2025-10-29.clover' });
 
@@ -102,8 +134,8 @@ Deno.serve(async (req) => {
       // bearing part of the whole flow. client_reference_id survives even if
       // metadata is dropped by an intermediary.
       client_reference_id: user.id,
-      metadata: { user_id: user.id, tier },
-      payment_intent_data: { metadata: { user_id: user.id, tier } },
+      metadata: { user_id: user.id, tier, reason },
+      payment_intent_data: { metadata: { user_id: user.id, tier, reason } },
       customer_email: user.email || undefined,
       automatic_tax: { enabled: true },
       // Required for automatic_tax to resolve a rate for digital goods: the

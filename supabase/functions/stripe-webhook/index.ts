@@ -28,12 +28,20 @@
  * cumulative cross-border B2C figure can be counted against the EUR 10,000
  * Article 59c threshold without anyone opening the Stripe Dashboard.
  *
- * DEPLOY ORDER: migration 026 FIRST, then this function. The RPC is called
- * with NAMED arguments, so a call carrying p_buyer_country against a database
- * that still has only the six-argument grant_pass does not silently fall back,
- * it fails to find the function and the grant errors. The 500 that follows
- * makes Stripe retry, so nothing is lost once the migration lands, but a
- * customer holds no pass until it does.
+ * DEPLOY ORDER: migration 044 FIRST, then this function. The RPC is called
+ * with NAMED arguments, so a call carrying p_reason and p_fee_cents against a
+ * database that still has the nine-argument grant_pass from 026 does not
+ * silently fall back, it fails to find the function and the grant errors.
+ * The 500 that follows makes Stripe retry, so nothing is lost once the
+ * migration lands, but a customer holds no pass until it does.
+ *
+ * Needs migration 044_payments_quota.sql (T265) for the reason, fee_cents and
+ * fee_currency columns. The reason is the paywall gate the checkout function
+ * put in the session metadata, and it is what admin_paywall_funnel joins on.
+ * The fee is Stripe's own, read off the balance transaction behind the
+ * charge, so admin_margin can report the Stripe line as a charge rather than
+ * a modelled rate. Both are reporting fields: a failure to read either must
+ * never stop a paid customer being granted what they bought.
  */
 import Stripe from 'npm:stripe@17';
 import { createClient } from 'npm:@supabase/supabase-js@2';
@@ -136,6 +144,36 @@ Deno.serve(async (req) => {
   const amountCents = typeof session.amount_total === 'number' ? session.amount_total : null;
   const currency = session.currency || null;
 
+  // WHICH GATE SENT THEM (T265). Written by the checkout function into the
+  // session metadata; letters only or nothing. grant_pass validates it again.
+  const metaReason = String(session.metadata?.reason || '');
+  const reason = /^[A-Za-z]{1,32}$/.test(metaReason) ? metaReason : null;
+
+  // WHAT STRIPE ACTUALLY KEPT (T265). The fee lives on the balance
+  // transaction behind the charge behind the payment intent, and none of it
+  // rides on the checkout.session.completed event, so it is one retrieve
+  // with one expansion. A failed retrieve leaves both NULL and the grant
+  // goes ahead; admin_margin then models the fee for that row and says so.
+  let feeCents: number | null = null;
+  let feeCurrency: string | null = null;
+  const paymentIntentId = typeof session.payment_intent === 'string'
+    ? session.payment_intent : session.payment_intent?.id || '';
+  if (paymentIntentId) {
+    try {
+      const pi = await stripe.paymentIntents.retrieve(paymentIntentId, {
+        expand: ['latest_charge.balance_transaction'],
+      });
+      const charge = pi.latest_charge && typeof pi.latest_charge === 'object'
+        ? pi.latest_charge : null;
+      const bt = charge && charge.balance_transaction && typeof charge.balance_transaction === 'object'
+        ? charge.balance_transaction : null;
+      if (bt && typeof bt.fee === 'number') {
+        feeCents = bt.fee;
+        feeCurrency = bt.currency || null;
+      }
+    } catch { /* grant anyway, with the fee modelled for this sale */ }
+  }
+
   const service = createClient(env('SUPABASE_URL'), env('SUPABASE_SERVICE_ROLE_KEY'));
   const { data, error } = await service.rpc('grant_pass', {
     p_user: userId,
@@ -149,6 +187,9 @@ Deno.serve(async (req) => {
     p_buyer_country: buyerCountry,
     p_amount_cents: amountCents,
     p_currency: currency,
+    p_reason: reason,
+    p_fee_cents: feeCents,
+    p_fee_currency: feeCurrency,
   });
 
   if (error) {
