@@ -24,13 +24,31 @@ import { supabase } from '../lib/supabaseClient.js';
  * The codes that mean the service failed, as opposed to the traveller's own
  * state (signed out, out of plans, too few places) or a switched-off
  * function. Only these are recorded; the table refuses anything else too.
+ *
+ * client_crash is the ErrorBoundary's code (T083): a render error the
+ * traveller saw as the crash panel. It travels through the same RPC with
+ * fn 'app' and origin 'client'. Until a migration widens 040's two closed
+ * lists (fn and code) the writer drops it exactly as it drops any other
+ * unknown code, which costs nothing on the traveller's side; register row
+ * T083-b carries the SQL.
  */
-const RECORDED = new Set(['ai_timeout', 'ai_bad_output', 'url_unreachable', 'ai_error']);
+const RECORDED = new Set(['ai_timeout', 'ai_bad_output', 'url_unreachable', 'ai_error', 'client_crash']);
 
 const httpStatus = (n) => (Number.isInteger(n) && n >= 100 && n <= 599 ? n : null);
 
 /**
- * @param {'plan-day'|'suggest-city'|'parse-booking'} fn
+ * The ErrorBoundary's one call. What is sent is the fact of a crash and
+ * nothing else: no message, no stack, no component name, no page, for the
+ * same reason the edge failures carry no body (see the header). The console
+ * keeps the detail for whoever is looking at the screen; the row says only
+ * that the app fell over for a signed-in traveller, and when.
+ */
+export function reportClientCrash() {
+  reportEdgeFailure('app', 'client_crash', { origin: 'client' });
+}
+
+/**
+ * @param {'plan-day'|'suggest-city'|'parse-booking'|'app'} fn
  * @param {string} code  the code the wrapper is about to return
  * @param {{ origin?: 'edge'|'client', http?: number, upstream?: number }} [meta]
  *   origin 'client' when the function answered 2xx and the wrapper's own

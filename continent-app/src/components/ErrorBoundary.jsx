@@ -1,4 +1,5 @@
 import React from 'react';
+import { reportClientCrash } from '../planner/edgeFailure.js';
 
 // Signatures browsers use when a dynamically-imported chunk can't be fetched, // almost always a stale bundle after a redeploy. Safari: "Importing a module
 // script failed."; Chrome: "Failed to fetch dynamically imported module";
@@ -41,10 +42,18 @@ export class ErrorBoundary extends React.Component {
         try { window.sessionStorage.setItem(CHUNK_RELOAD_KEY, '1'); } catch {}
         this.setState({ reloading: true });
         window.location.reload();
+        // A stale tab picking up a fresh build is not a crash of this build,
+        // and the reload would cut the request off anyway.
+        return;
       }
       // If we already reloaded once and it still failed, the chunk is genuinely
       // broken, fall through to the crash panel below instead of looping.
     }
+
+    // The crash panel is about to show. Record that it happened, before the
+    // traveller sees it, the way the AI wrappers record a failed call (T071).
+    // Fire and forget, never throws; nothing about the error itself is sent.
+    reportClientCrash();
   }
 
   render() {
