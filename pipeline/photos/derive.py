@@ -543,6 +543,16 @@ def _wire_record(node):
     return title, cred, fetch_url
 
 
+def _coordinates(node):
+    """A list of numbers, or of lists of numbers at any depth: a trail or
+    route geometry. Walking one element by element is most of the cost of
+    reading the trails and cycling wires, and it never holds a photograph."""
+    x = node
+    while isinstance(x, list) and x:
+        x = x[0]
+    return isinstance(x, (int, float)) and not isinstance(x, bool)
+
+
 def iter_wire(layer):
     """(position, where, title, credit or None, fetch URL) for every photo
     record the layer's wire publishes, hero first: a record's position is
@@ -561,6 +571,8 @@ def iter_wire(layer):
         while stack:
             node, pos = stack.pop()
             if isinstance(node, list):
+                if _coordinates(node):
+                    continue          # a geometry: millions of numbers, no photo
                 for i, x in enumerate(node):
                     if isinstance(x, (list, dict)):
                         stack.append((x, i))

@@ -459,6 +459,94 @@ before. It was found by pulling on a loose thread, five photographs of a
 Kosovan lake carrying scores in identical pairs, which turned out to be
 resolution and season agreeing because nothing else had a vote.
 
+## The derive stage: our own copies on R2
+
+`pipeline/photos/derive.py` (T049, extended by T269) turns every published
+photograph into five content-addressed files on R2: AVIF at 320, 640 and
+1280 px and WebP at 320 and 640, under `img/{ab}/{cd}/{sha1}/`, served from
+cdn.carta-europetravel.com with a one-year immutable Cache-Control. It runs
+on the CAX41 as the `image_transcode` job. Its docstring is the reference;
+this is the map.
+
+Sources. The beaches, lakes and mountains read their rich caches. The other
+Tier A layers (trails, cycling, region, dossier, poi, dest, trips, journeys)
+have no cache that carries a photograph's credit, so they read the wire,
+which is what the app shows, and take the credit from Commons' own
+extmetadata at resolve time. A row's `lic` is never read as its photo's
+licence unless the same record names an author: a cycling route's ODbL is
+the geometry's. The worker has no wire, so `derive.py sources <layer>`
+writes the published list to `img/manifest/_sources/<layer>.json`, and a run
+that finds it under `--prior` derives the published titles first.
+
+Gates, before any download: a canonical title, a raster extension (SVG, ogg,
+wav, webm, ogv and PDF never reach the encoder; T007 counted 4,280 of them
+in Tier A), a storable licence (no NC, no ND, not empty), a credit when one
+is owed, and not in the takedown ledger. Commons' mime type is checked again
+at resolve, and a name Commons no longer has is logged as dead and skipped.
+
+The manifest, `img/manifest/<layer>.json`, is what points at the objects.
+Per title: `h` the address, `d` the real rung sizes, `c` the credit, and
+since T269 `n` (Commons says no credit is owed), `p` (the hero placeholder,
+so the export needs no local img/ tree) and `s` (Commons' content sha1).
+
+Re-uploads. The address is the title, and an immutable object can never be
+rewritten. `run --recheck` asks Commons for the content sha1 of what is
+already held (one request per 50 titles, no download). A changed file gets a
+new address, the sha1 of `<title>#<content sha1>`, and is derived again; the
+manifest moves to it, the app follows through `ih`, and the old objects are
+left for gc. Never re-encode in place.
+
+Garbage collection. `derive.py gc --held <listing> --prior <copy of
+img/manifest> --out DIR` keeps every address a layer's newest manifest names
+and every address a journal names until a later manifest has folded that
+journal and the grace period (14 days) has passed. It deletes the rest, and
+any object of a title in the takedown ledger. It refuses with no manifest at
+all, and when the deletion is over a quarter of the bucket unless `--force`.
+It is a dry run unless `--apply`. A lifecycle rule would also expire
+journals, but by age alone, which would drop the progress of a layer whose
+first manifest is not written yet; the sweep knows which journals are
+folded, so it is the one mechanism.
+
+The ledger floor. Every manifest records how many takedown rows its run
+saw. A run that sees fewer refuses: a lost or reset ledger would otherwise
+let a taken-down photograph back into R2.
+
+Before a big run. `derive.py probe <layers> --sample 1000` asks imageinfo
+for a sample of names and reports the dead rate (T008 asked for this before
+the first transcode).
+
+Tests: `python pipeline/photos/verify_derive.py` (offline, needs libvips via
+`CARTA_VIPS_BIN` on Windows), `verify_takedown.py`, `verify_credit.py`,
+`verify_attribution_cdn.py`.
+
+## Moving the photo caches to the CAX41 (the T047-g check)
+
+The first promoted `clip_sweep` replaces `archive/caches/<layer>-cache.tar.gz`
+with what the CAX41 scored. Three things come first, in this order.
+
+1. The CLIP check, on the box. In a clip_sweep worker (or a kept one, with
+   the layer, embedding and model tarballs extracted), run
+   `python pipeline/photos/clip_parity.py beaches --n 20 --json parity.json`.
+   It re-embeds 20 photographs whose x86 embedding is cached and compares:
+   cosine distance under 0.002 and LAION score difference under 0.05 for
+   every one. PASS: the cached vectors stay valid on arm64. FAIL: do not
+   promote; either keep clip_sweep on x86 or rescore every photograph on the
+   box so a layer never mixes the two (an embedding cache cleared for that
+   layer, `rescore.py` forced). On the laptop the same command must print
+   distances of about zero; that proves the script, not the box.
+2. The caches in R2 without a hold. A tarball packed while
+   `cache/<layer>/.rescore_hold` exists is refused by clip_sweep.sh (exit 5).
+   Release the hold (the rebuild that set it has to have finished), then
+   pack and push the layer with T045's `pack.py` and `push.py`. Check:
+   `tar -tzf <layer>-cache.tar.gz | grep rescore_hold` prints nothing.
+3. One owner per cache. Decide, per layer, which machine writes
+   `cache/<layer>`. The recommendation: the laptop keeps harvesting and
+   rebuilding (it has the dumps and the trails lab), the CAX41 only scores,
+   and the laptop pulls `archive/caches/<layer>-cache.tar.gz` after every
+   promoted clip_sweep and before its next rebuild, so neither side ever
+   overwrites the other's newer work. Write the decision into this section
+   when it is made.
+
 ## Open items
 
 - **22 photographs still owe a credit nobody can supply.** Measured
