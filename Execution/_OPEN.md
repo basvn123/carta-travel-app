@@ -18,7 +18,7 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T031-a | T031 | Make the real test purchases per supabase/functions/checkout/test_purchase_e2e.md on fresh accounts, never the owner account | user | open | 6 |
 | T031-b | T031 | grant_pass sets tier unconditionally, so a Year holder buying a Trip Pass is downgraded; three candidate fixes in the report, needs a migration | next task | open | |
 | T031-c | T031 | entitlements.expires_at can be extended without limit by repeated purchases; grant_pass caps nothing | next task | open | |
-| T031-d | T031 | Migration 018 line 93 regex bound {5,600} exceeds the Postgres cap of 255 and breaks supabase start locally; use {5,255} | next task | open | |
+| T031-d | T031 | Migration 018 line 93 regex bound {5,600} exceeds the Postgres cap of 255 and breaks supabase start locally; use {5,255} | next task | closed by T253 | |
 | T032-a | T032 | Fill the Stripe Dashboard Terms of service URL, then set CHECKOUT_TERMS_URL; the secret before the field makes every checkout 502 | user | open | 2 |
 | T032-b | T032 | Paste migration 025 into the SQL editor | user | open | 3 |
 | T032-c | T032 | Confirm on a real purchase that the Stripe page shows Carta's waiver wording and pass_grants reads consent accepted | user | open | 6 |
@@ -257,3 +257,4 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T077-b | T077 | The suite proves the migrations as committed produce a closed admin surface, not that the live project matches them; with 021, 022, 024 to 027 and 029 to 043 recorded as unapplied the live surface is known to differ, and checking it means reading pg_proc from ntssxktaduxzpsmejwyv with a credential no CI job should hold | user | open |  |
 | T077-c | T077 | admin_get_audit gates on is_admin() rather than admin_guard(), so it is the one callable admin function with no rate budget; it refuses non-admins correctly, so this is an inconsistency rather than a hole, but a later migration should settle which check the surface uses | next task | open |  |
 | T077-d | T077 | The admin-rpc-security CI job is correct as YAML and its logic was exercised locally in both directions (a real run passes, a skipped run is caught), but no GitHub Actions run exists until this branch is pushed; confirm the job goes green on the first push | user | open |  |
+| T253-a | T253 | Thirteen admin harnesses in continent-app/scripts/admin still say 018 fails on a real Postgres and keep a dead {5,255} patched-copy fallback; remove the branch and the comments | next task | open | |

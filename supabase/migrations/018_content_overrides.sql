@@ -90,7 +90,10 @@ begin
       -- https only, and a length a real URL fits inside. An http image would
       -- be blocked by the page's own content security policy anyway, so
       -- accepting one would only produce a picture that silently never loads.
-      if (p_patch ->> 'image') !~ '^https://[^[:space:]]{5,600}$' then
+      -- The 600 cap is a char_length check, not a regex bound: Postgres caps
+      -- a repetition count at 255, and {5,600} fails on any fresh database.
+      if (p_patch ->> 'image') !~ '^https://[^[:space:]]{5,}$'
+         or char_length(p_patch ->> 'image') > 608 then
         return 'bad_image';
       end if;
     elsif k in ('hidden', 'featured') then
