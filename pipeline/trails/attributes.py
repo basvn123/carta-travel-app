@@ -23,6 +23,14 @@ season estimate, the portal verification badge, and the three facts the
 retired describe.py knew that the structured fields did not (the waymark ref,
 what the route passes, and who published the official line).
 
+And the title. The ingest stores the relation's name tag as is, which is a
+code on 1,295 rows and over 55 characters on 631; names.title_ladder() turns
+the tags, the highlight features and the anchors this pass already holds into
+a title of at most 42 characters, and the string it replaced rides in
+waymark_ref as the mono chip (spec 6.6). Written here, not at export, so
+curate.py's families and the registry match read the same title the app
+shows. Never written from the stored title: a re-run reads the tags again.
+
 Order of the run: after curate.py (this only reads the selection), after
 elevation.py (the DEM terms), after scenic.py (the highlight kinds), after
 way_tags.py (the member way tags), and before rate.py, which reads the
@@ -63,6 +71,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from db import connect  # noqa: E402
 from schema import ensure  # noqa: E402
 from way_tags import SAC_RANK, VIS_RANK, ferrata_value, sac_value  # noqa: E402
+from names import title_ladder  # noqa: E402
 
 SCHEMA_SQL = ROOT / "tools" / "trailslab" / "initdb" / "07_filters.sql"
 
@@ -553,6 +562,26 @@ def waymark_ref_of(row):
     return ref
 
 
+def title_of(row, route_type, passes):
+    """The published title and the ref chip, from the title ladder.
+
+    names.title_ladder() is the rule (spec 6.6); this only hands it what the
+    row carries. The ladder reads the relation's TAGS, never the stored
+    title, so a re-run lands on the same answer: the stored title is passed
+    only as the fallback for a derived route whose tags hold no name.
+
+    The ref chip is the signpost reference when the tags have one, otherwise
+    the string the title replaced ("GR 564", the 47-character original), so
+    a walker who knows the route by that string still finds it on the page.
+    The original always survives in raw_tags, whatever this writes."""
+    tags = row.get("raw_tags") or {}
+    features = (row.get("highlights") or {}).get("features") or []
+    out = title_ladder(tags, title=row.get("title"), features=features,
+                       passes=passes, route_type=route_type,
+                       distance_m=row.get("distance_m"))
+    return out["title"], out["ref"], out["rung"]
+
+
 # ---------------------------------------------------------------------------
 # Reads
 # ---------------------------------------------------------------------------
@@ -601,6 +630,7 @@ def fetch_shapes(conn, ids):
 
 UPDATE_SQL = """
     UPDATE trips SET
+        title = %(title)s,
         grade = %(grade)s, grade_src = %(grade_src)s, grade_parts = %(grade_parts)s,
         route_type = %(route_type)s, route_type_src = %(route_type_src)s,
         route_type_parts = %(route_type_parts)s,
@@ -630,9 +660,13 @@ def derive(row, shape):
     portal_source = portal_details.get("source") if portal_ok else None
 
     anchors = (row.get("popularity_details") or {}).get("anchors") or []
+    passes = passes_of(anchors)
+    title, ref, title_rung = title_of(row, route_type, passes)
 
     return {
         "id": row["id"],
+        "title": title,
+        "title_rung": title_rung,       # reported, not stored
         "grade": grade,
         "grade_src": grade_src,
         "grade_parts": Jsonb(grade_parts),
@@ -643,9 +677,9 @@ def derive(row, shape):
         "suitability": Jsonb(suitability_of(row, grade, season)),
         "surface": Jsonb(surface_of(row)),
         "season": Jsonb(season) if season else None,
-        "waymark_ref": waymark_ref_of(row),
+        "waymark_ref": ref or waymark_ref_of(row),
         "publisher": portal_source,
-        "passes": Jsonb(passes_of(anchors)) if passes_of(anchors) else None,
+        "passes": Jsonb(passes) if passes else None,
         "portal_ok": portal_ok if row.get("portal_passed") is not None else None,
         "portal_source": portal_source,
     }
@@ -674,6 +708,7 @@ def main():
     shapes = Counter()
     codes = Counter()
     suits = Counter()
+    rungs = Counter()
     with connect() as conn:
         ensure(conn, SCHEMA_SQL, verbose=True)
         countries = ([c.strip().upper() for c in args.countries.split(",") if c.strip()]
@@ -686,7 +721,7 @@ def main():
             shape_by_id = fetch_shapes(conn, [r["id"] for r in rows])
             conn.commit()
             records = [derive(r, shape_by_id.get(r["id"])) for r in rows]
-            for rec in records:
+            for row, rec in zip(rows, records):
                 grades[rec["grade"]] += 1
                 shapes[rec["route_type"]] += 1
                 for code in rec["highlight_kinds"] or []:
@@ -698,6 +733,9 @@ def main():
                     suits[f"{code} (derived)"] += 1
                 totals["tagged_grade" if rec["grade_src"] == "tagged"
                        else "derived_grade"] += 1
+                rungs[rec["title_rung"]] += 1
+                if rec["title"] != (row.get("title") or ""):
+                    totals["retitled"] += 1
             if not args.dry_run:
                 with conn.cursor() as cur:
                     cur.executemany(UPDATE_SQL, records)
@@ -720,6 +758,8 @@ def main():
     print(f"route type: {dict(shapes)}")
     print(f"highlights: {dict(codes.most_common())}")
     print(f"suitability: {dict(suits.most_common())}")
+    print(f"title rung: {dict(rungs.most_common())}, "
+          f"{totals['retitled']:,} retitled")
     if args.dry_run:
         print("dry run: nothing written")
     return 0
