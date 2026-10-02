@@ -346,7 +346,8 @@ The chain on the box is systemd timer, `weekly.sh`, `run_pipeline.sh`,
 `run_pipeline.py`. `carta-weekly.timer` (`infra/hetzner/cron/`) fires Monday
 09:00 Europe/Brussels, the Windows task's slot, with `Persistent=true` and no
 boot-time firing. `carta-weekly.service` gives the run a 48 hour start timeout,
-because the laptop's last complete fare chain took 29.8 hours and a oneshot
+because the laptop's last complete fare chain took 29.8 hours (that chain no
+longer runs since T255, so the figure is generous) and a oneshot
 service is otherwise killed after 90 seconds. `weekly.sh` writes the "cron
 fired" line T046's `verify.sh` counts and runs the pipeline only when the
 service sets `CARTA_PIPELINE_ENABLED=1`, which the T046 units cloud-init
@@ -385,7 +386,7 @@ so the gap is in every box log rather than only in this paragraph (T048-h).
 
 `infra/hetzner/cax11/verify_tasks.sh` verifies the weekly tasks one at a time
 in the order of `weekly_tasks.txt` (cheapest and least destructive first,
-the day-long `fares` refresh last, the wire build after it) and records exit
+the wire build last; the seven fare steps left the list in T255) and records exit
 code, wall time, peak memory and the state-file change of each in
 `logs/arm64_verify/`. `infra/hetzner/cax11/compare_wire.py` compares two wire
 builds, or two shape summaries of them, by file set, keys, schema version and
@@ -401,13 +402,13 @@ not stop the run.
 
 | Key | Cadence | Script(s) | Writes | Guard | Soft | Wall time | Cron-safe |
 |---|---|---|---|---|---|---|---|
-| `tp_stage` | weekly | src.ingestion.run_all | report only | - | yes | not recorded | yes |
-| `fares` | weekly | pipeline/harvest_all_origins.py (graph/harvest/patch/refresh) | master | - | no | 24.5 h | yes, but 24 h |
-| `wizz_fares` | weekly | pipeline/harvest_wizzair.py (graph/harvest/patch) | master | - | no | 4.7 h | yes, but 4.7 h |
-| `vueling_fares` | weekly | pipeline/harvest_vueling.py (graph/harvest/patch) | master | - | no | 35 min | yes, but 36 min |
-| `volotea_fares` | weekly | pipeline/harvest_volotea.py (graph/harvest/patch) | master | - | no | 58s | yes |
-| `fare_history` | weekly | src.estimation.snapshot | report only | - | yes | 6s | yes |
-| `fare_model` | weekly | src.estimation.drift, src.estimation.model, pipeline/harvest_all_origins.py est | master | - | yes | 2 min | yes |
+| `tp_stage` | manual (retired T255) | src.ingestion.run_all | report only | - | yes | not recorded | yes |
+| `fares` | manual (retired T255) | pipeline/harvest_all_origins.py (graph/harvest/patch/refresh) | master | - | no | 24.5 h | yes, but 24 h |
+| `wizz_fares` | manual (retired T255) | pipeline/harvest_wizzair.py (graph/harvest/patch) | master | - | no | 4.7 h | yes, but 4.7 h |
+| `vueling_fares` | manual (retired T255) | pipeline/harvest_vueling.py (graph/harvest/patch) | master | - | no | 35 min | yes, but 36 min |
+| `volotea_fares` | manual (retired T255) | pipeline/harvest_volotea.py (graph/harvest/patch) | master | - | no | 58s | yes |
+| `fare_history` | manual (retired T255) | src.estimation.snapshot | report only | - | yes | 6s | yes |
+| `fare_model` | manual (retired T255) | src.estimation.drift, src.estimation.model, pipeline/harvest_all_origins.py est | master | - | yes | 2 min | yes |
 | `ingestion` | weekly | src.ingestion.run_all | report only | - | yes | not recorded | yes |
 | `demand_events` | monthly | src.ingestion.run_all --only holidays,school_holidays | report only | - | yes | not recorded | yes |
 | `fame` | monthly | pipeline/resolve_dest_articles.py, harvest_pageviews.py, apply_designations.py, apply_beauty_layer.py, apply_place_layer.py, apply_rating_layer.py | master | - | no | 8 min | yes, the cache clear is self-guarded |

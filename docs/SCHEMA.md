@@ -1,6 +1,6 @@
 # app_data schema
 
-Live master: `meta.schema_version` = 15. The `Schema vN` sections further down
+Live master: `meta.schema_version` = 17. The `Schema vN` sections further down
 are the additive changelog of layers (their numbering ran ahead of the meta
 field; treat the sections as history, `meta.schema_version` as the contract).
 
@@ -721,15 +721,48 @@ Merge policy (cheapest-wins, direct carriers stay primary):
   direct fare, regardless of merge order); reclaiming clears that day from
   `out_o`/`out_x`.
 - `harvest_all_origins.py tp` re-merges a refreshed staging file into the
-  existing table offline, between weekly runs.
+  existing table offline, between runs.
+- Status since T255 (2026-10-01): every fare harvest is retired and its task
+  cadence is `manual`, so none of the merges above run on a schedule. The
+  shipped fares are frozen at the last run and the app labels them estimates.
 
-Read side: `lib/origins.js` hydrates `s` and `o` verbatim onto each route,
-plus `outbound_seen`/`return_seen` (`out_o`/`ret_o`) and `outbound_expires`/
-`return_expires` (`out_x`/`ret_x`). `lib/carriers.js` maps the `TP` tag to the
+Read side: `lib/origins.js` hydrates `s` and `o` verbatim onto each route.
+Per-day `out_o`/`ret_o` and `out_x`/`ret_x` are merge-time fields only: T057
+removed them from the shipped slices, so the read side no longer carries a
+per-day age or expiry (expiry is a merge-time gate). `lib/carriers.js` maps the `TP` tag to the
 booking source name (Aviasales) since the operating airline of a cached quote
 is only shown at booking. The estimation snapshot gate (`src/estimation/
 snapshot.py`) whitelists record keys and silently skips unknown ones, so the
 provenance fields pass the schema gate without being archived.
+
+### Flight-cost input (T058, written into the schema by T267)
+
+Decided in `Execution/P3/T058-flight-cost-input-decision.md`; this is the short
+form to read beside the field list above.
+
+- Two ends only. Flight cost enters route optimisation as the flight from the
+  home origin into the first stop and the flight from the last stop back to the
+  home origin. It never enters the ordering of interior stops, the allocation
+  of nights or the price of a leg between two stops. An interior flight is an
+  own leg the traveller enters, and its price is theirs.
+- One resolution order per trip, the same on every surface (Explore's
+  `planeFare` in `runtime_pricing.js` and the planner's `combineTripLegs` in
+  `trip_planner_pricing.js`): (1) a stored day pair on the destination's own
+  routes, the cheapest origin or the traveller's chosen one; (2) a stored day
+  pair into a served airport within `PLANE_REACH_KM`, with the last leg priced
+  in; (3) the `e_out`/`e_ret` band pair for the two months, and only when both
+  directions have a band; (4) nothing, and the flight option is absent. The
+  planner's "take this trip cheaper" date sweep (`cheapestStartDates`) uses
+  step 1 only, because its promise is that every candidate is a stored day.
+- Provenance per direction. The planner's flight carries `into_prov` and
+  `out_of_prov` in the short keys (`s`, `o`, `e`), taken from the winning
+  record and the day's carrier tag; a band reads `{s: "EST", e: 1}`. Today
+  every shown flight is labelled an estimate (T256), because no fare source is
+  live and every stored day is a frozen observation.
+- Harvested-family rule. A band month ships only when the service evidence
+  shows an airline outside the harvested families flying that route that
+  month. The family set tracks the harvests that run: since T255 it is empty,
+  so any cached quote counts as evidence.
 
 ## Served data split (added 2026-07-12)
 
