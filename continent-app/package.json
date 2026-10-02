@@ -22,10 +22,11 @@
     "verify": "node scripts/verify-affiliate.mjs && node scripts/verify-omio.mjs && node scripts/verify_paywall.mjs",
     "test:quota": "node scripts/verify_plan_tiers.mjs && node scripts/ai/test_global_cap.mjs && node scripts/ai/test_ai_quota.mjs && node scripts/ai/test_passes.mjs",
     "check:pages": "node scripts/check-pages-limits.mjs dist",
+    "build:pages": "node scripts/build-pages.mjs",
     "ci:routes": "node scripts/ci/check-routes.mjs",
     "ci:contract": "node scripts/ci/check-contract.mjs",
     "ci:smoke": "node scripts/ci/smoke.mjs",
-    "ci": "npm run lint && npm run test && npm run verify && npm run ci:routes && npm run ci:contract && npm run build && npm run ci:smoke"
+    "ci": "npm run lint && npm run test && npm run verify && npm run ci:routes && npm run ci:contract && npm run build && npm run ci:smoke && npm run build:pages"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.110.2",
