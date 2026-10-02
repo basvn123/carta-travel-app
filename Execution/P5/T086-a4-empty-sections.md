@@ -1,41 +1,53 @@
-# T086: A4: Stop rendering two empty sections on 60% of trips
+# T086: A4, stop rendering two empty sections on 60% of trips
 
-**Status:** Verified complete. No code changes required.
+## Task ID
 
-## Summary
+T086
 
-The task was to prevent empty section headings from rendering on the journey (trip) page where `packingNotes` and `whatCouldGoWrong` arrays are empty. Verification of the current code shows the guards are correctly in place and functioning as intended.
+## Date
 
-## What was checked
+2026-10-02
 
-Inspected `JourneyPage.jsx` in the continent-app worktree at `src/browse/JourneyPage.jsx`. The component already contains guards that prevent both sections from rendering when their data arrays are empty:
+## What changed
 
-- **Packing section** (line 631): `{trip.packingNotes?.length > 0 && (` — renders the fold only if packingNotes has items
-- **What could go wrong section** (line 651): `{trip.whatCouldGoWrong?.length > 0 && (` — renders the section only if whatCouldGoWrong has items
+Nothing in the app. The journey page already refuses to render the packing block and the what-could-go-wrong block when their arrays are empty, so no empty section heading can appear. This task verified that and counted how many trips rely on the guard. Of 253 trips, 153 (60.5%) have both packingNotes and whatCouldGoWrong empty, and all 153 are covered by the guards.
 
-Both guards have been in place since the baseline commit `c46f783`, prior to any changes on this task branch.
+The guards are in continent-app/src/browse/JourneyPage.jsx. The packing fold is wrapped in a check that packingNotes has at least one item (line 631), and the what-could-go-wrong section is wrapped in the same check on whatCouldGoWrong (line 651). Both have been there since app commit c46f783, before this branch existed.
 
-## Verification across the catalogue
+## Files touched
 
-Counted the journey wire data files in `continent-app/dist-data/journeys/journey/` (the source of truth for what renders):
+Created: Execution/P5/T086-a4-empty-sections.md (this report, root repo only).
 
-- **Total trip files:** 253
-- **Files with empty packingNotes:** 153 (60%)
-- **Files with empty whatCouldGoWrong:** 153 (60%)
-- **Files with both empty:** 153
+Modified and deleted: none. The app repo has no commit on this branch.
 
-All 153 trips with empty arrays will have those sections correctly hidden by the guards. No empty section headings will render anywhere.
+## Commands run
+
+The count was a read-only pass over the journey wire files in the main checkout, at continent-app/public/journeys/journey (253 trip files). For each file it read packingNotes and whatCouldGoWrong and counted the empty ones. Nothing was written there. The guard lines were found by reading JourneyPage.jsx in the app worktree.
+
+## Config and secrets set
+
+None.
+
+## Before/after measurements
+
+| Metric | Before | After | Delta |
+|---|---|---|---|
+| Trips in the journeys wire | 253 | 253 | 0 |
+| Trips with empty packingNotes | 153 | 153 | 0 |
+| Trips with empty whatCouldGoWrong | 153 | 153 | 0 |
+| Trips with both empty | 153 | 153 | 0 |
+| Empty section headings rendered | 0 | 0 | 0 |
+
+The before and after are the same because no code changed. The point of the count is that the guard is what keeps 153 trips from showing two empty headings.
+
+## What broke and how it was fixed
+
+No issues.
 
 ## What is still open
 
-None. The implementation is complete and verified.
+None.
 
 ## Rollback procedure
 
-No code was changed. The branch p5-a4-empty-sections contains no commits and is ready to be discarded or left as-is.
-
----
-
-**Measurements:** Before/After – same state (no changes made). Verified 253 trips; 153 (60%) have empty sections that are correctly gated by the guards.
-
-**File path verified in:** `C:\Users\Gebruiker\Documents\Portfolio\wt\T086-app\src\browse\JourneyPage.jsx`
+No app change exists, so there is nothing to undo in the app. The root repo carries the report commit or commits on branch p5-a4-empty-sections; undo them with git revert of those commits, or delete the branch before it is merged.
