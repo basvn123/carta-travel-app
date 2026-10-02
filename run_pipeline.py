@@ -33,9 +33,10 @@ that interval has elapsed since its last success (state in logs/pipeline_state.j
 So you schedule ONE weekly job and each layer self-selects how often it fires:
 
   weekly    raw open-data mirror (src/ingestion: schedules, realtime, ADS-B) + ship
-  manual    every fare task: Travelpayouts staging, the Ryanair, Wizz Air,
-            Vueling and Volotea harvests, the fare snapshot archive and the
-            fare model. No fare source is live (owner, 2026-10-01; T255), so
+  manual    every fare task: Travelpayouts staging, the Ryanair harvest, the
+            fare snapshot archive and the fare model (the Wizz Air, Vueling
+            and Volotea tasks were removed, T267-a, their harvesters are in
+            pipeline/archive/). No fare source is live (owner, 2026-10-01; T255), so
             none of them is scheduled. Each still runs with --only <key>.
   monthly   fame (pageviews) -> designations -> beauty -> place -> rating;
             flight times for covered origins
@@ -975,49 +976,10 @@ def fares_step(ctx):
     return ok
 
 
-def wizz_step(ctx):
-    """Merge live Wizz Air fares into the shared `fares` table. Runs AFTER the
-    Ryanair patch (fares_step) so it merges onto a fresh table, keeping the
-    cheaper price per (anchor, origin, day) and adding Wizz-only routes. The
-    harvester auto-resets its own fare cache when the window has rolled, so this
-    is just graph (if missing) -> harvest (resume) -> patch (cheapest-wins)."""
-    graph = CACHE / "wizzair_route_graph.json"
-    if not graph.exists():
-        if run_cmd([PY, "pipeline/harvest_wizzair.py", "graph"]) != 0:
-            return False
-    if run_cmd([PY, "pipeline/harvest_wizzair.py", "harvest"]) != 0:
-        return False
-    return run_cmd([PY, "pipeline/harvest_wizzair.py", "patch"]) == 0
-
-
-def vueling_step(ctx):
-    """Merge live Vueling fares into the shared `fares` table. Runs AFTER the
-    Ryanair (fares_step) and Wizz (wizz_step) patches so it merges last, keeping
-    the cheapest price per (anchor, origin, day) and adding Vueling-only routes.
-    Native EUR; the harvester auto-resets its fare cache when the window rolls.
-    graph (if missing) -> harvest (resume) -> patch (cheapest-wins)."""
-    graph = CACHE / "vueling_route_graph.json"
-    if not graph.exists():
-        if run_cmd([PY, "pipeline/harvest_vueling.py", "graph"]) != 0:
-            return False
-    if run_cmd([PY, "pipeline/harvest_vueling.py", "harvest"]) != 0:
-        return False
-    return run_cmd([PY, "pipeline/harvest_vueling.py", "patch"]) == 0
-
-
-def volotea_step(ctx):
-    """Merge live Volotea fares into the shared `fares` table. Runs AFTER the
-    Ryanair, Wizz and Vueling patches (merges last). Native EUR; coarser than the
-    daily calendars (getminprice = cheapest per date window). The harvester
-    auto-resets its fare cache when the window rolls.
-    graph (if missing) -> harvest (resume) -> patch (cheapest-wins)."""
-    graph = CACHE / "volotea_route_graph.json"
-    if not graph.exists():
-        if run_cmd([PY, "pipeline/harvest_volotea.py", "graph"]) != 0:
-            return False
-    if run_cmd([PY, "pipeline/harvest_volotea.py", "harvest"]) != 0:
-        return False
-    return run_cmd([PY, "pipeline/harvest_volotea.py", "patch"]) == 0
+# wizz_step, vueling_step and volotea_step were removed with their tasks
+# (T311, register row T267-a). Their harvesters are in pipeline/archive/;
+# git keeps both, and switching a carrier back on means moving its script
+# back to pipeline/ and restoring the step and the task from history.
 
 
 def fare_history_step(ctx):
@@ -1523,7 +1485,9 @@ def guard_dossier(ctx=None):
 # 2026-09-27 and Ryanair followed. The shipped fares are frozen, so rebuilding
 # the history or retraining the model would only redo the same frozen data each
 # week. The code stays; `--only <key>` still runs any of them, and switching a
-# source back on is setting its cadence to "weekly" again.
+# source back on is setting its cadence to "weekly" again. The Wizz Air,
+# Vueling and Volotea tasks are gone (T311, T267-a): their harvesters and
+# harvest_ryanair_schedules.py are in pipeline/archive/.
 TASKS = [
     {
         "key": "tp_stage",
@@ -1545,37 +1509,6 @@ TASKS = [
         "writes_app_data": True,
         "run": fares_step,
         "note": "the LIVE fare system (harvest_all_origins); resumes an interrupted refresh.",
-    },
-    {
-        "key": "wizz_fares",
-        "title": "Live Wizz Air fares -> merged cheapest-wins into public/fares",
-        "cadence": "manual",   # retired from the schedule, T255
-        "writes_app_data": True,
-        "run": wizz_step,
-        "note": ("adds Wizz-only routes + undercuts Ryanair on shared ones; MUST run "
-                 "after `fares` (merges onto the fresh Ryanair table). Full harvest "
-                 "~3h, resumable; tags days Wizz wins as W6 in out_c/ret_c."),
-    },
-    {
-        "key": "vueling_fares",
-        "title": "Live Vueling fares -> merged cheapest-wins into public/fares",
-        "cadence": "manual",   # retired from the schedule, T255
-        "writes_app_data": True,
-        "run": vueling_step,
-        "note": ("adds Vueling-only routes + undercuts Ryanair/Wizz; native EUR, a "
-                 "full ~11-mo calendar per call. MUST run after `fares` and "
-                 "`wizz_fares`. Discovery ~260 calls then ~1/leg; resumable; tags VY."),
-    },
-    {
-        "key": "volotea_fares",
-        "title": "Live Volotea fares -> merged cheapest-wins into public/fares",
-        "cadence": "manual",   # retired from the schedule, T255
-        "writes_app_data": True,
-        "run": volotea_step,
-        "note": ("adds Volotea-only regional routes; native EUR via getminprice. "
-                 "COARSER than the others (cheapest per date window, not daily). MUST "
-                 "run after fares/wizz_fares/vueling_fares. ~260 discovery + 1/origin; "
-                 "resumable; tags V7."),
     },
     # ---- estimation + raw ingestion layer: soft (never blocks the ship) ---- #
     {
@@ -2083,7 +2016,13 @@ TASKS = [
         "cadence": "monthly",
         "writes_app_data": False,
         "soft": True,
-        "cmds": [[PY, "pipeline/trails/famous_registry.py", "--all"],
+        # waymarked.py first (T113-b): the registry merges its harvest as the
+        # fifth evidence source, and without this step the monthly build read
+        # a harvest that only went stale. On an outage or with no extracts on
+        # disk it keeps the current file and exits 0, so the registry still
+        # runs on the last good harvest.
+        "cmds": [[PY, "pipeline/trails/waymarked.py"],
+                 [PY, "pipeline/trails/famous_registry.py", "--all"],
                  [PY, "pipeline/trails/coverage_report.py", "--all"]],
         "note": ("what SHOULD be published per region, from Wikidata, "
                  "pageviews, OSM fame tags on WAYS as well as relations, and "
@@ -2697,6 +2636,34 @@ TASKS = [
                  "sandwich is deliberate: the first pass discovers which images lack "
                  "TASL, the fill resolves them, the second pass flips ok_print. "
                  "Unchanged content keeps its content_hash, so re-runs are cheap."),
+    },
+    {
+        "key": "photo_sources",
+        # T269-b. Last in the table on purpose: it reads the wires the layer
+        # exports above have just written, so it must follow every one of them.
+        # ("key" stays the first line: registry.pipeline_tasks reads the
+        # table by that shape.)
+        "title": "Photo ladder: published-first source lists -> "
+                 "img/manifest/_sources on R2",
+        "cadence": "after",
+        "after": ["beaches", "lakes", "mountains", "trails_rate",
+                  "cycling_publish", "regions"],
+        "writes_app_data": False,
+        "soft": True,
+        "cmds": [[PY, "pipeline/photos/derive.py", "sources",
+                  "beaches", "lakes", "mountains", "trails", "cycling", "region",
+                  "--out", str(LOGS / "img_sources"),
+                  "--upload", "auto", "--allow-missing"]],
+        "note": ("derive.py's published list per layer, hero first. The image "
+                 "job copies img/manifest/ as --prior, so a list pushed here is "
+                 "what makes its next run derive the published photographs "
+                 "before the cache's long tail (T049-f); a list never re-pushed "
+                 "goes stale with every export. --upload auto copies to R2 only "
+                 "where the RCLONE_CONFIG_R2_* remote is set (the box), and "
+                 "otherwise leaves the files under logs/img_sources, which is "
+                 "gitignored. The six layers T269 measured; dossier, poi, dest, "
+                 "trips and journeys wait on T269-g. Under load trails took "
+                 "798 s, cycling 708 s and region 285 s."),
     },
 ]
 TASK_BY_KEY = {t["key"]: t for t in TASKS}

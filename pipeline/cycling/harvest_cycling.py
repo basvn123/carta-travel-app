@@ -168,10 +168,12 @@ def scan_relations(pbf_path):
 
 
 def is_node_network(tags):
-    """A connection between two numbered junctions, not a route to ride."""
-    return (tags.get("network:type") == NODE_NETWORK
-            or tags.get("network") == "rcn"
-            and tags.get("network:type") == NODE_NETWORK)
+    """A connection between two numbered junctions, not a route to ride.
+
+    The tag alone decides. An earlier second clause (network=rcn AND the
+    same tag) could never be true when the first was false, so it was
+    removed (T311, register row T300-p)."""
+    return tags.get("network:type") == NODE_NETWORK
 
 
 def is_superroute(tags):

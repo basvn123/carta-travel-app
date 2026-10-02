@@ -303,7 +303,8 @@ def match_registry(reg_rows, pub_rows, verbose=False):
         # unless the 250 m geometric test happened to catch it.
         e = r.get("evidence") or {}
         rel = ((e.get("osm") or {}).get("relation_id")
-               or (e.get("waymarked") or {}).get("relation_id"))
+               or (e.get("waymarked") or {}).get("relation_id")
+               or e.get("wd_relation_id"))     # Wikidata P402 (T113-g)
         if rel and int(rel) in by_rel:
             hit = by_rel[int(rel)]
             r["status"] = "matched"

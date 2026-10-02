@@ -82,7 +82,7 @@ sees it). A row key links to the source tables that follow.
 | `holidays` | events | Nager.Date public holidays, catalogue countries, current + next year | monthly | `demand_events` | soft | `nager_date` | also part of the weekly ingestion sweep |
 | `school_holidays` | events | OpenHolidays school holidays for the countries it covers | monthly | `demand_events` | soft | `openholidays_api` | also part of the weekly ingestion sweep |
 
-### Harvesters (28)
+### Harvesters (24)
 
 | Script | Cadence | Task | Failure | Ledger rows | Note |
 |---|---|---|---|---|---|
@@ -105,26 +105,17 @@ sees it). A row key links to the source tables that follow.
 | `pipeline/harvest_pois_overture.py` | backfill | `overture` | hard | `overture_maps_places` |  |
 | `pipeline/harvest_pois_wikidata_images.py` | backfill | `poi_images_wikidata` | hard | `wikimedia_commons`, `wikidata_sitelink_counts_live` |  |
 | `pipeline/harvest_protected_areas_osm.py` | backfill | `nature` | hard | `openstreetmap_via_overpass`, `osm_protected_areas` |  |
-| `pipeline/harvest_ryanair_schedules.py` | manual | none | manual | `ryanair_timetable_api` | Ryanair half of the schedule layer; idle since T255 |
 | `pipeline/harvest_tourism_density.py` | quarterly | `crowding` | hard | `eurostat_tour_occ_nin3` |  |
 | `pipeline/harvest_unesco_whc.py` | quarterly | `unesco` | soft | `unesco_world_heritage_centre` |  |
 | `pipeline/harvest_urban_fabric.py` | manual | none | manual | `openstreetmap_via_geofabrik_country` |  |
-| `pipeline/harvest_volotea.py` | manual | `volotea_fares` | hard | `volotea_getminprice_api` | retired (T255) |
-| `pipeline/harvest_vueling.py` | manual | `vueling_fares` | hard | `vueling_apiw_endpoints` | retired (T255) |
 | `pipeline/harvest_wikivoyage.py` | backfill | `guide` | hard | `wikivoyage` |  |
 | `pipeline/harvest_wikivoyage_listings.py` | monthly | `poi_significance` | soft | `wikivoyage`, `wikivoyage_listings` |  |
-| `pipeline/harvest_wizzair.py` | manual | `wizz_fares` | hard | `wizz_air_timetable_api`, `exchangerate_api_open_endpoint` | retired (T255) |
 
 ## 1. Flight fares, direct carrier harvest (primary source)
 
 | Source | What we take | License | Attribution required | Share-alike | Where attributed today | Storable copy |
 |---|---|---|---|---|---|---|
 | Ryanair farefinder API (`pipeline/harvest_all_origins.py`, `harvest_flight_times.py`) | Cheapest fare per day per route, departure and arrival times | None: public unauthenticated endpoint, direct harvest. Prices are facts; ToS risk accepted and kept polite (rate limits, resumable runs) | No | No | Carrier shown on fare surfaces (provenance code FR) | Yes |
-| Wizz Air timetable API (`pipeline/harvest_wizzair.py`) | Per-day fares both directions, converted to EUR | Same as Ryanair: public endpoint, direct harvest | No | No | Carrier shown (provenance code W6) | Yes |
-| Vueling apiw endpoints (`pipeline/harvest_vueling.py`) | Route discovery plus full per-day fare calendar | Same: public endpoint, direct harvest | No | No | Carrier shown (provenance code VY) | Yes |
-| Volotea getminprice API (`pipeline/harvest_volotea.py`) | Cheapest fare per window per route | Same: public endpoint with a static site key, direct harvest | No | No | Carrier shown (provenance code V7) | Yes |
-| ExchangeRate-API open endpoint (open.er-api.com, used by `harvest_wizzair.py`) | Daily EUR conversion table (`cache/fx_rates_eur.json`) | Free open endpoint; terms require a credit link ("Rates by Exchange Rate API"), verify current wording | Yes | No | Home footer, Data sources block | Verify |
-| Ryanair timetable API, services-api.ryanair.com/timtbl (`pipeline/harvest_ryanair_schedules.py`) | Published departure and arrival times per directed leg per month; departure times are patched into the fares table as `out_f` / `ret_f`, flight numbers stay in the cache. Row added 2026-10-01 (T078): the script existed without one | Same as the farefinder row: public unauthenticated endpoint, direct harvest; a timetable is facts. Manual tier, idle since the fare harvests were retired (T255, 2026-10-01) | No | No | Carrier shown on fare surfaces (provenance code FR); nothing new to credit | Yes |
 
 ## 2. Fare caches and partner APIs
 
@@ -720,6 +711,11 @@ script it was and when it was retired.
 
 | Source | What we take | License | Attribution required | Share-alike | Where attributed today | Storable copy |
 |---|---|---|---|---|---|---|
+| Wizz Air timetable API (`pipeline/archive/harvest_wizzair.py`, RETIRED) | Per-day fares both directions, converted to EUR | Same as Ryanair: public endpoint, direct harvest | No | No | Carrier shown (provenance code W6). RETIRED 2026-10-03 (T311, T267-a): the harvester is in pipeline/archive/ and no task runs it | Yes |
+| Vueling apiw endpoints (`pipeline/archive/harvest_vueling.py`, RETIRED) | Route discovery plus full per-day fare calendar | Same: public endpoint, direct harvest | No | No | Carrier shown (provenance code VY). RETIRED 2026-10-03 (T311, T267-a): the harvester is in pipeline/archive/ and no task runs it | Yes |
+| Volotea getminprice API (`pipeline/archive/harvest_volotea.py`, RETIRED) | Cheapest fare per window per route | Same: public endpoint with a static site key, direct harvest | No | No | Carrier shown (provenance code V7). RETIRED 2026-10-03 (T311, T267-a): the harvester is in pipeline/archive/ and no task runs it | Yes |
+| ExchangeRate-API open endpoint (open.er-api.com, used by `harvest_wizzair.py`) | Daily EUR conversion table (`cache/fx_rates_eur.json`) | Free open endpoint; terms require a credit link ("Rates by Exchange Rate API"), verify current wording | Yes | No | Home footer, Data sources block. RETIRED 2026-10-03 (T311, T267-a): the harvester is in pipeline/archive/ and no task runs it | Verify |
+| Ryanair timetable API, services-api.ryanair.com/timtbl (`pipeline/archive/harvest_ryanair_schedules.py`, RETIRED) | Published departure and arrival times per directed leg per month; departure times are patched into the fares table as `out_f` / `ret_f`, flight numbers stay in the cache. Row added 2026-10-01 (T078): the script existed without one | Same as the farefinder row: public unauthenticated endpoint, direct harvest; a timetable is facts. Manual tier, idle since the fare harvests were retired (T255, 2026-10-01) | No | No | Carrier shown on fare surfaces (provenance code FR); nothing new to credit. RETIRED 2026-10-03 (T311, T267-a): the harvester is in pipeline/archive/ and no task runs it | Yes |
 | WorldClim 2.1 (`pipeline/harvest_climate_worldclim.py`, RETIRED) | Monthly climate normals sampled per destination | Free for academic and other non-commercial use; commercial use needs permission | Yes, citation (Fick and Hijmans 2017) | No | RETIRED. The destination climate strip moved to NASA POWER and the lake season model moved to CHELSA V2.1 on 2026-08-30. No shipped wire is derived from WorldClim; the harvester and its cache are kept only so an old build can be reproduced | No |
 | Wikivoyage as description signal (`pipeline/trails/describe.py`, RETIRED 2026-08-30) | Guide intro for the route name, sent to the model as CONTEXT to judge which supplied facts matter. Never quoted or paraphrased: it is not a mappable source field in the verification pass, and any generated sentence sharing a six word run with the snippet is dropped in code | CC BY-SA 4.0 | Yes if any of its prose is ever used | Yes if any of its prose is ever used | Not attributed and deliberately not used as text. Each `description_grounding` row records which guide, if any, was in context. If a future change quotes it, this becomes a CC BY-SA credit plus share-alike obligation on the description. RETIRED: describe.py no longer runs (the three facts its prose knew are wire fields now, see docs/TRAILS.md), so nothing in the app reaches Wikivoyage through this path any more | Yes, with credit and share-alike |
 | Claude API (`--provider claude`) or Gemini API (`--provider gemini`) in `pipeline/trails/describe.py` | Not a data source: the model only rewrites the facts block we assemble from staged rows. The stored `description_md` is our own text and inherits the licenses of the facts behind it (ODbL for OSM tags and geometry, portal terms for the confirmation line) | Anthropic commercial terms: customer owns the outputs. Google Gemini terms: same for outputs, but on the **free** tier Google may use prompts and responses to improve their products, so only open-data facts go in the prompt | No credit obligation to either vendor | No | n/a. Trail credits still owe OSM and the national portals as above. NOTE: the EEA paid-services rule that put `plan-day` on a billed Gemini key covers API clients offered to users; describe.py is a local batch script and is not one, so the free tier is in scope for it only while it stays local | n/a |

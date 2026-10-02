@@ -87,10 +87,19 @@ VARIANT_ROLES = {"alternative", "alternate", "variant", "excursion", "approach",
                  "connection", "link", "shortcut", "detour"}
 # The prompt's core tag set plus what later steps feed on: wikipedia/wikidata
 # anchor the popularity ranking, from/to/description feed the describe step.
+# network:type is kept so the first filter can see a node-network edge (T121).
 KEEP_TAGS = ("type", "route", "name", "name:en", "ref", "network",
+             "network:type",
              "osmc:symbol", "osmc:status", "sac_scale", "distance", "ascent",
              "descent", "roundtrip", "from", "to", "via", "symbol",
              "wikipedia", "wikidata", "website", "operator", "description")
+# A numbered-junction network (knooppunten, Knotenpunkte) maps each pair of
+# junctions as its own tiny relation tagged network:type=node_network. Those
+# are graph edges, not walks: T121 decided they are never ingested as routes,
+# the rule harvest_cycling.is_node_network already applies to bicycles. They
+# are tagged rwn, which is in MAJOR_NETWORKS, so without this test every edge
+# passed the first filter.
+NODE_NETWORK = "node_network"
 
 LICENSE = "ODbL 1.0"
 ATTRIBUTION = "Trail data (c) OpenStreetMap contributors, ODbL"
@@ -223,7 +232,14 @@ def scan_relations(pbf_path):
     return pool
 
 
+def is_node_network(tags):
+    """A connection between two numbered junctions, not a walk (T121)."""
+    return tags.get("network:type") == NODE_NETWORK
+
+
 def passes_first_filter(tags):
+    if is_node_network(tags):
+        return False
     network = tags.get("network", "")
     tokens = {t.strip() for t in network.replace(";", ",").split(",")}
     return bool(tokens & MAJOR_NETWORKS) or bool(tags.get("name"))
@@ -555,8 +571,14 @@ def ingest_country(slug, country, args, conn, index):
     if args.limit:
         selected = selected[:args.limit]
     counts["pool"], counts["selected"] = len(pool), len(selected)
+    # Kept in the pool (a superroute may still name one as a member) but
+    # never selected, so the count says how many edges the filter turned away.
+    counts["node_network"] = sum(1 for r in pool.values()
+                                 if is_node_network(r["tags"]))
     print(f"[{slug}] relations: {len(pool)} hiking/foot/walking routes, "
-          f"{len(selected)} pass the first filter ({time.time() - t0:.0f}s)")
+          f"{len(selected)} pass the first filter, "
+          f"{counts['node_network']} node-network edges left out "
+          f"({time.time() - t0:.0f}s)")
 
     expansions, needed_ways = {}, set()
     for rid in selected:

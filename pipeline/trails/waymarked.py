@@ -95,6 +95,17 @@ WORKERS = 3                     # a volunteer-run server; be polite
 ROUTE_VALUES = {"hiking", "foot", "walking"}
 CANDIDATES = 9                  # held ways tried per route per country
 CHECKPOINT = Path(tempfile.gettempdir()) / "carta_waymarked_cells.json"
+# A fresh harvest with fewer routes than this share of the current file is an
+# outage or a throttled run, not Europe losing its national trails, and is not
+# written (T311, for the monthly trails_registry task). INT and NAT routes are
+# signed long-distance paths; a month moves a handful, never a tenth.
+HARVEST_FLOOR = 0.9
+
+
+def harvest_floor(prior):
+    """The fewest routes a harvest may return and still replace `prior`."""
+    n = len((prior or {}).get("routes") or [])
+    return int(n * HARVEST_FLOOR)
 
 
 # ---------------------------------------------------------------------------
@@ -394,11 +405,29 @@ def main():
         if stats["failed"]:
             print("  ! some boxes never answered; re-run to retry them "
                   f"(checkpoint {CHECKPOINT})")
+        floor = harvest_floor(prior)
+        if len(routes) < floor:
+            # run_pipeline.py's monthly trails_registry task runs this first
+            # (T113-b). A Waymarked outage must not replace the committed
+            # harvest with a near-empty one that famous_registry.py would
+            # then trust: keep the old file and let the registry read it.
+            print(f"  ! only {len(routes):,} route(s) against {floor:,} needed "
+                  f"({HARVEST_FLOOR:.0%} of the {len(prior.get('routes') or []):,}"
+                  f" in the current file); the current file is kept as it is")
+            return 0
 
     per_cc, no_extract, outside = {}, [], 0
+    keep_placements = args.harvest_only
     if not args.harvest_only:
         print("waymarked: [2/2] place each route in the extracts on disk")
         per_cc, no_extract, outside = place(routes, countries)
+        if countries and len(no_extract) >= len(countries):
+            # No extract on disk at all (a box that never pulled data/raw):
+            # placing would write every route as unplaced. Keep the old
+            # placements, exactly as --harvest-only does.
+            print("  ! no Geofabrik extract found for any country; the "
+                  "previous placements are kept")
+            keep_placements = True
 
     rows = []
     for rid in sorted(routes):
@@ -453,7 +482,7 @@ def main():
                 "catalogue.",
         "routes": rows,
     }
-    if args.harvest_only and prior.get("routes"):
+    if keep_placements and prior.get("routes"):
         # Keep the old placements rather than writing an unplaced file.
         old = {r["relation_id"]: r for r in prior["routes"]}
         for r in rows:

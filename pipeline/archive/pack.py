@@ -42,6 +42,14 @@ Usage (from the repo root):
 The default output directory is pipeline/archive/output (gitignored). On the
 laptop, point --out at a disk with room: all layers together are about 9.8 GB
 before compression. CARTA_ARCHIVE_OUT in the environment sets the same thing.
+
+Target guard (T288-c): before packing a layer, pack.py projects its tarball
+at no more than the bytes going in plus tar's headers, and refuses the layer
+when that projection would not fit, either because the target is FAT (no file
+over 4 GiB minus one byte: lakes-cache stopped at 4,294,966,173 bytes on the
+FAT32 drive D: with Errno 28) or because the target has less free space. A
+refused layer is listed and the run exits 1; the other layers still pack.
+Format the drive exFAT or NTFS, or point --out somewhere else.
 """
 
 from __future__ import annotations
@@ -121,6 +129,82 @@ def fingerprint(files: list[Path]) -> str:
     return h.hexdigest()
 
 
+# FAT12/16/32 cannot hold a file of 4 GiB or more. exFAT, NTFS, ext4, APFS and
+# the rest have no limit a tarball here could reach.
+FAT_MAX_FILE = 4 * 1024 ** 3 - 1
+FAT_NAMES = {"fat", "fat12", "fat16", "fat32", "vfat", "msdos"}
+TAR_BLOCK = 512
+
+
+def filesystem_type(path: Path) -> str | None:
+    """The filesystem name of the volume `path` is on, lower case, or None
+    when it cannot be told (the guard then checks free space only)."""
+    path = Path(path).resolve()
+    probe = path
+    while not probe.exists() and probe.parent != probe:
+        probe = probe.parent
+    if os.name == "nt":
+        try:
+            import ctypes
+            root = os.path.splitdrive(str(probe))[0] + "\\"
+            name = ctypes.create_unicode_buffer(64)
+            ok = ctypes.windll.kernel32.GetVolumeInformationW(
+                ctypes.c_wchar_p(root), None, 0, None, None, None, name, len(name))
+            return name.value.lower() if ok and name.value else None
+        except Exception:
+            return None
+    try:
+        best, fstype = "", None
+        with open("/proc/mounts", "r", encoding="utf-8") as fh:
+            for line in fh:
+                parts = line.split()
+                if len(parts) < 3:
+                    continue
+                # /proc/mounts writes a space in a mount point as \040.
+                mount = parts[1].replace(r"\040", " ")
+                inside = (str(probe) == mount
+                          or str(probe).startswith(mount.rstrip("/") + "/"))
+                if inside and len(mount) > len(best):
+                    best, fstype = mount, parts[2].lower()
+        return fstype
+    except OSError:
+        return None
+
+
+def projected_size(files: list[Path]) -> int:
+    """An upper bound on the tarball: every file's bytes rounded up to tar's
+    512-byte block, one header block each, and the two end blocks. gzip and
+    zstd store an incompressible block with a few bytes of framing, which the
+    rounding covers many times over, so the real tarball is smaller."""
+    total = 2 * TAR_BLOCK
+    for f in files:
+        size = f.lstat().st_size
+        total += TAR_BLOCK + -(-size // TAR_BLOCK) * TAR_BLOCK
+    return total
+
+
+def target_refusal(projected: int, fstype: str | None, free: int | None) -> str | None:
+    """Why a tarball of `projected` bytes cannot be written to the target, or
+    None when it can. Pure, so the rule is tested without a FAT drive."""
+    if fstype in FAT_NAMES and projected > FAT_MAX_FILE:
+        return (f"target is {fstype.upper()}, which holds no file over 4 GiB, and "
+                f"this tarball may reach {projected / 1024 ** 3:.2f} GiB")
+    if free is not None and projected > free:
+        return (f"target has {free / 1e9:.1f} GB free and this tarball may "
+                f"reach {projected / 1e9:.1f} GB")
+    return None
+
+
+def free_bytes(path: Path) -> int | None:
+    probe = Path(path).resolve()
+    while not probe.exists() and probe.parent != probe:
+        probe = probe.parent
+    try:
+        return shutil.disk_usage(probe).free
+    except OSError:
+        return None
+
+
 def pack_layer(files: list[Path], out_path: Path, manifest: dict) -> None:
     tmp = out_path.with_name(out_path.name + ".partial")
     if manifest.get("tar_compression") == "zstd":
@@ -160,6 +244,10 @@ def main() -> int:
     print(f"Compressor: {manifest.get('tar_compression', 'gzip')}"
           f"{'' if ext == 'tar.zst' else f' level {level}'} (zstd binary on PATH: {'yes' if zstd_found else 'no'})")
     print(f"Output:     {out_dir}")
+    fstype = filesystem_type(out_dir)
+    print(f"Filesystem: {fstype or 'unknown'}"
+          + ("  (FAT: no file over 4 GiB; large layers will be refused)"
+             if fstype in FAT_NAMES else ""))
 
     entries = [e for e in manifest["classes"] if e["kind"] == "derived-cache"]
     if args.only:
@@ -169,6 +257,7 @@ def main() -> int:
             return 2
 
     packed = skipped = missing = 0
+    refused: list[str] = []
     files_before = bytes_before = tarballs = bytes_after = 0
     for entry in entries:
         name = entry["name"]
@@ -187,6 +276,13 @@ def main() -> int:
             size_out = out_path.stat().st_size
             print(f"- {name}: unchanged, {len(files)} files, keeping {out_path.name}")
             skipped += 1
+        elif (why := target_refusal(projected_size(files), fstype,
+                                    free_bytes(out_dir))):
+            # Refused before a byte is written, rather than at 4 GiB in.
+            print(f"- {name}: REFUSED, {why}; pack it to an exFAT or NTFS "
+                  f"target with --only {name} --out DIR")
+            refused.append(name)
+            continue
         elif args.dry_run:
             size_out = 0
             print(f"- {name}: would pack {len(files)} files, {size_in / 1e6:.1f} MB, into {out_path.name}")
@@ -209,12 +305,14 @@ def main() -> int:
     print(f"  packed this run:       {packed}")
     print(f"  skipped (unchanged):   {skipped}")
     print(f"  missing locally:       {missing}")
+    print(f"  refused (target):      {len(refused)}"
+          + (f"  {', '.join(refused)}" if refused else ""))
     print(f"  loose files in:        {files_before}")
     print(f"  tarballs out:          {tarballs}")
     print(f"  bytes in:              {bytes_before / 1e6:.1f} MB")
     if not args.dry_run:
         print(f"  bytes out (on disk):   {bytes_after / 1e6:.1f} MB")
-    return 0
+    return 1 if refused else 0
 
 
 if __name__ == "__main__":

@@ -95,6 +95,7 @@ Usage:
         [--encoders N] [--countries NL,BE] [--limit N] [--sample N --seed S]
         [--run-id ID] [--budget-s SECONDS] [--recheck]
     python pipeline/photos/derive.py sources beaches trails --out DIR
+        [--upload none|r2|auto] [--allow-missing]
     python pipeline/photos/derive.py probe beaches lakes --sample 500 [--json F]
     python pipeline/photos/derive.py gc --held LISTING --prior DIR --out DIR
         [--grace-days 14] [--max-delete-frac 0.25] [--force] [--apply]
@@ -1656,9 +1657,32 @@ def _dims_dict(d):
 # sources: the published list for the worker (T049-f, T049-k)
 # ---------------------------------------------------------------------------
 
+def r2_configured():
+    """True when an rclone remote for R2 is in the environment (T045-a)."""
+    return bool(os.environ.get("RCLONE_CONFIG_R2_ENDPOINT")
+                or os.environ.get("CARTA_RCLONE"))
+
+
+def sources_upload_mode(mode):
+    """none | r2 for the sources command. auto (what run_pipeline.py passes,
+    T269-b) is r2 where the remote is configured and none elsewhere, so the
+    same task line works on the box and on a laptop with no credential."""
+    if mode == "auto":
+        return "r2" if r2_configured() else "none"
+    return mode or "none"
+
+
 def cmd_sources(args):
     out = Path(args.out).resolve()
     rc = 0
+    mode = sources_upload_mode(getattr(args, "upload", "none"))
+    if mode == "r2" and not r2_configured():
+        print("--upload r2 needs the RCLONE_CONFIG_R2_* remote in the "
+              "environment (T045-a); nothing was done")
+        return 2
+    if getattr(args, "upload", "none") == "auto" and mode == "none":
+        print("sources: no R2 remote in the environment, so the files stay "
+              "local and the copy commands are printed only")
     for layer in args.layers:
         if layer not in ALL_LAYERS:
             print(f"unknown layer {layer}")
@@ -1667,7 +1691,8 @@ def cmd_sources(args):
         if not doc["count"]:
             print(f"{layer}: no wire under continent-app/public; nothing "
                   f"written")
-            rc = 2
+            if not getattr(args, "allow_missing", False):
+                rc = 2
             continue
         rel = f"{SOURCES_DIR}/{layer}.json"
         local = out / IMG_PREFIX / rel
@@ -1678,7 +1703,14 @@ def cmd_sources(args):
         print(f"{layer}: {doc['count']} published titles, {credited} with "
               f"the photograph's own credit on the wire, "
               f"{len(text.encode('utf-8')) // 1024} KB -> {local}")
-        show(rclone_json_cmd(local, f"{IMG_PREFIX}/{rel}", MANIFEST_CACHE))
+        cmd = rclone_json_cmd(local, f"{IMG_PREFIX}/{rel}", MANIFEST_CACHE)
+        show(cmd)
+        if mode == "r2":
+            proc = subprocess.run(cmd, check=False)
+            if proc.returncode != 0:
+                print(f"{layer}: rclone exited {proc.returncode}; the sources "
+                      f"file stays at {local}")
+                rc = 1
     return rc
 
 
@@ -1964,6 +1996,12 @@ def main(argv=None):
                                          "layer for img/manifest/_sources/")
     src.add_argument("layers", nargs="+")
     src.add_argument("--out", required=True)
+    src.add_argument("--upload", choices=("none", "r2", "auto"), default="none",
+                     help="none prints the copy command; r2 runs it; auto "
+                          "runs it only where the R2 remote is configured")
+    src.add_argument("--allow-missing", action="store_true",
+                     help="a layer with no wire on disk is reported, not a "
+                          "failure (run_pipeline.py, T269-b)")
     probe = sub.add_parser("probe", help="imageinfo for a sample of names: "
                                          "the dead rate before a big run")
     probe.add_argument("layers", nargs="+", choices=sorted(ALL_LAYERS))

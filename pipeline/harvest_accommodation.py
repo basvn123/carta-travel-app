@@ -37,7 +37,11 @@ month; the seasonality curve here is normalised so its 12 values average ~1.0,
 which keeps that contract intact.
 
 Usage:  python harvest_accommodation.py            # all datasets
-        python harvest_accommodation.py --no-calendar   # skip the WHEN axis
+        python harvest_accommodation.py --no-seasonality   # skip the WHEN axis
+        python harvest_accommodation.py --refresh geneva,mallorca
+                                          # re-download those snapshots
+        python harvest_accommodation.py --footprint     # also the per-town
+                                          # anchors (T096-b, off by default)
 """
 
 import csv
@@ -160,6 +164,33 @@ DATASETS = [
 MIN_LISTINGS = 30          # minimum to trust a median
 MIN_BUCKET   = 12          # minimum listings for a per-capacity bucket
 MIN_HOOD     = 25          # minimum listings for a neighbourhood median
+
+# ---- Footprint anchors (T096-b, a proposal: off unless --footprint) ---------
+# A snapshot that covers a whole island or province holds listings around
+# every town in it, but each place above takes ONE median at ONE centre, and
+# apply_accommodation_anchors.py hands it only to destinations within 20 km of
+# that centre. Everything else on the island falls back to the national prior.
+# T096's benchmark measured what that costs on exactly these snapshots: Soller,
+# Alcudia, Sa Calobra, Cap de Formentor and Es Trenc on Mallorca, Cadaques on
+# the Costa Brava, Zumaia, Gaztelugatxe and Laguardia in Euskadi, all priced by
+# the Spanish prior at 32.63 to 35.07 EUR a person a night against 44 to 91
+# measured within 10 km (tools/benchmark/results/2026-10-01.json).
+#
+# The fix proposed here is the "wider island radius" of register row T096-b,
+# made honest: not one island median stretched over the island, but a median
+# per catalogue town from the listings within FOOTPRINT_KM of that town, with
+# the same 30-listing floor, 1 to 99% trim and band as every other anchor. A
+# town with too few listings near it gets nothing and keeps its prior. This is
+# measured local data, not a neighbour's number copied over, so it stays
+# inside the rule apply_accommodation_anchors.py's docstring sets. A resort
+# multiplier on the national prior was the other option; it would be a
+# hand-set number on the towns that have no listings at all, and these have.
+#
+# Only the snapshots that are a region rather than a city: inside a city
+# snapshot the city anchor already covers its own 20 km.
+FOOTPRINT_REGIONS = frozenset({"girona", "crete", "south-aegean", "mallorca",
+                               "menorca", "euskadi"})
+FOOTPRINT_KM = 10.0        # T096's hold-out radius; a town, not a coast
 UA = {"User-Agent": "CartaTravelApp-accom/2.0 (contact: data@carta-europetravel.com)"}
 
 
@@ -181,12 +212,16 @@ KINDS = {
 }
 
 
-def download(kind, region, path):
-    """Cached by region+kind, skipped if already present."""
+def download(kind, region, path, refresh=False):
+    """Cached by region+kind, skipped if already present unless refresh.
+
+    The cache key is the region alone, so a snapshot Inside Airbnb replaces
+    in place (Geneva's 2026-06-29 file was republished on 2026-09-26 with
+    sane prices) is never fetched again on its own: --refresh REGION does it."""
     CACHE_DIR.mkdir(parents=True, exist_ok=True)
     suffix, rel, _ = KINDS[kind]
     fp = CACHE_DIR / f"{region}{suffix}"
-    if fp.exists() and fp.stat().st_size > 40_000:
+    if not refresh and fp.exists() and fp.stat().st_size > 40_000:
         print(f"  [{region}/{kind}] cached ({fp.stat().st_size/1e6:.1f} MB)")
         return fp
     url = f"{BASE}/{path}/{rel}"
@@ -198,11 +233,39 @@ def download(kind, region, path):
     return fp
 
 
+# Thousands separators and currency marks a listing price may carry: the
+# comma, the Swiss apostrophe (straight and typographic), plain and narrow
+# no-break spaces, and the symbols and codes of the markets in FX.
+_PRICE_NOISE = ("$", "€", "£", ",", "'", "\u2019", "\u00a0", "\u202f",
+                "CHF", "EUR", "GBP", "CZK", "DKK", "HUF", "USD", "Kč", "kr", "Ft")
+
+
 def clean_price(s):
+    """A listing's `price` cell as a number, or None.
+
+    Inside Airbnb writes "$1,234.00" in every market, whatever the currency
+    the host set, so the dollar sign is a format and not a currency; FX
+    converts. The other marks are stripped too so a market that ever writes
+    "CHF 1'234.00" parses instead of silently dropping out."""
+    text = str(s or "")
+    for mark in _PRICE_NOISE:
+        text = text.replace(mark, "")
     try:
-        return float((s or "").replace("$", "").replace(",", "").replace("€", "").strip())
+        return float(text.strip())
     except ValueError:
         return None
+
+
+# The band apply_accommodation_anchors.py trusts an anchor inside, read from
+# there so the two can never disagree (12 to 2,000 EUR a night, whole home).
+# An anchor outside it is a broken snapshot, not a market.
+from apply_accommodation_anchors import MAX_NIGHT_EUR, MIN_NIGHT_EUR  # noqa: E402
+
+
+def in_band(rec):
+    """False for an anchor whose nightly cannot be a real price."""
+    night = rec.get("entire_home_night_eur") if rec else None
+    return isinstance(night, (int, float)) and MIN_NIGHT_EUR <= night <= MAX_NIGHT_EUR
 
 
 def parse_listings(path):
@@ -352,17 +415,83 @@ def anchor_for_place(listings, place, per_eur, region, captured, seasonality):
     }
 
 
+def catalogue_points(path=DATA):
+    """[(id, city, lat, lon)] for every destination, from the city centre the
+    anchor step measures from (city_lat/city_lon, else lat/lon). Read only."""
+    data = json.loads(Path(path).read_text(encoding="utf-8"))
+    out = []
+    for did, d in (data.get("destinations") or {}).items():
+        lat = d.get("city_lat", d.get("lat"))
+        lon = d.get("city_lon", d.get("lon"))
+        if isinstance(lat, (int, float)) and isinstance(lon, (int, float)):
+            out.append((did, d.get("city") or did, float(lat), float(lon)))
+    return out
+
+
+def footprint_anchors(listings, points, per_eur, region, captured, seasonality,
+                      radius_km=FOOTPRINT_KM):
+    """One anchor per catalogue town inside a regional snapshot (T096-b).
+
+    Each is anchor_for_place() at the town's own centre with radius_km, so the
+    trim, the floor of MIN_LISTINGS and the deflation are the ones every other
+    anchor gets, and each carries dest_id so apply_accommodation_anchors.py
+    gives it to that town alone and never to a neighbour. Out-of-band medians
+    are dropped like any broken anchor."""
+    if not listings:
+        return []
+    lats = [l[0] for l in listings]
+    lons = [l[1] for l in listings]
+    # A degree of latitude is 111 km; 0.15 and 0.2 degrees clear 10 km of
+    # margin in latitude and in longitude at every European latitude south
+    # of the Arctic circle, so no town that could reach 30 listings is cut.
+    lat_lo, lat_hi = min(lats) - 0.15, max(lats) + 0.15
+    lon_lo, lon_hi = min(lons) - 0.2, max(lons) + 0.2
+    out = []
+    for did, city, lat, lon in points:
+        if not (lat_lo <= lat <= lat_hi and lon_lo <= lon <= lon_hi):
+            continue
+        place = {"name": city, "lat": lat, "lon": lon, "radius": radius_km}
+        rec = anchor_for_place(listings, place, per_eur, region, captured,
+                               seasonality)
+        if not rec or not in_band(rec):
+            continue
+        rec["dest_id"] = did
+        rec["footprint_km"] = radius_km
+        out.append(rec)
+    return out
+
+
+def _refresh_regions(argv):
+    """--refresh a,b (or --refresh=a,b) -> {"a", "b"}; "all" means every one."""
+    out = set()
+    for i, arg in enumerate(argv):
+        val = None
+        if arg == "--refresh" and i + 1 < len(argv):
+            val = argv[i + 1]
+        elif arg.startswith("--refresh="):
+            val = arg.split("=", 1)[1]
+        if val:
+            out.update(v.strip().lower() for v in val.split(",") if v.strip())
+    return out
+
+
 def main():
     want_season = "--no-seasonality" not in sys.argv
+    want_footprint = "--footprint" in sys.argv
+    refresh = _refresh_regions(sys.argv[1:])
     anchors = []
+    refused = []
+    points = catalogue_points() if want_footprint else []
     print(f"Harvesting Inside Airbnb anchors ({len(DATASETS)} datasets, "
-          f"seasonality={'on' if want_season else 'off'}):")
+          f"seasonality={'on' if want_season else 'off'}, "
+          f"footprint={'on' if want_footprint else 'off'}):")
     for ds in DATASETS:
         region, path, cur = ds["region"], ds["path"], ds["cur"]
         captured = path.rstrip("/").split("/")[-1]
         per_eur = FX[cur]
+        again = "all" in refresh or region in refresh
         try:
-            lp = download("listings", region, path)
+            lp = download("listings", region, path, refresh=again)
             listings = parse_listings(lp)
         except Exception as e:
             print(f"  [{region}] listings FAILED: {e}")
@@ -371,7 +500,7 @@ def main():
         seasonality = None
         if want_season:
             try:
-                rp = download("reviews", region, path)
+                rp = download("reviews", region, path, refresh=again)
                 seasonality = parse_reviews_seasonality(rp)
                 tag = "curve" if seasonality else "flat/sparse"
                 print(f"  [{region}] seasonality {tag}")
@@ -383,6 +512,16 @@ def main():
             if not rec:
                 print(f"    {place['name']}: too few listings, skipped")
                 continue
+            if not in_band(rec):
+                # T096-c: Geneva's cached snapshot parsed to a 0.16 EUR median
+                # off 977 listings and was written as a 0 EUR anchor, which
+                # apply then had to drop. Refuse it here, loudly, with the cure.
+                print(f"    {place['name']}: REFUSED, median "
+                      f"{rec['entire_home_night_eur']} EUR/night is outside "
+                      f"{MIN_NIGHT_EUR} to {MAX_NIGHT_EUR}; the snapshot is "
+                      f"broken, re-fetch it with --refresh {region}")
+                refused.append(place["name"])
+                continue
             anchors.append(rec)
             peak = max(seasonality) if seasonality else None
             print(f"    {place['name']}: {rec['entire_home_night_eur']} EUR/night "
@@ -390,8 +529,17 @@ def main():
                   f"hoods={len(rec['neighbourhoods'])} n={rec['n_listings']}"
                   + (f" peak x{peak}" if peak else ""))
 
+        if want_footprint and region in FOOTPRINT_REGIONS:
+            local = footprint_anchors(listings, points, per_eur, region,
+                                      captured, seasonality)
+            anchors.extend(local)
+            print(f"    footprint: {len(local)} town anchor(s) within "
+                  f"{FOOTPRINT_KM:g} km of their own centre")
+
     atomic_write_json(OUT, anchors, indent=1, ensure_ascii=False)
-    print(f"\nwrote {OUT.name}: {len(anchors)} anchors from {len(DATASETS)} datasets")
+    print(f"\nwrote {OUT.name}: {len(anchors)} anchors from {len(DATASETS)} datasets"
+          + (f"; refused {len(refused)} out-of-band: {', '.join(refused)}"
+             if refused else ""))
 
 
 if __name__ == "__main__":

@@ -54,6 +54,7 @@ sys.path.insert(0, str(ROOT / "pipeline"))
 from db import connect  # noqa: E402
 from beaches import sources  # noqa: E402  (endpoint list is rewritten in place)
 from beaches.sources import SourceError, load_cache, overpass, save_cache  # noqa: E402
+from names import display_name, is_latin  # noqa: E402
 
 # Grid cell for the Overpass sweep, in degrees.
 #
@@ -234,8 +235,38 @@ def classify(tags):
     return None
 
 
-def parse_elements(elements):
-    """Overpass elements to scenic_pois rows, centroids for anything drawn."""
+def name_tags(tags):
+    """The tags display_name() can choose from, and only those.
+
+    Kept on each cached row so a later pass can pick the name again for
+    another country without asking Overpass. A summit in the Alps carries
+    thirty name:* tags; only the plain name, name:en, int_name and the
+    Latin-script ones can ever be picked, so the rest are not cached."""
+    keep = {}
+    for key, val in (tags or {}).items():
+        if not val:
+            continue
+        if key in ("name", "name:en", "int_name") or (
+                key.startswith("name:") and is_latin(str(val))):
+            keep[key] = str(val)
+    return keep
+
+
+def pick_name(names_, country=None):
+    """The highlight name a reader sees (T108-c): names.display_name, so a
+    lake on Mount Korab reads in English and not in Macedonian Cyrillic,
+    capped at the column's 160 characters."""
+    name = display_name(names_, country)
+    return (name or "").strip()[:160] or None
+
+
+def parse_elements(elements, country=None):
+    """Overpass elements to scenic_pois rows, centroids for anything drawn.
+
+    country is a hint for display_name's local-language step: the country
+    whose curated routes asked for the cell. A cell straddles borders, so it
+    is a hint and not a fact; name:en and a Latin plain name come first and
+    do not depend on it."""
     out = []
     for el in elements:
         tags = el.get("tags") or {}
@@ -254,9 +285,11 @@ def parse_elements(elements):
             ele = int(round(float(str(ele).replace(",", ".")))) if ele else None
         except ValueError:
             ele = None
+        names_ = name_tags(tags)
         out.append({
             "kind": kind,
-            "name": (tags.get("name") or "").strip()[:160] or None,
+            "name": pick_name(names_, country),
+            "names": names_ or None,
             "ele_m": ele,
             "wikidata": tags.get("wikidata"),
             "osm_ref": f"{el.get('type')}/{el.get('id')}",
@@ -303,10 +336,16 @@ def cells_for(conn, cc):
 # only infers a partial index when the statement repeats its predicate. Every
 # row written here has an osm_ref, so the WHERE clause is bookkeeping rather
 # than a filter, but leaving it out makes the whole insert fail.
+#
+# A feature already stored takes the new name and nothing else (T108-c). With
+# DO NOTHING a re-run could never replace a Cyrillic name stored before
+# display_name existed; every other column of a stored feature is left alone.
 INSERT_SQL = """
     INSERT INTO scenic_pois (country, kind, name, ele_m, wikidata, osm_ref, geom)
     VALUES (%s, %s, %s, %s, %s, %s, ST_SetSRID(ST_MakePoint(%s, %s), 4326))
-    ON CONFLICT (osm_ref) WHERE osm_ref IS NOT NULL DO NOTHING
+    ON CONFLICT (osm_ref) WHERE osm_ref IS NOT NULL
+    DO UPDATE SET name = EXCLUDED.name
+    WHERE scenic_pois.name IS DISTINCT FROM EXCLUDED.name
 """
 
 
@@ -321,7 +360,7 @@ COUNT_SQL = """
 """
 
 
-def all_cells(conn, countries):
+def all_cells(conn, countries, owner=None):
     """Every grid cell any curated route touches, busiest first.
 
     Global rather than per country because cells straddle borders: the sweep
@@ -337,7 +376,13 @@ def all_cells(conn, countries):
     of the routes, and the ones it missed are in the sparse corners."""
     seen = set()
     for cc in countries:
-        seen.update(cells_for(conn, cc))
+        got = cells_for(conn, cc)
+        seen.update(got)
+        if owner is not None:
+            # The first country (in the order given) to ask for a cell is its
+            # name hint; see parse_elements.
+            for cell in got:
+                owner.setdefault(cell, cc)
     with conn.cursor() as cur:
         cur.execute(COUNT_SQL, {"deg": CELL_DEG, "cc": list(countries)})
         weight = {(s, w): n for s, w, n in cur.fetchall()}
@@ -346,12 +391,30 @@ def all_cells(conn, countries):
     return sorted(seen, key=lambda c: (-weight.get(c, 0), c))
 
 
-def harvest_cells(conn, cells, verbose=False, refresh=False, shard=None):
+def cached_names(rows, country=None):
+    """Re-pick each cached row's name with display_name (T108-c).
+
+    A row cached before T311 has no `names` and keeps the name it was cached
+    with: only an Overpass re-fetch (--refresh) can give it the other tags.
+    A row cached since carries its name tags, so a re-run from the cache
+    lands on the same name a fresh fetch would."""
+    out = []
+    for r in rows:
+        if r.get("names"):
+            r = {**r, "name": pick_name(r["names"], country)}
+        out.append(r)
+    return out
+
+
+def harvest_cells(conn, cells, verbose=False, refresh=False, shard=None,
+                  owner=None):
     """Fetch and store one pass of cells.
 
     shard is (index, count): several processes can split the list and, with
     CARTA_OVERPASS pointed at different mirrors, halve or third the wall clock
-    without any one instance seeing two requests at a time."""
+    without any one instance seeing two requests at a time. owner maps a cell
+    to the country that asked for it, the hint display_name reads."""
+    owner = owner or {}
     if shard:
         index, count = shard
         cells = [c for i, c in enumerate(cells) if i % count == index]
@@ -367,9 +430,11 @@ def harvest_cells(conn, cells, verbose=False, refresh=False, shard=None):
             except SourceError as exc:
                 print(f"  cell {key} failed: {str(exc)[:100]}", flush=True)
                 continue
-            cached = parse_elements(elements)
+            cached = parse_elements(elements, owner.get((sy, sx)))
             save_cache("scenic_cell", key, cached)
             fetched += 1
+        else:
+            cached = cached_names(cached, owner.get((sy, sx)))
         # The country column records which sweep found the feature, not which
         # country it stands in: a cell straddles borders and nothing reads it.
         # The join that matters is spatial (ST_DWithin against the route line).
@@ -582,11 +647,12 @@ def main():
         totals = Counter()
         if not args.link_only:
             live_endpoints(verbose=True)
-            cells = all_cells(conn, countries)
+            owner = {}
+            cells = all_cells(conn, countries, owner)
             print(f"{len(cells)} distinct cells to sweep"
                   + (f" (shard {args.shard})" if shard else ""), flush=True)
             n_cells, found = harvest_cells(conn, cells, args.verbose,
-                                           args.refresh, shard)
+                                           args.refresh, shard, owner)
             totals["cells"] += n_cells
             totals["features"] += found
         if not args.harvest_only:
