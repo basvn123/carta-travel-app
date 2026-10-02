@@ -4,14 +4,14 @@
 // changes to the lazy-loaded planner tabs, which a `vite build` alone can't
 // exercise (a broken hook/extraction throws on mount and shows up here).
 //
-//   node scripts/smoke-nav.mjs [url]      (default http://localhost:4173)
+//   node scripts/smoke-nav.mjs [url]      (default http://localhost:$CARTA_PORT or 4173)
 //
 // Point it at a running `vite preview` (or `vite dev`) of the build you want to
 // check. Exits non-zero if any tab errors or can't be reached.
 
 import { chromium } from 'playwright';
 
-const URL = process.argv[2] || 'http://localhost:4173/';
+const URL = process.argv[2] || `http://localhost:${process.env.CARTA_PORT || 4173}/`;
 
 const browser = await chromium.launch();
 const page = await browser.newPage();

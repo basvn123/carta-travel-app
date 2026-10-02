@@ -1,6 +1,6 @@
 // Headless verify for the place-size rail on the Destinations tab.
 //
-//   node scripts/verify_place_classes.mjs [url]     (default http://localhost:4173)
+//   node scripts/verify_place_classes.mjs [url]     (default http://localhost:$CARTA_PORT or 4173)
 //
 // What it asserts, in the order a traveller meets it:
 //   the rail only exists once there are places to size (not on the country index)
@@ -15,7 +15,7 @@
 
 import { chromium } from 'playwright';
 
-const URL = process.argv[2] || 'http://localhost:4173/';
+const URL = process.argv[2] || `http://localhost:${process.env.CARTA_PORT || 4173}/`;
 const browser = await chromium.launch();
 const checks = [];
 const check = (label, ok, note = '') => checks.push({ label, ok, note });

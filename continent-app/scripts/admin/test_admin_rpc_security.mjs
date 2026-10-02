@@ -79,10 +79,8 @@
  * self-check NOTICEs survive, and call every RPC as the `authenticated` role
  * with request.jwt.claims set, which is exactly what PostgREST does.
  *
- * MIGRATION 018. It once failed on a real Postgres because of the regex bound
- * {5,600} (register row T031-d); stage 1 fixed the file. The fallback stays:
- * if 018 as committed ever fails again and still carries {5,600}, a copy with
- * {5,255} is applied from a temp directory, for this test only.
+ * Migration 018 applies as committed: T253 moved its URL length cap out of
+ * the regex bound, so no patched copy is needed.
  *
  * SUPABASE'S DEFAULT GRANTS. A Supabase project grants anon, authenticated
  * and service_role all privileges on new tables, sequences and functions in
@@ -321,24 +319,6 @@ function runTests(bin) {
 
     console.log(`  Applying all ${MIGRATIONS.length} migrations in filename order:`);
     for (const name of MIGRATIONS) {
-      if (name === '018_content_overrides.sql') {
-        const m018 = resolve(migrations, name);
-        const raw018 = psqlRun(bin, TEST_DB, ['-f', m018]);
-        const src = readFileSync(m018, 'utf8');
-        if (raw018.ok) {
-          check('migration applied: 018_content_overrides.sql (as committed)', true);
-        } else if (src.includes('{5,600}')) {
-          const why = (raw018.err.match(/ERROR:.*$/m) || [raw018.err.trim()])[0];
-          console.log(`  note  018 as committed fails here: ${why}`);
-          const patched = join(work, '018_content_overrides.patched.sql');
-          writeFileSync(patched, src.replace('{5,600}', '{5,255}'), 'utf8');
-          console.log('  note  applying a copy with {5,255} from a temp dir, for this test only');
-          applyFile('018_content_overrides.sql (patched copy, {5,255})', patched);
-        } else {
-          applyFile(name, m018);
-        }
-        continue;
-      }
       apply(name);
     }
 

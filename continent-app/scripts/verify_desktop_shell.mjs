@@ -5,14 +5,14 @@
 // selected states, and the photo-forward Explore card whose explanation sits
 // behind the info button. Then a phone pass that proves nothing moved there.
 //
-//   node scripts/verify_desktop_shell.mjs [url]   (default http://localhost:4173)
+//   node scripts/verify_desktop_shell.mjs [url]   (default http://localhost:$CARTA_PORT or 4173)
 //
 // Screenshots to shots/desktop-destinations.png, shots/desktop-explore.png,
 // shots/mobile-destinations.png.
 
 import { chromium } from 'playwright';
 
-const URL = process.argv[2] || 'http://localhost:4173/';
+const URL = process.argv[2] || `http://localhost:${process.env.CARTA_PORT || 4173}/`;
 
 const browser = await chromium.launch();
 const checks = [];

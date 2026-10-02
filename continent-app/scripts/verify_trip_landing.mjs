@@ -3,13 +3,13 @@
 // who), with no locator map, no bottom sheet and no modal backdrop, and the
 // app header still on screen.
 //
-//   node scripts/verify_trip_landing.mjs [url]   (default http://localhost:4173)
+//   node scripts/verify_trip_landing.mjs [url]   (default http://localhost:$CARTA_PORT or 4173)
 //
 // Desktop 1440x900 plus a 390x844 phone pass. Screenshots to shots/trip-landing-*.png.
 
 import { chromium } from 'playwright';
 
-const URL = process.argv[2] || 'http://localhost:4173/';
+const URL = process.argv[2] || `http://localhost:${process.env.CARTA_PORT || 4173}/`;
 const browser = await chromium.launch();
 const checks = [];
 const errors = [];

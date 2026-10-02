@@ -1,7 +1,7 @@
 // Headless verify for the rebuilt Where step (prompt T2): the two tabs, the
 // quiz, the recommendations it produces, the hand picker and the polygon map.
 //
-//   node scripts/verify_where_quiz.mjs [url]     (default http://localhost:4173)
+//   node scripts/verify_where_quiz.mjs [url]     (default http://localhost:$CARTA_PORT or 4173)
 //
 // Screenshots to shots/where-*.png, at 375 and 1280, for three different sets
 // of quiz answers.
@@ -14,7 +14,7 @@
 import { chromium } from 'playwright';
 import { mkdirSync } from 'node:fs';
 
-const URL = process.argv[2] || 'http://localhost:4173/';
+const URL = process.argv[2] || `http://localhost:${process.env.CARTA_PORT || 4173}/`;
 mkdirSync('shots', { recursive: true });
 
 const checks = [];

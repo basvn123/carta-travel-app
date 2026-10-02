@@ -1,16 +1,35 @@
 ﻿// Headless verify for the Destinations tab v2 (.places-tab): five category
-// tabs (General, Trips, Trails, Beaches, Mountains), photo cards everywhere,
-// country flag cards as the index, sort chips, and the trip sheet with the
-// route drawn on a real map.
+// tabs (Trips, Trails, Beaches, Lakes, Mountains, Cycling), photo cards
+// everywhere, and the trip sheet with the route drawn on a real map. The
+// General tab was removed in UX pass 1 (be4541c); Explore took over its job.
 //
-//   node scripts/verify_places_tab.mjs [url]      (default http://localhost:4173)
+//   node scripts/verify_places_tab.mjs [url]      (default http://localhost:$CARTA_PORT or 4173)
 //
 // Phone viewport first (the tab enters through the bottom bar), then a
 // desktop pass. Screenshots to shots/places-*.png.
 
 import { chromium } from 'playwright';
 
-const URL = process.argv[2] || 'http://localhost:4173/';
+const URL = process.argv[2] || `http://localhost:${process.env.CARTA_PORT || 4173}/`;
+
+// The country filter is the CountryPicker button and listbox now, not a
+// <select>, so selectOption() throws. This drives it the way a person does:
+// open it, type the name, click the option. A name of '' picks "All countries".
+const COUNTRY_NAME = new Intl.DisplayNames(['en'], { type: 'region' });
+async function pickCountry(scope, cc) {
+  await scope.locator('.places-country:visible').first().click();
+  await scope.waitForTimeout(400);
+  const pop = scope.locator('.country-picker-pop:visible');
+  if (!cc) {
+    await pop.locator('.origin-opt').first().click();
+  } else {
+    const name = COUNTRY_NAME.of(cc);
+    await pop.locator('.origin-search').fill(name);
+    await scope.waitForTimeout(400);
+    await pop.locator('.origin-opt', { hasText: new RegExp(`^${name}$`, 'i') }).first().click();
+  }
+  await scope.waitForTimeout(1200);
+}
 
 const browser = await chromium.launch();
 const checks = [];
@@ -41,111 +60,15 @@ check('places tab opens from the bar', await page.locator('.places-tab').isVisib
 
 // ── Category bar ──
 const cats = page.locator('.places-cat');
-// Six since the Lakes layer shipped: General, Trips, Trails, Beaches, Lakes,
-// Mountains. Asserted by NAME rather than by count, so the next category to
+// Six: Trips, Trails, Beaches, Lakes, Mountains, Cycling. Asserted by NAME rather than by count, so the next category to
 // arrive does not fail this check for existing.
 const catNames = (await cats.allInnerTexts()).map((s) => s.trim().toLowerCase());
 check('every category tab renders',
-  ['general', 'trips', 'trails', 'beaches', 'lakes', 'mountains']
+  ['trips', 'trails', 'beaches', 'lakes', 'mountains', 'cycling']
     .every((n) => catNames.some((c) => c.startsWith(n.slice(0, 5)))),
   catNames.join(', '));
-check('General starts active', /general/i.test(await page.locator('.places-cat.on').innerText().catch(() => '')));
-
-// ── General: country flag cards first ──
-// The covers are chosen for the box they are cropped into, not by rating
-// alone: at the old 4:1 the average catalogue photograph kept 37 per cent of
-// its frame and the index read as a row of doorways and roofs. Asserted as the
-// share of frame the rendered covers actually keep, which is the thing the
-// reader sees; a future box change that forgets the picker fails here.
-const coverFit = await page.evaluate(async () => {
-  const cards = [...document.querySelectorAll('.places-ccard')];
-  for (const c of cards.slice(0, 12)) {
-    const img = c.querySelector('img');
-    if (img) img.loading = 'eager';
-  }
-  await new Promise((r) => setTimeout(r, 2500));
-  let sum = 0; let n = 0; let worst = 1;
-  for (const c of cards) {
-    const img = c.querySelector('img');
-    const r = c.getBoundingClientRect();
-    if (!img || !img.naturalWidth || !r.height) continue;
-    const nat = img.naturalWidth / img.naturalHeight;
-    const box = r.width / r.height;
-    const vis = Math.min(nat, box) / Math.max(nat, box);
-    sum += vis; n += 1;
-    if (vis < worst) worst = vis;
-  }
-  return { avg: n ? sum / n : 0, n, worst };
-});
-check('country covers keep most of their frame',
-  coverFit.n >= 6 && coverFit.avg > 0.6 && coverFit.worst > 0.4,
-  `avg ${Math.round(coverFit.avg * 100)}%, worst ${Math.round(coverFit.worst * 100)}% over ${coverFit.n}`);
-
-const ccards = await page.locator('.places-ccard').count();
-check('country flag cards render', ccards > 20, `${ccards} flag cards`);
-const firstCc = await page.locator('.places-ccard .places-card-name').first().innerText().catch(() => '');
-check('flag cards carry the country name', firstCc.trim().length > 1, firstCc);
-// The count line is gone too (mobile chrome v4): "21 places" answered a
-// question nobody browsing a wall of countries was asking. The card is the
-// photograph, the flag and the name, nothing else.
-check('flag cards carry no count line',
-  await page.locator('.places-ccard .places-card-sub').count() === 0);
-await page.screenshot({ path: 'shots/places-general-countries.png' });
-
-// ── General: pick a country -> photo cards + sort chips ──
-await page.locator('.places-country:visible').selectOption('IT');
-await page.waitForTimeout(1200);
-const sortChips = await page.locator('.places-sort').count();
-check('sort chips appear once filtered', sortChips === 3, String(sortChips));
-const dcards = await page.locator('.places-dcard').count();
-check('destination photo cards render', dcards > 5, `${dcards} cards`);
-// The photo card frame. A wide card crops its photograph to a horizontal
-// band, and centred, that band is roofs, the near bank and the car park. The
-// crop is pulled above the middle so the skyline, the ridge and the spire come
-// back. Asserted as a ratio and as a focus, because a future height tweak that
-// widened the box further without moving the crop would quietly bring the
-// roofs back.
-const frame = await page.evaluate(() => {
-  const imgs = [...document.querySelectorAll('.places-dcard .places-card-img')]
-    .filter((n) => n.tagName === 'IMG' && n.naturalWidth);
-  if (!imgs.length) return null;
-  const vis = imgs.map((n) => {
-    const r = n.getBoundingClientRect();
-    const box = r.width / r.height;
-    const nat = n.naturalWidth / n.naturalHeight;
-    return box > nat ? nat / box : box / nat;
-  });
-  const r = imgs[0].getBoundingClientRect();
-  const focus = getComputedStyle(imgs[0]).objectPosition;
-  return {
-    box: r.width / r.height,
-    avg: vis.reduce((a, v) => a + v, 0) / vis.length,
-    n: vis.length,
-    focus,
-  };
-});
-// Mobile chrome v4: two cards abreast in a 16:11 frame, so the photograph
-// is a picture rather than a band. (The desktop keeps its wider strip.)
-check('cards keep the 16:11 phone frame',
-  !!frame && Math.abs(frame.box - 16 / 11) < 0.1, frame ? frame.box.toFixed(2) + ':1' : 'no loaded photo');
-check('the crop sits above the middle of the photograph',
-  !!frame && /(3[0-9]|4[0-2])(\.\d+)?%$/.test((frame.focus || '').split(' ')[1] || ''),
-  frame ? frame.focus : '');
-const dImg = await page.locator('.places-dcard .places-card-img').first().getAttribute('src').catch(() => '');
-check('destination cards carry a real image', /upload\.wikimedia|^http/.test(dImg || ''), (dImg || '').slice(0, 60));
-const dPrice = await page.locator('.places-dcard .places-card-price').first().innerText().catch(() => '');
-check('destination cards carry a euro price', /€/.test(dPrice), dPrice);
-const dRating = await page.locator('.places-dcard .score-chip').first().innerText().catch(() => '');
-check('destination cards carry a rating chip', /^\d/.test(dRating.trim()), dRating);
-// Default sort is rating: first card should be a strong score.
-check('rating sort puts a high score first', parseFloat(dRating) >= 8, dRating);
-await page.screenshot({ path: 'shots/places-general-cards.png' });
-
-// Price sort flips the order to cheapest-first.
-await page.locator('.places-sort', { hasText: /price/i }).click();
-await page.waitForTimeout(800);
-const p1 = await page.locator('.places-dcard .places-card-price').first().innerText().catch(() => '');
-check('price sort resorts the cards', /€/.test(p1), p1);
+check('Trips starts active', /trips/i.test(await page.locator('.places-cat.on').innerText().catch(() => '')));
+check('there is no General tab', !catNames.some((c) => c.startsWith('gener')));
 
 // ── Trips: the curated library, then the composed door, then the walks ──
 //
@@ -154,8 +77,6 @@ check('price sort resorts the cards', /€/.test(p1), p1);
 // itineraries live behind their own door at the end of the grid, and the
 // one-day city walks this block covers are what the "1" chip on the day
 // rail reaches, so that is how it gets there.
-await page.locator('.places-country:visible').selectOption('');
-await page.waitForTimeout(600);
 await page.locator('.places-cat', { hasText: /^trips$/i }).click();
 await page.waitForTimeout(1600);
 check('trips category opens on the style grid',
@@ -169,7 +90,7 @@ await page.locator('.trip-slider-input:visible').fill('1');
 await page.waitForTimeout(1600);
 const tripIdx = await page.locator('.places-ccard').count();
 check('one day shows the published-country index', tripIdx > 5, `${tripIdx} countries`);
-await page.locator('.places-country:visible').selectOption('AL');
+await pickCountry(page, 'AL');
 await page.waitForTimeout(1500);
 const tcards = await page.locator('.places-tcard').count();
 check('citytrip cards render for Albania', tcards >= 3, `${tcards} cards`);
@@ -177,6 +98,27 @@ const tKind = await page.locator('.places-tcard .places-card-kind').first().inne
 check('trip cards carry a kind chip', /day/i.test(tKind), tKind);
 const tFacts = await page.locator('.places-tcard .places-card-facts').first().innerText().catch(() => '');
 check('trip cards carry km and stops', /km/.test(tFacts) && /stop/i.test(tFacts), tFacts.replace(/\n/g, ' '));
+// T256-b: the city-day card is reachable (the one-day chip, then a country)
+// and its price follows the estimate rule. A flight-priced card reads "~EUR X/pp"
+// with the estimate title; a ground-priced one reads a plain figure with no
+// title. So the two must always agree, and across Spain and Italy at least one
+// card is a flight price, or this check proves nothing about the rule.
+let estCards = 0; let plainCards = 0; let mismatched = 0;
+for (const cc of ['ES', 'IT']) {
+  await pickCountry(page, cc);
+  const prices = await page.locator('.places-tcard .places-card-price').evaluateAll(
+    (els) => els.map((e) => ({ text: e.innerText.trim(), title: e.title || '' })));
+  for (const p of prices) {
+    const tilde = p.text.startsWith('~');
+    const titled = /not a live quote/i.test(p.title);
+    if (tilde !== titled) mismatched += 1;
+    if (tilde) estCards += 1; else plainCards += 1;
+  }
+}
+check('city-day card prices: the tilde and the estimate title always agree', mismatched === 0, `${mismatched} disagree`);
+check('city-day cards: at least one flight price reads as an estimate', estCards >= 1, `${estCards} estimates, ${plainCards} plain`);
+await pickCountry(page, 'AL');
+await page.waitForTimeout(1200);
 await page.screenshot({ path: 'shots/places-trips.png' });
 
 // ── The trail page: the route on a real map (see verify_trail_page.mjs for
@@ -244,7 +186,7 @@ await page.screenshot({ path: 'shots/places-mountains.png' });
 // photograph, the nearest catalogue place's (labelled on the card), and for a
 // walk with neither, the shape of the walk drawn from its own geometry.
 const blanks = [];
-for (const [blankCat, blankRe] of [['general', /^general/i], ['trips', /^trips$/i],
+for (const [blankCat, blankRe] of [['trips', /^trips$/i],
   ['trails', /trails/i], ['beaches', /beaches/i], ['lakes', /^lakes$/i],
   ['mountains', /mountains/i]]) {
   await page.locator('.places-cat', { hasText: blankRe }).first().click();
@@ -293,11 +235,13 @@ const heroHosts = await page.evaluate(async () => {
 });
 check('every hero URL is on the host the CSP allows',
   heroHosts.n === 0, heroHosts.n ? `${heroHosts.n}: ${heroHosts.bad.join(', ')}` : 'all on upload.wikimedia.org');
-await page.locator('.places-cat', { hasText: /^general/i }).first().click();
+await page.locator('.places-cat', { hasText: /^trips$/i }).first().click();
 await page.waitForTimeout(1500);
 
 // ── Near search: suggestions then closest-first ──
-await page.locator('.places-cat', { hasText: /general/i }).click();
+// On Trails, because the Trips category is the style grid and a style card
+// has no distance to chip; the trail cards carry the km chips.
+await page.locator('.places-cat', { hasText: /trails/i }).click();
 await page.waitForTimeout(800);
 await page.locator('.places-search input').fill('Tirana');
 await page.waitForTimeout(900);
@@ -321,10 +265,12 @@ await seed(desk);
 await desk.goto(URL, { waitUntil: 'domcontentloaded', timeout: 45000 });
 await desk.waitForTimeout(3000);
 const deskTab = desk.locator('.header-nav-item', { hasText: /destinations/i }).first();
+await deskTab.waitFor({ state: 'visible', timeout: 15000 }).catch(() => {});
 if (await deskTab.isVisible().catch(() => false)) {
   await deskTab.click();
   await desk.waitForTimeout(1200);
 }
+await desk.locator('.places-tab').waitFor({ state: 'visible', timeout: 15000 }).catch(() => {});
 check('desktop: places tab reachable', await desk.locator('.places-tab').isVisible().catch(() => false));
 const deskCols = await desk.locator('.places-list').evaluate(
   (el) => getComputedStyle(el).gridTemplateColumns.split(' ').length,
@@ -352,32 +298,15 @@ check('desktop: the side panel stands', await desk.locator('.places-side').isVis
 await desk.locator('.side-cat', { hasText: /^trips$/i }).click();
 await desk.waitForTimeout(1200);
 check('trips index carries no intro paragraph', await desk.locator('.places-intro').count() === 0);
-await desk.locator('.side-cat', { hasText: /general/i }).click();
-await desk.waitForTimeout(800);
 
-// ── Lifestyle: the stay tier every price here was computed at ────────────
-const pill = desk.locator('.places-side .lifestyle-btn:visible');
-check('lifestyle pill sits in the controls row', await pill.isVisible().catch(() => false));
-check('pill names the current stay tier', /entire place/i.test(await pill.innerText().catch(() => '')),
-  (await pill.innerText().catch(() => '')).replace(/\n/g, ' '));
-// Brussels, one of the cities with measured tiers, so the dorm price is a
-// real number rather than the entire-place fallback every village shows.
-await desk.locator('.places-country:visible').selectOption('BE');
-await desk.waitForTimeout(1200);
-const bru = desk.locator('.places-dcard', { hasText: 'Brussels' }).first();
-const priceBefore = await bru.locator('.places-card-price').innerText().catch(() => '');
-await pill.click();
-await desk.waitForTimeout(700);
-check('lifestyle panel opens over the destinations tab',
-  await desk.locator('.lifestyle-panel .ls-tiles').first().isVisible().catch(() => false));
-await desk.screenshot({ path: 'shots/places-lifestyle.png' });
-await desk.locator('.lifestyle-panel .ls-tile', { hasText: 'Dorm bed' }).first().click();
-await desk.waitForTimeout(1500);
-const priceAfter = await bru.locator('.places-card-price').innerText().catch(() => '');
-check('catalogue prices follow the stay tier', priceBefore !== priceAfter && /€/.test(priceAfter),
-  `${priceBefore.replace(/\n/g, ' ')} -> ${priceAfter.replace(/\n/g, ' ')}`);
-check('pill follows the new tier', /dorm bed/i.test(await pill.innerText().catch(() => '')),
-  (await pill.innerText().catch(() => '')).replace(/\n/g, ' '));
+// ── Lifestyle: not on the curated trip library ──────────────────────────
+// With the General tab gone, no desktop list here is priced from the
+// traveller's own bed and habits: the curated library's budgets are
+// editorial ranges, so the Lifestyle pill is not drawn. (The pill itself,
+// and the way it reprices a list, are covered by verify_lifestyle.mjs on
+// Explore, where the prices are.)
+check('the curated library draws no Lifestyle pill',
+  await desk.locator('.places-side .lifestyle-btn:visible').count() === 0);
 
 await desk.close();
 

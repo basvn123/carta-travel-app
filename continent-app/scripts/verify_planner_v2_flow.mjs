@@ -4,13 +4,13 @@
 // single-country, and picking one exposes the getting-there section with its
 // deep links, its price fields and the move-the-whole-trip control.
 //
-//   node scripts/verify_planner_v2_flow.mjs [url]   (default http://localhost:4173)
+//   node scripts/verify_planner_v2_flow.mjs [url]   (default http://localhost:$CARTA_PORT or 4173)
 //
 // Desktop pass then a phone pass. Shots to shots/planner2-*.png.
 
 import { chromium } from 'playwright';
 
-const URL = process.argv[2] || 'http://localhost:4173/';
+const URL = process.argv[2] || `http://localhost:${process.env.CARTA_PORT || 4173}/`;
 const browser = await chromium.launch();
 const checks = [];
 const errors = [];

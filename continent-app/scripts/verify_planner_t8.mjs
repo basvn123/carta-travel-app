@@ -7,7 +7,7 @@
 //   4  favourites: a shortlist row on Where, a star on a favourited trip
 //   7  recap chips are buttons back to the step that set them
 //
-//   node scripts/verify_planner_t8.mjs [url]   (default http://localhost:4173)
+//   node scripts/verify_planner_t8.mjs [url]   (default http://localhost:$CARTA_PORT or 4173)
 //
 // Items 5 and 6 (the Destinations hand-off and "Plan your days") need a
 // published trip opened from the Destinations tab and a fully arranged plan;
@@ -17,7 +17,7 @@
 
 import { chromium } from 'playwright';
 
-const URL = process.argv[2] || 'http://localhost:4173/';
+const URL = process.argv[2] || `http://localhost:${process.env.CARTA_PORT || 4173}/`;
 const browser = await chromium.launch();
 const checks = [];
 const errors = [];

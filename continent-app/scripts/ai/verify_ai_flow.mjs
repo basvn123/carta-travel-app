@@ -11,7 +11,7 @@
 import { chromium } from 'playwright';
 import { mkdirSync } from 'node:fs';
 
-const URL = process.argv[2] || 'http://localhost:4173/';
+const URL = process.argv[2] || `http://localhost:${process.env.CARTA_PORT || 4173}/`;
 const SHOTS = process.argv[3] || 'scripts/ai/shots';
 mkdirSync(SHOTS, { recursive: true });
 

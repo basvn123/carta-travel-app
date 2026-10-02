@@ -35,11 +35,8 @@
  * authenticated` or `set role anon` with request.jwt.claims set, the way
  * PostgREST does. Superuser inserts stand in for rows the app writes.
  *
- * MIGRATION 018. As committed it fails on a real Postgres because of the
- * regex bound {5,600} (register row T031-d). The script applies it as
- * committed first, reports the failure, and then applies a copy with
- * {5,255} from a temp directory, for this test only. 018 in the repo is
- * never edited.
+ * Migration 018 applies as committed: T253 moved its URL length cap out of
+ * the regex bound, so no patched copy is needed.
  *
  * NEEDS a PostgreSQL server that accepts a password-less connection (trust
  * auth or PGPASSWORD). Set PGHOST, PGPORT, PGUSER as needed; defaults are
@@ -230,20 +227,7 @@ function runTests(bin) {
       apply(name);
     }
 
-    const m018 = resolve(migrations, '018_content_overrides.sql');
-    const raw018 = psqlRun(bin, TEST_DB, ['-f', m018]);
-    if (raw018.ok) {
-      check('migration applied: 018_content_overrides.sql (as committed)', true);
-    } else {
-      const why = (raw018.err.match(/ERROR:.*$/m) || [raw018.err.trim()])[0];
-      console.log(`  note  018 as committed fails here: ${why}`);
-      const src = readFileSync(m018, 'utf8');
-      check('018 carries the {5,600} bound the failure points at', src.includes('{5,600}'));
-      const patched = join(work, '018_content_overrides.patched.sql');
-      writeFileSync(patched, src.replace('{5,600}', '{5,255}'), 'utf8');
-      console.log('  note  applying a copy with {5,255} from a temp dir, for this test only');
-      applyFile('018_content_overrides.sql (patched copy, {5,255})', patched);
-    }
+    apply('018_content_overrides.sql');
     const m19 = apply('019_public_guides.sql');
     check('019 self-check ran and passed', /public guides self-check passed/.test(m19.err + m19.out));
     apply('032_admin_mfa_destructive.sql');

@@ -23,14 +23,14 @@
 //      picking one marks it and relabels the header.
 //   7. No horizontal overflow at 380px or 390px.
 //
-//   node scripts/verify_top_bar.mjs [url]      (default http://localhost:4173)
+//   node scripts/verify_top_bar.mjs [url]      (default http://localhost:$CARTA_PORT or 4173)
 //
 // Screenshots to scripts/shots/top-bar-*.png.
 
 import { chromium } from 'playwright';
 import { mkdirSync } from 'node:fs';
 
-const URL = process.argv[2] || 'http://localhost:4173/';
+const URL = process.argv[2] || `http://localhost:${process.env.CARTA_PORT || 4173}/`;
 const SHOTS = 'scripts/shots';
 mkdirSync(SHOTS, { recursive: true });
 

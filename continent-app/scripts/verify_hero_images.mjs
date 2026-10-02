@@ -1,7 +1,7 @@
 // Headless verify for the hero image audit: the photographs the audit chose
 // have to actually load in the panel, at a size worth opening on.
 //
-//   node scripts/verify_hero_images.mjs [url]     (default http://localhost:4173)
+//   node scripts/verify_hero_images.mjs [url]     (default http://localhost:$CARTA_PORT or 4173)
 //
 // It samples destinations the audit replaced (image.source === "commons_audit"
 // in the shipped wire), opens one's detail panel, and checks the hero element
@@ -16,7 +16,7 @@
 import { chromium } from 'playwright';
 import { readFileSync } from 'node:fs';
 
-const BASE = process.argv[2] || 'http://localhost:4173/';   // not URL: that shadows the global
+const BASE = process.argv[2] || `http://localhost:${process.env.CARTA_PORT || 4173}/`;   // not URL: that shadows the global
 const SAMPLE = Number(process.argv[3] || 12);
 
 const wire = JSON.parse(readFileSync(new URL('../public/app_data.json', import.meta.url), 'utf8'));

@@ -2,7 +2,7 @@
 // a catalogue city and any location on earth (a village Carta does not price,
 // a postcode, a home address), then ranks the catalogue by distance from it.
 //
-//   node scripts/verify_places_search.mjs [url]   (default http://localhost:4173)
+//   node scripts/verify_places_search.mjs [url]   (default http://localhost:$CARTA_PORT or 4173)
 //
 // Nominatim is mocked at the network layer, so the run is deterministic and
 // never spends someone else's rate limit: the mock answers with a real point
@@ -13,7 +13,7 @@
 
 import { chromium } from 'playwright';
 
-const URL = process.argv[2] || 'http://localhost:4173/';
+const URL = process.argv[2] || `http://localhost:${process.env.CARTA_PORT || 4173}/`;
 
 // A street address Carta has no destination for, halfway between two it does.
 // Both records are shaped exactly like the live service answers this query: a

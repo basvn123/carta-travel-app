@@ -8,8 +8,7 @@
  *
  *   0. The chain applies: 002, 004, 006, 007, 009, 010, 011, 014 to 018,
  *      032 to 034, 040, then 041 with its self-check notice. 018 goes in
- *      because 033 and 034 check for it, applied the way T069 and T071 do
- *      (a {5,255} patched copy, T031-d).
+ *      because 033 and 034 check for it.
  *   1. BEFORE 041: no pipeline_runs table, admin_health does not list it,
  *      admin_pipeline_health does not exist.
  *   2. The closed doors: anon and a signed-in traveller cannot select,
@@ -206,17 +205,7 @@ async function runTests(bin) {
       apply(name);
     }
 
-    const m018 = resolve(migrations, '018_content_overrides.sql');
-    const raw018 = psqlRun(bin, TEST_DB, ['-f', m018]);
-    if (raw018.ok) {
-      check('migration applied: 018_content_overrides.sql (as committed)', true);
-    } else {
-      const src = readFileSync(m018, 'utf8');
-      check('018 carries the {5,600} bound the failure points at', src.includes('{5,600}'));
-      const patched = join(work, '018_content_overrides.patched.sql');
-      writeFileSync(patched, src.replace('{5,600}', '{5,255}'), 'utf8');
-      applyFile('018_content_overrides.sql (patched copy, {5,255})', patched);
-    }
+    apply('018_content_overrides.sql');
     for (const name of ['032_admin_mfa_destructive.sql', '033_admin_audit_rollback.sql',
       '034_admin_guard_tiers.sql', '040_edge_errors.sql']) {
       apply(name);

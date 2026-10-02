@@ -2,13 +2,13 @@
 // window opens on the harvest date, which is behind us), and a calendar sized
 // for the screen it is on.
 //
-//   node scripts/verify_when_step.mjs [url]   (default http://localhost:4173)
+//   node scripts/verify_when_step.mjs [url]   (default http://localhost:$CARTA_PORT or 4173)
 //
 // Runs at 1440x1000 desktop and 390x844 phone. Shots to shots/when-*.png.
 
 import { chromium } from 'playwright';
 
-const URL = process.argv[2] || 'http://localhost:4173/';
+const URL = process.argv[2] || `http://localhost:${process.env.CARTA_PORT || 4173}/`;
 const browser = await chromium.launch();
 const checks = [];
 const errors = [];

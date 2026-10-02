@@ -1,6 +1,6 @@
 // Headless verify for the country brief on the Where step (prompt T4).
 //
-//   node scripts/verify_country_brief.mjs [url]   (default http://localhost:4173)
+//   node scripts/verify_country_brief.mjs [url]   (default http://localhost:$CARTA_PORT or 4173)
 //
 // Four claims, none of which survives being eyeballed once and forgotten.
 //
@@ -25,7 +25,7 @@
 import { chromium } from 'playwright';
 import { mkdirSync } from 'node:fs';
 
-const URL = process.argv[2] || 'http://localhost:4173/';
+const URL = process.argv[2] || `http://localhost:${process.env.CARTA_PORT || 4173}/`;
 mkdirSync('shots', { recursive: true });
 
 const checks = [];

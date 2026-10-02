@@ -19,7 +19,7 @@ import { chromium } from 'playwright';
 import { mkdirSync } from 'node:fs';
 
 const TAG = process.argv[2] || 'before';
-const URL = process.argv[3] || 'http://localhost:4173/';
+const URL = process.argv[3] || `http://localhost:${process.env.CARTA_PORT || 4173}/`;
 mkdirSync('shots', { recursive: true });
 
 const gaps = [];

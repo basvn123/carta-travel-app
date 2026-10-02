@@ -1,7 +1,7 @@
 // Headless verify for the curated trip library: the Trips category's style
 // grid, one style's list, the journey page, and the composed door.
 //
-//   node scripts/verify_journeys.mjs [url]      (default http://localhost:4173)
+//   node scripts/verify_journeys.mjs [url]      (default http://localhost:$CARTA_PORT or 4173)
 //
 // What it is checking, in the order a traveller meets it:
 //   the Trips category opens on TEN style cards, each with a photograph
@@ -20,7 +20,7 @@
 import { chromium } from 'playwright';
 import { readFileSync, existsSync, readdirSync } from 'node:fs';
 
-const URL = process.argv[2] || 'http://localhost:4173/';
+const URL = process.argv[2] || `http://localhost:${process.env.CARTA_PORT || 4173}/`;
 const WIRE = 'public/journeys';
 
 const browser = await chromium.launch();

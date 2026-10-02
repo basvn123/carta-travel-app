@@ -2,7 +2,7 @@
 // My trips | Account, with the raised plus opening the Trip planner / Day
 // planner chooser.
 //
-//   node scripts/verify_bottom_nav.mjs [url]      (default http://localhost:4173)
+//   node scripts/verify_bottom_nav.mjs [url]      (default http://localhost:$CARTA_PORT or 4173)
 //
 // Runs at a 390x844 phone viewport. Asserts: no Home tab in the bar, the four
 // labelled items render whole (no ellipsis truncation), the plus chooser
@@ -12,7 +12,7 @@
 
 import { chromium } from 'playwright';
 
-const URL = process.argv[2] || 'http://localhost:4173/';
+const URL = process.argv[2] || `http://localhost:${process.env.CARTA_PORT || 4173}/`;
 
 const browser = await chromium.launch();
 const page = await browser.newPage({ viewport: { width: 390, height: 844 } });

@@ -1,7 +1,7 @@
 // Headless verify for the beach layer: the Beaches category on the
 // Destinations tab, and the beach page one card opens.
 //
-//   node scripts/verify_beaches.mjs [url]      (default http://localhost:4173)
+//   node scripts/verify_beaches.mjs [url]      (default http://localhost:$CARTA_PORT or 4173)
 //
 // What it is checking, in the order a traveller meets it:
 //   the tab shows BEACHES, not trips, and not a page of country flags
@@ -18,7 +18,7 @@
 
 import { chromium } from 'playwright';
 
-const URL = process.argv[2] || 'http://localhost:4173/';
+const URL = process.argv[2] || `http://localhost:${process.env.CARTA_PORT || 4173}/`;
 
 const browser = await chromium.launch();
 const checks = [];

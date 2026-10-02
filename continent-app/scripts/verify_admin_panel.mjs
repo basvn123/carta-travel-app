@@ -48,7 +48,7 @@ import { chromium } from 'playwright';
 import { spawn, spawnSync } from 'node:child_process';
 import { mkdirSync } from 'node:fs';
 
-const PORT = 4192;
+const PORT = Number(process.env.CARTA_PORT) || 4192;
 const BASE = `http://127.0.0.1:${PORT}`;
 const SHOTS = 'scripts/shots';
 mkdirSync(SHOTS, { recursive: true });
@@ -91,6 +91,59 @@ const USERS = [
   },
 ];
 
+// The moderation queues (T067 to T070): public guides, DSA reports against
+// them, and owners' complaints about takedowns. seedModeration() puts them
+// back to a known state, so the 380px pass at the end starts with rows.
+const seedModeration = (state) => {
+  state.guidesFail = false; state.reportsFail = false;
+  state.guideCalls = 0; state.reportCalls = []; state.complaintCalls = [];
+  state.unpublishCalls = []; state.unpublishMode = 'ok';
+  state.dismissCalls = []; state.decideCalls = []; state.decideRefuse = null;
+  state.guides = [
+    {
+      id: 'plan-g1', label: 'Porto in four days', cities: ['Porto', 'Lisbon'],
+      userId: USERS[0].id, handle: 'zoe_travels', displayName: 'Zoe Martens', avatarEmoji: null,
+      email: 'zoe@example.com', publishedAt: '2026-08-10T10:00:00Z', views: 0, inGallery: true,
+    },
+    {
+      id: 'plan-g2', label: '', cities: ['Split'],
+      userId: USERS[1].id, handle: null, displayName: null, avatarEmoji: null,
+      email: 'marco@example.com', publishedAt: '2026-08-12T10:00:00Z', views: 0, inGallery: false,
+    },
+  ];
+  const owner = { ownerId: USERS[0].id, ownerHandle: 'zoe_travels', ownerEmail: 'zoe@example.com' };
+  state.reports = [
+    {
+      id: 'r1', status: 'new', planId: 'plan-g1', planLabel: 'Porto in four days', currentLabel: 'Porto in four days',
+      planExists: true, reason: 'This copies a chapter of a published book.', createdAt: '2026-08-18T10:00:00Z',
+      reporterHandle: null, contactEmail: 'reporter@example.com', planTotal: 1, sourceTotal: 1,
+      decidedAt: null, decidedByHandle: null, decisionNote: null, ...owner,
+    },
+    {
+      id: 'r2', status: 'new', planId: 'plan-gone', planLabel: 'Old Rome trip', currentLabel: 'Old Rome trip',
+      planExists: true, reason: 'A bad review of a hostel.', createdAt: '2026-08-17T10:00:00Z',
+      reporterHandle: 'someone', contactEmail: null, planTotal: 2, sourceTotal: 1,
+      decidedAt: null, decidedByHandle: null, decisionNote: null, ...owner,
+    },
+    {
+      id: 'r3', status: 'actioned', planId: 'plan-old', planLabel: 'Taken down earlier', currentLabel: 'Taken down earlier',
+      planExists: true, reason: 'Earlier notice.', createdAt: '2026-08-01T10:00:00Z',
+      reporterHandle: null, contactEmail: null, planTotal: 1, sourceTotal: 1,
+      decidedAt: '2026-08-02T10:00:00Z', decidedByHandle: 'owner', decisionNote: 'Copied text.', ...owner,
+    },
+  ];
+  const base = {
+    planExists: true, ownerId: USERS[0].id, ownerHandle: 'zoe_travels', ownerEmail: 'zoe@example.com',
+    decidedByHandle: 'owner', createdAt: '2026-08-15T10:00:00Z', source: 'notice', noticeCount: 2,
+    complaintAt: '2026-08-19T10:00:00Z', complaintStatus: 'open',
+    complaintDecidedByHandle: null, complaintDecidedAt: null, complaintNote: null, reinstated: false,
+  };
+  state.complaints = [
+    { ...base, statementId: 's1', planLabel: 'Lisbon food guide', facts: 'Taken down for copied text.', complaintBody: 'The text is my own blog post.', unchanged: true },
+    { ...base, statementId: 's2', planLabel: 'Algarve loop', facts: 'Taken down for a private address.', complaintBody: 'I removed the address already.', unchanged: false, source: 'own' },
+  ];
+};
+
 const isUp = async () => {
   try { return (await fetch(BASE)).ok; } catch { return false; }
 };
@@ -129,6 +182,20 @@ const mfaRefusal = (route) => route.fulfill({
 
 async function stubSupabase(page, state, opts = {}) {
   const admin = opts.isAdmin !== false;
+  // T062-g: every shot waits for the fonts and lets the last paint settle, and
+  // the page stops its own transitions, so two runs of the same tree give the
+  // same pixels. (Contexts also ask for reduced motion.)
+  await page.addInitScript(() => {
+    const css = document.createElement('style');
+    css.textContent = '*,*::before,*::after{animation:none!important;transition:none!important;caret-color:transparent!important}';
+    document.addEventListener('DOMContentLoaded', () => document.head.appendChild(css));
+  });
+  const rawShot = page.screenshot.bind(page);
+  page.screenshot = async (o) => {
+    await page.evaluate(() => document.fonts.ready).catch(() => {});
+    await page.waitForTimeout(300);
+    return rawShot(o);
+  };
 
   await page.route('**/auth/v1/token*', (route) => {
     const body = JSON.parse(route.request().postData() || '{}');
@@ -463,6 +530,63 @@ async function stubSupabase(page, state, opts = {}) {
     if (i >= 0) state.overrides[i] = row; else state.overrides.push(row);
     return json(route, { ok: true });
   });
+  // T076-a: the override tests replace a photo with this URL. It answers with
+  // a real 1x1 PNG, so the diff viewer's "after" cell has something to paint.
+  await page.route('**/upload.wikimedia.org/better.jpg', (route) => route.fulfill({
+    status: 200, contentType: 'image/png',
+    body: Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==', 'base64'),
+  }));
+  await page.route('**/rest/v1/rpc/admin_list_public_guides*', (route) => {
+    state.guideCalls += 1;
+    if (state.guidesFail) return json(route, { error: 'could not find the function public.admin_list_public_guides' });
+    return json(route, { total: state.guides.length, viewsCounted: false, rows: state.guides });
+  });
+  await page.route('**/rest/v1/rpc/admin_list_content_reports*', (route) => {
+    const body = JSON.parse(route.request().postData() || '{}');
+    state.reportCalls.push(body);
+    if (state.reportsFail) return json(route, { error: 'could not find the function public.admin_list_content_reports' });
+    const live = state.reports.map((r) => ({ ...r, stillPublic: state.guides.some((g) => g.id === r.planId) }));
+    const rows = live.filter((r) => !body.p_status || r.status === body.p_status);
+    return json(route, { total: rows.length, new: live.filter((r) => r.status === 'new').length, rows });
+  });
+  await page.route('**/rest/v1/rpc/admin_unpublish_guide*', (route) => {
+    const body = JSON.parse(route.request().postData() || '{}');
+    state.unpublishCalls.push(body);
+    if (state.unpublishMode !== 'ok') return json(route, { error: state.unpublishMode });
+    const had = state.guides.some((g) => g.id === body.p_plan_id);
+    state.guides = state.guides.filter((g) => g.id !== body.p_plan_id);
+    let n = 0;
+    state.reports.forEach((r) => {
+      if (r.planId === body.p_plan_id && r.status === 'new') {
+        r.status = 'actioned'; r.decidedAt = '2026-08-20T10:00:00Z'; r.decidedByHandle = 'owner'; r.decisionNote = body.p_reason; n += 1;
+      }
+    });
+    return json(route, { ok: true, changed: had, visibility: 'private', reportsActioned: n, statementId: 'st-new' });
+  });
+  await page.route('**/rest/v1/rpc/admin_dismiss_content_report*', (route) => {
+    const body = JSON.parse(route.request().postData() || '{}');
+    state.dismissCalls.push(body);
+    const r = state.reports.find((x) => x.id === body.p_report_id);
+    if (r) { r.status = 'dismissed'; r.decidedAt = '2026-08-20T10:00:00Z'; r.decidedByHandle = 'owner'; r.decisionNote = body.p_reason; }
+    return json(route, { ok: true, changed: !!r, status: 'dismissed' });
+  });
+  await page.route('**/rest/v1/rpc/admin_list_moderation_complaints*', (route) => {
+    const body = JSON.parse(route.request().postData() || '{}');
+    state.complaintCalls.push(body);
+    const rows = state.complaints.filter((c) => !body.p_status || c.complaintStatus === body.p_status);
+    return json(route, { total: rows.length, open: state.complaints.filter((c) => c.complaintStatus === 'open').length, rows });
+  });
+  await page.route('**/rest/v1/rpc/admin_decide_complaint*', (route) => {
+    const body = JSON.parse(route.request().postData() || '{}');
+    state.decideCalls.push(body);
+    if (state.decideRefuse) { const e = state.decideRefuse; state.decideRefuse = null; return json(route, { error: e }); }
+    const c = state.complaints.find((x) => x.statementId === body.p_statement_id);
+    if (!c) return json(route, { error: 'not_found' });
+    c.complaintStatus = body.p_outcome; c.complaintDecidedByHandle = 'owner';
+    c.complaintDecidedAt = '2026-08-20T10:00:00Z'; c.complaintNote = body.p_reason;
+    c.reinstated = body.p_outcome === 'reversed' && c.unchanged;
+    return json(route, { ok: true, changed: true, outcome: body.p_outcome, reinstated: c.reinstated });
+  });
   await page.route('**/rest/v1/rpc/admin_get_audit*', (route) => json(route, {
     total: 2,
     rows: [
@@ -547,10 +671,12 @@ try {
       features: {},
     },
   };
+  seedModeration(state);
 
   // ---- 1. The door and the lock.
   console.log('1. the door and the lock');
   const ctx = await browser.newContext({
+    reducedMotion: 'reduce',
     viewport: { width: 1440, height: 960 },
     acceptDownloads: true,
   });
@@ -578,7 +704,7 @@ try {
   if (!(await page.locator('.adminpage-err').count())) fail('a wrong password unlocked nothing and said nothing');
   if (await page.locator('.adminpage-tiles').count()) fail('a wrong password opened the page');
   if (!state.reauthAttempts.includes('not-the-password')) fail('no real re-auth call was made');
-  await page.screenshot({ path: `${SHOTS}/admin-lock.png` });
+  await page.screenshot({ animations: 'disabled', path: `${SHOTS}/admin-lock.png` });
   await page.locator('#admin-lock-input').fill(RIGHT_PASSWORD);
   await page.locator('button', { hasText: 'Open admin tools' }).click();
   await page.locator('.adminpage-tiles').first().waitFor({ timeout: 15000 });
@@ -597,7 +723,7 @@ try {
     fail(`the warning does not name the missing table: ${await warn.first().innerText()}`);
   }
   ok(`${tiles} tiles, and the missing table is named on screen`);
-  await page.screenshot({ path: `${SHOTS}/admin-overview.png` });
+  await page.screenshot({ animations: 'disabled', path: `${SHOTS}/admin-overview.png` });
 
   // ---- 3. A failed list says so. The regression that matters.
   console.log('3. a failed list is not an empty list');
@@ -654,7 +780,7 @@ try {
   ok('the table searches by word and by pasted id');
   await page.locator('.adminpage-search input').fill('zoe');
   await page.waitForTimeout(700);
-  await page.screenshot({ path: `${SHOTS}/admin-users.png` });
+  await page.screenshot({ animations: 'disabled', path: `${SHOTS}/admin-users.png` });
 
   await page.locator('.adminpage-namebtn').first().click();
   await page.locator('.adminpage-facts').waitFor({ timeout: 10000 });
@@ -723,7 +849,7 @@ try {
   await page.locator('.adminpage-mfa .adminpage-btn', { hasText: 'Verify code' }).click();
   await page.locator('.adminpage-mfa .adminpage-err', { hasText: 'That code did not work' }).waitFor({ timeout: 5000 });
   if (await suspendBtn.isEnabled()) fail('a wrong code enabled Suspend');
-  await page.screenshot({ path: `${SHOTS}/admin-mfa-enrol.png` });
+  await page.screenshot({ animations: 'disabled', path: `${SHOTS}/admin-mfa-enrol.png` });
   await codeField.fill(GOOD_CODE);
   await page.locator('.adminpage-mfa .adminpage-btn', { hasText: 'Verify code' }).click();
   await page.locator('.adminpage-mfa').waitFor({ state: 'detached', timeout: 5000 });
@@ -756,7 +882,7 @@ try {
     fail('the saved note is not in the history');
   }
   ok('a note saves and appears in the account history');
-  await page.screenshot({ path: `${SHOTS}/admin-detail.png` });
+  await page.screenshot({ animations: 'disabled', path: `${SHOTS}/admin-detail.png` });
 
   // ---- 8. Deletion.
   console.log('8. deletion');
@@ -810,7 +936,7 @@ try {
     fail('the signups chart states no total in words');
   }
   ok(`${bars} days of signups, the provider split, and the destination ranking`);
-  await page.screenshot({ path: `${SHOTS}/admin-analytics.png`, fullPage: true });
+  await page.screenshot({ animations: 'disabled', path: `${SHOTS}/admin-analytics.png`, fullPage: true });
 
   // ---- 8b2. The AI usage rollup.
   // The point of the section is that plan and ground are never added
@@ -850,7 +976,7 @@ try {
     fail(`the heaviest-accounts table is not ranked on ground: ${JSON.stringify(aiRows)}`);
   }
   ok('AI usage: plan and ground stay apart, both refusal kinds counted, ground ranks the table');
-  await page.screenshot({ path: `${SHOTS}/admin-ai-usage.png`, fullPage: true });
+  await page.screenshot({ animations: 'disabled', path: `${SHOTS}/admin-ai-usage.png`, fullPage: true });
 
   // ---- 8b3. The margin dashboard.
   // The point of the section is the comparison against the EUR 6.85 the unit
@@ -904,7 +1030,7 @@ try {
   await page.locator('.adminpage-card', { hasText: 'Margin, 2026-08' })
     .first().waitFor({ timeout: 10000 });
   ok('margin: euros not cents, tiers apart, gap against 6.85 stated, ledger not invoiced, month selector refetches');
-  await page.screenshot({ path: `${SHOTS}/admin-margin.png`, fullPage: true });
+  await page.screenshot({ animations: 'disabled', path: `${SHOTS}/admin-margin.png`, fullPage: true });
 
   // ---- 8c. The feedback inbox.
   console.log('8c. feedback inbox');
@@ -925,6 +1051,172 @@ try {
     fail('marking a message done never reached the RPC');
   }
   ok('the inbox filters, shows the context, and marks a message done');
+
+  // ---- 8f. Guides, Reports, takedowns and complaints (T067 to T070).
+  // These tabs shipped with scratch-copy checks only; this is the permanent
+  // version. Each tab loads the first time it is opened, not at unlock.
+  console.log('8f. guides, reports, takedowns, complaints');
+  if (state.guideCalls !== 0 || state.reportCalls.length !== 0 || state.complaintCalls.length !== 0) {
+    fail('the Guides or Reports queues loaded before their tabs were opened');
+  }
+  await gotoSection(page, 'Guides');
+  await page.locator('.adminpage-table tbody tr').first().waitFor({ timeout: 10000 });
+  await page.waitForTimeout(400);
+  if (state.guideCalls !== 1) fail(`the Guides tab made ${state.guideCalls} loads on first open, not one`);
+  const gText = await page.locator('.adminpage-body').innerText();
+  if (!/Porto in four days/.test(gText) || !/Untitled trip/.test(gText)) fail('the Guides rows are not shown by title');
+  if (await page.locator('.adminpage-chip', { hasText: 'Not in gallery' }).count() !== 1) fail('exactly one guide should carry the not-in-gallery chip');
+  if (!/Views are not counted/.test(gText)) fail('the Guides tab does not say views are not counted');
+  // The author hand-off opens the account.
+  await page.locator('.adminpage-namebtn').nth(1).click();
+  await page.locator('.adminpage-btn', { hasText: 'Email a password reset' }).waitFor({ timeout: 10000 });
+  ok('Guides: lazy first load, rows by title, the not-in-gallery chip, the author opens the account');
+  await gotoSection(page, 'Guides');
+  await page.locator('.adminpage-table tbody tr').first().waitFor({ timeout: 10000 });
+  // A failure draws no table, and the retry brings the rows back.
+  state.guidesFail = true;
+  await page.locator('.adminpage-btn', { hasText: 'Refresh' }).click();
+  await page.locator('.adminpage-err').waitFor({ timeout: 10000 });
+  if (await page.locator('.adminpage-table').count()) fail('a failed Guides load still drew its table');
+  state.guidesFail = false;
+  await page.locator('.adminpage-retry').click();
+  await page.locator('.adminpage-table tbody tr').first().waitFor({ timeout: 10000 });
+  if (await page.locator('.adminpage-err').count()) fail('the Guides error survived the retry');
+  ok('Guides: a failed load says so and draws no table, and Try again recovers');
+
+  // Unpublish on the second row (the untitled guide, plan-g2).
+  const row2 = () => page.locator('.adminpage-table tbody tr').nth(1);
+  await row2().locator('.adminpage-btn.danger', { hasText: 'Unpublish' }).click();
+  const ta = page.locator('.adminpage-armed textarea');
+  await ta.waitFor({ timeout: 5000 });
+  if (!(await ta.evaluate((el) => el === document.activeElement))) fail('opening the takedown form did not move focus to the reason field');
+  const taId = await ta.getAttribute('id');
+  if (!(await page.locator(`label[for="${taId}"]`).count())) fail('the reason field has no label tied to it');
+  const goBtn = page.locator('.adminpage-armed .adminpage-btn.danger', { hasText: 'Unpublish guide' });
+  if (!(await goBtn.isDisabled())) fail('the send button is enabled with a blank reason');
+  await ta.fill('   ');
+  if (!(await goBtn.isDisabled())) fail('the send button is enabled with a whitespace reason');
+  await page.locator('.adminpage-armed .adminpage-btn', { hasText: 'Keep it public' }).click();
+  if (await page.locator('.adminpage-armed').count()) fail('Cancel left the takedown form open');
+  if (state.unpublishCalls.length) fail('a call went out before the form was submitted');
+  ok('Unpublish: arms with focus and a label, refuses a blank reason, Cancel closes it with no call');
+  // The server's refusals are worded in place and keep the form open.
+  await row2().locator('.adminpage-btn.danger', { hasText: 'Unpublish' }).click();
+  for (const [mode, re] of [['not_found', /no longer exists/i], ['slow_down', /too many admin actions/i], ['bad_reason', /write the reason/i]]) {
+    state.unpublishMode = mode;
+    await page.locator('.adminpage-armed textarea').fill('Copies a book');
+    await page.locator('.adminpage-armed .adminpage-btn.danger', { hasText: 'Unpublish guide' }).click();
+    await page.locator('.adminpage-armed [role="alert"]').waitFor({ timeout: 5000 });
+    if (!re.test(await page.locator('.adminpage-armed [role="alert"]').innerText())) fail(`the ${mode} refusal is not worded`);
+    if (!(await page.locator('.adminpage-armed textarea').inputValue())) fail(`the ${mode} refusal cleared the reason`);
+  }
+  ok('Unpublish: not_found, slow_down and bad_reason each get a sentence in place and keep the reason');
+  state.unpublishMode = 'ok';
+  await page.locator('.adminpage-armed textarea').fill('  Copies a book  ');
+  await page.locator('.adminpage-armed .adminpage-btn.danger', { hasText: 'Unpublish guide' }).click();
+  await page.locator('.adminpage-ok', { hasText: 'Guide unpublished' }).waitFor({ timeout: 10000 });
+  const lastUnpub = state.unpublishCalls[state.unpublishCalls.length - 1];
+  if (lastUnpub.p_reason !== 'Copies a book' || lastUnpub.p_plan_id !== 'plan-g2') {
+    fail(`the takedown sent ${JSON.stringify(lastUnpub)}, not the trimmed reason for plan-g2`);
+  }
+  await page.waitForTimeout(700);
+  if (await page.locator('.adminpage-table tbody tr').count() !== 1) fail('the unpublished guide did not leave the Guides list');
+  ok('Unpublish: sends the trimmed reason, announces it, and the guide leaves the list');
+
+  // Reports: lazy, filtered, worded.
+  if (state.reportCalls.length !== 0) fail('Reports loaded before its tab was opened');
+  await gotoSection(page, 'Reports');
+  await page.locator('.adminpage-fb').first().waitFor({ timeout: 10000 });
+  await page.waitForTimeout(500);
+  if (state.reportCalls.length !== 1) fail(`the Reports tab made ${state.reportCalls.length} loads on first open, not one`);
+  const r1c = page.locator('.adminpage-fb', { hasText: 'published book' });
+  const r2c = page.locator('.adminpage-fb', { hasText: 'hostel' });
+  if (await r1c.count() !== 1 || await r2c.count() !== 1) fail('the New filter should show the two new reports');
+  if (!/no longer public/i.test(await r2c.innerText())) fail('a report on a guide that is not public lacks its chip');
+  if (await r2c.locator('.adminpage-btn.danger', { hasText: 'Unpublish' }).count()) fail('a non-public guide offers Unpublish from its report');
+  if (!(await r1c.locator('a', { hasText: 'Reply to reporter' }).count())) fail('a report with a contact email has no reply link');
+  if (await r2c.locator('a', { hasText: 'Reply to reporter' }).count()) fail('a report with no contact email offers a reply link');
+  ok('Reports: lazy first load, the New filter, the not-public chip, reply only with a contact email');
+  state.reportsFail = true;
+  await page.locator('.adminpage-btn', { hasText: 'Refresh' }).first().click();
+  await page.locator('.adminpage-err', { hasText: 'could not find' }).waitFor({ timeout: 10000 });
+  if (await page.locator('.adminpage-fb', { hasText: 'published book' }).count()) fail('a failed Reports load still drew the queue');
+  state.reportsFail = false;
+  await page.locator('.adminpage-retry').first().click();
+  await page.locator('.adminpage-fb', { hasText: 'published book' }).waitFor({ timeout: 10000 });
+  ok('Reports: a failed load says so and draws no queue, and Try again recovers');
+
+  // Dismiss r2 (blank refused, trimmed reason in the body).
+  await r2c.locator('.adminpage-btn', { hasText: 'Dismiss' }).click();
+  const dta = r2c.locator('textarea');
+  await dta.waitFor({ timeout: 5000 });
+  if (!(await dta.evaluate((el) => el === document.activeElement))) fail('opening Dismiss did not move focus to its reason field');
+  const dGo = r2c.locator('.adminpage-btn', { hasText: 'Dismiss report' });
+  if (!(await dGo.isDisabled())) fail('Dismiss report is enabled with a blank reason');
+  await dta.fill('  An opinion, not illegal.  ');
+  await dGo.click();
+  await page.locator('.adminpage-ok', { hasText: 'Report dismissed' }).waitFor({ timeout: 10000 });
+  if (state.dismissCalls[0].p_reason !== 'An opinion, not illegal.' || state.dismissCalls[0].p_report_id !== 'r2') {
+    fail(`Dismiss sent ${JSON.stringify(state.dismissCalls[0])}`);
+  }
+  await page.waitForTimeout(600);
+  if (await page.locator('.adminpage-fb', { hasText: 'hostel' }).count()) fail('a dismissed report stayed in the New filter');
+  ok('Dismiss: refuses a blank reason, sends the trimmed one, and the report leaves New');
+
+  // Unpublish from the report card (r1, plan-g1): the report is actioned.
+  await r1c.locator('.adminpage-btn.danger', { hasText: 'Unpublish' }).click();
+  await r1c.locator('textarea').fill('Copies a chapter of a book.');
+  await r1c.locator('.adminpage-btn.danger', { hasText: 'Unpublish guide' }).click();
+  await page.locator('.adminpage-ok', { hasText: 'Reports marked actioned: 1' }).waitFor({ timeout: 10000 });
+  await page.waitForTimeout(600);
+  if (await page.locator('.adminpage-fb', { hasText: 'published book' }).count()) fail('an actioned report stayed in the New filter');
+  await page.locator('.adminpage-seg', { hasText: /^All$/ }).last().click();
+  await page.waitForTimeout(800);
+  if (await page.locator('.adminpage-fb', { hasText: /Decided by @owner/ }).count() < 3) fail('the All filter should show every decided report with who decided');
+  if (!/Copies a chapter of a book\./.test(await page.locator('.adminpage-fb', { hasText: 'published book' }).innerText())) {
+    fail('a decided report does not carry its reason');
+  }
+  ok('Reports: unpublishing from a card actions the report; All shows who decided, when and why');
+
+  // Complaints, above the notices.
+  const compCards = page.locator('#admin-complaints-h ~ .adminpage-fblist .adminpage-fb');
+  if (await compCards.count() !== 2) fail(`the open complaints should be two, found ${await compCards.count()}`);
+  const c1 = compCards.filter({ hasText: 'Lisbon food guide' });
+  const c2 = compCards.filter({ hasText: 'Algarve loop' });
+  if (!/Unchanged since the takedown/.test(await c1.innerText())) fail('an unchanged takedown does not say reversing reinstates it');
+  if (!/Changed or no longer private/.test(await c2.innerText())) fail('a changed takedown does not say reversing only lifts the decision');
+  if (!/The text is my own blog post/.test(await c1.innerText())) fail('the complaint card lacks the owner words');
+  // One form at a time across the whole page.
+  await c1.locator('.adminpage-btn', { hasText: 'Uphold' }).click();
+  await c2.locator('.adminpage-btn', { hasText: 'Reverse' }).click();
+  if (await page.locator('#admin-complaints-h ~ .adminpage-fblist textarea').count() !== 1) fail('more than one decision form is open at once');
+  await c2.locator('textarea').fill('The address is gone, so it goes back.');
+  // slow_down is worded in place; the form and the reason stay.
+  state.decideRefuse = 'slow_down';
+  await c2.locator('.adminpage-btn', { hasText: 'Reverse decision' }).click();
+  await c2.locator('[role="alert"]').waitFor({ timeout: 5000 });
+  if (!/too many admin actions/i.test(await c2.locator('[role="alert"]').innerText())) fail('slow_down on a complaint is not worded');
+  if ((await c2.locator('textarea').inputValue()) !== 'The address is gone, so it goes back.') fail('slow_down cleared the answer');
+  await c2.locator('.adminpage-btn', { hasText: 'Reverse decision' }).click();
+  await page.locator('.adminpage-ok', { hasText: /Decision reversed/ }).waitFor({ timeout: 10000 });
+  const dec = state.decideCalls[state.decideCalls.length - 1];
+  if (dec.p_outcome !== 'reversed' || dec.p_statement_id !== 's2' || dec.p_reason !== 'The address is gone, so it goes back.') {
+    fail(`Reverse sent ${JSON.stringify(dec)}`);
+  }
+  if (!/stays as the owner has it/.test(await page.locator('.adminpage-ok', { hasText: /Decision reversed/ }).innerText())) {
+    fail('a reversal of a changed trip does not say it was left as the owner has it');
+  }
+  await page.waitForTimeout(700);
+  const c1b = page.locator('#admin-complaints-h ~ .adminpage-fblist .adminpage-fb', { hasText: 'Lisbon food guide' });
+  await c1b.locator('.adminpage-btn', { hasText: 'Uphold' }).click();
+  await c1b.locator('textarea').fill('The chapter matches the book.');
+  await c1b.locator('.adminpage-btn', { hasText: 'Uphold decision' }).click();
+  await page.locator('.adminpage-ok', { hasText: /Decision upheld/ }).waitFor({ timeout: 10000 });
+  await page.locator('#admin-complaints-h ~ .adminpage-segment .adminpage-seg', { hasText: /^All$/ }).first().click();
+  await page.waitForTimeout(800);
+  if (!/Decided by @owner/.test(await page.locator('#admin-complaints-h ~ .adminpage-fblist').first().innerText())) fail('a decided complaint does not say who decided');
+  ok('Complaints: cards, the reinstate rule, one form at a time, slow_down in place, reverse and uphold with their bodies');
+  await page.screenshot({ animations: 'disabled', path: `${SHOTS}/admin-reports.png`, fullPage: true });
 
   // ---- 8d. Content review: the catalogue as travellers see it.
   // Deliberately NOT stubbed. A service worker serves public/, so page.route
@@ -1051,7 +1343,7 @@ try {
     fail('the beach override did not move into the review list');
   }
   ok('a card whose override passed its date is bordered and flagged overdue, and listed');
-  await page.screenshot({ path: `${SHOTS}/admin-content-review.png`, fullPage: true });
+  await page.screenshot({ animations: 'disabled', path: `${SHOTS}/admin-content-review.png`, fullPage: true });
 
   await page.waitForTimeout(500);
   if (!(await page.locator('.adminpage-card2.edited').count())) {
@@ -1085,8 +1377,17 @@ try {
   if (await page.locator('.diffviewer .diffcell-image img').count() !== 2) {
     fail('the diff viewer does not render both photographs');
   }
+  // T076-a: the replacement URL is answered with a real image, so the "after"
+  // cell has to have painted it, not just rendered an <img> tag.
+  const afterPainted = await page.waitForFunction(() => {
+    const imgs = document.querySelectorAll('.diffviewer .diffcell-image img');
+    const el = imgs[imgs.length - 1];
+    return !!el && el.complete && el.naturalWidth > 0;
+  }, null, { timeout: 8000 }).then(() => true).catch(() => false);
+  if (!afterPainted) fail('the diff viewer\'s after photograph never painted a real image');
   ok('the diff viewer shows the pipeline object beside the stored patch, name and photo both changed');
-  await page.screenshot({ path: `${SHOTS}/admin-content-diff.png` });
+  ok('the after photograph paints a real replacement image');
+  await page.screenshot({ animations: 'disabled', path: `${SHOTS}/admin-content-diff.png` });
 
   await page.locator('.adminpage-btn', { hasText: 'Revert to the pipeline' }).click();
   await page.waitForTimeout(1000);
@@ -1097,7 +1398,7 @@ try {
   if (state.overrides.some((o) => o.layer === 'beach')) fail('the override survived the revert');
   if (rev.p_status !== null || rev.p_review_by !== null) fail(`a revert sent lifecycle fields: ${JSON.stringify(rev)}`);
   ok('reverting sends the empty patch that clears the override');
-  await page.screenshot({ path: `${SHOTS}/admin-content.png`, fullPage: true });
+  await page.screenshot({ animations: 'disabled', path: `${SHOTS}/admin-content.png`, fullPage: true });
 
   // ---- 9. Site section.
   console.log('9. site');
@@ -1145,7 +1446,7 @@ try {
   const fcfg = state.configCalls.find((c) => c.p_key === 'features');
   if (fcfg?.p_value?.beta_map !== true) fail(`the flags payload is wrong: ${JSON.stringify(fcfg?.p_value)}`);
   ok('the notice and the flags publish exactly what the app reads');
-  await page.screenshot({ path: `${SHOTS}/admin-site.png` });
+  await page.screenshot({ animations: 'disabled', path: `${SHOTS}/admin-site.png` });
 
   // ---- 10. Audit section.
   console.log('10. audit');
@@ -1168,7 +1469,7 @@ try {
 
   // ---- 11. A non-admin never sees the door.
   console.log('11. non-admin');
-  const ctx2 = await browser.newContext({ viewport: { width: 1440, height: 960 } });
+  const ctx2 = await browser.newContext({ reducedMotion: 'reduce', viewport: { width: 1440, height: 960 } });
   await ctx2.addInitScript(seedSession(PROJECT_REF, ADMIN));
   const page2 = await ctx2.newPage();
   await stubSupabase(page2, state, { isAdmin: false });
@@ -1179,14 +1480,26 @@ try {
   if (await page2.locator('.account-nav:visible', { hasText: 'Admin' }).count()) {
     fail('a non-admin is shown the Admin row');
   }
-  if (await page2.locator('.account-nav:visible').count() !== 8) fail('the non-admin hub changed shape');
+  // Ten doors: Overview, Profile details, Friends, Send feedback, Common
+  // questions, Privacy policy, Terms of service, Imprint, Data sources and
+  // Lifestyle. The list grew after this step was written, which is why it
+  // said eight (T042-d). Asserted by name so the next door to arrive says
+  // which one it is rather than only changing a count.
+  const doors = (await page2.locator('.account-nav:visible').allInnerTexts()).map((x) => x.trim().split(String.fromCharCode(10))[0].trim());
+  const wantDoors = ['Overview', 'Profile details', 'Friends', 'Send feedback', 'Common questions',
+    'Privacy policy', 'Terms of service', 'Imprint', 'Data sources', 'Lifestyle'];
+  const missingDoors = wantDoors.filter((d) => !doors.includes(d));
+  const extraDoors = doors.filter((d) => !wantDoors.includes(d));
+  if (missingDoors.length || extraDoors.length) {
+    fail(`the non-admin hub changed shape: missing [${missingDoors.join(', ')}], extra [${extraDoors.join(', ')}]`);
+  }
   ok('a non-admin sees the usual hub, nothing more');
   await ctx2.close();
 
   // ---- 12. The public banner.
   console.log('12. site banner');
   state.siteConfig.announcement = { enabled: true, text: 'Fares refresh tonight at 02:00', tone: 'warn' };
-  const ctx3 = await browser.newContext({ viewport: { width: 1440, height: 960 } });
+  const ctx3 = await browser.newContext({ reducedMotion: 'reduce', viewport: { width: 1440, height: 960 } });
   await ctx3.addInitScript(seedSession(PROJECT_REF, null));
   const page3 = await ctx3.newPage();
   await stubSupabase(page3, state);
@@ -1208,7 +1521,7 @@ try {
   // Every override still in the stub is made overdue again, so the 380px
   // content check below measures a real review row rather than an empty list.
   state.overrides.forEach((o) => { o.reviewBy = '2026-01-01T12:00:00Z'; });
-  const ctx4 = await browser.newContext({ viewport: { width: 380, height: 820 }, isMobile: true, hasTouch: true });
+  const ctx4 = await browser.newContext({ reducedMotion: 'reduce', viewport: { width: 380, height: 820 }, isMobile: true, hasTouch: true });
   await ctx4.addInitScript(seedSession(PROJECT_REF, ADMIN));
   const page4 = await ctx4.newPage();
   await stubSupabase(page4, state);
@@ -1233,7 +1546,7 @@ try {
   });
   if (spill.scrolls) fail(`the admin page scrolls sideways at 380px: ${spill.wide.join(' | ')}`);
   ok('380px: no horizontal scroll on the admin page');
-  await page4.screenshot({ path: `${SHOTS}/admin-380.png`, fullPage: true });
+  await page4.screenshot({ animations: 'disabled', path: `${SHOTS}/admin-380.png`, fullPage: true });
   // 8e at 380px: the review list with its one row must not push sideways.
   await page4.locator('.adminpage-navbtn:visible', { hasText: 'Content' }).first().click();
   await page4.locator('.adminpage-reviewrow').first().waitFor({ timeout: 10000 });
@@ -1246,7 +1559,7 @@ try {
   }));
   if (spill2.scrolls || spill2.wide.length) fail(`the content review list spills at 380px: ${spill2.wide.join(' | ')}`);
   ok('380px: the content review list fits');
-  await page4.screenshot({ path: `${SHOTS}/admin-content-380.png`, fullPage: true });
+  await page4.screenshot({ animations: 'disabled', path: `${SHOTS}/admin-content-380.png`, fullPage: true });
   await page4.locator('.adminpage-reviewrow').first().click();
   await page4.locator('.adminpage-reviewset').waitFor({ timeout: 10000 });
   await page4.waitForTimeout(400);
@@ -1260,8 +1573,33 @@ try {
     .map((el) => `${el.tagName.toLowerCase()}.${el.className}`.slice(0, 50)).slice(0, 5));
   if (spill3.length) fail(`the override editor spills at 380px: ${spill3.join(' | ')}`);
   ok('380px: the override editor, with the diff viewer, status, review date and reason, fits');
-  await page4.locator('.diffviewer').screenshot({ path: `${SHOTS}/admin-content-diff-380.png` });
-  await page4.locator('.adminpage-reviewset').screenshot({ path: `${SHOTS}/admin-content-editor-380.png` });
+  await page4.locator('.diffviewer').screenshot({ animations: 'disabled', path: `${SHOTS}/admin-content-diff-380.png` });
+  await page4.locator('.adminpage-reviewset').screenshot({ animations: 'disabled', path: `${SHOTS}/admin-content-editor-380.png` });
+  // T067 to T070 at 380px: the Guides table, the Reports queue and the open
+  // forms must not push the page sideways. Starts from freshly seeded rows.
+  seedModeration(state);
+  const spillAt = (sel) => page4.evaluate((root) => [...document.querySelectorAll(`${root} *`)]
+    .filter((el) => el.getBoundingClientRect().right > window.innerWidth + 1)
+    .map((el) => `${el.tagName.toLowerCase()}.${el.className}`.slice(0, 50)).slice(0, 5), sel);
+  await page4.locator('.adminpage-navbtn:visible', { hasText: 'Guides' }).first().evaluate((el) => el.click());
+  await page4.locator('.adminpage-table tbody tr').first().waitFor({ timeout: 10000 });
+  await page4.locator('.adminpage-btn.danger', { hasText: 'Unpublish' }).first().click();
+  await page4.locator('.adminpage-armed textarea').waitFor({ timeout: 5000 });
+  await page4.waitForTimeout(400);
+  const gSpill = await page4.evaluate(() => document.documentElement.scrollWidth > window.innerWidth + 1);
+  if (gSpill) fail('the Guides tab, with its takedown form open, scrolls the page sideways at 380px');
+  await page4.screenshot({ animations: 'disabled', path: `${SHOTS}/admin-guides-380.png`, fullPage: true });
+  await page4.locator('.adminpage-navbtn:visible', { hasText: 'Reports' }).first().evaluate((el) => el.click());
+  await page4.locator('.adminpage-fb').first().waitFor({ timeout: 10000 });
+  await page4.locator('.adminpage-fb .adminpage-btn', { hasText: 'Dismiss' }).first().click();
+  await page4.locator('.adminpage-armed textarea').first().waitFor({ timeout: 5000 });
+  await page4.waitForTimeout(400);
+  const rSpill = await spillAt('.adminpage-body');
+  if (rSpill.length || await page4.evaluate(() => document.documentElement.scrollWidth > window.innerWidth + 1)) {
+    fail(`the Reports tab, with a form open, spills at 380px: ${rSpill.join(' | ')}`);
+  }
+  await page4.screenshot({ animations: 'disabled', path: `${SHOTS}/admin-reports-380.png`, fullPage: true });
+  ok('380px: the Guides table, the Reports queue, the complaints and their open forms fit');
   await ctx4.close();
 
   await browser.close();

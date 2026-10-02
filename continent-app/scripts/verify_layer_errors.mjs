@@ -1,7 +1,7 @@
 // Headless verify for P1.2: a dropped connection must not read as "nothing
 // published".
 //
-//   node scripts/verify_layer_errors.mjs [url]   (default http://localhost:4173)
+//   node scripts/verify_layer_errors.mjs [url]   (default http://localhost:$CARTA_PORT or 4173)
 //
 // Every published-layer loader used to end in `.catch(() => null)` and every
 // consumer coerced that null to [], so a failed request rendered the empty
@@ -14,7 +14,7 @@
 //
 // Phone width, same reason as verify_paging.mjs.
 
-const APP_URL = process.argv[2] || 'http://localhost:4173';
+const APP_URL = process.argv[2] || `http://localhost:${process.env.CARTA_PORT || 4173}`;
 
 let pass = 0;
 let fail = 0;

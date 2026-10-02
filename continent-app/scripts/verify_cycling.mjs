@@ -1,6 +1,6 @@
 // Headless verify for the cycling layer, and the Scotland acceptance test.
 //
-//   node scripts/verify_cycling.mjs [url]      (default http://localhost:4173)
+//   node scripts/verify_cycling.mjs [url]      (default http://localhost:$CARTA_PORT or 4173)
 //   node scripts/verify_cycling.mjs --wire     (data pass only, no browser)
 //
 // Two passes, and the first one is the one the brief actually asks for.
@@ -44,7 +44,7 @@ const WIRE_ONLY = ARGS.includes('--wire');
 // so `new URL(...)` in the photo-host check threw and its catch marked
 // every photograph as coming from an unchecked host. The check could
 // never pass, and nothing noticed until a Scottish tour first reached it.
-const APP_URL = ARGS.find((a) => a.startsWith('http')) || 'http://localhost:4173/';
+const APP_URL = ARGS.find((a) => a.startsWith('http')) || `http://localhost:${process.env.CARTA_PORT || 4173}/`;
 const WIRE = 'public/cycling';
 
 const checks = [];

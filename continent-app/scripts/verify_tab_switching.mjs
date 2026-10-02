@@ -2,7 +2,7 @@
 // planner | Day planner | Saved trips in the desktop header, and the five-slot
 // bottom bar on a phone.
 //
-//   node scripts/verify_tab_switching.mjs [url]     (default http://localhost:4173)
+//   node scripts/verify_tab_switching.mjs [url]     (default http://localhost:$CARTA_PORT or 4173)
 //
 // The contract this asserts, on both widths:
 //   1. Pressing a section lands on that section and hides every other one.
@@ -22,7 +22,7 @@
 
 import { chromium } from 'playwright';
 
-const URL = process.argv[2] || 'http://localhost:4173/';
+const URL = process.argv[2] || `http://localhost:${process.env.CARTA_PORT || 4173}/`;
 const browser = await chromium.launch();
 const checks = [];
 const errors = [];

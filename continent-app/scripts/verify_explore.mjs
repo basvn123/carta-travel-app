@@ -5,7 +5,7 @@
 // map, worth pairing with, when, weather, how the score is built, parking,
 // packing).
 //
-//   node scripts/verify_explore.mjs [url]      (default http://localhost:4173)
+//   node scripts/verify_explore.mjs [url]      (default http://localhost:$CARTA_PORT or 4173)
 //
 // Supersedes verify_filter_sheet.mjs and the map-era checks: the desktop
 // filter rows, the tray and the origin toolrow no longer exist on Explore.
@@ -13,7 +13,7 @@
 
 import { chromium } from 'playwright';
 
-const URL = process.argv[2] || 'http://localhost:4173/';
+const URL = process.argv[2] || `http://localhost:${process.env.CARTA_PORT || 4173}/`;
 
 const browser = await chromium.launch();
 const errors = [];
@@ -122,9 +122,13 @@ try {
   // v5: the count heads the control bar over the feed, beside the grid/map
   // switch and the sort, and the rail groups are folds with the first two
   // open. The count is locale-grouped ("3,855"), so digits are stripped.
-  const digits = async (sel) => Number((await page.locator(sel).innerText()).replace(/\D/g, ''));
+  // The bar carries no count any more, and the tier legend counts the whole
+  // catalogue, so "narrows live" is read off the cards: how many of the
+  // cards on screen are not a village.
+  const nonVillage = async () => (await page.locator('.xcard .xcard-kindword').allInnerTexts())
+    .filter((s) => !/^village$/i.test(s.trim())).length;
   check('the control bar heads the feed', await page.locator('.xbar .xbar-title').isVisible());
-  check('the live count heads the control bar', (await digits('.xbar .xgrid-count')) > 0);
+  check('the tier legend carries the tier counts', await page.locator('.tierlegend-count').count() >= 3);
   check('grid/map switch and sort share the bar',
     await page.locator('.xbar .xview-toggle button').count() === 2
     && await page.locator('.xbar .xgrid-sort select').isVisible());
@@ -152,14 +156,14 @@ try {
   const bodyFacts = await page.locator('.xcard').first().locator('.xcard-name, .score-chip, .xcard-country, .xcard-kindword, .xcard-cost').count();
   check('the card body carries its four facts', bodyFacts === 5, `${bodyFacts} parts`);
   check('the season pill left the photo', await page.locator('.xcard-best').count() === 0);
-  const countBefore = await digits('.xbar .xgrid-count');
+  const countBefore = await nonVillage();
   await page.locator('.explore-side .xrail-toggle', { hasText: /^Village$/ }).first().click();
   await page.waitForTimeout(700);
-  const countAfter = await digits('.xbar .xgrid-count');
+  const countAfter = await nonVillage();
   check('the open fold says how many are active',
     (await page.locator('.explore-side .xrail-legend-n').first().innerText()).trim() === '1');
-  check('a rail toggle narrows the count live', Number(countAfter) < Number(countBefore),
-    `${countBefore} -> ${countAfter}`);
+  check('a rail toggle narrows the grid live', countBefore > 0 && countAfter === 0,
+    `non-village cards ${countBefore} -> ${countAfter}`);
   check('the active filter shows as a chip', await page.locator('.xchip', { hasText: /Village/ }).count() === 1);
   check('the filter landed in the URL', page.url().includes('xk=village'));
   await page.screenshot({ path: 'shots/explore-filters-desktop.png' });
@@ -222,6 +226,9 @@ try {
 try {
   const page = await boot({ width: 390, height: 844 });
   const explore = page.locator('.bottom-nav-item', { hasText: /explore/i }).first();
+  // The bar mounts after the catalogue boots, which on a cold dev server is
+  // later than the 2.5 s boot() waits, so wait for it instead of skipping.
+  await explore.waitFor({ state: 'visible', timeout: 20000 }).catch(() => {});
   if (await explore.isVisible().catch(() => false)) {
     await explore.click();
     await page.waitForTimeout(1800);
@@ -232,18 +239,22 @@ try {
   const gridBox = await page.locator('.explore-grid').boundingBox();
   check('no horizontal scroll', gridBox && gridBox.width <= 390, `grid ${Math.round(gridBox?.width || 0)}px`);
 
-  // C6 on a phone: the same rail inside a plain fold, never a modal.
-  await page.locator('.explore-fold > summary').click();
-  await page.waitForTimeout(600);
-  check('phone fold opens the same rail', await page.locator('.explore-fold .xrail').isVisible());
-  check('phone rail is not a modal', await page.locator('[aria-modal="true"]').count() === 0);
+  // On a phone the filter rail sits behind the same Filters button
+  // Destinations uses, and opens as the shared sheet (the desktop rail is
+  // always on screen, so this is the one place a sheet is right).
+  check('phone: the Filters button is on the bar', await page.locator('.explore-filterbar .places-filter-btn').isVisible());
+  await page.locator('.explore-filterbar .places-filter-btn').click();
+  await page.waitForTimeout(700);
+  check('phone: the button opens the same rail in a sheet', await page.locator('.fsheet-explore .xrail').isVisible());
+  check('phone: the sheet is a labelled dialog', await page.locator('.fsheet-explore[role="dialog"][aria-modal="true"]').count() === 1);
   check('phone: grid/map switch floats above the nav', await page.locator('.xview-fab').isVisible()
     && await page.locator('.xbar .xview-toggle').isHidden());
   check('phone: cards run two abreast', await page.locator('.explore-grid').evaluate(
     (el) => getComputedStyle(el).gridTemplateColumns.split(' ').length === 2));
   await page.screenshot({ path: 'shots/explore-filters-phone.png' });
-  await page.locator('.explore-fold > summary').click();
-  await page.waitForTimeout(400);
+  await page.keyboard.press('Escape');
+  await page.waitForTimeout(500);
+  check('phone: Escape closes the sheet', await page.locator('.fsheet-explore').count() === 0);
   await page.screenshot({ path: 'shots/explore-phone.png' });
 
   await page.locator('.xcard-hit').first().click();

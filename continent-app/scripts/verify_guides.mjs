@@ -25,7 +25,7 @@ import { chromium } from 'playwright';
 import { spawn } from 'node:child_process';
 import { mkdirSync } from 'node:fs';
 
-const PORT = 4196;
+const PORT = Number(process.env.CARTA_PORT) || 4196;
 const BASE = `http://127.0.0.1:${PORT}`;
 const SHOTS = 'scripts/shots';
 mkdirSync(SHOTS, { recursive: true });
@@ -175,6 +175,51 @@ const run = async () => {
   }
   await page.waitForTimeout(900);
   await page.screenshot({ path: `${SHOTS}/guides-one.png` });
+
+  /* ---- 5b. The notice form at the foot of a guide (T068, DSA Article 16) ---- */
+  const reportOpen = page.locator('.gld-report-open');
+  await reportOpen.scrollIntoViewIfNeeded();
+  if (await reportOpen.getAttribute('aria-expanded') !== 'false') fail('the report button does not say it is collapsed');
+  await reportOpen.click();
+  const reasonBox = page.locator('.gld-report textarea');
+  await reasonBox.waitFor({ timeout: 5000 });
+  if (!(await reasonBox.evaluate((el) => el === document.activeElement))) fail('opening the report form did not move focus to the reason');
+  const reasonId = await reasonBox.getAttribute('id');
+  if (!(await page.locator(`.gld-report label[for="${reasonId}"]`).count())) fail('the reason field has no label tied to it');
+  const emailBox = page.locator('.gld-report input[type="email"]');
+  const emailId = await emailBox.getAttribute('id');
+  if (!(await page.locator(`.gld-report label[for="${emailId}"]`).count())) fail('the email field has no label tied to it');
+  if (!(await emailBox.getAttribute('aria-describedby'))) fail('the email field is not tied to its hint');
+  // Too short: a sentence, role=alert, the field marked invalid, nothing sent.
+  await reasonBox.fill('too short');
+  await page.locator('.gld-report button[type="submit"]').click();
+  const alertBox = page.locator('.gld-report [role="alert"]');
+  await alertBox.waitFor({ timeout: 5000 });
+  if (!/at least 10 characters/i.test(await alertBox.innerText())) fail('a short reason is not refused in words');
+  if (await reasonBox.getAttribute('aria-invalid') !== 'true') fail('a short reason does not mark the field invalid');
+  // A bad address gets its own sentence, and the reason stays.
+  await reasonBox.fill('This guide copies a chapter of a published book word for word.');
+  await emailBox.fill('not-an-address');
+  await page.locator('.gld-report button[type="submit"]').click();
+  if (!/looks incomplete/i.test(await alertBox.innerText())) fail('a bad email is not refused in words');
+  if (await emailBox.getAttribute('aria-invalid') !== 'true') fail('a bad email does not mark the field invalid');
+  if (!(await reasonBox.inputValue())) fail('a refusal cleared what was typed');
+  // Cancel closes the form and hands focus back to the button that opened it.
+  await page.locator('.gld-report .gld-copy', { hasText: /cancel|keep/i }).first().click();
+  await page.waitForTimeout(300);
+  if (await page.locator('.gld-report').count()) fail('Cancel left the report form open');
+  if (!(await page.locator('.gld-report-open').evaluate((el) => el === document.activeElement))) fail('Cancel did not return focus to the Report button');
+  // A good notice, with no email (optional), is received.
+  await page.locator('.gld-report-open').click();
+  // The form keeps what was typed across a Cancel, bad address included, so the
+  // email is cleared here: it is optional, and this notice goes without one.
+  await page.locator('.gld-report input[type="email"]').fill('');
+  await page.locator('.gld-report textarea').fill('This guide copies a chapter of a published book word for word.');
+  await page.locator('.gld-report button[type="submit"]').click();
+  await page.locator('.gld-report-done[role="status"]').waitFor({ timeout: 5000 });
+  if (!/Report received/i.test(await page.locator('.gld-report-done').innerText())) fail('a sent report says nothing');
+  ok('the report form: focus in, labels tied, short reason and bad email worded, Cancel returns focus, a notice with no email is received');
+  await page.screenshot({ path: `${SHOTS}/guides-report.png` });
 
   /* ---- 2. Nothing published: the strip is absent, not empty ---- */
   const emptyPage = await boot(ctx, '?o=CRL&guidesmock=none');

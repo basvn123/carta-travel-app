@@ -1,5 +1,5 @@
 // Headless verify for the AI day planner UI. Two scenarios against a running
-// `vite preview` (default http://localhost:4173):
+// `vite preview` (default http://localhost:$CARTA_PORT or 4173):
 //
 //   A. fresh day: the empty day's "Ask Carta" button opens the modal; as a guest
 //      the sign-in note + built-in-planner fallback shows, and using it
@@ -13,7 +13,7 @@
 import { chromium } from 'playwright';
 import { mkdirSync } from 'node:fs';
 
-const URL = process.argv[2] || 'http://localhost:4173/';
+const URL = process.argv[2] || `http://localhost:${process.env.CARTA_PORT || 4173}/`;
 const SHOTS = process.argv[3] || 'scripts/ai/shots';
 mkdirSync(SHOTS, { recursive: true });
 

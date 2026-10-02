@@ -2,7 +2,7 @@
 // opens, the composed explanation, the GPX/KML/link exports, live following,
 // and the price chrome that Trails no longer shows.
 //
-//   node scripts/verify_trail_page.mjs [url]      (default http://localhost:4173)
+//   node scripts/verify_trail_page.mjs [url]      (default http://localhost:$CARTA_PORT or 4173)
 //
 // Phone viewport first (that is where a walker uses this), then a desktop pass.
 // Screenshots to shots/trail-*.png.
@@ -35,7 +35,7 @@ async function pickCountry(page, name) {
   await page.waitForTimeout(1800);
 }
 
-const RAW_URL = process.argv[2] || 'http://localhost:4173/';
+const RAW_URL = process.argv[2] || `http://localhost:${process.env.CARTA_PORT || 4173}/`;
 // ?paymock: the GPX and KML exports are entitlement gated, and a headless run
 // cannot sign in or hold an entitlement, so without the seam the export button
 // opens a paywall dialog and the download checks below test the paywall

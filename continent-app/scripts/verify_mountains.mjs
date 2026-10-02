@@ -1,7 +1,7 @@
 // Headless verify for the mountain layer: the Mountains category on the
 // Destinations tab, and the mountain page one card opens.
 //
-//   node scripts/verify_mountains.mjs [url]      (default http://localhost:4173)
+//   node scripts/verify_mountains.mjs [url]      (default http://localhost:$CARTA_PORT or 4173)
 //
 // What it is checking, in the order a traveller meets it:
 //   the tab shows MOUNTAINS, not the mountain-flavoured slice of the hikes it
@@ -28,7 +28,7 @@
 import { chromium } from 'playwright';
 import { readFileSync, existsSync } from 'node:fs';
 
-const URL = process.argv[2] || 'http://localhost:4173/';
+const URL = process.argv[2] || `http://localhost:${process.env.CARTA_PORT || 4173}/`;
 const WIRE = 'public/mountains';
 
 const browser = await chromium.launch();
@@ -347,7 +347,9 @@ if (await chip.count()) {
 // ── The seven filters brief 05 asks for ──
 // One group in the toolbar, the rest inside the Filters sheet, every chip
 // carrying its own count, and no chip offered at zero in this scope.
-const filterBtn = page.locator('.places-filter-btn').first();
+// :visible, because the Explore tab keeps its own Filters button in the
+// page, hidden, and a bare class selector finds that one first.
+const filterBtn = page.locator('.places-filter-btn:visible').first();
 if (await filterBtn.count()) {
   await filterBtn.click();
   await page.waitForTimeout(900);

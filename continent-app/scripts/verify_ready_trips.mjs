@@ -28,7 +28,7 @@
 import { chromium } from 'playwright';
 import { mkdirSync } from 'node:fs';
 
-const URL = process.argv[2] || 'http://localhost:4173/';
+const URL = process.argv[2] || `http://localhost:${process.env.CARTA_PORT || 4173}/`;
 mkdirSync('shots', { recursive: true });
 
 const NOISE = /emrldtp|ERR_FAILED|config is not valid|maplibre|WebGL|tile/i;

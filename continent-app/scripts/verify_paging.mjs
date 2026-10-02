@@ -1,6 +1,6 @@
 // Headless verify for the paging fixes in P1.1.
 //
-//   node scripts/verify_paging.mjs [url]     (default http://localhost:4173)
+//   node scripts/verify_paging.mjs [url]     (default http://localhost:$CARTA_PORT or 4173)
 //
 // Three claims, each of which was a real bug before the fix:
 //
@@ -23,7 +23,7 @@
 // left panel instead, so at 1440px both .places-filter-btn nodes exist and
 // neither is hittable. The filter sheet this checks is the phone door.
 
-const APP_URL = process.argv[2] || 'http://localhost:4173';
+const APP_URL = process.argv[2] || `http://localhost:${process.env.CARTA_PORT || 4173}`;
 
 let pass = 0;
 let fail = 0;

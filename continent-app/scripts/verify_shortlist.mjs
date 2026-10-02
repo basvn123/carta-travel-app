@@ -10,13 +10,13 @@
 //   6. the trip planner offers shortlisted cities as stops
 //   7. the Visited map is the taller one, on the label-free record basemap
 //
-//   node scripts/verify_shortlist.mjs [url]      (default http://localhost:4173)
+//   node scripts/verify_shortlist.mjs [url]      (default http://localhost:$CARTA_PORT or 4173)
 //
 // Screenshots to shots/shortlist-*.png.
 
 import { chromium } from 'playwright';
 
-const URL = process.argv[2] || 'http://localhost:4173/';
+const URL = process.argv[2] || `http://localhost:${process.env.CARTA_PORT || 4173}/`;
 
 const browser = await chromium.launch();
 const checks = [];

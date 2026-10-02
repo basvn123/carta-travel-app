@@ -1,7 +1,7 @@
 // Headless verify for the composed itineraries in the Destinations tab's
 // Trips category (the published trip layer, pipeline/trips).
 //
-//   node scripts/verify_trips.mjs [url]      (default http://localhost:4173)
+//   node scripts/verify_trips.mjs [url]      (default http://localhost:$CARTA_PORT or 4173)
 //
 // What it proves, in the order a traveller meets it:
 //   the Trips category opens on the composed itineraries, not on a country index
@@ -26,7 +26,26 @@ import { chromium } from 'playwright';
 
 // Not named URL: that would shadow the global URL constructor the wire
 // fetches below need.
-const BASE = process.argv[2] || 'http://localhost:4173/';
+const BASE = process.argv[2] || `http://localhost:${process.env.CARTA_PORT || 4173}/`;
+
+// The country filter is the CountryPicker button and listbox now, not a
+// <select>, so selectOption() throws. This drives it the way a person does:
+// open it, type the name, click the option. A name of '' picks "All countries".
+const COUNTRY_NAME = new Intl.DisplayNames(['en'], { type: 'region' });
+async function pickCountry(scope, cc) {
+  await scope.locator('.places-country:visible').first().click();
+  await scope.waitForTimeout(400);
+  const pop = scope.locator('.country-picker-pop:visible');
+  if (!cc) {
+    await pop.locator('.origin-opt').first().click();
+  } else {
+    const name = COUNTRY_NAME.of(cc);
+    await pop.locator('.origin-search').fill(name);
+    await scope.waitForTimeout(400);
+    await pop.locator('.origin-opt', { hasText: new RegExp(`^${name}$`, 'i') }).first().click();
+  }
+  await scope.waitForTimeout(1200);
+}
 
 const browser = await chromium.launch();
 const errors = [];
@@ -204,7 +223,7 @@ try {
   await setDays(page, 0);   // back to any length
   const picker = page.locator('.places-country:visible').first();
   if (await picker.isVisible().catch(() => false)) {
-    await picker.selectOption('AT');
+    await pickCountry(page, 'AT');
     await page.waitForTimeout(2000);
     const head = await page.locator('.itin-card-route').first().innerText().catch(() => '');
     check('picking a country loads that country', head.length > 0, head.replace(/\n/g, ' ').slice(0, 60));
@@ -236,6 +255,13 @@ try {
   check('every claimed day has a row', String(dayRows) === factDays.trim(),
     `claims ${factDays.trim()}, lists ${dayRows}`);
 
+  // The named sights now sit behind each day's "more about the day" toggle
+  // (the day leads with its photo strip), so open the first before looking.
+  const more = page.locator('.itin-day .tday-more').first();
+  if (await more.count()) { await more.click(); await page.waitForTimeout(600); }
+  // The sight photographs are lazy, so one below the fold never starts until
+  // it is scrolled to; bring the first into view, as a reader would.
+  await page.locator('.itin-sight img.itin-sight-img').first().scrollIntoViewIfNeeded({ timeout: 8000 }).catch(() => {});
   const sightOk = await page.waitForFunction(() => {
     const el = document.querySelector('.itin-sight img.itin-sight-img');
     return !!el && el.complete && el.naturalWidth > 0;
@@ -254,7 +280,8 @@ try {
   const at = await res.json();
   const id = at.trips[0].id;
   const page = await boot({ width: 1440, height: 900 }, `#itin=${id}`);
-  await page.waitForTimeout(3400);
+  await page.locator('.itin-page').waitFor({ state: 'visible', timeout: 15000 }).catch(() => {});
+  await page.waitForTimeout(1500);
   check('a shared link opens the trip page', await page.locator('.itin-page').isVisible(), id);
   check('the shared trip has its route', await page.locator('.itin-route .itin-stop').count() >= 1);
   await page.screenshot({ path: 'shots/trips-shared.png' });

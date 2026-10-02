@@ -1,7 +1,7 @@
 // Headless verify for the lake layer: the Lakes category on the Destinations
 // tab, and the lake page one card opens.
 //
-//   node scripts/verify_lakes.mjs [url]      (default http://localhost:4173)
+//   node scripts/verify_lakes.mjs [url]      (default http://localhost:$CARTA_PORT or 4173)
 //
 // What it is checking, in the order a traveller meets it:
 //   the tab shows LAKES, not trips, and not a page of country flags
@@ -26,7 +26,7 @@
 import { chromium } from 'playwright';
 import { readFileSync, existsSync } from 'node:fs';
 
-const URL = process.argv[2] || 'http://localhost:4173/';
+const URL = process.argv[2] || `http://localhost:${process.env.CARTA_PORT || 4173}/`;
 const WIRE = 'public/lakes';
 
 const browser = await chromium.launch();

@@ -6,13 +6,13 @@
 // checks that "nothing yet" is now a real card: on by default, mutually
 // exclusive with the other two in both directions, and keyboard reachable.
 //
-//   node scripts/verify_booked_step.mjs [url]   (default http://localhost:4173)
+//   node scripts/verify_booked_step.mjs [url]   (default http://localhost:$CARTA_PORT or 4173)
 //
 // Screenshots to shots/booked-step-*.png.
 
 import { chromium } from 'playwright';
 
-const URL = process.argv[2] || 'http://localhost:4173/';
+const URL = process.argv[2] || `http://localhost:${process.env.CARTA_PORT || 4173}/`;
 const browser = await chromium.launch();
 const checks = [];
 const errors = [];

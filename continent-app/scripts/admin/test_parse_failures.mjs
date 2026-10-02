@@ -228,19 +228,7 @@ const applyMigration = (n) => {
   `], { encoding: 'utf-8', cwd: repoRoot }).trim();
   if (!files) throw new Error(`No migration found matching ${prefix}_*.sql`);
   const content = readFileSync(resolve(dir, files), 'utf-8');
-  try {
-    psqlRun(content);
-  } catch (e) {
-    // 018, as committed, carries a {5,600} bound this PostgreSQL build
-    // refuses as "invalid repetition count(s)" (T071's finding). A copy
-    // with {5,255} applies clean and is used for this test only.
-    if (n === 18 && content.includes('{5,600}')) {
-      console.log('  note  018 as committed fails here (regex bound); applying a {5,255} copy for this test only');
-      psqlRun(content.replace('{5,600}', '{5,255}'));
-    } else {
-      throw e;
-    }
-  }
+  psqlRun(content);
 };
 
 // -tc runs the whole batch as one command; setup statements ("set role",
@@ -273,7 +261,7 @@ try {
   console.log('Setting up...');
   setup();
 
-  console.log('\nApplying migrations 002, 004, 006, 007, 009-011, 014-018 (patched), 032-034, 040-042...');
+  console.log('\nApplying migrations 002, 004, 006, 007, 009-011, 014-018, 032-034, 040-042...');
   for (const n of [2, 4, 6, 7, 9, 10, 11, 14, 15, 16, 17, 18, 32, 33, 34, 40, 41, 42]) {
     applyMigration(n);
   }

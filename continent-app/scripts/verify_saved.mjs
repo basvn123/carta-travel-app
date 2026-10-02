@@ -12,7 +12,7 @@ import { chromium } from 'playwright';
 import { spawn } from 'node:child_process';
 import { mkdirSync } from 'node:fs';
 
-const PORT = 4191;
+const PORT = Number(process.env.CARTA_PORT) || 4191;
 const BASE = `http://127.0.0.1:${PORT}`;
 const SHOTS = 'scripts/shots';
 mkdirSync(SHOTS, { recursive: true });
@@ -227,6 +227,42 @@ try {
   await mock.waitForTimeout(900);
   await mock.locator('.saved-trips-panel').screenshot({ path: `${SHOTS}/saved-mock-planned.png` });
 
+  // The statement of reasons (T070, DSA Articles 17 and 20): the mock plan
+  // carries one, so its owner sees what was done, why, and how to contest.
+  const note = mock.locator('.modnote').first();
+  await note.waitFor({ timeout: 8000 }).catch(() => fail('the planned trip carries no statement of reasons'));
+  if (await mock.locator('.modnote').count()) {
+    if (!/off the public guides/i.test(await note.locator('.modnote-title').innerText())) fail('the statement has no plain title');
+    if (!/nothing in it was deleted/i.test(await note.locator('.modnote-line').innerText())) fail('the one-line state does not say nothing was deleted');
+    if (await note.locator('.modnote-body').count()) fail('the statement opens before it is asked for');
+    const toggle = note.locator('.modnote-toggle').first();
+    if (await toggle.getAttribute('aria-expanded') !== 'false') fail('the statement toggle does not say it is collapsed');
+    await toggle.click();
+    const facts = await note.locator('.modnote-body').innerText();
+    for (const [what, re] of [['what was done', /removed .* from the public guides/i], ['why', /copies a chapter of a published travel book/i],
+      ['what started it', /2 reports from readers/i], ['who decided', /person on the Carta team/i], ['the options', /contest this decision here/i]]) {
+      if (!re.test(facts)) fail(`the statement does not say ${what}`);
+    }
+    if (await toggle.getAttribute('aria-expanded') !== 'true' || !(await toggle.getAttribute('aria-controls'))) fail('the toggle is not tied to the statement it opens');
+    // The complaint form: focus in, a label, a short complaint worded, then sent.
+    await note.locator('.modnote-toggle', { hasText: /contest this decision/i }).click();
+    const cbox = note.locator('.modnote-form textarea');
+    if (!(await cbox.evaluate((el) => el === document.activeElement))) fail('opening the complaint did not move focus into it');
+    const cid = await cbox.getAttribute('id');
+    if (!(await note.locator(`label[for="${cid}"]`).count())) fail('the complaint field has no label tied to it');
+    await cbox.fill('too short');
+    await note.locator('.modnote-form button[type="submit"]').click();
+    if (!/at least 10 characters/i.test(await note.locator('.modnote-form [role="alert"]').innerText())) fail('a short complaint is not refused in words');
+    if (await cbox.getAttribute('aria-invalid') !== 'true') fail('a short complaint does not mark the field invalid');
+    await cbox.fill('The text is my own blog post, published under my name.');
+    await note.locator('.modnote-form button[type="submit"]').click();
+    await note.locator('.modnote-line[role="status"]').waitFor({ timeout: 5000 }).catch(() => fail('a sent complaint says nothing'));
+    if (!/complaint sent/i.test(await note.locator('.modnote-line').innerText())) fail('a sent complaint does not confirm itself');
+    await mock.waitForTimeout(500);
+    await mock.locator('.saved-trips-panel').screenshot({ path: `${SHOTS}/saved-mock-statement.png` });
+    ok('the statement of reasons: facts, the toggle, and the complaint form with its focus, label and words');
+  }
+
   // Visited tab: three finished mock trips, ledger at 3 countries.
   await pickTab(mock, 'visited');
   const mockVis = await mock.locator('.uptrip-card.is-visited').count();
@@ -312,6 +348,17 @@ try {
   await enterApp(mockMob);
   await openSaved(mockMob);
   await mockMob.waitForTimeout(900);
+  await pickTab(mockMob, 'planned');
+  if (await mockMob.locator('.modnote-toggle').count()) {
+    await mockMob.locator('.modnote-toggle').first().click();
+    await mockMob.waitForTimeout(400);
+    const noteOver = await mockMob.evaluate(() => {
+      const n = document.querySelector('.modnote');
+      return n ? document.documentElement.scrollWidth - window.innerWidth : -1;
+    });
+    if (noteOver > 1) fail(`the open statement scrolls sideways on mobile by ${noteOver}px`);
+    await mockMob.screenshot({ path: `${SHOTS}/saved-mock-mobile-statement.png` });
+  } else fail('no statement of reasons on the mobile planned tab');
   for (const which of ['planned', 'visited', 'favorites']) {
     await pickTab(mockMob, which);
     const overflow = await mockMob.evaluate(() => {

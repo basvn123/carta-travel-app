@@ -4,7 +4,7 @@
 // drawer of dropdowns that scrolled for a screen and a half under a floating
 // trip button.
 //
-//   node scripts/verify_filter_sheet.mjs [url]      (default http://localhost:4173)
+//   node scripts/verify_filter_sheet.mjs [url]      (default http://localhost:$CARTA_PORT or 4173)
 //
 // Checks the architecture (modal, scrim, sticky footer), the component swaps
 // (no dropdowns left except the country list, chips and steppers instead),
@@ -13,7 +13,7 @@
 
 import { chromium } from 'playwright';
 
-const URL = process.argv[2] || 'http://localhost:4173/';
+const URL = process.argv[2] || `http://localhost:${process.env.CARTA_PORT || 4173}/`;
 
 const browser = await chromium.launch();
 const errors = [];

@@ -1,6 +1,6 @@
 // Headless verify for the rebuilt Trails category and trail page.
 //
-//   node scripts/verify_trails.mjs [url]      (default http://localhost:4173)
+//   node scripts/verify_trails.mjs [url]      (default http://localhost:$CARTA_PORT or 4173)
 //
 // What this exists to catch, in the order the complaints came in:
 //   the hero image     a trail card must show a photograph of the TRAIL, or
@@ -45,7 +45,7 @@ const SORT = '.places-sort:visible, .side-sort:visible';
 const inFacets = (sel) =>
   `.side-facets:visible ${sel}, .places-facets:visible ${sel}`;
 
-const RAW_URL = process.argv[2] || 'http://localhost:4173/';
+const RAW_URL = process.argv[2] || `http://localhost:${process.env.CARTA_PORT || 4173}/`;
 // ?paymock: the GPX and KML exports are entitlement gated, and a headless run
 // cannot sign in or hold an entitlement, so without the seam the button opens
 // a paywall dialog and the "is the GPX one continuous track" check tests the

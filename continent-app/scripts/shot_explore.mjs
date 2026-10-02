@@ -3,7 +3,7 @@
 // Writes shots/<prefix>-explore-*.png. Serve dist first (vite preview).
 import { chromium } from 'playwright';
 
-const URL = process.argv[2] || 'http://localhost:4173/';
+const URL = process.argv[2] || `http://localhost:${process.env.CARTA_PORT || 4173}/`;
 const OUT = process.argv[3] || 'after';
 const browser = await chromium.launch();
 

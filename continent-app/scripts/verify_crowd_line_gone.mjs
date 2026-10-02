@@ -15,7 +15,7 @@
 
 import { chromium } from 'playwright';
 
-const BASE = process.argv[2] || 'http://localhost:4173/';
+const BASE = process.argv[2] || `http://localhost:${process.env.CARTA_PORT || 4173}/`;
 const browser = await chromium.launch();
 const checks = [];
 const errors = [];

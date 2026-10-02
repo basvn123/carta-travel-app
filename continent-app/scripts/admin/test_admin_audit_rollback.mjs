@@ -30,12 +30,8 @@
  * because 014 and 015 name plan_tiers, entitlements and ai_resolve_tier; 010
  * because admin_get_audit joins profiles.
  *
- * MIGRATION 018. Line 93 uses the regex bound {5,600}, and Postgres caps a
- * repetition count at 255, so 018's own self-check fails on a real Postgres
- * (register row T031-d). This script first applies 018 as committed and
- * reports what happens; if it fails on that bound, it applies a copy with
- * {5,255} from a temp directory, for this test only. 018 in the repo is
- * never edited.
+ * Migration 018 applies as committed: T253 moved its URL length cap out of
+ * the regex bound, so no patched copy is needed.
  *
  * NEEDS a PostgreSQL server that accepts a password-less connection (trust
  * auth or PGPASSWORD). Set PGHOST, PGPORT, PGUSER as needed; defaults are
@@ -243,22 +239,7 @@ function runTests(bin) {
       apply(name);
     }
 
-    // 018 as committed first, so the report can say what it does on a real
-    // Postgres; the patched copy only if it fails on the known bound.
-    const m018 = resolve(migrations, '018_content_overrides.sql');
-    const raw018 = psqlRun(bin, TEST_DB, ['-f', m018]);
-    if (raw018.ok) {
-      check('migration applied: 018_content_overrides.sql (as committed)', true);
-    } else {
-      const why = (raw018.err.match(/ERROR:.*$/m) || [raw018.err.trim()])[0];
-      console.log(`  note  018 as committed fails here: ${why}`);
-      const src = readFileSync(m018, 'utf8');
-      check('018 carries the {5,600} bound the failure points at', src.includes('{5,600}'));
-      const patched = join(work, '018_content_overrides.patched.sql');
-      writeFileSync(patched, src.replace('{5,600}', '{5,255}'), 'utf8');
-      console.log('  note  applying a copy with {5,255} from a temp dir, for this test only');
-      applyFile('018_content_overrides.sql (patched copy, {5,255})', patched);
-    }
+    apply('018_content_overrides.sql');
     apply('032_admin_mfa_destructive.sql');
 
     for (const [id, email] of [[ADMIN, 'owner@example.test'], [ADMIN2, 'second@example.test'],
