@@ -89,3 +89,46 @@ def test_ledger_is_rendered_from_the_registry(live_registry):
         assert f"`{name}`" in text
     for script in registry.harvester_scripts():
         assert f"`{script}`" in text
+
+
+# T310 additions
+
+def test_every_row_has_a_storable_verdict():
+    assert set(registry.STORABLE) == {s.key for s in registry.SOURCES}
+    assert registry.STORABLE, "empty verdict table would pass vacuously"
+    assert set(registry.STORABLE.values()) <= set(registry.STORABLE_VOCAB)
+
+
+def test_validate_flags_a_missing_or_unknown_verdict(monkeypatch):
+    victim = registry.SOURCES[0].key
+    monkeypatch.setitem(registry.STORABLE, victim, "Maybe")
+    assert any(victim in p and "Maybe" in p for p in registry.validate())
+    monkeypatch.delitem(registry.STORABLE, victim)
+    assert any(victim in p and "no STORABLE verdict" in p for p in registry.validate())
+
+
+def test_storable_column_is_rendered(live_registry):
+    text = ledger.render(live_registry)
+    assert "| Storable copy |" in text
+    assert "Waymarked Trails route list" in text
+
+
+def test_retired_rows_close_the_document(live_registry):
+    text = ledger.render(live_registry)
+    chapter = text.index("## 15. Retired rows")
+    retired_live = [s for s in registry.SOURCES if s.retired
+                    and s.section not in {x.id for x in registry.SECTIONS if x.retired}]
+    assert retired_live, "no retired rows would make this test vacuous"
+    for s in retired_live:
+        assert text.index(s.name) > chapter, s.key
+
+
+def test_app_credits_match_attribution_js(tmp_path):
+    good = "\n".join(f"  {{\n    source: '{n}',\n  }}," for n in registry.APP_CREDITS)
+    f = tmp_path / "attribution.js"
+    f.write_text(good, encoding="utf-8")
+    assert ledger.check_app(f) == []
+    f.write_text(good + "\n  {\n    source: 'Invented Source',\n  },", encoding="utf-8")
+    assert any("Invented Source" in p for p in ledger.check_app(f))
+    f.write_text(good.replace("source: 'CARTO'", "source: 'CARTA'"), encoding="utf-8")
+    assert any("CARTO" in p for p in ledger.check_app(f))

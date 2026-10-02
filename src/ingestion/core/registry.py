@@ -334,6 +334,21 @@ def validate(registry: dict | None = None, harvesters: list[str] | None = None,
             if not getattr(s, field).strip():
                 problems.append(f"SOURCES[{s.key!r}] has an empty {field} cell")
 
+    # Storable-copy verdicts (T300-d): one per row, from the closed vocabulary.
+    for k in keys:
+        if k not in STORABLE:
+            problems.append(f"SOURCES[{k!r}] has no STORABLE verdict")
+    for k, v in STORABLE.items():
+        if k not in keys:
+            problems.append(f"STORABLE[{k!r}] names a row that does not exist")
+        if v not in STORABLE_VOCAB:
+            problems.append(f"STORABLE[{k!r}] is {v!r}, not one of {STORABLE_VOCAB}")
+
+    for app_name, rows in APP_CREDITS.items():
+        for k in rows:
+            if k not in keys:
+                problems.append(f"APP_CREDITS[{app_name!r}] names {k!r}, which is not a ledger row")
+
     # Collectors: every registered collector has a RUNS entry and a row;
     # every RUNS collector entry and every row's collector name is real.
     for name in registry:
@@ -936,6 +951,19 @@ hold. Second, the manifest is the only door. Any surface that renders a
 CDN URL without the manifest entry behind it prints a photograph with no
 author, which on our own copy is our breach, not Wikimedia's.
 """,
+    ),
+    Section(
+        id="retired_rows",
+        title="15. Retired rows (history)",
+        level="##",
+        columns=('Source', 'What we take', 'License', 'Attribution required', 'Share-alike', 'Where attributed today'),
+        intro="""Rows for code that no longer runs, moved here by T310 so a reader skimming a
+live chapter does not take them for current. The ledger is also the record of
+what was shipped, so they stay, in the order they appeared. Whole chapters
+that were retired (section 8) keep their place. Each row's name says which
+script it was and when it was retired.
+""",
+        outro="",
     ),
 )
 
@@ -2573,7 +2601,247 @@ SOURCES = (
         share_alike="Per file (the copy only)",
         attributed="The gate: `credit.owes_credit` refuses a file owing a name it lacks before any object is written, and the manifest carries `[licence, author]` per entry plus the Commons and Geograph page templates, so the credit travels with the pixels and is never looked up from Wikimedia at render time. `src/lib/imageCredit.js` `creditFromManifest` turns a CDN URL plus the manifest into author, licence, licence link and page. Proven offline by `pipeline/photos/verify_attribution_cdn.py`; live check pending (Execution/P3/_OPEN-hetzner.md step 28). Account > Data sources carries a \"Carta image copies\" row. Not live until T052 serves the ladder",
     ),
+    Source(
+        key="waymarked_trails_route_list",
+        section="trails_lab",
+        scripts=('pipeline/trails/waymarked.py',),
+        name="Waymarked Trails route list (`pipeline/trails/waymarked.py`, `/api/v1/list/by_area`, INT and NAT hiking routes)",
+        takes="Only the list of international and national hiking routes the service knows over the catalogue: relation ids, names, refs and network groups, stored in `data/trails/waymarked_routes.json`. No geometry, no tiles, no rendered map is kept. It is the fifth evidence source of the famous-trail registry (T113), so a signed national trail nobody wrote an article about can still become a registry row",
+        licence="ODbL 1.0 (OpenStreetMap data, served by waymarkedtrails.org; the service needs no key)",
+        attribution="Yes: (c) OpenStreetMap contributors, already carried by every OSM row above",
+        share_alike="Only the ids, names, refs and groups are kept, so no database extract is redistributed; if geometry were ever stored from it the ODbL share-alike would attach",
+        attributed="Internal evidence for the registry only; nothing from this list is shown to a traveller as such. The OSM credit in Account > Data sources covers the underlying data. Be polite to the service: the harvest asks 785 boxes for the whole of Europe and keeps a checkpoint (T113 report)",
+    ),
 )
+
+# Storable-copy verdict per ledger row (T010's classification, written down
+# by T310). Question asked: may Carta keep its own copy of this data and
+# serve it (R2, the wire, the app bundle), not merely link to it? The
+# vocabulary is closed (see STORABLE_VOCAB); validate() enforces it.
+#   Yes                                no condition beyond good manners
+#   Yes, with credit                   attribution travels with the copy
+#   Yes, with credit and share-alike   ODbL or CC BY-SA: credit plus the
+#                                      share-alike duty on the derived work
+#   Yes, per file, with credit         the licence is per file; credit and the
+#                                      file's own terms travel with each copy
+#   No                                 non-commercial, restricted or no right
+#                                      to redistribute: do not store to serve
+#   Verify                             the licence cell itself says verify, or
+#                                      terms are agreement-bound: a human
+#                                      confirms before any stored copy ships
+#   n/a                                not a data source (a service, a vendor
+#                                      term or a fact about a policy)
+#   Per row above                      the catalogue row inherits its parts
+STORABLE_VOCAB = (
+    "Yes", "Yes, with credit", "Yes, with credit and share-alike",
+    "Yes, per file, with credit", "No", "Verify", "n/a", "Per row above",
+)
+STORABLE: dict[str, str] = {
+    'ryanair_farefinder_api': 'Yes',
+    'wizz_air_timetable_api': 'Yes',
+    'vueling_apiw_endpoints': 'Yes',
+    'volotea_getminprice_api': 'Yes',
+    'exchangerate_api_open_endpoint': 'Verify',
+    'ryanair_timetable_api': 'Yes',
+    'travelpayouts_aviasales': 'Verify',
+    'hostelworld_partner_api': 'Verify',
+    'liteapi_nuitee': 'Verify',
+    'ferryhopper_trips_widget': 'No',
+    'omio': 'n/a',
+    'flix_prices': 'n/a',
+    'public_transport_earth_index': 'Verify',
+    'gtfs_de_delfi_plus': 'Yes, with credit and share-alike',
+    'transport_data_gouv_fr': 'Yes, with credit and share-alike',
+    'mobility_data_austria': 'Verify',
+    'belgian_operators_sncb_de': 'Yes, with credit',
+    'danish_nap_plus_rejseplanen': 'Verify',
+    'traficom_finap_plus_digitraffic': 'Yes, with credit',
+    'ndov_loket_ovapi': 'Yes',
+    'entur': 'Yes, with credit',
+    'trafiklab_samtrafiken': 'Verify',
+    'opentransportdata_swiss': 'Verify',
+    'renfe_open_data': 'Verify',
+    'sncf_gtfs_rt_plus': 'Yes, with credit and share-alike',
+    'french_nap_cross_border': 'Yes, with credit and share-alike',
+    'era_registers': 'Verify',
+    'opensky_network': 'No',
+    'eurocontrol_statfor': 'Verify',
+    'eurocontrol_ddr_adrr': 'No',
+    'nordic_ferry_feeds_via': 'Yes, with credit',
+    'flix_eu_gtfs_feed': 'Verify',
+    'greek_nap': 'Verify',
+    'kaggle_renfe_archives': 'Verify',
+    'github_lcc_price_archives': 'Verify',
+    'sncf_tgv_max_availability': 'Yes',
+    'nager_date': 'Yes',
+    'openholidays_api': 'Verify',
+    'inside_airbnb': 'Yes, with credit',
+    'eea_wise_bathing_water': 'Yes, with credit',
+    'worldclim_2_1': 'No',
+    'geonames_cities500': 'Yes, with credit',
+    'wikipedia': 'Yes, with credit and share-alike',
+    'wikimedia_commons': 'Yes, per file, with credit',
+    'bayerische_vermessungsverwaltung_wanderwege': 'Yes, with credit',
+    'wikidata_sitelink_counts_live': 'Yes',
+    'wikivoyage': 'Yes, with credit and share-alike',
+    'opentripmap': 'Verify',
+    'overture_maps_places': 'Yes',
+    'openstreetmap_via_overpass': 'Yes, with credit and share-alike',
+    'openstreetmap_via_overpass_harvest_parking': 'Yes, with credit and share-alike',
+    'openstreetmap_via_geofabrik_country': 'Yes, with credit and share-alike',
+    'openstreetmap_via_geofabrik_country_enrich_beaches': 'Yes, with credit and share-alike',
+    'wikidata_beaches': 'Yes',
+    'wikimedia_commons_beach_photographs': 'Yes, per file, with credit',
+    'wikipedia_beach_articles': 'Yes, with credit and share-alike',
+    'eea_wise_bathing_water_enrich_beaches': 'Yes, with credit',
+    'eea_wise_bathing_water_eea_spine': 'Yes, with credit',
+    'natura_2000_and_the': 'Yes, with credit',
+    'eea_coastline_for_analysis': 'Yes, with credit',
+    'environment_agency_and_natural': 'Yes, with credit',
+    'wikidata_water_bodies': 'Yes',
+    'openstreetmap_named_water_bodies': 'Yes, with credit and share-alike',
+    'openstreetmap_via_overpass_enrich_lakes': 'Yes, with credit and share-alike',
+    'wikimedia_commons_lake_photographs': 'Yes, per file, with credit',
+    'wikipedia_lake_articles': 'Yes, with credit and share-alike',
+    'eea_wise_bathing_water_enrich_lakes': 'Yes, with credit',
+    'chelsa_v2_1_lake': 'Yes, with credit',
+    'geograph_britain_and_ireland': 'Yes, per file, with credit',
+    'mapillary': 'Yes, per file, with credit',
+    'wikidata_mountains': 'Yes',
+    'openstreetmap_via_overpass_enrich_peaks': 'Yes, with credit and share-alike',
+    'wikimedia_commons_mountain_photographs': 'Yes, per file, with credit',
+    'wikipedia_mountain_articles': 'Yes, with credit and share-alike',
+    'wikidata_recurring_events': 'Yes',
+    'open_meteo_forecast_api': 'No',
+    'eurostat_tour_occ_nin3': 'Yes, with credit',
+    'numbeo_point_anchors': 'No',
+    'wikimedia_commons_file_metadata': 'Yes',
+    'wikidata_place_registers_pageviews': 'Yes',
+    'carto_voyager_basemap': 'n/a',
+    'osrm_on_fossgis': 'Yes, with credit and share-alike',
+    'nominatim': 'Yes, with credit and share-alike',
+    'overpass_api': 'Yes, with credit and share-alike',
+    'supabase_google_sign_in': 'n/a',
+    'openstreetmap_named_landforms_via': 'Yes, with credit and share-alike',
+    'openstreetmap_route_relations_via': 'Yes, with credit and share-alike',
+    'copernicus_glo_30_dem': 'Yes, with credit',
+    'copernicus_glo_30_dem_terrain': 'Yes, with credit',
+    'swisstopo_swisstlm3d_wanderwege': 'Yes, with credit',
+    'ign_bd_topo_layer': 'Yes, with credit',
+    'kartverket_turrutebasen': 'Yes, with credit',
+    'natural_england_national_trails': 'Yes, with credit',
+    'self_hosted_valhalla_over': 'Yes, with credit and share-alike',
+    'transitous_public_plan_api': 'Verify',
+    'wikivoyage_as_description_signal': 'Yes, with credit and share-alike',
+    'eurostat_urban_audit_plus': 'Yes, with credit',
+    'statistics_norway_statbank_table': 'Yes, with credit',
+    'statistik_austria_ogd': 'Yes, with credit',
+    'wikimedia_commons_stop_images': 'Yes, per file, with credit',
+    'openstreetmap_scenic_features_via': 'Yes, with credit and share-alike',
+    'wikimedia_commons_trail_photographs': 'Yes, per file, with credit',
+    'claude_api_or_gemini': 'n/a',
+    'openstreetmap_via_the_existing': 'Yes, with credit and share-alike',
+    'osm_protected_areas': 'Yes, with credit and share-alike',
+    'eea_wise_bathing_water_harvest_bathing_water': 'Yes, with credit',
+    'unesco_world_heritage_list': 'Verify',
+    'wikimedia_commons_per_file': 'Yes, per file, with credit',
+    'wikipedia_enrich_wikidata': 'Yes, with credit and share-alike',
+    'wikidata': 'Yes',
+    'wikivoyage_listings': 'Yes, with credit and share-alike',
+    'wikivoyage_go_next_graph': 'Yes, with credit and share-alike',
+    'wikivoyage_itinerary_articles': 'Yes, with credit and share-alike',
+    'wikivoyage_get_in_sections': 'Yes, with credit and share-alike',
+    'wikivoyage_article_status': 'Yes, with credit and share-alike',
+    'eurostat_tourist_nights_per': 'Yes, with credit',
+    'catalogue_master': 'Per row above',
+    'wikimedia_commons_photographs': 'Yes, per file, with credit',
+    'wikipedia_lead_images_via': 'Yes, per file, with credit',
+    'eurostat_gisco_nuts_2024': 'Yes, with credit',
+    'eurostat_gisco_lau_2024': 'Yes, with credit',
+    'ons_open_geography_itl': 'Yes, with credit',
+    'geoboundaries_gbopen': 'Yes, per file, with credit',
+    'gmba_mountain_inventory_v2': 'Yes, with credit',
+    'eea_coastline_for_analysis_regions': 'Yes, with credit',
+    'eea_biogeographical_regions': 'Yes, with credit',
+    'eea_wise_wfd_river': 'Yes, with credit',
+    'nasa_power_climatology_api': 'Yes',
+    'nasa_power_climatology_api_season': 'Yes',
+    'open_meteo_elevation_api': 'Yes, with credit',
+    'unesco_world_heritage_centre': 'Verify',
+    'openstreetmap_relations_via_geofabrik': 'Yes, with credit and share-alike',
+    'openstreetmap_node_network': 'Yes, with credit and share-alike',
+    'openstreetmap_services': 'Yes, with credit and share-alike',
+    'openstreetmap_land_cover': 'Yes, with credit and share-alike',
+    'eurovelo_gpx_tracks': 'Yes, with credit and share-alike',
+    'sustrans_walk_wheel_cycle': 'Yes, with credit',
+    'spatial_hub_scotland_cycling': 'Yes, with credit',
+    'base_nationale_des_amenagements': 'Yes, with credit',
+    'toerisme_vlaanderen_cycling_node': 'Verify',
+    'opendata_swiss_schweizmobil_veloland': 'Yes, with credit',
+    'gip_at': 'n/a',
+    'eea_natura_2000': 'Yes, with credit',
+    'eea_emerald_network': 'Yes, with credit',
+    'copernicus_glo_30_dem_elevation': 'Yes, with credit',
+    'eea_coastline_for_analysis_cycling': 'Yes, with credit',
+    'nasa_power_2001_2020': 'Yes',
+    'wikimedia_commons_and_geograph': 'Yes, per file, with credit',
+    'operator_bike_on_train': 'n/a',
+    'carta_image_copies_on': 'Yes, per file, with credit',
+    'waymarked_trails_route_list': 'Yes, with credit and share-alike',
+}
+
+
+# User-facing credits (T078-b). Each entry of continent-app/src/data/attribution.js
+# (the Account > Data sources screen) is named here with the ledger row that
+# obliges it. `python -m src.ingestion.core.ledger --check-app <path>` fails
+# when the app file has an entry no row obliges, when a row here has no entry
+# in the app file, or when a key is not a ledger row. The credit wording stays
+# in the app file (it is English licence text, not generated prose).
+APP_CREDITS: dict[str, tuple] = {
+    "OpenStreetMap": ("openstreetmap_via_geofabrik_country",),
+    "CARTO": ("carto_voyager_basemap",),
+    "Wikipedia": ("wikipedia",),
+    "Wikivoyage": ("wikivoyage",),
+    "Wikimedia Commons": ("wikimedia_commons",),
+    "Geograph Britain and Ireland": ("geograph_britain_and_ireland",),
+    "Carta image copies": ("carta_image_copies_on",),
+    "Mapillary": ("mapillary",),
+    "GeoNames": ("geonames_cities500",),
+    "Inside Airbnb": ("inside_airbnb",),
+    "Eurostat": ("eurostat_tour_occ_nin3",),
+    "EuroGeographics": ("eurostat_gisco_nuts_2024",),
+    "European Environment Agency": ("eea_wise_bathing_water",),
+    "ONS Open Geography": ("ons_open_geography_itl",),
+    "GMBA Mountain Inventory": ("gmba_mountain_inventory_v2",),
+    "geoBoundaries": ("geoboundaries_gbopen",),
+    "NASA POWER": ("nasa_power_climatology_api",),
+    "UNESCO World Heritage Centre": ("unesco_world_heritage_centre",),
+    "CHELSA": ("chelsa_v2_1_lake",),
+    "OpenTripMap": ("opentripmap",),
+    "Overture Maps": ("overture_maps_places",),
+    "EuroVelo": ("eurovelo_gpx_tracks",),
+    "Walk Wheel Cycle Trust (Sustrans)": ("sustrans_walk_wheel_cycle",),
+    "Spatial Hub Scotland (Improvement Service)": ("spatial_hub_scotland_cycling",),
+    "SchweizMobil and the Federal Roads Office (ASTRA)": ("opendata_swiss_schweizmobil_veloland",),
+    "European Environment Agency, protected sites": ("eea_natura_2000",),
+    "Copernicus GLO-30": ("copernicus_glo_30_dem",),
+    "swisstopo": ("swisstopo_swisstlm3d_wanderwege",),
+    "IGN": ("ign_bd_topo_layer",),
+    "Kartverket": ("kartverket_turrutebasen",),
+    "Natural England": ("natural_england_national_trails",),
+    "Transitous": ("transitous_public_plan_api",),
+    "SNCB / NMBS": ("belgian_operators_sncb_de",),
+    "De Lijn": ("belgian_operators_sncb_de",),
+    "STIB / MIVB": ("belgian_operators_sncb_de",),
+    "TEC": ("belgian_operators_sncb_de",),
+    "GTFS.de / DELFI": ("gtfs_de_delfi_plus",),
+    "Entur": ("entur",),
+    "Digitraffic": ("traficom_finap_plus_digitraffic",),
+    "opentransportdata.swiss": ("opentransportdata_swiss",),
+    "transport.data.gouv.fr": ("transport_data_gouv_fr",),
+    "Open-Meteo": ("open_meteo_forecast_api",),
+    "Exchange Rate API": ("exchangerate_api_open_endpoint",),
+}
 
 WIRE_REVIEW = (
     WireReview(

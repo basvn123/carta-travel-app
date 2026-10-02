@@ -44,6 +44,11 @@ def _print_roster(collectors):
     print("-" * 100)
     for cls in collectors:
         print(f"{cls.name:18} {cls.group:9} {cls.description}")
+        run = cls.run
+        task = run.task or "none"
+        print(f"{'':18} {'':9}   runs: {run.cadence}, task {task}, failure {run.failure}")
+        for src in cls.sources:
+            print(f"{'':18} {'':9}   licence: {src.licence[:70]} | credit: {src.attribution[:30]}")
         if cls.required_env:
             print(f"{'':18} {'':9}   needs: {', '.join(cls.required_env)}")
 
