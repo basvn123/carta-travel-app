@@ -332,6 +332,56 @@ def month_short(months):
     return [names[m - 1] for m in months if 1 <= m <= 12]
 
 
+# ── Avoid months ─────────────────────────────────────────────────────────────
+# bestPeriod.avoid is free text ("July-August (35 C on unshaded asphalt)").
+# The month strip needs numbers, so read the month names out of it. Dashes are
+# already gone by the time this runs (clean_text), so a range reads "July-August".
+
+_MONTHS = ["january", "february", "march", "april", "may", "june", "july",
+           "august", "september", "october", "november", "december"]
+_MONTH_RE = re.compile(
+    r"\b(January|February|March|April|May|June|July|August|September|Sept|October|"
+    r"November|December)\b")
+# What may sit between the two ends of a range: a dash or "to", plus day
+# numbers and fuzzy words ("mid-July to late August", "December-7 January").
+_RANGE_GAP = re.compile(
+    r"^\s*(?:-|to|through|until)\s*(?:(?:mid-?|late|early|the|first|last|half|"
+    r"week|of|third|second|fortnight|\d{1,2})\s*)*$", re.I)
+
+
+def _month_no(word):
+    w = word.lower()
+    return 9 if w == "sept" else _MONTHS.index(w) + 1
+
+
+def parse_avoid_months(text):
+    """Month numbers (1-12, sorted) a free-text avoid note names.
+    A range wraps the year end (November-March is 11, 12, 1, 2, 3).
+    Month words only count when capitalised, so the verb "may" is ignored,
+    but a sentence-initial "May" is a month, which is what the data means."""
+    if not text:
+        return []
+    found = list(_MONTH_RE.finditer(text))
+    out = set()
+    i = 0
+    while i < len(found):
+        a = _month_no(found[i].group(1))
+        if i + 1 < len(found) and _RANGE_GAP.match(
+                text[found[i].end():found[i + 1].start()]):
+            b = _month_no(found[i + 1].group(1))
+            m = a
+            while True:
+                out.add(m)
+                if m == b:
+                    break
+                m = m % 12 + 1
+            i += 2
+        else:
+            out.add(a)
+            i += 1
+    return sorted(out)
+
+
 def to_card(trip, hero):
     budget = trip.get("budget") or {}
     total = budget.get("totalEur") or {}
@@ -454,6 +504,9 @@ def main():
         for t in rows:
             detail = dict(t)
             detail["hero"] = heroes.get(t["id"])
+            bp = dict(detail.get("bestPeriod") or {})
+            bp["avoidMonths"] = parse_avoid_months(bp.get("avoid"))
+            detail["bestPeriod"] = bp
             (OUT / "journey" / f"{t['id']}.json").write_text(
                 json.dumps(detail, ensure_ascii=False), encoding="utf-8")
 
