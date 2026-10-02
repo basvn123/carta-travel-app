@@ -221,6 +221,34 @@ const run = async () => {
   ok('the report form: focus in, labels tied, short reason and bad email worded, Cancel returns focus, a notice with no email is received');
   await page.screenshot({ path: `${SHOTS}/guides-report.png` });
 
+  // T266-e: the answer to a sixth notice. The ?guidesmock seam counts notices
+  // for the page's lifetime and refuses the sixth with too_many, as the
+  // database does (five an hour). One notice has gone; the form remounts per
+  // guide view, so each further notice is a back to the list and the guide
+  // opened again. Notices two to five are received, the sixth is refused in
+  // words, and what was typed stays.
+  const sendNotice = async () => {
+    await page.locator('.gld-back').first().click();
+    await page.locator('.gld-card').first().waitFor({ timeout: 10000 });
+    await page.locator('.gld-card').first().click();
+    await page.locator('.gld-report-open').waitFor({ timeout: 12000 });
+    await page.locator('.gld-report-open').scrollIntoViewIfNeeded();
+    await page.locator('.gld-report-open').click();
+    await page.locator('.gld-report textarea').fill('This guide copies a chapter of a published book word for word.');
+    await page.locator('.gld-report button[type="submit"]').click();
+  };
+  for (let k = 2; k <= 5; k += 1) {
+    await sendNotice();
+    await page.locator('.gld-report-done[role="status"]').waitFor({ timeout: 8000 });
+  }
+  await sendNotice();
+  const tooMany = page.locator('.gld-report [role="alert"]');
+  await tooMany.waitFor({ timeout: 8000 });
+  if (!/5 reports in the last hour/i.test(await tooMany.innerText())) fail('the sixth notice in an hour is not refused in words');
+  else if (!(await page.locator('.gld-report textarea').inputValue())) fail('the too_many refusal cleared what was typed');
+  else ok('the sixth notice in an hour is refused with the too_many sentence and keeps what was typed');
+  await page.screenshot({ path: `${SHOTS}/guides-report-too-many.png` });
+
   /* ---- 2. Nothing published: the strip is absent, not empty ---- */
   const emptyPage = await boot(ctx, '?o=CRL&guidesmock=none');
   await goExplore(emptyPage);

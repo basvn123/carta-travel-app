@@ -30,7 +30,7 @@ const check = (name, ok, extra = '') => {
   if (!ok) failed += 1;
 };
 const errors = [];
-const NOISE = /favicon|net::ERR_|Failed to load resource|maplibre|WebGL|tile|Nominatim|ResizeObserver|401|403|429|emrldtp|entrypoint_config|config is not valid/i;
+const NOISE = /favicon|net::ERR_|Failed to load resource|maplibre|WebGL|tile|Nominatim|ResizeObserver|401|403|429|entrypoint_config|config is not valid/i;
 const GEO = {
   display_name: 'Hotel Artemide, Via Nazionale, Rome, Lazio, Italy', name: 'Hotel Artemide',
   lat: '41.8996', lon: '12.4939', category: 'tourism', type: 'hotel', address: { country: 'Italy', country_code: 'it' },

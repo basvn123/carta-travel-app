@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useI18n } from '../i18n/index.jsx';
 import { searchFold } from '../lib/textSearch.js';
 import { cityLabel } from '../lib/placeName.js';
@@ -89,9 +89,11 @@ export function DayIdeasStep({
   const fold = searchFold(q);
   const searching = fold.length >= 2;
 
-  const km = (lat, lon) => (stayPoint && Number.isFinite(lat)
+  // Stable while the start point is: the geocoder effect lists it, and the
+  // planner holds stayPoint in state, so typing is the only thing that refetches.
+  const km = useCallback((lat, lon) => (stayPoint && Number.isFinite(lat)
     ? haversineKm(stayPoint.lat, stayPoint.lon, lat, lon)
-    : null);
+    : null), [stayPoint]);
 
   // ---- Pool 1: what is around the start point ----------------------------
   const nearRows = useMemo(() => {
@@ -156,7 +158,7 @@ export function DayIdeasStep({
         img: null,
         sub: t('ideas.fromShortlist'),
       }));
-  }, [searching, fold, shortlistPoints, stayPoint, t]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [searching, fold, shortlistPoints, stayPoint, km, t]);
 
   // ---- Pool 3: anywhere, via the geocoder ---------------------------------
   // Debounced and aborted on every keystroke: Nominatim is a shared public
@@ -186,7 +188,7 @@ export function DayIdeasStep({
       } catch { if (live) setGeoRows([]); } finally { if (live) setGeoBusy(false); }
     }, 450);
     return () => { live = false; ctl.abort(); clearTimeout(timer); };
-  }, [q, searching]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [q, searching, km]);
 
   const anywhereRows = useMemo(() => {
     const seen = new Set([...nearRows, ...shortRows].map((r) => searchFold(r.name)));

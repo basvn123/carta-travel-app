@@ -22,7 +22,7 @@ const check = (label, ok, note = '') => { checks.push({ label, ok, note }); };
 
 const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
 page.on('pageerror', (e) => errors.push('pageerror: ' + e.message.split('\n')[0]));
-const NOISE = /emrldtp|ERR_FAILED|config is not valid/;
+const NOISE = /ERR_FAILED|config is not valid/;
 page.on('console', (m) => { if (m.type() === 'error' && !NOISE.test(m.text())) errors.push('console: ' + m.text().slice(0, 120)); });
 
 await page.addInitScript(() => {

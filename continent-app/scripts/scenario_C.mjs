@@ -59,7 +59,7 @@ const check = (name, ok, extra = '') => note(ok ? 'ok' : 'FAIL', `${name}${extra
 const info = (msg) => note('info', msg);
 
 const errors = [];
-const NOISE = /favicon|net::ERR_|Failed to load resource|maplibre|WebGL|tile|Nominatim|ResizeObserver|401|403|429|emrldtp|entrypoint_config|config is not valid/i;
+const NOISE = /favicon|net::ERR_|Failed to load resource|maplibre|WebGL|tile|Nominatim|ResizeObserver|401|403|429|entrypoint_config|config is not valid/i;
 const seed = (page) => page.addInitScript(() => {
   try {
     localStorage.setItem('continent.lang.v1', 'en');

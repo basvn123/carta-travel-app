@@ -43,7 +43,7 @@ const browser = await chromium.launch();
 const checks = [];
 const check = (label, ok, note = '') => { checks.push({ label, ok, note }); };
 const errors = [];
-const NOISE = /emrldtp|ERR_FAILED|config is not valid/;
+const NOISE = /ERR_FAILED|config is not valid/;
 
 const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
 page.on('pageerror', (e) => errors.push('pageerror: ' + e.message.split('\n')[0]));

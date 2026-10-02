@@ -1,6 +1,7 @@
 import React from 'react';
 import { ScoreChip } from '../components/RatingBadge.jsx';
 import { tileUrl } from '../lib/mapTile.js';
+import { trailClimbUp, gradeLabelKey } from '../lib/trailStory.js';
 import {
   BootIcon, BikeIcon, MountainIcon, LakeIcon, BeachIcon, TreeIcon, StarIcon,
 } from '../components/Icons.jsx';
@@ -51,8 +52,14 @@ function rowMeta(row, layer, t) {
   const bits = [];
   if (layer === 'trails' || layer === 'cycling') {
     if (row.km_len != null) bits.push(`${Math.round(row.km_len)} km`);
-    if (row.ascent_m != null) bits.push(`${Math.round(row.ascent_m)} m up`);
-    if (row.difficulty) bits.push(t(`dest.diff.${row.difficulty}`));
+    // The climb read uphill and the grade: never the stored ascent of a line
+    // drawn summit to valley, never a grade code without a label (T108-d,
+    // T108-f). Both helpers read whatever the row carries, so a dossier
+    // built from the current wire and one built from the next both work.
+    const up = trailClimbUp(row);
+    if (up != null) bits.push(`${Math.round(up)} m up`);
+    const gradeKey = gradeLabelKey(row);
+    if (gradeKey) bits.push(t(gradeKey));
   } else if (layer === 'mountains') {
     if (row.elev_m != null) bits.push(`${Math.round(row.elev_m)} m`);
   } else if (layer === 'lakes' || layer === 'beaches') {

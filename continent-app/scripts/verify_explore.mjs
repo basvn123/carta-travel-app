@@ -23,7 +23,7 @@ const check = (label, ok, note = '') => { checks.push({ label, ok, note }); };
 const boot = async (viewport) => {
   const page = await browser.newPage({ viewport });
   page.on('pageerror', (e) => errors.push('pageerror: ' + e.message.split('\n')[0]));
-  const NOISE = /emrldtp|ERR_FAILED|config is not valid|open-meteo/;
+  const NOISE = /ERR_FAILED|config is not valid|open-meteo/;
   page.on('console', (m) => { if (m.type() === 'error' && !NOISE.test(m.text())) errors.push('console: ' + m.text().slice(0, 120)); });
   await page.addInitScript(() => {
     try {
@@ -67,6 +67,13 @@ try {
   check('the cost gauge fills', litSegs >= cards, `${litSegs} lit segments`);
   const cardText = await page.locator('.xcard').first().innerText();
   check('the card names a price in euros', /€\d/.test(cardText), cardText.replace(/\n/g, ' | ').slice(0, 90));
+
+  // T279-a: Carta prices no flight, so no Explore card may read as one. No
+  // tilde before a figure, no est. chip, no "not a live quote" title.
+  const allCardText = (await page.locator('.xcard').allInnerTexts()).join('\n');
+  const cardTitles = await page.locator('.xcard [title]').evaluateAll((els) => els.map((e) => e.title).join('\n'));
+  check('no Explore card carries a tilde fare or an est. tag',
+    !/~\s*€|\best\.(\s|$)/i.test(allCardText) && !/not a live quote/i.test(cardTitles));
 
   // The srcset must offer widths Wikimedia actually renders. An unlisted
   // width answers 400, which is exactly how this breaks silently.

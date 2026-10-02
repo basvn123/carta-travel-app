@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useI18n } from '../i18n/index.jsx';
 import { useFocusTrap } from '../hooks/useFocusTrap.js';
 import { FavStar } from '../components/FavStar.jsx';
+import { MonthStrip } from '../components/MonthStrip.jsx';
 import { NearbyOutdoors } from './NearbyOutdoors.jsx';
 import {
   lakeHeadline, lakeWhy, lakeTags, lakeSwim, lakeSeason, lakeHazards,
@@ -88,23 +89,21 @@ function ImageCredit({ image, t }) {
   );
 }
 
-/** The estimated surface temperature month by month, as a bar strip. The
- *  warm months are filled; the rest are outlines, so a lake with a fortnight
- *  of summer looks like one. */
-function SeasonStrip({ temps, warmC, t }) {
-  const max = Math.max(...temps, warmC + 4);
+/** The warm months as the shared twelve-cell strip. The temperatures are an
+ *  estimate and the info panel says so; a month counts as good when its
+ *  modelled surface temperature reaches the Lifestyle warm threshold. */
+function SeasonStrip({ temps, warmC, seasonLine, t }) {
+  const good = temps.map((c, i) => (c >= warmC ? i + 1 : 0)).filter(Boolean);
   return (
-    <ul className="lpage-months" aria-label={t('lake.seasonHead')}>
-      {temps.map((c, i) => (
-        <li key={MONTH_CODES[i]} className={c >= warmC ? 'warm' : ''}>
-          <span className="lpage-month-bar" aria-hidden="true">
-            <span style={{ height: `${Math.max(4, Math.round((c / max) * 100))}%` }} />
-          </span>
-          <span className="lpage-month-c">{Math.round(c)}</span>
-          <span className="lpage-month-m">{monthWord(MONTH_CODES[i], t).slice(0, 1)}</span>
-        </li>
-      ))}
-    </ul>
+    <MonthStrip
+      good={good}
+      info={(
+        <>
+          <p>{t('lake.seasonNote')}</p>
+          {seasonLine && <p>{seasonLine}</p>}
+        </>
+      )}
+    />
   );
 }
 
@@ -351,8 +350,7 @@ export function LakePage({ lake, countryName, onClose, onSelectDest, warmC = 18,
           {lake.swim?.temps?.length === 12 && (
             <section className="lpage-season">
               <h2>{t('lake.seasonHead')}</h2>
-              <p className="bpage-note">{t('lake.seasonNote')}</p>
-              <SeasonStrip temps={lake.swim.temps} warmC={warmC} t={t} />
+              <SeasonStrip temps={lake.swim.temps} warmC={warmC} seasonLine={seasonLine} t={t} />
             </section>
           )}
 

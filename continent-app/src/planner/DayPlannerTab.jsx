@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { E2E_SEAMS } from '../lib/e2eSeams.js';
 import { TripMap } from '../map/TripMap.jsx';
 import { DayExploreMap } from '../map/DayExploreMap.jsx';
@@ -520,7 +520,7 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
       }
       onOpenPlanConsumed && onOpenPlanConsumed();
     })();
-  }, [openPlanId]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [openPlanId]); // eslint-disable-line react-hooks/exhaustive-deps -- one-shot hand-off: the open helpers are rebuilt every render, and re-running while the async open is in flight would open the plan twice
 
   // A seed lands the flow on the When question with the stay answered: the
   // destination's city, or for a trail / beach / lake / mountain the nearest
@@ -575,7 +575,7 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
       onDaySeedConsumed && onDaySeedConsumed();
     })();
     return () => { live = false; };
-  }, [daySeed]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [daySeed]); // eslint-disable-line react-hooks/exhaustive-deps -- one-shot seed: resolveNearestTown is declared further down (listing it here is a TDZ crash) and the seed is consumed once
 
   /**
    * The chat's opening answers, read off the trip wizard's draft: a couple
@@ -747,10 +747,11 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
   // everywhere downstream: assignments index it, the schedule times it, the
   // map pins it, the PDF prints it. Append-only per destination: removing or
   // reordering entries would shift the indices saved assignments point at.
-  const customPoisFor = (destId) => (prefs?.customPois?.[destId] || [])
-    .map((c) => ({ ...c, custom: true }));
+  const customPois = prefs?.customPois;
+  const customPoisFor = useCallback((destId) => (customPois?.[destId] || [])
+    .map((c) => ({ ...c, custom: true })), [customPois]);
 
-  const itemsForStop = (s, fullMap = actFull) => {
+  const itemsForStop = useCallback((s, fullMap = actFull) => {
     const a = s?.dest?.activities;
     if (!a) return { items: [], walkable: new Set(), suppressed: new Set(), canon: new Map(), limited: true };
     const customs = customPoisFor(s.destination_id);
@@ -781,9 +782,9 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
     const { suppressed, canon } = canonicalPoiIndices(items);
     const walkable = new Set(items.map((_, i) => i).filter((i) => !suppressed.has(i)));
     return { items, walkable, suppressed, canon, limited: true };
-  };
+  }, [actFull, customPoisFor]);
 
-  const activities = useMemo(() => itemsForStop(stop), [stop, actFull, prefs?.customPois]); // eslint-disable-line react-hooks/exhaustive-deps
+  const activities = useMemo(() => itemsForStop(stop), [stop, itemsForStop]);
 
   // Saved plans can predate a dedupe improvement, so a day may already hold
   // BOTH copies of a place ("Parafia ..." next to "Kosciol pw. ..."). Repair
@@ -831,7 +832,7 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
     // Only consider the plan migrated once the real (coordinate-bearing) list
     // was loaded; before actFull arrives the pass can't dedupe anything.
     if (hadFull) repairedRef.current.add(pid);
-  }, [assignments, stops, actFull, plan?.id]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [assignments, stops, itemsForStop, plan?.id]);
 
   // Must-see / recommended / more / active tiers for the current stop's list.
   const tiers = useMemo(() => tieredActivities(activities.items, activities.walkable), [activities]);
@@ -910,8 +911,8 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
 
   const visibleDeck = useMemo(() => [...mapDeck, ...zoomDeck], [mapDeck, zoomDeck]);
 
-  const passRating = (item) => mapRating === 'all'
-    || (mapRating === 'must' ? isMustSee(item) : poiRating(item).tier >= 2);
+  const passRating = useCallback((item) => mapRating === 'all'
+    || (mapRating === 'must' ? isMustSee(item) : poiRating(item).tier >= 2), [mapRating]);
 
   const mapCatCounts = useMemo(() => {
     const c = { all: visibleDeck.length, sight: 0, nature: 0, active: 0, food: 0, top: 0, must: 0 };
@@ -953,7 +954,7 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
         cat: poiMapCat(item),
         must: isMustSee(item),
       }));
-  }, [visibleDeck, mapCat, mapRating, showSel, assignedAnyDay, assignments, stopIdx, dayIdx, activities]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [visibleDeck, mapCat, passRating, showSel, assignedAnyDay, assignments, stopIdx, dayIdx, activities]);
 
   // Outstanding sights BEYOND walking range, their own excursion, but too
   // good not to mention (importance + beauty outweigh the distance).
@@ -1103,15 +1104,16 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
 
   /* ---- Ready-made day: the published citytrip for this city ---- */
 
+  const citytripIso2 = stop?.dest?.iso2 || '';
+  const citytripDestId = stop?.dest?.id || '';
   useEffect(() => {
     let live = true;
     setCitytrip(null);
-    const dest = stop?.dest;
-    if (dest?.iso2 && dest?.id) {
-      findCitytrip(dest.iso2, dest.id).then((ct) => { if (live) setCitytrip(ct); });
+    if (citytripIso2 && citytripDestId) {
+      findCitytrip(citytripIso2, citytripDestId).then((ct) => { if (live) setCitytrip(ct); });
     }
     return () => { live = false; };
-  }, [stop?.dest?.id]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [citytripIso2, citytripDestId]);
 
   // Lay the citytrip's stops into the selected day, in their composed
   // walking order. Same assignment shape as a hand-built or drafted day, so
@@ -1397,7 +1399,7 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
       if (alive && r) setDayRoad({ key: dayRoadKey, km: r.km, min: r.min });
     });
     return () => { alive = false; };
-  }, [dayRoadKey]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [dayRoadKey]); // eslint-disable-line react-hooks/exhaustive-deps -- keyed by the rounded coordinates: the end points are fresh objects every render and listing them would refetch the road each time
 
   // Ride time per mode from a routed road leg: cars near the routed time
   // plus a dynamic parking padding, buses the same road with stops and a
@@ -1775,7 +1777,7 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
       if (alive && r) setStayRideRoad({ key: stayRideKey, km: r.km, min: r.min });
     });
     return () => { alive = false; };
-  }, [stayRideKey]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [stayRideKey]); // eslint-disable-line react-hooks/exhaustive-deps -- keyed by the rounded coordinates: assignedItems is rebuilt every render and listing it would refetch the ride each time
 
   // The map always shows the stay pin; the WALKING route only starts there
   // when the door-to-first-sight leg is actually a walk.
@@ -1795,7 +1797,7 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
     let alive = true;
     fetchWalkingRoute(walkPins).then((r) => { if (alive && r) setRouteGeom({ key: routeKey, ...r }); });
     return () => { alive = false; };
-  }, [routeKey]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [routeKey]); // eslint-disable-line react-hooks/exhaustive-deps -- keyed by the rounded coordinates: walkPins is rebuilt every render and listing it would refetch the walk each time
   const routeOk = route && route.key === routeKey;
 
   // Per-segment legs align to assignedItems only when every stop has
@@ -3005,10 +3007,7 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
       });
     });
     return () => { live = false; };
-    // chatDest is rebuilt every render and reads a cache, so depending on it
-    // would refetch the town on every keystroke elsewhere in the planner.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [chatDefaultTownId]);
+  }, [chatDefaultTownId]); // eslint-disable-line react-hooks/exhaustive-deps -- keyed on the town: chatDest is rebuilt every render, and a failed shard would refetch in a loop through actFull
 
   /**
    * Does anything actually happen in this town on this date? The dossier

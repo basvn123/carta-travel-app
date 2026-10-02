@@ -31,7 +31,7 @@ import { mkdirSync } from 'node:fs';
 const URL = process.argv[2] || `http://localhost:${process.env.CARTA_PORT || 4173}/`;
 mkdirSync('shots', { recursive: true });
 
-const NOISE = /emrldtp|ERR_FAILED|config is not valid|maplibre|WebGL|tile/i;
+const NOISE = /ERR_FAILED|config is not valid|maplibre|WebGL|tile/i;
 const results = [];
 const check = (name, pass, detail = '') => {
   results.push({ name, pass, detail });

@@ -55,6 +55,7 @@ import {
   ROUTE_TYPES, tripRouteType, HIGHLIGHTS, tripHighlights,
   SUITABILITY, tripSuitability, isListed,
 } from '../lib/trailCards.js';
+import { trailClimbUp } from '../lib/trailStory.js';
 import { useI18n } from '../i18n/index.jsx';
 import { geocodeAddress, reverseGeocode, geoLines } from '../lib/geocode.js';
 import { bandChip, bandBreak, scopeForRows } from '../lib/regions.js';
@@ -440,6 +441,7 @@ const HIGHLIGHT_KEY = Object.fromEntries(
 const TripCard = React.memo(function TripCard({ card, km, onOpen, t }) {
   const { tr, assoc, kindKey, price } = card;
   const isCityDay = tr.category === 'citytrip';
+  const climbUp = trailClimbUp(tr);
   const grade = tripGrade(tr);
   const diffKey = grade ? GRADE_KEY[grade]
     : tr.difficulty === 'easy' ? 'places.diffEasy'
@@ -466,7 +468,9 @@ const TripCard = React.memo(function TripCard({ card, km, onOpen, t }) {
             )}
             {tr.duration_min != null && <span>{hoursText(tr.duration_min)} h</span>}
             {isCityDay && tr.n_stops != null && <span>{t('trails.stops', { n: tr.n_stops })}</span>}
-            {!isCityDay && tr.ascent_m != null && <span>+{Math.round(tr.ascent_m)} m</span>}
+            {/* The climb read uphill (T108-d): a line drawn summit to village
+                stores +7 m of ascent and 1,423 m of descent. */}
+            {!isCityDay && climbUp != null && <span>+{Math.round(climbUp)} m</span>}
           </span>
           <span className="places-card-kinds">
             <span className={`places-card-kind ${isCityDay ? 'city' : ''}`}>{t(kindKey)}</span>

@@ -60,7 +60,7 @@ const errors = [];
 // rather than a fault. Matched on the MESSAGE because the console text
 // carries no URL: `status of 404` and nothing broader, so a 404 on a
 // wire file the app actually needs still fails the run.
-const NOISE = /status of 404|emrldtp|ERR_FAILED|config is not valid|Geolocation/;
+const NOISE = /status of 404|ERR_FAILED|config is not valid|Geolocation/;
 
 const browser = await chromium.launch();
 
@@ -117,7 +117,14 @@ await page.screenshot({ path: 'shots/trail-list.png' });
 // Other categories keep their price chrome.
 await page.locator(CAT, { hasText: /^trips$/i }).click();
 await page.waitForTimeout(1200);
-check('trips still show the sort chips', await page.locator(SORT).count() === 3);
+// Trips opens on the style grid of the Journeys library, which carries no
+// sort chips; the composed itineraries sit behind their own door at the end
+// of the grid (the same route verify_places_tab.mjs takes). W5-a: the check
+// was stale, it looked for the chips on the grid.
+await page.locator('.jcomposed-card').click();
+await page.waitForTimeout(1500);
+check('trips still show the sort chips', await page.locator(SORT).count() === 3,
+  `${await page.locator(SORT).count()} chips`);
 // The from-price origin picker moved out of this tab into the map tool row,
 // so asserting it here was asserting a layout that was replaced on purpose.
 // The "other categories keep their price chrome" intent is carried by the
@@ -236,16 +243,20 @@ check('back closes the page', await page.locator('.tpage').count() === 0);
 // ── A city day is the same page, with its stops ───────────────────────────
 await page.locator(CAT, { hasText: /^trips$/i }).click();
 await page.waitForTimeout(1500);
+// Trips opens on the style grid; the composed door leads to the length slider.
+if (await page.locator('.jcomposed-card').count()) await page.locator('.jcomposed-card').click();
+await page.waitForTimeout(1500);
 // The Trips category opens on its country index, exactly as Trails does, so a
 // card only exists once a country is chosen. Clicking straight through was
 // only ever right while the tab opened on a flat list.
-await pickCountry(page, 'Albania').catch(() => {});
-await page.waitForTimeout(1200);
 // A drawn city walk is the ONE DAY end of the Trips category, which is
 // otherwise the composed-itinerary surface. Without moving the length slider
 // to 1 the list is multi-day itineraries and no .places-tcard exists at all.
+// The slider goes first: at 1 the index lists the countries with city walks.
 await page.locator('.trip-slider-input:visible').first()
   .fill('1').catch(() => {});
+await page.waitForTimeout(1600);
+await pickCountry(page, 'Albania').catch(() => {});
 await page.waitForTimeout(1800);
 const cityCards = await page.locator('.places-tcard').count();
 check('city day cards render', cityCards >= 1, `${cityCards} cards`);

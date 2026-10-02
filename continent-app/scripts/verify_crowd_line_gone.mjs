@@ -20,7 +20,7 @@ const browser = await chromium.launch();
 const checks = [];
 const errors = [];
 const check = (label, ok, note = '') => checks.push({ label, ok, note });
-const NOISE = /emrldtp|ERR_FAILED|config is not valid|404/;
+const NOISE = /ERR_FAILED|config is not valid|404/;
 
 // A spread across the tiers, airports and gems alike. `badge` tracks the
 // PRE-EXISTING rule in crowdBadgeWorthShowing: only the extremes (tier 0 Quiet

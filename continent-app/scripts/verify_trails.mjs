@@ -92,7 +92,7 @@ const errors = [];
 // rather than a fault. Matched on the MESSAGE because the console text
 // carries no URL: `status of 404` and nothing broader, so a 404 on a
 // wire file the app actually needs still fails the run.
-const NOISE = /status of 404|emrldtp|ERR_FAILED|config is not valid/;
+const NOISE = /status of 404|ERR_FAILED|config is not valid/;
 
 const seed = (page) => page.addInitScript(() => {
   try {

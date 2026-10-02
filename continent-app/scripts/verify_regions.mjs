@@ -35,7 +35,11 @@
 import { chromium } from 'playwright';
 import { spawn } from 'node:child_process';
 import { mkdirSync, readFileSync } from 'node:fs';
+import { join } from 'node:path';
 
+// CARTA_REPO_ROOT names the root checkout when continent-app is a sibling
+// worktree rather than a child of it (T296-c); the default is the parent.
+const REPO_ROOT = process.env.CARTA_REPO_ROOT || '..';
 const PORT = 4213;
 const BASE = `http://127.0.0.1:${PORT}/`;
 mkdirSync('shots', { recursive: true });
@@ -60,7 +64,7 @@ const errors = [];
 // "Failed to load resource" with no URL is the browser noting an icon or
 // manifest 404; a missing WIRE file cannot hide behind it because every
 // wire check reads the JSON itself.
-const NOISE = /emrldtp|ERR_FAILED|config is not valid|content_overrides|net::|favicon|Failed to load resource/;
+const NOISE = /ERR_FAILED|config is not valid|content_overrides|net::|favicon|Failed to load resource/;
 
 const seed = (page) => page.addInitScript(() => {
   try {
@@ -97,7 +101,7 @@ try {
       `${index.n_regions} vs ${index.regions.length}`);
 
     // The quota model in the wire against the formulas in the code.
-    const quotasPy = readFileSync('../pipeline/regions/quotas.py', 'utf-8');
+    const quotasPy = readFileSync(join(REPO_ROOT, 'pipeline', 'regions', 'quotas.py'), 'utf-8');
     const model = index.model || {};
     let inSync = !!model.quotas;
     for (const [layer, spec] of Object.entries(model.quotas || {})) {
@@ -178,7 +182,8 @@ try {
   // drift; this check is deliberately of the kind whose own correctness is
   // a fact (a path resolves or it does not) rather than a judgement.
   {
-    const doc = readFileSync('../docs/REGIONS.md', 'utf-8');
+    // A checkout with autocrlf has CRLF in the doc; the fence regex wants LF.
+    const doc = readFileSync(join(REPO_ROOT, 'docs', 'REGIONS.md'), 'utf-8').replace(/\r\n/g, '\n');
     const block = doc.match(/```pointers\n([\s\S]*?)```/);
     const pointers = (block ? block[1] : '').split('\n')
       .map((l) => l.trim()).filter(Boolean)

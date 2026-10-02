@@ -110,6 +110,37 @@ export function trailGrade(src) {
 }
 
 /**
+ * A grade code to its label key, for every surface that names a trail's
+ * difficulty in a word. One table for the five published grades and the
+ * three-value `difficulty` alike, because the three are a subset of the five.
+ * export_wire.py ships `difficulty` as the grade wherever a grade exists
+ * (T286), so a row built from the wire (the dossier's around and nearby
+ * blocks, which carry no `f`) can arrive with very_hard or alpine, and a
+ * three-key table would print a raw key for those.
+ */
+export const GRADE_LABEL_KEY = {
+  easy: 'trails.gradeEasy',
+  moderate: 'trails.gradeModerate',
+  hard: 'trails.gradeHard',
+  very_hard: 'trails.gradeVeryHard',
+  alpine: 'trails.gradeAlpine',
+};
+export function gradeLabelKey(src) {
+  return GRADE_LABEL_KEY[trailGrade(src)] || null;
+}
+
+/**
+ * The one climb a surface prints when it has room for one number: the climb
+ * read uphill. The country card already carries descent_m (route_schema.py
+ * wire_keys), so Mount Korab (9) reads +1,423 m on its card rather than
+ * +7 m. A row with no descent_m (a dossier row, a cycling route) gets its
+ * stored ascent, which is all that row can say.
+ */
+export function trailClimbUp(src) {
+  return trailClimb(src).up;
+}
+
+/**
  * The country a walker starts in, as ISO2 (spec 6.8). regionize.py writes
  * rg.sc only where the trailhead's country differs from the row's own, so the
  * row's country is the answer everywhere else. Not the nearest catalogue

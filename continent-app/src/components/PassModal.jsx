@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
+import { useFocusTrap } from '../hooks/useFocusTrap.js';
 import { useI18n, LANGUAGES } from '../i18n/index.jsx';
 import {
   TIERS, TIER_ORDER, PAID_TIERS, formatPrice, yearPassTripsEquivalent, daysLeft,
@@ -56,6 +57,10 @@ export function PassModal({ entitlement, reason = '', onClose, onSignIn, signedI
   const [busy, setBusy] = useState('');
   const [failCode, setFailCode] = useState('');
   const [termsOpen, setTermsOpen] = useState(false);
+  const cardRef = useRef(null);
+  const closeRef = useRef(null);
+  // Escape on the shared capture-phase stack; off while the terms page is on top.
+  useFocusTrap(cardRef, onClose, { initialFocusRef: closeRef, enabled: !termsOpen });
 
   const locale = (LANGUAGES.find((l) => l.code === lang) || LANGUAGES[0]).bcp47;
   const current = entitlement?.tier || 'free';
@@ -80,8 +85,8 @@ export function PassModal({ entitlement, reason = '', onClose, onSignIn, signedI
 
   return (
     <div className="day-saved-overlay pass-overlay" role="dialog" aria-modal="true" onClick={onClose}>
-      <div className="day-saved-card pass-card" onClick={(e) => e.stopPropagation()}>
-        <button className="day-saved-close" onClick={onClose} aria-label={t('shape.close')} title={t('shape.close')}>×</button>
+      <div className="day-saved-card pass-card" ref={cardRef} onClick={(e) => e.stopPropagation()}>
+        <button className="day-saved-close" ref={closeRef} onClick={onClose} aria-label={t('shape.close')} title={t('shape.close')}>×</button>
 
         <div className="ai-plan-head">
           <span className="ai-plan-badge"><SparkIcon size={15} /></span>

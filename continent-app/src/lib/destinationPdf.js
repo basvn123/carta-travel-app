@@ -28,6 +28,7 @@
 import { stripDashes } from './format.js';
 import { activityLink } from './activityAffiliates.js';
 import { destShareUrl } from './dossier.js';
+import { trailClimbUp, gradeLabelKey } from './trailStory.js';
 
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 const MONTH_LONG = ['January', 'February', 'March', 'April', 'May', 'June', 'July',
@@ -364,9 +365,12 @@ export async function downloadDestinationPdf({
       for (const r of rows.slice(0, 6)) {
         const bits = [];
         if (r.km_len != null) bits.push(`${Math.round(r.km_len)} km`);
-        if (r.ascent_m != null) bits.push(`${Math.round(r.ascent_m)} m up`);
+        // Same reading as AroundHere: the climb uphill, the grade's label.
+        const up = trailClimbUp(r);
+        if (up != null) bits.push(`${Math.round(up)} m up`);
         if (r.elev_m != null) bits.push(`${Math.round(r.elev_m)} m`);
-        if (r.difficulty) bits.push(T(`dest.diff.${r.difficulty}`));
+        const gradeKey = gradeLabelKey(r);
+        if (gradeKey) bits.push(T(gradeKey));
         if (r.water) bits.push(r.water);
         ensure(lh(9) + 1.5);
         font(SANS, 'normal', 9, C.ink);
@@ -395,7 +399,8 @@ export async function downloadDestinationPdf({
       for (const r of rows) {
         const bits = [];
         if (r.km_len != null) bits.push(`${Math.round(r.km_len)} km`);
-        if (r.ascent_m != null) bits.push(`${Math.round(r.ascent_m)} m up`);
+        const up = trailClimbUp(r);
+        if (up != null) bits.push(`${Math.round(up)} m up`);
         if (r.car_free) bits.push(T('dest.routesCarFree'));
         ensure(lh(9) + 1.5);
         font(SANS, 'normal', 9, C.ink);

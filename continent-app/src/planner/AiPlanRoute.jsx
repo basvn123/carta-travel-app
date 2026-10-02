@@ -64,7 +64,7 @@ export function AiPlanRoute({ stops, phases = [] }) {
     if (pins.length < 2) return undefined;
     fetchWalkingRoute(pins).then((r) => { if (alive) setRoute(r); });
     return () => { alive = false; };
-  }, [routeKey]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [pins]);
 
   // TripMap indexes its pins, the list indexes the day. Translate both ways.
   const selPin = sel == null ? null : plotted.findIndex((p) => p.i === sel);

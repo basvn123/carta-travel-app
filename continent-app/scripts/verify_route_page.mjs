@@ -47,7 +47,7 @@ const check = (label, ok, note = '') => checks.push({ label, ok, note });
 const errors = [];
 // content_overrides is a Supabase table the live project does not have; the
 // app asks for it and carries on. Every other harness filters it too.
-const NOISE = /emrldtp|ERR_FAILED|config is not valid|content_overrides|net::|favicon|Failed to load resource/;
+const NOISE = /ERR_FAILED|config is not valid|content_overrides|net::|favicon|Failed to load resource/;
 
 // Pick real subjects out of the wire, so the harness tests what shipped.
 const pick = () => {

@@ -125,7 +125,10 @@ export function ContentSection({ overrides, onOverridesChanged, errText }) {
     setCountries([]); setCountry(''); setItems([]); setEditing(null);
     fetchJson(`/${layer.dir}/index.json`).then((raw) => {
       if (!live || !raw) return;
+      // The nature indexes name the field `cc` and count with `n`; the trails
+      // index names it `country` and counts with `n_trips` (T268-e).
       const list = (raw.countries || [])
+        .map((c) => (c ? { cc: c.cc || c.country, n: c.n ?? c.n_trips } : null))
         .filter((c) => c && c.cc && (c.n === undefined || c.n > 0))
         .map((c) => ({ cc: c.cc, n: c.n || 0 }));
       setCountries(list);

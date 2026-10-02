@@ -13,7 +13,7 @@ const browser = await chromium.launch();
 const checks = [];
 const errors = [];
 const check = (label, ok, note = '') => checks.push({ label, ok, note });
-const NOISE = /emrldtp|ERR_FAILED|config is not valid/;
+const NOISE = /ERR_FAILED|config is not valid/;
 const iso = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 
 async function toWhenStep(width, height, fakeNow) {

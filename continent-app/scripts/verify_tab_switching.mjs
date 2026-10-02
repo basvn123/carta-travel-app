@@ -31,7 +31,7 @@ const check = (label, ok, note = '') => checks.push({ label, ok, note });
 // The emrldtp affiliate loader always fails offline (accepted risk), and the
 // weather calls are rate-capped. Neither says anything about the section
 // switch, so neither is a regression signal here.
-const NOISE = /emrldtp|ERR_FAILED|config is not valid|open-meteo/;
+const NOISE = /ERR_FAILED|config is not valid|open-meteo/;
 
 const SEED = () => {
   try {

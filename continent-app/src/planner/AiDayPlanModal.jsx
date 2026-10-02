@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useI18n } from '../i18n/index.jsx';
+import { useFocusTrap } from '../hooks/useFocusTrap.js';
 import { DAY_STYLES } from './dayDraft.js';
 import { stopPhaseLabels } from './daySchedule.js';
 import { AiPlanRoute } from './AiPlanRoute.jsx';
@@ -71,6 +72,9 @@ export function AiDayPlanModal({
   // yesterday burns a generation on a day nobody can go. Live, so a dialog
   // left open across midnight tightens with the clock rather than staying on
   // the bound it was born with.
+  const cardRef = useRef(null);
+  const closeRef = useRef(null);
+  useFocusTrap(cardRef, onClose, { initialFocusRef: closeRef });
   const today = useToday();
   const dateMax = addDays(today, 365);
   const [date, setDate] = useState(dateISO || '');
@@ -152,8 +156,8 @@ export function AiDayPlanModal({
 
   return (
     <div className="day-saved-overlay ai-plan-overlay" role="dialog" aria-modal="true" onClick={onClose}>
-      <div className="day-saved-card ai-plan-card" onClick={(e) => e.stopPropagation()}>
-        <button className="day-saved-close" onClick={onClose} aria-label={t('shape.close')} title={t('shape.close')}>×</button>
+      <div className="day-saved-card ai-plan-card" ref={cardRef} onClick={(e) => e.stopPropagation()}>
+        <button className="day-saved-close" ref={closeRef} onClick={onClose} aria-label={t('shape.close')} title={t('shape.close')}>×</button>
         <div className="ai-plan-head">
           <span className="ai-plan-badge"><SparkIcon size={15} /></span>
           <h3>{t('ai.title', { n: dayNumber, city })}</h3>

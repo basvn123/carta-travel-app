@@ -122,6 +122,7 @@ export function I18nProvider({ children }) {
     return { lang, setLang, t, languages: LANGUAGES };
     // `loaded` is in the deps on purpose: it is the signal that CATALOGS[lang]
     // just became real, and it is what rebuilds t() around it.
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- `loaded` is a deliberate trigger, not a value read inside the memo
   }, [lang, setLang, loaded]);
 
   return <I18nContext.Provider value={value}>{children}</I18nContext.Provider>;

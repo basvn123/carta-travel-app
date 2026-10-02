@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useI18n } from '../i18n/index.jsx';
 import { useFocusTrap } from '../hooks/useFocusTrap.js';
-import { loadJourney, typeLabel, diffLabel, eurRange, boldSegments } from '../lib/journeys.js';
+import { loadJourney, typeLabel, diffLabel, eurRange, boldSegments, lastCheckedMonth } from '../lib/journeys.js';
 import { srcSetFor } from '../lib/heroImage.js';
 import { trailheadDirectionsUrl } from '../lib/trailExport.js';
 import { safeUrl } from '../lib/format.js';
@@ -685,7 +685,9 @@ export function JourneyPage({ id, gatewayDest, onClose, onSelectDest }) {
           <section className="bpage-sources">
             <h2>{t('journey.sourcesHead')}</h2>
             <p className="bpage-attrib">
-              {t('journey.vintage', { year: trip.dataVintage || 2026 })}
+              {lastCheckedMonth(trip, lang)
+                ? t('journey.vintageChecked', { year: trip.dataVintage || 2026, month: lastCheckedMonth(trip, lang) })
+                : t('journey.vintage', { year: trip.dataVintage || 2026 })}
             </p>
             {trip.hero?.page && safeUrl(trip.hero.page) && (
               <ul>

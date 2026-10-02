@@ -138,7 +138,7 @@ async function setup(page) {
     const t = m.text();
     if (t.startsWith('UNHANDLED::')) { if (!isMockAuthNoise(t)) errors.push(`rejection: ${t.slice(11, 160)}`); return; }
     if (m.type() !== 'error') return;
-    if (/tile|cartocdn|ERR_|emrldtp|config is not valid|nominatim/i.test(t)) return;
+    if (/tile|cartocdn|ERR_|config is not valid|nominatim/i.test(t)) return;
     if (isMockAuthNoise(t)) return;
     errors.push(`console: ${t.slice(0, 140)}`);
   });

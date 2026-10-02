@@ -44,7 +44,7 @@ if (!(await isUp())) {
 }
 
 // ── fixtures ──────────────────────────────────────────────────────────────
-const NOISE = /favicon|net::ERR_|Failed to load resource|maplibre|WebGL|tile|Nominatim|ResizeObserver|emrldtp|entrypoint_config|config is not valid/i;
+const NOISE = /favicon|net::ERR_|Failed to load resource|maplibre|WebGL|tile|Nominatim|ResizeObserver|entrypoint_config|config is not valid/i;
 const GEO = [{
   display_name: 'Hotel Artemide, Via Nazionale, Rome, Lazio, Italy', name: 'Hotel Artemide',
   lat: '41.8996', lon: '12.4939', category: 'tourism', type: 'hotel',

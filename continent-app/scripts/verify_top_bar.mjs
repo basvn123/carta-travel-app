@@ -41,7 +41,7 @@ const check = (label, ok, note = '') => { checks.push({ label, ok, note }); };
 
 // The emrldtp loader is an accepted risk that always fails offline; its fetch
 // noise is not a regression signal for this bar.
-const NOISE = /emrldtp|ERR_FAILED|config is not valid|open-meteo/;
+const NOISE = /ERR_FAILED|config is not valid|open-meteo/;
 
 const boot = async (viewport, tag) => {
   const page = await browser.newPage({ viewport });

@@ -51,7 +51,7 @@ const browser = await chromium.launch();
 const checks = [];
 const check = (label, ok, note = '') => checks.push({ label, ok, note });
 const errors = [];
-const NOISE = /emrldtp|ERR_FAILED|config is not valid|content_overrides|net::|favicon/;
+const NOISE = /ERR_FAILED|config is not valid|content_overrides|net::|favicon/;
 
 const seed = (page) => page.addInitScript(() => {
   try {

@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useI18n } from '../i18n/index.jsx';
 import { useFocusTrap } from '../hooks/useFocusTrap.js';
 import { FavStar } from '../components/FavStar.jsx';
+import { MonthStrip } from '../components/MonthStrip.jsx';
 import { NearbyOutdoors } from './NearbyOutdoors.jsx';
 import {
   mountainHeadline, mountainWhy, mountainTags, mountainHazards, mountainSeason,
@@ -189,6 +190,16 @@ export function MountainPage({ mountain, countryName, onClose, onSelectDest, onO
     if (how === 'copied') setToast(t('trip.linkCopied'));
   };
 
+  // The climatology's months, as the shared strip. Good months are the ones the
+  // season sweep named; avoid months are the ones with snow cover of 75 percent
+  // or more that are not good. A row without months keeps the v1 facts line.
+  const monthsGood = mountain.season?.months || [];
+  const hasMonths = monthsGood.length > 0;
+  const monthsAvoid = hasMonths && Array.isArray(mountain.season.snow)
+    ? mountain.season.snow.map((p, i) => (p >= 75 ? i + 1 : 0))
+      .filter((m) => m && !monthsGood.includes(m))
+    : [];
+
   const facts = [
     mountain.ele != null && {
       key: 'ele',
@@ -240,7 +251,7 @@ export function MountainPage({ mountain, countryName, onClose, onSelectDest, onO
       label: t('mtn.factHighpoint'),
       value: mountain.highpointOf,
     },
-    mountain.season && {
+    mountain.season && !hasMonths && {
       key: 'season',
       label: t('mtn.factSeason'),
       // The climatology's own sentence where there is one, which names the
@@ -386,6 +397,22 @@ export function MountainPage({ mountain, countryName, onClose, onSelectDest, onO
                 {hazards.map((h) => <li key={h.code}>{h.line}</li>)}
               </ul>
               <p className="mpage-check">{t('mtn.hazardsCheck')}</p>
+            </section>
+          )}
+
+          {hasMonths && (
+            <section className="mpage-season">
+              <h2>{t('mtn.seasonHead')}</h2>
+              <MonthStrip
+                good={monthsGood}
+                avoid={monthsAvoid}
+                info={(
+                  <>
+                    <p>{bestMonthsLine(mountain, t)}</p>
+                    <p>{t('mtn.seasonEstNote')}</p>
+                  </>
+                )}
+              />
             </section>
           )}
 

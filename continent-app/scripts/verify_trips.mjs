@@ -52,7 +52,7 @@ const errors = [];
 const checks = [];
 const check = (label, ok, note = '') => { checks.push({ label, ok, note }); };
 
-const NOISE = /emrldtp|ERR_FAILED|config is not valid|open-meteo|basemaps\.cartocdn/;
+const NOISE = /ERR_FAILED|config is not valid|open-meteo|basemaps\.cartocdn/;
 // A generic "Failed to load resource" console line carries no URL, so it is
 // useless as a failure. Requests are watched properly below instead, which
 // names what broke.
@@ -60,7 +60,7 @@ const CONSOLE_NOISE = /Failed to load resource/;
 // Known-absent and documented: migration 018's overrides table is not applied
 // on the live project, and lib/overrides.js is built to resolve to no
 // corrections when the read fails rather than take the catalogue down.
-const REQUEST_NOISE = /content_overrides|emrldtp/;
+const REQUEST_NOISE = /content_overrides/;
 const badRequests = [];
 
 const boot = async (viewport, hash = '') => {

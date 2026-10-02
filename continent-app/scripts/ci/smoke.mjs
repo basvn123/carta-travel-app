@@ -55,7 +55,7 @@ const pass = (msg) => console.log(`  ok    ${msg}`);
 // would be red on every machine without a deployed database. The same goes
 // for any cross-origin failure: this gate asserts that OUR files load, and
 // same-origin JSON is checked separately and strictly below.
-const NOISE = /emrldtp|ERR_FAILED|ERR_INTERNET_DISCONNECTED|config is not valid|open-meteo|ERR_NAME_NOT_RESOLVED|supabase\.co/;
+const NOISE = /ERR_FAILED|ERR_INTERNET_DISCONNECTED|config is not valid|open-meteo|ERR_NAME_NOT_RESOLVED|supabase\.co/;
 
 // What each route must show. Selectors are the ones the existing verify
 // harnesses already assert on, so a class rename breaks one obvious place.

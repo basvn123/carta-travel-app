@@ -127,3 +127,46 @@ export function boldSegments(text) {
   const parts = String(text || '').split('**');
   return parts.map((chunk, i) => ({ text: chunk, bold: i % 2 === 1 }));
 }
+
+/**
+ * The month a trip was last checked, written out in the reader's language
+ * ("September 2026"). It comes from provenance.ingestedAt, the date the trip
+ * entered the catalogue; null when the trip has no usable date, so the page
+ * falls back to the bare data year rather than printing a guess.
+ */
+export function lastCheckedMonth(trip, lang) {
+  const m = /^(\d{4})-(\d{2})/.exec(trip?.provenance?.ingestedAt || '');
+  if (!m) return null;
+  const month = Number(m[2]);
+  if (month < 1 || month > 12) return null;
+  try {
+    return new Intl.DateTimeFormat(lang || 'en', { month: 'long', year: 'numeric' })
+      .format(new Date(Number(m[1]), month - 1, 1));
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * What the index can say about its own coverage, from the index alone: how
+ * many trips, in how many countries, and how many of those countries have
+ * fewer than half of the styles. Counts, not adjectives.
+ */
+export function coverageFacts(index) {
+  const types = index?.types || [];
+  const styles = types.length;
+  const perCountry = new Map();
+  for (const tp of types) {
+    for (const cc of tp.countries || []) perCountry.set(cc, (perCountry.get(cc) || 0) + 1);
+  }
+  const half = Math.ceil(styles / 2);
+  let thin = 0;
+  perCountry.forEach((n) => { if (n < half) thin += 1; });
+  return {
+    trips: types.reduce((a, tp) => a + (tp.n || 0), 0),
+    countries: perCountry.size,
+    styles,
+    thin,
+    stylesIn: (cc) => perCountry.get(cc) || 0,
+  };
+}

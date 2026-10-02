@@ -9,8 +9,9 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import {
   trailClimb, trailGrade, trailheadCountry, trailPlace, isComfortableDay,
-  trailReasons, trailStory,
+  trailReasons, trailStory, trailClimbUp, gradeLabelKey,
 } from "../src/lib/trailStory.js";
+import { trailFactLine, trailKml, trailGpx } from "../src/lib/trailExport.js";
 
 const t = (key, vars) => (vars ? `${key} ${JSON.stringify(vars)}` : key);
 
@@ -90,4 +91,43 @@ test("a comfortable day out is never claimed over a big climb", () => {
   const easy = [{ code: "dayOut", km: 9 }];
   assert.ok(trailReasons(easy, t, 6, { ascent_m: 300, descent_m: 300, duration_min: 200 })
     .some((r) => r.text.startsWith("trails.whyDayOut")));
+});
+
+// T286: one climb and one difficulty on every surface (T108-d, T108-f).
+// The country card carries descent_m already (route_schema.py wire_keys); a
+// row without it (a dossier row, a cycling route) has only its ascent.
+const KORAB_9_NO_DESCENT = { ...KORAB_9, descent_m: undefined };
+
+test("one climb: the card, the KML line and the dossier rows read it uphill", () => {
+  assert.equal(trailClimbUp(KORAB_9), 1423);
+  // No descent on the row: the stored ascent is all it can say.
+  assert.equal(trailClimbUp(KORAB_9_NO_DESCENT), 7);
+  assert.equal(trailClimbUp({ ascent_m: 21 }), 21); // a cycling dossier row
+  assert.equal(trailClimbUp({}), null);
+
+  // The KML fact line reads the detail when it has arrived, and the card
+  // before that.
+  assert.equal(trailFactLine(KORAB_9_NO_DESCENT, KORAB_9), "7.9 km, 3.9 h, +1423 m");
+  assert.equal(trailFactLine(KORAB_9), "7.9 km, 3.9 h, +1423 m");
+  assert.equal(trailFactLine(KORAB_9_1), "12.1 km, 7.0 h, +1568 m");
+  assert.equal(trailFactLine({ category: "citytrip", distance_m: 4200, duration_min: 180 }),
+    "4.2 km, 3.0 h");
+  const kml = trailKml(KORAB_9, KORAB_9, { factLine: "7.9 km, 3.9 h, +7 m" });
+  assert.ok(kml.includes("+1423 m"));
+  assert.ok(!kml.includes("+7 m"));
+});
+
+test("one difficulty: dossier rows and the GPX name the grade", () => {
+  // A dossier row carries no f; after T286 its difficulty is the grade.
+  assert.equal(gradeLabelKey({ difficulty: "very_hard" }), "trails.gradeVeryHard");
+  assert.equal(gradeLabelKey({ difficulty: "alpine" }), "trails.gradeAlpine");
+  // A row attributes.py has not reached keeps validate.py's class.
+  assert.equal(gradeLabelKey({ difficulty: "easy" }), "trails.gradeEasy");
+  // Where both are present the grade wins, as on the facts strip.
+  assert.equal(gradeLabelKey(KORAB_9_1), "trails.gradeVeryHard");
+  assert.equal(gradeLabelKey({}), null);
+
+  const gpx = trailGpx(KORAB_9_1);
+  assert.ok(gpx.includes("very hard"));
+  assert.ok(!gpx.includes("moderate"));
 });

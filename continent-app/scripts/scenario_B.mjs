@@ -22,7 +22,7 @@ if (!(await isUp())) {
 const log = [];
 const note = (k, v) => { log.push({ k, v }); console.log(k, typeof v === 'string' ? v : JSON.stringify(v)); };
 const errors = [];
-const NOISE = /favicon|net::ERR_|Failed to load resource|maplibre|WebGL|tile|Nominatim|ResizeObserver|401|403|429|emrldtp|entrypoint_config|config is not valid/i;
+const NOISE = /favicon|net::ERR_|Failed to load resource|maplibre|WebGL|tile|Nominatim|ResizeObserver|401|403|429|entrypoint_config|config is not valid/i;
 
 const appData = JSON.parse(readFileSync('public/app_data.json', 'utf8'));
 const dests = appData.destinations || {};

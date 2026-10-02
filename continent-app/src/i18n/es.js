@@ -3631,6 +3631,9 @@ export const es = {
   'journey.ctaGateway': 'Calcula un viaje a {city}',
   'journey.sourcesHead': 'Sobre este plan',
   'journey.vintage': 'Cifras de planificación para {year}. Todos los precios son orientativos.',
+  'journey.vintageChecked': 'Cifras de planificación para {year}, revisadas por última vez en {month}. Todos los precios son orientativos.',
+  'journey.coverage': '{trips} viajes en {countries} países, en {styles} estilos. La cobertura es desigual: {thin} de {countries} países tienen menos de la mitad de los estilos, así que un filtro de país puede no devolver nada.',
+  'journey.coverageCountry': '{country} tiene viajes en {n} de {styles} estilos. Los demás estilos aún no están escritos para este país.',
 
   // Explore rebuild (PLAN.md C1-C6): place kinds, roles, filter rail
   "pkind.metro": "Metrópoli",

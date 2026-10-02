@@ -5,8 +5,8 @@
 //
 //   node scripts/verify_csp.mjs [--csp CSP_VALUE] [--url URL]
 //
-// Default CSP is the current one in vercel.json/public/_headers.
-// If --csp is omitted, loads dist with the vercel.json header.
+// Default CSP is the real one, read from the "/*" stanza of public/_headers.
+// If --csp is omitted, loads dist with that header.
 // If --url is provided, skips build and uses that (e.g., http://localhost:4173).
 
 import { chromium } from 'playwright';
@@ -26,14 +26,31 @@ for (let i = 0; i < args.length; i++) {
   if (args[i] === '--url' && i + 1 < args.length) urlArg = args[i + 1];
 }
 
-// Default CSP (from vercel.json)
-const DEFAULT_CSP = "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self'; script-src 'self' 'sha256-X2EKZ8Fy6+4YrR9ibDxyMwvkQEKFMxZEI1ZTK0zUIz0=' https://emrldtp.com; worker-src 'self' blob:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https://*.cartocdn.com https://upload.wikimedia.org https://thumb.wikimedia.org https://commons.wikimedia.org https://s0.geograph.org.uk https://s1.geograph.org.uk https://s2.geograph.org.uk https://s3.geograph.org.uk https://tile.openstreetmap.org https://flagcdn.com https://emrldtp.com; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://*.cartocdn.com https://routing.openstreetmap.de https://nominatim.openstreetmap.org https://overpass-api.de https://overpass.kumi.systems https://*.wikipedia.org https://emrldtp.com https://www.travelpayouts.com https://sentry.avs.io; manifest-src 'self'; upgrade-insecure-requests";
+// The real header, read from public/_headers (read only). Production is on
+// Cloudflare Pages since T293, and the "/*" stanza of that file is what it
+// sends. vercel.json is the rollback host only and is not consulted. Reading
+// the file means this harness can never drift from the shipped policy, which
+// is what the three hard-coded copies it used to carry did (T276-a).
+async function readRealCsp() {
+  const text = await fs.readFile(path.join(repoRoot, 'public', '_headers'), 'utf8');
+  const lines = text.split(/\r?\n/);
+  const start = lines.findIndex((l) => l.trim() === '/*');
+  if (start < 0) throw new Error('public/_headers has no "/*" stanza');
+  for (let i = start + 1; i < lines.length && /^\s/.test(lines[i]); i++) {
+    const m = lines[i].match(/^\s+Content-Security-Policy:\s*(.+?)\s*$/);
+    if (m) return m[1];
+  }
+  throw new Error('the "/*" stanza of public/_headers has no Content-Security-Policy line');
+}
 
-// CSP with cdn.carta-europetravel.com added to img-src
-const WITH_CDN_CSP = "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self'; script-src 'self' 'sha256-X2EKZ8Fy6+4YrR9ibDxyMwvkQEKFMxZEI1ZTK0zUIz0=' https://emrldtp.com; worker-src 'self' blob:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https://*.cartocdn.com https://cdn.carta-europetravel.com https://upload.wikimedia.org https://thumb.wikimedia.org https://commons.wikimedia.org https://s0.geograph.org.uk https://s1.geograph.org.uk https://s2.geograph.org.uk https://s3.geograph.org.uk https://tile.openstreetmap.org https://flagcdn.com https://emrldtp.com; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://*.cartocdn.com https://routing.openstreetmap.de https://nominatim.openstreetmap.org https://overpass-api.de https://overpass.kumi.systems https://*.wikipedia.org https://emrldtp.com https://www.travelpayouts.com https://sentry.avs.io; manifest-src 'self'; upgrade-insecure-requests";
-
-// CSP without Wikimedia and Geograph (to measure blocking impact)
-const NO_WIKIMEDIA_CSP = "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self'; script-src 'self' 'sha256-X2EKZ8Fy6+4YrR9ibDxyMwvkQEKFMxZEI1ZTK0zUIz0=' https://emrldtp.com; worker-src 'self' blob:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https://*.cartocdn.com https://cdn.carta-europetravel.com https://tile.openstreetmap.org https://flagcdn.com https://emrldtp.com; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://*.cartocdn.com https://routing.openstreetmap.de https://nominatim.openstreetmap.org https://overpass-api.de https://overpass.kumi.systems https://*.wikipedia.org https://emrldtp.com https://www.travelpayouts.com https://sentry.avs.io; manifest-src 'self'; upgrade-insecure-requests";
+// Reference only: the real policy with the Wikimedia and Geograph image hosts
+// removed, to show what blocking them would cost. Not a pass criterion.
+function withoutWikimedia(csp) {
+  return csp
+    .split(/\s+/)
+    .filter((tok) => !/^https:\/\/(upload|thumb|commons)\.wikimedia\.org$|^https:\/\/s[0-3]\.geograph\.org\.uk$/.test(tok))
+    .join(' ');
+}
 
 const pages = [
   { name: 'beaches', url: '#beach=es-cala-rovira-Q24021830&bc=ES', viewport: { width: 390, height: 844 } },
@@ -44,7 +61,7 @@ const pages = [
   { name: 'journeys', url: '#journeys=index', viewport: { width: 390, height: 844 } },
 ];
 
-const NOISE = /emrldtp|ERR_FAILED|config is not valid|ERR_CONNECTION_REFUSED|CSP for Playwright|playwrightInternal/;
+const NOISE = /ERR_FAILED|config is not valid|ERR_CONNECTION_REFUSED|CSP for Playwright|playwrightInternal/;
 
 let localServer = null;
 // The policy the local server sends. verifyCsp() sets it per run, so the three
@@ -71,7 +88,7 @@ async function startLocalServer(port = 4175) {
             '.svg': 'image/svg+xml',
           }[ext] || 'application/octet-stream';
           res.setHeader('Content-Type', contentType);
-          res.setHeader('Content-Security-Policy', currentCsp || cspArg || DEFAULT_CSP);
+          res.setHeader('Content-Security-Policy', currentCsp);
           res.writeHead(200);
           res.end(content);
         } else {
@@ -220,44 +237,35 @@ async function main() {
   }
 
   try {
-    // Run with three CSPs: current, with CDN, and without Wikimedia (to show blocking)
+    const real = cspArg || await readRealCsp();
     const results = {};
 
-    console.log('\n1. Testing CURRENT CSP (before)...');
-    results.before = await verifyCsp(DEFAULT_CSP, 'Current (default)');
+    console.log('\n1. Testing the REAL CSP (public/_headers)...');
+    results.real = await verifyCsp(real, 'Real header, public/_headers');
 
-    console.log('\n2. Testing WITH CDN CSP (after)...');
-    results.after = await verifyCsp(WITH_CDN_CSP, 'With CDN host added');
-
-    console.log('\n3. Testing NO WIKIMEDIA CSP (to show blocking impact)...');
-    results.noWikimedia = await verifyCsp(NO_WIKIMEDIA_CSP, 'Without Wikimedia/Geograph hosts (REFERENCE)');
+    console.log('\n2. Testing NO WIKIMEDIA CSP (reference, to show blocking impact)...');
+    results.noWikimedia = await verifyCsp(withoutWikimedia(real), 'Without Wikimedia/Geograph hosts (REFERENCE)');
 
     // Summary table
     console.log(`\n${'='.repeat(80)}`);
     console.log('Summary Table: Violations per Configuration');
     console.log(`${'='.repeat(80)}`);
-    console.log('\n| Page | Current | With CDN | Without Wiki |');
-    console.log('|---|---:|---:|---:|');
+    console.log('\n| Page | Real header | Without Wiki |');
+    console.log('|---|---:|---:|');
 
-    const allPages = Object.keys(results.before.pageViolations);
+    const allPages = Object.keys(results.real.pageViolations);
     for (const page of allPages) {
-      const before = results.before.pageViolations[page].length;
-      const after = results.after.pageViolations[page].length;
-      const noWiki = results.noWikimedia.pageViolations[page].length;
-      console.log(`| ${page} | ${before} | ${after} | ${noWiki} |`);
+      console.log(`| ${page} | ${results.real.pageViolations[page].length} | ${results.noWikimedia.pageViolations[page].length} |`);
     }
 
-    console.log('\n| TOTAL | ' +
-      results.before.totalViolations + ' | ' +
-      results.after.totalViolations + ' | ' +
-      results.noWikimedia.totalViolations + ' |');
+    console.log(`\n| TOTAL | ${results.real.totalViolations} | ${results.noWikimedia.totalViolations} |`);
 
     // Determine exit code
-    if (results.after.totalViolations === 0) {
-      console.log('\nSUCCESS: No CSP violations with the amended CSP.');
+    if (results.real.totalViolations === 0) {
+      console.log('\nSUCCESS: No CSP violations with the real header.');
       process.exit(0);
     } else {
-      console.log('\nFAILURE: CSP violations remain after amendment.');
+      console.log('\nFAILURE: CSP violations remain with the real header.');
       process.exit(1);
     }
   } finally {

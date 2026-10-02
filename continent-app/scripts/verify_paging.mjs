@@ -34,7 +34,7 @@ const check = (name, ok, note = '') => {
 
 const { chromium } = await import('playwright');
 const browser = await chromium.launch();
-const NOISE = /emrldtp|ERR_FAILED|config is not valid|favicon|content_overrides/;
+const NOISE = /ERR_FAILED|config is not valid|favicon|content_overrides/;
 const errors = [];
 
 const seed = (page) => page.addInitScript(() => {

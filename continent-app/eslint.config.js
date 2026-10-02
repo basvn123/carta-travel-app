@@ -28,7 +28,7 @@ export default [
       'react-hooks/rules-of-hooks': 'error',
       // Ramp-up rules -> warnings for now, so the guardrail lands without a big-
       // bang cleanup. Tighten to 'error' as the backlog is worked down.
-      'react-hooks/exhaustive-deps': 'warn',
+      'react-hooks/exhaustive-deps': 'error',
       'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
       'no-unused-vars': ['warn', { argsIgnorePattern: '^_', varsIgnorePattern: '^[A-Z_]' }],
       'no-empty': ['warn', { allowEmptyCatch: true }],

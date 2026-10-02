@@ -83,7 +83,7 @@ try {
   page.on('console', (m) => {
     if (m.type() !== 'error') return;
     const t = m.text();
-    if (/tile|cartocdn|ERR_|emrldtp|config is not valid|MIME type|Service worker/i.test(t)) return;
+    if (/tile|cartocdn|ERR_|config is not valid|MIME type|Service worker/i.test(t)) return;
     if (isMockAuthNoise(t)) return;
     errors.push(`console: ${t.slice(0, 140)}`);
   });

@@ -221,14 +221,16 @@ export function ReadyTripsStep({
   }, [countries, allCountries]);
   const ccKey = [...picked].sort().join(',');
 
+  // Keyed on the codes by value: `picked` is a new Set whenever the country
+  // picks change, even when the codes it holds do not.
   useEffect(() => {
     let live = true;
     setRows(null);
-    if (!picked.size) { setRows([]); return undefined; }
+    if (!ccKey) { setRows([]); return undefined; }
     setShown(12);
-    loadTripsFor([...picked]).then((list) => { if (live) setRows(list || []); });
+    loadTripsFor(ccKey.split(',')).then((list) => { if (live) setRows(list || []); });
     return () => { live = false; };
-  }, [ccKey]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [ccKey]);
 
   // A trip is offered when it visits at least one country still ticked. Length
   // follows the window from the first step, one day either side, because a
@@ -262,7 +264,7 @@ export function ReadyTripsStep({
     if (!onRestorePick || !selectedId || !rows) return;
     const card = rows.find((x) => x.id === selectedId);
     if (card) onRestorePick(card);
-  }, [rows, selectedId]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [rows, selectedId, onRestorePick]);
 
   const empty = rows != null && list.length === 0;
   // The countries this list is for, named in the title rather than in a

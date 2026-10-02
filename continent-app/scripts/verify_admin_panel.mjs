@@ -50,6 +50,9 @@ import { mkdirSync } from 'node:fs';
 
 const PORT = Number(process.env.CARTA_PORT) || Number(process.env.VERIFY_PORT) || 4192;
 const BASE = `http://127.0.0.1:${PORT}`;
+// Every explicit wait. Ten seconds failed under load (T268-g: ten parallel
+// sessions share the dev server's CPU); CARTA_WAIT_MS lowers or raises it.
+const WAIT = Number(process.env.CARTA_WAIT_MS) || 30000;
 const SHOTS = 'scripts/shots';
 mkdirSync(SHOTS, { recursive: true });
 
@@ -111,7 +114,10 @@ const seedModeration = (state) => {
       email: 'marco@example.com', publishedAt: '2026-08-12T10:00:00Z', views: 0, inGallery: false,
     },
   ];
-  const owner = { ownerId: USERS[0].id, ownerHandle: 'zoe_travels', ownerEmail: 'zoe@example.com' };
+  // The owner is an account that still exists at this point of the run: the
+  // Users step deleted USERS[0], and a stub owner that is a deleted account
+  // made the "Open owner" hand-off untestable (T266-e).
+  const owner = { ownerId: USERS[1].id, ownerHandle: 'marco_b', ownerEmail: 'marco@example.com' };
   state.reports = [
     {
       id: 'r1', status: 'new', planId: 'plan-g1', planLabel: 'Porto in four days', currentLabel: 'Porto in four days',
@@ -133,7 +139,7 @@ const seedModeration = (state) => {
     },
   ];
   const base = {
-    planExists: true, ownerId: USERS[0].id, ownerHandle: 'zoe_travels', ownerEmail: 'zoe@example.com',
+    planExists: true, ownerId: USERS[1].id, ownerHandle: 'marco_b', ownerEmail: 'marco@example.com',
     decidedByHandle: 'owner', createdAt: '2026-08-15T10:00:00Z', source: 'notice', noticeCount: 2,
     complaintAt: '2026-08-19T10:00:00Z', complaintStatus: 'open',
     complaintDecidedByHandle: null, complaintDecidedAt: null, complaintNote: null, reinstated: false,
@@ -706,6 +712,13 @@ try {
       note: 'pipeline swapped two lake names', status: 'temporary',
       reviewBy: '2026-01-01T12:00:00Z', authorNote: 'pipeline swapped two lake names',
       updatedAt: '2025-12-01T12:00:00Z', by: 'owner',
+    }, {
+      // T268-g: a real lake with its country, as a row saved after migration
+      // 045 carries one. Not due yet, so the earlier review-list counts hold;
+      // the 8g step below makes it overdue just before a save reloads the list.
+      layer: 'lake', itemId: 'it-lake-como-Q15523', country: 'IT', patch: { name: 'Lago di Como (test)' },
+      note: 'the pipeline name reads oddly', status: 'temporary', reviewBy: '2099-01-01T12:00:00Z',
+      authorNote: 'the pipeline name reads oddly', updatedAt: '2025-12-01T12:00:00Z', by: 'owner',
     }],
     feedback: [
       {
@@ -742,7 +755,7 @@ try {
   await page.locator('.account-avatar-btn').first().waitFor({ timeout: 120000 });
   await openPanel(page);
   const adminRow = page.locator('.account-nav:visible', { hasText: 'Admin' });
-  await adminRow.waitFor({ timeout: 10000 });
+  await adminRow.waitFor({ timeout: WAIT });
   // 44px is the THUMB floor, and this context is a 1360px window driven by a
   // pointer: the row lives in the account page's left panel here, sized like
   // every other row in it. The phone copy of the same door is the hub menu
@@ -805,7 +818,7 @@ try {
   // And the failure is recoverable without reopening the page.
   state.listFails = false;
   await page.locator('.adminpage-retry').click();
-  await page.locator('.adminpage-table').waitFor({ timeout: 10000 });
+  await page.locator('.adminpage-table').waitFor({ timeout: WAIT });
   if (await page.locator('.adminpage-err').count()) fail('the error survived a successful retry');
   ok('the retry button reloads the list and clears the error');
   await page.locator('.adminpage-search input').fill('');
@@ -815,7 +828,7 @@ try {
   console.log('4. users');
   await gotoSection(page, 'Overview');
   await gotoSection(page, 'Users');
-  await page.locator('.adminpage-table').waitFor({ timeout: 10000 });
+  await page.locator('.adminpage-table').waitFor({ timeout: WAIT });
   const bodyRows = page.locator('.adminpage-table tbody tr');
   if (await bodyRows.count() !== 3) fail(`expected 3 rows, found ${await bodyRows.count()}`);
   if (!(await page.locator('.adminpage-chip.staff').count())) fail('the staff account carries no chip');
@@ -842,7 +855,7 @@ try {
   await page.screenshot({ animations: 'disabled', path: `${SHOTS}/admin-users.png` });
 
   await page.locator('.adminpage-namebtn').first().click();
-  await page.locator('.adminpage-facts').waitFor({ timeout: 10000 });
+  await page.locator('.adminpage-facts').waitFor({ timeout: WAIT });
   if (!/Zoe/.test(await page.locator('.adminpage-detail-id').innerText())) {
     fail('the detail head does not name the user');
   }
@@ -961,14 +974,14 @@ try {
   // Back to the list, which is still filtered to the account just deleted,
   // so it is correctly empty and draws no table. Clearing the search is what
   // proves the row is gone rather than merely filtered out.
-  await page.locator('.adminpage-search input').waitFor({ timeout: 10000 });
+  await page.locator('.adminpage-search input').waitFor({ timeout: WAIT });
   if (!state.deleted.has(USERS[0].id)) fail('the right confirmation never deleted');
   if (state.mfa.refused.length) fail(`an RPC saw a token below aal2: ${state.mfa.refused.join(', ')}`);
   if (!(await page.locator('.adminpage-muted', { hasText: 'No accounts match' }).count())) {
     fail('the deleted account still matches its own search');
   }
   await page.locator('.adminpage-search input').fill('');
-  await page.locator('.adminpage-table').waitFor({ timeout: 10000 });
+  await page.locator('.adminpage-table').waitFor({ timeout: WAIT });
   if (await bodyRows.count() !== 2) fail(`the deleted account still shows: ${await bodyRows.count()} rows`);
   ok('deletion needs the exact address, and the table drops the account');
 
@@ -980,7 +993,7 @@ try {
   // these counts have to name the card they belong to or they silently start
   // measuring the wrong section.
   const signupsCard = page.locator('.adminpage-card', { hasText: 'Signups' }).first();
-  await signupsCard.locator('.adminpage-spark').waitFor({ timeout: 10000 });
+  await signupsCard.locator('.adminpage-spark').waitFor({ timeout: WAIT });
   const bars = await signupsCard.locator('.adminpage-sparkbar').count();
   if (bars !== 28) fail(`the signups chart has ${bars} bars, expected 28`);
   const provs = await page.locator('.adminpage-card', { hasText: 'How they sign in' })
@@ -1005,7 +1018,7 @@ try {
   // stopped answering the question it exists for.
   console.log('8b2. AI usage rollup');
   const aiCard = page.locator('.adminpage-card', { hasText: 'AI usage (30 days)' }).first();
-  await aiCard.waitFor({ timeout: 10000 });
+  await aiCard.waitFor({ timeout: WAIT });
   const aiText = await aiCard.innerText();
   // innerText collapses the tile's number and its label onto separate lines,
   // so the check is on the pair appearing together rather than on exact
@@ -1046,7 +1059,7 @@ try {
   // ledger is modelled, and the month selector actually moves the month.
   console.log('8b3. margin dashboard');
   const mgCard = page.locator('.adminpage-card', { hasText: 'Margin, 2026-08' }).first();
-  await mgCard.waitFor({ timeout: 10000 });
+  await mgCard.waitFor({ timeout: WAIT });
   const mgFlat = (await mgCard.innerText()).replace(/\s+/g, ' ');
   for (const [label, want] of [
     ['the pass count', '10 Passes sold'],
@@ -1083,18 +1096,18 @@ try {
   // The month selector has to refetch, not just relabel.
   await mgCard.locator('button', { hasText: 'Earlier month' }).click();
   await page.locator('.adminpage-card', { hasText: 'Margin, 2026-07' })
-    .first().waitFor({ timeout: 10000 });
+    .first().waitFor({ timeout: WAIT });
   await page.locator('.adminpage-card', { hasText: 'Margin, 2026-07' })
     .first().locator('button', { hasText: 'Later month' }).click();
   await page.locator('.adminpage-card', { hasText: 'Margin, 2026-08' })
-    .first().waitFor({ timeout: 10000 });
+    .first().waitFor({ timeout: WAIT });
   ok('margin: euros not cents, tiers apart, gap against 6.85 stated, ledger not invoiced, month selector refetches');
   await page.screenshot({ animations: 'disabled', path: `${SHOTS}/admin-margin.png`, fullPage: true });
 
   // ---- 8c. The feedback inbox.
   console.log('8c. feedback inbox');
   await gotoSection(page, 'Feedback');
-  await page.locator('.adminpage-fb').first().waitFor({ timeout: 10000 });
+  await page.locator('.adminpage-fb').first().waitFor({ timeout: WAIT });
   if (await page.locator('.adminpage-fb').count() !== 1) {
     fail('the New filter does not show exactly the one new message');
   }
@@ -1129,7 +1142,7 @@ try {
     fail('the Guides or Reports queues loaded before their tabs were opened');
   }
   await gotoSection(page, 'Guides');
-  await page.locator('.adminpage-table tbody tr').first().waitFor({ timeout: 10000 });
+  await page.locator('.adminpage-table tbody tr').first().waitFor({ timeout: WAIT });
   await page.waitForTimeout(400);
   if (state.guideCalls !== 1) fail(`the Guides tab made ${state.guideCalls} loads on first open, not one`);
   const gText = await page.locator('.adminpage-body').innerText();
@@ -1138,18 +1151,18 @@ try {
   if (!/Views are not counted/.test(gText)) fail('the Guides tab does not say views are not counted');
   // The author hand-off opens the account.
   await page.locator('.adminpage-namebtn').nth(1).click();
-  await page.locator('.adminpage-btn', { hasText: 'Email a password reset' }).waitFor({ timeout: 10000 });
+  await page.locator('.adminpage-btn', { hasText: 'Email a password reset' }).waitFor({ timeout: WAIT });
   ok('Guides: lazy first load, rows by title, the not-in-gallery chip, the author opens the account');
   await gotoSection(page, 'Guides');
-  await page.locator('.adminpage-table tbody tr').first().waitFor({ timeout: 10000 });
+  await page.locator('.adminpage-table tbody tr').first().waitFor({ timeout: WAIT });
   // A failure draws no table, and the retry brings the rows back.
   state.guidesFail = true;
   await page.locator('.adminpage-btn', { hasText: 'Refresh' }).click();
-  await page.locator('.adminpage-err').waitFor({ timeout: 10000 });
+  await page.locator('.adminpage-err').waitFor({ timeout: WAIT });
   if (await page.locator('.adminpage-table').count()) fail('a failed Guides load still drew its table');
   state.guidesFail = false;
   await page.locator('.adminpage-retry').click();
-  await page.locator('.adminpage-table tbody tr').first().waitFor({ timeout: 10000 });
+  await page.locator('.adminpage-table tbody tr').first().waitFor({ timeout: WAIT });
   if (await page.locator('.adminpage-err').count()) fail('the Guides error survived the retry');
   ok('Guides: a failed load says so and draws no table, and Try again recovers');
 
@@ -1183,7 +1196,7 @@ try {
   state.unpublishMode = 'ok';
   await page.locator('.adminpage-armed textarea').fill('  Copies a book  ');
   await page.locator('.adminpage-armed .adminpage-btn.danger', { hasText: 'Unpublish guide' }).click();
-  await page.locator('.adminpage-ok', { hasText: 'Guide unpublished' }).waitFor({ timeout: 10000 });
+  await page.locator('.adminpage-ok', { hasText: 'Guide unpublished' }).waitFor({ timeout: WAIT });
   const lastUnpub = state.unpublishCalls[state.unpublishCalls.length - 1];
   if (lastUnpub.p_reason !== 'Copies a book' || lastUnpub.p_plan_id !== 'plan-g2') {
     fail(`the takedown sent ${JSON.stringify(lastUnpub)}, not the trimmed reason for plan-g2`);
@@ -1195,7 +1208,7 @@ try {
   // Reports: lazy, filtered, worded.
   if (state.reportCalls.length !== 0) fail('Reports loaded before its tab was opened');
   await gotoSection(page, 'Reports');
-  await page.locator('.adminpage-fb').first().waitFor({ timeout: 10000 });
+  await page.locator('.adminpage-fb').first().waitFor({ timeout: WAIT });
   await page.waitForTimeout(500);
   if (state.reportCalls.length !== 1) fail(`the Reports tab made ${state.reportCalls.length} loads on first open, not one`);
   const r1c = page.locator('.adminpage-fb', { hasText: 'published book' });
@@ -1208,11 +1221,11 @@ try {
   ok('Reports: lazy first load, the New filter, the not-public chip, reply only with a contact email');
   state.reportsFail = true;
   await page.locator('.adminpage-btn', { hasText: 'Refresh' }).first().click();
-  await page.locator('.adminpage-err', { hasText: 'could not find' }).waitFor({ timeout: 10000 });
+  await page.locator('.adminpage-err', { hasText: 'could not find' }).waitFor({ timeout: WAIT });
   if (await page.locator('.adminpage-fb', { hasText: 'published book' }).count()) fail('a failed Reports load still drew the queue');
   state.reportsFail = false;
   await page.locator('.adminpage-retry').first().click();
-  await page.locator('.adminpage-fb', { hasText: 'published book' }).waitFor({ timeout: 10000 });
+  await page.locator('.adminpage-fb', { hasText: 'published book' }).waitFor({ timeout: WAIT });
   ok('Reports: a failed load says so and draws no queue, and Try again recovers');
 
   // Dismiss r2 (blank refused, trimmed reason in the body).
@@ -1224,7 +1237,7 @@ try {
   if (!(await dGo.isDisabled())) fail('Dismiss report is enabled with a blank reason');
   await dta.fill('  An opinion, not illegal.  ');
   await dGo.click();
-  await page.locator('.adminpage-ok', { hasText: 'Report dismissed' }).waitFor({ timeout: 10000 });
+  await page.locator('.adminpage-ok', { hasText: 'Report dismissed' }).waitFor({ timeout: WAIT });
   if (state.dismissCalls[0].p_reason !== 'An opinion, not illegal.' || state.dismissCalls[0].p_report_id !== 'r2') {
     fail(`Dismiss sent ${JSON.stringify(state.dismissCalls[0])}`);
   }
@@ -1236,7 +1249,7 @@ try {
   await r1c.locator('.adminpage-btn.danger', { hasText: 'Unpublish' }).click();
   await r1c.locator('textarea').fill('Copies a chapter of a book.');
   await r1c.locator('.adminpage-btn.danger', { hasText: 'Unpublish guide' }).click();
-  await page.locator('.adminpage-ok', { hasText: 'Reports marked actioned: 1' }).waitFor({ timeout: 10000 });
+  await page.locator('.adminpage-ok', { hasText: 'Reports marked actioned: 1' }).waitFor({ timeout: WAIT });
   await page.waitForTimeout(600);
   if (await page.locator('.adminpage-fb', { hasText: 'published book' }).count()) fail('an actioned report stayed in the New filter');
   await page.locator('.adminpage-seg', { hasText: /^All$/ }).last().click();
@@ -1246,6 +1259,19 @@ try {
     fail('a decided report does not carry its reason');
   }
   ok('Reports: unpublishing from a card actions the report; All shows who decided, when and why');
+
+  // T266-e: the owner hand-off. "Open owner" on a report card switches to
+  // Users and opens that account's detail, then Reports is still there.
+  const ownerBtn = page.locator('.adminpage-fb', { hasText: 'published book' }).locator('.adminpage-btn', { hasText: 'Open owner' });
+  if (await ownerBtn.count() !== 1) fail('a report card with a known owner offers no Open owner button');
+  else {
+    await ownerBtn.click();
+    await page.locator('.adminpage-facts').waitFor({ timeout: WAIT });
+    if (!/marco@example\.com/.test(await page.locator('.adminpage-body').innerText())) fail('Open owner did not open the owner account');
+    else ok('Reports: Open owner switches to Users and opens the owner account');
+    await gotoSection(page, 'Reports');
+    await page.locator('.adminpage-fb').first().waitFor({ timeout: WAIT });
+  }
 
   // Complaints, above the notices.
   const compCards = page.locator('#admin-complaints-h ~ .adminpage-fblist .adminpage-fb');
@@ -1267,7 +1293,7 @@ try {
   if (!/too many admin actions/i.test(await c2.locator('[role="alert"]').innerText())) fail('slow_down on a complaint is not worded');
   if ((await c2.locator('textarea').inputValue()) !== 'The address is gone, so it goes back.') fail('slow_down cleared the answer');
   await c2.locator('.adminpage-btn', { hasText: 'Reverse decision' }).click();
-  await page.locator('.adminpage-ok', { hasText: /Decision reversed/ }).waitFor({ timeout: 10000 });
+  await page.locator('.adminpage-ok', { hasText: /Decision reversed/ }).waitFor({ timeout: WAIT });
   const dec = state.decideCalls[state.decideCalls.length - 1];
   if (dec.p_outcome !== 'reversed' || dec.p_statement_id !== 's2' || dec.p_reason !== 'The address is gone, so it goes back.') {
     fail(`Reverse sent ${JSON.stringify(dec)}`);
@@ -1280,7 +1306,7 @@ try {
   await c1b.locator('.adminpage-btn', { hasText: 'Uphold' }).click();
   await c1b.locator('textarea').fill('The chapter matches the book.');
   await c1b.locator('.adminpage-btn', { hasText: 'Uphold decision' }).click();
-  await page.locator('.adminpage-ok', { hasText: /Decision upheld/ }).waitFor({ timeout: 10000 });
+  await page.locator('.adminpage-ok', { hasText: /Decision upheld/ }).waitFor({ timeout: WAIT });
   await page.locator('#admin-complaints-h ~ .adminpage-segment .adminpage-seg', { hasText: /^All$/ }).first().click();
   await page.waitForTimeout(800);
   if (!/Decided by @owner/.test(await page.locator('#admin-complaints-h ~ .adminpage-fblist').first().innerText())) fail('a decided complaint does not say who decided');
@@ -1315,7 +1341,7 @@ try {
   await page.waitForTimeout(900);
 
   await page.locator('.adminpage-card2').first().click();
-  await page.locator('.adminpage-editorbox').waitFor({ timeout: 10000 });
+  await page.locator('.adminpage-editorbox').waitFor({ timeout: WAIT });
   // http is refused by the page's own CSP, so the editor must not preview one
   // as though it would work.
   await page.locator('#ov-image').fill('http://insecure.example/a.jpg');
@@ -1357,6 +1383,10 @@ try {
       || ov.p_patch?.name !== 'A corrected name') {
     fail(`the patch is wrong: ${JSON.stringify(ov?.p_patch)}`);
   }
+  // T268-g: migration 045 added p_country, the wire file the item came from.
+  // A save from the grid sends the grid's country, an ISO code.
+  if (!/^[A-Z]{2}$/.test(ov.p_country || '')) fail(`a grid save sent no country: ${JSON.stringify(ov.p_country)}`);
+  else ok(`a grid save sends the grid's country (${ov.p_country})`);
   if (!/car park/.test(ov.p_note || '')) fail('the note never reached the server');
   if (ov.p_status !== 'temporary') fail(`the status sent was ${ov.p_status}`);
   if (!ov.p_review_by || Math.abs(new Date(ov.p_review_by) - Date.now() - 30 * 86400000) > 2 * 86400000) {
@@ -1385,7 +1415,7 @@ try {
   const beachRow = state.overrides.find((o) => o.layer === 'beach');
   beachRow.reviewBy = '2026-02-01T12:00:00Z';
   await lakeRow.click();
-  await page.locator('.adminpage-editorbox').waitFor({ timeout: 10000 });
+  await page.locator('.adminpage-editorbox').waitFor({ timeout: WAIT });
   if (await page.locator('#ov-name').inputValue() !== 'Lac du Test') fail('the review list opens the editor without the stored patch');
   if (await page.locator('#ov-note').inputValue() !== 'pipeline swapped two lake names') fail('the stored reason is not prefilled');
   if (!(await page.locator('.adminpage-reviewwas').count())) fail('the editor does not say the override was overdue');
@@ -1419,7 +1449,7 @@ try {
     fail('the corrected entry is not marked as edited');
   }
   await page.locator('.adminpage-card2.edited').first().click();
-  await page.locator('.adminpage-editorbox').waitFor({ timeout: 10000 });
+  await page.locator('.adminpage-editorbox').waitFor({ timeout: WAIT });
   if (await page.locator('#ov-image').inputValue() !== 'https://upload.wikimedia.org/better.jpg') {
     fail('the editor does not reopen with the saved correction');
   }
@@ -1428,7 +1458,7 @@ try {
   // object, not the live editing form, so it must show the ORIGINAL name
   // beside the corrected one even while the form itself already holds the
   // corrected value.
-  await page.locator('.diffviewer').waitFor({ timeout: 10000 });
+  await page.locator('.diffviewer').waitFor({ timeout: WAIT });
   const diffRows = await page.locator('.diffviewer .diffrow').allInnerTexts();
   const nameRow = diffRows.find((r) => /^Name/.test(r));
   if (!nameRow || !/A corrected name/.test(nameRow)) {
@@ -1458,6 +1488,8 @@ try {
   ok('the after photograph paints a real replacement image');
   await page.screenshot({ animations: 'disabled', path: `${SHOTS}/admin-content-diff.png` });
 
+  // 8g below needs the Como row due; the revert's save reloads the list.
+  state.overrides.find((o) => o.itemId === 'it-lake-como-Q15523').reviewBy = '2026-01-01T12:00:00Z';
   await page.locator('.adminpage-btn', { hasText: 'Revert to the pipeline' }).click();
   await page.waitForTimeout(1000);
   const rev = state.ovSetCalls[state.ovSetCalls.length - 1];
@@ -1469,10 +1501,32 @@ try {
   ok('reverting sends the empty patch that clears the override');
   await page.screenshot({ animations: 'disabled', path: `${SHOTS}/admin-content.png`, fullPage: true });
 
+  // T268-g: an override opened from the review list loads its pipeline item
+  // from the country saved with it, so the editor shows the ORIGINAL photo and
+  // the diff viewer its before-column. A real lake from the wire, with its
+  // country, stands in for a row saved after migration 045.
+  console.log('8g. review list, pipeline item from the saved country');
+  // The list reloaded when the revert saved, after the stub went overdue.
+  const comoRow = page.locator('.adminpage-review:not(.adminpage-orphans) .adminpage-reviewrow', { hasText: 'Lago di Como (test)' });
+  await comoRow.waitFor({ timeout: WAIT });
+  await comoRow.click();
+  await page.locator('.adminpage-editorbox').waitFor({ timeout: WAIT });
+  await page.waitForTimeout(800);
+  if (!(await page.locator('.adminpage-editorpreview img').count())) fail('the review-list editor shows no original photo for a row with a country');
+  await page.locator('.diffviewer').waitFor({ timeout: WAIT });
+  const comoRows = await page.locator('.diffviewer .diffrow').allInnerTexts();
+  const comoName = comoRows.find((r) => /^Name/.test(r));
+  if (!comoName || !/Lake Como/.test(comoName)) fail(`the diff before-column lost the pipeline name: ${JSON.stringify(comoRows)}`);
+  else ok('an override opened from the review list loads its pipeline photo and diff base from its own country');
+  await page.screenshot({ animations: 'disabled', path: `${SHOTS}/admin-content-review-country.png` });
+  await page.locator('.adminpage-editoractions .adminpage-btn').first().click();
+  await page.waitForTimeout(400);
+  state.overrides = state.overrides.filter((o) => o.itemId !== 'it-lake-como-Q15523');
+
   // ---- 9. Site section.
   console.log('9. site');
   await gotoSection(page, 'Site');
-  await page.locator('.adminpage-maint').waitFor({ timeout: 10000 });
+  await page.locator('.adminpage-maint').waitFor({ timeout: WAIT });
 
   // Maintenance mode publishes its own shape, and is the one control on this
   // page that turns the app off for everybody, so it reads as dangerous.
@@ -1520,7 +1574,7 @@ try {
   // ---- 10. Audit section.
   console.log('10. audit');
   await gotoSection(page, 'Audit');
-  await page.locator('.adminpage-table').waitFor({ timeout: 10000 });
+  await page.locator('.adminpage-table').waitFor({ timeout: WAIT });
   if (await page.locator('.adminpage-table tbody tr').count() !== 2) {
     fail('the audit table does not render the stubbed rows');
   }
@@ -1546,7 +1600,7 @@ try {
   await openPanel(page);
   await openAdmin(page);
   await gotoSection(page, 'Overview');
-  await page.locator('.adminpage-attention').waitFor({ timeout: 10000 });
+  await page.locator('.adminpage-attention').waitFor({ timeout: WAIT });
   if (!/2\s*New reports/.test((await page.locator('.adminpage-attention').innerText()).replace(/\n/g, ' '))) {
     fail('the Overview does not show the new-reports count');
   }
@@ -1676,7 +1730,7 @@ try {
   await page4.screenshot({ animations: 'disabled', path: `${SHOTS}/admin-380.png`, fullPage: true });
   // 8e at 380px: the review list with its one row must not push sideways.
   await page4.locator('.adminpage-navbtn:visible', { hasText: 'Content' }).first().click();
-  await page4.locator('.adminpage-reviewrow').first().waitFor({ timeout: 10000 });
+  await page4.locator('.adminpage-reviewrow').first().waitFor({ timeout: WAIT });
   await page4.waitForTimeout(800);
   const spill2 = await page4.evaluate(() => ({
     scrolls: document.documentElement.scrollWidth > window.innerWidth + 1,
@@ -1688,7 +1742,7 @@ try {
   ok('380px: the content review list fits');
   await page4.screenshot({ animations: 'disabled', path: `${SHOTS}/admin-content-380.png`, fullPage: true });
   await page4.locator('.adminpage-reviewrow').first().click();
-  await page4.locator('.adminpage-reviewset').waitFor({ timeout: 10000 });
+  await page4.locator('.adminpage-reviewset').waitFor({ timeout: WAIT });
   await page4.waitForTimeout(400);
   // T076: the diff viewer is inside .adminpage-editorbox, so the spill scan
   // below already covers it, but it must actually be there to be covered.
@@ -1718,7 +1772,7 @@ try {
     ['Guides', '.adminpage-table tbody tr'], ['Audit', '.adminpage-auditpair'],
   ]) {
     await page4.locator('.adminpage-navbtn:visible', { hasText: name }).first().click();
-    await page4.locator(wait).first().waitFor({ timeout: 10000 });
+    await page4.locator(wait).first().waitFor({ timeout: WAIT });
     await page4.waitForTimeout(400);
     const s = await spillOf();
     if (s.scrolls || s.wide.length) fail(`${name} spills at 380px: ${s.wide.join(' | ')}`);
@@ -1732,7 +1786,7 @@ try {
     .filter((el) => el.getBoundingClientRect().right > window.innerWidth + 1)
     .map((el) => `${el.tagName.toLowerCase()}.${el.className}`.slice(0, 50)).slice(0, 5), sel);
   await page4.locator('.adminpage-navbtn:visible', { hasText: 'Guides' }).first().evaluate((el) => el.click());
-  await page4.locator('.adminpage-table tbody tr').first().waitFor({ timeout: 10000 });
+  await page4.locator('.adminpage-table tbody tr').first().waitFor({ timeout: WAIT });
   await page4.locator('.adminpage-btn.danger', { hasText: 'Unpublish' }).first().click();
   await page4.locator('.adminpage-armed textarea').waitFor({ timeout: 5000 });
   await page4.waitForTimeout(400);
@@ -1740,7 +1794,7 @@ try {
   if (gSpill) fail('the Guides tab, with its takedown form open, scrolls the page sideways at 380px');
   await page4.screenshot({ animations: 'disabled', path: `${SHOTS}/admin-guides-380.png`, fullPage: true });
   await page4.locator('.adminpage-navbtn:visible', { hasText: 'Reports' }).first().evaluate((el) => el.click());
-  await page4.locator('.adminpage-fb').first().waitFor({ timeout: 10000 });
+  await page4.locator('.adminpage-fb').first().waitFor({ timeout: WAIT });
   await page4.locator('.adminpage-fb .adminpage-btn', { hasText: 'Dismiss' }).first().click();
   await page4.locator('.adminpage-armed textarea').first().waitFor({ timeout: 5000 });
   await page4.waitForTimeout(400);

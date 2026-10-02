@@ -25,7 +25,7 @@ const errors = [];
 // content_overrides 404s because migration 018 was never applied to the live
 // Supabase project; the overrides layer degrades to "no overrides" and every
 // screen still renders. Not this feature's business, so it is not its failure.
-const NOISE = /emrldtp|ERR_FAILED|config is not valid|cartocdn|content_overrides|Failed to load resource/;
+const NOISE = /ERR_FAILED|config is not valid|cartocdn|content_overrides|Failed to load resource/;
 
 /**
  * Open one of the app's top-level surfaces.

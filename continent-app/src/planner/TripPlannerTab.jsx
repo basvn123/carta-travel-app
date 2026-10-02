@@ -447,7 +447,7 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
       setSaveError(t('trip.openFailed'));
     });
     onOpenPlanConsumed && onOpenPlanConsumed();
-  }, [openPlanId]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [openPlanId]); // eslint-disable-line react-hooks/exhaustive-deps -- one-shot hand-off: tp is a fresh object every render, and a re-run before App clears the id would load the plan twice
 
   // A trip that arrived via a share link (decoded + sanitized in App): load it
   // like a wizard hand-over and open the planned view. Stops whose destination
@@ -487,7 +487,7 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
       setSheetOpen(true);
     }
     onSharedTripConsumed && onSharedTripConsumed();
-  }, [openSharedTrip]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [openSharedTrip]); // eslint-disable-line react-hooks/exhaustive-deps -- one-shot hand-off: tp is a fresh object every render, and a re-run before App clears the trip would load it twice
 
   // A country seed ("Plan a trip here") with a trip already on the map: the
   // wizard is not on screen, so open it as the modal and let it take the
@@ -495,7 +495,7 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
   useEffect(() => {
     if (!tripSeed) return;
     if (tp.planned || tp.stopDetails.length > 0) setWizardOpen(true);
-  }, [tripSeed]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [tripSeed, tp.planned, tp.stopDetails.length]);
 
   // Selecting a stop (via pin or card) scrolls its card into view.
   useEffect(() => {
@@ -573,7 +573,7 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
     let alive = true;
     fetchDrivingRoute(mapStops).then((r) => { if (alive && r) setTripRoute({ key: routeKey, ...r }); });
     return () => { alive = false; };
-  }, [routeKey]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [mapStops, routeKey]);
   const tripRouteOk = tripRoute && tripRoute.key === routeKey;
 
   const addPending = () => {

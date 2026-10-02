@@ -54,7 +54,7 @@ if (!(await isUp())) {
 const checks = [];
 const check = (label, ok, note = '') => checks.push({ label, ok, note });
 const errors = [];
-const NOISE = /emrldtp|ERR_FAILED|config is not valid|content_overrides|net::|favicon/;
+const NOISE = /ERR_FAILED|config is not valid|content_overrides|net::|favicon/;
 
 // Pick subjects from the shipped dossiers themselves, so the harness tests
 // what the data actually says rather than a destination somebody hoped had

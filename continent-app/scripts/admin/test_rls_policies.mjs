@@ -33,6 +33,10 @@
  *        policy admits nobody), and that is probed rather than trusted: a
  *        signed-in user and a signed-out visitor each try to read it and
  *        to insert into it, and both must come back with nothing.
+ *        That probe runs while most closed tables are empty, so for the
+ *        two that migration 047 widened (edge_errors, feedback) a later
+ *        section writes a real row first, through log_edge_error and
+ *        submit_feedback, and reads again (T284).
  *
  *   ISOLATION, one fixture per table with policies:
  *     The victim seeds rows through the `authenticated` role with their
@@ -69,11 +73,8 @@
  * not see a deliberately leaked row, nothing above was evidence.
  *
  * MIGRATIONS. Every file in supabase/migrations is applied in numeric
- * order; there is no list to keep current. 018 as committed fails on a real
- * Postgres because of the regex bound {5,600} (register row T031-d); as the
- * other harnesses do, it is applied as committed first, the failure is
- * reported, and a copy with {5,255} is applied from a temp directory. 018
- * in the repo is never edited.
+ * order; there is no list to keep current. Every file is applied as
+ * committed, 018 included (its regex bound is {5,} since T253).
  *
  * NEEDS a PostgreSQL server that accepts a password-less connection (trust
  * auth or PGPASSWORD). Set PGHOST, PGPORT, PGUSER as needed; defaults are
@@ -92,7 +93,8 @@ import { existsSync, readFileSync, readdirSync, writeFileSync, mkdtempSync, rmSy
 import { tmpdir } from 'node:os';
 
 const here = dirname(fileURLToPath(import.meta.url));
-const repoRoot = resolve(here, '../../..');
+// CARTA_REPO_ROOT names the root checkout when continent-app is a sibling worktree (T281).
+const repoRoot = process.env.CARTA_REPO_ROOT || resolve(here, '../../..');
 const migrations = process.env.CARTA_MIGRATIONS || resolve(repoRoot, 'supabase/migrations');
 
 let failures = 0;
@@ -428,8 +430,13 @@ const FIXTURES = [
   },
   {
     table: 'content_overrides',
-    // 043 made status, review_by and author_note mandatory.
-    seed: [{ as: 'db', sql: `insert into public.content_overrides (layer, item_id, patch, status, review_by, author_note) values ('dest', 't083', '{"name": "Lisboa"}', 'temporary', now() + interval '14 days', 'Seeded by the row policy test.')` }],
+    // 043 made status, review_by and author_note mandatory. The cycle row
+    // is 047's widened layer check (T284): it must seed, and it is then held
+    // to the same isolation as the dest row.
+    seed: [
+      { as: 'db', sql: `insert into public.content_overrides (layer, item_id, patch, status, review_by, author_note) values ('dest', 't083', '{"name": "Lisboa"}', 'temporary', now() + interval '14 days', 'Seeded by the row policy test.')` },
+      { as: 'db', sql: `insert into public.content_overrides (layer, item_id, patch, status, review_by, author_note) values ('cycle', 't083', '{"name": "EuroVelo 6"}', 'temporary', now() + interval '14 days', 'Seeded by the row policy test.')` },
+    ],
     mine: `item_id = 't083'`,
     mutate: `patch = '{"name": "tampered"}'`,
     forge: `insert into public.content_overrides (layer, item_id, patch, status, review_by, author_note) values ('dest', 't083_forged', '{}', 'temporary', now(), 'Forged by the row policy test.')`,
@@ -466,21 +473,6 @@ function runTests(bin) {
     console.log(`  Applying ${files.length} migrations from ${migrations}:`);
     for (const name of files) {
       const file = resolve(migrations, name);
-      if (name.startsWith('018_')) {
-        const raw018 = psqlRun(bin, TEST_DB, ['-f', file]);
-        if (raw018.ok) {
-          check(`migration applied: ${name} (as committed)`, true);
-        } else {
-          console.log(`  note  018 as committed fails here: ${firstError(raw018.err)}`);
-          const src = readFileSync(file, 'utf8');
-          check('018 carries the {5,600} bound the failure points at', src.includes('{5,600}'));
-          const patched = join(work, '018_content_overrides.patched.sql');
-          writeFileSync(patched, src.replace('{5,600}', '{5,255}'), 'utf8');
-          console.log('  note  applying a copy with {5,255} from a temp dir, for this test only');
-          applyFile(`${name} (patched copy, {5,255})`, patched);
-        }
-        continue;
-      }
       applyFile(name, file);
     }
 
@@ -721,6 +713,45 @@ function runTests(bin) {
     const strangerInvite = runAs('victim', `insert into public.trip_collaborators (trip_plan_id, user_id, invited_by) values ('${PLAN}', '${PLAIN}', '${VICTIM}')`);
     check('the owner cannot invite somebody who is not a friend (020, 046)',
       !strangerInvite.ok && /row-level security/i.test(strangerInvite.err), describe(strangerInvite));
+
+    // ---------------------------------------------------------------------
+    // 4b. The two closed tables 047 widened (T284). The closed-table probe
+    //     above runs while they are empty, where "reads nothing" would also
+    //     pass on an open table. Here a real row exists first: the victim's
+    //     crash (T083-b) and data report (T219-c) land through their writers,
+    //     and a second user and a visitor still read none of them.
+    // ---------------------------------------------------------------------
+    console.log('');
+    console.log('  A crash and a data report land through their writers and stay closed (047):');
+    const crashRows = () => scalar(bin, TEST_DB,
+      `select count(*) from public.edge_errors where user_id = '${VICTIM}' and fn = 'app' and code = 'client_crash' and origin = 'client'`);
+    const crash = runAs('victim', `select public.log_edge_error('app', 'client_crash', 'client', null, null)`);
+    check('the ErrorBoundary call from a signed-in traveller runs', crash.ok, describe(crash));
+    check('and stores exactly one crash row with the caller id', crashRows() === '1', crashRows());
+    const allBefore = scalar(bin, TEST_DB, 'select count(*) from public.edge_errors');
+    for (const [fn, code, origin] of [['plan-day', 'client_crash', 'client'], ['app', 'ai_timeout', 'client'], ['app', 'client_crash', 'edge']]) {
+      const forged = runAs('victim', `select public.log_edge_error('${fn}', '${code}', '${origin}', null, null)`);
+      check(`a forged (${fn}, ${code}, ${origin}) call is dropped without a row`,
+        forged.ok && scalar(bin, TEST_DB, 'select count(*) from public.edge_errors') === allBefore, describe(forged));
+    }
+    const anonCrash = runAs('anon', `select public.log_edge_error('app', 'client_crash', 'client', null, null)`);
+    check('a visitor cannot call the writer at all', denied(anonCrash), describe(anonCrash));
+    const dataReport = runAs('victim', `select public.submit_feedback('The photo shows the car park, not the beach.', 'data', null, '{"report": {"layer": "beach"}}'::jsonb)::text`);
+    check('a signed-in traveller sends a data report', dataReport.ok && /"ok": ?true/.test(dataReport.out), describe(dataReport));
+    const anonData = runAs('anon', `select public.submit_feedback('The price for Porto looks a year old.', 'data', null, null)::text`);
+    check('so does a visitor (the form works signed out)', anonData.ok && /"ok": ?true/.test(anonData.out), describe(anonData));
+    check("both are stored with kind 'data', not folded into 'other'", scalar(bin, TEST_DB,
+      `select count(*) from public.feedback where kind = 'data'`) === '2');
+    const oddKind = runAs('victim', `select public.submit_feedback('A kind nobody defined.', 'nonsense', null, null)::text`);
+    check("an unknown kind is still stored as 'other'", oddKind.ok && scalar(bin, TEST_DB,
+      `select count(*) from public.feedback where message = 'A kind nobody defined.' and kind = 'other'`) === '1', describe(oddKind));
+    for (const table of ['edge_errors', 'feedback']) {
+      check(`${table} holds rows for the probe below`, Number(scalar(bin, TEST_DB, `select count(*) from public.${table}`)) > 0);
+      for (const who of ['victim', 'plain', 'anon']) {
+        const read = runAs(who, `select count(*) from public.${table}`);
+        check(`${table}: ${who} reads none of the rows, their own included`, (read.ok && read.out === '0') || denied(read), describe(read));
+      }
+    }
 
     // ---------------------------------------------------------------------
     // 5. The harness proves itself: a deliberately leaked row is seen.

@@ -261,11 +261,11 @@ export function GuidedTripWizard({
   // sheet, and every move through the form closes it.
   const [stepsOpen, setStepsOpen] = useState(false);
   const isDesktop = useIsDesktop();
-  const goStep = (n) => {
+  const goStep = useCallback((n) => {
     setStepDir(n < step ? 'back' : 'fwd');
     setStep(n);
     setStepsOpen(false);
-  };
+  }, [step]);
 
 
   const [countries, setCountries] = useState(() => new Set(savedDraft.countries || []));
@@ -290,10 +290,20 @@ export function GuidedTripWizard({
   // and lets the Carta algorithm route them.
   const [buildMode, setBuildMode] = useState(() => savedDraft.buildMode || 'ready');
   const [tripPick, setTripPick] = useState(null);     // the chosen trip card
+  // The card's id, which is all the effects below read: they key on it so a
+  // re-fetched card for the same trip never reloads its stops.
+  const tripPickId = tripPick?.id || null;
   // The id from the draft, held until the Trips step has loaded the card it
   // names. Cleared as soon as a card arrives, or the moment the traveller
   // picks anything themselves, so a restore can never overwrite a fresh choice.
   const [pendingTripPickId, setPendingTripPickId] = useState(() => savedDraft.tripPickId || null);
+  // The Trips step hands the restored card back through this. Stable, so its
+  // restore effect runs when the list or the id changes and not on every
+  // render; a choice made in the meantime always wins over the restore.
+  const restoreTripPick = useCallback((card) => {
+    setPendingTripPickId(null);
+    setTripPick((cur) => cur || card);
+  }, []);
 
   // The seed lands on Where with its one country picked by hand. It replaces
   // the draft's countries rather than adding to them: "plan a trip here" is a
@@ -313,7 +323,7 @@ export function GuidedTripWizard({
       goStep(BASICS_STEPS.length + 1);
     }
     onSeedConsumed && onSeedConsumed();
-  }, [seed, allCountries.length]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [seed, allCountries, goStep, onSeedConsumed]);
   // Which trip's full page is open over the step. The page is the one the
   // Destinations tab shows, mounted here so "What's there" answers the
   // question in the place that already answers it properly.
@@ -450,7 +460,7 @@ export function GuidedTripWizard({
       list.push({ iata: originCode, name: originRec.name || originCity, city: originCity, km: Math.round(km || 0), coverage: 0 });
     }
     return list;
-  }, [originPoint?.lat, originPoint?.lon, data, originCode]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [originPoint, data?.meta, originCode, originRec, originCity]);
   // What a bed costs follows the travel style, not the app-wide lifestyle
   // panel; the panel's tier still stands when the style says nothing.
   const effectiveStayTier = STYLE_BY_KEY[travelStyle]?.stayTier || stayTier;
@@ -637,10 +647,10 @@ export function GuidedTripWizard({
   // stays become this wizard's stays, so the summary, the route and the
   // hand-over to the planner all work exactly as they do for a built trip.
   useEffect(() => {
-    if (!tripPick) { setTripDetail(null); setTripMissing(0); return undefined; }
+    if (!tripPickId) { setTripDetail(null); setTripMissing(0); return undefined; }
     let live = true;
     setTripLoading(true);
-    loadTrip(tripPick.id).then((detail) => {
+    loadTrip(tripPickId).then((detail) => {
       if (!live) return;
       setTripLoading(false);
       if (!detail) { setTripDetail(null); return; }
@@ -653,7 +663,7 @@ export function GuidedTripWizard({
       setOrder(stops.map((s) => s.dest));
     });
     return () => { live = false; };
-  }, [tripPick?.id, destinations]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [tripPickId, destinations]);
 
   // ---- The trip as dates: one anchor, everything else relative to it ------
   // Nothing below stores a calendar date of its own. Move the start and the
@@ -685,7 +695,7 @@ export function GuidedTripWizard({
     iata: nearAirports[0]?.iata || originCode || null,
   }), [originPlace, originCity, originRec, originPoint?.lat, originPoint?.lon, nearAirports, originCode]);
 
-  const pointOf = (id) => {
+  const pointOf = useCallback((id) => {
     const d = destinations[id];
     if (!d) return null;
     return {
@@ -697,7 +707,7 @@ export function GuidedTripWizard({
       iata: d.iata || null,
       anchorIata: d.anchor_airport || null,
     };
-  };
+  }, [destinations]);
 
   // Every hop of the trip, in order: out from home, stop to stop, home again.
   const travelLegs = useMemo(() => {
@@ -725,7 +735,7 @@ export function GuidedTripWizard({
       legs.push({ key: 'back', kind: 'back', from: last, to: homePoint, date: endDate });
     }
     return legs;
-  }, [stopDates, homePoint, tripStartDate, totalNights, destinations]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [stopDates, homePoint, tripStartDate, totalNights, pointOf]);
 
   // ---- Getting there: what the step knows before anyone answers ----------
   // The airports that actually fly somewhere near the two ends of the trip,
@@ -747,7 +757,7 @@ export function GuidedTripWizard({
 
   /** The airports near one stop, each carrying the dossier's transfer time
    *  when that airport is the one the dossier names as the anchor. */
-  const airportsFor = (id) => {
+  const airportsFor = useCallback((id) => {
     const d = destinations[id];
     if (!d) return [];
     const got = endTransfers[id] || null;
@@ -755,7 +765,7 @@ export function GuidedTripWizard({
       .map((a) => (got && got.airport === a.iata
         ? { ...a, transferMin: got.transfer_min ?? null, transferMode: got.transfer_mode || 'train' }
         : a));
-  };
+  }, [destinations, endTransfers, data?.meta]);
 
   // The legs, with everything the step guesses on them: which airports serve
   // each end, what the trip's own composer measured for a hop, and the mode
@@ -781,7 +791,7 @@ export function GuidedTripWizard({
         booked: booked.travel && (isOut || isBack),
       };
     });
-  }, [travelLegs, tripDetail, stopDates, endIds, endTransfers, booked.travel, destinations, data]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [travelLegs, tripDetail, stopDates, endIds, booked.travel, airportsFor]);
 
   // "Fly into BCN, home from GRO", when the far end of the trip has a
   // meaningfully closer airport than the one it started at.
@@ -791,7 +801,7 @@ export function GuidedTripWizard({
       if (jaw) return t('travel.openJaw', { into: jaw.into.iata, home: jaw.home.iata });
     }
     return '';
-  }, [gettingLegs, booked.travel]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [gettingLegs, booked.travel, t]);
 
   // Every leg opens already answered. The guess is written into the same state
   // the traveller edits, once per leg, so it flows into finish() unchanged and
@@ -815,7 +825,7 @@ export function GuidedTripWizard({
       }
       return next;
     });
-  }, [gettingLegs]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [gettingLegs]); // eslint-disable-line react-hooks/exhaustive-deps -- runs per new leg set only: re-running on quiz or drivingThere would refill a mode the traveller just cleared
 
   const setTravelLeg = (key, patch) => {
     setTravelValues((prev) => ({ ...prev, [key]: { ...prev[key], ...patch } }));
@@ -838,9 +848,8 @@ export function GuidedTripWizard({
       fixFirst: Boolean(anchorId && includedIds[0] === anchorId),
       pace,
     });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [readyTrip, includedIds, destinations, windowNights, totalNights, anchorDest, anchorId,
-    originPoint?.lat, originPoint?.lon, pace]);
+    originPoint, pace]);
   const nightsDiffer = Boolean(cartaPlan)
     && cartaPlan.order.some((id) => (nights[id] || 0) !== cartaPlan.nights[id]);
   const applyCartaNights = () => {
@@ -1656,10 +1665,11 @@ export function GuidedTripWizard({
 
   // Landing somewhere pins that country onto the trip, so the Stay step has a
   // region to talk about (more countries can still be added by search).
+  const arrivalCountry = arrivalDest?.country || '';
   useEffect(() => {
-    if (!booked.travel || !arrivalDest) return;
-    setCountries((prev) => (prev.has(arrivalDest.country) ? prev : new Set([...prev, arrivalDest.country])));
-  }, [booked.travel, arrivalDest?.country]); // eslint-disable-line react-hooks/exhaustive-deps
+    if (!booked.travel || !arrivalCountry) return;
+    setCountries((prev) => (prev.has(arrivalCountry) ? prev : new Set([...prev, arrivalCountry])));
+  }, [booked.travel, arrivalCountry]);
 
   // ---- The "planning around" recap: every earlier answer, always visible ----
   // Every chip is an answer, and an answer is somewhere you can go back to, so
@@ -1801,8 +1811,8 @@ export function GuidedTripWizard({
   // On the Getting there step the trip's stops and legs arrive under the
   // header, which on a phone is below the fold.
   useEffect(() => {
-    if (stepName === 'Getting' && tripPick) scrollPanelIntoView(tripPickRef.current);
-  }, [tripPick?.id, stepName]); // eslint-disable-line react-hooks/exhaustive-deps
+    if (stepName === 'Getting' && tripPickId) scrollPanelIntoView(tripPickRef.current);
+  }, [tripPickId, stepName]);
 
   /**
    * Choosing a trip from the list, or from its own page.
@@ -2304,10 +2314,7 @@ export function GuidedTripWizard({
                 favorites={favorites}
                 selectedId={tripPick?.id || pendingTripPickId}
                 onPick={pickReadyTrip}
-                onRestorePick={(card) => {
-                  setPendingTripPickId(null);
-                  setTripPick((cur) => cur || card);
-                }}
+                onRestorePick={restoreTripPick}
                 onToggleCountry={toggleCountry}
                 onOpenTrip={(trip) => setTripPageId(trip.id)}
                 onBuildOwn={setBuildMode}

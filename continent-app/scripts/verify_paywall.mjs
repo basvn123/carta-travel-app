@@ -138,7 +138,10 @@ for (const lang of LOCALES) {
 // paywall_event() drops anything not in its check constraint after it. Two
 // lists that must agree and live in different languages, in different repos'
 // worth of distance from each other, is exactly the drift this file exists for.
-const MIGRATION = join(SRC, '..', '..', 'supabase', 'migrations', '022_paywall_events.sql');
+// CARTA_REPO_ROOT names the root checkout when continent-app is a sibling
+// worktree rather than a child of it (T265-d); the same override the T265
+// scripts and verify_paywall_funnel.mjs read.
+const MIGRATION = join(process.env.CARTA_REPO_ROOT || join(SRC, '..', '..'), 'supabase', 'migrations', '022_paywall_events.sql');
 let sqlEvents = null;
 try {
   const sql = readFileSync(MIGRATION, 'utf8');

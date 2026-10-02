@@ -37,7 +37,7 @@ const errors = [];
 // and it does not exist on this Supabase project yet. That is another
 // feature's missing migration, not a fault in the lake layer, and failing
 // this script on it would report the wrong thing.
-const NOISE = /emrldtp|ERR_FAILED|config is not valid|content_overrides/;
+const NOISE = /ERR_FAILED|config is not valid|content_overrides/;
 
 const seed = (page) => page.addInitScript(() => {
   try {

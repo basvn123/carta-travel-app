@@ -53,7 +53,8 @@ import { existsSync, readFileSync, writeFileSync, mkdtempSync, rmSync } from 'no
 import { tmpdir } from 'node:os';
 
 const here = dirname(fileURLToPath(import.meta.url));
-const repoRoot = resolve(here, '../../..');
+// CARTA_REPO_ROOT names the root checkout when continent-app is a sibling worktree (T281).
+const repoRoot = process.env.CARTA_REPO_ROOT || resolve(here, '../../..');
 const migrations = resolve(repoRoot, 'supabase/migrations');
 
 let failures = 0;

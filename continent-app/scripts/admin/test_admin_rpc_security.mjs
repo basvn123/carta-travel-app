@@ -73,6 +73,16 @@
  * the refusal proves nothing and the run says so. This is the vacuous-gate
  * rule from CLAUDE.md applied to a permission test.
  *
+ * AFTER THE SURFACE CHECKS (T284). Four named sections follow the discovered
+ * ones. 7 tests admin_guard's rate budget, which nothing tested before
+ * (register row T300-o, raised against T034): a burst of 70 reads spends no
+ * budget, 60 logged actions in a minute refuse every tier with slow_down, 10
+ * destructive ones refuse the destructive tier only, another actor's rows do
+ * not count, and the window ends after 60 seconds. 8 to 10 test what
+ * migration 047 added: admin_adjust_expiry moves the date and keeps the
+ * allowance period, with one audit row per change; admin_edge_errors keeps
+ * client crashes off the AI figures; admin_set_override takes the cycle layer.
+ *
  * HOW. The harness of test_override_review.mjs (T074) and test_admin_mfa.mjs
  * (T063): stub schema auth, auth.users, auth.uid(), auth.jwt() and the three
  * Supabase roles, apply the migrations through psql with spawnSync so the
@@ -106,7 +116,8 @@ import { existsSync, readFileSync, readdirSync, writeFileSync, mkdtempSync, rmSy
 import { tmpdir } from 'node:os';
 
 const here = dirname(fileURLToPath(import.meta.url));
-const repoRoot = resolve(here, '../../..');
+// CARTA_REPO_ROOT names the root checkout when continent-app is a sibling worktree (T281).
+const repoRoot = process.env.CARTA_REPO_ROOT || resolve(here, '../../..');
 const migrations = process.env.CARTA_MIGRATIONS_DIR || resolve(repoRoot, 'supabase/migrations');
 
 let failures = 0;
@@ -140,10 +151,11 @@ const TEST_DB = process.env.CARTA_TEST_DB || 'carta_t077_test';
  * The floor on how many admin_* functions the discovery must find. It is a
  * floor, not an equality: adding a guarded function must not fail the build,
  * but a discovery that silently returns nothing or a handful (the vacuous
- * gate) must. 39 is what the whole directory defines as of 045 (T268); it
- * was 37 when the list of migrations was still written by hand.
+ * gate) must. 40 is what the whole directory defines as of 047 (T284 added
+ * admin_adjust_expiry); it was 39 as of 045 (T268) and 37 when the list of
+ * migrations was still written by hand.
  */
-const MIN_FUNCTIONS = 39;
+const MIN_FUNCTIONS = 40;
 
 function findPsql() {
   for (const cand of PSQL_CANDIDATES) {
@@ -257,7 +269,7 @@ const VICTIM = '00000000-0000-0000-0000-00000000c002'; // a target for the write
 const MIGRATIONS = readdirSync(migrations)
   .filter((f) => /^\d{3}_.+\.sql$/.test(f))
   .sort();
-const MIN_MIGRATIONS = 44;
+const MIN_MIGRATIONS = 46; // 002 to 047 as of T284 (the directory has no 001)
 
 /**
  * A safe argument for every parameter type the admin surface uses. The call is
@@ -514,6 +526,188 @@ function runTests(bin) {
       guardAs(plainClaims, 'destructive') === 'forbidden');
     check("admin_guard('read') answers null for an admin",
       guardAs(adminClaims, 'read') === '(null)');
+
+    // ---------------------------------------------------------------------
+    // 7. The read-burst limit (T300-o; T034 left it untested). admin_guard
+    //    counts the actor's admin_audit_log rows of the last 60 seconds: 60
+    //    or more refuses every tier with slow_down, and 10 or more of five
+    //    named destructive actions refuses the destructive tier. A read that
+    //    writes no audit row never spends the budget, which is why an admin
+    //    refreshing the dashboard is never locked out; that is asserted too.
+    // ---------------------------------------------------------------------
+    console.log('');
+    console.log('  The rate budget in admin_guard (T300-o):');
+    /** One call as the admin, returned as parsed jsonb. */
+    const adminCall = (sql) => {
+      const r = psqlRun(bin, TEST_DB, ['-At', '-c', 'set role authenticated', '-c', claimsSql(adminClaims), '-c', sql]);
+      if (!r.ok) return { raised: (r.err.match(/ERROR:.*$/m) || [''])[0] };
+      try { return JSON.parse(r.out.trim()); } catch { return { raw: r.out.trim() }; }
+    };
+    const auditCount = (actor) => Number(scalar(bin, TEST_DB,
+      `select count(*) from public.admin_audit_log where actor = '${actor}'`));
+    /** n audit rows for an actor, as the database owner. */
+    const seedAudit = (actor, n, action = 'note') => psql(bin, TEST_DB, ['-c',
+      `insert into public.admin_audit_log (actor, action, created_at)
+       select '${actor}', '${action}', now() from generate_series(1, ${n})`]);
+    psql(bin, TEST_DB, ['-c', 'delete from public.admin_audit_log']);
+
+    // A burst of 70 reads in one session, well inside one window. Each is a
+    // separate statement, as 70 dashboard refreshes would be.
+    const READS = 70;
+    const burstArgs = ['-At', '-c', 'set role authenticated', '-c', claimsSql(adminClaims)];
+    for (let i = 0; i < READS; i += 1) burstArgs.push('-c', `select coalesce(public.admin_edge_errors(30) ->> 'error', 'ok')`);
+    const burst = psqlRun(bin, TEST_DB, burstArgs);
+    const answers = burst.out.split('\n').map((l) => l.trim()).filter(Boolean);
+    check(`a burst of ${READS} admin reads inside one minute runs`, burst.ok && answers.length === READS,
+      burst.ok ? `${answers.length} answers` : (burst.err.match(/ERROR:.*$/m) || [''])[0]);
+    check(`none of the ${READS} reads is refused`, answers.length === READS && answers.every((a) => a === 'ok'),
+      answers.filter((a) => a !== 'ok').slice(0, 3).join(', '));
+    check('the reads wrote no audit row, so they spend none of the budget', auditCount(ADMIN) === 0,
+      `${auditCount(ADMIN)} rows`);
+
+    // Another actor's rows never count against this admin.
+    seedAudit(VICTIM, 100);
+    seedAudit(ADMIN, 59);
+    check("59 logged actions in the window: admin_guard('read') still answers null",
+      guardAs(adminClaims, 'read') === '(null)', guardAs(adminClaims, 'read'));
+    check('and 100 rows logged by another actor in the same window do not count against this admin',
+      auditCount(VICTIM) === 100 && guardAs(adminClaims, 'read') === '(null)');
+    seedAudit(ADMIN, 1);
+    check("60 logged actions in the window: admin_guard('read') answers slow_down",
+      guardAs(adminClaims, 'read') === 'slow_down', guardAs(adminClaims, 'read'));
+    check("and admin_guard('destructive') answers slow_down too",
+      guardAs(adminClaims, 'destructive') === 'slow_down', guardAs(adminClaims, 'destructive'));
+    const slowRead = adminCall('select public.admin_edge_errors(30)');
+    check('a read RPC hands slow_down back to the admin', slowRead.error === 'slow_down', JSON.stringify(slowRead));
+    const slowList = adminCall('select public.admin_list_users()');
+    check('so does the user list', slowList.error === 'slow_down', JSON.stringify(slowList));
+    psql(bin, TEST_DB, ['-c', `update public.admin_audit_log set created_at = now() - interval '61 seconds' where actor = '${ADMIN}'`]);
+    check('once those 60 rows are older than the 60-second window, the admin is let through again',
+      guardAs(adminClaims, 'read') === '(null)', guardAs(adminClaims, 'read'));
+
+    // The destructive budget: 10 of the five named actions.
+    seedAudit(ADMIN, 9, 'set_tier');
+    check("9 set_tier rows in the window: admin_guard('destructive') answers null",
+      guardAs(adminClaims, 'destructive') === '(null)', guardAs(adminClaims, 'destructive'));
+    seedAudit(ADMIN, 1, 'ban_user');
+    check("10 destructive rows: admin_guard('destructive') answers slow_down",
+      guardAs(adminClaims, 'destructive') === 'slow_down', guardAs(adminClaims, 'destructive'));
+    check("while admin_guard('read') still answers null (10 is under the overall 60)",
+      guardAs(adminClaims, 'read') === '(null)', guardAs(adminClaims, 'read'));
+    const slowAdjust = adminCall(`select public.admin_adjust_expiry('${VICTIM}'::uuid, 1)`);
+    check('admin_adjust_expiry sits on the destructive tier: it answers slow_down here',
+      slowAdjust.error === 'slow_down', JSON.stringify(slowAdjust));
+    psql(bin, TEST_DB, ['-c', 'delete from public.admin_audit_log']);
+
+    // ---------------------------------------------------------------------
+    // 8. admin_adjust_expiry (047, T217-c): moves the date, keeps the
+    //    allowance period, writes one audit row, refuses a non-admin.
+    // ---------------------------------------------------------------------
+    console.log('');
+    console.log('  admin_adjust_expiry moves the date and nothing else (047):');
+    psql(bin, TEST_DB, ['-c', `insert into public.entitlements (user_id, tier, period_start, expires_at, source)
+      values ('${VICTIM}', 'year', now() - interval '10 days', now() + interval '355 days', 'stripe')
+      on conflict (user_id) do update set tier = 'year', period_start = now() - interval '10 days',
+        expires_at = now() + interval '355 days', source = 'stripe'`]);
+    const ent = () => scalar(bin, TEST_DB,
+      `select tier || '|' || extract(epoch from period_start)::bigint || '|' || extract(epoch from expires_at)::bigint || '|' || source
+         from public.entitlements where user_id = '${VICTIM}'`).split('|');
+    const [tier0, start0, exp0] = ent();
+
+    const plainAdjust = psqlRun(bin, TEST_DB, ['-At', '-c', 'set role authenticated', '-c', claimsSql(plainClaims),
+      '-c', `select public.admin_adjust_expiry('${VICTIM}'::uuid, 400)::text`]);
+    check('a normal signed-in user is refused with forbidden', refused({ ok: plainAdjust.ok, out: plainAdjust.out.trim() }),
+      plainAdjust.out.trim() || plainAdjust.err.trim());
+    check('and the pass is unchanged', ent()[2] === exp0);
+
+    const short = adminCall(`select public.admin_adjust_expiry('${VICTIM}'::uuid, -30)`);
+    const [tier1, start1, exp1, src1] = ent();
+    check('an admin shortens a Year Pass by 30 days', short.ok === true, JSON.stringify(short));
+    check('expires_at moved back by exactly 30 days', Number(exp0) - Number(exp1) === 30 * 86400, `${exp0} -> ${exp1}`);
+    check('period_start is unchanged, so the AI allowance is not reset', start1 === start0, `${start0} -> ${start1}`);
+    check('the tier is unchanged', tier1 === tier0 && tier1 === 'year', tier1);
+    check("source is 'manual', as the refund procedure's update set it", src1 === 'manual', src1);
+    const audit = JSON.parse(scalar(bin, TEST_DB, `select coalesce(json_agg(json_build_object(
+        'actor', actor, 'target', target_user, 'detail', detail)), '[]'::json)
+       from public.admin_audit_log where action = 'adjust_expiry'`) || '[]');
+    check('one adjust_expiry audit row, by the admin, against the user', audit.length === 1
+      && audit[0].actor === ADMIN && audit[0].target === VICTIM, JSON.stringify(audit));
+    const det = audit[0] ? audit[0].detail : {};
+    check('the audit row carries the days, both expiries and the same period start', det.days === -30
+      && det.previous && det.new && det.previous.expiresAt !== det.new.expiresAt
+      && det.previous.periodStart === det.new.periodStart, JSON.stringify(det));
+
+    const longer = adminCall(`select public.admin_adjust_expiry('${VICTIM}'::uuid, 6)`);
+    check('an admin extends it by 6 days', longer.ok === true
+      && Number(ent()[2]) - Number(exp1) === 6 * 86400, JSON.stringify(longer));
+
+    const refusals = [
+      [`'${VICTIM}'::uuid, 0`, 'bad_days', 'zero days'],
+      [`'${VICTIM}'::uuid, null`, 'bad_days', 'no days'],
+      [`'${VICTIM}'::uuid, 1096`, 'bad_days', 'more than 1095 days'],
+      [`'${VICTIM}'::uuid, -400`, 'would_expire', 'a cut past today'],
+      [`'${VICTIM}'::uuid, 900`, 'beyond_horizon', 'an extension past three years from now'],
+      [`'${PLAIN}'::uuid, 5`, 'no_live_pass', 'a user with no pass'],
+      [`'00000000-0000-0000-0000-00000000dead'::uuid, 5`, 'not_found', 'an unknown user'],
+    ];
+    const expBefore = ent()[2];
+    for (const [args, word, what] of refusals) {
+      const r = adminCall(`select public.admin_adjust_expiry(${args})`);
+      check(`refuses ${what} with ${word}`, r.error === word, JSON.stringify(r));
+    }
+    check('and none of the refusals moved the date', ent()[2] === expBefore);
+    psql(bin, TEST_DB, ['-c', `update public.entitlements set expires_at = now() - interval '1 day' where user_id = '${VICTIM}'`]);
+    const lapsed = adminCall(`select public.admin_adjust_expiry('${VICTIM}'::uuid, 30)`);
+    check('a lapsed pass is not revived (no_live_pass): that is a new grant, not an adjustment',
+      lapsed.error === 'no_live_pass', JSON.stringify(lapsed));
+    check('exactly two adjust_expiry audit rows: one per change, none per refusal',
+      scalar(bin, TEST_DB, `select count(*) from public.admin_audit_log where action = 'adjust_expiry'`) === '2');
+    psql(bin, TEST_DB, ['-c', 'delete from public.admin_audit_log']);
+
+    // ---------------------------------------------------------------------
+    // 9. Client crashes stay off the AI failures card (047, T083-b).
+    // ---------------------------------------------------------------------
+    console.log('');
+    console.log('  admin_edge_errors keeps crashes apart from AI failures (047):');
+    psql(bin, TEST_DB, ['-c', `delete from public.edge_errors;
+      insert into public.edge_errors (user_id, fn, code, origin) values
+        ('${VICTIM}', 'plan-day', 'ai_timeout', 'edge'),
+        ('${VICTIM}', 'app', 'client_crash', 'client'),
+        ('${PLAIN}', 'app', 'client_crash', 'client')`]);
+    const ee = adminCall('select public.admin_edge_errors(7)');
+    check('the AI total counts the one AI failure only', ee.total === 1 && ee.users === 1,
+      JSON.stringify([ee.total, ee.users]));
+    check('byCode and byFunction carry no crash',
+      Array.isArray(ee.byCode) && !JSON.stringify(ee.byCode).includes('client_crash')
+      && Array.isArray(ee.byFunction) && !JSON.stringify(ee.byFunction).includes('"app"'),
+      JSON.stringify([ee.byCode, ee.byFunction]));
+    check('the daily series sums to the AI total',
+      Array.isArray(ee.daily) && ee.daily.reduce((a, d) => a + d.n, 0) === 1);
+    check('crashes are reported under their own key: two crashes, two travellers',
+      !!ee.crashes && ee.crashes.total === 2 && ee.crashes.users === 2
+      && ee.crashes.daily.reduce((a, d) => a + d.n, 0) === 2, JSON.stringify(ee.crashes));
+    psql(bin, TEST_DB, ['-c', 'delete from public.edge_errors; delete from public.admin_audit_log']);
+
+    // ---------------------------------------------------------------------
+    // 10. A cycle route can be patched (047, T219-c), by an admin only.
+    // ---------------------------------------------------------------------
+    console.log('');
+    console.log('  admin_set_override takes the cycle layer (047):');
+    const reviewBy = `now() + interval '30 days'`;
+    const cyc = adminCall(`select public.admin_set_override('cycle', 'eurovelo-6-t284', '{"name": "EuroVelo 6"}'::jsonb,
+      'Name corrected from a traveller report.', 'temporary', ${reviewBy}, 'FR')`);
+    check('an admin saves an override on a cycle route', cyc.ok === true, JSON.stringify(cyc));
+    check('the row is stored with layer cycle', scalar(bin, TEST_DB,
+      `select count(*) from public.content_overrides where layer = 'cycle' and item_id = 'eurovelo-6-t284'`) === '1');
+    const plainCyc = psqlRun(bin, TEST_DB, ['-At', '-c', 'set role authenticated', '-c', claimsSql(plainClaims),
+      '-c', `select public.admin_set_override('cycle', 'eurovelo-6-t284', '{}'::jsonb, null, null, null, null)::text`]);
+    check('a normal signed-in user cannot clear it', refused({ ok: plainCyc.ok, out: plainCyc.out.trim() })
+      && scalar(bin, TEST_DB, `select count(*) from public.content_overrides where layer = 'cycle'`) === '1',
+      plainCyc.out.trim() || plainCyc.err.trim());
+    const badLayer = adminCall(`select public.admin_set_override('nonsense', 'x-t284', '{"name": "x"}'::jsonb,
+      'A reason long enough.', 'temporary', ${reviewBy}, null)`);
+    check('an unknown layer is still refused with bad_layer', badLayer.error === 'bad_layer', JSON.stringify(badLayer));
+    psql(bin, TEST_DB, ['-c', `delete from public.content_overrides where item_id like '%t284'; delete from public.admin_audit_log`]);
   } finally {
     psqlRun(bin, 'postgres', ['-c', `drop database if exists ${TEST_DB} with (force)`]);
     if (work) {

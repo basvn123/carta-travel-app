@@ -38,7 +38,7 @@ export function CategoryRail({ tripKinds, setTripKinds }) {
   React.useEffect(() => {
     const el = scrollRef.current?.querySelector('.kind-rail-chip.on');
     if (el) el.scrollIntoView({ block: 'nearest', inline: 'nearest' });
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <div className="kind-rail">

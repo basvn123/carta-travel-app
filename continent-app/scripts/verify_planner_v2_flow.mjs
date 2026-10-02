@@ -15,7 +15,7 @@ const browser = await chromium.launch();
 const checks = [];
 const errors = [];
 const check = (label, ok, note = '') => checks.push({ label, ok, note });
-const NOISE = /emrldtp|ERR_FAILED|config is not valid|favicon/;
+const NOISE = /ERR_FAILED|config is not valid|favicon/;
 
 async function openWizard(width, height) {
   const page = await browser.newPage({ viewport: { width, height } });

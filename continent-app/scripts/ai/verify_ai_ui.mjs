@@ -53,7 +53,7 @@ async function boot(browser, { viewport, withAiState }) {
     const t = m.text();
     // Basemap tiles, the Travelpayouts affiliate beacon and the service
     // worker (absent from a bare preview) are network noise, not app errors.
-    if (m.type() === 'error' && !/tile|cartocdn|ERR_|emrldtp|config is not valid|MIME type|Service worker/i.test(t)) {
+    if (m.type() === 'error' && !/tile|cartocdn|ERR_|config is not valid|MIME type|Service worker/i.test(t)) {
       errors.push('console: ' + t.slice(0, 140));
     }
   });

@@ -21,7 +21,7 @@ if (!(await isUp())) {
 }
 
 const errors = [];
-const NOISE = /favicon|net::ERR_|Failed to load resource|maplibre|WebGL|tile|Nominatim|ResizeObserver|401|403|429|emrldtp|entrypoint_config|config is not valid/i;
+const NOISE = /favicon|net::ERR_|Failed to load resource|maplibre|WebGL|tile|Nominatim|ResizeObserver|401|403|429|entrypoint_config|config is not valid/i;
 const notes = [];
 const note = (k, v) => { notes.push([k, v]); console.log(`  ${k}: ${typeof v === 'string' ? v : JSON.stringify(v)}`); };
 

@@ -436,7 +436,7 @@ if (!WIRE_ONLY) {
   // this layer and verify_lakes.mjs already filters it for the same reason;
   // filtering it here too keeps a real cycling error visible instead of
   // buried under a backend gap that is somebody else's to close.
-  const NOISE = /emrldtp|ERR_FAILED|config is not valid|favicon|content_overrides/;
+  const NOISE = /ERR_FAILED|config is not valid|favicon|content_overrides/;
   try { mkdirSync('shots', { recursive: true }); } catch { /* exists */ }
 
   const seed = (page) => page.addInitScript(() => {

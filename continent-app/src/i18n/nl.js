@@ -3631,6 +3631,9 @@ export const nl = {
   'journey.ctaGateway': 'Prijs een reis naar {city}',
   'journey.sourcesHead': 'Over dit plan',
   'journey.vintage': 'Planningscijfers voor {year}. Elke prijs is indicatief.',
+  'journey.vintageChecked': 'Planningscijfers voor {year}, voor het laatst gecontroleerd in {month}. Elke prijs is indicatief.',
+  'journey.coverage': '{trips} reizen in {countries} landen, in {styles} stijlen. De dekking is ongelijk: {thin} van de {countries} landen hebben minder dan de helft van de stijlen, dus een landfilter kan leeg uitkomen.',
+  'journey.coverageCountry': '{country} heeft reizen in {n} van {styles} stijlen. De andere stijlen zijn er nog niet voor geschreven.',
 
   // Explore rebuild (PLAN.md C1-C6): place kinds, roles, filter rail
   "pkind.metro": "Metropool",

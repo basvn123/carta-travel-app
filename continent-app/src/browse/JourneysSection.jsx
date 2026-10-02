@@ -15,7 +15,7 @@ import { srcSetFor, fallbackSrc } from '../lib/heroImage.js';
  */
 const CARD_SIZES = '(max-width: 1039px) 47vw, min(26vw, 370px)';
 import {
-  loadJourneyIndex, loadJourneyType, typeLabel, diffLabel, monthsShort,
+  loadJourneyIndex, loadJourneyType, typeLabel, diffLabel, monthsShort, coverageFacts,
 } from '../lib/journeys.js';
 import { ArrowLeftIcon, ChevronRightIcon, RouteIcon } from '../components/Icons.jsx';
 
@@ -149,6 +149,8 @@ export function JourneysSection({
     return index.types.filter((tp) => !country || (tp.countries || []).includes(country));
   }, [index, country]);
 
+  const coverage = useMemo(() => (index ? coverageFacts(index) : null), [index]);
+
   const rows = useMemo(() => {
     if (!cards) return null;
     let out = cards;
@@ -182,6 +184,22 @@ export function JourneysSection({
           </span>
           <ChevronRightIcon size={15} className="places-card-chev" />
         </button>
+        {coverage && coverage.trips > 0 && (
+          <p className="places-credit jsec-coverage">
+            {country
+              ? t('journey.coverageCountry', {
+                country: countryName(country),
+                n: coverage.stylesIn(country),
+                styles: coverage.styles,
+              })
+              : t('journey.coverage', {
+                trips: coverage.trips,
+                countries: coverage.countries,
+                styles: coverage.styles,
+                thin: coverage.thin,
+              })}
+          </p>
+        )}
       </div>
     );
   }

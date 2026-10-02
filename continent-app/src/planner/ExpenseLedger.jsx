@@ -32,14 +32,15 @@ export function ExpenseLedger({ extras, onChange, groupSize }) {
   // Your accepted friends, as one-tap fills for the traveller slots. Guests
   // and projects without migration 011 simply never see the chips.
   const [friendOpts, setFriendOpts] = useState([]);
+  const userId = user?.id || null;
   useEffect(() => {
-    if (!user) { setFriendOpts([]); return undefined; }
+    if (!userId) { setFriendOpts([]); return undefined; }
     let live = true;
-    fetchFriendLinks(user.id)
+    fetchFriendLinks(userId)
       .then((rows) => { if (live) setFriendOpts(rows.filter((r) => r.kind === 'friend')); })
       .catch(() => {});
     return () => { live = false; };
-  }, [user?.id]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [userId]);
   // The roster is shared with the trip's record (see auth/tripCrew.js): a name
   // typed into "who came" arrives here already filled in. Clamped to the group
   // size, as it always was, so the chips and the balances stay one per head.

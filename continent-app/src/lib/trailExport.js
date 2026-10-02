@@ -19,6 +19,7 @@
  */
 import { buildKml } from './kmlExport.js';
 import { stopNameFromRef } from './trailCards.js';
+import { trailClimb, trailGrade } from './trailStory.js';
 
 const xmlEsc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => (
   { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&apos;' }[c]
@@ -68,9 +69,13 @@ export function trailGpx(tr, detail = null, { link = null, stopNames = [] } = {}
   const facts = [
     isNum(src.distance_m) ? `${(src.distance_m / 1000).toFixed(1)} km` : '',
     isNum(src.duration_min) ? `${(src.duration_min / 60).toFixed(1)} h walking (DIN 33466)` : '',
+    // The stored ascent and descent, on purpose: they describe the track in
+    // this file, which keeps the direction its mapper drew it in. The grade
+    // is the published one (trailGrade), never validate.py's effort class
+    // beside it (T108-f).
     isNum(src.ascent_m) ? `${Math.round(src.ascent_m)} m ascent` : '',
     isNum(src.descent_m) ? `${Math.round(src.descent_m)} m descent` : '',
-    src.difficulty || '',
+    (trailGrade(src) || trailGrade(tr) || '').replace(/_/g, ' '),
   ].filter(Boolean).join(', ');
   const stopLines = stopNames.length
     ? `Stops: ${stopNames.map((n, i) => `${i + 1}. ${n}`).join(', ')}`
@@ -111,12 +116,41 @@ ${trksegs}
 
 /* ── KML, for Google My Maps ──────────────────────────────────────────── */
 
+// The same two formatters TrailPage.jsx prints its facts strip with.
+const km1 = (m) => (m / 1000).toFixed(1).replace(/\.0$/, '');
+const hoursText = (min) => {
+  const h = min / 60;
+  return h >= 10 ? String(Math.round(h)) : h.toFixed(1);
+};
+
+/**
+ * The one line of facts the KML carries: "12.1 km, 7 h, +1568 m". The climb
+ * is read uphill (trailClimb().up), the same number the trail card prints, so
+ * Mount Korab (9), drawn summit to village, says +1423 m rather than +7 m
+ * (T108-d). Composed here, beside the writer, so no caller can hand it the
+ * stored ascent again. Empty when the record states no distance.
+ */
+export function trailFactLine(tr, detail = null) {
+  const src = detail || tr || {};
+  if (!isNum(src.distance_m)) return '';
+  const up = trailClimb(src).up ?? (detail ? trailClimb(tr).up : null);
+  return [
+    `${km1(src.distance_m)} km`,
+    isNum(src.duration_min) ? `${hoursText(src.duration_min)} h` : '',
+    tr?.category !== 'citytrip' && isNum(up) ? `+${Math.round(up)} m` : '',
+  ].filter(Boolean).join(', ');
+}
+
 /** The trail as KML: the line, a start and finish pin, and the stop list in
  *  the line's description panel. One folder, so My Maps imports it as one
  *  layer the traveller can rename. */
-export function trailKml(tr, detail = null, { link = null, stopNames = [], factLine = '' } = {}) {
+export function trailKml(tr, detail = null, { link = null, stopNames = [], factLine: given = '' } = {}) {
   const src = detail || tr;
   const segs = segments(src.geometry);
+  // The writer's own line wins. A caller's line is used only where the
+  // record has no distance to compose from (a city day measured off its
+  // drawn line), and TrailPage's line printed the stored ascent.
+  const factLine = trailFactLine(tr, detail) || given;
   const html = [
     factLine ? `<b>${xmlEsc(factLine)}</b><br/>` : '',
     stopNames.length ? `${stopNames.map((n, i) => `${i + 1}. ${xmlEsc(n)}`).join('<br/>')}<br/>` : '',

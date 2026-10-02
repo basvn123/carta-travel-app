@@ -31,7 +31,7 @@ mkdirSync('shots', { recursive: true });
 const checks = [];
 const errors = [];
 const check = (label, ok, note = '') => checks.push({ label, ok, note });
-const NOISE = /emrldtp|ERR_FAILED|config is not valid|maplibre|WebGL|tile/i;
+const NOISE = /ERR_FAILED|config is not valid|maplibre|WebGL|tile/i;
 
 const browser = await chromium.launch();
 
@@ -140,7 +140,13 @@ async function run(name, viewport, expectSheet) {
   check(`${name}: the info button is bottom-right`,
     !!geom && geom.right < geom.fromLeft && geom.bottom < geom.fromTop,
     geom ? `right ${geom.right}, bottom ${geom.bottom}, left ${geom.fromLeft}, top ${geom.fromTop}` : 'no geometry');
-  check(`${name}: drawn at 36px`, !!geom && geom.drawn >= 34 && geom.drawn <= 38, geom ? `${geom.drawn}px` : '');
+  // Drawn at 36px on a wide screen; at 768px and under the Q1 phone audit
+  // draws the circle at the 44px tap size itself (styles.css, max-width 768).
+  // T296-c: the harness still asked the phone for 36.
+  const phoneW = viewport.width <= 768;
+  check(`${name}: drawn at ${phoneW ? 44 : 36}px`,
+    !!geom && (phoneW ? geom.drawn >= 43 && geom.drawn <= 45 : geom.drawn >= 34 && geom.drawn <= 38),
+    geom ? `${geom.drawn}px` : '');
   check(`${name}: hit area is at least 44px`, !!geom && geom.hit >= 44, geom ? `${geom.hit}px` : '');
 
   const label = await info.getAttribute('aria-label');

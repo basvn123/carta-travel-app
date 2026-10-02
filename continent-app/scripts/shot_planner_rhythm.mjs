@@ -23,7 +23,7 @@ const URL = process.argv[3] || `http://localhost:${process.env.CARTA_PORT || 417
 mkdirSync('shots', { recursive: true });
 
 const gaps = [];
-const NOISE = /emrldtp|ERR_FAILED|config is not valid|maplibre|WebGL|tile/i;
+const NOISE = /ERR_FAILED|config is not valid|maplibre|WebGL|tile/i;
 const browser = await chromium.launch();
 
 /** The vertical gap between a step's heading and the first block under it. */

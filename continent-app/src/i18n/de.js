@@ -3631,6 +3631,9 @@ export const de = {
   'journey.ctaGateway': 'Reise nach {city} berechnen',
   'journey.sourcesHead': 'Über diesen Plan',
   'journey.vintage': 'Planungszahlen für {year}. Jeder Preis ist ein Richtwert.',
+  'journey.vintageChecked': 'Planungszahlen für {year}, zuletzt geprüft im {month}. Jeder Preis ist ein Richtwert.',
+  'journey.coverage': '{trips} Reisen in {countries} Ländern, in {styles} Stilen. Die Abdeckung ist ungleich: {thin} von {countries} Ländern haben weniger als die Hälfte der Stile, ein Länderfilter kann also ohne Treffer bleiben.',
+  'journey.coverageCountry': 'Für {country} gibt es Reisen in {n} von {styles} Stilen. Die übrigen Stile sind dafür noch nicht geschrieben.',
 
   // Explore rebuild (PLAN.md C1-C6): place kinds, roles, filter rail
   "pkind.metro": "Metropole",

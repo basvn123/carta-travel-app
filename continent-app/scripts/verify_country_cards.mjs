@@ -25,7 +25,7 @@ mkdirSync('shots', { recursive: true });
 const checks = [];
 const errors = [];
 const check = (label, ok, note = '') => checks.push({ label, ok, note });
-const NOISE = /emrldtp|ERR_FAILED|config is not valid|maplibre|WebGL|tile/i;
+const NOISE = /ERR_FAILED|config is not valid|maplibre|WebGL|tile/i;
 
 /** The width a Wikimedia thumb URL is rendered at, or null. */
 const thumbWidth = (url) => {

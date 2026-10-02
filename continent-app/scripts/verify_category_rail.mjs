@@ -8,7 +8,7 @@ import { mkdirSync } from 'node:fs';
 
 const PORT = 4198;
 const BASE = process.argv[2] || `http://127.0.0.1:${PORT}`;
-const NOISE = /emrldtp|ERR_FAILED|config is not valid/;
+const NOISE = /ERR_FAILED|config is not valid/;
 
 mkdirSync('shots', { recursive: true });
 
