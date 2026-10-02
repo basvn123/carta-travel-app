@@ -1,3 +1,7 @@
+> SUPERSEDED 2026-10-02 (T300). This procedure is stale: paste orders, retired fare steps and
+> Vercel steps no longer match the repository. Follow `Execution/_OPEN-MASTER.md` stage 3 instead,
+> and Part E there for the owner rows. The text below is kept unchanged as history.
+
 # Open items after T035 to T038: what the owner must do for the Gemini billing posture
 
 Written 2026-09-24 at the close of the Gemini billing batch. This gathers the

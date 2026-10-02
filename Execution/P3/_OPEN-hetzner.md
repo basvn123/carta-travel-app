@@ -1,3 +1,7 @@
+> SUPERSEDED 2026-10-02 (T300). This procedure is stale: paste orders, retired fare steps and
+> Vercel steps no longer match the repository. Follow `Execution/_OPEN-MASTER.md` stages 7 and 8 instead,
+> and Part E there for the owner rows. The text below is kept unchanged as history.
+
 # Open items for the Hetzner build boxes: what the owner must do, in order
 
 Written 2026-09-27 at the close of T046. This gathers the owner steps for the

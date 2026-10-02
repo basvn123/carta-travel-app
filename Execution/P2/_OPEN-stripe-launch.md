@@ -1,3 +1,7 @@
+> SUPERSEDED 2026-10-02 (T300). This procedure is stale: paste orders, retired fare steps and
+> Vercel steps no longer match the repository. Follow `Execution/_OPEN-MASTER.md` stage 10 instead,
+> and Part E there for the owner rows. The text below is kept unchanged as history.
+
 # Open items after T030 to T034: what the owner must do before a first sale
 
 Written 2026-09-24 at the close of the Stripe and paywall batch. This gathers the
