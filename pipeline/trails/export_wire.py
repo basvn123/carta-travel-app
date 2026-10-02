@@ -364,6 +364,26 @@ def fetch_images(conn, ids):
     return out
 
 
+# The credit gate, the same one beaches, lakes, mountains and cycling apply
+# (pipeline/photos/credit.owes_credit). A photograph whose licence owes a name
+# and which carries none reaches neither the card nor the gallery: "CC BY-SA
+# 3.0" printed with nobody named is the notice kept and the credit removed.
+# The trails export shipped 102 such photographs before T280 (row T269-f).
+#
+# The author is tested AFTER clean_author(), so an Artist field that is only a
+# licence blurb counts as no author, which is what a reader would have seen.
+# It recovers by itself: a name that turns up on Commons later brings the
+# photograph back at the next export. A trip that loses every photograph falls
+# back to its drawn route (TrailPicture), as it does when every one is rejected.
+sys.path.insert(0, str(ROOT / "pipeline" / "photos"))
+from credit import owes_credit  # noqa: E402
+
+
+def credited(rows):
+    """The photographs of one trip that we can lawfully credit, in order."""
+    return [r for r in rows if not owes_credit(r)]
+
+
 def fetch_stops(conn, ids):
     """Ordered stops per trip. poi_ref points at the app's own catalogue, so
     the app resolves names and images from data it already has; leg_* says how
@@ -1176,8 +1196,13 @@ def main():
     trip_ids = [t["id"] for t in trips]
     stops = fetch_stops(conn, trip_ids)
     images = fetch_images(conn, trip_ids)
+    n_owing = 0
     for t in trips:
-        t["images"] = images.get(t["id"], [])
+        rows = images.get(t["id"], [])
+        t["images"] = credited(rows)
+        n_owing += len(rows) - len(t["images"])
+    print(f"  {n_owing} photograph(s) held back: the licence owes a credit "
+          f"and no author is on record")
     n_shot = sum(1 for t in trips if t["images"])
     print(f"  {n_shot} of {len(trips)} trip(s) carry a photograph of the route")
     live_ids = published_ids(conn)
