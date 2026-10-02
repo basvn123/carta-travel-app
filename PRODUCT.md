@@ -6,7 +6,7 @@ DESIGN.md holds the tokens. This file holds the reasons the tokens look the way 
 
 ## What Carta is
 
-A price transparency tool for budget travel in Europe. The traveller gives it dates and a departure airport, and Carta prices the whole trip for every destination in the catalogue: flight out, flight back, cabin bag, airport transfer, the bed, food and local transport. It then plans the trip city by city and each day hour by hour, and it says plainly which numbers are real quotes and which are estimates.
+A price transparency tool for budget travel in Europe. Carta prices the ground for every destination in the catalogue: the bed, food and local transport, per person per day. It does not price flights. A traveller who has a fare types in what they paid, and only then does the full-trip total include the flight, as their own figure. Carta then plans the trip city by city and each day hour by hour, and it says plainly which numbers are measured and which are estimates.
 
 The catalogue is master data in `app_data/app_data.json` and grows with every ingest (3,868 destinations in 43 countries on 2026-10-01; do not copy that figure into UI, read `meta` instead). The app is Vite + React in `continent-app/`, served as static JSON from a CDN. Nothing on the map is live-searched; everything is precomputed by the pipeline and cached.
 
@@ -34,7 +34,7 @@ Density is a feature. The traveller wants to see forty prices on one phone scree
 
 Real harvested quote, then cached third-party quote, then model estimate, and never a blank. Each step is labelled for what it is. A harvested fare shows its source and age. A cached quote carries its expiry. An estimate is prefixed with a tilde, tagged "est." and never dressed up as a bookable price. An estimate ships only where a flight verifiably exists. Every external booking link warns that prices may have changed.
 
-Since 2026-10-01 no fare harvest is live, so flight prices are frozen snapshots and shown as estimates. The UI must keep saying so until a source returns.
+Carta does not price flights (owner decision, 2026-10-02). No fare harvest has been live since 2026-10-01, and none is planned. The only flight figure in a total is one the traveller typed in, labelled as theirs. Surfaces that still show the frozen fare snapshots as estimates are being removed (register row T272-a); until then they must keep the tilde and "est.".
 
 The product's only real asset is trust in its numbers. Every visual and copy choice follows from that.
 
@@ -44,7 +44,7 @@ Carta should sound like an instrument, not a brochure. Reference world: rail tim
 
 Plain, specific, verb first. Every headline carries a verb the traveller recognises or a number. "What the whole trip actually costs" works; "Everything the price tag usually hides" could sit on any product and so does not.
 
-Prefer the figure to the claim. "1,208 of 1,570 destinations priced from Charleroi, refreshed 2 hours ago" beats any adjective because it sounds like software that is running.
+Prefer the figure to the claim. "Bed prices measured in N of M destinations, refreshed 2 hours ago" beats any adjective because it sounds like software that is running.
 
 Honest about coverage, in its own voice. Four carriers and estimated food costs are facts to state, not weaknesses to bury. When the AI is off, the app says it is off. Carta has no testimonials; data freshness is the proof it has.
 
