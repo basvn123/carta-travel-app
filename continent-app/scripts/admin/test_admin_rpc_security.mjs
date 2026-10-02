@@ -16,9 +16,11 @@
  * the new function would simply not be in the array. So the list is discovered
  * from the live catalogue: after the migrations are applied, the test asks
  * pg_proc for every function named admin_* in the public schema and iterates
- * over what it finds. Add a function in a later migration, add that migration
- * to MIGRATIONS below, and this test starts asserting on it with no other
- * edit. That is the whole design. The count is asserted against a floor, never
+ * over what it finds. The migrations themselves are read from the directory
+ * too (T268, register row T077-a): every NNN_*.sql file in
+ * supabase/migrations, in filename order, which is the order the owner
+ * pastes them. Add a function in a later migration and this test starts
+ * asserting on it with no edit at all. That is the whole design. The count is asserted against a floor, never
  * an equality, so adding a guarded function does not fail the build, but a
  * discovery that returns nothing does.
  *
@@ -77,11 +79,19 @@
  * self-check NOTICEs survive, and call every RPC as the `authenticated` role
  * with request.jwt.claims set, which is exactly what PostgREST does.
  *
- * MIGRATION 018. As committed it fails on a real Postgres because of the regex
- * bound {5,600} (register row T031-d). As the other harnesses do, this script
- * applies it as committed first, reports the failure, then applies a copy with
- * {5,255} from a temp directory, for this test only. 018 in the repo is never
- * edited.
+ * MIGRATION 018. It once failed on a real Postgres because of the regex bound
+ * {5,600} (register row T031-d); stage 1 fixed the file. The fallback stays:
+ * if 018 as committed ever fails again and still carries {5,600}, a copy with
+ * {5,255} is applied from a temp directory, for this test only.
+ *
+ * SUPABASE'S DEFAULT GRANTS. A Supabase project grants anon, authenticated
+ * and service_role all privileges on new tables, sequences and functions in
+ * public by default, and every migration is written against that (each one
+ * revokes what it must). The stubs reproduce those defaults. Without them
+ * 023's self-check, which reads trip_plans as a client role, fails, which
+ * was one of the unexpressed prerequisites that kept this list manual. With
+ * them, the anon assertions below are also stricter: a function that forgets
+ * its revoke is caught the way it would be exposed live.
  *
  * NEEDS a PostgreSQL server that accepts a password-less connection (trust
  * auth or PGPASSWORD). Set PGHOST, PGPORT, PGUSER as needed; defaults are
@@ -94,12 +104,12 @@
 import { execFileSync, spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { resolve, dirname, join } from 'node:path';
-import { existsSync, readFileSync, writeFileSync, mkdtempSync, rmSync } from 'node:fs';
+import { existsSync, readFileSync, readdirSync, writeFileSync, mkdtempSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const repoRoot = resolve(here, '../../..');
-const migrations = resolve(repoRoot, 'supabase/migrations');
+const migrations = process.env.CARTA_MIGRATIONS_DIR || resolve(repoRoot, 'supabase/migrations');
 
 let failures = 0;
 let checks = 0;
@@ -132,9 +142,10 @@ const TEST_DB = process.env.CARTA_TEST_DB || 'carta_t077_test';
  * The floor on how many admin_* functions the discovery must find. It is a
  * floor, not an equality: adding a guarded function must not fail the build,
  * but a discovery that silently returns nothing or a handful (the vacuous
- * gate) must. 37 is what the migration set below defines today.
+ * gate) must. 39 is what the whole directory defines as of 045 (T268); it
+ * was 37 when the list of migrations was still written by hand.
  */
-const MIN_FUNCTIONS = 37;
+const MIN_FUNCTIONS = 39;
 
 function findPsql() {
   for (const cand of PSQL_CANDIDATES) {
@@ -229,6 +240,11 @@ end
 $do$;
 
 grant usage on schema auth to authenticated, anon, service_role;
+
+grant usage on schema public to anon, authenticated, service_role;
+alter default privileges in schema public grant all on tables to anon, authenticated, service_role;
+alter default privileges in schema public grant all on sequences to anon, authenticated, service_role;
+alter default privileges in schema public grant all on functions to anon, authenticated, service_role;
 `;
 
 const ADMIN = '00000000-0000-0000-0000-00000000ad01'; // a real admin, the control
@@ -236,50 +252,14 @@ const PLAIN = '00000000-0000-0000-0000-00000000c001'; // a normal signed-in user
 const VICTIM = '00000000-0000-0000-0000-00000000c002'; // a target for the write paths
 
 /**
- * Every migration that defines or redefines an admin_* function, plus the few
- * they depend on for tables. Applied in numeric order, which is the order the
- * owner pastes them into the SQL editor. When a later migration adds an admin
- * function, add its filename here; the assertions follow on their own.
- *
- * 018 is not in this list: it is applied in the loop at its numeric position,
- * through the {5,600} workaround below.
+ * Every migration in the directory, in filename order: NNN_name.sql only, so
+ * a scratch file or a README cannot slip in. Read once, at load. The floor
+ * below catches a directory that silently came back short.
  */
-const MIGRATIONS = [
-  '002_trip_plans.sql',       // trip_plans, which 009 and 019 then extend
-  '003_trip_plan_stops_insert_check.sql',
-  '004_day_plans.sql',
-  '006_ai_day_planner.sql',   // plan_tiers, ai_resolve_tier, named by 014/015
-  '007_passes.sql',           // entitlements, named by 014/015
-  '008_trip_plan_stops_update_check.sql',
-  '009_trip_shares.sql',      // trip_plans.visibility, which 019 constrains
-  '010_profiles.sql',         // profiles, read by the delete path
-  '011_friends.sql',          // named by the 036 and 037 self-checks
-  '012_profiles_policy_fix.sql',
-  '014_admin.sql',
-  '015_admin_hardening.sql',
-  '016_admin_resilient.sql',
-  '017_admin_analytics.sql',
-  '019_public_guides.sql',    // trip_plans.published_at and project_public_stops
-  '020_coplanners.sql',
-  '022_paywall_events.sql',
-  '026_oss_threshold.sql',
-  '027_paywall_funnel_kinds.sql',
-  '028_model_fallback_events.sql',
-  '029_cache_hit_instrumentation.sql',
-  '030_ai_usage_rollup.sql',
-  '031_margin_dashboard.sql',
-  '032_admin_mfa_destructive.sql',
-  '033_admin_audit_rollback.sql',
-  '034_admin_guard_tiers.sql',
-  '036_admin_public_guides.sql',
-  '037_content_reports.sql',
-  '038_admin_unpublish_guide.sql',
-  '039_statement_of_reasons.sql',
-  '040_edge_errors.sql',
-  '041_pipeline_health.sql',
-  '042_parse_failures.sql',
-  '043_override_review_lifecycle.sql',
-];
+const MIGRATIONS = readdirSync(migrations)
+  .filter((f) => /^\d{3}_.+\.sql$/.test(f))
+  .sort();
+const MIN_MIGRATIONS = 44;
 
 /**
  * A safe argument for every parameter type the admin surface uses. The call is
@@ -331,24 +311,33 @@ function runTests(bin) {
     };
     const apply = (name) => applyFile(name, resolve(migrations, name));
 
-    console.log('  Applying the admin surface:');
+    check(`the directory holds at least ${MIN_MIGRATIONS} migrations`,
+      MIGRATIONS.length >= MIN_MIGRATIONS, `found ${MIGRATIONS.length}`);
+    // Two sessions picking the same number is the failure parallel work
+    // invites; the owner would paste one and never the other.
+    const numbers = MIGRATIONS.map((f) => f.slice(0, 3));
+    const dupes = numbers.filter((n, i) => numbers.indexOf(n) !== i);
+    check('no two migrations share a number', dupes.length === 0, dupes.join(', '));
+
+    console.log(`  Applying all ${MIGRATIONS.length} migrations in filename order:`);
     for (const name of MIGRATIONS) {
-      // 018 sits between 017 and 019 in paste order.
-      if (name === '019_public_guides.sql') {
-        const m018 = resolve(migrations, '018_content_overrides.sql');
+      if (name === '018_content_overrides.sql') {
+        const m018 = resolve(migrations, name);
         const raw018 = psqlRun(bin, TEST_DB, ['-f', m018]);
+        const src = readFileSync(m018, 'utf8');
         if (raw018.ok) {
           check('migration applied: 018_content_overrides.sql (as committed)', true);
-        } else {
+        } else if (src.includes('{5,600}')) {
           const why = (raw018.err.match(/ERROR:.*$/m) || [raw018.err.trim()])[0];
           console.log(`  note  018 as committed fails here: ${why}`);
-          const src = readFileSync(m018, 'utf8');
-          check('018 carries the {5,600} bound the failure points at', src.includes('{5,600}'));
           const patched = join(work, '018_content_overrides.patched.sql');
           writeFileSync(patched, src.replace('{5,600}', '{5,255}'), 'utf8');
           console.log('  note  applying a copy with {5,255} from a temp dir, for this test only');
           applyFile('018_content_overrides.sql (patched copy, {5,255})', patched);
+        } else {
+          applyFile(name, m018);
         }
+        continue;
       }
       apply(name);
     }
@@ -441,12 +430,12 @@ function runTests(bin) {
     const pathBad = [];
     const anonGranted = [];
     const guardBad = [];
-    // What counts as an admission check. admin_guard is the normal one;
-    // is_admin() is the same membership test without the rate budget, and
-    // admin_get_audit (014) still uses it. Both are accepted here because both
-    // refuse a non-admin, which is the property under test. A function with
-    // NEITHER has no admission check at all, and that is the gap this catches.
-    const ADMISSION = /admin_guard|is_admin/;
+    // What counts as an admission check: admin_guard, and only admin_guard.
+    // is_admin() is the same membership test without the rate budget; 014's
+    // admin_get_audit used it until 045 moved it onto the guard (T077-c), so
+    // the whole callable surface now has one check and one budget, and a new
+    // function that reaches for is_admin() instead fails here.
+    const ADMISSION = /admin_guard\(/;
     // The guard cannot call itself. The other two are never granted to any
     // role, so they are only reachable from inside a definer body that has
     // already passed the guard; section 4 asserts exactly that unreachability,
@@ -462,7 +451,7 @@ function runTests(bin) {
     check('every admin_* function pins search_path', pathBad.length === 0, pathBad.join(', '));
     check('anon is granted execute on no admin_* function', anonGranted.length === 0, anonGranted.join(', '));
     check('every admin_* function carries an admission check', guardBad.length === 0,
-      `no admin_guard and no is_admin: ${guardBad.join(', ')}`);
+      `no admin_guard: ${guardBad.join(', ')}`);
     // The exemption list is only safe while the exempt functions are truly
     // unreachable. If someone grants one to `authenticated` later, the
     // exemption would hide an unguarded public function, so the exemption

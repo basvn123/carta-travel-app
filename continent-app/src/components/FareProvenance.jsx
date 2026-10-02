@@ -9,8 +9,7 @@ import { E2E_SEAMS } from '../lib/e2eSeams.js';
  * expansion), all fields optional, absent means legacy direct-harvest:
  *   s: source code, "FR" "W6" "VY" "V7" (direct carriers), "TP" (cached
  *      third-party quote), "EST" (model estimate)
- *   o: observed_at, unix epoch DAYS
- *   x: expires_at, unix epoch days, only when the source supplies one
+ *   o: observed_at, unix epoch DAYS (the day the record's prices were last confirmed)
  *   e: 1 when the price is a model estimate
  * The ground-fare resolver's flags ride on leg objects the same way
  * (est: bool, src: string) and are folded in here.
@@ -29,10 +28,10 @@ export function todayEpochDays() {
 }
 
 /* Headless-verify seam: the verify script switches a mock on with a query
- * param, e.g. ?provmock=age:3,exp:14,est:1,s:TP  ->  every price surface
+ * param, e.g. ?provmock=age:3,est:1,s:TP  ->  every price surface
  * renders the chips it would render for a real record, regardless of how
  * much provenance the current data actually carries (live slices have s/o;
- * x and e appear only on TP-merged days and estimates). Parsed once; inert
+ * e appears only on estimates). Parsed once; inert
  * unless the param is present. */
 let mockBag; // undefined = not parsed yet, null = off
 function provMock() {
@@ -42,11 +41,10 @@ function provMock() {
   try {
     const q = new URLSearchParams(window.location.search).get('provmock');
     if (q) {
-      const bag = { est: false, o: null, x: null, s: null };
+      const bag = { est: false, o: null, s: null };
       for (const part of q.split(',')) {
         const [k, v] = part.split(':');
         if (k === 'age') bag.o = todayEpochDays() - (Number(v) || 0);
-        else if (k === 'exp') bag.x = todayEpochDays() + (Number(v) || 0);
         else if (k === 'est') bag.est = v !== '0';
         else if (k === 's') bag.s = v || null;
       }
@@ -58,15 +56,14 @@ function provMock() {
 
 /** Normalized provenance of a fare/leg object, or null when it carries none
  *  (the "render exactly as today" path). Tolerates both the wire's short
- *  keys (s/o/x/e) and the ground resolver's flags (est/src). */
+ *  keys (s/o/e) and the ground resolver's flags (est/src). */
 export function fareProv(obj) {
   const b = obj || {};
   const o = Number.isFinite(b.o) ? b.o : null;
-  const x = Number.isFinite(b.x) ? b.x : null;
   const s = typeof b.s === 'string' ? b.s : (typeof b.src === 'string' ? b.src : null);
   const est = b.e === 1 || b.e === true || b.est === true || s === 'EST';
-  if (o == null && x == null && s == null && !est) return provMock();
-  return { o, x, s, est };
+  if (o == null && s == null && !est) return provMock();
+  return { o, s, est };
 }
 
 /** Provenance of a composeTrip breakdown's FLIGHT price. An estimate-band
@@ -75,7 +72,7 @@ export function fareProv(obj) {
  *  record's contract A fields (or the breakdown itself, keeping the
  *  ?provmock verify seam) decide. */
 export function flightBreakdownProv(breakdown, routeRec = null) {
-  if (breakdown?.fare_estimated) return { est: true, s: 'EST', o: null, x: null };
+  if (breakdown?.fare_estimated) return { est: true, s: 'EST', o: null };
   return fareProv(routeRec || breakdown);
 }
 
@@ -88,7 +85,7 @@ export function flightBreakdownProv(breakdown, routeRec = null) {
  *  more. The age line still shows when the record carries one. */
 export function flightProv(flight, dir) {
   const prov = fareProv(flight?.[`${dir}_prov`] || flight);
-  return { o: null, x: null, s: null, ...prov, est: true };
+  return { o: null, s: null, ...prov, est: true };
 }
 
 /** "~" for an estimated figure, "" otherwise. Prepend to the formatted price
@@ -106,17 +103,11 @@ export function fareAgeText(t, prov) {
   return t('prov.seenDays', { n: age });
 }
 
-/** Whether the quote outlived its source-supplied expiry. */
-export function fareExpired(prov) {
-  return Boolean(prov && prov.x != null && prov.x < todayEpochDays());
-}
-
 /** Inline tags after a price: the "est." marker and/or the age chip.
  *  Renders nothing when the object carries no provenance. */
 export function FareTag({ prov, className = '' }) {
   const { t } = useI18n();
   if (!prov || (!prov.est && prov.o == null)) return null;
-  const expired = fareExpired(prov);
   const ageText = fareAgeText(t, prov);
   return (
     <span className={`fare-prov ${className}`.trim()}>
@@ -124,12 +115,7 @@ export function FareTag({ prov, className = '' }) {
         <span className="fare-prov-est" title={t('prov.estTitle')}>{t('prov.est')}</span>
       )}
       {ageText && (
-        <span
-          className={`fare-prov-age${expired ? ' is-expired' : ''}`}
-          title={expired ? t('prov.expiredTitle') : undefined}
-        >
-          {ageText}
-        </span>
+        <span className="fare-prov-age">{ageText}</span>
       )}
     </span>
   );

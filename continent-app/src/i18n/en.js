@@ -1800,7 +1800,6 @@ export const en = {
   "prov.seenDays": "seen {n} days ago",
   "prov.est": "est.",
   "prov.estTitle": "estimated, not a live quote",
-  "prov.expiredTitle": "this quote has lapsed, confirm before booking",
   "prov.bookingNote": "Prices may have changed, confirm on the booking site.",
   "trails.nearbyTitle": "Hikes and day trips nearby",
   "trails.cityDay": "City day",

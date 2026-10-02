@@ -170,6 +170,16 @@ const QUESTIONS = [
   },
 ];
 
+// Which ai.* copy a failed run shows. Anything unlisted reads as the
+// generic hiccup; too_few and no_ai are not hiccups, so they say what they are.
+const CHAT_FAIL_KEY = {
+  user_cap: 'quotaUser',
+  global_cap: 'quotaGlobal',
+  auth: 'signIn',
+  no_ai: 'unavailable',
+  too_few: 'tooFew',
+};
+
 const NUDGES = ['chat.nudgeMore', 'chat.nudgeFewerSteps', 'chat.nudgeFood', 'chat.nudgeIndoor'];
 
 // A town needs this many walkable candidates before "stay around here" is a
@@ -757,11 +767,11 @@ export function CartaChatPlanner({
 
         {phase === 'fail' && (
           <div className="chat-turn">
-            <div className="chat-bubble bot chat-bubble-warn">{t(`ai.${failCode === 'user_cap' ? 'quotaUser' : failCode === 'global_cap' ? 'quotaGlobal' : failCode === 'auth' ? 'signIn' : 'error'}`)}</div>
+            <div className="chat-bubble bot chat-bubble-warn">{t(`ai.${CHAT_FAIL_KEY[failCode] || 'error'}`)}</div>
             <div className="chat-opts">
               {failCode === 'auth' && onSignIn
                 ? <button className="chat-opt" onClick={onSignIn}>{t('auth.signIn')}</button>
-                : <button className="chat-opt" onClick={() => generate(answers, '')}>{t('ai.retry')}</button>}
+                : failCode !== 'no_ai' && <button className="chat-opt" onClick={() => generate(answers, '')}>{t('ai.retry')}</button>}
               <button className="chat-opt" onClick={onManual}>{t('chat.planManually')}</button>
             </div>
           </div>

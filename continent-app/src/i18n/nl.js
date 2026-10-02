@@ -1366,7 +1366,6 @@ export const nl = {
   "prov.seenDays": "{n} dagen geleden gezien",
   "prov.est": "schatting",
   "prov.estTitle": "een schatting, geen actuele prijs",
-  "prov.expiredTitle": "deze prijs is verlopen, controleer voor het boeken",
   "prov.bookingNote": "Prijzen kunnen veranderd zijn, controleer op de boekingssite.",
   "trails.nearbyTitle": "Wandelingen en dagtochten in de buurt",
   "trails.cityDay": "Stadsdag",

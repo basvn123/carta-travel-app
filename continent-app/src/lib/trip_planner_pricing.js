@@ -15,7 +15,7 @@
  *      combineTripLegs to work at all), ranked by distance + beauty.
  */
 
-import { haversineKm, cityCoords } from './runtime_pricing.js';
+import { haversineKm, cityCoords, planeReachIndex, airportLastLeg } from './runtime_pricing.js';
 import { round2 } from './math.js';
 
 
@@ -61,13 +61,23 @@ export function baggageLabel(key) {
  *  preference: an origin that has no fare on these dates falls back to the
  *  cheapest shared origin.
  */
-export function combineTripLegs(destA, arriveDate, destB, departDate, groupSize = 1, baggage = 'cabin', preferOrigin = null) {
+export function combineTripLegs(destA, arriveDate, destB, departDate, groupSize = 1, baggage = 'cabin', preferOrigin = null, opts = {}) {
   if (!destA || !destB || !arriveDate || !departDate) {
     return { combinable: false, reason: 'missing_input' };
   }
 
-  const routesA = destA.routes || {};
-  const routesB = destB.routes || {};
+  // The same three steps planeFare takes for a single destination: (1) a
+  // stored day at the destination's own airport, (2) a served airport within
+  // PLANE_REACH_KM when the destination has no fares of its own (needs
+  // opts.allDests, the whole catalogue), (3) the model's month band
+  // (opts.estimates). cheapestStartDates passes neither, so it stays on
+  // stored days only.
+  const allDests = opts.allDests || null;
+  const wantBands = opts.estimates === true;
+  const reachA = resolveFareDest(destA, allDests);
+  const reachB = resolveFareDest(destB, allDests);
+  const routesA = reachA.dest.routes || {};
+  const routesB = reachB.dest.routes || {};
   const sharedOrigins = Object.keys(routesA).filter((o) => routesB[o]);
   if (!sharedOrigins.length) {
     return { combinable: false, reason: 'no_shared_origin' };
@@ -78,29 +88,51 @@ export function combineTripLegs(destA, arriveDate, destB, departDate, groupSize 
   for (const origin of sharedOrigins) {
     const rA = routesA[origin];
     const rB = routesB[origin];
-    const intoFare = rA.outbound_fare?.[arriveDate];
-    const outOfFare = rB.return_fare?.[departDate];
-    if (intoFare == null || outOfFare == null) continue;
+    let intoFare = rA.outbound_fare?.[arriveDate];
+    let outOfFare = rB.return_fare?.[departDate];
+    let estimated = false;
+    if (intoFare == null || outOfFare == null) {
+      // Both directions must be covered by the band: a half-known round trip
+      // would be a guess wearing an estimate's label.
+      const eInto = wantBands ? rA.outbound_estimate?.[arriveDate.slice(0, 7)] : null;
+      const eOut = wantBands ? rB.return_estimate?.[departDate.slice(0, 7)] : null;
+      if (eInto == null || eOut == null) continue;
+      intoFare = eInto;
+      outOfFare = eOut;
+      estimated = true;
+    }
 
     const combinedFare = intoFare + outOfFare;
+    const intoCarrier = estimated ? null : (rA.outbound_carrier?.[arriveDate] || null);
+    const outCarrier = estimated ? null : (rB.return_carrier?.[departDate] || null);
+    // Last leg from a nearby served airport into an unserved town, on the
+    // same scale as planeFare (zero when the place needs a car anyway).
+    const viaIn = reachA.via ? airportLastLeg(destA, reachA.via.straight_km) : null;
+    const viaOut = reachB.via ? airportLastLeg(destB, reachB.via.straight_km) : null;
     const cand = {
       origin,
+      estimated,
       combined_fare: combinedFare,
       into_fare: intoFare,
       out_of_fare: outOfFare,
-      into_anchor: rA.anchor_airport || destA.iata,
-      out_anchor: rB.anchor_airport || destB.iata,
-      into_ground_eur: rA.ground_transport_one_way_eur || 0,
-      into_ground_minutes: rA.ground_transport_minutes || 0,
-      out_ground_eur: rB.ground_transport_one_way_eur || 0,
-      out_ground_minutes: rB.ground_transport_minutes || 0,
+      into_anchor: rA.anchor_airport || reachA.dest.iata,
+      out_anchor: rB.anchor_airport || reachB.dest.iata,
+      into_ground_eur: viaIn ? viaIn.eur_pp_one_way : (rA.ground_transport_one_way_eur || 0),
+      into_ground_minutes: viaIn ? viaIn.minutes : (rA.ground_transport_minutes || 0),
+      out_ground_eur: viaOut ? viaOut.eur_pp_one_way : (rB.ground_transport_one_way_eur || 0),
+      out_ground_minutes: viaOut ? viaOut.minutes : (rB.ground_transport_minutes || 0),
       // Dep/arr local times of the exact flights priced above ('HH:MM/HH:MM'),
-      // when the times harvest covers this origin. Display-only.
-      into_time: rA.outbound_time?.[arriveDate] || null,
-      out_of_time: rB.return_time?.[departDate] || null,
+      // when the times harvest covers this origin. Display-only; a band has
+      // no flight behind it.
+      into_time: estimated ? null : (rA.outbound_time?.[arriveDate] || null),
+      out_of_time: estimated ? null : (rB.return_time?.[departDate] || null),
       // Which airline each priced day belongs to (untagged = Ryanair).
-      into_carrier: rA.outbound_carrier?.[arriveDate] || 'FR',
-      out_of_carrier: rB.return_carrier?.[departDate] || 'FR',
+      into_carrier: intoCarrier || 'FR',
+      out_of_carrier: outCarrier || 'FR',
+      // Per-direction provenance bag in the wire's short keys (s source,
+      // o epoch day last confirmed, e estimate), read by flightProv().
+      into_prov: legProv(rA, intoCarrier, estimated),
+      out_of_prov: legProv(rB, outCarrier, estimated),
     };
     if (origin === preferOrigin) preferred = cand;
     if (best == null || combinedFare < best.combined_fare) best = cand;
@@ -127,6 +159,11 @@ export function combineTripLegs(destA, arriveDate, destB, departDate, groupSize 
     out_of_time: best.out_of_time,
     into_carrier: best.into_carrier,
     out_of_carrier: best.out_of_carrier,
+    into_prov: best.into_prov,
+    out_of_prov: best.out_of_prov,
+    fare_estimated: best.estimated,
+    into_via: reachA.via,
+    out_via: reachB.via,
     fare_per_person: round2(best.combined_fare),
     fare_total: round2(best.combined_fare * group),
     into_ground_eur: round2(best.into_ground_eur),
@@ -141,6 +178,36 @@ export function combineTripLegs(destA, arriveDate, destB, departDate, groupSize 
     bag_total: round2(bagPerPerson * group),
     grand_total: round2(best.combined_fare * group + groundPerPerson * group + bagPerPerson * group),
   };
+}
+
+/** The destination whose fares price a leg: itself when it carries routes,
+ *  else the nearest served airport within PLANE_REACH_KM (planeReachIndex),
+ *  else itself with nothing to price from. `via` describes the hop. */
+function resolveFareDest(dest, allDests) {
+  if (Object.keys(dest.routes || {}).length > 0 || !allDests) return { dest, via: null };
+  const near = planeReachIndex(allDests)?.get(dest.id);
+  if (!near) return { dest, via: null };
+  return {
+    dest: near.airport,
+    via: {
+      id: near.id,
+      city: near.airport.city,
+      iata: near.airport.iata,
+      straight_km: near.straight_km,
+    },
+  };
+}
+
+/** Provenance bag for one priced direction: an estimate band is source EST
+ *  with no observation age; a stored day carries the day's carrier tag (else
+ *  the record's source) and the record's last-confirmed epoch day. */
+function legProv(rec, carrier, estimated) {
+  if (estimated) return { s: 'EST', e: 1 };
+  const bag = {};
+  const s = carrier || rec.s;
+  if (s != null) bag.s = s;
+  if (rec.o != null) bag.o = rec.o;
+  return bag;
 }
 
 // Why a trip's round flight couldn't be priced, in plain traveller language.

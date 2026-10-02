@@ -24,9 +24,8 @@ import { useAnchoredSheet } from './sheetAnchor.js';
  * country was to type its name into the search field and hope the match
  * landed, which is not a filter, it is a trick you have to know.
  *
- * The shell (portal, focus trap, swipe to dismiss) is deliberately the same
- * as ExploreFilterSheet's, down to the class names, so the two sheets are one
- * surface with two contents.
+ * The shell (portal, focus trap, swipe to dismiss) uses the shared .fsheet
+ * class names, so every filter sheet is one surface with different contents.
  */
 export function PlacesFilterSheet({
   onClose,

@@ -178,3 +178,115 @@ export function validateAppData(data, { fareFiles = null } = {}) {
 
   return problems;
 }
+
+/**
+ * Validate the split wires that sit beside app_data.json (T267, closing the
+ * gap T029 recorded): the boot index, the per-country destination files it
+ * names, the per-destination POI shards, the per-origin fare slices and the
+ * country insights. The checks are structural and narrow, in the same spirit
+ * as validateAppData: a field is required here only when the app is visibly
+ * broken without it.
+ *
+ *   boot          parsed public/boot.json
+ *   chunkNames    basenames of the files that exist in public/dest/
+ *   chunks        { name: parsed file } for a sample of those files
+ *   poiShards     { name: parsed file } for a sample of public/poi/
+ *   fareSlices    { name: parsed file } for a sample of public/fares/
+ *   insights      parsed public/country_insights.json
+ *
+ * Every walk is paired with a minimum count, so an empty sample cannot pass
+ * vacuously.
+ */
+export function validateSplitWires({ boot, chunkNames = null, chunks = {}, poiShards = {}, fareSlices = {}, insights = null } = {}) {
+  const problems = [];
+  const bad = (m) => problems.push(m);
+
+  if (boot === null || typeof boot !== 'object' || Array.isArray(boot)) {
+    return ['boot.json is not an object'];
+  }
+  if (boot.meta === null || typeof boot.meta !== 'object') {
+    bad('boot.json meta is missing');
+  } else if (boot.meta.schema_version !== EXPECTED_SCHEMA_VERSION) {
+    bad(`boot.json meta.schema_version is ${JSON.stringify(boot.meta.schema_version)}, `
+      + `expected ${EXPECTED_SCHEMA_VERSION}`);
+  }
+  if (!Array.isArray(boot.cols) || boot.cols.length < 4) {
+    bad('boot.json cols is missing or too short');
+  }
+  if (!Array.isArray(boot.d) || boot.d.length < 2) {
+    bad(`boot.json d holds ${Array.isArray(boot.d) ? boot.d.length : 'no'} rows; a valid index has at least 2`);
+  } else if (Array.isArray(boot.cols)) {
+    const width = boot.cols.length;
+    const idAt = boot.cols.indexOf('id');
+    const latAt = boot.cols.indexOf('lat');
+    const lonAt = boot.cols.indexOf('lon');
+    if (idAt < 0 || latAt < 0 || lonAt < 0) bad('boot.json cols lacks id, lat or lon');
+    else {
+      for (const row of boot.d) {
+        if (!Array.isArray(row) || row.length !== width) { bad('boot.json has a row that does not match cols'); break; }
+        if (typeof row[idAt] !== 'string' || !isFiniteNum(row[latAt]) || !isFiniteNum(row[lonAt])) {
+          bad(`boot.json row ${JSON.stringify(row[idAt])} has a bad id or coordinate`); break;
+        }
+      }
+    }
+  }
+  if (boot.chunks === null || typeof boot.chunks !== 'object' || Array.isArray(boot.chunks)
+      || Object.keys(boot.chunks).length < 1) {
+    bad('boot.json chunks is missing or empty');
+  } else if (Array.isArray(chunkNames)) {
+    const have = new Set(chunkNames);
+    const missing = Object.keys(boot.chunks).filter((k) => !have.has(k));
+    if (missing.length) {
+      bad(`boot.json names ${missing.length} destination file(s) that are not on disk: `
+        + missing.slice(0, 3).join(', '));
+    }
+  }
+
+  const sampled = (label, map, check, min) => {
+    const names = Object.keys(map);
+    if (names.length < min) bad(`${label}: only ${names.length} file(s) sampled, expected at least ${min}`);
+    for (const n of names) check(n, map[n]);
+  };
+
+  sampled('dest files', chunks, (n, file) => {
+    if (file === null || typeof file !== 'object' || Array.isArray(file) || !Object.keys(file).length) {
+      bad(`dest/${n}.json is not a non-empty object`);
+      return;
+    }
+    for (const [id, d] of Object.entries(file)) {
+      if (d === null || typeof d !== 'object' || !d.tier || !d.city || !d.country) {
+        bad(`dest/${n}.json ${id} lacks tier, city or country`);
+        break;
+      }
+    }
+  }, 1);
+
+  sampled('poi shards', poiShards, (n, file) => {
+    if (!Array.isArray(file)) { bad(`poi/${n}.json is not an array`); return; }
+    for (const it of file) {
+      if (it === null || typeof it !== 'object' || typeof it.name !== 'string' || !it.name) {
+        bad(`poi/${n}.json has an item with no name`); break;
+      }
+    }
+  }, 1);
+
+  sampled('fare slices', fareSlices, (n, file) => {
+    if (file === null || typeof file !== 'object' || Array.isArray(file) || !Object.keys(file).length) {
+      bad(`fares/${n}.json is not a non-empty object`);
+      return;
+    }
+    for (const [anchor, rec] of Object.entries(file)) {
+      if (anchor.startsWith('__')) continue; // slice metadata such as __window, not an anchor record
+      if (rec === null || typeof rec !== 'object' || rec.out === null || typeof rec.out !== 'object') {
+        bad(`fares/${n}.json ${anchor} has no out map`); break;
+      }
+    }
+  }, 1);
+
+  if (insights === null || typeof insights !== 'object' || Array.isArray(insights)
+      || Object.keys(insights).length < 1) {
+    bad('country_insights.json is not a non-empty object');
+  }
+
+  return problems;
+}

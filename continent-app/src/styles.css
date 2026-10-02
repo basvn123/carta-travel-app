@@ -1865,7 +1865,6 @@ input, select {
   color: var(--ink-mute);
   white-space: nowrap;
 }
-.fare-prov-age.is-expired { color: var(--rate-soft); cursor: help; }
 .booking-note { font-size: 10.5px; color: var(--ink-mute); font-style: italic; margin: 4px 0 0; }
 /* Inside a flex link row the note takes its own full-width line. */
 .cost-group-links .booking-note { flex: 1 0 100%; margin: 0; }
@@ -5433,11 +5432,6 @@ input, select {
 
 /* ── Sliders: the rail carries the price distribution, so a handle is dragged
       against the shape of the data instead of into the dark. ── */
-.fsheet-band {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
 .fsheet .dual-range { width: 100%; }
 .fsheet .dual-range-track { height: 40px; }
 .fsheet .dual-range-track::before,
@@ -5477,46 +5471,9 @@ input, select {
    screen allowed to shout in terracotta is the action button. */
 .dual-range-bar.in { background: var(--accent-soft); opacity: 0.62; }
 
-.fsheet-readout {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 40px;
-  padding: 0 16px;
-  border: 1px solid var(--rule);
-  border-radius: 12px;
-  background: var(--paper-dim);
-  font-size: 14px;
-  color: var(--ink-soft);
-}
-.fsheet-readout.is-narrowed {
-  border-color: var(--accent);
-  background: var(--accent-bg);
-  color: var(--ink);
-}
-.fsheet-nums {
-  font-family: var(--mono);
-  font-variant-numeric: tabular-nums;
-  font-size: 14px;
-  font-weight: 500;
-  color: var(--ink);
-}
-.fsheet-to {
-  margin: 0 8px;
-  font-family: var(--ui);
-  font-size: 12px;
-  color: var(--ink-soft);
-}/* Secondary, full-width action inside a section (lifestyle). */
+/* Secondary, full-width action inside a section (lifestyle). */
 
 
-.fsheet-note {
-  padding: 12px 16px;
-  border-radius: 12px;
-  background: var(--paper-dim);
-  font-size: 13px;
-  line-height: 1.45;
-  color: var(--ink-soft);
-}
 
 /* Country picker: the one control the markdown leaves as a dropdown, because
    43 countries is a real list. It just has to be a 44px field like the rest. */

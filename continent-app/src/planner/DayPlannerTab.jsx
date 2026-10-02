@@ -726,6 +726,9 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
     if (!missing.length) return actFullRef.current || {};
     missing.forEach((id) => poiAskedRef.current.add(id));
     const fetched = await fetchDestPoiMap(missing);
+    // A town that came back empty (a failed fetch resolves to []) is not
+    // remembered as asked, so the next call can try its shard again.
+    missing.forEach((id) => { if (!fetched[id]?.length) poiAskedRef.current.delete(id); });
     const merged = { ...(actFullRef.current || {}), ...fetched };
     actFullRef.current = merged;
     setActFull(merged);
@@ -2840,13 +2843,11 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
     const dest = destinations[destId];
     if (!dest) return null;
     const fullMap = await ensurePois([destId]);
-    const items = (dest.activities?.items_full?.length
-      ? dest.activities.items_full
-      : fullMap?.[destId]) || [];
+    // The same list the day workspace reads: the coordinate-bearing shard
+    // when it loaded, else the boot index's trimmed items, so a shard that
+    // failed to load still lets the chat plan from what the boot carries.
+    const { items, walkable } = itemsForStop({ dest, destination_id: destId }, fullMap);
     if (!items.length) return null;
-    const { suppressed } = canonicalPoiIndices(items);
-    const walkable = walkableIdxSet(items, dest);
-    suppressed.forEach((i) => walkable.delete(i));
     return { dest, items, walkable };
   };
 

@@ -3,12 +3,13 @@
 // warning, across the results list, the destination sheet and the trip
 // itinerary.
 //
-// No fare in the shipped data carries contract A fields yet, so the display
-// layer's ?provmock= seam supplies them per page load:
+// Shipped fares carry s (source) and o (epoch day last confirmed) on each
+// route record, and the display layer always labels them as estimates. The
+// ?provmock= seam supplies a chosen bag per page load:
 //   (none)                       baseline: no chips, no tildes, from-words
 //                                and booking notes present (unconditional)
-//   provmock=age:3,exp:14        a real quote seen 3 days ago
-//   provmock=age:3,exp:14,est:1  a model estimate (tilde + est. chip)
+//   provmock=age:3               a fare seen 3 days ago
+//   provmock=age:3,est:1         a model estimate (tilde + est. chip)
 //
 // Run from inside continent-app/ against a fresh build:
 //   npm run build && node scripts/verify_fare_provenance.mjs
@@ -197,11 +198,11 @@ try {
   await checkBrowse(page, '', 'plain');
   await checkTrip(page, '', 'plain');
   // A real quote with a known age and expiry.
-  await checkBrowse(page, 'age:3,exp:14', 'seen');
-  await checkTrip(page, 'age:3,exp:14', 'seen');
+  await checkBrowse(page, 'age:3', 'seen');
+  await checkTrip(page, 'age:3', 'seen');
   // A model estimate.
-  await checkBrowse(page, 'age:3,exp:14,est:1', 'est');
-  await checkTrip(page, 'age:3,exp:14,est:1', 'est');
+  await checkBrowse(page, 'age:3,est:1', 'est');
+  await checkTrip(page, 'age:3,est:1', 'est');
   await browser.close();
   console.log(failures ? `verify_fare_provenance: ${failures} FAILURES` : 'verify_fare_provenance OK');
 } catch (err) {

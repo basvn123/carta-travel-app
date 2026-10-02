@@ -389,11 +389,11 @@ export function useTripPlanner(data, countryInsights = null, preferredStayTier =
     // to the first stop's own airport only when the anchor can't be combined
     // with the home leg (keeps otherwise-unpriceable trips priced).
     if (anchorDest) {
-      const viaAnchor = combineTripLegs(anchorDest, first.arriveDate, outDest, last.departDate, groupSize, baggage, anchorOrigin);
+      const viaAnchor = combineTripLegs(anchorDest, first.arriveDate, outDest, last.departDate, groupSize, baggage, anchorOrigin, { allDests: destinations, estimates: true });
       if (viaAnchor.combinable) return withIds(viaAnchor, anchorDest);
     }
     const inDest = hasRoutes(first.dest) ? first.dest : (anchorDest || first.dest);
-    return withIds(combineTripLegs(inDest, first.arriveDate, outDest, last.departDate, groupSize, baggage, anchorOrigin), inDest);
+    return withIds(combineTripLegs(inDest, first.arriveDate, outDest, last.departDate, groupSize, baggage, anchorOrigin, { allDests: destinations, estimates: true }), inDest);
   }, [stopDetails, groupSize, anchorId, anchorOrigin, returnAnchorId, destinations, baggage, ownFlight, transportPref]);
 
   // Priced transport options (train / bus / car with booking links) between

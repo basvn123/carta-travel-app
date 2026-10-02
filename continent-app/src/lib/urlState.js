@@ -89,7 +89,7 @@ export function encodeState({
   // classes). Off is the default, so only the narrowed state is stored.
   if (bigOnly) q.set('big', '1');
   if (topPick && topPick.by && topPick.n) q.set('top', `${topPick.by}.${topPick.n}`);
-  // "Reachable within N hours" cutoff, whole hours (see ReachFilter).
+  // "Reachable within N hours" cutoff, whole hours. No control sets it now; it rides in shared links (?rh=5).
   if (Number.isFinite(reachHours) && reachHours > 0) q.set('rh', String(Math.round(reachHours)));
   const ls = packLifestyle(choices?.lifestyle);
   if (ls) q.set('ls', ls);

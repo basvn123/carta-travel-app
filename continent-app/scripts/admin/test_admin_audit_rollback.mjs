@@ -20,7 +20,8 @@
  *      from their own audit row to the exact earlier row, or to no row.
  *   4. Nothing else moved: the return shapes, every validation refusal, the
  *      forbidden answer for a non-admin, no audit row on a refusal, the
- *      fields the old detail carried, and the guard tier admin_guard('read').
+ *      fields the old detail carried, and the guard tier, which must be the
+ *      one the last applied migration for each function wrote (033: read).
  *
  * HOW. Same harness as test_admin_mfa.mjs (T063): stub schema auth, the
  * three roles, auth.uid() and auth.jwt(), apply the migrations through psql
@@ -225,7 +226,11 @@ function runTests(bin) {
     writeFileSync(stubFile, STUBS, 'utf8');
     psql(bin, TEST_DB, ['-f', stubFile]);
 
+    // Every file applied, in order, so the tier assertion at the end can ask
+    // which of them last defined each function (T065-e).
+    const appliedFiles = [];
     const applyFile = (label, file) => {
+      appliedFiles.push(file);
       const r = psqlRun(bin, TEST_DB, ['-f', file]);
       check(`migration applied: ${label}`, r.ok, r.err.trim().split('\n')[0]);
       if (!r.ok) throw new Error(`${label} failed: ${r.err.trim()}`);
@@ -441,10 +446,29 @@ function runTests(bin) {
     check('refusals wrote no audit row', auditCount() === before, `before ${before}, after ${auditCount()}`);
     check('refusals changed no row', configRow('announcement')?.value?.text === '' && overrideRow(L, I) === null);
 
+    // The tier is whatever the LAST migration this test applied for that
+    // function wrote (T065-e). Written as 'read' before, which was true only
+    // because the test stops at 033; 034 moves both functions to
+    // 'destructive', and an assertion pinned to 'read' would have failed (or
+    // been "fixed" the wrong way) the day this test applied 034. Reading the
+    // expected tier from the defining file keeps the assertion true to the
+    // stack the test builds, whatever that stack is.
+    const lastTier = (fname) => {
+      for (const file of [...appliedFiles].reverse()) {
+        const text = readFileSync(file, 'utf8');
+        const at = text.search(new RegExp(`create or replace function public\\.${fname}\\(`, 'i'));
+        if (at < 0) continue;
+        const m = text.slice(at).match(/admin_guard\('(\w+)'\)/);
+        return m ? { tier: m[1], file: file.split(/[\\/]/).pop() } : null;
+      }
+      return null;
+    };
     for (const fn of ['public.admin_set_config(text,jsonb)', 'public.admin_set_override(text,text,jsonb,text)']) {
       const src = scalar(bin, TEST_DB, `select prosrc from pg_proc where oid = '${fn}'::regprocedure`);
-      check(`${fn}: guard tier is still admin_guard('read')`,
-        src.includes("admin_guard('read')") && !src.includes("admin_guard('destructive')"));
+      const want = lastTier(fn.slice('public.'.length, fn.indexOf('(')));
+      check(`${fn}: guard tier is the one ${want ? want.file : '(no file)'} wrote (${want ? want.tier : '?'})`,
+        !!want && src.includes(`admin_guard('${want.tier}')`)
+        && (src.match(/admin_guard\('\w+'\)/g) || []).length === 1);
       check(`${fn}: still SECURITY DEFINER, anon cannot execute`,
         scalar(bin, TEST_DB, `select prosecdef from pg_proc where oid = '${fn}'::regprocedure`) === 't'
         && scalar(bin, TEST_DB, `select has_function_privilege('anon', '${fn}', 'execute')`) === 'f');

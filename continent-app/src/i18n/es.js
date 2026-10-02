@@ -1366,7 +1366,6 @@ export const es = {
   "prov.seenDays": "visto hace {n} días",
   "prov.est": "estimación",
   "prov.estTitle": "estimación, no es una tarifa en vivo",
-  "prov.expiredTitle": "esta tarifa ha caducado, confirma antes de reservar",
   "prov.bookingNote": "Los precios pueden haber cambiado, confírmalo en la web de reserva.",
   "trails.nearbyTitle": "Rutas y excursiones cercanas",
   "trails.cityDay": "Día en la ciudad",

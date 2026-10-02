@@ -15,6 +15,7 @@
  */
 
 import { dataUrl } from './dataHost.js';
+import { formatRange } from './format.js';
 
 const SLUG_RE = /^[a-z-]{3,30}$/;
 const ID_RE = /^[a-z]{2}-[a-z0-9-]{3,90}$/;
@@ -110,17 +111,12 @@ export function monthsShort(months, lang) {
   }
 }
 
-/** "€950-1,400" from a {low, high} pair, or '' when the record has neither. */
+/** "€950 to €1,400" from a {low, high} pair, or '' when the record has neither.
+ *  The join itself lives in format.js formatRange, the only place a range is
+ *  written. */
 export function eurRange(pair, lang) {
   if (!pair) return '';
-  const fmt = (n) => Math.round(n).toLocaleString(lang);
-  const { low, high } = pair;
-  if (Number.isFinite(low) && Number.isFinite(high) && low !== high) {
-    return `€${fmt(low)}-${fmt(high)}`;
-  }
-  if (Number.isFinite(low)) return `€${fmt(low)}`;
-  if (Number.isFinite(high)) return `€${fmt(high)}`;
-  return '';
+  return formatRange(pair.low, pair.high, (n) => `€${Math.round(n).toLocaleString(lang)}`);
 }
 
 /**

@@ -35,7 +35,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { validateAppData, EXPECTED_SCHEMA_VERSION } from './contract.mjs';
+import { validateAppData, validateSplitWires, EXPECTED_SCHEMA_VERSION } from './contract.mjs';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const APP_ROOT = path.join(HERE, '..', '..');
@@ -124,6 +124,68 @@ if (seed) {
       + `(schema_version ${real.meta.schema_version}, `
       + `${Object.keys(real.destinations).length} destinations, `
       + `${realFareFiles ? realFareFiles.length : 0} fare slices)`);
+  }
+}
+
+// ---------------------------------------------------------------- the split wires
+// The boot index, the per-country files it names, the POI shards, the fare
+// slices and the country insights. Real files are sampled (the first few of
+// each folder, sorted) because the folders hold thousands of files.
+{
+  const PUB = path.join(APP_ROOT, 'public');
+  const readJson = (rel) => JSON.parse(fs.readFileSync(path.join(PUB, rel), 'utf8'));
+  const jsonIn = (dir) => (fs.existsSync(path.join(PUB, dir))
+    ? fs.readdirSync(path.join(PUB, dir)).filter((f) => f.endsWith('.json')).sort()
+    : []);
+  const load = (dir, n) => Object.fromEntries(jsonIn(dir).slice(0, n).map((f) => [f.slice(0, -5), readJson(`${dir}/${f}`)]));
+
+  if (!fs.existsSync(path.join(PUB, 'boot.json'))) {
+    fail('public/boot.json is missing; the split wires cannot be checked (run `npm run data`)');
+  } else {
+    const wires = {
+      boot: readJson('boot.json'),
+      chunkNames: jsonIn('dest').map((f) => f.slice(0, -5)),
+      chunks: load('dest', 5),
+      poiShards: load('poi', 8),
+      fareSlices: load('fares', 3),
+      insights: fs.existsSync(path.join(PUB, 'country_insights.json')) ? readJson('country_insights.json') : null,
+    };
+    const problems = validateSplitWires(wires);
+    if (problems.length) {
+      fail('the split wires do not satisfy the contract:\n'
+        + problems.slice(0, 12).map((p) => `          ${p}`).join('\n'));
+    } else {
+      pass(`split wires satisfy the contract (boot index ${wires.boot.d.length} rows, `
+        + `${Object.keys(wires.boot.chunks).length} country files, `
+        + `${Object.keys(wires.chunks).length}/${Object.keys(wires.poiShards).length}/`
+        + `${Object.keys(wires.fareSlices).length} sampled dest/poi/fare files)`);
+    }
+
+    // Negative half: known-bad wires must be rejected, or the gate is vacuous.
+    const WIRE_BREAKS = {
+      'boot-index-empty': (w) => { w.boot.d = []; return w; },
+      'boot-chunk-missing-on-disk': (w) => { w.chunkNames = []; return w; },
+      'boot-schema-bumped': (w) => { w.boot.meta.schema_version += 1; return w; },
+      'dest-file-empty': (w) => { w.chunks[Object.keys(w.chunks)[0]] = {}; return w; },
+      'poi-shard-not-array': (w) => { w.poiShards[Object.keys(w.poiShards)[0]] = {}; return w; },
+      'fare-slice-no-out': (w) => {
+        const k = Object.keys(w.fareSlices)[0];
+        const a = Object.keys(w.fareSlices[k])[0];
+        delete w.fareSlices[k][a].out;
+        return w;
+      },
+      'insights-empty': (w) => { w.insights = {}; return w; },
+      'no-poi-sampled': (w) => { w.poiShards = {}; return w; },
+    };
+    let rejected = 0;
+    for (const [name, brk] of Object.entries(WIRE_BREAKS)) {
+      const found = validateSplitWires(brk(structuredClone(wires)));
+      if (found.length) rejected += 1;
+      else fail(`split-wire break ${name} was ACCEPTED; the gate is vacuous for it`);
+    }
+    if (rejected === Object.keys(WIRE_BREAKS).length) {
+      pass(`${rejected}/${rejected} seeded split-wire breaks rejected`);
+    }
   }
 }
 

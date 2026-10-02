@@ -128,7 +128,12 @@ export function fetchDestPois(destId) {
   if (!poiShardPromises.has(name)) {
     poiShardPromises.set(name, fetchJson(`/poi/${name}.json`)
       .then((j) => (Array.isArray(j) ? j : []))
-      .catch(() => []));
+      .catch(() => {
+        // Do not cache a failure: forget the entry so a later call (the
+        // chat's "Try again") fetches the shard afresh.
+        poiShardPromises.delete(name);
+        return [];
+      }));
   }
   return poiShardPromises.get(name);
 }

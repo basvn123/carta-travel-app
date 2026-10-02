@@ -86,6 +86,10 @@ export function ContentSection({ overrides, onOverridesChanged, errText }) {
   // switching the grid.
   const [editing, setEditing] = useState(null);
   const [editLayerKey, setEditLayerKey] = useState('beach');
+  // The wire file the item came from (public/<layer>/<CC>.json). Saved on the
+  // override row (migration 045) so the review and orphan lists can load the
+  // pipeline item later: its photo and the diff viewer's before-column.
+  const [editCountry, setEditCountry] = useState('');
   const [form, setForm] = useState({
     name: '', image: '', blurb: '', hidden: false, featured: false,
     note: '', status: 'temporary', reviewBy: '',
@@ -161,11 +165,12 @@ export function ContentSection({ overrides, onOverridesChanged, errText }) {
   // The editor opens prefilled with the stored patch AND the stored
   // lifecycle, so confirming an overdue override is "change the date, save",
   // and the reason carries over unless the admin rewrites it.
-  const openEditor = (item, lk = layerKey) => {
+  const openEditor = (item, lk = layerKey, cc = country) => {
     const row = rowFor(lk, item.id);
     const p = row?.patch || {};
     setEditing(item);
     setEditLayerKey(lk);
+    setEditCountry(cc || '');
     setSaveErr('');
     setForm({
       name: p.name || '',
@@ -183,11 +188,24 @@ export function ContentSection({ overrides, onOverridesChanged, errText }) {
     });
   };
 
-  // An override from the review list: the grid may be on another layer or
-  // country, so the item is rebuilt from the override row. Its pipeline
-  // photograph is not loaded; the editor says "no photo" for the original.
+  // An override from the review or orphan list: the grid may be on another
+  // layer or country, so the editor opens on a stand-in built from the row.
+  // When the row knows its country (saved since 045), the pipeline item is
+  // then loaded from that country's file and swapped in, which brings back
+  // the original photograph and the diff's before-column (T074-e, T076-b).
+  // Rows saved before 045 have no country and keep the stand-in.
   const openFromReview = (row) => {
-    openEditor({ id: row.itemId, name: row.patch?.name || row.itemId }, row.layer);
+    const stub = { id: row.itemId, name: row.patch?.name || row.itemId };
+    openEditor(stub, row.layer, row.country || '');
+    const dir = LAYERS.find((l) => l.key === row.layer);
+    if (!row.country || !dir) return;
+    fetchJson(`/${dir.dir}/${row.country}.json`).then((raw) => {
+      const arr = raw && Array.isArray(raw[dir.arr]) ? raw[dir.arr] : [];
+      const found = arr.find((it) => it && String(it.id) === String(row.itemId));
+      if (!found) return;
+      // Only if the admin is still on this item; the form is left alone.
+      setEditing((cur) => (cur === stub ? found : cur));
+    });
   };
 
   const editRow = editing ? rowFor(editLayerKey, editing.id) : null;
@@ -229,6 +247,7 @@ export function ContentSection({ overrides, onOverridesChanged, errText }) {
         empty ? null : (form.note.trim() || null),
         empty ? null : form.status,
         empty ? null : reviewBy,
+        empty ? null : (editCountry || null),
       );
       await onOverridesChanged?.();
       setEditing(null);

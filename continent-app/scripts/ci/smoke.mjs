@@ -72,6 +72,12 @@ const ROUTES = [
   { label: 'the privacy page (?legal=privacy)', url: '/?legal=privacy', body: null },
 ];
 
+// Anything the boot data drives. A route with no `body` of its own is settled
+// once one of these is on screen.
+const DATA_SIGNALS = '.place-card, .explore-card, .dest-card, .maplibregl-canvas, '
+  + '.wiz-step, .day-flow-screen, .trip-planner-screen, .legal-modal, '
+  + '.saved-trips-panel, .places-tab, .explore-tab';
+
 const SEED = () => {
   try {
     localStorage.setItem('continent.lang.v1', 'en');
@@ -183,7 +189,13 @@ for (const route of ROUTES) {
   await page.addInitScript(SEED);
   try {
     await page.goto(BASE + route.url, { waitUntil: 'domcontentloaded', timeout: 60000 });
-    await page.waitForTimeout(5000);
+    // Settle on the route's own signal instead of a fixed five seconds: the
+    // run ends the moment the page is ready and still waits up to 30 s on a
+    // slow machine. A route that never shows its signal falls through to the
+    // assertions below, which report it. Then let the network go quiet (capped,
+    // since map tiles may never idle) so a late JSON 404 is still caught.
+    await page.waitForSelector(route.body || DATA_SIGNALS, { state: 'visible', timeout: 30000 }).catch(() => {});
+    await page.waitForLoadState('networkidle', { timeout: 8000 }).catch(() => {});
   } catch (e) {
     fail(`${route.label}: navigation threw ${e.message.split('\n')[0]}`);
     await page.close();
@@ -194,16 +206,12 @@ for (const route of ROUTES) {
   // the app got its data, so this reads the rendered result. A destination
   // count on screen, or any element the data drives, means app_data.json
   // resolved and hydrateForOrigin ran.
-  const booted = await page.evaluate(() => {
+  const booted = await page.evaluate((sel) => {
     const root = document.getElementById('root');
     if (!root || root.children.length === 0) return { mounted: false, signals: 0 };
-    const signals = document.querySelectorAll(
-      '.place-card, .explore-card, .dest-card, .maplibregl-canvas, '
-      + '.wiz-step, .day-flow-screen, .trip-planner-screen, .legal-modal, '
-      + '.saved-trips-panel, .places-tab, .explore-tab',
-    ).length;
+    const signals = document.querySelectorAll(sel).length;
     return { mounted: true, signals, text: (root.innerText || '').length };
-  });
+  }, DATA_SIGNALS);
 
   if (!booted.mounted) {
     fail(`${route.label}: #root never mounted`);

@@ -54,9 +54,27 @@ export function flightTimes(t) {
 export function stripDashes(s) {
   if (typeof s !== 'string') return s;
   return s
+    // currency ranges -> "to" (a dash between two euro figures would otherwise
+    // fall to the comma rule below and read as two separate prices)
+    .replace(/(\d)\s*[—–]\s*([€$£]\s?\d)/g, '$1 to $2')
     .replace(/(\d)\s*[—–]\s*(\d)/g, '$1-$2')  // numeric ranges -> hyphen (1992-1995)
     .replace(/(\w)[—–](\w)/g, '$1-$2')         // tight word joins -> hyphen (Piraeus-Milos)
     .replace(/\s*[—–]\s*/g, ', ');             // remaining spaced prose dashes -> comma
+}
+
+/** THE one place a range is joined. Money and other quantities that have a low
+ *  and a high end render through here, with the word "to" (house style bans the
+ *  dash). `fmt` formats one end; a missing or equal end collapses to one
+ *  figure; returns '' when neither end is a number. Journey budgets, per-day
+ *  figures and every {low, high} pair on the trip page come through this, so
+ *  the join can never drift or be stripped back to a comma. */
+export function formatRange(low, high, fmt = String) {
+  const lo = Number.isFinite(low);
+  const hi = Number.isFinite(high);
+  if (lo && hi && low !== high) return `${fmt(low)} to ${fmt(high)}`;
+  if (lo) return fmt(low);
+  if (hi) return fmt(high);
+  return '';
 }
 
 /** Only allow http(s) URLs for links that come from harvested/remote data

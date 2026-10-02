@@ -50,6 +50,17 @@ export const adminSetConfig = (key, value) =>
 export const adminGetAudit = (limit = 50, offset = 0) =>
   call('admin_get_audit', { p_limit: limit, p_offset: offset });
 
+// Every site_config key, private ones included, with its public flag
+// (migration 045). The Site tab reads public keys through the client; only
+// this sees the rest.
+export const adminListConfig = () => call('admin_list_config');
+
+// Make a site_config key public or private (045). Refuses with
+// required_public for announcement, maintenance and features, which the app
+// reads signed out.
+export const adminSetConfigPublic = (key, isPublic) =>
+  call('admin_set_config_public', { p_key: key, p_public: !!isPublic });
+
 export const adminBanUser = (userId, days) =>
   call('admin_ban_user', { p_user: userId, p_days: days });
 
@@ -275,15 +286,29 @@ export const adminListModerationComplaints = (status = 'open', limit = 50, offse
 // or stale), a review date (ISO, within a year) and a reason of at least ten
 // characters, or the stored one. All six arguments are always sent, even for
 // a clear, so the call can never match a stray four-argument overload.
-export const adminSetOverride = (layer, itemId, patch, note = null, status = null, reviewBy = null) =>
-  call('admin_set_override', {
+// Migration 045 adds p_country, the wire file the item came from, so the
+// review list can load the pipeline item later. It is sent only when known.
+// Before 045 is pasted the database has no seven-argument function and
+// PostgREST answers PGRST202 (no function with those arguments); the call is
+// then repeated without the country, so this page works on either side of
+// the paste and only the country is lost.
+export const adminSetOverride = async (layer, itemId, patch, note = null, status = null, reviewBy = null, country = null) => {
+  const args = {
     p_layer: layer,
     p_item: String(itemId),
     p_patch: patch,
     p_note: note,
     p_status: status,
     p_review_by: reviewBy,
-  });
+  };
+  if (!country) return call('admin_set_override', args);
+  try {
+    return await call('admin_set_override', { ...args, p_country: country });
+  } catch (e) {
+    if (e?.code === 'PGRST202') return call('admin_set_override', args);
+    throw e;
+  }
+};
 
 export const adminListOverrides = (layer = null) =>
   call('admin_list_overrides', { p_layer: layer });
