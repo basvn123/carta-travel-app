@@ -541,8 +541,6 @@ export const es = {
 
   "account.faq1Q": "\u00bfQu\u00e9 hace Carta?",
   "account.faq1A": "Responde a tres preguntas: ad\u00f3nde ir, cu\u00e1nto cuesta un d\u00eda all\u00ed y c\u00f3mo llenarlo. {n} destinos en 43 pa\u00edses de Europa, m\u00e1s rutas a pie, playas, lagos y monta\u00f1as, cada uno con una valoraci\u00f3n y un precio por persona y d\u00eda. Luego el planificador de viaje arma la ruta y el planificador de d\u00eda llena las horas.",
-  "account.faq2Q": "\u00bfCarta calcula los vuelos?",
-  "account.faq2A": "Ya no. Una tarifa es un dato sobre una fecha, no sobre un lugar, y desplazaba a las dos cifras que s\u00ed describen un lugar: una cama para la noche y un d\u00eda comiendo fuera. Carta calcula el suelo y te pasa a Skyscanner, Trainline, Omio o Rome2rio para el trayecto. Escribe lo que pagaste de verdad y el total del viaje usa tu cifra en lugar de una estimaci\u00f3n.",
   "account.faq3Q": "\u00bfPuedo reservar en Carta?",
   "account.faq3A": "No. Carta nunca acepta una reserva ni un pago de viaje. Calcula y planifica el viaje, y despu\u00e9s te env\u00eda a la aerol\u00ednea, al ferrocarril o al anfitri\u00f3n para reservar directamente con ellos.",
   "account.faq4Q": "\u00bfPor qu\u00e9 no est\u00e1 mi ciudad en Carta?",
@@ -1334,7 +1332,7 @@ export const es = {
   "pass.freePrice": "0 €",
   "pass.perTrip": "un pago, 30 días",
   "pass.perYear": "un pago, 12 meses",
-  "pass.mostPopular": "El más elegido",
+  "pass.recommended": "Recomendado",
   "pass.featPlansFree": "{n} planes de día del bot de Carta para probar",
   "pass.featPlansPaid": "Planes de día ilimitados (uso razonable {n})",
   "pass.featSearchOn": "Búsqueda web en directo de eventos y horarios ({n})",

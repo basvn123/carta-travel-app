@@ -541,8 +541,6 @@ export const de = {
 
   "account.faq1Q": "Was macht Carta?",
   "account.faq1A": "Es beantwortet drei Fragen: wohin, was ein Tag dort kostet und wie du ihn f\u00fcllst. {n} Ziele in 43 europ\u00e4ischen L\u00e4ndern, dazu Wanderwege, Str\u00e4nde, Seen und Berge, jeweils mit Bewertung und Preis pro Person und Tag. Der Reiseplaner baut danach die Route, der Tagesplaner f\u00fcllt die Stunden.",
-  "account.faq2Q": "Berechnet Carta Flugpreise?",
-  "account.faq2A": "Nicht mehr. Ein Tarif ist eine Tatsache \u00fcber ein Datum, nicht \u00fcber einen Ort, und er verdr\u00e4ngte die beiden Zahlen, die den Ort wirklich beschreiben: ein Bett f\u00fcr die Nacht und ein Tag ausw\u00e4rts essen. Carta berechnet den Boden und \u00fcbergibt dich f\u00fcr die Strecke an Skyscanner, Trainline, Omio oder Rome2rio. Trag ein, was du tats\u00e4chlich bezahlt hast, und die Reisesumme rechnet mit deiner Zahl statt mit einer Sch\u00e4tzung.",
   "account.faq3Q": "Kann ich \u00fcber Carta buchen?",
   "account.faq3A": "Nein. Carta nimmt nie eine Buchung oder eine Zahlung f\u00fcr Reisen entgegen. Es berechnet und plant die Reise und schickt dich dann zur Airline, zur Bahn oder zum Gastgeber, um dort direkt zu buchen.",
   "account.faq4Q": "Warum fehlt meine Stadt in Carta?",
@@ -1334,7 +1332,7 @@ export const de = {
   "pass.freePrice": "€0",
   "pass.perTrip": "einmalig, 30 Tage",
   "pass.perYear": "einmalig, 12 Monate",
-  "pass.mostPopular": "Am beliebtesten",
+  "pass.recommended": "Empfohlen",
   "pass.featPlansFree": "{n} Carta-Bot Tagespläne zum Ausprobieren",
   "pass.featPlansPaid": "Unbegrenzte Tagespläne (Fair Use {n})",
   "pass.featSearchOn": "Live-Websuche für Veranstaltungen und Öffnungszeiten ({n})",

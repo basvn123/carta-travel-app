@@ -541,8 +541,6 @@ export const it = {
 
   "account.faq1Q": "Cosa fa Carta?",
   "account.faq1A": "Risponde a tre domande: dove andare, quanto costa una giornata l\u00ec e come riempirla. {n} destinazioni in 43 paesi europei, pi\u00f9 percorsi a piedi, spiagge, laghi e montagne, ognuno con un voto e un prezzo a persona al giorno. Poi il pianificatore di viaggio costruisce il percorso e il pianificatore di giornata riempie le ore.",
-  "account.faq2Q": "Carta calcola i voli?",
-  "account.faq2A": "Non pi\u00f9. Una tariffa \u00e8 un fatto su una data, non su un luogo, e toglieva spazio ai due numeri che il luogo lo descrivono davvero: un letto per la notte e una giornata mangiando fuori. Carta calcola il terreno e ti passa a Skyscanner, Trainline, Omio o Rome2rio per la tratta. Inserisci quanto hai pagato davvero e il totale del viaggio usa la tua cifra invece di una stima.",
   "account.faq3Q": "Posso prenotare da Carta?",
   "account.faq3A": "No. Carta non accetta mai una prenotazione n\u00e9 un pagamento di viaggio. Calcola e pianifica il viaggio, poi ti manda alla compagnia, alla ferrovia o all'host per prenotare direttamente da loro.",
   "account.faq4Q": "Perch\u00e9 la mia citt\u00e0 non c'\u00e8 in Carta?",
@@ -1334,7 +1332,7 @@ export const it = {
   "pass.freePrice": "0 €",
   "pass.perTrip": "una volta, 30 giorni",
   "pass.perYear": "una volta, 12 mesi",
-  "pass.mostPopular": "Il più scelto",
+  "pass.recommended": "Consigliato",
   "pass.featPlansFree": "{n} piani giornalieri del bot di Carta da provare",
   "pass.featPlansPaid": "Piani giornalieri illimitati (uso corretto {n})",
   "pass.featSearchOn": "Ricerca web dal vivo per eventi e orari ({n})",

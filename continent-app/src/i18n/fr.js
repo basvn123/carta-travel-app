@@ -541,8 +541,6 @@ export const fr = {
 
   "account.faq1Q": "Que fait Carta ?",
   "account.faq1A": "Il r\u00e9pond \u00e0 trois questions : o\u00f9 aller, ce que co\u00fbte une journ\u00e9e l\u00e0-bas, et comment la remplir. {n} destinations dans 43 pays d'Europe, plus des itin\u00e9raires de marche, des plages, des lacs et des montagnes, chacun avec une note et un prix par personne et par jour. Le planificateur de voyage construit ensuite la route, et le planificateur de journ\u00e9e remplit les heures.",
-  "account.faq2Q": "Carta chiffre-t-il les vols ?",
-  "account.faq2A": "Plus maintenant. Un tarif est un fait sur une date, pas sur un lieu, et il chassait les deux chiffres qui d\u00e9crivent vraiment un lieu : un lit pour la nuit et une journ\u00e9e \u00e0 manger dehors. Carta chiffre le sol et vous passe la main vers Skyscanner, Trainline, Omio ou Rome2rio pour le trajet. Saisissez ce que vous avez r\u00e9ellement pay\u00e9 et le total du voyage utilise votre montant plut\u00f4t qu'une estimation.",
   "account.faq3Q": "Puis-je r\u00e9server via Carta ?",
   "account.faq3A": "Non. Carta ne prend jamais de r\u00e9servation ni de paiement pour un voyage. Il chiffre et pr\u00e9pare le voyage, puis vous envoie vers la compagnie, le chemin de fer ou l'h\u00f4te pour r\u00e9server chez eux directement.",
   "account.faq4Q": "Pourquoi ma ville n'est-elle pas dans Carta ?",
@@ -1334,7 +1332,7 @@ export const fr = {
   "pass.freePrice": "0 €",
   "pass.perTrip": "une fois, 30 jours",
   "pass.perYear": "une fois, 12 mois",
-  "pass.mostPopular": "Le plus choisi",
+  "pass.recommended": "Recommandé",
   "pass.featPlansFree": "{n} plans de journée du bot Carta à essayer",
   "pass.featPlansPaid": "Plans de journée illimités (usage raisonnable {n})",
   "pass.featSearchOn": "Recherche web en direct pour les événements et les horaires ({n})",

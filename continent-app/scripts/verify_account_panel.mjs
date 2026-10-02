@@ -580,7 +580,7 @@ try {
   ok('the panel returns to the hub');
   await goTo(page, 'Common questions');
   const faqItems = await page.locator('.account-faq-item').count();
-  if (faqItems !== 14) fail(`expected 14 FAQ entries, found ${faqItems}`);
+  if (faqItems !== 13) fail(`expected 13 FAQ entries, found ${faqItems}`);
   const groups = await page.locator('.account-faq-grouplabel').allInnerTexts();
   if (groups.length !== 4) fail(`expected 4 FAQ group headings, found ${groups.length}`);
   if (await page.locator('.account-faq-a').count()) fail('an answer is open before anything was tapped');

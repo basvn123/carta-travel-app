@@ -61,7 +61,7 @@ const SHARE_URL = 'https://carta-europetravel.com';
 const FAQ_GROUPS = [
   {
     labelKey: 'account.faqGroup1',
-    items: [['account.faq1Q', 'account.faq1A'], ['account.faq2Q', 'account.faq2A'],
+    items: [['account.faq1Q', 'account.faq1A'],
       ['account.faq3Q', 'account.faq3A'], ['account.faq4Q', 'account.faq4A']],
   },
   {

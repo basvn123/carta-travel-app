@@ -541,8 +541,6 @@ export const nl = {
 
   "account.faq1Q": "Wat doet Carta?",
   "account.faq1A": "Het beantwoordt drie vragen: waar naartoe, wat een dag daar kost en hoe je die vult. {n} bestemmingen in 43 Europese landen, plus wandelroutes, stranden, meren en bergen, elk met een beoordeling en een prijs per persoon per dag. De reisplanner bouwt daarna de route, en de dagplanner vult de uren.",
-  "account.faq2Q": "Rekent Carta vluchtprijzen?",
-  "account.faq2A": "Niet meer. Een tarief is een feit over \u00e9\u00e9n datum, niet over een plek, en het verdrong de twee cijfers die w\u00e9l over een plek gaan: een bed voor de nacht en een dag uit eten. Carta prijst de grond en stuurt je voor de reis zelf naar Skyscanner, Trainline, Omio of Rome2rio. Vul in wat je echt betaald hebt en het reistotaal rekent met jouw bedrag in plaats van een schatting.",
   "account.faq3Q": "Kan ik via Carta boeken?",
   "account.faq3A": "Nee. Carta neemt nooit een boeking of een betaling voor reizen aan. Het prijst en plant de reis en stuurt je daarna naar de maatschappij, de spoorwegen of de verhuurder om rechtstreeks bij hen te boeken.",
   "account.faq4Q": "Waarom staat mijn stad niet in Carta?",
@@ -1334,7 +1332,7 @@ export const nl = {
   "pass.freePrice": "€0",
   "pass.perTrip": "eenmalig, 30 dagen",
   "pass.perYear": "eenmalig, 12 maanden",
-  "pass.mostPopular": "Populairst",
+  "pass.recommended": "Aanbevolen",
   "pass.featPlansFree": "{n} Carta-bot dagplannen om te proberen",
   "pass.featPlansPaid": "Onbeperkt dagplannen (fair use {n})",
   "pass.featSearchOn": "Live zoeken naar evenementen en openingstijden ({n})",

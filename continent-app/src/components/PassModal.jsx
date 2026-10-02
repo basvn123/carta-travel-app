@@ -119,7 +119,7 @@ export function PassModal({ entitlement, reason = '', onClose, onSignIn, signedI
             const buyable = PAID_TIERS.includes(id);
             return (
               <div key={id} className={`pass-tier ${tier.featured ? 'featured' : ''} ${isCurrent ? 'current' : ''}`}>
-                {tier.featured && <span className="pass-flag">{t('pass.mostPopular')}</span>}
+                {tier.featured && <span className="pass-flag">{t('pass.recommended')}</span>}
                 <h4>{t(tier.labelKey)}</h4>
                 <div className="pass-price">
                   {tier.priceCents === 0

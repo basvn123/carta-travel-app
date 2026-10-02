@@ -588,8 +588,6 @@ export const en = {
 
   "account.faq1Q": "What does Carta do?",
   "account.faq1A": "It answers three questions: where to go, what a day there costs, and how to fill it. {n} destinations across 43 European countries, plus walking routes, beaches, lakes and mountains, each with a rating and a price per person per day. The trip planner then builds the route, and the day planner fills the hours.",
-  "account.faq2Q": "Does Carta price flights?",
-  "account.faq2A": "Not any more. A fare is a fact about one date, not about a place, and it crowded out the two figures that do describe a place: a bed for the night and a day of eating out. Carta prices the ground and hands you to Skyscanner, Trainline, Omio or Rome2rio for the leg. Type in what you actually paid and the trip total uses your figure instead of an estimate.",
   "account.faq3Q": "Can I book through Carta?",
   "account.faq3A": "No. Carta never takes a booking or a payment for travel. It prices and plans the trip, then sends you to the airline, the railway or the host to book with them directly.",
   "account.faq4Q": "Why is my town not in Carta?",
@@ -1768,7 +1766,7 @@ export const en = {
   "pass.freePrice": "€0",
   "pass.perTrip": "once, 30 days",
   "pass.perYear": "once, 12 months",
-  "pass.mostPopular": "Most popular",
+  "pass.recommended": "Recommended",
   "pass.featPlansFree": "{n} Carta bot day plans to try",
   "pass.featPlansPaid": "Unlimited day plans (fair use {n})",
   "pass.featSearchOn": "Live web search for events and openings ({n})",
