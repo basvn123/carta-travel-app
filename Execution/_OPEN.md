@@ -320,3 +320,5 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T268-e | T268 | The Content tab trail layer has no countries: public/trails/index.json names the field country while ContentSection.jsx filters on cc, so trails cannot be browsed or corrected from the grid | next task | open | |
 | T268-f | T268 | C: had 0 bytes free on 2026-10-02 while parallel sessions committed; free space before the next wave (see the disk-full memory note) | user | open | |
 | T268-g | T268 | verify_admin_panel.mjs hardcodes port 4192 and 10 s waits that fail under load, and lacks the two T268 checks (grid save sends p_country; review-list editor loads the pipeline photo and diff base); fold them in with the D3 harness repairs | next task | open | |
+| T085-a | T085 | The tracked wire continent-app/public/journeys still holds the old comma ranges; rebuild it with build_wire.py on the main checkout (cache kept) and commit it so the trip-validator CI goes green | user | open | |
+| T085-b | T085 | Prose ranges (food, hotel, airport lines) are text, not {low, high}; structured fields belong with the K1 schema task | next task | open | |
