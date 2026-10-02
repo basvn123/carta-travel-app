@@ -997,7 +997,8 @@ def merge_waymarked(cc, rows, routes, fresh=None):
                 for k in (squash(base_name(text)), squash(text)):
                     if _key_ok(k):
                         by_key.setdefault(k, row)
-    tally = {"routes": 0, "known": 0, "added": 0, "seeds_resolved": 0}
+    tally = {"routes": 0, "known": 0, "added": 0, "seeds_resolved": 0,
+             "skipped": 0}
     for route in routes:
         if cc not in (route.get("countries") or {}):
             continue
@@ -1026,7 +1027,11 @@ def merge_waymarked(cc, rows, routes, fresh=None):
                 tally["seeds_resolved"] += 1
             continue
         name = route.get("name") or route.get("ref")
-        if not name:
+        if not name or point[0] is None:
+            # No name to search for, or no point inside this country: the
+            # extract held the relation from across the border. Either way
+            # it is not a walk this country can be held to.
+            tally["skipped"] += 1
             continue
         if fresh is not None:
             row = fresh(name, point[0], point[1])
@@ -1295,7 +1300,8 @@ def build_country(cc, osm_rows, wd_rows, portals, verbose=False,
 
 def waymarked_counts(tallies, wm):
     tot = {k: sum(t[k] for t in tallies.values())
-           for k in ("routes", "known", "added", "seeds_resolved")}
+           for k in ("routes", "known", "added", "seeds_resolved",
+                     "skipped")}
     return {"harvest_routes": len(wm), **tot,
             "per_country": dict(sorted(tallies.items()))}
 

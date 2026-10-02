@@ -303,12 +303,16 @@ def place_in_country(cc, slug, wanted, verbose=True):
 
 def choose_points(per_cc, verbose=True):
     """One [lat, lon] per route per country: the first candidate inside
-    that country by the regions spine, else the middle candidate, counted.
+    that country by the regions spine, else None.
 
     Point-in-polygon on the same NUTS3 layer the registry's region
-    assignment uses, so a row the registry places lands in its own country
-    whenever the extract holds any of the route on this side of the
-    border."""
+    assignment uses, so a row the registry places lands in its own country.
+    None is the honest answer when no candidate is inside: Geofabrik cuts
+    its extracts with a margin, so a route that runs along the far side of
+    a border is held by the neighbour's extract without entering the
+    neighbour (the first full run kept 225 such placements at a middle
+    point, and they became rows of the wrong country). famous_registry.py
+    attaches evidence for such a route but never adds it as a row."""
     import geopandas as gpd
     admin = gpd.read_file(GPKG, layer="admin")
     a3 = admin[admin["level"] == 3][["country", "geometry"]]
@@ -338,12 +342,11 @@ def choose_points(per_cc, verbose=True):
                     point = list(pt)
                     break
             if point is None and cands:
-                point = list(cands[len(cands) // 2])
                 outside += 1
             hit["point"] = point
     if verbose:
         print(f"  {outside} placement(s) with no candidate inside the "
-              f"country; kept at the middle candidate")
+              f"country; written as null")
     return outside
 
 
@@ -443,7 +446,9 @@ def main():
                 "lists over a NUTS3 polygon, placed in each catalogue "
                 "country whose Geofabrik extract holds it. countries maps "
                 "ISO2 to a [lat, lon] inside that country, or null when the "
-                "extract holds the relation but none of its ways. A route "
+                "extract holds the relation but none of its sampled ways "
+                "has a node inside the country (held across the border by "
+                "the extract's margin). A route "
                 "with no countries touched only a neighbour outside the "
                 "catalogue.",
         "routes": rows,
