@@ -587,8 +587,18 @@ def validate(dataset, wire=None, verify_urls=False, places=None):
                  "strategy cannot be checked against the itinerary")
         else:
             sleep_blob = _fold(" | ".join(sleeps))
+            # Schema v2.1 (T143): a generated record names the strategy entry
+            # it sleeps in by rank (sleepRef), and an entry that is only a
+            # different-budget substitute for another says so (alternativeTo).
+            # The reference is the proof, so the name match is skipped for it,
+            # and a declared alternative is exempt. A v2.0 record carries
+            # neither field and is checked by name exactly as before.
+            refs = {d.get("sleepRef") for d in days if d.get("sleepRef") is not None}
             for opt in strategy:
                 name = opt.get("name") or ""
+                if opt.get("alternativeTo") is not None or (
+                        opt.get("rank") is not None and opt.get("rank") in refs):
+                    continue
                 if name and not accommodation_slept(name, sleep_blob):
                     err(tid, "accommodation-not-slept",
                         f"{name!r} is in accommodationStrategy but no day sleeps there")

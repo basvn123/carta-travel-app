@@ -143,3 +143,43 @@ filter on them:
 7. Coordinates, where present, fall inside the European bounding box and declare their precision.
 
 `pipeline/validate.py` enforces all seven and reports everything softer as a warning.
+
+## Generated records (v2.1)
+
+Every trip a model writes must meet `schema/trip.generated.schema.json` (JSON Schema
+2020-12, task T143) before it is written to disk. `pipeline/generation_gate.py` checks a
+candidate against that schema, against the cross-field rules a schema cannot express, and
+against the K5 checks in `validate.py`, and rejects on any failure; it never repairs. A
+passing record is written atomically; a failing one is kept verbatim in a rejects folder
+with its errors beside it. `generation_gate.py self-test` proves the gate bites, and
+`generation_gate.py gemini-schema` prints the Gemini `responseSchema` the generator sends,
+which leaves out the fields `derive()` fills (ids, per-day figures, provenance and the rest
+of the `DERIVED` list).
+
+v2.1 is v2.0 with every number that has a typed home taken out of prose. The keys the app
+reads keep their v2.0 names (`budget.breakdown.*.lowEur`, `itinerary[].dayStats`,
+`packingNotes`), so `JourneyPage.jsx` renders both shapes. What changes:
+
+| Field | v2.0 | v2.1 |
+|---|---|---|
+| `itinerary[].dayStats` | free text | `{mode, distanceKm, ascentM, descentM, timeMin {low, high}, spendEur {low, high}, note}` |
+| `itinerary[].sleepRef` | absent | rank of the `accommodationStrategy` entry slept in tonight, or null |
+| `accommodationStrategy[]` | `priceNote` carries the figures | `priceEur {low, high}`, `priceUnit`, `priceNote` in words only, `alternativeTo` |
+| `gateways[]` | one `gatewayAirport` string | `{code, name, transferMin, transferTo, note}`; `gatewayAirport` and its code are derived from the first row |
+| `packingNotes[]` | strings | `{icon, item, whyThisTrip}`, `icon` from a fixed key list |
+| `whatCouldGoWrong[]` | strings | `{severity, trigger, consequence, whatToDo}` |
+| `bestPeriod.avoidMonths` | parsed from `avoid` by the wire build | stated |
+| `currency` | ISO code or a sentence | ISO 4217 code; the sentence goes to `currencyNote`, the rate to `eurRate {low, high}` |
+| `emergencyNumber` | a number or a sentence | digits only; rescue lines go to `logistics.emergency` |
+| `typeSpecific.surfaceMix` | absent | `[{surface, pct}]`, adding to 100 |
+| `provenance` | source batch | `sourceFormat: "generated"`, `synthesized: true`, `model` (Gemini only), `promptVersion`, `reviewedAt` |
+
+Two rules apply to every string. Display copy may not contain an em dash, an en dash or a
+middot. A note that sits beside a typed number (`totalNote`, breakdown notes, `priceNote`,
+gateway notes, `dayStats.note`, `currencyNote`) may not carry a euro range of its own.
+
+The accommodation rule (register row T084-b): a night slept in a strategy entry names it by
+`sleepRef`; every entry must be referenced by at least one night unless it declares
+`alternativeTo`, the rank of the slept-in entry it substitutes for at another budget. A
+tier alternative is exempt only when it says so. Every night but the last names its bed in
+`sleep`. `validate.py` honours both fields and checks a v2.0 record by name as before.

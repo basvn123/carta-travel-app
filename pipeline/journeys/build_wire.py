@@ -98,7 +98,12 @@ def strip_dashes(s):
     # currency sign (a dash between two euro figures) would fall through to
     # the spaced-dash rule below and become "€1,200, €1,850", which reads as
     # two prices (spec A1), so it becomes "to".
-    s = re.sub(r"(\d)\s*[—–]\s*([€$£]\s?\d)", r"\1 to \2", s)
+    # Only an unspaced en dash is a range: all 2,079 price ranges in the
+    # master are written "€40", en dash, "€55" with no space, while a spaced em dash
+    # before a price is prose after an address ("Via Branca 88", em dash, "€4 to 6"), which the old
+    # spaced rule turned into "88 to €4, €6" (T143). The lookahead leaves
+    # the right-hand figure for the next match, so a chain stays a range.
+    s = re.sub(r"(\d)\u2013(?=[€$£]\s?\d)", r"\1 to ", s)
     s = re.sub(r"(\d)\s*[—–]\s*(\d)", r"\1-\2", s)
     s = re.sub(r"(\w)[—–](\w)", r"\1-\2", s)
     s = re.sub(r"\s*[—–]\s*", ", ", s)
@@ -409,6 +414,97 @@ def parse_avoid_months(text):
     return sorted(out)
 
 
+# ── Gateway airports ─────────────────────────────────────────────────────────
+# Register rows T088-a and T092-a: the journey page used to split the one
+# hand-written gatewayAirport string into airport rows in the browser
+# (src/lib/gateway.js). The rows are now written here, once, as structured data
+# (code, name, transfer minutes), so the page renders data rather than
+# parsing prose. A v2.1 record (schema/trip.generated.schema.json) carries
+# gateways already and they pass through untouched. A v2.0 record is read
+# with the same two shapes gateway.js reads ("CODE Name, transfer" and
+# "Name (CODE), transfer"), and the same completeness rule: anything that
+# would not fit a row marks the list partial, and the page then shows the
+# first airport and keeps the whole original text behind its info button.
+
+_GW_CODE_FIRST = re.compile(r"^([A-Z]{3})\b[,\s]*\s*(.*)$", re.ASCII)
+_GW_NAME_FIRST = re.compile(r"^(?:Fly\s+)?([^()]{2,40}?)\s*\(([A-Z]{3})\)\s*[,.]?\s*(.*)$")
+_GW_SPLIT_NAME = re.compile(r"^(.*?)(?:,\s+|\s+(?=\d)|\s+is\s+|\s+has\s+|$)(.*)$")
+_GW_MAX_DETAIL = 70
+_GW_HOURS = re.compile(r"(\d{1,2})\s*h(?:\s*(\d{1,2})(?!\d)(?:\s*min)?)?\b")
+_GW_MINUTES = re.compile(r"(\d{1,3})\s*min\b")
+
+
+def transfer_minutes(detail):
+    """The first duration a transfer note states, in minutes, or None.
+    "2 h 05 to Krasno" is 125, "55 min" is 55, "approx 3h30" is 210."""
+    h = _GW_HOURS.search(detail or "")
+    m = _GW_MINUTES.search(detail or "")
+    if h and (not m or h.start() <= m.start()):
+        return int(h.group(1)) * 60 + int(h.group(2) or 0)
+    if m:
+        return int(m.group(1))
+    return None
+
+
+def parse_gateways(text):
+    """(rows, complete) from a v2.0 gatewayAirport string; the Python twin of
+    src/lib/gateway.js parseGateway, kept identical so the 144 trips it
+    rendered as rows render the same rows from the wire."""
+    src = str(text or "").replace("**", "").strip()
+    if not src:
+        return [], False
+    rows, complete = [], True
+    for seg in re.split(r"\s*;\s*", src):
+        if not seg:
+            continue
+        a = _GW_CODE_FIRST.match(seg)
+        b = None if a else _GW_NAME_FIRST.match(seg)
+        if a:
+            n = _GW_SPLIT_NAME.match(a.group(2))
+            name, det = (n.group(1), n.group(2)) if n else (a.group(2), "")
+            rows.append({"code": a.group(1), "name": name.strip(), "detail": det.strip()})
+        elif b:
+            det = re.sub(r"^(is|has)\s+", "", b.group(3).strip())
+            rows.append({"code": b.group(2), "name": b.group(1).strip(), "detail": det})
+        elif rows:
+            rows[-1]["detail"] = re.sub(r"^;\s*", "", f"{rows[-1]['detail']}; {seg}")
+        else:
+            complete = False
+    for r in rows:
+        if (re.search(r"[.!?]\s+\S", r["detail"]) or re.search(r"\([A-Z]{3}\)", r["detail"])
+                or len(r["detail"]) > _GW_MAX_DETAIL or len(r["name"]) > 40):
+            complete = False
+    if not rows:
+        complete = False
+    return rows, complete
+
+
+def gateway_rows(trip):
+    """(gateways, partial) for the wire. gateways follows the v2.1 shape:
+    {code, name, transferMin, transferTo, note}."""
+    if isinstance(trip.get("gateways"), list):
+        return trip["gateways"], False
+    text = trip.get("gatewayAirport")
+    if not text:
+        return [], False
+    rows, complete = parse_gateways(text)
+    out = [{"code": r["code"], "name": r["name"],
+            "transferMin": transfer_minutes(r["detail"]), "transferTo": None,
+            "note": r["detail"] or None} for r in rows]
+    if complete:
+        return out, False
+    # Partial: the first airport only, without the detail that could not be
+    # separated from its sentence; the page shows the full text on demand.
+    if out:
+        first = {**out[0], "transferMin": None, "note": None}
+    elif trip.get("gatewayAirportCode"):
+        first = {"code": trip["gatewayAirportCode"], "name": "", "transferMin": None,
+                 "transferTo": None, "note": None}
+    else:
+        return [], True
+    return [first], True
+
+
 def to_card(trip, hero):
     budget = trip.get("budget") or {}
     total = budget.get("totalEur") or {}
@@ -444,12 +540,16 @@ def main():
                     help="write the wire here instead of continent-app/public/journeys")
     ap.add_argument("--no-fetch", action="store_true",
                     help="cache only; never touch the network")
+    ap.add_argument("--src", default=None,
+                    help="read this master-shaped JSON instead of trips.master.json "
+                         "(a scratch set of candidate trips; pair it with --out)")
     args = ap.parse_args()
     global OUT
     if args.out:
         OUT = Path(args.out)
+    src = Path(args.src) if args.src else SRC
 
-    master = json.loads(SRC.read_text(encoding="utf-8"))
+    master = json.loads(src.read_text(encoding="utf-8"))
     trips = [clean_text(t) for t in master["trips"]]
     print(f"{len(trips)} trips in, schema {master.get('schemaVersion')}")
 
@@ -470,13 +570,15 @@ def main():
     print(f"{len(all_titles)} candidate places to look up "
           f"({sum(1 for t in all_titles if t not in cache)} not yet cached)")
     images = fetch_lead_images(all_titles, cache, allow)
-    save_cache(cache)
+    if allow:  # --no-fetch learns nothing, so it never rewrites the cache
+        save_cache(cache)
 
     heroes = {tid: pick_hero(names, images) for tid, names in per_trip.items()}
     for t in trips:
         if not heroes.get(t["id"]):
             heroes[t["id"]] = search_hero(t, cache, allow)
-    save_cache(cache)
+    if allow:  # --no-fetch learns nothing, so it never rewrites the cache
+        save_cache(cache)
     # The audit's replacements win over pick_hero: it saw the categories and
     # the pixel size, and pick_hero only ever saw the file name.
     overrides = load_hero_overrides()
@@ -532,8 +634,14 @@ def main():
             detail = dict(t)
             detail["hero"] = heroes.get(t["id"])
             bp = dict(detail.get("bestPeriod") or {})
-            bp["avoidMonths"] = parse_avoid_months(bp.get("avoid"))
+            # A v2.1 record states its avoid months; only v2.0 prose is parsed.
+            if "avoidMonths" not in bp:
+                bp["avoidMonths"] = parse_avoid_months(bp.get("avoid"))
             detail["bestPeriod"] = bp
+            gws, partial = gateway_rows(detail)
+            if gws or partial:
+                detail["gateways"] = gws
+                detail["gatewaysPartial"] = partial
             (OUT / "journey" / f"{t['id']}.json").write_text(
                 json.dumps(detail, ensure_ascii=False), encoding="utf-8")
 
