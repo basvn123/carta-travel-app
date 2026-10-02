@@ -1,0 +1,398 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://carta-europetravel.com/schema/trip.generated.v2.1.json",
+  "title": "Carta generated trip record, schema v2.1",
+  "description": "The contract every model-generated trip must meet before it is written to disk (task T143, spec K1). It is the v2.0 master record (schema/SCHEMA.md) with every number that has a typed home moved out of prose. pipeline/generation_gate.py validates against it and rejects, never repairs. Keys match what continent-app/src/browse/JourneyPage.jsx reads through the wire build_wire.py writes.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion", "id", "sourceId", "slug", "title", "summary", "summaryGenerated", "hook",
+    "country", "countryCode", "countries", "isMultiCountry", "region", "regionKey", "subRegion",
+    "basecamps", "gateways", "gatewayAirport", "gatewayAirportCode", "coordinates",
+    "tripType", "tripTypeId", "tripTypeSlug", "durationDays", "tags", "profile", "bestPeriod",
+    "budgetTier", "budgetTierRange", "budgetTierRaw", "budget", "languages", "currency",
+    "currencyNote", "eurRate", "emergencyNumber", "itinerary", "accommodationStrategy",
+    "logistics", "proTips", "packingNotes", "whatCouldGoWrong", "typeSpecific", "sources",
+    "snapshot", "verifyFlags", "verifyFlagCount", "volatilePricing", "wordCount",
+    "dataVintage", "provenance"
+  ],
+  "properties": {
+    "schemaVersion": { "const": "2.1" },
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z]{2}-[a-z-]+-[a-z0-9-]+$",
+      "maxLength": 93,
+      "description": "{cc}-{tripTypeSlug}-{nameSlug}, lowercase. The app's loader accepts at most 93 characters."
+    },
+    "sourceId": { "type": "null", "description": "A generated record has no source batch id." },
+    "slug": { "type": "string", "description": "Equal to id." },
+    "title": { "$ref": "#/$defs/text", "minLength": 10, "maxLength": 120 },
+    "summary": { "$ref": "#/$defs/text", "minLength": 40, "maxLength": 700, "description": "About 120 words at most (spec D4)." },
+    "summaryGenerated": { "const": false, "description": "Keeps its v2.0 meaning: composed from metadata. A model-written summary is written prose, so false; provenance.synthesized says it was generated." },
+    "hook": { "$ref": "#/$defs/textOrNull", "maxLength": 700 },
+
+    "country": { "$ref": "#/$defs/text", "maxLength": 60 },
+    "countryCode": { "$ref": "#/$defs/countryCode" },
+    "countries": {
+      "type": "array", "minItems": 1, "maxItems": 4,
+      "items": {
+        "type": "object", "additionalProperties": false, "required": ["name", "code"],
+        "properties": {
+          "name": { "$ref": "#/$defs/text", "maxLength": 60 },
+          "code": { "$ref": "#/$defs/countryCode" }
+        }
+      }
+    },
+    "isMultiCountry": { "type": "boolean" },
+    "region": { "enum": ["Western & Central Europe", "Southern & Mediterranean Europe", "Eastern & Southeastern Europe", "Northern Europe & Baltics"] },
+    "regionKey": { "enum": ["western-central", "southern-mediterranean", "eastern-southeastern", "northern-baltics"] },
+    "subRegion": { "$ref": "#/$defs/textOrNull", "maxLength": 90 },
+    "basecamps": { "type": "array", "maxItems": 8, "items": { "$ref": "#/$defs/text", "maxLength": 60 } },
+
+    "gateways": {
+      "type": "array", "minItems": 0, "maxItems": 4,
+      "description": "Structured gateway airports (register rows T088-a, T092-a). One row per airport, nearest first. Replaces the hand-written gatewayAirport string the app used to parse in src/lib/gateway.js.",
+      "items": { "$ref": "#/$defs/gateway" }
+    },
+    "gatewayAirport": { "$ref": "#/$defs/textOrNull", "maxLength": 80, "description": "Derived from gateways[0]: 'Name (CODE)'. Kept for the SQL export and old readers." },
+    "gatewayAirportCode": { "anyOf": [{ "$ref": "#/$defs/iata" }, { "type": "null" }], "description": "Derived from gateways[0].code." },
+    "coordinates": {
+      "anyOf": [
+        { "type": "null" },
+        {
+          "type": "object", "additionalProperties": false,
+          "required": ["lat", "lon", "precision", "matchedPlace", "source"],
+          "properties": {
+            "lat": { "type": "number", "minimum": 33.0, "maximum": 72.5 },
+            "lon": { "type": "number", "minimum": -32.0, "maximum": 45.0 },
+            "precision": { "enum": ["source", "city", "gateway", "country"] },
+            "matchedPlace": { "$ref": "#/$defs/textOrNull", "maxLength": 80 },
+            "source": { "$ref": "#/$defs/textOrNull", "maxLength": 120 }
+          }
+        }
+      ],
+      "description": "Null until the geocoder resolves a basecamp; never filled by the model."
+    },
+
+    "tripType": { "enum": ["Cycling Trips", "Trail Running", "City Trips", "Cozy Towns Trips", "Road Trips & Scenic Drives", "Hiking & Alpine Trekking", "Culinary & Wine Tours", "Winter Sports & Skiing", "Nature Escapes & Cabin Stays", "Water Sports & Coastal Trips"] },
+    "tripTypeId": { "type": "integer", "minimum": 1, "maximum": 10 },
+    "tripTypeSlug": { "enum": ["cycling", "trail-running", "city", "cozy-towns", "road-trip", "hiking", "culinary", "winter-sports", "nature-escape", "water-sports"] },
+    "durationDays": { "const": 7 },
+    "tags": {
+      "type": "array", "minItems": 1, "maxItems": 12, "uniqueItems": true,
+      "items": { "type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$", "maxLength": 30 }
+    },
+
+    "profile": {
+      "type": "object", "additionalProperties": false,
+      "required": ["difficulty", "difficultyLabel", "difficultyNote", "fitnessLevel", "crowdLevel", "familyFriendly", "carRequired"],
+      "properties": {
+        "difficulty": { "type": "integer", "minimum": 1, "maximum": 5 },
+        "difficultyLabel": { "$ref": "#/$defs/fitness" },
+        "difficultyNote": { "$ref": "#/$defs/textOrNull", "maxLength": 200, "description": "Why the score, behind the info button. Must not open by repeating the score." },
+        "fitnessLevel": { "$ref": "#/$defs/fitness" },
+        "crowdLevel": { "enum": ["Low", "Moderate", "High"] },
+        "familyFriendly": { "type": "boolean" },
+        "carRequired": { "type": "boolean" }
+      }
+    },
+
+    "bestPeriod": {
+      "type": "object", "additionalProperties": false,
+      "required": ["months", "monthNames", "window", "note", "avoid", "avoidMonths", "raw"],
+      "properties": {
+        "months": { "type": "array", "minItems": 1, "maxItems": 12, "uniqueItems": true, "items": { "$ref": "#/$defs/month" } },
+        "monthNames": { "type": "array", "items": { "type": "string" }, "description": "Derived from months." },
+        "window": { "$ref": "#/$defs/textOrNull", "maxLength": 120 },
+        "note": { "$ref": "#/$defs/textOrNull", "maxLength": 200 },
+        "avoid": { "$ref": "#/$defs/textOrNull", "maxLength": 220 },
+        "avoidMonths": { "type": "array", "maxItems": 11, "uniqueItems": true, "items": { "$ref": "#/$defs/month" }, "description": "The months the month strip strikes. Filled by the model, never parsed from avoid." },
+        "raw": { "type": "null" }
+      }
+    },
+
+    "budgetTier": { "enum": ["€", "€€", "€€€"] },
+    "budgetTierRange": {
+      "type": "array", "minItems": 2, "maxItems": 2,
+      "items": { "type": "integer", "minimum": 1, "maximum": 3 }
+    },
+    "budgetTierRaw": { "enum": ["€", "€€", "€€€", "€ to €€", "€€ to €€€"] },
+    "budget": {
+      "type": "object", "additionalProperties": false,
+      "required": ["currency", "totalEur", "totalNote", "breakdown", "perDayEur"],
+      "properties": {
+        "currency": { "const": "EUR" },
+        "totalEur": { "$ref": "#/$defs/eurPair" },
+        "totalNote": { "$ref": "#/$defs/qualifierOrNull", "maxLength": 160, "description": "What the total includes or leaves out. No euro figures: the figures are totalEur (register row T092-b)." },
+        "perDayEur": { "$ref": "#/$defs/eurPair" },
+        "breakdown": {
+          "type": "object", "additionalProperties": false,
+          "required": ["accommodation", "food", "transport", "activities"],
+          "properties": {
+            "accommodation": { "$ref": "#/$defs/budgetRow" },
+            "food": { "$ref": "#/$defs/budgetRow" },
+            "transport": { "$ref": "#/$defs/budgetRow" },
+            "activities": { "$ref": "#/$defs/budgetRow" }
+          }
+        }
+      }
+    },
+    "languages": { "type": "array", "minItems": 1, "maxItems": 5, "items": { "$ref": "#/$defs/text", "maxLength": 40 } },
+    "currency": { "type": "string", "pattern": "^[A-Z]{3}$", "description": "ISO 4217 code of the local currency only (register row T092-b). The prose that used to sit here goes to currencyNote, the rate to eurRate." },
+    "currencyNote": { "$ref": "#/$defs/qualifierOrNull", "maxLength": 160 },
+    "eurRate": {
+      "anyOf": [
+        { "type": "null" },
+        {
+          "type": "object", "additionalProperties": false, "required": ["low", "high"],
+          "properties": { "low": { "type": "number", "exclusiveMinimum": 0 }, "high": { "type": "number", "exclusiveMinimum": 0 } }
+        }
+      ],
+      "description": "Units of the local currency to one euro. Null when the currency is EUR."
+    },
+    "emergencyNumber": { "type": "string", "pattern": "^[0-9]{3,4}$", "description": "The number only. Rescue services and their numbers go in logistics.emergency." },
+
+    "itinerary": {
+      "type": "array", "minItems": 7, "maxItems": 7,
+      "items": { "$ref": "#/$defs/day" }
+    },
+    "accommodationStrategy": {
+      "type": "array", "minItems": 2, "maxItems": 3,
+      "items": { "$ref": "#/$defs/stay" }
+    },
+    "logistics": {
+      "type": "object", "additionalProperties": false,
+      "required": ["connectivity", "emergency", "weather", "bookingWindows", "money", "transportRules", "permits", "health", "gettingThere", "other"],
+      "properties": {
+        "connectivity": { "$ref": "#/$defs/logText" },
+        "emergency": { "$ref": "#/$defs/logText" },
+        "weather": { "$ref": "#/$defs/logText" },
+        "bookingWindows": { "$ref": "#/$defs/logText" },
+        "money": { "$ref": "#/$defs/logText" },
+        "transportRules": { "$ref": "#/$defs/logText" },
+        "permits": { "$ref": "#/$defs/logText" },
+        "health": { "$ref": "#/$defs/logText" },
+        "gettingThere": { "$ref": "#/$defs/logText" },
+        "other": {
+          "type": "array", "maxItems": 8,
+          "items": {
+            "type": "object", "additionalProperties": false, "required": ["label", "text"],
+            "properties": {
+              "label": { "$ref": "#/$defs/text", "maxLength": 60 },
+              "text": { "$ref": "#/$defs/text", "maxLength": 640 }
+            }
+          }
+        }
+      }
+    },
+    "proTips": { "type": "array", "minItems": 3, "maxItems": 10, "items": { "$ref": "#/$defs/text", "minLength": 20, "maxLength": 320 } },
+    "packingNotes": {
+      "type": "array", "minItems": 4, "maxItems": 24,
+      "description": "Spec D1 and C6: one item per entry, each with the reason it is on THIS trip.",
+      "items": {
+        "type": "object", "additionalProperties": false, "required": ["icon", "item", "whyThisTrip"],
+        "properties": {
+          "icon": { "$ref": "#/$defs/packIcon" },
+          "item": { "$ref": "#/$defs/text", "minLength": 3, "maxLength": 60 },
+          "whyThisTrip": { "$ref": "#/$defs/text", "minLength": 10, "maxLength": 200 }
+        }
+      }
+    },
+    "whatCouldGoWrong": {
+      "type": "array", "minItems": 2, "maxItems": 8,
+      "description": "Spec D1 and C5: one risk per entry.",
+      "items": {
+        "type": "object", "additionalProperties": false, "required": ["severity", "trigger", "consequence", "whatToDo"],
+        "properties": {
+          "severity": { "enum": ["low", "medium", "high"] },
+          "trigger": { "$ref": "#/$defs/text", "minLength": 5, "maxLength": 100 },
+          "consequence": { "$ref": "#/$defs/text", "minLength": 10, "maxLength": 220 },
+          "whatToDo": { "$ref": "#/$defs/text", "minLength": 10, "maxLength": 220 }
+        }
+      }
+    },
+    "typeSpecific": {
+      "type": "object", "additionalProperties": false,
+      "required": ["raw", "surface", "surfaceMix", "distanceKm", "elevationM", "verticalM", "technicalRating", "transitPass", "hutBooking", "liftNetwork", "snowReliability", "windConditions", "gpxReady", "bookingTimeline", "audience"],
+      "properties": {
+        "raw": { "type": "object", "maxProperties": 0, "description": "Source type-detail keys; a generated record has none." },
+        "surface": { "$ref": "#/$defs/specText" },
+        "surfaceMix": {
+          "anyOf": [
+            { "type": "null" },
+            {
+              "type": "array", "minItems": 1, "maxItems": 6,
+              "items": {
+                "type": "object", "additionalProperties": false, "required": ["surface", "pct"],
+                "properties": {
+                  "surface": { "enum": ["asphalt", "hardpack", "gravel", "cobbles", "singletrack", "rock", "snow", "sand", "boardwalk", "mixed"] },
+                  "pct": { "type": "integer", "minimum": 1, "maximum": 100 }
+                }
+              }
+            }
+          ],
+          "description": "The week's surface split as numbers (spec E4). Must add to 100."
+        },
+        "distanceKm": { "anyOf": [{ "type": "integer", "minimum": 0, "maximum": 3000 }, { "type": "null" }] },
+        "elevationM": { "anyOf": [{ "type": "integer", "minimum": 0, "maximum": 30000 }, { "type": "null" }] },
+        "verticalM": { "anyOf": [{ "type": "integer", "minimum": 0, "maximum": 60000 }, { "type": "null" }] },
+        "technicalRating": { "$ref": "#/$defs/specText" },
+        "transitPass": { "$ref": "#/$defs/specText" },
+        "hutBooking": { "$ref": "#/$defs/specText" },
+        "liftNetwork": { "$ref": "#/$defs/specText" },
+        "snowReliability": { "$ref": "#/$defs/specText" },
+        "windConditions": { "$ref": "#/$defs/specText" },
+        "gpxReady": { "type": ["boolean", "null"] },
+        "bookingTimeline": { "$ref": "#/$defs/specText" },
+        "audience": { "$ref": "#/$defs/textOrNull", "maxLength": 200 }
+      }
+    },
+    "sources": {
+      "type": "object", "additionalProperties": false, "required": ["verified", "confidenceNotes"],
+      "properties": {
+        "verified": { "$ref": "#/$defs/textOrNull", "maxLength": 800 },
+        "confidenceNotes": { "$ref": "#/$defs/textOrNull", "maxLength": 800 }
+      }
+    },
+    "snapshot": { "type": "object", "maxProperties": 0, "description": "The source's own snapshot table; a generated record has none." },
+    "verifyFlags": { "type": "array", "maxItems": 40, "uniqueItems": true, "items": { "$ref": "#/$defs/text", "minLength": 5, "maxLength": 200 } },
+    "verifyFlagCount": { "type": "integer", "minimum": 0 },
+    "volatilePricing": { "type": "boolean" },
+    "wordCount": { "type": "integer", "minimum": 0 },
+    "dataVintage": { "type": "integer", "minimum": 2026, "maximum": 2100 },
+    "provenance": {
+      "type": "object", "additionalProperties": false,
+      "required": ["batch", "sourceFile", "sourceFormat", "sourceId", "ingestedAt", "synthesized", "model", "promptVersion", "reviewedAt"],
+      "properties": {
+        "batch": { "type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$", "maxLength": 60 },
+        "sourceFile": { "type": "null" },
+        "sourceFormat": { "const": "generated" },
+        "sourceId": { "type": "null" },
+        "ingestedAt": { "$ref": "#/$defs/date" },
+        "synthesized": { "const": true },
+        "model": { "type": "string", "pattern": "^gemini-[a-z0-9.-]+$", "description": "Runtime and pipeline AI is Gemini only (CLAUDE.md). A record written by any other model is rejected." },
+        "promptVersion": { "type": "string", "pattern": "^[a-z0-9][a-z0-9._-]{0,40}$" },
+        "reviewedAt": { "anyOf": [{ "$ref": "#/$defs/date" }, { "type": "null" }], "description": "The day a person last checked the flagged fields (register row T094-b). Null until reviewed." }
+      }
+    }
+  },
+
+  "$defs": {
+    "text": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^[^\u2014\u2013\u00b7]*$",
+      "description": "Display copy. No em dash, en dash or middot anywhere (house rule); a range is written with 'to', or better, as a typed pair."
+    },
+    "textOrNull": {
+      "anyOf": [{ "$ref": "#/$defs/text" }, { "type": "null" }]
+    },
+    "qualifier": {
+      "$ref": "#/$defs/text",
+      "not": { "pattern": "€\\s?\\d[\\d.,]*\\s*(?:to|-|/)\\s*€?\\s?\\d|€\\s?\\d[\\d.,]*,\\s€\\s?\\d|\\d\\s*(?:to|-)\\s*\\d[\\d.,]*\\s?€" },
+      "description": "A note beside a typed number. It may not carry a euro range of its own: the range is the typed field next to it (register row T085-b)."
+    },
+    "qualifierOrNull": {
+      "anyOf": [{ "$ref": "#/$defs/qualifier" }, { "type": "null" }]
+    },
+    "logText": { "anyOf": [{ "$ref": "#/$defs/text", "maxLength": 640 }, { "type": "null" }] },
+    "specText": { "anyOf": [{ "$ref": "#/$defs/text", "maxLength": 1000 }, { "type": "null" }] },
+    "countryCode": { "type": "string", "pattern": "^[A-Z]{2}$" },
+    "iata": { "type": "string", "pattern": "^[A-Z]{3}$" },
+    "month": { "type": "integer", "minimum": 1, "maximum": 12 },
+    "date": { "type": "string", "pattern": "^20[2-9][0-9]-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$" },
+    "fitness": { "enum": ["Easy", "Moderate", "Active", "Demanding", "Expert"] },
+    "eurPair": {
+      "type": "object", "additionalProperties": false, "required": ["low", "high"],
+      "properties": {
+        "low": { "type": "integer", "minimum": 0, "maximum": 50000 },
+        "high": { "type": "integer", "minimum": 0, "maximum": 50000 }
+      },
+      "description": "A euro range as two integers. low <= high is checked by the gate."
+    },
+    "eurPairOrNull": { "anyOf": [{ "$ref": "#/$defs/eurPair" }, { "type": "null" }] },
+    "budgetRow": {
+      "type": "object", "additionalProperties": false, "required": ["lowEur", "highEur", "note"],
+      "properties": {
+        "lowEur": { "type": "integer", "minimum": 0, "maximum": 20000 },
+        "highEur": { "type": "integer", "minimum": 0, "maximum": 20000 },
+        "note": { "$ref": "#/$defs/qualifierOrNull", "maxLength": 200 }
+      },
+      "description": "One breakdown category, per person for the week. The keys are lowEur and highEur because that is what JourneyPage.jsx and the 253 published records use."
+    },
+    "gateway": {
+      "type": "object", "additionalProperties": false,
+      "required": ["code", "name", "transferMin", "transferTo", "note"],
+      "properties": {
+        "code": { "$ref": "#/$defs/iata" },
+        "name": { "$ref": "#/$defs/text", "maxLength": 40 },
+        "transferMin": { "anyOf": [{ "type": "integer", "minimum": 0, "maximum": 900 }, { "type": "null" }], "description": "Minutes from the airport to transferTo by the usual means." },
+        "transferTo": { "$ref": "#/$defs/textOrNull", "maxLength": 40 },
+        "note": { "$ref": "#/$defs/qualifierOrNull", "maxLength": 70 }
+      }
+    },
+    "dayStats": {
+      "type": "object", "additionalProperties": false,
+      "required": ["mode", "distanceKm", "ascentM", "descentM", "timeMin", "spendEur", "note"],
+      "description": "The measured line of one day as typed values; the page formats it. Replaces the v2.0 free-text dayStats string.",
+      "properties": {
+        "mode": { "enum": ["ride", "run", "walk", "hike", "drive", "ski", "paddle", "sail", "swim", "mixed", "rest"] },
+        "distanceKm": { "anyOf": [{ "type": "number", "minimum": 0, "maximum": 600 }, { "type": "null" }] },
+        "ascentM": { "anyOf": [{ "type": "integer", "minimum": 0, "maximum": 9000 }, { "type": "null" }] },
+        "descentM": { "anyOf": [{ "type": "integer", "minimum": 0, "maximum": 15000 }, { "type": "null" }] },
+        "timeMin": {
+          "anyOf": [
+            { "type": "null" },
+            {
+              "type": "object", "additionalProperties": false, "required": ["low", "high"],
+              "properties": { "low": { "type": "integer", "minimum": 0, "maximum": 1440 }, "high": { "type": "integer", "minimum": 0, "maximum": 1440 } }
+            }
+          ],
+          "description": "Realistic moving or activity time in minutes, as a range."
+        },
+        "spendEur": { "$ref": "#/$defs/eurPairOrNull", "description": "Tickets, tastings, hire or tolls for the day, per person." },
+        "note": { "$ref": "#/$defs/qualifierOrNull", "maxLength": 140, "description": "Surface, grade, water or bail-out in a few words." }
+      }
+    },
+    "day": {
+      "type": "object", "additionalProperties": false,
+      "required": ["day", "title", "morning", "afternoon", "evening", "dayStats", "sleep", "sleepRef"],
+      "properties": {
+        "day": { "type": "integer", "minimum": 1, "maximum": 7 },
+        "title": { "$ref": "#/$defs/text", "maxLength": 90 },
+        "morning": { "$ref": "#/$defs/text", "minLength": 20, "maxLength": 600 },
+        "afternoon": { "$ref": "#/$defs/text", "minLength": 20, "maxLength": 600 },
+        "evening": { "anyOf": [{ "$ref": "#/$defs/text", "minLength": 20, "maxLength": 600 }, { "type": "null" }] },
+        "dayStats": { "$ref": "#/$defs/dayStats" },
+        "sleep": { "$ref": "#/$defs/textOrNull", "maxLength": 120, "description": "Where the night is spent, as shown on the page." },
+        "sleepRef": {
+          "anyOf": [{ "type": "integer", "minimum": 1, "maximum": 3 }, { "type": "null" }],
+          "description": "The rank of the accommodationStrategy entry slept in tonight (register row T084-b). Required on days 1 to 6; null on day 7 only."
+        }
+      }
+    },
+    "stay": {
+      "type": "object", "additionalProperties": false,
+      "required": ["rank", "name", "style", "location", "description", "booking", "priceEur", "priceUnit", "priceNote", "alternativeTo"],
+      "properties": {
+        "rank": { "type": "integer", "minimum": 1, "maximum": 3 },
+        "name": { "$ref": "#/$defs/text", "maxLength": 80 },
+        "style": { "$ref": "#/$defs/textOrNull", "maxLength": 60 },
+        "location": { "$ref": "#/$defs/textOrNull", "maxLength": 80 },
+        "description": { "$ref": "#/$defs/text", "minLength": 40, "maxLength": 480 },
+        "booking": { "$ref": "#/$defs/textOrNull", "maxLength": 180 },
+        "priceEur": { "$ref": "#/$defs/eurPairOrNull", "description": "The hotel line as a range (register row T085-b)." },
+        "priceUnit": { "enum": ["room-night", "person-night", "bed-night", "person-week", null] },
+        "priceNote": { "$ref": "#/$defs/qualifierOrNull", "maxLength": 120, "description": "What the price covers, in words: 'per night for two, half board available'. No figures." },
+        "alternativeTo": {
+          "anyOf": [{ "type": "integer", "minimum": 1, "maximum": 3 }, { "type": "null" }],
+          "description": "Set when this entry is a different-budget substitute for the entry of that rank, so no night references it (register row T084-b). Null means the itinerary must sleep here at least once."
+        }
+      }
+    },
+    "packIcon": {
+      "enum": ["clothing", "rain", "warmth", "sun", "footwear", "light", "power", "water", "food", "first-aid", "repair", "bike", "navigation", "documents", "money", "lock", "bag", "swim", "snow", "sleep", "camera", "insect", "other"],
+      "description": "A category key, not a picture. The packing grid (spec C6) maps each key to one icon; a new key needs an icon before it is added here."
+    }
+  }
+}
