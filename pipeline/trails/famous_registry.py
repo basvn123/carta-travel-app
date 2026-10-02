@@ -39,8 +39,13 @@ Evidence, strongest first (the brief's order, and the order of the weights):
      way-only trails, and the reason Sentier des Roches can be named here
      while being unpublishable by the current ingest.
   4. National portals        crosscheck_portals.py's per-country sources.
-  5. The seed list           SEEDS below, the brief's section 9 recall net,
-     resolved against 1-4. A seed that resolves to nothing ships as
+  5. Waymarked Trails        every INT and NAT hiking route, placed in each
+     country whose extract holds it (waymarked.py, T113). The one source
+     that is not a fame signal: it says what a country's signed networks
+     contain, so a national trail nobody wrote up still gets a row.
+     Scored by the same weights as everything else (it adds no weight).
+  6. The seed list           SEEDS below, the brief's section 9 recall net,
+     resolved against 1-5. A seed that resolves to nothing ships as
      unresolved:true rather than being dropped, because a name we cannot
      resolve is a finding, not a blank.
 
@@ -58,6 +63,8 @@ Usage, from the repo root:
     python pipeline/trails/famous_registry.py --all
     python pipeline/trails/famous_registry.py --all --refresh   # re-scan OSM
     python pipeline/trails/famous_registry.py --countries FR --offline
+    python pipeline/trails/famous_registry.py --waymarked-only  # evidence 5
+                                          # re-applied to the committed file
 
 Output: data/trails/famous_registry.json  (committed, so a regression in the
 evidence shows up in a diff like any other change).
@@ -68,6 +75,7 @@ ASCII clean, no em dashes, per project convention.
 import argparse
 import json
 import math
+import os
 import re
 import sys
 import time
@@ -85,7 +93,19 @@ import enrich_activities as ea  # noqa: E402  (pageviews_avg, PV window)
 import harvest_activities as ha  # noqa: E402  (sitelink_counts, WDQS cache)
 from ingest_osm_routes import COUNTRIES, cached_extract  # noqa: E402
 
+# Where the caches and inputs live. Defaults to the checkout this file sits
+# in, so run_pipeline.py sees no change. A sparse worktree holds the code and
+# none of the data; there CARTA_DATA_ROOT points the READS at the main
+# checkout while the registry is still written beside this code, the same
+# split coverage.py uses (T111). Run --offline with it set: a networked run
+# would write the caches, and those belong to the checkout they live in.
+DATA_ROOT = Path(os.environ.get("CARTA_DATA_ROOT") or ROOT).resolve()
+
 REGISTRY = ROOT / "data" / "trails" / "famous_registry.json"
+# The Waymarked Trails harvest (waymarked.py). Committed beside the registry:
+# it is the fifth evidence source, the pan-European list of what each
+# country's national and international hiking network says should exist.
+WAYMARKED = ROOT / "data" / "trails" / "waymarked_routes.json"
 # The full evidence dump, including the ~163,000 `place` candidates (a named
 # summit or lake with an article and no path). Local only: at 87 MB compact
 # it would add a nine-figure line count to the repo on every monthly run,
@@ -93,10 +113,10 @@ REGISTRY = ROOT / "data" / "trails" / "famous_registry.json"
 # diff. The committed file carries every `trail` row, which is what the
 # coverage gate acts on.
 REGISTRY_FULL = ROOT / "data" / "trails" / "famous_registry_full.json"
-OSM_FAME_CACHE = ROOT / "cache" / "trails_osm_fame.json"
-WD_CACHE = ROOT / "cache" / "trails_wikidata_famous.json"
-PV_CACHE = ROOT / "cache" / "trail_pageviews.json"
-PORTAL_DIR = ROOT / "data" / "reports" / "trails_portals"
+OSM_FAME_CACHE = DATA_ROOT / "cache" / "trails_osm_fame.json"
+WD_CACHE = DATA_ROOT / "cache" / "trails_wikidata_famous.json"
+PV_CACHE = DATA_ROOT / "cache" / "trail_pageviews.json"
+PORTAL_DIR = DATA_ROOT / "data" / "reports" / "trails_portals"
 
 # Same knobs popularity.py uses against the same pageviews API.
 PV_WORKERS = 8
@@ -901,6 +921,177 @@ def portal_names(countries):
 
 
 # ---------------------------------------------------------------------------
+# Evidence 5: Waymarked Trails, what each country's networks say should exist
+# ---------------------------------------------------------------------------
+#
+# The other four sources are FAME signals, so a national trail nobody wrote
+# an article about could never enter the registry through any of them, and
+# "is this trail missing" could only be asked of trails somebody had already
+# made famous. waymarked.py harvests every INT and NAT hiking route that
+# Waymarked Trails lists (iwn and nwn in OSM) and places it in each country
+# whose extract holds it. Here those routes are diffed against the rows the
+# other evidence built:
+#
+#   already known  same relation id, same Wikidata QID, or the same folded
+#                  name or ref. The row gains evidence.waymarked, and an
+#                  unresolved seed that matches gains a coordinate and stops
+#                  being unresolved, which is a seed resolved by evidence.
+#   new            a row of its own, origin "waymarked", kind "trail" (a
+#                  signed national route IS a walk), placed at the point
+#                  waymarked.py found inside this country.
+#
+# The score is NOT changed by this source. WEIGHTS stay as they are, so a
+# route known only to Waymarked scores on the evidence it has (usually zero:
+# no article, no fame tag), sits at the bottom of its country's ranking, and
+# reaches a region's top three only where that region has fewer than three
+# better-known walks. That is the intended behaviour: in a region whose
+# registry was empty, the national trail through it is exactly what the
+# region should be held to, and everywhere else the fame ranking still
+# decides.
+
+def waymarked_routes():
+    """The committed harvest, or [] when waymarked.py has never run.
+
+    Optional like the portals: a registry that crashes because one evidence
+    source is missing is a worse instrument than one that lacks it."""
+    return (load_json(WAYMARKED, {}) or {}).get("routes") or []
+
+
+def _key_ok(key):
+    """A name key specific enough to join on. A bare letter or two ("E",
+    "GR") would join every route in a country onto one row; a short key with
+    a digit ("e1", "gr5") is a real ref and stays."""
+    return bool(key) and (len(key) >= 3 or any(ch.isdigit() for ch in key))
+
+
+def _wm_keys(route):
+    keys = set()
+    for text in (route.get("name"), route.get("ref")):
+        if text:
+            keys |= {squash(text), squash(base_name(text))}
+    return {k for k in keys if _key_ok(k)}
+
+
+def merge_waymarked(cc, rows, routes, fresh=None):
+    """Attach Waymarked evidence to one country's rows; add the new ones.
+
+    rows is that country's registry rows, edited in place. fresh(name, lat,
+    lon) builds and appends a row in the build path; without it (the
+    --waymarked-only path) rows are built and appended here. Returns a small
+    tally for the counts block."""
+    by_rel, by_qid, by_key = {}, {}, {}
+    # A fixed order, so which row wins a shared key never depends on the
+    # order rows arrived in (the committed file is sorted by score, a fresh
+    # build is not, and --waymarked-only must give the same answer on both).
+    for row in sorted(rows, key=lambda r: (r.get("origin") == "waymarked",
+                                           r.get("id") or "",
+                                           r.get("name") or "")):
+        e = row.get("evidence") or {}
+        rid = (e.get("osm") or {}).get("relation_id")
+        if rid:
+            by_rel.setdefault(int(rid), row)
+        if e.get("wikidata"):
+            by_qid.setdefault(e["wikidata"], row)
+        for text in [row.get("name")] + list(row.get("aliases") or []):
+            if text:
+                for k in (squash(base_name(text)), squash(text)):
+                    if _key_ok(k):
+                        by_key.setdefault(k, row)
+    tally = {"routes": 0, "known": 0, "added": 0, "seeds_resolved": 0,
+             "skipped": 0}
+    for route in routes:
+        if cc not in (route.get("countries") or {}):
+            continue
+        tally["routes"] += 1
+        point = route["countries"][cc] or [None, None]
+        rid = int(route["relation_id"])
+        row = by_rel.get(rid) or (by_qid.get(route.get("wikidata"))
+                                  if route.get("wikidata") else None)
+        if row is None:
+            for k in _wm_keys(route):
+                if k in by_key:
+                    row = by_key[k]
+                    break
+        wm = {"relation_id": rid, "group": route.get("group"),
+              "network": route.get("network")}
+        if row is not None:
+            tally["known"] += 1
+            row["evidence"]["waymarked"] = wm
+            if row.get("unresolved") and point[0] is not None:
+                # A seed nothing else could resolve, now placed by a signed
+                # route of the same name. Marked, so --waymarked-only can
+                # undo it before re-applying and stay idempotent.
+                row["unresolved"] = False
+                row["lat"], row["lon"] = point
+                row["resolved_by"] = "waymarked"
+                tally["seeds_resolved"] += 1
+            continue
+        name = route.get("name") or route.get("ref")
+        if not name or point[0] is None:
+            # No name to search for, or no point inside this country: the
+            # extract held the relation from across the border. Either way
+            # it is not a walk this country can be held to.
+            tally["skipped"] += 1
+            continue
+        if fresh is not None:
+            row = fresh(name, point[0], point[1])
+        else:
+            row = new_row(cc, name, point[0], point[1])
+            rows.append(row)
+        row["kind"] = "trail"
+        row["origin"] = "waymarked"
+        if route.get("ref") and route["ref"] != name:
+            row["aliases"] = [route["ref"]]
+        row["evidence"]["wikidata"] = route.get("wikidata")
+        row["evidence"]["osm"] = {
+            "relation_id": rid, "named_ways": 0,
+            "fame_tagged": bool(route.get("wikidata")
+                                or route.get("wikipedia")),
+            "wikipedia_tag": route.get("wikipedia"), "sac_scale": None,
+            "network": route.get("network"),
+        }
+        if route.get("wikipedia") and ":" in route["wikipedia"]:
+            lang, title = route["wikipedia"].split(":", 1)
+            row["evidence"]["wikipedia"] = {"lang": lang, "title": title,
+                                            "pageviews_avg": None}
+        row["evidence"]["waymarked"] = wm
+        by_rel[rid] = row
+        for k in _wm_keys(route):
+            by_key.setdefault(k, row)
+        tally["added"] += 1
+    return tally
+
+
+def new_row(cc, name, lat=None, lon=None):
+    """A blank registry row; the one shape build_country and the
+    --waymarked-only path both produce."""
+    return {
+        "id": None, "name": name, "kind": "place", "wd_class": None,
+        "aliases": [], "country": cc,
+        "nuts3": None, "range": None, "lat": lat, "lon": lon,
+        "evidence": {"wikidata": None, "sitelinks": 0, "wikipedia": None,
+                     "osm": None, "portal": None, "seed": False},
+        "fame_score": 0.0, "expected_km": None, "unresolved": False,
+    }
+
+
+def unique_ids(rows):
+    """id per row, suffixed where two rows of a country fold to one slug.
+
+    Waymarked brings rows whose names differ only in what slugify drops
+    ("GR 5" and "GR5"), and a duplicate id would make the coverage report
+    file two rows under one key. Waymarked rows take the suffix, never a
+    row from the other evidence, so no id that existed before this source
+    changes."""
+    seen = {}
+    for row in sorted(rows, key=lambda r: r.get("origin") == "waymarked"):
+        base = row["id"] or f"{row['country'].lower()}-{slugify(row['name'])}"
+        n = seen.get(base, 0)
+        seen[base] = n + 1
+        row["id"] = base if n == 0 else f"{base}-{n + 1}"
+
+
+# ---------------------------------------------------------------------------
 # Region assignment
 # ---------------------------------------------------------------------------
 
@@ -915,6 +1106,8 @@ def assign_regions(rows, verbose=False):
     if not rows:
         return
     import regionize as RZ
+    if DATA_ROOT != ROOT:
+        RZ.GPKG = DATA_ROOT / "cache" / "regions" / "regions.gpkg"
     try:
         spine = RZ.Spine()
     except FileNotFoundError as exc:
@@ -986,7 +1179,8 @@ def score_country(rows):
 # Build
 # ---------------------------------------------------------------------------
 
-def build_country(cc, osm_rows, wd_rows, portals, verbose=False):
+def build_country(cc, osm_rows, wd_rows, portals, verbose=False,
+                  wm_routes=None, tallies=None):
     """Merge the evidence for one country into registry rows.
 
     Merge key is the squashed base name. Wikidata leads (it has the
@@ -995,14 +1189,7 @@ def build_country(cc, osm_rows, wd_rows, portals, verbose=False):
     rows, by_key, by_qid = [], {}, {}
 
     def fresh(name, lat=None, lon=None):
-        row = {
-            "id": None, "name": name, "kind": "place", "wd_class": None,
-            "aliases": [], "country": cc,
-            "nuts3": None, "range": None, "lat": lat, "lon": lon,
-            "evidence": {"wikidata": None, "sitelinks": 0, "wikipedia": None,
-                         "osm": None, "portal": None, "seed": False},
-            "fame_score": 0.0, "expected_km": None, "unresolved": False,
-        }
+        row = new_row(cc, name, lat, lon)
         rows.append(row)
         return row
 
@@ -1060,6 +1247,17 @@ def build_country(cc, osm_rows, wd_rows, portals, verbose=False):
         if squash(row["name"]) in portal_set:
             row["evidence"]["portal"] = True
 
+    # Waymarked after the fame sources and before the seeds, so a seed can
+    # attach to a signed national route the fame sources never named.
+    if wm_routes:
+        def fresh_keyed(name, lat=None, lon=None):
+            row = fresh(name, lat, lon)
+            by_key.setdefault(squash(base_name(name)), row)
+            return row
+        tally = merge_waymarked(cc, rows, wm_routes, fresh=fresh_keyed)
+        if tallies is not None:
+            tallies[cc] = tally
+
     # Seeds last: they attach to what resolved, or ship unresolved.
     for seed in SEEDS.get(cc, []):
         key = squash(base_name(seed))
@@ -1095,8 +1293,112 @@ def build_country(cc, osm_rows, wd_rows, portals, verbose=False):
         kept.append(row)
 
     for row in kept:
-        row["id"] = f"{cc.lower()}-{slugify(row['name'])}"
+        row["id"] = None
+    unique_ids(kept)
     return kept
+
+
+def waymarked_counts(tallies, wm):
+    tot = {k: sum(t[k] for t in tallies.values())
+           for k in ("routes", "known", "added", "seeds_resolved",
+                     "skipped")}
+    return {"harvest_routes": len(wm), **tot,
+            "per_country": dict(sorted(tallies.items()))}
+
+
+def apply_waymarked_only():
+    """Re-apply evidence 5 to the committed registry, nothing else.
+
+    A full build needs the OSM fame scan, the Wikidata cache and the
+    pageviews cache, and re-running it re-scores every row in Europe. This
+    path takes the committed rows as they stand, removes whatever a previous
+    Waymarked pass added (rows with origin "waymarked", seeds it resolved),
+    and merges the current harvest again, so it is idempotent and touches no
+    score the other evidence set.
+
+    One difference from a full build, stated rather than hidden: a NEW row
+    is scored here without the per-country pageview and sitelink
+    normalisation, which needs the place rows this committed file does not
+    carry. So it scores osm 0.20 when the relation carries a fame tag and 0
+    otherwise. A full build scores it with the same formula as every row;
+    for a route with no article the two agree (zero), and that is nearly
+    every row this source adds, because a route with a fame tag was already
+    in the registry through the OSM fame scan."""
+    reg = load_json(REGISTRY)
+    if not reg:
+        print(f"! no registry at {REGISTRY}; run a full build first")
+        return 2
+    wm = waymarked_routes()
+    if not wm:
+        print(f"! no Waymarked harvest at {WAYMARKED}; "
+              "run pipeline/trails/waymarked.py first")
+        return 2
+    c = reg.setdefault("counts", {})
+    prev = c.get("waymarked") or {}
+    kept = []
+    for r in reg.get("rows") or []:
+        if r.get("origin") == "waymarked":
+            continue
+        r["evidence"].pop("waymarked", None)
+        if r.pop("resolved_by", None) == "waymarked":
+            r["unresolved"] = True
+            r["lat"] = r["lon"] = r["nuts3"] = r["range"] = None
+        kept.append(r)
+    per_country = {}
+    for r in kept:
+        per_country.setdefault(r["country"], []).append(r)
+    countries = reg.get("countries") or sorted(per_country)
+    tallies = {}
+    for cc in countries:
+        tallies[cc] = merge_waymarked(cc, per_country.setdefault(cc, []), wm)
+    all_rows = [r for cc in countries for r in per_country[cc]]
+    touched = [r for r in all_rows if r.get("origin") == "waymarked"
+               or r.get("resolved_by") == "waymarked"]
+    assign_regions([r for r in touched if r["lat"] is not None],
+                   verbose=True)
+    for cc in countries:
+        unique_ids(per_country[cc])
+    for r in touched:
+        if r.get("origin") != "waymarked":
+            continue
+        osm = r["evidence"].get("osm") or {}
+        parts = {"pageviews": 0.0, "sitelinks": 0.0,
+                 "osm": 1.0 if osm.get("fame_tagged") else 0.0,
+                 "portal": 0.0, "seed": 0.0}
+        r["fame_score"] = round(sum(WEIGHTS[k] * v
+                                    for k, v in parts.items()), 4)
+        r["fame_parts"] = parts
+    all_rows.sort(key=lambda r: (r["country"], -r["fame_score"], r["name"]))
+
+    # The counts describe every row, places included, and the committed file
+    # carries only the walks, so they move by the difference this pass made
+    # (and undo the previous pass's difference) rather than being recounted.
+    added = sum(t["added"] for t in tallies.values())
+    delta_region = sum(1 for r in touched if r.get("nuts3"))
+    c["rows"] = c.get("rows", 0) - prev.get("added", 0) + added
+    c["trail_rows"] = len(all_rows)
+    c["unresolved_seeds"] = sum(1 for r in all_rows if r.get("unresolved"))
+    c["with_osm"] = c.get("with_osm", 0) - prev.get("added", 0) + added
+    c["with_region"] = (c.get("with_region", 0)
+                        - prev.get("with_region_delta", 0) + delta_region)
+    pcs = c.setdefault("per_country", {})
+    for cc in countries:
+        was = (prev.get("per_country", {}).get(cc) or {}).get("added", 0)
+        pcs[cc] = pcs.get(cc, 0) - was + tallies[cc]["added"]
+    c["waymarked"] = waymarked_counts(tallies, wm)
+    c["waymarked"]["with_region_delta"] = delta_region
+    reg["rows"] = all_rows
+    reg["waymarked_applied_at"] = datetime.now(timezone.utc).isoformat(
+        timespec="seconds")
+    write_json(REGISTRY, reg)
+    w = c["waymarked"]
+    print(f"  waymarked routes in a catalogue country  {w['routes']:,}")
+    print(f"  already in the registry                 {w['known']:,}")
+    print(f"  added as rows                           {w['added']:,}")
+    print(f"  seeds resolved by a signed route        "
+          f"{w['seeds_resolved']:,}")
+    print(f"  -> {REGISTRY}")
+    return 0
 
 
 def main():
@@ -1111,8 +1413,14 @@ def main():
     ap.add_argument("--full", action="store_true",
                     help="also write famous_registry_full.json with the "
                          "place candidates too (not committed)")
+    ap.add_argument("--waymarked-only", action="store_true",
+                    help="re-apply the Waymarked harvest to the committed "
+                         "registry without rebuilding the other evidence")
     ap.add_argument("--verbose", action="store_true")
     args = ap.parse_args()
+
+    if args.waymarked_only:
+        return apply_waymarked_only()
 
     countries = (sorted(set(COUNTRIES.values())) if args.all else
                  [c.strip().upper() for c in args.countries.split(",")
@@ -1129,10 +1437,16 @@ def main():
 
     print("  [3/5] merge + national portals")
     portals = portal_names(countries)
+    wm = waymarked_routes()
+    if not wm:
+        print(f"        no Waymarked harvest at {WAYMARKED}; "
+              "evidence 5 skipped")
+    tallies = {}
     all_rows, per_country = [], {}
     for cc in countries:
         rows = build_country(cc, osm.get(cc) or {}, wd.get(cc) or [],
-                             portals, verbose=args.verbose)
+                             portals, verbose=args.verbose,
+                             wm_routes=wm, tallies=tallies)
         per_country[cc] = rows
         all_rows += rows
     print(f"        {len(all_rows):,} registry row(s)")
@@ -1172,6 +1486,7 @@ def main():
             "with_osm": sum(1 for r in all_rows if r["evidence"].get("osm")),
             "with_wikidata": sum(1 for r in all_rows
                                  if r["evidence"].get("wikidata")),
+            "waymarked": waymarked_counts(tallies, wm),
         },
         "rows": all_rows,
     }
@@ -1205,4 +1520,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())
