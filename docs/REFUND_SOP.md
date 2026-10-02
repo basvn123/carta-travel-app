@@ -77,16 +77,26 @@ Revoke everything (the refunded sale was the only live one): Admin, open the use
 
 Shorten or extend a live pass without resetting the allowance (stacked passes, partial refunds, outage
 extensions). Admin "set tier" restarts the allowance period, which would hand out a fresh quota, so use
-the SQL editor:
+admin_adjust_expiry (migration 047, T284) instead. It moves expires_at by whole days and nothing else:
+the tier and the allowance period stay, source becomes 'manual', and it writes its own audit row
+(action adjust_expiry, with the old and new expiry) under your name. The Admin panel has no button for it
+yet, so call it from the SQL editor as yourself. The SQL editor has no session of its own, so the first
+line tells the function who is calling; without it the answer is forbidden.
 
 ```sql
-update public.entitlements
-   set expires_at = expires_at - interval '30 days',   -- or + for an extension
-       source = 'manual', updated_at = now()
- where user_id = '<user id>';
+begin;
+select set_config('request.jwt.claims',
+  '{"sub": "<your admin user id>", "role": "authenticated"}', true);
+select public.admin_adjust_expiry('<user id>', -30);   -- a positive number extends
+commit;
 ```
 
-If the new expires_at is in the past, set the user to Free in Admin instead. Leave in place: change nothing.
+The answer is `{"ok": true, "expiresAt": ...}` or one error word, and on an error nothing has changed:
+would_expire means the cut reaches today or earlier, so set the user to Free in Admin instead;
+no_live_pass means the pass is free or has already lapsed, so there is nothing to shorten (grant a new
+pass in Admin if days are owed); beyond_horizon means the result would be more than 1095 days ahead;
+bad_days means zero, empty or more than 1095; slow_down means wait a minute. Leave in place: change
+nothing.
 
 Never edit or delete the pass_grants row. It is the purchase record and the only copy of the withdrawal
 waiver evidence. Deleting the user also deletes their pass_grants rows (on delete cascade), so for a
