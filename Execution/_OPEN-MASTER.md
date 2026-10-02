@@ -33,8 +33,10 @@ stage) and three loose ends.
 Rules that hold everywhere: never `supabase db push` against
 `ntssxktaduxzpsmejwyv`, paste migrations by hand into the SQL editor. After
 every paste, look for the self-check notice named in the step; it is the
-difference between "it ran" and "it is right". A push to GitHub only makes a
-Vercel Preview; promote it by hand.
+difference between "it ran" and "it is right". Since stage 6 (T293)
+production is the Cloudflare Pages project `carta-app`, deployed by hand with
+`npx wrangler pages deploy dist --project-name carta-app --branch main` after
+`npm run build:pages`; a push to GitHub reaches no domain.
 
 ---
 
@@ -453,15 +455,31 @@ the rewrite only matters if GitHub starts warning about repository size.
 # Stage 7. You, about three days, mostly waiting: the CAX11 box
 
 About EUR 6.60 a month. Do not run a real step on the box while a laptop run
-is in progress; the two machines would each write their own master. The
-Windows task `TravelAppFareRefresh` stays the live schedule until step 7.9.
+is in progress; the two machines would each write their own master.
+
+State on 2026-10-02 (T298), which changes this stage in four places:
+
+- The Windows task `TravelAppFareRefresh` is already disabled. The laptop's
+  inputs and caches were removed that afternoon (most of 7.11), so its Monday
+  run would have started about forty due tasks with nothing to read. Until
+  step 7.9 nothing runs the pipeline on a schedule, and nothing needs to:
+  production reads the data in R2, which does not change on its own.
+- Stage 5 is live, so `VITE_DATA_BASE` is set on the box from the start (7.3).
+- A production build is split since T291: `dist/` is the app shell and
+  `dist-data/` the data. Step 7.8 compares both.
+- The box gets the layer files (trails, cycling, regions, trips, dossier and
+  the rest) from its clone of `main`, which tracks them again since T297.
+  T297-a does not block this stage. The box refreshes only the weekly tasks;
+  the monthly and quarterly ones have no home yet (T048-h).
 
 ## 7.1 Hetzner project and token (T046-c)
 
 In the Hetzner Cloud Console create a project named Carta, then Security, API
 tokens, a Read & Write token (shown once). Install the hcloud CLI from
-https://github.com/hetznercloud/cli/releases and, in the shell you provision
-from only:
+https://github.com/hetznercloud/cli/releases (on the laptop:
+`hcloud-windows-amd64.zip`, with `hcloud.exe` in a folder on the Git Bash
+PATH such as `~/bin`; it was not installed on 2026-10-02) and, in the Git Bash
+shell you provision from only:
 
 ```
 export HCLOUD_TOKEN=<token>
@@ -498,12 +516,18 @@ nano ~/.config/carta/env
 ```
 
 A copy of `env.example`, mode 600. Copy the values from the laptop's repo-root
-`.env`, the five `RCLONE_CONFIG_R2_*` lines from stage 5, and
-`CARTA_SUPABASE_URL` and `CARTA_SUPABASE_SERVICE_KEY` from stage 2.
-`HCLOUD_TOKEN` stays blank until stage 8. Set
-`VITE_DATA_BASE=https://data.carta-europetravel.com/data` only once the
-stage 5 cutover is live: from then on every good weekly run uploads its data
-to R2 by itself (T262). Leave it blank before, or the build fails on the CSP.
+`.env`, and `CARTA_SUPABASE_URL` and `CARTA_SUPABASE_SERVICE_KEY` from stage 2.
+For the five `RCLONE_CONFIG_R2_*` lines, give the box its own key pair rather
+than the laptop's: in Cloudflare, R2, Manage API tokens, create an Account API
+token named `carta-box` with Object Read & Write on the bucket `carta` only,
+and use its Access Key ID and Secret Access Key. The laptop's `carta-rclone`
+pair is due to be replaced anyway (T288-a), and a separate pair can be revoked
+without touching the other machine. `HCLOUD_TOKEN` stays blank until stage 8.
+
+Set `VITE_DATA_BASE=https://data.carta-europetravel.com/data` now: the stage 5
+cutover is live (T291), so every good weekly run uploads its data to R2 by
+itself (T262, push-data phase 1). The app shell and the prune stay a hand step
+after a run (T262-a, at the end of this stage).
 
 ## 7.4 Verify the box (T046-f)
 
@@ -563,24 +587,32 @@ estimates from stage 1 on.
 
 ## 7.8 Compare with a laptop build (T048-d)
 
-On the box:
+Both builds are split (T291), so compare the app shell and the data
+separately. On the box, after 7.7:
 
 ```
-~/venv/bin/python ~/carta/infra/hetzner/cax11/compare_wire.py summarize ~/carta/continent-app/dist -o ~/box_wire.json
+cd ~/carta/infra/hetzner/cax11
+~/venv/bin/python compare_wire.py summarize ~/carta/continent-app/dist      -o ~/box_shell.json
+~/venv/bin/python compare_wire.py summarize ~/carta/continent-app/dist-data -o ~/box_data.json
 ```
 
-On the laptop, from the repo root:
+On the laptop, from the repo root (`build:pages` sets `VITE_DATA_BASE` itself,
+T295):
 
 ```
-(cd continent-app && npm run build)
-python infra/hetzner/cax11/compare_wire.py summarize continent-app/dist -o laptop_wire.json
-scp -i ~/.ssh/carta_orchestrator_ed25519 carta@<address>:box_wire.json .
-python infra/hetzner/cax11/compare_wire.py compare laptop_wire.json box_wire.json
+(cd continent-app && npm run build:pages)
+python infra/hetzner/cax11/compare_wire.py summarize continent-app/dist      -o laptop_shell.json
+python infra/hetzner/cax11/compare_wire.py summarize continent-app/dist-data -o laptop_data.json
+scp -i ~/.ssh/carta_orchestrator_ed25519 carta@<address>:box_shell.json carta@<address>:box_data.json .
+python infra/hetzner/cax11/compare_wire.py compare laptop_shell.json box_shell.json
+python infra/hetzner/cax11/compare_wire.py compare laptop_data.json  box_data.json
 ```
 
-It must print SAME SHAPE. With no fare harvest the `fares/` files are frozen,
-so they must match exactly; any key, type, file-set or schema difference is a
-bug for Claude.
+Both must print SAME SHAPE. Measured on the laptop on 2026-10-02: the shell is
+16 top-level files plus `fonts/`, the data 4 top-level files and 14
+directories with 52,307 files. With no fare harvest the `fares/` files are
+frozen, so they must match exactly; any key, type, file-set or schema
+difference is a bug for Claude.
 
 ## 7.9 Switch the schedule, same day (T048-e, T048-f)
 
@@ -591,17 +623,31 @@ sudo bash ~/carta/infra/hetzner/cron/install.sh --dry-run
 sudo bash ~/carta/infra/hetzner/cron/install.sh
 ```
 
-Monday 09:00 Brussels, 48 hour timeout, Sunday 04:00 reboot window. Then on
-the laptop:
+Monday 09:00 Brussels, 48 hour timeout, Sunday 04:00 reboot window. The
+laptop half of this step was done on 2026-10-02 (T298); check it is still off:
 
 ```
-schtasks /Change /TN TravelAppFareRefresh /DISABLE
 schtasks /Query /TN TravelAppFareRefresh /V /FO LIST | findstr /C:"Scheduled Task State"
 ```
 
 From now on the box's master is the newest. Before any master write on the
 laptop, pull first: `python pipeline/archive/push.py --pull --only master-current`.
-To go back: `/ENABLE` on the laptop and `install.sh --disable` on the box.
+To go back: `install.sh --disable` on the box. Re-enabling the laptop task
+(`schtasks /Change /TN TravelAppFareRefresh /ENABLE`) only makes sense after
+`python pipeline/archive/push.py --pull` has restored its inputs.
+
+After each weekly run the new data is in R2, but the boot index and app shell
+change only with an app deploy (T262-a). Until the box deploys by itself, do
+this on the laptop when a run added or changed destinations, from the repo
+root:
+
+```
+python pipeline/archive/push.py --pull --only master-current
+cd continent-app
+npm run build:pages
+npx wrangler pages deploy dist --project-name carta-app --branch main
+node scripts/r2/push-data.mjs --live --prune
+```
 
 ## 7.10 Weekly database dumps from the box (T048-g)
 
@@ -622,11 +668,18 @@ sudo apt-get update && sudo apt-get install -y postgresql-client-17
 
 ## 7.11 Clear the laptop, about 70 GB (T045-e)
 
-Only now, when the box runs the weekly pipeline and the laptop is no longer
-the system of record. Doing it earlier would leave the laptop's own weekly
-task with no inputs.
+Most of this was done on 2026-10-02, to free disk for the stage 6 build:
+`data/raw`, `data/history`, `data/models` and the eleven archived cache
+layers under `cache/` are gone (T293 report), and the laptop task was
+disabled the same day (T298). What remains is `app_data/backups`,
+`app_data/app_data.json`, the tool data, `logs`, `pipeline/logs` and
+`$CARTA_ARCHIVE_OUT`. Keep `app_data/app_data.json` as long as you deploy
+from the laptop: `npm run build:pages` reads it (pull it fresh first, as in
+7.9). The checks below for paths already removed have nothing left to check;
+run the rest.
 
-First every check from the T045 report must print "0 differences found":
+Only once the box runs the weekly pipeline, first every remaining check from
+the T045 report must print "0 differences found":
 
 ```
 rclone check data/raw/geofabrik r2:carta/archive/inputs/geofabrik --one-way
@@ -641,7 +694,7 @@ rclone ls r2:carta/archive/db/                                       # both dump
 Then, from the repo root:
 
 ```
-rm -rf data/raw data/history data/models        cache/photos/emb cache/photos/dumps cache/photos/models cache/photos/sheets cache/photos/geograph.sqlite        cache/beaches cache/cycling cache/lakes cache/iab cache/regions cache/trails cache/mountains cache/trips        app_data/backups app_data/app_data.json        tools/trailslab/valhalla/data tools/brouter/segments data/trails/famous_registry_full.json        data/derived/tp_fares.json tools/reachability/cache logs pipeline/logs "$CARTA_ARCHIVE_OUT"
+rm -rf data/raw data/history data/models        cache/photos/emb cache/photos/dumps cache/photos/models cache/photos/sheets cache/photos/geograph.sqlite        cache/beaches cache/cycling cache/lakes cache/iab cache/regions cache/trails cache/mountains cache/trips        app_data/backups        tools/trailslab/valhalla/data tools/brouter/segments data/trails/famous_registry_full.json        data/derived/tp_fares.json tools/reachability/cache logs pipeline/logs "$CARTA_ARCHIVE_OUT"
 git status --short        # must show no deletions: every path above is gitignored
 ```
 
