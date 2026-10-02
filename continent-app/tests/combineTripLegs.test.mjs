@@ -3,7 +3,7 @@
 // band. Run: npm test  (from continent-app/)
 import test from "node:test";
 import assert from "node:assert/strict";
-import { combineTripLegs, unpricedFlight } from "../src/lib/trip_planner_pricing.js";
+import { combineTripLegs, unpricedFlight, ownFlightTransfers } from "../src/lib/trip_planner_pricing.js";
 
 const rec = (extra = {}) => ({
   anchor_airport: "AAA",
@@ -63,9 +63,30 @@ test("unpricedFlight keeps the route and drops every flight figure", () => {
   assert.equal(r.origin, "BRU");
   assert.equal(r.into_via.id, "a");
   assert.ok(r.ground_total > 0);
-  for (const k of ["into_fare_eur", "out_of_fare_eur", "fare_per_person", "fare_total", "bag_total", "grand_total", "into_prov", "out_of_prov"]) {
+  for (const k of ["into_fare_eur", "out_of_fare_eur", "fare_per_person", "fare_total", "bag_total", "grand_total", "into_prov", "out_of_prov",
+    "into_carrier", "out_of_carrier", "into_time", "out_of_time"]) {
     assert.equal(k in r, false, k);
   }
   const none = { combinable: false, reason: "no_shared_origin" };
   assert.equal(unpricedFlight(none), none);
+});
+
+// T278: a fare the traveller typed still lands at an airport. The ids drive
+// the airport-to-stop legs; the airport-to-centre hop is taken from the routed
+// flight only where both use the same airport.
+test("ownFlightTransfers keeps the airports and the shared airport transfer", () => {
+  const routed = { ...unpricedFlight(combineTripLegs(dests.town, "2026-11-10", dests.town, "2026-11-17", 2, "cabin", null, { allDests: dests })), in_from_id: "town", out_from_id: "town" };
+  const same = ownFlightTransfers(routed, dests.town, dests.town, 2);
+  assert.equal(same.in_from_id, "town");
+  assert.ok(same.into_ground_eur > 0);
+  assert.equal(same.ground_total, Math.round((same.into_ground_eur + same.out_ground_eur) * 2 * 100) / 100);
+  // Landing somewhere else: the ids move, the routed transfer does not follow.
+  const other = ownFlightTransfers(routed, dests.a, dests.town, 2);
+  assert.equal(other.in_from_id, "a");
+  assert.equal(other.into_ground_eur, 0);
+  assert.equal(other.out_ground_eur, same.out_ground_eur);
+  // No routed flight at all: airports only, nothing priced.
+  const bare = ownFlightTransfers({ combinable: false }, dests.a, dests.a, 2);
+  assert.equal(bare.ground_total, 0);
+  assert.equal(bare.out_from_id, "a");
 });

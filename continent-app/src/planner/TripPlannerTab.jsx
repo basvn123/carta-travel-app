@@ -9,7 +9,7 @@ import { TripMap } from '../map/TripMap.jsx';
 import { TripItinerary, TransferModePicker } from './TripItinerary.jsx';
 import { GuidedTripWizard } from './GuidedTripWizard.jsx';
 import { CheapTipsSection } from './CheapTipsSection.jsx';
-import { eur, fmtHours, flightTimes } from '../lib/format.js';
+import { eur, fmtHours } from '../lib/format.js';
 import { fmtDate, laterISO, useToday, planningHorizon } from '../lib/dates.js';
 import { fetchDrivingRoute } from '../lib/routing.js';
 import { useTripPlanner } from '../hooks/useTripPlanner.js';
@@ -23,7 +23,6 @@ import { PlaneIcon } from '../components/TransportIcons.jsx';
 import { knownForFacts } from '../lib/knownFor.js';
 import { flightReasonLabel } from '../lib/trip_planner_pricing.js';
 import { geocodeAddress } from '../lib/geocode.js';
-import { carrierName } from '../lib/carriers.js';
 import { fareProv, estPrefix, FareTag } from '../components/FareProvenance.jsx';
 import { cityLabel } from '../lib/placeName.js';
 
@@ -1070,13 +1069,13 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
                       <div className="trip-total-row trip-flight-unpriced">
                         <span className="lbl">
                           <PlaneIcon size={11} /> {t('trip.flightOut')}
-                          <small>{carrierName(tp.flight.into_carrier)}, {tp.flight.origin} → {tp.flight.into_anchor}{flightTimes(tp.flight.into_time) ? `, ${t('trip.departs', { time: flightTimes(tp.flight.into_time).dep })}` : ''}, {tp.groupSize} {tp.groupSize === 1 ? t('trip.seatOne') : t('trip.seatMany')}</small>
+                          <small>{tp.flight.origin} → {tp.flight.into_anchor}, {tp.groupSize} {tp.groupSize === 1 ? t('trip.seatOne') : t('trip.seatMany')}</small>
                         </span>
                       </div>
                       <div className="trip-total-row trip-flight-unpriced">
                         <span className="lbl">
                           <PlaneIcon size={11} /> {t('trip.flightHome')}
-                          <small>{carrierName(tp.flight.out_of_carrier)}, {tp.flight.out_anchor} → {tp.flight.origin}{flightTimes(tp.flight.out_of_time) ? `, ${t('trip.departs', { time: flightTimes(tp.flight.out_of_time).dep })}` : ''}, {tp.groupSize} {tp.groupSize === 1 ? t('trip.seatOne') : t('trip.seatMany')}</small>
+                          <small>{tp.flight.out_anchor} → {tp.flight.origin}, {tp.groupSize} {tp.groupSize === 1 ? t('trip.seatOne') : t('trip.seatMany')}</small>
                         </span>
                       </div>
                       <div className="trip-saving-row trip-flight-own-door">
@@ -1146,6 +1145,23 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
                             onChange={(e) => tp.setOwnFlight({ ...tp.ownFlight, retDate: e.target.value ? laterISO(e.target.value, laterISO(tp.ownFlight?.outDate, today)) : null })}
                           />
                         </label>
+                      </div>
+                      {/* The airport transfers an own fare lands into (T278),
+                          priced like the routed flight's. */}
+                      {tp.flight.ground_total > 0 && (
+                        <div className="trip-total-row">
+                          <span className="lbl">
+                            <PlaneIcon size={11} /> {t('trip.airportTransfers')}
+                            <small>{t('trip.transfersSub')}</small>
+                          </span>
+                          <span className="val">{eur(tp.flightTransfer ? tp.flightTransfer.ground_total : tp.flight.ground_total)}</span>
+                        </div>
+                      )}
+                      {/* The way back from "Add your fare" (T278): drop the
+                          typed fare and the planner shows the route it found. */}
+                      <div className="trip-saving-row trip-flight-own-undo">
+                        <span>{t('trip.ownFareBack')}</span>
+                        <button onClick={() => tp.setOwnFlight(null)}>{t('trip.removeOwnFare')}</button>
                       </div>
                     </div>
                   ) : tp.flight?.driving ? (

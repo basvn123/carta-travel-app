@@ -188,11 +188,19 @@ const FLIGHT_MONEY_KEYS = [
   'into_prov', 'out_of_prov', 'bag_per_leg_eur', 'bag_per_person', 'bag_total', 'grand_total',
 ];
 
+/** The plan facts a combineTripLegs result reads off the same frozen
+ *  snapshots as the fares: which airline flew each priced day and its
+ *  departure and arrival times. A snapshot names a booking source as the
+ *  carrier for a cached quote ("Aviasales"), and no carrier at all reads as
+ *  Ryanair, so once the fare is gone these are guesses too (T278). */
+const SNAPSHOT_FACT_KEYS = ['into_carrier', 'out_of_carrier', 'into_time', 'out_of_time'];
+
 /** A planner flight with its price taken out (T273). Carta does not price
  *  flights (owner decision, 2026-10-02): the stored fares are frozen
  *  snapshots, so a figure built from them is neither a quote nor a fair
- *  estimate. What stays is the route the trip flies (origin, the two
- *  airports, carrier and times as plan facts) and the airport transfers,
+ *  estimate. What stays is the route the trip flies (origin and the two
+ *  airports; T278 also drops the snapshot carrier and times) and the
+ *  airport transfers,
  *  which are ground costs Carta does price. `priced: false` marks it, and no
  *  surface shows or sums a flight figure for it; the only flight figure in a
  *  total is one the traveller typed (the `own` flight in useTripPlanner). */
@@ -200,7 +208,38 @@ export function unpricedFlight(flight) {
   if (!flight?.combinable) return flight;
   const out = { ...flight, priced: false };
   for (const k of FLIGHT_MONEY_KEYS) delete out[k];
+  for (const k of SNAPSHOT_FACT_KEYS) delete out[k];
   return out;
+}
+
+/** The airport side of a flight the traveller booked themselves (T278).
+ *  Carta does not price their seat, but the trip still lands somewhere and
+ *  ends somewhere: `inDest` is the airport they fly into (the wizard's
+ *  arrival, else the routed flight's), `outDest` the one they fly home from.
+ *  The ids let the planner price the airport-to-stop legs (anchorLegs); the
+ *  airport-to-centre hop comes from the routed flight's stored transfer, and
+ *  only for a direction whose airport the routed flight also uses, since that
+ *  transfer belongs to that airport. Returns the same transfer fields
+ *  combineTripLegs carries, so flightTransfer reads both shapes alike. */
+export function ownFlightTransfers(routed, inDest, outDest, groupSize = 1) {
+  const inId = inDest?.id ?? null;
+  const outId = outDest?.id ?? null;
+  const ok = Boolean(routed?.combinable);
+  const sameIn = ok && inId != null && routed.in_from_id === inId;
+  const sameOut = ok && outId != null && routed.out_from_id === outId;
+  const intoEur = sameIn ? (routed.into_ground_eur || 0) : 0;
+  const outEur = sameOut ? (routed.out_ground_eur || 0) : 0;
+  const group = Math.max(1, groupSize || 1);
+  return {
+    in_from_id: inId,
+    out_from_id: outId,
+    into_ground_eur: round2(intoEur),
+    into_ground_minutes: sameIn ? (routed.into_ground_minutes || 0) : 0,
+    out_ground_eur: round2(outEur),
+    out_ground_minutes: sameOut ? (routed.out_ground_minutes || 0) : 0,
+    ground_per_person: round2(intoEur + outEur),
+    ground_total: round2((intoEur + outEur) * group),
+  };
 }
 
 /** The destination whose fares price a leg: itself when it carries routes,

@@ -225,68 +225,88 @@ export function JourneyPage({ id, gatewayDest, onClose, onSelectDest }) {
     const best = trip.bestPeriod || {};
     const budget = trip.budget || {};
     const yn = (v) => (v == null ? null : t(v ? 'journey.yes' : 'journey.no'));
+    const notRecorded = t('journey.fNotRecorded');
+
     return [
       { key: 'days', label: t('journey.fDuration'), value: t('journey.nDays', { n: trip.durationDays || 7 }) },
-      best.monthNames?.length && {
+      {
         key: 'best',
         label: t('journey.fBest'),
-        strip: {
-          good: best.months || [],
-          avoid: best.avoidMonths || [],
-          info: (best.note || best.avoid) && (
-            <>
-              {best.note && <p>{best.note}</p>}
-              {best.avoid && <p>{best.avoid}</p>}
-            </>
-          ),
-        },
+        ...(best.monthNames?.length ? {
+          strip: {
+            good: best.months || [],
+            avoid: best.avoidMonths || [],
+            info: (best.note || best.avoid) && (
+              <>
+                {best.note && <p>{best.note}</p>}
+                {best.avoid && <p>{best.avoid}</p>}
+              </>
+            ),
+          },
+        } : { value: notRecorded, className: 'bpage-fact-empty' }),
       },
-      budget.totalEur && {
+      {
         key: 'budget',
         label: t('journey.fBudget'),
-        value: `${eurRange(budget.totalEur, lang)} ${trip.budgetTierRaw || trip.budgetTier || ''}`.trim(),
-        note: t('journey.fBudgetNote'),
-        mono: true,
+        ...(budget.totalEur ? {
+          value: `${eurRange(budget.totalEur, lang)} ${trip.budgetTierRaw || trip.budgetTier || ''}`.trim(),
+          note: t('journey.fBudgetNote'),
+          mono: true,
+        } : { value: notRecorded, className: 'bpage-fact-empty' }),
       },
-      budget.perDayEur && {
+      {
         key: 'perday',
         label: t('journey.fPerDay'),
-        value: eurRange(budget.perDayEur, lang),
-        mono: true,
+        ...(budget.perDayEur ? {
+          value: eurRange(budget.perDayEur, lang),
+          mono: true,
+        } : { value: notRecorded, className: 'bpage-fact-empty' }),
       },
-      profile.difficultyLabel && {
+      {
         key: 'diff',
         label: t('journey.fDifficulty'),
-        meter: {
-          level: profile.difficulty,
-          label: diffLabel(profile.difficultyLabel, t),
-          note: difficultyNoteText(profile.difficultyNote, profile.difficultyLabel),
-        },
+        ...(profile.difficultyLabel ? {
+          meter: {
+            level: profile.difficulty,
+            label: diffLabel(profile.difficultyLabel, t),
+            note: difficultyNoteText(profile.difficultyNote, profile.difficultyLabel),
+          },
+        } : { value: notRecorded, className: 'bpage-fact-empty' }),
       },
-      profile.crowdLevel && {
+      {
         key: 'crowd',
         label: t('journey.fCrowds'),
-        value: t(`journey.crowd${profile.crowdLevel}`),
+        ...(profile.crowdLevel ? {
+          value: t(`journey.crowd${profile.crowdLevel}`),
+        } : { value: notRecorded, className: 'bpage-fact-empty' }),
       },
-      profile.familyFriendly != null && {
+      {
         key: 'family',
         label: t('journey.fFamily'),
-        value: yn(profile.familyFriendly),
+        ...(profile.familyFriendly != null ? {
+          value: yn(profile.familyFriendly),
+        } : { value: notRecorded, className: 'bpage-fact-empty' }),
       },
-      profile.carRequired != null && {
+      {
         key: 'car',
         label: t('journey.fCar'),
-        value: yn(profile.carRequired),
+        ...(profile.carRequired != null ? {
+          value: yn(profile.carRequired),
+        } : { value: notRecorded, className: 'bpage-fact-empty' }),
       },
-      trip.gatewayAirport && {
+      {
         key: 'gateway',
         label: t('journey.fGateway'),
-        gateway: gatewayFact(trip.gatewayAirport, trip.gatewayAirportCode),
+        ...(trip.gatewayAirport ? {
+          gateway: gatewayFact(trip.gatewayAirport, trip.gatewayAirportCode),
+        } : { value: notRecorded, className: 'bpage-fact-empty' }),
       },
-      trip.languages?.length && {
+      {
         key: 'lang',
         label: t('journey.fLanguages'),
-        value: trip.languages.join(', '),
+        ...(trip.languages?.length ? {
+          value: trip.languages.join(', '),
+        } : { value: notRecorded, className: 'bpage-fact-empty' }),
       },
       trip.emergencyNumber && {
         key: 'sos',
@@ -436,7 +456,7 @@ export function JourneyPage({ id, gatewayDest, onClose, onSelectDest }) {
             >
               <dl>
                 {facts.map((fact) => (
-                  <div key={fact.key} className="bpage-fact">
+                  <div key={fact.key} className={`bpage-fact ${fact.className || ''}`}>
                     <dt>{fact.label}</dt>
                     <dd className={fact.mono ? 'mono' : ''}>
                       {fact.strip ? (

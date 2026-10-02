@@ -20414,6 +20414,9 @@ button.ai-sched-main:focus-visible {
   font-family: var(--mono);
   font-variant-numeric: tabular-nums;
 }
+.bpage-fact.bpage-fact-empty dd {
+  color: var(--ink-mute);
+}
 .bpage-fact dd small {
   display: block;
   margin-top: 2px;

@@ -1,8 +1,10 @@
 /**
  * icsExport.js, the planned trip as a calendar file (.ics, RFC 5545).
  *
- * One VEVENT per flight (timed, using the harvested local dep/arr hours when
- * the flight-times layer covers the leg) and one all-day VEVENT per stay.
+ * One VEVENT per flight and one all-day VEVENT per stay. A flight event is
+ * all-day: the harvested dep/arr hours came from the frozen fare snapshots,
+ * so since T278 no event carries them; flightEvent still writes a timed
+ * event when it is handed a time.
  * Times are written "floating" (no time zone): a 19:45 departure reads as
  * 19:45 wherever the calendar is opened, which is how boarding passes are
  * read anyway. Opening the file adds the whole trip to Google Calendar,
@@ -12,7 +14,6 @@
 import { ownTravelWord } from './transportLinks.js';
 import { flightTimes } from './format.js';
 import { addDays } from './dates.js';
-import { carrierName } from './carriers.js';
 
 const pad2 = (n) => String(n).padStart(2, '0');
 
@@ -111,9 +112,11 @@ export function tripIcs({ label, stopDetails = [], flight = null, groupSize = 1,
     events.push(flightEvent({
       uid: `${stamp}-fly-out@carta`,
       date: first.arriveDate,
-      time: flight.into_time,
+      // No carrier or time: both came from the frozen fare snapshots (T278),
+      // so the event is all-day until the traveller's own booking says more.
+      time: null,
       summary: `Flight ${flight.origin} to ${flight.into_anchor}`,
-      description: `${carrierName(flight.into_carrier)}, ${people}.${refFor('flight-out')} Planned with Carta.`,
+      description: `${people}.${refFor('flight-out')} Planned with Carta.`,
     }));
   } else if (flight?.own) {
     events.push(flightEvent({
@@ -141,9 +144,9 @@ export function tripIcs({ label, stopDetails = [], flight = null, groupSize = 1,
     events.push(flightEvent({
       uid: `${stamp}-fly-home@carta`,
       date: last.departDate,
-      time: flight.out_of_time,
+      time: null,
       summary: `Flight ${flight.out_anchor} to ${flight.origin}`,
-      description: `${carrierName(flight.out_of_carrier)}, ${people}.${refFor('flight-home')} Planned with Carta.`,
+      description: `${people}.${refFor('flight-home')} Planned with Carta.`,
     }));
   } else if (flight?.own) {
     events.push(flightEvent({

@@ -1,24 +1,32 @@
-// Headless verify for the fare provenance layer (FareProvenance.jsx):
-// freshness chips, estimate styling, "from" phrasing and the booking-site
-// warning, across the results list, the destination sheet and the trip
-// itinerary.
+// Headless verify that no fare provenance mark sits on a Carta flight figure
+// (T279, closes T266-b and T267-c). Carta does not price flights (T273, owner
+// decision 2026-10-02), so there is no flight price to tag: no tilde before a
+// flight figure, no est. chip, no "seen N days ago" chip, no "from" phrasing
+// on a flight. A fare the traveller typed is theirs, and shows as a plain
+// figure with no tag. Ground legs still carry their real est. flags, and the
+// booking note still sits near external links; both are checked.
 //
-// Shipped fares carry s (source) and o (epoch day last confirmed) on each
-// route record, and the display layer always labels them as estimates. The
-// ?provmock= seam supplies a chosen bag per page load:
-//   (none)                       baseline: no chips, no tildes, from-words
-//                                and booking notes present (unconditional)
-//   provmock=age:3               a fare seen 3 days ago
-//   provmock=age:3,est:1         a model estimate (tilde + est. chip)
+// The old version drove the removed map results list and expected a no-tilde,
+// no-chip baseline that T256 reversed and T273 replaced. This one runs the
+// trip receipt (the one place a flight row and a typed fare both show),
+// under three ?provmock bags. (The Destinations city-day cards sit several
+// clicks deep; verify_places_tab.mjs reaches them and owns that check.) The mock must
+// change nothing on a flight row, because there is no flight figure for it
+// to tag:
+//   (none)             baseline
+//   age:3              a fare seen 3 days ago
+//   age:3,est:1        a model estimate
 //
-// Run from inside continent-app/ against a fresh build:
-//   npm run build && node scripts/verify_fare_provenance.mjs
+//   node scripts/verify_fare_provenance.mjs [url]
+//     url defaults to http://127.0.0.1:$CARTA_PORT or 5206. If nothing answers
+//     there, a vite dev server is started on that port (dev has the e2e seams
+//     on; a build needs VITE_E2E_SEAMS=1). Exits 1 on a failure.
 import { chromium } from 'playwright';
 import { spawn } from 'node:child_process';
 import { mkdirSync } from 'node:fs';
 
-const PORT = 4193;
-const BASE = `http://127.0.0.1:${PORT}`;
+const PORT = Number(process.env.CARTA_PORT || 5206);
+const BASE = (process.argv[2] || `http://127.0.0.1:${PORT}/`).replace(/\/?$/, '/');
 const SHOTS = 'scripts/shots';
 mkdirSync(SHOTS, { recursive: true });
 
@@ -28,35 +36,26 @@ const isUp = async () => {
 let srv = null;
 const waitForServer = async () => {
   if (await isUp()) return;
-  srv = spawn('npx', ['vite', 'preview', '--port', String(PORT), '--strictPort'], {
+  srv = spawn('npx', ['vite', '--port', String(PORT), '--strictPort', '--host', '127.0.0.1'], {
     shell: true, stdio: 'ignore',
   });
-  for (let i = 0; i < 60; i += 1) {
+  for (let i = 0; i < 240; i += 1) {
     if (await isUp()) return;
     await new Promise((r) => setTimeout(r, 500));
   }
-  throw new Error('vite preview never came up');
+  throw new Error('vite never came up');
 };
 
 let failures = 0;
 const fail = (msg) => { console.error('FAIL:', msg); failures += 1; process.exitCode = 1; };
 const ok = (msg) => console.log('ok  ', msg);
-
-// Chunk 2 (the fare write path) ships REAL contract A fields into the fare
-// slices, and this repo may hold both states while that merge rolls out. The
-// destination sheet reads the hydrated route directly, so its "renders
-// nothing without fields" baseline only applies while CRL's slice is still
-// provenance-free.
-let crlHasProv = false;
-const probeSlice = async () => {
-  try {
-    const slice = await (await fetch(`${BASE}/fares/CRL.json`)).json();
-    crlHasProv = Object.values(slice).some((r) => r && (r.o != null || r.s != null));
-    console.log(`CRL slice carries provenance fields: ${crlHasProv}`);
-  } catch { /* keep false */ }
+const euros = (s) => {
+  const m = String(s || '').replace(/[^0-9.,-]/g, '').replace(/,/g, '');
+  return m ? Number(m) : NaN;
 };
 
-const draft = {
+const OWN_FARE = 240;
+const draft = (extra = {}) => ({
   tripStart: '2026-08-24',
   stops: [
     { destinationId: 'BGY', nights: 2, activities: [] },
@@ -67,147 +66,110 @@ const draft = {
   pace: 'balanced',
   baggage: 'small',
   label: 'Provenance verify trip',
+  ...extra,
+});
+const hashOf = (d) => `trip=0.${Buffer.from(JSON.stringify(d)).toString('base64url')}`;
+const HASHES = {
+  unpriced: hashOf(draft()),
+  own: hashOf(draft({ ownFlight: { airline: 'Test Air', costTotal: OWN_FARE, mode: 'fly' } })),
 };
-const hash = `trip=0.${Buffer.from(JSON.stringify(draft)).toString('base64url')}`;
+
+const MOCKS = [['plain', ''], ['seen', 'age:3'], ['est', 'age:3,est:1']];
+const VIEWPORTS = [['desktop', { width: 1360, height: 900 }], ['phone', { width: 380, height: 820 }]];
 
 const browser = await (async () => {
   await waitForServer();
   return chromium.launch();
 })();
 
-async function newPage() {
-  const page = await browser.newPage({ viewport: { width: 1360, height: 900 } });
+async function newPage(viewport) {
+  const page = await browser.newPage({ viewport });
   await page.addInitScript(() => {
+    for (const k of ['continent.guestMode.v1', 'continent.mapGuideDismissed.v1', 'carta.fareNoticeSeen',
+      'carta.welcomeSeen', 'carta.welcomeSeen.v1']) localStorage.setItem(k, '1');
     localStorage.setItem('continent.lang.v1', 'en');
-    localStorage.setItem('continent.guestMode.v1', '1');
-    localStorage.setItem('continent.mapGuideDismissed.v1', '1');
-    localStorage.setItem('carta.fareNoticeSeen', '1');
-    localStorage.setItem('carta.welcomeSeen', '1');
   });
   return page;
 }
 
-const count = (page, sel) => page.locator(sel).count();
+const TAG = '.fare-prov, .fare-prov-est, .fare-prov-age';
 
-/** The trip itinerary via the share hash: receipt rows + a leg's links. */
-async function checkTrip(page, mock, tag) {
-  await page.goto(`${BASE}/?o=CRL${mock ? `&provmock=${mock}` : ''}#${hash}`);
+/** The trip receipt. kind is 'unpriced' (no typed fare) or 'own' (typed). */
+async function checkTrip(kind, mockName, mock, vpName, viewport) {
+  const where = `[trip ${kind} ${mockName} ${vpName}]`;
+  const page = await newPage(viewport);
+  await page.goto(`${BASE}?o=CRL${mock ? `&provmock=${mock}` : ''}#${HASHES[kind]}`,
+    { waitUntil: 'domcontentloaded', timeout: 120000 });
   await page.getByRole('button', { name: 'Open trip' }).click({ timeout: 120000 });
   await page.locator('.itin').waitFor({ timeout: 120000 });
   await page.waitForTimeout(1500);
-
-  // Expand the estimated-total receipt and the first inter-stop leg.
+  const pass = page.locator('.pass-overlay .day-saved-close');
+  if (await pass.count()) { await pass.first().click(); await page.waitForTimeout(500); }
   await page.locator('.itin-breakdown-toggle').click();
   await page.locator('.itin-breakdown-body').waitFor({ timeout: 10000 });
-  await page.locator('.itin-leg-main').first().click();
-  await page.locator('.itin-leg .trip-leg-links').first().waitFor({ timeout: 15000 });
+  const body = page.locator('.itin-breakdown-body');
 
-  const notes = await count(page, '.itin .booking-note');
-  if (notes < 1) fail(`[trip ${tag}] no booking note near the leg's booking links`);
-  else ok(`[trip ${tag}] booking note present near external links (${notes})`);
-
-  // Ground legs ALREADY carry real est/src flags (transport.js attaches
-  // est:true/src:'model' to distance-based fares), so est chips on leg rows
-  // are correct without any mock. What must stay silent without fields are
-  // the FLIGHT receipt rows (.trip-total-row) and every age chip.
-  const ages = await count(page, '.itin .fare-prov-age');
-  const legEsts = await count(page, '.itin .fare-prov-est');
-  const flightTags = await count(page, '.itin .trip-total-row .fare-prov');
-  const flightVals = await page.locator('.itin .trip-total-row .val').allInnerTexts();
-  const flightTildes = flightVals.filter((v) => v.includes('~')).length;
-
-  if (legEsts < 1) fail(`[trip ${tag}] ground legs carry real est flags but no est. chip rendered`);
-  else ok(`[trip ${tag}] est. chips on genuinely estimated ground legs (${legEsts})`);
-
-  if (!mock) {
-    if (flightTags > 0) fail(`[trip ${tag}] flight rows rendered chips with no fields (${flightTags})`);
-    else ok(`[trip ${tag}] flight rows silent without fields`);
-    if (ages > 0) fail(`[trip ${tag}] age chips rendered with no fields (${ages})`);
-    else ok(`[trip ${tag}] no age chips without fields`);
-    if (flightTildes > 0) fail(`[trip ${tag}] flight prices carry a tilde with no fields`);
-    else ok(`[trip ${tag}] no tilde on flight prices without fields`);
-  } else if (mock.includes('est')) {
-    if (await count(page, '.itin .trip-total-row .fare-prov-est') < 1) fail(`[trip ${tag}] est. chip missing on flight rows`);
-    else ok(`[trip ${tag}] est. chip on mocked flight rows`);
-    if (flightTildes < 1) fail(`[trip ${tag}] no ~€ flight prices in the receipt`);
-    else ok(`[trip ${tag}] tilde on mocked flight prices (${flightTildes})`);
+  if (kind === 'unpriced') {
+    const rows = body.locator('.itin-flight-unpriced');
+    const n = await rows.count();
+    if (n !== 2) fail(`${where} expected two unpriced flight rows, found ${n}`);
+    else ok(`${where} flight out and home are route rows`);
+    const text = (await rows.allInnerTexts()).join(' ').replace(/\s+/g, ' ');
+    if (/[~€]/.test(text)) fail(`${where} a flight row shows a price mark: "${text}"`);
+    else ok(`${where} no tilde or euro figure on a flight row`);
+    if (await rows.locator(TAG).count()) fail(`${where} a flight row carries a provenance tag`);
+    else ok(`${where} no est. or age tag on a flight row`);
+    if (await rows.locator('.val').count()) fail(`${where} a flight row carries a value cell`);
+    const total = (await page.locator('.itin-breakdown-toggle strong').innerText()).trim();
+    if (total.includes('~')) fail(`${where} the total carries a tilde: "${total}"`);
+    else ok(`${where} the total reads "${total}" with no tilde`);
   } else {
-    if (ages < 1) fail(`[trip ${tag}] age chip missing`);
-    else {
-      const txt = (await page.locator('.itin .fare-prov-age').first().innerText()).trim();
-      if (txt !== 'seen 3 days ago') fail(`[trip ${tag}] age bucket reads "${txt}"`);
-      else ok(`[trip ${tag}] age chips render: "${txt}" (${ages})`);
-    }
-    if (await count(page, '.itin .trip-total-row .fare-prov-est') > 0) fail(`[trip ${tag}] est. chip on a flight row for a non-estimate mock`);
-    else ok(`[trip ${tag}] flight rows show age only, no est. chip`);
-  }
-  await page.screenshot({ path: `${SHOTS}/prov-trip-${tag}.png`, fullPage: false });
-}
-
-/** Map tab: results list rows, then a destination sheet's flight group. */
-async function checkBrowse(page, mock, tag) {
-  await page.goto(`${BASE}/?o=CRL&t=plane${mock ? `&provmock=${mock}` : ''}`);
-  // Every visit opens on Destinations; move to the map.
-  for (const btn of await page.getByRole('button').all()) {
-    const txt = (await btn.innerText().catch(() => '')).trim();
-    if (/^map$/i.test(txt) && (await btn.isVisible().catch(() => false))) { await btn.click(); break; }
-  }
-  await page.locator('.result-row').first().waitFor({ timeout: 120000 });
-  await page.waitForTimeout(800);
-
-  const fromWords = await count(page, '.result-price .prov-from');
-  const firstPrice = (await page.locator('.result-price').first().innerText()).trim();
-
-  if (!mock) {
-    if (fromWords < 1) fail(`[browse ${tag}] result rows carry no "from" word`);
-    else ok(`[browse ${tag}] "from" phrasing on result rows (${fromWords})`);
-    if (firstPrice.includes('~')) fail(`[browse ${tag}] tilde with no fields: "${firstPrice}"`);
-  } else if (mock.includes('est')) {
-    if (!firstPrice.includes('~')) fail(`[browse ${tag}] estimated row price has no tilde: "${firstPrice}"`);
-    else ok(`[browse ${tag}] estimated row price reads "${firstPrice}"`);
+    const vals = await body.locator('.trip-total-row .val').allInnerTexts();
+    const mine = body.locator('.trip-total-row', { has: page.locator('.val', { hasText: String(OWN_FARE) }) });
+    if (!vals.some((v) => euros(v) === OWN_FARE)) fail(`${where} no row reads the typed EUR ${OWN_FARE} (${vals.join(' | ')})`);
+    else ok(`${where} the typed fare shows as EUR ${OWN_FARE}`);
+    const mineText = (await mine.first().innerText().catch(() => '')).replace(/\s+/g, ' ');
+    if (mineText.includes('~')) fail(`${where} the typed fare carries a tilde: "${mineText}"`);
+    if (await mine.first().locator(TAG).count()) fail(`${where} the typed fare carries a provenance tag`);
+    else ok(`${where} the typed fare is untagged, the traveller's own`);
+    if (await body.locator('.itin-flight-unpriced').count()) fail(`${where} an unpriced flight row sits beside the typed fare`);
   }
 
-  // The destination sheet: expand Getting there, check fare line + note.
-  await page.locator('.result-row').first().click();
-  await page.locator('.cost-group').first().waitFor({ timeout: 15000 });
-  await page.locator('.cost-group-head').first().click();
-  await page.waitForTimeout(400);
-  const notes = await count(page, '.cost-group .booking-note');
-  const links = await count(page, '.cost-group .cost-action');
-  if (links > 0 && notes < 1) fail(`[browse ${tag}] booking links without the price-change note`);
-  else ok(`[browse ${tag}] booking note near sheet links (links ${links}, notes ${notes})`);
-  const sheetTags = await count(page, '.cost-group .fare-prov');
-  if (!mock && sheetTags > 0 && !crlHasProv) fail(`[browse ${tag}] sheet provenance chips with no fields`);
-  else if (!mock && sheetTags > 0) ok(`[browse ${tag}] sheet chip from REAL slice provenance (${sheetTags})`);
-  if (mock && sheetTags < 1) fail(`[browse ${tag}] sheet fare line carries no provenance chip`);
-  else if (mock) ok(`[browse ${tag}] sheet fare line chip renders (${sheetTags})`);
-
-  // The selected map pin (DOM pill) shares the tilde derivation.
-  if (mock && mock.includes('est')) {
-    const pill = (await page.locator('.price-pill.selected').first().innerText().catch(() => '')).trim();
-    if (pill && !pill.includes('~')) fail(`[browse ${tag}] selected pin pill has no tilde: "${pill}"`);
-    else if (pill) ok(`[browse ${tag}] selected pin pill reads "${pill}"`);
+  // Ground legs keep their own flags; open the first leg for its booking
+  // links and the price-change note.
+  const legs = page.locator('.itin-leg-main');
+  if (await legs.count()) {
+    await legs.first().click();
+    await page.locator('.itin-leg .trip-leg-links').first().waitFor({ timeout: 15000 }).catch(() => {});
+    const links = await page.locator('.itin-leg .cost-action, .itin-leg .trip-leg-links a').count();
+    const notes = await page.locator('.itin .booking-note').count();
+    if (links > 0 && notes < 1) fail(`${where} booking links without the price-change note`);
+    else ok(`${where} booking note near links (links ${links}, notes ${notes})`);
   }
-  await page.screenshot({ path: `${SHOTS}/prov-browse-${tag}.png` });
+  if (mock) {
+    // A mock bag adds provenance to anything that carries fields; a flight
+    // figure carries none, so no flight row may react to it.
+    const flightTags = await page.locator('.itin .itin-flight-unpriced .fare-prov, .itin .itin-flight-row .fare-prov').count();
+    if (flightTags) fail(`${where} a flight row reacted to the provenance mock (${flightTags})`);
+    else ok(`${where} the provenance mock leaves flight rows alone`);
+  }
+  const over = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
+  if (over > 1) fail(`${where} ${over}px of sideways scroll`);
+  await page.screenshot({ path: `${SHOTS}/prov-trip-${kind}-${mockName}-${vpName}.png` });
+  await page.close();
 }
 
 try {
-  await probeSlice();
-  const page = await newPage();
-  // Baseline: no fields, nothing field-driven may render.
-  await checkBrowse(page, '', 'plain');
-  await checkTrip(page, '', 'plain');
-  // A real quote with a known age and expiry.
-  await checkBrowse(page, 'age:3', 'seen');
-  await checkTrip(page, 'age:3', 'seen');
-  // A model estimate.
-  await checkBrowse(page, 'age:3,est:1', 'est');
-  await checkTrip(page, 'age:3,est:1', 'est');
-  await browser.close();
-  console.log(failures ? `verify_fare_provenance: ${failures} FAILURES` : 'verify_fare_provenance OK');
+  for (const [vpName, vp] of VIEWPORTS) {
+    for (const [mockName, mock] of MOCKS) {
+      await checkTrip('unpriced', mockName, mock, vpName, vp);
+      await checkTrip('own', mockName, mock, vpName, vp);
+    }
+  }
 } catch (err) {
-  fail(err.message);
-  await browser.close().catch(() => {});
+  fail(String(err.message || err).split('\n')[0]);
 } finally {
+  await browser.close().catch(() => {});
   if (srv) srv.kill();
 }
+console.log(failures ? `verify_fare_provenance: ${failures} FAILURES` : 'verify_fare_provenance OK');

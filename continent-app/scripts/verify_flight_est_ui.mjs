@@ -12,6 +12,14 @@
 //      are not in the total, and its rows add up to the total without them.
 //   2. a typed fare of EUR 240 (ownFlight): the receipt shows that row at
 //      EUR 240 and its rows, that one included, add up to the total.
+//   3. (T278) the same typed fare landing at Bergamo with Lake Como as the
+//      first stop (anchorId, as the wizard sets it): the receipt prices the
+//      Bergamo to Lake Como transfer, and it counts. A typed fare also keeps
+//      the airport transfers the routed flight would have had (same row or
+//      none, as case 1 shows it on this screen size).
+// T278 also checks that a route row names no carrier and no time (both came
+// from the frozen snapshots), and that the trip editor's own-fare block has
+// a way back to the routed view.
 // Each runs on a desktop and on a 380px phone, with no sideways scroll.
 //
 //   node scripts/verify_flight_est_ui.mjs [url]   (default http://127.0.0.1:$CARTA_PORT or 4173)
@@ -42,9 +50,18 @@ const hashOf = (d) => `trip=0.${Buffer.from(JSON.stringify(d)).toString('base64u
 const CASES = [
   { name: 'unpriced', hash: hashOf(draft()) },
   { name: 'own-fare', hash: hashOf(draft({ ownFlight: { airline: 'Test Air', costTotal: OWN_FARE, mode: 'fly' } })) },
+  { name: 'own-anchor', hash: hashOf(draft({
+    stops: [
+      { destinationId: 'gem:como', nights: 2, activities: [] },
+      { destinationId: 'VCE', nights: 2, activities: [] },
+    ],
+    anchorId: 'BGY',
+    ownFlight: { airline: 'Test Air', costTotal: OWN_FARE, mode: 'fly' },
+  })) },
 ];
 
 let failures = 0;
+let routedHasTransfers = false;
 const fail = (msg) => { console.error('FAIL:', msg); failures += 1; process.exitCode = 1; };
 const ok = (msg) => console.log('ok  ', msg);
 // eur() prints whole euros in the app language ("€1,234"); English here.
@@ -104,16 +121,31 @@ try {
         else ok(`${where} no flight row carries a figure`);
         const flightText = (await flightRows.allInnerTexts()).join(' ');
         if (/[~€]/.test(flightText)) fail(`${where} a flight row shows a price: "${flightText.replace(/\s+/g, ' ')}"`);
+        // T278: no carrier and no time from the frozen snapshots.
+        if (/Ryanair|Aviasales|Wizz|easyJet|\d{2}:\d{2}|departs/i.test(flightText)) fail(`${where} a flight row names a snapshot carrier or time: "${flightText.replace(/\s+/g, ' ')}"`);
+        else ok(`${where} the flight rows name no carrier and no time`);
         const note = await body.locator('.itin-flight-note').innerText().catch(() => '');
         if (!/not price/i.test(note)) fail(`${where} no note that flights are not in the total ("${note}")`);
         else ok(`${where} the receipt says flights are not in the total`);
         if (!(Math.abs(sum - total) <= vals.length)) fail(`${where} rows add up to €${sum}, the total says €${total}`);
         else ok(`${where} the rows add up to the total (€${sum} vs €${total}) with no flight in them`);
+        routedHasTransfers = /Airport transfers/.test(await body.innerText());
       } else {
         const own = vals.filter((v) => euros(v) === OWN_FARE);
         if (!own.length) fail(`${where} no receipt row reads the typed €${OWN_FARE} (rows: ${vals.join(' | ')})`);
         else ok(`${where} the typed fare shows as €${OWN_FARE}`);
         if (await body.locator('.itin-flight-unpriced').count()) fail(`${where} an unpriced flight row shows beside the typed fare`);
+        // T278: a typed fare still lands at an airport, and the transfers count.
+        const bodyText = await body.innerText();
+        if (c.name === 'own-fare') {
+          const has = /Airport transfers/.test(bodyText);
+          if (has !== routedHasTransfers) fail(`${where} airport transfers row ${has ? 'shown' : 'missing'} beside the typed fare, ${routedHasTransfers ? 'shown' : 'missing'} for the routed flight`);
+          else ok(`${where} the airport transfers match the routed flight (${has ? 'priced' : 'none stored'})`);
+        }
+        if (c.name === 'own-anchor') {
+          if (!/Bergamo\)?\s*→\s*Lake Como/.test(bodyText)) fail(`${where} no Bergamo to Lake Como transfer row`);
+          else ok(`${where} the Bergamo to Lake Como transfer is priced`);
+        }
         if (!(Math.abs(sum - total) <= vals.length)) fail(`${where} rows add up to €${sum}, the total says €${total}`);
         else if (!(total >= OWN_FARE)) fail(`${where} the total €${total} is below the typed fare`);
         else ok(`${where} the typed fare counts in the total (€${sum} vs €${total})`);

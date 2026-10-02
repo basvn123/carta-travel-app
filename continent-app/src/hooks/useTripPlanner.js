@@ -3,7 +3,7 @@ import {
   tripDaysBetween, accommodationPerPerson, groundSpendPerPerson, DEFAULT_LIFESTYLE, haversineKm,
   drivingEstimate,
 } from '../lib/runtime_pricing.js';
-import { combineTripLegs, suggestNextStops, unpricedFlight } from '../lib/trip_planner_pricing.js';
+import { combineTripLegs, suggestNextStops, unpricedFlight, ownFlightTransfers } from '../lib/trip_planner_pricing.js';
 import { legTransportOptions, rentalEstimate, airportTransferOptions, transferModesFromKm, preferredPublicMode } from '../lib/transport.js';
 import { originHome } from '../lib/origins.js';
 import { reorderSavings } from '../lib/tripCostOptimizer.js';
@@ -347,27 +347,12 @@ export function useTripPlanner(data, countryInsights = null, preferredStayTier =
   // no routes of their own (ground-only gems) fly via the wizard's fly-in
   // anchor when one is set. Carta does not price flights (owner decision,
   // 2026-10-02, T273), so the route comes back through unpricedFlight: the
-  // airports, carrier and times stay, the fare does not.
-  const flight = useMemo(() => {
-    // Driving there in their own car: there is no flight to price at all.
-    // `driving` marks it so the overview/receipt render drive legs instead of
-    // ever showing a Ryanair fare for a trip nobody flies.
-    if (transportPref === 'owncar') return { driving: true };
-    // Booked with another airline: show what the traveller told us, never a
-    // Ryanair fare. `own` marks it so every surface (overview, receipt, export)
-    // renders the airline + their entered cost instead of the Ryanair rows.
-    if (ownFlight) {
-      return {
-        own: true,
-        airline: ownFlight.airline || '',
-        // How they actually travel there. Older drafts and saved trips carry
-        // no mode because the only answer used to be a flight.
-        mode: ownFlight.mode || 'fly',
-        cost_total: round2(ownFlight.costTotal || 0),
-        out_date: ownFlight.outDate || null,
-        ret_date: ownFlight.retDate || null,
-      };
-    }
+  // airports stay, the fare does not (and since T278 neither do the snapshot
+  // carrier and times). The routed flight is worked out even when the
+  // traveller typed their own fare: it is where the airport-to-centre
+  // transfer comes from.
+  const routedFlight = useMemo(() => {
+    if (transportPref === 'owncar') return null;
     const first = stopDetails[0];
     const last = stopDetails[stopDetails.length - 1];
     if (!first?.dest || !last?.dest) return null;
@@ -398,7 +383,54 @@ export function useTripPlanner(data, countryInsights = null, preferredStayTier =
     }
     const inDest = hasRoutes(first.dest) ? first.dest : (anchorDest || first.dest);
     return withIds(unpricedFlight(combineTripLegs(inDest, first.arriveDate, outDest, last.departDate, groupSize, baggage, anchorOrigin, { allDests: destinations, estimates: true })), inDest);
-  }, [stopDetails, groupSize, anchorId, anchorOrigin, returnAnchorId, destinations, baggage, ownFlight, transportPref]);
+  }, [stopDetails, groupSize, anchorId, anchorOrigin, returnAnchorId, destinations, baggage, transportPref]);
+
+  const flight = useMemo(() => {
+    // Driving there in their own car: there is no flight to price at all.
+    // `driving` marks it so the overview/receipt render drive legs instead of
+    // ever showing a Ryanair fare for a trip nobody flies.
+    if (transportPref === 'owncar') return { driving: true };
+    // Booked with another airline: show what the traveller told us, never a
+    // Ryanair fare. `own` marks it so every surface (overview, receipt, export)
+    // renders the airline + their entered cost instead of the Ryanair rows.
+    if (ownFlight) {
+      const mode = ownFlight.mode || 'fly';
+      const own = {
+        own: true,
+        airline: ownFlight.airline || '',
+        // How they actually travel there. Older drafts and saved trips carry
+        // no mode because the only answer used to be a flight.
+        mode,
+        cost_total: round2(ownFlight.costTotal || 0),
+        out_date: ownFlight.outDate || null,
+        ret_date: ownFlight.retDate || null,
+      };
+      // Their own car to the door has no airport or station to leave from.
+      if (mode === 'car') return own;
+      // Where they land and leave from (T278): the arrival the wizard asked
+      // for wins, else the airport the routed flight uses; the home airport
+      // is picked the way the routed flight picks it. anchorLegs prices the
+      // hop from there to the first stop and back, which an own fare used to
+      // lose (wizard trips included).
+      const first = stopDetails[0];
+      const last = stopDetails[stopDetails.length - 1];
+      if (!first?.dest || !last?.dest) return own;
+      const routed = routedFlight?.combinable ? routedFlight : null;
+      const anchorDest = anchorId ? destinations[anchorId] : null;
+      const returnDest = returnAnchorId ? destinations[returnAnchorId] : null;
+      const hasRoutes = (d) => d && Object.keys(d.routes || {}).length > 0;
+      const routedIn = routed?.in_from_id ? destinations[routed.in_from_id] : null;
+      const routedOut = routed?.out_from_id ? destinations[routed.out_from_id] : null;
+      const inDest = anchorDest || routedIn || first.dest;
+      const outDest = hasRoutes(returnDest) ? returnDest
+        : (hasRoutes(last.dest) ? last.dest : (anchorDest || routedOut || last.dest));
+      // The airport-to-centre hop is an airport fact; a train or a bus pulls
+      // into the station, so only a flight takes it.
+      const airports = ownFlightTransfers(mode === 'fly' ? routed : null, inDest, outDest, groupSize);
+      return { ...own, ...airports };
+    }
+    return routedFlight;
+  }, [routedFlight, stopDetails, groupSize, anchorId, returnAnchorId, destinations, ownFlight, transportPref]);
 
   // Priced transport options (train / bus / car with booking links) between
   // each consecutive pair of stops, resolved to a chosen mode: an explicit
@@ -487,7 +519,9 @@ export function useTripPlanner(data, countryInsights = null, preferredStayTier =
   // and the total. Price it like any other leg.
   const anchorLegs = useMemo(() => {
     const none = { in: null, out: null, anchor: null };
-    if (!flight?.combinable) return none;
+    // A routed flight, or one the traveller booked that lands somewhere
+    // (T278: an own fare used to lose this leg, wizard trips included).
+    if (!flight?.combinable && !flight?.in_from_id && !flight?.out_from_id) return none;
     // You've just flown in, so this hop is an AIRPORT TRANSFER, not an inter-city
     // drive: public transport, a taxi, or the rental you collect at the airport,
     // never your own car with tolls (which is what the generic leg engine used
@@ -529,7 +563,7 @@ export function useTripPlanner(data, countryInsights = null, preferredStayTier =
   // and let the chosen transferMode drive the total, so "how you get from the
   // plane to your bed" is a real, priced choice, not a hidden assumption.
   const flightTransfer = useMemo(() => {
-    if (!flight?.combinable || !(flight.ground_total > 0)) return null;
+    if (!(flight?.combinable || flight?.own) || !(flight.ground_total > 0)) return null;
     const iso2 = stopDetails[0]?.dest?.iso2;
     const fuelByIso = carModel?.fuel_price_by_iso2 || {};
     const petrol = fuelByIso[iso2] ?? carModel?.fuel_price_eur_per_l ?? 1.8;
@@ -687,7 +721,11 @@ export function useTripPlanner(data, countryInsights = null, preferredStayTier =
       // not the raw stored public fare, so the total reflects taxi/rental too.
       // The flight itself adds nothing: Carta does not price it (T273).
       total += flightTransfer ? flightTransfer.ground_total : (flight.ground_total || 0);
-    } else if (flight?.own) total += flight.cost_total || 0;
+    } else if (flight?.own) {
+      // Their own fare, plus the airport transfers it lands into (T278).
+      total += flight.cost_total || 0;
+      total += flightTransfer ? flightTransfer.ground_total : (flight.ground_total || 0);
+    }
     if (driveLegs?.out?.ground_total) total += driveLegs.out.ground_total;
     if (driveLegs?.home?.ground_total) total += driveLegs.home.ground_total;
     legs.forEach((l) => { if (l && l.ground_total) total += l.ground_total; });

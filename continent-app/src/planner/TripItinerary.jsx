@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { eur, fmtHours, flightTimes, safeUrl } from '../lib/format.js';
+import { eur, fmtHours, safeUrl } from '../lib/format.js';
 import { TripExtras } from './TripExtras.jsx';
 import { ExpenseLedger } from './ExpenseLedger.jsx';
 import { loadTripExtras, persistTripExtras, subscribeDayPlanStore } from './dayPlanStore.js';
@@ -10,9 +10,7 @@ import { shareTrip, downloadTripPdf } from '../lib/tripExport.js';
 import { tripKml, downloadKml } from '../lib/kmlExport.js';
 import { tripIcs, downloadIcs } from '../lib/icsExport.js';
 import { buildTripShareUrl } from '../lib/shareLink.js';
-import { carrierName } from '../lib/carriers.js';
 import { groundLinkFor } from '../lib/groundLinks.js';
-import { BagCheck } from '../components/BagCheck.jsx';
 import { fareProv, estPrefix, FareTag, BookingNote } from '../components/FareProvenance.jsx';
 import { useI18n } from '../i18n/index.jsx';
 import { usePaywall } from '../hooks/usePaywall.jsx';
@@ -52,12 +50,6 @@ function fmtLong(iso) {
 
 /** "Fri 18 Sep, 19:45-21:45", the date plus the priced flight's local dep/arr
  *  hours, when the times harvest covers this leg (just the date otherwise). */
-function fmtFlightWhen(iso, time) {
-  const ft = flightTimes(time);
-  if (!ft) return fmtLong(iso);
-  return `${fmtLong(iso)}, ${ft.dep}${ft.arr ? `-${ft.arr}` : ''}`;
-}
-
 const LEG_ICONS = {
   train: TrainIcon, bus: BusIcon, car: CarIcon, fly: PlaneIcon, ferry: FerryIcon,
   public: BusIcon, taxi: CarIcon, rental: CarIcon,
@@ -392,7 +384,7 @@ export function TripItinerary({
 
   // Everything the share text / printable PDF needs, in one bag.
   const exportPayload = {
-    label, stopDetails, dayPlan, flight, legs, anchorLegs, stayCosts, carRental, vignettes,
+    label, stopDetails, dayPlan, flight, flightTransfer, legs, anchorLegs, stayCosts, carRental, vignettes,
     tripHasCar, driveLegs, grandTotal, groupSize,
     extras, bookingRows,
   };
@@ -476,8 +468,9 @@ export function TripItinerary({
   // leg to the next one, then getting home, then the round-trip items that
   // belong to the whole journey (airport transfers, rental, vignettes). A
   // flight Carta routed adds nothing: Carta does not price flights (T273), so
-  // only the traveller's own fare (flight.own) is a flight figure here.
-  const transferTotal = flight?.combinable
+  // only the traveller's own fare (flight.own) is a flight figure here. The
+  // airport transfers count for both, an own fare included (T278).
+  const transferTotal = (flight?.combinable || flight?.own)
     ? (flightTransfer ? flightTransfer.ground_total : (flight.ground_total || 0)) : 0;
   const getThereTotal = (flight?.own ? (flight.cost_total || 0) : 0)
     + (driveLegs?.out?.ground_total || 0)
@@ -513,7 +506,7 @@ export function TripItinerary({
               <div className="itin-flight-row">
                 <PlaneIcon size={12} />
                 <span>{t('itin.fly')} <b>{flight.origin} → {flight.into_anchor}</b></span>
-                <small>{fmtFlightWhen(stopDetails[0]?.arriveDate, flight.into_time)}</small>
+                <small>{fmtLong(stopDetails[0]?.arriveDate)}</small>
               </div>
               <GroundLinkNote iata={flight.origin} dir="to" />
               <GroundLinkNote iata={flight.into_anchor} dir="from" />
@@ -584,7 +577,7 @@ export function TripItinerary({
               <div className="itin-flight-row">
                 <PlaneIcon size={12} />
                 <span>{t('itin.flyHome')} <b>{flight.out_anchor} → {flight.origin}</b></span>
-                <small>{fmtFlightWhen(stopDetails[stopDetails.length - 1]?.departDate, flight.out_of_time)}</small>
+                <small>{fmtLong(stopDetails[stopDetails.length - 1]?.departDate)}</small>
               </div>
             </>
           )}
@@ -632,7 +625,7 @@ export function TripItinerary({
                       <div className="trip-total-row itin-flight-unpriced">
                         <span className="lbl">
                           <PlaneIcon size={11} /> {t('itin.flightOut')}
-                          <small>{carrierName(flight.into_carrier)}, {flight.origin} → {flight.into_anchor}{flightTimes(flight.into_time) ? `, ${t('itin.departs', { time: flightTimes(flight.into_time).dep })}` : ''}, {groupSize} {groupSize === 1 ? t('itin.seatOne') : t('itin.seatMany')}</small>
+                          <small>{flight.origin} → {flight.into_anchor}, {groupSize} {groupSize === 1 ? t('itin.seatOne') : t('itin.seatMany')}</small>
                         </span>
                       </div>
                     )}
@@ -747,7 +740,7 @@ export function TripItinerary({
                       <div className="trip-total-row itin-flight-unpriced">
                         <span className="lbl">
                           <PlaneIcon size={11} /> {t('itin.flightHome')}
-                          <small>{carrierName(flight.out_of_carrier)}, {flight.out_anchor} → {flight.origin}{flightTimes(flight.out_of_time) ? `, ${t('itin.departs', { time: flightTimes(flight.out_of_time).dep })}` : ''}, {groupSize} {groupSize === 1 ? t('itin.seatOne') : t('itin.seatMany')}</small>
+                          <small>{flight.out_anchor} → {flight.origin}, {groupSize} {groupSize === 1 ? t('itin.seatOne') : t('itin.seatMany')}</small>
                         </span>
                       </div>
                     )}
@@ -759,7 +752,7 @@ export function TripItinerary({
                        entirely there rather than framing a lone sentence. */}
                 {wholeTripTotal > 0 && (
                   <BreakdownSection title={t('itin.secWholeTrip')} total={wholeTripTotal}>
-                    {flight?.combinable && flight.ground_total > 0 && (
+                    {(flight?.combinable || flight?.own) && flight.ground_total > 0 && (
                       <div className="trip-total-row">
                         <span className="lbl">
                           <PlaneIcon size={11} /> {t('itin.airportTransfers')}
@@ -785,8 +778,6 @@ export function TripItinerary({
                     )}
                   </BreakdownSection>
                 )}
-
-                <BagCheck flight={flight} />
 
                 <TransferModePicker
                   flightTransfer={flightTransfer}

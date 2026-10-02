@@ -8,7 +8,7 @@ import {
   tripSuitability, suitabilityIsDerived, isListed, isDerivedRoute,
   portalVerified, HIGHLIGHTS, SUITABILITY, ROUTE_TYPES,
 } from '../lib/trailCards.js';
-import { trailStory, trailReasons } from '../lib/trailStory.js';
+import { trailStory, trailReasons, trailPlace } from '../lib/trailStory.js';
 import {
   routePoints, routeLength, nearestOnRoute, sliceRoute, remainingRelief,
   hikeTimeMin, isLoopRoute, basesAlong,
@@ -23,7 +23,6 @@ import { useI18n } from '../i18n/index.jsx';
 import { useFocusTrap } from '../hooks/useFocusTrap.js';
 import { FavStar } from '../components/FavStar.jsx';
 import { NearbyOutdoors } from './NearbyOutdoors.jsx';
-import { usePaywall } from '../hooks/usePaywall.jsx';
 import {
   ArrowLeftIcon, ShareIcon, DownloadIcon, CompassIcon, RouteIcon, BootIcon,
   ClockIcon, MountainIcon, MapPinIcon, CheckIcon, ListDayIcon, CloseIcon,
@@ -237,8 +236,7 @@ function Fact({ label, value, word = false, title }) {
 }
 
 export function TrailPage({ card, onClose, onSelectDest, onOpenNeighbour, dests, fav = false, onFav = null, onAddToDay = null }) {
-  const { t } = useI18n();
-  const paywall = usePaywall();
+  const { t, lang } = useI18n();
   const { tr, assoc, kindKey, price } = card;
   const isCityDay = tr.category === 'citytrip';
   const [detail, setDetail] = useState(null);
@@ -327,9 +325,16 @@ export function TrailPage({ card, onClose, onSelectDest, onOpenNeighbour, dests,
   // section is populated on the first frame and simply lengthens when the
   // detail file lands with the rest.
   const why = useMemo(
-    () => trailReasons(detail?.reasons || tr.reasons, t),
-    [detail?.reasons, tr.reasons, t],
+    () => trailReasons(detail?.reasons || tr.reasons, t, 6, detail || tr),
+    [detail, tr, t],
   );
+  // The place under the title: the nearest town only when it is in the
+  // trailhead's country (T108-a), the country alone across a border.
+  const place = useMemo(() => {
+    let dn = null;
+    try { dn = new Intl.DisplayNames([lang], { type: 'region' }); } catch { /* older engines */ }
+    return trailPlace(tr, detail, assoc.dest, (cc) => (dn ? dn.of(cc) : cc) || cc);
+  }, [tr, detail, assoc.dest, lang]);
   const rating = trailRating(detail || tr);
 
   const { fix, err: fixErr } = useLiveFix(follow);
@@ -489,14 +494,12 @@ export function TrailPage({ card, onClose, onSelectDest, onOpenNeighbour, dests,
   ].filter(Boolean).join(', ');
 
   const onGpx = async () => {
-    if (!paywall.require('export')) return;
     const gpx = trailGpx(tr, detail, { link: shareUrl, stopNames });
     const how = await shareOrDownloadFile(trailFileBase(tr), gpx, 'gpx', tr.name);
     setToast(how === 'shared' ? null : t('trails.savedGpx'));
   };
 
   const onKml = () => {
-    if (!paywall.require('export')) return;
     const kml = trailKml(tr, detail, { link: shareUrl, stopNames, factLine });
     downloadTextFile(trailFileBase(tr), kml, 'kml');
     setToast(t('trails.savedKml'));
@@ -597,7 +600,7 @@ export function TrailPage({ card, onClose, onSelectDest, onOpenNeighbour, dests,
             <span className={`places-card-kind ${isCityDay ? 'city' : ''}`}>{t(kindKey)}</span>
             <h1 className="tpage-title" ref={titleEl}>{tr.name}</h1>
             <div className="tpage-sub">
-              {assoc.dest && <span>{assoc.dest.city}, {assoc.dest.country}</span>}
+              {place && <span>{[place.city, place.country].filter(Boolean).join(', ')}</span>}
               {isCityDay && assoc.dest?.rating && (
                 <RatingBadge rating={assoc.dest.rating} size="xs" showGem={false} />
               )}
