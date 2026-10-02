@@ -1,0 +1,48 @@
+name: design-lint
+
+# The generic-pattern detector (T196). Flags the regressions carta-design and
+# DESIGN.md ban: hex colours outside :root, gradients, literal shadows,
+# outline removed with no replacement, em dashes, middots, banned words in the
+# English strings, marquee and parallax. styles.css carries old violations, so
+# the run compares against continent-app/scripts/ci/design-lint.baseline.json
+# and fails only on a violation that is not already in it.
+#
+# The self-test step runs first against a seeded bad fixture and a clean one.
+# If a rule stops firing, that step fails, so a green lint step can never mean
+# "the detector was broken".
+on:
+  push:
+    branches: [main]
+    paths:
+      - "continent-app/src/**"
+      - "continent-app/scripts/ci/design-lint*"
+      - "continent-app/scripts/ci/fixtures/design-lint/**"
+      - ".github/workflows/design-lint.yml"
+  pull_request:
+    paths:
+      - "continent-app/src/**"
+      - "continent-app/scripts/ci/design-lint*"
+      - "continent-app/scripts/ci/fixtures/design-lint/**"
+      - ".github/workflows/design-lint.yml"
+  workflow_dispatch:
+
+jobs:
+  design-lint:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    defaults:
+      run:
+        working-directory: continent-app
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            continent-app/src
+            continent-app/scripts/ci
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Self-test (every rule catches a seeded violation)
+        run: node scripts/ci/design-lint.mjs --self-test
+      - name: Lint src against the baseline
+        run: node scripts/ci/design-lint.mjs

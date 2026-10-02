@@ -505,3 +505,6 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T300-u | T300 | supabase/functions/checkout/test_purchase_e2e.md predates 044: add checks that a Year holder buying a Trip Pass keeps Year, a sixth purchase gets 409 pass_max, and pass_grants carries reason and fee_cents | next task | open | before stage 10.3 |
 | T300-v | T300 | PARALLEL-WAVES-PLAN.md, Execution/_WAVES.md and the Execution/_queue tools are untracked in git; decide whether to commit them | user | open |  |
 | T300-w | T300 | T046-a: provision.sh still defaults to IPV4=0 although _OPEN-MASTER 7.2 says IPv4 is on; run it as IPV4=1 (as 7.2 writes it) or change the default in a box task | user | open | stage 7.2 |
+| T196-a | T196 | Regenerate scripts/ci/design-lint.baseline.json with --update-baseline after the first component lift pays down hex, shadow and gradient debt (550 baselined) | next task | open | after T197 first lift |
+| T196-b | T196 | design-lint does not scan hex colours inside JS (map paint, inline styles); decide a policy for them | user | open |  |
+| T196-c | T196 | design-lint.yml has never run on GitHub; confirm it goes green on the first push of main | user | open | after push |
