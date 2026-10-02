@@ -77,6 +77,9 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from db import connect  # noqa: E402
 from scenic import KINDS as SCENIC_WEIGHTS  # noqa: E402
+# The uphill rule itself, imported rather than copied a fourth time: a line
+# drawn summit to valley is read from the bottom (T108, spec 6.8).
+from attributes import uphill  # noqa: E402
 
 # Weights sum to 1. Scenery leads because it is the only component that says
 # what you will actually look at; designation and relief describe the walk,
@@ -127,6 +130,13 @@ DAY_MIN_M, DAY_MAX_M = 6_000, 22_000
 # Reason thresholds. Each one is the point where a fact is worth a sentence.
 MANY_SUMMITS = 3
 BIG_CLIMB_M = 800
+# "A comfortable day out" is a promise about effort as well as length, so the
+# dayOut reason also needs the climb, read uphill, at or under BIG_CLIMB_M and
+# the walking time inside the six hours the app calls a full day. The same
+# two numbers as continent-app/src/lib/trailStory.js isComfortableDay()
+# (COMFORT_MAX_CLIMB_M, COMFORT_MAX_MIN) and regression.py's watch (T286).
+COMFORT_MAX_CLIMB_M = BIG_CLIMB_M
+COMFORT_MAX_MIN = 360
 STEEP_M_PER_KM = 45
 HIGH_ALTITUDE_M = 1_800
 PHOTOGENIC = 4
@@ -166,7 +176,7 @@ def pct_rank(values):
 # any rating a row carried before it was demoted to l.
 FETCH_SQL = """
     SELECT t.id, t.country, t.title, t.network, t.distance_m, t.ascent_m,
-           t.is_loop, t.highlights, t.elevation, t.nuts3,
+           t.descent_m, t.duration_min, t.is_loop, t.highlights, t.elevation, t.nuts3,
            t.highlight_kinds, t.surface, t.route_type,
            t.raw_tags->>'wikidata'  AS wikidata,
            t.raw_tags->>'wikipedia' AS wikipedia,
@@ -193,7 +203,7 @@ CLEAR_LISTED_SQL = """
 """
 
 COLS = ("id", "country", "title", "network", "distance_m", "ascent_m",
-        "is_loop", "highlights", "elevation", "nuts3",
+        "descent_m", "duration_min", "is_loop", "highlights", "elevation", "nuts3",
         "highlight_kinds", "surface", "route_type", "wikidata", "wikipedia",
         "popularity", "n_photos")
 
@@ -321,6 +331,22 @@ WATER_KINDS = ("waterfall", "lake", "hot_spring")
 BUILT_KINDS = ("castle", "ruins", "monastery", "lighthouse")
 
 
+def climb_of(row):
+    """The climb in metres, read uphill (attributes.uphill)."""
+    return uphill(row)["climb_m"]
+
+
+def is_comfortable_day(row):
+    """Whether "a comfortable day out" is true of this walk's effort.
+
+    Distance is the caller's test; this one is the climb and the hours. An
+    unknown walking time does not fail it, the same as the app's check."""
+    if climb_of(row) > COMFORT_MAX_CLIMB_M:
+        return False
+    mins = row.get("duration_min")
+    return mins is None or mins <= COMFORT_MAX_MIN
+
+
 def reasons_for(row, parts):
     """Reason codes plus the numbers the app needs to write the sentence.
 
@@ -366,8 +392,10 @@ def reasons_for(row, parts):
     if by_kind.get("cave"):
         add("cave", name=named["cave"][0].get("name"))
 
-    # How the walk feels.
-    ascent = row.get("ascent_m") or 0
+    # How the walk feels. The climb a walker starting from the bottom faces,
+    # not the stored ascent: Mount Korab (9) is stored summit to village
+    # with 7 m of ascent and 1,423 m of descent.
+    ascent = climb_of(row)
     if ascent >= BIG_CLIMB_M:
         add("bigClimb", m=int(ascent))
     elif ascent / km >= STEEP_M_PER_KM:
@@ -385,7 +413,10 @@ def reasons_for(row, parts):
         add("loop")
     d = row.get("distance_m") or 0
     if DAY_MIN_M <= d <= DAY_MAX_M:
-        add("dayOut", km=round(d / 1000.0, 1))
+        # In the day band but over the climb or the hours: no line at all,
+        # rather than "a comfortable day out" beside 1,568 m of climb.
+        if is_comfortable_day(row):
+            add("dayOut", km=round(d / 1000.0, 1))
     elif d > 45_000:
         add("trek", km=round(d / 1000.0))
 
