@@ -3575,7 +3575,7 @@ export const fr = {
   'journey.fGateway': 'Vol vers',
   'journey.diffMeter': 'Difficulté {n} sur 5',
   'journey.diffWhy': 'Pourquoi cette difficulté',
-  'journey.gatewayMore': 'Plus sur l'accès',
+  'journey.gatewayMore': 'Plus sur l\'accès',
   'journey.fLanguages': 'Langue',
   'journey.fEmergency': 'Numéro d\'urgence',
   'journey.yes': 'Oui',
