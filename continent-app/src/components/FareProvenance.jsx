@@ -66,27 +66,11 @@ export function fareProv(obj) {
   return { o, s, est };
 }
 
-/** Provenance of a composeTrip breakdown's FLIGHT price. An estimate-band
- *  fare (breakdown.fare_estimated, no stored day matched the dates) is
- *  always EST regardless of what the route record says; otherwise the route
- *  record's contract A fields (or the breakdown itself, keeping the
- *  ?provmock verify seam) decide. */
-export function flightBreakdownProv(breakdown, routeRec = null) {
-  if (breakdown?.fare_estimated) return { est: true, s: 'EST', o: null };
-  return fareProv(routeRec || breakdown);
-}
-
-/** Provenance for one direction of a round-trip fare pair ('into' or
- *  'out_of', the trip planner's flight object), falling back to flat fields
- *  when no per-direction bag is attached.
- *
- *  Always an estimate (T256, 2026-10-01): no fare source is live, so every
- *  stored fare is a weeks-old observation and none of them is a quote any
- *  more. The age line still shows when the record carries one. */
-export function flightProv(flight, dir) {
-  const prov = fareProv(flight?.[`${dir}_prov`] || flight);
-  return { o: null, s: null, ...prov, est: true };
-}
+/* flightProv and flightBreakdownProv lived here until T273. Carta does not
+ * price flights (owner decision, 2026-10-02), so no surface labels a flight
+ * figure any more: a planner flight carries no fare, and the only flight
+ * figure on screen is one the traveller typed, which is theirs and unlabelled.
+ * Everything below now serves ground legs and transfers. */
 
 /** "~" for an estimated figure, "" otherwise. Prepend to the formatted price
  *  so an estimate never reads as an exact quote. */

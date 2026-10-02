@@ -180,6 +180,29 @@ export function combineTripLegs(destA, arriveDate, destB, departDate, groupSize 
   };
 }
 
+/** The money a combineTripLegs result carries for the flight itself: the
+ *  seat fares, the bag add-on and their sums, and the per-direction fare
+ *  provenance. unpricedFlight drops exactly these. */
+const FLIGHT_MONEY_KEYS = [
+  'into_fare_eur', 'out_of_fare_eur', 'fare_per_person', 'fare_total', 'fare_estimated',
+  'into_prov', 'out_of_prov', 'bag_per_leg_eur', 'bag_per_person', 'bag_total', 'grand_total',
+];
+
+/** A planner flight with its price taken out (T273). Carta does not price
+ *  flights (owner decision, 2026-10-02): the stored fares are frozen
+ *  snapshots, so a figure built from them is neither a quote nor a fair
+ *  estimate. What stays is the route the trip flies (origin, the two
+ *  airports, carrier and times as plan facts) and the airport transfers,
+ *  which are ground costs Carta does price. `priced: false` marks it, and no
+ *  surface shows or sums a flight figure for it; the only flight figure in a
+ *  total is one the traveller typed (the `own` flight in useTripPlanner). */
+export function unpricedFlight(flight) {
+  if (!flight?.combinable) return flight;
+  const out = { ...flight, priced: false };
+  for (const k of FLIGHT_MONEY_KEYS) delete out[k];
+  return out;
+}
+
 /** The destination whose fares price a leg: itself when it carries routes,
  *  else the nearest served airport within PLANE_REACH_KM (planeReachIndex),
  *  else itself with nothing to price from. `via` describes the hop. */

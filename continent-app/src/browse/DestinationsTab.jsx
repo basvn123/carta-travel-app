@@ -4,7 +4,6 @@ import { RatingBadge } from '../components/RatingBadge.jsx';
 import { CountryFlag } from '../components/CountryFlag.jsx';
 import { CountryPicker } from '../components/CountryPicker.jsx';
 import { count, eur } from '../lib/format.js';
-import { estPrefix, fareProv } from '../components/FareProvenance.jsx';
 import { needsCountry } from '../lib/favorites.js';
 import { HeroImage } from '../components/HeroImage.jsx';
 import { PlacesFilterSheet } from './PlacesFilterSheet.jsx';
@@ -509,12 +508,15 @@ const TripCard = React.memo(function TripCard({ card, km, onOpen, t }) {
               {gradeIsDerived(tr) ? <i aria-hidden="true">~</i> : null}
             </span>
           )}
+          {/* Carta does not price flights (T273): a flying row's figure is
+              the stay and the ground, and its title says the flight is not in
+              it. A driving row's figure includes the drive Carta priced. */}
           {isCityDay && price && (
             <span
               className="places-card-price"
-              title={fareProv(price.prov)?.est ? t('prov.estTitle') : undefined}
+              title={price.mode === 'plane' ? t('places.priceNoFlight') : undefined}
             >
-              {`${estPrefix(fareProv(price.prov))}${eur(price.pp)}`}
+              {eur(price.pp)}
               <small>/pp</small>
             </span>
           )}

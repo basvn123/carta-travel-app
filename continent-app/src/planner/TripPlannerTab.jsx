@@ -24,7 +24,7 @@ import { knownForFacts } from '../lib/knownFor.js';
 import { flightReasonLabel } from '../lib/trip_planner_pricing.js';
 import { geocodeAddress } from '../lib/geocode.js';
 import { carrierName } from '../lib/carriers.js';
-import { fareProv, flightProv, estPrefix, FareTag } from '../components/FareProvenance.jsx';
+import { fareProv, estPrefix, FareTag } from '../components/FareProvenance.jsx';
 import { cityLabel } from '../lib/placeName.js';
 
 const SHEET_H_KEY = 'carta.tripSheetH.v1';
@@ -1013,30 +1013,16 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
                 </div>
               )}
 
-              {/* Cheaper dates / cheaper order */}
-              {tp.stopDetails.length > 0 && (tp.cheaperOrder
-                || tp.cheaperDates.candidates.some((c) => c.saving_vs_current == null || c.saving_vs_current > 5)) && (
+              {/* Cheaper order. The cheaper-dates rows ranked start dates by
+                  frozen flight fares and went with T273: Carta does not price
+                  flights. */}
+              {tp.stopDetails.length > 0 && tp.cheaperOrder && (
                 <div className="trip-block trip-savings">
                   <div className="trip-block-title"><BulbIcon size={13} /> {t('trip.cheaperTitle')}</div>
-                  {tp.cheaperOrder && (
-                    <div className="trip-saving-row">
-                      <span>{t('trip.cheaperOrder', { amount: eur(tp.cheaperOrder.saving_eur) })}</span>
-                      <button onClick={tp.applyCheaperOrder}>{t('trip.reorder')}</button>
-                    </div>
-                  )}
-                  {tp.cheaperDates.candidates
-                    .filter((c) => c.saving_vs_current == null || c.saving_vs_current > 5)
-                    .map((c) => (
-                      <div className="trip-saving-row" key={c.start}>
-                        <span>
-                          {t('trip.cheaperStart')} <b>{fmtDate(c.start, true)}</b>{t('trip.cheaperFlights', { price: `~${eur(c.total)}` })}
-                          {c.saving_vs_current != null && c.saving_vs_current > 0 && (
-                            <em className="trip-saving-amount"> - {t('trip.cheaperBy', { amount: eur(c.saving_vs_current) })}</em>
-                          )}
-                        </span>
-                        <button onClick={() => tp.applyStartDate(c.start)}>{t('trip.useDates')}</button>
-                      </div>
-                    ))}
+                  <div className="trip-saving-row">
+                    <span>{t('trip.cheaperOrder', { amount: eur(tp.cheaperOrder.saving_eur) })}</span>
+                    <button onClick={tp.applyCheaperOrder}>{t('trip.reorder')}</button>
+                  </div>
                 </div>
               )}
 
@@ -1078,21 +1064,24 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
 
                   {tp.flight?.combinable ? (
                     <>
-                      <div className="trip-total-row">
+                      {/* The route the trip flies, with no figure: Carta does
+                          not price flights (T273). The traveller's own fare is
+                          the only flight figure a total takes. */}
+                      <div className="trip-total-row trip-flight-unpriced">
                         <span className="lbl">
                           <PlaneIcon size={11} /> {t('trip.flightOut')}
-                          <FareTag prov={flightProv(tp.flight, 'into')} />
                           <small>{carrierName(tp.flight.into_carrier)}, {tp.flight.origin} → {tp.flight.into_anchor}{flightTimes(tp.flight.into_time) ? `, ${t('trip.departs', { time: flightTimes(tp.flight.into_time).dep })}` : ''}, {tp.groupSize} {tp.groupSize === 1 ? t('trip.seatOne') : t('trip.seatMany')}</small>
                         </span>
-                        <span className="val">{`${estPrefix(flightProv(tp.flight, 'into'))}${eur(tp.flight.into_fare_eur * tp.groupSize)}`}</span>
                       </div>
-                      <div className="trip-total-row">
+                      <div className="trip-total-row trip-flight-unpriced">
                         <span className="lbl">
                           <PlaneIcon size={11} /> {t('trip.flightHome')}
-                          <FareTag prov={flightProv(tp.flight, 'out_of')} />
                           <small>{carrierName(tp.flight.out_of_carrier)}, {tp.flight.out_anchor} → {tp.flight.origin}{flightTimes(tp.flight.out_of_time) ? `, ${t('trip.departs', { time: flightTimes(tp.flight.out_of_time).dep })}` : ''}, {tp.groupSize} {tp.groupSize === 1 ? t('trip.seatOne') : t('trip.seatMany')}</small>
                         </span>
-                        <span className="val">{`${estPrefix(flightProv(tp.flight, 'out_of'))}${eur(tp.flight.out_of_fare_eur * tp.groupSize)}`}</span>
+                      </div>
+                      <div className="trip-saving-row trip-flight-own-door">
+                        <span>{t('trip.flightNotPriced')}</span>
+                        <button onClick={() => tp.setOwnFlight({ airline: '', costTotal: 0, mode: 'fly' })}>{t('trip.addOwnFare')}</button>
                       </div>
                       {tp.flight.ground_total > 0 && (
                         <div className="trip-total-row">
@@ -1239,7 +1228,7 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
 
                   <div className="trip-total-row grand">
                     <span className="lbl">{t('trip.total')} <small>{tp.groupSize} {tp.groupSize === 1 ? t('trip.personOne') : t('trip.personMany')}</small></span>
-                    <span className="val">{`${tp.flight?.combinable ? '~' : ''}${eur(tp.grandTotal)}`}</span>
+                    <span className="val">{eur(tp.grandTotal)}</span>
                   </div>
 
                   <div className="trip-save-row">

@@ -110,10 +110,8 @@ export function useDestinationSearch({
           planeOk: b.plane_reachable,      // is there a flight at all for these dates
           drivable: b.drivable,
           viaAirport: b.via_airport,       // set when flying into a nearby airport
-          // Every flight price reads as an estimate (T256): no fare source
-          // is live, so a stored day is no more a quote than a band is.
-          prov: b.transport_mode === 'plane'
-            ? { est: true, s: b.fare_estimated ? 'EST' : null, o: null, x: null } : null,
+          // No flight provenance any more (T273): in plane mode the total
+          // leaves the flight out, so there is no fare on the row to label.
         });
       }
     }

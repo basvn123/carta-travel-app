@@ -720,9 +720,13 @@ function planeFare(dest, departDate, returnDate, choices, allDests) {
 
 /** Full trip cost for these dates + choices. Prices the trip two ways and picks
  *  the one in `choices.transport_mode` ('plane' | 'car'):
- *    - plane: cheapest Ryanair round-trip + baggage, into this destination or an
- *      airport within PLANE_REACH_KM of it; plus the last leg in (shuttle or a
- *      rental car) and a rental at the destination when one is needed there.
+ *    - plane: the stored routes decide whether and where you can fly (this
+ *      destination or an airport within PLANE_REACH_KM of it), but the flight
+ *      itself adds nothing to the total: Carta does not price flights (owner
+ *      decision, 2026-10-02, T273). The total is the last leg in (shuttle or a
+ *      rental car), a rental at the destination when one is needed there, and
+ *      the stay. The fare fields below stay for the pricing harness
+ *      (scripts/verify_flight_estimates.mjs); no surface shows or sums them.
  *    - car  : fuel + tolls to drive there and back (only if road-reachable and
  *      within max_drive_km); no rental, you brought your own car.
  *  Accommodation + on-the-ground are added the same way for both. Always exposes
@@ -770,7 +774,9 @@ export function composeTrip(dest, departDate, returnDate, choices, allDests = nu
   if (fare) {
     flightPerPerson = fare.fare + baggageRt;
     flightTotal = flightPerPerson * groupSize;
-    planeGrand = flightTotal + transferTotal + rentalTotal + stayTotal;
+    // No flightTotal here (T273): the seat fare and the bag add-on are the
+    // airline's price, which Carta does not give.
+    planeGrand = transferTotal + rentalTotal + stayTotal;
   }
 
   // --- Car option: drive there & back. You have your car, so no rental.
@@ -860,6 +866,7 @@ export function composeTrip(dest, departDate, returnDate, choices, allDests = nu
     ground_total:       round2(groundTotal),
 
     // Totals for both options (for the plane/car comparison) + the selected one.
+    // plane_grand_total leaves the flight out (T273): ground and stay only.
     plane_grand_total:  planeGrand != null ? round2(planeGrand) : null,
     car_grand_total:    carGrand != null ? round2(carGrand) : null,
     grand_total:        round2(grandTotal),

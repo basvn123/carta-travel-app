@@ -20486,6 +20486,38 @@ button.ai-sched-main:focus-visible {
   .mstrip-cell { height: 26px; font-size: 11px; }
 }
 
+/* ── Difficulty as five segments, and the gateway as airport rows. Carta-design
+      has no rule for a meter; these are small, flat and use the existing ink
+      and rule tokens, with no colour coding of the level. ── */
+.fmeter-row { display: flex; align-items: center; flex-wrap: wrap; gap: 4px 10px; }
+.fmeter-segs { display: inline-flex; gap: 3px; }
+.fmeter-seg {
+  width: 18px;
+  height: 8px;
+  border-radius: 2px;
+  background: var(--rule-soft);
+}
+.fmeter-seg.is-on { background: var(--ink-fill); }
+.fmeter-text { font-size: 13px; color: var(--ink); }
+.fmeter-panel { flex-basis: 100%; }
+.fgate { display: flex; align-items: flex-start; flex-wrap: wrap; gap: 4px 8px; }
+.fgate-rows { flex: 1; min-width: 0; margin: 0; padding: 0; list-style: none; }
+.fgate-row {
+  display: grid;
+  grid-template-columns: 40px minmax(0, 1fr);
+  column-gap: 8px;
+  padding: 2px 0;
+  font-size: 13.5px;
+}
+.fgate-code { font-size: 12.5px; color: var(--ink); }
+.fgate-name { color: var(--ink); }
+.fgate-detail {
+  grid-column: 2;
+  font-size: 11.5px;
+  color: var(--ink-mute);
+}
+.fgate .mstrip-panel { flex-basis: 100%; }
+
 /* ── The score, shown as its parts. The number is only worth as much as the
       reader's ability to check it. ── */
 .bpage-note {

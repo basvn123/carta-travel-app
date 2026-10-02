@@ -98,25 +98,24 @@ const tKind = await page.locator('.places-tcard .places-card-kind').first().inne
 check('trip cards carry a kind chip', /day/i.test(tKind), tKind);
 const tFacts = await page.locator('.places-tcard .places-card-facts').first().innerText().catch(() => '');
 check('trip cards carry km and stops', /km/.test(tFacts) && /stop/i.test(tFacts), tFacts.replace(/\n/g, ' '));
-// T256-b: the city-day card is reachable (the one-day chip, then a country)
-// and its price follows the estimate rule. A flight-priced card reads "~EUR X/pp"
-// with the estimate title; a ground-priced one reads a plain figure with no
-// title. So the two must always agree, and across Spain and Italy at least one
-// card is a flight price, or this check proves nothing about the rule.
-let estCards = 0; let plainCards = 0; let mismatched = 0;
+// T256-b found the city-day card reachable (the one-day chip, then a
+// country). T273: Carta does not price flights, so no card carries a flight
+// estimate any more. A flying row's figure is the stay and the ground, with
+// a title that says flights are not included; no card reads "~" or the old
+// "not a live quote" title. Across Spain and Italy at least one card must be
+// a flying row, or this check proves nothing about the rule.
+let noFlightCards = 0; let otherCards = 0; let flightEst = 0;
 for (const cc of ['ES', 'IT']) {
   await pickCountry(page, cc);
   const prices = await page.locator('.places-tcard .places-card-price').evaluateAll(
     (els) => els.map((e) => ({ text: e.innerText.trim(), title: e.title || '' })));
   for (const p of prices) {
-    const tilde = p.text.startsWith('~');
-    const titled = /not a live quote/i.test(p.title);
-    if (tilde !== titled) mismatched += 1;
-    if (tilde) estCards += 1; else plainCards += 1;
+    if (p.text.startsWith('~') || /not a live quote/i.test(p.title)) flightEst += 1;
+    if (/flights are not included/i.test(p.title)) noFlightCards += 1; else otherCards += 1;
   }
 }
-check('city-day card prices: the tilde and the estimate title always agree', mismatched === 0, `${mismatched} disagree`);
-check('city-day cards: at least one flight price reads as an estimate', estCards >= 1, `${estCards} estimates, ${plainCards} plain`);
+check('city-day card prices: none reads as a flight estimate', flightEst === 0, `${flightEst} do`);
+check('city-day cards: flying rows say flights are not included', noFlightCards >= 1, `${noFlightCards} say so, ${otherCards} others`);
 await pickCountry(page, 'AL');
 await page.waitForTimeout(1200);
 await page.screenshot({ path: 'shots/places-trips.png' });

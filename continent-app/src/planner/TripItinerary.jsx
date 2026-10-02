@@ -3,7 +3,7 @@ import { eur, fmtHours, flightTimes, safeUrl } from '../lib/format.js';
 import { TripExtras } from './TripExtras.jsx';
 import { ExpenseLedger } from './ExpenseLedger.jsx';
 import { loadTripExtras, persistTripExtras, subscribeDayPlanStore } from './dayPlanStore.js';
-import { flightReasonLabel, baggageLabel } from '../lib/trip_planner_pricing.js';
+import { flightReasonLabel } from '../lib/trip_planner_pricing.js';
 import { googleMapsDirUrl } from '../lib/routing.js';
 import { cityCoords } from '../lib/runtime_pricing.js';
 import { shareTrip, downloadTripPdf } from '../lib/tripExport.js';
@@ -13,10 +13,10 @@ import { buildTripShareUrl } from '../lib/shareLink.js';
 import { carrierName } from '../lib/carriers.js';
 import { groundLinkFor } from '../lib/groundLinks.js';
 import { BagCheck } from '../components/BagCheck.jsx';
-import { fareProv, flightProv, estPrefix, FareTag, BookingNote } from '../components/FareProvenance.jsx';
+import { fareProv, estPrefix, FareTag, BookingNote } from '../components/FareProvenance.jsx';
 import { useI18n } from '../i18n/index.jsx';
 import { usePaywall } from '../hooks/usePaywall.jsx';
-import { SparkIcon, TrainIcon, BusIcon, CarIcon, FerryIcon, BedIcon, ReceiptIcon, ShareIcon, DownloadIcon, LuggageIcon, MapPinIcon, RouteIcon, CalendarIcon, LinkIcon, ChevronDownIcon } from '../components/Icons.jsx';
+import { SparkIcon, TrainIcon, BusIcon, CarIcon, FerryIcon, BedIcon, ReceiptIcon, ShareIcon, DownloadIcon, MapPinIcon, RouteIcon, CalendarIcon, LinkIcon, ChevronDownIcon } from '../components/Icons.jsx';
 import { PlaneIcon } from '../components/TransportIcons.jsx';
 import { TRAVEL_MODE_LABEL } from '../lib/transportLinks.js';
 
@@ -305,8 +305,11 @@ function ItinLeg({ leg, onMode }) {
  *  the same number twice, once in the header and once right under it, was the
  *  main thing making the receipt feel cluttered. */
 function BreakdownSection({ title, sub, total, children }) {
+  // An unpriced flight row (T273) is a route line, not a figure, so it does
+  // not count towards the "more than one priced row" rule for the subtotal.
   const pricedRows = React.Children.toArray(children).filter(
-    (c) => typeof c?.props?.className === 'string' && c.props.className.includes('trip-total-row'),
+    (c) => typeof c?.props?.className === 'string' && c.props.className.includes('trip-total-row')
+      && !c.props.className.includes('unpriced'),
   ).length;
   return (
     <section className="itin-bd-sec">
@@ -372,11 +375,12 @@ export function TripItinerary({
   };
 
   // The trip's bookable elements, each with our estimate so a real booked
-  // price can be judged against it at a glance.
+  // price can be judged against it at a glance. A flight has no estimate:
+  // Carta does not price flights (T273).
   const bookingRows = [];
   if (flight?.combinable) {
-    bookingRows.push({ key: 'flight-out', label: `${t('extras.flightOut')}: ${t('itin.fromTo', { a: flight.origin, b: flight.into_anchor })}`, estimate: (flight.into_fare_eur || 0) * groupSize });
-    bookingRows.push({ key: 'flight-home', label: `${t('extras.flightHome')}: ${t('itin.fromTo', { a: flight.out_anchor, b: flight.origin })}`, estimate: (flight.out_of_fare_eur || 0) * groupSize });
+    bookingRows.push({ key: 'flight-out', label: `${t('extras.flightOut')}: ${t('itin.fromTo', { a: flight.origin, b: flight.into_anchor })}`, estimate: null });
+    bookingRows.push({ key: 'flight-home', label: `${t('extras.flightHome')}: ${t('itin.fromTo', { a: flight.out_anchor, b: flight.origin })}`, estimate: null });
   } else if (flight?.own) {
     bookingRows.push({ key: 'flight', label: `${t('itin.ownTravelIn')}: ${ownTravelHow(flight, t)}`, estimate: flight.cost_total || null });
   }
@@ -470,17 +474,17 @@ export function TripItinerary({
 
   // Chronological receipt subtotals: getting there, then each stop with the
   // leg to the next one, then getting home, then the round-trip items that
-  // belong to the whole journey (bags, airport transfers, rental, vignettes).
+  // belong to the whole journey (airport transfers, rental, vignettes). A
+  // flight Carta routed adds nothing: Carta does not price flights (T273), so
+  // only the traveller's own fare (flight.own) is a flight figure here.
   const transferTotal = flight?.combinable
     ? (flightTransfer ? flightTransfer.ground_total : (flight.ground_total || 0)) : 0;
-  const getThereTotal = (flight?.combinable ? (flight.into_fare_eur || 0) * groupSize : 0)
-    + (flight?.own ? (flight.cost_total || 0) : 0)
+  const getThereTotal = (flight?.own ? (flight.cost_total || 0) : 0)
     + (driveLegs?.out?.ground_total || 0)
     + (anchorIn?.ground_total || 0);
-  const getHomeTotal = (flight?.combinable ? (flight.out_of_fare_eur || 0) * groupSize : 0)
-    + (driveLegs?.home?.ground_total || 0)
+  const getHomeTotal = (driveLegs?.home?.ground_total || 0)
     + (anchorOut?.ground_total || 0);
-  const wholeTripTotal = (flight?.combinable ? (flight.bag_total || 0) + transferTotal : 0)
+  const wholeTripTotal = transferTotal
     + (carRental?.eur_total || 0) + (vignettes?.eur_total || 0);
 
   return (
@@ -615,17 +619,21 @@ export function TripItinerary({
                   <p className="trip-note">{flightReasonLabel(flight.reason)}</p>
                 )}
 
+                {/* The flight Carta routed is not in the total (T273). Said
+                    once, before the receipt rows, so the sum reads honestly. */}
+                {flight?.combinable && (
+                  <p className="trip-note itin-flight-note">{t('itin.flightNotPriced')}</p>
+                )}
+
                 {/* 1. Getting there, in journey order. */}
-                {getThereTotal > 0 && (
+                {(getThereTotal > 0 || flight?.combinable) && (
                   <BreakdownSection title={t('itin.secGetThere')} total={getThereTotal}>
                     {flight?.combinable && (
-                      <div className="trip-total-row">
+                      <div className="trip-total-row itin-flight-unpriced">
                         <span className="lbl">
                           <PlaneIcon size={11} /> {t('itin.flightOut')}
-                          <FareTag prov={flightProv(flight, 'into')} />
                           <small>{carrierName(flight.into_carrier)}, {flight.origin} → {flight.into_anchor}{flightTimes(flight.into_time) ? `, ${t('itin.departs', { time: flightTimes(flight.into_time).dep })}` : ''}, {groupSize} {groupSize === 1 ? t('itin.seatOne') : t('itin.seatMany')}</small>
                         </span>
-                        <span className="val">{`${estPrefix(flightProv(flight, 'into'))}${eur(flight.into_fare_eur * groupSize)}`}</span>
                       </div>
                     )}
                     {flight?.own && (
@@ -715,7 +723,7 @@ export function TripItinerary({
                 })}
 
                 {/* 3. Getting home. */}
-                {getHomeTotal > 0 && (
+                {(getHomeTotal > 0 || flight?.combinable) && (
                   <BreakdownSection title={t('itin.secGetHome')} total={getHomeTotal}>
                     {anchorOut && (
                       <div className="trip-total-row">
@@ -736,13 +744,11 @@ export function TripItinerary({
                       </div>
                     )}
                     {flight?.combinable && (
-                      <div className="trip-total-row">
+                      <div className="trip-total-row itin-flight-unpriced">
                         <span className="lbl">
                           <PlaneIcon size={11} /> {t('itin.flightHome')}
-                          <FareTag prov={flightProv(flight, 'out_of')} />
                           <small>{carrierName(flight.out_of_carrier)}, {flight.out_anchor} → {flight.origin}{flightTimes(flight.out_of_time) ? `, ${t('itin.departs', { time: flightTimes(flight.out_of_time).dep })}` : ''}, {groupSize} {groupSize === 1 ? t('itin.seatOne') : t('itin.seatMany')}</small>
                         </span>
-                        <span className="val">{`${estPrefix(flightProv(flight, 'out_of'))}${eur(flight.out_of_fare_eur * groupSize)}`}</span>
                       </div>
                     )}
                   </BreakdownSection>
@@ -753,15 +759,6 @@ export function TripItinerary({
                        entirely there rather than framing a lone sentence. */}
                 {wholeTripTotal > 0 && (
                   <BreakdownSection title={t('itin.secWholeTrip')} total={wholeTripTotal}>
-                    {flight?.combinable && flight.bag_total > 0 && (
-                      <div className="trip-total-row">
-                        <span className="lbl">
-                          <LuggageIcon size={11} /> {t('itin.baggage')}
-                          <small>{baggageLabel(flight.baggage)}, {t('itin.outPlusHome')}, {groupSize} {groupSize === 1 ? t('itin.personOne') : t('itin.personMany')}</small>
-                        </span>
-                        <span className="val">{eur(flight.bag_total)}</span>
-                      </div>
-                    )}
                     {flight?.combinable && flight.ground_total > 0 && (
                       <div className="trip-total-row">
                         <span className="lbl">

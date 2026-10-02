@@ -3,10 +3,10 @@ import {
   tripDaysBetween, accommodationPerPerson, groundSpendPerPerson, DEFAULT_LIFESTYLE, haversineKm,
   drivingEstimate,
 } from '../lib/runtime_pricing.js';
-import { combineTripLegs, suggestNextStops } from '../lib/trip_planner_pricing.js';
+import { combineTripLegs, suggestNextStops, unpricedFlight } from '../lib/trip_planner_pricing.js';
 import { legTransportOptions, rentalEstimate, airportTransferOptions, transferModesFromKm, preferredPublicMode } from '../lib/transport.js';
 import { originHome } from '../lib/origins.js';
-import { cheapestStartDates, reorderSavings } from '../lib/tripCostOptimizer.js';
+import { reorderSavings } from '../lib/tripCostOptimizer.js';
 import { addDays } from '../lib/dates.js';
 import { round2 } from '../lib/math.js';
 import {
@@ -40,9 +40,11 @@ function normalizeTransferMode(v) {
  *  The traveller first picks the window they want to travel (tripStart,  *  tripEnd), then adds an ordered list of stops, each with a number of nights.
  *  Arrival/departure dates chain automatically from the trip start, so there's
  *  no per-stop date juggling: bumping a stop's nights just shifts everything
- *  after it. Pricing then reuses each destination's own real fare data
- *  (combineTripLegs: fly into the first stop, out of the last) plus an
- *  estimated overland leg between consecutive stops (interCityGroundEstimate).
+ *  after it. The flight route comes from each destination's stored routes
+ *  (combineTripLegs: fly into the first stop, out of the last), but Carta does
+ *  not price flights (T273): the route carries no fare, and the only flight
+ *  figure in a total is the one the traveller typed (ownFlight). Overland legs
+ *  between consecutive stops are estimated (interCityGroundEstimate).
  */
 export function useTripPlanner(data, countryInsights = null, preferredStayTier = 'home') {
   const destinations = data?.destinations || NO_DESTINATIONS;
@@ -341,9 +343,11 @@ export function useTripPlanner(data, countryInsights = null, preferredStayTier =
     });
   }, [stopDetails, destinations, transportPref]);
 
-  // Real combined flight fare: into the first stop, out of the last stop.
-  // Stops with no fares of their own (ground-only gems) price via the wizard's
-  // fly-in anchor when one is set.
+  // The round flight: into the first stop, out of the last stop. Stops with
+  // no routes of their own (ground-only gems) fly via the wizard's fly-in
+  // anchor when one is set. Carta does not price flights (owner decision,
+  // 2026-10-02, T273), so the route comes back through unpricedFlight: the
+  // airports, carrier and times stay, the fare does not.
   const flight = useMemo(() => {
     // Driving there in their own car: there is no flight to price at all.
     // `driving` marks it so the overview/receipt render drive legs instead of
@@ -390,10 +394,10 @@ export function useTripPlanner(data, countryInsights = null, preferredStayTier =
     // with the home leg (keeps otherwise-unpriceable trips priced).
     if (anchorDest) {
       const viaAnchor = combineTripLegs(anchorDest, first.arriveDate, outDest, last.departDate, groupSize, baggage, anchorOrigin, { allDests: destinations, estimates: true });
-      if (viaAnchor.combinable) return withIds(viaAnchor, anchorDest);
+      if (viaAnchor.combinable) return withIds(unpricedFlight(viaAnchor), anchorDest);
     }
     const inDest = hasRoutes(first.dest) ? first.dest : (anchorDest || first.dest);
-    return withIds(combineTripLegs(inDest, first.arriveDate, outDest, last.departDate, groupSize, baggage, anchorOrigin, { allDests: destinations, estimates: true }), inDest);
+    return withIds(unpricedFlight(combineTripLegs(inDest, first.arriveDate, outDest, last.departDate, groupSize, baggage, anchorOrigin, { allDests: destinations, estimates: true })), inDest);
   }, [stopDetails, groupSize, anchorId, anchorOrigin, returnAnchorId, destinations, baggage, ownFlight, transportPref]);
 
   // Priced transport options (train / bus / car with booking links) between
@@ -681,8 +685,8 @@ export function useTripPlanner(data, countryInsights = null, preferredStayTier =
     if (flight?.combinable) {
       // The airport transfer is priced by the chosen mode (flightTransfer),
       // not the raw stored public fare, so the total reflects taxi/rental too.
-      const transfer = flightTransfer ? flightTransfer.ground_total : (flight.ground_total || 0);
-      total += flight.fare_total + transfer + (flight.bag_total || 0);
+      // The flight itself adds nothing: Carta does not price it (T273).
+      total += flightTransfer ? flightTransfer.ground_total : (flight.ground_total || 0);
     } else if (flight?.own) total += flight.cost_total || 0;
     if (driveLegs?.out?.ground_total) total += driveLegs.out.ground_total;
     if (driveLegs?.home?.ground_total) total += driveLegs.home.ground_total;
@@ -695,29 +699,16 @@ export function useTripPlanner(data, countryInsights = null, preferredStayTier =
     return round2(total);
   }, [flight, flightTransfer, driveLegs, legs, anchorLegs, stayCosts, carRental, vignettes]);
 
-  // "Take this trip cheaper", the same itinerary on cheaper flight dates
-  // (real stored fares only), and a cheaper stop ORDER when reordering
-  // meaningfully shortens the overland route.
-  const cheaperDates = useMemo(() => {
-    // No flights on an own-car trip, so there are no cheaper fare dates to find.
-    if (stops.length === 0 || plannedNights <= 0 || transportPref === 'owncar') {
-      return { candidates: [], current_total: null };
-    }
-    return cheapestStartDates(stops, destinations, plannedNights, groupSize, tripStart);
-  }, [stops, destinations, plannedNights, groupSize, tripStart, transportPref]);
-
+  // "Take this trip cheaper": a cheaper stop ORDER when reordering
+  // meaningfully shortens the overland route. The cheaper-start-dates sweep
+  // is gone (T273): it ranked dates by frozen flight fares, and Carta does
+  // not price flights.
   const cheaperOrder = useMemo(
     () => reorderSavings(stops, destinations, groupSize, {
       carModel, countryInsights, hasCar: tripHasCar,
     }),
     [stops, destinations, groupSize, carModel, countryInsights, tripHasCar],
   );
-
-  // Shift the whole trip to a cheaper start date, keeping stops + nights.
-  const applyStartDate = useCallback((startIso) => {
-    setTripStart(startIso);
-    setTripEnd(addDays(startIso, Math.max(1, plannedNights)));
-  }, [plannedNights]);
 
   // Apply the cheaper stop order suggested by reorderSavings.
   const applyCheaperOrder = useCallback(() => {
@@ -861,7 +852,7 @@ export function useTripPlanner(data, countryInsights = null, preferredStayTier =
     transportPref, setTransportPref, transferMode, setTransferMode, pace, setPace, setLegMode, setOwnLeg, carRental,
     // The raw share-link ingredients (the same fields the draft persists).
     anchorId, anchorOrigin, returnAnchorId, legModes, ownLegs,
-    cheaperDates, cheaperOrder, applyStartDate, applyCheaperOrder,
+    cheaperOrder, applyCheaperOrder,
     addStop, removeStop, setStopNights, setStopActivities, moveStop, reorderStop,
     optimizeRoute, clearPlan, loadFromWizard,
     nextStopSuggestions, flight, legs, anchorLegs, flightTransfer, driveLegs, stayCosts, grandTotal, dayPlan,

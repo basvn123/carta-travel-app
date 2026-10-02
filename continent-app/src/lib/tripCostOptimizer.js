@@ -1,68 +1,18 @@
 /**
  * tripCostOptimizer.js, "take this trip cheaper" intelligence.
  *
- * Two independent levers, both computed from data the client already has:
- *   1. WHEN: sweep every start date that has a real stored fare for the first
- *      stop, price the whole flight combo (into first stop, out of last) for a
- *      trip of the same length, and surface the cheapest alternatives vs the
- *      currently chosen start.
- *   2. ORDER: compare the current stop order's total overland distance with a
- *      nearest-neighbour ordering; if reordering meaningfully shortens the
- *      route, estimate the saving in ground cost.
+ * One lever, computed from data the client already has:
+ *   ORDER: compare the current stop order's total overland distance with a
+ *   nearest-neighbour ordering; if reordering meaningfully shortens the
+ *   route, estimate the saving in ground cost.
+ *
+ * The WHEN lever (cheapestStartDates, a sweep of start dates ranked by stored
+ * flight fares) was removed in T273: Carta does not price flights (owner
+ * decision, 2026-10-02) and the fares it ranked by are frozen snapshots.
  */
-import { addDays } from './dates.js';
-import { combineTripLegs, interCityGroundEstimate } from './trip_planner_pricing.js';
+import { interCityGroundEstimate } from './trip_planner_pricing.js';
 import { legTransportOptions } from './transport.js';
 import { haversineKm, cityCoords } from './runtime_pricing.js';
-
-/**
- * Cheapest start dates for this itinerary, keeping the same stop order and
- * per-stop nights. Only dates with REAL stored fares for both the inbound and
- * outbound leg qualify, so every candidate here is actually bookable.
- *
- * @param stops        [{ destinationId, nights }]
- * @param destinations data.destinations
- * @param totalNights  the trip's total nights (defines the return date)
- * @param groupSize    travellers
- * @param currentStart the currently selected ISO start date (or '')
- * @returns { candidates: [{start, end, fare_total, ground_total, total, origin,
- *            saving_vs_current}], current_total } - candidates ascending by total
- */
-export function cheapestStartDates(stops, destinations, totalNights, groupSize, currentStart, { limit = 3 } = {}) {
-  if (!stops?.length || !totalNights) return { candidates: [], current_total: null };
-  const first = destinations[stops[0].destinationId];
-  const last = destinations[stops[stops.length - 1].destinationId];
-  if (!first || !last) return { candidates: [], current_total: null };
-
-  const priceFor = (start) => {
-    const end = addDays(start, totalNights);
-    const combo = combineTripLegs(first, start, last, end, groupSize);
-    if (!combo.combinable) return null;
-    return { start, end, fare_total: combo.fare_total, ground_total: combo.ground_total, total: combo.fare_total + combo.ground_total, origin: combo.origin };
-  };
-
-  const currentPriced = currentStart ? priceFor(currentStart) : null;
-  const currentTotal = currentPriced ? currentPriced.total : null;
-
-  const dates = new Set();
-  for (const r of Object.values(first.routes || {})) {
-    for (const d of Object.keys(r.outbound_fare || {})) dates.add(d);
-  }
-
-  const all = [];
-  for (const d of dates) {
-    if (d === currentStart) continue;
-    const priced = priceFor(d);
-    if (priced) all.push(priced);
-  }
-  all.sort((a, b) => a.total - b.total || (a.start < b.start ? -1 : 1));
-
-  const candidates = all.slice(0, limit).map((c) => ({
-    ...c,
-    saving_vs_current: currentTotal != null ? Math.round((currentTotal - c.total) * 100) / 100 : null,
-  }));
-  return { candidates, current_total: currentTotal };
-}
 
 /** Total estimated overland cost of visiting `ids` in that order, priced with
  *  the SAME country-profile leg engine the itinerary shows. The old flat

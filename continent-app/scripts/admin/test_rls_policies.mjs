@@ -138,15 +138,11 @@ const MIN_POLICIES = 34;
  * Each entry is asserted to STILL be broken, so the list cannot outlive the
  * bug: the migration that repairs it makes this run say "delete the entry".
  *
- *   trip_collaborators.coplan_insert_owner calls are_friends(a, b), which
- *   011 revoked from authenticated. Every invite through the client is
- *   refused once 020 is live. Register row T083-a; the repair is a
- *   one-armed is_friend_me(other), as 012 and 023 did, not a grant on the
- *   two-armed pair oracle.
+ *   The list is empty. Its one entry, trip_collaborators.coplan_insert_owner
+ *   calling are_friends(a, b) (register row T083-a), was repaired by
+ *   migration 046, which calls a one-armed is_friend_me(other) instead.
  */
-const KNOWN_UNCALLABLE = [
-  { policy: 'trip_collaborators.coplan_insert_owner', fn: 'are_friends', row: 'T083-a' },
-];
+const KNOWN_UNCALLABLE = [];
 
 function findPsql() {
   for (const cand of PSQL_CANDIDATES) {
@@ -354,13 +350,12 @@ const FIXTURES = [
   {
     table: 'trip_collaborators',
     seed: [
-      // The invite is seeded through the service path, not as the victim,
-      // because 020's insert policy calls are_friends, which 011 revoked
-      // from authenticated: as the victim this insert is refused with
-      // 42501 (KNOWN_UNCALLABLE, register row T083-a). When the repair
-      // lands, change `as: 'db'` to `as: 'victim'` so the invite path is
-      // under test again; the KNOWN_UNCALLABLE assertion will remind you.
-      { as: 'db', sql: `insert into public.trip_collaborators (trip_plan_id, user_id, invited_by) values ('${PLAN}', '${THIRD}', '${VICTIM}')` },
+      // The invite is seeded as the victim, through 020's insert policy as
+      // 046 repaired it, so the invite path itself is under test: the
+      // victim owns PLAN and is an accepted friend of THIRD (the
+      // friendships fixture above). Before 046 this insert was refused
+      // with 42501 (register row T083-a).
+      { as: 'victim', sql: `insert into public.trip_collaborators (trip_plan_id, user_id, invited_by) values ('${PLAN}', '${THIRD}', '${VICTIM}')` },
       { as: 'third', sql: `update public.trip_collaborators set status = 'accepted', responded_at = now() where trip_plan_id = '${PLAN}' and user_id = '${THIRD}'` },
     ],
     mine: `invited_by = '${VICTIM}'`,
@@ -718,6 +713,14 @@ function runTests(bin) {
     check('everyone sees their own profile', ownProfile.ok && ownProfile.out === '1', describe(ownProfile));
     const friendLink = countAs('third', 'friendships', `requester_id = '${VICTIM}'`);
     check('the addressee sees the friendship row', friendLink.ok && friendLink.out === '1', describe(friendLink));
+    // The invite seed above proves the owner CAN invite a friend (046). This
+    // proves the friendship arm still bites: the same owner, on the same plan,
+    // cannot invite somebody who is not an accepted friend, and the refusal
+    // is the policy's (a row-level security violation), not a 42501 on a
+    // function the caller cannot execute.
+    const strangerInvite = runAs('victim', `insert into public.trip_collaborators (trip_plan_id, user_id, invited_by) values ('${PLAN}', '${PLAIN}', '${VICTIM}')`);
+    check('the owner cannot invite somebody who is not a friend (020, 046)',
+      !strangerInvite.ok && /row-level security/i.test(strangerInvite.err), describe(strangerInvite));
 
     // ---------------------------------------------------------------------
     // 5. The harness proves itself: a deliberately leaked row is seen.

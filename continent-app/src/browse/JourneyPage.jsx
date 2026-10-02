@@ -8,6 +8,8 @@ import { safeUrl } from '../lib/format.js';
 import { CountryFlag } from '../components/CountryFlag.jsx';
 import { Fold } from './Fold.jsx';
 import { MonthStrip } from '../components/MonthStrip.jsx';
+import { DifficultyMeter, GatewayList } from '../components/FactMeter.jsx';
+import { parseGateway } from '../lib/gateway.js';
 import { useFolds } from './useFolds.js';
 import {
   ArrowLeftIcon, MapPinIcon, ChevronRightIcon, CameraIcon, AlertIcon,
@@ -55,6 +57,25 @@ function Prose({ text, className = 'bpage-prose' }) {
         : <React.Fragment key={i}>{seg.text}</React.Fragment>))}
     </p>
   );
+}
+
+/* The gateway string is hand-written prose. When it splits cleanly into airport
+   rows those are shown; otherwise the first airport is shown and the whole
+   text opens from the info button. */
+function gatewayFact(text, code) {
+  const { rows, complete } = parseGateway(text);
+  if (rows.length && complete) return { rows, more: null };
+  const first = rows[0] ? { code: rows[0].code, name: rows[0].name, detail: '' } : { code: code || '', name: '', detail: '' };
+  return { rows: [first], more: text };
+}
+
+/* The note opens with the score again ("4/5, ..."), which the meter already
+   shows, and sometimes says nothing more than the label. Both go. */
+function difficultyNoteText(note, label) {
+  if (!note) return null;
+  const text = note.replace(/^\s*\d\s*\/\s*5\s*[,.:;-]?\s*/, '').trim();
+  if (!text || text.toLowerCase() === String(label || '').toLowerCase()) return null;
+  return text;
 }
 
 function HeroCredit({ hero, t }) {
@@ -236,8 +257,11 @@ export function JourneyPage({ id, gatewayDest, onClose, onSelectDest }) {
       profile.difficultyLabel && {
         key: 'diff',
         label: t('journey.fDifficulty'),
-        value: diffLabel(profile.difficultyLabel, t),
-        note: profile.difficultyNote || null,
+        meter: {
+          level: profile.difficulty,
+          label: diffLabel(profile.difficultyLabel, t),
+          note: difficultyNoteText(profile.difficultyNote, profile.difficultyLabel),
+        },
       },
       profile.crowdLevel && {
         key: 'crowd',
@@ -257,7 +281,7 @@ export function JourneyPage({ id, gatewayDest, onClose, onSelectDest }) {
       trip.gatewayAirport && {
         key: 'gateway',
         label: t('journey.fGateway'),
-        value: trip.gatewayAirport,
+        gateway: gatewayFact(trip.gatewayAirport, trip.gatewayAirportCode),
       },
       trip.languages?.length && {
         key: 'lang',
@@ -417,6 +441,13 @@ export function JourneyPage({ id, gatewayDest, onClose, onSelectDest }) {
                     <dd className={fact.mono ? 'mono' : ''}>
                       {fact.strip ? (
                         <MonthStrip {...fact.strip} />
+                      ) : fact.meter ? (
+                        <DifficultyMeter {...fact.meter} note={fact.meter.note && <Prose text={fact.meter.note} className="" />} />
+                      ) : fact.gateway ? (
+                        <GatewayList
+                          rows={fact.gateway.rows}
+                          more={fact.gateway.more && <Prose text={fact.gateway.more} className="" />}
+                        />
                       ) : (
                         <>
                           {fact.value}
