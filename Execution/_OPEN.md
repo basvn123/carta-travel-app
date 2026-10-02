@@ -347,3 +347,5 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T201-b | T201 | docs/1.CARTA.md, README.md and the PRODUCT.md "Brand voice" example still say 1,570 destinations; app_data meta.n_destinations is 3,868, replace the literal with a pointer to meta | next task | open | |
 | T201-c | T201 | PRODUCT.md "What Carta is" says Carta prices flight out and back while the live account.faq2A says it does not; amend whichever T201-a rules wrong | next task | open | after T201-a |
 | T201-d | T201 | The positioning exists only in Execution/P12/T201-positioning.md; after T202 tests it against the competitor table, place the sentence and paragraph at the top of PRODUCT.md | next task | open | after T202 |
+| T126-a | T126 | vision_prompt.py is untested against a real Gemini model; measure it on the labelled set (evalset.py is lake-only, so label the other four sections first) | next task | open | |
+| T126-b | T126 | Decide whether the new rejects (marker, over 2 km) may veto a P18 image, and have the wiring compute distance_m from image and feature coordinates | user | open | |
