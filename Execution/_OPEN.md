@@ -535,3 +535,6 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T287-a | T287 | Beach page has no month data on its wire (only a bathing water class and site name), so it keeps no strip; needs a beach season or sea temperature field from the pipeline before MonthStrip can go on it | next task | open |  |
 | T287-b | T287 | Lake strip marks months by the Lifestyle warm threshold (default 18 C) but the info line (lakeSeason) uses the pipeline's fixed season from/to, so they can differ by a month (Attersee: strip Jul to Sep, line Jul to Aug); align them in a lake task | next task | open |  |
 | T287-c | T287 | styles.css still holds the unused .lpage-months and .lpage-month-* rules after the lake bar strip was replaced; remove in a CSS hygiene task | next task | open |  |
+| T196-a | T196 | Regenerate scripts/ci/design-lint.baseline.json with --update-baseline after the first component lift pays down hex, shadow and gradient debt (550 baselined) | next task | open | after T197 first lift |
+| T196-b | T196 | design-lint does not scan hex colours inside JS (map paint, inline styles); decide a policy for them | user | open |  |
+| T196-c | T196 | design-lint.yml has never run on GitHub; confirm it goes green on the first push of main | user | open | after push |
