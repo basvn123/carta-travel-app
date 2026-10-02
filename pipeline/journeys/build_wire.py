@@ -108,7 +108,7 @@ def strip_dashes(s):
 def clean_text(x):
     """Recursively clean every string: dashes out, [VERIFY] markers out."""
     if isinstance(x, str):
-        return strip_dashes(VERIFY_RE.sub("", x)).strip()
+        return normalise_bold(strip_dashes(VERIFY_RE.sub("", x)).strip())
     if isinstance(x, list):
         return [clean_text(v) for v in x]
     if isinstance(x, dict):
@@ -117,6 +117,33 @@ def clean_text(x):
         # shipped as a value.
         return {clean_text(k): clean_text(v) for k, v in x.items()}
     return x
+
+
+BOLD_RE = re.compile(r"\*\*(.+?)\*\*", re.S)
+BOLD_MAX = 2
+
+
+def normalise_bold(s):
+    """One emphasis rule for every trip (spec J6). The source batches bolded
+    place names in some trips and nothing in others, so the page read as
+    heavily annotated or as flat prose depending on the trip. The rule: bold
+    only the operative fact, meaning a span that carries a figure (a height,
+    a distance, a price, a time), and at most BOLD_MAX of them per string, the
+    first ones. Every other span, place names included, loses its markers and
+    keeps its words. Structure carries the rest of the emphasis."""
+    if "**" not in s:
+        return s
+    kept = 0
+
+    def one(m):
+        nonlocal kept
+        inner = m.group(1)
+        if kept < BOLD_MAX and re.search(r"\d", inner):
+            kept += 1
+            return m.group(0)
+        return inner
+
+    return BOLD_RE.sub(one, s)
 
 
 # ── Wikipedia lead images ────────────────────────────────────────────────────

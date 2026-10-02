@@ -505,3 +505,6 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T300-u | T300 | supabase/functions/checkout/test_purchase_e2e.md predates 044: add checks that a Year holder buying a Trip Pass keeps Year, a sixth purchase gets 409 pass_max, and pass_grants carries reason and fee_cents | next task | open | before stage 10.3 |
 | T300-v | T300 | PARALLEL-WAVES-PLAN.md, Execution/_WAVES.md and the Execution/_queue tools are untracked in git; decide whether to commit them | user | open |  |
 | T300-w | T300 | T046-a: provision.sh still defaults to IPV4=0 although _OPEN-MASTER 7.2 says IPv4 is on; run it as IPV4=1 (as 7.2 writes it) or change the default in a box task | user | open | stage 7.2 |
+| T094-a | T094 | The bold rule (J6) lives in build_wire.py and the tracked wire continent-app/public/journeys still carries the old bold; the same wire rebuild as T085-a and T087-a ships it | next task | open |  |
+| T094-b | T094 | The last-checked month (J8) is provenance.ingestedAt, which is 2026-09 for all 253 trips and records when a trip entered the catalogue, not a re-verification; a real per-trip reviewedAt needs the K1 trip schema | next task | open |  |
+| T094-c | T094 | J7 also asks that an empty country and style pair offer three nearby trips; the index now states coverage, but the empty state still shows only the plain sentence | next task | open |  |
