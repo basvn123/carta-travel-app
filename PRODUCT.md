@@ -38,7 +38,7 @@ Density is a feature. The traveller wants to see forty prices on one phone scree
 
 ## The one rule the numbers follow
 
-Real harvested quote, then cached third-party quote, then model estimate, and never a blank. Each step is labelled for what it is. A harvested fare shows its source and age. A cached quote carries its expiry. An estimate is prefixed with a tilde, tagged "est." and never dressed up as a bookable price. An estimate ships only where a flight verifiably exists. Every external booking link warns that prices may have changed.
+Every ground cost follows one chain: a real harvested figure first, then a cached third-party figure, then a model estimate, and never a blank. Ground costs are the bed, the food, the local transport and the airport transfer. Each step is labelled for what it is. A harvested figure shows its source and age. A cached figure carries its expiry. An estimate is prefixed with a tilde, tagged "est." and never dressed up as a bookable price. Every external booking link warns that prices may have changed.
 
 Carta does not price flights (owner decision, 2026-10-02). No fare harvest has been live since 2026-10-01, and none is planned. The only flight figure in a total is one the traveller typed in, labelled as theirs. No screen shows or sums a flight figure of Carta's (T273 removed the last of them), so no flight carries a tilde or "est." any more. The tilde and "est." stay for every other estimate.
 

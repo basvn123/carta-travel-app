@@ -8,15 +8,15 @@ The admin page, Overview section. It stacks, in this order: pipeline health, the
 
 ## The decision
 
-Look at five numbers every day of week one: purchases, new accounts, paywall shown, AI units against the daily cap, and AI failures. Read the rest once at the end of the week. The purchase rate is purchases divided by visitors. The visitor half has no source yet, so until it does the working stand-in is purchases divided by new accounts, and the report must say which one it used.
+Look at five numbers every day of week one: purchases, new accounts, paywall shown, AI units against the daily cap, and AI failures. Read the rest once at the end of the week. The purchase rate is purchases divided by visitors. The visitor half comes from the host's server-side dashboard (T275 closed T215-a: no analytics script, no cookie banner). Read it in the Cloudflare dashboard: Workers & Pages, the project carta-app, Metrics (Cloudflare Pages analytics, counted at the edge). Take the unique visitors figure for the same window as the purchases, and say in the report that it is a server-side count of requests at the edge, not a count of people. If that panel is unavailable, fall back to purchases divided by new accounts and say so.
 
 ## Metrics
 
 | Metric | Read from | Where on screen | Status |
 |---|---|---|---|
 | Purchases, total and by tier | admin_paywall_funnel (purchased, byTier) and admin_margin (byTier, count) | Overview, Paywall funnel and Margin | Exists |
-| Purchase rate | purchases over visitors | none | Gap: no visitor source (T215-a) |
-| Visitors | none; no analytics is installed and no cookie banner exists | none | Gap (T215-a) |
+| Purchase rate | purchases over visitors | Overview for purchases, host dashboard for visitors | Exists once both are read; the division is by hand |
+| Visitors | Cloudflare Pages analytics for the project carta-app (server-side, no script on the page, no cookie banner) | Cloudflare dashboard, Workers & Pages, carta-app, Metrics | Exists, outside the admin page (T215-a, T275) |
 | Priced-trip completions | none; no event is recorded when a traveller finishes a priced trip | none | Gap (T215-b) |
 | Account creations | admin_stats (users, newWeek, newMonth) | Overview, account counts | Exists |
 | Paywall shown, dismissed, converted per reason code | admin_paywall_funnel (byReason: shown, dismissed, checkout, bought, conversionRate; byKind groups them) | Overview, Paywall funnel, by gate | Exists |
@@ -34,4 +34,4 @@ Paywall conversion per reason uses the reason stored on the grant when there is 
 
 The error figure is a count of failed AI calls by code. It is not a rate. A rate for the AI functions can be had by dividing by plan units plus ground units from admin_ai_usage over the same window, which is close enough for week one and should be said as such.
 
-Fares are frozen estimates and Carta does not price flights, so no metric here depends on a fare source.
+Carta does not price flights, so no metric here depends on a fare source.

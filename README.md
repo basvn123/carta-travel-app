@@ -2,7 +2,7 @@
 
 Find affordable European getaways by **total trip cost** (real Ryanair fares +
 Airbnb-based stays + on-the-ground spend), then plan the trip city by city and
-day by day. 1,570 destinations across 43 European countries (master schema v15,
+day by day. The destination count is `meta.n_destinations` in `app_data.json`, across 43 European countries (master schema v15,
 see [SCHEMA.md](docs/SCHEMA.md)).
 
 ## Repository layout
@@ -25,7 +25,7 @@ see [SCHEMA.md](docs/SCHEMA.md)).
 │                           country_insights.json (all generated; do not edit)
 │
 ├── app_data/               MASTER datasets (source of truth for the app)
-│   ├── app_data.json           1,570 destinations, schema v15 (gitignored,
+│   ├── app_data.json           destination count in `meta.n_destinations`, schema v15 (gitignored,
 │   │                           rebuilt by the pipeline; see docs/SCHEMA.md)
 │   └── country_insights.json   Deep per-country travel intel, 43 countries
 │
