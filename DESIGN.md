@@ -4,7 +4,7 @@ This is the deterministic design system for Carta: the exact values the shipped 
 
 The source of truth is the `:root` block of `continent-app/src/styles.css`. This file is a record of it, kept in step by hand; when the two disagree, `styles.css` is what ships and this file is wrong. Never hardcode a hex, a font name or a pixel spacing in a component: reference the custom property.
 
-The carta-design skill (`.claude/skills/carta-design/SKILL.md`) still governs structure, the mono rule, the receipt, the search strip, the copy rules, the "never do this" list and the quality floor. Its banner of 2026-07-28 declares the palette and type below as the decided state. The skill's older body (cool-grey Timetable palette, `--signal` blue, Instrument Sans, IBM Plex Mono, "no serif anywhere", `assets/tokens.css`) was built for the landing page and reverted; it contradicts the banner and this file, and this file wins on colour and type. T198 owns the explicit typography decision that retires that text.
+The carta-design skill (`.claude/skills/carta-design/SKILL.md`) still governs structure, the mono rule, the receipt, the search strip, the copy rules, the "never do this" list and the quality floor. Its banner of 2026-07-28 declares the palette and type below as the decided state. The skill's older body (cool-grey Timetable palette, `--signal` blue, Instrument Sans, IBM Plex Mono, "no serif anywhere", `assets/tokens.css`) was built for the landing page and reverted; it contradicts the banner and this file, and this file wins on colour and type. T198 recorded the typography decision under Type below; T325 rewrites the skill body to match.
 
 ## Colour
 
@@ -71,6 +71,10 @@ All three are ink at low alpha. There is no other shadow and no gradient in the 
 ## Type
 
 Three faces, and one rule about which is which.
+
+Decision (T198, 2026-10-02): Carta's type is Fraunces for display, Plus Jakarta Sans for everything else and JetBrains Mono for measured facts, through the three tokens below and never by name; Cormorant Garamond, Instrument Sans and IBM Plex Mono are rejected, and `scripts/ci/design-lint.mjs` (rule `font-literal`) fails any `font-family` outside `:root` that is not `var(--display)`, `var(--ui)`, `var(--mono)` or `inherit`.
+
+Why. The research note (`additional docs/Carta/Plan/Frontend Design/Frontend Design Tools Research.md`) proposed Cormorant Garamond with Plus Jakarta Sans; the carta-design skill body bans every serif and teaches Instrument Sans with IBM Plex Mono; the app has shipped Fraunces, Plus Jakarta Sans and JetBrains Mono since the skill's banner of 2026-07-28. The shipped state wins because every planner, PDF and map label is already set in it, Fraunces at display sizes carries the destination-name voice the brochure-free rule still allows, and Plus Jakarta Sans is the one face all three sources agree on. Fraunces is the only serif and only in the display role; the skill's "no serif anywhere" line is retired by this decision and T325 rewrites the skill body to match.
 
 | Token | Value | Only for |
 |---|---|---|
