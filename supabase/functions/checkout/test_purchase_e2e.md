@@ -6,8 +6,9 @@ written so it can be run once by hand, top to bottom, in about forty minutes.
 Run it in Stripe TEST mode only. Nothing here should ever be pointed at a live
 key: step 7 deliberately replays a webhook, and step 9 deliberately buys twice.
 
-Seven things are being proved, and it is worth knowing which step proves which
-before starting.
+Ten things are being proved, and it is worth knowing which step proves which
+before starting. Claims 8 to 10 arrived with migration 044 (T265) and were added
+to this document by T314.
 
 | # | Claim | Step |
 |---|---|---|
@@ -18,6 +19,9 @@ before starting.
 | 5 | A Year Pass grants tier year and expires_at about 365 days out | 8 |
 | 6 | A replayed webhook is a no-op, guarded by pass_grants.session_id | 7 |
 | 7 | A second purchase extends from the current expiry, not from today | 9 |
+| 8 | A Year Pass holder who buys a Trip Pass keeps tier year and its allowance, and gains 30 days | 9 |
+| 9 | A purchase that the three-year horizon would take back whole is refused with 409 pass_max before Stripe is asked | 9b |
+| 10 | Every sale carries its gate reason and Stripe's real fee on pass_grants | 5, 6 |
 
 ## 0. What you need first
 
@@ -43,6 +47,19 @@ Note its user id, which every SELECT below needs:
 ```
 supabase db query "select id, email from auth.users where email = 'YOUR_TEST_EMAIL' " --linked
 ```
+
+The database must already hold migration 044 (`044_payments_quota.sql`), pasted
+in the stage 10.2 order of `Execution/_OPEN-MASTER.md`: after 025, 026, 027 and
+031, and before the two function deploys below. Without it the checkout function
+cannot call `pass_can_buy` and answers 503 `quota_check` on every buyable tier,
+and the webhook calls a twelve-argument `grant_pass` that does not exist. Check it
+is in before going on:
+
+```
+supabase db query "select public.pass_horizon_days()" --linked
+```
+
+Expect `1095`. An error naming the function means 044 is not pasted.
 
 ## 1. Secrets and deploy
 
@@ -167,7 +184,19 @@ named by the secret and nothing on the wire can touch it.
 
 ## 5. Buy a Trip Pass and check the session fields
 
-Take the `url` from a successful checkout call for tier trip and open it. Pay
+Make the checkout call for this purchase with a gate reason in the body, the way
+the app sends it (`src/lib/checkout.js` sends `{ tier, reason }`, where reason is
+the usePaywall gate that opened the modal):
+
+```
+curl -i -X POST https://ntssxktaduxzpsmejwyv.supabase.co/functions/v1/checkout \
+  -H "Content-Type: application/json" \
+  -H "apikey: YOUR_ANON_KEY" \
+  -H "Authorization: Bearer $TOKEN" \
+  -d '{"tier":"trip","reason":"export"}'
+```
+
+Take the `url` from that call and open it. Pay
 with test card `4242 4242 4242 4242`, any future expiry, any CVC, any postcode.
 `billing_address_collection` is required, so a full address is asked for; use a
 Belgian one, which keeps VAT in the home member state and matches the Article 59c
@@ -186,7 +215,11 @@ stripe checkout sessions retrieve cs_test_... \
 Check four things in that output. `client_reference_id` equals the test user's
 uuid. `metadata.user_id` equals the same uuid and `metadata.tier` is `trip`.
 `payment_intent.metadata.user_id` and `payment_intent.metadata.tier` carry the
-same pair. And `mode` is `payment`, with no subscription anywhere.
+same pair. And `mode` is `payment`, with no subscription anywhere. Since 044 both
+metadata copies also carry `reason`, which must read `export`. A reason that is
+not letters only (try `"reason":"ex port!"` on a throwaway session, not paid) is
+sent as an empty string rather than refused, because a malformed reason must
+never cost somebody a purchase.
 
 The two metadata copies are not redundancy for its own sake. Session metadata is
 what the `checkout.session.completed` event carries; the payment intent copy is
@@ -202,7 +235,7 @@ because it survives even when an intermediary drops metadata.
 ```
 supabase db query "select tier, period_start, expires_at, source, stripe_customer_id, last_session_id, updated_at from public.entitlements where user_id = 'UID'" --linked
 
-supabase db query "select session_id, tier, expires_at, granted_at from public.pass_grants where user_id = 'UID' order by granted_at desc" --linked
+supabase db query "select session_id, tier, expires_at, granted_at, reason, fee_cents, fee_currency from public.pass_grants where user_id = 'UID' order by granted_at desc" --linked
 ```
 
 Expected, for an account that held no pass before this:
@@ -216,6 +249,14 @@ Expected, for an account that held no pass before this:
 - `entitlements.last_session_id` is the `cs_test_...` id you just paid
 - exactly ONE row in `pass_grants`, with the same session id, tier `trip`, and
   the same `expires_at` as the entitlement
+- that row's `reason` is `export`, copied from the session metadata by the webhook
+- that row's `fee_cents` is a positive integer and `fee_currency` is `eur`: the
+  fee Stripe kept, read off the charge's balance transaction, not a modelled rate.
+  Compare it with the fee shown on the payment in the Stripe Dashboard; they must
+  be the same number of cents. NULL here means the webhook could not expand
+  `latest_charge.balance_transaction`; the grant still happened, and
+  `admin_margin` then models that sale's fee and reports `stripe.basis` as
+  `modelled` or `mixed` instead of `charge`
 
 Check the arithmetic explicitly rather than by eye, because a 30 against a 365 is
 easy to misread:
@@ -327,13 +368,73 @@ built on that column alone would not recognise this delivery and would extend th
 pass a third time. `pass_grants` does recognise it. Stripe retries for days, and
 this exact sequence is the one it was built for.
 
-Finally, the tier-change case, which is worth recording even though the code's
-behaviour here is a known open question rather than a defined requirement. On
-the year-pass account from step 8, buy a Trip Pass. What happens today is that
-`entitlements.tier` becomes `trip` while `expires_at` extends from the year
-expiry, so the holder keeps the dates and drops from 300 plans to 60. Record what
-you observe. If that is not the intended behaviour, it is a change to
-`grant_pass` and needs its own task.
+Finally, the tier-change case. Before 044 a Year Pass holder who bought a Trip
+Pass dropped to tier trip and from 300 plans to 60. Since 044 `grant_pass` keeps
+a live pass of a higher rank (T031-b), so this is now a defined requirement and a
+pass or fail check. On the year-pass account from step 8 (call its id `UID2`),
+record the expiry and the period start, then buy a Trip Pass:
+
+```
+supabase db query "select tier, period_start, expires_at, round(extract(epoch from (expires_at - now()))/86400) as days_left from public.entitlements where user_id = 'UID2'" --linked
+supabase db query "select session_id, tier, expires_at, reason, fee_cents from public.pass_grants where user_id = 'UID2' order by granted_at desc" --linked
+supabase db query "select public.ai_status('UID2')" --linked
+```
+
+Expected. `entitlements.tier` is still `year`. `expires_at` is the old year expiry
+plus 30 days, so `days_left` reads about 395. `period_start` did NOT move: the
+holder stays inside the allowance they were already in, so `ai_status` still
+shows `plansCap` 300 and `groundCap` 120, and `plansLeft` is whatever it was
+before the purchase, not refilled. The newest `pass_grants` row says tier `trip`,
+because the ledger records what was sold, and it carries its own reason and fee.
+
+If the tier reads `trip`, 044 is not pasted or the webhook deployed is older than
+T265.
+
+## 9b. The three-year horizon refuses a purchase that would gain nothing
+
+No pass may end more than `pass_horizon_days()`, 1,095 days, from now. The
+checkout function asks `pass_can_buy` on the service role before it opens a
+Stripe session; when the clamp would take back the whole purchase it answers 409
+`pass_max` and nobody is charged. A purchase that would cross the horizon only in
+part is still sold, and `grant_pass` clamps it.
+
+Stay on account `UID2`, which holds about 395 days after step 9. Two more Year
+Passes take it to the horizon, and the next attempt is refused.
+
+Buy a Year Pass, the fifth sale in this document. Expect `days_left` about 760.
+
+Make the checkout call for another Year Pass. It succeeds, because 760 plus 365
+crosses the horizon only in part. Pay it: this sixth sale is clamped. Expect
+`days_left` to read 1095, not 1125, and the newest `pass_grants` row to carry an
+`expires_at` 1,095 days after its `granted_at`:
+
+```
+supabase db query "select tier, expires_at, round(extract(epoch from (expires_at - granted_at))/86400) as days_from_sale from public.pass_grants where user_id = 'UID2' order by granted_at desc limit 1" --linked
+```
+
+`days_from_sale` must read 1095. Note that this buyer paid a full Year Pass price
+for about 335 days; that is the posture T265 chose (refuse only a purchase that
+gains nothing), not a bug in this run.
+
+Now try a seventh purchase, Year or Trip:
+
+```
+curl -i -X POST https://ntssxktaduxzpsmejwyv.supabase.co/functions/v1/checkout \
+  -H "Content-Type: application/json" \
+  -H "apikey: YOUR_ANON_KEY" \
+  -H "Authorization: Bearer $TOKEN2" \
+  -d '{"tier":"trip","reason":"browse"}'
+```
+
+with `TOKEN2` the access token of the `UID2` account. Expect `HTTP/2 409` and a
+body `{"code":"pass_max","expiresAt":"..."}` with the current expiry. Check the
+Stripe Dashboard under Payments, Checkout sessions: no session was created for
+this call. In the app, signed in as `UID2`, pressing a buy button shows the
+pass_max sentence in the pass modal instead of leaving for Stripe.
+
+If the call returns 200 with a session url, `pass_can_buy` is missing or the
+deployed checkout function predates T265, and the horizon is protecting nothing
+but the grant.
 
 ## 10. Clean up
 
@@ -344,9 +445,11 @@ database do, because they are real entitlements on real auth users.
 supabase db query "delete from public.pass_grants where user_id in ('UID1','UID2')" --linked
 supabase db query "delete from public.entitlements where user_id in ('UID1','UID2')" --linked
 supabase db query "delete from public.ai_usage where user_id in ('UID1','UID2')" --linked
+supabase db query "delete from public.ai_usage_days where user_id in ('UID1','UID2')" --linked
 ```
 
-Or delete the test auth users, which cascades all three by foreign key. Do not
+Or delete the test auth users, which cascades all four by foreign key
+(`ai_usage_days` came with 044). Do not
 delete the owner row, user id beginning 36a28f80, which holds the manual year
 grant to 2126.
 
@@ -359,7 +462,10 @@ test key takes payments that do not exist.
 
 The two price ids and which mode they belong to. The 401 and bad_tier responses
 verbatim. The `stripe checkout sessions retrieve` output for one session, with
-the three user id fields visible. The `days_left` figure after each of the four
-purchases: trip 30, year 365, second trip 60, and whatever the tier change gives.
-The before and after of the replay, showing `expires_at` identical. And the
-`pass_grants` row count at the end, which should be four.
+the three user id fields visible. The `days_left` figure after each of the six
+sales: trip 30, year 365, second trip 60, trip on the year account 395 with tier
+still year, a further year 760, and the clamped year 1095. The before and after
+of the replay, showing `expires_at` identical. The `reason`, `fee_cents` and
+`fee_currency` of every `pass_grants` row. The 409 `pass_max` response verbatim.
+And the `pass_grants` row count at the end, which should be six: two on `UID1`,
+four on `UID2`, and none for the refused seventh attempt.
