@@ -120,6 +120,13 @@ quietly drops data. This is the cheapest result in the whole plan.
    It should return the table name (018 was applied before the regex bound
    was noticed, per T066 and T077). If it returns null, paste
    `018_content_overrides.sql` first, as fixed in stage 1.
+5. Check whether 019 and 020 are live (added 2026-10-02, T275). 037 refuses to
+   run without 019, and 039 breaks if 020 is pasted after it, so both must be
+   in before paste 7:
+   `select to_regclass('public.trip_collaborators') as t020, (select count(*) from information_schema.columns where table_schema='public' and table_name='trip_plans' and column_name='published_at') as t019;`
+   `t019` = 1 means 019 is live and `t020` = trip_collaborators means 020 is
+   live. Pastes 6a and 6b below are only for the ones that are not live;
+   paste 6c (046) is needed either way.
 
 ## 2.2 The pastes, in this order
 
@@ -133,6 +140,9 @@ Strictly one after the other. Each self-check asserts the ones before it.
 | 4 | 033_admin_audit_rollback | T064-a | admin audit rollback self-check passed | the audit log has no previous/new detail |
 | 5 | 034_admin_guard_tiers | T065-a | admin guard tiers self-check passed | config and override saves stay on the read tier |
 | 6 | 035_site_config_visibility | T066-a | site config visibility self-check passed | every site_config key is world-readable |
+| 6a | 019_public_guides (only if 2.1 step 5 says not live) | T275 | it runs clean | 037 refuses to run; there is no guides gallery |
+| 6b | 020_coplanners (only if not live) | T275 | it runs clean | no co-planning; pasted after 039 it breaks 038 and 039 |
+| 6c | 046_coplanner_invite_fix (always, right after 020) | T274-a | co-planner invite policy self-check passed | every co-planner invite is refused (020 calls are_friends, which 011 revoked) |
 | 7 | 036_admin_public_guides | T067-c | admin public guides self-check passed | the Guides tab shows an error |
 | 8 | 037_content_reports | T068-a | content reports self-check passed | the report form on a guide answers "did not send" |
 | 9 | 038_admin_unpublish_guide | T069-a | admin unpublish guide self-check passed | Unpublish errors and nothing changes |
@@ -141,6 +151,10 @@ Strictly one after the other. Each self-check asserts the ones before it.
 | 12 | 040_edge_errors | T071-a | edge errors self-check passed | every AI failure makes one dropped RPC call |
 | 13 | 041_pipeline_health | T072-b | pipeline health self-check passed | the Overview card reads hasRun:false |
 | 14 | 042_parse_failures | T073-a | parse failures self-check passed | structural booking-parse failures go unrecorded |
+| 15 | 045_admin_followups | T268-a | admin followups self-check passed | MFA refusals leave no audit row, no guide view counter, no config visibility switch, the export misses edge errors |
+
+044 is NOT in this list: it rebuilds the Stripe functions, so it goes in
+stage 10 right after 031 (T265-a).
 
 After paste 6, run `select key, public from public.site_config;` and confirm
 only announcement, features and maintenance are public (T066-a).
@@ -183,9 +197,12 @@ migration's work; a feature just stops working. Keep this table:
 | 020 | 038's takedown exception, so every takedown fails | 038 (T069-b) |
 | 020, 037 or 038 | 039's takedown body and report fields | 039 (T070-b) |
 | 016 | 040's entry on the health list | 040 |
+| 020 | 046's invite fix, so every co-planner invite is refused | 046 (T274) |
+| 014, 015, 016, 017, 018, 019, 024, 032, 033, 034 or 036 | parts of 045 | 045 (T268-b; the full list is in 045's header) |
+| 043, after 045 | 043 fails at its first UPDATE, because 045 dropped `note` | do not re-paste 043 after 045 |
 
-The rule behind all six: after pasting any migration by hand, re-paste every
-later migration that names it.
+The rule behind all of these: after pasting any migration by hand, re-paste
+every later migration that names it.
 
 ## 2.6 After the first real content report
 
@@ -881,8 +898,13 @@ supabase secrets set STRIPE_SECRET_KEY=sk_test_... STRIPE_PRICE_TRIP=price_... S
 Paste in this order (022 went in at stage 2): `021_free_tier_once.sql`,
 `025_withdrawal_waiver.sql` (T032-b), `026_oss_threshold.sql` (T033-c),
 `027_paywall_funnel_kinds.sql` (T034-a), then `031_margin_dashboard.sql`
-(T043-a), which needed 026's sales columns. 026 must be in before the webhook
-deploy, because the webhook calls the nine-argument `grant_pass`. Then:
+(T043-a), which needed 026's sales columns, then `044_payments_quota.sql`
+(T265-a, added 2026-10-02). 044 keeps the higher tier, caps pass expiry, adds
+the day ledger and the real Stripe fee. It refuses to run without 021, 022,
+025, 026, 027 and 031. If its notice says pg_cron is off, enable pg_cron and
+run the one cron.schedule line it prints. 044 must be in before both deploys
+below: the webhook calls the twelve-argument `grant_pass` and checkout calls
+`pass_can_buy`. Then:
 
 ```
 supabase functions deploy checkout --project-ref ntssxktaduxzpsmejwyv
