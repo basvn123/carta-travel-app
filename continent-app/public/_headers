@@ -125,10 +125,10 @@
 # The CSP amendments are scheduled as follows:
 #
 #   - cdn.carta-europetravel.com added to img-src (T053, done).
-#   - https://data.carta-europetravel.com will be added to connect-src once
-#     the domain resolves (register row T053-b). T054 built the split; its
-#     scripts/r2/stage-data.mjs refuses a build that points the app at the
-#     data host while this line lacks it.
+#   - https://data.carta-europetravel.com added to connect-src (T290, closing
+#     T053-b) once the domain resolved and the data was on it. T054 built the
+#     split; its scripts/r2/stage-data.mjs refuses a build that points the app
+#     at the data host while this line lacks it.
 #
 # The data-host stanzas above (poi, dest, fares, reach, the layer directories
 # and the three catalogue-sized root files) are also read by
@@ -142,7 +142,7 @@
 # Removing the Wikimedia and Geograph hosts before the ladder ships would blank
 # every photograph in the app. The order is: add, migrate, verify, then remove.
 /*
-  Content-Security-Policy: default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self'; script-src 'self'; worker-src 'self' blob:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https://*.cartocdn.com https://cdn.carta-europetravel.com https://upload.wikimedia.org https://thumb.wikimedia.org https://commons.wikimedia.org https://s0.geograph.org.uk https://s1.geograph.org.uk https://s2.geograph.org.uk https://s3.geograph.org.uk https://tile.openstreetmap.org https://flagcdn.com; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://*.cartocdn.com https://routing.openstreetmap.de https://nominatim.openstreetmap.org https://overpass-api.de https://overpass.kumi.systems https://*.wikipedia.org; manifest-src 'self'; upgrade-insecure-requests
+  Content-Security-Policy: default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self'; script-src 'self'; worker-src 'self' blob:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https://*.cartocdn.com https://cdn.carta-europetravel.com https://upload.wikimedia.org https://thumb.wikimedia.org https://commons.wikimedia.org https://s0.geograph.org.uk https://s1.geograph.org.uk https://s2.geograph.org.uk https://s3.geograph.org.uk https://tile.openstreetmap.org https://flagcdn.com; connect-src 'self' https://data.carta-europetravel.com https://*.supabase.co wss://*.supabase.co https://*.cartocdn.com https://routing.openstreetmap.de https://nominatim.openstreetmap.org https://overpass-api.de https://overpass.kumi.systems https://*.wikipedia.org; manifest-src 'self'; upgrade-insecure-requests
   X-Frame-Options: DENY
   X-Content-Type-Options: nosniff
   Referrer-Policy: strict-origin-when-cross-origin
