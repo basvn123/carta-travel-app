@@ -64,7 +64,11 @@ const show = (cmd) => cmd.map(quote).join(' ');
 
 function run(cmd) {
   console.log(`$ ${show(cmd)}`);
-  const r = spawnSync(cmd[0], cmd.slice(1), { stdio: 'inherit', shell: process.platform === 'win32' });
+  // Only npx needs a shell on Windows (it is npx.cmd). With shell: true Node
+  // joins the arguments unquoted, so a repo path with a space ("Travel App")
+  // or the Cache-Control value would reach rclone split in pieces.
+  const shell = process.platform === 'win32' && cmd[0] === 'npx';
+  const r = spawnSync(cmd[0], cmd.slice(1), { stdio: 'inherit', shell });
   if (r.status !== 0) {
     console.error(`[push-data] failed (exit ${r.status}): ${show(cmd)}`);
     process.exit(r.status || 1);
