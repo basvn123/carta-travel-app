@@ -41,8 +41,10 @@ candidate (a CSS background with no url() never is), so the placeholder can
 never become the largest paint and hide a slow photograph.
 
 Where the pixels come from: the manifest entry's `p` field when derive.py
-has written one (not yet; register row T052-c), else the local 320 WebP rung
-under --img-root, which is the img/ tree a derive run leaves before upload.
+has written one (since T269, every source derived from then on: derive.py
+encodes it with encode_placeholder below while the rung is on disk, so the
+export box needs no img/ tree), else the local 320 WebP rung under
+--img-root, which is the img/ tree a derive run leaves before upload.
 A hero with neither ships without `ph` and the page shows the plain panel
 ground, exactly as today.
 

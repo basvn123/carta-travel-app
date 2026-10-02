@@ -216,33 +216,52 @@ def _derive():
     return derive
 
 
-def r2_delete(title, dry_run):
-    """rclone purge of the five derivative objects for one canonical title.
-    Returns (status, detail). "skipped: ..." is not a failure: a needle that
-    is not a Commons or Geograph identity (an author name, a URL fragment)
-    never had an R2 object to begin with."""
+def _addresses(derive, canon, extra=()):
+    """Every address a title's objects can live under: the plain sha1 of
+    the title, plus any re-upload address (derive.revision_key, T049-i) a
+    manifest named for it. Order kept, duplicates dropped."""
+    out = [derive.sha1_of(canon)]
+    for h in extra or ():
+        if h and h not in out:
+            out.append(h)
+    return out
+
+
+def r2_delete(title, dry_run, extra=()):
+    """rclone purge of the five derivative objects for one canonical title,
+    at every address it has had (`extra`: the re-upload addresses the
+    manifests named). Returns (status, detail). "skipped: ..." is not a
+    failure: a needle that is not a Commons or Geograph identity (an author
+    name, a URL fragment) never had an R2 object to begin with."""
     derive = _derive()
     canon = derive.canonical_title(title)
     if not canon:
         return "skipped: not a Commons or Geograph title", None
-    cmd = derive.r2_purge_cmd(canon)
+    cmds = [derive.r2_purge_cmd(h) for h in _addresses(derive, canon, extra)]
     if dry_run:
-        print("+ " + " ".join(cmd))
+        for cmd in cmds:
+            print("+ " + " ".join(cmd))
         return "dry-run", canon
     if not os.environ.get("RCLONE_CONFIG_R2_ENDPOINT") \
             and not os.environ.get("CARTA_RCLONE"):
         return ("skipped: no RCLONE_CONFIG_R2_* credential on this machine",
                 canon)
-    print("+ " + " ".join(cmd))
-    proc = subprocess.run(cmd, capture_output=True, text=True, check=False)
-    if proc.returncode != 0:
-        # rclone purge on a prefix nothing ever wrote (a title gated out
-        # before it reached R2) is not a failure the operator needs to see
-        # again; anything else is loud.
-        if "directory not found" in (proc.stderr or "").lower():
-            return "ok: nothing was in R2", canon
-        return f"failed: rclone exit {proc.returncode}: {proc.stderr.strip()[:300]}", canon
-    return "ok", canon
+    statuses = []
+    for cmd in cmds:
+        print("+ " + " ".join(cmd))
+        proc = subprocess.run(cmd, capture_output=True, text=True,
+                              check=False)
+        if proc.returncode != 0:
+            # rclone purge on a prefix nothing ever wrote (a title gated out
+            # before it reached R2) is not a failure the operator needs to
+            # see again; anything else is loud.
+            if "directory not found" in (proc.stderr or "").lower():
+                statuses.append("ok: nothing was in R2")
+                continue
+            return (f"failed: rclone exit {proc.returncode}: "
+                    f"{proc.stderr.strip()[:300]}"), canon
+        statuses.append("ok")
+    return ("ok" if "ok" in statuses else statuses[0]), canon
 
 
 def edge_purge_cmd(urls):
@@ -257,7 +276,7 @@ def edge_purge_cmd(urls):
             json.dumps({"files": urls}))
 
 
-def edge_purge(title, dry_run):
+def edge_purge(title, dry_run, extra=()):
     """Cloudflare cache purge of the five cdn_url()s for one canonical
     title. The R2 objects are served with a one-year immutable
     Cache-Control (derive.py IMMUTABLE), so deleting them from the bucket
@@ -267,7 +286,9 @@ def edge_purge(title, dry_run):
     canon = derive.canonical_title(title)
     if not canon:
         return "skipped: not a Commons or Geograph title", None
-    urls = [derive.cdn_url(canon, w, fmt) for fmt, w in derive.LADDER]
+    urls = [derive.cdn_url(h, w, fmt)
+            for h in _addresses(derive, canon, extra)
+            for fmt, w in derive.LADDER]
     method, url, headers, body = edge_purge_cmd(urls)
     if dry_run:
         print(f"+ curl -X {method} {url} "
@@ -310,7 +331,7 @@ def _rehash_manifest(data):
         separators=(",", ":")).encode("utf-8")).hexdigest()
 
 
-def manifest_purge(title, dry_run, work_dir=None):
+def manifest_purge(title, dry_run, work_dir=None, found=None):
     """Drop `title` from `files` in every layer manifest that carries it, so
     the index that points at R2 stops naming an object that (a) may no
     longer be there and (b) must never be re-derived while the ledger holds
@@ -320,13 +341,17 @@ def manifest_purge(title, dry_run, work_dir=None):
 
     Returns {layer: status}. `work_dir` is a directory to read/write local
     manifest copies from instead of R2, for tests and for a dry run with no
-    credential (derive.py's --out layout: <work_dir>/img/manifest/<layer>.json)."""
+    credential (derive.py's --out layout: <work_dir>/img/manifest/<layer>.json).
+
+    `found`, when a list, collects the address (`h`) each removed entry
+    named, so the R2 delete and the edge purge also reach a re-upload's
+    address (T049-i), not only the plain sha1 of the title."""
     derive = _derive()
     canon = derive.canonical_title(title)
     if not canon:
         return {}
     results = {}
-    for layer in sorted(derive.LAYERS):
+    for layer in sorted(derive.ALL_LAYERS):
         key = f"{derive.IMG_PREFIX}/{derive.MANIFEST_DIR}/{layer}.json"
         local_copy = None
         if work_dir is not None:
@@ -360,6 +385,8 @@ def manifest_purge(title, dry_run, work_dir=None):
         if canon not in (data.get("files") or {}):
             results[layer] = "ok: title not in this layer's manifest"
             continue
+        if found is not None:
+            found.append(data["files"][canon].get("h"))
         del data["files"][canon]
         data["count"] = len(data["files"])
         data["inputs_hash"] = _rehash_manifest(data)
@@ -392,10 +419,22 @@ def reach(title, dry_run=False, work_dir=None):
     other succeeding, and the operator needs to see every outcome in one
     pass rather than fix-and-rerun three times. Returns a dict written into
     the ledger row: {"r2": ..., "edge": ..., "manifest": {...}}."""
-    r2_status, canon = r2_delete(title, dry_run)
-    edge_status, _ = edge_purge(title, dry_run)
-    manifest_status = manifest_purge(title, dry_run, work_dir=work_dir)
-    row = {"r2": r2_status, "edge": edge_status, "manifest": manifest_status}
+    # The manifests go first since T269: they name the address each title
+    # is stored under, which after a re-upload is not the plain sha1 of the
+    # title, and the R2 delete and the edge purge need every one of them.
+    # `h` keeps them in the ledger row, so a later `reach` (when no manifest
+    # names the title any more) and derive.py gc still know them.
+    found = []
+    manifest_status = manifest_purge(title, dry_run, work_dir=work_dir,
+                                     found=found)
+    derive = _derive()
+    prior = next((r.get("h") or [] for r in load_ledger()
+                  if r.get("needle") == title), [])
+    extra = [h for h in list(prior) + found if h]
+    r2_status, canon = r2_delete(title, dry_run, extra)
+    edge_status, _ = edge_purge(title, dry_run, extra)
+    row = {"r2": r2_status, "edge": edge_status, "manifest": manifest_status,
+           "h": _addresses(derive, canon, extra) if canon else []}
     print(f"  r2:       {r2_status}")
     print(f"  edge:     {edge_status}")
     for layer, status in manifest_status.items():
@@ -457,6 +496,7 @@ def main():
         row["r2"] = result["r2"]
         row["edge"] = result["edge"]
         row["manifest"] = result["manifest"]
+        row["h"] = result["h"]
         save_ledger(rows)
         if _failed(result):
             print("one or more of R2, the edge purge or a manifest rewrite "
@@ -474,6 +514,7 @@ def main():
             row["r2"] = result["r2"]
             row["edge"] = result["edge"]
             row["manifest"] = result["manifest"]
+            row["h"] = result["h"]
             save_ledger(rows)
         if _failed(result):
             sys.exit(1)

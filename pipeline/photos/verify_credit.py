@@ -70,7 +70,89 @@ CASES = [
 ]
 
 
+def _owes_before_t051(img):
+    """owes_credit as it stood before T051: the author tested with strip()."""
+    lic = (img.get("license") or img.get("lic") or "").strip()
+    if not lic:
+        return True
+    if img.get("no_attribution_required"):
+        return False
+    if credit.NO_CREDIT_LIC.search(lic):
+        return False
+    return not str(img.get("author") or img.get("by") or "").strip()
+
+
+PHOTO_KEYS = ("u", "url", "thumb", "img", "big", "full")
+
+
+def drift(layers):
+    """T051-d: did the clean() change move any published photograph?
+
+    The cycling and dossier exports gate on the same rule, and neither was
+    re-checked when T051 changed it. Their published wire is what the last
+    export let through under the old rule, so every photo record on it that
+    names a licence is run through both versions: a record the old rule
+    shipped and the new one refuses is a photograph the next export will
+    drop. The per-layer count of credited photo records is the baseline the
+    next export's count is compared with.
+
+        python pipeline/photos/verify_credit.py --drift cycling dossier
+
+    Reads CARTA_DATA_ROOT/continent-app/public (default: this checkout)."""
+    import json
+    import os
+    root = Path(os.environ.get("CARTA_DATA_ROOT")
+                or Path(__file__).resolve().parents[2])
+    public = root / "continent-app" / "public"
+    moved_total = 0
+    for layer in layers:
+        seen = moved = 0
+        examples = []
+        for f in sorted((public / layer).rglob("*.json")):
+            try:
+                stack = [json.loads(f.read_text(encoding="utf-8"))]
+            except ValueError:
+                continue
+            while stack:
+                node = stack.pop()
+                if isinstance(node, list):
+                    leaf = node
+                    while isinstance(leaf, list) and leaf:
+                        leaf = leaf[0]
+                    if not isinstance(leaf, (int, float)):   # skip geometry
+                        stack.extend(x for x in node
+                                     if isinstance(x, (list, dict)))
+                    continue
+                if not isinstance(node, dict):
+                    continue
+                stack.extend(v for v in node.values()
+                             if isinstance(v, (list, dict)))
+                if not any(isinstance(node.get(k), str) for k in PHOTO_KEYS):
+                    continue
+                if not any(k in node for k in ("by", "author")):
+                    continue          # not a photo record's own credit
+                rec = dict(node)
+                if "licence" in rec and "license" not in rec:
+                    rec["license"] = rec["licence"]
+                seen += 1
+                if not _owes_before_t051(rec) and credit.owes_credit(rec):
+                    moved += 1
+                    if len(examples) < 3:
+                        examples.append(f"{f.name}: {rec.get('author') or rec.get('by')!r}")
+        moved_total += moved
+        print(f"{layer}: {seen} credited photo records on the wire; "
+              f"{moved} shipped under strip() and are refused under clean()"
+              + (f" (e.g. {', '.join(examples)})" if examples else ""))
+    return moved_total
+
+
 def main():
+    if "--drift" in sys.argv:
+        layers = [a for a in sys.argv[sys.argv.index("--drift") + 1:]
+                  if not a.startswith("-")] or ["cycling", "dossier"]
+        moved = drift(layers)
+        print(f"verdicts moved by T051's clean(): {moved}")
+        return
     failures = []
     for record, may_ship, why in CASES:
         got = not credit.owes_credit(record)

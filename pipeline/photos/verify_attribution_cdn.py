@@ -120,8 +120,16 @@ def part_gate(measure):
     srcs, stats = derive.collect(LAYER)
     stamped = stamped_titles(LAYER)
     man = derive.build_manifest(LAYER, srcs, fake_entries(srcs), "t051-gate")
+    # T051-c: the manifest says "nothing owed" itself (`n`), so the
+    # completeness check reads the manifest alone, and the cache's stamps
+    # are only the cross-check that every one of them arrived.
+    marked = {t for t, e in man["files"].items() if e.get("n")}
+    check(stamped & set(man["files"]) <= marked,
+          f"{len(stamped & set(man['files']) - marked)} stamped files lack "
+          f"the manifest's nothing-owed marker")
+    measure["nothing_owed_marked"] = len(marked)
     bad = [t for t, e in man["files"].items()
-           if not complete(man["credits"][e["c"]], t in stamped)]
+           if not complete(man["credits"][e["c"]], bool(e.get("n")))]
     check(not bad, f"{len(bad)} manifest entries lack a complete credit"
           + (f", first {bad[0]}" if bad else ""))
     check(man["count"] == stats["unique"],
@@ -144,7 +152,7 @@ def part_gate(measure):
                     if t:
                         owing.add(t)
     carried = sum(1 for t in owing if t in man["files"] and complete(
-        man["credits"][man["files"][t]["c"]], t in stamped))
+        man["credits"][man["files"][t]["c"]], bool(man["files"][t].get("n"))))
     measure["published_titles"] = len(published)
     measure["published_owing_credit"] = len(owing)
     measure["owing_with_complete_manifest_credit"] = carried
@@ -425,7 +433,8 @@ def part_run(mpath, tmp, measure, run_dir=None, head=0):
                 if not (Path(run_dir) / key).exists():
                     missing_obj += 1
         pair = man["credits"][e["c"]]
-        if not complete(pair, title in stamped):
+        # `n` on manifests since T269; the cache stamp for older ones.
+        if not complete(pair, bool(e.get("n")) or title in stamped):
             incomplete += 1
         if pair[0].upper().startswith("CC BY-SA"):
             url = derive.cdn_url(e["h"], 640, "avif")
