@@ -724,7 +724,8 @@ Merge policy (cheapest-wins, direct carriers stay primary):
   existing table offline, between runs.
 - Status since T255 (2026-10-01): every fare harvest is retired and its task
   cadence is `manual`, so none of the merges above run on a schedule. The
-  shipped fares are frozen at the last run and the app labels them estimates.
+  shipped fares are frozen at the last run, and since T273 the app shows no
+  figure from them (see "Flight-cost input" below).
 
 Read side: `lib/origins.js` hydrates `s` and `o` verbatim onto each route.
 Per-day `out_o`/`ret_o` and `out_x`/`ret_x` are merge-time fields only: T057
@@ -735,34 +736,43 @@ is only shown at booking. The estimation snapshot gate (`src/estimation/
 snapshot.py`) whitelists record keys and silently skips unknown ones, so the
 provenance fields pass the schema gate without being archived.
 
-### Flight-cost input (T058, written into the schema by T267)
+### Flight-cost input (T058, written into the schema by T267; changed by T273)
 
-Decided in `Execution/P3/T058-flight-cost-input-decision.md`; this is the short
-form to read beside the field list above.
+Carta does not price flights (owner decision, 2026-10-02, recorded in T272 and
+built in T273). The `fares/` slices still ship and still load, untouched, but
+no surface shows or sums a figure from them. What follows replaces T058's
+contract (`Execution/P3/T058-flight-cost-input-decision.md`, kept for history).
 
-- Two ends only. Flight cost enters route optimisation as the flight from the
-  home origin into the first stop and the flight from the last stop back to the
-  home origin. It never enters the ordering of interior stops, the allocation
-  of nights or the price of a leg between two stops. An interior flight is an
-  own leg the traveller enters, and its price is theirs.
-- One resolution order per trip, the same on every surface (Explore's
-  `planeFare` in `runtime_pricing.js` and the planner's `combineTripLegs` in
-  `trip_planner_pricing.js`): (1) a stored day pair on the destination's own
-  routes, the cheapest origin or the traveller's chosen one; (2) a stored day
-  pair into a served airport within `PLANE_REACH_KM`, with the last leg priced
-  in; (3) the `e_out`/`e_ret` band pair for the two months, and only when both
-  directions have a band; (4) nothing, and the flight option is absent. The
-  planner's "take this trip cheaper" date sweep (`cheapestStartDates`) uses
-  step 1 only, because its promise is that every candidate is a stored day.
-- Provenance per direction. The planner's flight carries `into_prov` and
-  `out_of_prov` in the short keys (`s`, `o`, `e`), taken from the winning
-  record and the day's carrier tag; a band reads `{s: "EST", e: 1}`. Today
-  every shown flight is labelled an estimate (T256), because no fare source is
-  live and every stored day is a frozen observation.
-- Harvested-family rule. A band month ships only when the service evidence
-  shows an airline outside the harvested families flying that route that
-  month. The family set tracks the harvests that run: since T255 it is empty,
-  so any cached quote counts as evidence.
+- The only flight figure in a total is the traveller's own. The planner's
+  `ownFlight` (`{ airline, costTotal, mode, outDate, retDate }`, typed in the
+  wizard's "getting there" step or through "Add your fare" on the planner's
+  trip total) becomes `flight.own` with `cost_total`, and that figure is
+  added to the grand total, shown on the receipt and printed in the export as
+  theirs, with no tilde and no estimate tag. An own leg between two stops
+  (`ownLegs`) works the same way.
+- The stored routes still decide where the trip flies. The planner calls
+  `combineTripLegs` for the route (origin, the two airports, the carrier and
+  times as plan facts, the airport transfers) and passes the result through
+  `unpricedFlight` (`trip_planner_pricing.js`), which drops the seat fares,
+  the bag add-on, their sums and the per-direction provenance and sets
+  `priced: false`. The airport transfers stay in the total: they are ground
+  costs Carta prices.
+- `composeTrip` (`runtime_pricing.js`) still resolves a fare to know whether
+  and where a destination can be flown to (stored day, served airport within
+  `PLANE_REACH_KM`, then the `e_out`/`e_ret` band pair), but
+  `plane_grand_total` and `grand_total` leave the flight and the bag add-on
+  out: in plane mode the figure is the airport transfer, a rental where one is
+  needed, and the stay. Its `fare_*` and `flight_*` fields remain for
+  `scripts/verify_flight_estimates.mjs` and nothing on screen reads them.
+- Gone: the "take this trip cheaper" start-date sweep (`cheapestStartDates`),
+  the tilde and "est." tag on flight rows (`flightProv`,
+  `flightBreakdownProv`), the flight share of the Destinations city-day card,
+  and the flight figures in the printed export. The cheaper stop order stays.
+- Data side unchanged. The fields and merge rules above still describe what
+  the wire carries; no fare harvest has run since T255 and none is planned.
+  The harvested-family rule still gates the bands: a band month ships only
+  when the service evidence shows an airline outside the harvested families
+  flying that route that month, and since T255 that family set is empty.
 
 ## Served data split (added 2026-07-12)
 
