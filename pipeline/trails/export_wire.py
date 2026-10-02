@@ -590,6 +590,22 @@ def rg_of(t):
 # The filter block: the six things a walker narrows a list by
 # ---------------------------------------------------------------------------
 
+def wire_difficulty(t):
+    """The one difficulty the wire ships: the published grade where
+    attributes.py has set one, validate.py's three-value effort class only
+    where it has not (T108-f, T286).
+
+    The two used to ride side by side, `difficulty` beside `f.g`, and
+    disagreed on 11,629 of the 17,670 published rows (Mount Korab (9/1):
+    moderate beside very_hard). Every reader that has no `f` (the dossier's
+    around and nearby rows, the region cards, the GPX line) printed the
+    wrong one. The column itself is not touched: validate.py reads it as the
+    tagged grade it checks its own effort class against, and overwriting it
+    in the lab would trip tagged_difficulty_mismatch. Only the wire changes.
+    """
+    return t.get("grade") or t.get("difficulty")
+
+
 def filters_of(t):
     """Everything a chip reads, as codes, on both the card and the page.
 
@@ -800,7 +816,7 @@ def wire_item(t, n_stops, hier=None):
         "distance_m": t["distance_m"],
         "ascent_m": t["ascent_m"],
         "duration_min": t["duration_min"],
-        "difficulty": t["difficulty"],
+        "difficulty": wire_difficulty(t),
         "bbox": [round(t["xmin"], WIRE_DECIMALS), round(t["ymin"], WIRE_DECIMALS),
                  round(t["xmax"], WIRE_DECIMALS), round(t["ymax"], WIRE_DECIMALS)],
         "geometry": t["wire"],
@@ -877,7 +893,7 @@ def detail_item(t, stops, generated_at, hier=None):
         "ascent_m": t["ascent_m"],
         "descent_m": t["descent_m"],
         "duration_min": t["duration_min"],
-        "difficulty": t["difficulty"],
+        "difficulty": wire_difficulty(t),
         "sac_scale": t["sac_scale"],
         "network": t["network"],
         "bbox": [round(t["xmin"], FULL_DECIMALS), round(t["ymin"], FULL_DECIMALS),
