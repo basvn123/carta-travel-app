@@ -2,6 +2,7 @@
 
     python -m src.ingestion.core.ledger --write    regenerate the ledger
     python -m src.ingestion.core.ledger --check    exit 1 if stale or invalid
+    python -m src.ingestion.core.ledger --check-app PATH   attribution.js matches APP_CREDITS
     python -m src.ingestion.core.ledger            print the ledger to stdout
 
 The ledger's prose and rows live in registry.py (HEADER, SECTIONS, SOURCES,
@@ -14,9 +15,12 @@ import argparse
 import sys
 from pathlib import Path
 
-from .registry import (HEADER, ROOT, RUNS, SECTIONS, SOURCES, WIRE_REVIEW,
-                       harvester_scripts, load_all, sources_for, validate)
+import re
 
+from .registry import (APP_CREDITS, HEADER, ROOT, RUNS, SECTIONS, SOURCES, STORABLE,
+                       WIRE_REVIEW, harvester_scripts, load_all, sources_for, validate)
+
+STORABLE_COLUMN = "Storable copy"
 LEDGER = ROOT / "docs" / "tos" / "data_licenses.md"
 GENERATED_BANNER = """\
 <!-- GENERATED FILE. Do not edit: the source is src/ingestion/core/registry.py.
@@ -30,6 +34,12 @@ failure mode) and what each source is licensed for; edit the row there and
 run `python -m src.ingestion.core.ledger --write`. The CI check fails when a
 collector or a `pipeline/harvest_*.py` script exists without its row, when
 this file is stale, or when a cadence here disagrees with `run_pipeline.py`.
+
+The last column of every source table, Storable copy, answers whether Carta may
+keep and serve its own copy of the data (T010's question, written into the
+registry by T310). Its vocabulary is `STORABLE_VOCAB` in the registry; `Verify`
+means the licence cell itself says verify and a person must confirm before a
+stored copy ships, and a `Yes` is a reading of the licence cell, not legal advice.
 """
 
 
@@ -87,6 +97,7 @@ def render(registry=None) -> str:
     registry = load_all() if registry is None else registry
     parts = [GENERATED_BANNER, HEADER.rstrip("\n"), "", GENERATED_NOTE.rstrip("\n"), "",
              _roster(registry)]
+    retired_sections = {sec.id for sec in SECTIONS if sec.retired}
     for section in SECTIONS:
         parts.append("")
         parts.append(f"{section.level} {section.title}")
@@ -97,14 +108,47 @@ def render(registry=None) -> str:
             parts.append("")
             if section.id == "share_alike":
                 rows = [(w.wire, w.ships, w.verdict, w.travels) for w in WIRE_REVIEW]
+                columns = section.columns
             else:
-                rows = [(s.name, s.takes, s.licence, s.attribution, s.share_alike, s.attributed)
-                        for s in SOURCES if s.section == section.id]
-            parts.append(_table(section.columns, rows))
+                if section.id == "retired_rows":
+                    # Retired rows of live chapters close the document (T078-d).
+                    chosen = [s for s in SOURCES if s.retired and s.section not in retired_sections]
+                else:
+                    chosen = [s for s in SOURCES if s.section == section.id
+                              and not (s.retired and section.id not in retired_sections)]
+                rows = [(s.name, s.takes, s.licence, s.attribution, s.share_alike, s.attributed,
+                         STORABLE[s.key]) for s in chosen]
+                columns = section.columns + (STORABLE_COLUMN,)
+            parts.append(_table(columns, rows))
         if section.outro:
             parts.append("")
             parts.append(section.outro.rstrip("\n"))
     return "\n".join(parts).rstrip("\n") + "\n"
+
+
+def _app_entries(text: str) -> list[str]:
+    """The `source:` names of attribution.js, in file order."""
+    return [m.group(2) for m in re.finditer(r"^\s+source: (['\"])(.*?)\1,", text, re.M)]
+
+
+def check_app(path: Path) -> list[str]:
+    """Cross-check continent-app/src/data/attribution.js against APP_CREDITS
+    (T078-b): every app entry is obliged by a ledger row, and every
+    APP_CREDITS entry is in the app file."""
+    entries = _app_entries(Path(path).read_text(encoding="utf-8"))
+    problems = []
+    if len(entries) < 30:
+        problems.append(f"{path}: found only {len(entries)} entries; is this attribution.js?")
+    for name in entries:
+        if name not in APP_CREDITS:
+            problems.append(f"attribution.js entry {name!r} has no APP_CREDITS row in the registry")
+    for name in APP_CREDITS:
+        if name not in entries:
+            problems.append(f"APP_CREDITS names {name!r}, which attribution.js does not have")
+    dupes = sorted({n for n in entries if entries.count(n) > 1})
+    for name in dupes:
+        problems.append(f"attribution.js lists {name!r} more than once")
+    return problems
 
 
 def check(path: Path = LEDGER) -> list[str]:
@@ -126,7 +170,17 @@ def main(argv=None) -> int:
     parser.add_argument("--write", action="store_true", help="write the ledger file")
     parser.add_argument("--check", action="store_true",
                         help="validate the registry and fail if the ledger is stale")
+    parser.add_argument("--check-app", metavar="ATTRIBUTION_JS",
+                        help="check continent-app/src/data/attribution.js against the registry")
     args = parser.parse_args(argv)
+    if args.check_app:
+        problems = check_app(Path(args.check_app))
+        for p in problems:
+            print(f"ERROR: {p}")
+        if problems:
+            return 1
+        print(f"app credits ok: {len(APP_CREDITS)} entries match the registry")
+        return 0
     if args.check:
         problems = check()
         for p in problems:
