@@ -91,6 +91,10 @@ def build_block(anchor, dist_km, level, prev=None):
         "source_place": anchor.get("name"),
         "source_km": round(dist_km, 1),
     }
+    if anchor.get("footprint_km"):
+        # A town's own listings (harvest --footprint, T096-b): same source,
+        # same level, and the radius the median was taken over.
+        block["footprint_km"] = anchor["footprint_km"]
     if anchor.get("capacity_buckets"):
         block["capacity_buckets"] = anchor["capacity_buckets"]
     if anchor.get("seasonality"):
@@ -105,10 +109,25 @@ def build_block(anchor, dist_km, level, prev=None):
 
 
 def assign(dests, anchors):
+    """Measured blocks onto the destinations that sit on an anchor.
+
+    An anchor with a dest_id is that town's own footprint median (T096-b) and
+    goes to that destination only, ahead of any city anchor near it, because
+    it was measured at the town itself. It never takes part in the nearest
+    search, so it can never be lent to a neighbour."""
     n = 0
-    for d in dests.values():
+    own = {a["dest_id"]: a for a in anchors if a.get("dest_id")}
+    anchors = [a for a in anchors if not a.get("dest_id")]
+    for did, d in dests.items():
         clat, clon = city_coords(d)
         if clat is None:
+            continue
+        if did in own:
+            a = own[did]
+            km = haversine_km(clat, clon, a["lat"], a["lon"]) or 0.0
+            d["accommodation"] = build_block(a, km, "city",
+                                             prev=d.get("accommodation"))
+            n += 1
             continue
         near = (None, None)          # (dist, idx) of the nearest anchor
         for i, a in enumerate(anchors):

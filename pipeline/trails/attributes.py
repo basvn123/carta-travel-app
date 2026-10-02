@@ -58,6 +58,8 @@ Usage, from the repo root (DB up: cd tools/trailslab && docker compose up -d):
 """
 
 import argparse
+import json
+import os
 import sys
 import time
 from collections import Counter, defaultdict
@@ -71,9 +73,22 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from db import connect  # noqa: E402
 from schema import ensure  # noqa: E402
 from way_tags import SAC_RANK, VIS_RANK, ferrata_value, sac_value  # noqa: E402
-from names import title_ladder  # noqa: E402
+from names import is_latin, title_ladder  # noqa: E402
 
 SCHEMA_SQL = ROOT / "tools" / "trailslab" / "initdb" / "07_filters.sql"
+
+# Title rung 1, the stored Wikidata label (T107-b). famous_registry.py already
+# keeps every trail-class Wikidata item per country, with its local and English
+# labels, in this cache; it is read here, never written. CARTA_DATA_ROOT points
+# the read at another checkout, as in famous_registry.py and coverage.py.
+DATA_ROOT = Path(os.environ.get("CARTA_DATA_ROOT") or ROOT).resolve()
+WD_LABEL_CACHE = DATA_ROOT / "cache" / "trails_wikidata_famous.json"
+# famous_registry.TRAIL_CLASSES (hiking trail, long-distance trail, via
+# ferrata). A copy, because importing famous_registry pulls the whole fame
+# harvest in; tests/test_pipeline_code_fixes.py checks the two agree. Only a
+# route item's label may title a route: a relation tagged with the QID of the
+# gorge it runs through must not be called after the gorge.
+ROUTE_CLASSES = frozenset({"Q2143825", "Q17008256", "Q1826691"})
 
 # ---------------------------------------------------------------------------
 # 1. Difficulty
@@ -608,7 +623,54 @@ def waymark_ref_of(row):
     return ref
 
 
-def title_of(row, route_type, passes):
+def wikidata_label_of(item):
+    """The label rung 1 may use from one cached Wikidata row, or None.
+
+    English first, then the local label when it is in Latin script: the
+    order names.display_name() gives a highlight. A Cyrillic or Greek label
+    with no English one is no better than the relation's own name, so rung 1
+    passes and rung 2 (which reads the tags in the same order) decides."""
+    if item.get("cls") not in ROUTE_CLASSES:
+        return None
+    en = str(item.get("en") or "").strip()
+    if en:
+        return en
+    label = str(item.get("label") or "").strip()
+    return label if label and is_latin(label) else None
+
+
+def load_wikidata_labels(path=None):
+    """{QID: label} for every route-class item in the registry's Wikidata
+    cache. {} when the cache is absent: rung 1 then never fires, as before."""
+    path = Path(path or WD_LABEL_CACHE)
+    if not path.exists():
+        return {}
+    try:
+        cache = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return {}
+    out = {}
+    for rows in (cache or {}).values():
+        for item in rows or []:
+            label = wikidata_label_of(item)
+            if label and item.get("qid"):
+                out.setdefault(item["qid"], label)
+    return out
+
+
+def labels_for(rows, labels):
+    """The labels a batch of rows may use: a QID tagged on one row only.
+
+    Stage relations sometimes carry the QID of the whole trail; titling every
+    stage "E5" would trade ten specific names for one general one. A QID two
+    or more rows share names the whole, so it is not used for any of them."""
+    seen = Counter(((r.get("raw_tags") or {}).get("wikidata") or "").strip()
+                   for r in rows)
+    return {q: labels[q] for q, n in seen.items()
+            if q and n == 1 and q in labels}
+
+
+def title_of(row, route_type, passes, labels=None):
     """The published title and the ref chip, from the title ladder.
 
     names.title_ladder() is the rule (spec 6.6); this only hands it what the
@@ -622,9 +684,11 @@ def title_of(row, route_type, passes):
     The original always survives in raw_tags, whatever this writes."""
     tags = row.get("raw_tags") or {}
     features = (row.get("highlights") or {}).get("features") or []
+    qid = str(tags.get("wikidata") or "").strip()
     out = title_ladder(tags, title=row.get("title"), features=features,
                        passes=passes, route_type=route_type,
-                       distance_m=row.get("distance_m"))
+                       distance_m=row.get("distance_m"),
+                       wikidata_label=(labels or {}).get(qid))
     return out["title"], out["ref"], out["rung"]
 
 
@@ -693,7 +757,7 @@ UPDATE_SQL = """
 # The pass
 # ---------------------------------------------------------------------------
 
-def derive(row, shape):
+def derive(row, shape, labels=None):
     walk = uphill(row)
     up = oriented(row)
     grade, grade_src, grade_parts = grade_of(up)
@@ -716,7 +780,7 @@ def derive(row, shape):
 
     anchors = (row.get("popularity_details") or {}).get("anchors") or []
     passes = passes_of(anchors)
-    title, ref, title_rung = title_of(row, route_type, passes)
+    title, ref, title_rung = title_of(row, route_type, passes, labels)
 
     return {
         "id": row["id"],
@@ -764,6 +828,9 @@ def main():
     codes = Counter()
     suits = Counter()
     rungs = Counter()
+    wd_labels = load_wikidata_labels()
+    print(f"title rung 1: {len(wd_labels):,} route label(s) from "
+          f"{WD_LABEL_CACHE.name}" + ("" if wd_labels else " (none, rung 1 off)"))
     with connect() as conn:
         ensure(conn, SCHEMA_SQL, verbose=True)
         countries = ([c.strip().upper() for c in args.countries.split(",") if c.strip()]
@@ -775,7 +842,8 @@ def main():
                 continue
             shape_by_id = fetch_shapes(conn, [r["id"] for r in rows])
             conn.commit()
-            records = [derive(r, shape_by_id.get(r["id"])) for r in rows]
+            usable = labels_for(rows, wd_labels)
+            records = [derive(r, shape_by_id.get(r["id"]), usable) for r in rows]
             for row, rec in zip(rows, records):
                 grades[rec["grade"]] += 1
                 shapes[rec["route_type"]] += 1

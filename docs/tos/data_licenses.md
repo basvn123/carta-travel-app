@@ -76,7 +76,7 @@ sees it). A row key links to the source tables that follow.
 | `holidays` | events | Nager.Date public holidays, catalogue countries, current + next year | monthly | `demand_events` | soft | `nager_date` | also part of the weekly ingestion sweep |
 | `school_holidays` | events | OpenHolidays school holidays for the countries it covers | monthly | `demand_events` | soft | `openholidays_api` | also part of the weekly ingestion sweep |
 
-### Harvesters (28)
+### Harvesters (24)
 
 | Script | Cadence | Task | Failure | Ledger rows | Note |
 |---|---|---|---|---|---|
@@ -99,26 +99,22 @@ sees it). A row key links to the source tables that follow.
 | `pipeline/harvest_pois_overture.py` | backfill | `overture` | hard | `overture_maps_places` |  |
 | `pipeline/harvest_pois_wikidata_images.py` | backfill | `poi_images_wikidata` | hard | `wikimedia_commons`, `wikidata_sitelink_counts_live` |  |
 | `pipeline/harvest_protected_areas_osm.py` | backfill | `nature` | hard | `openstreetmap_via_overpass`, `osm_protected_areas` |  |
-| `pipeline/harvest_ryanair_schedules.py` | manual | none | manual | `ryanair_timetable_api` | Ryanair half of the schedule layer; idle since T255 |
 | `pipeline/harvest_tourism_density.py` | quarterly | `crowding` | hard | `eurostat_tour_occ_nin3` |  |
 | `pipeline/harvest_unesco_whc.py` | quarterly | `unesco` | soft | `unesco_world_heritage_centre` |  |
 | `pipeline/harvest_urban_fabric.py` | manual | none | manual | `openstreetmap_via_geofabrik_country` |  |
-| `pipeline/harvest_volotea.py` | manual | `volotea_fares` | hard | `volotea_getminprice_api` | retired (T255) |
-| `pipeline/harvest_vueling.py` | manual | `vueling_fares` | hard | `vueling_apiw_endpoints` | retired (T255) |
 | `pipeline/harvest_wikivoyage.py` | backfill | `guide` | hard | `wikivoyage` |  |
 | `pipeline/harvest_wikivoyage_listings.py` | monthly | `poi_significance` | soft | `wikivoyage`, `wikivoyage_listings` |  |
-| `pipeline/harvest_wizzair.py` | manual | `wizz_fares` | hard | `wizz_air_timetable_api`, `exchangerate_api_open_endpoint` | retired (T255) |
 
 ## 1. Flight fares, direct carrier harvest (primary source)
 
 | Source | What we take | License | Attribution required | Share-alike | Where attributed today |
 |---|---|---|---|---|---|
 | Ryanair farefinder API (`pipeline/harvest_all_origins.py`, `harvest_flight_times.py`) | Cheapest fare per day per route, departure and arrival times | None: public unauthenticated endpoint, direct harvest. Prices are facts; ToS risk accepted and kept polite (rate limits, resumable runs) | No | No | Carrier shown on fare surfaces (provenance code FR) |
-| Wizz Air timetable API (`pipeline/harvest_wizzair.py`) | Per-day fares both directions, converted to EUR | Same as Ryanair: public endpoint, direct harvest | No | No | Carrier shown (provenance code W6) |
-| Vueling apiw endpoints (`pipeline/harvest_vueling.py`) | Route discovery plus full per-day fare calendar | Same: public endpoint, direct harvest | No | No | Carrier shown (provenance code VY) |
-| Volotea getminprice API (`pipeline/harvest_volotea.py`) | Cheapest fare per window per route | Same: public endpoint with a static site key, direct harvest | No | No | Carrier shown (provenance code V7) |
-| ExchangeRate-API open endpoint (open.er-api.com, used by `harvest_wizzair.py`) | Daily EUR conversion table (`cache/fx_rates_eur.json`) | Free open endpoint; terms require a credit link ("Rates by Exchange Rate API"), verify current wording | Yes | No | Home footer, Data sources block |
-| Ryanair timetable API, services-api.ryanair.com/timtbl (`pipeline/harvest_ryanair_schedules.py`) | Published departure and arrival times per directed leg per month; departure times are patched into the fares table as `out_f` / `ret_f`, flight numbers stay in the cache. Row added 2026-10-01 (T078): the script existed without one | Same as the farefinder row: public unauthenticated endpoint, direct harvest; a timetable is facts. Manual tier, idle since the fare harvests were retired (T255, 2026-10-01) | No | No | Carrier shown on fare surfaces (provenance code FR); nothing new to credit |
+| Wizz Air timetable API (`pipeline/archive/harvest_wizzair.py`, RETIRED) | Per-day fares both directions, converted to EUR | Same as Ryanair: public endpoint, direct harvest | No | No | Carrier shown (provenance code W6). RETIRED 2026-10-03 (T311, T267-a): the harvester is in pipeline/archive/ and no task runs it |
+| Vueling apiw endpoints (`pipeline/archive/harvest_vueling.py`, RETIRED) | Route discovery plus full per-day fare calendar | Same: public endpoint, direct harvest | No | No | Carrier shown (provenance code VY). RETIRED 2026-10-03 (T311, T267-a): the harvester is in pipeline/archive/ and no task runs it |
+| Volotea getminprice API (`pipeline/archive/harvest_volotea.py`, RETIRED) | Cheapest fare per window per route | Same: public endpoint with a static site key, direct harvest | No | No | Carrier shown (provenance code V7). RETIRED 2026-10-03 (T311, T267-a): the harvester is in pipeline/archive/ and no task runs it |
+| ExchangeRate-API open endpoint (open.er-api.com, used by `harvest_wizzair.py`) | Daily EUR conversion table (`cache/fx_rates_eur.json`) | Free open endpoint; terms require a credit link ("Rates by Exchange Rate API"), verify current wording | Yes | No | Home footer, Data sources block. RETIRED 2026-10-03 (T311, T267-a): the harvester is in pipeline/archive/ and no task runs it |
+| Ryanair timetable API, services-api.ryanair.com/timtbl (`pipeline/archive/harvest_ryanair_schedules.py`, RETIRED) | Published departure and arrival times per directed leg per month; departure times are patched into the fares table as `out_f` / `ret_f`, flight numbers stay in the cache. Row added 2026-10-01 (T078): the script existed without one | Same as the farefinder row: public unauthenticated endpoint, direct harvest; a timetable is facts. Manual tier, idle since the fare harvests were retired (T255, 2026-10-01) | No | No | Carrier shown on fare surfaces (provenance code FR); nothing new to credit. RETIRED 2026-10-03 (T311, T267-a): the harvester is in pipeline/archive/ and no task runs it |
 
 ## 2. Fare caches and partner APIs
 

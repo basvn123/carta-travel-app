@@ -697,6 +697,81 @@ def wd_articles(qids, wiki_host, verbose=False):
     return out
 
 
+# Spec 6.1 names two more properties for the Wikidata evidence. P402 is the
+# item's OpenStreetMap relation id, an identity join to the wire that needs no
+# name or geometry agreement; P18 is its image on Commons.
+WD_IDENTITY_PROPS = {"P402": "osm_relation", "P18": "image"}
+
+
+def parse_identity(prop, value):
+    """One SPARQL binding value to what the registry stores, or None.
+
+    P402 is a string of digits (a few items hold junk such as a URL or a way
+    id with a prefix, which is not a relation and is dropped). P18 comes back
+    as a Special:FilePath URL; the registry keeps the Commons file name."""
+    value = str(value or "").strip()
+    if not value:
+        return None
+    if prop == "P402":
+        return int(value) if value.isdigit() and int(value) > 0 else None
+    if prop == "P18":
+        name = urllib.parse.unquote(value.rsplit("/", 1)[-1]).replace("_", " ")
+        return name.strip() or None
+    return None
+
+
+def wd_identity(qids, verbose=False):
+    """({qid: {"osm_relation": int, "image": "File name.jpg"}}, unanswered)
+    (T113-g). unanswered is the set of QIDs whose batch got no answer from
+    either endpoint, so the caller can tell "no P402" from "not asked".
+
+    Not in wd_query: one more OPTIONAL there is the cross-product trap that
+    query's docstring describes. One plain triple pattern per property per
+    batch of 300 QIDs instead, the shape wd_articles already sends to both
+    endpoints. An item with several values keeps the smallest relation id and
+    the first file name in sort order, so a re-run gives the same answer."""
+    found, unanswered = {}, set()
+    todo = sorted({q for q in qids if q})
+    for prop, field in WD_IDENTITY_PROPS.items():
+        for i in range(0, len(todo), 300):
+            chunk = todo[i:i + 300]
+            query = (ha.SPARQL_PREFIXES +
+                     "SELECT ?item ?v WHERE { VALUES ?item { " +
+                     " ".join("wd:" + q for q in chunk) + " } "
+                     f"?item wdt:{prop} ?v }}")
+            got = None
+            for endpoint in ha.SPARQL_ENDPOINTS:
+                got = ha.get_json(
+                    endpoint + "?" + urllib.parse.urlencode(
+                        {"format": "json", "query": query}),
+                    base_headers={**ha.HEADERS,
+                                  "Accept": "application/sparql-results+json"})
+                if got is not None and got.get("results") is not None:
+                    break
+                got = None
+            if got is None:
+                unanswered.update(chunk)
+                continue
+            for b in got.get("results", {}).get("bindings", []) or []:
+                try:
+                    qid = b["item"]["value"].rsplit("/", 1)[-1]
+                    val = parse_identity(prop, b["v"]["value"])
+                except Exception:
+                    continue
+                if val is None:
+                    continue
+                found.setdefault(qid, {}).setdefault(field, set()).add(val)
+            time.sleep(0.3)
+    out = {qid: {field: min(vals) for field, vals in fields.items()}
+           for qid, fields in found.items()}
+    if verbose:
+        n_rel = sum(1 for v in out.values() if "osm_relation" in v)
+        n_img = sum(1 for v in out.values() if "image" in v)
+        print(f"        {n_rel:,} OSM relation id(s), {n_img:,} image(s) "
+              f"for {len(todo):,} item(s), {len(unanswered):,} unanswered")
+    return out, unanswered
+
+
 # ISO2 -> the language edition whose pageviews mean most for that country.
 # A French walk is looked up on fr.wikipedia, not en, and using en alone
 # would score every non-anglophone trail at zero.
@@ -727,6 +802,25 @@ COUNTRY_QID = {
 }
 
 
+# Every cached Wikidata row carries this key once its identity was asked for,
+# None when the item has no P402; its absence is what marks an old cache.
+IDENTITY_STAMP = "osm_relation"
+
+
+def add_identity(rows, verbose=False):
+    """Stamp osm_relation and image onto cached Wikidata rows, in place. A
+    failed batch leaves its rows unstamped, so the next run asks again
+    rather than trusting a None that only means the endpoint was down."""
+    got, unanswered = wd_identity([r["qid"] for r in rows], verbose=verbose)
+    for r in rows:
+        if r["qid"] in unanswered:
+            continue
+        ident = got.get(r["qid"]) or {}
+        r[IDENTITY_STAMP] = ident.get("osm_relation")
+        r["image"] = ident.get("image")
+    return rows
+
+
 def wikidata_candidates(countries, refresh=False, offline=False,
                         verbose=False):
     """Coordinate-bearing items of the WD_CLASSES, per country, cached.
@@ -743,6 +837,12 @@ def wikidata_candidates(countries, refresh=False, offline=False,
     classes = sorted(WD_CLASSES)
     for cc in countries:
         if cc in cache and not refresh:
+            # A country cached before T311 has no P402 or P18 on its rows.
+            # Backfill those alone (two cheap batched queries), once, rather
+            # than wait for a --refresh to re-ask the whole class query.
+            if any(IDENTITY_STAMP not in r for r in cache[cc]):
+                add_identity(cache[cc], verbose=verbose)
+                write_json(WD_CACHE, cache)
             continue
         qid = COUNTRY_QID.get(cc)
         if not qid:
@@ -826,6 +926,7 @@ def wikidata_candidates(countries, refresh=False, offline=False,
         for r in rows:
             if arts.get(r["qid"]):
                 r["lang"], r["title"] = lang, arts[r["qid"]]
+        add_identity(rows, verbose=verbose)
         cache[cc] = rows
         write_json(WD_CACHE, cache)
         if verbose:
@@ -990,6 +1091,8 @@ def merge_waymarked(cc, rows, routes, fresh=None):
         rid = (e.get("osm") or {}).get("relation_id")
         if rid:
             by_rel.setdefault(int(rid), row)
+        if e.get("wd_relation_id"):
+            by_rel.setdefault(int(e["wd_relation_id"]), row)
         if e.get("wikidata"):
             by_qid.setdefault(e["wikidata"], row)
         for text in [row.get("name")] + list(row.get("aliases") or []):
@@ -1203,6 +1306,13 @@ def build_country(cc, osm_rows, wd_rows, portals, verbose=False,
             by_key[key] = row
         row["evidence"]["wikidata"] = w["qid"]
         row["evidence"]["sitelinks"] = w["sitelinks"]
+        # P402 and P18 (T113-g). The relation id is identity, not fame: it
+        # never enters the score, only the joins (merge_waymarked here, the
+        # relation match in coverage_report.py).
+        if w.get("osm_relation"):
+            row["evidence"]["wd_relation_id"] = int(w["osm_relation"])
+        if w.get("image"):
+            row["wd_image"] = w["image"]
         row["expected_km"] = w.get("km")
         row["wd_class"] = w.get("cls")
         if w.get("cls") in TRAIL_CLASSES:
