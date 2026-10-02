@@ -7,16 +7,18 @@ import { CacheHitRate } from './CacheHitRate.jsx';
 import { AiModelFallbacks } from './AiModelFallbacks.jsx';
 import { PipelineHealth } from './PipelineHealth.jsx';
 import { EdgeErrors } from './EdgeErrors.jsx';
+import { ParseFailures } from './ParseFailures.jsx';
+import { OssThreshold } from './OssThreshold.jsx';
 import { RecentAudit } from './AuditLog.jsx';
 
 // The Overview tab: how is it going. Pure render. Every figure here was
 // fetched once at unlock by useOverview and useMargin, which live in the
 // shell so that leaving the tab and coming back does not refetch.
-export function Overview({ overview, marginDash, audit }) {
+export function Overview({ overview, marginDash, audit, attention, goTo }) {
   const { t } = useI18n();
   const {
     stats, analytics, funnel, modelReport, cacheReport, aiUsage,
-    pipelineHealth, edgeErrors,
+    pipelineHealth, edgeErrors, parseFailures, oss,
   } = overview;
   const { margin, marginBack, setMarginBack } = marginDash;
   return (
@@ -38,6 +40,20 @@ export function Overview({ overview, marginDash, audit }) {
         <p className="adminpage-err">{t('admin.statsFailed')}</p>
       )}
 
+      {attention && (
+        <div className="adminpage-tiles adminpage-attention">
+          {attention.newReports != null && (
+            <button type="button" className={`adminpage-tile ${attention.newReports > 0 ? 'attn' : ''}`}
+              onClick={() => goTo('reports')}>
+              <b>{attention.newReports}</b><span>{t('admin.attnReports')}</span>
+            </button>
+          )}
+          <button type="button" className={`adminpage-tile ${attention.overdue > 0 ? 'attn' : ''}`}
+            onClick={() => goTo('content')}>
+            <b>{attention.overdue}</b><span>{t('admin.attnOverdue')}</span>
+          </button>
+        </div>
+      )}
       {pipelineHealth && <PipelineHealth health={pipelineHealth} />}
 
       {analytics && (
@@ -138,6 +154,10 @@ export function Overview({ overview, marginDash, audit }) {
       {modelReport && !modelReport.error && <AiModelFallbacks modelReport={modelReport} />}
 
       {edgeErrors && !edgeErrors.error && <EdgeErrors report={edgeErrors} />}
+
+      {parseFailures && !parseFailures.error && <ParseFailures report={parseFailures} />}
+
+      {oss && !oss.error && <OssThreshold report={oss} />}
 
       <RecentAudit audit={audit} />
     </>

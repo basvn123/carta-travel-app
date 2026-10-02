@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useI18n } from '../i18n/index.jsx';
 import { LockIcon } from '../components/Icons.jsx';
-import { ContentSection } from './ContentSection.jsx';
+import { ContentSection } from '../components/admin/ContentSection.jsx';
 import { AdminLock } from '../components/admin/AdminLock.jsx';
 import { MissingTables } from '../components/admin/MissingTables.jsx';
 import { Overview } from '../components/admin/Overview.jsx';
@@ -12,6 +12,7 @@ import { PublicGuides } from '../components/admin/PublicGuides.jsx';
 import { ContentReports } from '../components/admin/ContentReports.jsx';
 import { ConfigManager } from '../components/admin/ConfigManager.jsx';
 import { AuditLog } from '../components/admin/AuditLog.jsx';
+import { rowsNeedingReview, reviewState } from '../lib/overrides.js';
 import { useErrText } from '../components/admin/useErrText.js';
 import { useMargin } from '../components/admin/useMargin.js';
 import { useOverview } from '../components/admin/useOverview.js';
@@ -90,7 +91,7 @@ export function AdminPage({ onClose }) {
   const marginDash = useMargin(unlocked);
   const overview = useOverview(unlocked);
   const { audit, auditBusy, loadAudit } = useAuditLog(unlocked);
-  const queue = useFeedbackInbox(unlocked, overview.refreshAnalytics);
+  const queue = useFeedbackInbox(unlocked, overview.refreshAnalytics, errText);
   const content = useContentOverrides(unlocked);
   const config = useConfigManager(unlocked, errText, loadAudit);
   const list = useUsersList(unlocked, errText);
@@ -105,6 +106,15 @@ export function AdminPage({ onClose }) {
   const decisionHook = useModerationDecision({ errText, reports, complaints, loadAudit });
   const unpublish = { ...unpublishHook, arm: (k) => { decisionHook.cancel(); unpublishHook.arm(k); } };
   const decision = { ...decisionHook, arm: (k) => { unpublishHook.cancel(); decisionHook.arm(k); } };
+
+  // What is waiting for a human, counted without opening its tab (T068-b,
+  // T074-b). New reports come from the Overview's unlock fetch until the
+  // Reports tab has loaded, after which its own count is the fresher one.
+  // Overdue overrides are read off the list the shell already holds.
+  const newReports = reports.reports?.new ?? overview.newReports;
+  const overdue = rowsNeedingReview(content.overrides, Date.now())
+    .filter((r) => reviewState(r, Date.now()) === 'overdue').length;
+  const badges = { reports: newReports || 0, content: overdue };
 
   // ---- the lock -----------------------------------------------------------
   if (!unlocked) {
@@ -128,6 +138,11 @@ export function AdminPage({ onClose }) {
               onClick={() => { setSection(s); setDetail(null); }}
             >
               {t(`admin.nav.${s}`)}
+              {badges[s] > 0 && (
+                <span className="adminpage-badge" aria-label={t('admin.badgeWaiting', { n: badges[s] })}>
+                  {badges[s]}
+                </span>
+              )}
             </button>
           ))}
         </nav>
@@ -142,7 +157,13 @@ export function AdminPage({ onClose }) {
         {detail ? <UserDetail account={account} /> : (
           <>
             {section === 'overview' && (
-              <Overview overview={overview} marginDash={marginDash} audit={audit} />
+              <Overview
+                overview={overview}
+                marginDash={marginDash}
+                audit={audit}
+                attention={{ newReports, overdue }}
+                goTo={(s) => { setSection(s); setDetail(null); }}
+              />
             )}
 
             {section === 'users' && (

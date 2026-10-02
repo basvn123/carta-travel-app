@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { adminListOverrides } from '../../auth/admin.js';
 
-// The override list that src/admin/ContentSection.jsx renders.
+// The override list that src/components/admin/ContentSection.jsx renders.
 export function useContentOverrides(unlocked) {
   const [overrides, setOverrides] = useState([]);
 

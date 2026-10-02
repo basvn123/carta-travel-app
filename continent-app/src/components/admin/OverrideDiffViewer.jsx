@@ -11,6 +11,9 @@ import { useI18n } from '../../i18n/index.jsx';
  * fields the patch actually sets are listed: an override never has an
  * opinion about a field it does not carry, so there is nothing to diff there.
  *
+ * Fields the patch carries that this file does not know by name are listed
+ * under their raw key (extraRows), so the diff cannot fall behind the patch.
+ *
  * `hidden` and `featured` are flags, not text, so they get their own row
  * worded as a sentence rather than forced into a before/after string pair.
  *
@@ -88,7 +91,22 @@ export function OverrideDiffViewer({ base, patch }) {
     { key: 'featured', label: 'diffFieldFeatured', before: 'diffFeaturedBefore', after: 'diffFeaturedAfter', set: p.featured === true },
   ].filter((r) => r.set);
 
-  const nothing = rows.length === 0 && flagRows.length === 0;
+  // Any other key the patch carries is listed by its own name, so a field
+  // added to the patch shape later shows up in the diff instead of saving
+  // silently and never appearing (T076-c). The known keys above keep their
+  // worded labels; these get the raw key and the value as JSON.
+  const known = new Set([...TEXT_FIELDS.map((f) => f.key), 'hidden', 'featured']);
+  const extraRows = Object.keys(p)
+    .filter((key) => !known.has(key) && p[key] !== undefined && p[key] !== null)
+    .map((key) => {
+      const raw = p[key];
+      const after = typeof raw === 'string' ? raw : JSON.stringify(raw);
+      const b = base ? base[key] : undefined;
+      const before = b === undefined || b === null ? '' : (typeof b === 'string' ? b : JSON.stringify(b));
+      return { key, before, after, changed: after !== before };
+    });
+
+  const nothing = rows.length === 0 && flagRows.length === 0 && extraRows.length === 0;
 
   return (
     <div className="diffviewer" aria-label={t('admin.diffTitle')}>
@@ -103,6 +121,15 @@ export function OverrideDiffViewer({ base, patch }) {
           <div className="diffviewer-pair">
             <Cell value={r.before} changed={r.changed} empty={!r.before} isImage={r.isImage} />
             <Cell value={r.after} changed={r.changed} empty={!r.after} isImage={r.isImage} />
+          </div>
+        </div>
+      ))}
+      {extraRows.map((r) => (
+        <div key={r.key} className={`diffrow ${r.changed ? 'changed' : ''}`}>
+          <span className="diffrow-label"><code>{r.key}</code></span>
+          <div className="diffviewer-pair">
+            <Cell value={r.before} changed={r.changed} empty={!r.before} />
+            <Cell value={r.after} changed={r.changed} empty={!r.after} />
           </div>
         </div>
       ))}

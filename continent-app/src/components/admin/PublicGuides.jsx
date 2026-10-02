@@ -21,7 +21,7 @@ import { UnpublishGuide } from './UnpublishGuide.jsx';
 // run".
 export function PublicGuides({ guidesIndex, onOpenUser, unpublish }) {
   const { t } = useI18n();
-  const { guides, busy, error, load } = guidesIndex;
+  const { guides, busy, error, load, loadMore } = guidesIndex;
   const rows = guides?.rows || [];
   return (
     <>
@@ -127,7 +127,16 @@ export function PublicGuides({ guidesIndex, onOpenUser, unpublish }) {
       )}
 
       {!error && rows.length > 0 && (
-        <p className="adminpage-count">{t('admin.guidesCount', { n: guides.total })}</p>
+        <p className="adminpage-count">
+          {rows.length < guides.total
+            ? t('admin.guidesCountShown', { shown: rows.length, n: guides.total })
+            : t('admin.guidesCount', { n: guides.total })}
+        </p>
+      )}
+      {!error && rows.length > 0 && rows.length < guides.total && (
+        <button type="button" className="adminpage-btn" disabled={busy} onClick={loadMore}>
+          {busy ? t('account.pleaseWait') : t('admin.loadMore')}
+        </button>
       )}
       {!error && rows.some((g) => !g.inGallery) && (
         <p className="adminpage-muted">{t('admin.guidesNotInGalleryHint')}</p>

@@ -18,6 +18,7 @@ export function useErrText() {
     if (code === 'confirm_mismatch') return t('admin.errConfirm');
     if (code === 'target_is_admin') return t('admin.errTargetAdmin');
     if (code === 'own_account') return t('admin.errOwn');
+    if (code === 'required_public') return t('admin.errRequiredPublic');
     if (code === 'bad_note') return t('admin.errNote');
     if (code === 'bad_reason') return t('admin.errReason');
     // not_found is not mapped here: admin_get_user answers it for a deleted

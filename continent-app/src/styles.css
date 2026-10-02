@@ -18239,6 +18239,76 @@ button.ai-sched-main:focus-visible {
   overflow: hidden;
   text-overflow: ellipsis;
 }
+/* Audit rows with a previous and a new state (T064-b): the two sides
+   whole, side by side, stacked under 640px. */
+.adminpage-detailcell:has(.adminpage-auditpair) { max-width: none; overflow: visible; }
+.adminpage-auditpair {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  min-width: 260px;
+}
+.adminpage-auditpair > div {
+  min-width: 0;
+  border: 1px solid var(--rule-soft);
+  border-radius: 6px;
+  padding: 6px 8px;
+}
+.adminpage-auditpair pre {
+  margin: 2px 0 0;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  max-height: 160px;
+  overflow: auto;
+  font-family: var(--mono);
+  font-size: 11.5px;
+  color: var(--ink);
+}
+.adminpage-auditlabel { font-size: 11.5px; color: var(--ink-soft); }
+.adminpage-auditrest { grid-column: 1 / -1; margin: 0; overflow-wrap: anywhere; }
+@media (max-width: 640px) {
+  .adminpage-auditpair { grid-template-columns: 1fr; }
+}
+/* Site tab: one row per key with its visibility switch. */
+.adminpage-keylist { list-style: none; margin: 0 0 8px; padding: 0; }
+.adminpage-keylist li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  padding: 8px 0;
+  border-top: 1px solid var(--rule-soft);
+}
+.adminpage-keylist li:first-child { border-top: none; }
+.adminpage-keylist code { font-family: var(--mono); font-size: 13px; }
+.adminpage-keymeta { flex: 1; min-width: 0; margin: 0; font-size: 12.5px; }
+/* Nav count: a number in mono beside the tab name, so a waiting notice is
+   seen without opening the tab. */
+.adminpage-badge {
+  display: inline-block;
+  margin-left: 6px;
+  min-width: 18px;
+  padding: 0 5px;
+  border-radius: 9px;
+  background: var(--accent);
+  color: var(--bg-card);
+  font-family: var(--mono);
+  font-size: 11.5px;
+  line-height: 18px;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+/* Overview: what is waiting for a person. A tile that is a button. */
+.adminpage-attention .adminpage-tile {
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.adminpage-attention .adminpage-tile.attn { border-color: var(--accent); }
+.adminpage-attention .adminpage-tile:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
 .adminpage-namebtn {
   display: flex;
   align-items: center;
@@ -20349,6 +20419,71 @@ button.ai-sched-main:focus-visible {
   margin-top: 2px;
   font-size: 11.5px;
   color: var(--ink-mute);
+}
+
+/* ── The month strip: twelve cells, January to December. Good months are a
+      tinted fill, avoid months a hairline strike, the rest plain. The tint is
+      --green mixed into the card white, because DESIGN.md has no green ground
+      and the spec's --signal-wash belongs to the retired blue palette. ── */
+.mstrip-row { display: flex; align-items: center; gap: 8px; }
+.mstrip-cells {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 2px;
+  flex: 1;
+  max-width: 400px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.mstrip-cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 28px;
+  border-radius: 4px;
+  font-family: var(--mono);
+  font-size: 12px;
+  line-height: 1;
+  color: var(--ink-soft);
+}
+.mstrip-cell.is-good {
+  background: color-mix(in srgb, var(--green) 16%, var(--bg-card));
+  color: var(--green);
+  font-weight: 600;
+}
+.mstrip-cell.is-avoid { color: var(--ink-mute); }
+.mstrip-cell.is-avoid span {
+  text-decoration: line-through;
+  text-decoration-thickness: 1px;
+}
+.mstrip-info {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--ink-mute);
+  cursor: pointer;
+}
+.mstrip-info:hover { color: var(--ink); }
+.mstrip-info:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.mstrip-panel {
+  margin-top: 8px;
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: var(--ink-soft);
+}
+.mstrip-panel[hidden] { display: none; }
+.mstrip-panel p { margin: 0 0 6px; }
+.mstrip-panel p:last-child { margin-bottom: 0; }
+@media (max-width: 420px) {
+  .mstrip-cell { height: 26px; font-size: 11px; }
 }
 
 /* ── The score, shown as its parts. The number is only worth as much as the

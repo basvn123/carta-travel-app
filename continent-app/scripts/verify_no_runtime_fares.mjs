@@ -61,7 +61,7 @@ const CALL_SITES = {
   'src/lib/publishedJson.js': 'own data files: layer pages',
   'src/lib/reach.js': 'own data files: reach tables',
   'src/lib/searchIndex.js': 'own data files: search index',
-  'src/admin/ContentSection.jsx': 'own data files, admin only',
+  'src/components/admin/ContentSection.jsx': 'own data files, admin only',
   'src/lib/destinationPdf.js': 'own fonts for the PDF',
   'src/map/CountryPickerMap.jsx': 'own country_shapes.json',
   'src/map/TripMap.jsx': 'own country_shapes.json',

@@ -9,7 +9,7 @@ import { fmtDateTime } from './format.js';
 // that file for why.
 export function FeedbackInbox({ queue, onOpenUser }) {
   const { t } = useI18n();
-  const { feedback, fbFilter, setFbFilter, fbBusy, loadFeedback, setFeedbackStatus } = queue;
+  const { feedback, fbFilter, setFbFilter, fbBusy, fbErr, loadFeedback, setFeedbackStatus } = queue;
   return (
     <>
       <h1 className="adminpage-h1">{t('admin.nav.feedback')}</h1>
@@ -29,6 +29,7 @@ export function FeedbackInbox({ queue, onOpenUser }) {
           </button>
         ))}
       </div>
+      {fbErr && <p className="adminpage-err" role="alert">{fbErr}</p>}
       {fbBusy && <p className="adminpage-muted">{t('account.pleaseWait')}</p>}
       {!fbBusy && (feedback?.rows || []).length === 0 && (
         <p className="adminpage-muted">{t('admin.fbEmpty')}</p>

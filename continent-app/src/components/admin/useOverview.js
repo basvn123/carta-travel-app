@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import {
   adminAiCacheReport, adminAiModelReport, adminAiUsage, adminAnalytics,
-  adminEdgeErrors, adminHealth, adminPaywallFunnel, adminPipelineHealth, adminStats,
+  adminEdgeErrors, adminHealth, adminListContentReports, adminOssThreshold,
+  adminParseFailures, adminPaywallFunnel, adminPipelineHealth, adminStats,
 } from '../../auth/admin.js';
 
 // Everything the Overview tab shows except the margin, which has its own
@@ -16,6 +17,11 @@ export function useOverview(unlocked) {
   const [aiUsage, setAiUsage] = useState(null);
   const [pipelineHealth, setPipelineHealth] = useState(null);
   const [edgeErrors, setEdgeErrors] = useState(null);
+  const [parseFailures, setParseFailures] = useState(null);
+  const [oss, setOss] = useState(null);
+  // DSA notices still marked new, so the Reports tab can carry a count
+  // without being opened (T068-b). Only the count; the queue loads on its tab.
+  const [newReports, setNewReports] = useState(null);
 
   useEffect(() => {
     if (!unlocked) return;
@@ -28,6 +34,11 @@ export function useOverview(unlocked) {
     adminAiUsage(30).then(setAiUsage).catch(() => setAiUsage(null));
     adminPipelineHealth().then(setPipelineHealth).catch(() => setPipelineHealth(null));
     adminEdgeErrors(30).then(setEdgeErrors).catch(() => setEdgeErrors(null));
+    adminParseFailures(7).then(setParseFailures).catch(() => setParseFailures(null));
+    adminOssThreshold().then(setOss).catch(() => setOss(null));
+    adminListContentReports('new', 1, 0)
+      .then((r) => setNewReports(typeof r?.new === 'number' ? r.new : null))
+      .catch(() => setNewReports(null));
   }, [unlocked]);
 
   // Refreshes after an action elsewhere. A failure keeps the old figure,
@@ -37,7 +48,7 @@ export function useOverview(unlocked) {
 
   return {
     stats, health, analytics, funnel, modelReport, cacheReport, aiUsage,
-    pipelineHealth, edgeErrors,
+    pipelineHealth, edgeErrors, parseFailures, oss, newReports,
     refreshStats, refreshAnalytics,
   };
 }

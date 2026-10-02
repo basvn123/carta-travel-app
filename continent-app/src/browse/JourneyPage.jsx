@@ -7,6 +7,7 @@ import { trailheadDirectionsUrl } from '../lib/trailExport.js';
 import { safeUrl } from '../lib/format.js';
 import { CountryFlag } from '../components/CountryFlag.jsx';
 import { Fold } from './Fold.jsx';
+import { MonthStrip } from '../components/MonthStrip.jsx';
 import { useFolds } from './useFolds.js';
 import {
   ArrowLeftIcon, MapPinIcon, ChevronRightIcon, CameraIcon, AlertIcon,
@@ -208,8 +209,16 @@ export function JourneyPage({ id, gatewayDest, onClose, onSelectDest }) {
       best.monthNames?.length && {
         key: 'best',
         label: t('journey.fBest'),
-        value: best.monthNames.join(', '),
-        note: best.avoid || null,
+        strip: {
+          good: best.months || [],
+          avoid: best.avoidMonths || [],
+          info: (best.note || best.avoid) && (
+            <>
+              {best.note && <p>{best.note}</p>}
+              {best.avoid && <p>{best.avoid}</p>}
+            </>
+          ),
+        },
       },
       budget.totalEur && {
         key: 'budget',
@@ -406,13 +415,18 @@ export function JourneyPage({ id, gatewayDest, onClose, onSelectDest }) {
                   <div key={fact.key} className="bpage-fact">
                     <dt>{fact.label}</dt>
                     <dd className={fact.mono ? 'mono' : ''}>
-                      {fact.value}
-                      {fact.note && <small>{fact.note}</small>}
+                      {fact.strip ? (
+                        <MonthStrip {...fact.strip} />
+                      ) : (
+                        <>
+                          {fact.value}
+                          {fact.note && <small>{fact.note}</small>}
+                        </>
+                      )}
                     </dd>
                   </div>
                 ))}
               </dl>
-              {trip.bestPeriod?.note && <p className="bpage-note">{trip.bestPeriod.note}</p>}
             </Fold>
           )}
 

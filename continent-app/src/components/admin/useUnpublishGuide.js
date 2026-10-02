@@ -9,8 +9,8 @@ import { useI18n } from '../../i18n/index.jsx';
 //
 // It is armed in two steps, the way suspend and delete are on an account:
 // the first click opens the form with the reason field, the second sends.
-// The reason is required, because it is the only record of why until the
-// statement of reasons exists (T070). A takedown never deletes: the plan
+// The reason is required: it goes into the audit log and is the text of the
+// statement of reasons the owner receives (T070). A takedown never deletes: the plan
 // goes private and stays in its owner's account.
 //
 // The notice is shown at the top of the tab, not on the row: after the

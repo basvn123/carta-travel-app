@@ -26,7 +26,7 @@ import { Sparkbars } from './Sparkbars.jsx';
  * Deliberately not i18n'd, the same as CacheHitRate above and for the same
  * reason: this panel has one reader.
  *
- * Kept self-contained so T062 can lift it into its own module unchanged.
+ * Self-contained: it takes its report as a prop and holds no state.
  */
 export function AiUsage({ report }) {
   const cap = report.globalCap || 200;

@@ -48,7 +48,7 @@ import { chromium } from 'playwright';
 import { spawn, spawnSync } from 'node:child_process';
 import { mkdirSync } from 'node:fs';
 
-const PORT = Number(process.env.CARTA_PORT) || 4192;
+const PORT = Number(process.env.CARTA_PORT) || Number(process.env.VERIFY_PORT) || 4192;
 const BASE = `http://127.0.0.1:${PORT}`;
 const SHOTS = 'scripts/shots';
 mkdirSync(SHOTS, { recursive: true });
@@ -496,6 +496,7 @@ async function stubSupabase(page, state, opts = {}) {
   await page.route('**/rest/v1/rpc/admin_set_feedback_status*', (route) => {
     const body = JSON.parse(route.request().postData() || '{}');
     state.fbStatusCalls.push(body);
+    if (state.fbFail) return json(route, { error: 'slow_down' });
     const row = state.feedback.find((f) => f.id === body.p_id);
     if (row) row.status = body.p_status;
     return json(route, { ok: true });
@@ -543,7 +544,8 @@ async function stubSupabase(page, state, opts = {}) {
   });
   await page.route('**/rest/v1/rpc/admin_list_content_reports*', (route) => {
     const body = JSON.parse(route.request().postData() || '{}');
-    state.reportCalls.push(body);
+    // The Overview's waiting-count read (limit 1) is not a Reports tab load.
+    if (body.p_limit !== 1) state.reportCalls.push(body);
     if (state.reportsFail) return json(route, { error: 'could not find the function public.admin_list_content_reports' });
     const live = state.reports.map((r) => ({ ...r, stillPublic: state.guides.some((g) => g.id === r.planId) }));
     const rows = live.filter((r) => !body.p_status || r.status === body.p_status);
@@ -591,9 +593,61 @@ async function stubSupabase(page, state, opts = {}) {
     total: 2,
     rows: [
       { id: 2, action: 'set_tier', actor: 'owner', target: 'zoe_travels', detail: { tier: 'trip' }, createdAt: '2026-08-18T14:00:00Z' },
-      { id: 1, action: 'set_config', actor: 'owner', target: null, detail: { key: 'announcement' }, createdAt: '2026-08-17T09:00:00Z' },
+      // T270: a config change carries previous and new, shown side by side.
+      {
+        id: 1, action: 'set_config', actor: 'owner', target: null,
+        detail: {
+          key: 'announcement',
+          previous: { exists: true, value: { enabled: false, text: 'OLD-TEXT-MARKER' } },
+          new: { exists: true, value: { enabled: true, text: 'NEW-TEXT-MARKER' } },
+        },
+        createdAt: '2026-08-17T09:00:00Z',
+      },
     ],
   }));
+  // T270: the 045 admin reads and the guide pages.
+  await page.route('**/rest/v1/rpc/admin_list_config*', (route) => json(route, {
+    rows: [
+      { key: 'announcement', value: {}, public: true, required: true, updatedAt: null, by: null },
+      { key: 'beta_banner', value: {}, public: state.betaPublic, required: false, updatedAt: null, by: 'owner' },
+    ],
+  }));
+  await page.route('**/rest/v1/rpc/admin_set_config_public*', (route) => {
+    const body = JSON.parse(route.request().postData() || '{}');
+    state.pubCalls.push(body);
+    if (body.p_key === 'beta_banner') state.betaPublic = body.p_public;
+    return json(route, { ok: true, changed: true });
+  });
+  // Registered after the moderation fixture above: it only answers while
+  // guideBulk is on (the 130-row paging check), else it falls through.
+  await page.route('**/rest/v1/rpc/admin_list_public_guides*', (route) => {
+    if (!state.guideBulk) return route.fallback();
+    const body = JSON.parse(route.request().postData() || '{}');
+    state.guidePages.push(body);
+    const off = body.p_offset || 0;
+    const lim = body.p_limit || 100;
+    const all = Array.from({ length: 130 }, (_, n) => ({
+      id: `g${n}`, label: `Guide ${n}`, userId: USERS[0].id, email: 'zoe@example.com',
+      handle: 'zoe_travels', displayName: 'Zoe', avatarEmoji: null, inGallery: true,
+      publishedAt: '2026-08-01T10:00:00Z', views: n, cities: ['Porto'],
+    }));
+    return json(route, {
+      total: all.length, limit: lim, offset: off, viewsCounted: true, rows: all.slice(off, off + lim),
+    });
+  });
+  await page.route('**/rest/v1/rpc/admin_parse_failures*', (route) => json(route, {
+    days: 7, retentionDays: 30, total: 6, users: 3,
+    byKind: [{ kind: 'pdf', n: 4, users: 2 }, { kind: 'url', n: 2, users: 1 }],
+    byCheck: [{ check: 'json_parse', n: 5, users: 3 }, { check: 'empty_result', n: 1, users: 1 }],
+    daily: [{ day: '2026-09-30', n: 2 }, { day: '2026-10-01', n: 4 }],
+  }));
+  await page.route('**/rest/v1/rpc/admin_oss_threshold*', (route) => json(route, {
+    thresholdCents: 1000000, years: [], currentYear: 2026, currentCents: 289700,
+    currentPct: 29.0, breached: false, unknownCountry: 2, unknownAmount: 0,
+    currencies: [{ currency: 'eur', sales: 12 }],
+  }));
+  // T270's count-badge stub for admin_list_content_reports is dropped: the T266
+  // moderation fixture above already returns new: 2 and records its calls.
   await page.route('**/rest/v1/site_config*', (route) => {
     const url = route.request().url();
     if (url.includes('key=eq.')) return json(route, { value: state.siteConfig.announcement });
@@ -644,6 +698,7 @@ try {
     history: [], missing: ['day_plans'], listFails: false,
     fbCalls: [], fbStatusCalls: [], submitCalls: [],
     ovListCalls: [], ovSetCalls: [],
+    pubCalls: [], guidePages: [], guideBulk: false, betaPublic: false, fbFail: false,
     // One override already past its review date, in a layer the grid does
     // not open on, so the review list is the only place it can surface.
     overrides: [{
@@ -712,9 +767,13 @@ try {
 
   // ---- 2. Overview, including what the database is missing.
   console.log('2. overview');
-  const tiles = await page.locator('.adminpage-tiles').first().locator('.adminpage-tile').count();
+  // The waiting-counts strip (.adminpage-attention) can land first; the eight
+  // stat tiles are the other .adminpage-tiles block.
+  const statTiles = page.locator('.adminpage-tiles:not(.adminpage-attention)').first();
+  await statTiles.waitFor({ timeout: 15000 });
+  const tiles = await statTiles.locator('.adminpage-tile').count();
   if (tiles !== 8) fail(`expected 8 tiles, found ${tiles}`);
-  if ((await page.locator('.adminpage-tile b').first().innerText()).trim() !== '3') {
+  if ((await statTiles.locator('.adminpage-tile b').first().innerText()).trim() !== '3') {
     fail('the accounts tile does not carry the stubbed count');
   }
   const warn = page.locator('.adminpage-warn');
@@ -1051,6 +1110,16 @@ try {
     fail('marking a message done never reached the RPC');
   }
   ok('the inbox filters, shows the context, and marks a message done');
+
+  // T065-d: a refused status change says why instead of failing silently.
+  state.fbFail = true;
+  await page.locator('.adminpage-fb').first().locator('.adminpage-btn', { hasText: /Mark (open|done)/ }).first().click();
+  await page.locator('.adminpage-err[role="alert"]').waitFor({ timeout: 6000 });
+  if (!/Too many admin actions/.test(await page.locator('.adminpage-err[role="alert"]').innerText())) {
+    fail('a slow_down on a feedback status shows no message');
+  }
+  state.fbFail = false;
+  ok('a refused feedback status change shows its reason');
 
   // ---- 8f. Guides, Reports, takedowns and complaints (T067 to T070).
   // These tabs shipped with scratch-copy checks only; this is the permanent
@@ -1438,7 +1507,7 @@ try {
 
   await page.locator('.adminpage-lock-input.mono').fill('beta_map');
   await page.locator('.adminpage-btn', { hasText: 'Add flag' }).click();
-  const sw = page.locator('.adminpage-switch');
+  const sw = page.locator('.adminpage-flags .adminpage-switch');
   if (await sw.getAttribute('aria-checked') !== 'false') fail('a new flag is not off by default');
   await sw.click();
   await page.locator('.adminpage-btn', { hasText: 'Publish flags' }).click();
@@ -1459,6 +1528,64 @@ try {
     fail('the audit table does not name the action');
   }
   ok('the audit table renders every column');
+  const pair = page.locator('.adminpage-auditpair');
+  if (await pair.count() !== 1) fail('a row with previous and new does not draw the two sides');
+  const pairText = await pair.innerText();
+  if (!/OLD-TEXT-MARKER/.test(pairText) || !/NEW-TEXT-MARKER/.test(pairText)) {
+    fail('the audit pair cuts off the previous or the new value');
+  }
+  ok('the audit pair shows previous beside new, whole');
+
+  // T270 Overview: waiting counts, OSS figure, parse failures.
+  console.log('10b. waiting counts and new cards');
+  // Earlier steps actioned the seeded reports, and the waiting counts are read
+  // once per unlock: reseed, then unlock afresh so two reports are new again.
+  seedModeration(state);
+  await page.goto(`${BASE}/?o=CRL`);
+  await page.locator('.account-avatar-btn').first().waitFor({ timeout: 120000 });
+  await openPanel(page);
+  await openAdmin(page);
+  await gotoSection(page, 'Overview');
+  await page.locator('.adminpage-attention').waitFor({ timeout: 10000 });
+  if (!/2\s*New reports/.test((await page.locator('.adminpage-attention').innerText()).replace(/\n/g, ' '))) {
+    fail('the Overview does not show the new-reports count');
+  }
+  if (!/^2$/.test((await page.locator('.adminpage-navbtn', { hasText: 'Reports' }).locator('.adminpage-badge').innerText()).trim())) {
+    fail('the Reports tab carries no count badge');
+  }
+  await page.locator('.adminpage-card', { hasText: 'Import parse failures' }).waitFor({ timeout: 8000 });
+  const oss = await page.locator('.adminpage-card', { hasText: 'One Stop Shop' }).innerText();
+  if (!/29\.0%/.test(oss) || !/floor/.test(oss)) fail(`the OSS card is wrong: ${oss}`);
+  ok('new-reports count, nav badge, parse-failure card and OSS card render');
+
+  // T270 Site: the visibility switch, and a required key that cannot flip.
+  await gotoSection(page, 'Site');
+  await page.locator('.adminpage-keylist').waitFor({ timeout: 8000 });
+  const reqSwitch = page.locator('.adminpage-keylist li', { hasText: 'announcement' }).locator('[role="switch"]');
+  if (!(await reqSwitch.isDisabled())) fail('a key the app reads signed out can be made private');
+  await page.locator('.adminpage-keylist li', { hasText: 'beta_banner' }).locator('[role="switch"]').click();
+  await page.waitForTimeout(600);
+  if (!state.pubCalls.some((c) => c.p_key === 'beta_banner' && c.p_public === true)) {
+    fail('the visibility switch never reached admin_set_config_public');
+  }
+  ok('the Site tab flips a key public, and locks the required ones');
+
+  // T270 Guides: the first page is 100, Show more appends the rest.
+  state.guideBulk = true;
+  await gotoSection(page, 'Guides');
+  await page.locator('.adminpage-table tbody tr').first().waitFor({ timeout: 8000 });
+  if (await page.locator('.adminpage-table tbody tr').count() !== 100) fail('the first Guides page is not 100 rows');
+  await page.locator('.adminpage-btn', { hasText: 'Show more' }).click();
+  await page.waitForTimeout(800);
+  if (await page.locator('.adminpage-table tbody tr').count() !== 130) fail('Show more did not append the last 30');
+  if (!state.guidePages.some((c) => c.p_offset === 100)) fail('Show more did not ask for offset 100');
+  state.guideBulk = false;
+  ok('the Guides tab pages with Show more');
+  await gotoSection(page, 'Content');
+  await page.locator('.adminpage-btn', { hasText: 'Re-check catalogue' }).waitFor({ timeout: 8000 });
+  ok('the Content tab offers a catalogue re-check');
+  await gotoSection(page, 'Audit');
+  await page.locator('.adminpage-table').waitFor({ timeout: 8000 });
 
   // Escape closes the page, like every other overlay.
   await page.keyboard.press('Escape');
@@ -1575,6 +1702,29 @@ try {
   ok('380px: the override editor, with the diff viewer, status, review date and reason, fits');
   await page4.locator('.diffviewer').screenshot({ animations: 'disabled', path: `${SHOTS}/admin-content-diff-380.png` });
   await page4.locator('.adminpage-reviewset').screenshot({ animations: 'disabled', path: `${SHOTS}/admin-content-editor-380.png` });
+
+  // T270 screens at 380px: overview counts, Site visibility, Guides, Audit pair.
+  const spillOf = () => page4.evaluate(() => ({
+    scrolls: document.documentElement.scrollWidth > window.innerWidth + 1,
+    wide: [...document.querySelectorAll('.adminpage-body *')]
+      .filter((el) => el.getBoundingClientRect().right > window.innerWidth + 1
+        && !el.closest('.adminpage-tablewrap'))
+      .map((el) => `${el.tagName.toLowerCase()}.${el.className}`.slice(0, 50)).slice(0, 5),
+  }));
+  await page4.locator('.adminpage-editoractions .adminpage-btn').first().click();
+  await page4.locator('.adminpage-editor').waitFor({ state: 'detached', timeout: 3000 });
+  for (const [name, wait] of [
+    ['Overview', '.adminpage-attention'], ['Site', '.adminpage-keylist'],
+    ['Guides', '.adminpage-table tbody tr'], ['Audit', '.adminpage-auditpair'],
+  ]) {
+    await page4.locator('.adminpage-navbtn:visible', { hasText: name }).first().click();
+    await page4.locator(wait).first().waitFor({ timeout: 10000 });
+    await page4.waitForTimeout(400);
+    const s = await spillOf();
+    if (s.scrolls || s.wide.length) fail(`${name} spills at 380px: ${s.wide.join(' | ')}`);
+    await page4.screenshot({ animations: 'disabled', path: `${SHOTS}/admin-${name.toLowerCase()}-t270-380.png`, fullPage: true });
+  }
+  ok('380px: Overview counts, Site visibility, Guides and the audit pair fit');
   // T067 to T070 at 380px: the Guides table, the Reports queue and the open
   // forms must not push the page sideways. Starts from freshly seeded rows.
   seedModeration(state);

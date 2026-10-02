@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import { adminSetConfig } from '../../auth/admin.js';
+import { useCallback, useEffect, useState } from 'react';
+import { adminListConfig, adminSetConfig, adminSetConfigPublic } from '../../auth/admin.js';
 import { supabase } from '../../lib/supabaseClient.js';
 
 // site_config as the Site tab edits it: maintenance, the notice, the flags.
@@ -23,6 +23,35 @@ export function useConfigManager(unlocked, errText, loadAudit) {
   const [flagsBusy, setFlagsBusy] = useState(false);
   const [flagsSaved, setFlagsSaved] = useState(false);
   const [flagsErr, setFlagsErr] = useState('');
+
+  // Every key with its public flag (045). null until read, and left null
+  // when the function is missing, so the visibility card only draws once the
+  // migration is pasted (T066-b).
+  const [keyRows, setKeyRows] = useState(null);
+  const [visBusy, setVisBusy] = useState('');
+  const [visErr, setVisErr] = useState('');
+
+  const loadKeys = useCallback(async () => {
+    try {
+      const res = await adminListConfig();
+      setKeyRows(Array.isArray(res?.rows) ? res.rows : null);
+    } catch { setKeyRows(null); }
+  }, []);
+
+  useEffect(() => {
+    if (!unlocked) return;
+    loadKeys();
+  }, [unlocked, loadKeys]);
+
+  const setKeyPublic = async (key, isPublic) => {
+    setVisBusy(key); setVisErr('');
+    try {
+      await adminSetConfigPublic(key, isPublic);
+      await loadKeys();
+      loadAudit(25);
+    } catch (e) { setVisErr(errText(e)); }
+    setVisBusy('');
+  };
 
   useEffect(() => {
     if (!unlocked) return;
@@ -88,5 +117,6 @@ export function useConfigManager(unlocked, errText, loadAudit) {
     noticeBusy, noticeSaved, setNoticeSaved, noticeErr,
     flags, setFlags, newFlag, setNewFlag, flagsBusy, flagsSaved, setFlagsSaved, flagsErr,
     saveNotice, saveMaintenance, saveFlags,
+    keyRows, visBusy, visErr, setKeyPublic,
   };
 }

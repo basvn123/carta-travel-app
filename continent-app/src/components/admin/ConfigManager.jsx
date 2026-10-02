@@ -11,6 +11,7 @@ export function ConfigManager({ config }) {
     noticeBusy, noticeSaved, setNoticeSaved, noticeErr,
     flags, setFlags, newFlag, setNewFlag, flagsBusy, flagsSaved, setFlagsSaved, flagsErr,
     saveNotice, saveMaintenance, saveFlags,
+    keyRows, visBusy, visErr, setKeyPublic,
   } = config;
   return (
     <>
@@ -157,6 +158,35 @@ export function ConfigManager({ config }) {
           </button>
         </section>
       </div>
+
+      {keyRows && keyRows.length > 0 && (
+        <section className="adminpage-card">
+          <h3 className="adminpage-h3">{t('admin.visTitle')}</h3>
+          <p className="adminpage-muted">{t('admin.visHint')}</p>
+          <ul className="adminpage-keylist">
+            {keyRows.map((k) => (
+              <li key={k.key}>
+                <code>{k.key}</code>
+                <span className="adminpage-muted adminpage-keymeta">
+                  {k.required ? t('admin.visRequired') : (k.by ? `@${k.by}` : '')}
+                </span>
+                <button
+                  type="button"
+                  role="switch"
+                  aria-checked={!!k.public}
+                  aria-label={`${k.key}: ${k.public ? t('admin.visPublic') : t('admin.visPrivate')}`}
+                  className={`adminpage-switch ${k.public ? 'on' : ''}`}
+                  disabled={k.required || visBusy === k.key}
+                  onClick={() => setKeyPublic(k.key, !k.public)}
+                >
+                  {k.public ? t('admin.visPublic') : t('admin.visPrivate')}
+                </button>
+              </li>
+            ))}
+          </ul>
+          {visErr && <p className="adminpage-err" role="alert">{visErr}</p>}
+        </section>
+      )}
     </>
   );
 }

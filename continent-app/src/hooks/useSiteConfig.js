@@ -1,9 +1,10 @@
 /**
  * Live site configuration, read from public.site_config (migration 014).
  *
- * The table is world-readable and tiny: a handful of jsonb knobs (the
- * announcement banner, feature flags) that the admin panel can change without
- * a deploy. One read per page load, module-cached, and every failure mode
+ * Only the rows marked public are readable here (migration 045 added the
+ * public flag; announcement, maintenance and features are always public). The
+ * table is tiny: a handful of jsonb knobs (the announcement banner, feature
+ * flags) that the admin panel can change without a deploy. One read per page load, module-cached, and every failure mode
  * degrades to "no config" rather than an error, because a banner is never
  * worth blocking the app for.
  */

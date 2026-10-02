@@ -158,10 +158,18 @@ export const adminAiUsage = (days = 30) =>
  * unknownCountry and unknownAmount. Those two matter, because a total built
  * from a ledger with holes in it is a floor and not the answer.
  *
- * No UI reads this yet. It is called from the SQL editor or from a later
- * admin task; the query is documented in Execution/P2/T033-stripe-tax-and-oss.md.
+ * The Overview's OssThreshold card reads this (T270); the query is documented
+ * in Execution/P2/T033-stripe-tax-and-oss.md.
  */
 export const adminOssThreshold = () => call('admin_oss_threshold');
+
+/**
+ * Structural import failures (migration 042): the reply arrived and a check
+ * refused it. { days, retentionDays, total, users, byKind, byCheck, daily }.
+ * Counts only. The window is capped at the 30-day retention.
+ */
+export const adminParseFailures = (days = 7) =>
+  call('admin_parse_failures', { p_days: days });
 
 /**
  * One calendar month of unit economics (migration 031), Europe/Amsterdam.
@@ -219,12 +227,22 @@ export const adminSetFeedbackStatus = (id, status) =>
  * 036). The email is read inside the SECURITY DEFINER function; the client
  * never touches auth.users.
  *
- * Returns { total, viewsCounted, rows }. viewsCounted is false because no
- * view counter exists in the schema yet, so every row's views is 0; the tab
- * says so rather than presenting 0 as a measurement. No arguments and no
- * limit: the plan asks for all of them (register row T067-b for paging).
+ * Returns { total, viewsCounted, rows }. Before migration 045 viewsCounted is
+ * false (no counter exists, every row's views is 0) and the tab says so
+ * rather than presenting 0 as a measurement. From 045 it is true, and the
+ * list pages: limit (default 100, at most 500) and offset, like the users
+ * list. Before 045 the function takes no arguments and PostgREST answers
+ * PGRST202 to these two; the call is then repeated bare, which returns every
+ * guide, so the Guides tab works on either side of the paste.
  */
-export const adminListPublicGuides = () => call('admin_list_public_guides');
+export const adminListPublicGuides = async (limit = 100, offset = 0) => {
+  try {
+    return await call('admin_list_public_guides', { p_limit: limit, p_offset: offset });
+  } catch (e) {
+    if (e?.code === 'PGRST202') return call('admin_list_public_guides');
+    throw e;
+  }
+};
 
 /**
  * The DSA notice queue: reports visitors filed against public guides through

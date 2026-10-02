@@ -1,14 +1,14 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { adminSetOverride } from '../auth/admin.js';
-import { useI18n } from '../i18n/index.jsx';
-import { SearchIcon } from '../components/Icons.jsx';
-import { dataUrl } from '../lib/dataHost.js';
+import { adminSetOverride } from '../../auth/admin.js';
+import { useI18n } from '../../i18n/index.jsx';
+import { SearchIcon } from '../Icons.jsx';
+import { dataUrl } from '../../lib/dataHost.js';
 import {
   OVERRIDE_STATUSES, MIN_REASON_CHARS, BACKFILL_REASON, defaultReviewDate, fromDateInput, reviewDateBounds,
   reviewProblem, reviewState, rowsNeedingReview, toDateInput, daysOverdue, fetchValidItemIds, orphanOverrides,
-} from '../lib/overrides.js';
-import { fmtDate } from '../components/admin/format.js';
-import { OverrideDiffViewer } from '../components/admin/OverrideDiffViewer.jsx';
+} from '../../lib/overrides.js';
+import { fmtDate } from './format.js';
+import { OverrideDiffViewer } from './OverrideDiffViewer.jsx';
 
 // Reviewing the catalogue, and correcting it.
 //
@@ -97,19 +97,23 @@ export function ContentSection({ overrides, onOverridesChanged, errText }) {
   const [saveBusy, setSaveBusy] = useState(false);
   const [saveErr, setSaveErr] = useState('');
 
-  // Orphan patch detection: fetch valid item IDs from the catalogue once,
-  // then keep them to filter orphans from overrides.
+  // Orphan patch detection: the valid item IDs come from the catalogue files,
+  // read once per page session (fetchValidItemIds caches them, so switching
+  // tabs does not refetch every country file, T075-a) and again on the
+  // Re-check button, for an admin who knows a deploy just landed.
   const [validIds, setValidIds] = useState(null);
-  useEffect(() => {
-    let live = true;
-    fetchValidItemIds().then((ids) => {
-      if (live) setValidIds(ids);
+  const [recheckBusy, setRecheckBusy] = useState(false);
+  const [copied, setCopied] = useState(false);
+  const recheck = useCallback((refresh) => {
+    setRecheckBusy(true);
+    return fetchValidItemIds({ refresh }).then((ids) => {
+      setValidIds(ids);
     }).catch(() => {
-      // Silently fail: orphan detection is best-effort, never blocking.
-      if (live) setValidIds({});
-    });
-    return () => { live = false; };
+      // Best-effort, never blocking. An unread layer is unknown, not orphaned.
+      setValidIds({});
+    }).finally(() => setRecheckBusy(false));
   }, []);
+  useEffect(() => { recheck(false); }, [recheck]);
 
   const layer = LAYERS.find((l) => l.key === layerKey) || LAYERS[0];
 
@@ -313,6 +317,24 @@ export function ContentSection({ overrides, onOverridesChanged, errText }) {
             {orphanRows.length > 1 && t('admin.orphanTitle', { n: orphanRows.length })}
           </h2>
           <p className="adminpage-muted">{t('admin.orphanHint')}</p>
+          <div className="adminpage-row">
+            <button
+              type="button"
+              className="adminpage-btn"
+              onClick={() => {
+                // layer, country (when known), item id, one per line: the
+                // list an admin pastes into a ticket or a clean-up script.
+                const text = orphanRows
+                  .map((r) => [r.layer, r.country || '-', r.itemId].join('\t'))
+                  .join('\n');
+                try {
+                  navigator.clipboard.writeText(text).then(() => setCopied(true));
+                } catch { /* clipboard blocked: the rows are on screen */ }
+              }}
+            >
+              {copied ? t('admin.orphanCopied') : t('admin.orphanCopy')}
+            </button>
+          </div>
           <ul className="adminpage-reviewlist">
             {orphanRows.map((r) => (
               <li key={`${r.layer}:${r.itemId}`}>
@@ -326,8 +348,9 @@ export function ContentSection({ overrides, onOverridesChanged, errText }) {
                     <span className="adminpage-reviewnote">{r.authorNote}</span>
                   </span>
                   <span className="adminpage-reviewfacts">
-                    <span className="adminpage-chip">orphan</span>
+                    <span className="adminpage-chip">{t('admin.orphanChip')}</span>
                     <span className="adminpage-reviewlayer">{t(`admin.layer.${r.layer}`)}</span>
+                    {r.country && <code>{r.country}</code>}
                     <code>{r.itemId}</code>
                   </span>
                 </button>
@@ -378,6 +401,14 @@ export function ContentSection({ overrides, onOverridesChanged, errText }) {
         <span className="adminpage-count">
           {t('admin.contentEdited', { n: editedCount })}
         </span>
+        <button
+          type="button"
+          className="adminpage-btn"
+          disabled={recheckBusy}
+          onClick={() => { setCopied(false); recheck(true); }}
+        >
+          {recheckBusy ? t('account.pleaseWait') : t('admin.orphanRecheck')}
+        </button>
         {overdueCount > 0 && (
           <span className="adminpage-count overdue">
             {t('admin.reviewOverdueCount', { n: overdueCount })}

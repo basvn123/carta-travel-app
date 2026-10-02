@@ -42,7 +42,7 @@ function eur(cents) {
  * Deliberately not i18n'd, the same as AiUsage and CacheHitRate above and for
  * the same reason: this panel has one reader.
  *
- * Kept self-contained so T062 can lift it into its own module unchanged.
+ * Self-contained: it takes its report as a prop and holds no state.
  */
 export function Margin({ report, monthsBack, onMonth }) {
   const sales = report.sales || {};

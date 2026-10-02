@@ -9,7 +9,7 @@ import React from 'react';
  * Content is deliberately plain English and factual about what the app
  * actually does; update it whenever a new data flow ships.
  */
-const UPDATED = '23 September 2026';
+const UPDATED = '2 October 2026';
 const CONTACT = 'bas.vannieuwenhuyse123@gmail.com';
 
 export function PrivacyPolicy({ onClose }) {
@@ -59,6 +59,22 @@ export function PrivacyPolicy({ onClose }) {
             repeated import does not cost you a second AI credit. Traveller
             names, email addresses and phone numbers are excluded from the
             extraction by design.
+          </p>
+          <p>
+            Google processes these requests on servers that are not limited to
+            the EU, so the text you send to the AI features can leave the
+            European Economic Area. The transfer runs under Google's Data
+            Processing Addendum and its Standard Contractual Clauses, and
+            Google does not use what you send to train its models.
+          </p>
+          <p>
+            When an AI request fails, Carta keeps a record of it so outages can
+            be found and fixed: the function that failed, the error code, the
+            HTTP status and your account, for 90 days. A booking import whose
+            result could not be read is recorded the same way, with the kind of
+            input and its size but not its content, for 30 days. The basis is
+            our legitimate interest in keeping the service working (Article
+            6(1)(f)).
           </p>
 
           <h3>Retention and deletion</h3>

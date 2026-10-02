@@ -20,6 +20,7 @@
  *      know this layer exists.
  */
 import { supabase } from './supabaseClient.js';
+import { dataUrl } from './dataHost.js';
 
 // layer -> Map(itemId -> patch)
 let readyPromise = null;
@@ -239,9 +240,22 @@ export function __setOverridesForTest(rows) {
 /** Build a Set of all valid item IDs across all layers and countries from
  *  the live catalogue files. Fetches index.json for each layer, which lists
  *  the countries; then fetches one file per country and layer, extracting
- *  all IDs from the array. Returns { layer -> Set(ids) }. On any fetch
- *  failure, returns empty for that layer. Does not block the page. */
-export async function fetchValidItemIds() {
+ *  all IDs from the array. Returns { layer -> Set(ids) }.
+ *
+ *  A layer is only present in the result when its index and every one of its
+ *  country files were read. A layer that failed to load is left out, and
+ *  orphanOverrides treats a missing layer as unknown rather than as empty,
+ *  because an empty set would flag every override in it as an orphan (a
+ *  vacuous pass: "no ID is valid" is what a failed fetch looks like).
+ *  Files are fetched through dataUrl, the same way the Content grid reads
+ *  them, so this keeps working once the layer pages move to the data host.
+ *
+ *  The result is cached for the page session. Pass { refresh: true } to read
+ *  the files again (the Content tab's refresh button, T075-a). */
+let validIdsCache = null;
+
+export async function fetchValidItemIds({ refresh = false } = {}) {
+  if (validIdsCache && !refresh) return validIdsCache;
   const layers = ['beach', 'lake', 'mountain', 'trail'];
   const dirs = {
     beach: 'beaches',
@@ -249,41 +263,36 @@ export async function fetchValidItemIds() {
     mountain: 'mountains',
     trail: 'trails',
   };
+  const getJson = async (url) => {
+    const res = await fetch(dataUrl(url));
+    if (!res.ok) throw new Error(`${res.status} ${url}`);
+    return res.json();
+  };
 
   const result = {};
   for (const layer of layers) {
-    result[layer] = new Set();
     const dir = dirs[layer];
     const arrayKey = layer === 'trail' ? 'trips' : `${layer}s`;
     try {
-      // Fetch index to find all countries.
-      const indexRes = await fetch(`/${dir}/index.json`);
-      if (!indexRes.ok) continue;
-      const index = await indexRes.json();
+      const index = await getJson(`/${dir}/index.json`);
       const countries = (index.countries || [])
         .filter((c) => c && c.cc)
         .map((c) => c.cc);
-
-      // Fetch each country file and extract IDs.
+      if (countries.length === 0) continue;
+      const ids = new Set();
       for (const cc of countries) {
-        try {
-          const res = await fetch(`/${dir}/${cc}.json`);
-          if (!res.ok) continue;
-          const data = await res.json();
-          const items = Array.isArray(data[arrayKey]) ? data[arrayKey] : [];
-          for (const item of items) {
-            if (item && item.id) {
-              result[layer].add(String(item.id));
-            }
-          }
-        } catch {
-          // Skip this country file on error; continue with others.
+        const data = await getJson(`/${dir}/${cc}.json`);
+        const items = Array.isArray(data[arrayKey]) ? data[arrayKey] : [];
+        for (const item of items) {
+          if (item && item.id) ids.add(String(item.id));
         }
       }
+      result[layer] = ids;
     } catch {
-      // Skip this layer on error; continue with others.
+      // This layer stays out of the result: unknown, not empty.
     }
   }
+  validIdsCache = result;
   return result;
 }
 
@@ -294,6 +303,8 @@ export function orphanOverrides(rows, validIds) {
   if (!rows || !validIds) return [];
   return rows.filter((row) => {
     const layerIds = validIds[row.layer];
-    return !layerIds || !layerIds.has(String(row.itemId));
+    // A layer that could not be read is unknown, not empty: never an orphan.
+    if (!layerIds) return false;
+    return !layerIds.has(String(row.itemId));
   });
 }
