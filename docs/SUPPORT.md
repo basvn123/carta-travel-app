@@ -71,8 +71,8 @@ Sale not found:
 ### 2. A price that turned out wrong
 
 This is the message that tests the provenance chain. Carta does not price flights (owner decision of
-2026-10-02, T272), but until T272-a removes the frozen fare snapshots, a traveller can still see one, always as
-an estimate. Every figure carries what it is: a harvested quote shows its source and the day it was seen, a
+2026-10-02, T272) and no screen shows a flight figure of its own since T273 removed the frozen estimates. A
+flight in a total is one the traveller typed in. Every other figure carries what it is: a harvested quote shows its source and the day it was seen, a
 cached quote shows its expiry, an estimate carries a tilde and the label est. Before answering, ask for the
 place, the dates and a screenshot, open the same screen, and read the chip on the figure. Then answer with the
 chip's own words, one of the three below.

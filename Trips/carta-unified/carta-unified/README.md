@@ -17,7 +17,7 @@ carta-unified/
 │   ├── 20260902000001_carta_schema.sql   DDL, indexes, FTS, RLS, views
 │   └── 20260902000002_carta_seed.sql     reference data + all 253 trips (idempotent)
 ├── reports/
-│   ├── validation-report.md       0 errors, 482 warnings, 30 notices
+│   ├── validation-report.md       606 errors, 624 warnings at T084 (Execution/P5/T084-trip-validator.md)
 │   ├── validation-issues.json     machine-readable issue list
 │   ├── gap-matrix.md              country × trip-type coverage and fill priorities
 │   └── gap-matrix.json            same, machine-readable
@@ -71,7 +71,7 @@ currently **10,360 checks, 0 failures**.
 | No `bookingWindows` line | 67 | Same batch, same reason. |
 | Coordinates are a country-capital pin | 61 | No basecamp town resolved against GeoNames' cities>15k extract. |
 | Coordinates sit on the gateway city | 54 | e.g. Bansko resolves to Sofia. Flagged, never silently presented as the trip location. |
-| Breakdown sums drift >15% from the stated total | 60 | Source arithmetic, left as-is rather than quietly corrected. |
+| Breakdown does not sum to the stated total within 1% | 98 | Now a validator error, not a warning (T084: the old 15% tolerance is gone). 59 are off by more than 40%, mostly Nordic trips written per night while the total is for the week; 28 are within 5%, plain source arithmetic. |
 | No difficulty rating | 21 | The Nordic batch rated only 9 of its 30 records. |
 | No gateway airport | 30 | The Nordic batch names gateways only in prose. |
 | Day 7 has no evening block | 30 | Nordic departure days. |

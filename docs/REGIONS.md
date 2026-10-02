@@ -349,6 +349,21 @@ started from cannot come back.
   rest: a one layer audit that overwrote the file would report every
   region as having no lakes, no mountains and no trails. `layers` lists
   what the wire knows about, `refreshed` what the last run recomputed.
+  Every region entry whose status is not ok also carries `code`, one of
+  the seven reason codes below, so a thin, empty or na region says why.
+  The file also carries a `contract` block (T111,
+  pipeline/regions/coverage.py, `build_contract`): `version`
+  (`coverage_contract_v1`), `floors` (the minimum count per layer),
+  `rules` (the named set each floor is made of), `reason_codes`, and
+  `countries`, one entry per country and layer. A country cell holds
+  `published`, `floor`, `must`, `must_published` and `status`
+  (ok | fail | n/a); a cell that is not ok also holds `code` and a one
+  line `detail`. The wire copy leaves out the miss lists, which live in
+  `reports/coverage_contract.json`. The seven codes are no_open_data,
+  way_only_not_derived, failed_continuity, below_quota, not_applicable,
+  licence_blocked (defined, never emitted yet) and pending_partnership.
+  A cell passes only when the count clears the minimum and every named
+  row is published, so a count alone never passes a country.
 - `reports/coverage_backlog_{layer}_{date}.csv`: every deficit region
   joined to the candidates the gate rejected and why, straight from a
   replay of the layer's own gate. `--explain <candidate_id>` prints one

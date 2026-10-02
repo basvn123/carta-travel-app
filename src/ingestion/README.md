@@ -29,32 +29,16 @@ nothing. `--strict` turns any error into exit code 1 for CI / schedulers.
 
 ## The roster
 
-| Collector | Group | Source | Auth |
-|---|---|---|---|
-| pan_europe | naps | public-transport.earth index + all linked archives | none |
-| germany | naps | GTFS.de fv/rv/nv/full, Mobilithek subscription URLs | none / account |
-| france_static | naps | transport.data.gouv.fr catalogue -> SNCF GTFS + NeTEx | none |
-| austria | naps | Mobilitaetsverbuende data hub (NeTEx + GTFS) | free account |
-| belgium | naps | SNCB GTFS + NeTEx EPIP, TEC, De Lijn, STIB | keys for De Lijn / STIB |
-| denmark | naps | nap.vd.dk catalogue + Rejseplanen account URLs | free account |
-| finland | naps | FinAP snapshot + Digitraffic open rail JSON | none |
-| netherlands | naps | OVapi gtfs-nl (CC0) + NDOV NeTEx listing | optional account |
-| norway | naps | Entur national GTFS + NeTEx + SIRI ET/SX/VM | none (client name) |
-| sweden | naps | Trafiklab GTFS Sweden 3, NeTEx Sweden, regional | free API keys |
-| switzerland | naps | opentransportdata.swiss CKAN: GTFS, NeTEx, HRDF | free token |
-| spain | naps | Renfe gtransit zips, data.renfe.com CKAN, NAP snapshot | none |
-| sncf_realtime | rail | GTFS-RT Trip Updates + SIRI SX Lite, 2 min polling | none |
-| france_crossborder | rail | Eurostar / Trenitalia France / Renfe intl via French NAP | none |
-| era | rail | ERADIS, ERSAD / accessibility, RINF register exports | optional account |
-| opensky | aviation | states snapshot + per airport arrivals / departures | free OAuth2 |
-| eurocontrol_statfor | aviation | STATFOR / public statistics downloads | none |
-| eurocontrol_ddr | aviation | DDR / ADRR staging sweeper | research access |
-| nordic_ferries | maritime | Entur / Trafiklab per operator ferry archives | partial keys |
-| greece_nap | maritime | nap.gov.gr maritime catalogue | none |
-| ferryhopper | maritime | trips widget sampling: schedules + base fares | commercial terms |
-| renfe_kaggle | pricing | Kaggle Renfe AVE dynamic pricing archives | kaggle.json |
-| ryanair_archive | pricing | GitHub LCC price history repos (Timecapsule style) | optional token |
-| sncf_availability | pricing | TGV MAX 30 day seat availability (occupancy proxy) | none |
+The roster is not kept here. It is rendered from `src/ingestion/core/registry.py`
+into section 0 of `docs/tos/data_licenses.md` (the execution roster: one table
+of collectors, one of harvesters, with cadence, task, failure mode and the
+ledger rows that govern each). `python -m src.ingestion.run_all --list` prints
+the live list. Regenerate the ledger with
+`python -m src.ingestion.core.ledger --write`; CI runs `--check` and fails on a
+stale ledger (T078, Execution/P4/T078-registry-licence-unification.md).
+
+Adding a source: write the collector, then add its row to the registry. A
+collector without a registry row is refused at import.
 
 ## Configuration
 
