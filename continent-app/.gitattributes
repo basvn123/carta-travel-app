@@ -1,0 +1,4 @@
+# Cloudflare Pages parses these two files from the deploy. Pin them to LF so
+# a checkout with core.autocrlf=true can never hand Pages carriage returns.
+public/_headers   text eol=lf
+public/_redirects text eol=lf
