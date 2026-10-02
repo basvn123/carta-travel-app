@@ -16,6 +16,16 @@
  * wins, for a staging data host.
  *
  * Exit 0 when the build succeeded and dist/ would deploy; non-zero otherwise.
+ *
+ * Then, from continent-app/ (T293, T296):
+ *   node scripts/r2/push-data.mjs --live          data first, phase 1
+ *   npx wrangler pages deploy dist --project-name carta-app --branch preview
+ *       a preview at https://preview.carta-app.pages.dev, the one preview
+ *       origin the data host's CORS rule admits (scripts/r2/data-cors.json);
+ *       the per-deploy <hash>.carta-app.pages.dev URLs cannot read R2
+ *   npx wrangler pages deploy dist --project-name carta-app --branch main
+ *       production
+ *   node scripts/r2/push-data.mjs --live --prune  after production is live
  */
 import { spawnSync } from 'node:child_process';
 import { dirname, resolve } from 'node:path';
