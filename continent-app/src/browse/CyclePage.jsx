@@ -15,6 +15,7 @@ import {
 } from '../lib/cycleStory.js';
 import { RatingBadge } from '../components/RatingBadge.jsx';
 import { CountryFlag } from '../components/CountryFlag.jsx';
+import CreditFold from './CreditFold.jsx';
 import {
   ArrowLeftIcon, CameraIcon, BikeIcon, TrainIcon, ClockIcon,
 } from '../components/Icons.jsx';
@@ -649,6 +650,7 @@ export function CyclePage({ routeId, tourSlug, country, countryName,
             <p className="places-credit" data-testid="cycle-credit">
               {(route.osm && route.osm.attribution) || t('cycle.sourceNote')}
             </p>
+            <CreditFold t={t} licenceKeys={['credit.licence.cycle']} />
           </section>
         )}
       </div>

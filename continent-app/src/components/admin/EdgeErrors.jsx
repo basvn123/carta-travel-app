@@ -5,15 +5,38 @@
 //
 // Deliberately not i18n'd, like the other AI sections beside it: this panel
 // is owner-only.
-export function EdgeErrors({ report }) {
+//
+// The rate (T215-d, migration 048) comes from admin_launch_metrics: the AI
+// calls the app counted, and the failures above counted over the same days,
+// from the first day a call was counted. Client crashes stay off it, as 047
+// decided. Without 048, or before the first counted call, the rate is not
+// shown at all rather than shown as zero.
+const pct = (r) => `${(Number(r) * 100).toFixed(1)}%`;
+
+export function EdgeErrors({ report, calls = null }) {
   if (!report || report.error) return null;
   const total = report.total || 0;
   const byCode = report.byCode || [];
   const byFunction = report.byFunction || [];
+  const rated = calls && calls.countedSince && calls.rate != null ? calls : null;
 
   return (
     <section className="adminpage-card">
       <h2 className="adminpage-h2">AI failures ({report.days || 30} days)</h2>
+      {rated && (
+        <>
+          <div className="adminpage-tiles">
+            <div className="adminpage-tile"><b>{pct(rated.rate)}</b><span>Failure rate</span></div>
+            <div className="adminpage-tile"><b>{rated.total}</b><span>AI calls</span></div>
+          </div>
+          <p className="adminpage-muted">
+            {rated.failures} of {rated.total} calls failed since {rated.countedSince}
+            {(rated.byFunction || []).filter((f) => f.calls > 0).map((f) => (
+              `; ${f.fn} ${pct(f.rate)} of ${f.calls}`
+            )).join('')}.
+          </p>
+        </>
+      )}
       {total === 0 ? (
         <p className="adminpage-muted">No AI failures recorded in this window.</p>
       ) : (

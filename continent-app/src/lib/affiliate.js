@@ -84,3 +84,24 @@ export function buildAviasalesLink({ origin, destIata, departDate, returnDate, a
   const params = new URLSearchParams({ marker, currency: 'eur' });
   return `https://www.aviasales.com/search/${path}?${params}`;
 }
+
+/**
+ * The reverse of buildAviasalesLink, for the click counter (launchEvents.js,
+ * migration 048): { partner: 'aviasales', surface } when `href` is an
+ * Aviasales link carrying this build's marker, otherwise null. The surface is
+ * the sub-ID after the dot, or 'none'. `marker` is a parameter only so the
+ * format can be checked under plain Node.
+ */
+export function aviasalesClickOf(href, marker = MARKER) {
+  if (!marker || typeof href !== 'string') return null;
+  let u;
+  try {
+    u = new URL(href);
+  } catch {
+    return null;
+  }
+  if (!/(^|\.)aviasales\.com$/i.test(u.hostname)) return null;
+  const m = u.searchParams.get('marker') || '';
+  if (m !== marker && !m.startsWith(`${marker}.`)) return null;
+  return { partner: 'aviasales', surface: m.slice(marker.length + 1) || 'none' };
+}

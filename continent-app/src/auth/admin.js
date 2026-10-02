@@ -101,6 +101,16 @@ export const adminEdgeErrors = (days = 30) =>
   call('admin_edge_errors', { p_days: days });
 
 /**
+ * The launch counters (migration 048): priced trips finished in the wizard
+ * (built or ready), affiliate clicks by partner and sub-ID, and AI calls,
+ * which give the AI failures card its rate. Per-day counts with no
+ * identifier; nothing here can name a traveller. aiCalls.rate is null until
+ * a call has been counted, and counts from aiCalls.countedSince.
+ */
+export const adminLaunchMetrics = (days = 30) =>
+  call('admin_launch_metrics', { p_days: days });
+
+/**
  * The ai_plan_cache hit rate (migration 029). One row per plan-day lookup,
  * hit or miss, so the rate is a division rather than a guess.
  *

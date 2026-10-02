@@ -1,4 +1,4 @@
-import React, { lazy, Suspense, useEffect, useMemo, useRef, useState } from 'react';
+import React, { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useAuth } from './AuthContext.jsx';
 import { fetchSavedTrips, deleteTrip } from './tripStorage.js';
@@ -773,7 +773,7 @@ export function SavedTripsPanel({
     loadTrips();
     loadTripPlans();
     loadStatements();
-  }, [user?.id]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [user?.id]); // eslint-disable-line react-hooks/exhaustive-deps -- keyed on the account id: the three loaders are rebuilt every render and listing them would refetch on each one
 
   const handleDelete = async (id) => {
     setTrips((prev) => prev.filter((x) => x.id !== id));
@@ -957,15 +957,17 @@ export function SavedTripsPanel({
     return out;
     // memTick is the point: memories live in localStorage, so a save has to
     // re-read them even though no prop changed.
-  }, [pastPlans, pastDayPlans, memTick]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [pastPlans, pastDayPlans, memTick]); // eslint-disable-line react-hooks/exhaustive-deps -- memTick is a deliberate trigger: memories live in localStorage, which React cannot see change
 
-  const destCoords = (id) => {
+  // The helpers below are callbacks so the record's memos can list them;
+  // each changes only when the catalogue (or an index built from it) does.
+  const destCoords = useCallback((id) => {
     const d = destinations[id];
     if (!d) return null;
     const lat = d.city_lat != null ? d.city_lat : d.lat;
     const lon = d.city_lon != null ? d.city_lon : d.lon;
     return lat != null && lon != null ? { lat, lon } : null;
-  };
+  }, [destinations]);
 
   // ── Images for everything. The direct lookup misses when a stop's id is a
   // researched town or an id that fell out of the catalogue, so every card
@@ -987,7 +989,7 @@ export function SavedTripsPanel({
     return { byCity, byCountry };
   }, [destinations]);
 
-  const resolveImage = ({ ids = [], cities = [], countries = [] }) => {
+  const resolveImage = useCallback(({ ids = [], cities = [], countries = [] }) => {
     for (const id of ids) {
       const u = destinations[id]?.image?.url;
       if (u) return u;
@@ -1001,20 +1003,26 @@ export function SavedTripsPanel({
       if (hit) return hit.url;
     }
     return null;
-  };
+  }, [destinations, imageLookup]);
 
   // A trip plan's places, from its stored arrays and its stops both, so a
   // plan saved before the arrays existed still knows where it went.
-  const planCountries = (p) => orderedUnique([
+  const planCountries = useCallback((p) => orderedUnique([
     ...(p.countries || []),
     ...(p.destination_ids || []).map((id) => destinations[id]?.country),
-  ]);
-  const planCities = (p) => orderedUnique([
+  ]), [destinations]);
+  const planCities = useCallback((p) => orderedUnique([
     ...(p.cities || []),
     ...(p.destination_ids || []).map((id) => destinations[id]?.city),
-  ]);
-  const dayPlanCountries = (sp) => orderedUnique((sp.stops || []).map((s) => destinations[s.destinationId]?.country));
-  const dayPlanCities = (sp) => orderedUnique((sp.stops || []).map((s) => destinations[s.destinationId]?.city));
+  ]), [destinations]);
+  const dayPlanCountries = useCallback(
+    (sp) => orderedUnique((sp.stops || []).map((s) => destinations[s.destinationId]?.country)),
+    [destinations],
+  );
+  const dayPlanCities = useCallback(
+    (sp) => orderedUnique((sp.stops || []).map((s) => destinations[s.destinationId]?.city)),
+    [destinations],
+  );
 
   // City name -> coordinates, best-rated entry wins the name, so a record that
   // stored "Munich" as plain text (no destination id) still lands on the map.
@@ -1031,7 +1039,10 @@ export function SavedTripsPanel({
     }
     return m;
   }, [destinations]);
-  const cityCoords = (city) => cityCoordIndex.get((city || '').toLowerCase()) || null;
+  const cityCoords = useCallback(
+    (city) => cityCoordIndex.get((city || '').toLowerCase()) || null,
+    [cityCoordIndex],
+  );
 
   // Every place in the record, pinned. Not first stops only: the map is the
   // record's own claim, so each city of each finished trip earns its pin, and
@@ -1069,7 +1080,7 @@ export function SavedTripsPanel({
       memoryPoints(memories[sp.id]).forEach((pt) => add(pt.city, pt, open, pt.id));
     });
     return out;
-  }, [pastPlans, pastDayPlans, destinations, cityCoordIndex, memories]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [pastPlans, pastDayPlans, destinations, memories, resolveImage, destCoords, cityCoords]);
 
   // What the record adds up to: distinct countries and cities out of finished
   // trips only. Favorites never count, a wish is not a visit.
@@ -1092,7 +1103,7 @@ export function SavedTripsPanel({
       });
     });
     return { countries: [...countries].sort(), cities: [...cities] };
-  }, [pastPlans, pastDayPlans, destinations, memories]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [pastPlans, pastDayPlans, memories, planCountries, planCities, dayPlanCountries, dayPlanCities]);
 
   // MapLibre states the cooperative-gesture rule in its own overlay, in the
   // traveller's language.

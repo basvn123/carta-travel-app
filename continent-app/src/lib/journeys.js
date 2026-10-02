@@ -119,6 +119,67 @@ export function eurRange(pair, lang) {
   return formatRange(pair.low, pair.high, (n) => `€${Math.round(n).toLocaleString(lang)}`);
 }
 
+/* ── Schema v2.1 typed fields ─────────────────────────────────────────────
+   A generated trip (Trips/carta-unified/carta-unified/schema/
+   trip.generated.schema.json, task T143) stores as typed values what a v2.0
+   trip wrote as a sentence: the day's measured line, the packing list, the
+   advisories, the hotel price. The page renders both shapes; each helper
+   below returns the v2.0 string unchanged and formats the v2.1 object, so
+   the 253 published trips look exactly as before. */
+
+/** 210 -> "3 h 30 min", 45 -> "45 min". Units are symbols, not words. */
+export function minutesText(min) {
+  if (!Number.isFinite(min)) return '';
+  const h = Math.floor(min / 60);
+  const m = Math.round(min % 60);
+  if (!h) return `${m} min`;
+  return m ? `${h} h ${m} min` : `${h} h`;
+}
+
+/** The mono line under a day title: a v2.0 string as written, or a v2.1
+ *  dayStats object as "52 km, +160 m, 3 h to 4 h, €3 to €4, asphalt". */
+export function dayStatsLine(stats, lang) {
+  if (!stats) return '';
+  if (typeof stats === 'string') return stats;
+  const num = (n) => Number(n).toLocaleString(lang, { maximumFractionDigits: 1 });
+  const time = stats.timeMin || {};
+  return [
+    Number.isFinite(stats.distanceKm) ? `${num(stats.distanceKm)} km` : '',
+    Number.isFinite(stats.ascentM) ? `+${num(stats.ascentM)} m` : '',
+    Number.isFinite(stats.descentM) ? `-${num(stats.descentM)} m` : '',
+    formatRange(time.low, time.high, minutesText),
+    eurRange(stats.spendEur, lang),
+    stats.note || '',
+  ].filter(Boolean).join(', ');
+}
+
+/** One packing entry: a v2.0 sentence, or v2.1 {item, whyThisTrip}. */
+export function packingText(note) {
+  if (!note || typeof note === 'string') return note || '';
+  const item = String(note.item || '').trim();
+  const why = String(note.whyThisTrip || '').trim();
+  return [item && !/[.!?]$/.test(item) ? `${item}.` : item, why].filter(Boolean).join(' ');
+}
+
+/** One advisory: a v2.0 sentence, or v2.1 {trigger, consequence, whatToDo}.
+ *  `doLine` wraps the remedy in the reader's language. */
+export function riskText(item, doLine) {
+  if (!item || typeof item === 'string') return item || '';
+  const trigger = String(item.trigger || '').trim();
+  return [
+    trigger && !/[.!?]$/.test(trigger) ? `${trigger}.` : trigger,
+    item.consequence,
+    item.whatToDo ? doLine(item.whatToDo) : '',
+  ].filter(Boolean).join(' ');
+}
+
+/** A stay's price: v2.1 priceEur as a range ahead of its note, or the v2.0
+ *  priceNote, which carries its figures inside the sentence. */
+export function stayPriceText(stay, lang) {
+  const range = eurRange(stay?.priceEur, lang);
+  return [range, stay?.priceNote].filter(Boolean).join(' ');
+}
+
 /**
  * The source prose carries **bold** markers. Rendered as segments rather
  * than dangerouslySetInnerHTML, so harvested text can never become markup.

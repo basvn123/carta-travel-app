@@ -2,7 +2,13 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App.jsx';
 import { ErrorBoundary } from './components/ErrorBoundary.jsx';
+import { installAffiliateClickCounter } from './lib/launchEvents.js';
 import './styles.css';
+
+// One document listener counts clicks on decorated partner links, by the
+// sub-ID they already carry (migration 048, T215-c). Nothing is stored on
+// the device.
+installAffiliateClickCounter();
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>

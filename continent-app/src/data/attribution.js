@@ -13,6 +13,10 @@
  * credit, not a better one. The prose around the block (heading, lede) goes
  * through i18n like every other UI string.
  *
+ * Checked against the registry (T310): the root repo's
+ * `python -m src.ingestion.core.ledger --check-app continent-app/src/data/attribution.js`
+ * fails when an entry here has no APP_CREDITS row in
+ * src/ingestion/core/registry.py, or the reverse.
  * Keep entries in sync with the ledger: a new row there with a required
  * credit means a new entry here. Order is the ledger's, roughly by how much
  * of the product each source carries.

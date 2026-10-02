@@ -62,3 +62,27 @@ export function activityLink(url, subId = 'dest') {
   }
   return url;
 }
+
+/**
+ * The reverse of activityLink, for the click counter (launchEvents.js,
+ * migration 048): { partner, surface } when `href` carries this build's
+ * GetYourGuide or Viator id, otherwise null. The surface is the cmp or
+ * campaign value activityLink wrote ('dest-do', 'dest-book'), or 'none'. The
+ * ids are parameters only so the format can be checked under plain Node.
+ */
+export function activityClickOf(href, gygId = GYG_ID, viatorPid = VIATOR_PID) {
+  if (typeof href !== 'string' || !href) return null;
+  let u;
+  try {
+    u = new URL(href);
+  } catch {
+    return null;
+  }
+  if (gygId && GYG_HOST.test(u.hostname) && u.searchParams.get('partner_id') === gygId) {
+    return { partner: 'getyourguide', surface: u.searchParams.get('cmp') || 'none' };
+  }
+  if (viatorPid && VIATOR_HOST.test(u.hostname) && u.searchParams.get('pid') === viatorPid) {
+    return { partner: 'viator', surface: u.searchParams.get('campaign') || 'none' };
+  }
+  return null;
+}

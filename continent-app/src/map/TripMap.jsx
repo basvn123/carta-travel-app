@@ -437,7 +437,7 @@ export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedInd
     // Deliberately once: scrollZoom and the basemap are construction-time
     // options, and rebuilding the map to change one would throw the viewport
     // away. Every caller picks its basemap at the mount, never mid-life.
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps -- built once: basemap, zoom and gesture options are construction-time
 
   // The framing reads the focus point and whether pois are given, by value:
   // a caller that passes a fresh focus object with the same coordinates must
@@ -645,7 +645,7 @@ export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedInd
     });
     if (readyRef.current) go();
     else map.once('load', go);
-  }, [flyTo?.k]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [flyTo?.k]); // eslint-disable-line react-hooks/exhaustive-deps -- request key: each ask bumps flyTo.k, so the same place asked twice still moves
 
   // Filled countries (the travel record): the shapes load on first use only,
   // so every other map in the app pays nothing for this layer.
@@ -698,7 +698,7 @@ export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedInd
     map._drawCountries = apply;
     if (readyRef.current) apply();
     return () => { cancelled = true; };
-  }, [fillsKey]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [fillsKey]); // eslint-disable-line react-hooks/exhaustive-deps -- value key: countryFills by its codes, so a fresh array of the same countries does not refilter and reframe
 
   // Pickable candidate pins (Day planner): rebuild when the visible set
   // changes, a tapped pin leaves this list (it becomes a numbered stop), so
@@ -771,7 +771,7 @@ export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedInd
       poiMarkersRef.current.forEach((m) => m.marker.remove());
       poiMarkersRef.current = [];
     };
-  }, [poisKey]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [poisKey]); // eslint-disable-line react-hooks/exhaustive-deps -- value key: pois by id and selection, because a rebuild tears down every candidate pin
 
   // Highlight the selected pin and ease it into the visible strip.
   //

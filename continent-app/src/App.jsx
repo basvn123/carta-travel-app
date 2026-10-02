@@ -166,7 +166,7 @@ function TravelApp() {
   const [pendingFriend, setPendingFriend] = useState(() => readFriendHandleFromUrl());
   useEffect(() => {
     if (pendingFriend) stripFriendHandleFromUrl();
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [pendingFriend]);
   // An invite opens the friends page as soon as there is an account to open
   // it for. A guest lands on the account hub instead, which is where signing
   // in is, and the handle waits: dropping it would waste the one tap the
@@ -177,7 +177,7 @@ function TravelApp() {
     setAccountView(user ? 'friends' : 'home');
     setAccountEntry((n) => n + 1);
     setAccountOpen(true);
-  }, [pendingFriend, user]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [pendingFriend, user, setAccountOpen, setSavedTripsOpen]);
 
   // The published guides gallery, and a direct link to one of them
   // (#guide=<id>). Same rule as every other hash this app answers: read once
@@ -191,7 +191,9 @@ function TravelApp() {
     setAccountOpen(false);
     setSavedTripsOpen(false);
     setGuidesOpen(true);
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+    // pendingGuide only ever moves to '' after this (openGuides, the gallery's
+    // close), which returns early, so the link still opens the guide once.
+  }, [pendingGuide, setAccountOpen, setSavedTripsOpen]);
 
   const openGuides = () => {
     setAccountOpen(false);
@@ -238,7 +240,7 @@ function TravelApp() {
     setAccountOpen(false);
     setLifestyleOpen(false);
     setActiveTab(key);
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [setSavedTripsOpen, setAccountOpen, setLifestyleOpen]);
   // My trips is the fifth door in the same row, so it clears the same things.
   const toggleSaved = () => {
     setAccountOpen(false);
@@ -361,8 +363,9 @@ function TravelApp() {
   const [shareToken, setShareToken] = useState(() => readShareTokenFromUrl());
   useEffect(() => {
     if (shareToken) stripShareTokenFromUrl();
-    // Once only: stripping the hash must not be able to re-trigger the read.
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+    // Stripping the hash never re-reads it: the token is state read once at
+    // startup, and its only later change (dismiss, to null) strips nothing.
+  }, [shareToken]);
 
   const [sharedTripRaw] = useState(() => readTripShareFromUrl());
   const [sharedTrip, setSharedTrip] = useState(null);
@@ -406,8 +409,9 @@ function TravelApp() {
   const [pendingDest] = useState(() => readDestFromUrl());
   useEffect(() => {
     if (pendingDest) setSelectedId(pendingDest);
-    // Once, at boot: the hash was already stripped by the reader.
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+    // Once, at boot: pendingDest has no setter, so it never changes, and the
+    // hash was already stripped by the reader.
+  }, [pendingDest]);
 
   // A single BEACH shared as a link (#beach=gr-navagio-Q1234&bc=GR, see
   // lib/beaches.js), read the same way and for the same reasons: the hash
@@ -587,13 +591,16 @@ function TravelApp() {
   const isFavorite = useCallback((id, kind = 'dest', cc = '') => isFav(favorites, kind, id, cc), [favorites]);
   const favDests = useMemo(() => new Set(favDestIds(favorites)), [favorites]);
 
-  // Sync trip_days into choices whenever the dates change
+  // Sync trip_days into choices whenever the dates change. trip_days is
+  // derived from the dates, so a write from elsewhere (useAppData's data
+  // default, for one) that disagrees with them is put back as well.
+  const tripDays = choices.trip_days;
   useEffect(() => {
     const days = tripDaysBetween(departDate, returnDate);
-    if (days > 0 && days !== choices.trip_days) {
+    if (days > 0 && days !== tripDays) {
       setChoices((prev) => ({ ...prev, trip_days: days }));
     }
-  }, [departDate, returnDate]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [departDate, returnDate, tripDays]);
 
   // Free-text location search (city / country). Ephemeral, not persisted in the
   // URL, and applied to the filtered set so the list AND map narrow together.
@@ -754,7 +761,7 @@ function TravelApp() {
   // every date change, on top of the one the date change itself already causes.
   const pricingChoices = useMemo(
     () => choices,
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- value key: the fields composeTrip reads, so a trip_days write does not reprice the catalogue
     [choices.group_size, choices.baggage_key, choices.baggage_per_direction_eur,
       choices.transport_mode, choices.stay_tier, choices.origin, choices.home, choices.lifestyle,
       choices.origin_pref, choices.car_model, choices.accommodation_model, choices.drive_home],

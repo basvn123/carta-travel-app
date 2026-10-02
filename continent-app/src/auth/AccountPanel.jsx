@@ -397,7 +397,7 @@ export function AccountPanel({
   // The header's Friends button lights up only while that spoke is showing,
   // so navigating back to the hub inside the panel unlights it. One effect
   // rather than a callback on every setView, which would drift.
-  useEffect(() => { onViewChange?.(view); }, [view]); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => { onViewChange?.(view); }, [view, onViewChange]);
 
   // A subview keeps the hub's scroll position otherwise, and "page two opens
   // halfway down" reads as a rendering bug.

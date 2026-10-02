@@ -308,9 +308,11 @@ export function TrailPage({ card, onClose, onSelectDest, onOpenNeighbour, dests,
     : (pts.length ? isLoopRoute(pts) : null);
   const start = pts.length ? pts[0] : null;
 
-  const nearby = assoc.dest
-    ? { city: assoc.dest.city, km: isCityDay ? 0 : assoc.km }
-    : null;
+  // The nearest town, by value: the story memo below builds the object
+  // itself, so a re-render that hands back the same town does not re-run it.
+  const hasNearby = !!assoc.dest;
+  const nearbyCity = assoc.dest?.city;
+  const nearbyKm = assoc.dest ? (isCityDay ? 0 : assoc.km) : null;
   // How far the TRAILHEAD is from the nearest town. assoc.km is measured from
   // the middle of the route, which on a long walk is a different place.
   const startKm = start && assoc.dest
@@ -318,8 +320,10 @@ export function TrailPage({ card, onClose, onSelectDest, onOpenNeighbour, dests,
       assoc.dest.city_lat ?? assoc.dest.lat, assoc.dest.city_lon ?? assoc.dest.lon)
     : null;
   const story = useMemo(
-    () => trailStory(tr, detail, { t, loop, nearby }),
-    [tr, detail, t, loop, nearby?.city, nearby?.km], // eslint-disable-line react-hooks/exhaustive-deps
+    () => trailStory(tr, detail, {
+      t, loop, nearby: hasNearby ? { city: nearbyCity, km: nearbyKm } : null,
+    }),
+    [tr, detail, t, loop, hasNearby, nearbyCity, nearbyKm],
   );
   // Why this one. The card already carries the first three codes, so the
   // section is populated on the first frame and simply lengthens when the

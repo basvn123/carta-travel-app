@@ -26,13 +26,17 @@
  * `skipEscapeWhen` lets a page keep a child popover's own Escape: return true
  * and this hook leaves the key alone for that press.
  */
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 
 const FOCUSABLE = 'button:not([disabled]), [href], input:not([disabled]), '
   + 'select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
 
 export function useFocusTrap(panelRef, onClose, options = {}) {
   const { initialFocusRef = null, skipEscapeWhen = null, enabled = true } = options;
+  // Read at keypress time, so a caller's inline predicate never re-runs the
+  // trap (which would pull focus back to the first control on every render).
+  const skipRef = useRef(skipEscapeWhen);
+  skipRef.current = skipEscapeWhen;
 
   useEffect(() => {
     if (!enabled) return undefined;
@@ -61,7 +65,7 @@ export function useFocusTrap(panelRef, onClose, options = {}) {
 
     const onKey = (e) => {
       if (e.key === 'Escape') {
-        if (skipEscapeWhen && skipEscapeWhen(e)) return;
+        if (skipRef.current && skipRef.current(e)) return;
         e.stopPropagation();
         onClose?.();
         return;
@@ -89,6 +93,6 @@ export function useFocusTrap(panelRef, onClose, options = {}) {
       // have been opened from something that has since unmounted.
       if (opener instanceof HTMLElement && document.contains(opener)) opener.focus();
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [onClose, enabled]);
+    // panelRef and initialFocusRef are ref objects, stable for the overlay's life.
+  }, [onClose, enabled, panelRef, initialFocusRef]);
 }

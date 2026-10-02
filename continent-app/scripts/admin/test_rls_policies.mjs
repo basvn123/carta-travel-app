@@ -36,7 +36,14 @@
  *        That probe runs while most closed tables are empty, so for the
  *        two that migration 047 widened (edge_errors, feedback) a later
  *        section writes a real row first, through log_edge_error and
- *        submit_feedback, and reads again (T284).
+ *        submit_feedback, and reads again (T284). The same is done for
+ *        048's launch_counts through launch_count (T315).
+ *
+ *   EXPORT (048, T315). After the fixtures have seeded the victim's rows,
+ *   export_user_data() as the victim must carry a row from each of those
+ *   tables, with friends and co-planners by handle and never by user id,
+ *   and the exports of the second user and the co-planner must carry none
+ *   of the victim's rows.
  *
  *   ISOLATION, one fixture per table with policies:
  *     The victim seeds rows through the `authenticated` role with their
@@ -752,6 +759,81 @@ function runTests(bin) {
         check(`${table}: ${who} reads none of the rows, their own included`, (read.ok && read.out === '0') || denied(read), describe(read));
       }
     }
+
+    // ---------------------------------------------------------------------
+    // 4c. The launch counters of 048 (T315). Rows land through the writer,
+    //     for a signed-in traveller and a visitor alike, and nobody reads
+    //     them back, the writer's own callers included.
+    // ---------------------------------------------------------------------
+    console.log('');
+    console.log('  The launch counters land through their writer and stay closed (048):');
+    const tick = (who, args) => runAs(who, `select public.launch_count(${args})`);
+    check('a signed-in traveller counts a priced trip', tick('victim', `'trip_priced', null, 'built'`).ok);
+    check('a visitor counts a priced trip (guests are included)', tick('anon', `'trip_priced', null, 'ready'`).ok);
+    check('a visitor counts an affiliate click', tick('anon', `'affiliate_click', 'omio', 'leg'`).ok);
+    check('a signed-in traveller counts an AI call', tick('victim', `'ai_call', 'plan-day', null`).ok);
+    tick('anon', `'ai_call', 'plan-day', null`);
+    const launchRows = scalar(bin, TEST_DB,
+      `select string_agg(event || '/' || target || '/' || surface || '=' || n, ' ' order by event, target, surface) from public.launch_counts`);
+    check('exactly the four counted ticks are stored, and the visitor AI call is not',
+      launchRows === 'affiliate_click/omio/leg=1 ai_call/plan-day/=1 trip_priced//built=1 trip_priced//ready=1', launchRows);
+    for (const who of ['victim', 'plain', 'anon']) {
+      const read = runAs(who, 'select count(*) from public.launch_counts');
+      check(`launch_counts: ${who} reads none of the rows`, (read.ok && read.out === '0') || denied(read), describe(read));
+      const forge = runAs(who, `insert into public.launch_counts (event, target, surface, n) values ('affiliate_click', 'omio', 'leg', 1000000)`);
+      check(`launch_counts: ${who} cannot write a count directly`, !forge.ok, describe(forge));
+    }
+
+    // ---------------------------------------------------------------------
+    // 4d. The export (024, 045, 048 schema 3; T300-i). By now the victim
+    //     has a row in every table the fixtures cover, plus a crash and a
+    //     data report from 4b. Their export must carry each of them, and
+    //     nobody else's export may carry any of them.
+    // ---------------------------------------------------------------------
+    console.log('');
+    console.log('  The export carries every one of the victim\'s rows and nobody else\'s (048):');
+    const exportOf = (who) => {
+      const r = runAs(who, 'select public.export_user_data()::text');
+      try { return r.ok ? JSON.parse(r.out) : null; } catch { return null; }
+    };
+    const victimHandle = scalar(bin, TEST_DB, `select handle from public.profiles where user_id = '${VICTIM}'`);
+    const mineExp = exportOf('victim');
+    check('the victim\'s export parses and is schema 3', mineExp && mineExp.schema === 3, JSON.stringify(mineExp || {}).slice(0, 120));
+    if (mineExp) {
+      for (const key of ['tripPlans', 'tripPlanStops', 'dayPlans', 'tripShares', 'coplanners', 'friends',
+        'passGrants', 'achievements', 'moderationStatements', 'edgeErrors', 'feedback']) {
+        check(`export: ${key} holds the victim's row`, Array.isArray(mineExp[key]) && mineExp[key].length > 0,
+          JSON.stringify(mineExp[key]).slice(0, 80));
+      }
+      check('export: the profile is the victim\'s', Boolean(mineExp.profile && mineExp.profile.handle === victimHandle),
+        JSON.stringify(mineExp.profile));
+      check('export: the entitlement is there', Boolean(mineExp.entitlement && mineExp.entitlement.tier),
+        JSON.stringify(mineExp.entitlement));
+      check('export: the share token is the victim\'s link', mineExp.tripShares.some((s) => s.token === SHARE));
+      const thirdHandle = scalar(bin, TEST_DB, `select handle from public.profiles where user_id = '${THIRD}'`);
+      check('export: an accepted friend appears by handle', mineExp.friends.some((f) => f.status === 'accepted'
+        && f.direction === 'sent' && f.otherHandle === thirdHandle), JSON.stringify(mineExp.friends));
+      check('export: the co-planner appears by handle', mineExp.coplanners.some((c) => c.role === 'inviter'
+        && c.otherHandle === thirdHandle), JSON.stringify(mineExp.coplanners));
+      const text = JSON.stringify(mineExp);
+      check('export: no other traveller\'s user id is anywhere in the file',
+        !text.includes(THIRD) && !text.includes(PLAIN), 'a friend or co-planner id leaked');
+    }
+    const plainExp = exportOf('plain');
+    check('a second traveller\'s export parses', Boolean(plainExp));
+    if (plainExp) {
+      const text = JSON.stringify(plainExp);
+      check('and carries none of the victim\'s rows (trip, share, day plan, profile, statement)',
+        !text.includes(VICTIM) && !text.includes(PLAN) && !text.includes(SHARE)
+        && !text.includes(`"${victimHandle}"`) && plainExp.dayPlans.length === 0 && plainExp.moderationStatements.length === 0,
+        text.slice(0, 160));
+    }
+    const thirdExp = exportOf('third');
+    check('the co-planner\'s export shows the invitation received, not the victim\'s trip rows',
+      Boolean(thirdExp && thirdExp.coplanners.some((c) => c.role === 'invited') && thirdExp.tripPlans.length === 0
+        && !JSON.stringify(thirdExp).includes(VICTIM)), JSON.stringify(thirdExp && thirdExp.coplanners));
+    const anonExp = runAs('anon', 'select public.export_user_data()');
+    check('a visitor cannot call the export at all', denied(anonExp), describe(anonExp));
 
     // ---------------------------------------------------------------------
     // 5. The harness proves itself: a deliberately leaked row is seen.

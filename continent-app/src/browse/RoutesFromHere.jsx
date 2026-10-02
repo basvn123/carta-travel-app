@@ -1,4 +1,5 @@
 import React from 'react';
+import CreditFold from './CreditFold.jsx';
 import { RouteIcon, BikeIcon, TrainIcon, ChevronRightIcon } from '../components/Icons.jsx';
 
 /**
@@ -119,6 +120,7 @@ export default function RoutesFromHere({ routes, t, onOpen }) {
           than a thin country, and the reader cannot tell those apart. */}
       <p className="drh-note">{t('dest.routesCoverage')}</p>
       <p className="drh-credit">{t('dest.routesCredit')}</p>
+      <CreditFold t={t} licenceKeys={['credit.licence.routes']} />
     </div>
   );
 }

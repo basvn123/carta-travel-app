@@ -71,7 +71,7 @@ export function OriginPicker({
 
   // Let the page know: the map's drive prompt asks the same question, and two
   // copies of it on screen at once read as a stutter.
-  useEffect(() => { onOpenChange?.(open); }, [open]); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => { onOpenChange?.(open); }, [open, onOpenChange]);
 
   if (!isCar && !hasOrigins) return null;
 

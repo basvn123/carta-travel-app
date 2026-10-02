@@ -19,6 +19,6 @@ export function useUrlSync(ready, snapshot) {
     // Listing the snapshot's values (stable key order) preserves the exact
     // per-value dependency behaviour the inline effect had, without a 17-line
     // dependency array. eslint can't statically verify a spread dep list.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- a spread list the rule cannot read: every snapshot value, in stable key order
   }, [ready, ...Object.values(snapshot)]);
 }

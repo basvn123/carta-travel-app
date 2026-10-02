@@ -87,7 +87,14 @@ export function AroundHere({ city, nearby, around, t, onOpenFeature, onShowMap }
   ];
   const [tab, setTab] = React.useState(tabs[0]?.key || null);
   const [all, setAll] = React.useState(false);
-  React.useEffect(() => { setTab(tabs[0]?.key || null); setAll(false); }, [city]); // eslint-disable-line react-hooks/exhaustive-deps
+  // A different town starts on its own first tab, set during render (React's
+  // pattern for state that follows a prop) so no frame shows the old tab.
+  const [tabCity, setTabCity] = React.useState(city);
+  if (tabCity !== city) {
+    setTabCity(city);
+    setTab(tabs[0]?.key || null);
+    setAll(false);
+  }
   if (!tabs.length) return null;
 
   const rows = tab === 'picks' ? picks : (around?.[tab] || []).map((r) => ({ ...r, layer: tab }));

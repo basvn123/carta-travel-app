@@ -126,7 +126,7 @@ export function AiDayPlanModal({
     if (autoRan.current || !preset?.autoRun || !signedIn) return;
     autoRan.current = true;
     generate('');
-  }, [preset, signedIn]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [preset, signedIn]); // eslint-disable-line react-hooks/exhaustive-deps -- one-shot, guarded by autoRan: generate is rebuilt every render and has nothing to add to that guard
 
   const chipRow = (label, options, activeKey, onPick) => (
     <div className="carta-plan-row">

@@ -82,6 +82,10 @@
  * migration 047 added: admin_adjust_expiry moves the date and keeps the
  * allowance period, with one audit row per change; admin_edge_errors keeps
  * client crashes off the AI figures; admin_set_override takes the cycle layer.
+ * 11 tests migration 048 (T315): launch_count counts per day with no
+ * identifier, drops unknown events, partners and visitor AI calls, holds the
+ * 200,000-a-day total and the 2,000-keys-a-day cap, and admin_launch_metrics
+ * adds up and divides AI failures by calls from the first counted day.
  *
  * HOW. The harness of test_override_review.mjs (T074) and test_admin_mfa.mjs
  * (T063): stub schema auth, auth.users, auth.uid(), auth.jwt() and the three
@@ -151,11 +155,12 @@ const TEST_DB = process.env.CARTA_TEST_DB || 'carta_t077_test';
  * The floor on how many admin_* functions the discovery must find. It is a
  * floor, not an equality: adding a guarded function must not fail the build,
  * but a discovery that silently returns nothing or a handful (the vacuous
- * gate) must. 40 is what the whole directory defines as of 047 (T284 added
- * admin_adjust_expiry); it was 39 as of 045 (T268) and 37 when the list of
+ * gate) must. 41 is what the whole directory defines as of 048 (T315 added
+ * admin_launch_metrics); it was 40 as of 047 (T284 added admin_adjust_expiry),
+ * 39 as of 045 (T268) and 37 when the list of
  * migrations was still written by hand.
  */
-const MIN_FUNCTIONS = 40;
+const MIN_FUNCTIONS = 41;
 
 function findPsql() {
   for (const cand of PSQL_CANDIDATES) {
@@ -269,7 +274,7 @@ const VICTIM = '00000000-0000-0000-0000-00000000c002'; // a target for the write
 const MIGRATIONS = readdirSync(migrations)
   .filter((f) => /^\d{3}_.+\.sql$/.test(f))
   .sort();
-const MIN_MIGRATIONS = 46; // 002 to 047 as of T284 (the directory has no 001)
+const MIN_MIGRATIONS = 47; // 002 to 048 as of T315 (the directory has no 001)
 
 /**
  * A safe argument for every parameter type the admin surface uses. The call is
@@ -708,6 +713,115 @@ function runTests(bin) {
       'A reason long enough.', 'temporary', ${reviewBy}, null)`);
     check('an unknown layer is still refused with bad_layer', badLayer.error === 'bad_layer', JSON.stringify(badLayer));
     psql(bin, TEST_DB, ['-c', `delete from public.content_overrides where item_id like '%t284'; delete from public.admin_audit_log`]);
+
+    // ---------------------------------------------------------------------
+    // 11. The launch counters and their reader (048, T215-b, T215-c,
+    //     T215-d). The writer counts per day with no identifier, drops what
+    //     it does not know, and holds both daily caps; the reader adds up
+    //     and divides failures by calls from the first counted day.
+    // ---------------------------------------------------------------------
+    console.log('');
+    console.log('  launch_count and admin_launch_metrics (048):');
+    psql(bin, TEST_DB, ['-c', 'delete from public.launch_counts; delete from public.launch_daily_total; delete from public.edge_errors']);
+    /** Several writer calls in one psql session, as the given claims (null = anon). */
+    const ticks = (claims, calls) => {
+      const args = ['-At', '-c', claims ? 'set role authenticated' : 'set role anon'];
+      if (claims) args.push('-c', claimsSql(claims));
+      for (const c of calls) args.push('-c', `select public.launch_count(${c})`);
+      return psqlRun(bin, TEST_DB, args);
+    };
+    const counts = () => scalar(bin, TEST_DB, `select coalesce(string_agg(event || '/' || target || '/' || surface || '=' || n, ' '
+      order by event, target, surface), '') from public.launch_counts`);
+    const guestTicks = ticks(null, [
+      `'trip_priced', null, 'built'`, `'trip_priced', null, 'built'`, `'trip_priced', null, 'ready'`,
+      `'trip_priced', null, 'Elsewhere'`,
+      `'affiliate_click', 'omio', 'leg'`, `'affiliate_click', 'OMIO', 'wiz_inter'`,
+      `'affiliate_click', 'getyourguide', 'dest-book'`, `'affiliate_click', 'viator', null`,
+      `'affiliate_click', 'skyscanner', 'leg'`, `'affiliate_click', 'aviasales', 'a/b c<script>'`,
+      `'nonsense', 'omio', 'leg'`, `null, null, null`, `'ai_call', 'plan-day', null`,
+    ]);
+    check('a visitor can call the writer', guestTicks.ok, (guestTicks.err.match(/ERROR:.*$/m) || [''])[0]);
+    const signedTicks = ticks(plainClaims, [
+      `'ai_call', 'plan-day', null`, `'ai_call', 'plan-day', 'ignored'`, `'ai_call', 'parse-booking', null`,
+      `'ai_call', 'gpt', null`,
+    ]);
+    check('a signed-in traveller can call the writer', signedTicks.ok, (signedTicks.err.match(/ERROR:.*$/m) || [''])[0]);
+    check('the rows are exactly the known ticks: unknown events and partners dropped, the visitor AI call dropped, sub-IDs cleaned',
+      counts() === 'affiliate_click/aviasales/abcscript=1 affiliate_click/getyourguide/dest-book=1 affiliate_click/omio/leg=1 '
+        + 'affiliate_click/omio/wiz_inter=1 affiliate_click/viator/none=1 ai_call/parse-booking/=1 ai_call/plan-day/=2 '
+        + 'trip_priced//built=2 trip_priced//other=1 trip_priced//ready=1', counts());
+    check('launch_counts has no column that could name a person', scalar(bin, TEST_DB,
+      `select string_agg(column_name, ',' order by ordinal_position) from information_schema.columns
+        where table_schema = 'public' and table_name = 'launch_counts'`) === 'day,event,target,surface,n');
+
+    // The two daily caps.
+    psql(bin, TEST_DB, ['-c', `update public.launch_daily_total set n = 199999 where day = current_date`]);
+    ticks(null, [`'trip_priced', null, 'built'`, `'trip_priced', null, 'built'`, `'trip_priced', null, 'built'`]);
+    check('the daily total stops at 200,000: of three ticks at 199,999 one is counted',
+      scalar(bin, TEST_DB, `select n from public.launch_counts where day = current_date and event = 'trip_priced' and surface = 'built'`) === '3'
+      && scalar(bin, TEST_DB, 'select n from public.launch_daily_total where day = current_date') === '200000');
+    psql(bin, TEST_DB, ['-c', `update public.launch_daily_total set n = 0 where day = current_date;
+      insert into public.launch_counts (day, event, target, surface, n)
+      select current_date, 'affiliate_click', 'omio', 'k' || g, 1 from generate_series(1, 2000 - (select count(*) from public.launch_counts where day = current_date)) g`]);
+    ticks(null, [`'affiliate_click', 'omio', 'brandnew'`, `'affiliate_click', 'omio', 'leg'`]);
+    check('at 2,000 keys a day a new sub-ID is dropped', scalar(bin, TEST_DB,
+      `select count(*) from public.launch_counts where surface = 'brandnew'`) === '0');
+    check('while an existing key still counts', scalar(bin, TEST_DB,
+      `select n from public.launch_counts where day = current_date and event = 'affiliate_click' and target = 'omio' and surface = 'leg'`) === '2');
+
+    // The reader. Yesterday: 4 plan-day calls, today: 6 more and 2 parse-booking
+    // calls. Failures: 3 plan-day and 1 parse-booking since yesterday, and
+    // 5 plan-day from a week ago, before any call was counted, which the rate
+    // must leave out. A crash never counts.
+    psql(bin, TEST_DB, ['-c', `delete from public.launch_counts; delete from public.launch_daily_total;
+      insert into public.launch_counts (day, event, target, surface, n) values
+        (current_date - 1, 'ai_call', 'plan-day', '', 4),
+        (current_date,     'ai_call', 'plan-day', '', 6),
+        (current_date,     'ai_call', 'parse-booking', '', 2),
+        (current_date - 1, 'trip_priced', '', 'built', 3),
+        (current_date,     'trip_priced', '', 'ready', 1),
+        (current_date - 40, 'trip_priced', '', 'built', 50),
+        (current_date,     'affiliate_click', 'omio', 'leg', 5),
+        (current_date,     'affiliate_click', 'getyourguide', 'dest-book', 2);
+      insert into public.edge_errors (user_id, fn, code, origin, at) values
+        ('${PLAIN}', 'plan-day', 'ai_timeout', 'edge', now()),
+        ('${PLAIN}', 'plan-day', 'ai_error', 'edge', now()),
+        ('${VICTIM}', 'plan-day', 'ai_bad_output', 'client', now() - interval '1 day' + interval '1 minute'),
+        ('${VICTIM}', 'parse-booking', 'url_unreachable', 'edge', now()),
+        ('${VICTIM}', 'app', 'client_crash', 'client', now());
+      insert into public.edge_errors (user_id, fn, code, origin, at)
+        select '${VICTIM}', 'plan-day', 'ai_timeout', 'edge', now() - interval '7 days' from generate_series(1, 5)`]);
+    const lm = adminCall('select public.admin_launch_metrics(30)');
+    check('the reader answers an admin', !lm.error && !lm.raised, JSON.stringify(lm).slice(0, 160));
+    check('priced trips in 30 days: 4, split 3 built and 1 ready; the 40-day-old 50 are outside',
+      lm.tripsPriced && lm.tripsPriced.total === 4
+      && JSON.stringify(lm.tripsPriced.bySurface) === '[{"n":3,"surface":"built"},{"n":1,"surface":"ready"}]',
+      JSON.stringify(lm.tripsPriced && lm.tripsPriced.bySurface));
+    check('the daily series is zero-filled over the 30 days and sums to the total',
+      Array.isArray(lm.tripsPriced && lm.tripsPriced.daily) && lm.tripsPriced.daily.length === 30
+      && lm.tripsPriced.daily.reduce((a, d) => a + d.n, 0) === 4);
+    check('affiliate clicks: 7, by partner and by surface',
+      lm.affiliateClicks && lm.affiliateClicks.total === 7
+      && JSON.stringify(lm.affiliateClicks.byPartner) === '[{"n":5,"partner":"omio"},{"n":2,"partner":"getyourguide"}]'
+      && lm.affiliateClicks.bySurface.length === 2, JSON.stringify(lm.affiliateClicks));
+    const ai = lm.aiCalls || {};
+    const pd = (ai.byFunction || []).find((f) => f.fn === 'plan-day') || {};
+    const pb = (ai.byFunction || []).find((f) => f.fn === 'parse-booking') || {};
+    check('the rate counts from the first counted day: 12 calls, 4 failures, 0.3333 (the 5 older failures and the crash left out)',
+      ai.total === 12 && ai.failures === 4 && Number(ai.rate) === 0.3333, JSON.stringify(ai));
+    check('per function: plan-day 3 of 10, parse-booking 1 of 2',
+      pd.calls === 10 && pd.failures === 3 && Number(pd.rate) === 0.3
+      && pb.calls === 2 && pb.failures === 1 && Number(pb.rate) === 0.5, JSON.stringify(ai.byFunction));
+    psql(bin, TEST_DB, ['-c', `delete from public.launch_counts where event = 'ai_call'`]);
+    const noCalls = adminCall('select public.admin_launch_metrics(30)');
+    check('with no call counted the rate is null, never zero, and failures are not guessed at',
+      noCalls.aiCalls && noCalls.aiCalls.rate === null && noCalls.aiCalls.total === 0
+      && noCalls.aiCalls.failures === 0 && noCalls.aiCalls.countedSince === null, JSON.stringify(noCalls.aiCalls));
+    const plainLm = psqlRun(bin, TEST_DB, ['-At', '-c', 'set role authenticated', '-c', claimsSql(plainClaims),
+      '-c', 'select public.admin_launch_metrics(30)::text']);
+    check('a normal signed-in user gets forbidden from the reader', refused({ ok: plainLm.ok, out: plainLm.out.trim() }),
+      plainLm.out.trim() || plainLm.err.trim());
+    psql(bin, TEST_DB, ['-c', 'delete from public.launch_counts; delete from public.launch_daily_total; delete from public.edge_errors; delete from public.admin_audit_log']);
   } finally {
     psqlRun(bin, 'postgres', ['-c', `drop database if exists ${TEST_DB} with (force)`]);
     if (work) {

@@ -14,6 +14,7 @@
  */
 import { supabase } from '../lib/supabaseClient.js';
 import { reportEdgeFailure } from './edgeFailure.js';
+import { trackAiCall } from '../lib/launchEvents.js';
 import { importMime, MAX_IMPORT_FILES, MAX_IMPORT_BYTES, MAX_IMPORT_TOTAL_BYTES } from './bookingImportLogic.js';
 
 export {
@@ -124,6 +125,8 @@ export async function requestBookingImport(payload) {
   const { kind, mimeType, sizeB } = analyzePayload(payload);
 
   try {
+    // The denominator of the AI failures rate (048, T215-d).
+    trackAiCall('parse-booking');
     const { data, error } = await supabase.functions.invoke('parse-booking', { body: payload });
     if (error) {
       let code = 'ai_error';

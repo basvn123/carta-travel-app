@@ -180,7 +180,7 @@ export function useFavoriteItems(favorites, destinations) {
     return () => { live = false; };
     // `resolved` is deliberately not a dependency: it is what this effect
     // writes, and depending on it would re-run the effect on its own result.
-  }, [wantedSig]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [wantedSig]); // eslint-disable-line react-hooks/exhaustive-deps -- value key: wantedSig is `wanted` by value, and `resolved` is this effect's own output
 
   /** The shortlist ready to draw: [{kind, rows}], groups in FAV_KINDS order. */
   const sections = useMemo(() => groups.map(({ kind, items }) => ({

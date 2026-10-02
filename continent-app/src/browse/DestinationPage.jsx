@@ -261,7 +261,7 @@ export function DestinationPage({
     try {
       return new URLSearchParams(window.location.search).get('dm') || null;
     } catch { return null; }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- re-reads ?dm= from the address bar, which is not React state, each time the page changes destination
   }, [destination?.id]);
 
   const isOpen = (id) => open.has(id);

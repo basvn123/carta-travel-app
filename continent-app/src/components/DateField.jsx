@@ -80,7 +80,7 @@ export function DateField({
   // Jump the visible month to the selected date each time the popup opens.
   useEffect(() => {
     if (open && sel) setView({ y: sel.y, m: sel.m });
-  }, [open]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [open]); // eslint-disable-line react-hooks/exhaustive-deps -- on open only: sel is parsed fresh every render, and a pick while open must not move the month under the reader
 
   // Follow the range as the parent moves it, so picking a start in July and an
   // end in August doesn't strand the view on the month you started in.

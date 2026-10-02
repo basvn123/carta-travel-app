@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import {
   adminAiCacheReport, adminAiModelReport, adminAiUsage, adminAnalytics,
-  adminEdgeErrors, adminHealth, adminListContentReports, adminOssThreshold,
+  adminEdgeErrors, adminHealth, adminLaunchMetrics, adminListContentReports, adminOssThreshold,
   adminParseFailures, adminPaywallFunnel, adminPipelineHealth, adminStats,
 } from '../../auth/admin.js';
 
@@ -19,6 +19,9 @@ export function useOverview(unlocked) {
   const [edgeErrors, setEdgeErrors] = useState(null);
   const [parseFailures, setParseFailures] = useState(null);
   const [oss, setOss] = useState(null);
+  // Priced trips, affiliate clicks and AI calls (048). Missing before the
+  // paste, which hides the Launch card and the rate on the AI failures card.
+  const [launch, setLaunch] = useState(null);
   // DSA notices still marked new, so the Reports tab can carry a count
   // without being opened (T068-b). Only the count; the queue loads on its tab.
   const [newReports, setNewReports] = useState(null);
@@ -36,6 +39,7 @@ export function useOverview(unlocked) {
     adminEdgeErrors(30).then(setEdgeErrors).catch(() => setEdgeErrors(null));
     adminParseFailures(7).then(setParseFailures).catch(() => setParseFailures(null));
     adminOssThreshold().then(setOss).catch(() => setOss(null));
+    adminLaunchMetrics(30).then(setLaunch).catch(() => setLaunch(null));
     adminListContentReports('new', 1, 0)
       .then((r) => setNewReports(typeof r?.new === 'number' ? r.new : null))
       .catch(() => setNewReports(null));
@@ -48,7 +52,7 @@ export function useOverview(unlocked) {
 
   return {
     stats, health, analytics, funnel, modelReport, cacheReport, aiUsage,
-    pipelineHealth, edgeErrors, parseFailures, oss, newReports,
+    pipelineHealth, edgeErrors, parseFailures, oss, launch, newReports,
     refreshStats, refreshAnalytics,
   };
 }

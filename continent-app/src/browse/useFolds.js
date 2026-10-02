@@ -11,7 +11,14 @@ import React from 'react';
 export function useFolds(defaults, resetKey) {
   const [open, setOpen] = React.useState(() => new Set(defaults));
 
-  React.useEffect(() => { setOpen(new Set(defaults)); }, [resetKey]); // eslint-disable-line react-hooks/exhaustive-deps
+  // A new subject resets the folds during render (React's pattern for state
+  // that follows a prop), so `defaults` may be a fresh array on every render
+  // without re-running anything, and no frame shows the last subject's folds.
+  const [subject, setSubject] = React.useState(resetKey);
+  if (subject !== resetKey) {
+    setSubject(resetKey);
+    setOpen(new Set(defaults));
+  }
 
   const isOpen = React.useCallback((id) => open.has(id), [open]);
   const toggle = React.useCallback((id) => setOpen((s) => {

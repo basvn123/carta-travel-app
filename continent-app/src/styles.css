@@ -33641,3 +33641,8 @@ button.ai-sched-main:focus-visible {
   .guide-foot-actions { flex: 1 1 auto; justify-content: flex-end; }
   .guide-next { white-space: nowrap; }
 }
+
+/* Licence names behind a credit line, collapsed (T313). */
+.credit-fold { margin: 6px 0 0; font-size: 11px; color: var(--ink-mute); }
+.credit-fold > summary { cursor: pointer; min-height: 24px; }
+.credit-fold > p { margin: 4px 0 0; }

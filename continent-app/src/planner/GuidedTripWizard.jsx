@@ -15,6 +15,7 @@ import {
   TRAVEL_STYLES, STYLE_BY_KEY, styleLifestyle, nearbyAirports,
 } from '../lib/wizardTransit.js';
 import { plannerStore } from './plannerStore.js';
+import { trackLaunch } from '../lib/launchEvents.js';
 import { CountryBrief } from './CountryBrief.jsx';
 import { ReadyTripsStep } from './ReadyTripsStep.jsx';
 // The trip's own page, the one the Destinations tab opens. Lazy because it
@@ -1284,6 +1285,10 @@ export function GuidedTripWizard({
       label,
       stops,
     });
+    // The launch metric "priced-trip completions" (migration 048, T215-b):
+    // one tick per finished wizard, 'ready' for a published journey and
+    // 'built' for a trip put together here. A per-day count, no identifier.
+    trackLaunch('trip_priced', '', readyTrip ? 'ready' : 'built');
   };
 
   // ---- Stay step data: per-country groups (big cities vs gems), exhaustive ----

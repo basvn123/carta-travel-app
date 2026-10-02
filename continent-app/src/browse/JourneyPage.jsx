@@ -1,7 +1,10 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useI18n } from '../i18n/index.jsx';
 import { useFocusTrap } from '../hooks/useFocusTrap.js';
-import { loadJourney, typeLabel, diffLabel, eurRange, boldSegments, lastCheckedMonth } from '../lib/journeys.js';
+import {
+  loadJourney, typeLabel, diffLabel, eurRange, boldSegments, lastCheckedMonth,
+  dayStatsLine, packingText, riskText, stayPriceText, minutesText,
+} from '../lib/journeys.js';
 import { srcSetFor } from '../lib/heroImage.js';
 import { trailheadDirectionsUrl } from '../lib/trailExport.js';
 import { safeUrl } from '../lib/format.js';
@@ -59,10 +62,24 @@ function Prose({ text, className = 'bpage-prose' }) {
   );
 }
 
-/* The gateway string is hand-written prose. When it splits cleanly into airport
-   rows those are shown; otherwise the first airport is shown and the whole
-   text opens from the info button. */
-function gatewayFact(text, code) {
+/* The gateway airports. The wire carries them as rows (trip.gateways, written
+   by build_wire.py since T143): code, name, transfer minutes and place, and a
+   short note. gatewaysPartial means the hand-written v2.0 string did not split
+   cleanly, so the first airport is shown and the whole text opens from the
+   info button. A wire built before T143 has no rows, and the string is split
+   here by parseGateway, the same reader the build now runs. */
+function gatewayFact(trip, t) {
+  if (Array.isArray(trip.gateways) && trip.gateways.length) {
+    const rows = trip.gateways.map((g) => {
+      const transfer = Number.isFinite(g.transferMin) && g.transferTo
+        ? t('journey.gatewayTransfer', { time: minutesText(g.transferMin), place: g.transferTo })
+        : '';
+      return { code: g.code, name: g.name || '', detail: [transfer, g.note].filter(Boolean).join(', ') };
+    });
+    return { rows, more: trip.gatewaysPartial ? (trip.gatewayAirport || null) : null };
+  }
+  const text = trip.gatewayAirport;
+  const code = trip.gatewayAirportCode;
   const { rows, complete } = parseGateway(text);
   if (rows.length && complete) return { rows, more: null };
   const first = rows[0] ? { code: rows[0].code, name: rows[0].name, detail: '' } : { code: code || '', name: '', detail: '' };
@@ -106,7 +123,7 @@ function HeroCredit({ hero, t }) {
  * between days. The prose is folded rather than shortened: it is authored
  * copy and every word of it is still on the page, one tap down.
  */
-function Day({ day, t }) {
+function Day({ day, t, lang }) {
   const [more, setMore] = React.useState(false);
   const parts = [['morning', day.morning], ['afternoon', day.afternoon], ['evening', day.evening]]
     .filter(([, text]) => text);
@@ -116,7 +133,7 @@ function Day({ day, t }) {
         <span className="jpage-day-n mono">{t('journey.dayN', { n: day.day })}</span>
         <h3>{day.title}</h3>
       </header>
-      {day.dayStats && <p className="jpage-day-stats mono">{day.dayStats}</p>}
+      {day.dayStats && <p className="jpage-day-stats mono">{dayStatsLine(day.dayStats, lang)}</p>}
       {day.sleep && (
         <p className="jpage-day-sleep">
           <b>{t('journey.night')}</b>
@@ -297,8 +314,8 @@ export function JourneyPage({ id, gatewayDest, onClose, onSelectDest }) {
       {
         key: 'gateway',
         label: t('journey.fGateway'),
-        ...(trip.gatewayAirport ? {
-          gateway: gatewayFact(trip.gatewayAirport, trip.gatewayAirportCode),
+        ...((trip.gateways?.length || trip.gatewayAirport) ? {
+          gateway: gatewayFact(trip, t),
         } : { value: notRecorded, className: 'bpage-fact-empty' }),
       },
       {
@@ -551,7 +568,7 @@ export function JourneyPage({ id, gatewayDest, onClose, onSelectDest }) {
               onToggle={() => toggle('itin')}
               className="jpage-itin"
             >
-              {trip.itinerary.map((day) => <Day key={day.day} day={day} t={t} />)}
+              {trip.itinerary.map((day) => <Day key={day.day} day={day} t={t} lang={lang} />)}
             </Fold>
           )}
 
@@ -573,10 +590,10 @@ export function JourneyPage({ id, gatewayDest, onClose, onSelectDest }) {
                     </span>
                   </header>
                   {stay.description && <Prose text={stay.description} className="jpage-stay-desc" />}
-                  {(stay.booking || stay.priceNote) && (
+                  {(stay.booking || stayPriceText(stay, lang)) && (
                     <p className="jpage-stay-book">
-                      {stay.priceNote && <span className="mono">{stay.priceNote}</span>}
-                      {stay.priceNote && stay.booking ? ' · ' : ''}
+                      {stayPriceText(stay, lang) && <span className="mono">{stayPriceText(stay, lang)}</span>}
+                      {stayPriceText(stay, lang) && stay.booking ? '. ' : ''}
                       {stay.booking && (
                         <span>
                           {t('journey.bookBy')}
@@ -639,7 +656,7 @@ export function JourneyPage({ id, gatewayDest, onClose, onSelectDest }) {
             >
               <ul>
                 {trip.packingNotes.map((note, i) => (
-                  <li key={i}><Prose text={note} className="jpage-tip-text" /></li>
+                  <li key={i}><Prose text={packingText(note)} className="jpage-tip-text" /></li>
                 ))}
               </ul>
             </Fold>
@@ -656,7 +673,12 @@ export function JourneyPage({ id, gatewayDest, onClose, onSelectDest }) {
               </h2>
               <ul>
                 {trip.whatCouldGoWrong.map((item, i) => (
-                  <li key={i}><Prose text={item} className="jpage-tip-text" /></li>
+                  <li key={i}>
+                    <Prose
+                      text={riskText(item, (text) => t('journey.wrongDo', { text }))}
+                      className="jpage-tip-text"
+                    />
+                  </li>
                 ))}
               </ul>
             </section>

@@ -80,7 +80,9 @@ export function useAppData(init, setChoices, departDate, setDepartDate, returnDa
       })
       .catch((e) => setError(e.message));
     return () => unsubscribe?.();
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+    // Once per mount: App passes its useState snapshot `init` and the
+    // setChoices setter, both stable for the app's life.
+  }, [init, setChoices]);
 
   // The effective origin: the user's choice once known, else the data's default.
   const effectiveOrigin = origin || (raw ? defaultOrigin(raw) : null);
@@ -217,7 +219,7 @@ export function useAppData(init, setChoices, departDate, setDepartDate, returnDa
 
     if (start !== departDate) setDepartDate(start);
     if (end !== returnDate) setReturnDate(end);
-  }, [dateBounds, defaultWindow]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [dateBounds, defaultWindow]); // eslint-disable-line react-hooks/exhaustive-deps -- repairs on a data or origin change only: re-running on the dates would undo a deliberate off-calendar pick
 
   return { data, error, dateBounds };
 }

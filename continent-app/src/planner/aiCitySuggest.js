@@ -11,6 +11,7 @@
  */
 import { supabase } from '../lib/supabaseClient.js';
 import { reportEdgeFailure } from './edgeFailure.js';
+import { trackAiCall } from '../lib/launchEvents.js';
 
 /**
  * The whitelist of towns the AI may rank or reference: real destinations
@@ -46,6 +47,8 @@ export function buildCityCandidates(towns, { limit = 120 } = {}) {
 export async function requestCitySuggestion(payload) {
   if (!supabase) return { ok: false, code: 'no_auth_config' };
   try {
+    // The denominator of the AI failures rate (048, T215-d).
+    trackAiCall('suggest-city');
     const { data, error } = await supabase.functions.invoke('suggest-city', { body: payload });
     if (error) {
       let code = 'ai_error';

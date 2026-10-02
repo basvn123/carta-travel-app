@@ -9,6 +9,7 @@ import { PipelineHealth } from './PipelineHealth.jsx';
 import { EdgeErrors } from './EdgeErrors.jsx';
 import { ParseFailures } from './ParseFailures.jsx';
 import { OssThreshold } from './OssThreshold.jsx';
+import { LaunchMetrics } from './LaunchMetrics.jsx';
 import { RecentAudit } from './AuditLog.jsx';
 
 // The Overview tab: how is it going. Pure render. Every figure here was
@@ -18,7 +19,7 @@ export function Overview({ overview, marginDash, audit, attention, goTo }) {
   const { t } = useI18n();
   const {
     stats, analytics, funnel, modelReport, cacheReport, aiUsage,
-    pipelineHealth, edgeErrors, parseFailures, oss,
+    pipelineHealth, edgeErrors, parseFailures, oss, launch,
   } = overview;
   const { margin, marginBack, setMarginBack } = marginDash;
   return (
@@ -141,6 +142,8 @@ export function Overview({ overview, marginDash, audit, attention, goTo }) {
         </>
       )}
 
+      {launch && !launch.error && <LaunchMetrics report={launch} />}
+
       {funnel && !funnel.error && <PaywallFunnel funnel={funnel} t={t} />}
 
       {margin && !margin.error && (
@@ -153,7 +156,7 @@ export function Overview({ overview, marginDash, audit, attention, goTo }) {
 
       {modelReport && !modelReport.error && <AiModelFallbacks modelReport={modelReport} />}
 
-      {edgeErrors && !edgeErrors.error && <EdgeErrors report={edgeErrors} />}
+      {edgeErrors && !edgeErrors.error && <EdgeErrors report={edgeErrors} calls={launch && !launch.error ? launch.aiCalls : null} />}
 
       {parseFailures && !parseFailures.error && <ParseFailures report={parseFailures} />}
 

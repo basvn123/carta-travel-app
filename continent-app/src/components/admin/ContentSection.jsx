@@ -156,7 +156,7 @@ export function ContentSection({ overrides, onOverridesChanged, errText }) {
   );
 
   // Read the clock once per list change, so every row in one render agrees.
-  const now = useMemo(() => Date.now(), [overrides]); // eslint-disable-line react-hooks/exhaustive-deps
+  const now = useMemo(() => Date.now(), [overrides]); // eslint-disable-line react-hooks/exhaustive-deps -- overrides is a deliberate trigger: the clock is re-read once per list change, never per render
   const dueRows = useMemo(() => rowsNeedingReview(overrides, now), [overrides, now]);
   const orphanRows = useMemo(() => orphanOverrides(overrides, validIds), [overrides, validIds]);
   const overdueCount = dueRows.filter((r) => reviewState(r, now) === 'overdue').length;

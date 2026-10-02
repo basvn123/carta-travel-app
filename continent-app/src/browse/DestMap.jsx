@@ -53,6 +53,10 @@ const DestMap = React.forwardRef(function DestMap({
   const markersRef = React.useRef([]);
   const declutterRef = React.useRef(null);
   const pinElsRef = React.useRef([]);
+  // The focus pin is restyled in place by the light effect below, so a
+  // rebuild reads the current focus through a ref instead of depending on it.
+  const focusRef = React.useRef(focus);
+  focusRef.current = focus;
 
   React.useImperativeHandle(ref, () => ({
     resize() { try { mapRef.current?.resize(); } catch { /* not mounted */ } },
@@ -89,7 +93,7 @@ const DestMap = React.forwardRef(function DestMap({
       pts.push([row.lon, row.lat]);
       let el;
       if (active === 'highlights') {
-        el = makeEl(`dmap-pin is-hl ${focus === i ? 'is-focus' : ''}`, `<span class="dmap-pin-in"><span class="dmap-pin-n mono">${i + 1}</span><span class="dmap-pin-name">${esc(row.name)}</span></span>`);
+        el = makeEl(`dmap-pin is-hl ${focusRef.current === i ? 'is-focus' : ''}`, `<span class="dmap-pin-in"><span class="dmap-pin-n mono">${i + 1}</span><span class="dmap-pin-name">${esc(row.name)}</span></span>`);
         if (onPickHighlight) {
           el.style.cursor = 'pointer';
           el.addEventListener('click', (e) => { e.stopPropagation(); onPickHighlight(i); });
@@ -134,10 +138,11 @@ const DestMap = React.forwardRef(function DestMap({
         });
       } catch { /* a bad bound is not worth a blank page */ }
     }
-  // The focus pin is restyled in a lighter effect below; it must not rebuild
-  // every marker.
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [active, highlights, trips, nearby, around, lat, lon, place?.name, onPickTrip, onPickHighlight, onPickFeature]);
+
+  // The map's load handler draws whatever layer is current by then.
+  const renderLayerRef = React.useRef(renderLayer);
+  renderLayerRef.current = renderLayer;
 
   React.useEffect(() => {
     if (!holder.current || !isNum(lat) || !isNum(lon)) return undefined;
@@ -152,7 +157,7 @@ const DestMap = React.forwardRef(function DestMap({
     });
     mapRef.current = map;
     map.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'top-right');
-    map.on('load', () => { readyRef.current = true; renderLayer(); });
+    map.on('load', () => { readyRef.current = true; renderLayerRef.current(); });
     const ro = new ResizeObserver(() => map.resize());
     ro.observe(holder.current);
     return () => {
@@ -164,7 +169,7 @@ const DestMap = React.forwardRef(function DestMap({
       mapRef.current = null;
     };
     // The map itself is created once per destination; layers re-render below.
-  }, [lat, lon]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [lat, lon]);
 
   React.useEffect(() => { renderLayer(); }, [renderLayer]);
 

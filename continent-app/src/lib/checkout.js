@@ -13,7 +13,7 @@
  */
 import { supabase } from './supabaseClient.js';
 import { PAID_TIERS } from './pricing.js';
-import { trackPaywall } from './paywallEvents.js';
+import { trackPaywall, markCheckoutRedirect } from './paywallEvents.js';
 
 /**
  * @param {string} tier    the pass being bought
@@ -45,6 +45,9 @@ export async function startCheckout(tier, reason = '') {
     if (!data?.url) return { ok: false, code: 'stripe_error' };
     // Full-page navigation, not a popup: Stripe Checkout is a hosted page and
     // a blocked popup is the single most common way this flow silently dies.
+    // Marked first, so the pagehide this navigation fires is not counted as
+    // a dismissal of the modal that is still standing open (T314).
+    markCheckoutRedirect();
     window.location.assign(data.url);
     return { ok: true };
   } catch {

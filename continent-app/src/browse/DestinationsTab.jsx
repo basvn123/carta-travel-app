@@ -67,6 +67,7 @@ import {
 } from '../components/Icons.jsx';
 import { LifestyleButton } from './LifestyleButton.jsx';
 import { JourneysSection } from './JourneysSection.jsx';
+import CreditFold from './CreditFold.jsx';
 
 /**
  * The Destinations tab: the whole catalogue and every published trip as a
@@ -1644,7 +1645,9 @@ export function DestinationsTab({
     setItinDays(null);
     setPageItin({ id: openTrip.id });
     onOpenTripConsumed?.();
-  }, [openTrip]); // eslint-disable-line react-hooks/exhaustive-deps
+    // The callback is a fresh arrow from App, but App only re-renders it after
+    // clearing openTrip, so the hand-off still runs once per link.
+  }, [openTrip, onOpenTripConsumed]);
 
   const itinRows = useMemo(() => {
     if (!isItinCat) return null;
@@ -3400,9 +3403,11 @@ export function DestinationsTab({
 
             {cycleRows && (cycleRows.routes.length > 0
               || cycleRows.tours.length > 0) && (
+              <>
               <p className="places-credit" data-testid="cycle-credit-foot">
                 {t('cycle.sourceNote')}
               </p>
+              <CreditFold t={t} licenceKeys={['credit.licence.cycle']} /></>
             )}
           </div>
         )}

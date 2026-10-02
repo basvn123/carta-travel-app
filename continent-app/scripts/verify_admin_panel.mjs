@@ -647,6 +647,32 @@ async function stubSupabase(page, state, opts = {}) {
     byCheck: [{ check: 'json_parse', n: 5, users: 3 }, { check: 'empty_result', n: 1, users: 1 }],
     daily: [{ day: '2026-09-30', n: 2 }, { day: '2026-10-01', n: 4 }],
   }));
+  // T315 (migration 048): the launch counters and the AI failures they give a
+  // rate to. 3 failures of 40 counted calls is 7.5%.
+  const daily30 = (n) => Array.from({ length: 30 }, (_, i) => ({ day: `2026-09-${String(i + 1).padStart(2, '0')}`, n: i === 29 ? n : 0 }));
+  await page.route('**/rest/v1/rpc/admin_launch_metrics*', (route) => json(route, {
+    days: 30, since: '2026-09-04',
+    tripsPriced: { total: 9, bySurface: [{ surface: 'built', n: 6 }, { surface: 'ready', n: 3 }], daily: daily30(9) },
+    affiliateClicks: {
+      total: 7,
+      byPartner: [{ partner: 'omio', n: 5 }, { partner: 'getyourguide', n: 2 }],
+      bySurface: [{ partner: 'omio', surface: 'leg', n: 4 }, { partner: 'omio', surface: 'wiz_inter', n: 1 },
+        { partner: 'getyourguide', surface: 'dest-book', n: 2 }],
+      daily: daily30(7),
+    },
+    aiCalls: {
+      countedSince: '2026-09-28', total: 40, failures: 3, rate: 0.075,
+      byFunction: [{ fn: 'plan-day', calls: 30, failures: 2, rate: 0.0667 },
+        { fn: 'parse-booking', calls: 10, failures: 1, rate: 0.1 },
+        { fn: 'suggest-city', calls: 0, failures: 0, rate: null }],
+    },
+  }));
+  await page.route('**/rest/v1/rpc/admin_edge_errors*', (route) => json(route, {
+    days: 30, total: 3, users: 2, lastAt: '2026-10-01T10:00:00Z',
+    byCode: [{ code: 'ai_timeout', n: 2 }, { code: 'url_unreachable', n: 1 }],
+    byFunction: [{ fn: 'plan-day', code: 'ai_timeout', n: 2 }, { fn: 'parse-booking', code: 'url_unreachable', n: 1 }],
+    byUpstream: [], daily: [], crashes: { total: 0, users: 0, lastAt: null, daily: [] },
+  }));
   await page.route('**/rest/v1/rpc/admin_oss_threshold*', (route) => json(route, {
     thresholdCents: 1000000, years: [], currentYear: 2026, currentCents: 289700,
     currentPct: 29.0, breached: false, unknownCountry: 2, unknownAmount: 0,
@@ -1611,6 +1637,24 @@ try {
   const oss = await page.locator('.adminpage-card', { hasText: 'One Stop Shop' }).innerText();
   if (!/29\.0%/.test(oss) || !/floor/.test(oss)) fail(`the OSS card is wrong: ${oss}`);
   ok('new-reports count, nav badge, parse-failure card and OSS card render');
+  // T315: the Launch card and the rate on the AI failures card (048).
+  const launchCard = (await page.locator('.adminpage-card', { hasText: 'Priced trips and partner clicks' }).first().innerText())
+    .replace(/\n/g, ' ');
+  if (!/9\s*Priced trips/.test(launchCard) || !/6\s*Built in the wizard/.test(launchCard)
+    || !/3\s*From a ready journey/.test(launchCard) || !/7\s*Partner clicks/.test(launchCard)
+    || !/omio \/ leg/.test(launchCard)) {
+    fail(`the Launch card is wrong: ${launchCard.slice(0, 300)}`);
+  }
+  const aiFail = (await page.locator('.adminpage-card', { hasText: 'AI failures' }).first().innerText()).replace(/\n/g, ' ');
+  if (!/7\.5%\s*Failure rate/.test(aiFail) || !/40\s*AI calls/.test(aiFail)
+    || !/3 of 40 calls failed since 2026-09-28/.test(aiFail) || /suggest-city/.test(aiFail.split('Failures')[0])) {
+    fail(`the AI failures card carries no rate: ${aiFail.slice(0, 300)}`);
+  }
+  ok('the Launch card counts priced trips and partner clicks, and the AI failures card shows its rate');
+  await page.locator('.adminpage-card', { hasText: 'Priced trips and partner clicks' }).first()
+    .screenshot({ animations: 'disabled', path: `${SHOTS}/admin-launch.png` });
+  await page.locator('.adminpage-card', { hasText: 'AI failures' }).first()
+    .screenshot({ animations: 'disabled', path: `${SHOTS}/admin-ai-failures.png` });
 
   // T270 Site: the visibility switch, and a required key that cannot flip.
   await gotoSection(page, 'Site');
@@ -1777,6 +1821,14 @@ try {
     const s = await spillOf();
     if (s.scrolls || s.wide.length) fail(`${name} spills at 380px: ${s.wide.join(' | ')}`);
     await page4.screenshot({ animations: 'disabled', path: `${SHOTS}/admin-${name.toLowerCase()}-t270-380.png`, fullPage: true });
+    if (name === 'Overview') {
+      // T315: the Launch card and the AI failures rate, on their own.
+      for (const [title, file] of [['Priced trips and partner clicks', 'launch'], ['AI failures', 'ai-failures']]) {
+        const card = page4.locator('.adminpage-card', { hasText: title }).first();
+        await card.scrollIntoViewIfNeeded();
+        await card.screenshot({ animations: 'disabled', path: `${SHOTS}/admin-${file}-380.png` });
+      }
+    }
   }
   ok('380px: Overview counts, Site visibility, Guides and the audit pair fit');
   // T067 to T070 at 380px: the Guides table, the Reports queue and the open

@@ -127,14 +127,16 @@ export function CityPickerMap({ cities = [], onToggle, onFocus, anchor = null })
     };
     map._build = build;
     if (readyRef.current) build();
-  }, [cityKey]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [cityKey]); // eslint-disable-line react-hooks/exhaustive-deps -- value key: cities by id (selection restyles in place via sync), because a rebuild clears every pin and reframes the map
 
   // A new arrival point (changed flight) recentres the view without a rebuild.
+  const anchorLat = anchor?.lat;
+  const anchorLon = anchor?.lon;
   useEffect(() => {
     const map = mapRef.current;
-    if (!map || !readyRef.current || !hasLngLat(anchor)) return;
-    map.flyTo({ center: [anchor.lon, anchor.lat], zoom: 7, duration: 600 });
-  }, [anchor?.lat, anchor?.lon]); // eslint-disable-line react-hooks/exhaustive-deps
+    if (!map || !readyRef.current || !hasLngLat({ lat: anchorLat, lon: anchorLon })) return;
+    map.flyTo({ center: [anchorLon, anchorLat], zoom: 7, duration: 600 });
+  }, [anchorLat, anchorLon]);
 
   // Selection / nights / anchor states change often, restyle in place.
   const sync = () => {

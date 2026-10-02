@@ -70,7 +70,7 @@ export function DayExploreMap({ stay, markers = [], onFocus, onStayClick, stayFo
       stopDeclutter();
       map.remove(); mapRef.current = null; readyRef.current = false; pins.clear();
     };
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps -- built once: stay only seeds the first camera, and the stay effect below follows it
 
   // Stay pin + recenter when the address changes.
   useEffect(() => {
@@ -101,7 +101,7 @@ export function DayExploreMap({ stay, markers = [], onFocus, onStayClick, stayFo
       .setLngLat([stay.lon, stay.lat])
       .addTo(map);
     map.jumpTo({ center: [stay.lon, stay.lat], zoom: 10.3 });
-  }, [stay?.lat, stay?.lon]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [stay?.lat, stay?.lon]); // eslint-disable-line react-hooks/exhaustive-deps -- value key on the coordinates: only a move re-pins and recentres, never a new stay object or a label change
 
   // Glide to a searched/suggested pin (each request bumps flyTo.k), keeping the
   // stay in view by never zooming further out than we already are.
@@ -113,7 +113,7 @@ export function DayExploreMap({ stay, markers = [], onFocus, onStayClick, stayFo
       zoom: Math.max(map.getZoom(), 11.5),
       duration: 700,
     });
-  }, [flyTo?.k]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [flyTo?.k]); // eslint-disable-line react-hooks/exhaustive-deps -- request key: each ask bumps flyTo.k, so the same place asked twice still glides
 
   // The pin only behaves as a button when there's a town to brief.
   useEffect(() => {
@@ -202,7 +202,7 @@ export function DayExploreMap({ stay, markers = [], onFocus, onStayClick, stayFo
     };
     map._build = build;
     if (readyRef.current) build();
-  }, [markerKey]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [markerKey]); // eslint-disable-line react-hooks/exhaustive-deps -- value key: markers by id, because a rebuild clears every pin and refits the map
 
   const sync = () => {
     const byId = new Map(markers.map((m) => [m.id, m]));

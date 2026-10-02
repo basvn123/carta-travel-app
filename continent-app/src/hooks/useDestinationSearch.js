@@ -172,9 +172,12 @@ export function useDestinationSearch({
   // On the first time bounds are known, honor a shared price range; afterwards
   // (e.g. when the price mode flips) snap back to the full bounds.
   const initRangeApplied = useRef(false);
+  // The shared range is a seed: only its value at mount is ever honoured.
+  const initialRangeRef = useRef(initialPriceRange);
   useEffect(() => {
+    const seed = initialRangeRef.current;
     if (!priceBounds) return;
-    if (!initRangeApplied.current && initialPriceRange) {
+    if (!initRangeApplied.current && seed) {
       initRangeApplied.current = true;
       // Clamp the restored range to the CURRENT bounds. A price range persisted
       // in the URL/localStorage is a snapshot of some earlier session's prices;
@@ -185,7 +188,7 @@ export function useDestinationSearch({
       // recovers because this init runs once. So: keep the overlap when the
       // ranges still intersect, otherwise fall back to the full bounds (show
       // everything) rather than latch a window that matches nothing.
-      const [lo, hi] = initialPriceRange;
+      const [lo, hi] = seed;
       const [bLo, bHi] = priceBounds;
       const overlaps = Number.isFinite(lo) && Number.isFinite(hi) && lo <= bHi && hi >= bLo;
       setPriceRange(overlaps
@@ -194,7 +197,7 @@ export function useDestinationSearch({
     } else {
       setPriceRange(priceBounds);
     }
-  }, [priceBounds]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [priceBounds]);
 
   const q = useMemo(() => normalize(locationQuery), [locationQuery]);
 

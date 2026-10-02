@@ -508,8 +508,25 @@ export function ExploreTab({
   }, [taxRows, shownRows, view, visible]);
 
   // C6: the filter state is the URL, so a filtered view is shareable and
-  // the back button means what it says. replaceState keeps the #trip hash
-  // and never triggers a reload.
+  // the back button means what it says. First, the App-owned filters are
+  // hydrated from it once on arrival. This effect is declared BEFORE the
+  // writer below on purpose: effects run in order, and the writer's first run
+  // (with the App filters still at their defaults) deletes xg, xu, xc and xs,
+  // so a hydrate that ran second found nothing and a shared filter was lost.
+  const hydrated = React.useRef(false);
+  React.useEffect(() => {
+    if (hydrated.current) return;
+    hydrated.current = true;
+    const q = new URLSearchParams(window.location.search);
+    if (q.get('xg') === '1') setGemOnly(true);
+    if (q.get('xu') === '1') setUnescoOnly(true);
+    if (q.get('xc')) setCountryFilter(q.get('xc').split(',').filter(Boolean));
+    if (q.get('xs')) setSortKey(q.get('xs'));
+    // App's useState setters, so stable; the ref keeps it to one read anyway.
+  }, [setGemOnly, setUnescoOnly, setCountryFilter, setSortKey]);
+
+  // Then the writer: replaceState keeps the #trip hash and never triggers a
+  // reload.
   React.useEffect(() => {
     if (!isActive) return;
     const q = new URLSearchParams(window.location.search);
@@ -529,19 +546,6 @@ export function ExploreTab({
     window.history.replaceState(null, '',
       `${window.location.pathname}${qs ? '?' + qs : ''}${window.location.hash}`);
   }, [xf, gemOnly, unescoOnly, countryFilter, sortKey, view, isActive]);
-
-  // ...and hydrates the App-owned filters once on arrival.
-  const hydrated = React.useRef(false);
-  React.useEffect(() => {
-    if (hydrated.current) return;
-    hydrated.current = true;
-    const q = new URLSearchParams(window.location.search);
-    if (q.get('xg') === '1') setGemOnly(true);
-    if (q.get('xu') === '1') setUnescoOnly(true);
-    if (q.get('xc')) setCountryFilter(q.get('xc').split(',').filter(Boolean));
-    if (q.get('xs')) setSortKey(q.get('xs'));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   // New result set: back to one page, back to the top.
   React.useEffect(() => {
@@ -697,8 +701,7 @@ export function ExploreTab({
       { key: 'quiet', title: t('rail.quiet'), sub: t('rail.quietSub'), rows: q.quiet,
         seeAll: () => patchXf({ quiet: true }) },
     ];
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [railsIdle, rows, t]);
+  }, [railsIdle, rows, t, patchXf, setGemOnly]);
 
   // The control bar's three instruments. The count is a measured figure,
   // so it is grouped the way the reader's locale groups thousands.

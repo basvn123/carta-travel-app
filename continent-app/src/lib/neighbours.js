@@ -86,7 +86,7 @@ export function useNeighbours(cc, nb) {
       setOut(resolved);
     });
     return () => { live = false; };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- value key: sig is nb by its layers and their lengths, so a rebuilt row carrying the same block does not refetch every layer file
   }, [cc, sig]);
   return out;
 }

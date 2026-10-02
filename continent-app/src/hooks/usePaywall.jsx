@@ -30,7 +30,9 @@ import { useEntitlement } from './useEntitlement.js';
 import { useAuth } from '../auth/AuthContext.jsx';
 import { authConfigured } from '../lib/supabaseClient.js';
 import { PassModal } from '../components/PassModal.jsx';
-import { trackPaywall } from '../lib/paywallEvents.js';
+import {
+  trackPaywall, trackPaywallOnExit, isLeavingForCheckout,
+} from '../lib/paywallEvents.js';
 import { E2E_SEAMS } from '../lib/e2eSeams.js';
 
 /**
@@ -130,11 +132,32 @@ export function PaywallProvider({ children, onSignIn }) {
   // modal stands open) would report the same offer a second time and inflate
   // the top of the funnel against a checkout count that cannot move.
   const reportedReason = useRef('');
+  // Set once this opening's dismissal has been sent from pagehide, so a page
+  // restored from the back-forward cache and then closed by hand does not
+  // count the same offer as dismissed twice.
+  const exitReported = useRef(false);
   useEffect(() => {
     if (!reason) { reportedReason.current = ''; return; }
     if (reportedReason.current === reason) return;
     reportedReason.current = reason;
+    exitReported.current = false;
     trackPaywall('shown', reason, entitlement.tier);
+  }, [reason, entitlement.tier]);
+
+  // A modal left open through a tab close, a reload or a typed address never
+  // reaches handleClose, so pagehide counts it (T314, row T265-b). Skipped
+  // when the page is leaving for Stripe: that is a checkout, already counted
+  // by startCheckout, not a dismissal. The request is a keepalive fetch built
+  // in paywallEvents.js, because supabase-js does not survive the unload.
+  useEffect(() => {
+    if (!reason || typeof window === 'undefined') return undefined;
+    const onHide = () => {
+      if (exitReported.current || isLeavingForCheckout()) return;
+      exitReported.current = true;
+      trackPaywallOnExit('dismissed', reason, entitlement.tier);
+    };
+    window.addEventListener('pagehide', onHide);
+    return () => window.removeEventListener('pagehide', onHide);
   }, [reason, entitlement.tier]);
 
   /**
@@ -206,8 +229,10 @@ export function PaywallProvider({ children, onSignIn }) {
   const handleClose = useCallback(() => {
     // Only counted on a real dismissal. Buying navigates the whole page to
     // Stripe, so this never runs for somebody who paid, and signing in goes
-    // through close() rather than here.
-    if (reason) trackPaywall('dismissed', reason, entitlement.tier);
+    // through close() rather than here. A dismissal already sent from
+    // pagehide (the page went into the back-forward cache and came back)
+    // is not sent again.
+    if (reason && !exitReported.current) trackPaywall('dismissed', reason, entitlement.tier);
     // Only a soft prompt earns a snooze. Dismissing a hard gate means "not
     // now, I did not want that button", not "stop offering me this".
     if (reason && !openedHard.current && GATES[reason]?.kind === 'soft') {

@@ -111,6 +111,11 @@ export function ExploreMap({ rows, all, pins = null, onSelect, onViewport, onNee
       }),
     };
   }, [source, pins]);
+  // The map's load handler seeds its source from the payload current at load
+  // time, not the one current when the map was created: the catalogue can
+  // grow in between, and the setData effect below skips until the map is ready.
+  const geojsonRef = useRef(geojson);
+  geojsonRef.current = geojson;
 
   // What survives the filters, as an expression rather than a new payload.
   // `null` means "everything", which is also what an absent `all` means.
@@ -191,7 +196,7 @@ export function ExploreMap({ rows, all, pins = null, onSelect, onViewport, onNee
     map.on('load', () => {
       map.addSource('dests', {
         type: 'geojson',
-        data: geojson,
+        data: geojsonRef.current,
         cluster: true,
         clusterMaxZoom: 5,       // clusters below zoom 6
         clusterRadius: 44,
@@ -279,8 +284,9 @@ export function ExploreMap({ rows, all, pins = null, onSelect, onViewport, onNee
       mapRef.current = null;
       readyRef.current = false;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    // The map is built once: the popup helpers are one memo with no
+    // dependencies, so listing them never rebuilds it.
+  }, [closePop, showTip, showCard]);
 
   // The payload is serialised once (the memo above depends on `all`, which
   // does not change while the user filters), so this fires on mount and

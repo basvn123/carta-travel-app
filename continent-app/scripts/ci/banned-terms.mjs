@@ -100,9 +100,14 @@ function lint() {
     const lines = content.split('\n');
     for (const line of lines) {
       // Match 'key': 'value' or 'key': "value"
-      const kvMatch = line.match(/^\s*['"]([^'"]+)['"]\s*:\s*['"`]([^'"`]*)['""`]/);
+      // The value runs to the matching closing quote, so an escaped or
+      // inner apostrophe (French strings) does not cut it short.
+      const kvMatch = line.match(/^\s*['"]([^'"]+)['"]\s*:\s*(['"`])((?:\\.|(?!\2).)*)\2/);
       if (kvMatch) {
-        const [, key, value] = kvMatch;
+        const [, key, , value] = kvMatch;
+
+        // The collapsed footer is where the licence names belong.
+        if (key.startsWith('credit.licence.')) continue;
 
         // Skip metadata keys
         if (key.includes('aria') || key.includes('title') || key.includes('label') || key.includes('href')) {

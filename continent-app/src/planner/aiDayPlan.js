@@ -13,6 +13,7 @@
  */
 import { supabase } from '../lib/supabaseClient.js';
 import { reportEdgeFailure } from './edgeFailure.js';
+import { trackAiCall } from '../lib/launchEvents.js';
 import {
   pickerDeck, dwellMinutes, poiRating, poiCategory, isMustSee, poiKind, poiMapCat,
 } from './dayDraft.js';
@@ -79,6 +80,8 @@ export function buildAiCandidates({ items, walkable, excludeIdx, interests, limi
 export async function requestAiDayPlan(payload) {
   if (!supabase) return { ok: false, code: 'no_auth_config' };
   try {
+    // The denominator of the AI failures rate (048, T215-d).
+    trackAiCall('plan-day');
     const { data, error } = await supabase.functions.invoke('plan-day', { body: payload });
     if (error) {
       let code = 'ai_error';

@@ -106,3 +106,24 @@ export function buildOmioLink({ fromCity, toCity, mode = null, subId = '' }) {
   const target = omioRouteUrl({ fromCity, toCity, mode });
   return omioDeepLink(TRACKING, target, subId);
 }
+
+/**
+ * The reverse of omioDeepLink, for the click counter (launchEvents.js,
+ * migration 048): { partner: 'omio', surface } when `href` is this build's
+ * Impact tracking link, otherwise null. The surface is subId1 ('leg',
+ * 'wiz_inter', ...), or 'none'. `trackingLink` is a parameter only so the
+ * format can be checked under plain Node.
+ */
+export function omioClickOf(href, trackingLink = TRACKING) {
+  if (!trackingLink || typeof href !== 'string') return null;
+  let u;
+  let t;
+  try {
+    u = new URL(href);
+    t = new URL(trackingLink);
+  } catch {
+    return null;
+  }
+  if (u.origin !== t.origin || u.pathname !== t.pathname) return null;
+  return { partner: 'omio', surface: u.searchParams.get('subId1') || 'none' };
+}
