@@ -6,6 +6,10 @@ DESIGN.md holds the tokens. This file holds the reasons the tokens look the way 
 
 ## What Carta is
 
+Carta is a price transparency tool for budget travel in Europe: for people who start from "what can I afford", it says what a day costs, per person, in 3,868 places across 43 countries, and labels every figure for where it came from.
+
+Every travel product shows a price. Carta shows the price and its pedigree. A bed and a day of eating out are priced at the town's own rates where they were measured there, and the receipt says so in words: measured from this many stays, captured on this date, or the national figure standing in because the town has not been measured yet. The same figures carry through unchanged from the Explore card to the destination receipt, the multi-city planner and the hour-by-hour day planner, so no two screens can disagree about what dinner costs. Around the towns sit walking routes, beaches, lakes, summits and cycling routes, each with a page, and where a region is thin or empty the page says so rather than showing a blank grid. Carta takes no booking and no commission on travel; it prices, plans and hands the traveller to the operator. (Positioning from T201, in full in `Execution/P12/T201-positioning.md`. The counts are the 2026-10-02 measurement; read `meta` for today's.)
+
 A price transparency tool for budget travel in Europe. Carta prices the ground for every destination in the catalogue: the bed, food and local transport, per person per day. It does not price flights. A traveller who has a fare types in what they paid, and only then does the full-trip total include the flight, as their own figure. Carta then plans the trip city by city and each day hour by hour, and it says plainly which numbers are measured and which are estimates.
 
 The catalogue is master data in `app_data/app_data.json` and grows with every ingest (3,868 destinations in 43 countries on 2026-10-01; do not copy that figure into UI, read `meta` instead). The app is Vite + React in `continent-app/`, served as static JSON from a CDN. Nothing on the map is live-searched; everything is precomputed by the pipeline and cached.
@@ -13,6 +17,8 @@ The catalogue is master data in `app_data/app_data.json` and grows with every in
 Live at carta-europetravel.com. Six languages: English, Dutch, French, German, Spanish and Italian, on every surface including the PDF, KML and ICS exports.
 
 ## Who it is for
+
+The launch speaks to hikers first: the person who travels to a town to walk from it, for a day or a weekend first and hut to hut second (owner-confirmed 2026-10-02, T275; order and reasons in `Execution/P12/T203-audience-order.md`). Then families looking for beaches, cyclists and bikepackers, budget city-break travellers, car-free travellers and trail runners. The people described next are who Carta is for; the hiker is who it says its first sentence to.
 
 People counting money. The core audience is budget-conscious travellers inside Europe: students, young workers, families on one income, retirees on a fixed one, anyone who starts from "what can I afford" rather than "where do I want to go". They fly low-cost carriers from secondary airports, they take the bus from the airport, they sleep in dorms, private rooms and small apartments, and they care about the difference between €24.99 and €25.
 
@@ -34,7 +40,7 @@ Density is a feature. The traveller wants to see forty prices on one phone scree
 
 Real harvested quote, then cached third-party quote, then model estimate, and never a blank. Each step is labelled for what it is. A harvested fare shows its source and age. A cached quote carries its expiry. An estimate is prefixed with a tilde, tagged "est." and never dressed up as a bookable price. An estimate ships only where a flight verifiably exists. Every external booking link warns that prices may have changed.
 
-Carta does not price flights (owner decision, 2026-10-02). No fare harvest has been live since 2026-10-01, and none is planned. The only flight figure in a total is one the traveller typed in, labelled as theirs. Surfaces that still show the frozen fare snapshots as estimates are being removed (register row T272-a); until then they must keep the tilde and "est.".
+Carta does not price flights (owner decision, 2026-10-02). No fare harvest has been live since 2026-10-01, and none is planned. The only flight figure in a total is one the traveller typed in, labelled as theirs. No screen shows or sums a flight figure of Carta's (T273 removed the last of them), so no flight carries a tilde or "est." any more. The tilde and "est." stay for every other estimate.
 
 The product's only real asset is trust in its numbers. Every visual and copy choice follows from that.
 
