@@ -185,9 +185,12 @@ python run_pipeline.py --list                  what the automation will do, when
 
 ## Serving the estimates: e_out/e_ret fallback bands (added 2026-08-12)
 
-The per-trip rule for when a band is read (two ends only, the four-step
-resolution order, the harvested-family rule) is in SCHEMA.md, "Flight-cost
-input", with the decision in `Execution/P3/T058-flight-cost-input-decision.md`.
+Carta shows no flight figure (owner decision 2026-10-02, built in T273), so
+the bands below are no longer shown or summed on any screen. The rewritten
+rule is in SCHEMA.md, "Flight-cost input" (the traveller's own fare is the only
+flight figure in a total). The earlier per-trip rule (two ends only, the
+four-step resolution order) is replaced; T058's decision stays in
+`Execution/P3/T058-flight-cost-input-decision.md` for history.
 
 The weekly export (data/models/fare_estimates.json.gz, route-month p50/p10/p90
 bands) is now CONSUMED by the fare pipeline: `harvest_all_origins.py` attaches
