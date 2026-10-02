@@ -1476,10 +1476,19 @@ def main():
     payload = write_wire(regions, layers, contract)
     write_html(payload, layers)
     alerts(regions, layers)
-    if args.strict and summary["blank"]:
-        log(f"STRICT: {summary['blank']} country cells have neither a "
-            f"count nor a reason code")
-        sys.exit(1)
+    if args.strict:
+        # The same judge CI uses (coverage_gate.py): blank cells, a miss with
+        # no reason code, an ok cell under its floor, and, when the committed
+        # baseline exists, any cell that was ok and no longer is.
+        import coverage_gate
+        base_path = ROOT / "reports" / "coverage_gate_baseline.json"
+        baseline = load_json(base_path, None) if base_path.exists() else None
+        bad = coverage_gate.violations(contract, baseline)
+        if bad:
+            for line in bad[:50]:
+                log(f"STRICT: {line}")
+            log(f"STRICT: {len(bad)} coverage contract violations")
+            sys.exit(1)
 
 
 if __name__ == "__main__":

@@ -1,0 +1,55 @@
+name: coverage-contract
+
+# The country coverage contract (spec 0.4, T112). coverage.py builds
+# reports/coverage_contract.json and reports/coverage.html on every pipeline
+# run; this workflow judges the committed contract with coverage_gate.py,
+# which is standard library only because CI holds none of the data.
+#
+# Three things run, in order:
+#   1. The self-test seeds each fault (no reason code, bad code, missing cell,
+#      bad status, ok under floor, empty) and fails if any rule stops firing.
+#   2. The gate reads reports/coverage_contract.json and fails on a cell that
+#      misses its floor without a reason code.
+#   3. With reports/coverage_gate_baseline.json present, a cell that was ok
+#      may not stop being ok. That is the regression block.
+# Until the contract is committed the gate prints a warning and passes; once
+# it is committed, add --require to step 2 so a deleted contract fails too.
+on:
+  push:
+    branches: [main]
+    paths:
+      - "pipeline/regions/coverage.py"
+      - "pipeline/regions/coverage_gate.py"
+      - "reports/coverage_contract.json"
+      - "reports/coverage_gate_baseline.json"
+      - ".github/workflows/coverage-contract.yml"
+  pull_request:
+    paths:
+      - "pipeline/regions/coverage.py"
+      - "pipeline/regions/coverage_gate.py"
+      - "reports/coverage_contract.json"
+      - "reports/coverage_gate_baseline.json"
+      - ".github/workflows/coverage-contract.yml"
+  workflow_dispatch:
+
+jobs:
+  coverage-contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            pipeline/regions/coverage_gate.py
+            reports/coverage_contract.json
+            reports/coverage_gate_baseline.json
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Self-test (every rule catches a seeded fault)
+        run: python pipeline/regions/coverage_gate.py --self-test
+      - name: Contract holds and no covered country regressed
+        run: >
+          python pipeline/regions/coverage_gate.py
+          --check reports/coverage_contract.json
+          --baseline reports/coverage_gate_baseline.json
