@@ -15,11 +15,11 @@
  * Why the count is so far over today: the wire pre-bakes one file per
  * destination per layer, and trails plus cycling alone are about two thirds of
  * the total. The fix is not to prune the wire, it is to move the detail shards
- * to R2 (CARTA_CLOUD_ARCHITECTURE.md section 5.2, task T054), after which the
- * Pages deploy is a few hundred build artifacts and this gate passes with room
- * to spare. Until that lands, this script is expected to FAIL, and that failure
- * is the point: it is the machine-checkable form of the dependency, so nobody
- * discovers the ceiling by watching a production cut-over fail.
+ * to R2 (CARTA_CLOUD_ARCHITECTURE.md section 5.2, task T054). That landed: the
+ * split build (npm run build:pages, which runs this gate) leaves a few dozen
+ * files, and npm run ci ends with it (T295). A same-origin `npm run build`
+ * still FAILS here by design, since it keeps every shard in dist/; that build
+ * is for the offline smoke test, never for Pages.
  *
  * Usage:
  *   node scripts/check-pages-limits.mjs [dir]      # default: dist
