@@ -48,10 +48,10 @@
   "budget": {
     "currency": "EUR",
     "totalEur": {
-      "low": 1400,
-      "high": 2300
+      "low": 1490,
+      "high": 2450
     },
-    "totalNote": "€1,400–€2,300 per person, excl. international flights",
+    "totalNote": "€1,490 to €2,450 per person for 7 days, the sum of the breakdown.",
     "breakdown": {
       "accommodation": {
         "lowEur": 560,
@@ -75,8 +75,8 @@
       }
     },
     "perDayEur": {
-      "low": 200,
-      "high": 329
+      "low": 213,
+      "high": 350
     }
   },
   "profile": {
@@ -206,7 +206,8 @@
       "location": "Buje",
       "description": "An abandoned stone village rebuilt as a hotel between Momjan and Grožnjan, well placed for the wine and oil days and quieter than Motovun in October. €180–€300.",
       "booking": null,
-      "priceNote": "€180–€300"
+      "priceNote": "€180–€300",
+      "alternativeTo": 1
     }
   ],
   "logistics": {

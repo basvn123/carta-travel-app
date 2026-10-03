@@ -56,20 +56,20 @@
   "budget": {
     "currency": "EUR",
     "totalEur": {
-      "low": 1000,
-      "high": 1600
+      "low": 1235,
+      "high": 2125
     },
-    "totalNote": "€1,000–1,600 per person",
+    "totalNote": "€1,235 to €2,125 per person for 7 days, the sum of the breakdown.",
     "breakdown": {
       "accommodation": {
-        "lowEur": 90,
-        "highEur": 170,
-        "note": "€90–170 per night for a summerhouse or apartment; surf-camp beds €40–70 pp"
+        "lowEur": 540,
+        "highEur": 1020,
+        "note": "€90–170 per night for a summerhouse or apartment; surf-camp beds €40–70 pp. The breakdown figure is the nightly rate times 6 nights."
       },
       "food": {
-        "lowEur": 45,
-        "highEur": 75,
-        "note": "€45–75 per day; the fish landing places and smokehouses are the cheap and correct option"
+        "lowEur": 315,
+        "highEur": 525,
+        "note": "€45–75 per day; the fish landing places and smokehouses are the cheap and correct option. The breakdown figure is the daily rate times 7 days."
       },
       "transport": {
         "lowEur": 180,
@@ -77,14 +77,14 @@
         "note": "€180–280: train Copenhagen–Thisted (about 5–6 h) or fly to Aalborg and drive 90 minutes; car hire €45–60 per day"
       },
       "activities": {
-        "lowEur": 35,
-        "highEur": 60,
-        "note": "Board and wetsuit hire €35–60 per day; lessons €60–90; a week's rental package €200–300"
+        "lowEur": 200,
+        "highEur": 300,
+        "note": "Board and wetsuit hire €35–60 per day; lessons €60–90; a week's rental package €200–300. The breakdown figure is the stated week or six-day total."
       }
     },
     "perDayEur": {
-      "low": 143,
-      "high": 229
+      "low": 176,
+      "high": 304
     }
   },
   "profile": {

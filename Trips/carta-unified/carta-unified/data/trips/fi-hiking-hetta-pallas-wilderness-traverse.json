@@ -46,20 +46,20 @@
   "budget": {
     "currency": "EUR",
     "totalEur": {
-      "low": 600,
-      "high": 950
+      "low": 382,
+      "high": 675
     },
-    "totalNote": "€600–950 per person",
+    "totalNote": "€382 to €675 per person for 7 days, the sum of the breakdown.",
     "breakdown": {
       "accommodation": {
-        "lowEur": 12,
-        "highEur": 20,
-        "note": "Wilderness open huts are free; reservation huts €12–20 pp; hotels at either end €90–160 per night, double"
+        "lowEur": 72,
+        "highEur": 120,
+        "note": "Wilderness open huts are free; reservation huts €12–20 pp; hotels at either end €90–160 per night, double. The breakdown figure is the nightly rate times 6 nights."
       },
       "food": {
-        "lowEur": 20,
-        "highEur": 35,
-        "note": "€20–35 per day carried in; there is nowhere to buy anything on the trail"
+        "lowEur": 140,
+        "highEur": 245,
+        "note": "€20–35 per day carried in; there is nowhere to buy anything on the trail. The breakdown figure is the daily rate times 7 days."
       },
       "transport": {
         "lowEur": 150,
@@ -73,8 +73,8 @@
       }
     },
     "perDayEur": {
-      "low": 86,
-      "high": 136
+      "low": 55,
+      "high": 96
     }
   },
   "profile": {

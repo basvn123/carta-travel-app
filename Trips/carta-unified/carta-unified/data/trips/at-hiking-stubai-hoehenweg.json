@@ -44,10 +44,10 @@
   "budget": {
     "currency": "EUR",
     "totalEur": {
-      "low": 850,
-      "high": 1200
+      "low": 830,
+      "high": 1140
     },
-    "totalNote": null,
+    "totalNote": "€830 to €1,140 per person for 7 days, the sum of the breakdown.",
     "breakdown": {
       "accommodation": {
         "lowEur": 450,
@@ -71,8 +71,8 @@
       }
     },
     "perDayEur": {
-      "low": 121,
-      "high": 171
+      "low": 119,
+      "high": 163
     }
   },
   "profile": {

@@ -192,7 +192,8 @@
       "location": "Soldeu",
       "description": "The luxury anchor at the foot of the Soldeu gondola, with the Sport Wellness Mountain Spa and two serious restaurants, Ibaya and the Japanese Koy Hermitage. Ski to the door and pay for it: €300–€500 per room. Book it if comfort, not mileage, is the point.",
       "booking": null,
-      "priceNote": null
+      "priceNote": null,
+      "alternativeTo": 1
     },
     {
       "rank": 3,
@@ -201,7 +202,8 @@
       "location": "Andorra la Vella",
       "description": "The counter-strategy: sleep in the capital, save 30–40% on the bed, walk to Caldea and the shops, and commute to snow via the Funicamp at Encamp ten minutes away, which lands you high. The cost is 25–40 minutes each way and no ski-in/ski-out. Roughly €130–€220 per room.",
       "booking": null,
-      "priceNote": null
+      "priceNote": null,
+      "alternativeTo": 1
     }
   ],
   "logistics": {

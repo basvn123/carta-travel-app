@@ -124,7 +124,8 @@
       "afternoon": "Provision at the big Tommy or Konzum near the marina rather than on the islands, where the same basket costs 40% more. Sail out on the first of the maestral through the Split gate and cross to Šolta, anchoring in Šešula bay — deep, sheltered, thick mud holding.",
       "evening": "Konoba Šišmiš at Šešula, on the water at the head of the bay, with a dinghy dock. Order the peka if you call ahead — it takes three hours and cannot be ordered on arrival.",
       "dayStats": "Split–Šešula roughly 11 nm / maestral fills 11:00–13:00, 12–18 knots by mid-afternoon / Šešula anchor in 8–12 m over mud / peka must be ordered 3 h ahead",
-      "sleep": "At anchor, Šešula bay, Šolta — or Hotel Martinis Marchi, Maslinica"
+      "sleep": "At anchor, Šešula bay, Šolta — or Hotel Martinis Marchi, Maslinica",
+      "sleepRef": 1
     },
     {
       "day": 2,
@@ -133,7 +134,8 @@
       "afternoon": "Komiža is the working fishing town and the Blue Cave departure point. Walk the harbour, look at the *falkuša* fishing boats in the Fishermen's Museum in the Venetian tower, then swim off Kamenica beach. Divers: the Komiža centres run the *Teti* wreck and the B-17 bomber.",
       "evening": "Konoba Jastožera in Komiža, built over the old lobster pens with the sea running under the floor. Order lobster with pasta if the budget allows, or the fish stew if it does not.",
       "dayStats": "Šolta–Vis roughly 22–25 nm / Komiža town quay or Vis ACI marina, roughly €9.50–€11.50/m/day for a monohull / crossing best before 11:00",
-      "sleep": "At anchor or on the quay, Komiža — or Hotel San Giorgio, Vis town"
+      "sleep": "At anchor or on the quay, Komiža — or Hotel San Giorgio, Vis town",
+      "sleepRef": 1
     },
     {
       "day": 3,
@@ -142,7 +144,8 @@
       "afternoon": "Sail back around the south coast of Vis to Stiniva, the pebble cove behind its rock gate. Boats hold off outside; swim or dinghy in. Then the Green Cave at Ravnik, which you can actually swim into, and where the light comes through a hole in the roof.",
       "evening": "Return to Vis town and eat at Pojoda, in a courtyard of orange trees behind the waterfront — old-school Dalmatian, and the best cooking on the island.",
       "dayStats": "Blue Cave entry ~€24 high season / ~€18 shoulder, cash only, no ATM on Biševo / cave open roughly 1 April–1 November, closed on southerly swell / peak light 11:00–12:00 / taxi boat from Komiža ~€35 pp, 15–20 min",
-      "sleep": "Vis town, at anchor or on the ACI quay"
+      "sleep": "Vis town, at anchor or on the ACI quay",
+      "sleepRef": 1
     },
     {
       "day": 4,
@@ -151,7 +154,8 @@
       "afternoon": "Berth at ACI Marina Palmižana on Sv. Klement or anchor off Vinogradišće on the island's sheltered south side. Palmižana bay is north-facing and exposed to any bura, so check the forecast before committing to an anchor there overnight.",
       "evening": "Taxi boat into Hvar town — they run until late and cost a few euros. Eat at Konoba Menego in the stepped lanes above the square, then walk up to the Fortica for the view back over the Pakleni. **Plan B if jugo is forecast:** skip Hvar town, stay on the protected south side, and eat at Toto's or Laganini on Vinogradišće.",
       "dayStats": "Vis–Palmižana roughly 18–20 nm / ACI Palmižana premium berth, budget €130–€200/night for a 13 m monohull in August / Hvar taxi boat runs to ~01:00 in season / Fortica climb 20 min, roughly €10",
-      "sleep": "ACI Marina Palmižana, Sv. Klement"
+      "sleep": "ACI Marina Palmižana, Sv. Klement",
+      "sleepRef": 1
     },
     {
       "day": 5,
@@ -160,7 +164,8 @@
       "afternoon": "Off the water before the maestral has the channels white-capping. Snorkel the shallow ledges off Jerolim, then a long lunch at Palmižana. The gardens above the bay were planted by the Meneghello family in the 1900s and are worth the walk.",
       "evening": "Back into Hvar town for the Franciscan monastery and Zoraić or Gariful on the harbour. **Plan B if wind is up:** stay island-side; the guided kayak operators cancel above about 15 knots and will move you to the following morning.",
       "dayStats": "Pakleni kayak day 12–16 km / guided day €70–€110 pp with boat, spray deck, dry bag and lunch / visibility typically 15–20 m / operators cancel above ~15 knots",
-      "sleep": "ACI Marina Palmižana, Sv. Klement"
+      "sleep": "ACI Marina Palmižana, Sv. Klement",
+      "sleepRef": 1
     },
     {
       "day": 6,
@@ -169,7 +174,8 @@
       "afternoon": "The reason you came. Rig at Big Blue Sport on Beach Borak, immediately west of the Zlatni Rat spit — side-shore maestral, pebble bottom, flat inshore water and short chop outside. If the wind is under 12 knots, take their sea kayak or SUP option and paddle west along the cliffs instead.",
       "evening": "Konoba Mlin in Bol, in an old olive mill in the back lanes. Order the lamb and ask for a Brač Plavac Mali. **Plan B for a windless afternoon:** drive or taxi up to the Blaca hermitage — a 15th-century monastery in a gorge, reachable only on foot for the last kilometre.",
       "dayStats": "Hvar channel crossing 8–10 nm / Big Blue Sport funboard ~€50/hour or ~€310/week; beginner course ~€200 for 6 hours; private advanced ~€140/hour / board storage €5–€7/day / Bol channel adds 4–8 knots",
-      "sleep": "Hotel Kaštil, Bol — or at anchor off Borak"
+      "sleep": "Hotel Kaštil, Bol — or at anchor off Borak",
+      "sleepRef": 2
     },
     {
       "day": 7,

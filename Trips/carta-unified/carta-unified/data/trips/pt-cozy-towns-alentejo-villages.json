@@ -210,7 +210,8 @@
       "location": null,
       "description": "Casa Pinto is a small, eccentric guesthouse inside Monsaraz's walls if you want to sleep behind the gates rather than below them. The Pousada in Marvão puts you inside the ramparts at 865 m — worth one night if the Barrocal budget is out of reach.",
       "booking": null,
-      "priceNote": null
+      "priceNote": null,
+      "alternativeTo": 1
     }
   ],
   "logistics": {

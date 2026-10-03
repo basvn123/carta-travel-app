@@ -48,20 +48,20 @@
   "budget": {
     "currency": "EUR",
     "totalEur": {
-      "low": 2000,
-      "high": 2900
+      "low": 1980,
+      "high": 3320
     },
-    "totalNote": "€2,000–2,900 per person",
+    "totalNote": "€1,980 to €3,320 per person for 7 days, the sum of the breakdown.",
     "breakdown": {
       "accommodation": {
-        "lowEur": 160,
-        "highEur": 300,
-        "note": "€160–300 per night for an apartment sleeping 4–6; hotel doubles €180–320"
+        "lowEur": 960,
+        "highEur": 1800,
+        "note": "€160–300 per night for an apartment sleeping 4–6; hotel doubles €180–320. The breakdown figure is the nightly rate times 6 nights."
       },
       "food": {
-        "lowEur": 70,
-        "highEur": 110,
-        "note": "€70–110 per day; self-catering roughly halves it, and Norway makes that decision for you"
+        "lowEur": 490,
+        "highEur": 770,
+        "note": "€70–110 per day; self-catering roughly halves it, and Norway makes that decision for you. The breakdown figure is the daily rate times 7 days."
       },
       "transport": {
         "lowEur": 250,
@@ -69,14 +69,14 @@
         "note": "€250–400: Oslo–Gol on the Bergen line plus bus, or a hire car; airport transfers"
       },
       "activities": {
-        "lowEur": 60,
-        "highEur": 75,
-        "note": "Lift passes roughly €60–75 per day, €280–350 for six days; guided ski touring €150–250 per day"
+        "lowEur": 280,
+        "highEur": 350,
+        "note": "Lift passes roughly €60–75 per day, €280–350 for six days; guided ski touring €150–250 per day. The breakdown figure is the stated week or six-day total."
       }
     },
     "perDayEur": {
-      "low": 286,
-      "high": 414
+      "low": 283,
+      "high": 474
     }
   },
   "profile": {

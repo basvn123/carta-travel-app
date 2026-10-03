@@ -197,7 +197,8 @@
       "location": "Palau",
       "description": "Ten minutes from Porto Pollo and in walking distance of the La Maddalena ferry, Palau's restaurants and the boat-rental quays, which makes it the right choice for the archipelago and Capo d'Orso days. Parking, air conditioning and a proper breakfast, which the campsite does not offer. Roughly €100–€180 double.",
       "booking": null,
-      "priceNote": null
+      "priceNote": null,
+      "alternativeTo": 1
     },
     {
       "rank": 3,

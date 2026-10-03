@@ -48,10 +48,10 @@
   "budget": {
     "currency": "EUR",
     "totalEur": {
-      "low": 1200,
-      "high": 1850
+      "low": 1280,
+      "high": 2050
     },
-    "totalNote": "€1,200–€1,850 per person, excl. international flights",
+    "totalNote": "€1,280 to €2,050 per person for 7 days, the sum of the breakdown.",
     "breakdown": {
       "accommodation": {
         "lowEur": 560,
@@ -75,8 +75,8 @@
       }
     },
     "perDayEur": {
-      "low": 171,
-      "high": 264
+      "low": 183,
+      "high": 293
     }
   },
   "profile": {
@@ -206,7 +206,8 @@
       "location": "Volpija near Buje",
       "description": "Literally on the old railway formation, with a bike shed, a workshop bench and a restaurant doing Istrian home cooking. The budget option at roughly €70–€100 double, and the most convenient base if you intend to ride the corridor end to end rather than detour.",
       "booking": null,
-      "priceNote": null
+      "priceNote": null,
+      "alternativeTo": 1
     }
   ],
   "logistics": {

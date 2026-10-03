@@ -50,20 +50,20 @@
   "budget": {
     "currency": "EUR",
     "totalEur": {
-      "low": 850,
-      "high": 1350
+      "low": 940,
+      "high": 1755
     },
-    "totalNote": "€850–1,350 per person",
+    "totalNote": "€940 to €1,755 per person for 7 days, the sum of the breakdown.",
     "breakdown": {
       "accommodation": {
-        "lowEur": 70,
-        "highEur": 140,
-        "note": "€70–140 per night, double, in Vilnius; €50–90 in the regions"
+        "lowEur": 420,
+        "highEur": 840,
+        "note": "€70–140 per night, double, in Vilnius; €50–90 in the regions. The breakdown figure is the nightly rate times 6 nights."
       },
       "food": {
-        "lowEur": 40,
-        "highEur": 75,
-        "note": "€40–75 per day; a Vilnius tasting menu €70–130"
+        "lowEur": 280,
+        "highEur": 525,
+        "note": "€40–75 per day; a Vilnius tasting menu €70–130. The breakdown figure is the daily rate times 7 days."
       },
       "transport": {
         "lowEur": 180,
@@ -77,8 +77,8 @@
       }
     },
     "perDayEur": {
-      "low": 121,
-      "high": 193
+      "low": 134,
+      "high": 251
     }
   },
   "profile": {

@@ -201,7 +201,8 @@
       "location": "Girona",
       "description": "Purpose-built for riders: workshop access, wash bay, laundry, and a shop downstairs that will fix anything. Less charming than a hotel, considerably more useful across a six-day riding block. Around €90–€140 for a twin apartment.",
       "booking": null,
-      "priceNote": null
+      "priceNote": null,
+      "alternativeTo": 1
     },
     {
       "rank": 3,

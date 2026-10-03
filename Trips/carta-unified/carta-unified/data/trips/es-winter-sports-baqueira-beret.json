@@ -194,7 +194,8 @@
       "location": "Baqueira 1500",
       "description": "The ski-in/ski-out option at the foot of the lifts, with a spa and the shortest possible morning. You are buying twenty minutes a day and paying heavily for it: roughly €250–€450 per room, and there is no village outside the door. Worth it with small children or a short trip.",
       "booking": null,
-      "priceNote": null
+      "priceNote": null,
+      "alternativeTo": 1
     },
     {
       "rank": 3,
@@ -203,7 +204,8 @@
       "location": "Arties",
       "description": "Built around the Casa de Don Gaspar de Portolà in Arties at 1,143 m, midway between Vielha and Salardú, with the valley's best restaurant cluster on the doorstep. A 15-minute ski-bus run to the lifts. Roughly €120–€200 per room, and the most characterful bed in Aran.",
       "booking": null,
-      "priceNote": null
+      "priceNote": null,
+      "alternativeTo": 1
     }
   ],
   "logistics": {

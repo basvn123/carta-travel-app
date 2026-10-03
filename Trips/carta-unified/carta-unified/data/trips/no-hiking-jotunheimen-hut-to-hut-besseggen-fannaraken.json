@@ -44,20 +44,20 @@
   "budget": {
     "currency": "EUR",
     "totalEur": {
-      "low": 1300,
-      "high": 1900
+      "low": 955,
+      "high": 1535
     },
-    "totalNote": "€1,300–1,900 per person",
+    "totalNote": "€955 to €1,535 per person for 7 days, the sum of the breakdown.",
     "breakdown": {
       "accommodation": {
-        "lowEur": 45,
-        "highEur": 80,
-        "note": "DNT staffed huts €45–80 per night for members in dormitory or room, plus €25–40 for dinner and €15–20 for breakfast; DNT membership pays for itself in three nights"
+        "lowEur": 270,
+        "highEur": 480,
+        "note": "DNT staffed huts €45–80 per night for members in dormitory or room, plus €25–40 for dinner and €15–20 for breakfast; DNT membership pays for itself in three nights. The breakdown figure is the nightly rate times 6 nights."
       },
       "food": {
-        "lowEur": 55,
-        "highEur": 85,
-        "note": "€55–85 per day if eating hut meals; €25–35 self-catering from hut provision stores"
+        "lowEur": 385,
+        "highEur": 595,
+        "note": "€55–85 per day if eating hut meals; €25–35 self-catering from hut provision stores. The breakdown figure is the daily rate times 7 days."
       },
       "transport": {
         "lowEur": 180,
@@ -71,8 +71,8 @@
       }
     },
     "perDayEur": {
-      "low": 186,
-      "high": 271
+      "low": 136,
+      "high": 219
     }
   },
   "profile": {

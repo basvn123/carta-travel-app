@@ -46,20 +46,20 @@
   "budget": {
     "currency": "EUR",
     "totalEur": {
-      "low": 1600,
-      "high": 2300
+      "low": 1345,
+      "high": 2285
     },
-    "totalNote": "€1,600–2,300 per person",
+    "totalNote": "€1,345 to €2,285 per person for 7 days, the sum of the breakdown.",
     "breakdown": {
       "accommodation": {
-        "lowEur": 100,
-        "highEur": 180,
-        "note": "€100–180 per night for a guesthouse or a self-catering house; village houses rented whole from €130"
+        "lowEur": 600,
+        "highEur": 1080,
+        "note": "€100–180 per night for a guesthouse or a self-catering house; village houses rented whole from €130. The breakdown figure is the nightly rate times 6 nights."
       },
       "food": {
-        "lowEur": 45,
-        "highEur": 75,
-        "note": "€45–75 per day; self-catering is near-obligatory outside Tvøroyri and Vágur"
+        "lowEur": 315,
+        "highEur": 525,
+        "note": "€45–75 per day; self-catering is near-obligatory outside Tvøroyri and Vágur. The breakdown figure is the daily rate times 7 days."
       },
       "transport": {
         "lowEur": 350,
@@ -73,8 +73,8 @@
       }
     },
     "perDayEur": {
-      "low": 229,
-      "high": 329
+      "low": 192,
+      "high": 326
     }
   },
   "profile": {

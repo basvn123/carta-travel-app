@@ -206,7 +206,8 @@
       "location": "Bevagna",
       "description": "The value alternative on Corso Matteotti: 18th-century townhouse, vaulted breakfast room, and a garage — the pick if you're driving. Roughly €90–€130 per double.",
       "booking": null,
-      "priceNote": null
+      "priceNote": null,
+      "alternativeTo": 2
     }
   ],
   "logistics": {

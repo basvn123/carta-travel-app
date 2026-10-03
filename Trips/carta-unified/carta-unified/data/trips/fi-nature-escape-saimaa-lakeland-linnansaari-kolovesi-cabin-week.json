@@ -50,20 +50,20 @@
   "budget": {
     "currency": "EUR",
     "totalEur": {
-      "low": 750,
-      "high": 1200
+      "low": 1100,
+      "high": 2130
     },
-    "totalNote": "€750–1,200 per person",
+    "totalNote": "€1,100 to €2,130 per person for 7 days, the sum of the breakdown.",
     "breakdown": {
       "accommodation": {
-        "lowEur": 110,
-        "highEur": 220,
-        "note": "€110–220 per night for a whole cabin sleeping 4–6; island wilderness huts and rental cabins from €60; upmarket lakeside villas €280+"
+        "lowEur": 660,
+        "highEur": 1320,
+        "note": "€110–220 per night for a whole cabin sleeping 4–6; island wilderness huts and rental cabins from €60; upmarket lakeside villas €280+. The breakdown figure is the nightly rate times 6 nights."
       },
       "food": {
-        "lowEur": 30,
-        "highEur": 50,
-        "note": "€30–50 per day self-catering; there is essentially no restaurant option once you are on the water"
+        "lowEur": 210,
+        "highEur": 350,
+        "note": "€30–50 per day self-catering; there is essentially no restaurant option once you are on the water. The breakdown figure is the daily rate times 7 days."
       },
       "transport": {
         "lowEur": 150,
@@ -77,8 +77,8 @@
       }
     },
     "perDayEur": {
-      "low": 107,
-      "high": 171
+      "low": 157,
+      "high": 304
     }
   },
   "profile": {

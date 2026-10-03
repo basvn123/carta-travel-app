@@ -42,10 +42,10 @@
   "budget": {
     "currency": "EUR",
     "totalEur": {
-      "low": 1150,
-      "high": 1900
+      "low": 1180,
+      "high": 2010
     },
-    "totalNote": "€1,150–€1,900 per person, excl. international flights",
+    "totalNote": "€1,180 to €2,010 per person for 7 days, the sum of the breakdown.",
     "breakdown": {
       "accommodation": {
         "lowEur": 420,
@@ -69,8 +69,8 @@
       }
     },
     "perDayEur": {
-      "low": 164,
-      "high": 271
+      "low": 169,
+      "high": 287
     }
   },
   "profile": {
@@ -193,7 +193,8 @@
       "location": "Perast",
       "description": "For anyone who wants to be on the water in the most beautiful village in the bay: everything in Perast is on foot, the boat shuttle to Our Lady of the Rocks leaves from the quay, and the bay at dawn from a Perast balcony is the single best view of the trip. Roughly €120–€250 double.",
       "booking": null,
-      "priceNote": null
+      "priceNote": null,
+      "alternativeTo": 1
     },
     {
       "rank": 3,

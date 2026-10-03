@@ -50,20 +50,20 @@
   "budget": {
     "currency": "EUR",
     "totalEur": {
-      "low": 800,
-      "high": 1300
+      "low": 785,
+      "high": 1560
     },
-    "totalNote": "€800–1,300 per person",
+    "totalNote": "€785 to €1,560 per person for 7 days, the sum of the breakdown.",
     "breakdown": {
       "accommodation": {
-        "lowEur": 70,
-        "highEur": 150,
-        "note": "€70–150 per night, double; design hotels €180+; hostels €25–40 pp"
+        "lowEur": 420,
+        "highEur": 900,
+        "note": "€70–150 per night, double; design hotels €180+; hostels €25–40 pp. The breakdown figure is the nightly rate times 6 nights."
       },
       "food": {
-        "lowEur": 40,
-        "highEur": 70,
-        "note": "€40–70 per day; tasting menus €90–160 — Estonia's best value is at the top end"
+        "lowEur": 280,
+        "highEur": 490,
+        "note": "€40–70 per day; tasting menus €90–160 — Estonia's best value is at the top end. The breakdown figure is the daily rate times 7 days."
       },
       "transport": {
         "lowEur": 25,
@@ -77,8 +77,8 @@
       }
     },
     "perDayEur": {
-      "low": 114,
-      "high": 186
+      "low": 112,
+      "high": 223
     }
   },
   "profile": {

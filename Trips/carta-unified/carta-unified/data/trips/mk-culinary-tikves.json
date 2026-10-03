@@ -49,9 +49,9 @@
     "currency": "EUR",
     "totalEur": {
       "low": 850,
-      "high": 1450
+      "high": 1435
     },
-    "totalNote": "€850–€1,450 per person, excl. international flights",
+    "totalNote": "€850 to €1,435 per person for 7 days, the sum of the breakdown.",
     "breakdown": {
       "accommodation": {
         "lowEur": 360,
@@ -76,7 +76,7 @@
     },
     "perDayEur": {
       "low": 121,
-      "high": 207
+      "high": 205
     }
   },
   "profile": {
@@ -206,7 +206,8 @@
       "location": null,
       "description": "If you want to be inside the vineyard basin rather than at its southern edge, Kavadarci has plain, cheap town hotels and Tikveš's own estates offer limited guest capacity — book by email, as online listings are patchy. MKD 2,500–4,500 (€40–€73).",
       "booking": null,
-      "priceNote": null
+      "priceNote": null,
+      "alternativeTo": 1
     }
   ],
   "logistics": {

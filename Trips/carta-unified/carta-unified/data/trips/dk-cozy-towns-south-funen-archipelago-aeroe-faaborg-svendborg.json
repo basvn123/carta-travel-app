@@ -48,20 +48,20 @@
   "budget": {
     "currency": "EUR",
     "totalEur": {
-      "low": 1050,
-      "high": 1600
+      "low": 1130,
+      "high": 1950
     },
-    "totalNote": "€1,050–1,600 per person",
+    "totalNote": "€1,130 to €1,950 per person for 7 days, the sum of the breakdown.",
     "breakdown": {
       "accommodation": {
-        "lowEur": 100,
-        "highEur": 180,
-        "note": "€100–180 per night, double, in a kro or town hotel; €220+ for a manor stay"
+        "lowEur": 600,
+        "highEur": 1080,
+        "note": "€100–180 per night, double, in a kro or town hotel; €220+ for a manor stay. The breakdown figure is the nightly rate times 6 nights."
       },
       "food": {
-        "lowEur": 50,
-        "highEur": 80,
-        "note": "€50–80 per day; a kro dinner €40–65"
+        "lowEur": 350,
+        "highEur": 560,
+        "note": "€50–80 per day; a kro dinner €40–65. The breakdown figure is the daily rate times 7 days."
       },
       "transport": {
         "lowEur": 120,
@@ -75,8 +75,8 @@
       }
     },
     "perDayEur": {
-      "low": 150,
-      "high": 229
+      "low": 161,
+      "high": 279
     }
   },
   "profile": {

@@ -206,7 +206,8 @@
       "location": "alternatives",
       "description": "Kriva Ćuprija sits on the Radobolja stream in Mostar's old town, a small conversion of mill buildings, if Muslibegović is full. Staying out at Blagaj instead is a real option for a quieter week — but it puts you 12 km from Mostar's evenings.",
       "booking": null,
-      "priceNote": null
+      "priceNote": null,
+      "alternativeTo": 1
     }
   ],
   "logistics": {

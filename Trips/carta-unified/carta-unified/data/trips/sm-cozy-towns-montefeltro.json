@@ -208,7 +208,8 @@
       "location": "rural alternative",
       "description": "If you would rather sleep among the hills than in a town, take a small relais in the Marecchia valley between San Leo and Verucchio. It costs less, it is quieter, and it removes the evening square from your week — decide which you want before booking.",
       "booking": null,
-      "priceNote": null
+      "priceNote": null,
+      "alternativeTo": 1
     }
   ],
   "logistics": {

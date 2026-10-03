@@ -49,9 +49,9 @@
     "currency": "EUR",
     "totalEur": {
       "low": 980,
-      "high": 1500
+      "high": 1540
     },
-    "totalNote": "€980–€1,500 per person, excl. international flights",
+    "totalNote": "€980 to €1,540 per person for 7 days, the sum of the breakdown.",
     "breakdown": {
       "accommodation": {
         "lowEur": 400,
@@ -76,7 +76,7 @@
     },
     "perDayEur": {
       "low": 140,
-      "high": 214
+      "high": 220
     }
   },
   "profile": {

@@ -204,7 +204,8 @@
       "location": "small-scale alternatives",
       "description": "Villa Jovan is a 19th-century house in Ohrid's old town with fewer than ten rooms; De Niro is a small Bitola hotel a block from Magnolia Square. Both are the right scale for this week if the first choices are full — avoid the lakefront blocks east of Ohrid town, which are 25 minutes' walk from anything worth walking to.",
       "booking": null,
-      "priceNote": null
+      "priceNote": null,
+      "alternativeTo": 1
     }
   ],
   "logistics": {

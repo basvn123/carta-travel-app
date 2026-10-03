@@ -50,20 +50,20 @@
   "budget": {
     "currency": "EUR",
     "totalEur": {
-      "low": 900,
-      "high": 1350
+      "low": 1005,
+      "high": 1720
     },
-    "totalNote": "€900–1,350 per person",
+    "totalNote": "€1,005 to €1,720 per person for 7 days, the sum of the breakdown.",
     "breakdown": {
       "accommodation": {
-        "lowEur": 90,
-        "highEur": 160,
-        "note": "€90–160 per night, double; An Óige hostels €30–45 pp"
+        "lowEur": 540,
+        "highEur": 960,
+        "note": "€90–160 per night, double; An Óige hostels €30–45 pp. The breakdown figure is the nightly rate times 6 nights."
       },
       "food": {
-        "lowEur": 45,
-        "highEur": 70,
-        "note": "€45–70 per day (pub dinners €20–30, Dublin dinner more)"
+        "lowEur": 315,
+        "highEur": 490,
+        "note": "€45–70 per day (pub dinners €20–30, Dublin dinner more). The breakdown figure is the daily rate times 7 days."
       },
       "transport": {
         "lowEur": 120,
@@ -77,8 +77,8 @@
       }
     },
     "perDayEur": {
-      "low": 129,
-      "high": 193
+      "low": 144,
+      "high": 246
     }
   },
   "profile": {

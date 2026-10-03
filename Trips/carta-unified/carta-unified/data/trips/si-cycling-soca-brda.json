@@ -204,7 +204,8 @@
       "location": "Livek",
       "description": "The luxury option at 700 m directly above the Livek climb: your morning is an 8 km descent, your evening an 8 km penalty. Glass-fronted cabins, shared sauna, dinner included, roughly €280–€340 per cabin.",
       "booking": null,
-      "priceNote": null
+      "priceNote": null,
+      "alternativeTo": 1
     }
   ],
   "logistics": {
