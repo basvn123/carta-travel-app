@@ -813,3 +813,7 @@ The owner steps for the Hetzner build boxes (T046 onward) are in
 | T190-e | T190 | The Lifestyle panel is now a modal dialog for the keyboard on every tab, but off Explore it opens on the left with no scrim and the page behind still takes clicks; design call whether that variant gets a scrim | user | open |  |
 | T190-f | T190 | No screen reader (NVDA, VoiceOver, TalkBack) has been run on the new map pin layer, pin names or Lifestyle dialog; the EN 301 549 audit needs a manual assistive-technology pass | user | open | with T204 |
 | T190-g | T190 | verify_keyboard.mjs is not wired into ci or the launch gate; add it to the T204 performance and accessibility gate | next task | open | with T204 |
+| T225-a | T225 | Five destinations and their cost pages are still unreachable by links from any country page after the nearest-places block; add a repair link from the nearest reached place, or list them on the country page | next task | open | |
+| T225-b | T225 | 1,542 prerendered pages still carry fewer than six links to other pages (mostly lakes, mountains, trips); spec 5.4's three ways out (easier, cheaper, nearby) finishes T221-e | next task | open | with T221-e |
+| T225-c | T225 | Week receipts exist only for seven-day trips; 3 and 4 day receipts would link the trip-length pages the same way and add indexable pages | next task | open | |
+| T225-d | T225 | scripts/measure_link_depth.mjs uses the 43 country pages as roots because the home page links no country (T221-c); move the roots to the home page when it does | next task | open | after T221-c |
