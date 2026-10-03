@@ -774,6 +774,13 @@ def _cell(published, floor, must, must_published, misses, code, detail,
         out["code"] = code
         out["detail"] = detail
     if misses:
+        # The count per reason code over every miss, not the capped list: the
+        # app's footer says "we cannot yet map 19 of them, because ..." from
+        # this, and the wire copy keeps it when it drops the lists.
+        by_code = {}
+        for m in misses:
+            by_code[m.get("code")] = by_code.get(m.get("code"), 0) + 1
+        out["by_code"] = by_code
         out["misses"] = misses[:200]
         if len(misses) > 200:
             out["misses_omitted"] = len(misses) - 200
