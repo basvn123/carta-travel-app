@@ -46,7 +46,7 @@ import {
   cleanText, sanitizeCandidates, selectCandidates, dayCentroid, sanitizeAiStops,
   scheduleDay, cacheKeyInput, modelChain, shouldFallOver, CACHE_KEY_VERSION,
 } from './logic.mjs';
-import { consume, logCapRejection, refund } from '../_shared/passes.mjs';
+import { consume, logCapRejection, logModelEvent, refund } from '../_shared/passes.mjs';
 
 const CORS = {
   'Access-Control-Allow-Origin': '*',
@@ -609,14 +609,15 @@ Deno.serve(async (req) => {
   // fallback rate as (fallbacks / total) per day.
   const kindUsed = useGrounding ? 'ground' : 'plan';
   const fellBack = usedModel !== CHAIN[0];
-  try {
-    await service.from('ai_model_events').insert({
-      user_id: user.id,
-      model: usedModel,
-      kind: kindUsed,
-      fell_back: fellBack,
-    });
-  } catch { /* ignore */ }
+  // Not awaited (T300-r): the response must not wait on telemetry. The helper
+  // hands the promise to EdgeRuntime.waitUntil so the insert still completes.
+  const edge = (globalThis as { EdgeRuntime?: { waitUntil?: (p: Promise<unknown>) => void } }).EdgeRuntime;
+  logModelEvent(service, {
+    user_id: user.id,
+    model: usedModel,
+    kind: kindUsed,
+    fell_back: fellBack,
+  }, edge?.waitUntil ? (p: Promise<unknown>) => edge.waitUntil!(p) : undefined);
 
   // Entitlement facts ride OUTSIDE payload so they never reach the cache: the
   // cached row is shared between users, and one traveller's remaining balance
