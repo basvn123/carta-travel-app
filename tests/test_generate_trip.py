@@ -251,5 +251,5 @@ def test_prompts_fill_completely(bodies):
         T.fill(body2, {"skeleton": p1})
     for n in (1, 2, 3):
         _, body = T.load_prompt(n)
-        for ch in ("—", "–", "·"):
+        for ch in (chr(0x2014), chr(0x2013), chr(0xB7)):   # em dash, en dash, middot
             assert ch not in body
