@@ -793,17 +793,20 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--accent);
-  color: var(--on-fill);
-  border: 4px solid var(--paper);
-  box-shadow: 0 6px 16px rgba(224, 90, 71, 0.38), var(--shadow-1);
+  /* A secondary round icon button (T360, owner call on T166-a): the accent
+     is left for the page's one primary action. */
+  background: var(--bg-card);
+  color: var(--ink);
+  border: 1px solid var(--rule);
+  box-shadow: var(--shadow-1);
   transition: transform .2s, box-shadow .15s;
 }
 .bottom-nav-plus:active { transform: scale(0.94); }
 .bottom-nav-plus.open { transform: rotate(45deg); }
 /* On the Trip/Day planner tabs the plus is the "you are here" item. */
 .bottom-nav-plus.active {
-  box-shadow: 0 0 0 3px var(--accent-bg), 0 6px 16px rgba(224, 90, 71, 0.38);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-bg), var(--shadow-1);
 }
 
 /* The Trip planner / Day planner chooser, anchored above the plus. */

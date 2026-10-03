@@ -3852,3 +3852,43 @@
   .jpage-book-lead { grid-column: 2; }
   .jpage-book-text { grid-column: 2; }
 }
+
+/* The suitability strip (T360): a solid --paper band flush under the hero,
+   three cells in a fixed order. No alpha, no gradient, nothing over the photo.
+   Square at the top where it meets the picture, card radius at the bottom. */
+.jpage-shot { border-radius: 12px 12px 0 0; }
+.jpage-hero:not(:has(.jpage-shot)) .jstrip { border-top: 1px solid var(--rule); border-radius: 12px; }
+.jstrip {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  background: var(--paper);
+  border: 1px solid var(--rule);
+  border-top: 0;
+  border-radius: 0 0 12px 12px;
+}
+.jstrip-cell {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px 8px;
+  min-width: 0;
+  padding: 10px 12px;
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: 600;
+}
+.jstrip-cell + .jstrip-cell { border-left: 1px solid var(--rule-soft); }
+.jstrip-squares { display: inline-flex; gap: 2px; }
+.jstrip-sq {
+  width: 9px;
+  height: 9px;
+  border: 1px solid var(--ink-mute);
+  background: transparent;
+}
+.jstrip-sq.is-on { background: var(--ink); border-color: var(--ink); }
+.jstrip-word { min-width: 0; overflow-wrap: anywhere; text-transform: capitalize; }
+.jstrip-word.mono { font-family: var(--mono); font-weight: 500; text-transform: none; }
+@media (max-width: 480px) {
+  .jstrip-cell { padding: 8px 8px; font-size: 12px; }
+  .jstrip-sq { width: 8px; height: 8px; }
+}

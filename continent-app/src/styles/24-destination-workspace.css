@@ -4617,19 +4617,22 @@
   .header-nav-icon { display: none; }
   .header-nav-label { display: inline; }
 
-  /* Get a pass: the one filled action in the bar. */
+  /* Get a pass: a secondary (T360, owner call on T166-a). The accent is left
+     for each page's one primary action, so the chip is transparent with a
+     --rule border and the 6px control radius. */
   .header-pricing-btn {
-    border-color: var(--accent);
-    background: var(--accent);
-    color: var(--on-fill);
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+    background: transparent;
+    color: var(--ink);
     font-weight: 600;
     box-shadow: none;
   }
-  .header-pricing-btn svg { color: var(--on-fill); }
+  .header-pricing-btn svg { color: var(--accent); }
   .header-pricing-btn:hover {
-    border-color: var(--accent-soft);
-    background: var(--accent-soft);
-    color: var(--on-fill);
+    border-color: var(--ink-soft);
+    background: var(--paper-dim);
+    color: var(--ink);
   }
   .header-pricing-label { display: none; }
   .header-pricing-label-short { display: inline; }

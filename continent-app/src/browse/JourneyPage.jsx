@@ -111,6 +111,54 @@ function difficultyNoteText(note, label) {
   return text;
 }
 
+/* The suitability strip (T360, DESIGN.md "Suitability strip"): exactly three
+   cells in fixed order, difficulty, style, total cost. A trip missing a value
+   shows a placeholder word, so the count is three on every trip. Style is the
+   first tag of one or two words (a tag is a hyphenated slug, so "slow-travel"
+   reads "slow travel"; "hut-to-hut" is three words and is skipped). */
+function journeyStripCells(trip, t, lang) {
+  const profile = trip.profile || {};
+  const level = Math.max(0, Math.min(5, Math.round(Number(profile.difficulty) || 0)));
+  const word = profile.difficultyLabel && level > 0
+    ? diffLabel(profile.difficultyLabel, t) : t('journey.stripUnrated');
+  let style = '';
+  for (const tag of trip.tags || []) {
+    const w = String(tag).replace(/-/g, ' ').trim();
+    if (w && w.split(/\s+/).length <= 2) { style = w; break; }
+  }
+  const cost = trip.budget?.totalEur ? eurRange(trip.budget.totalEur, lang) : '';
+  return [
+    { key: 'diff', level, word },
+    { key: 'style', word: style || t('journey.stripMixed') },
+    { key: 'cost', word: cost || t('journey.stripPrice'), mono: Boolean(cost) },
+  ];
+}
+
+function SuitabilityStrip({ trip, t, lang }) {
+  const cells = journeyStripCells(trip, t, lang);
+  return (
+    <div className="jstrip" role="group" aria-label={t('journey.stripAria')}>
+      {cells.map((c) => (
+        <div key={c.key} className="jstrip-cell">
+          {c.key === 'diff' && (
+            <span
+              className="jstrip-squares"
+              role={c.level > 0 ? 'img' : undefined}
+              aria-label={c.level > 0 ? t('journey.diffMeter', { n: c.level }) : undefined}
+              aria-hidden={c.level > 0 ? undefined : true}
+            >
+              {[1, 2, 3, 4, 5].map((i) => (
+                <span key={i} className={`jstrip-sq${i <= c.level ? ' is-on' : ''}`} />
+              ))}
+            </span>
+          )}
+          <span className={`jstrip-word${c.mono ? ' mono' : ''}`}>{c.word}</span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 function HeroCredit({ hero, t }) {
   const page = safeUrl(hero?.page);
   if (!hero?.credit) return null;
@@ -469,18 +517,19 @@ export function JourneyPage({ id, gatewayDest, onClose, onSelectDest }) {
             word: trip.profile?.difficultyLabel ? diffLabel(trip.profile.difficultyLabel, t) : '',
           })} />
 
-          {trip.hero?.url && (
-            <figure className="bpage-gallery">
+          <figure className="bpage-gallery jpage-hero">
+            {trip.hero?.url && (
               <img
-                className="bpage-shot"
+                className="bpage-shot jpage-shot"
                 src={trip.hero.url}
                 srcSet={srcSetFor(trip.hero.url, 1280)}
                 sizes="(max-width: 900px) 96vw, 720px"
                 alt={trip.title}
               />
-              <HeroCredit hero={trip.hero} t={t} />
-            </figure>
-          )}
+            )}
+            <SuitabilityStrip trip={trip} t={t} lang={lang} />
+            {trip.hero?.url && <HeroCredit hero={trip.hero} t={t} />}
+          </figure>
 
           <Fold
             id="sec-why"
