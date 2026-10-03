@@ -1,0 +1,321 @@
+{
+ "format": 1,
+ "batch": "southern-mediterranean-g1",
+ "regionKey": "southern-mediterranean",
+ "region": "Southern & Mediterranean Europe",
+ "wave": 1,
+ "mode": "fill",
+ "plannedAt": "2026-10-03",
+ "catalogueTrips": 253,
+ "maxPerCell": 2,
+ "estimateEur": {
+  "low": 5.0,
+  "high": 9.0,
+  "perTrip": [
+   0.25,
+   0.45
+  ]
+ },
+ "entries": [
+  {
+   "slot": {
+    "mode": "fill",
+    "viability": "viable",
+    "tripsInCell": 0,
+    "priority": 0.31538
+   },
+   "brief": {
+    "key": "southern-mediterranean-g1-sm-trail-running",
+    "countryCode": "SM",
+    "tripTypeSlug": "trail-running",
+    "idea": "In San Marino, a seven-day trail running week on marked mountain, forest or coastal trails. Carta has no trail running trip in San Marino yet, so choose the strongest route the country offers for it.",
+    "batch": "southern-mediterranean-g1"
+   }
+  },
+  {
+   "slot": {
+    "mode": "fill",
+    "viability": "viable",
+    "tripsInCell": 0,
+    "priority": 0.31481
+   },
+   "brief": {
+    "key": "southern-mediterranean-g1-sm-city",
+    "countryCode": "SM",
+    "tripTypeSlug": "city",
+    "idea": "In San Marino, a seven-day city week on foot and by public transport, with a day trip or two. Carta has no city trip in San Marino yet, so choose the strongest route the country offers for it.",
+    "batch": "southern-mediterranean-g1"
+   }
+  },
+  {
+   "slot": {
+    "mode": "fill",
+    "viability": "viable",
+    "tripsInCell": 0,
+    "priority": 0.31481
+   },
+   "brief": {
+    "key": "southern-mediterranean-g1-sm-culinary",
+    "countryCode": "SM",
+    "tripTypeSlug": "culinary",
+    "idea": "In San Marino, a seven-day food and wine week built around markets, producers and tastings. Carta has no food and wine trip in San Marino yet, so choose the strongest route the country offers for it.",
+    "batch": "southern-mediterranean-g1"
+   }
+  },
+  {
+   "slot": {
+    "mode": "fill",
+    "viability": "viable",
+    "tripsInCell": 0,
+    "priority": 0.31481
+   },
+   "brief": {
+    "key": "southern-mediterranean-g1-sm-cycling",
+    "countryCode": "SM",
+    "tripTypeSlug": "cycling",
+    "idea": "In San Marino, a seven-day bike week on a signed route or on loops from one or two bases. Carta has no cycling trip in San Marino yet, so choose the strongest route the country offers for it.",
+    "batch": "southern-mediterranean-g1"
+   }
+  },
+  {
+   "slot": {
+    "mode": "fill",
+    "viability": "viable",
+    "tripsInCell": 0,
+    "priority": 0.31481
+   },
+   "brief": {
+    "key": "southern-mediterranean-g1-sm-nature-escape",
+    "countryCode": "SM",
+    "tripTypeSlug": "nature-escape",
+    "idea": "In San Marino, a seven-day cabin or lodge week in protected nature, with walks and quiet days. Carta has no nature trip in San Marino yet, so choose the strongest route the country offers for it.",
+    "batch": "southern-mediterranean-g1"
+   }
+  },
+  {
+   "slot": {
+    "mode": "fill",
+    "viability": "viable",
+    "tripsInCell": 0,
+    "priority": 0.31481
+   },
+   "brief": {
+    "key": "southern-mediterranean-g1-sm-road-trip",
+    "countryCode": "SM",
+    "tripTypeSlug": "road-trip",
+    "idea": "In San Marino, a seven-day scenic road trip with two or three bases. Carta has no road trip in San Marino yet, so choose the strongest route the country offers for it.",
+    "batch": "southern-mediterranean-g1"
+   }
+  },
+  {
+   "slot": {
+    "mode": "fill",
+    "viability": "viable",
+    "tripsInCell": 0,
+    "priority": 0.216
+   },
+   "brief": {
+    "key": "southern-mediterranean-g1-rs-hiking",
+    "countryCode": "RS",
+    "tripTypeSlug": "hiking",
+    "idea": "In Serbia, a seven-day hiking week on waymarked trails, hut to hut or from bases. Carta has no hiking trip in Serbia yet, so choose the strongest route the country offers for it.",
+    "batch": "southern-mediterranean-g1"
+   }
+  },
+  {
+   "slot": {
+    "mode": "fill",
+    "viability": "viable",
+    "tripsInCell": 0,
+    "priority": 0.216
+   },
+   "brief": {
+    "key": "southern-mediterranean-g1-xk-winter-sports",
+    "countryCode": "XK",
+    "tripTypeSlug": "winter-sports",
+    "idea": "In Kosovo, a seven-day ski or Nordic week in one main area. Carta has no winter sports trip in Kosovo yet, so choose the strongest route the country offers for it.",
+    "batch": "southern-mediterranean-g1"
+   }
+  },
+  {
+   "slot": {
+    "mode": "fill",
+    "viability": "viable",
+    "tripsInCell": 0,
+    "priority": 0.21538
+   },
+   "brief": {
+    "key": "southern-mediterranean-g1-ad-trail-running",
+    "countryCode": "AD",
+    "tripTypeSlug": "trail-running",
+    "idea": "In Andorra, a seven-day trail running week on marked mountain, forest or coastal trails. Carta has no trail running trip in Andorra yet, so choose the strongest route the country offers for it.",
+    "batch": "southern-mediterranean-g1"
+   }
+  },
+  {
+   "slot": {
+    "mode": "fill",
+    "viability": "viable",
+    "tripsInCell": 0,
+    "priority": 0.21538
+   },
+   "brief": {
+    "key": "southern-mediterranean-g1-rs-trail-running",
+    "countryCode": "RS",
+    "tripTypeSlug": "trail-running",
+    "idea": "In Serbia, a seven-day trail running week on marked mountain, forest or coastal trails. Carta has no trail running trip in Serbia yet, so choose the strongest route the country offers for it.",
+    "batch": "southern-mediterranean-g1"
+   }
+  },
+  {
+   "slot": {
+    "mode": "fill",
+    "viability": "viable",
+    "tripsInCell": 0,
+    "priority": 0.21538
+   },
+   "brief": {
+    "key": "southern-mediterranean-g1-xk-trail-running",
+    "countryCode": "XK",
+    "tripTypeSlug": "trail-running",
+    "idea": "In Kosovo, a seven-day trail running week on marked mountain, forest or coastal trails. Carta has no trail running trip in Kosovo yet, so choose the strongest route the country offers for it.",
+    "batch": "southern-mediterranean-g1"
+   }
+  },
+  {
+   "slot": {
+    "mode": "fill",
+    "viability": "viable",
+    "tripsInCell": 0,
+    "priority": 0.21481
+   },
+   "brief": {
+    "key": "southern-mediterranean-g1-ad-city",
+    "countryCode": "AD",
+    "tripTypeSlug": "city",
+    "idea": "In Andorra, a seven-day city week on foot and by public transport, with a day trip or two. Carta has no city trip in Andorra yet, so choose the strongest route the country offers for it.",
+    "batch": "southern-mediterranean-g1"
+   }
+  },
+  {
+   "slot": {
+    "mode": "fill",
+    "viability": "viable",
+    "tripsInCell": 0,
+    "priority": 0.21481
+   },
+   "brief": {
+    "key": "southern-mediterranean-g1-ad-cozy-towns",
+    "countryCode": "AD",
+    "tripTypeSlug": "cozy-towns",
+    "idea": "In Andorra, a seven-day slow week through small towns linked by train, bus or short drives. Carta has no small-town trip in Andorra yet, so choose the strongest route the country offers for it.",
+    "batch": "southern-mediterranean-g1"
+   }
+  },
+  {
+   "slot": {
+    "mode": "fill",
+    "viability": "viable",
+    "tripsInCell": 0,
+    "priority": 0.21481
+   },
+   "brief": {
+    "key": "southern-mediterranean-g1-ad-culinary",
+    "countryCode": "AD",
+    "tripTypeSlug": "culinary",
+    "idea": "In Andorra, a seven-day food and wine week built around markets, producers and tastings. Carta has no food and wine trip in Andorra yet, so choose the strongest route the country offers for it.",
+    "batch": "southern-mediterranean-g1"
+   }
+  },
+  {
+   "slot": {
+    "mode": "fill",
+    "viability": "viable",
+    "tripsInCell": 0,
+    "priority": 0.21481
+   },
+   "brief": {
+    "key": "southern-mediterranean-g1-ad-cycling",
+    "countryCode": "AD",
+    "tripTypeSlug": "cycling",
+    "idea": "In Andorra, a seven-day bike week on a signed route or on loops from one or two bases. Carta has no cycling trip in Andorra yet, so choose the strongest route the country offers for it.",
+    "batch": "southern-mediterranean-g1"
+   }
+  },
+  {
+   "slot": {
+    "mode": "fill",
+    "viability": "viable",
+    "tripsInCell": 0,
+    "priority": 0.21481
+   },
+   "brief": {
+    "key": "southern-mediterranean-g1-ad-nature-escape",
+    "countryCode": "AD",
+    "tripTypeSlug": "nature-escape",
+    "idea": "In Andorra, a seven-day cabin or lodge week in protected nature, with walks and quiet days. Carta has no nature trip in Andorra yet, so choose the strongest route the country offers for it.",
+    "batch": "southern-mediterranean-g1"
+   }
+  },
+  {
+   "slot": {
+    "mode": "fill",
+    "viability": "viable",
+    "tripsInCell": 0,
+    "priority": 0.21481
+   },
+   "brief": {
+    "key": "southern-mediterranean-g1-ad-road-trip",
+    "countryCode": "AD",
+    "tripTypeSlug": "road-trip",
+    "idea": "In Andorra, a seven-day scenic road trip with two or three bases. Carta has no road trip in Andorra yet, so choose the strongest route the country offers for it.",
+    "batch": "southern-mediterranean-g1"
+   }
+  },
+  {
+   "slot": {
+    "mode": "fill",
+    "viability": "viable",
+    "tripsInCell": 0,
+    "priority": 0.21481
+   },
+   "brief": {
+    "key": "southern-mediterranean-g1-rs-cozy-towns",
+    "countryCode": "RS",
+    "tripTypeSlug": "cozy-towns",
+    "idea": "In Serbia, a seven-day slow week through small towns linked by train, bus or short drives. Carta has no small-town trip in Serbia yet, so choose the strongest route the country offers for it.",
+    "batch": "southern-mediterranean-g1"
+   }
+  },
+  {
+   "slot": {
+    "mode": "fill",
+    "viability": "viable",
+    "tripsInCell": 0,
+    "priority": 0.21481
+   },
+   "brief": {
+    "key": "southern-mediterranean-g1-rs-culinary",
+    "countryCode": "RS",
+    "tripTypeSlug": "culinary",
+    "idea": "In Serbia, a seven-day food and wine week built around markets, producers and tastings. Carta has no food and wine trip in Serbia yet, so choose the strongest route the country offers for it.",
+    "batch": "southern-mediterranean-g1"
+   }
+  },
+  {
+   "slot": {
+    "mode": "fill",
+    "viability": "viable",
+    "tripsInCell": 0,
+    "priority": 0.21481
+   },
+   "brief": {
+    "key": "southern-mediterranean-g1-rs-cycling",
+    "countryCode": "RS",
+    "tripTypeSlug": "cycling",
+    "idea": "In Serbia, a seven-day bike week on a signed route or on loops from one or two bases. Carta has no cycling trip in Serbia yet, so choose the strongest route the country offers for it.",
+    "batch": "southern-mediterranean-g1"
+   }
+  }
+ ]
+}

@@ -1,0 +1,66 @@
+{
+ "format": 1,
+ "batch": "eastern-southeastern-g1",
+ "regionKey": "eastern-southeastern",
+ "region": "Eastern & Southeastern Europe",
+ "wave": 1,
+ "mode": "fill",
+ "plannedAt": "2026-10-03",
+ "catalogueTrips": 253,
+ "maxPerCell": 2,
+ "estimateEur": {
+  "low": 0.75,
+  "high": 1.35,
+  "perTrip": [
+   0.25,
+   0.45
+  ]
+ },
+ "entries": [
+  {
+   "slot": {
+    "mode": "fill",
+    "viability": "viable",
+    "tripsInCell": 0,
+    "priority": 0.1011
+   },
+   "brief": {
+    "key": "eastern-southeastern-g1-md-trail-running",
+    "countryCode": "MD",
+    "tripTypeSlug": "trail-running",
+    "idea": "In Moldova, a seven-day trail running week on marked mountain, forest or coastal trails. Carta has no trail running trip in Moldova yet, so choose the strongest route the country offers for it.",
+    "batch": "eastern-southeastern-g1"
+   }
+  },
+  {
+   "slot": {
+    "mode": "fill",
+    "viability": "marginal",
+    "tripsInCell": 0,
+    "priority": 0.04577
+   },
+   "brief": {
+    "key": "eastern-southeastern-g1-md-water-sports",
+    "countryCode": "MD",
+    "tripTypeSlug": "water-sports",
+    "idea": "In Moldova, a seven-day paddling, sailing or swimming week on the coast or a lake. Carta has no water sports trip in Moldova yet, so choose the strongest route the country offers for it. Only a reduced form of this trip type fits here (Prut and Dniester only, no coast); say so plainly in the trip rather than stretching it.",
+    "batch": "eastern-southeastern-g1"
+   }
+  },
+  {
+   "slot": {
+    "mode": "fill",
+    "viability": "marginal",
+    "tripsInCell": 0,
+    "priority": 0.0342
+   },
+   "brief": {
+    "key": "eastern-southeastern-g1-sk-water-sports",
+    "countryCode": "SK",
+    "tripTypeSlug": "water-sports",
+    "idea": "In Slovakia, a seven-day paddling, sailing or swimming week on the coast or a lake. Carta has no water sports trip in Slovakia yet, so choose the strongest route the country offers for it. Only a reduced form of this trip type fits here (Danube, Váh and Liptovská Mara, no coast); say so plainly in the trip rather than stretching it.",
+    "batch": "eastern-southeastern-g1"
+   }
+  }
+ ]
+}

@@ -1,0 +1,276 @@
+{
+ "format": 1,
+ "batch": "western-central-g1",
+ "regionKey": "western-central",
+ "region": "Western & Central Europe",
+ "wave": 1,
+ "mode": "fill",
+ "plannedAt": "2026-10-03",
+ "catalogueTrips": 253,
+ "maxPerCell": 2,
+ "estimateEur": {
+  "low": 4.25,
+  "high": 7.65,
+  "perTrip": [
+   0.25,
+   0.45
+  ]
+ },
+ "entries": [
+  {
+   "slot": {
+    "mode": "fill",
+    "viability": "viable",
+    "tripsInCell": 0,
+    "priority": 0.13481
+   },
+   "brief": {
+    "key": "western-central-g1-li-city",
+    "countryCode": "LI",
+    "tripTypeSlug": "city",
+    "idea": "In Liechtenstein, a seven-day city week on foot and by public transport, with a day trip or two. Carta has no city trip in Liechtenstein yet, so choose the strongest route the country offers for it.",
+    "batch": "western-central-g1"
+   }
+  },
+  {
+   "slot": {
+    "mode": "fill",
+    "viability": "viable",
+    "tripsInCell": 0,
+    "priority": 0.13481
+   },
+   "brief": {
+    "key": "western-central-g1-li-cozy-towns",
+    "countryCode": "LI",
+    "tripTypeSlug": "cozy-towns",
+    "idea": "In Liechtenstein, a seven-day slow week through small towns linked by train, bus or short drives. Carta has no small-town trip in Liechtenstein yet, so choose the strongest route the country offers for it.",
+    "batch": "western-central-g1"
+   }
+  },
+  {
+   "slot": {
+    "mode": "fill",
+    "viability": "viable",
+    "tripsInCell": 0,
+    "priority": 0.13481
+   },
+   "brief": {
+    "key": "western-central-g1-li-culinary",
+    "countryCode": "LI",
+    "tripTypeSlug": "culinary",
+    "idea": "In Liechtenstein, a seven-day food and wine week built around markets, producers and tastings. Carta has no food and wine trip in Liechtenstein yet, so choose the strongest route the country offers for it.",
+    "batch": "western-central-g1"
+   }
+  },
+  {
+   "slot": {
+    "mode": "fill",
+    "viability": "viable",
+    "tripsInCell": 0,
+    "priority": 0.13481
+   },
+   "brief": {
+    "key": "western-central-g1-li-cycling",
+    "countryCode": "LI",
+    "tripTypeSlug": "cycling",
+    "idea": "In Liechtenstein, a seven-day bike week on a signed route or on loops from one or two bases. Carta has no cycling trip in Liechtenstein yet, so choose the strongest route the country offers for it.",
+    "batch": "western-central-g1"
+   }
+  },
+  {
+   "slot": {
+    "mode": "fill",
+    "viability": "viable",
+    "tripsInCell": 0,
+    "priority": 0.13481
+   },
+   "brief": {
+    "key": "western-central-g1-li-nature-escape",
+    "countryCode": "LI",
+    "tripTypeSlug": "nature-escape",
+    "idea": "In Liechtenstein, a seven-day cabin or lodge week in protected nature, with walks and quiet days. Carta has no nature trip in Liechtenstein yet, so choose the strongest route the country offers for it.",
+    "batch": "western-central-g1"
+   }
+  },
+  {
+   "slot": {
+    "mode": "fill",
+    "viability": "viable",
+    "tripsInCell": 0,
+    "priority": 0.11481
+   },
+   "brief": {
+    "key": "western-central-g1-mc-cozy-towns",
+    "countryCode": "MC",
+    "tripTypeSlug": "cozy-towns",
+    "idea": "In Monaco, a seven-day slow week through small towns linked by train, bus or short drives. Carta has no small-town trip in Monaco yet, so choose the strongest route the country offers for it.",
+    "batch": "western-central-g1"
+   }
+  },
+  {
+   "slot": {
+    "mode": "fill",
+    "viability": "viable",
+    "tripsInCell": 0,
+    "priority": 0.11481
+   },
+   "brief": {
+    "key": "western-central-g1-mc-culinary",
+    "countryCode": "MC",
+    "tripTypeSlug": "culinary",
+    "idea": "In Monaco, a seven-day food and wine week built around markets, producers and tastings. Carta has no food and wine trip in Monaco yet, so choose the strongest route the country offers for it.",
+    "batch": "western-central-g1"
+   }
+  },
+  {
+   "slot": {
+    "mode": "fill",
+    "viability": "viable",
+    "tripsInCell": 0,
+    "priority": 0.11481
+   },
+   "brief": {
+    "key": "western-central-g1-mc-cycling",
+    "countryCode": "MC",
+    "tripTypeSlug": "cycling",
+    "idea": "In Monaco, a seven-day bike week on a signed route or on loops from one or two bases. Carta has no cycling trip in Monaco yet, so choose the strongest route the country offers for it.",
+    "batch": "western-central-g1"
+   }
+  },
+  {
+   "slot": {
+    "mode": "fill",
+    "viability": "viable",
+    "tripsInCell": 0,
+    "priority": 0.11481
+   },
+   "brief": {
+    "key": "western-central-g1-mc-nature-escape",
+    "countryCode": "MC",
+    "tripTypeSlug": "nature-escape",
+    "idea": "In Monaco, a seven-day cabin or lodge week in protected nature, with walks and quiet days. Carta has no nature trip in Monaco yet, so choose the strongest route the country offers for it.",
+    "batch": "western-central-g1"
+   }
+  },
+  {
+   "slot": {
+    "mode": "fill",
+    "viability": "viable",
+    "tripsInCell": 0,
+    "priority": 0.06993
+   },
+   "brief": {
+    "key": "western-central-g1-nl-trail-running",
+    "countryCode": "NL",
+    "tripTypeSlug": "trail-running",
+    "idea": "In Netherlands, a seven-day trail running week on marked mountain, forest or coastal trails. Carta has no trail running trip in Netherlands yet, so choose the strongest route the country offers for it.",
+    "batch": "western-central-g1"
+   }
+  },
+  {
+   "slot": {
+    "mode": "fill",
+    "viability": "viable",
+    "tripsInCell": 0,
+    "priority": 0.06936
+   },
+   "brief": {
+    "key": "western-central-g1-ch-city",
+    "countryCode": "CH",
+    "tripTypeSlug": "city",
+    "idea": "In Switzerland, a seven-day city week on foot and by public transport, with a day trip or two. Carta has no city trip in Switzerland yet, so choose the strongest route the country offers for it.",
+    "batch": "western-central-g1"
+   }
+  },
+  {
+   "slot": {
+    "mode": "fill",
+    "viability": "viable",
+    "tripsInCell": 0,
+    "priority": 0.06936
+   },
+   "brief": {
+    "key": "western-central-g1-ch-cycling",
+    "countryCode": "CH",
+    "tripTypeSlug": "cycling",
+    "idea": "In Switzerland, a seven-day bike week on a signed route or on loops from one or two bases. Carta has no cycling trip in Switzerland yet, so choose the strongest route the country offers for it.",
+    "batch": "western-central-g1"
+   }
+  },
+  {
+   "slot": {
+    "mode": "fill",
+    "viability": "viable",
+    "tripsInCell": 0,
+    "priority": 0.06481
+   },
+   "brief": {
+    "key": "western-central-g1-be-road-trip",
+    "countryCode": "BE",
+    "tripTypeSlug": "road-trip",
+    "idea": "In Belgium, a seven-day scenic road trip with two or three bases. Carta has no road trip in Belgium yet, so choose the strongest route the country offers for it.",
+    "batch": "western-central-g1"
+   }
+  },
+  {
+   "slot": {
+    "mode": "fill",
+    "viability": "marginal",
+    "tripsInCell": 0,
+    "priority": 0.0372
+   },
+   "brief": {
+    "key": "western-central-g1-lu-water-sports",
+    "countryCode": "LU",
+    "tripTypeSlug": "water-sports",
+    "idea": "In Luxembourg, a seven-day paddling, sailing or swimming week on the coast or a lake. Carta has no water sports trip in Luxembourg yet, so choose the strongest route the country offers for it. Only a reduced form of this trip type fits here (Upper Sûre lake and the Moselle only, no coast); say so plainly in the trip rather than stretching it.",
+    "batch": "western-central-g1"
+   }
+  },
+  {
+   "slot": {
+    "mode": "fill",
+    "viability": "marginal",
+    "tripsInCell": 0,
+    "priority": 0.0372
+   },
+   "brief": {
+    "key": "western-central-g1-lu-winter-sports",
+    "countryCode": "LU",
+    "tripTypeSlug": "winter-sports",
+    "idea": "In Luxembourg, a seven-day ski or Nordic week in one main area. Carta has no winter sports trip in Luxembourg yet, so choose the strongest route the country offers for it. Only a reduced form of this trip type fits here (Occasional cross-country in the Éislek; no lifts); say so plainly in the trip rather than stretching it.",
+    "batch": "western-central-g1"
+   }
+  },
+  {
+   "slot": {
+    "mode": "fill",
+    "viability": "marginal",
+    "tripsInCell": 0,
+    "priority": 0.03175
+   },
+   "brief": {
+    "key": "western-central-g1-ch-water-sports",
+    "countryCode": "CH",
+    "tripTypeSlug": "water-sports",
+    "idea": "In Switzerland, a seven-day paddling, sailing or swimming week on the coast or a lake. Carta has no water sports trip in Switzerland yet, so choose the strongest route the country offers for it. Only a reduced form of this trip type fits here (Alpine lakes, no coast); say so plainly in the trip rather than stretching it.",
+    "batch": "western-central-g1"
+   }
+  },
+  {
+   "slot": {
+    "mode": "fill",
+    "viability": "marginal",
+    "tripsInCell": 0,
+    "priority": 0.0297
+   },
+   "brief": {
+    "key": "western-central-g1-cz-water-sports",
+    "countryCode": "CZ",
+    "tripTypeSlug": "water-sports",
+    "idea": "In Czechia, a seven-day paddling, sailing or swimming week on the coast or a lake. Carta has no water sports trip in Czechia yet, so choose the strongest route the country offers for it. Only a reduced form of this trip type fits here (Reservoirs and the Vltava, no coast); say so plainly in the trip rather than stretching it.",
+    "batch": "western-central-g1"
+   }
+  }
+ ]
+}
