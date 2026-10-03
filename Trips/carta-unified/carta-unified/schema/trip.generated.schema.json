@@ -251,7 +251,7 @@
       "type": "object", "additionalProperties": false, "required": ["verified", "confidenceNotes"],
       "properties": {
         "verified": { "$ref": "#/$defs/textOrNull", "maxLength": 800 },
-        "confidenceNotes": { "$ref": "#/$defs/textOrNull", "maxLength": 800 }
+        "confidenceNotes": { "$ref": "#/$defs/text", "minLength": 30, "maxLength": 800, "description": "Required (T154, spec K7): what could not be confirmed, in a sentence or more. It is the reviewer's starting point; null or empty fails the gate." }
       }
     },
     "snapshot": { "type": "object", "maxProperties": 0, "description": "The source's own snapshot table; a generated record has none." },
